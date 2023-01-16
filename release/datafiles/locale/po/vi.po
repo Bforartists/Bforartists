@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2022-08-19 12:33+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -308,6 +308,14 @@ msgstr "Loại Thiết Bị Tính"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Thiết bị nào để sử dụng cho tính toán (khi dùng Cycles kết xuất ảnh)"
+
+
+msgid "Off"
+msgstr "Tắt"
+
+
+msgid "Full"
+msgstr "Đầy"
 
 
 msgid "Distribute memory across devices"
@@ -3168,10 +3176,6 @@ msgstr "Thừa Kế Phóng To"
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "Được xác định làm sao xương được thừa hưởng phóng to từ xương phụ huynh"
-
-
-msgid "Full"
-msgstr "Đầy"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -7625,10 +7629,6 @@ msgstr "Hủy Diệt Mặt"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "Không cho đỉnh chiếu đến một mặt của mục tiêu khi chỉ đến/hướng từ"
-
-
-msgid "Off"
-msgstr "Tắt"
 
 
 msgid "No culling"
@@ -17666,6 +17666,10 @@ msgstr "Bộ Điều Chỉnh Dịch"
 
 msgid "Offset Stroke modifier"
 msgstr "Bộ điều chỉnh Dịch Nét"
+
+
+msgid "Start Offset"
+msgstr "Dịch Đầu"
 
 
 msgid "Opacity Modifier"
@@ -28629,10 +28633,6 @@ msgstr "Thao Tác"
 
 msgid "Operator registry"
 msgstr "Sổ Hộ Khẩu Thao Tác"
-
-
-msgid "Flip Pose"
-msgstr "Lật Dạng Đứng"
 
 
 msgid "Preset Name"
@@ -54878,15 +54878,6 @@ msgid "Send new stroke to back"
 msgstr "Gởi nét mới đến phía sau"
 
 
-msgctxt "Operator"
-msgid "Clean Duplicated Frames"
-msgstr "Làm Sạch Bức Ảnh Được Sao Chép"
-
-
-msgid "Remove any duplicated frame"
-msgstr "Xoá hết bức ảnh được sao chép"
-
-
 msgid "All Frames"
 msgstr "Hết Bức Ảnh"
 
@@ -55225,6 +55216,10 @@ msgid "Add new layer or note for the active data-block"
 msgstr "Thêm một lớp hay tin nhắn mới cho cục dữ liệu hoạt động"
 
 
+msgid "Name of the newly added layer"
+msgstr "Tên của lớp mới thêm"
+
+
 msgctxt "Operator"
 msgid "Add New Annotation Layer"
 msgstr "Thêm Lớp Ghi Chú Mới"
@@ -55517,10 +55512,6 @@ msgstr "Di Chuyển Nét Đến Lớp"
 
 msgid "Move selected strokes to another layer"
 msgstr "Di chuyển nét được chọn đến lớp khác"
-
-
-msgid "Name of the newly added layer"
-msgstr "Tên của lớp mới thêm"
 
 
 msgctxt "Operator"
@@ -68077,10 +68068,6 @@ msgid "Apply the given Pose Action to the rig"
 msgstr "Áp dụng Hành Động Dạng Đứng đươc giao cho giàn"
 
 
-msgid "Amount that the pose is applied on top of the existing poses"
-msgstr "Mức độ dạng đứng được áp dụng trên các dạng đứng đang tồn tại"
-
-
 msgid "Apply Flipped"
 msgstr "Áp Dụng Lật"
 
@@ -68498,14 +68485,6 @@ msgstr "Chế Độ Kết Thúc"
 
 msgid "Method used to determine when to stop propagating pose to keyframes"
 msgstr "Phương pháp dùng cho biết khi ngừng truyền dẫn dạng đứng bức ảnh mẫu"
-
-
-msgid "While Held"
-msgstr "Khi Giữ"
-
-
-msgid "Propagate pose to all keyframes after current frame that don't change (Default behavior)"
-msgstr "Truyền dẫn dạng đứng cho hết bức ảnh mẫu sau bức ảnh hiện tại mà không thay đổi (Hành vi mặc định)"
 
 
 msgid "To Next Keyframe"
@@ -89653,10 +89632,6 @@ msgid "End Offset"
 msgstr "Dịch Cuối"
 
 
-msgid "Start Offset"
-msgstr "Dịch Đầu"
-
-
 msgid "X position where the strip begins"
 msgstr "Vị trí X đoạn được bắt đầu"
 
@@ -104276,8 +104251,8 @@ msgstr "Xoá Điểm Rời Ra"
 
 
 msgctxt "Operator"
-msgid "Delete Duplicated Frames"
-msgstr "Xoá Bức Ảnh Có Sao Chép"
+msgid "Delete Duplicate Frames"
+msgstr "Xoá Bức Ảnh Được Sao Chép"
 
 
 msgctxt "Operator"
@@ -105972,11 +105947,6 @@ msgstr "Làm Sạch Kênh"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Kéo Ra"
-
-
-msgctxt "Operator"
-msgid "Delete Duplicate Frames"
-msgstr "Xoá Bức Ảnh Được Sao Chép"
 
 
 msgctxt "Operator"
@@ -112414,10 +112384,6 @@ msgid "No active GP data"
 msgstr "Không có dữ liệu bút sáp hoạt động"
 
 
-msgid "Operator not supported in multiframe edition"
-msgstr "Thao tác không được hỗ trợ trong phiên bản đa bức ảnh"
-
-
 msgid "Not implemented!"
 msgstr "Chưa được thành lập!"
 
@@ -116814,6 +116780,18 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Không thể thêm bộ điều chỉnh cho (%s : %s) (xem chi tiết trong diện điều khiển)"
 
 
+msgid "Clipboard is empty"
+msgstr "Bảng dán trống rỗng"
+
+
+msgid "Some nodes references could not be restored, will be left empty"
+msgstr "Vài tham chiếu giao điểm không thể hoàn lại, sẽ bị bỏ trống"
+
+
+msgid "Cannot add node %s into node tree %s"
+msgstr "Không thêm giao điểm %s vào cây giao điểm %s"
+
+
 msgid "Label Size"
 msgstr "Cỡ Nhãn"
 
@@ -116848,10 +116826,6 @@ msgstr "Loại Ổ Cắm Không Xác Định"
 
 msgid "Group Input "
 msgstr "Ngõ Vào Nhóm"
-
-
-msgid "NodeTree"
-msgstr "Cây Giao Điểm"
 
 
 msgid "Could not determine type of group node"
@@ -117010,10 +116984,6 @@ msgid "Supported: "
 msgstr "Được Hỗ Trợ: "
 
 
-msgid "The socket value has not been computed yet"
-msgstr "Chưa được tính giá trị của ổ cắm"
-
-
 msgid "Accessed named attributes:"
 msgstr "Đặc điểm có tên được đến:"
 
@@ -117038,20 +117008,8 @@ msgid "The execution time from the node tree's latest evaluation. For frame and 
 msgstr "Thời gian thị hành từ thời tính toán của cây giao điểm cuối cùng. Cho giao điểm khung và nhóm, là thời gian cho tất cả hạ giao điểm"
 
 
-msgid "Clipboard is empty"
-msgstr "Bảng dán trống rỗng"
-
-
-msgid "Some nodes references could not be restored, will be left empty"
-msgstr "Vài tham chiếu giao điểm không thể hoàn lại, sẽ bị bỏ trống"
-
-
 msgid "Text not used by any node, no update done"
 msgstr "Không có giao điểm nào dùng văn bản này, không nâng cấp"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "Không thêm giao điểm %s vào cây giao điểm %s"
 
 
 msgid "Cannot ungroup"
@@ -118624,14 +118582,6 @@ msgstr "[Shift] - Độ chính xác hoạt động"
 
 msgid "Shift - Hold for precision"
 msgstr "Shift - Bấm cho độ chính xác"
-
-
-msgid "[Ctrl] - Increments active"
-msgstr "[Ctrl] - Các bươc hoạt động"
-
-
-msgid "Ctrl - Hold for 10% increments"
-msgstr "Ctrl - Bấm cho bước 10%"
 
 
 msgid "Unpack File"

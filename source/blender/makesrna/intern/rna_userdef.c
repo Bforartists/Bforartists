@@ -140,10 +140,10 @@ static const EnumPropertyItem rna_enum_userdef_viewport_aa_items[] = {
     {0, NULL, 0, NULL, NULL},
 };
 
-const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
-    {GPU_BACKEND_OPENGL, "OPENGL", 0, "OpenGL", "Use OpenGL backend"},
-    {GPU_BACKEND_METAL, "METAL", 0, "Metal", "Use Metal backend"},
-    {GPU_BACKEND_VULKAN, "VULKAN", 0, "Vulkan", "Use Vulkan backend"},
+static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
+    {GPU_BACKEND_OPENGL, "OPENGL", 0, "OpenGL", "Use OpenGL back end"},
+    {GPU_BACKEND_METAL, "METAL", 0, "Metal", "Use Metal back end"},
+    {GPU_BACKEND_VULKAN, "VULKAN", 0, "Vulkan", "Use Vulkan back end"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -5645,8 +5645,8 @@ static void rna_def_userdef_system(BlenderRNA *brna)
   RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_preference_gpu_backend_itemf");
   RNA_def_property_ui_text(
       prop,
-      "GPU Backend",
-      "GPU backend to use. (Requires restarting Blender for changes to take effect)");
+      "GPU Back end",
+      "GPU back end to use (requires restarting Blender for changes to take effect)");
 
   /* Audio */
 
@@ -6388,10 +6388,6 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "use_sculpt_tools_tilt", 1);
   RNA_def_property_ui_text(
       prop, "Sculpt Mode Tilt Support", "Support for pen tablet tilt events in Sculpt Mode");
-
-  prop = RNA_def_property(srna, "use_realtime_compositor", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "use_realtime_compositor", 1);
-  RNA_def_property_ui_text(prop, "Realtime Compositor", "Enable the new realtime compositor");
 
   prop = RNA_def_property(srna, "use_sculpt_texture_paint", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "use_sculpt_texture_paint", 1);

@@ -16,7 +16,7 @@ def register() -> None:
     km = wm.keyconfigs.addon.keymaps.new(name="File Browser Main", space_type="FILE_BROWSER")
 
     # DblClick to apply pose.
-    kmi = km.keymap_items.new("poselib.apply_pose_asset_for_keymap", "LEFTMOUSE", "DOUBLE_CLICK")
+    kmi = km.keymap_items.new("poselib.apply_pose_asset", "LEFTMOUSE", "DOUBLE_CLICK")
     addon_keymaps.append((km, kmi))
 
 

@@ -111,19 +111,13 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   GeometryComponentEditData::remember_deformed_curve_positions_if_necessary(geometry_set);
 
-  StrongAnonymousAttributeID tangent_anonymous_id;
-  StrongAnonymousAttributeID normal_anonymous_id;
-  StrongAnonymousAttributeID rotation_anonymous_id;
-  const bool rotation_required = params.output_is_required("Rotation");
-  if (params.output_is_required("Tangent") || rotation_required) {
-    tangent_anonymous_id = StrongAnonymousAttributeID("Tangent");
-  }
-  if (params.output_is_required("Normal") || rotation_required) {
-    normal_anonymous_id = StrongAnonymousAttributeID("Normal");
-  }
-  if (rotation_required) {
-    rotation_anonymous_id = StrongAnonymousAttributeID("Rotation");
-  }
+  AutoAnonymousAttributeID rotation_anonymous_id =
+      params.get_output_anonymous_attribute_id_if_needed("Rotation");
+  const bool need_tangent_and_normal = bool(rotation_anonymous_id);
+  AutoAnonymousAttributeID tangent_anonymous_id =
+      params.get_output_anonymous_attribute_id_if_needed("Tangent", need_tangent_and_normal);
+  AutoAnonymousAttributeID normal_anonymous_id =
+      params.get_output_anonymous_attribute_id_if_needed("Normal", need_tangent_and_normal);
 
   geometry::ResampleCurvesOutputAttributeIDs resample_attributes;
   resample_attributes.tangent_id = tangent_anonymous_id.get();

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
 "Last-Translator: Adriel Tristanputra <ultimexport@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -299,6 +299,14 @@ msgstr "Pesan"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Perangkat digunakan untuk komputasi (rendering dengan Cycles)"
+
+
+msgid "Off"
+msgstr "Mati"
+
+
+msgid "Full"
+msgstr "Penuh"
 
 
 msgid "Distribute memory across devices"
@@ -2623,10 +2631,6 @@ msgstr "Skala Mewarisi"
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "Menentukan bagaimana tulang mewarisi penskalaan dari tulang induk"
-
-
-msgid "Full"
-msgstr "Penuh"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -5484,10 +5488,6 @@ msgstr "Objek teks yang mengandung script Python"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "Hentikan sudut dari proyeksi ke muka di target saat menghadap ke depan/luar"
-
-
-msgid "Off"
-msgstr "Mati"
 
 
 msgid "Front"
@@ -23376,8 +23376,8 @@ msgstr "Hapus Titik Longgar"
 
 
 msgctxt "Operator"
-msgid "Delete Duplicated Frames"
-msgstr "Hapus Frame yang Terdupliasi"
+msgid "Delete Duplicate Frames"
+msgstr "Hapus Frame Duplikat"
 
 
 msgctxt "Operator"
@@ -24193,11 +24193,6 @@ msgstr "Bersihkan Saluran"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Memperluas"
-
-
-msgctxt "Operator"
-msgid "Delete Duplicate Frames"
-msgstr "Hapus Frame Duplikat"
 
 
 msgctxt "Operator"

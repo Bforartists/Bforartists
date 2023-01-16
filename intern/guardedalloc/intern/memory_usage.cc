@@ -4,6 +4,7 @@
 #include <atomic>
 #include <cassert>
 #include <iostream>
+#include <memory>
 #include <mutex>
 #include <vector>
 
@@ -14,10 +15,18 @@
 
 namespace {
 
+struct Local;
+struct Global;
+
 /**
  * This is stored per thread. Align to cache line size to avoid false sharing.
  */
-struct alignas(64) Local {
+struct alignas(128) Local {
+  /**
+   * Retain shared ownership of #Global to make sure that it is not destructed.
+   */
+  std::shared_ptr<Global> global;
+
   /** Helps to find bugs during program shutdown. */
   bool destructed = false;
   /**
@@ -49,7 +58,8 @@ struct alignas(64) Local {
 };
 
 /**
- * This is a singleton that stores global data.
+ * This is a singleton that stores global data. It's owned by a `std::shared_ptr` which is owned by
+ * the static variable in #get_global_ptr and all #Local objects.
  */
 struct Global {
   /**
@@ -71,7 +81,7 @@ struct Global {
    * To solve this, the memory counts are added to these global counters when the thread
    * exists. The global counters are also used when the entire process starts to exit, because the
    * #Local data of the main thread is already destructed when the leak detection happens (during
-   * destruction of static variables which happens after destruction of threadlocals).
+   * destruction of static variables which happens after destruction of thread-locals).
    */
   std::atomic<int64_t> mem_in_use_outside_locals = 0;
   /**
@@ -98,10 +108,15 @@ static std::atomic<bool> use_local_counters = true;
  */
 static constexpr int64_t peak_update_threshold = 1024 * 1024;
 
+static std::shared_ptr<Global> &get_global_ptr()
+{
+  static std::shared_ptr<Global> global = std::make_shared<Global>();
+  return global;
+}
+
 static Global &get_global()
 {
-  static Global global;
-  return global;
+  return *get_global_ptr();
 }
 
 static Local &get_local_data()
@@ -113,32 +128,32 @@ static Local &get_local_data()
 
 Local::Local()
 {
-  Global &global = get_global();
-  std::lock_guard lock{global.locals_mutex};
+  this->global = get_global_ptr();
 
-  if (global.locals.empty()) {
+  std::lock_guard lock{this->global->locals_mutex};
+  if (this->global->locals.empty()) {
     /* This is the first thread creating #Local, it is therefore the main thread because it's
      * created through #memory_usage_init. */
     this->is_main = true;
   }
   /* Register self in the global list. */
-  global.locals.push_back(this);
+  this->global->locals.push_back(this);
 }
 
 Local::~Local()
 {
-  Global &global = get_global();
-  std::lock_guard lock{global.locals_mutex};
+  std::lock_guard lock{this->global->locals_mutex};
 
   /* Unregister self from the global list. */
-  global.locals.erase(std::find(global.locals.begin(), global.locals.end(), this));
+  this->global->locals.erase(
+      std::find(this->global->locals.begin(), this->global->locals.end(), this));
   /* Don't forget the memory counts stored locally. */
-  global.blocks_num_outside_locals.fetch_add(this->blocks_num, std::memory_order_relaxed);
-  global.mem_in_use_outside_locals.fetch_add(this->mem_in_use, std::memory_order_relaxed);
+  this->global->blocks_num_outside_locals.fetch_add(this->blocks_num, std::memory_order_relaxed);
+  this->global->mem_in_use_outside_locals.fetch_add(this->mem_in_use, std::memory_order_relaxed);
 
   if (this->is_main) {
     /* The main thread started shutting down. Use global counters from now on to avoid accessing
-     * threadlocals after they have been destructed. */
+     * thread-locals after they have been destructed. */
     use_local_counters.store(false, std::memory_order_relaxed);
   }
   /* Helps to detect when thread locals are accidentally accessed after destruction. */
@@ -164,7 +179,7 @@ static void update_global_peak()
 
 void memory_usage_init()
 {
-  /* Makes sure that the static and threadlocal variables on the main thread are initialized. */
+  /* Makes sure that the static and thread-local variables on the main thread are initialized. */
   get_local_data();
 }
 

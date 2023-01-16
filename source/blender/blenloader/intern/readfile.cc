@@ -724,13 +724,15 @@ static BHeadN *get_bhead(FileData *fd)
           new_bhead->has_data = false;
           new_bhead->is_memchunk_identical = false;
           new_bhead->bhead = bhead;
-          off64_t seek_new = fd->file->seek(fd->file, bhead.len, SEEK_CUR);
-          if (seek_new == -1) {
+          const off64_t seek_new = fd->file->seek(fd->file, bhead.len, SEEK_CUR);
+          if (UNLIKELY(seek_new == -1)) {
             fd->is_eof = true;
             MEM_freeN(new_bhead);
             new_bhead = nullptr;
           }
-          BLI_assert(fd->file->offset == seek_new);
+          else {
+            BLI_assert(fd->file->offset == seek_new);
+          }
         }
         else {
           fd->is_eof = true;
@@ -1604,7 +1606,7 @@ static void blo_cache_storage_entry_register(
 
 /** Restore a cache data entry from old ID into new one, when reading some undo memfile. */
 static void blo_cache_storage_entry_restore_in_new(
-    ID * /*id*/, const IDCacheKey *key, void **cache_p, uint flags, void *cache_storage_v)
+    ID *id, const IDCacheKey *key, void **cache_p, uint flags, void *cache_storage_v)
 {
   BLOCacheStorage *cache_storage = static_cast<BLOCacheStorage *>(cache_storage_v);
 
@@ -1615,6 +1617,15 @@ static void blo_cache_storage_entry_restore_in_new(
     if ((flags & IDTYPE_CACHE_CB_FLAGS_PERSISTENT) == 0) {
       *cache_p = nullptr;
     }
+    return;
+  }
+
+  /* Assume that when ID source is tagged as changed, its caches need to be cleared.
+   * NOTE: This is mainly a work-around for some IDs, like Image, which use a non-depsgraph-handled
+   * process for part of their updates.
+   */
+  if (id->recalc & ID_RECALC_SOURCE) {
+    *cache_p = nullptr;
     return;
   }
 
@@ -4963,6 +4974,11 @@ void BLO_read_int32_array(BlendDataReader *reader, int array_size, int32_t **ptr
   if (BLO_read_requires_endian_switch(reader)) {
     BLI_endian_switch_int32_array(*ptr_p, array_size);
   }
+}
+
+void BLO_read_int8_array(BlendDataReader *reader, int /*array_size*/, int8_t **ptr_p)
+{
+  BLO_read_data_address(reader, ptr_p);
 }
 
 void BLO_read_uint32_array(BlendDataReader *reader, int array_size, uint32_t **ptr_p)

@@ -35,10 +35,6 @@ addon_keymaps: List[Tuple[bpy.types.KeyMap, bpy.types.KeyMapItem]] = []
 
 
 def register() -> None:
-    bpy.types.WindowManager.poselib_flipped = bpy.props.BoolProperty(
-        name="Flip Pose",
-        default=False,
-    )
     bpy.types.WindowManager.poselib_previous_action = bpy.props.PointerProperty(type=bpy.types.Action)
 
     operators.register()
@@ -51,10 +47,6 @@ def unregister() -> None:
     keymaps.unregister()
     operators.unregister()
 
-    try:
-        del bpy.types.WindowManager.poselib_flipped
-    except AttributeError:
-        pass
     try:
         del bpy.types.WindowManager.poselib_previous_action
     except AttributeError:

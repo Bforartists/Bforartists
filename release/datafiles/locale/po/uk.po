@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
 "Last-Translator: lxlalexlxl <lxlalexlxl@ukr.net>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -304,6 +304,14 @@ msgstr "Тип обчислювального пристрою"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Пристрій для обчислень (рендеринг з Cycles)"
+
+
+msgid "Off"
+msgstr "Вимкнено"
+
+
+msgid "Full"
+msgstr "Повний"
 
 
 msgid "Distribute memory across devices"
@@ -2828,10 +2836,6 @@ msgstr "Успадкувати масштаб"
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "Визначає, як кістка успадковує масштабування з предківської кістки"
-
-
-msgid "Full"
-msgstr "Повний"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -6937,10 +6941,6 @@ msgstr "Відкидати Грані"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "Не проєктувати вершин на поверхню цілі, коли грань повернута до або від об'єкта"
-
-
-msgid "Off"
-msgstr "Вимкнено"
 
 
 msgid "No culling"
@@ -15853,6 +15853,10 @@ msgstr "Модифікатор Зсув"
 
 msgid "Offset Stroke modifier"
 msgstr "Модифікатор Зсув Штриха"
+
+
+msgid "Start Offset"
+msgstr "Початковий зсув"
 
 
 msgid "Opacity Modifier"
@@ -48120,15 +48124,6 @@ msgid "Send new stroke to back"
 msgstr "Послати новий штрих на зад"
 
 
-msgctxt "Operator"
-msgid "Clean Duplicated Frames"
-msgstr "Очистити Дубльовані Кадри"
-
-
-msgid "Remove any duplicated frame"
-msgstr "Вилучити будь-які дубльовані кадри"
-
-
 msgid "All Frames"
 msgstr "Усі Кадри"
 
@@ -60500,14 +60495,6 @@ msgstr "Режим Завершення"
 
 msgid "Method used to determine when to stop propagating pose to keyframes"
 msgstr "Метод визначення моменту припинення поширення пози на ключові кадри"
-
-
-msgid "While Held"
-msgstr "Доки утримується"
-
-
-msgid "Propagate pose to all keyframes after current frame that don't change (Default behavior)"
-msgstr "Поширити позу на всі ключові кадри після поточного кадру, доки поза не змінюється (стандартна поведінка)"
 
 
 msgid "To Next Keyframe"
@@ -78968,10 +78955,6 @@ msgid "End Offset"
 msgstr "Кінцеве зміщення"
 
 
-msgid "Start Offset"
-msgstr "Початковий зсув"
-
-
 msgid "X position where the strip begins"
 msgstr "Позиція X початку смужки"
 
@@ -90438,11 +90421,6 @@ msgstr "Видалити Незв'язані Точки"
 
 
 msgctxt "Operator"
-msgid "Delete Duplicated Frames"
-msgstr "Видалити Дубльовані Кадри"
-
-
-msgctxt "Operator"
 msgid "Recalculate Geometry"
 msgstr "Перерахувати Геометрію"
 
@@ -97378,10 +97356,6 @@ msgstr "Неможливо змінити не-наявний матеріал (
 
 msgid "No active GP data"
 msgstr "Нема активних даних Нарисного Олівця"
-
-
-msgid "Operator not supported in multiframe edition"
-msgstr "Оператор не підтримується у багатокадровому редагуванні"
 
 
 msgid "Not implemented!"

@@ -1,21 +1,44 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2012-05-11 14:55+0200\n"
-"Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
-"Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"PO-Revision-Date: 2022-12-31 19:30+0300\n"
+"Last-Translator: Emir SARI <emir_sari@îcloud.com>\n"
+"Language-Team: Turkish <>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Country: TURKEY"
+"Content-Transfer-Encoding: 8bit"
+
+
+msgid "Shader AOV"
+msgstr "Gölgelendirici KÇD"
+
+
+msgid "Valid"
+msgstr "Geçerli"
+
+
+msgid "Is the name of the AOV conflicting"
+msgstr "KÇD'nin adı çakışıyor mu"
 
 
 msgid "Name"
-msgstr "İsim"
+msgstr "Ad"
+
+
+msgid "Name of the AOV"
+msgstr "KÇD'nin adı"
+
+
+msgid "Type"
+msgstr "Tür"
+
+
+msgid "Data type of the AOV"
+msgstr "KÇD'nin veri türü"
 
 
 msgid "Color"
@@ -26,60 +49,1496 @@ msgid "Value"
 msgstr "Değer"
 
 
+msgid "List of AOVs"
+msgstr "KÇD'ler Listesi"
+
+
+msgid "Collection of AOVs"
+msgstr "KÇD'ler Koleksiyonu"
+
+
+msgid "Action F-Curves"
+msgstr "Eylem Kare Eğrileri"
+
+
+msgid "Collection of action F-Curves"
+msgstr "Eylem Kare Eğrileri Koleksiyonu"
+
+
 msgid "Action Group"
 msgstr "Eylem Grubu"
+
+
+msgid "Groups of F-Curves"
+msgstr "Kare Eğrileri Grupları"
 
 
 msgid "Channels"
 msgstr "Kanallar"
 
 
+msgid "F-Curves in this group"
+msgstr "Bu gruptaki kare eğrileri"
+
+
+msgid "Color Set"
+msgstr "Renk Kümesi"
+
+
+msgid "Custom color set to use"
+msgstr "Kullanılacak özel renk kümesi"
+
+
+msgid "Default Colors"
+msgstr "Saptanmış Renkler"
+
+
+msgid "01 - Theme Color Set"
+msgstr "01 - Tema Renk Kümesi"
+
+
+msgid "02 - Theme Color Set"
+msgstr "02 - Tema Renk Kümesi"
+
+
+msgid "03 - Theme Color Set"
+msgstr "03 - Tema Renk Kümesi"
+
+
+msgid "04 - Theme Color Set"
+msgstr "04 - Tema Renk Kümesi"
+
+
+msgid "05 - Theme Color Set"
+msgstr "05 - Tema Renk Kümesi"
+
+
+msgid "06 - Theme Color Set"
+msgstr "06 - Tema Renk Kümesi"
+
+
+msgid "07 - Theme Color Set"
+msgstr "07 - Tema Renk Kümesi"
+
+
+msgid "08 - Theme Color Set"
+msgstr "08 - Tema Renk Kümesi"
+
+
+msgid "09 - Theme Color Set"
+msgstr "09 - Tema Renk Kümesi"
+
+
+msgid "10 - Theme Color Set"
+msgstr "10 - Tema Renk Kümesi"
+
+
+msgid "11 - Theme Color Set"
+msgstr "11 - Tema Renk Kümesi"
+
+
+msgid "12 - Theme Color Set"
+msgstr "12 - Tema Renk Kümesi"
+
+
+msgid "13 - Theme Color Set"
+msgstr "13 - Tema Renk Kümesi"
+
+
+msgid "14 - Theme Color Set"
+msgstr "14 - Tema Renk Kümesi"
+
+
+msgid "15 - Theme Color Set"
+msgstr "15 - Tema Renk Kümesi"
+
+
+msgid "16 - Theme Color Set"
+msgstr "16 - Tema Renk Kümesi"
+
+
+msgid "17 - Theme Color Set"
+msgstr "17 - Tema Renk Kümesi"
+
+
+msgid "18 - Theme Color Set"
+msgstr "18 - Tema Renk Kümesi"
+
+
+msgid "19 - Theme Color Set"
+msgstr "19 - Tema Renk Kümesi"
+
+
+msgid "20 - Theme Color Set"
+msgstr "20 - Tema Renk Kümesi"
+
+
+msgid "Custom Color Set"
+msgstr "Özel Renk Kümesi"
+
+
+msgid "Colors"
+msgstr "Renkler"
+
+
+msgid "Copy of the colors associated with the group's color set"
+msgstr "Grubun renk kümesiyle ilişkilendirilmiş renklerin kopyası"
+
+
+msgid "Color set is user-defined instead of a fixed theme color set"
+msgstr "Renk kümesi, sabit bir tema renk kümesi değil de kullanıcı tanımlıdır"
+
+
 msgid "Lock"
-msgstr "Kilit"
+msgstr "Kilitle"
+
+
+msgid "Action group is locked"
+msgstr "Eylem grubu kilitli"
+
+
+msgid "Mute"
+msgstr "Sessize Al"
+
+
+msgid "Action group is muted"
+msgstr "Eylem grubu sessize alınmış"
 
 
 msgid "Select"
-msgstr "Seçim"
+msgstr "Seç"
+
+
+msgid "Action group is selected"
+msgstr "Eylem grubu seçili"
 
 
 msgid "Expanded"
 msgstr "Genişletilmiş"
 
 
+msgid "Action group is expanded except in graph editor"
+msgstr "Eylem grubu, grafik düzenleyici haricinde genişletilmiş"
+
+
+msgid "Expanded in Graph Editor"
+msgstr "Grafik Düzenleyicide Genişletilmiş"
+
+
+msgid "Action group is expanded in graph editor"
+msgstr "Eylem grubu, grafik düzenleyicide genişletilmiş"
+
+
+msgid "Pin in Graph Editor"
+msgstr "Grafik Düzenleyicide Sabitle"
+
+
+msgid "Action Groups"
+msgstr "Eylem Grupları"
+
+
+msgid "Collection of action groups"
+msgstr "Eylem grupları koleksiyonu"
+
+
+msgid "Action Pose Markers"
+msgstr "Eylem Poz İmleyicileri"
+
+
+msgid "Collection of timeline markers"
+msgstr "Zaman akışı imleyicileri koleksiyonu"
+
+
+msgid "Active Pose Marker"
+msgstr "Etkin Poz İmleyici"
+
+
+msgid "Active pose marker for this action"
+msgstr "Bu eylem için etkin poz imleyicisi"
+
+
+msgid "Active Pose Marker Index"
+msgstr "Etkin Poz İmleyici İndeksi"
+
+
+msgid "Index of active pose marker"
+msgstr "Etkin poz imleyici indeksi"
+
+
+msgid "Add-on"
+msgstr "Eklenti"
+
+
+msgid "Python add-ons to be loaded automatically"
+msgstr "Python eklentileri kendiliğinden yüklenir"
+
+
+msgid "Module"
+msgstr "Modül"
+
+
+msgid "Module name"
+msgstr "Modül adı"
+
+
+msgid "Add-on Preferences"
+msgstr "Eklenti Tercihleri"
+
+
+msgid "Password"
+msgstr "Parola"
+
+
+msgid "E-mail address"
+msgstr "E-posta adresi"
+
+
+msgid "Error Message"
+msgstr "Hata İletisi"
+
+
 msgid "Message"
-msgstr "Mesaj"
+msgstr "İleti"
+
+
+msgid "Compute Device Type"
+msgstr "Hesaplama Aygıtı Türü"
+
+
+msgid "Device to use for computation (rendering with Cycles)"
+msgstr "Hesaplama için kullanılacak aygıt (Çevrimlerle sunum)"
+
+
+msgid "Distribute memory across devices"
+msgstr "Belleği aygıtlar arasında dağıt"
+
+
+msgid "Make more room for large scenes to fit by distributing memory across interconnected devices (e.g. via NVLink) rather than duplicating it"
+msgstr "Birbirine bağlı aygıtlara (örneğin NVLink aracılığıyla) bellek dağıtarak büyük sahnelerin sığması için daha fazla yer aç"
+
+
+msgid "MetalRT (Experimental)"
+msgstr "MetalRT (Deneysel)"
+
+
+msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
+msgstr "MetalRT, eğrileri kapsamlı bir biçimde kullanan sahnelerde ışın izleme yaparken daha az bellek kullanır ve belirli durumlarda daha iyi başarım gösterebilir. Ancak bu destek deneyseldir ve bazı sahneler yanlış sunulabilir."
+
+
+msgid "KHR_materials_variants_ui"
+msgstr "KHR_materials_variants_ui"
+
+
+msgid "Displays glTF UI to manage material variants"
+msgstr "Malzeme varyantlarını yönetmek için glTF arayüzünü görüntüler"
+
+
+msgid "Displays glTF Material Output node in Shader Editor (Menu Add > Output)"
+msgstr "Gölgelendirici Düzenleyicide glTF Malzeme Çıktısı düğümünü görüntüler (Ekle > Çıktı menüsü)"
+
+
+msgid "Fribidi Library"
+msgstr "Fribidi Kitaplığı"
+
+
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in svn's libraries repository"
+msgstr "FriBidi C derlenmiş kitaplığı (Linux altında .so, Windows altında .dll...); Windows kullanıyorsanız büyük olasılıkla onu düzenlemeniz gerekecektir; örn. svn'nin kitaplıklar deposundaki kullanarak)"
+
+
+msgid "Gettext 'msgfmt' executable"
+msgstr "Gettext 'msgfmt' yürütülebiliri"
+
+
+msgid "The gettext msgfmt 'compiler'. You’ll likely have to edit it if you’re under Windows"
+msgstr "gettext msgfmt 'derleyicisi'. Windows kullanıyorsanız onu büyük olasılıkla düzenlemeniz gerekecektir"
+
+
+msgid "Translation Root"
+msgstr "Çeviri Kökü"
+
+
+msgid "The bf-translation repository"
+msgstr "bf-translation deposu"
+
+
+msgid "Import Paths"
+msgstr "İçe Aktarma Yolları"
+
+
+msgid "Additional paths to add to sys.path (';' separated)"
+msgstr "sys.path'e eklenecek ek yollar (';' ile ayrılmış)"
+
+
+msgid "Source Root"
+msgstr "Kaynak Kökü"
+
+
+msgid "The Blender source root path"
+msgstr "Blender kaynak kökü yolu"
+
+
+msgid "Spell Cache"
+msgstr "Yazım Önbelleği"
+
+
+msgid "A cache storing validated msgids, to avoid re-spellchecking them"
+msgstr "Doğrulanmış msgid'leri yeniden denetlemeyi önlemek için onları depolamak için kullanılan önbellek"
+
+
+msgid "Warn Msgid Not Capitalized"
+msgstr "Msgid BÜYÜK harfle başlamıyorsa uyar"
+
+
+msgid "Warn about messages not starting by a capitalized letter (with a few allowed exceptions!)"
+msgstr "İletiler BÜYÜK harfle başlamıyorsa uyar (izin verilen birkaç istisna dışında!)"
+
+
+msgid "Persistent Data Path"
+msgstr "Kalıcı Veri Yolu"
+
+
+msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
+msgstr "Bu ayarları depolayan bir JSON dosyasının adı (Blender'ın sistemi ne yazık ki burada çalışmaz)"
+
+
+msgid "User Add-ons"
+msgstr "Kullanıcı Eklentileri"
+
+
+msgid "Collection of add-ons"
+msgstr "Eklentiler koleksiyonu"
+
+
+msgid "Animation Data"
+msgstr "Canlandırma Verisi"
+
+
+msgid "Animation data for data-block"
+msgstr "Veri bloku için canlandırma verisi"
 
 
 msgid "Action"
 msgstr "Eylem"
 
 
+msgid "Active Action for this data-block"
+msgstr "Bu veri bloku için Etkin Eylem"
+
+
+msgid "Action Blending"
+msgstr "Eylem Harmanlama"
+
+
+msgid "Method used for combining Active Action's result with result of NLA stack"
+msgstr "Etkin Eylem'in sonucunu DOC yığınının sonucuyla birleştirmek için kullanılan yöntem"
+
+
+msgid "Replace"
+msgstr "Değiştir"
+
+
+msgid "The strip values replace the accumulated results by amount specified by influence"
+msgstr "Şerit değerleri, biriken sonuçları etki tarafından belirtilen miktara göre değiştirir"
+
+
+msgid "Combine"
+msgstr "Birleştir"
+
+
+msgid "The strip values are combined with accumulated results by appropriately using addition, multiplication, or quaternion math, based on channel type"
+msgstr "Şerit değerleri, kanal türüne göre toplama, çarpma veya kuaternion matematiği kullanılarak uygun şekilde birikmiş sonuçlarla birleştirilir"
+
+
 msgid "Add"
 msgstr "Ekle"
+
+
+msgid "Weighted result of strip is added to the accumulated results"
+msgstr "Birikmiş sonuçlara şeridin ağırlıklı sonucu eklenir"
+
+
+msgid "Subtract"
+msgstr "Çıkar"
+
+
+msgid "Weighted result of strip is removed from the accumulated results"
+msgstr "Birikmiş sonuçlardan şeridin ağırlıklı sonucu çıkarılır"
+
+
+msgid "Multiply"
+msgstr "Çarp"
+
+
+msgid "Weighted result of strip is multiplied with the accumulated results"
+msgstr "Birikmiş sonuçlarla şeridin ağırlıklı değeri çarpılır"
+
+
+msgid "Action Extrapolation"
+msgstr "Eylem Dışdeğerleme"
+
+
+msgid "Action to take for gaps past the Active Action's range (when evaluating with NLA)"
+msgstr "Etkin eylemin aralığından geçerek boşluklar almak için eylem (DOC ile değerlendirilirken)"
+
+
+msgid "Nothing"
+msgstr "Hiçbir Şey"
+
+
+msgid "Strip has no influence past its extents"
+msgstr "Şeridin, uzantılarından sonra bir etkisi yok"
+
+
+msgid "Hold"
+msgstr "Tut"
+
+
+msgid "Hold the first frame if no previous strips in track, and always hold last frame"
+msgstr "Öncesinde şerit yoksa ilk kareyi tut ve her zaman son kareyi tut"
+
+
+msgid "Hold Forward"
+msgstr "İleri Tut"
+
+
+msgid "Only hold last frame"
+msgstr "Yalnızca son kareyi tut"
+
+
+msgid "Action Influence"
+msgstr "Eylem Etkisi"
+
+
+msgid "Amount the Active Action contributes to the result of the NLA stack"
+msgstr "Etkin Eylem'in DOC yığınının sonucuna katkıda bulunduğu miktar"
 
 
 msgid "Drivers"
 msgstr "Sürücüler"
 
 
+msgid "The Drivers/Expressions for this data-block"
+msgstr "Bu veri bloku için olan Sürücüler/İfadeler"
+
+
+msgid "NLA Tracks"
+msgstr "DOC İzleri"
+
+
+msgid "NLA Tracks (i.e. Animation Layers)"
+msgstr "DOC İzleri (örn. Canlandırma Katmanları)"
+
+
+msgid "NLA Evaluation Enabled"
+msgstr "DOC Değerlendirme Etkin"
+
+
+msgid "NLA stack is evaluated when evaluating this block"
+msgstr "Bu blok değerlendirilirken DOC yığını değerlendirilir"
+
+
+msgid "Use NLA Tweak Mode"
+msgstr "DOC İnce Ayar Kipini Kullan"
+
+
+msgid "Whether to enable or disable tweak mode in NLA"
+msgstr "DOC'da ince ayar kipinin etkinleştirilip etkinleştirilmeyeceği"
+
+
+msgid "Collection of Driver F-Curves"
+msgstr "Sürücü Kare Eğrileri Koleksiyonu"
+
+
+msgid "Animation Visualization"
+msgstr "Canlandırma Görselleştirme"
+
+
+msgid "Settings for the visualization of motion"
+msgstr "Hareketin görselleştirilmesi ayarları"
+
+
+msgid "Motion Paths"
+msgstr "Hareket Yolları"
+
+
+msgid "Motion Path settings for visualization"
+msgstr "Görselleştirme için Hareket Yolu ayarları"
+
+
+msgid "Motion Path Settings"
+msgstr "Hareket Yolu Ayarları"
+
+
+msgid "Motion Path settings for animation visualization"
+msgstr "Canlandırma görselleştirme için Hareket Yolu ayarları"
+
+
+msgid "Bake Location"
+msgstr "Pişirme Konumu"
+
+
+msgid "When calculating Bone Paths, use Head or Tips"
+msgstr "Kemik Yolları hesaplanırken, Baş veya Uçlar kullan"
+
+
+msgid "Heads"
+msgstr "Başlar"
+
+
+msgid "Calculate bone paths from heads"
+msgstr "Kemik yollarını başlardan hesapla"
+
+
+msgid "Tails"
+msgstr "Kuyruklar"
+
+
+msgid "Calculate bone paths from tails"
+msgstr "Kemik yollarını kuyruklardan hesapla"
+
+
+msgid "After Current"
+msgstr "Geçerliden Sonra"
+
+
+msgid "Number of frames to show after the current frame (only for 'Around Current Frame' Onion-skinning method)"
+msgstr "Geçerli kareden sonra gösterilecek kare sayısı (yalnızca 'Geçerli Kare Çevresi' soğan zarı soyma yöntemi)"
+
+
+msgid "Before Current"
+msgstr "Geçerliden Önce"
+
+
+msgid "Number of frames to show before the current frame (only for 'Around Current Frame' Onion-skinning method)"
+msgstr "Geçerli kareden önce gösterilecek kare sayısı (yalnızca 'Geçerli Kare Çevresi' soğan zarı soyma yöntemi)"
+
+
+msgid "End Frame"
+msgstr "Bitiş Karesi"
+
+
+msgid "End frame of range of paths to display/calculate (not for 'Around Current Frame' Onion-skinning method)"
+msgstr "Görüntülenecek/hesaplanacak yol eriminin bitiş karesi ('Geçerli Kare Çevresi' soğan zarı soyma yöntemi için değil)"
+
+
+msgid "Start Frame"
+msgstr "Başlangıç Karesi"
+
+
+msgid "Starting frame of range of paths to display/calculate (not for 'Around Current Frame' Onion-skinning method)"
+msgstr "Görüntülenecek/hesaplanacak yol eriminin başlangıç karesi ('Geçerli Kare Çevresi' soğan zarı soyma yöntemi için değil)"
+
+
+msgid "Frame Step"
+msgstr "Kare Adımı"
+
+
+msgid "Number of frames between paths shown (not for 'On Keyframes' Onion-skinning method)"
+msgstr "Yollar arasında gösterilen karelerin sayısı ('Anahtar Kareler Üzerinde' soğan zarı soyma yöntemi için değil)"
+
+
+msgid "Has Motion Paths"
+msgstr "Hareket Yolları Var"
+
+
+msgid "Are there any bone paths that will need updating (read-only)"
+msgstr "Güncellenmesi gerekecek bir kemik yolu var mı (saltokunur)"
+
+
+msgid "Paths Range"
+msgstr "Yollar Erimi"
+
+
+msgid "Type of range to calculate for Motion Paths"
+msgstr "Hareket Yolları için hesaplanacak erim türü"
+
+
+msgid "All Keys"
+msgstr "Tüm Anahtarlar"
+
+
+msgid "From the first keyframe to the last"
+msgstr "İlk anahtar kareden sonuncusuna kadar"
+
+
+msgid "Selected Keys"
+msgstr "Seçili Anahtarlar"
+
+
+msgid "From the first selected keyframe to the last"
+msgstr "İlk seçili anahtar kareden sonuncusuna kadar"
+
+
+msgid "Scene Frame Range"
+msgstr "Sahne Kare Erimi"
+
+
+msgid "The entire Scene / Preview range"
+msgstr "Bütün sahne/önizleme erimi"
+
+
+msgid "Manual Range"
+msgstr "Elle Belirlenen Erim"
+
+
+msgid "Manually determined frame range"
+msgstr "Elle belirlenen kare erimi"
+
+
+msgid "Show Frame Numbers"
+msgstr "Kare Numaralarını Göster"
+
+
+msgid "Show frame numbers on Motion Paths"
+msgstr "Hareket Yolları'nda kare numaralarını göster"
+
+
+msgid "All Action Keyframes"
+msgstr "Tüm Eylem Anahtar Kareleri"
+
+
+msgid "For bone motion paths, search whole Action for keyframes instead of in group with matching name only (is slower)"
+msgstr "Kemik hareket yolları için, yalnızca eşleşen adla grup yerine anahtar kareler için tüm eylemi ara (daha yavaş)"
+
+
+msgid "Highlight Keyframes"
+msgstr "Anahtar Kareleri Vurgula"
+
+
+msgid "Emphasize position of keyframes on Motion Paths"
+msgstr "Hareket Yolları'ndaki anahtar karelerin konumunu vurgula"
+
+
+msgid "Show Keyframe Numbers"
+msgstr "Anahtar Kare Numaralarını Göster"
+
+
+msgid "Show frame numbers of Keyframes on Motion Paths"
+msgstr "Hareket Yolları'nda anahtar karelerin numaralarını göster"
+
+
+msgid "Paths Type"
+msgstr "Yollar Türü"
+
+
+msgid "Type of range to show for Motion Paths"
+msgstr "Hareket Yolları için gösterilecek erim türü"
+
+
+msgid "Around Frame"
+msgstr "Karenin Çevresinde"
+
+
+msgid "Display Paths of poses within a fixed number of frames around the current frame"
+msgstr "Pozların yollarını, geçerli karenin çevresinde sabit bir kare sayısı içinde göster"
+
+
+msgid "In Range"
+msgstr "Erim İçinde"
+
+
+msgid "Display Paths of poses within specified range"
+msgstr "Pozların yollarını belirtilen erimde görüntüle"
+
+
+msgid "Any Type"
+msgstr "Herhangi Bir Tür"
+
+
+msgid "RNA type used for pointers to any possible data"
+msgstr "Herhangi bir olası veriye olan işaretçiler için kullanılan RNA türü"
+
+
+msgid "Area in a subdivided screen, containing an editor"
+msgstr "Bir düzenleyici içeren alt bölümlere ayrılmış bir ekrandaki alan"
+
+
 msgid "Height"
 msgstr "Yükseklik"
+
+
+msgid "Area height"
+msgstr "Alan yüksekliği"
+
+
+msgid "Regions"
+msgstr "Bölgeler"
+
+
+msgid "Regions this area is subdivided in"
+msgstr "Bu alanın alt bölümlere ayrıldığı bölgeler"
+
+
+msgid "Show Menus"
+msgstr "Menüleri Göster"
+
+
+msgid "Show menus in the header"
+msgstr "Üstbilgide menüleri göster"
+
+
+msgid "Spaces"
+msgstr "Uzaylar"
+
+
+msgid "Spaces contained in this area, the first being the active space (NOTE: Useful for example to restore a previously used 3D view space in a certain area to get the old view orientation)"
+msgstr "Birincisi etkin uzay olan bu alanda içerilen uzaylar (Not: Örneğin, eski görünüm yönelimini elde etmek için belirli bir uzayda daha önce kullanılan bir 3B görünüm uzayını geri yüklemek için kullanışlıdır)"
+
+
+msgid "Editor Type"
+msgstr "Düzenleyici Türü"
+
+
+msgid "Current editor type for this area"
+msgstr "Bu alan için olan geçerli düzenleyici türü"
+
+
+msgid "Empty"
+msgstr "Boş"
+
+
+msgid "3D Viewport"
+msgstr "3B Görüş Alanı"
+
+
+msgid "Manipulate objects in a 3D environment"
+msgstr "Nesneleri, 3B bir ortamda işleyin"
+
+
+msgid "UV/Image Editor"
+msgstr "UV/Görsel Düzenleyici"
+
+
+msgid "View and edit images and UV Maps"
+msgstr "Görselleri ve UV İşlemlerini görüntüle ve düzenle"
+
+
+msgid "Node Editor"
+msgstr "Düğüm Düzenleyici"
+
+
+msgid "Editor for node-based shading and compositing tools"
+msgstr "Düğüm tabanlı gölgelendirme ve bileşikleştirme araçları için düzenleyici"
+
+
+msgid "Video Sequencer"
+msgstr "Video Sıralayıcı"
+
+
+msgid "Video editing tools"
+msgstr "Video düzenleme araçları"
+
+
+msgid "Movie Clip Editor"
+msgstr "Film Klibi Düzenleyici"
+
+
+msgid "Motion tracking tools"
+msgstr "Hareket izleme araçları"
+
+
+msgid "Dope Sheet"
+msgstr "Döküm Kağıdı"
+
+
+msgid "Adjust timing of keyframes"
+msgstr "Anahtar karelerin zamanlamasını ayarla"
+
+
+msgid "Graph Editor"
+msgstr "Grafik Düzenleyici"
+
+
+msgid "Edit drivers and keyframe interpolation"
+msgstr "Sürücüleri ve anahtar kare aradeğerlemesini düzenle"
+
+
+msgid "Nonlinear Animation"
+msgstr "Doğrusal Olmayan Canlandırma"
+
+
+msgid "Combine and layer Actions"
+msgstr "Birleştir ve Katmanlaştır Eylemleri"
+
+
+msgid "Text Editor"
+msgstr "Metin Düzenleyici"
+
+
+msgid "Edit scripts and in-file documentation"
+msgstr "Betikleri ve dosya içi belgelendirmeyi düzenle"
+
+
+msgid "Python Console"
+msgstr "Python Konsolu"
+
+
+msgid "Interactive programmatic console for advanced editing and script development"
+msgstr "Gelişmiş düzenleme ve betik geliştirme için etkileşimli programlama konsolu"
 
 
 msgid "Info"
 msgstr "Bilgi"
 
 
+msgid "Log of operations, warnings and error messages"
+msgstr "İşlem günlüğü, uyarılar ve hata iletileri"
+
+
+msgid "Top Bar"
+msgstr "Üst Çubuk"
+
+
+msgid "Global bar at the top of the screen for global per-window settings"
+msgstr "Global pencereye özel ayarlar için ekranın üst kısmında global çubuk"
+
+
+msgid "Status Bar"
+msgstr "Durum Çubuğu"
+
+
+msgid "Global bar at the bottom of the screen for general status information"
+msgstr "Genel durum bilgisi için ekranın alt kısmında global çubuk"
+
+
+msgid "Outliner"
+msgstr "Başlıklar"
+
+
+msgid "Overview of scene graph and all available data-blocks"
+msgstr "Sahne grafiğinin ve tüm kullanılabilir veri bloklarının genel görünümü"
+
+
+msgid "Properties"
+msgstr "Özellikler"
+
+
+msgid "Edit properties of active object and related data-blocks"
+msgstr "Etkin nesnenin ve ilgili veri bloklarının özelliklerini düzenle"
+
+
+msgid "File Browser"
+msgstr "Dosya Tarayıcı"
+
+
+msgid "Browse for files and assets"
+msgstr "Dosyalara ve varlıklara göz at"
+
+
+msgid "Spreadsheet"
+msgstr "Hesap Tablosu"
+
+
+msgid "Explore geometry data in a table"
+msgstr "Geometri verisine bir tabloda göz at"
+
+
+msgid "Preferences"
+msgstr "Tercihler"
+
+
+msgid "Edit persistent configuration settings"
+msgstr "Kalıcı yapılandırma ayarlarını düzenle"
+
+
+msgid "Width"
+msgstr "Genişlik"
+
+
+msgid "Area width"
+msgstr "Alan genişliği"
+
+
+msgid "X Position"
+msgstr "X Konumu"
+
+
+msgid "The window relative vertical location of the area"
+msgstr "Alanın pencereye göreceli dikey konumu"
+
+
+msgid "Y Position"
+msgstr "Y Konumu"
+
+
+msgid "The window relative horizontal location of the area"
+msgstr "Alanın pencereye göreceli yatay konumu"
+
+
+msgid "Area Spaces"
+msgstr "Alan Uzayları"
+
+
+msgid "Collection of spaces"
+msgstr "Uzaylar koleksiyonu"
+
+
+msgid "Active Space"
+msgstr "Etkin Uzay"
+
+
+msgid "Space currently being displayed in this area"
+msgstr "Şu anda bu alanda görüntülenen uzay"
+
+
+msgid "Armature Bones"
+msgstr "Armatür Kemikleri"
+
+
+msgid "Collection of armature bones"
+msgstr "Armatür kemikleri koleksiyonu"
+
+
+msgid "Active Bone"
+msgstr "Etkin Kemik"
+
+
+msgid "Armature's active bone"
+msgstr "Armatürün etkin kemiği"
+
+
+msgid "Armature Deform Constraint Targets"
+msgstr "Armatür Deformu Kısıtlama Hedefleri"
+
+
+msgid "Collection of target bones and weights"
+msgstr "Hedef kemikler ve ağırlıklar koleksiyonu"
+
+
+msgid "Armature EditBones"
+msgstr "Armatür Düzenleme Kemikleri"
+
+
+msgid "Collection of armature edit bones"
+msgstr "Armatür düzenleme kemikleri koleksiyonu"
+
+
+msgid "Active EditBone"
+msgstr "Etkin Düzenleme Kemiği"
+
+
+msgid "Armatures active edit bone"
+msgstr "Armatürün etkin düzenleme kemiği"
+
+
+msgid "Catalog Path"
+msgstr "Katalog Yolu"
+
+
+msgid "Asset Library Reference"
+msgstr "Varlık Kitaplığı Başvurusu"
+
+
+msgid "Identifier to refer to the asset library"
+msgstr "Varlık kitaplığına başvurma tanımlayıcısı"
+
+
+msgid "Asset Data"
+msgstr "Varlık Verisi"
+
+
+msgid "Additional data stored for an asset data-block"
+msgstr "Bir varlık veri bloku için depolanan ek veri"
+
+
+msgid "Active Tag"
+msgstr "Etkin Etiket"
+
+
+msgid "Index of the tag set for editing"
+msgstr "Düzenleme için ayarlanan etiketin indeksi"
+
+
+msgid "Author"
+msgstr "Yazar"
+
+
+msgid "Name of the creator of the asset"
+msgstr "Bu varlığın yaratıcısının adı"
+
+
+msgid "Catalog UUID"
+msgstr "Katalog UUID'si"
+
+
+msgid "Identifier for the asset's catalog, used by Blender to look up the asset's catalog path. Must be a UUID according to RFC4122"
+msgstr "Varlığın kataloğu için tanımlayıcı; Blender tarafından varlığın katalog yoluna bakmak için kullanılır. RFC4122'ye göre bir UUID olmalıdır"
+
+
+msgid "Catalog Simple Name"
+msgstr "Katalog Yalın Adı"
+
+
+msgid "Simple name of the asset's catalog, for debugging and data recovery purposes"
+msgstr "Varlığın kataloğunun yalın adı; hata ayıklama ve veri kurtarma amaçlı"
+
+
+msgid "Description"
+msgstr "Açıklama"
+
+
+msgid "A description of the asset to be displayed for the user"
+msgstr "Varlığın kullanıcıya gösterilecek bir açıklaması"
+
+
+msgid "Tags"
+msgstr "Etiketler"
+
+
+msgid "Custom tags (name tokens) for the asset, used for filtering and general asset management"
+msgstr "Varlık için özel etiketler (ad jetonları); süzme ve genel varlık yönetimi için kullanılır"
+
+
+msgid "Asset Tag"
+msgstr "Varlık Etiketi"
+
+
+msgid "User defined tag (name token)"
+msgstr "Kullanıcı tanımlı etiket (ad jetonu)"
+
+
+msgid "The identifier that makes up this tag"
+msgstr "Bu etiketi yapan tanımlayıcı"
+
+
+msgid "Asset Tags"
+msgstr "Varlık Etiketleri"
+
+
+msgid "Collection of custom asset tags"
+msgstr "Özel varlık etiketleri koleksiyonu"
+
+
+msgid "Geometry attribute"
+msgstr "Geometri özniteliği"
+
+
+msgid "Data Type"
+msgstr "Veri Türü"
+
+
+msgid "Type of data stored in attribute"
+msgstr "Öznitelikte depolanan veri türü"
+
+
+msgid "Float"
+msgstr "Kayan Noktalı"
+
+
+msgid "Floating-point value"
+msgstr "Kayan noktalı değer"
+
+
+msgid "Integer"
+msgstr "Tamsayı"
+
+
+msgid "32-bit integer"
+msgstr "32 bit tamsayı"
+
+
 msgid "Vector"
 msgstr "Vektör"
 
 
+msgid "3D vector with floating-point values"
+msgstr "Kayan noktalı değerli 3B vektör"
+
+
+msgid "RGBA color with 32-bit floating-point values"
+msgstr "32 bit kayan noktalı değerli RGBA rengi"
+
+
+msgid "Byte Color"
+msgstr "Bayt Rengi"
+
+
+msgid "RGBA color with 8-bit positive integer values"
+msgstr "8 bit pozitif tamsayı değerli RGBA rengi"
+
+
+msgid "String"
+msgstr "Dizi"
+
+
+msgid "Text string"
+msgstr "Metin dizisi"
+
+
 msgid "Boolean"
-msgstr "Boolean"
+msgstr "Boole"
+
+
+msgid "True or false"
+msgstr "Doğru veya yanlış"
+
+
+msgid "2D Vector"
+msgstr "2B Vektör"
+
+
+msgid "2D vector with floating-point values"
+msgstr "Kayan noktalı değerli 2B vektör"
+
+
+msgid "8-Bit Integer"
+msgstr "8 Bit Tamsayı"
+
+
+msgid "Smaller integer with a range from -128 to 127"
+msgstr "-128 ve 127 arasında bir değerli küçükçe tamsayı"
+
+
+msgid "Domain"
+msgstr "Etki Alanı"
+
+
+msgid "Domain of the Attribute"
+msgstr "Özniteliğin Etki Alanı"
+
+
+msgid "Point"
+msgstr "Nokta"
+
+
+msgid "Attribute on point"
+msgstr "Noktadaki öznitelik"
+
+
+msgid "Edge"
+msgstr "Kenar"
+
+
+msgid "Attribute on mesh edge"
+msgstr "Kafes kenarındaki öznitelik"
+
+
+msgid "Face"
+msgstr "Yüz"
+
+
+msgid "Attribute on mesh faces"
+msgstr "Kafes yüzlerindeki öznitelik"
+
+
+msgid "Face Corner"
+msgstr "Yüz Köşesi"
+
+
+msgid "Attribute on mesh face corner"
+msgstr "Kafes yüzü köşesindeki öznitelik"
+
+
+msgid "Spline"
+msgstr "Yiv"
+
+
+msgid "Attribute on spline"
+msgstr "Yivdeki öznitelik"
+
+
+msgid "Instance"
+msgstr "Örnek"
+
+
+msgid "Attribute on instance"
+msgstr "Örnekteki öznitelik"
+
+
+msgid "Is Internal"
+msgstr "İçsel"
+
+
+msgid "The attribute is meant for internal use by Blender"
+msgstr "Öznitelik, Blender tarafından iç kullanım içindir"
+
+
+msgid "Name of the Attribute"
+msgstr "Özniteliğin Adı"
+
+
+msgid "Bool Attribute"
+msgstr "Boole Öznitelik"
+
+
+msgid "Geometry attribute that stores booleans"
+msgstr "Boole değerleri depolayan geometri özniteliği"
+
+
+msgid "Byte Color Attribute"
+msgstr "Bayt Rengi Öznitelik"
+
+
+msgid "Geometry attribute that stores RGBA colors as positive integer values using 8-bits per channel"
+msgstr "RGBA renklerini kanal başına 8 bit kullanarak pozitif tamsayı değerleri olarak depolayan geometri özniteliği"
+
+
+msgid "8-bit Integer Attribute"
+msgstr "8 Bit Tamsayı Öznitelik"
+
+
+msgid "Geometry attribute that stores 8-bit integers"
+msgstr "8 bit tamsayılar depolayan geometri özniteliği"
+
+
+msgid "Float2 Attribute"
+msgstr "Kayan Noktalı2 Öznitelik"
+
+
+msgid "Geometry attribute that stores floating-point 2D vectors"
+msgstr "Kayan noktalı 2B vektörler depolayan geometri özniteliği"
+
+
+msgid "Float Attribute"
+msgstr "Kayan Noktalı Öznitelik"
+
+
+msgid "Geometry attribute that stores floating-point values"
+msgstr "Kayan noktalı değerler depolayan geometri özniteliği"
+
+
+msgid "Float Color Attribute"
+msgstr "Kayan Noktalı Renk Öznitelik"
+
+
+msgid "Geometry attribute that stores RGBA colors as floating-point values using 32-bits per channel"
+msgstr "RGBA renklerini kanal başına 32 bit kullanarak kayan noktalı değerler olarak depolayan geometri özniteliği"
+
+
+msgid "Float Vector Attribute"
+msgstr "Kayan Noktalı Vektör Öznitelik"
+
+
+msgid "Geometry attribute that stores floating-point 3D vectors"
+msgstr "Kayan noktalı 3B vektörler depolayan geometri özniteliği"
+
+
+msgid "Integer Attribute"
+msgstr "Tamsayı Öznitelik"
+
+
+msgid "Geometry attribute that stores integer values"
+msgstr "Tamsayı değerler depolayan geometri özniteliği"
+
+
+msgid "String Attribute"
+msgstr "Dizi Öznitelik"
+
+
+msgid "Geometry attribute that stores strings"
+msgstr "Diziler depolayan geometri özniteliği"
+
+
+msgid "Attribute Group"
+msgstr "Öznitelik Grubu"
+
+
+msgid "Group of geometry attributes"
+msgstr "Geometri özniteliklerinin grubu"
+
+
+msgid "Active Attribute"
+msgstr "Etkin Öznitelik"
+
+
+msgid "Active attribute"
+msgstr "Etkin öznitelik"
+
+
+msgid "Active Color"
+msgstr "Etkin Renk"
+
+
+msgid "Active color attribute for display and editing"
+msgstr "Görüntüleme ve düzenleme için etkin renk özniteliği"
+
+
+msgid "Active Color Index"
+msgstr "Etkin Renk İndeksi"
+
+
+msgid "Active color attribute index"
+msgstr "Etkin renk özniteliği indeksi"
+
+
+msgid "Active Color Attribute"
+msgstr "Etkin Renk Özniteliği"
+
+
+msgid "The name of the active color attribute for display and editing"
+msgstr "Görüntüleme ve düzenleme için olan etkin renk özniteliğinin adı"
+
+
+msgid "Active Attribute Index"
+msgstr "Etkin Öznitelik İndeksi"
+
+
+msgid "Active attribute index"
+msgstr "Etkin öznitelik indeksi"
+
+
+msgid "Default Color Attribute"
+msgstr "Öntanımlı Renk Özniteliği"
+
+
+msgid "The name of the default color attribute used as a fallback for rendering"
+msgstr "Sunum için yedek olarak kullanılan öntanımlı renk özniteliğinin adı"
+
+
+msgid "Active Render Color Index"
+msgstr "Etkin Sunum Rengi İndeksi"
+
+
+msgid "The index of the color attribute used as a fallback for rendering"
+msgstr "Sunum için yedek olarak kullanılan renk özniteliğinin indeksi"
+
+
+msgid "Bake Data"
+msgstr "Pişirme Verisi"
+
+
+msgid "Bake data for a Scene data-block"
+msgstr "Sahne veri bloku için pişirme verisi"
+
+
+msgid "Cage Extrusion"
+msgstr "Kafes Sıkımı"
+
+
+msgid "Inflate the active object by the specified distance for baking. This helps matching to points nearer to the outside of the selected object meshes"
+msgstr "Pişirme için belirtilen uzaklık ile etkin nesneyi şişirin. Bu, seçilen nesne kafeslerinin dışına daha yakın noktalarla eşleşmeye yardımcı olur"
+
+
+msgid "Cage Object"
+msgstr "Kafes Nesnesi"
+
+
+msgid "Object to use as cage instead of calculating the cage from the active object with cage extrusion"
+msgstr "Kafes sıkımı ile kafesi etkin nesneden hesaplamak yerine kafes olarak kullanılacak nesne"
+
+
+msgid "File Path"
+msgstr "Dosya Yolu"
+
+
+msgid "Image filepath to use when saving externally"
+msgstr "Dışa kaydederken kullanılacak görsel yolu"
+
+
+msgid "Vertical dimension of the baking map"
+msgstr "Pişirme haritasının dikey boyutu"
+
+
+msgid "Image Format"
+msgstr "Görsel Biçimi"
+
+
+msgid "Margin"
+msgstr "Pay"
+
+
+msgid "Extends the baked result as a post process filter"
+msgstr "Pişirilen sonucu bir işlem sonrası süzgeci olarak genişletir"
+
+
+msgid "Margin Type"
+msgstr "Pay Türü"
+
+
+msgid "Algorithm to extend the baked result"
+msgstr "Pişirilen sonucu genişletmek için algoritma"
+
+
+msgid "Adjacent Faces"
+msgstr "Bitişik Yüzler"
+
+
+msgid "Use pixels from adjacent faces across UV seams"
+msgstr "UV dikişlerinde bitişik yüzlerden piksel kullan"
+
+
+msgid "Extend"
+msgstr "Genişlet"
+
+
+msgid "Extend border pixels outwards"
+msgstr "Kenar piksellerini dışa doğru genişlet"
+
+
+msgid "Max Ray Distance"
+msgstr "En Büyük Işın Uzaklığı"
+
+
+msgid "The maximum ray distance for matching points between the active and selected objects. If zero, there is no limit"
+msgstr "Etkin ve seçili nesneler arasındaki eşleşen noktalar için en büyük ışın uzaklığı. Sıfırsa sınırsızdır"
+
+
+msgid "Normal Space"
+msgstr "Normal Uzay"
+
+
+msgid "Axis to bake in blue channel"
+msgstr "Mavi kanalda pişirilecek eksen"
+
+
+msgid "+X"
+msgstr "+X"
+
+
+msgid "+Y"
+msgstr "+Y"
+
+
+msgid "+Z"
+msgstr "+Z"
+
+
+msgid "-X"
+msgstr "-X"
+
+
+msgid "-Y"
+msgstr "-Y"
+
+
+msgid "-Z"
+msgstr "-Z"
+
+
+msgid "Axis to bake in green channel"
+msgstr "Yeşil kanalda pişirilecek eksen"
+
+
+msgid "Axis to bake in red channel"
+msgstr "Kırmızı kanalda pişirilecek eksen"
+
+
+msgid "Choose normal space for baking"
+msgstr "Pişirme için normal uzayı seç"
 
 
 msgid "Object"
 msgstr "Nesne"
+
+
+msgid "Bake the normals in object space"
+msgstr "Normalleri nesne uzayında pişir"
+
+
+msgid "Tangent"
+msgstr "Tanjant"
+
+
+msgid "Bake the normals in tangent space"
+msgstr "Normalleri tanjant uzayında pişir"
+
+
+msgid "Pass Filter"
+msgstr "Geçiş Süzgeci"
+
+
+msgid "Passes to include in the active baking pass"
+msgstr "Etkin pişirme geçişinde içerilecek geçişler"
 
 
 msgid "Emit"
@@ -566,6 +2025,10 @@ msgid "Extrude"
 msgstr "Presle"
 
 
+msgid "Path Duration"
+msgstr "Yol Süresi"
+
+
 msgid "Font"
 msgstr "Yazıtipi"
 
@@ -647,27 +2110,31 @@ msgstr "İkisi de"
 
 
 msgid "Object Mode"
-msgstr "Nesne Modu"
+msgstr "Nesne Kipi"
 
 
 msgid "Pose Mode"
-msgstr "Poz Modu"
+msgstr "Poz Kipi"
 
 
 msgid "Sculpt Mode"
-msgstr "Heykeltraşlık Modu"
+msgstr "Yontma Kipi"
 
 
 msgid "Vertex Paint"
-msgstr "Nokta Boyama"
+msgstr "Tepecik Boya"
 
 
 msgid "Weight Paint"
-msgstr "Ağırlık Boyama"
+msgstr "Ağırlık Boya"
 
 
 msgid "Texture Paint"
-msgstr "Doku Boyama"
+msgstr "Doku Boya"
+
+
+msgid "Draw Mode"
+msgstr "Çizim Kipi"
 
 
 msgid "Global X"
@@ -694,6 +2161,10 @@ msgid "Halo"
 msgstr "Hale"
 
 
+msgid "Sync Mode"
+msgstr "Eşzamanlama Kipi"
+
+
 msgid "Global Gravity"
 msgstr "Evrensel Yerçekimi"
 
@@ -710,8 +2181,20 @@ msgid "Area"
 msgstr "Alan"
 
 
+msgid "Sequence Mode"
+msgstr "Sıralama Kipi"
+
+
 msgid "Window Manager"
 msgstr "Pencere Yöneticisi"
+
+
+msgid "Grease Pencil Edit Mode"
+msgstr "Gres Kalemi Düzenleme Kipi"
+
+
+msgid "Grease Pencil Sculpt Mode"
+msgstr "Gres Kalemi Yontma Kipi"
 
 
 msgid "Mist"
@@ -802,6 +2285,18 @@ msgid "Help"
 msgstr "Yardım"
 
 
+msgid "Enabled Modes"
+msgstr "Etkinleştirilmiş Kipler"
+
+
+msgid "Names"
+msgstr "Adlar"
+
+
+msgid "Mesh Select Mode"
+msgstr "Kafes Seçim Kipi"
+
+
 msgid "Add Image"
 msgstr "Resim Ekle"
 
@@ -818,6 +2313,30 @@ msgid "New"
 msgstr "Yeni"
 
 
+msgid "Material Mode"
+msgstr "Malzeme Kipi"
+
+
+msgid "Transfer"
+msgstr "Aktar"
+
+
+msgid "Deform Mode"
+msgstr "Deforme Kipi"
+
+
+msgid "Play Mode"
+msgstr "Oynatma Kipi"
+
+
+msgid "Time Mode"
+msgstr "Zaman Kipi"
+
+
+msgid "Resolution Mode"
+msgstr "Çözüm Kipi"
+
+
 msgid "Copy"
 msgstr "Kopya"
 
@@ -832,6 +2351,22 @@ msgstr "Limitler"
 
 msgid "Origin"
 msgstr "Merkez"
+
+
+msgid "Thickness Mode"
+msgstr "Kalınlık Kipi"
+
+
+msgid "Proximity Mode"
+msgstr "Yakınlık Kipi"
+
+
+msgid "Texture Mapping Mode"
+msgstr "Doku Eşlemleme Kipi"
+
+
+msgid "Weighting Mode"
+msgstr "Ağırlıklama Kipi"
 
 
 msgid "H"
@@ -868,6 +2403,15 @@ msgstr "Küçüktür"
 
 msgid "Greater Than"
 msgstr "Büyüktür"
+
+
+msgid "Image Info"
+msgstr "Görsel Bilgisi"
+
+
+msgctxt "Image"
+msgid "Mirror"
+msgstr "Yansıt"
 
 
 msgid "Object Info"
@@ -923,11 +2467,16 @@ msgstr "Etkin"
 
 
 msgid "Flip Names"
-msgstr "İsimleri Çevir"
+msgstr "Adları Ters Çevir"
 
 
 msgid "Move"
 msgstr "Taşı"
+
+
+msgctxt "Operator"
+msgid "Flip Names"
+msgstr "Adları Ters Çevir"
 
 
 msgid "History"
@@ -1238,6 +2787,10 @@ msgid "Continue"
 msgstr "Devamlı"
 
 
+msgid "OpenGL"
+msgstr "OpenGL"
+
+
 msgid "Manual"
 msgstr "Kullanım Kılavuzu"
 
@@ -1318,6 +2871,31 @@ msgid "Tracking"
 msgstr "Takip"
 
 
+msgctxt "Operator"
+msgid "Import..."
+msgstr "İçe Aktar..."
+
+
+msgctxt "Operator"
+msgid "Export..."
+msgstr "Dışa Aktar..."
+
+
+msgctxt "WindowManager"
+msgid "Add New"
+msgstr "Yeni Ekle"
+
+
+msgctxt "Operator"
+msgid "New"
+msgstr "Yeni"
+
+
+msgctxt "Operator"
+msgid "Edit Value"
+msgstr "Değeri Düzenle"
+
+
 msgid "Torus"
 msgstr "Halka"
 
@@ -1374,6 +2952,11 @@ msgid "Image*"
 msgstr "Görüntü*"
 
 
+msgctxt "Operator"
+msgid "Edit"
+msgstr "Düzenle"
+
+
 msgid "Top Level"
 msgstr "Üst Seviye"
 
@@ -1395,7 +2978,7 @@ msgstr "Tampon Karıştırma"
 
 
 msgid "View Name"
-msgstr "Görünüş İsmi"
+msgstr "Ekran Adı"
 
 
 msgid "Limit Size"
@@ -1430,6 +3013,22 @@ msgid "Bone Settings"
 msgstr "Kemik Ayarları"
 
 
+msgid "Draw Grease Pencil"
+msgstr "Çizim Gres Kalemi"
+
+
+msgid "Sculpt Grease Pencil"
+msgstr "Yontma Gres Kalemi"
+
+
+msgid "Weight Grease Pencil"
+msgstr "Ağırlık Gres Kalemi"
+
+
+msgid "Vertex Grease Pencil"
+msgstr "Tepecik Gres Kalemi"
+
+
 msgid "Auto Normalize"
 msgstr "Otomatik Normalleştir"
 
@@ -1446,16 +3045,72 @@ msgid "Hex"
 msgstr "Hex"
 
 
+msgid "Red:"
+msgstr "Kırmızı:"
+
+
+msgid "Green:"
+msgstr "Yeşil:"
+
+
+msgid "Blue:"
+msgstr "Mavi:"
+
+
+msgid "Hue:"
+msgstr "Ton:"
+
+
+msgid "Saturation:"
+msgstr "Doygunluk:"
+
+
+msgid "Lightness:"
+msgstr "Aydınlık:"
+
+
 msgid "Value:"
 msgstr "Değer:"
+
+
+msgid "Alpha:"
+msgstr "Alfa:"
+
+
+msgid "Hex:"
+msgstr "Onaltılık:"
 
 
 msgid "(Gamma Corrected)"
 msgstr "(Gamma Düzeltildi)"
 
 
+msgid "Lightness"
+msgstr "Aydınlık"
+
+
 msgid "Hex triplet for color (#RRGGBB)"
-msgstr "Renk için Hex üçlüsü (#RRGGBB)"
+msgstr "Renk için onaltılık üçlüsü (#RRGGBB)"
+
+
+msgid "Redo"
+msgstr "Yinele"
+
+
+msgid "Menu \"%s\" not found"
+msgstr "\"%s\" menüsü bulunamadı"
+
+
+msgid "Panel \"%s\" not found"
+msgstr "\"%s\" paneli bulunamadı"
+
+
+msgid "Unsupported context"
+msgstr "Desteklenmeyen bağlam"
+
+
+msgid "Internal error!"
+msgstr "İç hata!"
 
 
 msgid "Shortcut: %s"
@@ -1642,12 +3297,32 @@ msgid "Cursor X"
 msgstr "İmleç X"
 
 
+msgid " (String)"
+msgstr " (Dizi)"
+
+
+msgid " (Integer)"
+msgstr " (Tamsayı)"
+
+
+msgid " (Float)"
+msgstr " (Kayan Noktalı)"
+
+
+msgid " (Vector)"
+msgstr " (Vektör)"
+
+
+msgid " (Color)"
+msgstr " (Renk)"
+
+
 msgid "Geometry:"
 msgstr "Geometri:"
 
 
 msgid "Vertex:"
-msgstr "Nokta:"
+msgstr "Tepecik:"
 
 
 msgid "Median:"
@@ -1720,4 +3395,208 @@ msgstr "Desenler"
 
 msgid "OK?"
 msgstr "TAMAM?"
+
+
+msgid "English (English)"
+msgstr "İngilizce (English)"
+
+
+msgid "Japanese (日本語)"
+msgstr "Japonca (日本語)"
+
+
+msgid "Dutch (Nederlandse taal)"
+msgstr "Hollandaca (Nederlandse taal)"
+
+
+msgid "Italian (Italiano)"
+msgstr "İtalyanca (Italiano)"
+
+
+msgid "German (Deutsch)"
+msgstr "German (Deutsch)"
+
+
+msgid "Finnish (Suomi)"
+msgstr "Fince (Suomi)"
+
+
+msgid "Swedish (Svenska)"
+msgstr "Swedish (Svenska)"
+
+
+msgid "French (Français)"
+msgstr "Fransızca (Français)"
+
+
+msgid "Spanish (Español)"
+msgstr "İspanyolca (Español)"
+
+
+msgid "Catalan (Català)"
+msgstr "Katalanca (Català)"
+
+
+msgid "Czech (Český)"
+msgstr "Çekçe (Český)"
+
+
+msgid "Portuguese (Português)"
+msgstr "Portekizce (Português)"
+
+
+msgid "Simplified Chinese (简体中文)"
+msgstr "Basitleştirilmiş Çince (简体中文)"
+
+
+msgid "Traditional Chinese (繁體中文)"
+msgstr "Geleneksel Çince (繁體中文)"
+
+
+msgid "Russian (Русский)"
+msgstr "Rusça (Русский)"
+
+
+msgid "Croatian (Hrvatski)"
+msgstr "Hırvatça (Hrvatski)"
+
+
+msgid "Serbian (Српски)"
+msgstr "Sırpça (Српски)"
+
+
+msgid "Ukrainian (Українська)"
+msgstr "Ukraynaca (Українська)"
+
+
+msgid "Polish (Polski)"
+msgstr "Lehçe (Polski)"
+
+
+msgid "Romanian (Român)"
+msgstr "Romence (Român)"
+
+
+msgid "Arabic (ﺔﻴﺑﺮﻌﻟﺍ)"
+msgstr "Arapça (ﺔﻴﺑﺮﻌﻟﺍ)"
+
+
+msgid "Bulgarian (Български)"
+msgstr "Bulgarca (Български)"
+
+
+msgid "Greek (Ελληνικά)"
+msgstr "Yunanca (Ελληνικά)"
+
+
+msgid "Korean (한국어)"
+msgstr "Korece (한국어)"
+
+
+msgid "Nepali (नेपाली)"
+msgstr "Nepalce (नेपाली)"
+
+
+msgid "Persian (ﯽﺳﺭﺎﻓ)"
+msgstr "Farsça (ﯽﺳﺭﺎﻓ)"
+
+
+msgid "Indonesian (Bahasa indonesia)"
+msgstr "Endonezce (Bahasa indonesia)"
+
+
+msgid "Serbian Latin (Srpski latinica)"
+msgstr "Sırpça Latin (Srpski latinica)"
+
+
+msgid "Kyrgyz (Кыргыз тили)"
+msgstr "Kırgızca (Кыргыз тили)"
+
+
+msgid "Turkish (Türkçe)"
+msgstr "Türkçe (Türkçe)"
+
+
+msgid "Hungarian (Magyar)"
+msgstr "Macarca (Magyar)"
+
+
+msgid "Brazilian Portuguese (Português do Brasil)"
+msgstr "Brezilya Portekizcesi (Português do Brasil)"
+
+
+msgid "Hebrew (תירִבְעִ)"
+msgstr "İbranice (תירִבְעִ)"
+
+
+msgid "Estonian (Eestlane)"
+msgstr "Estonca (Eestlane)"
+
+
+msgid "Esperanto (Esperanto)"
+msgstr "Esperanto (Esperanto)"
+
+
+msgid "Spanish from Spain (Español de España)"
+msgstr "İspanya İspanyolcası (Español de España)"
+
+
+msgid "Amharic (አማርኛ)"
+msgstr "Amharca (አማርኛ)"
+
+
+msgid "Uzbek (Oʻzbek)"
+msgstr "Özbekçe (O'zbek)"
+
+
+msgid "Uzbek Cyrillic (Ўзбек)"
+msgstr "Özbekçe Kiril (Ўзбек)"
+
+
+msgid "Hindi (मानक हिन्दी)"
+msgstr "Hintçe (मानक हिन्दी)"
+
+
+msgid "Vietnamese (tiếng Việt)"
+msgstr "Vietnamca (tiếng Việt)"
+
+
+msgid "Basque (Euskara)"
+msgstr "Bask Dili (Euskara)"
+
+
+msgid "Hausa (Hausa)"
+msgstr "Hausa (Hausa)"
+
+
+msgid "Kazakh (қазақша)"
+msgstr "Kazakça (қазақша)"
+
+
+msgid "Abkhaz (Аԥсуа бызшәа)"
+msgstr "Abhazca (Аԥсуа бызшәа)"
+
+
+msgid "Thai (ภาษาไทย)"
+msgstr "Tayca (ภาษาไทย)"
+
+
+msgid "Slovak (Slovenčina)"
+msgstr "Slovakça (Slovenčina)"
+
+
+msgid "Georgian (ქართული)"
+msgstr "Gürcüce (ქართული)"
+
+
+msgid "Complete"
+msgstr "Çevirisi Bitmiş"
+
+
+msgid "In Progress"
+msgstr "Çevirisi Sürüyor"
+
+
+msgid "Starting"
+msgstr "Çevirisine Başlanmış"
 

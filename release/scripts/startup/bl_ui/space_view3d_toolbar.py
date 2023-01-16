@@ -532,9 +532,9 @@ class SelectPaintSlotHelper:
 
         match getattr(mode_settings, self.canvas_source_attr_name):
             case 'MATERIAL':
-                
+
                 layout.operator_menu_enum("paint.add_texture_paint_slot", "type", icon='ADD', text="Add Texture Paint Slot")
-                
+
                 if len(ob.material_slots) > 1:
                     layout.template_list(
                         "MATERIAL_UL_matslots", "layers",
@@ -1216,7 +1216,7 @@ class VIEW3D_PT_tools_weightpaint_symmetry(Panel, View3DPaintPanel):
 
         col = layout.column(align = True)
         col.use_property_split = False
-        col.prop(mesh, 'use_mirror_vertex_groups')
+        col.prop(mesh, "use_mirror_vertex_groups")
 
         row = col.row()
         if mesh.use_mirror_vertex_groups:

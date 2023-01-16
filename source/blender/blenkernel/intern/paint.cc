@@ -67,6 +67,10 @@
 
 #include "bmesh.h"
 
+using blender::float3;
+using blender::MutableSpan;
+using blender::Span;
+
 static void sculpt_attribute_update_refs(Object *ob);
 static SculptAttribute *sculpt_attribute_ensure_ex(Object *ob,
                                                    eAttrDomain domain,
@@ -76,9 +80,6 @@ static SculptAttribute *sculpt_attribute_ensure_ex(Object *ob,
                                                    PBVHType pbvhtype,
                                                    bool flat_array_for_bmesh);
 static void sculptsession_bmesh_add_layers(Object *ob);
-
-using blender::MutableSpan;
-using blender::Span;
 
 static void palette_init_data(ID *id)
 {
@@ -128,7 +129,7 @@ static void palette_undo_preserve(BlendLibReader * /*reader*/, ID *id_new, ID *i
   /* NOTE: We do not swap IDProperties, as dealing with potential ID pointers in those would be
    *       fairly delicate. */
   BKE_lib_id_swap(nullptr, id_new, id_old);
-  SWAP(IDProperty *, id_new->properties, id_old->properties);
+  std::swap(id_new->properties, id_old->properties);
 }
 
 IDTypeInfo IDType_ID_PAL = {
@@ -1080,7 +1081,7 @@ bool BKE_paint_ensure(ToolSettings *ts, Paint **r_paint)
       Paint paint_test = **r_paint;
       BKE_paint_runtime_init(ts, *r_paint);
       /* Swap so debug doesn't hide errors when release fails. */
-      SWAP(Paint, **r_paint, paint_test);
+      std::swap(**r_paint, paint_test);
       BLI_assert(paint_test.runtime.ob_mode == (*r_paint)->runtime.ob_mode);
       BLI_assert(paint_test.runtime.tool_offset == (*r_paint)->runtime.tool_offset);
 #endif
@@ -1694,7 +1695,7 @@ static void sculpt_update_object(
 
     /* These are assigned to the base mesh in Multires. This is needed because Face Sets operators
      * and tools use the Face Sets data from the base mesh when Multires is active. */
-    ss->mvert = BKE_mesh_verts_for_write(me);
+    ss->vert_positions = BKE_mesh_vert_positions_for_write(me);
     ss->mpoly = BKE_mesh_polys(me);
     ss->mloop = BKE_mesh_loops(me);
   }
@@ -1702,13 +1703,14 @@ static void sculpt_update_object(
     ss->totvert = me->totvert;
     ss->totpoly = me->totpoly;
     ss->totfaces = me->totpoly;
-    ss->mvert = BKE_mesh_verts_for_write(me);
+    ss->vert_positions = BKE_mesh_vert_positions_for_write(me);
     ss->mpoly = BKE_mesh_polys(me);
     ss->mloop = BKE_mesh_loops(me);
     ss->multires.active = false;
     ss->multires.modifier = nullptr;
     ss->multires.level = 0;
-    ss->vmask = static_cast<float *>(CustomData_get_layer(&me->vdata, CD_PAINT_MASK));
+    ss->vmask = static_cast<float *>(
+        CustomData_get_layer_for_write(&me->vdata, CD_PAINT_MASK, me->totvert));
 
     CustomDataLayer *layer;
     eAttrDomain domain;
@@ -1735,14 +1737,15 @@ static void sculpt_update_object(
 
   /* Sculpt Face Sets. */
   if (use_face_sets) {
-    ss->face_sets = static_cast<int *>(
-        CustomData_get_layer_named(&me->pdata, CD_PROP_INT32, ".sculpt_face_set"));
+    ss->face_sets = static_cast<int *>(CustomData_get_layer_named_for_write(
+        &me->pdata, CD_PROP_INT32, ".sculpt_face_set", me->totpoly));
   }
   else {
     ss->face_sets = nullptr;
   }
 
-  ss->hide_poly = (bool *)CustomData_get_layer_named(&me->pdata, CD_PROP_BOOL, ".hide_poly");
+  ss->hide_poly = (bool *)CustomData_get_layer_named_for_write(
+      &me->pdata, CD_PROP_BOOL, ".hide_poly", me->totpoly);
 
   ss->subdiv_ccg = me_eval->runtime->subdiv_ccg;
 
@@ -1961,14 +1964,14 @@ int *BKE_sculpt_face_sets_ensure(Mesh *mesh)
     face_sets.finish();
   }
 
-  return static_cast<int *>(
-      CustomData_get_layer_named(&mesh->pdata, CD_PROP_INT32, ".sculpt_face_set"));
+  return static_cast<int *>(CustomData_get_layer_named_for_write(
+      &mesh->pdata, CD_PROP_INT32, ".sculpt_face_set", mesh->totpoly));
 }
 
 bool *BKE_sculpt_hide_poly_ensure(Mesh *mesh)
 {
-  bool *hide_poly = static_cast<bool *>(
-      CustomData_get_layer_named(&mesh->pdata, CD_PROP_BOOL, ".hide_poly"));
+  bool *hide_poly = static_cast<bool *>(CustomData_get_layer_named_for_write(
+      &mesh->pdata, CD_PROP_BOOL, ".hide_poly", mesh->totpoly));
   if (hide_poly != nullptr) {
     return hide_poly;
   }
@@ -2178,21 +2181,25 @@ static PBVH *build_pbvh_from_regular_mesh(Object *ob, Mesh *me_eval_deform, bool
   PBVH *pbvh = BKE_pbvh_new(PBVH_FACES);
   BKE_pbvh_respect_hide_set(pbvh, respect_hide);
 
-  MutableSpan<MVert> verts = me->verts_for_write();
+  MutableSpan<float3> positions = me->vert_positions_for_write();
   const Span<MPoly> polys = me->polys();
   const Span<MLoop> loops = me->loops();
 
   MLoopTri *looptri = static_cast<MLoopTri *>(
       MEM_malloc_arrayN(looptris_num, sizeof(*looptri), __func__));
 
-  BKE_mesh_recalc_looptri(
-      loops.data(), polys.data(), verts.data(), me->totloop, me->totpoly, looptri);
+  BKE_mesh_recalc_looptri(loops.data(),
+                          polys.data(),
+                          reinterpret_cast<const float(*)[3]>(positions.data()),
+                          me->totloop,
+                          me->totpoly,
+                          looptri);
 
   BKE_pbvh_build_mesh(pbvh,
                       me,
                       polys.data(),
                       loops.data(),
-                      verts.data(),
+                      reinterpret_cast<float(*)[3]>(positions.data()),
                       me->totvert,
                       &me->vdata,
                       &me->ldata,

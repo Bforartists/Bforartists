@@ -199,6 +199,14 @@ class SUNPOS_PT_Location(bpy.types.Panel):
             col.prop(sp, "north_offset")
             col.separator()
 
+        if p.show_surface or p.show_analemmas:
+            col = flow.column(align=True)
+            if p.show_surface:
+                col.prop(sp, "show_surface", toggle=True)
+            if p.show_analemmas:
+                col.prop(sp, "show_analemmas", toggle=True)
+            col.separator()
+
         if p.show_az_el:
             col = flow.column(align=True)
             split = col.split(factor=0.4, align=True)
@@ -216,6 +224,7 @@ class SUNPOS_PT_Location(bpy.types.Panel):
 
         col = flow.column()
         col.prop(sp, "sun_distance")
+        col.separator()
 
 
 class SUNPOS_PT_Time(bpy.types.Panel):

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -281,6 +281,14 @@ msgstr "연산 장치 유형"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "계산에 사용하는 장치 (Cycles 렌더링)"
+
+
+msgid "Off"
+msgstr "Off"
+
+
+msgid "Full"
+msgstr "Full"
 
 
 msgid "Fribidi Library"
@@ -2581,10 +2589,6 @@ msgstr "축적을 상속"
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "본이 부모 본에서 축척 조정을 상속하는 방법을 지정합니다"
-
-
-msgid "Full"
-msgstr "Full"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -6354,10 +6358,6 @@ msgstr "페이스 추려내기"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "정면이 대상을 향한 방향으로 향할 때 정지"
-
-
-msgid "Off"
-msgstr "Off"
 
 
 msgid "No culling"
@@ -13943,6 +13943,10 @@ msgstr "오프셋 모디파이어"
 
 msgid "Offset Stroke modifier"
 msgstr "오프셋 스트로크 모디파이어"
+
+
+msgid "Start Offset"
+msgstr "시작 오프셋"
 
 
 msgid "Opacity Modifier"
@@ -52876,14 +52880,6 @@ msgid "Method used to determine when to stop propagating pose to keyframes"
 msgstr "키 프레임에 전파하는 포즈를 정지할 때 결정하는 데 사용된 메서드"
 
 
-msgid "While Held"
-msgstr "유지하는 동안"
-
-
-msgid "Propagate pose to all keyframes after current frame that don't change (Default behavior)"
-msgstr "변경하지 않은 현재 프레임 이후의 모든 키 프레임에 포즈를 전파 (기본 동작)"
-
-
 msgid "To Next Keyframe"
 msgstr "다음 키 프레임으로"
 
@@ -68765,10 +68761,6 @@ msgid "End Offset"
 msgstr "종료 오프셋"
 
 
-msgid "Start Offset"
-msgstr "시작 오프셋"
-
-
 msgid "X position where the strip begins"
 msgstr "스트립이 시작되는 X 위치"
 
@@ -83917,10 +83909,6 @@ msgstr "존재하지 않는 레이어로 변경할 수 없습니다 (인덱스 =
 
 msgid "No active GP data"
 msgstr "활성 GP 데이터가 없음"
-
-
-msgid "Operator not supported in multiframe edition"
-msgstr "멀티 프레임 에디션에서는 작업자가 지원되지 않습니다"
 
 
 msgid "No strokes to paste, select and copy some points before trying again"

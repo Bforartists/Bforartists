@@ -98,7 +98,7 @@ class STORYPENCIL_OT_RenderAction(Operator):
         prv_format = image_settings.file_format
         prv_use_file_extension = scene.render.use_file_extension
         prv_ffmpeg_format = scene.render.ffmpeg.format
-        rootpath = scene.storypencil_render_render_path
+        rootpath = bpy.path.abspath(scene.storypencil_render_render_path)
         only_selected = scene.storypencil_render_onlyselected
         channel = scene.storypencil_render_channel
 
