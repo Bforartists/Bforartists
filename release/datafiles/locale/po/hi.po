@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -177,6 +177,14 @@ msgstr "विस्तृत"
 
 msgid "Message"
 msgstr "संदेश"
+
+
+msgid "Off"
+msgstr "बंद"
+
+
+msgid "Full"
+msgstr "पूर्ण"
 
 
 msgid "Fribidi Library"
@@ -573,10 +581,6 @@ msgstr "सिर"
 
 msgid "Selectable"
 msgstr "चयनयोग्य"
-
-
-msgid "Full"
-msgstr "पूर्ण"
 
 
 msgid "Layers"
@@ -982,10 +986,6 @@ msgstr "हड्डी"
 
 msgid "Use Tail"
 msgstr "पूंछ का प्रयोग करें"
-
-
-msgid "Off"
-msgstr "बंद"
 
 
 msgid "Front"

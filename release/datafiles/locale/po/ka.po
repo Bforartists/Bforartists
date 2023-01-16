@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Tamar Mebonia <tammebonia@gmail.com>, 2022\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -307,6 +307,14 @@ msgstr "გამომთვლელი მოწყობილობის �
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "გამოთვლისთვის გამოსაყენებელი მოწყობილობა (Cycles-ით რენდერის დროს)"
+
+
+msgid "Off"
+msgstr "გამორთვა"
+
+
+msgid "Full"
+msgstr "სრული"
 
 
 msgid "Distribute memory across devices"
@@ -3135,10 +3143,6 @@ msgstr "მასშტაბის მემკვიდრეობით მ�
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "განსაზღვრავს, თუ როგორ იღებს ძვალი მასშტაბს მემკვიდრეობით მშობელი ძვლისგან"
-
-
-msgid "Full"
-msgstr "სრული"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -7492,10 +7496,6 @@ msgstr "წახნაგების გამოხშირვა"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "ხელი შეუშალე წვეროებს სამიზნის წახნაგზე პროექცირებაში, როცა მისკენ, ან მისგან მიტრიალებულია"
-
-
-msgid "Off"
-msgstr "გამორთვა"
 
 
 msgid "No culling"
@@ -22093,10 +22093,6 @@ msgid "Operators"
 msgstr "ოპერატორები"
 
 
-msgid "Flip Pose"
-msgstr "შებრუნებული პოზა"
-
-
 msgid "Preset Name"
 msgstr "წინასწარ აწყობილის სახელი"
 
@@ -36589,11 +36585,6 @@ msgstr "წაშალე აქტიური საგასაღებო 
 msgctxt "Operator"
 msgid "Delete Loose Points"
 msgstr "წაშალე დაუმაგრებელი წერტილები"
-
-
-msgctxt "Operator"
-msgid "Delete Duplicated Frames"
-msgstr "წაშალე დუბლირებული კადრები"
 
 
 msgctxt "Operator"

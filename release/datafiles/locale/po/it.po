@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -264,6 +264,14 @@ msgstr "Tipo Dispositivo di Calcolo"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Dispositivo da usare per i calcoli (rendering con Cycles)"
+
+
+msgid "Off"
+msgstr "Spento"
+
+
+msgid "Full"
+msgstr "Completo"
 
 
 msgid "Fribidi Library"
@@ -2392,10 +2400,6 @@ msgstr "L'osso può essere selezionato"
 
 msgid "Inherit Scale"
 msgstr "Eredita Scala"
-
-
-msgid "Full"
-msgstr "Completo"
 
 
 msgid "Layers"
@@ -5277,10 +5281,6 @@ msgstr "Scarta Faccia"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "Impedisce ai vertici di proiettare su una faccia dell'obiettivo quando di fronte/lontano"
-
-
-msgid "Off"
-msgstr "Spento"
 
 
 msgid "No culling"
@@ -37008,14 +37008,6 @@ msgstr "Modo conclusione"
 
 msgid "Method used to determine when to stop propagating pose to keyframes"
 msgstr "Metodo usato per determinare quando fermare la propagazione delle pose sui keyframes"
-
-
-msgid "While Held"
-msgstr "Mentre trattiene"
-
-
-msgid "Propagate pose to all keyframes after current frame that don't change (Default behavior)"
-msgstr "Estende la posa su tutti i fotogrammi chiave dopo il fotogramma corrente, che non cambia (impostazione predefinita)"
 
 
 msgid "To Next Keyframe"

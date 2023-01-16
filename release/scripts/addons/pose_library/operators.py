@@ -53,7 +53,7 @@ class POSELIB_OT_create_pose_asset(PoseAssetCreator, Operator):
         "Create a new Action that contains the pose of the selected bones, and mark it as Asset. "
         "The asset will be stored in the current blend file"
     )
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {'REGISTER', 'UNDO'}
 
     pose_name: StringProperty(name="Pose Name")  # type: ignore
     activate_new_action: BoolProperty(name="Activate New Action", default=True)  # type: ignore
@@ -143,7 +143,7 @@ class POSELIB_OT_restore_previous_action(Operator):
     bl_idname = "poselib.restore_previous_action"
     bl_label = "Restore Previous Action"
     bl_description = "Switch back to the previous Action, after creating a pose asset"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context: Context) -> bool:
@@ -187,14 +187,11 @@ class ASSET_OT_assign_action(Operator):
     bl_idname = "asset.assign_action"
     bl_label = "Assign Action"
     bl_description = "Set this pose Action as active Action on the active Object"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context: Context) -> bool:
-        return bool(
-            isinstance(getattr(context, "id", None), Action)
-            and context.object
-        )
+        return bool(isinstance(getattr(context, "id", None), Action) and context.object)
 
     def execute(self, context: Context) -> Set[str]:
         context.object.animation_data_create().action = context.id
@@ -205,14 +202,12 @@ class POSELIB_OT_copy_as_asset(PoseAssetCreator, Operator):
     bl_idname = "poselib.copy_as_asset"
     bl_label = "Copy Pose as Asset"
     bl_description = "Create a new pose asset on the clipboard, to be pasted into an Asset Browser"
-    bl_options = {"REGISTER"}
+    bl_options = {'REGISTER'}
 
     CLIPBOARD_ASSET_MARKER = "ASSET-BLEND="
 
     def execute(self, context: Context) -> Set[str]:
-        asset = pose_creation.create_pose_asset_from_context(
-            context, new_asset_name=context.object.name
-        )
+        asset = pose_creation.create_pose_asset_from_context(context, new_asset_name=context.object.name)
         if asset is None:
             self.report({"WARNING"}, "No animation data found to create asset from")
             return {"CANCELLED"}
@@ -257,7 +252,7 @@ class POSELIB_OT_paste_asset(Operator):
     bl_idname = "poselib.paste_asset"
     bl_label = "Paste as New Asset"
     bl_description = "Paste the Asset that was previously copied using Copy As Asset"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context: Context) -> bool:
@@ -362,7 +357,7 @@ class POSELIB_OT_pose_asset_select_bones(PoseAssetUser, Operator):
     bl_idname = "poselib.pose_asset_select_bones"
     bl_label = "Select Bones"
     bl_description = "Select those bones that are used in this pose"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {'REGISTER', 'UNDO'}
 
     select: BoolProperty(name="Select", default=True)  # type: ignore
     flipped: BoolProperty(name="Flipped", default=False)  # type: ignore
@@ -378,73 +373,17 @@ class POSELIB_OT_pose_asset_select_bones(PoseAssetUser, Operator):
         return {"FINISHED"}
 
     @classmethod
-    def description(
-        cls, _context: Context, properties: 'POSELIB_OT_pose_asset_select_bones'
-    ) -> str:
+    def description(cls, _context: Context, properties: 'POSELIB_OT_pose_asset_select_bones') -> str:
         if properties.select:
             return cls.bl_description
         return cls.bl_description.replace("Select", "Deselect")
-
-
-# This operator takes the Window Manager's `poselib_flipped` property, and
-# passes it to the `POSELIB_OT_blend_pose_asset` operator. This makes it
-# possible to bind a key to the operator and still have it respect the global
-# "Flip Pose" checkbox.
-class POSELIB_OT_blend_pose_asset_for_keymap(Operator):
-    bl_idname = "poselib.blend_pose_asset_for_keymap"
-    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
-
-    _rna = bpy.ops.poselib.blend_pose_asset.get_rna_type()
-    bl_label = _rna.name
-    bl_description = _rna.description
-    del _rna
-
-    @classmethod
-    def poll(cls, context: Context) -> bool:
-        return bpy.ops.poselib.blend_pose_asset.poll(context.copy())
-
-    def execute(self, context: Context) -> Set[str]:
-        flipped = context.window_manager.poselib_flipped
-        return bpy.ops.poselib.blend_pose_asset(context.copy(), 'EXEC_DEFAULT', flipped=flipped)
-
-    def invoke(self, context: Context, event: Event) -> Set[str]:
-        flipped = context.window_manager.poselib_flipped
-        return bpy.ops.poselib.blend_pose_asset(context.copy(), 'INVOKE_DEFAULT', flipped=flipped)
-
-
-# This operator takes the Window Manager's `poselib_flipped` property, and
-# passes it to the `POSELIB_OT_apply_pose_asset` operator. This makes it
-# possible to bind a key to the operator and still have it respect the global
-# "Flip Pose" checkbox.
-class POSELIB_OT_apply_pose_asset_for_keymap(Operator):
-    bl_idname = "poselib.apply_pose_asset_for_keymap"
-    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
-
-    _rna = bpy.ops.poselib.apply_pose_asset.get_rna_type()
-    bl_label = _rna.name
-    bl_description = _rna.description
-    del _rna
-
-    @classmethod
-    def poll(cls, context: Context) -> bool:
-        if context.copy is None:
-            # This can happen when the asset browser is configured with a
-            # non-existing asset library path.
-            return False
-        if not asset_utils.SpaceAssetInfo.is_asset_browser(context.space_data):
-            return False
-        return bpy.ops.poselib.apply_pose_asset.poll(context.copy())
-
-    def execute(self, context: Context) -> Set[str]:
-        flipped = context.window_manager.poselib_flipped
-        return bpy.ops.poselib.apply_pose_asset(context.copy(), 'EXEC_DEFAULT', flipped=flipped)
 
 
 class POSELIB_OT_convert_old_poselib(Operator):
     bl_idname = "poselib.convert_old_poselib"
     bl_label = "Convert Legacy Pose Library"
     bl_description = "Create a pose asset for each pose marker in the current action"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context: Context) -> bool:
@@ -478,7 +417,7 @@ class POSELIB_OT_convert_old_object_poselib(Operator):
 
     # Mark this one as "internal", as it converts `context.object.pose_library`
     # instead of its current animation Action.
-    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     @classmethod
     def poll(cls, context: Context) -> bool:
@@ -507,8 +446,6 @@ class POSELIB_OT_convert_old_object_poselib(Operator):
 
 classes = (
     ASSET_OT_assign_action,
-    POSELIB_OT_apply_pose_asset_for_keymap,
-    POSELIB_OT_blend_pose_asset_for_keymap,
     POSELIB_OT_convert_old_poselib,
     POSELIB_OT_convert_old_object_poselib,
     POSELIB_OT_copy_as_asset,

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
 "Last-Translator: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "Language-Team: Leandro Paganelli, Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -269,6 +269,14 @@ msgstr "Tipo de dispositivo de computação"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Dispositivo a ser usado para computação (renderização usando Cycles)."
+
+
+msgid "Off"
+msgstr "Desligar"
+
+
+msgid "Full"
+msgstr "Completo"
 
 
 msgid "Fribidi Library"
@@ -2493,10 +2501,6 @@ msgstr "Osso está apto a ser selecionado."
 
 msgid "Inherit Scale"
 msgstr "Herdar escala"
-
-
-msgid "Full"
-msgstr "Completo"
 
 
 msgid "Layers"
@@ -5666,10 +5670,6 @@ msgstr "Refugar face"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "Faz com que os vértices parem de ser projetados em uma face do alvo quando estiverem faceando na direção do alvo ou para longe dele."
-
-
-msgid "Off"
-msgstr "Desligar"
 
 
 msgid "No culling"
@@ -11457,6 +11457,10 @@ msgstr "Fator de Espessura"
 
 msgid "Steps"
 msgstr "Passos"
+
+
+msgid "Start Offset"
+msgstr "Deslocamento inicial"
 
 
 msgid "Uniform Opacity"
@@ -36552,11 +36556,6 @@ msgstr "Preenchimento do Lápis de Cera"
 
 
 msgctxt "Operator"
-msgid "Clean Duplicated Frames"
-msgstr "Limpar Quadros Duplicados"
-
-
-msgctxt "Operator"
 msgid "Clean Fill Boundaries"
 msgstr "Limpar Bordas do Preenchimento"
 
@@ -46199,14 +46198,6 @@ msgstr "Modo de encerramento"
 
 msgid "Method used to determine when to stop propagating pose to keyframes"
 msgstr "Método usado para determinar quando interromper a propagação de poses para os quadros-chave."
-
-
-msgid "While Held"
-msgstr "Enquanto são mantidos"
-
-
-msgid "Propagate pose to all keyframes after current frame that don't change (Default behavior)"
-msgstr "Propaga a pose para todos os quadros-chave após o quadro atual que não mudam (comportamento padrão)."
 
 
 msgid "To Next Keyframe"
@@ -59675,10 +59666,6 @@ msgstr "Quadro inicial mostrado dentro do editor de sequências após os desloca
 
 msgid "End Offset"
 msgstr "Deslocamento final"
-
-
-msgid "Start Offset"
-msgstr "Deslocamento inicial"
 
 
 msgid "X position where the strip begins"
