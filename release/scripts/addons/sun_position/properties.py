@@ -5,8 +5,8 @@ from bpy.types import AddonPreferences, PropertyGroup
 from bpy.props import (StringProperty, EnumProperty, IntProperty,
                        FloatProperty, BoolProperty, PointerProperty)
 
-from .sun_calc import sun_update, parse_coordinates
-from .north import north_update
+from .sun_calc import sun_update, parse_coordinates, surface_update, analemmas_update
+from .draw import north_update
 
 from math import pi
 from datetime import datetime
@@ -52,6 +52,18 @@ class SunPosProperties(PropertyGroup):
         unit="ROTATION",
         soft_min=-pi, soft_max=pi, step=10.0, default=0.0,
         update=sun_update)
+
+    show_surface: BoolProperty(
+        name="Show Surface",
+        description="Draw sun surface",
+        default=False,
+        update=surface_update)
+
+    show_analemmas: BoolProperty(
+        name="Show Analemmas",
+        description="Draw sun analemmas",
+        default=False,
+        update=analemmas_update)
 
     latitude: FloatProperty(
         name="Latitude",
@@ -186,7 +198,6 @@ class SunPosProperties(PropertyGroup):
         soft_min=1.0, soft_max=24.0, step=1.0, default=23.0,
         update=sun_update)
 
-
 ############################################################################
 # Preference panel properties
 ############################################################################
@@ -208,6 +219,18 @@ class SunPosAddonPreferences(AddonPreferences):
     show_north: BoolProperty(
         name="Show North",
         description="Show north offset choice and slider",
+        default=True,
+        update=sun_update)
+
+    show_surface: BoolProperty(
+        name="Show Surface",
+        description="Show sun surface choice and slider",
+        default=True,
+        update=sun_update)
+
+    show_analemmas: BoolProperty(
+        name="Show Analemmas",
+        description="Show analemmas choice and slider",
         default=True,
         update=sun_update)
 
@@ -244,6 +267,8 @@ class SunPosAddonPreferences(AddonPreferences):
         flow.prop(self, "show_time_place")
         flow.prop(self, "show_dms")
         flow.prop(self, "show_north")
+        flow.prop(self, "show_surface")
+        flow.prop(self, "show_analemmas")
         flow.prop(self, "show_refraction")
         flow.prop(self, "show_az_el")
         flow.prop(self, "show_daylight_savings")

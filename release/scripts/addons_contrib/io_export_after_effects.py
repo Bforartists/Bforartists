@@ -21,7 +21,7 @@ bl_info = {
     "description": "Export cameras, selected objects & camera solution "
         "3D Markers to Adobe After Effects CS3 and above",
     "author": "Bartek Skorupa, Damien Picard (@pioverfour)",
-    "version": (0, 1, 2),
+    "version": (0, 1, 3),
     "blender": (2, 80, 0),
     "location": "File > Export > Adobe After Effects (.jsx)",
     "warning": "",
@@ -444,6 +444,7 @@ def is_image_plane(obj):
     - The mesh is a plane
     - The mesh has exactly one material
     - There is only one image in this material node tree
+    - The rectangle is UV unwrapped and its UV is occupying the whole space
     """
     if not is_plane(obj):
         return False
@@ -459,9 +460,13 @@ def is_image_plane(obj):
     if img is None:
         return False
 
-    if len(obj.data.vertices) == 4:
-        return True
+    if len(obj.data.vertices) != 4:
+        return False
 
+    if not get_image_plane_matrix(obj):
+        return False
+
+    return True
 
 def get_image_filepath(obj):
     mat = get_first_material(obj)
@@ -499,6 +504,7 @@ def get_image_plane_matrix(obj):
 
     This will only work if uvs occupy all space, to get bounds
     """
+    p0, px, py = None, None, None
     for p_i, p in enumerate(obj.data.uv_layers.active.data):
         if p.uv == Vector((0, 0)):
             p0 = p_i
@@ -506,6 +512,9 @@ def get_image_plane_matrix(obj):
             px = p_i
         elif p.uv == Vector((0, 1)):
             py = p_i
+
+    if None in (p0, px, py):
+        return False
 
     verts = obj.data.vertices
     loops = obj.data.loops

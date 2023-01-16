@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-12-20 00:13+0100\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"PO-Revision-Date: 2023-01-03 19:40+0100\n"
 "Last-Translator: Damien Picard (pioverfour) <dam.pic@free.fr>\n"
 "Language-Team: French https://wiki.blender.org/wiki/Process/Translate_Blender/French_Team\n"
 "Language: fr\n"
@@ -308,6 +308,14 @@ msgstr "Type de périphérique de calculs"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Périphérique à utiliser pour les calculs (rendu avec Cycles)"
+
+
+msgid "Off"
+msgstr "Désactivé"
+
+
+msgid "Full"
+msgstr "Complet"
 
 
 msgid "Distribute memory across devices"
@@ -3234,10 +3242,6 @@ msgstr "Hériter taille"
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "Comment l’os hérite de l’échelle (taille) de l’os parent"
-
-
-msgid "Full"
-msgstr "Complet"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -7767,10 +7771,6 @@ msgstr "Suppression de face"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "Empêcher les sommets de se projeter sur la face de la cible quand ils sont devant/derrière elle"
-
-
-msgid "Off"
-msgstr "Désactivé"
 
 
 msgid "No culling"
@@ -17893,6 +17893,10 @@ msgid "Offset Stroke modifier"
 msgstr "Modificateur décaler trait"
 
 
+msgid "Start Offset"
+msgstr "Décalage de début"
+
+
 msgid "Opacity Modifier"
 msgstr "Modificateur Opacité"
 
@@ -18679,6 +18683,14 @@ msgstr "Est indirect"
 
 msgid "Is this ID block linked indirectly"
 msgstr "Ce bloc ID est-il lié indirectement"
+
+
+msgid "Runtime Data"
+msgstr "Données à l’exécution"
+
+
+msgid "This data-block is runtime data, i.e. it won't be saved in .blend file. Note that e.g. evaluated IDs are always runtime, so this value is only editable for data-blocks in Main data-base"
+msgstr "Ce bloc de données contient des données à l’exécution, c-à-d qu’il ne sera pas enregistré dans le fichier .blend. Les ID évaluées (par ex.) sont toujours à l’exécution, donc cette valeur n’est éditable que pour les blocs de données de la base de données Main"
 
 
 msgid "Library"
@@ -29094,10 +29106,6 @@ msgid "Operator registry"
 msgstr "Liste des opérateurs"
 
 
-msgid "Flip Pose"
-msgstr "Inverser pose"
-
-
 msgid "Preset Name"
 msgstr "Nom du préréglage"
 
@@ -33637,6 +33645,10 @@ msgstr "Menu d’éditeur contenant des boutons"
 
 msgid "Asset"
 msgstr "Asset"
+
+
+msgid "Catalog"
+msgstr "Catalogue"
 
 
 msgid "Assets Context Menu"
@@ -39384,6 +39396,10 @@ msgstr "Générer des normales pondérées par les aires des faces"
 
 msgid "Generate corner angle weighted normals"
 msgstr "Générer des normales pondérées par l’angle des coins"
+
+
+msgid "Face Area & Angle"
+msgstr "Aires des faces et angle"
 
 
 msgid "Generated normals weighted by both face area and angle"
@@ -55932,15 +55948,6 @@ msgid "Send new stroke to back"
 msgstr "Envoyer les nouveaux traits à l’arrière"
 
 
-msgctxt "Operator"
-msgid "Clean Duplicated Frames"
-msgstr "Nettoyer les frames en double"
-
-
-msgid "Remove any duplicated frame"
-msgstr "Supprimer toute frame en double"
-
-
 msgid "All Frames"
 msgstr "Toutes les frames"
 
@@ -56287,6 +56294,10 @@ msgid "Add new layer or note for the active data-block"
 msgstr "Ajouter un nouveau calque ou une nouvelle note au bloc de données actif"
 
 
+msgid "Name of the newly added layer"
+msgstr "Nom du calque nouvellement ajouté"
+
+
 msgctxt "Operator"
 msgid "Add New Annotation Layer"
 msgstr "Ajouter calque d’annotation"
@@ -56584,10 +56595,6 @@ msgstr "Déplacer traits vers calque"
 
 msgid "Move selected strokes to another layer"
 msgstr "Déplacer les traits sélectionnés vers un autre calque"
-
-
-msgid "Name of the newly added layer"
-msgstr "Nom du calque nouvellement ajouté"
 
 
 msgctxt "Operator"
@@ -66218,6 +66225,10 @@ msgid "Clear Object Paths"
 msgstr "Effacer chemins d’objets"
 
 
+msgid "Only clear motion paths of selected objects"
+msgstr "N’effacer que les chemins de mouvement des objets sélectionnés"
+
+
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Mettre à jour chemins d’objets"
@@ -69514,10 +69525,6 @@ msgid "Apply the given Pose Action to the rig"
 msgstr "Appliquer l’action de pose dans le rig"
 
 
-msgid "Amount that the pose is applied on top of the existing poses"
-msgstr "Quantité de la pose à appliquer par-dessus la pose existante"
-
-
 msgid "Apply Flipped"
 msgstr "Appliquer retournée"
 
@@ -69548,6 +69555,11 @@ msgid "Create a pose asset for each pose marker in the current action"
 msgstr "Créer un asset de pose pour chaque marqueur de pose dans l’action actuelle"
 
 
+msgctxt "Operator"
+msgid "Copy Pose as Asset"
+msgstr "Copier pose en tant qu’asset"
+
+
 msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Browser"
 msgstr "Créer un nouvel asset de pose dans le presse-papier, à coller dans l’explorateur d’asset"
 
@@ -69567,6 +69579,11 @@ msgstr "Activer nouvelle action"
 
 msgid "Pose Name"
 msgstr "Nom de la pose"
+
+
+msgctxt "Operator"
+msgid "Paste as New Asset"
+msgstr "Coller comme nouvel asset"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
@@ -69898,6 +69915,10 @@ msgid "Clear Bone Paths"
 msgstr "Effacer chemins d’os"
 
 
+msgid "Only clear motion paths of selected bones"
+msgstr "N’effacer que les chemins de mouvement des os sélectionnés"
+
+
 msgctxt "Operator"
 msgid "Update Range from Scene"
 msgstr "Mettre à jour l’intervalle depuis la scène"
@@ -69935,14 +69956,6 @@ msgstr "Mode d’interruption"
 
 msgid "Method used to determine when to stop propagating pose to keyframes"
 msgstr "Méthode utilisée pour déterminer quand arrêter de propager la pose aux images clés"
-
-
-msgid "While Held"
-msgstr "Durant maintient"
-
-
-msgid "Propagate pose to all keyframes after current frame that don't change (Default behavior)"
-msgstr "Propager la pose à toutes les images clés après l’image actuelle qui ne change pas (comportement par défaut)"
 
 
 msgid "To Next Keyframe"
@@ -85128,14 +85141,6 @@ msgid "Enable library override template in the python API"
 msgstr "Activer les patrons de redéfinition de bibliothèque dans l’API Python"
 
 
-msgid "Realtime Compositor"
-msgstr "Compositing temps réel"
-
-
-msgid "Enable the new realtime compositor"
-msgstr "Activer le nouveau module de compositing temps réel"
-
-
 msgid "Sculpt Texture Paint"
 msgstr "Peinture de texture en mode sculpture"
 
@@ -86060,8 +86065,16 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "Limiter la taille de la texture pour épargner la mémoire graphique"
 
 
+msgid "OpenGL"
+msgstr "OpenGL"
+
+
 msgid "Metal"
 msgstr "Metal"
+
+
+msgid "Vulkan"
+msgstr "Vulkan"
 
 
 msgid "Image Display Method"
@@ -88198,10 +88211,6 @@ msgstr "Utiliser un motif Sobol avec embrouillage d’Owen calculé à la volée
 
 msgid "Tabulated Sobol"
 msgstr "Sobol tabulé"
-
-
-msgid "Use precomputed tables of Owen-scrambled Sobol for random sampling"
-msgstr "Utiliser des tables précalculées du motif Sobol avec embrouillage d’Owen pour l’échantillonnage aléatoire"
 
 
 msgid "Scrambling Distance"
@@ -91595,10 +91604,6 @@ msgstr "Frame de départ affichée dans l’éditeur de séquences après applic
 
 msgid "End Offset"
 msgstr "Décalage de fin"
-
-
-msgid "Start Offset"
-msgstr "Décalage de début"
 
 
 msgid "X position where the strip begins"
@@ -100156,6 +100161,14 @@ msgid "Sculpt Mask Opacity"
 msgstr "Opacité masque de sculpture"
 
 
+msgid "Sculpt Show Face Sets"
+msgstr "Afficher ensembles de faces de sculpture"
+
+
+msgid "Sculpt Show Mask"
+msgstr "Afficher masque de sculpture"
+
+
 msgid "Display X Axis"
 msgstr "Afficher axe X"
 
@@ -105266,6 +105279,11 @@ msgid "Apply Pose"
 msgstr "Appliquer pose"
 
 
+msgctxt "Operator"
+msgid "Apply Pose Flipped"
+msgstr "Appliquer pose retournée"
+
+
 msgid "Action %s marked Fake User to prevent loss"
 msgstr "L’action %s a été marquée en utilisateur factice pour empêcher une perte de données"
 
@@ -107041,7 +107059,7 @@ msgstr "Supprimer points isolés"
 
 
 msgctxt "Operator"
-msgid "Delete Duplicated Frames"
+msgid "Delete Duplicate Frames"
 msgstr "Supprimer frames en double"
 
 
@@ -108763,11 +108781,6 @@ msgstr "Nettoyer canaux"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Étendre"
-
-
-msgctxt "Operator"
-msgid "Delete Duplicate Frames"
-msgstr "Supprimer frames en double"
 
 
 msgctxt "Operator"
@@ -112692,10 +112705,6 @@ msgid "To 3D Cursor"
 msgstr "Au curseur 3D"
 
 
-msgid "Compositor not supported on MacOS."
-msgstr "Compositeur non pris en charge sur MacOS."
-
-
 msgid "Fade Inactive Geometry"
 msgstr "Atténuer géométrie inactive"
 
@@ -114883,6 +114892,14 @@ msgid "Failed to find bind solution (increase precision?)"
 msgstr "Impossible de trouver une solution de liaison (augmentez la précision ?)"
 
 
+msgid "Clear motion paths of selected bones"
+msgstr "N’effacer que les chemins de mouvement des os sélectionnés"
+
+
+msgid "Clear motion paths of all bones"
+msgstr "Effacer les chemins de mouvement de tous les os"
+
+
 msgid "Cannot pose libdata"
 msgstr "Impossible de poser des données de bibliothèque"
 
@@ -115466,10 +115483,6 @@ msgstr "Impossible de basculer vers un matériau inexistant (indice = %d)"
 
 msgid "No active GP data"
 msgstr "Pas de données de crayon gras actives"
-
-
-msgid "Operator not supported in multiframe edition"
-msgstr "Opérateur non pris en charge en édition multiframes"
 
 
 msgid "Not implemented!"
@@ -117603,7 +117616,7 @@ msgstr "Transférer des couches de données (poids, dureté d’arête, etc.) de
 
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
-msgstr "L’opérateur est gelé, les modifications de ses réglages ne prendront pas effets avant que vous ne le dégeliez"
+msgstr "L’opérateur est gelé, les modifications de ses réglages ne prendront pas effet tant qu’il sera gelé"
 
 
 msgid "Skipping object '%s', linked or override data '%s' cannot be modified"
@@ -117612,6 +117625,14 @@ msgstr "Objet « %s » ignoré, les données liées ou redéfinies « %s » 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
 msgstr "Objet « %s » ignoré, les données « %s » ont déjà été traitées dans un objet précédent"
+
+
+msgid "Clear motion paths of selected objects"
+msgstr "Effacer les chemins de mouvement des objets sélectionnés"
+
+
+msgid "Clear motion paths of all objects"
+msgstr "Effacer les chemins de mouvement de tous les objets"
 
 
 msgid "Can't edit linked mesh or curve data"
@@ -120008,6 +120029,22 @@ msgid "Loading Asset Libraries"
 msgstr "Chargement des bibliothèques d’assets"
 
 
+msgid "Clipboard is empty"
+msgstr "Le presse-papier est vide"
+
+
+msgid "Some nodes references could not be restored, will be left empty"
+msgstr "Certaines références de nœuds n’ont pas pu être restaurées et vont être laissées vides"
+
+
+msgid "Cannot add node %s into node tree %s: %s"
+msgstr "Impossible d’ajouter le nœud %s à l’arborescence de nœuds %s : %s"
+
+
+msgid "Cannot add node %s into node tree %s"
+msgstr "Impossible d’ajouter le nœud %s à l’arborescence de nœuds %s"
+
+
 msgid "Label Size"
 msgstr "Taille d’étiquette"
 
@@ -120042,10 +120079,6 @@ msgstr "Type de prise non-défini"
 
 msgid "Group Input "
 msgstr "Entrée groupe "
-
-
-msgid "NodeTree"
-msgstr "ArborescenceDeNœuds"
 
 
 msgid "Could not determine type of group node"
@@ -120212,10 +120245,6 @@ msgid "Supported: "
 msgstr "Pris en charge : "
 
 
-msgid "The socket value has not been computed yet"
-msgstr "La valeur du connecteur n’a pas encore été calculée"
-
-
 msgid "Accessed named attributes:"
 msgstr "Accès attribut nommé :"
 
@@ -120240,24 +120269,8 @@ msgid "The execution time from the node tree's latest evaluation. For frame and 
 msgstr "La durée d’exécution de la dernière exécution de l’arborescence de nœuds. Pour les nœuds cadres et groupes, la durée pour tous les sous-nœuds"
 
 
-msgid "Clipboard is empty"
-msgstr "Le presse-papier est vide"
-
-
-msgid "Some nodes references could not be restored, will be left empty"
-msgstr "Certaines références de nœuds n’ont pas pu être restaurées et vont être laissées vides"
-
-
 msgid "Text not used by any node, no update done"
 msgstr "Le texte n’est utilisé par aucun nœud, aucune mise à jour n’a été faite"
-
-
-msgid "Cannot add node %s into node tree %s: %s"
-msgstr "Impossible d’ajouter le nœud %s à l’arborescence de nœuds %s : %s"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "Impossible d’ajouter le nœud %s à l’arborescence de nœuds %s"
 
 
 msgid "Cannot ungroup"
@@ -121880,14 +121893,6 @@ msgstr "[Maj] - Précision activée"
 
 msgid "Shift - Hold for precision"
 msgstr "Maj - Maintenir pour précision"
-
-
-msgid "[Ctrl] - Increments active"
-msgstr "[Ctrl] - Incréments activés"
-
-
-msgid "Ctrl - Hold for 10% increments"
-msgstr "Ctrl - Maintenir pour incréments de 10%"
 
 
 msgid "Unpack File"

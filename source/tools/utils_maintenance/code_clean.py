@@ -1056,6 +1056,15 @@ class edit_generators:
                     data,
             ):
                 beg, end = match.span()
+                # This could be ignored, but `sizeof` accounts for such a large number
+                # of cases that should be left as-is, that it's best to explicitly ignore them.
+                if (
+                    (beg > 6) and
+                    (data[beg - 6: beg] == 'sizeof') and
+                    (not data[beg - 7].isalpha())
+                ):
+                    continue
+
                 char_after = data[end]
                 if char_after == "(":
                     # Simple case.

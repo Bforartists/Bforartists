@@ -139,9 +139,7 @@ class PoseActionCreator:
                 # A once-animated property no longer exists.
                 continue
 
-            dst_fcurve = dst_action.fcurves.new(
-                fcurve.data_path, index=fcurve.array_index, action_group=bone_name
-            )
+            dst_fcurve = dst_action.fcurves.new(fcurve.data_path, index=fcurve.array_index, action_group=bone_name)
             dst_fcurve.keyframe_points.insert(self.params.src_frame_nr, value=value)
             dst_fcurve.update()
 
@@ -171,9 +169,7 @@ class PoseActionCreator:
             else:
                 self._store_bone_property(dst_action, bone_name, prop_name)
 
-    def _store_bone_array(
-        self, dst_action: Action, bone_name: str, property_name: str, array_length: int
-    ) -> None:
+    def _store_bone_array(self, dst_action: Action, bone_name: str, property_name: str, array_length: int) -> None:
         """Store all elements of an array property."""
         for array_index in range(array_length):
             self._store_bone_property(dst_action, bone_name, property_name, array_index)
@@ -201,9 +197,7 @@ class PoseActionCreator:
         fcurve.update()
 
     @classmethod
-    def _current_value(
-        cls, datablock: bpy.types.ID, data_path: str, array_index: int
-    ) -> FCurveValue:
+    def _current_value(cls, datablock: bpy.types.ID, data_path: str, array_index: int) -> FCurveValue:
         """Resolve an RNA path + array index to an actual value."""
         value_or_array = cls._path_resolve(datablock, data_path)
 
@@ -227,9 +221,7 @@ class PoseActionCreator:
         return cast(FCurveValue, value_or_array[array_index])  # type: ignore
 
     @staticmethod
-    def _path_resolve(
-        datablock: bpy.types.ID, data_path: str
-    ) -> Union[FCurveValue, Iterable[FCurveValue]]:
+    def _path_resolve(datablock: bpy.types.ID, data_path: str) -> Union[FCurveValue, Iterable[FCurveValue]]:
         """Wrapper for datablock.path_resolve(data_path).
 
         Raise UnresolvablePathError when the path cannot be resolved.
@@ -338,9 +330,7 @@ def copy_fcurves(
     return num_fcurves_copied
 
 
-def create_single_key_fcurve(
-    dst_action: Action, src_fcurve: FCurve, src_keyframe: Keyframe
-) -> FCurve:
+def create_single_key_fcurve(dst_action: Action, src_fcurve: FCurve, src_keyframe: Keyframe) -> FCurve:
     """Create a copy of the source FCurve, but only for the given keyframe.
 
     Returns a new FCurve with just one keyframe.
@@ -355,9 +345,7 @@ def copy_fcurve_without_keys(dst_action: Action, src_fcurve: FCurve) -> FCurve:
     """Create a new FCurve and copy some properties."""
 
     src_group_name = src_fcurve.group.name if src_fcurve.group else ""
-    dst_fcurve = dst_action.fcurves.new(
-        src_fcurve.data_path, index=src_fcurve.array_index, action_group=src_group_name
-    )
+    dst_fcurve = dst_action.fcurves.new(src_fcurve.data_path, index=src_fcurve.array_index, action_group=src_group_name)
     for propname in {"auto_smoothing", "color", "color_mode", "extrapolation"}:
         setattr(dst_fcurve, propname, getattr(src_fcurve, propname))
     return dst_fcurve

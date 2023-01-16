@@ -339,7 +339,8 @@ def get_sequences_at_frame(
     :param frame: the frame to consider
     """
     return [s for s in sequences if frame >= s.frame_start + s.frame_offset_start and
-                                    frame < s.frame_start + s.frame_offset_start + s.frame_final_duration]
+                                    frame < s.frame_start + s.frame_offset_start + s.frame_final_duration and
+                                    s.type == 'SCENE']
 
 
 def get_sequence_at_frame(

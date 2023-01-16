@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -304,6 +304,14 @@ msgstr "Berechnungsgerättyp"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Gerät, das für Berechnungen verwendet wird (rendern mit Cycles)"
+
+
+msgid "Off"
+msgstr "Aus"
+
+
+msgid "Full"
+msgstr "Voll"
 
 
 msgid "Distribute memory across devices"
@@ -2952,10 +2960,6 @@ msgstr "Skalierung übernehmen"
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "Spezifiziert, wie die Skalierung des Knochen vom Elternknochen übernommen wird"
-
-
-msgid "Full"
-msgstr "Voll"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -6757,10 +6761,6 @@ msgstr "Ziele verwenden"
 
 msgid "Shrinkwrap Constraint"
 msgstr "Schrumpfbeschränkung"
-
-
-msgid "Off"
-msgstr "Aus"
 
 
 msgid "No culling"
@@ -12294,6 +12294,10 @@ msgstr "Rauschsamen"
 
 msgid "Offset Modifier"
 msgstr "Offset-Modifizierer"
+
+
+msgid "Start Offset"
+msgstr "Startversatz"
 
 
 msgid "Opacity Modifier"
@@ -18167,10 +18171,6 @@ msgstr "Operatoren"
 
 msgid "Operator registry"
 msgstr "Operator-Voreinstellung"
-
-
-msgid "Flip Pose"
-msgstr "Pose umkehren"
 
 
 msgid "Preset Name"
@@ -31704,11 +31704,6 @@ msgstr "Strickpunkte extrudieren"
 msgctxt "Operator"
 msgid "Grease Pencil Fill"
 msgstr "Wachsstift Füllung"
-
-
-msgctxt "Operator"
-msgid "Clean Duplicated Frames"
-msgstr "Bereinigen von duplizierten Frames"
 
 
 msgid "All Frames"
@@ -48853,10 +48848,6 @@ msgid "Effect Fader Position"
 msgstr "Effektabklingposition"
 
 
-msgid "Start Offset"
-msgstr "Startversatz"
-
-
 msgid "Override Cache Settings"
 msgstr "Puffereigenschaften überschreiben"
 
@@ -56111,8 +56102,8 @@ msgstr "Lösche freie Punkte"
 
 
 msgctxt "Operator"
-msgid "Delete Duplicated Frames"
-msgstr "Lösche doppelte Einzelbilder"
+msgid "Delete Duplicate Frames"
+msgstr "Doppelte Einzelbilder löschen"
 
 
 msgctxt "Operator"
@@ -57403,11 +57394,6 @@ msgstr "Kanäle löschen"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Erweitern"
-
-
-msgctxt "Operator"
-msgid "Delete Duplicate Frames"
-msgstr "Doppelte Einzelbilder löschen"
 
 
 msgctxt "Operator"
@@ -63892,10 +63878,6 @@ msgstr "Undefinierter Socket Typ"
 
 msgid "Group Input "
 msgstr "Gruppeneingabe "
-
-
-msgid "NodeTree"
-msgstr "Knotenbaum"
 
 
 msgid " (String)"

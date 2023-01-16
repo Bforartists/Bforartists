@@ -151,9 +151,15 @@ struct NodeState {
    */
   bool node_has_finished = false;
   /**
-   * Set to true once the node is done running for the first time.
+   * Set to true once the always required inputs have been requested.
+   * This happens the first time the node is run.
    */
-  bool had_initialization = false;
+  bool always_used_inputs_requested = false;
+  /**
+   * Set to true when the storage and defaults have been initialized.
+   * This happens the first time the node function is executed.
+   */
+  bool storage_and_defaults_initialized = false;
   /**
    * Nodes with side effects should always be executed when their required inputs have been
    * computed.
@@ -200,6 +206,44 @@ struct LockedNode {
 class Executor;
 class GraphExecutorLFParams;
 
+/**
+ * Keeps track of nodes that are currently scheduled on a thread. A node can only be scheduled by
+ * one thread at the same time.
+ */
+struct ScheduledNodes {
+ private:
+  /** Use two stacks of scheduled nodes for different priorities. */
+  Vector<const FunctionNode *> priority_;
+  Vector<const FunctionNode *> normal_;
+
+ public:
+  void schedule(const FunctionNode &node, const bool is_priority)
+  {
+    if (is_priority) {
+      this->priority_.append(&node);
+    }
+    else {
+      this->normal_.append(&node);
+    }
+  }
+
+  const FunctionNode *pop_next_node()
+  {
+    if (!this->priority_.is_empty()) {
+      return this->priority_.pop_last();
+    }
+    if (!this->normal_.is_empty()) {
+      return this->normal_.pop_last();
+    }
+    return nullptr;
+  }
+
+  bool is_empty() const
+  {
+    return this->priority_.is_empty() && this->normal_.is_empty();
+  }
+};
+
 struct CurrentTask {
   /**
    * Mutex used to protect #scheduled_nodes when the executor uses multi-threading.
@@ -208,7 +252,7 @@ struct CurrentTask {
   /**
    * Nodes that have been scheduled to execute next.
    */
-  Vector<const FunctionNode *> scheduled_nodes;
+  ScheduledNodes scheduled_nodes;
   /**
    * Makes it cheaper to check if there are any scheduled nodes because it avoids locking the
    * mutex.
@@ -324,7 +368,7 @@ class Executor {
       this->schedule_side_effect_nodes(side_effect_nodes, current_task);
     }
 
-    this->schedule_newly_requested_outputs(current_task);
+    this->schedule_for_new_output_usages(current_task);
     this->forward_newly_provided_inputs(current_task);
 
     this->run_task(current_task);
@@ -388,20 +432,29 @@ class Executor {
     std::destroy_at(&node_state);
   }
 
-  void schedule_newly_requested_outputs(CurrentTask &current_task)
+  /**
+   * When the usage of output values changed, propagate that information backwards.
+   */
+  void schedule_for_new_output_usages(CurrentTask &current_task)
   {
     for (const int graph_output_index : self_.graph_outputs_.index_range()) {
-      if (params_->get_output_usage(graph_output_index) != ValueUsage::Used) {
+      if (params_->output_was_set(graph_output_index)) {
         continue;
       }
-      if (params_->output_was_set(graph_output_index)) {
+      const ValueUsage output_usage = params_->get_output_usage(graph_output_index);
+      if (output_usage == ValueUsage::Maybe) {
         continue;
       }
       const InputSocket &socket = *self_.graph_outputs_[graph_output_index];
       const Node &node = socket.node();
       NodeState &node_state = *node_states_[node.index_in_graph()];
       this->with_locked_node(node, node_state, current_task, [&](LockedNode &locked_node) {
-        this->set_input_required(locked_node, socket);
+        if (output_usage == ValueUsage::Used) {
+          this->set_input_required(locked_node, socket);
+        }
+        else {
+          this->set_input_unused(locked_node, socket);
+        }
       });
     }
   }
@@ -526,7 +579,7 @@ class Executor {
     for (const FunctionNode *node : side_effect_nodes) {
       NodeState &node_state = *node_states_[node->index_in_graph()];
       this->with_locked_node(*node, node_state, current_task, [&](LockedNode &locked_node) {
-        this->schedule_node(locked_node, current_task);
+        this->schedule_node(locked_node, current_task, false);
       });
     }
   }
@@ -597,7 +650,7 @@ class Executor {
         return;
       }
       output_state.usage = ValueUsage::Used;
-      this->schedule_node(locked_node, current_task);
+      this->schedule_node(locked_node, current_task, false);
     });
   }
 
@@ -619,14 +672,16 @@ class Executor {
             params_->set_input_unused(graph_input_index);
           }
           else {
-            this->schedule_node(locked_node, current_task);
+            /* Schedule as priority node. This allows freeing up memory earlier which results in
+             * better memory reuse and less copy-on-write copies caused by shared data. */
+            this->schedule_node(locked_node, current_task, true);
           }
         }
       }
     });
   }
 
-  void schedule_node(LockedNode &locked_node, CurrentTask &current_task)
+  void schedule_node(LockedNode &locked_node, CurrentTask &current_task, const bool is_priority)
   {
     BLI_assert(locked_node.node.is_function());
     switch (locked_node.node_state.schedule_state) {
@@ -635,10 +690,10 @@ class Executor {
         const FunctionNode &node = static_cast<const FunctionNode &>(locked_node.node);
         if (this->use_multi_threading()) {
           std::lock_guard lock{current_task.mutex};
-          current_task.scheduled_nodes.append(&node);
+          current_task.scheduled_nodes.schedule(node, is_priority);
         }
         else {
-          current_task.scheduled_nodes.append(&node);
+          current_task.scheduled_nodes.schedule(node, is_priority);
         }
         current_task.has_scheduled_nodes.store(true, std::memory_order_relaxed);
         break;
@@ -694,12 +749,11 @@ class Executor {
 
   void run_task(CurrentTask &current_task)
   {
-    while (!current_task.scheduled_nodes.is_empty()) {
-      const FunctionNode &node = *current_task.scheduled_nodes.pop_last();
+    while (const FunctionNode *node = current_task.scheduled_nodes.pop_next_node()) {
       if (current_task.scheduled_nodes.is_empty()) {
         current_task.has_scheduled_nodes.store(false, std::memory_order_relaxed);
       }
-      this->run_node_task(node, current_task);
+      this->run_node_task(*node, current_task);
     }
   }
 
@@ -729,39 +783,20 @@ class Executor {
         return;
       }
 
-      if (!node_state.had_initialization) {
-        /* Initialize storage. */
-        node_state.storage = fn.init_storage(allocator);
-
-        /* Load unlinked inputs. */
-        for (const int input_index : node.inputs().index_range()) {
-          const InputSocket &input_socket = node.input(input_index);
-          if (input_socket.origin() != nullptr) {
-            continue;
-          }
-          InputState &input_state = node_state.inputs[input_index];
-          const CPPType &type = input_socket.type();
-          const void *default_value = input_socket.default_value();
-          BLI_assert(default_value != nullptr);
-          if (self_.logger_ != nullptr) {
-            self_.logger_->log_socket_value(input_socket, {type, default_value}, *context_);
-          }
-          void *buffer = allocator.allocate(type.size(), type.alignment());
-          type.copy_construct(default_value, buffer);
-          this->forward_value_to_input(locked_node, input_state, {type, buffer}, current_task);
-        }
-
+      if (!node_state.always_used_inputs_requested) {
         /* Request linked inputs that are always needed. */
         const Span<Input> fn_inputs = fn.inputs();
         for (const int input_index : fn_inputs.index_range()) {
           const Input &fn_input = fn_inputs[input_index];
           if (fn_input.usage == ValueUsage::Used) {
             const InputSocket &input_socket = node.input(input_index);
-            this->set_input_required(locked_node, input_socket);
+            if (input_socket.origin() != nullptr) {
+              this->set_input_required(locked_node, input_socket);
+            }
           }
         }
 
-        node_state.had_initialization = true;
+        node_state.always_used_inputs_requested = true;
       }
 
       for (const int input_index : node_state.inputs.index_range()) {
@@ -784,6 +819,32 @@ class Executor {
     });
 
     if (node_needs_execution) {
+      if (!node_state.storage_and_defaults_initialized) {
+        /* Initialize storage. */
+        node_state.storage = fn.init_storage(allocator);
+
+        /* Load unlinked inputs. */
+        for (const int input_index : node.inputs().index_range()) {
+          const InputSocket &input_socket = node.input(input_index);
+          if (input_socket.origin() != nullptr) {
+            continue;
+          }
+          InputState &input_state = node_state.inputs[input_index];
+          const CPPType &type = input_socket.type();
+          const void *default_value = input_socket.default_value();
+          BLI_assert(default_value != nullptr);
+          if (self_.logger_ != nullptr) {
+            self_.logger_->log_socket_value(input_socket, {type, default_value}, *context_);
+          }
+          BLI_assert(input_state.value == nullptr);
+          input_state.value = allocator.allocate(type.size(), type.alignment());
+          type.copy_construct(default_value, input_state.value);
+          input_state.was_ready_for_execution = true;
+        }
+
+        node_state.storage_and_defaults_initialized = true;
+      }
+
       /* Importantly, the node must not be locked when it is executed. That would result in locks
        * being hold very long in some cases and results in multiple locks being hold by the same
        * thread in the same graph which can lead to deadlocks. */
@@ -801,7 +862,7 @@ class Executor {
                                         NodeScheduleState::RunningAndRescheduled;
       node_state.schedule_state = NodeScheduleState::NotScheduled;
       if (reschedule_requested && !node_state.node_has_finished) {
-        this->schedule_node(locked_node, current_task);
+        this->schedule_node(locked_node, current_task, false);
       }
     });
   }
@@ -1048,7 +1109,7 @@ class Executor {
           (locked_node.node.is_function() && static_cast<const FunctionNode &>(locked_node.node)
                                                  .function()
                                                  .allow_missing_requested_inputs())) {
-        this->schedule_node(locked_node, current_task);
+        this->schedule_node(locked_node, current_task, false);
       }
     }
   }
@@ -1060,6 +1121,12 @@ class Executor {
 
   bool try_enable_multi_threading()
   {
+#ifndef WITH_TBB
+    /* The non-TBB task pool has the property that it immediately executes tasks under some
+     * circumstances. This is not supported here because tasks might be scheduled while another
+     * node is in the middle of being executed on the same thread. */
+    return false;
+#endif
     if (this->use_multi_threading()) {
       return true;
     }
@@ -1101,14 +1168,13 @@ class Executor {
   void move_scheduled_nodes_to_task_pool(CurrentTask &current_task)
   {
     BLI_assert(this->use_multi_threading());
-    using FunctionNodeVector = Vector<const FunctionNode *>;
-    FunctionNodeVector *nodes = MEM_new<FunctionNodeVector>(__func__);
+    ScheduledNodes *scheduled_nodes = MEM_new<ScheduledNodes>(__func__);
     {
       std::lock_guard lock{current_task.mutex};
       if (current_task.scheduled_nodes.is_empty()) {
         return;
       }
-      *nodes = std::move(current_task.scheduled_nodes);
+      *scheduled_nodes = std::move(current_task.scheduled_nodes);
       current_task.has_scheduled_nodes.store(false, std::memory_order_relaxed);
     }
     /* All nodes are pushed as a single task in the pool. This avoids unnecessary threading
@@ -1117,17 +1183,15 @@ class Executor {
         task_pool_.load(),
         [](TaskPool *pool, void *data) {
           Executor &executor = *static_cast<Executor *>(BLI_task_pool_user_data(pool));
-          FunctionNodeVector &nodes = *static_cast<FunctionNodeVector *>(data);
+          ScheduledNodes &scheduled_nodes = *static_cast<ScheduledNodes *>(data);
           CurrentTask new_current_task;
-          new_current_task.scheduled_nodes = std::move(nodes);
+          new_current_task.scheduled_nodes = std::move(scheduled_nodes);
           new_current_task.has_scheduled_nodes.store(true, std::memory_order_relaxed);
           executor.run_task(new_current_task);
         },
-        nodes,
+        scheduled_nodes,
         true,
-        [](TaskPool * /*pool*/, void *data) {
-          MEM_delete(static_cast<FunctionNodeVector *>(data));
-        });
+        [](TaskPool * /*pool*/, void *data) { MEM_delete(static_cast<ScheduledNodes *>(data)); });
   }
 
   LinearAllocator<> &get_main_or_local_allocator()

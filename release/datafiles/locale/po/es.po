@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzán <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -308,6 +308,14 @@ msgstr "Tipo dispositivo cálculo"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Dispositivo a usar para el cálculo (al procesar con Cycles)"
+
+
+msgid "Off"
+msgstr "Desactivado"
+
+
+msgid "Full"
+msgstr "Completo"
 
 
 msgid "Distribute memory across devices"
@@ -3202,10 +3210,6 @@ msgstr "Heredar escala"
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "Especifica de qué manera el hueso heredará la escala de su superior"
-
-
-msgid "Full"
-msgstr "Completo"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -7727,10 +7731,6 @@ msgstr "Descartar caras"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "Dejar de proyectar vértices a las caras del objetivo cuando apunte hacia afuera"
-
-
-msgid "Off"
-msgstr "Desactivado"
 
 
 msgid "No culling"
@@ -17823,6 +17823,10 @@ msgstr "Modificador Desplazamiento"
 
 msgid "Offset Stroke modifier"
 msgstr "Modificador para desplazar trazos"
+
+
+msgid "Start Offset"
+msgstr "Inicio desplazamiento"
 
 
 msgid "Opacity Modifier"
@@ -28988,10 +28992,6 @@ msgstr "Operadores"
 
 msgid "Operator registry"
 msgstr "Registro de operadores"
-
-
-msgid "Flip Pose"
-msgstr "Invertir pose"
 
 
 msgid "Preset Name"
@@ -55661,15 +55661,6 @@ msgid "Send new stroke to back"
 msgstr "Envía los nuevos trazos al fondo"
 
 
-msgctxt "Operator"
-msgid "Clean Duplicated Frames"
-msgstr "Eliminar fotogramas duplicados"
-
-
-msgid "Remove any duplicated frame"
-msgstr "Eliminar cualquier fotograma que se encuentre duplicado"
-
-
 msgid "All Frames"
 msgstr "Todos los fotogramas"
 
@@ -56008,6 +55999,10 @@ msgid "Add new layer or note for the active data-block"
 msgstr "Agrega una nueva capa o anotación para el bloque de datos activo"
 
 
+msgid "Name of the newly added layer"
+msgstr "Nombre de la capa recientemente agregada"
+
+
 msgctxt "Operator"
 msgid "Add New Annotation Layer"
 msgstr "Agregar nueva capa de anotación"
@@ -56305,10 +56300,6 @@ msgstr "Mover trazos a capa"
 
 msgid "Move selected strokes to another layer"
 msgstr "Permite mover los trazos seleccionados a otra capa"
-
-
-msgid "Name of the newly added layer"
-msgstr "Nombre de la capa recientemente agregada"
 
 
 msgctxt "Operator"
@@ -69223,10 +69214,6 @@ msgid "Apply the given Pose Action to the rig"
 msgstr "Aplica la acción de pose indicada a los controles de animación"
 
 
-msgid "Amount that the pose is applied on top of the existing poses"
-msgstr "Magnitud en que la pose será aplicada sobre las poses existentes"
-
-
 msgid "Apply Flipped"
 msgstr "Aplicar invertida"
 
@@ -69644,14 +69631,6 @@ msgstr "Terminar modo"
 
 msgid "Method used to determine when to stop propagating pose to keyframes"
 msgstr "Método usado para determinar cuando detener la propagación de la pose"
-
-
-msgid "While Held"
-msgstr "Al mantener"
-
-
-msgid "Propagate pose to all keyframes after current frame that don't change (Default behavior)"
-msgstr "Propaga la pose a todos los fotogramas clave posteriores al fotograma actual que no cambian (comportamiento predefinido)"
 
 
 msgid "To Next Keyframe"
@@ -84783,14 +84762,6 @@ msgid "Enable library override template in the python API"
 msgstr "Habilitar plantillas de redefinición de bibliotecas en la API de python"
 
 
-msgid "Realtime Compositor"
-msgstr "Compositor en tiempo real"
-
-
-msgid "Enable the new realtime compositor"
-msgstr "Habilita el nuevo compositor en tiempo real"
-
-
 msgid "Sculpt Texture Paint"
 msgstr "Pintar texturas en esculpido"
 
@@ -91174,10 +91145,6 @@ msgstr "Fotograma inicial mostrado en el editor de secuencias luego de ser aplic
 
 msgid "End Offset"
 msgstr "Final desplazamiento"
-
-
-msgid "Start Offset"
-msgstr "Inicio desplazamiento"
 
 
 msgid "X position where the strip begins"
@@ -106571,7 +106538,7 @@ msgstr "Borrar puntos sueltos"
 
 
 msgctxt "Operator"
-msgid "Delete Duplicated Frames"
+msgid "Delete Duplicate Frames"
 msgstr "Borrar fotogramas duplicados"
 
 
@@ -108293,11 +108260,6 @@ msgstr "Limpiar canales"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Extender"
-
-
-msgctxt "Operator"
-msgid "Delete Duplicate Frames"
-msgstr "Borrar fotogramas duplicados"
 
 
 msgctxt "Operator"
@@ -114909,10 +114871,6 @@ msgid "No active GP data"
 msgstr "No hay datos de lápiz de cera activo"
 
 
-msgid "Operator not supported in multiframe edition"
-msgstr "Operador no soportado en edición multifotogramas"
-
-
 msgid "Not implemented!"
 msgstr "¡No implementado!"
 
@@ -119429,6 +119387,18 @@ msgid "Loading Asset Libraries"
 msgstr "Cargando bibliotecas de recursos"
 
 
+msgid "Clipboard is empty"
+msgstr "El portapapeles se encuentra vacío"
+
+
+msgid "Some nodes references could not be restored, will be left empty"
+msgstr "No se pudieron restablecer algunas referencias a nodos, serán dejadas en blanco"
+
+
+msgid "Cannot add node %s into node tree %s"
+msgstr "No es posible agregar el nodo %s al árbol de nodos %s"
+
+
 msgid "Label Size"
 msgstr "Tamaño de etiqueta"
 
@@ -119463,10 +119433,6 @@ msgstr "Tipo de conector no definido"
 
 msgid "Group Input "
 msgstr "Entrada del grupo "
-
-
-msgid "NodeTree"
-msgstr "Árbol de nodos"
 
 
 msgid "Could not determine type of group node"
@@ -119633,10 +119599,6 @@ msgid "Supported: "
 msgstr "Soportado: "
 
 
-msgid "The socket value has not been computed yet"
-msgstr "El valor del conector aún no ha sido calculado"
-
-
 msgid "Accessed named attributes:"
 msgstr "Atributos con nombre accedidos:"
 
@@ -119661,20 +119623,8 @@ msgid "The execution time from the node tree's latest evaluation. For frame and 
 msgstr "El tiempo de ejecución de la última evaluación del árbol e nodos. Para nodos de grupo y marco, el tiempo de todos sus sub-nodos"
 
 
-msgid "Clipboard is empty"
-msgstr "El portapapeles se encuentra vacío"
-
-
-msgid "Some nodes references could not be restored, will be left empty"
-msgstr "No se pudieron restablecer algunas referencias a nodos, serán dejadas en blanco"
-
-
 msgid "Text not used by any node, no update done"
 msgstr "Texto no usado por ningún nodo, no fue actualizado"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "No es posible agregar el nodo %s al árbol de nodos %s"
 
 
 msgid "Cannot ungroup"
@@ -121281,14 +121231,6 @@ msgstr "[Mayúsculas] - Modo preciso activo"
 
 msgid "Shift - Hold for precision"
 msgstr "Mayúsculas - Mantener para modo preciso"
-
-
-msgid "[Ctrl] - Increments active"
-msgstr "[Ctrl] - Modo incremental activo"
-
-
-msgid "Ctrl - Hold for 10% increments"
-msgstr "Ctrl - Mantener para incrementos del 10%"
 
 
 msgid "Unpack File"

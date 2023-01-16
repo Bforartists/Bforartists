@@ -207,6 +207,11 @@ static void ntree_copy_data(Main * /*bmain*/, ID *id_dst, const ID *id_src, cons
     dst_runtime.field_inferencing_interface = std::make_unique<FieldInferencingInterface>(
         *ntree_src->runtime->field_inferencing_interface);
   }
+  if (ntree_src->runtime->anonymous_attribute_relations) {
+    dst_runtime.anonymous_attribute_relations =
+        std::make_unique<blender::nodes::anonymous_attribute_lifetime::RelationsInNode>(
+            *ntree_src->runtime->anonymous_attribute_relations);
+  }
 
   if (flag & LIB_ID_COPY_NO_PREVIEW) {
     ntree_dst->preview = nullptr;
@@ -1954,10 +1959,10 @@ void nodeRemoveSocketEx(bNodeTree *ntree, bNode *node, bNodeSocket *sock, bool d
     }
   }
 
-  for (bNodeLink *link : node->runtime->internal_links) {
-    if (link->fromsock == sock || link->tosock == sock) {
-      node->runtime->internal_links.remove_first_occurrence_and_reorder(link);
-      MEM_freeN(link);
+  for (const int64_t i : node->runtime->internal_links.index_range()) {
+    const bNodeLink &link = node->runtime->internal_links[i];
+    if (link.fromsock == sock || link.tosock == sock) {
+      node->runtime->internal_links.remove_and_reorder(i);
       BKE_ntree_update_tag_node_internal_link(ntree, node);
       break;
     }
@@ -1981,9 +1986,6 @@ void nodeRemoveAllSockets(bNodeTree *ntree, bNode *node)
     }
   }
 
-  for (bNodeLink *link : node->runtime->internal_links) {
-    MEM_freeN(link);
-  }
   node->runtime->internal_links.clear();
 
   LISTBASE_FOREACH_MUTABLE (bNodeSocket *, sock, &node->inputs) {
@@ -2307,14 +2309,12 @@ bNode *node_copy_with_mapping(bNodeTree *dst_tree,
     node_dst->prop = IDP_CopyProperty_ex(node_src.prop, flag);
   }
 
-  node_dst->runtime->internal_links.clear();
-  for (const bNodeLink *src_link : node_src.runtime->internal_links) {
-    bNodeLink *dst_link = (bNodeLink *)MEM_dupallocN(src_link);
-    dst_link->fromnode = node_dst;
-    dst_link->tonode = node_dst;
-    dst_link->fromsock = socket_map.lookup(src_link->fromsock);
-    dst_link->tosock = socket_map.lookup(src_link->tosock);
-    node_dst->runtime->internal_links.append(dst_link);
+  node_dst->runtime->internal_links = node_src.runtime->internal_links;
+  for (bNodeLink &dst_link : node_dst->runtime->internal_links) {
+    dst_link.fromnode = node_dst;
+    dst_link.tonode = node_dst;
+    dst_link.fromsock = socket_map.lookup(dst_link.fromsock);
+    dst_link.tosock = socket_map.lookup(dst_link.tosock);
   }
 
   if ((flag & LIB_ID_CREATE_NO_USER_REFCOUNT) == 0) {
@@ -2469,8 +2469,8 @@ static void adjust_multi_input_indices_after_removed_link(bNodeTree *ntree,
 void nodeInternalRelink(bNodeTree *ntree, bNode *node)
 {
   /* store link pointers in output sockets, for efficient lookup */
-  for (bNodeLink *link : node->runtime->internal_links) {
-    link->tosock->link = link;
+  for (bNodeLink &link : node->runtime->internal_links) {
+    link.tosock->link = &link;
   }
 
   /* redirect downstream links */
@@ -2983,11 +2983,6 @@ void node_free_node(bNodeTree *ntree, bNode *node)
     node_socket_free(sock, false);
     MEM_freeN(sock);
   }
-
-  for (bNodeLink *link : node->runtime->internal_links) {
-    MEM_freeN(link);
-  }
-  node->runtime->internal_links.clear();
 
   if (node->prop) {
     /* Remember, no ID user refcount management here! */
@@ -3556,16 +3551,16 @@ void nodeSetActive(bNodeTree *ntree, bNode *node)
 void nodeSetSocketAvailability(bNodeTree *ntree, bNodeSocket *sock, bool is_available)
 {
   const bool was_available = (sock->flag & SOCK_UNAVAIL) == 0;
-  if (is_available != was_available) {
-    BKE_ntree_update_tag_socket_availability(ntree, sock);
+  if (is_available == was_available) {
+    return;
   }
-
   if (is_available) {
     sock->flag &= ~SOCK_UNAVAIL;
   }
   else {
     sock->flag |= SOCK_UNAVAIL;
   }
+  BKE_ntree_update_tag_socket_availability(ntree, sock);
 }
 
 int nodeSocketLinkLimit(const bNodeSocket *sock)
@@ -3639,7 +3634,7 @@ void nodeTagUpdateID(bNode *node)
   node->runtime->update |= NODE_UPDATE_ID;
 }
 
-void nodeInternalLinks(bNode *node, bNodeLink ***r_links, int *r_len)
+void nodeInternalLinks(bNode *node, bNodeLink **r_links, int *r_len)
 {
   *r_links = node->runtime->internal_links.data();
   *r_len = node->runtime->internal_links.size();

@@ -22,6 +22,8 @@
 #include "BLI_gsqueue.h"
 #include "BLI_threads.h"
 
+#include "ED_view3d.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -486,6 +488,8 @@ typedef struct FilterCache {
 
   /* Pre-smoothed colors used by sharpening. Colors are HSL. */
   float (*pre_smoothed_color)[4];
+
+  ViewContext vc;
 } FilterCache;
 
 /**
@@ -1004,7 +1008,7 @@ void SCULPT_active_vertex_normal_get(SculptSession *ss, float normal[3]);
 
 /* Returns PBVH deformed vertices array if shape keys or deform modifiers are used, otherwise
  * returns mesh original vertices array. */
-struct MVert *SCULPT_mesh_deformed_mverts_get(SculptSession *ss);
+float (*SCULPT_mesh_deformed_positions_get(SculptSession *ss))[3];
 
 /* Fake Neighbors */
 

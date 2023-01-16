@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2021\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -304,6 +304,14 @@ msgstr "Тип устройства для вычисления"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Устройство, используемое для вычислений (при использовании Cycles)"
+
+
+msgid "Off"
+msgstr "Выкл."
+
+
+msgid "Full"
+msgstr "Полностью"
 
 
 msgid "Distribute memory across devices"
@@ -2924,10 +2932,6 @@ msgstr "Наследовать масштаб"
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "Определяет, как кость наследует масштабирование от родительской кости"
-
-
-msgid "Full"
-msgstr "Полностью"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -7149,10 +7153,6 @@ msgstr "Отбрасывать задние грани"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "Не выполнять проецирование на грань целевого объекта, если нормаль грани направлена на наблюдателя или против него"
-
-
-msgid "Off"
-msgstr "Выкл."
 
 
 msgid "No culling"
@@ -16477,6 +16477,10 @@ msgstr "Модификатор смещения"
 
 msgid "Offset Stroke modifier"
 msgstr "Модификатор смещения штрихов"
+
+
+msgid "Start Offset"
+msgstr "Начальное смещение"
 
 
 msgid "Opacity Modifier"
@@ -55219,14 +55223,6 @@ msgid "Method used to determine when to stop propagating pose to keyframes"
 msgstr "Метод определения момента прекращения распространения позы на ключевые кадры"
 
 
-msgid "While Held"
-msgstr "Пока нет изменений"
-
-
-msgid "Propagate pose to all keyframes after current frame that don't change (Default behavior)"
-msgstr "Распространить позу на все ключевые кадры после текущего до тех пор, пока поза не меняется (поведение по умолчанию)"
-
-
 msgid "To Next Keyframe"
 msgstr "До следующего ключевого кадра"
 
@@ -71168,10 +71164,6 @@ msgid "End Offset"
 msgstr "Конечное смещение"
 
 
-msgid "Start Offset"
-msgstr "Начальное смещение"
-
-
 msgid "X position where the strip begins"
 msgstr "Координата X начала дорожки"
 
@@ -86472,10 +86464,6 @@ msgstr "Нельзя изменить несуществующий слой (и�
 
 msgid "No active GP data"
 msgstr "Нет активных данных GP"
-
-
-msgid "Operator not supported in multiframe edition"
-msgstr "Оператор не поддерживается в режиме мультикадрового редактирования"
 
 
 msgid "No strokes to paste, select and copy some points before trying again"

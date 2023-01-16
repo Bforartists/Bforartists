@@ -15,20 +15,15 @@ from bpy.types import (
     WorkSpace,
 )
 
-from bpy_extras import asset_utils
-
 
 class PoseLibraryPanel:
     @classmethod
     def pose_library_panel_poll(cls, context: Context) -> bool:
-        return bool(
-            context.object
-            and context.object.mode == 'POSE'
-        )
+        return bool(context.object and context.object.mode == 'POSE')
 
     @classmethod
     def poll(cls, context: Context) -> bool:
-        return cls.pose_library_panel_poll(context);
+        return cls.pose_library_panel_poll(context)
 
 
 class VIEW3D_PT_pose_library(PoseLibraryPanel, Panel):
@@ -55,9 +50,10 @@ class VIEW3D_PT_pose_library(PoseLibraryPanel, Panel):
                 activate_operator="poselib.apply_pose_asset",
                 drag_operator="poselib.blend_pose_asset",
             )
-            drag_op_props.release_confirm = True
-            drag_op_props.flipped = wm.poselib_flipped
-            activate_op_props.flipped = wm.poselib_flipped
+
+            # Make sure operators properties match those used in
+            # `pose_library_list_item_context_menu` so shortcuts show in menus (see T103267).
+            activate_op_props.flipped = False
 
 
 def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
@@ -83,25 +79,22 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
         return
 
     layout = self.layout
-    wm = context.window_manager
 
     layout.separator()
 
+    # Make sure these operator properties match those used in `VIEW3D_PT_pose_library`.
     layout.operator("poselib.apply_pose_asset", text="Apply Pose").flipped = False
     layout.operator("poselib.apply_pose_asset", text="Apply Pose Flipped").flipped = True
 
     old_op_ctx = layout.operator_context
     layout.operator_context = 'INVOKE_DEFAULT'
     props = layout.operator("poselib.blend_pose_asset", text="Blend Pose")
-    props.flipped = wm.poselib_flipped
     layout.operator_context = old_op_ctx
 
     layout.separator()
     props = layout.operator("poselib.pose_asset_select_bones", text="Select Pose Bones")
-    props.flipped = wm.poselib_flipped
     props.select = True
     props = layout.operator("poselib.pose_asset_select_bones", text="Deselect Pose Bones")
-    props.flipped = wm.poselib_flipped
     props.select = False
 
     if not is_pose_asset_view():
@@ -111,6 +104,7 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
     layout.separator()
     if is_pose_asset_view():
         layout.operator("asset.open_containing_blend_file")
+
         props.select = False
 
 
@@ -124,8 +118,7 @@ class DOPESHEET_PT_asset_panel(PoseLibraryPanel, Panel):
         layout = self.layout
         col = layout.column(align=True)
         row = col.row(align=True)
-        #bfa - added icon
-        row.operator("poselib.create_pose_asset", icon = 'POSE_HLT').activate_new_action = True
+        row.operator("poselib.create_pose_asset").activate_new_action = True
         if bpy.types.POSELIB_OT_restore_previous_action.poll(context):
             row.operator("poselib.restore_previous_action", text="", icon='LOOP_BACK')
         col.operator("poselib.copy_as_asset", icon="COPYDOWN")
@@ -144,21 +137,20 @@ class ASSETBROWSER_MT_asset(Menu):
     @classmethod
     def poll(cls, context):
         from bpy_extras.asset_utils import SpaceAssetInfo
+
         return SpaceAssetInfo.is_asset_browser_poll(context)
 
     def draw(self, context: Context) -> None:
         layout = self.layout
 
         layout.operator("poselib.paste_asset", icon='PASTEDOWN')
-
         layout.separator()
-
-        #bfa - added pose icon
-        layout.operator("poselib.create_pose_asset", icon = 'POSE_HLT').activate_new_action = False
+        layout.operator("poselib.create_pose_asset").activate_new_action = False
 
 
 ### Messagebus subscription to monitor asset library changes.
 _msgbus_owner = object()
+
 
 def _on_asset_library_changed() -> None:
     """Update areas when a different asset library is selected."""
@@ -170,6 +162,7 @@ def _on_asset_library_changed() -> None:
 
             area.tag_redraw()
 
+
 def register_message_bus() -> None:
     bpy.msgbus.subscribe_rna(
         key=(bpy.types.FileAssetSelectParams, "asset_library_ref"),
@@ -179,13 +172,16 @@ def register_message_bus() -> None:
         options={'PERSISTENT'},
     )
 
+
 def unregister_message_bus() -> None:
     bpy.msgbus.clear_by_owner(_msgbus_owner)
+
 
 @bpy.app.handlers.persistent
 def _on_blendfile_load_pre(none, other_none) -> None:
     # The parameters are required, but both are None.
     unregister_message_bus()
+
 
 @bpy.app.handlers.persistent
 def _on_blendfile_load_post(none, other_none) -> None:
@@ -208,7 +204,7 @@ def register() -> None:
     WorkSpace.active_pose_asset_index = bpy.props.IntProperty(
         name="Active Pose Asset",
         # TODO explain which list the index belongs to, or how it can be used to get the pose.
-        description="Per workspace index of the active pose asset"
+        description="Per workspace index of the active pose asset",
     )
     # Register for window-manager. This is a global property that shouldn't be
     # written to files.
