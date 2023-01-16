@@ -420,13 +420,14 @@ void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
   if (wm->is_interface_locked) {
     return;
   }
-  /* Combine data-masks so one window doesn't disable UV's in another T26448. */
+  /* Combine data-masks so one window doesn't disable UVs in another T26448. */
   CustomData_MeshMasks win_combine_v3d_datamask = {0};
   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
     const Scene *scene = WM_window_get_active_scene(win);
+    ViewLayer *view_layer = WM_window_get_active_view_layer(win);
     const bScreen *screen = WM_window_get_active_screen(win);
 
-    ED_view3d_screen_datamask(C, scene, screen, &win_combine_v3d_datamask);
+    ED_view3d_screen_datamask(scene, view_layer, screen, &win_combine_v3d_datamask);
   }
   /* Update all the dependency graphs of visible view layers. */
   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
@@ -3573,10 +3574,10 @@ static ARegion *region_event_inside(bContext *C, const int xy[2])
   return nullptr;
 }
 
-static void wm_paintcursor_tag(bContext *C, wmPaintCursor *pc, ARegion *region)
+static void wm_paintcursor_tag(bContext *C, wmWindowManager *wm, ARegion *region)
 {
   if (region) {
-    for (; pc; pc = pc->next) {
+    LISTBASE_FOREACH_MUTABLE (wmPaintCursor *, pc, &wm->paintcursors) {
       if (pc->poll == nullptr || pc->poll(C)) {
         wmWindow *win = CTX_wm_window(C);
         WM_paint_cursor_tag_redraw(win, region);
@@ -3598,7 +3599,7 @@ static void wm_paintcursor_test(bContext *C, const wmEvent *event)
     ARegion *region = CTX_wm_region(C);
 
     if (region) {
-      wm_paintcursor_tag(C, static_cast<wmPaintCursor *>(wm->paintcursors.first), region);
+      wm_paintcursor_tag(C, wm, region);
     }
 
     /* If previous position was not in current region, we have to set a temp new context. */
@@ -3608,8 +3609,7 @@ static void wm_paintcursor_test(bContext *C, const wmEvent *event)
       CTX_wm_area_set(C, area_event_inside(C, event->prev_xy));
       CTX_wm_region_set(C, region_event_inside(C, event->prev_xy));
 
-      wm_paintcursor_tag(
-          C, static_cast<wmPaintCursor *>(wm->paintcursors.first), CTX_wm_region(C));
+      wm_paintcursor_tag(C, wm, CTX_wm_region(C));
 
       CTX_wm_area_set(C, area);
       CTX_wm_region_set(C, region);
@@ -4426,7 +4426,7 @@ static void wm_event_get_keymap_from_toolsystem_ex(wmWindowManager *wm,
 
   if (is_gizmo_visible && !is_gizmo_highlight) {
     if (keymap_id_list_len == 2) {
-      SWAP(const char *, keymap_id_list[0], keymap_id_list[1]);
+      std::swap(keymap_id_list[0], keymap_id_list[1]);
     }
   }
 

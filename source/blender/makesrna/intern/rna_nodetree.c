@@ -2377,10 +2377,10 @@ static void rna_Node_parent_set(PointerRNA *ptr,
 static void rna_Node_internal_links_begin(CollectionPropertyIterator *iter, PointerRNA *ptr)
 {
   bNode *node = ptr->data;
-  bNodeLink **begin;
+  bNodeLink *begin;
   int len;
   nodeInternalLinks(node, &begin, &len);
-  rna_iterator_array_begin(iter, begin, sizeof(bNodeLink *), len, false, NULL);
+  rna_iterator_array_begin(iter, begin, sizeof(bNodeLink), len, false, NULL);
 }
 
 static bool rna_Node_parent_poll(PointerRNA *ptr, PointerRNA value)
@@ -10846,7 +10846,7 @@ static void def_geo_realize_instances(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_GeometryNode_socket_update");
 }
 
-static void def_geo_field_at_index(StructRNA *srna)
+static void def_geo_evaluate_at_index(StructRNA *srna)
 {
   PropertyRNA *prop;
 
@@ -10865,7 +10865,7 @@ static void def_geo_field_at_index(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_GeometryNode_socket_update");
 }
 
-static void def_geo_interpolate_domain(StructRNA *srna)
+static void def_geo_evaluate_on_domain(StructRNA *srna)
 {
   PropertyRNA *prop;
 
@@ -12201,7 +12201,7 @@ static void rna_def_node(BlenderRNA *brna)
                                     "rna_Node_internal_links_begin",
                                     "rna_iterator_array_next",
                                     "rna_iterator_array_end",
-                                    "rna_iterator_array_dereference_get",
+                                    "rna_iterator_array_get",
                                     NULL,
                                     NULL,
                                     NULL,
@@ -13644,6 +13644,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_EDGE_PATHS_TO_SELECTION:
       return ICON_EDGE_PATH_TO_SELECTION;
 
+    case GEO_NODE_EVALUATE_AT_INDEX:
+      return ICON_DELETE;
+
+    case GEO_NODE_EVALUATE_ON_DOMAIN:
+      return ICON_DELETE;
+
     case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
       return ICON_POINT_DISTRIBUTE;
 
@@ -13655,12 +13661,6 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_EXTRUDE_MESH:
       return ICON_EXTRUDE_REGION;
-
-    case GEO_NODE_FIELD_AT_INDEX:
-      return ICON_FIELD_AT_INDEX;
-
-    case GEO_NODE_INTERPOLATE_DOMAIN:
-      return ICON_FIELD_DOMAIN;
 
     case GEO_NODE_FILL_CURVE:
       return ICON_CURVE_FILL;
@@ -13674,14 +13674,14 @@ static int node_type_to_icon(int type)
     case GEO_NODE_GEOMETRY_TO_INSTANCE:
       return ICON_GEOMETRY_INSTANCE;
 
-    case GEO_NODE_IMAGE:
-      return ICON_FILE_IMAGE;
-
     case GEO_NODE_IMAGE_INFO:
       return ICON_IMAGE_INFO;
 
     case GEO_NODE_IMAGE_TEXTURE:
       return ICON_IMAGE_DATA;
+
+    case GEO_NODE_IMAGE:
+      return ICON_FILE_IMAGE;
 
     case GEO_NODE_INPUT_NAMED_ATTRIBUTE:
       return ICON_NAMED_ATTRIBUTE;
@@ -13902,14 +13902,14 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SCALE_INSTANCES:
       return ICON_SCALE_INSTANCE;
 
+    case GEO_NODE_SELF_OBJECT:
+      return ICON_SELF_OBJECT;
+
     case GEO_NODE_SEPARATE_COMPONENTS:
       return ICON_SEPARATE;
 
     case GEO_NODE_SEPARATE_GEOMETRY:
       return ICON_SEPARATE_GEOMETRY;
-
-    case GEO_NODE_SELF_OBJECT:
-      return ICON_SELF_OBJECT;
 
     case GEO_NODE_SET_CURVE_HANDLES:
       return ICON_SET_CURVE_HANDLE_POSITIONS;

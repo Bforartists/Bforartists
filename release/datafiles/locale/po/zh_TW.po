@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <http://weblate.slat.org/projects/blender/blender/zh_Hant/>\n"
@@ -305,6 +305,14 @@ msgstr "計算裝置類型"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "用於計算的裝置 (以 Cycles 算繪)"
+
+
+msgid "Off"
+msgstr "關"
+
+
+msgid "Full"
+msgstr "完整"
 
 
 msgid "Distribute memory across devices"
@@ -2693,10 +2701,6 @@ msgstr "繼承縮放"
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "指定此骨骼如何繼承親代骨骼的縮放"
-
-
-msgid "Full"
-msgstr "完整"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -6046,10 +6050,6 @@ msgstr "面淘選"
 
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "當面對/背對時讓頂點停止從一個面投射至目標"
-
-
-msgid "Off"
-msgstr "關"
 
 
 msgid "No culling"
@@ -11029,6 +11029,10 @@ msgstr "厚度係數"
 
 msgid "Steps"
 msgstr "步數"
+
+
+msgid "Start Offset"
+msgstr "起始偏移"
 
 
 msgid "Opacity Factor"
@@ -37691,14 +37695,6 @@ msgid "Method used to determine when to stop propagating pose to keyframes"
 msgstr "用來決定何時停止增生姿勢至鍵幀上的方法"
 
 
-msgid "While Held"
-msgstr "當保持時"
-
-
-msgid "Propagate pose to all keyframes after current frame that don't change (Default behavior)"
-msgstr "姿勢增生至目前框幀之後沒有更改的所有鍵幀 (預設行為)"
-
-
 msgid "To Next Keyframe"
 msgstr "至下一鍵幀"
 
@@ -48038,10 +48034,6 @@ msgid "End Offset"
 msgstr "結束偏移"
 
 
-msgid "Start Offset"
-msgstr "起始偏移"
-
-
 msgid "Modifiers affecting this strip"
 msgstr "影響此片段的修改器"
 
@@ -54116,11 +54108,6 @@ msgstr "刪除鬆散的點"
 
 
 msgctxt "Operator"
-msgid "Delete Duplicated Frames"
-msgstr "刪除重複影格"
-
-
-msgctxt "Operator"
 msgid "Recalculate Geometry"
 msgstr "重計幾何結構"
 
@@ -58853,6 +58840,18 @@ msgid "No valid action to add"
 msgstr "無有效的動作可添加"
 
 
+msgid "Clipboard is empty"
+msgstr "剪貼簿為空白"
+
+
+msgid "Some nodes references could not be restored, will be left empty"
+msgstr "有些節點參照無法還原，將會留白"
+
+
+msgid "Cannot add node %s into node tree %s"
+msgstr "無法將 %s 節點加入 %s 節點樹"
+
+
 msgid "Label Size"
 msgstr "標籤大小"
 
@@ -58867,10 +58866,6 @@ msgstr "塞擠"
 
 msgid "Undefined Socket Type"
 msgstr "未定義的接口類型"
-
-
-msgid "NodeTree"
-msgstr "節點樹"
 
 
 msgid "Could not add a mask node"
@@ -58905,20 +58900,8 @@ msgid "Geometry:"
 msgstr "幾何:"
 
 
-msgid "Clipboard is empty"
-msgstr "剪貼簿為空白"
-
-
-msgid "Some nodes references could not be restored, will be left empty"
-msgstr "有些節點參照無法還原，將會留白"
-
-
 msgid "Text not used by any node, no update done"
 msgstr "文字無法被任何節點使用，無更新"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "無法將 %s 節點加入 %s 節點樹"
 
 
 msgid "Cannot ungroup"

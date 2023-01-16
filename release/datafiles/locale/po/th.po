@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -200,6 +200,10 @@ msgstr "ข้อความแสดงข้อผิดพลาด"
 
 msgid "Message"
 msgstr "ข้อความ"
+
+
+msgid "Full"
+msgstr "เต็ม"
 
 
 msgid "Action"
@@ -472,10 +476,6 @@ msgstr "ปริมาตร"
 
 msgid "Head"
 msgstr "หัว"
-
-
-msgid "Full"
-msgstr "เต็ม"
 
 
 msgid "Layers"

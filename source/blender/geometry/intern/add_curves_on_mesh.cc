@@ -246,7 +246,7 @@ AddCurvesOnMeshOutputs add_curves_on_mesh(CurvesGeometry &curves,
   Vector<float2> used_uvs;
 
   /* Find faces that the passed in uvs belong to. */
-  const Span<MVert> surface_verts = inputs.surface->verts();
+  const Span<float3> surface_positions = inputs.surface->vert_positions();
   const Span<MLoop> surface_loops = inputs.surface->loops();
   for (const int i : inputs.uvs.index_range()) {
     const float2 &uv = inputs.uvs[i];
@@ -260,9 +260,9 @@ AddCurvesOnMeshOutputs add_curves_on_mesh(CurvesGeometry &curves,
     looptris.append(&looptri);
     const float3 root_position_su = attribute_math::mix3<float3>(
         result.bary_weights,
-        surface_verts[surface_loops[looptri.tri[0]].v].co,
-        surface_verts[surface_loops[looptri.tri[1]].v].co,
-        surface_verts[surface_loops[looptri.tri[2]].v].co);
+        surface_positions[surface_loops[looptri.tri[0]].v],
+        surface_positions[surface_loops[looptri.tri[1]].v],
+        surface_positions[surface_loops[looptri.tri[2]].v]);
     root_positions_cu.append(inputs.transforms->surface_to_curves * root_position_su);
     used_uvs.append(uv);
   }
@@ -372,7 +372,7 @@ AddCurvesOnMeshOutputs add_curves_on_mesh(CurvesGeometry &curves,
   Set<std::string> attributes_to_skip{{"position", "curve_type", "surface_uv_coordinate"}};
   attributes.for_all(
       [&](const bke::AttributeIDRef &id, const bke::AttributeMetaData /*meta_data*/) {
-        if (id.is_named() && attributes_to_skip.contains(id.name())) {
+        if (attributes_to_skip.contains(id.name())) {
           return true;
         }
         bke::GSpanAttributeWriter attribute = attributes.lookup_for_write_span(id);

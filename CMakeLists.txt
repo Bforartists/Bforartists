@@ -118,14 +118,18 @@ enable_testing()
 
 if(CMAKE_COMPILER_IS_GNUCC)
   if("${CMAKE_C_COMPILER_VERSION}" VERSION_LESS "11.0.0")
-    message(FATAL_ERROR "The minimum supported version of GCC is 11.0.0")
+    message(FATAL_ERROR "The minimum supported version of GCC is 11.0.0, found ${CMAKE_C_COMPILER_VERSION}")
   endif()
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
   if(CMAKE_COMPILER_IS_GNUCC AND ("${CMAKE_C_COMPILER_VERSION}" VERSION_LESS "8.0"))
-    message(FATAL_ERROR "The minimum supported version of CLANG is 8.0")
+    message(FATAL_ERROR "The minimum supported version of CLANG is 8.0, found ${CMAKE_C_COMPILER_VERSION}")
   endif()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES MSVC)
   if(MSVC_VERSION VERSION_LESS "1928")
+    # MSVC_VERSION is an internal version number, it doesn't map to something
+    # the end user would recognize as a version. Because of this, for MSVC we do
+    # not show the found number. When using our make.bat the actual VS version
+    # will be displayed on the console before starting the build, anyway.
     message(FATAL_ERROR "The minimum supported version of MSVC is 2019 (16.9.16)")
   endif()
 endif()
@@ -599,10 +603,6 @@ if(APPLE)
   mark_as_advanced(WITH_METAL_BACKEND)
 else()
   set(WITH_METAL_BACKEND OFF)
-endif()
-
-if(WITH_METAL_BACKEND)
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum OS X deployment version" FORCE)
 endif()
 
 if(WIN32)
@@ -1427,6 +1427,9 @@ if(CMAKE_COMPILER_IS_GNUCC)
   add_check_c_compiler_flag(C_WARNINGS C_WARN_TYPE_LIMITS -Wtype-limits)
   add_check_c_compiler_flag(C_WARNINGS C_WARN_FORMAT_SIGN -Wformat-signedness)
   add_check_c_compiler_flag(C_WARNINGS C_WARN_RESTRICT -Wrestrict)
+  # Useful but too many false positives and inconvenient to suppress each occurrence.
+  add_check_c_compiler_flag(C_WARNINGS C_WARN_NO_STRINGOP_OVERREAD -Wno-stringop-overread)
+  add_check_c_compiler_flag(C_WARNINGS C_WARN_NO_STRINGOP_OVERFLOW -Wno-stringop-overflow)
 
   # C-only.
   add_check_c_compiler_flag(C_WARNINGS C_WARN_NO_NULL -Wnonnull)
@@ -1466,6 +1469,9 @@ if(CMAKE_COMPILER_IS_GNUCC)
   add_check_cxx_compiler_flag(CXX_WARNINGS CXX_WARN_RESTRICT -Wrestrict)
   add_check_cxx_compiler_flag(CXX_WARNINGS CXX_WARN_NO_SUGGEST_OVERRIDE  -Wno-suggest-override)
   add_check_cxx_compiler_flag(CXX_WARNINGS CXX_WARN_UNINITIALIZED -Wuninitialized)
+  # Useful but too many false positives and inconvenient to suppress each occurrence.
+  add_check_cxx_compiler_flag(CXX_WARNINGS CXX_WARN_NO_STRINGOP_OVERREAD -Wno-stringop-overread)
+  add_check_cxx_compiler_flag(CXX_WARNINGS CXX_WARN_NO_STRINGOP_OVERFLOW -Wno-stringop-overflow)
 
   # causes too many warnings
   if(NOT APPLE)

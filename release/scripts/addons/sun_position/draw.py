@@ -52,11 +52,11 @@ else:
     shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
 
     def draw_north_callback():
-        # ------------------------------------------------------------------
-        # Set up the compass needle using the current north offset angle
-        # less 90 degrees.  This forces the unit circle to begin at the
-        # 12 O'clock instead of 3 O'clock position.
-        # ------------------------------------------------------------------
+        """
+        Set up the compass needle using the current north offset angle
+        less 90 degrees.  This forces the unit circle to begin at the
+        12 O'clock instead of 3 O'clock position.
+        """
         sun_props = bpy.context.scene.sun_pos_properties
 
         color = (0.2, 0.6, 1.0, 0.7)
@@ -64,30 +64,26 @@ else:
         angle = -(sun_props.north_offset - math.pi / 2)
         x = math.cos(angle) * radius
         y = math.sin(angle) * radius
-
-        coords = Vector((x, y, 0)), Vector((0, 0, 0))   # Start & end of needle
-
-        batch = batch_for_shader(
-            shader, 'LINE_STRIP',
-            {"position": coords},
-        )
-        shader.bind()
+        coords = Vector((x, y, 0)), Vector((0, 0, 0))
+        batch = batch_for_shader(shader, 'LINE_STRIP', {"position": coords})
 
         matrix = bpy.context.region_data.perspective_matrix
         shader.uniform_float("u_ViewProjectionMatrix", matrix)
-        shader.uniform_float("u_Resolution", (bpy.context.region.width, bpy.context.region.height))
+        shader.uniform_float("u_Resolution", (bpy.context.region.width,
+                                              bpy.context.region.height))
         shader.uniform_float("u_Color", color)
+        width = gpu.state.line_width_get()
         gpu.state.line_width_set(2.0)
         batch.draw(shader)
+        gpu.state.line_width_set(width)
 
-    _handle = None
 
+    _north_handle = None
 
     def north_update(self, context):
-        global _handle
-        if self.show_north and _handle is None:
-            _handle = bpy.types.SpaceView3D.draw_handler_add(draw_north_callback, (), 'WINDOW', 'POST_VIEW')
-        elif _handle is not None:
-            bpy.types.SpaceView3D.draw_handler_remove(_handle, 'WINDOW')
-            _handle = None
-        context.area.tag_redraw()
+        global _north_handle
+        if self.show_north and _north_handle is None:
+            _north_handle = bpy.types.SpaceView3D.draw_handler_add(draw_north_callback, (), 'WINDOW', 'POST_VIEW')
+        elif _north_handle is not None:
+            bpy.types.SpaceView3D.draw_handler_remove(_north_handle, 'WINDOW')
+            _north_handle = None

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -47,6 +47,10 @@ msgstr "Lås"
 
 msgid "Select"
 msgstr "Markera"
+
+
+msgid "Off"
+msgstr "Av"
 
 
 msgid "Add"
@@ -481,10 +485,6 @@ msgid "Uniform"
 msgstr "Enhetlig"
 
 
-msgid "Off"
-msgstr "Av"
-
-
 msgid "Front"
 msgstr "Fram"
 
@@ -847,6 +847,10 @@ msgstr "Steg"
 
 msgid "Steps"
 msgstr "Steg"
+
+
+msgid "Start Offset"
+msgstr "Startförskjutning"
 
 
 msgid "Subdivisions"
@@ -2350,10 +2354,6 @@ msgstr "Instrument för statistisk analys av bilder"
 
 msgid "Vectorscope Opacity"
 msgstr "Genomskinlighet för vektroskop"
-
-
-msgid "Start Offset"
-msgstr "Startförskjutning"
 
 
 msgid "Camera Override"
