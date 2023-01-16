@@ -216,8 +216,7 @@ static MutableSpan<T> get_mutable_attribute(CurvesGeometry &curves,
   const eCustomDataType type = cpp_type_to_custom_data_type(CPPType::get<T>());
   CustomData &custom_data = domain_custom_data(curves, domain);
 
-  T *data = (T *)CustomData_duplicate_referenced_layer_named(
-      &custom_data, type, name.c_str(), num);
+  T *data = (T *)CustomData_get_layer_named_for_write(&custom_data, type, name.c_str(), num);
   if (data != nullptr) {
     return {data, num};
   }
@@ -1047,8 +1046,10 @@ static Array<int> build_point_to_curve_map(const CurvesGeometry &curves)
   return point_to_curve_map;
 }
 
-static CurvesGeometry copy_with_removed_points(const CurvesGeometry &curves,
-                                               const IndexMask points_to_delete)
+static CurvesGeometry copy_with_removed_points(
+    const CurvesGeometry &curves,
+    const IndexMask points_to_delete,
+    const AnonymousAttributePropagationInfo &propagation_info)
 {
   /* Use a map from points to curves to facilitate using an #IndexMask input. */
   const Array<int> point_to_curve_map = build_point_to_curve_map(curves);
@@ -1093,9 +1094,15 @@ static CurvesGeometry copy_with_removed_points(const CurvesGeometry &curves,
 
   CurvesGeometry new_curves{new_point_count, new_curve_count};
   Vector<bke::AttributeTransferData> point_attributes = bke::retrieve_attributes_for_transfer(
-      curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_POINT);
+      curves.attributes(),
+      new_curves.attributes_for_write(),
+      ATTR_DOMAIN_MASK_POINT,
+      propagation_info);
   Vector<bke::AttributeTransferData> curve_attributes = bke::retrieve_attributes_for_transfer(
-      curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_CURVE);
+      curves.attributes(),
+      new_curves.attributes_for_write(),
+      ATTR_DOMAIN_MASK_CURVE,
+      propagation_info);
 
   threading::parallel_invoke(
       256 < new_point_count * new_curve_count,
@@ -1144,7 +1151,8 @@ static CurvesGeometry copy_with_removed_points(const CurvesGeometry &curves,
   return new_curves;
 }
 
-void CurvesGeometry::remove_points(const IndexMask points_to_delete)
+void CurvesGeometry::remove_points(const IndexMask points_to_delete,
+                                   const AnonymousAttributePropagationInfo &propagation_info)
 {
   if (points_to_delete.is_empty()) {
     return;
@@ -1152,11 +1160,13 @@ void CurvesGeometry::remove_points(const IndexMask points_to_delete)
   if (points_to_delete.size() == this->points_num()) {
     *this = {};
   }
-  *this = copy_with_removed_points(*this, points_to_delete);
+  *this = copy_with_removed_points(*this, points_to_delete, propagation_info);
 }
 
-static CurvesGeometry copy_with_removed_curves(const CurvesGeometry &curves,
-                                               const IndexMask curves_to_delete)
+static CurvesGeometry copy_with_removed_curves(
+    const CurvesGeometry &curves,
+    const IndexMask curves_to_delete,
+    const AnonymousAttributePropagationInfo &propagation_info)
 {
   const Span<int> old_offsets = curves.offsets();
   const Vector<IndexRange> old_curve_ranges = curves_to_delete.extract_ranges_invert(
@@ -1178,9 +1188,15 @@ static CurvesGeometry copy_with_removed_curves(const CurvesGeometry &curves,
 
   CurvesGeometry new_curves{new_tot_points, new_tot_curves};
   Vector<bke::AttributeTransferData> point_attributes = bke::retrieve_attributes_for_transfer(
-      curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_POINT);
+      curves.attributes(),
+      new_curves.attributes_for_write(),
+      ATTR_DOMAIN_MASK_POINT,
+      propagation_info);
   Vector<bke::AttributeTransferData> curve_attributes = bke::retrieve_attributes_for_transfer(
-      curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_CURVE);
+      curves.attributes(),
+      new_curves.attributes_for_write(),
+      ATTR_DOMAIN_MASK_CURVE,
+      propagation_info);
 
   threading::parallel_invoke(
       256 < new_tot_points * new_tot_curves,
@@ -1251,7 +1267,8 @@ static CurvesGeometry copy_with_removed_curves(const CurvesGeometry &curves,
   return new_curves;
 }
 
-void CurvesGeometry::remove_curves(const IndexMask curves_to_delete)
+void CurvesGeometry::remove_curves(const IndexMask curves_to_delete,
+                                   const AnonymousAttributePropagationInfo &propagation_info)
 {
   if (curves_to_delete.is_empty()) {
     return;
@@ -1260,7 +1277,7 @@ void CurvesGeometry::remove_curves(const IndexMask curves_to_delete)
     *this = {};
     return;
   }
-  *this = copy_with_removed_curves(*this, curves_to_delete);
+  *this = copy_with_removed_curves(*this, curves_to_delete, propagation_info);
 }
 
 template<typename T>
@@ -1315,7 +1332,7 @@ void CurvesGeometry::reverse_curves(const IndexMask curves_to_reverse)
     if (meta_data.data_type == CD_PROP_STRING) {
       return true;
     }
-    if (id.is_named() && bezier_handle_names.contains(id.name())) {
+    if (bezier_handle_names.contains(id.name())) {
       return true;
     }
 

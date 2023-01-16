@@ -13,7 +13,7 @@
 
 #include "BLI_array.hh"
 #include "BLI_listbase.h"
-#include "BLI_math_vec_types.hh"
+#include "BLI_math_vector_types.hh"
 #include "BLI_multi_value_map.hh"
 #include "BLI_set.hh"
 #include "BLI_string.h"
@@ -125,17 +125,16 @@ using blender::fn::ValueOrFieldCPPType;
 using blender::nodes::FieldInferencingInterface;
 using blender::nodes::GeoNodeExecParams;
 using blender::nodes::InputSocketFieldType;
-using blender::nodes::geo_eval_log::GeoModifierLog;
-using blender::threading::EnumerableThreadSpecific;
-using namespace blender::fn::multi_function_types;
 using blender::nodes::geo_eval_log::GeometryAttributeInfo;
 using blender::nodes::geo_eval_log::GeometryInfoLog;
+using blender::nodes::geo_eval_log::GeoModifierLog;
 using blender::nodes::geo_eval_log::GeoNodeLog;
 using blender::nodes::geo_eval_log::GeoTreeLog;
 using blender::nodes::geo_eval_log::NamedAttributeUsage;
 using blender::nodes::geo_eval_log::NodeWarning;
 using blender::nodes::geo_eval_log::NodeWarningType;
 using blender::nodes::geo_eval_log::ValueLog;
+using blender::threading::EnumerableThreadSpecific;
 
 static void initData(ModifierData *md)
 {
@@ -443,8 +442,8 @@ id_property_create_from_socket(const bNodeSocket &socket)
       auto property = bke::idprop::create(socket.identifier, value->value);
       IDPropertyUIDataFloat *ui_data = (IDPropertyUIDataFloat *)IDP_ui_data_ensure(property.get());
       ui_data->base.rna_subtype = value->subtype;
-      ui_data->min = ui_data->soft_min = double(value->min);
-      ui_data->max = ui_data->soft_max = double(value->max);
+      ui_data->soft_min = double(value->min);
+      ui_data->soft_max = double(value->max);
       ui_data->default_value = value->value;
       return property;
     }
@@ -454,8 +453,8 @@ id_property_create_from_socket(const bNodeSocket &socket)
       auto property = bke::idprop::create(socket.identifier, value->value);
       IDPropertyUIDataInt *ui_data = (IDPropertyUIDataInt *)IDP_ui_data_ensure(property.get());
       ui_data->base.rna_subtype = value->subtype;
-      ui_data->min = ui_data->soft_min = value->min;
-      ui_data->max = ui_data->soft_max = value->max;
+      ui_data->soft_min = value->min;
+      ui_data->soft_max = value->max;
       ui_data->default_value = value->value;
       return property;
     }
@@ -466,8 +465,8 @@ id_property_create_from_socket(const bNodeSocket &socket)
           socket.identifier, Span<float>{value->value[0], value->value[1], value->value[2]});
       IDPropertyUIDataFloat *ui_data = (IDPropertyUIDataFloat *)IDP_ui_data_ensure(property.get());
       ui_data->base.rna_subtype = value->subtype;
-      ui_data->min = ui_data->soft_min = double(value->min);
-      ui_data->max = ui_data->soft_max = double(value->max);
+      ui_data->soft_min = double(value->min);
+      ui_data->soft_max = double(value->max);
       ui_data->default_array = (double *)MEM_mallocN(sizeof(double[3]), "mod_prop_default");
       ui_data->default_array_len = 3;
       for (const int i : IndexRange(3)) {
@@ -884,12 +883,12 @@ static void find_side_effect_nodes_for_viewer_path(
 
   /* Not only mark the viewer node as having side effects, but also all group nodes it is contained
    * in. */
-  r_side_effect_nodes.add(compute_context_builder.hash(),
-                          &find_viewer_lf_node(*found_viewer_node));
+  r_side_effect_nodes.add_non_duplicates(compute_context_builder.hash(),
+                                         &find_viewer_lf_node(*found_viewer_node));
   compute_context_builder.pop();
   while (!compute_context_builder.is_empty()) {
-    r_side_effect_nodes.add(compute_context_builder.hash(),
-                            &find_group_lf_node(*group_node_stack.pop()));
+    r_side_effect_nodes.add_non_duplicates(compute_context_builder.hash(),
+                                           &find_group_lf_node(*group_node_stack.pop()));
     compute_context_builder.pop();
   }
 }
@@ -1124,12 +1123,11 @@ static GeometrySet compute_geometry(
 {
   const blender::nodes::GeometryNodeLazyFunctionGraphMapping &mapping = lf_graph_info.mapping;
 
-  Span<const lf::OutputSocket *> graph_inputs = mapping.group_input_sockets;
-  Vector<const lf::InputSocket *> graph_outputs;
-  for (const bNodeSocket *bsocket : output_node.input_sockets().drop_back(1)) {
-    const lf::InputSocket &socket = mapping.dummy_socket_map.lookup(bsocket)->as_input();
-    graph_outputs.append(&socket);
-  }
+  Vector<const lf::OutputSocket *> graph_inputs = mapping.group_input_sockets;
+  graph_inputs.extend(mapping.group_output_used_sockets);
+  graph_inputs.extend(mapping.attribute_set_by_geometry_output.values().begin(),
+                      mapping.attribute_set_by_geometry_output.values().end());
+  Vector<const lf::InputSocket *> graph_outputs = mapping.standard_group_output_sockets;
 
   Array<GMutablePointer> param_inputs(graph_inputs.size());
   Array<GMutablePointer> param_outputs(graph_outputs.size());
@@ -1166,19 +1164,34 @@ static GeometrySet compute_geometry(
   blender::LinearAllocator<> allocator;
   Vector<GMutablePointer> inputs_to_destruct;
 
-  int input_index;
-  LISTBASE_FOREACH_INDEX (bNodeSocket *, interface_socket, &btree.inputs, input_index) {
-    if (interface_socket->type == SOCK_GEOMETRY && input_index == 0) {
+  int input_index = -1;
+  for (const int i : btree.interface_inputs().index_range()) {
+    input_index++;
+    const bNodeSocket &interface_socket = *btree.interface_inputs()[i];
+    if (interface_socket.type == SOCK_GEOMETRY && input_index == 0) {
       param_inputs[input_index] = &input_geometry_set;
       continue;
     }
 
-    const CPPType *type = interface_socket->typeinfo->geometry_nodes_cpp_type;
+    const CPPType *type = interface_socket.typeinfo->geometry_nodes_cpp_type;
     BLI_assert(type != nullptr);
     void *value = allocator.allocate(type->size(), type->alignment());
-    initialize_group_input(*nmd, *interface_socket, input_index, value);
+    initialize_group_input(*nmd, interface_socket, i, value);
     param_inputs[input_index] = {type, value};
     inputs_to_destruct.append({type, value});
+  }
+
+  Array<bool> output_used_inputs(btree.interface_outputs().size(), true);
+  for (const int i : btree.interface_outputs().index_range()) {
+    input_index++;
+    param_inputs[input_index] = &output_used_inputs[i];
+  }
+
+  Array<blender::bke::AnonymousAttributeSet> attributes_to_propagate(
+      mapping.attribute_set_by_geometry_output.size());
+  for (const int i : attributes_to_propagate.index_range()) {
+    input_index++;
+    param_inputs[input_index] = &attributes_to_propagate[i];
   }
 
   for (const int i : graph_outputs.index_range()) {

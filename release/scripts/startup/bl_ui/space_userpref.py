@@ -646,7 +646,7 @@ class USERPREF_PT_system_cycles_devices(SystemPanel, CenterAlignMixIn, Panel):
 
 
 class USERPREF_PT_system_gpu_backend(SystemPanel, CenterAlignMixIn, Panel):
-    bl_label = "GPU Backend"
+    bl_label = "GPU Back end"
 
     @classmethod
     def poll(cls, _context):
@@ -663,7 +663,7 @@ class USERPREF_PT_system_gpu_backend(SystemPanel, CenterAlignMixIn, Panel):
         col.prop(system, "gpu_backend")
 
         if system.gpu_backend != gpu.platform.backend_type_get():
-            layout.label(text="Requires a restart of Blender to take effect.", icon='INFO')
+            layout.label(text="Requires a restart of Blender to take effect", icon='INFO')
 
 
 class USERPREF_PT_system_os_settings(SystemPanel, CenterAlignMixIn, Panel):
@@ -1362,7 +1362,7 @@ class ThemeGenericClassGenerator:
     def generate_panel_classes_from_theme_areas():
         from bpy.types import Theme
 
-        for theme_area in Theme.bl_rna.properties['theme_area'].enum_items_static:
+        for theme_area in Theme.bl_rna.properties["theme_area"].enum_items_static:
             if theme_area.identifier in {'USER_INTERFACE', 'STYLE', 'BONE_COLOR_SETS'}:
                 continue
 
@@ -2444,7 +2444,6 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                 ({"property": "use_sculpt_tools_tilt"}, "T82877"),
                 ({"property": "use_extended_asset_browser"}, ("project/view/130/", "Project Page")),
                 ({"property": "use_override_templates"}, ("T73318", "Milestone 4")),
-                ({"property": "use_realtime_compositor"}, "T99210"),
             ),
         )
 

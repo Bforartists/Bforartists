@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -197,6 +197,14 @@ msgstr "ﺏﺎﺴﺤﻟﺍ ﺯﺎﻬﺟ ﻉﻮﻧ"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "(ﺰﻠﻜﻳﺎﺴﺑ ﺮﻴﻴﺼﺘﻟﺍ ﺪﻨﻋ) ﺏﺎﺴﺤﻠﻟ ﻡﺪﺨﺘﺴﻤﻟﺍ ﺯﺎﻬﺠﻟﺍ"
+
+
+msgid "Off"
+msgstr "ﻞﻌﻔﻣ ﺮﻴﻏ"
+
+
+msgid "Full"
+msgstr "ﻼ﻿ﻣﺎﻛ"
 
 
 msgid "Fribidi Library"
@@ -1773,10 +1781,6 @@ msgstr "ﺭﺎﻴﺘﺧﻺ﻿ﻟ ﺔﻠﺑﺎﻗ ﺔﻤﻈﻌﻟﺍ"
 
 msgid "Inherit Scale"
 msgstr "ﻢﻴﺠﺤﺘﻟﺍ ﺙﺭﻭ"
-
-
-msgid "Full"
-msgstr "ﻼ﻿ﻣﺎﻛ"
 
 
 msgid "Layers"
@@ -4478,10 +4482,6 @@ msgstr "ﺩﻮﻴﻘﻟﺎﺑ ﺔﻄﺒﺗﺮﻣ ﻲﺷﺎﻤﻜﻧﺍ ﻒﻴﻠ
 
 msgid "Face Cull"
 msgstr "ﻍﺮﻔﻣ ﻪﺟﻭ"
-
-
-msgid "Off"
-msgstr "ﻞﻌﻔﻣ ﺮﻴﻏ"
 
 
 msgid "No culling"

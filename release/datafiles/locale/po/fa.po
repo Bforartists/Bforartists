@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -158,6 +158,10 @@ msgstr "ﻝﻭﮊﺎﻣ ﻡﺎﻧ"
 
 msgid "Message"
 msgstr "ﻡﺎﯿﭘ"
+
+
+msgid "Off"
+msgstr "ﺵﻮﻣﺎﺧ"
 
 
 msgid "Animation Data"
@@ -1238,10 +1242,6 @@ msgstr "ﻪﺸﯿﻤﻫ"
 
 msgid "Script"
 msgstr "ﺖﭙﯾﺮﮑﺳﺍ"
-
-
-msgid "Off"
-msgstr "ﺵﻮﻣﺎﺧ"
 
 
 msgid "Front"
@@ -4162,10 +4162,6 @@ msgstr "ﺩﺮﮑﻧ ﺮﯿﯿﻐﺗ ﯽﺴﮑﻋ ﭻﯿﻫ"
 
 msgid "Packing movies or image sequences not supported"
 msgstr "ﺩﻮﺷ‌ﯽﻤﻧ ﯽﻧﺎﺒﯿﺘﺸﭘ ﺲﻧﺎﮑﺳ ﺮﯾﻭﺎﺼﺗ ﺎﯾ ﻭ ﺎﻫ‌ﻢﻠﯿﻓ ﯼﺪﻨﺑ ﻪﺘﺴﺑ"
-
-
-msgid "NodeTree"
-msgstr "ﻩﺮﮔ ﺖﺧﺭﺩ"
 
 
 msgid "No Recent Files"

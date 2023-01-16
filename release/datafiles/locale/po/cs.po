@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -300,6 +300,14 @@ msgstr "Typ Výpočetního Zařízení"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Zařízení pro výpočet (vykreslování s enginem Cycles)"
+
+
+msgid "Off"
+msgstr "Vypnout"
+
+
+msgid "Full"
+msgstr "Plná"
 
 
 msgid "Distribute memory across devices"
@@ -2208,10 +2216,6 @@ msgstr "Původní velikost"
 
 msgid "Specifies how the bone inherits scaling from the parent bone"
 msgstr "Určuje, jak kost dědí změnu měřítka z nadřazené kosti"
-
-
-msgid "Full"
-msgstr "Plná"
 
 
 msgid "Layers"
@@ -4909,10 +4913,6 @@ msgstr "Míra vazby"
 
 msgid "Create constraint-based shrinkwrap relationship"
 msgstr "Typ: Animace"
-
-
-msgid "Off"
-msgstr "Vypnout"
 
 
 msgid "Front"
@@ -8253,6 +8253,10 @@ msgstr "Odsazení Šumu"
 
 msgid "Steps"
 msgstr "Kroky"
+
+
+msgid "Start Offset"
+msgstr "Začátek Odsazení"
 
 
 msgid "Target Object"
@@ -22878,11 +22882,6 @@ msgstr "Duplikovat Tahy"
 
 
 msgctxt "Operator"
-msgid "Clean Duplicated Frames"
-msgstr "Vyčistit Duplikované Snímky"
-
-
-msgctxt "Operator"
 msgid "Clean Loose Points"
 msgstr "Vyčistit Volné Body"
 
@@ -37093,10 +37092,6 @@ msgid "End Offset"
 msgstr "Konec Odsazení"
 
 
-msgid "Start Offset"
-msgstr "Začátek Odsazení"
-
-
 msgid "Modifiers affecting this strip"
 msgstr "Nelze kopírovat modifikátory do objektu jiného typu"
 
@@ -41744,8 +41739,8 @@ msgstr "Vymazat Volné Body"
 
 
 msgctxt "Operator"
-msgid "Delete Duplicated Frames"
-msgstr "Odstranit Duplikovat Snímky"
+msgid "Delete Duplicate Frames"
+msgstr "Odstranit Duplicitní Snímky"
 
 
 msgctxt "Operator"
@@ -42641,11 +42636,6 @@ msgstr "Zatlačit Dolů"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Rozšířit"
-
-
-msgctxt "Operator"
-msgid "Delete Duplicate Frames"
-msgstr "Odstranit Duplicitní Snímky"
 
 
 msgctxt "Operator"

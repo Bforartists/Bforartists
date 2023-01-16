@@ -28,11 +28,7 @@ def convert_old_poselib(old_poselib: Action) -> Collection[Action]:
     marker will be converted to an Action by itself and marked as asset.
     """
 
-    pose_assets = [
-        action
-        for marker in old_poselib.pose_markers
-        if (action := convert_old_pose(old_poselib, marker))
-    ]
+    pose_assets = [action for marker in old_poselib.pose_markers if (action := convert_old_pose(old_poselib, marker))]
 
     # Mark all Actions as assets in one go. Ideally this would be done on an
     # appropriate frame in the scene (to set up things like the background

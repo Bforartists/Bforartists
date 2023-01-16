@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -268,6 +268,10 @@ msgstr "Virheilmoitus"
 
 msgid "Message"
 msgstr "Ilmoitus"
+
+
+msgid "Full"
+msgstr "Täysi"
 
 
 msgid "Fribidi Library"
@@ -1840,10 +1844,6 @@ msgstr "Luurankosuhteellinen pää"
 
 msgid "Selectable"
 msgstr "Valittavissa oleva"
-
-
-msgid "Full"
-msgstr "Täysi"
 
 
 msgid "Layers"
@@ -10267,10 +10267,6 @@ msgstr "Ei pakattua tiedostoa"
 
 msgid "Group Input "
 msgstr "Ryhmäsyöte "
-
-
-msgid "NodeTree"
-msgstr "Noodipuu"
 
 
 msgid " (String)"
