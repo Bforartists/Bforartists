@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2023-01-09 08:20:55\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -55,6 +55,10 @@ msgstr "Модуль аты"
 
 msgid "Message"
 msgstr "Билдирүү"
+
+
+msgid "Full"
+msgstr "Толук"
 
 
 msgid "Animation Data"
@@ -287,10 +291,6 @@ msgstr "Кокустугу"
 
 msgid "Volume"
 msgstr "Көлөм"
-
-
-msgid "Full"
-msgstr "Толук"
 
 
 msgid "Remove"

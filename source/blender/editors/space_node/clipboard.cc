@@ -86,7 +86,7 @@ struct NodeClipboard {
                 Map<const bNode *, bNode *> &node_map,
                 Map<const bNodeSocket *, bNodeSocket *> &socket_map)
   {
-    /* No ID refcounting, this node is virtual,
+    /* No ID reference-counting, this node is virtual,
      * detached from any actual Blender data currently. */
     bNode *new_node = bke::node_copy_with_mapping(
         nullptr, node, LIB_ID_CREATE_NO_USER_REFCOUNT | LIB_ID_CREATE_NO_MAIN, false, socket_map);
@@ -257,11 +257,10 @@ static int node_clipboard_paste_exec(bContext *C, wmOperator *op)
     }
     /* DPI factor needs to be removed when computing a View2D offset from drawing rects. */
     center /= clipboard.nodes.size();
-    center /= UI_DPI_FAC;
 
     float2 mouse_location;
     RNA_property_float_get_array(op->ptr, offset_prop, mouse_location);
-    const float2 offset = mouse_location - center;
+    const float2 offset = (mouse_location - center) / UI_DPI_FAC;
 
     for (bNode *new_node : node_map.values()) {
       new_node->locx += offset.x;

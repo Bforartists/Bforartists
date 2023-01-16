@@ -83,7 +83,7 @@ enum_use_layer_samples = (
 
 enum_sampling_pattern = (
     ('SOBOL_BURLEY', "Sobol-Burley", "Use on-the-fly computed Owen-scrambled Sobol for random sampling", 0),
-    ('TABULATED_SOBOL', "Tabulated Sobol", "Use precomputed tables of Owen-scrambled Sobol for random sampling", 1),
+    ('TABULATED_SOBOL', "Tabulated Sobol", "Use pre-computed tables of Owen-scrambled Sobol for random sampling", 1),
 )
 
 enum_emission_sampling = (
@@ -908,7 +908,8 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     use_fast_gi: BoolProperty(
         name="Fast GI Approximation",
-        description="Approximate diffuse indirect light with background tinted ambient occlusion. This provides fast alternative to full global illumination, for interactive viewport rendering or final renders with reduced quality",
+        description="Approximate diffuse indirect light with background tinted ambient occlusion. "
+                    "This provides fast alternative to full global illumination, for interactive viewport rendering or final renders with reduced quality",
         default=False,
     )
 
@@ -1546,8 +1547,22 @@ class CyclesPreferences(bpy.types.AddonPreferences):
 
     use_metalrt: BoolProperty(
         name="MetalRT (Experimental)",
-        description="MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly",
+        description="MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better "
+                    "performance in specific cases. However this support is experimental and some scenes may render incorrectly",
         default=False,
+    )
+
+    kernel_optimization_level: EnumProperty(
+        name="Kernel Optimization",
+        description="Kernels can be optimized based on scene content. Optimized kernels are requested at the start of a render. "
+                    "If optimized kernels are not available, rendering will proceed using generic kernels until the optimized set "
+                    "is available in the cache. This can result in additional CPU usage for a brief time (tens of seconds)",
+        default='FULL',
+        items=(
+            ('OFF', "Off", "Disable kernel optimization. Slowest rendering, no extra background CPU usage"),
+            ('INTERSECT', "Intersection only", "Optimize only intersection kernels. Faster rendering, negligible extra background CPU usage"),
+            ('FULL', "Full", "Optimize all kernels. Fastest rendering, may result in extra background CPU usage"),
+        ),
     )
 
     def find_existing_device_entry(self, device):
@@ -1718,10 +1733,12 @@ class CyclesPreferences(bpy.types.AddonPreferences):
         if compute_device_type == 'METAL':
             import platform
             # MetalRT only works on Apple Silicon at present, pending argument encoding fixes on AMD
+            # Kernel specialization is only viable on Apple Silicon at present due to relative compilation speed
             if platform.machine() == 'arm64':
-                row = layout.row()
-                row.use_property_split = True
-                row.prop(self, "use_metalrt")
+                col = layout.column()
+                col.use_property_split = True
+                col.prop(self, "kernel_optimization_level")
+                col.prop(self, "use_metalrt")
 
     def draw(self, context):
         self.draw_impl(self.layout, context)

@@ -127,7 +127,7 @@ class NODE_HT_header(Header):
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
-        # Now expanded via the 'ui_type'
+        # Now expanded via the `ui_type`.
         # layout.prop(snode, "tree_type", text="")
 
         if snode.tree_type == 'ShaderNodeTree':
@@ -864,7 +864,7 @@ class NODE_PT_active_node_properties(Panel):
                 )
 
     def show_socket_input(self, socket):
-        return hasattr(socket, 'draw') and socket.enabled and not socket.is_linked
+        return hasattr(socket, "draw") and socket.enabled and not socket.is_linked
 
 
 class NODE_PT_texture_mapping(Panel):
@@ -1160,7 +1160,7 @@ def node_panel(cls):
     node_cls.bl_space_type = 'NODE_EDITOR'
     node_cls.bl_region_type = 'UI'
     node_cls.bl_category = "Options"
-    if hasattr(node_cls, 'bl_parent_id'):
+    if hasattr(node_cls, "bl_parent_id"):
         node_cls.bl_parent_id = 'NODE_' + node_cls.bl_parent_id
 
     return node_cls

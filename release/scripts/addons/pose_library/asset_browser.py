@@ -26,7 +26,7 @@ def biggest_asset_browser_area(screen: bpy.types.Screen) -> Optional[bpy.types.A
 
     def area_sorting_key(area: bpy.types.Area) -> Tuple[bool, int]:
         """Return area size in pixels."""
-        return (area.width * area.height)
+        return area.width * area.height
 
     areas = list(suitable_areas(screen))
     if not areas:
@@ -70,9 +70,7 @@ def area_from_context(context: bpy.types.Context) -> Optional[bpy.types.Area]:
     return None
 
 
-def activate_asset(
-    asset: bpy.types.Action, asset_browser: bpy.types.Area, *, deferred: bool
-) -> None:
+def activate_asset(asset: bpy.types.Action, asset_browser: bpy.types.Area, *, deferred: bool) -> None:
     """Select & focus the asset in the browser."""
 
     space_data = asset_browser.spaces[0]

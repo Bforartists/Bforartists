@@ -1468,6 +1468,7 @@ class _defs_sculpt:
             props = tool.operator_properties("sculpt.trim_box_gesture")
             layout.prop(props, "trim_mode", expand=False)
             layout.use_property_split = False
+            layout.prop(props, "trim_extrude_mode", expand=False)
             layout.prop(props, "use_cursor_depth", expand=False)
         return dict(
             idname="builtin.box_trim",
@@ -1484,6 +1485,7 @@ class _defs_sculpt:
             props = tool.operator_properties("sculpt.trim_lasso_gesture")
             layout.prop(props, "trim_mode", expand=False)
             layout.prop(props, "trim_orientation", expand=False)
+            layout.prop(props, "trim_extrude_mode", expand=False)
             layout.use_property_split = False
             layout.prop(props, "use_cursor_depth", expand=False)
         return dict(
@@ -2777,7 +2779,7 @@ class IMAGE_PT_tools_active(ToolSelectPanelHelper, Panel):
     )
 
     # Private tools dictionary, store data to implement `tools_all` & `tools_from_context`.
-    # The keys match image spaces modes: 'context.space_data.mode'.
+    # The keys match image spaces modes: `context.space_data.mode`.
     # The values represent the tools, see `ToolSelectPanelHelper` for details.
     _tools = {
         None: [
@@ -2867,7 +2869,7 @@ class NODE_PT_tools_active(ToolSelectPanelHelper, Panel):
     )
 
     # Private tools dictionary, store data to implement `tools_all` & `tools_from_context`.
-    # The keys is always `None` since nodes don't use use modes to access different tools.
+    # The keys match object-modes from: `context.mode`.
     # The values represent the tools, see `ToolSelectPanelHelper` for details.
     _tools = {
         None: [
@@ -2968,7 +2970,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
     )
 
     # Private tools dictionary, store data to implement `tools_all` & `tools_from_context`.
-    # The keys match object-modes from: 'context.mode'.
+    # The keys match object-modes from: `context.mode`.
     # The values represent the tools, see `ToolSelectPanelHelper` for details.
     _tools = {
         None: [
@@ -3308,7 +3310,7 @@ class SEQUENCER_PT_tools_active(ToolSelectPanelHelper, Panel):
     )
 
     # Private tools dictionary, store data to implement `tools_all` & `tools_from_context`.
-    # The keys match sequence editors view type: 'context.space_data.view_type'.
+    # The keys match object-modes from: `context.mode`.
     # The values represent the tools, see `ToolSelectPanelHelper` for details.
     _tools = {
         None: [

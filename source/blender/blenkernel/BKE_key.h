@@ -13,7 +13,6 @@ struct Lattice;
 struct ListBase;
 struct Main;
 struct Mesh;
-struct MVert;
 struct Object;
 
 /* Kernel prototypes */
@@ -132,7 +131,9 @@ void BKE_keyblock_update_from_mesh(const struct Mesh *me, struct KeyBlock *kb);
 void BKE_keyblock_convert_from_mesh(const struct Mesh *me,
                                     const struct Key *key,
                                     struct KeyBlock *kb);
-void BKE_keyblock_convert_to_mesh(const struct KeyBlock *kb, struct MVert *mvert, int totvert);
+void BKE_keyblock_convert_to_mesh(const struct KeyBlock *kb,
+                                  float (*vert_positions)[3],
+                                  int totvert);
 
 /**
  * Computes normals (vertices, polygons and/or loops ones) of given mesh for given shape key.
@@ -144,7 +145,7 @@ void BKE_keyblock_convert_to_mesh(const struct KeyBlock *kb, struct MVert *mvert
  * \param r_loop_normals: if non-NULL, an array of vectors, same length as number of loops.
  */
 void BKE_keyblock_mesh_calc_normals(const struct KeyBlock *kb,
-                                    const struct Mesh *mesh,
+                                    struct Mesh *mesh,
                                     float (*r_vert_normals)[3],
                                     float (*r_poly_normals)[3],
                                     float (*r_loop_normals)[3]);

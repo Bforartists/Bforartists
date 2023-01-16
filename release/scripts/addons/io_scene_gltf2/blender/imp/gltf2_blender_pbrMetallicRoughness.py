@@ -64,11 +64,12 @@ def pbr_metallic_roughness(mh: MaterialHelper):
             need_volume_node = True
 
             # We also need glTF Material Output Node, to set thicknessFactor and thicknessTexture
-            mh.settings_node = make_settings_node(mh)
-            mh.settings_node.location = additional_location
-            mh.settings_node.width = 180
-            volume_location = additional_location
-            additional_location = additional_location[0], additional_location[1] - 150
+            if mh.settings_node is None:
+                mh.settings_node = make_settings_node(mh)
+                mh.settings_node.location = additional_location
+                mh.settings_node.width = 180
+                volume_location = additional_location
+                additional_location = additional_location[0], additional_location[1] - 150
 
     need_velvet_node = False
     if mh.pymat.extensions and 'KHR_materials_sheen' in mh.pymat.extensions:
@@ -322,7 +323,7 @@ def emission(mh: MaterialHelper, location, color_socket, strength_socket):
             node.location = x - 140, y
             node.blend_type = 'MULTIPLY'
             # Outputs
-            mh.node_tree.links.new(color_socket, node.outputs[0])
+            mh.node_tree.links.new(color_socket, node.outputs[2])
             # Inputs
             node.inputs['Factor'].default_value = 1.0
             color_socket = node.inputs[6]

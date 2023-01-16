@@ -16,7 +16,7 @@
 bl_info = {
     "name": "Sun Position",
     "author": "Michael Martin",
-    "version": (3, 1, 2),
+    "version": (3, 2, 0),
     "blender": (3, 0, 0),
     "location": "World > Sun Position",
     "description": "Show sun position with objects and/or sky texture",
@@ -35,6 +35,7 @@ else:
     from . import properties, ui_sun, hdr, translations
 
 import bpy
+from bpy.app.handlers import persistent
 
 
 register_classes, unregister_classes = bpy.utils.register_classes_factory(
@@ -44,6 +45,14 @@ register_classes, unregister_classes = bpy.utils.register_classes_factory(
      ui_sun.SUNPOS_PT_Location, ui_sun.SUNPOS_PT_Time, hdr.SUNPOS_OT_ShowHdr))
 
 
+@persistent
+def sun_scene_handler(scene):
+    sun_props = bpy.context.scene.sun_pos_properties
+    sun_props.show_surface = sun_props.show_surface
+    sun_props.show_analemmas = sun_props.show_analemmas
+    sun_props.show_north = sun_props.show_north
+
+
 def register():
     register_classes()
     bpy.types.Scene.sun_pos_properties = (
@@ -51,10 +60,12 @@ def register():
                                   name="Sun Position",
                                   description="Sun Position Settings"))
     bpy.app.handlers.frame_change_post.append(sun_calc.sun_handler)
+    bpy.app.handlers.load_post.append(sun_scene_handler)
     bpy.app.translations.register(__name__, translations.translations_dict)
 
 def unregister():
     bpy.app.translations.unregister(__name__)
     bpy.app.handlers.frame_change_post.remove(sun_calc.sun_handler)
+    bpy.app.handlers.load_post.remove(sun_scene_handler)
     del bpy.types.Scene.sun_pos_properties
     unregister_classes()

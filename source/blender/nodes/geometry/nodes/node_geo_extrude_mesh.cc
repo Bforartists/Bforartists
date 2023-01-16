@@ -27,7 +27,7 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Bool>(N_("Selection")).default_value(true).field_on_all().hide_value();
   b.add_input<decl::Vector>(N_("Offset"))
       .subtype(PROP_TRANSLATION)
-      .implicit_field(implicit_field_inputs::normal)
+      .implicit_field_on_all(implicit_field_inputs::normal)
       .hide_value();
   b.add_input<decl::Float>(N_("Offset Scale")).default_value(1.0f).field_on_all();
   b.add_input<decl::Bool>(N_("Individual")).default_value(true);
@@ -61,8 +61,8 @@ static void node_update(bNodeTree *ntree, bNode *node)
 }
 
 struct AttributeOutputs {
-  StrongAnonymousAttributeID top_id;
-  StrongAnonymousAttributeID side_id;
+  AutoAnonymousAttributeID top_id;
+  AutoAnonymousAttributeID side_id;
 };
 
 static void save_selection_as_attribute(Mesh &mesh,
@@ -143,7 +143,8 @@ static MutableSpan<int> get_orig_index_layer(Mesh &mesh, const eAttrDomain domai
 {
   const bke::AttributeAccessor attributes = mesh.attributes();
   CustomData &custom_data = get_customdata(mesh, domain);
-  if (int *orig_indices = static_cast<int *>(CustomData_get_layer(&custom_data, CD_ORIGINDEX))) {
+  if (int *orig_indices = static_cast<int *>(CustomData_get_layer_for_write(
+          &custom_data, CD_ORIGINDEX, attributes.domain_size(domain)))) {
     return {orig_indices, attributes.domain_size(domain)};
   }
   return {};
@@ -221,7 +222,7 @@ static void extrude_mesh_vertices(Mesh &mesh,
   const IndexRange new_vert_range{orig_vert_size, selection.size()};
   const IndexRange new_edge_range{orig_edge_size, selection.size()};
 
-  MutableSpan<MVert> new_verts = mesh.verts_for_write().slice(new_vert_range);
+  MutableSpan<float3> new_positions = mesh.vert_positions_for_write().slice(new_vert_range);
   MutableSpan<MEdge> new_edges = mesh.edges_for_write().slice(new_edge_range);
 
   for (const int i_selection : selection.index_range()) {
@@ -265,8 +266,7 @@ static void extrude_mesh_vertices(Mesh &mesh,
   devirtualize_varray(offsets, [&](const auto offsets) {
     threading::parallel_for(selection.index_range(), 1024, [&](const IndexRange range) {
       for (const int i : range) {
-        const float3 offset = offsets[selection[i]];
-        add_v3_v3(new_verts[i].co, offset);
+        new_positions[i] += offsets[selection[i]];
       }
     });
   });
@@ -593,19 +593,19 @@ static void extrude_mesh_edges(Mesh &mesh,
     return true;
   });
 
-  MutableSpan<MVert> new_verts = mesh.verts_for_write().slice(new_vert_range);
+  MutableSpan<float3> new_positions = mesh.vert_positions_for_write().slice(new_vert_range);
   if (edge_offsets.is_single()) {
     const float3 offset = edge_offsets.get_internal_single();
-    threading::parallel_for(new_verts.index_range(), 1024, [&](const IndexRange range) {
+    threading::parallel_for(new_positions.index_range(), 1024, [&](const IndexRange range) {
       for (const int i : range) {
-        add_v3_v3(new_verts[i].co, offset);
+        new_positions[i] += offset;
       }
     });
   }
   else {
-    threading::parallel_for(new_verts.index_range(), 1024, [&](const IndexRange range) {
+    threading::parallel_for(new_positions.index_range(), 1024, [&](const IndexRange range) {
       for (const int i : range) {
-        add_v3_v3(new_verts[i].co, vert_offsets[new_vert_indices[i]]);
+        new_positions[i] += vert_offsets[new_vert_indices[i]];
       }
     });
   }
@@ -978,15 +978,19 @@ static void extrude_mesh_face_regions(Mesh &mesh,
   /* Translate vertices based on the offset. If the vertex is used by a selected edge, it will
    * have been duplicated and only the new vertex should use the offset. Otherwise the vertex might
    * still need an offset, but it was reused on the inside of a region of extruded faces. */
-  MutableSpan<MVert> verts = mesh.verts_for_write();
+  MutableSpan<float3> positions = mesh.vert_positions_for_write();
   if (poly_offsets.is_single()) {
     const float3 offset = poly_offsets.get_internal_single();
     threading::parallel_for(
         IndexRange(all_selected_verts.size()), 1024, [&](const IndexRange range) {
           for (const int i_orig : all_selected_verts.as_span().slice(range)) {
             const int i_new = new_vert_indices.index_of_try(i_orig);
-            MVert &vert = verts[(i_new == -1) ? i_orig : new_vert_range[i_new]];
-            add_v3_v3(vert.co, offset);
+            if (i_new == -1) {
+              positions[i_orig] += offset;
+            }
+            else {
+              positions[new_vert_range[i_new]] += offset;
+            }
           }
         });
   }
@@ -996,8 +1000,12 @@ static void extrude_mesh_face_regions(Mesh &mesh,
           for (const int i_orig : all_selected_verts.as_span().slice(range)) {
             const int i_new = new_vert_indices.index_of_try(i_orig);
             const float3 offset = vert_offsets[i_orig];
-            MVert &vert = verts[(i_new == -1) ? i_orig : new_vert_range[i_new]];
-            add_v3_v3(vert.co, offset);
+            if (i_new == -1) {
+              positions[i_orig] += offset;
+            }
+            else {
+              positions[new_vert_range[i_new]] += offset;
+            }
           }
         });
   }
@@ -1094,7 +1102,7 @@ static void extrude_individual_mesh_faces(Mesh &mesh,
               side_poly_range.size(),
               side_loop_range.size());
 
-  MutableSpan<MVert> new_verts = mesh.verts_for_write().slice(new_vert_range);
+  MutableSpan<float3> new_positions = mesh.vert_positions_for_write().slice(new_vert_range);
   MutableSpan<MEdge> edges = mesh.edges_for_write();
   MutableSpan<MEdge> connect_edges = edges.slice(connect_edge_range);
   MutableSpan<MEdge> duplicate_edges = edges.slice(duplicate_edge_range);
@@ -1269,8 +1277,8 @@ static void extrude_individual_mesh_faces(Mesh &mesh,
   threading::parallel_for(poly_selection.index_range(), 1024, [&](const IndexRange range) {
     for (const int i_selection : range) {
       const IndexRange extrude_range = selected_corner_range(index_offsets, i_selection);
-      for (MVert &vert : new_verts.slice(extrude_range)) {
-        add_v3_v3(vert.co, poly_offset[poly_selection[i_selection]]);
+      for (float3 &position : new_positions.slice(extrude_range)) {
+        position += poly_offset[poly_selection[i_selection]];
       }
     }
   });
@@ -1325,21 +1333,17 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   /* Create a combined field from the offset and the scale so the field evaluator
    * can take care of the multiplication and to simplify each extrude function. */
-  static fn::CustomMF_SI_SI_SO<float3, float, float3> multiply_fn{
+  static auto multiply_fn = mf::build::SI2_SO<float3, float, float3>(
       "Scale",
       [](const float3 &offset, const float scale) { return offset * scale; },
-      fn::CustomMF_presets::AllSpanOrSingle()};
+      mf::build::exec_presets::AllSpanOrSingle());
   std::shared_ptr<FieldOperation> multiply_op = std::make_shared<FieldOperation>(
       FieldOperation(multiply_fn, {std::move(offset_field), std::move(scale_field)}));
   const Field<float3> final_offset{std::move(multiply_op)};
 
   AttributeOutputs attribute_outputs;
-  if (params.output_is_required("Top")) {
-    attribute_outputs.top_id = StrongAnonymousAttributeID("Top");
-  }
-  if (params.output_is_required("Side")) {
-    attribute_outputs.side_id = StrongAnonymousAttributeID("Side");
-  }
+  attribute_outputs.top_id = params.get_output_anonymous_attribute_id_if_needed("Top");
+  attribute_outputs.side_id = params.get_output_anonymous_attribute_id_if_needed("Side");
 
   const bool extrude_individual = mode == GEO_NODE_EXTRUDE_MESH_FACES &&
                                   params.extract_input<bool>("Individual");
