@@ -5142,11 +5142,11 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Field at Index    ", icon = "FIELD_AT_INDEX")
+            props = col.operator("node.add_node", text=" Evaluate at Index ", icon = "FIELD_AT_INDEX")
             props.use_transform = True
             props.type = "GeometryNodeFieldAtIndex"
 
-            props = col.operator("node.add_node", text=" Interpolate Domain    ", icon = "FIELD_DOMAIN")
+            props = col.operator("node.add_node", text=" Evaluate On Domain ", icon = "FIELD_DOMAIN")
             props.use_transform = True
             props.type = "GeometryNodeFieldOnDomain"
 
