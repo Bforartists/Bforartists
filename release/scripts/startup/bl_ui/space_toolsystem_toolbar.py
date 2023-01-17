@@ -1466,9 +1466,9 @@ class _defs_sculpt:
     def trim_box():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_box_gesture")
-            layout.prop(props, "trim_mode", expand=False)
-            layout.use_property_split = False
+            layout.prop(props, "trim_mode", expand=False)           
             layout.prop(props, "trim_extrude_mode", expand=False)
+            layout.use_property_split = False
             layout.prop(props, "use_cursor_depth", expand=False)
         return dict(
             idname="builtin.box_trim",
