@@ -79,7 +79,7 @@ const EnumPropertyItem *ED_asset_library_reference_to_rna_enum_itemf(const bool 
     const EnumPropertyItem generated_items[] = {
         {ASSET_LIBRARY_ALL,
          "ALL",
-         ICON_NONE,
+         ICON_DOCUMENTS,
          "All",
          "Show assets from all of the listed asset libraries"},
         {ASSET_LIBRARY_LOCAL,
