@@ -4551,6 +4551,197 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
+
+
+#add mesh panel, read subpanel
+class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Read"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_mesh"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Edge Angle              ", icon = "EDGE_ANGLE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeAngle"
+
+            props = col.operator("node.add_node", text=" Edge Neighbors       ", icon = "EDGE_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeNeighbors"
+
+            props = col.operator("node.add_node", text=" Edge Vertices           ", icon = "EDGE_VERTICES")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeVertices"
+
+            props = col.operator("node.add_node", text=" Face Area                ", icon = "FACEREGIONS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceArea"
+
+            props = col.operator("node.add_node", text=" Face Neighbors        ", icon = "FACE_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceNeighbors"
+
+            props = col.operator("node.add_node", text=" Face Set Boundaries ", icon = "SELECT_BOUNDARY")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshFaceSetBoundaries"
+
+            props = col.operator("node.add_node", text=" Is Face Planar           ", icon = "PLANAR")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceIsPlanar"
+
+            props = col.operator("node.add_node", text=" Is Shade Smooth   ", icon = "SHADING_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeInputShadeSmooth"
+
+            props = col.operator("node.add_node", text=" Mesh Island             ", icon = "UV_ISLANDSEL")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshIsland"
+
+            props = col.operator("node.add_node", text = " Shortest Edge Path ", icon = "SELECT_SHORTESTPATH")
+            props.use_transform = True
+            props.type = "GeometryNodeInputShortestEdgePaths"
+
+            props = col.operator("node.add_node", text=" Vertex Neighbors   ", icon = "VERTEX_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshVertexNeighbors"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "EDGE_ANGLE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeAngle"
+
+            props = flow.operator("node.add_node", text="", icon = "EDGE_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeNeighbors"
+
+            props = flow.operator("node.add_node", text="", icon = "EDGE_VERTICES")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeVertices"
+
+            props = flow.operator("node.add_node", text="", icon = "FACEREGIONS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceArea"
+
+            props = flow.operator("node.add_node", text = "", icon = "FACE_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceNeighbors"
+
+            props = flow.operator("node.add_node", text="", icon = "SELECT_BOUNDARY")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshFaceSetBoundaries"
+
+            props = flow.operator("node.add_node", text="", icon = "PLANAR")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceIsPlanar"
+
+            props = flow.operator("node.add_node", text = "", icon = "SHADING_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeInputShadeSmooth"
+
+            props = flow.operator("node.add_node", text = "", icon = "SELECT_SHORTESTPATH")
+            props.use_transform = True
+            props.type = "GeometryNodeInputShortestEdgePaths"
+
+            props = flow.operator("node.add_node", text = "", icon = "VERTEX_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshVertexNeighbors"
+
+
+#add mesh panel, write subpanel
+class NODES_PT_geom_add_mesh_write(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Write"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_mesh"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Set Shade Smooth   ", icon = "SET_SHADE_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSetShadeSmooth"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_SHADE_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSetShadeSmooth"
+
+
+#add mesh panel, operations subpanel
+class NODES_PT_geom_add_mesh_operations(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Operations"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_mesh"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
@@ -4612,6 +4803,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSampleUVSurface"
 
+            props = col.operator("node.add_node", text=" Scale Elements        ", icon = "TRANSFORM_SCALE")
+            props.use_transform = True
+            props.type = "GeometryNodeScaleElements"
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -4631,63 +4826,6 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
 
-            props = col.operator("node.add_node", text=" Scale Elements        ", icon = "TRANSFORM_SCALE")
-            props.use_transform = True
-            props.type = "GeometryNodeScaleElements"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Edge Angle              ", icon = "EDGE_ANGLE")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshEdgeAngle"
-
-            props = col.operator("node.add_node", text=" Edge Neighbors       ", icon = "EDGE_NEIGHBORS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshEdgeNeighbors"
-
-            props = col.operator("node.add_node", text=" Edge Vertices           ", icon = "EDGE_VERTICES")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshEdgeVertices"
-
-            props = col.operator("node.add_node", text=" Face Area                ", icon = "FACEREGIONS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshFaceArea"
-
-            props = col.operator("node.add_node", text=" Face Set Boundaries ", icon = "SELECT_BOUNDARY")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshFaceSetBoundaries"
-
-            props = col.operator("node.add_node", text=" Is Face Planar           ", icon = "PLANAR")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshFaceIsPlanar"
-
-            props = col.operator("node.add_node", text=" Face Neighbors        ", icon = "FACE_NEIGHBORS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshFaceNeighbors"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Mesh Island             ", icon = "UV_ISLANDSEL")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshIsland"
-
-            props = col.operator("node.add_node", text=" Is Shade Smooth   ", icon = "SHADING_SMOOTH")
-            props.use_transform = True
-            props.type = "GeometryNodeInputShadeSmooth"
-
-            props = col.operator("node.add_node", text = " Shortest Edge Path ", icon = "SELECT_SHORTESTPATH")
-            props.use_transform = True
-            props.type = "GeometryNodeInputShortestEdgePaths"
-
-            props = col.operator("node.add_node", text=" Vertex Neighbors   ", icon = "VERTEX_NEIGHBORS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshVertexNeighbors"
-
-            props = col.operator("node.add_node", text=" Set Shade Smooth   ", icon = "SET_SHADE_SMOOTH")
-            props.use_transform = True
-            props.type = "GeometryNodeSetShadeSmooth"
 
         #### Icon Buttons
 
@@ -4741,6 +4879,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSampleUVSurface"
 
+            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_SCALE")
+            props.use_transform = True
+            props.type = "GeometryNodeScaleElements"
+
             props = flow.operator("node.add_node", text = "", icon = "SPLITEDGE")
             props.use_transform = True
             props.type = "GeometryNodeSplitEdges"
@@ -4757,67 +4899,16 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
 
-            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_SCALE")
-            props.use_transform = True
-            props.type = "GeometryNodeScaleElements"
 
-            props = flow.operator("node.add_node", text = "", icon = "EDGE_NEIGHBORS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshEdgeNeighbors"
-
-            props = flow.operator("node.add_node", text = "", icon = "EDGE_VERTICES")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshEdgeVertices"
-
-            props = flow.operator("node.add_node", text = "", icon = "FACEREGIONS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshFaceArea"
-
-            props = flow.operator("node.add_node", text="", icon = "SELECT_BOUNDARY")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshFaceSetBoundaries"
-
-            props = flow.operator("node.add_node", text = "", icon = "PLANAR")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshFaceIsPlanar"
-
-            props = flow.operator("node.add_node", text = "", icon = "EDGE_ANGLE")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshEdgeAngle"
-
-            props = flow.operator("node.add_node", text = "", icon = "FACE_NEIGHBORS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshFaceNeighbors"
-
-            props = flow.operator("node.add_node", text = "", icon = "UV_ISLANDSEL")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshIsland"
-
-            props = flow.operator("node.add_node", text = "", icon = "SHADING_SMOOTH")
-            props.use_transform = True
-            props.type = "GeometryNodeInputShadeSmooth"
-
-            props = flow.operator("node.add_node", text = "", icon = "SELECT_SHORTESTPATH")
-            props.use_transform = True
-            props.type = "GeometryNodeInputShortestEdgePaths"
-
-            props = flow.operator("node.add_node", text = "", icon = "VERTEX_NEIGHBORS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshVertexNeighbors"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_SHADE_SMOOTH")
-            props.use_transform = True
-            props.type = "GeometryNodeSetShadeSmooth"
-
-
-#add mesh panel
+#add mesh panel, primitives subpanel
 class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Mesh Primitives - SUB"
+    bl_label = "Primitives"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_mesh"
 
     @classmethod
     def poll(cls, context):
@@ -4916,14 +5007,15 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props.type = "GeometryNodeMeshUVSphere"
 
 
-#add mesh panel
+#add mesh panel, topology subpanel
 class NODES_PT_geom_add_mesh_topology(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Mesh Topology - SUB"
+    bl_label = "Topology"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_mesh"
 
     @classmethod
     def poll(cls, context):
@@ -5015,13 +5107,14 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel):
 
 
 #add volume panel
-class NODES_PT_geom_add_uv(bpy.types.Panel):
+class NODES_PT_geom_add_mesh_uv(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "UV - SUB"
+    bl_label = "UV"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_mesh"
 
     @classmethod
     def poll(cls, context):
@@ -6602,11 +6695,13 @@ classes = (
     NODES_PT_geom_add_curve_topology,
 
     NODES_PT_geom_add_instances,
-
     NODES_PT_geom_add_mesh,
+    NODES_PT_geom_add_mesh_read,
+    NODES_PT_geom_add_mesh_write,
+    NODES_PT_geom_add_mesh_operations,
     NODES_PT_geom_add_mesh_primitives,
     NODES_PT_geom_add_mesh_topology,
-    NODES_PT_geom_add_uv,
+    NODES_PT_geom_add_mesh_uv,
     NODES_PT_geom_add_point,
 
     NODES_PT_geom_add_volume,
