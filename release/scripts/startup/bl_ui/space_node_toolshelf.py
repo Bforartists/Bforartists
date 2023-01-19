@@ -3515,9 +3515,7 @@ class NODES_PT_geom_add_output(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "GROUPOUTPUT")
-            props.use_transform = True
-            props.type = "NodeGroupOutput"
+
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_VIEWER")
             props.use_transform = True
@@ -3919,6 +3917,24 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
+
+#add Curves panel, read subpanel
+class NODES_PT_geom_add_curve_read(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Read"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_curve"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
@@ -3933,56 +3949,13 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Curve Length              ", icon = "PARTICLEBRUSH_LENGTH")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveLength"
-
-            props = col.operator("node.add_node", text=" Curve to Mesh            ", icon = "OUTLINER_OB_MESH")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveToMesh"
-
-            props = col.operator("node.add_node", text=" Curve to Points          ", icon = "POINTCLOUD_DATA")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveToPoints"
-
-            props = col.operator("node.add_node", text=" Deform Curves on Surface ", icon = "DEFORM_CURVES")
-            props.use_transform = True
-            props.type = "GeometryNodeDeformCurvesOnSurface"
-
-            props = col.operator("node.add_node", text=" Fill Curve                   ", icon = "CURVE_FILL")
-            props.use_transform = True
-            props.type = "GeometryNodeFillCurve"
-
-            props = col.operator("node.add_node", text=" Fillet Curve                ", icon = "CURVE_FILLET")
-            props.use_transform = True
-            props.type = "GeometryNodeFilletCurve"
-
-            props = col.operator("node.add_node", text=" Resample Curve        ", icon = "CURVE_RESAMPLE")
-            props.use_transform = True
-            props.type = "GeometryNodeResampleCurve"
-
-            props = col.operator("node.add_node", text=" Reverse Curve           ", icon = "SWITCH_DIRECTION")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyCurveReverse"
-
-            props = col.operator("node.add_node", text=" Sample Curve             ", icon = "CURVE_SAMPLE")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleCurve"
-
-            props = col.operator("node.add_node", text=" Subdivide Curve         ", icon = "SUBDIVIDE_EDGES")
-            props.use_transform = True
-            props.type = "GeometryNodeSubdivideCurve"
-
-            props = col.operator("node.add_node", text=" Trim Curve                  ", icon = "CURVE_TRIM")
-            props.use_transform = True
-            props.type = "GeometryNodeTrimCurve"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
             props = col.operator("node.add_node", text=" Curve Handle Positions ", icon = "CURVE_HANDLE_POSITIONS")
             props.use_transform = True
             props.type = "GeometryNodeInputCurveHandlePositions"
+
+            props = col.operator("node.add_node", text=" Curve Length              ", icon = "PARTICLEBRUSH_LENGTH")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveLength"
 
             props = col.operator("node.add_node", text=" Curve Tangent           ", icon = "CURVE_TANGENT")
             props.use_transform = True
@@ -4015,6 +3988,82 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Spline Resolution        ", icon = "SPLINE_RESOLUTION")
             props.use_transform = True
             props.type = "GeometryNodeInputSplineResolution"
+
+        #### Icon Buttons
+
+        else:
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_HANDLE_POSITIONS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputCurveHandlePositions"
+
+            props = flow.operator("node.add_node", text = "", icon = "PARTICLEBRUSH_LENGTH")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveLength"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_TANGENT")
+            props.use_transform = True
+            props.type = "GeometryNodeInputTangent"
+
+            props = flow.operator("node.add_node", text="", icon = "CURVE_TILT")
+            props.use_transform = True
+            props.type = "GeometryNodeInputCurveTilt"
+
+            props = flow.operator("node.add_node", text="", icon = "SELECT_LAST")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveEndpointSelection"
+
+            props = flow.operator("node.add_node", text="", icon = "SELECT_HANDLETYPE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveHandleTypeSelection"
+
+            props = flow.operator("node.add_node", text = "", icon = "IS_SPLINE_CYCLIC")
+            props.use_transform = True
+            props.type = "GeometryNodeInputSplineCyclic"
+
+            props = flow.operator("node.add_node", text = "", icon = "SPLINE_LENGTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSplineLength"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_PARAMETER")
+            props.use_transform = True
+            props.type = "GeometryNodeSplineParameter"
+
+            props = flow.operator("node.add_node", text = "", icon = "SPLINE_RESOLUTION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputSplineResolution"
+
+
+#add Curves panel, write subpanel
+class NODES_PT_geom_add_curve_write(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Write"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_curve"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -4058,9 +4107,118 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "PARTICLEBRUSH_LENGTH")
+            props = flow.operator("node.add_node", text="", icon = "CURVE_NORMAL")
             props.use_transform = True
-            props.type = "GeometryNodeCurveLength"
+            props.type = "GeometryNodeSetCurveNormal"
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_RADIUS")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveRadius"
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_TILT")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveTilt"
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_HANDLE_POSITIONS")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveHandlePositions"
+
+            props = flow.operator("node.add_node", text = "", icon = "HANDLE_AUTO")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSetHandles"
+
+            props = flow.operator("node.add_node", text = "", icon = "TOGGLE_CYCLIC")
+            props.use_transform = True
+            props.type = "GeometryNodeSetSplineCyclic"
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_SPLINE_RESOLUTION")
+            props.use_transform = True
+            props.type = "GeometryNodeSetSplineResolution"
+
+            props = flow.operator("node.add_node", text = "", icon = "SPLINE_TYPE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSplineType"
+
+
+#add Curves panel, operations subpanel
+class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Operations"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_curve"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+
+            props = col.operator("node.add_node", text=" Curve to Mesh            ", icon = "OUTLINER_OB_MESH")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveToMesh"
+
+            props = col.operator("node.add_node", text=" Curve to Points          ", icon = "POINTCLOUD_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveToPoints"
+
+            props = col.operator("node.add_node", text=" Deform Curves on Surface ", icon = "DEFORM_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodeDeformCurvesOnSurface"
+
+            props = col.operator("node.add_node", text=" Fill Curve                   ", icon = "CURVE_FILL")
+            props.use_transform = True
+            props.type = "GeometryNodeFillCurve"
+
+            props = col.operator("node.add_node", text=" Fillet Curve                ", icon = "CURVE_FILLET")
+            props.use_transform = True
+            props.type = "GeometryNodeFilletCurve"
+
+            props = col.operator("node.add_node", text=" Resample Curve        ", icon = "CURVE_RESAMPLE")
+            props.use_transform = True
+            props.type = "GeometryNodeResampleCurve"
+
+            props = col.operator("node.add_node", text=" Reverse Curve           ", icon = "SWITCH_DIRECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeLegacyCurveReverse"
+
+            props = col.operator("node.add_node", text=" Sample Curve             ", icon = "CURVE_SAMPLE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleCurve"
+
+            props = col.operator("node.add_node", text=" Subdivide Curve         ", icon = "SUBDIVIDE_EDGES")
+            props.use_transform = True
+            props.type = "GeometryNodeSubdivideCurve"
+
+            props = col.operator("node.add_node", text=" Trim Curve                  ", icon = "CURVE_TRIM")
+            props.use_transform = True
+            props.type = "GeometryNodeTrimCurve"
+
+        #### Icon Buttons
+
+        else:
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
 
             props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
@@ -4102,91 +4260,16 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeTrimCurve"
 
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_HANDLE_POSITIONS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputCurveHandlePositions"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_TANGENT")
-            props.use_transform = True
-            props.type = "GeometryNodeInputTangent"
-
-            props = flow.operator("node.add_node", text="", icon = "CURVE_TILT")
-            props.use_transform = True
-            props.type = "GeometryNodeInputCurveTilt"
-
-            props = flow.operator("node.add_node", text="", icon = "SELECT_LAST")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveEndpointSelection"
-
-            props = flow.operator("node.add_node", text="", icon = "SELECT_HANDLETYPE")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveHandleTypeSelection"
-
-            props = flow.operator("node.add_node", text = "", icon = "IS_SPLINE_CYCLIC")
-            props.use_transform = True
-            props.type = "GeometryNodeInputSplineCyclic"
-
-            props = flow.operator("node.add_node", text = "", icon = "SPLINE_LENGTH")
-            props.use_transform = True
-            props.type = "GeometryNodeSplineLength"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_PARAMETER")
-            props.use_transform = True
-            props.type = "GeometryNodeSplineParameter"
-
-            props = flow.operator("node.add_node", text = "", icon = "SPLINE_RESOLUTION")
-            props.use_transform = True
-            props.type = "GeometryNodeInputSplineResolution"
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "CURVE_NORMAL")
-            props.use_transform = True
-            props.type = "GeometryNodeSetCurveNormal"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_RADIUS")
-            props.use_transform = True
-            props.type = "GeometryNodeSetCurveRadius"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_TILT")
-            props.use_transform = True
-            props.type = "GeometryNodeSetCurveTilt"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_HANDLE_POSITIONS")
-            props.use_transform = True
-            props.type = "GeometryNodeSetCurveHandlePositions"
-
-            props = flow.operator("node.add_node", text = "", icon = "HANDLE_AUTO")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveSetHandles"
-
-            props = flow.operator("node.add_node", text = "", icon = "TOGGLE_CYCLIC")
-            props.use_transform = True
-            props.type = "GeometryNodeSetSplineCyclic"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_SPLINE_RESOLUTION")
-            props.use_transform = True
-            props.type = "GeometryNodeSetSplineResolution"
-
-            props = flow.operator("node.add_node", text = "", icon = "SPLINE_TYPE")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveSplineType"
-
-
-#add Curve Primitives panel
+#add Curves panel, Primitives subpanel
 class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Curve Primitives - SUB"
+    bl_label = "Primitives"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_curve"
 
     @classmethod
     def poll(cls, context):
@@ -4282,14 +4365,15 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
             props.type = "GeometryNodeCurveStar"
 
 
-#add Curve Topology panel
+#add Curve panel, Topology subpanel
 class NODES_PT_geom_add_curve_topology(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Curve Topology - SUB"
+    bl_label = "Topology"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_curve"
 
     @classmethod
     def poll(cls, context):
@@ -4343,8 +4427,6 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "POINT_OF_CURVE")
             props.use_transform = True
             props.type = "GeometryNodePointsOfCurve"
-
-
 
 
 #add mesh panel
@@ -4451,7 +4533,6 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "INSTANCE_SCALE")
             props.use_transform = True
             props.type = "GeometryNodeInputInstanceScale"
-
 
 
 #add mesh panel
@@ -4896,7 +4977,6 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeVertexOfCorner"
 
-
         #### Icon Buttons
 
         else:
@@ -4932,7 +5012,6 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "VERTEX_OF_CORNER")
             props.use_transform = True
             props.type = "GeometryNodeVertexOfCorner"
-
 
 
 #add volume panel
@@ -4988,8 +5067,6 @@ class NODES_PT_geom_add_uv(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
             props.use_transform = True
             props.type = "GeometryNodeUVUnwrap"
-
-
 
 
 #add mesh panel
@@ -5079,7 +5156,6 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props.type = "GeometryNodeSetPointRadius"
 
 
-
 #add volume panel
 class NODES_PT_geom_add_volume(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -5133,7 +5209,6 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
             props.use_transform = True
             props.type = "GeometryNodeVolumeToMesh"
-
 
 
 #add material panel
@@ -5580,7 +5655,6 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.type = "FunctionNodeSeparateColor"
 
 
-
 #add text panel
 class NODES_PT_geom_add_text(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -5753,7 +5827,6 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTORROTATE")
             props.use_transform = True
             props.type = "ShaderNodeVectorRotate"
-
 
 
 # ---------------- shader editor common. This content shows when you activate the common switch in the display panel.
@@ -6522,6 +6595,9 @@ classes = (
     NODES_PT_geom_add_geometry_operations,
     NODES_PT_geom_add_geometry_sample,
     NODES_PT_geom_add_curve,
+    NODES_PT_geom_add_curve_read,
+    NODES_PT_geom_add_curve_write,
+    NODES_PT_geom_add_curve_operations,
     NODES_PT_geom_add_curve_primitives,
     NODES_PT_geom_add_curve_topology,
 
