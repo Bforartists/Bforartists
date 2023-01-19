@@ -3130,7 +3130,6 @@ class NODES_PT_Relations_layout(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
 
-
 # ------------- Node Editor - Add tab -------------------------------
 
 #add attribute panel
@@ -3167,6 +3166,13 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeAttributeStatistic"
 
+            props = col.operator("node.add_node", text=" Domain Size            ", icon = "DOMAIN_SIZE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeDomainSize"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
             props = col.operator("node.add_node", text=" Blur Attribute          ", icon = "BLUR_ATTRIBUTE")
             props.use_transform = True
             props.type = "GeometryNodeBlurAttribute"
@@ -3174,10 +3180,6 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Capture Attribute    ", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
             props.type = "GeometryNodeCaptureAttribute"
-
-            props = col.operator("node.add_node", text=" Domain Size            ", icon = "DOMAIN_SIZE")
-            props.use_transform = True
-            props.type = "GeometryNodeAttributeDomainSize"
 
             props = col.operator("node.add_node", text=" Remove Attribute   ", icon = "ATTRIBUTE_REMOVE")
             props.use_transform = True
@@ -3199,6 +3201,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeAttributeStatistic"
 
+            props = flow.operator("node.add_node", text="", icon = "DOMAIN_SIZE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeDomainSize"
+
             props = flow.operator("node.add_node", text="", icon = "BLUR_ATTRIBUTE")
             props.use_transform = True
             props.type = "GeometryNodeBlurAttribute"
@@ -3206,10 +3212,6 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
             props.type = "GeometryNodeCaptureAttribute"
-
-            props = flow.operator("node.add_node", text="", icon = "DOMAIN_SIZE")
-            props.use_transform = True
-            props.type = "GeometryNodeAttributeDomainSize"
 
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_REMOVE")
             props.use_transform = True
