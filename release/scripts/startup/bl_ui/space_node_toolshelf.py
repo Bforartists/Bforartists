@@ -3546,6 +3546,207 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Join Geometry           ", icon = "JOIN")
+            props.use_transform = True
+            props.type = "GeometryNodeJoinGeometry"
+
+            props = col.operator("node.add_node", text=" Geometry to Instance", icon = "GEOMETRY_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeGeometryToInstance"
+
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "JOIN")
+            props.use_transform = True
+            props.type = "GeometryNodeJoinGeometry"
+
+            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeGeometryToInstance"
+
+
+#add geometry panel, read subpanel
+class NODES_PT_geom_add_geometry_read(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Read"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_geometry"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" ID                               ", icon = "GET_ID")
+            props.use_transform = True
+            props.type = "GeometryNodeInputID"
+
+            props = col.operator("node.add_node", text=" Index                          ", icon = "INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeInputIndex"
+
+            props = col.operator("node.add_node", text=" Named Attribute       ", icon = "NAMED_ATTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNamedAttribute"
+
+            props = col.operator("node.add_node", text=" Normal                      ", icon = "RECALC_NORMALS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNormal"
+
+            props = col.operator("node.add_node", text=" Position                     ", icon = "POSITION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputPosition"
+
+            props = col.operator("node.add_node", text=" Radius                       ", icon = "RADIUS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputRadius"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "GET_ID")
+            props.use_transform = True
+            props.type = "GeometryNodeInputID"
+
+            props = flow.operator("node.add_node", text = "", icon = "INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeInputIndex"
+
+            props = flow.operator("node.add_node", text = "", icon = "NAMED_ATTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNamedAttribute"
+
+            props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNormal"
+
+            props = flow.operator("node.add_node", text = "", icon = "POSITION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputPosition"
+
+            props = flow.operator("node.add_node", text = "", icon = "RADIUS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputRadius"
+
+
+#add geometry panel, write subpanel
+class NODES_PT_geom_add_geometry_write(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Write"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_geometry"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Set ID                         ", icon = "SET_ID")
+            props.use_transform = True
+            props.type = "GeometryNodeSetID"
+
+            props = col.operator("node.add_node", text=" Set Postion                 ", icon = "SET_POSITION")
+            props.use_transform = True
+            props.type = "GeometryNodeSetPosition"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_ID")
+            props.use_transform = True
+            props.type = "GeometryNodeSetID"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
+            props.use_transform = True
+            props.type = "GeometryNodeTransform"
+
+
+#add geometry panel, operations subpanel
+class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Operations"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_geometry"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
             props = col.operator("node.add_node", text=" Bounding Box             ", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
             props.type = "GeometryNodeBoundBox"
@@ -3562,41 +3763,9 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeDuplicateElements"
 
-            props = col.operator("node.add_node", text=" Geometry to Instance", icon = "GEOMETRY_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeGeometryToInstance"
-
             props = col.operator("node.add_node", text=" Merge by Distance    ", icon = "REMOVE_DOUBLES")
             props.use_transform = True
             props.type = "GeometryNodeMergeByDistance"
-
-            props = col.operator("node.add_node", text=" Geometry Proximity ", icon = "GEOMETRY_PROXIMITY")
-            props.use_transform = True
-            props.type = "GeometryNodeProximity"
-
-            props = col.operator("node.add_node", text=" Join Geometry           ", icon = "JOIN")
-            props.use_transform = True
-            props.type = "GeometryNodeJoinGeometry"
-
-            props = col.operator("node.add_node", text=" Raycast                      ", icon = "RAYCAST")
-            props.use_transform = True
-            props.type = "GeometryNodeRaycast"
-
-            props = col.operator("node.add_node", text=" Sample Index             ", icon = "SAMPLE_INDEX")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleIndex"
-
-            props = col.operator("node.add_node", text=" Sample Nearest          ", icon = "SAMPLE_NEAREST")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleNearest"
-
-            props = col.operator("node.add_node", text=" Separate Components", icon = "SEPARATE")
-            props.use_transform = True
-            props.type = "GeometryNodeSeparateComponents"
-
-            props = col.operator("node.add_node", text=" Separate Geometry   ", icon = "SEPARATE_GEOMETRY")
-            props.use_transform = True
-            props.type = "GeometryNodeSeparateGeometry"
 
             props = col.operator("node.add_node", text=" Transform Geometry  ", icon = "NODE_TRANSFORM")
             props.use_transform = True
@@ -3605,13 +3774,13 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Set ID                         ", icon = "SET_ID")
+            props = col.operator("node.add_node", text=" Separate Components", icon = "SEPARATE")
             props.use_transform = True
-            props.type = "GeometryNodeSetID"
+            props.type = "GeometryNodeSeparateComponents"
 
-            props = col.operator("node.add_node", text=" Set Postion                 ", icon = "SET_POSITION")
+            props = col.operator("node.add_node", text=" Separate Geometry   ", icon = "SEPARATE_GEOMETRY")
             props.use_transform = True
-            props.type = "GeometryNodeSetPosition"
+            props.type = "GeometryNodeSeparateGeometry"
 
         #### Icon Buttons
 
@@ -3637,21 +3806,81 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeDuplicateElements"
 
-            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeGeometryToInstance"
-
             props = flow.operator("node.add_node", text = "", icon = "REMOVE_DOUBLES")
             props.use_transform = True
-            props.type = "GeometryNodeGeometryToInstance"
+            props.type = "GeometryNodeMergeByDistance"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
+            props.use_transform = True
+            props.type = "GeometryNodeTransform"
+
+            props = flow.operator("node.add_node", text = "", icon = "SEPARATE")
+            props.use_transform = True
+            props.type = "GeometryNodeSeparateComponents"
+
+            props = flow.operator("node.add_node", text = "", icon = "SEPARATE_GEOMETRY")
+            props.use_transform = True
+            props.type = "GeometryNodeSeparateGeometry"
+
+
+#add geometry panel, sample subpanel
+class NODES_PT_geom_add_geometry_sample(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Sample"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_geometry"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Geometry Proximity   ", icon = "GEOMETRY_PROXIMITY")
+            props.use_transform = True
+            props.type = "GeometryNodeProximity"
+
+            props = col.operator("node.add_node", text=" Raycast                      ", icon = "RAYCAST")
+            props.use_transform = True
+            props.type = "GeometryNodeRaycast"
+
+            props = col.operator("node.add_node", text=" Sample Index             ", icon = "SAMPLE_INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleIndex"
+
+            props = col.operator("node.add_node", text=" Sample Nearest        ", icon = "SAMPLE_NEAREST")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleNearest"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
             props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeMergeByDistance"
-
-            props = flow.operator("node.add_node", text = "", icon = "JOIN")
-            props.use_transform = True
-            props.type = "GeometryNodeJoinGeometry"
 
             props = flow.operator("node.add_node", text = "", icon = "RAYCAST")
             props.use_transform = True
@@ -3664,31 +3893,6 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "SAMPLE_NEAREST")
             props.use_transform = True
             props.type = "GeometryNodeSampleNearest"
-
-            props = flow.operator("node.add_node", text = "", icon = "SEPARATE")
-            props.use_transform = True
-            props.type = "GeometryNodeSeparateComponents"
-
-            props = flow.operator("node.add_node", text = "", icon = "SEPARATE_GEOMETRY")
-            props.use_transform = True
-            props.type = "GeometryNodeSeparateGeometry"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_POSITION")
-            props.use_transform = True
-            props.type = "GeometryNodeSetPosition"
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_ID")
-            props.use_transform = True
-            props.type = "GeometryNodeSetID"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
-            props.use_transform = True
-            props.type = "GeometryNodeTransform"
-
 
 
 #add Curves panel
@@ -6305,6 +6509,10 @@ classes = (
     NODES_PT_geom_add_output,
 
     NODES_PT_geom_add_geometry,
+    NODES_PT_geom_add_geometry_read,
+    NODES_PT_geom_add_geometry_write,
+    NODES_PT_geom_add_geometry_operations,
+    NODES_PT_geom_add_geometry_sample,
     NODES_PT_geom_add_curve,
     NODES_PT_geom_add_curve_primitives,
     NODES_PT_geom_add_curve_topology,
