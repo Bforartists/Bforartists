@@ -5532,67 +5532,9 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Accumulate Field  ", icon = "ACCUMULATE")
-            props.use_transform = True
-            props.type = "GeometryNodeAccumulateField"
-
-            props = col.operator("node.add_node", text=" Align Euler to Vector", icon = "ALIGN_EULER_TO_VECTOR")
-            props.use_transform = True
-            props.type = "FunctionNodeAlignEulerToVector"
-
-            props = col.operator("node.add_node", text=" Boolean Math  ", icon = "BOOLEAN_MATH")
-            props.use_transform = True
-            props.type = "FunctionNodeBooleanMath"
-
-            props = col.operator("node.add_node", text=" Clamp              ", icon = "NODE_CLAMP")
-            props.use_transform = True
-            props.type = "ShaderNodeClamp"
-
-            props = col.operator("node.add_node", text=" Compare          ", icon = "FLOAT_COMPARE")
-            props.use_transform = True
-            props.type = "FunctionNodeCompare"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Evaluate at Index ", icon = "FIELD_AT_INDEX")
-            props.use_transform = True
-            props.type = "GeometryNodeFieldAtIndex"
-
-            props = col.operator("node.add_node", text=" Evaluate On Domain ", icon = "FIELD_DOMAIN")
-            props.use_transform = True
-            props.type = "GeometryNodeFieldOnDomain"
-
-            props = col.operator("node.add_node", text=" Float Curve      ", icon = "FLOAT_CURVE")
-            props.use_transform = True
-            props.type = "ShaderNodeFloatCurve"
-
-            props = col.operator("node.add_node", text=" Float to Integer ", icon = "FLOAT_TO_INT")
-            props.use_transform = True
-            props.type = "FunctionNodeFloatToInt"
-
-            props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_MAP_RANGE")
-            props.use_transform = True
-            props.type = "ShaderNodeMapRange"
-
-            props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
-            props.use_transform = True
-            props.type = "ShaderNodeMath"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Mix                   ", icon = "NODE_MIXSHADER")
-            props.use_transform = True
-            props.type = "ShaderNodeMix"
-
             props = col.operator("node.add_node", text=" Random Value  ", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomValue"
-
-            props = col.operator("node.add_node", text=" Rotate Euler     ", icon = "ROTATE_EULER")
-            props.use_transform = True
-            props.type = "FunctionNodeRotateEuler"
 
             props = col.operator("node.add_node", text=" Switch               ", icon = "SWITCH")
             props.use_transform = True
@@ -5606,75 +5548,24 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "ACCUMULATE")
-            props.use_transform = True
-            props.type = "GeometryNodeAccumulateField"
-
-            props = flow.operator("node.add_node", text = "", icon = "ALIGN_EULER_TO_VECTOR")
-            props.use_transform = True
-            props.type = "FunctionNodeAlignEulerToVector"
-
-            props = flow.operator("node.add_node", text = "", icon = "BOOLEAN_MATH")
-            props.use_transform = True
-            props.type = "FunctionNodeBooleanMath"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_CLAMP")
-            props.use_transform = True
-            props.type = "ShaderNodeClamp"
-
-            props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
-            props.use_transform = True
-            props.type = "ShaderNodeFloatCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
-            props.use_transform = True
-            props.type = "FunctionNodeCompare"
-
-            props = flow.operator("node.add_node", text = "", icon = "FIELD_AT_INDEX")
-            props.use_transform = True
-            props.type = "GeometryNodeFieldAtIndex"
-
-            props = flow.operator("node.add_node", text="", icon = "FIELD_DOMAIN")
-            props.use_transform = True
-            props.type = "GeometryNodeFieldOnDomain"
-
-            props = flow.operator("node.add_node", text="", icon = "FLOAT_TO_INT")
-            props.use_transform = True
-            props.type = "FunctionNodeFloatToInt"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
-            props.use_transform = True
-            props.type = "ShaderNodeMapRange"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
-            props.use_transform = True
-            props.type = "ShaderNodeMath"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_MIXSHADER")
-            props.use_transform = True
-            props.type = "ShaderNodeMix"
-
             props = flow.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomValue"
-
-            props = flow.operator("node.add_node", text = "", icon = "ROTATE_EULER")
-            props.use_transform = True
-            props.type = "FunctionNodeRotateEuler"
 
             props = flow.operator("node.add_node", text = "", icon = "SWITCH")
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
 
 
-#add color panel
-class NODES_PT_geom_add_color(bpy.types.Panel):
+#add utilities panel, color subpanel
+class NODES_PT_geom_add_utilities_color(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Color - SUB"
+    bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -5748,14 +5639,15 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.type = "FunctionNodeSeparateColor"
 
 
-#add text panel
-class NODES_PT_geom_add_text(bpy.types.Panel):
+#add utilities panel, text subpanel
+class NODES_PT_geom_add_utilities_text(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Text - SUB"
+    bl_label = "Text"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -5790,10 +5682,6 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeSliceString"
 
-            props = col.operator("node.add_node", text=" Special Characters  ", icon = "SPECIAL")
-            props.use_transform = True
-            props.type = "FunctionNodeInputSpecialCharacters"
-
             props = col.operator("node.add_node", text=" String Length           ", icon = "STRING_LENGTH")
             props.use_transform = True
             props.type = "FunctionNodeStringLength"
@@ -5805,6 +5693,10 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Value to String         ", icon = "VALUE_TO_STRING")
             props.use_transform = True
             props.type = "FunctionNodeValueToString"
+
+            props = col.operator("node.add_node", text=" Special Characters  ", icon = "SPECIAL")
+            props.use_transform = True
+            props.type = "FunctionNodeInputSpecialCharacters"
 
         #### Icon Buttons
 
@@ -5826,10 +5718,6 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeSliceString"
 
-            props = flow.operator("node.add_node", text = "", icon = "SPECIAL")
-            props.use_transform = True
-            props.type = "FunctionNodeInputSpecialCharacters"
-
             props = flow.operator("node.add_node", text = "", icon = "STRING_LENGTH")
             props.use_transform = True
             props.type = "FunctionNodeStringLength"
@@ -5842,15 +5730,20 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeValueToString"
 
+            props = flow.operator("node.add_node", text = "", icon = "SPECIAL")
+            props.use_transform = True
+            props.type = "FunctionNodeInputSpecialCharacters"
 
-#add vector panel
-class NODES_PT_geom_add_vector(bpy.types.Panel):
+
+#add utilities panel, vector subpanel
+class NODES_PT_geom_add_utilities_vector(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Vector - SUB"
+    bl_label = "Vector"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -5873,25 +5766,29 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Vector Curves  ", icon = "NODE_VECTOR")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorCurve"
+
+            props = col.operator("node.add_node", text=" Vector Math      ", icon = "NODE_VECTORMATH")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorMath"
+
+            props = col.operator("node.add_node", text=" Vector Rotate    ", icon = "NODE_VECTORROTATE")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorRotate"
+
             props = col.operator("node.add_node", text=" Combine XYZ   ", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeCombineXYZ"
 
+            props = col.operator("node.add_node", text=" Mix Vector       ", icon = "NODE_MIX")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
+
             props = col.operator("node.add_node", text=" Separate XYZ   ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
-
-            props = col.operator("node.add_node", text=" Vector Curves   ", icon = "NODE_VECTOR")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorCurve"
-
-            props = col.operator("node.add_node", text=" Vector Math     ", icon = "NODE_VECTORMATH")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorMath"
-
-            props = col.operator("node.add_node", text=" Vector Rotate     ", icon = "NODE_VECTORROTATE")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorRotate"
 
         #### Icon Buttons
 
@@ -5900,14 +5797,6 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
-            props.use_transform = True
-            props.type = "ShaderNodeCombineXYZ"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
-            props.use_transform = True
-            props.type = "ShaderNodeSeparateXYZ"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
@@ -5920,6 +5809,247 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTORROTATE")
             props.use_transform = True
             props.type = "ShaderNodeVectorRotate"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
+            props.use_transform = True
+            props.type = "ShaderNodeCombineXYZ"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MIX")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
+            props.use_transform = True
+            props.type = "ShaderNodeSeparateXYZ"
+
+
+#add utilities panel, field subpanel
+class NODES_PT_geom_add_utilities_field(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Field"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Accumulate Field  ", icon = "ACCUMULATE")
+            props.use_transform = True
+            props.type = "GeometryNodeAccumulateField"
+
+            props = col.operator("node.add_node", text=" Evaluate at Index ", icon = "FIELD_AT_INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldAtIndex"
+
+            props = col.operator("node.add_node", text=" Evaluate On Domain ", icon = "FIELD_DOMAIN")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldOnDomain"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "ACCUMULATE")
+            props.use_transform = True
+            props.type = "GeometryNodeAccumulateField"
+
+            props = flow.operator("node.add_node", text = "", icon = "FIELD_AT_INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldAtIndex"
+
+            props = flow.operator("node.add_node", text="", icon = "FIELD_DOMAIN")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldOnDomain"
+
+
+#add utilities panel, math subpanel
+class NODES_PT_geom_add_utilities_math(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Math"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+
+            props = col.operator("node.add_node", text=" Boolean Math  ", icon = "BOOLEAN_MATH")
+            props.use_transform = True
+            props.type = "FunctionNodeBooleanMath"
+
+            props = col.operator("node.add_node", text=" Clamp              ", icon = "NODE_CLAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeClamp"
+
+            props = col.operator("node.add_node", text=" Compare          ", icon = "FLOAT_COMPARE")
+            props.use_transform = True
+            props.type = "FunctionNodeCompare"
+
+            props = col.operator("node.add_node", text=" Float Curve      ", icon = "FLOAT_CURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeFloatCurve"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+
+            props = col.operator("node.add_node", text=" Float to Integer ", icon = "FLOAT_TO_INT")
+            props.use_transform = True
+            props.type = "FunctionNodeFloatToInt"
+
+            props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_MAP_RANGE")
+            props.use_transform = True
+            props.type = "ShaderNodeMapRange"
+
+            props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
+            props.use_transform = True
+            props.type = "ShaderNodeMath"
+
+            props = col.operator("node.add_node", text=" Mix                   ", icon = "NODE_MIXSHADER")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "BOOLEAN_MATH")
+            props.use_transform = True
+            props.type = "FunctionNodeBooleanMath"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_CLAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeClamp"
+
+            props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
+            props.use_transform = True
+            props.type = "FunctionNodeCompare"
+
+            props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeFloatCurve"
+
+            props = flow.operator("node.add_node", text="", icon = "FLOAT_TO_INT")
+            props.use_transform = True
+            props.type = "FunctionNodeFloatToInt"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
+            props.use_transform = True
+            props.type = "ShaderNodeMapRange"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
+            props.use_transform = True
+            props.type = "ShaderNodeMath"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_MIXSHADER")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
+
+
+#add utilities panel, rotation subpanel
+class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Rotation"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Align Euler to Vector", icon = "ALIGN_EULER_TO_VECTOR")
+            props.use_transform = True
+            props.type = "FunctionNodeAlignEulerToVector"
+
+            props = col.operator("node.add_node", text=" Rotate Euler     ", icon = "ROTATE_EULER")
+            props.use_transform = True
+            props.type = "FunctionNodeRotateEuler"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "ALIGN_EULER_TO_VECTOR")
+            props.use_transform = True
+            props.type = "FunctionNodeAlignEulerToVector"
+
+            props = flow.operator("node.add_node", text = "", icon = "ROTATE_EULER")
+            props.use_transform = True
+            props.type = "FunctionNodeRotateEuler"
 
 
 # ---------------- shader editor common. This content shows when you activate the common switch in the display panel.
@@ -6676,10 +6806,12 @@ classes = (
 
     #geometry nodes add tab
     NODES_PT_geom_add_attribute,
+
     NODES_PT_geom_add_input,
     NODES_PT_geom_add_input_constant,
     NODES_PT_geom_add_input_group,
     NODES_PT_geom_add_input_scene,
+
     NODES_PT_geom_add_output,
 
     NODES_PT_geom_add_geometry,
@@ -6687,6 +6819,7 @@ classes = (
     NODES_PT_geom_add_geometry_write,
     NODES_PT_geom_add_geometry_operations,
     NODES_PT_geom_add_geometry_sample,
+
     NODES_PT_geom_add_curve,
     NODES_PT_geom_add_curve_read,
     NODES_PT_geom_add_curve_write,
@@ -6695,6 +6828,7 @@ classes = (
     NODES_PT_geom_add_curve_topology,
 
     NODES_PT_geom_add_instances,
+
     NODES_PT_geom_add_mesh,
     NODES_PT_geom_add_mesh_read,
     NODES_PT_geom_add_mesh_write,
@@ -6702,15 +6836,19 @@ classes = (
     NODES_PT_geom_add_mesh_primitives,
     NODES_PT_geom_add_mesh_topology,
     NODES_PT_geom_add_mesh_uv,
-    NODES_PT_geom_add_point,
 
+    NODES_PT_geom_add_point,
     NODES_PT_geom_add_volume,
     NODES_PT_geom_add_material,
     NODES_PT_geom_add_texture,
+
     NODES_PT_geom_add_utilities,
-    NODES_PT_geom_add_color,
-    NODES_PT_geom_add_text,
-    NODES_PT_geom_add_vector,
+    NODES_PT_geom_add_utilities_color,
+    NODES_PT_geom_add_utilities_text,
+    NODES_PT_geom_add_utilities_vector,
+    NODES_PT_geom_add_utilities_field,
+    NODES_PT_geom_add_utilities_math,
+    NODES_PT_geom_add_utilities_rotation,
 
     #----------------------------------
 
