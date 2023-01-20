@@ -1646,10 +1646,10 @@ if(UNIX AND NOT APPLE)
 execute_process(\
   COMMAND \
   \"${CMAKE_SOURCE_DIR}/doc/manpage/blender.1.py\" \
-  --blender \"${EXECUTABLE_OUTPUT_PATH}/blender\" \
+  --blender \"${EXECUTABLE_OUTPUT_PATH}/bforartists\" \
   --output \"${CMAKE_CURRENT_BINARY_DIR}/blender.1\"\
 )"
-        DEPENDS blender
+        DEPENDS bforartists
       )
 
       if(WITH_INSTALL_PORTABLE)
