@@ -1408,6 +1408,8 @@ static uiBlock *wm_block_create_redo(bContext *C, ARegion *region, void *arg_op)
   }
 
   uiLayout *col = uiLayoutColumn(layout, false);
+  // bfa - align left? But what? Not sure, comment was added afterwards.
+  // Original change is not to find.
   uiTemplateOperatorPropertyButs(
       C, col, op, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
 
