@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -8137,6 +8137,18 @@ msgid "Build Modifier"
 msgstr "Přidat modifikátor"
 
 
+msgid "Speed Factor"
+msgstr "Faktor Rychlosti"
+
+
+msgid "Delay"
+msgstr "Odstranit"
+
+
+msgid "Timing"
+msgstr "Načasování"
+
+
 msgid "Transition"
 msgstr "Překlad"
 
@@ -9757,6 +9769,10 @@ msgstr "Atributy"
 
 msgid "Geometry attributes"
 msgstr "Atributy geometrie"
+
+
+msgid "Normals"
+msgstr "Normály"
 
 
 msgid "Enable symmetry in the X axis"
@@ -14543,6 +14559,10 @@ msgid "Utilities"
 msgstr "Nástroje"
 
 
+msgid "Math"
+msgstr "Matematika"
+
+
 msgid "Attribute"
 msgstr "Atribut"
 
@@ -14674,10 +14694,6 @@ msgstr "Speciální Znaky"
 
 msgid "Face Data"
 msgstr "Data Ploch"
-
-
-msgid "Normals"
-msgstr "Normály"
 
 
 msgid "Mesh Select Mode"
@@ -17833,10 +17849,6 @@ msgstr "Zobrazit nastaveni hran"
 
 msgid "Motion Blur"
 msgstr "Rozostření pohybu"
-
-
-msgid "Math"
-msgstr "Matematika"
 
 
 msgid "Convert from degrees to radians"
@@ -21313,6 +21325,15 @@ msgid "Reset Original Length"
 msgstr "Uchovat originál"
 
 
+msgid "(De)select all control points"
+msgstr "O(d)značit vše"
+
+
+msgctxt "Operator"
+msgid "Select Random"
+msgstr "Vybrat Náhodně"
+
+
 msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "Uzavřený/otevřený"
@@ -21543,10 +21564,6 @@ msgid "Set Curve Radius"
 msgstr "Nastavit poloměr křivky"
 
 
-msgid "(De)select all control points"
-msgstr "O(d)značit vše"
-
-
 msgid "Select all control points linked to already selected ones"
 msgstr "Vybrané vertexy náleží do aktuální skupiny vertexů"
 
@@ -21572,11 +21589,6 @@ msgstr "Počet vybraných prvků v opakující se sekvenci"
 msgctxt "Operator"
 msgid "Select Previous"
 msgstr "Vybrat předchozí"
-
-
-msgctxt "Operator"
-msgid "Select Random"
-msgstr "Vybrat Náhodně"
 
 
 msgid "Randomly select some control points"
@@ -25807,10 +25819,6 @@ msgid "Collapse and Hide Unused Sockets"
 msgstr "Sbalit a skrýt nepoužené sokety"
 
 
-msgid "Delete selected nodes"
-msgstr "Odstranit označené Objekt(y)"
-
-
 msgctxt "Operator"
 msgid "Delete with Reconnect"
 msgstr "Odstranit s připojením"
@@ -25944,10 +25952,6 @@ msgid "Link Nodes"
 msgstr "Uzly"
 
 
-msgid "Delay"
-msgstr "Odstranit"
-
-
 msgid "Detach"
 msgstr "Vytvořit propojení"
 
@@ -25996,10 +26000,6 @@ msgstr "Odpojit propojení"
 msgctxt "Operator"
 msgid "Toggle Node Mute"
 msgstr "Ztlumit Uzel"
-
-
-msgid "Toggle muting of the nodes"
-msgstr "Úhle hrany"
 
 
 msgctxt "Operator"
@@ -33431,10 +33431,6 @@ msgid "Forces"
 msgstr "Síly"
 
 
-msgid "Timing"
-msgstr "Načasování"
-
-
 msgid "Border Collisions"
 msgstr "Kolize hranic"
 
@@ -37407,10 +37403,6 @@ msgid "Wipe direction"
 msgstr "Překlopit směr"
 
 
-msgid "Speed Factor"
-msgstr "Faktor Rychlosti"
-
-
 msgid "Mask Sequence"
 msgstr "Sekvence "
 
@@ -38282,10 +38274,6 @@ msgstr "Vyrovná úhly označených plošek"
 
 msgid "Space Image Editor"
 msgstr "UV/obrázkový editor"
-
-
-msgid "Color and Alpha"
-msgstr "Barva a alfa"
 
 
 msgid "Z-Buffer"
@@ -40738,11 +40726,6 @@ msgstr "Předvolby:"
 msgctxt "Operator"
 msgid "Render:"
 msgstr "Render:"
-
-
-msgctxt "Operator"
-msgid "Safe_areas:"
-msgstr "Bezpečné_oblasti:"
 
 
 msgctxt "Operator"

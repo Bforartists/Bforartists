@@ -521,7 +521,7 @@ char *MSLGeneratorInterface::msl_patch_default_get()
   std::stringstream ss_patch;
   ss_patch << datatoc_mtl_shader_defines_msl << std::endl;
   ss_patch << datatoc_mtl_shader_shared_h << std::endl;
-  size_t len = strlen(ss_patch.str().c_str());
+  size_t len = strlen(ss_patch.str().c_str()) + 1;
 
   msl_patch_default = (char *)malloc(len * sizeof(char));
   strcpy(msl_patch_default, ss_patch.str().c_str());
@@ -2607,6 +2607,10 @@ MTLShaderInterface *MSLGeneratorInterface::bake_shader_interface(const char *nam
           c_offset);
       c_offset += size;
     }
+
+    /* Used in `GPU_shader_get_attribute_info`. */
+    interface->attr_types_[this->vertex_input_attributes[attribute].layout_location] = uint8_t(
+        this->vertex_input_attributes[attribute].type);
   }
 
   /* Prepare Interface Default Uniform Block. */

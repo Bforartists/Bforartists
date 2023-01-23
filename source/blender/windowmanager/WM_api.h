@@ -26,7 +26,6 @@ extern "C" {
 
 struct ARegion;
 struct AssetHandle;
-struct AssetLibraryReference;
 struct GHashIterator;
 struct GPUViewport;
 struct ID;
@@ -39,7 +38,6 @@ struct MenuType;
 struct PointerRNA;
 struct PropertyRNA;
 struct ScrArea;
-struct SelectPick_Params;
 struct View3D;
 struct ViewLayer;
 struct bContext;
@@ -276,7 +274,7 @@ void WM_window_set_dpi(const wmWindow *win);
 
 bool WM_stereo3d_enabled(struct wmWindow *win, bool only_fullscreen_test);
 
-/* wm_files.c */
+/* wm_files.cc */
 
 void WM_file_autoexec_init(const char *filepath);
 bool WM_file_read(struct bContext *C, const char *filepath, struct ReportList *reports);

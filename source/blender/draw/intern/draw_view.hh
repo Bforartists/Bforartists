@@ -57,7 +57,7 @@ class View {
   View(const char *name, int view_len = 1, bool procedural = false)
       : visibility_buf_(name), debug_name_(name), view_len_(view_len), procedural_(procedural)
   {
-    BLI_assert(view_len < DRW_VIEW_MAX);
+    BLI_assert(view_len <= DRW_VIEW_MAX);
   }
 
   /* For compatibility with old system. Will be removed at some point. */
@@ -71,6 +71,16 @@ class View {
   }
 
   void sync(const float4x4 &view_mat, const float4x4 &win_mat, int view_id = 0);
+
+  /** Disable a range in the multi-view array. Disabled view will not produce any instances. */
+  void disable(IndexRange range);
+
+  /**
+   * Update culling data using a compute shader.
+   * This is to be used if the matrices were updated externally
+   * on the GPU (not using the `sync()` method).
+   **/
+  void compute_procedural_bounds();
 
   bool is_persp(int view_id = 0) const
   {
@@ -132,6 +142,11 @@ class View {
     return (view_len_ == 1) ? 0 : divide_ceil_u(view_len_, 32);
   }
 
+  UniformArrayBuffer<ViewMatrices, DRW_VIEW_MAX> &matrices_ubo_get()
+  {
+    return data_;
+  }
+
  private:
   /** Called from draw manager. */
   void bind();
@@ -139,9 +154,10 @@ class View {
 
   void update_viewport_size();
 
-  void frustum_boundbox_calc(BoundBox &bbox, int view_id);
+  /* WARNING: These 3 functions must be called in order */
+  void frustum_boundbox_calc(int view_id);
   void frustum_culling_planes_calc(int view_id);
-  void frustum_culling_sphere_calc(const BoundBox &bbox, BoundSphere &bsphere, int view_id);
+  void frustum_culling_sphere_calc(int view_id);
 };
 
 }  // namespace blender::draw

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -949,6 +949,10 @@ msgid "Fast Editing"
 msgstr "Snabbredigera"
 
 
+msgid "Normals"
+msgstr "Normaler"
+
+
 msgid "Min"
 msgstr "Min"
 
@@ -1303,10 +1307,6 @@ msgstr "Förinställningar"
 
 msgid "Names"
 msgstr "Namn"
-
-
-msgid "Normals"
-msgstr "Normaler"
 
 
 msgid "Metaball"
@@ -2414,10 +2414,6 @@ msgstr "Synka markörer"
 
 msgid "Space Image Editor"
 msgstr "Redigerare för rumsbild"
-
-
-msgid "Color and Alpha"
-msgstr "Färg och alfa"
 
 
 msgid "Z-Buffer"
