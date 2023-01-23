@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -8813,6 +8813,10 @@ msgid "Build Modifier"
 msgstr "ءﺎﻨﺒﻟﺍ ﺮﻴﻐﻣ"
 
 
+msgid "Speed Factor"
+msgstr "ﺔﻋﺮﺴﻟﺍ ﻞﻣﺎﻌﻣ"
+
+
 msgid "Transition"
 msgstr "ﻝﺎﻘﺘﻧﺍ"
 
@@ -10561,6 +10565,10 @@ msgstr "ﻊﻳﺮﺳ ﻞﻳﺪﻌﺗ"
 
 msgid "Don't fill polygons while editing"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ءﺎﻨﺛﺍ ﻪﺟﻭﻷ﻿ﺍ ﺊﺒﻌﺗ ﻻ﻿"
+
+
+msgid "Normals"
+msgstr "ﺕﺎﻤﻇﺎﻨﻟﺍ"
 
 
 msgid "Freestyle Line Style"
@@ -17088,6 +17096,10 @@ msgid "Text"
 msgstr "ﺺﻧ"
 
 
+msgid "Math"
+msgstr "ﺏﺎﺴﺣ"
+
+
 msgid "Attribute"
 msgstr "ﺔﻤﺳ"
 
@@ -17194,10 +17206,6 @@ msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
 
 msgid "Face Data"
 msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻧﺎﻴﺑ"
-
-
-msgid "Normals"
-msgstr "ﺕﺎﻤﻇﺎﻨﻟﺍ"
 
 
 msgid "Select All by Trait"
@@ -20596,10 +20604,6 @@ msgid "Motion Blur"
 msgstr "ﺔﻛﺮﺣ ﺔﻴﺑﺎﺒﺿ"
 
 
-msgid "Math"
-msgstr "ﺏﺎﺴﺣ"
-
-
 msgid "Movie Distortion"
 msgstr "ﻢﻠﻔﻟﺍ ﻪﻳﻮﺸﺗ"
 
@@ -22316,6 +22320,15 @@ msgstr "ﻱﺭﺆﺒﻟﺍ ﻝﻮﻄﻟﺍ ﻦﻤﺿ"
 
 
 msgctxt "Operator"
+msgid "Add Safe Area Preset"
+msgstr "ﺔﻨﻣﺁ ﺔﻘﻄﻨﻤﻟ ﻖﺒﺴﻣ ﺩﺍﺪﻋﺇ ﻒﺿﺍ"
+
+
+msgid "Add or remove a Safe Areas Preset"
+msgstr "ﺔﻨﻣﺁ ﺔﻘﻄﻨﻤﻟ ﻖﺒﺴﻣ ﺩﺍﺪﻋﺇ ﻑﺬﺣﺇ ﻭﺃ ﻒﺿﺍ"
+
+
+msgctxt "Operator"
 msgid "Add Marker"
 msgstr "ﺔﻣﻼ﻿ﻋ ﻒﺿﺃ"
 
@@ -23100,6 +23113,15 @@ msgid "Reset Original Length"
 msgstr "ﻲﻠﺻﻻ﻿ﺍ ﻝﻮﻄﻟﺍ ﻂﺒﺿ ﺪﻋﺍ"
 
 
+msgid "(De)select all control points"
+msgstr "ﻢﻜﺤﺘﻟﺍ ﻁﺎﻘﻧ ﻞﻛ ﺮﺘﺨﺗ ﻻ﻿/ﺮﺘﺧﺍ"
+
+
+msgctxt "Operator"
+msgid "Select Random"
+msgstr "ﺎﻴﺋﺍﻮﺸﻋ ﺮﺘﺧﺍ"
+
+
 msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "ﻱﺭﻭﺪﻟﺍ ﺐﻠﻗﺍ"
@@ -23234,10 +23256,6 @@ msgid "Set Curve Radius"
 msgstr "ﻰﻨﺤﻨﻤﻟﺍ ﺮﻄﻗ ﻒﺼﻧ ﺩﺪﺣ"
 
 
-msgid "(De)select all control points"
-msgstr "ﻢﻜﺤﺘﻟﺍ ﻁﺎﻘﻧ ﻞﻛ ﺮﺘﺨﺗ ﻻ﻿/ﺮﺘﺧﺍ"
-
-
 msgctxt "Operator"
 msgid "Select Next"
 msgstr "ﻲﻟﺎﺘﻟﺍ ﺮﺘﺧﺍ"
@@ -23255,11 +23273,6 @@ msgstr "ﻊﻗﺮﻟﺍ ﺔﻓﺎﺴﻣ"
 msgctxt "Operator"
 msgid "Select Previous"
 msgstr "ﻖﺑﺎﺴﻟﺍ ﺮﺘﺧﺍ"
-
-
-msgctxt "Operator"
-msgid "Select Random"
-msgstr "ﺎﻴﺋﺍﻮﺸﻋ ﺮﺘﺧﺍ"
 
 
 msgid "Randomly select some control points"
@@ -28109,15 +28122,6 @@ msgstr "ﺕﺍﺮﻤﻣ"
 
 msgid "Rigid Body Shape"
 msgstr "ﻞﻋﺎﻔﺘﻣ ﻢﺴﺟ"
-
-
-msgctxt "Operator"
-msgid "Add Safe Area Preset"
-msgstr "ﺔﻨﻣﺁ ﺔﻘﻄﻨﻤﻟ ﻖﺒﺴﻣ ﺩﺍﺪﻋﺇ ﻒﺿﺍ"
-
-
-msgid "Add or remove a Safe Areas Preset"
-msgstr "ﺔﻨﻣﺁ ﺔﻘﻄﻨﻤﻟ ﻖﺒﺴﻣ ﺩﺍﺪﻋﺇ ﻑﺬﺣﺇ ﻭﺃ ﻒﺿﺍ"
 
 
 msgctxt "Operator"
@@ -34305,10 +34309,6 @@ msgstr "ﺏﺎﺒﻀﻟﺍ ﺽﺮﻋ"
 
 msgid "Wipe direction"
 msgstr "ﺢﺴﻤﻟﺍ ﻩﺎﺠﺗﺇ"
-
-
-msgid "Speed Factor"
-msgstr "ﺔﻋﺮﺴﻟﺍ ﻞﻣﺎﻌﻣ"
 
 
 msgid "Mask Sequence"

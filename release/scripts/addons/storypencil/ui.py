@@ -10,33 +10,6 @@ from bpy.types import (
 from .synchro import get_main_window,  validate_sync, window_id
 
 
-class STORYPENCIL_MT_extra_options(Menu):
-    bl_label = "Scene Settings"
-
-    def draw(self, context):
-        layout = self.layout
-        wm = bpy.context.window_manager
-        scene = context.scene
-        layout.prop(scene, "storypencil_use_new_window")
-
-        # If no main window nothing else to do
-        if not get_main_window(wm):
-            return
-
-        win_id = window_id(context.window)
-        row = self.layout.row(align=True)
-        if not validate_sync(window_manager=wm) or win_id == wm.storypencil_settings.main_window_id:
-            row = layout.row()
-            row.prop(wm.storypencil_settings, "active",
-                     text="Timeline Synchronization")
-            row.active = scene.storypencil_use_new_window
-
-            row = layout.row()
-            row.prop(wm.storypencil_settings,
-                     "show_main_strip_range", text="Show Strip Range")
-            row.active = scene.storypencil_use_new_window
-
-
 # ------------------------------------------------------
 # Defines UI panel
 # ------------------------------------------------------
@@ -209,3 +182,48 @@ class STORYPENCIL_PT_SettingsNew(Panel):
         if scene.storypencil_base_scene is None:
             row.alert = True
         row.prop(scene, "storypencil_base_scene", text="Template Scene")
+
+
+class STORYPENCIL_PT_ModePanel(Panel):
+    bl_label = "Edit Scenes"
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'Storypencil'
+    bl_parent_id = "STORYPENCIL_PT_Settings"
+
+    @classmethod
+    def poll(cls, context):
+        if context.space_data.view_type != 'SEQUENCER':
+            return False
+
+        return True
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        wm = bpy.context.window_manager
+        scene = context.scene
+        win_id = window_id(context.window)
+
+        col = layout.column(align=True)
+        col.prop(scene, "storypencil_mode", text="Mode")
+
+        col.prop(wm.storypencil_settings,
+                    "show_main_strip_range", text="Show Strip Range")
+
+
+        if scene.storypencil_mode == 'WINDOW':
+            if not validate_sync(window_manager=wm) or win_id == wm.storypencil_settings.main_window_id:
+                col.prop(wm.storypencil_settings, "active",
+                        text="Timeline Synchronization")
+
+        if scene.storypencil_mode == 'SWITCH':
+            col.separator()
+            col = layout.column(heading="Audio", align=True)
+            col.prop(scene, "storypencil_copy_sounds", text="Copy to Scene")
+
+            subcol = col.column(align=True)
+            subcol.prop(scene, 'storypencil_skip_sound_mute')
+            subcol.enabled = scene.storypencil_copy_sounds is True or scene.storypencil_mode == 'WINDOW'

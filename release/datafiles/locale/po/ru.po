@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2021\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -15721,10 +15721,6 @@ msgid "Time Alignment"
 msgstr "Выравнивание времени"
 
 
-msgid "When should strokes start to appear/disappear"
-msgstr "Когда штрихи должны начать появляться/исчезать"
-
-
 msgid "Align Start"
 msgstr "Выровнять по началу"
 
@@ -15753,10 +15749,6 @@ msgid "Maximum number of frames that the build effect can run for (unless anothe
 msgstr "Максимальное количество кадров, на которых выполняется эффект сборки (если не встречается другой ключевой кадр Grease Pencil до истечения этого времени)"
 
 
-msgid "How many strokes are being animated at a time"
-msgstr "Количество штрихов, анимируемых одновременно"
-
-
 msgid "Sequential"
 msgstr "Последовательно"
 
@@ -15777,12 +15769,20 @@ msgid "Defines how much of the stroke is visible"
 msgstr "Видимость штриха"
 
 
-msgid "Start Delay"
-msgstr "Задержка начала"
+msgid "Speed Factor"
+msgstr "Множитель скорости"
+
+
+msgid "Delay"
+msgstr "Задержка"
 
 
 msgid "Number of frames after each GP keyframe before the modifier has any effect"
 msgstr "Количество кадров после каждого ключевого кадра Grease Pencil перед началом действия модификатора"
+
+
+msgid "Timing"
+msgstr "Тайминг"
 
 
 msgid "Transition"
@@ -19326,6 +19326,10 @@ msgstr "Не заполнять полигоны во время редакти�
 
 msgid "Attributes"
 msgstr "Атрибуты"
+
+
+msgid "Normals"
+msgstr "Нормали"
 
 
 msgid "Freestyle Line Style"
@@ -29334,6 +29338,14 @@ msgid "Text"
 msgstr "Текст"
 
 
+msgid "Math"
+msgstr "Математика"
+
+
+msgid "Primitives"
+msgstr "Примитивы"
+
+
 msgid "Node Context Menu"
 msgstr "Контекстное меню нодов"
 
@@ -29555,10 +29567,6 @@ msgid "Face Data"
 msgstr "Данные граней"
 
 
-msgid "Normals"
-msgstr "Нормали"
-
-
 msgid "Select by Face Strength"
 msgstr "Выбрать по твёрдости грани"
 
@@ -29741,10 +29749,6 @@ msgstr "Индекс этого ребра"
 
 msgid "Loose"
 msgstr "Свободное"
-
-
-msgid "Sharp edge for the Edge Split modifier"
-msgstr "Острое ребро для модификатора разделения рёбер"
 
 
 msgid "Freestyle Edge Mark"
@@ -36460,10 +36464,6 @@ msgid "Use multi-sampled motion blur of the mask"
 msgstr "Использовать размытие движения с множественной выборкой для маски"
 
 
-msgid "Math"
-msgstr "Математика"
-
-
 msgid "A + B"
 msgstr "A + B"
 
@@ -40404,6 +40404,15 @@ msgstr "Включить фокусное расстояние в предуст
 
 
 msgctxt "Operator"
+msgid "Add Safe Area Preset"
+msgstr "Добавить предустановку безопасных областей"
+
+
+msgid "Add or remove a Safe Areas Preset"
+msgstr "Добавить или удалить предустановку безопасных областей"
+
+
+msgctxt "Operator"
 msgid "Add Marker"
 msgstr "Добавить маркер"
 
@@ -41839,6 +41848,15 @@ msgid "Reset original length of bone for Stretch To Constraint"
 msgstr "Сбросить исходную длину кости для ограничителя растяжения"
 
 
+msgid "(De)select all control points"
+msgstr "Установить/снять выделение со всех контрольных точек"
+
+
+msgctxt "Operator"
+msgid "Select Random"
+msgstr "Выделить случайным образом"
+
+
 msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "Переключить замкнутость"
@@ -42149,10 +42167,6 @@ msgid "Reveal hidden control points"
 msgstr "Показать скрытые контрольные точки"
 
 
-msgid "(De)select all control points"
-msgstr "Установить/снять выделение со всех контрольных точек"
-
-
 msgid "Select all control points linked to the current selection"
 msgstr "Выделить все контрольные точки, связанные с текущим выделением"
 
@@ -42206,11 +42220,6 @@ msgstr "Выделить пред."
 
 msgid "Select control points preceding already selected ones along the curves"
 msgstr "Выделить контрольные точки, предшествующие уже выделенным точкам на кривых"
-
-
-msgctxt "Operator"
-msgid "Select Random"
-msgstr "Выделить случайным образом"
 
 
 msgid "Randomly select some control points"
@@ -50483,17 +50492,9 @@ msgid "Remove layer from a Cryptomatte node"
 msgstr "Удалить слой из ноды Cryptomatte"
 
 
-msgid "Delete selected nodes"
-msgstr "Удалить выделенные ноды"
-
-
 msgctxt "Operator"
 msgid "Delete with Reconnect"
 msgstr "Удалить с пересоединением"
-
-
-msgid "Delete nodes; will reconnect nodes as if deletion was muted"
-msgstr "Удалить ноды; переподсоединить ноды так, как если бы удаляемые ноды были отключены"
 
 
 msgctxt "Operator"
@@ -50661,10 +50662,6 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "Создать связь между двумя нодами с помощью мыши"
 
 
-msgid "Delay"
-msgstr "Задержка"
-
-
 msgid "Detach"
 msgstr "Отсоединить"
 
@@ -50735,10 +50732,6 @@ msgid "Toggle Node Mute"
 msgstr "Включить/выключить ноду"
 
 
-msgid "Toggle muting of the nodes"
-msgstr "Включить/выключить ноду"
-
-
 msgctxt "Operator"
 msgid "New Node Tree"
 msgstr "Создать нодовое дерево"
@@ -50795,10 +50788,6 @@ msgstr "Переместить активный вход ноды сохране
 msgctxt "Operator"
 msgid "Remove File Node Socket"
 msgstr "Удалить сокет ноды файла"
-
-
-msgid "Remove active input from a file output node"
-msgstr "Удалить активный вход ноды выходного файла"
 
 
 msgid "Attach selected nodes"
@@ -50946,10 +50935,6 @@ msgid "Add Node Tree Interface Socket"
 msgstr "Добавить интерфейсный сокет к системе нодов"
 
 
-msgid "Add an input or output socket to the current node tree"
-msgstr "Добавить входной или выходной сокет к текущей системе нодов"
-
-
 msgid "Socket Type"
 msgstr "Тип сокета"
 
@@ -50959,17 +50944,9 @@ msgid "Move Node Tree Socket"
 msgstr "Переместить сокет системы нодов"
 
 
-msgid "Move a socket up or down in the current node tree's sockets stack"
-msgstr "Переместить сокет вверх или вниз по списку сокетов текущей системы нодов"
-
-
 msgctxt "Operator"
 msgid "Remove Node Tree Interface Socket"
 msgstr "Удалить интерфейсный сокет системы нодов"
-
-
-msgid "Remove an input or output socket to the current node tree"
-msgstr "Удалить входной или выходной сокет в текущей системы нодов"
 
 
 msgid "Resize view so you can see all nodes"
@@ -56107,15 +56084,6 @@ msgstr "Удалить среду симуляции твёрдых тел из 
 
 
 msgctxt "Operator"
-msgid "Add Safe Area Preset"
-msgstr "Добавить предустановку безопасных областей"
-
-
-msgid "Add or remove a Safe Areas Preset"
-msgstr "Добавить или удалить предустановку безопасных областей"
-
-
-msgctxt "Operator"
 msgid "Delete Scene"
 msgstr "Удалить сцену"
 
@@ -59819,10 +59787,6 @@ msgstr "Скрыть (не)выделенные UV-вершины"
 msgctxt "Operator"
 msgid "Lightmap Pack"
 msgstr "Развернуть для карты освещения"
-
-
-msgid "Pack each faces UV's into the UV bounds"
-msgstr "Упаковать все UV граней в границы UV"
 
 
 msgid "New Image"
@@ -63776,10 +63740,6 @@ msgid "Forces"
 msgstr "Силы"
 
 
-msgid "Timing"
-msgstr "Тайминг"
-
-
 msgid "Border Collisions"
 msgstr "Столкновения с границами"
 
@@ -63986,10 +63946,6 @@ msgstr "Найти и заменить"
 
 msgid "Playback"
 msgstr "Воспроизведение"
-
-
-msgid "Primitives"
-msgstr "Примитивы"
 
 
 msgid "Rename Active Item"
@@ -67984,20 +67940,12 @@ msgid "Any object modification requires a complete BVH rebuild, but renders fast
 msgstr "Любое изменение объекта приводит к полному перестроению BVH, но рендеринг работает быстрее"
 
 
-msgid "AVX"
-msgstr "AVX"
-
-
 msgid "AVX2"
 msgstr "AVX2"
 
 
 msgid "SSE2"
 msgstr "SSE2"
-
-
-msgid "SSE3"
-msgstr "SSE3"
 
 
 msgid "SSE41"
@@ -71751,10 +71699,6 @@ msgid "Sequence strip to load one or more images"
 msgstr "Дорожка видеоредактора, загружающая одно или более изображений"
 
 
-msgid "Speed Factor"
-msgstr "Множитель скорости"
-
-
 msgid "Mask Sequence"
 msgstr "Последовательность маски"
 
@@ -73729,10 +73673,6 @@ msgstr "Данные пространства редактора изображ�
 
 msgid "Display Channels"
 msgstr "Отобразить каналы"
-
-
-msgid "Color and Alpha"
-msgstr "Цвет и прозрачность"
 
 
 msgid "Display image with RGB colors and alpha transparency"
@@ -78920,11 +78860,6 @@ msgstr "Рендер:"
 msgctxt "Operator"
 msgid "Rigidbody:"
 msgstr "Твёрдое тело:"
-
-
-msgctxt "Operator"
-msgid "Safe_areas:"
-msgstr "Безопасные области:"
 
 
 msgctxt "Operator"
@@ -90592,38 +90527,6 @@ msgid "Shrink/Fatten: %3f"
 msgstr "Сжать/расжать: %3f"
 
 
-msgid "Bevel Weight: +%s %s"
-msgstr "Вес фаски: +%s %s"
-
-
-msgid "Bevel Weight: %s %s"
-msgstr "Вес фаски: %s %s"
-
-
-msgid "Bevel Weight: +%.3f %s"
-msgstr "Вес фаски: +%.3f %s"
-
-
-msgid "Bevel Weight: %.3f %s"
-msgstr "Вес фаски: %.3f %s"
-
-
-msgid "Crease: +%s %s"
-msgstr "Складка: +%s %s"
-
-
-msgid "Crease: %s %s"
-msgstr "Складка: %s %s"
-
-
-msgid "Crease: +%.3f %s"
-msgstr "Складка: +%.3f %s"
-
-
-msgid "Crease: %.3f %s"
-msgstr "Складка: %.3f %s"
-
-
 msgid "Edge Slide: "
 msgstr "Сдвинуть ребро: "
 
@@ -91232,10 +91135,6 @@ msgstr "Максимальное количество добавляемых т�
 
 msgid "Index %d is invalid"
 msgstr "Индекс %d не является допустимым"
-
-
-msgid "Texture layer '%s' not found"
-msgstr "Текстурный слой «%s» не найден"
 
 
 msgid "Number of custom normals is not number of loops (%f / %d)"

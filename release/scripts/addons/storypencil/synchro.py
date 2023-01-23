@@ -23,6 +23,7 @@ from bpy.props import (
 )
 from .scene_tools import STORYPENCIL_OT_NewScene
 from .render import STORYPENCIL_OT_RenderAction
+from .sound import delete_sounds, send_sound_to_strip_scene
 
 def window_id(window: Window) -> str:
     """ Get Window's ID.
@@ -158,7 +159,7 @@ class STORYPENCIL_OT_AddSecondaryWindowOperator(Operator):
                 new_window.workspace = wk
                 return
         with context.temp_override(window=new_window):
-            bpy.ops.workspace.append_activate(context, idname=wk_name, filepath=template_path)
+            bpy.ops.workspace.append_activate(context, idname=wrk_name, filepath=template_path)
 
 
 class STORYPENCIL_OT_WindowBringFront(Operator):
@@ -310,11 +311,25 @@ def get_main_strip(wm: WindowManager) -> SceneSequence:
     :param wm: the WindowManager instance
     :returns: the Strip at current time or None
     """
-    main_window = get_main_window(wm=wm)
-    if not main_window or not main_window.scene.sequence_editor:
-        return None
-    seq_editor = main_window.scene.sequence_editor
-    return seq_editor.sequences.get(wm.storypencil_settings.main_strip_name, None)
+    context = bpy.context
+    scene = context.scene
+    main_scene = scene.storypencil_main_scene
+
+    if main_scene.storypencil_use_new_window:
+        main_window = get_main_window(wm=wm)
+        if not main_window or not main_window.scene.sequence_editor:
+            return None
+        seq_editor = main_window.scene.sequence_editor
+        return seq_editor.sequences.get(wm.storypencil_settings.main_strip_name, None)
+    else:
+        seq_editor = main_scene.sequence_editor.sequences
+        for strip in seq_editor:
+            if strip.type != 'SCENE':
+                continue
+            if strip.scene.name == scene.name:
+                return strip
+
+    return None
 
 
 class STORYPENCIL_OT_SyncToggleSecondary(Operator):
@@ -630,8 +645,6 @@ def draw_sync_sequencer_header(self, context):
     else:
         row.operator(STORYPENCIL_OT_Switch.bl_idname, text="Edit")
 
-    row.menu("STORYPENCIL_MT_extra_options", icon='DOWNARROW_HLT', text="")
-
     row.separator()
     layout.operator_context = 'INVOKE_REGION_WIN'
     row.operator(STORYPENCIL_OT_NewScene.bl_idname, text="New")
@@ -743,7 +756,11 @@ class STORYPENCIL_OT_Switch(Operator):
             if strip:
                 context.window.scene.frame_current = int(cfra_prv + strip.frame_start) - 1
 
-            bpy.ops.sequencer.reload()
+            # Delete sounds
+            if scene.storypencil_copy_sounds:
+                delete_sounds(scene)
+
+            #bpy.ops.sequencer.reload()
         else:
             # Switch to Edit
             strip = self.act_strip(context)
@@ -763,6 +780,11 @@ class STORYPENCIL_OT_Switch(Operator):
                 context.window.workspace.update_tag()
 
                 context.window.scene = strip.scene
+                # Copy sounds
+                if scene.storypencil_copy_sounds:
+                    send_sound_to_strip_scene(strip, clear_sequencer=True, skip_mute=scene.storypencil_skip_sound_mute)
+
+
                 active_frame = cfra_prv - strip.frame_start + 1
                 if active_frame < strip.scene.frame_start:
                     active_frame = strip.scene.frame_start
@@ -776,6 +798,9 @@ class STORYPENCIL_OT_Switch(Operator):
                                 # select camera as view
                                 if strip and strip.scene.camera is not None:
                                     area.spaces.active.region_3d.view_perspective = 'CAMERA'
+
+                if scene.storypencil_copy_sounds:
+                    bpy.ops.sequencer.reload()
 
         return {"FINISHED"}
 

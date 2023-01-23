@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: 2022-08-19 12:33+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -16490,10 +16490,6 @@ msgid "Time Alignment"
 msgstr "Sắp Xếp Thời Gian"
 
 
-msgid "When should strokes start to appear/disappear"
-msgstr "Thời gian nét nên bắt đầu xuất hiện/biến mất"
-
-
 msgid "Align Start"
 msgstr "Sắp Xếp Bắt Đầu"
 
@@ -16546,10 +16542,6 @@ msgid "Maximum number of frames that the build effect can run for (unless anothe
 msgstr "Số lượng bức ảnh tối đa thì hiệu ứng xây lên được chạy (trừ gặp một bức ảnh mẫu trước thời gian này đã hết)"
 
 
-msgid "How many strokes are being animated at a time"
-msgstr "Số lượng nét đang hoạt hình cùng một lượt"
-
-
 msgid "Sequential"
 msgstr "Trình Tự"
 
@@ -16578,8 +16570,12 @@ msgid "Defines how much of the stroke is visible"
 msgstr "Chỉ định bao nhiêu của nét được hiện"
 
 
-msgid "Start Delay"
-msgstr "Trì Hoãn Bắt Đầu"
+msgid "Speed Factor"
+msgstr "Hệ Số Tốc Độ"
+
+
+msgid "Delay"
+msgstr "Trì Hoãn"
 
 
 msgid "Number of frames after each GP keyframe before the modifier has any effect"
@@ -16588,6 +16584,10 @@ msgstr "Số lượng bức ảnh sau mỗi bức ảnh bút sáp trước bộ 
 
 msgid "Output Vertex group"
 msgstr "Nhóm Đỉnh Ngõ Ra"
+
+
+msgid "Timing"
+msgstr "Thời Tự"
 
 
 msgid "Transition"
@@ -21635,6 +21635,10 @@ msgstr "Các đặc điểm màu sắc của hình dạng"
 
 msgid "All curves in the data-block"
 msgstr "Hết đường cong trong cục dữ liệu"
+
+
+msgid "Normals"
+msgstr "Pháp Tuyến"
 
 
 msgid "Control points of all curves"
@@ -33382,8 +33386,12 @@ msgid "Utilities"
 msgstr "Các Dịch Vụ"
 
 
-msgid "Mesh Primitives"
-msgstr "Mạng Lưới Cơ Bản"
+msgid "Math"
+msgstr "Toán"
+
+
+msgid "Primitives"
+msgstr "Đồ Cơ Bản"
 
 
 msgid "Node Context Menu"
@@ -33394,16 +33402,20 @@ msgid "Attribute"
 msgstr "Đặc Điểm"
 
 
+msgid "Read"
+msgstr "Đọc"
+
+
+msgid "Write"
+msgstr "Ghi"
+
+
 msgid "Instances"
 msgstr "Các Thực Thể"
 
 
 msgid "Mesh"
 msgstr "Mạng Lưới"
-
-
-msgid "Curve Primitives"
-msgstr "Đường Cong Cơ Bản"
 
 
 msgid "Node"
@@ -33667,10 +33679,6 @@ msgid "Face Data"
 msgstr "Dữ Liệu Mặt"
 
 
-msgid "Normals"
-msgstr "Pháp Tuyến"
-
-
 msgid "Select by Face Strength"
 msgstr "Chọn Mặt Bằng Sức Mặt"
 
@@ -33889,10 +33897,6 @@ msgstr "Chỉ số của cạnh này"
 
 msgid "Loose"
 msgstr "Rời Ra"
-
-
-msgid "Sharp edge for the Edge Split modifier"
-msgstr "Cạnh bén cho bộ điều chỉnh Chẻ Cạnh"
 
 
 msgid "Freestyle Edge Mark"
@@ -37620,16 +37624,8 @@ msgid "Stretch U"
 msgstr "Kéo Dài U"
 
 
-msgid "Stretch the U coordinates between 0 and 1 when UV's are present"
-msgstr "Kéo dài tọa độ U giữa 0 đến 1 khi có tọa độ UV"
-
-
 msgid "Stretch V"
 msgstr "Kéo Dài V"
-
-
-msgid "Stretch the V coordinates between 0 and 1 when UV's are present"
-msgstr "Kéo dài tọa độ V giữa 0 đên 1 khi có tọa độ UV"
 
 
 msgid "SimpleDeform Modifier"
@@ -42060,10 +42056,6 @@ msgid "Use multi-sampled motion blur of the mask"
 msgstr "Dùng mờ hóa chuyển động kiểu đa mẫu vật của mặt nạ"
 
 
-msgid "Math"
-msgstr "Toán"
-
-
 msgctxt "NodeTree"
 msgid "Operation"
 msgstr "Thao Tác"
@@ -43597,20 +43589,12 @@ msgid "Generate new vertices, edges, or faces from selected elements and move th
 msgstr "Chế tạo đỉnh, cạnh, hay mặt mới từ các phần tử được chọn và di chuyển chúng nó tùy một dịch và giữ chúng nó liên kết với ranh giới của chúng nó"
 
 
-msgid "Field at Index"
-msgstr "Trường tại Chỉ Số"
-
-
 msgid "Retrieve data of other elements in the context's geometry"
 msgstr "Lấy dữ liệu của các phần tử khác trong bối cảnh của hình dạng"
 
 
 msgid "Domain the field is evaluated in"
 msgstr "Phạm vi cho tính toán trường"
-
-
-msgid "Interpolate Domain"
-msgstr "Phạm Vi Nội Suy"
 
 
 msgid "Retrieve values from a field on a different domain besides the domain from the context"
@@ -49494,6 +49478,15 @@ msgstr "Gồm cách xa tiêu điểm trong đặt sẵn"
 
 
 msgctxt "Operator"
+msgid "Add Safe Area Preset"
+msgstr "Thêm Đặt Sẫn Khu Vực An Toàn"
+
+
+msgid "Add or remove a Safe Areas Preset"
+msgstr "Thêm hay xóa một đặt sẵn Khu Vực An Toàn"
+
+
+msgctxt "Operator"
 msgid "Add Marker"
 msgstr "Thêm Ký Hiệu"
 
@@ -51143,6 +51136,48 @@ msgid "Enter/Exit sculpt mode for curves"
 msgstr "Nhập/Xuất chế độ khắc cho đường cong"
 
 
+msgid "(De)select all control points"
+msgstr "Chọn/thả hết điểm kiểm soát"
+
+
+msgctxt "Operator"
+msgid "Select End"
+msgstr "Chọn Kết Thúc"
+
+
+msgid "Select end points of curves"
+msgstr "Chọn các điểm kết thúc của các đường cong"
+
+
+msgid "Number of points to select"
+msgstr "Số lượng điềm để chọn"
+
+
+msgid "Select points at the end of the curve as opposed to the beginning"
+msgstr "Chọn các điểm đại kết thúc của đường cong thay thế điểm bắt đầu"
+
+
+msgctxt "Operator"
+msgid "Select Random"
+msgstr "Chọn Ngẫu Nhiên"
+
+
+msgid "Randomizes existing selection or create new random selection"
+msgstr "Ngẫu nhiên hóa sự lựa chọn hiện tại hay tạo một sự lựa chọn ngẫu nhiên mới"
+
+
+msgid "Probability"
+msgstr "Xác Suất"
+
+
+msgid "Chance of every point or curve being included in the selection"
+msgstr "Xác suát của mỗi điểm hay đường cong đang gồm và sự lựa chọn"
+
+
+msgid "Source of randomness"
+msgstr "Nguồn của sự ngẫu nhiên"
+
+
 msgctxt "Operator"
 msgid "Set Select Mode"
 msgstr "Đặt Chế Độ Chọn"
@@ -51658,10 +51693,6 @@ msgid "Reveal hidden control points"
 msgstr "Hiển thị điểm kiểm soát được ẩn"
 
 
-msgid "(De)select all control points"
-msgstr "Chọn/thả hết điểm kiểm soát"
-
-
 msgid "Deselect control points at the boundary of each selection region"
 msgstr "Thả điểm kiểm soát tại ranh giới của khu vực được chọn"
 
@@ -51723,11 +51754,6 @@ msgstr "Chọn Trước"
 
 msgid "Select control points preceding already selected ones along the curves"
 msgstr "Chọn điểm kiểm soát trên đường cong phía trước các điểm được chọn rồi"
-
-
-msgctxt "Operator"
-msgid "Select Random"
-msgstr "Chọn Ngẫu Nhiên"
 
 
 msgid "Randomly select some control points"
@@ -59370,10 +59396,6 @@ msgid "Collapse Edges & Faces"
 msgstr "Tóp Cạnh & Mặt"
 
 
-msgid "Collapse isolated edge and face regions, merging data such as UV's and color attributes. This can collapse edge-rings as well as regions of connected faces into vertices"
-msgstr "Tóp các vùng có cạnh và mặt cô lập, gồm dữ liệu như UV và màu đỉnh. Cái này có thể tóp vành cạnh và vùng có mặt kết nối nhau vào đỉnh"
-
-
 msgctxt "Operator"
 msgid "Make Edge/Face"
 msgstr "Chế Tạo Cạnh/Mặt"
@@ -62296,17 +62318,9 @@ msgid "Remove layer from a Cryptomatte node"
 msgstr "Xóa lớp từ một giao điểm Mặt Nạ Mã"
 
 
-msgid "Delete selected nodes"
-msgstr "Xóa giao điểm được chọn"
-
-
 msgctxt "Operator"
 msgid "Delete with Reconnect"
 msgstr "Xóa Với Kết Nối Lại"
-
-
-msgid "Delete nodes; will reconnect nodes as if deletion was muted"
-msgstr "Xóa giao điểm; sẽ kết nối lại giao điểm nếu sự xóa bị cắt tiếng"
 
 
 msgctxt "Operator"
@@ -62487,10 +62501,6 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "Dùng con chuột để chế tạo một liên kết giữa hai giao điểm"
 
 
-msgid "Delay"
-msgstr "Trì Hoãn"
-
-
 msgid "Delay in seconds before maximum speed is reached"
 msgstr "Trì hoãn (giây) trước đến tốc độ cực đại"
 
@@ -62618,10 +62628,6 @@ msgid "Toggle Node Mute"
 msgstr "Bật/Tắt Cắt tiếng Giao Điểm"
 
 
-msgid "Toggle muting of the nodes"
-msgstr "Bật/tắt cắt tiếng gioa điểm"
-
-
 msgctxt "Operator"
 msgid "Assign New Geometry Node Group"
 msgstr "Chỉ Định Nhóm Giao Điểm Hình Dạng Mới"
@@ -62700,10 +62706,6 @@ msgstr "Di chuyển ngõ vào hoạt động của một giao điểm xuất t�
 msgctxt "Operator"
 msgid "Remove File Node Socket"
 msgstr "Xóa Ổ Cắm Giao Điểm Tập Tin"
-
-
-msgid "Remove active input from a file output node"
-msgstr "Xóa ngõ vào hoạt động từ một giao điểm xuất tập tin"
 
 
 msgid "Attach selected nodes"
@@ -62855,10 +62857,6 @@ msgid "Add Node Tree Interface Socket"
 msgstr "Thêm Ổ Cắm Giao Diện Cây Giao Điểm"
 
 
-msgid "Add an input or output socket to the current node tree"
-msgstr "Thêm một ngõ vào hay ổ cắm cho cây giao điểm hiện tại"
-
-
 msgid "Socket Type"
 msgstr "Loại Ổ Cắm"
 
@@ -62868,26 +62866,14 @@ msgid "Change Node Tree Interface Socket Type"
 msgstr "Đổi Loại Ổ Cắm Giao Diện Cây Giao Điểm"
 
 
-msgid "Change the type of a socket of the current node tree"
-msgstr "Đổi loại của một ổ cắm của cây giao điểm hiện tại"
-
-
 msgctxt "Operator"
 msgid "Move Node Tree Socket"
 msgstr "Di Chuyển Ổ Cắm Cây Giao Điểm"
 
 
-msgid "Move a socket up or down in the current node tree's sockets stack"
-msgstr "Di chuyển một ổ cắm lên xuống trong xếp đống ổ cắm của cây giao điểm hiện tại"
-
-
 msgctxt "Operator"
 msgid "Remove Node Tree Interface Socket"
 msgstr "Xóa Ổ Cắm Giao Diện Cây Giao Điểm"
-
-
-msgid "Remove an input or output socket to the current node tree"
-msgstr "Xóa một ổ cắm ngõ vào hay ra từ cây giao điểm hiện tại"
 
 
 msgid "Resize view so you can see all nodes"
@@ -63225,10 +63211,6 @@ msgstr "Biến đổi các vật thể được chọn thành loại khác"
 
 msgid "Keep original objects instead of replacing them"
 msgstr "Giữ các vật thể gốc và không thay thế cho chúng nó"
-
-
-msgid "Merge UV's"
-msgstr "Gồm UV"
 
 
 msgid "Merge UV coordinates that share a vertex to account for imprecision in some modifiers"
@@ -69505,15 +69487,6 @@ msgstr "Xóa thế giới mô phỏng Thân Rắn của cảnh hiện tại"
 
 
 msgctxt "Operator"
-msgid "Add Safe Area Preset"
-msgstr "Thêm Đặt Sẫn Khu Vực An Toàn"
-
-
-msgid "Add or remove a Safe Areas Preset"
-msgstr "Thêm hay xóa một đặt sẵn Khu Vực An Toàn"
-
-
-msgctxt "Operator"
 msgid "Delete Scene"
 msgstr "Xóa Cảnh"
 
@@ -70450,23 +70423,6 @@ msgstr "Đổi khoảng cách cực tiểu được sử dụng bởi bút mật
 
 
 msgctxt "Operator"
-msgid "Select End"
-msgstr "Chọn Kết Thúc"
-
-
-msgid "Select end points of curves"
-msgstr "Chọn các điểm kết thúc của các đường cong"
-
-
-msgid "Number of points to select"
-msgstr "Số lượng điềm để chọn"
-
-
-msgid "Select points at the end of the curve as opposed to the beginning"
-msgstr "Chọn các điểm đại kết thúc của đường cong thay thế điểm bắt đầu"
-
-
-msgctxt "Operator"
 msgid "Select Grow"
 msgstr "Chọn Lớn Lên"
 
@@ -70477,10 +70433,6 @@ msgstr "Chọn các đường cong gần đến các đường cong đang chọn
 
 msgid "By how much to grow the selection"
 msgstr "Mức độ mở rộng sự lựa chọn"
-
-
-msgid "Randomizes existing selection or create new random selection"
-msgstr "Ngẫu nhiên hóa sự lựa chọn hiện tại hay tạo một sự lựa chọn ngẫu nhiên mới"
 
 
 msgid "Constant per Curve"
@@ -70501,18 +70453,6 @@ msgstr "Một Phần"
 
 msgid "Allow points or curves to be selected partially"
 msgstr "Cho chọn một phần của điểm hay đường cong"
-
-
-msgid "Probability"
-msgstr "Xác Suất"
-
-
-msgid "Chance of every point or curve being included in the selection"
-msgstr "Xác suát của mỗi điểm hay đường cong đang gồm và sự lựa chọn"
-
-
-msgid "Source of randomness"
-msgstr "Nguồn của sự ngẫu nhiên"
 
 
 msgctxt "Operator"
@@ -74758,10 +74698,6 @@ msgid "Lightmap Pack"
 msgstr "Gói Ánh Xạ Ánh Sáng"
 
 
-msgid "Pack each faces UV's into the UV bounds"
-msgstr "Gói UV của mỗi mặt vào ranh giới UV"
-
-
 msgid "New Image"
 msgstr "Ảnh Mới"
 
@@ -74948,10 +74884,6 @@ msgstr "Xé các đỉnh được chọn hoặc một vùng đã chọn"
 msgctxt "Operator"
 msgid "UV Rip Move"
 msgstr "Di Chuyển Xé UV"
-
-
-msgid "Unstitch UV's and move the result"
-msgstr "Gỡ khâu UV và di chuyển kết qủa"
 
 
 msgid "UV Rip"
@@ -80473,10 +80405,6 @@ msgid "Forces"
 msgstr "Lực"
 
 
-msgid "Timing"
-msgstr "Thời Tự"
-
-
 msgid "Border Collisions"
 msgstr "Va Chạm Ranh Giới"
 
@@ -80728,10 +80656,6 @@ msgstr "Bức Ảnh Mẫu Tự Động"
 
 msgid "Playback"
 msgstr "Hát Lại"
-
-
-msgid "Primitives"
-msgstr "Đồ Cơ Bản"
 
 
 msgid "Rename Active Item"
@@ -85868,20 +85792,12 @@ msgid "Use compact BVH structure (uses less ram but renders slower)"
 msgstr "Dùng cấu trúc BVH nhỏ gọn (nó dùng bộ nhớ ít hơn nhưng kết xuất chậm hơn)"
 
 
-msgid "AVX"
-msgstr "AVX"
-
-
 msgid "AVX2"
 msgstr "AVX2"
 
 
 msgid "SSE2"
 msgstr "SSE2"
-
-
-msgid "SSE3"
-msgstr "SSE3"
 
 
 msgid "SSE41"
@@ -90299,10 +90215,6 @@ msgid "Sequence strip to load one or more images"
 msgstr "Đoạn trình tự cho nhập một ảnh trở lên"
 
 
-msgid "Speed Factor"
-msgstr "Hệ Số Tốc Độ"
-
-
 msgid "Multiply playback speed"
 msgstr "Nhân tốc độ hát lại"
 
@@ -92646,10 +92558,6 @@ msgstr "Hiển Thị Kênh"
 
 msgid "Channels of the image to display"
 msgstr "Các kênh của ảnh để hiển thị"
-
-
-msgid "Color and Alpha"
-msgstr "Màu Và Độ Đục"
 
 
 msgid "Display image with RGB colors and alpha transparency"
@@ -97266,10 +97174,6 @@ msgid "Correct Face Attributes"
 msgstr "Sửa Đặc Điểm Mặt"
 
 
-msgid "Correct data such as UV's and color attributes when transforming"
-msgstr "Sửa dữ liệu như UV và đặc điểm màu khi đang biến hóa"
-
-
 msgid "Keep Connected"
 msgstr "Giữ Được Kết Nối"
 
@@ -100176,11 +100080,6 @@ msgstr "Kết_xuất:"
 msgctxt "Operator"
 msgid "Rigidbody:"
 msgstr "Thân_rắn:"
-
-
-msgctxt "Operator"
-msgid "Safe_areas:"
-msgstr "Khu_vực_an_toàn:"
 
 
 msgctxt "Operator"
@@ -112208,6 +112107,10 @@ msgid "Curves must have a mesh surface object set"
 msgstr "Đường cong phải có đặt một vật thể bề mặt mạng lưới"
 
 
+msgid "Only available in point selection mode"
+msgstr "Chỉ có thể dùng trong chế độ lựa chọn điểm"
+
+
 msgid "Cannot convert to the selected type"
 msgstr "Không thể biến đổi thành loại được chọn"
 
@@ -115583,10 +115486,6 @@ msgid "Invalid UV map: UV islands must not overlap"
 msgstr "Bản đồ UV không hợp lệ: các hòn đảo UV không thể nằm trên nhau"
 
 
-msgid "Only available in point selection mode"
-msgstr "Chỉ có thể dùng trong chế độ lựa chọn điểm"
-
-
 msgid "Curves do not have surface attachment information"
 msgstr "Đường cong không có thông tin cho sự gắn trên bề mặt"
 
@@ -116942,10 +116841,6 @@ msgstr "• Mạng lưới: %s đỉnh, %s cạnh, %s mặt"
 
 msgid "• Point Cloud: %s points"
 msgstr "• Mây Điểm: %s điểm"
-
-
-msgid "• Curve: %s splines"
-msgstr "• Đường Cong: %s mẫu cong"
 
 
 msgid "• Instances: %s"
@@ -118327,38 +118222,6 @@ msgid "Shrink/Fatten: %3f"
 msgstr "Thu Nhỏ/Phình Ra: %3f"
 
 
-msgid "Bevel Weight: +%s %s"
-msgstr "Quyền Lượng Xiên: +%s %s"
-
-
-msgid "Bevel Weight: %s %s"
-msgstr "Quyền Lượng Xiên: %s %s"
-
-
-msgid "Bevel Weight: +%.3f %s"
-msgstr "Quyền Lượng Xiên: +%.3f %s"
-
-
-msgid "Bevel Weight: %.3f %s"
-msgstr "Quyền Lượng Cạnh Tròn: %.3f %s"
-
-
-msgid "Crease: +%s %s"
-msgstr "Nhăn: +%s %s"
-
-
-msgid "Crease: %s %s"
-msgstr "Nhăn: %s %s"
-
-
-msgid "Crease: +%.3f %s"
-msgstr "Nhăn: +%.3f %s"
-
-
-msgid "Crease: %.3f %s"
-msgstr "Nhăn: %.3f %s"
-
-
 msgid "Sequence Slide: %s%s"
 msgstr "Trượt Trình Tự: %s%s"
 
@@ -119379,10 +119242,6 @@ msgid "Error removing face map"
 msgstr "Sai lầm xóa bản đồ mặt"
 
 
-msgid "Texture layer '%s' not found"
-msgstr "Không tìm được lớp chất liệu '%s'"
-
-
 msgid "Number of custom normals is not number of loops (%f / %d)"
 msgstr "Số lượng pháp tuyến tùy chọn khác số lượng vòng (%f / %d)"
 
@@ -120206,14 +120065,6 @@ msgstr "Không có đặc điểm có được sử dụng"
 
 msgid "No group output attributes connected"
 msgstr "Không có đặc điểm ngõ ra nhóm được két nối"
-
-
-msgid "Read"
-msgstr "Đọc"
-
-
-msgid "Write"
-msgstr "Ghi"
 
 
 msgid "Output Attributes"

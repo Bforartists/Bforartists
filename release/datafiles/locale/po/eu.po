@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -431,6 +431,10 @@ msgstr "Leihoa"
 
 msgid "Tools"
 msgstr "Tresnak"
+
+
+msgid "Speed Factor"
+msgstr "Azelerazio-faktorea"
 
 
 msgctxt "Curve"
@@ -1778,10 +1782,6 @@ msgstr "Abiadura"
 msgctxt "Sequence"
 msgid "Text"
 msgstr "Testua"
-
-
-msgid "Speed Factor"
-msgstr "Azelerazio-faktorea"
 
 
 msgid "Gray Scale"

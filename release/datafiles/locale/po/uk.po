@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
 "Last-Translator: lxlalexlxl <lxlalexlxl@ukr.net>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -15413,10 +15413,6 @@ msgid "Time Alignment"
 msgstr "Вирівняння Часу"
 
 
-msgid "When should strokes start to appear/disappear"
-msgstr "Коли штрихи повинні починати з'являтися/зникати"
-
-
 msgid "Align Start"
 msgstr "Вирівняння за Стартом"
 
@@ -15445,10 +15441,6 @@ msgid "Maximum number of frames that the build effect can run for (unless anothe
 msgstr "Максимальна кількість кадрів, упродовж яких може виконуватися ефект вибудовування (якщо тільки інший ключкадр Нарисного Олівця не трапиться перед тим, як цей час мине)"
 
 
-msgid "How many strokes are being animated at a time"
-msgstr "Скільки штрихів анімуються у часі"
-
-
 msgid "Sequential"
 msgstr "Послідовно"
 
@@ -15469,12 +15461,20 @@ msgid "Defines how much of the stroke is visible"
 msgstr "Визначає, наскільки штрих є видимим"
 
 
-msgid "Start Delay"
-msgstr "Затримка Старту"
+msgid "Speed Factor"
+msgstr "Коефіцієнт швидкості"
+
+
+msgid "Delay"
+msgstr "Затримка"
 
 
 msgid "Number of frames after each GP keyframe before the modifier has any effect"
 msgstr "Кількість кадрів після кожного ключкадра Нарисного Олівця, перед тим, як цей модифікатор матиме якийсь вплив"
+
+
+msgid "Timing"
+msgstr "Часування"
 
 
 msgid "Transition"
@@ -19454,6 +19454,10 @@ msgstr "Атрибути"
 
 msgid "Geometry attributes"
 msgstr "Атрибути геометрії"
+
+
+msgid "Normals"
+msgstr "Нормалі"
 
 
 msgid "Enable symmetry in the X axis"
@@ -30157,6 +30161,14 @@ msgid "Utilities"
 msgstr "Утиліти"
 
 
+msgid "Math"
+msgstr "Математика"
+
+
+msgid "Primitives"
+msgstr "Примітиви"
+
+
 msgid "Node Context Menu"
 msgstr "Контекстне Меню Вузлів"
 
@@ -30394,10 +30406,6 @@ msgid "Face Data"
 msgstr "Дані граней"
 
 
-msgid "Normals"
-msgstr "Нормалі"
-
-
 msgid "Select by Face Strength"
 msgstr "Вибрати за Силою Грані"
 
@@ -30608,10 +30616,6 @@ msgstr "Індекс цього ребра"
 
 msgid "Loose"
 msgstr "Незв'язане"
-
-
-msgid "Sharp edge for the Edge Split modifier"
-msgstr "Гостре ребро для модифікатора поділу ребром"
 
 
 msgid "Freestyle Edge Mark"
@@ -34255,16 +34259,8 @@ msgid "Stretch U"
 msgstr "Розтяг U"
 
 
-msgid "Stretch the U coordinates between 0 and 1 when UV's are present"
-msgstr "Розтягти координати у напрямку U між 0 та 1 за наявності UV"
-
-
 msgid "Stretch V"
 msgstr "Розтяг V"
-
-
-msgid "Stretch the V coordinates between 0 and 1 when UV's are present"
-msgstr "Розтягти координати у напрямку V між 0 та 1 за наявності UV"
 
 
 msgid "SimpleDeform Modifier"
@@ -38429,10 +38425,6 @@ msgstr "Розмив рухом"
 
 msgid "Use multi-sampled motion blur of the mask"
 msgstr "Використати  для маски багато-вибірне розмиття руху"
-
-
-msgid "Math"
-msgstr "Математика"
 
 
 msgid "A + B"
@@ -43257,6 +43249,15 @@ msgstr "Включити у передустановку фокусну відс
 
 
 msgctxt "Operator"
+msgid "Add Safe Area Preset"
+msgstr "Додати передустановку безпечних областей"
+
+
+msgid "Add or remove a Safe Areas Preset"
+msgstr "Додати або вилучити передустановку безпечних областей"
+
+
+msgctxt "Operator"
 msgid "Add Marker"
 msgstr "Додати мітку"
 
@@ -44834,6 +44835,15 @@ msgid "Reset original length of bone for Stretch To Constraint"
 msgstr "Скинути початкову довжину кістки для примусу Розтяг за"
 
 
+msgid "(De)select all control points"
+msgstr "(Не) вибрати всі керувальні точки"
+
+
+msgctxt "Operator"
+msgid "Select Random"
+msgstr "Вибрати Випадково"
+
+
 msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "Перемкнути циклічність"
@@ -45185,10 +45195,6 @@ msgid "Reveal hidden control points"
 msgstr "Показати сховані керувальні точки"
 
 
-msgid "(De)select all control points"
-msgstr "(Не) вибрати всі керувальні точки"
-
-
 msgid "Deselect control points at the boundary of each selection region"
 msgstr "Зневибрати керувальні точки на рубежі кожного регіону вибрання"
 
@@ -45250,11 +45256,6 @@ msgstr "Вибрати Попереднє"
 
 msgid "Select control points preceding already selected ones along the curves"
 msgstr "Вибрати керувальні точки вздовж кривих перед вже вибраними"
-
-
-msgctxt "Operator"
-msgid "Select Random"
-msgstr "Вибрати Випадково"
 
 
 msgid "Randomly select some control points"
@@ -54998,17 +54999,9 @@ msgid "Remove layer from a Cryptomatte node"
 msgstr "Вилучити шар з вузла Cryptomatte"
 
 
-msgid "Delete selected nodes"
-msgstr "Видалити вибрані вузли"
-
-
 msgctxt "Operator"
 msgid "Delete with Reconnect"
 msgstr "Видалити з перез'єднанням"
-
-
-msgid "Delete nodes; will reconnect nodes as if deletion was muted"
-msgstr "Видалити вузли; вузли буде підключено так, ніби видалені вузли було вимкнено"
 
 
 msgctxt "Operator"
@@ -55180,10 +55173,6 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "Використовуйте мишу для створення зв'язку між двома вузлами"
 
 
-msgid "Delay"
-msgstr "Затримка"
-
-
 msgid "Detach"
 msgstr "Від'єднати"
 
@@ -55266,10 +55255,6 @@ msgid "Toggle Node Mute"
 msgstr "Перемкнути приглушення вузла"
 
 
-msgid "Toggle muting of the nodes"
-msgstr "Перемкнути приглушення вузлів"
-
-
 msgctxt "Operator"
 msgid "Assign New Geometry Node Group"
 msgstr "Призначити Нову Групу Вузлів Геометрії"
@@ -55348,10 +55333,6 @@ msgstr "Перемістити активний ввід вузла Вивід �
 msgctxt "Operator"
 msgid "Remove File Node Socket"
 msgstr "Вилучити роз'єм файлового вузла"
-
-
-msgid "Remove active input from a file output node"
-msgstr "Вилучити активний ввід вузла Вивід Файлу"
 
 
 msgid "Attach selected nodes"
@@ -55503,10 +55484,6 @@ msgid "Add Node Tree Interface Socket"
 msgstr "Додати інтерфейсний роз'єм до дерева вузлів"
 
 
-msgid "Add an input or output socket to the current node tree"
-msgstr "Додати ввідний або вивідний роз'єм до поточного дерева вузлів"
-
-
 msgid "Socket Type"
 msgstr "Тип роз'єму"
 
@@ -55516,17 +55493,9 @@ msgid "Move Node Tree Socket"
 msgstr "Перемістити роз'єм дерева вузлів"
 
 
-msgid "Move a socket up or down in the current node tree's sockets stack"
-msgstr "Перемістити роз'єм вгору або вниз у стеку роз'ємів поточного дерева вузлів"
-
-
 msgctxt "Operator"
 msgid "Remove Node Tree Interface Socket"
 msgstr "Вилучити інтерфейсний роз'єм до дерева вузлів"
-
-
-msgid "Remove an input or output socket to the current node tree"
-msgstr "Вилучити ввідний або вивідний роз'єм з поточного дерева вузлів"
 
 
 msgid "Resize view so you can see all nodes"
@@ -61480,15 +61449,6 @@ msgstr "Вилучити з поточної сцени світ моделюв�
 
 
 msgctxt "Operator"
-msgid "Add Safe Area Preset"
-msgstr "Додати передустановку безпечних областей"
-
-
-msgid "Add or remove a Safe Areas Preset"
-msgstr "Додати або вилучити передустановку безпечних областей"
-
-
-msgctxt "Operator"
 msgid "Delete Scene"
 msgstr "Видалити сцену"
 
@@ -66166,10 +66126,6 @@ msgid "Lightmap Pack"
 msgstr "Упакувати карту освітлення"
 
 
-msgid "Pack each faces UV's into the UV bounds"
-msgstr "Упакувати всі UV граней у межі UV"
-
-
 msgid "New Image"
 msgstr "Нове зображення"
 
@@ -66324,10 +66280,6 @@ msgstr "Відірвати вибрані вершини або вибраний
 msgctxt "Operator"
 msgid "UV Rip Move"
 msgstr "Розірвання і Переміщення UV"
-
-
-msgid "Unstitch UV's and move the result"
-msgstr "Розшити UV та перемістити результат"
 
 
 msgid "UV Rip"
@@ -70793,10 +70745,6 @@ msgid "Forces"
 msgstr "Сили"
 
 
-msgid "Timing"
-msgstr "Часування"
-
-
 msgid "Border Collisions"
 msgstr "Зіткнення з межами"
 
@@ -71040,10 +70988,6 @@ msgstr "Авто Ключкадрування"
 
 msgid "Playback"
 msgstr "Програвання"
-
-
-msgid "Primitives"
-msgstr "Примітиви"
 
 
 msgid "Rename Active Item"
@@ -75511,20 +75455,12 @@ msgid "Any object modification requires a complete BVH rebuild, but renders fast
 msgstr "Будь-яка модифікація об'єкта вимагає повної перебудови BVH, але рендер проходить швидше"
 
 
-msgid "AVX"
-msgstr "AVX"
-
-
 msgid "AVX2"
 msgstr "AVX2"
 
 
 msgid "SSE2"
 msgstr "SSE2"
-
-
-msgid "SSE3"
-msgstr "SSE3"
 
 
 msgid "SSE41"
@@ -79578,10 +79514,6 @@ msgid "Sequence strip to load one or more images"
 msgstr "Смужка послідовності для завантаження одного або більше зображень"
 
 
-msgid "Speed Factor"
-msgstr "Коефіцієнт швидкості"
-
-
 msgid "Mask Sequence"
 msgstr "Послідовність маски"
 
@@ -81709,10 +81641,6 @@ msgstr "Дані простору редактора зображень та UV"
 
 msgid "Display Channels"
 msgstr "Показати канали"
-
-
-msgid "Color and Alpha"
-msgstr "Колір та альфа"
 
 
 msgid "Display image with RGB colors and alpha transparency"
@@ -87987,11 +87915,6 @@ msgstr "Рендер:"
 msgctxt "Operator"
 msgid "Rigidbody:"
 msgstr "Тверде_тіло:"
-
-
-msgctxt "Operator"
-msgid "Safe_areas:"
-msgstr "Області_безпеки:"
 
 
 msgctxt "Operator"
@@ -102156,38 +102079,6 @@ msgid "Shrink/Fatten: %3f"
 msgstr "Стиснути/Розширити: %3f"
 
 
-msgid "Bevel Weight: +%s %s"
-msgstr "Вагомість скосу: +%s %s"
-
-
-msgid "Bevel Weight: %s %s"
-msgstr "Вагомість скосу: %s %s"
-
-
-msgid "Bevel Weight: +%.3f %s"
-msgstr "Вагомість скосу: +%.3f %s"
-
-
-msgid "Bevel Weight: %.3f %s"
-msgstr "Вагомість скосу: %.3f %s"
-
-
-msgid "Crease: +%s %s"
-msgstr "Складка: +%s %s"
-
-
-msgid "Crease: %s %s"
-msgstr "Складка: %s %s"
-
-
-msgid "Crease: +%.3f %s"
-msgstr "Складка: +%.3f %s"
-
-
-msgid "Crease: %.3f %s"
-msgstr "Складка: %.3f %s"
-
-
 msgid "Edge Slide: "
 msgstr "Ковзання ребра:"
 
@@ -102892,10 +102783,6 @@ msgstr "Розкладка граней не в сіті"
 
 msgid "Error removing face map"
 msgstr "Помилка вилучення розкладки граней"
-
-
-msgid "Texture layer '%s' not found"
-msgstr "Текстурний шар '%s' не знайдено"
 
 
 msgid "Number of custom normals is not number of loops (%f / %d)"
