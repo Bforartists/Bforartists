@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -11994,8 +11994,12 @@ msgid "Concurrent"
 msgstr "Gleichzeitig"
 
 
-msgid "Start Delay"
-msgstr "Anfangsverzögerung"
+msgid "Speed Factor"
+msgstr "Geschwindigkeitsfaktor"
+
+
+msgid "Delay"
+msgstr "Verzögerung"
 
 
 msgid "Transition"
@@ -14247,6 +14251,10 @@ msgstr "Schnellbearbeitung"
 
 msgid "Attributes"
 msgstr "Eigenschaften"
+
+
+msgid "Normals"
+msgstr "Normalen"
 
 
 msgid "Active Texture"
@@ -20894,8 +20902,24 @@ msgid "Text"
 msgstr "Text"
 
 
+msgid "Math"
+msgstr "Mathematisch"
+
+
+msgid "Primitives"
+msgstr "Grundkörper"
+
+
 msgid "Attribute"
 msgstr "Eigenschaft"
+
+
+msgid "Read"
+msgstr "Lesen"
+
+
+msgid "Write"
+msgstr "Schreiben"
 
 
 msgid "Instances"
@@ -21105,10 +21129,6 @@ msgstr "Gitter Kontextmenü"
 
 msgid "Face Data"
 msgstr "Flächendaten"
-
-
-msgid "Normals"
-msgstr "Normalen"
 
 
 msgid "Select All by Trait"
@@ -25572,10 +25592,6 @@ msgid "Motion Blur"
 msgstr "Bewegungsunschärfe"
 
 
-msgid "Math"
-msgstr "Mathematisch"
-
-
 msgctxt "NodeTree"
 msgid "Operation"
 msgstr "Operation"
@@ -29821,6 +29837,20 @@ msgid "Convert Particle System to Curves"
 msgstr "Partikelsysteme zu Kurven konvertieren"
 
 
+msgid "(De)select all control points"
+msgstr "Kontrollpunkte aus-/abwählen"
+
+
+msgctxt "Operator"
+msgid "Select End"
+msgstr "Ende auswählen"
+
+
+msgctxt "Operator"
+msgid "Select Random"
+msgstr "Zufällig auswählen"
+
+
 msgctxt "Operator"
 msgid "Set Select Mode"
 msgstr "Auswahlmodus setzen"
@@ -30153,10 +30183,6 @@ msgid "Reveal hidden control points"
 msgstr "Versteckte Kontrollpunkte enthüllen"
 
 
-msgid "(De)select all control points"
-msgstr "Kontrollpunkte aus-/abwählen"
-
-
 msgid "Select all control points linked to the current selection"
 msgstr "Alle Kontrollpunkte auswählen, die mit der aktuellen Auswahl verknüpft sind"
 
@@ -30182,11 +30208,6 @@ msgstr "Deaktiviert"
 msgctxt "Operator"
 msgid "Select Previous"
 msgstr "Vorheriges auswählen"
-
-
-msgctxt "Operator"
-msgid "Select Random"
-msgstr "Zufällig auswählen"
 
 
 msgid "Seed for the random number generator"
@@ -35282,10 +35303,6 @@ msgid "Toggle collapsed nodes and hide unused sockets"
 msgstr "Knoten zusammen-/ausklappen und unbenutzte Buchsen ein-/ausblenden"
 
 
-msgid "Delete selected nodes"
-msgstr "Ausgewählte Knoten löschen"
-
-
 msgctxt "Operator"
 msgid "Delete with Reconnect"
 msgstr "Löschen und Verbinden"
@@ -35407,10 +35424,6 @@ msgid "Link Nodes"
 msgstr "Knoten verknüpfen"
 
 
-msgid "Delay"
-msgstr "Verzögerung"
-
-
 msgid "Detach"
 msgstr "Lösen"
 
@@ -35476,10 +35489,6 @@ msgstr "Verbindungen abhängen"
 msgctxt "Operator"
 msgid "Toggle Node Mute"
 msgstr "Knoten an-/ausschalten"
-
-
-msgid "Toggle muting of the nodes"
-msgstr "Knoten aktivieren oder deaktivieren"
 
 
 msgctxt "Operator"
@@ -35652,10 +35661,6 @@ msgid "Add Node Tree Interface Socket"
 msgstr "Knotenbaum-Schnittstellenbuchse hinzufügen"
 
 
-msgid "Add an input or output socket to the current node tree"
-msgstr "Fügt eine Eingabe- oder Ausgabebuchse zum aktuellen Knotenbaum hinzu"
-
-
 msgid "Socket Type"
 msgstr "Buchsentype"
 
@@ -35665,17 +35670,9 @@ msgid "Move Node Tree Socket"
 msgstr "Knotenbaum-Buchse bewegen"
 
 
-msgid "Move a socket up or down in the current node tree's sockets stack"
-msgstr "Bewegt eine Buchse in der aktuellen Liste hoch oder runter"
-
-
 msgctxt "Operator"
 msgid "Remove Node Tree Interface Socket"
 msgstr "Knotenbaum-Schnittstellenbuchse entfernen"
-
-
-msgid "Remove an input or output socket to the current node tree"
-msgstr "Entfernt eine Eingabe- oder Ausgabebuchse vom aktuellen Knotenbaum"
 
 
 msgid "Resize view so you can see all nodes"
@@ -39300,11 +39297,6 @@ msgstr "Skripte neu laden"
 
 msgid "Reload scripts"
 msgstr "Skripte neu laden"
-
-
-msgctxt "Operator"
-msgid "Select End"
-msgstr "Ende auswählen"
 
 
 msgid "Partial"
@@ -43843,10 +43835,6 @@ msgid "Playback"
 msgstr "Wiedergabe"
 
 
-msgid "Primitives"
-msgstr "Grundkörper"
-
-
 msgid "Extra Options"
 msgstr "Extraoptionen"
 
@@ -46812,20 +46800,12 @@ msgid "Dynamic BVH"
 msgstr "Dynamisch"
 
 
-msgid "AVX"
-msgstr "AVX"
-
-
 msgid "AVX2"
 msgstr "AVX2"
 
 
 msgid "SSE2"
 msgstr "SSE2"
-
-
-msgid "SSE3"
-msgstr "SSE3"
 
 
 msgid "SSE41"
@@ -49184,10 +49164,6 @@ msgid "Clock"
 msgstr "Uhr"
 
 
-msgid "Speed Factor"
-msgstr "Geschwindigkeitsfaktor"
-
-
 msgid "Mask Sequence"
 msgstr "Sequenz maskieren"
 
@@ -50297,10 +50273,6 @@ msgstr "Kanäle anzeigen"
 
 msgid "Channels of the image to display"
 msgstr "Kanäle des anzuzeigenden Bildes"
-
-
-msgid "Color and Alpha"
-msgstr "Farbe und Alpha"
 
 
 msgid "Display image with RGB colors and alpha transparency"
@@ -53777,11 +53749,6 @@ msgstr "Rendern:"
 msgctxt "Operator"
 msgid "Rigidbody:"
 msgstr "Starrer Körper:"
-
-
-msgctxt "Operator"
-msgid "Safe_areas:"
-msgstr "Sichere Bereiche:"
 
 
 msgctxt "Operator"
@@ -65058,14 +65025,6 @@ msgstr "Speichern Extern..."
 
 msgid "No named attributes used"
 msgstr "Keine benannten Attribute verwendet"
-
-
-msgid "Read"
-msgstr "Lesen"
-
-
-msgid "Write"
-msgstr "Schreiben"
 
 
 msgid "Internal Dependencies"

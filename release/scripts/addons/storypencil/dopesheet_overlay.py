@@ -58,13 +58,18 @@ def get_scene_strip_in_out(strip):
 def draw_callback_px(line_drawer: LineDrawer):
     context = bpy.context
     region = context.region
+    main_scene = context.scene.storypencil_main_scene
+    if main_scene is None:
+        return
 
+    use_win = main_scene.storypencil_use_new_window
     wm = context.window_manager
 
     if (
-            not wm.storypencil_settings.active
+            (use_win and not wm.storypencil_settings.active)
             or not wm.storypencil_settings.show_main_strip_range
-            or not is_secondary_window(wm, window_id(context.window))
+            or (use_win and not is_secondary_window(wm, window_id(context.window)))
+            or (not use_win and context.scene == main_scene)
     ):
         return
 
