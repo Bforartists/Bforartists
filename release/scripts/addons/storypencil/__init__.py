@@ -6,8 +6,8 @@
 bl_info = {
     "name": "Storypencil - Storyboard Tools",
     "description": "Storyboard tools",
-    "author": "Antonio Vazquez, Matias Mendiola, Daniel Martinez Lara, Rodrigo Blaas",
-    "version": (1, 1, 1),
+    "author": "Antonio Vazquez, Matias Mendiola, Daniel Martinez Lara, Rodrigo Blaas, Samuel Bernou",
+    "version": (1, 1, 3),
     "blender": (3, 3, 0),
     "location": "",
     "warning": "",
@@ -24,6 +24,7 @@ if "bpy" in locals():
     importlib.reload(synchro)
     importlib.reload(dopesheet_overlay)
     importlib.reload(scene_tools)
+    importlib.reload(sound)
     importlib.reload(render)
     importlib.reload(ui)
 else:
@@ -31,6 +32,7 @@ else:
     from . import synchro
     from . import dopesheet_overlay
     from . import scene_tools
+    from . import sound
     from . import render
     from . import ui
 
@@ -62,17 +64,23 @@ classes = (
     synchro.STORYPENCIL_OT_AddSecondaryWindowOperator,
     synchro.STORYPENCIL_OT_Switch,
     synchro.STORYPENCIL_OT_TabSwitch,
+    sound.STORYPENCIL_OT_duplicate_sound_in_edit_scene,
     render.STORYPENCIL_OT_RenderAction,
     ui.STORYPENCIL_PT_Settings,
+    ui.STORYPENCIL_PT_ModePanel,
     ui.STORYPENCIL_PT_SettingsNew,
     ui.STORYPENCIL_PT_RenderPanel,
     ui.STORYPENCIL_PT_General,
-    ui.STORYPENCIL_MT_extra_options,
 )
 
 
 def save_mode(self, context):
     wm = context.window_manager
+    if context.scene.storypencil_mode == 'WINDOW':
+        context.scene.storypencil_use_new_window = True
+    else:
+        context.scene.storypencil_use_new_window = False
+
     wm['storypencil_use_new_window'] = context.scene.storypencil_use_new_window
     # Close all secondary windows
     if context.scene.storypencil_use_new_window is False:
@@ -121,8 +129,7 @@ def register():
 
     Scene.storypencil_use_new_window = BoolProperty(name="Open in new window",
                                                     description="Use secondary main window to edit scenes",
-                                                    default=False,
-                                                    update=save_mode)
+                                                    default=False)
 
     Scene.storypencil_main_workspace = PointerProperty(type=WorkSpace,
                                                        description="Main Workspace used for editing Storyboard")
@@ -159,14 +166,32 @@ def register():
 
     Scene.storypencil_render_numbering = EnumProperty(name="Image Numbering",
                                                       items=(
-                                                            ('1', "Frame", "Use real frame number"),
-                                                            ('2', "Consecutive", "Use sequential numbering"),
+                                                            ('FRAME', "Frame", "Use real frame number"),
+                                                            ('CONSECUTIVE', "Consecutive", "Use sequential numbering"),
                                                             ),
                                                       description="Defines how frame is named")
 
     Scene.storypencil_add_render_byfolder = BoolProperty(name="Folder by Strip",
                                                          description="Create a separated folder for each strip",
                                                          default=True)
+
+    Scene.storypencil_copy_sounds = BoolProperty(name="Copy Sounds",
+                                                 description="Copy automatically the sounds from VSE to edit scene",
+                                                 default=True)
+
+    Scene.storypencil_mode = EnumProperty(name="Mode",
+                                          items=(
+                                                ('SWITCH', "Switch", "Use same window and switch scene"),
+                                                ('WINDOW', "New Window", "Use a new window for editing"),
+                                                ),
+                                          update=save_mode,
+                                          description="Defines how frame is named")
+    Scene.storypencil_selected_scn_only = BoolProperty(name='Selected Scene Only',
+                                                       default=False,
+                                                       description='Selected Scenes only')
+    Scene.storypencil_skip_sound_mute = BoolProperty(name='Ignore Muted Sound',
+                                                     default=True,
+                                                     description='Skip muted sound')
 
     WindowManager.storypencil_settings = PointerProperty(
         type=synchro.STORYPENCIL_PG_Settings,
@@ -232,6 +257,10 @@ def unregister():
     del Scene.storypencil_add_render_strip
     del Scene.storypencil_render_numbering
     del Scene.storypencil_add_render_byfolder
+    del Scene.storypencil_copy_sounds
+    del Scene.storypencil_mode
+    del Scene.storypencil_selected_scn_only
+    del Scene.storypencil_skip_sound_mute
 
 if __name__ == '__main__':
     register()

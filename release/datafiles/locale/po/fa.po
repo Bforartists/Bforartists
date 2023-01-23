@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -2020,6 +2020,10 @@ msgid "Text"
 msgstr "ﻦﺘﻣ"
 
 
+msgid "Math"
+msgstr "ﯽﺿﺎﯾﺭ"
+
+
 msgid "Mesh"
 msgstr "ﺶﻣ"
 
@@ -2334,10 +2338,6 @@ msgstr "ﯽﺑﺁ ﻝﺎﻧﺎﮐ"
 
 msgid "Scene Size"
 msgstr "ﻪﻨﺤﺻ ﻩﺯﺍﺪﻧﺍ"
-
-
-msgid "Math"
-msgstr "ﯽﺿﺎﯾﺭ"
 
 
 msgid "Separate HSVA"

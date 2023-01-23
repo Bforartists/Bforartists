@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -1677,6 +1677,10 @@ msgid "Shift"
 msgstr "शिफ्ट"
 
 
+msgid "Delay"
+msgstr "देरी"
+
+
 msgid "Grow"
 msgstr "विस्तार"
 
@@ -2909,6 +2913,10 @@ msgid "Text"
 msgstr "पाठ"
 
 
+msgid "Math"
+msgstr "गणित"
+
+
 msgid "Mesh"
 msgstr "जाल"
 
@@ -3324,10 +3332,6 @@ msgstr "लाल सरणि"
 
 msgid "Motion Blur"
 msgstr "गतिकीय धुंधलापन"
-
-
-msgid "Math"
-msgstr "गणित"
 
 
 msgid "Translate"
@@ -4072,10 +4076,6 @@ msgstr "निर्गम"
 msgctxt "Operator"
 msgid "Hide"
 msgstr "छिपाएँ"
-
-
-msgid "Delay"
-msgstr "देरी"
 
 
 msgid "Set the boundaries for viewer operations"
