@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <http://weblate.slat.org/projects/blender/blender/zh_Hant/>\n"
@@ -10885,6 +10885,14 @@ msgid "Build Modifier"
 msgstr "建置修改器"
 
 
+msgid "Speed Factor"
+msgstr "速度係數"
+
+
+msgid "Delay"
+msgstr "延遲"
+
+
 msgid "Transition"
 msgstr "過渡"
 
@@ -12758,6 +12766,10 @@ msgstr "快速編輯"
 
 msgid "Don't fill polygons while editing"
 msgstr "編輯時不填補多角形"
+
+
+msgid "Normals"
+msgstr "法線"
 
 
 msgid "Freestyle Line Style"
@@ -19250,8 +19262,12 @@ msgid "Utilities"
 msgstr "效用"
 
 
-msgid "Mesh Primitives"
-msgstr "網格原形"
+msgid "Math"
+msgstr "比對"
+
+
+msgid "Primitives"
+msgstr "原形"
 
 
 msgid "Attribute"
@@ -19264,10 +19280,6 @@ msgstr "實例化"
 
 msgid "Mesh"
 msgstr "網格"
-
-
-msgid "Curve Primitives"
-msgstr "曲線原形"
 
 
 msgid "Node"
@@ -19408,10 +19420,6 @@ msgstr "特殊字元"
 
 msgid "Face Data"
 msgstr "面資料"
-
-
-msgid "Normals"
-msgstr "法線"
 
 
 msgid "Mesh Select Mode"
@@ -24758,10 +24766,6 @@ msgid "Motion Blur"
 msgstr "運動模糊"
 
 
-msgid "Math"
-msgstr "比對"
-
-
 msgid "Include alpha of second input in this operation"
 msgstr "將第二輸入的 alpha 內含於此操作"
 
@@ -27829,6 +27833,15 @@ msgstr "將焦距納入預置"
 
 
 msgctxt "Operator"
+msgid "Add Safe Area Preset"
+msgstr "添加安全區域預置"
+
+
+msgid "Add or remove a Safe Areas Preset"
+msgstr "添加或移除安全區域預置"
+
+
+msgctxt "Operator"
 msgid "Add Marker"
 msgstr "添加標記"
 
@@ -29113,6 +29126,15 @@ msgid "Reset original length of bone for Stretch To Constraint"
 msgstr "為「拉伸至約束」重設骨骼的原始長度"
 
 
+msgid "(De)select all control points"
+msgstr "(取消)全選控制點"
+
+
+msgctxt "Operator"
+msgid "Select Random"
+msgstr "選取隨機"
+
+
 msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "切換循環"
@@ -29362,10 +29384,6 @@ msgid "Set per-point radius which is used for bevel tapering"
 msgstr "設定用作倒角窄縮的各點半徑"
 
 
-msgid "(De)select all control points"
-msgstr "(取消)全選控制點"
-
-
 msgid "Select all control points linked to already selected ones"
 msgstr "選取所有連結至已選取項目的控制點"
 
@@ -29395,11 +29413,6 @@ msgstr "選取上一項"
 
 msgid "Select control points preceding already selected ones along the curves"
 msgstr "沿曲線選取前導於已選取項目的控制點"
-
-
-msgctxt "Operator"
-msgid "Select Random"
-msgstr "選取隨機"
 
 
 msgid "Randomly select some control points"
@@ -34405,17 +34418,9 @@ msgid "Toggle collapsed nodes and hide unused sockets"
 msgstr "切換收闔的節點並隱藏未使用的接口"
 
 
-msgid "Delete selected nodes"
-msgstr "刪除所選的節點"
-
-
 msgctxt "Operator"
 msgid "Delete with Reconnect"
 msgstr "刪除加重新連接"
-
-
-msgid "Delete nodes; will reconnect nodes as if deletion was muted"
-msgstr "刪除節點；會重新連接節點唯若刪除已閉鎖"
 
 
 msgctxt "Operator"
@@ -34574,10 +34579,6 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "使用滑鼠來建立兩個節點之間的連結"
 
 
-msgid "Delay"
-msgstr "延遲"
-
-
 msgid "Detach"
 msgstr "斷開"
 
@@ -34644,10 +34645,6 @@ msgid "Toggle Node Mute"
 msgstr "切換節點的閉鎖"
 
 
-msgid "Toggle muting of the nodes"
-msgstr "切換節點的閉鎖"
-
-
 msgctxt "Operator"
 msgid "New Node Tree"
 msgstr "新增節點樹"
@@ -34704,10 +34701,6 @@ msgstr "在清單中將檔案輸出節點的作用中輸入往上移或往下移
 msgctxt "Operator"
 msgid "Remove File Node Socket"
 msgstr "移除檔案節點接口"
-
-
-msgid "Remove active input from a file output node"
-msgstr "從檔案輸出節點移除作用中輸入"
 
 
 msgid "Attach selected nodes"
@@ -34846,10 +34839,6 @@ msgid "Add Node Tree Interface Socket"
 msgstr "添加節點樹介面接口"
 
 
-msgid "Add an input or output socket to the current node tree"
-msgstr "在目前節點樹中添加輸入或輸出接口"
-
-
 msgid "Socket Type"
 msgstr "接口類型"
 
@@ -34859,17 +34848,9 @@ msgid "Move Node Tree Socket"
 msgstr "移動節點樹接口"
 
 
-msgid "Move a socket up or down in the current node tree's sockets stack"
-msgstr "上移或下移目前節點樹中接口堆疊內的接口"
-
-
 msgctxt "Operator"
 msgid "Remove Node Tree Interface Socket"
 msgstr "移除節點樹介面接口"
-
-
-msgid "Remove an input or output socket to the current node tree"
-msgstr "從目前節點樹中移除輸入或輸出接口"
 
 
 msgid "Resize view so you can see all nodes"
@@ -38505,15 +38486,6 @@ msgstr "從目前場景移除剛體模擬世界"
 
 
 msgctxt "Operator"
-msgid "Add Safe Area Preset"
-msgstr "添加安全區域預置"
-
-
-msgid "Add or remove a Safe Areas Preset"
-msgstr "添加或移除安全區域預置"
-
-
-msgctxt "Operator"
 msgid "Delete Scene"
 msgstr "刪除場景"
 
@@ -41372,10 +41344,6 @@ msgid "Lightmap Pack"
 msgstr "光照映射打包"
 
 
-msgid "Pack each faces UV's into the UV bounds"
-msgstr "將每面 UV 打包成 UV 邊界"
-
-
 msgid "New Image"
 msgstr "新增影像"
 
@@ -43883,10 +43851,6 @@ msgstr "特徵權重"
 
 msgid "Playback"
 msgstr "播放"
-
-
-msgid "Primitives"
-msgstr "原形"
 
 
 msgid "Rename Active Item"
@@ -48458,10 +48422,6 @@ msgid "Sequence strip to load one or more images"
 msgstr "載入一個或多個影像的序段片段"
 
 
-msgid "Speed Factor"
-msgstr "速度係數"
-
-
 msgid "Mask Sequence"
 msgstr "遮罩序段"
 
@@ -49804,10 +49764,6 @@ msgstr "空間影像編輯器"
 
 msgid "Image and UV editor space data"
 msgstr "影像與 UV 編輯器的空間資料"
-
-
-msgid "Color and Alpha"
-msgstr "色彩與 Alpha"
 
 
 msgid "Z-Buffer"
@@ -53029,11 +52985,6 @@ msgstr "算繪："
 msgctxt "Operator"
 msgid "Rigidbody:"
 msgstr "剛體："
-
-
-msgctxt "Operator"
-msgid "Safe_areas:"
-msgstr "安全區域："
 
 
 msgctxt "Operator"
@@ -59531,38 +59482,6 @@ msgstr "收縮/擴充：%s"
 
 msgid "Shrink/Fatten: %3f"
 msgstr "收縮/擴充：%3f"
-
-
-msgid "Bevel Weight: +%s %s"
-msgstr "倒角權重：+%s %s"
-
-
-msgid "Bevel Weight: %s %s"
-msgstr "倒角權重：%s %s"
-
-
-msgid "Bevel Weight: +%.3f %s"
-msgstr "倒角權重：+%.3f %s"
-
-
-msgid "Bevel Weight: %.3f %s"
-msgstr "倒角權重：%.3f %s"
-
-
-msgid "Crease: +%s %s"
-msgstr "皺摺：+%s %s"
-
-
-msgid "Crease: %s %s"
-msgstr "皺摺：%s %s"
-
-
-msgid "Crease: +%.3f %s"
-msgstr "皺摺：+%.3f %s"
-
-
-msgid "Crease: %.3f %s"
-msgstr "皺摺：%.3f %s"
 
 
 msgid "Edge Slide: "

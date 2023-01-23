@@ -107,30 +107,29 @@ static bke::curves::CurvePoint lookup_point_bezier(const Span<int> bezier_offset
 
   /* Find the segment index from the offset mapping. */
   const int *offset = std::upper_bound(bezier_offsets.begin(), bezier_offsets.end(), eval_index);
-  const int left = offset - bezier_offsets.begin();
+  const int left = offset - bezier_offsets.begin() - 1;
   const int right = left == last_index ? 0 : left + 1;
 
-  const int prev_offset = left == 0 ? 0 : bezier_offsets[int64_t(left) - 1];
+  const int prev_offset = bezier_offsets[left];
   const float offset_in_segment = eval_factor + (eval_index - prev_offset);
-  const int segment_resolution = bezier_offsets[left] - prev_offset;
+  const int segment_resolution = bezier_offsets[left + 1] - prev_offset;
   const float parameter = std::clamp(offset_in_segment / segment_resolution, 0.0f, 1.0f);
 
   return {{left, right}, parameter};
 }
 
-static bke::curves::CurvePoint lookup_point_bezier(const bke::CurvesGeometry &src_curves,
-                                                   const int64_t curve_index,
-                                                   const Span<float> accumulated_lengths,
-                                                   const float sample_length,
-                                                   const bool cyclic,
-                                                   const int resolution,
-                                                   const int num_curve_points)
+static bke::curves::CurvePoint lookup_point_bezier(
+    const bke::CurvesGeometry &src_curves,
+    const OffsetIndices<int> evaluated_points_by_curve,
+    const int64_t curve_index,
+    const Span<float> accumulated_lengths,
+    const float sample_length,
+    const bool cyclic,
+    const int resolution,
+    const int num_curve_points)
 {
   if (bke::curves::bezier::has_vector_handles(
-          num_curve_points,
-          src_curves.evaluated_points_for_curve(curve_index).size(),
-          cyclic,
-          resolution)) {
+          num_curve_points, evaluated_points_by_curve.size(curve_index), cyclic, resolution)) {
     const Span<int> bezier_offsets = src_curves.bezier_evaluated_offsets_for_curve(curve_index);
     return lookup_point_bezier(
         bezier_offsets, accumulated_lengths, sample_length, cyclic, num_curve_points);
@@ -141,14 +140,16 @@ static bke::curves::CurvePoint lookup_point_bezier(const bke::CurvesGeometry &sr
   }
 }
 
-static bke::curves::CurvePoint lookup_curve_point(const bke::CurvesGeometry &src_curves,
-                                                  const CurveType curve_type,
-                                                  const int64_t curve_index,
-                                                  const Span<float> accumulated_lengths,
-                                                  const float sample_length,
-                                                  const bool cyclic,
-                                                  const int resolution,
-                                                  const int num_curve_points)
+static bke::curves::CurvePoint lookup_curve_point(
+    const bke::CurvesGeometry &src_curves,
+    const OffsetIndices<int> evaluated_points_by_curve,
+    const CurveType curve_type,
+    const int64_t curve_index,
+    const Span<float> accumulated_lengths,
+    const float sample_length,
+    const bool cyclic,
+    const int resolution,
+    const int num_curve_points)
 {
   if (num_curve_points == 1) {
     return {{0, 0}, 0.0f};
@@ -160,6 +161,7 @@ static bke::curves::CurvePoint lookup_curve_point(const bke::CurvesGeometry &src
   }
   else if (curve_type == CURVE_TYPE_BEZIER) {
     return lookup_point_bezier(src_curves,
+                               evaluated_points_by_curve,
                                curve_index,
                                accumulated_lengths,
                                sample_length,
@@ -173,10 +175,8 @@ static bke::curves::CurvePoint lookup_curve_point(const bke::CurvesGeometry &src
   else {
     /* Handle evaluated curve. */
     BLI_assert(resolution > 0);
-    return lookup_point_polygonal(accumulated_lengths,
-                                  sample_length,
-                                  cyclic,
-                                  src_curves.evaluated_points_for_curve(curve_index).size());
+    return lookup_point_polygonal(
+        accumulated_lengths, sample_length, cyclic, evaluated_points_by_curve.size(curve_index));
   }
 }
 
@@ -191,6 +191,7 @@ static void fill_bezier_data(bke::CurvesGeometry &dst_curves, const IndexMask se
   if (!dst_curves.has_curve_with_type(CURVE_TYPE_BEZIER)) {
     return;
   }
+  const OffsetIndices dst_points_by_curve = dst_curves.points_by_curve();
   MutableSpan<float3> handle_positions_left = dst_curves.handle_positions_left_for_write();
   MutableSpan<float3> handle_positions_right = dst_curves.handle_positions_right_for_write();
   MutableSpan<int8_t> handle_types_left = dst_curves.handle_types_left_for_write();
@@ -198,7 +199,7 @@ static void fill_bezier_data(bke::CurvesGeometry &dst_curves, const IndexMask se
 
   threading::parallel_for(selection.index_range(), 4096, [&](const IndexRange range) {
     for (const int64_t curve_i : selection.slice(range)) {
-      const IndexRange points = dst_curves.points_for_curve(curve_i);
+      const IndexRange points = dst_points_by_curve[curve_i];
       handle_types_right.slice(points).fill(int8_t(BEZIER_HANDLE_FREE));
       handle_types_left.slice(points).fill(int8_t(BEZIER_HANDLE_FREE));
       handle_positions_left.slice(points).fill({0.0f, 0.0f, 0.0f});
@@ -526,7 +527,7 @@ static void sample_interval_bezier(const Span<float3> src_positions,
                                                        start_point_insert.position,
                                                        parameter);
 
-        /* Update startpoint handle. */
+        /* Update start-point handle. */
         dst_handles_l[dst_range.first()] = end_point_insert.handle_next;
       }
       else {
@@ -587,18 +588,20 @@ static void trim_attribute_linear(const bke::CurvesGeometry &src_curves,
                                   const Span<bke::curves::IndexRangeCyclic> src_ranges,
                                   MutableSpan<bke::AttributeTransferData> transfer_attributes)
 {
+  const OffsetIndices src_points_by_curve = src_curves.points_by_curve();
+  const OffsetIndices dst_points_by_curve = dst_curves.points_by_curve();
   for (bke::AttributeTransferData &attribute : transfer_attributes) {
     attribute_math::convert_to_static_type(attribute.meta_data.data_type, [&](auto dummy) {
       using T = decltype(dummy);
 
       threading::parallel_for(selection.index_range(), 512, [&](const IndexRange range) {
         for (const int64_t curve_i : selection.slice(range)) {
-          const IndexRange src_points = src_curves.points_for_curve(curve_i);
+          const IndexRange src_points = src_points_by_curve[curve_i];
 
           sample_interval_linear<T>(attribute.src.template typed<T>().slice(src_points),
                                     attribute.dst.span.typed<T>(),
                                     src_ranges[curve_i],
-                                    dst_curves.points_for_curve(curve_i),
+                                    dst_points_by_curve[curve_i],
                                     start_points[curve_i],
                                     end_points[curve_i]);
         }
@@ -615,13 +618,15 @@ static void trim_polygonal_curves(const bke::CurvesGeometry &src_curves,
                                   const Span<bke::curves::IndexRangeCyclic> src_ranges,
                                   MutableSpan<bke::AttributeTransferData> transfer_attributes)
 {
+  const OffsetIndices src_points_by_curve = src_curves.points_by_curve();
+  const OffsetIndices dst_points_by_curve = dst_curves.points_by_curve();
   const Span<float3> src_positions = src_curves.positions();
   MutableSpan<float3> dst_positions = dst_curves.positions_for_write();
 
   threading::parallel_for(selection.index_range(), 512, [&](const IndexRange range) {
     for (const int64_t curve_i : selection.slice(range)) {
-      const IndexRange src_points = src_curves.points_for_curve(curve_i);
-      const IndexRange dst_points = dst_curves.points_for_curve(curve_i);
+      const IndexRange src_points = src_points_by_curve[curve_i];
+      const IndexRange dst_points = dst_points_by_curve[curve_i];
 
       sample_interval_linear<float3>(src_positions.slice(src_points),
                                      dst_positions,
@@ -650,14 +655,16 @@ static void trim_catmull_rom_curves(const bke::CurvesGeometry &src_curves,
                                     const Span<bke::curves::IndexRangeCyclic> src_ranges,
                                     MutableSpan<bke::AttributeTransferData> transfer_attributes)
 {
+  const OffsetIndices src_points_by_curve = src_curves.points_by_curve();
+  const OffsetIndices dst_points_by_curve = dst_curves.points_by_curve();
   const Span<float3> src_positions = src_curves.positions();
   const VArray<bool> src_cyclic = src_curves.cyclic();
   MutableSpan<float3> dst_positions = dst_curves.positions_for_write();
 
   threading::parallel_for(selection.index_range(), 512, [&](const IndexRange range) {
     for (const int64_t curve_i : selection.slice(range)) {
-      const IndexRange src_points = src_curves.points_for_curve(curve_i);
-      const IndexRange dst_points = dst_curves.points_for_curve(curve_i);
+      const IndexRange src_points = src_points_by_curve[curve_i];
+      const IndexRange dst_points = dst_points_by_curve[curve_i];
 
       sample_interval_catmull_rom<float3>(src_positions.slice(src_points),
                                           dst_positions,
@@ -677,8 +684,8 @@ static void trim_catmull_rom_curves(const bke::CurvesGeometry &src_curves,
 
       threading::parallel_for(selection.index_range(), 512, [&](const IndexRange range) {
         for (const int64_t curve_i : selection.slice(range)) {
-          const IndexRange src_points = src_curves.points_for_curve(curve_i);
-          const IndexRange dst_points = dst_curves.points_for_curve(curve_i);
+          const IndexRange src_points = src_points_by_curve[curve_i];
+          const IndexRange dst_points = dst_points_by_curve[curve_i];
 
           sample_interval_catmull_rom<T>(attribute.src.template typed<T>().slice(src_points),
                                          attribute.dst.span.typed<T>(),
@@ -701,12 +708,14 @@ static void trim_bezier_curves(const bke::CurvesGeometry &src_curves,
                                const Span<bke::curves::IndexRangeCyclic> src_ranges,
                                MutableSpan<bke::AttributeTransferData> transfer_attributes)
 {
+  const OffsetIndices src_points_by_curve = src_curves.points_by_curve();
   const Span<float3> src_positions = src_curves.positions();
   const VArraySpan<int8_t> src_types_l{src_curves.handle_types_left()};
   const VArraySpan<int8_t> src_types_r{src_curves.handle_types_right()};
   const Span<float3> src_handles_l = src_curves.handle_positions_left();
   const Span<float3> src_handles_r = src_curves.handle_positions_right();
 
+  const OffsetIndices dst_points_by_curve = dst_curves.points_by_curve();
   MutableSpan<float3> dst_positions = dst_curves.positions_for_write();
   MutableSpan<int8_t> dst_types_l = dst_curves.handle_types_left_for_write();
   MutableSpan<int8_t> dst_types_r = dst_curves.handle_types_right_for_write();
@@ -715,8 +724,8 @@ static void trim_bezier_curves(const bke::CurvesGeometry &src_curves,
 
   threading::parallel_for(selection.index_range(), 512, [&](const IndexRange range) {
     for (const int64_t curve_i : selection.slice(range)) {
-      const IndexRange src_points = src_curves.points_for_curve(curve_i);
-      const IndexRange dst_points = dst_curves.points_for_curve(curve_i);
+      const IndexRange src_points = src_points_by_curve[curve_i];
+      const IndexRange dst_points = dst_points_by_curve[curve_i];
 
       sample_interval_bezier(src_positions.slice(src_points),
                              src_handles_l.slice(src_points),
@@ -752,14 +761,16 @@ static void trim_evaluated_curves(const bke::CurvesGeometry &src_curves,
                                   const Span<bke::curves::IndexRangeCyclic> src_ranges,
                                   MutableSpan<bke::AttributeTransferData> transfer_attributes)
 {
+  const OffsetIndices src_points_by_curve = src_curves.points_by_curve();
+  const OffsetIndices src_evaluated_points_by_curve = src_curves.evaluated_points_by_curve();
+  const OffsetIndices dst_points_by_curve = dst_curves.points_by_curve();
   const Span<float3> src_eval_positions = src_curves.evaluated_positions();
   MutableSpan<float3> dst_positions = dst_curves.positions_for_write();
 
   threading::parallel_for(selection.index_range(), 512, [&](const IndexRange range) {
     for (const int64_t curve_i : selection.slice(range)) {
-      const IndexRange dst_points = dst_curves.points_for_curve(curve_i);
-      const IndexRange src_evaluated_points = src_curves.evaluated_points_for_curve(curve_i);
-
+      const IndexRange src_evaluated_points = src_evaluated_points_by_curve[curve_i];
+      const IndexRange dst_points = dst_points_by_curve[curve_i];
       sample_interval_linear<float3>(src_eval_positions.slice(src_evaluated_points),
                                      dst_positions,
                                      src_ranges[curve_i],
@@ -776,17 +787,18 @@ static void trim_evaluated_curves(const bke::CurvesGeometry &src_curves,
       using T = decltype(dummy);
 
       threading::parallel_for(selection.index_range(), 512, [&](const IndexRange range) {
+        Vector<std::byte> evaluated_buffer;
         for (const int64_t curve_i : selection.slice(range)) {
+          const IndexRange src_points = src_points_by_curve[curve_i];
+
           /* Interpolate onto the evaluated point domain and sample the evaluated domain. */
-          const IndexRange src_evaluated_points = src_curves.evaluated_points_for_curve(curve_i);
-          GArray<> evaluated_data(CPPType::get<T>(), src_evaluated_points.size());
-          GMutableSpan evaluated_span = evaluated_data.as_mutable_span();
-          src_curves.interpolate_to_evaluated(
-              curve_i, attribute.src.slice(src_curves.points_for_curve(curve_i)), evaluated_span);
-          sample_interval_linear<T>(evaluated_span.typed<T>(),
+          evaluated_buffer.reinitialize(sizeof(T) * src_evaluated_points_by_curve.size(curve_i));
+          MutableSpan<T> evaluated = evaluated_buffer.as_mutable_span().cast<T>();
+          src_curves.interpolate_to_evaluated(curve_i, attribute.src.slice(src_points), evaluated);
+          sample_interval_linear<T>(evaluated,
                                     attribute.dst.span.typed<T>(),
                                     src_ranges[curve_i],
-                                    dst_curves.points_for_curve(curve_i),
+                                    dst_points_by_curve[curve_i],
                                     start_points[curve_i],
                                     end_points[curve_i]);
         }
@@ -810,8 +822,7 @@ static float trim_sample_length(const Span<float> accumulated_lengths,
 }
 
 /**
- * Compute the selection for the given curve type. Tracks indices for splitting the selection if
- * there are curves reduced to a single point.
+ * Compute the selected range of points for every selected curve.
  */
 static void compute_curve_trim_parameters(const bke::CurvesGeometry &curves,
                                           const IndexMask selection,
@@ -819,28 +830,28 @@ static void compute_curve_trim_parameters(const bke::CurvesGeometry &curves,
                                           const VArray<float> &ends,
                                           const GeometryNodeCurveSampleMode mode,
                                           MutableSpan<int> dst_curve_size,
-                                          MutableSpan<int8_t> dst_curve_types,
                                           MutableSpan<bke::curves::CurvePoint> start_points,
                                           MutableSpan<bke::curves::CurvePoint> end_points,
                                           MutableSpan<bke::curves::IndexRangeCyclic> src_ranges)
 {
+  const OffsetIndices points_by_curve = curves.points_by_curve();
+  const OffsetIndices evaluated_points_by_curve = curves.evaluated_points_by_curve();
   const VArray<bool> src_cyclic = curves.cyclic();
   const VArray<int> resolution = curves.resolution();
   const VArray<int8_t> curve_types = curves.curve_types();
+  curves.ensure_can_interpolate_to_evaluated();
 
-  /* Compute. */
   threading::parallel_for(selection.index_range(), 128, [&](const IndexRange selection_range) {
     for (const int64_t curve_i : selection.slice(selection_range)) {
       CurveType curve_type = CurveType(curve_types[curve_i]);
 
       int point_count;
       if (curve_type == CURVE_TYPE_NURBS) {
-        dst_curve_types[curve_i] = CURVE_TYPE_POLY;
-        point_count = curves.evaluated_points_for_curve(curve_i).size();
+        /* The result curve is a poly curve. */
+        point_count = evaluated_points_by_curve.size(curve_i);
       }
       else {
-        dst_curve_types[curve_i] = curve_type;
-        point_count = curves.points_num_for_curve(curve_i);
+        point_count = points_by_curve.size(curve_i);
       }
       if (point_count == 1) {
         /* Single point. */
@@ -873,6 +884,7 @@ static void compute_curve_trim_parameters(const bke::CurvesGeometry &curves,
       }
 
       start_points[curve_i] = lookup_curve_point(curves,
+                                                 evaluated_points_by_curve,
                                                  curve_type,
                                                  curve_i,
                                                  lengths,
@@ -885,10 +897,15 @@ static void compute_curve_trim_parameters(const bke::CurvesGeometry &curves,
         if (end_length <= start_length) {
           /* Single point. */
           dst_curve_size[curve_i] = 1;
-          src_ranges[curve_i] = bke::curves::IndexRangeCyclic::get_range_from_size(
-              start_points[curve_i].index,
-              start_points[curve_i].is_controlpoint(), /* Only iterate if control point. */
-              point_count);
+          if (start_points[curve_i].is_controlpoint()) {
+            /* Only iterate if control point. */
+            const int single_point_index = start_points[curve_i].parameter == 1.0f ?
+                                               start_points[curve_i].next_index :
+                                               start_points[curve_i].index;
+            src_ranges[curve_i] = bke::curves::IndexRangeCyclic::get_range_from_size(
+                single_point_index, 1, point_count);
+          }
+          /* else: leave empty range */
         }
         else {
           /* Split. */
@@ -903,6 +920,7 @@ static void compute_curve_trim_parameters(const bke::CurvesGeometry &curves,
       else {
         /* General case. */
         end_points[curve_i] = lookup_curve_point(curves,
+                                                 evaluated_points_by_curve,
                                                  curve_type,
                                                  curve_i,
                                                  lengths,
@@ -938,50 +956,29 @@ bke::CurvesGeometry trim_curves(const bke::CurvesGeometry &src_curves,
   BLI_assert(starts.size() == ends.size());
   src_curves.ensure_evaluated_lengths();
 
-  Vector<int64_t> inverse_selection_indices;
-  const IndexMask inverse_selection = selection.invert(src_curves.curves_range(),
-                                                       inverse_selection_indices);
+  const Vector<IndexRange> inverse_selection = selection.extract_ranges_invert(
+      src_curves.curves_range());
 
-  /* Create destination curves. */
-  bke::CurvesGeometry dst_curves(0, src_curves.curves_num());
+  bke::CurvesGeometry dst_curves = bke::curves::copy_only_curve_domain(src_curves);
   MutableSpan<int> dst_curve_offsets = dst_curves.offsets_for_write();
-  MutableSpan<int8_t> dst_curve_types = dst_curves.curve_types_for_write();
-  Array<bke::curves::CurvePoint, 12> start_points(src_curves.curves_num());
-  Array<bke::curves::CurvePoint, 12> end_points(src_curves.curves_num());
-  Array<bke::curves::IndexRangeCyclic, 12> src_ranges(src_curves.curves_num());
+  Array<bke::curves::CurvePoint, 16> start_points(src_curves.curves_num());
+  Array<bke::curves::CurvePoint, 16> end_points(src_curves.curves_num());
+  Array<bke::curves::IndexRangeCyclic, 16> src_ranges(src_curves.curves_num());
 
-  if (src_curves.has_curve_with_type({CURVE_TYPE_BEZIER, CURVE_TYPE_NURBS})) {
-    src_curves.ensure_evaluated_offsets();
-    if (src_curves.has_curve_with_type(CURVE_TYPE_NURBS)) {
-      src_curves.evaluated_positions();
-    }
-  }
-
-  /* Compute destination curves. */
   compute_curve_trim_parameters(src_curves,
                                 selection,
                                 starts,
                                 ends,
                                 mode,
                                 dst_curve_offsets,
-                                dst_curve_types,
                                 start_points,
                                 end_points,
                                 src_ranges);
+  bke::curves::copy_curve_sizes(src_curves, inverse_selection, dst_curve_offsets);
 
-  /* Transfer copied curves parameters. */
-  const VArray<int8_t> src_curve_types = src_curves.curve_types();
-  threading::parallel_for(
-      inverse_selection.index_range(), 4096, [&](const IndexRange selection_range) {
-        for (const int64_t curve_i : inverse_selection.slice(selection_range)) {
-          dst_curve_offsets[curve_i] = src_curves.points_num_for_curve(curve_i);
-          dst_curve_types[curve_i] = src_curve_types[curve_i];
-        }
-      });
   /* Finalize and update the geometry container. */
-  bke::curves::accumulate_counts_to_offsets(dst_curve_offsets);
+  offset_indices::accumulate_counts_to_offsets(dst_curve_offsets);
   dst_curves.resize(dst_curves.offsets().last(), dst_curves.curves_num());
-  dst_curves.update_curve_types();
 
   /* Populate curve domain. */
   const bke::AttributeAccessor src_attributes = src_curves.attributes();
@@ -992,12 +989,6 @@ bke::CurvesGeometry trim_curves(const bke::CurvesGeometry &src_curves,
     transfer_curve_skip.remove("nurbs_order");
     transfer_curve_skip.remove("knots_mode");
   }
-  bke::copy_attribute_domain(src_attributes,
-                             dst_attributes,
-                             selection,
-                             ATTR_DOMAIN_CURVE,
-                             propagation_info,
-                             transfer_curve_skip);
 
   /* Fetch custom point domain attributes for transfer (copy). */
   Vector<bke::AttributeTransferData> transfer_attributes = bke::retrieve_attributes_for_transfer(
@@ -1040,8 +1031,8 @@ bke::CurvesGeometry trim_curves(const bke::CurvesGeometry &src_curves,
                        transfer_attributes);
   };
   auto trim_evaluated = [&](const IndexMask selection) {
+    dst_curves.fill_curve_types(selection, CURVE_TYPE_POLY);
     /* Ensure evaluated positions are available. */
-    src_curves.ensure_evaluated_offsets();
     src_curves.evaluated_positions();
     trim_evaluated_curves(src_curves,
                           dst_curves,
@@ -1067,16 +1058,16 @@ bke::CurvesGeometry trim_curves(const bke::CurvesGeometry &src_curves,
   }
 
   /* Copy unselected */
-  if (!inverse_selection.is_empty()) {
-    transfer_curve_skip.remove("cyclic");
-    bke::copy_attribute_domain(src_attributes,
-                               dst_attributes,
-                               inverse_selection,
-                               ATTR_DOMAIN_CURVE,
-                               propagation_info,
-                               transfer_curve_skip);
-    /* Trim curves are no longer cyclic. If all curves are trimmed, this will be set implicitly. */
-    dst_curves.cyclic_for_write().fill_indices(selection, false);
+  if (inverse_selection.is_empty()) {
+    /* Since all curves were trimmed, none of them are cyclic and the attribute can be removed. */
+    dst_curves.attributes_for_write().remove("cyclic");
+  }
+  else {
+    /* Only trimmed curves are no longer cyclic.  */
+    if (bke::SpanAttributeWriter cyclic = dst_attributes.lookup_for_write_span<bool>("cyclic")) {
+      cyclic.span.fill_indices(selection, false);
+      cyclic.finish();
+    }
 
     Set<std::string> copy_point_skip;
     if (!dst_curves.has_curve_with_type(CURVE_TYPE_NURBS) &&
@@ -1096,6 +1087,7 @@ bke::CurvesGeometry trim_curves(const bke::CurvesGeometry &src_curves,
     }
   }
 
+  dst_curves.remove_attributes_based_on_types();
   dst_curves.tag_topology_changed();
   return dst_curves;
 }

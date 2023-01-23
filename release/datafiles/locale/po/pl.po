@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -10243,38 +10243,6 @@ msgid "Shrink/Fatten: %3f"
 msgstr "Kurcz/Rozszerz: %3f"
 
 
-msgid "Bevel Weight: +%s %s"
-msgstr "Waga skosu: +%s %s"
-
-
-msgid "Bevel Weight: %s %s"
-msgstr "Waga skosu: %s %s"
-
-
-msgid "Bevel Weight: +%.3f %s"
-msgstr "Waga skosu: +%.3f %s"
-
-
-msgid "Bevel Weight: %.3f %s"
-msgstr "Waga skosu: %.3f %s"
-
-
-msgid "Crease: +%s %s"
-msgstr "Fałda: +%s %s"
-
-
-msgid "Crease: %s %s"
-msgstr "Fałda: %s %s"
-
-
-msgid "Crease: +%.3f %s"
-msgstr "Fałda: +%.3f %s"
-
-
-msgid "Crease: %.3f %s"
-msgstr "Fałda: %.3f %s"
-
-
 msgid "(E)ven: %s, "
 msgstr "Równ(E): %s "
 
@@ -10739,10 +10707,6 @@ msgstr "Maksymalna liczba dodanych tekstur %d"
 
 msgid "Index %d is invalid"
 msgstr "Indeks %d jest nieprawidłowy"
-
-
-msgid "Texture layer '%s' not found"
-msgstr "Nie odnaleziono warstwy tekstury '%s'"
 
 
 msgid "Number of custom normals is not number of loops (%f / %d)"

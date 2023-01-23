@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -4746,6 +4746,10 @@ msgid "Auto-Masking Strokes"
 msgstr "Automaattinen maskauspiirto"
 
 
+msgid "Normals"
+msgstr "Normaalit"
+
+
 msgid "Show/Hide"
 msgstr "Näytä/Piilota"
 
@@ -4792,12 +4796,20 @@ msgid "Utilities"
 msgstr "Työkalut"
 
 
-msgid "Mesh Primitives"
-msgstr "Primitiiviset muodot"
+msgid "Math"
+msgstr "Matematiikka"
 
 
 msgid "Attribute"
 msgstr "Ominaisuus"
+
+
+msgid "Read"
+msgstr "Lue"
+
+
+msgid "Write"
+msgstr "Kirjoita"
 
 
 msgid "Instances"
@@ -4806,18 +4818,6 @@ msgstr "Instanssit"
 
 msgid "Mesh"
 msgstr "Muoto"
-
-
-msgid "Curve Primitives"
-msgstr "Primitiiviset käyrät"
-
-
-msgid "Curve Topology"
-msgstr "Käyrätopologia"
-
-
-msgid "Mesh Topology"
-msgstr "Muototopologia"
 
 
 msgid "Node"
@@ -4875,10 +4875,6 @@ msgstr "Tallenna & lataa"
 
 msgid "Names"
 msgstr "Nimet"
-
-
-msgid "Normals"
-msgstr "Normaalit"
 
 
 msgid "Select All by Trait"
@@ -5620,10 +5616,6 @@ msgstr "Käytä minimiä"
 
 msgid "Motion Blur"
 msgstr "Liike-epäterävyys"
-
-
-msgid "Math"
-msgstr "Matematiikka"
 
 
 msgctxt "NodeTree"
@@ -6826,10 +6818,6 @@ msgstr "Näkyvät objektit"
 
 msgid "Lighting Mode"
 msgstr "Valotustila"
-
-
-msgid "Export Attributes"
-msgstr "Vie ominaisuudet"
 
 
 msgid "Export cameras"
@@ -10785,14 +10773,6 @@ msgid "Save External..."
 msgstr "Tallenna ulkoisesti..."
 
 
-msgid "Read"
-msgstr "Lue"
-
-
-msgid "Write"
-msgstr "Kirjoita"
-
-
 msgid "Output Attributes"
 msgstr "Tulosteen ominaisuudet"
 
@@ -11179,10 +11159,6 @@ msgstr "Instanssien kierto"
 
 msgid "Scale of the instances"
 msgstr "Instanssien skaala"
-
-
-msgid "Face Set"
-msgstr "Tahkosarja"
 
 
 msgid "Side Segments"
