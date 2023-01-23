@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -13591,10 +13591,6 @@ msgid "Time Alignment"
 msgstr "시간 정렬"
 
 
-msgid "When should strokes start to appear/disappear"
-msgstr "스트로크가 나타나기 시작하는 시점/사라지는 시점"
-
-
 msgid "Align Start"
 msgstr "정렬 시작"
 
@@ -13623,10 +13619,6 @@ msgid "Maximum number of frames that the build effect can run for (unless anothe
 msgstr "다음에 대해 빌드 효과를 실행할 수있는 최대 프레임 수 (이 시간이 지나기 전에 다른 GP 키 프레임이 발생하지 않는 한)"
 
 
-msgid "How many strokes are being animated at a time"
-msgstr "한 번에 몇 개의 스트로크가 애니메이션으로 재생되고 있는 지"
-
-
 msgid "Sequential"
 msgstr "순차"
 
@@ -13643,12 +13635,20 @@ msgid "Multiple strokes appear/disappear at once"
 msgstr "한 번에 여러 개의 스트로크가 표시되거나 사라집니다"
 
 
-msgid "Start Delay"
-msgstr "시작 지연"
+msgid "Speed Factor"
+msgstr "속력 팩터"
+
+
+msgid "Delay"
+msgstr "지연"
 
 
 msgid "Number of frames after each GP keyframe before the modifier has any effect"
 msgstr "모디파이어가 효과를 나타내기 이전에 각 GP 키 프레임 이후의 프레임 수"
+
+
+msgid "Timing"
+msgstr "타이밍"
 
 
 msgid "Transition"
@@ -16652,6 +16652,10 @@ msgstr "편집하는 동안 폴리곤을 작성하지 않음"
 
 msgid "Attributes"
 msgstr "속성"
+
+
+msgid "Normals"
+msgstr "노멀"
 
 
 msgid "Freestyle Line Style"
@@ -26643,6 +26647,14 @@ msgid "Text"
 msgstr "텍스트"
 
 
+msgid "Math"
+msgstr "수학"
+
+
+msgid "Primitives"
+msgstr "프리미티브"
+
+
 msgid "Node Context Menu"
 msgstr "노드 컨텍스트 메뉴"
 
@@ -26868,10 +26880,6 @@ msgid "Face Data"
 msgstr "페이스 데이터"
 
 
-msgid "Normals"
-msgstr "노멀"
-
-
 msgid "Select by Face Strength"
 msgstr "페이스 강도로 선택"
 
@@ -27050,10 +27058,6 @@ msgstr "이 에지의 인덱스"
 
 msgid "Loose"
 msgstr "루즈"
-
-
-msgid "Sharp edge for the Edge Split modifier"
-msgstr "에지 분할 모디파이어에 대한 샤프 에지"
 
 
 msgid "Freestyle Edge Mark"
@@ -33929,10 +33933,6 @@ msgid "Use multi-sampled motion blur of the mask"
 msgstr "마스크의 멀티 샘플리드 모션 블러를 사용"
 
 
-msgid "Math"
-msgstr "수학"
-
-
 msgid "A + B"
 msgstr "A + B"
 
@@ -37939,6 +37939,15 @@ msgstr "프리셋으로 포함 초점의 길이"
 
 
 msgctxt "Operator"
+msgid "Add Safe Area Preset"
+msgstr "안전 영역 프리셋을 추가"
+
+
+msgid "Add or remove a Safe Areas Preset"
+msgstr "안전 영역 프리셋을 추가 또는 제거"
+
+
+msgctxt "Operator"
 msgid "Add Marker"
 msgstr "마커를 추가"
 
@@ -39383,6 +39392,15 @@ msgid "Reset original length of bone for Stretch To Constraint"
 msgstr "제약으로 늘이기에 대해 본의 원본 길이를 재설정"
 
 
+msgid "(De)select all control points"
+msgstr "모든 컨트롤 포인트를 선택(취소)"
+
+
+msgctxt "Operator"
+msgid "Select Random"
+msgstr "랜덤 선택"
+
+
 msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "사이클을 토글"
@@ -39693,10 +39711,6 @@ msgid "Reveal hidden control points"
 msgstr "숨겨진 컨트롤 포인트를 보이기"
 
 
-msgid "(De)select all control points"
-msgstr "모든 컨트롤 포인트를 선택(취소)"
-
-
 msgid "Select all control points linked to the current selection"
 msgstr "현재 선택 항목에 연결된 컨트롤 포인트를 선택"
 
@@ -39750,11 +39764,6 @@ msgstr "이전을 선택"
 
 msgid "Select control points preceding already selected ones along the curves"
 msgstr "커브를 따라 이미 선택된 것의 이전 컨트롤 포인트를 선택"
-
-
-msgctxt "Operator"
-msgid "Select Random"
-msgstr "랜덤 선택"
 
 
 msgid "Randomly select some control points"
@@ -48155,17 +48164,9 @@ msgid "Remove layer from a Cryptomatte node"
 msgstr "크립토매트 노드에서 레이어를 제거"
 
 
-msgid "Delete selected nodes"
-msgstr "선택된 노드를 삭제"
-
-
 msgctxt "Operator"
 msgid "Delete with Reconnect"
 msgstr "재 연결과 함께 삭제"
-
-
-msgid "Delete nodes; will reconnect nodes as if deletion was muted"
-msgstr "노드를 삭제; 삭제가 음소거된 것처럼 노드를 다시 연결"
 
 
 msgctxt "Operator"
@@ -48333,10 +48334,6 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "두 노드 사이에 연결을 생성하기 위해 마우스를 사용"
 
 
-msgid "Delay"
-msgstr "지연"
-
-
 msgid "Detach"
 msgstr "분리"
 
@@ -48407,10 +48404,6 @@ msgid "Toggle Node Mute"
 msgstr "노드 음소거를 토글"
 
 
-msgid "Toggle muting of the nodes"
-msgstr "노드의 음소거를 토글"
-
-
 msgctxt "Operator"
 msgid "New Node Tree"
 msgstr "새로운 노드 트리"
@@ -48467,10 +48460,6 @@ msgstr "목록 위 또는 아래로 파일 출력 노드의 활성 입력을 움
 msgctxt "Operator"
 msgid "Remove File Node Socket"
 msgstr "파일 노드 소켓을 제거"
-
-
-msgid "Remove active input from a file output node"
-msgstr "파일 출력 노드에서 활성 입력을 제거"
 
 
 msgid "Attach selected nodes"
@@ -48618,10 +48607,6 @@ msgid "Add Node Tree Interface Socket"
 msgstr "노드 트리 인터페이스 소켓을 추가"
 
 
-msgid "Add an input or output socket to the current node tree"
-msgstr "현재 노드 트리에 입력 또는 출력 소켓을 추가"
-
-
 msgid "Socket Type"
 msgstr "소켓 유형"
 
@@ -48631,17 +48616,9 @@ msgid "Move Node Tree Socket"
 msgstr "노드 트리 소켓을 이동"
 
 
-msgid "Move a socket up or down in the current node tree's sockets stack"
-msgstr "현재 노드 트리의 소켓 스택에서 소켓을 위나 아래로 이동합니다"
-
-
 msgctxt "Operator"
 msgid "Remove Node Tree Interface Socket"
 msgstr "노드 트리 인터페이스 소켓을 제거"
-
-
-msgid "Remove an input or output socket to the current node tree"
-msgstr "현재 노드 트리에 입력 또는 출력 소켓을 제거"
 
 
 msgid "Resize view so you can see all nodes"
@@ -53764,15 +53741,6 @@ msgstr "현재 씬에서 리지드 바디 시뮬레이션 월드를 분리"
 
 
 msgctxt "Operator"
-msgid "Add Safe Area Preset"
-msgstr "안전 영역 프리셋을 추가"
-
-
-msgid "Add or remove a Safe Areas Preset"
-msgstr "안전 영역 프리셋을 추가 또는 제거"
-
-
-msgctxt "Operator"
 msgid "Delete Scene"
 msgstr "씬을 삭제"
 
@@ -57492,10 +57460,6 @@ msgstr "선택(취소)된 UV 버텍스를 숨기기"
 msgctxt "Operator"
 msgid "Lightmap Pack"
 msgstr "라이트 맵 포장"
-
-
-msgid "Pack each faces UV's into the UV bounds"
-msgstr "UV 경계 안으로 각 UV의 페이스를 포장"
 
 
 msgid "New Image"
@@ -61450,10 +61414,6 @@ msgid "Forces"
 msgstr "포스"
 
 
-msgid "Timing"
-msgstr "타이밍"
-
-
 msgid "Border Collisions"
 msgstr "경계 충돌"
 
@@ -61668,10 +61628,6 @@ msgstr "찾기 및 교체"
 
 msgid "Playback"
 msgstr "재생"
-
-
-msgid "Primitives"
-msgstr "프리미티브"
 
 
 msgid "Rename Active Item"
@@ -65633,20 +65589,12 @@ msgid "Any object modification requires a complete BVH rebuild, but renders fast
 msgstr "모든 오브젝트를 수정하려면 완전한 BVH 재작성이 필요하지만 더 빨리 렌더됩니다"
 
 
-msgid "AVX"
-msgstr "AVX"
-
-
 msgid "AVX2"
 msgstr "AVX2"
 
 
 msgid "SSE2"
 msgstr "SSE2"
-
-
-msgid "SSE3"
-msgstr "SSE3"
 
 
 msgid "SSE41"
@@ -69348,10 +69296,6 @@ msgid "Sequence strip to load one or more images"
 msgstr "하나 또는 더 많은 이미지들 불러오는 시퀀스 스트립"
 
 
-msgid "Speed Factor"
-msgstr "속력 팩터"
-
-
 msgid "Mask Sequence"
 msgstr "마스크 시퀀스"
 
@@ -71322,10 +71266,6 @@ msgstr "이미지 및 UV 에디터 공간 데이터"
 
 msgid "Display Channels"
 msgstr "채널을 표시"
-
-
-msgid "Color and Alpha"
-msgstr "컬러&알파"
 
 
 msgid "Display image with RGB colors and alpha transparency"
@@ -76541,11 +76481,6 @@ msgstr "Render:"
 msgctxt "Operator"
 msgid "Rigidbody:"
 msgstr "Rigidbody:"
-
-
-msgctxt "Operator"
-msgid "Safe_areas:"
-msgstr "Safe_areas:"
 
 
 msgctxt "Operator"
@@ -87913,38 +87848,6 @@ msgid "Shrink/Fatten: %3f"
 msgstr "수축/팽창: %3f"
 
 
-msgid "Bevel Weight: +%s %s"
-msgstr "베벨 웨이트: +%s %s"
-
-
-msgid "Bevel Weight: %s %s"
-msgstr "베벨 웨이트: %s %s"
-
-
-msgid "Bevel Weight: +%.3f %s"
-msgstr "베벨 웨이트: +%.3f %s"
-
-
-msgid "Bevel Weight: %.3f %s"
-msgstr "베벨 웨이트: %.3f %s"
-
-
-msgid "Crease: +%s %s"
-msgstr "크리스: +%s %s"
-
-
-msgid "Crease: %s %s"
-msgstr "크리스: %s %s"
-
-
-msgid "Crease: +%.3f %s"
-msgstr "크리스: +%.3f %s"
-
-
-msgid "Crease: %.3f %s"
-msgstr "크리스: %.3f %s"
-
-
 msgid "Edge Slide: "
 msgstr "에지 슬라이드: "
 
@@ -88565,10 +88468,6 @@ msgstr "추가된 %d 텍스처의 최대치 수"
 
 msgid "Index %d is invalid"
 msgstr "인덱스 %d 유효하지 않음"
-
-
-msgid "Texture layer '%s' not found"
-msgstr "택스처 레이어 '%s' 찾을 수 없습니다"
 
 
 msgid "Number of custom normals is not number of loops (%f / %d)"

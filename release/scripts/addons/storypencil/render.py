@@ -177,7 +177,7 @@ class STORYPENCIL_OT_RenderAction(Operator):
                             if keyframe > scene.frame_end:
                                 break
                         # For frame name use only the number
-                        if scene.storypencil_render_numbering == '1':
+                        if scene.storypencil_render_numbering == 'FRAME':
                             # Real
                             framename = strip_name + '.' + self.format_to4(key)
                         else:

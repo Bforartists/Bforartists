@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'4887401789ea')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 08:20:55\n"
+"POT-Creation-Date: 2023-01-23 11:39:38\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -5065,6 +5065,14 @@ msgid "Relative Offset"
 msgstr "Relativno rastojanje"
 
 
+msgid "Speed Factor"
+msgstr "Faktor brzine"
+
+
+msgid "Delay"
+msgstr "Kašnjenje"
+
+
 msgid "Transition"
 msgstr "Prelaz"
 
@@ -6100,6 +6108,10 @@ msgstr "Brza izmena"
 
 msgid "Don't fill polygons while editing"
 msgstr "Ne popunjavaj poligone prilikom uređivanja"
+
+
+msgid "Normals"
+msgstr "Normale"
 
 
 msgid "Freestyle Line Style"
@@ -9355,6 +9367,10 @@ msgid "Matte"
 msgstr "Mat"
 
 
+msgid "Math"
+msgstr "Matematika"
+
+
 msgid "Attribute"
 msgstr "Atribut"
 
@@ -9473,10 +9489,6 @@ msgstr "Rolna kostiju"
 
 msgid "Special Characters"
 msgstr "Specijalni znaci"
-
-
-msgid "Normals"
-msgstr "Normale"
 
 
 msgid "Mesh Select Mode"
@@ -11588,10 +11600,6 @@ msgstr "Koristi informacije umekšavanja sa maske"
 
 msgid "Motion Blur"
 msgstr "Zamućenje pokreta"
-
-
-msgid "Math"
-msgstr "Matematika"
 
 
 msgid "Movie Distortion"
@@ -13821,6 +13829,11 @@ msgid "Reset Original Length"
 msgstr "Vrati originalnu dužinu"
 
 
+msgctxt "Operator"
+msgid "Select Random"
+msgstr "Izaberi nasumično"
+
+
 msgid "Cyclic U"
 msgstr "Ciklično U"
 
@@ -14012,11 +14025,6 @@ msgstr "Teksture stranice"
 msgctxt "Operator"
 msgid "Select Previous"
 msgstr "Izaberi prethodno"
-
-
-msgctxt "Operator"
-msgid "Select Random"
-msgstr "Izaberi nasumično"
 
 
 msgid "Randomly select some control points"
@@ -16719,10 +16727,6 @@ msgid "Copies selected nodes to the clipboard"
 msgstr "Ubacuje izabrani tekst u ostavu"
 
 
-msgid "Delete selected nodes"
-msgstr "Izbriši izabrane čvorove"
-
-
 msgctxt "Operator"
 msgid "Detach Nodes"
 msgstr "Odvoji čvorove"
@@ -16860,10 +16864,6 @@ msgstr "Poveži čvorove"
 
 msgid "Use the mouse to create a link between two nodes"
 msgstr "Koristi ugao između dve kosti"
-
-
-msgid "Delay"
-msgstr "Kašnjenje"
 
 
 msgid "Detach"
@@ -23062,10 +23062,6 @@ msgid "Wipe direction"
 msgstr "Smer brisanja"
 
 
-msgid "Speed Factor"
-msgstr "Faktor brzine"
-
-
 msgid "Mask Sequence"
 msgstr "Meta sekvenca"
 
@@ -23534,10 +23530,6 @@ msgstr "Automatski normalizuje krivu pri svakoj izmeni"
 
 msgid "Use Normalization"
 msgstr "Koristi normalizaciju"
-
-
-msgid "Color and Alpha"
-msgstr "Boja i providnost"
 
 
 msgid "Z-Buffer"
