@@ -250,6 +250,15 @@ struct UVBorderCorner {
    * resulting uv coordinate. The distance is in uv space.
    */
   float2 uv(float factor, float min_uv_distance);
+
+  /**
+   * Does this corner exist as 2 connected edges of the mesh.
+   *
+   * During the extraction phase a connection can be made in uv-space that
+   * doesn't reflect to two connected edges inside the mesh.
+   */
+  bool connected_in_mesh() const;
+  void print_debug() const;
 };
 
 struct UVBorder {
@@ -280,6 +289,12 @@ struct UVBorder {
 };
 
 struct UVIsland {
+  /**
+   * Id (Index) of the UVIsland. Contains the index of this island in UVIslands.
+   *
+   * Useful during debugging to set a breaking condition on a specific island/vert.
+   */
+  int id;
   VectorList<UVVertex> uv_vertices;
   VectorList<UVEdge> uv_edges;
   VectorList<UVPrimitive> uv_primitives;

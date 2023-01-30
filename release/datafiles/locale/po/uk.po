@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
 "Last-Translator: lxlalexlxl <lxlalexlxl@ukr.net>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -30342,10 +30342,6 @@ msgid "Save & Load"
 msgstr "Збереження і Завантаження"
 
 
-msgid "Angle Control"
-msgstr "Керування Кутом"
-
-
 msgid "Armature Context Menu"
 msgstr "Контекстне Меню Арматур"
 
@@ -33646,10 +33642,6 @@ msgid "Modifier affecting/generating custom normals"
 msgstr "Модифікатор задіює/генерує власні нормалі "
 
 
-msgid "How much of generated normals to mix with exiting ones"
-msgstr "Скільки згенерованих нормалей мішати з наявними"
-
-
 msgid "Maximum angle between old and new normals"
 msgstr "Найбільший кут між старою і новою нормалями"
 
@@ -36922,20 +36914,8 @@ msgid "Collection of NLA strip F-Curves"
 msgstr "Колекція Ф-Кривих смужок НЛА"
 
 
-msgid "Nla Strips"
-msgstr "Смужки НЛА"
-
-
-msgid "Collection of Nla Strips"
-msgstr "Колекція смужок НЛА"
-
-
 msgid "NLA Track"
 msgstr "Доріжка НЛА"
-
-
-msgid "A animation layer containing Actions referenced as NLA strips"
-msgstr "Шар анімації, що містить дії, вкладені до смужок НЛА"
 
 
 msgid "NLA Track is active"
@@ -40358,10 +40338,6 @@ msgstr "Розкладання зміщення вектора простору 
 
 msgid "World space vector displacement mapping"
 msgstr "Розкладання зміщення вектора простору світу"
-
-
-msgid "Vector Math"
-msgstr "Векторна математика"
 
 
 msgid "Entry-wise multiply"
@@ -69519,6 +69495,10 @@ msgid "Visible Only"
 msgstr "Лише Видиме"
 
 
+msgid "Textures Directory"
+msgstr "Тека текстур"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Закрити вікно"
@@ -73529,10 +73509,6 @@ msgstr "Тимчасова тека"
 
 msgid "The directory for storing temporary save files"
 msgstr "Тека для збереження тимчасових файлів"
-
-
-msgid "Textures Directory"
-msgstr "Тека текстур"
 
 
 msgid "The default directory to search for textures"
@@ -82452,6 +82428,10 @@ msgid "Show overexposed areas with zebra stripes"
 msgstr "Позначити переекспоновані ділянки смужками зебри"
 
 
+msgid "Show Overlays"
+msgstr "Показ Накладок"
+
+
 msgid "Separate Colors"
 msgstr "Відокремити Кольори"
 
@@ -82890,10 +82870,6 @@ msgstr "Показ іншого набору колекцій у цьому ог
 
 msgid "Use a region within the frame size for rendered viewport (when not viewing through the camera)"
 msgstr "Вжити регіон в межах розміру кадру для рендереного оглядвікна (коли огляд не через камеру)"
-
-
-msgid "Show Overlays"
-msgstr "Показ Накладок"
 
 
 msgid "Display overlays like UV Maps and Metadata"
@@ -99095,10 +99071,6 @@ msgid "%s already in %s"
 msgstr "%s вже у %s"
 
 
-msgid "%s %s to %s"
-msgstr "%s %s у %s"
-
-
 msgid "Only one modifier of this type is allowed"
 msgstr "Допускається лише один модифікатор цього типу"
 
@@ -100218,10 +100190,6 @@ msgstr "Вставка ключкадрів ще не реалізована д�
 
 msgid "Not implemented for Masks"
 msgstr "Не реалізовано для масок"
-
-
-msgid "Cannot activate a file selector, one already open"
-msgstr "Неможливо активувати діалог вибору файлів, він вже відкритий"
 
 
 msgid "Texture Field"

@@ -1143,7 +1143,7 @@ static bool ghost_event_proc(GHOST_EventHandle evt, GHOST_TUserDataPtr C_void_pt
     wmWindow *win = GHOST_GetWindowUserData(ghostwin);
 
     switch (type) {
-      case GHOST_kEventWindowDeactivate:
+      case GHOST_kEventWindowDeactivate: {
 #ifdef USE_WIN_DEACTIVATE
         /* Release all held modifiers before de-activating the window. */
         if (win->eventstate->modifier != 0) {
@@ -1180,8 +1180,9 @@ static bool ghost_event_proc(GHOST_EventHandle evt, GHOST_TUserDataPtr C_void_pt
 #endif /* USE_WIN_DEACTIVATE */
 
         wm_event_add_ghostevent(wm, win, type, data);
-        win->active = 0; /* XXX */
+        win->active = 0;
         break;
+      }
       case GHOST_kEventWindowActivate: {
 
         /* No context change! C->wm->windrawable is drawable, or for area queues. */
@@ -1723,14 +1724,13 @@ static uiBlock *block_create_opengl_usage_warning(struct bContext *C,
 
   /* Title and explanation text. */
   uiLayout *col = uiLayoutColumn(layout, false);
-  uiItemL_ex(col, TIP_("Python script uses OpenGL for drawing."), ICON_NONE, true, false);
+  uiItemL_ex(col, TIP_("Python script uses OpenGL for drawing"), ICON_NONE, true, false);
   uiItemL(col, TIP_("This may lead to unexpected behavior"), ICON_NONE);
-  uiItemL(
-      col,
-      TIP_("One of the add-ons or scripts is using OpenGL and will not work correct on Metal."),
-      ICON_NONE);
   uiItemL(col,
-          TIP_("Please contact the developer of the add-on to migrate to use 'gpu' module."),
+          TIP_("One of the add-ons or scripts is using OpenGL and will not work correct on Metal"),
+          ICON_NONE);
+  uiItemL(col,
+          TIP_("Please contact the developer of the add-on to migrate to use 'gpu' module"),
           ICON_NONE);
   if (G.opengl_deprecation_usage_filename) {
     char location[1024];
@@ -1738,7 +1738,7 @@ static uiBlock *block_create_opengl_usage_warning(struct bContext *C,
         location, "%s:%d", G.opengl_deprecation_usage_filename, G.opengl_deprecation_usage_lineno);
     uiItemL(col, location, ICON_NONE);
   }
-  uiItemL(col, TIP_("See system tab in preferences to switch to OpenGL backend."), ICON_NONE);
+  uiItemL(col, TIP_("See system tab in preferences to switch to OpenGL backend"), ICON_NONE);
 
   uiItemS(layout);
 
@@ -1769,7 +1769,7 @@ void wm_test_opengl_deprecation_warning(bContext *C)
       &wm->reports,
       RPT_ERROR,
       TIP_("One of the add-ons or scripts is using OpenGL and will not work correct on Metal. "
-           "Please contact the developer of the add-on to migrate to use 'gpu' module."));
+           "Please contact the developer of the add-on to migrate to use 'gpu' module"));
 
   if (win) {
     wmWindow *prevwin = CTX_wm_window(C);

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"

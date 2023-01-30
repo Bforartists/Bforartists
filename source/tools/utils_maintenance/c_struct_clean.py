@@ -5,7 +5,8 @@
 When a source file declares a struct which isn't used anywhere else in the file.
 Remove it.
 
-There may be times this is needed, however there can typically be removed.
+There may be times this is needed, however they can typically be removed
+and any errors caused can be added to the headers which require the forward declarations.
 """
 
 import os
@@ -24,10 +25,10 @@ from batch_edit_text import run
 
 SOURCE_DIR = os.path.normpath(os.path.abspath(os.path.normpath(os.path.join(PWD, "..", "..", ".."))))
 
-# TODO, move to config file
+# TODO: move to configuration file.
 SOURCE_DIRS = (
     "source",
-    "intern/ghost",
+    os.path.join("intern", "ghost"),
 )
 
 SOURCE_EXT = (
@@ -44,13 +45,29 @@ re_match_struct = re.compile(r"struct\s+([A-Za-z_][A-Za-z_0-9]*)\s*;")
 def clean_structs(fn: str, data_src: str) -> Optional[str]:
     import re
 
+    from pygments.token import Token
+    from pygments import lexers
+
     word_occurance: Dict[str, int] = {}
-    for w_match in re_words.finditer(data_src):
-        w = w_match.group(0)
-        try:
-            word_occurance[w] += 1
-        except KeyError:
-            word_occurance[w] = 1
+
+    lex = lexers.get_lexer_by_name("c++")
+    lex.get_tokens(data_src)
+
+    ty_exact = (Token.Comment.Preproc, Token.Comment.PreprocFile)
+
+    for ty, text in lex.get_tokens(data_src):
+        if ty not in ty_exact:
+            if ty in Token.String:  # type: ignore
+                continue
+            if ty in Token.Comment:  # type: ignore
+                continue
+
+        for w_match in re_words.finditer(data_src):
+            w = w_match.group(0)
+            try:
+                word_occurance[w] += 1
+            except KeyError:
+                word_occurance[w] = 1
 
     lines = data_src.splitlines(keepends=True)
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -18744,10 +18744,6 @@ msgid "Save & Load"
 msgstr "Salva & Carica"
 
 
-msgid "Angle Control"
-msgstr "Controllo Angolo"
-
-
 msgid "Assign Material"
 msgstr "Assegna Materiale"
 
@@ -20760,10 +20756,6 @@ msgid "Modifier affecting/generating custom normals"
 msgstr "Modificatore che influenza/genera normali personalizzate"
 
 
-msgid "How much of generated normals to mix with exiting ones"
-msgstr "Quanto le normali generate si miscelano con quelle esistenti"
-
-
 msgid "Maximum angle between old and new normals"
 msgstr "Angolo massimo fra vecchie e nuove normali"
 
@@ -22755,14 +22747,6 @@ msgid "NLA-Strip F-Curves"
 msgstr "Curve-F dello Spezzone-NLA"
 
 
-msgid "Nla Strips"
-msgstr "Spezzoni NLA"
-
-
-msgid "Collection of Nla Strips"
-msgstr "Raccolta di Spezzoni NLA"
-
-
 msgid "NLA Track"
 msgstr "Traccia NLA"
 
@@ -24627,10 +24611,6 @@ msgstr "UV Lungo il Tratto"
 
 msgid "UV coordinates to be used for mapping"
 msgstr "Coordinate UV da usare per la mappatura"
-
-
-msgid "Vector Math"
-msgstr "Matematica Vettori"
 
 
 msgid "Cross Product"
@@ -42121,6 +42101,10 @@ msgid "UV Maps"
 msgstr "Mappe UV"
 
 
+msgid "Textures Directory"
+msgstr "Cartella Texture"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Chiudi Finestra"
@@ -44611,10 +44595,6 @@ msgstr "Cartella Temporanea"
 
 msgid "The directory for storing temporary save files"
 msgstr "Cartella di salvataggio per i file temporanei"
-
-
-msgid "Textures Directory"
-msgstr "Cartella Texture"
 
 
 msgid "The default directory to search for textures"

@@ -24,7 +24,6 @@
 11:Czech (Český):cs_CZ
 5:German (Deutsch):de_DE
 4:Italian (Italiano):it_IT
-48:Georgian (ქართული):ka
 24:Korean (한국어):ko_KR
 32:Brazilian Portuguese (Português do Brasil):pt_BR
 12:Portuguese (Português):pt_PT
@@ -50,6 +49,7 @@
 16:Croatian (Hrvatski):hr_HR
 31:Hungarian (Magyar):hu_HU
 27:Indonesian (Bahasa indonesia):id_ID
+48:Georgian (ქართული):ka
 # Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #44:Kazakh (қазақша):kk_KZ
 29:Kyrgyz (Кыргыз тили):ky_KG
 # Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #25:Nepali (नेपाली):ne_NP
