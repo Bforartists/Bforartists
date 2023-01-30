@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2021\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -29507,10 +29507,6 @@ msgid "Save & Load"
 msgstr "Сохранение и загрузка"
 
 
-msgid "Angle Control"
-msgstr "Управление углом"
-
-
 msgid "Armature Context Menu"
 msgstr "Контекстное меню арматур"
 
@@ -32201,10 +32197,6 @@ msgstr "Модификатор редактирования нормалей"
 
 msgid "Modifier affecting/generating custom normals"
 msgstr "Модификатор, изменяющий/генерирующий настраиваемые нормали"
-
-
-msgid "How much of generated normals to mix with exiting ones"
-msgstr "Уровень смешения сгенерированных нормалей с уже существующими"
 
 
 msgid "Maximum angle between old and new normals"
@@ -35059,20 +35051,8 @@ msgid "Collection of NLA strip F-Curves"
 msgstr "Коллекция F-кривых НЛА-дорожки"
 
 
-msgid "Nla Strips"
-msgstr "НЛА-дорожки"
-
-
-msgid "Collection of Nla Strips"
-msgstr "Коллекция НЛА-дорожек"
-
-
 msgid "NLA Track"
 msgstr "НЛА-трек"
-
-
-msgid "A animation layer containing Actions referenced as NLA strips"
-msgstr "Слой анимации, содержащий действия, заключённые в НЛА-дорожки"
 
 
 msgid "NLA Track is active"
@@ -37831,10 +37811,6 @@ msgstr "Отображение смещения по векторам в про�
 
 msgid "World space vector displacement mapping"
 msgstr "Отображение смещения по векторам в пространстве мира"
-
-
-msgid "Vector Math"
-msgstr "Векторная математика"
 
 
 msgid "Cross Product"
@@ -62583,6 +62559,10 @@ msgid "Instancing"
 msgstr "Создание экземпляров"
 
 
+msgid "Textures Directory"
+msgstr "Папка с текстурами"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Закрыть окно"
@@ -66218,10 +66198,6 @@ msgstr "Папка для временных файлов"
 
 msgid "The directory for storing temporary save files"
 msgstr "Папка для хранения временных файлов сохранения"
-
-
-msgid "Textures Directory"
-msgstr "Папка с текстурами"
 
 
 msgid "The default directory to search for textures"
@@ -74423,6 +74399,10 @@ msgid "Show overexposed areas with zebra stripes"
 msgstr "Отображать «зеброй» пересвеченные области"
 
 
+msgid "Show Overlays"
+msgstr "Показать наложения"
+
+
 msgid "Separate Colors"
 msgstr "Разделение цветов"
 
@@ -74821,10 +74801,6 @@ msgstr "Локальные коллекции"
 
 msgid "Display a different set of collections in this viewport"
 msgstr "Отображать другой набор коллекций в этом вьюпорте"
-
-
-msgid "Show Overlays"
-msgstr "Показать наложения"
 
 
 msgid "Get the node tree path as a string"
@@ -87956,10 +87932,6 @@ msgid "%s already in %s"
 msgstr "%s уже в %s"
 
 
-msgid "%s %s to %s"
-msgstr "%s %s в %s"
-
-
 msgid "Only one modifier of this type is allowed"
 msgstr "Допустим только один модификатор данного типа"
 
@@ -88907,10 +88879,6 @@ msgstr "Вставка ключевых кадров в этом режиме е
 
 msgid "Not implemented for Masks"
 msgstr "Не реализовано для масок"
-
-
-msgid "Cannot activate a file selector, one already open"
-msgstr "Невозможно перейти в режим выбора файлов, поскольку этот режим уже запущен"
 
 
 msgid "Texture Field"

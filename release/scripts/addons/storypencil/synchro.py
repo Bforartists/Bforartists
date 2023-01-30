@@ -815,6 +815,21 @@ class STORYPENCIL_OT_TabSwitch(Operator):
         if context.scene.storypencil_use_new_window:
             bpy.ops.storypencil.sync_set_main('INVOKE_DEFAULT', True)
         else:
-            bpy.ops.storypencil.switch('INVOKE_DEFAULT', True)
+            scene = context.scene
+            sequences = scene.sequence_editor.sequences
+            if sequences:
+                # Get strip under time cursor
+                strip, old_frame = get_sequence_at_frame(
+                    scene.frame_current, sequences=sequences)
+                # For meta strips the tab key must be processed by other operator, so
+                # just pass through to the next operator in the stack.
+                if strip is None or strip.type != 'SCENE':
+                    if context.active_sequence_strip and context.active_sequence_strip.type == 'META':
+                        return {'PASS_THROUGH'}
+
+                    if context.scene.sequence_editor and context.scene.sequence_editor.meta_stack:
+                        return {'PASS_THROUGH'}
+                else:
+                    bpy.ops.storypencil.switch('INVOKE_DEFAULT', True)
 
         return {'FINISHED'}

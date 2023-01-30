@@ -279,9 +279,9 @@ class Comment:
 
 
 def extract_code_strings(filepath: str) -> Tuple[List[Comment], Set[str]]:
-    import pygments  # type: ignore
+    import pygments
     from pygments import lexers
-    from pygments.token import Token  # type: ignore
+    from pygments.token import Token
 
     comments = []
     code_words = set()

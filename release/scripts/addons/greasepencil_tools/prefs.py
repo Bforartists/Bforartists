@@ -20,6 +20,7 @@ def get_addon_prefs():
     return (addon_prefs)
 
 from .timeline_scrub import GPTS_timeline_settings, draw_ts_pref
+from .layer_navigator import GPNAV_layer_navigator_settings, draw_nav_pref
 
 ## Addons Preferences Update Panel
 def update_panel(self, context):
@@ -36,10 +37,11 @@ def auto_rebind(self, context):
     register_keymaps()
 
 class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
-    bl_idname = os.path.splitext(__name__)[0] #'greasepencil-addon' ... __package__ ?
-    # bl_idname = __name__
+    bl_idname = os.path.splitext(__name__)[0] #__package__
 
     ts: PointerProperty(type=GPTS_timeline_settings)
+    nav: PointerProperty(type=GPNAV_layer_navigator_settings)
+
 
     category : StringProperty(
             name="Category",
@@ -47,7 +49,20 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             default="Grease Pencil",
             update=update_panel)
 
+    ## Tool tab
+    pref_tab : EnumProperty(
+    name="Preference Tool Tab", description="Choose tool preferences to display",
+    default='canvas_rotate',
+    items=(
+        ('canvas_rotate', 'Rotate Canvas', 'Canvas Rotate tool shortcut and prefs', 0),
+        ('box_deform', 'Box Deform', 'Box Deform tool prefs', 1),
+        ('timeline_scrub', 'Timeline Scrub', 'Timeline Scrub tool shortcut and prefs', 2),
+        ('layer_navigator', 'Layer Navigator', 'Layer Navigation tool shortcut and prefs', 3),
+        ),
+    )
+    
     # --- props
+
     use_clic_drag : BoolProperty(
         name='Use click drag directly on points',
         description="Change the active tool to 'tweak' during modal, Allow to direct clic-drag points of the box",
@@ -136,62 +151,73 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             row.label(text="Panel Category:")
             row.prop(self, "category", text="")
 
-            ## BOX DEFORM
-            box = layout.box()
-            row = box.row(align=True)
-            row.label(text='Box Deform:')
-            row.operator("wm.call_menu", text="", icon='QUESTION').name = "GPT_MT_box_deform_doc"
-            box.prop(self, "use_clic_drag")
+            row = layout.row(align=True)
+            row.prop(self, "pref_tab", expand=True)
+            
+            if self.pref_tab == 'box_deform':
 
-            box.prop(self, "default_deform_type")
-            box.label(text="Deformer type can be changed during modal with 'M' key, this is for default behavior", icon='INFO')
+                ## BOX DEFORM
+                box = layout.box()
+                row = box.row(align=True)
+                row.label(text='Box Deform:')
+                row.operator("wm.call_menu", text="", icon='QUESTION').name = "GPT_MT_box_deform_doc"
+                box.prop(self, "use_clic_drag")
 
-            box.prop(self, "auto_swap_deform_type")
-            box.label(text="Once 'M' is hit, auto swap is deactivated to stay in your chosen mode", icon='INFO')
+                box.prop(self, "default_deform_type")
+                box.label(text="Deformer type can be changed during modal with 'M' key, this is for default behavior", icon='INFO')
 
-            ## ROTATE CANVAS
-            box = layout.box()
-            box.label(text='Rotate canvas:')
+                box.prop(self, "auto_swap_deform_type")
+                box.label(text="Once 'M' is hit, auto swap is deactivated to stay in your chosen mode", icon='INFO')
 
-            box.prop(self, "canvas_use_shortcut", text='Bind Shortcuts')
+            if self.pref_tab == 'canvas_rotate':
+                ## ROTATE CANVAS
+                box = layout.box()
+                box.label(text='Rotate Canvas:')
 
-            if self.canvas_use_shortcut:
+                box.prop(self, "canvas_use_shortcut", text='Bind Shortcuts')
 
-                row = box.row()
-                row.label(text="(Auto rebind when changing shortcut)")#icon=""
-                # row.operator("prefs.rebind_shortcut", text='Bind/Rebind shortcuts', icon='FILE_REFRESH')#EVENT_SPACEKEY
-                row = box.row(align = True)
-                row.prop(self, "use_ctrl", text='Ctrl')#, expand=True
-                row.prop(self, "use_alt", text='Alt')#, expand=True
-                row.prop(self, "use_shift", text='Shift')#, expand=True
-                row.prop(self, "mouse_click",text='')#expand=True
+                if self.canvas_use_shortcut:
 
-                if not self.use_ctrl and not self.use_alt and not self.use_shift:
-                    box.label(text="Choose at least one modifier to combine with click (default: Ctrl+Alt)", icon="ERROR")# INFO
-
-                if not all((self.use_ctrl, self.use_alt, self.use_shift)):
+                    row = box.row()
+                    row.label(text="(Auto rebind when changing shortcut)")#icon=""
+                    # row.operator("prefs.rebind_shortcut", text='Bind/Rebind shortcuts', icon='FILE_REFRESH')#EVENT_SPACEKEY
                     row = box.row(align = True)
-                    snap_key_list = []
-                    if not self.use_ctrl:
-                        snap_key_list.append('Ctrl')
-                    if not self.use_shift:
-                        snap_key_list.append('Shift')
-                    if not self.use_alt:
-                        snap_key_list.append('Alt')
+                    row.prop(self, "use_ctrl", text='Ctrl')#, expand=True
+                    row.prop(self, "use_alt", text='Alt')#, expand=True
+                    row.prop(self, "use_shift", text='Shift')#, expand=True
+                    row.prop(self, "mouse_click",text='')#expand=True
 
-                    row.label(text=f"Step rotation with: {' or '.join(snap_key_list)}", icon='DRIVER_ROTATIONAL_DIFFERENCE')
-                    row.prop(self, "rc_angle_step", text='Angle Steps')
+                    if not self.use_ctrl and not self.use_alt and not self.use_shift:
+                        box.label(text="Choose at least one modifier to combine with click (default: Ctrl+Alt)", icon="ERROR")# INFO
 
+                    if not all((self.use_ctrl, self.use_alt, self.use_shift)):
+                        row = box.row(align = True)
+                        snap_key_list = []
+                        if not self.use_ctrl:
+                            snap_key_list.append('Ctrl')
+                        if not self.use_shift:
+                            snap_key_list.append('Shift')
+                        if not self.use_alt:
+                            snap_key_list.append('Alt')
 
-            else:
-                box.label(text="No hotkey has been set automatically. Following operators needs to be set manually:", icon="ERROR")
-                box.label(text="view3d.rotate_canvas")
-            box.prop(self, 'canvas_use_view_center')
-            box.prop(self, 'canvas_use_hud')
+                        row.label(text=f"Step rotation with: {' or '.join(snap_key_list)}", icon='DRIVER_ROTATIONAL_DIFFERENCE')
+                        row.prop(self, "rc_angle_step", text='Angle Steps')
 
-            ## SCRUB TIMELINE
-            box = layout.box()
-            draw_ts_pref(prefs.ts, box)
+                else:
+                    box.label(text="No hotkey has been set automatically. Following operators needs to be set manually:", icon="ERROR")
+                    box.label(text="view3d.rotate_canvas")
+                box.prop(self, 'canvas_use_view_center')
+                box.prop(self, 'canvas_use_hud')
+
+            if self.pref_tab == 'timeline_scrub':
+                ## SCRUB TIMELINE
+                box = layout.box()
+                draw_ts_pref(prefs.ts, box)
+            
+            if self.pref_tab == 'layer_navigator':
+                ## LAYER NAVIGATOR
+                box = layout.box()
+                draw_nav_pref(prefs.nav, box)
 
 
 
@@ -260,6 +286,7 @@ def unregister_keymaps():
 
 classes = (
     GPTS_timeline_settings,
+    GPNAV_layer_navigator_settings,
     GPT_MT_box_deform_doc,
     GreasePencilAddonPrefs,
 )

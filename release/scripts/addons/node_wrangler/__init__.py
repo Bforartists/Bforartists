@@ -1912,7 +1912,7 @@ class NWMergeNodes(Operator, NWBase):
         items=(
             ('AUTO', 'Auto', 'Automatic Output Type Detection'),
             ('SHADER', 'Shader', 'Merge using ADD or MIX Shader'),
-            ('GEOMETRY', 'Geometry', 'Merge using Boolean or Join Geometry Node'),
+            ('GEOMETRY', 'Geometry', 'Merge using Mesh Boolean or Join Geometry Node'),
             ('MIX', 'Mix Node', 'Merge using Mix Nodes'),
             ('MATH', 'Math Node', 'Merge using Math Nodes'),
             ('ZCOMBINE', 'Z-Combine Node', 'Merge using Z-Combine Nodes'),
@@ -2166,7 +2166,7 @@ class NWMergeNodes(Operator, NWBase):
                         add_type = node_type + 'JoinGeometry'
                         add = self.merge_with_multi_input(nodes_list, merge_position, do_hide, loc_x, links, nodes, add_type,[0])
                     else:
-                        add_type = node_type + 'Boolean'
+                        add_type = node_type + 'MeshBoolean'
                         indices = [0,1] if mode == 'DIFFERENCE' else [1]
                         add = self.merge_with_multi_input(nodes_list, merge_position, do_hide, loc_x, links, nodes, add_type,indices)
                         add.operation = mode

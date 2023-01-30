@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzán <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -33989,10 +33989,6 @@ msgid "Save & Load"
 msgstr "Guardar y cargar"
 
 
-msgid "Angle Control"
-msgstr "Control de ángulo"
-
-
 msgid "Armature Context Menu"
 msgstr "Esqueleto - menú contextual"
 
@@ -37401,10 +37397,6 @@ msgid "Modifier affecting/generating custom normals"
 msgstr "Modificador para afectar/generar normales personalizadas"
 
 
-msgid "How much of generated normals to mix with exiting ones"
-msgstr "En qué medida se mezclan las normales generadas con las ya existentes"
-
-
 msgid "Maximum angle between old and new normals"
 msgstr "ÁNgulo máximo entre las normales antiguas y las nuevas"
 
@@ -40794,20 +40786,8 @@ msgid "Collection of NLA strip F-Curves"
 msgstr "Colección de curvas-f de clips de ANL"
 
 
-msgid "Nla Strips"
-msgstr "Clips de ANL"
-
-
-msgid "Collection of Nla Strips"
-msgstr "Colección de clips de ANL"
-
-
 msgid "NLA Track"
 msgstr "Pista de ANL"
-
-
-msgid "A animation layer containing Actions referenced as NLA strips"
-msgstr "Una capa de animación conteniendo acciones referenciadas como clips de ANL"
 
 
 msgid "NLA Track is active"
@@ -43466,10 +43446,6 @@ msgid "Float to Integer"
 msgstr "Decimal a entero"
 
 
-msgid "Rounding Mode"
-msgstr "Modo de redondeo"
-
-
 msgid "Method used to convert the float to an integer"
 msgstr "Método usado para convertir el decimal a entero"
 
@@ -43480,10 +43456,6 @@ msgstr "Redondear el decimal hacia arriba o abajo hasta el entero más cercano"
 
 msgid "Round the float down to the next smallest integer"
 msgstr "Redondear el decimal hacia abajo hasta el entero más pequeño"
-
-
-msgid "Ceiling"
-msgstr "Techo"
 
 
 msgid "Round the float up to the next largest integer"
@@ -44622,10 +44594,6 @@ msgid "Realize Instances"
 msgstr "Hacer instancias reales"
 
 
-msgid "Change the direction of the curve by swapping each spline's start and end data"
-msgstr "Cambia la dirección, invirtiendo los datos de inicio y fin de cada curva"
-
-
 msgid "Legacy Behavior"
 msgstr "Comportamiento antiguo"
 
@@ -44676,10 +44644,6 @@ msgstr "Calcular la cantidad de muestras dividiendo cada curva en segmentos de l
 
 msgid "Reverse Curve"
 msgstr "Invertir curva"
-
-
-msgid "Swap the start and end of splines"
-msgstr "Intercambia el inicio y el fin de las curvas"
 
 
 msgid "Rotate Instances"
@@ -46849,10 +46813,6 @@ msgstr "Mapeo de desplazamiento vectorial en espacio del objeto"
 
 msgid "World space vector displacement mapping"
 msgstr "Mapeo de desplazamiento vectorial en espacio global"
-
-
-msgid "Vector Math"
-msgstr "Operar con vectores"
 
 
 msgid "Perform vector math operation"
@@ -80022,6 +79982,10 @@ msgid "Create subdivision surface modifiers based on the USD SubdivisionScheme a
 msgstr "Crea modificadores de subdivisión de superficies basándose en el atributo SubdivisionScheme del USD"
 
 
+msgid "Textures Directory"
+msgstr "Directorio de texturas"
+
+
 msgid "Import USD Preview"
 msgstr "Importar previs USD"
 
@@ -84888,10 +84852,6 @@ msgstr "Directorio temporal"
 
 msgid "The directory for storing temporary save files"
 msgstr "El directorio donde almacenar temporalmente archivos"
-
-
-msgid "Textures Directory"
-msgstr "Directorio de texturas"
 
 
 msgid "The default directory to search for textures"
@@ -95024,6 +94984,10 @@ msgid "Show overexposed areas with zebra stripes"
 msgstr "Muestra las áreas sobre expuestas con barras tipo cebra"
 
 
+msgid "Show Overlays"
+msgstr "Mostrar sobreimpresos"
+
+
 msgid "Separate Colors"
 msgstr "Separar colores"
 
@@ -95594,10 +95558,6 @@ msgstr "Mostrar fondo"
 
 msgid "Show the grid background and borders"
 msgstr "Muestra el fondo y los bordes de la cuadrícula"
-
-
-msgid "Show Overlays"
-msgstr "Mostrar sobreimpresos"
 
 
 msgid "Display overlays like UV Maps and Metadata"
@@ -104047,10 +104007,6 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "y un controlador NVIDIA versión 470 o más nuevo"
 
 
-msgid "Requires AMD GPU with Vega or RDNA architecture"
-msgstr "Requiere una GPU de AMD con arquitectura Vega o RDNA"
-
-
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "y un controlador AMD Radeon Pro 21.Q4 o más nuevo"
 
@@ -104061,10 +104017,6 @@ msgstr "y un controlador AMD versión 22.10 o más nuevo"
 
 msgid "Requires Intel GPU with Xe-HPG architecture"
 msgstr "Requiere una GPU de Intel con arquitectura Xe-HPG"
-
-
-msgid "and Windows driver version 101.3430 or newer"
-msgstr "y un controlador Windows versión 101.3430 o más nuevo"
 
 
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
@@ -109839,11 +109791,6 @@ msgstr "Alembic (.abc)"
 
 
 msgctxt "Operator"
-msgid "Universal Scene Description (.usd, .usdc, .usda)"
-msgstr "Universal Scene Description (.usd, .usdc, .usda)"
-
-
-msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG como lápiz de cera"
 
@@ -109856,6 +109803,11 @@ msgstr "Wavefront (.obj)"
 msgctxt "Operator"
 msgid "STL (.stl) (experimental)"
 msgstr "STL (.stl) (experimental)"
+
+
+msgctxt "Operator"
+msgid "Universal Scene Description (.usd, .usdc, .usda)"
+msgstr "Universal Scene Description (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
@@ -116908,10 +116860,6 @@ msgid "%s already in %s"
 msgstr "%s ya está en %s"
 
 
-msgid "%s %s to %s"
-msgstr "%s %s a %s"
-
-
 msgid "Only one modifier of this type is allowed"
 msgstr "Sólo se permite un modificador de este tipo"
 
@@ -118281,10 +118229,6 @@ msgid "Not implemented for Masks"
 msgstr "No implementado para máscaras"
 
 
-msgid "Cannot activate a file selector, one already open"
-msgstr "No es posible activar un selector de archivos, ya hay uno abierto"
-
-
 msgid "Texture Field"
 msgstr "Campo de texturas"
 
@@ -119516,10 +119460,6 @@ msgstr ""
 
 msgid "Can not add node '%s' in a group"
 msgstr "No es posible agregar el nodo '%s' a un grupo"
-
-
-msgid "LMB: drag node link, RMB: cancel"
-msgstr "clic Izq: arrastrar conexión de nodo, clic Der: cancelar"
 
 
 msgid "Disconnect"
@@ -122952,10 +122892,6 @@ msgstr "El tipo de propiedad no coincide con el conector de entrada \"(%s)\""
 
 msgid "Node group's geometry input must be the first"
 msgstr "La entrada de geometría del grupo de nodos debe encontrarse en primer lugar"
-
-
-msgid "Node group can only have one geometry input"
-msgstr "El grupo de nodos sólo puede contener una entrada de geometría"
 
 
 msgid "Node group must have a group output node"

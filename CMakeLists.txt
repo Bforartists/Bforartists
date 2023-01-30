@@ -167,14 +167,26 @@ get_blender_version()
 option(WITH_BLENDER "Build bforartists (disable to build only the blender player)" ON)
 mark_as_advanced(WITH_BLENDER)
 
-if(APPLE)
-  # In future, can be used with `quicklookthumbnailing/qlthumbnailreply` to create file
-  # thumbnails for say Finder. Turn it off for now.
-  option(WITH_BLENDER_THUMBNAILER "Build \"blender-thumbnailer\" thumbnail extraction utility" OFF)
-elseif(WIN32)
-  option(WITH_BLENDER_THUMBNAILER "Build \"BlendThumb.dll\" helper for Windows explorer integration" ON)
+if(WIN32)
+  option(WITH_BLENDER_THUMBNAILER "\
+Build \"BlendThumb.dll\" helper for Windows explorer integration to support extracting \
+thumbnails from `.blend` files."
+    ON
+  )
 else()
-  option(WITH_BLENDER_THUMBNAILER "Build \"blender-thumbnailer\" thumbnail extraction utility" ON)
+  set(_option_default ON)
+  if(APPLE)
+    # In future, can be used with `quicklookthumbnailing/qlthumbnailreply`
+    # to create file thumbnails for say Finder.
+    # Turn it off for now, even though it can build on APPLE, it's not likely to be useful.
+    set(_option_default OFF)
+  endif()
+  option(WITH_BLENDER_THUMBNAILER "\
+Build stand-alone \"blender-thumbnailer\" command-line thumbnail extraction utility, \
+intended for use by file-managers to extract PNG images from `.blend` files."
+    ${_option_default}
+  )
+  unset(_option_default)
 endif()
 
 option(WITH_INTERNATIONAL "Enable I18N (International fonts and text)" ON)
@@ -214,14 +226,19 @@ option(WITH_BULLET        "Enable Bullet (Physics Engine)" ON)
 option(WITH_SYSTEM_BULLET "Use the systems bullet library (currently unsupported due to missing features in upstream!)" )
 mark_as_advanced(WITH_SYSTEM_BULLET)
 option(WITH_OPENCOLORIO   "Enable OpenColorIO color management" ON)
+
+set(_option_default ON)
 if(APPLE)
   # There's no OpenXR runtime in sight for macOS, neither is code well
   # tested there -> disable it by default.
-  option(WITH_XR_OPENXR   "Enable VR features through the OpenXR specification" OFF)
-  mark_as_advanced(WITH_XR_OPENXR)
-else()
-  option(WITH_XR_OPENXR   "Enable VR features through the OpenXR specification" ON)
+  set(_option_default OFF)
 endif()
+option(WITH_XR_OPENXR "Enable VR features through the OpenXR specification" ${_option_default})
+if(APPLE)
+  mark_as_advanced(WITH_XR_OPENXR)
+endif()
+unset(_option_default)
+
 option(WITH_GMP "Enable features depending on GMP (Exact Boolean)" ON)
 
 # Compositor
@@ -353,12 +370,13 @@ else()
   set(WITH_COREAUDIO OFF)
 endif()
 if(NOT WIN32)
+  set(_option_default ON)
   if(APPLE)
-    option(WITH_JACK          "Enable JACK Support (http://www.jackaudio.org)" OFF)
-  else()
-    option(WITH_JACK          "Enable JACK Support (http://www.jackaudio.org)" ON)
+    set(_option_default OFF)
   endif()
-  option(WITH_JACK_DYNLOAD  "Enable runtime dynamic JACK libraries loading" OFF)
+  option(WITH_JACK "Enable JACK Support (http://www.jackaudio.org)" ${_option_default})
+  unset(_option_default)
+  option(WITH_JACK_DYNLOAD "Enable runtime dynamic JACK libraries loading" OFF)
 else()
   set(WITH_JACK OFF)
 endif()
@@ -506,7 +524,7 @@ endif()
 if(NOT APPLE)
   option(WITH_CYCLES_DEVICE_HIP        "Enable Cycles AMD HIP support" ON)
   option(WITH_CYCLES_HIP_BINARIES      "Build Cycles AMD HIP binaries" OFF)
-  set(CYCLES_HIP_BINARIES_ARCH gfx900 gfx906 gfx90c gfx902 gfx1010 gfx1011 gfx1012 gfx1030 gfx1031 gfx1032 gfx1034 gfx1035 gfx1100 gfx1101 gfx1102 CACHE STRING "AMD HIP architectures to build binaries for")
+  set(CYCLES_HIP_BINARIES_ARCH gfx1010 gfx1011 gfx1012 gfx1030 gfx1031 gfx1032 gfx1034 gfx1035 gfx1100 gfx1101 gfx1102 CACHE STRING "AMD HIP architectures to build binaries for")
   mark_as_advanced(WITH_CYCLES_DEVICE_HIP)
   mark_as_advanced(CYCLES_HIP_BINARIES_ARCH)
 endif()
