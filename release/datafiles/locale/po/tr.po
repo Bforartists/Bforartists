@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2023-01-11 01:00+0300\n"
 "Last-Translator: Emir SARI <emir_sari@îcloud.com>\n"
 "Language-Team: Turkish <>\n"
@@ -354,7 +354,7 @@ msgstr "MetalRT (Deneysel)"
 
 
 msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
-msgstr "MetalRT, eğrileri kapsamlı bir biçimde kullanan sahnelerde ışın izleme yaparken daha az bellek kullanır ve belirli durumlarda daha iyi başarım gösterebilir. Ancak bu destek deneyseldir ve bazı sahneler yanlış sunulabilir."
+msgstr "MetalRT, eğrileri kapsamlı bir biçimde kullanan sahnelerde ışın izleme yaparken daha az bellek kullanır ve belirli durumlarda daha iyi başarım gösterebilir. Ancak bu destek deneyseldir ve bazı sahneler yanlış sunulabilir"
 
 
 msgid "KHR_materials_variants_ui"
@@ -3111,6 +3111,306 @@ msgid "Selects how the start handle of the B-Bone is computed"
 msgstr "Bükülmüş kemiğin başlangıç tutacının nice hesaplandığını seçer"
 
 
+msgid "End Handle Ease"
+msgstr "Bitiş Tutacını Yavaşlat"
+
+
+msgid "Multiply the B-Bone Ease Out channel by the local Y scale value of the end handle. This is done after the Scale Easing option and isn't affected by it"
+msgstr "Bükülmüş Kemik Yavaşça Çıkış kanalını, bitiş tutamacının yerel Y ölçeği değeriyle çarpın. Bu, Ölçek Yavaşlatma seçeneğinden sonra yapılır ve bundan etkilenmez"
+
+
+msgid "Start Handle Ease"
+msgstr "Başlangıç Tutacını Yavaşlat"
+
+
+msgid "Multiply the B-Bone Ease In channel by the local Y scale value of the start handle. This is done after the Scale Easing option and isn't affected by it"
+msgstr "Bükülmüş Kemik Yavaşça Giriş kanalını, başlangıç tutamacının yerel Y ölçeği değeriyle çarpın. Bu, Ölçek Yavaşlatma seçeneğinden sonra yapılır ve bundan etkilenmez"
+
+
+msgid "End Handle Scale"
+msgstr "Bitiş Tutacı Ölçeği"
+
+
+msgid "Multiply B-Bone Scale Out channels by the local scale values of the end handle. This is done after the Scale Easing option and isn't affected by it"
+msgstr "Bükülmüş Kemik Dışa Ölçekle kanallarını, bitiş tutamacının yerel ölçek değerleriyle çarpın. Bu, Ölçek Yavaşlatma seçeneğinden sonra yapılır ve bundan etkilenmez"
+
+
+msgid "Start Handle Scale"
+msgstr "Başlangıç Tutacı Ölçeği"
+
+
+msgid "Multiply B-Bone Scale In channels by the local scale values of the start handle. This is done after the Scale Easing option and isn't affected by it"
+msgstr "Bükülmüş Kemik İçe Ölçekle kanallarını, bitiş tutamacının yerel ölçek değerleriyle çarpın. Bu, Ölçek Yavaşlatma seçeneğinden sonra yapılır ve bundan etkilenmez"
+
+
+msgid "Roll In"
+msgstr "İçe Yuvarla"
+
+
+msgid "Roll offset for the start of the B-Bone, adjusts twist"
+msgstr "Bükülmüş Kemiğin başlangıcı için dönme ofseti, bükülmeyi ayarlar"
+
+
+msgid "Roll Out"
+msgstr "Dışa Yuvarla"
+
+
+msgid "Roll offset for the end of the B-Bone, adjusts twist"
+msgstr "Bükülmüş Kemiğin bitişi için dönme ofseti, bükülmeyi ayarlar"
+
+
+msgid "Scale In"
+msgstr "İçe Ölçekle"
+
+
+msgid "Scale factors for the start of the B-Bone, adjusts thickness (for tapering effects)"
+msgstr "Bükülmüş Kemiğin başlangıcı için ölçek çarpanları, kalınlığı ayarlar (incelen efektler için)"
+
+
+msgid "Scale Out"
+msgstr "Dışa Ölçekle"
+
+
+msgid "Scale factors for the end of the B-Bone, adjusts thickness (for tapering effects)"
+msgstr "Bükülmüş Kemiğin bitişi için ölçek çarpanları, kalınlığı ayarlar (incelen efektler için)"
+
+
+msgid "B-Bone Segments"
+msgstr "Bükülmüş Kemik Bölütleri"
+
+
+msgid "Number of subdivisions of bone (for B-Bones only)"
+msgstr "Kemiğin alt bölümlerinin sayısı (yalnızca Bükülmüş Kemikler için)"
+
+
+msgid "B-Bone Display X Width"
+msgstr "Bükülmüş Kemik X Genişliğini Görüntüle"
+
+
+msgid "B-Bone X size"
+msgstr "Bükülmüş Kemik X boyutu"
+
+
+msgid "B-Bone Display Z Width"
+msgstr "Bükülmüş Kemik Z Genişliğini Görüntüle"
+
+
+msgid "B-Bone Z size"
+msgstr "Bükülmüş Kemik Z boyutu"
+
+
+msgid "Children"
+msgstr "Alt Ögeler"
+
+
+msgid "Bones which are children of this bone"
+msgstr "Bu kemiğin alt ögesi olan kemikler"
+
+
+msgid "Envelope Deform Distance"
+msgstr "Zarf Deforme Uzaklığı"
+
+
+msgid "Bone deformation distance (for Envelope deform only)"
+msgstr "Kemik deformasyon uzaklığı (yalnızca Zarf deformesi için)"
+
+
+msgid "Envelope Deform Weight"
+msgstr "Zarf Deforme Ağırlığı"
+
+
+msgid "Bone deformation weight (for Envelope deform only)"
+msgstr "Kemik deformasyon ağırlığı (yalnızca Zarf deformesi için)"
+
+
+msgid "Head"
+msgstr "Baş"
+
+
+msgid "Location of head end of the bone relative to its parent"
+msgstr "Kemiğin baş ucunun üst ögesine göre konumu"
+
+
+msgid "Armature-Relative Head"
+msgstr "Armatüre Göreceli Baş"
+
+
+msgid "Location of head end of the bone relative to armature"
+msgstr "Kemiğin baş ucunun armatüre göre konumu"
+
+
+msgid "Envelope Head Radius"
+msgstr "Zarf Başı Yarıçapı"
+
+
+msgid "Radius of head of bone (for Envelope deform only)"
+msgstr "Kemiğin başının yarıçapı (yalnızca Zarf deformesi için)"
+
+
+msgid "Bone is not visible when it is not in Edit Mode (i.e. in Object or Pose Modes)"
+msgstr "Düzenleme Kipi'nde değilken kemik görünür değildir (örn. Nesne veya (Poz Kipi)"
+
+
+msgid "Selectable"
+msgstr "Seçilebilir"
+
+
+msgid "Bone is able to be selected"
+msgstr "Kemik seçilebilirdir"
+
+
+msgid "Inherit Scale"
+msgstr "Ölçeği Devral"
+
+
+msgid "Specifies how the bone inherits scaling from the parent bone"
+msgstr "Kemiğin, üst kemikten ölçeklemeyi nasıl devralacağını belirtir"
+
+
+msgid "Inherit all effects of parent scaling"
+msgstr "Üst öge ölçeklemesinin tüm efektlerini devral"
+
+
+msgid "Fix Shear"
+msgstr "Yamulmayı Düzelt"
+
+
+msgid "Inherit scaling, but remove shearing of the child in the rest orientation"
+msgstr "Ölçeklemeyi devral; ancak alt ögenin dinlenme yönelimindeki yamulmasını kaldır"
+
+
+msgid "Rotate non-uniform parent scaling to align with the child, applying parent X scale to child X axis, and so forth"
+msgstr "Düzensiz üst öge ölçeklemesini alt ögeyle hizalanacak biçimde döndür; bu işlem üst ögenin X ölçeğini alt ögenin X eksenine vb. uygular"
+
+
+msgid "Inherit uniform scaling representing the overall change in the volume of the parent"
+msgstr "Üst ögenin hacmindeki genel değişikliği temsil eden tekdüze ölçeklemeyi devral"
+
+
+msgid "Completely ignore parent scaling"
+msgstr "Üst ögenin ölçeklemesini tümüyle yok say"
+
+
+msgid "None (Legacy)"
+msgstr "Hiçbiri (Eskiden kalan)"
+
+
+msgid "Ignore parent scaling without compensating for parent shear. Replicates the effect of disabling the original Inherit Scale checkbox"
+msgstr "Üst öge yamulmasını tazmin etmeden üst öge ölçeklemesini yok say. Özgün 'Ölçeği Devral' onay kutusunun vereceği efekti yineler"
+
+
+msgid "Layers"
+msgstr "Katmanlar"
+
+
+msgid "Layers bone exists in"
+msgstr "Kemiğin var olduğu katmanlar"
+
+
+msgid "Length"
+msgstr "Uzunluk"
+
+
+msgid "Length of the bone"
+msgstr "Kemiğin uzunluğu"
+
+
+msgid "Bone Matrix"
+msgstr "Kemik Matrisi"
+
+
+msgid "3x3 bone matrix"
+msgstr "3 x 3 kemik matrisi"
+
+
+msgid "Bone Armature-Relative Matrix"
+msgstr "Kemik Armatüre Göreceli Matris"
+
+
+msgid "4x4 bone matrix relative to armature"
+msgstr "Armatüre göreceli olan 4 x 4 kemik matrisi"
+
+
+msgid "Parent"
+msgstr "Üst Öge"
+
+
+msgid "Parent bone (in same Armature)"
+msgstr "Üst kemik (aynı armatürde)"
+
+
+msgid "Select Head"
+msgstr "Başı Seç"
+
+
+msgid "Select Tail"
+msgstr "Kuyruğu Seç"
+
+
+msgid "Display Wire"
+msgstr "Kabloyu Görüntüle"
+
+
+msgid "Bone is always displayed in wireframe regardless of viewport shading mode (useful for non-obstructive custom bone shapes)"
+msgstr "Kemik, görüş alanı gölgeleme kipinden bağımsız olarak her zaman tel kafes içinde görüntülenir (engelleyici olmayan özel kemik şekilleri için kullanışlıdır)"
+
+
+msgid "Tail"
+msgstr "Kuyruk"
+
+
+msgid "Location of tail end of the bone relative to its parent"
+msgstr "Üst ögesine göre kemiğin kuyruk ucunun konumu"
+
+
+msgid "Armature-Relative Tail"
+msgstr "Armatüre Göreceli Kuyruk"
+
+
+msgid "Location of tail end of the bone relative to armature"
+msgstr "Armatüre göre kemiğin kuyruk ucunun konumu"
+
+
+msgid "Envelope Tail Radius"
+msgstr "Zarf Kuyruğu Yarıçapı"
+
+
+msgid "Radius of tail of bone (for Envelope deform only)"
+msgstr "Kemiğin kuyruğunun yarıçapı (yalnızca Zarf deformesi için)"
+
+
+msgid "Connected"
+msgstr "Bağlı"
+
+
+msgid "When bone has a parent, bone's head is stuck to the parent's tail"
+msgstr "Kemiğin bir üst ögesi olduğunda, kemiğin başı, üst ögesinin kuyruğuna takılıdır"
+
+
+msgid "Cyclic Offset"
+msgstr "Döngüsel Ofset"
+
+
+msgid "When bone doesn't have a parent, it receives cyclic offset effects (Deprecated)"
+msgstr "Kemiğin bir üst ögesi olmadığında, döngüsel ofset efektleri alır (Kullanılmıyor)"
+
+
+msgid "Deform"
+msgstr "Deforme"
+
+
+msgid "Enable Bone to deform geometry"
+msgstr "Kemiğin geometrisinin deforme olmasını etkinleştir"
+
+
+msgid "Inherit End Roll"
+msgstr "Bitiş Rulosunu Devral"
+
+
+msgid "Scale Easing"
+msgstr "Ölçek Yavaşlatma"
+
+
 msgid "Angle"
 msgstr "Açı"
 
@@ -3368,7 +3668,7 @@ msgstr "Başlat"
 
 
 msgid "Final"
-msgstr "Sonuç "
+msgstr "Sonuç"
 
 
 msgid "Time"
@@ -3416,7 +3716,7 @@ msgstr "Pencere"
 
 
 msgid "Header"
-msgstr "Başlık "
+msgstr "Üstbilgi"
 
 
 msgid "Tools"
@@ -3484,7 +3784,11 @@ msgstr "Eğri Önayarı"
 
 
 msgid "Erase"
-msgstr "Sil "
+msgstr "Sil"
+
+
+msgid "The brush is used for erasing strokes"
+msgstr "Fırça, vuruşları silmek için kullanılır"
 
 
 msgid "Mask"
@@ -3636,7 +3940,27 @@ msgstr "Silindir"
 
 
 msgid "Solid"
-msgstr "Katı "
+msgstr "Katı"
+
+
+msgid "Display the object as a solid (if solid drawing is enabled in the viewport)"
+msgstr "Nesneyi bir katı olarak görüntüle (görüş alanında katı çizim etkinleştirilmişse)"
+
+
+msgid "Textured"
+msgstr "Dokulu"
+
+
+msgid "Display the object with textures (if textures are enabled in the viewport)"
+msgstr "Nesneyi dokularla görüntüle (görüş alanında dokular etkinleştirilmişse)"
+
+
+msgid "Empty Display Size"
+msgstr "Boş Görüntü Boyutu"
+
+
+msgid "Size of display for empties in the viewport"
+msgstr "Görüş alanındaki boşlar için görüntü boyutu"
 
 
 msgid "Both"
@@ -4078,12 +4402,56 @@ msgstr "Sınır"
 
 msgctxt "Operator"
 msgid "Save Image"
-msgstr "Görüntü Kaydet"
+msgstr "Görseli Kaydet"
+
+
+msgid "Save the image with current name and settings"
+msgstr "Görseli geçerli ad ve ayarlarla kaydet"
+
+
+msgctxt "Operator"
+msgid "Save All Modified"
+msgstr "Tüm Değiştirilenleri Kaydet"
+
+
+msgid "Save all modified images"
+msgstr "Tüm değiştirilen görselleri kaydet"
 
 
 msgctxt "Operator"
 msgid "Save As Image"
-msgstr "Resmi farklı kaydet:"
+msgstr "Görseli Olarak Kaydet"
+
+
+msgid "Save the image with another name and/or settings"
+msgstr "Görseli başka ad ve/veya ayarlarla kaydet"
+
+
+msgid "Create a new image file without modifying the current image in blender"
+msgstr "Blender'daki geçerli dosyayı değiştirmeden yeni bir görsel dosyası oluştur"
+
+
+msgid "Save As Render"
+msgstr "Sunum Olarak Kaydet"
+
+
+msgid ""
+"Save image with render color management.\n"
+"For display image formats like PNG, apply view and display transform.\n"
+"For intermediate image formats like OpenEXR, use the default render output color space"
+msgstr ""
+"Görseli sunum renk yönetimiyle kaydet.\n"
+"PNG gibi görüntüleme biçimleri için görünümü uygula/dönüştürmeyi görüntüle.\n"
+"OpenEXR gibi orta halli görsel biçimleri için öntanımlı sunum çıktı renk uzayını kullan"
+
+
+msgctxt "Operator"
+msgid "Save Sequence"
+msgstr "Sıralamayı Kaydet"
+
+
+msgid "Save a sequence of images"
+msgstr "Bir görseller sıralamasını kaydet"
 
 
 msgid "Zoom Out"
@@ -4193,7 +4561,7 @@ msgstr "Kaydet"
 
 msgctxt "Operator"
 msgid "Save As"
-msgstr "Farklı Kaydet..."
+msgstr "Farklı Kaydet"
 
 
 msgctxt "Operator"
@@ -4401,6 +4769,11 @@ msgid "Radians"
 msgstr "Radyan"
 
 
+msgctxt "WindowManager"
+msgid "Curves"
+msgstr "Eğriler"
+
+
 msgid "Tracking"
 msgstr "Takip"
 
@@ -4440,6 +4813,10 @@ msgstr "Python Dili Klavuzu"
 
 msgid "Credits"
 msgstr "Katkıda Bulunanlar"
+
+
+msgid "Mix Vector"
+msgstr "Karışım Vektörü"
 
 
 msgid "After"
@@ -4922,6 +5299,10 @@ msgstr "Biçim:"
 
 msgid "On"
 msgstr "Açık"
+
+
+msgid "Group ID"
+msgstr "Grup Kimliği"
 
 
 msgid "Transparency"

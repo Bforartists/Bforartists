@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -26816,10 +26816,6 @@ msgid "Save & Load"
 msgstr "저장 & 불러오기"
 
 
-msgid "Angle Control"
-msgstr "각도 컨트롤"
-
-
 msgid "Armature Context Menu"
 msgstr "아마튜어 컨텍스트 메뉴"
 
@@ -29654,10 +29650,6 @@ msgstr "노멀 편집 모디파이어"
 
 msgid "Modifier affecting/generating custom normals"
 msgstr "커스텀 노멀에 영향/발생하는 모디파이어"
-
-
-msgid "How much of generated normals to mix with exiting ones"
-msgstr "생성된 노멀과 기존의 노멀을 얼마나 혼합하는지"
 
 
 msgid "Maximum angle between old and new normals"
@@ -32528,20 +32520,8 @@ msgid "Collection of NLA strip F-Curves"
 msgstr "NLA 스트립 F-커브의 컬렉션"
 
 
-msgid "Nla Strips"
-msgstr "NLA 스트립"
-
-
-msgid "Collection of Nla Strips"
-msgstr "NLA 스트립의 컬렉션"
-
-
 msgid "NLA Track"
 msgstr "NLA 트랙"
-
-
-msgid "A animation layer containing Actions referenced as NLA strips"
-msgstr "NLA 스트립으로 참조되는 액션이 포함된 애니메이션 레이어"
 
 
 msgid "NLA Track is active"
@@ -35396,10 +35376,6 @@ msgstr "오브젝트 공간 벡터 변위 매핑"
 
 msgid "World space vector displacement mapping"
 msgstr "월드 공간 벡터 변위 매핑"
-
-
-msgid "Vector Math"
-msgstr "벡터 수학"
 
 
 msgid "Multiply Add"
@@ -60261,6 +60237,10 @@ msgid "Instancing"
 msgstr "인스턴싱"
 
 
+msgid "Textures Directory"
+msgstr "텍스처 디렉토리"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "창을 닫기"
@@ -63887,10 +63867,6 @@ msgstr "임시 디렉토리"
 
 msgid "The directory for storing temporary save files"
 msgstr "임시 저장 파일에 대한 디렉토리"
-
-
-msgid "Textures Directory"
-msgstr "텍스처 디렉토리"
 
 
 msgid "The default directory to search for textures"
@@ -72016,6 +71992,10 @@ msgid "Show overexposed areas with zebra stripes"
 msgstr "얼룩말 줄무늬 과다 노출 영역을 표시"
 
 
+msgid "Show Overlays"
+msgstr "오버레이를 표시"
+
+
 msgid "Separate Colors"
 msgstr "컬러를 분리"
 
@@ -72414,10 +72394,6 @@ msgstr "로컬 컬렉션"
 
 msgid "Display a different set of collections in this viewport"
 msgstr "이 뷰포트에 다른 컬렉션 모음을 표시"
-
-
-msgid "Show Overlays"
-msgstr "오버레이를 표시"
 
 
 msgid "Get the node tree path as a string"
@@ -85289,10 +85265,6 @@ msgid "%s already in %s"
 msgstr "%s는 이미 %s에 있습니다"
 
 
-msgid "%s %s to %s"
-msgstr "%s %s를 %s로"
-
-
 msgid "Only one modifier of this type is allowed"
 msgstr "이 유형의 모디파이어는 하나만 허용됩니다"
 
@@ -86268,10 +86240,6 @@ msgstr "이 모드에 대한 키 프레임 삽입은 아직 구현되지 않음"
 
 msgid "Not implemented for Masks"
 msgstr "마스크에 대해 구현되지 않음"
-
-
-msgid "Cannot activate a file selector, one already open"
-msgstr "이미 열려있는 파일 선택기를 활성화 할 수 없습니다"
 
 
 msgid "Texture Field"

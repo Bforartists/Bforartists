@@ -7,6 +7,13 @@ from os.path import join, splitext
 
 from autopep8_clean_config import PATHS, BLACKLIST
 
+from typing import (
+    Callable,
+    Generator,
+    Optional,
+    Sequence,
+)
+
 # Useful to disable when debugging warnings.
 USE_MULTIPROCESS = True
 
@@ -17,14 +24,17 @@ SOURCE_EXT = (
 )
 
 
-def is_source_and_included(filename):
+def is_source_and_included(filename: str) -> bool:
     return (
         filename.endswith(SOURCE_EXT) and
         filename not in BLACKLIST
     )
 
 
-def path_iter(path, filename_check=None):
+def path_iter(
+        path: str,
+        filename_check: Optional[Callable[[str], bool]] = None,
+) -> Generator[str, None, None]:
     for dirpath, dirnames, filenames in os.walk(path):
         # skip ".git"
         dirnames[:] = [d for d in dirnames if not d.startswith(".")]
@@ -37,7 +47,10 @@ def path_iter(path, filename_check=None):
                 yield filepath
 
 
-def path_expand(paths, filename_check=None):
+def path_expand(
+        paths: Sequence[str],
+        filename_check: Optional[Callable[[str], bool]] = None,
+) -> Generator[str, None, None]:
     for f in paths:
         if not os.path.exists(f):
             print("Missing:", f)
@@ -47,7 +60,7 @@ def path_expand(paths, filename_check=None):
             yield f
 
 
-def autopep8_format_file(f):
+def autopep8_format_file(f: str) -> None:
     print(f)
     subprocess.call((
         "autopep8",
@@ -80,7 +93,7 @@ def autopep8_format_file(f):
     ))
 
 
-def main():
+def main() -> None:
     import sys
     import subprocess
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2022-08-19 12:33+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -33615,10 +33615,6 @@ msgid "Save & Load"
 msgstr "Lưu & Nhập"
 
 
-msgid "Angle Control"
-msgstr "Điều Khiển Góc"
-
-
 msgid "Armature Context Menu"
 msgstr "Danh Bạ Bối Cảnh Cốt"
 
@@ -37011,10 +37007,6 @@ msgid "Modifier affecting/generating custom normals"
 msgstr "Bộ điều chỉnh đang ảnh hướng/chế tạo pháp tuyến tùy chọn"
 
 
-msgid "How much of generated normals to mix with exiting ones"
-msgstr "Tỉ số pha trộn pháp tuyến được chế tạo với pháp tuyến tồn tại"
-
-
 msgid "Maximum angle between old and new normals"
 msgstr "Góc cực đại giữa pháp tuyến mới và cũ"
 
@@ -40399,20 +40391,8 @@ msgid "Collection of NLA strip F-Curves"
 msgstr "Sưu tập Cong-F Đoạn NLA"
 
 
-msgid "Nla Strips"
-msgstr "Đoạn NLA"
-
-
-msgid "Collection of Nla Strips"
-msgstr "Sưu tập đoạn NLA"
-
-
 msgid "NLA Track"
 msgstr "Rãnh NLA"
-
-
-msgid "A animation layer containing Actions referenced as NLA strips"
-msgstr "Một lớp hoạt hình đựng Hành Động được tham chiếu như đoạn NLA"
 
 
 msgid "NLA Track is active"
@@ -43061,10 +43041,6 @@ msgid "Float to Integer"
 msgstr "Số Thật sang Số Nguyên"
 
 
-msgid "Rounding Mode"
-msgstr "Chế Độ Tròn Số"
-
-
 msgid "Method used to convert the float to an integer"
 msgstr "Phương pháp dùng cho biến đổi số thật sang số nguyên"
 
@@ -43075,10 +43051,6 @@ msgstr "Tròn số thật lên hay xuống đến số nguyên gần nhất"
 
 msgid "Round the float down to the next smallest integer"
 msgstr "Tròn số thật xuống đến số nguyên gần nhất"
-
-
-msgid "Ceiling"
-msgstr "Nóc"
 
 
 msgid "Round the float up to the next largest integer"
@@ -44129,10 +44101,6 @@ msgid "Realize Instances"
 msgstr "Hình Thành Các Thực Thể"
 
 
-msgid "Change the direction of the curve by swapping each spline's start and end data"
-msgstr "Đổi hướng của đường cong bằng bởi trao đổi dữ liệu bắt đầu và kết thúc của mỗi mẫu cong"
-
-
 msgid "Legacy Behavior"
 msgstr "Hành Vi Lỗi Thời"
 
@@ -44183,10 +44151,6 @@ msgstr "Tính số lượng mẫu vật bằng chẻ mỗi mẫu cong thành kh�
 
 msgid "Reverse Curve"
 msgstr "Lật Ngược Đường Cong"
-
-
-msgid "Swap the start and end of splines"
-msgstr "Trao đổi bắt đầu và kết thúc của mẫu cong"
 
 
 msgid "Rotate Instances"
@@ -46232,10 +46196,6 @@ msgstr "Ánh xạ dịch vectơ không gian vật thể"
 
 msgid "World space vector displacement mapping"
 msgstr "Ánh xạ dịch vectơ không gian thế giới"
-
-
-msgid "Vector Math"
-msgstr "Toán Vectơ"
 
 
 msgid "Perform vector math operation"
@@ -78745,6 +78705,10 @@ msgid "Create subdivision surface modifiers based on the USD SubdivisionScheme a
 msgstr "Chế tạo bộ điều chỉnh phân hóa bề mặt tùy đặc điểm SubdivisionScheme (GiảiThuậtPhânHóa) của USD"
 
 
+msgid "Textures Directory"
+msgstr "Thư Mục Chất Liệu"
+
+
 msgid "Import USD Preview"
 msgstr "Nhập Dự Khán USD"
 
@@ -83550,10 +83514,6 @@ msgstr "Thư Mục Tạm Thời"
 
 msgid "The directory for storing temporary save files"
 msgstr "Thư mục mặc định cho lưu chứa tập tin tạm thời"
-
-
-msgid "Textures Directory"
-msgstr "Thư Mục Chất Liệu"
 
 
 msgid "The default directory to search for textures"
@@ -93433,6 +93393,10 @@ msgid "Show overexposed areas with zebra stripes"
 msgstr "Hiện khu vực bị hứng dư bằng sọc ngựa quảng"
 
 
+msgid "Show Overlays"
+msgstr "Hiện Các Lớp Che"
+
+
 msgid "Separate Colors"
 msgstr "Chẻ Màu"
 
@@ -93987,10 +93951,6 @@ msgstr "Hiển Thị Nền"
 
 msgid "Show the grid background and borders"
 msgstr "Hiện nền đồ thị và ranh giới"
-
-
-msgid "Show Overlays"
-msgstr "Hiện Các Lớp Che"
 
 
 msgid "Display overlays like UV Maps and Metadata"
@@ -101996,10 +101956,6 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "và trình điều khiển NVIDIA phiên bản 470 hay mới hơn"
 
 
-msgid "Requires AMD GPU with Vega or RDNA architecture"
-msgstr "Yêu cầu GPU AMD có kiến trúc Vega hay RDNA"
-
-
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "và trình điều khiển AMD Pro 21.Q4 hay mới hơn"
 
@@ -107531,11 +107487,6 @@ msgstr "Alembic (.abc)"
 
 
 msgctxt "Operator"
-msgid "Universal Scene Description (.usd, .usdc, .usda)"
-msgstr "Mô Tả Cảnh Tổng Quát (.usd, .usdc, .usda)"
-
-
-msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG là Bút Sáp"
 
@@ -107548,6 +107499,11 @@ msgstr "Wavefront (.obj)"
 msgctxt "Operator"
 msgid "STL (.stl) (experimental)"
 msgstr "STL (.stl) (đồ thí nghiệm)"
+
+
+msgctxt "Operator"
+msgid "Universal Scene Description (.usd, .usdc, .usda)"
+msgstr "Mô Tả Cảnh Tổng Quát (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
@@ -114377,10 +114333,6 @@ msgid "%s already in %s"
 msgstr "%s đang ở trong %s rồi"
 
 
-msgid "%s %s to %s"
-msgstr "%s %s đến %s"
-
-
 msgid "Only one modifier of this type is allowed"
 msgstr "Chỉ được dùng một bộ điều chỉnh của loại này"
 
@@ -115730,10 +115682,6 @@ msgid "Not implemented for Masks"
 msgstr "Chưa được thành lập cho Mặt Nạ"
 
 
-msgid "Cannot activate a file selector, one already open"
-msgstr "Không thể hoạt động đồ chọn tập tin, đã có một cái mở rồi"
-
-
 msgid "Texture Field"
 msgstr "Trường Chất Liệu"
 
@@ -116929,10 +116877,6 @@ msgstr ""
 
 msgid "Can not add node '%s' in a group"
 msgstr "Không thể thêm giao điểm '%s' trong nhóm"
-
-
-msgid "LMB: drag node link, RMB: cancel"
-msgstr "NCT: kéo liên kết giao điểm, NCP: hủy"
 
 
 msgid "Disconnect"
@@ -120085,10 +120029,6 @@ msgstr "Loại đặt tính không giống đổ cắm ngõ vào \"(%s)\""
 
 msgid "Node group's geometry input must be the first"
 msgstr "Ngõ vào cho hình dạng của nhóm đỉnh phải là thứ nhất"
-
-
-msgid "Node group can only have one geometry input"
-msgstr "Nhóm đỉnh chỉ được có một ngõ vào hình dạng"
 
 
 msgid "Node group must have an output socket"

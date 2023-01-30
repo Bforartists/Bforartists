@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -9212,10 +9212,6 @@ msgstr "Brak zaznaczonej krzywej-F na którą można wkleić"
 
 msgid "Not implemented for Masks"
 msgstr "Nie wprowadzone dla Masek"
-
-
-msgid "Cannot activate a file selector, one already open"
-msgstr "Nie można aktywować selektora plików, jeden jest już aktywny"
 
 
 msgid "No textures in context"

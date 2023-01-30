@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Tamar Mebonia <tammebonia@gmail.com>, 2022\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25513,10 +25513,6 @@ msgid "Save & Load"
 msgstr "შენახვა და ჩატვირთვა"
 
 
-msgid "Angle Control"
-msgstr "კუთხის კონტროლი"
-
-
 msgid "Armature Context Menu"
 msgstr "არმატურის კონტექსტური მენიუ"
 
@@ -35785,6 +35781,10 @@ msgid "Active tool gizmo"
 msgstr "აქტიური ხელსაწყოს მანიპულატორი"
 
 
+msgid "Show Overlays"
+msgstr "აჩვენე გადაფარვები"
+
+
 msgid "Find Text"
 msgstr "იპოვე ტექსტი"
 
@@ -35943,10 +35943,6 @@ msgstr "ამ სარკმლისთვის კოლექციებ�
 
 msgid "Use a region within the frame size for rendered viewport (when not viewing through the camera)"
 msgstr "გამოიყენე ჩარჩოს ზომის ფარგლებში მყოფი რეგიონი დარენდერებული სარკმლისთვის (როცა კამერიდან არ იხედები)"
-
-
-msgid "Show Overlays"
-msgstr "აჩვენე გადაფარვები"
 
 
 msgid "Display overlays like UV Maps and Metadata"
@@ -38435,13 +38431,13 @@ msgstr "Alembic (.abc)"
 
 
 msgctxt "Operator"
-msgid "Universal Scene Description (.usd, .usdc, .usda)"
-msgstr "Universal Scene Description (.usd, .usdc, .usda)"
+msgid "SVG as Grease Pencil"
+msgstr "SVG როგორც ცვილის ფანქარი"
 
 
 msgctxt "Operator"
-msgid "SVG as Grease Pencil"
-msgstr "SVG როგორც ცვილის ფანქარი"
+msgid "Universal Scene Description (.usd, .usdc, .usda)"
+msgstr "Universal Scene Description (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"

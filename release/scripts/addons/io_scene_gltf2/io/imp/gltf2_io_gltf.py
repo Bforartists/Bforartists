@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2018-2021 The glTF-Blender-IO authors.
 
+from ...io.com.gltf2_io_path import uri_to_path
 from ..com.gltf2_io import gltf_from_dict
 from ..com.gltf2_io_debug import Log
 import logging
@@ -8,7 +9,6 @@ import json
 import struct
 import base64
 from os.path import dirname, join, isfile
-from urllib.parse import unquote
 
 
 # Raise this error to have the importer report an error message.
@@ -186,7 +186,7 @@ class glTFImporter():
                 data = uri[idx + len(sep):]
                 return memoryview(base64.b64decode(data))
 
-        path = join(dirname(self.filename), unquote(uri))
+        path = join(dirname(self.filename), uri_to_path(uri))
         try:
             with open(path, 'rb') as f_:
                 return memoryview(f_.read())
