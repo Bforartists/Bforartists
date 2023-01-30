@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -19735,10 +19735,6 @@ msgid "NLA Track"
 msgstr "ﺔﻛﺮﺣ ﺭﺎﺴﻣ"
 
 
-msgid "A animation layer containing Actions referenced as NLA strips"
-msgstr " ﺔﻴﻄﺧ ﻻ﻿ ﺔﻛﺮﺣ ﺔﻃﺮﺷﺃ ﻞﻜﺷ ﻰﻠﻋ ﺎﻬﻴﻟﺇ ﺭﺎﺸﻣ ﺕﺎﻛﺮﺣ ﻰﻠﻋ ﻱﻮﺘﺤﺗ ﺔﻛﺮﺤﻣ ﺔﻘﺒﻃ"
-
-
 msgid "NLA Track is active"
 msgstr "ﻞﻌﻔﻣ ﺔﻛﺮﺤﻟﺍ ﺭﺎﺴﻣ"
 
@@ -21230,10 +21226,6 @@ msgstr "ﻢﻤﻘﻟﺍ ﻡﺪﺨﺘﺳﺇ"
 
 msgid "UV coordinates to be used for mapping"
 msgstr "ءﺎﺴﻛﻺ﻿ﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ UV ﺕﺎﻴﺛﺍﺪﺣﺇ"
-
-
-msgid "Vector Math"
-msgstr "ﻲﺑﺎﺴﺣ ﻪﺠﺘﻣ"
 
 
 msgid "Modulo"
@@ -30227,6 +30219,10 @@ msgid "UV Maps"
 msgstr "UV ﻂﺋﺍﺮﺧ"
 
 
+msgid "Textures Directory"
+msgstr "ﺔﺠﺴﻧﻷ﻿ﺍ ﺪﻠﺠﻣ"
+
+
 msgctxt "Operator"
 msgid "Toggle Window Fullscreen"
 msgstr "ﺔﻠﻣﺎﻛ ﺔﺷﺎﺷ ﺓﺬﻓﺎﻨﻟﺍ ﺐﻠﻗﺇ"
@@ -32112,10 +32108,6 @@ msgstr "ﺖﻗﺆﻤﻟﺍ ﺪﻠﺠﻤﻟﺍ"
 
 msgid "The directory for storing temporary save files"
 msgstr "ﺔﺘﻗﺆﻤﻟﺍ ﻆﻔﺤﻟﺍ ﺕﺎﻔﻠﻣ ﻦﻳﺰﺨﺘﻟ ﺪﻠﺠﻤﻟﺍ"
-
-
-msgid "Textures Directory"
-msgstr "ﺔﺠﺴﻧﻷ﻿ﺍ ﺪﻠﺠﻣ"
 
 
 msgid "The default directory to search for textures"

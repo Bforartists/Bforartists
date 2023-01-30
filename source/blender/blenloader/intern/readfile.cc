@@ -2701,8 +2701,6 @@ void blo_lib_link_restore(Main *oldmain,
      * all workspaces), that one only focuses one current active screen, takes care of
      * potential local view, and needs window's scene pointer to be final... */
     lib_link_window_scene_data_restore(win, win->scene, cur_view_layer);
-
-    BLI_assert(win->screen == nullptr);
   }
 
   lib_link_wm_xr_data_restore(id_map, &curwm->xr);
@@ -3195,7 +3193,7 @@ static bool read_libblock_undo_restore(
 {
   /* Get pointer to memory of new ID that we will be reading. */
   const ID *id = static_cast<const ID *>(peek_struct_undo(fd, bhead));
-  const short idcode = GS(id->name);
+  const IDTypeInfo *id_type = BKE_idtype_get_info_from_id(id);
 
   if (bhead->code == ID_LI) {
     /* Restore library datablock. */
@@ -3209,7 +3207,7 @@ static bool read_libblock_undo_restore(
       return true;
     }
   }
-  else if (ELEM(idcode, ID_WM, ID_SCR, ID_WS)) {
+  else if (id_type->flags & IDTYPE_FLAGS_NO_MEMFILE_UNDO) {
     /* Skip reading any UI datablocks, existing ones are kept. We don't
      * support pointers from other datablocks to UI datablocks so those
      * we also don't put UI datablocks in fd->libmap. */
@@ -3289,11 +3287,23 @@ static BHead *read_libblock(FileData *fd,
    * address and inherit recalc flags for the dependency graph. */
   ID *id_old = nullptr;
   if (fd->flags & FD_FLAGS_IS_MEMFILE) {
+    /* FIXME `read_libblock_undo_restore` currently often skips setting `id_old` even if there
+     * would be a valid matching old ID (libraries, linked data, and `IDTYPE_FLAGS_NO_MEMFILE_UNDO`
+     * id types, at least).
+     *
+     * It is unclear whether this is currently an issue:
+     *   * `r_id` is currently only requested by linking code (both independent one, and as part of
+     *     loading .blend file through `read_library_linked_ids`).
+     *   * `main->id_map` seems to always be `nullptr` in undo case at this point.
+     *
+     * So undo case does not seem to be affected by this. A future cleanup should try to remove
+     * most of this related code in the future, and instead assert that both `r_id` and
+     * `main->id_map` are `nullptr`. */
     if (read_libblock_undo_restore(fd, main, bhead, tag, &id_old)) {
       if (r_id) {
         *r_id = id_old;
       }
-      if (main->id_map != nullptr) {
+      if (main->id_map != nullptr && id_old != nullptr) {
         BKE_main_idmap_insert_id(main->id_map, id_old);
       }
 
@@ -3771,6 +3781,21 @@ static BHead *read_userdef(BlendFileData *bfd, FileData *fd, BHead *bhead)
 /** \name Read File (Internal)
  * \{ */
 
+/** Contains sanity/debug checks to be performed at the very end of the reading process (i.e. after
+ * data, liblink, linked data, etc. has been done). */
+static void blo_read_file_checks(Main *bmain)
+{
+#ifndef NDEBUG
+  LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
+    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+      /* This pointer is deprecated and should always be nullptr. */
+      BLI_assert(win->screen == nullptr);
+    }
+  }
+#endif
+  UNUSED_VARS_NDEBUG(bmain);
+}
+
 BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
 {
   BHead *bhead = blo_bhead_first(fd);
@@ -3952,6 +3977,9 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
   fd->mainlist = nullptr; /* Safety, this is local variable, shall not be used afterward. */
 
   BLI_assert(bfd->main->id_map == nullptr);
+
+  /* Sanity checks. */
+  blo_read_file_checks(bfd->main);
 
   return bfd;
 }
@@ -4572,6 +4600,9 @@ static void library_link_end(Main *mainl, FileData **fd, const int flag)
     blo_filedata_free(*fd);
     *fd = nullptr;
   }
+
+  /* Sanity checks. */
+  blo_read_file_checks(mainvar);
 }
 
 void BLO_library_link_end(Main *mainl, BlendHandle **bh, const LibraryLink_Params *params)

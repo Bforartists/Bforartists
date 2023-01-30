@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -24447,14 +24447,6 @@ msgid "Sync Action Length"
 msgstr "Synchronisiere Aktionslänge"
 
 
-msgid "Nla Strips"
-msgstr "NLA-Streifen"
-
-
-msgid "A animation layer containing Actions referenced as NLA strips"
-msgstr "Eine Animationsebene, die Aktionen enthält, auf die als NLA-Strips verwiesen wird"
-
-
 msgid "NLA Track is active"
 msgstr "NLA-Spur ist aktiv"
 
@@ -26125,10 +26117,6 @@ msgid "Darker"
 msgstr "Dunkler"
 
 
-msgid "Ceiling"
-msgstr "Decke"
-
-
 msgid "Input value used for unconnected socket"
 msgstr "Eingabewert, der für die nicht verbundene Buchse verwendet wird"
 
@@ -27024,10 +27012,6 @@ msgstr "UV-Koordinaten zur Kartierung"
 
 msgid "Vector Displacement"
 msgstr "Vektorverlagerung"
-
-
-msgid "Vector Math"
-msgstr "Mathematischer Vektor"
 
 
 msgid "Multiply Add"
@@ -42826,6 +42810,10 @@ msgid "Add all imported objects to a new collection"
 msgstr "Alle importieren Objekt zu einer neuen Sammlung hinzufügen"
 
 
+msgid "Textures Directory"
+msgstr "Texturverzeichnis"
+
+
 msgid "Path Mask"
 msgstr "Maskenpfad"
 
@@ -45602,10 +45590,6 @@ msgstr "Temporäres Verzeichnis"
 
 msgid "The directory for storing temporary save files"
 msgstr "Das Verzeichnis, um temporär gespeicherte Dateien abzulegen"
-
-
-msgid "Textures Directory"
-msgstr "Texturverzeichnis"
 
 
 msgid "The default directory to search for textures"
@@ -58668,13 +58652,13 @@ msgstr "Alembic (.abc)"
 
 
 msgctxt "Operator"
-msgid "Universal Scene Description (.usd, .usdc, .usda)"
-msgstr "Universal Scene Description (.usd, .usdc, .usda)"
+msgid "SVG as Grease Pencil"
+msgstr "SVG als Wachsstift"
 
 
 msgctxt "Operator"
-msgid "SVG as Grease Pencil"
-msgstr "SVG als Wachsstift"
+msgid "Universal Scene Description (.usd, .usdc, .usda)"
+msgstr "Universal Scene Description (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
@@ -62782,10 +62766,6 @@ msgid "%s already in %s"
 msgstr "%s ist bereits in %s"
 
 
-msgid "%s %s to %s"
-msgstr "%s %s zu %s"
-
-
 msgid "Cannot apply modifier for this object type"
 msgstr "Konnte Modifikator nicht für diesen Objekttyp anwenden"
 
@@ -63365,10 +63345,6 @@ msgstr "Keine Daten im Puffer zum Einfügen"
 
 msgid "No selected F-Curves to paste into"
 msgstr "Keine ausgewählte F-Kurven zum Einfügen"
-
-
-msgid "Cannot activate a file selector, one already open"
-msgstr "Dateiauswahl kann nicht aktiviert werden, bereits geöffnet"
 
 
 msgid "Texture Field"
