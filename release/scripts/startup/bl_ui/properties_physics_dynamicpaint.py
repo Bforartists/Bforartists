@@ -83,7 +83,12 @@ class PhysicButtonsPanel:
 
 class PHYSICS_PT_dynamic_paint(PhysicButtonsPanel, Panel):
     bl_label = "Dynamic Paint"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -104,7 +109,12 @@ class PHYSICS_PT_dynamic_paint(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_dynamic_paint_settings(PhysicButtonsPanel, Panel):
     bl_label = "Settings"
     bl_parent_id = 'PHYSICS_PT_dynamic_paint'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -196,7 +206,12 @@ class PHYSICS_PT_dynamic_paint_settings(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_dp_surface_canvas(PhysicButtonsPanel, Panel):
     bl_label = "Surface"
     bl_parent_id = "PHYSICS_PT_dynamic_paint"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -263,7 +278,12 @@ class PHYSICS_PT_dp_surface_canvas_paint_dry(PhysicButtonsPanel, Panel):
     bl_label = "Dry"
     bl_parent_id = "PHYSICS_PT_dp_surface_canvas"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -300,7 +320,12 @@ class PHYSICS_PT_dp_surface_canvas_paint_dissolve(PhysicButtonsPanel, Panel):
     bl_label = "Dissolve"
     bl_parent_id = "PHYSICS_PT_dp_surface_canvas"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -338,7 +363,12 @@ class PHYSICS_PT_dp_canvas_output(PhysicButtonsPanel, Panel):
     bl_label = "Output"
     bl_parent_id = "PHYSICS_PT_dynamic_paint"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -416,7 +446,12 @@ class PHYSICS_PT_dp_canvas_output_paintmaps(PhysicButtonsPanel, Panel):
     bl_label = "Paintmaps"
     bl_parent_id = "PHYSICS_PT_dp_canvas_output"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -446,7 +481,12 @@ class PHYSICS_PT_dp_canvas_output_wetmaps(PhysicButtonsPanel, Panel):
     bl_label = "Wetmaps"
     bl_parent_id = "PHYSICS_PT_dp_canvas_output"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -476,7 +516,12 @@ class PHYSICS_PT_dp_canvas_initial_color(PhysicButtonsPanel, Panel):
     bl_label = "Initial Color"
     bl_parent_id = "PHYSICS_PT_dynamic_paint"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -516,7 +561,12 @@ class PHYSICS_PT_dp_effects(PhysicButtonsPanel, Panel):
     bl_label = "Effects"
     bl_parent_id = 'PHYSICS_PT_dynamic_paint'
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -533,7 +583,12 @@ class PHYSICS_PT_dp_effects_spread(PhysicButtonsPanel, Panel):
     bl_label = "Spread"
     bl_parent_id = "PHYSICS_PT_dp_effects"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -568,7 +623,12 @@ class PHYSICS_PT_dp_effects_drip(PhysicButtonsPanel, Panel):
     bl_label = "Drip"
     bl_parent_id = "PHYSICS_PT_dp_effects"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -604,7 +664,12 @@ class PHYSICS_PT_dp_effects_drip_weights(PhysicButtonsPanel, Panel):
     bl_label = "Weights"
     bl_parent_id = "PHYSICS_PT_dp_effects_drip"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -628,7 +693,12 @@ class PHYSICS_PT_dp_effects_shrink(PhysicButtonsPanel, Panel):
     bl_label = "Shrink"
     bl_parent_id = "PHYSICS_PT_dp_effects"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -658,7 +728,12 @@ class PHYSICS_PT_dp_cache(PhysicButtonsPanel, Panel):
     bl_label = "Cache"
     bl_parent_id = "PHYSICS_PT_dynamic_paint"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -678,7 +753,12 @@ class PHYSICS_PT_dp_cache(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_dp_brush_source(PhysicButtonsPanel, Panel):
     bl_label = "Source"
     bl_parent_id = "PHYSICS_PT_dynamic_paint"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -751,7 +831,12 @@ class PHYSICS_PT_dp_brush_source(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_dp_brush_source_color_ramp(PhysicButtonsPanel, Panel):
     bl_label = "Falloff Ramp"
     bl_parent_id = "PHYSICS_PT_dp_brush_source"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -781,7 +866,12 @@ class PHYSICS_PT_dp_brush_velocity(PhysicButtonsPanel, Panel):
     bl_label = "Velocity"
     bl_parent_id = "PHYSICS_PT_dynamic_paint"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -823,7 +913,12 @@ class PHYSICS_PT_dp_brush_velocity_color_ramp(PhysicButtonsPanel, Panel):
     bl_label = "Ramp"
     bl_parent_id = "PHYSICS_PT_dp_brush_velocity"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -844,7 +939,12 @@ class PHYSICS_PT_dp_brush_velocity_smudge(PhysicButtonsPanel, Panel):
     bl_label = "Smudge"
     bl_parent_id = "PHYSICS_PT_dp_brush_velocity"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -872,7 +972,12 @@ class PHYSICS_PT_dp_brush_wave(PhysicButtonsPanel, Panel):
     bl_label = "Waves"
     bl_parent_id = "PHYSICS_PT_dynamic_paint"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+        'BLENDER_WORKBENCH_NEXT'}
 
     @classmethod
     def poll(cls, context):

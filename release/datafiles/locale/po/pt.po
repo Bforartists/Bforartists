@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -20999,10 +20999,6 @@ msgid "KeyPresets"
 msgstr "Predefinições de chave"
 
 
-msgid "Angle Control"
-msgstr "Controlo angular"
-
-
 msgid "Disable Bone Options"
 msgstr "Desativar as opções de ossos"
 
@@ -23237,10 +23233,6 @@ msgstr "Modificador - Edição de normais"
 
 msgid "Modifier affecting/generating custom normals"
 msgstr "Modificador para afetar ou gerar normais personalizadas."
-
-
-msgid "How much of generated normals to mix with exiting ones"
-msgstr "Define quanto das normais geradas será misturado com as existentes."
 
 
 msgid "Maximum angle between old and new normals"
@@ -25862,20 +25854,8 @@ msgid "Collection of NLA strip F-Curves"
 msgstr "Coleção de curvas-f de faixas de animação não linear."
 
 
-msgid "Nla Strips"
-msgstr "Faixas de animação não linear"
-
-
-msgid "Collection of Nla Strips"
-msgstr "Coleção de faixas de animação não linear"
-
-
 msgid "NLA Track"
 msgstr "Trilha de animação não linear"
-
-
-msgid "A animation layer containing Actions referenced as NLA strips"
-msgstr "Uma camada de animação contendo ações referenciadas como faixas de animação não linear."
 
 
 msgid "NLA Track is active"
@@ -28282,10 +28262,6 @@ msgstr "A metade inferior da textura é para as pontas dos traços."
 
 msgid "UV coordinates to be used for mapping"
 msgstr "Quais coordenadas UV serão usadas para mapeamento."
-
-
-msgid "Vector Math"
-msgstr "Matemática vetorial"
 
 
 msgid "Cross Product"
@@ -47911,6 +47887,10 @@ msgid "UV Maps"
 msgstr "Mapas UV"
 
 
+msgid "Textures Directory"
+msgstr "Diretório de texturas"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Fechar janela"
@@ -50328,10 +50308,6 @@ msgstr "Diretório temporário"
 
 msgid "The directory for storing temporary save files"
 msgstr "O diretório para armazenar ficheiros temporários."
-
-
-msgid "Textures Directory"
-msgstr "Diretório de texturas"
 
 
 msgid "The default directory to search for textures"
@@ -65424,10 +65400,6 @@ msgstr "A inserção de fotogramas chave ainda não está implementada para este
 
 msgid "Not implemented for Masks"
 msgstr "Não implementado para máscaras."
-
-
-msgid "Cannot activate a file selector, one already open"
-msgstr "Não é possível ativar o seletor de ficheiros, um já está aberto."
 
 
 msgid "Texture Field"

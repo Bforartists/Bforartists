@@ -9,10 +9,18 @@ While it can be called directly, you may prefer to run this from Blender's root 
 
 """
 
+import argparse
 import multiprocessing
 import os
 import sys
 import subprocess
+
+from typing import (
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+)
 
 VERSION_MIN = (8, 0, 0)
 VERSION_MAX_RECOMMENDED = (12, 0, 0)
@@ -40,10 +48,10 @@ ignore_files = {
 }
 
 
-def compute_paths(paths, use_default_paths):
+def compute_paths(paths: List[str], use_default_paths: bool) -> List[str]:
     # Optionally pass in files to operate on.
     if use_default_paths:
-        paths = (
+        paths = [
             "intern/atomic",
             "intern/audaspace",
             "intern/clog",
@@ -66,7 +74,7 @@ def compute_paths(paths, use_default_paths):
             "intern/utfconv",
             "source",
             "tests/gtests",
-        )
+        ]
     else:
         # Filter out files, this is only done so this utility wont print that it's
         # "Operating" on files that will be filtered out later on.
@@ -80,7 +88,7 @@ def compute_paths(paths, use_default_paths):
     return paths
 
 
-def source_files_from_git(paths, changed_only):
+def source_files_from_git(paths: Sequence[str], changed_only: bool) -> List[str]:
     if changed_only:
         cmd = ("git", "diff", "HEAD", "--name-only", "-z", "--", *paths)
     else:
@@ -89,7 +97,7 @@ def source_files_from_git(paths, changed_only):
     return [f.decode('ascii') for f in files]
 
 
-def convert_tabs_to_spaces(files):
+def convert_tabs_to_spaces(files: Sequence[str]) -> None:
     for f in files:
         print("TabExpand", f)
         with open(f, 'r', encoding="utf-8") as fh:
@@ -100,7 +108,7 @@ def convert_tabs_to_spaces(files):
             else:
                 # Complex 2 space
                 # because some comments have tabs for alignment.
-                def handle(l):
+                def handle(l: str) -> str:
                     ls = l.lstrip("\t")
                     d = len(l) - len(ls)
                     if d != 0:
@@ -115,10 +123,10 @@ def convert_tabs_to_spaces(files):
             fh.write(data)
 
 
-def clang_format_ensure_version():
+def clang_format_ensure_version() -> Optional[Tuple[int, int, int]]:
     global CLANG_FORMAT_CMD
     clang_format_cmd = None
-    version_output = None
+    version_output = ""
     for i in range(2, -1, -1):
         clang_format_cmd = (
             "clang-format-" + (".".join(["%d"] * i) % VERSION_MIN[:i])
@@ -131,16 +139,18 @@ def clang_format_ensure_version():
             continue
         CLANG_FORMAT_CMD = clang_format_cmd
         break
-    version = next(iter(v for v in version_output.split() if v[0].isdigit()), None)
-    if version is not None:
-        version = version.split("-")[0]
-        version = tuple(int(n) for n in version.split("."))
-        version = (version + (0, 0, 0))[:3]  # Ensure exactly 3 numbers.
-        print("Using %s (%d.%d.%d)..." % (CLANG_FORMAT_CMD, version[0], version[1], version[2]))
-    return version
+    version: Optional[str] = next(iter(v for v in version_output.split() if v[0].isdigit()), None)
+    if version is None:
+        return None
+
+    version = version.split("-")[0]
+    # Ensure exactly 3 numbers.
+    version_num: Tuple[int, int, int] = (tuple(int(n) for n in version.split(".")) + (0, 0, 0))[:3]  # type: ignore
+    print("Using %s (%d.%d.%d)..." % (CLANG_FORMAT_CMD, version_num[0], version_num[1], version_num[2]))
+    return version_num
 
 
-def clang_format_file(files):
+def clang_format_file(files: List[str]) -> bytes:
     cmd = [
         CLANG_FORMAT_CMD,
         # Update the files in-place.
@@ -151,11 +161,11 @@ def clang_format_file(files):
     return subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
 
-def clang_print_output(output):
+def clang_print_output(output: bytes) -> None:
     print(output.decode('utf8', errors='ignore').strip())
 
 
-def clang_format(files):
+def clang_format(files: List[str]) -> None:
     pool = multiprocessing.Pool()
 
     # Process in chunks to reduce overhead of starting processes.
@@ -169,8 +179,7 @@ def clang_format(files):
     pool.join()
 
 
-def argparse_create():
-    import argparse
+def argparse_create() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(
         description="Format C/C++/GLSL & Objective-C source code.",
@@ -209,7 +218,7 @@ def argparse_create():
     return parser
 
 
-def main():
+def main() -> None:
     version = clang_format_ensure_version()
     if version is None:
         print("Unable to detect 'clang-format -version'")
@@ -243,7 +252,7 @@ def main():
         if f not in ignore_files
     ]
 
-    # Always operate on all cmake files (when expanding tabs and no paths given).
+    # Always operate on all CMAKE files (when expanding tabs and no paths given).
     files_retab = [
         f for f in source_files_from_git((".",) if use_default_paths else paths, args.changed_only)
         if f.endswith(extensions_only_retab)

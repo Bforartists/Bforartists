@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
-"PO-Revision-Date: 2022-05-10 19:36+0800\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
+"PO-Revision-Date: 2023-01-28 11:09+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <http://weblate.slat.org/projects/blender/blender/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.0.1"
+"X-Generator: Poedit 3.2.2"
 
 
 msgid "Shader AOV"
@@ -1943,6 +1943,14 @@ msgid "Collection of screens"
 msgstr "螢幕的選集"
 
 
+msgid "Main Simulations"
+msgstr "主要模擬"
+
+
+msgid "Collection of simulations"
+msgstr "模擬選集"
+
+
 msgid "Main Sounds"
 msgstr "主要音效"
 
@@ -2955,6 +2963,10 @@ msgid "Has Plane Offset"
 msgstr "有平面偏移"
 
 
+msgid "Has Rake Factor"
+msgstr "拓樸走向係數"
+
+
 msgid "Has Sculpt Plane"
 msgstr "有雕塑平面"
 
@@ -2969,6 +2981,10 @@ msgstr "有強度壓力"
 
 msgid "Has Tilt"
 msgstr "具備傾斜"
+
+
+msgid "Has Topology Rake"
+msgstr "依循拓樸走向"
 
 
 msgid "Vertex Paint Capabilities"
@@ -8601,6 +8617,10 @@ msgid "Stepped Interpolation"
 msgstr "步進插補法"
 
 
+msgid "Snap values to nearest grid step, e.g. for a stop-motion look"
+msgstr "將值吸附至最近的格線上 - 即：看起來會像定格動畫"
+
+
 msgid "Use Influence"
 msgstr "使用影響力"
 
@@ -9554,7 +9574,11 @@ msgstr "連結"
 
 
 msgid "Append"
-msgstr "追加"
+msgstr "附加"
+
+
+msgid "Append (Reuse Data)"
+msgstr "附加 ( 重複利用資料 )"
 
 
 msgid "Domain Settings"
@@ -10553,6 +10577,10 @@ msgid "Lock current frame displayed by layer"
 msgstr "鎖定依層顯示的目前框幀"
 
 
+msgid "List of Masking Layers"
+msgstr "遮罩圖層列表"
+
+
 msgid "Layer Opacity"
 msgstr "層不透明度"
 
@@ -10609,6 +10637,10 @@ msgid "ViewLayer"
 msgstr "視圖層"
 
 
+msgid "Grease Pencil Masking Layers"
+msgstr "蠟筆遮罩圖層"
+
+
 msgid "Layer"
 msgstr "層"
 
@@ -10627,6 +10659,22 @@ msgstr "圓"
 
 msgid "Grid"
 msgstr "格線"
+
+
+msgid "Enable snapping to guides angle or spacing options"
+msgstr "開啟吸附角度或隔線間距選項"
+
+
+msgid "Auto-Masking Layer"
+msgstr "自動遮罩圖層"
+
+
+msgid "Auto-Masking Material"
+msgstr "自動遮罩材質"
+
+
+msgid "Auto-Masking Strokes"
+msgstr "自動遮罩筆畫"
 
 
 msgid "Grease Pencil Stroke"
@@ -11428,6 +11476,18 @@ msgid "Amount of smoothing to automatically apply to each stroke"
 msgstr "自動套用至每個筆觸的平滑處理量"
 
 
+msgid "Cavity Curve"
+msgstr "坑腔曲線"
+
+
+msgid "Cavity Factor"
+msgstr "坑腔係數"
+
+
+msgid "The contrast of the cavity mask"
+msgstr "調整坑腔遮罩的對比"
+
+
 msgid "Brush blending mode"
 msgstr "筆刷混合模式"
 
@@ -11721,7 +11781,7 @@ msgstr "面集"
 
 
 msgid "Rake"
-msgstr "耙掠"
+msgstr "筆順走向"
 
 
 msgid "Rate"
@@ -11924,6 +11984,14 @@ msgid "Texture Slot"
 msgstr "紋理槽"
 
 
+msgid "Topology Rake"
+msgstr "拓樸走向"
+
+
+msgid "Automatically align edges to the brush direction to generate cleaner topology and define sharp features. Best used on low-poly meshes as it has a performance impact"
+msgstr "自動將邊緣線與筆刷走向對齊以繪製出更清晰的撲結構讓造型更加明確。最好用於低面網格，因為它會影響繪製時的效能。"
+
+
 msgid "Unprojected Radius"
 msgstr "未投射的半徑"
 
@@ -11952,8 +12020,24 @@ msgid "When this is disabled, lock alpha while painting"
 msgstr "當它停用時，繪製時會鎖定 alpha"
 
 
+msgid "Mesh Boundary Auto-Masking"
+msgstr "網格邊緣自動遮罩"
+
+
 msgid "Do not affect non manifold boundary edges"
 msgstr "不影響破口邊"
+
+
+msgid "Cavity Mask"
+msgstr "坑腔遮罩"
+
+
+msgid "Inverted Cavity Mask"
+msgstr "反向坑腔遮罩"
+
+
+msgid "Custom Cavity Curve"
+msgstr "自訂坑腔曲線"
 
 
 msgid "Affect only vertices that share Face Sets with the active vertex"
@@ -19478,8 +19562,16 @@ msgid "Proportional Editing Falloff"
 msgstr "比例化編輯衰落"
 
 
+msgid "Random Mask"
+msgstr "隨機遮罩"
+
+
 msgid "Sculpt"
 msgstr "雕塑"
+
+
+msgid "Automasking"
+msgstr "自動遮罩"
 
 
 msgid "Face Sets Edit"
@@ -20639,7 +20731,7 @@ msgstr "面數"
 
 
 msgid "The current number of faces in the decimated mesh"
-msgstr "大量毀滅的網格其目前的面數"
+msgstr "網格大量削減後的目前面數"
 
 
 msgid "Invert vertex group influence (collapse only)"
@@ -21974,7 +22066,7 @@ msgstr "遮罩處理文字"
 
 
 msgid "Masking texture"
-msgstr "遮罩處理紋理"
+msgstr "紋理遮罩"
 
 
 msgid "Masking vertex group name"
@@ -22319,6 +22411,10 @@ msgstr "波形之間的距離"
 
 msgid "Face Area"
 msgstr "面區域"
+
+
+msgid "Full merge by distance"
+msgstr "全部依距離合併"
 
 
 msgid "Wireframe Modifier"
@@ -23475,10 +23571,6 @@ msgstr "同步動作長度"
 
 msgid "NLA Track"
 msgstr "NLA 軌道"
-
-
-msgid "A animation layer containing Actions referenced as NLA strips"
-msgstr "包含將動作參照為 NLA 片段的動畫分層"
 
 
 msgid "NLA Track is active"
@@ -25138,6 +25230,10 @@ msgid "Dot Product"
 msgstr "內積"
 
 
+msgid "Compare the dot products of the input vectors"
+msgstr "比較所輸入的向量之內積"
+
+
 msgid "Less Than"
 msgstr "小於"
 
@@ -25180,6 +25276,10 @@ msgstr "無插補 (樣本最接近紋理)"
 
 msgid "Edge Angle"
 msgstr "線角"
+
+
+msgid "Merge by Distance"
+msgstr "依距離合併"
 
 
 msgid "Fill Type"
@@ -25389,6 +25489,10 @@ msgstr "混合RGB"
 
 msgid "Mix Shader"
 msgstr "混合著色器"
+
+
+msgid "Generate a normal vector and a dot product"
+msgstr "生成一個法線向量和內積"
 
 
 msgid "Space of the input normal"
@@ -25777,10 +25881,6 @@ msgstr "沿筆觸 UV"
 
 msgid "Use Tips"
 msgstr "使用提示"
-
-
-msgid "Vector Math"
-msgstr "向量數學"
 
 
 msgid "Cross Product"
@@ -26651,19 +26751,23 @@ msgstr "吸附鍵"
 
 
 msgid "Snap selected keyframes to the times specified"
-msgstr "將選取的鍵幀吸附至指定的時間"
+msgstr "將選取的關鍵幀吸附至指定的時間"
 
 
 msgid "Snap selected keyframes to the current frame"
-msgstr "將所選的鍵幀吸附至目前框幀"
+msgstr "將所選的關鍵幀吸附至目前幀"
+
+
+msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
+msgstr "將選定的關鍵帧吸附至最近的 ( 整個 ) 幀 ( 用於修復意外的子幀偏移)"
 
 
 msgid "Snap selected keyframes to the nearest second"
-msgstr "將選取的鍵幀吸附至第二近的框幀"
+msgstr "將選取的關鍵幀吸附至第二近的框幀"
 
 
 msgid "Snap selected keyframes to the nearest marker"
-msgstr "將選取的鍵幀吸附至最近的標記處"
+msgstr "將選取的關鍵幀吸附至最近的標記處"
 
 
 msgctxt "Operator"
@@ -28864,11 +28968,11 @@ msgstr "將目前的主控臺列作為 Python 表述式執行"
 
 msgctxt "Operator"
 msgid "History Append"
-msgstr "歷史追加"
+msgstr "附加歷史"
 
 
 msgid "Append history at cursor position"
-msgstr "於游標位置追加歷史"
+msgstr "於游標位置附加歷史"
 
 
 msgid "The index of the cursor"
@@ -28968,7 +29072,7 @@ msgstr "從剪貼簿貼上文字"
 
 msgctxt "Operator"
 msgid "Scrollback Append"
-msgstr "回滾追加"
+msgstr "附加滾動條"
 
 
 msgid "Append scrollback text by type"
@@ -29136,6 +29240,11 @@ msgstr "選取隨機"
 
 
 msgctxt "Operator"
+msgid "Snap Curves to Surface"
+msgstr "曲線吸附至表面"
+
+
+msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "切換循環"
 
@@ -29172,6 +29281,11 @@ msgstr "(取消)選取最後項"
 
 msgid "(De)select last of visible part of each NURBS"
 msgstr "(取消)選取每個 NURBS 的最後可見部份"
+
+
+msgctxt "Operator"
+msgid "Decimate Curve"
+msgstr "削減曲線"
 
 
 msgid "Delete selected control points or segments"
@@ -30054,6 +30168,10 @@ msgid "General"
 msgstr "通用"
 
 
+msgid "Include active collection and nested collections"
+msgstr "包括活動集盒和嵌入集盒"
+
+
 msgctxt "Operator"
 msgid "Export OBJ"
 msgstr "匯出 OBJ"
@@ -30800,6 +30918,18 @@ msgid "Eraser"
 msgstr "橡皮擦"
 
 
+msgid "Stabilizer Stroke Factor"
+msgstr "穩定筆觸係數"
+
+
+msgid "Stabilizer Stroke Radius"
+msgstr "穩定筆觸半徑"
+
+
+msgid "Stabilize Stroke"
+msgstr "穩定筆觸"
+
+
 msgid "Side"
 msgstr "側"
 
@@ -30979,6 +31109,10 @@ msgid "Erase Grease Pencil strokes"
 msgstr "擦除蠟筆筆觸"
 
 
+msgid "Send new stroke to back"
+msgstr "最下層新增"
+
+
 msgid "Limit"
 msgstr "限制"
 
@@ -31009,9 +31143,17 @@ msgid "Add New Layer"
 msgstr "添加新層"
 
 
+msgid "Add new layer as masking"
+msgstr "依遮罩增加新圖層"
+
+
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "移除遮罩分層"
+
+
+msgid "Append Materials of the active Grease Pencil to other object"
+msgstr "將作用中的蠟筆材質附加到其他物件"
 
 
 msgctxt "Operator"
@@ -31041,17 +31183,68 @@ msgstr "套索選取筆觸"
 
 
 msgctxt "Operator"
+msgid "Snap Cursor to Selected Points"
+msgstr "游標吸附至所選項"
+
+
+msgid "Snap cursor to center of selected points"
+msgstr "游標吸附至選取項目中心"
+
+
+msgctxt "Operator"
 msgid "Snap Selection to Cursor"
-msgstr "吸附選取項至游標"
+msgstr "選取的項目吸附至游標"
+
+
+msgid "Snap selected points/strokes to the cursor"
+msgstr "所選點 / 筆畫吸附至游標"
 
 
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
-msgstr "吸附選取項至格線"
+msgstr "選取的項目吸附至格線"
+
+
+msgid "Snap selected points to the nearest grid points"
+msgstr "所選的點吸附至最近的格線交叉點"
+
+
+msgctxt "Operator"
+msgid "Arrange Stroke"
+msgstr "排序筆劃"
+
+
+msgid "Arrange selected strokes up/down in the display order of the active layer"
+msgstr "排序所選筆劃的顯示順序向上/向下"
+
+
+msgid "Bring to Front"
+msgstr "提至最上層"
+
+
+msgid "Bring Forward"
+msgstr "向上提一層"
+
+
+msgid "Send Backward"
+msgstr "向下降一層"
+
+
+msgid "Send to Back"
+msgstr "降至最後層"
 
 
 msgid "Dissolve Points"
 msgstr "消散點"
+
+
+msgctxt "Operator"
+msgid "Merge by Distance"
+msgstr "依距離合併"
+
+
+msgid "Merge points by distance"
+msgstr "依距離合併"
 
 
 msgctxt "Operator"
@@ -31151,6 +31344,19 @@ msgid "Set Cursor"
 msgstr "設定游標"
 
 
+msgctxt "Operator"
+msgid "Decimate Keyframes"
+msgstr "削減鍵幀"
+
+
+msgid "Decimate F-Curves by removing keyframes that influence the curve shape the least"
+msgstr "使用對曲線形狀影響最小的關鍵幀來削減函數曲線"
+
+
+msgid "How much the new decimated curve is allowed to deviate from the original"
+msgstr "新的削減曲線允許偏離原本曲線的數值"
+
+
 msgid "Replace Existing"
 msgstr "替換既有"
 
@@ -31239,7 +31445,7 @@ msgstr "套用權重化移動代表可讓所選 F 曲線減少凹凸不平"
 
 
 msgid "Snap selected keyframes to the chosen times/values"
-msgstr "將所選的鍵幀吸附至選擇的時間/值"
+msgstr "將所選的關鍵幀吸附至選擇的時間/值"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -31252,6 +31458,11 @@ msgstr "平展控制桿"
 
 msgid "Flatten handles for a smoother transition"
 msgstr "平展控制桿以取得更平滑的過度"
+
+
+msgctxt "Operator"
+msgid "Snap Cursor Value to Selected"
+msgstr "游標數值吸附至所選項"
 
 
 msgctxt "Operator"
@@ -32484,6 +32695,11 @@ msgid "Clear vertex skin layer"
 msgstr "清除頂點皮膚分層"
 
 
+msgctxt "Operator"
+msgid "Decimate Geometry"
+msgstr "削減幾何"
+
+
 msgid "Delete selected vertices, edges or faces"
 msgstr "刪除選取的頂點、邊線或面"
 
@@ -32764,6 +32980,10 @@ msgstr "僅擠出頂點"
 msgctxt "Operator"
 msgid "Face Set Extract"
 msgstr "擷取面集"
+
+
+msgid "Extract the mask as a solid object with a solidify modifier"
+msgstr "使用實體化修改器將遮罩區域擷取成為新的物件"
 
 
 msgid "Copy mirror UV coordinates on the X axis based on a mirrored mesh"
@@ -33064,8 +33284,26 @@ msgid "Make face and vertex normals point either outside or inside the mesh"
 msgstr "讓面與頂點法線點都在網格的外面或是內面"
 
 
+msgctxt "Operator"
+msgid "Mask Extract"
+msgstr "遮罩擷取"
+
+
+msgctxt "Operator"
+msgid "Mask Slice"
+msgstr "遮罩切除 ( 非流形 )"
+
+
+msgid "Slices the paint mask from the mesh"
+msgstr "從網格中切除遮罩區域 ( 物體變為非流形 )"
+
+
 msgid "Fill Holes"
 msgstr "填入孔洞"
+
+
+msgid "Create a new object from the sliced mask"
+msgstr "從網格中切除遮罩區域後再建立出一個新物體"
 
 
 msgctxt "Operator"
@@ -33842,6 +34080,10 @@ msgid "+Z to -Z"
 msgstr "+Z 至 -Z"
 
 
+msgid "Limit for snap middle vertices to the axis center"
+msgstr "限制頂點中央吸附至軸中心"
+
+
 msgctxt "Operator"
 msgid "Snap to Symmetry"
 msgstr "吸附至對稱"
@@ -33853,6 +34095,10 @@ msgstr "將頂點對吸附至其鏡像的位置"
 
 msgid "Mix factor of the locations of the vertices"
 msgstr "頂點位置的混合係數"
+
+
+msgid "Snap middle vertices to the axis center"
+msgstr "頂點中央吸附至軸中心"
 
 
 msgctxt "Operator"
@@ -36144,6 +36390,10 @@ msgstr "套用物體變換"
 
 msgid "Apply the object's transformation to its data"
 msgstr "將物體的變換套用至其自身資料"
+
+
+msgid "Snap selected item(s) to the mouse location"
+msgstr "所選項目吸附至滑鼠位置"
 
 
 msgctxt "Operator"
@@ -39260,6 +39510,31 @@ msgid "Shrink mask"
 msgstr "收縮遮罩"
 
 
+msgid "Increase Contrast"
+msgstr "增強對比"
+
+
+msgid "Increase the contrast of the paint mask"
+msgstr "增強遮罩的對比度"
+
+
+msgid "Decrease Contrast"
+msgstr "減弱對比"
+
+
+msgid "Decrease the contrast of the paint mask"
+msgstr "減弱遮罩的對比度"
+
+
+msgctxt "Operator"
+msgid "Mask From Cavity"
+msgstr "坑腔遮罩"
+
+
+msgid "Cavity (Inverted)"
+msgstr "坑腔 ( 反轉 )"
+
+
 msgid "Operator"
 msgstr "操作器"
 
@@ -39276,8 +39551,13 @@ msgid "Sharpen"
 msgstr "銳利化"
 
 
+msgctxt "Operator"
+msgid "Rebuild BVH"
+msgstr "重構 BVH"
+
+
 msgid "Recalculate the sculpt BVH to improve performance"
-msgstr "重新計算雕塑 BVH 以改善效能"
+msgstr "重新構建雕塑體的 BVH 以提升效能"
 
 
 msgctxt "Operator"
@@ -39845,6 +40125,11 @@ msgstr "選取最接近滑鼠指標的已連結片段鏈"
 
 msgid "Select more strips adjacent to the current selection"
 msgstr "選取更多相鄰於目前選取內容的片段"
+
+
+msgctxt "Operator"
+msgid "Snap Strips to the Current Frame"
+msgstr "片段吸附至目前幀"
 
 
 msgid "Frame where selected strips will be snapped"
@@ -40567,7 +40852,7 @@ msgstr "當變換時校正 UV 座標"
 
 
 msgid "Snap to increments of grid"
-msgstr "吸附格線的定量"
+msgstr "格線定量吸附"
 
 
 msgid "Snap to vertices"
@@ -40578,24 +40863,56 @@ msgid "Snap to edges"
 msgstr "吸附邊線"
 
 
+msgid "Snap by projecting onto faces"
+msgstr "在表面上使用投影吸附"
+
+
+msgid "Snap to nearest point on faces"
+msgstr "吸附至面上最近的點"
+
+
 msgid "Snap to volume"
 msgstr "吸附體積"
 
 
+msgid "Snap to the middle of edges"
+msgstr "吸附至線段中央"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "吸附至邊線上最近的點"
+
+
 msgid "Snap closest point onto target"
-msgstr "吸附到目標上最近的點"
+msgstr "吸附至目標上最近的點"
+
+
+msgid "Snap transformation center onto target"
+msgstr "吸附至目標的中心點"
 
 
 msgid "Snap median onto target"
-msgstr "吸附到目標的中間點"
+msgstr "吸附至目標的中間點"
 
 
 msgid "Snap active onto target"
-msgstr "將作用項吸附到目標"
+msgstr "作用中項目吸附至目標"
+
+
+msgid "Target: Include Non-Edited"
+msgstr "Target: 包括未編輯的物體"
 
 
 msgid "Project Individual Elements"
 msgstr "投影各自元素"
+
+
+msgid "Target: Exclude Non-Selectable"
+msgstr "Target: 排除關閉選擇的物體"
+
+
+msgid "Target: Include Active"
+msgstr "Target: 包括作用中的物體"
 
 
 msgctxt "Operator"
@@ -41439,6 +41756,11 @@ msgid "Use orthographic projection"
 msgstr "使用正視投影"
 
 
+msgctxt "Operator"
+msgid "Merge UVs by Distance"
+msgstr "依距離合併"
+
+
 msgid "Selected UV vertices that are within a radius of each other are welded together"
 msgstr "選取的一定半徑內 UV 頂點彼此會焊接在一起"
 
@@ -41646,7 +41968,7 @@ msgstr "吸附島塊"
 
 
 msgid "Snap islands together (on edge stitch mode, rotates the islands too)"
-msgstr "一同吸附島塊 (對邊線合縫模式，也會旋轉島塊)"
+msgstr "將島塊吸附在一起 (對邊線合縫模式，也會旋轉島塊)"
 
 
 msgid "Static Island"
@@ -41855,6 +42177,14 @@ msgid "Interactively fly around the scene"
 msgstr "互動式環繞場景飛行"
 
 
+msgid "Snap to"
+msgstr "吸附至"
+
+
+msgid "Snap to all geometry"
+msgstr "吸附至所有幾何"
+
+
 msgctxt "Operator"
 msgid "Local View"
 msgstr "區域視圖"
@@ -41960,22 +42290,55 @@ msgstr "平滑視圖"
 
 msgctxt "Operator"
 msgid "Snap Cursor to Active"
-msgstr "吸附游標至作用項"
+msgstr "游標吸附至作用中項目"
+
+
+msgid "Snap 3D cursor to the active item"
+msgstr "3D 游標吸附至作用中項目"
+
+
+msgctxt "Operator"
+msgid "Snap Cursor to World Origin"
+msgstr "游標吸附至世界原點"
+
+
+msgid "Snap 3D cursor to the world origin"
+msgstr "3D 游標吸附至世界原點"
 
 
 msgctxt "Operator"
 msgid "Snap Cursor to Grid"
-msgstr "吸附游標至格線"
+msgstr "游標吸附至格線"
+
+
+msgid "Snap 3D cursor to the nearest grid division"
+msgstr "3D 游標吸附至最近的格線細分交叉點"
 
 
 msgctxt "Operator"
 msgid "Snap Cursor to Selected"
-msgstr "吸附游標至所選項"
+msgstr "游標吸附至所選項目"
+
+
+msgid "Snap 3D cursor to the middle of the selected item(s)"
+msgstr "將 3D 游標吸附至所選項目的中間"
 
 
 msgctxt "Operator"
 msgid "Snap Selection to Active"
-msgstr "吸附選取項至作用項"
+msgstr "選取項目吸附至作用項目"
+
+
+msgid "Snap selected item(s) to the active item"
+msgstr "選取項目吸附至作用中項目"
+
+
+msgid "Snap selected item(s) to the 3D cursor"
+msgstr "選取項目吸附至 3D 游標"
+
+
+msgid "Snap selected item(s) to their nearest grid division"
+msgstr "選取項目吸附至最近的格線細分交叉點"
 
 
 msgid "View all objects in scene"
@@ -42152,12 +42515,24 @@ msgid "Append"
 msgstr "追加"
 
 
+msgid "Append from a Library .blend file"
+msgstr "從庫 .blend 檔案中連結或附加"
+
+
+msgid "Link the objects or data-blocks rather than appending"
+msgstr "連結對象或資料塊而非附加"
+
+
+msgid "Set \"Fake User\" for appended items (except objects and collections)"
+msgstr "讓附加項目（物體和集盒除外）設定 “ 偽使用者 ”"
+
+
 msgid "Localize All"
 msgstr "全部翻譯"
 
 
 msgid "Localize all appended data, including those indirectly linked from other libraries"
-msgstr "翻譯所有追加的資料，包含那些間接從其他藏庫連結來的資料"
+msgstr "翻譯所有附加的資料，包含那些間接從其他藏庫連結來的資料"
 
 
 msgctxt "Operator"
@@ -43066,6 +43441,10 @@ msgid "UV Maps"
 msgstr "UV 映射"
 
 
+msgid "Textures Directory"
+msgstr "紋理目錄"
+
+
 msgctxt "Operator"
 msgid "Toggle Window Fullscreen"
 msgstr "切換視窗全螢幕"
@@ -43079,6 +43458,11 @@ msgstr "切換 VR 作業階段"
 msgctxt "Operator"
 msgid "Add Workspace"
 msgstr "添加工作空間"
+
+
+msgctxt "Operator"
+msgid "Append and Activate Workspace"
+msgstr "附加和工作空間"
 
 
 msgctxt "Operator"
@@ -43100,6 +43484,10 @@ msgstr "打包的檔案大小，單位為 bytes"
 
 msgid "Active Brush"
 msgstr "作用中筆刷"
+
+
+msgid "Editable cavity curve"
+msgstr "可編輯坑腔曲線"
 
 
 msgid "Average multiple input samples together to smooth the brush stroke"
@@ -43981,6 +44369,10 @@ msgid "Stroke Placement"
 msgstr "筆觸放置"
 
 
+msgid "Masking"
+msgstr "遮罩"
+
+
 msgid "Motion Tracking"
 msgstr "運動跟蹤"
 
@@ -43989,8 +44381,16 @@ msgid "Pose Library"
 msgstr "姿勢庫"
 
 
+msgid "Auto-Masking"
+msgstr "自動遮罩"
+
+
 msgid "Compositor"
 msgstr "合成器"
+
+
+msgid "Stencil Mask"
+msgstr "遮罩蠟紙"
 
 
 msgctxt "Operator"
@@ -45430,10 +45830,6 @@ msgid "The directory for storing temporary save files"
 msgstr "儲藏暫存檔用的目錄"
 
 
-msgid "Textures Directory"
-msgstr "紋理目錄"
-
-
 msgid "The default directory to search for textures"
 msgstr "搜尋紋理用的預設目錄"
 
@@ -46343,7 +46739,7 @@ msgstr "靜態 BVH"
 
 
 msgid "Any object modification requires a complete BVH rebuild, but renders faster"
-msgstr "任何物體修改都需要完整的 BVH 重建，但是算繪較快"
+msgstr "任何物體修改都可能需要完整的 BVH 重構，但這可以提升算繪速度"
 
 
 msgid "Use Spatial Splits"
@@ -48794,6 +49190,26 @@ msgid "Individual Origins"
 msgstr "個別原點"
 
 
+msgid "Don't snap to hidden strips"
+msgstr "不吸附影藏片段"
+
+
+msgid "Don't snap to sound strips"
+msgstr "不吸附聲音片段"
+
+
+msgid "Snap to current frame"
+msgstr "吸附至目前幀"
+
+
+msgid "Snap Current Frame to Strips"
+msgstr "目前幀吸附片段"
+
+
+msgid "Snap current frame to strip start or end"
+msgstr "目前幀吸附至片段開頭或結尾"
+
+
 msgid "Factor of Blur"
 msgstr "模糊的係數"
 
@@ -49627,7 +50043,7 @@ msgstr "在 F 曲線通道的旁邊顯示滑桿"
 
 
 msgid "Automatically merge nearby keyframes"
-msgstr "自動合併相鄰鍵幀"
+msgstr "自動合併相近鍵幀"
 
 
 msgid "Sync Markers"
@@ -52138,6 +52554,18 @@ msgid "Stick stroke to other strokes"
 msgstr "將筆劃固定於其他筆劃"
 
 
+msgid "Snap to all points"
+msgstr "吸附至所有的點"
+
+
+msgid "Snap to first and last points and interpolate"
+msgstr "抓取至第一個和最後一個點並進行插入"
+
+
+msgid "Snap to first point"
+msgstr "吸附至第一個點"
+
+
 msgid "Lock Markers"
 msgstr "鎖定標記"
 
@@ -52180,7 +52608,7 @@ msgstr "吸附節點元素"
 
 
 msgid "Snap to grid"
-msgstr "吸附網格"
+msgstr "吸附格線"
 
 
 msgid "Node X"
@@ -52212,7 +52640,7 @@ msgstr "吸附目標"
 
 
 msgid "Which part to snap onto the target"
-msgstr "吸附目標上的哪個部分"
+msgstr "哪個部分吸附至目標上"
 
 
 msgid "Snap UV Element"
@@ -52291,6 +52719,22 @@ msgid "Align rotation with the snapping target"
 msgstr "將旋轉與吸附用目標對齊"
 
 
+msgid "Snap onto Edited"
+msgstr "吸附至已編輯"
+
+
+msgid "Snap onto non-active objects in Edit Mode (Edit Mode Only)"
+msgstr "在編輯模式下吸附至非作用中項目（僅限編輯模式）"
+
+
+msgid "Snap onto Non-edited"
+msgstr "吸附至未編輯"
+
+
+msgid "Snap onto objects not in Edit Mode (Edit Mode Only)"
+msgstr "吸附至不在編輯模式下的對象（僅限編輯模式）"
+
+
 msgid "Snap Peel Object"
 msgstr "吸附剝開物體"
 
@@ -52301,6 +52745,34 @@ msgstr "當尋找體積中心時將物體視為整體"
 
 msgid "Project individual elements on the surface of other objects"
 msgstr "將各自元素投影至其他物體的表面上"
+
+
+msgid "Snap onto Selectable Only"
+msgstr "僅針對選取吸附"
+
+
+msgid "Snap only onto objects that are selectable"
+msgstr "僅吸附至可選取的物體"
+
+
+msgid "Snap onto Active"
+msgstr "吸附至作用中"
+
+
+msgid "Snap onto itself only if enabled (Edit Mode Only)"
+msgstr "只有在啟用時吸附至本身（僅限編輯模式）"
+
+
+msgid "Snap to strip edges or current frame"
+msgstr "吸附至片段邊緣或目前幀"
+
+
+msgid "Snap to Same Target"
+msgstr "吸附至相同目標"
+
+
+msgid "Snap only to target that source was initially near (Face Nearest Only)"
+msgstr "僅吸附至最初靠近的來源（僅面向最近）"
 
 
 msgid "UV Sync Selection"
@@ -52743,8 +53215,45 @@ msgid "Show Weights"
 msgstr "顯示權重"
 
 
+msgid "Stencil Mask Opacity"
+msgstr "遮罩蠟紙不透明度"
+
+
+msgid "Opacity of the texture paint mode stencil mask overlay"
+msgstr "紋理繪製時遮罩蠟紙覆蓋在模型上的不透明度"
+
+
 msgid "Background Color"
 msgstr "背景色彩"
+
+
+msgid "Cavity Ridge"
+msgstr "坑腔稜邊"
+
+
+msgid "Factor for the cavity ridges"
+msgstr "坑腔稜邊的係數值"
+
+
+msgctxt "View3D"
+msgid "Cavity Type"
+msgstr "坑腔類型"
+
+
+msgid "Cavity Valley"
+msgstr "坑腔凹谷"
+
+
+msgid "Factor for the cavity valleys"
+msgstr "坑腔凹谷的係數值"
+
+
+msgid "Cavity"
+msgstr "坑腔"
+
+
+msgid "Show Cavity"
+msgstr "顯示坑腔"
 
 
 msgid "Viewport Shading"
@@ -53217,8 +53726,23 @@ msgstr "割刀工具典範映射"
 
 
 msgctxt "WindowManager"
+msgid "Snap to Midpoints On"
+msgstr "開啟吸附至中間點"
+
+
+msgctxt "WindowManager"
+msgid "Snap to Midpoints Off"
+msgstr "關閉吸附至中間點"
+
+
+msgctxt "WindowManager"
 msgid "Paint Stroke Modal"
 msgstr "繪製筆觸典範"
+
+
+msgctxt "WindowManager"
+msgid "Snap expand to Face Sets"
+msgstr "擴張吸附至面集"
 
 
 msgctxt "WindowManager"
@@ -53469,6 +53993,11 @@ msgstr "標準典範映射"
 msgctxt "WindowManager"
 msgid "Transform Modal Map"
 msgstr "變換典範映射"
+
+
+msgctxt "WindowManager"
+msgid "Snap Toggle"
+msgstr "吸附切換"
 
 
 msgid "OSL shader compilation succeeded"
@@ -53767,6 +54296,10 @@ msgstr "API 已定義"
 
 msgid "3D View"
 msgstr "3D 視圖"
+
+
+msgid "Image is packed, unpack before editing"
+msgstr "圖像為打包狀態，需要外部編輯時請先解包"
 
 
 msgid "Active object is not a mesh"
@@ -54145,8 +54678,16 @@ msgid "Sample Rate"
 msgstr "取樣率"
 
 
+msgid "Pressure Masking"
+msgstr "壓力遮罩"
+
+
 msgid "Falloff Opacity"
 msgstr "衰減不透明"
+
+
+msgid "Cavity (inverted)"
+msgstr "坑腔 ( 反轉 )"
 
 
 msgid "Source Clone Slot"
@@ -54292,6 +54833,10 @@ msgstr "熱"
 
 msgid "Exponent"
 msgstr "指數"
+
+
+msgid "Concavity Upper"
+msgstr "坑腔凹谷上"
 
 
 msgid "Lower"
@@ -54574,6 +55119,16 @@ msgstr "隱藏未選取曲線"
 
 
 msgctxt "Operator"
+msgid "Decimate (Ratio)"
+msgstr "大量削減 ( 比率調整 )"
+
+
+msgctxt "Operator"
+msgid "Decimate (Allowed Change)"
+msgstr "大量削減"
+
+
+msgctxt "Operator"
 msgid "Less"
 msgstr "較少"
 
@@ -54781,6 +55336,11 @@ msgstr "輸入："
 
 msgid "Slot %d"
 msgstr "槽 %d"
+
+
+msgctxt "Operator"
+msgid "Edit"
+msgstr "編輯"
 
 
 msgctxt "Operator"
@@ -55230,6 +55790,11 @@ msgstr "切換透視法 / 正視法"
 
 
 msgctxt "Operator"
+msgid "Viewport Render Image"
+msgstr "視接口算繪影像"
+
+
+msgctxt "Operator"
 msgid "Active Camera"
 msgstr "作用中攝影機"
 
@@ -55603,6 +56168,36 @@ msgstr "收縮遮罩"
 
 
 msgctxt "Operator"
+msgid "Increase Contrast"
+msgstr "增強對比"
+
+
+msgctxt "Operator"
+msgid "Decrease Contrast"
+msgstr "減弱對比"
+
+
+msgctxt "Operator"
+msgid "Expand Mask by Topology"
+msgstr "依佈線結構擴張遮罩"
+
+
+msgctxt "Operator"
+msgid "Expand Mask by Normals"
+msgstr "依法線擴張遮罩"
+
+
+msgctxt "Operator"
+msgid "Mask Slice and Fill Holes"
+msgstr "遮罩切除並填補 ( 流形 )"
+
+
+msgctxt "Operator"
+msgid "Mask Slice to New Object"
+msgstr "遮罩切除後建立新物體"
+
+
+msgctxt "Operator"
 msgid "Face Set from Masked"
 msgstr "依遮罩建立面集"
 
@@ -55732,6 +56327,21 @@ msgstr "依面圖群組"
 
 
 msgctxt "Operator"
+msgid "Per Vertex"
+msgstr "依每個頂點"
+
+
+msgctxt "Operator"
+msgid "Per Face Set"
+msgstr "依每個面集"
+
+
+msgctxt "Operator"
+msgid "Per Loose Part"
+msgstr "依每個分散的部分"
+
+
+msgctxt "Operator"
 msgid "Change Armature Layers..."
 msgstr "更改骨架分層..."
 
@@ -55805,6 +56415,10 @@ msgid "Zero Weights"
 msgstr "顯示零權重"
 
 
+msgid "Snap To"
+msgstr "吸附至"
+
+
 msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "移動紋理空間"
@@ -55823,6 +56437,11 @@ msgstr "對齊變換方向"
 msgctxt "Operator"
 msgid "Project from View (Bounds)"
 msgstr "從視圖 (邊界) 投射"
+
+
+msgctxt "Operator"
+msgid "Viewport Render Animation"
+msgstr "視接口算繪動畫"
 
 
 msgctxt "Operator"
@@ -55872,6 +56491,16 @@ msgstr "鉤至選取的物體骨骼"
 msgctxt "Operator"
 msgid "Transfer Weights"
 msgstr "傳輸權重"
+
+
+msgctxt "Operator"
+msgid "Snap to Deformed Surface"
+msgstr "吸附至變形表面"
+
+
+msgctxt "Operator"
+msgid "Snap to Nearest Surface"
+msgstr "吸附至最近表面"
 
 
 msgctxt "Operator"
@@ -56053,6 +56682,14 @@ msgid "Clear Freestyle Face"
 msgstr "清除 Freestyle 面"
 
 
+msgid "Exclude Non-Selectable"
+msgstr "排除關閉選擇的物體"
+
+
+msgid "Scaling"
+msgstr "縮放"
+
+
 msgctxt "Operator"
 msgid "Scale BBone"
 msgstr "縮放 BBone"
@@ -56066,6 +56703,18 @@ msgstr "攝影機鏡頭縮放"
 msgctxt "Operator"
 msgid "Remove from All"
 msgstr "從全部移除"
+
+
+msgid "Include Active"
+msgstr "包括作用中的物體"
+
+
+msgid "Include Edited"
+msgstr "包括已編輯的物體"
+
+
+msgid "Include Non-Edited"
+msgstr "包括未編輯的物體"
 
 
 msgctxt "Operator"
@@ -56126,6 +56775,10 @@ msgid "in memory to enable editing!"
 msgstr "在記憶體中以啟用編輯！"
 
 
+msgid "Modifier requires original data, bad stack position"
+msgstr "修改器需要原始資料，不良的堆疊位置"
+
+
 msgid "No AnimData to set action on"
 msgstr "無可設定動作的動畫資料"
 
@@ -56170,6 +56823,10 @@ msgid "Loading '%s' failed: "
 msgstr "載入「%s」失敗： "
 
 
+msgid "Appended Data"
+msgstr "已附資料"
+
+
 msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
 msgstr "藏庫重載：若重新載入者失敗則將所有參照取代為「%s」舊資料塊，而舊的（%d 位剩餘使用者）必須保留並重新命名為「%s」"
 
@@ -56192,6 +56849,26 @@ msgstr "總計檔案 %d | 更動 %d | 失敗 %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "路徑「%s」無法變為相對路徑"
+
+
+msgid "Can't initialize cloth"
+msgstr "無法初始化布料"
+
+
+msgid "Null cloth object"
+msgstr "空布料物體"
+
+
+msgid "Out of memory on allocating clmd->clothObject"
+msgstr "分配 clmd->clothObject 時記憶體耗盡"
+
+
+msgid "Cannot build springs"
+msgstr "無法建置彈簧"
+
+
+msgid "Out of memory on allocating clmd->clothObject->verts"
+msgstr "分配 clmd->clothObject->verts 時記憶體耗盡"
 
 
 msgid "Scene Collection"
@@ -56756,6 +57433,10 @@ msgid "Bone Heat Weighting: failed to find solution for one or more bones"
 msgstr "骨骼熱權重：無法找出一根或多根骨骼的解決方案"
 
 
+msgid "Failed to find bind solution (increase precision?)"
+msgstr "無法找出綁定解決方案 (是否要提昇精準度？)。"
+
+
 msgid "Cannot pose libdata"
 msgstr "無姿勢庫資料"
 
@@ -56922,6 +57603,10 @@ msgstr "無法開啟檔案「%s」"
 
 msgid "File too long %s"
 msgstr "檔案過長 %s"
+
+
+msgid "Could not snap some curves to the surface"
+msgstr "無法將某些曲線吸附至表面"
 
 
 msgid "Annotation Session: ESC/Enter to end   (or click outside this area)"
@@ -58338,10 +59023,6 @@ msgid "No selected F-Curves to paste into"
 msgstr "無選取的 F 曲線可貼入"
 
 
-msgid "Cannot activate a file selector, one already open"
-msgstr "無法啟動檔案選取器，已開啟一個"
-
-
 msgid "Texture Field"
 msgstr "紋理欄位"
 
@@ -58667,6 +59348,14 @@ msgid "Missing %s%s%s component(s) of euler rotation for ID='%s' and RNA-Path='%
 msgstr "ID='%s' 與 RNA-Path='%s' 的尤拉旋轉遺失 %s%s%s 部份"
 
 
+msgid "Decimate Keyframes"
+msgstr "削減鍵幀"
+
+
+msgid "Decimate F-Curves by specifying how much they can deviate from the original curve"
+msgstr "利用指定偏離原始曲線的程度來削減函數曲線"
+
+
 msgid "Select Slot"
 msgstr "選取槽"
 
@@ -58869,10 +59558,6 @@ msgstr "無法分離節點"
 
 msgid "Can not add node '%s' in a group"
 msgstr "無法在群組中添加「%s」節點"
-
-
-msgid "LMB: drag node link, RMB: cancel"
-msgstr "左鼠鍵：拖曳節點連結，右鼠鍵：取消"
 
 
 msgid "Disconnect"
@@ -60175,6 +60860,50 @@ msgid "Settings are inside the Physics tab"
 msgstr "設定值位於物理分頁內"
 
 
+msgid "Bind data required"
+msgstr "需要綁定資料"
+
+
+msgid "Modifier requires more than 3 input faces"
+msgstr "修改器需要超過 3 個輸入面"
+
+
+msgid "Vertices changed from %d to %d"
+msgstr "頂點從 %d 變為 %d"
+
+
+msgid "Edges changed from %d to %d"
+msgstr "邊線從 %d 變為 %d"
+
+
+msgid "The system did not find a solution"
+msgstr "系統找不到解決方案"
+
+
+msgid "'Integrate' only valid for Mesh objects"
+msgstr "「整合」僅適用網格物體"
+
+
+msgid "'Integrate' original mesh vertex mismatch"
+msgstr "「整合」原始網格頂點不符"
+
+
+msgid "'Integrate' requires faces"
+msgstr "「整合」需要有面"
+
+
+msgid "Time Remapping"
+msgstr "時間重新映射"
+
+
+msgid "Cannot get mesh from cage object"
+msgstr "無法從罩體物體取得網格"
+
+
+msgid "Bind data missing"
+msgstr "綁定資料遺失"
+
+
 msgid "Coverage"
 msgstr "收斂"
 
@@ -60187,6 +60916,10 @@ msgid "Create Along Paths"
 msgstr "沿路徑建立"
 
 
+msgid "Hull error"
+msgstr "淘選錯誤"
+
+
 msgid "Outer"
 msgstr "外部"
 
@@ -60194,6 +60927,10 @@ msgstr "外部"
 msgctxt "Operator"
 msgid "Apply as Shape Key"
 msgstr "套用為外形鍵"
+
+
+msgid "Life"
+msgstr "生命"
 
 
 msgid "Global Influence:"
@@ -60857,7 +61594,7 @@ msgstr "未有指示"
 
 
 msgid "Can't append data-block '%s' of type '%s'"
-msgstr "無法追加「%s」資料塊，其類型為「%s」"
+msgstr "無法附加「%s」資料塊，其類型為「%s」"
 
 
 msgid "Can't link data-block '%s' of type '%s'"
@@ -61032,6 +61769,11 @@ msgid "Stereo 3D Mode requires the window to be fullscreen"
 msgstr "立體 3D 模式需要視窗變成全螢幕"
 
 
+msgctxt "WorkSpace"
+msgid "Masking"
+msgstr "遮罩"
+
+
 msgid "All Add-ons"
 msgstr "所有附加元件"
 
@@ -61086,6 +61828,10 @@ msgstr "芬蘭文 (Suomi)"
 
 msgid "Swedish (Svenska)"
 msgstr "瑞典文 (Svenska)"
+
+
+msgid "French (Français)"
+msgstr "法文 (Française)"
 
 
 msgid "Spanish (Español)"
@@ -61146,6 +61892,10 @@ msgstr "希臘文 (Ελληνικά)"
 
 msgid "Nepali (नेपाली)"
 msgstr "尼泊爾文 (नेपाली)"
+
+
+msgid "Persian (ﯽﺳﺭﺎﻓ)"
+msgstr "波斯文 (ﺱﺭﺎﻓ)"
 
 
 msgid "Indonesian (Bahasa indonesia)"

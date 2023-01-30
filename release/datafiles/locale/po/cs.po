@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -18780,10 +18780,6 @@ msgid "Use wave texture in rings"
 msgstr "Zobrazit materiál daného objektu"
 
 
-msgid "Vector Math"
-msgstr "Vektorová Matematika"
-
-
 msgid "Multiply Add"
 msgstr "Násobit Vše"
 
@@ -32654,6 +32650,10 @@ msgid "Visible Only"
 msgstr "Viditelné Pouze"
 
 
+msgid "Textures Directory"
+msgstr "Adresář textur"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Zavřít Okno"
@@ -35062,10 +35062,6 @@ msgstr "Adresář zvuků"
 
 msgid "Temporary Directory"
 msgstr "Dočasný adresář"
-
-
-msgid "Textures Directory"
-msgstr "Adresář textur"
 
 
 msgid "Auto Save Temporary Files"
@@ -38657,6 +38653,10 @@ msgid "Scene size"
 msgstr "Velikost scény"
 
 
+msgid "Show Overlays"
+msgstr "Zobrazit Překrytí"
+
+
 msgid "Separate Colors"
 msgstr "Oddělit"
 
@@ -38835,10 +38835,6 @@ msgstr "3D pohled:"
 
 msgid "Use Local Camera"
 msgstr "Použít Místní Kameru"
-
-
-msgid "Show Overlays"
-msgstr "Zobrazit Překrytí"
 
 
 msgid "Space UV Editor"
