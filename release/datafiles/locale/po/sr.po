@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'59ee5add1283')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 11:39:38\n"
+"POT-Creation-Date: 2023-01-30 08:45:14\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -20805,6 +20805,10 @@ msgid "UV Maps"
 msgstr "UV Мапе"
 
 
+msgid "Textures Directory"
+msgstr "Директоријум са текстурама"
+
+
 msgctxt "Operator"
 msgid "New World"
 msgstr "Нови свет"
@@ -21856,10 +21860,6 @@ msgstr "Основни директоријум са звуцима"
 
 msgid "The directory for storing temporary save files"
 msgstr "Директоријум за чување привремених датотека"
-
-
-msgid "Textures Directory"
-msgstr "Директоријум са текстурама"
 
 
 msgid "The default directory to search for textures"
