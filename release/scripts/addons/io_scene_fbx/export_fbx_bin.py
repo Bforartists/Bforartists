@@ -755,17 +755,19 @@ def fbx_data_mesh_shapes_elements(root, me_obj, me, scene_data, fbx_me_tmpl, fbx
 
     channels = []
 
+    vertices = me.vertices
     for shape, (channel_key, geom_key, shape_verts_co, shape_verts_idx) in shapes.items():
         # Use vgroups as weights, if defined.
         if shape.vertex_group and shape.vertex_group in me_obj.bdata.vertex_groups:
-            shape_verts_weights = [0.0] * (len(shape_verts_co) // 3)
+            shape_verts_weights = array.array(data_types.ARRAY_FLOAT64, [0.0]) * (len(shape_verts_co) // 3)
             vg_idx = me_obj.bdata.vertex_groups[shape.vertex_group].index
             for sk_idx, v_idx in enumerate(shape_verts_idx):
-                for vg in me.vertices[v_idx].groups:
+                for vg in vertices[v_idx].groups:
                     if vg.group == vg_idx:
                         shape_verts_weights[sk_idx] = vg.weight * 100.0
+                        break
         else:
-            shape_verts_weights = [100.0] * (len(shape_verts_co) // 3)
+            shape_verts_weights = array.array(data_types.ARRAY_FLOAT64, [100.0]) * (len(shape_verts_co) // 3)
         channels.append((channel_key, shape, shape_verts_weights))
 
         geom = elem_data_single_int64(root, b"Geometry", get_fbx_uuid_from_key(geom_key))
@@ -781,7 +783,8 @@ def fbx_data_mesh_shapes_elements(root, me_obj, me, scene_data, fbx_me_tmpl, fbx
         elem_data_single_int32_array(geom, b"Indexes", shape_verts_idx)
         elem_data_single_float64_array(geom, b"Vertices", shape_verts_co)
         if write_normals:
-            elem_data_single_float64_array(geom, b"Normals", [0.0] * len(shape_verts_co))
+            elem_data_single_float64_array(geom, b"Normals",
+                                           array.array(data_types.ARRAY_FLOAT64, [0.0]) * len(shape_verts_co))
 
     # Yiha! BindPose for shapekeys too! Dodecasigh...
     # XXX Not sure yet whether several bindposes on same mesh are allowed, or not... :/

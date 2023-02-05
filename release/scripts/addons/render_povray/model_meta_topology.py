@@ -270,7 +270,7 @@ def export_meta(file, metas, tab_write, DEF_MAT_NAME):
                 diffuse_color = material.diffuse_color
                 trans = 1.0 - material.pov.alpha
                 if material.pov.use_transparency and material.pov.transparency_method == 'RAYTRACE':
-                    pov_filter = material.pov_raytrace_transparency.filter * (1.0 - 
+                    pov_filter = material.pov_raytrace_transparency.filter * (1.0 -
                     material.pov.alpha)
                     trans = (1.0 - material.pov.alpha) - pov_filter
                 else:

@@ -336,7 +336,7 @@ class DATA_PT_rigify_actions(Panel):
             layout, context,
             class_name='RIGIFY_UL_action_slots',
             list_context_path='object.data.rigify_action_slots',
-            active_idx_context_path='object.data.rigify_active_action_slot',
+            active_index_context_path='object.data.rigify_active_action_slot',
         )
 
         if len(action_slots) == 0:

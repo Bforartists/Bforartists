@@ -5,7 +5,7 @@
  * \ingroup bke
  */
 
-#include "multires_reshape.h"
+#include "multires_reshape.hh"
 
 #include "MEM_guardedalloc.h"
 
@@ -104,7 +104,7 @@ struct LinearGrids {
   LinearGridElement *elements_storage;
 };
 
-/* Context which holds all information eeded during propagation and smoothing. */
+/* Context which holds all information needed during propagation and smoothing. */
 
 struct MultiresReshapeSmoothContext {
   const MultiresReshapeContext *reshape_context;
