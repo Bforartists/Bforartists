@@ -332,6 +332,7 @@ class GRAPH_MT_channel(Menu):
 
         layout.operator("anim.channels_editable_toggle", icon="LOCKED")
         layout.menu("GRAPH_MT_channel_extrapolation")
+        layout.operator_menu_enum("graph.fmodifier_add", "type", text="Add F-Curve Modifier").only_active = False
 
         layout.separator()
 

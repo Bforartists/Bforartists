@@ -4421,6 +4421,11 @@ def km_weight_paint_vertex_selection(params):
         ("view3d.select_lasso", {"type": params.action_mouse, "value": 'CLICK_DRAG', "shift": True, "ctrl": True},
          {"properties": [("mode", 'SUB')]}),
         ("view3d.select_circle", {"type": 'C', "value": 'PRESS'}, None),
+        ("paint.vert_select_linked", {"type": 'L', "value": 'PRESS', "ctrl": True}, None),
+        ("paint.vert_select_linked_pick", {"type": 'L', "value": 'PRESS'},
+         {"properties": [("select", True)]}),
+        ("paint.vert_select_linked_pick", {"type": 'L', "value": 'PRESS', "shift": True},
+         {"properties": [("select", False)]}),
     ])
 
     return keymap
@@ -5048,7 +5053,7 @@ def km_sculpt(params):
          {"properties": [
              ("target", "MASK"),
              ("falloff_type", "GEODESIC"),
-             ("invert", True),
+             ("invert", False),
              ("use_auto_mask", False),
              ("use_mask_preserve", True),
          ]}),
@@ -6281,7 +6286,7 @@ def km_sculpt_expand_modal(_params):
         ("MOVE_TOGGLE", {"type": 'SPACE', "value": 'ANY', "any": True}, None),
         *((e, {"type": NUMBERS_1[i], "value": 'PRESS', "any": True}, None) for i, e in enumerate(
             ("FALLOFF_GEODESICS", "FALLOFF_TOPOLOGY", "FALLOFF_TOPOLOGY_DIAGONALS", "FALLOFF_SPHERICAL"))),
-        *((e, {"type": "NUMPAD_%i" % (i+1), "value": 'PRESS', "any": True}, None) for i, e in enumerate(
+        *((e, {"type": "NUMPAD_%i" % (i + 1), "value": 'PRESS', "any": True}, None) for i, e in enumerate(
             ("FALLOFF_GEODESICS", "FALLOFF_TOPOLOGY", "FALLOFF_TOPOLOGY_DIAGONALS", "FALLOFF_SPHERICAL"))),
         ("SNAP_TOGGLE", {"type": 'LEFT_CTRL', "value": 'ANY'}, None),
         ("SNAP_TOGGLE", {"type": 'RIGHT_CTRL', "value": 'ANY'}, None),
@@ -6312,6 +6317,25 @@ def km_curve_pen_modal_map(_params):
 
     return keymap
 
+
+def km_node_link_modal_map(_params):
+    items = []
+    keymap = (
+        "Node Link Modal Map",
+        {"space_type": 'EMPTY', "region_type": 'WINDOW', "modal": True},
+        {"items": items},
+    )
+
+    items.extend([
+        ("BEGIN", {"type": 'LEFTMOUSE', "value": 'PRESS', "any": True}, None),
+        ("CONFIRM", {"type": 'LEFTMOUSE', "value": 'RELEASE', "any": True}, None),
+        ("CANCEL", {"type": 'RIGHTMOUSE', "value": 'PRESS', "any": True}, None),
+        ("CANCEL", {"type": 'ESC', "value": 'PRESS', "any": True}, None),
+        ("SWAP", {"type": 'LEFT_ALT', "value": 'ANY', "any": True}, None),
+        ("SWAP", {"type": 'RIGHT_ALT', "value": 'ANY', "any": True}, None),
+    ])
+
+    return keymap
 
 # Fallback for gizmos that don't have custom a custom key-map.
 def km_generic_gizmo(_params):
@@ -8082,6 +8106,7 @@ def generate_keymaps(params=None):
         km_paint_stroke_modal(params),
         km_sculpt_expand_modal(params),
         km_curve_pen_modal_map(params),
+        km_node_link_modal_map(params),
 
         # Gizmos.
         km_generic_gizmo(params),

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 """
 This script is to validate the WIKI page that documents Blender's file-structure, see:
 

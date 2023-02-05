@@ -2261,6 +2261,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.separator()
 
         layout.operator("paint.vert_select_ungrouped", text="Ungrouped Vertices", icon="SELECT_UNGROUPED_VERTS")
+        layout.operator("paint.vert_select_linked", text="Select Linked")
 
 
 class VIEW3D_MT_select_edit_curves(Menu):
@@ -2471,6 +2472,7 @@ class VIEW3D_MT_camera_add(Menu):
 class VIEW3D_MT_volume_add(Menu):
     bl_idname = "VIEW3D_MT_volume_add"
     bl_label = "Volume"
+    bl_translation_context = i18n_contexts.id_id
 
     def draw(self, _context):
         layout = self.layout
@@ -7250,14 +7252,15 @@ class VIEW3D_PT_shading_compositor(Panel):
     def draw(self, context):
         shading = context.space_data.shading
 
-        import sys
-        is_macos = sys.platform == "darwin"
+        import gpu
+        is_supported = (gpu.capabilities.compute_shader_support_get()
+                        and gpu.capabilities.shader_image_load_store_support_get())
 
         row = self.layout.row()
-        row.active = not is_macos
+        row.active = is_supported
         row.prop(shading, "use_compositor", expand=True)
-        if is_macos and shading.use_compositor != "DISABLED":
-            self.layout.label(text="Compositor not supported on MacOS", icon='ERROR')
+        if shading.use_compositor != "DISABLED" and not is_supported:
+            self.layout.label(text="Compositor not supported on this platform", icon='ERROR')
 
 
 class VIEW3D_PT_gizmo_display(Panel):
@@ -7387,7 +7390,7 @@ class VIEW3D_PT_overlay_guides(Panel):
         col.prop(overlay, "show_ortho_grid")
         col = split.column()
         if overlay.show_ortho_grid:
-            col.prop(overlay, "show_floor", text="Floor")
+            col.prop(overlay, "show_floor", text="Floor", text_ctxt=i18n_contexts.editor_view3d)
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
 
