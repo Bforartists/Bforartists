@@ -1163,17 +1163,17 @@ static int mesh_tessface_calc(Mesh &mesh,
   CustomData_add_layer(fdata, CD_ORIGINDEX, CD_ASSIGN, mface_to_poly_map, totface);
   add_mface_layers(mesh, fdata, ldata, totface);
 
-  /* NOTE: quad detection issue - fourth vertidx vs fourth loopidx:
+  /* NOTE: quad detection issue - fourth vertex-index vs fourth loop-index:
    * Polygons take care of their loops ordering, hence not of their vertices ordering.
    * Currently, our tfaces' fourth vertex index might be 0 even for a quad.
    * However, we know our fourth loop index is never 0 for quads
    * (because they are sorted for polygons, and our quads are still mere copies of their polygons).
-   * So we pass nullptr as MFace pointer, and #mesh_loops_to_tessdata
+   * So we pass nullptr as #MFace pointer, and #mesh_loops_to_tessdata
    * will use the fourth loop index as quad test. */
   mesh_loops_to_tessdata(fdata, ldata, nullptr, mface_to_poly_map, lindices, totface);
 
-  /* NOTE: quad detection issue - fourth vertidx vs fourth loopidx:
-   * ...However, most TFace code uses 'MFace->v4 == 0' test to check whether it is a tri or quad.
+  /* NOTE: quad detection issue - fourth vert-index vs fourth loop-index:
+   * ...However, most #TFace code uses `MFace->v4 == 0` test to check whether it is a tri or quad.
    * BKE_mesh_mface_index_validate() will check this and rotate the tessellated face if needed.
    */
 #ifdef USE_TESSFACE_QUADS
@@ -1228,12 +1228,19 @@ void BKE_mesh_legacy_face_set_from_generic(Mesh *mesh,
                                            blender::MutableSpan<CustomDataLayer> poly_layers)
 {
   using namespace blender;
+  void *faceset_data = nullptr;
   for (CustomDataLayer &layer : poly_layers) {
     if (StringRef(layer.name) == ".sculpt_face_set") {
-      layer.type = CD_SCULPT_FACE_SETS;
+      faceset_data = layer.data;
+      layer.data = nullptr;
+      CustomData_free_layer_named(&mesh->pdata, ".sculpt_face_set", mesh->totpoly);
+      break;
     }
   }
-  CustomData_update_typemap(&mesh->pdata);
+  if (faceset_data != nullptr) {
+    CustomData_add_layer(
+        &mesh->pdata, CD_SCULPT_FACE_SETS, CD_ASSIGN, faceset_data, mesh->totpoly);
+  }
 }
 
 void BKE_mesh_legacy_face_set_to_generic(Mesh *mesh)
@@ -1242,13 +1249,19 @@ void BKE_mesh_legacy_face_set_to_generic(Mesh *mesh)
   if (mesh->attributes().contains(".sculpt_face_set")) {
     return;
   }
-  for (CustomDataLayer &layer : MutableSpan(mesh->pdata.layers, mesh->pdata.totlayer)) {
-    if (layer.type == CD_SCULPT_FACE_SETS) {
-      BLI_strncpy(layer.name, ".sculpt_face_set", sizeof(layer.name));
-      layer.type = CD_PROP_INT32;
+  void *faceset_data = nullptr;
+  for (const int i : IndexRange(mesh->pdata.totlayer)) {
+    if (mesh->pdata.layers[i].type == CD_SCULPT_FACE_SETS) {
+      faceset_data = mesh->pdata.layers[i].data;
+      mesh->pdata.layers[i].data = nullptr;
+      CustomData_free_layer(&mesh->pdata, CD_SCULPT_FACE_SETS, mesh->totpoly, i);
+      break;
     }
   }
-  CustomData_update_typemap(&mesh->pdata);
+  if (faceset_data != nullptr) {
+    CustomData_add_layer_named(
+        &mesh->pdata, CD_PROP_INT32, CD_ASSIGN, faceset_data, mesh->totpoly, ".sculpt_face_set");
+  }
 }
 
 /** \} */

@@ -60,7 +60,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
         ('layer_navigator', 'Layer Navigator', 'Layer Navigation tool shortcut and prefs', 3),
         ),
     )
-    
+
     # --- props
 
     use_clic_drag : BoolProperty(
@@ -153,7 +153,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
 
             row = layout.row(align=True)
             row.prop(self, "pref_tab", expand=True)
-            
+
             if self.pref_tab == 'box_deform':
 
                 ## BOX DEFORM
@@ -213,7 +213,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 ## SCRUB TIMELINE
                 box = layout.box()
                 draw_ts_pref(prefs.ts, box)
-            
+
             if self.pref_tab == 'layer_navigator':
                 ## LAYER NAVIGATOR
                 box = layout.box()
