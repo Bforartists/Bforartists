@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 import bpy
 import blf, gpu
 import math
@@ -14,7 +16,7 @@ from .prefs import get_addon_prefs
 def rectangle_tris_from_coords(quad_list):
     '''Get a list of Vector corner for a triangle
     return a list of TRI for gpu drawing'''
-    return [           
+    return [
             # tri 1
             quad_list[0],
             quad_list[1],
@@ -26,9 +28,9 @@ def rectangle_tris_from_coords(quad_list):
         ]
 
 def round_to_ceil_even(f):
-  if (math.floor(f) % 2 == 0): 
+  if (math.floor(f) % 2 == 0):
     return math.floor(f)
-  else: 
+  else:
     return math.floor(f) + 1
 
 def move_layer_to_index(l, idx):
@@ -89,7 +91,7 @@ def draw_callback_px(self, context):
     opacity_bars = []
     active_case = []
     active_width = float(round_to_ceil_even(4.0 * context.preferences.system.ui_scale))
-    
+
     ## tex icon store
     icons = {'locked':[],'unlocked':[], 'hide_off':[], 'hide_on':[]}
 
@@ -119,7 +121,7 @@ def draw_callback_px(self, context):
 
             # Apply offset to line tips
             active_case = [v + offset for v, offset in zip(flattened_line_pairs, case_px_offsets)]
-            
+
 
         lock_coord = corner + Vector((self.px_w - self.icons_margin_a, self.mid_height - int(self.icon_size / 2)))
 
@@ -182,7 +184,7 @@ def draw_callback_px(self, context):
     ## line color (static)
     shader.uniform_float("color", self.lines_color)
     self.batch_lines.draw(shader)
-    
+
     ## "Plus" lines
     if self.gpl.active_index == 0:
         plus_lines = self.plus_lines[:8]
@@ -309,7 +311,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         self.id_src = self.click_src = None
 
         ## Structure:
-        # 
+        #
         #  ---  <-- top
         # |   |
         #  ---
@@ -365,7 +367,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             ## define index ranges
             self.ranges.append((y_coord, y_coord + self.px_h))
 
-        ## add boxes 
+        ## add boxes
         box = [
             Vector((0, 0)),
             Vector((self.add_box, 0)),
@@ -382,7 +384,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             Vector((mid, marg)), Vector((mid, marg + plus_length)),
             Vector((marg, mid)), Vector((marg + plus_length, mid)),
         ]
-        
+
         self.plus_lines = []
         for i in range(len(self.gpl) + 1):
             height = self.bottom - self.add_box + (i * self.px_h)
@@ -452,7 +454,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         self.left_handed = prefs.left_handed
         self.icons_margin_a = int(30 * ui_scale)
         self.icons_margin_b = int(54 * ui_scale)
-        
+
         self.opacity_slider_length = int(self.px_w * 72 / 100) # As width's percentage
         # self.opacity_slider_length = self.px_w # Full width
 
@@ -461,11 +463,11 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         ret = self.setup(context)
         if ret is not None:
             return ret
-        
+
         self.current_area = context.area
         wm = context.window_manager
         args = (self, context)
-        
+
         self.store_settings(context)
 
         self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
@@ -522,7 +524,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                         ## bottom layer, need to get down by one
                         # bpy.ops.gpencil.layer_move(type='DOWN')
                         self.gpl.move(nl, type='DOWN')
-                    
+
                     # return True # Stop the modal when a new layer is created
 
                     ## Reset pop-up
@@ -804,7 +806,7 @@ def draw_keymap_ui_custom(km, kmi, layout):
 
             if map_type == 'KEYBOARD':
                 subrow.prop(kmi, "type", text="", event=True)
-                
+
                 ## Hide value (Should always be Press)
                 # subrow.prop(kmi, "value", text="")
 
@@ -820,7 +822,7 @@ def draw_keymap_ui_custom(km, kmi, layout):
             if map_type in {'KEYBOARD', 'MOUSE'} and kmi.value == 'CLICK_DRAG':
                 subrow = sub.row()
                 subrow.prop(kmi, "direction")
-            
+
             sub = box.column()
             subrow = sub.row()
             subrow.scale_x = 0.75
@@ -835,7 +837,7 @@ def draw_keymap_ui_custom(km, kmi, layout):
                 subrow.prop(kmi, "ctrl", toggle=True)
                 subrow.prop(kmi, "alt", toggle=True)
                 subrow.prop(kmi, "oskey", text="Cmd", toggle=True)
-            
+
             subrow.prop(kmi, "key_modifier", text="", event=True)
 
 def draw_nav_pref(prefs, layout):
@@ -857,7 +859,7 @@ def draw_nav_pref(prefs, layout):
 
     layout.separator()
     layout.label(text='Keymap:')
-    
+
 
     for akm, akmi in addon_keymaps:
         km = bpy.context.window_manager.keyconfigs.user.keymaps.get(akm.name)
@@ -866,7 +868,7 @@ def draw_nav_pref(prefs, layout):
         kmi = km.keymap_items.get(akmi.idname)
         if not kmi:
             continue
-        
+
         draw_keymap_ui_custom(km, kmi, layout)
         # draw_kmi_custom(km, kmi, box)
 

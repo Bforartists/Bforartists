@@ -17,16 +17,16 @@ class GenericUIListOperator(Operator):
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     list_context_path: StringProperty()
-    active_idx_context_path: StringProperty()
+    active_index_context_path: StringProperty()
 
     def get_list(self, context):
         return get_context_attr(context, self.list_context_path)
 
     def get_active_index(self, context):
-        return get_context_attr(context, self.active_idx_context_path)
+        return get_context_attr(context, self.active_index_context_path)
 
     def set_active_index(self, context, index):
-        set_context_attr(context, self.active_idx_context_path, index)
+        set_context_attr(context, self.active_index_context_path, index)
 
 
 # noinspection PyPep8Naming
@@ -103,7 +103,7 @@ class UILIST_OT_entry_move(GenericUIListOperator):
 def draw_ui_list(
         layout, context, class_name="UI_UL_list", *,
         list_context_path: str,  # Eg. "object.vertex_groups".
-        active_idx_context_path: str,  # Eg., "object.vertex_groups.active_index".
+        active_index_context_path: str,  # Eg., "object.vertex_groups.active_index".
         insertion_operators=True,
         move_operators=True,
         menu_class_name="",
@@ -117,8 +117,8 @@ def draw_ui_list(
 
     list_owner = get_context_attr(context, ".".join(list_context_path.split(".")[:-1]))
     list_prop_name = list_context_path.split(".")[-1]
-    idx_owner = get_context_attr(context, ".".join(active_idx_context_path.split(".")[:-1]))
-    idx_prop_name = active_idx_context_path.split(".")[-1]
+    idx_owner = get_context_attr(context, ".".join(active_index_context_path.split(".")[:-1]))
+    idx_prop_name = active_index_context_path.split(".")[-1]
 
     my_list = get_context_attr(context, list_context_path)
 
@@ -136,13 +136,13 @@ def draw_ui_list(
     if insertion_operators:
         add_op = col.operator(UILIST_OT_entry_add.bl_idname, text="", icon='ADD')
         add_op.list_context_path = list_context_path
-        add_op.active_idx_context_path = active_idx_context_path
+        add_op.active_index_context_path = active_index_context_path
 
         row = col.row()
         row.enabled = len(my_list) > 0
         remove_op = row.operator(UILIST_OT_entry_remove.bl_idname, text="", icon='REMOVE')
         remove_op.list_context_path = list_context_path
-        remove_op.active_idx_context_path = active_idx_context_path
+        remove_op.active_index_context_path = active_index_context_path
 
         col.separator()
 
@@ -156,12 +156,12 @@ def draw_ui_list(
         move_up_op = col.operator(UILIST_OT_entry_move.bl_idname, text="", icon='TRIA_UP')
         move_up_op.direction = 'UP'
         move_up_op.list_context_path = list_context_path
-        move_up_op.active_idx_context_path = active_idx_context_path
+        move_up_op.active_index_context_path = active_index_context_path
 
         move_down_op = col.operator(UILIST_OT_entry_move.bl_idname, text="", icon='TRIA_DOWN')
         move_down_op.direction = 'DOWN'
         move_down_op.list_context_path = list_context_path
-        move_down_op.active_idx_context_path = active_idx_context_path
+        move_down_op.active_index_context_path = active_index_context_path
 
     # Return the right-side column.
     return col
