@@ -1,4 +1,4 @@
-keyconfig_version = (3, 5, 3)
+keyconfig_version = (3, 5, 8)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1458,6 +1458,63 @@ keyconfig_data = \
      {"type": 'D', "value": 'PRESS'},
      {"properties":
       [("name", 'builtin.select'),
+       ],
+      },
+     ),
+    ],
+   },
+  ),
+ ("Curves",
+  {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+  {"items":
+   [("curves.set_selection_domain",
+     {"type": 'ONE', "value": 'PRESS'},
+     {"properties":
+      [("domain", 'POINT'),
+       ],
+      },
+     ),
+    ("curves.set_selection_domain",
+     {"type": 'TWO', "value": 'PRESS'},
+     {"properties":
+      [("domain", 'CURVE'),
+       ],
+      },
+     ),
+    ("curves.disable_selection", {"type": 'ONE', "value": 'PRESS', "alt": True}, None),
+    ("curves.disable_selection", {"type": 'TWO', "value": 'PRESS', "alt": True}, None),
+    ("curves.select_all",
+     {"type": 'A', "value": 'PRESS'},
+     {"properties":
+      [("action", 'SELECT'),
+       ],
+      },
+     ),
+    ("curves.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("curves.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
+    ("curves.select_all",
+     {"type": 'A', "value": 'DOUBLE_CLICK'},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("curves.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
        ],
       },
      ),
