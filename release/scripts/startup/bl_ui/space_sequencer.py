@@ -1921,17 +1921,17 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
         frame_offset_end = strip.frame_offset_end
 
         length_list = (
-            str(round(frame_start, 0)),
-            str(round(frame_final_end, 0)),
-            str(round(frame_final_duration, 0)),
-            str(round(frame_offset_start, 0)),
-            str(round(frame_offset_end, 0)),
+            str(frame_start),
+            str(frame_final_end),
+            str(frame_final_duration),
+            str(frame_offset_start),
+            str(frame_offset_end),
         )
 
         if not is_effect:
             length_list = length_list + (
-                str(round(strip.animation_offset_start, 0)),
-                str(round(strip.animation_offset_end, 0)),
+                str(strip.animation_offset_start),
+                str(strip.animation_offset_end),
             )
 
         max_length = max(len(x) for x in length_list)
@@ -2713,7 +2713,7 @@ class SEQUENCER_PT_annotation_onion(AnnotationOnionSkin, SequencerButtonsPanel_O
 
 
 class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH', 'BLENDER_WORKBENCH_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     _context_path = "active_sequence_strip"
     _property_type = (bpy.types.Sequence,)
     bl_category = "Strip"
@@ -2750,8 +2750,11 @@ class SEQUENCER_PT_snapping(Panel):
         row.separator()
         row.prop(sequencer_tool_settings, "snap_ignore_sound",text="Sound Strips")
 
-        col = layout.column(heading="Current Frame", align=True)
-        col.prop(sequencer_tool_settings, "use_snap_current_frame_to_strips", text="Snap to Strips")
+        col = layout.column(align = True)
+        col.label(text = "Current Frame")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "use_snap_current_frame_to_strips", text="Snap to Strips")
 
 
 class SEQUENCER_PT_view_options(bpy.types.Panel):
