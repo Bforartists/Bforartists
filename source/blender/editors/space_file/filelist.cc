@@ -2233,46 +2233,40 @@ static bool filelist_file_cache_block_create(FileList *filelist,
 {
   FileListEntryCache *cache = &filelist->filelist_cache;
 
-  {
-    int i, idx;
+  int i, idx;
 
-    for (i = 0, idx = start_index; i < size; i++, idx++, cursor++) {
-      FileDirEntry *entry;
+  for (i = 0, idx = start_index; i < size; i++, idx++, cursor++) {
+    FileDirEntry *entry;
 
-      /* That entry might have already been requested and stored in misc cache... */
-      if ((entry = static_cast<FileDirEntry *>(BLI_ghash_popkey(
-               cache->misc_entries, POINTER_FROM_INT(idx), nullptr))) == nullptr) {
-        entry = filelist_file_create_entry(filelist, idx);
-        BLI_ghash_insert(cache->uids, POINTER_FROM_UINT(entry->uid), entry);
-      }
-      cache->block_entries[cursor] = entry;
+    /* That entry might have already been requested and stored in misc cache... */
+    if ((entry = static_cast<FileDirEntry *>(
+             BLI_ghash_popkey(cache->misc_entries, POINTER_FROM_INT(idx), nullptr))) == nullptr) {
+      entry = filelist_file_create_entry(filelist, idx);
+      BLI_ghash_insert(cache->uids, POINTER_FROM_UINT(entry->uid), entry);
     }
-    return true;
+    cache->block_entries[cursor] = entry;
   }
-
-  return false;
+  return true;
 }
 
 static void filelist_file_cache_block_release(FileList *filelist, const int size, int cursor)
 {
   FileListEntryCache *cache = &filelist->filelist_cache;
 
-  {
-    int i;
+  int i;
 
-    for (i = 0; i < size; i++, cursor++) {
-      FileDirEntry *entry = cache->block_entries[cursor];
+  for (i = 0; i < size; i++, cursor++) {
+    FileDirEntry *entry = cache->block_entries[cursor];
 #if 0
       printf("%s: release cacheidx %d (%%p %%s)\n",
              __func__,
              cursor /*, cache->block_entries[cursor], cache->block_entries[cursor]->relpath*/);
 #endif
-      BLI_ghash_remove(cache->uids, POINTER_FROM_UINT(entry->uid), nullptr, nullptr);
-      filelist_file_release_entry(filelist, entry);
+    BLI_ghash_remove(cache->uids, POINTER_FROM_UINT(entry->uid), nullptr, nullptr);
+    filelist_file_release_entry(filelist, entry);
 #ifndef NDEBUG
-      cache->block_entries[cursor] = nullptr;
+    cache->block_entries[cursor] = nullptr;
 #endif
-    }
   }
 }
 
@@ -2983,7 +2977,7 @@ static int filelist_readjob_list_dir(FileListReadJob *job_params,
       entry->relpath = current_relpath_append(job_params, files[i].relname);
       entry->st = files[i].s;
 
-      BLI_path_join(full_path, FILE_MAX, root, entry->relpath);
+      BLI_path_join(full_path, FILE_MAX, root, files[i].relname);
       char *target = full_path;
 
       /* Set initial file type and attributes. */

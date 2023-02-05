@@ -984,6 +984,7 @@ class SEQUENCER_MT_strip(Menu):
 
         if strip and strip.type == 'SCENE':
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon='DELETE_DUPLICATE').delete_data = True
+            layout.operator("sequencer.scene_frame_range_update")
 
         layout.separator()
         layout.menu("SEQUENCER_MT_change")
@@ -1115,6 +1116,7 @@ class SEQUENCER_MT_context_menu(Menu):
         strip = context.active_sequence_strip
         if strip and strip.type == 'SCENE':
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon='DELETE_DUPLICATE').delete_data = True
+            layout.operator("sequencer.scene_frame_range_update")
 
         layout.separator()
         layout.menu("SEQUENCER_MT_change")
@@ -2071,7 +2073,7 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
 
             split = col.split(factor=0.4)
             split.alignment = 'RIGHT'
-            split.label(text="Pan")
+            split.label(text="Pan", heading_ctxt=i18n_contexts.id_sound)
             split.prop(strip, "pan", text="")
             split.enabled = pan_enabled
 
