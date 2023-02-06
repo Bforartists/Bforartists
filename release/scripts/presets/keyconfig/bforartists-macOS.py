@@ -1468,21 +1468,19 @@ keyconfig_data = \
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
    [("curves.set_selection_domain",
-     {"type": 'ONE', "value": 'PRESS'},
+     {"type": 'ONE', "value": 'RELEASE', "alt": True},
      {"properties":
       [("domain", 'POINT'),
        ],
       },
      ),
     ("curves.set_selection_domain",
-     {"type": 'TWO', "value": 'PRESS'},
+     {"type": 'TWO', "value": 'RELEASE', "alt": True},
      {"properties":
       [("domain", 'CURVE'),
        ],
       },
      ),
-    ("curves.disable_selection", {"type": 'ONE', "value": 'PRESS', "alt": True}, None),
-    ("curves.disable_selection", {"type": 'TWO', "value": 'PRESS', "alt": True}, None),
     ("curves.select_all",
      {"type": 'A', "value": 'PRESS'},
      {"properties":
