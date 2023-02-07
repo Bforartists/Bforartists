@@ -5209,10 +5209,10 @@ static EnumPropertyItem prop_edge_similar_types[] = {
 static EnumPropertyItem prop_face_similar_types[] = {
     {UV_SSIM_AREA_UV, "AREA", ICON_AREA, "Area", ""},
     {UV_SSIM_AREA_3D, "AREA_3D", ICON_AREA, "Area 3D", ""},
-    {UV_SSIM_MATERIAL, "MATERIAL", 0, "Material", ""},
-    {UV_SSIM_OBJECT, "OBJECT", 0, "Object", ""},
+    {UV_SSIM_MATERIAL, "MATERIAL", ICON_MATERIAL_DATA, "Material", ""},
+    {UV_SSIM_OBJECT, "OBJECT", ICON_OBJECT_DATA, "Object", ""},
     {UV_SSIM_SIDES, "SIDES", ICON_SELECT_FACES_BY_SIDE, "Polygon Sides", ""},
-    {UV_SSIM_WINDING, "WINDING", ICON_MATERIAL_DATA, "Winding", ""},
+    {UV_SSIM_WINDING, "WINDING", ICON_WINDING, "Winding", ""},
     {0}};
 
 static EnumPropertyItem prop_island_similar_types[] = {
