@@ -1713,7 +1713,7 @@ con_splineik
 con_stretchto
 con_trackto
 
-#~ DEF_ICON_BLANK(1746)
+winding
 #~ DEF_ICON_BLANK(1747)
 #~ DEF_ICON_BLANK(1748)
 #~ DEF_ICON_BLANK(1749)
