@@ -1509,13 +1509,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("curves.select_all",
-     {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True},
-     {"properties":
-      [("action", 'INVERT'),
-       ],
-      },
-     ),
     ],
    },
   ),
