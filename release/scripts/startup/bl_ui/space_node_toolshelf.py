@@ -4604,7 +4604,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceNeighbors"
 
-            props = col.operator("node.add_node", text=" Face Set Boundaries ", icon = "SELECT_BOUNDARY")
+            props = col.operator("node.add_node", text=" Face Group Boundaries ", icon = "SELECT_BOUNDARY")
             props.use_transform = True
             props.type = "GeometryNodeMeshFaceSetBoundaries"
 
