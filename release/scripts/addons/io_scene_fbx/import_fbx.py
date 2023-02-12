@@ -3154,7 +3154,7 @@ def load(operator, context, filepath="",
                         # Intensity actually, not color...
                         ma_wrap.metallic_texture.image = image
                         texture_mapping_set(fbx_lnk, ma_wrap.metallic_texture)
-                    elif lnk_type in {b'TransparentColor', b'TransparentFactor'}:
+                    elif lnk_type in {b'TransparentColor', b'TransparencyFactor'}:
                         ma_wrap.alpha_texture.image = image
                         texture_mapping_set(fbx_lnk, ma_wrap.alpha_texture)
                         if use_alpha_decals:
