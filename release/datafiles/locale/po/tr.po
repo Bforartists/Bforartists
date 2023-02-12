@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-30 08:45:14\n"
-"PO-Revision-Date: 2023-01-11 01:00+0300\n"
+"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"PO-Revision-Date: 2023-02-05 22:00+0300\n"
 "Last-Translator: Emir SARI <emir_sari@îcloud.com>\n"
 "Language-Team: Turkish <>\n"
 "Language: tr\n"
@@ -1838,11 +1838,11 @@ msgstr "2. Tutaç seçim durumu"
 
 
 msgid "Tilt"
-msgstr "Kaydır"
+msgstr "Yana Yatır"
 
 
 msgid "Tilt in 3D View"
-msgstr "3B Görünümde Kaydır"
+msgstr "3B Görünümde Yana Yatır"
 
 
 msgid "Weight"
@@ -3407,40 +3407,752 @@ msgid "Inherit End Roll"
 msgstr "Bitiş Rulosunu Devral"
 
 
+msgid "Add Roll Out of the Start Handle bone to the Roll In value"
+msgstr "İçe Yuvarla değerine Başlangıç Tutacı kemiğinin Dışa Yuvarla'sını ekle"
+
+
+msgid "Multiply Vertex Group with Envelope"
+msgstr "Tepecik Grubunu Zarfla Çarp"
+
+
+msgid "When deforming bone, multiply effects of Vertex Group weights with Envelope influence"
+msgstr "Kemiği deforme ederken, Tepecik Grubu ağırlıklarının efektlerini Zarf etkisiyle çarp"
+
+
+msgid "Inherit Rotation"
+msgstr "Döndürmeyi Devral"
+
+
+msgid "Bone inherits rotation or scale from parent bone"
+msgstr "Kemik, üst kemikten döndürmeyi veya ölçeği devralır"
+
+
+msgid "DEPRECATED: Bone inherits scaling from parent bone"
+msgstr "KULLANILMIYOR: Kemik, üst kemikten ölçeklemeyi devralır"
+
+
+msgid "Local Location"
+msgstr "Yerel Konum"
+
+
+msgid "Bone location is set in local space"
+msgstr "Kemik konumu yerel uzayda ayarlı"
+
+
+msgid "Relative Parenting"
+msgstr "Göreceli Üst Ögeler"
+
+
+msgid "Object children will use relative transform, like deform"
+msgstr "Nesne alt ögeleri, göreceli dönüşüm kullanır, deforme gibi"
+
+
 msgid "Scale Easing"
 msgstr "Ölçek Yavaşlatma"
+
+
+msgid "Multiply the final easing values by the Scale In/Out Y factors"
+msgstr "Son yavaşlatma değerlerini İçe/Dışa Ölçekle Y çarpanlarıyla çarp"
+
+
+msgid "Bone Group"
+msgstr "Kemik Grubu"
+
+
+msgid "Groups of Pose Channels (Bones)"
+msgstr "Poz Kanallarının Grupları (Kemikler)"
+
+
+msgid "Bone Groups"
+msgstr "Kemik Grupları"
+
+
+msgid "Collection of bone groups"
+msgstr "Kemik grupları koleksiyonu"
+
+
+msgid "Active Bone Group"
+msgstr "Etkin Kemik Grubu"
+
+
+msgid "Active bone group for this pose"
+msgstr "Bu poz için olan etkin kemik grubu"
+
+
+msgid "Active Bone Group Index"
+msgstr "Etkin Kemik Grubu İndeksi"
+
+
+msgid "Active index in bone groups array"
+msgstr "Kemik grupları dizilimindeki etkin indeks"
+
+
+msgid "Bool Attribute Value"
+msgstr "Boole Öznitelik Değeri"
+
+
+msgid "Bool value in geometry attribute"
+msgstr "Geometri özniteliğinde Boole değeri"
+
+
+msgid "Brush Capabilities"
+msgstr "Fırça Yetenekleri"
+
+
+msgid "Read-only indications of supported operations"
+msgstr "Desteklenen işlemlerin saltokunur göstergeleri"
+
+
+msgid "Has Overlay"
+msgstr "Kaplaması Var"
+
+
+msgid "Has Random Texture Angle"
+msgstr "Rastgele Doku Açısı Var"
+
+
+msgid "Has Smooth Stroke"
+msgstr "Pürüzsüz Vuruş Var"
+
+
+msgid "Has Spacing"
+msgstr "Boşluklandırma Var"
+
+
+msgid "Image Paint Capabilities"
+msgstr "Görsel Boyama Yetenekleri"
+
+
+msgid "Has Accumulate"
+msgstr "Birikim Var"
+
+
+msgid "Has Color"
+msgstr "Renk Var"
+
+
+msgid "Has Radius"
+msgstr "Yarıçap Var"
+
+
+msgid "Has Space Attenuation"
+msgstr "Uzay Söndürmesi Var"
+
+
+msgid "Sculpt Capabilities"
+msgstr "Yontma Yetenekleri"
+
+
+msgid "Read-only indications of which brush operations are supported by the current sculpt tool"
+msgstr "Geçerli yontma aracı tarafından hangi fırça işlemlerinin desteklendiğini gösteren saltokunur göstergeler"
+
+
+msgid "Has Auto Smooth"
+msgstr "Otomatik Pürüzsüzleştirme Var"
+
+
+msgid "Has Direction"
+msgstr "Yön Var"
+
+
+msgid "Has Gravity"
+msgstr "Yerçekimi Var"
+
+
+msgid "Has Height"
+msgstr "Yükseklik Var"
+
+
+msgid "Has Jitter"
+msgstr "Seğirme Var"
+
+
+msgid "Has Crease/Pinch Factor"
+msgstr "Buruşma/Çimdik Etmeni Var"
+
+
+msgid "Has Persistence"
+msgstr "Kalıcılık Var"
+
+
+msgid "Has Pinch Factor"
+msgstr "Çimdik Etmeni Var"
+
+
+msgid "Has Plane Offset"
+msgstr "Düzlem Ofseti Var"
+
+
+msgid "Has Rake Factor"
+msgstr "Tırmık Etmeni Var"
+
+
+msgid "Has Sculpt Plane"
+msgstr "Yontma Düzlemi Var"
+
+
+msgid "Has Secondary Color"
+msgstr "İkincil Renk Var"
+
+
+msgid "Has Strength Pressure"
+msgstr "Güç Basıncı Var"
+
+
+msgid "Has Tilt"
+msgstr "Yana Yatırma Var"
+
+
+msgid "Has Topology Rake"
+msgstr "İlinge Tırmığı Var"
+
+
+msgid "Vertex Paint Capabilities"
+msgstr "Tepecik Boyama Yetenekleri"
+
+
+msgid "Weight Paint Capabilities"
+msgstr "Ağırlık Boyama Yetenekleri"
+
+
+msgid "Has Weight"
+msgstr "Ağırlık Var"
+
+
+msgid "Curves Sculpt Brush Settings"
+msgstr "Eğri Yontma Fırçası Ayarları"
+
+
+msgid "Count"
+msgstr "Sayım"
+
+
+msgid "Number of curves added by the Add brush"
+msgstr "'Fırça ekle' tarafından eklenen eğrilerin sayısı"
+
+
+msgid "Curve Length"
+msgstr "Eğri Uzunluğu"
+
+
+msgid "Length of newly added curves when it is not interpolated from other curves"
+msgstr "Başka eğimlerden aradeğerlenmediği zaman yeni eklenen eğimlerin uzunluğu"
+
+
+msgid "Density Add Attempts"
+msgstr "Yoğunluk Ekleme Girişimleri"
+
+
+msgid "How many times the Density brush tries to add a new curve"
+msgstr "Yoğunluk fırçasının kaç kere yeni bir eğri ekleme denemeleri"
+
+
+msgid "Density Mode"
+msgstr "Yoğunluk Kipi"
+
+
+msgid "Determines whether the brush adds or removes curves"
+msgstr "Fırçanın eğri ekleyip eklemediğini belirler"
+
+
+msgid "Either add or remove curves depending on the minimum distance of the curves under the cursor"
+msgstr "İmlecin altındaki eğrilerin en düşük uzaklığına bağlı olarak eğriler ekle veya kaldır"
+
+
+msgid "Add new curves between existing curves, taking the minimum distance into account"
+msgstr "En düşük uzaklığı dikkate alarak var olan eğriler arasına yeni eğriler ekle"
+
+
+msgid "Remove"
+msgstr "Kaldır"
+
+
+msgid "Remove curves whose root points are too close"
+msgstr "Kök noktaları pek yakın olan eğrileri kaldır"
+
+
+msgid "Interpolate Length"
+msgstr "Uzunluğu Aradeğerle"
+
+
+msgid "Use length of the curves in close proximity"
+msgstr "Yakın uzaklıktaki eğrilerin uzunluğunu kullan"
+
+
+msgid "Interpolate Point Count"
+msgstr "Nokta Sayısını Aradeğerle"
+
+
+msgid "Use the number of points from the curves in close proximity"
+msgstr "Yakın uzaklıktaki eğrilerin noktaları sayısını kullan"
+
+
+msgid "Interpolate Shape"
+msgstr "Şekli Aradeğerle"
+
+
+msgid "Use shape of the curves in close proximity"
+msgstr "Yakın uzaklıktaki eğrilerin şeklini kullan"
+
+
+msgid "Minimum Distance"
+msgstr "En Düşük Uzaklık"
+
+
+msgid "Goal distance between curve roots for the Density brush"
+msgstr "Yoğunluk fırçası için eğri kökleri arasındaki hedef uzaklık"
+
+
+msgid "Minimum Length"
+msgstr "En Düşük Uzunluk"
+
+
+msgid "Avoid shrinking curves shorter than this length"
+msgstr "Bu uzunluktan kısa olan eğrilerin küçülmesini engelle"
+
+
+msgid "Points per Curve"
+msgstr "Eğri Başına Nokta"
+
+
+msgid "Number of control points in a newly added curve"
+msgstr "Yeni eklenen bir eğrideki denetim noktalarının sayısı"
+
+
+msgid "Scale Uniform"
+msgstr "Birlikte Ölçekle"
+
+
+msgid "Grow or shrink curves by changing their size uniformly instead of using trimming or extrapolation"
+msgstr "Kırpma veya dışdeğerleme kullanmak yerine boyutlarını eşit şekilde değiştirerek eğrileri büyüt veya küçült"
+
+
+msgid "Grease Pencil Brush Settings"
+msgstr "Gres Kalemi Fırçası Ayarları"
+
+
+msgid "Settings for grease pencil brush"
+msgstr "Gres kalemi fırçası için ayarlar"
+
+
+msgid "Active Smooth"
+msgstr "Etkin Pürüzsüz"
+
+
+msgid "Amount of smoothing while drawing"
+msgstr "Çizim sırasındaki pürüzsüzleştirme miktarı"
 
 
 msgid "Angle"
 msgstr "Açı"
 
 
+msgid "Direction of the stroke at which brush gives maximal thickness (0° for horizontal)"
+msgstr "Fırçanın en çok kalınlık verdiği vuruş yönü (yatay için 0°)"
+
+
+msgid "Angle Factor"
+msgstr "Açı Çarpanı"
+
+
+msgid "Reduce brush thickness by this factor when stroke is perpendicular to 'Angle' direction"
+msgstr "Vuruş 'Açı' yönüne dik olduğunda fırça kalınlığını bu çarpan kadar azalt"
+
+
+msgid "Aspect"
+msgstr "Bakış"
+
+
 msgid "Mode"
-msgstr "Mod"
+msgstr "Kip"
+
+
+msgid "Preselected mode when using this brush"
+msgstr "Bu fırçayı kullanırken önceden seçilmiş kip"
+
+
+msgid "Active"
+msgstr "Etkin"
+
+
+msgid "Use current mode"
+msgstr "Geçerli kipi kullan"
 
 
 msgid "Material"
 msgstr "Malzeme"
 
 
+msgid "Use always material mode"
+msgstr "Her zaman malzeme kipini kullan"
+
+
+msgid "Vertex Color"
+msgstr "Tepecik Rengi"
+
+
+msgid "Use always Vertex Color mode"
+msgstr "Her zaman Tepecik Rengi kipini kullan"
+
+
+msgid "Caps Type"
+msgstr "Başlık Türü"
+
+
+msgid "The shape of the start and end of the stroke"
+msgstr "Vuruşun başlangıç ve bitiş ucu şekli"
+
+
+msgid "Round"
+msgstr "Yuvarlak"
+
+
+msgid "Flat"
+msgstr "Düz"
+
+
+msgid "Curve Jitter"
+msgstr "Eğri Seğirtmesi"
+
+
+msgid "Curve used for the jitter effect"
+msgstr "Seğirtme efekti için kullanılan eğri"
+
+
+msgid "Random Curve"
+msgstr "Rastgele Eğri"
+
+
+msgid "Curve used for modulating effect"
+msgstr "Oranlama efekti için kullanılan eğri"
+
+
+msgid "Curve Sensitivity"
+msgstr "Eğri Duyarlılığı"
+
+
+msgid "Curve used for the sensitivity"
+msgstr "Duyarlılık için kullanılan eğri"
+
+
+msgid "Curve Strength"
+msgstr "Eğri Gücü"
+
+
+msgid "Curve used for the strength"
+msgstr "Güç için kullanılan eğri"
+
+
+msgid "Dilate/Contract"
+msgstr "İrileşme/Daralma"
+
+
+msgid "Number of pixels to expand or contract fill area"
+msgstr "Dolgu alanını genişletmek veya daraltmak için kullanılacak piksel sayısı"
+
+
+msgid "Direction"
+msgstr "Yön"
+
+
+msgid "Add effect of brush"
+msgstr "Fırçanın ekleme efekti"
+
+
+msgid "Subtract effect of brush"
+msgstr "Fırçanın çıkarma efekti"
+
+
+msgid "Eraser Mode"
+msgstr "Silgi Kipi"
+
+
 msgid "Dissolve"
-msgstr "Eritme"
+msgstr "Erit"
+
+
+msgid "Erase strokes, fading their points strength and thickness"
+msgstr "Nokta gücünü ve kalınlığını soldurarak vuruşları sil"
+
+
+msgid "Erase stroke points"
+msgstr "Vuruş noktalarını sil"
+
+
+msgid "Stroke"
+msgstr "Vuruş"
+
+
+msgid "Erase entire strokes"
+msgstr "Tüm vuruşları sil"
+
+
+msgid "Affect Stroke Strength"
+msgstr "Vuruş Gücünü Etkile"
+
+
+msgid "Amount of erasing for strength"
+msgstr "Güç ile ilgili silme miktarı"
+
+
+msgid "Affect Stroke Thickness"
+msgstr "Vuruş Kalınlığını Etkile"
+
+
+msgid "Amount of erasing for thickness"
+msgstr "Kalınlık ile ilgili silme miktarı"
+
+
+msgid "Closure Size"
+msgstr "Kapatma Boyutu"
+
+
+msgid "Strokes end extension for closing gaps, use zero to disable"
+msgstr "Boşlukları kapatmak için uzantıyı sonlandırır, devre dışı bırakmak için sıfır kullan"
+
+
+msgid "Direction of the fill"
+msgstr "Dolgunun yönü"
+
+
+msgid "Normal"
+msgstr "Olağan"
+
+
+msgid "Fill internal area"
+msgstr "İç alanı doldur"
+
+
+msgid "Inverted"
+msgstr "Ters Çevrilmiş"
+
+
+msgid "Fill inverted area"
+msgstr "Ters çevrilen alanı doldur"
+
+
+msgid "Mode to draw boundary limits"
+msgstr "Had sınırlarını çizmek için kip"
+
+
+msgid "All"
+msgstr "Tümü"
+
+
+msgid "Use both visible strokes and edit lines as fill boundary limits"
+msgstr "Had sınırlarını doldurmak için hem görünür vuruşları hem düzenleme çizgilerini kullan"
+
+
+msgid "Strokes"
+msgstr "Vuruşlar"
+
+
+msgid "Use visible strokes as fill boundary limits"
+msgstr "Görünür vuruşları dolgu haddi sınırları olarak kullan"
+
+
+msgid "Edit Lines"
+msgstr "Düzenleme Çizgileri"
+
+
+msgid "Use edit lines as fill boundary limits"
+msgstr "Düzenleme çizgilerini dolgu haddi sınırları olarak kullan"
+
+
+msgid "Closure Mode"
+msgstr "Kapatma Kipi"
+
+
+msgid "Types of stroke extensions used for closing gaps"
+msgstr "Boşlukları kapatmak için kullanılan vuruş genişletmeleri türü"
+
+
+msgid "Extend strokes in straight lines"
+msgstr "Düz çizgilerdeki vuruşları genişlet"
 
 
 msgid "Radius"
 msgstr "Yarıçap"
 
 
+msgid "Connect endpoints that are close together"
+msgstr "Yakın duran bitiş noktalarını bağla"
+
+
+msgid "Precision"
+msgstr "Kesinlik"
+
+
+msgid "Factor for fill boundary accuracy, higher values are more accurate but slower"
+msgstr "Dolgu haddi doğruluğu için çarpan, yüksek değerler daha doğrudur; ancak yavaştır"
+
+
+msgid "Layer Mode"
+msgstr "Katman Kipi"
+
+
+msgid "Layers used as boundaries"
+msgstr "Hadler olarak kullanılan katmanlar"
+
+
+msgid "Visible"
+msgstr "Görünür"
+
+
+msgid "Visible layers"
+msgstr "Görünür katmanlar"
+
+
+msgid "Only active layer"
+msgstr "Yalnızca etkin katman"
+
+
+msgid "Layer Above"
+msgstr "Üstteki Katman"
+
+
+msgid "Layer above active"
+msgstr "Etkin katmanın üstündeki katman"
+
+
+msgid "Layer Below"
+msgstr "Alttaki Katman"
+
+
+msgid "Layer below active"
+msgstr "Etkin katmanın altındaki katman"
+
+
+msgid "All Above"
+msgstr "Üstteki Tümü"
+
+
+msgid "All layers above active"
+msgstr "Etkin katmanın üstündeki tüm katmanlar"
+
+
+msgid "All Below"
+msgstr "Alttaki Tümü"
+
+
+msgid "All layers below active"
+msgstr "Etkin katmanın altındaki tüm katmanlar"
+
+
+msgid "Simplify"
+msgstr "Yalınlaştır"
+
+
+msgid "Number of simplify steps (large values reduce fill accuracy)"
+msgstr "Yalınlaştırma adımlarının sayısı (daha yüksek değerler dolgu doğruluğunu azaltır)"
+
+
+msgid "Threshold"
+msgstr "Eşik"
+
+
+msgid "Threshold to consider color transparent for filling"
+msgstr "Dolgu için rengin saydam varsayılacağı eşik"
+
+
+msgid "Grease Pencil Icon"
+msgstr "Gres Kalemi Simgesi"
+
+
+msgid "Pencil"
+msgstr "Kalem"
+
+
+msgid "Pen"
+msgstr "Tükenmez Kalem"
+
+
+msgid "Ink"
+msgstr "Mürekkep"
+
+
+msgid "Ink Noise"
+msgstr "Mürekkep Paraziti"
+
+
+msgid "Block"
+msgstr "Blok"
+
+
+msgid "Marker"
+msgstr "Vurgulayıcı"
+
+
+msgid "Airbrush"
+msgstr "Sprey Boya"
+
+
+msgid "Chisel"
+msgstr "Keski"
+
+
 msgid "Fill"
 msgstr "Doldur"
+
+
+msgid "Eraser Soft"
+msgstr "Silgi Yumuşak"
+
+
+msgid "Eraser Hard"
+msgstr "Silgi Sert"
+
+
+msgid "Eraser Stroke"
+msgstr "Silgi Vuruş"
+
+
+msgid "Smooth"
+msgstr "Pürüzsüz"
+
+
+msgid "Thickness"
+msgstr "Kalınlık"
+
+
+msgid "Randomize"
+msgstr "Rastgeleleştir"
 
 
 msgid "Grab"
 msgstr "Tut"
 
 
+msgid "Push"
+msgstr "İt"
+
+
+msgid "Twist"
+msgstr "Bük"
+
+
+msgid "Pinch"
+msgstr "Çimdikle"
+
+
+msgid "Clone"
+msgstr "Klonla"
+
+
+msgid "Draw"
+msgstr "Çiz"
+
+
 msgid "Blur"
-msgstr "Bulanıklık"
+msgstr "Bulanıklaştır"
+
+
+msgid "Smear"
+msgstr "Bulaştır"
+
+
+msgid "Hardness"
+msgstr "Sertlik"
 
 
 msgid "Hue"
@@ -3980,15 +4692,27 @@ msgstr "Yontma Kipi"
 
 
 msgid "Vertex Paint"
-msgstr "Tepecik Boya"
+msgstr "Tepecik Boyama"
 
 
 msgid "Weight Paint"
-msgstr "Ağırlık Boya"
+msgstr "Ağırlık Boyama"
 
 
 msgid "Texture Paint"
-msgstr "Doku Boya"
+msgstr "Doku Boyama"
+
+
+msgid "Particle Edit"
+msgstr "Parçacık Düzenle"
+
+
+msgid "Edit Grease Pencil Strokes"
+msgstr "Gres Kalemi Vuruşlarını Düzenle"
+
+
+msgid "Sculpt Grease Pencil Strokes"
+msgstr "Gres Kalemi Vuruşlarını Yont"
 
 
 msgid "Draw Mode"
@@ -4225,6 +4949,10 @@ msgstr "Doku Eşlemleme Kipi"
 
 msgid "Weighting Mode"
 msgstr "Ağırlıklama Kipi"
+
+
+msgid "Collection of NLA Strips"
+msgstr "DOC Şeritleri Koleksiyonu"
 
 
 msgid "H"
@@ -4545,6 +5273,15 @@ msgstr "Keskinlik"
 
 
 msgctxt "Operator"
+msgid "Update Scene Frame Range"
+msgstr "Sahne Kare Erimini Güncelle"
+
+
+msgid "Update frame range of scene strip"
+msgstr "Sahne şeridinin kare erimini güncelle"
+
+
+msgctxt "Operator"
 msgid "Reload"
 msgstr "Yeniden"
 
@@ -4621,16 +5358,61 @@ msgid "Save Blender File"
 msgstr "Blender Dosyasını Kaydet"
 
 
+msgid "Textures Directory"
+msgstr "Dokular Dizini"
+
+
+msgid "Path to the directory where imported textures will be copied "
+msgstr "İçe aktarılan dokuların kopyalanacağı dizine olan yol"
+
+
+msgid "Import Textures"
+msgstr "Dokuları İçe Aktar"
+
+
+msgid "Behavior when importing textures from a USDZ archive"
+msgstr "Bir USDZ arşivinden dokuları içe aktarırken oluşan davranış"
+
+
+msgid "Don't import textures"
+msgstr "Dokuları içe aktarma"
+
+
 msgid "Bone Constraints"
 msgstr "Kemik Kısıtlamaları"
 
 
+msgid "Create Pose Asset"
+msgstr "Poz Varlığı Oluştur"
+
+
+msgid "Filters"
+msgstr "Süzgeçler"
+
+
+msgid "Advanced Filter"
+msgstr "Gelişmiş Süzgeç"
+
+
 msgid "Bookmarks"
-msgstr "Yer imleri"
+msgstr "Yer İmleri"
 
 
 msgid "Recent"
 msgstr "En Son"
+
+
+msgctxt "File browser"
+msgid "Volumes"
+msgstr "Disk Bölümleri"
+
+
+msgid "Directory Path"
+msgstr "Dizin Yolu"
+
+
+msgid "Filter Settings"
+msgstr "Süzgeç Ayarları"
 
 
 msgid "Physics"
@@ -4735,6 +5517,11 @@ msgstr "Bul"
 
 msgid "Strand"
 msgstr "İplik"
+
+
+msgctxt "Sequence"
+msgid "Box"
+msgstr "Kutu"
 
 
 msgid "Sepia"
