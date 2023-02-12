@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-30 08:45:14\n"
-"PO-Revision-Date: 2023-01-26 09:13+0100\n"
+"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"PO-Revision-Date: 2023-02-04 08:21+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -15939,6 +15939,14 @@ msgid "Stroke start extreme cap style"
 msgstr "Začiatok ťahu krajným štýlom hlavice"
 
 
+msgid "Init Time"
+msgstr "Čas inicializácie"
+
+
+msgid "Initial time of the stroke"
+msgstr "Inicializačná čas ťahu"
+
+
 msgid "Triangles"
 msgstr "Trojuholníky"
 
@@ -16001,6 +16009,10 @@ msgstr "Bod je vybraný pre úpravu záberu"
 
 msgid "Color intensity (alpha factor)"
 msgstr "Intenzita farby (alfa faktor)"
+
+
+msgid "Time relative to stroke start"
+msgstr "Čas vzhľadom na začiatok ťahu"
 
 
 msgid "UV Fill"
@@ -33625,6 +33637,11 @@ msgid "Color for mixing with primary filling color"
 msgstr "Farba na zmiešanie s primárnou farbou výplne"
 
 
+msgctxt "GPencil"
+msgid "Mix"
+msgstr "Zmiešať"
+
+
 msgid "Mix Factor"
 msgstr "Faktor zmiešania"
 
@@ -37715,6 +37732,10 @@ msgid "Modifier affecting/generating custom normals"
 msgstr "Modifikátor ovplyvňujúci/vytvárajúci vlastné normály"
 
 
+msgid "How much of generated normals to mix with existing ones"
+msgstr "Koľko z vygenerovaných normálov sa zmieša s existujúcimi"
+
+
 msgid "Maximum angle between old and new normals"
 msgstr "Maximálny uhol medzi starými a novými normálmi"
 
@@ -41148,8 +41169,16 @@ msgid "Collection of NLA strip F-Curves"
 msgstr "Kolekcia pásov NLA F-krivky"
 
 
+msgid "Collection of NLA Strips"
+msgstr "Kolekcia pásov NLA"
+
+
 msgid "NLA Track"
 msgstr "Stopa NLA"
+
+
+msgid "An animation layer containing Actions referenced as NLA strips"
+msgstr "Vrstva animácie obsahujúca akcie uvádzané ako pásy NLA"
 
 
 msgid "NLA Track is active"
@@ -43812,6 +43841,11 @@ msgid "Float to Integer"
 msgstr "Pohyblivá čiarka na celé číslo"
 
 
+msgctxt "NodeTree"
+msgid "Rounding Mode"
+msgstr "Režim zaokrúhľovania"
+
+
 msgid "Method used to convert the float to an integer"
 msgstr "Metóda použitá na konvertovanie čísla na pohyblivej čiarke na celé číslo"
 
@@ -43822,6 +43856,11 @@ msgstr "Zaokrúhli číslo na pohyblivej čiarke nahor alebo nadol na najbližš
 
 msgid "Round the float down to the next smallest integer"
 msgstr "Zaokrúhli číslo na pohyblivej čiarke smerom nadol na najbližšie najmenšie celé číslo"
+
+
+msgctxt "NodeTree"
+msgid "Ceiling"
+msgstr "Nahor"
 
 
 msgid "Round the float up to the next largest integer"
@@ -45021,6 +45060,10 @@ msgid "Realize Instances"
 msgstr "Realizovať inštancie"
 
 
+msgid "Convert instances into real geometry data"
+msgstr "Konvertuje inštancie na údaje o skutočnej geometrii"
+
+
 msgid "Legacy Behavior"
 msgstr "Dedičné správanie"
 
@@ -45071,6 +45114,10 @@ msgstr "Vypočíta počet snímok rozdelením každej drážky na segmenty so za
 
 msgid "Reverse Curve"
 msgstr "Reverzná krivka"
+
+
+msgid "Change the direction of curves by swapping their start and end data"
+msgstr "Zmení smer krivky výmenou počiatočných a koncových údajov"
 
 
 msgid "Rotate Instances"
@@ -47252,6 +47299,11 @@ msgstr "Vektor priestoru objektu mapovania posunutia"
 
 msgid "World space vector displacement mapping"
 msgstr "Vektor priestoru oblasti mapovania posunutia"
+
+
+msgctxt "NodeTree"
+msgid "Vector Math"
+msgstr "Vektorová matematika"
 
 
 msgid "Perform vector math operation"
@@ -61194,6 +61246,15 @@ msgid "Only flip the custom loop normals of the selected elements"
 msgstr "Preklopí iba na vlastné normály slučky vybraných prvkov"
 
 
+msgctxt "Operator"
+msgid "Flip Quad Tessellation"
+msgstr "Preklopiť mozaikovanie štvoruholníkov"
+
+
+msgid "Flips the tessellation of selected quads"
+msgstr "Obráti mozaikovanie vybraných štvoruholníkov"
+
+
 msgid "Hide (un)selected vertices, edges or faces"
 msgstr "Skryje (ne)vybrané vrcholy, hrany alebo plôšky"
 
@@ -73861,6 +73922,15 @@ msgstr "Použije myš na snímku farby v aktuálnej snímke"
 
 
 msgctxt "Operator"
+msgid "Update Scene Frame Range"
+msgstr "Aktualizovať rozsah snímok scény"
+
+
+msgid "Update frame range of scene strip"
+msgstr "Aktualizuje rozsah snímok pásu scény"
+
+
+msgctxt "Operator"
 msgid "Add Scene Strip"
 msgstr "Pridať pás scény"
 
@@ -75521,6 +75591,41 @@ msgstr "Uhol skrútenia"
 
 msgid "Amount to warp about the cursor"
 msgstr "Počet skrútení okolo kurzora"
+
+
+msgctxt "Operator"
+msgid "Add Entry"
+msgstr "Pridať položku"
+
+
+msgid "Add an entry to the list after the current active item"
+msgstr "Pridá položku do zoznamu za aktuálnu aktívnu položku"
+
+
+msgctxt "Operator"
+msgid "Move Entry"
+msgstr "Presunúť položku"
+
+
+msgid "Move an entry in the list up or down"
+msgstr "Presunutie položky v zozname nahor alebo nadol"
+
+
+msgid "UP"
+msgstr "Nahor"
+
+
+msgid "DOWN"
+msgstr "Nadol"
+
+
+msgctxt "Operator"
+msgid "Remove Selected Entry"
+msgstr "Odstrániť vybranú položku"
+
+
+msgid "Remove the selected entry from the list"
+msgstr "Odstráni vybranú položky zo zoznamu"
 
 
 msgctxt "Operator"
@@ -80656,6 +80761,14 @@ msgid "Add all imported objects to a new collection"
 msgstr "Pridá všetky importované objekty do novej kolekcie"
 
 
+msgid "Import All Materials"
+msgstr "Importovať všetky materiály"
+
+
+msgid "Also import materials that are not used by any geometry.  Note that when this option is false, materials referenced by geometry will still be imported"
+msgstr "Importujte aj materiály, ktoré nie sú použité žiadnou geometriou. Upozorňujeme, že ak je táto možnosť NEPRAVDA, materiály odkazované geometriou, sa budú stále importovať"
+
+
 msgid "Import guide geometry"
 msgstr "Import návodu geometrie"
 
@@ -80686,6 +80799,34 @@ msgstr "Vytvorí modifikátory rozdelenia povrchu na základe atribútu USD Subd
 
 msgid "Textures Directory"
 msgstr "Priečinok textúr"
+
+
+msgid "Path to the directory where imported textures will be copied "
+msgstr "Cesta k priečinku, do ktorého sa budú kopírovať importované textúry "
+
+
+msgid "Import Textures"
+msgstr "Import textúr"
+
+
+msgid "Behavior when importing textures from a USDZ archive"
+msgstr "Správanie pri importe textúr z archívu USDZ"
+
+
+msgid "Don't import textures"
+msgstr "Neimportovať textúry"
+
+
+msgid "Packed"
+msgstr "Zbalené"
+
+
+msgid "Import textures as packed data"
+msgstr "Importuje textúry ako zbalené údaje"
+
+
+msgid "Copy files to Textures Directory"
+msgstr "Kopíruje súbory do priečinka textúr"
 
 
 msgid "Import USD Preview"
@@ -80762,6 +80903,26 @@ msgstr "Nastaviť prelínania materiálu"
 
 msgid "If the Import USD Preview option is enabled, the material blend method will automatically be set based on the shader's opacity and opacityThreshold inputs"
 msgstr "Ak je zapnutá možnosť Importovať náhľad USD, metóda prelínania materiálu sa automaticky nastaví na základe nepriehľadnosti tieňovača a vstupov opacityThreshold (prah nepriehľadnosti)"
+
+
+msgid "File Name Collision"
+msgstr "Kolízia názvu súboru"
+
+
+msgid "Behavior when the name of an imported texture file conflicts with an existing file"
+msgstr "Správanie v prípade konfliktu názvu importovaného súboru textúry s existujúcim súborom"
+
+
+msgid "Use Existing"
+msgstr "Použiť existujúce"
+
+
+msgid "If a file with the same name already exists, use that instead of copying"
+msgstr "Ak už súbor s rovnakým názvom existuje, použije ho namiesto kopírovania"
+
+
+msgid "Overwrite existing files"
+msgstr "Prepíše existujúce súbory"
 
 
 msgctxt "Operator"
@@ -82034,6 +82195,11 @@ msgid "Recent"
 msgstr "Nedávno otvorené"
 
 
+msgctxt "File browser"
+msgid "Volumes"
+msgstr "Objemy"
+
+
 msgid "Directory Path"
 msgstr "Cesta priečinka"
 
@@ -82791,10 +82957,6 @@ msgstr "HDRIs"
 
 msgid "Cycles Render Devices"
 msgstr "Zariadenia prekreslenia Cyklov"
-
-
-msgid "GPU Back end"
-msgstr "GPU Back end"
 
 
 msgid "Memory & Limits"
@@ -85264,6 +85426,14 @@ msgid "Enable the new EEVEE codebase, requires restart"
 msgstr "Povolí novú databázu EEVEE, vyžaduje reštart"
 
 
+msgid "Workbench Next"
+msgstr "Ďalší Pracovný stôl"
+
+
+msgid "Enable the new Workbench codebase, requires restart"
+msgstr "Povolí nový základ kódu pracovného stola, vyžaduje reštart"
+
+
 msgid "Override Auto Resync"
 msgstr "Prepísať automatickú opätovnú synchronizáciu"
 
@@ -86264,32 +86434,16 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "Limit veľkosti textúry na uloženie grafickej pamäte"
 
 
-msgid "GPU back end to use (requires restarting Blender for changes to take effect)"
-msgstr "GPU back end na použitie. (Vyžaduje reštartovanie Blenderu, aby zmeny nadobudli účinnosť)"
-
-
 msgid "OpenGL"
 msgstr "OpenGL"
-
-
-msgid "Use OpenGL back end"
-msgstr "Používanie back endu OpenGL"
 
 
 msgid "Metal"
 msgstr "Kov"
 
 
-msgid "Use Metal back end"
-msgstr "Použije back end kovu"
-
-
 msgid "Vulkan"
 msgstr "Vulkan"
-
-
-msgid "Use Vulkan back end"
-msgstr "Použije back end Vulkan"
 
 
 msgid "Image Display Method"
@@ -92351,16 +92505,21 @@ msgid "Display text as bold"
 msgstr "Zobraziť text ako tučný"
 
 
+msgctxt "Sequence"
+msgid "Box"
+msgstr "Políčko"
+
+
 msgid "Display colored box behind text"
-msgstr "Zobraziť farebné pole za textom"
+msgstr "Zobrazí farebné pole za textom"
 
 
 msgid "Display text as italic"
-msgstr "Zobraziť text ako kurzívu"
+msgstr "Zobrazí text ako kurzívu"
 
 
 msgid "Display shadow behind text"
-msgstr "Zobraziť tieň za textom"
+msgstr "Zobrazí tieň za textom"
 
 
 msgid "Wrap Width"
@@ -92625,6 +92784,11 @@ msgstr "Sekvencia zvuku"
 
 msgid "Sequence strip defining a sound to be played over a period of time"
 msgstr "Sekvenčný pás definujúci zvuk, ktorý sa má prehrávať po určitú dobu"
+
+
+msgctxt "Sound"
+msgid "Pan"
+msgstr "Posúvať"
 
 
 msgid "Playback panning of the sound (only for Mono sources)"
@@ -93132,6 +93296,14 @@ msgstr "Parametre transformácie pre sekvenčné pásy"
 
 msgid "Type of filter to use for image transformation"
 msgstr "Typ filtra na použitie pre transformáciu obrázku"
+
+
+msgid "Subsampling (3x3)"
+msgstr "Presnímanie (3x3)"
+
+
+msgid "Use nearest with 3x3 subsamples during rendering"
+msgstr "Použije najbližšie 3x3 podsnímky počas prekresľovania"
 
 
 msgid "Move along X axis"
@@ -102774,6 +102946,11 @@ msgstr "Transformácia:"
 
 
 msgctxt "Operator"
+msgid "Uilist:"
+msgstr "Uizoznam:"
+
+
+msgctxt "Operator"
 msgid "Ui:"
 msgstr "UI:"
 
@@ -104897,6 +105074,10 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "a ovládač NVIDIA vo verzii 470 alebo novšej"
 
 
+msgid "Requires AMD GPU with RDNA architecture"
+msgstr "Vyžaduje AMD GPU s architektúrou RDNA"
+
+
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "a ovládač AMD Radeon Pro 21.Q4 alebo novší"
 
@@ -104909,6 +105090,10 @@ msgid "Requires Intel GPU with Xe-HPG architecture"
 msgstr "Vyžaduje GPU Intel s architektúrou Xe-HPG"
 
 
+msgid "and Windows driver version 101.4032 or newer"
+msgstr "a ovládač systému Windows verzie 101.4032 alebo novšej"
+
+
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
 msgstr "Vyžaduje Apple Silicon so systémom macOS 12.2 alebo novším"
 
@@ -104919,6 +105104,10 @@ msgstr "alebo AMD so systémom macOS 12.3 alebo novším"
 
 msgid "Requires Intel GPU with Xe-HPG architecture and"
 msgstr "Vyžaduje GPU Intel s architektúrou Xe-HPG a"
+
+
+msgid "  - intel-level-zero-gpu version 1.3.24931 or newer"
+msgstr "  - Intel-level-zero-GPU verzia 1.3.24931 alebo novšia"
 
 
 msgid "  - oneAPI Level-Zero Loader"
@@ -110763,6 +110952,11 @@ msgstr "Alembic (.abc)"
 
 
 msgctxt "Operator"
+msgid "Universal Scene Description (.usd*)"
+msgstr "Univerzálny popis scény (.usd*)"
+
+
+msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG ako pastelka"
 
@@ -112334,6 +112528,11 @@ msgid "Viewport Overlays"
 msgstr "Prekrytie záberu"
 
 
+msgctxt "View3D"
+msgid "Floor"
+msgstr "Podlaha"
+
+
 msgid "Text Info"
 msgstr "Text informácie"
 
@@ -112925,10 +113124,6 @@ msgstr "Prepnúť röntgen"
 
 msgid "To 3D Cursor"
 msgstr "na 3D kurzor"
-
-
-msgid "Compositor not supported on MacOS"
-msgstr "Kompozítor v systéme MacOS nie je podporovaný"
 
 
 msgid "Fade Inactive Geometry"
@@ -114644,6 +114839,10 @@ msgstr "Kompozícia | Zrušenie inicializácie vykonávania"
 
 msgid "Basic"
 msgstr "Základné"
+
+
+msgid "Compiling Shaders (%d remaining)"
+msgstr "Kompilácia tieňovačov (%d zostávajúce)"
 
 
 msgid "Incompatible Light cache version, please bake again"
@@ -117897,6 +118096,22 @@ msgid "%s already in %s"
 msgstr "%s už v %s"
 
 
+msgid "%s linked to %s"
+msgstr "%s prepojené s %s"
+
+
+msgid "Objects linked to %s"
+msgstr "Objekty prepojené s %s"
+
+
+msgid "%s moved to %s"
+msgstr "%s presunutý do %s"
+
+
+msgid "Objects moved to %s"
+msgstr "Objekty presunuté do %s"
+
+
 msgid "Only one modifier of this type is allowed"
 msgstr "Povolený je iba jeden modifikátor tohto typu"
 
@@ -119280,6 +119495,10 @@ msgstr "Vloženie kľúčových snímok ešte nie je implementované v tomto re�
 
 msgid "Not implemented for Masks"
 msgstr "Neimplementované pre masky"
+
+
+msgid "Cannot activate a file selector dialog, one already open"
+msgstr "Nemožno aktivovať dialógové okno voliča súborov, ktoré je už otvorené"
 
 
 msgid "Texture Field"
@@ -123316,6 +123535,10 @@ msgstr "Vynútenie '%s' sa v objekte '%s' nenašlo"
 
 msgid "Could not move constraint from index '%d' to '%d'"
 msgstr "Nemožno presunúť vynútenie z indexu '%d' do '%d'"
+
+
+msgid "Invalid original modifier index '%d'"
+msgstr "Neplatný pôvodný index modifikátora \"%d\""
 
 
 msgid "Modifier \"%s\" is not in the object's modifier list"

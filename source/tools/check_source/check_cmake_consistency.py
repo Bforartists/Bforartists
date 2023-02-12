@@ -249,11 +249,11 @@ def cmake_get_src(f: str) -> None:
                             pass
                         elif new_file.endswith(".def"):
                             pass
-                        elif new_file.endswith(".cl"):  # opencl
+                        elif new_file.endswith(".cl"):  # OPENCL.
                             pass
-                        elif new_file.endswith(".cu"):  # cuda
+                        elif new_file.endswith(".cu"):  # CUDA.
                             pass
-                        elif new_file.endswith(".osl"):  # open shading language
+                        elif new_file.endswith(".osl"):  # open shading language.
                             pass
                         elif new_file.endswith(".glsl"):
                             pass

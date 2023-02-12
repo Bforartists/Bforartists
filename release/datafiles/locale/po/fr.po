@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-30 08:45:14\n"
-"PO-Revision-Date: 2023-01-24 23:13+0100\n"
+"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"PO-Revision-Date: 2023-01-30 21:21+0100\n"
 "Last-Translator: Damien Picard (pioverfour) <dam.pic@free.fr>\n"
 "Language-Team: French https://wiki.blender.org/wiki/Process/Translate_Blender/French_Team\n"
 "Language: fr\n"
@@ -15937,6 +15937,14 @@ msgid "Stroke start extreme cap style"
 msgstr "Style d’extrémité initiale du trait"
 
 
+msgid "Init Time"
+msgstr "Heure de début"
+
+
+msgid "Initial time of the stroke"
+msgstr "Heure de début du trait"
+
+
 msgid "Triangles"
 msgstr "Triangles"
 
@@ -15999,6 +16007,10 @@ msgstr "Le point est sélectionné pour l’édition dans la vue"
 
 msgid "Color intensity (alpha factor)"
 msgstr "Intensité de couleur (facteur alpha)"
+
+
+msgid "Time relative to stroke start"
+msgstr "Temps écoulé depuis le début du trait"
 
 
 msgid "UV Fill"
@@ -27363,7 +27375,7 @@ msgstr "Caméra active, utilisée pour rendre la scène"
 
 
 msgid "Scene root collection that owns all the objects and other collections instantiated in the scene"
-msgstr "Collection de scène qui contient tous les objets et autre collections instanciées dans la scène"
+msgstr "Collection à la racine de la scène, qui contient tous les objets et autre collections instanciées dans la scène"
 
 
 msgid "3D Cursor"
@@ -33623,6 +33635,11 @@ msgid "Color for mixing with primary filling color"
 msgstr "Couleur à mélanger avec la couleur de remplissage principale"
 
 
+msgctxt "GPencil"
+msgid "Mix"
+msgstr "Mélange"
+
+
 msgid "Mix Factor"
 msgstr "Facteur de mélange"
 
@@ -37714,6 +37731,10 @@ msgid "Modifier affecting/generating custom normals"
 msgstr "Modificateur qui affecte/génère des normales personnalisées"
 
 
+msgid "How much of generated normals to mix with existing ones"
+msgstr "Combien des normales générées mélanger aux préexistantes"
+
+
 msgid "Maximum angle between old and new normals"
 msgstr "Angle maximum entre ancienne et nouvelle normales"
 
@@ -41147,8 +41168,16 @@ msgid "Collection of NLA strip F-Curves"
 msgstr "Collection de F-courbes de bande NLA"
 
 
+msgid "Collection of NLA Strips"
+msgstr "Collection de bandes NLA"
+
+
 msgid "NLA Track"
 msgstr "Piste NLA"
+
+
+msgid "An animation layer containing Actions referenced as NLA strips"
+msgstr "Un calque d’animation contenant des actions référencées en tant que bandes NLA"
 
 
 msgid "NLA Track is active"
@@ -43811,6 +43840,11 @@ msgid "Float to Integer"
 msgstr "Flottant vers Entier"
 
 
+msgctxt "NodeTree"
+msgid "Rounding Mode"
+msgstr "Mode d’arrondi"
+
+
 msgid "Method used to convert the float to an integer"
 msgstr "Méthode utilisée pour convertir le nombre flottant en entier"
 
@@ -43821,6 +43855,11 @@ msgstr "Arrondir le nombre flottant vers le haut ou le bas, à l’entier le plu
 
 msgid "Round the float down to the next smallest integer"
 msgstr "Arrondir le nombre flottant vers le bas, à l’entier inférieur le plus proche"
+
+
+msgctxt "NodeTree"
+msgid "Ceiling"
+msgstr "Plafond"
 
 
 msgid "Round the float up to the next largest integer"
@@ -45020,6 +45059,10 @@ msgid "Realize Instances"
 msgstr "Rendre instances réelles"
 
 
+msgid "Convert instances into real geometry data"
+msgstr "Convertir les instances en véritables données de géométrie"
+
+
 msgid "Legacy Behavior"
 msgstr "Ancien comportement"
 
@@ -45070,6 +45113,10 @@ msgstr "Calculer le nombre d’échantillons en divisant chaque spline en segmen
 
 msgid "Reverse Curve"
 msgstr "Inverser courbe"
+
+
+msgid "Change the direction of curves by swapping their start and end data"
+msgstr "Inverser la direction des courbes en échangeant leurs données de début et de fin"
 
 
 msgid "Rotate Instances"
@@ -47251,6 +47298,11 @@ msgstr "Placage de déplacement vectoriel en espace objet"
 
 msgid "World space vector displacement mapping"
 msgstr "Placage de déplacement vectoriel en espace monde"
+
+
+msgctxt "NodeTree"
+msgid "Vector Math"
+msgstr "Maths vectorielles"
 
 
 msgid "Perform vector math operation"
@@ -61193,6 +61245,15 @@ msgid "Only flip the custom loop normals of the selected elements"
 msgstr "Inverser les normales de boucles personnalisées des éléments sélectionnés uniquement"
 
 
+msgctxt "Operator"
+msgid "Flip Quad Tessellation"
+msgstr "Inverser tessellation des quads"
+
+
+msgid "Flips the tessellation of selected quads"
+msgstr "Inverser la tessellation des quadrilatères sélectionnés"
+
+
 msgid "Hide (un)selected vertices, edges or faces"
 msgstr "Cacher les sommets, arêtes ou faces (dé)sélectionnés"
 
@@ -73860,6 +73921,15 @@ msgstr "Utiliser la souris pour échantillonner une couleur dans l’image actue
 
 
 msgctxt "Operator"
+msgid "Update Scene Frame Range"
+msgstr "MÀJ intervalle de frames de scène"
+
+
+msgid "Update frame range of scene strip"
+msgstr "Mettre à jour l’intervalle de frames de la bande de scène"
+
+
+msgctxt "Operator"
 msgid "Add Scene Strip"
 msgstr "Ajouter bande de scène"
 
@@ -75520,6 +75590,41 @@ msgstr "Angle de déformation"
 
 msgid "Amount to warp about the cursor"
 msgstr "Quantité de déformation (gauchissement) à appliquer autour du curseur"
+
+
+msgctxt "Operator"
+msgid "Add Entry"
+msgstr "Ajouter entrée"
+
+
+msgid "Add an entry to the list after the current active item"
+msgstr "Ajouter une entrée à la liste après l’élément actif"
+
+
+msgctxt "Operator"
+msgid "Move Entry"
+msgstr "Déplacer entrée"
+
+
+msgid "Move an entry in the list up or down"
+msgstr "Déplacer une entrée vers le haut ou le bas dans la liste"
+
+
+msgid "UP"
+msgstr "HAUT"
+
+
+msgid "DOWN"
+msgstr "BAS"
+
+
+msgctxt "Operator"
+msgid "Remove Selected Entry"
+msgstr "Supprimer entrée sélectionnée"
+
+
+msgid "Remove the selected entry from the list"
+msgstr "Enlever l’entrée sélectionnée de la liste"
 
 
 msgctxt "Operator"
@@ -80655,6 +80760,14 @@ msgid "Add all imported objects to a new collection"
 msgstr "Ajouter tous les objets importés à une nouvelle collection"
 
 
+msgid "Import All Materials"
+msgstr "Importer tous les matériaux"
+
+
+msgid "Also import materials that are not used by any geometry.  Note that when this option is false, materials referenced by geometry will still be imported"
+msgstr "Importer également les matériaux qui ne sont utilisés par aucune géométrie. Notez que si cette option est désactivée, les matériaux référencés par une géométrie seront quand même importés"
+
+
 msgid "Import guide geometry"
 msgstr "Importer la géométrie guide"
 
@@ -80685,6 +80798,34 @@ msgstr "Créer des modificateurs de surface de subdivision d’après l’attrib
 
 msgid "Textures Directory"
 msgstr "Dossier de textures"
+
+
+msgid "Path to the directory where imported textures will be copied "
+msgstr "Chemin du dossier où les textures importées seront copiées"
+
+
+msgid "Import Textures"
+msgstr "Import des textures"
+
+
+msgid "Behavior when importing textures from a USDZ archive"
+msgstr "Comportement lors de l’import des textures depuis une archive USDZ"
+
+
+msgid "Don't import textures"
+msgstr "Ne pas importer les textures"
+
+
+msgid "Packed"
+msgstr "Empaqueter"
+
+
+msgid "Import textures as packed data"
+msgstr "Importer les textures en tant que données empaquetées"
+
+
+msgid "Copy files to Textures Directory"
+msgstr "Copier les fichiers vers le dossier de textures"
 
 
 msgid "Import USD Preview"
@@ -80761,6 +80902,26 @@ msgstr "Définir mode de mélange"
 
 msgid "If the Import USD Preview option is enabled, the material blend method will automatically be set based on the shader's opacity and opacityThreshold inputs"
 msgstr "Si l’option Importer prévisualisation USD est activée, le mode de mélange du matériau sera défini automatiquement d’après les entrées « opacity » et « opacityThreshold » (seuil d’opacité)"
+
+
+msgid "File Name Collision"
+msgstr "Collision des noms de fichiers"
+
+
+msgid "Behavior when the name of an imported texture file conflicts with an existing file"
+msgstr "Comportement lorsque le nom d’un fichier de texture importé entre en conflit avec un fichier existant"
+
+
+msgid "Use Existing"
+msgstr "Utiliser existant"
+
+
+msgid "If a file with the same name already exists, use that instead of copying"
+msgstr "Si un fichier avec le même nom existe déjà, le référencer au lieu de copier"
+
+
+msgid "Overwrite existing files"
+msgstr "Écraser les fichiers existants"
 
 
 msgctxt "Operator"
@@ -82033,6 +82194,11 @@ msgid "Recent"
 msgstr "Récents"
 
 
+msgctxt "File browser"
+msgid "Volumes"
+msgstr "Volumes"
+
+
 msgid "Directory Path"
 msgstr "Chemin du dossier"
 
@@ -82790,10 +82956,6 @@ msgstr "HDRI"
 
 msgid "Cycles Render Devices"
 msgstr "Périphériques de rendu Cycles"
-
-
-msgid "GPU Back end"
-msgstr "Dorsal GPU"
 
 
 msgid "Memory & Limits"
@@ -85263,6 +85425,14 @@ msgid "Enable the new EEVEE codebase, requires restart"
 msgstr "Activer le nouveau code base d’EEVEE, nécessite un redémarrage"
 
 
+msgid "Workbench Next"
+msgstr "Workbench Next"
+
+
+msgid "Enable the new Workbench codebase, requires restart"
+msgstr "Activer le nouveau code base du Workbench, nécessite un redémarrage"
+
+
 msgid "Override Auto Resync"
 msgstr "Resynchro auto des redéfinitions"
 
@@ -86263,32 +86433,16 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "Limiter la taille de la texture pour épargner la mémoire graphique"
 
 
-msgid "GPU back end to use (requires restarting Blender for changes to take effect)"
-msgstr "Dorsal GPU à utiliser (nécessite un redémarrage de Blender pour prendre effet)"
-
-
 msgid "OpenGL"
 msgstr "OpenGL"
-
-
-msgid "Use OpenGL back end"
-msgstr "Utiliser le dorsal OpenGL"
 
 
 msgid "Metal"
 msgstr "Metal"
 
 
-msgid "Use Metal back end"
-msgstr "Utiliser le dorsal Metal"
-
-
 msgid "Vulkan"
 msgstr "Vulkan"
-
-
-msgid "Use Vulkan back end"
-msgstr "Utiliser le dorsal Vulkan"
 
 
 msgid "Image Display Method"
@@ -92319,15 +92473,15 @@ msgstr "Aligner le texte le long de l’axe Y, relativement aux limites du texte
 
 
 msgid "Box Color"
-msgstr "Couleur de la boîte"
+msgstr "Couleur de l’arrière-plan"
 
 
 msgid "Box Margin"
-msgstr "Marge de la boîte"
+msgstr "Marge de l’arrière-plan"
 
 
 msgid "Box margin as factor of image width"
-msgstr "Marge de la boîte, comme facteur de la largeur de l’image"
+msgstr "Marge de l’arrière-plan, comme facteur de la largeur de l’image"
 
 
 msgid "Text color"
@@ -92350,8 +92504,13 @@ msgid "Display text as bold"
 msgstr "Afficher le texte en gras"
 
 
+msgctxt "Sequence"
+msgid "Box"
+msgstr "Arrière-plan"
+
+
 msgid "Display colored box behind text"
-msgstr "Afficher une boîte colorée derrière le texte"
+msgstr "Afficher un arrière-plan coloré derrière le texte"
 
 
 msgid "Display text as italic"
@@ -92624,6 +92783,11 @@ msgstr "Séquence son"
 
 msgid "Sequence strip defining a sound to be played over a period of time"
 msgstr "Bande séquence définissant un son à lire sur une période de temps"
+
+
+msgctxt "Sound"
+msgid "Pan"
+msgstr "Panoramique"
 
 
 msgid "Playback panning of the sound (only for Mono sources)"
@@ -93131,6 +93295,14 @@ msgstr "Paramètres de transformation pour une bande de séquence"
 
 msgid "Type of filter to use for image transformation"
 msgstr "Type de filtre à utiliser pour la transformation de l’image"
+
+
+msgid "Subsampling (3x3)"
+msgstr "Sous-échantillonnage (3×3)"
+
+
+msgid "Use nearest with 3x3 subsamples during rendering"
+msgstr "Utiliser le plus proche avec 3×3 sous-échantillons durant le rendu"
 
 
 msgid "Move along X axis"
@@ -102773,6 +102945,11 @@ msgstr "Transformation :"
 
 
 msgctxt "Operator"
+msgid "Uilist:"
+msgstr "UIlist :"
+
+
+msgctxt "Operator"
 msgid "Ui:"
 msgstr "UI :"
 
@@ -104890,6 +105067,10 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "et pilote NVIDIA en version 470 ou plus nécessaires"
 
 
+msgid "Requires AMD GPU with RDNA architecture"
+msgstr "GPU AMD avec architecture RDNA"
+
+
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "et pilote AMD Radeon Pro en version 21.Q4 ou plus nécessaires"
 
@@ -104900,6 +105081,10 @@ msgstr "et pilote AMD en version 22.10 ou plus nécessaires"
 
 msgid "Requires Intel GPU with Xe-HPG architecture"
 msgstr "GPU Intel avec architecture Xe-HPG"
+
+
+msgid "and Windows driver version 101.4032 or newer"
+msgstr "et pilote Windows en version 101.4032 ou plus nécessaires"
 
 
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
@@ -104914,8 +105099,12 @@ msgid "Requires Intel GPU with Xe-HPG architecture and"
 msgstr "GPU Intel nécessaire avec architecture Xe-HPG et"
 
 
+msgid "  - intel-level-zero-gpu version 1.3.24931 or newer"
+msgstr "  - intel-level-zero-gpu version 1.3.24931 ou plus"
+
+
 msgid "  - oneAPI Level-Zero Loader"
-msgstr "  -  chargeur oneAPI Level-Zero"
+msgstr "  - chargeur oneAPI Level-Zero"
 
 
 msgid "Noise Threshold"
@@ -110752,6 +110941,11 @@ msgstr "Alembic (.abc)"
 
 
 msgctxt "Operator"
+msgid "Universal Scene Description (.usd*)"
+msgstr "Universal Scene Description (.usd*)"
+
+
+msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG en crayon gras"
 
@@ -112323,6 +112517,11 @@ msgid "Viewport Overlays"
 msgstr "Surimpressions de la vue"
 
 
+msgctxt "View3D"
+msgid "Floor"
+msgstr "Sol"
+
+
 msgid "Text Info"
 msgstr "Infos textuelles"
 
@@ -112910,10 +113109,6 @@ msgstr "(Dés)activer rayons X"
 
 msgid "To 3D Cursor"
 msgstr "Au curseur 3D"
-
-
-msgid "Compositor not supported on MacOS"
-msgstr "Compositeur non pris en charge sur MacOS."
 
 
 msgid "Fade Inactive Geometry"
@@ -113545,7 +113740,7 @@ msgstr "Mémoire insuffisante lors de l’allocation de clmd->clothObject->loopt
 
 
 msgid "Scene Collection"
-msgstr "Collection de scène"
+msgstr "Collection de la scène"
 
 
 msgid "Collection %d"
@@ -114629,6 +114824,10 @@ msgstr "Compositing | Désinitialisation de l’exécution"
 
 msgid "Basic"
 msgstr "Basique"
+
+
+msgid "Compiling Shaders (%d remaining)"
+msgstr "Compilation des shaders (%d restants)"
 
 
 msgid "Incompatible Light cache version, please bake again"
@@ -117882,6 +118081,22 @@ msgid "%s already in %s"
 msgstr "%s déjà dans %s"
 
 
+msgid "%s linked to %s"
+msgstr "%s lié dans %s"
+
+
+msgid "Objects linked to %s"
+msgstr "Objets liés dans %s"
+
+
+msgid "%s moved to %s"
+msgstr "%s déplacé vers %s"
+
+
+msgid "Objects moved to %s"
+msgstr "Objets déplacés vers %s"
+
+
 msgid "Only one modifier of this type is allowed"
 msgstr "Un seul modificateur de ce type autorisé"
 
@@ -119265,6 +119480,10 @@ msgstr "Insérer image clé n’est pas encore implémenté pour ce mode"
 
 msgid "Not implemented for Masks"
 msgstr "Pas implémenté pour les masques"
+
+
+msgid "Cannot activate a file selector dialog, one already open"
+msgstr "Impossible d’activer une fenêtre de sélection de fichier, une fenêtre est déjà ouverte"
 
 
 msgid "Texture Field"
@@ -123301,6 +123520,10 @@ msgstr "La contrainte « %s » est introuvable dans l’objet « %s »"
 
 msgid "Could not move constraint from index '%d' to '%d'"
 msgstr "Impossible de déplacer la contrainte de l’indice %d vers %d"
+
+
+msgid "Invalid original modifier index '%d'"
+msgstr "Indice du modificateur original invalide '%d'"
 
 
 msgid "Modifier \"%s\" is not in the object's modifier list"
