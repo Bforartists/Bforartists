@@ -613,6 +613,8 @@ void BKE_curve_calc_modifiers_pre(Depsgraph *depsgraph,
         continue;
       }
 
+      blender::bke::ScopedModifierTimer modifier_timer{*md};
+
       if (!deformedVerts) {
         deformedVerts = BKE_curve_nurbs_vert_coords_alloc(source_nurb, &numVerts);
       }
@@ -732,6 +734,8 @@ static GeometrySet curve_calc_modifiers_post(Depsgraph *depsgraph,
       mti->modifyGeometrySet(md, &mectx_apply, &geometry_set);
       continue;
     }
+
+    blender::bke::ScopedModifierTimer modifier_timer{*md};
 
     if (!geometry_set.has_mesh()) {
       geometry_set.replace_mesh(BKE_mesh_new_nomain(0, 0, 0, 0, 0));
@@ -1200,7 +1204,7 @@ static GeometrySet evaluate_curve_type_object(Depsgraph *depsgraph,
         }
 
         LISTBASE_FOREACH (DispList *, dlb, &dlbev) {
-          /* for each part of the bevel use a separate displblock */
+          /* For each part of the bevel use a separate display-block. */
           DispList *dl = MEM_cnew<DispList>(__func__);
           dl->verts = data = (float *)MEM_mallocN(sizeof(float[3]) * dlb->nr * steps, __func__);
           BLI_addtail(r_dispbase, dl);
