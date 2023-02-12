@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-30 08:45:14\n"
+"POT-Creation-Date: 2023-02-06 15:36:45\n"
 "PO-Revision-Date: \n"
 "Last-Translator: DeathBlood\n"
 "Language-Team: \n"
@@ -13068,6 +13068,10 @@ msgid "3D vector"
 msgstr "三维矢量"
 
 
+msgid "Read-Only Vector"
+msgstr "只读向量"
+
+
 msgid "Domain Settings"
 msgstr "域设置"
 
@@ -15936,6 +15940,14 @@ msgid "Stroke start extreme cap style"
 msgstr "笔画开端风格"
 
 
+msgid "Init Time"
+msgstr "初始化时间"
+
+
+msgid "Initial time of the stroke"
+msgstr "笔画的初始时间"
+
+
 msgid "Triangles"
 msgstr "三角形"
 
@@ -15998,6 +16010,10 @@ msgstr "选择用于编辑的路径控制点"
 
 msgid "Color intensity (alpha factor)"
 msgstr "色彩强度 (alpha 系数)"
+
+
+msgid "Time relative to stroke start"
+msgstr "相对于笔画开始的时间"
 
 
 msgid "UV Fill"
@@ -22087,6 +22103,10 @@ msgstr "数据块中的所有曲线"
 
 msgid "Normals"
 msgstr "法向"
+
+
+msgid "The curve normal value at each of the curve's control points"
+msgstr "曲线每个控制点处的曲线法向值"
 
 
 msgid "Control points of all curves"
@@ -33618,6 +33638,11 @@ msgid "Color for mixing with primary filling color"
 msgstr "与主要填充颜色混合的颜色"
 
 
+msgctxt "GPencil"
+msgid "Mix"
+msgstr "混合"
+
+
 msgid "Mix Factor"
 msgstr "混合系数"
 
@@ -34991,6 +35016,10 @@ msgid "Mesh UV Layer"
 msgstr "网格UV 层"
 
 
+msgid "(Deprecated) Layer of UV coordinates in a Mesh data-block"
+msgstr "(已弃用)网格数据块中的UV坐标层"
+
+
 msgid "UV Pinned"
 msgstr "钉住UV"
 
@@ -35019,8 +35048,36 @@ msgid "Set the UV map as active for rendering"
 msgstr "将UV贴图设置为活动状态以用于渲染"
 
 
+msgid "UV Edge Selection"
+msgstr "UV 边选择"
+
+
+msgid "Selection state of the edge in the UV editor"
+msgstr "UV 编辑器中边的选择状态"
+
+
 msgid "Name of UV map"
 msgstr "UV 贴图名称"
+
+
+msgid "UV Pin"
+msgstr "UV 钉固"
+
+
+msgid "UV pinned state in the uv editor"
+msgstr "UV 编辑器中的 UV 钉固状态"
+
+
+msgid "UV coordinates on face corners"
+msgstr "面角上的 UV 坐标"
+
+
+msgid "UV Vertex Selection"
+msgstr "UV 顶点选择"
+
+
+msgid "Selection state of the face corner the UV editor"
+msgstr "UV编辑器的面角选择状态"
 
 
 msgid "Mesh Sculpt Vertex Color"
@@ -37673,6 +37730,10 @@ msgstr "法向编辑修改器"
 
 msgid "Modifier affecting/generating custom normals"
 msgstr "修改器会影响/生成自定义法线"
+
+
+msgid "How much of generated normals to mix with existing ones"
+msgstr "新生成的法线与已有法线的混合程度"
 
 
 msgid "Maximum angle between old and new normals"
@@ -41108,8 +41169,16 @@ msgid "Collection of NLA strip F-Curves"
 msgstr "NLA片段函数曲线集合"
 
 
+msgid "Collection of NLA Strips"
+msgstr "NLA片段集合"
+
+
 msgid "NLA Track"
 msgstr "NLA 轨道"
+
+
+msgid "An animation layer containing Actions referenced as NLA strips"
+msgstr "一个包含引用为 NLA 片段的动作的动画层"
 
 
 msgid "NLA Track is active"
@@ -43772,6 +43841,11 @@ msgid "Float to Integer"
 msgstr "小数(浮点型)转整数"
 
 
+msgctxt "NodeTree"
+msgid "Rounding Mode"
+msgstr "舍入模式"
+
+
 msgid "Method used to convert the float to an integer"
 msgstr "用于将浮点数转换为整数的方法"
 
@@ -43782,6 +43856,11 @@ msgstr "将浮点向上或向下四舍五入到最接近的整数"
 
 msgid "Round the float down to the next smallest integer"
 msgstr "将浮点数四舍五入到下一个最小的整数"
+
+
+msgctxt "NodeTree"
+msgid "Ceiling"
+msgstr "向上取整"
 
 
 msgid "Round the float up to the next largest integer"
@@ -44673,6 +44752,14 @@ msgstr ""
 "注意：嵌套实例不受此节点的影响"
 
 
+msgid "Interpolate Curves"
+msgstr "插值曲线"
+
+
+msgid "Generate new curves on points by interpolating between existing curves"
+msgstr "通过在现有曲线之间进行插值，在点上生成新曲线"
+
+
 msgid "Is Viewport"
 msgstr "是否视图"
 
@@ -44747,6 +44834,14 @@ msgstr "生成具有可变边长和细分的长方体网格"
 
 msgid "Generate a cylinder mesh"
 msgstr "生成圆柱体网格"
+
+
+msgid "Face Group Boundaries"
+msgstr "面组边界"
+
+
+msgid "Find edges on the boundaries between groups of faces with the same ID value"
+msgstr "查找具有相同 ID 值的面组之间的边界上的边"
 
 
 msgid "Generate a planar mesh on the XY plane"
@@ -44965,6 +45060,10 @@ msgid "Realize Instances"
 msgstr "实现实例"
 
 
+msgid "Convert instances into real geometry data"
+msgstr "将实例转换为真实的几何体"
+
+
 msgid "Legacy Behavior"
 msgstr "后遗行为"
 
@@ -45015,6 +45114,10 @@ msgstr "通过将每根样条线拆分为具有指定长度的线段来计算采
 
 msgid "Reverse Curve"
 msgstr "反转曲线"
+
+
+msgid "Change the direction of curves by swapping their start and end data"
+msgstr "通过交换曲线的开始和结束数据来更改曲线的方向"
 
 
 msgid "Rotate Instances"
@@ -47196,6 +47299,11 @@ msgstr "物体空间矢量置换映射"
 
 msgid "World space vector displacement mapping"
 msgstr "世界空间矢量转换映射"
+
+
+msgctxt "NodeTree"
+msgid "Vector Math"
+msgstr "矢量运算"
 
 
 msgid "Perform vector math operation"
@@ -53907,6 +54015,10 @@ msgid "Apply modifiers (excluding Armatures) to mesh objects -WARNING: prevents 
 msgstr "应用修改器到网格物体(除骨架外) - 警告: 禁止导出形态键"
 
 
+msgid "Export Attributes (when starting with underscore)"
+msgstr "导出属性(以下划线开头时)"
+
+
 msgid "Export cameras"
 msgstr "导出摄像机"
 
@@ -54061,6 +54173,14 @@ msgstr "将图像另存为 JPEG。(需要alpha 的图像保存为 PNG。)注意�
 
 msgid "Don't export images"
 msgstr "不导出图像"
+
+
+msgid "JPEG quality"
+msgstr "JPEG 品质"
+
+
+msgid "Quality of JPEG export"
+msgstr "JPEG 导出的品质"
 
 
 msgid "Keep original"
@@ -82717,10 +82837,6 @@ msgid "Cycles Render Devices"
 msgstr "Cycles 渲染设备"
 
 
-msgid "GPU Back end"
-msgstr "GPU后端"
-
-
 msgid "Memory & Limits"
 msgstr "内存 & 限额"
 
@@ -86188,32 +86304,16 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "通过限制纹理尺寸来节约显存"
 
 
-msgid "GPU back end to use (requires restarting Blender for changes to take effect)"
-msgstr "要使用的 GPU 后端。(需要重新启动Blender才能使更改生效)"
-
-
 msgid "OpenGL"
 msgstr "OpenGL"
-
-
-msgid "Use OpenGL back end"
-msgstr "使用 OpenGL 后端"
 
 
 msgid "Metal"
 msgstr "金属"
 
 
-msgid "Use Metal back end"
-msgstr "使用金属后端"
-
-
 msgid "Vulkan"
 msgstr "Vulkan"
-
-
-msgid "Use Vulkan back end"
-msgstr "使用 Vulkan 后端"
 
 
 msgid "Image Display Method"
@@ -112827,10 +112927,6 @@ msgstr "切换透视"
 
 msgid "To 3D Cursor"
 msgstr "至3D游标"
-
-
-msgid "Compositor not supported on MacOS"
-msgstr "合成器在 MacOS 上不受支持"
 
 
 msgid "Fade Inactive Geometry"

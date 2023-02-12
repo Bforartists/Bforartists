@@ -496,7 +496,7 @@ class edit_generators:
 
     class use_brief_types(EditGenerator):
         """
-        Use zero before the float suffix.
+        Use less verbose unsigned types.
 
         Replace:
           unsigned int
@@ -512,6 +512,42 @@ class edit_generators:
                 edits.append(Edit(
                     span=match.span(),
                     content='u%s' % match.group(2),
+                    content_fail='__ALWAYS_FAIL__',
+                ))
+
+            # There may be some remaining uses of `unsigned` without any integer type afterwards.
+            # `unsigned` -> `uint`.
+            for match in re.finditer(r"\bunsigned\b", data):
+                edits.append(Edit(
+                    span=match.span(),
+                    content='uint',
+                    content_fail='__ALWAYS_FAIL__',
+                ))
+
+            return edits
+
+    class use_nullptr(EditGenerator):
+        """
+        Use ``nullptr`` instead of ``NULL`` for C++ code.
+
+        Replace:
+          NULL
+        With:
+          nullptr
+        """
+        @staticmethod
+        def edit_list_from_file(source: str, data: str, _shared_edit_data: Any) -> List[Edit]:
+            edits = []
+
+            # The user might exclude C++, if they forget, it is better not to operate on C.
+            if not source.lower().endswith((".h", ".c")):
+                return edits
+
+            # `NULL` -> `nullptr`.
+            for match in re.finditer(r"\bNULL\b", data):
+                edits.append(Edit(
+                    span=match.span(),
+                    content='nullptr',
                     content_fail='__ALWAYS_FAIL__',
                 ))
 
