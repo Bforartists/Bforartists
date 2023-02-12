@@ -207,6 +207,8 @@ static void wm_window_match_init(bContext *C, ListBase *wmlist)
 
   BLI_listbase_clear(&G_MAIN->wm);
   if (G_MAIN->name_map != nullptr) {
+    /* NOTE: UI IDs are assumed to be only local data-blocks, so no need to call
+     * #BKE_main_namemap_clear here. */
     BKE_main_namemap_destroy(&G_MAIN->name_map);
   }
 
@@ -480,7 +482,7 @@ static void wm_init_userdef(Main *bmain)
     SET_FLAG_FROM_TEST(G.f, (U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0, G_FLAG_SCRIPT_AUTOEXEC);
   }
 
-  MEM_CacheLimiter_set_maximum((size_t(U.memcachelimit)) * 1024 * 1024);
+  MEM_CacheLimiter_set_maximum(size_t(U.memcachelimit) * 1024 * 1024);
   BKE_sound_init(bmain);
 
   /* Update the temporary directory from the preferences or fallback to the system default. */
