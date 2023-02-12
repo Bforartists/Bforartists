@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'90e940686692')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-30 08:45:14\n"
+"POT-Creation-Date: 2023-02-06 15:36:45\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -86718,32 +86718,16 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "グラフィックス メモリーに保存するテクスチャ サイズの上限"
 
 
-msgid "GPU back end to use (requires restarting Blender for changes to take effect)"
-msgstr "使用する GPU バックエンド（変更後は Blender の再起動が必要です）"
-
-
 msgid "OpenGL"
 msgstr "OpenGL"
-
-
-msgid "Use OpenGL back end"
-msgstr "OpenGL バックエンドを使用します"
 
 
 msgid "Metal"
 msgstr "Metal"
 
 
-msgid "Use Metal back end"
-msgstr "Metal バックエンドを使用します"
-
-
 msgid "Vulkan"
 msgstr "Vulkan"
-
-
-msgid "Use Vulkan back end"
-msgstr "Vulkan バックエンドを使用します"
 
 
 msgid "Image Display Method"
@@ -113444,10 +113428,6 @@ msgstr "透過表示を切り替え"
 
 msgid "To 3D Cursor"
 msgstr "3Dカーソルを注視"
-
-
-msgid "Compositor not supported on MacOS"
-msgstr "コンポジターは MacOS に未対応です"
 
 
 msgid "Fade Inactive Geometry"

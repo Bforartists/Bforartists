@@ -253,6 +253,7 @@ dict_custom = {
     "reparameterization",
     "reparametization",
     "representable",
+    "reprojecting",
     "repurpose",
     "respecialized",
     "retiming",
