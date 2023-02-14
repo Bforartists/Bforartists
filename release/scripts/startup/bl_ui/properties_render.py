@@ -480,6 +480,32 @@ class RENDER_PT_eevee_shadows(RenderButtonsPanel, Panel):
         col.prop(props, "use_soft_shadows")
 
 
+class RENDER_PT_eevee_next_shadows(RenderButtonsPanel, Panel):
+    bl_label = "Shadows"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        scene = context.scene
+        props = scene.eevee
+        self.layout.prop(props, "use_shadows", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        scene = context.scene
+        props = scene.eevee
+
+        col = layout.column()
+        col.prop(props, "shadow_pool_size", text="Pool Size")
+        col.prop(props, "light_threshold")
+
+
 class RENDER_PT_eevee_sampling(RenderButtonsPanel, Panel):
     bl_label = "Sampling"
     COMPAT_ENGINES = {'BLENDER_EEVEE'}
@@ -661,7 +687,6 @@ class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
 
         scene = context.scene
         rd = scene.render
-        props = scene.eevee
 
         col = layout.column()
         col.prop(rd, "filter_size")
@@ -855,6 +880,10 @@ class RENDER_PT_simplify_viewport(RenderButtonsPanel, Panel):
         col = flow.column()
         col.prop(rd, "simplify_volumes", text="Volume Resolution")
 
+        if context.engine in 'BLENDER_EEVEE_NEXT':
+            col = flow.column()
+            col.prop(rd, "simplify_shadows", text="Shadow Resolution")
+
 
 class RENDER_PT_simplify_render(RenderButtonsPanel, Panel):
     bl_label = "Render"
@@ -881,6 +910,10 @@ class RENDER_PT_simplify_render(RenderButtonsPanel, Panel):
 
         col = flow.column()
         col.prop(rd, "simplify_child_particles_render", text="Max Child Particles")
+
+        if context.engine in 'BLENDER_EEVEE_NEXT':
+            col = flow.column()
+            col.prop(rd, "simplify_shadows_render", text="Shadow Resolution")
 
 
 class RENDER_PT_simplify_greasepencil(RenderButtonsPanel, Panel, GreasePencilSimplifyPanel):
@@ -916,6 +949,7 @@ classes = (
     RENDER_PT_eevee_performance,
     RENDER_PT_eevee_hair,
     RENDER_PT_eevee_shadows,
+    RENDER_PT_eevee_next_shadows,
     RENDER_PT_eevee_indirect_lighting,
     RENDER_PT_eevee_indirect_lighting_display,
     RENDER_PT_eevee_film,

@@ -132,7 +132,7 @@ struct MeshRuntime {
    *
    * Modifiers that edit the mesh data in-place must set this to false
    * (most #eModifierTypeType_NonGeometrical modifiers). Otherwise the edit-mesh
-   * data will be used for drawing, missing changes from modifiers. See T79517.
+   * data will be used for drawing, missing changes from modifiers. See #79517.
    */
   bool is_original_bmesh = false;
 
@@ -173,6 +173,13 @@ struct MeshRuntime {
    * drawing code instead of polygon center face dots. Otherwise this will be empty.
    */
   BitVector<> subsurf_face_dot_tags;
+
+  /**
+   * A bit vector the size of the number of edges, set to true for edges that should be drawn in
+   * the viewport. Created by the "Optimal Display" feature of the subdivision surface modifier.
+   * Otherwise it will be empty.
+   */
+  BitVector<> subsurf_optimal_display_edges;
 
   MeshRuntime() = default;
   ~MeshRuntime();
