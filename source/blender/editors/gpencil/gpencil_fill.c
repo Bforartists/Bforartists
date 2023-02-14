@@ -735,7 +735,7 @@ static void gpencil_create_extensions_radius(tGPDfill *tgpf)
     float tan2[3];
     float d1;
     float d2;
-    float total_length = 0.f;
+    float total_length = 0.0f;
     for (int i = 1; i < gps->totpoints; i++) {
       if (i > 1) {
         copy_v3_v3(tan1, tan2);
@@ -751,7 +751,7 @@ static void gpencil_create_extensions_radius(tGPDfill *tgpf)
         sub_v3_v3v3(curvature, tan2, tan1);
         float k = normalize_v3(curvature);
         k /= min_ff(d1, d2);
-        float radius = 1.f / k;
+        float radius = 1.0f / k;
         /*
          * The smaller the radius of curvature, the sharper the corner.
          * The thicker the line, the larger the radius of curvature it
@@ -1003,8 +1003,8 @@ static void draw_mouse_position(tGPDfill *tgpf)
   uint col = GPU_vertformat_attr_add(format, "color", GPU_COMP_U8, 4, GPU_FETCH_INT_TO_FLOAT_UNIT);
 
   /* Draw mouse click position in Blue. */
-  immBindBuiltinProgram(GPU_SHADER_3D_POINT_FIXED_SIZE_VARYING_COLOR);
-  GPU_point_size(point_size);
+  immBindBuiltinProgram(GPU_SHADER_2D_POINT_UNIFORM_SIZE_UNIFORM_COLOR_AA);
+  immUniform1f("size", point_size * M_SQRT2);
   immBegin(GPU_PRIM_POINTS, 1);
   immAttr4ubv(col, mouse_color);
   immVertex3fv(pos, &pt->x);
