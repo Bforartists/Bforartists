@@ -79,7 +79,7 @@
 #include "ED_undo.h"
 
 #include "bmesh.h"
-#include "sculpt_intern.h"
+#include "sculpt_intern.hh"
 
 /* Uncomment to print the undo stack in the console on push/undo/redo. */
 //#define SCULPT_UNDO_DEBUG
@@ -1839,7 +1839,7 @@ static void sculpt_undo_set_active_layer(struct bContext *C, SculptAttrRef *attr
   CustomDataLayer *layer;
   layer = BKE_id_attribute_find(&me->id, attr->name, attr->type, attr->domain);
 
-  /* Temporary fix for T97408. This is a fundamental
+  /* Temporary fix for #97408. This is a fundamental
    * bug in the undo stack; the operator code needs to push
    * an extra undo step before running an operator if a
    * non-memfile undo system is active.
