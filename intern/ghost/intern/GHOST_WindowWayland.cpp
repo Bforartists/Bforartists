@@ -669,7 +669,7 @@ static void xdg_surface_handle_configure(void *data,
   GHOST_SystemWayland *system = win->ghost_system;
   const bool is_main_thread = system->main_thread_id == std::this_thread::get_id();
   if (!is_main_thread) {
-    /* NOTE(@campbellbarton): this only gets one redraw,
+    /* NOTE(@ideasman42): this only gets one redraw,
      * I could not find a case where this causes problems. */
     gwl_window_pending_actions_tag(win, PENDING_FRAME_CONFIGURE);
   }
@@ -774,7 +774,7 @@ GHOST_WindowWayland::GHOST_WindowWayland(GHOST_SystemWayland *system,
   window_->ghost_window = this;
   window_->ghost_system = system;
 
-  /* NOTE(@campbellbarton): The scale set here to avoid flickering on startup.
+  /* NOTE(@ideasman42): The scale set here to avoid flickering on startup.
    * When all monitors use the same scale (which is quite common) there aren't any problems.
    *
    * When monitors have different scales there may still be a visible window resize on startup.
@@ -812,12 +812,12 @@ GHOST_WindowWayland::GHOST_WindowWayland(GHOST_SystemWayland *system,
    * when the `window_->scale` changed. */
   const int32_t size_min[2] = {320, 240};
 
-  /* This value is expected to match the base name of the `.desktop` file. see T101805.
+  /* This value is expected to match the base name of the `.desktop` file. see #101805.
    *
    * NOTE: the XDG desktop-entry-spec defines that this should follow the "reverse DNS" convention.
    * For e.g. `org.blender.Blender` - however the `.desktop` file distributed with Blender is
    * simply called `blender.desktop`, so the it's important to follow that name.
-   * Other distributions such as SNAP & FLATPAK may need to change this value T101779.
+   * Other distributions such as SNAP & FLATPAK may need to change this value #101779.
    * Currently there isn't a way to configure this, we may want to support that. */
   const char *xdg_app_id = (
 #ifdef WITH_GHOST_WAYLAND_APP_ID
@@ -1078,9 +1078,9 @@ GHOST_WindowWayland::~GHOST_WindowWayland()
 
   wl_surface_destroy(window_->wl_surface);
 
-  /* NOTE(@campbellbarton): Flushing will often run the appropriate handlers event
+  /* NOTE(@ideasman42): Flushing will often run the appropriate handlers event
    * (#wl_surface_listener.leave in particular) to avoid attempted access to the freed surfaces.
-   * This is not fool-proof though, hence the call to #window_surface_unref, see: T99078. */
+   * This is not fool-proof though, hence the call to #window_surface_unref, see: #99078. */
   wl_display_flush(system_->wl_display());
 
   delete window_;
