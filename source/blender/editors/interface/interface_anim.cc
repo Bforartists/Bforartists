@@ -85,7 +85,7 @@ void ui_but_anim_flag(uiBut *but, const AnimationEvalContext *anim_eval_context)
 
       but->flag |= UI_BUT_ANIMATED;
 
-      /* #41525 - When the active action is a NLA strip being edited,
+      /* T41525 - When the active action is a NLA strip being edited,
        * we need to correct the frame number to "look inside" the
        * remapped action
        */
@@ -322,7 +322,7 @@ void ui_but_anim_decorate_cb(bContext *C, void *arg_but, void * /*arg_dummy*/)
     return;
   }
 
-  /* FIXME(@ideasman42): swapping active pointer is weak. */
+  /* FIXME(@campbellbarton): swapping active pointer is weak. */
   std::swap(but_anim->active, but_decorate->active);
   wm->op_undo_depth++;
 

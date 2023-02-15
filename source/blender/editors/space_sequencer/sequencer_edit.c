@@ -1223,7 +1223,7 @@ int seq_effect_find_selected(Scene *scene,
   *r_selseq2 = seq2;
   *r_selseq3 = seq3;
 
-  /* TODO(Richard): This function needs some refactoring, this is just quick hack for #73828. */
+  /* TODO(Richard): This function needs some refactoring, this is just quick hack for T73828. */
   if (SEQ_effect_get_num_inputs(type) < 3) {
     *r_selseq3 = NULL;
   }
@@ -2550,22 +2550,17 @@ void SEQUENCER_OT_copy(wmOperatorType *ot)
 /** \name Paste Operator
  * \{ */
 
-bool ED_sequencer_deselect_all(Scene *scene)
+void ED_sequencer_deselect_all(Scene *scene)
 {
   Editing *ed = SEQ_editing_get(scene);
-  bool changed = false;
 
   if (ed == NULL) {
-    return changed;
+    return;
   }
 
   LISTBASE_FOREACH (Sequence *, seq, SEQ_active_seqbase_get(ed)) {
-    if (seq->flag & SEQ_ALLSEL) {
-      seq->flag &= ~SEQ_ALLSEL;
-      changed = true;
-    }
+    seq->flag &= ~SEQ_ALLSEL;
   }
-  return changed;
 }
 
 static void sequencer_paste_animation(bContext *C)
@@ -2965,7 +2960,7 @@ static int sequencer_change_path_exec(bContext *C, wmOperator *op)
 
     RNA_string_get(op->ptr, "directory", directory);
     if (is_relative_path) {
-      /* TODO(@ideasman42): shouldn't this already be relative from the filesel?
+      /* TODO(@campbellbarton): shouldn't this already be relative from the filesel?
        * (as the 'filepath' is) for now just make relative here,
        * but look into changing after 2.60. */
       BLI_path_rel(directory, BKE_main_blendfile_path(bmain));

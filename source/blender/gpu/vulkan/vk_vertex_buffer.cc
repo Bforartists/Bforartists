@@ -32,8 +32,14 @@ void VKVertexBuffer::update_sub(uint /*start*/, uint /*len*/, const void * /*dat
 {
 }
 
-void VKVertexBuffer::read(void * /*data*/) const
+const void *VKVertexBuffer::read() const
 {
+  return nullptr;
+}
+
+void *VKVertexBuffer::unmap(const void * /*mapped_data*/) const
+{
+  return nullptr;
 }
 
 void VKVertexBuffer::acquire_data()

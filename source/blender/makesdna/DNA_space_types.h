@@ -95,13 +95,12 @@ enum {
   /**
    * The space is not a regular one opened through the editor menu (for example) but spawned by an
    * operator to fulfill some task and then disappear again.
-   * Can typically be canceled using Escape, but that is handled on the editor level.
-   */
+   * Can typically be cancelled using Escape, but that is handled on the editor level. */
   SPACE_FLAG_TYPE_TEMPORARY = (1 << 0),
   /**
    * Used to mark a space as active but "overlapped" by temporary full-screen spaces. Without this
    * we wouldn't be able to restore the correct active space after closing temp full-screens
-   * reliably if the same space type is opened twice in a full-screen stack (see #19296). We don't
+   * reliably if the same space type is opened twice in a full-screen stack (see T19296). We don't
    * actually open the same space twice, we have to pretend it is by managing area order carefully.
    */
   SPACE_FLAG_TYPE_WAS_ACTIVE = (1 << 1),
@@ -606,13 +605,10 @@ typedef struct SequencerTimelineOverlay {
 typedef enum eSpaceSeq_SequencerTimelineOverlay_Flag {
   SEQ_TIMELINE_SHOW_STRIP_OFFSETS = (1 << 1),
   SEQ_TIMELINE_SHOW_THUMBNAILS = (1 << 2),
-  /** Use #Sequence::color_tag */
-  SEQ_TIMELINE_SHOW_STRIP_COLOR_TAG = (1 << 3),
+  SEQ_TIMELINE_SHOW_STRIP_COLOR_TAG = (1 << 3), /* use Sequence->color_tag */
   SEQ_TIMELINE_SHOW_FCURVES = (1 << 5),
-  /** Draw all wave-forms. */
-  SEQ_TIMELINE_ALL_WAVEFORMS = (1 << 7),
-  /** Draw no wave-forms. */
-  SEQ_TIMELINE_NO_WAVEFORMS = (1 << 8),
+  SEQ_TIMELINE_ALL_WAVEFORMS = (1 << 7), /* draw all waveforms */
+  SEQ_TIMELINE_NO_WAVEFORMS = (1 << 8),  /* draw no waveforms */
   SEQ_TIMELINE_SHOW_STRIP_NAME = (1 << 14),
   SEQ_TIMELINE_SHOW_STRIP_SOURCE = (1 << 15),
   SEQ_TIMELINE_SHOW_STRIP_DURATION = (1 << 16),
@@ -982,7 +978,7 @@ enum eFileDetails {
   FILE_DETAILS_DATETIME = (1 << 1),
 };
 
-/* These values need to be hard-coded in structs, DNA does not recognize defines. */
+/* these values need to be hardcoded in structs, dna does not recognize defines */
 /* also defined in BKE */
 #define FILE_MAXDIR 768
 #define FILE_MAXFILE 256
@@ -1095,14 +1091,13 @@ typedef enum eFileSel_File_Types {
 } eFileSel_File_Types;
 ENUM_OPERATORS(eFileSel_File_Types, FILE_TYPE_BLENDERLIB);
 
-/** Selection Flags #FileList::selection_state. */
+/** Selection Flags in filesel: struct direntry, unsigned char selflag. */
 typedef enum eDirEntry_SelectFlag {
   /*  FILE_SEL_ACTIVE         = (1 << 1), */ /* UNUSED */
   FILE_SEL_HIGHLIGHTED = (1 << 2),
   FILE_SEL_SELECTED = (1 << 3),
   FILE_SEL_EDITING = (1 << 4),
 } eDirEntry_SelectFlag;
-ENUM_OPERATORS(eDirEntry_SelectFlag, FILE_SEL_EDITING);
 
 /* ***** Related to file browser, but never saved in DNA, only here to help with RNA. ***** */
 
@@ -1214,7 +1209,7 @@ typedef struct SpaceImage {
   struct Image *image;
   struct ImageUser iuser;
 
-  /** Histogram waveform and vector-scope. */
+  /** Histogram waveform and vectorscope. */
   struct Scopes scopes;
   /** Sample line histogram. */
   struct Histogram sample_line_hist;
@@ -1593,12 +1588,12 @@ typedef struct SpaceNode {
 
   /* tree type for the current node tree */
   char tree_idname[64];
-  /** Same as #bNodeTree::type (deprecated). */
+  /** Treetype: as same nodetree->type. */
   int treetype DNA_DEPRECATED;
 
-  /** Texture-from object, world or brush (#eSpaceNode_TexFrom). */
+  /** Texfrom object, world or brush. */
   short texfrom;
-  /** Shader from object or world (#eSpaceNode_ShaderFrom). */
+  /** Shader from object or world. */
   short shaderfrom;
 
   /** Grease-pencil data. */
@@ -1662,7 +1657,7 @@ typedef struct ConsoleLine {
   /* Keep these 3 vars so as to share free, realloc functions. */
   /** Allocated length. */
   int len_alloc;
-  /** Real length: `strlen()`. */
+  /** Real len - strlen(). */
   int len;
   char *line;
 
@@ -1675,8 +1670,7 @@ typedef struct ConsoleLine {
 typedef enum eConsoleLine_Type {
   CONSOLE_LINE_OUTPUT = 0,
   CONSOLE_LINE_INPUT = 1,
-  /** Auto-completion feedback. */
-  CONSOLE_LINE_INFO = 2,
+  CONSOLE_LINE_INFO = 2, /* autocomp feedback */
   CONSOLE_LINE_ERROR = 3,
 } eConsoleLine_Type;
 

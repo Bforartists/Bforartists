@@ -24,7 +24,7 @@ struct wmKeyConfig;
 struct wmOperator;
 typedef struct PaintTileMap PaintTileMap;
 
-/* paint_ops.cc */
+/* paint_ops.c */
 
 void ED_operatortypes_paint(void);
 void ED_operatormacros_paint(void);

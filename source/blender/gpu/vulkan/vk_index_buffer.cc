@@ -17,8 +17,9 @@ void VKIndexBuffer::bind_as_ssbo(uint /*binding*/)
 {
 }
 
-void VKIndexBuffer::read(uint32_t * /*data*/) const
+const uint32_t *VKIndexBuffer::read() const
 {
+  return 0;
 }
 
 void VKIndexBuffer::update_sub(uint /*start*/, uint /*len*/, const void * /*data*/)

@@ -140,7 +140,7 @@ class DATA_PT_EEVEE_light_distance(DataButtonsPanel, Panel):
 class DATA_PT_EEVEE_shadow(DataButtonsPanel, Panel):
     bl_label = "Shadow"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     @classmethod
     def poll(cls, context):
@@ -168,8 +168,7 @@ class DATA_PT_EEVEE_shadow(DataButtonsPanel, Panel):
         if light.type != 'SUN':
             sub.prop(light, "shadow_buffer_clip_start", text="Clip Start")
 
-        if context.engine != 'BLENDER_EEVEE_NEXT':
-            col.prop(light, "shadow_buffer_bias", text="Bias")
+        col.prop(light, "shadow_buffer_bias", text="Bias")
 
 
 class DATA_PT_EEVEE_shadow_cascaded_shadow_map(DataButtonsPanel, Panel):

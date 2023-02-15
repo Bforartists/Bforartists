@@ -46,13 +46,16 @@ void MTLIndexBuf::bind_as_ssbo(uint32_t binding)
   MTL_LOG_WARNING("MTLIndexBuf::bind_as_ssbo not yet implemented!\n");
 }
 
-void MTLIndexBuf::read(uint32_t *data) const
+const uint32_t *MTLIndexBuf::read() const
 {
   if (ibo_ != nullptr) {
-    void *host_ptr = ibo_->get_host_ptr();
-    memcpy(data, host_ptr, size_get());
+
+    /* Return host pointer. */
+    void *data = ibo_->get_host_ptr();
+    return static_cast<uint32_t *>(data);
   }
   BLI_assert(false && "Index buffer not ready to be read.");
+  return nullptr;
 }
 
 void MTLIndexBuf::upload_data()

@@ -46,7 +46,7 @@ typedef struct CoNo {
   float no[3];
 } CoNo;
 
-/* paint_stroke.cc */
+/* paint_stroke.c */
 
 typedef bool (*StrokeGetLocation)(struct bContext *C,
                                   float location[3],
@@ -87,7 +87,7 @@ bool paint_supports_texture(enum ePaintMode mode);
 bool paint_supports_jitter(enum ePaintMode mode);
 
 /**
- * Called in paint_ops.cc, on each regeneration of key-maps.
+ * Called in paint_ops.c, on each regeneration of key-maps.
  */
 struct wmKeyMap *paint_stroke_modal_keymap(struct wmKeyConfig *keyconf);
 int paint_stroke_modal(struct bContext *C,
@@ -352,17 +352,16 @@ void paint_calc_redraw_planes(float planes[4][4],
 float paint_calc_object_space_radius(struct ViewContext *vc,
                                      const float center[3],
                                      float pixel_radius);
-
-/**
- * Returns true when a color was sampled and false when a value was sampled.
- */
-bool paint_get_tex_pixel(const struct MTex *mtex,
-                         float u,
-                         float v,
-                         struct ImagePool *pool,
-                         int thread,
-                         float *r_intensity,
-                         float r_rgba[4]);
+float paint_get_tex_pixel(
+    const struct MTex *mtex, float u, float v, struct ImagePool *pool, int thread);
+void paint_get_tex_pixel_col(const struct MTex *mtex,
+                             float u,
+                             float v,
+                             float rgba[4],
+                             struct ImagePool *pool,
+                             int thread,
+                             bool convert,
+                             struct ColorSpace *colorspace);
 
 /**
  * Used for both 3D view and image window.
@@ -458,7 +457,7 @@ typedef enum BrushStrokeMode {
   BRUSH_STROKE_SMOOTH,
 } BrushStrokeMode;
 
-/* paint_hide.cc */
+/* paint_hide.c */
 
 typedef enum {
   PARTIALVIS_HIDE,
@@ -481,7 +480,7 @@ void PAINT_OT_hide_show(struct wmOperatorType *ot);
  * We must thus map the modes here to the desired
  * eSelectOp modes.
  *
- * Fixes #102349.
+ * Fixes T102349.
  */
 typedef enum {
   PAINT_MASK_FLOOD_VALUE = SEL_OP_SUB,

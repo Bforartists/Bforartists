@@ -75,7 +75,7 @@ const EnumPropertyItem rna_enum_usd_mtl_name_collision_mode_items[] = {
 const EnumPropertyItem rna_enum_usd_tex_import_mode_items[] = {
     {USD_TEX_IMPORT_NONE, "IMPORT_NONE", 0, "None", "Don't import textures"},
     {USD_TEX_IMPORT_PACK, "IMPORT_PACK", 0, "Packed", "Import textures as packed data"},
-    {USD_TEX_IMPORT_COPY, "IMPORT_COPY", 0, "Copy", "Copy files to textures directory"},
+    {USD_TEX_IMPORT_COPY, "IMPORT_COPY", 0, "Copy", "Copy files to Textures Directory"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -382,7 +382,6 @@ static int wm_usd_import_exec(bContext *C, wmOperator *op)
   const bool import_materials = RNA_boolean_get(op->ptr, "import_materials");
   const bool import_meshes = RNA_boolean_get(op->ptr, "import_meshes");
   const bool import_volumes = RNA_boolean_get(op->ptr, "import_volumes");
-  const bool import_shapes = RNA_boolean_get(op->ptr, "import_shapes");
 
   const bool import_subdiv = RNA_boolean_get(op->ptr, "import_subdiv");
 
@@ -414,7 +413,7 @@ static int wm_usd_import_exec(bContext *C, wmOperator *op)
   int offset = 0;
   int sequence_len = 1;
 
-  /* Switch out of edit mode to avoid being stuck in it (#54326). */
+  /* Switch out of edit mode to avoid being stuck in it (T54326). */
   Object *obedit = CTX_data_edit_object(C);
   if (obedit) {
     ED_object_mode_set(C, OB_MODE_EDIT);
@@ -444,7 +443,6 @@ static int wm_usd_import_exec(bContext *C, wmOperator *op)
                                    .import_materials = import_materials,
                                    .import_meshes = import_meshes,
                                    .import_volumes = import_volumes,
-                                   .import_shapes = import_shapes,
                                    .import_subdiv = import_subdiv,
                                    .import_instance_proxies = import_instance_proxies,
                                    .create_collection = create_collection,
@@ -490,7 +488,6 @@ static void wm_usd_import_draw(bContext *UNUSED(C), wmOperator *op)
   uiItemR(col, ptr, "import_materials", 0, NULL, ICON_NONE);
   uiItemR(col, ptr, "import_meshes", 0, NULL, ICON_NONE);
   uiItemR(col, ptr, "import_volumes", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "import_shapes", 0, NULL, ICON_NONE);
   uiItemR(box, ptr, "prim_path_mask", 0, NULL, ICON_NONE);
   uiItemR(box, ptr, "scale", 0, NULL, ICON_NONE);
 
@@ -580,7 +577,6 @@ void WM_OT_usd_import(struct wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "import_materials", true, "Materials", "");
   RNA_def_boolean(ot->srna, "import_meshes", true, "Meshes", "");
   RNA_def_boolean(ot->srna, "import_volumes", true, "Volumes", "");
-  RNA_def_boolean(ot->srna, "import_shapes", true, "Shapes", "");
 
   RNA_def_boolean(ot->srna,
                   "import_subdiv",
@@ -679,7 +675,7 @@ void WM_OT_usd_import(struct wmOperatorType *ot)
                  "//textures/",
                  FILE_MAXDIR,
                  "Textures Directory",
-                 "Path to the directory where imported textures will be copied");
+                 "Path to the directory where imported textures will be copied ");
 
   RNA_def_enum(
       ot->srna,
