@@ -350,7 +350,7 @@ static Mesh *mesh_wrapper_ensure_subdivision(Mesh *me)
     BKE_mesh_calc_normals_split(subdiv_mesh);
   }
 
-  if (!ELEM(subdiv, runtime_data->subdiv_cpu, runtime_data->subdiv_gpu)) {
+  if (subdiv != runtime_data->subdiv) {
     BKE_subdiv_free(subdiv);
   }
 

@@ -92,9 +92,6 @@ class OSLShaderManager : public ShaderManager {
                            const std::string &bytecode_hash = "",
                            const std::string &bytecode = "");
 
-  /* Get image slots used by OSL services on device. */
-  static void osl_image_slots(Device *device, ImageManager *image_manager, set<int> &image_slots);
-
  private:
   void texture_system_init();
   void texture_system_free();

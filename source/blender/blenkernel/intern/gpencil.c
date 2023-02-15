@@ -1261,9 +1261,7 @@ bGPDframe *BKE_gpencil_layer_frame_get(bGPDlayer *gpl, int cframe, eGP_GetFrame_
           found = true;
           break;
         }
-        /* If this is the last frame or the next frame is at a later time, we found the right
-         * frame. */
-        if (!(gpf->next) || (gpf->next->framenum > cframe)) {
+        if ((gpf->next) && (gpf->next->framenum > cframe)) {
           found = true;
           break;
         }

@@ -3,9 +3,9 @@ if NOT exist "%BLENDER_DIR%\source\tools\.git" (
 	if not "%GIT%" == "" (
 		"%GIT%" submodule update --init --recursive --progress
 		if errorlevel 1 goto FAIL
-		"%GIT%" submodule foreach git checkout main
+		"%GIT%" submodule foreach git checkout master
 		if errorlevel 1 goto FAIL
-		"%GIT%" submodule foreach git pull --rebase origin main
+		"%GIT%" submodule foreach git pull --rebase origin master
 		if errorlevel 1 goto FAIL
 		goto EOF
 	) else (

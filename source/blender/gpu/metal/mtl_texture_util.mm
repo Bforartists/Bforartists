@@ -647,9 +647,7 @@ id<MTLComputePipelineState> gpu::MTLTexture::mtl_texture_read_impl(
       @"IS_DEPTH_FORMAT" :
           [NSNumber numberWithInt:((specialization_params.depth_format_mode > 0) ? 1 : 0)],
       @"DEPTH_SCALE_FACTOR" : [NSNumber numberWithLongLong:depth_scale_factor],
-      @"TEX_TYPE" : [NSNumber numberWithInt:((int)(texture_type))],
-      @"IS_DEPTHSTENCIL_24_8" :
-          [NSNumber numberWithInt:(specialization_params.depth_format_mode == 2) ? 1 : 0]
+      @"TEX_TYPE" : [NSNumber numberWithInt:((int)(texture_type))]
     };
 
     /* Prepare shader library for conversion routine. */

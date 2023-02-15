@@ -58,7 +58,7 @@
 #  include "PIL_time_utildefines.h"
 #endif
 
-typedef int8_t eSign;
+typedef signed char eSign;
 
 #ifdef USE_KDTREE
 /**
@@ -84,24 +84,24 @@ typedef bool axis_t;
 
 /* use for sorting */
 typedef struct KDTreeNode2D_head {
-  uint32_t neg, pos;
-  uint32_t index;
+  uint neg, pos;
+  uint index;
 } KDTreeNode2D_head;
 
 typedef struct KDTreeNode2D {
-  uint32_t neg, pos;
-  uint32_t index;
+  uint neg, pos;
+  uint index;
   axis_t axis; /* range is only (0-1) */
-  uint16_t flag;
-  uint32_t parent;
+  ushort flag;
+  uint parent;
 } KDTreeNode2D;
 
 struct KDTree2D {
   KDTreeNode2D *nodes;
   const float (*coords)[2];
-  uint32_t root;
-  uint32_t node_num;
-  uint32_t *nodes_map; /* index -> node lookup */
+  uint root;
+  uint node_num;
+  uint *nodes_map; /* index -> node lookup */
 };
 
 struct KDRange2D {
@@ -119,14 +119,14 @@ typedef struct PolyFill {
   struct PolyIndex *indices; /* vertex aligned */
 
   const float (*coords)[2];
-  uint32_t coords_num;
+  uint coords_num;
 #ifdef USE_CONVEX_SKIP
-  uint32_t coords_num_concave;
+  uint coords_num_concave;
 #endif
 
   /* A polygon with n vertices has a triangulation of n-2 triangles. */
-  uint32_t (*tris)[3];
-  uint32_t tris_num;
+  uint (*tris)[3];
+  uint tris_num;
 
 #ifdef USE_KDTREE
   struct KDTree2D kdtree;
@@ -136,7 +136,7 @@ typedef struct PolyFill {
 /** Circular double linked-list. */
 typedef struct PolyIndex {
   struct PolyIndex *next, *prev;
-  uint32_t index;
+  uint index;
   eSign sign;
 } PolyIndex;
 
@@ -155,18 +155,19 @@ static PolyIndex *pf_ear_tip_find(PolyFill *pf
 #endif
 );
 
-static bool pf_ear_tip_check(PolyFill *pf, PolyIndex *pi_ear_tip, const eSign sign_accept);
+static bool pf_ear_tip_check(PolyFill *pf, PolyIndex *pi_ear_tip);
 static void pf_ear_tip_cut(PolyFill *pf, PolyIndex *pi_ear_tip);
 
 BLI_INLINE eSign signum_enum(float a)
 {
-  if (a > 0.0f) {
-    return CONVEX;
-  }
   if (UNLIKELY(a == 0.0f)) {
-    return TANGENTIAL;
+    return 0;
   }
-  return CONCAVE;
+  if (a > 0.0f) {
+    return 1;
+  }
+
+  return -1;
 }
 
 /**
@@ -189,13 +190,13 @@ static eSign span_tri_v2_sign(const float v1[2], const float v2[2], const float 
 }
 
 #ifdef USE_KDTREE
-#  define KDNODE_UNSET ((uint32_t)-1)
+#  define KDNODE_UNSET ((uint)-1)
 
 enum {
   KDNODE_FLAG_REMOVED = (1 << 0),
 };
 
-static void kdtree2d_new(struct KDTree2D *tree, uint32_t tot, const float (*coords)[2])
+static void kdtree2d_new(struct KDTree2D *tree, uint tot, const float (*coords)[2])
 {
   /* set by caller */
   // tree->nodes = nodes;
@@ -207,12 +208,10 @@ static void kdtree2d_new(struct KDTree2D *tree, uint32_t tot, const float (*coor
 /**
  * no need for kdtree2d_insert, since we know the coords array.
  */
-static void kdtree2d_init(struct KDTree2D *tree,
-                          const uint32_t coords_num,
-                          const PolyIndex *indices)
+static void kdtree2d_init(struct KDTree2D *tree, const uint coords_num, const PolyIndex *indices)
 {
   KDTreeNode2D *node;
-  uint32_t i;
+  uint i;
 
   for (i = 0, node = tree->nodes; i < coords_num; i++) {
     if (indices[i].sign != CONVEX) {
@@ -224,17 +223,14 @@ static void kdtree2d_init(struct KDTree2D *tree,
     }
   }
 
-  BLI_assert(tree->node_num == (uint32_t)(node - tree->nodes));
+  BLI_assert(tree->node_num == (uint)(node - tree->nodes));
 }
 
-static uint32_t kdtree2d_balance_recursive(KDTreeNode2D *nodes,
-                                           uint32_t node_num,
-                                           axis_t axis,
-                                           const float (*coords)[2],
-                                           const uint32_t ofs)
+static uint kdtree2d_balance_recursive(
+    KDTreeNode2D *nodes, uint node_num, axis_t axis, const float (*coords)[2], const uint ofs)
 {
   KDTreeNode2D *node;
-  uint32_t neg, pos, median, i, j;
+  uint neg, pos, median, i, j;
 
   if (node_num <= 0) {
     return KDNODE_UNSET;
@@ -292,7 +288,7 @@ static void kdtree2d_balance(struct KDTree2D *tree)
 
 static void kdtree2d_init_mapping(struct KDTree2D *tree)
 {
-  uint32_t i;
+  uint i;
   KDTreeNode2D *node;
 
   for (i = 0, node = tree->nodes; i < tree->node_num; i++, node++) {
@@ -311,9 +307,9 @@ static void kdtree2d_init_mapping(struct KDTree2D *tree)
   tree->nodes[tree->root].parent = KDNODE_UNSET;
 }
 
-static void kdtree2d_node_remove(struct KDTree2D *tree, uint32_t index)
+static void kdtree2d_node_remove(struct KDTree2D *tree, uint index)
 {
-  uint32_t node_index = tree->nodes_map[index];
+  uint node_index = tree->nodes_map[index];
   KDTreeNode2D *node;
 
   if (node_index == KDNODE_UNSET) {
@@ -332,7 +328,7 @@ static void kdtree2d_node_remove(struct KDTree2D *tree, uint32_t index)
          (node->parent != KDNODE_UNSET)) {
     KDTreeNode2D *node_parent = &tree->nodes[node->parent];
 
-    BLI_assert((uint32_t)(node - tree->nodes) == node_index);
+    BLI_assert((uint)(node - tree->nodes) == node_index);
     if (node_parent->neg == node_index) {
       node_parent->neg = KDNODE_UNSET;
     }
@@ -352,7 +348,7 @@ static void kdtree2d_node_remove(struct KDTree2D *tree, uint32_t index)
 }
 
 static bool kdtree2d_isect_tri_recursive(const struct KDTree2D *tree,
-                                         const uint32_t tri_index[3],
+                                         const uint tri_index[3],
                                          const float *tri_coords[3],
                                          const float tri_center[2],
                                          const struct KDRange2D bounds[2],
@@ -409,10 +405,10 @@ static bool kdtree2d_isect_tri_recursive(const struct KDTree2D *tree,
   return false;
 }
 
-static bool kdtree2d_isect_tri(struct KDTree2D *tree, const uint32_t ind[3])
+static bool kdtree2d_isect_tri(struct KDTree2D *tree, const uint ind[3])
 {
   const float *vs[3];
-  uint32_t i;
+  uint i;
   struct KDRange2D bounds[2] = {
       {FLT_MAX, -FLT_MAX},
       {FLT_MAX, -FLT_MAX},
@@ -437,7 +433,7 @@ static bool kdtree2d_isect_tri(struct KDTree2D *tree, const uint32_t ind[3])
 
 #endif /* USE_KDTREE */
 
-static uint32_t *pf_tri_add(PolyFill *pf)
+static uint *pf_tri_add(PolyFill *pf)
 {
   return pf->tris[pf->tris_num++];
 }
@@ -458,7 +454,7 @@ static void pf_coord_remove(PolyFill *pf, PolyIndex *pi)
     pf->indices = pi->next;
   }
 #ifdef DEBUG
-  pi->index = (uint32_t)-1;
+  pi->index = (uint)-1;
   pi->next = pi->prev = NULL;
 #endif
 
@@ -549,16 +545,14 @@ static void pf_triangulate(PolyFill *pf)
     }
 #  endif
 #else
-#  ifdef USE_CLIP_SWEEP
     if ((reverse ? pi_prev->prev : pi_next->next)->sign != CONVEX) {
       reverse = !reverse;
     }
-#  endif
 #endif
   }
 
   if (pf->coords_num == 3) {
-    uint32_t *tri = pf_tri_add(pf);
+    uint *tri = pf_tri_add(pf);
     pi_ear = pf->indices;
     tri[0] = pi_ear->index;
     pi_ear = pi_ear->next;
@@ -591,49 +585,27 @@ static PolyIndex *pf_ear_tip_find(PolyFill *pf
 )
 {
   /* localize */
-  const uint32_t coords_num = pf->coords_num;
+  const uint coords_num = pf->coords_num;
   PolyIndex *pi_ear;
 
-  uint32_t i;
+  uint i;
 
-  /* Use two passes when looking for an ear.
-   *
-   * - The first pass only picks *good* (concave) choices.
-   *   For polygons which aren't degenerate this works well
-   *   since it avoids creating any zero area faces.
-   *
-   * - The second pass is only met if no concave choices are possible,
-   *   so the cost of a second pass is only incurred for degenerate polygons.
-   *   In this case accept zero area faces as better alternatives aren't available.
-   *
-   * See: #103913 for reference.
-   *
-   * NOTE: these passes draw a distinction between zero area faces and concave
-   * which is susceptible minor differences in float precision
-   * (since #TANGENTIAL compares with 0.0f).
-   *
-   * While it's possible to compute an error threshold and run a pass that picks
-   * ears which are more likely not to appear as zero area from a users perspective,
-   * this API prioritizes performance (for real-time updates).
-   * Higher quality tessellation can always be achieved using #BLI_polyfill_beautify.
-   */
-  for (eSign sign_accept = CONVEX; sign_accept >= TANGENTIAL; sign_accept--) {
 #ifdef USE_CLIP_EVEN
-    pi_ear = pi_ear_init;
+  pi_ear = pi_ear_init;
 #else
-    pi_ear = pf->indices;
+  pi_ear = pf->indices;
 #endif
-    i = coords_num;
-    while (i--) {
-      if (pf_ear_tip_check(pf, pi_ear, sign_accept)) {
-        return pi_ear;
-      }
-#ifdef USE_CLIP_SWEEP
-      pi_ear = reverse ? pi_ear->prev : pi_ear->next;
-#else
-      pi_ear = pi_ear->next;
-#endif
+
+  i = coords_num;
+  while (i--) {
+    if (pf_ear_tip_check(pf, pi_ear)) {
+      return pi_ear;
     }
+#ifdef USE_CLIP_SWEEP
+    pi_ear = reverse ? pi_ear->prev : pi_ear->next;
+#else
+    pi_ear = pi_ear->next;
+#endif
   }
 
   /* Desperate mode: if no vertex is an ear tip,
@@ -666,7 +638,7 @@ static PolyIndex *pf_ear_tip_find(PolyFill *pf
   return pi_ear;
 }
 
-static bool pf_ear_tip_check(PolyFill *pf, PolyIndex *pi_ear_tip, const eSign sign_accept)
+static bool pf_ear_tip_check(PolyFill *pf, PolyIndex *pi_ear_tip)
 {
 #ifndef USE_KDTREE
   /* localize */
@@ -677,7 +649,7 @@ static bool pf_ear_tip_check(PolyFill *pf, PolyIndex *pi_ear_tip, const eSign si
 #endif
 
 #if defined(USE_CONVEX_SKIP) && !defined(USE_KDTREE)
-  uint32_t coords_num_concave_checked = 0;
+  uint coords_num_concave_checked = 0;
 #endif
 
 #ifdef USE_CONVEX_SKIP
@@ -685,7 +657,7 @@ static bool pf_ear_tip_check(PolyFill *pf, PolyIndex *pi_ear_tip, const eSign si
 #  ifdef USE_CONVEX_SKIP_TEST
   /* check if counting is wrong */
   {
-    uint32_t coords_num_concave_test = 0;
+    uint coords_num_concave_test = 0;
     PolyIndex *pi_iter = pi_ear_tip;
     do {
       if (pi_iter->sign != CONVEX) {
@@ -702,13 +674,13 @@ static bool pf_ear_tip_check(PolyFill *pf, PolyIndex *pi_ear_tip, const eSign si
   }
 #endif
 
-  if (UNLIKELY(pi_ear_tip->sign != sign_accept)) {
+  if (UNLIKELY(pi_ear_tip->sign == CONCAVE)) {
     return false;
   }
 
 #ifdef USE_KDTREE
   {
-    const uint32_t ind[3] = {pi_ear_tip->index, pi_ear_tip->next->index, pi_ear_tip->prev->index};
+    const uint ind[3] = {pi_ear_tip->index, pi_ear_tip->next->index, pi_ear_tip->prev->index};
 
     if (kdtree2d_isect_tri(&pf->kdtree, ind)) {
       return false;
@@ -757,7 +729,7 @@ static bool pf_ear_tip_check(PolyFill *pf, PolyIndex *pi_ear_tip, const eSign si
 
 static void pf_ear_tip_cut(PolyFill *pf, PolyIndex *pi_ear_tip)
 {
-  uint32_t *tri = pf_tri_add(pf);
+  uint *tri = pf_tri_add(pf);
 
   tri[0] = pi_ear_tip->prev->index;
   tri[1] = pi_ear_tip->index;
@@ -771,15 +743,15 @@ static void pf_ear_tip_cut(PolyFill *pf, PolyIndex *pi_ear_tip)
  */
 static void polyfill_prepare(PolyFill *pf,
                              const float (*coords)[2],
-                             const uint32_t coords_num,
+                             const uint coords_num,
                              int coords_sign,
-                             uint32_t (*r_tris)[3],
+                             uint (*r_tris)[3],
                              PolyIndex *r_indices)
 {
   /* localize */
   PolyIndex *indices = r_indices;
 
-  uint32_t i;
+  uint i;
 
   /* assign all polyfill members here */
   pf->indices = r_indices;
@@ -817,7 +789,7 @@ static void polyfill_prepare(PolyFill *pf,
   }
   else {
     /* reversed */
-    uint32_t n = coords_num - 1;
+    uint n = coords_num - 1;
     for (i = 0; i < coords_num; i++) {
       indices[i].next = &indices[i + 1];
       indices[i].prev = &indices[i - 1];
@@ -856,9 +828,9 @@ static void polyfill_calc(PolyFill *pf)
 }
 
 void BLI_polyfill_calc_arena(const float (*coords)[2],
-                             const uint32_t coords_num,
+                             const uint coords_num,
                              const int coords_sign,
-                             uint32_t (*r_tris)[3],
+                             uint (*r_tris)[3],
 
                              struct MemArena *arena)
 {
@@ -901,9 +873,9 @@ void BLI_polyfill_calc_arena(const float (*coords)[2],
 }
 
 void BLI_polyfill_calc(const float (*coords)[2],
-                       const uint32_t coords_num,
+                       const uint coords_num,
                        const int coords_sign,
-                       uint32_t (*r_tris)[3])
+                       uint (*r_tris)[3])
 {
   /* Fallback to heap memory for large allocations.
    * Avoid running out of stack memory on systems with 512kb stack (macOS).
