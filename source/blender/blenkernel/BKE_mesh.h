@@ -230,6 +230,11 @@ void BKE_mesh_smooth_flag_set(struct Mesh *me, bool use_smooth);
 void BKE_mesh_auto_smooth_flag_set(struct Mesh *me, bool use_auto_smooth, float auto_smooth_angle);
 
 /**
+ * Needed after converting a mesh with subsurf optimal display to mesh.
+ */
+void BKE_mesh_edges_set_draw_render(struct Mesh *me);
+
+/**
  * Used for unit testing; compares two meshes, checking only
  * differences we care about.  should be usable with leaf's
  * testing framework I get RNA work done, will use hackish
@@ -812,7 +817,7 @@ struct Mesh *BKE_mesh_merge_verts(struct Mesh *mesh,
  * Account for custom-data such as UVs becoming detached because of imprecision
  * in custom-data interpolation.
  * Without running this operation subdivision surface can cause UVs to be disconnected,
- * see: #81065.
+ * see: T81065.
  */
 void BKE_mesh_merge_customdata_for_apply_modifier(struct Mesh *me);
 

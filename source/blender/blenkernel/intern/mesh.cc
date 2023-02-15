@@ -107,12 +107,10 @@ static void mesh_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int 
   mesh_dst->runtime->wrapper_type_finalize = mesh_src->runtime->wrapper_type_finalize;
   mesh_dst->runtime->subsurf_runtime_data = mesh_src->runtime->subsurf_runtime_data;
   mesh_dst->runtime->cd_mask_extra = mesh_src->runtime->cd_mask_extra;
-  /* Copy face dot tags and edge tags, since meshes may be duplicated after a subsurf modifier or
-   * node, but we still need to be able to draw face center vertices and "optimal edges"
-   * differently. The tags may be cleared explicitly when the topology is changed. */
+  /* Copy face dot tags, since meshes may be duplicated after a subsurf modifier or node, but we
+   * still need to be able to draw face center vertices. The tags may be cleared explicitly when
+   * the topology is changed. */
   mesh_dst->runtime->subsurf_face_dot_tags = mesh_src->runtime->subsurf_face_dot_tags;
-  mesh_dst->runtime->subsurf_optimal_display_edges =
-      mesh_src->runtime->subsurf_optimal_display_edges;
   if ((mesh_src->id.tag & LIB_TAG_NO_MAIN) == 0) {
     /* This is a direct copy of a main mesh, so for now it has the same topology. */
     mesh_dst->runtime->deformed_only = true;
@@ -907,7 +905,7 @@ void BKE_mesh_free_data_for_undo(Mesh *me)
  *
  * - Edit-Mesh (#Mesh.edit_mesh)
  *   Since edit-mesh is tied to the objects mode,
- *   which crashes when called in edit-mode, see: #90972.
+ *   which crashes when called in edit-mode, see: T90972.
  */
 static void mesh_clear_geometry(Mesh *mesh)
 {

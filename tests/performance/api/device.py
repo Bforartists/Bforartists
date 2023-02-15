@@ -39,6 +39,7 @@ def get_gpu_device(args: None) -> List:
             if device.type == device_type:
                 result.append({'type': device.type, 'name': device.name, 'index': index})
                 index += 1
+                break
 
     return result
 

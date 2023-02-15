@@ -120,7 +120,10 @@ static void engine_bind_display_space_shader(RenderEngine *UNUSED(engine), Scene
 {
   GPUShader *shader = GPU_shader_get_builtin_shader(GPU_SHADER_3D_IMAGE);
   GPU_shader_bind(shader);
-  /** \note "image" binding slot is 0. */
+
+  int img_loc = GPU_shader_get_uniform(shader, "image");
+
+  GPU_shader_uniform_int(shader, img_loc, 0);
 }
 
 static void engine_unbind_display_space_shader(RenderEngine *UNUSED(engine))

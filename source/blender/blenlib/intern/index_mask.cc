@@ -208,7 +208,8 @@ IndexMask find_indices_from_virtual_array(const IndexMask indices_to_check,
   }
   if (virtual_array.is_span()) {
     const Span<bool> span = virtual_array.get_internal_span();
-    return find_indices_from_array(span, r_indices);
+    return find_indices_based_on_predicate(
+        indices_to_check, 4096, r_indices, [&](const int64_t i) { return span[i]; });
   }
 
   threading::EnumerableThreadSpecific<Vector<bool>> materialize_buffers;
@@ -238,12 +239,6 @@ IndexMask find_indices_from_virtual_array(const IndexMask indices_to_check,
       });
 
   return detail::find_indices_based_on_predicate__merge(indices_to_check, sub_masks, r_indices);
-}
-
-IndexMask find_indices_from_array(const Span<bool> array, Vector<int64_t> &r_indices)
-{
-  return find_indices_based_on_predicate(
-      array.index_range(), 4096, r_indices, [array](const int64_t i) { return array[i]; });
 }
 
 }  // namespace blender::index_mask_ops

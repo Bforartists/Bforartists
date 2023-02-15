@@ -562,6 +562,15 @@ void MeshImporter::mesh_add_edges(Mesh *mesh, int len)
 
   CustomData_free(&mesh->edata, mesh->totedge);
   mesh->edata = edata;
+
+  MutableSpan<MEdge> edges = mesh->edges_for_write();
+
+  /* set default flags */
+  medge = &edges[mesh->totedge];
+  for (int i = 0; i < len; i++, medge++) {
+    medge->flag = ME_EDGEDRAW;
+  }
+
   mesh->totedge = totedge;
 }
 

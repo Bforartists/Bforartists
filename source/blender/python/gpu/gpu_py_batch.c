@@ -157,7 +157,7 @@ static PyObject *pygpu_batch_vertbuf_add(BPyGPUBatch *self, BPyGPUVertBuf *py_bu
   PyList_Append(self->references, (PyObject *)py_buf);
 #endif
 
-  GPU_batch_vertbuf_add(self->batch, py_buf->buf, false);
+  GPU_batch_vertbuf_add(self->batch, py_buf->buf);
   Py_RETURN_NONE;
 }
 

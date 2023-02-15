@@ -8,9 +8,9 @@ else
   exit 1
 fi
 
-BRANCH="main"
+BRANCH="master"
 
-# repo="https://projects.blender.org/blender/libmv.git"
+# repo="git://git.blender.org/libmv.git"
 repo="/home/sergey/Developer/libmv"
 tmp=`mktemp -d`
 

@@ -253,16 +253,6 @@ template<typename T, int Size>
 }
 
 template<typename T, int Size>
-[[nodiscard]] inline VecBase<T, Size> round(const VecBase<T, Size> &a)
-{
-  VecBase<T, Size> result;
-  for (int i = 0; i < Size; i++) {
-    result[i] = std::round(a[i]);
-  }
-  return result;
-}
-
-template<typename T, int Size>
 [[nodiscard]] inline VecBase<T, Size> ceil(const VecBase<T, Size> &a)
 {
   VecBase<T, Size> result;
