@@ -2,17 +2,12 @@
 
 #pragma once
 
-#include "BKE_curves.h"
-
 /** \file
  * \ingroup bke
  * \brief Low-level operations for curves.
  */
 
-#include <mutex>
-
 #include "BLI_bounds_types.hh"
-#include "BLI_cache_mutex.hh"
 #include "BLI_generic_virtual_array.hh"
 #include "BLI_index_mask.hh"
 #include "BLI_math_matrix_types.hh"
@@ -20,12 +15,12 @@
 #include "BLI_offset_indices.hh"
 #include "BLI_shared_cache.hh"
 #include "BLI_span.hh"
-#include "BLI_task.hh"
 #include "BLI_vector.hh"
 #include "BLI_virtual_array.hh"
 
 #include "BKE_attribute.hh"
 #include "BKE_attribute_math.hh"
+#include "BKE_curves.h"
 
 namespace blender::bke {
 
@@ -76,16 +71,11 @@ class CurvesGeometryRuntime {
 
   mutable SharedCache<Vector<curves::nurbs::BasisCache>> nurbs_basis_cache;
 
-  /** Cache of evaluated positions. */
-  struct EvaluatedPositions {
-    Vector<float3> vector;
-    /**
-     * The evaluated positions result, using a separate span in case all curves are poly curves,
-     * in which case a separate array of evaluated positions is unnecessary.
-     */
-    Span<float3> span;
-  };
-  mutable SharedCache<EvaluatedPositions> evaluated_position_cache;
+  /**
+   * Cache of evaluated positions for all curves. The positions span will
+   * be used directly rather than the cache when all curves are poly type.
+   */
+  mutable SharedCache<Vector<float3>> evaluated_position_cache;
 
   /**
    * A cache of bounds shared between data-blocks with unchanged positions and radii.
