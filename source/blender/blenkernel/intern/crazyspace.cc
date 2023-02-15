@@ -398,7 +398,7 @@ int BKE_sculpt_get_first_deform_matrices(struct Depsgraph *depsgraph,
       }
       else {
         /* More complex handling will continue in BKE_crazyspace_build_sculpt.
-         * Exiting the loop on a non-deform modifier causes issues - T71213. */
+         * Exiting the loop on a non-deform modifier causes issues - #71213. */
         BLI_assert(crazyspace_modifier_supports_deform(md));
         break;
       }
@@ -596,7 +596,7 @@ void BKE_crazyspace_api_eval_clear(Object *object)
 
 namespace blender::bke::crazyspace {
 
-GeometryDeformation get_evaluated_curves_deformation(const Depsgraph &depsgraph,
+GeometryDeformation get_evaluated_curves_deformation(const Object *ob_eval,
                                                      const Object &ob_orig)
 {
   BLI_assert(ob_orig.type == OB_CURVES);
@@ -608,7 +608,6 @@ GeometryDeformation get_evaluated_curves_deformation(const Depsgraph &depsgraph,
   /* Use the undeformed positions by default. */
   deformation.positions = curves_orig.positions();
 
-  const Object *ob_eval = DEG_get_evaluated_object(&depsgraph, const_cast<Object *>(&ob_orig));
   if (ob_eval == nullptr) {
     return deformation;
   }
@@ -651,6 +650,13 @@ GeometryDeformation get_evaluated_curves_deformation(const Depsgraph &depsgraph,
     }
   }
   return deformation;
+}
+
+GeometryDeformation get_evaluated_curves_deformation(const Depsgraph &depsgraph,
+                                                     const Object &ob_orig)
+{
+  const Object *ob_eval = DEG_get_evaluated_object(&depsgraph, const_cast<Object *>(&ob_orig));
+  return get_evaluated_curves_deformation(ob_eval, ob_orig);
 }
 
 }  // namespace blender::bke::crazyspace

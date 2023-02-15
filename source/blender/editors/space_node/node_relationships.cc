@@ -353,7 +353,7 @@ static void snode_autoconnect(SpaceNode &snode, const bool allow_multiple, const
 
     bNode *node_fr = sorted_nodes[i];
     bNode *node_to = sorted_nodes[i + 1];
-    /* Corner case: input/output node aligned the wrong way around (T47729). */
+    /* Corner case: input/output node aligned the wrong way around (#47729). */
     if (BLI_listbase_is_empty(&node_to->inputs) || BLI_listbase_is_empty(&node_fr->outputs)) {
       std::swap(node_fr, node_to);
     }
@@ -537,6 +537,11 @@ static bNodeSocket *determine_socket_to_view(bNode &node_to_view)
         if (link->is_muted() || !(target_node.flag & NODE_DO_OUTPUT)) {
           /* This socket is linked to a deactivated viewer, the viewer should be activated. */
           return socket;
+        }
+        if (socket->type == SOCK_GEOMETRY && (target_node.flag & NODE_DO_OUTPUT)) {
+          /* Skip geometry sockets connected to viewer nodes when deciding whether to cycle through
+           * outputs. */
+          continue;
         }
         last_linked_socket_index = socket->index();
       }

@@ -622,7 +622,7 @@ int WM_operator_props_popup_confirm(struct bContext *C,
 /**
  * Same as #WM_operator_props_popup but call the operator first,
  * This way - the button values correspond to the result of the operator.
- * Without this, first access to a button will make the result jump, see T32452.
+ * Without this, first access to a button will make the result jump, see #32452.
  */
 int WM_operator_props_popup_call(struct bContext *C,
                                  struct wmOperator *op,
@@ -672,7 +672,7 @@ bool WM_operator_poll_context(struct bContext *C, struct wmOperatorType *ot, sho
  * \param store: Store properties for re-use when an operator has finished
  * (unless #PROP_SKIP_SAVE is set).
  *
- * \warning do not use this within an operator to call itself! T29537.
+ * \warning do not use this within an operator to call itself! #29537.
  */
 int WM_operator_call_ex(struct bContext *C, struct wmOperator *op, bool store);
 int WM_operator_call(struct bContext *C, struct wmOperator *op);
@@ -1345,7 +1345,7 @@ bool WM_drag_is_ID_type(const struct wmDrag *drag, int idcode);
  */
 wmDragAsset *WM_drag_create_asset_data(const struct AssetHandle *asset,
                                        const char *path,
-                                       int import_type);
+                                       int /* #eAssetImportMethod */ import_type);
 struct wmDragAsset *WM_drag_get_asset_data(const struct wmDrag *drag, int idcode);
 struct AssetMetaData *WM_drag_get_asset_meta_data(const struct wmDrag *drag, int idcode);
 /**
@@ -1619,7 +1619,7 @@ char WM_event_utf8_to_ascii(const struct wmEvent *event) ATTR_NONNULL(1) ATTR_WA
  * \param mval: Region relative coordinates, call with (-1, -1) resets the last cursor location.
  * \returns True when there was motion since last called.
  *
- * NOTE(@campbellbarton): The logic used here isn't foolproof.
+ * NOTE(@ideasman42): The logic used here isn't foolproof.
  * It's possible that users move the cursor past #WM_EVENT_CURSOR_MOTION_THRESHOLD then back to
  * a position within the threshold (between mouse clicks).
  * In practice users never reported this since the threshold is very small (a few pixels).
