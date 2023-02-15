@@ -14,7 +14,6 @@
 #include "WM_api.h"
 
 #include "BLI_enumerable_thread_specific.hh"
-#include "BLI_task.hh"
 
 #include "curves_sculpt_intern.hh"
 

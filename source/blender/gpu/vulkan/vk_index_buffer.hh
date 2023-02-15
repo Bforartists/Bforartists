@@ -17,7 +17,7 @@ class VKIndexBuffer : public IndexBuf {
 
   void bind_as_ssbo(uint binding) override;
 
-  void read(uint32_t *data) const override;
+  const uint32_t *read() const override;
 
   void update_sub(uint start, uint len, const void *data) override;
 

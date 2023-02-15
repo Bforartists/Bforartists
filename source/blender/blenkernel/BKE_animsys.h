@@ -37,7 +37,7 @@ struct bActionGroup;
 /* Container for data required to do FCurve and Driver evaluation. */
 typedef struct AnimationEvalContext {
   /* For drivers, so that they have access to the dependency graph and the current view layer. See
-   * #77086. */
+   * T77086. */
   struct Depsgraph *depsgraph;
 
   /* FCurves and Drivers can be evaluated at a different time than the current scene time, for

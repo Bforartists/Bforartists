@@ -93,6 +93,7 @@ Mesh *create_grid_mesh(const int verts_x,
           MEdge &edge = edges[y_edge_offset + y];
           edge.v1 = vert_index;
           edge.v2 = vert_index + 1;
+          edge.flag = ME_EDGEDRAW;
         }
       });
     }
@@ -108,6 +109,7 @@ Mesh *create_grid_mesh(const int verts_x,
           MEdge &edge = edges[x_edge_offset + x];
           edge.v1 = vert_index;
           edge.v2 = vert_index + verts_y;
+          edge.flag = ME_EDGEDRAW;
         }
       });
     }
