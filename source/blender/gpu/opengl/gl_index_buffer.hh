@@ -29,7 +29,7 @@ class GLIndexBuf : public IndexBuf {
   void bind();
   void bind_as_ssbo(uint binding) override;
 
-  void read(uint32_t *data) const override;
+  const uint32_t *read() const override;
 
   void *offset_ptr(uint additional_vertex_offset) const
   {

@@ -105,7 +105,6 @@ MetalDevice::MetalDevice(const DeviceInfo &info, Stats &stats, Profiler &profile
     }
     case METAL_GPU_AMD: {
       max_threads_per_threadgroup = 128;
-      use_metalrt = info.use_metalrt;
       break;
     }
     case METAL_GPU_APPLE: {
@@ -586,7 +585,7 @@ void MetalDevice::erase_allocation(device_memory &mem)
   if (it != metal_mem_map.end()) {
     MetalMem *mmem = it->second.get();
 
-    /* blank out reference to MetalMem* in the launch params (fixes crash #94736) */
+    /* blank out reference to MetalMem* in the launch params (fixes crash T94736) */
     if (mmem->pointer_index >= 0) {
       device_ptr *pointers = (device_ptr *)&launch_params;
       pointers[mmem->pointer_index] = 0;

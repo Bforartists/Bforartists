@@ -983,7 +983,7 @@ static void computeVeryFastVisibility(ViewMap *ioViewMap, G &grid, real epsilon)
       wFace = nullptr;
     }
     else {
-      qi = computeVisibility<G, I>(ioViewMap, fe, grid, epsilon, *ve, &wFace, nullptr);
+      qi = computeVisibility<G, I>(ioViewMap, fe, grid, epsilon, *ve, &wFace, NULL);
     }
 
     // Store test results

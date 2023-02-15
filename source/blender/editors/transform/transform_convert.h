@@ -260,7 +260,7 @@ extern TransConvertTypeInfo TransConvertType_PaintCurve;
 
 extern TransConvertTypeInfo TransConvertType_Particle;
 
-/* transform_convert_sculpt.cc */
+/* transform_convert_sculpt.c */
 
 extern TransConvertTypeInfo TransConvertType_Sculpt;
 

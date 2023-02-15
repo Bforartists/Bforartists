@@ -5,16 +5,16 @@
 update-code:
     git:
         submodules:
-        -   branch: main
+        -   branch: master
             commit_id: HEAD
             path: release/scripts/addons
-        -   branch: main
+        -   branch: master
             commit_id: HEAD
             path: release/scripts/addons_contrib
-        -   branch: main
+        -   branch: master
             commit_id: HEAD
             path: release/datafiles/locale
-        -   branch: main
+        -   branch: master
             commit_id: HEAD
             path: source/tools
     svn:

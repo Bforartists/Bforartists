@@ -354,8 +354,7 @@ typedef struct ThemeSpace {
   unsigned char path_before[4], path_after[4];
   unsigned char path_keyframe_before[4], path_keyframe_after[4];
   unsigned char camera_path[4];
-  unsigned char camera_passepartout[4];
-  unsigned char _pad1[2];
+  unsigned char _pad1[6];
 
   unsigned char gp_vertex_size;
   unsigned char gp_vertex[4], gp_vertex_select[4];
@@ -655,8 +654,7 @@ typedef struct UserDef_Experimental {
   char enable_eevee_next;
   char use_sculpt_texture_paint;
   char enable_workbench_next;
-  char use_new_volume_nodes;
-  char _pad[6];
+  char _pad[7];
   /** `makesdna` does not allow empty structs. */
 } UserDef_Experimental;
 
