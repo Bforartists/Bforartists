@@ -55,6 +55,8 @@
 #include "GPU_immediate_util.h"
 #include "GPU_state.h"
 
+#include "AS_asset_representation.h"
+
 #include "filelist.h"
 
 #include "file_intern.h" /* own include */
@@ -168,10 +170,13 @@ static void file_draw_icon(const SpaceFile *sfile,
         const FileAssetSelectParams *asset_params = ED_fileselect_get_asset_params(sfile);
         BLI_assert(asset_params != NULL);
 
+        const int import_method = ED_fileselect_asset_import_method_get(sfile, file);
+        BLI_assert(import_method > -1);
+
         UI_but_drag_set_asset(but,
                               &(AssetHandle){.file_data = file},
                               BLI_strdup(blend_path),
-                              asset_params->import_type,
+                              import_method,
                               icon,
                               preview_image,
                               UI_DPI_FAC);
@@ -562,10 +567,13 @@ static void file_draw_preview(const SpaceFile *sfile,
         const FileAssetSelectParams *asset_params = ED_fileselect_get_asset_params(sfile);
         BLI_assert(asset_params != NULL);
 
+        const int import_method = ED_fileselect_asset_import_method_get(sfile, file);
+        BLI_assert(import_method > -1);
+
         UI_but_drag_set_asset(but,
                               &(AssetHandle){.file_data = file},
                               BLI_strdup(blend_path),
-                              asset_params->import_type,
+                              import_method,
                               icon,
                               imb,
                               scale);
@@ -987,7 +995,7 @@ void file_draw_list(const bContext *C, ARegion *region)
   UI_GetThemeColor4ubv(TH_TEXT, text_col);
 
   for (i = offset; (i < numfiles) && (i < offset + numfiles_layout); i++) {
-    uint file_selflag;
+    eDirEntry_SelectFlag file_selflag;
     const int padx = 0.1f * UI_UNIT_X;
     int icon_ofs = 0;
 
