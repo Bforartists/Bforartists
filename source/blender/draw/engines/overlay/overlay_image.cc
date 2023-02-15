@@ -375,7 +375,7 @@ void OVERLAY_image_empty_cache_populate(OVERLAY_Data *vedata, Object *ob)
 
   {
     /* Calling 'BKE_image_get_size' may free the texture. Get the size from 'tex' instead,
-     * see: #59347 */
+     * see: T59347 */
     int size[2] = {0};
     if (ima != nullptr) {
       ImageUser iuser = *ob->iuser;

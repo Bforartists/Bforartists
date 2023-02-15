@@ -67,7 +67,6 @@ void Instance::init(const int2 &output_res,
   film.init(output_res, output_rect);
   velocity.init();
   depth_of_field.init();
-  shadows.init();
   motion_blur.init();
   main_view.init();
 }
@@ -103,7 +102,6 @@ void Instance::begin_sync()
   materials.begin_sync();
   velocity.begin_sync(); /* NOTE: Also syncs camera. */
   lights.begin_sync();
-  shadows.begin_sync();
   cryptomatte.begin_sync();
 
   gpencil_engine_enabled = false;
@@ -199,7 +197,6 @@ void Instance::object_sync_render(void *instance_,
 void Instance::end_sync()
 {
   velocity.end_sync();
-  shadows.end_sync(); /** \note: Needs to be before lights. */
   lights.end_sync();
   sampling.end_sync();
   film.end_sync();

@@ -429,7 +429,7 @@ static void calcEdgeSlide_mval_range(TransInfo *t,
         continue;
       }
 
-      /* This test is only relevant if object is not wire-drawn! See #32068. */
+      /* This test is only relevant if object is not wire-drawn! See T32068. */
       bool is_visible = !use_occlude_geometry ||
                         BMBVH_EdgeVisible(bmbvh, e, t->depsgraph, region, v3d, tc->obedit);
 
@@ -617,7 +617,7 @@ static EdgeSlideData *createEdgeSlideVerts_double_side(TransInfo *t, TransDataCo
      * which calculates the direction to slide based on clever checks.
      *
      * otherwise we simply use 'e_dir' as an edge-rail.
-     * (which is better when the attached edge is a boundary, see: #40422)
+     * (which is better when the attached edge is a boundary, see: T40422)
      */
 #define EDGESLIDE_VERT_IS_INNER(v, e_dir) \
   ((BM_edge_is_boundary(e_dir) == false) && (BM_vert_edge_count_nonwire(v) == 2))
@@ -717,7 +717,7 @@ static EdgeSlideData *createEdgeSlideVerts_double_side(TransInfo *t, TransDataCo
       BMVert *v_prev;
       BMEdge *e_prev;
 
-      /* XXX, 'sv' will initialize multiple times, this is suspicious. see #34024. */
+      /* XXX, 'sv' will initialize multiple times, this is suspicious. see T34024. */
       BLI_assert(v != NULL);
       BLI_assert(sv_table[BM_elem_index_get(v)] != INDEX_INVALID);
       sv = SV_FROM_VERT(v);
@@ -1207,7 +1207,7 @@ void drawEdgeSlide(TransInfo *t)
     immUniformThemeColorShadeAlpha(TH_EDGE_SELECT, 80, alpha_shade);
     immBegin(GPU_PRIM_LINES, sld->totsv * 2);
 
-    /* TODO(@ideasman42): Loop over all verts. */
+    /* TODO(@campbellbarton): Loop over all verts. */
     sv = sld->sv;
     for (i = 0; i < sld->totsv; i++, sv++) {
       float a[3], b[3];

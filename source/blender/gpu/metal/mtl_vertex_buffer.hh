@@ -56,7 +56,8 @@ class MTLVertBuf : public VertBuf {
 
   void update_sub(uint start, uint len, const void *data) override;
 
-  void read(void *data) const override;
+  const void *read() const override;
+  void *unmap(const void *mapped_data) const override;
 
   void wrap_handle(uint64_t handle) override;
 

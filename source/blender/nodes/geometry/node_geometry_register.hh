@@ -50,7 +50,6 @@ void register_node_type_geo_duplicate_elements();
 void register_node_type_geo_edge_paths_to_curves();
 void register_node_type_geo_edge_paths_to_selection();
 void register_node_type_geo_edge_split();
-void register_node_type_geo_edges_to_face_groups();
 void register_node_type_geo_evaluate_at_index();
 void register_node_type_geo_evaluate_on_domain();
 void register_node_type_geo_extrude_mesh();

@@ -9,11 +9,6 @@
 
 void main()
 {
-  DRW_VIEW_FROM_RESOURCE_ID;
-#ifdef MAT_SHADOW
-  shadow_interp.view_id = drw_view_id;
-#endif
-
   init_interface();
 
   vec3 T;
