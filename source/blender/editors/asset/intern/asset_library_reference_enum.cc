@@ -47,7 +47,7 @@ AssetLibraryReference ED_asset_library_reference_from_enum_value(int value)
   if (value < ASSET_LIBRARY_CUSTOM) {
     library.type = value;
     library.custom_library_index = -1;
-    BLI_assert(ELEM(value, ASSET_LIBRARY_ALL, ASSET_LIBRARY_LOCAL));
+    BLI_assert(ELEM(value, ASSET_LIBRARY_ALL, ASSET_LIBRARY_LOCAL, ASSET_LIBRARY_ESSENTIALS));
     return library;
   }
 
@@ -57,7 +57,7 @@ AssetLibraryReference ED_asset_library_reference_from_enum_value(int value)
   /* Note that there is no check if the path exists here. If an invalid library path is used, the
    * Asset Browser can give a nice hint on what's wrong. */
   if (!user_library) {
-    library.type = ASSET_LIBRARY_LOCAL;
+    library.type = ASSET_LIBRARY_ALL;
     library.custom_library_index = -1;
   }
   else {
@@ -82,11 +82,17 @@ const EnumPropertyItem *ED_asset_library_reference_to_rna_enum_itemf(const bool 
          ICON_DOCUMENTS,
          "All",
          "Show assets from all of the listed asset libraries"},
+        RNA_ENUM_ITEM_SEPR,
         {ASSET_LIBRARY_LOCAL,
          "LOCAL",
          ICON_BLENDER,
          "Current File",
          "Show the assets currently available in this session"},
+        {ASSET_LIBRARY_ESSENTIALS,
+         "ESSENTIALS",
+         0,
+         "Essentials",
+         "Show the basic building blocks and utilities included with Bforartists"},
         {0, nullptr, 0, nullptr, nullptr},
     };
 
