@@ -437,7 +437,7 @@ class SEQUENCER_MT_view(Menu):
         # if st.view_type == 'PREVIEW':
         #     # Specifying the REGION_PREVIEW context is needed in preview-only
         #     # mode, else the lookup for the shortcut will fail in
-        #     # wm_keymap_item_find_props() (see T32595).
+        #     # wm_keymap_item_find_props() (see #32595).
         #     layout.operator_context = 'INVOKE_REGION_PREVIEW'
         layout.prop(st, "show_region_toolbar")
         layout.prop(st, "show_region_ui")
@@ -2073,7 +2073,7 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
 
             split = col.split(factor=0.4)
             split.alignment = 'RIGHT'
-            split.label(text="Pan", heading_ctxt=i18n_contexts.id_sound)
+            split.label(text="Pan", text_ctxt=i18n_contexts.id_sound)
             split.prop(strip, "pan", text="")
             split.enabled = pan_enabled
 
