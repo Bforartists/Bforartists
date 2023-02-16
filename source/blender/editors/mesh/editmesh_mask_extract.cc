@@ -593,8 +593,8 @@ static const char *wm_paint_mask_slide_get_name(wmOperatorType *ot, PointerRNA *
 }
 
 /*bfa - descriptions*/
-static char *wm_paint_mask_slide_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
+static char *wm_paint_mask_slide_get_description(bContext * /*C*/,
+                                                 wmOperatorType * /*ot*/,
                                                  PointerRNA *ptr)
 {
   const bool fill_holes = RNA_boolean_get(ptr, "fill_holes");
