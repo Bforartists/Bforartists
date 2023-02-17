@@ -4595,6 +4595,10 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Edge Vertices           ", icon = "EDGE_VERTICES")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshEdgeVertices"
+            
+            props = col.operator("node.add_node", text=" Edges to Face Groups ", icon = "FACEGROUP")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgesToFaceGroups"
 
             props = col.operator("node.add_node", text=" Face Area                ", icon = "FACEREGIONS")
             props.use_transform = True
@@ -4647,6 +4651,10 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "EDGE_VERTICES")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshEdgeVertices"
+            
+            props = flow.operator("node.add_node", text="", icon = "FACEGROUP")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgesToFaceGroups"
 
             props = flow.operator("node.add_node", text="", icon = "FACEREGIONS")
             props.use_transform = True
