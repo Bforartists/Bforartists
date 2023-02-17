@@ -4514,7 +4514,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_normals")
         layout.menu("VIEW3D_MT_edit_mesh_shading")
         layout.menu("VIEW3D_MT_edit_mesh_weights")
-        layout.operator("mesh.attribute_set")
+        layout.operator("mesh.attribute_set", icon = "NODE_ATTRIBUTE")
         layout.menu("VIEW3D_MT_edit_mesh_sort_elements")
         layout.menu("VIEW3D_MT_subdivision_set")
 
