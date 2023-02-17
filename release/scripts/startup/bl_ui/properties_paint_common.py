@@ -1288,6 +1288,7 @@ def brush_texture_settings(layout, brush, sculpt):
         if brush.sculpt_tool == 'DRAW':
             col = layout.column()
             col.active = tex_slot.map_mode == 'AREA_PLANE'
+            col.use_property_split = False
             col.prop(brush, "use_color_as_displacement", text="Vector Displacement")
 
 
