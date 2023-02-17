@@ -1714,7 +1714,7 @@ con_stretchto
 con_trackto
 
 winding
-#~ DEF_ICON_BLANK(1747)
+facegroup
 #~ DEF_ICON_BLANK(1748)
 #~ DEF_ICON_BLANK(1749)
 #~ DEF_ICON_BLANK(1750)
