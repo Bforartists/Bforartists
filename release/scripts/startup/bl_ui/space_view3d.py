@@ -7980,14 +7980,24 @@ class VIEW3D_PT_overlay_sculpt_curves(Panel):
 
         row = layout.row(align=True)
         row.active = overlay.show_overlays
+        row.use_property_decorate = False
+        row.separator(factor = 3)
+        row.use_property_split = True
         row.prop(overlay, "sculpt_mode_mask_opacity", text="Selection Opacity")
 
-        row = layout.row(align=True)
+        col = layout.column()
+        split = col.split()
+        row = split.row()
         row.active = overlay.show_overlays
-        row.prop(overlay, "show_sculpt_curves_cage", text="")
-        subrow = row.row(align=True)
-        subrow.active = overlay.show_sculpt_curves_cage
-        subrow.prop(overlay, "sculpt_curves_cage_opacity", text="Cage Opacity")
+        row.separator()
+        row.prop(overlay, "show_sculpt_curves_cage", text="Curves Cage")
+
+        row = split.row(align=True)
+        row.active = overlay.show_overlays
+        if overlay.show_sculpt_curves_cage:
+            row.prop(overlay, "sculpt_curves_cage_opacity", text="")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class VIEW3D_PT_overlay_bones(Panel):
