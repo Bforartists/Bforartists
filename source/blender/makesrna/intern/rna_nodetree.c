@@ -13677,6 +13677,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_EDGE_PATHS_TO_SELECTION:
       return ICON_EDGE_PATH_TO_SELECTION;
 
+    case GEO_NODE_EDGES_TO_FACE_GROUPS:
+      return ICON_FACEGROUP;
+
     case GEO_NODE_EVALUATE_AT_INDEX:
       return ICON_FIELD_AT_INDEX;
 
