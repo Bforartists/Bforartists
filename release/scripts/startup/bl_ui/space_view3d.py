@@ -2273,12 +2273,12 @@ class VIEW3D_MT_select_edit_curves(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("curves.select_all", text="All").action = 'SELECT'
-        layout.operator("curves.select_all", text="None").action = 'DESELECT'
-        layout.operator("curves.select_all", text="Invert").action = 'INVERT'
-        layout.operator("curves.select_random", text="Random")
-        layout.operator("curves.select_end", text="Endpoints")
-        layout.operator("curves.select_linked", text="Linked")
+        layout.operator("curves.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("curves.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("curves.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("curves.select_random", text="Random", icon = "RANDOMIZE")
+        layout.operator("curves.select_end", text="Endpoints", icon = "SELECT_TIP")
+        layout.operator("curves.select_linked", text="Linked", icon="LINKED")
 
 
 class VIEW3D_MT_select_sculpt_curves(Menu):
@@ -6238,7 +6238,7 @@ class VIEW3D_MT_edit_curves(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.separator()
-        layout.operator("curves.delete")
+        layout.operator("curves.delete", icon = 'DELETE')
 
 
 class VIEW3D_MT_object_mode_pie(Menu):
