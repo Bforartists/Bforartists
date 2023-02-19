@@ -2340,7 +2340,7 @@ class VIEW3D_MT_curve_add(Menu):
         layout.separator()
 
         layout.operator("object.curves_empty_hair_add", text="Empty Hair", icon='OUTLINER_OB_CURVES')
-        layout.operator("object.quick_fur", text="Fur", icon='CURVES_DATA')
+        layout.operator("object.quick_fur", text="Fur", icon='OUTLINER_OB_CURVES')
 
         experimental = context.preferences.experimental
         if experimental.use_new_curves_tools:
