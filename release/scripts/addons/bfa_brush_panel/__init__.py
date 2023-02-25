@@ -28,7 +28,8 @@ submodule_names = [
     "vertex_paint",
     "texture_paint",
     "texture_paint_image_editor",
-    "sculpt"
+    "sculpt",
+    "gp"
 ]
 
 register, unregister = register_submodule_factory(__name__, submodule_names)
