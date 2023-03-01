@@ -9,7 +9,8 @@ panel_classes = list(
         tool_name_attr="weight_tool",
         use_paint_attr="use_paint_weight",
         tool_settings_attr="weight_paint",
-        mode="PAINT_WEIGHT")
+        mode="PAINT_WEIGHT",
+    )
 )
 
 
