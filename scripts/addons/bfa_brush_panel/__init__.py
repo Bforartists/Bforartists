@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Bforartists Brush Panel",
     "author": "Iyad Ahmed (@cgonfire), Draise (@trinumedia)",
-    "version": (0, 0, 11),
+    "version": (0, 0, 12),
     "blender": (3, 1, 0),
     "location": "3D View > Tools",
     "description": "Official BFA add-on to display brushes in a top-level panel",
@@ -15,6 +15,9 @@ bl_info = {
 # The iconography also updates to custom icons when they are defined by the user.
 # The panel also is responsive with the standard 1,2,3 and text row format defined by Bforartists.
 # In use cases, this has already proven a huge time saver when weighting rigs - very intuitive.
+
+## UPDATES ##
+# -added icons to the GP using an attribute check and new library - Draise
 
 
 import sys
