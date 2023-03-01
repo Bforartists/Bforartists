@@ -32,7 +32,7 @@ submodule_names = [
     "texture_paint",
     "texture_paint_image_editor",
     "sculpt",
-    "gp"
+    "gp",
 ]
 
 register, unregister = register_submodule_factory(__name__, submodule_names)
