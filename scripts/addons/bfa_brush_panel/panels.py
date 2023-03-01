@@ -13,7 +13,8 @@ def panel_factory(
         tool_settings_attr: str,
         poll: Callable[[bpy.types.Panel, bpy.types.Context], bool],
         panel_class_name_suffix: str,
-        space_type: str
+        space_type: str,
+        span_multiple_tabs: bool = False,
 ):
 
     @staticmethod
@@ -34,6 +35,7 @@ def panel_factory(
             (BrushPanelBase,),
             {
                 "bl_label": tool_name.capitalize(),
+                "bl_category": tool_name.capitalize() if span_multiple_tabs else "Brushes",
                 "bl_space_type": space_type,
                 "poll": poll,
                 "tool_name": tool_name,
@@ -44,14 +46,9 @@ def panel_factory(
             },
         )
 
-
+# TODO: use dependency injection to get rid of parameter hell
 def panel_factory_view3d(
-        tools: Iterable[str],
-        icon_prefix: str,
-        tool_name_attr: str,
-        use_paint_attr: str,
-        tool_settings_attr: str,
-        mode: str
+    tools: Iterable[str], icon_prefix: str, tool_name_attr: str, use_paint_attr: str, tool_settings_attr: str, mode: str, span_multiple_tabs: bool = False
 ):
 
     @classmethod
@@ -65,15 +62,14 @@ def panel_factory_view3d(
                              tool_settings_attr,
                              poll,
                              panel_class_name_suffix=mode,
-                             space_type="VIEW_3D"
+                             space_type="VIEW_3D",
+                             span_multiple_tabs=span_multiple_tabs
                              )
 
 
-def panel_factory_image_editor(tools: Iterable[str],
-                                icon_prefix: str,
-                                tool_name_attr: str,
-                                use_paint_attr: str,
-                                tool_settings_attr: str):
+def panel_factory_image_editor(
+    tools: Iterable[str], icon_prefix: str, tool_name_attr: str, use_paint_attr: str, tool_settings_attr: str, span_multiple_tabs
+):
     @classmethod
     def poll(cls, context):
         return context.space_data.ui_mode == "PAINT"
@@ -86,4 +82,5 @@ def panel_factory_image_editor(tools: Iterable[str],
                              poll,
                              panel_class_name_suffix="image_editor",
                              space_type="IMAGE_EDITOR",
+                             span_multiple_tabs=span_multiple_tabs
                              )

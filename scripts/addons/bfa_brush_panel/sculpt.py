@@ -41,7 +41,10 @@ panel_classes = list(
         tool_name_attr="sculpt_tool",
         use_paint_attr="use_paint_sculpt",
         tool_settings_attr="sculpt",
-        mode="SCULPT"))
+        mode="SCULPT",
+        span_multiple_tabs=True
+        )
+        )
 
 
 def register():
