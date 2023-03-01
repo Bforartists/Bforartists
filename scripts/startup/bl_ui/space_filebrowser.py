@@ -23,9 +23,10 @@ class FILEBROWSER_HT_header(Header):
         layout.separator_spacer()
 
         if params.asset_library_ref not in {'LOCAL', 'ESSENTIALS'}:
-            layout.prop(params, "import_type", text="")
+            row = layout.row(align=True) #BFA - change to make row of buttons
+            row.prop(params, "import_type", text="", expand=True, icon_only=True,) #BFA - change to make row of buttons
 
-        layout.separator_spacer()
+        #layout.separator_spacer() #BFA
 
         # Uses prop_with_popover() as popover() only adds the triangle icon in headers.
         row = layout.row(align=True)
