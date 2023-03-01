@@ -308,7 +308,7 @@ static void weld_assert_poly_len(const WeldPoly *wp, const Span<WeldLoop> wloop)
  *
  * \return array with the context weld vertices.
  */
-static Vector<WeldVert> weld_vert_ctx_alloc_and_setup(Span<int> vert_dest_map,
+static Vector<WeldVert> weld_vert_ctx_alloc_and_setup(MutableSpan<int> vert_dest_map,
                                                       const int vert_kill_len)
 {
   Vector<WeldVert> wvert;
@@ -316,10 +316,20 @@ static Vector<WeldVert> weld_vert_ctx_alloc_and_setup(Span<int> vert_dest_map,
 
   for (const int i : vert_dest_map.index_range()) {
     if (vert_dest_map[i] != OUT_OF_CONTEXT) {
+      const int vert_dest = vert_dest_map[i];
       WeldVert wv{};
-      wv.vert_dest = vert_dest_map[i];
+      wv.vert_dest = vert_dest;
       wv.vert_orig = i;
       wvert.append(wv);
+
+      if (vert_dest_map[vert_dest] != vert_dest) {
+        /* The target vertex is also part of the context and needs to be referenced.
+         * #vert_dest_map could already indicate this from the beginning, but for better
+         * compatibility, it is done here as well. */
+        vert_dest_map[vert_dest] = vert_dest;
+        wv.vert_orig = vert_dest;
+        wvert.append(wv);
+      }
     }
   }
   return wvert;
@@ -1511,7 +1521,7 @@ static Mesh *create_merged_mesh(const Mesh &mesh,
   const int result_npolys = src_polys.size() - weld_mesh.poly_kill_len + weld_mesh.wpoly_new_len;
 
   Mesh *result = BKE_mesh_new_nomain_from_template(
-      &mesh, result_nverts, result_nedges, 0, result_nloops, result_npolys);
+      &mesh, result_nverts, result_nedges, result_nloops, result_npolys);
   MutableSpan<MEdge> dst_edges = result->edges_for_write();
   MutableSpan<MPoly> dst_polys = result->polys_for_write();
   MutableSpan<MLoop> dst_loops = result->loops_for_write();
@@ -1813,6 +1823,11 @@ std::optional<Mesh *> mesh_merge_by_distance_connected(const Mesh &mesh,
   }
 
   return create_merged_mesh(mesh, vert_dest_map, vert_kill_len);
+}
+
+Mesh *mesh_merge_verts(const Mesh &mesh, MutableSpan<int> vert_dest_map, int vert_dest_map_len)
+{
+  return create_merged_mesh(mesh, vert_dest_map, vert_dest_map_len);
 }
 
 /** \} */

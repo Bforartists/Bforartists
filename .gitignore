@@ -41,7 +41,7 @@ Desktop.ini
 /doc/python_api/rst/bmesh.ops.rst
 
 # in-source lib downloads
-/build_files/build_environment/downloads
+/build_files/build_environment/downloads/
 
 #bfa - we don't have sub modules
 /.gitmodules
@@ -53,6 +53,20 @@ Desktop.ini
 waveletNoiseTile.bin
 
 # testing environment
-/Testing
-/release/datafiles/blender_icons16/icon16_current_file.dat
-/release/datafiles/blender_icons32/icon32_current_file.dat
+/Testing/
+
+# Translations.
+/locale/user-config.py
+
+# External repositories.
+/scripts/addons/
+/scripts/addons_contrib/
+
+# Ignore old submodules directories.
+# Eventually need to get rid of those, but for the first time of transition
+# avoid indidents when the folders exists after bisect and developers staging
+# them by accident.
+/release/scripts/addons/
+/release/datafiles/locale/
+/release/scripts/addons_contrib/
+/source/tools/
