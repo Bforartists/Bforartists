@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import os
-from os.path import join, splitext
+from os.path import join
 
 from trailing_space_clean_config import PATHS
 

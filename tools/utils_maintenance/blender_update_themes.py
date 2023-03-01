@@ -2,7 +2,7 @@
 
 # this script updates XML themes once new settings are added
 #
-#  ./blender.bin --background --python ./source/tools/utils_maintenance/blender_update_themes.py
+#  ./blender.bin --background --python ./tools/utils_maintenance/blender_update_themes.py
 
 import bpy
 import os

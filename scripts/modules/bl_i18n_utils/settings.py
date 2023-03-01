@@ -365,11 +365,10 @@ WARN_MSGID_NOT_CAPITALIZED_ALLOWED = {
     # Sub-strings.
     "all",
     "all and invert unselected",
-    "and AMD driver version 22.10 or newer",
-    "and AMD Radeon Pro 21.Q4 driver or newer",
-    "and Linux driver version xx.xx.23904 or newer",
-    "and NVIDIA driver version 470 or newer",
-    "and Windows driver version 101.3430 or newer",
+    "and AMD driver version %s or newer",
+    "and AMD Radeon Pro %s driver or newer",
+    "and NVIDIA driver version %s or newer",
+    "and Windows driver version %s or newer",
     "available with",
     "brown fox",
     "can't save image while rendering",
@@ -379,6 +378,7 @@ WARN_MSGID_NOT_CAPITALIZED_ALLOWED = {
     "custom",
     "custom matrix",
     "custom orientation",
+    "drag-",
     "edge data",
     "exp(A)",
     "expected a timeline/animation area to be active",
@@ -403,7 +403,7 @@ WARN_MSGID_NOT_CAPITALIZED_ALLOWED = {
     "name",
     "non-triangle face",
     "normal",
-    "or AMD with macOS 12.3 or newer",
+    "or AMD with macOS %s or newer",
     "performance impact!",
     "positions", "no positions",
     "read",
@@ -511,7 +511,7 @@ REL_TRUNK_MO_DIR = os.path.join(REL_TRUNK_DIR, "locale")
 
 
 # The path to the *git* translation repository (relative to SOURCE_DIR).
-REL_GIT_I18N_DIR = os.path.join("release/datafiles/locale")
+REL_GIT_I18N_DIR = os.path.join("locale")
 
 
 # The /po path of the *git* translation repository (relative to REL_GIT_I18N_DIR).
@@ -522,11 +522,10 @@ REL_GIT_I18N_PO_DIR = os.path.join("po")
 REL_POTFILES_SOURCE_DIR = os.path.join("source")
 
 # Where to search for preset names (relative to SOURCE_DIR).
-REL_PRESETS_DIR = os.path.join("release", "scripts", "presets")
+REL_PRESETS_DIR = os.path.join("scripts", "presets")
 
 # Where to search for templates (relative to SOURCE_DIR).
-REL_TEMPLATES_DIR = os.path.join("release", "scripts", "startup",
-                                 "bl_app_templates_system")
+REL_TEMPLATES_DIR = os.path.join("scripts", "startup", "bl_app_templates_system")
 
 # The template messages file (relative to I18N_DIR).
 REL_FILE_NAME_POT = os.path.join(REL_BRANCHES_DIR, DOMAIN + ".pot")

@@ -21,7 +21,7 @@ def get_string(cmd):
 
 # Parse arguments.
 mode = None
-base_branch = 'master'
+base_branch = 'main'
 if len(sys.argv) >= 2:
     # Note that recursive conflict resolution strategy has to reversed in rebase compared to merge.
     # See https://git-scm.com/docs/git-rebase#Documentation/git-rebase.txt--m
@@ -36,14 +36,14 @@ if len(sys.argv) >= 2:
             base_branch = sys.argv[3]
 
 if mode is None:
-    print("Merge or rebase Blender master (or another base branch) into a branch in 3 steps,")
+    print("Merge or rebase Blender main (or another base branch) into a branch in 3 steps,")
     print("to automatically merge clang-format changes.")
     print("")
-    print("  --rebase     Perform equivalent of 'git rebase master'")
-    print("  --merge      Perform equivalent of 'git merge master'")
+    print("  --rebase     Perform equivalent of 'git rebase main'")
+    print("  --merge      Perform equivalent of 'git merge main'")
     print("")
     print("Optional arguments:")
-    print("  --base_branch <branch name>  Use given branch instead of master")
+    print("  --base_branch <branch name>  Use given branch instead of main")
     print("                               (assuming that base branch has already been updated")
     print("                                and has the initial clang-format commit).")
     sys.exit(0)

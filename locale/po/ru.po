@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2021\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -1828,10 +1828,6 @@ msgstr "Ключи формы"
 
 msgid "Shape Key data-blocks"
 msgstr "Датаблоки ключей формы"
-
-
-msgid "Simulations"
-msgstr "Симуляции"
 
 
 msgid "Sounds"
@@ -11655,6 +11651,10 @@ msgid "Show Scene data-blocks"
 msgstr "Показать датаблоки сцен"
 
 
+msgid "Simulations"
+msgstr "Симуляции"
+
+
 msgid "Show Simulation data-blocks"
 msgstr "Показать датаблоки симуляций"
 
@@ -12137,10 +12137,6 @@ msgstr "Настройки выбора файлов в режиме просм�
 
 msgid "Asset Library"
 msgstr "Библиотека ассетов"
-
-
-msgid "Import Type"
-msgstr "Тип импорта"
 
 
 msgid "Determine how the asset will be imported"
@@ -18160,6 +18156,10 @@ msgid "Affect only vertices connected to the active vertex under the brush"
 msgstr "Влияние кисти распространяется только на точки, соединённые с ближайшей к кисти"
 
 
+msgid "Vector Displacement"
+msgstr "Векторное смещение"
+
+
 msgid "Connected Only"
 msgstr "Только соединённое"
 
@@ -19096,14 +19096,6 @@ msgid "Curve data-block used for storing text"
 msgstr "Датаблок кривой для хранения текста"
 
 
-msgid "Text Horizontal Align"
-msgstr "Горизонтальное выравнивание текста"
-
-
-msgid "Text horizontal align from the object center"
-msgstr "Горизонтальное выравнивание текста от центра объекта"
-
-
 msgid "Align text to the left"
 msgstr "Выравнивать текст по левому краю"
 
@@ -19132,22 +19124,6 @@ msgid "Align to the left and the right, with equal character spacing"
 msgstr "Выравнивать по левому и правому краю и общим межсимвольным интервалом"
 
 
-msgid "Text Vertical Align"
-msgstr "Вертикальное выравнивание текста"
-
-
-msgid "Text vertical align from the object center"
-msgstr "Вертикальное выравнивание текста от центра объекта"
-
-
-msgid "Top Base-Line"
-msgstr "Верхняя строка"
-
-
-msgid "Align to top but use the base-line of the text"
-msgstr "Выравнивать по верхнему краю, но использовать верхнюю строку текста"
-
-
 msgid "Align text to the top"
 msgstr "Выравнивать текст по верхнему краю"
 
@@ -19158,14 +19134,6 @@ msgstr "Выравнивать текст по середине"
 
 msgid "Align text to the bottom"
 msgstr "Выравнивать текст по нижнему краю"
-
-
-msgid "Bottom Base-Line"
-msgstr "Нижняя базовая линия"
-
-
-msgid "Align text to the bottom but use the base-line of the text"
-msgstr "Выравнивать по низу, но использовать базовую линию текста"
 
 
 msgid "Body Text"
@@ -25361,14 +25329,6 @@ msgstr "От сообщества"
 
 msgid "Maintained by community developers"
 msgstr "Расширения, сопровождаемые разработчиками из сообщества"
-
-
-msgid "Testing"
-msgstr "Тестируемые"
-
-
-msgid "Newly contributed scripts (excluded from release builds)"
-msgstr "Расширения, поддерживаемые с недавнего времени (исключаемые из релизных сборок)"
 
 
 msgid "If true, the interface is currently locked by a running job and data shouldn't be modified from application timers. Otherwise, the running job might conflict with the handler causing unexpected results or even crashes"
@@ -31931,16 +31891,8 @@ msgid "Overwrite"
 msgstr "Перезаписывать"
 
 
-msgid "Replace vertex coords with cached values"
-msgstr "Заменить координаты вершин значениями из кэша"
-
-
 msgid "Integrate"
 msgstr "Совмещать"
-
-
-msgid "Integrate deformation from this modifiers input with the mesh-cache coords (useful for shape keys)"
-msgstr "Совмещать деформацию от меша на входе этого модификатора с координатами из кэша (полезно для ключей формы)"
 
 
 msgid "Evaluation Factor"
@@ -36968,14 +36920,6 @@ msgid "Z Up"
 msgstr "Вверх по Z"
 
 
-msgid "Align X"
-msgstr "Выровнять по X"
-
-
-msgid "Align Y"
-msgstr "Выровнять по Y"
-
-
 msgid "Font of the text. Falls back to the UI font by default"
 msgstr "Шрифт текста. По умолчанию используется шрифт интерфейса"
 
@@ -37795,10 +37739,6 @@ msgstr "Использовать нижнюю половину текстуры 
 
 msgid "UV coordinates to be used for mapping"
 msgstr "UV-координаты, используемые для сопоставления"
-
-
-msgid "Vector Displacement"
-msgstr "Векторное смещение"
 
 
 msgid "Tangent space vector displacement mapping"
@@ -42821,10 +42761,6 @@ msgid "Armature FBXNode Type"
 msgstr "Тип узла FBX арматуры"
 
 
-msgid "FBX type of node (object) used to represent Blender's armatures (use Null one unless you experience issues with other app, other choices may no import back perfectly in Blender...)"
-msgstr "FBX-тип узла (объекта), используемый для представления арматур в Blender (используйте Null, если не испытываете проблем с другим приложением; другие варианты могут не импортироваться назад в Blender полностью)"
-
-
 msgid "Null"
 msgstr "Null"
 
@@ -42891,10 +42827,6 @@ msgstr "Принудительно экспортировать хотя бы о
 
 msgid "Export each non-muted NLA strip as a separated FBX's AnimStack, if any, instead of global scene animation"
 msgstr "Экспортировать каждую незаглушенную дорожку НЛА в виде отдельного AnimStack FBX (если есть), а не в виде глобальной анимации сцены"
-
-
-msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
-msgstr "Запечь трансформацию пространства мира в данные объекта, помогает избежать нежелательного вращения объектов при несовпадении пространств Blender и другой программы (Внимание: эта настройка экспериментальна и может привести к ошибкам в арматурах/анимации)"
 
 
 msgid "Active scene to file"
@@ -43152,14 +43084,6 @@ msgstr "Копирайт"
 
 msgid "Legal rights and conditions for the model"
 msgstr "Условия использования модели"
-
-
-msgid "Use Current Frame"
-msgstr "Использовать текущий кадр"
-
-
-msgid "Export the scene in the current animation frame"
-msgstr "Экспортировать сцену на текущем кадре анимации"
 
 
 msgid "Draco mesh compression"
@@ -45362,17 +45286,9 @@ msgid "Simplify Stroke"
 msgstr "Упростить штрихи"
 
 
-msgid "Simplify selected stroked reducing number of points"
-msgstr "Упростить выделенные штрихи, уменьшив количество точек"
-
-
 msgctxt "Operator"
 msgid "Simplify Fixed Stroke"
 msgstr "Упростить штрихи фиксированно"
-
-
-msgid "Simplify selected stroked reducing number of points using fixed algorithm"
-msgstr "Упростить выделенные штрихи, уменьшив количество точек используя фиксированный алгоритм"
 
 
 msgid "Number of simplify steps"
@@ -52359,22 +52275,6 @@ msgstr "Внешняя скорость"
 msgctxt "Operator"
 msgid "Quick Fur"
 msgstr "Быстрый мех"
-
-
-msgid "Add fur setup to the selected objects"
-msgstr "Добавить предустановку шерсти на выделенные объекты"
-
-
-msgid "Fur Density"
-msgstr "Плотность меха"
-
-
-msgid "Heavy"
-msgstr "Сильно"
-
-
-msgid "View %"
-msgstr "Вид %"
 
 
 msgctxt "Operator"
@@ -59547,8 +59447,16 @@ msgid "Automatically choose the axis on which there is most alignment already"
 msgstr "Автоматически выбрать ось, по которой уже выровнены большинство вершин"
 
 
+msgid "Align X"
+msgstr "Выровнять по X"
+
+
 msgid "Align UVs on X axis"
 msgstr "Выровнять UV по оси X"
+
+
+msgid "Align Y"
+msgstr "Выровнять по Y"
 
 
 msgid "Align UVs on Y axis"
@@ -61527,10 +61435,6 @@ msgid "Context Int Cycle"
 msgstr "Числовой цикл контекста"
 
 
-msgid "Set a context value (useful for cycling active material, vertex keys, groups, etc.)"
-msgstr "Установить значение в контексте (полезно для циклического переключения активного материала, ключей вершин, групп и т. д.)"
-
-
 msgctxt "Operator"
 msgid "Context Enum Menu"
 msgstr "Меню перечисления в контексте"
@@ -62557,6 +62461,10 @@ msgstr "UV-карты"
 
 msgid "Instancing"
 msgstr "Создание экземпляров"
+
+
+msgid "Shapes"
+msgstr "Формы"
 
 
 msgid "Textures Directory"
@@ -63836,12 +63744,12 @@ msgid "Indirect Lighting"
 msgstr "Отражённое освещение"
 
 
-msgid "Screen Space Reflections"
-msgstr "Отражение в пространстве экрана"
-
-
 msgid "Shadows"
 msgstr "Тени"
+
+
+msgid "Screen Space Reflections"
+msgstr "Отражение в пространстве экрана"
 
 
 msgid "Volumetrics"
@@ -65326,6 +65234,10 @@ msgstr "Лёгко"
 
 msgid "Fast but not so effective compression"
 msgstr "Быстрое, но малоэффективное сжатие"
+
+
+msgid "Heavy"
+msgstr "Сильно"
 
 
 msgid "Cache file path"
@@ -78368,10 +78280,6 @@ msgid "Render cryptomatte object pass, for isolating objects in compositing"
 msgstr "Рендерить проход объектов Сryptomatte, изолирующий объекты в постобработке"
 
 
-msgid "Unknown"
-msgstr "Неизвестно"
-
-
 msgid "Volume grid name"
 msgstr "Имя сетки у объёма"
 
@@ -80090,6 +79998,10 @@ msgid "Load %d.%d Settings"
 msgstr "Загрузить настройки %d.%d"
 
 
+msgid "Unknown"
+msgstr "Неизвестно"
+
+
 msgid "Frame Numbers"
 msgstr "Номера кадров"
 
@@ -80169,10 +80081,6 @@ msgstr "Слои:"
 
 msgid "Protected Layers:"
 msgstr "Защищённые слои:"
-
-
-msgid "Shapes"
-msgstr "Формы"
 
 
 msgid "Group Colors"
@@ -83064,11 +82972,6 @@ msgstr "Общее"
 msgctxt "Operator"
 msgid "Alembic (.abc)"
 msgstr "Alembic (.abc)"
-
-
-msgctxt "Operator"
-msgid "Universal Scene Description (.usd, .usdc, .usda)"
-msgstr "Universal Scene Description (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
@@ -86117,10 +86020,6 @@ msgid "No point was selected"
 msgstr "Нет выделенных точек"
 
 
-msgid "Cannot separate curves with vertex keys"
-msgstr "Невозможно отделить кривую с ключами вершин"
-
-
 msgid "Cannot separate current selection"
 msgstr "Не удалось отделить текущее выделение"
 
@@ -86719,10 +86618,6 @@ msgstr "Нет допустимого файла .po для языка «%s» в
 
 msgid "Hex"
 msgstr "Hex"
-
-
-msgid "Value:"
-msgstr "Значение:"
 
 
 msgid "(Gamma Corrected)"
@@ -88761,14 +88656,6 @@ msgid "OK"
 msgstr "ДА"
 
 
-msgid "Vertex Data Detected!"
-msgstr "Обнаружены данные вершин!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Динамическая топология уничтожает цвета вершин, UV и другие настраиваемые данные"
-
-
 msgid "Generative Modifiers Detected!"
 msgstr "Обнаружены генерирующие модификаторы!"
 
@@ -89191,6 +89078,10 @@ msgstr "Выражение:"
 
 msgid "Add Input Variable"
 msgstr "Добавить входную переменную"
+
+
+msgid "Value:"
+msgstr "Значение:"
 
 
 msgid "Update Dependencies"

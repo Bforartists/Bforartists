@@ -379,7 +379,6 @@ class OUTLINER_MT_collection(Menu):
         OUTLINER_MT_context_menu.draw_common_operators(layout)
 
 
-
 class OUTLINER_MT_collection_new(Menu):
     bl_label = "Collection"
 
@@ -620,6 +619,10 @@ class OUTLINER_PT_filter(Panel):
                 row.separator()
                 row.label(icon='CAMERA_DATA')
                 row.prop(space, "use_filter_object_camera", text="Cameras")
+            if bpy.data.grease_pencils:
+                row = sub.row()
+                row.label(icon='STROKE')
+                row.prop(space, "use_filter_object_grease_pencil", text="Grease Pencil")
             row = sub.row()
             row.separator()
             row.separator()
