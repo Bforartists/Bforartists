@@ -32,7 +32,7 @@ def panel_factory(
             f"BFA_PT_brush_{tool_name_attr}_{tool_name}_{panel_class_name_suffix}",
             (BrushPanelBase,),
             {
-                "bl_label": tool_name.capitalize(),
+                "bl_label": tool_name.replace("_", " ").title(),
                 "bl_space_type": space_type,
                 "poll": poll,
                 "tool_name": tool_name,
