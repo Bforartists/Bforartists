@@ -8,9 +8,7 @@ from .icon_system import get_brush_icon
 def column_count(region: bpy.types.Region):
     system = bpy.context.preferences.system
     view2d = region.view2d
-    view2d_scale = (
-        view2d.region_to_view(1.0, 0.0)[0] - view2d.region_to_view(0.0, 0.0)[0]
-    )
+    view2d_scale = view2d.region_to_view(1.0, 0.0)[0] - view2d.region_to_view(0.0, 0.0)[0]
     width_scale = region.width * view2d_scale / system.ui_scale
 
     if width_scale > 160.0:
@@ -87,8 +85,11 @@ class BrushPanelBase(bpy.types.Panel):
 
         # TODO: get rid of building list and poping
         # hint: use a generator and the next function
-        brushes = [brush for brush in sorted(bpy.data.brushes, key=lambda brush: brush.name) if self.filter_brush(
-            brush) and self.tool_name_from_brush(brush) == self.tool_name]
+        brushes = [
+            brush
+            for brush in sorted(bpy.data.brushes, key=lambda brush: brush.name)
+            if self.filter_brush(brush) and self.tool_name_from_brush(brush) == self.tool_name
+        ]
 
         col = layout.column(align=True)
 
