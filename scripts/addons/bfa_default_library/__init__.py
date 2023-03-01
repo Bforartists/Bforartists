@@ -114,7 +114,6 @@ def unregister_library():
     prefs = bpy.context.preferences
 
     index = get_lib_path_index(prefs)
-    print(index)
 
     if index == -1:
         return
