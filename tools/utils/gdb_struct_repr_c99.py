@@ -6,7 +6,7 @@ useful for creating a literal for a nested runtime struct.
 
 Example use:
 
-   (gdb) source source/tools/utils/gdb_struct_repr_c99.py
+   (gdb) source tools/utils/gdb_struct_repr_c99.py
    (gdb) print_struct_c99 scene->toolsettings
 '''
 

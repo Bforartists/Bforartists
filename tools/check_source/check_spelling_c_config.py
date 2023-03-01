@@ -55,6 +55,7 @@ dict_custom = {
     "catadioptric",
     "checksums",
     "clearcoat",
+    "codecs",
     "collapser",
     "collinear",
     "comparator",
@@ -122,12 +123,14 @@ dict_custom = {
     "formatter",
     "formatters",
     "foveation",
+    "generatrix",
     "glitchy",
     "haptics",
     "highlightable",
     "homogenous",
     "ideographic",
     "illuminant",
+    "impactful",
     "incrementation",
     "initializer",
     "initializers",
@@ -706,5 +709,5 @@ dict_ignore_hyphenated_suffix = {
 }
 
 files_ignore = {
-    "source/tools/utils_doc/rna_manual_reference_updater.py",  # Contains language ID references.
+    "tools/utils_doc/rna_manual_reference_updater.py",  # Contains language ID references.
 }

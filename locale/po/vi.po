@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: 2022-08-19 12:33+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -2056,10 +2056,6 @@ msgstr "Hình Dạng Mẫu"
 
 msgid "Shape Key data-blocks"
 msgstr "Các cục dữ liệu Hình Dạng Mẫu"
-
-
-msgid "Simulations"
-msgstr "Mô Phỏng"
 
 
 msgid "Sounds"
@@ -8603,10 +8599,6 @@ msgid "Index"
 msgstr "Chỉ Số"
 
 
-msgid "Index of this points"
-msgstr "Chỉ số của các điểm này"
-
-
 msgid "Profile Path editor used to build a profile path"
 msgstr "Trình biên soạn Mặt Cắt được dùng để xây một đường mặt cắt"
 
@@ -12280,6 +12272,10 @@ msgid "Show Scene data-blocks"
 msgstr "Hiện các cục dữ liệu Cảnh"
 
 
+msgid "Simulations"
+msgstr "Mô Phỏng"
+
+
 msgid "Show Simulation data-blocks"
 msgstr "Hiện các cục dữ liệu Mô Phỏng"
 
@@ -12774,10 +12770,6 @@ msgstr "UUID của danh mục được hiện trong trình duyệt"
 
 msgid "Filter Asset Types"
 msgstr "Lọc Loại Tích Sản"
-
-
-msgid "Import Type"
-msgstr "Loại Nhập"
 
 
 msgid "Determine how the asset will be imported"
@@ -20061,6 +20053,10 @@ msgid "Lock the position of the vertices in the simulation falloff area to avoid
 msgstr "Khóa vị trí của các đỉnh trong khu vực sự giảm của mô phỏng để tránh lỗi lầm và chế tạo một tiến triển mềm hơn với những khu vực không bị ảnh hưởng"
 
 
+msgid "Vector Displacement"
+msgstr "Dịch Vectơ"
+
+
 msgid "Connected Only"
 msgstr "Chỉ Được Kết Nối"
 
@@ -21381,14 +21377,6 @@ msgid "Active Text Box"
 msgstr "Hộp Văn Bản Hoạt Động"
 
 
-msgid "Text Horizontal Align"
-msgstr "Canh Lề Ngang Văn Bản"
-
-
-msgid "Text horizontal align from the object center"
-msgstr "Canh ngang văn bản từ tâm vật thể"
-
-
 msgid "Align text to the left"
 msgstr "Canh lề bên trái"
 
@@ -21417,40 +21405,28 @@ msgid "Align to the left and the right, with equal character spacing"
 msgstr "Canh lề phía trái và phải, và có cách đều giữa ký tự"
 
 
-msgid "Text Vertical Align"
-msgstr "Canh Lề Văn Bản Dọc"
-
-
-msgid "Text vertical align from the object center"
-msgstr "Canh lề văn bản dọc từ trung tâm vật thể"
-
-
-msgid "Top Base-Line"
-msgstr "Trên Đường Cơ Sở"
-
-
-msgid "Align to top but use the base-line of the text"
-msgstr "Canh lề đến trên nhưng dùng đường cơ sở của văn bản"
-
-
 msgid "Align text to the top"
 msgstr "Canh lề văn bản đến phía tren"
+
+
+msgid "Top Baseline"
+msgstr "Đường Cơ Sở Trên"
+
+
+msgid "Middle"
+msgstr "Giữa"
 
 
 msgid "Align text to the middle"
 msgstr "Canh lề văn bản ở giữa"
 
 
+msgid "Bottom Baseline"
+msgstr "Đường Cơ Sở Dưới"
+
+
 msgid "Align text to the bottom"
 msgstr "Canh lề văn bản đến phía dưới"
-
-
-msgid "Bottom Base-Line"
-msgstr "Đấy Đường Cơ Sở"
-
-
-msgid "Align text to the bottom but use the base-line of the text"
-msgstr "Sắp xếp văn bản theo phía dưới nhưng sử dụng đấy của đường cơ sở của văn bản"
 
 
 msgid "Body Text"
@@ -28599,14 +28575,6 @@ msgid "Maintained by community developers"
 msgstr "Duy trì bằng cộng đồng phát triển"
 
 
-msgid "Testing"
-msgstr "Thử Nghiệm"
-
-
-msgid "Newly contributed scripts (excluded from release builds)"
-msgstr "Văn thảo mới được góp phần (trừ từ phiên bản phát hành)"
-
-
 msgid "Asset Blend Path"
 msgstr "Đường Mục Tập Tin Của Tích Sản"
 
@@ -35563,16 +35531,8 @@ msgid "Original Coords"
 msgstr "Tọa Độ Ban Đầu"
 
 
-msgid "Use base mesh vertex coords as the rest position"
-msgstr "Dùng tọa độ đỉnh cơ sở của mạng lưới cho làm vị trí nghỉ ngơi"
-
-
 msgid "Bind Coords"
 msgstr "Trói Tọa Độ"
-
-
-msgid "Use bind vertex coords for rest position"
-msgstr "Dùng tọa độ đỉnh trói cho làm vị trí nghỉ ngơi"
 
 
 msgid "Compensate for scale applied by other modifiers"
@@ -36555,16 +36515,8 @@ msgid "Overwrite"
 msgstr "Ghi Lên Trên"
 
 
-msgid "Replace vertex coords with cached values"
-msgstr "Thay thế tọa độ đỉnh với giá trị trong đệm chứa"
-
-
 msgid "Integrate"
 msgstr "Tích Phân"
-
-
-msgid "Integrate deformation from this modifiers input with the mesh-cache coords (useful for shape keys)"
-msgstr "Góp méo hóa từ ngõ vào của bộ điều chỉnh này với tọa độ đệm chứa mạng lưới (có lợi ích cho mẫu dạng)"
 
 
 msgid "Evaluation Factor"
@@ -44381,10 +44333,6 @@ msgid "Generate a paragraph of text with a specific font, using a curve instance
 msgstr "Chế tạo một đoạn văn có văn bản dùng một phông được chỉ định, dùng một đường cong cho chứa mỗi ký tự"
 
 
-msgid "Align X"
-msgstr "Sắp Xếp X"
-
-
 msgid "Align text to the center"
 msgstr "Kéo văn bản đến trung tâm"
 
@@ -44395,30 +44343,6 @@ msgstr "Kéo văn bản vừa lề phía trái và phải"
 
 msgid "Align text to the left and the right, with equal character spacing"
 msgstr "Kéo văn bản vừa lề phía trái và phải, và có cách đều giữa ký tự"
-
-
-msgid "Align Y"
-msgstr "Sắp Xếp Y"
-
-
-msgid "Top Baseline"
-msgstr "Đường Cơ Sở Trên"
-
-
-msgid "Align text to the top baseline"
-msgstr "Sắp hàng văn bản đến đường cơ sở tren"
-
-
-msgid "Middle"
-msgstr "Giữa"
-
-
-msgid "Bottom Baseline"
-msgstr "Đường Cơ Sở Dưới"
-
-
-msgid "Align text to the bottom baseline"
-msgstr "Sắp xếp văn bản đến đường cơ sở dưới"
 
 
 msgid "Font of the text. Falls back to the UI font by default"
@@ -46176,10 +46100,6 @@ msgstr "Dùng để làm giá trị số Ngõ Vào đến các giao điểm khá
 
 msgid "Map an input vectors to curves, used to fine-tune the interpolation of the input"
 msgstr "Ánh xạ vectơ ngõ vào đến đường cong, dùng để chỉnh nối suy của ngõ vào"
-
-
-msgid "Vector Displacement"
-msgstr "Dịch Vectơ"
 
 
 msgid "Displace the surface along an arbitrary direction"
@@ -52430,10 +52350,6 @@ msgid "Armature FBXNode Type"
 msgstr "Cốt Loại FBXNode"
 
 
-msgid "FBX type of node (object) used to represent Blender's armatures (use Null one unless you experience issues with other app, other choices may no import back perfectly in Blender...)"
-msgstr "Giao điểm loại FBX (vật thể) dùng cho biểu diễn cốt của Blender (dùng Null trừ khi có vấn đề với ứng dụng khác, sự lựa chọn khác có thể không nhập lại vàl Blender hoàn toàn…)"
-
-
 msgid "Null"
 msgstr "Không"
 
@@ -52504,10 +52420,6 @@ msgstr "Xuất mỗi trình tự NLA không bị tắt tiếng làm một AnimSt
 
 msgid "Apply Transform"
 msgstr "Áp Dụng Biến Hóa"
-
-
-msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
-msgstr "Nướng biến hóa không gian vào dữ liệu vật thể, giúp tránh vật thể xoay kiểu không muốn khi không gian mục tiêu không sắp xếp với không gian của Blender (CẢNH BÁO! đây là tùy chọn đồ thử nghiệm, có thể có kết qủa không theo ý, biết trước ncốt/hoạt hình hư) "
 
 
 msgid "Active scene to file"
@@ -52795,14 +52707,6 @@ msgid "Legal rights and conditions for the model"
 msgstr "Quyền luật pháp và điều kiện của mô hình"
 
 
-msgid "Use Current Frame"
-msgstr "Sử Dụng Bức Ảnh Hiện Tại"
-
-
-msgid "Export the scene in the current animation frame"
-msgstr "Xuất cảnh trong bức ảnh hiện tại"
-
-
 msgid "Export Deformation Bones Only"
 msgstr "Chỉ Xuất Xương Méo Hóa"
 
@@ -52821,10 +52725,6 @@ msgstr "Bit lượng tử hóa cho giá trị màn sắc (0 = không lượng t�
 
 msgid "Generic quantization bits"
 msgstr "Bit lượng tử hóa tổng quát"
-
-
-msgid "Quantization bits for generic coordinate values like weights or joints (0 = no quantization)"
-msgstr "Bit lượng tử hóa cho các giá trị tọa độ như quyền lượng hay khớp (0 = không lượng tử hóa)"
 
 
 msgid "Draco mesh compression"
@@ -52951,10 +52851,6 @@ msgid "Export directional, point, and spot lights. Uses \"KHR_lights_punctual\" 
 msgstr "Xuất đèn định hướng, điểm, và hình nón. Dụng đuôi \"KHR_lights_punctual\" glTF"
 
 
-msgid "Export materials "
-msgstr "Xuất vật liệu"
-
-
 msgid "Export all materials used by included objects"
 msgstr "Xuất hết vật liệu của vật thể xuất đang dùng"
 
@@ -52991,14 +52887,6 @@ msgid "Export vertex tangents with shape keys (morph targets)"
 msgstr "Xuất tiếp tuyến đỉnh với dạng mẫu (mục đích biến dạng)"
 
 
-msgid "Group by NLA Track"
-msgstr "Nhom Hóa từng Rãnh NLA"
-
-
-msgid "When on, multiple actions become part of the same glTF animation if they're pushed onto NLA tracks with the same name. When off, all the currently assigned actions become one glTF animation"
-msgstr "Khi bật, nhiều hành động được gồm vào cùng hoạt hình glTF nếu được đẩy vào rãnh NLA có cùng tên. Khi tắt, tất cả hành động hiện tại đang được chỉ định hiện tại được trở thành một hoạt hình glTF"
-
-
 msgid "Merged Animation Name"
 msgstr "Tên Hoạt Hình Được Gồm Lại"
 
@@ -53013,10 +52901,6 @@ msgstr "Xuất pháp tuyến đỉnh với mạng lưới"
 
 msgid "Optimize Animation Size"
 msgstr "Tối Ưu Cỡ Thước Hoạt Hình"
-
-
-msgid "Reduce exported file-size by removing duplicate keyframes(can cause problems with stepped animation)"
-msgstr "Giảm cỡ thước tệp tin xuất bằng xóa các số bức ảnh mẫu sao chép (có thể tạo vấn đề với hoạt hình từng bước)"
 
 
 msgid "Export original PBR Specular"
@@ -55613,10 +55497,6 @@ msgid "Reproject the selected strokes from the current viewpoint as if they had 
 msgstr "Chiếu lại nét được chọn từ điểm nhìn hiện tại như mới được vẽ ra (ví dụ cho sửa vấn đề khi di chuyển sờ ý con trỏ 3D hay đổi sờ ý màn chiếu, hay cho vẽ theo hình dạng bị méo hóa)"
 
 
-msgid "Keep original strokes and create a copy before reprojecting instead of reproject them"
-msgstr "Giữ các nét ban đầu và chế tạo một bản sao trước chiếu lại thay thế chỉ chiếi lại nó"
-
-
 msgid "Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement"
 msgstr "Chiếu lại các nét trên hình dạng cảnh, như được vẽ bằng 'Bề Mặt'"
 
@@ -56010,10 +55890,6 @@ msgid "Set handle type"
 msgstr "Đặt loại tay cầm"
 
 
-msgid "Set the type of a edit curve handle"
-msgstr "Đặt loại của một tay cầm đường cong biên tập"
-
-
 msgctxt "Operator"
 msgid "Enter curve edit mode"
 msgstr "Vào chế độ đường cong biên tập"
@@ -56225,17 +56101,9 @@ msgid "Simplify Stroke"
 msgstr "Đơn Giản Hóa Nét"
 
 
-msgid "Simplify selected stroked reducing number of points"
-msgstr "Đơn giản hóa các nét được chọn bằng giảm số lượng điểm"
-
-
 msgctxt "Operator"
 msgid "Simplify Fixed Stroke"
 msgstr "Đơn Giản Hóa Nét Bất Biến"
-
-
-msgid "Simplify selected stroked reducing number of points using fixed algorithm"
-msgstr "Đơn giải hóa các nét được chọn và giảm số lượng điểm bằng giải thuật bất biến"
 
 
 msgid "Number of simplify steps"
@@ -64871,22 +64739,6 @@ msgstr "Vận Tốc Bay Ra"
 msgctxt "Operator"
 msgid "Quick Fur"
 msgstr "Lông Nhanh"
-
-
-msgid "Add fur setup to the selected objects"
-msgstr "Thêm cài đặt lông cho vật thể được chọn"
-
-
-msgid "Fur Density"
-msgstr "Tỉ Trọng Lông"
-
-
-msgid "Heavy"
-msgstr "Nặng"
-
-
-msgid "View %"
-msgstr "Hiện %"
 
 
 msgctxt "Operator"
@@ -74432,8 +74284,16 @@ msgid "Automatically choose the axis on which there is most alignment already"
 msgstr "Tự động chọn trục nào thì có sẵn sắp xếp nhiều nhất sẫn rồi"
 
 
+msgid "Align X"
+msgstr "Sắp Xếp X"
+
+
 msgid "Align UVs on X axis"
 msgstr "Sắp hàng UV trên trục X"
+
+
+msgid "Align Y"
+msgstr "Sắp Xếp Y"
 
 
 msgid "Align UVs on Y axis"
@@ -77004,10 +76864,6 @@ msgid "Context Int Cycle"
 msgstr "Chu Trình Lặp Lặi Bối Cảnh"
 
 
-msgid "Set a context value (useful for cycling active material, vertex keys, groups, etc.)"
-msgstr "Đặt một giá trị bối cạnh (sử dụng cho chu trình vật liệu hoạt động, mẫu đỉnh, nhóm, v.v.)"
-
-
 msgctxt "Operator"
 msgid "Context Enum Menu"
 msgstr "Danh Bạ Liệt Kê Bối Cảnh"
@@ -78695,6 +78551,10 @@ msgstr "Nhập hình dạng đại lý"
 
 msgid "Import final render geometry"
 msgstr "Nhập hình dạng kết xuất cuối"
+
+
+msgid "Shapes"
+msgstr "Hình Dạng"
 
 
 msgid "Import Subdivision Scheme"
@@ -80501,12 +80361,12 @@ msgid "Indirect Lighting"
 msgstr "Ánh Sáng Gián Tiếp"
 
 
-msgid "Screen Space Reflections"
-msgstr "Phản Xạ Không Gian Màn"
-
-
 msgid "Shadows"
 msgstr "Bống Tối"
+
+
+msgid "Screen Space Reflections"
+msgstr "Phản Xạ Không Gian Màn"
 
 
 msgid "Volumetrics"
@@ -82279,6 +82139,10 @@ msgid "Fast but not so effective compression"
 msgstr "Nhanh mà mà hiệu qủa nén không cao"
 
 
+msgid "Heavy"
+msgstr "Nặng"
+
+
 msgid "Cache file path"
 msgstr "Đường dẫn đệm chứa"
 
@@ -83470,10 +83334,6 @@ msgstr "Giữ số lượng phiên bản cũ trong thư mục hiện tại, khi 
 
 msgid "Python Scripts Directory"
 msgstr "Thư Mục Văn Thảo Python"
-
-
-msgid "Alternate script path, matching the default layout with subdirectories: startup, add-ons, modules, and presets (requires restart)"
-msgstr "Đường dẫn văn thảo thay phiên, giống cài được đặt là mặc định có hạ thư múc: khởi động, đồ kèm, mô đun, và đặt sẵn (phải khởi động lại Blender)"
 
 
 msgid "Show Hidden Files/Data-Blocks"
@@ -98781,10 +98641,6 @@ msgid "Double precision"
 msgstr "Số thật dấu phẩy động đôi"
 
 
-msgid "Integer 64-bit"
-msgstr "Số nguyên 64 bit"
-
-
 msgid "64-bit integer"
 msgstr "Số nguyên 64 bit"
 
@@ -98793,40 +98649,20 @@ msgid "No data, boolean mask of active voxels"
 msgstr "Không có dữ liệu, mặt nạ bool của thể tích hoạt động"
 
 
-msgid "Float Vector"
-msgstr "Vectơ Số Thật Dấu Phẩy Động"
-
-
 msgid "3D float vector"
 msgstr "Vectơ số thật dấu phẩy động đơn 3D"
-
-
-msgid "Double Vector"
-msgstr "Vectơ Đôi"
 
 
 msgid "3D double vector"
 msgstr "Vectơ số thật dấu phẩy động đôi 3D"
 
 
-msgid "Integer Vector"
-msgstr "Vectơ Số Thật"
-
-
 msgid "3D integer vector"
 msgstr "Vectơ số nguyên 3D"
 
 
-msgid "Points (Unsupported)"
-msgstr "Điểm (Chưa Hỗ Trợ)"
-
-
 msgid "Points grid, currently unsupported by volume objects"
 msgstr "Đồ thị điểm, hiện tại vật thể thể tích chưa hỗ trợ"
-
-
-msgid "Unknown"
-msgstr "Lạ"
 
 
 msgid "Unsupported data type"
@@ -101944,36 +101780,8 @@ msgid "No compatible GPUs found for Cycles"
 msgstr "Không tìm được GPU phù hợp cho Cycles"
 
 
-msgid "Requires NVIDIA GPU with compute capability 3.0"
-msgstr "Yêu cầu GPU NVIDIA có khả năng tính toán 3.0"
-
-
-msgid "Requires NVIDIA GPU with compute capability 5.0"
-msgstr "Yêu cầu GPU NVIDIA có khả năng tính toán 5.0"
-
-
-msgid "and NVIDIA driver version 470 or newer"
-msgstr "và trình điều khiển NVIDIA phiên bản 470 hay mới hơn"
-
-
-msgid "and AMD Radeon Pro 21.Q4 driver or newer"
-msgstr "và trình điều khiển AMD Pro 21.Q4 hay mới hơn"
-
-
-msgid "and AMD driver version 22.10 or newer"
-msgstr "và trình điều khiển AMD phiên bản 22.10 hay mới hơn"
-
-
 msgid "Requires Intel GPU with Xe-HPG architecture"
 msgstr "Yêu cầu GPU Intel có kiến trúc Xe-HPG"
-
-
-msgid "Requires Apple Silicon with macOS 12.2 or newer"
-msgstr "Yêu Cầu Silic Hãng Táo và hệ điều hành MacOS 12.2 trở lên"
-
-
-msgid "or AMD with macOS 12.3 or newer"
-msgstr "hoặc AMD với hệ điều hành MacOS 12.3 trở lên"
 
 
 msgid "Noise Threshold"
@@ -103439,6 +103247,10 @@ msgid "Edit Bone(s)"
 msgstr "Biên Tập Xương"
 
 
+msgid "Unknown"
+msgstr "Lạ"
+
+
 msgid "Calculation Range"
 msgstr "Phạm Vi Tính Toán"
 
@@ -103580,10 +103392,6 @@ msgstr "Các Lớp:"
 
 msgid "Protected Layers:"
 msgstr "Các Lớp Được Bảo Vệ:"
-
-
-msgid "Shapes"
-msgstr "Hình Dạng"
 
 
 msgid "Group Colors"
@@ -106907,6 +106715,11 @@ msgstr "Bật Tiếng Các Đoạn Chưa Chọn"
 
 
 msgctxt "Operator"
+msgid "Hold Split"
+msgstr "Giữ Chẻ"
+
+
+msgctxt "Operator"
 msgid "Position"
 msgstr "Vị Trí"
 
@@ -106981,11 +106794,6 @@ msgstr "Đoạn Phim"
 msgctxt "Operator"
 msgid "Move/Extend from Current Frame"
 msgstr "Di Chuyển/Kéo Ra từ Bức Ảnh Hiện Tại"
-
-
-msgctxt "Operator"
-msgid "Hold Split"
-msgstr "Giữ Chẻ"
 
 
 msgctxt "Operator"
@@ -107499,11 +107307,6 @@ msgstr "Wavefront (.obj)"
 msgctxt "Operator"
 msgid "STL (.stl) (experimental)"
 msgstr "STL (.stl) (đồ thí nghiệm)"
-
-
-msgctxt "Operator"
-msgid "Universal Scene Description (.usd, .usdc, .usda)"
-msgstr "Mô Tả Cảnh Tổng Quát (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
@@ -111878,10 +111681,6 @@ msgid "Could not separate selected curve(s)"
 msgstr "Không thể chẻ các đường cong được chọn"
 
 
-msgid "Cannot separate curves with vertex keys"
-msgstr "Không thể chẻ riêng đường cong có bức ảnh mẫu đỉnh"
-
-
 msgid "Cannot separate current selection"
 msgstr "Không thể chẻ riêng sự lựa chọn hiện tại"
 
@@ -112756,10 +112555,6 @@ msgstr "Không có tập tin .po hợp lệ cho ngôn ngữ '%s' trong %s"
 
 msgid "Hex"
 msgstr "Thập Lục Phận"
-
-
-msgid "Value:"
-msgstr "Giá Trị:"
 
 
 msgid "(Gamma Corrected)"
@@ -114741,42 +114536,6 @@ msgid "|%i multiuser armature object(s)"
 msgstr "|%i vật thể cốt đa người dùng"
 
 
-msgid "Toggle locks of"
-msgstr "Mở/khóa ổ khóa của"
-
-
-msgid "Invert locks of"
-msgstr "Đảo nghịch khóa của"
-
-
-msgid "all"
-msgstr "hết"
-
-
-msgid "selected"
-msgstr "được chọn"
-
-
-msgid "unselected"
-msgstr "chưa chọn"
-
-
-msgid "selected and unlock unselected"
-msgstr "được chọn và mở khóa chưa chọn"
-
-
-msgid "selected and lock unselected"
-msgstr "được chọn và khóa chưa chọn"
-
-
-msgid "all and invert unselected"
-msgstr "hết và đảo nghich được chưa chọn"
-
-
-msgid "%s %s vertex groups of the active object"
-msgstr "%s %s nhóm điểm của vật thể hoạt động"
-
-
 msgid "No vertex groups to operate on"
 msgstr "Không có nhóm đỉnh để tác dụng"
 
@@ -115554,14 +115313,6 @@ msgid "OK"
 msgstr "Được"
 
 
-msgid "Vertex Data Detected!"
-msgstr "Được Phát Hiện Dữ Liệu Đỉnh!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Hình dạng học động lý sẽ không giữ nguyên màu đỉnh, UV, hay dữ liệu khác tùy chọn"
-
-
 msgid "Generative Modifiers Detected!"
 msgstr "Được Phát Hiện Bộ Điều Chỉnh Chế Tạo!"
 
@@ -116080,6 +115831,10 @@ msgstr "Biểu Thức:"
 
 msgid "Add Input Variable"
 msgstr "Thêm Biến Số Ngõ Vào"
+
+
+msgid "Value:"
+msgstr "Giá Trị:"
 
 
 msgid "Update Dependencies"
@@ -118411,6 +118166,14 @@ msgid "Overwrite %s"
 msgstr "Ghi lên %s"
 
 
+msgid "Incorrect context for running data-block fake user toggling"
+msgstr "Bối cảnh không hợp lệ để chạy bật/tắt người dùng giả cho cục dữ liệu"
+
+
+msgid "Data-block type does not support fake user"
+msgstr "Loại cục dữ liệu này không hỗ trợ người dùng giả"
+
+
 msgid "Can't edit previews of overridden library data"
 msgstr "Không thể biên tập dự khán của dữ liệu thư viện được vượt quyền"
 
@@ -118421,14 +118184,6 @@ msgstr "Cúc dữ liệu không hỗ trợ dự khán"
 
 msgid "Can't generate automatic preview for node group"
 msgstr "Không thể chế tạo một dự khán tự động cho nhóm giao điểm"
-
-
-msgid "Incorrect context for running data-block fake user toggling"
-msgstr "Bối cảnh không hợp lệ để chạy bật/tắt người dùng giả cho cục dữ liệu"
-
-
-msgid "Data-block type does not support fake user"
-msgstr "Loại cục dữ liệu này không hỗ trợ người dùng giả"
 
 
 msgid "Numeric input evaluation"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -8528,10 +8528,6 @@ msgid "Community"
 msgstr "Korisnička zajednica"
 
 
-msgid "Testing"
-msgstr "Ispitujem"
-
-
 msgid "Key Configurations"
 msgstr "Konfiguracije prečica"
 
@@ -10225,10 +10221,6 @@ msgstr "Mod deformacije"
 
 msgid "Overwrite"
 msgstr "Prepiši"
-
-
-msgid "Replace vertex coords with cached values"
-msgstr "Zameni koordinate temena vrdnostima iz ostave"
 
 
 msgid "Integrate"
@@ -17445,18 +17437,6 @@ msgid "Quick Fur"
 msgstr "Brzo krzno"
 
 
-msgid "Fur Density"
-msgstr "Gustina krzna"
-
-
-msgid "Heavy"
-msgstr "Teško"
-
-
-msgid "View %"
-msgstr "Pogled %"
-
-
 msgctxt "Operator"
 msgid "Quick Smoke"
 msgstr "Brzi dim"
@@ -20805,6 +20785,10 @@ msgid "UV Maps"
 msgstr "UV Mape"
 
 
+msgid "Shapes"
+msgstr "Oblici"
+
+
 msgid "Textures Directory"
 msgstr "Direktorijum sa teksturama"
 
@@ -21508,6 +21492,10 @@ msgstr "Kompresija"
 
 msgid "No compression"
 msgstr "Kompresija"
+
+
+msgid "Heavy"
+msgstr "Teško"
 
 
 msgid "Cache file path"
@@ -24744,10 +24732,6 @@ msgid "Alpha Threshold"
 msgstr "Prag providnosti"
 
 
-msgid "Unknown"
-msgstr "Nepoznato"
-
-
 msgid "Jump Height"
 msgstr "Visina skakanja"
 
@@ -25182,6 +25166,10 @@ msgid "Manual"
 msgstr "Uputstvo"
 
 
+msgid "Unknown"
+msgstr "Nepoznato"
+
+
 msgid "Frame Numbers"
 msgstr "Bojevi kadrova"
 
@@ -25214,10 +25202,6 @@ msgstr "Slojevi:"
 
 msgid "Protected Layers:"
 msgstr "Zaštićeni slojevi:"
-
-
-msgid "Shapes"
-msgstr "Oblici"
 
 
 msgid "Axes"
@@ -26809,10 +26793,6 @@ msgid "Online Python Reference"
 msgstr "Python uputstvo na internetu"
 
 
-msgid "Value:"
-msgstr "Vrednost"
-
-
 msgid "(Gamma Corrected)"
 msgstr "Ispravka"
 
@@ -27541,6 +27521,10 @@ msgstr "Svojstvo"
 
 msgid "Driver Value:"
 msgstr "Vrednost vozača:"
+
+
+msgid "Value:"
+msgstr "Vrednost"
 
 
 msgid "Update Dependencies"

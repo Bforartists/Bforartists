@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -5927,10 +5927,6 @@ msgid "Index"
 msgstr "Indice"
 
 
-msgid "Index of this points"
-msgstr "Indice di questi punti"
-
-
 msgid "Segments"
 msgstr "Segmenti"
 
@@ -11605,14 +11601,6 @@ msgid "Curve data-block used for storing text"
 msgstr "Blocco-dati Curva usato per conservare il testo"
 
 
-msgid "Text Horizontal Align"
-msgstr "Allineamento Orizzontale Testo"
-
-
-msgid "Text horizontal align from the object center"
-msgstr "Allineamento orizzontale testo definito dal centro dell'oggetto"
-
-
 msgid "Align text to the left"
 msgstr "Allinea testo a sinistra"
 
@@ -11639,22 +11627,6 @@ msgstr "Adatta"
 
 msgid "Align to the left and the right, with equal character spacing"
 msgstr "Allinea a sinistra e a destra, con eguale spaziature dei caratteri"
-
-
-msgid "Text Vertical Align"
-msgstr "Allineamento Verticale Testo"
-
-
-msgid "Text vertical align from the object center"
-msgstr "Allineamento verticale testo definito dal centro dell'oggetto"
-
-
-msgid "Top Base-Line"
-msgstr "Alto Linea-Base"
-
-
-msgid "Align to top but use the base-line of the text"
-msgstr "Allinea in alto ma usa la linea di base del testo"
 
 
 msgid "Align text to the top"
@@ -16102,14 +16074,6 @@ msgstr "Comunità"
 
 msgid "Maintained by community developers"
 msgstr "Mantenuti dalla comunità di sviluppatori"
-
-
-msgid "Testing"
-msgstr "In Test"
-
-
-msgid "Newly contributed scripts (excluded from release builds)"
-msgstr "Nuovi script (esclusi dalle build di rilascio)"
 
 
 msgid "Key Configurations"
@@ -24046,14 +24010,6 @@ msgstr "Info Oggetto"
 
 msgid "Z Up"
 msgstr "Z In Alto"
-
-
-msgid "Align X"
-msgstr "Allinea X"
-
-
-msgid "Align Y"
-msgstr "Allinea Y"
 
 
 msgid "Pack UV Islands"
@@ -34829,18 +34785,6 @@ msgid "Quick Fur"
 msgstr "Pelliccia Veloce"
 
 
-msgid "Fur Density"
-msgstr "Densità Pelliccia"
-
-
-msgid "Heavy"
-msgstr "Pesante"
-
-
-msgid "View %"
-msgstr "Vista %"
-
-
 msgctxt "Operator"
 msgid "Quick Smoke"
 msgstr "Fumo Veloce"
@@ -40063,8 +40007,16 @@ msgid "Automatically choose the axis on which there is most alignment already"
 msgstr "Sceglie automaticamente l'asse su cui ci sono la maggior parte degli allineamenti"
 
 
+msgid "Align X"
+msgstr "Allinea X"
+
+
 msgid "Align UVs on X axis"
 msgstr "Allinea le UV sull'asse X"
+
+
+msgid "Align Y"
+msgstr "Allinea Y"
 
 
 msgid "Align UVs on Y axis"
@@ -42101,6 +42053,10 @@ msgid "UV Maps"
 msgstr "Mappe UV"
 
 
+msgid "Shapes"
+msgstr "Forme"
+
+
 msgid "Textures Directory"
 msgstr "Cartella Texture"
 
@@ -42902,12 +42858,12 @@ msgid "Indirect Lighting"
 msgstr "Illuminazione Indiretta"
 
 
-msgid "Screen Space Reflections"
-msgstr "Riflessioni Spazio Schermo"
-
-
 msgid "Shadows"
 msgstr "Ombre"
+
+
+msgid "Screen Space Reflections"
+msgstr "Riflessioni Spazio Schermo"
 
 
 msgid "Volumetrics"
@@ -43919,6 +43875,10 @@ msgstr "Nessuna compressione"
 
 msgid "Fast but not so effective compression"
 msgstr "Compressione veloce ma non così efficace"
+
+
+msgid "Heavy"
+msgstr "Pesante"
 
 
 msgid "Cache file path"
@@ -51582,10 +51542,6 @@ msgid "Render stylized strokes in this Layer"
 msgstr "Renderizza tratti stilizzati in questo livello"
 
 
-msgid "Unknown"
-msgstr "Sconosciuto"
-
-
 msgid "Walk navigation settings"
 msgstr "Impostazioni navigazione a camminata"
 
@@ -52720,6 +52676,10 @@ msgid "Manual"
 msgstr "Manuale"
 
 
+msgid "Unknown"
+msgstr "Sconosciuto"
+
+
 msgid "Frame Numbers"
 msgstr "Numero Fotogrammi"
 
@@ -52782,10 +52742,6 @@ msgstr "Livelli:"
 
 msgid "Protected Layers:"
 msgstr "Livelli Protetti:"
-
-
-msgid "Shapes"
-msgstr "Forme"
 
 
 msgid "Axes"
@@ -56929,10 +56885,6 @@ msgid "Hex"
 msgstr "Hex"
 
 
-msgid "Value:"
-msgstr "Valore:"
-
-
 msgid "(Gamma Corrected)"
 msgstr "(Gamma Corretto)"
 
@@ -58279,14 +58231,6 @@ msgid "OK"
 msgstr "OK"
 
 
-msgid "Vertex Data Detected!"
-msgstr "Rilevati Dati Vertice!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Topologia Dinamica non preserva i colori vertici, le UV o altri dati personalizzati"
-
-
 msgid "Generative Modifiers Detected!"
 msgstr "Rilevati Modificatori Generativi!"
 
@@ -58517,6 +58461,10 @@ msgstr "Espressione:"
 
 msgid "Add Input Variable"
 msgstr "Aggiungi Variabile Ingresso"
+
+
+msgid "Value:"
+msgstr "Valore:"
 
 
 msgid "Update Dependencies"

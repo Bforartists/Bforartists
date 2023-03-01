@@ -4,7 +4,7 @@
 import os
 from os.path import join, splitext
 
-from check_mypy_config import PATHS, BLACKLIST
+from check_mypy_config import PATHS, PATHS_EXCLUDE
 
 from typing import (
     Any,
@@ -76,7 +76,7 @@ def main() -> None:
         )
 
     for f, extra_args, extra_env in paths:
-        if f in BLACKLIST:
+        if f in PATHS_EXCLUDE:
             continue
 
         if not extra_args:

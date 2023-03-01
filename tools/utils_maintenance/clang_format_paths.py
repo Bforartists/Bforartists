@@ -26,7 +26,7 @@ VERSION_MIN = (8, 0, 0)
 VERSION_MAX_RECOMMENDED = (12, 0, 0)
 CLANG_FORMAT_CMD = "clang-format"
 
-BASE_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+BASE_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 os.chdir(BASE_DIR)
 
 
@@ -135,7 +135,7 @@ def clang_format_ensure_version() -> Optional[Tuple[int, int, int]]:
         )
         try:
             version_output = subprocess.check_output((clang_format_cmd, "-version")).decode('utf-8')
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             continue
         CLANG_FORMAT_CMD = clang_format_cmd
         break

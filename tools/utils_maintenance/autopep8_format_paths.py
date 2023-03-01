@@ -9,7 +9,7 @@ While it can be called directly, you may prefer to run this from Blender's root 
 
 Otherwise you may call this script directly, for example:
 
-   ./source/tools/utils_maintenance/autopep8_format_paths.py --changed-only tests/python
+   ./tools/utils_maintenance/autopep8_format_paths.py --changed-only tests/python
 """
 
 import os
@@ -28,7 +28,7 @@ VERSION_MIN = (1, 6, 0)
 VERSION_MAX_RECOMMENDED = (1, 6, 0)
 AUTOPEP8_FORMAT_CMD = "autopep8"
 
-BASE_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+BASE_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 os.chdir(BASE_DIR)
 
 
@@ -37,7 +37,7 @@ extensions = (
 )
 
 ignore_files = {
-    "release/scripts/modules/rna_manual_reference.py",  # Large generated file, don't format.
+    "scripts/modules/rna_manual_reference.py",  # Large generated file, don't format.
 }
 
 
@@ -94,7 +94,7 @@ def autopep8_ensure_version(autopep8_format_cmd_argument: str) -> Optional[Tuple
 
         try:
             version_output = subprocess.check_output((*cmd, "--version")).decode('utf-8')
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             continue
         AUTOPEP8_FORMAT_CMD = autopep8_format_cmd
         break

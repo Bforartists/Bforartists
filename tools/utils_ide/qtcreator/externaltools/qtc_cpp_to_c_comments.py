@@ -23,7 +23,6 @@ data = txt.split("\n")
 
 # first detect blocks
 def block_data(data, i_start):
-    ok = False
     i_begin = -1
     i_index = -1
     i_end = -1

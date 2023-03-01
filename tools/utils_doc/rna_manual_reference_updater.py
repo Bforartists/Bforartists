@@ -29,7 +29,41 @@ URL is the: url_manual_prefix + url_manual_mapping[#id]
 
 import os
 import argparse
-import sphobjinv as soi
+import re
+import sys
+
+try:
+    import sphobjinv
+except ImportError:
+    print("The module \"sphobjinv\" was not found, it may be installed via \"pip install sphobjinv\", exiting!")
+    sys.exit(1)
+
+# The root of Blender's source directory.
+BASE_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "..")
+
+# Names that don't match this regex can't be used as URL's.
+re_name_sanity_match = re.compile("[a-zA-Z0-9._*]+")
+
+
+def sphobjinv_sanity_check(o):
+    """
+    Ensure ``o`` can be used to make a URL.
+    """
+    name = o.name
+    # Perhaps other characters could be excluded too.
+    if not re_name_sanity_match.fullmatch(name):
+        m = re_name_sanity_match.match(name)
+        fail_char = 0
+        if m:
+            fail_char = m.span(0)[1]
+        msg = "WARNING: invalid char found for name:"
+        print(msg, name, "(at index %d)" % fail_char, "skipping!")
+        print(" " * (len(msg) + fail_char), "^")
+        return False
+
+    if " " in name or "/" in name:
+        return False
+    return True
 
 
 def write_mappings(inv, output):
@@ -43,51 +77,27 @@ def write_mappings(inv, output):
     fw(" This file is auto generated from rna_manual_reference_updater.py\n\n")
     # Prevent systems with autopep8 configured from re-formatting the file.
     fw("# autopep8: off\n")
-    fw("import bpy\n\n")
-    fw("manual_version = '%d.%d' % bpy.app.version[:2]\n\n")
-    fw("url_manual_prefix = \"https://docs.blender.org/manual/en/\" + manual_version + \"/\"\n\n")
-    fw("language = bpy.context.preferences.view.language\n")
-    fw("if language == 'DEFAULT':\n")
-    fw("    import os\n")
-    fw("    language = os.getenv('LANG', '').split('.')[0]\n\n")
-    fw("LANG = {\n")
-    fw("\"ar_EG\":        \"ar\",\n")  # Arabic
-    # fw("\"bg_BG\":        \"bg\",\n")  # Bulgarian
-    # fw("\"ca_AD\":        \"ca\",\n")  # Catalan
-    # fw("\"cs_CZ\":        \"cz\",\n")  # Czech
-    fw("\"de_DE\":        \"de\",\n")  # German
-    # fw("\"el_GR\":        \"el\",\n")  # Greek
-    fw("\"es\":           \"es\",\n")  # Spanish
-    fw("\"fi_FI\":        \"fi\",\n")  # Finnish
-    fw("\"fr_FR\":        \"fr\",\n")  # French
-    fw("\"id_ID\":        \"id\",\n")  # Indonesian
-    fw("\"it_IT\":        \"it\",\n")  # Italian
-    fw("\"ja_JP\":        \"ja\",\n")  # Japanese
-    fw("\"ko_KR\":        \"ko\",\n")  # Korean
-    # fw("\"nb\":           \"nb\",\n")  # Norwegian
-    # fw("\"nl_NL\":        \"nl\",\n")  # Dutch
-    # fw("\"pl_PL\":        \"pl\",\n")  # Polish
-    fw("\"pt_PT\":        \"pt\",\n")  # Portuguese
-    # Portuguese - Brazil, for until we have a pt_BR version
-    fw("\"pt_BR\":        \"pt\",\n")
-    fw("\"ru_RU\":        \"ru\",\n")  # Russian
-    fw("\"sk_SK\":        \"sk\",\n")  # Slovak
-    # fw("\"sl\":           \"sl\",\n")  # Slovenian
-    fw("\"sr_RS\":        \"sr\",\n")  # Serbian
-    # fw("\"sv_SE\":        \"sv\",\n")  # Swedish
-    # fw("\"tr_TR\":        \"th\",\n")  # Thai
-    fw("\"uk_UA\":        \"uk\",\n")  # Ukrainian
-    fw("\"vi_VN\":        \"vi\",\n")  # Vietnamese
-    fw("\"zh_CN\":        \"zh-hans\",\n")  # Simplified Chinese
-    fw("\"zh_TW\":        \"zh-hant\",\n")  # Traditional Chinese
-    fw("}.get(language)\n\n")
-    fw("if LANG is not None:\n")
-    fw("    url_manual_prefix = url_manual_prefix.replace(\"manual/en\", \"manual/\" + LANG)\n\n")
+
+    fw(
+        "import bpy\n"
+        "\n"
+        "url_manual_prefix = \"https://docs.blender.org/manual/%s/%d.%d/\" % (\n"
+        "    bpy.utils.manual_language_code(),\n"
+        "    *bpy.app.version[:2],\n"
+        ")\n"
+        "\n"
+    )
+
     fw("url_manual_mapping = (\n")
 
+
+
     # Logic to manipulate strings from objects.inv
-    lines = [o.data_line() for o in inv.objects if o.name.startswith(
-        "bpy.types") or o.name.startswith("bpy.ops")]
+    lines = [
+        o.data_line() for o in inv.objects
+        if o.name.startswith(("bpy.types", "bpy.ops"))
+        if sphobjinv_sanity_check(o)
+    ]
     # Finding first space will return length of rna path
     lines.sort(key=lambda l: l.find(" "), reverse=True)
     for line in lines:
@@ -121,7 +131,7 @@ def main():
     parser.add_argument(
         "--output",
         dest="output",
-        default="../../../release/scripts/modules/rna_manual_reference.py",
+        default=os.path.join(BASE_DIR, "release", "scripts", "modules", "rna_manual_reference.py"),
         required=False,
         help="path to output including filename and extentsion",
         metavar="FILE")
@@ -139,11 +149,11 @@ def main():
     if args.filename:
         # Download and decode objects.inv
         print("Loading from file...")
-        inv = soi.Inventory(args.filename)
+        inv = sphobjinv.Inventory(args.filename)
     else:
         # Load and decode objects.inv
         print("Downloading...")
-        inv = soi.Inventory(url=args.url)
+        inv = sphobjinv.Inventory(url=args.url)
 
     write_mappings(inv, args.output)
     print("Done!")
