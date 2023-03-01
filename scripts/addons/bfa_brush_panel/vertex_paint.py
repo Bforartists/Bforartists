@@ -10,7 +10,8 @@ panel_classes = list(
         tool_name_attr="vertex_tool",
         use_paint_attr="use_paint_vertex",
         tool_settings_attr="vertex_paint",
-        mode="PAINT_VERTEX")
+        mode="PAINT_VERTEX",
+    )
 )
 
 
