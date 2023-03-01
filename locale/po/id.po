@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
 "Last-Translator: Adriel Tristanputra <ultimexport@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -1631,10 +1631,6 @@ msgstr "Kunci Bentuk"
 
 msgid "Shape Key data-blocks"
 msgstr "Kunci Bentuk data-blok"
-
-
-msgid "Simulations"
-msgstr "Simulasi"
 
 
 msgid "Sounds"
@@ -7430,6 +7426,10 @@ msgid "Show Scene data-blocks"
 msgstr "Tampilkan Adegan data-blok"
 
 
+msgid "Simulations"
+msgstr "Simulasi"
+
+
 msgid "Show Simulation data-blocks"
 msgstr "Tampilkan Simulasi data-blok"
 
@@ -10517,10 +10517,6 @@ msgstr "Komunitas Pengguna"
 
 msgid "Maintained by community developers"
 msgstr "Dirawat komunitas developer"
-
-
-msgid "Testing"
-msgstr "Pengujian"
 
 
 msgid "Operators"
@@ -15656,10 +15652,6 @@ msgid "Export cameras"
 msgstr "Ekspor kamera"
 
 
-msgid "Use Current Frame"
-msgstr "Gunakan Frame Sekarang"
-
-
 msgid "Renderable Objects"
 msgstr "Objek yang Dapat Dirender"
 
@@ -20073,6 +20065,10 @@ msgid "Search Menu"
 msgstr "Adegan"
 
 
+msgid "Shapes"
+msgstr "Bentuk"
+
+
 msgid "Tile X"
 msgstr "Ukurang"
 
@@ -23087,10 +23083,6 @@ msgid "Protected Layers:"
 msgstr "Layer yang Terjaga:"
 
 
-msgid "Shapes"
-msgstr "Bentuk"
-
-
 msgctxt "Operator"
 msgid "Remove"
 msgstr "Hapus"
@@ -25625,10 +25617,6 @@ msgid "Online Manual"
 msgstr "Material"
 
 
-msgid "Value:"
-msgstr "Nilai:"
-
-
 msgid "(Gamma Corrected)"
 msgstr "lokasi"
 
@@ -26365,6 +26353,10 @@ msgstr "Nama dokumen"
 
 msgid "Cursor X"
 msgstr "Kursor X"
+
+
+msgid "Value:"
+msgstr "Nilai:"
 
 
 msgid "Active F-Curve is not editable"

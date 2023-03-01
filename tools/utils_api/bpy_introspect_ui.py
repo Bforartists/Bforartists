@@ -7,7 +7,7 @@
 """
 Example usage:
 
-  python3 source/tools/utils_api/bpy_introspect_ui.py
+  python3 tools/utils_api/bpy_introspect_ui.py
 """
 
 import sys
@@ -426,7 +426,7 @@ import bpy
 
 def module_classes(mod):
     classes = []
-    for key, value in mod.__dict__.items():
+    for value in mod.__dict__.values():
         try:
             is_subclass = issubclass(value, BaseFakeUI)
         except:

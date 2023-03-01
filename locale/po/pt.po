@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -12461,14 +12461,6 @@ msgid "Curve data-block used for storing text"
 msgstr "Blocos de dados de curva usado para armazenar os textos."
 
 
-msgid "Text Horizontal Align"
-msgstr "Alinhar texto horizontalmente"
-
-
-msgid "Text horizontal align from the object center"
-msgstr "Alinhamento horizontal a partir do centro do objeto."
-
-
 msgid "Align text to the left"
 msgstr "Alinha o texto à esquerda."
 
@@ -12495,22 +12487,6 @@ msgstr "Fluir"
 
 msgid "Align to the left and the right, with equal character spacing"
 msgstr "Alinha o texto para a esquerda e para a direita, com igual espaçamento entre caracteres."
-
-
-msgid "Text Vertical Align"
-msgstr "Alinhar texto verticalmente"
-
-
-msgid "Text vertical align from the object center"
-msgstr "Alinhamento vertical a partir do centro do objeto."
-
-
-msgid "Top Base-Line"
-msgstr "Topo à base"
-
-
-msgid "Align to top but use the base-line of the text"
-msgstr "Alinha o texto pelo topo de cada linha existente, mas continua usando a base das linhas como referência."
 
 
 msgid "Align text to the top"
@@ -17485,14 +17461,6 @@ msgstr "Comunitários"
 
 msgid "Maintained by community developers"
 msgstr "Mantido por desenvolvedores da comunidade."
-
-
-msgid "Testing"
-msgstr "Em testes"
-
-
-msgid "Newly contributed scripts (excluded from release builds)"
-msgstr "Scripts recentes a partir de contribuições (excluídos das construções de lançamentos)."
 
 
 msgid "Key Configurations"
@@ -23051,16 +23019,8 @@ msgid "Overwrite"
 msgstr "Sobrescrever"
 
 
-msgid "Replace vertex coords with cached values"
-msgstr "Substitui as coordenadas dos vértices com valores em cache."
-
-
 msgid "Integrate"
 msgstr "Integrar"
-
-
-msgid "Integrate deformation from this modifiers input with the mesh-cache coords (useful for shape keys)"
-msgstr "Integra a deformação a partir da entrada destes modificadores com as coordenadas da malha-cache (útil para chaves de formato)."
 
 
 msgid "Evaluation Factor"
@@ -27613,14 +27573,6 @@ msgstr "Informações de objetos"
 
 msgid "Z Up"
 msgstr "Z Para cima"
-
-
-msgid "Align X"
-msgstr "Alinhar em X"
-
-
-msgid "Align Y"
-msgstr "Alinhar em Y"
 
 
 msgid "Pack UV Islands"
@@ -32734,10 +32686,6 @@ msgid "Armature FBXNode Type"
 msgstr "Tipo de nós para armações FBX"
 
 
-msgid "FBX type of node (object) used to represent Blender's armatures (use Null one unless you experience issues with other app, other choices may no import back perfectly in Blender...)"
-msgstr "O tipo de nós para objetos de armações de ossos em formato FBX, representando as armações de ossos do Blender. Use a opção \"Nulo\" a menos que haja problemas com outros aplicativos. Outras escolhas podem não ser novamente importadas de maneira perfeita no Blender."
-
-
 msgid "Null"
 msgstr "Nulo"
 
@@ -32804,10 +32752,6 @@ msgstr "Força a exportação de ao menos uma chave de animação para todos os 
 
 msgid "Export each non-muted NLA strip as a separated FBX's AnimStack, if any, instead of global scene animation"
 msgstr "Caso exista, exporta cada faixa de animação não linear não muda, como uma pilha separada de animação FBX , ao invés de exportar como uma animação global de cena."
-
-
-msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
-msgstr "Gera e grava o espaço de transformação em dados de objeto, evitando rotações indesejadas nos objetos quando o espaço alvo não está alinhado com o espaço Blender (AVISO ! opção experimental, use por conta e risco pois sabe-se que pode haver defeitos com armações e / ou animações)."
 
 
 msgid "Active scene to file"
@@ -39776,18 +39720,6 @@ msgid "Quick Fur"
 msgstr "Gerar pelos rápido"
 
 
-msgid "Fur Density"
-msgstr "Densidade de pelos"
-
-
-msgid "Heavy"
-msgstr "Pesada"
-
-
-msgid "View %"
-msgstr "Visualização %"
-
-
 msgctxt "Operator"
 msgid "Quick Smoke"
 msgstr "Gerar fumo rápido"
@@ -45566,8 +45498,16 @@ msgid "Automatically choose the axis on which there is most alignment already"
 msgstr "Escolhe automaticamente o eixo no qual já exista mais alinhamento."
 
 
+msgid "Align X"
+msgstr "Alinhar em X"
+
+
 msgid "Align UVs on X axis"
 msgstr "Alinha as UVs no eixo X."
+
+
+msgid "Align Y"
+msgstr "Alinhar em Y"
 
 
 msgid "Align UVs on Y axis"
@@ -47016,10 +46956,6 @@ msgid "Context Int Cycle"
 msgstr "Ciclo de contexto inteiro"
 
 
-msgid "Set a context value (useful for cycling active material, vertex keys, groups, etc.)"
-msgstr "Define um valor de contexto. Útil para ciclagens através do material ativo, chaves de vértices, grupos, etc."
-
-
 msgctxt "Operator"
 msgid "Context Enum Menu"
 msgstr "Menu de enumeração de contexto"
@@ -47885,6 +47821,10 @@ msgstr "A localização do tipo \"URL\" a ser aberta"
 
 msgid "UV Maps"
 msgstr "Mapas UV"
+
+
+msgid "Shapes"
+msgstr "Formatos"
 
 
 msgid "Textures Directory"
@@ -49544,6 +49484,10 @@ msgstr "Sem compressão."
 
 msgid "Fast but not so effective compression"
 msgstr "Compressão rápida mas não tão eficaz."
+
+
+msgid "Heavy"
+msgstr "Pesada"
 
 
 msgid "Cache file path"
@@ -58927,10 +58871,6 @@ msgid "Render stylized strokes in this Layer"
 msgstr "Renderiza os traços estilizados nesta camada."
 
 
-msgid "Unknown"
-msgstr "Desconhecido"
-
-
 msgid "Walk navigation settings"
 msgstr "Definições de navegação em caminhada."
 
@@ -60155,6 +60095,10 @@ msgid "Manual"
 msgstr "Manual"
 
 
+msgid "Unknown"
+msgstr "Desconhecido"
+
+
 msgid "Frame Numbers"
 msgstr "Números dos fotogramas"
 
@@ -60217,10 +60161,6 @@ msgstr "Camadas:"
 
 msgid "Protected Layers:"
 msgstr "Camadas protegidas:"
-
-
-msgid "Shapes"
-msgstr "Formatos"
 
 
 msgid "Axes"
@@ -63728,10 +63668,6 @@ msgid "Hex"
 msgstr "Hex"
 
 
-msgid "Value:"
-msgstr "Valor:"
-
-
 msgid "(Gamma Corrected)"
 msgstr "(Usa correção de gama)"
 
@@ -65286,14 +65222,6 @@ msgid "OK"
 msgstr "OK"
 
 
-msgid "Vertex Data Detected!"
-msgstr "Dados de vértices detectados !"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Topologia dinâmica não irá preservar as cores dos vértices, UVs ou outros dados personalizados."
-
-
 msgid "Generative Modifiers Detected!"
 msgstr "Modificadores de geração detectados !"
 
@@ -65644,6 +65572,10 @@ msgstr "Propriedades:"
 
 msgid "Driver Value:"
 msgstr "Valor de controlador:"
+
+
+msgid "Value:"
+msgstr "Valor:"
 
 
 msgid "Update Dependencies"

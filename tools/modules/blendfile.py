@@ -5,7 +5,7 @@
 # -----------------------------------------------------------------------------
 # NOTICE: this module is expanded upon in Blender Asset Tracer.
 #
-# See https://developer.blender.org/source/blender-asset-tracer/
+# See https://projects.blender.org/blender/blender-asset-tracer
 # and https://pypi.org/project/blender-asset-tracer/
 # -----------------------------------------------------------------------------
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -15173,14 +15173,6 @@ msgid "Maintained by community developers"
 msgstr "ﻊﻤﺘﺠﻤﻟﺍ ﻱﺭﻮّﻄﻣ ﻞﺒﻗ ﻦﻣ ﻪﻴﻟ ﻆﻓﺎﺤﻣ"
 
 
-msgid "Testing"
-msgstr "ﺺﺤﻔﻟﺍ ﺖﺤﺗ"
-
-
-msgid "Newly contributed scripts (excluded from release builds)"
-msgstr "(ﺔﻣﺎﺘﻟﺍ ﺦﺴﻨﻟﺍ ﻦﻣ ﺓﺪﻌﺒﺘﺴﻣ) ﺓﺪﻳﺪﺟ ﺓﺪّﻌﻣ ﺕﺎﺘﺒﻳﺮﻜﺳ"
-
-
 msgid "Key Configurations"
 msgstr "ﺡﺎﺘﻔﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
@@ -26678,10 +26670,6 @@ msgid "Quick Fur"
 msgstr "ﻊﻳﺮﺳ ﻭﺮﻓ"
 
 
-msgid "Heavy"
-msgstr "ﻞﻴﻘﺛ"
-
-
 msgctxt "Operator"
 msgid "Quick Smoke"
 msgstr "ﻊﻳﺮﺳ ﻥﺎﺧﺩ"
@@ -30219,6 +30207,10 @@ msgid "UV Maps"
 msgstr "UV ﻂﺋﺍﺮﺧ"
 
 
+msgid "Shapes"
+msgstr "ﻝﺎﻜﺷﻷ﻿ﺍ"
+
+
 msgid "Textures Directory"
 msgstr "ﺔﺠﺴﻧﻷ﻿ﺍ ﺪﻠﺠﻣ"
 
@@ -31444,6 +31436,10 @@ msgstr "ﻂﻐﺿ ﻻ﻿"
 
 msgid "Fast but not so effective compression"
 msgstr "ﺎﻴﻟﺎﻌﻓ ﺎﻄﻐﺿ ﺲﻴﻟ ﻦﻜﻟ ﻊﻳﺮﺳ"
+
+
+msgid "Heavy"
+msgstr "ﻞﻴﻘﺛ"
 
 
 msgid "Cache file path"
@@ -36982,10 +36978,6 @@ msgid "Protected Layers:"
 msgstr ":ﺔﻴﻤﺤﻤﻟﺍ ﺕﺎﻘﺒﻄﻟﺍ"
 
 
-msgid "Shapes"
-msgstr "ﻝﺎﻜﺷﻷ﻿ﺍ"
-
-
 msgid "Axes"
 msgstr "ﺭﻭﺎﺤﻣ"
 
@@ -39180,10 +39172,6 @@ msgid "Hex"
 msgstr "ﻲﻧﺎﻤﺛ"
 
 
-msgid "Value:"
-msgstr ":ﺔﻤﻴﻗ"
-
-
 msgid "(Gamma Corrected)"
 msgstr "(ﺔﻟﺪﻌﻣ ﺓﺭﺎﻧﺇ)"
 
@@ -40026,6 +40014,10 @@ msgstr ":ﺔﻴﺻﺎﺧ"
 
 msgid "Driver Value:"
 msgstr ":ﻞﻐﺸﻤﻟﺍ ﺔﻤﻴﻗ"
+
+
+msgid "Value:"
+msgstr ":ﺔﻤﻴﻗ"
 
 
 msgid "Update Dependencies"

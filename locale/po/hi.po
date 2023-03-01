@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -2675,10 +2675,6 @@ msgid "Community"
 msgstr "समुदाय"
 
 
-msgid "Testing"
-msgstr "परीक्षण"
-
-
 msgid "Lighting"
 msgstr "प्रकाश व्यवस्था"
 
@@ -4142,10 +4138,6 @@ msgid "Remove the selected particle system"
 msgstr "चयनित कण प्रणाली हटाएँ"
 
 
-msgid "Heavy"
-msgstr "भारी"
-
-
 msgctxt "Operator"
 msgid "Select Camera"
 msgstr "प्रतिबिंबक का चयन करें"
@@ -4673,6 +4665,10 @@ msgid "URL"
 msgstr "यूआरएल"
 
 
+msgid "Shapes"
+msgstr "आकृतियाँ"
+
+
 msgid "Lock X"
 msgstr "तालाबंदी x"
 
@@ -4825,6 +4821,10 @@ msgstr "कश"
 
 msgid "Enemy"
 msgstr "विरोधी"
+
+
+msgid "Heavy"
+msgstr "भारी"
 
 
 msgid "Duplicate Particle"
@@ -5315,10 +5315,6 @@ msgid "Relationship Lines"
 msgstr "संबंध रेखाएँ"
 
 
-msgid "Unknown"
-msgstr "अज्ञात"
-
-
 msgid "Search"
 msgstr "खोज"
 
@@ -5569,6 +5565,10 @@ msgid "Manual"
 msgstr "नियम पुस्तिका"
 
 
+msgid "Unknown"
+msgstr "अज्ञात"
+
+
 msgid "After"
 msgstr "के बाद"
 
@@ -5589,10 +5589,6 @@ msgstr "ब्लेंडर २.६ पाइथन प्रतिबंध�
 
 msgid "Layers:"
 msgstr "परत:"
-
-
-msgid "Shapes"
-msgstr "आकृतियाँ"
 
 
 msgid "Axes"
@@ -6516,10 +6512,6 @@ msgid "Hex"
 msgstr "हेक्स"
 
 
-msgid "Value:"
-msgstr "मान:"
-
-
 msgid "Pos"
 msgstr "पीओएस"
 
@@ -6888,6 +6880,10 @@ msgstr "रद्द करें"
 
 msgid "File name"
 msgstr "संचिका का नाम"
+
+
+msgid "Value:"
+msgstr "मान:"
 
 
 msgid "Add Modifier"

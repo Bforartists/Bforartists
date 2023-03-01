@@ -29,7 +29,7 @@ def load_tests(loader, standard_tests, pattern):
 
 def main():
     # Slice command line arguments by '--'
-    unittest_args, parser_args = sliceCommandLineArguments()
+    unittest_args, _parser_args = sliceCommandLineArguments()
     # Construct and run unit tests.
     unittest.main(argv=unittest_args)
 

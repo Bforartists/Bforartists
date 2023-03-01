@@ -122,7 +122,7 @@ class MyCustomNode(MyCustomTreeNode, Node):
 ### Node Categories ###
 # Node categories are a python system for automatically
 # extending the Add menu, toolbar panels and search operator.
-# For more examples see release/scripts/startup/nodeitems_builtins.py
+# For more examples see scripts/startup/nodeitems_builtins.py
 
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem

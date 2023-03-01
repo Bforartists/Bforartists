@@ -68,7 +68,7 @@ _is_factory_startup = _bpy.app.factory_startup
 _script_module_dirs = "startup", "modules"
 
 # Base scripts, this points to the directory containing: "modules" & "startup" (see `_script_module_dirs`).
-# In Blender's code-base this is `./release/scripts`.
+# In Blender's code-base this is `./scripts`.
 #
 # NOTE: in virtually all cases this should match `BLENDER_SYSTEM_SCRIPTS` as this script is it's self a system script,
 # it must be in the `BLENDER_SYSTEM_SCRIPTS` by definition and there is no need for a look-up from `_bpy_script_paths`.
