@@ -59,8 +59,9 @@ waveletNoiseTile.bin
 /locale/user-config.py
 
 # External repositories.
-/scripts/addons/
-/scripts/addons_contrib/
+# bfa: we don't use external repositories for those
+# /scripts/addons/
+# /scripts/addons_contrib/
 
 # Ignore old submodules directories.
 # Eventually need to get rid of those, but for the first time of transition
