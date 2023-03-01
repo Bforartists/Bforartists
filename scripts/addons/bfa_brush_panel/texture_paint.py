@@ -10,7 +10,8 @@ panel_classes = list(
         tool_name_attr="image_tool",
         use_paint_attr="use_paint_image",
         tool_settings_attr="image_paint",
-        mode="PAINT_TEXTURE")
+        mode="PAINT_TEXTURE",
+    )
 )
 
 

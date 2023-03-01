@@ -36,12 +36,15 @@ panel_classes = list(
             "DRAW_FACE_SETS",
             "DISPLACEMENT_ERASER",
             "DISPLACEMENT_SMEAR",
-            "PAINT"],
+            "PAINT",
+        ],
         icon_prefix="brush.sculpt.",
         tool_name_attr="sculpt_tool",
         use_paint_attr="use_paint_sculpt",
         tool_settings_attr="sculpt",
-        mode="SCULPT"))
+        mode="SCULPT",
+    )
+)
 
 
 def register():
