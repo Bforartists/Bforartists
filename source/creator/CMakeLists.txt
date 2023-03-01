@@ -123,8 +123,9 @@ set(SRC
 
 # MSVC 2010 gives linking errors with the manifest.
 if(WIN32 AND NOT UNIX)
+  # bfa: modifed BLEN_VER_RC_STR to show patch version as well
   add_definitions(
-    -DBLEN_VER_RC_STR="${BFORARTISTS_VERSION}"
+    -DBLEN_VER_RC_STR="${BFORARTISTS_VERSION}.${BFORARTISTS_VERSION_PATCH}"
     -DBLEN_VER_RC_1=${BFORARTISTS_VERSION_MAJOR}
     -DBLEN_VER_RC_2=${BFORARTISTS_VERSION_MINOR}
     -DBLEN_VER_RC_3=${BFORARTISTS_VERSION_PATCH}
