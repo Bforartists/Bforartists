@@ -154,7 +154,7 @@ def main():
 
     args = argparse_create().parse_args()
 
-    from git_log import GitCommit, GitCommitIter
+    from git_log import GitCommitIter
 
     # --------------
     # Filter Commits

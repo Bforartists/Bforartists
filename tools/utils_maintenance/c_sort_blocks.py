@@ -47,7 +47,7 @@ def sort_struct_lists(fn: str, data_src: str) -> Optional[str]:
 
     # eg:
     #    extern char datatoc_splash_png[];
-    re_match_datatoc = re.compile(r"extern\s+(char)\s+datatoc_[A-Za-z_].*;")
+    # re_match_datatoc = re.compile(r"extern\s+(char)\s+datatoc_[A-Za-z_].*;")
 
     lines = data_src.splitlines(keepends=True)
 

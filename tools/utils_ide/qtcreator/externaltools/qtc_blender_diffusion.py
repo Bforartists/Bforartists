@@ -20,7 +20,7 @@ BASE_URL = "https://developer.blender.org/diffusion/B/browse"
 
 
 def main():
-    dirname, filename = os.path.split(SOURCE_FILE)
+    dirname, _filename = os.path.split(SOURCE_FILE)
 
     process = subprocess.Popen(
         ["git", "rev-parse", "--symbolic-full-name", "--abbrev-ref",

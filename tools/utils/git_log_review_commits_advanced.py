@@ -465,7 +465,7 @@ def write_release_log(path, release_log, c, cat, rstate, rstate_list):
         f.write("%s\n" % IGNORE_START_LINE)
         f.write("Total fixed bugs: %d (%d from tracker, %d reported/found by other ways).\n\n"
                 "" % (sum(count), count[0], count[1]))
-        f.write("%s\n%s\n\n" % ("{{Note|Note|Before RC1 (i.e. during regular development of next version in master "
+        f.write("%s\n%s\n\n" % ("{{Note|Note|Before RC1 (i.e. during regular development of next version in main "
                                 "branch), only fixes of issues which already existed in previous official releases are "
                                 "listed here. Fixes for regressions introduced since last release, or for new "
                                 "features, are '''not''' listed here.<br/>For following RCs and final release, "
@@ -573,7 +573,7 @@ def main():
         messages |= release_log_extract_messages(path)
     args.filter_exclude_releaselogs = messages
 
-    from git_log import GitCommit, GitCommitIter
+    from git_log import GitCommitIter
 
     # --------------
     # Filter Commits
