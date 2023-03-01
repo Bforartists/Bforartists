@@ -43,8 +43,6 @@ re_match_struct = re.compile(r"struct\s+([A-Za-z_][A-Za-z_0-9]*)\s*;")
 
 
 def clean_structs(fn: str, data_src: str) -> Optional[str]:
-    import re
-
     from pygments.token import Token
     from pygments import lexers
 
@@ -55,7 +53,7 @@ def clean_structs(fn: str, data_src: str) -> Optional[str]:
 
     ty_exact = (Token.Comment.Preproc, Token.Comment.PreprocFile)
 
-    for ty, text in lex.get_tokens(data_src):
+    for ty, _text in lex.get_tokens(data_src):
         if ty not in ty_exact:
             if ty in Token.String:  # type: ignore
                 continue

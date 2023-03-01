@@ -76,11 +76,11 @@ def deprecations() -> List[Tuple[datetime.datetime, Tuple[str, int], str]]:
     """
     Searches out source code for lines like
 
-    /* *DEPRECATED* 2011/7/17 bgl.Buffer.list info text. */
+    /* *DEPRECATED* 2011/7/17 ``bgl.Buffer.list`` info text. */
 
     Or...
 
-    # *DEPRECATED* 2010/12/22 some.py.func more info.
+    # *DEPRECATED* 2010/12/22 ``some.py.func`` more info.
 
     """
     SOURCE_DIR = os.path.normpath(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")))

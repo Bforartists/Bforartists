@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
 "Last-Translator: lxlalexlxl <lxlalexlxl@ukr.net>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -1796,10 +1796,6 @@ msgstr "Ключі форм"
 
 msgid "Shape Key data-blocks"
 msgstr "Блоки даних ключів форми"
-
-
-msgid "Simulations"
-msgstr "Симуляції"
 
 
 msgid "Sounds"
@@ -11427,6 +11423,10 @@ msgid "Show Scene data-blocks"
 msgstr "Показ блоків даних Сцени"
 
 
+msgid "Simulations"
+msgstr "Симуляції"
+
+
 msgid "Show Simulation data-blocks"
 msgstr "Показати блоки даних Симуляції"
 
@@ -18032,6 +18032,10 @@ msgid "Lock the position of the vertices in the simulation falloff area to avoid
 msgstr "Блокувати позицію вершин в області спаду симуляції для запобігання артефактами та створення м'якшого переходу з незалучених областей"
 
 
+msgid "Vector Displacement"
+msgstr "Зміщення вектора"
+
+
 msgid "Connected Only"
 msgstr "Лише З'єднане"
 
@@ -19216,14 +19220,6 @@ msgid "Active Text Box"
 msgstr "Активне Текстове Поле"
 
 
-msgid "Text Horizontal Align"
-msgstr "Горизонтальне вирівнення тексту"
-
-
-msgid "Text horizontal align from the object center"
-msgstr "Горизонтальне вирівнення тексту від центру об'єкта"
-
-
 msgid "Align text to the left"
 msgstr "Вирівнювання тексту за лівим краєм"
 
@@ -19252,22 +19248,6 @@ msgid "Align to the left and the right, with equal character spacing"
 msgstr "Вирівняти ліворуч та праворуч з однаковою відстанню між символами"
 
 
-msgid "Text Vertical Align"
-msgstr "Вертикальне вирівнення тексту"
-
-
-msgid "Text vertical align from the object center"
-msgstr "Вертикальне вирівнення тексту від центру об'єкта"
-
-
-msgid "Top Base-Line"
-msgstr "Зверху по базовій лінії"
-
-
-msgid "Align to top but use the base-line of the text"
-msgstr "Вирівняти зверху, але використовуючи базову лінію символів тексту"
-
-
 msgid "Align text to the top"
 msgstr "Вирівняти текст по верху"
 
@@ -19278,14 +19258,6 @@ msgstr "Вирівняти текст по середині"
 
 msgid "Align text to the bottom"
 msgstr "Вирівняти текст по низу"
-
-
-msgid "Bottom Base-Line"
-msgstr "Базова Лінія Знизу"
-
-
-msgid "Align text to the bottom but use the base-line of the text"
-msgstr "Вирівнює текст по низу, але використовує базову лінію тексту"
 
 
 msgid "Body Text"
@@ -25947,14 +25919,6 @@ msgid "Maintained by community developers"
 msgstr "Підтримка спільнотою розробників"
 
 
-msgid "Testing"
-msgstr "Тестування"
-
-
-msgid "Newly contributed scripts (excluded from release builds)"
-msgstr "Нові скрипти (виключені з випуску версії)"
-
-
 msgid "Is Interface Locked"
 msgstr "Є Інтерфейс Блокованим"
 
@@ -32230,16 +32194,8 @@ msgid "Original Coords"
 msgstr "Оригінальні координати"
 
 
-msgid "Use base mesh vertex coords as the rest position"
-msgstr "Вжити координати вершин базової сіті як позицію спокою"
-
-
 msgid "Bind Coords"
 msgstr "Пов'язані координати"
-
-
-msgid "Use bind vertex coords for rest position"
-msgstr "Вжити координати вершин прив'язання як позицію спокою"
 
 
 msgid "Compensate for scale applied by other modifiers"
@@ -33206,16 +33162,8 @@ msgid "Overwrite"
 msgstr "Перезапис"
 
 
-msgid "Replace vertex coords with cached values"
-msgstr "Замінити координати вершин значеннями з кешу"
-
-
 msgid "Integrate"
 msgstr "Інтегрування"
-
-
-msgid "Integrate deformation from this modifiers input with the mesh-cache coords (useful for shape keys)"
-msgstr "Об'єднати деформацію зі вводу цього модифікатора з кешованими координатами сіті (корисно для ключів форм)"
 
 
 msgid "Evaluation Factor"
@@ -39247,14 +39195,6 @@ msgid "Z Up"
 msgstr "Z Уверх"
 
 
-msgid "Align X"
-msgstr "Вирівняти за X"
-
-
-msgid "Align Y"
-msgstr "Вирівняти за Y"
-
-
 msgid "Font of the text. Falls back to the UI font by default"
 msgstr "Шрифт тексту. Стандартно падає назад до шрифту Інтерфейсу Користувача"
 
@@ -40322,10 +40262,6 @@ msgstr "Нижня частина текстури використовуєть�
 
 msgid "UV coordinates to be used for mapping"
 msgstr "UV-координати для розкладання"
-
-
-msgid "Vector Displacement"
-msgstr "Зміщення вектора"
 
 
 msgid "Tangent space vector displacement mapping"
@@ -45909,10 +45845,6 @@ msgid "Armature FBXNode Type"
 msgstr "Тип вузлів арматури FBXNode"
 
 
-msgid "FBX type of node (object) used to represent Blender's armatures (use Null one unless you experience issues with other app, other choices may no import back perfectly in Blender...)"
-msgstr "Типи вузлів (об'єктів) FBX використовується для представлення арматур Blender'а (використовуйте вузол Null, щоб не мати проблемного досвіду з іншими програмами, інші випадки можуть завадити ідеальному імпорту арматур назад у Blender...)"
-
-
 msgid "Null"
 msgstr "Null"
 
@@ -45983,10 +45915,6 @@ msgstr "Експортувати кожну не приглушену смужк
 
 msgid "Apply Transform"
 msgstr "Застосувати Трансформу"
-
-
-msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
-msgstr "Запекти трансформування простору в дані об'єкта, запобігаючи небажаним обертанням об'єктів, коли простір цілі не вирівнюється відповідно простору Blender'а (УВАГА! Експериментальна опція, використовуйте на власний ризик, відомі збої при використанні для арматур та анімацій)"
 
 
 msgid "Active scene to file"
@@ -46262,14 +46190,6 @@ msgid "Legal rights and conditions for the model"
 msgstr "Захищені законом права та умови для моделі"
 
 
-msgid "Use Current Frame"
-msgstr "Вжити Поточний Кадр"
-
-
-msgid "Export the scene in the current animation frame"
-msgstr "Експортувати сцену у поточному кадрі анімації"
-
-
 msgid "Export Deformation Bones Only"
 msgstr "Експорт Лише Деформувальних Кісток"
 
@@ -46284,10 +46204,6 @@ msgstr "Квантизація бітів для значень кольору (
 
 msgid "Generic quantization bits"
 msgstr "Узагальнені біти квантування"
-
-
-msgid "Quantization bits for generic coordinate values like weights or joints (0 = no quantization)"
-msgstr "Біти квантування для узагальнених значень координат, як вагомості або суглоби (0 = без квантування)"
 
 
 msgid "Draco mesh compression"
@@ -46398,10 +46314,6 @@ msgid "Export directional, point, and spot lights. Uses \"KHR_lights_punctual\" 
 msgstr "Експортувати напрямлені, точкові та прожекторні освітлювачі. Використовує glTF розширення \"KHR_lights_punctual\""
 
 
-msgid "Export materials "
-msgstr "Експорт матеріалів "
-
-
 msgid "Export all materials used by included objects"
 msgstr "Експорт всіх матеріалів, що використовуються включеними об'єктами"
 
@@ -46436,14 +46348,6 @@ msgstr "Тангенси Ключів Форм"
 
 msgid "Export vertex tangents with shape keys (morph targets)"
 msgstr "Експортувати тангенси вершин з ключами форм (цілі морфа)"
-
-
-msgid "Group by NLA Track"
-msgstr "Група за Стежкою НЛА"
-
-
-msgid "When on, multiple actions become part of the same glTF animation if they're pushed onto NLA tracks with the same name. When off, all the currently assigned actions become one glTF animation"
-msgstr "При увімкненні багаторазові дії стають частиною однієї і тієї ж анімації glTF animation якщо вони виштовхані на стежки NLA з таким самим іменем. Коли вимкнено, то всі поточно призначені дії стають однією анімацією glTF"
 
 
 msgid "Export vertex normals with meshes"
@@ -48714,10 +48618,6 @@ msgid "Reproject the selected strokes from the current viewpoint as if they had 
 msgstr "Перепроєктувати виділені штрихи із поточного вигляду, ніби вони щойно нарисовані (наприклад, для виправлення проблем з випадковим переміщенням 3D-курсора, з випадковими змінами вигляду або для узгодженням з деформувальною геометрією)"
 
 
-msgid "Keep original strokes and create a copy before reprojecting instead of reproject them"
-msgstr "Зберегти оригінальні штрихи та створити копію перед перепроектуванням, замість перепроектування їх"
-
-
 msgid "Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement"
 msgstr "Перепроктувати штрихи на геометрії сцени, ніби нарисовані за допомогою розміщення 'Поверхня'"
 
@@ -49063,10 +48963,6 @@ msgid "Set handle type"
 msgstr "Задати тип держака"
 
 
-msgid "Set the type of a edit curve handle"
-msgstr "Задати тип держака кривої редагування"
-
-
 msgctxt "Operator"
 msgid "Enter curve edit mode"
 msgstr "Увійти у режим кривої редагування"
@@ -49257,17 +49153,9 @@ msgid "Simplify Stroke"
 msgstr "Спростити Штрих"
 
 
-msgid "Simplify selected stroked reducing number of points"
-msgstr "Спростити вибраний штрих, скоротивши кількість точок"
-
-
 msgctxt "Operator"
 msgid "Simplify Fixed Stroke"
 msgstr "Спростити Штрих Фіксовано"
-
-
-msgid "Simplify selected stroked reducing number of points using fixed algorithm"
-msgstr "Спростити вибраний штрих, скоротивши кількість точок, використовуючи фіксований алгоритм"
 
 
 msgid "Number of simplify steps"
@@ -57190,22 +57078,6 @@ msgstr "Скорість Розлітання"
 msgctxt "Operator"
 msgid "Quick Fur"
 msgstr "Швидке хутро"
-
-
-msgid "Add fur setup to the selected objects"
-msgstr "Додати уклад хутра до вибраних об'єктів"
-
-
-msgid "Fur Density"
-msgstr "Щільність хутра"
-
-
-msgid "Heavy"
-msgstr "Сильно"
-
-
-msgid "View %"
-msgstr "Показати %"
 
 
 msgctxt "Operator"
@@ -65884,8 +65756,16 @@ msgid "Automatically choose the axis on which there is most alignment already"
 msgstr "Автоматично вибрати вісь, за якою вже вирівняно більшість вершин"
 
 
+msgid "Align X"
+msgstr "Вирівняти за X"
+
+
 msgid "Align UVs on X axis"
 msgstr "Вирівняти UV за віссю Х"
+
+
+msgid "Align Y"
+msgstr "Вирівняти за Y"
 
 
 msgid "Align UVs on Y axis"
@@ -68288,10 +68168,6 @@ msgid "Context Int Cycle"
 msgstr "Цілочисельний цикл у контексті"
 
 
-msgid "Set a context value (useful for cycling active material, vertex keys, groups, etc.)"
-msgstr "Задати контекстне значення (зручно для перебору активних матеріалів, ключів вершин, груп тощо)"
-
-
 msgctxt "Operator"
 msgid "Context Enum Menu"
 msgstr "Меню-перелік у контексті"
@@ -69493,6 +69369,10 @@ msgstr "Примірникування"
 
 msgid "Visible Only"
 msgstr "Лише Видиме"
+
+
+msgid "Shapes"
+msgstr "Форми"
 
 
 msgid "Textures Directory"
@@ -70857,12 +70737,12 @@ msgid "Indirect Lighting"
 msgstr "Відбите світло"
 
 
-msgid "Screen Space Reflections"
-msgstr "Відбиття простору екрана"
-
-
 msgid "Shadows"
 msgstr "Тіні"
+
+
+msgid "Screen Space Reflections"
+msgstr "Відбиття простору екрана"
 
 
 msgid "Volumetrics"
@@ -72529,6 +72409,10 @@ msgstr "Полегшено "
 
 msgid "Fast but not so effective compression"
 msgstr "Швидке, але не таке ефективне стискання"
+
+
+msgid "Heavy"
+msgstr "Сильно"
 
 
 msgid "Cache file path"
@@ -87241,10 +87125,6 @@ msgid "Double precision"
 msgstr "Подвійна точність"
 
 
-msgid "Integer 64-bit"
-msgstr "Цілочислове 64-бітне"
-
-
 msgid "64-bit integer"
 msgstr "64-бітне цілочислове"
 
@@ -87253,40 +87133,20 @@ msgid "No data, boolean mask of active voxels"
 msgstr "Нема даних, булева маска активних вокселів"
 
 
-msgid "Float Vector"
-msgstr "Дійсночисловий Вектор"
-
-
 msgid "3D float vector"
 msgstr "3D дійсночисловий вектор"
-
-
-msgid "Double Vector"
-msgstr "Подвійний Вектор"
 
 
 msgid "3D double vector"
 msgstr "3D подвоєний вектор"
 
 
-msgid "Integer Vector"
-msgstr "Цілочисловий Вектор"
-
-
 msgid "3D integer vector"
 msgstr "3D цілочисловий вектор"
 
 
-msgid "Points (Unsupported)"
-msgstr "Точки (Непідтримуване)"
-
-
 msgid "Points grid, currently unsupported by volume objects"
 msgstr "Сітка точок, поточно не підтримується об'єктами об'єму"
-
-
-msgid "Unknown"
-msgstr "Невідомо"
 
 
 msgid "Unsupported data type"
@@ -89751,6 +89611,10 @@ msgid "Invalid regular expression (replace): "
 msgstr "Недійсний регулярний вираз (заміна):"
 
 
+msgid "Unknown"
+msgstr "Невідомо"
+
+
 msgid "Frame Numbers"
 msgstr "Номери Кадрів"
 
@@ -89870,10 +89734,6 @@ msgstr "Шари:"
 
 msgid "Protected Layers:"
 msgstr "Захищені Шари:"
-
-
-msgid "Shapes"
-msgstr "Форми"
 
 
 msgid "Group Colors"
@@ -92944,6 +92804,11 @@ msgstr "Знеглушити Зневибрані Смужки"
 
 
 msgctxt "Operator"
+msgid "Hold Split"
+msgstr "Тримати Розділ"
+
+
+msgctxt "Operator"
 msgid "Rotation"
 msgstr "Обертання"
 
@@ -93003,11 +92868,6 @@ msgstr "Кліп"
 msgctxt "Operator"
 msgid "Move/Extend from Current Frame"
 msgstr "Перемістити/Розширити з Поточного Кадру"
-
-
-msgctxt "Operator"
-msgid "Hold Split"
-msgstr "Тримати Розділ"
 
 
 msgctxt "Operator"
@@ -93454,11 +93314,6 @@ msgstr "Загальне"
 msgctxt "Operator"
 msgid "Alembic (.abc)"
 msgstr "Alembic (.abc)"
-
-
-msgctxt "Operator"
-msgid "Universal Scene Description (.usd, .usdc, .usda)"
-msgstr "Універсальний Опис Сцени (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
@@ -96969,10 +96824,6 @@ msgid "No point was selected"
 msgstr "Жодна точка не вибрана"
 
 
-msgid "Cannot separate curves with vertex keys"
-msgstr "Неможливо відокремити криві за допомогою ключів вершин"
-
-
 msgid "Cannot separate current selection"
 msgstr "Неможливо виокремити вибране"
 
@@ -97691,10 +97542,6 @@ msgstr "Не знайдено правильного po-файлу для мов
 
 msgid "Hex"
 msgstr "Hex"
-
-
-msgid "Value:"
-msgstr "Значення:"
 
 
 msgid "(Gamma Corrected)"
@@ -100072,14 +99919,6 @@ msgid "OK"
 msgstr "Гаразд"
 
 
-msgid "Vertex Data Detected!"
-msgstr "Виявлено дані вершин!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Динамічна топологія не зберігає кольорів вершин, UV та інших власних даних"
-
-
 msgid "Generative Modifiers Detected!"
 msgstr "Виявлено генерувальні модифікатори!"
 
@@ -100510,6 +100349,10 @@ msgstr "Вираз"
 
 msgid "Add Input Variable"
 msgstr "Додати Змінну Уводу"
+
+
+msgid "Value:"
+msgstr "Значення:"
 
 
 msgid "Update Dependencies"
