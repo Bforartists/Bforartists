@@ -1346,6 +1346,9 @@ class NODES_PT_shader_add_color(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mix Color          ", icon = "NODE_MIX")
             props.use_transform = True
             props.type = "ShaderNodeMix"
+            ops = props.settings.add()
+            ops.name = "data_type"
+            ops.value = "'RGBA'"
 
             props = col.operator("node.add_node", text="  RGB Curves        ", icon = "NODE_RGBCURVE")
             props.use_transform = True
@@ -5607,7 +5610,9 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mix Color              ", icon = "NODE_MIX")
             props.use_transform = True
             props.type = "ShaderNodeMix"
-            #props.settings = [{"name":"data_type", "value":"'RGBA'"}] # halp :(
+            ops = props.settings.add()
+            ops.name = "data_type"
+            ops.value = "'RGBA'"
 
             props = col.operator("node.add_node", text=" RGB Curves          ", icon = "NODE_RGBCURVE")
             props.use_transform = True
@@ -5793,6 +5798,9 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mix Vector       ", icon = "NODE_MIX")
             props.use_transform = True
             props.type = "ShaderNodeMix"
+            ops = props.settings.add()
+            ops.name = "data_type"
+            ops.value = "'VECTOR'"
 
             props = col.operator("node.add_node", text=" Separate XYZ   ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
@@ -5825,6 +5833,9 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_MIX")
             props.use_transform = True
             props.type = "ShaderNodeMix"
+            ops = props.settings.add()
+            ops.name = "data_type"
+            ops.value = "'VECTOR'"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
