@@ -7011,19 +7011,19 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
   static const EnumPropertyItem asset_import_type_items[] = {
       {FILE_ASSET_IMPORT_FOLLOW_PREFS,
        "FOLLOW_PREFS",
-       0,
+       ICON_PREFERENCES,
        "Follow Preferences",
        "Use the import method set in the Preferences for this asset library, don't override it "
        "for this Asset Browser"},
-      {FILE_ASSET_IMPORT_LINK, "LINK", 0, "Link", "Import the assets as linked data-block"},
+      {FILE_ASSET_IMPORT_LINK, "LINK", ICON_LINK_BLEND, "Link", "Import the assets as linked data-block"},
       {FILE_ASSET_IMPORT_APPEND,
        "APPEND",
-       0,
+       ICON_APPEND_BLEND,
        "Append",
        "Import the assets as copied data-block, with no link to the original asset data-block"},
       {FILE_ASSET_IMPORT_APPEND_REUSE,
        "APPEND_REUSE",
-       0,
+       ICON_FILE_BLEND,
        "Append (Reuse Data)",
        "Import the assets as copied data-block while avoiding multiple copies of nested, "
        "typically heavy data. For example the textures of a material asset, or the mesh of an "
