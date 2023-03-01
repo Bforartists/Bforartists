@@ -374,8 +374,10 @@ typedef enum eDriverTarget_RotationMode {
 
   DTAR_ROTMODE_QUATERNION,
 
-  /** Implements the very common Damped Track + child trick to decompose
-   *  rotation into bending followed by twist around the remaining axis. */
+  /**
+   * Implements the very common Damped Track + child trick to decompose
+   * rotation into bending followed by twist around the remaining axis.
+   */
   DTAR_ROTMODE_SWING_TWIST_X,
   DTAR_ROTMODE_SWING_TWIST_Y,
   DTAR_ROTMODE_SWING_TWIST_Z,
@@ -966,8 +968,8 @@ typedef struct KeyingSet {
   char idname[64];
   /** User-viewable name for KeyingSet (for menus, etc.) - `MAX_ID_NAME - 2`. */
   char name[64];
-  /** (RNA_DYN_DESCR_MAX) short help text. */
-  char description[240];
+  /** (#RNA_DYN_DESCR_MAX) help text. */
+  char description[1024];
   /** Name of the typeinfo data used for the relative paths - `MAX_ID_NAME - 2`. */
   char typeinfo[64];
 

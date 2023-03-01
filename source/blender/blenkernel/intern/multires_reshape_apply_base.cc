@@ -34,9 +34,9 @@ void multires_reshape_apply_base_update_mesh_coords(MultiresReshapeContext *resh
   /* Update the context in case the vertices were duplicated. */
   reshape_context->base_positions = base_positions;
 
-  const MLoop *mloop = reshape_context->base_loops;
-  for (int loop_index = 0; loop_index < base_mesh->totloop; ++loop_index) {
-    const MLoop *loop = &mloop[loop_index];
+  const blender::Span<MLoop> loops = reshape_context->base_loops;
+  for (const int loop_index : loops.index_range()) {
+    const MLoop *loop = &loops[loop_index];
 
     GridCoord grid_coord;
     grid_coord.grid_index = loop_index;
@@ -75,8 +75,8 @@ void multires_reshape_apply_base_refit_base_mesh(MultiresReshapeContext *reshape
   int *pmap_mem;
   BKE_mesh_vert_poly_map_create(&pmap,
                                 &pmap_mem,
-                                reshape_context->base_polys,
-                                reshape_context->base_loops,
+                                reshape_context->base_polys.data(),
+                                reshape_context->base_loops.data(),
                                 base_mesh->totvert,
                                 base_mesh->totpoly,
                                 base_mesh->totloop);
@@ -160,7 +160,7 @@ void multires_reshape_apply_base_refit_base_mesh(MultiresReshapeContext *reshape
   /* Vertices were moved around, need to update normals after all the vertices are updated
    * Probably this is possible to do in the loop above, but this is rather tricky because
    * we don't know all needed vertices' coordinates there yet. */
-  BKE_mesh_tag_coords_changed(base_mesh);
+  BKE_mesh_tag_positions_changed(base_mesh);
 }
 
 void multires_reshape_apply_base_refine_from_base(MultiresReshapeContext *reshape_context)

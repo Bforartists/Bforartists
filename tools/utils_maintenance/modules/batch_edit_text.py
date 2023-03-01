@@ -5,7 +5,6 @@ from typing import (
     Generator,
     Optional,
     Sequence,
-    Tuple,
 )
 
 TextOpFn = Callable[
@@ -45,7 +44,6 @@ def run(
             for filename in filenames:
                 if filename.startswith("."):
                     continue
-                ext = os.path.splitext(filename)[1]
                 filepath = os.path.join(dirpath, filename)
                 if is_text(filepath):
                     yield filepath

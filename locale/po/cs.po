@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -1568,10 +1568,6 @@ msgstr "Obrazovky"
 
 msgid "Shape Keys"
 msgstr "Tvarové klávesy"
-
-
-msgid "Simulations"
-msgstr "Simulace"
 
 
 msgid "Sounds"
@@ -7021,6 +7017,10 @@ msgstr "Fonts"
 
 msgid "Particles Settings"
 msgstr "Nastavení Částic"
+
+
+msgid "Simulations"
+msgstr "Simulace"
 
 
 msgid "Node Trees"
@@ -12730,10 +12730,6 @@ msgid "Maintained by community developers"
 msgstr "Udržováno komunitními vývojáři"
 
 
-msgid "Testing"
-msgstr "Testing"
-
-
 msgid "Key Configurations"
 msgstr "Poslední frame animace"
 
@@ -18197,14 +18193,6 @@ msgstr "Cílová Geometrie"
 
 msgid "Z Up"
 msgstr "Posun nahoru"
-
-
-msgid "Align X"
-msgstr "Zarovnat X"
-
-
-msgid "Align Y"
-msgstr "Zarovnat Y"
 
 
 msgid "Angle Based"
@@ -27002,18 +26990,6 @@ msgid "Quick Fur"
 msgstr "Rychlá Kožešina"
 
 
-msgid "Fur Density"
-msgstr "Hustota srsti"
-
-
-msgid "Heavy"
-msgstr "Záhlaví"
-
-
-msgid "View %"
-msgstr "Pohled %"
-
-
 msgctxt "Operator"
 msgid "Quick Liquid"
 msgstr "Rychlá Kapalina"
@@ -31028,6 +31004,14 @@ msgid "Align Auto"
 msgstr "Automatické zarovnání"
 
 
+msgid "Align X"
+msgstr "Zarovnat X"
+
+
+msgid "Align Y"
+msgstr "Zarovnat Y"
+
+
 msgid "Align UVs on Y axis"
 msgstr "Zarovnat"
 
@@ -32648,6 +32632,10 @@ msgstr "Instancování"
 
 msgid "Visible Only"
 msgstr "Viditelné Pouze"
+
+
+msgid "Shapes"
+msgstr "Tvary"
 
 
 msgid "Textures Directory"
@@ -34666,6 +34654,10 @@ msgstr "Komprimovat soubor"
 
 msgid "No compression"
 msgstr "Bez komprese"
+
+
+msgid "Heavy"
+msgstr "Záhlaví"
 
 
 msgid "Cache file path"
@@ -41462,10 +41454,6 @@ msgid "Layers:"
 msgstr "Vrstvy:"
 
 
-msgid "Shapes"
-msgstr "Tvary"
-
-
 msgid "Axes"
 msgstr "Osy"
 
@@ -43538,11 +43526,6 @@ msgstr "Alembic (.abc)"
 
 
 msgctxt "Operator"
-msgid "Universal Scene Description (.usd, .usdc, .usda)"
-msgstr "Universal Scene Description (.usd, .usdc, .usda)"
-
-
-msgctxt "Operator"
 msgid "Render Image"
 msgstr "Render obrázku"
 
@@ -45541,10 +45524,6 @@ msgid "File '%s' cannot be opened"
 msgstr "Soubor '%s' nelze otevřít"
 
 
-msgid "Value:"
-msgstr "Hodnota:"
-
-
 msgid "(Gamma Corrected)"
 msgstr "Odznačit spojené"
 
@@ -46930,6 +46909,10 @@ msgstr "Prop:"
 
 msgid "Driver Value:"
 msgstr "Driver Value:"
+
+
+msgid "Value:"
+msgstr "Hodnota:"
 
 
 msgid "Update Dependencies"

@@ -5,11 +5,12 @@ import os
 from pathlib import Path
 import re
 import subprocess
-import sys
 import unittest
 
-from check_utils import (sliceCommandLineArguments,
-                         parseArguments)
+from check_utils import (
+    sliceCommandLineArguments,
+    parseArguments,
+)
 
 
 ALLOWED_LIBS = (
@@ -180,7 +181,7 @@ class UnitTesting(unittest.TestCase):
 
 def main():
     # Slice command line arguments by '--'
-    unittest_args, parser_args = sliceCommandLineArguments()
+    unittest_args, _parser_args = sliceCommandLineArguments()
     # Construct and run unit tests.
     unittest.main(argv=unittest_args)
 

@@ -8,13 +8,13 @@ This script exports permutations of key-maps with different settings modified.
 Useful for checking changes intended for one configuration don't impact others accidentally.
 
 ./blender.bin -b --factory-startup \
-    --python source/tools/utils/blender_keyconfig_export_permutations.py -- \
+    --python tools/utils/blender_keyconfig_export_permutations.py -- \
     --preset=Blender \
     --output-dir=./output \
     --keymap-prefs=select_mouse:rmb_action
 
 /blender.bin -b --factory-startup \
-    --python source/tools/utils/blender_keyconfig_export_permutations.py -- \
+    --python tools/utils/blender_keyconfig_export_permutations.py -- \
     --preset=Blender_27x \
     --output-dir=output \
     --keymap-prefs="select_mouse"

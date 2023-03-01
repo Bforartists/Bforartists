@@ -5,7 +5,6 @@ import collections
 import os
 import subprocess
 import sys
-import tempfile
 
 # Hashes to be ignored
 #

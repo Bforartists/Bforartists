@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -1872,10 +1872,6 @@ msgstr "Formschlüssel"
 
 msgid "Shape Key data-blocks"
 msgstr "Formschlüssel-Datenblöcke"
-
-
-msgid "Simulations"
-msgstr "Simulationen"
 
 
 msgid "Sounds"
@@ -7351,10 +7347,6 @@ msgid "Index"
 msgstr "Index"
 
 
-msgid "Index of this points"
-msgstr "Index dieser Punkte"
-
-
 msgid "Profile control points"
 msgstr "Profil Kontrollpunkte"
 
@@ -9848,6 +9840,10 @@ msgid "Show Scene data-blocks"
 msgstr "Szenen-Datenblöcke anzeigen"
 
 
+msgid "Simulations"
+msgstr "Simulationen"
+
+
 msgid "Show Simulation data-blocks"
 msgstr "Simulations-Datenblöcke anzeigen"
 
@@ -10258,10 +10254,6 @@ msgstr "Asset Auswahl-Parameter"
 
 msgid "Asset Library"
 msgstr "Bestand-Bibliothek"
-
-
-msgid "Import Type"
-msgstr "Import Typ"
 
 
 msgid "Link"
@@ -13545,6 +13537,10 @@ msgid "When this is disabled, lock alpha while painting"
 msgstr "Bei deaktivieren wird während des Males das Alpha gesperrt"
 
 
+msgid "Vector Displacement"
+msgstr "Vektorverlagerung"
+
+
 msgid "Connected Only"
 msgstr "Nur verbundenes"
 
@@ -14093,10 +14089,6 @@ msgid "Active Text Box"
 msgstr "Aktives Textfeld"
 
 
-msgid "Text horizontal align from the object center"
-msgstr "Text horizontal aus dem Objektmittelpunkt ausrichten"
-
-
 msgid "Align text to the left"
 msgstr "Linksbündig ausrichten"
 
@@ -14119,10 +14111,6 @@ msgstr "Links und rechts ausrichten"
 
 msgid "Flush"
 msgstr "Bündig"
-
-
-msgid "Text vertical align from the object center"
-msgstr "Text vertikal aus dem Objektmittelpunkt ausrichten"
 
 
 msgid "Align text to the top"
@@ -18159,10 +18147,6 @@ msgstr "Community"
 
 msgid "Maintained by community developers"
 msgstr "Durch Community-Entwickler erstellt"
-
-
-msgid "Testing"
-msgstr "Testen"
 
 
 msgid "Key Configurations"
@@ -27010,10 +26994,6 @@ msgid "UV coordinates to be used for mapping"
 msgstr "UV-Koordinaten zur Kartierung"
 
 
-msgid "Vector Displacement"
-msgstr "Vektorverlagerung"
-
-
 msgid "Multiply Add"
 msgstr "Multiplizieren hinzufügen"
 
@@ -30776,10 +30756,6 @@ msgstr "Speichern Sie PNGs als PNGs und JPEGs als JPEGs. Wenn keines von beiden,
 
 msgid "Save images as JPEGs. (Images that need alpha are saved as PNGs though.) Be aware of a possible loss in quality"
 msgstr "Speichern Sie Bilder als JPEGs. (Bilder, die Alpha benötigen, werden jedoch als PNGs gespeichert.) Seien Sie sich eines möglichen Qualitätsverlusts bewusst"
-
-
-msgid "Export materials "
-msgstr "Materialien exportieren "
 
 
 msgid "Do not export materials, and combine mesh primitive groups, losing material slot information"
@@ -36591,14 +36567,6 @@ msgstr "Stückzahl"
 msgctxt "Operator"
 msgid "Quick Fur"
 msgstr "Schnelles Fell"
-
-
-msgid "Heavy"
-msgstr "Schwer"
-
-
-msgid "View %"
-msgstr "Ansicht %"
 
 
 msgid "Render Liquid Objects"
@@ -42810,6 +42778,10 @@ msgid "Add all imported objects to a new collection"
 msgstr "Alle importieren Objekt zu einer neuen Sammlung hinzufügen"
 
 
+msgid "Shapes"
+msgstr "Formen"
+
+
 msgid "Textures Directory"
 msgstr "Texturverzeichnis"
 
@@ -44957,6 +44929,10 @@ msgstr "Leicht"
 
 msgid "Fast but not so effective compression"
 msgstr "Schnelle, aber nicht so effektive Kompression"
+
+
+msgid "Heavy"
+msgstr "Schwer"
 
 
 msgid "Cache file path"
@@ -53197,44 +53173,20 @@ msgid "Double precision"
 msgstr "Doppelte Genauigkeit"
 
 
-msgid "Integer 64-bit"
-msgstr "Ganzzahl 64-bit"
-
-
 msgid "64-bit integer"
 msgstr "64-Bit Ganzzahl"
-
-
-msgid "Float Vector"
-msgstr "Gleitkomma Vektor"
 
 
 msgid "3D float vector"
 msgstr "3D Gleitkomma Vektor"
 
 
-msgid "Double Vector"
-msgstr "Vektor verdoppeln"
-
-
 msgid "3D double vector"
 msgstr "3D Verdoppelungsvektor"
 
 
-msgid "Integer Vector"
-msgstr "Ganzzahl Vektor"
-
-
 msgid "3D integer vector"
 msgstr "3D Ganzzahl Vektor"
-
-
-msgid "Points (Unsupported)"
-msgstr "Punkte (nicht unterstützt)"
-
-
-msgid "Unknown"
-msgstr "Unbekannt"
 
 
 msgid "Unsupported data type"
@@ -55541,6 +55493,10 @@ msgid "Type \"%s\" can not be found"
 msgstr "Typ \"%s\" konnte nicht gefunden werden"
 
 
+msgid "Unknown"
+msgstr "Unbekannt"
+
+
 msgctxt "Operator"
 msgid "Update All Paths"
 msgstr "Alle Pfade aktualisieren"
@@ -55662,10 +55618,6 @@ msgstr "Ebenen:"
 
 msgid "Protected Layers:"
 msgstr "Geschützte Ebenen:"
-
-
-msgid "Shapes"
-msgstr "Formen"
 
 
 msgid "Group Colors"
@@ -58657,11 +58609,6 @@ msgstr "SVG als Wachsstift"
 
 
 msgctxt "Operator"
-msgid "Universal Scene Description (.usd, .usdc, .usda)"
-msgstr "Universal Scene Description (.usd, .usdc, .usda)"
-
-
-msgctxt "Operator"
 msgid "Render Image"
 msgstr "Bild rendern"
 
@@ -61373,10 +61320,6 @@ msgid "No point was selected"
 msgstr "Kein Punkt ausgewählt"
 
 
-msgid "Cannot separate curves with vertex keys"
-msgstr "Kurven mit Eckschlüsseln kann nicht separiert werden"
-
-
 msgid "Cannot separate current selection"
 msgstr "Aktuelle Auswahl kann nicht separiert werden"
 
@@ -61754,10 +61697,6 @@ msgstr "Für Sprache '%s' unter %s wurde kein gültiger po gefunden"
 
 msgid "Hex"
 msgstr "Hex"
-
-
-msgid "Value:"
-msgstr "Wert:"
 
 
 msgid "(Gamma Corrected)"
@@ -62894,18 +62833,6 @@ msgid "|%i multiuser armature object(s)"
 msgstr "|%i Mehrfachbenutzer Skelettobjekt(e)"
 
 
-msgid "all"
-msgstr "alle"
-
-
-msgid "selected"
-msgstr "ausgewählt"
-
-
-msgid "unselected"
-msgstr "nicht ausgewählt"
-
-
 msgid "All groups are locked"
 msgstr "Alle Gruppen sind gesperrt"
 
@@ -63561,6 +63488,10 @@ msgstr "Ausdruck:"
 
 msgid "Add Input Variable"
 msgstr "Eingabewert hinzufügen"
+
+
+msgid "Value:"
+msgstr "Wert:"
 
 
 msgid "Update Dependencies"

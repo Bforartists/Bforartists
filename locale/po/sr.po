@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'a86f657692a1')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'c5bbc5db6faa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 15:36:45\n"
+"POT-Creation-Date: 2023-02-27 15:19:45\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -8528,10 +8528,6 @@ msgid "Community"
 msgstr "Корисничка заједница"
 
 
-msgid "Testing"
-msgstr "Испитујем"
-
-
 msgid "Key Configurations"
 msgstr "Конфигурације пречица"
 
@@ -10225,10 +10221,6 @@ msgstr "Мод деформације"
 
 msgid "Overwrite"
 msgstr "Препиши"
-
-
-msgid "Replace vertex coords with cached values"
-msgstr "Замени координате темена врдностима из оставе"
 
 
 msgid "Integrate"
@@ -17445,18 +17437,6 @@ msgid "Quick Fur"
 msgstr "Брзо крзно"
 
 
-msgid "Fur Density"
-msgstr "Густина крзна"
-
-
-msgid "Heavy"
-msgstr "Тешко"
-
-
-msgid "View %"
-msgstr "Поглед %"
-
-
 msgctxt "Operator"
 msgid "Quick Smoke"
 msgstr "Брзи дим"
@@ -20805,6 +20785,10 @@ msgid "UV Maps"
 msgstr "UV Мапе"
 
 
+msgid "Shapes"
+msgstr "Облици"
+
+
 msgid "Textures Directory"
 msgstr "Директоријум са текстурама"
 
@@ -21508,6 +21492,10 @@ msgstr "Компресија"
 
 msgid "No compression"
 msgstr "Компресија"
+
+
+msgid "Heavy"
+msgstr "Тешко"
 
 
 msgid "Cache file path"
@@ -24744,10 +24732,6 @@ msgid "Alpha Threshold"
 msgstr "Праг провидности"
 
 
-msgid "Unknown"
-msgstr "Непознато"
-
-
 msgid "Jump Height"
 msgstr "Висина скакања"
 
@@ -25182,6 +25166,10 @@ msgid "Manual"
 msgstr "Упутство"
 
 
+msgid "Unknown"
+msgstr "Непознато"
+
+
 msgid "Frame Numbers"
 msgstr "Бојеви кадрова"
 
@@ -25214,10 +25202,6 @@ msgstr "Слојеви:"
 
 msgid "Protected Layers:"
 msgstr "Заштићени слојеви:"
-
-
-msgid "Shapes"
-msgstr "Облици"
 
 
 msgid "Axes"
@@ -26809,10 +26793,6 @@ msgid "Online Python Reference"
 msgstr "Python упутство на интернету"
 
 
-msgid "Value:"
-msgstr "Вредност"
-
-
 msgid "(Gamma Corrected)"
 msgstr "Исправка"
 
@@ -27541,6 +27521,10 @@ msgstr "Својство"
 
 msgid "Driver Value:"
 msgstr "Вредност возача:"
+
+
+msgid "Value:"
+msgstr "Вредност"
 
 
 msgid "Update Dependencies"

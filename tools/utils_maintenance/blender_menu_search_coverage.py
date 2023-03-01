@@ -4,7 +4,7 @@
 #
 # ./blender.bin --factory-startup \
 #               --enable-event-simulate \
-#               --python source/tools/utils_maintenance/blender_menu_search_coverage.py
+#               --python tools/utils_maintenance/blender_menu_search_coverage.py
 
 import bpy
 

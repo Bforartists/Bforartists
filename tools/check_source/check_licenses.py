@@ -46,7 +46,7 @@ mapping: Dict[str, List[str]] = {}
 
 SOURCE_DIR = os.path.normpath(
     os.path.abspath(
-        os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+        os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
     )
 )
 
@@ -397,8 +397,8 @@ def main() -> None:
             source_paths_exclude=(
                 # Directories:
                 "./extern",
-                "./release/scripts/addons_contrib",
-                "./source/tools",
+                "./scripts/addons_contrib",
+                "./tools",
                 # Needs manual handling as it mixes two licenses.
                 "./intern/atomic",
                 # Practically an "extern" within an "intern" module, leave as-is.
@@ -430,12 +430,12 @@ def main() -> None:
                 # Directories:
                 # This is an exception, it has it's own CMake files we do not maintain.
                 "./extern",
-                "./release/scripts/addons_contrib",
+                "./scripts/addons_contrib",
                 # Just data.
                 "./doc/python_api/examples",
-                "./release/scripts/addons/presets",
-                "./release/scripts/presets",
-                "./release/scripts/templates_py",
+                "./scripts/addons/presets",
+                "./scripts/presets",
+                "./scripts/templates_py",
             ),
         ),
     )
