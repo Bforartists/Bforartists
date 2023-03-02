@@ -4201,7 +4201,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Reverse Curve           ", icon = "SWITCH_DIRECTION")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyCurveReverse"
+            props.type = "GeometryNodeReverseCurve"
 
             props = col.operator("node.add_node", text=" Sample Curve             ", icon = "CURVE_SAMPLE")
             props.use_transform = True
@@ -4249,7 +4249,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
 
             props = flow.operator("node.add_node", text = "", icon = "SWITCH_DIRECTION")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyCurveReverse"
+            props.type = "GeometryNodeReverseCurve"
 
             props = flow.operator("node.add_node", text = "", icon = "CURVE_SAMPLE")
             props.use_transform = True
