@@ -452,7 +452,7 @@ typedef struct bNodeTreeType {
 struct bNodeTreeType *ntreeTypeFind(const char *idname);
 void ntreeTypeAdd(struct bNodeTreeType *nt);
 void ntreeTypeFreeLink(const struct bNodeTreeType *nt);
-bool ntreeIsRegistered(struct bNodeTree *ntree);
+bool ntreeIsRegistered(const struct bNodeTree *ntree);
 struct GHashIterator *ntreeTypeGetIterator(void);
 
 /* Helper macros for iterating over tree types. */
@@ -620,7 +620,7 @@ struct GHashIterator *nodeTypeGetIterator(void);
 struct bNodeSocketType *nodeSocketTypeFind(const char *idname);
 void nodeRegisterSocketType(struct bNodeSocketType *stype);
 void nodeUnregisterSocketType(struct bNodeSocketType *stype);
-bool nodeSocketIsRegistered(struct bNodeSocket *sock);
+bool nodeSocketIsRegistered(const struct bNodeSocket *sock);
 struct GHashIterator *nodeSocketTypeGetIterator(void);
 const char *nodeSocketTypeLabel(const bNodeSocketType *stype);
 
@@ -644,7 +644,7 @@ const char *nodeStaticSocketLabel(int type, int subtype);
   } \
   ((void)0)
 
-struct bNodeSocket *nodeFindSocket(struct bNode *node,
+struct bNodeSocket *nodeFindSocket(const struct bNode *node,
                                    eNodeSocketInOut in_out,
                                    const char *identifier);
 struct bNodeSocket *nodeAddSocket(struct bNodeTree *ntree,
@@ -757,14 +757,13 @@ void nodeInternalRelink(struct bNodeTree *ntree, struct bNode *node);
 
 void nodeToView(const struct bNode *node, float x, float y, float *rx, float *ry);
 void nodeFromView(const struct bNode *node, float x, float y, float *rx, float *ry);
-bool nodeAttachNodeCheck(const struct bNode *node, const struct bNode *parent);
 void nodeAttachNode(struct bNodeTree *ntree, struct bNode *node, struct bNode *parent);
 void nodeDetachNode(struct bNodeTree *ntree, struct bNode *node);
 
 void nodePositionRelative(struct bNode *from_node,
-                          struct bNode *to_node,
-                          struct bNodeSocket *from_sock,
-                          struct bNodeSocket *to_sock);
+                          const struct bNode *to_node,
+                          const struct bNodeSocket *from_sock,
+                          const struct bNodeSocket *to_sock);
 void nodePositionPropagate(struct bNode *node);
 
 /**
@@ -790,11 +789,7 @@ void nodeFindNode(struct bNodeTree *ntree,
  */
 struct bNode *nodeFindRootParent(bNode *node);
 
-/**
- * \returns true if \a child has \a parent as a parent/grandparent/... etc.
- * \note Recursive
- */
-bool nodeIsChildOf(const bNode *parent, const bNode *child);
+bool nodeIsParentAndChild(const bNode *parent, const bNode *child);
 
 /**
  * Iterate over a chain of nodes, starting with \a node_start, executing
