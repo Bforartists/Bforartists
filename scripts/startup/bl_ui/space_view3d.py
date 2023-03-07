@@ -1,28 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 import bpy
-from bpy.types import (
-    Header,
-    Menu,
-    Panel,
-)
-from bl_ui.properties_paint_common import (
-    UnifiedPaintPanel,
-    brush_basic_texpaint_settings,
-)
-from bl_ui.properties_grease_pencil_common import (
-    AnnotationDataPanel,
-    AnnotationOnionSkin,
-    GreasePencilMaterialsPanel,
-    GreasePencilVertexcolorPanel,
-)
-from bl_ui.space_toolsystem_common import (
-    ToolActivePanelHelper,
-)
-from bpy.app.translations import (
-    pgettext_iface as iface_,
-    pgettext_tip as tip_,
-    contexts as i18n_contexts,
-)
+from bl_ui.properties_grease_pencil_common import (AnnotationDataPanel, AnnotationOnionSkin, GreasePencilMaterialsPanel,
+                                                   GreasePencilVertexcolorPanel)
+from bl_ui.properties_paint_common import UnifiedPaintPanel, brush_basic_texpaint_settings
+from bl_ui.space_toolsystem_common import ToolActivePanelHelper
+from bpy.app.translations import contexts as i18n_contexts
+from bpy.app.translations import pgettext_iface as iface_
+from bpy.app.translations import pgettext_tip as tip_
+from bpy.types import Header, Menu, Panel
 
 
 class VIEW3D_HT_header(Header):
@@ -716,18 +701,14 @@ class _draw_tool_settings_context_mode:
         row.template_ID_preview(settings, "brush", rows=3, cols=8, hide_buttons=True)
 
         if context.object and brush.gpencil_tool in {'FILL', 'DRAW'}:
-            from bl_ui.properties_paint_common import (
-                brush_basic__draw_color_selector,
-            )
+            from bl_ui.properties_paint_common import brush_basic__draw_color_selector
             brush_basic__draw_color_selector(context, layout, brush, gp_settings, None)
 
         if context.object and brush.gpencil_tool == 'TINT':
             row.separator(factor=0.4)
             row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
 
-        from bl_ui.properties_paint_common import (
-            brush_basic_gpencil_paint_settings,
-        )
+        from bl_ui.properties_paint_common import brush_basic_gpencil_paint_settings
         brush_basic_gpencil_paint_settings(layout, context, brush, compact=True)
 
         return True
@@ -739,9 +720,7 @@ class _draw_tool_settings_context_mode:
         paint = context.tool_settings.gpencil_sculpt_paint
         brush = paint.brush
 
-        from bl_ui.properties_paint_common import (
-            brush_basic_gpencil_sculpt_settings,
-        )
+        from bl_ui.properties_paint_common import brush_basic_gpencil_sculpt_settings
         brush_basic_gpencil_sculpt_settings(layout, context, brush, compact=True)
 
         return True
@@ -753,9 +732,7 @@ class _draw_tool_settings_context_mode:
         paint = context.tool_settings.gpencil_weight_paint
         brush = paint.brush
 
-        from bl_ui.properties_paint_common import (
-            brush_basic_gpencil_weight_settings,
-        )
+        from bl_ui.properties_paint_common import brush_basic_gpencil_weight_settings
         brush_basic_gpencil_weight_settings(layout, context, brush, compact=True)
 
         return True
@@ -781,9 +758,7 @@ class _draw_tool_settings_context_mode:
             sub.prop(brush, "secondary_color", text="")
             row.operator("gpencil.tint_flip", icon='FILE_REFRESH', text="")
 
-        from bl_ui.properties_paint_common import (
-            brush_basic_gpencil_vertex_settings,
-        )
+        from bl_ui.properties_paint_common import brush_basic_gpencil_vertex_settings
 
         brush_basic_gpencil_vertex_settings(layout, context, brush, compact=True)
 
@@ -7711,6 +7686,12 @@ class VIEW3D_PT_overlay_edit_mesh_shading(Panel):
         row = col.row()
         row.separator()
         row.prop(overlay, "show_occlude_wire")
+
+        row = col.row(align=True)
+        row.prop(overlay, "show_retopology", text="")
+        sub = row.row()
+        sub.active = overlay.show_retopology
+        sub.prop(overlay, "retopology_offset", text="Retopology")
 
         row = col.row()
         row.separator()
