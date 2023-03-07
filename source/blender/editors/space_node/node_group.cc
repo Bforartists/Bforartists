@@ -596,8 +596,8 @@ static int node_group_separate_exec(bContext *C, wmOperator *op)
 
 /* Not used by BFA */
 // static int node_group_separate_invoke(bContext *C,
-//                                       wmOperator *UNUSED(op),
-//                                       const wmEvent *UNUSED(event))
+//                                       wmOperator * /*op*/),
+//                                       const wmEvent * /*event*/)
 // {
 //   uiPopupMenu *pup = UI_popup_menu_begin(
 //       C, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Separate"), ICON_NONE);
