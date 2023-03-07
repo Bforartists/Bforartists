@@ -696,7 +696,7 @@ static bool do_versions_sequencer_init_retiming_tool_data(Sequence *seq, void *u
 
   const int content_length = SEQ_time_strip_length_get(scene, seq);
 
-  SEQ_retiming_data_ensure(scene, seq);
+  SEQ_retiming_data_ensure(seq);
 
   SeqRetimingHandle *handle = &seq->retiming_handles[seq->retiming_handle_num - 1];
   handle->strip_frame_index = round_fl_to_int(content_length / seq->speed_factor);
@@ -939,7 +939,7 @@ static void version_geometry_nodes_primitive_uv_maps(bNodeTree &ntree)
   }
 }
 
-void do_versions_after_linking_300(Main *bmain, ReportList * /*reports*/)
+void do_versions_after_linking_300(FileData * /*fd*/, Main *bmain)
 {
   if (MAIN_VERSION_ATLEAST(bmain, 300, 0) && !MAIN_VERSION_ATLEAST(bmain, 300, 1)) {
     /* Set zero user text objects to have a fake user. */
@@ -4013,6 +4013,20 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
    * \note Keep this message at the bottom of the function.
    */
   {
+    /* Z bias for retopology overlay. */
+    if (!DNA_struct_elem_find(fd->filesdna, "View3DOverlay", "float", "retopology_offset")) {
+      LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+        LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+          LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+            if (sl->spacetype == SPACE_VIEW3D) {
+              View3D *v3d = (View3D *)sl;
+              v3d->overlay.retopology_offset = 0.2f;
+            }
+          }
+        }
+      }
+    }
+
     /* Keep this block, even when empty. */
   }
 }

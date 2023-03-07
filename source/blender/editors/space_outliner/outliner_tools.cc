@@ -2931,7 +2931,7 @@ static const EnumPropertyItem outliner_lib_op_type_items[] = {
      "DELETE",
      ICON_DELETE,
      "Delete",
-     "Delete this library and all its item.\n"
+     "Delete this library and all its items.\n"
      "Warning: No undo"},
     {OL_LIB_RELOCATE,
      "RELOCATE",
