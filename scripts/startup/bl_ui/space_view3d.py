@@ -3233,7 +3233,9 @@ class VIEW3D_MT_object_parent(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("object.parent_no_inverse_set", icon="PARENT")
+        layout.operator("object.parent_no_inverse_set", icon="PARENT").keep_transform = False
+        props = layout.operator("object.parent_no_inverse_set", text="Make Parent without Inverse (Keep Transform)", icon="PARENT")
+        props.keep_transform = True
         layout.operator_context = operator_context_default
 
         layout.separator()
@@ -3788,17 +3790,35 @@ class VIEW3D_MT_sculpt(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.operator("transform.translate")
+        layout.operator("transform.rotate")
+        layout.operator("transform.resize", text="Scale")
+
+        props = layout.operator("sculpt.mesh_filter", text="Sphere")
+        props.type = 'SPHERE'
+
+        layout.separator()
+
+        props = layout.operator("paint.hide_show", text="Box Hide", icon="HIDE_ON")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show", text="Box Show", icon="HIDE_OFF")
+        props.action = 'SHOW'
+
+        layout.separator()
+
+        props = layout.operator("sculpt.face_set_change_visibility", text="Toggle Visibility")
+        props.mode = 'TOGGLE'
+
+        props = layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set")
+        props.mode = 'HIDE_ACTIVE'
+
         props = layout.operator("paint.hide_show", text="Show All", icon="HIDE_OFF")
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        props = layout.operator("paint.hide_show", text="Show Bounding Box", icon="HIDE_OFF")
-        props.action = 'SHOW'
-        props.area = 'INSIDE'
-
-        props = layout.operator("paint.hide_show", text="Hide Bounding Box", icon="HIDE_ON")
-        props.action = 'HIDE'
-        props.area = 'INSIDE'
+        props = layout.operator("sculpt.face_set_change_visibility", text="Invert Visible")
+        props.mode = 'INVERT'
 
         props = layout.operator("paint.hide_show", text="Hide Masked", icon="HIDE_ON")
         props.action = 'HIDE'
@@ -3806,7 +3826,51 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_subdivision_set")
+        layout.menu("VIEW3D_MT_subdivision_set") # bfa - add subdivion set menu
+
+        layout.separator()
+
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Trim")
+        props.trim_mode = 'DIFFERENCE'
+
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim")
+        props.trim_mode = 'DIFFERENCE'
+
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Add")
+        props.trim_mode = 'JOIN'
+
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add")
+        props.trim_mode = 'JOIN'
+
+        layout.operator("sculpt.project_line_gesture", text="Line Project")
+
+        layout.separator()
+
+        # Fair Positions
+        props = layout.operator("sculpt.face_set_edit", text="Fair Positions")
+        props.mode = 'FAIR_POSITIONS'
+
+        # Fair Tangency
+        props = layout.operator("sculpt.face_set_edit", text="Fair Tangency")
+        props.mode = 'FAIR_TANGENCY'
+
+        layout.separator()
+
+        sculpt_filters_types = [
+            ('SMOOTH', "Smooth"),
+            ('SURFACE_SMOOTH', "Surface Smooth"),
+            ('INFLATE', "Inflate"),
+            ('RELAX', "Relax Topology"),
+            ('RELAX_FACE_SETS', "Relax Face Sets"),
+            ('SHARPEN', "Sharpen"),
+            ('ENHANCE_DETAILS', "Enhance Details"),
+            ('ERASE_DISCPLACEMENT', "Erase Multires Displacement"),
+            ('RANDOM', "Randomize")
+        ]
+
+        for filter_type, ui_name in sculpt_filters_types:
+            props = layout.operator("sculpt.mesh_filter", text=ui_name)
+            props.type = filter_type
 
         layout.separator()
 
@@ -3814,6 +3878,7 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
+        # Rebuild BVH
         layout.operator("sculpt.optimize", icon="FILE_REFRESH")
 
         layout.separator()
@@ -7470,6 +7535,12 @@ class VIEW3D_PT_overlay_object(Panel):
         row = sub.row()
         row.separator()
         row.prop(overlay, "show_extras", text="Extras")
+
+        row = sub.row()
+        row.separator()
+        row.active = overlay.show_extras
+        row.prop(overlay, "show_light_colors")
+
         row = sub.row()
         row.separator()
         row.prop(overlay, "show_relationship_lines")

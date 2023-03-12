@@ -816,6 +816,8 @@ class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
         row.operator("asset.open_containing_blend_file", text="", icon='FILE_BLEND')
 
         layout.prop(asset_file_handle.asset_data, "description")
+        layout.prop(asset_file_handle.asset_data, "license")
+        layout.prop(asset_file_handle.asset_data, "copyright")
         layout.prop(asset_file_handle.asset_data, "author")
 
 
