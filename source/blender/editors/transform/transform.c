@@ -66,7 +66,8 @@ bool transdata_check_local_islands(TransInfo *t, short around)
   if (t->options & (CTX_CURSOR | CTX_TEXTURE_SPACE)) {
     return false;
   }
-  return ((around == V3D_AROUND_LOCAL_ORIGINS) && ELEM(t->obedit_type, OB_MESH, OB_GPENCIL));
+  return ((around == V3D_AROUND_LOCAL_ORIGINS) &&
+          ELEM(t->obedit_type, OB_MESH, OB_GPENCIL_LEGACY));
 }
 
 /* ************************** SPACE DEPENDENT CODE **************************** */
@@ -624,7 +625,9 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
         return false;
       }
       if (value == TFM_MODAL_TRANSLATE && t->mode == TFM_TRANSLATION) {
-        return false;
+        /* The tracking transform in MovieClip has an alternate translate that modifies the offset
+         * of the tracks. */
+        return t->data_type == &TransConvertType_Tracking;
       }
       if (value == TFM_MODAL_ROTATE && t->mode == TFM_ROTATION) {
         return false;
@@ -987,16 +990,16 @@ int transformEvent(TransInfo *t, const wmEvent *event)
             t->redraw |= TREDRAW_HARD;
             handled = true;
           }
-          else if (t->options & (CTX_MOVIECLIP | CTX_MASK)) {
-            restoreTransObjects(t);
-
-            t->flag ^= T_ALT_TRANSFORM;
-            t->redraw |= TREDRAW_HARD;
-            handled = true;
-          }
         }
         else {
           if (t->mode == TFM_TRANSLATION) {
+            if (t->data_type == &TransConvertType_Tracking) {
+              restoreTransObjects(t);
+
+              t->flag ^= T_ALT_TRANSFORM;
+              t->redraw |= TREDRAW_HARD;
+              handled = true;
+            }
             break;
           }
           restoreTransObjects(t);

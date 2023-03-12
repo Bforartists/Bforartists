@@ -15,6 +15,7 @@
 #include "BLI_blenlib.h"
 #include "BLI_dlrbTree.h"
 #include "BLI_lasso_2d.h"
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "DNA_anim_types.h"
@@ -48,10 +49,9 @@
 
 #include "action_intern.h"
 
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
-
-/* ************************************************************************** */
-/* KEYFRAMES STUFF */
+/* -------------------------------------------------------------------- */
+/** \name Keyframes Stuff
+ * \{ */
 
 static bAnimListElem *actkeys_find_list_element_at_position(bAnimContext *ac,
                                                             int filter,
@@ -220,12 +220,16 @@ static bool actkeys_is_key_at_position(bAnimContext *ac, float region_x, float r
   return found;
 }
 
-/* ******************** Deselect All Operator ***************************** */
-/* This operator works in one of three ways:
- * 1) (de)select all (AKEY) - test if select all or deselect all
- * 2) invert all (CTRL-IKEY) - invert selection of all keyframes
- * 3) (de)select all - no testing is done; only for use internal tools as normal function...
- */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Deselect All Operator
+ *
+ * This operator works in one of three ways:
+ * 1) (de)select all (AKEY) - test if select all or deselect all.
+ * 2) invert all (CTRL-IKEY) - invert selection of all keyframes.
+ * 3) (de)select all - no testing is done; only for use internal tools as normal function.
+ * \{ */
 
 /* Deselects keyframes in the action editor
  * - This is called by the deselect all operator, as well as other ones!
@@ -375,15 +379,18 @@ void ACTION_OT_select_all(wmOperatorType *ot)
   WM_operator_properties_select_all(ot);
 }
 
-/* ******************** Box Select Operator **************************** */
-/**
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Box Select Operator
+ *
  * This operator currently works in one of three ways:
  * - BKEY     - 1) all keyframes within region are selected #ACTKEYS_BORDERSEL_ALLKEYS.
  * - ALT-BKEY - depending on which axis of the region was larger...
  *   - 2) x-axis, so select all frames within frame range #ACTKEYS_BORDERSEL_FRAMERANGE.
  *   - 3) y-axis, so select all frames within channels that region included
  *     #ACTKEYS_BORDERSEL_CHANNELS.
- */
+ * \{ */
 
 /* defines for box_select mode */
 enum {
@@ -629,11 +636,15 @@ void ACTION_OT_select_box(wmOperatorType *ot)
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
-/* ******************** Region Select Operators ***************************** */
-/* "Region Select" operators include the Lasso and Circle Select operators.
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Region Select Operators
+ *
+ * "Region Select" operators include the Lasso and Circle Select operators.
  * These two ended up being lumped together, as it was easier in the
  * original Graph Editor implementation of these to do it this way.
- */
+ * \{ */
 
 typedef struct RegionSelectData {
   bAnimContext *ac;
@@ -926,13 +937,17 @@ void ACTION_OT_select_circle(wmOperatorType *ot)
   WM_operator_properties_select_operation_simple(ot);
 }
 
-/* ******************** Column Select Operator **************************** */
-/* This operator works in one of four ways:
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Column Select Operator
+ *
+ * This operator works in one of four ways:
  * - 1) select all keyframes in the same frame as a selected one  (KKEY)
  * - 2) select all keyframes in the same frame as the current frame marker (CTRL-KKEY)
  * - 3) select all keyframes in the same frame as a selected markers (SHIFT-KKEY)
  * - 4) select all keyframes that occur between selected markers (ALT-KKEY)
- */
+ * \{ */
 
 /* defines for column-select mode */
 static const EnumPropertyItem prop_column_select_types[] = {
@@ -1163,7 +1178,11 @@ void ACTION_OT_select_column(wmOperatorType *ot)
   RNA_def_property_flag(ot->prop, PROP_HIDDEN);
 }
 
-/* ******************** Select Linked Operator *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Select Linked Operator
+ * \{ */
 
 static int actkeys_select_linked_exec(bContext *C, wmOperator *UNUSED(op))
 {
@@ -1222,7 +1241,11 @@ void ACTION_OT_select_linked(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-/* ******************** Select More/Less Operators *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Select More/Less Operators
+ * \{ */
 
 /* Common code to perform selection */
 static void select_moreless_action_keys(bAnimContext *ac, short mode)
@@ -1345,8 +1368,13 @@ void ACTION_OT_select_less(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-/* ******************** Select Left/Right Operator ************************* */
-/* Select keyframes left/right of the current frame indicator */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Select Left/Right Operator
+ *
+ * Select keyframes left/right of the current frame indicator.
+ * \{ */
 
 /* defines for left-right select tool */
 static const EnumPropertyItem prop_actkeys_leftright_select_types[] = {
@@ -1556,8 +1584,12 @@ void ACTION_OT_select_leftright(wmOperatorType *ot)
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
-/* ******************** Mouse-Click Select Operator *********************** */
-/* This operator works in one of three ways:
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Mouse-Click Select Operator
+ *
+ * This operator works in one of three ways:
  * - 1) keyframe under mouse - no special modifiers
  * - 2) all keyframes on the same side of current frame indicator as mouse - ALT modifier
  * - 3) column select all keyframes in frame under mouse - CTRL modifier
@@ -1565,9 +1597,7 @@ void ACTION_OT_select_leftright(wmOperatorType *ot)
  *
  * In addition to these basic options, the SHIFT modifier can be used to toggle the
  * selection mode between replacing the selection (without) and inverting the selection (with).
- */
-
-/* ------------------- */
+ * \{ */
 
 /* option 1) select keyframe directly under mouse */
 static void actkeys_mselect_single(bAnimContext *ac,
@@ -1941,4 +1971,4 @@ void ACTION_OT_clickselect(wmOperatorType *ot)
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
-/* ************************************************************************** */
+/** \} */
