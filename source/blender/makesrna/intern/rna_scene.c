@@ -724,7 +724,7 @@ static void rna_Gpencil_extend_selection(bContext *C, PointerRNA *UNUSED(ptr))
   ViewLayer *view_layer = CTX_data_view_layer(C);
   BKE_view_layer_synced_ensure(scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
-  if ((ob) && (ob->type == OB_GPENCIL)) {
+  if ((ob) && (ob->type == OB_GPENCIL_LEGACY)) {
     bGPdata *gpd = (bGPdata *)ob->data;
     CTX_DATA_BEGIN (C, bGPDstroke *, gps, editable_gpencil_strokes) {
       if ((gps->flag & GP_STROKE_SELECT) && (gps->totpoints > 1)) {
@@ -1193,7 +1193,9 @@ static char *rna_ImageFormatSettings_path(const PointerRNA *ptr)
       for (node = ntree->nodes.first; node; node = node->next) {
         if (node->type == CMP_NODE_OUTPUT_FILE) {
           if (&((NodeImageMultiFile *)node->storage)->format == imf) {
-            return BLI_sprintfN("nodes['%s'].format", node->name);
+            char node_name_esc[sizeof(node->name) * 2];
+            BLI_str_escape(node_name_esc, node->name, sizeof(node_name_esc));
+            return BLI_sprintfN("nodes[\"%s\"].format", node_name_esc);
           }
           else {
             bNodeSocket *sock;
@@ -1201,8 +1203,14 @@ static char *rna_ImageFormatSettings_path(const PointerRNA *ptr)
             for (sock = node->inputs.first; sock; sock = sock->next) {
               NodeImageMultiFileSocket *sockdata = sock->storage;
               if (&sockdata->format == imf) {
+                char node_name_esc[sizeof(node->name) * 2];
+                BLI_str_escape(node_name_esc, node->name, sizeof(node_name_esc));
+
+                char socketdata_path_esc[sizeof(sockdata->path) * 2];
+                BLI_str_escape(socketdata_path_esc, sockdata->path, sizeof(socketdata_path_esc));
+
                 return BLI_sprintfN(
-                    "nodes['%s'].file_slots['%s'].format", node->name, sockdata->path);
+                    "nodes[\"%s\"].file_slots[\"%s\"].format", node_name_esc, socketdata_path_esc);
               }
             }
           }
@@ -6442,6 +6450,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   prop = RNA_def_property(srna, "hair_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, hair_shape_type_items);
   RNA_def_property_ui_text(prop, "Curves Shape Type", "Curves shape type");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_CURVES);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_render_update");
 
   prop = RNA_def_property(srna, "hair_subdiv", PROP_INT, PROP_NONE);
