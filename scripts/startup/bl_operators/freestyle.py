@@ -13,8 +13,8 @@ from bpy.props import (
 
 
 class SCENE_OT_freestyle_fill_range_by_selection(Operator):
-    """Fill Range by Selection\nFill the Range Min/Max entries by the min/max distance between selected mesh objects and the source object """
-    """(either a user-specified object or the active camera)"""
+    """Fill Range by Selection\nFill the Range Min/Max entries by the min/max distance between selected mesh objects and the source object """ \
+        """(either a user-specified object or the active camera)"""
     bl_idname = "scene.freestyle_fill_range_by_selection"
     bl_label = "Fill Range by Selection"
     bl_options = {'INTERNAL'}
@@ -54,6 +54,9 @@ class SCENE_OT_freestyle_fill_range_by_selection(Operator):
         # Find the reference object
         if m.type == 'DISTANCE_FROM_CAMERA':
             ref = scene.camera
+            if ref is None:
+                self.report({'ERROR'}, "No active camera in the scene")
+                return {'CANCELLED'}
             matrix_to_camera = ref.matrix_world.inverted()
         elif m.type == 'DISTANCE_FROM_OBJECT':
             if m.target is None:
