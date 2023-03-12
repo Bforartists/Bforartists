@@ -798,7 +798,7 @@ static void gpencil_create_extensions_radius(tGPDfill *tgpf)
       }
 
       /* Don't check endpoint distances unless the bounding boxes of the strokes
-      are close enough together that they can plausibly be connected. */
+       * are close enough together that they can plausibly be connected. */
       if (!extended_bbox_overlap(gps->boundbox_min,
                                  gps->boundbox_max,
                                  gps2->boundbox_min,
@@ -2325,7 +2325,7 @@ static bool gpencil_fill_poll(bContext *C)
   if (ED_operator_regionactive(C)) {
     ScrArea *area = CTX_wm_area(C);
     if (area->spacetype == SPACE_VIEW3D) {
-      if ((obact == NULL) || (obact->type != OB_GPENCIL) ||
+      if ((obact == NULL) || (obact->type != OB_GPENCIL_LEGACY) ||
           (obact->mode != OB_MODE_PAINT_GPENCIL)) {
         return false;
       }
@@ -2480,7 +2480,7 @@ static void gpencil_fill_exit(bContext *C, wmOperator *op)
   op->customdata = NULL;
 
   /* drawing batch cache is dirty now */
-  if ((ob) && (ob->type == OB_GPENCIL) && (ob->data)) {
+  if ((ob) && (ob->type == OB_GPENCIL_LEGACY) && (ob->data)) {
     bGPdata *gpd2 = ob->data;
     DEG_id_tag_update(&gpd2->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
     gpd2->flag |= GP_DATA_CACHE_IS_DIRTY;
