@@ -89,6 +89,10 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     btheme->tui.wcol_view_item = U_theme_default.tui.wcol_view_item;
   }
 
+  if (!USER_VERSION_ATLEAST(306, 1)) {
+    FROM_DEFAULT_V4_UCHAR(space_view3d.face_retopology);
+  }
+
   /**
    * Versioning code until next subversion bump goes here.
    *
@@ -781,6 +785,10 @@ void blo_do_versions_userdef(UserDef *userdef)
     LISTBASE_FOREACH (bUserAssetLibrary *, asset_library, &userdef->asset_libraries) {
       asset_library->import_method = ASSET_IMPORT_APPEND_REUSE;
     }
+  }
+
+  if (!USER_VERSION_ATLEAST(306, 2)) {
+    userdef->animation_flag |= USER_ANIM_HIGH_QUALITY_DRAWING;
   }
 
   /**
