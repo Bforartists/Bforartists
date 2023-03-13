@@ -23,9 +23,9 @@
 const UserDef U_default = {
     .versionfile = BLENDER_FILE_VERSION,
     .subversionfile = BLENDER_FILE_SUBVERSION,
-    .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_TOOLTIPS_PYTHON |
-             USER_DEVELOPER_UI  | USER_RELPATHS | USER_FILENOUI |
-             USER_RELEASECONFIRM | USER_SCRIPT_AUTOEXEC_DISABLE | USER_NONEGFRAMES),
+    .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_TOOLTIPS_PYTHON | USER_DEVELOPER_UI |
+             USER_RELPATHS | USER_FILENOUI | USER_RELEASECONFIRM | USER_SCRIPT_AUTOEXEC_DISABLE |
+             USER_NONEGFRAMES),
     .dupflag = USER_DUP_MESH | USER_DUP_CURVE | USER_DUP_SURF | USER_DUP_LATTICE | USER_DUP_FONT |
                USER_DUP_MBALL | USER_DUP_LAMP | USER_DUP_ARM | USER_DUP_CAMERA | USER_DUP_SPEAKER |
                USER_DUP_ACT | USER_DUP_LIGHTPROBE | USER_DUP_GPENCIL | USER_DUP_CURVES |
@@ -51,8 +51,8 @@ const UserDef U_default = {
     /*bfa - added USER_ORBIT_SELECTION */
     .uiflag = (USER_FILTERFILEEXTS | USER_DRAWVIEWINFO | USER_PLAINMENUS |
                USER_LOCK_CURSOR_ADJUST | USER_DEPTH_CURSOR | USER_ORBIT_SELECTION |
-               USER_AUTOPERSP | USER_DEPTH_NAVIGATE | USER_GLOBALUNDO |
-               USER_HIDE_DOT | USER_SHOW_GIZMO_NAVIGATE | USER_SHOW_VIEWPORTNAME | USER_SHOW_FPS |
+               USER_AUTOPERSP | USER_DEPTH_NAVIGATE | USER_GLOBALUNDO | USER_HIDE_DOT |
+               USER_SHOW_GIZMO_NAVIGATE | USER_SHOW_VIEWPORTNAME | USER_SHOW_FPS |
                USER_CONTINUOUS_MOUSE | USER_SAVE_PROMPT),
     .uiflag2 = USER_REGION_OVERLAP,
     .gpu_flag = USER_GPU_FLAG_OVERLAY_SMOOTH_WIRE | USER_GPU_FLAG_SUBDIVISION_EVALUATION,
@@ -162,7 +162,8 @@ const UserDef U_default = {
     .glalphaclip = 0.004,
     .autokey_mode = (AUTOKEY_MODE_NORMAL & ~AUTOKEY_ON),
     .autokey_flag = AUTOKEY_FLAG_XYZ2RGB,
-    .animation_flag = USER_ANIM_SHOW_CHANNEL_GROUP_COLORS, /*bfa - channel group colors on. use_anim_channel_group_colors*/
+    .animation_flag = USER_ANIM_SHOW_CHANNEL_GROUP_COLORS, /*bfa - channel group colors on.
+                                                              use_anim_channel_group_colors*/
     .text_render = 0,
     .navigation_mode = VIEW_NAVIGATION_WALK,
     .view_rotate_sensitivity_turntable = DEG2RAD(0.4),
