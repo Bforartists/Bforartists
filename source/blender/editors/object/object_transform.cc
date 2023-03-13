@@ -713,7 +713,7 @@ static int apply_objects_internal(bContext *C,
              OB_CURVES_LEGACY,
              OB_SURF,
              OB_FONT,
-             OB_GPENCIL,
+             OB_GPENCIL_LEGACY,
              OB_CURVES,
              OB_POINTCLOUD)) {
       ID *obdata = static_cast<ID *>(ob->data);
@@ -773,7 +773,7 @@ static int apply_objects_internal(bContext *C,
       }
     }
 
-    if (ob->type == OB_GPENCIL) {
+    if (ob->type == OB_GPENCIL_LEGACY) {
       bGPdata *gpd = static_cast<bGPdata *>(ob->data);
       if (gpd) {
         if (gpd->layers.first) {
@@ -795,7 +795,7 @@ static int apply_objects_internal(bContext *C,
                         "Can't apply to a GP data-block where all layers are parented: Object "
                         "\"%s\", %s \"%s\", aborting",
                         ob->id.name + 2,
-                        BKE_idtype_idcode_to_name(ID_GD),
+                        BKE_idtype_idcode_to_name(ID_GD_LEGACY),
                         gpd->id.name + 2);
             changed = false;
           }
@@ -807,7 +807,7 @@ static int apply_objects_internal(bContext *C,
               RPT_ERROR,
               R"(Can't apply to GP data-block with no layers: Object "%s", %s "%s", aborting)",
               ob->id.name + 2,
-              BKE_idtype_idcode_to_name(ID_GD),
+              BKE_idtype_idcode_to_name(ID_GD_LEGACY),
               gpd->id.name + 2);
         }
       }
@@ -942,7 +942,7 @@ static int apply_objects_internal(bContext *C,
         cu->fsize *= scale;
       }
     }
-    else if (ob->type == OB_GPENCIL) {
+    else if (ob->type == OB_GPENCIL_LEGACY) {
       bGPdata *gpd = static_cast<bGPdata *>(ob->data);
       BKE_gpencil_transform(gpd, mat);
     }
@@ -1598,7 +1598,7 @@ static int object_origin_set_exec(bContext *C, wmOperator *op)
       lt->id.tag |= LIB_TAG_DOIT;
       do_inverse_offset = true;
     }
-    else if (ob->type == OB_GPENCIL) {
+    else if (ob->type == OB_GPENCIL_LEGACY) {
       bGPdata *gpd = static_cast<bGPdata *>(ob->data);
       float gpcenter[3];
       if (gpd) {
