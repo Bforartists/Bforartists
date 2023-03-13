@@ -174,8 +174,9 @@ static void get_nearest_fcurve_verts_list(bAnimContext *ac, const int mval[2], L
    */
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
             ANIMFILTER_NODUPLIS | ANIMFILTER_FCURVESONLY);
-  if (sipo->flag &
-      SIPO_SELCUVERTSONLY) { /* FIXME: this should really be check for by the filtering code... */
+  if (U.animation_flag &
+      USER_ANIM_ONLY_SHOW_SELECTED_CURVE_KEYS) { /* FIXME: this should really be check for by the
+                                                    filtering code... */
     filter |= ANIMFILTER_SEL;
   }
   mapping_flag |= ANIM_get_normalization_flags(ac);
@@ -338,7 +339,6 @@ void deselect_graph_keys(bAnimContext *ac, bool test, short sel, bool do_channel
   bAnimListElem *ale;
   int filter;
 
-  SpaceGraph *sipo = (SpaceGraph *)ac->sl;
   KeyframeEditData ked = {{NULL}};
   KeyframeEditFunc test_cb, sel_cb;
 
@@ -376,7 +376,7 @@ void deselect_graph_keys(bAnimContext *ac, bool test, short sel, bool do_channel
     if (do_channels) {
       /* Only change selection of channel when the visibility of keyframes
        * doesn't depend on this. */
-      if ((sipo->flag & SIPO_SELCUVERTSONLY) == 0) {
+      if ((U.animation_flag & USER_ANIM_ONLY_SHOW_SELECTED_CURVE_KEYS) == 0) {
         /* deactivate the F-Curve, and deselect if deselecting keyframes.
          * otherwise select the F-Curve too since we've selected all the keyframes
          */
@@ -519,11 +519,11 @@ static rctf initialize_box_select_coords(const bAnimContext *ac, const rctf *rec
   return rectf;
 }
 
-static int initialize_animdata_selection_filter(const SpaceGraph *sipo)
+static int initialize_animdata_selection_filter(void)
 {
   int filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
                 ANIMFILTER_NODUPLIS);
-  if (sipo->flag & SIPO_SELCUVERTSONLY) {
+  if (U.animation_flag & USER_ANIM_ONLY_SHOW_SELECTED_CURVE_KEYS) {
     filter |= ANIMFILTER_FOREDIT | ANIMFILTER_SELEDIT;
   }
   return filter;
@@ -536,8 +536,7 @@ static ListBase initialize_box_select_anim_data(const int filter, bAnimContext *
   return anim_data;
 }
 
-static void initialize_box_select_key_editing_data(const SpaceGraph *sipo,
-                                                   const bool incl_handles,
+static void initialize_box_select_key_editing_data(const bool incl_handles,
                                                    const short mode,
                                                    bAnimContext *ac,
                                                    void *data,
@@ -563,7 +562,7 @@ static void initialize_box_select_key_editing_data(const SpaceGraph *sipo,
       r_ked->data = scaled_rectf;
       break;
   }
-
+  SpaceGraph *sipo = (SpaceGraph *)ac->sl;
   if (sipo->flag & SIPO_SELVHANDLESONLY) {
     r_ked->iterflags |= KEYFRAME_ITER_HANDLES_DEFAULT_INVISIBLE;
   }
@@ -597,14 +596,13 @@ static bool box_select_graphkeys(bAnimContext *ac,
                                  void *data)
 {
   const rctf rectf = initialize_box_select_coords(ac, rectf_view);
-  SpaceGraph *sipo = (SpaceGraph *)ac->sl;
-  const int filter = initialize_animdata_selection_filter(sipo);
+  const int filter = initialize_animdata_selection_filter();
   ListBase anim_data = initialize_box_select_anim_data(filter, ac);
   rctf scaled_rectf;
   KeyframeEditData ked;
   int mapping_flag;
   initialize_box_select_key_editing_data(
-      sipo, incl_handles, mode, ac, data, &scaled_rectf, &ked, &mapping_flag);
+      incl_handles, mode, ac, data, &scaled_rectf, &ked, &mapping_flag);
 
   /* Get beztriple editing/validation functions. */
   const KeyframeEditFunc select_cb = ANIM_editkeyframes_select(selectmode);
@@ -656,7 +654,7 @@ static bool box_select_graphkeys(bAnimContext *ac,
       any_key_selection_changed = true;
       /* Only change selection of channel when the visibility of keyframes
        * doesn't depend on this. */
-      if ((sipo->flag & SIPO_SELCUVERTSONLY) == 0) {
+      if ((U.animation_flag & USER_ANIM_ONLY_SHOW_SELECTED_CURVE_KEYS) == 0) {
         /* select the curve too now that curve will be touched */
         if (selectmode == SELECT_ADD) {
           fcu->flag |= FCURVE_SELECTED;
@@ -756,14 +754,13 @@ static void box_select_graphcurves(bAnimContext *ac,
                                    const bool incl_handles,
                                    void *data)
 {
-  const SpaceGraph *sipo = (SpaceGraph *)ac->sl;
-  const int filter = initialize_animdata_selection_filter(sipo);
+  const int filter = initialize_animdata_selection_filter();
   ListBase anim_data = initialize_box_select_anim_data(filter, ac);
   rctf scaled_rectf;
   KeyframeEditData ked;
   int mapping_flag;
   initialize_box_select_key_editing_data(
-      sipo, incl_handles, mode, ac, data, &scaled_rectf, &ked, &mapping_flag);
+      incl_handles, mode, ac, data, &scaled_rectf, &ked, &mapping_flag);
 
   FCurve *last_selected_curve = NULL;
 
@@ -1743,7 +1740,7 @@ static int mouse_graph_keys(bAnimContext *ac,
 
     /* Deselect other channels too, but only do this if selection of channel
      * when the visibility of keyframes doesn't depend on this. */
-    if ((sipo->flag & SIPO_SELCUVERTSONLY) == 0) {
+    if ((U.animation_flag & USER_ANIM_ONLY_SHOW_SELECTED_CURVE_KEYS) == 0) {
       ANIM_anim_channels_select_set(ac, ACHANNEL_SETFLAG_CLEAR);
     }
   }
@@ -1816,7 +1813,7 @@ static int mouse_graph_keys(bAnimContext *ac,
   }
 
   /* only change selection of channel when the visibility of keyframes doesn't depend on this */
-  if ((sipo->flag & SIPO_SELCUVERTSONLY) == 0) {
+  if ((U.animation_flag & USER_ANIM_ONLY_SHOW_SELECTED_CURVE_KEYS) == 0) {
     /* select or deselect curve? */
     if (bezt) {
       /* take selection status from item that got hit, to prevent flip/flop on channel
