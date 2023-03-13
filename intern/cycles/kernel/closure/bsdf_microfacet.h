@@ -136,7 +136,7 @@ ccl_device_forceinline float3 microfacet_beckmann_sample_vndf(const float3 wi,
 
     /* Find root in a monotonic interval using newton method, under given precision and maximal
      * iterations. Falls back to bisection if newton step produces results outside of the valid
-     * interval.*/
+     * interval. */
     const float precision = 1e-6f;
     const int max_iter = 3;
     int iter = 0;
@@ -494,7 +494,7 @@ ccl_device int bsdf_microfacet_sample(ccl_private const ShaderClosure *sc,
 
   float3 H;
   float cos_NH, cos_HI;
-  float3 local_H, local_I, X, Y; /* Nneeded for anisotropic microfacets later. */
+  float3 local_H, local_I, X, Y; /* Needed for anisotropic microfacets later. */
   if (m_singular) {
     H = N;
     cos_NH = 1.0f;
