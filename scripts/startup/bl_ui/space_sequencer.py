@@ -874,7 +874,7 @@ class SEQUENCER_MT_strip_transform(Menu):
             layout.operator("transform.rotate", text="Rotate", icon = "TRANSFORM_ROTATE")
             layout.operator("transform.resize", text="Scale", icon = "TRANSFORM_SCALE")
         else:
-            layout.operator("transform.seq_slide", text="Move", icon = "TRANSFORM_MOVE")
+            layout.operator("transform.seq_slide", text="Move", icon = "TRANSFORM_MOVE").view2d_edge_pan = True
             layout.operator("transform.transform", text="Move/Extend from Current Frame", icon = "SEQ_MOVE_EXTEND").mode = 'TIME_EXTEND'
             layout.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQ_SLIP_CONTENTS")
 

@@ -410,6 +410,7 @@ set(GLSL_SRC
 
   shaders/gpu_shader_codegen_lib.glsl
 
+  shaders/common/gpu_shader_bicubic_sampler_lib.glsl
   shaders/common/gpu_shader_common_color_ramp.glsl
   shaders/common/gpu_shader_common_color_utils.glsl
   shaders/common/gpu_shader_common_curves.glsl
@@ -810,7 +811,6 @@ if(WITH_GTESTS)
 
       tests/gpu_index_buffer_test.cc
       tests/gpu_push_constants_test.cc
-      tests/gpu_shader_builtin_test.cc
       tests/gpu_shader_test.cc
       tests/gpu_storage_buffer_test.cc
 

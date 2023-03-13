@@ -832,7 +832,7 @@ ID *ui_template_id_liboverride_hierarchy_make(
     case ID_CA:
     case ID_SPK:
     case ID_AR:
-    case ID_GD:
+    case ID_GD_LEGACY:
     case ID_CV:
     case ID_PT:
     case ID_VO:
@@ -1102,7 +1102,7 @@ static const char *template_id_browse_tip(const StructRNA *type)
         return N_("Brush Browser\nChoose Brush to use");
       case ID_PA:
         return N_("Particle Settings Browser\nChoose Particle Settings to use");
-      case ID_GD:
+      case ID_GD_LEGACY:
         return N_("Data Browser\nChoose Grease Pencil Data to use");
       case ID_MC:
         return N_("Clip Browser\nChoose Movie Clip to use");

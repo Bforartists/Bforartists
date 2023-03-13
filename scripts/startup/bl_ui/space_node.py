@@ -485,6 +485,7 @@ class NODE_MT_node(Menu):
         is_compositor = snode.tree_type == 'CompositorNodeTree'
 
         myvar = layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        myvar.view2d_edge_pan = True
         myvar.release_confirm = True
         layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
         layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
