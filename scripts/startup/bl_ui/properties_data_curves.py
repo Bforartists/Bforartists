@@ -67,29 +67,30 @@ class CURVES_MT_add_attribute(Menu):
     bl_label = "Add Attribute"
 
     @staticmethod
-    def add_standard_attribute(layout, curves, name, data_type, domain):
+    def add_standard_attribute(layout, curves, name, data_type, domain, icon):  # bfa -added icon
         exists = curves.attributes.get(name) is not None
 
         col = layout.column()
         col.enabled = not exists
         col.operator_context = 'EXEC_DEFAULT'
 
-        props = col.operator("geometry.attribute_add", text=name)
+        props = col.operator("geometry.attribute_add", text=name, icon=icon) # bfa -added icon
         props.name = name
         props.data_type = data_type
         props.domain = domain
+        #props.icon = icon
 
     def draw(self, context):
         layout = self.layout
         curves = context.curves
-
-        self.add_standard_attribute(layout, curves, "radius", 'FLOAT', 'POINT')
-        self.add_standard_attribute(layout, curves, "color", 'FLOAT_COLOR', 'POINT')
+        
+        self.add_standard_attribute(layout, curves, "radius", 'FLOAT', 'POINT', 'RADIUS') # bfa -added icon
+        self.add_standard_attribute(layout, curves, "color", 'FLOAT_COLOR', 'POINT', 'COLOR') # bfa -added icon)
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("geometry.attribute_add", text="Custom...")
+        layout.operator("geometry.attribute_add", text="Custom...", icon = 'ADD')
 
 
 class CURVES_UL_attributes(UIList):
