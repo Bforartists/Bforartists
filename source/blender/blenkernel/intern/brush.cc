@@ -1347,87 +1347,87 @@ void BKE_brush_gpencil_paint_presets(Main *bmain, ToolSettings *ts, const bool r
   Paint *paint = &ts->gp_paint->paint;
   Brush *brush_prev = paint->brush;
   Brush *brush, *deft_draw;
-  /* Airbrush brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Airbrush", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Airbrush brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Airbrush", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_AIRBRUSH);
   }
 
-  /* Ink Pen brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Ink Pen", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Ink Pen brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Ink Pen", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_INK_PEN);
   }
 
-  /* Ink Pen Rough brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Ink Pen Rough", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Ink Pen Rough brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Ink Pen Rough", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_INK_PEN_ROUGH);
   }
 
-  /* Marker Bold brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Marker Bold", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Marker Bold brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Marker Bold", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_MARKER_BOLD);
   }
 
-  /* Marker Chisel brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Marker Chisel", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Marker Chisel brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Marker Chisel", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_MARKER_CHISEL);
   }
 
-  /* Pen brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Pen", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Pen brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Pen", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_PEN);
   }
 
-  /* Pencil Soft brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Pencil Soft", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Pencil Soft brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Pencil Soft", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_PENCIL_SOFT);
   }
 
-  /* Pencil brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Pencil", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Pencil brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Pencil", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_PENCIL);
   }
   deft_draw = brush; /* save default brush. */
 
-  /* Fill brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Fill Area", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Fill brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Fill Area", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_FILL_AREA);
   }
 
-  /* Soft Eraser brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Eraser Soft", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Soft Eraser brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Eraser Soft", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_ERASER_SOFT);
   }
 
-  /* Hard Eraser brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Eraser Hard", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Hard Eraser brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Eraser Hard", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_ERASER_HARD);
   }
 
-  /* Point Eraser brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Eraser Point", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Point Eraser brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Eraser Point", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_ERASER_POINT);
   }
 
-  /* Stroke Eraser brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Eraser Stroke", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Stroke Eraser brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Eraser Stroke", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_ERASER_STROKE);
   }
 
-  /* Tint brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Tint", OB_MODE_PAINT_GPENCIL, &r_new);
+  /* Tint brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_Tint", OB_MODE_PAINT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_TINT);
   }
@@ -1448,30 +1448,30 @@ void BKE_brush_gpencil_vertex_presets(Main *bmain, ToolSettings *ts, const bool 
   Paint *vertexpaint = &ts->gp_vertexpaint->paint;
   Brush *brush_prev = vertexpaint->brush;
   Brush *brush, *deft_vertex;
-  /* Vertex Draw brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Vertex Draw", OB_MODE_VERTEX_GPENCIL, &r_new);
+  /* Vertex Draw brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_V_W_Draw", OB_MODE_VERTEX_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_VERTEX_DRAW);
   }
   deft_vertex = brush; /* save default brush. */
 
-  /* Vertex Blur brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Vertex Blur", OB_MODE_VERTEX_GPENCIL, &r_new);
+  /* Vertex Blur brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_V_W_Blur", OB_MODE_VERTEX_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_VERTEX_BLUR);
   }
-  /* Vertex Average brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Vertex Average", OB_MODE_VERTEX_GPENCIL, &r_new);
+  /* Vertex Average brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_V_W_Average", OB_MODE_VERTEX_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_VERTEX_AVERAGE);
   }
-  /* Vertex Smear brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Vertex Smear", OB_MODE_VERTEX_GPENCIL, &r_new);
+  /* Vertex Smear brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_V_W_Smear", OB_MODE_VERTEX_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_VERTEX_SMEAR);
   }
-  /* Vertex Replace brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Vertex Replace", OB_MODE_VERTEX_GPENCIL, &r_new);
+  /* Vertex Replace brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_V_W_Replace", OB_MODE_VERTEX_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_VERTEX_REPLACE);
   }
@@ -1495,57 +1495,57 @@ void BKE_brush_gpencil_sculpt_presets(Main *bmain, ToolSettings *ts, const bool 
   Brush *brush_prev = sculptpaint->brush;
   Brush *brush, *deft_sculpt;
 
-  /* Smooth brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Smooth Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
+  /* Smooth brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_S_Smooth Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_SMOOTH_STROKE);
   }
   deft_sculpt = brush;
 
-  /* Strength brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Strength Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
+  /* Strength brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_S_Strength Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_STRENGTH_STROKE);
   }
 
-  /* Thickness brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Thickness Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
+  /* Thickness brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_S_Thickness Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_THICKNESS_STROKE);
   }
 
-  /* Grab brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Grab Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
+  /* Grab brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_S_Grab Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_GRAB_STROKE);
   }
 
-  /* Push brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Push Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
+  /* Push brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_S_Push Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_PUSH_STROKE);
   }
 
-  /* Twist brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Twist Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
+  /* Twist brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_S_Twist Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_TWIST_STROKE);
   }
 
-  /* Pinch brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Pinch Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
+  /* Pinch brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_S_Pinch Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_PINCH_STROKE);
   }
 
-  /* Randomize brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Randomize Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
+  /* Randomize brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_S_Randomize Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_RANDOMIZE_STROKE);
   }
 
-  /* Clone brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Clone Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
+  /* Clone brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_S_Clone Stroke", OB_MODE_SCULPT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_CLONE_STROKE);
   }
@@ -1568,8 +1568,8 @@ void BKE_brush_gpencil_weight_presets(Main *bmain, ToolSettings *ts, const bool 
   Paint *weightpaint = &ts->gp_weightpaint->paint;
   Brush *brush_prev = weightpaint->brush;
   Brush *brush, *deft_weight;
-  /* Vertex Draw brush. */
-  brush = gpencil_brush_ensure(bmain, ts, "Draw Weight", OB_MODE_WEIGHT_GPENCIL, &r_new);
+  /* Vertex Draw brush. */ /*BFA - Renamed default brush*/
+  brush = gpencil_brush_ensure(bmain, ts, "GP_W_Draw", OB_MODE_WEIGHT_GPENCIL, &r_new);
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_DRAW_WEIGHT);
   }
