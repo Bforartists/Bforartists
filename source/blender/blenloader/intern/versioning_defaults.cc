@@ -389,30 +389,30 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
     /* Update Grease Pencil brushes. */
     Brush *brush;
 
-    /* Pencil brush. */
-    do_versions_rename_id(bmain, ID_BR, "Draw Pencil", "Pencil");
+    /* Pencil brush. */  /*BFA - Renamed default brush*/
+    do_versions_rename_id(bmain, ID_BR, "GP_Draw Pencil", "Pencil");
 
-    /* Pen brush. */
-    do_versions_rename_id(bmain, ID_BR, "Draw Pen", "Pen");
+    /* Pen brush. */  /*BFA - Renamed default brush*/
+    do_versions_rename_id(bmain, ID_BR, "GP_Draw Pen", "Pen");
 
-    /* Pen Soft brush. */
+    /* Pen Soft brush. */  /*BFA - Renamed default brush*/
     brush = reinterpret_cast<Brush *>(
-        do_versions_rename_id(bmain, ID_BR, "Draw Soft", "Pencil Soft"));
+        do_versions_rename_id(bmain, ID_BR, "GP_Draw Soft", "Pencil Soft"));
     if (brush) {
       brush->gpencil_settings->icon_id = GP_BRUSH_ICON_PEN;
     }
 
-    /* Ink Pen brush. */
-    do_versions_rename_id(bmain, ID_BR, "Draw Ink", "Ink Pen");
+    /* Ink Pen brush. */  /*BFA - Renamed default brush*/
+    do_versions_rename_id(bmain, ID_BR, "GP_Draw Ink", "Ink Pen");
 
-    /* Ink Pen Rough brush. */
-    do_versions_rename_id(bmain, ID_BR, "Draw Noise", "Ink Pen Rough");
+    /* Ink Pen Rough brush. */ /*BFA - Renamed default brush*/
+    do_versions_rename_id(bmain, ID_BR, "GP_Draw Noise", "Ink Pen Rough");
 
-    /* Marker Bold brush. */
-    do_versions_rename_id(bmain, ID_BR, "Draw Marker", "Marker Bold");
+    /* Marker Bold brush. */ /*BFA - Renamed default brush*/
+    do_versions_rename_id(bmain, ID_BR, "GP_Draw Marker", "Marker Bold");
 
-    /* Marker Chisel brush. */
-    do_versions_rename_id(bmain, ID_BR, "Draw Block", "Marker Chisel");
+    /* Marker Chisel brush. */ /*BFA - Renamed default brush*/
+    do_versions_rename_id(bmain, ID_BR, "GP_Draw Block", "Marker Chisel");
 
     /* Remove useless Fill Area.001 brush. */
     brush = static_cast<Brush *>(
@@ -647,15 +647,15 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
     /* Change the spacing of the Smear brush to 3.0% */
     const char *brush_name;
     Brush *brush;
-
-    brush_name = "Smear";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Smear";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (brush) {
       brush->spacing = 3.0;
     }
-
-    brush_name = "Draw Sharp";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Draw Sharp";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -663,8 +663,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_DRAW_SHARP;
     }
-
-    brush_name = "Elastic Deform";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Elastic Deform";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -672,8 +672,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_ELASTIC_DEFORM;
     }
-
-    brush_name = "Pose";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Pose";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -681,8 +681,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_POSE;
     }
-
-    brush_name = "Multi-plane Scrape";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Multi-plane Scrape";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -690,8 +690,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_MULTIPLANE_SCRAPE;
     }
-
-    brush_name = "Clay Thumb";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Clay Thumb";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -699,8 +699,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_CLAY_THUMB;
     }
-
-    brush_name = "Cloth";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Cloth";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -708,8 +708,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_CLOTH;
     }
-
-    brush_name = "Slide Relax";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Slide Relax";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -717,8 +717,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_SLIDE_RELAX;
     }
-
-    brush_name = "Paint";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Paint";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -726,8 +726,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_PAINT;
     }
-
-    brush_name = "Smear";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Smear";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -735,8 +735,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_SMEAR;
     }
-
-    brush_name = "Boundary";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Boundary";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -744,8 +744,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_BOUNDARY;
     }
-
-    brush_name = "Simplify";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Simplify";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -753,8 +753,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_SIMPLIFY;
     }
-
-    brush_name = "Draw Face Sets";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Draw Face Sets";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -762,8 +762,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_DRAW_FACE_SETS;
     }
-
-    brush_name = "Multires Displacement Eraser";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Multires Displacement Eraser";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
@@ -772,7 +772,8 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       brush->sculpt_tool = SCULPT_TOOL_DISPLACEMENT_ERASER;
     }
 
-    brush_name = "Multires Displacement Smear";
+    /*BFA - Renamed default brush*/
+    brush_name = "S_Multires Displacement Smear";
     brush = static_cast<Brush *>(
         BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2));
     if (!brush) {
