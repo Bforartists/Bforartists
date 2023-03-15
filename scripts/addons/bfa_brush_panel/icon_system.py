@@ -161,9 +161,13 @@ def get_brush_icon(
     return BrushIcon("NONE", _icon_value_from_icon_name(icon_name))
 
 
-def register():
+def register_icons():
     pcoll = bpy.utils.previews.new()
     preview_collections["main"] = pcoll
+
+
+def register():
+    bpy.app.timers.register(register_icons, first_interval=0, persistent=True)
 
 
 def unregister():
