@@ -108,12 +108,16 @@ class COLLECTION_PT_lineart_collection(CollectionButtonsPanel, Panel):
             row = col.row(align=True)
             for i in range(8):
                 row.prop(collection, "lineart_intersection_mask", index=i, text="", toggle=True)
-
-        row = layout.row(heading="Intersection Priority")
-        row.prop(collection, "use_lineart_intersection_priority", text="")
-        subrow = row.row()
-        subrow.active = collection.use_lineart_intersection_priority
-        subrow.prop(collection, "lineart_intersection_priority", text="")
+        
+        split = layout.split()
+        col = split.column()
+        col.use_property_split = False
+        col.prop(collection, "use_lineart_intersection_priority", text="Intersection Priority")
+        col = split.column()
+        if collection.use_lineart_intersection_priority:
+            col.prop(collection, "lineart_intersection_priority", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class COLLECTION_PT_collection_custom_props(CollectionButtonsPanel, PropertyPanel, Panel):
