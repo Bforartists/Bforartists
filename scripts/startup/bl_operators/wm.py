@@ -1235,7 +1235,7 @@ def _wm_doc_get_id(doc_id, *, do_url=True, url_prefix="", report=None):
 
 
 class WM_OT_doc_view_manual(Operator):
-    """Load online manual"""
+    """Load online manual\nNote that this link leads to the online Blender manual. And is not part of Bforartists"""
     bl_idname = "wm.doc_view_manual"
     bl_label = "View Manual"
 
