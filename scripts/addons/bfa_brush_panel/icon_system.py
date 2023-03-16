@@ -108,6 +108,10 @@ def get_brush_icon(
     icon_name_from_brush: Callable[[bpy.types.Brush], str],
     tool_name_from_brush: Callable[[bpy.types.Brush], str],
 ):
+    if "main" not in preview_collections:
+        pcoll = bpy.utils.previews.new()
+        preview_collections["main"] = pcoll
+
     # Custom Icon code, so that it override any default icon
     if brush.use_custom_icon and brush.icon_filepath:
         pcoll = preview_collections["main"]
@@ -162,8 +166,7 @@ def get_brush_icon(
 
 
 def register():
-    pcoll = bpy.utils.previews.new()
-    preview_collections["main"] = pcoll
+    pass
 
 
 def unregister():
