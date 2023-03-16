@@ -645,19 +645,19 @@ class NODE_MT_context_menu_show_hide_menu(Menu):
 
         layout = self.layout
 
-        layout.operator("node.mute_toggle", text="Mute")
+        layout.operator("node.mute_toggle", text="Mute", icon = "TOGGLE_NODE_MUTE")
 
         # Node previews are only available in the Compositor.
         if is_compositor:
-            layout.operator("node.preview_toggle", text="Node Preview")
+            layout.operator("node.preview_toggle", text="Node Preview", icon = "TOGGLE_NODE_PREVIEW")
 
-        layout.operator("node.options_toggle", text="Node Options")
+        layout.operator("node.options_toggle", text="Node Options", icon = "TOGGLE_NODE_OPTIONS")
 
         layout.separator()
 
-        layout.operator("node.hide_socket_toggle", text="Unconnected Sockets")
-        layout.operator("node.hide_toggle", text="Collapse")
-        layout.operator("node.collapse_hide_unused_toggle")
+        layout.operator("node.hide_socket_toggle", text="Unconnected Sockets", icon = "HIDE_OFF")
+        layout.operator("node.hide_toggle", text="Collapse", icon = "HIDE_ON")
+        layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
 
 
 class NODE_MT_context_menu_select_menu(Menu):
@@ -666,17 +666,17 @@ class NODE_MT_context_menu_select_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("node.select_grouped", text="Select Grouped...").extend = False
+        layout.operator("node.select_grouped", text="Select Grouped", icon = "GROUP").extend = False
 
         layout.separator()
 
-        layout.operator("node.select_linked_from")
-        layout.operator("node.select_linked_to")
+        layout.operator("node.select_linked_from", icon = "LINKED")
+        layout.operator("node.select_linked_to", icon = "LINKED")
 
         layout.separator()
 
-        layout.operator("node.select_same_type_step", text="Activate Same Type Previous").prev = True
-        layout.operator("node.select_same_type_step", text="Activate Same Type Next").prev = False
+        layout.operator("node.select_same_type_step", text="Activate Same Type Previous", icon = "PREVIOUSACTIVE").prev = True
+        layout.operator("node.select_same_type_step", text="Activate Same Type Next", icon = "NEXTACTIVE").prev = False
 
 
 class NODE_MT_context_menu(Menu):
@@ -708,8 +708,8 @@ class NODE_MT_context_menu(Menu):
                 layout.operator_context = 'INVOKE_DEFAULT'
                 layout.operator("node.select", text="Clear Viewer", icon="HIDE_ON").clear_viewer = True
 
-            layout.operator("node.links_cut")
-            layout.operator("node.links_mute")
+            layout.operator("node.links_cut", icon = 'CUT_LINKS')
+            layout.operator("node.links_mute", icon = 'MUTE_IPO_ON')
 
             if is_nested:
                 layout.separator()
@@ -749,7 +749,7 @@ class NODE_MT_context_menu(Menu):
         layout.separator()
 
         layout.operator("node.group_make", text="Make Group", icon="NODE_MAKEGROUP")
-        layout.operator("node.group_insert", text="Insert Into Group")
+        layout.operator("node.group_insert", text="Insert Into Group", icon = 'NODE_GROUPINSERT')
 
         if active_node and active_node.type == 'GROUP':
             layout.operator("node.group_edit", text="Edit", icon="NODE_EDITGROUP").exit = False
@@ -769,8 +769,8 @@ class NODE_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("node.join", text="Join in New Frame")
-        layout.operator("node.detach", text="Remove from Frame")
+        layout.operator("node.join", text="Join in New Frame", icon = 'JOIN')
+        layout.operator("node.detach", text="Remove from Frame", icon = 'DELETE')
 
         layout.separator()
 
