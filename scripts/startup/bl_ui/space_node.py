@@ -485,7 +485,6 @@ class NODE_MT_node(Menu):
         is_compositor = snode.tree_type == 'CompositorNodeTree'
 
         myvar = layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
-        myvar.view2d_edge_pan = True
         myvar.release_confirm = True
         layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
         layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
@@ -780,7 +779,7 @@ class NODE_MT_context_menu(Menu):
 
         if active_node:
             layout.separator()
-            props = layout.operator("wm.doc_view_manual", text="Online Manual", icon='URL')
+            props = layout.operator("wm.doc_view_manual", text="Blender Online Manual", icon='URL')
             props.doc_id = active_node.bl_idname
 
 
