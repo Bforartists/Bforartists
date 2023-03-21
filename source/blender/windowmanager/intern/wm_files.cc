@@ -43,6 +43,7 @@
 
 #include "PIL_time.h"
 
+#include "BLO_readfile.h"
 #include "BLT_translation.h"
 
 #include "BLF_api.h"
@@ -79,7 +80,6 @@
 #include "BKE_undo_system.h"
 #include "BKE_workspace.h"
 
-#include "BLO_readfile.h"
 #include "BLO_undofile.h" /* to save from an undo memfile */
 #include "BLO_writefile.h"
 
@@ -3261,7 +3261,7 @@ static bool wm_save_mainfile_check(bContext * /*C*/, wmOperator *op)
 {
   char filepath[FILE_MAX];
   RNA_string_get(op->ptr, "filepath", filepath);
-  if (!BLO_has_bfile_extension(filepath)) {
+  if (!BKE_blendfile_extension_check(filepath)) {
     /* some users would prefer BLI_path_extension_replace(),
      * we keep getting nitpicking bug reports about this - campbell */
     BLI_path_extension_ensure(filepath, FILE_MAX, ".blend");
@@ -3556,7 +3556,7 @@ static uiBlock *block_create_autorun_warning(struct bContext *C,
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
   UI_but_flag_enable(but, UI_BUT_ACTIVE_DEFAULT);
 
-  UI_block_bounds_set_centered(block, 14 * U.dpi_fac);
+  UI_block_bounds_set_centered(block, 14 * UI_SCALE_FAC);
 
   return block;
 }
@@ -3934,7 +3934,7 @@ static uiBlock *block_create__close_file_dialog(struct bContext *C,
     wm_block_file_close_save_button(block, post_action);
   }
 
-  UI_block_bounds_set_centered(block, 14 * U.dpi_fac);
+  UI_block_bounds_set_centered(block, 14 * UI_SCALE_FAC);
   return block;
 }
 

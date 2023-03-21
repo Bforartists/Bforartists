@@ -11,7 +11,7 @@
 
 #include "BKE_editmesh.h"
 #include "BKE_editmesh_tangent.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_mesh_tangent.h"
 
 #include "extract_mesh.hh"
@@ -107,7 +107,7 @@ static void extract_tan_init_common(const MeshRenderData *mr,
                                      r_tangent_names,
                                      tan_len,
                                      reinterpret_cast<const float(*)[3]>(mr->poly_normals.data()),
-                                     mr->loop_normals,
+                                     reinterpret_cast<const float(*)[3]>(mr->loop_normals.data()),
                                      orco,
                                      r_loop_data,
                                      mr->loop_len,
@@ -117,7 +117,7 @@ static void extract_tan_init_common(const MeshRenderData *mr,
       BKE_mesh_calc_loop_tangent_ex(reinterpret_cast<const float(*)[3]>(mr->vert_positions.data()),
                                     mr->polys.data(),
                                     mr->polys.size(),
-                                    mr->loops.data(),
+                                    mr->corner_verts.data(),
                                     mr->looptris.data(),
                                     mr->tri_len,
                                     mr->sharp_faces,
@@ -127,10 +127,10 @@ static void extract_tan_init_common(const MeshRenderData *mr,
                                     tan_len,
                                     reinterpret_cast<const float(*)[3]>(mr->vert_normals.data()),
                                     reinterpret_cast<const float(*)[3]>(mr->poly_normals.data()),
-                                    mr->loop_normals,
+                                    reinterpret_cast<const float(*)[3]>(mr->loop_normals.data()),
                                     orco,
                                     r_loop_data,
-                                    mr->loops.size(),
+                                    mr->corner_verts.size(),
                                     &tangent_mask);
     }
   }

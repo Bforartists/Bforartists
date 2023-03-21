@@ -45,7 +45,7 @@ void BKE_mesh_remap_item_define_invalid(MeshPairRemap *map, int index);
  * https://blenderartists.org/t/619105
  *
  * We could also use similar topology mappings inside a same mesh
- * (cf. Campbell's 'select face islands from similar topology' wip work).
+ * (cf. Campbell's 'select face islands from similar topology' WIP work).
  * Also, users will have to check, whether we can get rid of some modes here,
  * not sure all will be useful!
  */
@@ -202,7 +202,8 @@ void BKE_mesh_remap_calc_loops_from_mesh(int mode,
                                          int numverts_dst,
                                          const struct MEdge *edges_dst,
                                          int numedges_dst,
-                                         const struct MLoop *loops_dst,
+                                         const int *corner_verts_dst,
+                                         const int *corner_edges_dst,
                                          int numloops_dst,
                                          const struct MPoly *polys_dst,
                                          int numpolys_dst,
@@ -221,7 +222,8 @@ void BKE_mesh_remap_calc_polys_from_mesh(int mode,
                                          float ray_radius,
                                          const struct Mesh *mesh_dst,
                                          const float (*vert_positions_dst)[3],
-                                         const struct MLoop *loops_dst,
+                                         int numverts_dst,
+                                         const int *corner_verts,
                                          const struct MPoly *polys_dst,
                                          int numpolys_dst,
                                          struct Mesh *me_src,
