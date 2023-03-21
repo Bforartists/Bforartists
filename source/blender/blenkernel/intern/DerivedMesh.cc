@@ -42,7 +42,7 @@
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_material.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_mesh_iterators.h"
 #include "BKE_mesh_mapping.h"
 #include "BKE_mesh_runtime.h"
@@ -99,7 +99,7 @@ static float *dm_getVertArray(DerivedMesh *dm)
 
   if (!positions) {
     positions = (float(*)[3])CustomData_add_layer_named(
-        &dm->vertData, CD_PROP_FLOAT3, CD_SET_DEFAULT, nullptr, dm->getNumVerts(dm), "position");
+        &dm->vertData, CD_PROP_FLOAT3, CD_SET_DEFAULT, dm->getNumVerts(dm), "position");
     CustomData_set_layer_flag(&dm->vertData, CD_PROP_FLOAT3, CD_FLAG_TEMPORARY);
     dm->copyVertArray(dm, positions);
   }
@@ -114,7 +114,7 @@ static MEdge *dm_getEdgeArray(DerivedMesh *dm)
 
   if (!edge) {
     edge = (MEdge *)CustomData_add_layer(
-        &dm->edgeData, CD_MEDGE, CD_SET_DEFAULT, nullptr, dm->getNumEdges(dm));
+        &dm->edgeData, CD_MEDGE, CD_SET_DEFAULT, dm->getNumEdges(dm));
     CustomData_set_layer_flag(&dm->edgeData, CD_MEDGE, CD_FLAG_TEMPORARY);
     dm->copyEdgeArray(dm, edge);
   }
@@ -122,19 +122,32 @@ static MEdge *dm_getEdgeArray(DerivedMesh *dm)
   return edge;
 }
 
-static MLoop *dm_getLoopArray(DerivedMesh *dm)
+static int *dm_getCornerVertArray(DerivedMesh *dm)
 {
-  MLoop *mloop = (MLoop *)CustomData_get_layer_for_write(
-      &dm->loopData, CD_MLOOP, dm->getNumLoops(dm));
+  int *corner_verts = (int *)CustomData_get_layer_named_for_write(
+      &dm->loopData, CD_PROP_INT32, ".corner_vert", dm->getNumLoops(dm));
 
-  if (!mloop) {
-    mloop = (MLoop *)CustomData_add_layer(
-        &dm->loopData, CD_MLOOP, CD_SET_DEFAULT, nullptr, dm->getNumLoops(dm));
-    CustomData_set_layer_flag(&dm->loopData, CD_MLOOP, CD_FLAG_TEMPORARY);
-    dm->copyLoopArray(dm, mloop);
+  if (!corner_verts) {
+    corner_verts = (int *)CustomData_add_layer_named(
+        &dm->loopData, CD_PROP_INT32, CD_SET_DEFAULT, dm->getNumLoops(dm), ".corner_vert");
+    dm->copyCornerVertArray(dm, corner_verts);
   }
 
-  return mloop;
+  return corner_verts;
+}
+
+static int *dm_getCornerEdgeArray(DerivedMesh *dm)
+{
+  int *corner_edges = (int *)CustomData_get_layer_named(
+      &dm->loopData, CD_PROP_INT32, ".corner_edge");
+
+  if (!corner_edges) {
+    corner_edges = (int *)CustomData_add_layer_named(
+        &dm->loopData, CD_PROP_INT32, CD_SET_DEFAULT, dm->getNumLoops(dm), ".corner_edge");
+    dm->copyCornerEdgeArray(dm, corner_edges);
+  }
+
+  return corner_edges;
 }
 
 static MPoly *dm_getPolyArray(DerivedMesh *dm)
@@ -144,7 +157,7 @@ static MPoly *dm_getPolyArray(DerivedMesh *dm)
 
   if (!mpoly) {
     mpoly = (MPoly *)CustomData_add_layer(
-        &dm->polyData, CD_MPOLY, CD_SET_DEFAULT, nullptr, dm->getNumPolys(dm));
+        &dm->polyData, CD_MPOLY, CD_SET_DEFAULT, dm->getNumPolys(dm));
     CustomData_set_layer_flag(&dm->polyData, CD_MPOLY, CD_FLAG_TEMPORARY);
     dm->copyPolyArray(dm, mpoly);
   }
@@ -188,7 +201,8 @@ void DM_init_funcs(DerivedMesh *dm)
   /* default function implementations */
   dm->getVertArray = dm_getVertArray;
   dm->getEdgeArray = dm_getEdgeArray;
-  dm->getLoopArray = dm_getLoopArray;
+  dm->getCornerVertArray = dm_getCornerVertArray;
+  dm->getCornerEdgeArray = dm_getCornerEdgeArray;
   dm->getPolyArray = dm_getPolyArray;
 
   dm->getLoopTriArray = dm_getLoopTriArray;
@@ -505,7 +519,7 @@ static void add_orco_mesh(Object *ob, BMEditMesh *em, Mesh *mesh, Mesh *mesh_orc
     layerorco = (float(*)[3])CustomData_get_layer_for_write(&mesh->vdata, layer, mesh->totvert);
     if (!layerorco) {
       layerorco = (float(*)[3])CustomData_add_layer(
-          &mesh->vdata, layer, CD_SET_DEFAULT, nullptr, mesh->totvert);
+          &mesh->vdata, eCustomDataType(layer), CD_SET_DEFAULT, mesh->totvert);
     }
 
     memcpy(layerorco, orco, sizeof(float[3]) * totvert);
@@ -886,11 +900,11 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
             ((nextmask.vmask | nextmask.emask | nextmask.pmask) & CD_MASK_ORIGINDEX)) {
           /* calc */
           CustomData_add_layer(
-              &mesh_final->vdata, CD_ORIGINDEX, CD_CONSTRUCT, nullptr, mesh_final->totvert);
+              &mesh_final->vdata, CD_ORIGINDEX, CD_CONSTRUCT, mesh_final->totvert);
           CustomData_add_layer(
-              &mesh_final->edata, CD_ORIGINDEX, CD_CONSTRUCT, nullptr, mesh_final->totedge);
+              &mesh_final->edata, CD_ORIGINDEX, CD_CONSTRUCT, mesh_final->totedge);
           CustomData_add_layer(
-              &mesh_final->pdata, CD_ORIGINDEX, CD_CONSTRUCT, nullptr, mesh_final->totpoly);
+              &mesh_final->pdata, CD_ORIGINDEX, CD_CONSTRUCT, mesh_final->totpoly);
 
           /* Not worth parallelizing this,
            * gives less than 0.1% overall speedup in best of best cases... */
@@ -929,11 +943,8 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
       /* add an origspace layer if needed */
       if ((md_datamask->mask.lmask) & CD_MASK_ORIGSPACE_MLOOP) {
         if (!CustomData_has_layer(&mesh_final->ldata, CD_ORIGSPACE_MLOOP)) {
-          CustomData_add_layer(&mesh_final->ldata,
-                               CD_ORIGSPACE_MLOOP,
-                               CD_SET_DEFAULT,
-                               nullptr,
-                               mesh_final->totloop);
+          CustomData_add_layer(
+              &mesh_final->ldata, CD_ORIGSPACE_MLOOP, CD_SET_DEFAULT, mesh_final->totloop);
           mesh_init_origspace(mesh_final);
         }
       }
@@ -1380,11 +1391,8 @@ static void editbmesh_calc_modifiers(struct Depsgraph *depsgraph,
 
       if (mask.lmask & CD_MASK_ORIGSPACE_MLOOP) {
         if (!CustomData_has_layer(&mesh_final->ldata, CD_ORIGSPACE_MLOOP)) {
-          CustomData_add_layer(&mesh_final->ldata,
-                               CD_ORIGSPACE_MLOOP,
-                               CD_SET_DEFAULT,
-                               nullptr,
-                               mesh_final->totloop);
+          CustomData_add_layer(
+              &mesh_final->ldata, CD_ORIGSPACE_MLOOP, CD_SET_DEFAULT, mesh_final->totloop);
           mesh_init_origspace(mesh_final);
         }
       }
@@ -1897,7 +1905,7 @@ static void mesh_init_origspace(Mesh *mesh)
       &mesh->ldata, CD_ORIGSPACE_MLOOP, mesh->totloop);
   const Span<float3> positions = mesh->vert_positions();
   const Span<MPoly> polys = mesh->polys();
-  const Span<MLoop> loops = mesh->loops();
+  const Span<int> corner_verts = mesh->corner_verts();
 
   int j, k;
 
@@ -1913,20 +1921,20 @@ static void mesh_init_origspace(Mesh *mesh)
       }
     }
     else {
-      const MLoop *l = &loops[poly.loopstart];
-      float p_nor[3], co[3];
+      float co[3];
       float mat[3][3];
 
       float min[2] = {FLT_MAX, FLT_MAX}, max[2] = {-FLT_MAX, -FLT_MAX};
       float translate[2], scale[2];
 
-      BKE_mesh_calc_poly_normal(
-          &poly, l, reinterpret_cast<const float(*)[3]>(positions.data()), p_nor);
+      const float3 p_nor = blender::bke::mesh::poly_normal_calc(
+          positions, corner_verts.slice(poly.loopstart, poly.totloop));
+
       axis_dominant_v3_to_m3(mat, p_nor);
 
       vcos_2d.resize(poly.totloop);
-      for (j = 0; j < poly.totloop; j++, l++) {
-        mul_v3_m3v3(co, mat, positions[l->v]);
+      for (j = 0; j < poly.totloop; j++) {
+        mul_v3_m3v3(co, mat, positions[corner_verts[poly.loopstart + j]]);
         copy_v2_v2(vcos_2d[j], co);
 
         for (k = 0; k < 2; k++) {

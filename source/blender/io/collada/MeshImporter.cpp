@@ -22,7 +22,7 @@
 #include "BKE_global.h"
 #include "BKE_lib_id.h"
 #include "BKE_material.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_object.h"
 
 #include "BLI_edgehash.h"
@@ -210,7 +210,7 @@ MeshImporter::MeshImporter(UnitConverter *unitconv,
 }
 
 bool MeshImporter::set_poly_indices(
-    MPoly *poly, MLoop *mloop, int loop_index, const uint *indices, int loop_count)
+    MPoly *poly, int *poly_verts, int loop_index, const uint *indices, int loop_count)
 {
   poly->loopstart = loop_index;
   poly->totloop = loop_count;
@@ -227,8 +227,8 @@ bool MeshImporter::set_poly_indices(
       }
     }
 
-    mloop->v = indices[index];
-    mloop++;
+    *poly_verts = indices[index];
+    poly_verts++;
   }
   return broken_loop;
 }
@@ -351,8 +351,7 @@ void MeshImporter::read_vertices(COLLADAFW::Mesh *mesh, Mesh *me)
   }
 
   me->totvert = pos.getFloatValues()->getCount() / stride;
-  CustomData_add_layer_named(
-      &me->vdata, CD_PROP_FLOAT3, CD_CONSTRUCT, nullptr, me->totvert, "position");
+  CustomData_add_layer_named(&me->vdata, CD_PROP_FLOAT3, CD_CONSTRUCT, me->totvert, "position");
   MutableSpan<float3> positions = me->vert_positions_for_write();
   for (const int i : positions.index_range()) {
     get_vector(positions[i], pos, i, stride);
@@ -456,8 +455,9 @@ void MeshImporter::allocate_poly_data(COLLADAFW::Mesh *collada_mesh, Mesh *me)
   if (total_poly_count > 0) {
     me->totpoly = total_poly_count;
     me->totloop = total_loop_count;
-    CustomData_add_layer(&me->pdata, CD_MPOLY, CD_SET_DEFAULT, nullptr, me->totpoly);
-    CustomData_add_layer(&me->ldata, CD_MLOOP, CD_SET_DEFAULT, nullptr, me->totloop);
+    CustomData_add_layer(&me->pdata, CD_MPOLY, CD_SET_DEFAULT, me->totpoly);
+    CustomData_add_layer_named(
+        &me->ldata, CD_PROP_INT32, CD_SET_DEFAULT, me->totloop, ".corner_vert");
 
     uint totuvset = collada_mesh->getUVCoords().getInputInfosArray().getCount();
     for (int i = 0; i < totuvset; i++) {
@@ -474,7 +474,7 @@ void MeshImporter::allocate_poly_data(COLLADAFW::Mesh *collada_mesh, Mesh *me)
         COLLADAFW::String &uvname = info->mName;
         /* Allocate space for UV_data */
         CustomData_add_layer_named(
-            &me->ldata, CD_PROP_FLOAT2, CD_SET_DEFAULT, nullptr, me->totloop, uvname.c_str());
+            &me->ldata, CD_PROP_FLOAT2, CD_SET_DEFAULT, me->totloop, uvname.c_str());
       }
       /* activate the first uv map */
       CustomData_set_layer_active(&me->ldata, CD_PROP_FLOAT2, 0);
@@ -487,7 +487,7 @@ void MeshImporter::allocate_poly_data(COLLADAFW::Mesh *collada_mesh, Mesh *me)
             collada_mesh->getColors().getInputInfosArray()[i];
         COLLADAFW::String colname = extract_vcolname(info->mName);
         CustomData_add_layer_named(
-            &me->ldata, CD_PROP_BYTE_COLOR, CD_SET_DEFAULT, nullptr, me->totloop, colname.c_str());
+            &me->ldata, CD_PROP_BYTE_COLOR, CD_SET_DEFAULT, me->totloop, colname.c_str());
       }
       BKE_id_attributes_active_color_set(
           &me->id, CustomData_get_layer_name(&me->ldata, CD_PROP_BYTE_COLOR, 0));
@@ -558,7 +558,7 @@ void MeshImporter::mesh_add_edges(Mesh *mesh, int len)
   CustomData_copy_data(&mesh->edata, &edata, 0, 0, mesh->totedge);
 
   if (!CustomData_has_layer(&edata, CD_MEDGE)) {
-    CustomData_add_layer(&edata, CD_MEDGE, CD_SET_DEFAULT, nullptr, totedge);
+    CustomData_add_layer(&edata, CD_MEDGE, CD_SET_DEFAULT, totedge);
   }
 
   CustomData_free(&mesh->edata, mesh->totedge);
@@ -609,8 +609,7 @@ void MeshImporter::read_polys(COLLADAFW::Mesh *collada_mesh,
   VCOLDataWrapper vcol(collada_mesh->getColors());
 
   MutableSpan<MPoly> polys = me->polys_for_write();
-  MutableSpan<MLoop> loops = me->loops_for_write();
-  MLoop *mloop = loops.data();
+  MutableSpan<int> corner_verts = me->corner_verts_for_write();
   int poly_index = 0;
   int loop_index = 0;
 
@@ -621,7 +620,7 @@ void MeshImporter::read_polys(COLLADAFW::Mesh *collada_mesh,
       CustomData_get_layer_named_for_write(&me->pdata, CD_PROP_BOOL, "sharp_face", me->totpoly));
   if (!sharp_faces) {
     sharp_faces = static_cast<bool *>(CustomData_add_layer_named(
-        &me->pdata, CD_PROP_BOOL, CD_SET_DEFAULT, NULL, me->totpoly, "sharp_face"));
+        &me->pdata, CD_PROP_BOOL, CD_SET_DEFAULT, me->totpoly, "sharp_face"));
   }
 
   COLLADAFW::MeshPrimitiveArray &prim_arr = collada_mesh->getMeshPrimitives();
@@ -660,7 +659,11 @@ void MeshImporter::read_polys(COLLADAFW::Mesh *collada_mesh,
           /* For each triangle store indices of its 3 vertices */
           uint triangle_vertex_indices[3] = {
               first_vertex, position_indices[1], position_indices[2]};
-          set_poly_indices(&polys[poly_index], mloop, loop_index, triangle_vertex_indices, 3);
+          set_poly_indices(&polys[poly_index],
+                           &corner_verts[loop_index],
+                           loop_index,
+                           triangle_vertex_indices,
+                           3);
 
           if (mp_has_normals) { /* vertex normals, same implementation as for the triangles */
             /* The same for vertices normals. */
@@ -669,7 +672,6 @@ void MeshImporter::read_polys(COLLADAFW::Mesh *collada_mesh,
             normal_indices++;
           }
 
-          mloop += 3;
           poly_index++;
           loop_index += 3;
           prim.totpoly++;
@@ -704,7 +706,7 @@ void MeshImporter::read_polys(COLLADAFW::Mesh *collada_mesh,
         }
 
         bool broken_loop = set_poly_indices(
-            &polys[poly_index], mloop, loop_index, position_indices, vcount);
+            &polys[poly_index], &corner_verts[loop_index], loop_index, position_indices, vcount);
         if (broken_loop) {
           invalid_loop_holes += 1;
         }
@@ -769,7 +771,6 @@ void MeshImporter::read_polys(COLLADAFW::Mesh *collada_mesh,
         }
 
         poly_index++;
-        mloop += vcount;
         loop_index += vcount;
         start_index += vcount;
         prim.totpoly++;
@@ -891,8 +892,8 @@ std::string *MeshImporter::get_geometry_name(const std::string &mesh_name)
 
 static bool bc_has_out_of_bound_indices(Mesh *me)
 {
-  for (const MLoop &loop : me->loops()) {
-    if (loop.v >= me->totvert) {
+  for (const int vert_i : me->corner_verts()) {
+    if (vert_i >= me->totvert) {
       return true;
     }
   }
@@ -1155,7 +1156,7 @@ bool MeshImporter::write_geometry(const COLLADAFW::Geometry *geom)
    * BKE_mesh_set_custom_normals()'s internals expect me->medge to be populated
    * and for the MLoops to have correct edge indices. */
   if (use_custom_normals && !loop_normals.is_empty()) {
-    /* BKE_mesh_set_custom_normals()'s internals also expect that each MLoop
+    /* BKE_mesh_set_custom_normals()'s internals also expect that each corner
      * has a valid vertex index, which may not be the case due to the existing
      * logic in read_polys(). This check isn't necessary in the no-custom-normals
      * case because the invalid MLoops get stripped in a later step. */

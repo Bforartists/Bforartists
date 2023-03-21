@@ -16,7 +16,7 @@
 #include "BLI_utildefines.h"
 
 #include "DNA_anim_types.h"
-#include "DNA_gpencil_types.h"
+#include "DNA_gpencil_legacy_types.h"
 #include "DNA_key_types.h"
 #include "DNA_mask_types.h"
 #include "DNA_object_types.h"
@@ -30,7 +30,7 @@
 #include "BKE_context.h"
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
-#include "BKE_gpencil.h"
+#include "BKE_gpencil_legacy.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_mask.h"
@@ -3652,7 +3652,12 @@ static bool get_normalized_fcurve_bounds(FCurve *fcu,
                                          rctf *r_bounds)
 {
   const bool fcu_selection_only = false;
-  BKE_fcurve_calc_bounds(fcu, fcu_selection_only, include_handles, range, r_bounds);
+  const bool found_bounds = BKE_fcurve_calc_bounds(
+      fcu, fcu_selection_only, include_handles, range, r_bounds);
+
+  if (!found_bounds) {
+    return false;
+  }
 
   const short mapping_flag = ANIM_get_normalization_flags(ac);
 
