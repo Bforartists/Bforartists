@@ -3050,7 +3050,7 @@ static void ui_textedit_set_cursor_pos(uiBut *but, uiHandleButtonData *data, con
 
   if (ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
     if (but->flag & UI_HAS_ICON) {
-      startx += UI_DPI_ICON_SIZE / aspect;
+      startx += UI_ICON_SIZE / aspect;
     }
   }
   startx += (UI_TEXT_MARGIN_X * U.widget_unit - U.pixelsize) / aspect;
@@ -4048,7 +4048,7 @@ static void ui_numedit_begin(uiBut *but, uiHandleButtonData *data)
       const double value_step = is_float ?
                                     double(number_but->step_size * UI_PRECISION_FLOAT_SCALE) :
                                     int(number_but->step_size);
-      const float drag_map_softrange_max = UI_DRAG_MAP_SOFT_RANGE_PIXEL_MAX * UI_DPI_FAC;
+      const float drag_map_softrange_max = UI_DRAG_MAP_SOFT_RANGE_PIXEL_MAX * UI_SCALE_FAC;
       const float softrange_max = min_ff(
           softrange,
           2 * (is_float ? min_ff(value_step, value_step_float_min) *
@@ -5156,7 +5156,7 @@ static bool ui_numedit_but_NUM(uiButNumber *but,
 
     if (is_float == false) {
       /* at minimum, moving cursor 2 pixels should change an int button. */
-      CLAMP_MIN(non_linear_scale, 0.5f * UI_DPI_FAC);
+      CLAMP_MIN(non_linear_scale, 0.5f * UI_SCALE_FAC);
     }
 
     data->dragf += (float(mx - data->draglastx) / deler) * non_linear_scale;
@@ -7027,7 +7027,7 @@ static int ui_do_but_COLORBAND(
       else {
         CBData *cbd;
         /* ignore zoom-level for mindist */
-        int mindist = (50 * UI_DPI_FAC) * block->aspect;
+        int mindist = (50 * UI_SCALE_FAC) * block->aspect;
         int xco;
         data->dragstartx = mx;
         data->dragstarty = my;
@@ -7215,7 +7215,7 @@ static int ui_do_but_CURVE(
       CurveMapping *cumap = (CurveMapping *)but->poin;
       CurveMap *cuma = cumap->cm + cumap->cur;
       const float m_xy[2] = {float(mx), float(my)};
-      float dist_min_sq = square_f(U.dpi_fac * 14.0f); /* 14 pixels radius */
+      float dist_min_sq = square_f(UI_SCALE_FAC * 14.0f); /* 14 pixels radius */
       int sel = -1;
 
       if (event->modifier & KM_CTRL) {
@@ -7249,7 +7249,7 @@ static int ui_do_but_CURVE(
         BLI_rctf_transform_pt_v(&but->rect, &cumap->curr, f_xy, &cmp[0].x);
 
         /* with 160px height 8px should translate to the old 0.05 coefficient at no zoom */
-        dist_min_sq = square_f(U.dpi_fac * 8.0f);
+        dist_min_sq = square_f(UI_SCALE_FAC * 8.0f);
 
         /* loop through the curve segment table and find what's near the mouse. */
         for (int i = 1; i <= CM_TABLE; i++) {
@@ -7383,7 +7383,7 @@ static bool ui_numedit_but_CURVEPROFILE(uiBlock *block,
 
   if (snap) {
     const float d[2] = {float(mx - data->dragstartx), float(data->dragstarty)};
-    if (len_squared_v2(d) < (9.0f * U.dpi_fac)) {
+    if (len_squared_v2(d) < (9.0f * UI_SCALE_FAC)) {
       snap = false;
     }
   }
@@ -7529,7 +7529,8 @@ static int ui_do_but_CURVEPROFILE(
 
       /* Check for selecting of a point by finding closest point in radius. */
       CurveProfilePoint *pts = profile->path;
-      float dist_min_sq = square_f(U.dpi_fac * 14.0f); /* 14 pixels radius for selecting points. */
+      float dist_min_sq = square_f(UI_SCALE_FAC *
+                                   14.0f); /* 14 pixels radius for selecting points. */
       int i_selected = -1;
       short selection_type = 0; /* For handle selection. */
       for (int i = 0; i < profile->path_len; i++) {
@@ -7571,7 +7572,7 @@ static int ui_do_but_CURVEPROFILE(
         CurveProfilePoint *table = profile->table;
         BLI_rctf_transform_pt_v(&but->rect, &profile->view_rect, f_xy, &table[0].x);
 
-        dist_min_sq = square_f(U.dpi_fac * 8.0f); /* 8 pixel radius from each table point. */
+        dist_min_sq = square_f(UI_SCALE_FAC * 8.0f); /* 8 pixel radius from each table point. */
 
         /* Loop through the path's high resolution table and find what's near the click. */
         for (int i = 1; i <= BKE_curveprofile_table_size(profile); i++) {
@@ -7941,6 +7942,16 @@ static int ui_do_button(bContext *C, uiBlock *block, uiBut *but, const wmEvent *
     if (is_disabled) {
       return WM_UI_HANDLER_CONTINUE;
     }
+
+#ifdef WITH_INPUT_NDOF
+    /* 2D view navigation conflicts with using NDOF to adjust colors,
+     * especially in the node-editor, see: #105224. */
+    if (event->type == NDOF_MOTION) {
+      if (data->region->type->keymapflag & ED_KEYMAP_VIEW2D) {
+        return WM_UI_HANDLER_CONTINUE;
+      }
+    }
+#endif /* WITH_INPUT_NDOF */
 
     if (do_paste) {
       ui_but_paste(C, but, data, event->modifier & KM_ALT);
@@ -8741,15 +8752,6 @@ static uiBut *ui_context_button_active(const ARegion *region, bool (*but_check_c
   return but_found;
 }
 
-static bool ui_context_rna_button_active_test(const uiBut *but)
-{
-  return (but->rnapoin.data != nullptr);
-}
-static uiBut *ui_context_rna_button_active(const bContext *C)
-{
-  return ui_context_button_active(CTX_wm_region(C), ui_context_rna_button_active_test);
-}
-
 uiBut *UI_context_active_but_get(const bContext *C)
 {
   return ui_context_button_active(CTX_wm_region(C), nullptr);
@@ -8776,12 +8778,12 @@ uiBlock *UI_region_block_find_mouse_over(const ARegion *region, const int xy[2],
   return ui_block_find_mouse_over_ex(region, xy, only_clip);
 }
 
-uiBut *UI_context_active_but_prop_get(const bContext *C,
-                                      PointerRNA *r_ptr,
-                                      PropertyRNA **r_prop,
-                                      int *r_index)
+uiBut *UI_region_active_but_prop_get(const ARegion *region,
+                                     PointerRNA *r_ptr,
+                                     PropertyRNA **r_prop,
+                                     int *r_index)
 {
-  uiBut *activebut = UI_context_active_but_get_respect_menu(C);
+  uiBut *activebut = UI_region_active_but_get(region);
 
   if (activebut && activebut->rnapoin.data) {
     *r_ptr = activebut->rnapoin;
@@ -8795,6 +8797,16 @@ uiBut *UI_context_active_but_prop_get(const bContext *C,
   }
 
   return activebut;
+}
+
+uiBut *UI_context_active_but_prop_get(const bContext *C,
+                                      PointerRNA *r_ptr,
+                                      PropertyRNA **r_prop,
+                                      int *r_index)
+{
+  ARegion *region_menu = CTX_wm_menu(C);
+  return UI_region_active_but_prop_get(
+      region_menu ? region_menu : CTX_wm_region(C), r_ptr, r_prop, r_index);
 }
 
 void UI_context_active_but_prop_handle(bContext *C, const bool handle_undo)
@@ -10139,7 +10151,7 @@ float ui_block_calc_pie_segment(uiBlock *block, const float event_xy[2])
 
   const float len = normalize_v2_v2(block->pie_data.pie_dir, seg2);
 
-  if (len < U.pie_menu_threshold * U.dpi_fac) {
+  if (len < U.pie_menu_threshold * UI_SCALE_FAC) {
     block->pie_data.flags |= UI_PIE_INVALID_DIR;
   }
   else {
@@ -10949,7 +10961,7 @@ static int ui_pie_handler(bContext *C, const wmEvent *event, uiPopupBlockHandle 
         if (!(block->pie_data.flags & UI_PIE_ANIMATION_FINISHED)) {
           const double final_time = 0.01 * U.pie_animation_timeout;
           float fac = duration / final_time;
-          const float pie_radius = U.pie_menu_radius * UI_DPI_FAC;
+          const float pie_radius = U.pie_menu_radius * UI_SCALE_FAC;
 
           if (fac > 1.0f) {
             fac = 1.0f;
@@ -11024,7 +11036,7 @@ static int ui_pie_handler(bContext *C, const wmEvent *event, uiPopupBlockHandle 
           uiBut *but = ui_region_find_active_but(menu->region);
 
           if (but && (U.pie_menu_confirm > 0) &&
-              (dist >= U.dpi_fac * (U.pie_menu_threshold + U.pie_menu_confirm))) {
+              (dist >= UI_SCALE_FAC * (U.pie_menu_threshold + U.pie_menu_confirm))) {
             return ui_but_pie_menu_apply(C, menu, but, true);
           }
 
@@ -11049,7 +11061,7 @@ static int ui_pie_handler(bContext *C, const wmEvent *event, uiPopupBlockHandle 
             /* here instead, we use the offset location to account for the initial
              * direction timeout */
             if ((U.pie_menu_confirm > 0) &&
-                (dist >= U.dpi_fac * (U.pie_menu_threshold + U.pie_menu_confirm))) {
+                (dist >= UI_SCALE_FAC * (U.pie_menu_threshold + U.pie_menu_confirm))) {
               block->pie_data.flags |= UI_PIE_GESTURE_END_WAIT;
               copy_v2_v2(block->pie_data.last_pos, event_xy);
               block->pie_data.duration_gesture = duration;

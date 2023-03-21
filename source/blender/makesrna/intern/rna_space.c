@@ -32,7 +32,7 @@
 #include "BLI_uuid.h"
 
 #include "DNA_action_types.h"
-#include "DNA_gpencil_types.h"
+#include "DNA_gpencil_legacy_types.h"
 #include "DNA_key_types.h"
 #include "DNA_mask_types.h"
 #include "DNA_material_types.h"
@@ -2653,8 +2653,8 @@ static void rna_SpaceNodeEditor_cursor_location_from_region(SpaceNode *snode,
   float cursor_location[2];
 
   UI_view2d_region_to_view(&region->v2d, x, y, &cursor_location[0], &cursor_location[1]);
-  cursor_location[0] /= UI_DPI_FAC;
-  cursor_location[1] /= UI_DPI_FAC;
+  cursor_location[0] /= UI_SCALE_FAC;
+  cursor_location[1] /= UI_SCALE_FAC;
 
   ED_node_cursor_location_set(snode, cursor_location);
 }

@@ -1770,7 +1770,7 @@ static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
     {sizeof(MRecast), "MRecast", 1, N_("Recast"), nullptr, nullptr, nullptr, nullptr},
     /* 25: CD_MPOLY */
     {sizeof(MPoly), "MPoly", 1, N_("NGon Face"), nullptr, nullptr, nullptr, nullptr, nullptr},
-    /* 26: CD_MLOOP */
+    /* 26: CD_MLOOP */ /* DEPRECATED*/
     {sizeof(MLoop),
      "MLoop",
      1,
@@ -2030,14 +2030,14 @@ const CustomData_MeshMasks CD_MASK_BAREMESH = {
     /*emask*/ CD_MASK_MEDGE,
     /*fmask*/ 0,
     /*pmask*/ CD_MASK_MPOLY | CD_MASK_FACEMAP,
-    /*lmask*/ CD_MASK_MLOOP,
+    /*lmask*/ CD_MASK_PROP_INT32,
 };
 const CustomData_MeshMasks CD_MASK_BAREMESH_ORIGINDEX = {
     /*vmask*/ CD_MASK_PROP_FLOAT3 | CD_MASK_ORIGINDEX,
     /*emask*/ CD_MASK_MEDGE | CD_MASK_ORIGINDEX,
     /*fmask*/ 0,
     /*pmask*/ CD_MASK_MPOLY | CD_MASK_FACEMAP | CD_MASK_ORIGINDEX,
-    /*lmask*/ CD_MASK_MLOOP,
+    /*lmask*/ CD_MASK_PROP_INT32,
 };
 const CustomData_MeshMasks CD_MASK_MESH = {
     /*vmask*/ (CD_MASK_PROP_FLOAT3 | CD_MASK_MDEFORMVERT | CD_MASK_MVERT_SKIN |
@@ -2048,8 +2048,7 @@ const CustomData_MeshMasks CD_MASK_MESH = {
     /*pmask*/
     (CD_MASK_MPOLY | CD_MASK_FACEMAP | CD_MASK_FREESTYLE_FACE | CD_MASK_PROP_ALL),
     /*lmask*/
-    (CD_MASK_MLOOP | CD_MASK_MDISPS | CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_GRID_PAINT_MASK |
-     CD_MASK_PROP_ALL),
+    (CD_MASK_MDISPS | CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_GRID_PAINT_MASK | CD_MASK_PROP_ALL),
 };
 const CustomData_MeshMasks CD_MASK_DERIVEDMESH = {
     /*vmask*/ (CD_MASK_ORIGINDEX | CD_MASK_MDEFORMVERT | CD_MASK_SHAPEKEY | CD_MASK_MVERT_SKIN |
@@ -2090,9 +2089,9 @@ const CustomData_MeshMasks CD_MASK_EVERYTHING = {
     (CD_MASK_MPOLY | CD_MASK_BM_ELEM_PYPTR | CD_MASK_ORIGINDEX | CD_MASK_FACEMAP |
      CD_MASK_FREESTYLE_FACE | CD_MASK_PROP_ALL),
     /*lmask*/
-    (CD_MASK_MLOOP | CD_MASK_BM_ELEM_PYPTR | CD_MASK_MDISPS | CD_MASK_NORMAL |
-     CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_MLOOPTANGENT | CD_MASK_PREVIEW_MLOOPCOL |
-     CD_MASK_ORIGSPACE_MLOOP | CD_MASK_GRID_PAINT_MASK | CD_MASK_PROP_ALL),
+    (CD_MASK_BM_ELEM_PYPTR | CD_MASK_MDISPS | CD_MASK_NORMAL | CD_MASK_CUSTOMLOOPNORMAL |
+     CD_MASK_MLOOPTANGENT | CD_MASK_PREVIEW_MLOOPCOL | CD_MASK_ORIGSPACE_MLOOP |
+     CD_MASK_GRID_PAINT_MASK | CD_MASK_PROP_ALL),
 };
 
 static const LayerTypeInfo *layerType_getInfo(int type)
@@ -2686,6 +2685,15 @@ void CustomData_clear_layer_flag(CustomData *data, const int type, const int fla
   }
 }
 
+bool CustomData_layer_is_anonymous(const struct CustomData *data, int type, int n)
+{
+  const int layer_index = CustomData_get_layer_index_n(data, type, n);
+
+  BLI_assert(layer_index >= 0);
+
+  return data->layers[layer_index].anonymous_id != nullptr;
+}
+
 static bool customData_resize(CustomData *data, const int amount)
 {
   CustomDataLayer *tmp = static_cast<CustomDataLayer *>(
@@ -2835,7 +2843,7 @@ static CustomDataLayer *customData_add_layer__internal(CustomData *data,
   return &data->layers[index];
 }
 
-void *CustomData_add_layer(
+static void *customdata_add_layer(
     CustomData *data, const int type, eCDAllocType alloctype, void *layerdata, const int totelem)
 {
   const LayerTypeInfo *typeInfo = layerType_getInfo(type);
@@ -2851,12 +2859,28 @@ void *CustomData_add_layer(
   return nullptr;
 }
 
-void *CustomData_add_layer_named(CustomData *data,
-                                 const int type,
-                                 const eCDAllocType alloctype,
-                                 void *layerdata,
-                                 const int totelem,
-                                 const char *name)
+void *CustomData_add_layer(CustomData *data,
+                           const eCustomDataType type,
+                           const eCDAllocType alloctype,
+                           const int totelem)
+{
+  return customdata_add_layer(data, type, alloctype, nullptr, totelem);
+}
+
+const void *CustomData_add_layer_with_data(CustomData *data,
+                                           const eCustomDataType type,
+                                           void *layer_data,
+                                           const int totelem)
+{
+  return customdata_add_layer(data, type, CD_ASSIGN, layer_data, totelem);
+}
+
+static void *customdata_add_layer_named(CustomData *data,
+                                        const eCustomDataType type,
+                                        const eCDAllocType alloctype,
+                                        void *layerdata,
+                                        const int totelem,
+                                        const char *name)
 {
   CustomDataLayer *layer = customData_add_layer__internal(
       data, type, alloctype, layerdata, totelem, name);
@@ -2867,6 +2891,21 @@ void *CustomData_add_layer_named(CustomData *data,
   }
 
   return nullptr;
+}
+
+void *CustomData_add_layer_named(CustomData *data,
+                                 const eCustomDataType type,
+                                 const eCDAllocType alloctype,
+                                 const int totelem,
+                                 const char *name)
+{
+  return customdata_add_layer_named(data, type, alloctype, nullptr, totelem, name);
+}
+
+const void *CustomData_add_layer_named_with_data(
+    CustomData *data, const eCustomDataType type, void *layer_data, int totelem, const char *name)
+{
+  return customdata_add_layer_named(data, type, CD_ASSIGN, layer_data, totelem, name);
 }
 
 void *CustomData_add_layer_anonymous(CustomData *data,
