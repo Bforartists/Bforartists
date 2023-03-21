@@ -13,7 +13,7 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "DNA_gpencil_types.h"
+#include "DNA_gpencil_legacy_types.h"
 #include "DNA_lattice_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
@@ -31,7 +31,7 @@
 #include "BKE_customdata.h"
 #include "BKE_data_transfer.h"
 #include "BKE_deform.h" /* own include */
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.h"
 #include "BKE_object.h"
 #include "BKE_object_deform.h"
@@ -1074,7 +1074,7 @@ void BKE_defvert_extract_vgroup_to_edgeweights(const MDeformVert *dvert,
 void BKE_defvert_extract_vgroup_to_loopweights(const MDeformVert *dvert,
                                                const int defgroup,
                                                const int verts_num,
-                                               const MLoop *loops,
+                                               const int *corner_verts,
                                                const int loops_num,
                                                const bool invert_vgroup,
                                                float *r_weights)
@@ -1088,9 +1088,7 @@ void BKE_defvert_extract_vgroup_to_loopweights(const MDeformVert *dvert,
         dvert, defgroup, verts_num, invert_vgroup, tmp_weights);
 
     while (i--) {
-      const MLoop *ml = &loops[i];
-
-      r_weights[i] = tmp_weights[ml->v];
+      r_weights[i] = tmp_weights[corner_verts[i]];
     }
 
     MEM_freeN(tmp_weights);
@@ -1103,7 +1101,7 @@ void BKE_defvert_extract_vgroup_to_loopweights(const MDeformVert *dvert,
 void BKE_defvert_extract_vgroup_to_polyweights(const MDeformVert *dvert,
                                                const int defgroup,
                                                const int verts_num,
-                                               const MLoop *loops,
+                                               const int *corner_verts,
                                                const int /*loops_num*/,
                                                const MPoly *polys,
                                                const int polys_num,
@@ -1120,12 +1118,12 @@ void BKE_defvert_extract_vgroup_to_polyweights(const MDeformVert *dvert,
 
     while (i--) {
       const MPoly &poly = polys[i];
-      const MLoop *ml = &loops[poly.loopstart];
+      const int *corner_vert = &corner_verts[poly.loopstart];
       int j = poly.totloop;
       float w = 0.0f;
 
-      for (; j--; ml++) {
-        w += tmp_weights[ml->v];
+      for (; j--; corner_vert++) {
+        w += tmp_weights[*corner_vert];
       }
       r_weights[i] = w / float(poly.totloop);
     }
@@ -1262,7 +1260,7 @@ static bool data_transfer_layersmapping_vgroups_multisrc_to_dst(ListBase *r_map,
          * Again, use_create is not relevant in this case */
         if (!data_dst) {
           data_dst = static_cast<MDeformVert *>(
-              CustomData_add_layer(cd_dst, CD_MDEFORMVERT, CD_SET_DEFAULT, nullptr, num_elem_dst));
+              CustomData_add_layer(cd_dst, CD_MDEFORMVERT, CD_SET_DEFAULT, num_elem_dst));
         }
 
         while (idx_src--) {
@@ -1323,8 +1321,8 @@ static bool data_transfer_layersmapping_vgroups_multisrc_to_dst(ListBase *r_map,
           /* At this stage, we **need** a valid CD_MDEFORMVERT layer on dest!
            * use_create is not relevant in this case */
           if (!data_dst) {
-            data_dst = static_cast<MDeformVert *>(CustomData_add_layer(
-                cd_dst, CD_MDEFORMVERT, CD_SET_DEFAULT, nullptr, num_elem_dst));
+            data_dst = static_cast<MDeformVert *>(
+                CustomData_add_layer(cd_dst, CD_MDEFORMVERT, CD_SET_DEFAULT, num_elem_dst));
           }
 
           data_transfer_layersmapping_add_item(r_map,
@@ -1467,7 +1465,7 @@ bool data_transfer_layersmapping_vgroups(ListBase *r_map,
        * use_create is not relevant in this case */
       if (!data_dst) {
         data_dst = static_cast<MDeformVert *>(
-            CustomData_add_layer(cd_dst, CD_MDEFORMVERT, CD_SET_DEFAULT, nullptr, num_elem_dst));
+            CustomData_add_layer(cd_dst, CD_MDEFORMVERT, CD_SET_DEFAULT, num_elem_dst));
       }
 
       data_transfer_layersmapping_add_item(r_map,

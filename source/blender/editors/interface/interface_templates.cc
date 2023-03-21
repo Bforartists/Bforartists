@@ -39,13 +39,14 @@
 #include "BLT_translation.h"
 
 #include "BKE_action.h"
+#include "BKE_blendfile.h"
 #include "BKE_colorband.h"
 #include "BKE_colortools.h"
 #include "BKE_constraint.h"
 #include "BKE_context.h"
 #include "BKE_curveprofile.h"
 #include "BKE_global.h"
-#include "BKE_gpencil_modifier.h"
+#include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_idprop.h"
 #include "BKE_idtype.h"
 #include "BKE_layer.h"
@@ -78,8 +79,6 @@
 
 #include "WM_api.h"
 #include "WM_types.h"
-
-#include "BLO_readfile.h"
 
 #include "UI_interface.h"
 #include "UI_interface_icons.h"
@@ -5699,7 +5698,7 @@ void uiTemplateColorPicker(uiLayout *layout,
                                                  "",
                                                  WHEEL_SIZE + 6,
                                                  0,
-                                                 14 * UI_DPI_FAC,
+                                                 14 * UI_SCALE_FAC,
                                                  WHEEL_SIZE,
                                                  ptr,
                                                  prop,
@@ -5720,7 +5719,7 @@ void uiTemplateColorPicker(uiLayout *layout,
                                                  0,
                                                  4,
                                                  WHEEL_SIZE,
-                                                 18 * UI_DPI_FAC,
+                                                 18 * UI_SCALE_FAC,
                                                  ptr,
                                                  prop,
                                                  -1,
@@ -5740,7 +5739,7 @@ void uiTemplateColorPicker(uiLayout *layout,
                                                  0,
                                                  4,
                                                  WHEEL_SIZE,
-                                                 18 * UI_DPI_FAC,
+                                                 18 * UI_SCALE_FAC,
                                                  ptr,
                                                  prop,
                                                  -1,
@@ -5760,7 +5759,7 @@ void uiTemplateColorPicker(uiLayout *layout,
                                                  0,
                                                  4,
                                                  WHEEL_SIZE,
-                                                 18 * UI_DPI_FAC,
+                                                 18 * UI_SCALE_FAC,
                                                  ptr,
                                                  prop,
                                                  -1,
@@ -5782,7 +5781,7 @@ void uiTemplateColorPicker(uiLayout *layout,
                                                  "",
                                                  WHEEL_SIZE + 6,
                                                  0,
-                                                 14 * UI_DPI_FAC,
+                                                 14 * UI_SCALE_FAC,
                                                  WHEEL_SIZE,
                                                  ptr,
                                                  prop,
@@ -6135,6 +6134,8 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
   ScrArea *area = CTX_wm_area(C);
   void *owner = nullptr;
   int handle_event, icon = 0;
+  const char *op_name = nullptr;
+  const char *op_description = nullptr;
 
   uiBlock *block = uiLayoutGetBlock(layout);
   UI_block_layout_set_current(block, layout);
@@ -6196,6 +6197,10 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
     if (WM_jobs_test(wm, scene, WM_JOB_TYPE_RENDER)) {
       handle_event = B_STOPRENDER;
       icon = ICON_SCENE;
+      if (U.render_display_type != USER_RENDER_DISPLAY_NONE) {
+        op_name = "RENDER_OT_view_show";
+        op_description = "Show the render window";
+      }
       break;
     }
     if (WM_jobs_test(wm, scene, WM_JOB_TYPE_COMPOSITE)) {
@@ -6252,12 +6257,26 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
 
     const char *name = active ? WM_jobs_name(wm, owner) : "Canceling...";
 
-    /* job name and icon */
+    /* job icon as a button */
+    if (op_name) {
+      uiDefIconButO(block,
+                    UI_BTYPE_BUT,
+                    op_name,
+                    WM_OP_INVOKE_DEFAULT,
+                    icon,
+                    0,
+                    0,
+                    UI_UNIT_X,
+                    UI_UNIT_Y,
+                    TIP_(op_description));
+    }
+
+    /* job name and icon if not previously set */
     const int textwidth = UI_fontstyle_string_width(fstyle, name);
     uiDefIconTextBut(block,
                      UI_BTYPE_LABEL,
                      0,
-                     icon,
+                     op_name ? 0 : icon,
                      name,
                      0,
                      0,
@@ -6370,7 +6389,7 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
   UI_fontstyle_set(&style->widgetlabel);
   int width = BLF_width(style->widgetlabel.uifont_id, report->message, report->len);
   width = min_ii(int(rti->widthfac * width), width);
-  width = max_ii(width, 10 * UI_DPI_FAC);
+  width = max_ii(width, 10 * UI_SCALE_FAC);
 
   UI_block_align_begin(block);
 
@@ -6381,7 +6400,7 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
                  "",
                  0,
                  0,
-                 UI_UNIT_X + (6 * UI_DPI_FAC),
+                 UI_UNIT_X + (6 * UI_SCALE_FAC),
                  UI_UNIT_Y,
                  nullptr,
                  0.0f,
@@ -6397,7 +6416,7 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
                  UI_BTYPE_ROUNDBOX,
                  0,
                  "",
-                 UI_UNIT_X + (6 * UI_DPI_FAC),
+                 UI_UNIT_X + (6 * UI_SCALE_FAC),
                  0,
                  UI_UNIT_X + width,
                  UI_UNIT_Y,
@@ -6421,7 +6440,7 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
                       "SCREEN_OT_info_log_show",
                       WM_OP_INVOKE_REGION_WIN,
                       UI_icon_from_report_type(report->type),
-                      (3 * UI_DPI_FAC),
+                      (3 * UI_SCALE_FAC),
                       0,
                       UI_UNIT_X,
                       UI_UNIT_Y,
@@ -7045,7 +7064,7 @@ int uiTemplateRecentFiles(uiLayout *layout, int rows)
     uiItemFullO(layout,
                 "WM_OT_open_mainfile",
                 filename,
-                BLO_has_bfile_extension(filename) ? ICON_FILE_BLEND : ICON_FILE_BACKUP,
+                BKE_blendfile_extension_check(filename) ? ICON_FILE_BLEND : ICON_FILE_BACKUP,
                 nullptr,
                 WM_OP_INVOKE_DEFAULT,
                 0,

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Beta (b'4e3286478670')\n"
+"Project-Id-Version: Blender 3.5.0 Beta (b'3962d9b931f1')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2023-03-06 08:08:35\n"
+"POT-Creation-Date: 2023-03-20 13:37:56\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -9290,10 +9290,6 @@ msgid "Data Depth"
 msgstr "Profundidade de dados"
 
 
-msgid "Number"
-msgstr "Número(s)"
-
-
 msgid "Randomness"
 msgstr "Aleatorização"
 
@@ -11311,22 +11307,6 @@ msgstr "Máscara de textura de sobreposição de alfa"
 
 msgid "Editable falloff curve"
 msgstr "Curva de decaimento editável."
-
-
-msgid "Root"
-msgstr "Raiz"
-
-
-msgid "Sharp"
-msgstr "Ressaltar"
-
-
-msgid "Sharper"
-msgstr "Aguçar"
-
-
-msgid "Inverse Square"
-msgstr "Inverso quadrático"
 
 
 msgid "Paint most on faces pointing towards the view according to this angle"
@@ -13753,6 +13733,10 @@ msgid "Inverse Linear"
 msgstr "Linear inverso"
 
 
+msgid "Inverse Square"
+msgstr "Inverso quadrático"
+
+
 msgid "Inverse Coefficients"
 msgstr "Coeficientes inversos"
 
@@ -15689,6 +15673,10 @@ msgid "Show hair simulation grid"
 msgstr "Mostra a grelha de simulação de cabelos."
 
 
+msgid "Number"
+msgstr "Número(s)"
+
+
 msgid "Show particle number"
 msgstr "Mostra os números das partículas."
 
@@ -16463,10 +16451,6 @@ msgid "Text file on disk is different than the one in memory"
 msgstr "O ficheiro de texto no disco é diferente do que está na memória."
 
 
-msgid "Lines"
-msgstr "Linhas"
-
-
 msgid "Lines of text"
 msgstr "Linhas de texto"
 
@@ -17075,8 +17059,16 @@ msgid "Use soft marble"
 msgstr "Usa um mármore suave."
 
 
+msgid "Sharp"
+msgstr "Ressaltar"
+
+
 msgid "Use more clearly defined marble"
 msgstr "Usa um mármore bem definido."
+
+
+msgid "Sharper"
+msgstr "Aguçar"
 
 
 msgid "Use very clearly defined marble"
@@ -20660,6 +20652,10 @@ msgid "Active spline of masking layer"
 msgstr "Spline ativa da camada de máscara."
 
 
+msgid "Active Point"
+msgstr "Ponto ativo"
+
+
 msgid "Alignment"
 msgstr "Alinhamento"
 
@@ -21369,6 +21365,10 @@ msgstr "Raio da cobertura"
 
 msgid "If vertex has multiple adjacent edges, it is hulled to them directly"
 msgstr "Caso o vértice tenha múltiplas arestas adjacentes, ele está corrigido por estas automaticamente."
+
+
+msgid "Root"
+msgstr "Raiz"
 
 
 msgid "Mesh Skin Vertex Layer"
@@ -24504,6 +24504,10 @@ msgstr "Número de fotogramas em cache."
 
 msgid "Line Thickness"
 msgstr "Espessura da linha"
+
+
+msgid "Lines"
+msgstr "Linhas"
 
 
 msgid "Motion Path Points"
@@ -35586,17 +35590,9 @@ msgid "Clear Restrict View"
 msgstr "Limpar visualização restrita"
 
 
-msgid "Reveal the layer by setting the hide flag"
-msgstr "Revela a camada pela definição da bandeira de ocultação."
-
-
 msgctxt "Operator"
 msgid "Set Restrict View"
 msgstr "Definir restrição de visualização"
-
-
-msgid "Hide the layer by setting the hide flag"
-msgstr "Oculta a camada definindo a bandeira de ocultação."
 
 
 msgctxt "Operator"
@@ -42779,10 +42775,6 @@ msgid "Fill Range by Selection"
 msgstr "Preencher campo pela seleção"
 
 
-msgid "Fill the Range Min/Max entries by the min/max distance between selected mesh objects and the source object "
-msgstr "Preenche as entradas de alcance mínima e máxima pela distância mínima e máxima entre os objetos de malhas selecionadas e o objeto fonte."
-
-
 msgid "Name of the modifier to work on"
 msgstr "Nome do modificador no qual trabalhar."
 
@@ -48268,10 +48260,6 @@ msgstr "Predefinições de câmara"
 
 msgid "2D Cursor"
 msgstr "Cursor 2D"
-
-
-msgid "Active Point"
-msgstr "Ponto ativo"
 
 
 msgid "Predefined tracking camera intrinsics"
@@ -60040,10 +60028,6 @@ msgid "Invert Selection"
 msgstr "Inverter seleção"
 
 
-msgid "[{}]: \"{}\" ({})"
-msgstr "[{}]: \"{}\" ({})"
-
-
 msgid "Tracking"
 msgstr "Rastreamento"
 
@@ -60464,6 +60448,18 @@ msgid "Strand Shape"
 msgstr "Formato das vertentes"
 
 
+msgid "Settings used for fluid"
+msgstr "Definições usadas para fluidos."
+
+
+msgid "Jittering Amount"
+msgstr "Montante de tremulação"
+
+
+msgid "Use Timing"
+msgstr "Usar temporizações"
+
+
 msgid "Iterations: %d .. %d (avg. %d)"
 msgstr "Interações: %d .. %d (média: %d)"
 
@@ -60474,22 +60470,6 @@ msgstr "Erros: %.5f .. %.5f (média: %.5f)"
 
 msgid "Spacing: %g"
 msgstr "Espaçamento: %g"
-
-
-msgid "Settings used for fluid"
-msgstr "Definições usadas para fluidos."
-
-
-msgid "Jittering Amount"
-msgstr "Montante de tremulação"
-
-
-msgid "%d fluid particles for this frame"
-msgstr "%d partículas de fluido para este fotograma."
-
-
-msgid "Use Timing"
-msgstr "Usar temporizações"
 
 
 msgid "Not yet functional"
@@ -60504,6 +60484,10 @@ msgstr "Conectar todos"
 msgctxt "Operator"
 msgid "Disconnect All"
 msgstr "Desconectar todos"
+
+
+msgid "%d fluid particles for this frame"
+msgstr "%d partículas de fluido para este fotograma."
 
 
 msgid "Dynamic Mesh"
@@ -61317,10 +61301,6 @@ msgid "Rotation"
 msgstr "Rotação"
 
 
-msgid "Original frame range: %d-%d (%d)"
-msgstr "Intervalo de fotogramas original: %d-%d (%d)"
-
-
 msgctxt "Operator"
 msgid "Clip"
 msgstr "Clipe"
@@ -61328,6 +61308,10 @@ msgstr "Clipe"
 
 msgid "Unpack"
 msgstr "Desempacotar"
+
+
+msgid "Original frame range: %d-%d (%d)"
+msgstr "Intervalo de fotogramas original: %d-%d (%d)"
 
 
 msgid "Source Channel"
@@ -61531,10 +61515,6 @@ msgstr "Ficheiro:"
 
 msgid "Author:"
 msgstr "Autor:"
-
-
-msgid "author"
-msgstr "autor"
 
 
 msgid "Version:"
