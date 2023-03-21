@@ -44,7 +44,7 @@ typedef struct CfraElem {
 /* ************** F-Curve Modifiers *************** */
 
 /**
- * F-Curve Modifier Type-Info (fmi):
+ * F-Curve Modifier Type-Info (`fmi`):
  * This struct provides function pointers for runtime, so that functions can be
  * written more generally (with fewer/no special exceptions for various modifiers).
  *
@@ -376,7 +376,7 @@ bool BKE_fcurve_calc_range(const struct FCurve *fcu,
 
 /**
  * Calculate the x and y extents of F-Curve's data.
- * \param frame_range Only calculate the bounds of the FCurve in the given range.
+ * \param frame_range: Only calculate the bounds of the FCurve in the given range.
  * Does the full range if NULL.
  * \return true if the bounds have been found.
  */

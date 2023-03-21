@@ -35,6 +35,7 @@ class VKBuffer {
               int64_t size,
               GPUUsageType usage,
               VkBufferUsageFlagBits buffer_usage);
+  void clear(VKContext &context, uint32_t clear_value);
   void update(const void *data) const;
   void read(void *data) const;
   bool free(VKContext &context);
@@ -48,6 +49,13 @@ class VKBuffer {
   {
     return vk_buffer_;
   }
+
+  /**
+   * Get the reference to the mapped memory.
+   *
+   * Can only be called when the buffer is (still) mapped.
+   */
+  void *mapped_memory_get() const;
 
  private:
   /** Check if this buffer is mapped. */

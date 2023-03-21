@@ -29,8 +29,8 @@
 #include "DNA_fluid_types.h"
 #include "DNA_freestyle_types.h"
 #include "DNA_genfile.h"
+#include "DNA_gpencil_legacy_types.h"
 #include "DNA_gpencil_modifier_types.h"
-#include "DNA_gpencil_types.h"
 #include "DNA_gpu_types.h"
 #include "DNA_key_types.h"
 #include "DNA_layer_types.h"
@@ -65,9 +65,9 @@
 #include "BKE_fcurve_driver.h"
 #include "BKE_freestyle.h"
 #include "BKE_global.h"
-#include "BKE_gpencil.h"
-#include "BKE_gpencil_geom.h"
-#include "BKE_gpencil_modifier.h"
+#include "BKE_gpencil_geom_legacy.h"
+#include "BKE_gpencil_legacy.h"
+#include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_idprop.h"
 #include "BKE_key.h"
 #include "BKE_layer.h"
@@ -3639,7 +3639,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
 
     LISTBASE_FOREACH (bArmature *, arm, &bmain->armatures) {
-      arm->flag &= ~(ARM_FLAG_UNUSED_1 | ARM_FLAG_UNUSED_5 | ARM_FLAG_UNUSED_6 |
+      arm->flag &= ~(ARM_FLAG_UNUSED_1 | ARM_DRAW_RELATION_FROM_HEAD | ARM_FLAG_UNUSED_6 |
                      ARM_FLAG_UNUSED_7 | ARM_FLAG_UNUSED_12);
     }
 

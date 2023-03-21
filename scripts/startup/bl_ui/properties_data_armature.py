@@ -107,6 +107,9 @@ class DATA_PT_display(ArmatureButtonsPanel, Panel):
         subrow.alignment='RIGHT'
         subrow.prop_decorator(arm, "show_axes")
 
+        sub = col.row(align=True)
+        sub.prop(arm, "relation_line_position", text="Relations", expand=True)
+
 
 class DATA_MT_bone_group_context_menu(Menu):
     bl_label = "Bone Group Specials"

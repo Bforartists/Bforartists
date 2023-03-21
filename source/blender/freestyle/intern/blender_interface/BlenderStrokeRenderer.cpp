@@ -35,7 +35,7 @@
 #include "BKE_lib_id.h" /* free_libblock */
 #include "BKE_main.h"
 #include "BKE_material.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_node.h"
 #include "BKE_node_tree_update.h"
 #include "BKE_object.h"
@@ -582,34 +582,36 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
   mesh->totcol = group->materials.size();
 
   float3 *vert_positions = (float3 *)CustomData_add_layer_named(
-      &mesh->vdata, CD_PROP_FLOAT3, CD_SET_DEFAULT, nullptr, mesh->totvert, "position");
+      &mesh->vdata, CD_PROP_FLOAT3, CD_SET_DEFAULT, mesh->totvert, "position");
   MEdge *edges = (MEdge *)CustomData_add_layer(
-      &mesh->edata, CD_MEDGE, CD_SET_DEFAULT, nullptr, mesh->totedge);
+      &mesh->edata, CD_MEDGE, CD_SET_DEFAULT, mesh->totedge);
   MPoly *polys = (MPoly *)CustomData_add_layer(
-      &mesh->pdata, CD_MPOLY, CD_SET_DEFAULT, nullptr, mesh->totpoly);
-  MLoop *loops = (MLoop *)CustomData_add_layer(
-      &mesh->ldata, CD_MLOOP, CD_SET_DEFAULT, nullptr, mesh->totloop);
+      &mesh->pdata, CD_MPOLY, CD_SET_DEFAULT, mesh->totpoly);
+  int *corner_verts = (int *)CustomData_add_layer_named(
+      &mesh->ldata, CD_PROP_INT32, CD_SET_DEFAULT, mesh->totloop, ".corner_vert");
+  int *corner_edges = (int *)CustomData_add_layer_named(
+      &mesh->ldata, CD_PROP_INT32, CD_SET_DEFAULT, mesh->totloop, ".corner_vert");
   int *material_indices = (int *)CustomData_add_layer_named(
-      &mesh->pdata, CD_PROP_INT32, CD_SET_DEFAULT, nullptr, mesh->totpoly, "material_index");
+      &mesh->pdata, CD_PROP_INT32, CD_SET_DEFAULT, mesh->totpoly, "material_index");
   blender::float2 *loopsuv[2] = {nullptr};
 
   if (hasTex) {
     // First UV layer
     loopsuv[0] = static_cast<blender::float2 *>(CustomData_add_layer_named(
-        &mesh->ldata, CD_PROP_FLOAT2, CD_SET_DEFAULT, nullptr, mesh->totloop, uvNames[0]));
+        &mesh->ldata, CD_PROP_FLOAT2, CD_SET_DEFAULT, mesh->totloop, uvNames[0]));
     CustomData_set_layer_active(&mesh->ldata, CD_PROP_FLOAT2, 0);
 
     // Second UV layer
     loopsuv[1] = static_cast<blender::float2 *>(CustomData_add_layer_named(
-        &mesh->ldata, CD_PROP_FLOAT2, CD_SET_DEFAULT, nullptr, mesh->totloop, uvNames[1]));
+        &mesh->ldata, CD_PROP_FLOAT2, CD_SET_DEFAULT, mesh->totloop, uvNames[1]));
     CustomData_set_layer_active(&mesh->ldata, CD_PROP_FLOAT2, 1);
   }
 
   // colors and transparency (the latter represented by grayscale colors)
   MLoopCol *colors = (MLoopCol *)CustomData_add_layer_named(
-      &mesh->ldata, CD_PROP_BYTE_COLOR, CD_SET_DEFAULT, nullptr, mesh->totloop, "Color");
+      &mesh->ldata, CD_PROP_BYTE_COLOR, CD_SET_DEFAULT, mesh->totloop, "Color");
   MLoopCol *transp = (MLoopCol *)CustomData_add_layer_named(
-      &mesh->ldata, CD_PROP_BYTE_COLOR, CD_SET_DEFAULT, nullptr, mesh->totloop, "Alpha");
+      &mesh->ldata, CD_PROP_BYTE_COLOR, CD_SET_DEFAULT, mesh->totloop, "Alpha");
   BKE_id_attributes_active_color_set(
       &mesh->id, CustomData_get_layer_name(&mesh->ldata, CD_PROP_BYTE_COLOR, 0));
 
@@ -718,26 +720,27 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
           bool is_odd = n % 2;
           // loops
           if (is_odd) {
-            loops[0].v = vertex_index - 1;
-            loops[0].e = edge_index - 2;
+            corner_verts[0] = vertex_index - 1;
+            corner_edges[0] = edge_index - 2;
 
-            loops[1].v = vertex_index - 3;
-            loops[1].e = edge_index - 3;
+            corner_verts[1] = vertex_index - 3;
+            corner_edges[1] = edge_index - 3;
 
-            loops[2].v = vertex_index - 2;
-            loops[2].e = edge_index - 1;
+            corner_verts[2] = vertex_index - 2;
+            corner_edges[2] = edge_index - 1;
           }
           else {
-            loops[0].v = vertex_index - 1;
-            loops[0].e = edge_index - 1;
+            corner_verts[0] = vertex_index - 1;
+            corner_edges[0] = edge_index - 1;
 
-            loops[1].v = vertex_index - 2;
-            loops[1].e = edge_index - 3;
+            corner_verts[1] = vertex_index - 2;
+            corner_edges[1] = edge_index - 3;
 
-            loops[2].v = vertex_index - 3;
-            loops[2].e = edge_index - 2;
+            corner_verts[2] = vertex_index - 3;
+            corner_edges[2] = edge_index - 2;
           }
-          loops += 3;
+          corner_verts += 3;
+          corner_edges += 3;
           loop_index += 3;
 
           // UV

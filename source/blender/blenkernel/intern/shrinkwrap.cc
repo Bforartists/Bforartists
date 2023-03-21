@@ -33,7 +33,7 @@
 
 #include "BKE_deform.h"
 #include "BKE_editmesh.h"
-#include "BKE_mesh.h" /* for OMP limits. */
+#include "BKE_mesh.hh" /* for OMP limits. */
 #include "BKE_mesh_runtime.h"
 #include "BKE_mesh_wrapper.h"
 #include "BKE_subsurf.h"
@@ -60,7 +60,7 @@ struct ShrinkwrapCalcData {
   Object *ob; /* object we are applying shrinkwrap to */
 
   float (*vert_positions)[3]; /* Array of verts being projected. */
-  const float (*vert_normals)[3];
+  blender::Span<blender::float3> vert_normals;
   /* Vertices being shrink-wrapped. */
   float (*vertexCos)[3];
   int numVerts;
@@ -115,7 +115,8 @@ bool BKE_shrinkwrap_init_tree(
 
   data->mesh = mesh;
   data->polys = mesh->polys().data();
-  data->vert_normals = BKE_mesh_vert_normals_ensure(mesh);
+  data->corner_edges = mesh->corner_edges().data();
+  data->vert_normals = reinterpret_cast<const float(*)[3]>(mesh->vert_normals().data()),
   data->sharp_faces = static_cast<const bool *>(
       CustomData_get_layer_named(&mesh->edata, CD_PROP_BOOL, "sharp_face"));
 
@@ -136,7 +137,7 @@ bool BKE_shrinkwrap_init_tree(
   }
 
   if (force_normals || BKE_shrinkwrap_needs_normals(shrinkType, shrinkMode)) {
-    data->poly_normals = BKE_mesh_poly_normals_ensure(mesh);
+    data->poly_normals = reinterpret_cast<const float(*)[3]>(mesh->poly_normals().data());
     if ((mesh->flag & ME_AUTOSMOOTH) != 0) {
       data->clnors = static_cast<const float(*)[3]>(CustomData_get_layer(&mesh->ldata, CD_NORMAL));
     }
@@ -190,16 +191,18 @@ static void merge_vert_dir(ShrinkwrapBoundaryVertData *vdata,
 
 static ShrinkwrapBoundaryData *shrinkwrap_build_boundary_data(Mesh *mesh)
 {
+  using namespace blender;
   const float(*positions)[3] = BKE_mesh_vert_positions(mesh);
   const blender::Span<MEdge> edges = mesh->edges();
-  const blender::Span<MLoop> loops = mesh->loops();
+  const Span<int> corner_verts = mesh->corner_verts();
+  const Span<int> corner_edges = mesh->corner_edges();
 
   /* Count faces per edge (up to 2). */
   char *edge_mode = static_cast<char *>(
       MEM_calloc_arrayN(size_t(mesh->totedge), sizeof(char), __func__));
 
   for (int i = 0; i < mesh->totloop; i++) {
-    uint eidx = loops[i].e;
+    const int eidx = corner_edges[i];
 
     if (edge_mode[eidx] < 2) {
       edge_mode[eidx]++;
@@ -240,7 +243,8 @@ static ShrinkwrapBoundaryData *shrinkwrap_build_boundary_data(Mesh *mesh)
 
   for (const int64_t i : looptris.index_range()) {
     int real_edges[3];
-    BKE_mesh_looptri_get_real_edges(edges.data(), loops.data(), &looptris[i], real_edges);
+    BKE_mesh_looptri_get_real_edges(
+        edges.data(), corner_verts.data(), corner_edges.data(), &looptris[i], real_edges);
 
     for (int j = 0; j < 3; j++) {
       if (real_edges[j] >= 0 && edge_mode[real_edges[j]]) {
@@ -297,7 +301,7 @@ static ShrinkwrapBoundaryData *shrinkwrap_build_boundary_data(Mesh *mesh)
   MEM_freeN(vert_status);
 
   /* Finalize average direction and compute normal. */
-  const float(*vert_normals)[3] = BKE_mesh_vert_normals_ensure(mesh);
+  const blender::Span<blender::float3> vert_normals = mesh->vert_normals();
   for (int i = 0; i < mesh->totvert; i++) {
     int bidx = vert_boundary_id[i];
 
@@ -1012,11 +1016,12 @@ static void mesh_looptri_target_project(void *userdata,
   const ShrinkwrapTreeData *tree = (ShrinkwrapTreeData *)userdata;
   const BVHTreeFromMesh *data = &tree->treeData;
   const MLoopTri *lt = &data->looptri[index];
-  const MLoop *loop[3] = {
-      &data->loop[lt->tri[0]], &data->loop[lt->tri[1]], &data->loop[lt->tri[2]]};
-  const float *vtri_co[3] = {data->vert_positions[loop[0]->v],
-                             data->vert_positions[loop[1]->v],
-                             data->vert_positions[loop[2]->v]};
+  const int tri_verts[3] = {data->corner_verts[lt->tri[0]],
+                            data->corner_verts[lt->tri[1]],
+                            data->corner_verts[lt->tri[2]]};
+  const float *vtri_co[3] = {data->vert_positions[tri_verts[0]],
+                             data->vert_positions[tri_verts[1]],
+                             data->vert_positions[tri_verts[2]]};
   float raw_hit_co[3], hit_co[3], hit_no[3], dist_sq, vtri_no[3][3];
 
   /* First find the closest point and bail out if it's worse than the current solution. */
@@ -1038,9 +1043,9 @@ static void mesh_looptri_target_project(void *userdata,
   }
 
   /* Decode normals */
-  copy_v3_v3(vtri_no[0], tree->vert_normals[loop[0]->v]);
-  copy_v3_v3(vtri_no[1], tree->vert_normals[loop[1]->v]);
-  copy_v3_v3(vtri_no[2], tree->vert_normals[loop[2]->v]);
+  copy_v3_v3(vtri_no[0], tree->vert_normals[tri_verts[0]]);
+  copy_v3_v3(vtri_no[1], tree->vert_normals[tri_verts[1]]);
+  copy_v3_v3(vtri_no[2], tree->vert_normals[tri_verts[2]]);
 
   /* Solve the equations for the triangle */
   if (target_project_solve_point_tri(vtri_co, vtri_no, co, raw_hit_co, dist_sq, hit_co, hit_no)) {
@@ -1051,7 +1056,7 @@ static void mesh_looptri_target_project(void *userdata,
     const BLI_bitmap *is_boundary = tree->boundary->edge_is_boundary;
     int edges[3];
 
-    BKE_mesh_looptri_get_real_edges(data->edge, data->loop, lt, edges);
+    BKE_mesh_looptri_get_real_edges(data->edge, data->corner_verts, tree->corner_edges, lt, edges);
 
     for (int i = 0; i < 3; i++) {
       if (edges[i] >= 0 && BLI_BITMAP_TEST(is_boundary, edges[i])) {
@@ -1178,9 +1183,9 @@ void BKE_shrinkwrap_compute_smooth_normal(const ShrinkwrapTreeData *tree,
 
   /* Interpolate smooth normals if enabled. */
   if (!(tree->sharp_faces && tree->sharp_faces[tri->poly])) {
-    const uint32_t vert_indices[3] = {treeData->loop[tri->tri[0]].v,
-                                      treeData->loop[tri->tri[1]].v,
-                                      treeData->loop[tri->tri[2]].v};
+    const int vert_indices[3] = {treeData->corner_verts[tri->tri[0]],
+                                 treeData->corner_verts[tri->tri[1]],
+                                 treeData->corner_verts[tri->tri[2]]};
     float w[3], no[3][3], tmp_co[3];
 
     /* Custom and auto smooth split normals. */
@@ -1409,7 +1414,7 @@ void shrinkwrapModifier_deform(ShrinkwrapModifierData *smd,
   if (mesh != nullptr && smd->shrinkType == MOD_SHRINKWRAP_PROJECT) {
     /* Setup arrays to get vertex positions, normals and deform weights */
     calc.vert_positions = BKE_mesh_vert_positions_for_write(mesh);
-    calc.vert_normals = BKE_mesh_vert_normals_ensure(mesh);
+    calc.vert_normals = mesh->vert_normals();
 
     /* Using vertices positions/normals as if a subsurface was applied */
     if (smd->subsurfLevels) {
@@ -1530,7 +1535,6 @@ void BKE_shrinkwrap_mesh_nearest_surface_deform(bContext *C, Object *ob_source, 
   Scene *sce = CTX_data_scene(C);
   ShrinkwrapModifierData ssmd = {{nullptr}};
   ModifierEvalContext ctx = {depsgraph, ob_source, ModifierApplyFlag(0)};
-  int totvert;
 
   ssmd.target = ob_target;
   ssmd.shrinkType = MOD_SHRINKWRAP_NEAREST_SURFACE;
@@ -1538,13 +1542,17 @@ void BKE_shrinkwrap_mesh_nearest_surface_deform(bContext *C, Object *ob_source, 
   ssmd.keepDist = 0.0f;
 
   Mesh *src_me = static_cast<Mesh *>(ob_source->data);
-  float(*vertexCos)[3] = BKE_mesh_vert_coords_alloc(src_me, &totvert);
 
-  shrinkwrapModifier_deform(&ssmd, &ctx, sce, ob_source, src_me, nullptr, -1, vertexCos, totvert);
-
-  BKE_mesh_vert_coords_apply(src_me, vertexCos);
-
-  MEM_freeN(vertexCos);
+  shrinkwrapModifier_deform(&ssmd,
+                            &ctx,
+                            sce,
+                            ob_source,
+                            src_me,
+                            nullptr,
+                            -1,
+                            BKE_mesh_vert_positions_for_write(src_me),
+                            src_me->totvert);
+  BKE_mesh_tag_positions_changed(src_me);
 }
 
 void BKE_shrinkwrap_remesh_target_project(Mesh *src_me, Mesh *target_me, Object *ob_target)
@@ -1570,7 +1578,7 @@ void BKE_shrinkwrap_remesh_target_project(Mesh *src_me, Mesh *target_me, Object 
   calc.smd = &ssmd;
   calc.numVerts = src_me->totvert;
   calc.vertexCos = vertexCos;
-  calc.vert_normals = BKE_mesh_vert_normals_ensure(src_me);
+  calc.vert_normals = src_me->vert_normals();
   calc.vgroup = -1;
   calc.target = target_me;
   calc.keepDist = ssmd.keepDist;

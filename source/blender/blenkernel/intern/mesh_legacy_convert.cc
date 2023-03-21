@@ -27,7 +27,7 @@
 #include "BKE_attribute.hh"
 #include "BKE_customdata.h"
 #include "BKE_global.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_mesh_legacy_convert.h"
 #include "BKE_multires.h"
 
@@ -209,18 +209,18 @@ void BKE_mesh_calc_edges_legacy(Mesh *me)
   const Span<MVert> verts(static_cast<const MVert *>(CustomData_get_layer(&me->vdata, CD_MVERT)),
                           me->totvert);
   const Span<MPoly> polys = me->polys();
-  MutableSpan<MLoop> loops = me->loops_for_write();
 
-  mesh_calc_edges_mdata(verts.data(),
-                        (MFace *)CustomData_get_layer(&me->fdata, CD_MFACE),
-                        loops.data(),
-                        polys.data(),
-                        verts.size(),
-                        me->totface,
-                        loops.size(),
-                        polys.size(),
-                        &edges,
-                        &totedge);
+  mesh_calc_edges_mdata(
+      verts.data(),
+      (MFace *)CustomData_get_layer(&me->fdata, CD_MFACE),
+      static_cast<MLoop *>(CustomData_get_layer_for_write(&me->ldata, CD_MLOOP, me->totloop)),
+      polys.data(),
+      verts.size(),
+      me->totface,
+      me->totloop,
+      polys.size(),
+      &edges,
+      &totedge);
 
   if (totedge == 0) {
     /* flag that mesh has edges */
@@ -228,7 +228,7 @@ void BKE_mesh_calc_edges_legacy(Mesh *me)
     return;
   }
 
-  edges = (MEdge *)CustomData_add_layer(&me->edata, CD_MEDGE, CD_ASSIGN, edges, totedge);
+  edges = (MEdge *)CustomData_add_layer_with_data(&me->edata, CD_MEDGE, edges, totedge);
   me->totedge = totedge;
 
   BKE_mesh_tag_topology_changed(me);
@@ -394,19 +394,17 @@ static void CustomData_to_bmeshpoly(CustomData *fdata, CustomData *ldata, int to
   for (int i = 0; i < fdata->totlayer; i++) {
     if (fdata->layers[i].type == CD_MTFACE) {
       CustomData_add_layer_named(
-          ldata, CD_PROP_FLOAT2, CD_SET_DEFAULT, nullptr, totloop, fdata->layers[i].name);
+          ldata, CD_PROP_FLOAT2, CD_SET_DEFAULT, totloop, fdata->layers[i].name);
     }
     else if (fdata->layers[i].type == CD_MCOL) {
       CustomData_add_layer_named(
-          ldata, CD_PROP_BYTE_COLOR, CD_SET_DEFAULT, nullptr, totloop, fdata->layers[i].name);
+          ldata, CD_PROP_BYTE_COLOR, CD_SET_DEFAULT, totloop, fdata->layers[i].name);
     }
     else if (fdata->layers[i].type == CD_MDISPS) {
-      CustomData_add_layer_named(
-          ldata, CD_MDISPS, CD_SET_DEFAULT, nullptr, totloop, fdata->layers[i].name);
+      CustomData_add_layer_named(ldata, CD_MDISPS, CD_SET_DEFAULT, totloop, fdata->layers[i].name);
     }
     else if (fdata->layers[i].type == CD_TESSLOOPNORMAL) {
-      CustomData_add_layer_named(
-          ldata, CD_NORMAL, CD_SET_DEFAULT, nullptr, totloop, fdata->layers[i].name);
+      CustomData_add_layer_named(ldata, CD_NORMAL, CD_SET_DEFAULT, totloop, fdata->layers[i].name);
     }
   }
 }
@@ -440,18 +438,18 @@ static void convert_mfaces_to_mpolys(ID *id,
   CustomData_free(pdata, totpoly_i);
 
   totpoly = totface_i;
-  mpoly = (MPoly *)CustomData_add_layer(pdata, CD_MPOLY, CD_SET_DEFAULT, nullptr, totpoly);
+  mpoly = (MPoly *)CustomData_add_layer(pdata, CD_MPOLY, CD_SET_DEFAULT, totpoly);
   int *material_indices = static_cast<int *>(
       CustomData_get_layer_named_for_write(pdata, CD_PROP_INT32, "material_index", totpoly));
   if (material_indices == nullptr) {
     material_indices = static_cast<int *>(CustomData_add_layer_named(
-        pdata, CD_PROP_INT32, CD_SET_DEFAULT, nullptr, totpoly, "material_index"));
+        pdata, CD_PROP_INT32, CD_SET_DEFAULT, totpoly, "material_index"));
   }
   bool *sharp_faces = static_cast<bool *>(
       CustomData_get_layer_named_for_write(pdata, CD_PROP_BOOL, "sharp_face", totpoly));
   if (!sharp_faces) {
-    sharp_faces = static_cast<bool *>(CustomData_add_layer_named(
-        pdata, CD_PROP_BOOL, CD_SET_DEFAULT, nullptr, totpoly, "sharp_face"));
+    sharp_faces = static_cast<bool *>(
+        CustomData_add_layer_named(pdata, CD_PROP_BOOL, CD_SET_DEFAULT, totpoly, "sharp_face"));
   }
 
   numTex = CustomData_number_of_layers(fdata, CD_MTFACE);
@@ -463,7 +461,7 @@ static void convert_mfaces_to_mpolys(ID *id,
     totloop += mf->v4 ? 4 : 3;
   }
 
-  mloop = (MLoop *)CustomData_add_layer(ldata, CD_MLOOP, CD_SET_DEFAULT, nullptr, totloop);
+  mloop = (MLoop *)CustomData_add_layer(ldata, CD_MLOOP, CD_SET_DEFAULT, totloop);
 
   CustomData_to_bmeshpoly(fdata, ldata, totloop);
 
@@ -625,28 +623,25 @@ static void add_mface_layers(Mesh &mesh, CustomData *fdata, CustomData *ldata, i
 
   for (int i = 0; i < ldata->totlayer; i++) {
     if (ldata->layers[i].type == CD_PROP_FLOAT2) {
-      CustomData_add_layer_named(
-          fdata, CD_MTFACE, CD_SET_DEFAULT, nullptr, total, ldata->layers[i].name);
+      CustomData_add_layer_named(fdata, CD_MTFACE, CD_SET_DEFAULT, total, ldata->layers[i].name);
     }
     if (ldata->layers[i].type == CD_PROP_BYTE_COLOR) {
-      CustomData_add_layer_named(
-          fdata, CD_MCOL, CD_SET_DEFAULT, nullptr, total, ldata->layers[i].name);
+      CustomData_add_layer_named(fdata, CD_MCOL, CD_SET_DEFAULT, total, ldata->layers[i].name);
     }
     else if (ldata->layers[i].type == CD_PREVIEW_MLOOPCOL) {
       CustomData_add_layer_named(
-          fdata, CD_PREVIEW_MCOL, CD_SET_DEFAULT, nullptr, total, ldata->layers[i].name);
+          fdata, CD_PREVIEW_MCOL, CD_SET_DEFAULT, total, ldata->layers[i].name);
     }
     else if (ldata->layers[i].type == CD_ORIGSPACE_MLOOP) {
       CustomData_add_layer_named(
-          fdata, CD_ORIGSPACE, CD_SET_DEFAULT, nullptr, total, ldata->layers[i].name);
+          fdata, CD_ORIGSPACE, CD_SET_DEFAULT, total, ldata->layers[i].name);
     }
     else if (ldata->layers[i].type == CD_NORMAL) {
       CustomData_add_layer_named(
-          fdata, CD_TESSLOOPNORMAL, CD_SET_DEFAULT, nullptr, total, ldata->layers[i].name);
+          fdata, CD_TESSLOOPNORMAL, CD_SET_DEFAULT, total, ldata->layers[i].name);
     }
     else if (ldata->layers[i].type == CD_TANGENT) {
-      CustomData_add_layer_named(
-          fdata, CD_TANGENT, CD_SET_DEFAULT, nullptr, total, ldata->layers[i].name);
+      CustomData_add_layer_named(fdata, CD_TANGENT, CD_SET_DEFAULT, total, ldata->layers[i].name);
     }
   }
 
@@ -710,6 +705,7 @@ void BKE_mesh_convert_mfaces_to_mpolys(Mesh *mesh)
                            &mesh->totpoly);
 
   mesh_ensure_tessellation_customdata(mesh);
+  BKE_mesh_legacy_convert_loops_to_corners(mesh);
 }
 
 /**
@@ -969,7 +965,6 @@ static int mesh_tessface_calc(Mesh &mesh,
   const int looptri_num = poly_to_tri_count(totpoly, totloop);
 
   const MPoly *poly, *mpoly;
-  const MLoop *ml, *mloop;
   MFace *mface, *mf;
   MemArena *arena = nullptr;
   int *mface_to_poly_map;
@@ -978,7 +973,7 @@ static int mesh_tessface_calc(Mesh &mesh,
   uint j;
 
   mpoly = (const MPoly *)CustomData_get_layer(pdata, CD_MPOLY);
-  mloop = (const MLoop *)CustomData_get_layer(ldata, CD_MLOOP);
+  const Span<int> corner_verts = mesh.corner_verts();
   const int *material_indices = static_cast<const int *>(
       CustomData_get_layer_named(pdata, CD_PROP_INT32, "material_index"));
   const bool *sharp_faces = static_cast<const bool *>(
@@ -1013,9 +1008,9 @@ static int mesh_tessface_calc(Mesh &mesh,
     l1 = mp_loopstart + i1; \
     l2 = mp_loopstart + i2; \
     l3 = mp_loopstart + i3; \
-    mf->v1 = mloop[l1].v; \
-    mf->v2 = mloop[l2].v; \
-    mf->v3 = mloop[l3].v; \
+    mf->v1 = corner_verts[l1]; \
+    mf->v2 = corner_verts[l2]; \
+    mf->v3 = corner_verts[l3]; \
     mf->v4 = 0; \
     lidx[0] = l1; \
     lidx[1] = l2; \
@@ -1036,10 +1031,10 @@ static int mesh_tessface_calc(Mesh &mesh,
     l2 = mp_loopstart + 1; /* EXCEPTION */ \
     l3 = mp_loopstart + 2; /* EXCEPTION */ \
     l4 = mp_loopstart + 3; /* EXCEPTION */ \
-    mf->v1 = mloop[l1].v; \
-    mf->v2 = mloop[l2].v; \
-    mf->v3 = mloop[l3].v; \
-    mf->v4 = mloop[l4].v; \
+    mf->v1 = corner_verts[l1]; \
+    mf->v2 = corner_verts[l2]; \
+    mf->v3 = corner_verts[l3]; \
+    mf->v4 = corner_verts[l4]; \
     lidx[0] = l1; \
     lidx[1] = l2; \
     lidx[2] = l3; \
@@ -1086,10 +1081,10 @@ static int mesh_tessface_calc(Mesh &mesh,
       zero_v3(normal);
 
       /* Calculate the normal, flipped: to get a positive 2D cross product. */
-      ml = mloop + mp_loopstart;
-      co_prev = positions[ml[mp_totloop - 1].v];
-      for (j = 0; j < mp_totloop; j++, ml++) {
-        co_curr = positions[ml->v];
+      co_prev = positions[corner_verts[mp_loopstart + mp_totloop - 1]];
+      for (j = 0; j < mp_totloop; j++) {
+        const int vert = corner_verts[mp_loopstart + j];
+        co_curr = positions[vert];
         add_newell_cross_v3_v3v3(normal, co_prev, co_curr);
         co_prev = co_curr;
       }
@@ -1100,9 +1095,9 @@ static int mesh_tessface_calc(Mesh &mesh,
       /* Project verts to 2D. */
       axis_dominant_v3_to_m3_negate(axis_mat, normal);
 
-      ml = mloop + mp_loopstart;
-      for (j = 0; j < mp_totloop; j++, ml++) {
-        mul_v2_m3v3(projverts[j], axis_mat, positions[ml->v]);
+      for (j = 0; j < mp_totloop; j++) {
+        const int vert = corner_verts[mp_loopstart + j];
+        mul_v2_m3v3(projverts[j], axis_mat, positions[vert]);
       }
 
       BLI_polyfill_calc_arena(projverts, mp_totloop, 1, tris, arena);
@@ -1120,9 +1115,9 @@ static int mesh_tessface_calc(Mesh &mesh,
         l2 = mp_loopstart + tri[1];
         l3 = mp_loopstart + tri[2];
 
-        mf->v1 = mloop[l1].v;
-        mf->v2 = mloop[l2].v;
-        mf->v3 = mloop[l3].v;
+        mf->v1 = corner_verts[l1];
+        mf->v2 = corner_verts[l2];
+        mf->v3 = corner_verts[l3];
         mf->v4 = 0;
 
         lidx[0] = l1;
@@ -1157,11 +1152,11 @@ static int mesh_tessface_calc(Mesh &mesh,
                                             sizeof(*mface_to_poly_map) * size_t(totface));
   }
 
-  CustomData_add_layer(fdata, CD_MFACE, CD_ASSIGN, mface, totface);
+  CustomData_add_layer_with_data(fdata, CD_MFACE, mface, totface);
 
   /* #CD_ORIGINDEX will contain an array of indices from tessellation-faces to the polygons
    * they are directly tessellated from. */
-  CustomData_add_layer(fdata, CD_ORIGINDEX, CD_ASSIGN, mface_to_poly_map, totface);
+  CustomData_add_layer_with_data(fdata, CD_ORIGINDEX, mface_to_poly_map, totface);
   add_mface_layers(mesh, fdata, ldata, totface);
 
   /* NOTE: quad detection issue - fourth vertex-index vs fourth loop-index:
@@ -1314,8 +1309,8 @@ void BKE_mesh_legacy_face_set_to_generic(Mesh *mesh)
     }
   }
   if (faceset_data != nullptr) {
-    CustomData_add_layer_named(
-        &mesh->pdata, CD_PROP_INT32, CD_ASSIGN, faceset_data, mesh->totpoly, ".sculpt_face_set");
+    CustomData_add_layer_named_with_data(
+        &mesh->pdata, CD_PROP_INT32, faceset_data, mesh->totpoly, ".sculpt_face_set");
   }
 }
 
@@ -1365,7 +1360,7 @@ void BKE_mesh_legacy_bevel_weight_to_layers(Mesh *mesh)
     const Span<MVert> verts(mesh->mvert, mesh->totvert);
     if (mesh->cd_flag & ME_CDFLAG_VERT_BWEIGHT) {
       float *weights = static_cast<float *>(
-          CustomData_add_layer(&mesh->vdata, CD_BWEIGHT, CD_CONSTRUCT, nullptr, verts.size()));
+          CustomData_add_layer(&mesh->vdata, CD_BWEIGHT, CD_CONSTRUCT, verts.size()));
       for (const int i : verts.index_range()) {
         weights[i] = verts[i].bweight_legacy / 255.0f;
       }
@@ -1376,7 +1371,7 @@ void BKE_mesh_legacy_bevel_weight_to_layers(Mesh *mesh)
   if (!CustomData_has_layer(&mesh->edata, CD_BWEIGHT)) {
     if (mesh->cd_flag & ME_CDFLAG_EDGE_BWEIGHT) {
       float *weights = static_cast<float *>(
-          CustomData_add_layer(&mesh->edata, CD_BWEIGHT, CD_CONSTRUCT, nullptr, edges.size()));
+          CustomData_add_layer(&mesh->edata, CD_BWEIGHT, CD_CONSTRUCT, edges.size()));
       for (const int i : edges.index_range()) {
         weights[i] = edges[i].bweight_legacy / 255.0f;
       }
@@ -1418,7 +1413,7 @@ void BKE_mesh_legacy_edge_crease_to_layers(Mesh *mesh)
   const Span<MEdge> edges = mesh->edges();
   if (mesh->cd_flag & ME_CDFLAG_EDGE_CREASE) {
     float *creases = static_cast<float *>(
-        CustomData_add_layer(&mesh->edata, CD_CREASE, CD_CONSTRUCT, nullptr, edges.size()));
+        CustomData_add_layer(&mesh->edata, CD_CREASE, CD_CONSTRUCT, edges.size()));
     for (const int i : edges.index_range()) {
       creases[i] = edges[i].crease_legacy / 255.0f;
     }
@@ -1660,6 +1655,19 @@ void BKE_mesh_legacy_convert_mpoly_to_material_indices(Mesh *mesh)
 /** \name Generic UV Map Conversion
  * \{ */
 
+static const bool *layers_find_bool_named(const Span<CustomDataLayer> layers,
+                                          const blender::StringRef name)
+{
+  for (const CustomDataLayer &layer : layers) {
+    if (layer.type == CD_PROP_BOOL) {
+      if (layer.name == name) {
+        return static_cast<const bool *>(layer.data);
+      }
+    }
+  }
+  return nullptr;
+}
+
 void BKE_mesh_legacy_convert_uvs_to_struct(
     Mesh *mesh,
     blender::ResourceScope &temp_mloopuv_for_convert,
@@ -1667,6 +1675,7 @@ void BKE_mesh_legacy_convert_uvs_to_struct(
 {
   using namespace blender;
   using namespace blender::bke;
+  const int loops_num = mesh->totloop;
   Vector<CustomDataLayer, 16> new_layer_to_write;
 
   /* Don't write the boolean UV map sublayers which will be written in the legacy #MLoopUV type. */
@@ -1691,20 +1700,19 @@ void BKE_mesh_legacy_convert_uvs_to_struct(
       new_layer_to_write.append(layer);
       continue;
     }
-    const Span<float2> coords{static_cast<const float2 *>(layer.data), mesh->totloop};
+    const Span<float2> coords{static_cast<const float2 *>(layer.data), loops_num};
     CustomDataLayer mloopuv_layer = layer;
     mloopuv_layer.type = CD_MLOOPUV;
-    MutableSpan<MLoopUV> mloopuv = temp_mloopuv_for_convert.construct<Array<MLoopUV>>(
-        mesh->totloop);
+    MutableSpan<MLoopUV> mloopuv = temp_mloopuv_for_convert.construct<Array<MLoopUV>>(loops_num);
     mloopuv_layer.data = mloopuv.data();
 
     char buffer[MAX_CUSTOMDATA_LAYER_NAME];
-    const bool *vert_selection = static_cast<const bool *>(CustomData_get_layer_named(
-        &mesh->ldata, CD_PROP_BOOL, BKE_uv_map_vert_select_name_get(layer.name, buffer)));
-    const bool *edge_selection = static_cast<const bool *>(CustomData_get_layer_named(
-        &mesh->ldata, CD_PROP_BOOL, BKE_uv_map_edge_select_name_get(layer.name, buffer)));
-    const bool *pin = static_cast<const bool *>(CustomData_get_layer_named(
-        &mesh->ldata, CD_PROP_BOOL, BKE_uv_map_pin_name_get(layer.name, buffer)));
+    const bool *vert_selection = layers_find_bool_named(
+        loop_layers_to_write, BKE_uv_map_vert_select_name_get(layer.name, buffer));
+    const bool *edge_selection = layers_find_bool_named(
+        loop_layers_to_write, BKE_uv_map_edge_select_name_get(layer.name, buffer));
+    const bool *pin = layers_find_bool_named(loop_layers_to_write,
+                                             BKE_uv_map_pin_name_get(layer.name, buffer));
 
     threading::parallel_for(mloopuv.index_range(), 2048, [&](IndexRange range) {
       for (const int i : range) {
@@ -1802,32 +1810,29 @@ void BKE_mesh_legacy_convert_uvs_to_generic(Mesh *mesh)
     });
 
     CustomData_free_layer_named(&mesh->ldata, name.c_str(), mesh->totloop);
-    CustomData_add_layer_named(
-        &mesh->ldata, CD_PROP_FLOAT2, CD_ASSIGN, coords, mesh->totloop, name.c_str());
+    CustomData_add_layer_named_with_data(
+        &mesh->ldata, CD_PROP_FLOAT2, coords, mesh->totloop, name.c_str());
     char buffer[MAX_CUSTOMDATA_LAYER_NAME];
     if (vert_selection) {
-      CustomData_add_layer_named(&mesh->ldata,
-                                 CD_PROP_BOOL,
-                                 CD_ASSIGN,
-                                 vert_selection,
-                                 mesh->totloop,
-                                 BKE_uv_map_vert_select_name_get(name.c_str(), buffer));
+      CustomData_add_layer_named_with_data(&mesh->ldata,
+                                           CD_PROP_BOOL,
+                                           vert_selection,
+                                           mesh->totloop,
+                                           BKE_uv_map_vert_select_name_get(name.c_str(), buffer));
     }
     if (edge_selection) {
-      CustomData_add_layer_named(&mesh->ldata,
-                                 CD_PROP_BOOL,
-                                 CD_ASSIGN,
-                                 edge_selection,
-                                 mesh->totloop,
-                                 BKE_uv_map_edge_select_name_get(name.c_str(), buffer));
+      CustomData_add_layer_named_with_data(&mesh->ldata,
+                                           CD_PROP_BOOL,
+                                           edge_selection,
+                                           mesh->totloop,
+                                           BKE_uv_map_edge_select_name_get(name.c_str(), buffer));
     }
     if (pin) {
-      CustomData_add_layer_named(&mesh->ldata,
-                                 CD_PROP_BOOL,
-                                 CD_ASSIGN,
-                                 pin,
-                                 mesh->totloop,
-                                 BKE_uv_map_pin_name_get(name.c_str(), buffer));
+      CustomData_add_layer_named_with_data(&mesh->ldata,
+                                           CD_PROP_BOOL,
+                                           pin,
+                                           mesh->totloop,
+                                           BKE_uv_map_pin_name_get(name.c_str(), buffer));
     }
   }
 
@@ -2000,7 +2005,7 @@ void BKE_mesh_legacy_convert_verts_to_positions(Mesh *mesh)
                           mesh->totvert);
   MutableSpan<float3> positions(
       static_cast<float3 *>(CustomData_add_layer_named(
-          &mesh->vdata, CD_PROP_FLOAT3, CD_CONSTRUCT, nullptr, mesh->totvert, "position")),
+          &mesh->vdata, CD_PROP_FLOAT3, CD_CONSTRUCT, mesh->totvert, "position")),
       mesh->totvert);
   threading::parallel_for(verts.index_range(), 2048, [&](IndexRange range) {
     for (const int i : range) {
@@ -2130,6 +2135,64 @@ void BKE_mesh_legacy_attribute_strings_to_flags(Mesh *mesh)
       ldata->layers[i].flag |= CD_FLAG_COLOR_RENDER;
     }
   }
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Face Corner Conversion
+ * \{ */
+
+MLoop *BKE_mesh_legacy_convert_corners_to_loops(
+    Mesh *mesh,
+    blender::ResourceScope &temp_arrays_for_convert,
+    blender::Vector<CustomDataLayer, 16> &loop_layers_to_write)
+{
+  using namespace blender;
+  const Span<int> corner_verts = mesh->corner_verts();
+  const Span<int> corner_edges = mesh->corner_edges();
+
+  CustomDataLayer mloop_layer{};
+  mloop_layer.type = CD_MLOOP;
+  MutableSpan<MLoop> loops = temp_arrays_for_convert.construct<Array<MLoop>>(mesh->totloop);
+  mloop_layer.data = loops.data();
+
+  threading::parallel_for(loops.index_range(), 2048, [&](IndexRange range) {
+    for (const int i : range) {
+      loops[i].v = corner_verts[i];
+      loops[i].e = corner_edges[i];
+    }
+  });
+
+  loop_layers_to_write.append(mloop_layer);
+  return loops.data();
+}
+
+void BKE_mesh_legacy_convert_loops_to_corners(Mesh *mesh)
+{
+  using namespace blender;
+  if (CustomData_get_layer_named(&mesh->ldata, CD_PROP_INT32, ".corner_vert") &&
+      CustomData_get_layer_named(&mesh->ldata, CD_PROP_INT32, ".corner_edge")) {
+    return;
+  }
+  const Span<MLoop> loops(static_cast<const MLoop *>(CustomData_get_layer(&mesh->ldata, CD_MLOOP)),
+                          mesh->totloop);
+  MutableSpan<int> corner_verts(
+      static_cast<int *>(CustomData_add_layer_named(
+          &mesh->ldata, CD_PROP_INT32, CD_CONSTRUCT, mesh->totloop, ".corner_vert")),
+      mesh->totloop);
+  MutableSpan<int> corner_edges(
+      static_cast<int *>(CustomData_add_layer_named(
+          &mesh->ldata, CD_PROP_INT32, CD_CONSTRUCT, mesh->totloop, ".corner_edge")),
+      mesh->totloop);
+  threading::parallel_for(loops.index_range(), 2048, [&](IndexRange range) {
+    for (const int i : range) {
+      corner_verts[i] = loops[i].v;
+      corner_edges[i] = loops[i].e;
+    }
+  });
+
+  CustomData_free_layers(&mesh->ldata, CD_MLOOP, mesh->totloop);
 }
 
 /** \} */
