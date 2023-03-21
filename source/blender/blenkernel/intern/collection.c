@@ -82,6 +82,8 @@ static CollectionParent *collection_find_parent(Collection *child, Collection *c
 static bool collection_find_child_recursive(const Collection *parent,
                                             const Collection *collection);
 
+static void collection_object_cache_free(Collection *collection);
+
 static void collection_gobject_hash_ensure(Collection *collection);
 static void collection_gobject_hash_update_object(Collection *collection,
                                                   Object *ob_old,
@@ -160,7 +162,7 @@ static void collection_free_data(ID *id)
   BLI_freelistN(&collection->children);
   BLI_freelistN(&collection->runtime.parents);
 
-  BKE_collection_object_cache_free(collection);
+  collection_object_cache_free(collection);
 }
 
 static void collection_foreach_id(ID *id, LibraryForeachIDData *data)
@@ -887,15 +889,27 @@ static void collection_object_cache_free(Collection *collection)
   collection->flag &= ~(COLLECTION_HAS_OBJECT_CACHE | COLLECTION_HAS_OBJECT_CACHE_INSTANCED);
   BLI_freelistN(&collection->runtime.object_cache);
   BLI_freelistN(&collection->runtime.object_cache_instanced);
+}
+
+void BKE_collection_object_cache_free(Collection *collection)
+{
+  collection_object_cache_free(collection);
 
   LISTBASE_FOREACH (CollectionParent *, parent, &collection->runtime.parents) {
     collection_object_cache_free(parent->collection);
   }
 }
 
-void BKE_collection_object_cache_free(Collection *collection)
+void BKE_main_collections_object_cache_free(const Main *bmain)
 {
-  collection_object_cache_free(collection);
+  for (Scene *scene = bmain->scenes.first; scene != NULL; scene = scene->id.next) {
+    collection_object_cache_free(scene->master_collection);
+  }
+
+  for (Collection *collection = bmain->collections.first; collection != NULL;
+       collection = collection->id.next) {
+    collection_object_cache_free(collection);
+  }
 }
 
 Base *BKE_collection_or_layer_objects(const Scene *scene,
@@ -1141,11 +1155,12 @@ static void collection_gobject_hash_ensure_fix(Collection *collection)
 /**
  * Update the collections object hash, removing `ob_old`, inserting `cob->ob` as the new key.
  *
- * \note This function is called fron foreach_id callback, and a difference of Object pointers is
- * only expected in case ID remapping is happening. This code is the only are in Blender allowed to
- * (temporarily) leave the CollectionObject list in an inconsistent/invalid state (with NULL object
- * pointers, or duplicates of CollectionObjects). If such invalid cases are encountered, it will
- * tag the collection objects list as dirty.
+ * \note This function is called from #IDTypeInfo::foreach_id callback,
+ * and a difference of Object pointers is only expected in case ID remapping is happening.
+ * This code is the only are in Blender allowed to (temporarily) leave the #CollectionObject list
+ * in an inconsistent/invalid state (with NULL object pointers, or duplicates of
+ * #CollectionObjects). If such invalid cases are encountered,
+ * it will tag the collection objects list as dirty.
  *
  * \param ob_old: The existing key to `cob` in the hash, not removed when NULL.
  * \param cob: The `cob->ob` is to be used as the new key,
@@ -1162,7 +1177,7 @@ static void collection_gobject_hash_update_object(Collection *collection,
   if (ob_old) {
     CollectionObject *cob_old = BLI_ghash_popkey(collection->runtime.gobject_hash, ob_old, NULL);
     if (cob_old != cob) {
-      /* Old object alredy removed from the ghash. */
+      /* Old object already removed from the #GHash. */
       collection->runtime.tag |= COLLECTION_TAG_COLLECTION_OBJECT_DIRTY;
     }
   }
@@ -1173,28 +1188,28 @@ static void collection_gobject_hash_update_object(Collection *collection,
       *cob_p = cob;
     }
     else {
-      /* Duplicate CollectionObject entries. */
+      /* Duplicate #CollectionObject entries. */
       collection->runtime.tag |= COLLECTION_TAG_COLLECTION_OBJECT_DIRTY;
     }
   }
   else {
-    /* CollectionObject with NULL objetc pointer. */
+    /* #CollectionObject with NULL object pointer. */
     collection->runtime.tag |= COLLECTION_TAG_COLLECTION_OBJECT_DIRTY;
   }
 }
 
 /**
- * Validate the integrity of the collection's CollectionObject list, and of its mapping.
+ * Validate the integrity of the collection's #CollectionObject list, and of its mapping.
  *
  * Simple test is very fast, as it only checks that the 'dirty' tag for collection's objects is not
  * set.
  *
  * The extensive check is expensive. This should not be done from within loops over collections
  * items, or from low-level operations that can be assumed safe (like adding or removing an object
- * from a colleciton). It ensures that:
- *   - There is a `gobject_hash` mapping.
- *   - There is no NULL-object CollectionObject items.
- *   - there is no duplicate CollectionObject items (two or more referencing the same Object).
+ * from a collection). It ensures that:
+ * - There is a `gobject_hash` mapping.
+ * - There is no NULL-object #CollectionObject items.
+ * - there is no duplicate #CollectionObject items (two or more referencing the same Object).
  */
 static void collection_gobject_assert_internal_consistency(Collection *collection,
                                                            const bool do_extensive_check)
@@ -1205,15 +1220,16 @@ static void collection_gobject_assert_internal_consistency(Collection *collectio
   }
 
   if (collection->runtime.gobject_hash == NULL) {
-    /* NOTE: If the ghash does not exist yet, it's creation will assert on errors, so in theory the
-     * second loop below could be skipped. */
+    /* NOTE: If the `ghash` does not exist yet, it's creation will assert on errors,
+     * so in theory the second loop below could be skipped. */
     collection_gobject_hash_create(collection);
   }
   GHash *gobject_hash = collection->runtime.gobject_hash;
+  UNUSED_VARS_NDEBUG(gobject_hash);
   LISTBASE_FOREACH (CollectionObject *, cob, &collection->gobject) {
     BLI_assert(cob->ob != NULL);
-    /* If there are more than one CollectionObject for the same object, at most one of them will
-     * pass this test. */
+    /* If there are more than one #CollectionObject for the same object,
+     * at most one of them will pass this test. */
     BLI_assert(BLI_ghash_lookup(gobject_hash, cob->ob) == cob);
   }
 }

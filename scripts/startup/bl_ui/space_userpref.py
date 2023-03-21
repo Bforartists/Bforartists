@@ -803,7 +803,7 @@ class USERPREF_PT_viewport_display(ViewportPanel, CenterAlignMixIn, Panel):
         flow.separator()
 
         col = flow.column()
-        col.prop(view, "mini_axis_type", text="3D Viewport Axis")
+        col.prop(view, "mini_axis_type", text="3D Viewport Axes")
 
         if view.mini_axis_type == 'MINIMAL':
             col.prop(view, "mini_axis_size", text="Size")

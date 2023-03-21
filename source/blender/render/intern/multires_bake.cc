@@ -24,7 +24,7 @@
 #include "BKE_image.h"
 #include "BKE_lib_id.h"
 #include "BKE_material.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_mesh_tangent.h"
 #include "BKE_modifier.h"
 #include "BKE_multires.h"
@@ -61,16 +61,17 @@ struct MultiresBakeResult {
 
 struct MResolvePixelData {
   const float (*vert_positions)[3];
-  const float (*vert_normals)[3];
+  const blender::float3 *vert_normals;
+  int verts_num;
   const MPoly *polys;
   const int *material_indices;
+  const int *corner_verts;
   const bool *sharp_faces;
-  MLoop *mloop;
   float (*mloopuv)[2];
   float uv_offset[2];
   const MLoopTri *mlooptri;
   float *pvtangent;
-  const float (*precomputed_normals)[3];
+  const blender::float3 *poly_normals;
   int w, h;
   int tri_index;
   DerivedMesh *lores_dm, *hires_dm;
@@ -118,16 +119,19 @@ static void multiresbake_get_normal(const MResolvePixelData *data,
   const bool smoothnormal = !(data->sharp_faces && data->sharp_faces[poly_index]);
 
   if (smoothnormal) {
-    const int vi = data->mloop[data->mlooptri[tri_num].tri[vert_index]].v;
+    const int vi = data->corner_verts[data->mlooptri[tri_num].tri[vert_index]];
     copy_v3_v3(r_normal, data->vert_normals[vi]);
   }
   else {
-    if (data->precomputed_normals) {
-      copy_v3_v3(r_normal, data->precomputed_normals[poly_index]);
+    if (data->poly_normals) {
+      copy_v3_v3(r_normal, data->poly_normals[poly_index]);
     }
     else {
-      BKE_mesh_calc_poly_normal(
-          &poly, &data->mloop[poly.loopstart], data->vert_positions, r_normal);
+      copy_v3_v3(
+          r_normal,
+          blender::bke::mesh::poly_normal_calc(
+              {reinterpret_cast<const blender::float3 *>(data->vert_positions), data->verts_num},
+              {&data->corner_verts[poly.loopstart], poly.totloop}));
     }
   }
 }
@@ -476,7 +480,6 @@ static void do_multires_bake(MultiresBakeRender *bkr,
 
   const float(*positions)[3] = (float(*)[3])dm->getVertArray(dm);
   const MPoly *polys = dm->getPolyArray(dm);
-  MLoop *mloop = dm->getLoopArray(dm);
   float(*mloopuv)[2] = static_cast<float(*)[2]>(dm->getLoopDataArray(dm, CD_PROP_FLOAT2));
   float *pvtangent = nullptr;
 
@@ -492,9 +495,10 @@ static void do_multires_bake(MultiresBakeRender *bkr,
          temp_mesh->totvert * sizeof(float[3]));
   temp_mesh->edges_for_write().copy_from({dm->getEdgeArray(dm), temp_mesh->totedge});
   temp_mesh->polys_for_write().copy_from({dm->getPolyArray(dm), temp_mesh->totpoly});
-  temp_mesh->loops_for_write().copy_from({dm->getLoopArray(dm), temp_mesh->totloop});
-  const float(*vert_normals)[3] = BKE_mesh_vert_normals_ensure(temp_mesh);
-  const float(*poly_normals)[3] = BKE_mesh_poly_normals_ensure(temp_mesh);
+  temp_mesh->corner_verts_for_write().copy_from({dm->getCornerVertArray(dm), temp_mesh->totloop});
+  temp_mesh->corner_edges_for_write().copy_from({dm->getCornerEdgeArray(dm), temp_mesh->totloop});
+  const blender::Span<blender::float3> vert_normals = temp_mesh->vert_normals();
+  const blender::Span<blender::float3> poly_normals = temp_mesh->poly_normals();
 
   if (require_tangent) {
     if (CustomData_get_layer_index(&dm->loopData, CD_TANGENT) == -1) {
@@ -502,7 +506,7 @@ static void do_multires_bake(MultiresBakeRender *bkr,
           positions,
           dm->getPolyArray(dm),
           dm->getNumPolys(dm),
-          dm->getLoopArray(dm),
+          dm->getCornerVertArray(dm),
           dm->getLoopTriArray(dm),
           dm->getNumLoopTri(dm),
           static_cast<const bool *>(
@@ -511,8 +515,8 @@ static void do_multires_bake(MultiresBakeRender *bkr,
           true,
           nullptr,
           0,
-          vert_normals,
-          poly_normals,
+          reinterpret_cast<const float(*)[3]>(vert_normals.data()),
+          reinterpret_cast<const float(*)[3]>(poly_normals.data()),
           (const float(*)[3])dm->getLoopDataArray(dm, CD_NORMAL),
           (const float(*)[3])dm->getVertDataArray(dm, CD_ORCO), /* May be nullptr. */
           /* result */
@@ -556,13 +560,14 @@ static void do_multires_bake(MultiresBakeRender *bkr,
     handle->data.sharp_faces = static_cast<const bool *>(
         CustomData_get_layer_named(&dm->polyData, CD_PROP_BOOL, "sharp_face"));
     handle->data.vert_positions = positions;
-    handle->data.vert_normals = vert_normals;
+    handle->data.vert_normals = vert_normals.data();
+    handle->data.verts_num = dm->getNumVerts(dm);
     handle->data.mloopuv = mloopuv;
     BKE_image_get_tile_uv(ima, tile->tile_number, handle->data.uv_offset);
     handle->data.mlooptri = mlooptri;
-    handle->data.mloop = mloop;
+    handle->data.corner_verts = dm->getCornerVertArray(dm);
     handle->data.pvtangent = pvtangent;
-    handle->data.precomputed_normals = poly_normals; /* don't strictly need this */
+    handle->data.poly_normals = poly_normals.data(); /* don't strictly need this */
     handle->data.w = ibuf->x;
     handle->data.h = ibuf->y;
     handle->data.lores_dm = dm;
@@ -716,7 +721,7 @@ static void get_ccgdm_data(DerivedMesh *lodm,
  * mode = 1: interpolate coord */
 
 static void interp_bilinear_mpoly(DerivedMesh *dm,
-                                  MLoop *mloop,
+                                  const int *corner_verts,
                                   const MPoly &poly,
                                   const float u,
                                   const float v,
@@ -726,23 +731,23 @@ static void interp_bilinear_mpoly(DerivedMesh *dm,
   float data[4][3];
 
   if (mode == 0) {
-    dm->getVertNo(dm, mloop[poly.loopstart].v, data[0]);
-    dm->getVertNo(dm, mloop[poly.loopstart + 1].v, data[1]);
-    dm->getVertNo(dm, mloop[poly.loopstart + 2].v, data[2]);
-    dm->getVertNo(dm, mloop[poly.loopstart + 3].v, data[3]);
+    dm->getVertNo(dm, corner_verts[poly.loopstart], data[0]);
+    dm->getVertNo(dm, corner_verts[poly.loopstart + 1], data[1]);
+    dm->getVertNo(dm, corner_verts[poly.loopstart + 2], data[2]);
+    dm->getVertNo(dm, corner_verts[poly.loopstart + 3], data[3]);
   }
   else {
-    dm->getVertCo(dm, mloop[poly.loopstart].v, data[0]);
-    dm->getVertCo(dm, mloop[poly.loopstart + 1].v, data[1]);
-    dm->getVertCo(dm, mloop[poly.loopstart + 2].v, data[2]);
-    dm->getVertCo(dm, mloop[poly.loopstart + 3].v, data[3]);
+    dm->getVertCo(dm, corner_verts[poly.loopstart], data[0]);
+    dm->getVertCo(dm, corner_verts[poly.loopstart + 1], data[1]);
+    dm->getVertCo(dm, corner_verts[poly.loopstart + 2], data[2]);
+    dm->getVertCo(dm, corner_verts[poly.loopstart + 3], data[3]);
   }
 
   interp_bilinear_quad_v3(data, u, v, res);
 }
 
 static void interp_barycentric_mlooptri(DerivedMesh *dm,
-                                        MLoop *mloop,
+                                        const int *corner_verts,
                                         const MLoopTri *lt,
                                         const float u,
                                         const float v,
@@ -752,14 +757,14 @@ static void interp_barycentric_mlooptri(DerivedMesh *dm,
   float data[3][3];
 
   if (mode == 0) {
-    dm->getVertNo(dm, mloop[lt->tri[0]].v, data[0]);
-    dm->getVertNo(dm, mloop[lt->tri[1]].v, data[1]);
-    dm->getVertNo(dm, mloop[lt->tri[2]].v, data[2]);
+    dm->getVertNo(dm, corner_verts[lt->tri[0]], data[0]);
+    dm->getVertNo(dm, corner_verts[lt->tri[1]], data[1]);
+    dm->getVertNo(dm, corner_verts[lt->tri[2]], data[2]);
   }
   else {
-    dm->getVertCo(dm, mloop[lt->tri[0]].v, data[0]);
-    dm->getVertCo(dm, mloop[lt->tri[1]].v, data[1]);
-    dm->getVertCo(dm, mloop[lt->tri[2]].v, data[2]);
+    dm->getVertCo(dm, corner_verts[lt->tri[0]], data[0]);
+    dm->getVertCo(dm, corner_verts[lt->tri[1]], data[1]);
+    dm->getVertCo(dm, corner_verts[lt->tri[2]], data[2]);
   }
 
   interp_barycentric_tri_v3(data, u, v, res);
@@ -835,7 +840,7 @@ static void apply_heights_callback(DerivedMesh *lores_dm,
                                    const int y)
 {
   const MLoopTri *lt = lores_dm->getLoopTriArray(lores_dm) + tri_index;
-  MLoop *mloop = lores_dm->getLoopArray(lores_dm);
+  const int *corner_verts = lores_dm->getCornerVertArray(lores_dm);
   const MPoly &poly = lores_dm->getPolyArray(lores_dm)[lt->poly];
   float(*mloopuv)[2] = static_cast<float(*)[2]>(
       lores_dm->getLoopDataArray(lores_dm, CD_PROP_FLOAT2));
@@ -879,12 +884,12 @@ static void apply_heights_callback(DerivedMesh *lores_dm,
   }
   else {
     if (poly.totloop == 4) {
-      interp_bilinear_mpoly(lores_dm, mloop, poly, uv[0], uv[1], 1, p0);
-      interp_bilinear_mpoly(lores_dm, mloop, poly, uv[0], uv[1], 0, n);
+      interp_bilinear_mpoly(lores_dm, corner_verts, poly, uv[0], uv[1], 1, p0);
+      interp_bilinear_mpoly(lores_dm, corner_verts, poly, uv[0], uv[1], 0, n);
     }
     else {
-      interp_barycentric_mlooptri(lores_dm, mloop, lt, uv[0], uv[1], 1, p0);
-      interp_barycentric_mlooptri(lores_dm, mloop, lt, uv[0], uv[1], 0, n);
+      interp_barycentric_mlooptri(lores_dm, corner_verts, lt, uv[0], uv[1], 1, p0);
+      interp_barycentric_mlooptri(lores_dm, corner_verts, lt, uv[0], uv[1], 0, n);
     }
   }
 

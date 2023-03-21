@@ -29,7 +29,7 @@
  * It's mostly used for modifiers, and has the advantages of not taking much
  * resources.
  *
- * BMesh is a full-on brep, used for editmode, some modifiers, etc.  It's much
+ * BMesh is a full-on BREP, used for edit-mode, some modifiers, etc.  It's much
  * more capable (if memory-intensive) then CDDM.
  *
  * DerivedMesh is somewhat hackish.  Many places assumes that a DerivedMesh is
@@ -129,7 +129,8 @@ struct DerivedMesh {
    */
   float *(*getVertArray)(DerivedMesh *dm);
   struct MEdge *(*getEdgeArray)(DerivedMesh *dm);
-  struct MLoop *(*getLoopArray)(DerivedMesh *dm);
+  int *(*getCornerVertArray)(DerivedMesh *dm);
+  int *(*getCornerEdgeArray)(DerivedMesh *dm);
   struct MPoly *(*getPolyArray)(DerivedMesh *dm);
 
   /** Copy all verts/edges/faces from the derived mesh into
@@ -137,7 +138,8 @@ struct DerivedMesh {
    */
   void (*copyVertArray)(DerivedMesh *dm, float (*r_positions)[3]);
   void (*copyEdgeArray)(DerivedMesh *dm, struct MEdge *r_edge);
-  void (*copyLoopArray)(DerivedMesh *dm, struct MLoop *r_loop);
+  void (*copyCornerVertArray)(DerivedMesh *dm, int *r_corner_verts);
+  void (*copyCornerEdgeArray)(DerivedMesh *dm, int *r_corner_edges);
   void (*copyPolyArray)(DerivedMesh *dm, struct MPoly *r_poly);
 
   /** Return a pointer to the entire array of vert/edge/face custom data

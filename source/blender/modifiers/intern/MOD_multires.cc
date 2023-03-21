@@ -21,7 +21,7 @@
 
 #include "BKE_cdderivedmesh.h"
 #include "BKE_context.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_modifier.h"
 #include "BKE_multires.h"
 #include "BKE_paint.h"
@@ -246,7 +246,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
       sculpt_session->totpoly = mesh->totpoly;
       sculpt_session->vert_positions = nullptr;
       sculpt_session->polys = nullptr;
-      sculpt_session->mloop = nullptr;
+      sculpt_session->corner_verts = nullptr;
     }
     // BKE_subdiv_stats_print(&subdiv->stats);
   }

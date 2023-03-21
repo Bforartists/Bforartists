@@ -14,7 +14,7 @@
 
 #include "BKE_customdata.h"
 #include "BKE_lib_id.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_mesh_runtime.h"
 #include "BKE_modifier.h"
 #include "BKE_multires.h"
@@ -28,16 +28,18 @@
 
 static void multires_subdivide_create_object_space_linear_grids(Mesh *mesh)
 {
-  const float(*positions)[3] = BKE_mesh_vert_positions(mesh);
+  using namespace blender;
+  using namespace blender::bke;
+  const Span<float3> positions = mesh->vert_positions();
   const blender::Span<MPoly> polys = mesh->polys();
-  const blender::Span<MLoop> loops = mesh->loops();
+  const blender::Span<int> corner_verts = mesh->corner_verts();
 
   MDisps *mdisps = static_cast<MDisps *>(
       CustomData_get_layer_for_write(&mesh->ldata, CD_MDISPS, mesh->totloop));
   for (const int p : polys.index_range()) {
     const MPoly &poly = polys[p];
-    float poly_center[3];
-    BKE_mesh_calc_poly_center(&poly, &loops[poly.loopstart], positions, poly_center);
+    const float3 poly_center = mesh::poly_center_calc(
+        positions, corner_verts.slice(poly.loopstart, poly.totloop));
     for (int l = 0; l < poly.totloop; l++) {
       const int loop_index = poly.loopstart + l;
 
@@ -48,14 +50,14 @@ static void multires_subdivide_create_object_space_linear_grids(Mesh *mesh)
       int prev_loop_index = l - 1 >= 0 ? loop_index - 1 : loop_index + poly.totloop - 1;
       int next_loop_index = l + 1 < poly.totloop ? loop_index + 1 : poly.loopstart;
 
-      const MLoop *loop = &loops[loop_index];
-      const MLoop *loop_next = &loops[next_loop_index];
-      const MLoop *loop_prev = &loops[prev_loop_index];
+      const int vert = corner_verts[loop_index];
+      const int vert_next = corner_verts[next_loop_index];
+      const int vert_prev = corner_verts[prev_loop_index];
 
       copy_v3_v3(disps[0], poly_center);
-      mid_v3_v3v3(disps[1], positions[loop->v], positions[loop_next->v]);
-      mid_v3_v3v3(disps[2], positions[loop->v], positions[loop_prev->v]);
-      copy_v3_v3(disps[3], positions[loop->v]);
+      mid_v3_v3v3(disps[1], positions[vert], positions[vert_next]);
+      mid_v3_v3v3(disps[2], positions[vert], positions[vert_prev]);
+      copy_v3_v3(disps[3], positions[vert]);
     }
   }
 }
@@ -72,8 +74,7 @@ void multires_subdivide_create_tangent_displacement_linear_grids(Object *object,
 
   const bool has_mdisps = CustomData_has_layer(&coarse_mesh->ldata, CD_MDISPS);
   if (!has_mdisps) {
-    CustomData_add_layer(
-        &coarse_mesh->ldata, CD_MDISPS, CD_SET_DEFAULT, nullptr, coarse_mesh->totloop);
+    CustomData_add_layer(&coarse_mesh->ldata, CD_MDISPS, CD_SET_DEFAULT, coarse_mesh->totloop);
   }
 
   if (new_top_level == 1) {

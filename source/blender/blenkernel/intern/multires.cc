@@ -24,7 +24,7 @@
 #include "BKE_ccg.h"
 #include "BKE_cdderivedmesh.h"
 #include "BKE_editmesh.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.h"
 #include "BKE_mesh_runtime.h"
 #include "BKE_modifier.h"
@@ -673,7 +673,6 @@ static void multires_del_higher(MultiresModifierData *mmd, Object *ob, int lvl)
 
   if (mdisps && levels > 0) {
     if (lvl > 0) {
-      // MLoop *ml = me->mloop; /*UNUSED*/
       int nsize = multires_side_tot[lvl];
       int hsize = multires_side_tot[mmd->totlvl];
       int j;
@@ -993,7 +992,7 @@ static void multiresModifier_disp_run(
   if (!mdisps) {
     if (op == CALC_DISPLACEMENTS) {
       mdisps = static_cast<MDisps *>(
-          CustomData_add_layer(&me->ldata, CD_MDISPS, CD_SET_DEFAULT, nullptr, me->totloop));
+          CustomData_add_layer(&me->ldata, CD_MDISPS, CD_SET_DEFAULT, me->totloop));
     }
     else {
       return;
@@ -1528,7 +1527,7 @@ void multires_ensure_external_read(struct Mesh *mesh, int top_level)
       CustomData_get_layer_for_write(&mesh->ldata, CD_MDISPS, mesh->totloop));
   if (mdisps == nullptr) {
     mdisps = static_cast<MDisps *>(
-        CustomData_add_layer(&mesh->ldata, CD_MDISPS, CD_SET_DEFAULT, nullptr, mesh->totloop));
+        CustomData_add_layer(&mesh->ldata, CD_MDISPS, CD_SET_DEFAULT, mesh->totloop));
   }
 
   const int totloop = mesh->totloop;
@@ -1629,7 +1628,7 @@ int mdisp_rot_face_to_crn(
     float mindist = FLT_MAX;
 
     for (i = 0; i < poly->totloop; i++) {
-      float len = len_v3v3(nullptr, positions[mloop[poly->loopstart + i].v]);
+      float len = len_v3v3(nullptr, positions[corner_verts[poly->loopstart + i]]);
       if (len < mindist) {
         mindist = len;
         minS = i;

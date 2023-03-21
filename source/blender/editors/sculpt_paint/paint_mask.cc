@@ -28,7 +28,7 @@
 #include "BKE_ccg.h"
 #include "BKE_context.h"
 #include "BKE_lib_id.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_multires.h"
 #include "BKE_paint.h"
 #include "BKE_pbvh.h"
@@ -1243,15 +1243,15 @@ static void sculpt_gesture_trim_geometry_generate(SculptGestureContext *sgcontex
 
   /* Write the front face triangle indices. */
   blender::MutableSpan<MPoly> polys = trim_operation->mesh->polys_for_write();
-  blender::MutableSpan<MLoop> loops = trim_operation->mesh->loops_for_write();
+  blender::MutableSpan<int> corner_verts = trim_operation->mesh->corner_verts_for_write();
   int poly_index = 0;
   int loop_index = 0;
   for (int i = 0; i < tot_tris_face; i++) {
     polys[poly_index].loopstart = loop_index;
     polys[poly_index].totloop = 3;
-    loops[loop_index + 0].v = r_tris[i][0];
-    loops[loop_index + 1].v = r_tris[i][1];
-    loops[loop_index + 2].v = r_tris[i][2];
+    corner_verts[loop_index + 0] = r_tris[i][0];
+    corner_verts[loop_index + 1] = r_tris[i][1];
+    corner_verts[loop_index + 2] = r_tris[i][2];
     poly_index++;
     loop_index += 3;
   }
@@ -1260,9 +1260,9 @@ static void sculpt_gesture_trim_geometry_generate(SculptGestureContext *sgcontex
   for (int i = 0; i < tot_tris_face; i++) {
     polys[poly_index].loopstart = loop_index;
     polys[poly_index].totloop = 3;
-    loops[loop_index + 0].v = r_tris[i][0] + tot_screen_points;
-    loops[loop_index + 1].v = r_tris[i][1] + tot_screen_points;
-    loops[loop_index + 2].v = r_tris[i][2] + tot_screen_points;
+    corner_verts[loop_index + 0] = r_tris[i][0] + tot_screen_points;
+    corner_verts[loop_index + 1] = r_tris[i][1] + tot_screen_points;
+    corner_verts[loop_index + 2] = r_tris[i][2] + tot_screen_points;
     poly_index++;
     loop_index += 3;
   }
@@ -1278,9 +1278,9 @@ static void sculpt_gesture_trim_geometry_generate(SculptGestureContext *sgcontex
     if (next_index >= tot_screen_points) {
       next_index = 0;
     }
-    loops[loop_index + 0].v = next_index + tot_screen_points;
-    loops[loop_index + 1].v = next_index;
-    loops[loop_index + 2].v = current_index;
+    corner_verts[loop_index + 0] = next_index + tot_screen_points;
+    corner_verts[loop_index + 1] = next_index;
+    corner_verts[loop_index + 2] = current_index;
     poly_index++;
     loop_index += 3;
   }
@@ -1293,12 +1293,14 @@ static void sculpt_gesture_trim_geometry_generate(SculptGestureContext *sgcontex
     if (next_index >= tot_screen_points) {
       next_index = 0;
     }
-    loops[loop_index + 0].v = current_index;
-    loops[loop_index + 1].v = current_index + tot_screen_points;
-    loops[loop_index + 2].v = next_index + tot_screen_points;
+    corner_verts[loop_index + 0] = current_index;
+    corner_verts[loop_index + 1] = current_index + tot_screen_points;
+    corner_verts[loop_index + 2] = next_index + tot_screen_points;
     poly_index++;
     loop_index += 3;
   }
+
+  BKE_mesh_smooth_flag_set(trim_operation->mesh, false);
 
   BKE_mesh_calc_edges(trim_operation->mesh, false, false);
   sculpt_gesture_trim_normals_update(sgcontext);
