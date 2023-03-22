@@ -808,6 +808,7 @@ def brush_settings(layout, context, brush, popover=False):
 
     elif mode == 'SCULPT_CURVES':
         if brush.curves_sculpt_tool == 'ADD':
+            layout.use_property_split = True
             layout.prop(brush.curves_sculpt_settings, "add_amount")
 
             col = layout.column()
