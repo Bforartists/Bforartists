@@ -197,15 +197,26 @@ class _defs_annotate:
                 row = layout.row()
                 row.prop(props, "use_stabilizer", text="Stabilize Stroke")
                 subrow = layout.row(align=False)
-                subrow.active = props.use_stabilizer
-                subrow.prop(props, "stabilizer_radius", text="Radius", slider=True)
-                subrow.prop(props, "stabilizer_factor", text="Factor", slider=True)
+                if props.use_stabilizer:
+                    subrow.prop(props, "stabilizer_radius", text="Radius", slider=True)
+                    subrow.prop(props, "stabilizer_factor", text="Factor", slider=True)
             else:
-                layout.prop(props, "use_stabilizer", text="Stabilize Stroke")
-                col = layout.column(align=False)
-                col.active = props.use_stabilizer
-                col.prop(props, "stabilizer_radius", text="Radius", slider=True)
-                col.prop(props, "stabilizer_factor", text="Factor", slider=True)
+                split = layout.split(factor=.6)
+                split.use_property_split=False
+                split.prop(props, "use_stabilizer", text="Stabilize Stroke")
+
+                split.alignment = 'LEFT'
+                if props.use_stabilizer:
+                    split.label(icon='DISCLOSURE_TRI_DOWN')
+                    col = layout.column()
+                    row = col.row()
+                    row.separator()
+                    row.prop(props, "stabilizer_radius", text="Radius", slider=True)
+                    row = col.row()
+                    row.separator()
+                    row.prop(props, "stabilizer_factor", text="Factor", slider=True)
+                else:
+                    split.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
     @ToolDef.from_fn.with_args(draw_settings=draw_settings_common)
