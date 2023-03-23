@@ -3732,7 +3732,6 @@ class VIEW3D_MT_paint_weight(Menu):
             props.data_type = 'VGROUP_WEIGHTS'
 
         layout.operator("object.vertex_group_limit_total", text="Limit Total", icon='WEIGHT_LIMIT_TOTAL')
-        layout.operator("object.vertex_group_fix", text="Fix Deforms", icon='WEIGHT_FIX_DEFORMS')
 
         if not is_editmode:
             layout.separator()
