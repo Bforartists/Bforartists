@@ -544,7 +544,7 @@ class NODE_MT_node_links(Menu):
 
 
 class NODE_MT_context_menu_show_hide_menu(Menu):
-    bl_label = "Hide/Toggle"
+    bl_label = "Show/Hide"
 
     def draw(self, context):
         layout = self.layout
@@ -711,14 +711,11 @@ class NODE_MT_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("node.duplicate_move", icon = "DUPLICATE")
-        props = layout.operator("wm.call_panel", text="Rename...", icon = "RENAME")
-        props.name = "TOPBAR_PT_name"
-        props.keep_open = False
-        layout.operator("node.delete", icon='DELETE')
-        layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
-        layout.operator("node.clipboard_paste", text="Paste", icon='PASTEDOWN')
-        layout.operator_context = 'EXEC_REGION_WIN'
 
+        layout.separator()
+
+        layout.operator("node.delete", icon='DELETE')
+        layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("node.delete_reconnect", icon='DELETE')
 
         if selected_nodes_len > 1:
@@ -744,6 +741,12 @@ class NODE_MT_context_menu(Menu):
 
         layout.operator("node.join", text="Join in New Frame", icon = 'JOIN')
         layout.operator("node.detach", text="Remove from Frame", icon = 'DELETE')
+
+        layout.separator()
+
+        props = layout.operator("wm.call_panel", text="Rename...", icon = "RENAME")
+        props.name = "TOPBAR_PT_name"
+        props.keep_open = False
 
         layout.separator()
 
