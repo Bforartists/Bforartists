@@ -3965,7 +3965,8 @@ class VIEW3D_MT_mask(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.mask_from_cavity", text="Mask From Cavity", icon="DIRTY_VERTEX")
+        props = layout.operator("sculpt.dirty_mask", text='Dirty Mask', icon="DIRTY_VERTEX")
+        props = layout.operator("sculpt.mask_from_cavity", text="Mask From Cavity")
         props.settings_source = "OPERATOR"
 
         layout.separator()
@@ -4016,8 +4017,6 @@ class VIEW3D_MT_face_sets(Menu):
 
         layout.operator("sculpt.face_set_change_visibility", text="Invert Visible Face Sets", icon="INVERT_MASK").mode = 'INVERT'
         layout.operator("sculpt.reveal_all", text = "Show All Face Sets", icon = "HIDE_OFF")
-
-        op = layout.operator("sculpt.reveal_all", text="Show All Face Sets")
 
         layout.separator()
 
