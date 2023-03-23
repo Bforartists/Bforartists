@@ -519,7 +519,7 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
-        layout.menu("NODE_MT_node_toggle")
+        layout.menu("NODE_MT_context_menu_show_hide_menu")
 
         if is_compositor:
 
@@ -543,7 +543,7 @@ class NODE_MT_node_links(Menu):
         layout.operator("node.links_mute", icon = "MUTE_IPO_ON")
 
 
-class NODE_MT_node_toggle(Menu):
+class NODE_MT_context_menu_show_hide_menu(Menu):
     bl_label = "Hide/Toggle"
 
     def draw(self, context):
@@ -553,8 +553,13 @@ class NODE_MT_node_toggle(Menu):
 
         layout.operator("node.hide_toggle", icon = "HIDE_ON")
         layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
+
+        # Node previews are only available in the Compositor.
         if is_compositor:
             layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
+
+        layout.separator()
+
         layout.operator("node.hide_socket_toggle", icon = "HIDE_OFF")
         layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
         layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
@@ -635,30 +640,6 @@ class NODE_MT_node_color_context_menu(Menu):
         layout = self.layout
 
         layout.operator("node.node_copy_color", icon='COPY_ID')
-
-
-class NODE_MT_context_menu_show_hide_menu(Menu):
-    bl_label = "Show/Hide"
-
-    def draw(self, context):
-        snode = context.space_data
-        is_compositor = snode.tree_type == 'CompositorNodeTree'
-
-        layout = self.layout
-
-        layout.operator("node.mute_toggle", text="Mute", icon = "TOGGLE_NODE_MUTE")
-
-        # Node previews are only available in the Compositor.
-        if is_compositor:
-            layout.operator("node.preview_toggle", text="Node Preview", icon = "TOGGLE_NODE_PREVIEW")
-
-        layout.operator("node.options_toggle", text="Node Options", icon = "TOGGLE_NODE_OPTIONS")
-
-        layout.separator()
-
-        layout.operator("node.hide_socket_toggle", text="Unconnected Sockets", icon = "HIDE_OFF")
-        layout.operator("node.hide_toggle", text="Collapse", icon = "HIDE_ON")
-        layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
 
 
 class NODE_MT_context_menu_select_menu(Menu):
@@ -758,15 +739,6 @@ class NODE_MT_context_menu(Menu):
 
             if is_nested:
                 layout.operator("node.tree_path_parent", text="Exit Group", icon='FILE_PARENT')
-
-        layout.separator()
-
-        layout.operator("node.hide_toggle", icon = "HIDE_ON")
-        layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
-        layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
-        layout.operator("node.hide_socket_toggle", icon = "HIDE_OFF")
-        layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
-        layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
 
         layout.separator()
 
@@ -1203,7 +1175,6 @@ classes = (
     NODE_MT_node_group_separate,
     NODE_MT_node,
     NODE_MT_node_links,
-    NODE_MT_node_toggle,
     NODE_MT_node_color_context_menu,
     NODE_MT_context_menu_show_hide_menu,
     NODE_MT_context_menu_select_menu,
