@@ -1715,7 +1715,7 @@ con_trackto
 
 winding
 facegroup
-#~ DEF_ICON_BLANK(1748)
+current_file
 #~ DEF_ICON_BLANK(1749)
 #~ DEF_ICON_BLANK(1750)
 #~ DEF_ICON_BLANK(1751)
