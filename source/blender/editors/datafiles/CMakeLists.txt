@@ -1716,13 +1716,13 @@ con_trackto
 winding
 facegroup
 current_file
-#~ DEF_ICON_BLANK(1749)
-#~ DEF_ICON_BLANK(1750)
-#~ DEF_ICON_BLANK(1751)
-#~ DEF_ICON_BLANK(1752)
-#~ DEF_ICON_BLANK(1753)
-#~ DEF_ICON_BLANK(1754)
-#~ DEF_ICON_BLANK(1755)
+box_show 
+box_hide 
+box_trim 
+box_add 
+lasso_add 
+lasso_trim 
+line_project
 
 # ------------------------- row 26 --------------------------*/
 
@@ -1781,11 +1781,11 @@ follow_leader
 goal
 protect
 
-#~ DEF_ICON_BLANK(1814)
-#~ DEF_ICON_BLANK(1815)
-#~ DEF_ICON_BLANK(1816)
-#~ DEF_ICON_BLANK(1817)
-#~ DEF_ICON_BLANK(1818)
+surface_smooth 
+inflate 
+relax_face_sets 
+relax_topology 
+enhance 
 #~ DEF_ICON_BLANK(1819)
 #~ DEF_ICON_BLANK(1820)
 #~ DEF_ICON_BLANK(1821)
