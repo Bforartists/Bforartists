@@ -145,7 +145,7 @@ class ASSETBROWSER_MT_asset(Menu):
 
         layout.operator("poselib.paste_asset", icon='PASTEDOWN')
         layout.separator()
-        layout.operator("poselib.create_pose_asset").activate_new_action = False
+        layout.operator("poselib.create_pose_asset", icon = 'POSE_DATA').activate_new_action = False
 
 
 ### Messagebus subscription to monitor asset library changes.
