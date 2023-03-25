@@ -182,20 +182,24 @@ class IMAGE_MT_select_similar(Menu):
     def draw(self, context):
         layout = self.layout
 
-        mode = bpy.context.tool_settings.uv_select_mode
+        mode = context.tool_settings.uv_select_mode
        
         #data_selection = ['VERTEX', 'EDGE', 'FACE', 'ISLAND']
         #type_selection = ['PIN', 'LENGTH', 'LENGTH_3D', 'AREA', 'AREA_3D', 'POLYGON_SIDES', 'MATERIAL']               
         
+        rna = bpy.ops.uv.select_similar.get_rna_type()
+        prop = rna.properties.get('type')
+        
         try:
             layout.operator_context = 'INVOKE_REGION_WIN'
-            
-            if mode == 'VERTEX':
+        
+            if len(prop.enum_items) == 1 and mode == 'VERTEX':
                 #Detects if it's in Vertex mode, the default
                 layout.operator_context = 'INVOKE_DEFAULT'
                 layout.operator("uv.select_similar", text="Floating Menu", icon="SIMILAR")
                 layout.separator()
                 layout.operator("uv.select_similar", text="Pinned", icon="PINNED").type = "PIN"
+            #elif len(prop.enum_items) == 3 and mode == 'EDGE':
             elif mode == 'EDGE':
                 #Detects if it's in Edge mode
                 layout.operator_context = 'INVOKE_DEFAULT'
@@ -204,6 +208,7 @@ class IMAGE_MT_select_similar(Menu):
                 layout.operator("uv.select_similar", text="Length", icon="PARTICLEBRUSH_LENGTH").type = "LENGTH"
                 layout.operator("uv.select_similar", text="Length 3D", icon="PARTICLEBRUSH_LENGTH").type = "LENGTH_3D"
                 layout.operator("uv.select_similar", text="Pinned", icon="PINNED").type = "PIN"
+            #elif len(prop.enum_items) == 6 and mode == 'FACE':
             elif mode == 'FACE':
                 #Detects if it's in Face mode
                 layout.operator_context = 'INVOKE_DEFAULT'
@@ -215,6 +220,7 @@ class IMAGE_MT_select_similar(Menu):
                 layout.operator("uv.select_similar", text="Object", icon="OBJECT_DATA").type = "OBJECT"
                 layout.operator("uv.select_similar", text="Polygon Sides", icon="SELECT_FACES_BY_SIDE").type = "SIDES"
                 layout.operator("uv.select_similar", text="Winding", icon="WINDING").type = "WINDING"
+
             else:
                 #Detects if it's in Island mode
                 layout.operator("uv.select_similar", text="Floating Menu", icon="SIMILAR")
@@ -223,12 +229,20 @@ class IMAGE_MT_select_similar(Menu):
                 layout.operator("uv.select_similar", text="Area 3D", icon="AREA").type = "AREA_3D"
                 layout.operator("uv.select_similar", text="Ammount of Faces in Island", icon="FACE_MAPS").type = "FACE"
         except:
-            print("A uv.select_similar exception occurred")
+            if len(prop.enum_items) == 1 and mode != 'VERTEX':
+                layout.separator()
+                layout.operator_context = 'INVOKE_DEFAULT'
+                layout.label(text="Please use floating menu to show all options", icon="ERROR")
+            else:
+                pass
             # Right now an exception happens before you activate the enum list with the floating panel. Till the activation you'll get a warning hint.
             # This causes an incomplete operation list on first use... 
             # The issue is: "TypeError: bpy_struct: item.attr = val: enum "LENGTH" not found in ('PIN')" 
             # Hinting that the enumerated list for the other type methods are not populated on first use, only on the default Vertex enums ('PIN').
-            layout.label(text="Please use to show all options", icon="ERROR")
+            
+        return
+
+
         
 ### BFA - End of changes
 
