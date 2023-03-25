@@ -102,6 +102,7 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
             col.separator()
 
             col.operator("transform.shear", icon='SHEAR')
+            col.operator("uv.randomize_uv_transform", icon = 'RANDOMIZE')
 
         # icon buttons
         else:
@@ -116,6 +117,8 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
                 row.operator("transform.rotate", text="", icon="ROTATE_PLUS_90").value = math.pi / 2
                 row.operator("transform.rotate", text="", icon="ROTATE_MINUS_90").value = math.pi / -2
                 row.operator("transform.shear", text="", icon='SHEAR')
+                row = col.row(align=True)
+                row.operator("uv.randomize_uv_transform", text="", icon = 'RANDOMIZE')
 
             elif column_count == 2:
 
@@ -125,6 +128,7 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("transform.shear", text="", icon='SHEAR')
+                row.operator("uv.randomize_uv_transform", text="", icon = 'RANDOMIZE')
 
             elif column_count == 1:
 
@@ -136,6 +140,7 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
                 col.separator()
 
                 col.operator("transform.shear", text="", icon='SHEAR')
+                col.operator("uv.randomize_uv_transform", text="", icon = 'RANDOMIZE')
 
 
 class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):

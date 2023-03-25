@@ -1021,7 +1021,7 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
         tool_settings = context.tool_settings
         sculpt = tool_settings.sculpt
 
-        col = layout.column()
+        col = layout.column(align = True)
         col.label(text = "Display")
 
         row = col.row()
@@ -1034,16 +1034,32 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
         row.separator()
         row.prop(sculpt, "use_deform_only")
 
-        col = layout.column(heading="Auto-Masking", align=True)
-
-        col.prop(sculpt, "use_automasking_topology", text="Topology")
-        col.prop(sculpt, "use_automasking_face_sets", text="Face Sets")
-        col.prop(sculpt, "use_automasking_boundary_edges", text="Mesh Boundary")
-        col.prop(sculpt, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
-        col.prop(sculpt, "use_automasking_cavity", text="Cavity")
-        col.prop(sculpt, "use_automasking_cavity_inverted", text="Cavity (Inverted)")
-        col.prop(sculpt, "use_automasking_start_normal", text="Area Normal")
-        col.prop(sculpt, "use_automasking_view_normal", text="View Normal")
+        col.label(text = "Display")
+        
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_topology", text="Topology")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_face_sets", text="Face Sets")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_boundary_edges", text="Mesh Boundary")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_cavity", text="Cavity")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_cavity_inverted", text="Cavity (Inverted)")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_start_normal", text="Area Normal")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_view_normal", text="View Normal")
 
         if sculpt.use_automasking_start_normal:
             col.separator()
@@ -1059,6 +1075,8 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
             col.prop(sculpt, "automasking_view_normal_falloff")
 
         col.separator()
+        
+        col.use_property_split = True
         col.prop(sculpt.brush, "automasking_boundary_edges_propagation_steps")
 
         if sculpt.use_automasking_cavity or sculpt.use_automasking_cavity_inverted:

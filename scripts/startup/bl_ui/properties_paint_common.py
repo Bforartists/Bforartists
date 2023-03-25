@@ -843,6 +843,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
     """ Draw simple brush settings that are shared between different paint modes. """
 
     mode = UnifiedPaintPanel.get_brush_mode(context)
+    mode_string = context.mode
 
     ### Determine which settings to draw. ###
     blend_mode = False
@@ -959,10 +960,10 @@ def brush_shared_settings(layout, context, brush, popover=False):
         col = layout.column()
         col.use_property_split = False
         col.prop(brush, "use_frontface", text="Front Faces Only")
-        
-    layout.use_property_split = False        
-    layout.prop(context.object.data, "use_sculpt_collision")
-    
+
+    if mode_string == 'SCULPT_CURVES':
+        layout.use_property_split = False
+        layout.prop(context.object.data, "use_sculpt_collision")
 
 
 def brush_settings_advanced(layout, context, brush, popover=False):
