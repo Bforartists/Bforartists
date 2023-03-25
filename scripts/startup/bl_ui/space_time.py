@@ -12,6 +12,7 @@ class TIME_HT_editor_buttons:
         scene = context.scene
         tool_settings = context.tool_settings
         screen = context.screen
+        anim = bpy.ops.anim
 
         layout.separator_spacer()
 
@@ -47,14 +48,18 @@ class TIME_HT_editor_buttons:
 
         row = layout.row(align=True)
         row.prop(scene, "use_preview_range", text="", toggle=True)
+        row.operator("anim.start_frame_set", text="", icon = 'SET_POSITION')
         sub = row.row(align=True)
         sub.scale_x = 0.8
         if not scene.use_preview_range:
             sub.prop(scene, "frame_start", text="Start")
             sub.prop(scene, "frame_end", text="End")
+
         else:
             sub.prop(scene, "frame_preview_start", text="Start")
             sub.prop(scene, "frame_preview_end", text="End")
+
+        row.operator("anim.end_frame_set", text="", icon = 'SET_POSITION')
 
         row.separator()
 
@@ -252,12 +257,6 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
 
         col = layout.column()
         col.prop(scene, "show_subframe", text="Show Subframes")
-
-        layout.separator()
-
-        row = layout.row(align=True)
-        row.operator("anim.start_frame_set")
-        row.operator("anim.end_frame_set")
 
 
 class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
