@@ -2239,7 +2239,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.separator()
 
         layout.operator("paint.vert_select_ungrouped", text="Ungrouped Vertices", icon="SELECT_UNGROUPED_VERTS")
-        layout.operator("paint.vert_select_linked", text="Select Linked")
+        layout.operator("paint.vert_select_linked", text="Select Linked", icon = 'LINKED')
 
 
 class VIEW3D_MT_edit_curves_select_more_less(Menu):
@@ -3732,7 +3732,6 @@ class VIEW3D_MT_paint_weight(Menu):
             props.data_type = 'VGROUP_WEIGHTS'
 
         layout.operator("object.vertex_group_limit_total", text="Limit Total", icon='WEIGHT_LIMIT_TOTAL')
-        layout.operator("object.vertex_group_fix", text="Fix Deforms", icon='WEIGHT_FIX_DEFORMS')
 
         if not is_editmode:
             layout.separator()
@@ -3790,37 +3789,37 @@ class VIEW3D_MT_sculpt(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize", text="Scale")
+        layout.operator("transform.translate", icon = 'TRANSFORM_MOVE')
+        layout.operator("transform.rotate", icon = 'TRANSFORM_ROTATE')
+        layout.operator("transform.resize", text="Scale", icon = 'TRANSFORM_SCALE')
 
-        props = layout.operator("sculpt.mesh_filter", text="Sphere")
+        props = layout.operator("sculpt.mesh_filter", text="Sphere", icon = 'SPHERE')
         props.type = 'SPHERE'
 
         layout.separator()
 
-        props = layout.operator("paint.hide_show", text="Box Hide", icon="HIDE_ON")
+        props = layout.operator("paint.hide_show", text="Box Hide", icon="BOX_HIDE")
         props.action = 'HIDE'
 
-        props = layout.operator("paint.hide_show", text="Box Show", icon="HIDE_OFF")
+        props = layout.operator("paint.hide_show", text="Box Show", icon="BOX_SHOW")
         props.action = 'SHOW'
 
         layout.separator()
 
-        props = layout.operator("sculpt.face_set_change_visibility", text="Toggle Visibility")
+        props = layout.operator("sculpt.face_set_change_visibility", text="Toggle Visibility", icon="HIDE_OFF")
         props.mode = 'TOGGLE'
 
-        props = layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set")
+        props = layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set", icon="HIDE_ON")
         props.mode = 'HIDE_ACTIVE'
 
         props = layout.operator("paint.hide_show", text="Show All", icon="HIDE_OFF")
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        props = layout.operator("sculpt.face_set_change_visibility", text="Invert Visible")
+        props = layout.operator("sculpt.face_set_change_visibility", text="Invert Visible", icon="HIDE_ON")
         props.mode = 'INVERT'
 
-        props = layout.operator("paint.hide_show", text="Hide Masked", icon="HIDE_ON")
+        props = layout.operator("paint.hide_show", text="Hide Masked", icon="MOD_MASK_OFF")
         props.action = 'HIDE'
         props.area = 'MASKED'
 
@@ -3830,46 +3829,46 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.trim_box_gesture", text="Box Trim")
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Trim", icon = 'BOX_TRIM')
         props.trim_mode = 'DIFFERENCE'
 
-        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim")
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim", icon = 'LASSO_TRIM')
         props.trim_mode = 'DIFFERENCE'
 
-        props = layout.operator("sculpt.trim_box_gesture", text="Box Add")
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon = 'BOX_ADD')
         props.trim_mode = 'JOIN'
 
-        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add")
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon = 'LASSO_ADD')
         props.trim_mode = 'JOIN'
 
-        layout.operator("sculpt.project_line_gesture", text="Line Project")
+        layout.operator("sculpt.project_line_gesture", text="Line Project", icon = 'LINE_PROJECT')
 
         layout.separator()
 
         # Fair Positions
-        props = layout.operator("sculpt.face_set_edit", text="Fair Positions")
+        props = layout.operator("sculpt.face_set_edit", text="Fair Positions", icon = 'POSITION')
         props.mode = 'FAIR_POSITIONS'
 
         # Fair Tangency
-        props = layout.operator("sculpt.face_set_edit", text="Fair Tangency")
+        props = layout.operator("sculpt.face_set_edit", text="Fair Tangency", icon = 'NODE_TANGENT')
         props.mode = 'FAIR_TANGENCY'
 
         layout.separator()
 
         sculpt_filters_types = [
-            ('SMOOTH', "Smooth"),
-            ('SURFACE_SMOOTH', "Surface Smooth"),
-            ('INFLATE', "Inflate"),
-            ('RELAX', "Relax Topology"),
-            ('RELAX_FACE_SETS', "Relax Face Sets"),
-            ('SHARPEN', "Sharpen"),
-            ('ENHANCE_DETAILS', "Enhance Details"),
-            ('ERASE_DISCPLACEMENT', "Erase Multires Displacement"),
-            ('RANDOM', "Randomize")
+            ('SMOOTH', "Smooth", 'PARTICLEBRUSH_SMOOTH'),
+            ('SURFACE_SMOOTH', "Surface Smooth", 'SURFACE_SMOOTH'),
+            ('INFLATE', "Inflate", 'INFLATE'),
+            ('RELAX', "Relax Topology", 'RELAX_TOPOLOGY'),
+            ('RELAX_FACE_SETS', "Relax Face Sets", 'RELAX_FACE_SETS'),
+            ('SHARPEN', "Sharpen", 'SHARPEN'),
+            ('ENHANCE_DETAILS', "Enhance Details", 'ENHANCE'),
+            ('ERASE_DISCPLACEMENT', "Erase Multires Displacement", 'DELETE'),
+            ('RANDOM', "Randomize", 'RANDOMIZE'),
         ]
-
-        for filter_type, ui_name in sculpt_filters_types:
-            props = layout.operator("sculpt.mesh_filter", text=ui_name)
+        #bfa - added icons to the list
+        for filter_type, ui_name, icon in sculpt_filters_types:
+            props = layout.operator("sculpt.mesh_filter", text=ui_name, icon = icon)
             props.type = filter_type
 
         layout.separator()
@@ -4018,8 +4017,6 @@ class VIEW3D_MT_face_sets(Menu):
 
         layout.operator("sculpt.face_set_change_visibility", text="Invert Visible Face Sets", icon="INVERT_MASK").mode = 'INVERT'
         layout.operator("sculpt.reveal_all", text = "Show All Face Sets", icon = "HIDE_OFF")
-
-        op = layout.operator("sculpt.reveal_all", text="Show All Face Sets")
 
         layout.separator()
 

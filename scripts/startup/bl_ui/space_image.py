@@ -517,7 +517,7 @@ class IMAGE_MT_uvs_transform(Menu):
 
         layout.separator()
 
-        layout.operator("uv.randomize_uv_transform")
+        layout.operator("uv.randomize_uv_transform", icon = 'RANDOMIZE')
 
 
 class IMAGE_MT_uvs_snap(Menu):
