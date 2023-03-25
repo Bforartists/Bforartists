@@ -175,6 +175,78 @@ class IMAGE_MT_view_zoom(Menu):
                 translate=False,
             ).ratio = a / b
 
+### BFA - Changes start - added a new menu for the select similar in the header GUI. To avoid issues, the floating menu operator is included. 
+class IMAGE_MT_select_similar(Menu):
+    bl_label = "Select Similar"
+
+    def draw(self, context):
+        layout = self.layout
+
+        mode = context.tool_settings.uv_select_mode
+       
+        #data_selection = ['VERTEX', 'EDGE', 'FACE', 'ISLAND']
+        #type_selection = ['PIN', 'LENGTH', 'LENGTH_3D', 'AREA', 'AREA_3D', 'POLYGON_SIDES', 'MATERIAL']               
+        
+        rna = bpy.ops.uv.select_similar.get_rna_type()
+        prop = rna.properties.get('type')
+        
+        try:
+            layout.operator_context = 'INVOKE_REGION_WIN'
+        
+            if len(prop.enum_items) == 1 and mode == 'VERTEX':
+                #Detects if it's in Vertex mode, the default
+                layout.operator_context = 'INVOKE_DEFAULT'
+                layout.operator("uv.select_similar", text="Floating Menu", icon="SIMILAR")
+                layout.separator()
+                layout.operator("uv.select_similar", text="Pinned", icon="PINNED").type = "PIN"
+            #elif len(prop.enum_items) == 3 and mode == 'EDGE':
+            elif mode == 'EDGE':
+                #Detects if it's in Edge mode
+                layout.operator_context = 'INVOKE_DEFAULT'
+                layout.operator("uv.select_similar", text="Floating Menu", icon="SIMILAR")
+                layout.separator()
+                layout.operator("uv.select_similar", text="Length", icon="PARTICLEBRUSH_LENGTH").type = "LENGTH"
+                layout.operator("uv.select_similar", text="Length 3D", icon="PARTICLEBRUSH_LENGTH").type = "LENGTH_3D"
+                layout.operator("uv.select_similar", text="Pinned", icon="PINNED").type = "PIN"
+            #elif len(prop.enum_items) == 6 and mode == 'FACE':
+            elif mode == 'FACE':
+                #Detects if it's in Face mode
+                layout.operator_context = 'INVOKE_DEFAULT'
+                layout.operator("uv.select_similar", text="Floating Menu", icon="SIMILAR")
+                layout.separator()
+                layout.operator("uv.select_similar", text="Area", icon="AREA").type = "AREA"
+                layout.operator("uv.select_similar", text="Area 3D", icon="AREA").type = "AREA_3D"
+                layout.operator("uv.select_similar", text="Material", icon="MATERIAL_DATA").type = "MATERIAL"
+                layout.operator("uv.select_similar", text="Object", icon="OBJECT_DATA").type = "OBJECT"
+                layout.operator("uv.select_similar", text="Polygon Sides", icon="SELECT_FACES_BY_SIDE").type = "SIDES"
+                layout.operator("uv.select_similar", text="Winding", icon="WINDING").type = "WINDING"
+
+            else:
+                #Detects if it's in Island mode
+                layout.operator("uv.select_similar", text="Floating Menu", icon="SIMILAR")
+                layout.separator()
+                layout.operator("uv.select_similar", text="Area", icon="AREA").type = "AREA"
+                layout.operator("uv.select_similar", text="Area 3D", icon="AREA").type = "AREA_3D"
+                layout.operator("uv.select_similar", text="Ammount of Faces in Island", icon="FACE_MAPS").type = "FACE"
+        except:
+            if len(prop.enum_items) == 1 and mode != 'VERTEX':
+                layout.separator()
+                layout.operator_context = 'INVOKE_DEFAULT'
+                layout.label(text="Please use floating menu to show all options", icon="ERROR")
+            else:
+                pass
+            # Right now an exception happens before you activate the enum list with the floating panel. Till the activation you'll get a warning hint.
+            # This causes an incomplete operation list on first use... 
+            # The issue is: "TypeError: bpy_struct: item.attr = val: enum "LENGTH" not found in ('PIN')" 
+            # Hinting that the enumerated list for the other type methods are not populated on first use, only on the default Vertex enums ('PIN').
+            
+        return
+
+
+        
+### BFA - End of changes
+
+
 
 class IMAGE_MT_select(Menu):
     bl_label = "Select"
@@ -206,7 +278,8 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_split", text="Split", icon="SPLIT")
         layout.operator("uv.select_overlap", text="Overlap", icon="OVERLAP")
         layout.operator("uv.shortest_path_pick", text="Shortest Path", icon="SELECT_SHORTESTPATH")
-        layout.operator("uv.select_similar", text="Similar", icon="SIMILAR")
+        layout.menu("IMAGE_MT_select_similar") #BFA - new menu to add to header
+        #layout.operator("uv.select_similar", text="Similar", icon="SIMILAR") #BFA - changed to a submenu
 
         layout.separator()
 
@@ -1966,6 +2039,7 @@ classes = (
     IMAGE_MT_view,
     IMAGE_MT_view_pie_menus,
     IMAGE_MT_view_zoom,
+    IMAGE_MT_select_similar, #BFA - added to access this dynamic menu
     IMAGE_MT_select,
     IMAGE_MT_select_legacy,
     IMAGE_MT_select_linked,
