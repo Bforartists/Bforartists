@@ -4195,6 +4195,10 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeFilletCurve"
 
+            props = col.operator("node.add_node", text=" Interpolate Curve        ", icon = "CURVE_RESAMPLE")
+            props.use_transform = True
+            props.type = "GeometryNodeInterpolateCurves"
+
             props = col.operator("node.add_node", text=" Resample Curve        ", icon = "CURVE_RESAMPLE")
             props.use_transform = True
             props.type = "GeometryNodeResampleCurve"
@@ -4242,6 +4246,10 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "CURVE_FILLET")
             props.use_transform = True
             props.type = "GeometryNodeFilletCurve"
+
+            props = flow.operator("node.add_node", text="", icon = "CURVE_RESAMPLE")
+            props.use_transform = True
+            props.type = "GeometryNodeInterpolateCurves"
 
             props = flow.operator("node.add_node", text = "", icon = "CURVE_RESAMPLE")
             props.use_transform = True
@@ -4598,7 +4606,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Edge Vertices           ", icon = "EDGE_VERTICES")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshEdgeVertices"
-            
+
             props = col.operator("node.add_node", text=" Edges to Face Groups ", icon = "FACEGROUP")
             props.use_transform = True
             props.type = "GeometryNodeEdgesToFaceGroups"
@@ -4654,7 +4662,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "EDGE_VERTICES")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshEdgeVertices"
-            
+
             props = flow.operator("node.add_node", text="", icon = "FACEGROUP")
             props.use_transform = True
             props.type = "GeometryNodeEdgesToFaceGroups"
