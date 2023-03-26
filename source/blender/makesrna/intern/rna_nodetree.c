@@ -13753,6 +13753,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_DELETE_GEOMETRY:
       return ICON_DELETE;
 
+    case GEO_NODE_DISTRIBUTE_POINTS_IN_VOLUME:
+      return ICON_VOLUME_DISTRIBUTE;
+
     case GEO_NODE_DUPLICATE_ELEMENTS:
       return ICON_DUPLICATE;
 
@@ -14104,6 +14107,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_TRIM_CURVE:
       return ICON_CURVE_TRIM;
 
+    case GEO_NODE_UV_PACK_ISLANDS:
+      return ICON_PACKISLAND;
+
+    case GEO_NODE_UV_UNWRAP:
+      return ICON_UNWRAP_ABF;
+
     case GEO_NODE_VIEWER:
       return ICON_NODE_VIEWER;
 
@@ -14113,14 +14122,8 @@ static int node_type_to_icon(int type)
     case GEO_NODE_VOLUME_TO_MESH:
       return ICON_VOLUME_TO_MESH;
 
-    case GEO_NODE_UV_PACK_ISLANDS:
-      return ICON_PACKISLAND;
-
-    case GEO_NODE_UV_UNWRAP:
-      return ICON_UNWRAP_ABF;
-
-    case GEO_NODE_DISTRIBUTE_POINTS_IN_VOLUME:
-      return ICON_VOLUME_DISTRIBUTE;
+    case GEO_NODE_INTERPOLATE_CURVES:
+      return ICON_INTERPOLATE_CURVE;
   }
   return ICON_NONE;
 }
