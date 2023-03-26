@@ -1786,7 +1786,7 @@ inflate
 relax_face_sets 
 relax_topology 
 enhance 
-#~ DEF_ICON_BLANK(1819)
+interpolate_curve
 #~ DEF_ICON_BLANK(1820)
 #~ DEF_ICON_BLANK(1821)
 #~ DEF_ICON_BLANK(1822)
