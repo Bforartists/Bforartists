@@ -2248,8 +2248,8 @@ class VIEW3D_MT_edit_curves_select_more_less(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("curves.select_more", text="More")
-        layout.operator("curves.select_less", text="Less")
+        layout.operator("curves.select_more", text="More", icon="SELECTMORE")
+        layout.operator("curves.select_less", text="Less", icon="SELECTLESS")
 
 
 class VIEW3D_MT_select_edit_curves(Menu):
