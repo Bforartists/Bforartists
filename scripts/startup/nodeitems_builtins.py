@@ -43,7 +43,10 @@ class TextureNodeCategory(SortedNodeCategory):
 # Menu entry for node group tools.
 def group_tools_draw(_self, layout, _context):
     layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
+    layout.operator("node.group_insert", text = " Insert into Group ", icon = "NODE_GROUPINSERT")
     layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
+    layout.separator()
+    layout.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
     layout.separator()
 
 

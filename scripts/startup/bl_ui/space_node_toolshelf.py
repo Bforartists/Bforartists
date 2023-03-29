@@ -2978,6 +2978,10 @@ class NODES_PT_Relations_group(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
+            col.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text = " Group Input      ", icon = "GROUPINPUT")
             props.use_transform = True
@@ -2986,11 +2990,6 @@ class NODES_PT_Relations_group(bpy.types.Panel):
             props = col.operator("node.add_node", text = " Group Output    ", icon = "GROUPOUTPUT")
             props.use_transform = True
             props.type = "NodeGroupOutput"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            col.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
-
 
 
         #### Icon Buttons
@@ -3005,6 +3004,8 @@ class NODES_PT_Relations_group(bpy.types.Panel):
             flow.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
             flow.operator("node.group_ungroup", text = "", icon = "NODE_UNGROUP")
 
+            flow.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
+
             props = flow.operator("node.add_node", text = "", icon = "GROUPINPUT")
             props.use_transform = True
             props.type = "NodeGroupInput"
@@ -3012,9 +3013,6 @@ class NODES_PT_Relations_group(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "GROUPOUTPUT")
             props.use_transform = True
             props.type = "NodeGroupOutput"
-
-            flow.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
-            
 
 
 #Shader Editor - Relations tab, Node Group Panel
