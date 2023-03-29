@@ -18,15 +18,21 @@
 struct UnwrapOptions;
 
 enum eUVPackIsland_MarginMethod {
-  ED_UVPACK_MARGIN_SCALED = 0, /* Use scale of existing UVs to multiply margin. */
-  ED_UVPACK_MARGIN_ADD,        /* Just add the margin, ignoring any UV scale. */
-  ED_UVPACK_MARGIN_FRACTION,   /* Specify a precise fraction of final UV output. */
+  /** Use scale of existing UVs to multiply margin. */
+  ED_UVPACK_MARGIN_SCALED = 0,
+  /** Just add the margin, ignoring any UV scale. */
+  ED_UVPACK_MARGIN_ADD,
+  /** Specify a precise fraction of final UV output. */
+  ED_UVPACK_MARGIN_FRACTION,
 };
 
 enum eUVPackIsland_ShapeMethod {
-  ED_UVPACK_SHAPE_AABB = 0, /* Use Axis-Aligned Bounding-Boxes. */
-  ED_UVPACK_SHAPE_CONVEX,   /* Use convex hull. */
-  ED_UVPACK_SHAPE_CONCAVE,  /* Use concave hull. */
+  /** Use Axis-Aligned Bounding-Boxes. */
+  ED_UVPACK_SHAPE_AABB = 0,
+  /** Use convex hull. */
+  ED_UVPACK_SHAPE_CONVEX,
+  /** Use concave hull. */
+  ED_UVPACK_SHAPE_CONCAVE,
 };
 
 namespace blender::geometry {
@@ -66,16 +72,23 @@ class UVPackIsland_Params {
 
 class PackIsland {
  public:
+  /** Bounding rectangle of input. Will be calculated automatically in a future update. */
   rctf bounds_rect;
-  float2 pre_translate; /* Output. */
-  int caller_index;     /* Unchanged by #pack_islands, used by caller. */
+  /** Aspect ratio, required for rotation. */
+  float aspect_y;
+  /** Output pre-translation. */
+  float2 pre_translate;
+  /** Output angle in radians. */
+  float angle;
+  /** Unchanged by #pack_islands, used by caller. */
+  int caller_index;
 
   void add_triangle(const float2 uv0, const float2 uv1, const float2 uv2);
   void add_polygon(const blender::Span<float2> uvs, MemArena *arena, Heap *heap);
   void finalize_geometry(const UVPackIsland_Params &params, MemArena *arena, Heap *heap);
 
  private:
-  blender::Vector<float2> triangleVertices;
+  blender::Vector<float2> triangle_vertices_;
   friend class Occupancy;
 };
 

@@ -509,6 +509,7 @@ class GRAPH_MT_slider(Menu):
         layout.operator("graph.blend_to_neighbor", text = "Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
         layout.operator("graph.blend_to_default", text = "Blend to Default Value", icon = 'BLEND_TO_DEFAULT')
         layout.operator("graph.ease", text="Ease")
+        layout.operator("graph.gaussian_smooth", text="Smooth")
 
 
 class GRAPH_MT_key_transform(Menu):
