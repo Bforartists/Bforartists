@@ -25,8 +25,10 @@ def draw_node_group_add_menu(context, layout):
     node_tree = space_node.edit_tree
     all_node_groups = context.blend_data.node_groups
 
-    layout.operator("node.group_make")
-    layout.operator("node.group_ungroup")
+    layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
+    layout.operator("node.group_insert", text = "Insert into Group ", icon = "NODE_GROUPINSERT")
+    layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
+
     if node_tree in all_node_groups.values():
         layout.separator()
         add_node_type(layout, "NodeGroupInput")
@@ -48,6 +50,10 @@ def draw_node_group_add_menu(context, layout):
                 ops = props.settings.add()
                 ops.name = "node_tree"
                 ops.value = "bpy.data.node_groups[%r]" % group.name
+
+    layout.separator()
+
+    layout.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
 
 
 def draw_assets_for_catalog(layout, catalog_path):
