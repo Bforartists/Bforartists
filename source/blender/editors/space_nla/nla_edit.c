@@ -50,8 +50,8 @@
 #include "UI_resources.h" /*bfa - we need the ui resources for the icons*/
 #include "UI_view2d.h"
 
-#include "nla_intern.h"  /* own include */
-#include "nla_private.h" /* FIXME: maybe this shouldn't be included? */
+#include "nla_intern.h"
+#include "nla_private.h"
 
 #include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
