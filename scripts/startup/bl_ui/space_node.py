@@ -649,12 +649,12 @@ class NODE_MT_context_menu_select_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("node.select_grouped", text="Select Grouped", icon = "GROUP").extend = False
+        layout.operator("node.select_grouped", text = "Grouped", icon = "GROUP").extend = False
 
         layout.separator()
 
-        layout.operator("node.select_linked_from", icon = "LINKED")
-        layout.operator("node.select_linked_to", icon = "LINKED")
+        layout.operator("node.select_linked_from", text = "Linked from", icon = "LINKED")
+        layout.operator("node.select_linked_to", text = "Linked to", icon = "LINKED")
 
         layout.separator()
 
@@ -732,7 +732,7 @@ class NODE_MT_context_menu(Menu):
         layout.operator("node.group_insert", text="Insert Into Group", icon = 'NODE_GROUPINSERT')
 
         if active_node and active_node.type == 'GROUP':
-            layout.operator("node.group_edit", text="Edit", icon="NODE_EDITGROUP").exit = False
+            layout.operator("node.group_edit", text="Toggle Edit Group", icon="NODE_EDITGROUP").exit = False
             layout.operator("node.group_ungroup", text="Ungroup", icon="NODE_UNGROUP")
 
             if is_nested:
