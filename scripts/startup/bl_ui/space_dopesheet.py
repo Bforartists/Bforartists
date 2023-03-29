@@ -477,9 +477,9 @@ class DOPESHEET_MT_view_pie(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        pie.operator("action.view_all")
-        pie.operator("action.view_selected", icon='ZOOM_SELECTED')
-        pie.operator("action.view_frame")
+        pie.operator("action.view_all", icon="VIEWALL")
+        pie.operator("action.view_selected", icon="VIEW_SELECTED")
+        pie.operator("action.view_frame", icon="VIEW_FRAME")
 
 
 class DOPESHEET_MT_select(Menu):
@@ -591,6 +591,10 @@ class DOPESHEET_MT_channel(Menu):
 
         layout.operator("anim.channels_fcurves_enable", icon="UNLOCKED")
 
+        layout.separator()
+
+        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
+
 
 class DOPESHEET_MT_channel_extrapolation(Menu):
     bl_label = "Extrapolation Mode"
@@ -608,7 +612,8 @@ class DOPESHEET_MT_channel_extrapolation(Menu):
                         icon="EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR_CYCLIC'
 
         layout.separator()
-        layout.operator("anim.channels_view_selected")
+
+        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
 
 
 class DOPESHEET_MT_key(Menu):
@@ -823,7 +828,8 @@ class DOPESHEET_MT_gpencil_channel(Menu):
             "anim.channels_move", "direction", text="Move...")
 
         layout.separator()
-        layout.operator("anim.channels_view_selected")
+        
+        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
 
 
 class DOPESHEET_MT_gpencil_key(Menu):
@@ -913,7 +919,7 @@ class DOPESHEET_MT_channel_context_menu(Menu):
         # This menu is used from the graph editor too.
         is_graph_editor = context.area.type == 'GRAPH_EDITOR'
 
-        layout.operator("anim.channels_view_selected")
+        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
         layout.operator("anim.channels_setting_enable", text="Mute Channels", icon='MUTE_IPO_ON').type = 'MUTE'
         layout.operator("anim.channels_setting_disable", text="Unmute Channels", icon='MUTE_IPO_OFF').type = 'MUTE'
         layout.separator()
