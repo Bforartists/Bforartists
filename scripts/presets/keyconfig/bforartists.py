@@ -1,4 +1,4 @@
-keyconfig_version = (3, 5, 8)
+keyconfig_version = (3, 6, 4)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -751,7 +751,15 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu",
-     {"type": 'A', "value": 'PRESS'},
+     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
+     {"properties":
+      [("name", 'DOPESHEET_MT_channel_context_menu'),
+       ],
+      },
+     ),
+    ("anim.channels_view_selected", {"type": 'F', "value": 'PRESS'}, None),
+    ("wm.call_menu",
+     {"type": 'APP', "value": 'PRESS'},
      {"properties":
       [("name", 'DOPESHEET_MT_channel_context_menu'),
        ],
@@ -1867,6 +1875,7 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
@@ -7315,6 +7324,9 @@ keyconfig_data = \
     ("AUTOCONSTRAINPLANE", {"type": 'S', "value": 'PRESS', "alt": True}, None),
     ("PRECISION", {"type": 'LEFT_SHIFT', "value": 'ANY', "any": True}, None),
     ("PRECISION", {"type": 'RIGHT_SHIFT', "value": 'ANY', "any": True}, None),
+    ("VERT_EDGE_SLIDE", {"type": 'W', "value": 'PRESS'}, None),
+    ("TRACKBALL", {"type": 'E', "value": 'PRESS'}, None),
+    ("ROTATE_NORMALS", {"type": 'N', "value": 'PRESS'}, None),
     ],
    },
   ),
