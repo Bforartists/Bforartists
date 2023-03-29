@@ -497,6 +497,7 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
+        layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("node.duplicate_move_keep_inputs", text = "Duplicate Keep Input", icon = "DUPLICATE")
         layout.operator("node.duplicate_move", icon = "DUPLICATE")
         layout.operator("node.duplicate_move_linked", icon = "DUPLICATE")

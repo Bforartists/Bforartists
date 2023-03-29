@@ -861,7 +861,7 @@ void initSnapping(TransInfo *t, wmOperator *op)
   }
   /* use scene defaults only when transform is modal */
   else if (t->flag & T_MODAL) {
-    if (transformModeUseSnap(t) && (t->tsnap.flag & SCE_SNAP)) {
+    if (t->tsnap.flag & SCE_SNAP) {
       t->modifiers |= MOD_SNAP;
     }
 
@@ -880,6 +880,8 @@ void initSnapping(TransInfo *t, wmOperator *op)
   }
 
   t->tsnap.source_operation = snap_source;
+
+  transform_snap_flag_from_modifiers_set(t);
 
   initSnappingMode(t);
 }
@@ -945,6 +947,11 @@ static void setSnappingCallback(TransInfo *t)
       break;
     case SCE_SNAP_SOURCE_ACTIVE:
       t->tsnap.snap_source_fn = snap_source_active_fn;
+
+      /* XXX, workaround: active needs to be calculated before transforming, otherwise
+       * `t->tsnap.snap_source` will be calculated with the transformed data since we're not
+       * reading from 'td->center' in this case. (See: #40241 and #40348). */
+      snap_source_active_fn(t);
       break;
   }
 }
@@ -1228,13 +1235,18 @@ static void snap_source_active_fn(TransInfo *t)
 {
   /* Only need to calculate once */
   if ((t->tsnap.status & SNAP_SOURCE_FOUND) == 0) {
-    if (calculateCenterActive(t, true, t->tsnap.snap_source)) {
+    if (t->around == V3D_AROUND_ACTIVE) {
+      /* Just copy the already calculated active center. */
+      copy_v3_v3(t->tsnap.snap_source, t->center_global);
       TargetSnapOffset(t, nullptr);
-
       t->tsnap.status |= SNAP_SOURCE_FOUND;
     }
-    /* No active, default to median */
+    else if (calculateCenterActive(t, true, t->tsnap.snap_source)) {
+      TargetSnapOffset(t, nullptr);
+      t->tsnap.status |= SNAP_SOURCE_FOUND;
+    }
     else {
+      /* No active, default to median, */
       t->tsnap.source_operation = SCE_SNAP_SOURCE_MEDIAN;
       t->tsnap.snap_source_fn = snap_source_median_fn;
       snap_source_median_fn(t);
