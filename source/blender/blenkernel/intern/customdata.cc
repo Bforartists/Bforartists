@@ -1015,7 +1015,7 @@ static void layerInterp_mloopcol(const void **sources,
 /** \name Callbacks for #OrigSpaceLoop
  * \{ */
 
-/* origspace is almost exact copy of mloopuv's, keep in sync */
+/* origspace is almost exact copy of #MLoopUV, keep in sync. */
 static void layerCopyValue_mloop_origspace(const void *source,
                                            void *dest,
                                            const int /*mixmode*/,
@@ -2273,7 +2273,7 @@ bool CustomData_merge(const CustomData *source,
           layer->anonymous_id = nullptr;
         }
         else {
-          layer->anonymous_id->user_add();
+          layer->anonymous_id->add_user();
         }
       }
       if (alloctype == CD_ASSIGN) {
@@ -2365,7 +2365,7 @@ static void customData_free_layer__internal(CustomDataLayer *layer, const int to
   const LayerTypeInfo *typeInfo;
 
   if (layer->anonymous_id != nullptr) {
-    layer->anonymous_id->user_remove();
+    layer->anonymous_id->remove_user_and_delete_if_last();
     layer->anonymous_id = nullptr;
   }
   if (!(layer->flag & CD_FLAG_NOFREE) && layer->data) {
@@ -2583,8 +2583,12 @@ const char *CustomData_get_render_layer_name(const CustomData *data, const int t
 
 void CustomData_set_layer_active(CustomData *data, const int type, const int n)
 {
+#ifndef NDEBUG
+  const int layer_num = CustomData_number_of_layers(data, type);
+#endif
   for (int i = 0; i < data->totlayer; i++) {
     if (data->layers[i].type == type) {
+      BLI_assert(uint(n) < uint(layer_num));
       data->layers[i].active = n;
     }
   }
@@ -2592,8 +2596,12 @@ void CustomData_set_layer_active(CustomData *data, const int type, const int n)
 
 void CustomData_set_layer_render(CustomData *data, const int type, const int n)
 {
+#ifndef NDEBUG
+  const int layer_num = CustomData_number_of_layers(data, type);
+#endif
   for (int i = 0; i < data->totlayer; i++) {
     if (data->layers[i].type == type) {
+      BLI_assert(uint(n) < uint(layer_num));
       data->layers[i].active_rnd = n;
     }
   }
@@ -2601,8 +2609,12 @@ void CustomData_set_layer_render(CustomData *data, const int type, const int n)
 
 void CustomData_set_layer_clone(CustomData *data, const int type, const int n)
 {
+#ifndef NDEBUG
+  const int layer_num = CustomData_number_of_layers(data, type);
+#endif
   for (int i = 0; i < data->totlayer; i++) {
     if (data->layers[i].type == type) {
+      BLI_assert(uint(n) < uint(layer_num));
       data->layers[i].active_clone = n;
     }
   }
@@ -2610,8 +2622,12 @@ void CustomData_set_layer_clone(CustomData *data, const int type, const int n)
 
 void CustomData_set_layer_stencil(CustomData *data, const int type, const int n)
 {
+#ifndef NDEBUG
+  const int layer_num = CustomData_number_of_layers(data, type);
+#endif
   for (int i = 0; i < data->totlayer; i++) {
     if (data->layers[i].type == type) {
+      BLI_assert(uint(n) < uint(layer_num));
       data->layers[i].active_mask = n;
     }
   }
@@ -2619,48 +2635,64 @@ void CustomData_set_layer_stencil(CustomData *data, const int type, const int n)
 
 void CustomData_set_layer_active_index(CustomData *data, const int type, const int n)
 {
-  const int layer_index = data->typemap[type];
+#ifndef NDEBUG
+  const int layer_num = CustomData_number_of_layers(data, type);
+#endif
+  const int layer_index = n - data->typemap[type];
   BLI_assert(customdata_typemap_is_valid(data));
 
   for (int i = 0; i < data->totlayer; i++) {
     if (data->layers[i].type == type) {
-      data->layers[i].active = n - layer_index;
+      BLI_assert(uint(layer_index) < uint(layer_num));
+      data->layers[i].active = layer_index;
     }
   }
 }
 
 void CustomData_set_layer_render_index(CustomData *data, const int type, const int n)
 {
-  const int layer_index = data->typemap[type];
+#ifndef NDEBUG
+  const int layer_num = CustomData_number_of_layers(data, type);
+#endif
+  const int layer_index = n - data->typemap[type];
   BLI_assert(customdata_typemap_is_valid(data));
 
   for (int i = 0; i < data->totlayer; i++) {
     if (data->layers[i].type == type) {
-      data->layers[i].active_rnd = n - layer_index;
+      BLI_assert(uint(layer_index) < uint(layer_num));
+      data->layers[i].active_rnd = layer_index;
     }
   }
 }
 
 void CustomData_set_layer_clone_index(CustomData *data, const int type, const int n)
 {
-  const int layer_index = data->typemap[type];
+#ifndef NDEBUG
+  const int layer_num = CustomData_number_of_layers(data, type);
+#endif
+  const int layer_index = n - data->typemap[type];
   BLI_assert(customdata_typemap_is_valid(data));
 
   for (int i = 0; i < data->totlayer; i++) {
     if (data->layers[i].type == type) {
-      data->layers[i].active_clone = n - layer_index;
+      BLI_assert(uint(layer_index) < uint(layer_num));
+      data->layers[i].active_clone = layer_index;
     }
   }
 }
 
 void CustomData_set_layer_stencil_index(CustomData *data, const int type, const int n)
 {
-  const int layer_index = data->typemap[type];
+#ifndef NDEBUG
+  const int layer_num = CustomData_number_of_layers(data, type);
+#endif
+  const int layer_index = n - data->typemap[type];
   BLI_assert(customdata_typemap_is_valid(data));
 
   for (int i = 0; i < data->totlayer; i++) {
     if (data->layers[i].type == type) {
-      data->layers[i].active_mask = n - layer_index;
+      BLI_assert(uint(layer_index) < uint(layer_num));
+      data->layers[i].active_mask = layer_index;
     }
   }
 }
@@ -2924,7 +2956,7 @@ void *CustomData_add_layer_anonymous(CustomData *data,
     return nullptr;
   }
 
-  anonymous_id->user_add();
+  anonymous_id->add_user();
   layer->anonymous_id = anonymous_id;
   return layer->data;
 }

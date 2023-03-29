@@ -44,6 +44,8 @@
 
 #include "BLO_read_write.h"
 
+#include "GPU_matrix.h"
+
 #include "action_intern.hh" /* own include */
 
 /* -------------------------------------------------------------------- */
@@ -101,9 +103,9 @@ static SpaceLink *action_create(const ScrArea *area, const Scene *scene)
   BLI_addtail(&saction->regionbase, region);
   region->regiontype = RGN_TYPE_WINDOW;
 
-  region->v2d.tot.xmin = (float)(scene->r.sfra - 10);
-  region->v2d.tot.ymin = (float)(-area->winy) / 3.0f;
-  region->v2d.tot.xmax = (float)(scene->r.efra + 10);
+  region->v2d.tot.xmin = float(scene->r.sfra - 10);
+  region->v2d.tot.ymin = float(-area->winy) / 3.0f;
+  region->v2d.tot.xmax = float(scene->r.efra + 10);
   region->v2d.tot.ymax = 0.0f;
 
   region->v2d.cur = region->v2d.tot;
@@ -169,7 +171,6 @@ static void action_main_region_draw(const bContext *C, ARegion *region)
   /* draw entirely, view changes should be handled here */
   SpaceAction *saction = CTX_wm_space_action(C);
   Scene *scene = CTX_data_scene(C);
-  Object *obact = CTX_data_active_object(C);
   bAnimContext ac;
   View2D *v2d = &region->v2d;
   short marker_flag = 0;
@@ -212,11 +213,6 @@ static void action_main_region_draw(const bContext *C, ARegion *region)
     ED_markers_draw(C, marker_flag);
   }
 
-  /* caches */
-  if (saction->mode == SACTCONT_TIMELINE) {
-    timeline_draw_cache(saction, obact, scene);
-  }
-
   /* preview range */
   UI_view2d_view_ortho(v2d);
   ANIM_draw_previewrange(C, v2d, 0);
@@ -240,7 +236,16 @@ static void action_main_region_draw_overlay(const bContext *C, ARegion *region)
   /* draw entirely, view changes should be handled here */
   const SpaceAction *saction = CTX_wm_space_action(C);
   const Scene *scene = CTX_data_scene(C);
+  const Object *obact = CTX_data_active_object(C);
   View2D *v2d = &region->v2d;
+
+  /* caches */
+  if (saction->mode == SACTCONT_TIMELINE) {
+    GPU_matrix_push_projection();
+    UI_view2d_view_orthoSpecial(region, v2d, 1);
+    timeline_draw_cache(saction, obact, scene);
+    GPU_matrix_pop_projection();
+  }
 
   /* scrubbing region */
   ED_time_scrub_draw_current_frame(region, scene, saction->flag & SACTION_DRAWTIME);
@@ -577,8 +582,8 @@ static void action_listener(const wmSpaceTypeListenerParams *params)
           LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
             if (region->regiontype == RGN_TYPE_WINDOW) {
               Scene *scene = static_cast<Scene *>(wmn->reference);
-              region->v2d.tot.xmin = (float)(scene->r.sfra - 4);
-              region->v2d.tot.xmax = (float)(scene->r.efra + 4);
+              region->v2d.tot.xmin = float(scene->r.sfra - 4);
+              region->v2d.tot.xmax = float(scene->r.efra + 4);
               break;
             }
           }

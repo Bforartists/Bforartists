@@ -480,7 +480,7 @@ void draw_channel_strips(bAnimContext *ac, SpaceAction *saction, ARegion *region
 /** \name Timeline - Caches
  * \{ */
 
-static bool timeline_cache_is_hidden_by_setting(SpaceAction *saction, PTCacheID *pid)
+static bool timeline_cache_is_hidden_by_setting(const SpaceAction *saction, const PTCacheID *pid)
 {
   switch (pid->type) {
     case PTCACHE_TYPE_SOFTBODY:
@@ -656,14 +656,14 @@ static void timeline_cache_draw_cached_segments(PointCache *cache, uint pos_id)
 static void timeline_cache_draw_single(PTCacheID *pid, float y_offset, float height, uint pos_id)
 {
   GPU_matrix_push();
-  GPU_matrix_translate_2f(0.0, (float)V2D_SCROLL_HANDLE_HEIGHT + y_offset);
+  GPU_matrix_translate_2f(0.0, float(V2D_SCROLL_HANDLE_HEIGHT) + y_offset);
   GPU_matrix_scale_2f(1.0, height);
 
   float color[4];
   timeline_cache_color_get(pid, color);
 
   immUniformColor4fv(color);
-  immRectf(pos_id, (float)pid->cache->startframe, 0.0, (float)pid->cache->endframe, 1.0);
+  immRectf(pos_id, float(pid->cache->startframe), 0.0, float(pid->cache->endframe), 1.0);
 
   color[3] = 0.4f;
   timeline_cache_modify_color_based_on_state(pid->cache, color);
@@ -674,14 +674,14 @@ static void timeline_cache_draw_single(PTCacheID *pid, float y_offset, float hei
   GPU_matrix_pop();
 }
 
-void timeline_draw_cache(SpaceAction *saction, Object *ob, Scene *scene)
+void timeline_draw_cache(const SpaceAction *saction, const Object *ob, const Scene *scene)
 {
   if ((saction->cache_display & TIME_CACHE_DISPLAY) == 0 || ob == nullptr) {
     return;
   }
 
   ListBase pidlist;
-  BKE_ptcache_ids_from_object(&pidlist, ob, scene, 0);
+  BKE_ptcache_ids_from_object(&pidlist, const_cast<Object *>(ob), const_cast<Scene *>(scene), 0);
 
   uint pos_id = GPU_vertformat_attr_add(
       immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
@@ -689,7 +689,7 @@ void timeline_draw_cache(SpaceAction *saction, Object *ob, Scene *scene)
 
   GPU_blend(GPU_BLEND_ALPHA);
 
-  /* Iterate over pointcaches on the active object, and draw each one's range. */
+  /* Iterate over point-caches on the active object, and draw each one's range. */
   float y_offset = 0.0f;
   const float cache_draw_height = 4.0f * UI_SCALE_FAC * U.pixelsize;
   LISTBASE_FOREACH (PTCacheID *, pid, &pidlist) {
