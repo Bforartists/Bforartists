@@ -510,6 +510,12 @@ class NODE_MT_node(Menu):
         layout.operator("node.detach", text="Remove from Frame", icon = "DELETE")
         layout.operator("node.parent_set", text = "Frame Make Parent", icon = "PARENT_SET")
 
+        layout.separator() #BFA - exposed context menu operator to header
+
+        props = layout.operator("wm.call_panel", text="Rename...", icon = "RENAME") 
+        props.name = "TOPBAR_PT_name" 
+        props.keep_open = False 
+
         layout.separator()
 
         layout.menu("NODE_MT_node_links")
