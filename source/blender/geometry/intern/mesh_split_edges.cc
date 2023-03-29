@@ -2,7 +2,6 @@
 
 #include "BLI_array_utils.hh"
 #include "BLI_index_mask.hh"
-#include "BLI_user_counter.hh"
 
 #include "BKE_attribute.hh"
 #include "BKE_attribute_math.hh"
@@ -69,7 +68,7 @@ static void add_new_edges(Mesh &mesh,
   /* Store a copy of the IDs locally since we will remove the existing attributes which
    * can also free the names, since the API does not provide pointer stability. */
   Vector<std::string> named_ids;
-  Vector<UserCounter<const bke::AnonymousAttributeID>> anonymous_ids;
+  Vector<bke::AutoAnonymousAttributeID> anonymous_ids;
   for (const bke::AttributeIDRef &id : attributes.all_ids()) {
     if (attributes.lookup_meta_data(id)->domain != ATTR_DOMAIN_EDGE) {
       continue;
@@ -82,14 +81,14 @@ static void add_new_edges(Mesh &mesh,
     }
     else {
       anonymous_ids.append(&id.anonymous_id());
-      id.anonymous_id().user_add();
+      id.anonymous_id().add_user();
     }
   }
   Vector<bke::AttributeIDRef> local_edge_ids;
   for (const StringRef name : named_ids) {
     local_edge_ids.append(name);
   }
-  for (const UserCounter<const bke::AnonymousAttributeID> &id : anonymous_ids) {
+  for (const bke::AutoAnonymousAttributeID &id : anonymous_ids) {
     local_edge_ids.append(*id);
   }
 
@@ -251,8 +250,8 @@ static int adjacent_edge(const Span<int> corner_verts,
                          const int vertex)
 {
   const int adjacent_loop_i = (corner_verts[loop_i] == vertex) ?
-                                  bke::mesh_topology::poly_loop_prev(poly, loop_i) :
-                                  bke::mesh_topology::poly_loop_next(poly, loop_i);
+                                  bke::mesh::poly_corner_prev(poly, loop_i) :
+                                  bke::mesh::poly_corner_next(poly, loop_i);
   return corner_edges[adjacent_loop_i];
 }
 

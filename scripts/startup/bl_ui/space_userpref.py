@@ -309,6 +309,7 @@ class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
 
         flow.use_property_split = False
         flow.prop(view, "show_statusbar_stats", text="Scene Statistics")
+        flow.prop(view, "show_statusbar_scene_duration", text="Scene Duration")
         flow.prop(view, "show_statusbar_memory", text="System Memory")
         flow.prop(view, "show_statusbar_vram", text="Video Memory")
         flow.prop(view, "show_statusbar_version", text="Bforartists Version")
