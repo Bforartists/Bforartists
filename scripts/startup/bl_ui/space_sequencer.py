@@ -984,7 +984,7 @@ class SEQUENCER_MT_strip(Menu):
 
         if strip and strip.type == 'SCENE':
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon='DELETE_DUPLICATE').delete_data = True
-            layout.operator("sequencer.scene_frame_range_update")
+            layout.operator("sequencer.scene_frame_range_update", icon = 'NODE_MAP_RANGE')
 
         layout.separator()
         layout.menu("SEQUENCER_MT_change")
