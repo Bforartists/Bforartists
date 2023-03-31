@@ -233,7 +233,7 @@ class NODE_MT_geometry_node_GEO_INPUT(Menu):
     def draw(self, _context):
         layout = self.layout
         layout.menu("NODE_MT_geometry_node_GEO_INPUT_CONSTANT")
-        layout.menu("NODE_MT_geometry_node_GEO_INPUT_GROUP")
+        #layout.menu("NODE_MT_geometry_node_GEO_INPUT_GROUP")# bfa - double menu entry
         layout.menu("NODE_MT_geometry_node_GEO_INPUT_SCENE")
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
@@ -255,15 +255,15 @@ class NODE_MT_geometry_node_GEO_INPUT_CONSTANT(Menu):
         node_add_menu.add_node_type(layout, "FunctionNodeInputVector")
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
-
-class NODE_MT_geometry_node_GEO_INPUT_GROUP(Menu):
+# bfa - double menu entry
+""" class NODE_MT_geometry_node_GEO_INPUT_GROUP(Menu):
     bl_idname = "NODE_MT_geometry_node_GEO_INPUT_GROUP"
     bl_label = "Group"
 
     def draw(self, _context):
         layout = self.layout
         node_add_menu.add_node_type(layout, "NodeGroupInput")
-        node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
+        node_add_menu.draw_assets_for_catalog(layout, self.bl_label) """
 
 
 class NODE_MT_geometry_node_GEO_INPUT_SCENE(Menu):
@@ -439,7 +439,7 @@ class NODE_MT_category_GEO_OUTPUT(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        node_add_menu.add_node_type(layout, "NodeGroupOutput")
+        #node_add_menu.add_node_type(layout, "NodeGroupOutput")# bfa - double menu entry
         node_add_menu.add_node_type(layout, "GeometryNodeViewer")
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
@@ -658,7 +658,7 @@ classes = (
     NODE_MT_geometry_node_GEO_ATTRIBUTE,
     NODE_MT_geometry_node_GEO_INPUT,
     NODE_MT_geometry_node_GEO_INPUT_CONSTANT,
-    NODE_MT_geometry_node_GEO_INPUT_GROUP,
+    #NODE_MT_geometry_node_GEO_INPUT_GROUP,# bfa - double menu entry
     NODE_MT_geometry_node_GEO_INPUT_SCENE,
     NODE_MT_category_GEO_OUTPUT,
     NODE_MT_geometry_node_GEO_CURVE,
