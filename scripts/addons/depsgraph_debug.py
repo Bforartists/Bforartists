@@ -13,6 +13,7 @@ bl_info = {
     "version": (0, 1),
     "blender": (2, 80, 0),
     "description": "Various dependency graph debugging tools",
+    "location": "Properties > View Layer > Dependency Graph",
     "warning": "",
     "doc_url": "",
     "tracker_url": "",

@@ -755,7 +755,8 @@ def draw_sticks_dupliverts(all_atoms,
     if use_sticks_color == False:
         stick_material = bpy.data.materials.new(ELEMENTS[-1].name)
         stick_material.use_nodes = True
-        mat_P_BSDF = stick_material.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in stick_material.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = ELEMENTS[-1].color
 
     # Sort the sticks and put them into a new list such that ...
@@ -1048,7 +1049,8 @@ def draw_sticks_skin(all_atoms,
 
     stick_material = bpy.data.materials.new(ELEMENTS[-1].name)
     stick_material.use_nodes = True
-    mat_P_BSDF = stick_material.node_tree.nodes['Principled BSDF']
+    mat_P_BSDF = next(n for n in stick_material.node_tree.nodes
+                      if n.type == "BSDF_PRINCIPLED")
     mat_P_BSDF.inputs['Base Color'].default_value = ELEMENTS[-1].color
     new_stick_mesh.active_material = stick_material
 
@@ -1105,7 +1107,8 @@ def draw_sticks_normal(all_atoms,
 
     stick_material = bpy.data.materials.new(ELEMENTS[-1].name)
     stick_material.use_nodes = True
-    mat_P_BSDF = stick_material.node_tree.nodes['Principled BSDF']
+    mat_P_BSDF = next(n for n in stick_material.node_tree.nodes
+                      if n.type == "BSDF_PRINCIPLED")
     mat_P_BSDF.inputs['Base Color'].default_value = ELEMENTS[-1].color
 
     up_axis = Vector([0.0, 0.0, 1.0])
@@ -1332,7 +1335,8 @@ def import_pdb(Ball_type,
         material = bpy.data.materials.new(atom_type[1])
         material.diffuse_color = atom_type[2]
         material.use_nodes = True
-        mat_P_BSDF = material.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = atom_type[2]
         material.name = atom_type[0]
         atom_material_list.append(material)
@@ -1350,7 +1354,8 @@ def import_pdb(Ball_type,
                 if atom.name == "Vacancy":
                     # For cycles and eevee.
                     material.use_nodes = True
-                    mat_P_BSDF = material.node_tree.nodes['Principled BSDF']
+                    mat_P_BSDF = next(n for n in material.node_tree.nodes
+                                      if n.type == "BSDF_PRINCIPLED")
                     mat_P_BSDF.inputs['Metallic'].default_value = 0.1
                     mat_P_BSDF.inputs['Specular'].default_value = 0.15
                     mat_P_BSDF.inputs['Roughness'].default_value = 0.05

@@ -4,6 +4,7 @@ import bpy
 from bpy.types import Operator, Menu
 from bl_operators.presets import AddPresetBase
 import os
+from math import degrees
 
 from .sun_calc import (format_lat_long, format_time, format_hms, sun)
 
@@ -79,7 +80,7 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
 
     def draw_environ_mode_panel(self, context, sp, p, layout):
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True,
-                             even_rows=False, align=False)
+                                even_rows=False, align=False)
 
         col = flow.column(align=True)
         col.label(text="Environment Texture")
@@ -153,6 +154,7 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
             col.label(text="Please select World in the World panel.",
                       icon="ERROR")
 
+
 class SUNPOS_PT_Location(bpy.types.Panel):
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
@@ -211,10 +213,10 @@ class SUNPOS_PT_Location(bpy.types.Panel):
             col = flow.column(align=True)
             split = col.split(factor=0.4, align=True)
             split.label(text="Azimuth:")
-            split.label(text=str(round(sun.azimuth, 3)) + "°")
+            split.label(text=str(round(degrees(sun.azimuth), 3)) + "°")
             split = col.split(factor=0.4, align=True)
             split.label(text="Elevation:")
-            split.label(text=str(round(sun.elevation, 3)) + "°")
+            split.label(text=str(round(degrees(sun.elevation), 3)) + "°")
             col.separator()
 
         if p.show_refraction:
@@ -281,7 +283,6 @@ class SUNPOS_PT_Time(bpy.types.Panel):
         split.label(text="UTC:", icon='PREVIEW_RANGE')
         split.label(text=ut)
         col.separator()
-
 
         col = flow.column(align=True)
         col.alignment = 'CENTER'

@@ -472,7 +472,8 @@ def import_xyz(Ball_type,
         material = bpy.data.materials.new(atom.name)
         material.diffuse_color = atom.color
         material.use_nodes = True
-        mat_P_BSDF = material.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = atom.color
         material.name = atom.name
         atom_material_list.append(material)
@@ -491,7 +492,8 @@ def import_xyz(Ball_type,
                     if atom.name == "Vacancy":
                         # For cycles and eevee.
                         material.use_nodes = True
-                        mat_P_BSDF = material.node_tree.nodes['Principled BSDF']
+                        mat_P_BSDF = next(n for n in material.node_tree.nodes
+                                          if n.type == "BSDF_PRINCIPLED")
                         mat_P_BSDF.inputs['Metallic'].default_value = 0.1
                         mat_P_BSDF.inputs['Specular'].default_value = 0.15
                         mat_P_BSDF.inputs['Roughness'].default_value = 0.05

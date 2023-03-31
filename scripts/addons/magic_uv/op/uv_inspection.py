@@ -447,7 +447,8 @@ class MUV_OT_UVInspection_PaintUVIsland(bpy.types.Operator):
                 "MagicUV_PaintUVMaterial_{}".format(i))
             if compat.check_version(2, 80, 0) >= 0:
                 target_mtrl.use_nodes = True
-                output_node = target_mtrl.node_tree.nodes["Material Output"]
+                output_node = next(n for n in target_mtrl.node_tree.nodes
+                                   if n.type == "OUTPUT_MATERIAL")
                 nodes_to_remove = [n for n in target_mtrl.node_tree.nodes
                                    if n != output_node]
                 for n in nodes_to_remove:

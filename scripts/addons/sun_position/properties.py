@@ -5,7 +5,7 @@ from bpy.types import AddonPreferences, PropertyGroup
 from bpy.props import (StringProperty, EnumProperty, IntProperty,
                        FloatProperty, BoolProperty, PointerProperty)
 
-from .sun_calc import sun_update, parse_coordinates, surface_update, analemmas_update
+from .sun_calc import sun_update, parse_coordinates, surface_update, analemmas_update, sun
 from .draw import north_update
 
 from math import pi
@@ -19,7 +19,7 @@ TODAY = datetime.today()
 
 class SunPosProperties(PropertyGroup):
     usage_mode: EnumProperty(
-        name="Usage mode",
+        name="Usage Mode",
         description="Operate in normal mode or environment texture mode",
         items=(
             ('NORMAL', "Normal", ""),
@@ -29,14 +29,14 @@ class SunPosProperties(PropertyGroup):
         update=sun_update)
 
     use_daylight_savings: BoolProperty(
-        name="Daylight savings",
+        name="Daylight Savings",
         description="Daylight savings time adds 1 hour to standard time",
         default=False,
         update=sun_update)
 
     use_refraction: BoolProperty(
-        name="Use refraction",
-        description="Show apparent sun position due to refraction",
+        name="Use Refraction",
+        description="Show apparent Sun position due to refraction",
         default=True,
         update=sun_update)
 
@@ -80,6 +80,34 @@ class SunPosProperties(PropertyGroup):
         step=5, precision=3,
         default=0.0,
         update=sun_update)
+
+    sunrise_time: FloatProperty(
+        name="Sunrise Time",
+        description="Time at which the Sun rises",
+        soft_min=0.0, soft_max=24.0,
+        default=0.0,
+        get=lambda _: sun.sunrise.time)
+
+    sunset_time: FloatProperty(
+        name="Sunset Time",
+        description="Time at which the Sun sets",
+        soft_min=0.0, soft_max=24.0,
+        default=0.0,
+        get=lambda _: sun.sunset.time)
+
+    sun_azimuth: FloatProperty(
+        name="Sun Azimuth",
+        description="Rotation angle of the Sun from the north direction",
+        soft_min=-pi, soft_max=pi,
+        default=0.0,
+        get=lambda _: sun.azimuth)
+
+    sun_elevation: FloatProperty(
+        name="Sunset Time",
+        description="Elevation angle of the Sun",
+        soft_min=-pi/2, soft_max=pi/2,
+        default=0.0,
+        get=lambda _: sun.elevation)
 
     co_parser: StringProperty(
         name="Enter coordinates",

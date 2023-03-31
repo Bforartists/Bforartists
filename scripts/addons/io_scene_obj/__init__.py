@@ -6,7 +6,7 @@ bl_info = {
     "version": (3, 9, 0),
     "blender": (3, 0, 0),
     "location": "File > Import-Export",
-    "description": "Import-Export OBJ, Import OBJ mesh, UV's, materials and textures",
+    "description": "Import-Export OBJ, Import OBJ mesh, UVs, materials and textures",
     "warning": "",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/scene_obj.html",
     "support": 'OFFICIAL',

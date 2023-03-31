@@ -108,20 +108,16 @@ class ARCHIMESH_OT_Hole(Operator):
             # ---------------------------------------
             for child in obj.parent.children:
                 # noinspection PyBroadException
-                try:
-                    if child["archimesh.ctrl_hole"]:
-                        # apply scale
-                        t = parentobj.RoomGenerator[0].wall_width
-                        if t > 0:
-                            child.scale.y = (t + 0.45) / (child.dimensions.y / child.scale.y)  # Add some gap
-                        else:
-                            child.scale.y = 1
-                        # add boolean modifier
-                        if isboolean(myroom, child) is False:
-                            set_modifier_boolean(myroom, child)
-                except:
-                    # print("Unexpected error:" + str(sys.exc_info()))
-                    pass
+                if "archimesh.ctrl_hole" in child and child["archimesh.ctrl_hole"]:
+                    # apply scale
+                    t = parentobj.RoomGenerator[0].wall_width
+                    if t > 0:
+                        child.scale.y = (t + 0.45) / (child.dimensions.y / child.scale.y)  # Add some gap
+                    else:
+                        child.scale.y = 1
+                    # add boolean modifier
+                    if not isboolean(myroom, child):
+                        set_modifier_boolean(myroom, child)
 
         # ---------------------------------------
         # Now add the modifiers to baseboard

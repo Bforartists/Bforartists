@@ -1,13 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2018-2021 The glTF-Blender-IO authors.
 
-from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached
-from ..com.gltf2_blender_extras import generate_extras
-from io_scene_gltf2.io.com import gltf2_io
-from io_scene_gltf2.io.exp.gltf2_io_user_extensions import export_user_extensions
-
 import bpy
 import math
+from ...io.com import gltf2_io
+from ...io.exp.gltf2_io_user_extensions import export_user_extensions
+from ..com.gltf2_blender_extras import generate_extras
+from .gltf2_blender_gather_cache import cached
 
 
 @cached

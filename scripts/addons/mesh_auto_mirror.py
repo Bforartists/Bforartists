@@ -11,7 +11,7 @@ bl_info = {
     "name": "Auto Mirror",
     "description": "Super fast cutting and mirroring for mesh",
     "author": "Lapineige",
-    "version": (2, 5, 3),
+    "version": (2, 5, 4),
     "blender": (2, 80, 0),
     "location": "View 3D > Sidebar > Edit Tab > AutoMirror (panel)",
     "warning": "",
@@ -187,12 +187,13 @@ class AutoMirror(bpy.types.Operator):
             bpy.ops.object.mode_set(mode = current_mode) # Reload previous mode
 
         if automirror.cut:
-            bpy.ops.object.modifier_add(type = 'MIRROR') # Add a mirror modifier
-            bpy.context.object.modifiers[-1].use_axis[0] = X # Choose the axis to use, based on the cut's axis
-            bpy.context.object.modifiers[-1].use_axis[1] = Y
-            bpy.context.object.modifiers[-1].use_axis[2] = Z
-            bpy.context.object.modifiers[-1].use_clip = automirror.Use_Matcap
-            bpy.context.object.modifiers[-1].show_on_cage = automirror.show_on_cage
+            # Add a mirror modifier
+            mirror_modifier = bpy.context.object.modifiers.new("", 'MIRROR')
+            mirror_modifier.use_axis[0] = X # Choose the axis to use, based on the cut's axis
+            mirror_modifier.use_axis[1] = Y
+            mirror_modifier.use_axis[2] = Z
+            mirror_modifier.use_clip = automirror.Use_Matcap
+            mirror_modifier.show_on_cage = automirror.show_on_cage
             if automirror.apply_mirror:
                 bpy.ops.object.mode_set(mode = 'OBJECT')
                 bpy.ops.object.modifier_apply(modifier = bpy.context.object.modifiers[-1].name)

@@ -51,7 +51,7 @@ class Parser:
         # do matching
         m = re.match(pattern, text)
 
-        if m == None:
+        if m is None:
             return None
 
         # build tree recursively by parsing subgroups
@@ -59,7 +59,7 @@ class Parser:
 
         for i in range(len(subpattern_names)):
             text_part = m.group(i + 1)
-            if not text_part == None:
+            if text_part is not None:
                 subpattern = subpattern_names[i]
                 tree[subpattern] = self.parse(subpattern, text_part)
 
@@ -158,7 +158,8 @@ def parse_position(s):
     Tries to be as tolerant as possible with input. Returns None if parsing doesn't succeed. """
 
     parse_tree = position_parser.parse("position", s)
-    if parse_tree == None: return None
+    if parse_tree is None:
+        return None
 
     lat_sign = +1.
     if parse_tree.get(

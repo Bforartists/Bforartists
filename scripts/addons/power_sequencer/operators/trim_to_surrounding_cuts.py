@@ -18,7 +18,7 @@ class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
     little time offset. It's useful after you removed some bad audio but you need to keep some
     video around for a transition.
 
-    By default, the tool leaves a 0.2 seconds margin on either side of the trim.
+    By default, the tool leaves a 0.2 seconds margin on either side of the trim
     """
 
     doc = {
