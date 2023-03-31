@@ -76,8 +76,12 @@ class VIEW3D_PT_tools_SURFSK_mesh(Panel):
             except: pass
             try: col.prop(mesh_object.data.materials[0], "diffuse_color")
             except: pass
-            try: col.prop(mesh_object.modifiers['Shrinkwrap'], "offset")
-            except: pass
+            try:
+                shrinkwrap = next(mod for mod in mesh_object.modifiers
+                                  if mod.type == 'SHRINKWRAP')
+                col.prop(shrinkwrap, "offset")
+            except:
+                pass
             try: col.prop(mesh_object, "show_in_front")
             except: pass
             try: col.prop(bs, "SURFSK_shade_smooth")
@@ -1652,8 +1656,7 @@ class MESH_OT_SURFSK_add_surface(Operator):
 
         final_ob_duplicate = bpy.context.view_layer.objects.active
 
-        bpy.ops.object.modifier_add('INVOKE_REGION_WIN', type='SHRINKWRAP')
-        shrinkwrap_modifier = final_ob_duplicate.modifiers[-1]
+        shrinkwrap_modifier = context.object.modifiers.new("", 'SHRINKWRAP')
         shrinkwrap_modifier.wrap_method = "NEAREST_VERTEX"
         shrinkwrap_modifier.target = self.main_object
 
@@ -3514,8 +3517,7 @@ class MESH_OT_SURFSK_init(Operator):
             color_red = [1.0, 0.0, 0.0, 0.3]
             material = makeMaterial("BSurfaceMesh", color_red)
             mesh_object.data.materials.append(material)
-            bpy.ops.object.modifier_add(type='SHRINKWRAP')
-            modifier = mesh_object.modifiers["Shrinkwrap"]
+            modifier = mesh_object.modifiers.new("", 'SHRINKWRAP')
             if self.active_object is not None:
                 modifier.target = self.active_object
                 modifier.wrap_method = 'TARGET_PROJECT'
@@ -3593,44 +3595,36 @@ class MESH_OT_SURFSK_add_modifiers(Operator):
             bpy.context.view_layer.objects.active = mesh_object
 
             try:
-                shrinkwrap = mesh_object.modifiers["Shrinkwrap"]
-                if self.active_object is not None and self.active_object != mesh_object:
-                    shrinkwrap.target = self.active_object
-                    shrinkwrap.wrap_method = 'TARGET_PROJECT'
-                    shrinkwrap.wrap_mode = 'OUTSIDE_SURFACE'
-                    shrinkwrap.show_on_cage = True
-                    shrinkwrap.offset = bpy.context.scene.bsurfaces.SURFSK_Shrinkwrap_offset
+                shrinkwrap = next(mod for mod in mesh_object.modifiers
+                                  if mod.type == 'SHRINKWRAP')
             except:
-                bpy.ops.object.modifier_add(type='SHRINKWRAP')
-                shrinkwrap = mesh_object.modifiers["Shrinkwrap"]
-                if self.active_object is not None and self.active_object != mesh_object:
-                    shrinkwrap.target = self.active_object
-                    shrinkwrap.wrap_method = 'TARGET_PROJECT'
-                    shrinkwrap.wrap_mode = 'OUTSIDE_SURFACE'
-                    shrinkwrap.show_on_cage = True
-                    shrinkwrap.offset = bpy.context.scene.bsurfaces.SURFSK_Shrinkwrap_offset
+                shrinkwrap = mesh_object.modifiers.new("", 'SHRINKWRAP')
+            if self.active_object is not None and self.active_object != mesh_object:
+                shrinkwrap.target = self.active_object
+                shrinkwrap.wrap_method = 'TARGET_PROJECT'
+                shrinkwrap.wrap_mode = 'OUTSIDE_SURFACE'
+                shrinkwrap.show_on_cage = True
+                shrinkwrap.offset = bpy.context.scene.bsurfaces.SURFSK_Shrinkwrap_offset
 
             try:
-                mirror = mesh_object.modifiers["Mirror"]
-                mirror.use_clip = True
+                mirror = next(mod for mod in mesh_object.modifiers
+                              if mod.type == 'MIRROR')
             except:
-                bpy.ops.object.modifier_add(type='MIRROR')
-                mirror = mesh_object.modifiers["Mirror"]
-                mirror.use_clip = True
+                mirror = mesh_object.modifiers.new("", 'MIRROR')
+            mirror.use_clip = True
 
             try:
-                _subsurf = mesh_object.modifiers["Subdivision"]
+                _subsurf = next(mod for mod in mesh_object.modifiers
+                                if mod.type == 'SUBSURF')
             except:
-                bpy.ops.object.modifier_add(type='SUBSURF')
-                _subsurf = mesh_object.modifiers["Subdivision"]
+                _subsurf = mesh_object.modifiers.new("", 'SUBSURF')
 
             try:
-                solidify = mesh_object.modifiers["Solidify"]
-                solidify.thickness = 0.01
+                solidify = next(mod for mod in mesh_object.modifiers
+                                if mod.type == 'SOLIDIFY')
             except:
-                bpy.ops.object.modifier_add(type='SOLIDIFY')
-                solidify = mesh_object.modifiers["Solidify"]
-                solidify.thickness = 0.01
+                solidify = mesh_object.modifiers.new("", 'SOLIDIFY')
+            solidify.thickness = 0.01
 
         return {"FINISHED"}
 
@@ -3960,10 +3954,10 @@ class CURVE_OT_SURFSK_reorder_splines(Operator):
         curves_duplicate_2.select_set(True)
         bpy.context.view_layer.objects.active = curves_duplicate_2
 
-        bpy.ops.object.modifier_add('INVOKE_REGION_WIN', type='SHRINKWRAP')
-        curves_duplicate_2.modifiers["Shrinkwrap"].wrap_method = "NEAREST_VERTEX"
-        curves_duplicate_2.modifiers["Shrinkwrap"].target = GP_strokes_mesh
-        bpy.ops.object.modifier_apply('INVOKE_REGION_WIN', modifier='Shrinkwrap')
+        shrinkwrap = curves_duplicate_2.modifiers.new("", 'SHRINKWRAP')
+        shrinkwrap.wrap_method = "NEAREST_VERTEX"
+        shrinkwrap.target = GP_strokes_mesh
+        bpy.ops.object.modifier_apply('INVOKE_REGION_WIN', modifier=shrinkwrap.name)
 
         # Get the distance of each vert from its original position to its position with Shrinkwrap
         nearest_points_coords = {}

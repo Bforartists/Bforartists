@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2018-2022 The glTF-Blender-IO authors.
 
-from io_scene_gltf2.io.com.gltf2_io import from_dict, from_union, from_none, from_float, from_str, from_list
-from io_scene_gltf2.io.com.gltf2_io import to_float, to_class
+from ...io.com.gltf2_io import from_dict, from_union, from_none, from_float, from_str, from_list
+from ...io.com.gltf2_io import to_float, to_class
 
 class Variant:
     """defines variant for use with glTF 2.0."""

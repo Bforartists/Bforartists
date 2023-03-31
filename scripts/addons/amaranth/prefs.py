@@ -24,11 +24,6 @@ class AmaranthToolsetPreferences(bpy.types.AddonPreferences):
         description="Specials Menu [W]",
         default=True,
     )
-    use_timeline_extra_info: BoolProperty(
-        name="Timeline Extra Info",
-        description="Timeline Header",
-        default=True,
-    )
     use_image_node_display: BoolProperty(
         name="Active Image Node in Editor",
         description="Display active node image in image editor",
@@ -75,7 +70,6 @@ class AmaranthToolsetPreferences(bpy.types.AddonPreferences):
 
         sub.label(text="General", icon="SCENE_DATA")
         sub.prop(self, "use_file_save_reload")
-        sub.prop(self, "use_timeline_extra_info")
         sub.prop(self, "use_scene_stats")
         sub.prop(self, "use_layers_for_render")
         sub.prop(self, "use_framerate")
@@ -98,8 +92,6 @@ class AmaranthToolsetPreferences(bpy.types.AddonPreferences):
         sub.label(
             text="Quickly save and reload the current file (no warning!). "
                  "File menu or Ctrl+Shift+W")
-        sub.label(
-            text="SMPTE Timecode and frames left/ahead on Timeline's header")
         sub.label(
             text="Display extra stats for Scenes, Cameras, Meshlights (Cycles). Can be slow in heavy scenes")
         sub.label(

@@ -11,14 +11,19 @@ if bpy.app.background:  # ignore north line in background mode
     def north_update(self, context):
         pass
 else:
-    vertex_shader = '''
-        uniform mat4 u_ViewProjectionMatrix;
+    shader_interface = gpu.types.GPUStageInterfaceInfo("my_interface")
+    shader_interface.flat('VEC2', "v_StartPos")
+    shader_interface.smooth('VEC4', "v_VertPos")
 
-        in vec3 position;
+    shader_info = gpu.types.GPUShaderCreateInfo()
+    shader_info.push_constant('MAT4', "u_ViewProjectionMatrix")
+    shader_info.push_constant('VEC4', "u_Color")
+    shader_info.push_constant('VEC2', "u_Resolution")
+    shader_info.vertex_in(0, 'VEC3', "position")
+    shader_info.vertex_out(shader_interface)
 
-        flat out vec2 v_StartPos;
-        out vec4 v_VertPos;
-
+    shader_info.vertex_source(
+        '''
         void main()
         {
             vec4 pos    = u_ViewProjectionMatrix * vec4(position, 1.0f);
@@ -26,17 +31,12 @@ else:
             v_StartPos    = (pos / pos.w).xy;
             v_VertPos     = pos;
         }
-    '''
+        '''
+    )
 
-    fragment_shader = '''
-        uniform vec4 u_Color;
-
-        flat in vec2 v_StartPos;
-        in vec4 v_VertPos;
-        out vec4 FragColor;
-
-        uniform vec2 u_Resolution;
-
+    shader_info.fragment_out(0, 'VEC4', "FragColor")
+    shader_info.fragment_source(
+        '''
         void main()
         {
             vec4 vertPos_2d = v_VertPos / v_VertPos.w;
@@ -47,9 +47,12 @@ else:
 
             FragColor = u_Color;
         }
-    '''
+        '''
+    )
 
-    shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
+    shader = gpu.shader.create_from_info(shader_info)
+    del shader_info
+    del shader_interface
 
     def draw_north_callback():
         """
@@ -76,7 +79,6 @@ else:
         gpu.state.line_width_set(2.0)
         batch.draw(shader)
         gpu.state.line_width_set(width)
-
 
     _north_handle = None
 

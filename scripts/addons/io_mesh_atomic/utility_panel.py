@@ -493,7 +493,8 @@ def modify_objects(action_type,
         else:
             new_material = draw_obj_material('1', atom.active_material)
         # Assign now the correct color.
-        mat_P_BSDF = new_material.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in new_material.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = element.color
         new_material.name = element.name + "_normal"
 
@@ -580,7 +581,8 @@ def separate_atoms(scn):
 # Prepare a new material
 def draw_obj_material(material_type, material):
 
-    mat_P_BSDF_default = material.node_tree.nodes['Principled BSDF']
+    mat_P_BSDF_default = next(n for n in material.node_tree.nodes
+                              if n.type == "BSDF_PRINCIPLED")
     default_color = mat_P_BSDF_default.inputs['Base Color'].default_value
 
     if material_type == '0': # Unchanged
@@ -591,7 +593,8 @@ def draw_obj_material(material_type, material):
         # user's work in Blender ... .
         material_new = bpy.data.materials.new(material.name + "_normal")
         material_new.use_nodes = True
-        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material_new.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.0
         mat_P_BSDF.inputs['Specular'].default_value = 0.5
@@ -607,7 +610,8 @@ def draw_obj_material(material_type, material):
     if material_type == '2': # Transparent
         material_new = bpy.data.materials.new(material.name + "_transparent")
         material_new.use_nodes = True
-        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material_new.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.0
         mat_P_BSDF.inputs['Specular'].default_value = 0.15
@@ -624,7 +628,8 @@ def draw_obj_material(material_type, material):
     if material_type == '3': # Reflecting
         material_new = bpy.data.materials.new(material.name + "_reflecting")
         material_new.use_nodes = True
-        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material_new.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.7
         mat_P_BSDF.inputs['Specular'].default_value = 0.15
@@ -640,7 +645,8 @@ def draw_obj_material(material_type, material):
     if material_type == '4': # Transparent + reflecting
         material_new = bpy.data.materials.new(material.name + "_trans+refl")
         material_new.use_nodes = True
-        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material_new.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.5
         mat_P_BSDF.inputs['Specular'].default_value = 0.15
@@ -933,7 +939,8 @@ def draw_obj_special(atom_shape, atom):
 
     # Get the color of the selected atom.
     material = atom.active_material
-    mat_P_BSDF_default = material.node_tree.nodes['Principled BSDF']
+    mat_P_BSDF_default = next(n for n in material.node_tree.nodes
+                      if n.type == "BSDF_PRINCIPLED")
     default_color = mat_P_BSDF_default.inputs['Base Color'].default_value
 
     # Create first a cube
@@ -952,7 +959,8 @@ def draw_obj_special(atom_shape, atom):
         # New material for this cube
         material_new = bpy.data.materials.new(atom.name + "_F2+_vac")
         material_new.use_nodes = True
-        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material_new.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.7
         mat_P_BSDF.inputs['Specular'].default_value = 0.0
@@ -1008,7 +1016,8 @@ def draw_obj_special(atom_shape, atom):
         # New material for this cube
         material_new = bpy.data.materials.new(atom.name + "_F2+_vac")
         material_new.use_nodes = True
-        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material_new.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = [0.0, 0.0, 0.8, 1.0]
         mat_P_BSDF.inputs['Metallic'].default_value = 0.7
         mat_P_BSDF.inputs['Specular'].default_value = 0.0
@@ -1038,7 +1047,8 @@ def draw_obj_special(atom_shape, atom):
         # New material for the electron
         material_electron = bpy.data.materials.new(atom.name + "_F+-center")
         material_electron.use_nodes = True
-        mat_P_BSDF = material_electron.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material_electron.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = [0.0, 0.0, 0.8, 1.0]
         mat_P_BSDF.inputs['Metallic'].default_value = 0.8
         mat_P_BSDF.inputs['Specular'].default_value = 0.0
@@ -1097,7 +1107,8 @@ def draw_obj_special(atom_shape, atom):
         # New material for this cube
         material_new = bpy.data.materials.new(atom.name + "_F2+_vac")
         material_new.use_nodes = True
-        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material_new.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = [0.8, 0.0, 0.0, 1.0]
         mat_P_BSDF.inputs['Metallic'].default_value = 0.7
         mat_P_BSDF.inputs['Specular'].default_value = 0.0
@@ -1136,7 +1147,8 @@ def draw_obj_special(atom_shape, atom):
         # Create a new material for the two electrons.
         material_electron = bpy.data.materials.new(atom.name + "_F0-center")
         material_electron.use_nodes = True
-        mat_P_BSDF = material_electron.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF = next(n for n in material_electron.node_tree.nodes
+                          if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = [0.0, 0.0, 0.8, 1.0]
         mat_P_BSDF.inputs['Metallic'].default_value = 0.8
         mat_P_BSDF.inputs['Specular'].default_value = 0.0
@@ -1263,7 +1275,8 @@ def custom_datafile_change_atom_props():
         if FLAG:
             obj.scale = (e.radii[0],) * 3
             mat = obj.active_material
-            mat_P_BSDF = mat.node_tree.nodes['Principled BSDF']
+            mat_P_BSDF = next(n for n in mat.node_tree.nodes
+                              if n.type == "BSDF_PRINCIPLED")
 
             mat_P_BSDF.inputs['Base Color'].default_value = e.color
             mat_P_BSDF.subsurface_method = e.mat_P_BSDF.Subsurface_method

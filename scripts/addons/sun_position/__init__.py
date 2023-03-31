@@ -15,8 +15,8 @@
 
 bl_info = {
     "name": "Sun Position",
-    "author": "Michael Martin",
-    "version": (3, 2, 0),
+    "author": "Michael Martin, Damien Picard",
+    "version": (3, 3, 1),
     "blender": (3, 0, 0),
     "location": "World > Sun Position",
     "description": "Show sun position with objects and/or sky texture",
@@ -62,6 +62,7 @@ def register():
     bpy.app.handlers.frame_change_post.append(sun_calc.sun_handler)
     bpy.app.handlers.load_post.append(sun_scene_handler)
     bpy.app.translations.register(__name__, translations.translations_dict)
+
 
 def unregister():
     bpy.app.translations.unregister(__name__)

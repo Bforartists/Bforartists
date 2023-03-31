@@ -64,7 +64,7 @@ class _Properties:
         )
         scene.muv_select_uv_sync_mesh_selection = BoolProperty(
             name="Sync Mesh Selection",
-            description="Select the mesh's faces as well as UV's faces",
+            description="Select the mesh's faces as well as UVs' faces",
             default=False
         )
 
@@ -106,7 +106,7 @@ class MUV_OT_SelectUV_SelectOverlapped(bpy.types.Operator):
     )
     sync_mesh_selection = BoolProperty(
         name="Sync Mesh Selection",
-        description="Select mesh's faces as well as UV's faces",
+        description="Select the mesh's faces as well as UVs' faces",
         default=False
     )
 
@@ -199,7 +199,7 @@ class MUV_OT_SelectUV_SelectFlipped(bpy.types.Operator):
     )
     sync_mesh_selection = BoolProperty(
         name="Sync Mesh Selection",
-        description="Select mesh's faces as well as UV's faces",
+        description="Select the mesh's faces as well as UVs' faces",
         default=False
     )
 

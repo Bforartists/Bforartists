@@ -54,7 +54,7 @@ from amaranth.render import (
     )
 
 from amaranth.animation import (
-    timeline_extra_info,
+    time_extra_info,
     frame_current,
     motion_paths,
     jump_frames,
@@ -72,13 +72,12 @@ from amaranth.misc import (
 bl_info = {
     "name": "Amaranth Toolset",
     "author": "Pablo Vazquez, Bassam Kurdali, Sergey Sharybin, Lukas Tönne, Cesar Saez, CansecoGPC",
-    "version": (1, 0, 17),
+    "version": (1, 0, 20),
     "blender": (3, 2, 0),
     "location": "Everywhere!",
     "description": "A collection of tools and settings to improve productivity",
     "warning": "",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/amaranth.html",
-    "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Interface",
 }
 

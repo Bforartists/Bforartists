@@ -119,7 +119,7 @@ class STORYPENCIL_OT_duplicate_sound_in_edit_scene(Operator):
 
     @classmethod
     def poll(cls, context):
-        if context.space_data.view_type != 'SEQUENCER':
+        if context.space_data.type != 'SEQUENCE_EDITOR':
             return False
 
         return True
