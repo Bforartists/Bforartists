@@ -11,8 +11,8 @@ It's called "global" to avoid confusion with the Blender World data-block.
 bl_info = {
     "name": "Copy Global Transform",
     "author": "Sybren A. Stüvel",
-    "version": (2, 0),
-    "blender": (3, 1, 0),
+    "version": (2, 1),
+    "blender": (3, 5, 0),
     "location": "N-panel in the 3D Viewport",
     "category": "Animation",
     "support": 'OFFICIAL',
@@ -23,8 +23,15 @@ import ast
 from typing import Iterable, Optional, Union, Any
 
 import bpy
-from bpy.types import Context, Object, Operator, Panel, PoseBone
+from bpy.types import Context, Object, Operator, Panel, PoseBone, UILayout
 from mathutils import Matrix
+
+
+_axis_enum_items = [
+    ("x", "X", "", 1),
+    ("y", "Y", "", 2),
+    ("z", "Z", "", 3),
+]
 
 
 class AutoKeying:
@@ -235,6 +242,10 @@ class OBJECT_OT_copy_global_transform(Operator):
         return {'FINISHED'}
 
 
+class UnableToMirrorError(Exception):
+    """Raised when mirroring is enabled but no mirror object/bone is set."""
+
+
 class OBJECT_OT_paste_transform(Operator):
     bl_idname = "object.paste_transform"
     bl_label = "Paste Global Transform"
@@ -273,12 +284,33 @@ class OBJECT_OT_paste_transform(Operator):
         soft_max=5,
     )
 
+    use_mirror: bpy.props.BoolProperty(  # type: ignore
+        name="Mirror Transform",
+        description="When pasting, mirror the transform relative to a specific object or bone",
+        default=False,
+    )
+
+    mirror_axis_loc: bpy.props.EnumProperty(  # type: ignore
+        items=_axis_enum_items,
+        name="Location Axis",
+        description="Coordinate axis used to mirror the location part of the transform",
+        default='x',
+    )
+    mirror_axis_rot: bpy.props.EnumProperty(  # type: ignore
+        items=_axis_enum_items,
+        name="Rotation Axis",
+        description="Coordinate axis used to mirror the rotation part of the transform",
+        default='z',
+    )
+
     @classmethod
     def poll(cls, context: Context) -> bool:
         if not context.active_pose_bone and not context.active_object:
             cls.poll_message_set("Select an object or pose bone")
             return False
-        if not context.window_manager.clipboard.startswith("Matrix("):
+
+        clipboard = context.window_manager.clipboard.strip()
+        if not (clipboard.startswith("Matrix(") or clipboard.startswith("<Matrix 4x4")):
             cls.poll_message_set("Clipboard does not contain a valid matrix")
             return False
         return True
@@ -297,15 +329,34 @@ class OBJECT_OT_paste_transform(Operator):
         floats = tuple(tuple(float(item) for item in line.split()) for line in lines)
         return Matrix(floats)
 
+    @staticmethod
+    def parse_repr_m4(value: str) -> Optional[Matrix]:
+        """Four lines of (a, b, c, d) floats."""
+
+        lines = value.strip().splitlines()
+        if len(lines) != 4:
+            return None
+
+        floats = tuple(tuple(float(item.strip()) for item in line.strip()[1:-1].split(',')) for line in lines)
+        return Matrix(floats)
+
     def execute(self, context: Context) -> set[str]:
-        clipboard = context.window_manager.clipboard
+        clipboard = context.window_manager.clipboard.strip()
         if clipboard.startswith("Matrix"):
             mat = Matrix(ast.literal_eval(clipboard[6:]))
+        elif clipboard.startswith("<Matrix 4x4"):
+            mat = self.parse_repr_m4(clipboard[12:-1])
         else:
             mat = self.parse_print_m4(clipboard)
 
         if mat is None:
             self.report({'ERROR'}, "Clipboard does not contain a valid matrix")
+            return {'CANCELLED'}
+
+        try:
+            mat = self._maybe_mirror(context, mat)
+        except UnableToMirrorError:
+            self.report({'ERROR'}, "Unable to mirror, no mirror object/bone configured")
             return {'CANCELLED'}
 
         applicator = {
@@ -314,6 +365,68 @@ class OBJECT_OT_paste_transform(Operator):
             'BAKE': self._paste_bake,
         }[self.method]
         return applicator(context, mat)
+
+    def _maybe_mirror(self, context: Context, matrix: Matrix) -> Matrix:
+        if not self.use_mirror:
+            return matrix
+
+        mirror_ob = context.scene.addon_copy_global_transform_mirror_ob
+        mirror_bone = context.scene.addon_copy_global_transform_mirror_bone
+
+        # No mirror object means "current armature object".
+        ctx_ob = context.object
+        if not mirror_ob and mirror_bone and ctx_ob and ctx_ob.type == 'ARMATURE':
+            mirror_ob = ctx_ob
+
+        if not mirror_ob:
+            raise UnableToMirrorError()
+
+        if mirror_ob.type == 'ARMATURE' and mirror_bone:
+            return self._mirror_over_bone(matrix, mirror_ob, mirror_bone)
+        return self._mirror_over_ob(matrix, mirror_ob)
+
+    def _mirror_over_ob(self, matrix: Matrix, mirror_ob: bpy.types.Object) -> Matrix:
+        mirror_matrix = mirror_ob.matrix_world
+        return self._mirror_over_matrix(matrix, mirror_matrix)
+
+    def _mirror_over_bone(self, matrix: Matrix, mirror_ob: bpy.types.Object, mirror_bone_name: str) -> Matrix:
+        bone = mirror_ob.pose.bones[mirror_bone_name]
+        mirror_matrix = mirror_ob.matrix_world @ bone.matrix
+        return self._mirror_over_matrix(matrix, mirror_matrix)
+
+    def _mirror_over_matrix(self, matrix: Matrix, mirror_matrix: Matrix) -> Matrix:
+        # Compute the matrix in the space of the mirror matrix:
+        mat_local = mirror_matrix.inverted() @ matrix
+
+        # Decompose the matrix, as we don't want to touch the scale. This
+        # operator should only mirror the translation and rotation components.
+        trans, rot_q, scale = mat_local.decompose()
+
+        # Mirror the translation component:
+        axis_index = ord(self.mirror_axis_loc) - ord('x')
+        trans[axis_index] *= -1
+
+        # Flip the rotation, and use a rotation order that applies the to-be-flipped axes first.
+        match self.mirror_axis_rot:
+            case 'x':
+                rot_e = rot_q.to_euler('XYZ')
+                rot_e.x *= -1  # Flip the requested rotation axis.
+                rot_e.y *= -1  # Also flip the bone roll.
+            case 'y':
+                rot_e = rot_q.to_euler('YZX')
+                rot_e.y *= -1  # Flip the requested rotation axis.
+                rot_e.z *= -1  # Also flip another axis? Not sure how to handle this one.
+            case 'z':
+                rot_e = rot_q.to_euler('ZYX')
+                rot_e.z *= -1  # Flip the requested rotation axis.
+                rot_e.y *= -1  # Also flip the bone roll.
+
+        # Recompose the local matrix:
+        mat_local = Matrix.LocRotScale(trans, rot_e, scale)
+
+        # Go back to world space:
+        mirrored_world = mirror_matrix @ mat_local
+        return mirrored_world
 
     @staticmethod
     def _paste_current(context: Context, matrix: Matrix) -> set[str]:
@@ -370,10 +483,13 @@ class OBJECT_OT_paste_transform(Operator):
             context.scene.frame_set(int(current_frame), subframe=current_frame % 1.0)
 
 
-class VIEW3D_PT_copy_global_transform(Panel):
+class PanelMixin:
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Animation"
+
+
+class VIEW3D_PT_copy_global_transform(PanelMixin, Panel):
     bl_label = "Global Transform"
 
     def draw(self, context: Context) -> None:
@@ -383,7 +499,15 @@ class VIEW3D_PT_copy_global_transform(Panel):
         layout.operator("object.copy_global_transform", text="Copy", icon='COPYDOWN')
 
         paste_col = layout.column(align=True)
-        paste_col.operator("object.paste_transform", text="Paste", icon='PASTEDOWN').method = 'CURRENT'
+
+        paste_row = paste_col.row(align=True)
+        paste_props = paste_row.operator("object.paste_transform", text="Paste", icon='PASTEDOWN')
+        paste_props.method = 'CURRENT'
+        paste_props.use_mirror = False
+        paste_props = paste_row.operator("object.paste_transform", text="Mirrored", icon='PASTEFLIPDOWN')
+        paste_props.method = 'CURRENT'
+        paste_props.use_mirror = True
+
         wants_autokey_col = paste_col.column(align=True)
         has_autokey = context.scene.tool_settings.use_keyframe_insert_auto
         wants_autokey_col.enabled = has_autokey
@@ -400,6 +524,42 @@ class VIEW3D_PT_copy_global_transform(Panel):
             text="Paste and Bake",
             icon='PASTEDOWN',
         ).method = 'BAKE'
+
+
+class VIEW3D_PT_copy_global_transform_mirror(PanelMixin, Panel):
+    bl_label = "Mirror Options"
+    bl_parent_id = "VIEW3D_PT_copy_global_transform"
+
+    def draw(self, context: Context) -> None:
+        layout = self.layout
+        scene = context.scene
+        layout.prop(scene, 'addon_copy_global_transform_mirror_ob', text="Object")
+
+        mirror_ob = scene.addon_copy_global_transform_mirror_ob
+        if mirror_ob is None:
+            # No explicit mirror object means "the current armature", so then the bone name should be editable.
+            if context.object and context.object.type == 'ARMATURE':
+                self._bone_search(layout, scene, context.object)
+            else:
+                self._bone_entry(layout, scene)
+        elif mirror_ob.type == 'ARMATURE':
+            self._bone_search(layout, scene, mirror_ob)
+
+    def _bone_search(self, layout: UILayout, scene: bpy.types.Scene, armature_ob: bpy.types.Object) -> None:
+        """Search within the bones of the given armature."""
+        assert armature_ob and armature_ob.type == 'ARMATURE'
+
+        layout.prop_search(
+            scene,
+            "addon_copy_global_transform_mirror_bone",
+            armature_ob.data,
+            "edit_bones" if armature_ob.mode == 'EDIT' else "bones",
+            text="Bone",
+        )
+
+    def _bone_entry(self, layout: UILayout, scene: bpy.types.Scene) -> None:
+        """Allow manual entry of a bone name."""
+        layout.prop(scene, "addon_copy_global_transform_mirror_bone", text="Bone")
 
 
 ### Messagebus subscription to monitor changes & refresh panels.
@@ -419,6 +579,7 @@ classes = (
     OBJECT_OT_copy_global_transform,
     OBJECT_OT_paste_transform,
     VIEW3D_PT_copy_global_transform,
+    VIEW3D_PT_copy_global_transform_mirror,
 )
 _register, _unregister = bpy.utils.register_classes_factory(classes)
 
@@ -447,8 +608,28 @@ def register():
     _register()
     bpy.app.handlers.load_post.append(_on_blendfile_load_post)
 
+    # The mirror object & bone name are stored on the scene, and not on the
+    # operator. This makes it possible to set up the operator for use in a
+    # certain scene, while keeping hotkey assignments working as usual.
+    #
+    # The goal is to allow hotkeys for "copy", "paste", and "paste mirrored",
+    # while keeping the other choices in a more global place.
+    bpy.types.Scene.addon_copy_global_transform_mirror_ob = bpy.props.PointerProperty(
+        type=bpy.types.Object,
+        name="Mirror Object",
+        description="Object to mirror over. Leave empty and name a bone to always mirror "
+        "over that bone of the active armature",
+    )
+    bpy.types.Scene.addon_copy_global_transform_mirror_bone = bpy.props.StringProperty(
+        name="Mirror Bone",
+        description="Bone to use for the mirroring",
+    )
+
 
 def unregister():
     _unregister()
     _unregister_message_bus()
     bpy.app.handlers.load_post.remove(_on_blendfile_load_post)
+
+    del bpy.types.Scene.addon_copy_global_transform_mirror_ob
+    del bpy.types.Scene.addon_copy_global_transform_mirror_bone

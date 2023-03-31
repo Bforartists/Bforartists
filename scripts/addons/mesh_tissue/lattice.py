@@ -371,8 +371,8 @@ class lattice_along_surface(Operator):
             lattice.scale.z = 1
 
         context.view_layer.objects.active = obj
-        bpy.ops.object.modifier_add(type='LATTICE')
-        obj.modifiers[-1].object = lattice
+        lattice_modifier = context.object.modifiers.new("", 'LATTICE')
+        lattice_modifier.object = lattice
 
         # set as parent
         if self.set_parent:
@@ -433,7 +433,7 @@ class lattice_along_surface(Operator):
             bpy.ops.object.delete(use_global=False)
             context.view_layer.objects.active = obj
             obj.select_set(True)
-            bpy.ops.object.modifier_remove(modifier=obj.modifiers[-1].name)
+            bpy.ops.object.modifier_remove(modifier=lattice_modifier.name)
             if nu > 64 or nv > 64:
                 self.report({'ERROR'}, "Maximum resolution allowed for Lattice is 64")
                 return {'CANCELLED'}

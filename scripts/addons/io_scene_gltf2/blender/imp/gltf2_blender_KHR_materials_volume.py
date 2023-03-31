@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2018-2021 The glTF-Blender-IO authors.
 
-from ...io.com.gltf2_io import TextureInfo, MaterialNormalTextureInfoClass
+from ...io.com.gltf2_io import TextureInfo
 from .gltf2_blender_texture import texture
 
 def volume(mh, location, volume_socket, thickness_socket):

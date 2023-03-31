@@ -108,6 +108,7 @@ OBJECT_CAM_RANGES = 0x4720  # The camera range values
 
 # >------ sub defines of OBJECT_MESH
 OBJECT_VERTICES = 0x4110  # The objects vertices
+OBJECT_VERTFLAGS = 0x4111  # The objects vertex flags
 OBJECT_FACES = 0x4120  # The objects faces
 OBJECT_MATERIAL = 0x4130  # This is found if the object has a material, either texture map or color
 OBJECT_UV = 0x4140  # The UV texture coordinates
@@ -327,10 +328,11 @@ class _3ds_rgb_color(object):
 
 class _3ds_face(object):
     """Class representing a face for a 3ds file."""
-    __slots__ = ("vindex", )
+    __slots__ = ("vindex", "flag")
 
-    def __init__(self, vindex):
+    def __init__(self, vindex, flag):
         self.vindex = vindex
+        self.flag = flag
 
     def get_size(self):
         return 4 * SZ_SHORT
@@ -339,11 +341,11 @@ class _3ds_face(object):
     # catch this problem
 
     def write(self, file):
-        # The last zero is only used by 3d studio
-        file.write(struct.pack("<4H", self.vindex[0], self.vindex[1], self.vindex[2], 0))
+        # The last short is used for face flags
+        file.write(struct.pack("<4H", self.vindex[0], self.vindex[1], self.vindex[2], self.flag))
 
     def __str__(self):
-        return "[%d %d %d]" % (self.vindex[0], self.vindex[1], self.vindex[2])
+        return "[%d %d %d %d]" % (self.vindex[0], self.vindex[1], self.vindex[2], self.flag)
 
 
 class _3ds_array(object):
@@ -645,8 +647,8 @@ def make_material_chunk(material, image):
 
     name_str = material.name if material else "None"
 
-    if image:
-        name_str += image.name
+    #if image:
+    #    name_str += image.name
 
     name.add_variable("name", _3ds_string(sane_name(name_str)))
     material_chunk.add_subchunk(name)
@@ -666,11 +668,14 @@ def make_material_chunk(material, image):
         material_chunk.add_subchunk(make_material_subchunk(MATAMBIENT, wrap.emission_color[:3]))
         material_chunk.add_subchunk(make_material_subchunk(MATDIFFUSE, wrap.base_color[:3]))
         material_chunk.add_subchunk(make_material_subchunk(MATSPECULAR, material.specular_color[:]))
-        material_chunk.add_subchunk(make_percent_subchunk(MATSHINESS, wrap.roughness))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSHINESS, 1 - wrap.roughness))
         material_chunk.add_subchunk(make_percent_subchunk(MATSHIN2, wrap.specular))
         material_chunk.add_subchunk(make_percent_subchunk(MATSHIN3, wrap.metallic))
         material_chunk.add_subchunk(make_percent_subchunk(MATTRANS, 1 - wrap.alpha))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSELFILPCT, wrap.emission_strength))
         material_chunk.add_subchunk(shading)
+
+        primary_tex = False
 
         if wrap.base_color_texture:
             d_pct = 0.7 + sum(wrap.base_color[:]) * 0.1
@@ -678,6 +683,7 @@ def make_material_chunk(material, image):
             matmap = make_material_texture_chunk(MAT_DIFFUSEMAP, color, d_pct)
             if matmap:
                 material_chunk.add_subchunk(matmap)
+                primary_tex = True
 
         if wrap.specular_texture:
             spec = [wrap.specular_texture]
@@ -702,25 +708,21 @@ def make_material_chunk(material, image):
 
         if wrap.normalmap_texture:
             normal = [wrap.normalmap_texture]
-            bump = wrap.normalmap_strength
-            b_pct = min(bump, 1)
-            bumpval = min(999, (bump * 100))  # 3ds max bump = 999
-            strength = _3ds_chunk(MAT_BUMP_PERCENT)
-            strength.add_variable("bump_pct", _3ds_ushort(int(bumpval)))
+            b_pct = wrap.normalmap_strength
             matmap = make_material_texture_chunk(MAT_BUMPMAP, normal, b_pct)
             if matmap:
                 material_chunk.add_subchunk(matmap)
-                material_chunk.add_subchunk(strength)
+                material_chunk.add_subchunk(make_percent_subchunk(MAT_BUMP_PERCENT, b_pct))
 
         if wrap.roughness_texture:
             roughness = [wrap.roughness_texture]
-            r_pct = material.roughness
+            r_pct = 1 - material.roughness
             matmap = make_material_texture_chunk(MAT_SHINMAP, roughness, r_pct)
             if matmap:
                 material_chunk.add_subchunk(matmap)
 
         if wrap.emission_color_texture:
-            e_pct = sum(wrap.emission_color[:]) * .25
+            e_pct = wrap.emission_strength
             emission = [wrap.emission_color_texture]
             matmap = make_material_texture_chunk(MAT_SELFIMAP, emission, e_pct)
             if matmap:
@@ -731,11 +733,14 @@ def make_material_chunk(material, image):
         diffuse = []
 
         for link in wrap.material.node_tree.links:
-            if link.from_node.type == 'TEX_IMAGE' and link.to_node.type != 'BSDF_PRINCIPLED':
-                diffuse = [link.from_node.image] if not wrap.normalmap_texture else None
+            if link.from_node.type == 'TEX_IMAGE' and link.to_node.type == 'MIX_RGB':
+                diffuse = [link.from_node.image]
 
         if diffuse:
-            matmap = make_texture_chunk(MAT_TEX2MAP, diffuse)
+            if primary_tex == False:
+                matmap = make_texture_chunk(MAT_DIFFUSEMAP, diffuse)
+            else:
+                matmap = make_texture_chunk(MAT_TEX2MAP, diffuse)
             if matmap:
                 material_chunk.add_subchunk(matmap)
 
@@ -744,7 +749,7 @@ def make_material_chunk(material, image):
         material_chunk.add_subchunk(make_material_subchunk(MATAMBIENT, material.line_color[:3]))
         material_chunk.add_subchunk(make_material_subchunk(MATDIFFUSE, material.diffuse_color[:3]))
         material_chunk.add_subchunk(make_material_subchunk(MATSPECULAR, material.specular_color[:]))
-        material_chunk.add_subchunk(make_percent_subchunk(MATSHINESS, material.roughness))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSHINESS, 1 - material.roughness))
         material_chunk.add_subchunk(make_percent_subchunk(MATSHIN2, material.specular_intensity))
         material_chunk.add_subchunk(make_percent_subchunk(MATSHIN3, material.metallic))
         material_chunk.add_subchunk(make_percent_subchunk(MATTRANS, 1 - material.diffuse_color[3]))
@@ -760,17 +765,17 @@ def make_material_chunk(material, image):
 
 class tri_wrapper(object):
     """Class representing a triangle.
-
     Used when converting faces to triangles"""
 
-    __slots__ = "vertex_index", "ma", "image", "faceuvs", "offset", "group"
+    __slots__ = "vertex_index", "ma", "image", "faceuvs", "offset", "flag", "group"
 
-    def __init__(self, vindex=(0, 0, 0), ma=None, image=None, faceuvs=None, group=0):
+    def __init__(self, vindex=(0, 0, 0), ma=None, image=None, faceuvs=None, flag=0, group=0):
         self.vertex_index = vindex
         self.ma = ma
         self.image = image
         self.faceuvs = faceuvs
         self.offset = [0, 0, 0]  # offset indices
+        self.flag = flag
         self.group = group
 
 
@@ -786,7 +791,7 @@ def extract_triangles(mesh):
     img = None
     for i, face in enumerate(mesh.loop_triangles):
         f_v = face.vertices
-
+        v1, v2, v3 = f_v[0], f_v[1], f_v[2]
         uf = mesh.uv_layers.active.data if do_uv else None
 
         if do_uv:
@@ -795,13 +800,37 @@ def extract_triangles(mesh):
                 img = get_uv_image(ma) if uf else None
                 if img is not None:
                     img = img.name
+            uv1, uv2, uv3 = f_uv[0], f_uv[1], f_uv[2]
+
+        """Flag 0x1 sets CA edge visible, Flag 0x2 sets BC edge visible, Flag 0x4 sets AB edge visible
+        Flag 0x8 indicates a U axis texture wrap and Flag 0x10 indicates a V axis texture wrap
+        In Blender we use the edge CA, BC, and AB flags for sharp edges flags"""
+        a_b = mesh.edges[mesh.loops[face.loops[0]].edge_index]
+        b_c = mesh.edges[mesh.loops[face.loops[1]].edge_index]
+        c_a = mesh.edges[mesh.loops[face.loops[2]].edge_index]
+
+        if v3 == 0:
+            a_b, b_c, c_a = c_a, a_b, b_c
+
+        faceflag = 0
+        if c_a.use_edge_sharp:
+            faceflag = faceflag + 0x1
+        if b_c.use_edge_sharp:
+            faceflag = faceflag + 0x2
+        if a_b.use_edge_sharp:
+            faceflag = faceflag + 0x4
 
         smoothgroup = polygroup[face.polygon_index]
 
-        if len(f_v) == 3:
-            new_tri = tri_wrapper((f_v[0], f_v[1], f_v[2]), face.material_index, img)
+        if len(f_v)==3:
+            if v3 == 0:
+                v1, v2, v3 = v3, v1, v2
+                if do_uv:
+                    uv1, uv2, uv3 = uv3, uv1, uv2
+            new_tri = tri_wrapper((v1, v2, v3), face.material_index, img)
             if (do_uv):
-                new_tri.faceuvs = uv_key(f_uv[0]), uv_key(f_uv[1]), uv_key(f_uv[2])
+                new_tri.faceuvs = uv_key(uv1), uv_key(uv2), uv_key(uv3)
+            new_tri.flag = faceflag
             new_tri.group = smoothgroup if face.use_smooth else 0
             tri_list.append(new_tri)
 
@@ -810,7 +839,6 @@ def extract_triangles(mesh):
 
 def remove_face_uv(verts, tri_list):
     """Remove face UV coordinates from a list of triangles.
-
     Since 3ds files only support one pair of uv coordinates for each vertex, face uv coordinates
     need to be converted to vertex uv coordinates. That means that vertices need to be duplicated when
     there are multiple uv coordinates per vertex."""
@@ -893,8 +921,7 @@ def make_faces_chunk(tri_list, mesh, materialDict):
         # Gather materials used in this mesh - mat/image pairs
         unique_mats = {}
         for i, tri in enumerate(tri_list):
-
-            face_list.add(_3ds_face(tri.vertex_index))
+            face_list.add(_3ds_face(tri.vertex_index, tri.flag))
 
             if materials:
                 ma = materials[tri.ma]
@@ -907,8 +934,8 @@ def make_faces_chunk(tri_list, mesh, materialDict):
                 context_face_array = unique_mats[ma, img][1]
             except:
                 name_str = ma if ma else "None"
-                if img:
-                    name_str += img
+                #if img:
+                #    name_str += img
 
                 context_face_array = _3ds_array()
                 unique_mats[ma, img] = _3ds_string(sane_name(name_str)), context_face_array
@@ -924,7 +951,6 @@ def make_faces_chunk(tri_list, mesh, materialDict):
             face_chunk.add_subchunk(obj_material_chunk)
 
     else:
-
         obj_material_faces = []
         obj_material_names = []
         for m in materials:
@@ -934,7 +960,7 @@ def make_faces_chunk(tri_list, mesh, materialDict):
         n_materials = len(obj_material_names)
 
         for i, tri in enumerate(tri_list):
-            face_list.add(_3ds_face(tri.vertex_index))
+            face_list.add(_3ds_face(tri.vertex_index, tri.flag))
             if (tri.ma < n_materials):
                 obj_material_faces[tri.ma].add(_3ds_ushort(i))
 
@@ -1169,7 +1195,7 @@ def save(operator,
          ):
 
     import time
-    from bpy_extras.io_utils import create_derived_objects, free_derived_objects
+    #from bpy_extras.io_utils import create_derived_objects, free_derived_objects
 
     """Save the Blender scene to a 3ds file."""
 
@@ -1185,7 +1211,7 @@ def save(operator,
 
     scene = context.scene
     layer = context.view_layer
-    #depsgraph = context.evaluated_depsgraph_get()
+    depsgraph = context.evaluated_depsgraph_get()
 
     # Initialize the main chunk (primary):
     primary = _3ds_chunk(PRIMARY)
@@ -1233,7 +1259,9 @@ def save(operator,
 
     for ob in objects:
         # get derived objects
-        free, derived = create_derived_objects(scene, ob)
+        #free, derived = create_derived_objects(scene, ob)
+        derived_dict = bpy_extras.io_utils.create_derived_objects(depsgraph, [ob])
+        derived = derived_dict.get(ob)
 
         if derived is None:
             continue
@@ -1242,7 +1270,6 @@ def save(operator,
             if ob.type not in {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META'}:
                 continue
 
-            #ob_derived_eval = ob_derived.evaluated_get(depsgraph)
             try:
                 data = ob_derived.to_mesh()
             except:
@@ -1286,8 +1313,8 @@ def save(operator,
 
                 # ob_derived_eval.to_mesh_clear()
 
-        if free:
-            free_derived_objects(ob)
+        #if free:
+        #    free_derived_objects(ob)
 
     # Make material chunks for all materials used in the meshes:
     for ma_image in materialDict.values():

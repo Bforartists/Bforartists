@@ -1780,7 +1780,7 @@ class tissue_update_tessellate_deps(Operator):
     bl_idname = "object.tissue_update_tessellate_deps"
     bl_label = "Tissue Refresh"
     bl_description = ("Fast update the tessellated mesh according to base and "
-                      "component changes.")
+                      "component changes")
     bl_options = {'REGISTER', 'UNDO'}
 
     go = False

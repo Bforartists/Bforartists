@@ -25,14 +25,16 @@ image_nodes = ("CompositorNodeRLayers",
 
 
 class AMTH_NODE_OT_show_active_node_image(bpy.types.Operator):
-    """Show active image node image in the image editor"""
+    """Display source image in the Image Editor (if available)"""
     bl_idname = "node.show_active_node_image"
-    bl_label = "Preview Image from Node"
+    bl_label = "Open Node Source Image"
     bl_options = {"UNDO"}
 
     @classmethod
     def poll(cls, context):
-        return context.space_data == 'NODE_EDITOR' and context.active_node is not None
+        return context.space_data.type == 'NODE_EDITOR' \
+            and context.active_node is not None \
+            and context.active_node.bl_idname in image_nodes
 
     def execute(self, context):
         return {'FINISHED'}
@@ -91,6 +93,17 @@ class AMTH_NODE_OT_show_active_node_image(bpy.types.Operator):
             return {"PASS_THROUGH"}
 
 
+def ui(self, context):
+    node = context.active_node
+
+    if node is not None and node.bl_idname in image_nodes:
+        self.layout.separator()
+        self.layout.operator_context = 'INVOKE_DEFAULT'
+        self.layout.operator(
+            AMTH_NODE_OT_show_active_node_image.bl_idname,
+            icon="IMAGE", text="Display in Image Editor")
+
+
 def register():
     bpy.utils.register_class(AMTH_NODE_OT_show_active_node_image)
     kc = bpy.context.window_manager.keyconfigs.addon
@@ -99,9 +112,15 @@ def register():
                               "LEFTMOUSE", "DOUBLE_CLICK")
     KEYMAPS.append((km, kmi))
 
+    bpy.types.NODE_MT_node.append(ui)
+    bpy.types.NODE_MT_context_menu.append(ui)
+
 
 def unregister():
     bpy.utils.unregister_class(AMTH_NODE_OT_show_active_node_image)
     for km, kmi in KEYMAPS:
         km.keymap_items.remove(kmi)
     KEYMAPS.clear()
+
+    bpy.types.NODE_MT_node.remove(ui)
+    bpy.types.NODE_MT_context_menu.remove(ui)
