@@ -99,6 +99,31 @@ def parse(filename):
         return [c for c in parse_chunk(data)]
 
 
+def create_color(data):
+
+    valid = False
+    color = [0, 0, 0]
+    val = data['values']
+
+    if data['mode'] == 'RGB':
+        valid = True
+        color[0] = val[0]
+        color[1] = val[1]
+        color[2] = val[2]
+    elif data['mode'] == 'Gray':
+        valid = True
+        color[0] = val[0]
+        color[1] = val[0]
+        color[2] = val[0]
+    elif data['mode'] == 'CMYK':
+        valid = True
+        color[0] = (1.0 - val[0]) * (1.0 - val[3])
+        color[1] = (1.0 - val[1]) * (1.0 - val[3])
+        color[2] = (1.0 - val[2]) * (1.0 - val[3])
+    
+    if valid:
+        return color
+
 def load(context, filepath):
     output = parse(filepath)
 
@@ -107,33 +132,20 @@ def load(context, filepath):
     pal = None
 
     for elm in output:
-        valid = False
-        data = elm['data']
-        color = [0, 0, 0]
-        val = data['values']
+        colors = []
 
-        if data['mode'] == 'RGB':
-            valid = True
-            color[0] = val[0]
-            color[1] = val[1]
-            color[2] = val[2]
-        elif data['mode'] == 'Gray':
-            valid = True
-            color[0] = val[0]
-            color[1] = val[0]
-            color[2] = val[0]
-        elif data['mode'] == 'CMYK':
-            valid = True
-            color[0] = (1.0 - val[0]) * (1.0 - val[3])
-            color[1] = (1.0 - val[1]) * (1.0 - val[3])
-            color[2] = (1.0 - val[2]) * (1.0 - val[3])
+        if "data" in elm:
+            colors.append(create_color(elm['data']))
 
-        # Create palette color
-        if valid:
-            # Create Palette
-            if pal is None:
-                pal = bpy.data.palettes.new(name=filename)
+        if "swatches" in elm:
+            for swatch in elm['swatches']:
+                colors.append(create_color(swatch["data"]))
 
+        # Create Palette
+        if pal is None:
+            pal = bpy.data.palettes.new(name=filename)
+
+        for color in colors:
             # Create Color
             col = pal.colors.new()
             col.color[0] = color[0]

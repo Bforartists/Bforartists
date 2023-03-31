@@ -395,9 +395,9 @@ class CARVER_OT_operator(bpy.types.Operator):
                     # Set xRay
                     self.ProfileBrush.show_in_front = True
 
-                    bpy.ops.object.modifier_add(type='SOLIDIFY')
-                    context.object.modifiers["Solidify"].name = "CT_SOLIDIFY"
-                    context.object.modifiers["CT_SOLIDIFY"].thickness = 0.1
+                    solidify_modifier = context.object.modifiers.new("CT_SOLIDIFY",
+                                                                     'SOLIDIFY')
+                    solidify_modifier.thickness = 0.1
 
                     Selection_Restore(self)
 
@@ -435,9 +435,9 @@ class CARVER_OT_operator(bpy.types.Operator):
                                 context.view_layer.objects.active = self.ObjectBrush
                                 # Set xRay
                                 self.ObjectBrush.show_in_front = True
-                                bpy.ops.object.modifier_add(type='SOLIDIFY')
-                                context.object.modifiers["Solidify"].name = "CT_SOLIDIFY"
-                                context.object.modifiers["CT_SOLIDIFY"].thickness = 0.1
+                                solidify_modifier = context.object.modifiers.new("CT_SOLIDIFY",
+                                                                                 'SOLIDIFY')
+                                solidify_modifier.thickness = 0.1
 
                                 #Restore selected and active object
                                 Selection_Restore(self)
@@ -546,10 +546,9 @@ class CARVER_OT_operator(bpy.types.Operator):
                                     # Active le xray
                                     self.ProfileBrush.show_in_front = True
 
-                                bpy.ops.object.modifier_add(type='SOLIDIFY')
-                                context.object.modifiers["Solidify"].name = "CT_SOLIDIFY"
-
-                                context.object.modifiers["CT_SOLIDIFY"].thickness = 0.1
+                                solidify_modifier = context.object.modifiers.new("CT_SOLIDIFY",
+                                                                                 'SOLIDIFY')
+                                solidify_modifier.thickness = 0.1
 
                                 Selection_Restore(self)
 

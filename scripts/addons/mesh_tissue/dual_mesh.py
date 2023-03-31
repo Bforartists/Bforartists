@@ -228,14 +228,10 @@ class dual_mesh(Operator):
                     )
             bpy.ops.mesh.select_all(action='DESELECT')
             bpy.ops.object.mode_set(mode='OBJECT')
-            bpy.ops.object.modifier_add(type='SUBSURF')
-            ob.modifiers[-1].name = "dual_mesh_subsurf"
-            while True:
-                bpy.ops.object.modifier_move_up(modifier="dual_mesh_subsurf")
-                if ob.modifiers[0].name == "dual_mesh_subsurf":
-                    break
+            subsurf_modifier = context.object.modifiers.new("dual_mesh_subsurf", 'SUBSURF')
+            context.object.modifiers.move(len(context.object.modifiers)-1, 0)
 
-            bpy.ops.object.modifier_apply(modifier='dual_mesh_subsurf')
+            bpy.ops.object.modifier_apply(modifier=subsurf_modifier.name)
 
             bpy.ops.object.mode_set(mode='EDIT')
             bpy.ops.mesh.select_all(action='DESELECT')

@@ -60,9 +60,9 @@ class POSELIB_OT_create_pose_asset(PoseAssetCreator, Operator):
 
     @classmethod
     def poll(cls, context: Context) -> bool:
-        if context.object.mode != "POSE":
+        if context.object is None or context.object.mode != "POSE":
             # The operator assumes pose mode, so that bone selection is visible.
-            cls.poll_message_set("The object must be in Pose mode")
+            cls.poll_message_set("An active armature object in pose mode is needed")
             return False
 
         # Make sure that if there is an asset browser open, the artist can see the newly created pose asset.

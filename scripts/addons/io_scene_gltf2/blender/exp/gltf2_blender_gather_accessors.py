@@ -1,12 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2018-2021 The glTF-Blender-IO authors.
 
-
-from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached
-from io_scene_gltf2.io.com import gltf2_io
-from io_scene_gltf2.io.com import gltf2_io_constants
-from io_scene_gltf2.io.exp import gltf2_io_binary_data
-
+from ...io.com import gltf2_io
+from ...io.com import gltf2_io_constants
+from ...io.exp import gltf2_io_binary_data
+from .gltf2_blender_gather_cache import cached
 
 @cached
 def gather_accessor(buffer_view: gltf2_io_binary_data.BinaryData,

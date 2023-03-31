@@ -2,7 +2,7 @@
 # Copyright 2018-2021 The glTF-Blender-IO authors.
 
 from typing import Optional
-from io_scene_gltf2.io.com import gltf2_io_lights_punctual
+from ...io.com import gltf2_io_lights_punctual
 
 
 def gather_light_spot(blender_lamp, export_settings) -> Optional[gltf2_io_lights_punctual.LightSpot]:

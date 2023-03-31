@@ -4,7 +4,7 @@ bl_info = {
     "name": "Carver",
     "author": "Pixivore, Cedric LEPILLER, Ted Milker, Clarkx",
     "description": "Multiple tools to carve or to create objects",
-    "version": (1, 2, 1),
+    "version": (1, 2, 2),
     "blender": (3, 4, 0),
     "location": "3D View > Ctrl/Shift/x",
     "warning": "",

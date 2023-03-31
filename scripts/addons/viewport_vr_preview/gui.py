@@ -7,6 +7,7 @@ else:
     from . import properties
 
 import bpy
+from bpy.app.translations import pgettext_iface as iface_
 from bpy.types import (
     Menu,
     Panel,
@@ -37,12 +38,10 @@ class VIEW3D_PT_vr_session(Panel):
 
         # Using SNAP_FACE because it looks like a stop icon -- I shouldn't
         # have commit rights...
-        toggle_info = (
-            ("Start VR Session", 'PLAY') if not is_session_running else (
-                "Stop VR Session", 'SNAP_FACE')
-        )
-        layout.operator("wm.xr_session_toggle",
-                        text=toggle_info[0], icon=toggle_info[1])
+        toggle_info = ((iface_("Start VR Session"), 'PLAY') if not is_session_running
+                       else (iface_("Stop VR Session"), 'SNAP_FACE'))
+        layout.operator("wm.xr_session_toggle", text=toggle_info[0],
+                        translate=False, icon=toggle_info[1])
 
         layout.separator()
 
