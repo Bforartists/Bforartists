@@ -172,12 +172,9 @@ def set_modifier_solidify(myobject, width):
 # Add modifier (boolean)
 # --------------------------------------------------------------------
 def set_modifier_boolean(myobject, bolobject):
-    bpy.context.view_layer.objects.active = myobject
-    if bpy.context.view_layer.objects.active.name == myobject.name:
-        bpy.ops.object.modifier_add(type='BOOLEAN')
-        mod = myobject.modifiers[len(myobject.modifiers) - 1]
-        mod.operation = 'DIFFERENCE'
-        mod.object = bolobject
+    boolean_modifier = myobject.modifiers.new("", 'BOOLEAN')
+    boolean_modifier.operation = 'DIFFERENCE'
+    boolean_modifier.object = bolobject
 
 
 # --------------------------------------------------------------------
@@ -709,40 +706,38 @@ def create_brick_material(matname, replace, r, g, b, rv=0.8, gv=0.636, bv=0.315)
     nodes = mat.node_tree.nodes
 
     # support for multilanguage
-    node = nodes[get_node_index(nodes, 'BSDF_DIFFUSE')]
-    node.name = 'Diffuse BSDF'
-    node.label = 'Diffuse BSDF'
+    principled_node = nodes[get_node_index(nodes, 'BSDF_PRINCIPLED')]
 
-    node.inputs[0].default_value = [r, g, b, 1]
-    node.location = 500, 160
+    principled_node.inputs[0].default_value = [r, g, b, 1]
+    principled_node.location = 500, 160
 
-    node = nodes[get_node_index(nodes, 'OUTPUT_MATERIAL')]
-    node.location = 700, 160
+    output_node = nodes[get_node_index(nodes, 'OUTPUT_MATERIAL')]
+    output_node.location = 700, 160
 
-    node = nodes.new('ShaderNodeTexBrick')
-    node.name = 'Brick_0'
-    node.inputs[3].default_value = [0.407, 0.411, 0.394, 1]  # mortar color
-    node.inputs[4].default_value = 3  # scale
-    node.inputs[5].default_value = 0.001  # mortar
-    node.inputs[7].default_value = 0.60  # size_w
-    node.inputs[8].default_value = 0.30  # size_h
-    node.location = 300, 160
+    brick_node = nodes.new('ShaderNodeTexBrick')
+    brick_node.name = 'Brick_0'
+    brick_node.inputs[3].default_value = [0.407, 0.411, 0.394, 1]  # mortar color
+    brick_node.inputs[4].default_value = 3  # scale
+    brick_node.inputs[5].default_value = 0.001  # mortar
+    brick_node.inputs[7].default_value = 0.60  # size_w
+    brick_node.inputs[8].default_value = 0.30  # size_h
+    brick_node.location = 300, 160
 
-    node = nodes.new('ShaderNodeRGB')
-    node.name = 'RGB_0'
-    node.outputs[0].default_value = [r, g, b, 1]
-    node.location = 70, 160
+    rgb_node = nodes.new('ShaderNodeRGB')
+    rgb_node.name = 'RGB_0'
+    rgb_node.outputs[0].default_value = [r, g, b, 1]
+    rgb_node.location = 70, 160
 
     # Connect nodes
-    outn = nodes['RGB_0'].outputs['Color']
-    inn = nodes['Brick_0'].inputs['Color1']
+    outn = rgb_node.outputs['Color']
+    inn = brick_node.inputs['Color1']
     mat.node_tree.links.new(outn, inn)
 
-    inn = nodes['Brick_0'].inputs['Color2']
+    inn = brick_node.inputs['Color2']
     mat.node_tree.links.new(outn, inn)
 
-    outn = nodes['Brick_0'].outputs['Color']
-    inn = nodes['Diffuse BSDF'].inputs['Color']
+    outn = brick_node.outputs['Color']
+    inn = principled_node.inputs['Base Color']
     mat.node_tree.links.new(outn, inn)
 
     return mat

@@ -917,8 +917,10 @@ class reaction_diffusion(Operator):
 class edges_deformation(Operator):
     bl_idname = "object.edges_deformation"
     bl_label = "Edges Deformation"
-    bl_description = ("Compute Weight based on the deformation of edges"+
-        "according to visible modifiers.")
+    bl_description = (
+        "Compute Weight based on the deformation of edges "
+        "according to visible modifiers"
+    )
     bl_options = {'REGISTER', 'UNDO'}
 
     bounds : EnumProperty(
@@ -1061,8 +1063,10 @@ class edges_deformation(Operator):
 class edges_bending(Operator):
     bl_idname = "object.edges_bending"
     bl_label = "Edges Bending"
-    bl_description = ("Compute Weight based on the bending of edges"+
-        "according to visible modifiers.")
+    bl_description = (
+        "Compute Weight based on the bending of edges"
+        "according to visible modifiers"
+    )
     bl_options = {'REGISTER', 'UNDO'}
 
     bounds : EnumProperty(
@@ -1455,10 +1459,10 @@ class weight_contour_displace(Operator):
 
         # Displace Modifier
         if self.bool_displace:
-            ob.modifiers.new(type='DISPLACE', name='Displace')
-            ob.modifiers["Displace"].mid_level = 0
-            ob.modifiers["Displace"].strength = 0.1
-            ob.modifiers['Displace'].vertex_group = vertex_group_name
+            displace_modifier = ob.modifiers.new(type='DISPLACE', name='Displace')
+            displace_modifier.mid_level = 0
+            displace_modifier.strength = 0.1
+            displace_modifier.vertex_group = vertex_group_name
 
         bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
@@ -2128,7 +2132,7 @@ class tissue_weight_contour_curves_pattern(Operator):
 
     spiralized: BoolProperty(
         name='Spiralized', default=False,
-        description='Create a Spiral Contour. Works better with dense meshes.'
+        description='Create a Spiral Contour. Works better with dense meshes'
     )
     spiral_axis: FloatVectorProperty(
         name="Spiral Axis", default=(0,0,1),
@@ -2392,7 +2396,7 @@ class vertex_colors_to_vertex_groups(Operator):
     bl_idname = "object.vertex_colors_to_vertex_groups"
     bl_label = "Vertex Color"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_description = ("Convert the active Vertex Color into a Vertex Group.")
+    bl_description = ("Convert the active Vertex Color into a Vertex Group")
 
     red : BoolProperty(
         name="red channel", default=False, description="convert red channel")
@@ -2486,7 +2490,7 @@ class vertex_group_to_vertex_colors(Operator):
     bl_idname = "object.vertex_group_to_vertex_colors"
     bl_label = "Vertex Group"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_description = ("Convert the active Vertex Group into a Vertex Color.")
+    bl_description = ("Convert the active Vertex Group into a Vertex Color")
 
     channel : EnumProperty(
         items=[('BLUE', 'Blue Channel', 'Convert to Blue Channel'),
@@ -2579,7 +2583,7 @@ class vertex_group_to_uv(Operator):
     bl_idname = "object.vertex_group_to_uv"
     bl_label = "Vertex Group"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_description = ("Combine two Vertex Groups as UV Map Layer.")
+    bl_description = ("Combine two Vertex Groups as UV Map Layer")
 
     vertex_group_u : StringProperty(
         name="U", default='',
@@ -2667,7 +2671,7 @@ class curvature_to_vertex_groups(Operator):
     bl_label = "Curvature"
     bl_options = {'REGISTER', 'UNDO'}
     bl_description = ("Generate a Vertex Group based on the curvature of the"
-                      "mesh. Is based on Dirty Vertex Color.")
+                      "mesh. Is based on Dirty Vertex Color")
 
     invert : BoolProperty(
         name="invert", default=False, description="invert values")
@@ -2714,7 +2718,7 @@ class face_area_to_vertex_groups(Operator):
     bl_label = "Area"
     bl_options = {'REGISTER', 'UNDO'}
     bl_description = ("Generate a Vertex Group based on the area of individual"
-                      "faces.")
+                      "faces")
 
     invert : BoolProperty(
         name="invert", default=False, description="invert values")

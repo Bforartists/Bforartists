@@ -1068,7 +1068,7 @@ def blen_read_geom_layer_color(fbx_obj, mesh, colors_type):
     use_srgb = colors_type == 'SRGB'
     layer_type = 'BYTE_COLOR' if use_srgb else 'FLOAT_COLOR'
     color_prop_name = "color_srgb" if use_srgb else "color"
-    # almost same as UV's
+    # almost same as UVs
     for layer_id in (b'LayerElementColor',):
         for fbx_layer in elem_find_iter(fbx_obj, layer_id):
             # all should be valid

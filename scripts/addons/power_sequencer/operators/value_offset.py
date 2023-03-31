@@ -8,7 +8,7 @@ from .utils.functions import convert_duration_to_frames
 
 class POWER_SEQUENCER_OT_value_offset(bpy.types.Operator):
     """Instantly offset selected strips, either using frames or seconds. Allows to
-    nudge the selection quickly, using keyboard shortcuts.
+    nudge the selection quickly, using keyboard shortcuts
     """
 
     doc = {

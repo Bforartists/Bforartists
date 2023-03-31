@@ -16,57 +16,55 @@ Developed during Caminandes Open Movie Project
 
 import bpy
 from amaranth import utils
-from bpy.props import (
-        BoolProperty,
-        IntProperty,
+from bpy.props import BoolProperty
+
+
+class CYCLES_RENDER_PT_amaranth_samples(bpy.types.Panel):
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "render"
+    bl_label = "Samples per View Layer"
+    bl_parent_id = "CYCLES_RENDER_PT_sampling"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'CYCLES'}
+
+    @classmethod
+    def poll(cls, context):
+        return (
+            utils.cycles_exists() and
+            context.engine in cls.COMPAT_ENGINES and
+            (len(context.scene.render.views) > 1) or (len(bpy.data.scenes) > 1)
         )
 
-
-def render_cycles_scene_samples(self, context):
-
-    layout = self.layout
-    scene = context.scene
-    render = scene.render
-    if utils.cycles_exists():
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        render = scene.render
         cscene = scene.cycles
-        list_sampling = scene.amaranth_cycles_list_sampling
 
-    # List Samples
-    #if (len(scene.render.layers) > 1) or (len(bpy.data.scenes) > 1):
-    if (len(scene.render.views) > 1) or (len(bpy.data.scenes) > 1):
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        row = box.row(align=True)
-        col = row.column(align=True)
+        col = layout.column()
 
-        row = col.row(align=True)
-        row.alignment = "LEFT"
-        row.prop(scene, "amaranth_cycles_list_sampling",
-                 icon="%s" % "TRIA_DOWN" if list_sampling else "TRIA_RIGHT",
-                 emboss=False)
-
-    if list_sampling:
-        #if len(scene.render.layers) == 1 and render.layers[0].samples == 0:
         if len(scene.render.views) == 1 and render.view_layers[0].samples == 0:
             pass
         else:
-            col.separator()
-            #col.label(text="RenderLayers:", icon="RENDERLAYERS")
-            col.label(text="View Layers:", icon="RENDERLAYERS")
-
-            #for rl in scene.render.layers:
-            for rl in scene.view_layers:
+            for viewlayer in scene.view_layers:
                 row = col.row(align=True)
-                row.label(text=rl.name, icon="BLANK1")
-                row.prop(
-                    rl, "samples", text="%s" %
-                    "Samples" if rl.samples > 0 else "Automatic (%s)" %
-                    cscene.samples)
+                row.alignment = "RIGHT"
+                row.label(text=viewlayer.name, icon="BLANK1")
+
+                sub = row.row(align=True)
+                sub.prop(viewlayer, "samples", text="")
+                sub.active = viewlayer.samples > 0
+
+        col = layout.column()
 
         if (len(bpy.data.scenes) > 1):
             col.separator()
 
-            col.label(text="Scenes:", icon="SCENE_DATA")
+            col.label(text="Other Scenes")
 
             if utils.cycles_exists():
                 for s in bpy.data.scenes:
@@ -75,9 +73,12 @@ def render_cycles_scene_samples(self, context):
                         if s.render.engine == "CYCLES":
                             cscene = s.cycles
 
-                            #row.label(s.name)
-                            row.label(text=s.name)
-                            row.prop(cscene, "samples", icon="BLANK1")
+                            row = col.row(align=True)
+                            row.alignment = "RIGHT"
+                            row.label(text=s.name, icon="BLANK1")
+
+                            sub = row.row(align=True)
+                            sub.prop(cscene, "samples", text="")
                         else:
                             row.label(
                                 text="Scene: '%s' is not using Cycles" %
@@ -99,12 +100,7 @@ def render_cycles_scene_samples(self, context):
 
 
 def init():
-    scene = bpy.types.Scene
     if utils.cycles_exists():
-        scene.amaranth_cycles_list_sampling = bpy.props.BoolProperty(
-            default=False,
-            name="Samples Per:")
-        # Note: add versioning code to address changes introduced in 2.79.1
         from cycles import properties as _cycles_props
         _cycles_props.CyclesRenderSettings.use_samples_final = BoolProperty(
             name="Use Final Render Samples",
@@ -123,12 +119,13 @@ def clear():
 def register():
     init()
     if utils.cycles_exists():
-        bpy.types.CYCLES_RENDER_PT_sampling.append(render_cycles_scene_samples)
+        bpy.utils.register_class(CYCLES_RENDER_PT_amaranth_samples)
 
 
 def unregister():
     if utils.cycles_exists():
-        bpy.types.CYCLES_RENDER_PT_sampling.remove(render_cycles_scene_samples)
-
+        panel = CYCLES_RENDER_PT_amaranth_samples
+        if "bl_rna" in panel.__dict__:
+            bpy.utils.unregister_class(panel)
 
     clear()

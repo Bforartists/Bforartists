@@ -2,7 +2,7 @@
 # Copyright 2018-2022 The glTF-Blender-IO authors.
 
 
-from ...io.com.gltf2_io import TextureInfo, MaterialNormalTextureInfoClass
+from ...io.com.gltf2_io import TextureInfo
 from .gltf2_blender_texture import texture
 
 

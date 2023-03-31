@@ -15,22 +15,40 @@ import bpy
 def render_final_resolution_ui(self, context):
 
     rd = context.scene.render
-    layout = self.layout
-
     final_res_x = (rd.resolution_x * rd.resolution_percentage) / 100
     final_res_y = (rd.resolution_y * rd.resolution_percentage) / 100
+    final_res_x_border = round(
+        (final_res_x * (rd.border_max_x - rd.border_min_x)))
+    final_res_y_border = round(
+        (final_res_y * (rd.border_max_y - rd.border_min_y)))
+
+    layout = self.layout
+    layout.use_property_split = True
+    layout.use_property_decorate = False
+
+    layout.separator()
+    box = layout.box()
+    col = box.column(align=True)
+    col.active = False
+    split = col.split(factor=0.4)
+
+    col = split.column(align=True)
+    row = col.row()
+    row.alignment = 'RIGHT'
+    row.label(text="Render Resolution")
 
     if rd.use_border:
-        final_res_x_border = round(
-            (final_res_x * (rd.border_max_x - rd.border_min_x)))
-        final_res_y_border = round(
-            (final_res_y * (rd.border_max_y - rd.border_min_y)))
-        layout.label(text="Final Resolution: {} x {} [Border: {} x {}]".format(
-                     str(final_res_x)[:-2], str(final_res_y)[:-2],
-                     str(final_res_x_border), str(final_res_y_border)))
-    else:
-        layout.label(text="Final Resolution: {} x {}".format(
-                     str(final_res_x)[:-2], str(final_res_y)[:-2]))
+        row = col.row()
+        row.alignment = 'RIGHT'
+        row.label(text="Region")
+
+    col = split.column(align=True)
+    col.label(text="{} x {}".format(
+        str(final_res_x)[:-2], str(final_res_y)[:-2]))
+
+    if rd.use_border:
+        col.label(text="{} x {}".format(
+            str(final_res_x_border), str(final_res_y_border)))
 
 
 def register():

@@ -321,8 +321,7 @@ def CreateBevel(context, CurrentObject):
                 bevel_modifier = True
 
         if bevel_modifier is False:
-            bpy.ops.object.modifier_add(type='BEVEL')
-            mod = context.object.modifiers[-1]
+            mod = context.object.modifiers.new("", 'BEVEL')
             mod.limit_method = 'WEIGHT'
             mod.width = 0.01
             mod.profile = 0.699099
