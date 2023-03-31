@@ -64,8 +64,7 @@ def draw_callback_px(self, context):
     coords = ((-0.5, -0.5), (0.5, -0.5), (0.5, 0.5), (-0.5, 0.5))
     uv_coords = ((0, 0), (1, 0), (1, 1), (0, 1))
     batch = batch_for_shader(shader, 'TRI_FAN',
-        {"pos" : coords,
-         "texCoord" : uv_coords})
+                             {"pos": coords, "texCoord": uv_coords})
 
     with gpu.matrix.push_pop():
         gpu.matrix.translate(position)
@@ -79,7 +78,7 @@ def draw_callback_px(self, context):
     # Crosshair
     # vertical
     coords = ((self.mouse_position[0], bottom), (self.mouse_position[0], top))
-    colors = ((1,)*4,)*2
+    colors = ((1,) * 4,) * 2
     shader = gpu.shader.from_builtin('2D_FLAT_COLOR')
     batch = batch_for_shader(shader, 'LINES',
                              {"pos": coords, "color": colors})
@@ -134,7 +133,9 @@ class SUNPOS_OT_ShowHdr(bpy.types.Operator):
             self.mouse_position = Vector((mouse_position_abs.x - self.area.x,
                                           mouse_position_abs.y - self.area.y))
 
-            self.selected_point = (self.mouse_position - self.offset - Vector((self.right, self.top))/2) / self.scale
+            self.selected_point = (self.mouse_position
+                                   - self.offset
+                                   - Vector((self.right, self.top)) / 2) / self.scale
             u = self.selected_point.x / self.area.width + 0.5
             v = (self.selected_point.y) / (self.area.width / 2) + 0.5
 
@@ -275,10 +276,13 @@ class SUNPOS_OT_ShowHdr(bpy.types.Operator):
         self.initial_elevation = context.scene.sun_pos_properties.hdr_elevation
         self.initial_azimuth = context.scene.sun_pos_properties.hdr_azimuth
 
-        context.workspace.status_text_set("Enter/LMB: confirm, Esc/RMB: cancel, MMB: pan, mouse wheel: zoom, Ctrl + mouse wheel: set exposure")
+        context.workspace.status_text_set(
+            "Enter/LMB: confirm, Esc/RMB: cancel,"
+            " MMB: pan, mouse wheel: zoom, Ctrl + mouse wheel: set exposure")
 
-        self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px,
-            (self, context), 'WINDOW', 'POST_PIXEL')
+        self._handle = bpy.types.SpaceView3D.draw_handler_add(
+            draw_callback_px, (self, context), 'WINDOW', 'POST_PIXEL'
+        )
         context.window_manager.modal_handler_add(self)
 
         return {'RUNNING_MODAL'}

@@ -43,7 +43,7 @@ bl_info = {
     "name": "Atomic Blender PDB/XYZ",
     "description": "Importing atoms listed in PDB or XYZ files as balls into Blender",
     "author": "Clemens Barth",
-    "version": (1, 8),
+    "version": (1, 8, 1),
     "blender": (2, 80, 0),
     "location": "File -> Import -> PDB (.pdb) and File -> Import -> XYZ (.xyz)",
     "warning": "",

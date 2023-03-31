@@ -17,7 +17,7 @@
 bl_info = {
     "name": "Tissue",
     "author": "Alessandro Zomparelli (Co-de-iT)",
-    "version": (0, 3, 52),
+    "version": (0, 3, 54),
     "blender": (2, 93, 0),
     "location": "",
     "description": "Tools for Computational Design",

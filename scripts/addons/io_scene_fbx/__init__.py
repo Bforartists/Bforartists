@@ -2,11 +2,11 @@
 
 bl_info = {
     "name": "FBX format",
-    "author": "Campbell Barton, Bastien Montagne, Jens Restemeier",
-    "version": (4, 37, 5),
-    "blender": (3, 4, 0),
+    "author": "Campbell Barton, Bastien Montagne, Jens Restemeier, @Mysteryem",
+    "version": (5, 1, 0),
+    "blender": (3, 6, 0),
     "location": "File > Import-Export",
-    "description": "FBX IO meshes, UV's, vertex colors, materials, textures, cameras, lamps and actions",
+    "description": "FBX IO meshes, UVs, vertex colors, materials, textures, cameras, lamps and actions",
     "warning": "",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/scene_fbx.html",
     "support": 'OFFICIAL',
@@ -80,7 +80,7 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
             name="Apply Transform",
             description="Bake space transform into object data, avoids getting unwanted rotations to objects when "
                         "target space is not aligned with Blender's space "
-                        "(WARNING! experimental option, use at own risks, known broken with armatures/animations)",
+                        "(WARNING! experimental option, use at own risk, known to be broken with armatures/animations)",
             default=False,
             )
 
@@ -434,7 +434,7 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
             name="Apply Transform",
             description="Bake space transform into object data, avoids getting unwanted rotations to objects when "
                         "target space is not aligned with Blender's space "
-                        "(WARNING! experimental option, use at own risks, known broken with armatures/animations)",
+                        "(WARNING! experimental option, use at own risk, known to be broken with armatures/animations)",
             default=False,
             )
 
@@ -481,6 +481,12 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
                    ),
             description="Export vertex color attributes",
             default='SRGB',
+            )
+    prioritize_active_color: BoolProperty(
+            name="Prioritize Active Color",
+            description="Make sure active color will be exported first. Could be important "
+                        "since some other software can discard other color attributes besides the first one",
+            default=False,
             )
     use_subsurf: BoolProperty(
             name="Export Subdivision Surface",
@@ -549,8 +555,8 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
                    ('LIMBNODE', "LimbNode", "'LimbNode' FBX node, a regular joint between two bones..."),
                   ),
             description="FBX type of node (object) used to represent Blender's armatures "
-                        "(use Null one unless you experience issues with other app, other choices may no import back "
-                        "perfectly in Blender...)",
+                        "(use the Null type unless you experience issues with the other app, "
+                        "as other choices may not import back perfectly into Blender...)",
             default='NULL',
             )
     bake_anim: BoolProperty(
@@ -787,6 +793,7 @@ class FBX_PT_export_geometry(bpy.types.Panel):
         #~ sub.enabled = operator.mesh_smooth_type in {'OFF'}
         sub.prop(operator, "use_tspace")
         layout.prop(operator, "colors_type")
+        layout.prop(operator, "prioritize_active_color")
 
 
 class FBX_PT_export_armature(bpy.types.Panel):

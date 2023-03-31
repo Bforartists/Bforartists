@@ -23,17 +23,17 @@ class POWER_SEQUENCER_OT_speed_up_movie_strip(bpy.types.Operator):
         "shortcuts": [
             (
                 {"type": "TWO", "value": "PRESS", "alt": True},
-                {"speed_factor": 2.0},
+                {"speed_factor": 2},
                 "Speed x2",
             ),
             (
                 {"type": "THREE", "value": "PRESS", "alt": True},
-                {"speed_factor": 3.0},
+                {"speed_factor": 3},
                 "Speed x3",
             ),
             (
                 {"type": "FOUR", "value": "PRESS", "alt": True},
-                {"speed_factor": 4.0},
+                {"speed_factor": 4},
                 "Speed x4",
             ),
         ],

@@ -13,7 +13,7 @@ class tissuePreferences(bpy.types.AddonPreferences):
 
     print_stats : IntProperty(
         name="Print Stats",
-        description="Print in the console all details about the computing time.",
+        description="Print in the console all details about the computing time",
         default=1,
         min=0,
         max=4

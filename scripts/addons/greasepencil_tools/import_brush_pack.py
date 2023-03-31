@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-import ssl
 import urllib.request
 import urllib.parse
 import zipfile
@@ -74,6 +73,7 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
         self._append_brushes(Path(self.temp) / blendname)
 
     def execute(self, context):
+        import ssl
         import tempfile
         import os
 

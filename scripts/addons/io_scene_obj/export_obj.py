@@ -452,10 +452,10 @@ def write_file(filepath, objects, depsgraph, scene,
                                 uv_ls = uv_face_mapping[f_index] = []
                                 for uv_index, l_index in enumerate(f.loop_indices):
                                     uv = uv_layer[l_index].uv
-                                    # include the vertex index in the key so we don't share UV's between vertices,
+                                    # include the vertex index in the key so we don't share UVs between vertices,
                                     # allowed by the OBJ spec but can cause issues for other importers, see: T47010.
 
-                                    # this works too, shared UV's for all verts
+                                    # this works too, shared UVs for all verts
                                     #~ uv_key = veckey2d(uv)
                                     uv_key = loops[l_index].vertex_index, veckey2d(uv)
 
@@ -596,7 +596,7 @@ def write_file(filepath, objects, depsgraph, scene,
 
                                 face_vert_index += len(f_v)
 
-                            else:  # No UV's
+                            else:  # No UVs
                                 if EXPORT_NORMALS:
                                     for vi, v, li in f_v:
                                         fw(" %d//%d" % (totverts + v.index, totno + loops_to_normals[li]))

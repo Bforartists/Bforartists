@@ -8,6 +8,7 @@ else:
 
 import bpy
 import gpu
+from bpy.app.translations import pgettext_data as data_
 from bpy.types import (
     Gizmo,
     GizmoGroup,
@@ -117,8 +118,8 @@ class VIEW3D_OT_vr_camera_landmark_from_session(Operator):
         loc = wm.xr_session_state.viewer_pose_location
         rot = wm.xr_session_state.viewer_pose_rotation.to_euler()
 
-        cam = bpy.data.cameras.new("Camera_" + lm.name)
-        new_cam = bpy.data.objects.new("Camera_" + lm.name, cam)
+        cam = bpy.data.cameras.new(data_("Camera") + "_" + lm.name)
+        new_cam = bpy.data.objects.new(data_("Camera") + "_" + lm.name, cam)
         scene.collection.objects.link(new_cam)
         new_cam.location = loc
         new_cam.rotation_euler = rot
@@ -215,8 +216,8 @@ class VIEW3D_OT_add_camera_from_vr_landmark(Operator):
         scene = context.scene
         lm = properties.VRLandmark.get_selected_landmark(context)
 
-        cam = bpy.data.cameras.new("Camera_" + lm.name)
-        new_cam = bpy.data.objects.new("Camera_" + lm.name, cam)
+        cam = bpy.data.cameras.new(data_("Camera") + "_" + lm.name)
+        new_cam = bpy.data.objects.new(data_("Camera") + "_" + lm.name, cam)
         scene.collection.objects.link(new_cam)
         angle = lm.base_pose_angle
         new_cam.location = lm.base_pose_location
