@@ -1592,8 +1592,7 @@ static void add_attribute_search_or_value_buttons(const bContext &C,
 
   uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
   uiLayout *name_row = uiLayoutRow(split, false);
-  // uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);/*bfa - we align left*/
-  uiItemL(name_row, socket.name, ICON_NONE);
+  uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);
 
   const int use_attribute = RNA_int_get(md_ptr, rna_path_use_attribute.c_str()) != 0;
   if (socket.type == SOCK_BOOLEAN && !use_attribute) {
