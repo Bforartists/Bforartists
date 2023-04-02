@@ -1451,7 +1451,11 @@ static void std_node_socket_interface_draw(bContext * /*C*/, uiLayout *layout, P
       uiItemR(sub, ptr, "max_value", DEFAULT_FLAGS, IFACE_("Max"), ICON_NONE);
       break;
     }
-    case SOCK_BOOLEAN:
+    case SOCK_BOOLEAN: {
+      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+      uiItemR(col, ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), 0);
+      break;
+    }
     case SOCK_RGBA:
     case SOCK_STRING:
     case SOCK_OBJECT:
