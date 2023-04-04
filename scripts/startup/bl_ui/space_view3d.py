@@ -3965,8 +3965,7 @@ class VIEW3D_MT_mask(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.dirty_mask", text='Dirty Mask', icon="DIRTY_VERTEX")
-        props = layout.operator("sculpt.mask_from_cavity", text="Mask From Cavity")
+        props = layout.operator("sculpt.mask_from_cavity", text="Mask From Cavity", icon="DIRTY_VERTEX")
         props.settings_source = "OPERATOR"
 
         layout.separator()
