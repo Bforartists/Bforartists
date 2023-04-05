@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2008 Blender Foundation. All rights reserved. */
+ * Copyright 2008 Blender Foundation */
 
 /** \file
  * \ingroup spview3d
@@ -3480,7 +3480,7 @@ static void do_nurbs_box_select__doSelect(void *userData,
     }
   }
 }
-static bool do_nurbs_box_select(ViewContext *vc, rcti *rect, const eSelectOp sel_op)
+static bool do_nurbs_box_select(ViewContext *vc, const rcti *rect, const eSelectOp sel_op)
 {
   const bool deselect_all = (sel_op == SEL_OP_SET);
   BoxSelectUserData data;
@@ -3520,7 +3520,7 @@ static void do_lattice_box_select__doSelect(void *userData, BPoint *bp, const fl
     data->is_changed = true;
   }
 }
-static bool do_lattice_box_select(ViewContext *vc, rcti *rect, const eSelectOp sel_op)
+static bool do_lattice_box_select(ViewContext *vc, const rcti *rect, const eSelectOp sel_op)
 {
   BoxSelectUserData data;
 
@@ -3855,7 +3855,10 @@ static int opengl_bone_select_buffer_cmp(const void *sel_a_p, const void *sel_b_
   return 0;
 }
 
-static bool do_object_box_select(bContext *C, ViewContext *vc, rcti *rect, const eSelectOp sel_op)
+static bool do_object_box_select(bContext *C,
+                                 ViewContext *vc,
+                                 const rcti *rect,
+                                 const eSelectOp sel_op)
 {
   View3D *v3d = vc->v3d;
   int totobj = MAXPICKELEMS; /* XXX solve later */
@@ -3928,7 +3931,10 @@ finally:
   return changed;
 }
 
-static bool do_pose_box_select(bContext *C, ViewContext *vc, rcti *rect, const eSelectOp sel_op)
+static bool do_pose_box_select(bContext *C,
+                               ViewContext *vc,
+                               const rcti *rect,
+                               const eSelectOp sel_op)
 {
   blender::Vector<Base *> bases = do_pose_tag_select_op_prepare(vc);
 
@@ -3942,13 +3948,12 @@ static bool do_pose_box_select(bContext *C, ViewContext *vc, rcti *rect, const e
   const int hits = view3d_opengl_select(
       vc, buffer, (totobj + MAXPICKELEMS), rect, VIEW3D_SELECT_ALL, select_filter);
   /*
-   * LOGIC NOTES (theeth):
-   * The buffer and ListBase have the same relative order, which makes the selection
+   * NOTE(@theeth): Regarding the logic use here.
+   * The buffer and #ListBase have the same relative order, which makes the selection
    * very simple. Loop through both data sets at the same time, if the color
    * is the same as the object, we have a hit and can move to the next color
    * and object pair, if not, just move to the next object,
-   * keeping the same color until we have a hit.
-   */
+   * keeping the same color until we have a hit. */
 
   if (hits > 0) {
     /* no need to loop if there's no hit */

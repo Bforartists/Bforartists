@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2008 Blender Foundation. All rights reserved. */
+ * Copyright 2008 Blender Foundation */
 
 /** \file
  * \ingroup edscr
@@ -5420,11 +5420,6 @@ static int userpref_show_exec(bContext *C, wmOperator *op)
     ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
 
     region->flag |= RGN_FLAG_HIDDEN;
-    ED_region_visibility_change_update(C, area, region);
-
-    /* And also show the region with "Load & Save" buttons. */
-    region = BKE_area_find_region_type(area, RGN_TYPE_EXECUTE);
-    region->flag &= ~RGN_FLAG_HIDDEN;
     ED_region_visibility_change_update(C, area, region);
 
     return OPERATOR_FINISHED;

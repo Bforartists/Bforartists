@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2011 Blender Foundation. All rights reserved. */
+ * Copyright 2011 Blender Foundation */
 
 /** \file
  * \ingroup spclip
@@ -113,10 +113,6 @@ void CLIP_OT_set_scene_frames(wmOperatorType *ot);
 void CLIP_OT_cursor_set(struct wmOperatorType *ot);
 
 void CLIP_OT_lock_selection_toggle(struct wmOperatorType *ot);
-
-/* clip_toolbar.cc */
-
-struct ARegion *ED_clip_has_properties_region(struct ScrArea *area);
 
 /* clip_utils.cc */
 

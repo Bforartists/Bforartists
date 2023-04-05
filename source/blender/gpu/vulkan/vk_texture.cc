@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2022 Blender Foundation. All rights reserved. */
+ * Copyright 2022 Blender Foundation */
 
 /** \file
  * \ingroup gpu
@@ -29,13 +29,9 @@ VKTexture::~VKTexture()
   vkDestroyImageView(context.device_get(), vk_image_view_, vk_allocation_callbacks);
 }
 
-void VKTexture::generate_mipmap()
-{
-}
+void VKTexture::generate_mipmap() {}
 
-void VKTexture::copy_to(Texture * /*tex*/)
-{
-}
+void VKTexture::copy_to(Texture * /*tex*/) {}
 
 void VKTexture::clear(eGPUDataFormat format, const void *data)
 {
@@ -56,17 +52,11 @@ void VKTexture::clear(eGPUDataFormat format, const void *data)
       vk_image_, current_layout_get(), clear_color, Span<VkImageSubresourceRange>(&range, 1));
 }
 
-void VKTexture::swizzle_set(const char /*swizzle_mask*/[4])
-{
-}
+void VKTexture::swizzle_set(const char /*swizzle_mask*/[4]) {}
 
-void VKTexture::stencil_texture_mode_set(bool /*use_stencil*/)
-{
-}
+void VKTexture::stencil_texture_mode_set(bool /*use_stencil*/) {}
 
-void VKTexture::mip_range_set(int /*min*/, int /*max*/)
-{
-}
+void VKTexture::mip_range_set(int /*min*/, int /*max*/) {}
 
 void *VKTexture::read(int mip, eGPUDataFormat format)
 {
@@ -196,7 +186,7 @@ static VkImageUsageFlagBits to_vk_image_usage(const eGPUTextureUsage usage,
   if (usage & GPU_TEXTURE_USAGE_ATTACHMENT) {
     if (format_flag & (GPU_FORMAT_NORMALIZED_INTEGER | GPU_FORMAT_COMPRESSED)) {
       /* These formats aren't supported as an attachment. When using GPU_TEXTURE_USAGE_DEFAULT they
-       * are still being evaluated to be attachable. So we need to skip them.*/
+       * are still being evaluated to be attachable. So we need to skip them. */
     }
     else {
       if (format_flag & (GPU_FORMAT_DEPTH | GPU_FORMAT_STENCIL)) {

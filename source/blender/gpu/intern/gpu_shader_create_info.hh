@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2021 Blender Foundation. All rights reserved. */
+ * Copyright 2021 Blender Foundation */
 
 /** \file
  * \ingroup gpu
@@ -444,7 +444,7 @@ struct ShaderCreateInfo {
 
   struct Sampler {
     ImageType type;
-    eGPUSamplerState sampler;
+    GPUSamplerState sampler;
     StringRefNull name;
   };
 
@@ -689,7 +689,7 @@ struct ShaderCreateInfo {
                 ImageType type,
                 StringRefNull name,
                 Frequency freq = Frequency::PASS,
-                eGPUSamplerState sampler = (eGPUSamplerState)-1)
+                GPUSamplerState sampler = GPUSamplerState::internal_sampler())
   {
     Resource res(Resource::BindType::SAMPLER, slot);
     res.sampler.type = type;

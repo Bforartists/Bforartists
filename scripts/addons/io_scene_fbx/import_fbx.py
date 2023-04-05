@@ -18,6 +18,9 @@ import bpy
 from bpy.app.translations import pgettext_tip as tip_
 from mathutils import Matrix, Euler, Vector
 
+# Also imported in .fbx_utils, so importing here is unlikely to further affect Blender startup time.
+import numpy as np
+
 # -----
 # Utils
 from . import parse_fbx, fbx_utils
@@ -34,6 +37,10 @@ from .fbx_utils import (
     similar_values,
     similar_values_iter,
     FBXImportSettings,
+    vcos_transformed,
+    nors_transformed,
+    parray_as_ndarray,
+    astype_view_signedness,
 )
 
 # global singleton, assign on execution
@@ -454,8 +461,9 @@ def add_vgroup_to_objects(vg_indices, vg_weights, vg_name, objects):
             vg = obj.vertex_groups.get(vg_name)
             if vg is None:
                 vg = obj.vertex_groups.new(name=vg_name)
+            vg_add = vg.add
             for i, w in zip(vg_indices, vg_weights):
-                vg.add((i,), w, 'REPLACE')
+                vg_add((i,), w, 'REPLACE')
 
 
 def blen_read_object_transform_preprocess(fbx_props, fbx_obj, rot_alt_mat, use_prepost_rot):
@@ -777,87 +785,258 @@ def blen_read_geom_layerinfo(fbx_layer):
         )
 
 
-def blen_read_geom_array_setattr(generator, blen_data, blen_attr, fbx_data, stride, item_size, descr, xform):
-    """Generic fbx_layer to blen_data setter, generator is expected to yield tuples (ble_idx, fbx_idx)."""
-    max_blen_idx = len(blen_data) - 1
-    max_fbx_idx = len(fbx_data) - 1
-    print_error = True
+def blen_read_geom_validate_blen_data(blen_data, blen_dtype, item_size):
+    """Validate blen_data when it's not a bpy_prop_collection.
+    Returns whether blen_data is a bpy_prop_collection"""
+    blen_data_is_collection = isinstance(blen_data, bpy.types.bpy_prop_collection)
+    if not blen_data_is_collection:
+        if item_size > 1:
+            assert(len(blen_data.shape) == 2)
+            assert(blen_data.shape[1] == item_size)
+        assert(blen_data.dtype == blen_dtype)
+    return blen_data_is_collection
 
-    def check_skip(blen_idx, fbx_idx):
-        nonlocal print_error
-        if fbx_idx < 0:  # Negative values mean 'skip'.
-            return True
-        if blen_idx > max_blen_idx:
-            if print_error:
-                print("ERROR: too much data in this Blender layer, compared to elements in mesh, skipping!")
-                print_error = False
-            return True
-        if fbx_idx + item_size - 1 > max_fbx_idx:
-            if print_error:
-                print("ERROR: not enough data in this FBX layer, skipping!")
-                print_error = False
-            return True
-        return False
 
-    if xform is not None:
-        if isinstance(blen_data, list):
-            if item_size == 1:
-                def _process(blend_data, blen_attr, fbx_data, xform, item_size, blen_idx, fbx_idx):
-                    blen_data[blen_idx] = xform(fbx_data[fbx_idx])
-            else:
-                def _process(blend_data, blen_attr, fbx_data, xform, item_size, blen_idx, fbx_idx):
-                    blen_data[blen_idx] = xform(fbx_data[fbx_idx:fbx_idx + item_size])
-        else:
-            if item_size == 1:
-                def _process(blend_data, blen_attr, fbx_data, xform, item_size, blen_idx, fbx_idx):
-                    setattr(blen_data[blen_idx], blen_attr, xform(fbx_data[fbx_idx]))
-            else:
-                def _process(blend_data, blen_attr, fbx_data, xform, item_size, blen_idx, fbx_idx):
-                    setattr(blen_data[blen_idx], blen_attr, xform(fbx_data[fbx_idx:fbx_idx + item_size]))
+def blen_read_geom_parse_fbx_data(fbx_data, stride, item_size):
+    """Parse fbx_data as an array.array into a 2d np.ndarray that shares the same memory, where each row is a single
+    item"""
+    # Technically stride < item_size could be supported, but there's probably not a use case for it since it would
+    # result in a view of the data with self-overlapping memory.
+    assert(stride >= item_size)
+    # View the array.array as an np.ndarray.
+    fbx_data_np = parray_as_ndarray(fbx_data)
+
+    if stride == item_size:
+        if item_size > 1:
+            # Need to make sure fbx_data_np has a whole number of items to be able to view item_size elements per row.
+            items_remainder = len(fbx_data_np) % item_size
+            if items_remainder:
+                print("ERROR: not a whole number of items in this FBX layer, skipping the partial item!")
+                fbx_data_np = fbx_data_np[:-items_remainder]
+        fbx_data_np = fbx_data_np.reshape(-1, item_size)
     else:
-        if isinstance(blen_data, list):
-            if item_size == 1:
-                def _process(blend_data, blen_attr, fbx_data, xform, item_size, blen_idx, fbx_idx):
-                    blen_data[blen_idx] = fbx_data[fbx_idx]
+        # Create a view of fbx_data_np that is only the first item_size elements of each stride. Note that the view will
+        # not be C-contiguous.
+        stride_remainder = len(fbx_data_np) % stride
+        if stride_remainder:
+            if stride_remainder < item_size:
+                print("ERROR: not a whole number of items in this FBX layer, skipping the partial item!")
+                # Not enough in the remainder for a full item, so cut off the partial stride
+                fbx_data_np = fbx_data_np[:-stride_remainder]
+                # Reshape to one stride per row and then create a view that includes only the first item_size elements
+                # of each stride.
+                fbx_data_np = fbx_data_np.reshape(-1, stride)[:, :item_size]
             else:
-                def _process(blend_data, blen_attr, fbx_data, xform, item_size, blen_idx, fbx_idx):
-                    blen_data[blen_idx] = fbx_data[fbx_idx:fbx_idx + item_size]
+                print("ERROR: not a whole number of strides in this FBX layer! There are a whole number of items, but"
+                      " this could indicate an error!")
+                # There is not a whole number of strides, but there is a whole number of items.
+                # This is a pain to deal with because fbx_data_np.reshape(-1, stride) is not possible.
+                # A view of just the items can be created using stride_tricks.as_strided by specifying the shape and
+                # strides of the view manually.
+                # Extreme care must be taken when using stride_tricks.as_strided because improper usage can result in
+                # a view that gives access to memory outside the array.
+                from numpy.lib import stride_tricks
+
+                # fbx_data_np should always start off as flat and C-contiguous.
+                assert(fbx_data_np.strides == (fbx_data_np.itemsize,))
+
+                num_whole_strides = len(fbx_data_np) // stride
+                # Plus the one partial stride that is enough elements for a complete item.
+                num_items = num_whole_strides + 1
+                shape = (num_items, item_size)
+
+                # strides are the number of bytes to step to get to the next element, for each axis.
+                step_per_item = fbx_data_np.itemsize * stride
+                step_per_item_element = fbx_data_np.itemsize
+                strides = (step_per_item, step_per_item_element)
+
+                fbx_data_np = stride_tricks.as_strided(fbx_data_np, shape, strides)
         else:
-            if item_size == 1:
-                def _process(blend_data, blen_attr, fbx_data, xform, item_size, blen_idx, fbx_idx):
-                    setattr(blen_data[blen_idx], blen_attr, fbx_data[fbx_idx])
-            else:
-                def _process(blend_data, blen_attr, fbx_data, xform, item_size, blen_idx, fbx_idx):
-                    setattr(blen_data[blen_idx], blen_attr, fbx_data[fbx_idx:fbx_idx + item_size])
+            # There's a whole number of strides, so first reshape to one stride per row and then create a view that
+            # includes only the first item_size elements of each stride.
+            fbx_data_np = fbx_data_np.reshape(-1, stride)[:, :item_size]
 
-    for blen_idx, fbx_idx in generator:
-        if check_skip(blen_idx, fbx_idx):
-            continue
-        _process(blen_data, blen_attr, fbx_data, xform, item_size, blen_idx, fbx_idx)
+    return fbx_data_np
 
 
-# generic generators.
-def blen_read_geom_array_gen_allsame(data_len):
-    return zip(*(range(data_len), (0,) * data_len))
+def blen_read_geom_check_fbx_data_length(blen_data, fbx_data_np, is_indices=False):
+    """Check that there are the same number of items in blen_data and fbx_data_np.
+
+    Returns a tuple of two elements:
+        0: fbx_data_np or, if fbx_data_np contains more items than blen_data, a view of fbx_data_np with the excess
+           items removed
+        1: Whether the returned fbx_data_np contains enough items to completely fill blen_data"""
+    bl_num_items = len(blen_data)
+    fbx_num_items = len(fbx_data_np)
+    enough_data = fbx_num_items >= bl_num_items
+    if not enough_data:
+        if is_indices:
+            print("ERROR: not enough indices in this FBX layer, missing data will be left as default!")
+        else:
+            print("ERROR: not enough data in this FBX layer, missing data will be left as default!")
+    elif fbx_num_items > bl_num_items:
+        if is_indices:
+            print("ERROR: too many indices in this FBX layer, skipping excess!")
+        else:
+            print("ERROR: too much data in this FBX layer, skipping excess!")
+        fbx_data_np = fbx_data_np[:bl_num_items]
+
+    return fbx_data_np, enough_data
 
 
-def blen_read_geom_array_gen_direct(fbx_data, stride):
-    fbx_data_len = len(fbx_data)
-    return zip(*(range(fbx_data_len // stride), range(0, fbx_data_len, stride)))
+def blen_read_geom_xform(fbx_data_np, xform):
+    """xform is either None, or a function that takes fbx_data_np as its only positional argument and returns an
+    np.ndarray with the same total number of elements as fbx_data_np.
+    It is acceptable for xform to return an array with a different dtype to fbx_data_np.
+
+    Returns xform(fbx_data_np) when xform is not None and ensures the result of xform(fbx_data_np) has the same shape as
+    fbx_data_np before returning it.
+    When xform is None, fbx_data_np is returned as is."""
+    if xform is not None:
+        item_size = fbx_data_np.shape[1]
+        fbx_total_data = fbx_data_np.size
+        fbx_data_np = xform(fbx_data_np)
+        # The amount of data should not be changed by xform
+        assert(fbx_data_np.size == fbx_total_data)
+        # Ensure fbx_data_np is still item_size elements per row
+        if len(fbx_data_np.shape) != 2 or fbx_data_np.shape[1] != item_size:
+            fbx_data_np = fbx_data_np.reshape(-1, item_size)
+    return fbx_data_np
 
 
-def blen_read_geom_array_gen_indextodirect(fbx_layer_index, stride):
-    return ((bi, fi * stride) for bi, fi in enumerate(fbx_layer_index))
+def blen_read_geom_array_foreach_set_direct(blen_data, blen_attr, blen_dtype, fbx_data, stride, item_size, descr,
+                                            xform):
+    """Generic fbx_layer to blen_data foreach setter for Direct layers.
+    blen_data must be a bpy_prop_collection or 2d np.ndarray whose second axis length is item_size.
+    fbx_data must be an array.array."""
+    fbx_data_np = blen_read_geom_parse_fbx_data(fbx_data, stride, item_size)
+    fbx_data_np, enough_data = blen_read_geom_check_fbx_data_length(blen_data, fbx_data_np)
+    fbx_data_np = blen_read_geom_xform(fbx_data_np, xform)
+
+    blen_data_is_collection = blen_read_geom_validate_blen_data(blen_data, blen_dtype, item_size)
+
+    if blen_data_is_collection:
+        if not enough_data:
+            blen_total_data = len(blen_data) * item_size
+            buffer = np.empty(blen_total_data, dtype=blen_dtype)
+            # It's not clear what values should be used for the missing data, so read the current values into a buffer.
+            blen_data.foreach_get(blen_attr, buffer)
+
+            # Change the buffer shape to one item per row
+            buffer.shape = (-1, item_size)
+
+            # Copy the fbx data into the start of the buffer
+            buffer[:len(fbx_data_np)] = fbx_data_np
+        else:
+            # Convert the buffer to the Blender C type of blen_attr
+            buffer = astype_view_signedness(fbx_data_np, blen_dtype)
+
+        # Set blen_attr of blen_data. The buffer must be flat and C-contiguous, which ravel() ensures
+        blen_data.foreach_set(blen_attr, buffer.ravel())
+    else:
+        assert(blen_data.size % item_size == 0)
+        blen_data = blen_data.view()
+        blen_data.shape = (-1, item_size)
+        blen_data[:len(fbx_data_np)] = fbx_data_np
 
 
-def blen_read_geom_array_gen_direct_looptovert(mesh, fbx_data, stride):
-    fbx_data_len = len(fbx_data) // stride
-    loops = mesh.loops
-    for p in mesh.polygons:
-        for lidx in p.loop_indices:
-            vidx = loops[lidx].vertex_index
-            if vidx < fbx_data_len:
-                yield lidx, vidx * stride
+def blen_read_geom_array_foreach_set_indexed(blen_data, blen_attr, blen_dtype, fbx_data, fbx_layer_index, stride,
+                                             item_size, descr, xform):
+    """Generic fbx_layer to blen_data foreach setter for IndexToDirect layers.
+    blen_data must be a bpy_prop_collection or 2d np.ndarray whose second axis length is item_size.
+    fbx_data must be an array.array or a 1d np.ndarray."""
+    fbx_data_np = blen_read_geom_parse_fbx_data(fbx_data, stride, item_size)
+    fbx_data_np = blen_read_geom_xform(fbx_data_np, xform)
+
+    # fbx_layer_index is allowed to be a 1d np.ndarray for use with blen_read_geom_array_foreach_set_looptovert.
+    if not isinstance(fbx_layer_index, np.ndarray):
+        fbx_layer_index = parray_as_ndarray(fbx_layer_index)
+
+    fbx_layer_index, enough_indices = blen_read_geom_check_fbx_data_length(blen_data, fbx_layer_index, is_indices=True)
+
+    blen_data_is_collection = blen_read_geom_validate_blen_data(blen_data, blen_dtype, item_size)
+
+    blen_data_items_len = len(blen_data)
+    blen_data_len = blen_data_items_len * item_size
+    fbx_num_items = len(fbx_data_np)
+
+    # Find all indices that are out of bounds of fbx_data_np.
+    min_index_inclusive = -fbx_num_items
+    max_index_inclusive = fbx_num_items - 1
+    valid_index_mask = np.equal(fbx_layer_index, fbx_layer_index.clip(min_index_inclusive, max_index_inclusive))
+    indices_invalid = not valid_index_mask.all()
+
+    fbx_data_items = fbx_data_np.reshape(-1, item_size)
+
+    if indices_invalid or not enough_indices:
+        if blen_data_is_collection:
+            buffer = np.empty(blen_data_len, dtype=blen_dtype)
+            buffer_item_view = buffer.view()
+            buffer_item_view.shape = (-1, item_size)
+            # Since we don't know what the default values should be for the missing data, read the current values into a
+            # buffer.
+            blen_data.foreach_get(blen_attr, buffer)
+        else:
+            buffer_item_view = blen_data
+
+        if not enough_indices:
+            # Reduce the length of the view to the same length as the number of indices.
+            buffer_item_view = buffer_item_view[:len(fbx_layer_index)]
+
+        # Copy the result of indexing fbx_data_items by each element in fbx_layer_index into the buffer.
+        if indices_invalid:
+            print("ERROR: indices in this FBX layer out of bounds of the FBX data, skipping invalid indices!")
+            buffer_item_view[valid_index_mask] = fbx_data_items[fbx_layer_index[valid_index_mask]]
+        else:
+            buffer_item_view[:] = fbx_data_items[fbx_layer_index]
+
+        if blen_data_is_collection:
+            blen_data.foreach_set(blen_attr, buffer.ravel())
+    else:
+        if blen_data_is_collection:
+            # Cast the buffer to the Blender C type of blen_attr
+            fbx_data_items = astype_view_signedness(fbx_data_items, blen_dtype)
+            buffer_items = fbx_data_items[fbx_layer_index]
+            blen_data.foreach_set(blen_attr, buffer_items.ravel())
+        else:
+            blen_data[:] = fbx_data_items[fbx_layer_index]
+
+
+def blen_read_geom_array_foreach_set_allsame(blen_data, blen_attr, blen_dtype, fbx_data, stride, item_size, descr,
+                                             xform):
+    """Generic fbx_layer to blen_data foreach setter for AllSame layers.
+    blen_data must be a bpy_prop_collection or 2d np.ndarray whose second axis length is item_size.
+    fbx_data must be an array.array."""
+    fbx_data_np = blen_read_geom_parse_fbx_data(fbx_data, stride, item_size)
+    fbx_data_np = blen_read_geom_xform(fbx_data_np, xform)
+    blen_data_is_collection = blen_read_geom_validate_blen_data(blen_data, blen_dtype, item_size)
+    fbx_items_len = len(fbx_data_np)
+    blen_items_len = len(blen_data)
+
+    if fbx_items_len < 1:
+        print("ERROR: not enough data in this FBX layer, skipping!")
+        return
+
+    if blen_data_is_collection:
+        # Create an array filled with the value from fbx_data_np
+        buffer = np.full((blen_items_len, item_size), fbx_data_np[0], dtype=blen_dtype)
+
+        blen_data.foreach_set(blen_attr, buffer.ravel())
+    else:
+        blen_data[:] = fbx_data_np[0]
+
+
+def blen_read_geom_array_foreach_set_looptovert(mesh, blen_data, blen_attr, blen_dtype, fbx_data, stride, item_size,
+                                                descr, xform):
+    """Generic fbx_layer to blen_data foreach setter for polyloop ByVertice layers.
+    blen_data must be a bpy_prop_collection or 2d np.ndarray whose second axis length is item_size.
+    fbx_data must be an array.array"""
+    # The fbx_data is mapped to vertices. To expand fbx_data to polygon loops, get an array of the vertex index of each
+    # polygon loop that will then be used to index fbx_data
+    loop_vertex_indices = np.empty(len(mesh.loops), dtype=np.uintc)
+    mesh.loops.foreach_get("vertex_index", loop_vertex_indices)
+    blen_read_geom_array_foreach_set_indexed(blen_data, blen_attr, blen_dtype, fbx_data, loop_vertex_indices, stride,
+                                             item_size, descr, xform)
 
 
 # generic error printers.
@@ -872,7 +1051,7 @@ def blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet=False):
 
 
 def blen_read_geom_array_mapped_vert(
-        mesh, blen_data, blen_attr,
+        mesh, blen_data, blen_attr, blen_dtype,
         fbx_layer_data, fbx_layer_index,
         fbx_layer_mapping, fbx_layer_ref,
         stride, item_size, descr,
@@ -881,15 +1060,15 @@ def blen_read_geom_array_mapped_vert(
     if fbx_layer_mapping == b'ByVertice':
         if fbx_layer_ref == b'Direct':
             assert(fbx_layer_index is None)
-            blen_read_geom_array_setattr(blen_read_geom_array_gen_direct(fbx_layer_data, stride),
-                                         blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+            blen_read_geom_array_foreach_set_direct(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride, item_size,
+                                                    descr, xform)
             return True
         blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     elif fbx_layer_mapping == b'AllSame':
         if fbx_layer_ref == b'IndexToDirect':
             assert(fbx_layer_index is None)
-            blen_read_geom_array_setattr(blen_read_geom_array_gen_allsame(len(blen_data)),
-                                         blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+            blen_read_geom_array_foreach_set_allsame(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride,
+                                                     item_size, descr, xform)
             return True
         blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     else:
@@ -899,7 +1078,7 @@ def blen_read_geom_array_mapped_vert(
 
 
 def blen_read_geom_array_mapped_edge(
-        mesh, blen_data, blen_attr,
+        mesh, blen_data, blen_attr, blen_dtype,
         fbx_layer_data, fbx_layer_index,
         fbx_layer_mapping, fbx_layer_ref,
         stride, item_size, descr,
@@ -907,15 +1086,15 @@ def blen_read_geom_array_mapped_edge(
         ):
     if fbx_layer_mapping == b'ByEdge':
         if fbx_layer_ref == b'Direct':
-            blen_read_geom_array_setattr(blen_read_geom_array_gen_direct(fbx_layer_data, stride),
-                                         blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+            blen_read_geom_array_foreach_set_direct(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride, item_size,
+                                                    descr, xform)
             return True
         blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     elif fbx_layer_mapping == b'AllSame':
         if fbx_layer_ref == b'IndexToDirect':
             assert(fbx_layer_index is None)
-            blen_read_geom_array_setattr(blen_read_geom_array_gen_allsame(len(blen_data)),
-                                         blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+            blen_read_geom_array_foreach_set_allsame(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride,
+                                                     item_size, descr, xform)
             return True
         blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     else:
@@ -925,7 +1104,7 @@ def blen_read_geom_array_mapped_edge(
 
 
 def blen_read_geom_array_mapped_polygon(
-        mesh, blen_data, blen_attr,
+        mesh, blen_data, blen_attr, blen_dtype,
         fbx_layer_data, fbx_layer_index,
         fbx_layer_mapping, fbx_layer_ref,
         stride, item_size, descr,
@@ -937,22 +1116,22 @@ def blen_read_geom_array_mapped_polygon(
             #     We fallback to 'Direct' mapping in this case.
             #~ assert(fbx_layer_index is not None)
             if fbx_layer_index is None:
-                blen_read_geom_array_setattr(blen_read_geom_array_gen_direct(fbx_layer_data, stride),
-                                             blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+                blen_read_geom_array_foreach_set_direct(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride,
+                                                        item_size, descr, xform)
             else:
-                blen_read_geom_array_setattr(blen_read_geom_array_gen_indextodirect(fbx_layer_index, stride),
-                                             blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+                blen_read_geom_array_foreach_set_indexed(blen_data, blen_attr, blen_dtype, fbx_layer_data,
+                                                         fbx_layer_index, stride, item_size, descr, xform)
             return True
         elif fbx_layer_ref == b'Direct':
-            blen_read_geom_array_setattr(blen_read_geom_array_gen_direct(fbx_layer_data, stride),
-                                         blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+            blen_read_geom_array_foreach_set_direct(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride, item_size,
+                                                    descr, xform)
             return True
         blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     elif fbx_layer_mapping == b'AllSame':
         if fbx_layer_ref == b'IndexToDirect':
             assert(fbx_layer_index is None)
-            blen_read_geom_array_setattr(blen_read_geom_array_gen_allsame(len(blen_data)),
-                                         blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+            blen_read_geom_array_foreach_set_allsame(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride,
+                                                     item_size, descr, xform)
             return True
         blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     else:
@@ -962,7 +1141,7 @@ def blen_read_geom_array_mapped_polygon(
 
 
 def blen_read_geom_array_mapped_polyloop(
-        mesh, blen_data, blen_attr,
+        mesh, blen_data, blen_attr, blen_dtype,
         fbx_layer_data, fbx_layer_index,
         fbx_layer_mapping, fbx_layer_ref,
         stride, item_size, descr,
@@ -974,29 +1153,29 @@ def blen_read_geom_array_mapped_polyloop(
             #     We fallback to 'Direct' mapping in this case.
             #~ assert(fbx_layer_index is not None)
             if fbx_layer_index is None:
-                blen_read_geom_array_setattr(blen_read_geom_array_gen_direct(fbx_layer_data, stride),
-                                             blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+                blen_read_geom_array_foreach_set_direct(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride,
+                                                        item_size, descr, xform)
             else:
-                blen_read_geom_array_setattr(blen_read_geom_array_gen_indextodirect(fbx_layer_index, stride),
-                                             blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+                blen_read_geom_array_foreach_set_indexed(blen_data, blen_attr, blen_dtype, fbx_layer_data,
+                                                         fbx_layer_index, stride, item_size, descr, xform)
             return True
         elif fbx_layer_ref == b'Direct':
-            blen_read_geom_array_setattr(blen_read_geom_array_gen_direct(fbx_layer_data, stride),
-                                         blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+            blen_read_geom_array_foreach_set_direct(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride, item_size,
+                                                    descr, xform)
             return True
         blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     elif fbx_layer_mapping == b'ByVertice':
         if fbx_layer_ref == b'Direct':
             assert(fbx_layer_index is None)
-            blen_read_geom_array_setattr(blen_read_geom_array_gen_direct_looptovert(mesh, fbx_layer_data, stride),
-                                         blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+            blen_read_geom_array_foreach_set_looptovert(mesh, blen_data, blen_attr, blen_dtype, fbx_layer_data, stride,
+                                                        item_size, descr, xform)
             return True
         blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     elif fbx_layer_mapping == b'AllSame':
         if fbx_layer_ref == b'IndexToDirect':
             assert(fbx_layer_index is None)
-            blen_read_geom_array_setattr(blen_read_geom_array_gen_allsame(len(blen_data)),
-                                         blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
+            blen_read_geom_array_foreach_set_allsame(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride,
+                                                     item_size, descr, xform)
             return True
         blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     else:
@@ -1021,7 +1200,7 @@ def blen_read_geom_layer_material(fbx_obj, mesh):
 
     blen_data = mesh.polygons
     blen_read_geom_array_mapped_polygon(
-        mesh, blen_data, "material_index",
+        mesh, blen_data, "material_index", np.uintc,
         fbx_layer_data, None,
         fbx_layer_mapping, fbx_layer_ref,
         1, 1, layer_id,
@@ -1055,7 +1234,7 @@ def blen_read_geom_layer_uv(fbx_obj, mesh):
                 continue
 
             blen_read_geom_array_mapped_polyloop(
-                mesh, blen_data, "uv",
+                mesh, blen_data, "uv", np.single,
                 fbx_layer_data, fbx_layer_index,
                 fbx_layer_mapping, fbx_layer_ref,
                 2, 2, layer_id,
@@ -1095,7 +1274,7 @@ def blen_read_geom_layer_color(fbx_obj, mesh, colors_type):
                 continue
 
             blen_read_geom_array_mapped_polyloop(
-                mesh, blen_data, color_prop_name,
+                mesh, blen_data, color_prop_name, np.single,
                 fbx_layer_data, fbx_layer_index,
                 fbx_layer_mapping, fbx_layer_ref,
                 4, 4, layer_id,
@@ -1129,11 +1308,11 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
 
         blen_data = mesh.edges
         blen_read_geom_array_mapped_edge(
-            mesh, blen_data, "use_edge_sharp",
+            mesh, blen_data, "use_edge_sharp", bool,
             fbx_layer_data, None,
             fbx_layer_mapping, fbx_layer_ref,
             1, 1, layer_id,
-            xform=lambda s: not s,
+            xform=np.logical_not,
             )
         # We only set sharp edges here, not face smoothing itself...
         mesh.use_auto_smooth = True
@@ -1141,7 +1320,7 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
     elif fbx_layer_mapping == b'ByPolygon':
         blen_data = mesh.polygons
         return blen_read_geom_array_mapped_polygon(
-            mesh, blen_data, "use_smooth",
+            mesh, blen_data, "use_smooth", bool,
             fbx_layer_data, None,
             fbx_layer_mapping, fbx_layer_ref,
             1, 1, layer_id,
@@ -1152,8 +1331,6 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
         return False
 
 def blen_read_geom_layer_edge_crease(fbx_obj, mesh):
-    from math import sqrt
-
     fbx_layer = elem_find_first(fbx_obj, b'LayerElementEdgeCrease')
 
     if fbx_layer is None:
@@ -1184,13 +1361,13 @@ def blen_read_geom_layer_edge_crease(fbx_obj, mesh):
 
         blen_data = mesh.edges
         return blen_read_geom_array_mapped_edge(
-            mesh, blen_data, "crease",
+            mesh, blen_data, "crease", np.single,
             fbx_layer_data, None,
             fbx_layer_mapping, fbx_layer_ref,
             1, 1, layer_id,
             # Blender squares those values before sending them to OpenSubdiv, when other software don't,
             # so we need to compensate that to get similar results through FBX...
-            xform=sqrt,
+            xform=np.sqrt,
             )
     else:
         print("warning layer %r mapping type unsupported: %r" % (fbx_layer.id, fbx_layer_mapping))
@@ -1215,22 +1392,28 @@ def blen_read_geom_layer_normal(fbx_obj, mesh, xform=None):
         print("warning %r %r missing data" % (layer_id, fbx_layer_name))
         return False
 
-    # try loops, then vertices.
+    # Normals are temporarily set here so that they can be retrieved again after a call to Mesh.validate().
+    bl_norm_dtype = np.single
+    item_size = 3
+    # try loops, then polygons, then vertices.
     tries = ((mesh.loops, "Loops", False, blen_read_geom_array_mapped_polyloop),
              (mesh.polygons, "Polygons", True, blen_read_geom_array_mapped_polygon),
              (mesh.vertices, "Vertices", True, blen_read_geom_array_mapped_vert))
     for blen_data, blen_data_type, is_fake, func in tries:
-        bdata = [None] * len(blen_data) if is_fake else blen_data
-        if func(mesh, bdata, "normal",
-                fbx_layer_data, fbx_layer_index, fbx_layer_mapping, fbx_layer_ref, 3, 3, layer_id, xform, True):
+        bdata = np.zeros((len(blen_data), item_size), dtype=bl_norm_dtype) if is_fake else blen_data
+        if func(mesh, bdata, "normal", bl_norm_dtype,
+                fbx_layer_data, fbx_layer_index, fbx_layer_mapping, fbx_layer_ref, 3, item_size, layer_id, xform, True):
             if blen_data_type == "Polygons":
-                for pidx, p in enumerate(mesh.polygons):
-                    for lidx in range(p.loop_start, p.loop_start + p.loop_total):
-                        mesh.loops[lidx].normal[:] = bdata[pidx]
+                # To expand to per-loop normals, repeat each per-polygon normal by the number of loops of each polygon.
+                poly_loop_totals = np.empty(len(mesh.polygons), dtype=np.uintc)
+                mesh.polygons.foreach_get("loop_total", poly_loop_totals)
+                loop_normals = np.repeat(bdata, poly_loop_totals, axis=0)
+                mesh.loops.foreach_set("normal", loop_normals.ravel())
             elif blen_data_type == "Vertices":
                 # We have to copy vnors to lnors! Far from elegant, but simple.
-                for l in mesh.loops:
-                    l.normal[:] = bdata[l.vertex_index]
+                loop_vertex_indices = np.empty(len(mesh.loops), dtype=np.uintc)
+                mesh.loops.foreach_get("vertex_index", loop_vertex_indices)
+                mesh.loops.foreach_set("normal", bdata[loop_vertex_indices].ravel())
             return True
 
     blen_read_geom_array_error_mapping("normal", fbx_layer_mapping)
@@ -1239,9 +1422,6 @@ def blen_read_geom_layer_normal(fbx_obj, mesh, xform=None):
 
 
 def blen_read_geom(fbx_tmpl, fbx_obj, settings):
-    from itertools import chain
-    import array
-
     # Vertices are in object space, but we are post-multiplying all transforms with the inverse of the
     # global matrix, so we need to apply the global matrix to the vertices to get the correct result.
     geom_mat_co = settings.global_matrix if settings.bake_space_transform else None
@@ -1259,36 +1439,61 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
     fbx_polys = elem_prop_first(elem_find_first(fbx_obj, b'PolygonVertexIndex'))
     fbx_edges = elem_prop_first(elem_find_first(fbx_obj, b'Edges'))
 
-    if geom_mat_co is not None:
-        def _vcos_transformed_gen(raw_cos, m=None):
-            # Note: we could most likely get much better performances with numpy, but will leave this as TODO for now.
-            return chain(*(m @ Vector(v) for v in zip(*(iter(raw_cos),) * 3)))
-        fbx_verts = array.array(fbx_verts.typecode, _vcos_transformed_gen(fbx_verts, geom_mat_co))
+    bl_vcos_dtype = np.single
 
-    if fbx_verts is None:
-        fbx_verts = ()
-    if fbx_polys is None:
-        fbx_polys = ()
+    # The dtypes when empty don't matter, but are set to what the fbx arrays are expected to be.
+    fbx_verts = parray_as_ndarray(fbx_verts) if fbx_verts else np.empty(0, dtype=data_types.ARRAY_FLOAT64)
+    fbx_polys = parray_as_ndarray(fbx_polys) if fbx_polys else np.empty(0, dtype=data_types.ARRAY_INT32)
+    fbx_edges = parray_as_ndarray(fbx_edges) if fbx_edges else np.empty(0, dtype=data_types.ARRAY_INT32)
+
+    # Each vert is a 3d vector so is made of 3 components.
+    tot_verts = len(fbx_verts) // 3
+    if tot_verts * 3 != len(fbx_verts):
+        print("ERROR: Not a whole number of vertices. Ignoring the partial vertex!")
+        # Remove any remainder.
+        fbx_verts = fbx_verts[:tot_verts * 3]
+
+    tot_loops = len(fbx_polys)
+    tot_edges = len(fbx_edges)
 
     mesh = bpy.data.meshes.new(name=elem_name_utf8)
-    mesh.vertices.add(len(fbx_verts) // 3)
-    mesh.vertices.foreach_set("co", fbx_verts)
 
-    if fbx_polys:
-        mesh.loops.add(len(fbx_polys))
-        poly_loop_starts = []
-        poly_loop_totals = []
-        poly_loop_prev = 0
-        for i, l in enumerate(mesh.loops):
-            index = fbx_polys[i]
-            if index < 0:
-                poly_loop_starts.append(poly_loop_prev)
-                poly_loop_totals.append((i - poly_loop_prev) + 1)
-                poly_loop_prev = i + 1
-                index ^= -1
-            l.vertex_index = index
+    if tot_verts:
+        if geom_mat_co is not None:
+            fbx_verts = vcos_transformed(fbx_verts, geom_mat_co, bl_vcos_dtype)
+        else:
+            fbx_verts = fbx_verts.astype(bl_vcos_dtype, copy=False)
 
-        mesh.polygons.add(len(poly_loop_starts))
+        mesh.vertices.add(tot_verts)
+        mesh.vertices.foreach_set("co", fbx_verts.ravel())
+
+    if tot_loops:
+        bl_loop_start_dtype = bl_loop_total_dtype = bl_loop_vertex_index_dtype = np.uintc
+
+        mesh.loops.add(tot_loops)
+        # The end of each polygon is specified by an inverted index.
+        fbx_loop_end_idx = np.flatnonzero(fbx_polys < 0)
+
+        tot_polys = len(fbx_loop_end_idx)
+
+        # Un-invert the loop ends.
+        fbx_polys[fbx_loop_end_idx] ^= -1
+        # Set loop vertex indices, casting to the Blender C type first for performance.
+        mesh.loops.foreach_set("vertex_index", astype_view_signedness(fbx_polys, bl_loop_vertex_index_dtype))
+
+        poly_loop_totals = np.empty(tot_polys, dtype=bl_loop_total_dtype)
+        # The loop total of the first polygon is first loop end index plus 1.
+        poly_loop_totals[0] = fbx_loop_end_idx[0] + 1
+        # The differences between consecutive loop end indices are the remaining loop totals.
+        poly_loop_totals[1:] = np.diff(fbx_loop_end_idx)
+
+        poly_loop_starts = np.empty(tot_polys, dtype=bl_loop_start_dtype)
+        # The first loop is always a loop start.
+        poly_loop_starts[0] = 0
+        # Ignoring the last loop end, the indices after every loop end are the remaining loop starts.
+        poly_loop_starts[1:] = fbx_loop_end_idx[:-1] + 1
+
+        mesh.polygons.add(tot_polys)
         mesh.polygons.foreach_set("loop_start", poly_loop_starts)
         mesh.polygons.foreach_set("loop_total", poly_loop_totals)
 
@@ -1296,36 +1501,40 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         blen_read_geom_layer_uv(fbx_obj, mesh)
         blen_read_geom_layer_color(fbx_obj, mesh, settings.colors_type)
 
-    if fbx_edges:
-        # edges in fact index the polygons (NOT the vertices)
-        import array
-        tot_edges = len(fbx_edges)
-        edges_conv = array.array('i', [0]) * (tot_edges * 2)
+        if tot_edges:
+            # edges in fact index the polygons (NOT the vertices)
+            bl_edge_vertex_indices_dtype = np.uintc
 
-        edge_index = 0
-        for i in fbx_edges:
-            e_a = fbx_polys[i]
-            if e_a >= 0:
-                e_b = fbx_polys[i + 1]
-                if e_b < 0:
-                    e_b ^= -1
-            else:
-                # Last index of polygon, wrap back to the start.
+            # The first vertex index of each edge is the vertex index of the corresponding loop in fbx_polys.
+            edges_a = fbx_polys[fbx_edges]
 
-                # ideally we wouldn't have to search back,
-                # but it should only be 2-3 iterations.
-                j = i - 1
-                while j >= 0 and fbx_polys[j] >= 0:
-                    j -= 1
-                e_a ^= -1
-                e_b = fbx_polys[j + 1]
+            # The second vertex index of each edge is the vertex index of the next loop in the same polygon. The
+            # complexity here is that if the first vertex index was the last loop of that polygon in fbx_polys, the next
+            # loop in the polygon is the first loop of that polygon, which is not the next loop in fbx_polys.
 
-            edges_conv[edge_index] = e_a
-            edges_conv[edge_index + 1] = e_b
-            edge_index += 2
+            # Copy fbx_polys, but rolled backwards by 1 so that indexing the result by [fbx_edges] will get the next
+            # loop of the same polygon unless the first vertex index was the last loop of the polygon.
+            fbx_polys_next = np.roll(fbx_polys, -1)
+            # Get the first loop of each polygon and set them into fbx_polys_next at the same indices as the last loop
+            # of each polygon in fbx_polys.
+            fbx_polys_next[fbx_loop_end_idx] = fbx_polys[poly_loop_starts]
 
-        mesh.edges.add(tot_edges)
-        mesh.edges.foreach_set("vertices", edges_conv)
+            # Indexing fbx_polys_next by fbx_edges now gets the vertex index of the next loop in fbx_polys.
+            edges_b = fbx_polys_next[fbx_edges]
+
+            # edges_a and edges_b need to be combined so that the first vertex index of each edge is immediately
+            # followed by the second vertex index of that same edge.
+            # Stack edges_a and edges_b as individual columns like np.column_stack((edges_a, edges_b)).
+            # np.concatenate is used because np.column_stack doesn't allow specifying the dtype of the returned array.
+            edges_conv = np.concatenate((edges_a.reshape(-1, 1), edges_b.reshape(-1, 1)),
+                                        axis=1, dtype=bl_edge_vertex_indices_dtype, casting='unsafe')
+
+            # Add the edges and set their vertex indices.
+            mesh.edges.add(len(edges_conv))
+            # ravel() because edges_conv must be flat and C-contiguous when passed to foreach_set.
+            mesh.edges.foreach_set("vertices", edges_conv.ravel())
+    elif tot_edges:
+        print("ERROR: No polygons, but edges exist. Ignoring the edges!")
 
     # must be after edge, face loading.
     ok_smooth = blen_read_geom_layer_smooth(fbx_obj, mesh)
@@ -1340,21 +1549,23 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         if geom_mat_no is None:
             ok_normals = blen_read_geom_layer_normal(fbx_obj, mesh)
         else:
-            def nortrans(v):
-                return geom_mat_no @ Vector(v)
-            ok_normals = blen_read_geom_layer_normal(fbx_obj, mesh, nortrans)
+            ok_normals = blen_read_geom_layer_normal(fbx_obj, mesh,
+                                                     lambda v_array: nors_transformed(v_array, geom_mat_no))
 
     mesh.validate(clean_customdata=False)  # *Very* important to not remove lnors here!
 
     if ok_normals:
-        clnors = array.array('f', [0.0] * (len(mesh.loops) * 3))
+        bl_nors_dtype = np.single
+        clnors = np.empty(len(mesh.loops) * 3, dtype=bl_nors_dtype)
         mesh.loops.foreach_get("normal", clnors)
 
         if not ok_smooth:
-            mesh.polygons.foreach_set("use_smooth", [True] * len(mesh.polygons))
+            mesh.polygons.foreach_set("use_smooth", np.full(len(mesh.polygons), True, dtype=bool))
             ok_smooth = True
 
-        mesh.normals_split_custom_set(tuple(zip(*(iter(clnors),) * 3)))
+        # Iterating clnors into a nested tuple first is faster than passing clnors.reshape(-1, 3) directly into
+        # normals_split_custom_set. We use clnors.data since it is a memoryview, which is faster to iterate than clnors.
+        mesh.normals_split_custom_set(tuple(zip(*(iter(clnors.data),) * 3)))
         mesh.use_auto_smooth = True
     else:
         mesh.calc_normals()
@@ -1363,7 +1574,7 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         mesh.free_normals_split()
 
     if not ok_smooth:
-        mesh.polygons.foreach_set("use_smooth", [True] * len(mesh.polygons))
+        mesh.polygons.foreach_set("use_smooth", np.full(len(mesh.polygons), True, dtype=bool))
 
     if settings.use_custom_props:
         blen_read_custom_properties(fbx_obj, mesh, settings)
@@ -1371,46 +1582,78 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
     return mesh
 
 
-def blen_read_shape(fbx_tmpl, fbx_sdata, fbx_bcdata, meshes, scene):
-    elem_name_utf8 = elem_name_ensure_class(fbx_sdata, b'Geometry')
-    indices = elem_prop_first(elem_find_first(fbx_sdata, b'Indexes'), default=())
-    dvcos = tuple(co for co in zip(*[iter(elem_prop_first(elem_find_first(fbx_sdata, b'Vertices'), default=()))] * 3))
-    # We completely ignore normals here!
-    weight = elem_prop_first(elem_find_first(fbx_bcdata, b'DeformPercent'), default=100.0) / 100.0
-    vgweights = tuple(vgw / 100.0 for vgw in elem_prop_first(elem_find_first(fbx_bcdata, b'FullWeights'), default=()))
+def blen_read_shapes(fbx_tmpl, fbx_data, objects, me, scene):
+    if not fbx_data:
+        # No shape key data. Nothing to do.
+        return
 
-    # Special case, in case all weights are the same, FullWeight can have only one element - *sigh!*
-    nbr_indices = len(indices)
-    if len(vgweights) == 1 and nbr_indices > 1:
-        vgweights = (vgweights[0],) * nbr_indices
+    bl_vcos_dtype = np.single
+    me_vcos = np.empty(len(me.vertices) * 3, dtype=bl_vcos_dtype)
+    me.vertices.foreach_get("co", me_vcos)
+    me_vcos_vector_view = me_vcos.reshape(-1, 3)
 
-    assert(len(vgweights) == nbr_indices == len(dvcos))
-    create_vg = bool(set(vgweights) - {1.0})
+    objects = list({node.bl_obj for node in objects})
+    assert(objects)
 
-    keyblocks = []
+    bc_uuid_to_keyblocks = {}
+    for bc_uuid, fbx_sdata, fbx_bcdata in fbx_data:
+        elem_name_utf8 = elem_name_ensure_class(fbx_sdata, b'Geometry')
+        indices = elem_prop_first(elem_find_first(fbx_sdata, b'Indexes'))
+        dvcos = elem_prop_first(elem_find_first(fbx_sdata, b'Vertices'))
 
-    for me, objects in meshes:
-        vcos = tuple((idx, me.vertices[idx].co + Vector(dvco)) for idx, dvco in zip(indices, dvcos))
-        objects = list({node.bl_obj for node in objects})
-        assert(objects)
+        indices = parray_as_ndarray(indices) if indices else np.empty(0, dtype=data_types.ARRAY_INT32)
+        dvcos = parray_as_ndarray(dvcos) if dvcos else np.empty(0, dtype=data_types.ARRAY_FLOAT64)
 
+        # If there's not a whole number of vectors, trim off the remainder.
+        # 3 components per vector.
+        remainder = len(dvcos) % 3
+        if remainder:
+            dvcos = dvcos[:-remainder]
+        dvcos = dvcos.reshape(-1, 3)
+
+        # We completely ignore normals here!
+        weight = elem_prop_first(elem_find_first(fbx_bcdata, b'DeformPercent'), default=100.0) / 100.0
+
+        vgweights = elem_prop_first(elem_find_first(fbx_bcdata, b'FullWeights'))
+        vgweights = parray_as_ndarray(vgweights) if vgweights else np.empty(0, dtype=data_types.ARRAY_FLOAT64)
+        # Not doing the division in-place in-case it's possible for FBX shape keys to be used by more than one mesh.
+        vgweights = vgweights / 100.0
+
+        create_vg = (vgweights != 1.0).any()
+
+        # Special case, in case all weights are the same, FullWeight can have only one element - *sigh!*
+        nbr_indices = len(indices)
+        if len(vgweights) == 1 and nbr_indices > 1:
+            vgweights = np.full_like(indices, vgweights[0], dtype=vgweights.dtype)
+
+        assert(len(vgweights) == nbr_indices == len(dvcos))
+
+        # To add shape keys to the mesh, an Object using the mesh is needed.
         if me.shape_keys is None:
             objects[0].shape_key_add(name="Basis", from_mix=False)
         kb = objects[0].shape_key_add(name=elem_name_utf8, from_mix=False)
         me.shape_keys.use_relative = True  # Should already be set as such.
 
-        for idx, co in vcos:
-            kb.data[idx].co[:] = co
+        # Only need to set the shape key co if there are any non-zero dvcos.
+        if dvcos.any():
+            shape_cos = me_vcos_vector_view.copy()
+            shape_cos[indices] += dvcos
+            kb.data.foreach_set("co", shape_cos.ravel())
+
         kb.value = weight
 
         # Add vgroup if necessary.
         if create_vg:
-            vgoups = add_vgroup_to_objects(indices, vgweights, kb.name, objects)
+            # VertexGroup.add only allows sequences of int indices, but iterating the indices array directly would
+            # produce numpy scalars of types such as np.int32. The underlying memoryview of the indices array, however,
+            # does produce standard Python ints when iterated, so pass indices.data to add_vgroup_to_objects instead of
+            # indices.
+            # memoryviews tend to be faster to iterate than numpy arrays anyway, so vgweights.data is passed too.
+            add_vgroup_to_objects(indices.data, vgweights.data, kb.name, objects)
             kb.vertex_group = kb.name
 
-        keyblocks.append(kb)
-
-    return keyblocks
+        bc_uuid_to_keyblocks.setdefault(bc_uuid, []).append(kb)
+    return bc_uuid_to_keyblocks
 
 
 # --------
@@ -2861,6 +3104,7 @@ def load(operator, context, filepath="",
     def _():
         fbx_tmpl = fbx_template_get((b'Geometry', b'KFbxShape'))
 
+        mesh_to_shapes = {}
         for s_uuid, s_item in fbx_table_nodes.items():
             fbx_sdata, bl_sdata = s_item = fbx_table_nodes.get(s_uuid, (None, None))
             if fbx_sdata is None or fbx_sdata.id != b'Geometry' or fbx_sdata.props[2] != b'Shape':
@@ -2873,8 +3117,6 @@ def load(operator, context, filepath="",
                 fbx_bcdata, _bl_bcdata = fbx_table_nodes.get(bc_uuid, (None, None))
                 if fbx_bcdata is None or fbx_bcdata.id != b'Deformer' or fbx_bcdata.props[2] != b'BlendShapeChannel':
                     continue
-                meshes = []
-                objects = []
                 for bs_uuid, bs_ctype in fbx_connection_map.get(bc_uuid, ()):
                     if bs_ctype.props[0] != b'OO':
                         continue
@@ -2889,20 +3131,29 @@ def load(operator, context, filepath="",
                             continue
                         # Blenmeshes are assumed already created at that time!
                         assert(isinstance(bl_mdata, bpy.types.Mesh))
-                        # And we have to find all objects using this mesh!
-                        objects = []
-                        for o_uuid, o_ctype in fbx_connection_map.get(m_uuid, ()):
-                            if o_ctype.props[0] != b'OO':
-                                continue
-                            node = fbx_helper_nodes[o_uuid]
-                            if node:
-                                objects.append(node)
-                        meshes.append((bl_mdata, objects))
+                        # Group shapes by mesh so that each mesh only needs to be processed once for all of its shape
+                        # keys.
+                        if bl_mdata not in mesh_to_shapes:
+                            # And we have to find all objects using this mesh!
+                            objects = []
+                            for o_uuid, o_ctype in fbx_connection_map.get(m_uuid, ()):
+                                if o_ctype.props[0] != b'OO':
+                                    continue
+                                node = fbx_helper_nodes[o_uuid]
+                                if node:
+                                    objects.append(node)
+                            shapes_list = []
+                            mesh_to_shapes[bl_mdata] = (objects, shapes_list)
+                        else:
+                            shapes_list = mesh_to_shapes[bl_mdata][1]
+                        shapes_list.append((bc_uuid, fbx_sdata, fbx_bcdata))
                     # BlendShape deformers are only here to connect BlendShapeChannels to meshes, nothing else to do.
 
+        # Iterate through each mesh and create its shape keys
+        for bl_mdata, (objects, shapes) in mesh_to_shapes.items():
+            for bc_uuid, keyblocks in blen_read_shapes(fbx_tmpl, shapes, objects, bl_mdata, scene).items():
                 # keyblocks is a list of tuples (mesh, keyblock) matching that shape/blendshapechannel, for animation.
-                keyblocks = blen_read_shape(fbx_tmpl, fbx_sdata, fbx_bcdata, meshes, scene)
-                blend_shape_channels[bc_uuid] = keyblocks
+                blend_shape_channels.setdefault(bc_uuid, []).extend(keyblocks)
     _(); del _
 
     if settings.use_subsurf:
@@ -3224,8 +3475,16 @@ def load(operator, context, filepath="",
                     if decal_offset != 0.0:
                         for material in mesh.materials:
                             if material in material_decals:
-                                for v in mesh.vertices:
-                                    v.co += v.normal * decal_offset
+                                num_verts = len(mesh.vertices)
+                                blen_cos_dtype = blen_norm_dtype = np.single
+                                vcos = np.empty(num_verts * 3, dtype=blen_cos_dtype)
+                                vnorm = np.empty(num_verts * 3, dtype=blen_norm_dtype)
+                                mesh.vertices.foreach_get("co", vcos)
+                                mesh.vertices.foreach_get("normal", vnorm)
+
+                                vcos += vnorm * decal_offset
+
+                                mesh.vertices.foreach_set("co", vcos)
                                 break
 
                     for obj in (obj for obj in bpy.data.objects if obj.data == mesh):

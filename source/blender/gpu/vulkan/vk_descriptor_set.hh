@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2023 Blender Foundation. All rights reserved. */
+ * Copyright 2023 Blender Foundation */
 
 /** \file
  * \ingroup gpu
@@ -55,9 +55,7 @@ class VKDescriptorSet : NonCopyable {
      */
     uint32_t binding;
 
-    Location(uint32_t binding) : binding(binding)
-    {
-    }
+    Location(uint32_t binding) : binding(binding) {}
 
    public:
     Location() = default;
@@ -138,18 +136,14 @@ class VKDescriptorSetTracker : protected VKResourceTracker<VKDescriptorSet> {
   };
 
  private:
-  /** A list of bindings that needs to be updated.*/
+  /** A list of bindings that needs to be updated. */
   Vector<Binding> bindings_;
   VkDescriptorSetLayout layout_;
 
  public:
-  VKDescriptorSetTracker()
-  {
-  }
+  VKDescriptorSetTracker() {}
 
-  VKDescriptorSetTracker(VkDescriptorSetLayout layout) : layout_(layout)
-  {
-  }
+  VKDescriptorSetTracker(VkDescriptorSetLayout layout) : layout_(layout) {}
 
   void bind_as_ssbo(VKVertexBuffer &buffer, VKDescriptorSet::Location location);
   void bind_as_ssbo(VKIndexBuffer &buffer, VKDescriptorSet::Location location);
