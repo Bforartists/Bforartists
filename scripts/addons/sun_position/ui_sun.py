@@ -287,8 +287,8 @@ class SUNPOS_PT_Time(bpy.types.Panel):
         col = flow.column(align=True)
         col.alignment = 'CENTER'
         if p.show_rise_set:
-            sr = format_hms(sun.sunrise.time)
-            ss = format_hms(sun.sunset.time)
+            sr = format_hms(sun.sunrise)
+            ss = format_hms(sun.sunset)
 
             split = col.split(factor=0.5, align=True)
             split.label(text="Sunrise:", icon='LIGHT_SUN')

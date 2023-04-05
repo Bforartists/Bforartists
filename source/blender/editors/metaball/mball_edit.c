@@ -74,9 +74,7 @@ void ED_mball_editmball_make(Object *obedit)
   mb->editelems = &mb->elems;
 }
 
-void ED_mball_editmball_load(Object *UNUSED(obedit))
-{
-}
+void ED_mball_editmball_load(Object *UNUSED(obedit)) {}
 
 /** \} */
 

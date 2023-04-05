@@ -2,12 +2,11 @@
 # Copyright 2018-2021 The glTF-Blender-IO authors.
 import re
 import os
-import urllib.parse
 from typing import List
 
 from ... import get_version_string
 from ...io.com import gltf2_io, gltf2_io_extensions
-from ...io.com.gltf2_io_path import path_to_uri
+from ...io.com.gltf2_io_path import path_to_uri, uri_to_path
 from ...io.exp import gltf2_io_binary_data, gltf2_io_buffer, gltf2_io_image_data
 from ...io.exp.gltf2_io_user_extensions import export_user_extensions
 
@@ -110,7 +109,7 @@ class GlTF2Exporter:
             if is_glb:
                 uri = None
             elif output_path and buffer_name:
-                with open(output_path + buffer_name, 'wb') as f:
+                with open(output_path + uri_to_path(buffer_name), 'wb') as f:
                     f.write(self.__buffer.to_bytes())
                 uri = buffer_name
             else:

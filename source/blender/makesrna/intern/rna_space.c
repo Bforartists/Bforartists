@@ -267,7 +267,9 @@ static EnumPropertyItem rna_enum_space_action_ui_mode_items[] = {
     {0, NULL, 0, NULL, NULL},
 };
 #endif
-/* expose as ui_mode */
+
+/* Expose as `ui_mode`. */
+
 const EnumPropertyItem rna_enum_space_action_mode_items[] = {
     SACT_ITEM_DOPESHEET,
     SACT_ITEM_TIMELINE,
@@ -2403,6 +2405,18 @@ static void rna_SpaceGraphEditor_display_mode_update(bContext *C, PointerRNA *pt
   ED_area_tag_refresh(area);
 }
 
+static void rna_SpaceGraphEditor_normalize_update(bContext *C, PointerRNA *UNUSED(ptr))
+{
+  bAnimContext ac;
+
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
+    return;
+  }
+
+  ANIM_frame_channel_y_extents(C, &ac);
+  ED_area_tag_refresh(ac.area);
+}
+
 static bool rna_SpaceGraphEditor_has_ghost_curves_get(PointerRNA *ptr)
 {
   SpaceGraph *sipo = (SpaceGraph *)(ptr->data);
@@ -3035,9 +3049,7 @@ static PointerRNA rna_FileBrowser_FSMenu_get(CollectionPropertyIterator *iter)
   return r_ptr;
 }
 
-static void rna_FileBrowser_FSMenu_end(CollectionPropertyIterator *UNUSED(iter))
-{
-}
+static void rna_FileBrowser_FSMenu_end(CollectionPropertyIterator *UNUSED(iter)) {}
 
 static void rna_FileBrowser_FSMenuSystem_data_begin(CollectionPropertyIterator *iter,
                                                     PointerRNA *UNUSED(ptr))
@@ -5158,7 +5170,9 @@ static void rna_def_space_view3d(BlenderRNA *brna)
   RNA_def_property_struct_type(prop, "RegionView3D");
   RNA_def_property_pointer_funcs(prop, "rna_SpaceView3D_region_3d_get", NULL, NULL, NULL);
   RNA_def_property_ui_text(
-      prop, "3D Region", "3D region in this space, in case of quad view the camera region");
+      prop,
+      "3D Region",
+      "3D region for this space. When the space is in quad view, the camera region");
 
   prop = RNA_def_property(srna, "region_quadviews", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_struct_type(prop, "RegionView3D");
@@ -5361,9 +5375,9 @@ static void rna_def_space_view3d(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Is Axis Aligned",
-      "Is current view aligned to an axis "
-      "(does not check the view is orthographic use \"is_perspective\" for that). "
-      "Assignment sets the \"view_rotation\" to the closest axis aligned view");
+      "Whether the current view is aligned to an axis "
+      "(does not check whether the view is orthographic, use \"is_perspective\" for that). "
+      "Setting this will rotate the view to the closest axis");
 
   /* This isn't directly accessible from the UI, only an operator. */
   prop = RNA_def_property(srna, "use_clip_planes", PROP_BOOLEAN, PROP_NONE);
@@ -6505,7 +6519,9 @@ static void rna_def_space_graph(BlenderRNA *brna)
                            "Use Normalization",
                            "Display curves in normalized range from -1 to 1, "
                            "for easier editing of multiple curves with different ranges");
-  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_GRAPH, NULL);
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_update(
+      prop, NC_SPACE | ND_SPACE_GRAPH, "rna_SpaceGraphEditor_normalize_update");
 
   prop = RNA_def_property(srna, "use_auto_normalization", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", SIPO_NORMALIZE_FREEZE);
@@ -6846,7 +6862,7 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_library_browsing", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(
-      prop, "Library Browser", "Whether we may browse blender files' content or not");
+      prop, "Library Browser", "Whether we may browse Blender files' content or not");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_boolean_funcs(prop, "rna_FileSelectParams_use_lib_get", NULL);
 

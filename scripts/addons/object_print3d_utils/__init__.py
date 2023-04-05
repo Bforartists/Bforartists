@@ -3,7 +3,7 @@
 bl_info = {
     "name": "3D-Print Toolbox",
     "author": "Campbell Barton",
-    "blender": (3, 0, 0),
+    "blender": (3, 6, 0),
     "location": "3D View > Sidebar",
     "description": "Utilities for 3D printing",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/3d_print_toolbox.html",

@@ -483,7 +483,6 @@ void ED_object_parent(Object *ob, Object *par, const int type, const char *subst
   BLI_strncpy(ob->parsubstr, substr, sizeof(ob->parsubstr));
 }
 
-/* Operator Property */
 EnumPropertyItem prop_make_parent_types[] = {
     {PAR_OBJECT, "OBJECT", ICON_PARENT_OBJECT, "Object", ""},
     {PAR_ARMATURE, "ARMATURE", ICON_PARENT_BONE, "Armature Deform", ""},
