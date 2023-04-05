@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2008 Blender Foundation. All rights reserved. */
+ * Copyright 2008 Blender Foundation */
 
 /** \file
  * \ingroup collada
@@ -465,7 +465,7 @@ void WM_OT_collada_export(wmOperatorType *ot)
                   "apply_modifiers",
                   0,
                   "Apply Modifiers",
-                  "Apply modifiers to exported mesh (non destructive))");
+                  "Apply modifiers to exported mesh (non destructive)");
 
   RNA_def_int(ot->srna,
               "export_mesh_type",

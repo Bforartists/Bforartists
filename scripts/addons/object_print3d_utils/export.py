@@ -79,7 +79,8 @@ def write_mesh(context, report_cb):
         name = data_("untitled")
 
     # add object name
-    name += f"-{bpy.path.clean_name(obj.name)}"
+    import re
+    name += "-" + re.sub(r'[\\/:*?"<>|]', "", obj.name)
 
     # first ensure the path is created
     if export_path:
@@ -113,17 +114,16 @@ def write_mesh(context, report_cb):
             global_scale=global_scale,
         )
     elif export_format == 'PLY':
-        addon_ensure("io_mesh_ply")
         filepath = bpy.path.ensure_ext(filepath, ".ply")
-        ret = bpy.ops.export_mesh.ply(
+        ret = bpy.ops.wm.ply_export(
             filepath=filepath,
-            use_ascii=False,
-            use_mesh_modifiers=True,
-            use_selection=True,
+            ascii_format=False,
+            apply_modifiers=True,
+            export_selected_objects=True,
             global_scale=global_scale,
-            use_normals=export_data_layers,
-            use_uv_coords=export_data_layers,
-            use_colors=export_data_layers,
+            export_normals=export_data_layers,
+            export_uv=export_data_layers,
+            export_colors="SRGB" if export_data_layers else "NONE",
         )
     elif export_format == 'X3D':
         addon_ensure("io_scene_x3d")

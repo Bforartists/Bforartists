@@ -444,10 +444,11 @@ static void uv_parametrizer_scale_x(ParamHandle *phandle, const float scale_x)
     return; /* Identity transform. */
   }
 
+  /* Scale every chart. */
   for (int i = 0; i < phandle->ncharts; i++) {
     PChart *chart = phandle->charts[i];
     for (PVert *v = chart->verts; v; v = v->nextlink) {
-      v->uv[0] *= scale_x;
+      v->uv[0] *= scale_x; /* Only scale x axis. */
     }
   }
 }
@@ -1013,15 +1014,14 @@ static PChart **p_split_charts(ParamHandle *handle, PChart *chart, int ncharts)
 static PFace *p_face_add(ParamHandle *handle)
 {
   PFace *f;
-  PEdge *e1, *e2, *e3;
 
   /* allocate */
   f = (PFace *)BLI_memarena_alloc(handle->arena, sizeof(*f));
   f->flag = 0; /* init ! */
 
-  e1 = (PEdge *)BLI_memarena_alloc(handle->arena, sizeof(*e1));
-  e2 = (PEdge *)BLI_memarena_alloc(handle->arena, sizeof(*e2));
-  e3 = (PEdge *)BLI_memarena_alloc(handle->arena, sizeof(*e3));
+  PEdge *e1 = (PEdge *)BLI_memarena_calloc(handle->arena, sizeof(*e1));
+  PEdge *e2 = (PEdge *)BLI_memarena_calloc(handle->arena, sizeof(*e2));
+  PEdge *e3 = (PEdge *)BLI_memarena_calloc(handle->arena, sizeof(*e3));
 
   /* set up edges */
   f->edge = e1;
@@ -1030,14 +1030,6 @@ static PFace *p_face_add(ParamHandle *handle)
   e1->next = e2;
   e2->next = e3;
   e3->next = e1;
-
-  e1->pair = nullptr;
-  e2->pair = nullptr;
-  e3->pair = nullptr;
-
-  e1->flag = 0;
-  e2->flag = 0;
-  e3->flag = 0;
 
   return f;
 }
@@ -3721,15 +3713,6 @@ struct GeoUVPinIndex {
   ParamKey reindex;
 };
 
-/**
- * Find a (mostly) unique #ParamKey given a #BMVert index and UV co-ordinates.
- * For each unique pinned UVs, return a unique #ParamKey, starting with
- * a very large number, and decreasing steadily from there.
- * For non-pinned UVs which share a #BMVert with a pinned UV,
- * return the index corresponding to the closest pinned UV.
- * For everything else, just return the #BMVert index.
- * Note that #ParamKeys will eventually be hashed, so they don't need to be contiguous.
- */
 ParamKey uv_find_pin_index(ParamHandle *handle, const int bmvertindex, const float uv[2])
 {
   if (!handle->pin_hash) {
@@ -4153,36 +4136,40 @@ void uv_parametrizer_pack(ParamHandle *handle, float margin, bool do_rotate, boo
   }
 
   uv_parametrizer_scale_x(handle, 1.0f / handle->aspect_y);
+
   Vector<PackIsland *> pack_island_vector;
-  int unpacked = 0;
-  for (int i = 0; i < handle->ncharts; i++) {
-    PChart *chart = handle->charts[i];
-
-    if (ignore_pinned && chart->has_pins) {
-      unpacked++;
-      continue;
-    }
-    (void)unpacked; /* Quiet set-but-unused warning (may be removed). */
-
-    geometry::PackIsland *pack_island = new geometry::PackIsland();
-    pack_island->caller_index = i;
-    pack_island->aspect_y = handle->aspect_y;
-    pack_island->angle = 0.0f;
-    pack_island_vector.append(pack_island);
-
-    float minv[2];
-    float maxv[2];
-    p_chart_uv_bbox(chart, minv, maxv);
-    pack_island->bounds_rect.xmin = minv[0];
-    pack_island->bounds_rect.ymin = minv[1];
-    pack_island->bounds_rect.xmax = maxv[0];
-    pack_island->bounds_rect.ymax = maxv[1];
-  }
 
   UVPackIsland_Params params;
   params.rotate = do_rotate;
   params.margin = margin;
   params.margin_method = ED_UVPACK_MARGIN_SCALED;
+
+  MemArena *arena = BLI_memarena_new(BLI_MEMARENA_STD_BUFSIZE, __func__);
+  Heap *heap = BLI_heap_new();
+
+  for (int i = 0; i < handle->ncharts; i++) {
+    PChart *chart = handle->charts[i];
+    if (ignore_pinned && chart->has_pins) {
+      continue;
+    }
+
+    geometry::PackIsland *pack_island = new geometry::PackIsland();
+    pack_island->caller_index = i;
+    pack_island->aspect_y = handle->aspect_y;
+    pack_island->angle = 0.0f;
+
+    for (PFace *f = chart->faces; f; f = f->nextlink) {
+      PVert *v0 = f->edge->vert;
+      PVert *v1 = f->edge->next->vert;
+      PVert *v2 = f->edge->next->next->vert;
+      pack_island->add_triangle(v0->uv, v1->uv, v2->uv);
+    }
+    pack_island->finalize_geometry(params, arena, heap);
+
+    pack_island_vector.append(pack_island);
+  }
+  BLI_heap_free(heap, nullptr);
+  BLI_memarena_free(arena);
 
   float scale[2] = {1.0f, 1.0f};
   pack_islands(pack_island_vector, params, scale);
@@ -4192,17 +4179,9 @@ void uv_parametrizer_pack(ParamHandle *handle, float margin, bool do_rotate, boo
     PChart *chart = handle->charts[pack_island->caller_index];
 
     float matrix[2][2];
-    float b[2];
-    const float cos_angle = cosf(pack_island->angle);
-    const float sin_angle = sinf(pack_island->angle);
-    matrix[0][0] = cos_angle * scale[0];
-    matrix[0][1] = -sin_angle * scale[0] * pack_island->aspect_y;
-    matrix[1][0] = sin_angle * scale[1] / pack_island->aspect_y;
-    matrix[1][1] = cos_angle * scale[1];
-    b[0] = pack_island->pre_translate.x;
-    b[1] = pack_island->pre_translate.y;
+    pack_island->build_transformation(scale[0], pack_island->angle, matrix);
     for (PVert *v = chart->verts; v; v = v->nextlink) {
-      blender::geometry::mul_v2_m2_add_v2v2(v->uv, matrix, v->uv, b);
+      blender::geometry::mul_v2_m2_add_v2v2(v->uv, matrix, v->uv, pack_island->pre_translate);
     }
 
     pack_island_vector[i] = nullptr;

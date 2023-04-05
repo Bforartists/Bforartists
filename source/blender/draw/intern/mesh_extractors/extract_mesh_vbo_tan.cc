@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2021 Blender Foundation. All rights reserved. */
+ * Copyright 2021 Blender Foundation */
 
 /** \file
  * \ingroup draw
@@ -115,8 +115,7 @@ static void extract_tan_init_common(const MeshRenderData *mr,
     }
     else {
       BKE_mesh_calc_loop_tangent_ex(reinterpret_cast<const float(*)[3]>(mr->vert_positions.data()),
-                                    mr->polys.data(),
-                                    mr->polys.size(),
+                                    mr->polys,
                                     mr->corner_verts.data(),
                                     mr->looptris.data(),
                                     mr->tri_len,

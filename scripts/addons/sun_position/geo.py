@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright 2010  Maximilian Hoegner <hp.maxi@hoegners.de>.
 
 # geo.py is a python module with no dependencies on extra packages,

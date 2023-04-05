@@ -5,7 +5,7 @@
 import bpy
 from .shading import write_object_material_interior
 
-def export_meta(file, metas, tab_write, DEF_MAT_NAME):
+def export_meta(file, metas, material_names_dictionary, tab_write, DEF_MAT_NAME):
     """write all POV blob primitives and Blender Metas to exported file """
     # TODO - blenders 'motherball' naming is not supported.
 
@@ -221,7 +221,8 @@ def export_meta(file, metas, tab_write, DEF_MAT_NAME):
                     write_object_material_interior(file, one_material, mob, tab_write)
                     # write_object_material_interior(file, one_material, elems[1])
                     tab_write(file, "radiosity{importance %3g}\n" % mob.pov.importance_value)
-                    tab_write(file, "}\n\n")  # End of Metaball block
+
+                tab_write(file, "}\n\n")  # End of Metaball block
 
 
 '''

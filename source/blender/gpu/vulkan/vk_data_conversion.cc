@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2023 Blender Foundation. All rights reserved. */
+ * Copyright 2023 Blender Foundation. */
 
 /** \file
  * \ingroup gpu
@@ -609,7 +609,7 @@ void convert_component(F32 &dst, const UnsignedNormalized<StorageType> &src)
   dst.value = float(src.value) / scalar;
 }
 
-/* Copy the contents of src to dst with out performing any actual conversion.*/
+/* Copy the contents of src to dst with out performing any actual conversion. */
 template<typename DestinationType, typename SourceType>
 void convert_component(DestinationType &dst, const SourceType &src)
 {

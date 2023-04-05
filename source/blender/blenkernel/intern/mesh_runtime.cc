@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2005 Blender Foundation. All rights reserved. */
+ * Copyright 2005 Blender Foundation */
 
 /** \file
  * \ingroup bke
@@ -145,7 +145,7 @@ blender::Span<MLoopTri> Mesh::looptris() const
 {
   this->runtime->looptris_cache.ensure([&](blender::Array<MLoopTri> &r_data) {
     const Span<float3> positions = this->vert_positions();
-    const Span<MPoly> polys = this->polys();
+    const blender::OffsetIndices polys = this->polys();
     const Span<int> corner_verts = this->corner_verts();
 
     r_data.reinitialize(poly_to_tri_count(polys.size(), corner_verts.size()));
@@ -243,6 +243,12 @@ void BKE_mesh_tag_edges_split(struct Mesh *mesh)
   }
 }
 
+void BKE_mesh_tag_face_winding_changed(Mesh *mesh)
+{
+  mesh->runtime->vert_normals_dirty = true;
+  mesh->runtime->poly_normals_dirty = true;
+}
+
 void BKE_mesh_tag_positions_changed(Mesh *mesh)
 {
   mesh->runtime->vert_normals_dirty = true;
@@ -281,6 +287,7 @@ eMeshWrapperType BKE_mesh_wrapper_type(const struct Mesh *mesh)
  * \{ */
 
 /* Draw Engine */
+
 void (*BKE_mesh_batch_cache_dirty_tag_cb)(Mesh *me, eMeshBatchDirtyMode mode) = nullptr;
 void (*BKE_mesh_batch_cache_free_cb)(void *batch_cache) = nullptr;
 
@@ -317,7 +324,7 @@ bool BKE_mesh_runtime_is_valid(Mesh *me_eval)
 
   MutableSpan<float3> positions = me_eval->vert_positions_for_write();
   MutableSpan<MEdge> edges = me_eval->edges_for_write();
-  MutableSpan<MPoly> polys = me_eval->polys_for_write();
+  MutableSpan<int> poly_offsets = me_eval->poly_offsets_for_write();
   MutableSpan<int> corner_verts = me_eval->corner_verts_for_write();
   MutableSpan<int> corner_edges = me_eval->corner_edges_for_write();
 
@@ -346,8 +353,8 @@ bool BKE_mesh_runtime_is_valid(Mesh *me_eval)
                                        corner_verts.data(),
                                        corner_edges.data(),
                                        corner_verts.size(),
-                                       polys.data(),
-                                       polys.size(),
+                                       poly_offsets.data(),
+                                       me_eval->totpoly,
                                        me_eval->deform_verts_for_write().data(),
                                        do_verbose,
                                        do_fixes,

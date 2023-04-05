@@ -247,13 +247,16 @@ size_t CachedData::memory_used() const
 static M44d convert_yup_zup(const M44d &mtx, float scale_mult)
 {
   V3d scale, shear, rotation, translation;
-  extractSHRT(mtx,
-              scale,
-              shear,
-              rotation,
-              translation,
-              true,
-              IMATH_INTERNAL_NAMESPACE::Euler<double>::XZY);
+
+  if (!extractSHRT(mtx,
+                   scale,
+                   shear,
+                   rotation,
+                   translation,
+                   true,
+                   IMATH_INTERNAL_NAMESPACE::Euler<double>::XZY)) {
+    return mtx;
+  }
 
   M44d rot_mat, scale_mat, trans_mat;
   rot_mat.setEulerAngles(V3d(rotation.x, -rotation.z, rotation.y));
@@ -433,9 +436,7 @@ AlembicObject::AlembicObject() : Node(get_node_type())
   schema_type = INVALID;
 }
 
-AlembicObject::~AlembicObject()
-{
-}
+AlembicObject::~AlembicObject() {}
 
 void AlembicObject::set_object(Object *object_)
 {

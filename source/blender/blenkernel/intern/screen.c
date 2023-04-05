@@ -1203,7 +1203,8 @@ static void direct_link_region(BlendDataReader *reader, ARegion *region, int spa
   BLO_read_list(reader, &region->ui_lists);
 
   /* The area's search filter is runtime only, so we need to clear the active flag on read. */
-  region->flag &= ~RGN_FLAG_SEARCH_FILTER_ACTIVE;
+  /* Clear runtime flags (e.g. search filter is runtime only). */
+  region->flag &= ~(RGN_FLAG_SEARCH_FILTER_ACTIVE | RGN_FLAG_POLL_FAILED);
 
   LISTBASE_FOREACH (uiList *, ui_list, &region->ui_lists) {
     ui_list->type = NULL;
@@ -1256,7 +1257,6 @@ static void direct_link_region(BlendDataReader *reader, ARegion *region, int spa
   memset(&region->drawrct, 0, sizeof(region->drawrct));
 }
 
-/* for the saved 2.50 files without regiondata */
 void BKE_screen_view3d_do_versions_250(View3D *v3d, ListBase *regions)
 {
   LISTBASE_FOREACH (ARegion *, region, regions) {

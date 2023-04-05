@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2009 Blender Foundation. All rights reserved. */
+ * Copyright 2009 Blender Foundation */
 
 /** \file
  * \ingroup edmesh
@@ -169,15 +169,15 @@ static void mesh_uv_reset_bmface(BMFace *f, const int cd_loop_uv_offset)
   mesh_uv_reset_array(fuv.data(), f->len);
 }
 
-static void mesh_uv_reset_mface(const MPoly *poly, float2 *mloopuv)
+static void mesh_uv_reset_mface(const blender::IndexRange poly, float2 *mloopuv)
 {
-  Array<float *, BM_DEFAULT_NGON_STACK_SIZE> fuv(poly->totloop);
+  Array<float *, BM_DEFAULT_NGON_STACK_SIZE> fuv(poly.size());
 
-  for (int i = 0; i < poly->totloop; i++) {
-    fuv[i] = mloopuv[poly->loopstart + i];
+  for (int i = 0; i < poly.size(); i++) {
+    fuv[i] = mloopuv[poly[i]];
   }
 
-  mesh_uv_reset_array(fuv.data(), poly->totloop);
+  mesh_uv_reset_array(fuv.data(), poly.size());
 }
 
 void ED_mesh_uv_loop_reset_ex(Mesh *me, const int layernum)
@@ -208,9 +208,9 @@ void ED_mesh_uv_loop_reset_ex(Mesh *me, const int layernum)
     float2 *mloopuv = static_cast<float2 *>(
         CustomData_get_layer_n_for_write(&me->ldata, CD_PROP_FLOAT2, layernum, me->totloop));
 
-    const blender::Span<MPoly> polys = me->polys();
+    const blender::OffsetIndices polys = me->polys();
     for (const int i : polys.index_range()) {
-      mesh_uv_reset_mface(&polys[i], mloopuv);
+      mesh_uv_reset_mface(polys[i], mloopuv);
     }
   }
 
@@ -316,10 +316,11 @@ const bool *ED_mesh_uv_map_vert_select_layer_get(const Mesh *mesh, const int uv_
   return mesh_loop_boolean_custom_data_get_by_name(
       *mesh, BKE_uv_map_vert_select_name_get(uv_name, buffer));
 }
-/* UV map edge selections are stored on face corners (loops) and not on edges
- * because we need selections per face edge, even when the edge is split in UV space. */
 const bool *ED_mesh_uv_map_edge_select_layer_get(const Mesh *mesh, const int uv_index)
 {
+  /* UV map edge selections are stored on face corners (loops) and not on edges
+   * because we need selections per face edge, even when the edge is split in UV space. */
+
   using namespace blender::bke;
   char buffer[MAX_CUSTOMDATA_LAYER_NAME];
   const char *uv_name = CustomData_get_layer_name(&mesh->ldata, CD_PROP_FLOAT2, uv_index);
@@ -595,7 +596,9 @@ void MESH_OT_uv_texture_remove(wmOperatorType *ot)
 
 /* *** CustomData clear functions, we need an operator for each *** */
 
-static int mesh_customdata_clear_exec__internal(bContext *C, char htype, int type)
+static int mesh_customdata_clear_exec__internal(bContext *C,
+                                                char htype,
+                                                const eCustomDataType type)
 {
   Mesh *me = ED_mesh_context(C);
 
@@ -620,7 +623,7 @@ static int mesh_customdata_clear_exec__internal(bContext *C, char htype, int typ
   return OPERATOR_CANCELLED;
 }
 
-static int mesh_customdata_add_exec__internal(bContext *C, char htype, int type)
+static int mesh_customdata_add_exec__internal(bContext *C, char htype, const eCustomDataType type)
 {
   Mesh *mesh = ED_mesh_context(C);
 
@@ -1223,6 +1226,12 @@ static void mesh_add_loops(Mesh *mesh, int len)
   mesh->ldata = ldata;
 
   mesh->totloop = totloop;
+
+  /* Keep the last poly offset up to date with the corner total (they must be the same). We have
+   * to be careful here though, since the mesh may not be in a valid state at this point. */
+  if (mesh->poly_offset_indices) {
+    mesh->poly_offsets_for_write().last() = mesh->totloop;
+  }
 }
 
 static void mesh_add_polys(Mesh *mesh, int len)
@@ -1241,9 +1250,8 @@ static void mesh_add_polys(Mesh *mesh, int len)
   CustomData_copy(&mesh->pdata, &pdata, CD_MASK_MESH.pmask, CD_SET_DEFAULT, totpoly);
   CustomData_copy_data(&mesh->pdata, &pdata, 0, 0, mesh->totpoly);
 
-  if (!CustomData_has_layer(&pdata, CD_MPOLY)) {
-    CustomData_add_layer(&pdata, CD_MPOLY, CD_SET_DEFAULT, totpoly);
-  }
+  mesh->poly_offset_indices = static_cast<int *>(
+      MEM_reallocN(mesh->poly_offset_indices, sizeof(int) * (totpoly + 1)));
 
   CustomData_free(&mesh->pdata, mesh->totpoly);
   mesh->pdata = pdata;
@@ -1251,6 +1259,9 @@ static void mesh_add_polys(Mesh *mesh, int len)
   BKE_mesh_runtime_clear_cache(mesh);
 
   mesh->totpoly = totpoly;
+  /* Update the last offset, which may not be set elsewhere and must be the same as the number of
+   * face corners. */
+  mesh->poly_offsets_for_write().last() = mesh->totloop;
 
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
   bke::SpanAttributeWriter<bool> select_poly = attributes.lookup_or_add_for_write_span<bool>(
@@ -1462,7 +1473,7 @@ Mesh *ED_mesh_context(bContext *C)
 void ED_mesh_split_faces(Mesh *mesh)
 {
   using namespace blender;
-  const Span<MPoly> polys = mesh->polys();
+  const OffsetIndices polys = mesh->polys();
   const Span<int> corner_verts = mesh->corner_verts();
   const Span<int> corner_edges = mesh->corner_edges();
   const float split_angle = (mesh->flag & ME_AUTOSMOOTH) != 0 ? mesh->smoothresh : float(M_PI);
@@ -1485,9 +1496,8 @@ void ED_mesh_split_faces(Mesh *mesh)
 
   threading::parallel_for(polys.index_range(), 1024, [&](const IndexRange range) {
     for (const int poly_i : range) {
-      const MPoly &poly = polys[poly_i];
       if (sharp_faces && sharp_faces[poly_i]) {
-        for (const int edge : corner_edges.slice(poly.loopstart, poly.totloop)) {
+        for (const int edge : corner_edges.slice(polys[poly_i])) {
           sharp_edges[edge] = true;
         }
       }
