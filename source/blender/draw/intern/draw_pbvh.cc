@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2005 Blender Foundation. All rights reserved. */
+ * Copyright 2005 Blender Foundation */
 
 /** \file
  * \ingroup gpu
@@ -124,9 +124,7 @@ struct PBVHBatch {
     struct cmp {
       Vector<PBVHVbo> &master_vbos;
 
-      cmp(Vector<PBVHVbo> &_master_vbos) : master_vbos(_master_vbos)
-      {
-      }
+      cmp(Vector<PBVHVbo> &_master_vbos) : master_vbos(_master_vbos) {}
 
       bool operator()(const int &a, const int &b)
       {
@@ -344,10 +342,9 @@ struct PBVHBatches {
         last_poly = tri->poly;
         flat = sharp_faces && sharp_faces[tri->poly];
         if (flat) {
-          const MPoly &poly = args->polys[tri->poly];
           const float3 fno = blender::bke::mesh::poly_normal_calc(
               {reinterpret_cast<const float3 *>(args->vert_positions), args->mesh_verts_num},
-              {&args->corner_verts[poly.loopstart], poly.totloop});
+              args->corner_verts.slice(args->polys[tri->poly]));
           normal_float_to_short_v3(no, fno);
         }
       }
@@ -905,7 +902,9 @@ struct PBVHBatches {
 
     if (need_aliases) {
       CustomData *cdata = get_cdata(domain, args);
-      int layer_i = cdata ? CustomData_get_named_layer_index(cdata, type, name.c_str()) : -1;
+      int layer_i = cdata ? CustomData_get_named_layer_index(
+                                cdata, eCustomDataType(type), name.c_str()) :
+                            -1;
       CustomDataLayer *layer = layer_i != -1 ? cdata->layers + layer_i : nullptr;
 
       if (layer) {
@@ -926,8 +925,8 @@ struct PBVHBatches {
               break;
           }
 
-          const char *active_name = CustomData_get_active_layer_name(cdata, type);
-          const char *render_name = CustomData_get_render_layer_name(cdata, type);
+          const char *active_name = CustomData_get_active_layer_name(cdata, eCustomDataType(type));
+          const char *render_name = CustomData_get_render_layer_name(cdata, eCustomDataType(type));
 
           is_active = active_name && STREQ(layer->name, active_name);
           is_render = render_name && STREQ(layer->name, render_name);
