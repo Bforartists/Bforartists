@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2008 Blender Foundation. All rights reserved. */
+ * Copyright 2008 Blender Foundation */
 
 /** \file
  * \ingroup spnode
@@ -356,6 +356,7 @@ void NODE_OT_clipboard_paste(wmOperatorType *ot);
 void NODE_OT_tree_socket_add(wmOperatorType *ot);
 void NODE_OT_tree_socket_remove(wmOperatorType *ot);
 void NODE_OT_tree_socket_change_type(wmOperatorType *ot);
+void NODE_OT_tree_socket_change_subtype(wmOperatorType *ot);
 void NODE_OT_tree_socket_move(wmOperatorType *ot);
 
 void NODE_OT_shader_script_update(wmOperatorType *ot);

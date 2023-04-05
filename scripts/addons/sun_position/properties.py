@@ -86,14 +86,14 @@ class SunPosProperties(PropertyGroup):
         description="Time at which the Sun rises",
         soft_min=0.0, soft_max=24.0,
         default=0.0,
-        get=lambda _: sun.sunrise.time)
+        get=lambda _: sun.sunrise)
 
     sunset_time: FloatProperty(
         name="Sunset Time",
         description="Time at which the Sun sets",
         soft_min=0.0, soft_max=24.0,
         default=0.0,
-        get=lambda _: sun.sunset.time)
+        get=lambda _: sun.sunset)
 
     sun_azimuth: FloatProperty(
         name="Sun Azimuth",

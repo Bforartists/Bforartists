@@ -413,7 +413,7 @@ struct ProjPaintState {
   const float (*vert_positions_eval)[3];
   blender::Span<blender::float3> vert_normals;
   blender::Span<MEdge> edges_eval;
-  blender::Span<MPoly> polys_eval;
+  blender::OffsetIndices<int> polys_eval;
   blender::Span<int> corner_verts_eval;
   const bool *select_poly_eval;
   const int *material_indices;
@@ -4043,6 +4043,10 @@ static bool proj_paint_state_mesh_eval_init(const bContext *C, ProjPaintState *p
   CustomData_MeshMasks cddata_masks = scene_eval->customdata_mask;
   cddata_masks.fmask |= CD_MASK_MTFACE;
   cddata_masks.lmask |= CD_MASK_PROP_FLOAT2;
+  cddata_masks.vmask |= CD_MASK_PROP_ALL | CD_MASK_CREASE;
+  cddata_masks.emask |= CD_MASK_PROP_ALL | CD_MASK_CREASE;
+  cddata_masks.pmask |= CD_MASK_PROP_ALL | CD_MASK_CREASE;
+  cddata_masks.lmask |= CD_MASK_PROP_ALL | CD_MASK_CREASE;
   if (ps->do_face_sel) {
     cddata_masks.vmask |= CD_MASK_ORIGINDEX;
     cddata_masks.emask |= CD_MASK_ORIGINDEX;
@@ -4385,14 +4389,11 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
         if (ps->do_backfacecull) {
           if (ps->do_mask_normal) {
             if (prev_poly != looptris[tri_index].poly) {
-              int iloop;
               bool culled = true;
-              const MPoly &poly = ps->polys_eval[looptris[tri_index].poly];
-              int poly_loops = poly.totloop;
+              const blender::IndexRange poly = ps->polys_eval[looptris[tri_index].poly];
               prev_poly = looptris[tri_index].poly;
-              for (iloop = 0; iloop < poly_loops; iloop++) {
-                if (!(ps->vertFlags[ps->corner_verts_eval[poly.loopstart + iloop]] &
-                      PROJ_VERT_CULL)) {
+              for (const int corner : poly) {
+                if (!(ps->vertFlags[ps->corner_verts_eval[corner]] & PROJ_VERT_CULL)) {
                   culled = false;
                   break;
                 }
@@ -4401,7 +4402,7 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
               if (culled) {
                 /* poly loops - 2 is number of triangles for poly,
                  * but counter gets incremented when continuing, so decrease by 3 */
-                int poly_tri = poly_loops - 3;
+                int poly_tri = poly.size() - 3;
                 tri_index += poly_tri;
                 continue;
               }

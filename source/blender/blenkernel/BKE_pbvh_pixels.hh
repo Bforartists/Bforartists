@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2022 Blender Foundation. All rights reserved. */
+ * Copyright 2022 Blender Foundation */
 
 #pragma once
 
@@ -169,9 +169,7 @@ struct UDIMTileUndo {
   short tile_number;
   rcti region;
 
-  UDIMTileUndo(short tile_number, rcti &region) : tile_number(tile_number), region(region)
-  {
-  }
+  UDIMTileUndo(short tile_number, rcti &region) : tile_number(tile_number), region(region) {}
 };
 
 struct NodeData {
@@ -330,7 +328,7 @@ struct CopyPixelCommand {
       return false;
     }
 
-    /* Can only extend when the delta between with the previous source fits in a single byte.*/
+    /* Can only extend when the delta between with the previous source fits in a single byte. */
     int2 delta_source_1 = source_1 - command.source_1;
     if (max_ii(UNPACK2(blender::math::abs(delta_source_1))) > 127) {
       return false;
@@ -344,9 +342,7 @@ struct CopyPixelTile {
   Vector<CopyPixelGroup> groups;
   Vector<DeltaCopyPixelCommand> command_deltas;
 
-  CopyPixelTile(image::TileNumber tile_number) : tile_number(tile_number)
-  {
-  }
+  CopyPixelTile(image::TileNumber tile_number) : tile_number(tile_number) {}
 
   void copy_pixels(ImBuf &tile_buffer, IndexRange group_range) const
   {

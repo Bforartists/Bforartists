@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2023 Blender Foundation. All rights reserved. */
+ * Copyright 2023 Blender Foundation */
 
 /** \file
  * \ingroup gpu
@@ -17,7 +17,7 @@ class VKStateManager : public StateManager {
 
   void issue_barrier(eGPUBarrier barrier_bits) override;
 
-  void texture_bind(Texture *tex, eGPUSamplerState sampler, int unit) override;
+  void texture_bind(Texture *tex, GPUSamplerState sampler, int unit) override;
   void texture_unbind(Texture *tex) override;
   void texture_unbind_all() override;
 

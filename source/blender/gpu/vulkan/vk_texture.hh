@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2022 Blender Foundation. All rights reserved. */
+ * Copyright 2022 Blender Foundation */
 
 /** \file
  * \ingroup gpu
@@ -17,16 +17,14 @@ class VKTexture : public Texture {
   VkImageView vk_image_view_ = VK_NULL_HANDLE;
   VmaAllocation allocation_ = VK_NULL_HANDLE;
 
-  /* Last image layout of the texture. Framebuffer and barriers can alter/require the actual layout
-   * to be changed. During this it requires to set the current layout in order to know which
+  /* Last image layout of the texture. Frame-buffer and barriers can alter/require the actual
+   * layout to be changed. During this it requires to set the current layout in order to know which
    * conversion should happen. #current_layout_ keep track of the layout so the correct conversion
-   * can be done.*/
+   * can be done. */
   VkImageLayout current_layout_ = VK_IMAGE_LAYOUT_UNDEFINED;
 
  public:
-  VKTexture(const char *name) : Texture(name)
-  {
-  }
+  VKTexture(const char *name) : Texture(name) {}
   virtual ~VKTexture() override;
 
   void generate_mipmap() override;

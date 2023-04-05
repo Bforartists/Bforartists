@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2021 Blender Foundation. All rights reserved. */
+ * Copyright 2021 Blender Foundation */
 
 /** \file
  * \ingroup draw
@@ -51,7 +51,6 @@ static void extract_fdots_edituv_data_iter_poly_bm(const MeshRenderData *mr,
 }
 
 static void extract_fdots_edituv_data_iter_poly_mesh(const MeshRenderData *mr,
-                                                     const MPoly * /*poly*/,
                                                      const int poly_index,
                                                      void *_data)
 {

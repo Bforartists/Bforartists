@@ -16,7 +16,7 @@
 bl_info = {
     "name": "Sun Position",
     "author": "Michael Martin, Damien Picard",
-    "version": (3, 3, 1),
+    "version": (3, 3, 3),
     "blender": (3, 0, 0),
     "location": "World > Sun Position",
     "description": "Show sun position with objects and/or sky texture",
