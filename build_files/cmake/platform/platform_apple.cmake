@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright 2016 Blender Foundation. All rights reserved.
+# Copyright 2016 Blender Foundation
 
 # Libraries configuration for Apple.
 
@@ -245,6 +245,7 @@ if(WITH_BOOST)
   if(WITH_USD AND USD_PYTHON_SUPPORT)
     list(APPEND _boost_FIND_COMPONENTS python${PYTHON_VERSION_NO_DOTS})
   endif()
+  set(Boost_NO_WARN_NEW_VERSIONS ON)
   find_package(Boost COMPONENTS ${_boost_FIND_COMPONENTS})
 
   # Boost Python is separate to avoid linking Python into tests that don't need it.
@@ -329,6 +330,7 @@ if(WITH_CYCLES AND WITH_CYCLES_EMBREE)
   endforeach()
   set(EMBREE_LIBRARIES ${_embree_libraries_force_load})
 endif()
+add_bundled_libraries(embree/lib)
 
 if(WITH_OPENIMAGEDENOISE)
   find_package(OpenImageDenoise REQUIRED)

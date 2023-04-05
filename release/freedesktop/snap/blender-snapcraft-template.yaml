@@ -22,7 +22,7 @@ apps:
         command: ./bforartists-wrapper
         desktop: ./bforartists.desktop
 
-base: core18
+base: core20
 version: '@VERSION@'
 grade: @GRADE@
 

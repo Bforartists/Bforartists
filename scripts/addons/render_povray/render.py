@@ -554,6 +554,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
         model_meta_topology.export_meta(file,
                                          [m for m in sel if m.type == 'META'],
+                                         material_names_dictionary,
                                          tab_write,
                                          DEF_MAT_NAME,)
 

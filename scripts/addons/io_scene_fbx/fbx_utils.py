@@ -244,6 +244,11 @@ def array_to_matrix4(arr):
     return Matrix(tuple(zip(*[iter(arr)]*4))).transposed()
 
 
+def parray_as_ndarray(arr):
+    """Convert an array.array into an np.ndarray that shares the same memory"""
+    return np.frombuffer(arr, dtype=arr.typecode)
+
+
 def similar_values(v1, v2, e=1e-6):
     """Return True if v1 and v2 are nearly the same."""
     if v1 == v2:

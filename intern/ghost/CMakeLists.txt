@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright 2006 Blender Foundation. All rights reserved.
+# Copyright 2006 Blender Foundation
 
 set(INC
   .
@@ -378,7 +378,6 @@ elseif(WITH_GHOST_X11 OR WITH_GHOST_WAYLAND)
       unset(_name)
     endmacro()
 
-
     list(APPEND INC_SYS
       ${INC_DST}
     )
@@ -401,6 +400,14 @@ elseif(WITH_GHOST_X11 OR WITH_GHOST_WAYLAND)
     # `xdg-activation`.
     generate_protocol_bindings(
       "${WAYLAND_PROTOCOLS_DIR}/staging/xdg-activation/xdg-activation-v1.xml"
+    )
+    # Fractional scale.
+    generate_protocol_bindings(
+      "${WAYLAND_PROTOCOLS_DIR}/staging/fractional-scale/fractional-scale-v1.xml"
+    )
+    # Viewport (only required when fractional scale is in use).
+    generate_protocol_bindings(
+      "${WAYLAND_PROTOCOLS_DIR}/stable/viewporter/viewporter.xml"
     )
     # Pointer-constraints.
     generate_protocol_bindings(
@@ -426,7 +433,6 @@ elseif(WITH_GHOST_X11 OR WITH_GHOST_WAYLAND)
     unset(INC_DST)
 
     add_definitions(-DWITH_GHOST_WAYLAND)
-
     if(NOT WITH_GHOST_WAYLAND_APP_ID STREQUAL "")
       add_definitions(-DWITH_GHOST_WAYLAND_APP_ID=${WITH_GHOST_WAYLAND_APP_ID})
     endif()

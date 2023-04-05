@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2020 Blender Foundation. All rights reserved. */
+ * Copyright 2020 Blender Foundation */
 
 /** \file
  * \ingroup bke
@@ -52,8 +52,8 @@ typedef struct MultiresUnsubdivideContext {
 
   /* Private data. */
   struct BMesh *bm_original_mesh;
-  int *loop_to_face_map;
-  int *base_to_orig_vmap;
+  blender::Array<int> loop_to_face_map;
+  const int *base_to_orig_vmap;
 } MultiresUnsubdivideContext;
 
 /* --------------------------------------------------------------------
