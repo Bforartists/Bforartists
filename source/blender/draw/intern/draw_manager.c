@@ -219,13 +219,9 @@ int DRW_object_visibility_in_active_context(const Object *ob)
 bool DRW_object_use_hide_faces(const struct Object *ob)
 {
   if (ob->type == OB_MESH) {
-    const Mesh *me = ob->data;
-
     switch (ob->mode) {
       case OB_MODE_SCULPT:
-        return true;
       case OB_MODE_TEXTURE_PAINT:
-        return (me->editflag & ME_EDIT_PAINT_FACE_SEL) != 0;
       case OB_MODE_VERTEX_PAINT:
       case OB_MODE_WEIGHT_PAINT:
         return true;
@@ -2772,6 +2768,25 @@ void DRW_draw_select_id(Depsgraph *depsgraph, ARegion *region, View3D *v3d, cons
     for (uint remaining = sel_ctx->objects_len; remaining--; obj++) {
       Object *obj_eval = DEG_get_evaluated_object(depsgraph, *obj);
       drw_engines_cache_populate(obj_eval);
+    }
+
+    if (RETOPOLOGY_ENABLED(v3d) && !XRAY_ENABLED(v3d)) {
+      DEGObjectIterSettings deg_iter_settings = {0};
+      deg_iter_settings.depsgraph = depsgraph;
+      deg_iter_settings.flags = DEG_OBJECT_ITER_FOR_RENDER_ENGINE_FLAGS;
+      DEG_OBJECT_ITER_BEGIN (&deg_iter_settings, ob) {
+        if (ob->type != OB_MESH) {
+          /* The iterator has evaluated meshes for all solid objects.
+           * It also has non-mesh objects however, which are not supported here. */
+          continue;
+        }
+        if (DRW_object_is_in_edit_mode(ob)) {
+          /* Only background (non-edit) objects are used for occlusion. */
+          continue;
+        }
+        drw_engines_cache_populate(ob);
+      }
+      DEG_OBJECT_ITER_END;
     }
 
     drw_engines_cache_finish();
