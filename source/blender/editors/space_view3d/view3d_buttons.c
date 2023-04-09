@@ -672,6 +672,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
         col = uiLayoutColumn(row, false);
 
         uiItemL(col, IFACE_("Bevel Weight"), ICON_NONE);
+        uiItemL(col, IFACE_("Crease"), ICON_NONE); /* -bfa move text to left of slider */
 
         col = uiLayoutColumn(row, false);
         subblock = uiLayoutGetBlock(col);
@@ -697,7 +698,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
         but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        tot == 1 ? IFACE_("Vertex Crease:") : IFACE_("Mean Vertex Crease:"),
+                        "", /* -bfa remove text from slider */
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -793,7 +794,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
         but = uiDefButF(subblock,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        totedgedata == 1 ? IFACE_("Crease:") : IFACE_("Mean Crease:"),
+                        "", /* -bfa remove text from slider */
                         0,
                         yi -= buth + but_margin,
                         butw,
