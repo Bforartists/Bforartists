@@ -16,7 +16,7 @@ import bpy
 bl_info = {
     "name": "Autodesk 3DS format",
     "author": "Bob Holcomb, Campbell Barton, Andreas Atteneder, Sebastian Schrand",
-    "version": (2, 3, 1),
+    "version": (2, 3, 2),
     "blender": (3, 0, 0),
     "location": "File > Import",
     "description": "Import 3DS, meshes, uvs, materials, textures, "
@@ -66,11 +66,15 @@ class Import3DS(bpy.types.Operator, ImportHelper):
         "importing incorrectly",
         default=True,
     )
-
     read_keyframe: bpy.props.BoolProperty(
         name="Read Keyframe",
         description="Read the keyframe data",
         default=True,
+    )
+    use_world_matrix: bpy.props.BoolProperty(
+        name="World Space",
+        description="Transform to matrix world",
+        default=False,
     )
 
     def execute(self, context):

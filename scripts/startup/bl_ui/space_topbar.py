@@ -7,6 +7,7 @@ user_path = Path(bpy.utils.resource_path('USER')).parent
 local_path = Path(bpy.utils.resource_path('LOCAL')).parent
 
 from bpy.types import Header, Menu, Panel
+from bl_ui_utils.layout import operator_context
 
 from bpy.app.translations import (
     pgettext_iface as iface_,
@@ -637,9 +638,8 @@ class TOPBAR_MT_window(Menu):
         # - From the top-bar, the text replaces the file-menu (not so bad but strange).
         # - From menu-search it replaces the area that the user may want to screen-shot.
         # Setting the context to screen causes the status to show in the global status-bar.
-        layout.operator_context = 'INVOKE_SCREEN'
-        layout.operator("screen.screenshot_area", icon = "MAKE_SCREENSHOT_AREA")
-        layout.operator_context = operator_context_default
+        with operator_context(layout, 'INVOKE_SCREEN'):
+            layout.operator("screen.screenshot_area", icon="MAKE_SCREENSHOT_AREA")
 
         if sys.platform[:3] == "win":
             layout.separator()
