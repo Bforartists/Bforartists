@@ -541,7 +541,7 @@ keyconfig_data = \
     ("view3d.move", {"type": 'MIDDLEMOUSE', "value": 'PRESS'}, None),
     ("view3d.rotate", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "alt": True}, None),
     ("wm.context_toggle",
-     {"type": 'TAB', "value": 'PRESS'},
+     {"type": 'TAB', "value": 'PRESS', "shift": True},
      {"properties":
       [("data_path", 'space_data.show_gizmo'),
        ],
@@ -573,6 +573,13 @@ keyconfig_data = \
      {"properties":
       [("cursor_transform", True),
        ("release_confirm", True),
+       ],
+      },
+     ),
+    ("wm.context_toggle",
+     {"type": 'TAB', "value": 'PRESS'},
+     {"properties":
+      [("data_path", 'space_data.show_over'),
        ],
       },
      ),
@@ -1875,6 +1882,7 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
@@ -8027,6 +8035,20 @@ keyconfig_data = \
      ),
     ("wm.batch_rename", {"type": 'F2', "value": 'PRESS', "oskey": True}, None),
     ("wm.save_mainfile", {"type": 'S', "value": 'PRESS', "oskey": True}, None),
+    ("wm.context_toggle",
+     {"type": 'TAB', "value": 'PRESS', "shift": True, "repeat": True},
+     {"properties":
+      [("data_path", 'space_data.show_gizmo'),
+       ],
+      },
+     ),
+    ("wm.context_toggle",
+     {"type": 'TAB', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("data_path", 'space_data.overlay.show_overlays'),
+       ],
+      },
+     ),
     ],
    },
   ),
