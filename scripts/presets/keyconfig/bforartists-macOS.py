@@ -579,7 +579,7 @@ keyconfig_data = \
     ("wm.context_toggle",
      {"type": 'TAB', "value": 'PRESS'},
      {"properties":
-      [("data_path", 'space_data.show_over'),
+      [("data_path", 'space_data.overlay.show_overlays'),
        ],
       },
      ),
@@ -1882,6 +1882,7 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
