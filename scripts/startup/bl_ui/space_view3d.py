@@ -2209,9 +2209,6 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.menu("VIEW3D_MT_select_object_legacy")
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
-        layout.operator("paint.face_select_more")
-        layout.operator("paint.face_select_less")
-
         layout.separator()
 
         layout.operator("paint.face_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
@@ -2223,6 +2220,22 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.operator("paint.face_select_linked", text="Linked", icon="LINKED")
         layout.operator("paint.face_select_linked_pick", text="Linked Pick Select", icon="LINKED").deselect = False
         layout.operator("paint.face_select_linked_pick", text="Linked Pick Deselect", icon="LINKED").deselect = True
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_select_paint_mask_face_more_less")
+
+
+class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout = self.layout
+
+        layout.operator("paint.face_select_more", text="More", icon="SELECTMORE")
+        layout.operator("paint.face_select_less", text="Less", icon="SELECTLESS")
 
 
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
@@ -2240,13 +2253,26 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.operator("paint.vert_select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
         layout.operator("paint.vert_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
-        layout.operator("paint.vert_select_more")
-        layout.operator("paint.vert_select_less")
-
         layout.separator()
 
         layout.operator("paint.vert_select_ungrouped", text="Ungrouped Vertices", icon="SELECT_UNGROUPED_VERTS")
         layout.operator("paint.vert_select_linked", text="Select Linked", icon = 'LINKED')
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_select_paint_mask_vertex_more_less")
+
+
+class VIEW3D_MT_select_paint_mask_vertex_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout = self.layout
+
+        layout.operator("paint.vert_select_more", text="More", icon="SELECTMORE")
+        layout.operator("paint.vert_select_less", text="Less", icon="SELECTLESS")
 
 
 class VIEW3D_MT_edit_curves_select_more_less(Menu):
@@ -9532,7 +9558,9 @@ classes = (
     VIEW3D_MT_select_gpencil_legacy,
     VIEW3D_MT_select_gpencil_grouped,
     VIEW3D_MT_select_paint_mask,
+    VIEW3D_MT_select_paint_mask_face_more_less,
     VIEW3D_MT_select_paint_mask_vertex,
+    VIEW3D_MT_select_paint_mask_vertex_more_less,
     VIEW3D_MT_edit_curves_select_more_less,
     VIEW3D_MT_select_edit_curves,
     VIEW3D_MT_select_sculpt_curves,
