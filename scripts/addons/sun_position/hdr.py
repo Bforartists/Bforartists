@@ -95,9 +95,9 @@ def draw_callback_px(self, context):
 
 
 class SUNPOS_OT_ShowHdr(bpy.types.Operator):
-    """Tooltip"""
+    """Select the location of the Sun in any 3D viewport and keep it in sync with the environment"""
     bl_idname = "world.sunpos_show_hdr"
-    bl_label = "Sync Sun to Texture"
+    bl_label = "Pick Sun in Viewport"
 
     exposure: FloatProperty(name="Exposure", default=1.0)
     scale: FloatProperty(name="Scale", default=1.0)
@@ -265,7 +265,7 @@ class SUNPOS_OT_ShowHdr(bpy.types.Operator):
 
         nt = context.scene.world.node_tree.nodes
         env_tex_node = nt.get(context.scene.sun_pos_properties.hdr_texture)
-        if env_tex_node.type != "TEX_ENVIRONMENT":
+        if env_tex_node is None or env_tex_node.type != "TEX_ENVIRONMENT":
             self.report({'ERROR'}, 'Please select an Environment Texture node')
             return {'CANCELLED'}
 

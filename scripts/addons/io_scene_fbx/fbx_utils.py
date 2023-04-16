@@ -1174,7 +1174,7 @@ class ObjectWrapper(metaclass=MetaObjectWrapper):
     we need to use a key to identify each.
     """
     __slots__ = (
-        'name', 'key', 'bdata', 'parented_to_armature',
+        'name', 'key', 'bdata', 'parented_to_armature', 'override_materials',
         '_tag', '_ref', '_dupli_matrix'
     )
 
@@ -1229,6 +1229,7 @@ class ObjectWrapper(metaclass=MetaObjectWrapper):
             self.bdata = bdata
             self._ref = armature
         self.parented_to_armature = False
+        self.override_materials = None
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.key == other.key
@@ -1443,11 +1444,14 @@ class ObjectWrapper(metaclass=MetaObjectWrapper):
         return ()
     bones = property(get_bones)
 
-    def get_material_slots(self):
+    def get_materials(self):
+        override_materials = self.override_materials
+        if override_materials is not None:
+            return override_materials
         if self._tag in {'OB', 'DP'}:
-            return self.bdata.material_slots
+            return tuple(slot.material for slot in self.bdata.material_slots)
         return ()
-    material_slots = property(get_material_slots)
+    materials = property(get_materials)
 
     def is_deformed_by_armature(self, arm_obj):
         if not (self.is_object and self.type == 'MESH'):

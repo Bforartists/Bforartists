@@ -60,6 +60,9 @@
 #include "ED_scene.h"
 #include "ED_screen.h"
 
+#include "IMB_imbuf.h"
+#include "IMB_imbuf_types.h"
+
 #include "UI_interface.h"
 #include "UI_interface_icons.h"
 
@@ -1344,11 +1347,10 @@ static bool ghost_event_proc(GHOST_EventHandle evt, GHOST_TUserDataPtr C_void_pt
         if (state != GHOST_kWindowStateMinimized) {
           /*
            * Ghost sometimes send size or move events when the window hasn't changed.
-           * One case of this is using compiz on linux. To alleviate the problem
-           * we ignore all such event here.
+           * One case of this is using COMPIZ on Linux.
+           * To alleviate the problem we ignore all such event here.
            *
-           * It might be good to eventually do that at Ghost level, but that is for
-           * another time.
+           * It might be good to eventually do that at GHOST level, but that is for another time.
            */
           if (wm_window_update_size_position(win)) {
             const bScreen *screen = WM_window_get_active_screen(win);
@@ -1847,6 +1849,12 @@ eWM_CapabilitiesFlag WM_capabilities_flag(void)
   if (ghost_flag & GHOST_kCapabilityPrimaryClipboard) {
     flag |= WM_CAPABILITY_PRIMARY_CLIPBOARD;
   }
+  if (ghost_flag & GHOST_kCapabilityGPUReadFrontBuffer) {
+    flag |= WM_CAPABILITY_GPU_FRONT_BUFFER_READ;
+  }
+  if (ghost_flag & GHOST_kCapabilityClipboardImages) {
+    flag |= WM_CAPABILITY_CLIPBOARD_IMAGES;
+  }
 
   return flag;
 }
@@ -2062,6 +2070,45 @@ void WM_clipboard_text_set(const char *buf, bool selection)
   }
 }
 
+bool WM_clipboard_image_available(void)
+{
+  return (bool)GHOST_hasClipboardImage();
+}
+
+ImBuf *WM_clipboard_image_get(void)
+{
+  int width, height;
+
+  uint *rgba = GHOST_getClipboardImage(&width, &height);
+  if (!rgba) {
+    return NULL;
+  }
+
+  ImBuf *ibuf = IMB_allocFromBuffer(rgba, NULL, width, height, 4);
+  free(rgba);
+
+  return ibuf;
+}
+
+bool WM_clipboard_image_set(ImBuf *ibuf)
+{
+  bool free_byte_buffer = false;
+  if (ibuf->rect == NULL) {
+    /* Add a byte buffer if it does not have one. */
+    IMB_rect_from_float(ibuf);
+    free_byte_buffer = true;
+  }
+
+  bool success = (bool)GHOST_putClipboardImage(ibuf->rect, ibuf->x, ibuf->y);
+
+  if (free_byte_buffer) {
+    /* Remove the byte buffer if we added it. */
+    imb_freerectImBuf(ibuf);
+  }
+
+  return success;
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -2176,28 +2223,6 @@ wmWindow *WM_window_find_by_area(wmWindowManager *wm, const struct ScrArea *area
   return NULL;
 }
 
-void WM_window_pixel_sample_read(const wmWindowManager *wm,
-                                 const wmWindow *win,
-                                 const int pos[2],
-                                 float r_col[3])
-{
-  bool setup_context = wm->windrawable != win;
-
-  if (setup_context) {
-    GHOST_ActivateWindowDrawingContext(win->ghostwin);
-    GPU_context_active_set(win->gpuctx);
-  }
-
-  GPU_frontbuffer_read_pixels(pos[0], pos[1], 1, 1, 3, GPU_DATA_FLOAT, r_col);
-
-  if (setup_context) {
-    if (wm->windrawable) {
-      GHOST_ActivateWindowDrawingContext(wm->windrawable->ghostwin);
-      GPU_context_active_set(wm->windrawable->gpuctx);
-    }
-  }
-}
-
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -2209,6 +2234,8 @@ void WM_window_pixel_sample_read(const wmWindowManager *wm,
 
 uint *WM_window_pixels_read(wmWindowManager *wm, wmWindow *win, int r_size[2])
 {
+  BLI_assert(WM_capabilities_flag() & WM_CAPABILITY_GPU_FRONT_BUFFER_READ);
+
   /* WARNING: Reading from the front-buffer immediately after drawing may fail,
    * for a slower but more reliable version of this function #WM_window_pixels_read_offscreen
    * should be preferred. See it's comments for details on why it's needed, see also #98462. */
@@ -2224,7 +2251,7 @@ uint *WM_window_pixels_read(wmWindowManager *wm, wmWindow *win, int r_size[2])
   const uint rect_len = r_size[0] * r_size[1];
   uint *rect = MEM_mallocN(sizeof(*rect) * rect_len, __func__);
 
-  GPU_frontbuffer_read_pixels(0, 0, r_size[0], r_size[1], 4, GPU_DATA_UBYTE, rect);
+  GPU_frontbuffer_read_color(0, 0, r_size[0], r_size[1], 4, GPU_DATA_UBYTE, rect);
 
   if (setup_context) {
     if (wm->windrawable) {
@@ -2240,6 +2267,29 @@ uint *WM_window_pixels_read(wmWindowManager *wm, wmWindow *win, int r_size[2])
     *cp = 0xff;
   }
   return (uint *)rect;
+}
+
+void WM_window_pixels_read_sample(const wmWindowManager *wm,
+                                  const wmWindow *win,
+                                  const int pos[2],
+                                  float r_col[3])
+{
+  BLI_assert(WM_capabilities_flag() & WM_CAPABILITY_GPU_FRONT_BUFFER_READ);
+  bool setup_context = wm->windrawable != win;
+
+  if (setup_context) {
+    GHOST_ActivateWindowDrawingContext(win->ghostwin);
+    GPU_context_active_set(win->gpuctx);
+  }
+
+  GPU_frontbuffer_read_color(pos[0], pos[1], 1, 1, 3, GPU_DATA_FLOAT, r_col);
+
+  if (setup_context) {
+    if (wm->windrawable) {
+      GHOST_ActivateWindowDrawingContext(wm->windrawable->ghostwin);
+      GPU_context_active_set(wm->windrawable->gpuctx);
+    }
+  }
 }
 
 /** \} */

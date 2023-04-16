@@ -7,7 +7,6 @@ user_path = Path(bpy.utils.resource_path('USER')).parent
 local_path = Path(bpy.utils.resource_path('LOCAL')).parent
 
 from bpy.types import Header, Menu, Panel
-from bl_ui_utils.layout import operator_context
 
 from bpy.app.translations import (
     pgettext_iface as iface_,
@@ -200,34 +199,34 @@ class TOPBAR_MT_file_cleanup(Menu):
         layout = self.layout
         layout.separator()
 
-        op_props = layout.operator("outliner.orphans_purge", text="Unused Data", icon = "CLEAN_CHANNELS")
-        op_props.do_local_ids = True
-        op_props.do_linked_ids = True
-        op_props.do_recursive = False
-        op_props = layout.operator("outliner.orphans_purge", text="Recursive Unused Data", icon = "CLEAN_CHANNELS")
-        op_props.do_local_ids = True
-        op_props.do_linked_ids = True
-        op_props.do_recursive = True
+        props = layout.operator("outliner.orphans_purge", text="Unused Data", icon = "CLEAN_CHANNELS")
+        props.do_local_ids = True
+        props.do_linked_ids = True
+        props.do_recursive = False
+        props = layout.operator("outliner.orphans_purge", text="Recursive Unused Data", icon = "CLEAN_CHANNELS")
+        props.do_local_ids = True
+        props.do_linked_ids = True
+        props.do_recursive = True
 
         layout.separator()
-        op_props = layout.operator("outliner.orphans_purge", text="Unused Linked Data", icon = "CLEAN_CHANNELS")
-        op_props.do_local_ids = False
-        op_props.do_linked_ids = True
-        op_props.do_recursive = False
-        op_props = layout.operator("outliner.orphans_purge", text="Recursive Unused Linked Data", icon = "CLEAN_CHANNELS")
-        op_props.do_local_ids = False
-        op_props.do_linked_ids = True
-        op_props.do_recursive = True
+        props = layout.operator("outliner.orphans_purge", text="Unused Linked Data", icon = "CLEAN_CHANNELS")
+        props.do_local_ids = False
+        props.do_linked_ids = True
+        props.do_recursive = False
+        props = layout.operator("outliner.orphans_purge", text="Recursive Unused Linked Data", icon = "CLEAN_CHANNELS")
+        props.do_local_ids = False
+        props.do_linked_ids = True
+        props.do_recursive = True
 
         layout.separator()
-        op_props = layout.operator("outliner.orphans_purge", text="Unused Local Data", icon = "CLEAN_CHANNELS")
-        op_props.do_local_ids = True
-        op_props.do_linked_ids = False
-        op_props.do_recursive = False
-        op_props = layout.operator("outliner.orphans_purge", text="Recursive Unused Local Data", icon = "CLEAN_CHANNELS")
-        op_props.do_local_ids = True
-        op_props.do_linked_ids = False
-        op_props.do_recursive = True
+        props = layout.operator("outliner.orphans_purge", text="Unused Local Data", icon = "CLEAN_CHANNELS")
+        props.do_local_ids = True
+        props.do_linked_ids = False
+        props.do_recursive = False
+        props = layout.operator("outliner.orphans_purge", text="Recursive Unused Local Data", icon = "CLEAN_CHANNELS")
+        props.do_local_ids = True
+        props.do_linked_ids = False
+        props.do_recursive = True
 
 
 class TOPBAR_MT_file(Menu):
@@ -609,9 +608,9 @@ class TOPBAR_MT_window(Menu):
 
     def draw(self, context):
         import sys
+        from bl_ui_utils.layout import operator_context
 
         layout = self.layout
-        operator_context_default = layout.operator_context
 
         layout.operator("wm.window_new", icon = "NEW_WINDOW")
         layout.operator("wm.window_new_main", icon = "NEW_WINDOW_MAIN")
