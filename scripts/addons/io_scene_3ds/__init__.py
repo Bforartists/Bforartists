@@ -17,9 +17,9 @@ bl_info = {
     "name": "Autodesk 3DS format",
     "author": "Bob Holcomb, Campbell Barton, Andreas Atteneder, Sebastian Schrand",
     "version": (2, 3, 2),
-    "blender": (3, 0, 0),
+    "blender": (3, 6, 0),
     "location": "File > Import",
-    "description": "Import 3DS, meshes, uvs, materials, textures, "
+    "description": "3DS Import/Export meshes, UVs, materials, textures, "
                    "cameras & lamps",
     "warning": "Images must be in file folder, "
                "filenames are limited to DOS 8.3 format",
