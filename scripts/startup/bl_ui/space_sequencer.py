@@ -135,8 +135,6 @@ class SEQUENCER_HT_tool_header(Header):
         # TODO: options popover.
 
     def draw_tool_settings(self, context):
-        pass
-
         layout = self.layout
 
         # Active Tool
@@ -644,17 +642,17 @@ class SEQUENCER_MT_change(Menu):
 
                 if strip_type in data_strips:
                     layout.operator_context = 'INVOKE_DEFAULT'
-                    prop = layout.operator("sequencer.change_path", text="Path/Files", icon='FILE_MOVIE')
+                    props = layout.operator("sequencer.change_path", text="Path/Files", icon='FILE_MOVIE')
 
                     if strip:
                         strip_type = strip.type
 
                         if strip_type == 'IMAGE':
-                            prop.filter_image = True
+                            props.filter_image = True
                         elif strip_type == 'MOVIE':
-                            prop.filter_movie = True
+                            props.filter_movie = True
                         elif strip_type == 'SOUND':
-                            prop.filter_sound = True
+                            props.filter_sound = True
                 elif strip_type in effect_strips:
                     layout.operator_context = 'INVOKE_DEFAULT'
                     layout.operator_menu_enum("sequencer.change_effect_input", "swap")
@@ -905,18 +903,18 @@ class SEQUENCER_MT_strip_input(Menu):
 
         layout.operator("sequencer.reload", text="Reload Strips", icon = "FILE_REFRESH")
         layout.operator("sequencer.reload", text="Reload Strips and Adjust Length", icon = "FILE_REFRESH").adjust_length = True
-        prop = layout.operator("sequencer.change_path", text="Change Path/Files", icon = "FILE_MOVIE")
+        props = layout.operator("sequencer.change_path", text="Change Path/Files", icon = "FILE_MOVIE")
         layout.operator("sequencer.swap_data", text="Swap Data", icon = "SWAP")
 
         if strip:
             strip_type = strip.type
 
             if strip_type == 'IMAGE':
-                prop.filter_image = True
+                props.filter_image = True
             elif strip_type == 'MOVIE':
-                prop.filter_movie = True
+                props.filter_movie = True
             elif strip_type == 'SOUND':
-                prop.filter_sound = True
+                props.filter_sound = True
 
 
 class SEQUENCER_MT_strip_lock_mute(Menu):
@@ -1826,7 +1824,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
             sub.use_property_decorate = True
             split = sub.split(factor=0.4, align=True)
             split.alignment = 'RIGHT'
-            split.label(text="Volume")
+            split.label(text="Volume", text_ctxt=i18n_contexts.id_sound)
             split.prop(scene, "audio_volume", text="")
             sub.use_property_decorate = False
 
@@ -2064,7 +2062,7 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
 
             split = col.split(factor=0.4)
             split.alignment = 'RIGHT'
-            split.label(text="Volume")
+            split.label(text="Volume", text_ctxt=i18n_contexts.id_sound)
             split.prop(strip, "volume", text="")
 
             audio_channels = context.scene.render.ffmpeg.audio_channels
@@ -2077,7 +2075,7 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             split.prop(strip, "pan", text="")
             split.enabled = pan_enabled
 
-            if audio_channels != 'MONO' and audio_channels != 'STEREO':
+            if audio_channels not in {'MONO', 'STEREO'}:
                 split = col.split(factor=0.4)
                 split.alignment = 'RIGHT'
                 split.label(text="Pan Angle")

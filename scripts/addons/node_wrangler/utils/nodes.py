@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
+from bpy_extras.node_utils import connect_sockets
 from math import hypot
 
 
@@ -29,48 +30,42 @@ def node_mid_pt(node, axis):
 
 
 def autolink(node1, node2, links):
-    link_made = False
     available_inputs = [inp for inp in node2.inputs if inp.enabled]
     available_outputs = [outp for outp in node1.outputs if outp.enabled]
     for outp in available_outputs:
         for inp in available_inputs:
             if not inp.is_linked and inp.name == outp.name:
-                link_made = True
-                links.new(outp, inp)
+                connect_sockets(outp, inp)
                 return True
 
     for outp in available_outputs:
         for inp in available_inputs:
             if not inp.is_linked and inp.type == outp.type:
-                link_made = True
-                links.new(outp, inp)
+                connect_sockets(outp, inp)
                 return True
 
     # force some connection even if the type doesn't match
     if available_outputs:
         for inp in available_inputs:
             if not inp.is_linked:
-                link_made = True
-                links.new(available_outputs[0], inp)
+                connect_sockets(available_outputs[0], inp)
                 return True
 
     # even if no sockets are open, force one of matching type
     for outp in available_outputs:
         for inp in available_inputs:
             if inp.type == outp.type:
-                link_made = True
-                links.new(outp, inp)
+                connect_sockets(outp, inp)
                 return True
 
     # do something!
     for outp in available_outputs:
         for inp in available_inputs:
-            link_made = True
-            links.new(outp, inp)
+            connect_sockets(outp, inp)
             return True
 
     print("Could not make a link from " + node1.name + " to " + node2.name)
-    return link_made
+    return False
 
 
 def abs_node_location(node):
