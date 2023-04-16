@@ -27,6 +27,7 @@
 #include "BLI_math_vector.h"
 #include "BLI_string_utf8.h"
 #include "BLI_utildefines.h"
+#include "BLI_vector.hh"
 
 #include "BLT_translation.h"
 
@@ -70,6 +71,7 @@
 using blender::float3;
 using blender::MutableSpan;
 using blender::Span;
+using blender::Vector;
 
 static void sculpt_attribute_update_refs(Object *ob);
 static SculptAttribute *sculpt_attribute_ensure_ex(Object *ob,
@@ -1302,12 +1304,7 @@ float paint_grid_paint_mask(const GridPaintMask *gpm, uint level, uint x, uint y
 
 void paint_update_brush_rake_rotation(UnifiedPaintSettings *ups, Brush *brush, float rotation)
 {
-  if (brush->mtex.brush_angle_mode & MTEX_ANGLE_RAKE) {
-    ups->brush_rotation = rotation;
-  }
-  else {
-    ups->brush_rotation = 0.0f;
-  }
+  ups->brush_rotation = rotation;
 
   if (brush->mask_mtex.brush_angle_mode & MTEX_ANGLE_RAKE) {
     ups->brush_rotation_sec = rotation;
@@ -1322,17 +1319,19 @@ static bool paint_rake_rotation_active(const MTex &mtex)
   return mtex.tex && mtex.brush_angle_mode & MTEX_ANGLE_RAKE;
 }
 
-static bool paint_rake_rotation_active(const Brush &brush)
+static const bool paint_rake_rotation_active(const Brush &brush, ePaintMode paint_mode)
 {
-  return paint_rake_rotation_active(brush.mtex) || paint_rake_rotation_active(brush.mask_mtex);
+  return paint_rake_rotation_active(brush.mtex) || paint_rake_rotation_active(brush.mask_mtex) ||
+         BKE_brush_has_cube_tip(&brush, paint_mode);
 }
 
 bool paint_calculate_rake_rotation(UnifiedPaintSettings *ups,
                                    Brush *brush,
-                                   const float mouse_pos[2])
+                                   const float mouse_pos[2],
+                                   ePaintMode paint_mode)
 {
   bool ok = false;
-  if (paint_rake_rotation_active(*brush)) {
+  if (paint_rake_rotation_active(*brush, paint_mode)) {
     const float r = RAKE_THRESHHOLD;
     float rotation;
 
@@ -1894,16 +1893,11 @@ void BKE_sculpt_update_object_before_eval(Object *ob_eval)
       BKE_sculptsession_free_vwpaint_data(ob_eval->sculpt);
     }
     else {
-      PBVHNode **nodes;
-      int n, totnode;
+      Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(ss->pbvh, nullptr, nullptr);
 
-      BKE_pbvh_search_gather(ss->pbvh, nullptr, nullptr, &nodes, &totnode);
-
-      for (n = 0; n < totnode; n++) {
-        BKE_pbvh_node_mark_update(nodes[n]);
+      for (PBVHNode *node : nodes) {
+        BKE_pbvh_node_mark_update(node);
       }
-
-      MEM_freeN(nodes);
     }
   }
 }
@@ -2174,11 +2168,10 @@ static PBVH *build_pbvh_for_dynamic_topology(Object *ob)
   return pbvh;
 }
 
-static PBVH *build_pbvh_from_regular_mesh(Object *ob, Mesh *me_eval_deform, bool respect_hide)
+static PBVH *build_pbvh_from_regular_mesh(Object *ob, Mesh *me_eval_deform)
 {
   Mesh *me = BKE_object_get_original_mesh(ob);
   PBVH *pbvh = BKE_pbvh_new(PBVH_FACES);
-  BKE_pbvh_respect_hide_set(pbvh, respect_hide);
 
   BKE_pbvh_build_mesh(pbvh, me);
 
@@ -2191,12 +2184,11 @@ static PBVH *build_pbvh_from_regular_mesh(Object *ob, Mesh *me_eval_deform, bool
   return pbvh;
 }
 
-static PBVH *build_pbvh_from_ccg(Object *ob, SubdivCCG *subdiv_ccg, bool respect_hide)
+static PBVH *build_pbvh_from_ccg(Object *ob, SubdivCCG *subdiv_ccg)
 {
   CCGKey key;
   BKE_subdiv_ccg_key_top_level(&key, subdiv_ccg);
   PBVH *pbvh = BKE_pbvh_new(PBVH_GRIDS);
-  BKE_pbvh_respect_hide_set(pbvh, respect_hide);
 
   Mesh *base_mesh = BKE_mesh_from_object(ob);
   BKE_sculpt_sync_face_visibility_to_grids(base_mesh, subdiv_ccg);
@@ -2218,8 +2210,6 @@ PBVH *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Object *ob)
   if (ob == nullptr || ob->sculpt == nullptr) {
     return nullptr;
   }
-
-  const bool respect_hide = true;
 
   PBVH *pbvh = ob->sculpt->pbvh;
   if (pbvh != nullptr) {
@@ -2261,11 +2251,11 @@ PBVH *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Object *ob)
     Object *object_eval = DEG_get_evaluated_object(depsgraph, ob);
     Mesh *mesh_eval = static_cast<Mesh *>(object_eval->data);
     if (mesh_eval->runtime->subdiv_ccg != nullptr) {
-      pbvh = build_pbvh_from_ccg(ob, mesh_eval->runtime->subdiv_ccg, respect_hide);
+      pbvh = build_pbvh_from_ccg(ob, mesh_eval->runtime->subdiv_ccg);
     }
     else if (ob->type == OB_MESH) {
       Mesh *me_eval_deform = object_eval->runtime.mesh_deform_eval;
-      pbvh = build_pbvh_from_regular_mesh(ob, me_eval_deform, respect_hide);
+      pbvh = build_pbvh_from_regular_mesh(ob, me_eval_deform);
     }
   }
 

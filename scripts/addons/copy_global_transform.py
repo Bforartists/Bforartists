@@ -17,6 +17,7 @@ bl_info = {
     "category": "Animation",
     "support": 'OFFICIAL',
     "doc_url": "{BLENDER_MANUAL_URL}/addons/animation/copy_global_transform.html",
+    "tracker_url": "https://projects.blender.org/blender/blender-addons/issues",
 }
 
 import ast

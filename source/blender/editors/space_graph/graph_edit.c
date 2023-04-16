@@ -524,7 +524,7 @@ static int graphkeys_copy_exec(bContext *C, wmOperator *op)
 
   /* Copy keyframes. */
   if (copy_graph_keys(&ac)) {
-    BKE_report(op->reports, RPT_ERROR, "No keyframes copied to keyframes copy/paste buffer");
+    BKE_report(op->reports, RPT_ERROR, "No keyframes copied to the internal clipboard");
     return OPERATOR_CANCELLED;
   }
 
@@ -537,7 +537,7 @@ void GRAPH_OT_copy(wmOperatorType *ot)
   /* Identifiers */
   ot->name = "Copy Keyframes";
   ot->idname = "GRAPH_OT_copy";
-  ot->description = "Copy selected keyframes to the copy/paste buffer";
+  ot->description = "Copy selected keyframes to the internal clipboard";
 
   /* API callbacks */
   ot->exec = graphkeys_copy_exec;
@@ -575,7 +575,7 @@ static int graphkeys_paste_exec(bContext *C, wmOperator *op)
       return OPERATOR_CANCELLED;
 
     case KEYFRAME_PASTE_NOTHING_TO_PASTE:
-      BKE_report(op->reports, RPT_ERROR, "No data in buffer to paste");
+      BKE_report(op->reports, RPT_ERROR, "No data in the internal clipboard to paste");
       return OPERATOR_CANCELLED;
   }
 

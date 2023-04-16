@@ -2,6 +2,7 @@
 
 import bpy
 from bpy.app.handlers import persistent
+
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -9,7 +10,6 @@ from mathutils import Euler, Vector
 
 from math import degrees, radians, pi, sin, cos, asin, acos, tan, floor
 import datetime
-from .geo import parse_position
 
 
 class SunInfo:
@@ -46,32 +46,6 @@ class SunInfo:
 
 
 sun = SunInfo()
-
-
-def sun_update(self, context):
-    update_time(context)
-    move_sun(context)
-    if self.show_surface:
-        surface_update(self, context)
-    if self.show_analemmas:
-        analemmas_update(self, context)
-
-
-def parse_coordinates(self, context):
-    error_message = "ERROR: Could not parse coordinates"
-    sun_props = context.scene.sun_pos_properties
-
-    if sun_props.co_parser:
-        parsed_co = parse_position(sun_props.co_parser)
-
-        if parsed_co is not None and len(parsed_co) == 2:
-            sun_props.latitude, sun_props.longitude = parsed_co
-        elif sun_props.co_parser != error_message:
-            sun_props.co_parser = error_message
-
-        # Clear prop
-    if sun_props.co_parser not in {'', error_message}:
-        sun_props.co_parser = ''
 
 
 def move_sun(context):
@@ -120,8 +94,7 @@ def move_sun(context):
 
     azimuth, elevation = get_sun_coordinates(
         local_time, sun_props.latitude, sun_props.longitude,
-        zone, sun_props.month, sun_props.day, sun_props.year,
-        sun_props.sun_distance)
+        zone, sun_props.month, sun_props.day, sun_props.year)
 
     sun.azimuth = azimuth
     sun.elevation = elevation
@@ -159,8 +132,7 @@ def move_sun(context):
                 azimuth, elevation = get_sun_coordinates(
                     local_time, sun_props.latitude,
                     sun_props.longitude, zone,
-                    sun_props.month, sun_props.day,
-                    sun_props.year, sun_props.sun_distance)
+                    sun_props.month, sun_props.day)
                 obj.location = get_sun_vector(azimuth, elevation) * sun_props.sun_distance
                 local_time -= time_increment
                 obj.rotation_euler = ((elevation - pi/2, 0, -azimuth))
@@ -174,8 +146,7 @@ def move_sun(context):
                 azimuth, elevation = get_sun_coordinates(
                     local_time, sun_props.latitude,
                     sun_props.longitude, zone,
-                    dt.month, dt.day, sun_props.year,
-                    sun_props.sun_distance)
+                    dt.month, dt.day, sun_props.year)
                 obj.location = get_sun_vector(azimuth, elevation) * sun_props.sun_distance
                 day -= day_increment
                 obj.rotation_euler = (elevation - pi/2, 0, -azimuth)
@@ -225,50 +196,46 @@ def sun_handler(scene):
     move_sun(bpy.context)
 
 
-def format_time(the_time, daylight_savings, longitude, UTC_zone=None):
+def format_time(time, daylight_savings, UTC_zone=None):
     if UTC_zone is not None:
         if daylight_savings:
             UTC_zone += 1
-        the_time -= UTC_zone
+        time -= UTC_zone
 
-    the_time %= 24
+    time %= 24
 
-    hh = int(the_time)
-    mm = (the_time - int(the_time)) * 60
-    ss = int((mm - int(mm)) * 60)
-
-    return ("%02i:%02i:%02i" % (hh, mm, ss))
+    return format_hms(time)
 
 
-def format_hms(the_time):
-    hh = str(int(the_time))
-    min = (the_time - int(the_time)) * 60
-    sec = int((min - int(min)) * 60)
-    mm = "0" + str(int(min)) if min < 10 else str(int(min))
-    ss = "0" + str(sec) if sec < 10 else str(sec)
+def format_hms(time):
+    hh = int(time)
+    mm = (time % 1.0) * 60
+    ss = (mm % 1.0) * 60
 
-    return (hh + ":" + mm + ":" + ss)
+    return f"{hh:02d}:{int(mm):02d}:{int(ss):02d}"
 
 
-def format_lat_long(lat_long, is_latitude):
-    hh = str(abs(int(lat_long)))
-    min = abs((lat_long - int(lat_long)) * 60)
-    sec = abs(int((min - int(min)) * 60))
-    mm = "0" + str(int(min)) if min < 10 else str(int(min))
-    ss = "0" + str(sec) if sec < 10 else str(sec)
-    if lat_long == 0:
-        coord_tag = " "
-    else:
-        if is_latitude:
-            coord_tag = " N" if lat_long > 0 else " S"
+def format_lat_long(latitude, longitude):
+    coordinates = ""
+
+    for i, co in enumerate((latitude, longitude)):
+        dd = abs(int(co))
+        mm = abs(co - int(co)) * 60.0
+        ss = abs(mm - int(mm)) * 60.0
+        if co == 0:
+            direction = ""
+        elif i == 0:
+            direction = "N" if co > 0 else "S"
         else:
-            coord_tag = " E" if lat_long > 0 else " W"
+            direction = "E" if co > 0 else "W"
 
-    return hh + "° " + mm + "' " + ss + '"' + coord_tag
+        coordinates += f"{dd:02d}°{int(mm):02d}′{ss:05.2f}″{direction} "
+
+    return coordinates.strip(" ")
 
 
 def get_sun_coordinates(local_time, latitude, longitude,
-                        utc_zone, month, day, year, distance):
+                        utc_zone, month, day, year):
     """
     Calculate the actual position of the sun based on input parameters.
 
@@ -284,7 +251,6 @@ def get_sun_coordinates(local_time, latitude, longitude,
     NOAA's web site is:
                 http://www.esrl.noaa.gov/gmd/grad/solcalc
     """
-    addon_prefs = bpy.context.preferences.addons[__package__].preferences
     sun_props = bpy.context.scene.sun_pos_properties
 
     longitude *= -1                   # for internal calculations
@@ -446,10 +412,6 @@ def calc_sunrise_sunset(rise):
                                         sun.latitude, sun.longitude)
     time_local = new_time_UTC + (-zone * 60.0)
     tl = time_local / 60.0
-    azimuth, elevation = get_sun_coordinates(
-        tl, sun.latitude, sun.longitude,
-        zone, sun.month, sun.day, sun.year,
-        sun.sun_distance)
     if sun.use_daylight_savings:
         time_local += 60.0
         tl = time_local / 60.0
@@ -563,7 +525,7 @@ def calc_surface(context):
     def get_surface_coordinates(time, month):
         azimuth, elevation = get_sun_coordinates(
             time, sun_props.latitude, sun_props.longitude,
-            zone, month, 1, sun_props.year, sun_props.sun_distance)
+            zone, month, 1, sun_props.year)
         sun_vector = get_sun_vector(azimuth, elevation) * sun_props.sun_distance
         sun_vector.z = max(0, sun_vector.z)
         return sun_vector
@@ -588,71 +550,8 @@ def calc_analemma(context, h):
         day, month = day_of_year_to_month_day(sun_props.year, day_of_year)
         azimuth, elevation = get_sun_coordinates(
             h, sun_props.latitude, sun_props.longitude,
-            zone, month, day, sun_props.year,
-            sun_props.sun_distance)
+            zone, month, day, sun_props.year)
         sun_vector = get_sun_vector(azimuth, elevation) * sun_props.sun_distance
         if sun_vector.z > 0:
             vertices.append(sun_vector)
     return vertices
-
-
-def draw_surface(batch, shader):
-    blend = gpu.state.blend_get()
-    gpu.state.blend_set("ALPHA")
-    shader.uniform_float("color", (.8, .6, 0, 0.2))
-    batch.draw(shader)
-    gpu.state.blend_set(blend)
-
-
-def draw_analemmas(batch, shader):
-    shader.uniform_float("color", (1, 0, 0, 1))
-    batch.draw(shader)
-
-
-_handle_surface = None
-
-
-def surface_update(self, context):
-    global _handle_surface
-    if self.show_surface:
-        coords = calc_surface(context)
-        shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-        batch = batch_for_shader(shader, 'TRIS', {"pos": coords})
-
-        if _handle_surface is not None:
-            bpy.types.SpaceView3D.draw_handler_remove(_handle_surface, 'WINDOW')
-        _handle_surface = bpy.types.SpaceView3D.draw_handler_add(
-            draw_surface, (batch, shader), 'WINDOW', 'POST_VIEW')
-    elif _handle_surface is not None:
-        bpy.types.SpaceView3D.draw_handler_remove(_handle_surface, 'WINDOW')
-        _handle_surface = None
-
-
-_handle_analemmas = None
-
-
-def analemmas_update(self, context):
-    global _handle_analemmas
-    if self.show_analemmas:
-        coords = []
-        indices = []
-        coord_offset = 0
-        for h in range(24):
-            analemma_verts = calc_analemma(context, h)
-            coords.extend(analemma_verts)
-            for i in range(len(analemma_verts) - 1):
-                indices.append((coord_offset + i,
-                                coord_offset + i+1))
-            coord_offset += len(analemma_verts)
-
-        shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-        batch = batch_for_shader(shader, 'LINES',
-                                 {"pos": coords}, indices=indices)
-
-        if _handle_analemmas is not None:
-            bpy.types.SpaceView3D.draw_handler_remove(_handle_analemmas, 'WINDOW')
-        _handle_analemmas = bpy.types.SpaceView3D.draw_handler_add(
-            draw_analemmas, (batch, shader), 'WINDOW', 'POST_VIEW')
-    elif _handle_analemmas is not None:
-        bpy.types.SpaceView3D.draw_handler_remove(_handle_analemmas, 'WINDOW')
-        _handle_analemmas = None
