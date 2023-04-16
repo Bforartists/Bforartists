@@ -134,6 +134,12 @@ typedef enum eWM_CapabilitiesFlag {
    * (typically set when interactively selecting text).
    */
   WM_CAPABILITY_PRIMARY_CLIPBOARD = (1 << 2),
+  /**
+   * Reading from the back-buffer is supported.
+   */
+  WM_CAPABILITY_GPU_FRONT_BUFFER_READ = (1 << 3),
+  /** Ability to copy/paste system clipboard images. */
+  WM_CAPABILITY_CLIPBOARD_IMAGES = (1 << 4),
 } eWM_CapabilitiesFlag;
 
 eWM_CapabilitiesFlag WM_capabilities_flag(void);
@@ -155,11 +161,6 @@ wmWindow *WM_window_find_under_cursor(wmWindow *win, const int mval[2], int r_mv
  */
 wmWindow *WM_window_find_by_area(wmWindowManager *wm, const struct ScrArea *area);
 
-void WM_window_pixel_sample_read(const wmWindowManager *wm,
-                                 const wmWindow *win,
-                                 const int pos[2],
-                                 float r_col[3]);
-
 /**
  * Read pixels from the front-buffer (fast).
  *
@@ -171,6 +172,11 @@ void WM_window_pixel_sample_read(const wmWindowManager *wm,
  * the front-buffer state to be invalid under some EGL configurations.
  */
 uint *WM_window_pixels_read(struct wmWindowManager *wm, struct wmWindow *win, int r_size[2]);
+void WM_window_pixels_read_sample(const wmWindowManager *wm,
+                                  const wmWindow *win,
+                                  const int pos[2],
+                                  float r_col[3]);
+
 /**
  * Draw the window & read pixels from an off-screen buffer (slower than #WM_window_pixels_read).
  *
@@ -178,6 +184,10 @@ uint *WM_window_pixels_read(struct wmWindowManager *wm, struct wmWindow *win, in
  * (see in-line code comments for details).
  */
 uint *WM_window_pixels_read_offscreen(struct bContext *C, struct wmWindow *win, int r_size[2]);
+bool WM_window_pixels_read_sample_offscreen(struct bContext *C,
+                                            struct wmWindow *win,
+                                            const int pos[2],
+                                            float r_col[3]);
 
 /**
  * Support for native pixel size
@@ -1571,6 +1581,27 @@ char *WM_clipboard_text_get(bool selection, int *r_len);
  */
 char *WM_clipboard_text_get_firstline(bool selection, int *r_len);
 void WM_clipboard_text_set(const char *buf, bool selection);
+
+/**
+ * Returns true if the clipboard contains an image.
+ */
+bool WM_clipboard_image_available(void);
+
+/**
+ * Get image data from the Clipboard
+ * \param r_width: the returned image width in pixels.
+ * \param r_height: the returned image height in pixels.
+ * \return pointer uint array in RGBA byte order. Caller must free.
+ */
+struct ImBuf *WM_clipboard_image_get(void);
+
+/**
+ * Put image data to the Clipboard
+ * \param rgba: uint array in RGBA byte order.
+ * \param width: the image width in pixels.
+ * \param height: the image height in pixels.
+ */
+bool WM_clipboard_image_set(struct ImBuf *ibuf);
 
 /* progress */
 

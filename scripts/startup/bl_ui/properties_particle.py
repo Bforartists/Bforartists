@@ -334,7 +334,7 @@ class PARTICLE_PT_emission_source(ParticleButtonsPanel, Panel):
         row.prop(part, "use_modifier_stack")
         row.prop_decorator(part, "use_modifier_stack")
 
-        if part.emit_from == 'FACE' or part.emit_from == 'VOLUME':
+        if part.emit_from in {'FACE', 'VOLUME'}:
             col.prop(part, "distribution")
 
         if part.emit_from == 'VERT':
@@ -354,7 +354,7 @@ class PARTICLE_PT_emission_source(ParticleButtonsPanel, Panel):
             col.prop(part, "use_even_distribution")
             col.use_property_split = True
 
-        if part.emit_from == 'FACE' or part.emit_from == 'VOLUME':
+        if part.emit_from in {'FACE', 'VOLUME'}:
 
             if part.distribution == 'JIT':
                 col.prop(part, "userjit", text="Particles/Face")

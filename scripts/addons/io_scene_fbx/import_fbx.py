@@ -1468,7 +1468,7 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         mesh.vertices.foreach_set("co", fbx_verts.ravel())
 
     if tot_loops:
-        bl_loop_start_dtype = bl_loop_total_dtype = bl_loop_vertex_index_dtype = np.uintc
+        bl_loop_start_dtype = bl_loop_vertex_index_dtype = np.uintc
 
         mesh.loops.add(tot_loops)
         # The end of each polygon is specified by an inverted index.
@@ -1481,12 +1481,6 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         # Set loop vertex indices, casting to the Blender C type first for performance.
         mesh.loops.foreach_set("vertex_index", astype_view_signedness(fbx_polys, bl_loop_vertex_index_dtype))
 
-        poly_loop_totals = np.empty(tot_polys, dtype=bl_loop_total_dtype)
-        # The loop total of the first polygon is first loop end index plus 1.
-        poly_loop_totals[0] = fbx_loop_end_idx[0] + 1
-        # The differences between consecutive loop end indices are the remaining loop totals.
-        poly_loop_totals[1:] = np.diff(fbx_loop_end_idx)
-
         poly_loop_starts = np.empty(tot_polys, dtype=bl_loop_start_dtype)
         # The first loop is always a loop start.
         poly_loop_starts[0] = 0
@@ -1495,7 +1489,6 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
 
         mesh.polygons.add(tot_polys)
         mesh.polygons.foreach_set("loop_start", poly_loop_starts)
-        mesh.polygons.foreach_set("loop_total", poly_loop_totals)
 
         blen_read_geom_layer_material(fbx_obj, mesh)
         blen_read_geom_layer_uv(fbx_obj, mesh)

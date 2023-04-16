@@ -345,13 +345,11 @@ def load_ply_mesh(filepath, ply_name):
     if mesh_faces:
         loops_vert_idx = []
         faces_loop_start = []
-        faces_loop_total = []
         lidx = 0
         for f in mesh_faces:
             nbr_vidx = len(f)
             loops_vert_idx.extend(f)
             faces_loop_start.append(lidx)
-            faces_loop_total.append(nbr_vidx)
             lidx += nbr_vidx
 
         mesh.loops.add(len(loops_vert_idx))
@@ -359,7 +357,6 @@ def load_ply_mesh(filepath, ply_name):
 
         mesh.loops.foreach_set("vertex_index", loops_vert_idx)
         mesh.polygons.foreach_set("loop_start", faces_loop_start)
-        mesh.polygons.foreach_set("loop_total", faces_loop_total)
 
         if uvindices:
             uv_layer = mesh.uv_layers.new()

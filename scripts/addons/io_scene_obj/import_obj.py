@@ -690,11 +690,9 @@ def create_mesh(new_objects,
         nbr_vidx = len(face_vert_loc_indices)
         faces_loop_start.append(lidx)
         lidx += nbr_vidx
-    faces_loop_total = tuple(len(face_vert_loc_indices) for (face_vert_loc_indices, _, _, _, _, _, _) in faces)
 
     me.loops.foreach_set("vertex_index", loops_vert_idx)
     me.polygons.foreach_set("loop_start", faces_loop_start)
-    me.polygons.foreach_set("loop_total", faces_loop_total)
 
     faces_ma_index = tuple(material_mapping[context_material] for (_, _, _, context_material, _, _, _) in faces)
     me.polygons.foreach_set("material_index", faces_ma_index)

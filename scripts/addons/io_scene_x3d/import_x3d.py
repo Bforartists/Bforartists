@@ -1720,7 +1720,6 @@ def importMesh_IndexedTriangleSet(geom, ancestry):
     bpymesh.loops.add(num_polys * 3)
     bpymesh.polygons.add(num_polys)
     bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
-    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
     bpymesh.polygons.foreach_set("vertices", index)
 
     return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry)
@@ -1742,7 +1741,6 @@ def importMesh_IndexedTriangleStripSet(geom, ancestry):
     bpymesh.loops.add(num_polys * 3)
     bpymesh.polygons.add(num_polys)
     bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
-    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
 
     def triangles():
         i = 0
@@ -1778,7 +1776,6 @@ def importMesh_IndexedTriangleFanSet(geom, ancestry):
     bpymesh.loops.add(num_polys * 3)
     bpymesh.polygons.add(num_polys)
     bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
-    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
 
     def triangles():
         i = 0
@@ -1808,7 +1805,6 @@ def importMesh_TriangleSet(geom, ancestry):
     bpymesh.loops.add(num_polys * 3)
     bpymesh.polygons.add(num_polys)
     bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
-    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
 
     if ccw:
         fv = [i for i in range(n)]
@@ -1830,7 +1826,6 @@ def importMesh_TriangleStripSet(geom, ancestry):
     bpymesh.loops.add(num_polys * 3)
     bpymesh.polygons.add(num_polys)
     bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
-    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
 
     def triangles():
         b = 0
@@ -1856,7 +1851,6 @@ def importMesh_TriangleFanSet(geom, ancestry):
     bpymesh.loops.add(num_polys * 3)
     bpymesh.polygons.add(num_polys)
     bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
-    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
 
     def triangles():
         b = 0
@@ -2067,7 +2061,6 @@ def importMesh_ElevationGrid(geom, ancestry):
     bpymesh.loops.add(num_polys * 4)
     bpymesh.polygons.add(num_polys)
     bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 4, 4))
-    bpymesh.polygons.foreach_set("loop_total", (4,) * num_polys)
     # If the ccw is off, we flip the 2nd and the 4th vertices of each face.
     # For quad tessfaces, it was important that the final vertex index was not 0
     # (Blender treated it as a triangle then).
@@ -2481,7 +2474,6 @@ def importMesh_Sphere(geom, ancestry):
                                  tuple(range(0, ns * 3, 3)) +
                                  tuple(range(ns * 3, num_loop - ns * 3, 4)) +
                                  tuple(range(num_loop - ns * 3, num_loop, 3)))
-    bpymesh.polygons.foreach_set("loop_total", (3,) * ns + (4,) * num_quad + (3,) * ns)
 
     vb = 2 + (nr - 2) * ns  # First vertex index for the bottom cap
     fb = (nr - 1) * ns  # First face index for the bottom cap

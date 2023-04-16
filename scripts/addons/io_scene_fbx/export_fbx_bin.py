@@ -1431,7 +1431,7 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     me_fbxmaterials_idx = scene_data.mesh_material_indices.get(me)
     if me_fbxmaterials_idx is not None:
         # We cannot use me.materials here, as this array is filled with None in case materials are linked to object...
-        me_blmaterials = [mat_slot.material for mat_slot in me_obj.material_slots]
+        me_blmaterials = me_obj.materials
         if me_fbxmaterials_idx and me_blmaterials:
             lay_ma = elem_data_single_int32(geom, b"LayerElementMaterial", 0)
             elem_data_single_int32(lay_ma, b"Version", FBX_GEOMETRY_MATERIAL_VERSION)
@@ -2598,6 +2598,14 @@ def fbx_data_from_scene(scene, depsgraph, settings):
                     bmesh.ops.triangulate(bm, faces=bm.faces)
                     bm.to_mesh(tmp_me)
                     bm.free()
+                # Usually the materials of the evaluated object will be the same, but modifiers, such as Geometry Nodes,
+                # can change the materials.
+                orig_mats = tuple(slot.material for slot in ob.material_slots)
+                eval_mats = tuple(slot.material.original if slot.material else None
+                                  for slot in ob_to_convert.material_slots)
+                if orig_mats != eval_mats:
+                    # Override the default behaviour of getting materials from ob_obj.bdata.material_slots.
+                    ob_obj.override_materials = eval_mats
                 data_meshes[ob_obj] = (get_blenderID_key(tmp_me), tmp_me, True)
             # Change armatures back.
             for armature, pose_position in backup_pose_positions:
@@ -2713,8 +2721,7 @@ def fbx_data_from_scene(scene, depsgraph, settings):
     data_materials = {}
     for ob_obj in objects:
         # If obj is not a valid object for materials, wrapper will just return an empty tuple...
-        for ma_s in ob_obj.material_slots:
-            ma = ma_s.material
+        for ma in ob_obj.materials:
             if ma is None:
                 continue  # Empty slots!
             # Note theoretically, FBX supports any kind of materials, even GLSL shaders etc.
