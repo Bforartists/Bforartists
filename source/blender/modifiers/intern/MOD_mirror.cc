@@ -170,7 +170,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemR(col, ptr, "mirror_object", 0, nullptr, ICON_NONE);
 
   /*------------------- bfa - original props */
-  // uiItemR(col, ptr, "use_clip", 0, IFACE_("Clipping"), ICON_NONE);
+  // uiItemR(col, ptr, "use_clip", 0, CTX_IFACE_(BLT_I18NCONTEXT_ID_MESH, "Clipping"), ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);

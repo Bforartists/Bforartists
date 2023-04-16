@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 import bpy
 from bpy.types import Header, Menu, Panel
-from bl_ui_utils.layout import operator_context
 from bl_ui.space_dopesheet import (
     DopesheetFilterPopoverBase,
     dopesheet_filter,
@@ -415,6 +414,8 @@ class GRAPH_MT_key(Menu):
     bl_label = "Key"
 
     def draw(self, _context):
+        from bl_ui_utils.layout import operator_context
+
         layout = self.layout
 
         layout.menu("GRAPH_MT_key_transform", text="Transform")
