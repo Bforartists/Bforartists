@@ -352,8 +352,8 @@ class IMAGE_MT_image(Menu):
         layout.separator()
 
         if sys.platform[:3] == "win":
-            layout.operator("image.clipboard_copy", text="Copy")
-            layout.operator("image.clipboard_paste", text="Paste")
+            layout.operator("image.clipboard_copy", text="Copy", icon = 'COPYDOWN')
+            layout.operator("image.clipboard_paste", text="Paste", icon = 'PASTEDOWN')
             layout.separator()
 
         if ima:
