@@ -2169,7 +2169,7 @@ static void gpencil_sculpt_brush_apply(bContext *C, wmOperator *op, PointerRNA *
 static Brush *gpencil_sculpt_get_smooth_brush(tGP_BrushEditData *gso)
 {
   Main *bmain = gso->bmain;
-  Brush *brush = BLI_findstring(&bmain->brushes, "Smooth Stroke", offsetof(ID, name) + 2);
+  Brush *brush = BLI_findstring(&bmain->brushes, "GP_S_Smooth Stroke", offsetof(ID, name) + 2); /*BFA - updated to call the default Smooth Stroke brush while holding down SHIFT+LMB to smooth strokes in sculpt mode*/
 
   return brush;
 }
