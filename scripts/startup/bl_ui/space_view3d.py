@@ -3822,12 +3822,8 @@ class VIEW3D_MT_sculpt(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("transform.translate", icon = 'TRANSFORM_MOVE')
-        layout.operator("transform.rotate", icon = 'TRANSFORM_ROTATE')
-        layout.operator("transform.resize", text="Scale", icon = 'TRANSFORM_SCALE')
-
-        props = layout.operator("sculpt.mesh_filter", text="Sphere", icon = 'SPHERE')
-        props.type = 'SPHERE'
+        layout.menu("VIEW3D_MT_sculpt_legacy")
+        layout.menu("VIEW3D_MT_sculpt_transform")
 
         layout.separator()
 
@@ -3836,29 +3832,6 @@ class VIEW3D_MT_sculpt(Menu):
 
         props = layout.operator("paint.hide_show", text="Box Show", icon="BOX_SHOW")
         props.action = 'SHOW'
-
-        layout.separator()
-
-        props = layout.operator("sculpt.face_set_change_visibility", text="Toggle Visibility", icon="HIDE_OFF")
-        props.mode = 'TOGGLE'
-
-        props = layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set", icon="HIDE_ON")
-        props.mode = 'HIDE_ACTIVE'
-
-        props = layout.operator("paint.hide_show", text="Show All", icon="HIDE_OFF")
-        props.action = 'SHOW'
-        props.area = 'ALL'
-
-        props = layout.operator("sculpt.face_set_change_visibility", text="Invert Visible", icon="HIDE_ON")
-        props.mode = 'INVERT'
-
-        props = layout.operator("paint.hide_show", text="Hide Masked", icon="MOD_MASK_OFF")
-        props.action = 'HIDE'
-        props.area = 'MASKED'
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_subdivision_set") # bfa - add subdivion set menu
 
         layout.separator()
 
@@ -3874,9 +3847,9 @@ class VIEW3D_MT_sculpt(Menu):
         props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon = 'LASSO_ADD')
         props.trim_mode = 'JOIN'
 
-        layout.operator("sculpt.project_line_gesture", text="Line Project", icon = 'LINE_PROJECT')
-
         layout.separator()
+
+        layout.operator("sculpt.project_line_gesture", text="Line Project", icon = 'LINE_PROJECT')
 
         # Fair Positions
         props = layout.operator("sculpt.face_set_edit", text="Fair Positions", icon = 'POSITION')
@@ -3906,7 +3879,12 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_subdivision_set") # bfa - add subdivion set menu
+
+        layout.separator()
+
         layout.menu("VIEW3D_MT_sculpt_set_pivot", text="Set Pivot")
+        layout.menu("VIEW3D_MT_sculpt_showhide")
 
         layout.separator()
 
@@ -3916,6 +3894,51 @@ class VIEW3D_MT_sculpt(Menu):
         layout.separator()
 
         layout.operator("object.transfer_mode", text="Transfer Sculpt Mode", icon="TRANSFER_SCULPT")
+
+
+class VIEW3D_MT_sculpt_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("transform.translate", icon = 'TRANSFORM_MOVE')
+        layout.operator("transform.rotate", icon = 'TRANSFORM_ROTATE')
+        layout.operator("transform.resize", text="Scale", icon = 'TRANSFORM_SCALE')
+
+
+class VIEW3D_MT_sculpt_transform(Menu):
+    bl_label = "Transform"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        props = layout.operator("sculpt.mesh_filter", text="Sphere", icon = 'SPHERE')
+        props.type = 'SPHERE'
+
+
+class VIEW3D_MT_sculpt_showhide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        props = layout.operator("sculpt.face_set_change_visibility", text="Toggle Visibility", icon="HIDE_OFF")
+        props.mode = 'TOGGLE'
+
+        props = layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set", icon="HIDE_ON")
+        props.mode = 'HIDE_ACTIVE'
+
+        props = layout.operator("paint.hide_show", text="Show All", icon="HIDE_OFF")
+        props.action = 'SHOW'
+        props.area = 'ALL'
+
+        props = layout.operator("sculpt.face_set_change_visibility", text="Invert Visible", icon="HIDE_ON")
+        props.mode = 'INVERT'
+
+        props = layout.operator("paint.hide_show", text="Hide Masked", icon="MOD_MASK_OFF")
+        props.action = 'HIDE'
+        props.area = 'MASKED'
 
 
 class VIEW3D_MT_sculpt_curves(Menu):
@@ -9618,6 +9641,9 @@ classes = (
     VIEW3D_MT_subdivision_set,
     VIEW3D_MT_sculpt_specials,
     VIEW3D_MT_sculpt,
+    VIEW3D_MT_sculpt_legacy,
+    VIEW3D_MT_sculpt_transform,
+    VIEW3D_MT_sculpt_showhide,
     VIEW3D_MT_sculpt_set_pivot,
     VIEW3D_MT_mask,
     VIEW3D_MT_mask_legacy,
