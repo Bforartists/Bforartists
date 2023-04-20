@@ -2432,6 +2432,492 @@ class MASK_MT_flood_fill_clear(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class VIEW3D_PT_sculpttab_transform(toolshelf_calculate, Panel):
+    bl_label = "Transform"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Sculpt"
+    bl_context = "sculpt_mode"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            props = col.operator("sculpt.mesh_filter", text=" Sphere        ", icon = 'SPHERE')
+            props.type = 'SPHERE'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'SPHERE')
+                props.type = 'SPHERE'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'SPHERE')
+                props.type = 'SPHERE'
+
+            elif column_count == 1:
+
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'SPHERE')
+                props.type = 'SPHERE'
+
+
+class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
+    bl_label = "Sculpt"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Sculpt"
+    bl_context = "sculpt_mode"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            props = col.operator("paint.hide_show", text=" Box Hide    ", icon="BOX_HIDE")
+            props.action = 'HIDE'
+
+            props = col.operator("paint.hide_show", text=" Box Show   ", icon="BOX_SHOW")
+            props.action = 'SHOW'
+
+            props = col.operator("sculpt.trim_box_gesture", text=" Box Trim    ", icon = 'BOX_TRIM')
+            props.trim_mode = 'DIFFERENCE'
+
+            props = col.operator("sculpt.trim_lasso_gesture", text=" Lasso Trim  ", icon = 'LASSO_TRIM')
+            props.trim_mode = 'DIFFERENCE'
+
+            props = col.operator("sculpt.trim_box_gesture", text=" Box Add      ", icon = 'BOX_ADD')
+            props.trim_mode = 'JOIN'
+
+            props = col.operator("sculpt.trim_lasso_gesture", text=" Lasso Add   ", icon = 'LASSO_ADD')
+            props.trim_mode = 'JOIN'
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("sculpt.project_line_gesture", text=" Line Project  ", icon = 'LINE_PROJECT')
+
+            # Fair Positions
+            props = col.operator("sculpt.face_set_edit", text=" Fair Positions", icon = 'POSITION')
+            props.mode = 'FAIR_POSITIONS'
+
+            # Fair Tangency
+            props = col.operator("sculpt.face_set_edit", text=" Fair Tangency", icon = 'NODE_TANGENT')
+            props.mode = 'FAIR_TANGENCY'
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                props = row.operator("paint.hide_show", text="", icon="BOX_HIDE")
+                props.action = 'HIDE'
+
+                props = row.operator("paint.hide_show", text="", icon="BOX_SHOW")
+                props.action = 'SHOW'
+
+                props = row.operator("sculpt.trim_box_gesture", text="", icon = 'BOX_TRIM')
+                props.trim_mode = 'DIFFERENCE'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.trim_lasso_gesture", text="", icon = 'LASSO_TRIM')
+                props.trim_mode = 'DIFFERENCE'
+
+                props = row.operator("sculpt.trim_box_gesture", text="", icon = 'BOX_ADD')
+                props.trim_mode = 'JOIN'
+
+                props = row.operator("sculpt.trim_lasso_gesture", text="", icon = 'LASSO_ADD')
+                props.trim_mode = 'JOIN'
+
+                col.separator()
+
+                row = col.row(align=True)
+                row.operator("sculpt.project_line_gesture", text="", icon = 'LINE_PROJECT')
+
+                # Fair Positions
+                props = row.operator("sculpt.face_set_edit", text="", icon = 'POSITION')
+                props.mode = 'FAIR_POSITIONS'
+
+                # Fair Tangency
+                props = row.operator("sculpt.face_set_edit", text="", icon = 'NODE_TANGENT')
+                props.mode = 'FAIR_TANGENCY'
+
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                props = row.operator("paint.hide_show", text="", icon="BOX_HIDE")
+                props.action = 'HIDE'
+
+                props = row.operator("paint.hide_show", text="", icon="BOX_SHOW")
+                props.action = 'SHOW'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.trim_box_gesture", text="", icon = 'BOX_TRIM')
+                props.trim_mode = 'DIFFERENCE'
+
+                props = row.operator("sculpt.trim_lasso_gesture", text="", icon = 'LASSO_TRIM')
+                props.trim_mode = 'DIFFERENCE'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.trim_box_gesture", text="", icon = 'BOX_ADD')
+                props.trim_mode = 'JOIN'
+
+                props = row.operator("sculpt.trim_lasso_gesture", text="", icon = 'LASSO_ADD')
+                props.trim_mode = 'JOIN'
+
+                col.separator()
+
+                row = col.row(align=True)
+                row.operator("sculpt.project_line_gesture", text="", icon = 'LINE_PROJECT')
+
+                # Fair Positions
+                props = row.operator("sculpt.face_set_edit", text="", icon = 'POSITION')
+                props.mode = 'FAIR_POSITIONS'
+
+                row = col.row(align=True)
+                # Fair Tangency
+                props = row.operator("sculpt.face_set_edit", text="", icon = 'NODE_TANGENT')
+                props.mode = 'FAIR_TANGENCY'
+
+            elif column_count == 1:
+
+                props = col.operator("paint.hide_show", text="", icon="BOX_HIDE")
+                props.action = 'HIDE'
+
+                props = col.operator("paint.hide_show", text="", icon="BOX_SHOW")
+                props.action = 'SHOW'
+
+                props = col.operator("sculpt.trim_box_gesture", text="", icon = 'BOX_TRIM')
+                props.trim_mode = 'DIFFERENCE'
+
+                props = col.operator("sculpt.trim_lasso_gesture", text="", icon = 'LASSO_TRIM')
+                props.trim_mode = 'DIFFERENCE'
+
+                props = col.operator("sculpt.trim_box_gesture", text="", icon = 'BOX_ADD')
+                props.trim_mode = 'JOIN'
+
+                props = col.operator("sculpt.trim_lasso_gesture", text="", icon = 'LASSO_ADD')
+                props.trim_mode = 'JOIN'
+
+                col.separator()
+
+                col.operator("sculpt.project_line_gesture", text="", icon = 'LINE_PROJECT')
+
+                # Fair Positions
+                props = col.operator("sculpt.face_set_edit", text="", icon = 'POSITION')
+                props.mode = 'FAIR_POSITIONS'
+
+                # Fair Tangency
+                props = col.operator("sculpt.face_set_edit", text="", icon = 'NODE_TANGENT')
+                props.mode = 'FAIR_TANGENCY'
+
+
+class VIEW3D_PT_sculpttab_filters(toolshelf_calculate, Panel):
+    bl_label = "Meshfilter"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Sculpt"
+    bl_context = "sculpt_mode"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            props = col.operator("sculpt.mesh_filter", text=" Smooth           ", icon = 'PARTICLEBRUSH_SMOOTH')
+            props.type = 'SMOOTH'
+
+            props = col.operator("sculpt.mesh_filter", text=" Surface Smooth", icon = 'SURFACE_SMOOTH')
+            props.type = 'SURFACE_SMOOTH'
+
+            props = col.operator("sculpt.mesh_filter", text=" Inflate              ", icon = 'INFLATE')
+            props.type = 'INFLATE'
+
+            props = col.operator("sculpt.mesh_filter", text=" Relax Topology", icon = 'RELAX_TOPOLOGY')
+            props.type = 'RELAX'
+
+            props = col.operator("sculpt.mesh_filter", text=" Relax Face Sets", icon = 'RELAX_FACE_SETS')
+            props.type = 'RELAX_FACE_SETS'
+
+            props = col.operator("sculpt.mesh_filter", text=" Sharpen            ", icon = 'SHARPEN')
+            props.type = 'SHARPEN'
+
+            props = col.operator("sculpt.mesh_filter", text=" Enhance Details", icon = 'ENHANCE')
+            props.type = 'ENHANCE_DETAILS'
+
+            props = col.operator("sculpt.mesh_filter", text=" Erase Multires Displacement", icon = 'DELETE')
+            props.type = 'ERASE_DISCPLACEMENT'
+
+            props = col.operator("sculpt.mesh_filter", text=" Randomize          ", icon = 'RANDOMIZE')
+            props.type = 'RANDOM'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'PARTICLEBRUSH_SMOOTH')
+                props.type = 'SMOOTH'
+
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'SURFACE_SMOOTH')
+                props.type = 'SURFACE_SMOOTH'
+
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'INFLATE')
+                props.type = 'INFLATE'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'RELAX_TOPOLOGY')
+                props.type = 'RELAX'
+
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'RELAX_FACE_SETS')
+                props.type = 'RELAX_FACE_SETS'
+
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'SHARPEN')
+                props.type = 'SHARPEN'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'ENHANCE')
+                props.type = 'ENHANCE_DETAILS'
+
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'DELETE')
+                props.type = 'ERASE_DISCPLACEMENT'
+
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'RANDOMIZE')
+                props.type = 'RANDOM'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'PARTICLEBRUSH_SMOOTH')
+                props.type = 'SMOOTH'
+
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'SURFACE_SMOOTH')
+                props.type = 'SURFACE_SMOOTH'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'INFLATE')
+                props.type = 'INFLATE'
+
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'RELAX_TOPOLOGY')
+                props.type = 'RELAX'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'RELAX_FACE_SETS')
+                props.type = 'RELAX_FACE_SETS'
+
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'SHARPEN')
+                props.type = 'SHARPEN'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'ENHANCE')
+                props.type = 'ENHANCE_DETAILS'
+
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'DELETE')
+                props.type = 'ERASE_DISCPLACEMENT'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mesh_filter", text="", icon = 'RANDOMIZE')
+                props.type = 'RANDOM'
+
+            elif column_count == 1:
+
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'PARTICLEBRUSH_SMOOTH')
+                props.type = 'SMOOTH'
+
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'SURFACE_SMOOTH')
+                props.type = 'SURFACE_SMOOTH'
+
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'INFLATE')
+                props.type = 'INFLATE'
+
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'RELAX_TOPOLOGY')
+                props.type = 'RELAX'
+
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'RELAX_FACE_SETS')
+                props.type = 'RELAX_FACE_SETS'
+
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'SHARPEN')
+                props.type = 'SHARPEN'
+
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'ENHANCE')
+                props.type = 'ENHANCE_DETAILS'
+
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'DELETE')
+                props.type = 'ERASE_DISCPLACEMENT'
+
+                props = col.operator("sculpt.mesh_filter", text="", icon = 'RANDOMIZE')
+                props.type = 'RANDOM'
+
+
+class VIEW3D_PT_sculpttab_set_pivot(toolshelf_calculate, Panel):
+    bl_label = "Set Pivot"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Sculpt"
+    bl_context = "sculpt_mode"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            props = col.operator("sculpt.set_pivot_position", text=" Pivot to Origin        ", icon="PIVOT_TO_ORIGIN")
+            props.mode = 'ORIGIN'
+
+            props = col.operator("sculpt.set_pivot_position", text=" Pivot to Unmasked  ", icon="PIVOT_TO_UNMASKED")
+            props.mode = 'UNMASKED'
+
+            props = col.operator("sculpt.set_pivot_position", text=" Pivot to Mask Border", icon="PIVOT_TO_MASKBORDER")
+            props.mode = 'BORDER'
+
+            props = col.operator("sculpt.set_pivot_position", text=" Pivot to Active Vertex", icon="PIVOT_TO_ACTIVE_VERT")
+            props.mode = 'ACTIVE'
+
+            props = col.operator("sculpt.set_pivot_position", text=" Pivot to Surface Under Cursor", icon="PIVOT_TO_SURFACE")
+            props.mode = 'SURFACE'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ORIGIN")
+                props.mode = 'ORIGIN'
+
+                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_UNMASKED")
+                props.mode = 'UNMASKED'
+
+                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_MASKBORDER")
+                props.mode = 'BORDER'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ACTIVE_VERT")
+                props.mode = 'ACTIVE'
+
+                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_SURFACE")
+                props.mode = 'SURFACE'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ORIGIN")
+                props.mode = 'ORIGIN'
+
+                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_UNMASKED")
+                props.mode = 'UNMASKED'
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_MASKBORDER")
+                props.mode = 'BORDER'
+
+                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ACTIVE_VERT")
+                props.mode = 'ACTIVE'
+
+                row = col.row(align=True)
+                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_SURFACE")
+                props.mode = 'SURFACE'
+
+            elif column_count == 1:
+
+                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ORIGIN")
+                props.mode = 'ORIGIN'
+
+                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_UNMASKED")
+                props.mode = 'UNMASKED'
+
+                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_MASKBORDER")
+                props.mode = 'BORDER'
+
+                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ACTIVE_VERT")
+                props.mode = 'ACTIVE'
+
+                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_SURFACE")
+                props.mode = 'SURFACE'
+
+
 class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
     bl_label = "Mask"
     bl_space_type = 'VIEW_3D'
@@ -2817,10 +3303,6 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
             col.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK").mode = 'INVERT'
             col.operator("sculpt.reveal_all", text='Show Active Face Set', icon = "HIDE_OFF")
-            
-            # bfa - deactivated. These operators now crashes.
-            #col.operator("sculpt.face_set_change_visibility", text='Hide Active Face Sets', icon = "HIDE_ON").mode = 'HIDE_ACTIVE'
-            #col.operator("sculpt.face_set_change_visibility", text='Toggle Visibility', icon = "HIDE_UNSELECTED").mode = 'TOGGLE'
 
             col.separator(factor = 0.5)
 
@@ -2846,15 +3328,9 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 row.operator("mesh.face_set_extract", text='', icon = "SEPARATE")
 
                 row = col.row(align=True)
-                row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'INVERT'        
+                row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'INVERT'
                 row.operator("sculpt.reveal_all", text = '', icon = "HIDE_OFF")
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
-                
-                # bfa - deactivated. These operators now crashes.
-                #row = col.row(align=True)
-                #row.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_ON").mode = 'HIDE_ACTIVE'
-                #row.operator("sculpt.face_set_change_visibility", text='T', icon = "HIDE_UNSELECTED").mode = 'TOGGLE'
-                
 
             elif column_count == 2:
 
@@ -2873,12 +3349,6 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'INVERT'
                 row.operator("sculpt.reveal_all", text='', icon = "HIDE_OFF")
-                
-                # bfa - deactivated. These operators now crashes.
-                #row = col.row(align=True)
-                
-                #row.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_ON").mode = 'HIDE_ACTIVE'
-                #row.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_UNSELECTED").mode = 'TOGGLE'
 
                 row = col.row(align=True)
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
@@ -2900,12 +3370,8 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
 
-                col.operator("sculpt.face_set_change_visibility", text = '', icon = "INVERT_MASK").mode = 'INVERT'          
+                col.operator("sculpt.face_set_change_visibility", text = '', icon = "INVERT_MASK").mode = 'INVERT'
                 col.operator("sculpt.reveal_all", text = '', icon = "HIDE_OFF").mode = 'SHOW_ACTIVE'
-                
-                # bfa - deactivated. These operators now crashes.
-                #col.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_ON").mode = 'HIDE_ACTIVE'
-                #col.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_UNSELECTED").mode = 'TOGGLE'
 
                 col.separator(factor = 0.5)
 
@@ -5995,6 +6461,10 @@ classes = (
     VIEW3D_PT_uvtab_uv,
 
     #mesh sculpt mode
+    VIEW3D_PT_sculpttab_transform,
+    VIEW3D_PT_sculpttab_sculpt,
+    VIEW3D_PT_sculpttab_filters,
+    VIEW3D_PT_sculpttab_set_pivot,
     VIEW3D_PT_masktab_mask,
     VIEW3D_PT_masktab_random_mask,
     VIEW3D_PT_facesetstab_facesets,
