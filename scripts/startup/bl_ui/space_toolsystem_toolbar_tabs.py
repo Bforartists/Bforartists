@@ -6058,7 +6058,6 @@ class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'WHILE_HELD'
                 row.operator("pose.propagate", text="", icon = "PROPAGATE_NEXT").mode = 'NEXT_KEY'
                 row.operator("pose.propagate", text="", icon = "PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
 
@@ -6069,21 +6068,14 @@ class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'WHILE_HELD'
-                row.operator("pose.propagate", text="", icon = "PROPAGATE_NEXT").mode = 'NEXT_KEY'
-
-                row = col.row(align=True)
+                row.operator("pose.propagate", text="", icon = "PROPAGATE_NEXT").mode = 'NEXT_KEY'           
                 row.operator("pose.propagate", text="", icon = "PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
-                row.operator("pose.propagate", text="", icon = "PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
 
                 row = col.row(align=True)
+                row.operator("pose.propagate", text="", icon = "PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
                 row.operator("pose.propagate", text="", icon = "PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
 
             elif column_count == 1:
-
-                col.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'WHILE_HELD'
-
-                col.separator(factor = 0.5)
 
                 col.operator("pose.propagate", text="", icon = "PROPAGATE_NEXT").mode = 'NEXT_KEY'
                 col.operator("pose.propagate", text="", icon = "PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
