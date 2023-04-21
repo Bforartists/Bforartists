@@ -83,23 +83,23 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
     layout.separator()
 
     # Make sure these operator properties match those used in `VIEW3D_PT_pose_library`.
-    layout.operator("poselib.apply_pose_asset", text="Apply Pose").flipped = False
-    layout.operator("poselib.apply_pose_asset", text="Apply Pose Flipped").flipped = True
+    layout.operator("poselib.apply_pose_asset", icon="MOD_ARMATURE_SELECTED", text="Apply Pose").flipped = False
+    layout.operator("poselib.apply_pose_asset", icon="FLIP",text="Apply Pose Flipped").flipped = True
 
     old_op_ctx = layout.operator_context
     layout.operator_context = 'INVOKE_DEFAULT'
-    props = layout.operator("poselib.blend_pose_asset", text="Blend Pose")
+    props = layout.operator("poselib.blend_pose_asset", icon="BLEND_TO_DEFAULT", text="Blend Pose")
     layout.operator_context = old_op_ctx
 
     layout.separator()
-    props = layout.operator("poselib.pose_asset_select_bones", text="Select Pose Bones")
+    props = layout.operator("poselib.pose_asset_select_bones", icon="SELECT_ALL", text="Select Pose Bones")
     props.select = True
-    props = layout.operator("poselib.pose_asset_select_bones", text="Deselect Pose Bones")
+    props = layout.operator("poselib.pose_asset_select_bones", icon="SELECT_NONE", text="Deselect Pose Bones")
     props.select = False
 
     if not is_pose_asset_view():
         layout.separator()
-        layout.operator("asset.assign_action")
+        layout.operator("asset.assign_action", icon="ACTION_TWEAK")
 
     layout.separator()
     if is_pose_asset_view():
