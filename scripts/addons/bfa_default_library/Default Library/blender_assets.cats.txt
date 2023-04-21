@@ -1,4 +1,4 @@
-# This is an Asset Catalog Definition file for blend files.
+# This is an Asset Catalog Definition file for Blender.
 #
 # Empty lines and lines starting with `#` will be ignored.
 # The first non-ignored line should be the version indicator.
