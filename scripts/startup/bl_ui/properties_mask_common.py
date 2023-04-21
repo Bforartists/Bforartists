@@ -240,14 +240,14 @@ class MASK_PT_display:
             sub.prop(space_data, "mask_display_type", text="")
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
-    
+
         row = layout.row(align=True)
         row.prop(space_data, "show_mask_overlay", text="Overlay")
         if space_data.show_mask_overlay:
             sub = row.row()
             sub.active = space_data.show_mask_overlay
             sub.prop(space_data, "mask_overlay_mode", text="")
-            
+
             row = layout.row()
             row.active = (space_data.mask_overlay_mode in ['COMBINED'] and space_data.show_mask_overlay)
             row.prop(space_data, "blend_factor", text="Blending Factor")
@@ -396,7 +396,7 @@ class MASK_MT_transform(Menu):
         layout.separator()
 
         layout.operator("transform.transform", text = "Scale Feather", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
-        layout.operator("mask.feather_weight_clear", text = "  Clear Feather Weight", icon = "CLEAR")
+        layout.operator("mask.feather_weight_clear", text = "Clear Feather Weight", icon = "CLEAR")
 
 
 class MASK_MT_animation(Menu):
