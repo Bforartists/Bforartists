@@ -723,6 +723,400 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
                 col.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
 
 
+class IMAGE_PT_image_masktab_add(toolshelf_calculate, Panel):
+    bl_label = "Add"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mask"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+
+        obj = context.object
+
+        # text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator_context = 'INVOKE_REGION_WIN'
+            col.operator("mask.primitive_circle_add", text="Circle", icon='MESH_CIRCLE')
+            col.operator("mask.primitive_square_add", text="Square", icon='MESH_PLANE')
+
+            col.separator()
+
+            col.operator("mask.add_vertex_slide", text="Add Vertex and Slide", icon='SLIDE_VERTEX')
+
+        # icon buttons
+        else:
+            col = layout.column(align=True)
+            col.operator_context = 'INVOKE_REGION_WIN'
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mask.primitive_circle_add", text="", icon='MESH_CIRCLE')
+                row.operator("mask.primitive_square_add", text="", icon='MESH_PLANE')
+                row.operator("mask.add_vertex_slide", text="", icon='SLIDE_VERTEX')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mask.primitive_circle_add", text="", icon='MESH_CIRCLE')
+                row.operator("mask.primitive_square_add", text="", icon='MESH_PLANE')
+
+                row = col.row(align=True)
+                row.operator("mask.add_vertex_slide", text="", icon='SLIDE_VERTEX')
+
+            elif column_count == 1:
+
+                col.operator("mask.primitive_circle_add", text="", icon='MESH_CIRCLE')
+                col.operator("mask.primitive_square_add", text="", icon='MESH_PLANE')
+
+                col.separator()
+
+                col.operator("mask.add_vertex_slide", text="", icon='SLIDE_VERTEX')
+
+
+class IMAGE_PT_image_masktab_transform(toolshelf_calculate, Panel):
+    bl_label = "Transform"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mask"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+
+        obj = context.object
+
+        # text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("transform.tosphere", text = "To Sphere", icon = "TOSPHERE")
+            col.operator("transform.shear", text = "Shear", icon = "SHEAR")
+            col.operator("transform.push_pull", text = "Push/Pull", icon = "PUSH_PULL")
+
+            col.separator()
+
+            col.operator("transform.transform", text = "Scale Feather", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
+            col.operator("mask.feather_weight_clear", text = "  Clear Feather Weight", icon = "CLEAR")
+
+        # icon buttons
+        else:
+            col = layout.column(align=True)
+            col.operator_context = 'INVOKE_REGION_WIN'
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("transform.tosphere", text = "", icon = "TOSPHERE")
+                row.operator("transform.shear", text = "", icon = "SHEAR")
+                row.operator("transform.push_pull", text = "", icon = "PUSH_PULL")
+
+                row = col.row(align=True)
+                row.operator("transform.transform", text = "", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
+                row.operator("mask.feather_weight_clear", text = "", icon = "CLEAR")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("transform.tosphere", text = "", icon = "TOSPHERE")
+                row.operator("transform.shear", text = "", icon = "SHEAR")
+
+                row = col.row(align=True)
+                row.operator("transform.push_pull", text = "", icon = "PUSH_PULL")
+                row.operator("transform.transform", text = "", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
+
+                row = col.row(align=True)
+                row.operator("mask.feather_weight_clear", text = "", icon = "CLEAR")
+
+            elif column_count == 1:
+
+                col.operator("transform.tosphere", text = "", icon = "TOSPHERE")
+                col.operator("transform.shear", text = "", icon = "SHEAR")
+                col.operator("transform.push_pull", text = "", icon = "PUSH_PULL")
+
+                col.separator()
+
+                col.operator("transform.transform", text = "", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
+                col.operator("mask.feather_weight_clear", text = "", icon = "CLEAR")
+
+
+class IMAGE_PT_image_masktab_mask(toolshelf_calculate, Panel):
+    bl_label = "Mask"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mask"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+
+        obj = context.object
+
+        # text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mask.parent_set", icon = "PARENT_SET")
+            col.operator("mask.parent_clear", icon = "PARENT_CLEAR")
+
+            col.separator()
+
+            col.operator("mask.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+            col.operator("mask.switch_direction", icon = 'SWITCH_DIRECTION')
+            col.operator("mask.normals_make_consistent", icon = "RECALC_NORMALS")
+
+        # icon buttons
+        else:
+            col = layout.column(align=True)
+            col.operator_context = 'INVOKE_REGION_WIN'
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mask.parent_set", text="", icon = "PARENT_SET")
+                row.operator("mask.parent_clear", text="", icon = "PARENT_CLEAR")
+                row.operator("mask.cyclic_toggle", text="", icon = 'TOGGLE_CYCLIC')
+
+                row = col.row(align=True)
+                row.operator("mask.switch_direction", text="", icon = 'SWITCH_DIRECTION')
+                row.operator("mask.normals_make_consistent", text="", icon = "RECALC_NORMALS")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mask.parent_set", text="", icon = "PARENT_SET")
+                row.operator("mask.parent_clear", text="", icon = "PARENT_CLEAR")
+
+                row = col.row(align=True)
+                row.operator("mask.cyclic_toggle", text="", icon = 'TOGGLE_CYCLIC')
+                row.operator("mask.switch_direction", text="", icon = 'SWITCH_DIRECTION')
+
+                row = col.row(align=True)
+                row.operator("mask.normals_make_consistent", text="", icon = "RECALC_NORMALS")
+
+            elif column_count == 1:
+
+                col.operator("mask.parent_set", text="", icon = "PARENT_SET")
+                col.operator("mask.parent_clear", text="", icon = "PARENT_CLEAR")
+
+                col.separator()
+
+                col.operator("mask.cyclic_toggle", text="", icon = 'TOGGLE_CYCLIC')
+                col.operator("mask.switch_direction", text="", icon = 'SWITCH_DIRECTION')
+                col.operator("mask.normals_make_consistent", text="", icon = "RECALC_NORMALS")
+
+
+class IMAGE_PT_image_masktab_handletype(toolshelf_calculate, Panel):
+    bl_label = "Set Handle Type"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mask"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+
+        obj = context.object
+
+        # text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mask.handle_type_set", text="Auto", icon = "HANDLE_AUTO").type = 'AUTO'
+            col.operator("mask.handle_type_set", text="Vector", icon = "HANDLE_VECTOR").type = 'VECTOR'
+            col.operator("mask.handle_type_set", text="Aligned Single", icon = 'HANDLE_ALIGN_SINGLE').type = 'ALIGNED'
+            col.operator("mask.handle_type_set", text="Aligned", icon = 'HANDLE_ALIGNED').type = 'ALIGNED_DOUBLESIDE'
+            col.operator("mask.handle_type_set", text="Free", icon = "HANDLE_FREE").type = 'FREE'
+
+        # icon buttons
+        else:
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mask.handle_type_set", text="", icon = "HANDLE_AUTO").type = 'AUTO'
+                row.operator("mask.handle_type_set", text="", icon = "HANDLE_VECTOR").type = 'VECTOR'
+                row.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGN_SINGLE').type = 'ALIGNED'
+
+                row = col.row(align=True)
+                row.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGNED').type = 'ALIGNED_DOUBLESIDE'
+                row.operator("mask.handle_type_set", text="", icon = "HANDLE_FREE").type = 'FREE'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mask.handle_type_set", text="", icon = "HANDLE_AUTO").type = 'AUTO'
+                row.operator("mask.handle_type_set", text="", icon = "HANDLE_VECTOR").type = 'VECTOR'
+
+                row = col.row(align=True)
+                row.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGN_SINGLE').type = 'ALIGNED'
+                row.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGNED').type = 'ALIGNED_DOUBLESIDE'
+
+                row = col.row(align=True)
+                row.operator("mask.handle_type_set", text="", icon = "HANDLE_FREE").type = 'FREE'
+
+            elif column_count == 1:
+
+                col.operator("mask.handle_type_set", text="", icon = "HANDLE_AUTO").type = 'AUTO'
+                col.operator("mask.handle_type_set", text="", icon = "HANDLE_VECTOR").type = 'VECTOR'
+                col.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGN_SINGLE').type = 'ALIGNED'
+                col.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGNED').type = 'ALIGNED_DOUBLESIDE'
+                col.operator("mask.handle_type_set", text="", icon = "HANDLE_FREE").type = 'FREE'
+
+
+class IMAGE_PT_image_masktab_animation(toolshelf_calculate, Panel):
+    bl_label = "Animation"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mask"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+
+        obj = context.object
+
+        # text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mask.shape_key_insert", text="Insert Shape Key", icon = "KEYFRAMES_INSERT")
+            col.operator("mask.shape_key_clear", text="Clear Shape", icon = "CLEAR")
+            col.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon='RESET')
+            col.operator("mask.shape_key_rekey", text="Re-key Shape Points", icon = "SHAPEKEY_DATA")
+
+        # icon buttons
+        else:
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mask.shape_key_insert", text="", icon = "KEYFRAMES_INSERT")
+                row.operator("mask.shape_key_clear", text="", icon = "CLEAR")
+                row.operator("mask.shape_key_feather_reset", text="", icon='RESET')
+
+                row = col.row(align=True)
+                row.operator("mask.shape_key_rekey", text="", icon = "SHAPEKEY_DATA")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mask.shape_key_insert", text="", icon = "KEYFRAMES_INSERT")
+                row.operator("mask.shape_key_clear", text="", icon = "CLEAR")
+
+                row = col.row(align=True)
+                row.operator("mask.shape_key_feather_reset", text="", icon='RESET')
+                row.operator("mask.shape_key_rekey", text="", icon = "SHAPEKEY_DATA")
+
+            elif column_count == 1:
+
+                col.operator("mask.shape_key_insert", text="", icon = "KEYFRAMES_INSERT")
+                col.operator("mask.shape_key_clear", text="", icon = "CLEAR")
+                col.operator("mask.shape_key_feather_reset", text="", icon='RESET')
+                col.operator("mask.shape_key_rekey", text="", icon = "SHAPEKEY_DATA")
+
+
 classes = (
 
     IMAGE_PT_uvtab_transform,
@@ -732,6 +1126,12 @@ classes = (
     IMAGE_PT_uvtab_merge,
     IMAGE_PT_uvtab_uvtools,
     IMAGE_PT_uvtab_align,
+
+    IMAGE_PT_image_masktab_add,
+    IMAGE_PT_image_masktab_transform,
+    IMAGE_PT_image_masktab_mask,
+    IMAGE_PT_image_masktab_handletype,
+    IMAGE_PT_image_masktab_animation,
 )
 
 if __name__ == "__main__":  # only for live edit.
