@@ -1582,7 +1582,7 @@ static void add_attribute_search_or_value_buttons(const bContext &C,
 
   uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
   uiLayout *name_row = uiLayoutRow(split, false);
-  //uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);// bfa - we align our labels left
+  //uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);// bfa - turned off, we align our labels left
 
   const int use_attribute = RNA_int_get(md_ptr, rna_path_use_attribute.c_str()) != 0;
   if (socket.type == SOCK_BOOLEAN && !use_attribute) {
@@ -1702,7 +1702,7 @@ static void draw_property_for_output_socket(const bContext &C,
 
   uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
   uiLayout *name_row = uiLayoutRow(split, false);
-  uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);
+  //uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);// bfa - turned off, we align our labels left
   uiItemL(name_row, socket.name, ICON_NONE);
 
   uiLayout *row = uiLayoutRow(split, true);
@@ -1845,7 +1845,8 @@ static void internal_dependencies_panel_draw(const bContext * /*C*/, Panel *pane
     }
 
     uiLayout *row = uiLayoutRow(split, false);
-    uiLayoutSetAlignment(row, UI_LAYOUT_ALIGN_RIGHT);
+    //uiLayoutSetAlignment(row, UI_LAYOUT_ALIGN_RIGHT);// bfa - turned off, we align our labels left
+
     uiLayoutSetActive(row, false);
     uiItemL(row, ss.str().c_str(), ICON_NONE);
 
