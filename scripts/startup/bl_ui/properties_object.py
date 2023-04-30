@@ -295,7 +295,7 @@ class OBJECT_PT_instancing(ObjectButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         ob = context.object
-        # FONT objects need (vertex) instancing for the 'Object Font' feature
+        # FONT objects need (vertex) instancing for the "Object Font" feature.
         return (ob.type in {'MESH', 'EMPTY', 'FONT'})
 
     def draw(self, context):
@@ -343,7 +343,7 @@ class OBJECT_PT_instancing_size(ObjectButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         ob = context.object
-        return ob.instance_type == 'FACES'
+        return (ob is not None) and (ob.instance_type == 'FACES')
 
     def draw_header(self, context):
 
@@ -371,7 +371,8 @@ class OBJECT_PT_lineart(ObjectButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        lineart = context.object.lineart
+        ob = context.object
+        lineart = ob.lineart
 
         layout.use_property_split = True
 
@@ -474,7 +475,7 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         row.prop(ob, "hide_render", text = "Renders", toggle=False, invert_checkbox=True)
         row.prop_decorator(ob, "hide_render")
 
-        if context.object.type == 'GPENCIL':
+        if ob.type == 'GPENCIL':
 
             col = layout.column(align = True)
             col.label(text = "Grease Pencil")

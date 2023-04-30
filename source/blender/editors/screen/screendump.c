@@ -56,15 +56,12 @@ static int screenshot_data_create(bContext *C, wmOperator *op, ScrArea *area)
 {
   int dumprect_size[2];
 
-  wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win = CTX_wm_window(C);
 
   /* do redraw so we don't show popups/menus */
   WM_redraw_windows(C);
 
-  uint *dumprect = (WM_capabilities_flag() & WM_CAPABILITY_GPU_FRONT_BUFFER_READ) ?
-                       WM_window_pixels_read(wm, win, dumprect_size) :
-                       WM_window_pixels_read_offscreen(C, win, dumprect_size);
+  uint *dumprect = WM_window_pixels_read(C, win, dumprect_size);
 
   if (dumprect) {
     ScreenshotData *scd = MEM_callocN(sizeof(ScreenshotData), "screenshot");
@@ -170,11 +167,14 @@ static int screenshot_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 
     /* extension is added by 'screenshot_check' after */
     char filepath[FILE_MAX];
-    BLI_snprintf(filepath, FILE_MAX, "//%s", DATA_("screen"));
     const char *blendfile_path = BKE_main_blendfile_path_from_global();
     if (blendfile_path[0] != '\0') {
       BLI_strncpy(filepath, blendfile_path, sizeof(filepath));
-      BLI_path_extension_replace(filepath, sizeof(filepath), ""); /* strip '.blend' */
+      BLI_path_extension_strip(filepath); /* Strip `.blend`. */
+    }
+    else {
+      /* As the file isn't saved, only set the name and let the file selector pick a directory. */
+      STRNCPY(filepath, DATA_("screen"));
     }
     RNA_string_set(op->ptr, "filepath", filepath);
 
