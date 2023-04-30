@@ -417,7 +417,7 @@ static int sculpt_face_set_create_exec(bContext *C, wmOperator *op)
 
   if (mode == SCULPT_FACE_SET_SELECTION) {
     const bke::AttributeAccessor attributes = mesh->attributes();
-    const VArraySpan<bool> select_poly = attributes.lookup_or_default<bool>(
+    const VArraySpan<bool> select_poly = *attributes.lookup_or_default<bool>(
         ".select_poly", ATTR_DOMAIN_FACE, false);
     threading::parallel_for(select_poly.index_range(), 4096, [&](const IndexRange range) {
       for (const int i : range) {
@@ -552,7 +552,7 @@ static void sculpt_face_sets_init_flood_fill(Object *ob, const FaceSetsFloodFill
 
   int *face_sets = ss->face_sets;
 
-  const Span<MEdge> edges = mesh->edges();
+  const Span<int2> edges = mesh->edges();
   const OffsetIndices polys = mesh->polys();
   const Span<int> corner_edges = mesh->corner_edges();
 
@@ -609,7 +609,7 @@ static void sculpt_face_sets_init_loop(Object *ob, const int mode)
 
   if (mode == SCULPT_FACE_SETS_FROM_MATERIALS) {
     const bke::AttributeAccessor attributes = mesh->attributes();
-    const VArraySpan<int> material_indices = attributes.lookup_or_default<int>(
+    const VArraySpan<int> material_indices = *attributes.lookup_or_default<int>(
         "material_index", ATTR_DOMAIN_FACE, 0);
     for (const int i : IndexRange(mesh->totpoly)) {
       ss->face_sets[i] = material_indices[i] + 1;
@@ -660,7 +660,7 @@ static int sculpt_face_set_init_exec(bContext *C, wmOperator *op)
 
   switch (mode) {
     case SCULPT_FACE_SETS_FROM_LOOSE_PARTS: {
-      const VArray<bool> hide_poly = attributes.lookup_or_default<bool>(
+      const VArray<bool> hide_poly = *attributes.lookup_or_default<bool>(
           ".hide_poly", ATTR_DOMAIN_FACE, false);
       sculpt_face_sets_init_flood_fill(
           ob, [&](const int from_face, const int /*edge*/, const int to_face) {
@@ -681,7 +681,7 @@ static int sculpt_face_set_init_exec(bContext *C, wmOperator *op)
       break;
     }
     case SCULPT_FACE_SETS_FROM_UV_SEAMS: {
-      const VArraySpan<bool> uv_seams = mesh->attributes().lookup_or_default<bool>(
+      const VArraySpan<bool> uv_seams = *mesh->attributes().lookup_or_default<bool>(
           ".uv_seam", ATTR_DOMAIN_EDGE, false);
       sculpt_face_sets_init_flood_fill(
           ob, [&](const int /*from_face*/, const int edge, const int /*to_face*/) -> bool {
@@ -699,7 +699,7 @@ static int sculpt_face_set_init_exec(bContext *C, wmOperator *op)
       break;
     }
     case SCULPT_FACE_SETS_FROM_SHARP_EDGES: {
-      const VArraySpan<bool> sharp_edges = mesh->attributes().lookup_or_default<bool>(
+      const VArraySpan<bool> sharp_edges = *mesh->attributes().lookup_or_default<bool>(
           "sharp_edge", ATTR_DOMAIN_EDGE, false);
       sculpt_face_sets_init_flood_fill(
           ob, [&](const int /*from_face*/, const int edge, const int /*to_face*/) -> bool {
