@@ -170,7 +170,10 @@ static int foreach_libblock_remap_callback(LibraryIDLinkCallbackData *cb_data)
 {
   const int cb_flag = cb_data->cb_flag;
 
-  if (cb_flag & (IDWALK_CB_EMBEDDED | IDWALK_CB_EMBEDDED_NOT_OWNING)) {
+  /* NOTE: Support remapping of `IDWALK_CB_EMBEDDED_NON_OWNING` pointers, this is necessary in some
+   * complex low-level ID manipulation cases (e.g. in ID swapping, see #BKE_lib_id_swap & co).
+   */
+  if (cb_flag & IDWALK_CB_EMBEDDED) {
     return IDWALK_RET_NOP;
   }
 
@@ -480,7 +483,9 @@ static void libblock_remap_data(Main *bmain,
       (((remap_flags & ID_REMAP_FORCE_INTERNAL_RUNTIME_POINTERS) != 0 ?
             IDWALK_DO_INTERNAL_RUNTIME_POINTERS :
             IDWALK_NOP) |
-       ((remap_flags & ID_REMAP_FORCE_UI_POINTERS) != 0 ? IDWALK_INCLUDE_UI : IDWALK_NOP));
+       ((remap_flags & ID_REMAP_FORCE_UI_POINTERS) != 0 ? IDWALK_INCLUDE_UI : IDWALK_NOP) |
+       ((remap_flags & ID_REMAP_NO_ORIG_POINTERS_ACCESS) != 0 ? IDWALK_NO_ORIG_POINTERS_ACCESS :
+                                                                IDWALK_NOP));
 
   id_remap_data.id_remapper = id_remapper;
   id_remap_data.type = remap_type;
@@ -890,8 +895,8 @@ static void libblock_relink_to_newid_prepare_data(Main *bmain,
 static int id_relink_to_newid_looper(LibraryIDLinkCallbackData *cb_data)
 {
   const int cb_flag = cb_data->cb_flag;
-  if (cb_flag & (IDWALK_CB_EMBEDDED | IDWALK_CB_EMBEDDED_NOT_OWNING |
-                 IDWALK_CB_OVERRIDE_LIBRARY_REFERENCE)) {
+  /* NOTE: For now, support remapping `IDWALK_CB_EMBEDDED_NON_OWNING` pointers. */
+  if (cb_flag & (IDWALK_CB_EMBEDDED | IDWALK_CB_OVERRIDE_LIBRARY_REFERENCE)) {
     return IDWALK_RET_NOP;
   }
 
