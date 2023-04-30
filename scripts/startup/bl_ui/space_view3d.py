@@ -1,15 +1,29 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 import bpy
-from bl_ui.properties_grease_pencil_common import (AnnotationDataPanel, AnnotationOnionSkin, GreasePencilMaterialsPanel,
-                                                   GreasePencilVertexcolorPanel)
-from bl_ui.properties_paint_common import UnifiedPaintPanel, brush_basic_texpaint_settings
-from bl_ui.space_toolsystem_common import ToolActivePanelHelper
-from bpy.app.translations import contexts as i18n_contexts
-from bpy.app.translations import pgettext_iface as iface_
-from bpy.app.translations import pgettext_tip as tip_
-from bpy.types import Header, Menu, Panel
-
-
+from bpy.types import (
+    Header,
+    Menu,
+    Panel,
+)
+from bl_ui.properties_paint_common import (
+    UnifiedPaintPanel,
+    brush_basic_texpaint_settings,
+    brush_basic_gpencil_weight_settings,
+)
+from bl_ui.properties_grease_pencil_common import (
+    AnnotationDataPanel,
+    AnnotationOnionSkin,
+    GreasePencilMaterialsPanel,
+    GreasePencilVertexcolorPanel,
+)
+from bl_ui.space_toolsystem_common import (
+    ToolActivePanelHelper,
+)
+from bpy.app.translations import (
+    pgettext_iface as iface_,
+    pgettext_tip as tip_,
+    contexts as i18n_contexts,
+)
 class VIEW3D_HT_header(Header):
     bl_space_type = 'VIEW_3D'
 
@@ -732,8 +746,13 @@ class _draw_tool_settings_context_mode:
         paint = context.tool_settings.gpencil_weight_paint
         brush = paint.brush
 
-        from bl_ui.properties_paint_common import brush_basic_gpencil_weight_settings
+        from bl_ui.properties_paint_common import (
+            brush_basic_gpencil_weight_settings,
+        )
         brush_basic_gpencil_weight_settings(layout, context, brush, compact=True)
+
+        layout.popover("VIEW3D_PT_tools_grease_pencil_weight_options", text="Options")
+        layout.popover("VIEW3D_PT_tools_grease_pencil_brush_weight_falloff", text="Falloff")
 
         return True
 
@@ -1973,8 +1992,8 @@ class VIEW3D_MT_select_edit_text(Menu):
 
         layout.separator()
 
-        layout.operator("font.move_select", text="Line End", icon="HAND").type = 'LINE_END'
-        layout.operator("font.move_select", text="Line Begin", icon="HAND").type = 'LINE_BEGIN'
+        layout.operator("font.move_select", text="Previous Block").type = 'PREVIOUS_PAGE'
+        layout.operator("font.move_select", text="Next Block").type = 'NEXT_PAGE'
 
         layout.separator()
 
@@ -3999,12 +4018,15 @@ class VIEW3D_MT_mask(Menu):
         props = layout.operator("sculpt.expand", text="Expand Mask by Topology", icon="MESH_DATA")
         props.target = 'MASK'
         props.falloff_type = 'GEODESIC'
-        props.invert = True
+        props.invert = False
+        props.use_auto_mask = False
+        props.use_mask_preserve = True
 
         props = layout.operator("sculpt.expand", text="Expand Mask by Curvature", icon="CURVE_DATA")
         props.target = 'MASK'
         props.falloff_type = 'NORMALS'
         props.invert = False
+        props.use_mask_preserve = True
 
         layout.separator()
 
@@ -4061,8 +4083,17 @@ class VIEW3D_MT_face_sets(Menu):
 
         layout.separator()
 
-        layout.operator("sculpt.face_set_edit", text="Grow Face Set", icon='SELECTMORE').mode = 'GROW'
-        layout.operator("sculpt.face_set_edit", text="Shrink Face Set", icon='SELECTLESS').mode = 'SHRINK'
+        props = layout.operator("sculpt.expand", text="Expand Face Set by Topology")
+        props.target = 'FACE_SETS'
+        props.falloff_type = 'GEODESIC'
+        props.invert = False
+        props.use_modify_active = False
+
+        props = layout.operator("sculpt.expand", text="Expand Active Face Set")
+        props.target = 'FACE_SETS'
+        props.falloff_type = 'BOUNDARY_FACE_SET'
+        props.invert = False
+        props.use_modify_active = True
 
         layout.separator()
 
@@ -6079,7 +6110,7 @@ class VIEW3D_MT_draw_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.interpolate", text="Interpolate", icon="INTERPOLATE")
+        layout.operator("gpencil.interpolate", text="Interpolate", icon="INTERPOLATE")#BFA - merge edit
         layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE")
 
         layout.separator()
@@ -6126,7 +6157,8 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
     def draw(self, _context):
         layout = self.layout
-
+        
+        #layout.menu("VIEW3D_MT_edit_gpencil_transform_legacy")
         layout.menu("VIEW3D_MT_edit_gpencil_transform")
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("GPENCIL_MT_snap")
@@ -6159,6 +6191,10 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.operator("gpencil.paste", text="Paste", icon='PASTEDOWN').type = 'ACTIVE'
         layout.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER'
 
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_weight_gpencil")
+        
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_gpencil_delete")
@@ -6329,11 +6365,21 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
 
     def draw(self, _context):
         layout = self.layout
-
+		
         layout.operator("transform.bend", text="Bend", icon="BEND")
         layout.operator("transform.shear", text="Shear", icon="SHEAR")
         layout.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
         layout.operator("transform.transform", text="Shrink Fatten", icon='SHRINK_FATTEN').mode = 'GPENCIL_SHRINKFATTEN'
+
+#class VIEW3D_MT_edit_gpencil_transform_legacy(Menu):
+#    bl_label = "Legacy"
+#    
+#    def draw(self, _context):
+#    	layout = self.layout
+#
+#        layout.operator("transform.translate", icon="TRANSFORM_MOVE")
+#        layout.operator("transform.rotate", icon="TRANSFORM_ROTATE")
+#        layout.operator("transform.resize", icon="TRANSFORM_SCALE", text="Scale")
 
 
 class VIEW3D_MT_edit_curves(Menu):
@@ -8946,8 +8992,149 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
 
             col.separator()
 
-            col.operator("gpencil.reproject", text="Reproject", icon="REPROJECT")
+            col.operator("gpencil.reproject", text="Reproject")
 
+def draw_gpencil_layer_active(context, layout):
+    gpl = context.active_gpencil_layer
+    if gpl:
+        layout.label(text="Active Layer")
+        row = layout.row(align=True)
+        row.operator_context = 'EXEC_REGION_WIN'
+        row.operator_menu_enum("gpencil.layer_change", "layer", text="", icon='GREASEPENCIL')
+        row.prop(gpl, "info", text="")
+        row.operator("gpencil.layer_remove", text="", icon='X')
+
+
+def draw_gpencil_material_active(context, layout):
+    ob = context.active_object
+    if ob and len(ob.material_slots) > 0 and ob.active_material_index >= 0:
+        ma = ob.material_slots[ob.active_material_index].material
+        if ma:
+            layout.label(text="Active Material")
+            row = layout.row(align=True)
+            row.operator_context = 'EXEC_REGION_WIN'
+            row.operator_menu_enum("gpencil.material_set", "slot", text="", icon='MATERIAL')
+            row.prop(ma, "name", text="")
+
+
+class VIEW3D_PT_gpencil_sculpt_automasking(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Auto-masking"
+    bl_ui_units_x = 10
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.scene.tool_settings
+        layout.label(text="Auto-masking")
+
+        col = layout.column(align=True)
+        col.prop(tool_settings.gpencil_sculpt, "use_automasking_stroke", text="Stroke")
+        col.prop(tool_settings.gpencil_sculpt, "use_automasking_layer_stroke", text="Layer")
+        col.prop(tool_settings.gpencil_sculpt, "use_automasking_material_stroke", text="Material")
+        col.separator()
+        col.prop(tool_settings.gpencil_sculpt, "use_automasking_layer_active", text="Active Layer")
+        col.prop(tool_settings.gpencil_sculpt, "use_automasking_material_active", text="Active Material")
+
+
+class VIEW3D_PT_gpencil_sculpt_context_menu(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'WINDOW'
+    bl_label = "Sculpt Context Menu"
+    bl_ui_units_x = 12
+
+    def draw(self, context):
+        ts = context.tool_settings
+        settings = ts.gpencil_sculpt_paint
+        brush = settings.brush
+
+        layout = self.layout
+
+        layout.prop(brush, "size", slider=True)
+        layout.prop(brush, "strength")
+
+        # Layers
+        draw_gpencil_layer_active(context, layout)
+
+
+class VIEW3D_PT_gpencil_weight_context_menu(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'WINDOW'
+    bl_label = "Weight Paint Context Menu"
+    bl_ui_units_x = 12
+
+    def draw(self, context):
+        ts = context.tool_settings
+        settings = ts.gpencil_weight_paint
+        brush = settings.brush
+
+        layout = self.layout
+
+        layout.prop(brush, "size", slider=True)
+        layout.prop(brush, "strength")
+        layout.prop(brush, "weight")
+
+        # Layers
+        draw_gpencil_layer_active(context, layout)
+
+
+class VIEW3D_MT_gpencil_sculpt(Menu):
+    bl_label = "Sculpt"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.menu("VIEW3D_MT_assign_material")
+        layout.separator()
+
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon="DUPLICATE")
+        layout.operator(
+            "gpencil.frame_duplicate",
+            text="Duplicate Active Frame All Layers",
+            icon="DUPLICATE").mode = 'ALL'
+
+        layout.separator()
+
+        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
+        layout.operator("gpencil.stroke_simplify_fixed", text="Simplify", icon="MOD_SIMPLIFY")
+        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative", icon="SIMPLIFY_ADAPTIVE")
+
+        if context.mode == 'WEIGHT_GPENCIL':
+            layout.separator()
+            layout.menu("VIEW3D_MT_gpencil_autoweights")
+
+        layout.separator()
+
+        # radial control button brush size
+        myvar = layout.operator("wm.radial_control", text="Brush Radius", icon="BRUSHSIZE")
+        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.size'
+
+        # radial control button brush strength
+        myvar = layout.operator("wm.radial_control", text="Brush Strength", icon="BRUSHSTRENGTH")
+        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
+
+        layout.separator()
+
+        # line edit toggles from the keympap
+        props = layout.operator("wm.context_toggle", text="Toggle Edit Lines", icon='STROKE')
+        props.data_path = "space_data.overlay.use_gpencil_edit_lines"
+
+        props = layout.operator("wm.context_toggle", text="Toggle Multiline Edit Only", icon='STROKE')
+        props.data_path = "space_data.overlay.use_gpencil_multiedit_line_only"
+
+
+class VIEW3D_PT_gpencil_edit_options(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Options"
+
+    def draw(self, context):
+        layout = self.layout
+        settings = context.tool_settings.gpencil_sculpt
+
+        layout.prop(settings, "use_scale_thickness", text="Scale Thickness")
 
 class VIEW3D_PT_gpencil_draw_context_menu(Panel):
     bl_space_type = 'VIEW_3D'
@@ -9139,147 +9326,6 @@ class VIEW3D_PT_paint_weight_context_menu(Panel):
             slider=True)
 
 
-def draw_gpencil_layer_active(context, layout):
-    gpl = context.active_gpencil_layer
-    if gpl:
-        layout.label(text="Active Layer")
-        row = layout.row(align=True)
-        row.operator_context = 'EXEC_REGION_WIN'
-        row.operator_menu_enum("gpencil.layer_change", "layer", text="", icon='GREASEPENCIL')
-        row.prop(gpl, "info", text="")
-        row.operator("gpencil.layer_remove", text="", icon='X')
-
-
-def draw_gpencil_material_active(context, layout):
-    ob = context.active_object
-    if ob and len(ob.material_slots) > 0 and ob.active_material_index >= 0:
-        ma = ob.material_slots[ob.active_material_index].material
-        if ma:
-            layout.label(text="Active Material")
-            row = layout.row(align=True)
-            row.operator_context = 'EXEC_REGION_WIN'
-            row.operator_menu_enum("gpencil.material_set", "slot", text="", icon='MATERIAL')
-            row.prop(ma, "name", text="")
-
-
-class VIEW3D_PT_gpencil_sculpt_automasking(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'HEADER'
-    bl_label = "Auto-masking"
-    bl_ui_units_x = 10
-
-    def draw(self, context):
-        layout = self.layout
-
-        tool_settings = context.scene.tool_settings
-        layout.label(text="Auto-masking")
-
-        col = layout.column(align=True)
-        col.prop(tool_settings.gpencil_sculpt, "use_automasking_stroke", text="Stroke")
-        col.prop(tool_settings.gpencil_sculpt, "use_automasking_layer_stroke", text="Layer")
-        col.prop(tool_settings.gpencil_sculpt, "use_automasking_material_stroke", text="Material")
-        col.separator()
-        col.prop(tool_settings.gpencil_sculpt, "use_automasking_layer_active", text="Active Layer")
-        col.prop(tool_settings.gpencil_sculpt, "use_automasking_material_active", text="Active Material")
-
-
-class VIEW3D_PT_gpencil_sculpt_context_menu(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'WINDOW'
-    bl_label = "Sculpt Context Menu"
-    bl_ui_units_x = 12
-
-    def draw(self, context):
-        ts = context.tool_settings
-        settings = ts.gpencil_sculpt_paint
-        brush = settings.brush
-
-        layout = self.layout
-
-        layout.prop(brush, "size", slider=True)
-        layout.prop(brush, "strength")
-
-        # Layers
-        draw_gpencil_layer_active(context, layout)
-
-
-class VIEW3D_PT_gpencil_weight_context_menu(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'WINDOW'
-    bl_label = "Weight Paint Context Menu"
-    bl_ui_units_x = 12
-
-    def draw(self, context):
-        ts = context.tool_settings
-        settings = ts.gpencil_weight_paint
-        brush = settings.brush
-
-        layout = self.layout
-
-        layout.prop(brush, "size", slider=True)
-        layout.prop(brush, "strength")
-        layout.prop(brush, "weight")
-
-        # Layers
-        draw_gpencil_layer_active(context, layout)
-
-
-class VIEW3D_MT_gpencil_sculpt(Menu):
-    bl_label = "Sculpt"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("VIEW3D_MT_assign_material")
-        layout.separator()
-
-        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon="DUPLICATE")
-        layout.operator(
-            "gpencil.frame_duplicate",
-            text="Duplicate Active Frame All Layers",
-            icon="DUPLICATE").mode = 'ALL'
-
-        layout.separator()
-
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
-        layout.operator("gpencil.stroke_simplify_fixed", text="Simplify", icon="MOD_SIMPLIFY")
-        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative", icon="SIMPLIFY_ADAPTIVE")
-
-        if context.mode == 'WEIGHT_GPENCIL':
-            layout.separator()
-            layout.menu("VIEW3D_MT_gpencil_autoweights")
-
-        layout.separator()
-
-        # radial control button brush size
-        myvar = layout.operator("wm.radial_control", text="Brush Radius", icon="BRUSHSIZE")
-        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.size'
-
-        # radial control button brush strength
-        myvar = layout.operator("wm.radial_control", text="Brush Strength", icon="BRUSHSTRENGTH")
-        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
-
-        layout.separator()
-
-        # line edit toggles from the keympap
-        props = layout.operator("wm.context_toggle", text="Toggle Edit Lines", icon='STROKE')
-        props.data_path = "space_data.overlay.use_gpencil_edit_lines"
-
-        props = layout.operator("wm.context_toggle", text="Toggle Multiline Edit Only", icon='STROKE')
-        props.data_path = "space_data.overlay.use_gpencil_multiedit_line_only"
-
-
-class VIEW3D_PT_gpencil_edit_options(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'HEADER'
-    bl_label = "Options"
-
-    def draw(self, context):
-        layout = self.layout
-        settings = context.tool_settings.gpencil_sculpt
-
-        layout.prop(settings, "use_scale_thickness", text="Scale Thickness")
 
 
 class VIEW3D_PT_sculpt_automasking(Panel):
@@ -9732,6 +9778,7 @@ classes = (
     VIEW3D_MT_edit_armature_delete,
     VIEW3D_MT_gpencil_animation,
     VIEW3D_MT_edit_gpencil_transform,
+    #VIEW3D_MT_edit_gpencil_transform_legacy,
     VIEW3D_MT_edit_curves,
     VIEW3D_MT_object_mode_pie,
     VIEW3D_MT_view_pie,

@@ -154,7 +154,7 @@ struct SculptUndoNodeGeometry {
   CustomData ldata;
   CustomData pdata;
   int *poly_offset_indices;
-  blender::ImplicitSharingInfo *poly_offsets_sharing_info;
+  const blender::ImplicitSharingInfo *poly_offsets_sharing_info;
   int totvert;
   int totedge;
   int totloop;
@@ -613,7 +613,10 @@ struct StrokeCache {
   int radial_symmetry_pass;
   float symm_rot_mat[4][4];
   float symm_rot_mat_inv[4][4];
-  bool original;
+
+  /* Accumulate mode. Note: inverted for SCULPT_TOOL_DRAW_SHARP. */
+  bool accum;
+
   float anchored_location[3];
 
   /* Paint Brush. */
