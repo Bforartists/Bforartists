@@ -124,6 +124,7 @@ class NODE_HT_header(Header):
         id_from = snode.id_from
         tool_settings = context.tool_settings
         is_compositor = snode.tree_type == 'CompositorNodeTree'
+        not_group = (len(snode.path) > 1) # bfa - don't show up arrow if at top level.
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
@@ -288,8 +289,12 @@ class NODE_HT_header(Header):
         # Put pin next to ID block
         if not is_compositor:
             layout.prop(snode, "pin", text="", emboss=False)
-
-        layout.operator("node.tree_path_parent", text="", icon='FILE_PARENT')
+        
+        # bfa - don't show up arrow if at top level.
+        if not_group:
+            layout.operator("node.tree_path_parent", text="", icon='FILE_PARENT')
+        else:
+            pass
 
         # Backdrop
         if is_compositor:
