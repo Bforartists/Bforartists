@@ -198,6 +198,7 @@ class SEQUENCER_HT_header(Header):
         sub.active = st.show_overlays
 
         row.popover(panel = "SEQUENCER_PT_view_options", text = "Options")
+		## BFA - moved "class SEQUENCER_MT_editor_menus" below
 
 
 class SEQUENCER_PT_gizmo_display(Panel):
@@ -306,6 +307,7 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
+
 class SEQUENCER_MT_editor_menus(Menu):
     bl_idname = "SEQUENCER_MT_editor_menus"
     bl_label = ""
@@ -330,8 +332,6 @@ class SEQUENCER_MT_editor_menus(Menu):
 
         if st.view_type in {'SEQUENCER', 'PREVIEW'}:
             layout.menu("SEQUENCER_MT_image")
-
-
 
 class SEQUENCER_MT_view_cache(Menu):
     bl_label = "Cache"
@@ -416,7 +416,7 @@ class SEQUENCER_MT_view_pie_menus(Menu):
             layout.operator("wm.call_menu_pie", text = "Pivot Point", icon = "MENU_PANEL").name = 'SEQUENCER_MT_pivot_pie'
         layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'SEQUENCER_MT_preview_view_pie'
 
-
+## BFA - this menu has most of the property toggles now show exclusively in the property shelf.
 class SEQUENCER_MT_view(Menu):
     bl_label = "View"
 
@@ -1837,7 +1837,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
             layout.prop(strip, "use_annotations", text="Annotations")
             if scene:
                 # Warning, this is not a good convention to follow.
-                # Expose here because setting the alpha from the 'Render' menu is very inconvenient.
+                # Expose here because setting the alpha from the "Render" menu is very inconvenient.
                 row = layout.row()
                 row.separator()
                 row.prop(scene.render, "film_transparent")
@@ -2282,10 +2282,10 @@ class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
 
         col = layout.column()
 
-        col.prop(ed, "use_cache_raw")
+        col.prop(ed, "use_cache_raw", text="Raw")
         col.prop(ed, "use_cache_preprocessed", text="Preprocessed")
-        col.prop(ed, "use_cache_composite")
-        col.prop(ed, "use_cache_final")
+        col.prop(ed, "use_cache_composite", text="Composite")
+        col.prop(ed, "use_cache_final", text="Final")
 
 
 class SEQUENCER_PT_proxy_settings(SequencerButtonsPanel, Panel):
