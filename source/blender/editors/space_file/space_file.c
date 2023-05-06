@@ -613,6 +613,7 @@ static void file_operatortypes(void)
   WM_operatortype_append(FILE_OT_start_filter);
   WM_operatortype_append(FILE_OT_edit_directory_path);
   WM_operatortype_append(FILE_OT_view_selected);
+  WM_operatortype_append(FILE_OT_external_operation);
 }
 
 /* NOTE: do not add .blend file reading on this level */
@@ -925,7 +926,7 @@ static void file_id_remap(ScrArea *area, SpaceLink *sl, const struct IDRemapper 
   file_reset_filelist_showing_main_data(area, sfile);
 }
 
-static void file_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
+static void file_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 {
   SpaceFile *sfile = (SpaceFile *)sl;
 
@@ -950,15 +951,15 @@ static void file_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
   }
 }
 
-static void file_blend_read_lib(BlendLibReader *UNUSED(reader),
-                                ID *UNUSED(parent_id),
-                                SpaceLink *sl)
+static void file_space_blend_read_lib(BlendLibReader *UNUSED(reader),
+                                      ID *UNUSED(parent_id),
+                                      SpaceLink *sl)
 {
   SpaceFile *sfile = (SpaceFile *)sl;
   sfile->tags |= FILE_TAG_REBUILD_MAIN_FILES;
 }
 
-static void file_blend_write(BlendWriter *writer, SpaceLink *sl)
+static void file_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
   SpaceFile *sfile = (SpaceFile *)sl;
 
@@ -994,9 +995,9 @@ void ED_spacetype_file(void)
   st->space_subtype_set = file_space_subtype_set;
   st->context = file_context;
   st->id_remap = file_id_remap;
-  st->blend_read_data = file_blend_read_data;
-  st->blend_read_lib = file_blend_read_lib;
-  st->blend_write = file_blend_write;
+  st->blend_read_data = file_space_blend_read_data;
+  st->blend_read_lib = file_space_blend_read_lib;
+  st->blend_write = file_space_blend_write;
 
   /* regions: main window */
   art = MEM_callocN(sizeof(ARegionType), "spacetype file region");
@@ -1063,6 +1064,7 @@ void ED_spacetype_file(void)
   art->draw = file_tools_region_draw;
   BLI_addhead(&st->regiontypes, art);
   file_tool_props_region_panels_register(art);
+  file_external_operations_menu_register();
 
   BKE_spacetype_register(st);
 }

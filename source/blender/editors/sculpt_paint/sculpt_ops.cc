@@ -313,6 +313,11 @@ void SCULPT_ensure_valid_pivot(const Object *ob, Scene *scene)
   UnifiedPaintSettings *ups = &scene->toolsettings->unified_paint_settings;
   const SculptSession *ss = ob->sculpt;
 
+  /* Account for the case where no objects are evaluated. */
+  if (!ss->pbvh) {
+    return;
+  }
+
   /* No valid pivot? Use bounding box center. */
   if (ups->average_stroke_counter == 0 || !ups->last_stroke_valid) {
     float location[3], max[3];
@@ -901,9 +906,12 @@ static int sculpt_mask_by_color_invoke(bContext *C, wmOperator *op, const wmEven
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Object *ob = CTX_data_active_object(C);
   SculptSession *ss = ob->sculpt;
-  View3D *v3d = CTX_wm_view3d(C);
-  if (v3d->shading.type == OB_SOLID) {
-    v3d->shading.color_type = V3D_SHADING_VERTEX_COLOR;
+
+  {
+    View3D *v3d = CTX_wm_view3d(C);
+    if (v3d && v3d->shading.type == OB_SOLID) {
+      v3d->shading.color_type = V3D_SHADING_VERTEX_COLOR;
+    }
   }
 
   /* Color data is not available in multi-resolution or dynamic topology. */
