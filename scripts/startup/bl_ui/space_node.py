@@ -14,7 +14,7 @@ from bl_ui.space_toolsystem_common import (
 )
 from bl_ui.properties_material import (
     EEVEE_MATERIAL_PT_settings,
-    MATERIAL_PT_viewport
+    MATERIAL_PT_viewport,
 )
 from bl_ui.properties_world import (
     WORLD_PT_viewport_display
@@ -144,7 +144,13 @@ class NODE_HT_header(Header):
                 ob_type = ob.type
 
                 NODE_MT_editor_menus.draw_collapsible(context, layout)
-
+				## BFA - moved below to a different solution
+                # No shader nodes for Eevee lights
+                #if snode_id and not (context.engine == 'BLENDER_EEVEE' and ob_type == 'LIGHT'):
+                #    row = layout.row()
+                #    row.prop(snode_id, "use_nodes")
+				#
+                #layout.separator_spacer()
                 types_that_support_material = {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META',
                                                'GPENCIL', 'VOLUME', 'CURVES', 'POINTCLOUD'}
                 # disable material slot buttons when pinned, cannot find correct slot within id_from (#36589)
@@ -169,7 +175,12 @@ class NODE_HT_header(Header):
 
             if snode.shader_type == 'WORLD':
                 NODE_MT_editor_menus.draw_collapsible(context, layout)
-
+				## BFA - moved below to a different solution
+                #if snode_id:
+                #    row = layout.row()
+                #    row.prop(snode_id, "use_nodes")
+				#
+                #layout.separator_spacer()
                 row = layout.row()
                 row.enabled = not snode.pin
                 row.template_ID(scene, "world", new="world.new")
@@ -180,6 +191,12 @@ class NODE_HT_header(Header):
 
                 if lineset is not None:
                     NODE_MT_editor_menus.draw_collapsible(context, layout)
+					## BFA - moved below to a different solution
+                    #if snode_id:
+                    #    row = layout.row()
+                    #    row.prop(snode_id, "use_nodes")
+					#
+                    #layout.separator_spacer()
 
                     row = layout.row()
                     row.enabled = not snode.pin
@@ -189,7 +206,11 @@ class NODE_HT_header(Header):
             layout.prop(snode, "texture_type", text="")
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
-
+			## BFA - moved below to a different solution
+            #if snode_id:
+            #    layout.prop(snode_id, "use_nodes")
+			#
+            #layout.separator_spacer()
             if id_from:
                 if snode.texture_type == 'BRUSH':
                     layout.template_ID(id_from, "texture", new="texture.new")
@@ -245,7 +266,7 @@ class NODE_HT_header(Header):
         if is_compositor:
             layout.prop(snode, "pin", text="", emboss=False)
 
-        # -------------------- use nodes ---------------------------
+        # -------------------- BFA - use nodes ---------------------------
 
         if snode.tree_type == 'ShaderNodeTree':
 
@@ -413,9 +434,11 @@ class NODE_MT_view(Menu):
         layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
 
         layout.separator()
-
-        layout.operator("node.view_selected", icon='VIEW_SELECTED')
-        layout.operator("node.view_all", icon = "VIEWALL" )
+		
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        
+        layout.operator("node.view_selected")
+        layout.operator("node.view_all")
 
         if context.space_data.show_backdrop:
 
@@ -522,15 +545,15 @@ class NODE_MT_node(Menu):
         props.keep_open = False 
 
         layout.separator()
-
+		## BFA - set to sub-menu
         layout.menu("NODE_MT_node_links")
 
         layout.separator()
-
+		## BFA - set to sub-menu
         layout.menu("NODE_MT_node_group_separate")
 
         layout.separator()
-
+		## BFA - set majority to sub-menu
         layout.menu("NODE_MT_context_menu_show_hide_menu")
 
         if is_compositor:
@@ -922,11 +945,16 @@ class NODE_PT_backdrop(Panel):
         layout.active = snode.show_backdrop
 
         col = layout.column()
-
+		##BFA - removed as double entry
+		#col.prop(snode, "backdrop_channels", text="Channels")
         col.prop(snode, "backdrop_zoom", text="Zoom")
 
         col.prop(snode, "backdrop_offset", text="Offset")
-
+		##BFA - removed as double entry
+        #col.separator()
+		#
+        #col.operator("node.backimage_move", text="Move")
+        #col.operator("node.backimage_fit", text="Fit")
 
 class NODE_PT_quality(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
@@ -1089,7 +1117,10 @@ class NodeTreeInterfacePanel(Panel):
                     props = property_row.operator_menu_enum(
                         "node.tree_socket_change_subtype",
                         "socket_subtype",
-                        text=active_socket.bl_subtype_label if active_socket.bl_subtype_label else active_socket.bl_idname
+                        text=(
+                            active_socket.bl_subtype_label if active_socket.bl_subtype_label else
+                            active_socket.bl_idname
+                        ),
                     )
 
             layout.use_property_split = True
@@ -1174,7 +1205,7 @@ def node_panel(cls):
         node_cls.bl_parent_id = 'NODE_' + node_cls.bl_parent_id
 
     return node_cls
-
+## BFA - new view menu for consistency
 class NODE_PT_view(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'

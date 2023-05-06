@@ -728,7 +728,9 @@ static int gpencil_vertexmode_toggle_exec(bContext *C, wmOperator *op)
   }
 
   if (mode == OB_MODE_VERTEX_GPENCIL) {
-    /* Be sure we have brushes. */
+    /* Be sure we have brushes.
+     * Need Draw as well (used for Palettes). */
+    BKE_paint_ensure(ts, (Paint **)&ts->gp_paint);
     BKE_paint_ensure(ts, (Paint **)&ts->gp_vertexpaint);
 
     const bool reset_mode = (ts->gp_vertexpaint->paint.brush == NULL);
@@ -2017,7 +2019,9 @@ static int gpencil_blank_frame_add_exec(bContext *C, wmOperator *op)
   CTX_DATA_END;
 
   /* notifiers */
-  DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
+  if (gpd != NULL) {
+    DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
+  }
   WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED, NULL);
 
   return OPERATOR_FINISHED;
