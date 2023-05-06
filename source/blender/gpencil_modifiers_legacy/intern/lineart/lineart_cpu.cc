@@ -1457,7 +1457,7 @@ struct EdgeFeatData {
   Mesh *me;
   Object *ob_eval; /* For evaluated materials. */
   const int *material_indices;
-  blender::Span<MEdge> edges;
+  blender::Span<blender::int2> edges;
   blender::Span<int> corner_verts;
   blender::Span<int> corner_edges;
   blender::Span<MLoopTri> looptris;
@@ -2077,9 +2077,9 @@ static void lineart_geometry_object_load(LineartObjectInfo *ob_info,
   edge_feat_settings.func_reduce = feat_data_sum_reduce;
 
   const bke::AttributeAccessor attributes = me->attributes();
-  const VArray<bool> sharp_edges = attributes.lookup_or_default<bool>(
+  const VArray<bool> sharp_edges = *attributes.lookup_or_default<bool>(
       "sharp_edge", ATTR_DOMAIN_EDGE, false);
-  const VArray<bool> sharp_faces = attributes.lookup_or_default<bool>(
+  const VArray<bool> sharp_faces = *attributes.lookup_or_default<bool>(
       "sharp_face", ATTR_DOMAIN_FACE, false);
 
   EdgeFeatData edge_feat_data = {nullptr};
@@ -2236,11 +2236,11 @@ static void lineart_geometry_object_load(LineartObjectInfo *ob_info,
   }
 
   if (loose_data.loose_array) {
-    const Span<MEdge> edges = me->edges();
+    const Span<int2> edges = me->edges();
     for (int i = 0; i < loose_data.loose_count; i++) {
-      const MEdge *edge = &edges[loose_data.loose_array[i]];
-      la_edge->v1 = &la_v_arr[edge->v1];
-      la_edge->v2 = &la_v_arr[edge->v2];
+      const int2 &edge = edges[loose_data.loose_array[i]];
+      la_edge->v1 = &la_v_arr[edge[0]];
+      la_edge->v2 = &la_v_arr[edge[1]];
       la_edge->flags = LRT_EDGE_FLAG_LOOSE;
       la_edge->object_ref = orig_ob;
       la_edge->edge_identifier = LRT_EDGE_IDENTIFIER(ob_info, la_edge);

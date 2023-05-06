@@ -840,6 +840,13 @@ enum {
    * RESET_AFTER_USE
    */
   LIB_TAG_UNDO_OLD_ID_REUSED = 1 << 17,
+  /**
+   * ID has be re-read in-place, the ID address is the same as in the old BMain, but the content is
+   * different.
+   *
+   * RESET_AFTER_USE
+   */
+  LIB_TAG_UNDO_OLD_ID_REREAD_IN_PLACE = 1 << 18,
 
   /* ------------------------------------------------------------------------------------------- */
   /**
@@ -967,7 +974,7 @@ typedef enum IDRecalcFlag {
   /* ** Particle system changed. ** */
   /* Only do pathcache etc. */
   ID_RECALC_PSYS_REDO = (1 << 3),
-  /* Reset everything including pointcache. */
+  /* Reset everything including point-cache. */
   ID_RECALC_PSYS_RESET = (1 << 4),
   /* Only child settings changed. */
   ID_RECALC_PSYS_CHILD = (1 << 5),
