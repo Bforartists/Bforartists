@@ -571,7 +571,7 @@ static Mesh *subdivide_edit_mesh(const Object *object,
   mesh_settings.resolution = (1 << smd->levels) + 1;
   mesh_settings.use_optimal_display = (smd->flags & eSubsurfModifierFlag_ControlEdges);
 
-  Subdiv *subdiv = BKE_subdiv_update_from_mesh(nullptr, &settings, me_from_em);
+  Subdiv *subdiv = BKE_subdiv_new_from_mesh(&settings, me_from_em);
   Mesh *result = BKE_subdiv_to_mesh(subdiv, &mesh_settings, me_from_em);
   BKE_id_free(nullptr, me_from_em);
   BKE_subdiv_free(subdiv);
@@ -620,7 +620,7 @@ static ParamHandle *construct_param_handle_subsurfed(const Scene *scene,
   Mesh *subdiv_mesh = subdivide_edit_mesh(ob, em, &smd);
 
   const float(*subsurfedPositions)[3] = BKE_mesh_vert_positions(subdiv_mesh);
-  const blender::Span<MEdge> subsurf_edges = subdiv_mesh->edges();
+  const blender::Span<blender::int2> subsurf_edges = subdiv_mesh->edges();
   const blender::OffsetIndices subsurf_polys = subdiv_mesh->polys();
   const blender::Span<int> subsurf_corner_verts = subdiv_mesh->corner_verts();
 
@@ -726,10 +726,10 @@ static ParamHandle *construct_param_handle_subsurfed(const Scene *scene,
   /* These are calculated from original mesh too. */
   for (const int64_t i : subsurf_edges.index_range()) {
     if ((edgeMap[i] != nullptr) && BM_elem_flag_test(edgeMap[i], BM_ELEM_SEAM)) {
-      const MEdge *edge = &subsurf_edges[i];
+      const blender::int2 &edge = subsurf_edges[i];
       ParamKey vkeys[2];
-      vkeys[0] = (ParamKey)edge->v1;
-      vkeys[1] = (ParamKey)edge->v2;
+      vkeys[0] = (ParamKey)edge[0];
+      vkeys[1] = (ParamKey)edge[1];
       blender::geometry::uv_parametrizer_edge_set_seam(handle, vkeys);
     }
   }
@@ -1233,7 +1233,6 @@ static void uvedit_pack_islands_multi(const Scene *scene,
   MemArena *arena = BLI_memarena_new(BLI_MEMARENA_STD_BUFSIZE, __func__);
   Heap *heap = BLI_heap_new();
 
-  float scale[2] = {1.0f, 1.0f};
   blender::Vector<blender::geometry::PackIsland *> pack_island_vector;
   for (int i = 0; i < island_vector.size(); i++) {
     FaceIsland *face_island = island_vector[i];
@@ -1264,7 +1263,7 @@ static void uvedit_pack_islands_multi(const Scene *scene,
   BLI_heap_free(heap, nullptr);
   BLI_memarena_free(arena);
 
-  pack_islands(pack_island_vector, *params, scale);
+  const float scale = pack_islands(pack_island_vector, *params);
 
   float base_offset[2] = {0.0f, 0.0f};
   copy_v2_v2(base_offset, params->udim_base_offset);
@@ -1306,7 +1305,7 @@ static void uvedit_pack_islands_multi(const Scene *scene,
   for (int64_t i : pack_island_vector.index_range()) {
     blender::geometry::PackIsland *pack_island = pack_island_vector[i];
     FaceIsland *island = island_vector[pack_island->caller_index];
-    pack_island->build_transformation(scale[0], pack_island->angle, matrix);
+    pack_island->build_transformation(scale, pack_island->angle, matrix);
     invert_m2_m2(matrix_inverse, matrix);
 
     /* Add base_offset, post transform. */
@@ -1323,7 +1322,7 @@ static void uvedit_pack_islands_multi(const Scene *scene,
       const float rescale_x = (selection_max_co[0] - selection_min_co[0]) /
                               params->target_aspect_y;
       const float rescale_y = (selection_max_co[1] - selection_min_co[1]);
-      const float rescale = std::min(rescale_x, rescale_y);
+      const float rescale = params->scale_to_fit ? std::min(rescale_x, rescale_y) : 1.0f;
       matrix[0][0] = rescale;
       matrix[0][1] = 0.0f;
       matrix[1][0] = 0.0f;
@@ -1396,6 +1395,7 @@ static int pack_islands_exec(bContext *C, wmOperator *op)
   blender::geometry::UVPackIsland_Params pack_island_params;
   pack_island_params.setFromUnwrapOptions(options);
   pack_island_params.rotate = RNA_boolean_get(op->ptr, "rotate");
+  pack_island_params.scale_to_fit = RNA_boolean_get(op->ptr, "scale");
   pack_island_params.merge_overlap = RNA_boolean_get(op->ptr, "merge_overlap");
   pack_island_params.ignore_pinned = false;
   pack_island_params.margin_method = eUVPackIsland_MarginMethod(
@@ -1474,6 +1474,7 @@ void UV_OT_pack_islands(wmOperatorType *ot)
   /* properties */
   RNA_def_enum(ot->srna, "udim_source", pack_target, PACK_UDIM_SRC_CLOSEST, "Pack to", "");
   RNA_def_boolean(ot->srna, "rotate", true, "Rotate", "Rotate islands for best fit");
+  RNA_def_boolean(ot->srna, "scale", true, "Scale", "Scale islands to fill unit square");
   RNA_def_boolean(
       ot->srna, "merge_overlap", false, "Merge Overlapped", "Overlapping islands stick together");
   RNA_def_enum(ot->srna,
@@ -3196,7 +3197,7 @@ static float uv_sphere_project(const Scene *scene,
                                const float branch_init)
 {
   float max_u = 0.0f;
-  if (BM_elem_flag_test(efa_init, BM_ELEM_TAG)) {
+  if (use_seams && BM_elem_flag_test(efa_init, BM_ELEM_TAG)) {
     return max_u;
   }
 
@@ -3373,7 +3374,7 @@ static float uv_cylinder_project(const Scene *scene,
                                  const float branch_init)
 {
   float max_u = 0.0f;
-  if (BM_elem_flag_test(efa_init, BM_ELEM_TAG)) {
+  if (use_seams && BM_elem_flag_test(efa_init, BM_ELEM_TAG)) {
     return max_u;
   }
 
