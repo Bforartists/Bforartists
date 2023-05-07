@@ -83,7 +83,7 @@ static const EnumPropertyItem prop_graphkeys_insertkey_types[] = {
      "Insert a keyframe on selected F-Curves using each curve's current value"},
     {GRAPHKEYS_INSERTKEY_ACTIVE,
      "ACTIVE",
-     0,
+     ICON_KEYFRAMES_INSERT,
      "Only Active F-Curve",
      "Insert a keyframe on the active F-Curve using the curve's current value"},
     {GRAPHKEYS_INSERTKEY_ACTIVE | GRAPHKEYS_INSERTKEY_CURSOR,
