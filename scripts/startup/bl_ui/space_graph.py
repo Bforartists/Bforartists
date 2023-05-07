@@ -407,7 +407,7 @@ class GRAPH_MT_channel_move(Menu):
         layout.operator("anim.channels_move", text="To Bottom", icon="MOVE_TO_BOTTOM").direction = 'BOTTOM'
 
         layout.separator()
-        layout.operator("anim.channels_view_selected")
+        layout.operator("anim.channels_view_selected", icon = "VIEW_SELECTED")
 
 
 class GRAPH_MT_key(Menu):
