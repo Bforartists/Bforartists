@@ -3864,6 +3864,10 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Geometry Proximity   ", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeProximity"
+            
+            props = col.operator("node.add_node", text=" Index of Nearest        ", icon = "INDEX_OF_NEAREST")
+            props.use_transform = True
+            props.type = "GeometryNodeIndexOfNearest"
 
             props = col.operator("node.add_node", text=" Raycast                      ", icon = "RAYCAST")
             props.use_transform = True
@@ -3888,6 +3892,10 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeMergeByDistance"
+            
+            props = flow.operator("node.add_node", text="", icon = "INDEX_OF_NEAREST")
+            props.use_transform = True
+            props.type = "GeometryNodeIndexOfNearest"
 
             props = flow.operator("node.add_node", text = "", icon = "RAYCAST")
             props.use_transform = True

@@ -13810,6 +13810,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_IMAGE_TEXTURE:
       return ICON_IMAGE_DATA;
 
+    case GEO_NODE_INDEX_OF_NEAREST:
+      return ICON_INDEX_OF_NEAREST;
+
     case GEO_NODE_IMAGE:
       return ICON_FILE_IMAGE;
 
