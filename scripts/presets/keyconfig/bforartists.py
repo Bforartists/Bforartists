@@ -1,4 +1,4 @@
-keyconfig_version = (3, 6, 5)
+keyconfig_version = (3, 6, 6)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -2254,14 +2254,14 @@ keyconfig_data = \
       },
      ),
     ("font.move_select",
-     {"type": 'PAGE_DOWN', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"type": 'HOME', "value": 'PRESS', "shift": True, "ctrl": True, "repeat": True},
      {"properties":
       [("type", 'TEXT_BEGIN'),
        ],
       },
      ),
     ("font.move_select",
-     {"type": 'PAGE_DOWN', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"type": 'END', "value": 'PRESS', "shift": True, "ctrl": True, "repeat": True},
      {"properties":
       [("type", 'TEXT_END'),
        ],
