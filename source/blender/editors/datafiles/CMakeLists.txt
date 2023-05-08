@@ -1787,7 +1787,7 @@ relax_face_sets
 relax_topology 
 enhance 
 interpolate_curve
-#~ DEF_ICON_BLANK(1820)
+index_of_nearest
 #~ DEF_ICON_BLANK(1821)
 #~ DEF_ICON_BLANK(1822)
 #~ DEF_ICON_BLANK(1823)
