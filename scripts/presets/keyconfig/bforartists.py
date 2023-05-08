@@ -1882,9 +1882,6 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
@@ -2172,6 +2169,20 @@ keyconfig_data = \
        ],
       },
      ),
+    ("font.move",
+     {"type": 'HOME', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("type", 'TEXT_BEGIN'),
+       ],
+      },
+     ),
+    ("font.move",
+     {"type": 'END', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("type", 'TEXT_END'),
+       ],
+      },
+     ),
     ("font.move_select",
      {"type": 'HOME', "value": 'PRESS', "shift": True},
      {"properties":
@@ -2239,6 +2250,20 @@ keyconfig_data = \
      {"type": 'PAGE_DOWN', "value": 'PRESS', "shift": True, "repeat": True},
      {"properties":
       [("type", 'NEXT_PAGE'),
+       ],
+      },
+     ),
+    ("font.move_select",
+     {"type": 'PAGE_DOWN', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("type", 'TEXT_BEGIN'),
+       ],
+      },
+     ),
+    ("font.move_select",
+     {"type": 'PAGE_DOWN', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("type", 'TEXT_END'),
        ],
       },
      ),
