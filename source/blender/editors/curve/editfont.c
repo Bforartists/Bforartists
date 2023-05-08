@@ -1136,8 +1136,8 @@ void FONT_OT_text_paste(wmOperatorType *ot)
 static const EnumPropertyItem move_type_items[] = {
     {LINE_BEGIN, "LINE_BEGIN", ICON_CARET_NEXT_CHAR, "Line Begin", ""},
     {LINE_END, "LINE_END", ICON_CARET_NEXT_CHAR, "Line End", ""},
-    {TEXT_BEGIN, "TEXT_BEGIN", 0, "Text Begin", ""}, /*BFA - merge edit*/
-    {TEXT_END, "TEXT_END", 0, "Text End", ""}, /*BFA - merge edit*/
+    {TEXT_BEGIN, "TEXT_BEGIN", ICON_CARET_NEXT_CHAR, "Text Begin", ""},
+    {TEXT_END, "TEXT_END", ICON_CARET_NEXT_CHAR, "Text End", ""},
     {PREV_CHAR, "PREVIOUS_CHARACTER", ICON_CARET_NEXT_CHAR, "Previous Character", ""},
     {NEXT_CHAR, "NEXT_CHARACTER", ICON_CARET_NEXT_CHAR, "Next Character", ""},
     {PREV_WORD, "PREVIOUS_WORD", ICON_CARET_NEXT_CHAR, "Previous Word", ""},
