@@ -554,7 +554,7 @@ keyconfig_data = \
       },
      ),
     ("object.select_grouped",
-     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True, "ctrl": True},
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True, "oskey": True},
      {"properties":
       [("extend", True),
        ("type", 'COLLECTION'),
@@ -1519,7 +1519,7 @@ keyconfig_data = \
       },
      ),
     ("curves.select_all",
-     {"type": 'I', "value": 'PRESS', "ctrl": True},
+     {"type": 'I', "value": 'PRESS', "oskey": True},
      {"properties":
       [("action", 'INVERT'),
        ],
@@ -1882,9 +1882,6 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
@@ -2172,6 +2169,20 @@ keyconfig_data = \
        ],
       },
      ),
+    ("font.move",
+     {"type": 'HOME', "value": 'PRESS', "oskey": True, "repeat": True},
+     {"properties":
+      [("type", 'TEXT_BEGIN'),
+       ],
+      },
+     ),
+    ("font.move",
+     {"type": 'END', "value": 'PRESS', "oskey": True, "repeat": True},
+     {"properties":
+      [("type", 'TEXT_END'),
+       ],
+      },
+     ),
     ("font.move_select",
      {"type": 'HOME', "value": 'PRESS', "shift": True},
      {"properties":
@@ -2239,6 +2250,20 @@ keyconfig_data = \
      {"type": 'PAGE_DOWN', "value": 'PRESS', "shift": True, "repeat": True},
      {"properties":
       [("type", 'NEXT_PAGE'),
+       ],
+      },
+     ),
+    ("font.move_select",
+     {"type": 'PAGE_DOWN', "value": 'PRESS', "oskey": True, "repeat": True},
+     {"properties":
+      [("type", 'TEXT_BEGIN'),
+       ],
+      },
+     ),
+    ("font.move_select",
+     {"type": 'PAGE_DOWN', "value": 'PRESS', "oskey": True, "repeat": True},
+     {"properties":
+      [("type", 'TEXT_END'),
        ],
       },
      ),
@@ -5022,7 +5047,7 @@ keyconfig_data = \
      ),
     ("node.links_mute", {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True, "oskey": True}, None),
     ("node.links_cut", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG', "oskey": True}, None),
-    ("node.group_make", {"type": 'G', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("node.group_make", {"type": 'G', "value": 'PRESS', "oskey": True, "repeat": True}, None),
     ],
    },
   ),
