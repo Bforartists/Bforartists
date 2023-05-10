@@ -43,7 +43,9 @@ void Cryptomatte::begin_sync()
   }
 
   if (!(enabled_passes &
-        (EEVEE_RENDER_PASS_CRYPTOMATTE_OBJECT | EEVEE_RENDER_PASS_CRYPTOMATTE_ASSET))) {
+        (EEVEE_RENDER_PASS_CRYPTOMATTE_OBJECT | EEVEE_RENDER_PASS_CRYPTOMATTE_ASSET)))
+  {
+    /* Ensure dummy buffer for API validation. */
     cryptomatte_object_buf.resize(16);
   }
 }
@@ -52,7 +54,8 @@ void Cryptomatte::sync_object(Object *ob, ResourceHandle res_handle)
 {
   const eViewLayerEEVEEPassType enabled_passes = inst_.film.enabled_passes_get();
   if (!(enabled_passes &
-        (EEVEE_RENDER_PASS_CRYPTOMATTE_OBJECT | EEVEE_RENDER_PASS_CRYPTOMATTE_ASSET))) {
+        (EEVEE_RENDER_PASS_CRYPTOMATTE_OBJECT | EEVEE_RENDER_PASS_CRYPTOMATTE_ASSET)))
+  {
     return;
   }
 

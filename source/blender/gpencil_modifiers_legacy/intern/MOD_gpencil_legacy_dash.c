@@ -57,7 +57,7 @@ static void initData(GpencilModifierData *md)
 
   DashGpencilModifierSegment *ds = DNA_struct_default_alloc(DashGpencilModifierSegment);
   ds->dmd = dmd;
-  BLI_strncpy(ds->name, DATA_("Segment"), sizeof(ds->name));
+  STRNCPY(ds->name, DATA_("Segment"));
 
   dmd->segments = ds;
 }
@@ -211,7 +211,8 @@ static void apply_dash_for_frame(
                                        dmd->flag & GP_LENGTH_INVERT_LAYER,
                                        dmd->flag & GP_LENGTH_INVERT_PASS,
                                        dmd->flag & GP_LENGTH_INVERT_LAYERPASS,
-                                       dmd->flag & GP_LENGTH_INVERT_MATERIAL)) {
+                                       dmd->flag & GP_LENGTH_INVERT_MATERIAL))
+    {
       if (stroke_dash(gps, dmd, &result)) {
         BLI_remlink(&gpf->strokes, gps);
         BKE_gpencil_free_stroke(gps);

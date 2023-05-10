@@ -15,6 +15,7 @@
 #include "BLI_memarena.h"
 #include "BLI_polyfill_2d.h"
 #include "BLI_task.h"
+#include "BLI_task.hh"
 
 #include "BKE_mesh.hh"
 
@@ -50,7 +51,6 @@ BLI_INLINE void mesh_calc_tessellation_for_face_impl(const Span<int> corner_vert
     mlt->tri[0] = mp_loopstart + i1;
     mlt->tri[1] = mp_loopstart + i2;
     mlt->tri[2] = mp_loopstart + i3;
-    mlt->poly = poly_index;
   };
 
   switch (mp_totloop) {
@@ -66,7 +66,8 @@ BLI_INLINE void mesh_calc_tessellation_for_face_impl(const Span<int> corner_vert
       if (UNLIKELY(is_quad_flip_v3_first_third_fast(positions[corner_verts[mlt_a->tri[0]]],
                                                     positions[corner_verts[mlt_a->tri[1]]],
                                                     positions[corner_verts[mlt_a->tri[2]]],
-                                                    positions[corner_verts[mlt_b->tri[2]]]))) {
+                                                    positions[corner_verts[mlt_b->tri[2]]])))
+      {
         /* Flip out of degenerate 0-2 state. */
         mlt_a->tri[2] = mlt_b->tri[2];
         mlt_b->tri[0] = mlt_a->tri[1];
@@ -295,6 +296,18 @@ void looptris_calc(const Span<float3> vert_positions,
                    MutableSpan<MLoopTri> looptris)
 {
   looptris_calc_all(vert_positions, polys, corner_verts, {}, looptris);
+}
+
+void looptris_calc_poly_indices(const OffsetIndices<int> polys, MutableSpan<int> looptri_polys)
+{
+  threading::parallel_for(polys.index_range(), 1024, [&](const IndexRange range) {
+    for (const int64_t i : range) {
+      const IndexRange poly = polys[i];
+      const int start = poly_to_tri_count(int(i), int(poly.start()));
+      const int num = ME_POLY_TRI_TOT(int(poly.size()));
+      looptri_polys.slice(start, num).fill(int(i));
+    }
+  });
 }
 
 void looptris_calc_with_normals(const Span<float3> vert_positions,

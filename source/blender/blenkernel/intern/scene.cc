@@ -154,7 +154,7 @@ static void scene_init_data(ID *id)
 
   MEMCPY_STRUCT_AFTER(scene, DNA_struct_default_get(Scene), id);
 
-  BLI_strncpy(scene->r.bake.filepath, U.renderdir, sizeof(scene->r.bake.filepath));
+  STRNCPY(scene->r.bake.filepath, U.renderdir);
 
   mblur_shutter_curve = &scene->r.mblur_shutter_curve;
   BKE_curvemapping_set_defaults(mblur_shutter_curve, 1, 0.0f, 0.0f, 1.0f, 1.0f);
@@ -203,9 +203,9 @@ static void scene_init_data(ID *id)
     pset->brush[PE_BRUSH_CUT].strength = 1.0f;
   }
 
-  BLI_strncpy(scene->r.engine, RE_engine_id_BLENDER_EEVEE, sizeof(scene->r.engine));
+  STRNCPY(scene->r.engine, RE_engine_id_BLENDER_EEVEE);
 
-  BLI_strncpy(scene->r.pic, U.renderdir, sizeof(scene->r.pic));
+  STRNCPY(scene->r.pic, U.renderdir);
 
   /* NOTE: in header_info.c the scene copy happens...,
    * if you add more to renderdata it has to be checked there. */
@@ -213,11 +213,11 @@ static void scene_init_data(ID *id)
   /* multiview - stereo */
   BKE_scene_add_render_view(scene, STEREO_LEFT_NAME);
   srv = static_cast<SceneRenderView *>(scene->r.views.first);
-  BLI_strncpy(srv->suffix, STEREO_LEFT_SUFFIX, sizeof(srv->suffix));
+  STRNCPY(srv->suffix, STEREO_LEFT_SUFFIX);
 
   BKE_scene_add_render_view(scene, STEREO_RIGHT_NAME);
   srv = static_cast<SceneRenderView *>(scene->r.views.last);
-  BLI_strncpy(srv->suffix, STEREO_RIGHT_SUFFIX, sizeof(srv->suffix));
+  STRNCPY(srv->suffix, STEREO_RIGHT_SUFFIX);
 
   BKE_sound_reset_scene_runtime(scene);
 
@@ -227,9 +227,7 @@ static void scene_init_data(ID *id)
   BKE_color_managed_display_settings_init(&scene->display_settings);
   BKE_color_managed_view_settings_init_render(
       &scene->view_settings, &scene->display_settings, "Filmic");
-  BLI_strncpy(scene->sequencer_colorspace_settings.name,
-              colorspace_name,
-              sizeof(scene->sequencer_colorspace_settings.name));
+  STRNCPY(scene->sequencer_colorspace_settings.name, colorspace_name);
 
   BKE_image_format_init(&scene->r.im_format, true);
   BKE_image_format_init(&scene->r.bake.im_format, true);
@@ -290,7 +288,8 @@ static void scene_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int
   for (ViewLayer *view_layer_src = static_cast<ViewLayer *>(scene_src->view_layers.first),
                  *view_layer_dst = static_cast<ViewLayer *>(scene_dst->view_layers.first);
        view_layer_src;
-       view_layer_src = view_layer_src->next, view_layer_dst = view_layer_dst->next) {
+       view_layer_src = view_layer_src->next, view_layer_dst = view_layer_dst->next)
+  {
     BKE_view_layer_copy_data(scene_dst, scene_src, view_layer_dst, view_layer_src, flag_subdata);
   }
 
@@ -1474,7 +1473,8 @@ static void composite_patch(bNodeTree *ntree, Scene *scene)
   for (bNode *node : ntree->all_nodes()) {
     if (node->id == nullptr &&
         ((node->type == CMP_NODE_R_LAYERS) ||
-         (node->type == CMP_NODE_CRYPTOMATTE && node->custom1 == CMP_CRYPTOMATTE_SRC_RENDER))) {
+         (node->type == CMP_NODE_CRYPTOMATTE && node->custom1 == CMP_CRYPTOMATTE_SRC_RENDER)))
+    {
       node->id = &scene->id;
     }
   }
@@ -2419,7 +2419,8 @@ const char *BKE_scene_find_marker_name(const Scene *scene, int frame)
   for (m1 = static_cast<const TimeMarker *>(markers->first),
       m2 = static_cast<const TimeMarker *>(markers->last);
        m1 && m2;
-       m1 = m1->next, m2 = m2->prev) {
+       m1 = m1->next, m2 = m2->prev)
+  {
     if (m1->frame == frame) {
       return m1->name;
     }
@@ -2628,7 +2629,8 @@ static void prepare_mesh_for_viewport_render(Main *bmain,
   if (obedit) {
     Mesh *mesh = static_cast<Mesh *>(obedit->data);
     if ((obedit->type == OB_MESH) &&
-        ((obedit->id.recalc & ID_RECALC_ALL) || (mesh->id.recalc & ID_RECALC_ALL))) {
+        ((obedit->id.recalc & ID_RECALC_ALL) || (mesh->id.recalc & ID_RECALC_ALL)))
+    {
       if (check_rendered_viewport_visible(bmain)) {
         BMesh *bm = mesh->edit_mesh->bm;
         BMeshToMeshParams params{};
@@ -2849,7 +2851,7 @@ SceneRenderView *BKE_scene_add_render_view(Scene *sce, const char *name)
   }
 
   SceneRenderView *srv = MEM_cnew<SceneRenderView>(__func__);
-  BLI_strncpy(srv->name, name, sizeof(srv->name));
+  STRNCPY(srv->name, name);
   BLI_uniquename(&sce->r.views,
                  srv,
                  DATA_("RenderView"),
@@ -3014,14 +3016,12 @@ void BKE_scene_disable_color_management(Scene *scene)
 
   none_display_name = IMB_colormanagement_display_get_none_name();
 
-  BLI_strncpy(display_settings->display_device,
-              none_display_name,
-              sizeof(display_settings->display_device));
+  STRNCPY(display_settings->display_device, none_display_name);
 
   view = IMB_colormanagement_view_get_default_name(display_settings->display_device);
 
   if (view) {
-    BLI_strncpy(view_settings->view_transform, view, sizeof(view_settings->view_transform));
+    STRNCPY(view_settings->view_transform, view);
   }
 }
 
@@ -3299,10 +3299,10 @@ void BKE_scene_multiview_view_filepath_get(const RenderData *rd,
   srv = static_cast<SceneRenderView *>(
       BLI_findstring(&rd->views, viewname, offsetof(SceneRenderView, name)));
   if (srv) {
-    BLI_strncpy(suffix, srv->suffix, sizeof(suffix));
+    STRNCPY(suffix, srv->suffix);
   }
   else {
-    BLI_strncpy(suffix, viewname, sizeof(suffix));
+    STRNCPY(suffix, viewname);
   }
 
   BLI_strncpy(r_filepath, filepath, FILE_MAX);
@@ -3358,7 +3358,8 @@ void BKE_scene_multiview_view_prefix_get(Scene *scene,
     if (BKE_scene_multiview_is_render_view_active(&scene->r, srv)) {
       const size_t suffix_len = strlen(srv->suffix);
       if (basename_len >= suffix_len &&
-          STREQLEN(name + basename_len - suffix_len, srv->suffix, suffix_len)) {
+          STREQLEN(name + basename_len - suffix_len, srv->suffix, suffix_len))
+      {
         BLI_strncpy(r_prefix, name, basename_len - suffix_len + 1);
         break;
       }
@@ -3502,7 +3503,8 @@ static Depsgraph **scene_get_depsgraph_p(Scene *scene,
 
   DepsgraphKey **key_ptr;
   if (BLI_ghash_ensure_p_ex(
-          scene->depsgraph_hash, &key, (void ***)&key_ptr, (void ***)&depsgraph_ptr)) {
+          scene->depsgraph_hash, &key, (void ***)&key_ptr, (void ***)&depsgraph_ptr))
+  {
     return depsgraph_ptr;
   }
 
@@ -3537,7 +3539,7 @@ static Depsgraph **scene_ensure_depsgraph_p(Main *bmain, Scene *scene, ViewLayer
    * we will ever enable debug messages for this depsgraph.
    */
   char name[1024];
-  BLI_snprintf(name, sizeof(name), "%s :: %s", scene->id.name, view_layer->name);
+  SNPRINTF(name, "%s :: %s", scene->id.name, view_layer->name);
   DEG_debug_name_set(*depsgraph_ptr, name);
 
   /* These viewport depsgraphs communicate changes to the editors. */

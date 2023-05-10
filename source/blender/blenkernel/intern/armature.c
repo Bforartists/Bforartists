@@ -404,7 +404,8 @@ static void copy_bonechildren(Bone *bone_dst,
   /* For each child in the list, update its children */
   for (bone_src_child = bone_src->childbase.first, bone_dst_child = bone_dst->childbase.first;
        bone_src_child;
-       bone_src_child = bone_src_child->next, bone_dst_child = bone_dst_child->next) {
+       bone_src_child = bone_src_child->next, bone_dst_child = bone_dst_child->next)
+  {
     bone_dst_child->parent = bone_dst;
     copy_bonechildren(bone_dst_child, bone_src_child, bone_src_act, r_bone_dst_act, flag);
   }
@@ -422,7 +423,8 @@ static void copy_bonechildren_custom_handles(Bone *bone_dst, bArmature *arm_dst)
   }
 
   for (bone_dst_child = bone_dst->childbase.first; bone_dst_child;
-       bone_dst_child = bone_dst_child->next) {
+       bone_dst_child = bone_dst_child->next)
+  {
     copy_bonechildren_custom_handles(bone_dst_child, arm_dst);
   }
 }
@@ -706,7 +708,7 @@ bool bone_autoside_name(
   if (len == 0) {
     return false;
   }
-  BLI_strncpy(basename, name, sizeof(basename));
+  STRNCPY(basename, name);
 
   /* Figure out extension to append:
    * - The extension to append is based upon the axis that we are working on.
@@ -814,8 +816,8 @@ bool bone_autoside_name(
     }
 
     /* Subtract 1 from #MAXBONENAME for the null byte. Add 1 to the extension for the '.' */
-    const int basename_maxlen = (MAXBONENAME - 1) - (1 + strlen(extension));
-    BLI_snprintf(name, MAXBONENAME, "%.*s.%s", basename_maxlen, basename, extension);
+    const int basename_maxncpy = (MAXBONENAME - 1) - (1 + strlen(extension));
+    BLI_snprintf(name, MAXBONENAME, "%.*s.%s", basename_maxncpy, basename, extension);
 
     return true;
   }
@@ -2299,7 +2301,8 @@ static int rebuild_pose_bone(
   bPoseChannel *pchan_prev = pchan->prev;
   const Bone *last_visited_bone = *r_last_visited_bone_p;
   if ((pchan_prev == NULL && last_visited_bone != NULL) ||
-      (pchan_prev != NULL && pchan_prev->bone != last_visited_bone)) {
+      (pchan_prev != NULL && pchan_prev->bone != last_visited_bone))
+  {
     pchan_prev = last_visited_bone != NULL ?
                      BKE_pose_channel_find_name(pose, last_visited_bone->name) :
                      NULL;
@@ -2676,7 +2679,8 @@ void BKE_pchan_minmax(const Object *ob,
   if (ob_custom) {
     float min[3], max[3];
     if (use_empty_drawtype && (ob_custom->type == OB_EMPTY) &&
-        BKE_object_minmax_empty_drawtype(ob_custom, min, max)) {
+        BKE_object_minmax_empty_drawtype(ob_custom, min, max))
+    {
       memset(&bb_custom_buf, 0x0, sizeof(bb_custom_buf));
       BKE_boundbox_init_from_minmax(&bb_custom_buf, min, max);
       bb_custom = &bb_custom_buf;
@@ -2720,7 +2724,8 @@ bool BKE_pose_minmax(Object *ob, float r_min[3], float r_max[3], bool use_hidden
       /* XXX pchan->bone may be NULL for duplicated bones, see duplicateEditBoneObjects() comment
        *     (editarmature.c:2592)... Skip in this case too! */
       if (pchan->bone && (!((use_hidden == false) && (PBONE_VISIBLE(arm, pchan->bone) == false)) &&
-                          !((use_select == true) && ((pchan->bone->flag & BONE_SELECTED) == 0)))) {
+                          !((use_select == true) && ((pchan->bone->flag & BONE_SELECTED) == 0))))
+      {
 
         BKE_pchan_minmax(ob, pchan, false, r_min, r_max);
         changed = true;

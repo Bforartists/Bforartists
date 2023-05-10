@@ -644,6 +644,9 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_NODE_GRID_LEVELS:
           cp = &ts->grid_levels;
           break;
+        case TH_NODE_ZONE_SIMULATION:
+          cp = ts->node_zone_simulation;
+          break;
 
         case TH_SEQ_MOVIE:
           cp = ts->movie;
@@ -1407,8 +1410,8 @@ bool UI_GetIconThemeColor4ubv(int colorid, uchar col[4])
               g_theme_state.regionid == RGN_TYPE_WINDOW) ||
              (g_theme_state.spacetype == SPACE_PROPERTIES &&
               g_theme_state.regionid == RGN_TYPE_NAV_BAR) ||
-             (g_theme_state.spacetype == SPACE_FILE &&
-              g_theme_state.regionid == RGN_TYPE_WINDOW))) {
+             (g_theme_state.spacetype == SPACE_FILE && g_theme_state.regionid == RGN_TYPE_WINDOW)))
+  {
     /* Only colored icons in specific places, overall UI is intended
      * to stay monochrome and out of the way except a few places where it
      * is important to communicate different data types. */

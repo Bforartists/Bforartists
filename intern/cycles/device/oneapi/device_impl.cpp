@@ -302,6 +302,12 @@ void OneapiDevice::mem_copy_to(device_memory &mem)
                << string_human_readable_size(mem.memory_size()) << ")";
   }
 
+  /* After getting runtime errors we need to avoid performing oneAPI runtime operations
+   * because the associated GPU context may be in an invalid state at this point. */
+  if (have_error()) {
+    return;
+  }
+
   if (mem.type == MEM_GLOBAL) {
     global_free(mem);
     global_alloc(mem);
@@ -334,6 +340,12 @@ void OneapiDevice::mem_copy_from(device_memory &mem, size_t y, size_t w, size_t 
                  << " data " << size << " bytes";
     }
 
+    /* After getting runtime errors we need to avoid performing oneAPI runtime operations
+     * because the associated GPU context may be in an invalid state at this point. */
+    if (have_error()) {
+      return;
+    }
+
     assert(device_queue_);
 
     assert(size != 0);
@@ -355,6 +367,12 @@ void OneapiDevice::mem_zero(device_memory &mem)
     VLOG_DEBUG << "OneapiDevice::mem_zero: \"" << mem.name << "\", "
                << string_human_readable_number(mem.memory_size()) << " bytes. ("
                << string_human_readable_size(mem.memory_size()) << ")\n";
+  }
+
+  /* After getting runtime errors we need to avoid performing oneAPI runtime operations
+   * because the associated GPU context may be in an invalid state at this point. */
+  if (have_error()) {
+    return;
   }
 
   if (!mem.device_pointer) {
@@ -602,33 +620,33 @@ bool OneapiDevice::usm_memcpy(SyclQueue *queue_, void *dest, void *src, size_t n
   sycl::queue *queue = reinterpret_cast<sycl::queue *>(queue_);
   OneapiDevice::check_usm(queue_, dest, true);
   OneapiDevice::check_usm(queue_, src, true);
-  sycl::event mem_event = queue->memcpy(dest, src, num_bytes);
-#  ifdef WITH_CYCLES_DEBUG
   try {
+    sycl::event mem_event = queue->memcpy(dest, src, num_bytes);
+#  ifdef WITH_CYCLES_DEBUG
     /* NOTE(@nsirgien) Waiting on memory operation may give more precise error
      * messages. Due to impact on occupancy, it makes sense to enable it only during Cycles debug.
      */
     mem_event.wait_and_throw();
     return true;
+#  else
+    sycl::usm::alloc dest_type = get_pointer_type(dest, queue->get_context());
+    sycl::usm::alloc src_type = get_pointer_type(src, queue->get_context());
+    bool from_device_to_host = dest_type == sycl::usm::alloc::host &&
+                               src_type == sycl::usm::alloc::device;
+    bool host_or_device_memop_with_offset = dest_type == sycl::usm::alloc::unknown ||
+                                            src_type == sycl::usm::alloc::unknown;
+    /* NOTE(@sirgienko) Host-side blocking wait on this operation is mandatory, otherwise the host
+     * may not wait until the end of the transfer before using the memory.
+     */
+    if (from_device_to_host || host_or_device_memop_with_offset)
+      mem_event.wait();
+    return true;
+#  endif
   }
   catch (sycl::exception const &e) {
     oneapi_error_string_ = e.what();
     return false;
   }
-#  else
-  sycl::usm::alloc dest_type = get_pointer_type(dest, queue->get_context());
-  sycl::usm::alloc src_type = get_pointer_type(src, queue->get_context());
-  bool from_device_to_host = dest_type == sycl::usm::alloc::host &&
-                             src_type == sycl::usm::alloc::device;
-  bool host_or_device_memop_with_offset = dest_type == sycl::usm::alloc::unknown ||
-                                          src_type == sycl::usm::alloc::unknown;
-  /* NOTE(@sirgienko) Host-side blocking wait on this operation is mandatory, otherwise the host
-   * may not wait until the end of the transfer before using the memory.
-   */
-  if (from_device_to_host || host_or_device_memop_with_offset)
-    mem_event.wait();
-  return true;
-#  endif
 }
 
 bool OneapiDevice::usm_memset(SyclQueue *queue_,
@@ -639,23 +657,22 @@ bool OneapiDevice::usm_memset(SyclQueue *queue_,
   assert(queue_);
   sycl::queue *queue = reinterpret_cast<sycl::queue *>(queue_);
   OneapiDevice::check_usm(queue_, usm_ptr, true);
-  sycl::event mem_event = queue->memset(usm_ptr, value, num_bytes);
-#  ifdef WITH_CYCLES_DEBUG
   try {
+    sycl::event mem_event = queue->memset(usm_ptr, value, num_bytes);
+#  ifdef WITH_CYCLES_DEBUG
     /* NOTE(@nsirgien) Waiting on memory operation may give more precise error
      * messages. Due to impact on occupancy, it makes sense to enable it only during Cycles debug.
      */
     mem_event.wait_and_throw();
+#  else
+    (void)mem_event;
+#  endif
     return true;
   }
   catch (sycl::exception const &e) {
     oneapi_error_string_ = e.what();
     return false;
   }
-#  else
-  (void)mem_event;
-  return true;
-#  endif
 }
 
 bool OneapiDevice::queue_synchronize(SyclQueue *queue_)
@@ -696,8 +713,7 @@ void OneapiDevice::set_global_memory(SyclQueue *queue_,
 
 /* This macro will change global ptr of KernelGlobals via name matching. */
 #  define KERNEL_DATA_ARRAY(type, name) \
-    else if (#name == matched_name) \
-    { \
+    else if (#name == matched_name) { \
       globals->__##name = (type *)memory_device_pointer; \
       return; \
     }
@@ -709,8 +725,7 @@ void OneapiDevice::set_global_memory(SyclQueue *queue_,
   }
   KERNEL_DATA_ARRAY(KernelData, data)
 #  include "kernel/data_arrays.h"
-  else
-  {
+  else {
     std::cerr << "Can't found global/constant memory with name \"" << matched_name << "\"!"
               << std::endl;
     assert(false);
@@ -823,7 +838,8 @@ std::vector<sycl::device> OneapiDevice::available_devices()
             int driver_build_version = parse_driver_build_version(device);
             if ((driver_build_version > 100000 &&
                  driver_build_version < lowest_supported_driver_version_win) ||
-                driver_build_version < lowest_supported_driver_version_neo) {
+                driver_build_version < lowest_supported_driver_version_neo)
+            {
               filter_out = true;
             }
           }
@@ -965,7 +981,8 @@ int OneapiDevice::get_max_num_threads_per_multiprocessor()
 {
   const sycl::device &device = reinterpret_cast<sycl::queue *>(device_queue_)->get_device();
   if (device.has(sycl::aspect::ext_intel_gpu_eu_simd_width) &&
-      device.has(sycl::aspect::ext_intel_gpu_hw_threads_per_eu)) {
+      device.has(sycl::aspect::ext_intel_gpu_hw_threads_per_eu))
+  {
     return device.get_info<sycl::ext::intel::info::device::gpu_eu_simd_width>() *
            device.get_info<sycl::ext::intel::info::device::gpu_hw_threads_per_eu>();
   }

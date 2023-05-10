@@ -372,7 +372,7 @@ def blen_read_custom_properties(fbx_obj, blen_obj, settings):
 def blen_read_object_transform_do(transform_data):
     # This is a nightmare. FBX SDK uses Maya way to compute the transformation matrix of a node - utterly simple:
     #
-    #     WorldTransform = ParentWorldTransform @ T @ Roff @ Rp @ Rpre @ R @ Rpost @ Rp-1 @ Soff @ Sp @ S @ Sp-1
+    #     WorldTransform = ParentWorldTransform @ T @ Roff @ Rp @ Rpre @ R @ Rpost-1 @ Rp-1 @ Soff @ Sp @ S @ Sp-1
     #
     # Where all those terms are 4 x 4 matrices that contain:
     #     WorldTransform: Transformation matrix of the node in global space.
@@ -382,7 +382,7 @@ def blen_read_object_transform_do(transform_data):
     #     Rp: Rotation pivot
     #     Rpre: Pre-rotation
     #     R: Rotation
-    #     Rpost: Post-rotation
+    #     Rpost-1: Inverse of the post-rotation (FBX 2011 documentation incorrectly specifies this without inversion)
     #     Rp-1: Inverse of the rotation pivot
     #     Soff: Scaling offset
     #     Sp: Scaling pivot
@@ -402,14 +402,15 @@ def blen_read_object_transform_do(transform_data):
     #     S: Scaling
     #     OT: Geometric transform translation
     #     OR: Geometric transform rotation
-    #     OS: Geometric transform translation
+    #     OS: Geometric transform scale
     #
     # Notes:
     #     Geometric transformations ***are not inherited***: ParentWorldTransform does not contain the OT, OR, OS
     #     of WorldTransform's parent node.
+    #     The R matrix takes into account the rotation order. Other rotation matrices are always 'XYZ' order.
     #
-    # Taken from http://download.autodesk.com/us/fbx/20112/FBX_SDK_HELP/
-    #            index.html?url=WS1a9193826455f5ff1f92379812724681e696651.htm,topicNumber=d0e7429
+    # Taken from https://help.autodesk.com/view/FBX/2020/ENU/
+    #            ?guid=FBX_Developer_Help_nodes_and_scene_graph_fbx_nodes_computing_transformation_matrix_html
 
     # translation
     lcl_translation = Matrix.Translation(transform_data.loc)
@@ -418,9 +419,9 @@ def blen_read_object_transform_do(transform_data):
     # rotation
     to_rot = lambda rot, rot_ord: Euler(convert_deg_to_rad_iter(rot), rot_ord).to_matrix().to_4x4()
     lcl_rot = to_rot(transform_data.rot, transform_data.rot_ord) @ transform_data.rot_alt_mat
-    pre_rot = to_rot(transform_data.pre_rot, transform_data.rot_ord)
-    pst_rot = to_rot(transform_data.pst_rot, transform_data.rot_ord)
-    geom_rot = to_rot(transform_data.geom_rot, transform_data.rot_ord)
+    pre_rot = to_rot(transform_data.pre_rot, 'XYZ')
+    pst_rot = to_rot(transform_data.pst_rot, 'XYZ')
+    geom_rot = to_rot(transform_data.geom_rot, 'XYZ')
 
     rot_ofs = Matrix.Translation(transform_data.rot_ofs)
     rot_piv = Matrix.Translation(transform_data.rot_piv)
@@ -439,7 +440,7 @@ def blen_read_object_transform_do(transform_data):
         rot_piv @
         pre_rot @
         lcl_rot @
-        pst_rot @
+        pst_rot.inverted_safe() @
         rot_piv.inverted_safe() @
         sca_ofs @
         sca_piv @

@@ -614,7 +614,8 @@ bool BKE_brush_delete(Main *bmain, Brush *brush)
     return false;
   }
   if (ID_REAL_USERS(brush) <= 1 && ID_EXTRA_USERS(brush) == 0 &&
-      BKE_library_ID_is_indirectly_used(bmain, brush)) {
+      BKE_library_ID_is_indirectly_used(bmain, brush))
+  {
     return false;
   }
 
@@ -1612,9 +1613,8 @@ void BKE_brush_gpencil_weight_presets(Main *bmain, ToolSettings *ts, const bool 
   Paint *weightpaint = &ts->gp_weightpaint->paint;
   Brush *brush_prev = weightpaint->brush;
   Brush *brush, *deft_weight;
-  /* Vertex Draw brush. */ /*BFA - Renamed default brush*/
+  /* Weight Draw brush. */ /*BFA - Renamed default brush*/
   brush = gpencil_brush_ensure(bmain, ts, "GP_W_Draw", OB_MODE_WEIGHT_GPENCIL, &r_new);
-
   if ((reset) || (r_new)) {
     BKE_gpencil_brush_preset_set(bmain, brush, GP_BRUSH_PRESET_WEIGHT_DRAW);
   }
@@ -2649,7 +2649,8 @@ bool BKE_brush_has_cube_tip(const Brush *brush, ePaintMode paint_mode)
       }
 
       if (ELEM(brush->sculpt_tool, SCULPT_TOOL_CLAY_STRIPS, SCULPT_TOOL_PAINT) &&
-          brush->tip_roundness < 1.0f) {
+          brush->tip_roundness < 1.0f)
+      {
         return true;
       }
 

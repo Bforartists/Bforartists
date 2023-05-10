@@ -729,7 +729,8 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
     /* If the buttons have own identity comparator callbacks (and they match), use this to
      * determine equality. */
     if (but->identity_cmp_func && (but->type == oldbut->type) &&
-        (but->identity_cmp_func == oldbut->identity_cmp_func)) {
+        (but->identity_cmp_func == oldbut->identity_cmp_func))
+    {
       /* Test if the comparison is symmetrical (if a == b then b == a), may help catch some issues.
        */
       BLI_assert(but->identity_cmp_func(but, oldbut) == but->identity_cmp_func(oldbut, but));
@@ -759,7 +760,8 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
     return false;
   }
   if (!but->funcN && ((but->poin != oldbut->poin && (uiBut *)oldbut->poin != oldbut) ||
-                      (but->pointype != oldbut->pointype))) {
+                      (but->pointype != oldbut->pointype)))
+  {
     return false;
   }
   if (but->optype != oldbut->optype) {
@@ -773,7 +775,8 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
     uiButViewItem *but_item = (uiButViewItem *)but;
     uiButViewItem *oldbut_item = (uiButViewItem *)oldbut;
     if (!but_item->view_item || !oldbut_item->view_item ||
-        !UI_view_item_matches(but_item->view_item, oldbut_item->view_item)) {
+        !UI_view_item_matches(but_item->view_item, oldbut_item->view_item))
+    {
       return false;
     }
   }
@@ -924,7 +927,7 @@ static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
       MEM_freeN(oldbut->str);
       oldbut->str = oldbut->strdata;
     }
-    BLI_strncpy(oldbut->strdata, but->strdata, sizeof(oldbut->strdata));
+    STRNCPY(oldbut->strdata, but->strdata);
   }
 
   if (but->dragpoin) {
@@ -1144,7 +1147,8 @@ static void ui_menu_block_set_keyaccels(uiBlock *block)
                 UI_BTYPE_PULLDOWN,
                 /* For PIE-menus. */
                 UI_BTYPE_ROW) ||
-          (but->flag & UI_HIDDEN)) {
+          (but->flag & UI_HIDDEN))
+      {
         continue;
       }
 
@@ -1224,8 +1228,7 @@ void ui_but_add_shortcut(uiBut *but, const char *shortcut_str, const bool do_str
   else {
     butstr_orig = BLI_strdup(but->str);
   }
-  BLI_snprintf(
-      but->strdata, sizeof(but->strdata), "%s" UI_SEP_CHAR_S "%s", butstr_orig, shortcut_str);
+  SNPRINTF(but->strdata, "%s" UI_SEP_CHAR_S "%s", butstr_orig, shortcut_str);
   MEM_freeN(butstr_orig);
   but->str = but->strdata;
   but->flag |= UI_BUT_HAS_SEP_CHAR;
@@ -1242,7 +1245,7 @@ void ui_but_add_shortcut(uiBut *but, const char *shortcut_str, const bool do_str
 static bool ui_but_event_operator_string_from_operator(const bContext *C,
                                                        wmOperatorCallParams *op_call_params,
                                                        char *buf,
-                                                       const size_t buf_len)
+                                                       const size_t buf_maxncpy)
 {
   BLI_assert(op_call_params->optype != nullptr);
   bool found = false;
@@ -1256,7 +1259,8 @@ static bool ui_but_event_operator_string_from_operator(const bContext *C,
                                    prop,
                                    true,
                                    buf,
-                                   buf_len)) {
+                                   buf_maxncpy))
+  {
     found = true;
   }
   return found;
@@ -1265,7 +1269,7 @@ static bool ui_but_event_operator_string_from_operator(const bContext *C,
 static bool ui_but_event_operator_string_from_menu(const bContext *C,
                                                    uiBut *but,
                                                    char *buf,
-                                                   const size_t buf_len)
+                                                   const size_t buf_maxncpy)
 {
   MenuType *mt = UI_but_menutype_get(but);
   BLI_assert(mt != nullptr);
@@ -1275,10 +1279,11 @@ static bool ui_but_event_operator_string_from_menu(const bContext *C,
   /* annoying, create a property */
   const IDPropertyTemplate val = {0};
   IDProperty *prop_menu = IDP_New(IDP_GROUP, &val, __func__); /* Dummy, name is unimportant. */
-  IDP_AddToGroup(prop_menu, IDP_NewString(mt->idname, "name", sizeof(mt->idname)));
+  IDP_AddToGroup(prop_menu, IDP_NewStringMaxSize(mt->idname, "name", sizeof(mt->idname)));
 
   if (WM_key_event_operator_string(
-          C, "WM_OT_call_menu", WM_OP_INVOKE_REGION_WIN, prop_menu, true, buf, buf_len)) {
+          C, "WM_OT_call_menu", WM_OP_INVOKE_REGION_WIN, prop_menu, true, buf, buf_maxncpy))
+  {
     found = true;
   }
 
@@ -1289,7 +1294,7 @@ static bool ui_but_event_operator_string_from_menu(const bContext *C,
 static bool ui_but_event_operator_string_from_panel(const bContext *C,
                                                     uiBut *but,
                                                     char *buf,
-                                                    const size_t buf_len)
+                                                    const size_t buf_maxncpy)
 {
   /** Nearly exact copy of #ui_but_event_operator_string_from_menu */
   PanelType *pt = UI_but_paneltype_get(but);
@@ -1301,7 +1306,7 @@ static bool ui_but_event_operator_string_from_panel(const bContext *C,
   const IDPropertyTemplate group_val = {0};
   IDProperty *prop_panel = IDP_New(
       IDP_GROUP, &group_val, __func__); /* Dummy, name is unimportant. */
-  IDP_AddToGroup(prop_panel, IDP_NewString(pt->idname, "name", sizeof(pt->idname)));
+  IDP_AddToGroup(prop_panel, IDP_NewStringMaxSize(pt->idname, "name", sizeof(pt->idname)));
   IDPropertyTemplate space_type_val = {0};
   space_type_val.i = pt->space_type;
   IDP_AddToGroup(prop_panel, IDP_New(IDP_INT, &space_type_val, "space_type"));
@@ -1316,7 +1321,8 @@ static bool ui_but_event_operator_string_from_panel(const bContext *C,
 
     IDP_ReplaceInGroup(prop_panel, IDP_New(IDP_INT, &val, "keep_open"));
     if (WM_key_event_operator_string(
-            C, "WM_OT_call_panel", WM_OP_INVOKE_REGION_WIN, prop_panel, true, buf, buf_len)) {
+            C, "WM_OT_call_panel", WM_OP_INVOKE_REGION_WIN, prop_panel, true, buf, buf_maxncpy))
+    {
       found = true;
       break;
     }
@@ -1329,7 +1335,7 @@ static bool ui_but_event_operator_string_from_panel(const bContext *C,
 static bool ui_but_event_operator_string(const bContext *C,
                                          uiBut *but,
                                          char *buf,
-                                         const size_t buf_len)
+                                         const size_t buf_maxncpy)
 {
   bool found = false;
 
@@ -1338,13 +1344,13 @@ static bool ui_but_event_operator_string(const bContext *C,
     params.optype = but->optype;
     params.opptr = but->opptr;
     params.opcontext = but->opcontext;
-    found = ui_but_event_operator_string_from_operator(C, &params, buf, buf_len);
+    found = ui_but_event_operator_string_from_operator(C, &params, buf, buf_maxncpy);
   }
   else if (UI_but_menutype_get(but) != nullptr) {
-    found = ui_but_event_operator_string_from_menu(C, but, buf, buf_len);
+    found = ui_but_event_operator_string_from_menu(C, but, buf, buf_maxncpy);
   }
   else if (UI_but_paneltype_get(but) != nullptr) {
-    found = ui_but_event_operator_string_from_panel(C, but, buf, buf_len);
+    found = ui_but_event_operator_string_from_panel(C, but, buf, buf_maxncpy);
   }
 
   return found;
@@ -1353,12 +1359,13 @@ static bool ui_but_event_operator_string(const bContext *C,
 static bool ui_but_extra_icon_event_operator_string(const bContext *C,
                                                     uiButExtraOpIcon *extra_icon,
                                                     char *buf,
-                                                    const size_t buf_len)
+                                                    const size_t buf_maxncpy)
 {
   wmOperatorType *extra_icon_optype = UI_but_extra_operator_icon_optype_get(extra_icon);
 
   if (extra_icon_optype) {
-    return ui_but_event_operator_string_from_operator(C, extra_icon->optype_params, buf, buf_len);
+    return ui_but_event_operator_string_from_operator(
+        C, extra_icon->optype_params, buf, buf_maxncpy);
   }
 
   return false;
@@ -1367,7 +1374,7 @@ static bool ui_but_extra_icon_event_operator_string(const bContext *C,
 static bool ui_but_event_property_operator_string(const bContext *C,
                                                   uiBut *but,
                                                   char *buf,
-                                                  const size_t buf_len)
+                                                  const size_t buf_maxncpy)
 {
   /* Context toggle operator names to check. */
 
@@ -1410,7 +1417,8 @@ static bool ui_but_event_property_operator_string(const bContext *C,
         ELEM(but_parent->menu_create_func,
              ui_def_but_rna__menu,
              ui_def_but_rna__panel_type,
-             ui_def_but_rna__menu_type)) {
+             ui_def_but_rna__menu_type))
+    {
       prop_enum_value = int(but->hardmin);
       ptr = &but_parent->rnapoin;
       prop = but_parent->rnaprop;
@@ -1477,7 +1485,8 @@ static bool ui_but_event_property_operator_string(const bContext *C,
   bool found = false;
 
   for (int data_path_index = 0; data_path_index < data_path_variations_num && (found == false);
-       data_path_index++) {
+       data_path_index++)
+  {
     const char *data_path = data_path_variations[data_path_index];
     if (data_path || (prop_enum_value_ok && prop_enum_value_id)) {
       /* Create a property to host the "data_path" property we're sending to the operators. */
@@ -1486,7 +1495,7 @@ static bool ui_but_event_property_operator_string(const bContext *C,
       const IDPropertyTemplate group_val = {0};
       prop_path = IDP_New(IDP_GROUP, &group_val, __func__);
       if (data_path) {
-        IDP_AddToGroup(prop_path, IDP_NewString(data_path, "data_path", strlen(data_path) + 1));
+        IDP_AddToGroup(prop_path, IDP_NewString(data_path, "data_path"));
       }
       if (prop_enum_value_ok) {
         const EnumPropertyItem *item;
@@ -1503,7 +1512,7 @@ static bool ui_but_event_property_operator_string(const bContext *C,
           }
           else {
             const char *id = item[index].identifier;
-            prop_value = IDP_NewString(id, prop_enum_value_id, strlen(id) + 1);
+            prop_value = IDP_NewString(id, prop_enum_value_id);
           }
           IDP_AddToGroup(prop_path, prop_value);
         }
@@ -1519,7 +1528,8 @@ static bool ui_but_event_property_operator_string(const bContext *C,
 
       for (int i = 0; (i < opnames_len) && (opnames[i]); i++) {
         if (WM_key_event_operator_string(
-                C, opnames[i], WM_OP_INVOKE_REGION_WIN, prop_path, false, buf, buf_len)) {
+                C, opnames[i], WM_OP_INVOKE_REGION_WIN, prop_path, false, buf, buf_maxncpy))
+        {
           found = true;
           break;
         }
@@ -2166,7 +2176,8 @@ static void ui_block_message_subscribe(ARegion *region, struct wmMsgBus *mbus, u
       if ((but_prev && (but_prev->rnaprop == but->rnaprop) &&
            (but_prev->rnapoin.type == but->rnapoin.type) &&
            (but_prev->rnapoin.data == but->rnapoin.data) &&
-           (but_prev->rnapoin.owner_id == but->rnapoin.owner_id)) == false) {
+           (but_prev->rnapoin.owner_id == but->rnapoin.owner_id)) == false)
+      {
         /* TODO: could make this into utility function. */
         wmMsgSubscribeValue value = {};
         value.owner = region;
@@ -2436,7 +2447,8 @@ bool ui_but_is_bool(const uiBut *but)
            UI_BTYPE_TOGGLE_N,
            UI_BTYPE_ICON_TOGGLE,
            UI_BTYPE_ICON_TOGGLE_N,
-           UI_BTYPE_TAB)) {
+           UI_BTYPE_TAB))
+  {
     return true;
   }
 
@@ -2722,7 +2734,7 @@ static double ui_get_but_scale_unit(uiBut *but, double value)
   return BKE_scene_unit_scale(unit, RNA_SUBTYPE_UNIT_VALUE(unit_type), value);
 }
 
-void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t maxlen)
+void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t str_maxncpy)
 {
   if (!ui_but_is_unit(but)) {
     return;
@@ -2734,7 +2746,8 @@ void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t maxlen)
 
   orig_str = BLI_strdup(str);
 
-  BKE_unit_name_to_alt(str, maxlen, orig_str, unit->system, RNA_SUBTYPE_UNIT_VALUE(unit_type));
+  BKE_unit_name_to_alt(
+      str, str_maxncpy, orig_str, unit->system, RNA_SUBTYPE_UNIT_VALUE(unit_type));
 
   MEM_freeN(orig_str);
 }
@@ -2743,7 +2756,7 @@ void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t maxlen)
  * \param float_precision: Override the button precision.
  */
 static void ui_get_but_string_unit(
-    uiBut *but, char *str, int len_max, double value, bool pad, int float_precision)
+    uiBut *but, char *str, int str_maxncpy, double value, bool pad, int float_precision)
 {
   UnitSettings *unit = but->block->unit;
   const int unit_type = UI_but_unit_type_get(but);
@@ -2769,7 +2782,7 @@ static void ui_get_but_string_unit(
   }
 
   BKE_unit_value_as_string(str,
-                           len_max,
+                           str_maxncpy,
                            ui_get_but_scale_unit(but, value),
                            precision,
                            RNA_SUBTYPE_UNIT_VALUE(unit_type),
@@ -2815,7 +2828,7 @@ static float ui_get_but_step_unit(uiBut *but, float step_default)
 
 void ui_but_string_get_ex(uiBut *but,
                           char *str,
-                          const size_t maxlen,
+                          const size_t str_maxncpy,
                           const int float_precision,
                           const bool use_exp_float,
                           bool *r_use_exp_float)
@@ -2836,11 +2849,11 @@ void ui_but_string_get_ex(uiBut *but,
       /* uiBut.custom_data points to data this tab represents (e.g. workspace).
        * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
       RNA_pointer_create(but->rnapoin.owner_id, ptr_type, but->custom_data, &ptr);
-      buf = RNA_struct_name_get_alloc(&ptr, str, maxlen, &buf_len);
+      buf = RNA_struct_name_get_alloc(&ptr, str, str_maxncpy, &buf_len);
     }
     else if (type == PROP_STRING) {
       /* RNA string */
-      buf = RNA_property_string_get_alloc(&but->rnapoin, but->rnaprop, str, maxlen, &buf_len);
+      buf = RNA_property_string_get_alloc(&but->rnapoin, but->rnaprop, str, str_maxncpy, &buf_len);
     }
     else if (type == PROP_ENUM) {
       /* RNA enum */
@@ -2849,15 +2862,16 @@ void ui_but_string_get_ex(uiBut *but,
                                  &but->rnapoin,
                                  but->rnaprop,
                                  value,
-                                 &buf)) {
-        BLI_strncpy(str, buf, maxlen);
+                                 &buf))
+      {
+        BLI_strncpy(str, buf, str_maxncpy);
         buf = str;
       }
     }
     else if (type == PROP_POINTER) {
       /* RNA pointer */
       PointerRNA ptr = RNA_property_pointer_get(&but->rnapoin, but->rnaprop);
-      buf = RNA_struct_name_get_alloc(&ptr, str, maxlen, &buf_len);
+      buf = RNA_struct_name_get_alloc(&ptr, str, str_maxncpy, &buf_len);
     }
     else {
       BLI_assert(0);
@@ -2867,23 +2881,23 @@ void ui_but_string_get_ex(uiBut *but,
       str[0] = '\0';
     }
     else if (buf != str) {
-      BLI_assert(maxlen <= buf_len + 1);
+      BLI_assert(str_maxncpy <= buf_len + 1);
       /* string was too long, we have to truncate */
       if (UI_but_is_utf8(but)) {
-        BLI_strncpy_utf8(str, buf, maxlen);
+        BLI_strncpy_utf8(str, buf, str_maxncpy);
       }
       else {
-        BLI_strncpy(str, buf, maxlen);
+        BLI_strncpy(str, buf, str_maxncpy);
       }
       MEM_freeN((void *)buf);
     }
   }
   else if (ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
     /* string */
-    BLI_strncpy(str, but->poin, maxlen);
+    BLI_strncpy(str, but->poin, str_maxncpy);
     return;
   }
-  else if (ui_but_anim_expression_get(but, str, maxlen)) {
+  else if (ui_but_anim_expression_get(but, str, str_maxncpy)) {
     /* driver expression */
   }
   else {
@@ -2906,21 +2920,21 @@ void ui_but_string_get_ex(uiBut *but,
       }
 
       if (ui_but_is_unit(but)) {
-        ui_get_but_string_unit(but, str, maxlen, value, false, prec);
+        ui_get_but_string_unit(but, str, str_maxncpy, value, false, prec);
       }
       else if (subtype == PROP_FACTOR) {
         if (U.factor_display_type == USER_FACTOR_AS_FACTOR) {
-          BLI_snprintf(str, maxlen, "%.*f", prec, value);
+          BLI_snprintf(str, str_maxncpy, "%.*f", prec, value);
         }
         else {
-          BLI_snprintf(str, maxlen, "%.*f", MAX2(0, prec - 2), value * 100);
+          BLI_snprintf(str, str_maxncpy, "%.*f", MAX2(0, prec - 2), value * 100);
         }
       }
       else {
         const int int_digits_num = integer_digits_f(value);
         if (use_exp_float) {
           if (int_digits_num < -6 || int_digits_num > 12) {
-            BLI_snprintf(str, maxlen, "%.*g", prec, value);
+            BLI_snprintf(str, str_maxncpy, "%.*g", prec, value);
             if (r_use_exp_float) {
               *r_use_exp_float = true;
             }
@@ -2928,24 +2942,24 @@ void ui_but_string_get_ex(uiBut *but,
           else {
             prec -= int_digits_num;
             CLAMP(prec, 0, UI_PRECISION_FLOAT_MAX);
-            BLI_snprintf(str, maxlen, "%.*f", prec, value);
+            BLI_snprintf(str, str_maxncpy, "%.*f", prec, value);
           }
         }
         else {
           prec -= int_digits_num;
           CLAMP(prec, 0, UI_PRECISION_FLOAT_MAX);
-          BLI_snprintf(str, maxlen, "%.*f", prec, value);
+          BLI_snprintf(str, str_maxncpy, "%.*f", prec, value);
         }
       }
     }
     else {
-      BLI_snprintf(str, maxlen, "%d", int(value));
+      BLI_snprintf(str, str_maxncpy, "%d", int(value));
     }
   }
 }
-void ui_but_string_get(uiBut *but, char *str, const size_t maxlen)
+void ui_but_string_get(uiBut *but, char *str, const size_t str_maxncpy)
 {
-  ui_but_string_get_ex(but, str, maxlen, -1, false, nullptr);
+  ui_but_string_get_ex(but, str, str_maxncpy, -1, false, nullptr);
 }
 
 char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size)
@@ -2969,7 +2983,8 @@ char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size)
                                   &but->rnapoin,
                                   but->rnaprop,
                                   value,
-                                  &value_id)) {
+                                  &value_id))
+      {
         value_id = "";
       }
 
@@ -3161,7 +3176,8 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
          * is utterly weak and should be redesigned IMHO, but that's not a simple task. */
         if (search_but && search_but->rnasearchprop &&
             RNA_property_collection_lookup_string(
-                &search_but->rnasearchpoin, search_but->rnasearchprop, str, &rptr)) {
+                &search_but->rnasearchpoin, search_but->rnasearchprop, str, &rptr))
+        {
           RNA_property_pointer_set(&but->rnapoin, but->rnaprop, rptr, nullptr);
         }
         else if (search_but->item_active != nullptr) {
@@ -3181,7 +3197,8 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
                                     &but->rnapoin,
                                     but->rnaprop,
                                     str,
-                                    &value)) {
+                                    &value))
+        {
           RNA_property_enum_set(&but->rnapoin, but->rnaprop, value);
           return true;
         }
@@ -3520,10 +3537,8 @@ void UI_block_free(const bContext *C, uiBlock *block)
 
 void UI_block_listen(const uiBlock *block, const wmRegionListenerParams *listener_params)
 {
-  /* Don't need to let invisible blocks (old blocks from previous redraw) listen. */
-  if (!block->active) {
-    return;
-  }
+  /* Note that #uiBlock.active shouldn't be checked here, since notifier listening happens before
+   * drawing, so there are no active blocks at this point. */
 
   LISTBASE_FOREACH (uiBlockDynamicListener *, listener, &block->dynamic_listeners) {
     listener->listener_func(listener_params);
@@ -3652,7 +3667,7 @@ uiBlock *UI_block_begin(const bContext *C, ARegion *region, const char *name, eU
     STRNCPY(block->display_device, IMB_colormanagement_display_get_default_name());
   }
 
-  BLI_strncpy(block->name, name, sizeof(block->name));
+  STRNCPY(block->name, name);
 
   if (region) {
     UI_block_region_set(block, region);
@@ -3803,8 +3818,8 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
 
     case UI_BTYPE_ICON_TOGGLE:
     case UI_BTYPE_ICON_TOGGLE_N:
-      if ((but->rnaprop == nullptr) ||
-          (RNA_property_flag(but->rnaprop) & PROP_ICONS_CONSECUTIVE)) {
+      if ((but->rnaprop == nullptr) || (RNA_property_flag(but->rnaprop) & PROP_ICONS_CONSECUTIVE))
+      {
         if (but->rnaprop && RNA_property_flag(but->rnaprop) & PROP_ICONS_REVERSE) {
           but->drawflag |= UI_BUT_ICON_REVERSE;
         }
@@ -3837,7 +3852,8 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
                     &but->rnapoin,
                     but->rnaprop,
                     value_enum,
-                    &item)) {
+                    &item))
+            {
               const size_t slen = strlen(item.name);
               ui_but_string_free_internal(but);
               ui_but_string_set_internal(but, item.name, slen);
@@ -3845,7 +3861,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
             }
           }
         }
-        BLI_strncpy(but->drawstr, but->str, sizeof(but->drawstr));
+        STRNCPY(but->drawstr, but->str);
       }
       break;
 
@@ -3867,10 +3883,10 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
       if (ui_but_is_float(but)) {
         UI_GET_BUT_VALUE_INIT(but, value);
         const int prec = ui_but_calc_float_precision(but, value);
-        BLI_snprintf(but->drawstr, sizeof(but->drawstr), "%s%.*f", but->str, prec, value);
+        SNPRINTF(but->drawstr, "%s%.*f", but->str, prec, value);
       }
       else {
-        BLI_strncpy(but->drawstr, but->str, UI_MAX_DRAW_STR);
+        STRNCPY(but->drawstr, but->str);
       }
 
       break;
@@ -3881,7 +3897,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
         char str[UI_MAX_DRAW_STR];
 
         ui_but_string_get(but, str, UI_MAX_DRAW_STR);
-        BLI_snprintf(but->drawstr, sizeof(but->drawstr), "%s%s", but->str, str);
+        SNPRINTF(but->drawstr, "%s%s", but->str, str);
       }
       break;
 
@@ -3894,7 +3910,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
         UI_GET_BUT_VALUE_INIT(but, value);
         str = WM_key_event_string(short(value), false);
       }
-      BLI_snprintf(but->drawstr, UI_MAX_DRAW_STR, "%s%s", but->str, str);
+      SNPRINTF(but->drawstr, "%s%s", but->str, str);
       break;
     }
     case UI_BTYPE_HOTKEY_EVENT:
@@ -3921,11 +3937,11 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
           (void)str; /* UNUSED */
         }
         else {
-          BLI_strncpy(but->drawstr, IFACE_("Press a key"), UI_MAX_DRAW_STR);
+          STRNCPY(but->drawstr, IFACE_("Press a key"));
         }
       }
       else {
-        BLI_strncpy(but->drawstr, but->str, UI_MAX_DRAW_STR);
+        STRNCPY(but->drawstr, but->str);
       }
 
       break;
@@ -3934,7 +3950,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
     case UI_BTYPE_HSVCIRCLE:
       break;
     default:
-      BLI_strncpy(but->drawstr, but->str, UI_MAX_DRAW_STR);
+      STRNCPY(but->drawstr, but->str);
       break;
   }
 
@@ -4196,7 +4212,8 @@ static uiBut *ui_def_but(uiBlock *block,
                 UI_BTYPE_BLOCK,
                 UI_BTYPE_BUT_MENU,
                 UI_BTYPE_SEARCH_MENU,
-                UI_BTYPE_POPOVER)) {
+                UI_BTYPE_POPOVER))
+  {
     but->drawflag |= (UI_BUT_TEXT_LEFT | UI_BUT_ICON_LEFT);
   }
 #ifdef USE_NUMBUTS_LR_ALIGN
@@ -4228,7 +4245,8 @@ static uiBut *ui_def_but(uiBlock *block,
            UI_BTYPE_SEPR,
            UI_BTYPE_SEPR_LINE,
            UI_BTYPE_SEPR_SPACER) ||
-      (but->type >= UI_BTYPE_SEARCH_MENU)) {
+      (but->type >= UI_BTYPE_SEARCH_MENU))
+  {
     /* pass */
   }
   else {
@@ -5005,11 +5023,10 @@ int UI_preview_tile_size_y(void)
 {
   const uiStyle *style = UI_style_get();
   const float font_height = style->widget.points * UI_SCALE_FAC;
+  /* Add some extra padding to make things less tight vertically. */
   const float pad = PREVIEW_TILE_PAD;
 
-  return round_fl_to_int(UI_preview_tile_size_y_no_label() + font_height +
-                         /* Add some extra padding to make things less tight vertically. */
-                         pad);
+  return round_fl_to_int(UI_preview_tile_size_y_no_label() + font_height + pad);
 }
 
 int UI_preview_tile_size_y_no_label(void)
@@ -6410,8 +6427,8 @@ static void operator_enum_search_update_fn(const struct bContext *C,
       const EnumPropertyItem *item = filtered_items[i];
       /* NOTE: need to give the index rather than the
        * identifier because the enum can be freed */
-      if (!UI_search_item_add(
-              items, item->name, POINTER_FROM_INT(item->value), item->icon, 0, 0)) {
+      if (!UI_search_item_add(items, item->name, POINTER_FROM_INT(item->value), item->icon, 0, 0))
+      {
         break;
       }
     }

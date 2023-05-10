@@ -931,26 +931,6 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     me.edges.foreach_get("vertices", t_ev)
     me.loops.foreach_get("edge_index", t_lei)
 
-    # Polygons might not be in the same order as loops. To export per-loop and per-polygon data in a matching order,
-    # one must be set into the order of the other. Since there are fewer polygons than loops and there are usually
-    # more geometry layers exported that are per-loop than per-polygon, it's more efficient to re-order polygons and
-    # per-polygon data.
-    perm_polygons_to_loop_order = None
-    # t_ls indicates the ordering of polygons compared to loops. When t_ls is sorted, polygons and loops are in the same
-    # order. Since each loop must be assigned to exactly one polygon for the mesh to be valid, every value in t_ls must
-    # be unique, so t_ls will be monotonically increasing when sorted.
-    # t_ls is expected to be in the same order as loops in most cases since exiting Edit mode will sort t_ls, so do an
-    # initial check for any element being smaller than the previous element to determine if sorting is required.
-    sort_polygon_data = np.any(t_ls[1:] < t_ls[:-1])
-    if sort_polygon_data:
-        # t_ls is not sorted, so get the indices that would sort t_ls using argsort, these will be re-used to sort
-        # per-polygon data.
-        # Using 'stable' for radix sort, which performs much better with partially ordered data and slightly worse with
-        # completely random data, compared to the default of 'quicksort' for introsort.
-        perm_polygons_to_loop_order = np.argsort(t_ls, kind='stable')
-        # Sort t_ls into the same order as loops.
-        t_ls = t_ls[perm_polygons_to_loop_order]
-
     # Add "fake" faces for loose edges. Each "fake" face consists of two loops creating a new 2-sided polygon.
     if scene_data.settings.use_mesh_edges:
         bl_edge_is_loose_dtype = bool
@@ -1051,8 +1031,6 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
         if smooth_type == 'FACE':
             t_ps = np.empty(len(me.polygons), dtype=poly_use_smooth_dtype)
             me.polygons.foreach_get("use_smooth", t_ps)
-            if sort_polygon_data:
-                t_ps = t_ps[perm_polygons_to_loop_order]
             _map = b"ByPolygon"
         else:  # EDGE
             _map = b"ByEdge"
@@ -1071,17 +1049,14 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                 # Get the 'use_smooth' attribute of all polygons.
                 p_use_smooth_mask = np.empty(mesh_poly_nbr, dtype=poly_use_smooth_dtype)
                 me.polygons.foreach_get('use_smooth', p_use_smooth_mask)
-                if sort_polygon_data:
-                    p_use_smooth_mask = p_use_smooth_mask[perm_polygons_to_loop_order]
                 # Invert to get all flat shaded polygons.
                 p_flat_mask = np.invert(p_use_smooth_mask, out=p_use_smooth_mask)
                 # Convert flat shaded polygons to flat shaded loops by repeating each element by the number of sides of
                 # that polygon.
-                # Polygon sides can be calculated from the element-wise difference of sorted loop starts appended by the
-                # number of loops. Alternatively, polygon sides can be retrieved directly from the 'loop_total'
-                # attribute of polygons, but that might need to be sorted, and we already have t_ls which is sorted loop
-                # starts. It tends to be quicker to calculate from t_ls when above around 10_000 polygons even when the
-                # 'loop_total' array wouldn't need sorting.
+                # Polygon sides can be calculated from the element-wise difference of loop starts appended by the number
+                # of loops. Alternatively, polygon sides can be retrieved directly from the 'loop_total' attribute of
+                # polygons, but since we already have t_ls, it tends to be quicker to calculate from t_ls when above
+                # around 10_000 polygons.
                 polygon_sides = np.diff(mesh_t_ls_view, append=mesh_loop_nbr)
                 p_flat_loop_mask = np.repeat(p_flat_mask, polygon_sides)
                 # Convert flat shaded loops to flat shaded (sharp) edge indices.
@@ -1442,8 +1417,6 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                 fbx_pm_dtype = np.int32
                 t_pm = np.empty(len(me.polygons), dtype=bl_pm_dtype)
                 me.polygons.foreach_get("material_index", t_pm)
-                if sort_polygon_data:
-                    t_pm = t_pm[perm_polygons_to_loop_order]
 
                 # We have to validate mat indices, and map them to FBX indices.
                 # Note a mat might not be in me_fbxmaterials_idx (e.g. node mats are ignored).
@@ -1474,7 +1447,6 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                 elem_data_single_string(lay_ma, b"MappingInformationType", b"AllSame")
                 elem_data_single_string(lay_ma, b"ReferenceInformationType", b"IndexToDirect")
                 elem_data_single_int32_array(lay_ma, b"Materials", [0])
-    del perm_polygons_to_loop_order
 
     # And the "layer TOC"...
 

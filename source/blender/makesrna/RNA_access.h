@@ -216,6 +216,9 @@ bool RNA_enum_name(const EnumPropertyItem *item, int value, const char **r_name)
 bool RNA_enum_description(const EnumPropertyItem *item, int value, const char **description);
 int RNA_enum_from_value(const EnumPropertyItem *item, int value);
 int RNA_enum_from_identifier(const EnumPropertyItem *item, const char *identifier);
+bool RNA_enum_value_from_identifier(const EnumPropertyItem *item,
+                                    const char *identifier,
+                                    int *r_value);
 /**
  * Take care using this with translated enums,
  * prefer #RNA_enum_from_identifier where possible.
@@ -550,7 +553,8 @@ void RNA_collection_clear(PointerRNA *ptr, const char *name);
   { \
     CollectionPropertyIterator rna_macro_iter; \
     for (RNA_collection_begin(sptr, propname, &rna_macro_iter); rna_macro_iter.valid; \
-         RNA_property_collection_next(&rna_macro_iter)) { \
+         RNA_property_collection_next(&rna_macro_iter)) \
+    { \
       PointerRNA itemptr = rna_macro_iter.ptr;
 
 #define RNA_END \
@@ -563,7 +567,8 @@ void RNA_collection_clear(PointerRNA *ptr, const char *name);
   { \
     CollectionPropertyIterator rna_macro_iter; \
     for (RNA_property_collection_begin(sptr, prop, &rna_macro_iter); rna_macro_iter.valid; \
-         RNA_property_collection_next(&rna_macro_iter)) { \
+         RNA_property_collection_next(&rna_macro_iter)) \
+    { \
       PointerRNA itemptr = rna_macro_iter.ptr;
 
 #define RNA_PROP_END \
@@ -578,7 +583,8 @@ void RNA_collection_clear(PointerRNA *ptr, const char *name);
     for (RNA_property_collection_begin( \
              sptr, RNA_struct_iterator_property((sptr)->type), &rna_macro_iter); \
          rna_macro_iter.valid; \
-         RNA_property_collection_next(&rna_macro_iter)) { \
+         RNA_property_collection_next(&rna_macro_iter)) \
+    { \
       PropertyRNA *prop = (PropertyRNA *)rna_macro_iter.ptr.data;
 
 #define RNA_STRUCT_BEGIN_SKIP_RNA_TYPE(sptr, prop) \

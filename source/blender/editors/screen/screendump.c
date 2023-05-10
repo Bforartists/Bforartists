@@ -127,7 +127,8 @@ static int screenshot_exec(bContext *C, wmOperator *op)
       }
 
       if ((scd->im_format.planes == R_IMF_PLANES_BW) &&
-          (scd->im_format.imtype != R_IMF_IMTYPE_MULTILAYER)) {
+          (scd->im_format.imtype != R_IMF_IMTYPE_MULTILAYER))
+      {
         /* bw screenshot? - users will notice if it fails! */
         IMB_color_to_bw(ibuf);
       }
@@ -169,7 +170,7 @@ static int screenshot_invoke(bContext *C, wmOperator *op, const wmEvent *event)
     char filepath[FILE_MAX];
     const char *blendfile_path = BKE_main_blendfile_path_from_global();
     if (blendfile_path[0] != '\0') {
-      BLI_strncpy(filepath, blendfile_path, sizeof(filepath));
+      STRNCPY(filepath, blendfile_path);
       BLI_path_extension_strip(filepath); /* Strip `.blend`. */
     }
     else {

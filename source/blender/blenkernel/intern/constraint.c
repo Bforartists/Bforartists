@@ -354,10 +354,8 @@ void BKE_constraint_mat_convertspace(Object *ob,
           }
 
           /* use pose-space as stepping stone for other spaces */
-          if (ELEM(to,
-                   CONSTRAINT_SPACE_WORLD,
-                   CONSTRAINT_SPACE_PARLOCAL,
-                   CONSTRAINT_SPACE_CUSTOM)) {
+          if (ELEM(to, CONSTRAINT_SPACE_WORLD, CONSTRAINT_SPACE_PARLOCAL, CONSTRAINT_SPACE_CUSTOM))
+          {
             /* call self with slightly different values */
             BKE_constraint_mat_convertspace(
                 ob, pchan, cob, mat, CONSTRAINT_SPACE_POSE, to, keep_scale);
@@ -399,7 +397,8 @@ void BKE_constraint_mat_convertspace(Object *ob,
                  CONSTRAINT_SPACE_WORLD,
                  CONSTRAINT_SPACE_LOCAL,
                  CONSTRAINT_SPACE_OWNLOCAL,
-                 CONSTRAINT_SPACE_CUSTOM)) {
+                 CONSTRAINT_SPACE_CUSTOM))
+        {
           /* call self with slightly different values */
           BKE_constraint_mat_convertspace(
               ob, pchan, cob, mat, CONSTRAINT_SPACE_POSE, to, keep_scale);
@@ -860,7 +859,7 @@ static void default_get_tarmat_full_bbone(struct Depsgraph *UNUSED(depsgraph),
     ct = MEM_callocN(sizeof(bConstraintTarget), "tempConstraintTarget"); \
 \
     ct->tar = datatar; \
-    BLI_strncpy(ct->subtarget, datasubtarget, sizeof(ct->subtarget)); \
+    STRNCPY(ct->subtarget, datasubtarget); \
     ct->space = con->tarspace; \
     ct->flag = CONSTRAINT_TAR_TEMP; \
 \
@@ -917,7 +916,7 @@ static void default_get_tarmat_full_bbone(struct Depsgraph *UNUSED(depsgraph),
       bConstraintTarget *ctn = ct->next; \
       if (no_copy == 0) { \
         datatar = ct->tar; \
-        BLI_strncpy(datasubtarget, ct->subtarget, sizeof(datasubtarget)); \
+        STRNCPY(datasubtarget, ct->subtarget); \
         con->tarspace = (char)ct->space; \
       } \
 \
@@ -1509,7 +1508,8 @@ static void followpath_get_tarmat(struct Depsgraph *UNUSED(depsgraph),
                             NULL,
                             (data->followflag & FOLLOWPATH_FOLLOW) ? quat : NULL,
                             &radius,
-                            NULL)) { /* quat_pt is quat or NULL. */
+                            NULL))
+      {
         float totmat[4][4];
         unit_m4(totmat);
 
@@ -4230,7 +4230,8 @@ static void shrinkwrap_get_tarmat(struct Depsgraph *UNUSED(depsgraph),
     ShrinkwrapTreeData tree;
 
     if (BKE_shrinkwrap_init_tree(
-            &tree, target_eval, scon->shrinkType, scon->shrinkMode, do_track_normal)) {
+            &tree, target_eval, scon->shrinkType, scon->shrinkMode, do_track_normal))
+    {
       BLI_space_transform_from_matrices(&transform, cob->matrix, ct->tar->object_to_world);
 
       switch (scon->shrinkType) {
@@ -5402,7 +5403,7 @@ static void transformcache_copy(bConstraint *con, bConstraint *srccon)
   bTransformCacheConstraint *src = srccon->data;
   bTransformCacheConstraint *dst = con->data;
 
-  BLI_strncpy(dst->object_path, src->object_path, sizeof(dst->object_path));
+  STRNCPY(dst->object_path, src->object_path);
   dst->cache_file = src->cache_file;
   dst->reader = NULL;
   dst->reader_object_path[0] = '\0';
@@ -5778,7 +5779,7 @@ static bConstraint *add_new_constraint_internal(const char *name, short type)
   }
 
   /* copy the name */
-  BLI_strncpy(con->name, newName, sizeof(con->name));
+  STRNCPY(con->name, newName);
 
   /* return the new constraint */
   return con;
@@ -6200,7 +6201,7 @@ void BKE_constraint_targets_flush(struct bConstraint *con, struct ListBase *targ
 
     if (!no_copy) {
       con->space_object = ct->tar;
-      BLI_strncpy(con->space_subtarget, ct->subtarget, sizeof(con->space_subtarget));
+      STRNCPY(con->space_subtarget, ct->subtarget);
     }
 
     BLI_freelinkN(targets, ct);

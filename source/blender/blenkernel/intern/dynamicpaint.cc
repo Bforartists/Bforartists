@@ -295,7 +295,7 @@ static Mesh *dynamicPaint_brush_mesh_get(DynamicPaintBrushSettings *brush)
 static bool setError(DynamicPaintCanvasSettings *canvas, const char *string)
 {
   /* Add error to canvas ui info label */
-  BLI_strncpy(canvas->error, string, sizeof(canvas->error));
+  STRNCPY(canvas->error, string);
   CLOG_STR_ERROR(&LOG, string);
   return false;
 }
@@ -354,9 +354,11 @@ static bool surface_duplicateOutputExists(void *arg, const char *name)
 
   for (; surface; surface = surface->next) {
     if (surface != t_surface && surface->type == t_surface->type &&
-        surface->format == t_surface->format) {
+        surface->format == t_surface->format)
+    {
       if ((surface->output_name[0] != '\0' && !BLI_path_cmp(name, surface->output_name)) ||
-          (surface->output_name2[0] != '\0' && !BLI_path_cmp(name, surface->output_name2))) {
+          (surface->output_name2[0] != '\0' && !BLI_path_cmp(name, surface->output_name2)))
+      {
         return true;
       }
     }
@@ -367,7 +369,7 @@ static bool surface_duplicateOutputExists(void *arg, const char *name)
 static void surface_setUniqueOutputName(DynamicPaintSurface *surface, char *basename, int output)
 {
   char name[64];
-  BLI_strncpy(name, basename, sizeof(name)); /* in case basename is surface->name use a copy */
+  STRNCPY(name, basename); /* in case basename is surface->name use a copy */
   if (output == 0) {
     BLI_uniquename_cb(surface_duplicateOutputExists,
                       surface,
@@ -403,7 +405,7 @@ static bool surface_duplicateNameExists(void *arg, const char *name)
 void dynamicPaintSurface_setUniqueName(DynamicPaintSurface *surface, const char *basename)
 {
   char name[64];
-  BLI_strncpy(name, basename, sizeof(name)); /* in case basename is surface->name use a copy */
+  STRNCPY(name, basename); /* in case basename is surface->name use a copy */
   BLI_uniquename_cb(
       surface_duplicateNameExists, surface, name, '.', surface->name, sizeof(surface->name));
 }
@@ -418,7 +420,7 @@ void dynamicPaintSurface_updateType(DynamicPaintSurface *surface)
   }
   else {
     strcpy(surface->output_name, "dp_");
-    BLI_strncpy(surface->output_name2, surface->output_name, sizeof(surface->output_name2));
+    STRNCPY(surface->output_name2, surface->output_name);
     surface->flags &= ~MOD_DPAINT_ANTIALIAS;
     surface->depth_clamp = 0.0f;
   }
@@ -447,7 +449,8 @@ static int surface_totalSamples(DynamicPaintSurface *surface)
     return (surface->data->total_points * 5);
   }
   if (surface->format == MOD_DPAINT_SURFACE_F_VERTEX && surface->flags & MOD_DPAINT_ANTIALIAS &&
-      surface->data->adj_data) {
+      surface->data->adj_data)
+  {
     return (surface->data->total_points + surface->data->adj_data->total_targets);
   }
 
@@ -794,7 +797,8 @@ static void surfaceGenerateGrid(DynamicPaintSurface *surface)
 
     /* in case of an allocation failure abort here */
     if (!grid->bounds || !grid->s_pos || !grid->s_num || !grid->t_index || !temp_s_num ||
-        !temp_t_index) {
+        !temp_t_index)
+    {
       error = 1;
     }
 
@@ -930,7 +934,8 @@ static void surface_freeUnusedData(DynamicPaintSurface *surface)
 
   /* Free bake-data if not active or surface is baked. */
   if (!(surface->flags & MOD_DPAINT_ACTIVE) ||
-      (surface->pointcache && surface->pointcache->flag & PTCACHE_BAKED)) {
+      (surface->pointcache && surface->pointcache->flag & PTCACHE_BAKED))
+  {
     free_bakeData(surface->data);
   }
 }
@@ -1210,7 +1215,8 @@ void dynamicPaint_Modifier_copy(const DynamicPaintModifierData *pmd,
 
     /* copy existing surfaces */
     for (surface = static_cast<DynamicPaintSurface *>(pmd->canvas->surfaces.first); surface;
-         surface = surface->next) {
+         surface = surface->next)
+    {
       DynamicPaintSurface *t_surface = dynamicPaint_createNewSurface(tpmd->canvas, nullptr);
       if (flag & LIB_ID_COPY_SET_COPIED_ON_WRITE) {
         /* TODO(sergey): Consider passing some tips to the surface
@@ -1227,7 +1233,7 @@ void dynamicPaint_Modifier_copy(const DynamicPaintModifierData *pmd,
       t_surface->effector_weights = static_cast<EffectorWeights *>(
           MEM_dupallocN(surface->effector_weights));
 
-      BLI_strncpy(t_surface->name, surface->name, sizeof(t_surface->name));
+      STRNCPY(t_surface->name, surface->name);
       t_surface->format = surface->format;
       t_surface->type = surface->type;
       t_surface->disp_type = surface->disp_type;
@@ -1244,8 +1250,7 @@ void dynamicPaint_Modifier_copy(const DynamicPaintModifierData *pmd,
 
       copy_v4_v4(t_surface->init_color, surface->init_color);
       t_surface->init_texture = surface->init_texture;
-      BLI_strncpy(
-          t_surface->init_layername, surface->init_layername, sizeof(t_surface->init_layername));
+      STRNCPY(t_surface->init_layername, surface->init_layername);
 
       t_surface->dry_speed = surface->dry_speed;
       t_surface->diss_speed = surface->diss_speed;
@@ -1268,12 +1273,10 @@ void dynamicPaint_Modifier_copy(const DynamicPaintModifierData *pmd,
       t_surface->wave_spring = surface->wave_spring;
       t_surface->wave_smoothness = surface->wave_smoothness;
 
-      BLI_strncpy(t_surface->uvlayer_name, surface->uvlayer_name, sizeof(t_surface->uvlayer_name));
-      BLI_strncpy(t_surface->image_output_path,
-                  surface->image_output_path,
-                  sizeof(t_surface->image_output_path));
-      BLI_strncpy(t_surface->output_name, surface->output_name, sizeof(t_surface->output_name));
-      BLI_strncpy(t_surface->output_name2, surface->output_name2, sizeof(t_surface->output_name2));
+      STRNCPY(t_surface->uvlayer_name, surface->uvlayer_name);
+      STRNCPY(t_surface->image_output_path, surface->image_output_path);
+      STRNCPY(t_surface->output_name, surface->output_name);
+      STRNCPY(t_surface->output_name2, surface->output_name2);
     }
   }
   if (tpmd->brush) {
@@ -1775,8 +1778,8 @@ bool dynamicPaint_resetSurface(const Scene *scene, DynamicPaintSurface *surface)
 /* make sure allocated surface size matches current requirements */
 static bool dynamicPaint_checkSurfaceData(const Scene *scene, DynamicPaintSurface *surface)
 {
-  if (!surface->data ||
-      (dynamicPaint_surfaceNumOfPoints(surface) != surface->data->total_points)) {
+  if (!surface->data || (dynamicPaint_surfaceNumOfPoints(surface) != surface->data->total_points))
+  {
     return dynamicPaint_resetSurface(scene, surface);
   }
   return true;
@@ -1907,13 +1910,15 @@ static Mesh *dynamicPaint_Modifier_apply(DynamicPaintModifierData *pmd, Object *
   Mesh *result = BKE_mesh_copy_for_eval(mesh);
 
   if (pmd->canvas && !(pmd->canvas->flags & MOD_DPAINT_BAKING) &&
-      pmd->type == MOD_DYNAMICPAINT_TYPE_CANVAS) {
+      pmd->type == MOD_DYNAMICPAINT_TYPE_CANVAS)
+  {
 
     DynamicPaintSurface *surface;
 
     /* loop through surfaces */
     for (surface = static_cast<DynamicPaintSurface *>(pmd->canvas->surfaces.first); surface;
-         surface = surface->next) {
+         surface = surface->next)
+    {
       PaintSurfaceData *sData = surface->data;
 
       if (surface->format != MOD_DPAINT_SURFACE_F_IMAGESEQ && sData) {
@@ -2115,7 +2120,8 @@ static void dynamicPaint_frameUpdate(
       CLAMP(current_frame, surface->start_frame, surface->end_frame);
 
       if (no_surface_data || current_frame != surface->current_frame ||
-          int(scene->r.cfra) == surface->start_frame) {
+          int(scene->r.cfra) == surface->start_frame)
+      {
         PointCache *cache = surface->pointcache;
         PTCacheID pid;
         surface->current_frame = current_frame;
@@ -2149,7 +2155,8 @@ static void dynamicPaint_frameUpdate(
 
           /* restore canvas mesh if required */
           if (surface->type == MOD_DPAINT_SURFACE_T_DISPLACE &&
-              surface->flags & MOD_DPAINT_DISP_INCREMENTAL && surface->next) {
+              surface->flags & MOD_DPAINT_DISP_INCREMENTAL && surface->next)
+          {
             canvas_copyMesh(canvas, mesh);
           }
 
@@ -2255,7 +2262,8 @@ static void dynamic_paint_create_uv_surface_direct_cb(void *__restrict userdata,
       for (const int i : looptris.index_range()) {
         /* Check uv bb */
         if ((faceBB[i].min[0] > point[sample][0]) || (faceBB[i].min[1] > point[sample][1]) ||
-            (faceBB[i].max[0] < point[sample][0]) || (faceBB[i].max[1] < point[sample][1])) {
+            (faceBB[i].max[0] < point[sample][0]) || (faceBB[i].max[1] < point[sample][1]))
+        {
           continue;
         }
 
@@ -3303,12 +3311,12 @@ void dynamicPaint_outputSurfaceImage(DynamicPaintSurface *surface,
     format = R_IMF_IMTYPE_PNG;
   }
 #endif
-  BLI_strncpy(output_file, filepath, sizeof(output_file));
-  BKE_image_path_ensure_ext_from_imtype(output_file, format);
+  STRNCPY(output_file, filepath);
+  BKE_image_path_ext_from_imtype_ensure(output_file, sizeof(output_file), format);
 
   /* Validate output file path */
   BLI_path_abs(output_file, BKE_main_blendfile_path_from_global());
-  BLI_make_existing_file(output_file);
+  BLI_file_ensure_parent_dir_exists(output_file);
 
   /* Init image buffer */
   ibuf = IMB_allocImBuf(surface->image_resolution, surface->image_resolution, 32, IB_rectfloat);
@@ -3634,7 +3642,8 @@ static void dynamicPaint_updatePointData(const DynamicPaintSurface *surface,
 
   /* Sample velocity colorband if required */
   if (brush->flags &
-      (MOD_DPAINT_VELOCITY_ALPHA | MOD_DPAINT_VELOCITY_COLOR | MOD_DPAINT_VELOCITY_DEPTH)) {
+      (MOD_DPAINT_VELOCITY_ALPHA | MOD_DPAINT_VELOCITY_COLOR | MOD_DPAINT_VELOCITY_DEPTH))
+  {
     float coba_res[4];
     vel_factor /= brush->max_velocity;
     CLAMP(vel_factor, 0.0f, 1.0f);
@@ -4054,7 +4063,8 @@ static void dynamic_paint_paint_mesh_cell_point_cb_ex(void *__restrict userdata,
 
     /* Check proximity collision */
     if (ELEM(brush->collision, MOD_DPAINT_COL_DIST, MOD_DPAINT_COL_VOLDIST) &&
-        (!hit_found || (brush->flags & MOD_DPAINT_INVERSE_PROX))) {
+        (!hit_found || (brush->flags & MOD_DPAINT_INVERSE_PROX)))
+    {
       float proxDist = -1.0f;
       float hitCo[3] = {0.0f, 0.0f, 0.0f};
       int tri = 0;
@@ -4138,7 +4148,8 @@ static void dynamic_paint_paint_mesh_cell_point_cb_ex(void *__restrict userdata,
       else if (hit_found == HIT_PROXIMITY) {
         /* apply falloff curve to the proximity_factor */
         if (brush->proximity_falloff == MOD_DPAINT_PRFALL_RAMP &&
-            BKE_colorband_evaluate(brush->paint_ramp, (1.0f - proximity_factor), prox_colorband)) {
+            BKE_colorband_evaluate(brush->paint_ramp, (1.0f - proximity_factor), prox_colorband))
+        {
           proximity_factor = prox_colorband[3];
         }
         else if (brush->proximity_falloff == MOD_DPAINT_PRFALL_CONSTANT) {
@@ -4189,7 +4200,8 @@ static void dynamic_paint_paint_mesh_cell_point_cb_ex(void *__restrict userdata,
 
       /* if brush has smudge enabled store brush velocity */
       if (surface->type == MOD_DPAINT_SURFACE_T_PAINT && brush->flags & MOD_DPAINT_DO_SMUDGE &&
-          bData->brush_velocity) {
+          bData->brush_velocity)
+      {
         copy_v3_v3(&bData->brush_velocity[index * 4], velocity);
         bData->brush_velocity[index * 4 + 3] = velocity_val;
       }
@@ -4326,7 +4338,8 @@ static bool dynamicPaint_paintMesh(Depsgraph *depsgraph,
         for (c_index = 0; c_index < total_cells; c_index++) {
           /* check grid cell bounding box */
           if (!grid->s_num[c_index] ||
-              !meshBrush_boundsIntersect(&grid->bounds[c_index], &mesh_bb, brush, brush_radius)) {
+              !meshBrush_boundsIntersect(&grid->bounds[c_index], &mesh_bb, brush, brush_radius))
+          {
             continue;
           }
 
@@ -4481,7 +4494,8 @@ static void dynamic_paint_paint_particle_cell_point_cb_ex(
 
       /* If inside solid range and no disp depth required, no need to seek further */
       if ((s_range < 0.0f) &&
-          !ELEM(surface->type, MOD_DPAINT_SURFACE_T_DISPLACE, MOD_DPAINT_SURFACE_T_WAVE)) {
+          !ELEM(surface->type, MOD_DPAINT_SURFACE_T_DISPLACE, MOD_DPAINT_SURFACE_T_WAVE))
+      {
         break;
       }
     }
@@ -4529,7 +4543,8 @@ static void dynamic_paint_paint_particle_cell_point_cb_ex(
 
       /* store brush velocity for smudge */
       if ((surface->type == MOD_DPAINT_SURFACE_T_PAINT) &&
-          (brush->flags & MOD_DPAINT_DO_SMUDGE && bData->brush_velocity)) {
+          (brush->flags & MOD_DPAINT_DO_SMUDGE && bData->brush_velocity))
+      {
         copy_v3_v3(&bData->brush_velocity[index * 4], velocity);
         bData->brush_velocity[index * 4 + 3] = velocity_val;
       }
@@ -4587,7 +4602,8 @@ static bool dynamicPaint_paintParticles(DynamicPaintSurface *surface,
   for (ParticleData *pa = psys->particles; p < psys->totpart; p++, pa++) {
     /* Proceed only if particle is active */
     if ((pa->alive == PARS_UNBORN && (part->flag & PART_UNBORN) == 0) ||
-        (pa->alive == PARS_DEAD && (part->flag & PART_DIED) == 0) || (pa->flag & PARS_UNEXIST)) {
+        (pa->alive == PARS_DEAD && (part->flag & PART_DIED) == 0) || (pa->flag & PARS_UNEXIST))
+    {
       continue;
     }
 
@@ -4704,7 +4720,8 @@ static void dynamic_paint_paint_single_point_cb_ex(void *__restrict userdata,
 
     /* color ramp */
     if (brush->proximity_falloff == MOD_DPAINT_PRFALL_RAMP &&
-        BKE_colorband_evaluate(brush->paint_ramp, (1.0f - strength), colorband)) {
+        BKE_colorband_evaluate(brush->paint_ramp, (1.0f - strength), colorband))
+    {
       strength = colorband[3];
     }
 
@@ -4722,7 +4739,8 @@ static void dynamic_paint_paint_single_point_cb_ex(void *__restrict userdata,
 
       /* store brush velocity for smudge */
       if (surface->type == MOD_DPAINT_SURFACE_T_PAINT && brush->flags & MOD_DPAINT_DO_SMUDGE &&
-          bData->brush_velocity) {
+          bData->brush_velocity)
+      {
         mul_v3_v3fl(&bData->brush_velocity[index * 4], velocity, 1.0f / velocity_val);
         bData->brush_velocity[index * 4 + 3] = velocity_val;
       }
@@ -5363,7 +5381,8 @@ static void dynamic_paint_effect_drip_cb(void *__restrict userdata,
       const uint epointlock_idx = n_trgt / 8;
       const uint8_t epointlock_bitmask = 1 << (n_trgt & 7); /* 7 == 0b111 */
       while (atomic_fetch_and_or_uint8(&point_locks[epointlock_idx], epointlock_bitmask) &
-             epointlock_bitmask) {
+             epointlock_bitmask)
+      {
         /* pass */
       }
 
@@ -5410,7 +5429,8 @@ static void dynamic_paint_effect_drip_cb(void *__restrict userdata,
     const uint ppointlock_idx = index / 8;
     const uint8_t ppointlock_bitmask = 1 << (index & 7); /* 7 == 0b111 */
     while (atomic_fetch_and_or_uint8(&point_locks[ppointlock_idx], ppointlock_bitmask) &
-           ppointlock_bitmask) {
+           ppointlock_bitmask)
+    {
       /* pass */
     }
 
@@ -5865,7 +5885,8 @@ static void dynamic_paint_surface_pre_step_cb(void *__restrict userdata,
   }
   /* dissolve for float types */
   else if (surface->flags & MOD_DPAINT_DISSOLVE &&
-           ELEM(surface->type, MOD_DPAINT_SURFACE_T_DISPLACE, MOD_DPAINT_SURFACE_T_WEIGHT)) {
+           ELEM(surface->type, MOD_DPAINT_SURFACE_T_DISPLACE, MOD_DPAINT_SURFACE_T_WEIGHT))
+  {
     float *point = &((float *)sData->type_data)[index];
     /* log or linear */
     value_dissolve(
@@ -6266,7 +6287,8 @@ static int dynamicPaint_doStep(Depsgraph *depsgraph,
                    PART_FLUID_SPRAYBUBBLE,
                    PART_FLUID_FOAMBUBBLE,
                    PART_FLUID_SPRAYFOAMBUBBLE) &&
-              psys_check_enabled(brushObj, brush->psys, for_render)) {
+              psys_check_enabled(brushObj, brush->psys, for_render))
+          {
             /* Paint a particle system */
             dynamicPaint_paintParticles(surface, brush->psys, brush, timescale);
           }
@@ -6295,8 +6317,8 @@ static int dynamicPaint_doStep(Depsgraph *depsgraph,
 
           /* process special brush effects, like smudge */
           if (bData->brush_velocity) {
-            if (surface->type == MOD_DPAINT_SURFACE_T_PAINT &&
-                brush->flags & MOD_DPAINT_DO_SMUDGE) {
+            if (surface->type == MOD_DPAINT_SURFACE_T_PAINT && brush->flags & MOD_DPAINT_DO_SMUDGE)
+            {
               dynamicPaint_doSmudge(surface, brush, timescale);
             }
             MEM_freeN(bData->brush_velocity);

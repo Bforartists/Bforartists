@@ -93,7 +93,7 @@ static int wm_collada_export_exec(bContext *C, wmOperator *op)
 
   /* Avoid File write exceptions in Collada */
   if (!BLI_exists(filepath)) {
-    BLI_make_existing_file(filepath);
+    BLI_file_ensure_parent_dir_exists(filepath);
     if (!BLI_file_touch(filepath)) {
       BKE_report(op->reports, RPT_ERROR, "Can't create export file");
       fprintf(stdout, "Collada export: Can not create: %s\n", filepath);
@@ -218,7 +218,7 @@ static int wm_collada_export_exec(bContext *C, wmOperator *op)
   }
 
   char buff[100];
-  BLI_snprintf(buff, sizeof(buff), "Exported %d Objects", export_count);
+  SNPRINTF(buff, "Exported %d Objects", export_count);
   BKE_report(op->reports, RPT_INFO, buff);
   return OPERATOR_FINISHED;
 }

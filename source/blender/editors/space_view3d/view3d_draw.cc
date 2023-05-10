@@ -233,7 +233,8 @@ static bool view3d_stereo3d_active(wmWindow *win,
         return false;
       }
       if (((scene->r.views_format & SCE_VIEWS_FORMAT_MULTIVIEW) != 0) &&
-          !BKE_scene_multiview_is_stereo3d(&scene->r)) {
+          !BKE_scene_multiview_is_stereo3d(&scene->r))
+      {
         return false;
       }
       break;
@@ -359,7 +360,8 @@ void ED_view3d_draw_setup_view(const wmWindowManager *wm,
   }
   else
 #endif
-      if (view3d_stereo3d_active(win, scene, v3d, rv3d)) {
+      if (view3d_stereo3d_active(win, scene, v3d, rv3d))
+  {
     view3d_stereo3d_setup(depsgraph, scene, v3d, region, rect);
   }
   else {
@@ -1451,7 +1453,7 @@ static void draw_grid_unit_name(
       char numstr[32] = "";
       UI_FontThemeColor(font_id, TH_TEXT_HI);
       if (v3d->grid != 1.0f) {
-        BLI_snprintf(numstr, sizeof(numstr), "%s x %.4g", grid_unit, v3d->grid);
+        SNPRINTF(numstr, "%s x %.4g", grid_unit, v3d->grid);
       }
 
       *yoffset -= VIEW3D_OVERLAY_LINEHEIGHT;
@@ -1475,7 +1477,8 @@ void view3d_draw_region_info(const bContext *C, ARegion *region)
 
 #ifdef WITH_INPUT_NDOF
   if ((U.ndof_flag & NDOF_SHOW_GUIDE) && ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION) == 0) &&
-      (rv3d->persp != RV3D_CAMOB)) {
+      (rv3d->persp != RV3D_CAMOB))
+  {
     /* TODO: draw something else (but not this) during fly mode */
     draw_rotation_guide(rv3d);
   }
@@ -1712,7 +1715,8 @@ void ED_view3d_draw_offscreen(Depsgraph *depsgraph,
   GPU_matrix_identity_set();
 
   if ((viewname != nullptr && viewname[0] != '\0') && (viewmat == nullptr) &&
-      rv3d->persp == RV3D_CAMOB && v3d->camera) {
+      rv3d->persp == RV3D_CAMOB && v3d->camera)
+  {
     view3d_stereo3d_setup_offscreen(depsgraph, scene, v3d, region, winmat, viewname);
   }
   else {
@@ -2175,7 +2179,8 @@ static void validate_object_select_id(struct Depsgraph *depsgraph,
   UNUSED_VARS_NDEBUG(region);
 
   if (obact_eval && (obact_eval->mode & (OB_MODE_VERTEX_PAINT | OB_MODE_WEIGHT_PAINT) ||
-                     BKE_paint_select_face_test(obact_eval))) {
+                     BKE_paint_select_face_test(obact_eval)))
+  {
     /* do nothing */
   }
   /* texture paint mode sampling */
@@ -2573,11 +2578,11 @@ void ED_scene_draw_fps(const Scene *scene, int xoffset, int *yoffset)
   /* Is this more than half a frame behind? */
   if (fps + 0.5f < float(FPS)) {
     UI_FontThemeColor(font_id, TH_REDALERT);
-    BLI_snprintf(printable, sizeof(printable), IFACE_("fps: %.2f"), fps);
+    SNPRINTF(printable, IFACE_("fps: %.2f"), fps);
   }
   else {
     UI_FontThemeColor(font_id, TH_TEXT_HI);
-    BLI_snprintf(printable, sizeof(printable), IFACE_("fps: %i"), int(fps + 0.5f));
+    SNPRINTF(printable, IFACE_("fps: %i"), int(fps + 0.5f));
   }
 
   BLF_enable(font_id, BLF_SHADOW);

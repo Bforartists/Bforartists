@@ -116,7 +116,8 @@ static void action_copy_data(Main *UNUSED(bmain), ID *id_dst, const ID *id_src, 
     /* Fix group links (kind of bad list-in-list search, but this is the most reliable way). */
     for (group_dst = action_dst->groups.first, group_src = action_src->groups.first;
          group_dst && group_src;
-         group_dst = group_dst->next, group_src = group_src->next) {
+         group_dst = group_dst->next, group_src = group_src->next)
+    {
       if (fcurve_src->grp == group_src) {
         fcurve_dst->grp = group_dst;
 
@@ -421,7 +422,7 @@ bActionGroup *action_groups_add_new(bAction *act, const char name[])
 
   /* make it selected, with default name */
   agrp->flag = AGRP_SELECTED;
-  BLI_strncpy(agrp->name, name[0] ? name : DATA_("Group"), sizeof(agrp->name));
+  STRNCPY(agrp->name, name[0] ? name : DATA_("Group"));
 
   /* add to action, and validate */
   BLI_addtail(&act->groups, agrp);
@@ -644,7 +645,7 @@ bPoseChannel *BKE_pose_channel_ensure(bPose *pose, const char *name)
 
   BKE_pose_channel_session_uuid_generate(chan);
 
-  BLI_strncpy(chan->name, name, sizeof(chan->name));
+  STRNCPY(chan->name, name);
 
   copy_v3_fl(chan->custom_scale_xyz, 1.0f);
   zero_v3(chan->custom_translation);
@@ -1272,7 +1273,7 @@ bActionGroup *BKE_pose_add_group(bPose *pose, const char *name)
   }
 
   grp = MEM_callocN(sizeof(bActionGroup), "PoseGroup");
-  BLI_strncpy(grp->name, name, sizeof(grp->name));
+  STRNCPY(grp->name, name);
   BLI_addtail(&pose->agroups, grp);
   BLI_uniquename(&pose->agroups, grp, name, '.', offsetof(bActionGroup, name), sizeof(grp->name));
 
@@ -1771,10 +1772,10 @@ void what_does_obaction(Object *ob,
     }
   }
 
-  BLI_strncpy(workob->parsubstr, ob->parsubstr, sizeof(workob->parsubstr));
+  STRNCPY(workob->parsubstr, ob->parsubstr);
 
   /* we don't use real object name, otherwise RNA screws with the real thing */
-  BLI_strncpy(workob->id.name, "OB<ConstrWorkOb>", sizeof(workob->id.name));
+  STRNCPY(workob->id.name, "OB<ConstrWorkOb>");
 
   /* If we're given a group to use, it's likely to be more efficient
    * (though a bit more dangerous). */
