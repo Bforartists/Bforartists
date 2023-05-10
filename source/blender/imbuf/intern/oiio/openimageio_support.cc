@@ -161,7 +161,7 @@ static void set_colorspace_name(char colorspace[IM_MAX_SPACE],
   if (ctx.use_embedded_colorspace) {
     string ics = spec.get_string_attribute("oiio:ColorSpace");
     char file_colorspace[IM_MAX_SPACE];
-    BLI_strncpy(file_colorspace, ics.c_str(), IM_MAX_SPACE);
+    STRNCPY(file_colorspace, ics.c_str());
 
     /* Only use color-spaces that exist. */
     if (colormanage_colorspace_get_named(file_colorspace)) {
@@ -191,7 +191,6 @@ static ImBuf *get_oiio_ibuf(ImageInput *in, const ReadContext &ctx, char colorsp
   ImBuf *ibuf = nullptr;
   if (is_float) {
     ibuf = load_pixels<float>(in, width, height, channels, ctx.flags, use_all_planes);
-    ibuf->channels = 4;
   }
   else {
     ibuf = load_pixels<uchar>(in, width, height, channels, ctx.flags, use_all_planes);
@@ -222,9 +221,12 @@ static ImBuf *get_oiio_ibuf(ImageInput *in, const ReadContext &ctx, char colorsp
     /* Transfer metadata to the ibuf if necessary. */
     if (ctx.flags & IB_metadata) {
       IMB_metadata_ensure(&ibuf->metadata);
-      ibuf->flags |= (spec.extra_attribs.empty()) ? 0 : IB_metadata;
+      ibuf->flags |= spec.extra_attribs.empty() ? 0 : IB_metadata;
 
       for (const auto &attrib : spec.extra_attribs) {
+        if (attrib.name().find("ICCProfile") != string::npos) {
+          continue;
+        }
         IMB_metadata_set_field(ibuf->metadata, attrib.name().c_str(), attrib.get_string().c_str());
       }
     }
@@ -312,12 +314,14 @@ bool imb_oiio_write(const WriteContext &ctx, const char *filepath, const ImageSp
 
     imb_addencodedbufferImBuf(ctx.ibuf);
     out->set_ioproxy(&writer);
-    out->open("", file_spec);
-    ok = final_buf.write(out.get());
+    if (out->open("", file_spec)) {
+      ok = final_buf.write(out.get());
+    }
   }
   else {
-    out->open(filepath, file_spec);
-    ok = final_buf.write(out.get());
+    if (out->open(filepath, file_spec)) {
+      ok = final_buf.write(out.get());
+    }
   }
 
   out->close();
@@ -375,7 +379,8 @@ ImageSpec imb_create_write_spec(const WriteContext &ctx, int file_channels, Type
 
   if (ctx.ibuf->metadata) {
     for (IDProperty *prop = static_cast<IDProperty *>(ctx.ibuf->metadata->data.group.first); prop;
-         prop = prop->next) {
+         prop = prop->next)
+    {
       if (prop->type == IDP_STRING) {
         /* If this property has a prefixed name (oiio:, tiff:, etc.) and it belongs to
          * oiio or a different format, then skip. */
@@ -383,7 +388,8 @@ ImageSpec imb_create_write_spec(const WriteContext &ctx, int file_channels, Type
           std::string prefix(prop->name, colon);
           Strutil::to_lower(prefix);
           if (prefix == "oiio" ||
-              (!STREQ(prefix.c_str(), ctx.file_format) && OIIO::is_imageio_format_name(prefix))) {
+              (!STREQ(prefix.c_str(), ctx.file_format) && OIIO::is_imageio_format_name(prefix)))
+          {
             /* Skip this attribute. */
             continue;
           }

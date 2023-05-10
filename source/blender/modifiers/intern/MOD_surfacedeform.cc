@@ -43,8 +43,8 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "MOD_ui_common.h"
-#include "MOD_util.h"
+#include "MOD_ui_common.hh"
+#include "MOD_util.hh"
 
 struct SDefAdjacency {
   SDefAdjacency *next;
@@ -68,11 +68,12 @@ struct SDefBindCalcData {
   const SDefAdjacencyArray *vert_edges;
   const SDefEdgePolys *edge_polys;
   SDefVert *bind_verts;
-  blender::Span<MEdge> edges;
+  blender::Span<blender::int2> edges;
   blender::OffsetIndices<int> polys;
   blender::Span<int> corner_verts;
   blender::Span<int> corner_edges;
   blender::Span<MLoopTri> looptris;
+  blender::Span<int> looptri_polys;
 
   /** Coordinates to bind to, transformed into local space (compatible with `vertexCos`). */
   float (*targetCos)[3];
@@ -290,7 +291,7 @@ static void freeAdjacencyMap(SDefAdjacencyArray *const vert_edges,
 }
 
 static int buildAdjacencyMap(const blender::OffsetIndices<int> polys,
-                             const blender::Span<MEdge> edges,
+                             const blender::Span<blender::int2> edges,
                              const blender::Span<int> corner_edges,
                              SDefAdjacencyArray *const vert_edges,
                              SDefAdjacency *adj,
@@ -316,17 +317,17 @@ static int buildAdjacencyMap(const blender::OffsetIndices<int> polys,
 
   /* Find edges adjacent to vertices */
   for (const int i : edges.index_range()) {
-    const MEdge &edge = edges[i];
-    adj->next = vert_edges[edge.v1].first;
+    const blender::int2 &edge = edges[i];
+    adj->next = vert_edges[edge[0]].first;
     adj->index = i;
-    vert_edges[edge.v1].first = adj;
-    vert_edges[edge.v1].num += edge_polys[i].num;
+    vert_edges[edge[0]].first = adj;
+    vert_edges[edge[0]].num += edge_polys[i].num;
     adj++;
 
-    adj->next = vert_edges[edge.v2].first;
+    adj->next = vert_edges[edge[1]].first;
     adj->index = i;
-    vert_edges[edge.v2].first = adj;
-    vert_edges[edge.v2].num += edge_polys[i].num;
+    vert_edges[edge[1]].first = adj;
+    vert_edges[edge[1]].num += edge_polys[i].num;
     adj++;
   }
 
@@ -380,7 +381,6 @@ BLI_INLINE uint nearestVert(SDefBindCalcData *const data, const float point_co[3
   nearest.dist_sq = FLT_MAX;
   nearest.index = -1;
 
-  const MEdge *edge;
   float t_point[3];
   float max_dist = FLT_MAX;
   float dist;
@@ -391,13 +391,13 @@ BLI_INLINE uint nearestVert(SDefBindCalcData *const data, const float point_co[3
   BLI_bvhtree_find_nearest(
       data->treeData->tree, t_point, &nearest, data->treeData->nearest_callback, data->treeData);
 
-  const blender::IndexRange poly = data->polys[data->looptris[nearest.index].poly];
+  const blender::IndexRange poly = data->polys[data->looptri_polys[nearest.index]];
 
   for (int i = 0; i < poly.size(); i++) {
     const int edge_i = data->corner_edges[poly.start() + i];
-    edge = &data->edges[edge_i];
+    const blender::int2 &edge = data->edges[edge_i];
     dist = dist_squared_to_line_segment_v3(
-        point_co, data->targetCos[edge->v1], data->targetCos[edge->v2]);
+        point_co, data->targetCos[edge[0]], data->targetCos[edge[1]]);
 
     if (dist < max_dist) {
       max_dist = dist;
@@ -405,13 +405,14 @@ BLI_INLINE uint nearestVert(SDefBindCalcData *const data, const float point_co[3
     }
   }
 
-  edge = &data->edges[index];
-  if (len_squared_v3v3(point_co, data->targetCos[edge->v1]) <
-      len_squared_v3v3(point_co, data->targetCos[edge->v2])) {
-    return edge->v1;
+  const blender::int2 &edge = data->edges[index];
+  if (len_squared_v3v3(point_co, data->targetCos[edge[0]]) <
+      len_squared_v3v3(point_co, data->targetCos[edge[1]]))
+  {
+    return edge[0];
   }
 
-  return edge->v2;
+  return edge[1];
 }
 
 BLI_INLINE int isPolyValid(const float coords[][2], const uint nr)
@@ -653,7 +654,8 @@ BLI_INLINE SDefBindWeightData *computeBindWeights(SDefBindCalcData *const data,
          * degenerate despite having passed isPolyValid). */
         if (bpoly->scales[0] < FLT_EPSILON || bpoly->scales[1] < FLT_EPSILON ||
             bpoly->edgemid_angle < FLT_EPSILON || bpoly->corner_edgemid_angles[0] < FLT_EPSILON ||
-            bpoly->corner_edgemid_angles[1] < FLT_EPSILON) {
+            bpoly->corner_edgemid_angles[1] < FLT_EPSILON)
+        {
           freeBindData(bwdata);
           data->success = MOD_SDEF_BIND_RESULT_GENERIC_ERR;
           return nullptr;
@@ -711,7 +713,8 @@ BLI_INLINE SDefBindWeightData *computeBindWeights(SDefBindCalcData *const data,
 
           /* Verify that the additional computed values are valid. */
           if (bpoly->scale_mid < FLT_EPSILON ||
-              bpoly->point_edgemid_angles[0] + bpoly->point_edgemid_angles[1] < FLT_EPSILON) {
+              bpoly->point_edgemid_angles[0] + bpoly->point_edgemid_angles[1] < FLT_EPSILON)
+          {
             freeBindData(bwdata);
             data->success = MOD_SDEF_BIND_RESULT_GENERIC_ERR;
             return nullptr;
@@ -913,7 +916,8 @@ BLI_INLINE SDefBindWeightData *computeBindWeights(SDefBindCalcData *const data,
       }
       else {
         if (bpoly->dominant_angle_weight < FLT_EPSILON ||
-            1.0f - bpoly->dominant_angle_weight < FLT_EPSILON) {
+            1.0f - bpoly->dominant_angle_weight < FLT_EPSILON)
+        {
           bwdata->binds_num += 1;
         }
         else {
@@ -1176,7 +1180,7 @@ static bool surfacedeformBind(Object *ob,
 {
   BVHTreeFromMesh treeData = {nullptr};
   const float(*positions)[3] = BKE_mesh_vert_positions(target);
-  const blender::Span<MEdge> edges = target->edges();
+  const blender::Span<blender::int2> edges = target->edges();
   const blender::OffsetIndices polys = target->polys();
   const blender::Span<int> corner_verts = target->corner_verts();
   const blender::Span<int> corner_edges = target->corner_edges();
@@ -1255,6 +1259,7 @@ static bool surfacedeformBind(Object *ob,
   data.corner_verts = corner_verts;
   data.corner_edges = corner_edges;
   data.looptris = target->looptris();
+  data.looptri_polys = target->looptri_polys();
   data.targetCos = static_cast<float(*)[3]>(
       MEM_malloc_arrayN(target_verts_num, sizeof(float[3]), "SDefTargetBindVertArray"));
   data.bind_verts = smd_orig->verts;
@@ -1477,7 +1482,8 @@ static void surfacedeformModifier_do(ModifierData *md,
                            target_polys_num,
                            target_verts_num,
                            target,
-                           mesh)) {
+                           mesh))
+    {
       smd->flags &= ~MOD_SDEF_BIND;
     }
     /* Early abort, this is binding 'call', no need to perform whole evaluation. */

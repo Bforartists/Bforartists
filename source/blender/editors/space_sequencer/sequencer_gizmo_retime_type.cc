@@ -380,15 +380,15 @@ static void retime_speed_text_draw(const bContext *C,
   int next_handle_index = SEQ_retiming_handle_index_get(seq, handle) + 1;
   const SeqRetimingHandle *next_handle = &SEQ_retiming_handles_get(seq)[next_handle_index];
   if (handle_x_get(scene, seq, next_handle) < start_frame ||
-      handle_x_get(scene, seq, handle) > end_frame) {
+      handle_x_get(scene, seq, handle) > end_frame)
+  {
     return; /* Label out of strip bounds. */
   }
 
   const float speed = SEQ_retiming_handle_speed_get(seq, next_handle);
 
   char label_str[20];
-  const size_t label_len = BLI_snprintf_rlen(
-      label_str, sizeof(label_str), "%d%%", round_fl_to_int(speed * 100.0f));
+  const size_t label_len = SNPRINTF_RLEN(label_str, "%d%%", round_fl_to_int(speed * 100.0f));
 
   const float width = pixels_to_view_width(C, BLF_width(BLF_default(), label_str, label_len));
 
@@ -456,7 +456,8 @@ static int gizmo_retime_handle_test_select(bContext *C, wmGizmo *gz, const int m
   }
 
   if (handle_x_get(scene, seq, handle) == SEQ_time_left_handle_frame_get(scene, seq) ||
-      handle_index == 0) {
+      handle_index == 0)
+  {
     return -1;
   }
 
@@ -532,7 +533,8 @@ static int gizmo_retime_remove_test_select(bContext *C, wmGizmo *gz, const int m
   }
 
   if (handle_x_get(scene, seq, handle) == SEQ_time_left_handle_frame_get(scene, seq) ||
-      handle_index == 0) {
+      handle_index == 0)
+  {
     return -1; /* Ignore first handle. */
   }
 

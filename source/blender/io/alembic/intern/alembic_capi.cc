@@ -93,7 +93,7 @@ BLI_INLINE CacheArchiveHandle *handle_from_archive(ArchiveReader *archive)
 static void add_object_path(ListBase *object_paths, const IObject &object)
 {
   CacheObjectPath *abc_path = MEM_cnew<CacheObjectPath>("CacheObjectPath");
-  BLI_strncpy(abc_path->path, object.getFullName().c_str(), sizeof(abc_path->path));
+  STRNCPY(abc_path->path, object.getFullName().c_str());
   BLI_addtail(object_paths, abc_path);
 }
 
@@ -656,7 +656,7 @@ static void import_endjob(void *user_data)
       data->import_ok = !data->was_cancelled;
       break;
     case ABC_ARCHIVE_FAIL:
-      WM_report(RPT_ERROR, "Could not open Alembic archive for reading! See console for detail.");
+      WM_report(RPT_ERROR, "Could not open Alembic archive for reading, see console for detail");
       break;
   }
 
@@ -684,7 +684,7 @@ bool ABC_import(bContext *C,
   job->view_layer = CTX_data_view_layer(C);
   job->wm = CTX_wm_manager(C);
   job->import_ok = false;
-  BLI_strncpy(job->filename, filepath, 1024);
+  STRNCPY(job->filename, filepath);
 
   job->settings.scale = params->global_scale;
   job->settings.is_sequence = params->is_sequence;

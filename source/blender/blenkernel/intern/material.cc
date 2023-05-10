@@ -759,6 +759,10 @@ Material *BKE_object_material_get_eval(Object *ob, short act)
 int BKE_object_material_count_eval(Object *ob)
 {
   BLI_assert(DEG_is_evaluated_object(ob));
+  if (ob->type == OB_EMPTY) {
+    return 0;
+  }
+  BLI_assert(ob->data != nullptr);
   ID *id = get_evaluated_object_data_with_materials(ob);
   const short *len_p = BKE_id_material_len_p(id);
   return len_p ? *len_p : 0;
@@ -1316,7 +1320,8 @@ bool BKE_object_material_slot_remove(Main *bmain, Object *ob)
   const int actcol = ob->actcol;
 
   for (Object *obt = static_cast<Object *>(bmain->objects.first); obt;
-       obt = static_cast<Object *>(obt->id.next)) {
+       obt = static_cast<Object *>(obt->id.next))
+  {
     if (obt->data == ob->data) {
       /* Can happen when object material lists are used, see: #52953 */
       if (actcol > obt->totcol) {
@@ -1397,7 +1402,8 @@ static bool ntree_foreach_texnode_recursive(bNodeTree *nodetree,
   const bool do_color_attributes = (slot_filter & PAINT_SLOT_COLOR_ATTRIBUTE) != 0;
   for (bNode *node : nodetree->all_nodes()) {
     if (do_image_nodes && node->typeinfo->nclass == NODE_CLASS_TEXTURE &&
-        node->typeinfo->type == SH_NODE_TEX_IMAGE && node->id) {
+        node->typeinfo->type == SH_NODE_TEX_IMAGE && node->id)
+    {
       if (!callback(node, userdata)) {
         return false;
       }
@@ -1409,8 +1415,8 @@ static bool ntree_foreach_texnode_recursive(bNodeTree *nodetree,
     }
     else if (ELEM(node->type, NODE_GROUP, NODE_CUSTOM_GROUP) && node->id) {
       /* recurse into the node group and see if it contains any textures */
-      if (!ntree_foreach_texnode_recursive(
-              (bNodeTree *)node->id, callback, userdata, slot_filter)) {
+      if (!ntree_foreach_texnode_recursive((bNodeTree *)node->id, callback, userdata, slot_filter))
+      {
         return false;
       }
     }
@@ -1576,7 +1582,8 @@ void BKE_texpaint_slot_refresh_cache(Scene *scene, Material *ma, const struct Ob
       ma->paint_clone_slot != prev_paint_clone_slot ||
       (ma->texpaintslot && prev_texpaintslot &&
        memcmp(ma->texpaintslot, prev_texpaintslot, sizeof(*ma->texpaintslot) * ma->tot_slots) !=
-           0)) {
+           0))
+  {
     DEG_id_tag_update(&ma->id, ID_RECALC_SHADING | ID_RECALC_COPY_ON_WRITE);
   }
 

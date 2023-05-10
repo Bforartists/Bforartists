@@ -32,8 +32,8 @@
 #include "bmesh.h"
 #include "bmesh_tools.h"
 
-#include "MOD_modifiertypes.h"
-#include "MOD_ui_common.h"
+#include "MOD_modifiertypes.hh"
+#include "MOD_ui_common.hh"
 
 static Mesh *triangulate_mesh(Mesh *mesh,
                               const int quad_method,
@@ -103,7 +103,8 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext * /*ctx*/, M
   TriangulateModifierData *tmd = (TriangulateModifierData *)md;
   Mesh *result;
   if (!(result = triangulate_mesh(
-            mesh, tmd->quad_method, tmd->ngon_method, tmd->min_vertices, tmd->flag))) {
+            mesh, tmd->quad_method, tmd->ngon_method, tmd->min_vertices, tmd->flag)))
+  {
     return mesh;
   }
 

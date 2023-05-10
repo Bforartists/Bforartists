@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.6.0 Alpha (b'bca2090724a3')\n"
+"Project-Id-Version: Blender 3.6.0 Alpha (b'ae1c52b3f2e0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-11 10:34:35\n"
+"POT-Creation-Date: 2023-05-08 10:27:51\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -1008,6 +1008,10 @@ msgid "Execute selected file"
 msgstr "Hautatutako fitxategia exekutatu"
 
 
+msgid "Play"
+msgstr "Erreproduzitu"
+
+
 msgctxt "Operator"
 msgid "Increment Number in Filename"
 msgstr "Fitxategi-izenean Zenbakia Inkrementatu"
@@ -1046,11 +1050,6 @@ msgstr "Hurrengo karpeta"
 
 msgid "Move to next folder"
 msgstr "Hurrengo karpetara mugitu"
-
-
-msgctxt "Operator"
-msgid "Parent File"
-msgstr "Erro Fitxategia"
 
 
 msgid "Move to parent directory"
@@ -1669,10 +1668,6 @@ msgstr "Objectuaren Izena"
 
 msgid "Prev"
 msgstr "Aurrekoa"
-
-
-msgid "Play"
-msgstr "Erreproduzitu"
 
 
 msgctxt "Operator"

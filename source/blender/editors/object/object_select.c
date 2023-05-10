@@ -346,7 +346,7 @@ bool ED_object_jump_to_bone(bContext *C,
 
       /* Select it. */
       ED_pose_deselect_all(ob, SEL_DESELECT, true);
-      ED_pose_bone_select(ob, pchan, true);
+      ED_pose_bone_select(ob, pchan, true, true);
 
       arm->act_bone = pchan->bone;
 
@@ -823,7 +823,8 @@ static bool select_grouped_collection(bContext *C, Object *ob)
 
   for (collection = bmain->collections.first;
        collection && (collection_count < COLLECTION_MENU_MAX);
-       collection = collection->id.next) {
+       collection = collection->id.next)
+  {
     if (BKE_collection_has_object(collection, ob)) {
       ob_collections[collection_count] = collection;
       collection_count++;

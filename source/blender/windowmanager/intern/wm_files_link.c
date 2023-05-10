@@ -126,7 +126,8 @@ static int wm_link_append_flag(wmOperator *op)
     flag |= FILE_ACTIVE_COLLECTION;
   }
   if ((prop = RNA_struct_find_property(op->ptr, "relative_path")) &&
-      RNA_property_boolean_get(op->ptr, prop)) {
+      RNA_property_boolean_get(op->ptr, prop))
+  {
     flag |= FILE_RELPATH;
   }
   if (RNA_boolean_get(op->ptr, "link")) {
@@ -177,7 +178,8 @@ static bool wm_link_append_item_poll(ReportList *reports,
   idcode = BKE_idtype_idcode_from_name(group);
 
   if (!BKE_idtype_idcode_is_linkable(idcode) ||
-      (!do_append && BKE_idtype_idcode_is_only_appendable(idcode))) {
+      (!do_append && BKE_idtype_idcode_is_only_appendable(idcode)))
+  {
     if (reports) {
       if (do_append) {
         BKE_reportf(reports,
@@ -380,7 +382,7 @@ static int wm_link_append_exec(bContext *C, wmOperator *op)
   DEG_relations_tag_update(bmain);
 
   /* XXX TODO: align G.lib with other directory storage (like last opened image etc...) */
-  BLI_strncpy(G.lib, root, FILE_MAX);
+  STRNCPY(G.lib, root);
 
   WM_event_add_notifier(C, NC_WINDOW, NULL);
 
@@ -777,7 +779,7 @@ static int wm_lib_relocate_exec_do(bContext *C, wmOperator *op, bool do_reload)
     BKE_blendfile_link_append_context_free(lapp_context);
 
     /* XXX TODO: align G.lib with other directory storage (like last opened image etc...) */
-    BLI_strncpy(G.lib, root, FILE_MAX);
+    STRNCPY(G.lib, root);
 
     BKE_main_lib_objects_recalc_all(bmain);
     IMB_colormanagement_check_file_config(bmain);

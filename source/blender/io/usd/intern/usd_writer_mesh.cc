@@ -82,7 +82,8 @@ void USDGenericMeshWriter::write_custom_data(const Mesh *mesh, pxr::UsdGeomMesh 
       [&](const bke::AttributeIDRef &attribute_id, const bke::AttributeMetaData &meta_data) {
         /* Color data. */
         if (ELEM(meta_data.domain, ATTR_DOMAIN_CORNER, ATTR_DOMAIN_POINT) &&
-            ELEM(meta_data.data_type, CD_PROP_BYTE_COLOR, CD_PROP_COLOR)) {
+            ELEM(meta_data.data_type, CD_PROP_BYTE_COLOR, CD_PROP_COLOR))
+        {
           write_color_data(mesh, usd_mesh, attribute_id, meta_data);
         }
 
@@ -108,7 +109,7 @@ void USDGenericMeshWriter::write_color_data(const Mesh *mesh,
   pxr::UsdGeomPrimvar colors_pv = pvApi.CreatePrimvar(
       primvar_name, pxr::SdfValueTypeNames->Color3fArray, prim_varying);
 
-  const VArray<ColorGeometry4f> attribute = mesh->attributes().lookup_or_default<ColorGeometry4f>(
+  const VArray<ColorGeometry4f> attribute = *mesh->attributes().lookup_or_default<ColorGeometry4f>(
       attribute_id, meta_data.domain, {0.0f, 0.0f, 0.0f, 1.0f});
 
   pxr::VtArray<pxr::GfVec3f> colors_data;
@@ -281,7 +282,8 @@ void USDGenericMeshWriter::write_mesh(HierarchyContext &context, Mesh *mesh)
   }
 
   if (!usd_mesh_data.corner_indices.empty() &&
-      usd_mesh_data.corner_indices.size() == usd_mesh_data.corner_sharpnesses.size()) {
+      usd_mesh_data.corner_indices.size() == usd_mesh_data.corner_sharpnesses.size())
+  {
     pxr::UsdAttribute attr_corner_indices = usd_mesh.CreateCornerIndicesAttr(pxr::VtValue(), true);
     pxr::UsdAttribute attr_corner_sharpnesses = usd_mesh.CreateCornerSharpnessesAttr(
         pxr::VtValue(), true);
@@ -345,7 +347,7 @@ static void get_loops_polys(const Mesh *mesh, USDMeshData &usd_mesh_data)
   /* Only construct face groups (a.k.a. geometry subsets) when we need them for material
    * assignments. */
   const bke::AttributeAccessor attributes = mesh->attributes();
-  const VArray<int> material_indices = attributes.lookup_or_default<int>(
+  const VArray<int> material_indices = *attributes.lookup_or_default<int>(
       "material_index", ATTR_DOMAIN_FACE, 0);
   if (!material_indices.is_single() && mesh->totcol > 1) {
     const VArraySpan<int> indices_span(material_indices);
@@ -376,7 +378,7 @@ static void get_edge_creases(const Mesh *mesh, USDMeshData &usd_mesh_data)
     return;
   }
 
-  const Span<MEdge> edges = mesh->edges();
+  const Span<int2> edges = mesh->edges();
   for (const int i : edges.index_range()) {
     const float crease = creases[i];
     if (crease == 0.0f) {
@@ -385,8 +387,8 @@ static void get_edge_creases(const Mesh *mesh, USDMeshData &usd_mesh_data)
 
     const float sharpness = crease >= 1.0f ? pxr::UsdGeomMesh::SHARPNESS_INFINITE : crease;
 
-    usd_mesh_data.crease_vertex_indices.push_back(edges[i].v1);
-    usd_mesh_data.crease_vertex_indices.push_back(edges[i].v2);
+    usd_mesh_data.crease_vertex_indices.push_back(edges[i][0]);
+    usd_mesh_data.crease_vertex_indices.push_back(edges[i][1]);
     usd_mesh_data.crease_lengths.push_back(2);
     usd_mesh_data.crease_sharpnesses.push_back(sharpness);
   }
@@ -513,7 +515,7 @@ void USDGenericMeshWriter::write_normals(const Mesh *mesh, pxr::UsdGeomMesh usd_
     bke::AttributeAccessor attributes = mesh->attributes();
     const Span<float3> vert_normals = mesh->vert_normals();
     const Span<float3> poly_normals = mesh->poly_normals();
-    const VArray<bool> sharp_faces = attributes.lookup_or_default<bool>(
+    const VArray<bool> sharp_faces = *attributes.lookup_or_default<bool>(
         "sharp_face", ATTR_DOMAIN_FACE, false);
     for (const int i : polys.index_range()) {
       const IndexRange poly = polys[i];

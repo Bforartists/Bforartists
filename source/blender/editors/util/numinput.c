@@ -119,7 +119,7 @@ void outputNumInput(NumInput *n, char *str, UnitSettings *unit_settings)
 #endif
 
         if (n->val_flag[i] & NUM_INVALID) {
-          BLI_strncpy(val, "Invalid", sizeof(val));
+          STRNCPY(val, "Invalid");
         }
         else {
           BKE_unit_value_as_string_adaptive(val,
@@ -278,7 +278,7 @@ bool user_string_to_number(bContext *C,
   double unit_scale = BKE_scene_unit_scale(unit, type, 1.0);
   if (BKE_unit_string_contains_unit(str, type)) {
     char str_unit_convert[256];
-    BLI_strncpy(str_unit_convert, str, sizeof(str_unit_convert));
+    STRNCPY(str_unit_convert, str);
     BKE_unit_replace_string(
         str_unit_convert, sizeof(str_unit_convert), str, unit_scale, unit->system, type);
 
@@ -323,7 +323,8 @@ bool handleNumInput(bContext *C, NumInput *n, const wmEvent *event)
 #endif
   {
     if (((event->modifier & (KM_CTRL | KM_ALT)) == 0) && (event_ascii != '\0') &&
-        strchr("01234567890@%^&*-+/{}()[]<>.|", event_ascii)) {
+        strchr("01234567890@%^&*-+/{}()[]<>.|", event_ascii))
+    {
       if (!(n->flag & NUM_EDIT_FULL)) {
         n->flag |= NUM_EDITED;
         n->flag |= NUM_EDIT_FULL;

@@ -624,7 +624,8 @@ static void mywrite_id_begin(WriteData *wd, ID *id)
     if (wd->mem.id_session_uuid_mapping != nullptr &&
         (curr_memchunk == nullptr || curr_memchunk->id_session_uuid != id->session_uuid ||
          (prev_memchunk != nullptr &&
-          (prev_memchunk->id_session_uuid == curr_memchunk->id_session_uuid)))) {
+          (prev_memchunk->id_session_uuid == curr_memchunk->id_session_uuid))))
+    {
       void *ref = BLI_ghash_lookup(wd->mem.id_session_uuid_mapping,
                                    POINTER_FROM_UINT(id->session_uuid));
       if (ref != nullptr) {
@@ -839,7 +840,7 @@ static void write_renderinfo(WriteData *wd, Main *mainvar)
       data.efra = sce->r.efra;
       memset(data.scene_name, 0, sizeof(data.scene_name));
 
-      BLI_strncpy(data.scene_name, sce->id.name + 2, sizeof(data.scene_name));
+      STRNCPY(data.scene_name, sce->id.name + 2);
 
       writedata(wd, BLO_CODE_REND, sizeof(data), &data);
     }
@@ -959,9 +960,9 @@ static void write_libraries(WriteData *wd, Main *main)
       found_one = false;
       while (!found_one && tot--) {
         for (id = static_cast<ID *>(lbarray[tot]->first); id; id = static_cast<ID *>(id->next)) {
-          if (id->us > 0 &&
-              ((id->tag & LIB_TAG_EXTERN) ||
-               ((id->tag & LIB_TAG_INDIRECT) && (id->flag & LIB_INDIRECT_WEAK_LINK)))) {
+          if (id->us > 0 && ((id->tag & LIB_TAG_EXTERN) || ((id->tag & LIB_TAG_INDIRECT) &&
+                                                            (id->flag & LIB_INDIRECT_WEAK_LINK))))
+          {
             found_one = true;
             break;
           }
@@ -995,9 +996,9 @@ static void write_libraries(WriteData *wd, Main *main)
       /* Write link placeholders for all direct linked IDs. */
       while (a--) {
         for (id = static_cast<ID *>(lbarray[a]->first); id; id = static_cast<ID *>(id->next)) {
-          if (id->us > 0 &&
-              ((id->tag & LIB_TAG_EXTERN) ||
-               ((id->tag & LIB_TAG_INDIRECT) && (id->flag & LIB_INDIRECT_WEAK_LINK)))) {
+          if (id->us > 0 && ((id->tag & LIB_TAG_EXTERN) || ((id->tag & LIB_TAG_INDIRECT) &&
+                                                            (id->flag & LIB_INDIRECT_WEAK_LINK))))
+          {
             if (!BKE_idtype_idcode_is_linkable(GS(id->name))) {
               CLOG_ERROR(&LOG,
                          "Data-block '%s' from lib '%s' is not linkable, but is flagged as "
@@ -1053,7 +1054,7 @@ static void write_global(WriteData *wd, int fileflags, Main *mainvar)
   if (fileflags & G_FILE_RECOVER_WRITE) {
     STRNCPY(fg.filepath, mainvar->filepath);
   }
-  BLI_snprintf(subvstr, sizeof(subvstr), "%4d", BLENDER_FILE_SUBVERSION);
+  SNPRINTF(subvstr, "%4d", BLENDER_FILE_SUBVERSION);
   memcpy(fg.subvstr, subvstr, 4);
 
   fg.subversion = BLENDER_FILE_SUBVERSION;
@@ -1065,7 +1066,7 @@ static void write_global(WriteData *wd, int fileflags, Main *mainvar)
   BLI_strncpy(fg.build_hash, build_hash, sizeof(fg.build_hash));
 #else
   fg.build_commit_timestamp = 0;
-  BLI_strncpy(fg.build_hash, "unknown", sizeof(fg.build_hash));
+  STRNCPY(fg.build_hash, "unknown");
 #endif
   writestruct(wd, BLO_CODE_GLOB, FileGlobal, 1, &fg);
 }
@@ -1238,12 +1239,11 @@ static bool write_file_handle(Main *mainvar,
 
   blo_split_main(&mainlist, mainvar);
 
-  BLI_snprintf(buf,
-               sizeof(buf),
-               "BLENDER%c%c%.3d",
-               (sizeof(void *) == 8) ? '-' : '_',
-               (ENDIAN_ORDER == B_ENDIAN) ? 'V' : 'v',
-               BLENDER_FILE_VERSION);
+  SNPRINTF(buf,
+           "BLENDER%c%c%.3d",
+           (sizeof(void *) == 8) ? '-' : '_',
+           (ENDIAN_ORDER == B_ENDIAN) ? 'V' : 'v',
+           BLENDER_FILE_VERSION);
 
   mywrite(wd, buf, 12);
 
@@ -1379,9 +1379,9 @@ static bool do_history(const char *name, ReportList *reports)
   }
 
   while (hisnr > 1) {
-    BLI_snprintf(tempname1, sizeof(tempname1), "%s%d", name, hisnr - 1);
+    SNPRINTF(tempname1, "%s%d", name, hisnr - 1);
     if (BLI_exists(tempname1)) {
-      BLI_snprintf(tempname2, sizeof(tempname2), "%s%d", name, hisnr);
+      SNPRINTF(tempname2, "%s%d", name, hisnr);
 
       if (BLI_rename(tempname1, tempname2)) {
         BKE_report(reports, RPT_ERROR, "Unable to make version backup");
@@ -1393,7 +1393,7 @@ static bool do_history(const char *name, ReportList *reports)
 
   /* is needed when hisnr==1 */
   if (BLI_exists(name)) {
-    BLI_snprintf(tempname1, sizeof(tempname1), "%s%d", name, hisnr);
+    SNPRINTF(tempname1, "%s%d", name, hisnr);
 
     if (BLI_rename(name, tempname1)) {
       BKE_report(reports, RPT_ERROR, "Unable to make version backup");
@@ -1441,7 +1441,7 @@ bool BLO_write_file(Main *mainvar,
   }
 
   /* open temporary file, so we preserve the original in case we crash */
-  BLI_snprintf(tempname, sizeof(tempname), "%s@", filepath);
+  SNPRINTF(tempname, "%s@", filepath);
 
   ww_handle_init((write_flags & G_FILE_COMPRESS) ? WW_WRAP_ZSTD : WW_WRAP_NONE, &ww);
 
@@ -1473,14 +1473,14 @@ bool BLO_write_file(Main *mainvar,
 
     /* Normalize the paths in case there is some subtle difference (so they can be compared). */
     if (relbase_valid) {
-      BLI_split_dir_part(mainvar->filepath, dir_src, sizeof(dir_src));
-      BLI_path_normalize(nullptr, dir_src);
+      BLI_path_split_dir_part(mainvar->filepath, dir_src, sizeof(dir_src));
+      BLI_path_normalize(dir_src);
     }
     else {
       dir_src[0] = '\0';
     }
-    BLI_split_dir_part(filepath, dir_dst, sizeof(dir_dst));
-    BLI_path_normalize(nullptr, dir_dst);
+    BLI_path_split_dir_part(filepath, dir_dst, sizeof(dir_dst));
+    BLI_path_normalize(dir_dst);
 
     /* Only for relative, not relative-all, as this means making existing paths relative. */
     if (remap_mode == BLO_WRITE_PATH_REMAP_RELATIVE) {

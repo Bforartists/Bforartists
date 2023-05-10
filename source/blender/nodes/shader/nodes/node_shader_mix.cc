@@ -77,7 +77,7 @@ static void sh_node_mix_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *p
 static void sh_node_mix_label(const bNodeTree * /*ntree*/,
                               const bNode *node,
                               char *label,
-                              int maxlen)
+                              int label_maxncpy)
 {
   const NodeShaderMix &storage = node_storage(*node);
   if (storage.data_type == SOCK_RGBA) {
@@ -86,7 +86,7 @@ static void sh_node_mix_label(const bNodeTree * /*ntree*/,
     if (!enum_label) {
       name = "Unknown";
     }
-    BLI_strncpy(label, IFACE_(name), maxlen);
+    BLI_strncpy(label, IFACE_(name), label_maxncpy);
   }
 }
 
@@ -227,12 +227,12 @@ static void node_mix_gather_link_searches(GatherLinkSearchOpParams &params)
 
 static void gather_add_node_searches(GatherAddNodeSearchParams &params)
 {
-  params.add_item(IFACE_("Mix"), params.node_type().ui_description);
-  params.add_item(IFACE_("Mix Color"),
-                  params.node_type().ui_description,
-                  [](const bContext & /*C*/, bNodeTree & /*node_tree*/, bNode &node) {
-                    node_storage(node).data_type = SOCK_RGBA;
-                  });
+  params.add_single_node_item(IFACE_("Mix"), params.node_type().ui_description);
+  params.add_single_node_item(IFACE_("Mix Color"),
+                              params.node_type().ui_description,
+                              [](const bContext & /*C*/, bNodeTree & /*node_tree*/, bNode &node) {
+                                node_storage(node).data_type = SOCK_RGBA;
+                              });
 }
 
 static void node_mix_init(bNodeTree * /*tree*/, bNode *node)

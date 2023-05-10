@@ -65,7 +65,7 @@
 #include "BKE_ccg.h"
 #include "bmesh.h"
 
-#include "paint_intern.h" /* own include */
+#include "paint_intern.hh" /* own include */
 #include "sculpt_intern.hh"
 
 using blender::IndexRange;
@@ -137,7 +137,7 @@ struct NormalAnglePrecalc {
 /* Returns number of elements. */
 static int get_vcol_elements(Mesh *me, size_t *r_elem_size)
 {
-  const std::optional<bke::AttributeMetaData> meta_data = me->attributes().lookup_meta_data(
+  const std::optional<bke::AttributeMetaData> meta_data = *me->attributes().lookup_meta_data(
       me->active_color_attribute);
 
   if (r_elem_size) {
@@ -291,7 +291,8 @@ static bool weight_paint_poll_ex(bContext *C, bool check_tool)
 
   if ((ob != nullptr) && (ob->mode & OB_MODE_WEIGHT_PAINT) &&
       (BKE_paint_brush(&CTX_data_tool_settings(C)->wpaint->paint) != nullptr) &&
-      (area = CTX_wm_area(C)) && (area->spacetype == SPACE_VIEW3D)) {
+      (area = CTX_wm_area(C)) && (area->spacetype == SPACE_VIEW3D))
+  {
     ARegion *region = CTX_wm_region(C);
     if (ELEM(region->regiontype, RGN_TYPE_WINDOW, RGN_TYPE_HUD)) {
       if (!check_tool || WM_toolsystem_active_tool_is_brush(C)) {
@@ -382,8 +383,8 @@ static Color vpaint_blend(const VPaint *vp,
     }
   }
 
-  if ((brush->flag & BRUSH_LOCK_ALPHA) &&
-      !ELEM(blend, IMB_BLEND_ERASE_ALPHA, IMB_BLEND_ADD_ALPHA)) {
+  if ((brush->flag & BRUSH_LOCK_ALPHA) && !ELEM(blend, IMB_BLEND_ERASE_ALPHA, IMB_BLEND_ADD_ALPHA))
+  {
     Value *cp, *cc;
     cp = (Value *)&color_blend;
     cc = (Value *)&color_curr;
@@ -450,7 +451,8 @@ static void paint_and_tex_color_alpha_intern(VPaint *vp,
             vc->region,
             co,
             co_ss,
-            (eV3DProjTest)(V3D_PROJ_TEST_CLIP_BB | V3D_PROJ_TEST_CLIP_NEAR)) == V3D_PROJ_RET_OK) {
+            (eV3DProjTest)(V3D_PROJ_TEST_CLIP_BB | V3D_PROJ_TEST_CLIP_NEAR)) == V3D_PROJ_RET_OK)
+    {
       const float co_ss_3d[3] = {co_ss[0], co_ss[1], 0.0f}; /* we need a 3rd empty value */
       BKE_brush_sample_tex_3d(vc->scene, brush, mtex, co_ss_3d, r_rgba, 0, nullptr);
     }
@@ -1560,8 +1562,7 @@ static void smooth_brush_toggle_on(const bContext *C, Paint *paint, StrokeCache 
   Brush *brush = paint->brush;
   int cur_brush_size = BKE_brush_size_get(scene, brush);
 
-  BLI_strncpy(
-      cache->saved_active_brush_name, brush->id.name + 2, sizeof(cache->saved_active_brush_name));
+  STRNCPY(cache->saved_active_brush_name, brush->id.name + 2);
 
   /* Switch to the blur (smooth) brush. */
   brush = BKE_paint_toolslots_brush_get(paint, WPAINT_TOOL_BLUR);
@@ -1655,6 +1656,8 @@ static void vwpaint_update_cache_invariants(
   copy_v3_v3(cache->view_normal, cache->true_view_normal);
   cache->bstrength = BKE_brush_alpha_get(scene, brush);
   cache->is_last_valid = false;
+
+  cache->accum = true;
 }
 
 /* Initialize the stroke cache variants from operator properties */
@@ -1689,8 +1692,8 @@ static void vwpaint_update_cache_variants(bContext *C, VPaint *vp, Object *ob, P
     BKE_brush_unprojected_radius_set(scene, brush, cache->initial_radius);
   }
 
-  if (BKE_brush_use_size_pressure(brush) &&
-      paint_supports_dynamic_size(brush, PAINT_MODE_SCULPT)) {
+  if (BKE_brush_use_size_pressure(brush) && paint_supports_dynamic_size(brush, PAINT_MODE_SCULPT))
+  {
     cache->radius = cache->initial_radius * cache->pressure;
   }
   else {
@@ -1797,7 +1800,8 @@ static bool wpaint_stroke_test_start(bContext *C, wmOperator *op, const float mo
       BKE_object_defgroup_check_lock_relative(
           wpd->lock_flags, wpd->vgroup_validmap, wpd->active.index) &&
       (!wpd->do_multipaint || BKE_object_defgroup_check_lock_relative_multi(
-                                  defbase_tot, wpd->lock_flags, defbase_sel, defbase_tot_sel))) {
+                                  defbase_tot, wpd->lock_flags, defbase_sel, defbase_tot_sel)))
+  {
     wpd->do_lock_relative = true;
   }
 
@@ -1953,7 +1957,7 @@ static void do_wpaint_brush_blur_task_cb_ex(void *__restrict userdata,
       ss, data->brush->falloff_shape);
 
   const blender::bke::AttributeAccessor attributes = data->me->attributes();
-  const blender::VArray<bool> select_vert = attributes.lookup_or_default<bool>(
+  const blender::VArray<bool> select_vert = *attributes.lookup_or_default<bool>(
       ".select_vert", ATTR_DOMAIN_POINT, false);
 
   /* For each vertex */
@@ -1990,7 +1994,8 @@ static void do_wpaint_brush_blur_task_cb_ex(void *__restrict userdata,
           if (((brush->flag & BRUSH_FRONTFACE) == 0 || (angle_cos > 0.0f)) &&
               ((brush->flag & BRUSH_FRONTFACE_FALLOFF) == 0 ||
                view_angle_limits_apply_falloff(
-                   &data->wpd->normal_angle_precalc, angle_cos, &brush_strength))) {
+                   &data->wpd->normal_angle_precalc, angle_cos, &brush_strength)))
+          {
             const float brush_fade = BKE_brush_curve_strength(
                 brush, sqrtf(test.dist), cache->radius);
             const float final_alpha = brush_fade * brush_strength * grid_alpha *
@@ -2042,7 +2047,7 @@ static void do_wpaint_brush_smear_task_cb_ex(void *__restrict userdata,
   project_plane_v3_v3v3(brush_dir, brush_dir, cache->view_normal);
 
   const blender::bke::AttributeAccessor attributes = data->me->attributes();
-  const blender::VArray<bool> select_vert = attributes.lookup_or_default<bool>(
+  const blender::VArray<bool> select_vert = *attributes.lookup_or_default<bool>(
       ".select_vert", ATTR_DOMAIN_POINT, false);
 
   if (cache->is_last_valid && (normalize_v3(brush_dir) != 0.0f)) {
@@ -2074,7 +2079,8 @@ static void do_wpaint_brush_smear_task_cb_ex(void *__restrict userdata,
           if (((brush->flag & BRUSH_FRONTFACE) == 0 || (angle_cos > 0.0f)) &&
               ((brush->flag & BRUSH_FRONTFACE_FALLOFF) == 0 ||
                view_angle_limits_apply_falloff(
-                   &data->wpd->normal_angle_precalc, angle_cos, &brush_strength))) {
+                   &data->wpd->normal_angle_precalc, angle_cos, &brush_strength)))
+          {
             bool do_color = false;
             /* Minimum dot product between brush direction and current
              * to neighbor direction is 0.0, meaning orthogonal. */
@@ -2157,7 +2163,7 @@ static void do_wpaint_brush_draw_task_cb_ex(void *__restrict userdata,
       ss, data->brush->falloff_shape);
 
   const blender::bke::AttributeAccessor attributes = data->me->attributes();
-  const blender::VArray<bool> select_vert = attributes.lookup_or_default<bool>(
+  const blender::VArray<bool> select_vert = *attributes.lookup_or_default<bool>(
       ".select_vert", ATTR_DOMAIN_POINT, false);
 
   /* For each vertex */
@@ -2180,7 +2186,8 @@ static void do_wpaint_brush_draw_task_cb_ex(void *__restrict userdata,
         if (((brush->flag & BRUSH_FRONTFACE) == 0 || (angle_cos > 0.0f)) &&
             ((brush->flag & BRUSH_FRONTFACE_FALLOFF) == 0 ||
              view_angle_limits_apply_falloff(
-                 &data->wpd->normal_angle_precalc, angle_cos, &brush_strength))) {
+                 &data->wpd->normal_angle_precalc, angle_cos, &brush_strength)))
+        {
           const float brush_fade = BKE_brush_curve_strength(
               brush, sqrtf(test.dist), cache->radius);
           const float final_alpha = brush_fade * brush_strength * grid_alpha *
@@ -2228,7 +2235,7 @@ static void do_wpaint_brush_calc_average_weight_cb_ex(void *__restrict userdata,
       ss, data->brush->falloff_shape);
 
   const blender::bke::AttributeAccessor attributes = data->me->attributes();
-  const blender::VArray<bool> select_vert = attributes.lookup_or_default<bool>(
+  const blender::VArray<bool> select_vert = *attributes.lookup_or_default<bool>(
       ".select_vert", ATTR_DOMAIN_POINT, false);
 
   /* For each vertex */
@@ -2239,7 +2246,8 @@ static void do_wpaint_brush_calc_average_weight_cb_ex(void *__restrict userdata,
       const float angle_cos = (use_normal && vd.no) ? dot_v3v3(sculpt_normal_frontface, vd.no) :
                                                       1.0f;
       if (angle_cos > 0.0 &&
-          BKE_brush_curve_strength(data->brush, sqrtf(test.dist), cache->radius) > 0.0) {
+          BKE_brush_curve_strength(data->brush, sqrtf(test.dist), cache->radius) > 0.0)
+      {
         const int v_index = has_grids ? ss->corner_verts[vd.grid_indices[vd.g]] :
                                         vd.vert_indices[vd.i];
 
@@ -2859,7 +2867,7 @@ static void *vpaint_init_vpaint(bContext *C,
   vpd->is_texbrush = !(brush->vertexpaint_tool == VPAINT_TOOL_BLUR) && brush->mtex.tex;
 
   if (brush->vertexpaint_tool == VPAINT_TOOL_SMEAR) {
-    const GVArray attribute = me->attributes().lookup(me->active_color_attribute, domain);
+    const GVArray attribute = *me->attributes().lookup(me->active_color_attribute, domain);
     vpd->smear.color_prev = MEM_malloc_arrayN(attribute.size(), attribute.type().size(), __func__);
     attribute.materialize(vpd->smear.color_prev);
 
@@ -2896,7 +2904,7 @@ static bool vpaint_stroke_test_start(bContext *C, wmOperator *op, const float mo
 
   ED_mesh_color_ensure(me, nullptr);
 
-  const std::optional<bke::AttributeMetaData> meta_data = me->attributes().lookup_meta_data(
+  const std::optional<bke::AttributeMetaData> meta_data = *me->attributes().lookup_meta_data(
       me->active_color_attribute);
 
   if (!meta_data) {
@@ -2957,9 +2965,9 @@ static void do_vpaint_brush_blur_loops(bContext *C,
 
   Color *previous_color = static_cast<Color *>(ss->cache->prev_colors_vpaint);
 
-  const blender::VArray<bool> select_vert = me->attributes().lookup_or_default<bool>(
+  const blender::VArray<bool> select_vert = *me->attributes().lookup_or_default<bool>(
       ".select_vert", ATTR_DOMAIN_POINT, false);
-  const blender::VArray<bool> select_poly = me->attributes().lookup_or_default<bool>(
+  const blender::VArray<bool> select_poly = *me->attributes().lookup_or_default<bool>(
       ".select_poly", ATTR_DOMAIN_FACE, false);
 
   blender::threading::parallel_for(nodes.index_range(), 1LL, [&](IndexRange range) {
@@ -3003,7 +3011,8 @@ static void do_vpaint_brush_blur_loops(bContext *C,
             if (((brush->flag & BRUSH_FRONTFACE) == 0 || (angle_cos > 0.0f)) &&
                 ((brush->flag & BRUSH_FRONTFACE_FALLOFF) == 0 ||
                  view_angle_limits_apply_falloff(
-                     &vpd->normal_angle_precalc, angle_cos, &brush_strength))) {
+                     &vpd->normal_angle_precalc, angle_cos, &brush_strength)))
+            {
               const float brush_fade = BKE_brush_curve_strength(
                   brush, sqrtf(test.dist), cache->radius);
 
@@ -3100,9 +3109,9 @@ static void do_vpaint_brush_blur_verts(bContext *C,
 
   Color *previous_color = static_cast<Color *>(ss->cache->prev_colors_vpaint);
 
-  const blender::VArray<bool> select_vert = me->attributes().lookup_or_default<bool>(
+  const blender::VArray<bool> select_vert = *me->attributes().lookup_or_default<bool>(
       ".select_vert", ATTR_DOMAIN_POINT, false);
-  const blender::VArray<bool> select_poly = me->attributes().lookup_or_default<bool>(
+  const blender::VArray<bool> select_poly = *me->attributes().lookup_or_default<bool>(
       ".select_poly", ATTR_DOMAIN_FACE, false);
 
   blender::threading::parallel_for(nodes.index_range(), 1LL, [&](IndexRange range) {
@@ -3146,7 +3155,8 @@ static void do_vpaint_brush_blur_verts(bContext *C,
             if (((brush->flag & BRUSH_FRONTFACE) == 0 || (angle_cos > 0.0f)) &&
                 ((brush->flag & BRUSH_FRONTFACE_FALLOFF) == 0 ||
                  view_angle_limits_apply_falloff(
-                     &vpd->normal_angle_precalc, angle_cos, &brush_strength))) {
+                     &vpd->normal_angle_precalc, angle_cos, &brush_strength)))
+            {
               const float brush_fade = BKE_brush_curve_strength(
                   brush, sqrtf(test.dist), cache->radius);
 
@@ -3248,9 +3258,9 @@ static void do_vpaint_brush_smear(bContext *C,
   Color *color_prev_smear = static_cast<Color *>(vpd->smear.color_prev);
   Color *color_prev = reinterpret_cast<Color *>(ss->cache->prev_colors_vpaint);
 
-  const blender::VArray<bool> select_vert = me->attributes().lookup_or_default<bool>(
+  const blender::VArray<bool> select_vert = *me->attributes().lookup_or_default<bool>(
       ".select_vert", ATTR_DOMAIN_POINT, false);
-  const blender::VArray<bool> select_poly = me->attributes().lookup_or_default<bool>(
+  const blender::VArray<bool> select_poly = *me->attributes().lookup_or_default<bool>(
       ".select_poly", ATTR_DOMAIN_FACE, false);
 
   blender::threading::parallel_for(nodes.index_range(), 1LL, [&](IndexRange range) {
@@ -3299,7 +3309,8 @@ static void do_vpaint_brush_smear(bContext *C,
               if (((brush->flag & BRUSH_FRONTFACE) == 0 || (angle_cos > 0.0f)) &&
                   ((brush->flag & BRUSH_FRONTFACE_FALLOFF) == 0 ||
                    view_angle_limits_apply_falloff(
-                       &vpd->normal_angle_precalc, angle_cos, &brush_strength))) {
+                       &vpd->normal_angle_precalc, angle_cos, &brush_strength)))
+              {
                 const float brush_fade = BKE_brush_curve_strength(
                     brush, sqrtf(test.dist), cache->radius);
 
@@ -3415,7 +3426,7 @@ static void calculate_average_color(VPaintData<Color, Traits, domain> *vpd,
 {
   using Blend = typename Traits::BlendType;
 
-  const blender::VArray<bool> select_vert = me->attributes().lookup_or_default<bool>(
+  const blender::VArray<bool> select_vert = *me->attributes().lookup_or_default<bool>(
       ".select_vert", ATTR_DOMAIN_POINT, false);
 
   VPaintAverageAccum<Blend> *accum = (VPaintAverageAccum<Blend> *)MEM_mallocN(
@@ -3532,9 +3543,9 @@ static void vpaint_do_draw(bContext *C,
 
   Color *previous_color = static_cast<Color *>(ss->cache->prev_colors_vpaint);
 
-  const blender::VArray<bool> select_vert = me->attributes().lookup_or_default<bool>(
+  const blender::VArray<bool> select_vert = *me->attributes().lookup_or_default<bool>(
       ".select_vert", ATTR_DOMAIN_POINT, false);
-  const blender::VArray<bool> select_poly = me->attributes().lookup_or_default<bool>(
+  const blender::VArray<bool> select_poly = *me->attributes().lookup_or_default<bool>(
       ".select_poly", ATTR_DOMAIN_FACE, false);
 
   blender::threading::parallel_for(nodes.index_range(), 1LL, [&](IndexRange range) {
@@ -3582,7 +3593,8 @@ static void vpaint_do_draw(bContext *C,
             if (((brush->flag & BRUSH_FRONTFACE) == 0 || (angle_cos > 0.0f)) &&
                 ((brush->flag & BRUSH_FRONTFACE_FALLOFF) == 0 ||
                  view_angle_limits_apply_falloff(
-                     &vpd->normal_angle_precalc, angle_cos, &brush_strength))) {
+                     &vpd->normal_angle_precalc, angle_cos, &brush_strength)))
+            {
               const float brush_fade = BKE_brush_curve_strength(
                   brush, sqrtf(test.dist), cache->radius);
 
@@ -4083,9 +4095,9 @@ static void fill_mesh_face_or_corner_attribute(Mesh &mesh,
                                                const bool use_vert_sel,
                                                const bool use_face_sel)
 {
-  const VArray<bool> select_vert = mesh.attributes().lookup_or_default<bool>(
+  const VArray<bool> select_vert = *mesh.attributes().lookup_or_default<bool>(
       ".select_vert", ATTR_DOMAIN_POINT, false);
-  const VArray<bool> select_poly = mesh.attributes().lookup_or_default<bool>(
+  const VArray<bool> select_poly = *mesh.attributes().lookup_or_default<bool>(
       ".select_poly", ATTR_DOMAIN_FACE, false);
 
   const OffsetIndices polys = mesh.polys();
