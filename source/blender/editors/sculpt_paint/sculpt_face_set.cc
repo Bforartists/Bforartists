@@ -370,8 +370,8 @@ static int sculpt_face_set_create_exec(bContext *C, wmOperator *op)
     for (int i = 0; i < tot_vert; i++) {
       PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ss->pbvh, i);
 
-      if (SCULPT_vertex_mask_get(ss, vertex) >= threshold &&
-          SCULPT_vertex_visible_get(ss, vertex)) {
+      if (SCULPT_vertex_mask_get(ss, vertex) >= threshold && SCULPT_vertex_visible_get(ss, vertex))
+      {
         SCULPT_vertex_face_set_set(ss, vertex, next_face_set);
       }
     }
@@ -785,7 +785,6 @@ enum eSculptFaceGroupVisibilityModes {
   SCULPT_FACE_SET_VISIBILITY_TOGGLE = 0,
   SCULPT_FACE_SET_VISIBILITY_SHOW_ACTIVE = 1,
   SCULPT_FACE_SET_VISIBILITY_HIDE_ACTIVE = 2,
-  SCULPT_FACE_SET_VISIBILITY_INVERT = 3,
 };
 
 static EnumPropertyItem prop_sculpt_face_sets_change_visibility_types[] = {
@@ -809,13 +808,6 @@ static EnumPropertyItem prop_sculpt_face_sets_change_visibility_types[] = {
         0,
         "Hide Active Face Sets",
         "Hide Active Face Sets",
-    },
-    {
-        SCULPT_FACE_SET_VISIBILITY_INVERT,
-        "INVERT",
-        0,
-        "Invert Face Set Visibility",
-        "Invert Face Set Visibility",
     },
     {0, nullptr, 0, nullptr, nullptr},
 };
@@ -846,6 +838,7 @@ static int sculpt_face_sets_change_visibility_exec(bContext *C, wmOperator *op)
   }
 
   const int active_face_set = SCULPT_active_face_set_get(ss);
+  ss->hide_poly = BKE_sculpt_hide_poly_ensure(mesh);
 
   SCULPT_undo_push_begin(ob, op);
   for (PBVHNode *node : nodes) {
@@ -877,8 +870,6 @@ static int sculpt_face_sets_change_visibility_exec(bContext *C, wmOperator *op)
           }
         }
       }
-
-      ss->hide_poly = BKE_sculpt_hide_poly_ensure(mesh);
 
       if (hidden_vertex) {
         SCULPT_face_visibility_all_set(ss, true);
@@ -915,10 +906,6 @@ static int sculpt_face_sets_change_visibility_exec(bContext *C, wmOperator *op)
         SCULPT_face_visibility_all_set(ss, false);
       }
 
-      break;
-    case SCULPT_FACE_SET_VISIBILITY_INVERT:
-      ss->hide_poly = BKE_sculpt_hide_poly_ensure(mesh);
-      SCULPT_face_visibility_all_invert(ss);
       break;
   }
 
@@ -1521,4 +1508,64 @@ void SCULPT_OT_face_sets_edit(struct wmOperatorType *ot)
                              true,
                              "Modify Hidden",
                              "Apply the edit operation to hidden Face Sets");
+}
+
+static int sculpt_face_sets_invert_visibility_exec(bContext *C, wmOperator *op)
+{
+  Object *ob = CTX_data_active_object(C);
+  SculptSession *ss = ob->sculpt;
+  Mesh *mesh = static_cast<Mesh *>(ob->data);
+  Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
+
+  BKE_sculpt_update_object_for_edit(depsgraph, ob, true, true, false);
+
+  /* Not supported for dyntopo. */
+  if (BKE_pbvh_type(ss->pbvh) == PBVH_BMESH) {
+    return OPERATOR_CANCELLED;
+  }
+
+  PBVH *pbvh = ob->sculpt->pbvh;
+  Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(pbvh, nullptr, nullptr);
+
+  if (nodes.is_empty()) {
+    return OPERATOR_CANCELLED;
+  }
+
+  ss->hide_poly = BKE_sculpt_hide_poly_ensure(mesh);
+
+  SCULPT_undo_push_begin(ob, op);
+  for (PBVHNode *node : nodes) {
+    SCULPT_undo_push_node(ob, node, SCULPT_UNDO_HIDDEN);
+  }
+
+  SCULPT_face_visibility_all_invert(ss);
+
+  SCULPT_undo_push_end(ob);
+
+  /* Sync face sets visibility and vertex visibility. */
+  SCULPT_visibility_sync_all_from_faces(ob);
+
+  for (PBVHNode *node : nodes) {
+    BKE_pbvh_node_mark_update_visibility(node);
+  }
+
+  BKE_pbvh_update_vertex_data(ss->pbvh, PBVH_UpdateVisibility);
+
+  SCULPT_tag_update_overlays(C);
+
+  return OPERATOR_FINISHED;
+}
+
+void SCULPT_OT_face_sets_invert_visibility(wmOperatorType *ot)
+{
+  /* Identifiers. */
+  ot->name = "Invert Face Set Visibility";
+  ot->idname = "SCULPT_OT_face_set_invert_visibility";
+  ot->description = "Invert the visibility of the Face Sets of the sculpt";
+
+  /* Api callbacks. */
+  ot->exec = sculpt_face_sets_invert_visibility_exec;
+  ot->poll = SCULPT_mode_poll;
+
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }

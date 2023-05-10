@@ -48,7 +48,7 @@ bDeformGroup *BKE_object_defgroup_new(Object *ob, const char *name)
 
   defgroup = MEM_cnew<bDeformGroup>(__func__);
 
-  BLI_strncpy(defgroup->name, name, sizeof(defgroup->name));
+  STRNCPY(defgroup->name, name);
 
   ListBase *defbase = BKE_object_defgroup_list_mutable(ob);
 
@@ -1301,7 +1301,8 @@ static bool data_transfer_layersmapping_vgroups_multisrc_to_dst(ListBase *r_map,
 
       for (idx_src = 0, dg_src = static_cast<bDeformGroup *>(src_list->first);
            idx_src < num_layers_src;
-           idx_src++, dg_src = dg_src->next) {
+           idx_src++, dg_src = dg_src->next)
+      {
         if (!use_layers_src[idx_src]) {
           continue;
         }
@@ -1610,7 +1611,8 @@ void BKE_defvert_blend_read(BlendDataReader *reader, int count, MDeformVert *mdv
     /* Convert to vertex group allocation system. */
     MDeformWeight *dw;
     if (mdverts->dw &&
-        (dw = static_cast<MDeformWeight *>(BLO_read_get_new_data_address(reader, mdverts->dw)))) {
+        (dw = static_cast<MDeformWeight *>(BLO_read_get_new_data_address(reader, mdverts->dw))))
+    {
       const size_t dw_len = sizeof(MDeformWeight) * mdverts->totweight;
       void *dw_tmp = MEM_mallocN(dw_len, __func__);
       memcpy(dw_tmp, dw, dw_len);

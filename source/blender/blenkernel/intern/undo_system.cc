@@ -119,7 +119,7 @@ static void undosys_id_ref_store(void * /*user_data*/, UndoRefID *id_ref)
 {
   BLI_assert(id_ref->name[0] == '\0');
   if (id_ref->ptr) {
-    BLI_strncpy(id_ref->name, id_ref->ptr->name, sizeof(id_ref->name));
+    STRNCPY(id_ref->name, id_ref->ptr->name);
     /* Not needed, just prevents stale data access. */
     id_ref->ptr = nullptr;
   }
@@ -456,7 +456,7 @@ UndoStep *BKE_undosys_step_push_init_with_type(UndoStack *ustack,
 
     UndoStep *us = static_cast<UndoStep *>(MEM_callocN(ut->step_size, __func__));
     if (name != nullptr) {
-      BLI_strncpy(us->name, name, sizeof(us->name));
+      STRNCPY(us->name, name);
     }
     us->type = ut;
     ustack->step_init = us;
@@ -541,7 +541,7 @@ eUndoPushReturn BKE_undosys_step_push_with_type(UndoStack *ustack,
                        static_cast<UndoStep *>(MEM_callocN(ut->step_size, __func__));
     ustack->step_init = nullptr;
     if (us->name[0] == '\0') {
-      BLI_strncpy(us->name, name, sizeof(us->name));
+      STRNCPY(us->name, name);
     }
     us->type = ut;
     /* True by default, code needs to explicitly set it to false if necessary. */
@@ -767,7 +767,8 @@ bool BKE_undosys_step_load_data_ex(UndoStack *ustack,
    * from given reference step. */
   bool is_processing_extra_skipped_steps = false;
   for (UndoStep *us_iter = undosys_step_iter_first(us_reference, undo_dir); us_iter != nullptr;
-       us_iter = (undo_dir == -1) ? us_iter->prev : us_iter->next) {
+       us_iter = (undo_dir == -1) ? us_iter->prev : us_iter->next)
+  {
     BLI_assert(us_iter != nullptr);
 
     const bool is_final = (us_iter == us_target_active);

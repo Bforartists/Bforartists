@@ -43,8 +43,8 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "MOD_ui_common.h"
-#include "MOD_util.h"
+#include "MOD_ui_common.hh"
+#include "MOD_util.hh"
 
 struct SDefAdjacency {
   SDefAdjacency *next;
@@ -73,6 +73,7 @@ struct SDefBindCalcData {
   blender::Span<int> corner_verts;
   blender::Span<int> corner_edges;
   blender::Span<MLoopTri> looptris;
+  blender::Span<int> looptri_polys;
 
   /** Coordinates to bind to, transformed into local space (compatible with `vertexCos`). */
   float (*targetCos)[3];
@@ -390,7 +391,7 @@ BLI_INLINE uint nearestVert(SDefBindCalcData *const data, const float point_co[3
   BLI_bvhtree_find_nearest(
       data->treeData->tree, t_point, &nearest, data->treeData->nearest_callback, data->treeData);
 
-  const blender::IndexRange poly = data->polys[data->looptris[nearest.index].poly];
+  const blender::IndexRange poly = data->polys[data->looptri_polys[nearest.index]];
 
   for (int i = 0; i < poly.size(); i++) {
     const int edge_i = data->corner_edges[poly.start() + i];
@@ -406,7 +407,8 @@ BLI_INLINE uint nearestVert(SDefBindCalcData *const data, const float point_co[3
 
   const blender::int2 &edge = data->edges[index];
   if (len_squared_v3v3(point_co, data->targetCos[edge[0]]) <
-      len_squared_v3v3(point_co, data->targetCos[edge[1]])) {
+      len_squared_v3v3(point_co, data->targetCos[edge[1]]))
+  {
     return edge[0];
   }
 
@@ -652,7 +654,8 @@ BLI_INLINE SDefBindWeightData *computeBindWeights(SDefBindCalcData *const data,
          * degenerate despite having passed isPolyValid). */
         if (bpoly->scales[0] < FLT_EPSILON || bpoly->scales[1] < FLT_EPSILON ||
             bpoly->edgemid_angle < FLT_EPSILON || bpoly->corner_edgemid_angles[0] < FLT_EPSILON ||
-            bpoly->corner_edgemid_angles[1] < FLT_EPSILON) {
+            bpoly->corner_edgemid_angles[1] < FLT_EPSILON)
+        {
           freeBindData(bwdata);
           data->success = MOD_SDEF_BIND_RESULT_GENERIC_ERR;
           return nullptr;
@@ -710,7 +713,8 @@ BLI_INLINE SDefBindWeightData *computeBindWeights(SDefBindCalcData *const data,
 
           /* Verify that the additional computed values are valid. */
           if (bpoly->scale_mid < FLT_EPSILON ||
-              bpoly->point_edgemid_angles[0] + bpoly->point_edgemid_angles[1] < FLT_EPSILON) {
+              bpoly->point_edgemid_angles[0] + bpoly->point_edgemid_angles[1] < FLT_EPSILON)
+          {
             freeBindData(bwdata);
             data->success = MOD_SDEF_BIND_RESULT_GENERIC_ERR;
             return nullptr;
@@ -912,7 +916,8 @@ BLI_INLINE SDefBindWeightData *computeBindWeights(SDefBindCalcData *const data,
       }
       else {
         if (bpoly->dominant_angle_weight < FLT_EPSILON ||
-            1.0f - bpoly->dominant_angle_weight < FLT_EPSILON) {
+            1.0f - bpoly->dominant_angle_weight < FLT_EPSILON)
+        {
           bwdata->binds_num += 1;
         }
         else {
@@ -1254,6 +1259,7 @@ static bool surfacedeformBind(Object *ob,
   data.corner_verts = corner_verts;
   data.corner_edges = corner_edges;
   data.looptris = target->looptris();
+  data.looptri_polys = target->looptri_polys();
   data.targetCos = static_cast<float(*)[3]>(
       MEM_malloc_arrayN(target_verts_num, sizeof(float[3]), "SDefTargetBindVertArray"));
   data.bind_verts = smd_orig->verts;
@@ -1476,7 +1482,8 @@ static void surfacedeformModifier_do(ModifierData *md,
                            target_polys_num,
                            target_verts_num,
                            target,
-                           mesh)) {
+                           mesh))
+    {
       smd->flags &= ~MOD_SDEF_BIND;
     }
     /* Early abort, this is binding 'call', no need to perform whole evaluation. */

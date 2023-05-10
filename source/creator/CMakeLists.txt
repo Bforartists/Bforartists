@@ -26,6 +26,10 @@ if(HAVE_FEENABLEEXCEPT)
   add_definitions(-DHAVE_FEENABLEEXCEPT)
 endif()
 
+if(WITH_STRSIZE_DEBUG)
+  add_definitions(-DWITH_STRSIZE_DEBUG)
+endif()
+
 if(WITH_TBB)
   # Force TBB libraries to be in front of MKL (part of `OpenImageDenoise`), so
   # that it is initialized before MKL and static library initialization order issues are avoided.
@@ -993,6 +997,24 @@ elseif(WIN32)
       ${LIBDIR}/materialx/bin/MaterialXGenShader.dll
     RELEASE
   )
+  if(EXISTS ${LIBDIR}/materialx/bin/MaterialXRender.dll) # 3.6+
+    windows_install_shared_manifest(
+      FILES
+        ${LIBDIR}/materialx/bin/MaterialXRender.dll
+        ${LIBDIR}/materialx/bin/MaterialXRenderGlsl.dll
+        ${LIBDIR}/materialx/bin/MaterialXRenderHw.dll
+        ${LIBDIR}/materialx/bin/MaterialXRenderOsl.dll
+      RELEASE
+    )
+    windows_install_shared_manifest(
+      FILES
+        ${LIBDIR}/materialx/bin/MaterialXRender_d.dll
+        ${LIBDIR}/materialx/bin/MaterialXRenderGlsl_d.dll
+        ${LIBDIR}/materialx/bin/MaterialXRenderHw_d.dll
+        ${LIBDIR}/materialx/bin/MaterialXRenderOsl_d.dll
+      DEBUG
+    )
+  endif()
   windows_install_shared_manifest(
     FILES
       ${LIBDIR}/materialx/bin/MaterialXCore_d.dll

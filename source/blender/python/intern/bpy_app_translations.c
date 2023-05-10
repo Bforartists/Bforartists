@@ -267,7 +267,7 @@ const char *BPY_app_translations_py_pgettext(const char *msgctxt, const char *ms
   if (!STREQ(tmp, locale) || !_translations_cache) {
     PyGILState_STATE _py_state;
 
-    BLI_strncpy(locale, tmp, STATIC_LOCALE_SIZE);
+    STRNCPY(locale, tmp);
 
     /* Locale changed or cache does not exist, refresh the whole cache! */
     /* This func may be called from C (i.e. outside of python interpreter 'context'). */
@@ -320,7 +320,8 @@ static PyObject *app_translations_py_messages_register(BlenderAppTranslations *s
                                    &PyUnicode_Type,
                                    &module_name,
                                    &PyDict_Type,
-                                   &uuid_dict)) {
+                                   &uuid_dict))
+  {
     return NULL;
   }
 
@@ -371,7 +372,8 @@ static PyObject *app_translations_py_messages_unregister(BlenderAppTranslations 
                                    "O!:bpy.app.translations.unregister",
                                    (char **)kwlist,
                                    &PyUnicode_Type,
-                                   &module_name)) {
+                                   &module_name))
+  {
     return NULL;
   }
 
@@ -534,7 +536,8 @@ static PyObject *_py_pgettext(PyObject *args,
   char *msgid, *msgctxt = NULL;
 
   if (!PyArg_ParseTupleAndKeywords(
-          args, kw, "s|z:bpy.app.translations.pgettext", (char **)kwlist, &msgid, &msgctxt)) {
+          args, kw, "s|z:bpy.app.translations.pgettext", (char **)kwlist, &msgid, &msgctxt))
+  {
     return NULL;
   }
 
@@ -544,7 +547,8 @@ static PyObject *_py_pgettext(PyObject *args,
   (void)_pgettext;
 
   if (!PyArg_ParseTupleAndKeywords(
-          args, kw, "O|O:bpy.app.translations.pgettext", (char **)kwlist, &msgid, &msgctxt)) {
+          args, kw, "O|O:bpy.app.translations.pgettext", (char **)kwlist, &msgid, &msgctxt))
+  {
     return NULL;
   }
 
@@ -678,7 +682,8 @@ static PyObject *app_translations_locale_explode(BlenderAppTranslations *UNUSED(
   char *language, *country, *variant, *language_country, *language_variant;
 
   if (!PyArg_ParseTupleAndKeywords(
-          args, kw, "s:bpy.app.translations.locale_explode", (char **)kwlist, &locale)) {
+          args, kw, "s:bpy.app.translations.locale_explode", (char **)kwlist, &locale))
+  {
     return NULL;
   }
 

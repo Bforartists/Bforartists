@@ -29,7 +29,8 @@ ccl_device float light_tree_cos_bounding_box_angle(const BoundingBox bbox,
                                                    const float3 point_to_centroid)
 {
   if (P.x > bbox.min.x && P.y > bbox.min.y && P.z > bbox.min.z && P.x < bbox.max.x &&
-      P.y < bbox.max.y && P.z < bbox.max.z) {
+      P.y < bbox.max.y && P.z < bbox.max.z)
+  {
     /* If P is inside the bbox, `theta_u` covers the whole sphere. */
     return -1.0f;
   }
@@ -189,7 +190,8 @@ ccl_device void light_tree_importance(const float3 N_or_D,
     cos_min_outgoing_angle = 1.0f;
   }
   else if ((bcone.theta_o + bcone.theta_e > M_PI_F) ||
-           (cos_theta_minus_theta_u > cos(bcone.theta_o + bcone.theta_e))) {
+           (cos_theta_minus_theta_u > cos(bcone.theta_o + bcone.theta_e)))
+  {
     /* theta' = theta - theta_o - theta_u < theta_e */
     kernel_assert(
         (fast_acosf(cos_theta) - bcone.theta_o - fast_acosf(cos_theta_u) - bcone.theta_e) < 5e-4f);
@@ -218,7 +220,8 @@ ccl_device void light_tree_importance(const float3 N_or_D,
   float cos_max_outgoing_angle;
   const float cos_theta_plus_theta_u = cos_theta * cos_theta_u - sin_theta * sin_theta_u;
   if (bcone.theta_e - bcone.theta_o < 0 || cos_theta < 0 || cos_theta_u < 0 ||
-      cos_theta_plus_theta_u < cos(bcone.theta_e - bcone.theta_o)) {
+      cos_theta_plus_theta_u < cos(bcone.theta_e - bcone.theta_o))
+  {
     min_importance = 0.0f;
   }
   else {
@@ -279,8 +282,8 @@ ccl_device bool compute_emitter_centroid_and_dir(KernelGlobals kg,
         dir = -dir;
       }
       const int object_flag = kernel_data_fetch(object_flag, object);
-      if ((object_flag & SD_OBJECT_TRANSFORM_APPLIED) &&
-          (object_flag & SD_OBJECT_NEGATIVE_SCALE)) {
+      if ((object_flag & SD_OBJECT_TRANSFORM_APPLIED) && (object_flag & SD_OBJECT_NEGATIVE_SCALE))
+      {
         dir = -dir;
       }
     }
@@ -393,8 +396,8 @@ ccl_device void light_tree_emitter_importance(KernelGlobals kg,
   float2 distance; /* distance.x = max_distance, distance.y = mix_distance */
   float3 centroid, point_to_centroid, P_c;
 
-  if (!compute_emitter_centroid_and_dir<in_volume_segment>(
-          kg, kemitter, P, centroid, bcone.axis)) {
+  if (!compute_emitter_centroid_and_dir<in_volume_segment>(kg, kemitter, P, centroid, bcone.axis))
+  {
     return;
   }
 
@@ -706,7 +709,8 @@ ccl_device_noinline bool light_tree_sample(KernelGlobals kg,
 
     float left_prob;
     if (!get_left_probability<in_volume_segment>(
-            kg, local_P, N_or_D, t, has_transmission, left_index, right_index, left_prob)) {
+            kg, local_P, N_or_D, t, has_transmission, left_index, right_index, left_prob))
+    {
       return false; /* Both child nodes have zero importance. */
     }
 
@@ -735,7 +739,7 @@ ccl_device float light_tree_pdf(
 
   ccl_global const KernelLightTreeEmitter *kemitter = &kernel_data_fetch(light_tree_emitters,
                                                                          target);
-  int root_index, target_leaf;
+  int root_index;
   uint bit_trail, target_emitter;
 
   if (is_triangle(kemitter)) {
@@ -744,7 +748,6 @@ ccl_device float light_tree_pdf(
     target_emitter = kernel_data_fetch(object_to_tree, object);
     ccl_global const KernelLightTreeEmitter *kmesh = &kernel_data_fetch(light_tree_emitters,
                                                                         target_emitter);
-    target_leaf = kmesh->parent_index;
     root_index = kmesh->mesh.node_id;
     ccl_global const KernelLightTreeNode *kroot = &kernel_data_fetch(light_tree_nodes, root_index);
     bit_trail = kroot->bit_trail;
@@ -755,8 +758,7 @@ ccl_device float light_tree_pdf(
   }
   else {
     root_index = 0;
-    target_leaf = kemitter->parent_index;
-    bit_trail = kernel_data_fetch(light_tree_nodes, target_leaf).bit_trail;
+    bit_trail = kemitter->bit_trail;
     target_emitter = target;
   }
 
@@ -768,18 +770,14 @@ ccl_device float light_tree_pdf(
     const ccl_global KernelLightTreeNode *knode = &kernel_data_fetch(light_tree_nodes, node_index);
 
     if (is_leaf(knode)) {
-      kernel_assert(node_index == target_leaf);
-      ccl_global const KernelLightTreeNode *kleaf = &kernel_data_fetch(light_tree_nodes,
-                                                                       target_leaf);
-
       /* Iterate through leaf node to find the probability of sampling the target emitter. */
       float target_max_importance = 0.0f;
       float target_min_importance = 0.0f;
       float total_max_importance = 0.0f;
       float total_min_importance = 0.0f;
       int num_has_importance = 0;
-      for (int i = 0; i < kleaf->num_emitters; i++) {
-        const int emitter = kleaf->leaf.first_emitter + i;
+      for (int i = 0; i < knode->num_emitters; i++) {
+        const int emitter = knode->leaf.first_emitter + i;
         float max_importance, min_importance;
         light_tree_emitter_importance<false>(
             kg, P, N, 0, has_transmission, emitter, max_importance, min_importance);
@@ -809,12 +807,10 @@ ccl_device float light_tree_pdf(
         node_index = root_index;
         root_index = 0;
         target_emitter = target;
-        target_leaf = kemitter->parent_index;
-        bit_trail = kernel_data_fetch(light_tree_nodes, target_leaf).bit_trail;
+        bit_trail = kemitter->bit_trail;
         continue;
       }
       else {
-        kernel_assert(node_index == target_leaf);
         return pdf;
       }
     }
@@ -825,7 +821,8 @@ ccl_device float light_tree_pdf(
 
     float left_prob;
     if (!get_left_probability<false>(
-            kg, P, N, 0, has_transmission, left_index, right_index, left_prob)) {
+            kg, P, N, 0, has_transmission, left_index, right_index, left_prob))
+    {
       return 0.0f;
     }
 

@@ -83,7 +83,7 @@ void interpolate_from_neighbors(const Span<NeighborCurves> neighbors_per_curve,
                                 const GetValueF &get_value_from_neighbor,
                                 MutableSpan<T> r_interpolated_values)
 {
-  attribute_math::DefaultMixer<T> mixer{r_interpolated_values};
+  bke::attribute_math::DefaultMixer<T> mixer{r_interpolated_values};
   threading::parallel_for(r_interpolated_values.index_range(), 512, [&](const IndexRange range) {
     for (const int i : range) {
       const NeighborCurves &neighbors = neighbors_per_curve[i];
@@ -255,7 +255,7 @@ AddCurvesOnMeshOutputs add_curves_on_mesh(CurvesGeometry &curves,
     const MLoopTri &looptri = inputs.surface_looptris[result.looptri_index];
     bary_coords.append(result.bary_weights);
     looptri_indices.append(result.looptri_index);
-    const float3 root_position_su = attribute_math::mix3<float3>(
+    const float3 root_position_su = bke::attribute_math::mix3<float3>(
         result.bary_weights,
         surface_positions[surface_corner_verts[looptri.tri[0]]],
         surface_positions[surface_corner_verts[looptri.tri[1]]],
@@ -278,6 +278,9 @@ AddCurvesOnMeshOutputs add_curves_on_mesh(CurvesGeometry &curves,
 
   /* Grow number of curves first, so that the offsets array can be filled. */
   curves.resize(old_points_num, new_curves_num);
+  if (new_curves_num == 0) {
+    return outputs;
+  }
   const IndexRange new_curves_range = curves.curves_range().drop_front(old_curves_num);
 
   /* Compute new curve offsets. */
@@ -339,14 +342,12 @@ AddCurvesOnMeshOutputs add_curves_on_mesh(CurvesGeometry &curves,
 
   /* Find surface normal at root points. */
   Array<float3> new_normals_su(added_curves_num);
-  bke::mesh_surface_sample::sample_corner_attribute(
-      inputs.surface_looptris,
-      looptri_indices,
-      bary_coords,
-      VArray<float3>::ForSpan(inputs.corner_normals_su),
-      IndexMask(added_curves_num),
-      new_normals_su.as_mutable_span());
-  /* TODO: Normalization. */
+  bke::mesh_surface_sample::sample_corner_normals(inputs.surface_looptris,
+                                                  looptri_indices,
+                                                  bary_coords,
+                                                  inputs.corner_normals_su,
+                                                  IndexMask(added_curves_num),
+                                                  new_normals_su);
 
   /* Initialize position attribute. */
   if (inputs.interpolate_shape) {

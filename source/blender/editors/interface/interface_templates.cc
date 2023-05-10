@@ -399,7 +399,8 @@ static bool id_search_add(const bContext *C, TemplateID *template_ui, uiSearchIt
                           id,
                           iconid,
                           has_sep_char ? int(UI_BUT_HAS_SEP_CHAR) : 0,
-                          name_prefix_offset)) {
+                          name_prefix_offset))
+  {
     return false;
   }
 
@@ -516,16 +517,14 @@ static ARegion *template_ID_search_menu_item_tooltip(
   uiSearchItemTooltipData tooltip_data = {{0}};
 
   tooltip_data.name = active_id->name + 2;
-  BLI_snprintf(tooltip_data.description,
-               sizeof(tooltip_data.description),
-               TIP_("Choose %s data-block to be assigned to this user"),
-               RNA_struct_ui_name(type));
+  SNPRINTF(tooltip_data.description,
+           TIP_("Choose %s data-block to be assigned to this user"),
+           RNA_struct_ui_name(type));
   if (ID_IS_LINKED(active_id)) {
-    BLI_snprintf(tooltip_data.hint,
-                 sizeof(tooltip_data.hint),
-                 TIP_("Source library: %s\n%s"),
-                 active_id->lib->id.name + 2,
-                 active_id->lib->filepath);
+    SNPRINTF(tooltip_data.hint,
+             TIP_("Source library: %s\n%s"),
+             active_id->lib->id.name + 2,
+             active_id->lib->filepath);
   }
 
   return UI_tooltip_create_from_search_item_generic(C, region, item_rect, &tooltip_data);
@@ -605,7 +604,8 @@ static void template_id_liboverride_hierarchy_collection_root_find_recursive(
   }
   for (CollectionParent *iter = static_cast<CollectionParent *>(collection->runtime.parents.first);
        iter != nullptr;
-       iter = iter->next) {
+       iter = iter->next)
+  {
     if (iter->collection->id.lib != collection->id.lib && ID_IS_LINKED(iter->collection)) {
       continue;
     }
@@ -625,7 +625,8 @@ static void template_id_liboverride_hierarchy_collections_tag_recursive(
     for (CollectionParent *iter =
              static_cast<CollectionParent *>(root_collection->runtime.parents.first);
          iter != nullptr;
-         iter = iter->next) {
+         iter = iter->next)
+    {
       if (ID_IS_LINKED(iter->collection)) {
         continue;
       }
@@ -635,7 +636,8 @@ static void template_id_liboverride_hierarchy_collections_tag_recursive(
 
   for (CollectionChild *iter = static_cast<CollectionChild *>(root_collection->children.first);
        iter != nullptr;
-       iter = iter->next) {
+       iter = iter->next)
+  {
     if (iter->collection->id.lib != root_collection->id.lib && ID_IS_LINKED(root_collection)) {
       continue;
     }
@@ -643,11 +645,13 @@ static void template_id_liboverride_hierarchy_collections_tag_recursive(
       continue;
     }
     if (GS(target_id->name) == ID_OB &&
-        !BKE_collection_has_object_recursive(iter->collection, (Object *)target_id)) {
+        !BKE_collection_has_object_recursive(iter->collection, (Object *)target_id))
+    {
       continue;
     }
     if (GS(target_id->name) == ID_GR &&
-        !BKE_collection_has_collection(iter->collection, (Collection *)target_id)) {
+        !BKE_collection_has_collection(iter->collection, (Collection *)target_id))
+    {
       continue;
     }
     template_id_liboverride_hierarchy_collections_tag_recursive(
@@ -669,8 +673,8 @@ ID *ui_template_id_liboverride_hierarchy_make(
     if (!ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
       BKE_lib_override_library_get(bmain, id, nullptr, &id);
     }
-    if (id->override_library->flag & IDOVERRIDE_LIBRARY_FLAG_SYSTEM_DEFINED) {
-      id->override_library->flag &= ~IDOVERRIDE_LIBRARY_FLAG_SYSTEM_DEFINED;
+    if (id->override_library->flag & LIBOVERRIDE_FLAG_SYSTEM_DEFINED) {
+      id->override_library->flag &= ~LIBOVERRIDE_FLAG_SYSTEM_DEFINED;
       *r_undo_push_label = "Make Library Override Hierarchy Editable";
     }
     else {
@@ -698,8 +702,8 @@ ID *ui_template_id_liboverride_hierarchy_make(
   }
   if (object_active != nullptr) {
     if (ID_IS_LINKED(object_active)) {
-      if (object_active->id.lib != id->lib ||
-          !ID_IS_OVERRIDABLE_LIBRARY_HIERARCHY(object_active)) {
+      if (object_active->id.lib != id->lib || !ID_IS_OVERRIDABLE_LIBRARY_HIERARCHY(object_active))
+      {
         /* The active object is from a different library than the overridden ID, or otherwise
          * cannot be used in hierarchy. */
         object_active = nullptr;
@@ -718,7 +722,8 @@ ID *ui_template_id_liboverride_hierarchy_make(
   if (collection_active != nullptr) {
     if (ID_IS_LINKED(collection_active)) {
       if (collection_active->id.lib != id->lib ||
-          !ID_IS_OVERRIDABLE_LIBRARY_HIERARCHY(collection_active)) {
+          !ID_IS_OVERRIDABLE_LIBRARY_HIERARCHY(collection_active))
+      {
         /* The active collection is from a different library than the overridden ID, or otherwise
          * cannot be used in hierarchy. */
         collection_active = nullptr;
@@ -737,7 +742,8 @@ ID *ui_template_id_liboverride_hierarchy_make(
     }
   }
   if (collection_active == nullptr && object_active != nullptr &&
-      (ID_IS_LINKED(object_active) || ID_IS_OVERRIDE_LIBRARY_REAL(object_active))) {
+      (ID_IS_LINKED(object_active) || ID_IS_OVERRIDE_LIBRARY_REAL(object_active)))
+  {
     /* If we failed to find a valid 'active' collection so far for our override hierarchy, but do
      * have a valid 'active' object, try to find a collection from that object. */
     LISTBASE_FOREACH (Collection *, collection_iter, &bmain->collections) {
@@ -762,7 +768,8 @@ ID *ui_template_id_liboverride_hierarchy_make(
   switch (GS(id->name)) {
     case ID_GR:
       if (collection_active != nullptr &&
-          BKE_collection_has_collection(collection_active, (Collection *)id)) {
+          BKE_collection_has_collection(collection_active, (Collection *)id))
+      {
         template_id_liboverride_hierarchy_collections_tag_recursive(collection_active, id, true);
         if (object_active != nullptr) {
           object_active->id.tag |= LIB_TAG_DOIT;
@@ -778,7 +785,8 @@ ID *ui_template_id_liboverride_hierarchy_make(
                                         false);
       }
       else if (object_active != nullptr && !ID_IS_LINKED(object_active) &&
-               &object_active->instance_collection->id == id) {
+               &object_active->instance_collection->id == id)
+      {
         object_active->id.tag |= LIB_TAG_DOIT;
         BKE_lib_override_library_create(bmain,
                                         scene,
@@ -793,7 +801,8 @@ ID *ui_template_id_liboverride_hierarchy_make(
       break;
     case ID_OB:
       if (collection_active != nullptr &&
-          BKE_collection_has_object_recursive(collection_active, (Object *)id)) {
+          BKE_collection_has_object_recursive(collection_active, (Object *)id))
+      {
         template_id_liboverride_hierarchy_collections_tag_recursive(collection_active, id, true);
         if (object_active != nullptr) {
           object_active->id.tag |= LIB_TAG_DOIT;
@@ -833,7 +842,8 @@ ID *ui_template_id_liboverride_hierarchy_make(
     case ID_NT: /* Essentially geometry nodes from modifier currently. */
       if (object_active != nullptr) {
         if (collection_active != nullptr &&
-            BKE_collection_has_object_recursive(collection_active, object_active)) {
+            BKE_collection_has_object_recursive(collection_active, object_active))
+        {
           template_id_liboverride_hierarchy_collections_tag_recursive(collection_active, id, true);
           if (object_active != nullptr) {
             object_active->id.tag |= LIB_TAG_DOIT;
@@ -883,7 +893,7 @@ ID *ui_template_id_liboverride_hierarchy_make(
   }
 
   if (id_override != nullptr) {
-    id_override->override_library->flag &= ~IDOVERRIDE_LIBRARY_FLAG_SYSTEM_DEFINED;
+    id_override->override_library->flag &= ~LIBOVERRIDE_FLAG_SYSTEM_DEFINED;
     *r_undo_push_label = "Make Library Override Hierarchy";
 
     /* In theory we could rely on setting/updating the RNA ID pointer property (as done by calling
@@ -1424,7 +1434,7 @@ static void template_ID(const bContext *C,
       char numstr[32];
       short numstr_len;
 
-      numstr_len = BLI_snprintf_rlen(numstr, sizeof(numstr), "%d", ID_REAL_USERS(id));
+      numstr_len = SNPRINTF_RLEN(numstr, "%d", ID_REAL_USERS(id));
 
       but = uiDefBut(
           block,
@@ -1447,7 +1457,8 @@ static void template_ID(const bContext *C,
           but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_ALONE));
       if (!BKE_id_copy_is_allowed(id) || (idfrom && idfrom->lib) || (!editable) ||
           /* object in editmode - don't change data */
-          (idfrom && GS(idfrom->name) == ID_OB && (((Object *)idfrom)->mode & OB_MODE_EDIT))) {
+          (idfrom && GS(idfrom->name) == ID_OB && (((Object *)idfrom)->mode & OB_MODE_EDIT)))
+      {
         UI_but_flag_enable(but, UI_BUT_DISABLED);
       }
     }
@@ -1472,8 +1483,8 @@ static void template_ID(const bContext *C,
                       UI_UNIT_Y,
                       nullptr);
       }
-      else if (!ELEM(GS(id->name), ID_GR, ID_SCE, ID_SCR, ID_OB, ID_WS) &&
-               (hide_buttons == false)) {
+      else if (!ELEM(GS(id->name), ID_GR, ID_SCE, ID_SCR, ID_OB, ID_WS) && (hide_buttons == false))
+      {
         uiDefIconButR(block,
                       UI_BTYPE_ICON_TOGGLE,
                       0,
@@ -2156,7 +2167,8 @@ static PropertyRNA *template_search_get_searchprop(PointerRNA *targetptr,
   }
   /* check if searchprop has same type as targetprop */
   else if (RNA_property_pointer_type(searchptr, searchprop) !=
-           RNA_property_pointer_type(targetptr, targetprop)) {
+           RNA_property_pointer_type(targetptr, targetprop))
+  {
     RNA_warning("search collection items from %s.%s are not of type %s",
                 RNA_struct_identifier(searchptr->type),
                 searchpropname,
@@ -2451,7 +2463,8 @@ void uiTemplateConstraints(uiLayout * /*layout*/, bContext *C, bool use_bone_con
     for (bConstraint *con =
              (constraints == nullptr) ? nullptr : static_cast<bConstraint *>(constraints->first);
          con;
-         con = con->next) {
+         con = con->next)
+    {
       /* Don't show invalid/legacy constraints. */
       if (con->type == CONSTRAINT_TYPE_NULL) {
         continue;
@@ -2542,7 +2555,8 @@ void uiTemplateGpencilModifiers(uiLayout * /*layout*/, bContext *C)
   if (!panels_match) {
     UI_panels_free_instanced(C, region);
     for (GpencilModifierData *md = static_cast<GpencilModifierData *>(modifiers->first); md;
-         md = md->next) {
+         md = md->next)
+    {
       const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(
           GpencilModifierType(md->type));
       if (mti->panelRegister == nullptr) {
@@ -2678,7 +2692,8 @@ static bool ui_layout_operator_buts_poll_property(PointerRNA * /*ptr*/,
       user_data);
 
   if ((params->flag & UI_TEMPLATE_OP_PROPS_HIDE_ADVANCED) &&
-      (RNA_property_tags(prop) & OP_PROP_TAG_ADVANCED)) {
+      (RNA_property_tags(prop) & OP_PROP_TAG_ADVANCED))
+  {
     return false;
   }
   return params->op->type->poll_property(params->C, params->op, prop);
@@ -3175,8 +3190,7 @@ void uiTemplatePreview(uiLayout *layout,
 
   if (!preview_id || (preview_id[0] == '\0')) {
     /* If no identifier given, generate one from ID type. */
-    BLI_snprintf(
-        _preview_id, UI_MAX_NAME_STR, "uiPreview_%s", BKE_idtype_idcode_to_name(GS(id->name)));
+    SNPRINTF(_preview_id, "uiPreview_%s", BKE_idtype_idcode_to_name(GS(id->name)));
     preview_id = _preview_id;
   }
 
@@ -3187,7 +3201,7 @@ void uiTemplatePreview(uiLayout *layout,
 
   if (!ui_preview) {
     ui_preview = MEM_cnew<uiPreview>(__func__);
-    BLI_strncpy(ui_preview->preview_id, preview_id, sizeof(ui_preview->preview_id));
+    STRNCPY(ui_preview->preview_id, preview_id);
     ui_preview->height = short(UI_UNIT_Y * 7.6f);
     BLI_addtail(&region->ui_previews, ui_preview);
   }
@@ -6204,7 +6218,8 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
       break;
     }
     if (WM_jobs_test(wm, scene, WM_JOB_TYPE_OBJECT_BAKE_TEXTURE) ||
-        WM_jobs_test(wm, scene, WM_JOB_TYPE_OBJECT_BAKE)) {
+        WM_jobs_test(wm, scene, WM_JOB_TYPE_OBJECT_BAKE))
+    {
       /* Skip bake jobs in compositor to avoid compo header displaying
        * progress bar which is not being updated (bake jobs only need
        * to update NC_IMAGE context.
@@ -6248,7 +6263,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
     /* get percentage done and set it as the UI text */
     const float progress = WM_jobs_progress(wm, owner);
     char text[8];
-    BLI_snprintf(text, 8, "%d%%", int(progress * 100));
+    SNPRINTF(text, "%d%%", int(progress * 100));
 
     const char *name = active ? WM_jobs_name(wm, owner) : "Canceling...";
 
@@ -6724,7 +6739,7 @@ void uiTemplateComponentMenu(uiLayout *layout,
   ComponentMenuArgs *args = MEM_cnew<ComponentMenuArgs>(__func__);
 
   args->ptr = *ptr;
-  BLI_strncpy(args->propname, propname, sizeof(args->propname));
+  STRNCPY(args->propname, propname);
 
   uiBlock *block = uiLayoutGetBlock(layout);
   UI_block_align_begin(block);
@@ -6914,7 +6929,7 @@ uiListType *UI_UL_cache_file_layers()
 {
   uiListType *list_type = (uiListType *)MEM_callocN(sizeof(*list_type), __func__);
 
-  BLI_strncpy(list_type->idname, "UI_UL_cache_file_layers", sizeof(list_type->idname));
+  STRNCPY(list_type->idname, "UI_UL_cache_file_layers");
   list_type->draw_item = cache_file_layer_item;
 
   return list_type;
