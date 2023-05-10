@@ -47,6 +47,10 @@ void BKE_main_free(Main *mainvar)
     BKE_main_free(mainvar->next);
   }
 
+  /* Include this check here as the path may be manipulated after creation. */
+  BLI_assert_msg(!(mainvar->filepath[0] == '/' && mainvar->filepath[1] == '/'),
+                 "'.blend' relative \"//\" must not be used in Main!");
+
   /* also call when reading a file, erase all, etc */
   ListBase *lbarray[INDEX_ID_MAX];
   int a;
@@ -333,7 +337,8 @@ void BKE_main_relations_tag_set(struct Main *bmain,
   GHashIterator *gh_iter;
   for (gh_iter = BLI_ghashIterator_new(bmain->relations->relations_from_pointers);
        !BLI_ghashIterator_done(gh_iter);
-       BLI_ghashIterator_step(gh_iter)) {
+       BLI_ghashIterator_step(gh_iter))
+  {
     MainIDRelationsEntry *entry = BLI_ghashIterator_getValue(gh_iter);
     if (value) {
       entry->tags |= tag;
@@ -372,8 +377,8 @@ static LibWeakRefKey *lib_weak_key_create(LibWeakRefKey *key,
   if (key == NULL) {
     key = MEM_mallocN(sizeof(*key), __func__);
   }
-  BLI_strncpy(key->filepath, lib_path, sizeof(key->filepath));
-  BLI_strncpy(key->id_name, id_name, sizeof(key->id_name));
+  STRNCPY(key->filepath, lib_path);
+  STRNCPY(key->id_name, id_name);
   return key;
 }
 
@@ -458,12 +463,8 @@ void BKE_main_library_weak_reference_add_item(GHash *library_weak_reference_mapp
   BLI_assert(!already_exist_in_mapping);
   UNUSED_VARS_NDEBUG(already_exist_in_mapping);
 
-  BLI_strncpy(new_id->library_weak_reference->library_filepath,
-              library_filepath,
-              sizeof(new_id->library_weak_reference->library_filepath));
-  BLI_strncpy(new_id->library_weak_reference->library_id_name,
-              library_id_name,
-              sizeof(new_id->library_weak_reference->library_id_name));
+  STRNCPY(new_id->library_weak_reference->library_filepath, library_filepath);
+  STRNCPY(new_id->library_weak_reference->library_id_name, library_id_name);
   *id_p = new_id;
 }
 

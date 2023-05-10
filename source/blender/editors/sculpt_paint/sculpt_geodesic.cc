@@ -27,7 +27,7 @@
 #include "BKE_paint.h"
 #include "BKE_pbvh.h"
 
-#include "paint_intern.h"
+#include "paint_intern.hh"
 #include "sculpt_intern.hh"
 
 #include "bmesh.h"
@@ -195,7 +195,8 @@ static float *SCULPT_geodesic_mesh_create(Object *ob,
                 }
 
                 if (e_other != e && !BLI_BITMAP_TEST(edge_tag, e_other) &&
-                    (ss->epmap[e_other].count == 0 || dists[ev_other] != FLT_MAX)) {
+                    (ss->epmap[e_other].count == 0 || dists[ev_other] != FLT_MAX))
+                {
                   if (BLI_BITMAP_TEST(affected_vertex, v_other) ||
                       BLI_BITMAP_TEST(affected_vertex, ev_other)) {
                     BLI_BITMAP_ENABLE(edge_tag, e_other);

@@ -236,7 +236,7 @@ int DocumentExporter::exportCurrentScene()
                build_commit_time,
                build_hash);
 #else
-  BLI_snprintf(version_buf, sizeof(version_buf), "Blender %s", BKE_blender_version_string());
+  SNPRINTF(version_buf, "Blender %s", BKE_blender_version_string());
 #endif
   asset.getContributor().mAuthoringTool = version_buf;
   asset.add();
@@ -275,8 +275,8 @@ int DocumentExporter::exportCurrentScene()
   /* <library_controllers> */
   ArmatureExporter arm_exporter(blender_context, writer, this->export_settings);
   ControllerExporter controller_exporter(blender_context, writer, this->export_settings);
-  if (bc_has_object_type(export_set, OB_ARMATURE) ||
-      this->export_settings.get_include_shapekeys()) {
+  if (bc_has_object_type(export_set, OB_ARMATURE) || this->export_settings.get_include_shapekeys())
+  {
     controller_exporter.export_controllers();
   }
 

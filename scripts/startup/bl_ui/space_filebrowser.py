@@ -554,11 +554,10 @@ class FILEBROWSER_MT_context_menu(FileBrowserMenu, Menu):
         st = context.space_data
         params = st.params
 
-        layout.operator("file.previous", text="Back")
-        layout.operator("file.next", text="Forward")
-        layout.operator("file.parent", text="Go to Parent")
-        layout.operator("file.refresh", text="Refresh")
-		
+        layout.operator("file.previous", text="Back", icon='BACK')
+        layout.operator("file.next", text="Forward", icon='FORWARD')
+        layout.operator("file.parent", text="Go to Parent", icon='FILE_PARENT')
+        layout.operator("file.refresh", text="Refresh", icon='FILE_REFRESH')
         layout.menu("FILEBROWSER_MT_operations_menu")
 
         layout.separator()

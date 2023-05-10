@@ -64,7 +64,7 @@ void ED_node_tree_start(SpaceNode *snode, bNodeTree *ntree, ID *id, ID *from)
     copy_v2_v2(path->view_center, ntree->view_center);
 
     if (id) {
-      BLI_strncpy(path->display_name, id->name + 2, sizeof(path->display_name));
+      STRNCPY(path->display_name, id->name + 2);
     }
 
     BLI_addtail(&snode->treepath, path);
@@ -100,8 +100,8 @@ void ED_node_tree_push(SpaceNode *snode, bNodeTree *ntree, bNode *gnode)
       path->parent_key = NODE_INSTANCE_KEY_BASE;
     }
 
-    BLI_strncpy(path->node_name, gnode->name, sizeof(path->node_name));
-    BLI_strncpy(path->display_name, gnode->name, sizeof(path->display_name));
+    STRNCPY(path->node_name, gnode->name);
+    STRNCPY(path->display_name, gnode->name);
   }
   else {
     path->parent_key = NODE_INSTANCE_KEY_BASE;
@@ -198,7 +198,8 @@ void ED_node_set_active_viewer_key(SpaceNode *snode)
     /* A change in active viewer may result in the change of the output node used by the
      * compositor, so we need to get notified about such changes. */
     if (snode->nodetree->active_viewer_key.value != path->parent_key.value &&
-        snode->nodetree->type == NTREE_COMPOSIT) {
+        snode->nodetree->type == NTREE_COMPOSIT)
+    {
       DEG_id_tag_update(&snode->nodetree->id, ID_RECALC_NTREE_OUTPUT);
       WM_main_add_notifier(NC_NODE, nullptr);
     }

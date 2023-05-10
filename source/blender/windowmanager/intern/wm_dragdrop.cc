@@ -87,7 +87,7 @@ ListBase *WM_dropboxmap_find(const char *idname, int spaceid, int regionid)
   }
 
   wmDropBoxMap *dm = MEM_cnew<wmDropBoxMap>(__func__);
-  BLI_strncpy(dm->idname, idname, KMAP_MAX_NAME);
+  STRNCPY(dm->idname, idname);
   dm->spaceid = spaceid;
   dm->regionid = regionid;
   BLI_addtail(&dropboxes, dm);
@@ -431,8 +431,8 @@ static void wm_drop_update_active(bContext *C, wmDrag *drag, const wmEvent *even
   const int winsize_y = WM_window_pixels_y(win);
 
   /* for multiwin drags, we only do this if mouse inside */
-  if (event->xy[0] < 0 || event->xy[1] < 0 || event->xy[0] > winsize_x ||
-      event->xy[1] > winsize_y) {
+  if (event->xy[0] < 0 || event->xy[1] < 0 || event->xy[0] > winsize_x || event->xy[1] > winsize_y)
+  {
     return;
   }
 
@@ -567,7 +567,7 @@ wmDragAsset *WM_drag_create_asset_data(const AssetHandle *asset, const char *pat
 {
   wmDragAsset *asset_drag = MEM_new<wmDragAsset>(__func__);
 
-  BLI_strncpy(asset_drag->name, ED_asset_handle_get_name(asset), sizeof(asset_drag->name));
+  STRNCPY(asset_drag->name, ED_asset_handle_get_name(asset));
   asset_drag->metadata = ED_asset_handle_get_metadata(asset);
   asset_drag->path = path;
   asset_drag->id_type = ED_asset_handle_get_id_type(asset);

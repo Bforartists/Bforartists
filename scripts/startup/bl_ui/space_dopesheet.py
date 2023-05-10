@@ -382,12 +382,16 @@ class DOPESHEET_HT_editor_buttons:
             layout.prop(st, "auto_snap", text="")
 
         row = layout.row(align=True)
-        row.prop(tool_settings, "use_proportional_action",
-                 text="", icon_only=True)
+        row.prop(tool_settings, "use_proportional_action", text="", icon_only=True)
         if tool_settings.use_proportional_action:
             sub = row.row(align=True)
-            sub.prop(tool_settings, "proportional_edit_falloff",
-                     text="", icon_only=True)
+            sub.prop_with_popover(
+                tool_settings,
+                "proportional_edit_falloff",
+                text="",
+                icon_only=True,
+                panel="DOPESHEET_PT_proportional_edit",
+            )
 
         row = layout.row(align = True)
         row.operator_menu_enum("action.easing_type", "type", text="", icon = "IPO_EASE_IN_OUT")
@@ -397,6 +401,22 @@ class DOPESHEET_HT_editor_buttons:
 
         row = layout.row()
         row.popover(panel = "DOPESHEET_PT_view_view_options", text = "Options")
+
+
+class DOPESHEET_PT_proportional_edit(Panel):
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Proportional Editing"
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        layout = self.layout
+        tool_settings = context.tool_settings
+        col = layout.column()
+        col.active = tool_settings.use_proportional_action
+
+        col.prop(tool_settings, "proportional_edit_falloff", expand=True)
+        col.prop(tool_settings, "proportional_size")
 
 
 class DOPESHEET_MT_editor_menus(Menu):
@@ -1056,6 +1076,7 @@ classes = (
     ANIM_OT_switch_editors_to_nla,
     ANIM_OT_switch_editors_in_dopesheet,
     DOPESHEET_HT_header,
+    DOPESHEET_PT_proportional_edit,
     DOPESHEET_MT_editor_menus,
     DOPESHEET_MT_view,
     DOPESHEET_MT_view_pie_menus,

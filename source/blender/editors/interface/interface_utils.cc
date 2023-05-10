@@ -148,7 +148,8 @@ uiBut *uiDefAutoButR(uiBlock *block,
         }
       }
       else if (RNA_property_subtype(prop) == PROP_PERCENTAGE ||
-               RNA_property_subtype(prop) == PROP_FACTOR) {
+               RNA_property_subtype(prop) == PROP_FACTOR)
+      {
         but = uiDefButR_prop(block,
                              UI_BTYPE_NUM_SLIDER,
                              0,
@@ -341,8 +342,7 @@ uiBut *uiDefAutoButR(uiBlock *block,
     }
     case PROP_COLLECTION: {
       char text[256];
-      BLI_snprintf(
-          text, sizeof(text), IFACE_("%d items"), RNA_property_collection_length(ptr, prop));
+      SNPRINTF(text, IFACE_("%d items"), RNA_property_collection_length(ptr, prop));
       but = uiDefBut(
           block, UI_BTYPE_LABEL, 0, text, x, y, width, height, nullptr, 0, 0, 0, 0, nullptr);
       UI_but_flag_enable(but, UI_BUT_DISABLED);
@@ -1116,8 +1116,9 @@ static bool ui_key_event_property_match(const char *opname,
 
   bool match = false;
   if (properties) {
-    if (ui_opptr && IDP_EqualsProperties_ex(
-                        properties, static_cast<IDProperty *>(ui_opptr->data), is_strict)) {
+    if (ui_opptr &&
+        IDP_EqualsProperties_ex(properties, static_cast<IDProperty *>(ui_opptr->data), is_strict))
+    {
       match = true;
     }
   }
@@ -1132,7 +1133,7 @@ const char *UI_key_event_operator_string(const bContext *C,
                                          IDProperty *properties,
                                          const bool is_strict,
                                          char *result,
-                                         const int result_len)
+                                         const int result_maxncpy)
 {
   /* NOTE: currently only actions on UI Lists are supported (for the asset manager).
    * Other kinds of events can be supported as needed. */
@@ -1175,7 +1176,8 @@ const char *UI_key_event_operator_string(const bContext *C,
                                     properties,
                                     is_strict,
                                     dyn_data->custom_activate_optype,
-                                    dyn_data->custom_activate_opptr)) {
+                                    dyn_data->custom_activate_opptr))
+    {
       event_val = KM_CLICK;
       event_type = LEFTMOUSE;
     }
@@ -1184,7 +1186,8 @@ const char *UI_key_event_operator_string(const bContext *C,
                                          properties,
                                          is_strict,
                                          dyn_data->custom_drag_optype,
-                                         dyn_data->custom_drag_opptr)) {
+                                         dyn_data->custom_drag_opptr))
+    {
       event_val = KM_CLICK_DRAG;
       event_type = LEFTMOUSE;
     }
@@ -1192,7 +1195,7 @@ const char *UI_key_event_operator_string(const bContext *C,
 
   if ((event_val != KM_NOTHING) && (event_type != KM_NOTHING)) {
     WM_keymap_item_raw_to_string(
-        false, false, false, false, 0, event_val, event_type, false, result, result_len);
+        false, false, false, false, 0, event_val, event_type, false, result, result_maxncpy);
     return result;
   }
 

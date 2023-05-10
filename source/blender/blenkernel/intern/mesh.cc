@@ -134,6 +134,7 @@ static void mesh_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int 
   mesh_dst->runtime->verts_no_face_cache = mesh_src->runtime->verts_no_face_cache;
   mesh_dst->runtime->loose_edges_cache = mesh_src->runtime->loose_edges_cache;
   mesh_dst->runtime->looptris_cache = mesh_src->runtime->looptris_cache;
+  mesh_dst->runtime->looptri_polys_cache = mesh_src->runtime->looptri_polys_cache;
 
   /* Only do tessface if we have no polys. */
   const bool do_tessface = ((mesh_src->totface != 0) && (mesh_src->totpoly == 0));
@@ -565,7 +566,8 @@ static int customdata_compare(
   for (int i = 0; i < c1->totlayer; i++) {
     l1 = &c1->layers[i];
     if ((CD_TYPE_AS_MASK(l1->type) & cd_mask_all_attr) && l1->anonymous_id == nullptr &&
-        !is_uv_bool_sublayer(*l1)) {
+        !is_uv_bool_sublayer(*l1))
+    {
       layer_count1++;
     }
   }
@@ -573,7 +575,8 @@ static int customdata_compare(
   for (int i = 0; i < c2->totlayer; i++) {
     l2 = &c2->layers[i];
     if ((CD_TYPE_AS_MASK(l2->type) & cd_mask_all_attr) && l2->anonymous_id == nullptr &&
-        !is_uv_bool_sublayer(*l2)) {
+        !is_uv_bool_sublayer(*l2))
+    {
       layer_count2++;
     }
   }
@@ -800,7 +803,8 @@ const char *BKE_mesh_cmp(Mesh *me1, Mesh *me2, float thresh)
   }
 
   if (!std::equal(
-          me1->poly_offsets().begin(), me1->poly_offsets().end(), me2->poly_offsets().begin())) {
+          me1->poly_offsets().begin(), me1->poly_offsets().end(), me2->poly_offsets().begin()))
+  {
     return "Face sizes don't match";
   }
 
@@ -1316,7 +1320,8 @@ void BKE_mesh_texspace_calc(Mesh *me)
 void BKE_mesh_texspace_ensure(Mesh *me)
 {
   if ((me->texspace_flag & ME_TEXSPACE_FLAG_AUTO) &&
-      !(me->texspace_flag & ME_TEXSPACE_FLAG_AUTO_EVALUATED)) {
+      !(me->texspace_flag & ME_TEXSPACE_FLAG_AUTO_EVALUATED))
+  {
     BKE_mesh_texspace_calc(me);
   }
 }
