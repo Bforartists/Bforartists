@@ -149,7 +149,8 @@ static bool WIDGETGROUP_navigate_poll(const bContext *C, wmGizmoGroupType *UNUSE
   View3D *v3d = CTX_wm_view3d(C);
   if ((((U.uiflag & USER_SHOW_GIZMO_NAVIGATE) == 0) &&
        (U.mini_axis_type != USER_MINI_AXIS_TYPE_GIZMO)) ||
-      (v3d->gizmo_flag & (V3D_GIZMO_HIDE | V3D_GIZMO_HIDE_NAVIGATE))) {
+      (v3d->gizmo_flag & (V3D_GIZMO_HIDE | V3D_GIZMO_HIDE_NAVIGATE)))
+  {
     return false;
   }
   return true;
@@ -293,7 +294,8 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
        (v3d->flag2 & v3d_flag2_test)) && /*bfa - lock camera to view in navigation element*/
       (navgroup->state.rv3d.is_persp == rv3d->is_persp) &&
       (navgroup->state.rv3d.is_camera == (rv3d->persp == RV3D_CAMOB)) &&
-      (navgroup->state.rv3d.viewlock == RV3D_LOCK_FLAGS(rv3d))) {
+      (navgroup->state.rv3d.viewlock == RV3D_LOCK_FLAGS(rv3d)))
+  {
     return;
   }
 

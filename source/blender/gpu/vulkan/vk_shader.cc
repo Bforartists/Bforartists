@@ -561,10 +561,9 @@ void VKShader::build_shader_module(Span<uint32_t> spirv_module, VkShaderModule *
   create_info.codeSize = spirv_module.size() * sizeof(uint32_t);
   create_info.pCode = spirv_module.data();
 
-  VKContext &context = *static_cast<VKContext *>(VKContext::get());
-
+  const VKDevice &device = VKBackend::get().device_get();
   VkResult result = vkCreateShaderModule(
-      context.device_get(), &create_info, vk_allocation_callbacks, r_shader_module);
+      device.device_get(), &create_info, vk_allocation_callbacks, r_shader_module);
   if (result != VK_SUCCESS) {
     compilation_failed_ = true;
     *r_shader_module = VK_NULL_HANDLE;
@@ -580,29 +579,29 @@ VKShader::~VKShader()
 {
   VK_ALLOCATION_CALLBACKS
 
-  VkDevice device = context_->device_get();
+  const VKDevice &device = VKBackend::get().device_get();
   if (vertex_module_ != VK_NULL_HANDLE) {
-    vkDestroyShaderModule(device, vertex_module_, vk_allocation_callbacks);
+    vkDestroyShaderModule(device.device_get(), vertex_module_, vk_allocation_callbacks);
     vertex_module_ = VK_NULL_HANDLE;
   }
   if (geometry_module_ != VK_NULL_HANDLE) {
-    vkDestroyShaderModule(device, geometry_module_, vk_allocation_callbacks);
+    vkDestroyShaderModule(device.device_get(), geometry_module_, vk_allocation_callbacks);
     geometry_module_ = VK_NULL_HANDLE;
   }
   if (fragment_module_ != VK_NULL_HANDLE) {
-    vkDestroyShaderModule(device, fragment_module_, vk_allocation_callbacks);
+    vkDestroyShaderModule(device.device_get(), fragment_module_, vk_allocation_callbacks);
     fragment_module_ = VK_NULL_HANDLE;
   }
   if (compute_module_ != VK_NULL_HANDLE) {
-    vkDestroyShaderModule(device, compute_module_, vk_allocation_callbacks);
+    vkDestroyShaderModule(device.device_get(), compute_module_, vk_allocation_callbacks);
     compute_module_ = VK_NULL_HANDLE;
   }
   if (pipeline_layout_ != VK_NULL_HANDLE) {
-    vkDestroyPipelineLayout(device, pipeline_layout_, vk_allocation_callbacks);
+    vkDestroyPipelineLayout(device.device_get(), pipeline_layout_, vk_allocation_callbacks);
     pipeline_layout_ = VK_NULL_HANDLE;
   }
   if (layout_ != VK_NULL_HANDLE) {
-    vkDestroyDescriptorSetLayout(device, layout_, vk_allocation_callbacks);
+    vkDestroyDescriptorSetLayout(device.device_get(), layout_, vk_allocation_callbacks);
     layout_ = VK_NULL_HANDLE;
   }
 }
@@ -653,11 +652,11 @@ bool VKShader::finalize(const shader::ShaderCreateInfo *info)
   VKShaderInterface *vk_interface = new VKShaderInterface();
   vk_interface->init(*info);
 
-  VkDevice vk_device = context_->device_get();
-  if (!finalize_descriptor_set_layouts(vk_device, *vk_interface, *info)) {
+  const VKDevice &device = VKBackend::get().device_get();
+  if (!finalize_descriptor_set_layouts(device.device_get(), *vk_interface, *info)) {
     return false;
   }
-  if (!finalize_pipeline_layout(vk_device, *vk_interface)) {
+  if (!finalize_pipeline_layout(device.device_get(), *vk_interface)) {
     return false;
   }
 
@@ -668,7 +667,7 @@ bool VKShader::finalize(const shader::ShaderCreateInfo *info)
     BLI_assert((fragment_module_ != VK_NULL_HANDLE && info->tf_type_ == GPU_SHADER_TFB_NONE) ||
                (fragment_module_ == VK_NULL_HANDLE && info->tf_type_ != GPU_SHADER_TFB_NONE));
     BLI_assert(compute_module_ == VK_NULL_HANDLE);
-    result = finalize_graphics_pipeline(vk_device);
+    result = finalize_graphics_pipeline(device.device_get());
   }
   else {
     BLI_assert(vertex_module_ == VK_NULL_HANDLE);
@@ -676,11 +675,7 @@ bool VKShader::finalize(const shader::ShaderCreateInfo *info)
     BLI_assert(fragment_module_ == VK_NULL_HANDLE);
     BLI_assert(compute_module_ != VK_NULL_HANDLE);
     compute_pipeline_ = VKPipeline::create_compute_pipeline(
-        *context_,
-        compute_module_,
-        layout_,
-        pipeline_layout_,
-        vk_interface->push_constants_layout_get());
+        compute_module_, layout_, pipeline_layout_, vk_interface->push_constants_layout_get());
     result = compute_pipeline_.is_valid();
   }
 
@@ -748,7 +743,8 @@ bool VKShader::finalize_pipeline_layout(VkDevice vk_device,
   }
 
   if (vkCreatePipelineLayout(
-          vk_device, &pipeline_info, vk_allocation_callbacks, &pipeline_layout_) != VK_SUCCESS) {
+          vk_device, &pipeline_info, vk_allocation_callbacks, &pipeline_layout_) != VK_SUCCESS)
+  {
     return false;
   };
 
@@ -942,7 +938,8 @@ bool VKShader::finalize_descriptor_set_layouts(VkDevice vk_device,
   VkDescriptorSetLayoutCreateInfo layout_info = create_descriptor_set_layout(
       shader_interface, all_resources, bindings);
   if (vkCreateDescriptorSetLayout(vk_device, &layout_info, vk_allocation_callbacks, &layout_) !=
-      VK_SUCCESS) {
+      VK_SUCCESS)
+  {
     return false;
   };
 
@@ -984,12 +981,14 @@ void VKShader::unbind()
 
 void VKShader::uniform_float(int location, int comp_len, int array_size, const float *data)
 {
-  pipeline_get().push_constants_get().push_constant_set(location, comp_len, array_size, data);
+  VKPushConstants &push_constants = pipeline_get().push_constants_get();
+  push_constants.push_constant_set(location, comp_len, array_size, data);
 }
 
 void VKShader::uniform_int(int location, int comp_len, int array_size, const int *data)
 {
-  pipeline_get().push_constants_get().push_constant_set(location, comp_len, array_size, data);
+  VKPushConstants &push_constants = pipeline_get().push_constants_get();
+  push_constants.push_constant_set(location, comp_len, array_size, data);
 }
 
 std::string VKShader::resources_declare(const shader::ShaderCreateInfo &info) const
@@ -1183,6 +1182,7 @@ std::string VKShader::geometry_layout_declare(const shader::ShaderCreateInfo &in
   }
   ss << "\n";
 
+  location = 0;
   for (const StageInterfaceInfo *iface : info.geometry_out_interfaces_) {
     bool has_matching_input_iface = find_interface_by_name(info.vertex_out_interfaces_,
                                                            iface->instance_name) != nullptr;

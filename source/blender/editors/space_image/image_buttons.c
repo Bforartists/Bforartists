@@ -75,10 +75,10 @@ static void ui_imageuser_slot_menu(bContext *UNUSED(C), uiLayout *layout, void *
   LISTBASE_FOREACH_INDEX (RenderSlot *, slot, &image->renderslots, slot_id) {
     char str[64];
     if (slot->name[0] != '\0') {
-      BLI_strncpy(str, slot->name, sizeof(str));
+      STRNCPY(str, slot->name);
     }
     else {
-      BLI_snprintf(str, sizeof(str), IFACE_("Slot %d"), slot_id + 1);
+      SNPRINTF(str, IFACE_("Slot %d"), slot_id + 1);
     }
     uiDefButS(block,
               UI_BTYPE_BUT_MENU,
@@ -587,10 +587,10 @@ static void uiblock_layer_pass_buttons(uiLayout *layout,
     char str[64];
     RenderSlot *slot = BKE_image_get_renderslot(image, *render_slot);
     if (slot && slot->name[0] != '\0') {
-      BLI_strncpy(str, slot->name, sizeof(str));
+      STRNCPY(str, slot->name);
     }
     else {
-      BLI_snprintf(str, sizeof(str), IFACE_("Slot %d"), *render_slot + 1);
+      SNPRINTF(str, IFACE_("Slot %d"), *render_slot + 1);
     }
 
     rnd_pt = ui_imageuser_data_copy(&rnd_pt_local);
@@ -654,7 +654,8 @@ static void uiblock_layer_pass_buttons(uiLayout *layout,
 
     /* view */
     if (BLI_listbase_count_at_most(&rr->views, 2) > 1 &&
-        ((!show_stereo) || !RE_RenderResult_is_stereo(rr))) {
+        ((!show_stereo) || !RE_RenderResult_is_stereo(rr)))
+    {
       rview = BLI_findlink(&rr->views, iuser->view);
       display_name = rview ? rview->name : "";
 
@@ -676,7 +677,8 @@ static void uiblock_layer_pass_buttons(uiLayout *layout,
 
   /* stereo image */
   else if ((BKE_image_is_stereo(image) && (!show_stereo)) ||
-           (BKE_image_is_multiview(image) && !BKE_image_is_stereo(image))) {
+           (BKE_image_is_multiview(image) && !BKE_image_is_stereo(image)))
+  {
     ImageView *iv;
     int nr = 0;
 
@@ -1003,7 +1005,8 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
            R_IMF_CHAN_DEPTH_12,
            R_IMF_CHAN_DEPTH_16,
            R_IMF_CHAN_DEPTH_24,
-           R_IMF_CHAN_DEPTH_32) == 0) {
+           R_IMF_CHAN_DEPTH_32) == 0)
+  {
     uiItemR(uiLayoutRow(col, true), imfptr, "color_depth", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
   }
 
@@ -1262,17 +1265,17 @@ void uiTemplateImageInfo(uiLayout *layout, bContext *C, Image *ima, ImageUser *i
 
     if (duration > 0) {
       /* Movie duration */
-      BLI_snprintf(str, MAX_IMAGE_INFO_LEN, TIP_("Frame %d / %d"), framenr, duration);
+      SNPRINTF(str, TIP_("Frame %d / %d"), framenr, duration);
     }
     else if (ima->source == IMA_SRC_SEQUENCE && ibuf) {
       /* Image sequence frame number + filename */
-      const char *filename = BLI_path_slash_rfind(ibuf->name);
-      filename = (filename == NULL) ? ibuf->name : filename + 1;
-      BLI_snprintf(str, MAX_IMAGE_INFO_LEN, TIP_("Frame %d: %s"), framenr, filename);
+      const char *filename = BLI_path_slash_rfind(ibuf->filepath);
+      filename = (filename == NULL) ? ibuf->filepath : filename + 1;
+      SNPRINTF(str, TIP_("Frame %d: %s"), framenr, filename);
     }
     else {
       /* Frame number */
-      BLI_snprintf(str, MAX_IMAGE_INFO_LEN, TIP_("Frame %d"), framenr);
+      SNPRINTF(str, TIP_("Frame %d"), framenr);
     }
 
     uiItemL(col, str, ICON_NONE);

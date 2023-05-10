@@ -157,7 +157,7 @@ static void init_vbo_for_attribute(const MeshRenderData &mr,
   char attr_name[32], attr_safe_name[GPU_MAX_SAFE_ATTR_NAME];
   GPU_vertformat_safe_attr_name(request.attribute_name, attr_safe_name, GPU_MAX_SAFE_ATTR_NAME);
   /* Attributes use auto-name. */
-  BLI_snprintf(attr_name, sizeof(attr_name), "a%s", attr_safe_name);
+  SNPRINTF(attr_name, "a%s", attr_safe_name);
 
   GPUVertFormat format = {0};
   GPU_vertformat_deinterleave(&format);
@@ -438,9 +438,9 @@ static void extract_mesh_attr_viewer_init(const MeshRenderData *mr,
 
   const StringRefNull attr_name = ".viewer";
   const bke::AttributeAccessor attributes = mr->me->attributes();
-  attributes
-      .lookup_or_default<ColorGeometry4f>(attr_name, ATTR_DOMAIN_CORNER, {1.0f, 0.0f, 1.0f, 1.0f})
-      .materialize(attr);
+  const bke::AttributeReader attribute = attributes.lookup_or_default<ColorGeometry4f>(
+      attr_name, ATTR_DOMAIN_CORNER, {1.0f, 0.0f, 1.0f, 1.0f});
+  attribute.varray.materialize(attr);
 }
 
 constexpr MeshExtract create_extractor_attr_viewer()

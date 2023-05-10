@@ -3301,7 +3301,7 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
-            col.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK").mode = 'INVERT'
+            col.operator("sculpt.face_set_invert_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK")
             col.operator("sculpt.reveal_all", text='Show Active Face Set', icon = "HIDE_OFF")
 
             col.separator(factor = 0.5)
@@ -3328,7 +3328,7 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 row.operator("mesh.face_set_extract", text='', icon = "SEPARATE")
 
                 row = col.row(align=True)
-                row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'INVERT'
+                row.operator("sculpt.face_set_invert_visibility", text='', icon = "INVERT_MASK")
                 row.operator("sculpt.reveal_all", text = '', icon = "HIDE_OFF")
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
@@ -3347,7 +3347,7 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 row.operator("mesh.face_set_extract", text = '', icon = "SEPARATE")
 
                 row = col.row(align=True)
-                row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'INVERT'
+                row.operator("sculpt.face_set_invert_visibility", text='', icon = "INVERT_MASK")
                 row.operator("sculpt.reveal_all", text='', icon = "HIDE_OFF")
 
                 row = col.row(align=True)
@@ -3370,7 +3370,7 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
 
-                col.operator("sculpt.face_set_change_visibility", text = '', icon = "INVERT_MASK").mode = 'INVERT'
+                col.operator("sculpt.face_set_invert_visibility", text = '', icon = "INVERT_MASK")
                 col.operator("sculpt.reveal_all", text = '', icon = "HIDE_OFF").mode = 'SHOW_ACTIVE'
 
                 col.separator(factor = 0.5)

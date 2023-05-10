@@ -304,7 +304,8 @@ void transform_constraint_snap_axis_to_edge(const TransInfo *t,
   const float *edge_dir = t->tsnap.snapNormal;
   bool is_aligned = fabsf(dot_v3v3(axis, edge_dir)) > (1.0f - CONSTRAIN_EPSILON);
   if (!is_aligned &&
-      isect_ray_ray_v3(t->tsnap.snap_source, axis, edge_snap_point, edge_dir, &lambda, NULL)) {
+      isect_ray_ray_v3(t->tsnap.snap_source, axis, edge_snap_point, edge_dir, &lambda, NULL))
+  {
     mul_v3_v3fl(r_out, axis, lambda);
   }
 }
@@ -576,7 +577,8 @@ static void constraints_rotation_impl(const TransInfo *t,
   }
   /* don't flip axis if asked to or if num input */
   if (r_angle &&
-      !((mode & CON_NOFLIP) || hasNumInput(&t->num) || (t->flag & T_INPUT_IS_VALUES_FINAL))) {
+      !((mode & CON_NOFLIP) || hasNumInput(&t->num) || (t->flag & T_INPUT_IS_VALUES_FINAL)))
+  {
     float view_vector[3];
     view_vector_calc(t, t->center_global, view_vector);
     if (dot_v3v3(r_axis, view_vector) > 0.0f) {
@@ -704,7 +706,7 @@ void setUserConstraint(TransInfo *t, int mode, const char text_[])
   char text[256];
   const short orientation = transform_orientation_or_default(t);
   const char *spacename = transform_orientations_spacename_get(t, orientation);
-  BLI_snprintf(text, sizeof(text), text_, spacename);
+  SNPRINTF(text, text_, spacename);
 
   switch (orientation) {
     case V3D_ORIENT_LOCAL:
@@ -778,7 +780,14 @@ static void drawLine(
 
   uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
 
-  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+  float viewport[4];
+  GPU_viewport_size_get_f(viewport);
+  GPU_blend(GPU_BLEND_ALPHA);
+
+  immBindBuiltinProgram(GPU_SHADER_3D_POLYLINE_UNIFORM_COLOR);
+  immUniform2fv("viewportSize", &viewport[2]);
+  immUniform1f("lineWidth", U.pixelsize * 2.0f);
+
   immUniformColor3ubv(col2);
 
   immBegin(GPU_PRIM_LINES, 2);
@@ -1063,11 +1072,11 @@ static void setNearestAxis2d(TransInfo *t)
   /* no correction needed... just use whichever one is lower */
   if (abs(t->mval[0] - t->con.imval[0]) < abs(t->mval[1] - t->con.imval[1])) {
     t->con.mode |= CON_AXIS1;
-    BLI_strncpy(t->con.text, TIP_(" along Y axis"), sizeof(t->con.text));
+    STRNCPY(t->con.text, TIP_(" along Y axis"));
   }
   else {
     t->con.mode |= CON_AXIS0;
-    BLI_strncpy(t->con.text, TIP_(" along X axis"), sizeof(t->con.text));
+    STRNCPY(t->con.text, TIP_(" along X axis"));
   }
 }
 
@@ -1121,31 +1130,31 @@ static void setNearestAxis3d(TransInfo *t)
   if (len[0] <= len[1] && len[0] <= len[2]) {
     if (t->modifiers & MOD_CONSTRAINT_SELECT_PLANE) {
       t->con.mode |= (CON_AXIS1 | CON_AXIS2);
-      BLI_snprintf(t->con.text, sizeof(t->con.text), TIP_(" locking %s X axis"), t->spacename);
+      SNPRINTF(t->con.text, TIP_(" locking %s X axis"), t->spacename);
     }
     else {
       t->con.mode |= CON_AXIS0;
-      BLI_snprintf(t->con.text, sizeof(t->con.text), TIP_(" along %s X axis"), t->spacename);
+      SNPRINTF(t->con.text, TIP_(" along %s X axis"), t->spacename);
     }
   }
   else if (len[1] <= len[0] && len[1] <= len[2]) {
     if (t->modifiers & MOD_CONSTRAINT_SELECT_PLANE) {
       t->con.mode |= (CON_AXIS0 | CON_AXIS2);
-      BLI_snprintf(t->con.text, sizeof(t->con.text), TIP_(" locking %s Y axis"), t->spacename);
+      SNPRINTF(t->con.text, TIP_(" locking %s Y axis"), t->spacename);
     }
     else {
       t->con.mode |= CON_AXIS1;
-      BLI_snprintf(t->con.text, sizeof(t->con.text), TIP_(" along %s Y axis"), t->spacename);
+      SNPRINTF(t->con.text, TIP_(" along %s Y axis"), t->spacename);
     }
   }
   else if (len[2] <= len[1] && len[2] <= len[0]) {
     if (t->modifiers & MOD_CONSTRAINT_SELECT_PLANE) {
       t->con.mode |= (CON_AXIS0 | CON_AXIS1);
-      BLI_snprintf(t->con.text, sizeof(t->con.text), TIP_(" locking %s Z axis"), t->spacename);
+      SNPRINTF(t->con.text, TIP_(" locking %s Z axis"), t->spacename);
     }
     else {
       t->con.mode |= CON_AXIS2;
-      BLI_snprintf(t->con.text, sizeof(t->con.text), TIP_(" along %s Z axis"), t->spacename);
+      SNPRINTF(t->con.text, TIP_(" along %s Z axis"), t->spacename);
     }
   }
 }

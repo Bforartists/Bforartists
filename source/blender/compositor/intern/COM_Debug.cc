@@ -305,7 +305,7 @@ bool DebugInfo::graphviz_system(const ExecutionSystem *system, char *str, int ma
 
     for (NodeOperation *operation : group->operations_) {
 
-      BLI_snprintf(strbuf, sizeof(strbuf), "_%p", group);
+      SNPRINTF(strbuf, "_%p", group);
       op_groups[operation].push_back(std::string(strbuf));
 
       len += graphviz_operation(
@@ -423,10 +423,10 @@ void DebugInfo::graphviz(const ExecutionSystem *system, StringRefNull name)
     char filepath[FILE_MAX];
 
     if (name.is_empty()) {
-      BLI_snprintf(basename, sizeof(basename), "compositor_%d.dot", file_index_);
+      SNPRINTF(basename, "compositor_%d.dot", file_index_);
     }
     else {
-      BLI_strncpy(basename, (name + ".dot").c_str(), sizeof(basename));
+      STRNCPY(basename, (name + ".dot").c_str());
     }
     BLI_path_join(filepath, sizeof(filepath), BKE_tempdir_session(), basename);
     file_index_++;
@@ -457,9 +457,9 @@ void DebugInfo::export_operation(const NodeOperation *op, MemoryBuffer *render)
 
   const std::string file_name = operation_class_name(op) + "_" + std::to_string(op->get_id()) +
                                 ".png";
-  const std::string path = get_operations_export_dir() + file_name;
-  BLI_make_existing_file(path.c_str());
-  IMB_saveiff(ibuf, path.c_str(), ibuf->flags);
+  const std::string filepath = get_operations_export_dir() + file_name;
+  BLI_file_ensure_parent_dir_exists(filepath.c_str());
+  IMB_saveiff(ibuf, filepath.c_str(), ibuf->flags);
   IMB_freeImBuf(ibuf);
 }
 

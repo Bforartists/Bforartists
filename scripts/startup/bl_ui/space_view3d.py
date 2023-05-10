@@ -733,7 +733,12 @@ class _draw_tool_settings_context_mode:
         brush = paint.brush
 
         from bl_ui.properties_paint_common import brush_basic_gpencil_weight_settings
+        layout.template_ID_preview(paint, "brush", rows=3, cols=8, hide_buttons=True)
+
         brush_basic_gpencil_weight_settings(layout, context, brush, compact=True)
+
+        layout.popover("VIEW3D_PT_tools_grease_pencil_weight_options", text="Options")
+        layout.popover("VIEW3D_PT_tools_grease_pencil_brush_weight_falloff", text="Falloff")
 
         return True
 
@@ -1975,6 +1980,16 @@ class VIEW3D_MT_select_edit_text(Menu):
 
         layout.operator("font.move_select", text="Line End", icon="HAND").type = 'LINE_END'
         layout.operator("font.move_select", text="Line Begin", icon="HAND").type = 'LINE_BEGIN'
+
+        layout.separator()
+
+        layout.operator("font.move_select", text="Top").type = 'TEXT_BEGIN'
+        layout.operator("font.move_select", text="Bottom").type = 'TEXT_END'
+
+        layout.separator()
+
+        layout.operator("font.move_select", text="Previous Block").type = 'PREVIOUS_PAGE'
+        layout.operator("font.move_select", text="Next Block").type = 'NEXT_PAGE'
 
         layout.separator()
 
@@ -3832,6 +3847,13 @@ class VIEW3D_MT_sculpt(Menu):
 
         props = layout.operator("paint.hide_show", text="Box Show", icon="BOX_SHOW")
         props.action = 'SHOW'
+        props.area = 'ALL'
+
+        layout.operator("sculpt.face_set_invert_visibility", text="Invert Visible")
+
+        props = layout.operator("paint.hide_show", text="Hide Masked")
+        props.action = 'HIDE'
+        props.area = 'MASKED'
 
         layout.separator()
 
@@ -3933,8 +3955,7 @@ class VIEW3D_MT_sculpt_showhide(Menu):
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        props = layout.operator("sculpt.face_set_change_visibility", text="Invert Visible", icon="HIDE_ON")
-        props.mode = 'INVERT'
+        props = layout.operator("sculpt.face_set_invert_visibility", text="Invert Visible", icon="HIDE_ON")
 
         props = layout.operator("paint.hide_show", text="Hide Masked", icon="MOD_MASK_OFF")
         props.action = 'HIDE'
@@ -3999,12 +4020,15 @@ class VIEW3D_MT_mask(Menu):
         props = layout.operator("sculpt.expand", text="Expand Mask by Topology", icon="MESH_DATA")
         props.target = 'MASK'
         props.falloff_type = 'GEODESIC'
-        props.invert = True
+        props.invert = False
+        props.use_auto_mask = False
+        props.use_mask_preserve = True
 
         props = layout.operator("sculpt.expand", text="Expand Mask by Curvature", icon="CURVE_DATA")
         props.target = 'MASK'
         props.falloff_type = 'NORMALS'
         props.invert = False
+        props.use_mask_preserve = True
 
         layout.separator()
 
@@ -4063,6 +4087,19 @@ class VIEW3D_MT_face_sets(Menu):
 
         layout.operator("sculpt.face_set_edit", text="Grow Face Set", icon='SELECTMORE').mode = 'GROW'
         layout.operator("sculpt.face_set_edit", text="Shrink Face Set", icon='SELECTLESS').mode = 'SHRINK'
+        props = layout.operator("sculpt.expand", text="Expand Face Set by Topology")
+        props.target = 'FACE_SETS'
+        props.falloff_type = 'GEODESIC'
+        props.invert = False
+        props.use_mask_preserve = False
+        props.use_modify_active = False
+
+        props = layout.operator("sculpt.expand", text="Expand Active Face Set")
+        props.target = 'FACE_SETS'
+        props.falloff_type = 'BOUNDARY_FACE_SET'
+        props.invert = False
+        props.use_mask_preserve = False
+        props.use_modify_active = True
 
         layout.separator()
 
@@ -4070,7 +4107,7 @@ class VIEW3D_MT_face_sets(Menu):
 
         layout.separator()
 
-        layout.operator("sculpt.face_set_change_visibility", text="Invert Visible Face Sets", icon="INVERT_MASK").mode = 'INVERT'
+        layout.operator("sculpt.face_set_invert_visibility", text="Invert Visible Face Sets", icon="INVERT_MASK")
         layout.operator("sculpt.reveal_all", text = "Show All Face Sets", icon = "HIDE_OFF")
 
         layout.separator()
@@ -6581,8 +6618,7 @@ class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
         props = pie.operator("sculpt.face_sets_create", text="Face Set from Visible")
         props.mode = 'VISIBLE'
 
-        props = pie.operator("sculpt.face_set_change_visibility", text="Invert Visible")
-        props.mode = 'INVERT'
+        pie.operator("sculpt.face_set_invert_visibility", text="Invert Visible")
 
         props = pie.operator("sculpt.reveal_all", text="Show All")
 
@@ -8380,6 +8416,7 @@ class VIEW3D_PT_proportional_edit(Panel):
             col.separator()
 
         col.prop(tool_settings, "proportional_edit_falloff", expand=True)
+        col.prop(tool_settings, "proportional_distance")
 
 
 class VIEW3D_PT_transform_orientations(Panel):

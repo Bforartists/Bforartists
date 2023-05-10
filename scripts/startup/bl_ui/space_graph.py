@@ -98,7 +98,13 @@ class GRAPH_HT_header(Header):
         sub = row.row(align=True)
 
         if tool_settings.use_proportional_fcurve:
-            sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
+            sub.prop_with_popover(
+                tool_settings,
+                "proportional_edit_falloff",
+                text="",
+                icon_only=True,
+                panel="GRAPH_PT_proportional_edit",
+            )
 
         row = layout.row(align=True)
 
@@ -124,6 +130,22 @@ class ALL_MT_editormenu(Menu):
 
         row = layout.row(align=True)
         row.template_header()  # editor type menus
+
+
+class GRAPH_PT_proportional_edit(Panel):
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Proportional Editing"
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        layout = self.layout
+        tool_settings = context.tool_settings
+        col = layout.column()
+        col.active = tool_settings.use_proportional_fcurve
+
+        col.prop(tool_settings, "proportional_edit_falloff", expand=True)
+        col.prop(tool_settings, "proportional_size")
 
 
 class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
@@ -312,10 +334,11 @@ class GRAPH_MT_channel(Menu):
 
     def draw(self, context):
         layout = self.layout
-
+        operator_context = layout.operator_context
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
         layout.operator("anim.channels_delete", icon="DELETE")
+
         if context.space_data.mode == 'DRIVERS':
             layout.operator("graph.driver_delete_invalid", icon="DELETE")
 
@@ -329,10 +352,12 @@ class GRAPH_MT_channel(Menu):
         layout.menu("GRAPH_MT_channel_settings_toggle")
 
         layout.separator()
-
         layout.operator("anim.channels_editable_toggle", icon="LOCKED")
         layout.menu("GRAPH_MT_channel_extrapolation")
+        # To get it to display the hotkey.
+        layout.operator_context = operator_context
         layout.operator_menu_enum("graph.fmodifier_add", "type", text="Add F-Curve Modifier").only_active = False
+        layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
         layout.separator()
 
@@ -407,15 +432,60 @@ class GRAPH_MT_channel_move(Menu):
         layout.operator("anim.channels_move", text="To Bottom", icon="MOVE_TO_BOTTOM").direction = 'BOTTOM'
 
         layout.separator()
+        layout.operator("graph.bake")
+        layout.operator("graph.unbake")
+        layout.operator("graph.sound_bake")
+
+        layout.separator()
+        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
+
+        layout.separator()
         layout.operator("anim.channels_view_selected")
+
+
+class GRAPH_MT_key_density(Menu):
+    bl_label = "Density"
+
+    def draw(self, _context):
+        from bl_ui_utils.layout import operator_context
+        layout = self.layout
+        layout.operator("graph.decimate", text="Decimate (Ratio)").mode = 'RATIO'
+        # Using the modal operation doesn't make sense for this variant
+        # as we do not have a modal mode for it, so just execute it.
+        with operator_context(layout, 'EXEC_REGION_WIN'):
+            layout.operator("graph.decimate", text="Decimate (Allowed Change)").mode = 'ERROR'
+        layout.operator("graph.sample")
+
+        layout.separator()
+        layout.operator("graph.clean").channels = False
+
+
+class GRAPH_MT_key_blending(Menu):
+    bl_label = "Blend"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator("graph.breakdown", text="Breakdown")
+        layout.operator("graph.blend_to_neighbor", text="Blend to Neighbor")
+        layout.operator("graph.blend_to_default", text="Blend to Default Value")
+        layout.operator("graph.ease", text="Ease")
+
+
+class GRAPH_MT_key_smoothing(Menu):
+    bl_label = "Smooth"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator("graph.gaussian_smooth", text="Smooth (Gaussian)")
+        layout.operator("graph.smooth", text="Smooth (Legacy)")
 
 
 class GRAPH_MT_key(Menu):
     bl_label = "Key"
 
     def draw(self, _context):
-        from bl_ui_utils.layout import operator_context
-
         layout = self.layout
 
         layout.menu("GRAPH_MT_key_transform", text="Transform")
@@ -462,6 +532,9 @@ class GRAPH_MT_key(Menu):
         layout.separator()
 
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon="DISCONTINUE_EULER")
+        # layout.menu("GRAPH_MT_key_density") # bfa we already have this
+        layout.menu("GRAPH_MT_key_blending")
+        layout.menu("GRAPH_MT_key_smoothing")
 
 
 class GRAPH_MT_key_mirror(Menu):
@@ -656,6 +729,7 @@ classes = (
     ALL_MT_editormenu,
     GRAPH_HT_header,
     GRAPH_PT_properties_view_options,
+    GRAPH_PT_proportional_edit,
     GRAPH_MT_editor_menus,
     GRAPH_MT_view,
     GRAPH_MT_view_pie_menus,
@@ -667,9 +741,12 @@ classes = (
     GRAPH_MT_channel_move,
     GRAPH_MT_key,
     GRAPH_MT_key_mirror,
-    GRAPH_MT_key_snap,
-    GRAPH_MT_slider,
+    GRAPH_MT_key_density,
     GRAPH_MT_key_transform,
+    GRAPH_MT_key_snap,
+    GRAPH_MT_key_smoothing,
+    GRAPH_MT_key_blending,
+    GRAPH_MT_slider,
     GRAPH_MT_delete,
     GRAPH_MT_context_menu,
     GRAPH_MT_channel_context_menu,

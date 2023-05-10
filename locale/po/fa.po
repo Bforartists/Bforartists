@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.6.0 Alpha (b'bca2090724a3')\n"
+"Project-Id-Version: Blender 3.6.0 Alpha (b'ae1c52b3f2e0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-11 10:34:35\n"
+"POT-Creation-Date: 2023-05-08 10:27:51\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -428,10 +428,6 @@ msgid "Weight"
 msgstr "ﻥﺯﻭ"
 
 
-msgid "Grease Pencil"
-msgstr "ﯽﻨﻏﻭﺭ ﺩﺍﺪﻣ"
-
-
 msgid "Particles"
 msgstr "ﺕﺍﺭﺫ"
 
@@ -750,10 +746,6 @@ msgstr "ﺱﺃﺭ ﻩﻭﺮﮔ ﻥﺪﺷ ﻢﺧ ﯽﺘﺨﺳ"
 
 msgid "Vertex group for fine control over bending stiffness"
 msgstr "ﻥﺪﺷ ﻢﺧ ﯽﺘﺨﺳ ﯼﻭﺭ ﻖﯿﻗﺩ ﻝﺮﺘﻨﮐ ﯼﺍﺮﺑ ﺱﺃﺭ ﻩﻭﺮﮔ"
-
-
-msgid "Mass Vertex Group"
-msgstr "ﺱﺃﺭ ﯽﻌﻤﺟ ﯼﺎﻫ ﻩﻭﺮﮔ"
 
 
 msgid "Vertex Group for pinning of vertices"
@@ -1482,6 +1474,10 @@ msgstr "ﻪﻧﺍﺩ"
 
 msgid "Size"
 msgstr "ﻩﺯﺍﺪﻧﺍ"
+
+
+msgid "Grease Pencil"
+msgstr "ﯽﻨﻏﻭﺭ ﺩﺍﺪﻣ"
 
 
 msgid "Save"
@@ -2420,10 +2416,6 @@ msgid "Add Shader"
 msgstr "ﻥﺯ ﻪﯾﺎﺳ ﻥﺩﻭﺰﻓﺍ"
 
 
-msgid "Bright Contrast"
-msgstr "ﻦﺷﻭﺭ ﺖﺳﺍﺮﺘﻨﮐ"
-
-
 msgid "Reflection"
 msgstr "ﺱﺎﮑﻌﻧﺍ"
 
@@ -2797,6 +2789,10 @@ msgstr "ﻥﻮﯿﺳﺍﺭﻮﮐﺩ ﻡﺎﻧ"
 
 msgid "Open"
 msgstr "ﻥﺩﺮﮐ‌ﺯﺎﺑ"
+
+
+msgid "Play"
+msgstr "ﺶﺨﭘ"
 
 
 msgid "Limit"
@@ -3183,10 +3179,6 @@ msgid "Render Delay"
 msgstr "ﺭﺪﻧﺭ ﺮﯿﺧﺎﺗ"
 
 
-msgid "Play"
-msgstr "ﺶﺨﭘ"
-
-
 msgid "Random Order"
 msgstr "ﯽﻓﺩﺎﺼﺗ ﺕﺭﻮﺻ"
 
@@ -3517,6 +3509,10 @@ msgid "Gray Scale"
 msgstr "ﯼﺮﺘﺴﮐﺎﺧ ﺱﺎﯿﻘﻣ"
 
 
+msgid "Mass Vertex Group"
+msgstr "ﺱﺃﺭ ﯽﻌﻤﺟ ﯼﺎﻫ ﻩﻭﺮﮔ"
+
+
 msgid "Lock to Selection"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﻞﻔﻗ"
 
@@ -3731,10 +3727,6 @@ msgstr "ﺩﺍﺯﺁ:"
 
 msgid "Transform:"
 msgstr "ﻞﯾﺪﺒﺗ:"
-
-
-msgid "Old"
-msgstr "ﯽﻤﯾﺪﻗ"
 
 
 msgid "Date"
@@ -4194,6 +4186,10 @@ msgstr "ﺖﮐﺮﺣ"
 
 msgid "On"
 msgstr "ﻦﺷﻭﺭ"
+
+
+msgid "Old"
+msgstr "ﯽﻤﯾﺪﻗ"
 
 
 msgid "Blender File View"

@@ -83,7 +83,7 @@ BlenderStrokeRenderer::BlenderStrokeRenderer(Render *re, int render_count)
   old_scene = re->scene;
 
   char name[MAX_ID_NAME - 2];
-  BLI_snprintf(name, sizeof(name), "FRS%d_%s", render_count, re->scene->id.name + 2);
+  SNPRINTF(name, "FRS%d_%s", render_count, re->scene->id.name + 2);
   freestyle_scene = BKE_scene_add(freestyle_bmain, name);
   freestyle_scene->r.cfra = old_scene->r.cfra;
   freestyle_scene->r.mode = old_scene->r.mode & ~(R_EDGE_FRS | R_BORDER);
@@ -235,7 +235,7 @@ Material *BlenderStrokeRenderer::GetStrokeShader(Main *bmain,
   input_attr_color->locx = 0.0f;
   input_attr_color->locy = -200.0f;
   storage = (NodeShaderAttribute *)input_attr_color->storage;
-  BLI_strncpy(storage->name, "Color", sizeof(storage->name));
+  STRNCPY(storage->name, "Color");
 
   bNode *mix_rgb_color = nodeAddStaticNode(nullptr, ntree, SH_NODE_MIX_RGB_LEGACY);
   mix_rgb_color->custom1 = MA_RAMP_BLEND;  // Mix
@@ -249,7 +249,7 @@ Material *BlenderStrokeRenderer::GetStrokeShader(Main *bmain,
   input_attr_alpha->locx = 400.0f;
   input_attr_alpha->locy = 300.0f;
   storage = (NodeShaderAttribute *)input_attr_alpha->storage;
-  BLI_strncpy(storage->name, "Alpha", sizeof(storage->name));
+  STRNCPY(storage->name, "Alpha");
 
   bNode *mix_rgb_alpha = nodeAddStaticNode(nullptr, ntree, SH_NODE_MIX_RGB_LEGACY);
   mix_rgb_alpha->custom1 = MA_RAMP_BLEND;  // Mix
@@ -390,10 +390,10 @@ Material *BlenderStrokeRenderer::GetStrokeShader(Main *bmain,
         input_uvmap->locy = node->locy;
         NodeShaderUVMap *storage = (NodeShaderUVMap *)input_uvmap->storage;
         if (node->custom1 & 1) {  // use_tips
-          BLI_strncpy(storage->uv_map, uvNames[1], sizeof(storage->uv_map));
+          STRNCPY(storage->uv_map, uvNames[1]);
         }
         else {
-          BLI_strncpy(storage->uv_map, uvNames[0], sizeof(storage->uv_map));
+          STRNCPY(storage->uv_map, uvNames[0]);
         }
         fromsock = (bNodeSocket *)BLI_findlink(&input_uvmap->outputs, 0);  // UV
 
@@ -452,7 +452,8 @@ void BlenderStrokeRenderer::RenderStrokeRepBasic(StrokeRep *iStrokeRep) const
   vector<StrokeGroup *> *groups = hasTex ? &self->texturedStrokeGroups : &self->strokeGroups;
   StrokeGroup *group;
   if (groups->empty() || !(groups->back()->totvert + totvert < MESH_MAX_VERTS &&
-                           groups->back()->materials.size() + 1 < MAXMAT)) {
+                           groups->back()->materials.size() + 1 < MAXMAT))
+  {
     group = new StrokeGroup;
     groups->push_back(group);
   }
@@ -584,8 +585,8 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
 
   float3 *vert_positions = (float3 *)CustomData_add_layer_named(
       &mesh->vdata, CD_PROP_FLOAT3, CD_SET_DEFAULT, mesh->totvert, "position");
-  MEdge *edges = (MEdge *)CustomData_add_layer(
-      &mesh->edata, CD_MEDGE, CD_SET_DEFAULT, mesh->totedge);
+  blender::int2 *edges = (blender::int2 *)CustomData_add_layer_named(
+      &mesh->edata, CD_PROP_INT32_2D, CD_CONSTRUCT, mesh->totedge, ".edge_verts");
   blender::MutableSpan<int> poly_offsets = mesh->poly_offsets_for_write();
   int *corner_verts = (int *)CustomData_add_layer_named(
       &mesh->ldata, CD_PROP_INT32, CD_SET_DEFAULT, mesh->totloop, ".corner_vert");
@@ -639,7 +640,8 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
   for (vector<StrokeRep *>::const_iterator it = group->strokes.begin(),
                                            itend = group->strokes.end();
        it != itend;
-       ++it) {
+       ++it)
+  {
     const int matnr = group->materials.lookup_default((*it)->getMaterial(), 0);
 
     vector<Strip *> &strips = (*it)->getStrips();
@@ -685,9 +687,8 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
             ++vertex_index;
 
             // first edge
-            edges->v1 = vertex_index - 2;
-            edges->v2 = vertex_index - 1;
-            ++edges;
+            edges[edge_index][0] = vertex_index - 2;
+            edges[edge_index][1] = vertex_index - 1;
             ++edge_index;
           }
           visible = true;
@@ -699,14 +700,12 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
           ++vertex_index;
 
           // edges
-          edges->v1 = vertex_index - 1;
-          edges->v2 = vertex_index - 3;
-          ++edges;
+          edges[edge_index][0] = vertex_index - 1;
+          edges[edge_index][1] = vertex_index - 3;
           ++edge_index;
 
-          edges->v1 = vertex_index - 1;
-          edges->v2 = vertex_index - 2;
-          ++edges;
+          edges[edge_index][0] = vertex_index - 1;
+          edges[edge_index][1] = vertex_index - 2;
           ++edge_index;
 
           // poly
@@ -817,9 +816,9 @@ Object *BlenderStrokeRenderer::NewMesh() const
   char name[MAX_ID_NAME];
   uint mesh_id = get_stroke_mesh_id();
 
-  BLI_snprintf(name, MAX_ID_NAME, "0%08xOB", mesh_id);
+  SNPRINTF(name, "0%08xOB", mesh_id);
   ob = BKE_object_add_only_object(freestyle_bmain, OB_MESH, name);
-  BLI_snprintf(name, MAX_ID_NAME, "0%08xME", mesh_id);
+  SNPRINTF(name, "0%08xME", mesh_id);
   ob->data = BKE_mesh_add(freestyle_bmain, name);
 
   Collection *collection_master = freestyle_scene->master_collection;

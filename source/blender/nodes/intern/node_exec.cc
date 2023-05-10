@@ -17,8 +17,8 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "node_exec.h"
-#include "node_util.h"
+#include "node_exec.hh"
+#include "node_util.hh"
 
 static int node_exec_socket_use_stack(bNodeSocket *sock)
 {
@@ -56,7 +56,8 @@ static void node_init_input_index(bNodeSocket *sock, int *index)
 {
   /* Only consider existing link if from socket is valid! */
   if (sock->link && !(sock->link->flag & NODE_LINK_MUTED) && sock->link->fromsock &&
-      sock->link->fromsock->stack_index >= 0) {
+      sock->link->fromsock->stack_index >= 0)
+  {
     sock->stack_index = sock->link->fromsock->stack_index;
   }
   else {
