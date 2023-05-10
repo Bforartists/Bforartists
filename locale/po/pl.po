@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.6.0 Alpha (b'bca2090724a3')\n"
+"Project-Id-Version: Blender 3.6.0 Alpha (b'ae1c52b3f2e0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-11 10:34:35\n"
+"POT-Creation-Date: 2023-05-08 10:27:51\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -1012,10 +1012,6 @@ msgstr "Ścieżka do pliku .blend"
 
 msgid "Vector Fonts"
 msgstr "Czcionki wektorowe"
-
-
-msgid "Grease Pencil"
-msgstr "Szkicownik"
 
 
 msgid "Images"
@@ -2316,10 +2312,6 @@ msgstr "Grupa wierzchołków sztywności zgięć"
 
 msgid "Vertex group for fine control over bending stiffness"
 msgstr "Grupa wierzchołków, która pozwala kontrolować sztywność zginania"
-
-
-msgid "Mass Vertex Group"
-msgstr "Masa grupy wierzchołków"
 
 
 msgid "Vertex Group for pinning of vertices"
@@ -4427,10 +4419,6 @@ msgid "Map To"
 msgstr "Mapuj na"
 
 
-msgid "The transformation type to affect of the constrained object"
-msgstr "Typ transformacji do zmiany w obiekcie"
-
-
 msgid "Map To X From"
 msgstr "Mapuj na X z"
 
@@ -6056,6 +6044,10 @@ msgid "Size"
 msgstr "Rozmiar"
 
 
+msgid "Grease Pencil"
+msgstr "Szkicownik"
+
+
 msgid "Save"
 msgstr "Zapisz"
 
@@ -6447,6 +6439,10 @@ msgid "Open"
 msgstr "Otwórz"
 
 
+msgid "Play"
+msgstr "Start"
+
+
 msgid "Remove Pack"
 msgstr "Usuń paczkę (rozpakuj)"
 
@@ -6514,10 +6510,6 @@ msgid "Pinned"
 msgstr "Przypięty"
 
 
-msgid "Play"
-msgstr "Start"
-
-
 msgid "Property Name"
 msgstr "Nazwa właściwości"
 
@@ -6580,6 +6572,10 @@ msgstr "Odcienie szarości"
 
 msgid "Sepia"
 msgstr "Sepia"
+
+
+msgid "Mass Vertex Group"
+msgstr "Masa grupy wierzchołków"
 
 
 msgid "Timeline and playback controls"
@@ -6975,10 +6971,6 @@ msgid "Render height has to be 576 pixels for DV-PAL!"
 msgstr "Wysokość renderu musi wynosić 576 pikseli dla DV-PAL!"
 
 
-msgid "FFMPEG only supports 48khz / stereo audio for DV!"
-msgstr "FFMPEG obsługuje wyłącznie 48khz / dźwięk stereo dla DV!"
-
-
 msgid "Error initializing video stream"
 msgstr "Błąd inicjacji strumienia filmowego"
 
@@ -7183,10 +7175,6 @@ msgid "<Missing ID block>"
 msgstr "<Brak bloku ID>"
 
 
-msgid "No RNA pointer available to retrieve values for this fcurve"
-msgstr "Brak dostępnego wskaźnika RNA, z którego można odzyskać wartości dla tej krzywej-F"
-
-
 msgid "No F-Curve to add keyframes to"
 msgstr "Brak krzywej-F, do której można dodać klatki kluczowe"
 
@@ -7217,10 +7205,6 @@ msgstr "Ustanowienie ścieżki do właściwości nie powiodło się, spróbuj r�
 
 msgid "No active Keying Set"
 msgstr "Brak aktywnego Zestawu Kluczowania"
-
-
-msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "Nie można było uaktualnić flag dla tej krzywej-F ponieważ ścieżka RNA jest nieprawidłowa dla danego ID (ID = %s, path = %s)"
 
 
 msgid "F-Curve with path '%s[%d]' cannot be keyframed, ensure that it is not locked or sampled, and try removing F-Modifiers"
@@ -7385,10 +7369,6 @@ msgstr "Akcje na tym szkielecie zostaną zniszczone przez tę nową pozę spoczy
 
 msgid "No pose to copy"
 msgstr "Brak pozy do skopiowania"
-
-
-msgid "Copy buffer is empty"
-msgstr "Bufor kopiowania jest pusty"
 
 
 msgid "Programming error: missing clear transform function or keying set name"
@@ -9178,10 +9158,6 @@ msgid "Action has already been stashed"
 msgstr "Akcja została już przytrzymana (stashed)"
 
 
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "Nie skopiowano klatek kluczowych do bufora kopiuj/wklej klatek kluczowych"
-
-
 msgid "Keyframe pasting is not available for mask mode"
 msgstr "Wklejanie klatek kluczowych nie dostępne dla trybu maski"
 
@@ -9829,10 +9805,6 @@ msgstr "Odtwórz plik"
 
 msgid "unknown error writing file"
 msgstr "nieznany błąd zapisu pliku"
-
-
-msgid "unknown error stating file"
-msgstr "nieznany błąd stating file"
 
 
 msgid "Could not reopen file"
@@ -10548,22 +10520,6 @@ msgid "Already a control point at frame %.6f"
 msgstr "Punkt kontrolny już w klatce %.6f"
 
 
-msgid "FCurve has already sample points"
-msgstr "Krzywa F już posiada próbkowane punkty"
-
-
-msgid "FCurve has no keyframes"
-msgstr "Krzywa F nie posiada klatek kluczowych"
-
-
-msgid "FCurve has already keyframes"
-msgstr "Krzywa F już posiada klatki kluczowe"
-
-
-msgid "FCurve has no sample points"
-msgstr "Krzywa F nie posiada próbkowanych punktów"
-
-
 msgid "Invalid frame range (%d - %d)"
 msgstr "Nieprawidłowy zakres klatek (%d - %d)"
 
@@ -11167,11 +11123,6 @@ msgstr "Krzywe"
 msgctxt "Sequence"
 msgid "Hue Correct"
 msgstr "Korekta barwy"
-
-
-msgctxt "Sequence"
-msgid "Bright/Contrast"
-msgstr "Jasność/Kontrast"
 
 
 msgid "Strips must be the same length"

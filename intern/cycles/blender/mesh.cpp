@@ -280,7 +280,7 @@ static void fill_generic_attribute(BL::Mesh &b_mesh,
         assert(0);
       }
       else {
-        const MEdge *edges = static_cast<const MEdge *>(b_mesh.edges[0].ptr.data);
+        const int2 *edges = static_cast<const int2 *>(b_mesh.edges[0].ptr.data);
         const size_t verts_num = b_mesh.vertices.length();
         vector<int> count(verts_num, 0);
 
@@ -288,11 +288,11 @@ static void fill_generic_attribute(BL::Mesh &b_mesh,
         for (int i = 0; i < edges_num; i++) {
           TypeInCycles value = get_value_at_index(i);
 
-          const MEdge &b_edge = edges[i];
-          data[b_edge.v1] += value;
-          data[b_edge.v2] += value;
-          count[b_edge.v1]++;
-          count[b_edge.v2]++;
+          const int2 &b_edge = edges[i];
+          data[b_edge[0]] += value;
+          data[b_edge[1]] += value;
+          count[b_edge[0]]++;
+          count[b_edge[1]]++;
         }
 
         for (size_t i = 0; i < verts_num; i++) {
@@ -319,10 +319,10 @@ static void fill_generic_attribute(BL::Mesh &b_mesh,
       }
       else {
         const int tris_num = b_mesh.loop_triangles.length();
-        const MLoopTri *looptris = static_cast<const MLoopTri *>(
-            b_mesh.loop_triangles[0].ptr.data);
+        const int *looptri_polys = static_cast<const int *>(
+            b_mesh.loop_triangle_polygons[0].ptr.data);
         for (int i = 0; i < tris_num; i++) {
-          data[i] = get_value_at_index(looptris[i].poly);
+          data[i] = get_value_at_index(looptri_polys[i]);
         }
       }
       break;
@@ -337,7 +337,8 @@ static void fill_generic_attribute(BL::Mesh &b_mesh,
 static void attr_create_motion(Mesh *mesh, BL::Attribute &b_attribute, const float motion_scale)
 {
   if (!(b_attribute.domain() == BL::Attribute::domain_POINT) &&
-      (b_attribute.data_type() == BL::Attribute::data_type_FLOAT_VECTOR)) {
+      (b_attribute.data_type() == BL::Attribute::data_type_FLOAT_VECTOR))
+  {
     return;
   }
 
@@ -384,7 +385,8 @@ static void attr_create_generic(Scene *scene,
     }
 
     if (!(mesh->need_attribute(scene, name) ||
-          (is_render_color && mesh->need_attribute(scene, ATTR_STD_VERTEX_COLOR)))) {
+          (is_render_color && mesh->need_attribute(scene, ATTR_STD_VERTEX_COLOR))))
+    {
       continue;
     }
     if (attributes.find(name)) {
@@ -741,13 +743,15 @@ static void attr_create_pointiness(Scene *scene, Mesh *mesh, BL::Mesh &b_mesh, b
     const float3 &vert_co = mesh->get_verts()[vert_index];
     bool found = false;
     for (int other_sorted_vert_index = sorted_vert_index + 1; other_sorted_vert_index < num_verts;
-         ++other_sorted_vert_index) {
+         ++other_sorted_vert_index)
+    {
       const int other_vert_index = sorted_vert_indeices[other_sorted_vert_index];
       const float3 &other_vert_co = mesh->get_verts()[other_vert_index];
       /* We are too far away now, we wouldn't have duplicate. */
       if ((other_vert_co.x + other_vert_co.y + other_vert_co.z) -
               (vert_co.x + vert_co.y + vert_co.z) >
-          3 * FLT_EPSILON) {
+          3 * FLT_EPSILON)
+      {
         break;
       }
       /* Found duplicate. */
@@ -796,13 +800,13 @@ static void attr_create_pointiness(Scene *scene, Mesh *mesh, BL::Mesh &b_mesh, b
   EdgeMap visited_edges;
   memset(&counter[0], 0, sizeof(int) * counter.size());
 
-  const MEdge *edges = static_cast<MEdge *>(b_mesh.edges[0].ptr.data);
+  const int2 *edges = static_cast<int2 *>(b_mesh.edges[0].ptr.data);
   const int edges_num = b_mesh.edges.length();
 
   for (int i = 0; i < edges_num; i++) {
-    const MEdge &b_edge = edges[i];
-    const int v0 = vert_orig_index[b_edge.v1];
-    const int v1 = vert_orig_index[b_edge.v2];
+    const int2 &b_edge = edges[i];
+    const int v0 = vert_orig_index[b_edge[0]];
+    const int v1 = vert_orig_index[b_edge[1]];
     if (visited_edges.exists(v0, v1)) {
       continue;
     }
@@ -838,9 +842,9 @@ static void attr_create_pointiness(Scene *scene, Mesh *mesh, BL::Mesh &b_mesh, b
   memset(&counter[0], 0, sizeof(int) * counter.size());
   visited_edges.clear();
   for (int i = 0; i < edges_num; i++) {
-    const MEdge &b_edge = edges[i];
-    const int v0 = vert_orig_index[b_edge.v1];
-    const int v1 = vert_orig_index[b_edge.v2];
+    const int2 &b_edge = edges[i];
+    const int v0 = vert_orig_index[b_edge[0]];
+    const int v1 = vert_orig_index[b_edge[1]];
     if (visited_edges.exists(v0, v1)) {
       continue;
     }
@@ -907,12 +911,12 @@ static void attr_create_random_per_island(Scene *scene,
 
   DisjointSet vertices_sets(number_of_vertices);
 
-  const MEdge *edges = static_cast<MEdge *>(b_mesh.edges[0].ptr.data);
+  const int2 *edges = static_cast<int2 *>(b_mesh.edges[0].ptr.data);
   const int edges_num = b_mesh.edges.length();
   const int *corner_verts = find_corner_vert_attribute(b_mesh);
 
   for (int i = 0; i < edges_num; i++) {
-    vertices_sets.join(edges[i].v1, edges[i].v2);
+    vertices_sets.join(edges[i][0], edges[i][1]);
   }
 
   AttributeSet &attributes = (subdivision) ? mesh->subd_attributes : mesh->attributes;
@@ -1091,9 +1095,10 @@ static void create_mesh(Scene *scene,
     }
 
     if (material_indices) {
+      const int *looptri_polys = static_cast<const int *>(
+          b_mesh.loop_triangle_polygons[0].ptr.data);
       for (int i = 0; i < numtris; i++) {
-        const int poly_index = looptris[i].poly;
-        shader[i] = clamp_material_index(material_indices[poly_index]);
+        shader[i] = clamp_material_index(material_indices[looptri_polys[i]]);
       }
     }
     else {
@@ -1101,9 +1106,10 @@ static void create_mesh(Scene *scene,
     }
 
     if (sharp_faces && !(use_loop_normals && corner_normals)) {
+      const int *looptri_polys = static_cast<const int *>(
+          b_mesh.loop_triangle_polygons[0].ptr.data);
       for (int i = 0; i < numtris; i++) {
-        const int poly_index = looptris[i].poly;
-        smooth[i] = !sharp_faces[poly_index];
+        smooth[i] = !sharp_faces[looptri_polys[i]];
       }
     }
     else {
@@ -1234,12 +1240,12 @@ static void create_subd_mesh(Scene *scene,
 
     mesh->reserve_subd_creases(num_creases);
 
-    const MEdge *edges = static_cast<MEdge *>(b_mesh.edges[0].ptr.data);
+    const int2 *edges = static_cast<int2 *>(b_mesh.edges[0].ptr.data);
     for (int i = 0; i < edges_num; i++) {
       const float crease = creases[i];
       if (crease != 0.0f) {
-        const MEdge &b_edge = edges[i];
-        mesh->add_edge_crease(b_edge.v1, b_edge.v2, crease);
+        const int2 &b_edge = edges[i];
+        mesh->add_edge_crease(b_edge[0], b_edge[1], crease);
       }
     }
   }
@@ -1325,7 +1331,8 @@ void BlenderSync::sync_mesh(BL::Depsgraph b_depsgraph, BObjectInfo &b_ob_info, M
   for (const SocketType &socket : new_mesh.type->inputs) {
     /* Those sockets are updated in sync_object, so do not modify them. */
     if (socket.name == "use_motion_blur" || socket.name == "motion_steps" ||
-        socket.name == "used_shaders") {
+        socket.name == "used_shaders")
+    {
       continue;
     }
     mesh->set_value(socket, new_mesh, socket);

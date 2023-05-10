@@ -219,7 +219,8 @@ static PyObject *bpy_lib_load(BPy_PropertyRNA *self, PyObject *args, PyObject *k
                                         PyC_ParseBool,
                                         &reuse_liboverrides,
                                         PyC_ParseBool,
-                                        &create_liboverrides_runtime)) {
+                                        &create_liboverrides_runtime))
+  {
     return NULL;
   }
 
@@ -240,8 +241,8 @@ static PyObject *bpy_lib_load(BPy_PropertyRNA *self, PyObject *args, PyObject *k
 
   ret = PyObject_New(BPy_Library, &bpy_lib_Type);
 
-  BLI_strncpy(ret->relpath, filepath, sizeof(ret->relpath));
-  BLI_strncpy(ret->abspath, filepath, sizeof(ret->abspath));
+  STRNCPY(ret->relpath, filepath);
+  STRNCPY(ret->abspath, filepath);
   BLI_path_abs(ret->abspath, BKE_main_blendfile_path(bmain));
 
   ret->bmain = bmain;
@@ -323,8 +324,8 @@ static PyObject *bpy_lib_enter(BPy_Library *self)
 
   /* create a dummy */
   self_from = PyObject_New(BPy_Library, &bpy_lib_Type);
-  BLI_strncpy(self_from->relpath, self->relpath, sizeof(self_from->relpath));
-  BLI_strncpy(self_from->abspath, self->abspath, sizeof(self_from->abspath));
+  STRNCPY(self_from->relpath, self->relpath);
+  STRNCPY(self_from->abspath, self->abspath);
 
   self_from->blo_handle = NULL;
   self_from->flag = 0;
@@ -353,7 +354,8 @@ static void bpy_lib_exit_warn_idname(BPy_Library *self,
                        "load: '%s' does not contain %s[\"%s\"]",
                        self->abspath,
                        name_plural,
-                       idname)) {
+                       idname))
+  {
     /* Spurious errors can appear at shutdown */
     if (PyErr_ExceptionMatches(PyExc_Warning)) {
       PyErr_WriteUnraisable((PyObject *)self);
@@ -370,7 +372,8 @@ static void bpy_lib_exit_warn_type(BPy_Library *self, PyObject *item)
                        1,
                        "load: '%s' expected a string type, not a %.200s",
                        self->abspath,
-                       Py_TYPE(item)->tp_name)) {
+                       Py_TYPE(item)->tp_name))
+  {
     /* Spurious errors can appear at shutdown */
     if (PyErr_ExceptionMatches(PyExc_Warning)) {
       PyErr_WriteUnraisable((PyObject *)self);

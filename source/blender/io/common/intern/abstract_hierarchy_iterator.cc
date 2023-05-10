@@ -169,9 +169,7 @@ AbstractHierarchyIterator::~AbstractHierarchyIterator()
   /* release_writers() cannot be called here directly, as it calls into the pure-virtual
    * release_writer() function. By the time this destructor is called, the subclass that implements
    * that pure-virtual function is already destructed. */
-  BLI_assert(
-      writers_.empty() ||
-      !"release_writers() should be called before the AbstractHierarchyIterator goes out of scope");
+  BLI_assert(writers_.empty() || !"release_writers() should be called before the AbstractHierarchyIterator goes out of scope");
 }
 
 void AbstractHierarchyIterator::iterate_and_write()
@@ -485,6 +483,12 @@ void AbstractHierarchyIterator::context_update_for_graph_index(
 {
   /* Update the HierarchyContext so that it is consistent with the graph index. */
   context->export_parent = graph_index.object;
+
+  /* If the parent type is such that it cannot be exported (at least not currently to USD or
+   * Alembic), always check the parent for animation. */
+  const short partype = context->object->partype & PARTYPE;
+  context->animation_check_include_parent |= ELEM(partype, PARBONE, PARVERT1, PARVERT3, PARSKEL);
+
   if (context->export_parent != context->object->parent) {
     /* The parent object in Blender is NOT used as the export parent. This means
      * that the world transform of this object can be influenced by objects that

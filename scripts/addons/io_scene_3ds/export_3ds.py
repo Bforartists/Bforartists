@@ -7,25 +7,26 @@ from the lib3ds project (http://lib3ds.sourceforge.net/) sourcecode.
 """
 
 import bpy
+import time
 import math
 import struct
 import mathutils
 import bpy_extras
 from bpy_extras import node_shader_utils
 
-######################################################
-# Data Structures
-######################################################
+###################
+# Data Structures #
+###################
 
 # Some of the chunks that we will export
-# ----- Primary Chunk, at the beginning of each file
+# >----- Primary Chunk, at the beginning of each file
 PRIMARY = 0x4D4D
 
-# ------ Main Chunks
+# >----- Main Chunks
 VERSION = 0x0002  # This gives the version of the .3ds file
 KFDATA = 0xB000  # This is the header for all of the key frame info
 
-# ------ sub defines of OBJECTINFO
+# >----- sub defines of OBJECTINFO
 OBJECTINFO = 0x3D3D  # Main mesh object chunk before the material and object information
 MESHVERSION = 0x3D3E  # This gives the version of the mesh
 AMBIENTLIGHT = 0x2100  # The color of the ambient light
@@ -41,9 +42,16 @@ MATSHINESS = 0xA040  # Specular intensity of the object/material (percent)
 MATSHIN2 = 0xA041  # Reflection of the object/material (percent)
 MATSHIN3 = 0xA042  # metallic/mirror of the object/material (percent)
 MATTRANS = 0xA050  # Transparency value (100-OpacityValue) (percent)
+MATSELFILLUM = 0xA080  # # Material self illumination flag
 MATSELFILPCT = 0xA084  # Self illumination strength (percent)
+MATWIRE = 0xA085  # Material wireframe rendered flag
+MATFACEMAP = 0xA088  # Face mapped textures flag
+MATPHONGSOFT = 0xA08C  # Phong soften material flag
+MATWIREABS = 0xA08E  # Wire size in units flag
+MATWIRESIZE = 0xA087  # Rendered wire size in pixels
 MATSHADING = 0xA100  # Material shading method
 
+# >------ sub defines of MAT_MAP
 MAT_DIFFUSEMAP = 0xA200  # This is a header for a new diffuse texture
 MAT_SPECMAP = 0xA204  # head for specularity map
 MAT_OPACMAP = 0xA210  # head for opacity map
@@ -53,9 +61,7 @@ MAT_BUMP_PERCENT = 0xA252  # Normalmap strength (percent)
 MAT_TEX2MAP = 0xA33A  # head for secondary texture
 MAT_SHINMAP = 0xA33C  # head for roughness map
 MAT_SELFIMAP = 0xA33D  # head for emission map
-
-# >------ sub defines of MAT_MAP
-MATMAPFILE = 0xA300  # This holds the file name of a texture
+MAT_MAP_FILE = 0xA300  # This holds the file name of a texture
 MAT_MAP_TILING = 0xa351   # 2nd bit (from LSB) is mirror UV flag
 MAT_MAP_TEXBLUR = 0xA353  # Texture blurring factor
 MAT_MAP_USCALE = 0xA354   # U axis scaling
@@ -85,7 +91,10 @@ OBJECT_CAMERA = 0x4700  # This lets us know we are reading a camera object
 # >------ Sub defines of LIGHT
 LIGHT_MULTIPLIER = 0x465B  # The light energy factor
 LIGHT_SPOTLIGHT = 0x4610  # The target of a spotlight
-LIGHT_SPOTROLL = 0x4656  # The roll angle of the spot
+LIGHT_SPOT_ROLL = 0x4656  # Light spot roll angle
+LIGHT_SPOT_SHADOWED = 0x4630  # Light spot shadow flag
+LIGHT_SPOT_SEE_CONE = 0x4650  # Light spot show cone flag
+LIGHT_SPOT_RECTANGLE = 0x4651  # Light spot rectangle flag
 
 # >------ sub defines of CAMERA
 OBJECT_CAM_RANGES = 0x4720  # The camera range values
@@ -100,26 +109,40 @@ OBJECT_SMOOTH = 0x4150  # The objects smooth groups
 OBJECT_TRANS_MATRIX = 0x4160  # The Object Matrix
 
 # >------ sub defines of KFDATA
-KFDATA_KFHDR = 0xB00A
-KFDATA_KFSEG = 0xB008
-KFDATA_KFCURTIME = 0xB009
-KFDATA_OBJECT_NODE_TAG = 0xB002
+AMBIENT_NODE_TAG = 0xB001  # Ambient node tag
+OBJECT_NODE_TAG = 0xB002  # Object tree tag
+CAMERA_NODE_TAG = 0xB003  # Camera object tag
+TARGET_NODE_TAG = 0xB004  # Camera target tag
+LIGHT_NODE_TAG = 0xB005  # Light object tag
+LTARGET_NODE_TAG = 0xB006  # Light target tag
+SPOT_NODE_TAG = 0xB007  # Spotlight tag
+KFDATA_KFSEG = 0xB008  # Frame start & end
+KFDATA_KFCURTIME = 0xB009  # Frame current
+KFDATA_KFHDR = 0xB00A  # Keyframe header
 
 # >------ sub defines of OBJECT_NODE_TAG
-OBJECT_NODE_ID = 0xB030
-OBJECT_NODE_HDR = 0xB010
-OBJECT_PIVOT = 0xB013
-OBJECT_INSTANCE_NAME = 0xB011
-POS_TRACK_TAG = 0xB020
-ROT_TRACK_TAG = 0xB021
-SCL_TRACK_TAG = 0xB022
+OBJECT_NODE_ID = 0xB030  # Object hierachy ID
+OBJECT_NODE_HDR = 0xB010  # Hierachy tree header
+OBJECT_INSTANCE_NAME = 0xB011  # Object instance name
+OBJECT_PIVOT = 0xB013  # Object pivot position
+OBJECT_BOUNDBOX = 0xB014  # Object boundbox
+OBJECT_MORPH_SMOOTH = 0xB015  # Object smooth angle
+POS_TRACK_TAG = 0xB020  # Position transform tag
+ROT_TRACK_TAG = 0xB021  # Rotation transform tag
+SCL_TRACK_TAG = 0xB022  # Scale transform tag
+FOV_TRACK_TAG = 0xB023  # Field of view tag
+ROLL_TRACK_TAG = 0xB024  # Roll transform tag
+COL_TRACK_TAG = 0xB025  # Color transform tag
+HOTSPOT_TRACK_TAG = 0xB027  # Hotspot transform tag
+FALLOFF_TRACK_TAG = 0xB028  # Falloff transform tag
+
+ROOT_OBJECT = 0xFFFF  # Root object
 
 
 # So 3ds max can open files, limit names to 12 in length
 # this is very annoying for filenames!
 name_unique = []  # stores str, ascii only
 name_mapping = {}  # stores {orig: byte} mapping
-
 
 def sane_name(name):
     name_fixed = name_mapping.get(name)
@@ -131,7 +154,7 @@ def sane_name(name):
     i = 0
 
     while new_name in name_unique:
-        new_name = new_name_clean + ".%.3d" % i
+        new_name = new_name_clean + '.%.3d' % i
         i += 1
 
     # note, appending the 'str' version.
@@ -143,12 +166,10 @@ def sane_name(name):
 def uv_key(uv):
     return round(uv[0], 6), round(uv[1], 6)
 
-
 # size defines:
 SZ_SHORT = 2
 SZ_INT = 4
 SZ_FLOAT = 4
-
 
 class _3ds_ushort(object):
     """Class representing a short (2-byte integer) for a 3ds file.
@@ -162,7 +183,7 @@ class _3ds_ushort(object):
         return SZ_SHORT
 
     def write(self, file):
-        file.write(struct.pack("<H", self.value))
+        file.write(struct.pack('<H', self.value))
 
     def __str__(self):
         return str(self.value)
@@ -179,7 +200,7 @@ class _3ds_uint(object):
         return SZ_INT
 
     def write(self, file):
-        file.write(struct.pack("<I", self.value))
+        file.write(struct.pack('<I', self.value))
 
     def __str__(self):
         return str(self.value)
@@ -196,7 +217,7 @@ class _3ds_float(object):
         return SZ_FLOAT
 
     def write(self, file):
-        file.write(struct.pack("<f", self.value))
+        file.write(struct.pack('<f', self.value))
 
     def __str__(self):
         return str(self.value)
@@ -214,7 +235,7 @@ class _3ds_string(object):
         return (len(self.value) + 1)
 
     def write(self, file):
-        binary_format = "<%ds" % (len(self.value) + 1)
+        binary_format = '<%ds' % (len(self.value) + 1)
         file.write(struct.pack(binary_format, self.value))
 
     def __str__(self):
@@ -242,19 +263,19 @@ class _3ds_point_3d(object):
 '''
 class _3ds_point_4d(object):
     """Class representing a four-dimensional point for a 3ds file, for instance a quaternion."""
-    __slots__ = "x","y","z","w"
+    __slots__ = "w","x","y","z"
     def __init__(self, point=(0.0,0.0,0.0,0.0)):
-        self.x, self.y, self.z, self.w = point
+        self.w, self.x, self.y, self.z = point
 
     def get_size(self):
         return 4*SZ_FLOAT
 
     def write(self,file):
-        data=struct.pack('<4f', self.x, self.y, self.z, self.w)
+        data=struct.pack('<4f', self.w, self.x, self.y, self.z)
         file.write(data)
 
     def __str__(self):
-        return '(%f, %f, %f, %f)' % (self.x, self.y, self.z, self.w)
+        return '(%f, %f, %f, %f)' % (self.w, self.x, self.y, self.z)
 '''
 
 
@@ -312,7 +333,7 @@ class _3ds_rgb_color(object):
 
 class _3ds_face(object):
     """Class representing a face for a 3ds file."""
-    __slots__ = ("vindex", "flag")
+    __slots__ = ("vindex", "flag", )
 
     def __init__(self, vindex, flag):
         self.vindex = vindex
@@ -326,15 +347,14 @@ class _3ds_face(object):
 
     def write(self, file):
         # The last short is used for face flags
-        file.write(struct.pack("<4H", self.vindex[0], self.vindex[1], self.vindex[2], self.flag))
+        file.write(struct.pack('<4H', self.vindex[0], self.vindex[1], self.vindex[2], self.flag))
 
     def __str__(self):
-        return "[%d %d %d %d]" % (self.vindex[0], self.vindex[1], self.vindex[2], self.flag)
+        return '[%d %d %d %d]' % (self.vindex[0], self.vindex[1], self.vindex[2], self.flag)
 
 
 class _3ds_array(object):
     """Class representing an array of variables for a 3ds file.
-
     Consists of a _3ds_ushort to indicate the number of items, followed by the items themselves.
     """
     __slots__ = "values", "size"
@@ -395,7 +415,6 @@ class _3ds_named_variable(object):
 # the chunk class
 class _3ds_chunk(object):
     """Class representing a chunk in a 3ds file.
-
     Chunks contain zero or more variables, followed by zero or more subchunks.
     """
     __slots__ = "ID", "size", "variables", "subchunks"
@@ -408,8 +427,8 @@ class _3ds_chunk(object):
 
     def add_variable(self, name, var):
         """Add a named variable.
-
         The name is mostly for debugging purposes."""
+
         self.variables.append(_3ds_named_variable(name, var))
 
     def add_subchunk(self, chunk):
@@ -418,8 +437,8 @@ class _3ds_chunk(object):
 
     def get_size(self):
         """Calculate the size of the chunk and return it.
-
         The sizes of the variables and subchunks are used to determine this chunk\'s size."""
+
         tmpsize = self.ID.get_size() + self.size.get_size()
         for variable in self.variables:
             tmpsize += variable.get_size()
@@ -443,8 +462,8 @@ class _3ds_chunk(object):
 
     def write(self, file):
         """Write the chunk to a file.
-
         Uses the write function of the variables and the subchunks to do the actual work."""
+
         # write header
         self.ID.write(file)
         self.size.write(file)
@@ -455,21 +474,20 @@ class _3ds_chunk(object):
 
     def dump(self, indent=0):
         """Write the chunk to a file.
-
         Dump is used for debugging purposes, to dump the contents of a chunk to the standard output.
         Uses the dump function of the named variables and the subchunks to do the actual work."""
         print(indent * " ",
-              "ID=%r" % hex(self.ID.value),
-              "size=%r" % self.get_size())
+              'ID=%r' % hex(self.ID.value),
+              'size=%r' % self.get_size())
         for variable in self.variables:
             variable.dump(indent + 1)
         for subchunk in self.subchunks:
             subchunk.dump(indent + 1)
 
 
-######################################################
-# EXPORT
-######################################################
+##########
+# EXPORT #
+##########
 
 def get_material_image(material):
     """ Get images from paint slots."""
@@ -485,17 +503,16 @@ def get_material_image(material):
 def get_uv_image(ma):
     """ Get image from material wrapper."""
     if ma and ma.use_nodes:
-        ma_wrap = node_shader_utils.PrincipledBSDFWrapper(ma)
-        ma_tex = ma_wrap.base_color_texture
-        if ma_tex and ma_tex.image is not None:
-            return ma_tex.image
+        mat_wrap = node_shader_utils.PrincipledBSDFWrapper(ma)
+        mat_tex = mat_wrap.base_color_texture
+        if mat_tex and mat_tex.image is not None:
+            return mat_tex.image
     else:
         return get_material_image(ma)
 
 
 def make_material_subchunk(chunk_id, color):
     """Make a material subchunk.
-
     Used for color subchunks, such as diffuse color or ambient color subchunks."""
     mat_sub = _3ds_chunk(chunk_id)
     col1 = _3ds_chunk(RGB1)
@@ -514,33 +531,38 @@ def make_percent_subchunk(chunk_id, percent):
     pcti = _3ds_chunk(PCT)
     pcti.add_variable("percent", _3ds_ushort(int(round(percent * 100, 0))))
     pct_sub.add_subchunk(pcti)
+    # optional:
+    # pctf = _3ds_chunk(PCTF)
+    # pctf.add_variable("pctfloat", _3ds_float(round(percent, 6)))
+    # pct_sub.add_subchunk(pctf)
     return pct_sub
 
 
 def make_texture_chunk(chunk_id, images):
     """Make Material Map texture chunk."""
     # Add texture percentage value (100 = 1.0)
-    ma_sub = make_percent_subchunk(chunk_id, 1)
+    mat_sub = make_percent_subchunk(chunk_id, 1)
     has_entry = False
 
     def add_image(img):
         filename = bpy.path.basename(image.filepath)
-        ma_sub_file = _3ds_chunk(MATMAPFILE)
-        ma_sub_file.add_variable("image", _3ds_string(sane_name(filename)))
-        ma_sub.add_subchunk(ma_sub_file)
+        mat_sub_file = _3ds_chunk(MAT_MAP_FILE)
+        mat_sub_file.add_variable("image", _3ds_string(sane_name(filename)))
+        mat_sub.add_subchunk(mat_sub_file)
 
     for image in images:
         add_image(image)
         has_entry = True
 
-    return ma_sub if has_entry else None
+    return mat_sub if has_entry else None
 
 
 def make_material_texture_chunk(chunk_id, texslots, pct):
     """Make Material Map texture chunk given a seq. of `MaterialTextureSlot`'s
-        Paint slots are optionally used as image source if no nodes are
-        used. No additional filtering for mapping modes is done, all
-        slots are written "as is"."""
+    Paint slots are optionally used as image source if no nodes are
+    used. No additional filtering for mapping modes is done, all
+    slots are written "as is"."""
+
     # Add texture percentage value
     mat_sub = make_percent_subchunk(chunk_id, pct)
     has_entry = False
@@ -549,35 +571,36 @@ def make_material_texture_chunk(chunk_id, texslots, pct):
         image = texslot.image
 
         filename = bpy.path.basename(image.filepath)
-        mat_sub_file = _3ds_chunk(MATMAPFILE)
+        mat_sub_file = _3ds_chunk(MAT_MAP_FILE)
         mat_sub_file.add_variable("mapfile", _3ds_string(sane_name(filename)))
         mat_sub.add_subchunk(mat_sub_file)
         for link in texslot.socket_dst.links:
             socket = link.from_socket.identifier
 
-        maptile = 0
+        mat_sub_mapflags = _3ds_chunk(MAT_MAP_TILING)
+        """Control bit flags, where 0x1 activates decaling, 0x2 activates mirror,
+        0x8 activates inversion, 0x10 deactivates tiling, 0x20 activates summed area sampling,
+        0x40 activates alpha source, 0x80 activates tinting, 0x100 ignores alpha, 0x200 activates RGB tint.
+        Bits 0x80, 0x100, and 0x200 are only used with TEXMAP, TEX2MAP, and SPECMAP chunks.
+        0x40, when used with a TEXMAP, TEX2MAP, or SPECMAP chunk must be accompanied with a tint bit,
+        either 0x100 or 0x200, tintcolor will be processed if colorchunks are present"""
+
+        mapflags = 0
 
         # no perfect mapping for mirror modes - 3DS only has uniform mirror w. repeat=2
         if texslot.extension == 'EXTEND':
-            maptile |= 0x1
-        # CLIP maps to 3DS' decal flag
-        elif texslot.extension == 'CLIP':
-            maptile |= 0x10
+            mapflags |= 0x1
 
-        mat_sub_tile = _3ds_chunk(MAT_MAP_TILING)
-        mat_sub_tile.add_variable("tiling", _3ds_ushort(maptile))
-        mat_sub.add_subchunk(mat_sub_tile)
+        if texslot.extension == 'CLIP':
+            mapflags |= 0x10
 
         if socket == 'Alpha':
-            mat_sub_alpha = _3ds_chunk(MAP_TILING)
-            alphaflag = 0x40  # summed area sampling 0x20
-            mat_sub_alpha.add_variable("alpha", _3ds_ushort(alphaflag))
-            mat_sub.add_subchunk(mat_sub_alpha)
-            if texslot.socket_dst.identifier in {'Base Color', 'Specular'}:
-                mat_sub_tint = _3ds_chunk(MAP_TILING)  # RGB tint 0x200
-                tint = 0x80 if texslot.image.colorspace_settings.name == 'Non-Color' else 0x200
-                mat_sub_tint.add_variable("tint", _3ds_ushort(tint))
-                mat_sub.add_subchunk(mat_sub_tint)
+            mapflags |= 0x40
+            if texslot.socket_dst.identifier in {'Base Color', 'Specular'}: 
+                mapflags |= 0x80 if image.colorspace_settings.name=='Non-Color' else 0x200
+
+        mat_sub_mapflags.add_variable("mapflags", _3ds_ushort(mapflags))
+        mat_sub.add_subchunk(mat_sub_mapflags)
 
         mat_sub_texblur = _3ds_chunk(MAT_MAP_TEXBLUR)  # Based on observation this is usually 1.0
         mat_sub_texblur.add_variable("maptexblur", _3ds_float(1.0))
@@ -625,6 +648,7 @@ def make_material_chunk(material, image):
     """Make a material chunk out of a blender material.
     Shading method is required for 3ds max, 0 for wireframe.
     0x1 for flat, 0x2 for gouraud, 0x3 for phong and 0x4 for metal."""
+
     material_chunk = _3ds_chunk(MATERIAL)
     name = _3ds_chunk(MATNAME)
     shading = _3ds_chunk(MATSHADING)
@@ -717,7 +741,7 @@ def make_material_chunk(material, image):
         diffuse = []
 
         for link in wrap.material.node_tree.links:
-            if link.from_node.type == 'TEX_IMAGE' and link.to_node.type == 'MIX_RGB':
+            if link.from_node.type == 'TEX_IMAGE' and link.to_node.type in {'MIX', 'MIX_RGB'}:
                 diffuse = [link.from_node.image]
 
         if diffuse:
@@ -801,11 +825,11 @@ def extract_triangles(mesh):
 
         faceflag = 0
         if c_a.use_edge_sharp:
-            faceflag = faceflag + 0x1
+            faceflag |= 0x1
         if b_c.use_edge_sharp:
-            faceflag = faceflag + 0x2
+            faceflag |= 0x2
         if a_b.use_edge_sharp:
-            faceflag = faceflag + 0x4
+            faceflag |= 0x4
 
         smoothgroup = polygroup[face.polygon_index]
 
@@ -977,16 +1001,6 @@ def make_uv_chunk(uv_array):
     return uv_chunk
 
 
-'''
-def make_matrix_4x3_chunk(matrix):
-    matrix_chunk = _3ds_chunk(OBJECT_TRANS_MATRIX)
-    for vec in matrix.col:
-        for f in vec[:3]:
-            matrix_chunk.add_variable("matrix_f", _3ds_float(f))
-    return matrix_chunk
-'''
-
-
 def make_mesh_chunk(ob, mesh, matrix, materialDict, translation):
     """Make a chunk out of a Blender mesh."""
 
@@ -1017,14 +1031,12 @@ def make_mesh_chunk(ob, mesh, matrix, materialDict, translation):
     if uv_array:
         mesh_chunk.add_subchunk(make_uv_chunk(uv_array))
 
-    # mesh_chunk.add_subchunk(make_matrix_4x3_chunk(matrix))
-
     # create transformation matrix chunk
     matrix_chunk = _3ds_chunk(OBJECT_TRANS_MATRIX)
     obj_matrix = matrix.transposed().to_3x3()
 
-    if ob.parent is None:
-        obj_translate = translation[ob.name]
+    if ob.parent is None or ob.parent.name not in translation:
+        obj_translate = matrix.to_translation()
 
     else:  # Calculate child matrix translation relative to parent
         obj_translate = translation[ob.name].cross(-1 * translation[ob.parent.name])
@@ -1073,7 +1085,6 @@ def make_kfdata(start=0, stop=0, curtime=0):
 
 def make_track_chunk(ID, obj):
     """Make a chunk for track data.
-
     Depending on the ID, this will construct a position, rotation or scale track."""
     track_chunk = _3ds_chunk(ID)
     track_chunk.add_variable("track_flags", _3ds_ushort())
@@ -1111,13 +1122,12 @@ def make_track_chunk(ID, obj):
 
 def make_kf_obj_node(obj, name_to_id):
     """Make a node chunk for a Blender object.
-
     Takes the Blender object as a parameter. Object id's are taken from the dictionary name_to_id.
     Blender Empty objects are converted to dummy nodes."""
 
     name = obj.name
     # main object node chunk:
-    kf_obj_node = _3ds_chunk(KFDATA_OBJECT_NODE_TAG)
+    kf_obj_node = _3ds_chunk(OBJECT_NODE_TAG)
     # chunk for the object id:
     obj_id_chunk = _3ds_chunk(OBJECT_NODE_ID)
     # object id is from the name_to_id dictionary:
@@ -1177,14 +1187,13 @@ def save(operator,
          global_matrix=None,
          ):
 
-    import time
-    # from bpy_extras.io_utils import create_derived_objects, free_derived_objects
-
     """Save the Blender scene to a 3ds file."""
-
     # Time the export
     duration = time.time()
-    # Blender.Window.WaitCursor(1)
+
+    scene = context.scene
+    layer = context.view_layer
+    depsgraph = context.evaluated_depsgraph_get()
 
     if global_matrix is None:
         global_matrix = mathutils.Matrix()
@@ -1192,12 +1201,9 @@ def save(operator,
     if bpy.ops.object.mode_set.poll():
         bpy.ops.object.mode_set(mode='OBJECT')
 
-    scene = context.scene
-    layer = context.view_layer
-    depsgraph = context.evaluated_depsgraph_get()
-
     # Initialize the main chunk (primary):
     primary = _3ds_chunk(PRIMARY)
+
     # Add version chunk:
     version_chunk = _3ds_chunk(VERSION)
     version_chunk.add_variable("version", _3ds_uint(3))
@@ -1233,16 +1239,16 @@ def save(operator,
     mesh_objects = []
 
     if use_selection:
-        objects = [ob for ob in scene.objects if not ob.hide_viewport and ob.select_get(view_layer=layer)]
+        objects = [ob for ob in scene.objects if ob.visible_get(view_layer=layer) and ob.select_get(view_layer=layer)]
     else:
-        objects = [ob for ob in scene.objects if not ob.hide_viewport]
+        objects = [ob for ob in scene.objects if ob.visible_get(view_layer=layer)]
 
+    empty_objects = [ob for ob in objects if ob.type == 'EMPTY']
     light_objects = [ob for ob in objects if ob.type == 'LIGHT']
     camera_objects = [ob for ob in objects if ob.type == 'CAMERA']
 
     for ob in objects:
         # get derived objects
-        # free, derived = create_derived_objects(scene, ob)
         derived_dict = bpy_extras.io_utils.create_derived_objects(depsgraph, [ob])
         derived = derived_dict.get(ob)
 
@@ -1294,25 +1300,24 @@ def save(operator,
                         if f.material_index >= ma_ls_len:
                             f.material_index = 0
 
-                # ob_derived_eval.to_mesh_clear()
-
-        # if free:
-        #     free_derived_objects(ob)
 
     # Make material chunks for all materials used in the meshes:
     for ma_image in materialDict.values():
         object_info.add_subchunk(make_material_chunk(ma_image[0], ma_image[1]))
 
+    # Collect translation for transformation matrix
+    translation = {}
+
     # Give all objects a unique ID and build a dictionary from object name to object id:
-    translation = {}  # collect translation for transformation matrix
     # name_to_id = {}
+
     for ob, data, matrix in mesh_objects:
         translation[ob.name] = ob.location
         # name_to_id[ob.name]= len(name_to_id)
-    """
-    #for ob in empty_objects:
-    #    name_to_id[ob.name]= len(name_to_id)
-    """
+
+    for ob in empty_objects:
+        translation[ob.name] = ob.location
+        # name_to_id[ob.name]= len(name_to_id)
 
     # Create object chunks for all meshes:
     i = 0
@@ -1339,10 +1344,6 @@ def save(operator,
         kfdata.add_subchunk(make_kf_obj_node(ob, name_to_id))
         '''
 
-        # if not blender_mesh.users:
-        # bpy.data.meshes.remove(blender_mesh)
-        # blender_mesh.vertices = None
-
         i += i
 
     # Create chunks for all empties:
@@ -1362,7 +1363,7 @@ def save(operator,
         object_chunk.add_variable("light", _3ds_string(sane_name(ob.name)))
         light_chunk.add_variable("location", _3ds_point_3d(ob.location))
         color_float_chunk.add_variable("color", _3ds_float_color(ob.data.color))
-        energy_factor.add_variable("energy", _3ds_float(ob.data.energy * .001))
+        energy_factor.add_variable("energy", _3ds_float(ob.data.energy * 0.001))
         light_chunk.add_subchunk(color_float_chunk)
         light_chunk.add_subchunk(energy_factor)
 
@@ -1374,12 +1375,18 @@ def save(operator,
             pos_y = ob.location[1] + (ob.location[0] * math.tan(math.radians(90) - ob.rotation_euler[2]))
             pos_z = hypo * math.tan(math.radians(90) - ob.rotation_euler[0])
             spotlight_chunk = _3ds_chunk(LIGHT_SPOTLIGHT)
-            spot_roll_chunk = _3ds_chunk(LIGHT_SPOTROLL)
+            spot_roll_chunk = _3ds_chunk(LIGHT_SPOT_ROLL)
             spotlight_chunk.add_variable("target", _3ds_point_3d((pos_x, pos_y, pos_z)))
             spotlight_chunk.add_variable("hotspot", _3ds_float(round(hotspot, 4)))
             spotlight_chunk.add_variable("angle", _3ds_float(round(cone_angle, 4)))
             spot_roll_chunk.add_variable("roll", _3ds_float(round(ob.rotation_euler[1], 6)))
             spotlight_chunk.add_subchunk(spot_roll_chunk)
+            if ob.data.show_cone:
+                spot_cone_chunk = _3ds_chunk(LIGHT_SPOT_SEE_CONE)
+                spotlight_chunk.add_subchunk(spot_cone_chunk)
+            if ob.data.use_square:
+                spot_square_chunk = _3ds_chunk(LIGHT_SPOT_RECTANGLE)
+                spotlight_chunk.add_subchunk(spot_square_chunk)
             light_chunk.add_subchunk(spotlight_chunk)
 
         # Add light to object info
@@ -1411,9 +1418,9 @@ def save(operator,
     '''
 
     # At this point, the chunk hierarchy is completely built.
-
     # Check the size:
     primary.get_size()
+
     # Open the file for writing:
     file = open(filepath, 'wb')
 
@@ -1428,7 +1435,6 @@ def save(operator,
     name_mapping.clear()
 
     # Debugging only: report the exporting time:
-    # Blender.Window.WaitCursor(0)
     print("3ds export time: %.2f" % (time.time() - duration))
 
     # Debugging only: dump the chunk hierarchy:

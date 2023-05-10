@@ -1837,7 +1837,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
             layout.prop(strip, "use_annotations", text="Annotations")
             if scene:
                 # Warning, this is not a good convention to follow.
-                # Expose here because setting the alpha from the 'Render' menu is very inconvenient.
+                # Expose here because setting the alpha from the "Render" menu is very inconvenient.
                 row = layout.row()
                 row.separator()
                 row.prop(scene.render, "film_transparent")

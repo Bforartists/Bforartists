@@ -476,11 +476,15 @@ static void generate_margin(ImBuf *ibuf,
                             const int edges_num,
                             const OffsetIndices<int> polys,
                             const Span<int> corner_edges,
+                            const Span<int> corner_verts,
                             const Span<float2> mloopuv,
                             const float uv_offset[2])
 {
   Array<MLoopTri> looptris(poly_to_tri_count(polys.size(), corner_edges.size()));
-  bke::mesh::looptris_calc(vert_positions, polys, corner_edges, looptris);
+  bke::mesh::looptris_calc(vert_positions, polys, corner_verts, looptris);
+
+  Array<int> looptri_polys(looptris.size());
+  bke::mesh::looptris_calc_poly_indices(polys, looptri_polys);
 
   TextureMarginMap map(ibuf->x, ibuf->y, uv_offset, edges_num, polys, corner_edges, mloopuv);
 
@@ -511,9 +515,9 @@ static void generate_margin(ImBuf *ibuf,
     }
 
     /* NOTE: we need the top bit for the dijkstra distance map. */
-    BLI_assert(lt->poly < 0x80000000);
+    BLI_assert(looptri_polys[i] < 0x80000000);
 
-    map.rasterize_tri(vec[0], vec[1], vec[2], lt->poly, draw_new_mask ? mask : nullptr);
+    map.rasterize_tri(vec[0], vec[1], vec[2], looptri_polys[i], draw_new_mask ? mask : nullptr);
   }
 
   char *tmpmask = (char *)MEM_dupallocN(mask);
@@ -563,6 +567,7 @@ void RE_generate_texturemargin_adjacentfaces(ImBuf *ibuf,
                                                   mesh->totedge,
                                                   mesh->polys(),
                                                   mesh->corner_edges(),
+                                                  mesh->corner_verts(),
                                                   {mloopuv, mesh->totloop},
                                                   uv_offset);
 }
@@ -581,6 +586,7 @@ void RE_generate_texturemargin_adjacentfaces_dm(
       dm->getNumEdges(dm),
       blender::Span(dm->getPolyArray(dm), dm->getNumPolys(dm) + 1),
       {dm->getCornerEdgeArray(dm), dm->getNumLoops(dm)},
+      {dm->getCornerVertArray(dm), dm->getNumLoops(dm)},
       {mloopuv, dm->getNumLoops(dm)},
       uv_offset);
 }

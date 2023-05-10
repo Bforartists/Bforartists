@@ -728,7 +728,9 @@ static int gpencil_vertexmode_toggle_exec(bContext *C, wmOperator *op)
   }
 
   if (mode == OB_MODE_VERTEX_GPENCIL) {
-    /* Be sure we have brushes. */
+    /* Be sure we have brushes.
+     * Need Draw as well (used for Palettes). */
+    BKE_paint_ensure(ts, (Paint **)&ts->gp_paint);
     BKE_paint_ensure(ts, (Paint **)&ts->gp_vertexpaint);
 
     const bool reset_mode = (ts->gp_vertexpaint->paint.brush == NULL);
@@ -874,7 +876,7 @@ static void gpencil_duplicate_points(bGPdata *gpd,
         gpsd = BKE_gpencil_stroke_duplicate((bGPDstroke *)gps, false, true);
 
         /* saves original layer name */
-        BLI_strncpy(gpsd->runtime.tmp_layerinfo, layername, sizeof(gpsd->runtime.tmp_layerinfo));
+        STRNCPY(gpsd->runtime.tmp_layerinfo, layername);
 
         /* now, make a new points array, and copy of the relevant parts */
         gpsd->points = MEM_mallocN(sizeof(bGPDspoint) * len, "gps stroke points copy");
@@ -952,8 +954,7 @@ static int gpencil_duplicate_exec(bContext *C, wmOperator *op)
             /* make direct copies of the stroke and its points */
             gpsd = BKE_gpencil_stroke_duplicate(gps, true, true);
 
-            BLI_strncpy(
-                gpsd->runtime.tmp_layerinfo, gpl->info, sizeof(gpsd->runtime.tmp_layerinfo));
+            STRNCPY(gpsd->runtime.tmp_layerinfo, gpl->info);
 
             /* Initialize triangle information. */
             BKE_gpencil_stroke_geometry_update(gpd, gpsd);
@@ -1523,8 +1524,7 @@ static int gpencil_strokes_copy_exec(bContext *C, wmOperator *op)
                 gpsd = BKE_gpencil_stroke_duplicate(gps, false, true);
 
                 /* saves original layer name */
-                BLI_strncpy(
-                    gpsd->runtime.tmp_layerinfo, gpl->info, sizeof(gpsd->runtime.tmp_layerinfo));
+                STRNCPY(gpsd->runtime.tmp_layerinfo, gpl->info);
                 gpsd->points = MEM_dupallocN(gps->points);
                 if (gps->dvert != NULL) {
                   gpsd->dvert = MEM_dupallocN(gps->dvert);
@@ -1877,8 +1877,8 @@ static int gpencil_move_to_layer_exec(bContext *C, wmOperator *op)
     }
     bGPDframe *init_gpf = (is_multiedit) ? gpl_src->frames.first : gpl_src->actframe;
     for (bGPDframe *gpf_src = init_gpf; gpf_src; gpf_src = gpf_src->next) {
-      if ((gpf_src == gpl_src->actframe) ||
-          ((gpf_src->flag & GP_FRAME_SELECT) && (is_multiedit))) {
+      if ((gpf_src == gpl_src->actframe) || ((gpf_src->flag & GP_FRAME_SELECT) && (is_multiedit)))
+      {
         if (gpf_src == NULL) {
           continue;
         }
@@ -2017,7 +2017,9 @@ static int gpencil_blank_frame_add_exec(bContext *C, wmOperator *op)
   CTX_DATA_END;
 
   /* notifiers */
-  DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
+  if (gpd != NULL) {
+    DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
+  }
   WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED, NULL);
 
   return OPERATOR_FINISHED;
@@ -3307,8 +3309,8 @@ static int gpencil_stroke_cyclical_set_exec(bContext *C, wmOperator *op)
         for (gps = gpf->strokes.first; gps; gps = gps->next) {
           MaterialGPencilStyle *gp_style = BKE_gpencil_material_settings(ob, gps->mat_nr + 1);
           /* skip strokes that are not selected or invalid for current view */
-          if (((gps->flag & GP_STROKE_SELECT) == 0) ||
-              ED_gpencil_stroke_can_use(C, gps) == false) {
+          if (((gps->flag & GP_STROKE_SELECT) == 0) || ED_gpencil_stroke_can_use(C, gps) == false)
+          {
             continue;
           }
           /* skip hidden or locked colors */
@@ -4510,7 +4512,8 @@ static int gpencil_count_subdivision_cuts(bGPDstroke *gps)
   }
 
   if ((gps->flag & GP_STROKE_CYCLIC) && (gps->points[0].flag & GP_SPOINT_SELECT) &&
-      (gps->points[gps->totpoints - 1].flag & GP_SPOINT_SELECT)) {
+      (gps->points[gps->totpoints - 1].flag & GP_SPOINT_SELECT))
+  {
     totnewpoints++;
   }
 

@@ -55,7 +55,7 @@ struct BasisCache {
 class CurvesGeometryRuntime {
  public:
   /** Implicit sharing user count for #CurvesGeometry::curve_offsets. */
-  ImplicitSharingInfo *curve_offsets_sharing_info = nullptr;
+  const ImplicitSharingInfo *curve_offsets_sharing_info = nullptr;
 
   /**
    * The cached number of curves with each type. Unlike other caches here, this is not computed
@@ -82,7 +82,7 @@ class CurvesGeometryRuntime {
   mutable SharedCache<Vector<float3>> evaluated_position_cache;
 
   /**
-   * A cache of bounds shared between data-blocks with unchanged positions and radii.
+   * A cache of bounds shared between data-blocks with unchanged positions.
    * When data changes affect the bounds, the cache is "un-shared" with other geometries.
    * See #SharedCache comments.
    */
@@ -138,7 +138,9 @@ class CurvesGeometry : public ::CurvesGeometry {
 
   /**
    * The index of the first point in every curve. The size of this span is one larger than the
-   * number of curves. Consider using #points_by_curve rather than using the offsets directly.
+   * number of curves, but the spans will be empty if there are no curves/points.
+   *
+   * Consider using #points_by_curve rather than these offsets directly.
    */
   Span<int> offsets() const;
   MutableSpan<int> offsets_for_write();

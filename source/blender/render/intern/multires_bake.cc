@@ -45,6 +45,7 @@ using MPassKnownData = void (*)(blender::Span<blender::float3> vert_positions,
                                 blender::OffsetIndices<int> polys,
                                 blender::Span<int> corner_verts,
                                 blender::Span<MLoopTri> looptris,
+                                blender::Span<int> looptri_polys,
                                 blender::Span<blender::float2> uv_map,
                                 DerivedMesh *hires_dm,
                                 void *thread_data,
@@ -70,6 +71,7 @@ struct MResolvePixelData {
   blender::OffsetIndices<int> polys;
   blender::Span<int> corner_verts;
   blender::Span<MLoopTri> looptris;
+  blender::Span<int> looptri_polys;
   blender::Span<blender::float3> vert_normals;
   blender::Span<blender::float3> poly_normals;
 
@@ -125,7 +127,7 @@ static void multiresbake_get_normal(const MResolvePixelData *data,
                                     const int vert_index,
                                     float r_normal[3])
 {
-  const int poly_index = data->looptris[tri_num].poly;
+  const int poly_index = data->looptri_polys[tri_num];
   const bool smoothnormal = !(data->sharp_faces && data->sharp_faces[poly_index]);
 
   if (smoothnormal) {
@@ -209,6 +211,7 @@ static void flush_pixel(const MResolvePixelData *data, const int x, const int y)
                   data->polys,
                   data->corner_verts,
                   data->looptris,
+                  data->looptri_polys,
                   data->uv_map,
                   data->hires_dm,
                   data->thread_data,
@@ -395,7 +398,8 @@ static void *do_multires_bake_thread(void *data_v)
 
   while ((tri_index = multires_bake_queue_next_tri(handle->queue)) >= 0) {
     const MLoopTri *lt = &data->looptris[tri_index];
-    const short mat_nr = data->material_indices == nullptr ? 0 : data->material_indices[lt->poly];
+    const int poly_i = data->looptri_polys[tri_index];
+    const short mat_nr = data->material_indices == nullptr ? 0 : data->material_indices[poly_i];
 
     if (multiresbake_test_break(bkr)) {
       break;
@@ -492,10 +496,11 @@ static void do_multires_bake(MultiresBakeRender *bkr,
   void *bake_data = nullptr;
 
   Mesh *temp_mesh = BKE_mesh_new_nomain(
-      dm->getNumVerts(dm), dm->getNumEdges(dm), dm->getNumLoops(dm), dm->getNumPolys(dm));
+      dm->getNumVerts(dm), dm->getNumEdges(dm), dm->getNumPolys(dm), dm->getNumLoops(dm));
   temp_mesh->vert_positions_for_write().copy_from(
       {reinterpret_cast<const blender::float3 *>(dm->getVertArray(dm)), temp_mesh->totvert});
-  temp_mesh->edges_for_write().copy_from({dm->getEdgeArray(dm), temp_mesh->totedge});
+  temp_mesh->edges_for_write().copy_from(
+      {reinterpret_cast<const blender::int2 *>(dm->getEdgeArray(dm)), temp_mesh->totedge});
   temp_mesh->poly_offsets_for_write().copy_from({dm->getPolyArray(dm), temp_mesh->totpoly + 1});
   temp_mesh->corner_verts_for_write().copy_from({dm->getCornerVertArray(dm), temp_mesh->totloop});
   temp_mesh->corner_edges_for_write().copy_from({dm->getCornerEdgeArray(dm), temp_mesh->totloop});
@@ -506,6 +511,7 @@ static void do_multires_bake(MultiresBakeRender *bkr,
   const blender::Span<blender::float3> vert_normals = temp_mesh->vert_normals();
   const blender::Span<blender::float3> poly_normals = temp_mesh->poly_normals();
   const blender::Span<MLoopTri> looptris = temp_mesh->looptris();
+  const blender::Span<int> looptri_polys = temp_mesh->looptri_polys();
 
   if (require_tangent) {
     if (CustomData_get_layer_index(&dm->loopData, CD_TANGENT) == -1) {
@@ -514,6 +520,7 @@ static void do_multires_bake(MultiresBakeRender *bkr,
           polys,
           dm->getCornerVertArray(dm),
           looptris.data(),
+          looptri_polys.data(),
           looptris.size(),
           static_cast<const bool *>(
               CustomData_get_layer_named(&dm->polyData, CD_PROP_BOOL, "sharp_face")),
@@ -564,6 +571,7 @@ static void do_multires_bake(MultiresBakeRender *bkr,
     handle->data.polys = polys;
     handle->data.corner_verts = corner_verts;
     handle->data.looptris = looptris;
+    handle->data.looptri_polys = looptri_polys;
     handle->data.vert_normals = vert_normals;
     handle->data.poly_normals = poly_normals;
     handle->data.material_indices = static_cast<const int *>(
@@ -657,7 +665,7 @@ static void get_ccgdm_data(const blender::OffsetIndices<int> lores_polys,
                            DerivedMesh *hidm,
                            const int *index_mp_to_orig,
                            const int lvl,
-                           const MLoopTri *lt,
+                           const int poly_index,
                            const float u,
                            const float v,
                            float co[3],
@@ -668,7 +676,6 @@ static void get_ccgdm_data(const blender::OffsetIndices<int> lores_polys,
   float crn_x, crn_y;
   int grid_size, S, face_side;
   int *grid_offset, g_index;
-  int poly_index = lt->poly;
 
   grid_size = hidm->getGridSize(hidm);
   grid_data = hidm->getGridData(hidm);
@@ -839,6 +846,7 @@ static void apply_heights_callback(const blender::Span<blender::float3> vert_pos
                                    const blender::OffsetIndices<int> polys,
                                    const blender::Span<int> corner_verts,
                                    const blender::Span<MLoopTri> looptris,
+                                   const blender::Span<int> looptri_polys,
                                    const blender::Span<blender::float2> uv_map,
                                    DerivedMesh *hires_dm,
                                    void *thread_data_v,
@@ -852,7 +860,8 @@ static void apply_heights_callback(const blender::Span<blender::float3> vert_pos
                                    const int y)
 {
   const MLoopTri *lt = &looptris[tri_index];
-  const blender::IndexRange poly = polys[lt->poly];
+  const int poly_i = looptri_polys[tri_index];
+  const blender::IndexRange poly = polys[poly_i];
   MHeightBakeData *height_data = (MHeightBakeData *)bake_data;
   MultiresBakeThread *thread_data = (MultiresBakeThread *)thread_data_v;
   float uv[2];
@@ -879,11 +888,18 @@ static void apply_heights_callback(const blender::Span<blender::float3> vert_pos
   clamp_v2(uv, 0.0f, 1.0f);
 
   get_ccgdm_data(
-      polys, hires_dm, height_data->orig_index_mp_to_orig, lvl, lt, uv[0], uv[1], p1, nullptr);
+      polys, hires_dm, height_data->orig_index_mp_to_orig, lvl, poly_i, uv[0], uv[1], p1, nullptr);
 
   if (height_data->ssdm) {
-    get_ccgdm_data(
-        polys, height_data->ssdm, height_data->orig_index_mp_to_orig, 0, lt, uv[0], uv[1], p0, n);
+    get_ccgdm_data(polys,
+                   height_data->ssdm,
+                   height_data->orig_index_mp_to_orig,
+                   0,
+                   poly_i,
+                   uv[0],
+                   uv[1],
+                   p0,
+                   n);
   }
   else {
     if (poly.size() == 4) {
@@ -953,6 +969,7 @@ static void apply_tangmat_callback(const blender::Span<blender::float3> /*vert_p
                                    const blender::OffsetIndices<int> polys,
                                    const blender::Span<int> /*corner_verts*/,
                                    const blender::Span<MLoopTri> looptris,
+                                   const blender::Span<int> looptri_polys,
                                    const blender::Span<blender::float2> uv_map,
                                    DerivedMesh *hires_dm,
                                    void * /*thread_data*/,
@@ -966,7 +983,8 @@ static void apply_tangmat_callback(const blender::Span<blender::float3> /*vert_p
                                    const int y)
 {
   const MLoopTri *lt = &looptris[tri_index];
-  const blender::IndexRange poly = polys[lt->poly];
+  const int poly_i = looptri_polys[tri_index];
+  const blender::IndexRange poly = polys[poly_i];
   MNormalBakeData *normal_data = (MNormalBakeData *)bake_data;
   float uv[2];
   const float *st0, *st1, *st2, *st3;
@@ -992,7 +1010,7 @@ static void apply_tangmat_callback(const blender::Span<blender::float3> /*vert_p
   clamp_v2(uv, 0.0f, 1.0f);
 
   get_ccgdm_data(
-      polys, hires_dm, normal_data->orig_index_mp_to_orig, lvl, lt, uv[0], uv[1], nullptr, n);
+      polys, hires_dm, normal_data->orig_index_mp_to_orig, lvl, poly_i, uv[0], uv[1], nullptr, n);
 
   mul_v3_m3v3(vec, tangmat, n);
   normalize_v3_length(vec, 0.5);

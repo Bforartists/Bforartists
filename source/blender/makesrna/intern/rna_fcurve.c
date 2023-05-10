@@ -460,7 +460,7 @@ void rna_DriverVariable_name_set(PointerRNA *ptr, const char *value)
 {
   DriverVar *data = (DriverVar *)(ptr->data);
 
-  BLI_strncpy_utf8(data->name, value, 64);
+  STRNCPY_UTF8(data->name, value);
   driver_variable_name_validate(data);
   driver_variable_unique_name(data);
 }
@@ -700,6 +700,7 @@ static void rna_tag_animation_update(Main *bmain, ID *id)
 static void rna_FCurve_update_data_ex(ID *id, FCurve *fcu, Main *bmain)
 {
   sort_time_fcurve(fcu);
+  /* TODO: Blender 4.0 should call BKE_fcurve_deduplicate_keys(fcu) here. */
   BKE_fcurve_handles_recalc(fcu);
 
   rna_tag_animation_update(bmain, id);
@@ -844,6 +845,12 @@ static void rna_FModifier_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *
   }
 
   rna_tag_animation_update(bmain, id);
+}
+
+static void rna_fModifier_name_set(PointerRNA *ptr, const char *value)
+{
+  FModifier *fcm = (FModifier *)ptr->data;
+  BKE_fmodifier_name_set(fcm, value);
 }
 
 static void rna_FModifier_verify_data_update(Main *bmain, Scene *scene, PointerRNA *ptr)
@@ -1079,24 +1086,12 @@ static BezTriple *rna_FKeyframe_points_insert(
 
 static void rna_FKeyframe_points_add(ID *id, FCurve *fcu, Main *bmain, int tot)
 {
-  if (tot > 0) {
-    BezTriple *bezt;
-
-    fcu->bezt = MEM_recallocN(fcu->bezt, sizeof(BezTriple) * (fcu->totvert + tot));
-
-    bezt = fcu->bezt + fcu->totvert;
-    fcu->totvert += tot;
-
-    while (tot--) {
-      /* Defaults, ignoring user-preference gives predictable results for API. */
-      bezt->f1 = bezt->f2 = bezt->f3 = SELECT;
-      bezt->ipo = BEZT_IPO_BEZ;
-      bezt->h1 = bezt->h2 = HD_AUTO_ANIM;
-      bezt++;
-    }
-
-    rna_tag_animation_update(bmain, id);
+  if (tot <= 0) {
+    return;
   }
+
+  ED_keyframes_add(fcu, tot);
+  rna_tag_animation_update(bmain, id);
 }
 
 static void rna_FKeyframe_points_remove(
@@ -1123,6 +1118,24 @@ static void rna_FKeyframe_points_clear(ID *id, FCurve *fcu, Main *bmain)
 {
   BKE_fcurve_delete_keys_all(fcu);
 
+  rna_tag_animation_update(bmain, id);
+}
+
+static void rna_FKeyframe_points_sort(ID *id, FCurve *fcu, Main *bmain)
+{
+  sort_time_fcurve(fcu);
+  rna_tag_animation_update(bmain, id);
+}
+
+static void rna_FKeyframe_points_deduplicate(ID *id, FCurve *fcu, Main *bmain)
+{
+  BKE_fcurve_deduplicate_keys(fcu);
+  rna_tag_animation_update(bmain, id);
+}
+
+static void rna_FKeyframe_points_handles_recalc(ID *id, FCurve *fcu, Main *bmain)
+{
+  BKE_fcurve_handles_recalc(fcu);
   rna_tag_animation_update(bmain, id);
 }
 
@@ -1750,12 +1763,12 @@ static void rna_def_fmodifier(BlenderRNA *brna)
   RNA_def_struct_refine_func(srna, "rna_FModifierType_refine");
   RNA_def_struct_ui_text(srna, "F-Modifier", "Modifier for values of F-Curve");
 
-#  if 0  /* XXX not used yet */
   /* name */
   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_funcs(prop, NULL, NULL, "rna_fModifier_name_set");
+  RNA_def_property_ui_text(prop, "Name", "F-Curve Modifier name");
+  RNA_def_property_update(prop, NC_OBJECT | ND_MODIFIER | NA_RENAME, NULL);
   RNA_def_struct_name_property(srna, prop);
-  RNA_def_property_ui_text(prop, "Name", "Short description of F-Curve Modifier");
-#  endif /* XXX not used yet */
 
   /* type */
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
@@ -2421,6 +2434,22 @@ static void rna_def_fcurve_keyframe_points(BlenderRNA *brna, PropertyRNA *cprop)
 
   func = RNA_def_function(srna, "clear", "rna_FKeyframe_points_clear");
   RNA_def_function_ui_description(func, "Remove all keyframes from an F-Curve");
+  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);
+
+  func = RNA_def_function(srna, "sort", "rna_FKeyframe_points_sort");
+  RNA_def_function_ui_description(func, "Ensure all keyframe points are chronologically sorted");
+  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);
+
+  func = RNA_def_function(srna, "deduplicate", "rna_FKeyframe_points_deduplicate");
+  RNA_def_function_ui_description(
+      func,
+      "Ensure there are no duplicate keys. Assumes that the points have already been sorted");
+  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);
+
+  func = RNA_def_function(srna, "handles_recalc", "rna_FKeyframe_points_handles_recalc");
+  RNA_def_function_ui_description(func,
+                                  "Update handles after modifications to the keyframe points, to "
+                                  "update things like auto-clamping");
   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);
 }
 
