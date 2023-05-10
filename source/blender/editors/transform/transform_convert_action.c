@@ -115,7 +115,8 @@ static int count_masklayer_frames(MaskLayer *masklay, char side, float cfra, boo
 
   /* only include points that occur on the right side of cfra */
   for (masklayer_shape = masklay->splines_shapes.first; masklayer_shape;
-       masklayer_shape = masklayer_shape->next) {
+       masklayer_shape = masklayer_shape->next)
+  {
     if (FrameOnMouseSide(side, (float)masklayer_shape->frame, cfra)) {
       if (masklayer_shape->flag & MASK_SHAPE_SELECT) {
         count++;
@@ -232,7 +233,8 @@ static int GPLayerToTransData(TransData *td,
 
   /* check for select frames on right side of current frame */
   for (gpf = gpl->frames.first; gpf; gpf = gpf->next) {
-    if (is_prop_edit || (gpf->flag & GP_FRAME_SELECT)) {
+    const bool is_selected = (gpf->flag & GP_FRAME_SELECT) != 0;
+    if (is_prop_edit || is_selected) {
       if (FrameOnMouseSide(side, (float)gpf->framenum, cfra)) {
         tfd->val = (float)gpf->framenum;
         tfd->sdata = &gpf->framenum;
@@ -242,6 +244,10 @@ static int GPLayerToTransData(TransData *td,
 
         td->center[0] = td->ival;
         td->center[1] = ypos;
+
+        if (is_selected) {
+          td->flag = TD_SELECTED;
+        }
 
         /* Advance `td` now. */
         td++;
@@ -268,7 +274,8 @@ static int MaskLayerToTransData(TransData *td,
 
   /* check for select frames on right side of current frame */
   for (masklay_shape = masklay->splines_shapes.first; masklay_shape;
-       masklay_shape = masklay_shape->next) {
+       masklay_shape = masklay_shape->next)
+  {
     if (is_prop_edit || (masklay_shape->flag & MASK_SHAPE_SELECT)) {
       if (FrameOnMouseSide(side, (float)masklay_shape->frame, cfra)) {
         tfd->val = (float)masklay_shape->frame;
@@ -486,7 +493,8 @@ static void createTransActionData(bContext *C, TransInfo *t)
         MaskLayerShape *masklay_shape;
 
         for (masklay_shape = masklay->splines_shapes.first; masklay_shape;
-             masklay_shape = masklay_shape->next) {
+             masklay_shape = masklay_shape->next)
+        {
           if (FrameOnMouseSide(t->frame_side, (float)masklay_shape->frame, cfra)) {
             if (masklay_shape->flag & MASK_SHAPE_SELECT) {
               td->dist = td->rdist = 0.0f;
@@ -674,7 +682,8 @@ static void posttrans_mask_clean(Mask *mask)
 
     if (is_double) {
       for (masklay_shape = masklay->splines_shapes.first; masklay_shape;
-           masklay_shape = masklay_shape_next) {
+           masklay_shape = masklay_shape_next)
+      {
         masklay_shape_next = masklay_shape->next;
         if (masklay_shape_next && masklay_shape->frame == masklay_shape_next->frame) {
           BKE_mask_layer_shape_unlink(masklay, masklay_shape);
@@ -684,7 +693,8 @@ static void posttrans_mask_clean(Mask *mask)
 
 #ifdef DEBUG
     for (masklay_shape = masklay->splines_shapes.first; masklay_shape;
-         masklay_shape = masklay_shape->next) {
+         masklay_shape = masklay_shape->next)
+    {
       BLI_assert(!masklay_shape->next || masklay_shape->frame < masklay_shape->next->frame);
     }
 #endif

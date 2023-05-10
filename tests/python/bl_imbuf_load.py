@@ -32,6 +32,7 @@ class ImBufTest(AbstractImBufTest):
         colorspace = img.colorspace_settings.name
         alpha_mode = img.alpha_mode
         actual_metadata = f"{channels=} {is_float=} {colorspace=} {alpha_mode=}"
+        expected_metadata = ""
 
         # Save actual metadata
         out_metadata_path.write_text(actual_metadata, encoding="utf-8")
@@ -52,10 +53,14 @@ class ImBufTest(AbstractImBufTest):
 
             failed = True
 
-        if failed and self.update:
-            # Update reference if requested.
-            ref_metadata_path.write_text(actual_metadata, encoding="utf-8")
-            failed = False
+        if failed:
+            if self.update:
+                # Update reference if requested.
+                ref_metadata_path.write_text(actual_metadata, encoding="utf-8")
+                failed = False
+            else:
+                print_message(
+                    "Expected [{}] but got [{}]".format(expected_metadata, actual_metadata))
 
         return not failed
 
@@ -148,6 +153,33 @@ class ImBufLoadTest(ImBufTest):
         self.skip_if_format_missing("WEBP")
 
         self.check("*.webp")
+
+
+class ImBufBrokenTest(AbstractImBufTest):
+    @classmethod
+    def setUpClass(cls):
+        AbstractImBufTest.init(args)
+
+    def _get_image_files(self, file_pattern):
+        return [f for f in (self.test_dir / "broken_images").glob(file_pattern)]
+
+    def check(self, file_pattern):
+        image_files = self._get_image_files(file_pattern)
+        print(image_files)
+        if len(image_files) == 0:
+            self.fail(f"No images found for pattern {file_pattern}")
+
+        for image_path in image_files:
+            print_message(image_path.name, 'SUCCESS', 'RUN')
+
+            bpy.ops.image.open(filepath=str(image_path))
+
+
+class ImBufLoadBrokenTest(ImBufBrokenTest):
+    def test_load_exr(self):
+        self.skip_if_format_missing("OPENEXR")
+
+        self.check("*.exr")
 
 
 def main():

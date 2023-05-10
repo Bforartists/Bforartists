@@ -87,7 +87,7 @@ ListBase *WM_dropboxmap_find(const char *idname, int spaceid, int regionid)
   }
 
   wmDropBoxMap *dm = MEM_cnew<wmDropBoxMap>(__func__);
-  BLI_strncpy(dm->idname, idname, KMAP_MAX_NAME);
+  STRNCPY(dm->idname, idname);
   dm->spaceid = spaceid;
   dm->regionid = regionid;
   BLI_addtail(&dropboxes, dm);
@@ -431,8 +431,8 @@ static void wm_drop_update_active(bContext *C, wmDrag *drag, const wmEvent *even
   const int winsize_y = WM_window_pixels_y(win);
 
   /* for multiwin drags, we only do this if mouse inside */
-  if (event->xy[0] < 0 || event->xy[1] < 0 || event->xy[0] > winsize_x ||
-      event->xy[1] > winsize_y) {
+  if (event->xy[0] < 0 || event->xy[1] < 0 || event->xy[0] > winsize_x || event->xy[1] > winsize_y)
+  {
     return;
   }
 
@@ -567,11 +567,12 @@ wmDragAsset *WM_drag_create_asset_data(const AssetHandle *asset, const char *pat
 {
   wmDragAsset *asset_drag = MEM_new<wmDragAsset>(__func__);
 
-  BLI_strncpy(asset_drag->name, ED_asset_handle_get_name(asset), sizeof(asset_drag->name));
+  STRNCPY(asset_drag->name, ED_asset_handle_get_name(asset));
   asset_drag->metadata = ED_asset_handle_get_metadata(asset);
   asset_drag->path = path;
   asset_drag->id_type = ED_asset_handle_get_id_type(asset);
   asset_drag->import_method = import_type;
+  asset_drag->use_relative_path = ED_asset_handle_get_use_relative_path(asset);
 
   return asset_drag;
 }
@@ -625,10 +626,18 @@ ID *WM_drag_asset_id_import(wmDragAsset *asset_drag, const int flag_extra)
   ViewLayer *view_layer = CTX_data_view_layer(asset_drag->evil_C);
   View3D *view3d = CTX_wm_view3d(asset_drag->evil_C);
 
+  const bool use_relative_path = asset_drag->use_relative_path;
+
   switch (eAssetImportMethod(asset_drag->import_method)) {
     case ASSET_IMPORT_LINK:
-      return WM_file_link_datablock(
-          bmain, scene, view_layer, view3d, asset_drag->path, idtype, name, flag);
+      return WM_file_link_datablock(bmain,
+                                    scene,
+                                    view_layer,
+                                    view3d,
+                                    asset_drag->path,
+                                    idtype,
+                                    name,
+                                    flag | (use_relative_path ? FILE_RELPATH : 0));
     case ASSET_IMPORT_APPEND:
       return WM_file_append_datablock(bmain,
                                       scene,
@@ -640,16 +649,16 @@ ID *WM_drag_asset_id_import(wmDragAsset *asset_drag, const int flag_extra)
                                       flag | BLO_LIBLINK_APPEND_RECURSIVE |
                                           BLO_LIBLINK_APPEND_ASSET_DATA_CLEAR);
     case ASSET_IMPORT_APPEND_REUSE:
-      return WM_file_append_datablock(G_MAIN,
-                                      scene,
-                                      view_layer,
-                                      view3d,
-                                      asset_drag->path,
-                                      idtype,
-                                      name,
-                                      flag | BLO_LIBLINK_APPEND_RECURSIVE |
-                                          BLO_LIBLINK_APPEND_ASSET_DATA_CLEAR |
-                                          BLO_LIBLINK_APPEND_LOCAL_ID_REUSE);
+      return WM_file_append_datablock(
+          G_MAIN,
+          scene,
+          view_layer,
+          view3d,
+          asset_drag->path,
+          idtype,
+          name,
+          flag | BLO_LIBLINK_APPEND_RECURSIVE | BLO_LIBLINK_APPEND_ASSET_DATA_CLEAR |
+              BLO_LIBLINK_APPEND_LOCAL_ID_REUSE | (use_relative_path ? FILE_RELPATH : 0));
   }
 
   BLI_assert_unreachable();

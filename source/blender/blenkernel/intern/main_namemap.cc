@@ -47,7 +47,7 @@ using namespace blender;
 static bool id_name_final_build(char *name, char *base_name, size_t base_name_len, int number)
 {
   char number_str[11]; /* Dot + nine digits + NULL terminator. */
-  size_t number_str_len = BLI_snprintf_rlen(number_str, ARRAY_SIZE(number_str), ".%.3d", number);
+  size_t number_str_len = SNPRINTF_RLEN(number_str, ".%.3d", number);
 
   /* If the number would lead to an overflow of the maximum ID name length, we need to truncate
    * the base name part and do all the number checks again. */
@@ -203,7 +203,8 @@ void BKE_main_namemap_clear(Main *bmain)
     }
     for (Library *lib_iter = static_cast<Library *>(bmain_iter->libraries.first);
          lib_iter != nullptr;
-         lib_iter = static_cast<Library *>(lib_iter->id.next)) {
+         lib_iter = static_cast<Library *>(lib_iter->id.next))
+    {
       if (lib_iter->runtime.name_map != nullptr) {
         BKE_main_namemap_destroy(&lib_iter->runtime.name_map);
       }
@@ -228,12 +229,12 @@ static void main_namemap_populate(UniqueName_Map *name_map, struct Main *bmain, 
 
     /* Insert the full name into the set. */
     UniqueName_Key key;
-    BLI_strncpy(key.name, id->name + 2, MAX_NAME);
+    STRNCPY(key.name, id->name + 2);
     type_map->full_names.add(key);
 
     /* Get the name and number parts ("name.number"). */
     int number = MIN_NUMBER;
-    BLI_split_name_num(key.name, &number, id->name + 2, '.');
+    BLI_string_split_name_number(id->name + 2, '.', key.name, &number);
 
     /* Get and update the entry for this base name. */
     UniqueName_Value &val = type_map->base_name_to_num_suffix.lookup_or_add_default(key);
@@ -278,12 +279,12 @@ bool BKE_main_namemap_get_name(struct Main *bmain, struct ID *id, char *name)
   UniqueName_Key key;
   while (true) {
     /* Check if the full original name has a duplicate. */
-    BLI_strncpy(key.name, name, MAX_NAME);
+    STRNCPY(key.name, name);
     const bool has_dup = type_map->full_names.contains(key);
 
     /* Get the name and number parts ("name.number"). */
     int number = MIN_NUMBER;
-    size_t base_name_len = BLI_split_name_num(key.name, &number, name, '.');
+    size_t base_name_len = BLI_string_split_name_number(name, '.', key.name, &number);
 
     bool added_new = false;
     UniqueName_Value &val = type_map->base_name_to_num_suffix.lookup_or_add_cb(key, [&]() {
@@ -298,7 +299,7 @@ bool BKE_main_namemap_get_name(struct Main *bmain, struct ID *id, char *name)
       val.mark_used(number);
 
       if (!has_dup) {
-        BLI_strncpy(key.name, name, MAX_NAME);
+        STRNCPY(key.name, name);
         type_map->full_names.add(key);
       }
       return is_name_changed;
@@ -333,7 +334,7 @@ bool BKE_main_namemap_get_name(struct Main *bmain, struct ID *id, char *name)
     BLI_assert(number_to_use >= MIN_NUMBER);
     if (id_name_final_build(name, key.name, base_name_len, number_to_use)) {
       /* All good, add final name to the set. */
-      BLI_strncpy(key.name, name, MAX_NAME);
+      STRNCPY(key.name, name);
       type_map->full_names.add(key);
       break;
     }
@@ -368,11 +369,11 @@ void BKE_main_namemap_remove_name(struct Main *bmain, struct ID *id, const char 
 
   UniqueName_Key key;
   /* Remove full name from the set. */
-  BLI_strncpy(key.name, name, MAX_NAME);
+  STRNCPY(key.name, name);
   type_map->full_names.remove(key);
 
   int number = MIN_NUMBER;
-  BLI_split_name_num(key.name, &number, name, '.');
+  BLI_string_split_name_number(name, '.', key.name, &number);
   UniqueName_Value *val = type_map->base_name_to_num_suffix.lookup_ptr(key);
   if (val == nullptr) {
     return;
@@ -407,7 +408,7 @@ static bool main_namemap_validate_and_fix(Main *bmain, const bool do_fix)
   FOREACH_MAIN_LISTBASE_BEGIN (bmain, lb_iter) {
     LISTBASE_FOREACH_MUTABLE (ID *, id_iter, lb_iter) {
       Uniqueness_Key key;
-      BLI_strncpy(key.name, id_iter->name, MAX_ID_NAME);
+      STRNCPY(key.name, id_iter->name);
       key.lib = id_iter->lib;
       if (!id_names_libs.add(key)) {
         is_valid = false;
@@ -420,7 +421,7 @@ static bool main_namemap_validate_and_fix(Main *bmain, const bool do_fix)
            * not really an issue. */
           BKE_id_new_name_validate(
               bmain, which_libbase(bmain, GS(id_iter->name)), id_iter, nullptr, true);
-          BLI_strncpy(key.name, id_iter->name, MAX_ID_NAME);
+          STRNCPY(key.name, id_iter->name);
           if (!id_names_libs.add(key)) {
             CLOG_ERROR(&LOG,
                        "\tID has been renamed to '%s', but it still seems to be already in use",
@@ -441,7 +442,7 @@ static bool main_namemap_validate_and_fix(Main *bmain, const bool do_fix)
 
       UniqueName_Key key_namemap;
       /* Remove full name from the set. */
-      BLI_strncpy(key_namemap.name, id_iter->name + 2, MAX_NAME);
+      STRNCPY(key_namemap.name, id_iter->name + 2);
       if (!type_map->full_names.contains(key_namemap)) {
         is_valid = false;
         CLOG_ERROR(&LOG,
@@ -460,7 +461,8 @@ static bool main_namemap_validate_and_fix(Main *bmain, const bool do_fix)
     if (name_map != nullptr) {
       int i = 0;
       for (short idcode = BKE_idtype_idcode_iter_step(&i); idcode != 0;
-           idcode = BKE_idtype_idcode_iter_step(&i)) {
+           idcode = BKE_idtype_idcode_iter_step(&i))
+      {
         UniqueName_TypeMap *type_map = name_map->find_by_type(idcode);
         if (type_map != nullptr) {
           for (const UniqueName_Key &id_name : type_map->full_names) {

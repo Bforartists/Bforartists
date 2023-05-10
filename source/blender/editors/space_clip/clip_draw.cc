@@ -165,7 +165,8 @@ static void draw_movieclip_cache(SpaceClip *sc, ARegion *region, MovieClip *clip
         }
 
         if (a < markersnr - 1 &&
-            generic_track_get_marker_framenr(active_track, active_plane_track, a + 1) > i) {
+            generic_track_get_marker_framenr(active_track, active_plane_track, a + 1) > i)
+        {
           break;
         }
 
@@ -266,7 +267,7 @@ static void draw_movieclip_notes(SpaceClip *sc, ARegion *region)
   bool full_redraw = false;
 
   if (tracking->stats) {
-    BLI_strncpy(str, tracking->stats->message, sizeof(str));
+    STRNCPY(str, tracking->stats->message);
     full_redraw = true;
   }
   else {
@@ -322,7 +323,8 @@ static void draw_movieclip_buffer(const bContext *C,
 
   /* non-scaled proxy shouldn't use filtering */
   if ((clip->flag & MCLIP_USE_PROXY) == 0 ||
-      ELEM(sc->user.render_size, MCLIP_PROXY_RENDER_SIZE_FULL, MCLIP_PROXY_RENDER_SIZE_100)) {
+      ELEM(sc->user.render_size, MCLIP_PROXY_RENDER_SIZE_FULL, MCLIP_PROXY_RENDER_SIZE_100))
+  {
     use_filter = false;
   }
 
@@ -602,7 +604,8 @@ static void draw_marker_outline(SpaceClip *sc,
                             marker->pattern_corners[0],
                             marker->pattern_corners[1],
                             marker->pattern_corners[2],
-                            marker->pattern_corners[3])) {
+                            marker->pattern_corners[3]))
+    {
       GPU_point_size(tiny ? 3.0f : 4.0f);
 
       immBegin(GPU_PRIM_POINTS, 1);
@@ -776,7 +779,8 @@ static void draw_marker_areas(SpaceClip *sc,
                             marker->pattern_corners[0],
                             marker->pattern_corners[1],
                             marker->pattern_corners[2],
-                            marker->pattern_corners[3])) {
+                            marker->pattern_corners[3]))
+    {
       GPU_point_size(tiny ? 1.0f : 2.0f);
 
       immUniform1f("udash_factor", 2.0f); /* Solid "line" */
@@ -1054,7 +1058,8 @@ static void draw_marker_texts(SpaceClip *sc,
   }
 
   if ((sc->flag & SC_SHOW_MARKER_SEARCH) &&
-      ((marker->flag & MARKER_DISABLED) == 0 || (sc->flag & SC_SHOW_MARKER_PATTERN) == 0)) {
+      ((marker->flag & MARKER_DISABLED) == 0 || (sc->flag & SC_SHOW_MARKER_PATTERN) == 0))
+  {
     dx = marker->search_min[0];
     dy = marker->search_min[1];
   }
@@ -1089,10 +1094,10 @@ static void draw_marker_texts(SpaceClip *sc,
   }
 
   if (state[0]) {
-    BLI_snprintf(str, sizeof(str), "%s: %s", track->name, state);
+    SNPRINTF(str, "%s: %s", track->name, state);
   }
   else {
-    BLI_strncpy(str, track->name, sizeof(str));
+    STRNCPY(str, track->name);
   }
 
   BLF_position(fontid, pos[0], pos[1], 0.0f);
@@ -1100,7 +1105,7 @@ static void draw_marker_texts(SpaceClip *sc,
   pos[1] -= fontsize;
 
   if (track->flag & TRACK_HAS_BUNDLE) {
-    BLI_snprintf(str, sizeof(str), "Average error: %.2f px", track->error);
+    SNPRINTF(str, "Average error: %.2f px", track->error);
     BLF_position(fontid, pos[0], pos[1], 0.0f);
     BLF_draw(fontid, str, sizeof(str));
     pos[1] -= fontsize;

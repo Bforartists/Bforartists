@@ -141,25 +141,34 @@ class UI_OT_i18n_cleanuptranslation_svn_branches(Operator):
 
 
 def i18n_updatetranslation_svn_trunk_callback(lng, settings):
+    reports = []
     if lng['uid'] in settings.IMPORT_LANGUAGES_SKIP:
-        print("Skipping {} language ({}), edit settings if you want to enable it.\n".format(lng['name'], lng['uid']))
-        return lng['uid'], 0.0
+        reports.append("Skipping {} language ({}), edit settings if you want to enable it.".format(lng['name'], lng['uid']))
+        return lng['uid'], 0.0, reports
     if not lng['use']:
-        print("Skipping {} language ({}).\n".format(lng['name'], lng['uid']))
-        return lng['uid'], 0.0
+        reports.append("Skipping {} language ({}).".format(lng['name'], lng['uid']))
+        return lng['uid'], 0.0, reports
     po = utils_i18n.I18nMessages(uid=lng['uid'], kind='PO', src=lng['po_path'], settings=settings)
     errs = po.check(fix=True)
-    print("Processing {} language ({}).\n"
-          "Cleaned up {} commented messages.\n".format(lng['name'], lng['uid'], po.clean_commented()) +
-          ("Errors in this po, solved as best as possible!\n\t" + "\n\t".join(errs) if errs else "") + "\n")
+    reports.append("Processing {} language ({}).\n"
+                   "Cleaned up {} commented messages.\n".format(lng['name'], lng['uid'], po.clean_commented()) +
+                   ("Errors in this po, solved as best as possible!\n\t" + "\n\t".join(errs) if errs else ""))
     if lng['uid'] in settings.IMPORT_LANGUAGES_RTL:
         po.write(kind="PO", dest=lng['po_path_trunk'][:-3] + "_raw.po")
         po.rtl_process()
     po.write(kind="PO", dest=lng['po_path_trunk'])
     po.write(kind="PO_COMPACT", dest=lng['po_path_git'])
-    po.write(kind="MO", dest=lng['mo_path_trunk'])
+    ret = po.write(kind="MO", dest=lng['mo_path_trunk'])
+    if (ret.stdout):
+        reports.append(ret.stdout.decode().rstrip("\n"))
+    if (ret.stderr):
+        stderr_str = ret.stderr.decode().rstrip("\n")
+        if ret.returncode != 0:
+            reports.append("ERROR: " + stderr_str)
+        else:
+            reports.append(stderr_str)
     po.update_info()
-    return lng['uid'], po.nbr_trans_msgs / po.nbr_msgs
+    return lng['uid'], po.nbr_trans_msgs / po.nbr_msgs, reports
 
 
 class UI_OT_i18n_updatetranslation_svn_trunk(Operator):
@@ -178,12 +187,13 @@ class UI_OT_i18n_updatetranslation_svn_trunk(Operator):
         context.window_manager.progress_update(0)
         with concurrent.futures.ProcessPoolExecutor() as exctr:
             num_langs = len(i18n_sett.langs)
-            for progress, (lng_uid, stats_val) in enumerate(exctr.map(i18n_updatetranslation_svn_trunk_callback,
+            for progress, (lng_uid, stats_val, reports) in enumerate(exctr.map(i18n_updatetranslation_svn_trunk_callback,
                                                                       [dict(lng.items()) for lng in i18n_sett.langs],
                                                                       (self.settings,) * num_langs,
                                                                       chunksize=4)):
                 context.window_manager.progress_update(progress + 1)
                 stats[lng_uid] = stats_val
+                print("".join(reports) + "\n")
 
         # Copy pot file from branches to trunk.
         shutil.copy2(self.settings.FILE_NAME_POT, self.settings.TRUNK_PO_DIR)

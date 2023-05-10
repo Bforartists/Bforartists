@@ -6,6 +6,7 @@
  */
 
 #include "vk_shader_interface.hh"
+#include "vk_backend.hh"
 #include "vk_context.hh"
 
 namespace blender::gpu {
@@ -17,7 +18,7 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
 
   using namespace blender::gpu::shader;
 
-  attr_len_ = 0;
+  attr_len_ = info.vertex_inputs_.size();
   uniform_len_ = info.push_constants_.size();
   ssbo_len_ = 0;
   ubo_len_ = 0;
@@ -47,9 +48,9 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
 
   /* Reserve 1 uniform buffer for push constants fallback. */
   size_t names_size = info.interface_names_size_;
-  VKContext &context = *VKContext::get();
+  const VKDevice &device = VKBackend::get().device_get();
   const VKPushConstants::StorageType push_constants_storage_type =
-      VKPushConstants::Layout::determine_storage_type(info, context.physical_device_limits_get());
+      VKPushConstants::Layout::determine_storage_type(info, device.physical_device_limits_get());
   if (push_constants_storage_type == VKPushConstants::StorageType::UNIFORM_BUFFER) {
     ubo_len_++;
     names_size += PUSH_CONSTANTS_FALLBACK_NAME_LEN + 1;
@@ -58,7 +59,7 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
   /* Make sure that the image slots don't overlap with the sampler slots. */
   image_offset_++;
 
-  int32_t input_tot_len = ubo_len_ + uniform_len_ + ssbo_len_;
+  int32_t input_tot_len = attr_len_ + ubo_len_ + uniform_len_ + ssbo_len_;
   inputs_ = static_cast<ShaderInput *>(
       MEM_calloc_arrayN(input_tot_len, sizeof(ShaderInput), __func__));
   ShaderInput *input = inputs_;
@@ -66,10 +67,24 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
   name_buffer_ = (char *)MEM_mallocN(names_size, "name_buffer");
   uint32_t name_buffer_offset = 0;
 
+  /* Attributes */
+  for (const ShaderCreateInfo::VertIn &attr : info.vertex_inputs_) {
+    copy_input_name(input, attr.name, name_buffer_, name_buffer_offset);
+    input->location = input->binding = attr.index;
+    if (input->location != -1) {
+      enabled_attr_mask_ |= (1 << input->location);
+
+      /* Used in `GPU_shader_get_attribute_info`. */
+      attr_types_[input->location] = uint8_t(attr.type);
+    }
+
+    input++;
+  }
+
   /* Uniform blocks */
   for (const ShaderCreateInfo::Resource &res : all_resources) {
     if (res.bind_type == ShaderCreateInfo::Resource::BindType::UNIFORM_BUFFER) {
-      copy_input_name(input, res.image.name, name_buffer_, name_buffer_offset);
+      copy_input_name(input, res.uniformbuf.name, name_buffer_, name_buffer_offset);
       input->location = input->binding = res.slot;
       input++;
     }
@@ -131,7 +146,9 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
   }
 
   /* Determine the descriptor set locations after the inputs have been sorted. */
-  descriptor_set_locations_ = Array<VKDescriptorSet::Location>(input_tot_len);
+  /* Note: input_tot_len is sometimes more than we need. */
+  const uint32_t resources_len = input_tot_len;
+  descriptor_set_locations_ = Array<VKDescriptorSet::Location>(resources_len);
   uint32_t descriptor_set_location = 0;
   for (ShaderCreateInfo::Resource &res : all_resources) {
     const ShaderInput *input = shader_input_get(res);
