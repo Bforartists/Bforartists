@@ -56,10 +56,14 @@ ccl_device_forceinline float3 integrate_surface_ray_offset(KernelGlobals kg,
    *   or dot(sd->Ng, ray_D)  is small. Detect such cases and skip test?
    * - Instead of ray offset, can we tweak P to lie within the triangle?
    */
-  const uint3 tri_vindex = kernel_data_fetch(tri_vindex, sd->prim);
-  const packed_float3 tri_a = kernel_data_fetch(tri_verts, tri_vindex.x),
-                      tri_b = kernel_data_fetch(tri_verts, tri_vindex.y),
-                      tri_c = kernel_data_fetch(tri_verts, tri_vindex.z);
+  float3 verts[3];
+  if (sd->type == PRIMITIVE_TRIANGLE) {
+    triangle_vertices(kg, sd->prim, verts);
+  }
+  else {
+    kernel_assert(sd->type == PRIMITIVE_MOTION_TRIANGLE);
+    motion_triangle_vertices(kg, sd->object, sd->prim, sd->time, verts);
+  }
 
   float3 local_ray_P = ray_P;
   float3 local_ray_D = ray_D;
@@ -70,7 +74,7 @@ ccl_device_forceinline float3 integrate_surface_ray_offset(KernelGlobals kg,
     local_ray_D = transform_direction(&itfm, local_ray_D);
   }
 
-  if (ray_triangle_intersect_self(local_ray_P, local_ray_D, tri_a, tri_b, tri_c)) {
+  if (ray_triangle_intersect_self(local_ray_P, local_ray_D, verts)) {
     return ray_P;
   }
   else {
@@ -87,7 +91,8 @@ ccl_device_forceinline bool integrate_surface_holdout(KernelGlobals kg,
   const uint32_t path_flag = INTEGRATOR_STATE(state, path, flag);
 
   if (((sd->flag & SD_HOLDOUT) || (sd->object_flag & SD_OBJECT_HOLDOUT_MASK)) &&
-      (path_flag & PATH_RAY_TRANSPARENT_BACKGROUND)) {
+      (path_flag & PATH_RAY_TRANSPARENT_BACKGROUND))
+  {
     const Spectrum holdout_weight = surface_shader_apply_holdout(kg, sd);
     const Spectrum throughput = INTEGRATOR_STATE(state, path, throughput);
     const float transparent = average(holdout_weight * throughput);
@@ -160,7 +165,8 @@ ccl_device_forceinline void integrate_surface_direct_light(KernelGlobals kg,
                                     sd->flag,
                                     bounce,
                                     path_flag,
-                                    &ls)) {
+                                    &ls))
+    {
       return;
     }
   }

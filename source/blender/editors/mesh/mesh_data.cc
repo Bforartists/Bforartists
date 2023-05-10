@@ -441,7 +441,8 @@ bool ED_mesh_color_ensure(Mesh *me, const char *name)
   char unique_name[MAX_CUSTOMDATA_LAYER_NAME];
   BKE_id_attribute_calc_unique_name(&me->id, name, unique_name);
   if (!me->attributes_for_write().add(
-          unique_name, ATTR_DOMAIN_CORNER, CD_PROP_BYTE_COLOR, bke::AttributeInitDefaultValue())) {
+          unique_name, ATTR_DOMAIN_CORNER, CD_PROP_BYTE_COLOR, bke::AttributeInitDefaultValue()))
+  {
     return false;
   }
 
@@ -473,7 +474,8 @@ int ED_mesh_sculpt_color_add(Mesh *me, const char *name, const bool do_init, Rep
   }
 
   if (const CustomDataLayer *layer = BKE_id_attribute_find(
-          &me->id, me->active_color_attribute, CD_PROP_COLOR, ATTR_DOMAIN_POINT)) {
+          &me->id, me->active_color_attribute, CD_PROP_COLOR, ATTR_DOMAIN_POINT))
+  {
     int dummy;
     const CustomData *data = mesh_customdata_get_type(me, BM_LOOP, &dummy);
     return CustomData_get_named_layer(data, CD_PROP_BYTE_COLOR, layer->name);
@@ -1181,8 +1183,8 @@ static void mesh_add_edges(Mesh *mesh, int len)
   CustomData_copy_layout(&mesh->edata, &edata, CD_MASK_MESH.emask, CD_SET_DEFAULT, totedge);
   CustomData_copy_data(&mesh->edata, &edata, 0, 0, mesh->totedge);
 
-  if (!CustomData_has_layer(&edata, CD_MEDGE)) {
-    CustomData_add_layer(&edata, CD_MEDGE, CD_SET_DEFAULT, totedge);
+  if (!CustomData_get_layer_named(&edata, CD_PROP_INT32_2D, ".edge_verts")) {
+    CustomData_add_layer_named(&edata, CD_PROP_INT32_2D, CD_SET_DEFAULT, totedge, ".edge_verts");
   }
 
   CustomData_free(&mesh->edata, mesh->totedge);
@@ -1481,7 +1483,7 @@ void ED_mesh_split_faces(Mesh *mesh)
   const Span<int> corner_edges = mesh->corner_edges();
   const float split_angle = (mesh->flag & ME_AUTOSMOOTH) != 0 ? mesh->smoothresh : float(M_PI);
   const bke::AttributeAccessor attributes = mesh->attributes();
-  const VArray<bool> mesh_sharp_edges = attributes.lookup_or_default<bool>(
+  const VArray<bool> mesh_sharp_edges = *attributes.lookup_or_default<bool>(
       "sharp_edge", ATTR_DOMAIN_EDGE, false);
   const bool *sharp_faces = static_cast<const bool *>(
       CustomData_get_layer_named(&mesh->pdata, CD_PROP_BOOL, "sharp_face"));
@@ -1514,6 +1516,5 @@ void ED_mesh_split_faces(Mesh *mesh)
     return;
   }
 
-  const bke::AnonymousAttributePropagationInfo propagation_info;
-  geometry::split_edges(*mesh, split_mask, propagation_info);
+  geometry::split_edges(*mesh, split_mask, {});
 }

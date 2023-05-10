@@ -947,8 +947,8 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
       }
     }
     else if (unode->maxgrid && subdiv_ccg != nullptr) {
-      if ((subdiv_ccg->num_grids != unode->maxgrid) ||
-          (subdiv_ccg->grid_size != unode->gridsize)) {
+      if ((subdiv_ccg->num_grids != unode->maxgrid) || (subdiv_ccg->grid_size != unode->gridsize))
+      {
         continue;
       }
 
@@ -1255,7 +1255,7 @@ static SculptUndoNode *sculpt_undo_alloc_node_type(Object *object, SculptUndoTyp
 {
   const size_t alloc_size = sizeof(SculptUndoNode);
   SculptUndoNode *unode = static_cast<SculptUndoNode *>(MEM_callocN(alloc_size, "SculptUndoNode"));
-  BLI_strncpy(unode->idname, object->id.name, sizeof(unode->idname));
+  STRNCPY(unode->idname, object->id.name);
   unode->type = type;
 
   UndoSculpt *usculpt = sculpt_undo_get_nodes();
@@ -1550,7 +1550,7 @@ static SculptUndoNode *sculpt_undo_bmesh_push(Object *ob, PBVHNode *node, Sculpt
   if (unode == nullptr) {
     unode = MEM_cnew<SculptUndoNode>(__func__);
 
-    BLI_strncpy(unode->idname, ob->id.name, sizeof(unode->idname));
+    STRNCPY(unode->idname, ob->id.name);
     unode->type = type;
     unode->applied = true;
 
@@ -1709,7 +1709,7 @@ SculptUndoNode *SCULPT_undo_push_node(Object *ob, PBVHNode *node, SculptUndoType
 
   /* Store active shape key. */
   if (ss->shapekey_active) {
-    BLI_strncpy(unode->shapeName, ss->shapekey_active->name, sizeof(ss->shapekey_active->name));
+    STRNCPY(unode->shapeName, ss->shapekey_active->name);
   }
   else {
     unode->shapeName[0] = '\0';
@@ -1742,11 +1742,12 @@ static void sculpt_save_active_attribute(Object *ob, SculptAttrRef *attr)
     return;
   }
   if (!(ATTR_DOMAIN_AS_MASK(meta_data->domain) & ATTR_DOMAIN_MASK_COLOR) ||
-      !(CD_TYPE_AS_MASK(meta_data->data_type) & CD_MASK_COLOR_ALL)) {
+      !(CD_TYPE_AS_MASK(meta_data->data_type) & CD_MASK_COLOR_ALL))
+  {
     return;
   }
   attr->domain = meta_data->domain;
-  BLI_strncpy(attr->name, name, sizeof(attr->name));
+  STRNCPY(attr->name, name);
   attr->type = meta_data->data_type;
 }
 
@@ -1854,7 +1855,8 @@ static void sculpt_undo_set_active_layer(struct bContext *C, SculptAttrRef *attr
     layer = BKE_id_attribute_search(&me->id, attr->name, CD_MASK_PROP_ALL, ATTR_DOMAIN_MASK_ALL);
     if (layer) {
       if (ED_geometry_attribute_convert(
-              me, attr->name, eCustomDataType(attr->type), attr->domain, nullptr)) {
+              me, attr->name, eCustomDataType(attr->type), attr->domain, nullptr))
+      {
         layer = BKE_id_attribute_find(&me->id, attr->name, attr->type, attr->domain);
       }
     }

@@ -15,6 +15,7 @@
 #include "BLI_memarena.h"
 #include "BLI_polyfill_2d.h"
 #include "BLI_task.h"
+#include "BLI_task.hh"
 
 #include "BKE_mesh.hh"
 
@@ -50,7 +51,6 @@ BLI_INLINE void mesh_calc_tessellation_for_face_impl(const Span<int> corner_vert
     mlt->tri[0] = mp_loopstart + i1;
     mlt->tri[1] = mp_loopstart + i2;
     mlt->tri[2] = mp_loopstart + i3;
-    mlt->poly = poly_index;
   };
 
   switch (mp_totloop) {
@@ -63,20 +63,11 @@ BLI_INLINE void mesh_calc_tessellation_for_face_impl(const Span<int> corner_vert
       MLoopTri *mlt_a = mlt++;
       create_tri(0, 2, 3);
       MLoopTri *mlt_b = mlt;
-
-      if (UNLIKELY(face_normal ? is_quad_flip_v3_first_third_fast_with_normal(
-                                     /* Simpler calculation (using the normal). */
-                                     positions[corner_verts[mlt_a->tri[0]]],
-                                     positions[corner_verts[mlt_a->tri[1]]],
-                                     positions[corner_verts[mlt_a->tri[2]]],
-                                     positions[corner_verts[mlt_b->tri[2]]],
-                                     normal_precalc) :
-                                 is_quad_flip_v3_first_third_fast(
-                                     /* Expensive calculation (no normal). */
-                                     positions[corner_verts[mlt_a->tri[0]]],
-                                     positions[corner_verts[mlt_a->tri[1]]],
-                                     positions[corner_verts[mlt_a->tri[2]]],
-                                     positions[corner_verts[mlt_b->tri[2]]]))) {
+      if (UNLIKELY(is_quad_flip_v3_first_third_fast(positions[corner_verts[mlt_a->tri[0]]],
+                                                    positions[corner_verts[mlt_a->tri[1]]],
+                                                    positions[corner_verts[mlt_a->tri[2]]],
+                                                    positions[corner_verts[mlt_b->tri[2]]])))
+      {
         /* Flip out of degenerate 0-2 state. */
         mlt_a->tri[2] = mlt_b->tri[2];
         mlt_b->tri[0] = mlt_a->tri[1];
@@ -307,6 +298,18 @@ void looptris_calc(const Span<float3> vert_positions,
   looptris_calc_all(vert_positions, polys, corner_verts, {}, looptris);
 }
 
+void looptris_calc_poly_indices(const OffsetIndices<int> polys, MutableSpan<int> looptri_polys)
+{
+  threading::parallel_for(polys.index_range(), 1024, [&](const IndexRange range) {
+    for (const int64_t i : range) {
+      const IndexRange poly = polys[i];
+      const int start = poly_to_tri_count(int(i), int(poly.start()));
+      const int num = ME_POLY_TRI_TOT(int(poly.size()));
+      looptri_polys.slice(start, num).fill(int(i));
+    }
+  });
+}
+
 void looptris_calc_with_normals(const Span<float3> vert_positions,
                                 const OffsetIndices<int> polys,
                                 const Span<int> corner_verts,
@@ -316,6 +319,8 @@ void looptris_calc_with_normals(const Span<float3> vert_positions,
   BLI_assert(!poly_normals.is_empty() || polys.size() == 0);
   looptris_calc_all(vert_positions, polys, corner_verts, poly_normals, looptris);
 }
+
+/** \} */
 
 }  // namespace blender::bke::mesh
 
@@ -333,5 +338,3 @@ void BKE_mesh_recalc_looptri(const int *corner_verts,
       {corner_verts, totloop},
       {mlooptri, poly_to_tri_count(totpoly, totloop)});
 }
-
-/** \} */

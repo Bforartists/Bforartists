@@ -466,8 +466,8 @@ static TriTessFace *mesh_calc_tri_tessface(Mesh *me, bool tangent, Mesh *me_eval
   const blender::OffsetIndices polys = me->polys();
   const blender::Span<int> corner_verts = me->corner_verts();
   const bke::AttributeAccessor attributes = me->attributes();
-  const VArray<bool> sharp_faces = attributes.lookup_or_default<bool>(
-      "sharp_face", ATTR_DOMAIN_FACE, false);
+  const VArray<bool> sharp_faces =
+      attributes.lookup_or_default<bool>("sharp_face", ATTR_DOMAIN_FACE, false).varray;
 
   looptri = static_cast<MLoopTri *>(MEM_mallocN(sizeof(*looptri) * tottri, __func__));
   triangles = static_cast<TriTessFace *>(MEM_callocN(sizeof(TriTessFace) * tottri, __func__));
@@ -501,8 +501,10 @@ static TriTessFace *mesh_calc_tri_tessface(Mesh *me, bool tangent, Mesh *me_eval
   }
 
   const blender::Span<blender::float3> vert_normals = me->vert_normals();
+  const blender::Span<int> looptri_polys = me->looptri_polys();
   for (i = 0; i < tottri; i++) {
     const MLoopTri *lt = &looptri[i];
+    const int poly_i = looptri_polys[i];
 
     triangles[i].positions[0] = positions[corner_verts[lt->tri[0]]];
     triangles[i].positions[1] = positions[corner_verts[lt->tri[1]]];
@@ -510,7 +512,7 @@ static TriTessFace *mesh_calc_tri_tessface(Mesh *me, bool tangent, Mesh *me_eval
     triangles[i].vert_normals[0] = vert_normals[corner_verts[lt->tri[0]]];
     triangles[i].vert_normals[1] = vert_normals[corner_verts[lt->tri[1]]];
     triangles[i].vert_normals[2] = vert_normals[corner_verts[lt->tri[2]]];
-    triangles[i].is_smooth = !sharp_faces[lt->poly];
+    triangles[i].is_smooth = !sharp_faces[poly_i];
 
     if (tangent) {
       triangles[i].tspace[0] = &tspace[lt->tri[0]];
@@ -525,14 +527,14 @@ static TriTessFace *mesh_calc_tri_tessface(Mesh *me, bool tangent, Mesh *me_eval
     }
 
     if (calculate_normal) {
-      if (lt->poly != mpoly_prev) {
-        no = blender::bke::mesh::poly_normal_calc(positions, corner_verts.slice(polys[lt->poly]));
-        mpoly_prev = lt->poly;
+      if (poly_i != mpoly_prev) {
+        no = blender::bke::mesh::poly_normal_calc(positions, corner_verts.slice(polys[poly_i]));
+        mpoly_prev = poly_i;
       }
       copy_v3_v3(triangles[i].normal, no);
     }
     else {
-      copy_v3_v3(triangles[i].normal, precomputed_normals[lt->poly]);
+      copy_v3_v3(triangles[i].normal, precomputed_normals[poly_i]);
     }
   }
 
@@ -579,7 +581,7 @@ bool RE_bake_pixels_populate_from_objects(Mesh *me_low,
   treeData = MEM_cnew_array<BVHTreeFromMesh>(tot_highpoly, "Highpoly BVH Trees");
 
   if (!is_cage) {
-    me_eval_low = BKE_mesh_copy_for_eval(me_low, false);
+    me_eval_low = BKE_mesh_copy_for_eval(me_low);
     tris_low = mesh_calc_tri_tessface(me_low, true, me_eval_low);
   }
   else if (is_custom_cage) {
@@ -654,7 +656,8 @@ bool RE_bake_pixels_populate_from_objects(Mesh *me_low,
                            dir,
                            i,
                            tot_highpoly,
-                           max_ray_distance)) {
+                           max_ray_distance))
+    {
       /* if it fails mask out the original pixel array */
       pixel_array_from[i].primitive_id = -1;
     }
@@ -752,17 +755,20 @@ void RE_bake_pixels_populate(Mesh *me,
   blender::bke::mesh::looptris_calc(
       me->vert_positions(), me->polys(), me->corner_verts(), {looptri, tottri});
 
+  const blender::Span<int> looptri_polys = me->looptri_polys();
+
   const int *material_indices = BKE_mesh_material_indices(me);
   const int materials_num = targets->materials_num;
 
   for (int i = 0; i < tottri; i++) {
     const MLoopTri *lt = &looptri[i];
+    const int poly_i = looptri_polys[i];
 
     bd.primitive_id = i;
 
     /* Find images matching this material. */
     const int material_index = (material_indices && materials_num) ?
-                                   clamp_i(material_indices[lt->poly], 0, materials_num - 1) :
+                                   clamp_i(material_indices[poly_i], 0, materials_num - 1) :
                                    0;
     Image *image = targets->material_to_image[material_index];
     for (int image_id = 0; image_id < targets->images_num; image_id++) {
@@ -854,7 +860,7 @@ void RE_bake_normal_world_to_tangent(const BakePixel pixel_array[],
 
   TriTessFace *triangles;
 
-  Mesh *me_eval = BKE_mesh_copy_for_eval(me, false);
+  Mesh *me_eval = BKE_mesh_copy_for_eval(me);
 
   triangles = mesh_calc_tri_tessface(me, true, me_eval);
 

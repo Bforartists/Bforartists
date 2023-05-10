@@ -35,8 +35,8 @@
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
-#include "MOD_modifiertypes.h"
-#include "MOD_util.h"
+#include "MOD_modifiertypes.hh"
+#include "MOD_util.hh"
 
 #include "MEM_guardedalloc.h"
 
@@ -182,10 +182,8 @@ Mesh *MOD_deform_mesh_eval_get(Object *ob,
       /* TODO(sybren): after modifier conversion of DM to Mesh is done, check whether
        * we really need a copy here. Maybe the CoW ob->data can be directly used. */
       Mesh *mesh_prior_modifiers = BKE_object_get_pre_modified_mesh(ob);
-      mesh = (Mesh *)BKE_id_copy_ex(nullptr,
-                                    &mesh_prior_modifiers->id,
-                                    nullptr,
-                                    (LIB_ID_COPY_LOCALIZE | LIB_ID_COPY_CD_REFERENCE));
+      mesh = (Mesh *)BKE_id_copy_ex(
+          nullptr, &mesh_prior_modifiers->id, nullptr, LIB_ID_COPY_LOCALIZE);
       mesh->runtime->deformed_only = true;
     }
 

@@ -130,7 +130,7 @@ static void palette_undo_preserve(BlendLibReader * /*reader*/, ID *id_new, ID *i
   /* NOTE: We do not care about potential internal references to self here, Palette has none. */
   /* NOTE: We do not swap IDProperties, as dealing with potential ID pointers in those would be
    *       fairly delicate. */
-  BKE_lib_id_swap(nullptr, id_new, id_old);
+  BKE_lib_id_swap(nullptr, id_new, id_old, false, 0);
   std::swap(id_new->properties, id_old->properties);
 }
 
@@ -750,8 +750,8 @@ void BKE_paint_curve_clamp_endpoint_add_index(PaintCurve *pc, const int add_inde
 
 void BKE_palette_color_remove(Palette *palette, PaletteColor *color)
 {
-  if (BLI_listbase_count_at_most(&palette->colors, palette->active_color) ==
-      palette->active_color) {
+  if (BLI_listbase_count_at_most(&palette->colors, palette->active_color) == palette->active_color)
+  {
     palette->active_color--;
   }
 
@@ -1259,12 +1259,12 @@ void BKE_paint_blend_read_lib(BlendLibReader *reader, Scene *sce, Paint *p)
   }
 }
 
-bool paint_is_face_hidden(const MLoopTri *lt, const bool *hide_poly)
+bool paint_is_face_hidden(const int *looptri_polys, const bool *hide_poly, const int tri_index)
 {
   if (!hide_poly) {
     return false;
   }
-  return hide_poly[lt->poly];
+  return hide_poly[looptri_polys[tri_index]];
 }
 
 bool paint_is_grid_face_hidden(const uint *grid_hidden, int gridsize, int x, int y)
@@ -1672,6 +1672,11 @@ static void sculpt_update_object(
 
   BLI_assert(me_eval != nullptr);
 
+  /* This is for handling a newly opened file with no object visible, causing me_eval==NULL. */
+  if (me_eval == nullptr) {
+    return;
+  }
+
   ss->depsgraph = depsgraph;
 
   ss->deform_modifiers_active = sculpt_modifiers_active(scene, sd, ob);
@@ -1782,7 +1787,8 @@ static void sculpt_update_object(
        * that simply recompute vertex weights (which can even include Geometry Nodes). */
       if (me_eval_deform->totpoly == me_eval->totpoly &&
           me_eval_deform->totloop == me_eval->totloop &&
-          me_eval_deform->totvert == me_eval->totvert) {
+          me_eval_deform->totvert == me_eval->totvert)
+      {
         BKE_sculptsession_free_deformMats(ss);
 
         BLI_assert(me_eval_deform->totvert == me->totvert);
@@ -1892,7 +1898,7 @@ void BKE_sculpt_update_object_before_eval(Object *ob_eval)
       /* In vertex/weight paint, force maps to be rebuilt. */
       BKE_sculptsession_free_vwpaint_data(ob_eval->sculpt);
     }
-    else {
+    else if (ss->pbvh) {
       Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(ss->pbvh, nullptr, nullptr);
 
       for (PBVHNode *node : nodes) {
@@ -1924,7 +1930,8 @@ void BKE_sculpt_color_layer_create_if_needed(Object *object)
   char unique_name[MAX_CUSTOMDATA_LAYER_NAME];
   BKE_id_attribute_calc_unique_name(&orig_me->id, "Color", unique_name);
   if (!orig_me->attributes_for_write().add(
-          unique_name, ATTR_DOMAIN_POINT, CD_PROP_COLOR, AttributeInitDefaultValue())) {
+          unique_name, ATTR_DOMAIN_POINT, CD_PROP_COLOR, AttributeInitDefaultValue()))
+  {
     return;
   }
 
@@ -2122,7 +2129,7 @@ void BKE_sculpt_sync_face_visibility_to_grids(Mesh *mesh, SubdivCCG *subdiv_ccg)
   }
 
   const AttributeAccessor attributes = mesh->attributes();
-  const VArray<bool> hide_poly = attributes.lookup_or_default<bool>(
+  const VArray<bool> hide_poly = *attributes.lookup_or_default<bool>(
       ".hide_poly", ATTR_DOMAIN_FACE, false);
   if (hide_poly.is_single() && !hide_poly.get_internal_single()) {
     /* Nothing is hidden, so we can just remove all visibility bitmaps. */
@@ -2421,7 +2428,7 @@ static bool sculpt_attribute_create(SculptSession *ss,
   out->params = *params;
   out->proptype = proptype;
   out->domain = domain;
-  BLI_strncpy_utf8(out->name, name, sizeof(out->name));
+  STRNCPY_UTF8(out->name, name);
 
   /* Force non-CustomData simple_array mode if not PBVH_FACES. */
   if (pbvhtype == PBVH_GRIDS || (pbvhtype == PBVH_BMESH && flat_array_for_bmesh)) {
@@ -2689,7 +2696,7 @@ SculptAttribute *BKE_sculpt_attribute_get(struct Object *ob,
       attr->layer = cdata->layers + index;
       attr->elem_size = CustomData_get_elem_size(attr->layer);
 
-      BLI_strncpy_utf8(attr->name, name, sizeof(attr->name));
+      STRNCPY_UTF8(attr->name, name);
       return attr;
     }
   }
@@ -2852,7 +2859,8 @@ bool BKE_sculpt_attribute_destroy(Object *ob, SculptAttribute *attr)
     SculptAttribute *attr2 = ss->temp_attributes + i;
 
     if (STREQ(attr2->name, attr->name) && attr2->domain == attr->domain &&
-        attr2->proptype == attr->proptype) {
+        attr2->proptype == attr->proptype)
+    {
 
       attr2->used = false;
     }

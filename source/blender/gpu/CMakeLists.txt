@@ -208,6 +208,7 @@ set(VULKAN_SRC
   vulkan/vk_debug.cc
   vulkan/vk_descriptor_pools.cc
   vulkan/vk_descriptor_set.cc
+  vulkan/vk_device.cc
   vulkan/vk_drawlist.cc
   vulkan/vk_fence.cc
   vulkan/vk_framebuffer.cc
@@ -235,8 +236,10 @@ set(VULKAN_SRC
   vulkan/vk_common.hh
   vulkan/vk_context.hh
   vulkan/vk_data_conversion.hh
+  vulkan/vk_debug.hh
   vulkan/vk_descriptor_pools.hh
   vulkan/vk_descriptor_set.hh
+  vulkan/vk_device.hh
   vulkan/vk_drawlist.hh
   vulkan/vk_fence.hh
   vulkan/vk_framebuffer.hh
@@ -273,7 +276,9 @@ set(METAL_SRC
   metal/mtl_shader.mm
   metal/mtl_shader_generator.mm
   metal/mtl_shader_interface.mm
+  metal/mtl_shader_log.mm
   metal/mtl_state.mm
+  metal/mtl_storage_buffer.mm
   metal/mtl_texture.mm
   metal/mtl_texture_util.mm
   metal/mtl_uniform_buffer.mm
@@ -297,8 +302,10 @@ set(METAL_SRC
   metal/mtl_shader_generator.hh
   metal/mtl_shader_interface.hh
   metal/mtl_shader_interface_type.hh
+  metal/mtl_shader_log.hh
   metal/mtl_shader_shared.h
   metal/mtl_state.hh
+  metal/mtl_storage_buffer.hh
   metal/mtl_texture.hh
   metal/mtl_uniform_buffer.hh
   metal/mtl_vertex_buffer.hh

@@ -802,12 +802,10 @@ static bool should_create_drag_link_search_menu(const bNodeTree &node_tree,
   if (nldrag.start_socket->in_out == SOCK_IN && nldrag.start_link_count > 0) {
     return false;
   }
-  /* Don't allow a drag from the "new socket" of a group input node. Handling these
-   * properly in node callbacks increases the complexity too much for now. */
-  if (ELEM(nldrag.start_node->type, NODE_GROUP_INPUT, NODE_GROUP_OUTPUT)) {
-    if (nldrag.start_socket->type == SOCK_CUSTOM) {
-      return false;
-    }
+  /* Don't allow a drag from the "new socket" (group input node or simulation nodes currently).
+   * Handling these properly in node callbacks increases the complexity too much for now. */
+  if (nldrag.start_socket->type == SOCK_CUSTOM) {
+    return false;
   }
   return true;
 }
@@ -2089,12 +2087,14 @@ static bNode *get_selected_node_for_insertion(bNodeTree &node_tree)
   }
   if (std::any_of(selected_node->input_sockets().begin(),
                   selected_node->input_sockets().end(),
-                  [&](const bNodeSocket *socket) { return socket->is_directly_linked(); })) {
+                  [&](const bNodeSocket *socket) { return socket->is_directly_linked(); }))
+  {
     return nullptr;
   }
   if (std::any_of(selected_node->output_sockets().begin(),
                   selected_node->output_sockets().end(),
-                  [&](const bNodeSocket *socket) { return socket->is_directly_linked(); })) {
+                  [&](const bNodeSocket *socket) { return socket->is_directly_linked(); }))
+  {
     return nullptr;
   };
   return selected_node;
@@ -2189,12 +2189,14 @@ void node_insert_on_link_flags(Main &bmain, SpaceNode &snode)
     /* Ignore main sockets when the types don't match. */
     if (best_input != nullptr && ntree.typeinfo->validate_link != nullptr &&
         !ntree.typeinfo->validate_link(static_cast<eNodeSocketDatatype>(old_link->fromsock->type),
-                                       static_cast<eNodeSocketDatatype>(best_input->type))) {
+                                       static_cast<eNodeSocketDatatype>(best_input->type)))
+    {
       best_input = nullptr;
     }
     if (best_output != nullptr && ntree.typeinfo->validate_link != nullptr &&
         !ntree.typeinfo->validate_link(static_cast<eNodeSocketDatatype>(best_output->type),
-                                       static_cast<eNodeSocketDatatype>(old_link->tosock->type))) {
+                                       static_cast<eNodeSocketDatatype>(old_link->tosock->type)))
+    {
       best_output = nullptr;
     }
   }
@@ -2466,7 +2468,8 @@ static void node_link_insert_offset_ntree(NodeInsertOfsData *iofsd,
    * without actually making it a part of the frame (because mouse isn't intersecting it)
    * - logic here is similar to node_find_frame_to_attach. */
   if (!insert.parent ||
-      (prev->parent && (prev->parent == next->parent) && (prev->parent != insert.parent))) {
+      (prev->parent && (prev->parent == next->parent) && (prev->parent != insert.parent)))
+  {
     bNode *frame;
     rctf totr_frame;
 
@@ -2481,9 +2484,11 @@ static void node_link_insert_offset_ntree(NodeInsertOfsData *iofsd,
       node_to_updated_rect(*frame, totr_frame);
 
       if (BLI_rctf_isect_x(&totr_frame, totr_insert.xmin) &&
-          BLI_rctf_isect_x(&totr_frame, totr_insert.xmax)) {
+          BLI_rctf_isect_x(&totr_frame, totr_insert.xmax))
+      {
         if (BLI_rctf_isect_y(&totr_frame, totr_insert.ymin) ||
-            BLI_rctf_isect_y(&totr_frame, totr_insert.ymax)) {
+            BLI_rctf_isect_y(&totr_frame, totr_insert.ymax))
+        {
           /* frame isn't insert.parent actually, but this is needed to make offsetting
            * nodes work correctly for above checked cases (it is restored later) */
           insert.parent = frame;
@@ -2518,7 +2523,8 @@ static void node_link_insert_offset_ntree(NodeInsertOfsData *iofsd,
     if (needs_alignment) {
       bNode *offs_node = right_alignment ? next : prev;
       if (!offs_node->parent || offs_node->parent == insert.parent ||
-          nodeIsParentAndChild(offs_node->parent, &insert)) {
+          nodeIsParentAndChild(offs_node->parent, &insert))
+      {
         node_offset_apply(*offs_node, addval);
       }
       else if (!insert.parent && offs_node->parent) {
@@ -2559,8 +2565,8 @@ static int node_insert_offset_modal(bContext *C, wmOperator *op, const wmEvent *
   NodeInsertOfsData *iofsd = static_cast<NodeInsertOfsData *>(op->customdata);
   bool redraw = false;
 
-  if (!snode || event->type != TIMER || iofsd == nullptr ||
-      iofsd->anim_timer != event->customdata) {
+  if (!snode || event->type != TIMER || iofsd == nullptr || iofsd->anim_timer != event->customdata)
+  {
     return OPERATOR_PASS_THROUGH;
   }
 

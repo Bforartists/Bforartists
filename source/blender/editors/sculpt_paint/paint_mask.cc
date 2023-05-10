@@ -51,7 +51,7 @@
 #include "bmesh.h"
 #include "tools/bmesh_boolean.h"
 
-#include "paint_intern.h"
+#include "paint_intern.hh"
 
 /* For undo push. */
 #include "sculpt_intern.hh"
@@ -749,6 +749,9 @@ static void face_set_gesture_apply_task_cb(void *__restrict userdata,
   PBVHFaceIter fd;
   BKE_pbvh_face_iter_begin (sgcontext->ss->pbvh, node, fd) {
     if (sculpt_gesture_is_face_effected(sgcontext, &fd)) {
+      if (sgcontext->ss->hide_poly && sgcontext->ss->hide_poly[fd.face.i]) {
+        continue;
+      }
       SCULPT_face_set_set(sgcontext->ss, fd.face, face_set_operation->new_face_set_id);
       any_updated = true;
     }
@@ -1135,7 +1138,7 @@ static void sculpt_gesture_trim_geometry_generate(SculptGestureContext *sgcontex
 
   const int trim_totverts = tot_screen_points * 2;
   const int trim_totpolys = (2 * (tot_screen_points - 2)) + (2 * tot_screen_points);
-  trim_operation->mesh = BKE_mesh_new_nomain(trim_totverts, 0, trim_totpolys * 3, trim_totpolys);
+  trim_operation->mesh = BKE_mesh_new_nomain(trim_totverts, 0, trim_totpolys, trim_totpolys * 3);
   trim_operation->true_mesh_co = static_cast<float(*)[3]>(
       MEM_malloc_arrayN(trim_totverts, sizeof(float[3]), "mesh orco"));
 

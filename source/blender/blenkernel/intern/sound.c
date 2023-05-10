@@ -258,11 +258,11 @@ bSound *BKE_sound_new_file(Main *bmain, const char *filepath)
   const char *blendfile_path = BKE_main_blendfile_path(bmain);
   char str[FILE_MAX];
 
-  BLI_strncpy(str, filepath, sizeof(str));
+  STRNCPY(str, filepath);
   BLI_path_abs(str, blendfile_path);
 
   sound = BKE_libblock_alloc(bmain, ID_SO, BLI_path_basename(filepath), 0);
-  BLI_strncpy(sound->filepath, filepath, FILE_MAX);
+  STRNCPY(sound->filepath, filepath);
   /* sound->type = SOUND_TYPE_FILE; */ /* XXX unused currently */
 
   /* Extract sound specs for bSound */
@@ -286,12 +286,12 @@ bSound *BKE_sound_new_file_exists_ex(Main *bmain, const char *filepath, bool *r_
   bSound *sound;
   char str[FILE_MAX], strtest[FILE_MAX];
 
-  BLI_strncpy(str, filepath, sizeof(str));
+  STRNCPY(str, filepath);
   BLI_path_abs(str, BKE_main_blendfile_path(bmain));
 
   /* first search an identical filepath */
   for (sound = bmain->sounds.first; sound; sound = sound->id.next) {
-    BLI_strncpy(strtest, sound->filepath, sizeof(sound->filepath));
+    STRNCPY(strtest, sound->filepath);
     BLI_path_abs(strtest, ID_BLEND_PATH(bmain, &sound->id));
 
     if (BLI_path_cmp(strtest, str) == 0) {
@@ -551,7 +551,7 @@ static void sound_load_audio(Main *bmain, bSound *sound, bool free_waveform)
     PackedFile *pf = sound->packedfile;
 
     /* don't modify soundact->sound->filepath, only change a copy */
-    BLI_strncpy(fullpath, sound->filepath, sizeof(fullpath));
+    STRNCPY(fullpath, sound->filepath);
     BLI_path_abs(fullpath, ID_BLEND_PATH(bmain, &sound->id));
 
     /* but we need a packed file then */
@@ -649,12 +649,12 @@ void BKE_sound_destroy_scene(Scene *scene)
   }
 }
 
-void BKE_sound_lock()
+void BKE_sound_lock(void)
 {
   AUD_Device_lock(sound_device);
 }
 
-void BKE_sound_unlock()
+void BKE_sound_unlock(void)
 {
   AUD_Device_unlock(sound_device);
 }
@@ -819,6 +819,15 @@ void BKE_sound_set_scene_sound_pitch(void *handle, float pitch, char animated)
   AUD_SequenceEntry_setAnimationData(handle, AUD_AP_PITCH, sound_cfra, &pitch, animated);
 }
 
+void BKE_sound_set_scene_sound_pitch_constant_range(void *handle,
+                                                    int frame_start,
+                                                    int frame_end,
+                                                    float pitch)
+{
+  AUD_SequenceEntry_setConstantRangeAnimationData(
+      handle, AUD_AP_PITCH, frame_start, frame_end, &pitch);
+}
+
 void BKE_sound_set_scene_sound_pan(void *handle, float pan, char animated)
 {
   AUD_SequenceEntry_setAnimationData(handle, AUD_AP_PANNING, sound_cfra, &pan, animated);
@@ -944,7 +953,8 @@ void BKE_sound_seek_scene(Main *bmain, Scene *scene)
     }
     AUD_Handle_resume(scene->playback_handle);
     if (scene->sound_scrub_handle &&
-        AUD_Handle_getStatus(scene->sound_scrub_handle) != AUD_STATUS_INVALID) {
+        AUD_Handle_getStatus(scene->sound_scrub_handle) != AUD_STATUS_INVALID)
+    {
       AUD_Handle_setPosition(scene->sound_scrub_handle, 0);
     }
     else {
@@ -1248,7 +1258,7 @@ bool BKE_sound_stream_info_get(struct Main *main,
   AUD_StreamInfo *stream_infos;
   int stream_count;
 
-  BLI_strncpy(str, filepath, sizeof(str));
+  STRNCPY(str, filepath);
   BLI_path_abs(str, blendfile_path);
 
   sound = AUD_Sound_file(str);
@@ -1367,6 +1377,12 @@ void BKE_sound_set_scene_volume(Scene *UNUSED(scene), float UNUSED(volume)) {}
 void BKE_sound_set_scene_sound_pitch(void *UNUSED(handle),
                                      float UNUSED(pitch),
                                      char UNUSED(animated))
+{
+}
+void BKE_sound_set_scene_sound_pitch_constant_range(void *UNUSED(handle),
+                                                    int UNUSED(frame_start),
+                                                    int UNUSED(frame_end),
+                                                    float UNUSED(pitch))
 {
 }
 float BKE_sound_get_length(struct Main *UNUSED(bmain), bSound *UNUSED(sound))

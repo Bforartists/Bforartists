@@ -361,7 +361,7 @@ static void rna_userdef_script_directory_name_set(PointerRNA *ptr, const char *v
     value = DATA_("Untitled");
   }
 
-  BLI_strncpy_utf8(script_dir->name, value, sizeof(script_dir->name));
+  STRNCPY_UTF8(script_dir->name, value);
   BLI_uniquename(&U.script_directories,
                  script_dir,
                  value,
@@ -655,7 +655,8 @@ static void rna_UserDef_viewport_lights_update(Main *bmain, Scene *scene, Pointe
   /* If all lights are off gpu_draw resets them all, see: #27627,
    * so disallow them all to be disabled. */
   if (U.light_param[0].flag == 0 && U.light_param[1].flag == 0 && U.light_param[2].flag == 0 &&
-      U.light_param[3].flag == 0) {
+      U.light_param[3].flag == 0)
+  {
     SolidLight *light = ptr->data;
     light->flag |= 1;
   }
@@ -879,7 +880,7 @@ static StructRNA *rna_AddonPref_register(Main *bmain,
     return NULL;
   }
 
-  BLI_strncpy(dummy_apt.idname, dummy_addon.module, sizeof(dummy_apt.idname));
+  STRNCPY(dummy_apt.idname, dummy_addon.module);
   if (strlen(identifier) >= sizeof(dummy_apt.idname)) {
     BKE_reportf(reports,
                 RPT_ERROR,
@@ -962,22 +963,22 @@ static void rna_StudioLights_remove(UserDef *UNUSED(userdef), StudioLight *studi
   BKE_studiolight_remove(studio_light);
 }
 
-static StudioLight *rna_StudioLights_load(UserDef *UNUSED(userdef), const char *path, int type)
+static StudioLight *rna_StudioLights_load(UserDef *UNUSED(userdef), const char *filepath, int type)
 {
-  return BKE_studiolight_load(path, type);
+  return BKE_studiolight_load(filepath, type);
 }
 
 /* TODO: Make it accept arguments. */
-static StudioLight *rna_StudioLights_new(UserDef *userdef, const char *name)
+static StudioLight *rna_StudioLights_new(UserDef *userdef, const char *filepath)
 {
-  return BKE_studiolight_create(name, userdef->light_param, userdef->light_ambient);
+  return BKE_studiolight_create(filepath, userdef->light_param, userdef->light_ambient);
 }
 
 /* StudioLight.name */
 static void rna_UserDef_studiolight_name_get(PointerRNA *ptr, char *value)
 {
   StudioLight *sl = (StudioLight *)ptr->data;
-  BLI_strncpy(value, sl->name, FILE_MAXFILE);
+  strcpy(value, sl->name);
 }
 
 static int rna_UserDef_studiolight_name_length(PointerRNA *ptr)
@@ -990,13 +991,13 @@ static int rna_UserDef_studiolight_name_length(PointerRNA *ptr)
 static void rna_UserDef_studiolight_path_get(PointerRNA *ptr, char *value)
 {
   StudioLight *sl = (StudioLight *)ptr->data;
-  BLI_strncpy(value, sl->path, FILE_MAX);
+  strcpy(value, sl->filepath);
 }
 
 static int rna_UserDef_studiolight_path_length(PointerRNA *ptr)
 {
   StudioLight *sl = (StudioLight *)ptr->data;
-  return strlen(sl->path);
+  return strlen(sl->filepath);
 }
 
 /* StudioLight.path_irr_cache */
@@ -1004,7 +1005,7 @@ static void rna_UserDef_studiolight_path_irr_cache_get(PointerRNA *ptr, char *va
 {
   StudioLight *sl = (StudioLight *)ptr->data;
   if (sl->path_irr_cache) {
-    BLI_strncpy(value, sl->path_irr_cache, FILE_MAX);
+    strcpy(value, sl->path_irr_cache);
   }
   else {
     value[0] = '\0';
@@ -1025,7 +1026,7 @@ static void rna_UserDef_studiolight_path_sh_cache_get(PointerRNA *ptr, char *val
 {
   StudioLight *sl = (StudioLight *)ptr->data;
   if (sl->path_sh_cache) {
-    BLI_strncpy(value, sl->path_sh_cache, FILE_MAX);
+    strcpy(value, sl->path_sh_cache);
   }
   else {
     value[0] = '\0';
@@ -1607,8 +1608,7 @@ static void rna_def_userdef_theme_ui(BlenderRNA *brna)
   prop = RNA_def_property(srna, "widget_text_cursor", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, NULL, "widget_text_cursor");
   RNA_def_property_array(prop, 3);
-  RNA_def_property_ui_text(
-      prop, "Text Cursor", "Color of the interface widgets text insertion cursor (caret)");
+  RNA_def_property_ui_text(prop, "Text Cursor", "Color of the text insertion cursor (caret)");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "panel_roundness", PROP_FLOAT, PROP_FACTOR);
@@ -3055,6 +3055,12 @@ static void rna_def_userdef_theme_space_node(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "nodeclass_attribute");
   RNA_def_property_array(prop, 3);
   RNA_def_property_ui_text(prop, "Attribute Node", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "simulation_zone", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, NULL, "node_zone_simulation");
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_ui_text(prop, "Simulation Zone", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 }
 
@@ -4920,7 +4926,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Timecode Style",
-      "Format of timecodes displayed when not displaying timing in terms of frames");
+      "Format of timecode displayed when not displaying timing in terms of frames");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
   prop = RNA_def_property(srna, "view_frame_type", PROP_ENUM, PROP_NONE);
@@ -6256,6 +6262,11 @@ static void rna_def_userdef_filepaths_asset_library(BlenderRNA *brna)
       "Default Import Method",
       "Determine how the asset will be imported, unless overridden by the Asset Browser");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
+
+  prop = RNA_def_property(srna, "use_relative_path", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", ASSET_LIBRARY_RELATIVE_PATH);
+  RNA_def_property_ui_text(
+      prop, "Relative Path", "Use relative path when linking assets from this asset library");
 }
 
 static void rna_def_userdef_script_directory(BlenderRNA *brna)
