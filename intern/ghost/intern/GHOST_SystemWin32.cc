@@ -267,7 +267,7 @@ GHOST_IContext *GHOST_SystemWin32::createOffscreenContext(GHOST_GLSettings glSet
 #ifdef WITH_VULKAN_BACKEND
   /* Vulkan does not need a window. */
   if (glSettings.context_type == GHOST_kDrawingContextTypeVulkan) {
-    context = new GHOST_ContextVK(false, (HWND)0, 1, 0, debug_context);
+    context = new GHOST_ContextVK(false, (HWND)0, 1, 2, debug_context);
 
     if (!context->initializeDrawingContext()) {
       delete context;
@@ -958,7 +958,8 @@ void GHOST_SystemWin32::processWintabEvent(GHOST_WindowWin32 *window)
          * event queue. */
         MSG msg;
         if (PeekMessage(&msg, window->getHWND(), message, message, PM_REMOVE | PM_NOYIELD) &&
-            msg.message != WM_QUIT) {
+            msg.message != WM_QUIT)
+        {
 
           WINTAB_PRINTF(" ... associated to system button\n");
           window->updateMouseCapture(MouseReleased);
@@ -2311,7 +2312,8 @@ void GHOST_SystemWin32::putClipboard(const char *buffer, bool selection) const
 GHOST_TSuccess GHOST_SystemWin32::hasClipboardImage(void) const
 {
   if (IsClipboardFormatAvailable(CF_DIBV5) ||
-      IsClipboardFormatAvailable(RegisterClipboardFormat("PNG"))) {
+      IsClipboardFormatAvailable(RegisterClipboardFormat("PNG")))
+  {
     return GHOST_kSuccess;
   }
 

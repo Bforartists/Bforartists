@@ -6032,12 +6032,9 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sculpt.face_set_change_visibility",
+    ("sculpt.face_set_invert_visibility",
      {"type": 'I', "value": 'PRESS', "oskey": True},
-     {"properties":
-      [("mode", 'INVERT'),
-       ],
-      },
+     None
      ),
     ("sculpt.face_set_change_visibility",
      {"type": 'H', "value": 'PRESS', "alt": True},

@@ -201,7 +201,8 @@ bool BKE_gpencil_has_transform_modifiers(Object *ob)
                eGpencilModifierType_Armature,
                eGpencilModifierType_Hook,
                eGpencilModifierType_Lattice,
-               eGpencilModifierType_Offset)) {
+               eGpencilModifierType_Offset))
+      {
         return true;
       }
     }
@@ -355,7 +356,7 @@ GpencilModifierData *BKE_gpencil_modifier_new(int type)
   GpencilModifierData *md = MEM_callocN(mti->struct_size, mti->struct_name);
 
   /* NOTE: this name must be made unique later. */
-  BLI_strncpy(md->name, DATA_(mti->name), sizeof(md->name));
+  STRNCPY(md->name, DATA_(mti->name));
 
   md->type = type;
   md->mode = eGpencilModifierMode_Realtime | eGpencilModifierMode_Render;
@@ -435,7 +436,8 @@ const GpencilModifierTypeInfo *BKE_gpencil_modifier_get_info(GpencilModifierType
 {
   /* type unsigned, no need to check < 0 */
   if (type < NUM_GREASEPENCIL_MODIFIER_TYPES && type > 0 &&
-      modifier_gpencil_types[type]->name[0] != '\0') {
+      modifier_gpencil_types[type]->name[0] != '\0')
+  {
     return modifier_gpencil_types[type];
   }
 

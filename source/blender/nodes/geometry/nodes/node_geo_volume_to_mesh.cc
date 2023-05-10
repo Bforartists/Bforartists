@@ -123,7 +123,7 @@ static Mesh *create_mesh_from_volume_grids(Span<openvdb::GridBase::ConstPtr> gri
     loop_offset += (3 * data.tris.size() + 4 * data.quads.size());
   }
 
-  Mesh *mesh = BKE_mesh_new_nomain(vert_offset, 0, loop_offset, poly_offset);
+  Mesh *mesh = BKE_mesh_new_nomain(vert_offset, 0, poly_offset, loop_offset);
   BKE_id_material_eval_ensure_default_slot(&mesh->id);
   MutableSpan<float3> positions = mesh->vert_positions_for_write();
   MutableSpan<int> dst_poly_offsets = mesh->poly_offsets_for_write();
@@ -158,11 +158,13 @@ static Mesh *create_mesh_from_volume(GeometrySet &geometry_set, GeoNodeExecParam
   const bke::VolumeToMeshResolution resolution = get_resolution_param(params);
 
   if (resolution.mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_SIZE &&
-      resolution.settings.voxel_size <= 0.0f) {
+      resolution.settings.voxel_size <= 0.0f)
+  {
     return nullptr;
   }
   if (resolution.mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT &&
-      resolution.settings.voxel_amount <= 0) {
+      resolution.settings.voxel_amount <= 0)
+  {
     return nullptr;
   }
 

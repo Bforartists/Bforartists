@@ -17,6 +17,7 @@
 
 #include "BLI_utildefines.h"
 
+#include "BLI_string.h"      /* #BLI_string_debug_size. */
 #include "BLI_string_utf8.h" /* own include */
 #ifdef WIN32
 #  include "utfconv.h"
@@ -24,8 +25,6 @@
 #ifdef __GNUC__
 #  pragma GCC diagnostic error "-Wsign-conversion"
 #endif
-
-// #define DEBUG_STRSIZE
 
 /**
  * Array copied from GLIB's `gutf8.c`.
@@ -203,84 +202,71 @@ int BLI_str_utf8_invalid_strip(char *str, size_t length)
   return tot;
 }
 
-/** Compatible with #BLI_strncpy, but ensure no partial UTF8 chars. */
-#define BLI_STR_UTF8_CPY(dst, src, maxncpy) \
-  { \
-    size_t utf8_size; \
-    while (*src != '\0' && (utf8_size = utf8_skip_data[*src]) < maxncpy) { \
-      maxncpy -= utf8_size; \
-      switch (utf8_size) { \
-        case 6: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 5: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 4: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 3: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 2: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 1: \
-          *dst++ = *src++; \
-      } \
-    } \
-    *dst = '\0'; \
-  } \
-  (void)0
-
-char *BLI_strncpy_utf8(char *__restrict dst, const char *__restrict src, size_t maxncpy)
+/**
+ * Internal utility for implementing #BLI_strncpy_utf8 / #BLI_strncpy_utf8_rlen.
+ *
+ * Compatible with #BLI_strncpy, but ensure no partial UTF8 chars.
+ *
+ * \note currently we don't attempt to deal with invalid utf8 chars.
+ * See #BLI_str_utf8_invalid_strip for if that is needed.
+ */
+BLI_INLINE char *str_utf8_copy_max_bytes_impl(char *dst, const char *src, size_t dst_maxncpy)
 {
+  /* Cast to `uint8_t` is a no-op, quiets array subscript of type `char` warning. */
+  size_t utf8_size;
+  while (*src != '\0' && (utf8_size = utf8_skip_data[(uint8_t)*src]) < dst_maxncpy) {
+    dst_maxncpy -= utf8_size;
+    /* Prefer more compact block. */
+    /* clang-format off */
+    switch (utf8_size) {
+      case 6: *dst++ = *src++; ATTR_FALLTHROUGH;
+      case 5: *dst++ = *src++; ATTR_FALLTHROUGH;
+      case 4: *dst++ = *src++; ATTR_FALLTHROUGH;
+      case 3: *dst++ = *src++; ATTR_FALLTHROUGH;
+      case 2: *dst++ = *src++; ATTR_FALLTHROUGH;
+      case 1: *dst++ = *src++;
+    }
+    /* clang-format on */
+  }
+  *dst = '\0';
+  return dst;
+}
+
+char *BLI_strncpy_utf8(char *__restrict dst, const char *__restrict src, size_t dst_maxncpy)
+{
+  BLI_assert(dst_maxncpy != 0);
+  BLI_string_debug_size(dst, dst_maxncpy);
+
   char *r_dst = dst;
-
-  BLI_assert(maxncpy != 0);
-
-#ifdef DEBUG_STRSIZE
-  memset(dst, 0xff, sizeof(*dst) * maxncpy);
-#endif
-
-  /* NOTE: currently we don't attempt to deal with invalid utf8 chars. */
-  BLI_STR_UTF8_CPY(dst, src, maxncpy);
+  str_utf8_copy_max_bytes_impl(dst, src, dst_maxncpy);
 
   return r_dst;
 }
 
-size_t BLI_strncpy_utf8_rlen(char *__restrict dst, const char *__restrict src, size_t maxncpy)
+size_t BLI_strncpy_utf8_rlen(char *__restrict dst, const char *__restrict src, size_t dst_maxncpy)
 {
+  BLI_assert(dst_maxncpy != 0);
+  BLI_string_debug_size(dst, dst_maxncpy);
+
   char *r_dst = dst;
-
-  BLI_assert(maxncpy != 0);
-
-#ifdef DEBUG_STRSIZE
-  memset(dst, 0xff, sizeof(*dst) * maxncpy);
-#endif
-
-  /* NOTE: currently we don't attempt to deal with invalid utf8 chars. */
-  BLI_STR_UTF8_CPY(dst, src, maxncpy);
+  dst = str_utf8_copy_max_bytes_impl(dst, src, dst_maxncpy);
 
   return (size_t)(dst - r_dst);
 }
-
-#undef BLI_STR_UTF8_CPY
 
 /* -------------------------------------------------------------------- */
 /* wchar_t / utf8 functions */
 
 size_t BLI_strncpy_wchar_as_utf8(char *__restrict dst,
                                  const wchar_t *__restrict src,
-                                 const size_t maxncpy)
+                                 const size_t dst_maxncpy)
 {
-  BLI_assert(maxncpy != 0);
+  BLI_assert(dst_maxncpy != 0);
+  BLI_string_debug_size(dst, dst_maxncpy);
+
   size_t len = 0;
-#ifdef DEBUG_STRSIZE
-  memset(dst, 0xff, sizeof(*dst) * maxncpy);
-#endif
-  while (*src && len < maxncpy) {
-    len += BLI_str_utf8_from_unicode((uint)*src++, dst + len, maxncpy - len);
+  while (*src && len < dst_maxncpy) {
+    len += BLI_str_utf8_from_unicode((uint)*src++, dst + len, dst_maxncpy - len);
   }
   dst[len] = '\0';
   /* Return the correct length when part of the final byte did not fit into the string. */
@@ -320,11 +306,11 @@ size_t BLI_strlen_utf8(const char *strc)
   return BLI_strlen_utf8_ex(strc, &len_bytes);
 }
 
-size_t BLI_strnlen_utf8_ex(const char *strc, const size_t maxlen, size_t *r_len_bytes)
+size_t BLI_strnlen_utf8_ex(const char *strc, const size_t strc_maxlen, size_t *r_len_bytes)
 {
   size_t len = 0;
   const char *strc_orig = strc;
-  const char *strc_end = strc + maxlen;
+  const char *strc_end = strc + strc_maxlen;
 
   while (true) {
     size_t step = (size_t)BLI_str_utf8_size_safe(strc);
@@ -339,22 +325,23 @@ size_t BLI_strnlen_utf8_ex(const char *strc, const size_t maxlen, size_t *r_len_
   return len;
 }
 
-size_t BLI_strnlen_utf8(const char *strc, const size_t maxlen)
+size_t BLI_strnlen_utf8(const char *strc, const size_t strc_maxlen)
 {
   size_t len_bytes;
-  return BLI_strnlen_utf8_ex(strc, maxlen, &len_bytes);
+  return BLI_strnlen_utf8_ex(strc, strc_maxlen, &len_bytes);
 }
 
 size_t BLI_strncpy_wchar_from_utf8(wchar_t *__restrict dst_w,
                                    const char *__restrict src_c,
-                                   const size_t maxncpy)
+                                   const size_t dst_w_maxncpy)
 {
 #ifdef WIN32
-  conv_utf_8_to_16(src_c, dst_w, maxncpy);
+  BLI_string_debug_size(dst_w, dst_w_maxncpy);
+  conv_utf_8_to_16(src_c, dst_w, dst_w_maxncpy);
   /* NOTE: it would be more efficient to calculate the length as part of #conv_utf_8_to_16. */
   return wcslen(dst_w);
 #else
-  return BLI_str_utf8_as_utf32((char32_t *)dst_w, src_c, maxncpy);
+  return BLI_str_utf8_as_utf32((char32_t *)dst_w, src_c, dst_w_maxncpy);
 #endif
 }
 
@@ -413,7 +400,10 @@ char32_t BLI_str_utf32_char_to_upper(const char32_t wc)
 {
   if (wc < U'\xFF') { /* Latin. */
     if ((wc <= U'z' && wc >= U'a') || (wc <= U'\xF6' && wc >= U'\xE0') ||
-        (wc <= U'\xFE' && wc >= U'\xF8')) {
+        /* Correct but the first case is know, only check the second */
+        // (wc <= U'\xFE' && wc >= U'\xF8')
+        (wc >= U'\xF8'))
+    {
       return wc - 32;
     }
     return wc;
@@ -436,7 +426,8 @@ char32_t BLI_str_utf32_char_to_upper(const char32_t wc)
 
   /* There are only three remaining ranges that contain capitalization. */
   if (!(wc <= U'\x0292' && wc >= U'\x00FF') && !(wc <= U'\x04F9' && wc >= U'\x03AC') &&
-      !(wc <= U'\x1FE1' && wc >= U'\x1E01')) {
+      !(wc <= U'\x1FE1' && wc >= U'\x1E01'))
+  {
     return wc;
   }
 
@@ -541,7 +532,8 @@ char32_t BLI_str_utf32_char_to_lower(const char32_t wc)
 
   /* There are only three remaining ranges that contain capitalization. */
   if (!(wc <= U'\x0216' && wc >= U'\x00D8') && !(wc <= U'\x04F8' && wc >= U'\x0386') &&
-      !(wc <= U'\x1FE9' && wc >= U'\x1E00')) {
+      !(wc <= U'\x1FE9' && wc >= U'\x1E00'))
+  {
     return wc;
   }
 
@@ -794,42 +786,41 @@ size_t BLI_str_utf8_from_unicode_len(const uint c)
   return len;
 }
 
-size_t BLI_str_utf8_from_unicode(uint c, char *outbuf, const size_t outbuf_len)
+size_t BLI_str_utf8_from_unicode(uint c, char *dst, const size_t dst_maxncpy)
 
 {
+  BLI_string_debug_size(dst, dst_maxncpy);
+
   /* If this gets modified, also update the copy in g_string_insert_unichar() */
   uint len = 0;
   uint first;
 
   UTF8_VARS_FROM_CHAR32(c, first, len);
 
-  if (UNLIKELY(outbuf_len < len)) {
+  if (UNLIKELY(dst_maxncpy < len)) {
     /* NULL terminate instead of writing a partial byte. */
-    memset(outbuf, 0x0, outbuf_len);
-    return outbuf_len;
+    memset(dst, 0x0, dst_maxncpy);
+    return dst_maxncpy;
   }
 
   for (uint i = len - 1; i > 0; i--) {
-    outbuf[i] = (c & 0x3f) | 0x80;
+    dst[i] = (c & 0x3f) | 0x80;
     c >>= 6;
   }
-  outbuf[0] = c | first;
+  dst[0] = c | first;
 
   return len;
 }
 
 size_t BLI_str_utf8_as_utf32(char32_t *__restrict dst_w,
                              const char *__restrict src_c,
-                             const size_t maxncpy)
+                             const size_t dst_w_maxncpy)
 {
-  const size_t maxlen = maxncpy - 1;
+  BLI_assert(dst_w_maxncpy != 0);
+  BLI_string_debug_size(dst_w, dst_w_maxncpy);
+
+  const size_t maxlen = dst_w_maxncpy - 1;
   size_t len = 0;
-
-  BLI_assert(maxncpy != 0);
-
-#ifdef DEBUG_STRSIZE
-  memset(dst_w, 0xff, sizeof(*dst_w) * maxncpy);
-#endif
 
   const size_t src_c_len = strlen(src_c);
   const char *src_c_end = src_c + src_c_len;
@@ -855,15 +846,14 @@ size_t BLI_str_utf8_as_utf32(char32_t *__restrict dst_w,
 
 size_t BLI_str_utf32_as_utf8(char *__restrict dst,
                              const char32_t *__restrict src,
-                             const size_t maxncpy)
+                             const size_t dst_maxncpy)
 {
-  BLI_assert(maxncpy != 0);
+  BLI_assert(dst_maxncpy != 0);
+  BLI_string_debug_size(dst, dst_maxncpy);
+
   size_t len = 0;
-#ifdef DEBUG_STRSIZE
-  memset(dst, 0xff, sizeof(*dst) * maxncpy);
-#endif
-  while (*src && len < maxncpy) {
-    len += BLI_str_utf8_from_unicode((uint)*src++, dst + len, maxncpy - len);
+  while (*src && len < dst_maxncpy) {
+    len += BLI_str_utf8_from_unicode((uint)*src++, dst + len, dst_maxncpy - len);
   }
   dst[len] = '\0';
   /* Return the correct length when part of the final byte did not fit into the string. */
@@ -960,7 +950,8 @@ size_t BLI_str_partition_ex_utf8(const char *str,
   for (char *sep = (char *)(from_right ? BLI_str_find_prev_char_utf8(end, str) : str);
        from_right ? (sep > str) : ((sep < end) && (*sep != '\0'));
        sep = (char *)(from_right ? (str != sep ? BLI_str_find_prev_char_utf8(sep, str) : NULL) :
-                                   str + index)) {
+                                   str + index))
+  {
     size_t index_ofs = 0;
     const uint c = BLI_str_utf8_as_unicode_step_or_error(sep, (size_t)(end - sep), &index_ofs);
     if (UNLIKELY(c == BLI_UTF8_ERR)) {

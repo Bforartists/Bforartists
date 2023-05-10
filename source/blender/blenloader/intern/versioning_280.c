@@ -428,10 +428,9 @@ static void do_version_layers_to_collections(Main *bmain, Scene *scene)
       if (base->lay & (1 << layer)) {
         /* Create collections when needed only. */
         if (collections[layer] == NULL) {
-          char name[MAX_NAME];
+          char name[MAX_ID_NAME - 2];
 
-          BLI_snprintf(
-              name, sizeof(collection_master->id.name), DATA_("Collection %d"), layer + 1);
+          SNPRINTF(name, DATA_("Collection %d"), layer + 1);
 
           Collection *collection = BKE_collection_add(bmain, collection_master, name);
           collection->id.lib = scene->id.lib;
@@ -569,7 +568,8 @@ static void do_version_collection_propagate_lib_to_children(Collection *collecti
 {
   if (ID_IS_LINKED(collection)) {
     for (CollectionChild *collection_child = collection->children.first; collection_child != NULL;
-         collection_child = collection_child->next) {
+         collection_child = collection_child->next)
+    {
       if (!ID_IS_LINKED(collection_child->collection)) {
         collection_child->collection->id.lib = collection->id.lib;
       }
@@ -695,8 +695,8 @@ static bool replace_bbone_scale_rnapath(char **p_old_path)
     return false;
   }
 
-  if (BLI_str_endswith(old_path, "bbone_scalein") ||
-      BLI_str_endswith(old_path, "bbone_scaleout")) {
+  if (BLI_str_endswith(old_path, "bbone_scalein") || BLI_str_endswith(old_path, "bbone_scaleout"))
+  {
     *p_old_path = BLI_strdupcat(old_path, "x");
 
     MEM_freeN(old_path);
@@ -979,7 +979,8 @@ static void do_version_curvemapping_walker(Main *bmain, void (*callback)(CurveMa
                CMP_NODE_TIME,
                CMP_NODE_HUECORRECT,
                TEX_NODE_CURVE_RGB,
-               TEX_NODE_CURVE_TIME)) {
+               TEX_NODE_CURVE_TIME))
+      {
         callback((CurveMapping *)node->storage);
       }
     }
@@ -1180,7 +1181,8 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
 
     /* Convert group layer visibility flags to hidden nested collection. */
     for (Collection *collection = bmain->collections.first; collection;
-         collection = collection->id.next) {
+         collection = collection->id.next)
+    {
       /* Add fake user for all existing groups. */
       id_fake_user_set(&collection->id);
 
@@ -1213,7 +1215,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
 
           if (*collection_hidden == NULL) {
             char name[MAX_ID_NAME];
-            BLI_snprintf(name, sizeof(name), DATA_("Hidden %d"), coll_idx + 1);
+            SNPRINTF(name, DATA_("Hidden %d"), coll_idx + 1);
             *collection_hidden = BKE_collection_add(bmain, collection, name);
             (*collection_hidden)->flag |= COLLECTION_HIDE_VIEWPORT | COLLECTION_HIDE_RENDER;
           }
@@ -1229,7 +1231,8 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
      * which is FORBIDDEN! NOTE: we need this to be recursive, since a child collection may be
      * sorted before its parent in bmain. */
     for (Collection *collection = bmain->collections.first; collection != NULL;
-         collection = collection->id.next) {
+         collection = collection->id.next)
+    {
       do_version_collection_propagate_lib_to_children(collection);
     }
 
@@ -1494,7 +1497,8 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
             /* If the settings in the Bone are not set, copy. */
             if (pchan->bone->bbone_prev_type == BBONE_HANDLE_AUTO &&
                 pchan->bone->bbone_next_type == BBONE_HANDLE_AUTO &&
-                pchan->bone->bbone_prev == NULL && pchan->bone->bbone_next == NULL) {
+                pchan->bone->bbone_prev == NULL && pchan->bone->bbone_next == NULL)
+            {
               pchan->bone->bbone_prev_type = (pchan->bboneflag & PCHAN_BBONE_CUSTOM_START_REL) ?
                                                  BBONE_HANDLE_RELATIVE :
                                                  BBONE_HANDLE_ABSOLUTE;
@@ -1799,7 +1803,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
       for (Mesh *me = bmain->meshes.first; me; me = me->id.next) {
         /* If we have UVs, so this file will have MTexPoly layers too! */
         if (CustomData_has_layer(&me->ldata, CD_MLOOPUV) ||
-            CustomData_has_layer(&me->ldata, CD_PROP_FLOAT2)) {
+            CustomData_has_layer(&me->ldata, CD_PROP_FLOAT2))
+        {
           CustomData_update_typemap(&me->pdata);
           CustomData_free_layers(&me->pdata, CD_MTEXPOLY, me->totpoly);
         }
@@ -1849,27 +1854,30 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
       if (ntree->type == NTREE_SHADER) {
         LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
           if (node->type == 194 /* SH_NODE_EEVEE_METALLIC */ &&
-              STREQ(node->idname, "ShaderNodeOutputMetallic")) {
-            BLI_strncpy(node->idname, "ShaderNodeEeveeMetallic", sizeof(node->idname));
+              STREQ(node->idname, "ShaderNodeOutputMetallic"))
+          {
+            STRNCPY(node->idname, "ShaderNodeEeveeMetallic");
             error |= NTREE_DOVERSION_NEED_OUTPUT;
           }
 
           else if (node->type == SH_NODE_EEVEE_SPECULAR &&
                    STREQ(node->idname, "ShaderNodeOutputSpecular")) {
-            BLI_strncpy(node->idname, "ShaderNodeEeveeSpecular", sizeof(node->idname));
+            STRNCPY(node->idname, "ShaderNodeEeveeSpecular");
             error |= NTREE_DOVERSION_NEED_OUTPUT;
           }
 
           else if (node->type == 196 /* SH_NODE_OUTPUT_EEVEE_MATERIAL */ &&
-                   STREQ(node->idname, "ShaderNodeOutputEeveeMaterial")) {
+                   STREQ(node->idname, "ShaderNodeOutputEeveeMaterial"))
+          {
             node->type = SH_NODE_OUTPUT_MATERIAL;
-            BLI_strncpy(node->idname, "ShaderNodeOutputMaterial", sizeof(node->idname));
+            STRNCPY(node->idname, "ShaderNodeOutputMaterial");
           }
 
           else if (node->type == 194 /* SH_NODE_EEVEE_METALLIC */ &&
-                   STREQ(node->idname, "ShaderNodeEeveeMetallic")) {
+                   STREQ(node->idname, "ShaderNodeEeveeMetallic"))
+          {
             node->type = SH_NODE_BSDF_PRINCIPLED;
-            BLI_strncpy(node->idname, "ShaderNodeBsdfPrincipled", sizeof(node->idname));
+            STRNCPY(node->idname, "ShaderNodeBsdfPrincipled");
             node->custom1 = SHD_GLOSSY_MULTI_GGX;
             error |= NTREE_DOVERSION_TRANSPARENCY_EMISSION;
           }
@@ -1901,7 +1909,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     if (use_collection_compat_28 &&
         (DNA_struct_elem_find(fd->filesdna, "ViewLayer", "FreestyleConfig", "freestyle_config") ==
          false) &&
-        DNA_struct_elem_find(fd->filesdna, "Scene", "ListBase", "view_layers")) {
+        DNA_struct_elem_find(fd->filesdna, "Scene", "ListBase", "view_layers"))
+    {
       for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
         ViewLayer *view_layer;
         for (view_layer = scene->view_layers.first; view_layer; view_layer = view_layer->next) {
@@ -1931,8 +1940,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
 
       /* Grease pencil multi-frame falloff curve. */
-      if (!DNA_struct_elem_find(
-              fd->filesdna, "GP_Sculpt_Settings", "CurveMapping", "cur_falloff")) {
+      if (!DNA_struct_elem_find(fd->filesdna, "GP_Sculpt_Settings", "CurveMapping", "cur_falloff"))
+      {
         for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
           /* sculpt brushes */
           GP_Sculpt_Settings *gset = &scene->toolsettings->gp_sculpt;
@@ -2021,7 +2030,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
                         SO_LIBRARIES,
                         SO_SEQUENCE,
                         SO_DATA_API,
-                        SO_ID_ORPHANS)) {
+                        SO_ID_ORPHANS))
+              {
                 space_outliner->outlinevis = SO_VIEW_LAYER;
               }
             }
@@ -2075,7 +2085,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
      * as scene render engine. */
     if (MAIN_VERSION_ATLEAST(bmain, 280, 0)) {
       for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
-        BLI_strncpy(scene->r.engine, RE_engine_id_BLENDER_EEVEE, sizeof(scene->r.engine));
+        STRNCPY(scene->r.engine, RE_engine_id_BLENDER_EEVEE);
       }
     }
   }
@@ -2084,7 +2094,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     /* Blender Internal removal */
     for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
       if (STR_ELEM(scene->r.engine, "BLENDER_RENDER", "BLENDER_GAME")) {
-        BLI_strncpy(scene->r.engine, RE_engine_id_BLENDER_EEVEE, sizeof(scene->r.engine));
+        STRNCPY(scene->r.engine, RE_engine_id_BLENDER_EEVEE);
       }
 
       scene->r.bake_mode = 0;
@@ -2514,7 +2524,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
             LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
               if (sl->spacetype == SPACE_VIEW3D) {
                 View3D *v3d = (View3D *)sl;
-                BLI_strncpy(v3d->shading.matcap, default_matcap->name, FILE_MAXFILE);
+                STRNCPY(v3d->shading.matcap, default_matcap->name);
               }
             }
           }
@@ -2566,7 +2576,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
         if (ima->type == IMA_TYPE_R_RESULT) {
           for (int i = 0; i < 8; i++) {
             RenderSlot *slot = MEM_callocN(sizeof(RenderSlot), "Image Render Slot Init");
-            BLI_snprintf(slot->name, sizeof(slot->name), "Slot %d", i + 1);
+            SNPRINTF(slot->name, "Slot %d", i + 1);
             BLI_addtail(&ima->renderslots, slot);
           }
         }
@@ -2652,8 +2662,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
     }
 
-    if (!DNA_struct_elem_find(
-            fd->filesdna, "RigidBodyWorld", "RigidBodyWorld_Shared", "*shared")) {
+    if (!DNA_struct_elem_find(fd->filesdna, "RigidBodyWorld", "RigidBodyWorld_Shared", "*shared"))
+    {
       for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
         RigidBodyWorld *rbw = scene->rigidbody_world;
 
@@ -3350,8 +3360,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
 
     /* Grease pencil primitive curve */
-    if (!DNA_struct_elem_find(
-            fd->filesdna, "GP_Sculpt_Settings", "CurveMapping", "cur_primitive")) {
+    if (!DNA_struct_elem_find(fd->filesdna, "GP_Sculpt_Settings", "CurveMapping", "cur_primitive"))
+    {
       for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
         GP_Sculpt_Settings *gset = &scene->toolsettings->gp_sculpt;
         if ((gset) && (gset->cur_primitive == NULL)) {
@@ -3669,8 +3679,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
   if (!MAIN_VERSION_ATLEAST(bmain, 280, 49)) {
     /* All tool names changed, reset to defaults. */
-    for (WorkSpace *workspace = bmain->workspaces.first; workspace;
-         workspace = workspace->id.next) {
+    for (WorkSpace *workspace = bmain->workspaces.first; workspace; workspace = workspace->id.next)
+    {
       while (!BLI_listbase_is_empty(&workspace->tools)) {
         BKE_workspace_tool_remove(workspace, workspace->tools.first);
       }
@@ -3869,7 +3879,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
           ARegion *region = NULL;
           if (ELEM(sl->spacetype, SPACE_VIEW3D, SPACE_IMAGE, SPACE_SEQ) &&
               ((region = do_versions_find_region_or_null(regionbase, RGN_TYPE_TOOL_HEADER)) ==
-               NULL)) {
+               NULL))
+          {
             /* Add tool header. */
             region = do_versions_add_region(RGN_TYPE_TOOL_HEADER, "tool header");
             region->alignment = (U.uiflag & USER_HEADER_BOTTOM) ? RGN_ALIGN_BOTTOM : RGN_ALIGN_TOP;
@@ -3906,8 +3917,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
     }
 
-    if (!DNA_struct_elem_find(
-            fd->filesdna, "View3DOverlay", "float", "sculpt_mode_mask_opacity")) {
+    if (!DNA_struct_elem_find(fd->filesdna, "View3DOverlay", "float", "sculpt_mode_mask_opacity"))
+    {
       for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
         LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
           LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
@@ -4284,8 +4295,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
     }
 
-    if (!DNA_struct_elem_find(
-            fd->filesdna, "LayerCollection", "short", "local_collections_bits")) {
+    if (!DNA_struct_elem_find(fd->filesdna, "LayerCollection", "short", "local_collections_bits"))
+    {
       LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
         LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
           LISTBASE_FOREACH (LayerCollection *, layer_collection, &view_layer->layer_collections) {
@@ -4716,8 +4727,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
             case eGpencilModifierType_Array: {
               ArrayGpencilModifierData *mmd = (ArrayGpencilModifierData *)md;
               mmd->seed = 1;
-              if ((mmd->offset[0] != 0.0f) || (mmd->offset[1] != 0.0f) ||
-                  (mmd->offset[2] != 0.0f)) {
+              if ((mmd->offset[0] != 0.0f) || (mmd->offset[1] != 0.0f) || (mmd->offset[2] != 0.0f))
+              {
                 mmd->flag |= GP_ARRAY_USE_OFFSET;
               }
               if ((mmd->shift[0] != 0.0f) || (mmd->shift[1] != 0.0f) || (mmd->shift[2] != 0.0f)) {
@@ -4879,7 +4890,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
     /* Boundary Edges Auto-masking. */
     if (!DNA_struct_elem_find(
-            fd->filesdna, "Brush", "int", "automasking_boundary_edges_propagation_steps")) {
+            fd->filesdna, "Brush", "int", "automasking_boundary_edges_propagation_steps"))
+    {
       for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
         br->automasking_boundary_edges_propagation_steps = 1;
       }

@@ -100,7 +100,7 @@ bFaceMap *BKE_object_facemap_add_name(Object *ob, const char *name)
 
   fmap = MEM_callocN(sizeof(bFaceMap), __func__);
 
-  BLI_strncpy(fmap->name, name, sizeof(fmap->name));
+  STRNCPY(fmap->name, name);
 
   BLI_addtail(&ob->fmaps, fmap);
 
@@ -150,8 +150,8 @@ static void object_fmap_remove_edit_mode(Object *ob, bFaceMap *fmap, bool do_sel
           BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
             map = BM_ELEM_CD_GET_VOID_P(efa, cd_fmap_offset);
 
-            if (map && *map == fmap_nr &&
-                (!do_selected || BM_elem_flag_test(efa, BM_ELEM_SELECT))) {
+            if (map && *map == fmap_nr && (!do_selected || BM_elem_flag_test(efa, BM_ELEM_SELECT)))
+            {
               *map = -1;
             }
           }

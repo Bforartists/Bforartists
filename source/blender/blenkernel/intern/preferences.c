@@ -24,6 +24,7 @@
 
 #include "BLT_translation.h"
 
+#include "DNA_defaults.h"
 #include "DNA_userdef_types.h"
 
 #define U BLI_STATIC_ASSERT(false, "Global 'U' not allowed, only use arguments passed in!")
@@ -37,6 +38,7 @@ bUserAssetLibrary *BKE_preferences_asset_library_add(UserDef *userdef,
                                                      const char *path)
 {
   bUserAssetLibrary *library = MEM_callocN(sizeof(*library), "bUserAssetLibrary");
+  memcpy(library, DNA_struct_default_get(bUserAssetLibrary), sizeof(*library));
 
   BLI_addtail(&userdef->asset_libraries, library);
 
@@ -44,9 +46,8 @@ bUserAssetLibrary *BKE_preferences_asset_library_add(UserDef *userdef,
     BKE_preferences_asset_library_name_set(userdef, library, name);
   }
   if (path) {
-    BLI_strncpy(library->path, path, sizeof(library->path));
+    STRNCPY(library->path, path);
   }
-  library->import_method = ASSET_IMPORT_APPEND_REUSE;
 
   return library;
 }
@@ -60,7 +61,7 @@ void BKE_preferences_asset_library_name_set(UserDef *userdef,
                                             bUserAssetLibrary *library,
                                             const char *name)
 {
-  BLI_strncpy_utf8(library->name, name, sizeof(library->name));
+  STRNCPY_UTF8(library->name, name);
   BLI_uniquename(&userdef->asset_libraries,
                  library,
                  name,
@@ -71,7 +72,7 @@ void BKE_preferences_asset_library_name_set(UserDef *userdef,
 
 void BKE_preferences_asset_library_path_set(bUserAssetLibrary *library, const char *path)
 {
-  BLI_strncpy(library->path, path, sizeof(library->path));
+  STRNCPY(library->path, path);
   if (BLI_is_file(library->path)) {
     BLI_path_parent_dir(library->path);
   }

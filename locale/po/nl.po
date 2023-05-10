@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.6.0 Alpha (b'bca2090724a3')\n"
+"Project-Id-Version: Blender 3.6.0 Alpha (b'ae1c52b3f2e0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-11 10:34:35\n"
+"POT-Creation-Date: 2023-05-08 10:27:51\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -412,10 +412,6 @@ msgstr "Krommes"
 
 msgid "Filename"
 msgstr "Bestandsnaam"
-
-
-msgid "Grease Pencil"
-msgstr "Vetkrijt"
 
 
 msgid "Images"
@@ -1385,6 +1381,10 @@ msgstr "2D"
 
 msgid "Fonts"
 msgstr "Lettertypen"
+
+
+msgid "Grease Pencil"
+msgstr "Vetkrijt"
 
 
 msgid "Particles Settings"
@@ -3954,6 +3954,10 @@ msgid "Execute File Window"
 msgstr "Voer Bestand Scherm Uit"
 
 
+msgid "Play"
+msgstr "Afspelen"
+
+
 msgctxt "Operator"
 msgid "Increment Number in Filename"
 msgstr "Verhoog Nummer in Bestandsnaam"
@@ -3976,11 +3980,6 @@ msgstr "Markeer Bestand"
 msgctxt "Operator"
 msgid "Next Folder"
 msgstr "Volgende Map"
-
-
-msgctxt "Operator"
-msgid "Parent File"
-msgstr "Ouder Bestand"
 
 
 msgctxt "Operator"
@@ -6050,10 +6049,6 @@ msgid "Export UV Layout"
 msgstr "Exporteer UV Indeling"
 
 
-msgid "New Image"
-msgstr "Nieuwe Afbeelding"
-
-
 msgid "Selected Faces"
 msgstr "Geselecteerde Vlakken"
 
@@ -6206,10 +6201,6 @@ msgstr "Tijd Min"
 
 msgid "Search Path"
 msgstr "Zoek Pad"
-
-
-msgid "Play"
-msgstr "Afspelen"
 
 
 msgid "Export grease pencil to PDF"
@@ -7709,10 +7700,6 @@ msgstr "Keer Om"
 msgctxt "Operator"
 msgid "Copy All Materials to Selected"
 msgstr "Kopieer Alle Materialen naar Geselecteerde"
-
-
-msgid "Old"
-msgstr "Oud"
 
 
 msgid "Date"
@@ -9507,10 +9494,6 @@ msgid "Now"
 msgstr "Nu"
 
 
-msgid " (Vector)"
-msgstr " (Punt)"
-
-
 msgctxt "Action"
 msgid "Group"
 msgstr "Groep"
@@ -9601,6 +9584,10 @@ msgstr "Pad:"
 
 msgid "Speed:"
 msgstr "Snelheid:"
+
+
+msgid "Old"
+msgstr "Oud"
 
 
 msgid "Random Roughness"

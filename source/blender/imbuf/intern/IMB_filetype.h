@@ -184,7 +184,7 @@ struct ImBuf *imb_load_cineon(const unsigned char *mem,
  * \{ */
 
 bool imb_is_a_dpx(const unsigned char *buf, size_t size);
-bool imb_save_dpx(struct ImBuf *buf, const char *filepath, int flags);
+bool imb_save_dpx(struct ImBuf *ibuf, const char *filepath, int flags);
 struct ImBuf *imb_load_dpx(const unsigned char *mem,
                            size_t size,
                            int flags,
@@ -256,7 +256,7 @@ struct ImBuf *imb_load_filepath_thumbnail_webp(const char *filepath,
                                                char colorspace[],
                                                size_t *r_width,
                                                size_t *r_height);
-bool imb_savewebp(struct ImBuf *ibuf, const char *name, int flags);
+bool imb_savewebp(struct ImBuf *ibuf, const char *filepath, int flags);
 
 /** \} */
 

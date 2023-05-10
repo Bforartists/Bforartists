@@ -108,6 +108,7 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
    */
   {
     /* Keep this block, even when empty. */
+    FROM_DEFAULT_V4_UCHAR(space_node.node_zone_simulation);
   }
 
 #undef FROM_DEFAULT_V4_UCHAR
@@ -810,6 +811,12 @@ void blo_do_versions_userdef(UserDef *userdef)
       STRNCPY(script_dir->dir_path, userdef->pythondir_legacy);
       STRNCPY(script_dir->name, DATA_("Untitled"));
       BLI_addhead(&userdef->script_directories, script_dir);
+    }
+  }
+
+  if (!USER_VERSION_ATLEAST(306, 6)) {
+    LISTBASE_FOREACH (bUserAssetLibrary *, asset_library, &userdef->asset_libraries) {
+      asset_library->flag |= ASSET_LIBRARY_RELATIVE_PATH;
     }
   }
 

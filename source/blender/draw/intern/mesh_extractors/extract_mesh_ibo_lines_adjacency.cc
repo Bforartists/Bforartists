@@ -115,11 +115,12 @@ static void extract_lines_adjacency_iter_looptri_bm(const MeshRenderData * /*mr*
 
 static void extract_lines_adjacency_iter_looptri_mesh(const MeshRenderData *mr,
                                                       const MLoopTri *mlt,
-                                                      const int /*elt_index*/,
+                                                      const int elt_index,
                                                       void *_data)
 {
   MeshExtract_LineAdjacency_Data *data = static_cast<MeshExtract_LineAdjacency_Data *>(_data);
-  const bool hidden = mr->use_hide && mr->hide_poly && mr->hide_poly[mlt->poly];
+  const int poly_i = mr->looptri_polys[elt_index];
+  const bool hidden = mr->use_hide && mr->hide_poly && mr->hide_poly[poly_i];
   if (hidden) {
     return;
   }
@@ -142,7 +143,7 @@ static void extract_lines_adjacency_finish(const MeshRenderData * /*mr*/,
   /* Create edges for remaining non manifold edges. */
   EdgeHashIterator *ehi = BLI_edgehashIterator_new(data->eh);
   for (; !BLI_edgehashIterator_isDone(ehi); BLI_edgehashIterator_step(ehi)) {
-    uint v2, v3, l1, l2, l3;
+    int v2, v3, l1, l2, l3;
     int v_data = POINTER_AS_INT(BLI_edgehashIterator_getValue(ehi));
     if (v_data != NO_EDGE) {
       BLI_edgehashIterator_getKey(ehi, &v2, &v3);

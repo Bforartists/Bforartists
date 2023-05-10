@@ -281,7 +281,10 @@ static void um_arraystore_cd_compact(CustomData *cdata,
            * solution might be to not pass "dynamic" layers (see `layer_type_is_dynamic`) to the
            * array store at all. */
           BLI_assert(layer->sharing_info->is_mutable());
-          MEM_delete(layer->sharing_info);
+          /* Intentionally don't call #MEM_delete, because we want to free the sharing info without
+           * the data here. In general this would not be allowed because one can't be sure how to
+           * free the data without the sharing info. */
+          MEM_freeN(const_cast<blender::ImplicitSharingInfo *>(layer->sharing_info));
         }
         MEM_freeN(layer->data);
         layer->data = nullptr;
@@ -683,8 +686,9 @@ static UndoMesh **mesh_undostep_reference_elems_from_objects(Object **object, in
   UndoMesh *um_iter = static_cast<UndoMesh *>(um_arraystore.local_links.last);
   while (um_iter && (uuid_map_len != 0)) {
     UndoMesh **um_p;
-    if ((um_p = static_cast<UndoMesh **>(BLI_ghash_popkey(
-             uuid_map, POINTER_FROM_INT(um_iter->me.id.session_uuid), nullptr)))) {
+    if ((um_p = static_cast<UndoMesh **>(
+             BLI_ghash_popkey(uuid_map, POINTER_FROM_INT(um_iter->me.id.session_uuid), nullptr))))
+    {
       *um_p = um_iter;
       uuid_map_len--;
     }

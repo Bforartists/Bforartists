@@ -54,6 +54,8 @@
 #include "BKE_pointcloud.h"
 #include "BKE_screen.h"
 #include "BKE_simulation.h"
+#include "BKE_simulation_state.hh"
+#include "BKE_simulation_state_serialize.hh"
 #include "BKE_workspace.h"
 
 #include "BLO_read_write.h"
@@ -73,9 +75,9 @@
 #include "DEG_depsgraph_build.h"
 #include "DEG_depsgraph_query.h"
 
-#include "MOD_modifiertypes.h"
+#include "MOD_modifiertypes.hh"
 #include "MOD_nodes.h"
-#include "MOD_ui_common.h"
+#include "MOD_ui_common.hh"
 
 #include "ED_object.h"
 #include "ED_screen.h"
@@ -118,8 +120,8 @@ static void add_used_ids_from_sockets(const ListBase &sockets, Set<ID *> &ids)
         break;
       }
       case SOCK_COLLECTION: {
-        if (Collection *collection =
-                ((bNodeSocketValueCollection *)socket->default_value)->value) {
+        if (Collection *collection = ((bNodeSocketValueCollection *)socket->default_value)->value)
+        {
           ids.add(&collection->id);
         }
         break;
@@ -302,6 +304,9 @@ static bool check_tree_for_time_node(const bNodeTree &tree, Set<const bNodeTree 
   }
   tree.ensure_topology_cache();
   if (!tree.nodes_by_type("GeometryNodeInputSceneTime").is_empty()) {
+    return true;
+  }
+  if (!tree.nodes_by_type("GeometryNodeSimulationInput").is_empty()) {
     return true;
   }
   for (const bNode *node : tree.group_nodes()) {
@@ -671,7 +676,7 @@ static void update_input_properties_from_node_tree(const bNodeTree &tree,
 
       if (old_properties == nullptr) {
         if (socket.default_attribute_name && socket.default_attribute_name[0] != '\0') {
-          IDP_AssignString(attribute_prop, socket.default_attribute_name, MAX_NAME);
+          IDP_AssignStringMaxSize(attribute_prop, socket.default_attribute_name, MAX_NAME);
           IDP_Int(use_attribute_prop) = 1;
         }
       }
@@ -705,7 +710,7 @@ static void update_output_properties_from_node_tree(const bNodeTree &tree,
     }
 
     const std::string idprop_name = socket.identifier + attribute_name_suffix;
-    IDProperty *new_prop = IDP_NewString("", idprop_name.c_str(), MAX_NAME);
+    IDProperty *new_prop = IDP_NewString("", idprop_name.c_str());
     if (socket.description[0] != '\0') {
       IDPropertyUIData *ui_data = IDP_ui_data_ensure(new_prop);
       ui_data->description = BLI_strdup(socket.description);
@@ -714,7 +719,7 @@ static void update_output_properties_from_node_tree(const bNodeTree &tree,
 
     if (old_properties == nullptr) {
       if (socket.default_attribute_name && socket.default_attribute_name[0] != '\0') {
-        IDP_AssignString(new_prop, socket.default_attribute_name, MAX_NAME);
+        IDP_AssignStringMaxSize(new_prop, socket.default_attribute_name, MAX_NAME);
       }
     }
     else {
@@ -824,7 +829,8 @@ static void initialize_group_input(const bNodeTree &tree,
 static const lf::FunctionNode *find_viewer_lf_node(const bNode &viewer_bnode)
 {
   if (const nodes::GeometryNodesLazyFunctionGraphInfo *lf_graph_info =
-          nodes::ensure_geometry_nodes_lazy_function_graph(viewer_bnode.owner_tree())) {
+          nodes::ensure_geometry_nodes_lazy_function_graph(viewer_bnode.owner_tree()))
+  {
     return lf_graph_info->mapping.viewer_node_map.lookup_default(&viewer_bnode, nullptr);
   }
   return nullptr;
@@ -832,7 +838,8 @@ static const lf::FunctionNode *find_viewer_lf_node(const bNode &viewer_bnode)
 static const lf::FunctionNode *find_group_lf_node(const bNode &group_bnode)
 {
   if (const nodes::GeometryNodesLazyFunctionGraphInfo *lf_graph_info =
-          nodes::ensure_geometry_nodes_lazy_function_graph(group_bnode.owner_tree())) {
+          nodes::ensure_geometry_nodes_lazy_function_graph(group_bnode.owner_tree()))
+  {
     return lf_graph_info->mapping.group_node_map.lookup_default(&group_bnode, nullptr);
   }
   return nullptr;
@@ -947,7 +954,8 @@ static void find_socket_log_contexts(const NodesModifierData &nmd,
         const SpaceNode &snode = *reinterpret_cast<const SpaceNode *>(sl);
         if (const std::optional<ComputeContextHash> hash =
                 geo_log::GeoModifierLog::get_compute_context_hash_for_node_editor(
-                    snode, nmd.modifier.name)) {
+                    snode, nmd.modifier.name))
+        {
           r_socket_log_contexts.add(*hash);
         }
       }
@@ -1032,7 +1040,8 @@ static Vector<OutputAttributeToStore> compute_attributes_to_store(
   for (const GeometryComponentType component_type : {GEO_COMPONENT_TYPE_MESH,
                                                      GEO_COMPONENT_TYPE_POINT_CLOUD,
                                                      GEO_COMPONENT_TYPE_CURVE,
-                                                     GEO_COMPONENT_TYPE_INSTANCES}) {
+                                                     GEO_COMPONENT_TYPE_INSTANCES})
+  {
     if (!geometry.has(component_type)) {
       continue;
     }
@@ -1080,16 +1089,16 @@ static void store_computed_output_attributes(
     /* Attempt to remove the attribute if it already exists but the domain and type don't match.
      * Removing the attribute won't succeed if it is built in and non-removable. */
     if (meta_data.has_value() &&
-        (meta_data->domain != store.domain || meta_data->data_type != data_type)) {
+        (meta_data->domain != store.domain || meta_data->data_type != data_type))
+    {
       attributes.remove(store.name);
     }
 
     /* Try to create the attribute reusing the stored buffer. This will only succeed if the
      * attribute didn't exist before, or if it existed but was removed above. */
-    if (attributes.add(store.name,
-                       store.domain,
-                       bke::cpp_type_to_custom_data_type(store.data.type()),
-                       bke::AttributeInitMoveArray(store.data.data()))) {
+    if (attributes.add(
+            store.name, store.domain, data_type, bke::AttributeInitMoveArray(store.data.data())))
+    {
       continue;
     }
 
@@ -1121,6 +1130,103 @@ static void store_output_attributes(GeometrySet &geometry,
   store_computed_output_attributes(geometry, attributes_to_store);
 }
 
+static void prepare_simulation_states_for_evaluation(const NodesModifierData &nmd,
+                                                     NodesModifierData &nmd_orig,
+                                                     const ModifierEvalContext &ctx,
+                                                     nodes::GeoNodesModifierData &exec_data)
+{
+  const Main *bmain = DEG_get_bmain(ctx.depsgraph);
+  const SubFrame current_frame = DEG_get_ctime(ctx.depsgraph);
+  const Scene *scene = DEG_get_input_scene(ctx.depsgraph);
+  const SubFrame start_frame = scene->r.sfra;
+  const bool is_start_frame = current_frame == start_frame;
+
+  if (DEG_is_active(ctx.depsgraph)) {
+    if (nmd_orig.simulation_cache == nullptr) {
+      nmd_orig.simulation_cache = MEM_new<bke::sim::ModifierSimulationCache>(__func__);
+    }
+
+    {
+      /* Try to use baked data. */
+      const StringRefNull bmain_path = BKE_main_blendfile_path(bmain);
+      if (nmd_orig.simulation_cache->cache_state() != bke::sim::CacheState::Baked &&
+          !bmain_path.is_empty())
+      {
+        nmd_orig.simulation_cache->try_discover_bake(
+            bke::sim::get_meta_directory(*bmain, *ctx.object, nmd.modifier),
+            bke::sim::get_bdata_directory(*bmain, *ctx.object, nmd.modifier));
+      }
+    }
+
+    {
+      /* Reset cached data if necessary. */
+      const bke::sim::StatesAroundFrame sim_states =
+          nmd_orig.simulation_cache->get_states_around_frame(current_frame);
+      if (nmd_orig.simulation_cache->cache_state() == bke::sim::CacheState::Invalid &&
+          (current_frame == start_frame ||
+           (sim_states.current == nullptr && sim_states.prev == nullptr &&
+            sim_states.next != nullptr)))
+      {
+        nmd_orig.simulation_cache->reset();
+      }
+    }
+    /* Decide if a new simulation state should be created in this evaluation. */
+    const bke::sim::StatesAroundFrame sim_states =
+        nmd_orig.simulation_cache->get_states_around_frame(current_frame);
+    if (nmd_orig.simulation_cache->cache_state() != bke::sim::CacheState::Baked) {
+      if (sim_states.current == nullptr) {
+        if (is_start_frame || !nmd_orig.simulation_cache->has_states()) {
+          bke::sim::ModifierSimulationState &current_sim_state =
+              nmd_orig.simulation_cache->get_state_at_frame_for_write(current_frame);
+          exec_data.current_simulation_state_for_write = &current_sim_state;
+          exec_data.simulation_time_delta = 0.0f;
+          if (!is_start_frame) {
+            /* When starting a new simulation at another frame than the start frame, it can't match
+             * what would be baked, so invalidate it immediately. */
+            nmd_orig.simulation_cache->invalidate();
+          }
+        }
+        else if (sim_states.prev != nullptr && sim_states.next == nullptr) {
+          const float max_delta_frames = 1.0f;
+          const float scene_delta_frames = float(current_frame) - float(sim_states.prev->frame);
+          const float delta_frames = std::min(max_delta_frames, scene_delta_frames);
+          if (delta_frames != scene_delta_frames) {
+            nmd_orig.simulation_cache->invalidate();
+          }
+          bke::sim::ModifierSimulationState &current_sim_state =
+              nmd_orig.simulation_cache->get_state_at_frame_for_write(current_frame);
+          exec_data.current_simulation_state_for_write = &current_sim_state;
+          const float delta_seconds = delta_frames / FPS;
+          exec_data.simulation_time_delta = delta_seconds;
+        }
+      }
+    }
+  }
+
+  if (nmd_orig.simulation_cache == nullptr) {
+    return;
+  }
+
+  /* Load read-only states to give nodes access to cached data. */
+  const bke::sim::StatesAroundFrame sim_states =
+      nmd_orig.simulation_cache->get_states_around_frame(current_frame);
+  if (sim_states.current) {
+    sim_states.current->state.ensure_bake_loaded();
+    exec_data.current_simulation_state = &sim_states.current->state;
+  }
+  if (sim_states.prev) {
+    sim_states.prev->state.ensure_bake_loaded();
+    exec_data.prev_simulation_state = &sim_states.prev->state;
+    if (sim_states.next) {
+      sim_states.next->state.ensure_bake_loaded();
+      exec_data.next_simulation_state = &sim_states.next->state;
+      exec_data.simulation_state_mix_factor =
+          (float(current_frame) - float(sim_states.prev->frame)) /
+          (float(sim_states.next->frame) - float(sim_states.prev->frame));
+    }
+  }
+}
+
 /**
  * Evaluate a node group to compute the output geometry.
  */
@@ -1131,6 +1237,9 @@ static GeometrySet compute_geometry(const bNodeTree &btree,
                                     NodesModifierData *nmd,
                                     const ModifierEvalContext *ctx)
 {
+  NodesModifierData *nmd_orig = reinterpret_cast<NodesModifierData *>(
+      BKE_modifier_get_original(ctx->object, &nmd->modifier));
+
   const nodes::GeometryNodeLazyFunctionGraphMapping &mapping = lf_graph_info.mapping;
 
   Vector<const lf::OutputSocket *> graph_inputs = mapping.group_input_sockets;
@@ -1155,6 +1264,8 @@ static GeometrySet compute_geometry(const bNodeTree &btree,
   geo_nodes_modifier_data.depsgraph = ctx->depsgraph;
   geo_nodes_modifier_data.self_object = ctx->object;
   auto eval_log = std::make_unique<geo_log::GeoModifierLog>();
+
+  prepare_simulation_states_for_evaluation(*nmd, *nmd_orig, *ctx, geo_nodes_modifier_data);
 
   Set<ComputeContextHash> socket_log_contexts;
   if (logging_enabled(ctx)) {
@@ -1212,9 +1323,9 @@ static GeometrySet compute_geometry(const bNodeTree &btree,
     param_outputs[i] = {type, buffer};
   }
 
-  lf::Context lf_context;
-  lf_context.storage = graph_executor.init_storage(allocator);
-  lf_context.user_data = &user_data;
+  nodes::GeoNodesLFLocalUserData local_user_data(user_data);
+
+  lf::Context lf_context(graph_executor.init_storage(allocator), &user_data, &local_user_data);
   lf::BasicParams lf_params{graph_executor,
                             param_inputs,
                             param_outputs,
@@ -1236,8 +1347,6 @@ static GeometrySet compute_geometry(const bNodeTree &btree,
   }
 
   if (logging_enabled(ctx)) {
-    NodesModifierData *nmd_orig = reinterpret_cast<NodesModifierData *>(
-        BKE_modifier_get_original(ctx->object, &nmd->modifier));
     delete static_cast<geo_log::GeoModifierLog *>(nmd_orig->runtime_eval_log);
     nmd_orig->runtime_eval_log = eval_log.release();
   }
@@ -1494,7 +1603,7 @@ static void attribute_search_exec_fn(bContext *C, void *data_v, void *item_v)
   const std::string attribute_prop_name = data.socket_identifier + attribute_name_suffix;
   IDProperty &name_property = *IDP_GetPropertyFromGroup(nmd->settings.properties,
                                                         attribute_prop_name.c_str());
-  IDP_AssignString(&name_property, item.name.c_str(), 0);
+  IDP_AssignString(&name_property, item.name.c_str());
 
   ED_undo_push(C, "Assign Attribute Name");
 }
@@ -1645,7 +1754,7 @@ static void draw_property_for_socket(const bContext &C,
   BLI_str_escape(socket_id_esc, socket.identifier, sizeof(socket_id_esc));
 
   char rna_path[sizeof(socket_id_esc) + 4];
-  BLI_snprintf(rna_path, ARRAY_SIZE(rna_path), "[\"%s\"]", socket_id_esc);
+  SNPRINTF(rna_path, "[\"%s\"]", socket_id_esc);
 
   uiLayout *row = uiLayoutRow(layout, true);
   uiLayoutSetPropDecorate(row, true);
@@ -1925,6 +2034,7 @@ static void blendRead(BlendDataReader *reader, ModifierData *md)
     IDP_BlendDataRead(reader, &nmd->settings.properties);
   }
   nmd->runtime_eval_log = nullptr;
+  nmd->simulation_cache = nullptr;
 }
 
 static void copyData(const ModifierData *md, ModifierData *target, const int flag)
@@ -1935,6 +2045,7 @@ static void copyData(const ModifierData *md, ModifierData *target, const int fla
   BKE_modifier_copydata_generic(md, target, flag);
 
   tnmd->runtime_eval_log = nullptr;
+  tnmd->simulation_cache = nullptr;
 
   if (nmd->settings.properties != nullptr) {
     tnmd->settings.properties = IDP_CopyProperty_ex(nmd->settings.properties, flag);
@@ -1948,6 +2059,8 @@ static void freeData(ModifierData *md)
     IDP_FreeProperty_ex(nmd->settings.properties, false);
     nmd->settings.properties = nullptr;
   }
+
+  MEM_delete(nmd->simulation_cache);
 
   clear_runtime_data(nmd);
 }
