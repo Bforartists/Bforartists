@@ -366,6 +366,7 @@ class TEXT_MT_edit(Menu):
         layout.separator()
 
         layout.menu("TEXT_MT_edit_move_select")
+        layout.operator_menu_enum("text.move", "type")
 
         layout.separator()
 
