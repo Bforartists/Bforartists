@@ -477,7 +477,8 @@ static bool nla_channels_get_selected_extents(bAnimContext *ac, float *r_min, fl
 
     /* must be selected... */
     if (acf && acf->has_setting(ac, ale, ACHANNEL_SETTING_SELECT) &&
-        ANIM_channel_setting_get(ac, ale, ACHANNEL_SETTING_SELECT)) {
+        ANIM_channel_setting_get(ac, ale, ACHANNEL_SETTING_SELECT))
+    {
       /* update best estimate */
       *r_min = ymax - NLACHANNEL_HEIGHT(snla);
       *r_max = ymax;
@@ -1661,7 +1662,8 @@ static int nlaedit_swap_exec(bContext *C, wmOperator *op)
       NlaStrip *mstrip = (NlaStrip *)nlt->strips.first;
 
       if ((mstrip->flag & NLASTRIP_FLAG_TEMP_META) &&
-          (BLI_listbase_count_at_most(&mstrip->strips, 3) == 2)) {
+          (BLI_listbase_count_at_most(&mstrip->strips, 3) == 2))
+      {
         /* remove this temp meta, so that we can see the strips inside */
         BKE_nlastrips_clear_metas(&nlt->strips, 0, 1);
       }
@@ -1728,7 +1730,8 @@ static int nlaedit_swap_exec(bContext *C, wmOperator *op)
 
       /* check if the track has room for the strips to be swapped */
       if (BKE_nlastrips_has_space(&nlt->strips, nsa[0], nsa[1]) &&
-          BKE_nlastrips_has_space(&nlt->strips, nsb[0], nsb[1])) {
+          BKE_nlastrips_has_space(&nlt->strips, nsb[0], nsb[1]))
+      {
         /* set new extents for strips then */
         area->start = nsa[0];
         area->end = nsa[1];
@@ -1836,7 +1839,8 @@ static int nlaedit_move_up_exec(bContext *C, wmOperator *UNUSED(op))
     }
 
     if (BKE_nlatrack_is_nonlocal_in_liboverride(ale->id, nlt) ||
-        BKE_nlatrack_is_nonlocal_in_liboverride(ale->id, nltn)) {
+        BKE_nlatrack_is_nonlocal_in_liboverride(ale->id, nltn))
+    {
       /* No moving of strips in non-local tracks of override data. */
       continue;
     }
@@ -1928,7 +1932,8 @@ static int nlaedit_move_down_exec(bContext *C, wmOperator *UNUSED(op))
     }
 
     if (BKE_nlatrack_is_nonlocal_in_liboverride(ale->id, nlt) ||
-        BKE_nlatrack_is_nonlocal_in_liboverride(ale->id, nltp)) {
+        BKE_nlatrack_is_nonlocal_in_liboverride(ale->id, nltp))
+    {
       /* No moving of strips in non-local tracks of override data. */
       continue;
     }

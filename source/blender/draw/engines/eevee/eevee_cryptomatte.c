@@ -429,21 +429,21 @@ void EEVEE_cryptomatte_update_passes(RenderEngine *engine, Scene *scene, ViewLay
   const short num_passes = eevee_cryptomatte_passes_per_layer(view_layer);
   if ((view_layer->cryptomatte_flag & VIEW_LAYER_CRYPTOMATTE_OBJECT) != 0) {
     for (short pass = 0; pass < num_passes; pass++) {
-      BLI_snprintf_rlen(cryptomatte_pass_name, MAX_NAME, "CryptoObject%02d", pass);
+      SNPRINTF_RLEN(cryptomatte_pass_name, "CryptoObject%02d", pass);
       RE_engine_register_pass(
           engine, scene, view_layer, cryptomatte_pass_name, 4, "rgba", SOCK_RGBA);
     }
   }
   if ((view_layer->cryptomatte_flag & VIEW_LAYER_CRYPTOMATTE_MATERIAL) != 0) {
     for (short pass = 0; pass < num_passes; pass++) {
-      BLI_snprintf_rlen(cryptomatte_pass_name, MAX_NAME, "CryptoMaterial%02d", pass);
+      SNPRINTF_RLEN(cryptomatte_pass_name, "CryptoMaterial%02d", pass);
       RE_engine_register_pass(
           engine, scene, view_layer, cryptomatte_pass_name, 4, "rgba", SOCK_RGBA);
     }
   }
   if ((view_layer->cryptomatte_flag & VIEW_LAYER_CRYPTOMATTE_ASSET) != 0) {
     for (short pass = 0; pass < num_passes; pass++) {
-      BLI_snprintf_rlen(cryptomatte_pass_name, MAX_NAME, "CryptoAsset%02d", pass);
+      SNPRINTF_RLEN(cryptomatte_pass_name, "CryptoAsset%02d", pass);
       RE_engine_register_pass(
           engine, scene, view_layer, cryptomatte_pass_name, 4, "rgba", SOCK_RGBA);
     }
@@ -500,7 +500,8 @@ static void eevee_cryptomatte_postprocess_weights(EEVEE_Data *vedata)
   int accum_pixel_stride = eevee_cryptomatte_pixel_stride(view_layer);
 
   for (int pixel_index = 0; pixel_index < buffer_size;
-       pixel_index++, accum_pixel_index += accum_pixel_stride) {
+       pixel_index++, accum_pixel_index += accum_pixel_stride)
+  {
     float coverage = 1.0f;
     if (volumetric_transmittance_buffer != NULL) {
       coverage = (volumetric_transmittance_buffer[pixel_index * 4] +
@@ -579,7 +580,7 @@ static void eevee_cryptomatte_extract_render_passes(
   for (int pass = 0; pass < num_cryptomatte_passes; pass++) {
     /* Each pass holds 2 cryptomatte samples. */
     const int pass_offset = pass * 2;
-    BLI_snprintf_rlen(cryptomatte_pass_name, MAX_NAME, render_pass_name_format, pass);
+    SNPRINTF_RLEN(cryptomatte_pass_name, render_pass_name_format, pass);
     RenderPass *rp_object = RE_pass_find_by_name(rl, cryptomatte_pass_name, viewname);
     for (int y = 0; y < rect_height; y++) {
       for (int x = 0; x < rect_width; x++) {

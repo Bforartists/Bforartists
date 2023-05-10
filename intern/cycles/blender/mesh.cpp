@@ -319,10 +319,10 @@ static void fill_generic_attribute(BL::Mesh &b_mesh,
       }
       else {
         const int tris_num = b_mesh.loop_triangles.length();
-        const MLoopTri *looptris = static_cast<const MLoopTri *>(
-            b_mesh.loop_triangles[0].ptr.data);
+        const int *looptri_polys = static_cast<const int *>(
+            b_mesh.loop_triangle_polygons[0].ptr.data);
         for (int i = 0; i < tris_num; i++) {
-          data[i] = get_value_at_index(looptris[i].poly);
+          data[i] = get_value_at_index(looptri_polys[i]);
         }
       }
       break;
@@ -337,7 +337,8 @@ static void fill_generic_attribute(BL::Mesh &b_mesh,
 static void attr_create_motion(Mesh *mesh, BL::Attribute &b_attribute, const float motion_scale)
 {
   if (!(b_attribute.domain() == BL::Attribute::domain_POINT) &&
-      (b_attribute.data_type() == BL::Attribute::data_type_FLOAT_VECTOR)) {
+      (b_attribute.data_type() == BL::Attribute::data_type_FLOAT_VECTOR))
+  {
     return;
   }
 
@@ -384,7 +385,8 @@ static void attr_create_generic(Scene *scene,
     }
 
     if (!(mesh->need_attribute(scene, name) ||
-          (is_render_color && mesh->need_attribute(scene, ATTR_STD_VERTEX_COLOR)))) {
+          (is_render_color && mesh->need_attribute(scene, ATTR_STD_VERTEX_COLOR))))
+    {
       continue;
     }
     if (attributes.find(name)) {
@@ -741,13 +743,15 @@ static void attr_create_pointiness(Scene *scene, Mesh *mesh, BL::Mesh &b_mesh, b
     const float3 &vert_co = mesh->get_verts()[vert_index];
     bool found = false;
     for (int other_sorted_vert_index = sorted_vert_index + 1; other_sorted_vert_index < num_verts;
-         ++other_sorted_vert_index) {
+         ++other_sorted_vert_index)
+    {
       const int other_vert_index = sorted_vert_indeices[other_sorted_vert_index];
       const float3 &other_vert_co = mesh->get_verts()[other_vert_index];
       /* We are too far away now, we wouldn't have duplicate. */
       if ((other_vert_co.x + other_vert_co.y + other_vert_co.z) -
               (vert_co.x + vert_co.y + vert_co.z) >
-          3 * FLT_EPSILON) {
+          3 * FLT_EPSILON)
+      {
         break;
       }
       /* Found duplicate. */
@@ -1091,9 +1095,10 @@ static void create_mesh(Scene *scene,
     }
 
     if (material_indices) {
+      const int *looptri_polys = static_cast<const int *>(
+          b_mesh.loop_triangle_polygons[0].ptr.data);
       for (int i = 0; i < numtris; i++) {
-        const int poly_index = looptris[i].poly;
-        shader[i] = clamp_material_index(material_indices[poly_index]);
+        shader[i] = clamp_material_index(material_indices[looptri_polys[i]]);
       }
     }
     else {
@@ -1101,9 +1106,10 @@ static void create_mesh(Scene *scene,
     }
 
     if (sharp_faces && !(use_loop_normals && corner_normals)) {
+      const int *looptri_polys = static_cast<const int *>(
+          b_mesh.loop_triangle_polygons[0].ptr.data);
       for (int i = 0; i < numtris; i++) {
-        const int poly_index = looptris[i].poly;
-        smooth[i] = !sharp_faces[poly_index];
+        smooth[i] = !sharp_faces[looptri_polys[i]];
       }
     }
     else {
@@ -1325,7 +1331,8 @@ void BlenderSync::sync_mesh(BL::Depsgraph b_depsgraph, BObjectInfo &b_ob_info, M
   for (const SocketType &socket : new_mesh.type->inputs) {
     /* Those sockets are updated in sync_object, so do not modify them. */
     if (socket.name == "use_motion_blur" || socket.name == "motion_steps" ||
-        socket.name == "used_shaders") {
+        socket.name == "used_shaders")
+    {
       continue;
     }
     mesh->set_value(socket, new_mesh, socket);

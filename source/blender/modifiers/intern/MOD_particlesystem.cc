@@ -36,8 +36,8 @@
 
 #include "BLO_read_write.h"
 
-#include "MOD_ui_common.h"
-#include "MOD_util.h"
+#include "MOD_ui_common.hh"
+#include "MOD_util.hh"
 
 static void initData(ModifierData *md)
 {
@@ -201,7 +201,8 @@ static void deformVerts(ModifierData *md,
    * instance. */
   if (had_mesh_final && (psmd->mesh_final->totvert != psmd->totdmvert ||
                          psmd->mesh_final->totedge != psmd->totdmedge ||
-                         psmd->mesh_final->totface != psmd->totdmface)) {
+                         psmd->mesh_final->totface != psmd->totdmface))
+  {
     psys->recalc |= ID_RECALC_PSYS_RESET;
   }
   psmd->totdmvert = psmd->mesh_final->totvert;

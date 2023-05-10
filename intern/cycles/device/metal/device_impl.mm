@@ -51,11 +51,11 @@ void MetalDevice::set_error(const string &error)
 
   Device::set_error(error);
 
-  if (first_error) {
+  if (!has_error) {
     fprintf(stderr, "\nRefer to the Cycles GPU rendering documentation for possible solutions:\n");
     fprintf(stderr,
             "https://docs.blender.org/manual/en/latest/render/cycles/gpu_rendering.html\n\n");
-    first_error = false;
+    has_error = true;
   }
 }
 
@@ -1032,8 +1032,7 @@ void MetalDevice::const_copy_to(const char *name, void *host, size_t size)
         offsetof(KernelParamsMetal, integrator_state), host, size, pointer_block_size);
   }
 #  define KERNEL_DATA_ARRAY(data_type, tex_name) \
-    else if (strcmp(name, #tex_name) == 0) \
-    { \
+    else if (strcmp(name, #tex_name) == 0) { \
       update_launch_pointers(offsetof(KernelParamsMetal, tex_name), host, size, size); \
     }
 #  include "kernel/data_arrays.h"
@@ -1096,9 +1095,8 @@ void MetalDevice::tex_alloc(device_texture &mem)
   }
   MTLStorageMode storage_mode = MTLStorageModeManaged;
   if (@available(macos 10.15, *)) {
-    if ([mtlDevice hasUnifiedMemory] &&
-        device_vendor !=
-            METAL_GPU_INTEL) { /* Intel GPUs don't support MTLStorageModeShared for MTLTextures */
+    /* Intel GPUs don't support MTLStorageModeShared for MTLTextures. */
+    if ([mtlDevice hasUnifiedMemory] && device_vendor != METAL_GPU_INTEL) {
       storage_mode = MTLStorageModeShared;
     }
   }

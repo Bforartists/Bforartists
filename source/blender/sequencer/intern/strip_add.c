@@ -63,10 +63,10 @@ void SEQ_add_load_data_init(SeqLoadData *load_data,
 {
   memset(load_data, 0, sizeof(SeqLoadData));
   if (name != NULL) {
-    BLI_strncpy(load_data->name, name, sizeof(load_data->name));
+    STRNCPY(load_data->name, name);
   }
   if (path != NULL) {
-    BLI_strncpy(load_data->path, path, sizeof(load_data->path));
+    STRNCPY(load_data->path, path);
   }
   load_data->start_frame = start_frame;
   load_data->channel = channel;
@@ -189,29 +189,29 @@ Sequence *SEQ_add_effect_strip(Scene *scene, ListBase *seqbase, struct SeqLoadDa
 
 void SEQ_add_image_set_directory(Sequence *seq, char *path)
 {
-  BLI_strncpy(seq->strip->dir, path, sizeof(seq->strip->dir));
+  STRNCPY(seq->strip->dir, path);
 }
 
 void SEQ_add_image_load_file(Scene *scene, Sequence *seq, size_t strip_frame, char *filename)
 {
   StripElem *se = SEQ_render_give_stripelem(
       scene, seq, SEQ_time_start_frame_get(seq) + strip_frame);
-  BLI_strncpy(se->name, filename, sizeof(se->name));
+  STRNCPY(se->name, filename);
 }
 
 void SEQ_add_image_init_alpha_mode(Sequence *seq)
 {
   if (seq->strip && seq->strip->stripdata) {
-    char name[FILE_MAX];
+    char filepath[FILE_MAX];
     ImBuf *ibuf;
 
-    BLI_path_join(name, sizeof(name), seq->strip->dir, seq->strip->stripdata->name);
-    BLI_path_abs(name, BKE_main_blendfile_path_from_global());
+    BLI_path_join(filepath, sizeof(filepath), seq->strip->dir, seq->strip->stripdata->name);
+    BLI_path_abs(filepath, BKE_main_blendfile_path_from_global());
 
     /* Initialize input color space. */
     if (seq->type == SEQ_TYPE_IMAGE) {
       ibuf = IMB_loadiffname(
-          name, IB_test | IB_alphamode_detect, seq->strip->colorspace_settings.name);
+          filepath, IB_test | IB_alphamode_detect, seq->strip->colorspace_settings.name);
 
       /* Byte images are default to straight alpha, however sequencer
        * works in premul space, so mark strip to be premultiplied first.
@@ -251,7 +251,7 @@ Sequence *SEQ_add_image_strip(Main *bmain, Scene *scene, ListBase *seqbase, SeqL
 
   /* Set initial scale based on load_data->fit_method. */
   char file_path[FILE_MAX];
-  BLI_strncpy(file_path, load_data->path, sizeof(file_path));
+  STRNCPY(file_path, load_data->path);
   BLI_path_abs(file_path, BKE_main_blendfile_path(bmain));
   ImBuf *ibuf = IMB_loadiffname(file_path, IB_rect, seq->strip->colorspace_settings.name);
   if (ibuf != NULL) {
@@ -270,7 +270,7 @@ Sequence *SEQ_add_image_strip(Main *bmain, Scene *scene, ListBase *seqbase, SeqL
   }
 
   /* Set Last active directory. */
-  BLI_strncpy(scene->ed->act_imagedir, seq->strip->dir, sizeof(scene->ed->act_imagedir));
+  STRNCPY(scene->ed->act_imagedir, seq->strip->dir);
   seq_add_set_view_transform(scene, seq, load_data);
   seq_add_set_name(scene, seq, load_data);
   seq_add_generic_update(scene, seq);
@@ -325,7 +325,8 @@ Sequence *SEQ_add_sound_strip(Main *bmain, Scene *scene, ListBase *seqbase, SeqL
   Strip *strip = seq->strip;
   /* We only need 1 element to store the filename. */
   StripElem *se = strip->stripdata = MEM_callocN(sizeof(StripElem), "stripelem");
-  BLI_split_dirfile(load_data->path, strip->dir, se->name, sizeof(strip->dir), sizeof(se->name));
+  BLI_path_split_dir_file(
+      load_data->path, strip->dir, sizeof(strip->dir), se->name, sizeof(se->name));
 
   if (seq != NULL && seq->sound != NULL) {
     if (load_data->flags & SEQ_LOAD_SOUND_MONO) {
@@ -380,7 +381,7 @@ Sequence *SEQ_add_meta_strip(Scene *scene, ListBase *seqbase, SeqLoadData *load_
 Sequence *SEQ_add_movie_strip(Main *bmain, Scene *scene, ListBase *seqbase, SeqLoadData *load_data)
 {
   char path[sizeof(load_data->path)];
-  BLI_strncpy(path, load_data->path, sizeof(path));
+  STRNCPY(path, load_data->path);
   BLI_path_abs(path, BKE_main_blendfile_path(bmain));
 
   char colorspace[64] = "\0"; /* MAX_COLORSPACE_NAME */
@@ -490,9 +491,7 @@ Sequence *SEQ_add_movie_strip(Main *bmain, Scene *scene, ListBase *seqbase, SeqL
     seq->flag |= SEQ_AUTO_PLAYBACK_RATE;
   }
 
-  BLI_strncpy(seq->strip->colorspace_settings.name,
-              colorspace,
-              sizeof(seq->strip->colorspace_settings.name));
+  STRNCPY(seq->strip->colorspace_settings.name, colorspace);
 
   Strip *strip = seq->strip;
   /* We only need 1 element for MOVIE strips. */
@@ -501,7 +500,8 @@ Sequence *SEQ_add_movie_strip(Main *bmain, Scene *scene, ListBase *seqbase, SeqL
   strip->stripdata->orig_width = orig_width;
   strip->stripdata->orig_height = orig_height;
   strip->stripdata->orig_fps = video_fps;
-  BLI_split_dirfile(load_data->path, strip->dir, se->name, sizeof(strip->dir), sizeof(se->name));
+  BLI_path_split_dir_file(
+      load_data->path, strip->dir, sizeof(strip->dir), se->name, sizeof(se->name));
 
   seq_add_set_view_transform(scene, seq, load_data);
   seq_add_set_name(scene, seq, load_data);
@@ -524,7 +524,8 @@ void SEQ_add_reload_new_file(Main *bmain, Scene *scene, Sequence *seq, const boo
            SEQ_TYPE_SCENE,
            SEQ_TYPE_META,
            SEQ_TYPE_MOVIECLIP,
-           SEQ_TYPE_MASK) == 0) {
+           SEQ_TYPE_MASK) == 0)
+  {
     return;
   }
 

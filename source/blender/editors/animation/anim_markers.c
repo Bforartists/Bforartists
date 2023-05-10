@@ -119,7 +119,8 @@ int ED_markers_post_apply_transform(
         case TFM_TIME_EXTEND: {
           /* apply delta if marker is on the right side of the current frame */
           if ((side == 'B') || (side == 'L' && marker->frame < cfra) ||
-              (side == 'R' && marker->frame >= cfra)) {
+              (side == 'R' && marker->frame >= cfra))
+          {
             marker->frame += round_fl_to_int(value);
             changed_tot++;
           }
@@ -745,7 +746,7 @@ static int ed_marker_add_exec(bContext *C, wmOperator *UNUSED(op))
   marker = MEM_callocN(sizeof(TimeMarker), "TimeMarker");
   marker->flag = SELECT;
   marker->frame = frame;
-  BLI_snprintf(marker->name, sizeof(marker->name), "F_%02d", frame); /* XXX: temp code only. */
+  SNPRINTF(marker->name, "F_%02d", frame); /* XXX: temp code only. */
   BLI_addtail(markers, marker);
 
   WM_event_add_notifier(C, NC_SCENE | ND_MARKERS, NULL);
@@ -812,7 +813,8 @@ static bool ed_marker_move_use_time(MarkerMove *mm)
        (((SpaceAction *)mm->slink)->flag & SACTION_DRAWTIME)) ||
       ((mm->slink->spacetype == SPACE_GRAPH) &&
        (((SpaceGraph *)mm->slink)->flag & SIPO_DRAWTIME)) ||
-      ((mm->slink->spacetype == SPACE_NLA) && (((SpaceNla *)mm->slink)->flag & SNLA_DRAWTIME))) {
+      ((mm->slink->spacetype == SPACE_NLA) && (((SpaceNla *)mm->slink)->flag & SNLA_DRAWTIME)))
+  {
     return true;
   }
 
@@ -841,24 +843,23 @@ static void ed_marker_move_update_header(bContext *C, wmOperator *op)
     outputNumInput(&mm->num, str_ofs, &scene->unit);
   }
   else if (use_time) {
-    BLI_snprintf(str_ofs, sizeof(str_ofs), "%.2f", FRA2TIME(ofs));
+    SNPRINTF(str_ofs, "%.2f", FRA2TIME(ofs));
   }
   else {
-    BLI_snprintf(str_ofs, sizeof(str_ofs), "%d", ofs);
+    SNPRINTF(str_ofs, "%d", ofs);
   }
 
   if (totmark == 1 && selmarker) {
     /* we print current marker value */
     if (use_time) {
-      BLI_snprintf(
-          str, sizeof(str), TIP_("Marker %.2f offset %s"), FRA2TIME(selmarker->frame), str_ofs);
+      SNPRINTF(str, TIP_("Marker %.2f offset %s"), FRA2TIME(selmarker->frame), str_ofs);
     }
     else {
-      BLI_snprintf(str, sizeof(str), TIP_("Marker %d offset %s"), selmarker->frame, str_ofs);
+      SNPRINTF(str, TIP_("Marker %d offset %s"), selmarker->frame, str_ofs);
     }
   }
   else {
-    BLI_snprintf(str, sizeof(str), TIP_("Marker offset %s"), str_ofs);
+    SNPRINTF(str, TIP_("Marker offset %s"), str_ofs);
   }
 
   ED_area_status_text(CTX_wm_area(C), str);
@@ -1172,7 +1173,7 @@ static void ed_marker_duplicate_apply(bContext *C)
       newmarker = MEM_callocN(sizeof(TimeMarker), "TimeMarker");
       newmarker->flag = SELECT;
       newmarker->frame = marker->frame;
-      BLI_strncpy(newmarker->name, marker->name, sizeof(marker->name));
+      STRNCPY(newmarker->name, marker->name);
 
 #ifdef DURIAN_CAMERA_SWITCH
       newmarker->camera = marker->camera;
@@ -1579,7 +1580,8 @@ static void ED_markers_select_leftright(bAnimContext *ac,
 
   LISTBASE_FOREACH (TimeMarker *, marker, markers) {
     if ((mode == MARKERS_LRSEL_LEFT && marker->frame <= scene->r.cfra) ||
-        (mode == MARKERS_LRSEL_RIGHT && marker->frame >= scene->r.cfra)) {
+        (mode == MARKERS_LRSEL_RIGHT && marker->frame >= scene->r.cfra))
+    {
       marker->flag |= SELECT;
     }
   }

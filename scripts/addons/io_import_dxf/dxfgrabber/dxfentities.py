@@ -9,6 +9,8 @@ __author__ = "mozman <mozman@gmx.at>"
 
 import math
 
+from mathutils import Vector
+
 from . import const
 from .color import TrueColor
 from .styles import default_text_style
@@ -733,11 +735,6 @@ def deg2vec(deg):
     return math.cos(rad), math.sin(rad), 0.
 
 
-def normalized(vector):
-    x, y, z = vector
-    m = (x**2 + y**2 + z**2)**0.5
-    return x/m, y/m, z/m
-
 ##################################################
 # MTEXT inline codes
 # \L    Start underline
@@ -850,7 +847,7 @@ class MText(DXFEntity):
         self.raw_text = "".join(lines)
         if xdir is None:
             xdir = deg2vec(rotation)
-        self.xdirection = normalized(xdir)
+        self.xdirection = Vector(xdir).normalized()
         self.set_default_extrusion()
 
     def lines(self):
