@@ -488,7 +488,8 @@ static void nla_draw_strip(SpaceNla *snla,
 
   /* draw 'inside' of strip itself */
   if (solo && is_nlastrip_enabled(adt, nlt, strip) &&
-      !(strip->flag & NLASTRIP_FLAG_INVALID_LOCATION)) {
+      !(strip->flag & NLASTRIP_FLAG_INVALID_LOCATION))
+  {
     immUnbindProgram();
 
     /* strip is in normal track */
@@ -647,7 +648,7 @@ static void nla_draw_strip_text(AnimData *adt,
     str_len = BLI_snprintf_rlen(str, sizeof(str), "Temp-Meta");
   }
   else {
-    str_len = BLI_strncpy_rlen(str, strip->name, sizeof(str));
+    str_len = STRNCPY_RLEN(str, strip->name);
   }
 
   /* set text color - if colors (see above) are light, draw black text, otherwise draw white */
@@ -700,11 +701,11 @@ static void nla_draw_strip_frames_text(
    *   while also preserving some accuracy, since we do use floats
    */
   /* start frame */
-  numstr_len = BLI_snprintf_rlen(numstr, sizeof(numstr), "%.1f", strip->start);
+  numstr_len = SNPRINTF_RLEN(numstr, "%.1f", strip->start);
   UI_view2d_text_cache_add(v2d, strip->start - 1.0f, ymaxc + ytol, numstr, numstr_len, col);
 
   /* end frame */
-  numstr_len = BLI_snprintf_rlen(numstr, sizeof(numstr), "%.1f", strip->end);
+  numstr_len = SNPRINTF_RLEN(numstr, "%.1f", strip->end);
   UI_view2d_text_cache_add(v2d, strip->end, ymaxc + ytol, numstr, numstr_len, col);
 }
 
@@ -761,14 +762,16 @@ static ListBase get_visible_nla_strips(NlaTrack *nlt, View2D *v2d)
     NlaStrip *first_strip = nlt->strips.first;
     NlaStrip *last_strip = nlt->strips.last;
     if (first_strip && v2d->cur.xmax < first_strip->start &&
-        first_strip->extendmode == NLASTRIP_EXTEND_HOLD) {
+        first_strip->extendmode == NLASTRIP_EXTEND_HOLD)
+    {
       /* The view is to the left of all strips and the first strip has an
        * extendmode that should be drawn.
        */
       first = last = first_strip;
     }
     else if (last_strip && v2d->cur.xmin > last_strip->end &&
-             last_strip->extendmode != NLASTRIP_EXTEND_NOTHING) {
+             last_strip->extendmode != NLASTRIP_EXTEND_NOTHING)
+    {
       /* The view is to the right of all strips and the last strip has an
        * extendmode that should be drawn.
        */

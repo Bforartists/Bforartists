@@ -272,7 +272,7 @@ void UI_list_filter_and_sort_items(uiList *ui_list,
 
       if (do_order) {
         names[order_idx].org_idx = order_idx;
-        BLI_strncpy(names[order_idx++].name, name, MAX_IDPROP_NAME);
+        STRNCPY(names[order_idx++].name, name);
       }
 
       /* free name */
@@ -432,7 +432,8 @@ static void ui_template_list_collect_items(PointerRNA *list_ptr,
 
   RNA_PROP_BEGIN (list_ptr, itemptr, list_prop) {
     if (!dyn_data->items_filter_flags ||
-        ((dyn_data->items_filter_flags[i] & UILST_FLT_ITEM) ^ filter_exclude)) {
+        ((dyn_data->items_filter_flags[i] & UILST_FLT_ITEM) ^ filter_exclude))
+    {
       int new_order_idx;
       if (dyn_data->items_filter_neworder) {
         new_order_idx = dyn_data->items_filter_neworder[reorder_i++];
@@ -672,7 +673,7 @@ static uiList *ui_list_ensure(const bContext *C,
 
   if (!ui_list) {
     ui_list = static_cast<uiList *>(MEM_callocN(sizeof(uiList), "uiList"));
-    BLI_strncpy(ui_list->list_id, full_list_id, sizeof(ui_list->list_id));
+    STRNCPY(ui_list->list_id, full_list_id);
     BLI_addtail(&region->ui_lists, ui_list);
     ui_list->list_grip = -UI_LIST_AUTO_SIZE_THRESHOLD; /* Force auto size by default. */
     if (sort_reverse) {
@@ -838,7 +839,8 @@ static void ui_template_list_layout_draw(const bContext *C,
       row = uiLayoutRow(layout, true);
 
       if ((input_data->dataptr.data && input_data->prop) && (dyn_data->items_shown > 0) &&
-          (items->active_item_idx >= 0) && (items->active_item_idx < dyn_data->items_shown)) {
+          (items->active_item_idx >= 0) && (items->active_item_idx < dyn_data->items_shown))
+      {
         PointerRNA *itemptr = &items->item_vec[items->active_item_idx].item;
         const int org_i = items->item_vec[items->active_item_idx].org_idx;
 
@@ -863,7 +865,7 @@ static void ui_template_list_layout_draw(const bContext *C,
       }
 
       /* next/prev button */
-      BLI_snprintf(numstr, sizeof(numstr), "%d :", dyn_data->items_shown);
+      SNPRINTF(numstr, "%d :", dyn_data->items_shown);
       but = uiDefIconTextButR_prop(block,
                                    UI_BTYPE_NUM,
                                    0,
@@ -1229,7 +1231,8 @@ uiList *uiTemplateList_ex(uiLayout *layout,
                                       active_propname,
                                       item_dyntip_propname,
                                       &input_data,
-                                      &ui_list_type)) {
+                                      &ui_list_type))
+  {
     return nullptr;
   }
 

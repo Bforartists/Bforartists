@@ -750,8 +750,8 @@ void BKE_paint_curve_clamp_endpoint_add_index(PaintCurve *pc, const int add_inde
 
 void BKE_palette_color_remove(Palette *palette, PaletteColor *color)
 {
-  if (BLI_listbase_count_at_most(&palette->colors, palette->active_color) ==
-      palette->active_color) {
+  if (BLI_listbase_count_at_most(&palette->colors, palette->active_color) == palette->active_color)
+  {
     palette->active_color--;
   }
 
@@ -1259,12 +1259,12 @@ void BKE_paint_blend_read_lib(BlendLibReader *reader, Scene *sce, Paint *p)
   }
 }
 
-bool paint_is_face_hidden(const MLoopTri *lt, const bool *hide_poly)
+bool paint_is_face_hidden(const int *looptri_polys, const bool *hide_poly, const int tri_index)
 {
   if (!hide_poly) {
     return false;
   }
-  return hide_poly[lt->poly];
+  return hide_poly[looptri_polys[tri_index]];
 }
 
 bool paint_is_grid_face_hidden(const uint *grid_hidden, int gridsize, int x, int y)
@@ -1787,7 +1787,8 @@ static void sculpt_update_object(
        * that simply recompute vertex weights (which can even include Geometry Nodes). */
       if (me_eval_deform->totpoly == me_eval->totpoly &&
           me_eval_deform->totloop == me_eval->totloop &&
-          me_eval_deform->totvert == me_eval->totvert) {
+          me_eval_deform->totvert == me_eval->totvert)
+      {
         BKE_sculptsession_free_deformMats(ss);
 
         BLI_assert(me_eval_deform->totvert == me->totvert);
@@ -1929,7 +1930,8 @@ void BKE_sculpt_color_layer_create_if_needed(Object *object)
   char unique_name[MAX_CUSTOMDATA_LAYER_NAME];
   BKE_id_attribute_calc_unique_name(&orig_me->id, "Color", unique_name);
   if (!orig_me->attributes_for_write().add(
-          unique_name, ATTR_DOMAIN_POINT, CD_PROP_COLOR, AttributeInitDefaultValue())) {
+          unique_name, ATTR_DOMAIN_POINT, CD_PROP_COLOR, AttributeInitDefaultValue()))
+  {
     return;
   }
 
@@ -2426,7 +2428,7 @@ static bool sculpt_attribute_create(SculptSession *ss,
   out->params = *params;
   out->proptype = proptype;
   out->domain = domain;
-  BLI_strncpy_utf8(out->name, name, sizeof(out->name));
+  STRNCPY_UTF8(out->name, name);
 
   /* Force non-CustomData simple_array mode if not PBVH_FACES. */
   if (pbvhtype == PBVH_GRIDS || (pbvhtype == PBVH_BMESH && flat_array_for_bmesh)) {
@@ -2694,7 +2696,7 @@ SculptAttribute *BKE_sculpt_attribute_get(struct Object *ob,
       attr->layer = cdata->layers + index;
       attr->elem_size = CustomData_get_elem_size(attr->layer);
 
-      BLI_strncpy_utf8(attr->name, name, sizeof(attr->name));
+      STRNCPY_UTF8(attr->name, name);
       return attr;
     }
   }
@@ -2857,7 +2859,8 @@ bool BKE_sculpt_attribute_destroy(Object *ob, SculptAttribute *attr)
     SculptAttribute *attr2 = ss->temp_attributes + i;
 
     if (STREQ(attr2->name, attr->name) && attr2->domain == attr->domain &&
-        attr2->proptype == attr->proptype) {
+        attr2->proptype == attr->proptype)
+    {
 
       attr2->used = false;
     }

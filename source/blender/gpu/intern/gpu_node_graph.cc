@@ -231,7 +231,8 @@ static void gpu_node_input_socket(
     gpu_node_input_link(node, sock->link, sock->type);
   }
   else if ((material != nullptr) &&
-           (gpu_uniformbuffer_link(material, bnode, sock, index, SOCK_IN) != nullptr)) {
+           (gpu_uniformbuffer_link(material, bnode, sock, index, SOCK_IN) != nullptr))
+  {
     gpu_node_input_link(node, sock->link, sock->type);
   }
   else {
@@ -484,7 +485,8 @@ static GPUMaterialTexture *gpu_node_graph_add_texture(GPUNodeGraph *graph,
   GPUMaterialTexture *tex = static_cast<GPUMaterialTexture *>(graph->textures.first);
   for (; tex; tex = tex->next) {
     if (tex->ima == ima && tex->colorband == colorband && tex->sky == sky &&
-        tex->sampler_state == sampler_state) {
+        tex->sampler_state == sampler_state)
+    {
       break;
     }
     num_textures++;
@@ -501,10 +503,9 @@ static GPUMaterialTexture *gpu_node_graph_add_texture(GPUNodeGraph *graph,
     tex->colorband = colorband;
     tex->sky = sky;
     tex->sampler_state = sampler_state;
-    BLI_snprintf(tex->sampler_name, sizeof(tex->sampler_name), "samp%d", num_textures);
+    SNPRINTF(tex->sampler_name, "samp%d", num_textures);
     if (is_tiled) {
-      BLI_snprintf(
-          tex->tiled_mapping_name, sizeof(tex->tiled_mapping_name), "tsamp%d", num_textures);
+      SNPRINTF(tex->tiled_mapping_name, "tsamp%d", num_textures);
     }
     BLI_addtail(&graph->textures, tex);
   }
@@ -936,7 +937,8 @@ void gpu_node_graph_prune_unused(GPUNodeGraph *graph)
   }
 
   for (GPUNode *node = static_cast<GPUNode *>(graph->nodes.first), *next = nullptr; node;
-       node = next) {
+       node = next)
+  {
     next = node->next;
 
     if (node->tag == GPU_NODE_TAG_NONE) {
@@ -948,7 +950,8 @@ void gpu_node_graph_prune_unused(GPUNodeGraph *graph)
   for (GPUMaterialAttribute *attr = static_cast<GPUMaterialAttribute *>(graph->attributes.first),
                             *next = nullptr;
        attr;
-       attr = next) {
+       attr = next)
+  {
     next = attr->next;
     if (attr->users == 0) {
       BLI_freelinkN(&graph->attributes, attr);
@@ -958,7 +961,8 @@ void gpu_node_graph_prune_unused(GPUNodeGraph *graph)
   for (GPUMaterialTexture *tex = static_cast<GPUMaterialTexture *>(graph->textures.first),
                           *next = nullptr;
        tex;
-       tex = next) {
+       tex = next)
+  {
     next = tex->next;
     if (tex->users == 0) {
       BLI_freelinkN(&graph->textures, tex);

@@ -460,7 +460,7 @@ void rna_DriverVariable_name_set(PointerRNA *ptr, const char *value)
 {
   DriverVar *data = (DriverVar *)(ptr->data);
 
-  BLI_strncpy_utf8(data->name, value, 64);
+  STRNCPY_UTF8(data->name, value);
   driver_variable_name_validate(data);
   driver_variable_unique_name(data);
 }
@@ -845,6 +845,12 @@ static void rna_FModifier_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *
   }
 
   rna_tag_animation_update(bmain, id);
+}
+
+static void rna_fModifier_name_set(PointerRNA *ptr, const char *value)
+{
+  FModifier *fcm = (FModifier *)ptr->data;
+  BKE_fmodifier_name_set(fcm, value);
 }
 
 static void rna_FModifier_verify_data_update(Main *bmain, Scene *scene, PointerRNA *ptr)
@@ -1757,12 +1763,12 @@ static void rna_def_fmodifier(BlenderRNA *brna)
   RNA_def_struct_refine_func(srna, "rna_FModifierType_refine");
   RNA_def_struct_ui_text(srna, "F-Modifier", "Modifier for values of F-Curve");
 
-#  if 0  /* XXX not used yet */
   /* name */
   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_funcs(prop, NULL, NULL, "rna_fModifier_name_set");
+  RNA_def_property_ui_text(prop, "Name", "F-Curve Modifier name");
+  RNA_def_property_update(prop, NC_OBJECT | ND_MODIFIER | NA_RENAME, NULL);
   RNA_def_struct_name_property(srna, prop);
-  RNA_def_property_ui_text(prop, "Name", "Short description of F-Curve Modifier");
-#  endif /* XXX not used yet */
 
   /* type */
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);

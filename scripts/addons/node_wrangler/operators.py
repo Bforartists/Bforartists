@@ -13,6 +13,7 @@ from bpy.props import (
     CollectionProperty,
 )
 from bpy_extras.io_utils import ImportHelper, ExportHelper
+from bpy_extras.node_utils import connect_sockets
 from mathutils import Vector
 from os import path
 from glob import glob
@@ -368,13 +369,13 @@ class NWSwapLinks(Operator, NWBase):
 
                 for connection in n1_outputs:
                     try:
-                        links.new(n2.outputs[connection[0]], connection[1])
+                        connect_sockets(n2.outputs[connection[0]], connection[1])
                     except:
                         self.report({'WARNING'},
                                     "Some connections have been lost due to differing numbers of output sockets")
                 for connection in n2_outputs:
                     try:
-                        links.new(n1.outputs[connection[0]], connection[1])
+                        connect_sockets(n1.outputs[connection[0]], connection[1])
                     except:
                         self.report({'WARNING'},
                                     "Some connections have been lost due to differing numbers of output sockets")
@@ -412,8 +413,8 @@ class NWSwapLinks(Operator, NWBase):
                         i1t = pair[0].links[0].to_socket
                         i2f = pair[1].links[0].from_socket
                         i2t = pair[1].links[0].to_socket
-                        links.new(i1f, i2t)
-                        links.new(i2f, i1t)
+                        connect_sockets(i1f, i2t)
+                        connect_sockets(i2f, i1t)
                     if t[1] == 1:
                         if len(types) == 1:
                             fs = t[0].links[0].from_socket
@@ -424,14 +425,14 @@ class NWSwapLinks(Operator, NWBase):
                             i += 1
                             while n1.inputs[i].is_linked:
                                 i += 1
-                            links.new(fs, n1.inputs[i])
+                            connect_sockets(fs, n1.inputs[i])
                         elif len(types) == 2:
                             i1f = types[0][0].links[0].from_socket
                             i1t = types[0][0].links[0].to_socket
                             i2f = types[1][0].links[0].from_socket
                             i2t = types[1][0].links[0].to_socket
-                            links.new(i1f, i2t)
-                            links.new(i2f, i1t)
+                            connect_sockets(i1f, i2t)
+                            connect_sockets(i2f, i1t)
 
                 else:
                     self.report({'WARNING'}, "This node has no input connections to swap!")
@@ -702,7 +703,7 @@ class NWPreviewNode(Operator, NWBase):
                     make_links.append((active.outputs[out_i], geometryoutput.inputs[geometryoutindex]))
                     output_socket = geometryoutput.inputs[geometryoutindex]
                     for li_from, li_to in make_links:
-                        base_node_tree.links.new(li_from, li_to)
+                        connect_sockets(li_from, li_to)
                     tree = base_node_tree
                     link_end = output_socket
                     while tree.nodes.active != active:
@@ -713,11 +714,11 @@ class NWPreviewNode(Operator, NWBase):
                         node_socket = node.node_tree.outputs[index]
                         if node_socket in delete_sockets:
                             delete_sockets.remove(node_socket)
-                        tree.links.new(link_start, link_end)
+                        connect_sockets(link_start, link_end)
                         # Iterate
                         link_end = self.ensure_group_output(node.node_tree).inputs[index]
                         tree = tree.nodes.active.node_tree
-                    tree.links.new(active.outputs[out_i], link_end)
+                    connect_sockets(active.outputs[out_i], link_end)
 
                 # Delete sockets
                 for socket in delete_sockets:
@@ -776,7 +777,7 @@ class NWPreviewNode(Operator, NWBase):
                     make_links.append((active.outputs[out_i], materialout.inputs[materialout_index]))
                     output_socket = materialout.inputs[materialout_index]
                     for li_from, li_to in make_links:
-                        base_node_tree.links.new(li_from, li_to)
+                        connect_sockets(li_from, li_to)
 
                     # Create links through node groups until we reach the active node
                     tree = base_node_tree
@@ -789,11 +790,11 @@ class NWPreviewNode(Operator, NWBase):
                         node_socket = node.node_tree.outputs[index]
                         if node_socket in delete_sockets:
                             delete_sockets.remove(node_socket)
-                        tree.links.new(link_start, link_end)
+                        connect_sockets(link_start, link_end)
                         # Iterate
                         link_end = self.ensure_group_output(node.node_tree).inputs[index]
                         tree = tree.nodes.active.node_tree
-                    tree.links.new(active.outputs[out_i], link_end)
+                    connect_sockets(active.outputs[out_i], link_end)
 
                 # Delete sockets
                 for socket in delete_sockets:
@@ -1064,31 +1065,31 @@ class NWSwitchNodeType(Operator, NWBase):
                     if node.inputs[src_i].links and not new_node.inputs[dst_i].links:
                         in_src_link = node.inputs[src_i].links[0]
                         in_dst_socket = new_node.inputs[dst_i]
-                        links.new(in_src_link.from_socket, in_dst_socket)
+                        connect_sockets(in_src_link.from_socket, in_dst_socket)
                         links.remove(in_src_link)
                 # OUTPUTS: Base on matches in proper order.
                 for (src_i, src_dval), (dst_i, dst_dval) in matches['OUTPUTS'][tp]:
                     for out_src_link in node.outputs[src_i].links:
                         out_dst_socket = new_node.outputs[dst_i]
-                        links.new(out_dst_socket, out_src_link.to_socket)
+                        connect_sockets(out_dst_socket, out_src_link.to_socket)
             # relink rest inputs if possible, no criteria
             for src_inp in node.inputs:
                 for dst_inp in new_node.inputs:
                     if src_inp.links and not dst_inp.links:
                         src_link = src_inp.links[0]
-                        links.new(src_link.from_socket, dst_inp)
+                        connect_sockets(src_link.from_socket, dst_inp)
                         links.remove(src_link)
             # relink rest outputs if possible, base on node kind if any left.
             for src_o in node.outputs:
                 for out_src_link in src_o.links:
                     for dst_o in new_node.outputs:
                         if src_o.type == dst_o.type:
-                            links.new(dst_o, out_src_link.to_socket)
+                            connect_sockets(dst_o, out_src_link.to_socket)
             # relink rest outputs no criteria if any left. Link all from first output.
             for src_o in node.outputs:
                 for out_src_link in src_o.links:
                     if new_node.outputs:
-                        links.new(new_node.outputs[0], out_src_link.to_socket)
+                        connect_sockets(new_node.outputs[0], out_src_link.to_socket)
             nodes.remove(node)
         force_update(context)
         return {'FINISHED'}
@@ -1177,16 +1178,16 @@ class NWMergeNodes(Operator, NWBase):
             # outputs to the multi input socket.
             if i < len(socket_indices) - 1:
                 ind = socket_indices[i]
-                links.new(node.outputs[0], new_node.inputs[ind])
+                connect_sockets(node.outputs[0], new_node.inputs[ind])
             else:
                 outputs_for_multi_input.insert(0, node.outputs[0])
         if outputs_for_multi_input != []:
             ind = socket_indices[-1]
             for output in outputs_for_multi_input:
-                links.new(output, new_node.inputs[ind])
+                connect_sockets(output, new_node.inputs[ind])
         if prev_links != []:
             for link in prev_links:
-                links.new(new_node.outputs[0], link.to_node.inputs[0])
+                connect_sockets(new_node.outputs[0], link.to_node.inputs[0])
         return new_node
 
     def execute(self, context):
@@ -1447,19 +1448,19 @@ class NWMergeNodes(Operator, NWBase):
                         # Prevent cyclic dependencies when nodes to be merged are linked to one another.
                         # Link only if "to_node" index not in invalid indexes list.
                         if not self.link_creates_cycle(ss_link, invalid_nodes):
-                            links.new(get_first_enabled_output(last_add), ss_link.to_socket)
+                            connect_sockets(get_first_enabled_output(last_add), ss_link.to_socket)
             # add links from last_add to all links 'to_socket' of out links of first selected.
             for fs_link in first_selected_output.links:
                 # Link only if "to_node" index not in invalid indexes list.
                 if not self.link_creates_cycle(fs_link, invalid_nodes):
-                    links.new(get_first_enabled_output(last_add), fs_link.to_socket)
+                    connect_sockets(get_first_enabled_output(last_add), fs_link.to_socket)
             # add link from "first" selected and "first" add node
             node_to = nodes[count_after - 1]
-            links.new(first_selected_output, node_to.inputs[first])
+            connect_sockets(first_selected_output, node_to.inputs[first])
             if node_to.type == 'ZCOMBINE':
                 for fs_out in first_selected.outputs:
                     if fs_out != first_selected_output and fs_out.name in ('Z', 'Depth'):
-                        links.new(fs_out, node_to.inputs[1])
+                        connect_sockets(fs_out, node_to.inputs[1])
                         break
             # add links between added ADD nodes and between selected and ADD nodes
             for i in range(count_adds):
@@ -1468,21 +1469,21 @@ class NWMergeNodes(Operator, NWBase):
                     node_to = nodes[index - 1]
                     node_to_input_i = first
                     node_to_z_i = 1  # if z combine - link z to first z input
-                    links.new(get_first_enabled_output(node_from), node_to.inputs[node_to_input_i])
+                    connect_sockets(get_first_enabled_output(node_from), node_to.inputs[node_to_input_i])
                     if node_to.type == 'ZCOMBINE':
                         for from_out in node_from.outputs:
                             if from_out != get_first_enabled_output(node_from) and from_out.name in ('Z', 'Depth'):
-                                links.new(from_out, node_to.inputs[node_to_z_i])
+                                connect_sockets(from_out, node_to.inputs[node_to_z_i])
                 if len(nodes_list) > 1:
                     node_from = nodes[nodes_list[i + 1][0]]
                     node_to = nodes[index]
                     node_to_input_i = second
                     node_to_z_i = 3  # if z combine - link z to second z input
-                    links.new(get_first_enabled_output(node_from), node_to.inputs[node_to_input_i])
+                    connect_sockets(get_first_enabled_output(node_from), node_to.inputs[node_to_input_i])
                     if node_to.type == 'ZCOMBINE':
                         for from_out in node_from.outputs:
                             if from_out != get_first_enabled_output(node_from) and from_out.name in ('Z', 'Depth'):
-                                links.new(from_out, node_to.inputs[node_to_z_i])
+                                connect_sockets(from_out, node_to.inputs[node_to_z_i])
                 index -= 1
             # set "last" of added nodes as active
             nodes.active = last_add
@@ -1690,7 +1691,7 @@ class NWCopySettings(Operator, NWBase):
                 new_node.location = node_loc
 
             for str_from, str_to in reconnections:
-                node_tree.links.new(eval(str_from), eval(str_to))
+                node_tree.connect_sockets(eval(str_from), eval(str_to))
 
             success_names.append(new_node.name)
 
@@ -1859,7 +1860,7 @@ class NWAddTextureSetup(Operator, NWBase):
                 x_offset = x_offset + image_texture_node.width + padding
                 image_texture_node.location = [locx - x_offset, locy]
                 nodes.active = image_texture_node
-                links.new(image_texture_node.outputs[0], target_input)
+                connect_sockets(image_texture_node.outputs[0], target_input)
 
                 # The mapping setup following this will connect to the first input of this image texture.
                 target_input = image_texture_node.inputs[0]
@@ -1871,7 +1872,7 @@ class NWAddTextureSetup(Operator, NWBase):
                 mapping_node = nodes.new('ShaderNodeMapping')
                 x_offset = x_offset + mapping_node.width + padding
                 mapping_node.location = [locx - x_offset, locy]
-                links.new(mapping_node.outputs[0], target_input)
+                connect_sockets(mapping_node.outputs[0], target_input)
 
                 # Add Texture Coordinates node.
                 tex_coord_node = nodes.new('ShaderNodeTexCoord')
@@ -1881,7 +1882,7 @@ class NWAddTextureSetup(Operator, NWBase):
                 is_procedural_texture = is_texture_node and node.type != 'TEX_IMAGE'
                 use_generated_coordinates = is_procedural_texture or use_environment_texture
                 tex_coord_output = tex_coord_node.outputs[0 if use_generated_coordinates else 2]
-                links.new(tex_coord_output, mapping_node.inputs[0])
+                connect_sockets(tex_coord_output, mapping_node.inputs[0])
 
         return {'FINISHED'}
 
@@ -2006,7 +2007,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                 disp_node = nodes.new(type='ShaderNodeDisplacement')
                 # Align the Displacement node under the active Principled BSDF node
                 disp_node.location = active_node.location + Vector((100, -700))
-                link = links.new(disp_node.inputs[0], disp_texture.outputs[0])
+                link = connect_sockets(disp_node.inputs[0], disp_texture.outputs[0])
 
                 # TODO Turn on true displacement in the material
                 # Too complicated for now
@@ -2015,7 +2016,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                 output_node = [n for n in nodes if n.bl_idname == 'ShaderNodeOutputMaterial']
                 if output_node:
                     if not output_node[0].inputs[2].is_linked:
-                        link = links.new(output_node[0].inputs[2], disp_node.outputs[0])
+                        link = connect_sockets(output_node[0].inputs[2], disp_node.outputs[0])
 
                 continue
 
@@ -2045,13 +2046,13 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                     if match_normal:
                         # If Normal add normal node in between
                         normal_node = nodes.new(type='ShaderNodeNormalMap')
-                        link = links.new(normal_node.inputs[1], texture_node.outputs[0])
+                        link = connect_sockets(normal_node.inputs[1], texture_node.outputs[0])
                     elif match_bump:
                         # If Bump add bump node in between
                         normal_node = nodes.new(type='ShaderNodeBump')
-                        link = links.new(normal_node.inputs[2], texture_node.outputs[0])
+                        link = connect_sockets(normal_node.inputs[2], texture_node.outputs[0])
 
-                    link = links.new(active_node.inputs[sname[0]], normal_node.outputs[0])
+                    link = connect_sockets(active_node.inputs[sname[0]], normal_node.outputs[0])
                     normal_node_texture = texture_node
 
                 elif sname[0] == 'Roughness':
@@ -2062,19 +2063,19 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
 
                     if match_rough:
                         # If Roughness nothing to to
-                        link = links.new(active_node.inputs[sname[0]], texture_node.outputs[0])
+                        link = connect_sockets(active_node.inputs[sname[0]], texture_node.outputs[0])
 
                     elif match_gloss:
                         # If Gloss Map add invert node
                         invert_node = nodes.new(type='ShaderNodeInvert')
-                        link = links.new(invert_node.inputs[1], texture_node.outputs[0])
+                        link = connect_sockets(invert_node.inputs[1], texture_node.outputs[0])
 
-                        link = links.new(active_node.inputs[sname[0]], invert_node.outputs[0])
+                        link = connect_sockets(active_node.inputs[sname[0]], invert_node.outputs[0])
                         roughness_node = texture_node
 
                 else:
                     # This is a simple connection Texture --> Input slot
-                    link = links.new(active_node.inputs[sname[0]], texture_node.outputs[0])
+                    link = connect_sockets(active_node.inputs[sname[0]], texture_node.outputs[0])
 
                 # Use non-color for all but 'Base Color' Textures
                 if not sname[0] in ['Base Color', 'Emission'] and texture_node.image:
@@ -2119,15 +2120,15 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                                  sum(n.location.y for n in texture_nodes) / len(texture_nodes)))
             reroute.location = tex_coords + Vector((-50, -120))
             for texture_node in texture_nodes:
-                link = links.new(texture_node.inputs[0], reroute.outputs[0])
-            link = links.new(reroute.inputs[0], mapping.outputs[0])
+                link = connect_sockets(texture_node.inputs[0], reroute.outputs[0])
+            link = connect_sockets(reroute.inputs[0], mapping.outputs[0])
         else:
-            link = links.new(texture_nodes[0].inputs[0], mapping.outputs[0])
+            link = connect_sockets(texture_nodes[0].inputs[0], mapping.outputs[0])
 
         # Connect texture_coordiantes to mapping node
         texture_input = nodes.new(type='ShaderNodeTexCoord')
         texture_input.location = mapping.location + Vector((-200, 0))
-        link = links.new(mapping.inputs[0], texture_input.outputs[2])
+        link = connect_sockets(mapping.inputs[0], texture_input.outputs[2])
 
         # Create frame around tex coords and mapping
         frame = nodes.new(type='NodeFrame')
@@ -2231,8 +2232,8 @@ class NWAddReroutes(Operator, NWBase):
                         n = nodes.new('NodeReroute')
                         nodes.active = n
                         for link in output.links:
-                            links.new(n.outputs[0], link.to_socket)
-                        links.new(output, n.inputs[0])
+                            connect_sockets(n.outputs[0], link.to_socket)
+                        connect_sockets(output, n.inputs[0])
                         n.location = loc
                         post_select.append(n)
                     reroutes_count += 1
@@ -2324,7 +2325,7 @@ class NWLinkActiveToSelected(Operator, NWBase):
                         for input in node.inputs:
                             if input.type == out.type or node.type == 'REROUTE':
                                 if replace or not input.is_linked:
-                                    links.new(out, input)
+                                    connect_sockets(out, input)
                                     if not use_node_name and not use_outputs_names:
                                         doit = False
                                     break
@@ -2521,7 +2522,7 @@ class NWLinkToOutputNode(Operator):
             elif tree_type == 'GeometryNodeTree':
                 if active.outputs[output_index].type != 'GEOMETRY':
                     return {'CANCELLED'}
-            links.new(active.outputs[output_index], output_node.inputs[out_input_index])
+            connect_sockets(active.outputs[output_index], output_node.inputs[out_input_index])
 
         force_update(context)  # viewport render does not update
 
@@ -2542,7 +2543,7 @@ class NWMakeLink(Operator, NWBase):
         n1 = nodes[context.scene.NWLazySource]
         n2 = nodes[context.scene.NWLazyTarget]
 
-        links.new(n1.outputs[self.from_socket], n2.inputs[self.to_socket])
+        connect_sockets(n1.outputs[self.from_socket], n2.inputs[self.to_socket])
 
         force_update(context)
 
@@ -2566,7 +2567,7 @@ class NWCallInputsMenu(Operator, NWBase):
         if len(n2.inputs) > 1:
             bpy.ops.wm.call_menu("INVOKE_DEFAULT", name=NWConnectionListInputs.bl_idname)
         elif len(n2.inputs) == 1:
-            links.new(n1.outputs[self.from_socket], n2.inputs[0])
+            connect_sockets(n1.outputs[self.from_socket], n2.inputs[0])
         return {'FINISHED'}
 
 
@@ -2950,7 +2951,7 @@ class NWResetNodes(bpy.types.Operator):
                 new_node.location = node_loc
 
             for str_from, str_to in reconnections:
-                node_tree.links.new(eval(str_from), eval(str_to))
+                connect_sockets(eval(str_from), eval(str_to))
 
             new_node.select = False
             success_names.append(new_node.name)

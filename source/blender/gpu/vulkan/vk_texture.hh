@@ -27,6 +27,8 @@ class VKTexture : public Texture {
   VKTexture(const char *name) : Texture(name) {}
   virtual ~VKTexture() override;
 
+  void init(VkImage vk_image, VkImageLayout layout);
+
   void generate_mipmap() override;
   void copy_to(Texture *tex) override;
   void clear(eGPUDataFormat format, const void *data) override;
@@ -47,7 +49,7 @@ class VKTexture : public Texture {
   void image_bind(int location);
   VkImage vk_image_handle() const
   {
-    BLI_assert(is_allocated());
+    BLI_assert(vk_image_ != VK_NULL_HANDLE);
     return vk_image_;
   }
   VkImageView vk_image_view_handle() const
@@ -61,7 +63,7 @@ class VKTexture : public Texture {
  protected:
   bool init_internal() override;
   bool init_internal(GPUVertBuf *vbo) override;
-  bool init_internal(const GPUTexture *src, int mip_offset, int layer_offset) override;
+  bool init_internal(GPUTexture *src, int mip_offset, int layer_offset) override;
 
  private:
   /** Is this texture already allocated on device. */
