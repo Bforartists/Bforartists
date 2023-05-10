@@ -1196,7 +1196,8 @@ static void rna_3DViewShading_type_update(Main *bmain, Scene *scene, PointerRNA 
 
   View3DShading *shading = ptr->data;
   if (shading->type == OB_MATERIAL ||
-      (shading->type == OB_RENDER && !BKE_scene_uses_blender_workbench(scene))) {
+      (shading->type == OB_RENDER && !BKE_scene_uses_blender_workbench(scene)))
+  {
     /* When switching from workbench to render or material mode the geometry of any
      * active sculpt session needs to be recalculated. */
     for (Object *ob = bmain->objects.first; ob; ob = ob->id.next) {
@@ -1505,11 +1506,13 @@ static const EnumPropertyItem *rna_3DViewShading_render_pass_itemf(bContext *C,
                   EEVEE_RENDER_PASS_CRYPTOMATTE_OBJECT,
                   EEVEE_RENDER_PASS_CRYPTOMATTE_ASSET,
                   EEVEE_RENDER_PASS_CRYPTOMATTE_MATERIAL) &&
-             !eevee_next_active) {
+             !eevee_next_active)
+    {
     }
     else if (!((!bloom_enabled &&
                 (item->value == EEVEE_RENDER_PASS_BLOOM || STREQ(item->name, "Effects"))) ||
-               (!aov_available && STREQ(item->name, "Shader AOV")))) {
+               (!aov_available && STREQ(item->name, "Shader AOV"))))
+    {
       RNA_enum_item_add(&result, &totitem, item);
     }
   }
@@ -1564,7 +1567,7 @@ static void rna_3DViewShading_render_pass_set(PointerRNA *ptr, int value)
     }
 
     shading->render_pass = EEVEE_RENDER_PASS_AOV;
-    BLI_strncpy(shading->aov_name, aov->name, sizeof(aov->name));
+    STRNCPY(shading->aov_name, aov->name);
   }
   else if (value == EEVEE_RENDER_PASS_BLOOM &&
            ((scene->eevee.flag & SCE_EEVEE_BLOOM_ENABLED) == 0)) {
@@ -2780,7 +2783,7 @@ static void rna_FileSelectPrams_filter_glob_set(PointerRNA *ptr, const char *val
 {
   FileSelectParams *params = ptr->data;
 
-  BLI_strncpy(params->filter_glob, value, sizeof(params->filter_glob));
+  STRNCPY(params->filter_glob, value);
 
   /* Remove stupid things like last group being a wildcard-only one. */
   BLI_path_extension_glob_validate(params->filter_glob);
@@ -2854,7 +2857,7 @@ static int rna_FileBrowser_FileSelectEntry_name_editable(PointerRNA *ptr, const 
 static void rna_FileBrowser_FileSelectEntry_name_get(PointerRNA *ptr, char *value)
 {
   const FileDirEntry *entry = ptr->data;
-  BLI_strncpy_utf8(value, entry->name, strlen(entry->name) + 1);
+  strcpy(value, entry->name);
 }
 
 static int rna_FileBrowser_FileSelectEntry_name_length(PointerRNA *ptr)
@@ -2866,7 +2869,7 @@ static int rna_FileBrowser_FileSelectEntry_name_length(PointerRNA *ptr)
 static void rna_FileBrowser_FileSelectEntry_relative_path_get(PointerRNA *ptr, char *value)
 {
   const FileDirEntry *entry = ptr->data;
-  BLI_strncpy_utf8(value, entry->relpath, strlen(entry->relpath) + 1);
+  strcpy(value, entry->relpath);
 }
 
 static int rna_FileBrowser_FileSelectEntry_relative_path_length(PointerRNA *ptr)
@@ -3156,7 +3159,7 @@ static void rna_FileBrowser_FSMenu_active_set(PointerRNA *ptr,
         break;
     }
 
-    BLI_strncpy(sf->params->dir, fsm->path, sizeof(sf->params->dir));
+    STRNCPY(sf->params->dir, fsm->path);
   }
 }
 
@@ -3263,7 +3266,8 @@ static void rna_SpaceSpreadsheet_geometry_component_type_update(Main *UNUSED(bma
                 ATTR_DOMAIN_POINT,
                 ATTR_DOMAIN_EDGE,
                 ATTR_DOMAIN_FACE,
-                ATTR_DOMAIN_CORNER)) {
+                ATTR_DOMAIN_CORNER))
+      {
         sspreadsheet->attribute_domain = ATTR_DOMAIN_POINT;
       }
       break;
@@ -3316,7 +3320,8 @@ const EnumPropertyItem *rna_SpaceSpreadsheet_attribute_domain_itemf(bContext *UN
   EnumPropertyItem *item_array = NULL;
   int items_len = 0;
   for (const EnumPropertyItem *item = rna_enum_attribute_domain_items; item->identifier != NULL;
-       item++) {
+       item++)
+  {
     if (component_type == GEO_COMPONENT_TYPE_MESH) {
       if (!ELEM(item->value,
                 ATTR_DOMAIN_CORNER,
@@ -7101,7 +7106,8 @@ static void rna_def_filemenu_entry(BlenderRNA *brna)
                                 "rna_FileBrowser_FSMenuEntry_path_set");
   RNA_def_property_ui_text(prop, "Path", "");
 
-  prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
+  /* Use #PROP_FILENAME sub-type so the UI can manipulate non-UTF8 names. */
+  prop = RNA_def_property(srna, "name", PROP_STRING, PROP_FILENAME);
   RNA_def_property_string_funcs(prop,
                                 "rna_FileBrowser_FSMenuEntry_name_get",
                                 "rna_FileBrowser_FSMenuEntry_name_length",

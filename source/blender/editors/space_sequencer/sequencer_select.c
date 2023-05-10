@@ -275,8 +275,8 @@ Sequence *find_neighboring_sequence(Scene *scene, Sequence *test, int lr, int se
 
   for (seq = ed->seqbasep->first; seq; seq = seq->next) {
     if ((seq != test) && (test->machine == seq->machine) &&
-        ((sel == -1) || (sel && (seq->flag & SELECT)) ||
-         (sel == 0 && (seq->flag & SELECT) == 0))) {
+        ((sel == -1) || (sel && (seq->flag & SELECT)) || (sel == 0 && (seq->flag & SELECT) == 0)))
+    {
       switch (lr) {
         case SEQ_SIDE_LEFT:
           if (SEQ_time_left_handle_frame_get(scene, test) ==
@@ -326,7 +326,8 @@ Sequence *find_nearest_seq(Scene *scene, View2D *v2d, int *hand, const int mval[
           ((SEQ_time_left_handle_frame_get(scene, seq) >
             SEQ_time_right_handle_frame_get(scene, seq)) &&
            (SEQ_time_left_handle_frame_get(scene, seq) >= x &&
-            SEQ_time_right_handle_frame_get(scene, seq) <= x))) {
+            SEQ_time_right_handle_frame_get(scene, seq) <= x)))
+      {
         if (SEQ_transform_sequence_can_be_translated(seq)) {
 
           /* Clamp handles to defined size in pixel space. */
@@ -617,7 +618,8 @@ static void sequencer_select_side_of_frame(const bContext *C,
     if (((x < scene->r.cfra) &&
          (SEQ_time_right_handle_frame_get(scene, seq_iter) <= scene->r.cfra)) ||
         ((x >= scene->r.cfra) &&
-         (SEQ_time_left_handle_frame_get(scene, seq_iter) >= scene->r.cfra))) {
+         (SEQ_time_left_handle_frame_get(scene, seq_iter) >= scene->r.cfra)))
+    {
       /* Select left or right. */
       seq_iter->flag |= SELECT;
       recurs_sel_seq(seq_iter);
@@ -631,7 +633,8 @@ static void sequencer_select_side_of_frame(const bContext *C,
 
       for (tmarker = scene->markers.first; tmarker; tmarker = tmarker->next) {
         if (((x < scene->r.cfra) && (tmarker->frame <= scene->r.cfra)) ||
-            ((x >= scene->r.cfra) && (tmarker->frame >= scene->r.cfra))) {
+            ((x >= scene->r.cfra) && (tmarker->frame >= scene->r.cfra)))
+        {
           tmarker->flag |= SELECT;
         }
         else {
@@ -1902,8 +1905,8 @@ static bool select_grouped_type_effect(SeqCollection *strips,
 
   Sequence *seq;
   SEQ_ITERATOR_FOREACH (seq, strips) {
-    if (SEQ_CHANNEL_CHECK(seq, channel) &&
-        (is_effect ? SEQ_IS_EFFECT(seq) : !SEQ_IS_EFFECT(seq))) {
+    if (SEQ_CHANNEL_CHECK(seq, channel) && (is_effect ? SEQ_IS_EFFECT(seq) : !SEQ_IS_EFFECT(seq)))
+    {
       seq->flag |= SELECT;
       changed = true;
     }
@@ -1929,7 +1932,8 @@ static bool select_grouped_data(SeqCollection *strips,
   if (SEQ_HAS_PATH(actseq) && dir) {
     SEQ_ITERATOR_FOREACH (seq, strips) {
       if (SEQ_CHANNEL_CHECK(seq, channel) && SEQ_HAS_PATH(seq) && seq->strip &&
-          STREQ(seq->strip->dir, dir)) {
+          STREQ(seq->strip->dir, dir))
+      {
         seq->flag |= SELECT;
         changed = true;
       }
@@ -1947,8 +1951,8 @@ static bool select_grouped_data(SeqCollection *strips,
   else if (actseq->type == SEQ_TYPE_MOVIECLIP) {
     MovieClip *clip = actseq->clip;
     SEQ_ITERATOR_FOREACH (seq, strips) {
-      if (SEQ_CHANNEL_CHECK(seq, channel) && seq->type == SEQ_TYPE_MOVIECLIP &&
-          seq->clip == clip) {
+      if (SEQ_CHANNEL_CHECK(seq, channel) && seq->type == SEQ_TYPE_MOVIECLIP && seq->clip == clip)
+      {
         seq->flag |= SELECT;
         changed = true;
       }
@@ -1982,7 +1986,8 @@ static bool select_grouped_effect(SeqCollection *strips,
   Sequence *seq;
   SEQ_ITERATOR_FOREACH (seq, strips) {
     if (SEQ_CHANNEL_CHECK(seq, channel) && (seq->type & SEQ_TYPE_EFFECT) &&
-        SEQ_relation_is_effect_of_strip(seq, actseq)) {
+        SEQ_relation_is_effect_of_strip(seq, actseq))
+    {
       effects[seq->type] = true;
     }
   }
@@ -2017,7 +2022,8 @@ static bool select_grouped_time_overlap(const Scene *scene,
     if (SEQ_time_left_handle_frame_get(scene, seq) <
             SEQ_time_right_handle_frame_get(scene, actseq) &&
         SEQ_time_right_handle_frame_get(scene, seq) >
-            SEQ_time_left_handle_frame_get(scene, actseq)) {
+            SEQ_time_left_handle_frame_get(scene, actseq))
+    {
       seq->flag |= SELECT;
       changed = true;
     }
@@ -2039,7 +2045,8 @@ static void query_lower_channel_strips(const Scene *scene,
     if (SEQ_time_right_handle_frame_get(scene, seq_test) <=
             SEQ_time_left_handle_frame_get(scene, seq_reference) ||
         SEQ_time_left_handle_frame_get(scene, seq_test) >=
-            SEQ_time_right_handle_frame_get(scene, seq_reference)) {
+            SEQ_time_right_handle_frame_get(scene, seq_reference))
+    {
       continue; /* Not intersecting in time. */
     }
     SEQ_collection_append_strip(seq_test, collection);

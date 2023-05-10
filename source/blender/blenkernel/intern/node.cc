@@ -65,6 +65,8 @@
 #include "BKE_node.h"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_update.h"
+#include "BKE_node_tree_zones.hh"
+#include "BKE_type_conversions.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -172,6 +174,10 @@ static void ntree_copy_data(Main * /*bmain*/, ID *id_dst, const ID *id_src, cons
     if (node->parent) {
       node->parent = dst_runtime.nodes_by_id.lookup_key_as(node->parent->identifier);
     }
+  }
+
+  for (bNode *node : ntree_dst->all_nodes()) {
+    nodeDeclarationEnsure(ntree_dst, node);
   }
 
   /* copy interface sockets */
@@ -522,7 +528,8 @@ void ntreeBlendWrite(BlendWriter *writer, bNodeTree *ntree)
 
     if (node->storage) {
       if (ELEM(ntree->type, NTREE_SHADER, NTREE_GEOMETRY) &&
-          ELEM(node->type, SH_NODE_CURVE_VEC, SH_NODE_CURVE_RGB, SH_NODE_CURVE_FLOAT)) {
+          ELEM(node->type, SH_NODE_CURVE_VEC, SH_NODE_CURVE_RGB, SH_NODE_CURVE_FLOAT))
+      {
         BKE_curvemapping_blend_write(writer, static_cast<const CurveMapping *>(node->storage));
       }
       else if (ntree->type == NTREE_SHADER && (node->type == SH_NODE_SCRIPT)) {
@@ -536,11 +543,13 @@ void ntreeBlendWrite(BlendWriter *writer, bNodeTree *ntree)
                                                        CMP_NODE_TIME,
                                                        CMP_NODE_CURVE_VEC,
                                                        CMP_NODE_CURVE_RGB,
-                                                       CMP_NODE_HUECORRECT)) {
+                                                       CMP_NODE_HUECORRECT))
+      {
         BKE_curvemapping_blend_write(writer, static_cast<const CurveMapping *>(node->storage));
       }
       else if ((ntree->type == NTREE_TEXTURE) &&
-               ELEM(node->type, TEX_NODE_CURVE_RGB, TEX_NODE_CURVE_TIME)) {
+               ELEM(node->type, TEX_NODE_CURVE_RGB, TEX_NODE_CURVE_TIME))
+      {
         BKE_curvemapping_blend_write(writer, static_cast<const CurveMapping *>(node->storage));
       }
       else if ((ntree->type == NTREE_COMPOSIT) && (node->type == CMP_NODE_MOVIEDISTORTION)) {
@@ -566,7 +575,8 @@ void ntreeBlendWrite(BlendWriter *writer, bNodeTree *ntree)
         BLO_write_struct_by_name(writer, node->typeinfo->storagename, node->storage);
       }
       else if ((ntree->type == NTREE_COMPOSIT) &&
-               ELEM(node->type, CMP_NODE_CRYPTOMATTE, CMP_NODE_CRYPTOMATTE_LEGACY)) {
+               ELEM(node->type, CMP_NODE_CRYPTOMATTE, CMP_NODE_CRYPTOMATTE_LEGACY))
+      {
         NodeCryptomatte *nc = static_cast<NodeCryptomatte *>(node->storage);
         BLO_write_string(writer, nc->matte_id);
         LISTBASE_FOREACH (CryptomatteEntry *, entry, &nc->entries) {
@@ -602,6 +612,14 @@ void ntreeBlendWrite(BlendWriter *writer, bNodeTree *ntree)
       /* Write extra socket info. */
       LISTBASE_FOREACH (bNodeSocket *, sock, &node->outputs) {
         BLO_write_struct(writer, NodeImageLayer, sock->storage);
+      }
+    }
+    if (node->type == GEO_NODE_SIMULATION_OUTPUT) {
+      const NodeGeometrySimulationOutput &storage =
+          *static_cast<const NodeGeometrySimulationOutput *>(node->storage);
+      BLO_write_struct_array(writer, NodeSimulationItem, storage.items_num, storage.items);
+      for (const NodeSimulationItem &item : Span(storage.items, storage.items_num)) {
+        BLO_write_string(writer, item.name);
       }
     }
   }
@@ -779,6 +797,16 @@ void ntreeBlendReadData(BlendDataReader *reader, ID *owner_id, bNodeTree *ntree)
           BLO_read_data_address(reader, &storage->string);
           break;
         }
+        case GEO_NODE_SIMULATION_OUTPUT: {
+          NodeGeometrySimulationOutput &storage = *static_cast<NodeGeometrySimulationOutput *>(
+              node->storage);
+          BLO_read_data_address(reader, &storage.items);
+          for (const NodeSimulationItem &item : Span(storage.items, storage.items_num)) {
+            BLO_read_data_address(reader, &item.name);
+          }
+          break;
+        }
+
         default:
           break;
       }
@@ -946,29 +974,29 @@ static void expand_node_socket(BlendExpander *expander, bNodeSocket *sock)
 {
   IDP_BlendReadExpand(expander, sock->prop);
 
-  if (sock->default_value != nullptr) {
+  if (sock->default_value == nullptr) {
     return;
   }
 
   switch (eNodeSocketDatatype(sock->type)) {
     case SOCK_OBJECT: {
-      BLO_expand(expander, &sock->default_value_typed<bNodeSocketValueObject>()->value);
+      BLO_expand(expander, sock->default_value_typed<bNodeSocketValueObject>()->value);
       break;
     }
     case SOCK_IMAGE: {
-      BLO_expand(expander, &sock->default_value_typed<bNodeSocketValueImage>()->value);
+      BLO_expand(expander, sock->default_value_typed<bNodeSocketValueImage>()->value);
       break;
     }
     case SOCK_COLLECTION: {
-      BLO_expand(expander, &sock->default_value_typed<bNodeSocketValueCollection>()->value);
+      BLO_expand(expander, sock->default_value_typed<bNodeSocketValueCollection>()->value);
       break;
     }
     case SOCK_TEXTURE: {
-      BLO_expand(expander, &sock->default_value_typed<bNodeSocketValueTexture>()->value);
+      BLO_expand(expander, sock->default_value_typed<bNodeSocketValueTexture>()->value);
       break;
     }
     case SOCK_MATERIAL: {
-      BLO_expand(expander, &sock->default_value_typed<bNodeSocketValueMaterial>()->value);
+      BLO_expand(expander, sock->default_value_typed<bNodeSocketValueMaterial>()->value);
       break;
     }
     case SOCK_FLOAT:
@@ -1000,7 +1028,8 @@ void ntreeBlendReadExpand(BlendExpander *expander, bNodeTree *ntree)
 
   LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
     if (node->id && !(node->type == CMP_NODE_R_LAYERS) &&
-        !(node->type == CMP_NODE_CRYPTOMATTE && node->custom1 == CMP_CRYPTOMATTE_SRC_RENDER)) {
+        !(node->type == CMP_NODE_CRYPTOMATTE && node->custom1 == CMP_CRYPTOMATTE_SRC_RENDER))
+    {
       BLO_expand(expander, node->id);
     }
 
@@ -1130,10 +1159,15 @@ static void node_init(const bContext *C, bNodeTree *ntree, bNode *node)
    *     Data have their own translation option!
    *     This solution may be a bit rougher than nodeLabel()'s returned string, but it's simpler
    *     than adding "do_translate" flags to this func (and labelfunc() as well). */
-  BLI_strncpy(node->name, DATA_(ntype->ui_name), NODE_MAXSTR);
+  STRNCPY(node->name, DATA_(ntype->ui_name));
   nodeUniqueName(ntree, node);
 
-  node_add_sockets_from_type(ntree, node, ntype);
+  /* Generally sockets should be added after the initialization, because the set of sockets might
+   * depend on node properties. */
+  const bool add_sockets_before_init = node->type == CMP_NODE_R_LAYERS;
+  if (add_sockets_before_init) {
+    node_add_sockets_from_type(ntree, node, ntype);
+  }
 
   if (ntype->initfunc != nullptr) {
     ntype->initfunc(ntree, node);
@@ -1141,6 +1175,10 @@ static void node_init(const bContext *C, bNodeTree *ntree, bNode *node)
 
   if (ntree->typeinfo && ntree->typeinfo->node_add_init) {
     ntree->typeinfo->node_add_init(ntree, node);
+  }
+
+  if (!add_sockets_before_init) {
+    node_add_sockets_from_type(ntree, node, ntype);
   }
 
   if (node->id) {
@@ -1558,11 +1596,11 @@ static bNodeSocket *make_socket(bNodeTree *ntree,
 
   if (identifier && identifier[0] != '\0') {
     /* use explicit identifier */
-    BLI_strncpy(auto_identifier, identifier, sizeof(auto_identifier));
+    STRNCPY(auto_identifier, identifier);
   }
   else {
     /* if no explicit identifier is given, assign a unique identifier based on the name */
-    BLI_strncpy(auto_identifier, name, sizeof(auto_identifier));
+    STRNCPY(auto_identifier, name);
   }
   /* Make the identifier unique. */
   BLI_uniquename_cb(
@@ -1572,15 +1610,15 @@ static bNodeSocket *make_socket(bNodeTree *ntree,
   sock->runtime = MEM_new<bNodeSocketRuntime>(__func__);
   sock->in_out = in_out;
 
-  BLI_strncpy(sock->identifier, auto_identifier, NODE_MAXSTR);
+  STRNCPY(sock->identifier, auto_identifier);
   sock->limit = (in_out == SOCK_IN ? 1 : 0xFFF);
 
-  BLI_strncpy(sock->name, name, NODE_MAXSTR);
+  STRNCPY(sock->name, name);
   sock->storage = nullptr;
   sock->flag |= SOCK_COLLAPSED;
   sock->type = SOCK_CUSTOM; /* int type undefined by default */
 
-  BLI_strncpy(sock->idname, idname, sizeof(sock->idname));
+  STRNCPY(sock->idname, idname);
   node_socket_set_typeinfo(ntree, sock, nodeSocketTypeFind(idname));
 
   return sock;
@@ -1734,7 +1772,7 @@ void nodeModifySocketType(bNodeTree *ntree,
     }
   }
 
-  BLI_strncpy(sock->idname, idname, sizeof(sock->idname));
+  STRNCPY(sock->idname, idname);
   node_socket_set_typeinfo(ntree, sock, socktype);
 }
 
@@ -2289,12 +2327,13 @@ bNode *nodeAddNode(const bContext *C, bNodeTree *ntree, const char *idname)
   BLI_addtail(&ntree->nodes, node);
   nodeUniqueID(ntree, node);
 
-  BLI_strncpy(node->idname, idname, sizeof(node->idname));
+  STRNCPY(node->idname, idname);
   node_set_typeinfo(C, ntree, node, nodeTypeFind(idname));
 
   BKE_ntree_update_tag_node_new(ntree, node);
 
-  if (ELEM(node->type, GEO_NODE_INPUT_SCENE_TIME, GEO_NODE_SELF_OBJECT)) {
+  if (ELEM(node->type, GEO_NODE_INPUT_SCENE_TIME, GEO_NODE_SELF_OBJECT, GEO_NODE_SIMULATION_INPUT))
+  {
     DEG_relations_tag_update(CTX_data_main(C));
   }
 
@@ -2418,12 +2457,72 @@ bNode *node_copy_with_mapping(bNodeTree *dst_tree,
     node_dst->typeinfo->copyfunc_api(&ptr, &node_src);
   }
 
-  /* Reset the declaration of the new node in real tree. */
-  if (dst_tree != nullptr) {
-    nodeDeclarationEnsure(dst_tree, node_dst);
+  return node_dst;
+}
+
+/**
+ * Type of value storage related with socket is the same.
+ * \param socket: Node can have multiple sockets & storages pairs.
+ */
+static void *node_static_value_storage_for(bNode &node, const bNodeSocket &socket)
+{
+  if (!socket.is_output()) {
+    return nullptr;
   }
 
-  return node_dst;
+  switch (node.type) {
+    case FN_NODE_INPUT_BOOL:
+      return &reinterpret_cast<NodeInputBool *>(node.storage)->boolean;
+    case FN_NODE_INPUT_INT:
+      return &reinterpret_cast<NodeInputInt *>(node.storage)->integer;
+    case FN_NODE_INPUT_VECTOR:
+      return &reinterpret_cast<NodeInputVector *>(node.storage)->vector;
+    case FN_NODE_INPUT_COLOR:
+      return &reinterpret_cast<NodeInputColor *>(node.storage)->color;
+    case GEO_NODE_IMAGE:
+      return &node.id;
+    default:
+      break;
+  }
+
+  return nullptr;
+}
+
+static void *socket_value_storage(bNodeSocket &socket)
+{
+  switch (eNodeSocketDatatype(socket.type)) {
+    case SOCK_BOOLEAN:
+      return &socket.default_value_typed<bNodeSocketValueBoolean>()->value;
+    case SOCK_INT:
+      return &socket.default_value_typed<bNodeSocketValueInt>()->value;
+    case SOCK_FLOAT:
+      return &socket.default_value_typed<bNodeSocketValueFloat>()->value;
+    case SOCK_VECTOR:
+      return &socket.default_value_typed<bNodeSocketValueVector>()->value;
+    case SOCK_RGBA:
+      return &socket.default_value_typed<bNodeSocketValueRGBA>()->value;
+    case SOCK_IMAGE:
+      return &socket.default_value_typed<bNodeSocketValueImage>()->value;
+    case SOCK_TEXTURE:
+      return &socket.default_value_typed<bNodeSocketValueTexture>()->value;
+    case SOCK_COLLECTION:
+      return &socket.default_value_typed<bNodeSocketValueCollection>()->value;
+    case SOCK_OBJECT:
+      return &socket.default_value_typed<bNodeSocketValueObject>()->value;
+    case SOCK_MATERIAL:
+      return &socket.default_value_typed<bNodeSocketValueMaterial>()->value;
+    case SOCK_STRING:
+      /* We don't want do this now! */
+      return nullptr;
+    case __SOCK_MESH:
+    case SOCK_CUSTOM:
+    case SOCK_SHADER:
+    case SOCK_GEOMETRY:
+      /* Unmovable types. */
+      break;
+  }
+
+  return nullptr;
 }
 
 void node_socket_move_default_value(Main & /*bmain*/,
@@ -2436,6 +2535,11 @@ void node_socket_move_default_value(Main & /*bmain*/,
   bNode &dst_node = dst.owner_node();
   bNode &src_node = src.owner_node();
 
+  const CPPType &src_type = *src.typeinfo->base_cpp_type;
+  const CPPType &dst_type = *dst.typeinfo->base_cpp_type;
+
+  const bke::DataTypeConversions &convert = bke::get_implicit_type_conversions();
+
   if (src.is_multi_input()) {
     /* Multi input sockets no have value. */
     return;
@@ -2444,54 +2548,30 @@ void node_socket_move_default_value(Main & /*bmain*/,
     /* Reroute node can't have ownership of socket value directly. */
     return;
   }
-  if (dst.type != src.type) {
-    /* It could be possible to support conversion in future. */
-    return;
-  }
-
-  ID **src_socket_value = nullptr;
-  Vector<ID **> dst_values;
-  switch (dst.type) {
-    case SOCK_IMAGE: {
-      Image **tmp_socket_value = &src.default_value_typed<bNodeSocketValueImage>()->value;
-      src_socket_value = reinterpret_cast<ID **>(tmp_socket_value);
-      if (*src_socket_value == nullptr) {
-        break;
-      }
-
-      switch (dst_node.type) {
-        case GEO_NODE_IMAGE: {
-          dst_values.append(&dst_node.id);
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-      break;
-    }
-    case SOCK_CUSTOM:
-    case SOCK_SHADER:
-    case SOCK_GEOMETRY: {
-      /* Unmovable types. */
+  if (&src_type != &dst_type) {
+    if (!convert.is_convertible(src_type, dst_type)) {
       return;
     }
-    default: {
-      break;
-    }
   }
 
-  if (dst_values.is_empty() || src_socket_value == nullptr) {
+  void *src_value = socket_value_storage(src);
+  void *dst_value = node_static_value_storage_for(dst_node, dst);
+  if (!dst_value || !src_value) {
     return;
   }
 
-  for (ID **dst_value : dst_values) {
-    *dst_value = *src_socket_value;
-    id_us_plus(*dst_value);
-  }
+  convert.convert_to_uninitialized(src_type, dst_type, src_value, dst_value);
 
-  id_us_min(*src_socket_value);
-  *src_socket_value = nullptr;
+  src_type.destruct(src_value);
+  if (ELEM(eNodeSocketDatatype(src.type),
+           SOCK_COLLECTION,
+           SOCK_IMAGE,
+           SOCK_MATERIAL,
+           SOCK_TEXTURE,
+           SOCK_OBJECT))
+  {
+    src_type.value_initialize(src_value);
+  }
 }
 
 bNode *node_copy(bNodeTree *dst_tree, const bNode &src_node, const int flag, const bool use_unique)
@@ -2534,7 +2614,8 @@ bNodeLink *nodeAddLink(
     link->tosock = tosock;
   }
   else if (eNodeSocketInOut(fromsock->in_out) == SOCK_IN &&
-           eNodeSocketInOut(tosock->in_out) == SOCK_OUT) {
+           eNodeSocketInOut(tosock->in_out) == SOCK_OUT)
+  {
     /* OK but flip */
     link = MEM_cnew<bNodeLink>("link");
     if (ntree) {
@@ -2817,7 +2898,7 @@ static bNodeTree *ntreeAddTree_do(
     BLI_assert(owner_id == nullptr);
   }
 
-  BLI_strncpy(ntree->idname, idname, sizeof(ntree->idname));
+  STRNCPY(ntree->idname, idname);
   ntree_set_typeinfo(ntree, ntreeTypeFind(idname));
 
   return ntree;
@@ -3202,7 +3283,7 @@ void nodeRemoveNode(Main *bmain, bNodeTree *ntree, bNode *node, const bool do_id
   char prefix[MAX_IDPROP_NAME * 2];
 
   BLI_str_escape(propname_esc, node->name, sizeof(propname_esc));
-  BLI_snprintf(prefix, sizeof(prefix), "nodes[\"%s\"]", propname_esc);
+  SNPRINTF(prefix, "nodes[\"%s\"]", propname_esc);
 
   if (BKE_animdata_fix_paths_remove(&ntree->id, prefix)) {
     if (bmain != nullptr) {
@@ -3212,7 +3293,9 @@ void nodeRemoveNode(Main *bmain, bNodeTree *ntree, bNode *node, const bool do_id
 
   /* Also update relations for the scene time node, which causes a dependency
    * on time that users expect to be removed when the node is removed. */
-  if (node_has_id || ELEM(node->type, GEO_NODE_INPUT_SCENE_TIME, GEO_NODE_SELF_OBJECT)) {
+  if (node_has_id ||
+      ELEM(node->type, GEO_NODE_INPUT_SCENE_TIME, GEO_NODE_SELF_OBJECT, GEO_NODE_SIMULATION_INPUT))
+  {
     if (bmain != nullptr) {
       DEG_relations_tag_update(bmain);
     }
@@ -3455,7 +3538,7 @@ static bNodeSocket *make_socket_interface(bNodeTree *ntree,
 
   bNodeSocket *sock = MEM_cnew<bNodeSocket>("socket template");
   sock->runtime = MEM_new<bNodeSocketRuntime>(__func__);
-  BLI_strncpy(sock->idname, stype->idname, sizeof(sock->idname));
+  STRNCPY(sock->idname, stype->idname);
   sock->in_out = int(in_out);
   sock->type = int(SOCK_CUSTOM); /* int type undefined by default */
   node_socket_set_typeinfo(ntree, sock, stype);
@@ -3464,15 +3547,15 @@ static bNodeSocket *make_socket_interface(bNodeTree *ntree,
   const int own_index = ntree->cur_index++;
   /* use the own_index as socket identifier */
   if (in_out == SOCK_IN) {
-    BLI_snprintf(sock->identifier, MAX_NAME, "Input_%d", own_index);
+    SNPRINTF(sock->identifier, "Input_%d", own_index);
   }
   else {
-    BLI_snprintf(sock->identifier, MAX_NAME, "Output_%d", own_index);
+    SNPRINTF(sock->identifier, "Output_%d", own_index);
   }
 
   sock->limit = (in_out == SOCK_IN ? 1 : 0xFFF);
 
-  BLI_strncpy(sock->name, name, NODE_MAXSTR);
+  STRNCPY(sock->name, name);
   sock->storage = nullptr;
   sock->flag |= SOCK_COLLAPSED;
 
@@ -3773,8 +3856,7 @@ bool nodeDeclarationEnsureOnOutdatedNode(bNodeTree *ntree, bNode *node)
   if (node->typeinfo->declare_dynamic) {
     BLI_assert(ntree != nullptr);
     BLI_assert(node != nullptr);
-    node->runtime->declaration = new blender::nodes::NodeDeclaration();
-    blender::nodes::build_node_declaration_dynamic(*ntree, *node, *node->runtime->declaration);
+    blender::nodes::update_node_declaration_and_sockets(*ntree, *node);
     return true;
   }
   if (node->typeinfo->declare) {
@@ -4013,15 +4095,15 @@ void ntreeUpdateAllUsers(Main *main, ID *id)
 
 /* ************* node type access ********** */
 
-void nodeLabel(const bNodeTree *ntree, const bNode *node, char *label, const int maxlen)
+void nodeLabel(const bNodeTree *ntree, const bNode *node, char *label, const int label_maxncpy)
 {
   label[0] = '\0';
 
   if (node->label[0] != '\0') {
-    BLI_strncpy(label, node->label, maxlen);
+    BLI_strncpy(label, node->label, label_maxncpy);
   }
   else if (node->typeinfo->labelfunc) {
-    node->typeinfo->labelfunc(ntree, node, label, maxlen);
+    node->typeinfo->labelfunc(ntree, node, label, label_maxncpy);
   }
   if (label[0] != '\0') {
     /* The previous methods (labelfunc) could not provide an adequate label for the node. */
@@ -4033,7 +4115,7 @@ void nodeLabel(const bNodeTree *ntree, const bNode *node, char *label, const int
   if (tmp == node->typeinfo->ui_name) {
     tmp = IFACE_(node->typeinfo->ui_name);
   }
-  BLI_strncpy(label, tmp, maxlen);
+  BLI_strncpy(label, tmp, label_maxncpy);
 }
 
 const char *nodeSocketLabel(const bNodeSocket *sock)
@@ -4076,7 +4158,7 @@ void node_type_base(bNodeType *ntype, const int type, const char *name, const sh
    */
 #define DefNode(Category, ID, DefFunc, EnumName, StructName, UIName, UIDesc) \
   case ID: \
-    BLI_strncpy(ntype->idname, #Category #StructName, sizeof(ntype->idname)); \
+    STRNCPY(ntype->idname, #Category #StructName); \
     ntype->rna_ext.srna = RNA_struct_find(#Category #StructName); \
     BLI_assert(ntype->rna_ext.srna != nullptr); \
     RNA_struct_blender_type_set(ntype->rna_ext.srna, ntype); \
@@ -4090,7 +4172,7 @@ void node_type_base(bNodeType *ntype, const int type, const char *name, const sh
   BLI_assert(ntype->idname[0] != '\0');
 
   ntype->type = type;
-  BLI_strncpy(ntype->ui_name, name, sizeof(ntype->ui_name));
+  STRNCPY(ntype->ui_name, name);
   ntype->nclass = nclass;
 
   node_type_base_defaults(ntype);
@@ -4104,9 +4186,9 @@ void node_type_base_custom(bNodeType *ntype,
                            const char *name,
                            const short nclass)
 {
-  BLI_strncpy(ntype->idname, idname, sizeof(ntype->idname));
+  STRNCPY(ntype->idname, idname);
   ntype->type = NODE_CUSTOM;
-  BLI_strncpy(ntype->ui_name, name, sizeof(ntype->ui_name));
+  STRNCPY(ntype->ui_name, name);
   ntype->nclass = nclass;
 
   node_type_base_defaults(ntype);
@@ -4165,7 +4247,7 @@ void node_type_socket_templates(bNodeType *ntype,
     }
 
     for (bNodeSocketTemplate *ntemp = inputs; ntemp->type >= 0; ntemp++) {
-      BLI_strncpy(ntemp->identifier, ntemp->name, sizeof(ntemp->identifier));
+      STRNCPY(ntemp->identifier, ntemp->name);
       unique_socket_template_identifier(inputs, ntemp, ntemp->identifier, '_');
     }
   }
@@ -4176,7 +4258,7 @@ void node_type_socket_templates(bNodeType *ntype,
     }
 
     for (bNodeSocketTemplate *ntemp = outputs; ntemp->type >= 0; ntemp++) {
-      BLI_strncpy(ntemp->identifier, ntemp->name, sizeof(ntemp->identifier));
+      STRNCPY(ntemp->identifier, ntemp->name);
       unique_socket_template_identifier(outputs, ntemp, ntemp->identifier, '_');
     }
   }
@@ -4220,7 +4302,7 @@ void node_type_storage(bNodeType *ntype,
                                         const bNode *src_node))
 {
   if (storagename) {
-    BLI_strncpy(ntype->storagename, storagename, sizeof(ntype->storagename));
+    STRNCPY(ntype->storagename, storagename);
   }
   else {
     ntype->storagename[0] = '\0';

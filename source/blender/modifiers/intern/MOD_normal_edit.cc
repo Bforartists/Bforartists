@@ -37,8 +37,8 @@
 
 #include "DEG_depsgraph_query.h"
 
-#include "MOD_ui_common.h"
-#include "MOD_util.h"
+#include "MOD_ui_common.hh"
+#include "MOD_util.hh"
 
 static void generate_vert_coordinates(Mesh *mesh,
                                       Object *ob,
@@ -147,7 +147,8 @@ static void mix_normals(const float mix_factor,
   }
 
   for (i = corner_verts.size(), no_new = nos_new, no_old = nos_old, wfac = facs; i--;
-       no_new++, no_old++, wfac++) {
+       no_new++, no_old++, wfac++)
+  {
     const float fac = facs ? *wfac * mix_factor : mix_factor;
 
     switch (mix_mode) {
@@ -325,7 +326,8 @@ static void normalEditModifier_do_radial(NormalEditModifierData *enmd,
 
   if (do_polynors_fix &&
       polygons_check_flip(
-          corner_verts, corner_edges, nos.data(), &mesh->ldata, polys, mesh->poly_normals())) {
+          corner_verts, corner_edges, nos.data(), &mesh->ldata, polys, mesh->poly_normals()))
+  {
     BKE_mesh_tag_face_winding_changed(mesh);
   }
   const bool *sharp_faces = static_cast<const bool *>(
@@ -432,7 +434,8 @@ static void normalEditModifier_do_directional(NormalEditModifierData *enmd,
 
   if (do_polynors_fix &&
       polygons_check_flip(
-          corner_verts, corner_edges, nos.data(), &mesh->ldata, polys, mesh->poly_normals())) {
+          corner_verts, corner_edges, nos.data(), &mesh->ldata, polys, mesh->poly_normals()))
+  {
     BKE_mesh_tag_face_winding_changed(mesh);
   }
   const bool *sharp_faces = static_cast<const bool *>(
@@ -625,7 +628,7 @@ static void requiredDataMask(ModifierData *md, CustomData_MeshMasks *r_cddata_ma
 
   r_cddata_masks->lmask |= CD_MASK_CUSTOMLOOPNORMAL;
 
-  /* Ask for vertexgroups if we need them. */
+  /* Ask for vertex-groups if we need them. */
   if (enmd->defgrp_name[0] != '\0') {
     r_cddata_masks->vmask |= CD_MASK_MDEFORMVERT;
   }

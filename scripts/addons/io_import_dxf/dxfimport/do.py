@@ -949,7 +949,7 @@ class Do:
 
         # create the block
         if len(block_group.objects) == 0 or name not in self.known_blocks.keys():
-            bpy.context.screen.scene = block_scene
+            bpy.context.window.scene = block_scene
             block_inserts = [en for en in entity if is_.insert(en.dxftype)]
             bc = (en for en in entity if is_.combined_entity(en))
             bs = (en for en in entity if is_.separated_entity(en) and not is_.insert(en.dxftype))
@@ -985,7 +985,7 @@ class Do:
         else:
             bbox = self.known_blocks[name][2]
 
-        bpy.context.screen.scene = scene
+        bpy.context.window.scene = scene
         o = bbox.copy()
         # o.empty_display_size = 0.3
         o.instance_type = "COLLECTION"
@@ -1379,7 +1379,7 @@ class Do:
         return o
 
     def _recenter(self, scene, name):
-        bpy.context.screen.scene = scene
+        bpy.context.window.scene = scene
         bpy.context.view_layer.update()
         bpy.ops.object.select_all(action='DESELECT')
 
@@ -1621,7 +1621,7 @@ class Do:
         elif self.pScene is not None:  # assume Proj
             scene['SRID'] = re.findall(r"\+init=(.+)\s", self.pScene.srs)[0]
 
-        #bpy.context.screen.scene = scene
+        #bpy.context.window.scene = scene
 
         return self.errors
         # trying to import dimensions:

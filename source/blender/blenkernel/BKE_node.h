@@ -263,7 +263,7 @@ typedef struct bNodeType {
   void (*labelfunc)(const struct bNodeTree *ntree,
                     const struct bNode *node,
                     char *label,
-                    int maxlen);
+                    int label_maxncpy);
 
   /** Optional override for node class, used for drawing node header. */
   int (*ui_class)(const struct bNode *node);
@@ -474,7 +474,8 @@ struct GHashIterator *ntreeTypeGetIterator(void);
   { \
     GHashIterator *__node_tree_type_iter__ = ntreeTypeGetIterator(); \
     for (; !BLI_ghashIterator_done(__node_tree_type_iter__); \
-         BLI_ghashIterator_step(__node_tree_type_iter__)) { \
+         BLI_ghashIterator_step(__node_tree_type_iter__)) \
+    { \
       bNodeTreeType *ntype = (bNodeTreeType *)BLI_ghashIterator_getValue(__node_tree_type_iter__);
 
 #define NODE_TREE_TYPES_END \
@@ -649,7 +650,8 @@ const char *nodeSocketSubTypeLabel(int subtype);
   { \
     GHashIterator *__node_socket_type_iter__ = nodeSocketTypeGetIterator(); \
     for (; !BLI_ghashIterator_done(__node_socket_type_iter__); \
-         BLI_ghashIterator_step(__node_socket_type_iter__)) { \
+         BLI_ghashIterator_step(__node_socket_type_iter__)) \
+    { \
       bNodeSocketType *stype = (bNodeSocketType *)BLI_ghashIterator_getValue( \
           __node_socket_type_iter__);
 
@@ -1582,6 +1584,9 @@ void BKE_nodetree_remove_layer_n(struct bNodeTree *ntree, struct Scene *scene, i
 #define GEO_NODE_MEAN_FILTER_SDF_VOLUME 1197
 #define GEO_NODE_OFFSET_SDF_VOLUME 1198
 #define GEO_NODE_INDEX_OF_NEAREST 1199
+/* Function nodes use the range starting at 1200. */
+#define GEO_NODE_SIMULATION_INPUT 2100
+#define GEO_NODE_SIMULATION_OUTPUT 2101
 
 /** \} */
 

@@ -330,7 +330,7 @@ void BKE_remesh_reproject_sculpt_face_sets(Mesh *target, const Mesh *source)
   const VArraySpan<int> src(src_face_sets);
   MutableSpan<int> dst = dst_face_sets.span;
 
-  const blender::Span<MLoopTri> looptris = source->looptris();
+  const blender::Span<int> looptri_polys = source->looptri_polys();
   BVHTreeFromMesh bvhtree = {nullptr};
   BKE_bvhtree_from_mesh_get(&bvhtree, source, BVHTREE_FROM_LOOPTRI, 2);
 
@@ -344,7 +344,7 @@ void BKE_remesh_reproject_sculpt_face_sets(Mesh *target, const Mesh *source)
       BLI_bvhtree_find_nearest(
           bvhtree.tree, from_co, &nearest, bvhtree.nearest_callback, &bvhtree);
       if (nearest.index != -1) {
-        dst[i] = src[looptris[nearest.index].poly];
+        dst[i] = src[looptri_polys[nearest.index]];
       }
       else {
         dst[i] = 1;
@@ -369,7 +369,8 @@ void BKE_remesh_reproject_vertex_paint(Mesh *target, const Mesh *source)
   int *target_lmap_mem = nullptr;
 
   while ((layer = BKE_id_attribute_from_index(
-              const_cast<ID *>(&source->id), i++, ATTR_DOMAIN_MASK_COLOR, CD_MASK_COLOR_ALL))) {
+              const_cast<ID *>(&source->id), i++, ATTR_DOMAIN_MASK_COLOR, CD_MASK_COLOR_ALL)))
+  {
     eAttrDomain domain = BKE_id_attribute_domain(&source->id, layer);
     const eCustomDataType type = eCustomDataType(layer->type);
 

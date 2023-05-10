@@ -231,7 +231,8 @@ static void stats_object_edit(Object *obedit, SceneStats *stats)
 
       /* if this is a connected child and its parent is being moved, remove our root */
       if ((ebo->flag & BONE_CONNECTED) && (ebo->flag & BONE_ROOTSEL) && ebo->parent &&
-          (ebo->parent->flag & BONE_TIPSEL)) {
+          (ebo->parent->flag & BONE_TIPSEL))
+      {
         stats->totvertsel--;
       }
 
@@ -709,7 +710,7 @@ static void stats_row(int col1,
   *y -= height;
   BLF_draw_default(col1, *y, 0.0f, key, 128);
   char values[128];
-  BLI_snprintf(values, sizeof(values), (value2) ? "%s / %s" : "%s", value1, value2);
+  SNPRINTF(values, (value2) ? "%s / %s" : "%s", value1, value2);
   BLF_draw_default(col2, *y, 0.0f, values, sizeof(values));
 }
 

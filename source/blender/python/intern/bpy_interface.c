@@ -401,7 +401,8 @@ void BPY_python_start(bContext *C, int argc, const char **argv)
     {
       char program_path[FILE_MAX];
       if (BKE_appdir_program_python_search(
-              program_path, sizeof(program_path), PY_MAJOR_VERSION, PY_MINOR_VERSION)) {
+              program_path, sizeof(program_path), PY_MAJOR_VERSION, PY_MINOR_VERSION))
+      {
         status = PyConfig_SetBytesString(&config, &config.executable, program_path);
         pystatus_exit_on_error(status);
         has_python_executable = true;
@@ -655,7 +656,7 @@ void BPY_modules_load_user(bContext *C)
       if (!(G.f & G_FLAG_SCRIPT_AUTOEXEC)) {
         if (!(G.f & G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET)) {
           G.f |= G_FLAG_SCRIPT_AUTOEXEC_FAIL;
-          BLI_snprintf(G.autoexec_fail, sizeof(G.autoexec_fail), "Text '%s'", text->id.name + 2);
+          SNPRINTF(G.autoexec_fail, "Text '%s'", text->id.name + 2);
 
           printf("scripts disabled for \"%s\", skipping '%s'\n",
                  BKE_main_blendfile_path(bmain),
@@ -848,7 +849,8 @@ static bool bpy_module_ensure_compatible_version(void)
   uint version_runtime_major = version_runtime >> 24;
   uint version_runtime_minor = ((version_runtime & 0x00ff0000) >> 16);
   if ((version_compile_major != version_runtime_major) ||
-      (version_compile_minor != version_runtime_minor)) {
+      (version_compile_minor != version_runtime_minor))
+  {
     PyErr_Format(PyExc_ImportError,
                  "The version of \"bpy\" was compiled with: "
                  "(%u.%u) is incompatible with: (%u.%u) used by the interpreter!",

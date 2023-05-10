@@ -131,10 +131,10 @@ static void common_draw_status_header(bContext *C, tGraphSliderOp *gso, const ch
 
     outputNumInput(&gso->num, str_ofs, &gso->scene->unit);
 
-    BLI_snprintf(status_str, sizeof(status_str), "%s: %s", mode_str, str_ofs);
+    SNPRINTF(status_str, "%s: %s", mode_str, str_ofs);
   }
   else {
-    BLI_snprintf(status_str, sizeof(status_str), "%s: %s", mode_str, slider_string);
+    SNPRINTF(status_str, "%s: %s", mode_str, slider_string);
   }
 
   ED_workspace_status_text(C, status_str);
@@ -430,10 +430,10 @@ static void decimate_draw_status(bContext *C, tGraphSliderOp *gso)
 
     outputNumInput(&gso->num, str_ofs, &gso->scene->unit);
 
-    BLI_snprintf(status_str, sizeof(status_str), "%s: %s", mode_str, str_ofs);
+    SNPRINTF(status_str, "%s: %s", mode_str, str_ofs);
   }
   else {
-    BLI_snprintf(status_str, sizeof(status_str), "%s: %s", mode_str, slider_string);
+    SNPRINTF(status_str, "%s: %s", mode_str, slider_string);
   }
 
   ED_workspace_status_text(C, status_str);
@@ -469,7 +469,7 @@ static int decimate_invoke(bContext *C, wmOperator *op, const wmEvent *event)
   tGraphSliderOp *gso = op->customdata;
   gso->factor_prop = RNA_struct_find_property(op->ptr, "factor");
   gso->modal_update = decimate_modal_update;
-  ED_slider_allow_overshoot_set(gso->slider, false);
+  ED_slider_allow_overshoot_set(gso->slider, false, false);
 
   return invoke_result;
 }
@@ -679,7 +679,7 @@ void GRAPH_OT_blend_to_neighbor(wmOperatorType *ot)
   ot->poll = graphop_editable_keyframes_poll;
 
   /* Flags. */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_X;
 
   RNA_def_float_factor(ot->srna,
                        "factor",
@@ -764,7 +764,7 @@ void GRAPH_OT_breakdown(wmOperatorType *ot)
   ot->poll = graphop_editable_keyframes_poll;
 
   /* Flags. */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_X;
 
   RNA_def_float_factor(ot->srna,
                        "factor",
@@ -869,7 +869,7 @@ void GRAPH_OT_blend_to_default(wmOperatorType *ot)
   ot->poll = graphop_editable_keyframes_poll;
 
   /* Flags. */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_X;
 
   RNA_def_float_factor(ot->srna,
                        "factor",
@@ -954,7 +954,7 @@ void GRAPH_OT_ease(wmOperatorType *ot)
   ot->poll = graphop_editable_keyframes_poll;
 
   /* Flags. */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_X;
 
   RNA_def_float_factor(ot->srna,
                        "factor",
@@ -1091,7 +1091,7 @@ static int gaussian_smooth_invoke(bContext *C, wmOperator *op, const wmEvent *ev
   gaussian_smooth_allocate_operator_data(gso, filter_width, sigma);
   gso->free_operator_data = gaussian_smooth_free_operator_data;
 
-  ED_slider_allow_overshoot_set(gso->slider, false);
+  ED_slider_allow_overshoot_set(gso->slider, false, false);
   ED_slider_factor_set(gso->slider, 0.0f);
   common_draw_status_header(C, gso, "Gaussian Smooth");
 

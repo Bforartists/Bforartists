@@ -450,8 +450,8 @@ static void interpolate_curve_attributes(bke::CurvesGeometry &child_curves,
     if (type == CD_PROP_STRING) {
       return true;
     }
-    if (guide_curve_attributes.is_builtin(id) &&
-        !ELEM(id.name(), "radius", "tilt", "resolution")) {
+    if (guide_curve_attributes.is_builtin(id) && !ELEM(id.name(), "radius", "tilt", "resolution"))
+    {
       return true;
     }
 
@@ -463,12 +463,12 @@ static void interpolate_curve_attributes(bke::CurvesGeometry &child_curves,
       if (!dst_generic) {
         return true;
       }
-      attribute_math::convert_to_static_type(type, [&](auto dummy) {
+      bke::attribute_math::convert_to_static_type(type, [&](auto dummy) {
         using T = decltype(dummy);
         const Span<T> src = src_generic.typed<T>();
         MutableSpan<T> dst = dst_generic.span.typed<T>();
 
-        attribute_math::DefaultMixer<T> mixer(dst);
+        bke::attribute_math::DefaultMixer<T> mixer(dst);
         threading::parallel_for(child_curves.curves_range(), 256, [&](const IndexRange range) {
           for (const int child_curve_i : range) {
             const int neighbor_count = all_neighbor_counts[child_curve_i];
@@ -497,12 +497,12 @@ static void interpolate_curve_attributes(bke::CurvesGeometry &child_curves,
         return true;
       }
 
-      attribute_math::convert_to_static_type(type, [&](auto dummy) {
+      bke::attribute_math::convert_to_static_type(type, [&](auto dummy) {
         using T = decltype(dummy);
         const Span<T> src = src_generic.typed<T>();
         MutableSpan<T> dst = dst_generic.span.typed<T>();
 
-        attribute_math::DefaultMixer<T> mixer(dst);
+        bke::attribute_math::DefaultMixer<T> mixer(dst);
         threading::parallel_for(child_curves.curves_range(), 256, [&](const IndexRange range) {
           Vector<float, 16> sample_lengths;
           Vector<int, 16> sample_segments;
@@ -831,7 +831,8 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   GeometryComponentEditData::remember_deformed_curve_positions_if_necessary(guide_curves_geometry);
   if (const auto *curve_edit_data =
-          guide_curves_geometry.get_component_for_read<GeometryComponentEditData>()) {
+          guide_curves_geometry.get_component_for_read<GeometryComponentEditData>())
+  {
     new_curves.add(*curve_edit_data);
   }
 
