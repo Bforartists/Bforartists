@@ -1997,13 +1997,13 @@ class VIEW3D_MT_select_edit_text(Menu):
 
         layout.separator()
 
-        layout.operator("font.move_select", text="Top").type = 'TEXT_BEGIN'
-        layout.operator("font.move_select", text="Bottom").type = 'TEXT_END'
+        layout.operator("font.move_select", text="Top", icon="HAND").type = 'TEXT_BEGIN'
+        layout.operator("font.move_select", text="Bottom", icon="HAND").type = 'TEXT_END'
 
         layout.separator()
 
-        layout.operator("font.move_select", text="Previous Block").type = 'PREVIOUS_PAGE'
-        layout.operator("font.move_select", text="Next Block").type = 'NEXT_PAGE'
+        layout.operator("font.move_select", text="Previous Block", icon="HAND").type = 'PREVIOUS_PAGE'
+        layout.operator("font.move_select", text="Next Block", icon="HAND").type = 'NEXT_PAGE'
 
         layout.separator()
 
@@ -6175,7 +6175,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        
+
         #layout.menu("VIEW3D_MT_edit_gpencil_transform_legacy")
         layout.menu("VIEW3D_MT_edit_gpencil_transform")
         layout.menu("VIEW3D_MT_mirror")
@@ -6212,7 +6212,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_weight_gpencil")
-        
+
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_gpencil_delete")
@@ -6383,7 +6383,7 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
 
     def draw(self, _context):
         layout = self.layout
-		
+
         layout.operator("transform.bend", text="Bend", icon="BEND")
         layout.operator("transform.shear", text="Shear", icon="SHEAR")
         layout.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
@@ -6391,7 +6391,7 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
 
 #class VIEW3D_MT_edit_gpencil_transform_legacy(Menu):
 #    bl_label = "Legacy"
-#    
+#
 #    def draw(self, _context):
 #    	layout = self.layout
 #
