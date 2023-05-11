@@ -215,11 +215,6 @@ class TEXT_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("text.move", text="Top of File", icon = "MOVE_UP").type = 'FILE_TOP'
-        layout.operator("text.move", text="Bottom of File",icon = "MOVE_DOWN").type = 'FILE_BOTTOM'
-
-        layout.separator()
-
         layout.menu("INFO_MT_area")
 
 
