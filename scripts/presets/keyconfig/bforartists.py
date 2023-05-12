@@ -1,4 +1,4 @@
-keyconfig_version = (3, 6, 6)
+keyconfig_version = (3, 6, 7)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -5344,6 +5344,13 @@ keyconfig_data = \
        ],
       },
      ),
+    ("wm.call_menu_pie",
+     {"type": 'TAB', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("name", 'VIEW3D_MT_object_mode_pie'),
+       ],
+      },
+     ),
     ],
    },
   ),
@@ -6057,10 +6064,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sculpt.face_set_invert_visibility",
-     {"type": 'I', "value": 'PRESS', "ctrl": True},
-     None
-     ),
+    ("sculpt.face_set_invert_visibility", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
     ("sculpt.face_set_change_visibility",
      {"type": 'H', "value": 'PRESS', "alt": True},
      {"properties":
