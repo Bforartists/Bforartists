@@ -1189,17 +1189,21 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         layout.prop(brush, "use_alpha")
         if brush.vertex_tool != 'SMEAR':
             use_accumulate = True
+        use_frontface = True
 
     # Weight Paint
     elif mode == 'PAINT_WEIGHT':
         if brush.weight_tool != 'SMEAR':
             use_accumulate = True
+        use_frontface = True
 
     # Draw shared settings.
     if use_accumulate:
         layout.use_property_split = False
         layout.prop(brush, "use_accumulate")
 
+    if use_frontface:
+        layout.prop(brush, "use_frontface", text="Front Faces Only")
 
 def draw_color_settings(context, layout, brush, color_type=False):
     """Draw color wheel and gradient settings."""

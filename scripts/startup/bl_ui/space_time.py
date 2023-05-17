@@ -12,11 +12,21 @@ class TIME_HT_editor_buttons:
         scene = context.scene
         tool_settings = context.tool_settings
         screen = context.screen
-        anim = bpy.ops.anim
+        anim = bpy.ops.anim #BFA
 
         layout.separator_spacer()
 
         row = layout.row(align=True)
+### BFA - moved to another area.  
+#        row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
+#        sub = row.row(align=True)
+#        sub.active = tool_settings.use_keyframe_insert_auto
+#        sub.popover(
+#            panel="TIME_PT_auto_keyframing",
+#            text="",
+#        )
+#        row = layout.row(align=True)
+
         row.operator("screen.frame_jump", text="", icon='REW').end = False
         row.operator("screen.keyframe_jump", text="", icon='PREV_KEYFRAME').next = False
         if not screen.is_animation_playing:
@@ -89,20 +99,32 @@ class TIME_MT_editor_menus(Menu):
         layout = self.layout
         horizontal = (layout.direction == 'VERTICAL')
         st = context.space_data
-
         if horizontal:
             row = layout.row()
             sub = row.row(align=True)
         else:
             sub = layout
+            
+## BFA - moved to header options 
+#        sub.popover(
+#            panel="TIME_PT_playback",
+#            text="Playback",
+#        )
+#        sub.popover(
+#            panel="TIME_PT_keyframing_settings",
+#            text="Keying",
+#            text_ctxt=i18n_contexts.id_windowmanager,
+#        )
 
+#        # Add a separator to keep the popover button from aligning with the menu button.
+#        sub.separator(factor=0.4)
         if horizontal:
             sub = row.row(align=True)
 
         sub.menu("TIME_MT_view")
         if st.show_markers:
             sub.menu("TIME_MT_marker")
-            sub.menu("DOPESHEET_MT_select")
+            sub.menu("DOPESHEET_MT_select")#BFA
 
 
 class TIME_MT_marker(Menu):
@@ -113,7 +135,6 @@ class TIME_MT_marker(Menu):
 
         marker_menu_generic(layout, context)
 
-
 class TIME_MT_view(Menu):
     bl_label = "View"
 
@@ -123,11 +144,11 @@ class TIME_MT_view(Menu):
         scene = context.scene
         st = context.space_data
 
-        layout.prop(st, "show_region_ui")
+        layout.prop(st, "show_region_ui")#BFA
         layout.prop(st, "show_region_hud")
 
         layout.separator()
-
+## BFA - these properties were moved to the header options properties
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
         layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
@@ -142,6 +163,29 @@ class TIME_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
+
+## BFA - moved to the options panel exclusively.
+#class TIME_MT_cache(Menu):
+#    bl_label = "Cache"
+
+#    def draw(self, context):
+#        layout = self.layout
+
+#        st = context.space_data
+
+#        layout.prop(st, "show_cache")
+
+#        layout.separator()
+
+#        col = layout.column()
+#        col.enabled = st.show_cache
+#        col.prop(st, "cache_softbody")
+#        col.prop(st, "cache_particles")
+#        col.prop(st, "cache_cloth")
+#        col.prop(st, "cache_simulation_nodes")
+#        col.prop(st, "cache_smoke")
+#        col.prop(st, "cache_dynamicpaint")
+#        col.prop(st, "cache_rigidbody")
 
 
 def marker_menu_generic(layout, context):
@@ -344,6 +388,7 @@ class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
             col.prop(st, "cache_softbody")
             col.prop(st, "cache_particles")
             col.prop(st, "cache_cloth")
+            col.prop(st, "cache_simulation_nodes")
             col.prop(st, "cache_smoke")
             col.prop(st, "cache_dynamicpaint")
             col.prop(st, "cache_rigidbody")
@@ -386,6 +431,7 @@ classes = (
     TIME_MT_editor_menus,
     TIME_MT_marker,
     TIME_MT_view,
+    #TIME_MT_cache, #BFA - not used, replaced by the PT_view_view_options
     TIME_PT_playback,
     TIME_PT_keyframing_settings,
     TIME_PT_view_view_options,
