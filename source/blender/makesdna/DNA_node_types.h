@@ -690,6 +690,8 @@ typedef enum eNodeTreeRuntimeFlag {
   NTREE_RUNTIME_FLAG_HAS_IMAGE_ANIMATION = 1 << 0,
   /** There is a material output node in the group. */
   NTREE_RUNTIME_FLAG_HAS_MATERIAL_OUTPUT = 1 << 1,
+  /** There is a simulation zone in the group. */
+  NTREE_RUNTIME_FLAG_HAS_SIMULATION_ZONE = 1 << 2,
 } eNodeTreeRuntimeFlag;
 
 /* socket value structs for input buttons
@@ -1634,6 +1636,13 @@ typedef struct NodeGeometryDistributePointsInVolume {
   uint8_t mode;
 } NodeGeometryDistributePointsInVolume;
 
+typedef struct NodeGeometrySampleVolume {
+  /* eCustomDataType. */
+  int8_t grid_type;
+  /* GeometryNodeSampleVolumeInterpolationMode */
+  int8_t interpolation_mode;
+} NodeGeometrySampleVolume;
+
 typedef struct NodeFunctionCompare {
   /* NodeCompareOperation */
   int8_t operation;
@@ -2143,11 +2152,12 @@ typedef enum CMPNodeStabilizeInverse {
   CMP_NODE_STABILIZE_FLAG_INVERSE = 1,
 } CMPNodeStabilizeInverse;
 
-/* Plane track deform node. */
+#define CMP_NODE_PLANE_TRACK_DEFORM_MOTION_BLUR_SAMPLES_MAX 64
 
-enum {
-  CMP_NODEFLAG_PLANETRACKDEFORM_MOTION_BLUR = 1,
-};
+/* Plane track deform node. */
+typedef enum CMPNodePlaneTrackDeformFlags {
+  CMP_NODE_PLANE_TRACK_DEFORM_FLAG_MOTION_BLUR = 1,
+} CMPNodePlaneTrackDeformFlags;
 
 /* Set Alpha Node. */
 
@@ -2175,8 +2185,6 @@ typedef enum CMPNodeCombSepColorMode {
   CMP_NODE_COMBSEP_COLOR_YCC = 3,
   CMP_NODE_COMBSEP_COLOR_YUV = 4,
 } CMPNodeCombSepColorMode;
-
-#define CMP_NODE_PLANETRACKDEFORM_MBLUR_SAMPLES_MAX 64
 
 /* Point Density shader node */
 
@@ -2437,6 +2445,12 @@ typedef enum GeometryNodeScaleElementsMode {
   GEO_NODE_SCALE_ELEMENTS_UNIFORM = 0,
   GEO_NODE_SCALE_ELEMENTS_SINGLE_AXIS = 1,
 } GeometryNodeScaleElementsMode;
+
+typedef enum GeometryNodeSampleVolumeInterpolationMode {
+  GEO_NODE_SAMPLE_VOLUME_INTERPOLATION_MODE_NEAREST = 0,
+  GEO_NODE_SAMPLE_VOLUME_INTERPOLATION_MODE_TRILINEAR = 1,
+  GEO_NODE_SAMPLE_VOLUME_INTERPOLATION_MODE_TRIQUADRATIC = 2,
+} GeometryNodeSampleVolumeInterpolationMode;
 
 typedef enum NodeCombSepColorMode {
   NODE_COMBSEP_COLOR_RGB = 0,

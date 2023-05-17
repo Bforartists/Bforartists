@@ -156,6 +156,8 @@ class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
     def draw(self, context):
         layout = self.layout
 
+        DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
+        layout.separator()
         DopesheetFilterPopoverBase.draw_search_filters(context, layout)
         layout.separator()
         DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
@@ -457,7 +459,7 @@ class GRAPH_MT_key_blending(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("graph.breakdown", text="Breakdown")
         layout.operator("graph.blend_to_neighbor", text="Blend to Neighbor")
         layout.operator("graph.blend_to_default", text="Blend to Default Value")
@@ -469,7 +471,7 @@ class GRAPH_MT_key_smoothing(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("graph.gaussian_smooth", text="Smooth (Gaussian)")
         layout.operator("graph.smooth", text="Smooth (Legacy)")
 
@@ -568,7 +570,7 @@ class GRAPH_MT_slider(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("graph.breakdown", text = "Breakdown", icon='BREAKDOWNER_POSE')
         layout.operator("graph.blend_to_neighbor", text = "Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
         layout.operator("graph.blend_to_default", text = "Blend to Default Value", icon = 'BLEND_TO_DEFAULT')

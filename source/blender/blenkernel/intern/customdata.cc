@@ -30,6 +30,7 @@
 #include "BLI_span.hh"
 #include "BLI_string.h"
 #include "BLI_string_ref.hh"
+#include "BLI_string_utf8.h"
 #include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
@@ -3175,6 +3176,13 @@ void CustomData_free_layers(CustomData *data, const eCustomDataType type, const 
   }
 }
 
+bool CustomData_has_layer_named(const CustomData *data,
+                                const eCustomDataType type,
+                                const char *name)
+{
+  return CustomData_get_named_layer_index(data, type, name) != -1;
+}
+
 bool CustomData_has_layer(const CustomData *data, const eCustomDataType type)
 {
   return (CustomData_get_layer_index(data, type) != -1);
@@ -4413,7 +4421,7 @@ void CustomData_set_layer_unique_name(CustomData *data, const int index)
   /* Set default name if none specified. Note we only call DATA_() when
    * needed to avoid overhead of locale lookups in the depsgraph. */
   if (nlayer->name[0] == '\0') {
-    STRNCPY(nlayer->name, DATA_(typeInfo->defaultname));
+    STRNCPY_UTF8(nlayer->name, DATA_(typeInfo->defaultname));
   }
 
   const char *defname = ""; /* Dummy argument, never used as `name` is never zero length. */
@@ -4437,10 +4445,10 @@ void CustomData_validate_layer_name(const CustomData *data,
      * deleted, so assign the active layer to name
      */
     index = CustomData_get_active_layer_index(data, type);
-    BLI_strncpy(outname, data->layers[index].name, MAX_CUSTOMDATA_LAYER_NAME);
+    BLI_strncpy_utf8(outname, data->layers[index].name, MAX_CUSTOMDATA_LAYER_NAME);
   }
   else {
-    BLI_strncpy(outname, name, MAX_CUSTOMDATA_LAYER_NAME);
+    BLI_strncpy_utf8(outname, name, MAX_CUSTOMDATA_LAYER_NAME);
   }
 }
 
@@ -5178,9 +5186,6 @@ void CustomData_blend_write(BlendWriter *writer,
             writer, count, static_cast<const MDisps *>(layer.data), layer.flag & CD_FLAG_EXTERNAL);
         break;
       case CD_PAINT_MASK:
-        BLO_write_raw(writer, sizeof(float) * count, static_cast<const float *>(layer.data));
-        break;
-      case CD_SCULPT_FACE_SETS:
         BLO_write_raw(writer, sizeof(float) * count, static_cast<const float *>(layer.data));
         break;
       case CD_GRID_PAINT_MASK:
