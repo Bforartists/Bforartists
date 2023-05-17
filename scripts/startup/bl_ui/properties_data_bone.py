@@ -149,7 +149,7 @@ class BONE_PT_curved(BoneButtonsPanel, Panel):
 
         col = topcol.column(align=True)
         col.prop(bbone, "bbone_rollin", text="Roll In")
-        col.prop(bbone, "bbone_rollout", text="Out")
+        col.prop(bbone, "bbone_rollout", text="Out", text_ctxt=i18n_contexts.id_armature)
         col.use_property_split = False
         col.prop(bone, "use_endroll_as_inroll")
 
@@ -324,7 +324,6 @@ class BONE_PT_display_custom_shape(BoneButtonsPanel, Panel):
 
             sub = col.column()
             sub.active = bool(pchan and pchan.custom_shape)
-
             sub.separator()
 
             sub.prop(pchan, "custom_shape_scale_xyz", text="Scale")
