@@ -257,9 +257,9 @@ void OutputSingleLayerOperation::deinit_execution()
     const char *suffix;
 
     ibuf->channels = size;
-    ibuf->rect_float = output_buffer_;
-    ibuf->mall |= IB_rectfloat;
     ibuf->dither = rd_->dither_intensity;
+
+    IMB_assign_float_buffer(ibuf, output_buffer_, IB_TAKE_OWNERSHIP);
 
     IMB_colormanagement_imbuf_for_write(ibuf, save_as_render_, false, &format_);
 
@@ -453,15 +453,14 @@ void OutputOpenExrMultiLayerOperation::update_memory_buffer_partial(MemoryBuffer
                                                                     const rcti &area,
                                                                     Span<MemoryBuffer *> inputs)
 {
-  const MemoryBuffer *input_image = inputs[0];
   for (int i = 0; i < layers_.size(); i++) {
     OutputOpenExrLayer &layer = layers_[i];
+    int layer_num_channels = COM_data_type_num_channels(layer.datatype);
     if (layer.output_buffer) {
-      MemoryBuffer output_buf(layer.output_buffer,
-                              COM_data_type_num_channels(layer.datatype),
-                              this->get_width(),
-                              this->get_height());
-      output_buf.copy_from(input_image, area);
+      MemoryBuffer output_buf(
+          layer.output_buffer, layer_num_channels, this->get_width(), this->get_height());
+      /* Input node always has 4 channels. Not all are needed depending on datatype. */
+      output_buf.copy_from(inputs[i], area, 0, layer_num_channels, 0);
     }
   }
 }
