@@ -586,8 +586,10 @@ class IMAGE_MT_uvs(Menu):
         layout.operator("uv.select_split", text="Split Selection", icon='SPLIT')
 
         layout.separator()
-
+## BFA order of these group of ops changed. They are listed below.
+        layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("uv.pack_islands", icon="PACKISLAND")
+        layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("uv.average_islands_scale", icon="AVERAGEISLANDSCALE")
         layout.operator("uv.minimize_stretch", icon="MINIMIZESTRETCH")
         layout.operator("uv.stitch", icon="STITCH")
