@@ -4,7 +4,7 @@
 /** \file
  * \ingroup editorui
  */
-
+/* BFA NOTE: When merging this, best to go in from the Bforartists one, then work the new icons from Blender. */
 /* NOTE: this is included multiple times with different #defines for DEF_ICON. */
 
 /* Auto define more specific types for places that do not need the distinction. */
@@ -32,6 +32,9 @@
 #ifndef DEF_ICON_COLOR
 #  define DEF_ICON_COLOR DEF_ICON
 #endif
+/*#ifndef DEF_ICON_FUND*/ /*BFa - This icon is not used*/
+/*#  define DEF_ICON_FUND DEF_ICON*/  /*BFa - This icon is not used*/
+/*#endif*/ /*BFa - This icon is not used*/
 
 /* ICON_ prefix added */
 
@@ -1803,7 +1806,7 @@ DEF_ICON_COLOR(RELAX_TOPOLOGY)
 DEF_ICON_COLOR(ENHANCE)
 DEF_ICON_COLOR(INTERPOLATE_CURVE)
 DEF_ICON_COLOR(INDEX_OF_NEAREST)
-DEF_ICON_BLANK(1821)
+DEF_ICON_COLOR(ORIENTATION_PARENT)
 DEF_ICON_BLANK(1822)
 DEF_ICON_BLANK(1823)
 
