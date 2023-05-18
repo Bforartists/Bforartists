@@ -2070,7 +2070,7 @@ static bool file_execute(bContext *C, SpaceFile *sfile)
     }
     else {
       BLI_path_abs(params->dir, BKE_main_blendfile_path(bmain));
-      BLI_path_normalize(params->dir);
+      BLI_path_normalize_native(params->dir);
       BLI_path_append_dir(params->dir, sizeof(params->dir), file->relpath);
     }
     ED_file_change_dir(C);
@@ -2741,9 +2741,12 @@ static void file_expand_directory(bContext *C)
                                                  BKE_appdir_folder_default_or_root());
     }
     else if (params->dir[0] == '~') {
+      /* While path handling expansion typically doesn't support home directory expansion
+       * in Blender, this is a convenience to be able to type in a single character.
+       * Even though this is a UNIX convention, it's harmless to expand on WIN32 as well. */
       char tmpstr[sizeof(params->dir) - 1];
       STRNCPY(tmpstr, params->dir + 1);
-      BLI_path_join(params->dir, sizeof(params->dir), BKE_appdir_folder_default_or_root(), tmpstr);
+      BLI_path_join(params->dir, sizeof(params->dir), BKE_appdir_folder_home(), tmpstr);
     }
 
     else if (params->dir[0] == '\0')
@@ -2841,7 +2844,7 @@ void file_directory_enter_handle(bContext *C, void *UNUSED(arg_unused), void *UN
     else if (!can_create_dir(params->dir)) {
       const char *lastdir = folderlist_peeklastdir(sfile->folders_prev);
       if (lastdir) {
-        BLI_strncpy(params->dir, lastdir, sizeof(params->dir));
+        STRNCPY(params->dir, lastdir);
       }
     }
 #endif
