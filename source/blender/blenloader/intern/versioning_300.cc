@@ -65,7 +65,7 @@
 #include "BKE_main_namemap.h"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.h"
-#include "BKE_node.h"
+#include "BKE_node.hh"
 #include "BKE_screen.h"
 #include "BKE_workspace.h"
 
@@ -497,44 +497,6 @@ static bool do_versions_sequencer_color_balance_sop(Sequence *seq, void * /*user
   return true;
 }
 
-static bNodeLink *find_connected_link(bNodeTree *ntree, bNodeSocket *in_socket)
-{
-  LISTBASE_FOREACH (bNodeLink *, link, &ntree->links) {
-    if (link->tosock == in_socket) {
-      return link;
-    }
-  }
-  return nullptr;
-}
-
-static void add_realize_instances_before_socket(bNodeTree *ntree,
-                                                bNode *node,
-                                                bNodeSocket *geometry_socket)
-{
-  BLI_assert(geometry_socket->type == SOCK_GEOMETRY);
-  bNodeLink *link = find_connected_link(ntree, geometry_socket);
-  if (link == nullptr) {
-    return;
-  }
-
-  /* If the realize instances node is already before this socket, no need to continue. */
-  if (link->fromnode->type == GEO_NODE_REALIZE_INSTANCES) {
-    return;
-  }
-
-  bNode *realize_node = nodeAddStaticNode(nullptr, ntree, GEO_NODE_REALIZE_INSTANCES);
-  realize_node->parent = node->parent;
-  realize_node->locx = node->locx - 100;
-  realize_node->locy = node->locy;
-  nodeAddLink(ntree,
-              link->fromnode,
-              link->fromsock,
-              realize_node,
-              static_cast<bNodeSocket *>(realize_node->inputs.first));
-  link->fromnode = realize_node;
-  link->fromsock = static_cast<bNodeSocket *>(realize_node->outputs.first);
-}
-
 /**
  * If a node used to realize instances implicitly and will no longer do so in 3.0, add a "Realize
  * Instances" node in front of it to avoid changing behavior. Don't do this if the node will be
@@ -704,7 +666,7 @@ static bool do_versions_sequencer_init_retiming_tool_data(Sequence *seq, void *u
 
   SeqRetimingHandle *handle = &seq->retiming_handles[seq->retiming_handle_num - 1];
   handle->strip_frame_index = round_fl_to_int(content_length / seq->speed_factor);
-  seq->speed_factor = 0.0f;
+  seq->speed_factor = 1.0f;
 
   return true;
 }
@@ -940,7 +902,7 @@ static void version_geometry_nodes_primitive_uv_maps(bNodeTree &ntree)
     BLI_addhead(&ntree.nodes, node);
   }
   if (!new_nodes.is_empty()) {
-    nodeRebuildIDVector(&ntree);
+    blender::bke::nodeRebuildIDVector(&ntree);
   }
 }
 
@@ -1074,7 +1036,7 @@ static void version_geometry_nodes_extrude_smooth_propagation(bNodeTree &ntree)
     BLI_addhead(&ntree.nodes, node);
   }
   if (!new_nodes.is_empty()) {
-    nodeRebuildIDVector(&ntree);
+    blender::bke::nodeRebuildIDVector(&ntree);
   }
 }
 
@@ -1783,6 +1745,18 @@ static bool version_set_seq_single_frame_content(Sequence *seq, void * /*user_da
   {
     seq->flag |= SEQ_SINGLE_FRAME_CONTENT;
   }
+  return true;
+}
+
+static bool version_seq_fix_broken_sound_strips(Sequence *seq, void * /*user_data*/)
+{
+  if (seq->type != SEQ_TYPE_SOUND_RAM || seq->speed_factor != 0.0f) {
+    return true;
+  }
+
+  seq->speed_factor = 1.0f;
+  SEQ_retiming_data_clear(seq);
+  seq->startofs = 0.0f;
   return true;
 }
 
@@ -4336,6 +4310,56 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
       }
     }
   }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 306, 8)) {
+    LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+      ob->flag |= OB_FLAG_USE_SIMULATION_CACHE;
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 306, 9)) {
+    /* Fix sound strips with speed factor set to 0. See #107289. */
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      Editing *ed = SEQ_editing_get(scene);
+      if (ed != nullptr) {
+        SEQ_for_each_callback(&ed->seqbase, version_seq_fix_broken_sound_strips, nullptr);
+      }
+    }
+
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_ACTION) {
+            SpaceAction *saction = reinterpret_cast<SpaceAction *>(sl);
+            saction->cache_display |= TIME_CACHE_SIMULATION_NODES;
+          }
+        }
+      }
+    }
+
+    /* Enable the iTaSC ITASC_TRANSLATE_ROOT_BONES flag for backward compatibility.
+     * See #104606. */
+    LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+      if (ob->type != OB_ARMATURE || ob->pose == nullptr) {
+        continue;
+      }
+      bPose *pose = ob->pose;
+      if (pose->iksolver != IKSOLVER_ITASC || pose->ikparam == nullptr) {
+        continue;
+      }
+      bItasc *ikparam = (bItasc *)pose->ikparam;
+      ikparam->flag |= ITASC_TRANSLATE_ROOT_BONES;
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 306, 10)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      /* Set default values for new members. */
+      scene->toolsettings->snap_mode_tools = SCE_SNAP_MODE_GEOM;
+      scene->toolsettings->plane_axis = 2;
+    }
+  }
+
   /**
    * Versioning code until next subversion bump goes here.
    *

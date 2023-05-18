@@ -378,16 +378,16 @@ int IMB_timecode_to_array_index(IMB_Timecode_Type tc)
  * - rebuild helper functions
  * ---------------------------------------------------------------------- */
 
-static void get_index_dir(struct anim *anim, char *index_dir, size_t index_dir_len)
+static void get_index_dir(struct anim *anim, char *index_dir, size_t index_dir_maxncpy)
 {
   if (!anim->index_dir[0]) {
     char filename[FILE_MAXFILE];
     char dirname[FILE_MAXDIR];
     BLI_path_split_dir_file(anim->filepath, dirname, sizeof(dirname), filename, sizeof(filename));
-    BLI_path_join(index_dir, index_dir_len, dirname, "BL_proxy", filename);
+    BLI_path_join(index_dir, index_dir_maxncpy, dirname, "BL_proxy", filename);
   }
   else {
-    BLI_strncpy(index_dir, anim->index_dir, index_dir_len);
+    BLI_strncpy(index_dir, anim->index_dir, index_dir_maxncpy);
   }
 }
 
@@ -1392,10 +1392,9 @@ static void index_rebuild_fallback(FallbackIndexBuilderContext *context,
 
         IMB_convert_rgba_to_abgr(s_ibuf);
 
-        AVI_write_frame(context->proxy_ctx[i], pos, AVI_FORMAT_RGB32, s_ibuf->rect, x * y * 4);
-
         /* note that libavi free's the buffer... */
-        s_ibuf->rect = nullptr;
+        uint8_t *rect = IMB_steal_byte_buffer(s_ibuf);
+        AVI_write_frame(context->proxy_ctx[i], pos, AVI_FORMAT_RGB32, rect, x * y * 4);
 
         IMB_freeImBuf(s_ibuf);
       }

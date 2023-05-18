@@ -1788,7 +1788,7 @@ relax_topology
 enhance 
 interpolate_curve
 index_of_nearest
-#~ DEF_ICON_BLANK(1821)
+orientation_parent
 #~ DEF_ICON_BLANK(1822)
 #~ DEF_ICON_BLANK(1823)
 
