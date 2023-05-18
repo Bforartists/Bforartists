@@ -3563,6 +3563,12 @@ static void rna_def_userdef_theme_space_action(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Interpolation Line", "Color of lines showing non-bezier interpolation modes");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "simulated_frames", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, NULL, "simulated_frames");
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_ui_text(prop, "Simulated Frames", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 }
 
 static void rna_def_userdef_theme_space_nla(BlenderRNA *brna)
@@ -6307,14 +6313,14 @@ static void rna_def_userdef_script_directory_collection(BlenderRNA *brna, Proper
 
   func = RNA_def_function(srna, "new", "rna_userdef_script_directory_new");
   RNA_def_function_flag(func, FUNC_NO_SELF);
-  RNA_def_function_ui_description(func, "Add a new python script directory");
+  RNA_def_function_ui_description(func, "Add a new Python script directory");
   /* return type */
   parm = RNA_def_pointer(func, "script_directory", "ScriptDirectory", "", "");
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_userdef_script_directory_remove");
   RNA_def_function_flag(func, FUNC_NO_SELF | FUNC_USE_REPORTS);
-  RNA_def_function_ui_description(func, "Remove a python script directory");
+  RNA_def_function_ui_description(func, "Remove a Python script directory");
   parm = RNA_def_pointer(func, "script_directory", "ScriptDirectory", "", "");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
   RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
@@ -6622,7 +6628,7 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_override_templates", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "use_override_templates", 1);
   RNA_def_property_ui_text(
-      prop, "Override Templates", "Enable library override template in the python API");
+      prop, "Override Templates", "Enable library override template in the Python API");
 
   prop = RNA_def_property(srna, "enable_eevee_next", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "enable_eevee_next", 1);
