@@ -106,10 +106,17 @@ class STORYPENCIL_OT_RenderAction(Operator):
 
         # Create list of selected strips because the selection is changed when adding new strips
         Strips = []
+        Metas = []
         for sq in sequences:
-            if sq.type == 'SCENE':
+            if sq.type in ('SCENE', 'META'):
                 if only_selected is False or sq.select is True:
-                    Strips.append(sq)
+                    if sq.type == 'META' and is_video_output:
+                        Metas.append(sq)
+                        continue
+                    if sq.type == 'SCENE' and is_video_output and sq.parent_meta():
+                        continue
+                    if sq.type == 'SCENE':
+                        Strips.append(sq)
 
         # Sort strips
         Strips = sorted(Strips, key=lambda strip: strip.frame_start)
@@ -133,8 +140,38 @@ class STORYPENCIL_OT_RenderAction(Operator):
 
         try:
             Videos = []
-            Sheets = []
-            # Read all strips and render the output
+            # Render Meta Strips (Only video)
+            for meta in Metas:
+                meta_name = meta.name
+                scene.frame_start = int(meta.frame_start + meta.frame_offset_start)
+                scene.frame_end = int(meta.frame_start + meta.frame_final_duration - 1)
+
+                print("Meta:" + meta_name)
+                print("Video From:", scene.frame_start,
+                        "To", scene.frame_end)
+                # Video
+                filepath = os.path.join(rootpath, meta_name)
+
+                if image_settings.file_format == 'FFMPEG':
+                    ext = self.video_ext[scene.render.ffmpeg.format]
+                else:
+                    ext = '.avi'
+
+                if not filepath.endswith(ext):
+                    filepath += ext
+
+                scene.render.use_file_extension = False
+                scene.render.filepath = filepath
+
+                # Render Animation
+                bpy.ops.render.render(animation=True)
+
+                # Add video to add meta strip later
+                if scene.storypencil_add_render_strip:
+                    Videos.append(
+                        [filepath, meta.frame_start + meta.frame_offset_start])
+
+            # Read all scene strips and render the output (No META)
             for sq in Strips:
                 strip_name = sq.name
                 strip_scene = sq.scene
@@ -187,12 +224,6 @@ class STORYPENCIL_OT_RenderAction(Operator):
                                 self.format_to4(frame_nrr)
 
                         filepath = os.path.join(root_folder, framename)
-
-                        sheet = os.path.realpath(filepath)
-                        sheet = bpy.path.ensure_ext(
-                            sheet, self.image_ext[image_settings.file_format])
-                        Sheets.append([sheet, keyframe])
-
                         scene.render.filepath = filepath
 
                         # Render Frame
