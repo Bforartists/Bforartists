@@ -7,7 +7,7 @@ bl_info = {
     "name": "Storypencil - Storyboard Tools",
     "description": "Storyboard tools",
     "author": "Antonio Vazquez, Matias Mendiola, Daniel Martinez Lara, Rodrigo Blaas, Samuel Bernou",
-    "version": (1, 1, 3),
+    "version": (1, 1, 4),
     "blender": (3, 3, 0),
     "location": "",
     "warning": "",
