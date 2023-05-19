@@ -586,11 +586,10 @@ def make_material_texture_chunk(chunk_id, texslots, pct):
         either 0x100 or 0x200, tintcolor will be processed if colorchunks are present"""
 
         mapflags = 0
-
-        # no perfect mapping for mirror modes - 3DS only has uniform mirror w. repeat=2
         if texslot.extension == 'EXTEND':
             mapflags |= 0x1
-
+        if texslot.extension == 'MIRROR':
+            mapflags |= 0x2
         if texslot.extension == 'CLIP':
             mapflags |= 0x10
 
