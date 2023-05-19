@@ -169,6 +169,12 @@ class PrimitiveCreator:
                 attr['gltf_attribute_name'] = 'COLOR_0'
                 attr['get'] = self.get_function()
 
+                # Seems we sometime can have name collision about attributes
+                # Avoid crash and ignoring one of duplicated attribute name
+                if 'COLOR_0' in [a['gltf_attribute_name'] for a in self.blender_attributes]:
+                    print_console('WARNING', 'Attribute (vertex color) collision name: ' + blender_attribute.name + ", ignoring one of them")
+                    continue
+
             else:
                 # Custom attributes
                 # Keep only attributes that starts with _
@@ -185,6 +191,12 @@ class PrimitiveCreator:
 
                 attr['gltf_attribute_name'] = keep_attribute.attr_name.upper()
                 attr['get'] = self.get_function()
+
+                # Seems we sometime can have name collision about attributes
+                # Avoid crash and ignoring one of duplicated attribute name
+                if attr['gltf_attribute_name'] in [a['gltf_attribute_name'] for a in self.blender_attributes]:
+                    print_console('WARNING', 'Attribute collision name: ' + blender_attribute.name + ", ignoring one of them")
+                    continue
 
             self.blender_attributes.append(attr)
 

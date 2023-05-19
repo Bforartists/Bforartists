@@ -2,7 +2,7 @@
 #
 #
 #  Author            : Clemens Barth (Blendphys@root-1.de)
-#  Homepage(Wiki)    : http://development.root-1.de/Atomic_Blender.php
+#  Homepage(Wiki)    : https://docs.blender.org/manual/en/dev/addons/import_export/mesh_atomic.html
 #
 #  Start of project                  : 2011-08-31 by CB
 #  First publication in Blender      : 2011-11-11 by CB
