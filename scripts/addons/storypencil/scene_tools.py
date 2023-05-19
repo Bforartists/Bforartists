@@ -19,6 +19,7 @@ class STORYPENCIL_OT_NewScene(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     scene_name: bpy.props.StringProperty(default="Scene")
+    num_strips: bpy.props.IntProperty(default=1, min=1, max=128, description="Number of scenes to add")
 
     # ------------------------------
     # Poll
@@ -39,6 +40,7 @@ class STORYPENCIL_OT_NewScene(Operator):
         layout = self.layout
         col = layout.column()
         col.prop(self, "scene_name", text="Scene Name")
+        col.prop(self, "num_strips", text="Repeat")
 
     def format_to3(self, value):
         return f"{value:03}"
@@ -50,32 +52,38 @@ class STORYPENCIL_OT_NewScene(Operator):
         scene_prv = context.scene
         cfra_prv = scene_prv.frame_current
         scene_base = scene_prv.storypencil_base_scene
+        repeat = self.num_strips
 
-        # Set context to base scene and duplicate
-        context.window.scene = scene_base
-        bpy.ops.scene.new(type='FULL_COPY')
-        scene_new = context.window.scene
-        new_name = scene_prv.storypencil_name_prefix + \
-            self.scene_name + scene_prv.storypencil_name_suffix
-        id = 0
-        while new_name in bpy.data.scenes:
-            id += 1
-            new_name = scene_prv.storypencil_name_prefix + self.scene_name + \
-                scene_prv.storypencil_name_suffix + '.' + self.format_to3(id)
+        offset = 0
+        for i in range(repeat):
+            # Set context to base scene and duplicate
+            context.window.scene = scene_base
+            bpy.ops.scene.new(type='FULL_COPY')
+            scene_new = context.window.scene
+            new_name = scene_prv.storypencil_name_prefix + \
+                self.scene_name + scene_prv.storypencil_name_suffix
+            id = 0
+            while new_name in bpy.data.scenes:
+                id += 1
+                new_name = scene_prv.storypencil_name_prefix + self.scene_name + \
+                    scene_prv.storypencil_name_suffix + '.' + self.format_to3(id)
 
-        scene_new.name = new_name
-        # Set duration of new scene
-        scene_new.frame_end = scene_new.frame_start + \
-            scene_prv.storypencil_scene_duration - 1
+            scene_new.name = new_name
+            # Set duration of new scene
+            scene_new.frame_end = scene_new.frame_start + \
+                scene_prv.storypencil_scene_duration - 1
 
-        # Back to original scene
-        context.window.scene = scene_prv
-        scene_prv.frame_current = cfra_prv
-        bpy.ops.sequencer.scene_strip_add(
-            frame_start=cfra_prv, scene=scene_new.name)
+            # Back to original scene
+            context.window.scene = scene_prv
+            scene_prv.frame_current = cfra_prv
+            bpy.ops.sequencer.scene_strip_add(
+                frame_start=cfra_prv + offset, scene=scene_new.name)
 
-        scene_new.update_tag()
-        scene_prv.update_tag()
+            # Add offset for repeat
+            offset += scene_new.frame_end - scene_new.frame_start + 1
+
+            scene_new.update_tag()
+            scene_prv.update_tag()
 
         return {"FINISHED"}
 
