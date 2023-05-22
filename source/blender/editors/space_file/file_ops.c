@@ -1786,31 +1786,31 @@ bool file_draw_check_exists(SpaceFile *sfile)
  * \{ */
 
 static const EnumPropertyItem file_external_operation[] = {
-    {FILE_EXTERNAL_OPERATION_OPEN, "OPEN", 0, "Open", "Open the file"},
-    {FILE_EXTERNAL_OPERATION_FOLDER_OPEN, "FOLDER_OPEN", 0, "Open Folder", "Open the folder"},
-    {FILE_EXTERNAL_OPERATION_EDIT, "EDIT", 0, "Edit", "Edit the file"},
-    {FILE_EXTERNAL_OPERATION_NEW, "NEW", 0, "New", "Create a new file of this type"},
-    {FILE_EXTERNAL_OPERATION_FIND, "FIND", 0, "Find File", "Search for files of this type"},
-    {FILE_EXTERNAL_OPERATION_SHOW, "SHOW", 0, "Show", "Show this file"},
-    {FILE_EXTERNAL_OPERATION_PLAY, "PLAY", 0, "Play", "Play this file"},
-    {FILE_EXTERNAL_OPERATION_BROWSE, "BROWSE", 0, "Browse", "Browse this file"},
-    {FILE_EXTERNAL_OPERATION_PREVIEW, "PREVIEW", 0, "Preview", "Preview this file"},
-    {FILE_EXTERNAL_OPERATION_PRINT, "PRINT", 0, "Print", "Print this file"},
-    {FILE_EXTERNAL_OPERATION_INSTALL, "INSTALL", 0, "Install", "Install this file"},
-    {FILE_EXTERNAL_OPERATION_RUNAS, "RUNAS", 0, "Run As User", "Run as specific user"},
+    {FILE_EXTERNAL_OPERATION_OPEN, "OPEN", ICON_FILE, "Open", "Open the file"},
+    {FILE_EXTERNAL_OPERATION_FOLDER_OPEN, "FOLDER_OPEN", ICON_FILE_FOLDER, "Open Folder", "Open the folder"},
+    {FILE_EXTERNAL_OPERATION_EDIT, "EDIT", ICON_FILE, "Edit", "Edit the file"},
+    {FILE_EXTERNAL_OPERATION_NEW, "NEW", ICON_FILE_NEW, "New", "Create a new file of this type"},
+    {FILE_EXTERNAL_OPERATION_FIND, "FIND", ICON_VIEW_ZOOM, "Find File", "Search for files of this type"},
+    {FILE_EXTERNAL_OPERATION_SHOW, "SHOW", ICON_RESTRICT_VIEW_ON, "Show", "Show this file"},
+    {FILE_EXTERNAL_OPERATION_PLAY, "PLAY", ICON_PLAY, "Play", "Play this file"},
+    {FILE_EXTERNAL_OPERATION_BROWSE, "BROWSE", ICON_FILE_FOLDER, "Browse", "Browse this file"},
+    {FILE_EXTERNAL_OPERATION_PREVIEW, "PREVIEW", ICON_RESTRICT_VIEW_ON, "Preview", "Preview this file"},
+    {FILE_EXTERNAL_OPERATION_PRINT, "PRINT", ICON_OUTPUT, "Print", "Print this file"},
+    {FILE_EXTERNAL_OPERATION_INSTALL, "INSTALL", ICON_IMPORT, "Install", "Install this file"},
+    {FILE_EXTERNAL_OPERATION_RUNAS, "RUNAS", ICON_PLAY, "Run As User", "Run as specific user"},
     {FILE_EXTERNAL_OPERATION_PROPERTIES,
      "PROPERTIES",
-     0,
+     ICON_PREFERENCES,
      "Properties",
      "Show OS Properties for this item"},
     {FILE_EXTERNAL_OPERATION_FOLDER_FIND,
      "FOLDER_FIND",
-     0,
+     ICON_VIEWZOOM,
      "Find in Folder",
      "Search for items in this folder"},
     {FILE_EXTERNAL_OPERATION_FOLDER_CMD,
      "CMD",
-     0,
+     ICON_CONSOLE,
      "Command Prompt Here",
      "Open a command prompt here"},
     {0, NULL, 0, NULL, NULL}};
@@ -1904,7 +1904,11 @@ static void file_os_operations_menu_item(uiLayout *layout,
   RNA_enum_name(file_external_operation, operation, &title);
 
   PointerRNA props_ptr;
-  uiItemFullO_ptr(layout, ot, title, ICON_NONE, NULL, WM_OP_INVOKE_DEFAULT, 0, &props_ptr);
+  int icon = ICON_NONE;
+  if (operation) {
+    RNA_enum_icon_from_value(file_external_operation, operation, &icon);
+  }
+  uiItemFullO_ptr(layout, ot, title, icon, NULL, WM_OP_INVOKE_DEFAULT, 0, &props_ptr);
   RNA_string_set(&props_ptr, "filepath", path);
   if (operation) {
     RNA_enum_set(&props_ptr, "operation", operation);
