@@ -3167,7 +3167,7 @@ class WM_MT_splash_quick_setup(Menu):
 
         # Themes.
         sub = col.column(heading="Theme")
-        #label = bpy.types.USERPREF_MT_interface_theme_presets.bl_label
+        label = bpy.types.USERPREF_MT_interface_theme_presets.bl_label
         if label == "Presets":
             label = "Bforartists"
         sub.menu("USERPREF_MT_interface_theme_presets", text=label)
