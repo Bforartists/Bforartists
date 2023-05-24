@@ -370,6 +370,7 @@
         clipping_border_3d="#313131ff"
         wire="#000000"
         wire_edit="#000000"
+        edge_width="1"
         gp_vertex="#000000"
         gp_vertex_select="#ff8500"
         gp_vertex_size="3"
@@ -399,6 +400,7 @@
         face_dot="#ff8500"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
+        face_retopology="#50c8ff0f"
         face_back="#ff0000b3"
         face_front="#0000ffb3"
         nurb_uline="#909000"
@@ -429,6 +431,7 @@
         bone_locked_weight="#ff000080"
         bundle_solid="#c8c8c8"
         camera_path="#000000"
+        camera_passepartout="#000000"
         skin_root="#b44d4d"
         view_overlay="#ffffff"
         transform="#ffffff"
@@ -690,6 +693,7 @@
         summary="#cc701a66"
         preview_range="#a14d0066"
         interpolation_line="#94e575cc"
+        simulated_frames="#721e65ff"
         >
         <space>
           <ThemeSpaceGeneric
@@ -746,10 +750,12 @@
         face_dot="#ff8500"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
+        face_retopology="#00000000"
         face_back="#00000000"
         face_front="#00000000"
         editmesh_active="#ffffff80"
         wire_edit="#c0c0c0"
+        edge_width="1"
         edge_select="#ff8500"
         scope_back="#727272ff"
         preview_stitch_face="#1242b026"
@@ -849,8 +855,8 @@
             button_title="#cccccc"
             button_text="#cccccc"
             button_text_hi="#ffffff"
-            navigation_bar="#00000000"
-            execution_buts="#00000000"
+            navigation_bar="#1d1d1dff"
+            execution_buts="#303030ff"
             tab_active="#5680c2"
             tab_inactive="#333333"
             tab_back="#333333ff"
@@ -966,7 +972,7 @@
         grid="#666666"
         node_selected="#f15800"
         node_active="#eefcff"
-        wire="#808080"
+        wire="#808080ff"
         wire_inner="#737373"
         wire_select="#ffffffff"
         selected_text="#7f7070"
@@ -992,6 +998,7 @@
         layout_node="#6f6a64"
         geometry_node="#00d7a4"
         attribute_node="#3f5980"
+        simulation_zone="#66416233"
         >
         <space>
           <ThemeSpaceGeneric
@@ -1149,7 +1156,7 @@
             >
             <panelcolors>
               <ThemePanelColors
-                header="#333333b3"
+                header="#42424200"
                 back="#333333b3"
                 sub_back="#0000003e"
                 >
