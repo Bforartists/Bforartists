@@ -316,6 +316,21 @@
             >
           </ThemeWidgetColors>
         </wcol_list_item>
+        <wcol_view_item>
+          <ThemeWidgetColors
+            outline="#2d2d2d"
+            inner="#303030ff"
+            inner_sel="#4772b3ff"
+            item="#4772b3ff"
+            text="#cccccc"
+            text_sel="#ffffff"
+            show_shaded="FALSE"
+            shadetop="0"
+            shadedown="0"
+            roundness="0.4"
+            >
+          </ThemeWidgetColors>
+        </wcol_view_item>
         <wcol_state>
           <ThemeWidgetStateColors
             inner_anim="#73be4c"
@@ -355,6 +370,7 @@
         clipping_border_3d="#323232ff"
         wire="#000000"
         wire_edit="#000000"
+        edge_width="1"
         gp_vertex="#000000"
         gp_vertex_select="#ff8500"
         gp_vertex_size="3"
@@ -384,6 +400,7 @@
         face_dot="#ff8500"
         facedot_size="4"
         freestyle_face_mark="#7fff7f33"
+        face_retopology="#50c8ff0f"
         face_back="#00000000"
         face_front="#00000000"
         nurb_uline="#909000"
@@ -414,6 +431,7 @@
         bone_locked_weight="#ff000080"
         bundle_solid="#c8c8c8"
         camera_path="#000000"
+        camera_passepartout="#000000"
         skin_root="#b44d4d"
         view_overlay="#000000"
         transform="#ffffff"
@@ -675,6 +693,7 @@
         summary="#cc701a66"
         preview_range="#a14d0066"
         interpolation_line="#94e575cc"
+        simulated_frames="#721e65ff"
         >
         <space>
           <ThemeSpaceGeneric
@@ -731,10 +750,12 @@
         face_dot="#ff8500"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
+        face_retopology="#00000000"
         face_back="#00000000"
         face_front="#00000000"
         editmesh_active="#ffffff80"
         wire_edit="#c0c0c0"
+        edge_width="1"
         edge_select="#ff8500"
         scope_back="#727272ff"
         preview_stitch_face="#7f7f0033"
@@ -851,6 +872,15 @@
             </panelcolors>
           </ThemeSpaceGeneric>
         </space>
+        <space_list>
+          <ThemeSpaceListGeneric
+            list="#2c2c2c"
+            list_title="#ffffff"
+            list_text="#ffffff"
+            list_text_hi="#ffffff"
+            >
+          </ThemeSpaceListGeneric>
+        </space_list>
       </ThemeSequenceEditor>
     </sequence_editor>
     <properties>
@@ -942,20 +972,20 @@
         grid="#666666"
         node_selected="#f15800"
         node_active="#ffaa40"
-        wire="#000000"
+        wire="#000000ff"
         wire_inner="#737373"
         wire_select="#ffffffff"
         selected_text="#7f7070"
         node_backdrop="#9b9b9ba0"
         converter_node="#686a75"
         color_node="#6c696f"
-        group_node="#69756ebf"
+        group_node="#69756e"
         group_socket_node="#dfca35"
         frame_node="#9b9b9ba0"
         matte_node="#977474"
         distor_node="#749797"
         noodle_curving="5"
-        grid_levels="7"
+        grid_levels="3"
         dash_alpha="0.5"
         input_node="#646464"
         output_node="#646464"
@@ -968,6 +998,7 @@
         layout_node="#6c696f"
         geometry_node="#00d7a4"
         attribute_node="#3f5980"
+        simulation_zone="#66416233"
         >
         <space>
           <ThemeSpaceGeneric
