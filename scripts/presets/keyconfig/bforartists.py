@@ -1,4 +1,4 @@
-keyconfig_version = (3, 6, 7)
+keyconfig_version = (4, 0, 1)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -667,6 +667,13 @@ keyconfig_data = \
    [("anim.channels_click", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ("anim.channels_click",
      {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("extend", True),
+       ],
+      },
+     ),
+    ("anim.channels_click",
+     {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
      {"properties":
       [("extend", True),
        ],

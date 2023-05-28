@@ -1,4 +1,4 @@
-keyconfig_version = (3, 6, 7)
+keyconfig_version = (4, 0, 1)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -667,6 +667,13 @@ keyconfig_data = \
    [("anim.channels_click", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ("anim.channels_click",
      {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("extend", True),
+       ],
+      },
+     ),
+    ("anim.channels_click",
+     {"type": 'LEFTMOUSE', "value": 'CLICK', "oskey": True},
      {"properties":
       [("extend", True),
        ],
@@ -2254,14 +2261,14 @@ keyconfig_data = \
       },
      ),
     ("font.move_select",
-     {"type": 'HOME', "value": 'PRESS', "shift": True, "ctrl": True, "repeat": True},
+     {"type": 'HOME', "value": 'PRESS', "shift": True, "oskey": True, "repeat": True},
      {"properties":
       [("type", 'TEXT_BEGIN'),
        ],
       },
      ),
     ("font.move_select",
-     {"type": 'END', "value": 'PRESS', "shift": True, "ctrl": True, "repeat": True},
+     {"type": 'END', "value": 'PRESS', "shift": True, "oskey": True, "repeat": True},
      {"properties":
       [("type", 'TEXT_END'),
        ],
@@ -5345,7 +5352,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu_pie",
-     {"type": 'TAB', "value": 'PRESS', "ctrl": True},
+     {"type": 'TAB', "value": 'PRESS', "oskey": True},
      {"properties":
       [("name", 'VIEW3D_MT_object_mode_pie'),
        ],
