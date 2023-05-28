@@ -235,7 +235,9 @@ def view_cage(obj):
     if from_obj:
         for o in other_gp:
             for _ in range(len(o.grease_pencil_modifiers)):
-                bpy.ops.object.gpencil_modifier_move_up({'object':o}, modifier='tmp_lattice')
+                context_override = {'object': o}
+                with bpy.context.temp_override(**context_override):
+                    bpy.ops.object.gpencil_modifier_move_up(modifier='tmp_lattice')
 
     mod.object = cage
     if from_obj:

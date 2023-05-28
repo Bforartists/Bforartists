@@ -23,7 +23,7 @@ from .utils.draw import (
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 if not bpy.app.background:
-    SHADER = gpu.shader.from_builtin("2D_UNIFORM_COLOR")
+    SHADER = gpu.shader.from_builtin("UNIFORM_COLOR")
 
 
 class POWER_SEQUENCER_OT_mouse_trim(bpy.types.Operator):

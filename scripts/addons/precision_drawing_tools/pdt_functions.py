@@ -560,7 +560,7 @@ def dis_ang(values, flip_angle, plane, scene):
 
 # Shader for displaying the Pivot Point as Graphics.
 #
-SHADER = gpu.shader.from_builtin("3D_UNIFORM_COLOR") if not bpy.app.background else None
+SHADER = gpu.shader.from_builtin("UNIFORM_COLOR") if not bpy.app.background else None
 
 
 def draw_3d(coords, gtype, rgba, context):

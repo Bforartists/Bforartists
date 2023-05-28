@@ -462,6 +462,7 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
 
             layout.operator("sequencer.view_all", text="Frame All", icon = "VIEWALL" )
+            layout.operator("sequencer.view_frame")
             layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
 
         if is_preview:
@@ -1712,7 +1713,7 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 col = col.column(align=True)
                 split = col.split(factor=0.5, align=False)
                 split.alignment = 'RIGHT'
-                split.label(text="Samplerate")
+                split.label(text="Sample Rate")
                 split.alignment = 'LEFT'
                 if sound.samplerate <= 0:
                     split.label(text="Unknown")

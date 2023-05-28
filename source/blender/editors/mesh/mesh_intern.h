@@ -49,7 +49,8 @@ bool EDBM_op_call_silentf(struct BMEditMesh *em, const char *fmt, ...);
  * These next two functions are the split version of EDBM_op_callf, so you can
  * do stuff with a bmesh operator, after initializing it but before executing it.
  *
- * execute the operator with BM_Exec_Op */
+ * execute the operator with #BMO_op_exec.
+ */
 bool EDBM_op_init(
     struct BMEditMesh *em, struct BMOperator *bmop, struct wmOperator *op, const char *fmt, ...);
 
@@ -323,10 +324,6 @@ void MESH_OT_customdata_skin_add(struct wmOperatorType *ot);
 void MESH_OT_customdata_skin_clear(struct wmOperatorType *ot);
 void MESH_OT_customdata_custom_splitnormals_add(struct wmOperatorType *ot);
 void MESH_OT_customdata_custom_splitnormals_clear(struct wmOperatorType *ot);
-void MESH_OT_customdata_bevel_weight_vertex_add(struct wmOperatorType *ot);
-void MESH_OT_customdata_bevel_weight_vertex_clear(struct wmOperatorType *ot);
-void MESH_OT_customdata_bevel_weight_edge_add(struct wmOperatorType *ot);
-void MESH_OT_customdata_bevel_weight_edge_clear(struct wmOperatorType *ot);
 void MESH_OT_customdata_crease_vertex_add(struct wmOperatorType *ot);
 void MESH_OT_customdata_crease_vertex_clear(struct wmOperatorType *ot);
 void MESH_OT_customdata_crease_edge_add(struct wmOperatorType *ot);

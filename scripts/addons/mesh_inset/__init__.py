@@ -45,7 +45,7 @@ HEIGHT_VALUE = 1
 NUM_VALUES = 2
 
 # TODO: make a dooted-line shader
-shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR') if not bpy.app.background else None
+shader = gpu.shader.from_builtin('UNIFORM_COLOR') if not bpy.app.background else None
 
 class MESH_OT_InsetStraightSkeleton(bpy.types.Operator):
     bl_idname = "mesh.insetstraightskeleton"
