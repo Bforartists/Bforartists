@@ -28,6 +28,8 @@ from bpy.props import (
     EnumProperty,
 )
 
+DEMO_CFG = "demo.py"
+
 
 class DemoModeSetup(bpy.types.Operator):
     """Create a demo script and optionally execute it"""
@@ -124,18 +126,21 @@ class DemoModeSetup(bpy.types.Operator):
         from . import config
 
         keywords = self.as_keywords(ignore=("directory", "random_order", "run", "exit"))
-        cfg_str, _dirpath = config.as_string(
+        cfg_str, cfg_file_count, _dirpath = config.as_string(
             self.directory,
             self.random_order,
             self.exit,
             **keywords,
         )
-        text = bpy.data.texts.get("demo.py")
+        text = bpy.data.texts.get(DEMO_CFG)
         if text:
             text.name += ".back"
 
-        text = bpy.data.texts.new("demo.py")
+        text = bpy.data.texts.new(DEMO_CFG)
         text.from_string(cfg_str)
+
+        # When run is disabled, no messages makes it seems as if nothing happened.
+        self.report({'INFO'}, "Demo text \"%s\" created with %s file(s)" % (DEMO_CFG, "{:,d}".format(cfg_file_count)))
 
         if self.run:
             extern_demo_mode_run()
@@ -154,7 +159,7 @@ class DemoModeSetup(bpy.types.Operator):
 
         box = layout.box()
         box.label(text="Search *.blend recursively")
-        box.label(text="Writes: demo.py config text")
+        box.label(text="Writes: %s config text" % DEMO_CFG)
 
         layout.prop(self, "run")
         layout.prop(self, "exit")
@@ -190,7 +195,7 @@ class DemoModeRun(bpy.types.Operator):
         if extern_demo_mode_run():
             return {'FINISHED'}
         else:
-            self.report({'ERROR'}, "Can't load demo.py config, run: File -> Demo Mode (Setup)")
+            self.report({'ERROR'}, "Can't load %s config, run: File -> Demo Mode (Setup)" % DEMO_CFG)
             return {'CANCELLED'}
 
 
@@ -234,6 +239,7 @@ classes = (
     DemoModeRun,
 )
 
+
 def register():
     from bpy.utils import register_class
     for cls in classes:
@@ -252,6 +258,7 @@ def unregister():
     bpy.types.TOPBAR_MT_file.remove(menu_func)
 
     extern_demo_mode_unregister()
+
 
 if __name__ == "__main__":
     register()

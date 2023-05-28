@@ -82,6 +82,8 @@ static void material_init_data(ID *id)
   BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(material, id));
 
   MEMCPY_STRUCT_AFTER(material, DNA_struct_default_get(Material), id);
+
+  *((short *)id->name) = ID_MA;
 }
 
 static void material_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int flag)
@@ -1283,11 +1285,9 @@ bool BKE_object_material_slot_remove(Main *bmain, Object *ob)
     return false;
   }
 
-  /* take a mesh/curve/mball as starting point, remove 1 index,
-   * AND with all objects that share the ob->data
-   *
-   * after that check indices in mesh/curve/mball!!!
-   */
+  /* Take a mesh/curve/meta-ball as starting point, remove 1 index,
+   * AND with all objects that share the `ob->data`.
+   * After that check indices in mesh/curve/meta-ball! */
 
   totcolp = BKE_object_material_len_p(ob);
   matarar = BKE_object_material_array_p(ob);
@@ -1992,14 +1992,14 @@ static Material *default_materials[] = {&default_material_empty,
 
 static void material_default_gpencil_init(Material *ma)
 {
-  strcpy(ma->id.name, "MADefault GPencil");
+  BLI_strncpy(ma->id.name + 2, "Default GPencil", MAX_NAME);
   BKE_gpencil_material_attr_init(ma);
   add_v3_fl(&ma->gp_style->stroke_rgba[0], 0.6f);
 }
 
 static void material_default_surface_init(Material *ma)
 {
-  strcpy(ma->id.name, "MADefault Surface");
+  BLI_strncpy(ma->id.name + 2, "Default Surface", MAX_NAME);
 
   bNodeTree *ntree = blender::bke::ntreeAddTreeEmbedded(
       nullptr, &ma->id, "Shader Nodetree", ntreeType_Shader->idname);
@@ -2027,7 +2027,7 @@ static void material_default_surface_init(Material *ma)
 
 static void material_default_volume_init(Material *ma)
 {
-  strcpy(ma->id.name, "MADefault Volume");
+  BLI_strncpy(ma->id.name + 2, "Default Volume", MAX_NAME);
 
   bNodeTree *ntree = blender::bke::ntreeAddTreeEmbedded(
       nullptr, &ma->id, "Shader Nodetree", ntreeType_Shader->idname);
@@ -2052,7 +2052,7 @@ static void material_default_volume_init(Material *ma)
 
 static void material_default_holdout_init(Material *ma)
 {
-  strcpy(ma->id.name, "MADefault Holdout");
+  BLI_strncpy(ma->id.name + 2, "Default Holdout", MAX_NAME);
 
   bNodeTree *ntree = blender::bke::ntreeAddTreeEmbedded(
       nullptr, &ma->id, "Shader Nodetree", ntreeType_Shader->idname);

@@ -1,7 +1,45 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+__all__ = (
+    "as_string",
+)
+
 import os
 
+
+# -----------------------------------------------------------------------------
+# Generic Utilities
+
+def round_float_32(f):
+    from struct import pack, unpack
+    return unpack("f", pack("f", f))[0]
+
+
+def repr_f32(f):
+    f_round = round_float_32(f)
+    f_str = repr(f)
+    f_str_frac = f_str.partition(".")[2]
+    if not f_str_frac:
+        return f_str
+    for i in range(1, len(f_str_frac)):
+        f_test = round(f, i)
+        f_test_round = round_float_32(f_test)
+        if f_test_round == f_round:
+            return "%.*f" % (i, f_test)
+    return f_str
+
+
+def repr_pretty(v):
+    from pprint import pformat
+    # Float's are originally 32 bit, regular pretty print
+    # shows them with many decimal places (not so pretty).
+    if type(v) is float:
+        return repr_f32(v)
+    return pformat(v)
+
+
+# -----------------------------------------------------------------------------
+# Configuration Generation
 
 def blend_list(path):
     for dirpath, dirnames, filenames in os.walk(path):
@@ -49,23 +87,16 @@ def as_string(dirpath, random_order, exit, **kwargs):
         "\n",
     ]
 
-    # All these work but use nicest formatting!
-    if 0:  # works but not nice to edit.
-        cfg_str += ["config = %r" % cfg]
-    elif 0:
-        import pprint
-        cfg_str += ["config = %s" % pprint.pformat(cfg, indent=0, width=120)]
-    elif 0:
-        cfg_str += [("config = %r" % cfg).replace("{", "\n    {")]
-    else:
-        import pprint
+    # Works, but custom formatting looks better.
+    # `cfg_str.append("config = %s" % pprint.pformat(cfg, indent=4, width=120))`.
 
-        def dict_as_kw(d):
-            return "dict(%s)" % ", ".join(("%s=%s" % (k, pprint.pformat(v))) for k, v in sorted(d.items()))
-        ident = "    "
-        cfg_str += ["config = [\n"]
-        for cfg_item in cfg:
-            cfg_str += ["%s%s,\n" % (ident, dict_as_kw(cfg_item))]
-        cfg_str += ["%s]\n\n" % ident]
+    def dict_as_kw(d):
+        return "dict(%s)" % ", ".join(("%s=%s" % (k, repr_pretty(v))) for k, v in sorted(d.items()))
 
-    return "".join(cfg_str), dirpath
+    ident = "    "
+    cfg_str.append("config = [\n")
+    for cfg_item in cfg:
+        cfg_str.append("%s%s,\n" % (ident, dict_as_kw(cfg_item)))
+    cfg_str.append("%s]\n\n" % ident)
+
+    return "".join(cfg_str), len(cfg), dirpath

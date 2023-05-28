@@ -740,7 +740,6 @@ classes = (
     GRAPH_MT_key_snap,
     GRAPH_MT_key_smoothing,
     GRAPH_MT_key_blending,
-    GRAPH_MT_slider,
     GRAPH_MT_delete,
     GRAPH_MT_context_menu,
     GRAPH_MT_channel_context_menu,
