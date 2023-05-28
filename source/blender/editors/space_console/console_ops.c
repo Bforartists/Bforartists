@@ -34,6 +34,18 @@
 
 #include "console_intern.h"
 
+/* TODO: Text operations not yet supported for console:
+ * Mac KM_OSKEY-arrow to beginning/end of line
+ * Mac KM_OSKEY-backspace to start of line
+ * Mac KM_OSKEY-delete to end of line
+ * Text cursor insertion by mouse
+ * Mouse drag to select does not change text cursor position.
+ * Shift-ctrl-arrow to select word
+ * ctrl-x to copy to clipboard and delete.
+ * ctrl-a to select all
+ * ctrl-z，shift-crtrl-z undo/redo
+ */
+
 /* -------------------------------------------------------------------- */
 /** \name Utilities
  * \{ */
@@ -1064,7 +1076,7 @@ static int console_paste_exec(bContext *C, wmOperator *op)
   ConsoleLine *ci = console_history_verify(C);
   int buf_len;
 
-  char *buf_str = WM_clipboard_text_get(selection, &buf_len);
+  char *buf_str = WM_clipboard_text_get(selection, true, &buf_len);
   char *buf_step, *buf_next;
 
   if (buf_str == NULL) {

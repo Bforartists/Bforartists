@@ -537,7 +537,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
 
 
 def menu_func(self, context):
-    self.layout.operator(IMPORT_OT_dxf.bl_idname, text="AutoCAD DXF")
+    self.layout.operator(IMPORT_OT_dxf.bl_idname, text="AutoCAD DXF (.dxf)")
 
 
 def register():

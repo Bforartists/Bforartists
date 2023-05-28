@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 """Define the POV render engine from generic Blender RenderEngine class."""
-import faulthandler
-faulthandler.enable()
 import bpy
 
 import builtins as __builtin__
@@ -27,11 +25,11 @@ def console_get(context):
                             return area, space, win, scr
     return None, None, None, None
 
-def console_write(context, txt):
+def console_write(txt):
     area, space, window, screen = console_get()
     if space is None:
         return
-    #context = bpy.context.copy()
+    context = bpy.context.copy()
     context.update(dict(
         area=area,
         space_data=space,
@@ -39,8 +37,9 @@ def console_write(context, txt):
         window=window,
         screen=screen,
     ))
-    for line in txt.split("\n"):
-        bpy.ops.console.scrollback_append(context, text=line, type='INFO')
+    with bpy.context.temp_override(**context):
+        for line in txt.split("\n"):
+            bpy.ops.console.scrollback_append(text=line, type='INFO')
 """
 class RENDER_OT_test(bpy.types.Operator):
     bl_idname = 'pov.oha_test'
@@ -53,7 +52,7 @@ class RENDER_OT_test(bpy.types.Operator):
     )
     def execute(self, context):
         try:
-            console_write(context, self.txt)
+            console_write(self.txt)
             return {'FINISHED'}
         except:
             self.report({'INFO'}, 'Printing report to Info window.')
