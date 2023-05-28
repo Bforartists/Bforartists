@@ -14,7 +14,6 @@
 #include "DNA_view3d_types.h"
 
 #include "BLI_array.hh"
-#include "BLI_index_mask_ops.hh"
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
 
@@ -825,126 +824,6 @@ void MESH_OT_customdata_custom_splitnormals_clear(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-/* Vertex bevel weight. */
-
-static int mesh_customdata_bevel_weight_vertex_state(bContext *C)
-{
-  const Object *object = ED_object_context(C);
-
-  if (object && object->type == OB_MESH) {
-    const Mesh *mesh = static_cast<Mesh *>(object->data);
-    if (!ID_IS_LINKED(mesh)) {
-      const CustomData *data = GET_CD_DATA(mesh, vdata);
-      return CustomData_has_layer(data, CD_BWEIGHT);
-    }
-  }
-  return -1;
-}
-
-static bool mesh_customdata_bevel_weight_vertex_add_poll(bContext *C)
-{
-  return mesh_customdata_bevel_weight_vertex_state(C) == 0;
-}
-
-static int mesh_customdata_bevel_weight_vertex_add_exec(bContext *C, wmOperator * /*op*/)
-{
-  return mesh_customdata_add_exec__internal(C, BM_VERT, CD_BWEIGHT);
-}
-
-void MESH_OT_customdata_bevel_weight_vertex_add(wmOperatorType *ot)
-{
-  ot->name = "Add Vertex Bevel Weight";
-  ot->idname = "MESH_OT_customdata_bevel_weight_vertex_add";
-  ot->description = "Add a vertex bevel weight layer";
-
-  ot->exec = mesh_customdata_bevel_weight_vertex_add_exec;
-  ot->poll = mesh_customdata_bevel_weight_vertex_add_poll;
-
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-}
-
-static bool mesh_customdata_bevel_weight_vertex_clear_poll(bContext *C)
-{
-  return (mesh_customdata_bevel_weight_vertex_state(C) == 1);
-}
-
-static int mesh_customdata_bevel_weight_vertex_clear_exec(bContext *C, wmOperator * /*op*/)
-{
-  return mesh_customdata_clear_exec__internal(C, BM_VERT, CD_BWEIGHT);
-}
-
-void MESH_OT_customdata_bevel_weight_vertex_clear(wmOperatorType *ot)
-{
-  ot->name = "Clear Vertex Bevel Weight";
-  ot->idname = "MESH_OT_customdata_bevel_weight_vertex_clear";
-  ot->description = "Clear the vertex bevel weight layer";
-
-  ot->exec = mesh_customdata_bevel_weight_vertex_clear_exec;
-  ot->poll = mesh_customdata_bevel_weight_vertex_clear_poll;
-
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-}
-
-/* Edge bevel weight. */
-
-static int mesh_customdata_bevel_weight_edge_state(bContext *C)
-{
-  const Object *ob = ED_object_context(C);
-
-  if (ob && ob->type == OB_MESH) {
-    const Mesh *mesh = static_cast<Mesh *>(ob->data);
-    if (!ID_IS_LINKED(mesh)) {
-      const CustomData *data = GET_CD_DATA(mesh, edata);
-      return CustomData_has_layer(data, CD_BWEIGHT);
-    }
-  }
-  return -1;
-}
-
-static bool mesh_customdata_bevel_weight_edge_add_poll(bContext *C)
-{
-  return mesh_customdata_bevel_weight_edge_state(C) == 0;
-}
-
-static int mesh_customdata_bevel_weight_edge_add_exec(bContext *C, wmOperator * /*op*/)
-{
-  return mesh_customdata_add_exec__internal(C, BM_EDGE, CD_BWEIGHT);
-}
-
-void MESH_OT_customdata_bevel_weight_edge_add(wmOperatorType *ot)
-{
-  ot->name = "Add Edge Bevel Weight";
-  ot->idname = "MESH_OT_customdata_bevel_weight_edge_add";
-  ot->description = "Add an edge bevel weight layer";
-
-  ot->exec = mesh_customdata_bevel_weight_edge_add_exec;
-  ot->poll = mesh_customdata_bevel_weight_edge_add_poll;
-
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-}
-
-static bool mesh_customdata_bevel_weight_edge_clear_poll(bContext *C)
-{
-  return mesh_customdata_bevel_weight_edge_state(C) == 1;
-}
-
-static int mesh_customdata_bevel_weight_edge_clear_exec(bContext *C, wmOperator * /*op*/)
-{
-  return mesh_customdata_clear_exec__internal(C, BM_EDGE, CD_BWEIGHT);
-}
-
-void MESH_OT_customdata_bevel_weight_edge_clear(wmOperatorType *ot)
-{
-  ot->name = "Clear Edge Bevel Weight";
-  ot->idname = "MESH_OT_customdata_bevel_weight_edge_clear";
-  ot->description = "Clear the edge bevel weight layer";
-
-  ot->exec = mesh_customdata_bevel_weight_edge_clear_exec;
-  ot->poll = mesh_customdata_bevel_weight_edge_clear_poll;
-
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-}
-
 /* Edge crease. */
 
 static int mesh_customdata_crease_edge_state(bContext *C)
@@ -1466,9 +1345,8 @@ void ED_mesh_split_faces(Mesh *mesh)
     }
   });
 
-  Vector<int64_t> split_indices;
-  const IndexMask split_mask = index_mask_ops::find_indices_from_virtual_array(
-      sharp_edges.index_range(), VArray<bool>::ForSpan(sharp_edges), 4096, split_indices);
+  IndexMaskMemory memory;
+  const IndexMask split_mask = IndexMask::from_bools(sharp_edges, memory);
   if (split_mask.is_empty()) {
     return;
   }

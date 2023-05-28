@@ -428,8 +428,8 @@ class MUV_OT_UVInspection_PaintUVIsland(bpy.types.Operator):
 
         objs = common.get_uv_editable_objects(context)
         mode_orig = context.object.mode
-        override_context = self._get_override_context(context)
-        if override_context is None:
+        context_override = self._get_override_context(context)
+        if context_override is None:
             self.report({'WARNING'}, "More than one 'VIEW_3D' area must exist")
             return {'CANCELLED'}
 
@@ -544,8 +544,8 @@ class MUV_OT_UVInspection_PaintUVIsland(bpy.types.Operator):
                 # Paint.
                 bpy.ops.object.mode_set(mode='TEXTURE_PAINT')
                 if compat.check_version(2, 80, 0) >= 0:
-                    bpy.ops.paint.brush_select(override_context,
-                                               image_tool='FILL')
+                    with context.temp_override(**context_override):
+                        bpy.ops.paint.brush_select(image_tool='FILL')
                 else:
                     paint_settings = \
                         bpy.data.scenes['Scene'].tool_settings.image_paint
@@ -553,18 +553,20 @@ class MUV_OT_UVInspection_PaintUVIsland(bpy.types.Operator):
                     paint_canvas_orig = paint_settings.canvas
                     paint_settings.mode = 'IMAGE'
                     paint_settings.canvas = target_image
-                    bpy.ops.paint.brush_select(override_context,
-                                               texture_paint_tool='FILL')
-                bpy.ops.paint.image_paint(override_context, stroke=[{
-                    "name": "",
-                    "location": (0, 0, 0),
-                    "mouse": (0, 0),
-                    "size": 0,
-                    "pressure": 0,
-                    "pen_flip": False,
-                    "time": 0,
-                    "is_start": False
-                }])
+                    with context.temp_override(**context_override):
+                        bpy.ops.paint.brush_select(texture_paint_tool='FILL')
+
+                with context.temp_override(**context_override):
+                    bpy.ops.paint.image_paint(stroke=[{
+                        "name": "",
+                        "location": (0, 0, 0),
+                        "mouse": (0, 0),
+                        "size": 0,
+                        "pressure": 0,
+                        "pen_flip": False,
+                        "time": 0,
+                        "is_start": False
+                    }])
 
                 if compat.check_version(2, 80, 0) < 0:
                     paint_settings.mode = paint_mode_orig

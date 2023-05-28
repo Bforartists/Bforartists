@@ -298,6 +298,9 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
         row = col.row()
         row.separator()
         row.prop(screen, "use_play_sequence_editors", text="Video Sequencer")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_spreadsheet_editors", text="Spreadsheet")
 
         col = layout.column()
         col.prop(scene, "show_subframe", text="Show Subframes")
