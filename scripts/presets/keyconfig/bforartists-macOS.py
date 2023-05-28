@@ -675,7 +675,8 @@ keyconfig_data = \
     ("anim.channels_click",
      {"type": 'LEFTMOUSE', "value": 'CLICK', "oskey": True},
      {"properties":
-      [("extend", True),
+      [("extend", False),
+       ("extend_range", True),
        ],
       },
      ),
