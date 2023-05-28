@@ -135,7 +135,7 @@ def draw_callback_px(self, context):
     # Get the size of the text
     text_size = 18 if region.width >= 850 else 12
     ui_scale = bpy.context.preferences.system.ui_scale
-    blf.size(0, round(text_size * ui_scale), 72)
+    blf.size(0, round(text_size * ui_scale))
 
     # Help Display
     if (self.ObjectMode is False) and (self.ProfileMode is False):
@@ -233,7 +233,7 @@ def draw_callback_px(self, context):
 
     # Display boolean mode
     text_size = 40 if region.width >= 850 else 20
-    blf.size(0, round(text_size * ui_scale), 72)
+    blf.size(0, round(text_size * ui_scale))
 
     draw_string(self, color2, color2, region_width - (blf.dimensions(0, BooleanMode)[0]) / 2, \
                 y_txt + bloc_height + 16, BooleanMode, 0, divide = 2)
@@ -242,7 +242,7 @@ def draw_callback_px(self, context):
 
         if self.AskHelp is False:
             # "H for Help" text
-            blf.size(0, round(13 * ui_scale), 72)
+            blf.size(0, round(13 * ui_scale))
             help_txt = "[" + self.carver_prefs.Key_Help + "] for help"
             txt_width = blf.dimensions(0, help_txt)[0]
             txt_height = (blf.dimensions(0, "gM")[1] * 1.45)
@@ -327,7 +327,7 @@ def draw_callback_px(self, context):
                        ["Gap for rows or columns",  self.carver_prefs.Key_Gapy + " " + self.carver_prefs.Key_Gapx]
                        ]
 
-            blf.size(0, round(15 * ui_scale), 72)
+            blf.size(0, round(15 * ui_scale))
             help_txt, bloc_height, max_option, max_key, comma = get_text_info(self, context, help_txt)
             draw_string(self, color1, color2, xHelp, yHelp, help_txt, max_option)
 

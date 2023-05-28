@@ -165,6 +165,7 @@ global scn
 scn = None
 
 object_dictionary = {}
+parent_dictionary = {}
 object_matrix = {}
 
 
@@ -568,25 +569,25 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         tilt = 0.0
         pos = location + target  # Target triangulation
         if abs(location[0] - target[0]) > abs(location[1] - target[1]):
-            foc = math.copysign(math.sqrt(pow(pos[0],2)+pow(pos[1],2)),pos[0])
-            dia = math.copysign(math.sqrt(pow(foc,2)+pow(target[2],2)),pos[0])
-            pitch = math.radians(90)-math.copysign(math.acos(foc/dia), pos[2])
+            foc = math.copysign(math.sqrt(pow(pos[0],2) + pow(pos[1],2)),pos[0])
+            dia = math.copysign(math.sqrt(pow(foc,2) + pow(target[2],2)),pos[0])
+            pitch = math.radians(90) - math.copysign(math.acos(foc / dia), pos[2])
             if location[0] > target[0]:
                 tilt = math.copysign(pitch, pos[0])
-                pan = math.radians(90)+math.atan(pos[1]/foc)
+                pan = math.radians(90) + math.atan(pos[1] / foc)
             else:
-                tilt = -1*(math.copysign(pitch, pos[0]))
-                pan = -1*(math.radians(90)-math.atan(pos[1]/foc))
+                tilt = -1 * (math.copysign(pitch, pos[0]))
+                pan = -1 * (math.radians(90) - math.atan(pos[1] / foc))
         elif abs(location[1] - target[1]) > abs(location[0] - target[0]):
-            foc = math.copysign(math.sqrt(pow(pos[1],2)+pow(pos[0],2)),pos[1])
-            dia = math.copysign(math.sqrt(pow(foc,2)+pow(target[2],2)),pos[1])
-            pitch = math.radians(90)-math.copysign(math.acos(foc/dia), pos[2])
+            foc = math.copysign(math.sqrt(pow(pos[1],2) + pow(pos[0],2)),pos[1])
+            dia = math.copysign(math.sqrt(pow(foc,2) + pow(target[2],2)),pos[1])
+            pitch = math.radians(90) - math.copysign(math.acos(foc / dia), pos[2])
             if location[1] > target[1]:
                 tilt = math.copysign(pitch, pos[1])
-                pan = math.radians(90)+math.acos(pos[0]/foc)
+                pan = math.radians(90) + math.acos(pos[0] / foc)
             else:
-                tilt = -1*(math.copysign(pitch, pos[1]))
-                pan = -1*(math.radians(90)-math.acos(pos[0]/foc))
+                tilt = -1 * (math.copysign(pitch, pos[1]))
+                pan = -1 * (math.radians(90) - math.acos(pos[0] / foc))
         direction = tilt, pan
         return direction
 
@@ -1060,6 +1061,11 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 object_parent.append(hierarchy)
                 pivot_list.append(mathutils.Vector((0.0, 0.0, 0.0)))
 
+        elif new_chunk.ID == PARENT_NAME:
+            parent_name, read_str_len = read_string(file)
+            parent_dictionary.setdefault(parent_name, []).append(child)
+            new_chunk.bytes_read += read_str_len
+
         elif new_chunk.ID == OBJECT_INSTANCE_NAME:
             object_name, read_str_len = read_string(file)
             if child.name == '$$$DUMMY':
@@ -1230,17 +1236,17 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             default_value = child.data.angle
             child.data.angle = read_track_angle(temp_chunk)[0]
             for keydata in keyframe_angle.items():
-                child.data.lens = (child.data.sensor_width/2)/math.tan(keydata[1]/2)
+                child.data.lens = (child.data.sensor_width / 2) / math.tan(keydata[1] / 2)
                 child.data.keyframe_insert(data_path="lens", frame=keydata[0])
 
         elif KEYFRAME and new_chunk.ID == HOTSPOT_TRACK_TAG and child.type == 'LIGHT' and child.data.type == 'SPOT':  # Hotspot
             keyframe_angle = {}
             cone_angle = math.degrees(child.data.spot_size)
-            default_value = cone_angle-(child.data.spot_blend*math.floor(cone_angle))   
+            default_value = cone_angle-(child.data.spot_blend * math.floor(cone_angle))   
             hot_spot = math.degrees(read_track_angle(temp_chunk)[0])
             child.data.spot_blend = 1.0 - (hot_spot/cone_angle)
             for keydata in keyframe_angle.items():
-                child.data.spot_blend = 1.0 - (math.degrees(keydata[1])/cone_angle)
+                child.data.spot_blend = 1.0 - (math.degrees(keydata[1]) / cone_angle)
                 child.data.keyframe_insert(data_path="spot_blend", frame=keydata[0])
 
         elif KEYFRAME and new_chunk.ID == FALLOFF_TRACK_TAG and child.type == 'LIGHT' and child.data.type == 'SPOT':  # Falloff
@@ -1283,13 +1289,18 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif parent not in object_dict:
             if ob.parent != object_list[parent]:
                 ob.parent = object_list[parent]
-            else:
-                print("\tWarning: Cannot assign self to parent ", ob)
+        elif ob.parent != object_dict[parent]:
+            ob.parent = object_dict.get(parent)
         else:
-            if ob.parent != object_dict[parent]:
-                ob.parent = object_dict.get(parent)
+            print("\tWarning: Cannot assign self to parent ", ob.name)
 
         #pivot_list[ind] += pivot_list[parent]  # Not sure this is correct, should parent space matrix be applied before combining?
+
+    for par, objs in parent_dictionary.items():
+        parent = object_dictionary.get(par)
+        for ob in objs:
+            if parent is not None:
+                ob.parent = parent
 
     # fix pivots
     for ind, ob in enumerate(object_list):
