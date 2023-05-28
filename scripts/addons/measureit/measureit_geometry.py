@@ -21,8 +21,8 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 
 
-shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR') if not bpy.app.background else None
-shader_line = gpu.shader.from_builtin('3D_POLYLINE_UNIFORM_COLOR') if not bpy.app.background else None
+shader = gpu.shader.from_builtin('UNIFORM_COLOR') if not bpy.app.background else None
+shader_line = gpu.shader.from_builtin('POLYLINE_UNIFORM_COLOR') if not bpy.app.background else None
 
 imm_line_width = 1.0
 imm_viewport = (0, 0)
@@ -814,8 +814,8 @@ def draw_text(myobj, pos2d, display_text, rgba, fsize, align='L', text_rot=0.0):
     x_pos, y_pos = pos2d
     font_id = 0
     ui_scale = bpy.context.preferences.system.ui_scale
-    blf.size(font_id, round(fsize * ui_scale), 72)
-    # blf.size(font_id, fsize, dpi)
+    blf.size(font_id, round(fsize * ui_scale))
+    # blf.size(font_id, fsize)
     # height of one line
     mwidth, mheight = blf.dimensions(font_id, "Tp")  # uses high/low letters
 
