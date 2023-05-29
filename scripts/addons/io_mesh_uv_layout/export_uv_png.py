@@ -70,7 +70,7 @@ def draw_background_colors(face_data, opacity):
         indices.extend([index + offset for index in triangle] for triangle in triangles)
         offset += len(uvs)
 
-    shader = gpu.shader.from_builtin('2D_FLAT_COLOR')
+    shader = gpu.shader.from_builtin('FLAT_COLOR')
     batch = batch_for_shader(
         shader, 'TRIS',
         {"pos": coords, "color": colors},

@@ -30,6 +30,9 @@ class POWER_SEQUENCER_OT_save_direct(bpy.types.Operator):
         if bpy.data.is_saved:
             bpy.ops.wm.save_mainfile()
         else:
-            bpy.ops.wm.save_as_mainfile({"dict": "override"}, "INVOKE_DEFAULT")
+            # FIXME: what does this override do?
+            context_override = {"dict": "override"}
+            with context.temp_override(**context_override):
+                bpy.ops.wm.save_as_mainfile('INVOKE_DEFAULT')
         self.report({"INFO"}, "File saved")
         return {"FINISHED"}
