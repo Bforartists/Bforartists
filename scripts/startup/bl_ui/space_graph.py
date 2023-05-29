@@ -495,7 +495,7 @@ class GRAPH_MT_key(Menu):
 
         layout.separator()
 
-        layout.operator("graph.frame_jump", icon="CENTER")
+        layout.operator("graph.frame_jump", text= "Jump to Selected", icon="CENTER")
 
         layout.separator()
 
