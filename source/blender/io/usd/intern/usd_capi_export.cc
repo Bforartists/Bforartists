@@ -103,8 +103,10 @@ static bool prim_path_valid(const char *path)
   return true;
 }
 
-/* Perform validation of export parameter settings. Returns
- * true if the paramters are valid; returns false otherwise. */
+/**
+ * Perform validation of export parameter settings.
+ * \return true if the parameters are valid; returns false otherwise.
+ */
 static bool export_params_valid(const USDExportParams &params)
 {
   bool valid = true;
@@ -369,8 +371,8 @@ static void create_temp_path_for_usdz_export(const char *filepath,
   char usdc_temp_filepath[FILE_MAX];
   BLI_path_join(usdc_temp_filepath, FILE_MAX, BKE_tempdir_session(), "USDZ", usdc_file);
 
-  BLI_strncpy(job->unarchived_filepath, usdc_temp_filepath, strlen(usdc_temp_filepath) + 1);
-  BLI_strncpy(job->usdz_filepath, filepath, strlen(filepath) + 1);
+  STRNCPY(job->unarchived_filepath, usdc_temp_filepath);
+  STRNCPY(job->usdz_filepath, filepath);
 
   MEM_freeN(usdc_file);
 }

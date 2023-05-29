@@ -10,34 +10,9 @@ from mathutils import Vector
 from math import sqrt, pi, atan2, asin
 
 
-vertex_shader = '''
-uniform mat4 ModelViewProjectionMatrix;
-
-/* Keep in sync with intern/opencolorio/gpu_shader_display_transform_vertex.glsl */
-in vec2 texCoord;
-in vec2 pos;
-out vec2 texCoord_interp;
-
-void main()
-{
-  gl_Position = ModelViewProjectionMatrix * vec4(pos.xy, 0.0f, 1.0f);
-  gl_Position.z = 1.0f;
-  texCoord_interp = texCoord;
-}'''
-
-fragment_shader = '''
-in vec2 texCoord_interp;
-out vec4 fragColor;
-
-uniform sampler2D image;
-uniform float exposure;
-
-void main()
-{
-  fragColor = texture(image, texCoord_interp) * vec4(exposure, exposure, exposure, 1.0f);
-}'''
-
-# shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
+if not bpy.app.background:  # ignore drawing in background mode
+    image_shader = gpu.shader.from_builtin('IMAGE_COLOR')
+    line_shader = gpu.shader.from_builtin('FLAT_COLOR')
 
 
 def draw_callback_px(self, context):
@@ -49,9 +24,6 @@ def draw_callback_px(self, context):
     if self.area != context.area:
         return
 
-    if image.gl_load():
-        raise Exception()
-
     bottom = 0
     top = context.area.height
     right = context.area.width
@@ -59,39 +31,36 @@ def draw_callback_px(self, context):
     position = Vector((right, top)) / 2 + self.offset
     scale = Vector((context.area.width, context.area.width / 2)) * self.scale
 
-    shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
-
     coords = ((-0.5, -0.5), (0.5, -0.5), (0.5, 0.5), (-0.5, 0.5))
     uv_coords = ((0, 0), (1, 0), (1, 1), (0, 1))
-    batch = batch_for_shader(shader, 'TRI_FAN',
+    batch = batch_for_shader(image_shader, 'TRI_FAN',
                              {"pos": coords, "texCoord": uv_coords})
 
     with gpu.matrix.push_pop():
         gpu.matrix.translate(position)
         gpu.matrix.scale(scale)
 
-        shader.bind()
-        shader.uniform_sampler("image", texture)
-        shader.uniform_float("exposure", self.exposure)
-        batch.draw(shader)
+        image_shader.bind()
+        image_shader.uniform_sampler("image", texture)
+        image_shader.uniform_float("color", (self.exposure, self.exposure, self.exposure, 1.0))
+        batch.draw(image_shader)
 
     # Crosshair
     # vertical
     coords = ((self.mouse_position[0], bottom), (self.mouse_position[0], top))
     colors = ((1,) * 4,) * 2
-    shader = gpu.shader.from_builtin('2D_FLAT_COLOR')
-    batch = batch_for_shader(shader, 'LINES',
+    batch = batch_for_shader(line_shader, 'LINES',
                              {"pos": coords, "color": colors})
-    shader.bind()
-    batch.draw(shader)
+    line_shader.bind()
+    batch.draw(line_shader)
 
     # horizontal
     if bottom <= self.mouse_position[1] <= top:
         coords = ((0, self.mouse_position[1]), (context.area.width, self.mouse_position[1]))
-        batch = batch_for_shader(shader, 'LINES',
+        batch = batch_for_shader(line_shader, 'LINES',
                                  {"pos": coords, "color": colors})
-        shader.bind()
-        batch.draw(shader)
+        line_shader.bind()
+        batch.draw(line_shader)
 
 
 class SUNPOS_OT_ShowHdr(bpy.types.Operator):

@@ -21,7 +21,7 @@ import bpy
 from . import operator
 
 def menu_func(self, context):
-    self.layout.operator(operator.DXFExporter.bl_idname, text="AutoCAD DXF")
+    self.layout.operator(operator.DXFExporter.bl_idname, text="AutoCAD DXF (.dxf)")
 
 classes = (
     operator.DXFExporter,

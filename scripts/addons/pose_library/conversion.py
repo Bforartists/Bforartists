@@ -34,7 +34,9 @@ def convert_old_poselib(old_poselib: Action) -> Collection[Action]:
     # appropriate frame in the scene (to set up things like the background
     # colour), but the old-style poselib doesn't contain such information. All
     # we can do is just render on the current frame.
-    bpy.ops.asset.mark({'selected_ids': pose_assets})
+    context_override = {'selected_ids': pose_assets}
+    with bpy.context.temp_override(**context_override):
+        bpy.ops.asset.mark()
 
     return pose_assets
 
