@@ -354,12 +354,17 @@ class GRAPH_MT_channel(Menu):
         layout.menu("GRAPH_MT_channel_settings_toggle")
 
         layout.separator()
+        layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
         layout.operator("anim.channels_editable_toggle", icon="LOCKED")
+
+        layout.separator()
         layout.menu("GRAPH_MT_channel_extrapolation")
         # To get it to display the hotkey.
         layout.operator_context = operator_context
         layout.operator_menu_enum("graph.fmodifier_add", "type", text="Add F-Curve Modifier").only_active = False
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
+        layout.operator("graph.sound_bake", icon="BAKE_SOUND")
 
         layout.separator()
 
@@ -492,7 +497,6 @@ class GRAPH_MT_key(Menu):
 
         layout.operator_menu_enum("graph.keyframe_insert", "type")
         layout.operator_menu_enum("graph.fmodifier_add", "type").only_active = False
-        layout.operator("graph.sound_bake", icon="BAKE_SOUND")
 
         layout.separator()
 
@@ -690,14 +694,18 @@ class GRAPH_MT_channel_context_menu(Menu):
         layout.separator()
         layout.operator("anim.channels_setting_enable", text="Protect Channels", icon="LOCKED").type = 'PROTECT'
         layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon="UNLOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_editable_toggle", icon="LOCKED")
 
         layout.separator()
         layout.operator("anim.channels_group", icon="NEW_GROUP")
         layout.operator("anim.channels_ungroup", icon="REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle", icon='RESTRICT_SELECT_ON')
         layout.operator_menu_enum("graph.extrapolation_type", "type", text="Extrapolation Mode")
+        # To get it to display the hotkey.
+        layout.operator_context = operator_context
+        layout.operator_menu_enum("graph.fmodifier_add", "type", text="Add F-Curve Modifier").only_active = False
+        layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
         layout.separator()
         layout.operator("graph.hide", text="Hide Selected Curves", icon='HIDE_ON').unselected = False
