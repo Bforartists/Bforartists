@@ -384,6 +384,7 @@ class GRAPH_MT_channel(Menu):
         layout.separator()
 
         layout.operator("anim.channels_fcurves_enable", icon="UNLOCKED")
+        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon="DISCONTINUE_EULER")
 
 
 class GRAPH_MT_channel_settings_toggle(Menu):
@@ -529,7 +530,6 @@ class GRAPH_MT_key(Menu):
 
         layout.separator()
 
-        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon="DISCONTINUE_EULER")
         # layout.menu("GRAPH_MT_key_density") # bfa we already have this
         layout.menu("GRAPH_MT_key_blending")
         layout.menu("GRAPH_MT_key_smoothing")
