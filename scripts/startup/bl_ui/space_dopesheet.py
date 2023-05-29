@@ -593,8 +593,12 @@ class DOPESHEET_MT_channel(Menu):
         layout.menu("GRAPH_MT_channel_settings_toggle")
 
         layout.separator()
-
+        layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
         layout.operator("anim.channels_editable_toggle", icon="LOCKED")
+        
+        layout.separator()
+        
         layout.menu("DOPESHEET_MT_channel_extrapolation")
 
         layout.separator()
@@ -836,6 +840,8 @@ class DOPESHEET_MT_gpencil_channel(Menu):
 
         layout.separator()
 
+        layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
         layout.operator("anim.channels_editable_toggle", icon="LOCKED")
 
         # XXX: to be enabled when these are ready for use!
@@ -945,13 +951,13 @@ class DOPESHEET_MT_channel_context_menu(Menu):
         layout.separator()
         layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
         layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
+        layout.operator("anim.channels_editable_toggle", icon='LOCKED')
 
         layout.separator()
         layout.operator("anim.channels_group", icon='NEW_GROUP')
         layout.operator("anim.channels_ungroup", icon='REMOVE_ALL_GROUPS')
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle", icon='RESTRICT_SELECT_ON')
         if is_graph_editor:
             operator = "graph.extrapolation_type"
         else:
