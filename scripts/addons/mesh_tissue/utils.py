@@ -261,7 +261,6 @@ def simple_to_mesh(ob, depsgraph=None):
         dg = depsgraph
     ob_eval = ob.evaluated_get(dg)
     me = bpy.data.meshes.new_from_object(ob_eval, preserve_all_data_layers=True, depsgraph=dg)
-    me.calc_normals()
     return me
 
 def _join_objects(context, objects, link_to_scene=True, make_active=True):
@@ -344,8 +343,9 @@ def array_mesh(ob, n):
     arr = ob.modifiers.new('Repeat','ARRAY')
     arr.relative_offset_displace[0] = 0
     arr.count = n
-    #bpy.ops.object.modifier_apply({'active_object':ob},modifier='Repeat')
-    #me = ob.data
+    # with bpy.context.temp_override(active_object=ob):
+    #     bpy.ops.object.modifier_apply(modifier='Repeat')
+    # me = ob.data
     ob.modifiers.update()
 
     dg = bpy.context.evaluated_depsgraph_get()

@@ -2,11 +2,11 @@
 
 import bpy
 
-class GP_OT_camera_flip_x(bpy.types.Operator):
-    bl_idname = "gp.camera_flip_x"
+class VIEW3D_OT_camera_flip_x(bpy.types.Operator):
+    bl_idname = "view3d.camera_flip_x"
     bl_label = "Camera Flip X"
     bl_description = "Invert active camera scale.x to flip view horizontally"
-    bl_options = {"REGISTER"}
+    bl_options = {"REGISTER", "UNDO_GROUPED"}
 
     @classmethod
     def poll(cls, context):
@@ -18,7 +18,7 @@ class GP_OT_camera_flip_x(bpy.types.Operator):
         return {"FINISHED"}
 
 def register():
-    bpy.utils.register_class(GP_OT_camera_flip_x)
+    bpy.utils.register_class(VIEW3D_OT_camera_flip_x)
 
 def unregister():
-    bpy.utils.unregister_class(GP_OT_camera_flip_x)
+    bpy.utils.unregister_class(VIEW3D_OT_camera_flip_x)

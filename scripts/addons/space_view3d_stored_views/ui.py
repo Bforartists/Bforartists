@@ -46,19 +46,21 @@ def init_draw(context=None):
 
 
 def _draw_callback_px(self, context):
-    if context.area and context.area.type == 'VIEW_3D':
+    area = context.area
+    if area and area.type == 'VIEW_3D':
+        ui_scale = context.preferences.system.ui_scale
         r_width = text_location = context.region.width
         r_height = context.region.height
         font_id = 0  # TODO: need to find out how best to get font_id
 
-        blf.size(font_id, 11, context.preferences.system.dpi)
+        blf.size(font_id, 11 * ui_scale)
         text_size = blf.dimensions(0, self.view_name)
 
         # compute the text location
         text_location = 0
         overlap = context.preferences.system.use_region_overlap
         if overlap:
-            for region in context.area.regions:
+            for region in area.regions:
                 if region.type == "UI":
                     text_location = r_width - region.width
 

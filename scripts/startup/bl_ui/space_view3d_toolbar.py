@@ -162,6 +162,17 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_ui_units_x = 12
 
+    def draw(self, _context):
+        # layout = self.layout
+        pass
+
+
+class VIEW3D_PT_tools_meshedit_options_transform(View3DPanel, Panel):
+    bl_category = "Tool"
+    bl_context = ".mesh_edit"  # dot on purpose (access from topbar)
+    bl_label = "Transform"
+    bl_parent_id = "VIEW3D_PT_tools_meshedit_options"
+
     @classmethod
     def poll(cls, context):
         return context.active_object
@@ -200,10 +211,6 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
 
         col = layout.column(align = True)
         col.label(text = "UV's")
-        row = col.row()
-        row.use_property_split = False
-        row.separator()
-        row.prop(tool_settings, "use_edge_path_live_unwrap")
 
         row = layout.row(heading="Mirror")
         sub = row.row(align=True)
@@ -236,38 +243,21 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-# bfa - panel remains for compatibility reasons. Who knows what Blender developers does in the future here ...
-#class VIEW3D_PT_tools_meshedit_options_automerge(View3DPanel, Panel):
-    #bl_category = "Tool"
-    #bl_context = ".mesh_edit"  # dot on purpose (access from topbar)
-    #bl_label = "Auto Merge"
-    #bl_parent_id = "VIEW3D_PT_tools_meshedit_options" #bfa - not longer, we have the two props in the options panel directly.
-"""     bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.active_object
-
-    def draw_header(self, context):
-        tool_settings = context.tool_settings
-        self.layout.use_property_split = False
-        self.layout.prop(tool_settings, "use_mesh_automerge",
-                         text=self.bl_label if self.is_popover else "", toggle=False)
+class VIEW3D_PT_tools_meshedit_options_uvs(View3DPanel, Panel):
+    bl_category = "Tool"
+    bl_context = ".mesh_edit"  # dot on purpose (access from topbar)
+    bl_label = "UVs"
+    bl_parent_id = "VIEW3D_PT_tools_meshedit_options"
 
     def draw(self, context):
         layout = self.layout
 
+        layout.use_property_decorate = False
+        layout.use_property_split = True
+
         tool_settings = context.tool_settings
 
-        layout.use_property_split = False
-        layout.use_property_decorate = False
-
-        col = layout.column(align=True)
-        col.active = tool_settings.use_mesh_automerge
-        col.prop(tool_settings, "use_mesh_automerge_and_split", toggle=False)
-
-        col.use_property_split = True
-        col.prop(tool_settings, "double_threshold", text="Threshold") """
+        layout.prop(tool_settings, "use_edge_path_live_unwrap")
 
 
 # ********** default tools for editmode_armature ****************
@@ -2534,7 +2524,8 @@ classes = (
     VIEW3D_PT_tools_object_options,
     VIEW3D_PT_tools_object_options_transform,
     VIEW3D_PT_tools_meshedit_options,
-    #VIEW3D_PT_tools_meshedit_options_automerge, # bfa - remains for compatibility
+    VIEW3D_PT_tools_meshedit_options_transform,
+    VIEW3D_PT_tools_meshedit_options_uvs,
     VIEW3D_PT_tools_armatureedit_options,
     VIEW3D_PT_tools_posemode_options,
 

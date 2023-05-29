@@ -19,7 +19,7 @@ from .achm_room_maker import get_wall_points
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR') if not bpy.app.background else None
+shader = gpu.shader.from_builtin('UNIFORM_COLOR') if not bpy.app.background else None
 
 # -------------------------------------------------------------
 # Handle all draw routines (OpenGL main entry point)
@@ -92,7 +92,7 @@ def draw_main(context):
 def draw_text(x_pos, y_pos, display_text, rgba, fsize, right=False):
     gap = 12
     font_id = 0
-    blf.size(font_id, fsize, 72)
+    blf.size(font_id, fsize)
 
     text_width, text_height = blf.dimensions(font_id, display_text)
     if right is True:
