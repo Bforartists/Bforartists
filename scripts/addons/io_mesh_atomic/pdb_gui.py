@@ -96,8 +96,8 @@ class IMPORT_OT_pdb(Operator, ImportHelper):
         name="Bonds", default=False,
         description="Show double and triple bonds")
     sticks_dist: FloatProperty(
-        name="", default = 1.1, min=1.0, max=3.0,
-        description="Distance between sticks measured in stick diameter")
+        name="", default = 0.8, min=0.0, max=3.0,
+        description="Distance between sticks (double or tripple bonds) measured in stick diameter")
     use_sticks_one_object: BoolProperty(
         name="One object", default=False,
         description="All sticks are one object")
@@ -184,7 +184,10 @@ class IMPORT_OT_pdb(Operator, ImportHelper):
             col = row.column()
             col.active = self.use_sticks_one_object
             col.prop(self, "use_sticks_one_object_nr")
-
+            row = box.row()
+            row.active = self.use_sticks and self.use_sticks_bonds
+            row.label(text="Distance")
+            row.prop(self, "sticks_dist")
 
     def execute(self, context):
         # Switch to 'OBJECT' mode when in 'EDIT' mode.
