@@ -379,7 +379,7 @@ def draw_text(location, text, size=15, color=(1, 1, 1, 1)):
     font_id = 0
     ui_scale = bpy.context.preferences.system.ui_scale
     blf.position(font_id, *location)
-    blf.size(font_id, round(size * ui_scale), 72)
+    blf.size(font_id, round(size * ui_scale))
     blf.draw(font_id, text)
 
 
@@ -485,7 +485,7 @@ def get_max_object_side_length(objects):
     )
 
 def get_uniform_color_shader():
-    return gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+    return gpu.shader.from_builtin('UNIFORM_COLOR')
 
 
 # Registration

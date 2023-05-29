@@ -852,7 +852,7 @@ class MarkerController:
 
     def __init__(self, context):
         self.smMap = self.createSMMap(context)
-        self.shader = gpu.shader.from_builtin('3D_FLAT_COLOR')
+        self.shader = gpu.shader.from_builtin('FLAT_COLOR')
         # self.shader.bind()
 
         MarkerController.drawHandlerRef = \

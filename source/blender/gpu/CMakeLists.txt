@@ -29,6 +29,7 @@ set(INC
   # For *_info.hh includes.
   ../compositor/realtime_compositor
   ../draw/engines/eevee_next
+  ../draw/engines/select
   ../draw/engines/workbench
   ../draw/intern
 
@@ -76,6 +77,7 @@ set(SRC
   intern/gpu_platform.cc
   intern/gpu_query.cc
   intern/gpu_select.c
+  intern/gpu_select_next.cc
   intern/gpu_select_pick.c
   intern/gpu_select_sample_query.cc
   intern/gpu_shader.cc
@@ -464,7 +466,6 @@ set(GLSL_SRC
 
   shaders/material/gpu_shader_material_add_shader.glsl
   shaders/material/gpu_shader_material_ambient_occlusion.glsl
-  shaders/material/gpu_shader_material_anisotropic.glsl
   shaders/material/gpu_shader_material_attribute.glsl
   shaders/material/gpu_shader_material_background.glsl
   shaders/material/gpu_shader_material_bevel.glsl

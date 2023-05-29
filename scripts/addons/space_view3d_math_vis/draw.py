@@ -12,8 +12,8 @@ SpaceView3D = bpy.types.SpaceView3D
 callback_handle = []
 
 if not bpy.app.background:
-    single_color_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    smooth_color_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+    single_color_shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+    smooth_color_shader = gpu.shader.from_builtin('SMOOTH_COLOR')
 else:
     single_color_shader = None
     smooth_color_shader = None
@@ -66,7 +66,7 @@ def draw_callback_px():
 
     font_id = 0
     ui_scale = context.preferences.system.ui_scale
-    blf.size(font_id, round(12 * ui_scale), 72)
+    blf.size(font_id, round(12 * ui_scale))
 
     data_matrix, data_quat, data_euler, data_vector, data_vector_array = utils.console_math_data()
     if not data_matrix and not data_quat and not data_euler and not data_vector and not data_vector_array:

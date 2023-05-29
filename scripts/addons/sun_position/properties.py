@@ -311,7 +311,7 @@ class SunPosAddonPreferences(AddonPreferences):
         box = layout.box()
         col = box.column()
 
-        col.label(text="Show options or labels:")
+        col.label(text="Show options and info:")
         flow = col.grid_flow(columns=0, even_columns=True, even_rows=False, align=False)
         flow.prop(self, "show_refraction")
         flow.prop(self, "show_overlays")
