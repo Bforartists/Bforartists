@@ -480,6 +480,7 @@ class GRAPH_MT_key(Menu):
     bl_label = "Key"
 
     def draw(self, _context):
+        from bl_ui_utils.layout import operator_context
         layout = self.layout
 
         layout.menu("GRAPH_MT_key_transform", text="Transform")
@@ -747,6 +748,7 @@ classes = (
     GRAPH_MT_snap_pie,
     GRAPH_MT_view_pie,
     GRAPH_PT_filters,
+    GRAPH_MT_slider,
 )
 
 if __name__ == "__main__":  # only for live edit.
