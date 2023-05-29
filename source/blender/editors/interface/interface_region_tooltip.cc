@@ -1356,7 +1356,7 @@ static ARegion *ui_tooltip_create_with_data(bContext *C,
     region->winrct.ymax = rect_i.ymax + margin;
   }
 
-  /* adds subwindow */
+  /* Adds sub-window. */
   ED_region_floating_init(region);
 
   /* notify change and redraw */

@@ -1561,8 +1561,6 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         # normals_split_custom_set. We use clnors.data since it is a memoryview, which is faster to iterate than clnors.
         mesh.normals_split_custom_set(tuple(zip(*(iter(clnors.data),) * 3)))
         mesh.use_auto_smooth = True
-    else:
-        mesh.calc_normals()
 
     if settings.use_custom_normals:
         mesh.free_normals_split()

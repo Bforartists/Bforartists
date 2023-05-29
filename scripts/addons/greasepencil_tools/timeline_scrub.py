@@ -37,7 +37,7 @@ def draw_callback_px(self, context):
     # text
     font_id = 0
 
-    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')  # initiate shader
+    shader = gpu.shader.from_builtin('UNIFORM_COLOR') # initiate shader
     gpu.state.blend_set('ALPHA')
     gpu.state.line_width_set(1.0)
 
@@ -77,14 +77,14 @@ def draw_callback_px(self, context):
     blf.color(font_id, *self.color_text)
     if self.use_hud_frame_current:
         blf.position(font_id, self.mouse[0]+10, self.mouse[1]+10, 0)
-        blf.size(font_id, 30, self.dpi)
+        blf.size(font_id, 30 * (self.dpi / 72.0))
         blf.draw(font_id, f'{self.new_frame:.0f}')
 
     # Display frame offset text
     if self.use_hud_frame_offset:
         blf.position(font_id, self.mouse[0]+10,
                      self.mouse[1]+(40*self.ui_scale), 0)
-        blf.size(font_id, 16, self.dpi)
+        blf.size(font_id, 16 * (self.dpi / 72.0))
         sign = '+' if self.offset > 0 else ''
         blf.draw(font_id, f'{sign}{self.offset:.0f}')
 
@@ -291,7 +291,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         self.hud_lines += [(0, my), (width, my)]
 
         # Prepare batchs to draw static parts
-        shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')  # initiate shader
+        shader = gpu.shader.from_builtin('UNIFORM_COLOR')  # initiate shader
         self.batch_timeline = batch_for_shader(
             shader, 'LINES', {"pos": self.hud_lines})
 

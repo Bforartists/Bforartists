@@ -71,10 +71,10 @@ def draw_callback_px(self, context):
 
     ## timer for debug purposes
     # blf.position(font_id, 15, 30, 0)
-    # blf.size(font_id, 20, 72)
+    # blf.size(font_id, 20.0)
     # blf.draw(font_id, "Time " + self.text)
 
-    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')  # initiate shader
+    shader = gpu.shader.from_builtin('UNIFORM_COLOR')  # initiate shader
     gpu.state.blend_set('ALPHA')
     gpu.state.line_width_set(1.0)
 
@@ -198,7 +198,7 @@ def draw_callback_px(self, context):
     for icon_name, coord_list in icons.items():
         texture = gpu.texture.from_image(self.icon_tex[icon_name])
         for coords in coord_list:
-            shader_tex = gpu.shader.from_builtin('2D_IMAGE')
+            shader_tex = gpu.shader.from_builtin('IMAGE')
             batch_icons = batch_for_shader(
                 shader_tex, 'TRI_FAN',
                 {
@@ -228,7 +228,7 @@ def draw_callback_px(self, context):
         # if i == self.ui_idx:
         #     ## color = self.active_layer_color # Color active name
         #     blf.position(font_id, self.text_x+1, self.text_pos[i]-1, 0)
-        #     blf.size(font_id, self.text_size, 72)
+        #     blf.size(font_id, self.text_size)
         #     blf.color(font_id, *self.active_layer_color)
         #     blf.draw(font_id, l.info)
         if l.hide:
@@ -240,7 +240,7 @@ def draw_callback_px(self, context):
             color = self.other_layer_color
 
         blf.position(font_id, self.text_x, self.text_pos[i], 0)
-        blf.size(font_id, self.text_size, 72)
+        blf.size(font_id, self.text_size)
         blf.color(font_id, *color)
         display_name = l.info if len(l.info) <= self.text_char_limit else l.info[:self.text_char_limit-3] + '...'
         blf.draw(font_id, display_name)
@@ -248,7 +248,7 @@ def draw_callback_px(self, context):
     ## Drag text
     if self.dragging and self.drag_text:
         blf.position(font_id, self.mouse.x + 5, self.mouse.y + 5, 0)
-        blf.size(font_id, self.text_size, 72)
+        blf.size(font_id, self.text_size)
         blf.color(font_id, 1.0, 1.0, 1.0, 1.0)
         if self.drag_text == 'opacity_level':
             blf.draw(font_id, f'{self.gpl[self.ui_idx].opacity:.2f}')
@@ -417,7 +417,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                     Vector((self.left, self.bottom)), Vector((self.right, self.bottom)),
                     Vector((self.left, self.top)), Vector((self.left, self.bottom)),
                     Vector((self.right, self.top)), Vector((self.right, self.bottom))]
-        shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+        shader = gpu.shader.from_builtin('UNIFORM_COLOR')
 
         self.batch_lines = batch_for_shader(
             shader, 'LINES', {"pos": self.lines[2:]})
