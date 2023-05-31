@@ -368,6 +368,11 @@ class GRAPH_MT_channel(Menu):
 
         layout.separator()
 
+        layout.operator("graph.bake", icon="BAKE_CURVE")
+        layout.operator("graph.unbake", icon="CLEAR")
+
+        layout.separator()
+        
         layout.operator("graph.reveal", icon="HIDE_OFF")
         layout.operator("graph.hide", text="Hide Selected Curves", icon="HIDE_ON").unselected = False
         layout.operator("graph.hide", text="Hide Unselected Curves", icon="HIDE_UNSELECTED").unselected = True
@@ -525,8 +530,6 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.clean", text="Clean Channels", icon="CLEAN_CHANNELS").channels = True
         layout.operator("graph.smooth", icon="SMOOTH_KEYFRAMES")
         layout.operator("graph.sample", icon="SAMPLE_KEYFRAMES")
-        layout.operator("graph.bake", icon="BAKE_CURVE")
-        layout.operator("graph.unbake", icon="CLEAR")
 
         layout.separator()
 
