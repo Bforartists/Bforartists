@@ -237,7 +237,7 @@ class VIEWLAYER_PT_eevee_layer_passes_effects(ViewLayerButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         view_layer = context.view_layer
@@ -246,7 +246,6 @@ class VIEWLAYER_PT_eevee_layer_passes_effects(ViewLayerButtonsPanel, Panel):
         scene_eevee = scene.eevee
 
         col = layout.column()
-        col.use_property_split = False
         col.prop(view_layer_eevee, "use_pass_bloom", text="Bloom")
         col.active = scene_eevee.use_bloom
 
