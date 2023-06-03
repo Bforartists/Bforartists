@@ -462,7 +462,7 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
 
             layout.operator("sequencer.view_all", text="Frame All", icon = "VIEWALL" )
-            layout.operator("sequencer.view_frame")
+            layout.operator("sequencer.view_frame", icon = "VIEW_FRAME" )
             layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
 
         if is_preview:
@@ -671,10 +671,6 @@ class SEQUENCER_MT_navigation(Menu):
         layout = self.layout
 
         layout.operator("screen.animation_play", icon='PLAY')
-
-        layout.separator()
-
-        layout.operator("sequencer.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
 
