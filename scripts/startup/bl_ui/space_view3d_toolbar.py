@@ -188,7 +188,6 @@ class VIEW3D_PT_tools_meshedit_options_transform(View3DPanel, Panel):
         mesh = ob.data
 
         col = layout.column(align = True)
-        col.label(text = "Transform")
 
         subcol = col.column()
         subcol.use_property_split = False
@@ -210,10 +209,10 @@ class VIEW3D_PT_tools_meshedit_options_transform(View3DPanel, Panel):
             row.prop(tool_settings, "use_transform_correct_keep_connected")
 
         col = layout.column(align = True)
-        col.label(text = "UV's")
 
         row = layout.row(heading="Mirror")
         sub = row.row(align=True)
+        sub.separator(factor = 2.4)
         sub.prop(mesh, "use_mirror_x", text="X", toggle=True)
         sub.prop(mesh, "use_mirror_y", text="Y", toggle=True)
         sub.prop(mesh, "use_mirror_z", text="Z", toggle=True)
@@ -222,23 +221,25 @@ class VIEW3D_PT_tools_meshedit_options_transform(View3DPanel, Panel):
 
         row = layout.row(align=True)
         if ob.data.use_mirror_x or ob.data.use_mirror_y or ob.data.use_mirror_z:
-            row.separator()
+            row.separator(factor = 4.8)
             row.prop(mesh, "use_mirror_topology")
 
         split = layout.split()
         col = split.column()
         col.use_property_split = False
-        col.prop(tool_settings, "use_mesh_automerge", text="Auto Merge", toggle=False)
+        row = col.row()
+        row.separator()
+        row.prop(tool_settings, "use_mesh_automerge", text="Auto Merge", toggle=False)
         col = split.column()
         if tool_settings.use_mesh_automerge:
             col.label(icon='DISCLOSURE_TRI_DOWN')
             col = layout.column(align=True)
             row = col.row()
-            row.separator()
+            row.separator(factor = 3.2)
             row.prop(tool_settings, "use_mesh_automerge_and_split", toggle=False)
             col.use_property_split = True
             row = col.row()
-            row.separator()
+            row.separator(factor = 3.2)
             row.prop(tool_settings, "double_threshold", text="Threshold")
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
@@ -253,11 +254,13 @@ class VIEW3D_PT_tools_meshedit_options_uvs(View3DPanel, Panel):
         layout = self.layout
 
         layout.use_property_decorate = False
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         tool_settings = context.tool_settings
 
-        layout.prop(tool_settings, "use_edge_path_live_unwrap")
+        row = layout.row()
+        row.separator()
+        row.prop(tool_settings, "use_edge_path_live_unwrap")
 
 
 # ********** default tools for editmode_armature ****************
@@ -1029,7 +1032,7 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
         row.prop(sculpt, "use_deform_only")
 
         col.label(text = "Display")
-        
+
         row = col.row()
         row.separator()
         row.prop(sculpt, "use_automasking_topology", text="Topology")
@@ -1069,7 +1072,7 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
             col.prop(sculpt, "automasking_view_normal_falloff")
 
         col.separator()
-        
+
         col.use_property_split = True
         col.prop(sculpt.brush, "automasking_boundary_edges_propagation_steps")
 
