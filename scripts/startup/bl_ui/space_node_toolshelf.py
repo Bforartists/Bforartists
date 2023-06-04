@@ -1324,7 +1324,7 @@ class NODES_PT_shader_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeBrightContrast"
 
-            props = col.operator("node.add_node", text=" Gamma             ", icon = "NODE_GAMMA")
+            props = col.operator("node.add_node", text=" Gamma              ", icon = "NODE_GAMMA")
             props.use_transform = True
             props.type = "ShaderNodeGamma"
 
@@ -1332,7 +1332,7 @@ class NODES_PT_shader_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeHueSaturation"
 
-            props = col.operator("node.add_node", text=" Invert                 ", icon = "NODE_INVERT")
+            props = col.operator("node.add_node", text=" Invert Color         ", icon = "NODE_INVERT")
             props.use_transform = True
             props.type = "ShaderNodeInvert"
 
@@ -1563,7 +1563,7 @@ class NODES_PT_comp_add_color(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Invert               ", icon = "NODE_INVERT")
+            props = col.operator("node.add_node", text=" Invert Color       ", icon = "NODE_INVERT")
             props.use_transform = True
             props.type = "CompositorNodeInvert"
 
@@ -1692,7 +1692,7 @@ class NODES_PT_Input_color_tex(bpy.types.Panel):
             props.use_transform = True
             props.type = "TextureNodeHueSaturation"
 
-            props = col.operator("node.add_node", text=" Invert                ", icon = "NODE_INVERT")
+            props = col.operator("node.add_node", text=" Invert Color       ", icon = "NODE_INVERT")
             props.use_transform = True
             props.type = "TextureNodeInvert"
 
@@ -3864,7 +3864,7 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Geometry Proximity   ", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeProximity"
-            
+
             props = col.operator("node.add_node", text=" Index of Nearest        ", icon = "INDEX_OF_NEAREST")
             props.use_transform = True
             props.type = "GeometryNodeIndexOfNearest"
@@ -3892,7 +3892,7 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeMergeByDistance"
-            
+
             props = flow.operator("node.add_node", text="", icon = "INDEX_OF_NEAREST")
             props.use_transform = True
             props.type = "GeometryNodeIndexOfNearest"
