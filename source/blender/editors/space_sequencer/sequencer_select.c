@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup spseq
@@ -513,7 +514,7 @@ static char *sequencer_ot_select_all_get_description(bContext *UNUSED(C),
   return NULL;
 }
 
-void SEQUENCER_OT_select_all(struct wmOperatorType *ot)
+void SEQUENCER_OT_select_all(wmOperatorType *ot)
 {
   /* Identifiers. */
   ot->name = "(De)select All";
@@ -566,7 +567,7 @@ static int sequencer_select_inverse_exec(bContext *C, wmOperator *UNUSED(op))
   return OPERATOR_FINISHED;
 }
 
-void SEQUENCER_OT_select_inverse(struct wmOperatorType *ot)
+void SEQUENCER_OT_select_inverse(wmOperatorType *ot)
 {
   /* Identifiers. */
   ot->name = "Select Inverse";
