@@ -343,6 +343,7 @@ class CMPreferences(AddonPreferences):
         subtype='COLOR_GAMMA',
         min=0.0,
         max=1.0,
+        size=4,
         get=get_tool_outline,
         set=set_tool_outline,
         )
@@ -377,6 +378,7 @@ class CMPreferences(AddonPreferences):
         subtype='COLOR_GAMMA',
         min=0.0,
         max=1.0,
+        size=4,
         get=get_menu_back_outline,
         set=set_menu_back_outline,
         )
@@ -411,6 +413,7 @@ class CMPreferences(AddonPreferences):
         subtype='COLOR_GAMMA',
         min=0.0,
         max=1.0,
+        size=4,
         get=get_tooltip_outline,
         set=set_tooltip_outline,
         )
