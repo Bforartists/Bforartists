@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup edinterface
@@ -1108,7 +1110,7 @@ static const char *template_id_browse_tip(const StructRNA *type)
       case ID_PA:
         return N_("Particle Settings Browser\nChoose Particle Settings to use");
       case ID_GD_LEGACY:
-        return N_("Data Browser\nChoose Grease Pencil Data to use");
+        return N_("Data Browser\nChoose Grease Pencil (legacy) Data to be linked");
       case ID_MC:
         return N_("Clip Browser\nChoose Movie Clip to use");
       case ID_MSK:
@@ -1131,6 +1133,8 @@ static const char *template_id_browse_tip(const StructRNA *type)
         return N_("Data Browser\nBrowse Volume Data to be linked");
       case ID_SIM:
         return N_("Data Browser\nBrowse Simulation to be linked");
+      case ID_GP:
+        return N_("Data Browser\nBrowse Grease Pencil Data to be linked");
 
       /* Use generic text. */
       case ID_LI:

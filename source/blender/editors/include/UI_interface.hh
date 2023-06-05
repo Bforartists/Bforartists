@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup editorui
@@ -6,6 +8,7 @@
 
 #pragma once
 
+#include <functional>
 #include <memory>
 
 #include "BLI_function_ref.hh"
@@ -23,6 +26,7 @@ struct bContext;
 struct PointerRNA;
 struct StructRNA;
 struct uiBlock;
+struct uiBut;
 struct uiLayout;
 struct uiList;
 struct uiSearchItems;
@@ -34,6 +38,8 @@ namespace blender::ui {
 
 class AbstractGridView;
 class AbstractTreeView;
+
+void UI_but_func_pushed_state_set(uiBut *but, std::function<bool(const uiBut &)> func);
 
 /**
  * An item in a breadcrumb-like context. Currently this struct is very simple, but more

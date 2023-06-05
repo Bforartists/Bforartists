@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2023 Blender Foundation */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup depsgraph
@@ -275,13 +276,5 @@ class Cache {
   LinkingData light_linking_{LIGHT_LINKING_RECEIVER};
   LinkingData shadow_linking_{LIGHT_LINKING_BLOCKER};
 };
-
-/* Check whether object can be linked to an emitter without causing feedback loop. */
-inline bool can_link_to_emitter(const Object &object)
-{
-  return object.light_linking == nullptr ||
-         (object.light_linking->receiver_collection == nullptr &&
-          object.light_linking->blocker_collection == nullptr);
-}
 
 }  // namespace blender::deg::light_linking

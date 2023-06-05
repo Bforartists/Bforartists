@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup bke
@@ -77,7 +79,7 @@ struct bContext {
     /**
      * Store values to dynamically to create the string (called when a tool-tip is shown).
      */
-    struct bContextPollMsgDyn_Params operator_poll_msg_dyn_params;
+    bContextPollMsgDyn_Params operator_poll_msg_dyn_params;
   } wm;
 
   /* data context */
@@ -1194,6 +1196,8 @@ enum eContextObjectMode CTX_data_mode_enum_ex(const Object *obedit,
         return CTX_MODE_EDIT_LATTICE;
       case OB_CURVES:
         return CTX_MODE_EDIT_CURVES;
+      case OB_GREASE_PENCIL:
+        return CTX_MODE_EDIT_GPENCIL;
     }
   }
   else {
