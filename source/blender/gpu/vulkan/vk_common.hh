@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2023 Blender Foundation */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup gpu
@@ -34,6 +35,7 @@ VkClearColorValue to_vk_clear_color_value(const eGPUDataFormat format, const voi
 VkIndexType to_vk_index_type(const GPUIndexBufType index_type);
 VkPrimitiveTopology to_vk_primitive_topology(const GPUPrimType prim_type);
 VkCullModeFlags to_vk_cull_mode_flags(const eGPUFaceCullTest cull_test);
+const char *to_string(VkObjectType type);
 
 template<typename T> VkObjectType to_vk_object_type(T /*vk_obj*/)
 {
@@ -97,6 +99,7 @@ template<typename T> VkObjectType to_vk_object_type(T /*vk_obj*/)
   return VK_OBJECT_TYPE_UNKNOWN;
 }
 
-#define NOT_YET_IMPLEMENTED printf("%s not implemented yet\n", __func__);
+#define NOT_YET_IMPLEMENTED \
+  printf("%s:%d `%s` not implemented yet\n", __FILE__, __LINE__, __func__);
 
 }  // namespace blender::gpu

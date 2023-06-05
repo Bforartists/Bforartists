@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2016 Blender Foundation. */
+/* SPDX-FileCopyrightText: 2016 Blender Foundation.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup draw
@@ -485,7 +486,7 @@ GPUShader *DRW_shader_create_fullscreen_with_shaderlib_ex(const char *frag,
 }
 
 GPUMaterial *DRW_shader_from_world(World *wo,
-                                   struct bNodeTree *ntree,
+                                   bNodeTree *ntree,
                                    const uint64_t shader_id,
                                    const bool is_volume_shader,
                                    bool deferred,
@@ -517,7 +518,7 @@ GPUMaterial *DRW_shader_from_world(World *wo,
 }
 
 GPUMaterial *DRW_shader_from_material(Material *ma,
-                                      struct bNodeTree *ntree,
+                                      bNodeTree *ntree,
                                       const uint64_t shader_id,
                                       const bool is_volume_shader,
                                       bool deferred,

@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2019 Blender Foundation */
+/* SPDX-FileCopyrightText: 2019 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup depsgraph
@@ -114,7 +115,7 @@ void ObjectRuntimeBackup::restore_to_object(Object *object)
       }
     }
   }
-  else if (ELEM(object->type, OB_CURVES, OB_POINTCLOUD, OB_VOLUME)) {
+  else if (ELEM(object->type, OB_CURVES, OB_POINTCLOUD, OB_VOLUME, OB_GREASE_PENCIL)) {
     if (object->id.recalc & ID_RECALC_GEOMETRY) {
       /* Free evaluated caches. */
       object->data = data_orig;
