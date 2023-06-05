@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup edasset
@@ -546,10 +548,10 @@ struct AssetLibraryIndex {
     if (!BLI_is_dir(index_path)) {
       return;
     }
-    struct direntry *dir_entries = nullptr;
+    direntry *dir_entries = nullptr;
     const int dir_entries_num = BLI_filelist_dir_contents(index_path, &dir_entries);
     for (int i = 0; i < dir_entries_num; i++) {
-      struct direntry *entry = &dir_entries[i];
+      direntry *entry = &dir_entries[i];
       if (BLI_str_endswith(entry->relname, ".index.json")) {
         preexisting_file_indices.add_as(std::string(entry->path));
       }

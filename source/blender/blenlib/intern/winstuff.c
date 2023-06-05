@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup bli
@@ -27,19 +28,20 @@
 
 /* FILE_MAXDIR + FILE_MAXFILE */
 
-int BLI_windows_get_executable_dir(char *str)
+int BLI_windows_get_executable_dir(char r_dirpath[/*FILE_MAXDIR*/])
 {
-  char dir[FILE_MAXDIR];
+  char filepath[FILE_MAX];
+  char dir[FILE_MAX];
   int a;
   /* Change to utf support. */
-  GetModuleFileName(NULL, str, FILE_MAX);
-  BLI_path_split_dir_part(str, dir, sizeof(dir)); /* shouldn't be relative */
+  GetModuleFileName(NULL, filepath, sizeof(filepath));
+  BLI_path_split_dir_part(filepath, dir, sizeof(dir)); /* shouldn't be relative */
   a = strlen(dir);
   if (dir[a - 1] == '\\') {
     dir[a - 1] = 0;
   }
 
-  strcpy(str, dir);
+  BLI_strncpy(r_dirpath, dir, FILE_MAXDIR);
 
   return 1;
 }

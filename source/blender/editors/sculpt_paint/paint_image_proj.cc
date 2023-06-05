@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup edsculpt
@@ -66,6 +67,7 @@
 #include "BKE_mesh_runtime.h"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
+#include "BKE_object.h"
 #include "BKE_paint.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
@@ -488,7 +490,7 @@ struct ProjPixel {
 };
 
 struct ProjPixelClone {
-  struct ProjPixel __pp;
+  ProjPixel __pp;
   PixelStore clonepx;
 };
 
@@ -502,7 +504,7 @@ struct TileInfo {
 };
 
 struct VertSeam {
-  struct VertSeam *next, *prev;
+  VertSeam *next, *prev;
   int tri;
   uint loop;
   float angle;
@@ -1836,7 +1838,7 @@ static int project_paint_undo_subtiles(const TileInfo *tinf, int tx, int ty)
   }
 
   if (generate_tile) {
-    struct PaintTileMap *undo_tiles = ED_image_paint_tile_map_get();
+    PaintTileMap *undo_tiles = ED_image_paint_tile_map_get();
     volatile void *undorect;
     if (tinf->masked) {
       undorect = ED_image_paint_tile_push(undo_tiles,
@@ -4069,26 +4071,11 @@ static bool proj_paint_state_mesh_eval_init(const bContext *C, ProjPaintState *p
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Object *ob = ps->ob;
 
-  Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
-  Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob);
-
-  if (scene_eval == nullptr || ob_eval == nullptr) {
+  const Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob);
+  ps->me_eval = BKE_object_get_evaluated_mesh(ob_eval);
+  if (!ps->me_eval) {
     return false;
   }
-
-  CustomData_MeshMasks cddata_masks = scene_eval->customdata_mask;
-  cddata_masks.fmask |= CD_MASK_MTFACE;
-  cddata_masks.lmask |= CD_MASK_PROP_FLOAT2;
-  cddata_masks.vmask |= CD_MASK_PROP_ALL | CD_MASK_CREASE;
-  cddata_masks.emask |= CD_MASK_PROP_ALL | CD_MASK_CREASE;
-  cddata_masks.pmask |= CD_MASK_PROP_ALL | CD_MASK_CREASE;
-  cddata_masks.lmask |= CD_MASK_PROP_ALL | CD_MASK_CREASE;
-  if (ps->do_face_sel) {
-    cddata_masks.vmask |= CD_MASK_ORIGINDEX;
-    cddata_masks.emask |= CD_MASK_ORIGINDEX;
-    cddata_masks.pmask |= CD_MASK_ORIGINDEX;
-  }
-  ps->me_eval = mesh_get_eval_final(depsgraph, scene_eval, ob_eval, &cddata_masks);
 
   if (!CustomData_has_layer(&ps->me_eval->ldata, CD_PROP_FLOAT2)) {
     ps->me_eval = nullptr;
@@ -4301,7 +4288,7 @@ static bool project_paint_winclip(const ProjPaintState *ps, const ProjPaintFaceC
 #endif /* PROJ_DEBUG_WINCLIP */
 
 struct PrepareImageEntry {
-  struct PrepareImageEntry *next, *prev;
+  PrepareImageEntry *next, *prev;
   Image *ima;
   ImageUser iuser;
 };
@@ -4873,7 +4860,7 @@ struct ProjectHandle {
   /* thread settings */
   int thread_index;
 
-  struct ImagePool *pool;
+  ImagePool *pool;
 };
 
 static void do_projectpaint_clone(ProjPaintState *ps, ProjPixel *projPixel, float mask)

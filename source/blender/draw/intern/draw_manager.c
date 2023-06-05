@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2016 Blender Foundation. */
+/* SPDX-FileCopyrightText: 2016 Blender Foundation.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup draw
@@ -25,6 +26,7 @@
 #include "BKE_editmesh.h"
 #include "BKE_global.h"
 #include "BKE_gpencil_legacy.h"
+#include "BKE_grease_pencil.h"
 #include "BKE_lattice.h"
 #include "BKE_main.h"
 #include "BKE_mball.h"
@@ -216,7 +218,7 @@ int DRW_object_visibility_in_active_context(const Object *ob)
   return BKE_object_visibility(ob, mode);
 }
 
-bool DRW_object_use_hide_faces(const struct Object *ob)
+bool DRW_object_use_hide_faces(const Object *ob)
 {
   if (ob->type == OB_MESH) {
     switch (ob->mode) {
@@ -262,12 +264,12 @@ bool DRW_object_is_visible_psys_in_active_context(const Object *object, const Pa
   return true;
 }
 
-struct Object *DRW_object_get_dupli_parent(const Object *UNUSED(ob))
+Object *DRW_object_get_dupli_parent(const Object *UNUSED(ob))
 {
   return DST.dupli_parent;
 }
 
-struct DupliObject *DRW_object_get_dupli(const Object *UNUSED(ob))
+DupliObject *DRW_object_get_dupli(const Object *UNUSED(ob))
 {
   return DST.dupli_source;
 }
@@ -1135,10 +1137,6 @@ void DRW_draw_region_engine_info(int xoffset, int *yoffset, int line_height)
 {
   DRW_ENABLED_ENGINE_ITER (DST.view_data_active, engine, data) {
     if (data->info[0] != '\0') {
-      char *chr_current = data->info;
-      char *chr_start = chr_current;
-      int line_len = 0;
-
       const int font_id = BLF_default();
       UI_FontThemeColor(font_id, TH_TEXT_HI);
 
@@ -1146,24 +1144,14 @@ void DRW_draw_region_engine_info(int xoffset, int *yoffset, int line_height)
       BLF_shadow(font_id, 5, (const float[4]){0.0f, 0.0f, 0.0f, 1.0f});
       BLF_shadow_offset(font_id, 1, -1);
 
-      while (*chr_current++ != '\0') {
-        line_len++;
-        if (*chr_current == '\n') {
-          char info[GPU_INFO_SIZE];
-          BLI_strncpy(info, chr_start, line_len + 1);
-          *yoffset -= line_height;
-          BLF_draw_default(xoffset, *yoffset, 0.0f, info, sizeof(info));
-
-          /* Re-start counting. */
-          chr_start = chr_current + 1;
-          line_len = -1;
-        }
-      }
-
-      char info[GPU_INFO_SIZE];
-      BLI_strncpy(info, chr_start, line_len + 1);
-      *yoffset -= line_height;
-      BLF_draw_default(xoffset, *yoffset, 0.0f, info, sizeof(info));
+      const char *buf_step = data->info;
+      do {
+        const char *buf = buf_step;
+        buf_step = BLI_strchr_or_end(buf, '\n');
+        const int buf_len = buf_step - buf;
+        *yoffset -= line_height;
+        BLF_draw_default(xoffset, *yoffset, 0.0f, buf, buf_len);
+      } while (*buf_step ? ((void)buf_step++, true) : false);
 
       BLF_disable(font_id, BLF_SHADOW);
     }
@@ -1286,7 +1274,8 @@ static void drw_engines_enable(ViewLayer *UNUSED(view_layer),
 
   drw_engines_enable_from_engine(engine_type, drawtype);
   if (gpencil_engine_needed && ((drawtype >= OB_SOLID) || !use_xray)) {
-    use_drw_engine(&draw_engine_gpencil_type);
+    use_drw_engine(((U.experimental.use_grease_pencil_version3) ? &draw_engine_gpencil_next_type :
+                                                                  &draw_engine_gpencil_type));
   }
 
   if (is_compositor_enabled()) {
@@ -1316,6 +1305,12 @@ static void drw_engines_data_validate(void)
  * For slow exact check use `DRW_render_check_grease_pencil` */
 static bool drw_gpencil_engine_needed(Depsgraph *depsgraph, View3D *v3d)
 {
+  if (U.experimental.use_grease_pencil_version3) {
+    const bool exclude_gpencil_rendering = v3d ? (v3d->object_type_exclude_viewport &
+                                                  (1 << OB_GREASE_PENCIL)) != 0 :
+                                                 false;
+    return (!exclude_gpencil_rendering) && DEG_id_type_any_exists(depsgraph, ID_GP);
+  }
   const bool exclude_gpencil_rendering = v3d ? (v3d->object_type_exclude_viewport &
                                                 (1 << OB_GPENCIL_LEGACY)) != 0 :
                                                false;
@@ -1387,7 +1382,7 @@ void DRW_notify_view_update(const DRWUpdateContext *update_ctx)
 }
 
 /* update a viewport which belongs to a GPUOffscreen */
-static void drw_notify_view_update_offscreen(struct Depsgraph *depsgraph,
+static void drw_notify_view_update_offscreen(Depsgraph *depsgraph,
                                              RenderEngineType *engine_type,
                                              ARegion *region,
                                              View3D *v3d,
@@ -1648,7 +1643,7 @@ void DRW_draw_view(const bContext *C)
   }
 }
 
-void DRW_draw_render_loop_ex(struct Depsgraph *depsgraph,
+void DRW_draw_render_loop_ex(Depsgraph *depsgraph,
                              RenderEngineType *engine_type,
                              ARegion *region,
                              View3D *v3d,
@@ -1793,7 +1788,7 @@ void DRW_draw_render_loop_ex(struct Depsgraph *depsgraph,
   drw_manager_exit(&DST);
 }
 
-void DRW_draw_render_loop(struct Depsgraph *depsgraph,
+void DRW_draw_render_loop(Depsgraph *depsgraph,
                           ARegion *region,
                           View3D *v3d,
                           GPUViewport *viewport)
@@ -1807,7 +1802,7 @@ void DRW_draw_render_loop(struct Depsgraph *depsgraph,
   DRW_draw_render_loop_ex(depsgraph, engine_type, region, v3d, viewport, NULL);
 }
 
-void DRW_draw_render_loop_offscreen(struct Depsgraph *depsgraph,
+void DRW_draw_render_loop_offscreen(Depsgraph *depsgraph,
                                     RenderEngineType *engine_type,
                                     ARegion *region,
                                     View3D *v3d,
@@ -1880,7 +1875,9 @@ bool DRW_render_check_grease_pencil(Depsgraph *depsgraph)
   deg_iter_settings.depsgraph = depsgraph;
   deg_iter_settings.flags = DEG_OBJECT_ITER_FOR_RENDER_ENGINE_FLAGS;
   DEG_OBJECT_ITER_BEGIN (&deg_iter_settings, ob) {
-    if (ob->type == OB_GPENCIL_LEGACY) {
+    if (ob->type == OB_GPENCIL_LEGACY ||
+        (U.experimental.use_grease_pencil_version3 && ob->type == OB_GREASE_PENCIL))
+    {
       if (DRW_object_visibility_in_active_context(ob) & OB_VISIBLE_SELF) {
         return true;
       }
@@ -1892,17 +1889,20 @@ bool DRW_render_check_grease_pencil(Depsgraph *depsgraph)
 }
 
 static void DRW_render_gpencil_to_image(RenderEngine *engine,
-                                        struct RenderLayer *render_layer,
+                                        RenderLayer *render_layer,
                                         const rcti *rect)
 {
-  if (draw_engine_gpencil_type.render_to_image) {
+  DrawEngineType *draw_engine = U.experimental.use_grease_pencil_version3 ?
+                                    &draw_engine_gpencil_next_type :
+                                    &draw_engine_gpencil_type;
+  if (draw_engine->render_to_image) {
     ViewportEngineData *gpdata = DRW_view_data_engine_data_get_ensure(DST.view_data_active,
-                                                                      &draw_engine_gpencil_type);
-    draw_engine_gpencil_type.render_to_image(gpdata, engine, render_layer, rect);
+                                                                      draw_engine);
+    draw_engine->render_to_image(gpdata, engine, render_layer, rect);
   }
 }
 
-void DRW_render_gpencil(struct RenderEngine *engine, struct Depsgraph *depsgraph)
+void DRW_render_gpencil(RenderEngine *engine, Depsgraph *depsgraph)
 {
   /* This function should only be called if there are grease pencil objects,
    * especially important to avoid failing in background renders without OpenGL context. */
@@ -1968,7 +1968,7 @@ void DRW_render_gpencil(struct RenderEngine *engine, struct Depsgraph *depsgraph
   DST.buffer_finish_called = false;
 }
 
-void DRW_render_to_image(RenderEngine *engine, struct Depsgraph *depsgraph)
+void DRW_render_to_image(RenderEngine *engine, Depsgraph *depsgraph)
 {
   Scene *scene = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_evaluated_view_layer(depsgraph);
@@ -2060,8 +2060,8 @@ void DRW_render_to_image(RenderEngine *engine, struct Depsgraph *depsgraph)
 void DRW_render_object_iter(
     void *vedata,
     RenderEngine *engine,
-    struct Depsgraph *depsgraph,
-    void (*callback)(void *vedata, Object *ob, RenderEngine *engine, struct Depsgraph *depsgraph))
+    Depsgraph *depsgraph,
+    void (*callback)(void *vedata, Object *ob, RenderEngine *engine, Depsgraph *depsgraph))
 {
   const DRWContextState *draw_ctx = DRW_context_state_get();
   DRW_pointcloud_init();
@@ -2101,7 +2101,7 @@ void DRW_render_object_iter(
 }
 
 void DRW_custom_pipeline(DrawEngineType *draw_engine_type,
-                         struct Depsgraph *depsgraph,
+                         Depsgraph *depsgraph,
                          void (*callback)(void *vedata, void *user_data),
                          void *user_data)
 {
@@ -2167,7 +2167,7 @@ void DRW_cache_restart(void)
   DRW_smoke_init(DST.vmempool);
 }
 
-void DRW_draw_render_loop_2d_ex(struct Depsgraph *depsgraph,
+void DRW_draw_render_loop_2d_ex(Depsgraph *depsgraph,
                                 ARegion *region,
                                 GPUViewport *viewport,
                                 const bContext *evil_C)
@@ -2326,8 +2326,8 @@ void DRW_draw_render_loop_2d_ex(struct Depsgraph *depsgraph,
 }
 
 static struct DRWSelectBuffer {
-  struct GPUFrameBuffer *framebuffer_depth_only;
-  struct GPUTexture *texture_depth;
+  GPUFrameBuffer *framebuffer_depth_only;
+  GPUTexture *texture_depth;
 } g_select_buffer = {NULL};
 
 static void draw_select_framebuffer_depth_only_setup(const int size[2])
@@ -2371,7 +2371,7 @@ void DRW_render_set_time(RenderEngine *engine, Depsgraph *depsgraph, int frame, 
   DST.draw_ctx.view_layer = DEG_get_evaluated_view_layer(depsgraph);
 }
 
-void DRW_draw_select_loop(struct Depsgraph *depsgraph,
+void DRW_draw_select_loop(Depsgraph *depsgraph,
                           ARegion *region,
                           View3D *v3d,
                           bool use_obedit_skip,
@@ -2470,7 +2470,9 @@ void DRW_draw_select_loop(struct Depsgraph *depsgraph,
   else if (!draw_surface) {
     /* grease pencil selection */
     if (drw_gpencil_engine_needed(depsgraph, v3d)) {
-      use_drw_engine(&draw_engine_gpencil_type);
+      use_drw_engine(((U.experimental.use_grease_pencil_version3) ?
+                          &draw_engine_gpencil_next_type :
+                          &draw_engine_gpencil_type));
     }
 
     drw_engines_enable_overlays();
@@ -2480,7 +2482,9 @@ void DRW_draw_select_loop(struct Depsgraph *depsgraph,
     drw_engines_enable_basic();
     /* grease pencil selection */
     if (drw_gpencil_engine_needed(depsgraph, v3d)) {
-      use_drw_engine(&draw_engine_gpencil_type);
+      use_drw_engine(((U.experimental.use_grease_pencil_version3) ?
+                          &draw_engine_gpencil_next_type :
+                          &draw_engine_gpencil_type));
     }
 
     drw_engines_enable_overlays();
@@ -2618,7 +2622,7 @@ void DRW_draw_select_loop(struct Depsgraph *depsgraph,
 #endif /* USE_GPU_SELECT */
 }
 
-void DRW_draw_depth_loop(struct Depsgraph *depsgraph,
+void DRW_draw_depth_loop(Depsgraph *depsgraph,
                          ARegion *region,
                          View3D *v3d,
                          GPUViewport *viewport,
@@ -2652,7 +2656,8 @@ void DRW_draw_depth_loop(struct Depsgraph *depsgraph,
   drw_manager_init(&DST, viewport, NULL);
 
   if (use_gpencil) {
-    use_drw_engine(&draw_engine_gpencil_type);
+    use_drw_engine(((U.experimental.use_grease_pencil_version3) ? &draw_engine_gpencil_next_type :
+                                                                  &draw_engine_gpencil_type));
   }
   if (use_basic) {
     drw_engines_enable_basic();
@@ -2967,7 +2972,7 @@ bool DRW_state_is_opengl_render(void)
 bool DRW_state_is_playback(void)
 {
   if (DST.draw_ctx.evil_C != NULL) {
-    struct wmWindowManager *wm = CTX_wm_manager(DST.draw_ctx.evil_C);
+    wmWindowManager *wm = CTX_wm_manager(DST.draw_ctx.evil_C);
     return ED_screen_animation_playing(wm) != NULL;
   }
   return false;
@@ -3045,6 +3050,7 @@ void DRW_engines_register(void)
   RE_engines_register(&DRW_engine_viewport_workbench_type);
 
   DRW_engine_register(&draw_engine_gpencil_type);
+  DRW_engine_register(&draw_engine_gpencil_next_type);
 
   DRW_engine_register(&draw_engine_overlay_type);
   DRW_engine_register(&draw_engine_overlay_next_type);
@@ -3084,6 +3090,9 @@ void DRW_engines_register(void)
 
     BKE_volume_batch_cache_dirty_tag_cb = DRW_volume_batch_cache_dirty_tag;
     BKE_volume_batch_cache_free_cb = DRW_volume_batch_cache_free;
+
+    BKE_grease_pencil_batch_cache_dirty_tag_cb = DRW_grease_pencil_batch_cache_dirty_tag;
+    BKE_grease_pencil_batch_cache_free_cb = DRW_grease_pencil_batch_cache_free;
 
     BKE_subsurf_modifier_free_gpu_cache_cb = DRW_subdiv_cache_free;
   }
