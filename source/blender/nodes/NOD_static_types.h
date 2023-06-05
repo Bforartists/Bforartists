@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup nodes
@@ -374,6 +376,7 @@ DefNode(GeometryNode, GEO_NODE_MESH_TO_CURVE, 0, "MESH_TO_CURVE", MeshToCurve, "
 DefNode(GeometryNode, GEO_NODE_MESH_TO_POINTS, def_geo_mesh_to_points, "MESH_TO_POINTS", MeshToPoints, "Mesh to Points", "Add a Mesh to Points Geometry node\nGenerate a point cloud from a mesh's vertices")
 DefNode(GeometryNode, GEO_NODE_MESH_TO_SDF_VOLUME, def_geo_mesh_to_sdf_volume, "MESH_TO_SDF_VOLUME", MeshToSDFVolume, "Mesh to SDF Volume", "Create an SDF volume with the shape of the input mesh's surface")
 DefNode(GeometryNode, GEO_NODE_MESH_TO_VOLUME, def_geo_mesh_to_volume, "MESH_TO_VOLUME", MeshToVolume, "Mesh to Volume", "Add a Mesh to Volume Geometry node\nCreate a fog volume with the shape of the input mesh's surface")
+DefNode(GeometryNode, GEO_NODE_MESH_TOPOLOGY_CORNERS_OF_EDGE, 0, "CORNERS_OF_EDGE", CornersOfEdge, "Corners of Edge", "Retrieve face corners connected to edges")
 DefNode(GeometryNode, GEO_NODE_MESH_TOPOLOGY_CORNERS_OF_FACE, 0, "CORNERS_OF_FACE", CornersOfFace, "Corners of Face", "Add a Corners of Face Geometry node\nRetrieve corners that make up a face")
 DefNode(GeometryNode, GEO_NODE_MESH_TOPOLOGY_CORNERS_OF_VERTEX, 0, "CORNERS_OF_VERTEX", CornersOfVertex, "Corners of Vertex", "Add a Corners of Vertex Geometry node\nRetrieve face corners connected to vertices")
 DefNode(GeometryNode, GEO_NODE_MESH_TOPOLOGY_EDGES_OF_CORNER, 0, "EDGES_OF_CORNER", EdgesOfCorner, "Edges of Corner", "Add a Edges of Corner Geometry node\nRetrieve the edges on both sides of a face corner")

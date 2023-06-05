@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup edarmature
@@ -81,7 +82,7 @@ Object *ED_pose_object_from_context(bContext *C)
   return ob;
 }
 
-bool ED_object_posemode_enter_ex(struct Main *bmain, Object *ob)
+bool ED_object_posemode_enter_ex(Main *bmain, Object *ob)
 {
   BLI_assert(BKE_id_is_editable(bmain, &ob->id));
   bool ok = false;
@@ -104,7 +105,7 @@ bool ED_object_posemode_enter_ex(struct Main *bmain, Object *ob)
 bool ED_object_posemode_enter(bContext *C, Object *ob)
 {
   ReportList *reports = CTX_wm_reports(C);
-  struct Main *bmain = CTX_data_main(C);
+  Main *bmain = CTX_data_main(C);
   if (!BKE_id_is_editable(bmain, &ob->id)) {
     BKE_report(reports, RPT_WARNING, "Cannot pose libdata");
     return false;
@@ -116,7 +117,7 @@ bool ED_object_posemode_enter(bContext *C, Object *ob)
   return ok;
 }
 
-bool ED_object_posemode_exit_ex(struct Main *bmain, Object *ob)
+bool ED_object_posemode_exit_ex(Main *bmain, Object *ob)
 {
   bool ok = false;
   if (ob) {
@@ -131,7 +132,7 @@ bool ED_object_posemode_exit_ex(struct Main *bmain, Object *ob)
 }
 bool ED_object_posemode_exit(bContext *C, Object *ob)
 {
-  struct Main *bmain = CTX_data_main(C);
+  Main *bmain = CTX_data_main(C);
   bool ok = ED_object_posemode_exit_ex(bmain, ob);
   if (ok) {
     WM_event_add_notifier(C, NC_SCENE | ND_MODE | NS_MODE_OBJECT, NULL);
@@ -431,9 +432,9 @@ static int pose_clear_paths_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static char *pose_clear_paths_description(struct bContext *UNUSED(C),
-                                          struct wmOperatorType *UNUSED(ot),
-                                          struct PointerRNA *ptr)
+static char *pose_clear_paths_description(bContext *UNUSED(C),
+                                          wmOperatorType *UNUSED(ot),
+                                          PointerRNA *ptr)
 {
   const bool only_selected = RNA_boolean_get(ptr, "only_selected");
   if (only_selected) {
@@ -862,7 +863,7 @@ static int pose_bone_layers_exec(bContext *C, wmOperator *op)
   /* Make sure that the pose bone data is up to date.
    * (May not always be the case after undo/redo e.g.).
    */
-  struct Main *bmain = CTX_data_main(C);
+  Main *bmain = CTX_data_main(C);
   wmWindow *win = CTX_wm_window(C);
   View3D *v3d = CTX_wm_view3d(C); /* This may be NULL in a lot of cases. */
   const Scene *scene = WM_window_get_active_scene(win);

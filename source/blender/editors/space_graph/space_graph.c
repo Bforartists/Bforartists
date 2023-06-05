@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2008 Blender Foundation */
+/* SPDX-FileCopyrightText: 2008 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup spgraph
@@ -136,7 +137,7 @@ static void graph_free(SpaceLink *sl)
 }
 
 /* spacetype; init callback */
-static void graph_init(struct wmWindowManager *wm, ScrArea *area)
+static void graph_init(wmWindowManager *wm, ScrArea *area)
 {
   SpaceGraph *sipo = (SpaceGraph *)area->spacedata.first;
 

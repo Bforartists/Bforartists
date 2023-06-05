@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup wm
@@ -244,7 +245,7 @@ typedef struct PlayAnimPict {
   int size;
   /** The allocated file-path to the image. */
   const char *filepath;
-  struct ImBuf *ibuf;
+  ImBuf *ibuf;
   struct anim *anim;
   int frame;
   int IB_flags;
@@ -256,7 +257,7 @@ typedef struct PlayAnimPict {
 #endif
 } PlayAnimPict;
 
-static struct ListBase picsbase = {NULL, NULL};
+static ListBase picsbase = {NULL, NULL};
 /* frames in memory - store them here to for easy deallocation later */
 static bool fromdisk = false;
 static double ptottime = 0.0, swaptime = 0.04;
@@ -267,7 +268,7 @@ static double fps_movie;
 #ifdef USE_FRAME_CACHE_LIMIT
 static struct {
   /** A list of #LinkData nodes referencing #PlayAnimPict to track cached frames. */
-  struct ListBase pics;
+  ListBase pics;
   /** Number if elements in `pics`. */
   int pics_len;
   /** Keep track of memory used by #g_frame_cache.pics when `g_frame_cache.memory_limit != 0`. */
@@ -535,52 +536,60 @@ static void draw_display_buffer(PlayState *ps, ImBuf *ibuf)
 }
 
 static void playanim_toscreen(
-    PlayState *ps, PlayAnimPict *picture, struct ImBuf *ibuf, int fontid, int fstep)
+    PlayState *ps, PlayAnimPict *picture, ImBuf *ibuf, int fontid, int fstep)
 {
-  if (ibuf == NULL) {
-    printf("%s: no ibuf for picture '%s'\n", __func__, picture ? picture->filepath : "<NIL>");
-    return;
-  }
-
   GHOST_ActivateWindowDrawingContext(g_WS.ghost_window);
-
-  /* size within window */
-  float span_x = (ps->zoom * ibuf->x) / (float)ps->win_x;
-  float span_y = (ps->zoom * ibuf->y) / (float)ps->win_y;
-
-  /* offset within window */
-  float offs_x = 0.5f * (1.0f - span_x);
-  float offs_y = 0.5f * (1.0f - span_y);
-
-  CLAMP(offs_x, 0.0f, 1.0f);
-  CLAMP(offs_y, 0.0f, 1.0f);
 
   GPU_clear_color(0.1f, 0.1f, 0.1f, 0.0f);
 
-  /* checkerboard for case alpha */
-  if (ibuf->planes == 32) {
-    GPU_blend(GPU_BLEND_ALPHA);
+  /* A null `ibuf` is an exceptional case and should almost never happen.
+   * if it does, this function displays a warning along with the file-path that failed. */
+  if (ibuf) {
+    /* Size within window. */
+    float span_x = (ps->zoom * ibuf->x) / (float)ps->win_x;
+    float span_y = (ps->zoom * ibuf->y) / (float)ps->win_y;
 
-    imm_draw_box_checker_2d_ex(offs_x,
-                               offs_y,
-                               offs_x + span_x,
-                               offs_y + span_y,
-                               (const float[4]){0.15, 0.15, 0.15, 1.0},
-                               (const float[4]){0.20, 0.20, 0.20, 1.0},
-                               8);
+    /* offset within window */
+    float offs_x = 0.5f * (1.0f - span_x);
+    float offs_y = 0.5f * (1.0f - span_y);
+
+    CLAMP(offs_x, 0.0f, 1.0f);
+    CLAMP(offs_y, 0.0f, 1.0f);
+
+    /* checkerboard for case alpha */
+    if (ibuf->planes == 32) {
+      GPU_blend(GPU_BLEND_ALPHA);
+
+      imm_draw_box_checker_2d_ex(offs_x,
+                                 offs_y,
+                                 offs_x + span_x,
+                                 offs_y + span_y,
+                                 (const float[4]){0.15, 0.15, 0.15, 1.0},
+                                 (const float[4]){0.20, 0.20, 0.20, 1.0},
+                                 8);
+    }
+
+    draw_display_buffer(ps, ibuf);
+
+    GPU_blend(GPU_BLEND_NONE);
   }
-
-  draw_display_buffer(ps, ibuf);
-
-  GPU_blend(GPU_BLEND_NONE);
 
   pupdate_time();
 
-  if (picture && (g_WS.qual & (WS_QUAL_SHIFT | WS_QUAL_LMOUSE)) && (fontid != -1)) {
+  if ((fontid != -1) && picture &&
+      ((g_WS.qual & (WS_QUAL_SHIFT | WS_QUAL_LMOUSE) ||
+        /* Always inform the user of an error, this should be an exceptional case. */
+        (ibuf == NULL))))
+  {
     int sizex, sizey;
     float fsizex_inv, fsizey_inv;
-    char str[32 + FILE_MAX];
-    SNPRINTF(str, "%s | %.2f frames/s", picture->filepath, fstep / swaptime);
+    char label[32 + FILE_MAX];
+    if (ibuf) {
+      SNPRINTF(label, "%s | %.2f frames/s", picture->filepath, fstep / swaptime);
+    }
+    else {
+      SNPRINTF(label, "%s | <failed to load buffer>", picture->filepath);
+    }
 
     playanim_window_get_size(&sizex, &sizey);
     fsizex_inv = 1.0f / sizex;
@@ -590,7 +599,7 @@ static void playanim_toscreen(
     BLF_enable(fontid, BLF_ASPECT);
     BLF_aspect(fontid, fsizex_inv, fsizey_inv, 1.0f);
     BLF_position(fontid, 10.0f * fsizex_inv, 10.0f * fsizey_inv, 0.0f);
-    BLF_draw(fontid, str, sizeof(str));
+    BLF_draw(fontid, label, sizeof(label));
   }
 
   if (ps->indicator) {
@@ -630,7 +639,7 @@ static void build_pict_list_ex(
     struct anim *anim = IMB_open_anim(filepath_first, IB_rect, 0, NULL);
     if (anim) {
       int pic;
-      struct ImBuf *ibuf = IMB_anim_absolute(anim, 0, IMB_TC_NONE, IMB_PROXY_NONE);
+      ImBuf *ibuf = IMB_anim_absolute(anim, 0, IMB_TC_NONE, IMB_PROXY_NONE);
       if (ibuf) {
         playanim_toscreen(ps, NULL, ibuf, fontid, fstep);
         IMB_freeImBuf(ibuf);
@@ -827,7 +836,7 @@ static void change_frame(PlayState *ps)
   }
 
   playanim_window_get_size(&sizex, &sizey);
-  i_last = ((struct PlayAnimPict *)picsbase.last)->frame;
+  i_last = ((PlayAnimPict *)picsbase.last)->frame;
   i = (i_last * ps->frame_cursor_x) / sizex;
   CLAMP(i, 0, i_last);
 
@@ -1389,7 +1398,7 @@ static void playanim_window_zoom(PlayState *ps, const float zoom_offset)
  */
 static char *wm_main_playanim_intern(int argc, const char **argv)
 {
-  struct ImBuf *ibuf = NULL;
+  ImBuf *ibuf = NULL;
   static char filepath[FILE_MAX]; /* abused to return dropped file path */
   uint32_t maxwinx, maxwiny;
   int i;
@@ -1507,7 +1516,7 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
   }
   else {
     printf("%s: no filepath argument given\n", __func__);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   if (IMB_isanim(filepath)) {
@@ -1522,7 +1531,7 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
   }
   else if (!IMB_ispic(filepath)) {
     printf("%s: '%s' not an image file\n", __func__, filepath);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   if (ibuf == NULL) {
@@ -1532,7 +1541,7 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 
   if (ibuf == NULL) {
     printf("%s: '%s' couldn't open\n", __func__, filepath);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   {
@@ -1547,7 +1556,7 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
       /* GHOST will have reported the back-ends that failed to load. */
       fprintf(stderr, "GHOST: unable to initialize, exiting!\n");
       /* This will leak memory, it's preferable to crashing. */
-      exit(1);
+      exit(EXIT_FAILURE);
     }
 
     GHOST_AddEventConsumer(g_WS.ghost_system, consumer);
@@ -1603,7 +1612,7 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 #ifdef WITH_AUDASPACE
   source = AUD_Sound_file(filepath);
   {
-    struct anim *anim_movie = ((struct PlayAnimPict *)picsbase.first)->anim;
+    struct anim *anim_movie = ((PlayAnimPict *)picsbase.first)->anim;
     if (anim_movie) {
       short frs_sec = 25;
       float frs_sec_base = 1.0;
@@ -1677,23 +1686,23 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 
       ibuf = ibuf_from_picture(ps.picture);
 
-      if (ibuf) {
+      {
 #ifdef USE_IMB_CACHE
         ps.picture->ibuf = ibuf;
 #endif
-
+        if (ibuf) {
 #ifdef USE_FRAME_CACHE_LIMIT
-        if (ps.picture->frame_cache_node == NULL) {
-          frame_cache_add(ps.picture);
-        }
-        else {
-          frame_cache_touch(ps.picture);
-        }
-        frame_cache_limit_apply(ibuf);
-
+          if (ps.picture->frame_cache_node == NULL) {
+            frame_cache_add(ps.picture);
+          }
+          else {
+            frame_cache_touch(ps.picture);
+          }
+          frame_cache_limit_apply(ibuf);
 #endif /* USE_FRAME_CACHE_LIMIT */
 
-        STRNCPY(ibuf->filepath, ps.picture->filepath);
+          STRNCPY(ibuf->filepath, ps.picture->filepath);
+        }
 
         /* why only windows? (from 2.4x) - campbell */
 #ifdef _WIN32
@@ -1705,10 +1714,6 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
         }
         ptottime -= swaptime;
         playanim_toscreen(&ps, ps.picture, ibuf, ps.fontid, ps.fstep);
-      } /* else delete */
-      else {
-        printf("error: can't play this image type\n");
-        exit(0);
       }
 
       if (ps.once) {

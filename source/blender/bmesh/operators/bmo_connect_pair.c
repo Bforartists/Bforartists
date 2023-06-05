@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup bmesh
@@ -99,7 +101,7 @@ typedef struct PathLink {
 
 typedef struct PathLinkState {
   /* chain of links */
-  struct PathLink *link_last;
+  PathLink *link_last;
 
   /* length along links */
   float dist;

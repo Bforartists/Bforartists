@@ -19,7 +19,8 @@ bl_info = {
     'version': (1, 0, 2),
     'location': 'Sculpt Mode: View3D > Sidebar > Tool Tab',
     'warning': '',
-    'category': 'Baking'
+    'category': 'Baking',
+    'doc_url': '{BLENDER_MANUAL_URL}/addons/baking/vdm_brush_baker.html'
 }
 
 
