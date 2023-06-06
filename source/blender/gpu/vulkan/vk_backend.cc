@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2022 Blender Foundation */
+/* SPDX-FileCopyrightText: 2022 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup gpu
@@ -17,6 +18,7 @@
 #include "vk_pixel_buffer.hh"
 #include "vk_query.hh"
 #include "vk_shader.hh"
+#include "vk_state_manager.hh"
 #include "vk_storage_buffer.hh"
 #include "vk_texture.hh"
 #include "vk_uniform_buffer.hh"
@@ -88,6 +90,7 @@ void VKBackend::samplers_update() {}
 void VKBackend::compute_dispatch(int groups_x_len, int groups_y_len, int groups_z_len)
 {
   VKContext &context = *VKContext::get();
+  context.state_manager_get().apply_bindings();
   context.bind_compute_pipeline();
   VKCommandBuffer &command_buffer = context.command_buffer_get();
   command_buffer.dispatch(groups_x_len, groups_y_len, groups_z_len);

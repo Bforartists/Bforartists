@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup bke
@@ -27,6 +28,7 @@
 #include "DNA_fluid_types.h"
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_gpencil_modifier_types.h"
+#include "DNA_grease_pencil_types.h"
 #include "DNA_key_types.h"
 #include "DNA_lattice_types.h"
 #include "DNA_light_types.h"
@@ -89,6 +91,7 @@
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_gpencil_modifier_legacy.h"
+#include "BKE_grease_pencil.hh"
 #include "BKE_icons.h"
 #include "BKE_idprop.h"
 #include "BKE_idtype.h"
@@ -1262,7 +1265,7 @@ static IDProperty *object_asset_dimensions_property(Object *ob)
   return property;
 }
 
-static void object_asset_pre_save(void *asset_ptr, struct AssetMetaData *asset_data)
+static void object_asset_pre_save(void *asset_ptr, AssetMetaData *asset_data)
 {
   Object *ob = (Object *)asset_ptr;
   BLI_assert(GS(ob->id.name) == ID_OB);
@@ -1467,7 +1470,8 @@ bool BKE_object_supports_modifiers(const Object *ob)
               OB_FONT,
               OB_LATTICE,
               OB_POINTCLOUD,
-              OB_VOLUME);
+              OB_VOLUME,
+              OB_GREASE_PENCIL);
 }
 
 bool BKE_object_support_modifier_type_check(const Object *ob, int modifier_type)
@@ -1640,7 +1644,7 @@ bool BKE_object_copy_modifier(
   return true;
 }
 
-bool BKE_object_copy_gpencil_modifier(struct Object *ob_dst, GpencilModifierData *gmd_src)
+bool BKE_object_copy_gpencil_modifier(Object *ob_dst, GpencilModifierData *gmd_src)
 {
   BLI_assert(ob_dst->type == OB_GPENCIL_LEGACY);
 
@@ -1970,6 +1974,8 @@ bool BKE_object_is_in_editmode(const Object *ob)
     case OB_CURVES:
       /* Curves object has no edit mode data. */
       return ob->mode == OB_MODE_EDIT;
+    case OB_GREASE_PENCIL:
+      return ob->mode == OB_MODE_EDIT;
     default:
       return false;
   }
@@ -1997,6 +2003,7 @@ bool BKE_object_data_is_in_editmode(const Object *ob, const ID *id)
     case ID_AR:
       return ((const bArmature *)id)->edbo != nullptr;
     case ID_CV:
+    case ID_GP:
       if (ob) {
         return BKE_object_is_in_editmode(ob);
       }
@@ -2007,7 +2014,7 @@ bool BKE_object_data_is_in_editmode(const Object *ob, const ID *id)
   }
 }
 
-char *BKE_object_data_editmode_flush_ptr_get(struct ID *id)
+char *BKE_object_data_editmode_flush_ptr_get(ID *id)
 {
   const short type = GS(id->name);
   switch (type) {
@@ -2052,6 +2059,10 @@ char *BKE_object_data_editmode_flush_ptr_get(struct ID *id)
       /* Curves have no edit mode data. */
       return nullptr;
     }
+    case ID_GP: {
+      /* Grease Pencil has no edit mode data. */
+      return nullptr;
+    }
     default:
       BLI_assert_unreachable();
       return nullptr;
@@ -2070,7 +2081,7 @@ bool BKE_object_is_in_wpaint_select_vert(const Object *ob)
   return false;
 }
 
-bool BKE_object_has_mode_data(const struct Object *ob, eObjectMode object_mode)
+bool BKE_object_has_mode_data(const Object *ob, eObjectMode object_mode)
 {
   if (object_mode & OB_MODE_EDIT) {
     if (BKE_object_is_in_editmode(ob)) {
@@ -2100,7 +2111,7 @@ bool BKE_object_has_mode_data(const struct Object *ob, eObjectMode object_mode)
   return false;
 }
 
-bool BKE_object_is_mode_compat(const struct Object *ob, eObjectMode object_mode)
+bool BKE_object_is_mode_compat(const Object *ob, eObjectMode object_mode)
 {
   return ((ob->mode == object_mode) || (ob->mode & object_mode) != 0);
 }
@@ -2195,6 +2206,8 @@ static const char *get_obdata_defname(int type)
       return DATA_("GPencil");
     case OB_LIGHTPROBE:
       return DATA_("LightProbe");
+    case OB_GREASE_PENCIL:
+      return DATA_("GreasePencil");
     default:
       CLOG_ERROR(&LOG, "Internal error, bad type: %d", type);
       return CTX_DATA_(BLT_I18NCONTEXT_ID_ID, "Empty");
@@ -2264,6 +2277,8 @@ void *BKE_object_obdata_add_from_type(Main *bmain, int type, const char *name)
       return BKE_pointcloud_add_default(bmain, name);
     case OB_VOLUME:
       return BKE_volume_add(bmain, name);
+    case OB_GREASE_PENCIL:
+      return BKE_grease_pencil_add(bmain, name);
     case OB_EMPTY:
       return nullptr;
     default:
@@ -2302,6 +2317,8 @@ int BKE_object_obdata_to_type(const ID *id)
       return OB_POINTCLOUD;
     case ID_VO:
       return OB_VOLUME;
+    case ID_GP:
+      return OB_GREASE_PENCIL;
     default:
       return -1;
   }
@@ -2433,7 +2450,7 @@ void BKE_object_copy_softbody(Object *ob_dst, const Object *ob_src, const int fl
     }
 
     if (sb->bspring) {
-      sbn->bspring = (struct BodySpring *)MEM_dupallocN(sb->bspring);
+      sbn->bspring = (BodySpring *)MEM_dupallocN(sb->bspring);
     }
   }
 
@@ -2935,7 +2952,7 @@ bool BKE_object_obdata_is_libdata(const Object *ob)
   return (ob && ob->data && ID_IS_LINKED(ob->data));
 }
 
-void BKE_object_obdata_size_init(struct Object *ob, const float size)
+void BKE_object_obdata_size_init(Object *ob, const float size)
 {
   /* apply radius as a scale to types that support it */
   switch (ob->type) {
@@ -3187,7 +3204,7 @@ void BKE_object_to_mat4(Object *ob, float r_mat[4][4])
   add_v3_v3v3(r_mat[3], ob->loc, ob->dloc);
 }
 
-void BKE_object_matrix_local_get(struct Object *ob, float r_mat[4][4])
+void BKE_object_matrix_local_get(Object *ob, float r_mat[4][4])
 {
   if (ob->parent) {
     float par_imat[4][4];
@@ -3678,7 +3695,7 @@ void BKE_object_apply_mat4(Object *ob,
   BKE_object_apply_mat4_ex(ob, mat, use_parent ? ob->parent : nullptr, ob->parentinv, use_compat);
 }
 
-void BKE_object_apply_parent_inverse(struct Object *ob)
+void BKE_object_apply_parent_inverse(Object *ob)
 {
   /*
    * Use parent's world transform as the child's origin.
@@ -3813,6 +3830,8 @@ const BoundBox *BKE_object_boundbox_get(Object *ob)
     case OB_VOLUME:
       bb = BKE_volume_boundbox_get(ob);
       break;
+    case OB_GREASE_PENCIL:
+      bb = BKE_grease_pencil_boundbox_get(ob);
     default:
       break;
   }
@@ -3997,7 +4016,6 @@ void BKE_object_minmax(Object *ob, float r_min[3], float r_max[3], const bool us
       changed = true;
       break;
     }
-
     case OB_POINTCLOUD: {
       const BoundBox bb = *BKE_pointcloud_boundbox_get(ob);
       BKE_boundbox_minmax(&bb, ob->object_to_world, r_min, r_max);
@@ -4006,6 +4024,12 @@ void BKE_object_minmax(Object *ob, float r_min[3], float r_max[3], const bool us
     }
     case OB_VOLUME: {
       const BoundBox bb = *BKE_volume_boundbox_get(ob);
+      BKE_boundbox_minmax(&bb, ob->object_to_world, r_min, r_max);
+      changed = true;
+      break;
+    }
+    case OB_GREASE_PENCIL: {
+      const BoundBox bb = *BKE_grease_pencil_boundbox_get(ob);
       BKE_boundbox_minmax(&bb, ob->object_to_world, r_min, r_max);
       changed = true;
       break;
@@ -4107,7 +4131,7 @@ bool BKE_object_empty_image_data_is_visible_in_view3d(const Object *ob, const Re
   return true;
 }
 
-bool BKE_object_minmax_empty_drawtype(const struct Object *ob, float r_min[3], float r_max[3])
+bool BKE_object_minmax_empty_drawtype(const Object *ob, float r_min[3], float r_max[3])
 {
   BLI_assert(ob->type == OB_EMPTY);
   float3 min(0), max(0);
@@ -5174,7 +5198,7 @@ MovieClip *BKE_object_movieclip_get(Scene *scene, Object *ob, bool use_default)
   return clip;
 }
 
-bool BKE_object_supports_material_slots(struct Object *ob)
+bool BKE_object_supports_material_slots(Object *ob)
 {
   return ELEM(ob->type,
               OB_MESH,
@@ -5185,7 +5209,8 @@ bool BKE_object_supports_material_slots(struct Object *ob)
               OB_CURVES,
               OB_POINTCLOUD,
               OB_VOLUME,
-              OB_GPENCIL_LEGACY);
+              OB_GPENCIL_LEGACY,
+              OB_GREASE_PENCIL);
 }
 
 /** \} */
@@ -5263,7 +5288,7 @@ static void obrel_list_add(LinkNode **links, Object *ob)
 }
 
 LinkNode *BKE_object_relational_superset(const Scene *scene,
-                                         struct ViewLayer *view_layer,
+                                         ViewLayer *view_layer,
                                          eObjectSet objectSet,
                                          eObRelationTypes includeFilter)
 {
@@ -5343,7 +5368,7 @@ LinkNode *BKE_object_relational_superset(const Scene *scene,
   return links;
 }
 
-struct LinkNode *BKE_object_groups(Main *bmain, Scene *scene, Object *ob)
+LinkNode *BKE_object_groups(Main *bmain, Scene *scene, Object *ob)
 {
   LinkNode *collection_linknode = nullptr;
   Collection *collection = nullptr;
@@ -5610,7 +5635,7 @@ bool BKE_object_modifier_update_subframe(Depsgraph *depsgraph,
   return false;
 }
 
-void BKE_object_update_select_id(struct Main *bmain)
+void BKE_object_update_select_id(Main *bmain)
 {
   Object *ob = (Object *)bmain->objects.first;
   int select_id = 1;
@@ -5668,10 +5693,7 @@ void BKE_object_check_uuids_unique_and_report(const Object *object)
   BKE_modifier_check_uuids_unique_and_report(object);
 }
 
-void BKE_object_modifiers_lib_link_common(void *userData,
-                                          struct Object *ob,
-                                          struct ID **idpoin,
-                                          int cb_flag)
+void BKE_object_modifiers_lib_link_common(void *userData, Object *ob, ID **idpoin, int cb_flag)
 {
   BlendLibReader *reader = (BlendLibReader *)userData;
 
