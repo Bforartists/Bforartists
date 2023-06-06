@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup edinterface
@@ -20,7 +22,7 @@ void UI_but_drag_set_id(uiBut *but, ID *id)
   but->dragpoin = (void *)id;
 }
 
-void UI_but_drag_attach_image(uiBut *but, struct ImBuf *imb, const float scale)
+void UI_but_drag_attach_image(uiBut *but, ImBuf *imb, const float scale)
 {
   but->imb = imb;
   but->imb_scale = scale;
@@ -32,7 +34,7 @@ void UI_but_drag_set_asset(uiBut *but,
                            const char *path,
                            int import_type,
                            int icon,
-                           struct ImBuf *imb,
+                           ImBuf *imb,
                            float scale,
                            bool drop_collections_as_instances) /* BFA - needed for setting #use_instance from UI before executing the drop operator */
 {
@@ -91,7 +93,7 @@ void UI_but_drag_set_value(uiBut *but)
   but->dragtype = WM_DRAG_VALUE;
 }
 
-void UI_but_drag_set_image(uiBut *but, const char *path, int icon, struct ImBuf *imb, float scale)
+void UI_but_drag_set_image(uiBut *but, const char *path, int icon, ImBuf *imb, float scale)
 {
   ui_def_but_icon(but, icon, 0); /* no flag UI_HAS_ICON, so icon doesn't draw in button */
   UI_but_drag_set_path(but, path);

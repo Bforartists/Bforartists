@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2008 Blender Foundation */
+/* SPDX-FileCopyrightText: 2008 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup render
@@ -270,7 +271,7 @@ static void screen_opengl_render_doit(const bContext *C, OGLRender *oglrender, R
 
   if (oglrender->is_sequencer) {
     SpaceSeq *sseq = oglrender->sseq;
-    struct bGPdata *gpd = (sseq && (sseq->flag & SEQ_PREVIEW_SHOW_GPENCIL)) ? sseq->gpd : nullptr;
+    bGPdata *gpd = (sseq && (sseq->flag & SEQ_PREVIEW_SHOW_GPENCIL)) ? sseq->gpd : nullptr;
 
     /* use pre-calculated ImBuf (avoids deadlock), see: */
     ImBuf *ibuf = oglrender->seq_data.ibufs_arr[oglrender->view_id];
@@ -635,6 +636,9 @@ static int gather_frames_to_render_for_id(LibraryIDLinkCallbackData *cb_data)
       /* In addition to regular ID's animdata, GreasePencil uses a specific frame-based animation
        * system that requires specific handling here. */
       gather_frames_to_render_for_grease_pencil(oglrender, (bGPdata *)id);
+      break;
+    case ID_GP:
+      /* TODO: gather frames. */
       break;
   }
 
@@ -1304,9 +1308,9 @@ static int screen_opengl_render_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static char *screen_opengl_render_description(struct bContext * /*C*/,
-                                              struct wmOperatorType * /*ot*/,
-                                              struct PointerRNA *ptr)
+static char *screen_opengl_render_description(bContext * /*C*/,
+                                              wmOperatorType * /*ot*/,
+                                              PointerRNA *ptr)
 {
   if (!RNA_boolean_get(ptr, "animation")) {
     return nullptr;

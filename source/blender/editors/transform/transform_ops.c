@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup edtransform
@@ -70,26 +72,26 @@ static const char OP_EDGE_BWEIGHT[] = "TRANSFORM_OT_edge_bevelweight";
 static const char OP_SEQ_SLIDE[] = "TRANSFORM_OT_seq_slide";
 static const char OP_NORMAL_ROTATION[] = "TRANSFORM_OT_rotate_normal";
 
-static void TRANSFORM_OT_translate(struct wmOperatorType *ot);
-static void TRANSFORM_OT_rotate(struct wmOperatorType *ot);
-static void TRANSFORM_OT_tosphere(struct wmOperatorType *ot);
-static void TRANSFORM_OT_resize(struct wmOperatorType *ot);
-static void TRANSFORM_OT_skin_resize(struct wmOperatorType *ot);
-static void TRANSFORM_OT_shear(struct wmOperatorType *ot);
-static void TRANSFORM_OT_bend(struct wmOperatorType *ot);
-static void TRANSFORM_OT_shrink_fatten(struct wmOperatorType *ot);
-static void TRANSFORM_OT_push_pull(struct wmOperatorType *ot);
-static void TRANSFORM_OT_tilt(struct wmOperatorType *ot);
-static void TRANSFORM_OT_trackball(struct wmOperatorType *ot);
-static void TRANSFORM_OT_mirror(struct wmOperatorType *ot);
-static void TRANSFORM_OT_bbone_resize(struct wmOperatorType *ot);
-static void TRANSFORM_OT_edge_slide(struct wmOperatorType *ot);
-static void TRANSFORM_OT_vert_slide(struct wmOperatorType *ot);
-static void TRANSFORM_OT_edge_crease(struct wmOperatorType *ot);
-static void TRANSFORM_OT_vert_crease(struct wmOperatorType *ot);
-static void TRANSFORM_OT_edge_bevelweight(struct wmOperatorType *ot);
-static void TRANSFORM_OT_seq_slide(struct wmOperatorType *ot);
-static void TRANSFORM_OT_rotate_normal(struct wmOperatorType *ot);
+static void TRANSFORM_OT_translate(wmOperatorType *ot);
+static void TRANSFORM_OT_rotate(wmOperatorType *ot);
+static void TRANSFORM_OT_tosphere(wmOperatorType *ot);
+static void TRANSFORM_OT_resize(wmOperatorType *ot);
+static void TRANSFORM_OT_skin_resize(wmOperatorType *ot);
+static void TRANSFORM_OT_shear(wmOperatorType *ot);
+static void TRANSFORM_OT_bend(wmOperatorType *ot);
+static void TRANSFORM_OT_shrink_fatten(wmOperatorType *ot);
+static void TRANSFORM_OT_push_pull(wmOperatorType *ot);
+static void TRANSFORM_OT_tilt(wmOperatorType *ot);
+static void TRANSFORM_OT_trackball(wmOperatorType *ot);
+static void TRANSFORM_OT_mirror(wmOperatorType *ot);
+static void TRANSFORM_OT_bbone_resize(wmOperatorType *ot);
+static void TRANSFORM_OT_edge_slide(wmOperatorType *ot);
+static void TRANSFORM_OT_vert_slide(wmOperatorType *ot);
+static void TRANSFORM_OT_edge_crease(wmOperatorType *ot);
+static void TRANSFORM_OT_vert_crease(wmOperatorType *ot);
+static void TRANSFORM_OT_edge_bevelweight(wmOperatorType *ot);
+static void TRANSFORM_OT_seq_slide(wmOperatorType *ot);
+static void TRANSFORM_OT_rotate_normal(wmOperatorType *ot);
 
 static TransformModeItem transform_modes[] = {
     {OP_TRANSLATION, TFM_TRANSLATION, TRANSFORM_OT_translate},
@@ -184,7 +186,7 @@ static int select_orientation_invoke(bContext *C,
   return OPERATOR_INTERFACE;
 }
 
-static void TRANSFORM_OT_select_orientation(struct wmOperatorType *ot)
+static void TRANSFORM_OT_select_orientation(wmOperatorType *ot)
 {
   PropertyRNA *prop;
 
@@ -234,7 +236,7 @@ static bool delete_orientation_poll(bContext *C)
           (scene->orientation_slots[SCE_ORIENT_DEFAULT].index_custom != -1));
 }
 
-static void TRANSFORM_OT_delete_orientation(struct wmOperatorType *ot)
+static void TRANSFORM_OT_delete_orientation(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Delete Orientation";
@@ -282,7 +284,7 @@ static int create_orientation_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static void TRANSFORM_OT_create_orientation(struct wmOperatorType *ot)
+static void TRANSFORM_OT_create_orientation(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Create Orientation";
@@ -617,7 +619,7 @@ static bool transform_poll_property(const bContext *C, wmOperator *op, const Pro
   return true;
 }
 
-void Transform_Properties(struct wmOperatorType *ot, int flags)
+void Transform_Properties(wmOperatorType *ot, int flags)
 {
   PropertyRNA *prop;
 
@@ -811,7 +813,7 @@ void Transform_Properties(struct wmOperatorType *ot, int flags)
   }
 }
 
-static void TRANSFORM_OT_translate(struct wmOperatorType *ot)
+static void TRANSFORM_OT_translate(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Move";
@@ -838,7 +840,7 @@ static void TRANSFORM_OT_translate(struct wmOperatorType *ot)
                            P_VIEW3D_NAVIGATION | P_POST_TRANSFORM);
 }
 
-static void TRANSFORM_OT_resize(struct wmOperatorType *ot)
+static void TRANSFORM_OT_resize(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Resize";
@@ -877,7 +879,7 @@ static void TRANSFORM_OT_resize(struct wmOperatorType *ot)
                            P_OPTIONS | P_GPENCIL_EDIT | P_CENTER | P_VIEW3D_NAVIGATION);
 }
 
-static void TRANSFORM_OT_skin_resize(struct wmOperatorType *ot)
+static void TRANSFORM_OT_skin_resize(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Skin Resize";
@@ -903,7 +905,7 @@ static void TRANSFORM_OT_skin_resize(struct wmOperatorType *ot)
                            P_OPTIONS | P_NO_TEXSPACE);
 }
 
-static void TRANSFORM_OT_trackball(struct wmOperatorType *ot)
+static void TRANSFORM_OT_trackball(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Trackball";
@@ -928,7 +930,7 @@ static void TRANSFORM_OT_trackball(struct wmOperatorType *ot)
   Transform_Properties(ot, P_PROPORTIONAL | P_MIRROR | P_SNAP | P_GPENCIL_EDIT | P_CENTER);
 }
 
-static void TRANSFORM_OT_rotate(struct wmOperatorType *ot)
+static void TRANSFORM_OT_rotate(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Rotate";
@@ -954,7 +956,7 @@ static void TRANSFORM_OT_rotate(struct wmOperatorType *ot)
                            P_GEO_SNAP | P_GPENCIL_EDIT | P_CENTER | P_VIEW3D_NAVIGATION);
 }
 
-static void TRANSFORM_OT_tilt(struct wmOperatorType *ot)
+static void TRANSFORM_OT_tilt(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Tilt";
@@ -981,7 +983,7 @@ static void TRANSFORM_OT_tilt(struct wmOperatorType *ot)
   Transform_Properties(ot, P_PROPORTIONAL | P_MIRROR | P_SNAP);
 }
 
-static void TRANSFORM_OT_bend(struct wmOperatorType *ot)
+static void TRANSFORM_OT_bend(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Bend";
@@ -1016,7 +1018,7 @@ static bool transform_shear_poll(bContext *C)
   return area && !ELEM(area->spacetype, SPACE_ACTION);
 }
 
-static void TRANSFORM_OT_shear(struct wmOperatorType *ot)
+static void TRANSFORM_OT_shear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Shear";
@@ -1041,7 +1043,7 @@ static void TRANSFORM_OT_shear(struct wmOperatorType *ot)
                            P_MIRROR | P_SNAP | P_GPENCIL_EDIT);
 }
 
-static void TRANSFORM_OT_push_pull(struct wmOperatorType *ot)
+static void TRANSFORM_OT_push_pull(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Push/Pull";
@@ -1064,7 +1066,7 @@ static void TRANSFORM_OT_push_pull(struct wmOperatorType *ot)
   Transform_Properties(ot, P_PROPORTIONAL | P_MIRROR | P_SNAP | P_CENTER);
 }
 
-static void TRANSFORM_OT_shrink_fatten(struct wmOperatorType *ot)
+static void TRANSFORM_OT_shrink_fatten(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Shrink/Fatten";
@@ -1093,7 +1095,7 @@ static void TRANSFORM_OT_shrink_fatten(struct wmOperatorType *ot)
   Transform_Properties(ot, P_PROPORTIONAL | P_MIRROR | P_SNAP);
 }
 
-static void TRANSFORM_OT_tosphere(struct wmOperatorType *ot)
+static void TRANSFORM_OT_tosphere(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "To Sphere";
@@ -1143,7 +1145,7 @@ static char *transform_ot_mirror_get_description(bContext *UNUSED(C),
   return NULL;
 }
 
-static void TRANSFORM_OT_mirror(struct wmOperatorType *ot)
+static void TRANSFORM_OT_mirror(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Interactive Mirror";
@@ -1164,7 +1166,7 @@ static void TRANSFORM_OT_mirror(struct wmOperatorType *ot)
   Transform_Properties(ot, P_ORIENT_MATRIX | P_CONSTRAINT | P_GPENCIL_EDIT | P_CENTER);
 }
 
-static void TRANSFORM_OT_bbone_resize(struct wmOperatorType *ot)
+static void TRANSFORM_OT_bbone_resize(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Scale B-Bone";
@@ -1188,7 +1190,7 @@ static void TRANSFORM_OT_bbone_resize(struct wmOperatorType *ot)
   Transform_Properties(ot, P_ORIENT_MATRIX | P_CONSTRAINT | P_MIRROR);
 }
 
-static void TRANSFORM_OT_edge_slide(struct wmOperatorType *ot)
+static void TRANSFORM_OT_edge_slide(wmOperatorType *ot)
 {
   PropertyRNA *prop;
 
@@ -1228,7 +1230,7 @@ static void TRANSFORM_OT_edge_slide(struct wmOperatorType *ot)
   Transform_Properties(ot, P_MIRROR | P_GEO_SNAP | P_CORRECT_UV | P_VIEW3D_NAVIGATION);
 }
 
-static void TRANSFORM_OT_vert_slide(struct wmOperatorType *ot)
+static void TRANSFORM_OT_vert_slide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Vertex Slide";
@@ -1263,7 +1265,7 @@ static void TRANSFORM_OT_vert_slide(struct wmOperatorType *ot)
   Transform_Properties(ot, P_MIRROR | P_GEO_SNAP | P_CORRECT_UV | P_VIEW3D_NAVIGATION);
 }
 
-static void TRANSFORM_OT_edge_crease(struct wmOperatorType *ot)
+static void TRANSFORM_OT_edge_crease(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Edge Crease";
@@ -1286,7 +1288,7 @@ static void TRANSFORM_OT_edge_crease(struct wmOperatorType *ot)
   Transform_Properties(ot, P_SNAP);
 }
 
-static void TRANSFORM_OT_vert_crease(struct wmOperatorType *ot)
+static void TRANSFORM_OT_vert_crease(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Vertex Crease";
@@ -1309,7 +1311,7 @@ static void TRANSFORM_OT_vert_crease(struct wmOperatorType *ot)
   Transform_Properties(ot, P_SNAP);
 }
 
-static void TRANSFORM_OT_edge_bevelweight(struct wmOperatorType *ot)
+static void TRANSFORM_OT_edge_bevelweight(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Edge Bevel Weight";
@@ -1331,7 +1333,7 @@ static void TRANSFORM_OT_edge_bevelweight(struct wmOperatorType *ot)
   Transform_Properties(ot, P_SNAP);
 }
 
-static void TRANSFORM_OT_seq_slide(struct wmOperatorType *ot)
+static void TRANSFORM_OT_seq_slide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Sequence Slide";
@@ -1358,7 +1360,7 @@ static void TRANSFORM_OT_seq_slide(struct wmOperatorType *ot)
   Transform_Properties(ot, P_SNAP | P_VIEW2D_EDGE_PAN);
 }
 
-static void TRANSFORM_OT_rotate_normal(struct wmOperatorType *ot)
+static void TRANSFORM_OT_rotate_normal(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Rotate Normals";
@@ -1379,7 +1381,7 @@ static void TRANSFORM_OT_rotate_normal(struct wmOperatorType *ot)
   Transform_Properties(ot, P_ORIENT_AXIS | P_ORIENT_MATRIX | P_CONSTRAINT | P_MIRROR);
 }
 
-static void TRANSFORM_OT_transform(struct wmOperatorType *ot)
+static void TRANSFORM_OT_transform(wmOperatorType *ot)
 {
   PropertyRNA *prop;
 
@@ -1408,7 +1410,8 @@ static void TRANSFORM_OT_transform(struct wmOperatorType *ot)
 
   Transform_Properties(ot,
                        P_ORIENT_AXIS | P_ORIENT_MATRIX | P_CONSTRAINT | P_PROPORTIONAL | P_MIRROR |
-                           P_ALIGN_SNAP | P_GPENCIL_EDIT | P_CENTER | P_VIEW3D_NAVIGATION);
+                           P_ALIGN_SNAP | P_GPENCIL_EDIT | P_CENTER | P_VIEW3D_NAVIGATION |
+                           P_POST_TRANSFORM);
 }
 
 static int transform_from_gizmo_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *event)
@@ -1451,7 +1454,7 @@ static int transform_from_gizmo_invoke(bContext *C, wmOperator *UNUSED(op), cons
 }
 
 /* Use with 'TRANSFORM_GGT_gizmo'. */
-static void TRANSFORM_OT_from_gizmo(struct wmOperatorType *ot)
+static void TRANSFORM_OT_from_gizmo(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Transform from Gizmo";

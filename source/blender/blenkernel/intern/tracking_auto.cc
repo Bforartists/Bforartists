@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2011 Blender Foundation */
+/* SPDX-FileCopyrightText: 2011 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup bke
@@ -65,7 +66,7 @@ typedef struct AutoTrackMarker {
  * On failure marker's frame number is initialized to frame number where it was attempted to be
  * tracked to. The position and other fields of tracked marker are the same as the input. */
 typedef struct AutoTrackTrackingResult {
-  struct AutoTrackTrackingResult *next, *prev;
+  AutoTrackTrackingResult *next, *prev;
 
   bool success;
   libmv_Marker libmv_marker;
@@ -116,7 +117,7 @@ typedef struct AutoTrackContext {
   /* Auto-track context.
    *
    * NOTE: Is accessed from multiple threads at once. */
-  struct libmv_AutoTrack *autotrack;
+  libmv_AutoTrack *autotrack;
 
   /* Markers from the current frame which will be tracked to the next frame upon the tracking
    * context step.
