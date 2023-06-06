@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup sptext
@@ -201,7 +202,7 @@ TextFormatType *ED_text_format_get(Text *text)
 
 const char *ED_text_format_comment_line_prefix(Text *text)
 {
-  const struct TextFormatType *format = ED_text_format_get(text);
+  const TextFormatType *format = ED_text_format_get(text);
   return format->comment_line;
 }
 

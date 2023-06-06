@@ -229,3 +229,4 @@ def unregister() -> None:
 
     bpy.types.UI_MT_list_item_context_menu.remove(pose_library_list_item_context_menu)
     bpy.types.ASSETBROWSER_MT_context_menu.remove(pose_library_list_item_context_menu)
+    bpy.types.ASSETBROWSER_MT_editor_menus.remove(pose_library_list_item_asset_menu)

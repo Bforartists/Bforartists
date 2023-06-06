@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup edsculpt
@@ -80,7 +81,7 @@ ImagePaintPartialRedraw *get_imapaintpartial(void)
   return &imapaintpartial;
 }
 
-void set_imapaintpartial(struct ImagePaintPartialRedraw *ippr)
+void set_imapaintpartial(ImagePaintPartialRedraw *ippr)
 {
   imapaintpartial = *ippr;
 }
@@ -353,14 +354,14 @@ bool paint_use_opacity_masking(Brush *brush)
               true);
 }
 
-void paint_brush_color_get(struct Scene *scene,
-                           struct Brush *br,
+void paint_brush_color_get(Scene *scene,
+                           Brush *br,
                            bool color_correction,
                            bool invert,
                            float distance,
                            float pressure,
                            float color[3],
-                           struct ColorManagedDisplay *display)
+                           ColorManagedDisplay *display)
 {
   if (invert) {
     copy_v3_v3(color, BKE_brush_secondary_color_get(scene, br));
@@ -814,6 +815,12 @@ static void paint_init_pivot_curves(Object *ob, float location[3])
   interp_v3_v3v3(location, bbox->vec[0], bbox->vec[6], 0.5f);
 }
 
+static void paint_init_pivot_grease_pencil(Object *ob, float location[3])
+{
+  const BoundBox *bbox = BKE_object_boundbox_get(ob);
+  interp_v3_v3v3(location, bbox->vec[0], bbox->vec[6], 0.5f);
+}
+
 void paint_init_pivot(Object *ob, Scene *scene)
 {
   UnifiedPaintSettings *ups = &scene->toolsettings->unified_paint_settings;
@@ -825,6 +832,9 @@ void paint_init_pivot(Object *ob, Scene *scene)
       break;
     case OB_CURVES:
       paint_init_pivot_curves(ob, location);
+      break;
+    case OB_GREASE_PENCIL:
+      paint_init_pivot_grease_pencil(ob, location);
       break;
     default:
       BLI_assert_unreachable();
@@ -946,7 +956,7 @@ static bool texture_paint_toggle_poll(bContext *C)
 
 static int texture_paint_toggle_exec(bContext *C, wmOperator *op)
 {
-  struct wmMsgBus *mbus = CTX_wm_message_bus(C);
+  wmMsgBus *mbus = CTX_wm_message_bus(C);
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   Object *ob = CTX_data_active_object(C);
@@ -1058,10 +1068,7 @@ void PAINT_OT_brush_colors_flip(wmOperatorType *ot)
 /** \name Texture Paint Bucket Fill Operator
  * \{ */
 
-void ED_imapaint_bucket_fill(struct bContext *C,
-                             float color[3],
-                             wmOperator *op,
-                             const int mouse[2])
+void ED_imapaint_bucket_fill(bContext *C, float color[3], wmOperator *op, const int mouse[2])
 {
   SpaceImage *sima = CTX_wm_space_image(C);
 

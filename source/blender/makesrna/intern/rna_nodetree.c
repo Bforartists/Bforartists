@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup RNA
@@ -4750,8 +4752,8 @@ static const EnumPropertyItem node_glossy_items[] = {
      "MULTI_GGX",
      0,
      "Multiscatter GGX",
-     "Slower than GGX but gives a more energy conserving results, which would otherwise be "
-     "visible as excessive darkening"},
+     "GGX with additional correction to account for multiple scattering, preserve energy and "
+     "prevent unexpected darkening at high roughness"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -4762,8 +4764,8 @@ static const EnumPropertyItem node_glass_items[] = {
      "MULTI_GGX",
      0,
      "Multiscatter GGX",
-     "Slower than GGX but gives a more energy conserving results, which would otherwise be "
-     "visible as excessive darkening"},
+     "GGX with additional correction to account for multiple scattering, preserve energy and "
+     "prevent unexpected darkening at high roughness"},
     {0, NULL, 0, NULL, NULL},
 };
 
