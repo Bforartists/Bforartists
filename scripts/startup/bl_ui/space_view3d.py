@@ -9872,8 +9872,6 @@ classes = (
     VIEW3D_PT_gpencil_multi_frame,
     VIEW3D_PT_gpencil_curve_edit,
     VIEW3D_PT_gpencil_sculpt_automasking,
-    VIEW3D_MT_gpencil_autoweights,
-    VIEW3D_MT_gpencil_edit_context_menu,
     VIEW3D_MT_gpencil_sculpt,
     VIEW3D_PT_quad_view,
     VIEW3D_PT_view3d_stereo,
