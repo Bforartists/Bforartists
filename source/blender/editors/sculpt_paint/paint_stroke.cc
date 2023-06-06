@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2009 by Nicholas Bishop. All rights reserved. */
+/* SPDX-FileCopyrightText: 2009 by Nicholas Bishop. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup edsculpt
@@ -1509,7 +1510,6 @@ int paint_stroke_modal(bContext *C, wmOperator *op, const wmEvent *event, PaintS
       mul_m4_v3(stroke->vc.obact->object_to_world, stroke->last_world_space_position);
     }
     stroke->stroke_started = stroke->test_start(C, op, sample_average.mouse);
-    BLI_assert((stroke->stroke_started & ~1) == 0); /* 0/1 */
 
     if (stroke->stroke_started) {
       if (br->flag & BRUSH_AIRBRUSH) {

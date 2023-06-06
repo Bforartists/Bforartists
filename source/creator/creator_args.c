@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup creator
@@ -543,7 +545,7 @@ static int arg_handle_print_version(int UNUSED(argc),
                                     void *UNUSED(data))
 {
   print_version_full();
-  exit(0);
+  exit(EXIT_SUCCESS);
   BLI_assert_unreachable();
   return 0;
 }
@@ -553,7 +555,7 @@ static void print_help(bArgs *ba, bool all)
   struct BuildDefs defs;
   build_defs_init(&defs, all);
 
-/* All printing must go via `PRINT` macro.  */
+/* All printing must go via `PRINT` macro. */
 #  define printf __ERROR__
 
 #  define PRINT(...) BLI_args_printf(ba, __VA_ARGS__)
@@ -816,7 +818,7 @@ static int arg_handle_print_help(int UNUSED(argc), const char **UNUSED(argv), vo
 
   print_help(ba, false);
 
-  exit(0);
+  exit(EXIT_SUCCESS);
   BLI_assert_unreachable();
 
   return 0;
@@ -1381,7 +1383,7 @@ static int arg_handle_env_system_set(int argc, const char **argv, void *UNUSED(d
 
   if (argc < 2) {
     fprintf(stderr, "%s requires one argument\n", argv[0]);
-    exit(1);
+    exit(EXIT_FAILURE);
     BLI_assert_unreachable();
   }
 
@@ -1428,7 +1430,7 @@ static int arg_handle_playback_mode(int argc, const char **argv, void *UNUSED(da
     /* This function knows to skip this argument ('-a'). */
     WM_main_playanim(argc, argv);
 
-    exit(0);
+    exit(EXIT_SUCCESS);
   }
 
   return -2;
@@ -2039,8 +2041,7 @@ static int arg_handle_python_file_run(int argc, const char **argv, void *data)
     BPY_CTX_SETUP(ok = BPY_run_filepath(C, filepath, NULL));
     if (!ok && app_state.exit_code_on_error.python) {
       fprintf(stderr, "\nError: script failed, file: '%s', exiting.\n", argv[1]);
-      BPY_python_end();
-      exit(app_state.exit_code_on_error.python);
+      WM_exit(C, app_state.exit_code_on_error.python);
     }
     return 1;
   }
@@ -2079,8 +2080,7 @@ static int arg_handle_python_text_run(int argc, const char **argv, void *data)
 
     if (!ok && app_state.exit_code_on_error.python) {
       fprintf(stderr, "\nError: script failed, text: '%s', exiting.\n", argv[1]);
-      BPY_python_end();
-      exit(app_state.exit_code_on_error.python);
+      WM_exit(C, app_state.exit_code_on_error.python);
     }
 
     return 1;
@@ -2109,8 +2109,7 @@ static int arg_handle_python_expr_run(int argc, const char **argv, void *data)
     BPY_CTX_SETUP(ok = BPY_run_string_exec(C, NULL, argv[1]));
     if (!ok && app_state.exit_code_on_error.python) {
       fprintf(stderr, "\nError: script failed, expr: '%s', exiting.\n", argv[1]);
-      BPY_python_end();
-      exit(app_state.exit_code_on_error.python);
+      WM_exit(C, app_state.exit_code_on_error.python);
     }
     return 1;
   }
@@ -2215,27 +2214,22 @@ static int arg_handle_addons_set(int argc, const char **argv, void *data)
   return 0;
 }
 
-static int arg_handle_load_file(int UNUSED(argc), const char **argv, void *data)
+/**
+ * Implementation for #arg_handle_load_last_file, also used by `--open-last`.
+ * \return true on success.
+ */
+static bool handle_load_file(bContext *C, const char *filepath_arg, const bool load_empty_file)
 {
-  bContext *C = data;
-  ReportList reports;
-  bool success;
-
   /* Make the path absolute because its needed for relative linked blends to be found */
   char filepath[FILE_MAX];
-
-  /* NOTE: we could skip these, but so far we always tried to load these files. */
-  if (argv[0][0] == '-') {
-    fprintf(stderr, "unknown argument, loading as file: %s\n", argv[0]);
-  }
-
-  STRNCPY(filepath, argv[0]);
+  STRNCPY(filepath, filepath_arg);
   BLI_path_canonicalize_native(filepath, sizeof(filepath));
 
   /* load the file */
+  ReportList reports;
   BKE_reports_init(&reports, RPT_PRINT);
   WM_file_autoexec_init(filepath);
-  success = WM_file_read(C, filepath, &reports);
+  const bool success = WM_file_read(C, filepath, &reports);
   BKE_reports_clear(&reports);
 
   if (success) {
@@ -2253,25 +2247,62 @@ static int arg_handle_load_file(int UNUSED(argc), const char **argv, void *data)
        * good or bad things are.
        */
       G.is_break = true;
-      return -1;
+      return false;
     }
 
-    if (BKE_blendfile_extension_check(filepath)) {
-      /* Just pretend a file was loaded, so the user can press Save and it'll
-       * save at the filepath from the CLI. */
-      STRNCPY(G_MAIN->filepath, filepath);
-      printf("... opened default scene instead; saving will write to: %s\n", filepath);
+    const char *error_msg_generic = "file could not be loaded";
+    const char *error_msg = NULL;
+
+    if (load_empty_file == false) {
+      error_msg = error_msg_generic;
     }
-    else {
-      fprintf(
-          stderr,
-          "Error: argument has no '.blend' file extension, not using as new file, exiting! %s\n",
-          filepath);
-      G.is_break = true;
-      WM_exit(C);
+    else if (BLI_exists(filepath)) {
+      /* When a file is found but can't be loaded, handling it as a new file
+       * could cause it to be unintentionally overwritten (data loss).
+       * Further this is almost certainly not that a user would expect or want.
+       * If they do, they can delete the file beforehand. */
+      error_msg = error_msg_generic;
     }
+    else if (!BKE_blendfile_extension_check(filepath)) {
+      /* Unrelated arguments should not be treated as new blend files. */
+      error_msg = "argument has no '.blend' file extension, not using as new file";
+    }
+
+    if (error_msg) {
+      fprintf(stderr, "Error: %s, exiting! %s\n", error_msg, filepath);
+      WM_exit(C, EXIT_FAILURE);
+      /* Unreachable, return for clarity. */
+      return false;
+    }
+
+    /* Behave as if a file was loaded, calling "Save" will write to the `filepath` from the CLI.
+     *
+     * WARNING: The path referenced may be incorrect, no attempt is made to validate the path
+     * here or check that writing to it will work. If the users enters the path of a directory
+     * that doesn't exist (for e.g.) saving will fail.
+     * Attempting to create the file at this point is possible but likely to cause more
+     * trouble than it's worth (what with network drives), removable devices ... etc. */
+
+    STRNCPY(G_MAIN->filepath, filepath);
+    printf("... opened default scene instead; saving will write to: %s\n", filepath);
   }
 
+  return true;
+}
+
+int main_args_handle_load_file(int UNUSED(argc), const char **argv, void *data)
+{
+  bContext *C = data;
+  const char *filepath = argv[0];
+
+  /* NOTE: we could skip these, but so far we always tried to load these files. */
+  if (argv[0][0] == '-') {
+    fprintf(stderr, "unknown argument, loading as file: %s\n", filepath);
+  }
+
+  if (!handle_load_file(C, filepath, true)) {
+    return -1;
+  }
   return 0;
 }
 
@@ -2285,9 +2316,12 @@ static int arg_handle_load_last_file(int UNUSED(argc), const char **UNUSED(argv)
     return -1;
   }
 
+  bContext *C = data;
   const RecentFile *recent_file = G.recent_files.first;
-  const char *fake_argv[] = {recent_file->filepath};
-  return arg_handle_load_file(ARRAY_SIZE(fake_argv), fake_argv, data);
+  if (!handle_load_file(C, recent_file->filepath, false)) {
+    return -1;
+  }
+  return 0;
 }
 
 void main_args_setup(bContext *C, bArgs *ba, bool all)
@@ -2514,6 +2548,8 @@ void main_args_setup(bContext *C, bArgs *ba, bool all)
   BLI_args_add_case(ba, "-setaudio", 1, NULL, 0, CB(arg_handle_audio_set), NULL);
 
   /* Pass: Processing Arguments. */
+  /* NOTE: Use #WM_exit for these callbacks, not `exit()`
+   * so temporary files are properly cleaned up. */
   BLI_args_pass_set(ba, ARG_PASS_FINAL);
   BLI_args_add(ba, "-f", "--render-frame", CB(arg_handle_render_frame), C);
   BLI_args_add(ba, "-a", "--render-anim", CB(arg_handle_render_animation), C);
@@ -2544,14 +2580,6 @@ void main_args_setup(bContext *C, bArgs *ba, bool all)
   /* Use for Python to extract help text (Python can't call directly - bad-level call). */
   BPY_python_app_help_text_fn = main_args_help_as_string;
 #  endif
-}
-
-/**
- * Needs to be added separately.
- */
-void main_args_setup_post(bContext *C, bArgs *ba)
-{
-  BLI_args_parse(ba, ARG_PASS_FINAL, arg_handle_load_file, C);
 }
 
 /** \} */

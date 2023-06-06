@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup pythonintern
@@ -22,7 +24,7 @@ static PyObject *bpy_atexit(PyObject *UNUSED(self), PyObject *UNUSED(args), PyOb
   /* close down enough of blender at least not to crash */
   struct bContext *C = BPY_context_get();
 
-  WM_exit_ex(C, false);
+  WM_exit_ex(C, false, false);
 
   Py_RETURN_NONE;
 }
