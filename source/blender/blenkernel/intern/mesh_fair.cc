@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup bke
@@ -279,7 +281,6 @@ class BMeshFairingContext : public FairingContext {
 
     /* This initializes both the bmloop and the vlmap for bmesh in a single loop. */
     BM_ITER_MESH (v, &iter, bm, BM_VERTS_OF_MESH) {
-      int loop_count = 0;
       const int vert_index = BM_elem_index_get(v);
       vert_to_loop_offsets_[vert_index] = index_iter;
       BM_ITER_ELEM (l, &loop_iter, v, BM_LOOPS_OF_VERT) {
@@ -287,7 +288,6 @@ class BMeshFairingContext : public FairingContext {
         bmloop_[loop_index] = l;
         vert_to_loop_indices_[index_iter] = loop_index;
         index_iter++;
-        loop_count++;
       }
     }
     vert_to_loop_offsets_.last() = index_iter;
@@ -452,7 +452,7 @@ static void prefair_and_fair_verts(FairingContext *fairing_context,
   delete voronoi_vertex_weights;
 }
 
-void BKE_mesh_prefair_and_fair_verts(struct Mesh *mesh,
+void BKE_mesh_prefair_and_fair_verts(Mesh *mesh,
                                      float (*deform_vert_positions)[3],
                                      bool *affect_verts,
                                      const eMeshFairingDepth depth)
@@ -466,9 +466,7 @@ void BKE_mesh_prefair_and_fair_verts(struct Mesh *mesh,
   delete fairing_context;
 }
 
-void BKE_bmesh_prefair_and_fair_verts(struct BMesh *bm,
-                                      bool *affect_verts,
-                                      const eMeshFairingDepth depth)
+void BKE_bmesh_prefair_and_fair_verts(BMesh *bm, bool *affect_verts, const eMeshFairingDepth depth)
 {
   BMeshFairingContext *fairing_context = new BMeshFairingContext(bm);
   prefair_and_fair_verts(fairing_context, affect_verts, depth);

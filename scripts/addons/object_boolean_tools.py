@@ -554,8 +554,9 @@ class Auto_Boolean:
         md.operation = mode
         md.object = ob
 
-        override = {"object": obj}
-        bpy.ops.object.modifier_apply(override, modifier=md.name)
+        context_override = {'object': obj}
+        with bpy.context.temp_override(**context_override):
+            bpy.ops.object.modifier_apply(modifier=md.name)
 
         if ob_delete:
             bpy.data.objects.remove(ob)
