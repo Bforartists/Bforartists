@@ -2186,7 +2186,7 @@ class VIEW3D_MT_paint_gpencil(Menu):
         layout.operator("gpencil.vertex_color_brightness_contrast", text="Brightness/Contrast", icon="BRIGHTNESS_CONTRAST")
 
 
-class VIEW3D_MT_select_gpencil(Menu):
+class VIEW3D_MT_select_edit_gpencil(Menu):
     bl_label = "Select"
 
     def draw(self, context):
@@ -2551,6 +2551,17 @@ class VIEW3D_MT_volume_add(Menu):
                         text_ctxt=i18n_contexts.id_volume, icon='OUTLINER_OB_VOLUME')
 
 
+class VIEW3D_MT_grease_pencil_add(Menu):
+    bl_idname = "VIEW3D_MT_grease_pencil_add"
+    bl_label = "Grease Pencil"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator("object.grease_pencil_add", text="Empty", icon='EMPTY_AXIS').type = 'EMPTY'
+        layout.operator("object.grease_pencil_add", text="Stroke", icon='STROKE').type = 'STROKE'
+        layout.operator("object.grease_pencil_add", text="Suzanne", icon='MONKEY').type = 'MONKEY'
+
+
 class VIEW3D_MT_add(Menu):
     bl_label = "Add"
     bl_translation_context = i18n_contexts.operator_default
@@ -2576,7 +2587,15 @@ class VIEW3D_MT_add(Menu):
         if context.preferences.experimental.use_new_point_cloud_type:
             layout.operator("object.pointcloud_add", text="Point Cloud", icon='OUTLINER_OB_POINTCLOUD')
         layout.menu("VIEW3D_MT_volume_add", text="Volume", text_ctxt=i18n_contexts.id_id, icon='OUTLINER_OB_VOLUME')
-        layout.operator_menu_enum("object.gpencil_add", "type", text="Grease Pencil", icon='OUTLINER_OB_GREASEPENCIL')
+        if context.preferences.experimental.use_grease_pencil_version3:
+            layout.menu("VIEW3D_MT_grease_pencil_add", text="Grease Pencil", icon='OUTLINER_OB_GREASEPENCIL')
+        else:
+            layout.operator_menu_enum(
+                "object.gpencil_add",
+                "type",
+                text="Grease Pencil",
+                icon='OUTLINER_OB_GREASEPENCIL')
+
         layout.separator()
 
         if VIEW3D_MT_armature_add.is_extended():
@@ -6416,6 +6435,13 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
 #        layout.operator("transform.resize", icon="TRANSFORM_SCALE", text="Scale")
 
 
+class VIEW3D_MT_edit_greasepencil(Menu):
+    bl_label = "Grease Pencil"
+
+    def draw(self, _context):
+        pass
+
+
 class VIEW3D_MT_edit_curves(Menu):
     bl_label = "Curves"
 
@@ -9661,9 +9687,9 @@ classes = (
     VIEW3D_MT_select_edit_metaball_select_similar,
     VIEW3D_MT_select_edit_lattice,
     VIEW3D_MT_select_edit_armature,
-    VIEW3D_MT_select_gpencil,
     VIEW3D_MT_select_gpencil_legacy,
     VIEW3D_MT_select_gpencil_grouped,
+    VIEW3D_MT_select_edit_gpencil,
     VIEW3D_MT_select_paint_mask,
     VIEW3D_MT_select_paint_mask_face_more_less,
     VIEW3D_MT_select_paint_mask_vertex,
@@ -9683,6 +9709,7 @@ classes = (
     VIEW3D_MT_lightprobe_add,
     VIEW3D_MT_camera_add,
     VIEW3D_MT_volume_add,
+    VIEW3D_MT_grease_pencil_add,
     VIEW3D_MT_add,
     VIEW3D_MT_image_add,
     VIEW3D_MT_origin_set,
@@ -9786,6 +9813,9 @@ classes = (
     VIEW3D_MT_sculpt_gpencil_copy,
     VIEW3D_MT_weight_gpencil,
     VIEW3D_MT_gpencil_simplify,
+    VIEW3D_MT_gpencil_autoweights,
+    VIEW3D_MT_gpencil_edit_context_menu,
+    VIEW3D_MT_edit_greasepencil,
     VIEW3D_MT_edit_curve,
     VIEW3D_MT_edit_curve_ctrlpoints,
     VIEW3D_MT_edit_curve_handle_type_set,

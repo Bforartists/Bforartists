@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. 2007 Blender Foundation. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved. 2007 Blender Foundation.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup wm
@@ -1234,7 +1235,7 @@ static bool ghost_event_proc(GHOST_EventHandle evt, GHOST_TUserDataPtr C_void_pt
     /* Ghost now can call this function for life resizes,
      * but it should return if WM didn't initialize yet.
      * Can happen on file read (especially full size window). */
-    if ((wm->initialized & WM_WINDOW_IS_INIT) == 0) {
+    if ((wm->init_flag & WM_INIT_FLAG_WINDOW) == 0) {
       return true;
     }
     if (!ghostwin) {
@@ -1677,7 +1678,7 @@ void wm_ghost_init(bContext *C)
     /* GHOST will have reported the back-ends that failed to load. */
     fprintf(stderr, "GHOST: unable to initialize, exiting!\n");
     /* This will leak memory, it's preferable to crashing. */
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 #if !(defined(WIN32) || defined(__APPLE__))
   g_system_backend_id = GHOST_SystemBackend();
@@ -1769,9 +1770,7 @@ GHOST_TDrawingContextType wm_ghost_drawing_context_type(const eGPUBackendType gp
   return GHOST_kDrawingContextTypeNone;
 }
 
-static uiBlock *block_create_opengl_usage_warning(struct bContext *C,
-                                                  struct ARegion *region,
-                                                  void *UNUSED(arg1))
+static uiBlock *block_create_opengl_usage_warning(bContext *C, ARegion *region, void *UNUSED(arg1))
 {
   uiBlock *block = UI_block_begin(C, region, "autorun_warning_popup", UI_EMBOSS);
   UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
@@ -2243,7 +2242,7 @@ wmWindow *WM_window_find_under_cursor(wmWindow *win, const int mval[2], int r_mv
   return win_other;
 }
 
-wmWindow *WM_window_find_by_area(wmWindowManager *wm, const struct ScrArea *area)
+wmWindow *WM_window_find_by_area(wmWindowManager *wm, const ScrArea *area)
 {
   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
     bScreen *sc = WM_window_get_active_screen(win);

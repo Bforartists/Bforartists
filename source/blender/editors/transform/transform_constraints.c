@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup edtransform
@@ -871,7 +872,7 @@ void drawConstraint(TransInfo *t)
   }
 }
 
-void drawPropCircle(const struct bContext *C, TransInfo *t)
+void drawPropCircle(const bContext *C, TransInfo *t)
 {
   if (t->flag & T_PROP_EDIT) {
     RegionView3D *rv3d = CTX_wm_region_view3d(C);

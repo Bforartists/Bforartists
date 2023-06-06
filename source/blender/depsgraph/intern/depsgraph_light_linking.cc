@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2023 Blender Foundation */
+/* SPDX-FileCopyrightText: 2023 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup depsgraph
@@ -63,10 +64,12 @@ template<class T> static inline const T *get_original(const T *id)
 
 /* Check whether the ID is suitable to be an input of the dependency graph. */
 /* TODO(sergey): Move the function and check to a more generic place. */
+#ifndef NDEBUG
 bool is_valid_input_id(const ID &id)
 {
   return (id.tag & LIB_TAG_LOCALIZED) || DEG_is_original_id(&id);
 }
+#endif
 
 }  // namespace
 
@@ -420,10 +423,6 @@ void Cache::add_receiver_object(const EmitterData &emitter_data,
 {
   BLI_assert(is_valid_input_id(receiver.id));
 
-  if (!can_link_to_emitter(receiver)) {
-    return;
-  }
-
   light_linking_.link_object(
       emitter_data, eCollectionLightLinkingState(collection_light_linking.link_state), receiver);
 }
@@ -433,10 +432,6 @@ void Cache::add_blocker_object(const EmitterData &emitter_data,
                                const Object &blocker)
 {
   BLI_assert(is_valid_input_id(blocker.id));
-
-  if (!can_link_to_emitter(blocker)) {
-    return;
-  }
 
   shadow_linking_.link_object(
       emitter_data, eCollectionLightLinkingState(collection_light_linking.link_state), blocker);

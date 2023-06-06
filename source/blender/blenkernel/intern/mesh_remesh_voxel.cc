@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2019 Blender Foundation */
+/* SPDX-FileCopyrightText: 2019 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup bke
@@ -485,7 +486,7 @@ void BKE_remesh_reproject_vertex_paint(Mesh *target, const Mesh *source)
   free_bvhtree_from_mesh(&bvhtree);
 }
 
-struct Mesh *BKE_mesh_remesh_voxel_fix_poles(const Mesh *mesh)
+Mesh *BKE_mesh_remesh_voxel_fix_poles(const Mesh *mesh)
 {
   const BMAllocTemplate allocsize = BMALLOC_TEMPLATE_FROM_ME(mesh);
 

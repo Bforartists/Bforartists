@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup spimage
@@ -48,7 +49,7 @@
 #define B_NOP -1
 #define MAX_IMAGE_INFO_LEN 128
 
-struct ImageUser *ntree_get_active_iuser(bNodeTree *ntree)
+ImageUser *ntree_get_active_iuser(bNodeTree *ntree)
 {
   bNode *node;
 

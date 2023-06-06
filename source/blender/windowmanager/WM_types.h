@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2007 Blender Foundation */
+/* SPDX-FileCopyrightText: 2007 Blender Foundation
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup wm
@@ -514,6 +515,7 @@ typedef struct wmNotifier {
 #define NS_MODE_POSE (9 << 8)
 #define NS_MODE_PARTICLE (10 << 8)
 #define NS_EDITMODE_CURVES (11 << 8)
+#define NS_EDITMODE_GREASE_PENCIL (12 << 8)
 
 /* subtype 3d view editing */
 #define NS_VIEW3D_GPU (16 << 8)

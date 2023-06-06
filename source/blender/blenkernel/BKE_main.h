@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 #pragma once
 
 /** \file
@@ -211,6 +212,7 @@ typedef struct Main {
   ListBase paintcurves;
   ListBase wm;       /* Singleton (exception). */
   ListBase gpencils; /* Legacy Grease Pencil. */
+  ListBase grease_pencils;
   ListBase movieclips;
   ListBase masks;
   ListBase linestyles;
