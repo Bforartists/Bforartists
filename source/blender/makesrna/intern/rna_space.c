@@ -7094,6 +7094,8 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
   prop = RNA_def_property(srna, "import_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, asset_import_type_items);
   RNA_def_property_ui_text(prop, "Import Method", "Determine how the asset will be imported");
+  /* BFA - needed for setting #use_instance from UI before executing drop operator */
+  RNA_def_boolean(srna, "drop_collections_as_instances", false, "Drop Collections as Instances", "");
   /* Asset drag info saved by buttons stores the import method, so the space must redraw when
    * import type changes. */
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_LIST, NULL);
