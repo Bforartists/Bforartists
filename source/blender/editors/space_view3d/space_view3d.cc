@@ -864,6 +864,9 @@ static void view3d_collection_drop_copy_external_asset(bContext * /*C*/,
 
   RNA_int_set(drop->ptr, "session_uuid", int(id->session_uuid));
 
+  /* BFA - This sets #use_instance before from UI before executing the drop operator */
+  RNA_boolean_set(drop->ptr, "use_instance", asset_drag->drop_collections_as_instances);
+
   /* Make an object active, just use the first one in the collection. */
   CollectionObject *cobject = static_cast<CollectionObject *>(collection->gobject.first);
   BKE_view_layer_synced_ensure(scene, view_layer);
