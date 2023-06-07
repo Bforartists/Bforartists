@@ -90,13 +90,21 @@ class BrushPanelBase(bpy.types.Panel):
         layout.scale_y = 2
         num_cols = column_count(context.region)
 
-        # TODO: get rid of building list and poping
-        # hint: use a generator and the next function
-        brushes = [
-            brush
-            for brush in sorted(bpy.data.brushes, key=lambda brush: brush.name)
-            if self.filter_brush(brush) and self.tool_name_from_brush(brush) == self.tool_name
-        ]
+        if isinstance(self.tool_name, str):
+            brushes = [
+                brush
+                for brush in sorted(bpy.data.brushes, key=lambda brush: brush.name)
+                if self.filter_brush(brush) and self.tool_name_from_brush(brush) == self.tool_name
+            ]
+        elif isinstance(self.tool_name, tuple):
+            tool_names = set(self.tool_name)
+            brushes = [
+                brush
+                for brush in sorted(bpy.data.brushes, key=lambda brush: brush.name)
+                if self.filter_brush(brush) and self.tool_name_from_brush(brush) in tool_names
+            ]
+        else:
+            raise NotImplementedError
 
         col = layout.column(align=True)
 
