@@ -27,12 +27,19 @@ def panel_factory(
     def icon_name_from_brush(brush: bpy.types.Brush):
         return icon_prefix + tool_name_from_brush(brush).lower()
 
-    for tool_name in tools:
+    for i, tool_name in enumerate(tools):
+        if isinstance(tool_name, tuple):
+            label = tool_name[0].replace("_", " ").title()
+        elif isinstance(tool_name, str):
+            label = tool_name.replace("_", " ").title()
+        else:
+            raise NotImplementedError
+
         yield type(
-            f"BFA_PT_brush_{tool_name_attr}_{tool_name}_{panel_class_name_suffix}",
+            f"BFA_PT_brush_{tool_name_attr}_{i}_{panel_class_name_suffix}",
             (BrushPanelBase,),
             {
-                "bl_label": tool_name.replace("_", " ").title(),
+                "bl_label": label,
                 "bl_space_type": space_type,
                 "poll": poll,
                 "tool_name": tool_name,
