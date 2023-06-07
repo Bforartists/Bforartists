@@ -62,7 +62,8 @@ static void asset_view_item_but_drag_set(uiBut *but, AssetHandle *asset_handle)
                           import_method,
                           ED_asset_handle_get_preview_icon_id(asset_handle),
                           imbuf,
-                          1.0f);
+                          1.0f,
+                          false); /* BFA - needed for setting #use_instance from UI before executing the drop operator */
   }
 }
 

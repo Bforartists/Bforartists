@@ -1106,6 +1106,7 @@ typedef struct wmDragAsset {
   struct AssetMetaData *metadata;
   int import_method; /* eAssetImportType */
   bool use_relative_path;
+  bool drop_collections_as_instances; /* BFA - needed for setting #use_instance from UI before executing the drop operator */
 
   /* FIXME: This is temporary evil solution to get scene/view-layer/etc in the copy callback of the
    * #wmDropBox.
