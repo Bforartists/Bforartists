@@ -1811,7 +1811,8 @@ void UI_but_drag_set_asset(uiBut *but,
                            int import_type, /* eAssetImportType */
                            int icon,
                            struct ImBuf *imb,
-                           float scale);
+                           float scale,
+                           bool drop_collections_as_instances); /* BFA - needed for setting #use_instance from UI before executing the drop operator */
 void UI_but_drag_set_rna(uiBut *but, struct PointerRNA *ptr);
 /**
  * Enable dragging a path from this button.

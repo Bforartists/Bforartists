@@ -838,7 +838,8 @@ typedef struct FileAssetSelectParams {
   bUUID catalog_id;
 
   short import_type; /* eFileAssetImportType */
-  char _pad2[6];
+  char drop_collections_as_instances; /* BFA - boolean, needed for setting #use_instance from UI before executing the drop operator*/
+  char _pad2[5];
 } FileAssetSelectParams;
 
 typedef enum eFileAssetImportType {
