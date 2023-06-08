@@ -7376,6 +7376,8 @@ keyconfig_data = \
     ("SNAP_INV_OFF", {"type": 'RIGHT_CTRL', "value": 'RELEASE', "any": True}, None),
     ("ADD_SNAP", {"type": 'A', "value": 'PRESS'}, None),
     ("REMOVE_SNAP", {"type": 'A', "value": 'PRESS', "alt": True}, None),
+    ("EDIT_SNAP_SOURCE_ON", {"type": 'B', "value": 'PRESS'}, None),
+    ("EDIT_SNAP_SOURCE_OFF", {"type": 'B', "value": 'PRESS'}, None),
     ("PROPORTIONAL_SIZE_UP", {"type": 'PAGE_UP', "value": 'PRESS', "repeat": True}, None),
     ("PROPORTIONAL_SIZE_DOWN", {"type": 'PAGE_DOWN', "value": 'PRESS', "repeat": True}, None),
     ("PROPORTIONAL_SIZE_UP", {"type": 'PAGE_UP', "value": 'PRESS', "shift": True, "repeat": True}, None),
