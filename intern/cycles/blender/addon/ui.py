@@ -1467,10 +1467,19 @@ class CYCLES_OBJECT_PT_shading_caustics(CyclesButtonsPanel, Panel):
         col.prop(cob, "is_caustics_caster")
         col.prop(cob, "is_caustics_receiver")
 
+class CYCLES_OBJECT_PT_lightoptions(CyclesButtonsPanel, Panel):
+    bl_label = "Light Options"
+    bl_context = "object"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        # bfa - light parent panel
+
 
 class CYCLES_OBJECT_PT_lightgroup(CyclesButtonsPanel, Panel):
     bl_label = "Light Group"
-    bl_parent_id = "CYCLES_OBJECT_PT_shading"
+    bl_parent_id = "CYCLES_OBJECT_PT_lightoptions"
     bl_context = "object"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1513,7 +1522,7 @@ class CYCLES_OBJECT_MT_shadow_linking_context_menu(Menu):
 
 class CYCLES_OBJECT_PT_light_linking(CyclesButtonsPanel, Panel):
     bl_label = "Light Linking"
-    bl_parent_id = "CYCLES_OBJECT_PT_shading"
+    bl_parent_id = "CYCLES_OBJECT_PT_lightoptions"
     bl_context = "object"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1545,7 +1554,7 @@ class CYCLES_OBJECT_PT_light_linking(CyclesButtonsPanel, Panel):
 
 class CYCLES_OBJECT_PT_shadow_linking(CyclesButtonsPanel, Panel):
     bl_label = "Shadow Linking"
-    bl_parent_id = "CYCLES_OBJECT_PT_shading"
+    bl_parent_id = "CYCLES_OBJECT_PT_lightoptions"
     bl_context = "object"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2778,6 +2787,7 @@ classes = (
     CYCLES_OBJECT_PT_shading_shadow_terminator,
     CYCLES_OBJECT_PT_shading_gi_approximation,
     CYCLES_OBJECT_PT_shading_caustics,
+    CYCLES_OBJECT_PT_lightoptions, # bfa - move light all panels to own parent panel for easier discovery.
     CYCLES_OBJECT_PT_lightgroup,
     CYCLES_OBJECT_MT_light_linking_context_menu,
     CYCLES_OBJECT_PT_light_linking,
