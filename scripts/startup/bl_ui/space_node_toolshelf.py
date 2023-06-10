@@ -919,7 +919,7 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
 
                 if engine == 'CYCLES':
 
-                    props = col.operator("node.add_node", text=" Hair BSDF          ", icon = "HAIR")
+                    props = col.operator("node.add_node", text=" Hair BSDF          ", icon = "CURVES")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfHairPrincipled"
 
@@ -1048,7 +1048,7 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
 
                 if engine == 'CYCLES':
 
-                    props = flow.operator("node.add_node", text="", icon = "HAIR")
+                    props = flow.operator("node.add_node", text="", icon = "CURVES")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfHairPrincipled"
 
@@ -6286,7 +6286,7 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel):
 
                 if engine == 'CYCLES':
 
-                    props = col.operator("node.add_node", text=" Hair BSDF          ", icon = "HAIR")
+                    props = col.operator("node.add_node", text=" Hair BSDF          ", icon = "CURVES")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfHairPrincipled"
 
@@ -6361,7 +6361,7 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel):
 
                 if engine == 'CYCLES':
 
-                    props = flow.operator("node.add_node", text="", icon = "HAIR")
+                    props = flow.operator("node.add_node", text="", icon = "CURVES")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfHairPrincipled"
 
