@@ -1936,7 +1936,7 @@ matplane
 matsphere
 matcube
 monkey
-hair
+curves
 aliased
 antialiased
 mat_sphere_sky
