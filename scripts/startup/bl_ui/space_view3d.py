@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# BFA NOTE: For this document in merges, it is best to preserve the Bforartists one and compare the old Blender version with the new to see what changed. 
+# BFA NOTE: For this document in merges, it is best to preserve the Bforartists one and compare the old Blender version with the new to see what changed.
 import bpy
 from bpy.types import (
     Header,
@@ -3400,7 +3400,7 @@ class VIEW3D_MT_object_quick_effects(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.quick_fur", icon="HAIR")
+        layout.operator("object.quick_fur", icon="CURVES")
         layout.operator("object.quick_explode", icon="MOD_EXPLODE")
         layout.operator("object.quick_smoke", icon="MOD_SMOKE")
         layout.operator("object.quick_liquid", icon="MOD_FLUIDSIM")
@@ -5381,7 +5381,7 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
 
         layout.operator("mesh.normals_tools", text="Copy Vectors", icon="COPYDOWN").mode = 'COPY'
         layout.operator("mesh.normals_tools", text="Paste Vectors", icon="PASTEDOWN").mode = 'PASTE'
-        
+
         layout.operator("mesh.smooth_normals", text="Smooth Vectors", icon="NORMAL_SMOOTH")
         layout.operator("mesh.normals_tools", text="Reset Vectors", icon="RESET").mode = 'RESET'
 

@@ -13450,10 +13450,10 @@ static int node_type_to_icon(int type)
       return ICON_NODE_TOONSHADER;
 
     case SH_NODE_BSDF_HAIR:
-      return ICON_HAIR;
+      return ICON_CURVES;
 
     case SH_NODE_BSDF_HAIR_PRINCIPLED:
-      return ICON_HAIR;
+      return ICON_CURVES;
 
     case SH_NODE_SUBSURFACE_SCATTERING:
       return ICON_NODE_SSS;
