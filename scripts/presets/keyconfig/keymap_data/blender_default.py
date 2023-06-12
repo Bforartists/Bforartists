@@ -931,6 +931,8 @@ def km_user_interface(_params):
         ("ui.reset_default_button", {"type": 'BACK_SPACE', "value": 'PRESS'}, {"properties": [("all", True)]}),
         # UI lists (polls check if there's a UI list under the cursor).
         ("ui.list_start_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
+        # UI views (polls check if there's a UI view under the cursor).
+        ("ui.view_start_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
     ])
 
     return keymap
@@ -1836,6 +1838,10 @@ def km_graph_editor(params):
         ("graph.delete", {"type": 'DEL', "value": 'PRESS'}, {"properties": [("confirm", False)]}),
         ("graph.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
         ("graph.keyframe_insert", {"type": 'I', "value": 'PRESS'}, None),
+        ("graph.keyframe_jump", {"type": 'UP_ARROW', "value": 'PRESS', "repeat": True},
+         {"properties": [("next", True)]}),
+        ("graph.keyframe_jump", {"type": 'DOWN_ARROW', "value": 'PRESS', "repeat": True},
+         {"properties": [("next", False)]}),
         ("graph.click_insert", {"type": params.action_mouse, "value": 'CLICK', "ctrl": True}, None),
         ("graph.click_insert", {"type": params.action_mouse, "value": 'CLICK', "shift": True, "ctrl": True},
          {"properties": [("extend", True)]}),
@@ -3667,7 +3673,8 @@ def km_grease_pencil_stroke_edit_mode(params):
         ("gpencil.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
         # Extrude and move selected points
         op_tool_optional(
-            ("gpencil.extrude_move", {"type": 'E', "value": 'PRESS'}, None),
+            ("gpencil.extrude_move", {"type": 'E', "value": 'PRESS'},
+             {"properties": [("TRANSFORM_OT_translate", [("allow_navigation", params.use_transform_navigation)])]}),
             (op_tool_cycle, "builtin.extrude"), params),
         # Delete
         op_menu("VIEW3D_MT_edit_gpencil_delete", {"type": 'X', "value": 'PRESS'}),
@@ -4493,6 +4500,26 @@ def km_grease_pencil_stroke_vertex_replace(_params):
     return keymap
 
 
+def km_grease_pencil_edit(params):
+    items = []
+    keymap = (
+        "Grease Pencil Edit Mode",
+        {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+        {"items": items},
+    )
+
+    items.extend([
+        *_template_items_select_actions(params, "grease_pencil.select_all"),
+        # Select linked
+        ("grease_pencil.select_linked", {"type": 'L', "value": 'PRESS'}, None),
+        ("grease_pencil.select_linked", {"type": 'L', "value": 'PRESS', "ctrl": True}, None),
+        ("grease_pencil.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+        ("grease_pencil.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ])
+
+    return keymap
+
+
 def km_face_mask(params):
     items = []
     keymap = (
@@ -4656,8 +4683,10 @@ def km_object_mode(params):
         op_menu("VIEW3D_MT_add", {"type": 'A', "value": 'PRESS', "shift": True}),
         op_menu("VIEW3D_MT_object_apply", {"type": 'A', "value": 'PRESS', "ctrl": True}),
         op_menu("VIEW3D_MT_make_links", {"type": 'L', "value": 'PRESS', "ctrl": True}),
-        ("object.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
-        ("object.duplicate_move_linked", {"type": 'D', "value": 'PRESS', "alt": True}, None),
+        ("object.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True},
+         {"properties": [("TRANSFORM_OT_translate", [("allow_navigation", params.use_transform_navigation)])]}),
+        ("object.duplicate_move_linked", {"type": 'D', "value": 'PRESS', "alt": True},
+         {"properties": [("TRANSFORM_OT_translate", [("allow_navigation", params.use_transform_navigation)])]}),
         ("object.join", {"type": 'J', "value": 'PRESS', "ctrl": True}, None),
         ("wm.context_toggle", {"type": 'PERIOD', "value": 'PRESS', "ctrl": True},
          {"properties": [("data_path", 'tool_settings.use_transform_data_origin')]}),
@@ -4762,7 +4791,8 @@ def km_curve(params):
         ("curve.separate", {"type": 'P', "value": 'PRESS'}, None),
         ("curve.split", {"type": 'Y', "value": 'PRESS'}, None),
         op_tool_optional(
-            ("curve.extrude_move", {"type": 'E', "value": 'PRESS'}, None),
+            ("curve.extrude_move", {"type": 'E', "value": 'PRESS'},
+             {"properties": [("TRANSFORM_OT_translate", [("allow_navigation", params.use_transform_navigation)])]}),
             (op_tool_cycle, "builtin.extrude"), params),
         ("curve.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
         ("curve.make_segment", {"type": 'F', "value": 'PRESS'}, None),
@@ -5371,7 +5401,8 @@ def km_mesh(params):
         ("mesh.normals_make_consistent", {"type": 'N', "value": 'PRESS', "shift": True, "ctrl": True},
          {"properties": [("inside", True)]}),
         op_tool_optional(
-            ("view3d.edit_mesh_extrude_move_normal", {"type": 'E', "value": 'PRESS'}, None),
+            ("view3d.edit_mesh_extrude_move_normal", {"type": 'E', "value": 'PRESS'},
+             {"properties": [("allow_navigation", params.use_transform_navigation)]}),
             (op_tool_cycle, "builtin.extrude_region"), params),
         op_menu("VIEW3D_MT_edit_mesh_extrude", {"type": 'E', "value": 'PRESS', "alt": True}),
         ("transform.edge_crease", {"type": 'E', "value": 'PRESS', "shift": True}, None),
@@ -5388,11 +5419,13 @@ def km_mesh(params):
         # No tool is available for this.
         ("mesh.rip_move", {"type": 'V', "value": 'PRESS', "alt": True},
          {"properties": [("MESH_OT_rip", [("use_fill", True)],)]}),
-        ("mesh.rip_edge_move", {"type": 'D', "value": 'PRESS', "alt": True}, None),
+        ("mesh.rip_edge_move", {"type": 'D', "value": 'PRESS', "alt": True},
+         {"properties": [("TRANSFORM_OT_translate", [("allow_navigation", params.use_transform_navigation)])]}),
         op_menu("VIEW3D_MT_edit_mesh_merge", {"type": 'M', "value": 'PRESS'}),
         op_menu("VIEW3D_MT_edit_mesh_split", {"type": 'M', "value": 'PRESS', "alt": True}),
         ("mesh.edge_face_add", {"type": 'F', "value": 'PRESS', "repeat": True}, None),
-        ("mesh.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+        ("mesh.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True},
+         {"properties": [("TRANSFORM_OT_translate", [("allow_navigation", params.use_transform_navigation)])]}),
         op_menu("VIEW3D_MT_mesh_add", {"type": 'A', "value": 'PRESS', "shift": True}),
         ("mesh.separate", {"type": 'P', "value": 'PRESS'}, None),
         ("mesh.split", {"type": 'Y', "value": 'PRESS'}, None),
@@ -5510,7 +5543,8 @@ def km_armature(params):
         ("armature.dissolve", {"type": 'X', "value": 'PRESS', "ctrl": True}, None),
         ("armature.dissolve", {"type": 'DEL', "value": 'PRESS', "ctrl": True}, None),
         op_tool_optional(
-            ("armature.extrude_move", {"type": 'E', "value": 'PRESS'}, None),
+            ("armature.extrude_move", {"type": 'E', "value": 'PRESS'},
+             {"properties": [("TRANSFORM_OT_translate", [("allow_navigation", params.use_transform_navigation)])]}),
             (op_tool_cycle, "builtin.extrude"), params),
         ("armature.extrude_forked", {"type": 'E', "value": 'PRESS', "shift": True}, None),
         ("armature.click_extrude", {"type": params.action_mouse, "value": 'CLICK', "ctrl": True}, None),
@@ -8209,7 +8243,7 @@ def generate_keymaps(params=None):
         km_animation_channels(params),
 
         # Modes.
-        km_grease_pencil(params),
+        km_grease_pencil(params),  # TODO: Rename to km_annotate
         km_grease_pencil_stroke_curve_edit_mode(params),
         km_grease_pencil_stroke_edit_mode(params),
         km_grease_pencil_stroke_paint_mode(params),
@@ -8238,6 +8272,7 @@ def generate_keymaps(params=None):
         km_grease_pencil_stroke_vertex_average(params),
         km_grease_pencil_stroke_vertex_smear(params),
         km_grease_pencil_stroke_vertex_replace(params),
+        km_grease_pencil_edit(params),
         km_face_mask(params),
         km_weight_paint_vertex_selection(params),
         km_pose(params),

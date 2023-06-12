@@ -256,7 +256,14 @@ class TEXT_MT_text(Menu):
         layout.operator("text.open", text = "Open Text", icon='FILE_FOLDER')
 
         if text:
-            layout.operator("text.reload", icon = "FILE_REFRESH")
+            layout.separator()
+            row = layout.row()
+            row.operator("text.reload", icon = "FILE_REFRESH")
+            row.enabled = not text.is_in_memory
+
+            row = layout.row()
+            op = row.operator("text.jump_to_file_at_point", text="Edit Externally")
+            row.enabled = (not text.is_in_memory and context.preferences.filepaths.text_editor != "")
 
             layout.column()
             layout.operator("text.save", icon='FILE_TICK')

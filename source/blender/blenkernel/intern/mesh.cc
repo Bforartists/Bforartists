@@ -661,6 +661,26 @@ static int customdata_compare(
           }
           break;
         }
+        case CD_PROP_QUATERNION: {
+          const float(*l1_data)[4] = (float(*)[4])l1->data;
+          const float(*l2_data)[4] = (float(*)[4])l2->data;
+
+          for (int i = 0; i < total_length; i++) {
+            if (compare_threshold_relative(l1_data[i][0], l2_data[i][0], thresh)) {
+              return MESHCMP_ATTRIBUTE_VALUE_MISMATCH;
+            }
+            if (compare_threshold_relative(l1_data[i][1], l2_data[i][1], thresh)) {
+              return MESHCMP_ATTRIBUTE_VALUE_MISMATCH;
+            }
+            if (compare_threshold_relative(l1_data[i][2], l2_data[i][2], thresh)) {
+              return MESHCMP_ATTRIBUTE_VALUE_MISMATCH;
+            }
+            if (compare_threshold_relative(l1_data[i][3], l2_data[i][3], thresh)) {
+              return MESHCMP_ATTRIBUTE_VALUE_MISMATCH;
+            }
+          }
+          break;
+        }
         case CD_PROP_INT32: {
           const int *l1_data = (int *)l1->data;
           const int *l2_data = (int *)l2->data;
@@ -806,44 +826,6 @@ void BKE_mesh_ensure_skin_customdata(Mesh *me)
       }
     }
   }
-}
-
-bool BKE_mesh_ensure_facemap_customdata(Mesh *me)
-{
-  BMesh *bm = me->edit_mesh ? me->edit_mesh->bm : nullptr;
-  bool changed = false;
-  if (bm) {
-    if (!CustomData_has_layer(&bm->pdata, CD_FACEMAP)) {
-      BM_data_layer_add(bm, &bm->pdata, CD_FACEMAP);
-      changed = true;
-    }
-  }
-  else {
-    if (!CustomData_has_layer(&me->pdata, CD_FACEMAP)) {
-      CustomData_add_layer(&me->pdata, CD_FACEMAP, CD_SET_DEFAULT, me->totpoly);
-      changed = true;
-    }
-  }
-  return changed;
-}
-
-bool BKE_mesh_clear_facemap_customdata(Mesh *me)
-{
-  BMesh *bm = me->edit_mesh ? me->edit_mesh->bm : nullptr;
-  bool changed = false;
-  if (bm) {
-    if (CustomData_has_layer(&bm->pdata, CD_FACEMAP)) {
-      BM_data_layer_free(bm, &bm->pdata, CD_FACEMAP);
-      changed = true;
-    }
-  }
-  else {
-    if (CustomData_has_layer(&me->pdata, CD_FACEMAP)) {
-      CustomData_free_layers(&me->pdata, CD_FACEMAP, me->totpoly);
-      changed = true;
-    }
-  }
-  return changed;
 }
 
 bool BKE_mesh_has_custom_loop_normals(Mesh *me)
