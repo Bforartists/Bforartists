@@ -658,7 +658,7 @@ class BTool_FindBrush(Operator):
                 bpy.ops.object.select_all(action="TOGGLE")
                 bpy.ops.object.select_all(action="DESELECT")
                 bpy.context.view_layer.objects.active = ob
-                ob.set_select(state=True)
+                ob.select_set(state=True)
         return {"FINISHED"}
 
 

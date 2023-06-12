@@ -13,6 +13,7 @@
 #include "vk_index_buffer.hh"
 #include "vk_memory.hh"
 #include "vk_pipeline.hh"
+#include "vk_storage_buffer.hh"
 #include "vk_texture.hh"
 #include "vk_vertex_buffer.hh"
 
@@ -201,15 +202,28 @@ void VKCommandBuffer::copy(VKTexture &dst_texture,
 }
 
 void VKCommandBuffer::blit(VKTexture &dst_texture,
-                           VKTexture &src_buffer,
+                           VKTexture &src_texture,
+                           Span<VkImageBlit> regions)
+{
+  blit(dst_texture,
+       dst_texture.current_layout_get(),
+       src_texture,
+       src_texture.current_layout_get(),
+       regions);
+}
+
+void VKCommandBuffer::blit(VKTexture &dst_texture,
+                           VkImageLayout dst_layout,
+                           VKTexture &src_texture,
+                           VkImageLayout src_layout,
                            Span<VkImageBlit> regions)
 {
   ensure_no_active_framebuffer();
   vkCmdBlitImage(vk_command_buffer_,
-                 src_buffer.vk_image_handle(),
-                 src_buffer.current_layout_get(),
+                 src_texture.vk_image_handle(),
+                 src_layout,
                  dst_texture.vk_image_handle(),
-                 dst_texture.current_layout_get(),
+                 dst_layout,
                  regions.size(),
                  regions.data(),
                  VK_FILTER_NEAREST);
@@ -292,6 +306,12 @@ void VKCommandBuffer::dispatch(int groups_x_len, int groups_y_len, int groups_z_
 {
   ensure_no_active_framebuffer();
   vkCmdDispatch(vk_command_buffer_, groups_x_len, groups_y_len, groups_z_len);
+}
+
+void VKCommandBuffer::dispatch(VKStorageBuffer &command_buffer)
+{
+  ensure_no_active_framebuffer();
+  vkCmdDispatchIndirect(vk_command_buffer_, command_buffer.vk_handle(), 0);
 }
 
 void VKCommandBuffer::submit()

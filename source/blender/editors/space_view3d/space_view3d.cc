@@ -12,6 +12,8 @@
 #include <cstdio>
 #include <cstring>
 
+#include "AS_asset_representation.h"
+
 #include "DNA_collection_types.h"
 #include "DNA_defaults.h"
 #include "DNA_gpencil_legacy_types.h"
@@ -308,7 +310,7 @@ static SpaceLink *view3d_create(const ScrArea * /*area*/, const Scene *scene)
   return (SpaceLink *)v3d;
 }
 
-/* not spacelink itself */
+/* Doesn't free the space-link itself. */
 static void view3d_free(SpaceLink *sl)
 {
   View3D *vd = (View3D *)sl;
@@ -435,6 +437,13 @@ static void view3d_main_region_init(wmWindowManager *wm, ARegion *region)
   keymap = WM_keymap_ensure(wm->defaultconf, "Sculpt Curves", 0, 0);
   WM_event_add_keymap_handler(&region->handlers, keymap);
 
+  /* Note: Grease Pencil handlers used to be added using `ED_KEYMAP_GPENCIL` in
+   * `ed_default_handlers` because it needed to be added to multiple editors (as other editors use
+   * annotations.). But for OB_GREASE_PENCIL, we only need it to register the keymaps for the
+   * 3D View. */
+  keymap = WM_keymap_ensure(wm->defaultconf, "Grease Pencil Edit Mode", 0, 0);
+  WM_event_add_keymap_handler(&region->handlers, keymap);
+
   /* editfont keymap swallows all... */
   keymap = WM_keymap_ensure(wm->defaultconf, "Font", 0, 0);
   WM_event_add_keymap_handler(&region->handlers, keymap);
@@ -489,7 +498,7 @@ static ID_Type view3d_drop_id_in_main_region_poll_get_id_type(bContext *C,
 
   wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
   if (asset_drag) {
-    return ID_Type(asset_drag->id_type);
+    return AS_asset_representation_id_type_get(asset_drag->asset);
   }
 
   return ID_Type(0);
@@ -724,7 +733,8 @@ static bool view3d_geometry_nodes_drop_poll(bContext *C, wmDrag *drag, const wmE
     if (!asset_data) {
       return false;
     }
-    const IDProperty *tree_type = BKE_asset_metadata_idprop_find(asset_data->metadata, "type");
+    const AssetMetaData *metadata = AS_asset_representation_metadata_get(asset_data->asset);
+    const IDProperty *tree_type = BKE_asset_metadata_idprop_find(metadata, "type");
     if (!tree_type || IDP_Int(tree_type) != NTREE_GEOMETRY) {
       return false;
     }
@@ -2168,7 +2178,7 @@ void ED_spacetype_view3d()
   /* regions: tool(bar) */
   art = MEM_cnew<ARegionType>("spacetype view3d tools region");
   art->regionid = RGN_TYPE_TOOLS;
-  art->prefsizex = 58; /* XXX */
+  art->prefsizex = int(UI_TOOLBAR_WIDTH);
   art->prefsizey = 50; /* XXX */
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
   art->listener = view3d_buttons_region_listener;

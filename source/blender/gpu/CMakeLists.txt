@@ -55,7 +55,6 @@ endif()
 
 set(INC_SYS
   ${Epoxy_INCLUDE_DIRS}
-  ${IMATH_INCLUDE_DIR}
 )
 
 set(SRC
@@ -216,6 +215,7 @@ set(VULKAN_SRC
   vulkan/vk_drawlist.cc
   vulkan/vk_fence.cc
   vulkan/vk_framebuffer.cc
+  vulkan/vk_image_view.cc
   vulkan/vk_immediate.cc
   vulkan/vk_index_buffer.cc
   vulkan/vk_memory.cc
@@ -251,6 +251,7 @@ set(VULKAN_SRC
   vulkan/vk_drawlist.hh
   vulkan/vk_fence.hh
   vulkan/vk_framebuffer.hh
+  vulkan/vk_image_view.hh
   vulkan/vk_immediate.hh
   vulkan/vk_index_buffer.hh
   vulkan/vk_memory.hh
@@ -358,11 +359,6 @@ if(WITH_VULKAN_BACKEND)
   )
 
   add_definitions(-DWITH_VULKAN_BACKEND)
-  if(WIN32)
-    if(EXISTS ${LIBDIR}/imath/bin/imath.dll)
-      add_definitions(-DIMATH_DLL)
-    endif()
-  endif()
 endif()
 
 if(WITH_VULKAN_GUARDEDALLOC)
@@ -797,8 +793,6 @@ if(WITH_GPU_BUILDTIME_SHADER_BUILDER)
       intern/gpu_shader_builder_stubs.cc
       ${shader_create_info_list_file}
       )
-
-    setup_platform_linker_flags(shader_builder)
     target_link_libraries(shader_builder PUBLIC buildinfoobj)
   else()
     if(WIN32)
@@ -813,15 +807,15 @@ if(WITH_GPU_BUILDTIME_SHADER_BUILDER)
       ${shader_create_info_list_file}
       ${MANIFEST}
     )
-
   endif()
+  setup_platform_linker_flags(shader_builder)
+
   target_link_libraries(shader_builder PUBLIC
     bf_gpu
     bf_intern_clog
     bf_blenlib
     bf_intern_ghost
     ${PLATFORM_LINKLIBS}
-    ${IMATH_LIBRARIES}
   )
   target_include_directories(shader_builder PRIVATE ${INC} ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -853,6 +847,7 @@ if(WITH_GTESTS)
       tests/gpu_testing.cc
 
       tests/buffer_texture_test.cc
+      tests/compute_test.cc
       tests/framebuffer_test.cc
       tests/immediate_test.cc
       tests/index_buffer_test.cc
@@ -868,6 +863,7 @@ if(WITH_GTESTS)
     if(WITH_VULKAN_BACKEND)
       list(APPEND TEST_SRC
         tests/memory_layout_test.cc
+        vulkan/vk_data_conversion_test.cc
       )
     endif()
 

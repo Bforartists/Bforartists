@@ -87,6 +87,8 @@ MASTERSCALE = 0x0100  # Master scale factor
 OBJECT_MESH = 0x4100  # This lets us know that we are reading a new object
 OBJECT_LIGHT = 0x4600  # This lets us know we are reading a light object
 OBJECT_CAMERA = 0x4700  # This lets us know we are reading a camera object
+OBJECT_HIERARCHY = 0x4F00  # Hierarchy id of the object
+OBJECT_PARENT = 0x4F10  # Parent id of the object
 
 # >------ Sub defines of LIGHT
 LIGHT_MULTIPLIER = 0x465B  # The light energy factor
@@ -1477,7 +1479,7 @@ def make_ambient_node(world):
 # EXPORT #
 ##########
 
-def save(operator, context, filepath="", use_selection=False, write_keyframe=False, global_matrix=None):
+def save(operator, context, filepath="", use_selection=False, use_hierarchy=False, write_keyframe=False, global_matrix=None):
 
     """Save the Blender scene to a 3ds file."""
     # Time the export
@@ -1608,6 +1610,7 @@ def save(operator, context, filepath="", use_selection=False, write_keyframe=Fal
     scale = {}
 
     # Give all objects a unique ID and build a dictionary from object name to object id
+    object_id = {}
     name_id = {}
 
     for ob, data, matrix in mesh_objects:
@@ -1615,12 +1618,19 @@ def save(operator, context, filepath="", use_selection=False, write_keyframe=Fal
         rotation[ob.name] = ob.rotation_euler.to_quaternion().inverted()
         scale[ob.name] = ob.scale
         name_id[ob.name] = len(name_id)
+        object_id[ob.name] = len(object_id)
 
     for ob in empty_objects:
         translation[ob.name] = ob.location
         rotation[ob.name] = ob.rotation_euler.to_quaternion().inverted()
         scale[ob.name] = ob.scale
         name_id[ob.name] = len(name_id)
+
+    for ob in light_objects:
+        object_id[ob.name] = len(object_id)
+
+    for ob in camera_objects:
+        object_id[ob.name] = len(object_id)
 
     # Create object chunks for all meshes
     i = 0
@@ -1633,20 +1643,32 @@ def save(operator, context, filepath="", use_selection=False, write_keyframe=Fal
         # Make a mesh chunk out of the mesh
         object_chunk.add_subchunk(make_mesh_chunk(ob, mesh, matrix, materialDict, translation))
 
-        # Ensure the mesh has no over sized arrays, skip ones that do!
+        # Add hierachy chunk with ID from object_id dictionary
+        if use_hierarchy:
+            obj_hierarchy_chunk = _3ds_chunk(OBJECT_HIERARCHY)
+            obj_hierarchy_chunk.add_variable("hierarchy", _3ds_ushort(object_id[ob.name]))
+
+            # Add parent chunk if object has a parent
+            if ob.parent is not None and (ob.parent.name in object_id):
+                obj_parent_chunk = _3ds_chunk(OBJECT_PARENT)
+                obj_parent_chunk.add_variable("parent", _3ds_ushort(object_id[ob.parent.name]))
+                obj_hierarchy_chunk.add_subchunk(obj_parent_chunk)
+            object_chunk.add_subchunk(obj_hierarchy_chunk)
+
+        # ensure the mesh has no over sized arrays - skip ones that do!
         # Otherwise we cant write since the array size wont fit into USHORT
         if object_chunk.validate():
             object_info.add_subchunk(object_chunk)
         else:
             operator.report({'WARNING'}, "Object %r can't be written into a 3DS file")
 
-        # Export kf object node
+        # Export object node
         if write_keyframe:
             kfdata.add_subchunk(make_object_node(ob, translation, rotation, scale, name_id))
 
         i += i
 
-    # Create chunks for all empties, only requires a kf object node
+    # Create chunks for all empties - only requires a object node
     if write_keyframe:
         for ob in empty_objects:
             kfdata.add_subchunk(make_object_node(ob, translation, rotation, scale, name_id))
@@ -1654,15 +1676,15 @@ def save(operator, context, filepath="", use_selection=False, write_keyframe=Fal
     # Create light object chunks
     for ob in light_objects:
         object_chunk = _3ds_chunk(OBJECT)
-        light_chunk = _3ds_chunk(OBJECT_LIGHT)
+        obj_light_chunk = _3ds_chunk(OBJECT_LIGHT)
         color_float_chunk = _3ds_chunk(RGB)
-        energy_factor = _3ds_chunk(LIGHT_MULTIPLIER)
+        light_energy_factor = _3ds_chunk(LIGHT_MULTIPLIER)
         object_chunk.add_variable("light", _3ds_string(sane_name(ob.name)))
-        light_chunk.add_variable("location", _3ds_point_3d(ob.location))
+        obj_light_chunk.add_variable("location", _3ds_point_3d(ob.location))
         color_float_chunk.add_variable("color", _3ds_float_color(ob.data.color))
-        energy_factor.add_variable("energy", _3ds_float(ob.data.energy * 0.001))
-        light_chunk.add_subchunk(color_float_chunk)
-        light_chunk.add_subchunk(energy_factor)
+        light_energy_factor.add_variable("energy", _3ds_float(ob.data.energy * 0.001))
+        obj_light_chunk.add_subchunk(color_float_chunk)
+        obj_light_chunk.add_subchunk(light_energy_factor)
 
         if ob.data.type == 'SPOT':
             cone_angle = math.degrees(ob.data.spot_size)
@@ -1684,10 +1706,24 @@ def save(operator, context, filepath="", use_selection=False, write_keyframe=Fal
             if ob.data.use_square:
                 spot_square_chunk = _3ds_chunk(LIGHT_SPOT_RECTANGLE)
                 spotlight_chunk.add_subchunk(spot_square_chunk)
-            light_chunk.add_subchunk(spotlight_chunk)
+            obj_light_chunk.add_subchunk(spotlight_chunk)
 
-        # Add light to object info
-        object_chunk.add_subchunk(light_chunk)
+        # Add light to object chunk
+        object_chunk.add_subchunk(obj_light_chunk)
+
+        # Add hierachy chunks with ID from object_id dictionary
+        if use_hierarchy:
+            obj_hierarchy_chunk = _3ds_chunk(OBJECT_HIERARCHY)
+            obj_parent_chunk = _3ds_chunk(OBJECT_PARENT)
+            obj_hierarchy_chunk.add_variable("hierarchy", _3ds_ushort(object_id[ob.name]))
+            if ob.parent is None or (ob.parent.name not in object_id):
+                obj_parent_chunk.add_variable("parent", _3ds_ushort(ROOT_OBJECT))
+            else:  # Get the parent ID from the object_id dict
+                obj_parent_chunk.add_variable("parent", _3ds_ushort(object_id[ob.parent.name]))
+            obj_hierarchy_chunk.add_subchunk(obj_parent_chunk)
+            object_chunk.add_subchunk(obj_hierarchy_chunk)
+
+        # Add light object and hierarchy chunks to object info
         object_info.add_subchunk(object_chunk)
 
         # Export light and spotlight target node
@@ -1714,6 +1750,20 @@ def save(operator, context, filepath="", use_selection=False, write_keyframe=Fal
         camera_chunk.add_variable("roll", _3ds_float(round(ob.rotation_euler[1], 6)))
         camera_chunk.add_variable("lens", _3ds_float(ob.data.lens))
         object_chunk.add_subchunk(camera_chunk)
+
+        # Add hierachy chunks with ID from object_id dictionary
+        if use_hierarchy:
+            obj_hierarchy_chunk = _3ds_chunk(OBJECT_HIERARCHY)
+            obj_parent_chunk = _3ds_chunk(OBJECT_PARENT)
+            obj_hierarchy_chunk.add_variable("hierarchy", _3ds_ushort(object_id[ob.name]))
+            if ob.parent is None or (ob.parent.name not in object_id):
+                obj_parent_chunk.add_variable("parent", _3ds_ushort(ROOT_OBJECT))
+            else:  # Get the parent ID from the object_id dict
+                obj_parent_chunk.add_variable("parent", _3ds_ushort(object_id[ob.parent.name]))
+            obj_hierarchy_chunk.add_subchunk(obj_parent_chunk)
+            object_chunk.add_subchunk(obj_hierarchy_chunk)
+
+        # Add light object and hierarchy chunks to object info
         object_info.add_subchunk(object_chunk)
 
         # Export camera and target node

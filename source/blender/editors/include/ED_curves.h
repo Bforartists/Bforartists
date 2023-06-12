@@ -54,11 +54,12 @@ int *ED_curves_offsets_for_write(struct Curves *curves_id);
 #ifdef __cplusplus
 
 #  include "BKE_attribute.hh"
+#  include "BKE_crazyspace.hh"
+#  include "BKE_curves.hh"
+
 #  include "BLI_index_mask.hh"
 #  include "BLI_vector.hh"
 #  include "BLI_vector_set.hh"
-
-#  include "BKE_curves.hh"
 
 #  include "ED_select_utils.h"
 
@@ -149,10 +150,10 @@ void select_all(bke::CurvesGeometry &curves, eAttrDomain selection_domain, int a
 /**
  * Select the ends (front or back) of all the curves.
  *
- * \param amount: The amount of points to select from the front or back.
- * \param end_points: If true, select the last point(s), if false, select the first point(s).
+ * \param amount_start: The amount of points to select from the front.
+ * \param amount_end: The amount of points to select from the back.
  */
-void select_ends(bke::CurvesGeometry &curves, int amount, bool end_points);
+void select_ends(bke::CurvesGeometry &curves, int amount_start, int amount_end);
 
 /**
  * Select the points of all curves that have at least one point selected.
@@ -192,6 +193,7 @@ struct FindClosestData {
 std::optional<FindClosestData> closest_elem_find_screen_space(const ViewContext &vc,
                                                               const Object &object,
                                                               bke::CurvesGeometry &curves,
+                                                              Span<float3> deformed_positions,
                                                               eAttrDomain domain,
                                                               int2 coord,
                                                               const FindClosestData &initial);
@@ -201,6 +203,7 @@ std::optional<FindClosestData> closest_elem_find_screen_space(const ViewContext 
  */
 bool select_box(const ViewContext &vc,
                 bke::CurvesGeometry &curves,
+                Span<float3> deformed_positions,
                 eAttrDomain selection_domain,
                 const rcti &rect,
                 eSelectOp sel_op);
@@ -210,6 +213,7 @@ bool select_box(const ViewContext &vc,
  */
 bool select_lasso(const ViewContext &vc,
                   bke::CurvesGeometry &curves,
+                  Span<float3> deformed_positions,
                   eAttrDomain selection_domain,
                   Span<int2> coords,
                   eSelectOp sel_op);
@@ -219,6 +223,7 @@ bool select_lasso(const ViewContext &vc,
  */
 bool select_circle(const ViewContext &vc,
                    bke::CurvesGeometry &curves,
+                   Span<float3> deformed_positions,
                    eAttrDomain selection_domain,
                    int2 coord,
                    float radius,
