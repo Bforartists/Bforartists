@@ -27,6 +27,7 @@ for each property.
 
 The types are as follows:
 
+* 'Z': - INT8
 * 'Y': - INT16
 * 'C': - BOOL
 * 'I': - INT32
@@ -65,6 +66,8 @@ def parse_json_rec(fbx_root, json_node):
     for d, dt in zip(data, data_types):
         if dt == "C":
             e.add_bool(d)
+        elif dt == "Z":
+            e.add_int8(d)
         elif dt == "Y":
             e.add_int16(d)
         elif dt == "I":

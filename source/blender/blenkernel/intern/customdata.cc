@@ -24,6 +24,7 @@
 #include "BLI_index_range.hh"
 #include "BLI_math.h"
 #include "BLI_math_color_blend.h"
+#include "BLI_math_quaternion_types.hh"
 #include "BLI_math_vector.hh"
 #include "BLI_mempool.h"
 #include "BLI_path_util.h"
@@ -1258,20 +1259,6 @@ static void layerSwap_flnor(void *data, const int *corner_indices)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Callbacks for (`int`, #CD_FACEMAP)
- * \{ */
-
-static void layerDefault_fmap(void *data, const int count)
-{
-  int *fmap_num = (int *)data;
-  for (int i = 0; i < count; i++) {
-    fmap_num[i] = -1;
-  }
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
 /** \name Callbacks for (#MPropCol, #CD_PROP_COLOR)
  * \{ */
 
@@ -1556,6 +1543,20 @@ static void layerInterp_propbool(const void **sources,
   *(bool *)dest = result;
 }
 
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Callbacks for (#math::Quaternion, #CD_PROP_QUATERNION)
+ * \{ */
+
+static void layerDefault_propquaternion(void *data, const int count)
+{
+  using namespace blender;
+  MutableSpan(static_cast<math::Quaternion *>(data), count).fill(math::Quaternion::identity());
+}
+
+/** \} */
+
 static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
     /* 0: CD_MVERT */ /* DEPRECATED */
     {sizeof(MVert), "MVert", 1, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
@@ -1628,8 +1629,8 @@ static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
      nullptr,
      nullptr,
      layerCopyValue_normal},
-    /* 9: CD_FACEMAP */
-    {sizeof(int), "", 0, nullptr, nullptr, nullptr, nullptr, nullptr, layerDefault_fmap, nullptr},
+    /* 9: CD_FACEMAP */ /* DEPRECATED */
+    {sizeof(int), ""},
     /* 10: CD_PROP_FLOAT */
     {sizeof(MFloatProperty),
      "MFloatProperty",
@@ -1865,7 +1866,7 @@ static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
     /* 41: CD_CUSTOMLOOPNORMAL */
     {sizeof(short[2]), "vec2s", 1, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
     /* 42: CD_SCULPT_FACE_SETS */ /* DEPRECATED */
-    {sizeof(int), "", 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+    {sizeof(int), ""},
     /* 43: CD_LOCATION */
     {sizeof(float[3]), "vec3f", 1, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
     /* 44: CD_RADIUS */
@@ -1947,6 +1948,16 @@ static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
      nullptr},
     /* 51: CD_HAIRLENGTH */
     {sizeof(float), "float", 1, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+    /* 52: CD_PROP_QUATERNION */
+    {sizeof(float[4]),
+     "vec4f",
+     1,
+     N_("Quaternion"),
+     nullptr,
+     nullptr,
+     nullptr,
+     nullptr,
+     layerDefault_propquaternion},
 };
 
 static const char *LAYERTYPENAMES[CD_NUMTYPES] = {
@@ -2004,20 +2015,21 @@ static const char *LAYERTYPENAMES[CD_NUMTYPES] = {
     "CDPropFloat2",
     "CDPropBoolean",
     "CDHairLength",
+    "CDPropQuaternion",
 };
 
 const CustomData_MeshMasks CD_MASK_BAREMESH = {
     /*vmask*/ CD_MASK_PROP_FLOAT3,
     /*emask*/ CD_MASK_PROP_INT32_2D,
     /*fmask*/ 0,
-    /*pmask*/ CD_MASK_FACEMAP,
+    /*pmask*/ 0,
     /*lmask*/ CD_MASK_PROP_INT32,
 };
 const CustomData_MeshMasks CD_MASK_BAREMESH_ORIGINDEX = {
     /*vmask*/ CD_MASK_PROP_FLOAT3 | CD_MASK_ORIGINDEX,
     /*emask*/ CD_MASK_PROP_INT32_2D | CD_MASK_ORIGINDEX,
     /*fmask*/ 0,
-    /*pmask*/ CD_MASK_FACEMAP | CD_MASK_ORIGINDEX,
+    /*pmask*/ CD_MASK_ORIGINDEX,
     /*lmask*/ CD_MASK_PROP_INT32,
 };
 const CustomData_MeshMasks CD_MASK_MESH = {
@@ -2027,7 +2039,7 @@ const CustomData_MeshMasks CD_MASK_MESH = {
     (CD_MASK_FREESTYLE_EDGE | CD_MASK_PROP_ALL | CD_MASK_CREASE),
     /*fmask*/ 0,
     /*pmask*/
-    (CD_MASK_FACEMAP | CD_MASK_FREESTYLE_FACE | CD_MASK_PROP_ALL),
+    (CD_MASK_FREESTYLE_FACE | CD_MASK_PROP_ALL),
     /*lmask*/
     (CD_MASK_MDISPS | CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_GRID_PAINT_MASK | CD_MASK_PROP_ALL),
 };
@@ -2039,7 +2051,7 @@ const CustomData_MeshMasks CD_MASK_DERIVEDMESH = {
     (CD_MASK_ORIGINDEX | CD_MASK_FREESTYLE_EDGE | CD_MASK_PROP_ALL | CD_MASK_CREASE),
     /*fmask*/ (CD_MASK_ORIGINDEX | CD_MASK_ORIGSPACE | CD_MASK_PREVIEW_MCOL | CD_MASK_TANGENT),
     /*pmask*/
-    (CD_MASK_ORIGINDEX | CD_MASK_FREESTYLE_FACE | CD_MASK_FACEMAP | CD_MASK_PROP_ALL),
+    (CD_MASK_ORIGINDEX | CD_MASK_FREESTYLE_FACE | CD_MASK_PROP_ALL),
     /*lmask*/
     (CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_PREVIEW_MLOOPCOL | CD_MASK_ORIGSPACE_MLOOP |
      CD_MASK_PROP_ALL), /* XXX: MISSING #CD_MASK_MLOOPTANGENT ? */
@@ -2050,7 +2062,7 @@ const CustomData_MeshMasks CD_MASK_BMESH = {
     /*emask*/ (CD_MASK_CREASE | CD_MASK_FREESTYLE_EDGE | CD_MASK_PROP_ALL),
     /*fmask*/ 0,
     /*pmask*/
-    (CD_MASK_FREESTYLE_FACE | CD_MASK_FACEMAP | CD_MASK_PROP_ALL),
+    (CD_MASK_FREESTYLE_FACE | CD_MASK_PROP_ALL),
     /*lmask*/
     (CD_MASK_MDISPS | CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_GRID_PAINT_MASK | CD_MASK_PROP_ALL),
 };
@@ -2066,8 +2078,7 @@ const CustomData_MeshMasks CD_MASK_EVERYTHING = {
      CD_MASK_ORIGSPACE | CD_MASK_TANGENT | CD_MASK_TESSLOOPNORMAL | CD_MASK_PREVIEW_MCOL |
      CD_MASK_PROP_ALL),
     /*pmask*/
-    (CD_MASK_BM_ELEM_PYPTR | CD_MASK_ORIGINDEX | CD_MASK_FACEMAP | CD_MASK_FREESTYLE_FACE |
-     CD_MASK_PROP_ALL),
+    (CD_MASK_BM_ELEM_PYPTR | CD_MASK_ORIGINDEX | CD_MASK_FREESTYLE_FACE | CD_MASK_PROP_ALL),
     /*lmask*/
     (CD_MASK_BM_ELEM_PYPTR | CD_MASK_MDISPS | CD_MASK_NORMAL | CD_MASK_CUSTOMLOOPNORMAL |
      CD_MASK_MLOOPTANGENT | CD_MASK_PREVIEW_MLOOPCOL | CD_MASK_ORIGSPACE_MLOOP |
@@ -4368,7 +4379,7 @@ static bool customdata_unique_check(void *arg, const char *name)
   return cd_layer_find_dupe(data_arg->data, name, data_arg->type, data_arg->index);
 }
 
-int CustomData_name_max_length_calc(const blender::StringRef name)
+int CustomData_name_maxncpy_calc(const blender::StringRef name)
 {
   if (name.startswith(".")) {
     return MAX_CUSTOMDATA_LAYER_NAME_NO_PREFIX;
@@ -4394,7 +4405,7 @@ void CustomData_set_layer_unique_name(CustomData *data, const int index)
     return;
   }
 
-  const int max_length = CustomData_name_max_length_calc(nlayer->name);
+  const int name_maxncpy = CustomData_name_maxncpy_calc(nlayer->name);
 
   /* Set default name if none specified. Note we only call DATA_() when
    * needed to avoid overhead of locale lookups in the depsgraph. */
@@ -4403,7 +4414,7 @@ void CustomData_set_layer_unique_name(CustomData *data, const int index)
   }
 
   const char *defname = ""; /* Dummy argument, never used as `name` is never zero length. */
-  BLI_uniquename_cb(customdata_unique_check, &data_arg, defname, '.', nlayer->name, max_length);
+  BLI_uniquename_cb(customdata_unique_check, &data_arg, defname, '.', nlayer->name, name_maxncpy);
 }
 
 void CustomData_validate_layer_name(const CustomData *data,
@@ -4880,7 +4891,7 @@ static void customdata_data_transfer_interp_generic(const CustomDataTransferLaye
    * more than 0.5 of weight. */
   int best_src_idx = 0;
 
-  const eCustomDataType data_type = laymap->data_type;
+  const int data_type = laymap->data_type;
   const int mix_mode = laymap->mix_mode;
 
   size_t data_size;
@@ -4898,7 +4909,7 @@ static void customdata_data_transfer_interp_generic(const CustomDataTransferLaye
     data_size = laymap->data_size;
   }
   else {
-    const LayerTypeInfo *type_info = layerType_getInfo(data_type);
+    const LayerTypeInfo *type_info = layerType_getInfo(eCustomDataType(data_type));
 
     data_size = size_t(type_info->size);
     interp_cd = type_info->interp;
@@ -4967,7 +4978,7 @@ static void customdata_data_transfer_interp_generic(const CustomDataTransferLaye
     }
   }
   else if (!(int(data_type) & CD_FAKE)) {
-    CustomData_data_mix_value(data_type, tmp_dst, data_dst, mix_mode, mix_factor);
+    CustomData_data_mix_value(eCustomDataType(data_type), tmp_dst, data_dst, mix_mode, mix_factor);
   }
   /* Else we can do nothing by default, needs custom interp func!
    * Note this is here only for sake of consistency, not expected to be used much actually? */
@@ -4990,7 +5001,8 @@ void customdata_data_transfer_interp_normal_normals(const CustomDataTransferLaye
   BLI_assert(weights != nullptr);
   BLI_assert(count > 0);
 
-  const eCustomDataType data_type = laymap->data_type;
+  const eCustomDataType data_type = eCustomDataType(laymap->data_type);
+  BLI_assert(data_type == CD_NORMAL);
   const int mix_mode = laymap->mix_mode;
 
   SpaceTransform *space_transform = static_cast<SpaceTransform *>(laymap->interp_data);
@@ -4999,8 +5011,6 @@ void customdata_data_transfer_interp_normal_normals(const CustomDataTransferLaye
   cd_interp interp_cd = type_info->interp;
 
   float tmp_dst[3];
-
-  BLI_assert(data_type == CD_NORMAL);
 
   if (!sources) {
     /* Not supported here, abort. */
@@ -5022,7 +5032,7 @@ void CustomData_data_transfer(const MeshPairRemap *me_remap,
   MeshPairRemapItem *mapit = me_remap->items;
   const int totelem = me_remap->items_num;
 
-  const eCustomDataType data_type = laymap->data_type;
+  const int data_type = laymap->data_type;
   const void *data_src = laymap->data_src;
   void *data_dst = laymap->data_dst;
 
@@ -5051,7 +5061,7 @@ void CustomData_data_transfer(const MeshPairRemap *me_remap,
     data_offset = laymap->data_offset;
   }
   else {
-    const LayerTypeInfo *type_info = layerType_getInfo(data_type);
+    const LayerTypeInfo *type_info = layerType_getInfo(eCustomDataType(data_type));
 
     /* NOTE: we can use 'fake' CDLayers for crease :/. */
     data_size = size_t(type_info->size);
@@ -5168,9 +5178,6 @@ void CustomData_blend_write(BlendWriter *writer,
         break;
       case CD_GRID_PAINT_MASK:
         write_grid_paint_mask(writer, count, static_cast<const GridPaintMask *>(layer.data));
-        break;
-      case CD_FACEMAP:
-        BLO_write_raw(writer, sizeof(int) * count, static_cast<const int *>(layer.data));
         break;
       case CD_PROP_BOOL:
         BLO_write_raw(writer, sizeof(bool) * count, static_cast<const bool *>(layer.data));
@@ -5373,6 +5380,8 @@ const blender::CPPType *custom_data_type_to_cpp_type(const eCustomDataType type)
       return &CPPType::get<int8_t>();
     case CD_PROP_BYTE_COLOR:
       return &CPPType::get<ColorGeometry4b>();
+    case CD_PROP_QUATERNION:
+      return &CPPType::get<math::Quaternion>();
     case CD_PROP_STRING:
       return &CPPType::get<MStringProperty>();
     default:
@@ -5408,6 +5417,9 @@ eCustomDataType cpp_type_to_custom_data_type(const blender::CPPType &type)
   }
   if (type.is<ColorGeometry4b>()) {
     return CD_PROP_BYTE_COLOR;
+  }
+  if (type.is<math::Quaternion>()) {
+    return CD_PROP_QUATERNION;
   }
   if (type.is<MStringProperty>()) {
     return CD_PROP_STRING;

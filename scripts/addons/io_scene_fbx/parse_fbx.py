@@ -67,6 +67,7 @@ def unpack_array(read, array_type, array_stride, array_byteswap):
 
 
 read_data_dict = {
+    b'Z'[0]: lambda read: unpack(b'<b', read(1))[0],  # byte
     b'Y'[0]: lambda read: unpack(b'<h', read(2))[0],  # 16 bit int
     b'C'[0]: lambda read: unpack(b'?', read(1))[0],   # 1 bit bool (yes/no)
     b'I'[0]: lambda read: unpack(b'<i', read(4))[0],  # 32 bit int

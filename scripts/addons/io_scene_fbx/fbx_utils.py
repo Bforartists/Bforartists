@@ -540,6 +540,58 @@ def fast_first_axis_unique(ar, return_unique=True, return_index=False, return_in
             return result
 
 
+def ensure_object_not_in_edit_mode(context, obj):
+    """Objects in Edit mode usually cannot be exported because much of the API used when exporting is not available for
+    Objects in Edit mode.
+
+    Exiting the currently active Object (and any other Objects opened in multi-editing) from Edit mode is simple and
+    should be done with `bpy.ops.mesh.mode_set(mode='OBJECT')` instead of using this function.
+
+    This function is for the rare case where an Object is in Edit mode, but the current context mode is not Edit mode.
+    This can occur from a state where the current context mode is Edit mode, but then the active Object of the current
+    View Layer is changed to a different Object that is not in Edit mode. This changes the current context mode, but
+    leaves the other Object(s) in Edit mode.
+    """
+    if obj.mode != 'EDIT':
+        return True
+
+    # Get the active View Layer.
+    view_layer = context.view_layer
+
+    # A View Layer belongs to a scene.
+    scene = view_layer.id_data
+
+    # Get the current active Object of this View Layer, so we can restore it once done.
+    orig_active = view_layer.objects.active
+
+    # Check if obj is in the View Layer. If obj is not in the View Layer, it cannot be set as the active Object.
+    # We don't use `obj.name in view_layer.objects` because an Object from a Library could have the same name.
+    is_in_view_layer = any(o == obj for o in view_layer.objects)
+
+    do_unlink_from_scene_collection = False
+    try:
+        if not is_in_view_layer:
+            # There might not be any enabled collections in the View Layer, so link obj into the Scene Collection
+            # instead, which is always available to all View Layers of that Scene.
+            scene.collection.objects.link(obj)
+            do_unlink_from_scene_collection = True
+        view_layer.objects.active = obj
+
+        # Now we're finally ready to attempt to change obj's mode.
+        if bpy.ops.object.mode_set.poll():
+            bpy.ops.object.mode_set(mode='OBJECT')
+        if obj.mode == 'EDIT':
+            # The Object could not be set out of EDIT mode and therefore cannot be exported.
+            return False
+    finally:
+        # Always restore the original active Object and unlink obj from the Scene Collection if it had to be linked.
+        view_layer.objects.active = orig_active
+        if do_unlink_from_scene_collection:
+            scene.collection.objects.unlink(obj)
+
+    return True
+
+
 # ##### UIDs code. #####
 
 # ID class (mere int).
@@ -720,6 +772,10 @@ def _elem_data_vec(elem, name, value, func_name):
 
 def elem_data_single_bool(elem, name, value):
     return _elem_data_single(elem, name, value, "add_bool")
+
+
+def elem_data_single_int8(elem, name, value):
+    return _elem_data_single(elem, name, value, "add_int8")
 
 
 def elem_data_single_int16(elem, name, value):
