@@ -142,7 +142,7 @@ def write_mesh(context, report_cb):
             filepath=filepath,
             apply_modifiers=True,
             export_selected_objects=True,
-            scaling_factor=global_scale,
+            global_scale=global_scale,
             path_mode=path_mode,
             export_normals=export_data_layers,
             export_uv=export_data_layers,

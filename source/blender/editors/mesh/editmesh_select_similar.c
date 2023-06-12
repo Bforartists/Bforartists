@@ -79,7 +79,6 @@ static const EnumPropertyItem prop_similar_types[] = {
     {SIMFACE_NORMAL, "NORMAL", ICON_RECALC_NORMALS, "Normal", ""},
     {SIMFACE_COPLANAR, "COPLANAR", ICON_MAKE_PLANAR, "Coplanar", ""},
     {SIMFACE_SMOOTH, "SMOOTH", ICON_SHADING_SMOOTH, "Flat/Smooth", ""},
-    {SIMFACE_FACEMAP, "FACE_MAP", ICON_TEXTURE, "Face Map", ""},
 #ifdef WITH_FREESTYLE
     {SIMFACE_FREESTYLE, "FREESTYLE_FACE", ICON_MARKFSFACE, "Freestyle Face Marks", ""},
 #endif
@@ -180,7 +179,6 @@ static int similar_face_select_exec(bContext *C, wmOperator *op)
   KDTree_3d *tree_3d = NULL;
   KDTree_4d *tree_4d = NULL;
   GSet *gset = NULL;
-  GSet **gset_array = NULL;
   int face_data_value = SIMFACE_DATA_NONE;
 
   switch (type) {
@@ -198,10 +196,6 @@ static int similar_face_select_exec(bContext *C, wmOperator *op)
     case SIMFACE_MATERIAL:
       gset = BLI_gset_ptr_new("Select similar face");
       break;
-    case SIMFACE_FACEMAP:
-      gset_array = MEM_callocN(sizeof(GSet *) * objects_len,
-                               "Select similar face: facemap gset array");
-      break;
   }
 
   int tree_index = 0;
@@ -211,7 +205,6 @@ static int similar_face_select_exec(bContext *C, wmOperator *op)
     BMesh *bm = em->bm;
     Material ***material_array = NULL;
     invert_m4_m4(ob->world_to_object, ob->object_to_world);
-    int custom_data_offset = 0;
 
     if (bm->totfacesel == 0) {
       continue;
@@ -234,13 +227,6 @@ static int similar_face_select_exec(bContext *C, wmOperator *op)
           continue;
         }
         break;
-      }
-      case SIMFACE_FACEMAP: {
-        custom_data_offset = CustomData_get_offset(&bm->pdata, CD_FACEMAP);
-        if (custom_data_offset == -1) {
-          continue;
-        }
-        gset_array[ob_index] = BLI_gset_ptr_new("Select similar face: facemap gset");
       }
     }
 
@@ -304,12 +290,6 @@ static int similar_face_select_exec(bContext *C, wmOperator *op)
             }
             break;
           }
-          case SIMFACE_FACEMAP: {
-            BLI_assert(custom_data_offset != -1);
-            int *face_map = BM_ELEM_CD_GET_VOID_P(face, custom_data_offset);
-            BLI_gset_add(gset_array[ob_index], face_map);
-            break;
-          }
         }
       }
     }
@@ -336,7 +316,6 @@ static int similar_face_select_exec(bContext *C, wmOperator *op)
     BMesh *bm = em->bm;
     bool changed = false;
     Material ***material_array = NULL;
-    int custom_data_offset;
 
     float ob_m3[3][3];
     copy_m3_m4(ob_m3, ob->object_to_world);
@@ -356,12 +335,6 @@ static int similar_face_select_exec(bContext *C, wmOperator *op)
           continue;
         }
         break;
-      }
-      case SIMFACE_FACEMAP: {
-        custom_data_offset = CustomData_get_offset(&bm->pdata, CD_FACEMAP);
-        if (custom_data_offset == -1) {
-          continue;
-        }
       }
     }
 
@@ -470,18 +443,6 @@ static int similar_face_select_exec(bContext *C, wmOperator *op)
             }
             break;
           }
-          case SIMFACE_FACEMAP: {
-            const int *face_map = BM_ELEM_CD_GET_VOID_P(face, custom_data_offset);
-            GSetIterator gs_iter;
-            GSET_ITER (gs_iter, gset_array[ob_index]) {
-              const int *face_map_iter = BLI_gsetIterator_getKey(&gs_iter);
-              if (*face_map == *face_map_iter) {
-                select = true;
-                break;
-              }
-            }
-            break;
-          }
         }
 
         if (select) {
@@ -535,14 +496,6 @@ static int similar_face_select_exec(bContext *C, wmOperator *op)
   BLI_kdtree_4d_free(tree_4d);
   if (gset != NULL) {
     BLI_gset_free(gset, NULL);
-  }
-  if (gset_array != NULL) {
-    for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
-      if (gset_array[ob_index] != NULL) {
-        BLI_gset_free(gset_array[ob_index], NULL);
-      }
-    }
-    MEM_freeN(gset_array);
   }
 
   return OPERATOR_FINISHED;
@@ -1379,7 +1332,7 @@ static const EnumPropertyItem *select_similar_type_itemf(bContext *C,
 #ifdef WITH_FREESTYLE
       const int a_end = SIMFACE_FREESTYLE;
 #else
-      const int a_end = SIMFACE_FACEMAP;
+      const int a_end = SIMFACE_MATERIAL;
 #endif
       for (a = SIMFACE_MATERIAL; a <= a_end; a++) {
         RNA_enum_items_add_value(&item, &totitem, prop_similar_types, a);

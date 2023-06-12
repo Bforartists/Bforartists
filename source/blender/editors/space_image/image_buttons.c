@@ -971,7 +971,10 @@ void uiTemplateImage(uiLayout *layout,
   UI_block_funcN_set(block, NULL, NULL, NULL);
 }
 
-void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_management)
+void uiTemplateImageSettings(uiLayout *layout,
+                             PointerRNA *imfptr,
+                             bool color_management,
+                             bool show_z_buffer)
 {
   ImageFormatData *imf = imfptr->data;
   ID *id = imfptr->owner_id;
@@ -1023,7 +1026,7 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
     uiItemR(col, imfptr, "exr_codec", 0, NULL, ICON_NONE);
   }
 
-  if (BKE_imtype_supports_zbuf(imf->imtype)) {
+  if (BKE_imtype_supports_zbuf(imf->imtype) && show_z_buffer) {
     uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     uiItemR(col, imfptr, "use_zbuffer", 0, NULL, ICON_NONE);
   }

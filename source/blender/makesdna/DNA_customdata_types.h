@@ -84,8 +84,7 @@ typedef struct CustomData {
    * MUST be >= CD_NUMTYPES, but we can't use a define here.
    * Correct size is ensured in CustomData_update_typemap assert().
    */
-  int typemap[52];
-  char _pad[4];
+  int typemap[53];
   /** Number of layers, size of layers array. */
   int totlayer, maxlayer;
   /** In editmode, total size of all data layers. */
@@ -121,7 +120,9 @@ typedef enum eCustomDataType {
    * lazily. Derived vertex and polygon normals are stored in #Mesh_Runtime.
    */
   CD_NORMAL = 8,
-  CD_FACEMAP = 9, /* exclusive face group, each face can only be part of one */
+#ifdef DNA_DEPRECATED_ALLOW
+  CD_FACEMAP = 9,
+#endif
   CD_PROP_FLOAT = 10,
   CD_PROP_INT32 = 11,
   CD_PROP_STRING = 12,
@@ -179,8 +180,9 @@ typedef enum eCustomDataType {
   CD_PROP_BOOL = 50,
 
   CD_HAIRLENGTH = 51,
+  CD_PROP_QUATERNION = 52,
 
-  CD_NUMTYPES = 52,
+  CD_NUMTYPES = 53,
 } eCustomDataType;
 
 /* Bits for eCustomDataMask */
@@ -190,7 +192,6 @@ typedef enum eCustomDataType {
 #define CD_MASK_MCOL (1 << CD_MCOL)
 #define CD_MASK_ORIGINDEX (1 << CD_ORIGINDEX)
 #define CD_MASK_NORMAL (1 << CD_NORMAL)
-#define CD_MASK_FACEMAP (1 << CD_FACEMAP)
 #define CD_MASK_PROP_FLOAT (1 << CD_PROP_FLOAT)
 #define CD_MASK_PROP_INT32 (1 << CD_PROP_INT32)
 #define CD_MASK_PROP_STRING (1 << CD_PROP_STRING)
@@ -223,6 +224,7 @@ typedef enum eCustomDataType {
 #define CD_MASK_PROP_BOOL (1ULL << CD_PROP_BOOL)
 #define CD_MASK_PROP_INT8 (1ULL << CD_PROP_INT8)
 #define CD_MASK_PROP_INT32_2D (1ULL << CD_PROP_INT32_2D)
+#define CD_MASK_PROP_QUATERNION (1ULL << CD_PROP_QUATERNION)
 
 #define CD_MASK_HAIRLENGTH (1ULL << CD_HAIRLENGTH)
 
@@ -236,7 +238,7 @@ typedef enum eCustomDataType {
 #define CD_MASK_PROP_ALL \
   (CD_MASK_PROP_FLOAT | CD_MASK_PROP_FLOAT2 | CD_MASK_PROP_FLOAT3 | CD_MASK_PROP_INT32 | \
    CD_MASK_PROP_COLOR | CD_MASK_PROP_STRING | CD_MASK_PROP_BYTE_COLOR | CD_MASK_PROP_BOOL | \
-   CD_MASK_PROP_INT8 | CD_MASK_PROP_INT32_2D)
+   CD_MASK_PROP_INT8 | CD_MASK_PROP_INT32_2D | CD_MASK_PROP_QUATERNION)
 
 /* All color attributes */
 #define CD_MASK_COLOR_ALL (CD_MASK_PROP_COLOR | CD_MASK_PROP_BYTE_COLOR)

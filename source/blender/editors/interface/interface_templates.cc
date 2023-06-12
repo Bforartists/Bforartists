@@ -976,6 +976,9 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
         id->us = 0;
         undo_push_label = "Delete Data-Block";
       }
+      else {
+        undo_push_label = "Unlink Data-Block";
+      }
 
       break;
     case UI_ID_FAKE_USER:
@@ -6751,7 +6754,7 @@ void uiTemplateComponentMenu(uiLayout *layout,
   /* set rna directly, uiDefBlockButN doesn't do this */
   but->rnapoin = *ptr;
   but->rnaprop = RNA_struct_find_property(ptr, propname);
-  but->rnaindex = -1;
+  but->rnaindex = 0;
 
   UI_block_align_end(block);
 }
