@@ -1053,16 +1053,35 @@ void GreasePencil::remove_drawing(const int index_to_remove)
   shrink_array<GreasePencilDrawingBase *>(&this->drawing_array, &this->drawing_array_num, 1);
 }
 
-void GreasePencil::foreach_visible_drawing(
-    int frame, blender::FunctionRef<void(GreasePencilDrawing &)> function)
+enum ForeachDrawingMode {
+  VISIBLE,
+  EDITABLE,
+};
+
+static void foreach_drawing_ex(GreasePencil &grease_pencil,
+                               int frame,
+                               ForeachDrawingMode mode,
+                               blender::FunctionRef<void(int, GreasePencilDrawing &)> function)
 {
   using namespace blender::bke::greasepencil;
 
-  blender::Span<GreasePencilDrawingBase *> drawings = this->drawings();
-  for (const Layer *layer : this->layers()) {
-    if (!layer->is_visible()) {
-      continue;
+  blender::Span<GreasePencilDrawingBase *> drawings = grease_pencil.drawings();
+  for (const Layer *layer : grease_pencil.layers()) {
+    switch (mode) {
+      case VISIBLE: {
+        if (!layer->is_visible()) {
+          continue;
+        }
+        break;
+      }
+      case EDITABLE: {
+        if (!layer->is_visible() || layer->is_locked()) {
+          continue;
+        }
+        break;
+      }
     }
+
     int index = layer->drawing_index_at(frame);
     if (index == -1) {
       continue;
@@ -1070,12 +1089,24 @@ void GreasePencil::foreach_visible_drawing(
     GreasePencilDrawingBase *drawing_base = drawings[index];
     if (drawing_base->type == GP_DRAWING) {
       GreasePencilDrawing *drawing = reinterpret_cast<GreasePencilDrawing *>(drawing_base);
-      function(*drawing);
+      function(index, *drawing);
     }
     else if (drawing_base->type == GP_DRAWING_REFERENCE) {
       /* TODO */
     }
   }
+}
+
+void GreasePencil::foreach_visible_drawing(
+    int frame, blender::FunctionRef<void(int, GreasePencilDrawing &)> function)
+{
+  foreach_drawing_ex(*this, frame, VISIBLE, function);
+}
+
+void GreasePencil::foreach_editable_drawing(
+    int frame, blender::FunctionRef<void(int, GreasePencilDrawing &)> function)
+{
+  foreach_drawing_ex(*this, frame, EDITABLE, function);
 }
 
 bool GreasePencil::bounds_min_max(float3 &min, float3 &max) const

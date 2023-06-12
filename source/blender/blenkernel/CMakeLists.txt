@@ -37,6 +37,7 @@ set(INC
   ../../../intern/mikktspace
   ../../../intern/opensubdiv
   ../../../extern/curve_fit_nd
+  ../../../extern/fmtlib/include
 
   # dna_type_offsets.h
   ${CMAKE_CURRENT_BINARY_DIR}/../makesdna/intern
@@ -240,7 +241,6 @@ set(SRC
   intern/object.cc
   intern/object_deform.c
   intern/object_dupli.cc
-  intern/object_facemap.c
   intern/object_update.cc
   intern/ocean.c
   intern/ocean_spectrum.c
@@ -456,7 +456,6 @@ set(SRC
   BKE_node_tree_zones.hh
   BKE_object.h
   BKE_object_deform.h
-  BKE_object_facemap.h
   BKE_ocean.h
   BKE_outliner_treehash.hh
   BKE_packedFile.h
@@ -554,6 +553,7 @@ set(LIB
   bf_rna
   bf_shader_fx
   bf_simulation
+  extern_fmtlib
 
   # For `vfontdata_freetype.c`.
   ${FREETYPE_LIBRARIES} ${BROTLI_LIBRARIES}

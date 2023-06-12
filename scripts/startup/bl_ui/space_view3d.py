@@ -951,13 +951,14 @@ class VIEW3D_MT_editor_menus(Menu):
                 ):
                     layout.menu("VIEW3D_MT_select_gpencil")
                     layout.menu("VIEW3D_MT_sculpt_gpencil_copy")
+                    layout.menu("VIEW3D_MT_select_edit_gpencil")
                 elif mode_string == 'EDIT_GPENCIL':
-                    layout.menu("VIEW3D_MT_select_gpencil")
+                    layout.menu("VIEW3D_MT_select_edit_gpencil")
                 elif mode_string == 'VERTEX_GPENCIL':
                     layout.menu("VIEW3D_MT_select_gpencil")
                     layout.menu("VIEW3D_MT_gpencil_animation")
                     layout.menu("GPENCIL_MT_layer_active", text="Active Layer")
-
+                    layout.menu("VIEW3D_MT_select_edit_gpencil")
         elif mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
             mesh = obj.data
             if mesh.use_paint_mask:
@@ -1057,17 +1058,9 @@ class VIEW3D_MT_transform_base:
             "use_transform_navigation",
             False)
 
-        props = layout.operator("transform.translate")
-        props.release_confirm = False
-        props.allow_navigation = allow_navigation
-
-        props = layout.operator("transform.rotate")
-        props.release_confirm = False
-        props.allow_navigation = allow_navigation
-
-        props = layout.operator("transform.resize", text="Scale")
-        props.release_confirm = False
-        props.allow_navigation = allow_navigation
+        layout.operator("transform.translate").allow_navigation = allow_navigation
+        layout.operator("transform.rotate").allow_navigation = allow_navigation
+        layout.operator("transform.resize", text="Scale").allow_navigation = allow_navigation
 
         layout.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
         layout.operator("transform.shear", text="Shear", icon="SHEAR")
@@ -1085,6 +1078,11 @@ class VIEW3D_MT_transform_base:
 # Generic transform menu - geometry types
 class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
     def draw(self, context):
+        allow_navigation = getattr(
+            context.window_manager.keyconfigs.active.preferences,
+            "use_transform_navigation",
+            False)
+
         # base menu
         VIEW3D_MT_transform_base.draw(self, context)
 
@@ -1092,18 +1090,20 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
 
         # generic
         layout = self.layout
-
-        if obj.type == 'MESH':
-            layout.operator("transform.shrink_fatten", text="Shrink Fatten", icon='SHRINK_FATTEN')
+        if context.mode == 'EDIT_MESH':
+            layout.operator("transform.shrink_fatten", text="Shrink/Fatten", icon='SHRINK_FATTEN').allow_navigation = allow_navigation
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
-
-        elif obj.type == 'CURVE':
+        elif context.mode == 'EDIT_CURVE':
             layout.operator("transform.transform", text="Radius", icon='SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
         if context.mode != 'EDIT_CURVES':
             layout.separator()
-            layout.operator("transform.translate", text="Move Texture Space", icon="MOVE_TEXTURESPACE").texture_space = True
-            layout.operator("transform.resize", text="Scale Texture Space", icon="SCALE_TEXTURESPACE").texture_space = True
+            props = layout.operator("transform.translate", text="Move Texture Space", icon="MOVE_TEXTURESPACE")
+            props.texture_space = True
+            props.allow_navigation = allow_navigation
+            props = layout.operator("transform.resize", text="Scale Texture Space", icon="SCALE_TEXTURESPACE")
+            props.texture_space = True
+            props.allow_navigation = allow_navigation
 
 
 # Object-specific extensions to Transform menu
@@ -2189,7 +2189,7 @@ class VIEW3D_MT_paint_gpencil(Menu):
 class VIEW3D_MT_select_edit_gpencil(Menu):
     bl_label = "Select"
 
-    def draw(self, context):
+    def draw_legacy(self, context):
         layout = self.layout
 
         layout.menu("VIEW3D_MT_select_gpencil_legacy")
@@ -2220,6 +2220,25 @@ class VIEW3D_MT_select_edit_gpencil(Menu):
 
         layout.operator("gpencil.select_more", text="More", icon="SELECTMORE")
         layout.operator("gpencil.select_less", text="Less", icon="SELECTLESS")
+
+    def draw(self, context):
+        if not context.preferences.experimental.use_grease_pencil_version3:
+            self.draw_legacy(context)
+
+        layout = self.layout
+
+        layout.operator("grease_pencil.select_all", text="All").action = 'SELECT'
+        layout.operator("grease_pencil.select_all", text="None").action = 'DESELECT'
+        layout.operator("grease_pencil.select_all", text="Invert").action = 'INVERT'
+
+        layout.separator()
+
+        layout.operator("grease_pencil.select_linked", text="Linked")
+
+        layout.separator()
+
+        layout.operator("grease_pencil.select_more")
+        layout.operator("grease_pencil.select_less")
 
 
 class VIEW3D_MT_select_gpencil_legacy(Menu):
@@ -2337,7 +2356,7 @@ class VIEW3D_MT_select_edit_curves(Menu):
         layout.operator("curves.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
         layout.operator("curves.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
         layout.operator("curves.select_random", text="Random", icon = "RANDOMIZE")
-        layout.operator("curves.select_end", text="Endpoints", icon = "SELECT_TIP")
+        layout.operator("curves.select_ends", text="Endpoints", icon = "SELECT_TIP")
         layout.operator("curves.select_linked", text="Linked", icon="LINKED")
 
         layout.separator()
@@ -2355,7 +2374,7 @@ class VIEW3D_MT_select_sculpt_curves(Menu):
         layout.operator("curves.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
         layout.operator("curves.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
         layout.operator("sculpt_curves.select_random", text="Random", icon = "RANDOMIZE")
-        layout.operator("curves.select_end", text="Endpoints", icon = "SELECT_TIP")
+        layout.operator("curves.select_ends", text="Endpoints", icon = "SELECT_TIP")
         layout.operator("sculpt_curves.select_grow", text="Grow", icon = "SELECTMORE")
 
 
@@ -4904,6 +4923,11 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("mesh.delete", text="Delete Edges", icon="DELETE").type = 'EDGE'
 
         if is_face_mode:
+            allow_navigation = getattr(
+                context.window_manager.keyconfigs.active.preferences,
+                "use_transform_navigation",
+                False)
+
             col = row.column(align=True)
 
             col.label(text="Face Context Menu", icon='FACESEL')
@@ -4914,12 +4938,12 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.separator()
 
-            col.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces", icon='EXTRUDE_REGION')
-            col.operator(
-                "view3d.edit_mesh_extrude_move_shrink_fatten",
-                text="Extrude Faces Along Normals",
-                icon='EXTRUDE_REGION')
-            col.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon='EXTRUDE_REGION')
+            col.operator("view3d.edit_mesh_extrude_move_normal",
+                         text="Extrude Faces", icon='EXTRUDE_REGION').allow_navigation = allow_navigation
+            col.operator("view3d.edit_mesh_extrude_move_shrink_fatten",
+                         text="Extrude Faces Along Normals", icon='EXTRUDE_REGION').allow_navigation = allow_navigation
+            col.operator("mesh.extrude_faces_move",
+                         text="Extrude Individual Faces", icon='EXTRUDE_REGION').TRANSFORM_OT_shrink_fatten.allow_navigation = allow_navigation
 
             col.separator()  # BFA-Draise - Legacy Operator Group
 
@@ -4997,67 +5021,39 @@ class VIEW3D_MT_edit_mesh_extrude_dupli_rotate(bpy.types.Operator):
 class VIEW3D_MT_edit_mesh_extrude(Menu):
     bl_label = "Extrude"
 
-    _extrude_funcs = {
-        'VERT': lambda layout: layout.operator(
-            "mesh.extrude_vertices_move",
-            text="Extrude Vertices",
-            icon='EXTRUDE_REGION'),
-        'EDGE': lambda layout: layout.operator(
-            "mesh.extrude_edges_move",
-            text="Extrude Edges",
-            icon='EXTRUDE_REGION'),
-        'REGION': lambda layout: layout.operator(
-            "view3d.edit_mesh_extrude_move_normal",
-            text="Extrude Faces (Legacy)",
-            icon='EXTRUDE_REGION'),
-        'REGION_VERT_NORMAL': lambda layout: layout.operator(
-            "view3d.edit_mesh_extrude_move_shrink_fatten",
-            text="Extrude Faces Along Normals (Legacy)",
-            icon='EXTRUDE_REGION'),
-        'FACE': lambda layout: layout.operator(
-            "mesh.extrude_faces_move",
-            text="Extrude Individual Faces (Legacy)",
-            icon='EXTRUDE_REGION'),
-        'MANIFOLD': lambda layout: layout.operator(
-            "view3d.edit_mesh_extrude_manifold_normal",
-            text="Extrude Manifold (Legacy)",
-            icon='EXTRUDE_REGION'),
-        'DUPLI_EXTRUDE': lambda layout: layout.operator(
-            "mesh.dupli_extrude_cursor_norotate",
-            text="Dupli Extrude",
-            icon='DUPLI_EXTRUDE'),
-        'DUPLI_EX_ROTATE': lambda layout: layout.operator(
-            "mesh.dupli_extrude_cursor_rotate",
-            text="Dupli Extrude Rotate",
-            icon='DUPLI_EXTRUDE_ROTATE'),
-    }
-
-    @staticmethod
-    def extrude_options(context):
-        tool_settings = context.tool_settings
-        select_mode = tool_settings.mesh_select_mode
-        mesh = context.object.data
-
-        menu = []
-        if mesh.total_face_sel:
-            menu += ['REGION', 'REGION_VERT_NORMAL', 'FACE', 'MANIFOLD']
-        if mesh.total_edge_sel and (select_mode[0] or select_mode[1]):
-            menu += ['EDGE']
-        if mesh.total_vert_sel and select_mode[0]:
-            menu += ['VERT']
-        menu += ['DUPLI_EXTRUDE', 'DUPLI_EX_ROTATE']
-
-        # should never get here
-        return menu
-
     def draw(self, context):
         from math import pi
+
+        allow_navigation = getattr(
+            context.window_manager.keyconfigs.active.preferences,
+            "use_transform_navigation",
+            False)
 
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        for menu_id in self.extrude_options(context):
-            self._extrude_funcs[menu_id](layout)
+        tool_settings = context.tool_settings
+        select_mode = tool_settings.mesh_select_mode
+        mesh = context.object.data
+
+        if mesh.total_face_sel:
+            layout.operator("view3d.edit_mesh_extrude_move_normal",
+                            text="Extrude Faces", icon='EXTRUDE_REGION').allow_navigation = allow_navigation
+            layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten",
+                            text="Extrude Faces Along Normals", icon='EXTRUDE_REGION').allow_navigation = allow_navigation
+            layout.operator(
+                "mesh.extrude_faces_move",
+                text="Extrude Individual Faces", icon='EXTRUDE_REGION').TRANSFORM_OT_shrink_fatten.allow_navigation = allow_navigation
+            layout.operator("view3d.edit_mesh_extrude_manifold_normal",
+                            text="Extrude Manifold", icon='EXTRUDE_REGION').allow_navigation = allow_navigation
+
+        if mesh.total_edge_sel and (select_mode[0] or select_mode[1]):
+            layout.operator("mesh.extrude_edges_move",
+                            text="Extrude Edges", icon='EXTRUDE_REGION').TRANSFORM_OT_translate.allow_navigation = allow_navigation
+
+        if mesh.total_vert_sel and select_mode[0]:
+            layout.operator("mesh.extrude_vertices_move",
+                            text="Extrude Vertices", icon='EXTRUDE_REGION').TRANSFORM_OT_translate.allow_navigation = allow_navigation
 
         layout.separator()
 
@@ -5227,7 +5223,12 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
     bl_label = "Face"
     bl_idname = "VIEW3D_MT_edit_mesh_faces"
 
-    def draw(self, _context):
+    def draw(self, context):
+        allow_navigation = getattr(
+            context.window_manager.keyconfigs.active.preferences,
+            "use_transform_navigation",
+            False)
+
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
@@ -5235,6 +5236,13 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_faces_legacy")
 
         layout.operator("mesh.poke", icon="POKEFACES")
+        layout.operator("view3d.edit_mesh_extrude_move_normal",
+                        text="Extrude Faces", icon='EXTRUDE_REGION').allow_navigation = allow_navigation
+        layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten",
+                        text="Extrude Faces Along Normals", icon='EXTRUDE_REGION').allow_navigation = allow_navigation
+        layout.operator(
+            "mesh.extrude_faces_move",
+            text="Extrude Individual Faces", icon='EXTRUDE_REGION').TRANSFORM_OT_shrink_fatten.allow_navigation = allow_navigation
 
         layout.separator()
 
@@ -8390,72 +8398,70 @@ class VIEW3D_PT_snapping(Panel):
 
     def draw(self, context):
         tool_settings = context.tool_settings
-        snap_elements = tool_settings.snap_elements
         obj = context.active_object
         object_mode = 'OBJECT' if obj is None else obj.mode
 
         layout = self.layout
         col = layout.column()
+
+        col.label(text="Snap With")
+        row = col.row(align=True)
+        row.prop(tool_settings, "snap_target", expand=True)
+
         col.label(text="Snap To")
-        col.prop(tool_settings, "snap_elements", expand=True)
+        col.prop(tool_settings, "snap_elements_base", expand=True)
+
+        col.label(text="Snap Individual Elements To")
+        col.prop(tool_settings, "snap_elements_individual", expand=True)
 
         col.separator()
-        if 'INCREMENT' in snap_elements:
+
+        if 'INCREMENT' in tool_settings.snap_elements:
             col.prop(tool_settings, "use_snap_grid_absolute")
 
-        if snap_elements != {'INCREMENT'}:
-            if snap_elements != {'FACE_NEAREST'}:
-                col.label(text="Snap With")
-                row = col.row(align=True)
-                row.prop(tool_settings, "snap_target", expand=True)
+        if 'VOLUME' in tool_settings.snap_elements:
+            col.prop(tool_settings, "use_snap_peel_object")
 
-            if obj:
-                col.label(text="Target Selection")
-                col_targetsel = col.column(align=True)
-                if object_mode == 'EDIT' and obj.type not in {'LATTICE', 'META', 'FONT'}:
-                    col_targetsel.prop(
-                        tool_settings,
-                        "use_snap_self",
-                        text="Include Active",
-                        icon='EDITMODE_HLT',
-                    )
-                    col_targetsel.prop(
-                        tool_settings,
-                        "use_snap_edit",
-                        text="Include Edited",
-                        icon='OUTLINER_DATA_MESH',
-                    )
-                    col_targetsel.prop(
-                        tool_settings,
-                        "use_snap_nonedit",
-                        text="Include Non-Edited",
-                        icon='OUTLINER_OB_MESH',
-                    )
+        if 'FACE_NEAREST' in tool_settings.snap_elements:
+            col.prop(tool_settings, "use_snap_to_same_target")
+            if object_mode == 'EDIT':
+                col.prop(tool_settings, "snap_face_nearest_steps")
+
+        col.separator()
+
+        col.prop(tool_settings, "use_snap_align_rotation")
+        col.prop(tool_settings, "use_snap_backface_culling")
+
+        col.separator()
+
+        if obj:
+            col.label(text="Target Selection")
+            col_targetsel = col.column(align=True)
+            if object_mode == 'EDIT' and obj.type not in {'LATTICE', 'META', 'FONT'}:
                 col_targetsel.prop(
                     tool_settings,
-                    "use_snap_selectable",
-                    text="Exclude Non-Selectable",
-                    icon='RESTRICT_SELECT_OFF',
+                    "use_snap_self",
+                    text="Include Active",
+                    icon='EDITMODE_HLT',
                 )
-
-                if object_mode in {'OBJECT', 'POSE', 'EDIT', 'WEIGHT_PAINT'}:
-                    col.prop(tool_settings, "use_snap_align_rotation")
-
-            col.prop(tool_settings, "use_snap_backface_culling")
-
-            is_face_nearest_enabled = 'FACE_NEAREST' in snap_elements
-            if is_face_nearest_enabled or 'FACE' in snap_elements:
-                sub = col.column()
-                sub.active = not is_face_nearest_enabled
-                sub.prop(tool_settings, "use_snap_project")
-
-                if is_face_nearest_enabled:
-                    col.prop(tool_settings, "use_snap_to_same_target")
-                    if object_mode == 'EDIT':
-                        col.prop(tool_settings, "snap_face_nearest_steps")
-
-            if 'VOLUME' in snap_elements:
-                col.prop(tool_settings, "use_snap_peel_object")
+                col_targetsel.prop(
+                    tool_settings,
+                    "use_snap_edit",
+                    text="Include Edited",
+                    icon='OUTLINER_DATA_MESH',
+                )
+                col_targetsel.prop(
+                    tool_settings,
+                    "use_snap_nonedit",
+                    text="Include Non-Edited",
+                    icon='OUTLINER_OB_MESH',
+                )
+            col_targetsel.prop(
+                tool_settings,
+                "use_snap_selectable",
+                text="Exclude Non-Selectable",
+                icon='RESTRICT_SELECT_OFF',
+            )
 
         col.label(text="Affect")
         row = col.row(align=True)

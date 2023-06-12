@@ -77,7 +77,7 @@ from .fbx_utils import (
     # Animation.
     AnimationCurveNodeWrapper,
     # Objects.
-    ObjectWrapper, fbx_name_class,
+    ObjectWrapper, fbx_name_class, ensure_object_not_in_edit_mode,
     # Top level.
     FBXExportSettingsMedia, FBXExportSettings, FBXExportData,
 )
@@ -2899,20 +2899,23 @@ def fbx_data_from_scene(scene, depsgraph, settings):
     _objs_indices = {}
     for ma, (ma_key, ob_objs) in data_materials.items():
         for ob_obj in ob_objs:
-            connections.append((b"OO", get_fbx_uuid_from_key(ma_key), ob_obj.fbx_uuid, None))
             # Get index of this material for this object (or dupliobject).
             # Material indices for mesh faces are determined by their order in 'ma to ob' connections.
             # Only materials for meshes currently...
             # Note in case of dupliobjects a same me/ma idx will be generated several times...
             # Should not be an issue in practice, and it's needed in case we export duplis but not the original!
             if ob_obj.type not in BLENDER_OBJECT_TYPES_MESHLIKE:
+                connections.append((b"OO", get_fbx_uuid_from_key(ma_key), ob_obj.fbx_uuid, None))
                 continue
             _mesh_key, me, _free = data_meshes[ob_obj]
             material_indices = mesh_material_indices.setdefault(me, {})
             if ma in material_indices:
                 # Material has already been found for this mesh.
                 # XXX If a mesh has multiple material slots with the same material, they are combined into one slot.
+                # Even if duplicate materials were exported without combining them into one slot, keeping duplicate
+                # materials separated does not appear to be common behaviour of external software when importing FBX.
                 continue
+            connections.append((b"OO", get_fbx_uuid_from_key(ma_key), ob_obj.fbx_uuid, None))
             idx = _objs_indices[ob_obj] = _objs_indices.get(ob_obj, -1) + 1
             material_indices[ma] = idx
     del _objs_indices
@@ -3494,6 +3497,14 @@ def save(operator, context,
                 ctx_objects = context.view_layer.objects
         if use_visible:
             ctx_objects = tuple(obj for obj in ctx_objects if obj.visible_get())
+
+        # Ensure no Objects are in Edit mode.
+        # Copy to a tuple for safety, to avoid the risk of modifying ctx_objects while iterating.
+        for obj in tuple(ctx_objects):
+            if not ensure_object_not_in_edit_mode(context, obj):
+                operator.report({'ERROR'}, "%s could not be set out of Edit Mode, so cannot be exported" % obj.name)
+                return {'CANCELLED'}
+
         kwargs_mod["context_objects"] = ctx_objects
 
         depsgraph = context.evaluated_depsgraph_get()
@@ -3524,6 +3535,16 @@ def save(operator, context,
                     data_seq.append((coll, coll_name, 'all_objects'))
         else:
             data_seq = tuple((scene, scene.name, 'objects') for scene in bpy.data.scenes if scene.objects)
+
+        # Ensure no Objects are in Edit mode.
+        for data, data_name, data_obj_propname in data_seq:
+            # Copy to a tuple for safety, to avoid the risk of modifying the data prop while iterating it.
+            for obj in tuple(getattr(data, data_obj_propname)):
+                if not ensure_object_not_in_edit_mode(context, obj):
+                    operator.report({'ERROR'},
+                                    "%s in %s could not be set out of Edit Mode, so cannot be exported"
+                                    % (obj.name, data_name))
+                    return {'CANCELLED'}
 
         # call this function within a loop with BATCH_ENABLE == False
 
