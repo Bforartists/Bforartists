@@ -311,7 +311,6 @@ class PoseAssetUser:
         if not (
             context.object
             and context.object.mode == "POSE"  # This condition may not be desired.
-            and context.asset_library_ref
             and context.asset_file_handle
         ):
             return False

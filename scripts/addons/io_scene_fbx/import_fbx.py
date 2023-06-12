@@ -3308,33 +3308,64 @@ def load(operator, context, filepath="",
 
     def _():
         # link Material's to Geometry (via Model's)
-        for fbx_uuid, fbx_item in fbx_table_nodes.items():
-            fbx_obj, blen_data = fbx_item
-            if fbx_obj.id != b'Geometry':
+        processed_meshes = set()
+        for helper_uuid, helper_node in fbx_helper_nodes.items():
+            obj = helper_node.bl_obj
+            if not obj or obj.type != 'MESH':
                 continue
 
-            mesh = fbx_table_nodes.get(fbx_uuid, (None, None))[1]
+            # Get the Mesh corresponding to the Geometry used by this Model.
+            mesh = obj.data
+            processed_meshes.add(mesh)
 
-            # can happen in rare cases
-            if mesh is None:
+            # Get the Materials from the Model's connections.
+            material_connections = connection_filter_reverse(helper_uuid, b'Material')
+            if not material_connections:
                 continue
 
-            # In Blender, we link materials to data, typically (meshes), while in FBX they are linked to objects...
-            # So we have to be careful not to re-add endlessly the same material to a mesh!
-            # This can easily happen with 'baked' dupliobjects, see T44386.
-            # TODO: add an option to link materials to objects in Blender instead?
-            done_materials = set()
+            mesh_mats = mesh.materials
+            num_mesh_mats = len(mesh_mats)
 
-            for (fbx_lnk, fbx_lnk_item, fbx_lnk_type) in connection_filter_forward(fbx_uuid, b'Model'):
-                # link materials
-                fbx_lnk_uuid = elem_uuid(fbx_lnk)
-                for (fbx_lnk_material, material, fbx_lnk_material_type) in connection_filter_reverse(fbx_lnk_uuid, b'Material'):
-                    if material not in done_materials:
-                        mesh.materials.append(material)
-                        done_materials.add(material)
+            if num_mesh_mats == 0:
+                # This is the first (or only) model to use this Geometry. This is the most common case when importing.
+                # All the Materials can trivially be appended to the Mesh's Materials.
+                mats_to_append = material_connections
+                mats_to_compare = ()
+            elif num_mesh_mats == len(material_connections):
+                # Another Model uses the same Geometry and has already appended its Materials to the Mesh. This is the
+                # second most common case when importing.
+                # It's also possible that a Model could share the same Geometry and have the same number of Materials,
+                # but have different Materials, though this is less common.
+                # The Model Materials will need to be compared with the Mesh Materials at the same indices to check if
+                # they are different.
+                mats_to_append = ()
+                mats_to_compare = material_connections
+            else:
+                # Under the assumption that only used Materials are connected to the Model, the number of Materials of
+                # each Model using a specific Geometry should be the same, otherwise the Material Indices of the
+                # Geometry will be out-of-bounds of the Materials of at least one of the Models using that Geometry.
+                # We wouldn't expect this case to happen, but there's nothing to say it can't.
+                # We'll handle a differing number of Materials by appending any extra Materials and comparing the rest.
+                mats_to_append = material_connections[num_mesh_mats:]
+                mats_to_compare = material_connections[:num_mesh_mats]
 
-            # We have to validate mesh polygons' ma_idx, see T41015!
-            # Some FBX seem to have an extra 'default' material which is not defined in FBX file.
+            for _fbx_lnk_material, material, _fbx_lnk_material_type in mats_to_append:
+                mesh_mats.append(material)
+
+            mats_to_compare_and_slots = zip(mats_to_compare, obj.material_slots)
+            for (_fbx_lnk_material, material, _fbx_lnk_material_type), mat_slot in mats_to_compare_and_slots:
+                if material != mat_slot.material:
+                    # Material Slots default to being linked to the Mesh, so a previously processed Object is also using
+                    # this Mesh, but the Mesh uses a different Material for this Material Slot.
+                    # To have a different Material for this Material Slot on this Object only, the Material Slot must be
+                    # linked to the Object rather than the Mesh.
+                    # TODO: add an option to link all materials to objects in Blender instead?
+                    mat_slot.link = 'OBJECT'
+                    mat_slot.material = material
+
+        # We have to validate mesh polygons' ma_idx, see #41015!
+        # Some FBX seem to have an extra 'default' material which is not defined in FBX file.
+        for mesh in processed_meshes:
             if mesh.validate_material_indices():
                 print("WARNING: mesh '%s' had invalid material indices, those were reset to first material" % mesh.name)
     _(); del _
