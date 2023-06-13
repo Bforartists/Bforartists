@@ -1,4 +1,4 @@
-keyconfig_version = (4, 0, 1)
+keyconfig_version = (4, 0, 6)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
