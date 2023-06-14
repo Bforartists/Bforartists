@@ -59,10 +59,10 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
     const float column = UI_TOOLBAR_COLUMN / aspect;
     const float margin = UI_TOOLBAR_MARGIN / aspect;
     const float snap_units[] = {
-        column + margin,
-        (2.0f * column) + margin,
-        (2.7f * column) + margin,
-        (3.4f * column) + margin,
+        column + margin + offset, /* need bfa offset for tabs */
+        (2.0f * column) + margin + offset,
+        (2.7f * column) + margin + offset,
+        (3.4f * column) + margin + offset,
     };
     int best_diff = INT_MAX;
     int best_size = size;
