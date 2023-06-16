@@ -978,6 +978,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
 
     # These options are shared across many modes.
     use_accumulate = False
+    use_frontface = False
 
     if mode == 'SCULPT':
         sculpt = context.tool_settings.sculpt
