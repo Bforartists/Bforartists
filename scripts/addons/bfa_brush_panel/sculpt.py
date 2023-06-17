@@ -6,7 +6,8 @@ from .panels import panel_factory_view3d
 panel_classes = list(
     panel_factory_view3d(
         tools=[
-(            "DRAW",
+(           "Draw", # Panel label and category
+            "DRAW",
             "DRAW_SHARP",
             "CLAY",
             "CLAY_STRIPS",
@@ -15,12 +16,14 @@ panel_classes = list(
             "INFLATE",
             "BLOB",
             "CREASE"),
-(            "SMOOTH",
+(           "Surface", # Panel label and category 
+            "SMOOTH",
             "FLATTEN",
             "FILL",
             "SCRAPE",
             "MULTIPLANE_SCRAPE"),
-(            "PINCH",
+(           "Deform", # Panel label and category  
+            "PINCH",
             "GRAB",
             "ELASTIC_DEFORM",
             "SNAKE_HOOK",
@@ -30,7 +33,8 @@ panel_classes = list(
             "ROTATE",
             "TOPOLOGY",
             "BOUNDARY"),
-(            "CLOTH",
+(           "Misc", # Panel label and category 
+            "CLOTH",
             "SIMPLIFY",
             "MASK",
             "DRAW_FACE_SETS",
