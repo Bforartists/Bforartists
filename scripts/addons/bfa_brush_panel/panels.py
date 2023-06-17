@@ -29,9 +29,11 @@ def panel_factory(
 
     for i, tool_name in enumerate(tools):
         if isinstance(tool_name, tuple):
-            label = tool_name[0].replace("_", " ").title()
+            category = label = tool_name[0]
+            tool_name = tool_name[1:]
         elif isinstance(tool_name, str):
             label = tool_name.replace("_", " ").title()
+            category = "Brushes"
         else:
             raise NotImplementedError
 
@@ -41,6 +43,7 @@ def panel_factory(
             {
                 "bl_label": label,
                 "bl_space_type": space_type,
+                "bl_category": category,
                 "poll": poll,
                 "tool_name": tool_name,
                 "tool_settings_attribute_name": tool_settings_attr,
