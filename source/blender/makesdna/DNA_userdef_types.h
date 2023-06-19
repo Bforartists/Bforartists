@@ -819,6 +819,9 @@ typedef struct UserDef {
   /** Deprecated, for forward compatibility. */
   int virtual_pixel;
 
+  float viewport_line_width; /* BFA - GooEngine */
+  char _pad15[4]; /* BFA - GooEngine */
+
   /** Console scroll-back limit. */
   int scrollback;
   /** Node insert offset (aka auto-offset) margin, but might be useful for later stuff as well. */
