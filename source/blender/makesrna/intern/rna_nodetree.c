@@ -13949,6 +13949,9 @@ static int node_type_to_icon(int type)
     case CMP_NODE_COMBINE_COLOR:
       return ICON_COMBINE_COLOR;
 
+    case CMP_NODE_KUWAHARA:
+      return ICON_KUWAHARA;
+
       /* bfa - TextureNode, we don't have these nodes iconized yet */
 
     /* bfa - FunctionNode */
