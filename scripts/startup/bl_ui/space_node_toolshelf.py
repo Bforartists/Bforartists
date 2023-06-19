@@ -2030,6 +2030,10 @@ class NODES_PT_comp_add_filter(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Kuwahara         ", icon = "KUWAHARA")
+            props.use_transform = True
+            props.type = "CompositorNodeKuwahara"
+
             props = col.operator("node.add_node", text=" Pixelate            ", icon = "NODE_PIXELATED")
             props.use_transform = True
             props.type = "CompositorNodePixelate"
@@ -2097,6 +2101,10 @@ class NODES_PT_comp_add_filter(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_IMPAINT")
             props.use_transform = True
             props.type = "CompositorNodeInpaint"
+
+            props = flow.operator("node.add_node", text = "", icon = "KUWAHARA")
+            props.use_transform = True
+            props.type = "CompositorNodeKuwahara"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_PIXELATED")
             props.use_transform = True
