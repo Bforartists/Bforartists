@@ -205,6 +205,7 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
 
         flow.prop(view, "ui_scale", text="Resolution Scale")
         flow.prop(view, "ui_line_width", text="Line Width")
+        flow.prop(view, "viewport_line_width", text="Viewport Line Width") # BFA - GooEngine
 
         layout.separator()
 
