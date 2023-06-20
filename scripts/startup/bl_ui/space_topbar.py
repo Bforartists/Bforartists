@@ -268,22 +268,15 @@ class TOPBAR_MT_file(Menu):
 
         sub = layout.row()
         sub.enabled = context.blend_data.is_saved
-        sub.operator("wm.save_mainfile", text="Save Incremental").incremental = True
+        if bpy.data.is_saved:
+            sub.operator("wm.save_mainfile", text="Save Incremental", icon='SAVE_AS').incremental = True
+        else:
+            sub.operator("wm.save_mainfile", text="Save Incremental (Unsaved)", icon='SAVE_AS').incremental = True
 
         layout.operator_context = 'INVOKE_AREA'
         layout.operator("wm.save_as_mainfile", text="Save As", icon='SAVE_AS')
         layout.operator_context = 'INVOKE_AREA'
         layout.operator("wm.save_as_mainfile", text="Save Copy", icon='SAVE_COPY').copy = True
-
-        if bpy.data.is_saved:
-            default_operator_contest = layout.operator_context
-            layout.operator_context = 'EXEC_DEFAULT'
-            layout.operator( "wm.save_as_mainfile", text="Incremental Save", icon='SAVE_AS').filepath = self._save_calculate_incremental_name()
-            layout.operator_context = default_operator_contest
-        else:
-            col = layout.column()
-            col.active = bpy.data.is_saved
-            col.operator( "wm.save_as_mainfile", text="Incremental Save (Unsaved)", icon='SAVE_AS').filepath = "" #bfa dummy unsaved
 
         layout.separator()
 
