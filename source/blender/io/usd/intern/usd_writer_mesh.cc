@@ -323,13 +323,12 @@ void USDGenericMeshWriter::write_mesh(HierarchyContext &context, Mesh *mesh)
   }
 
   /* Blender grows its bounds cache to cover animated meshes, so only author once. */
-  float bound_min[3];
-  float bound_max[3];
-  INIT_MINMAX(bound_min, bound_max);
-  BKE_mesh_minmax(mesh, bound_min, bound_max);
-  pxr::VtArray<pxr::GfVec3f> extent{pxr::GfVec3f{bound_min[0], bound_min[1], bound_min[2]},
-                                    pxr::GfVec3f{bound_max[0], bound_max[1], bound_max[2]}};
-  usd_mesh.CreateExtentAttr().Set(extent);
+  if (const std::optional<Bounds<float3>> bounds = mesh->bounds_min_max()) {
+    pxr::VtArray<pxr::GfVec3f> extent{
+        pxr::GfVec3f{bounds->min[0], bounds->min[1], bounds->min[2]},
+        pxr::GfVec3f{bounds->max[0], bounds->max[1], bounds->max[2]}};
+    usd_mesh.CreateExtentAttr().Set(extent);
+  }
 }
 
 static void get_vertices(const Mesh *mesh, USDMeshData &usd_mesh_data)
@@ -374,11 +373,12 @@ static void get_loops_polys(const Mesh *mesh, USDMeshData &usd_mesh_data)
 
 static void get_edge_creases(const Mesh *mesh, USDMeshData &usd_mesh_data)
 {
-  const float *creases = static_cast<const float *>(CustomData_get_layer(&mesh->edata, CD_CREASE));
-  if (!creases) {
+  const bke::AttributeAccessor attributes = mesh->attributes();
+  const bke::AttributeReader attribute = attributes.lookup<float>("crease_edge", ATTR_DOMAIN_EDGE);
+  if (!attribute) {
     return;
   }
-
+  const VArraySpan creases(*attribute);
   const Span<int2> edges = mesh->edges();
   for (const int i : edges.index_range()) {
     const float crease = creases[i];
@@ -397,13 +397,14 @@ static void get_edge_creases(const Mesh *mesh, USDMeshData &usd_mesh_data)
 
 static void get_vert_creases(const Mesh *mesh, USDMeshData &usd_mesh_data)
 {
-  const float *creases = static_cast<const float *>(CustomData_get_layer(&mesh->vdata, CD_CREASE));
-
-  if (!creases) {
+  const bke::AttributeAccessor attributes = mesh->attributes();
+  const bke::AttributeReader attribute = attributes.lookup<float>("crease_vert",
+                                                                  ATTR_DOMAIN_POINT);
+  if (!attribute) {
     return;
   }
-
-  for (int i = 0, v = mesh->totvert; i < v; i++) {
+  const VArraySpan creases(*attribute);
+  for (const int i : creases.index_range()) {
     const float sharpness = creases[i];
 
     if (sharpness != 0.0f) {

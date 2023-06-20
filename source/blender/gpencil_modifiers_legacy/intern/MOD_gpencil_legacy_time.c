@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2018 Blender Foundation.
+/* SPDX-FileCopyrightText: 2018 Blender Foundation
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -425,7 +425,7 @@ static void panelRegister(ARegionType *region_type)
       region_type, "mask", "Influence", NULL, mask_panel_draw, panel_type);
 
   uiListType *list_type = MEM_callocN(sizeof(uiListType), "time modifier segment uilist");
-  strcpy(list_type->idname, "MOD_UL_time_segment");
+  STRNCPY(list_type->idname, "MOD_UL_time_segment");
   list_type->draw_item = segment_list_item;
   WM_uilisttype_add(list_type);
 }

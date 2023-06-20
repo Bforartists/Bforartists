@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: Apache-2.0
- * Copyright 2011-2022 Blender Foundation */
+/* SPDX-FileCopyrightText: 2011-2022 Blender Foundation
+ *
+ * SPDX-License-Identifier: Apache-2.0 */
 
 #include "device/device.h"
 
@@ -1213,6 +1214,9 @@ void LightManager::device_update_lights(Device *device, DeviceScene *dscene, Sce
       shader_id &= ~SHADER_AREA_LIGHT;
 
       float radius = light->size;
+      /* TODO: `invarea` was used for disk sampling, with the current solid angle sampling this
+       * becomes unnecessary. We could store `eval_fac` instead, but currently it shares the same
+       * #KernelSpotLight type with #LIGHT_SPOT, so keep it know until refactor for spot light. */
       float invarea = (light->normalize && radius > 0.0f) ? 1.0f / (M_PI_F * radius * radius) :
                                                             1.0f;
 
