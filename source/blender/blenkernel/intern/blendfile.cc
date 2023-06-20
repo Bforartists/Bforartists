@@ -1191,6 +1191,7 @@ UserDef *BKE_blendfile_userdef_from_defaults(void)
         "pose_library",
         "bfa_default_library",
         "bforartists_toolbar_settings",
+        "bfa_find_and_replace",
         "createisocam",
         "edit_dimensions",
         "reset3dview",
