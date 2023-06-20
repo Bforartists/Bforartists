@@ -31,6 +31,10 @@ class bNodeTreeRuntime;
 class bNodeRuntime;
 class bNodeSocketRuntime;
 }  // namespace blender::bke
+namespace blender::bke {
+class bNodeTreeZones;
+class bNodeTreeZone;
+}  // namespace blender::bke
 using NodeDeclarationHandle = blender::nodes::NodeDeclaration;
 using SocketDeclarationHandle = blender::nodes::SocketDeclaration;
 using bNodeTreeRuntimeHandle = blender::bke::bNodeTreeRuntime;
@@ -168,6 +172,9 @@ typedef struct bNodeSocket {
   /** Custom data for inputs, only UI writes in this. */
   bNodeStack ns DNA_DEPRECATED;
 
+  /* UI panel of the socket. */
+  struct bNodePanel *panel;
+
   bNodeSocketRuntimeHandle *runtime;
 
 #ifdef __cplusplus
@@ -238,6 +245,7 @@ typedef enum eNodeSocketDatatype {
   SOCK_COLLECTION = 11,
   SOCK_TEXTURE = 12,
   SOCK_MATERIAL = 13,
+  SOCK_ROTATION = 14,
 } eNodeSocketDatatype;
 
 /** Socket shape. */
@@ -530,6 +538,12 @@ typedef struct bNodeLink {
 #define NTREE_CHUNKSIZE_512 512
 #define NTREE_CHUNKSIZE_1024 1024
 
+/** Panel in node tree for grouping sockets. */
+typedef struct bNodePanel {
+  /* UI name of the panel (not unique) */
+  char *name;
+} bNodePanel;
+
 /* the basis for a Node tree, all links and nodes reside internal here */
 /* only re-usable node trees are in the library though,
  * materials and textures allocate own tree struct */
@@ -593,6 +607,11 @@ typedef struct bNodeTree {
   /** Image representing what the node group does. */
   struct PreviewImage *preview;
 
+  /* UI panels */
+  struct bNodePanel **panels_array;
+  int panels_num;
+  int active_panel;
+
   bNodeTreeRuntimeHandle *runtime;
 
 #ifdef __cplusplus
@@ -631,6 +650,9 @@ typedef struct bNodeTree {
   blender::Span<const bNode *> nodes_by_type(blender::StringRefNull type_idname) const;
   /** Frame nodes without any parents. */
   blender::Span<bNode *> root_frames() const;
+  /** A span containing all links in the node tree. */
+  blender::Span<bNodeLink *> all_links();
+  blender::Span<const bNodeLink *> all_links() const;
   /**
    * Cached toposort of all nodes. If there are cycles, the returned array is not actually a
    * toposort. However, if a connected component does not contain a cycle, this component is sorted
@@ -656,6 +678,11 @@ typedef struct bNodeTree {
   /** Inputs and outputs of the entire node group. */
   blender::Span<const bNodeSocket *> interface_inputs() const;
   blender::Span<const bNodeSocket *> interface_outputs() const;
+
+  blender::Span<const bNodePanel *> panels() const;
+  blender::MutableSpan<bNodePanel *> panels_for_write();
+  /** Zones in the node tree. Currently there are only simulation zones in geometry nodes. */
+  const blender::bke::bNodeTreeZones *zones() const;
 #endif
 } bNodeTree;
 
@@ -723,6 +750,10 @@ typedef struct bNodeSocketValueVector {
   float value[3];
   float min, max;
 } bNodeSocketValueVector;
+
+typedef struct bNodeSocketValueRotation {
+  float value_euler[3];
+} bNodeSocketValueRotation;
 
 typedef struct bNodeSocketValueRGBA {
   float value[4];
@@ -1108,7 +1139,9 @@ typedef struct NodeTexVoronoi {
   int dimensions;
   int feature;
   int distance;
+  int normalize;
   int coloring DNA_DEPRECATED;
+  char _pad[4];
 } NodeTexVoronoi;
 
 typedef struct NodeTexMusgrave {

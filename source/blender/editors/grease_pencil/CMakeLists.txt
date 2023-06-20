@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2006-2023 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(INC
@@ -21,7 +23,9 @@ set(INC_SYS
 
 set(SRC
   intern/grease_pencil_add.cc
+  intern/grease_pencil_edit.cc
   intern/grease_pencil_ops.cc
+  intern/grease_pencil_select.cc
 )
 
 set(LIB
