@@ -224,7 +224,7 @@ DefNode(CompositorNode, CMP_NODE_COMBINE_XYZ,     0,                       "COMB
 DefNode(CompositorNode, CMP_NODE_SEPARATE_XYZ,    0,                       "SEPARATE_XYZ",    SeparateXYZ,       "Separate XYZ",       "Add a Separate XYZ Compositor Node\nSeparates the single RGB channels from a single image by values between 0 and 1")
 DefNode(CompositorNode, CMP_NODE_SEPARATE_COLOR,  def_cmp_combsep_color,   "SEPARATE_COLOR",  SeparateColor,     "Separate Color",     "Add a Combine Color Compositor node\nCombines single colors to a rgb, hsv or hsl color value"               )
 DefNode(CompositorNode, CMP_NODE_COMBINE_COLOR,   def_cmp_combsep_color,   "COMBINE_COLOR",   CombineColor,      "Combine Color",      "Add a Separate Color Compositor node\nSeparates the values of a rgb, hsv or hsl color into its single values"              )
-DefNode(CompositorNode, CMP_NODE_KUWAHARA,       def_cmp_kuwahara,       "KUWAHARA",       Kuwahara,         "Kuwahara",          ""              )
+DefNode(CompositorNode, CMP_NODE_KUWAHARA,       def_cmp_kuwahara,       "KUWAHARA",       Kuwahara,         "Kuwahara",          "Add a Kuwahara Compositor node\nKuwahara is a stylize filter")
 
 DefNode(TextureNode,     TEX_NODE_OUTPUT,          def_tex_output,          "OUTPUT",          Output,            "Output",             "Add a Output Texture node\nOutput for node textures"              )
 DefNode(TextureNode,     TEX_NODE_CHECKER,         0,                       "CHECKER",         Checker,           "Checker",            "Add a Checker Texture node\nAdds a procedural checkerboard texture"              )
