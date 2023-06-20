@@ -1,7 +1,9 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved.
- *           2009 Nokia Corporation and/or its subsidiary(-ies).
- *                Part of this code has been taken from Qt, under LGPL license. */
+/* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ * SPDX-FileCopyrightText: 2009 Nokia Corporation and/or its subsidiary(-ies).
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * Part of this code from Nokia has been taken from Qt, under LGPL license. */
 
 /** \file
  * \ingroup GHOST
@@ -2188,12 +2190,14 @@ char *GHOST_SystemX11::getClipboard(bool selection) const
   owner = XGetSelectionOwner(m_display, sseln);
   if (owner == win) {
     if (sseln == m_atom.CLIPBOARD) {
-      sel_buf = (char *)malloc(strlen(txt_cut_buffer) + 1);
-      strcpy(sel_buf, txt_cut_buffer);
+      size_t sel_buf_size = strlen(txt_cut_buffer) + 1;
+      sel_buf = (char *)malloc(sel_buf_size);
+      memcpy(sel_buf, txt_cut_buffer, sel_buf_size);
       return sel_buf;
     }
-    sel_buf = (char *)malloc(strlen(txt_select_buffer) + 1);
-    strcpy(sel_buf, txt_select_buffer);
+    size_t sel_buf_size = strlen(txt_select_buffer) + 1;
+    sel_buf = (char *)malloc(sel_buf_size);
+    memcpy(sel_buf, txt_select_buffer, sel_buf_size);
     return sel_buf;
   }
   if (owner == None) {
@@ -2287,8 +2291,9 @@ void GHOST_SystemX11::putClipboard(const char *buffer, bool selection) const
         free((void *)txt_cut_buffer);
       }
 
-      txt_cut_buffer = (char *)malloc(strlen(buffer) + 1);
-      strcpy(txt_cut_buffer, buffer);
+      size_t buffer_size = strlen(buffer) + 1;
+      txt_cut_buffer = (char *)malloc(buffer_size);
+      memcpy(txt_cut_buffer, buffer, buffer_size);
     }
     else {
       XSetSelectionOwner(m_display, m_atom.PRIMARY, m_window, CurrentTime);
@@ -2297,8 +2302,9 @@ void GHOST_SystemX11::putClipboard(const char *buffer, bool selection) const
         free((void *)txt_select_buffer);
       }
 
-      txt_select_buffer = (char *)malloc(strlen(buffer) + 1);
-      strcpy(txt_select_buffer, buffer);
+      size_t buffer_size = strlen(buffer) + 1;
+      txt_select_buffer = (char *)malloc(buffer_size);
+      memcpy(txt_select_buffer, buffer, buffer_size);
     }
 
     if (owner != m_window) {

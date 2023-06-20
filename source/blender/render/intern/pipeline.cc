@@ -507,17 +507,6 @@ void RE_ResultGet32(Render *re, uint *rect)
   RE_ReleaseResultImageViews(re, &rres);
 }
 
-void RE_AcquiredResultGet32(Render *re, RenderResult *result, uint *rect, const int view_id)
-{
-  render_result_rect_get_pixels(result,
-                                rect,
-                                re->rectx,
-                                re->recty,
-                                &re->scene->view_settings,
-                                &re->scene->display_settings,
-                                view_id);
-}
-
 RenderStats *RE_GetStats(Render *re)
 {
   return &re->i;
@@ -2248,6 +2237,7 @@ void RE_RenderAnim(Render *re,
   G.is_rendering = true;
 
   re->flag |= R_ANIMATION;
+  DEG_graph_id_tag_update(re->main, re->pipeline_depsgraph, &re->scene->id, ID_RECALC_AUDIO_MUTE);
 
   scene->r.subframe = 0.0f;
   for (nfra = sfra, scene->r.cfra = sfra; scene->r.cfra <= efra; scene->r.cfra++) {
@@ -2523,6 +2513,11 @@ bool RE_ReadRenderResult(Scene *scene, Scene *scenode)
 void RE_layer_load_from_file(
     RenderLayer *layer, ReportList *reports, const char *filepath, int x, int y)
 {
+  /* First try loading multilayer EXR. */
+  if (render_result_exr_file_read_path(nullptr, layer, reports, filepath)) {
+    return;
+  }
+
   /* OCIO_TODO: assume layer was saved in default color space */
   ImBuf *ibuf = IMB_loadiffname(filepath, IB_rect, nullptr);
   RenderPass *rpass = nullptr;
@@ -2592,7 +2587,7 @@ void RE_layer_load_from_file(
 
 void RE_result_load_from_file(RenderResult *result, ReportList *reports, const char *filepath)
 {
-  if (!render_result_exr_file_read_path(result, nullptr, filepath)) {
+  if (!render_result_exr_file_read_path(result, nullptr, reports, filepath)) {
     BKE_reportf(reports, RPT_ERROR, "%s: failed to load '%s'", __func__, filepath);
     return;
   }
