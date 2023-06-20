@@ -1791,7 +1791,7 @@ enhance
 interpolate_curve
 index_of_nearest
 orientation_parent
-#~ DEF_ICON_BLANK(1822)
+kuwahara
 #~ DEF_ICON_BLANK(1823)
 
 # ------------------------- row 27  --------------------------*/
