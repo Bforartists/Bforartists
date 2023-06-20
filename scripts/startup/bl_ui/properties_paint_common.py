@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2012-2023 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 from bpy.types import Menu, Panel # bfa - panel
 
@@ -148,6 +150,7 @@ class BrushSelectPanel(BrushPanel):
         else:
             row.column().template_ID(settings, "brush", new="brush.add")
         col = row.column()
+        col.menu("VIEW3D_MT_brush_context_menu", icon='DOWNARROW_HLT', text="")
 
         if brush is not None:
             col.prop(brush, "use_custom_icon", toggle=True, icon='FILE_IMAGE', text="")

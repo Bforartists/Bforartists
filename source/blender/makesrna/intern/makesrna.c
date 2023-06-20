@@ -1028,8 +1028,12 @@ static void rna_clamp_value_range_check(FILE *f,
     fprintf(f, "    {\n");
     fprintf(f, "#ifdef __cplusplus\n");
     fprintf(f, "        using T = decltype(%s%s);\n", dnaname_prefix, dnaname);
-    fprintf(f, "        static_assert(std::numeric_limits<T>::max() >= %d);\n", iprop->hardmax);
-    fprintf(f, "        static_assert(std::numeric_limits<T>::min() <= %d);\n", iprop->hardmin);
+    fprintf(f,
+            "        static_assert(std::numeric_limits<std::decay_t<T>>::max() >= %d);\n",
+            iprop->hardmax);
+    fprintf(f,
+            "        static_assert(std::numeric_limits<std::decay_t<T>>::min() <= %d);\n",
+            iprop->hardmin);
     fprintf(f, "#else\n");
     fprintf(f,
             "        BLI_STATIC_ASSERT("
@@ -1418,8 +1422,20 @@ static char *rna_def_property_set_func(
           }
           else {
             rna_clamp_value_range(f, prop);
+            /* C++ may require casting to an enum type.  */
+            fprintf(f, "#ifdef __cplusplus\n");
+            fprintf(f,
+                    /* If #rna_clamp_value() adds an expression like `CLAMPIS(...)` (instead of an
+                       lvalue), #decltype() yields a reference, so that has to be removed.*/
+                    "    data->%s = %s(std::remove_reference_t<decltype(data->%s)>)",
+                    dp->dnaname,
+                    (dp->booleannegative) ? "!" : "",
+                    dp->dnaname);
+            rna_clamp_value(f, prop, 0);
+            fprintf(f, "#else\n");
             fprintf(f, "    data->%s = %s", dp->dnaname, (dp->booleannegative) ? "!" : "");
             rna_clamp_value(f, prop, 0);
+            fprintf(f, "#endif\n");
           }
         }
 
@@ -4108,7 +4124,8 @@ static void rna_generate_property(FILE *f, StructRNA *srna, const char *nest, Pr
           prop->totarraylength);
   fprintf(f,
           "\t%s%s, %d, %s, %s, %s, %s, %s,\n",
-          (prop->flag & PROP_CONTEXT_UPDATE) ? "(UpdateFunc)" : "",
+          /* NOTE: void cast is needed to quiet function cast warning in C++. */
+          (prop->flag & PROP_CONTEXT_UPDATE) ? "(UpdateFunc)(void *)" : "",
           rna_function_string(prop->update),
           prop->noteflag,
           rna_function_string(prop->editable),
@@ -4534,7 +4551,7 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_action.c", "rna_action_api.c", RNA_def_action},
     {"rna_animation.c", "rna_animation_api.c", RNA_def_animation},
     {"rna_animviz.c", NULL, RNA_def_animviz},
-    {"rna_armature.c", "rna_armature_api.c", RNA_def_armature},
+    {"rna_armature.cc", "rna_armature_api.cc", RNA_def_armature},
     {"rna_attribute.c", NULL, RNA_def_attribute},
     {"rna_asset.c", NULL, RNA_def_asset},
     {"rna_boid.c", NULL, RNA_def_boid},
@@ -4546,12 +4563,12 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_color.c", NULL, RNA_def_color},
     {"rna_constraint.c", NULL, RNA_def_constraint},
     {"rna_context.c", NULL, RNA_def_context},
-    {"rna_curve.c", "rna_curve_api.c", RNA_def_curve},
+    {"rna_curve.cc", "rna_curve_api.cc", RNA_def_curve},
     {"rna_dynamicpaint.c", NULL, RNA_def_dynamic_paint},
     {"rna_fcurve.c", "rna_fcurve_api.c", RNA_def_fcurve},
     {"rna_gpencil_legacy.c", NULL, RNA_def_gpencil},
     {"rna_grease_pencil.c", NULL, RNA_def_grease_pencil},
-    {"rna_curves.c", NULL, RNA_def_curves},
+    {"rna_curves.cc", NULL, RNA_def_curves},
     {"rna_image.c", "rna_image_api.c", RNA_def_image},
     {"rna_key.c", NULL, RNA_def_key},
     {"rna_light.c", NULL, RNA_def_light},
@@ -4561,14 +4578,14 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_main.c", "rna_main_api.c", RNA_def_main},
     {"rna_fluid.c", NULL, RNA_def_fluid},
     {"rna_material.c", "rna_material_api.c", RNA_def_material},
-    {"rna_mesh.c", "rna_mesh_api.c", RNA_def_mesh},
+    {"rna_mesh.cc", "rna_mesh_api.cc", RNA_def_mesh},
     {"rna_meta.cc", "rna_meta_api.c", RNA_def_meta},
     {"rna_modifier.c", NULL, RNA_def_modifier},
     {"rna_gpencil_legacy_modifier.c", NULL, RNA_def_greasepencil_modifier},
     {"rna_shader_fx.c", NULL, RNA_def_shader_fx},
     {"rna_nla.c", NULL, RNA_def_nla},
-    {"rna_nodetree.c", NULL, RNA_def_nodetree},
-    {"rna_object.c", "rna_object_api.c", RNA_def_object},
+    {"rna_nodetree.cc", NULL, RNA_def_nodetree},
+    {"rna_object.cc", "rna_object_api.cc", RNA_def_object},
     {"rna_object_force.c", NULL, RNA_def_object_force},
     {"rna_depsgraph.c", NULL, RNA_def_depsgraph},
     {"rna_packedfile.c", NULL, RNA_def_packedfile},
@@ -4587,13 +4604,13 @@ static RNAProcessItem PROCESS_ITEMS[] = {
 #ifdef WITH_SIMULATION_DATABLOCK
     {"rna_simulation.c", NULL, RNA_def_simulation},
 #endif
-    {"rna_space.c", "rna_space_api.c", RNA_def_space},
+    {"rna_space.cc", "rna_space_api.cc", RNA_def_space},
     {"rna_speaker.c", NULL, RNA_def_speaker},
     {"rna_test.c", NULL, RNA_def_test},
     {"rna_text.c", "rna_text_api.c", RNA_def_text},
     {"rna_timeline.c", NULL, RNA_def_timeline_marker},
     {"rna_sound.c", "rna_sound_api.c", RNA_def_sound},
-    {"rna_ui.c", "rna_ui_api.c", RNA_def_ui},
+    {"rna_ui.cc", "rna_ui_api.cc", RNA_def_ui},
     {"rna_userdef.c", NULL, RNA_def_userdef},
     {"rna_vfont.c", "rna_vfont_api.c", RNA_def_vfont},
     {"rna_volume.c", NULL, RNA_def_volume},
