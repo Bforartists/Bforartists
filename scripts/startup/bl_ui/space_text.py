@@ -265,7 +265,7 @@ class TEXT_MT_text(Menu):
             row.enabled = not text.is_in_memory
 
             row = layout.row()
-            op = row.operator("text.jump_to_file_at_point", text="Edit Externally")
+            op = row.operator("text.jump_to_file_at_point", text="Edit Externally", icon = "FILE")
             row.enabled = (not text.is_in_memory and context.preferences.filepaths.text_editor != "")
 
             layout.column()
