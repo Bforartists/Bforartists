@@ -340,8 +340,9 @@ class matlibProperties(PropertyGroup):
             cmd = '''
 import bpy
 bpy.ops.wm.save_mainfile(filepath="%s", check_existing=False, compress=True)''' % winpath(path)
+            #bfa - we are Bforartists, not Blender
             if not (send_command(cmd, "createlib.py")):
-                return 'ERROR', "There was an error creating the file. Make sure you run Blender with admin rights."
+                return 'ERROR', "There was an error creating the file. Make sure you run Bforartists with admin rights."
 
             #self.libraries = sorted(self.libraries, key=lambda lib: sortlibs(lib))
             dd("adding library", path)
