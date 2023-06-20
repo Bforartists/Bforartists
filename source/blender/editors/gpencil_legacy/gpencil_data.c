@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2008 Blender Foundation.
+/* SPDX-FileCopyrightText: 2008 Blender Foundation
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -232,7 +232,7 @@ static int gpencil_layer_add_exec(bContext *C, wmOperator *op)
         RNA_property_string_get(op->ptr, prop, name);
       }
       else {
-        strcpy(name, "GP_Layer");
+        STRNCPY(name, "GP_Layer");
       }
       bGPDlayer *gpl = BKE_gpencil_layer_addnew(gpd, name, true, false);
 

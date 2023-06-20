@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2020-2023 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
@@ -44,10 +46,9 @@ def geometry_modifier_poll(context):
 
 
 def get_context_modifier(context):
-    # Context only has a 'modifier' attribute in the modifier extra operators dropdown.
-    if hasattr(context, 'modifier'):
-        modifier = context.modifier
-    else:
+    # Context only has a "modifier" attribute in the modifier extra operators drop-down.
+    modifier = getattr(context, "modifier", ...)
+    if modifier is ...:
         ob = context.object
         if ob is None:
             return False
