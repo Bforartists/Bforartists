@@ -203,6 +203,7 @@ set(OPENGL_SRC
 set(VULKAN_SRC
   vulkan/vk_backend.cc
   vulkan/vk_batch.cc
+  vulkan/vk_bindable_resource.cc
   vulkan/vk_buffer.cc
   vulkan/vk_command_buffer.cc
   vulkan/vk_common.cc
@@ -239,6 +240,7 @@ set(VULKAN_SRC
 
   vulkan/vk_backend.hh
   vulkan/vk_batch.hh
+  vulkan/vk_bindable_resource.hh
   vulkan/vk_buffer.hh
   vulkan/vk_command_buffer.hh
   vulkan/vk_common.hh
@@ -482,6 +484,7 @@ set(GLSL_SRC
   shaders/material/gpu_shader_material_eevee_specular.glsl
   shaders/material/gpu_shader_material_emission.glsl
   shaders/material/gpu_shader_material_fractal_noise.glsl
+  shaders/material/gpu_shader_material_fractal_voronoi.glsl
   shaders/material/gpu_shader_material_fresnel.glsl
   shaders/material/gpu_shader_material_gamma.glsl
   shaders/material/gpu_shader_material_geometry.glsl
@@ -546,6 +549,7 @@ set(GLSL_SRC
   shaders/material/gpu_shader_material_volume_absorption.glsl
   shaders/material/gpu_shader_material_volume_principled.glsl
   shaders/material/gpu_shader_material_volume_scatter.glsl
+  shaders/material/gpu_shader_material_voronoi.glsl
   shaders/material/gpu_shader_material_wireframe.glsl
   shaders/material/gpu_shader_material_world_normals.glsl
 
@@ -648,6 +652,7 @@ set(SRC_SHADER_CREATE_INFOS
   ../draw/engines/eevee_next/shaders/infos/eevee_material_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_motion_blur_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_shadow_info.hh
+  ../draw/engines/eevee_next/shaders/infos/eevee_subsurface_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_velocity_info.hh
   ../draw/engines/gpencil/shaders/infos/gpencil_info.hh
   ../draw/engines/gpencil/shaders/infos/gpencil_vfx_info.hh

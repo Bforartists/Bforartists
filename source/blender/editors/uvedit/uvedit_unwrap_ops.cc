@@ -632,7 +632,7 @@ static ParamHandle *construct_param_handle_subsurfed(const Scene *scene,
 
   Mesh *subdiv_mesh = subdivide_edit_mesh(ob, em, &smd);
 
-  const float(*subsurfedPositions)[3] = BKE_mesh_vert_positions(subdiv_mesh);
+  const blender::Span<blender::float3> subsurf_positions = subdiv_mesh->vert_positions();
   const blender::Span<blender::int2> subsurf_edges = subdiv_mesh->edges();
   const blender::OffsetIndices subsurf_polys = subdiv_mesh->polys();
   const blender::Span<int> subsurf_corner_verts = subdiv_mesh->corner_verts();
@@ -697,10 +697,10 @@ static ParamHandle *construct_param_handle_subsurfed(const Scene *scene,
     vkeys[2] = (ParamKey)poly_corner_verts[2];
     vkeys[3] = (ParamKey)poly_corner_verts[3];
 
-    co[0] = subsurfedPositions[poly_corner_verts[0]];
-    co[1] = subsurfedPositions[poly_corner_verts[1]];
-    co[2] = subsurfedPositions[poly_corner_verts[2]];
-    co[3] = subsurfedPositions[poly_corner_verts[3]];
+    co[0] = subsurf_positions[poly_corner_verts[0]];
+    co[1] = subsurf_positions[poly_corner_verts[1]];
+    co[2] = subsurf_positions[poly_corner_verts[2]];
+    co[3] = subsurf_positions[poly_corner_verts[3]];
 
     /* This is where all the magic is done.
      * If the vertex exists in the, we pass the original uv pointer to the solver, thus
@@ -1512,7 +1512,13 @@ static int pack_islands_exec(bContext *C, wmOperator *op)
   }
   pack_island_params.scale_to_fit = RNA_boolean_get(op->ptr, "scale");
   pack_island_params.merge_overlap = RNA_boolean_get(op->ptr, "merge_overlap");
-  pack_island_params.pin_method = eUVPackIsland_PinMethod(RNA_enum_get(op->ptr, "pin"));
+
+  if (RNA_boolean_get(op->ptr, "pin")) {
+    pack_island_params.pin_method = eUVPackIsland_PinMethod(RNA_enum_get(op->ptr, "pin_method"));
+  }
+  else {
+    pack_island_params.pin_method = ED_UVPACK_PIN_NONE;
+  }
 
   pack_island_params.margin_method = eUVPackIsland_MarginMethod(
       RNA_enum_get(op->ptr, "margin_method"));
@@ -1527,7 +1533,7 @@ static int pack_islands_exec(bContext *C, wmOperator *op)
   if (pid->use_job) {
     /* Setup job. */
     if (pid->wm->op_undo_depth == 0) {
-      /* The job must do it's own undo push. */
+      /* The job must do its own undo push. */
       pid->undo_context = C;
       pid->undo_str = op->type->name;
     }
@@ -1592,17 +1598,21 @@ static const EnumPropertyItem pack_shape_method_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+/**
+ * \note #ED_UVPACK_PIN_NONE is exposed as a boolean "pin".
+ * \note #ED_UVPACK_PIN_IGNORE is intentionally not exposed as it is confusing from the UI level
+ * (users can simply not select these islands).
+ * The option is kept kept internally because it's used for live unwrap.
+ */
 static const EnumPropertyItem pinned_islands_method_items[] = {
-    {ED_UVPACK_PIN_PACK, "PACK", 0, "Pack", "Pinned islands are packed normally"},
-    {ED_UVPACK_PIN_LOCK_SCALE, "SCALE", 0, "Lock Scale", "Pinned islands won't rescale"},
-    {ED_UVPACK_PIN_LOCK_ROTATION, "ROTATION", 0, "Lock Rotation", "Pinned islands won't rotate"},
+    {ED_UVPACK_PIN_LOCK_SCALE, "SCALE", 0, "Scale", "Pinned islands won't rescale"},
+    {ED_UVPACK_PIN_LOCK_ROTATION, "ROTATION", 0, "Rotation", "Pinned islands won't rotate"},
     {ED_UVPACK_PIN_LOCK_ROTATION_SCALE,
      "ROTATION_SCALE",
      0,
-     "Lock Rotation and Scale",
+     "Rotation and Scale",
      "Pinned islands will translate only"},
-    {ED_UVPACK_PIN_LOCK_ALL, "LOCKED", 0, "Lock in Place", "Pinned islands are locked in place"},
-    {ED_UVPACK_PIN_IGNORE, "IGNORE", 0, "Ignore", "Pinned islands are not packed"},
+    {ED_UVPACK_PIN_LOCK_ALL, "LOCKED", 0, "All", "Pinned islands are locked in place"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -1613,15 +1623,23 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
   uiLayoutSetPropDecorate(layout, false);
   uiItemR(layout, op->ptr, "shape_method", 0, nullptr, ICON_NONE);
   uiItemR(layout, op->ptr, "scale", 0, nullptr, ICON_NONE);
-  uiItemR(layout, op->ptr, "rotate", 0, nullptr, ICON_NONE);
-  uiLayout *sub = uiLayoutRow(layout, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "rotate"));
-  uiItemR(sub, op->ptr, "rotate_method", 0, nullptr, ICON_NONE);
-  uiItemS(layout);
+  {
+    uiItemR(layout, op->ptr, "rotate", 0, nullptr, ICON_NONE);
+    uiLayout *sub = uiLayoutRow(layout, true);
+    uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "rotate"));
+    uiItemR(sub, op->ptr, "rotate_method", 0, nullptr, ICON_NONE);
+    uiItemS(layout);
+  }
   uiItemR(layout, op->ptr, "margin_method", 0, nullptr, ICON_NONE);
   uiItemR(layout, op->ptr, "margin", 0, nullptr, ICON_NONE);
   uiItemS(layout);
-  uiItemR(layout, op->ptr, "pin", 0, nullptr, ICON_NONE);
+  {
+    uiItemR(layout, op->ptr, "pin", 0, nullptr, ICON_NONE);
+    uiLayout *sub = uiLayoutRow(layout, true);
+    uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "pin"));
+    uiItemR(sub, op->ptr, "pin_method", 0, IFACE_("Lock Method"), ICON_NONE);
+    uiItemS(layout);
+  }
   uiItemR(layout, op->ptr, "merge_overlap", 0, nullptr, ICON_NONE);
   uiItemR(layout, op->ptr, "udim_source", 0, nullptr, ICON_NONE);
   uiItemS(layout);
@@ -1687,8 +1705,17 @@ void UV_OT_pack_islands(wmOperatorType *ot)
                "");
   RNA_def_float_factor(
       ot->srna, "margin", 0.001f, 0.0f, 1.0f, "Margin", "Space between islands", 0.0f, 1.0f);
-  RNA_def_enum(
-      ot->srna, "pin", pinned_islands_method_items, ED_UVPACK_PIN_PACK, "Pinned Islands", "");
+  RNA_def_boolean(ot->srna,
+                  "pin",
+                  false,
+                  "Lock Pinned Islands",
+                  "Constrain islands containing any pinned UV's");
+  RNA_def_enum(ot->srna,
+               "pin_method",
+               pinned_islands_method_items,
+               ED_UVPACK_PIN_LOCK_ALL,
+               "Pin Method",
+               "");
   RNA_def_enum(ot->srna,
                "shape_method",
                pack_shape_method_items,
