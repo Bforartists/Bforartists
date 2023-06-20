@@ -1205,6 +1205,7 @@ static const float std_node_socket_colors[][4] = {
     {0.96, 0.96, 0.96, 1.0}, /* SOCK_COLLECTION */
     {0.62, 0.31, 0.64, 1.0}, /* SOCK_TEXTURE */
     {0.92, 0.46, 0.51, 1.0}, /* SOCK_MATERIAL */
+    {0.92, 0.46, 0.7, 1.0},  /* SOCK_ROTATION */
 };
 
 /* common color callbacks for standard types */
@@ -1327,6 +1328,11 @@ static void std_node_socket_draw(
         }
       }
       break;
+    case SOCK_ROTATION: {
+      uiLayout *column = uiLayoutColumn(layout, true);
+      uiItemR(column, ptr, "default_value", DEFAULT_FLAGS, text, ICON_NONE);
+      break;
+    }
     case SOCK_RGBA: {
       if (text[0] == '\0') {
         uiItemR(layout, ptr, "default_value", DEFAULT_FLAGS, "", 0);
@@ -1433,6 +1439,9 @@ static void std_node_socket_interface_draw(bContext * /*C*/, uiLayout *layout, P
   bNodeSocket *sock = (bNodeSocket *)ptr->data;
   int type = sock->typeinfo->type;
 
+  PointerRNA tree_ptr;
+  RNA_id_pointer_create(ptr->owner_id, &tree_ptr);
+
   uiLayout *col = uiLayoutColumn(layout, false);
 
   switch (type) {
@@ -1462,6 +1471,7 @@ static void std_node_socket_interface_draw(bContext * /*C*/, uiLayout *layout, P
       uiItemR(col, ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), 0);
       break;
     }
+    case SOCK_ROTATION:
     case SOCK_RGBA:
     case SOCK_STRING:
     case SOCK_OBJECT:
@@ -1482,6 +1492,10 @@ static void std_node_socket_interface_draw(bContext * /*C*/, uiLayout *layout, P
   if (sock->in_out == SOCK_IN && node_tree->type == NTREE_GEOMETRY) {
     uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     uiItemR(col, ptr, "hide_in_modifier", DEFAULT_FLAGS, nullptr, 0);
+  }
+
+  if (U.experimental.use_node_panels) {
+    uiItemPointerR(col, ptr, "panel", &tree_ptr, "panels", nullptr, 0);
   }
 }
 
