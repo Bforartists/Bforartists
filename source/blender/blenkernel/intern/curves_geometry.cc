@@ -1096,19 +1096,14 @@ void CurvesGeometry::transform(const float4x4 &matrix)
   this->tag_positions_changed();
 }
 
-bool CurvesGeometry::bounds_min_max(float3 &min, float3 &max) const
+std::optional<Bounds<float3>> CurvesGeometry::bounds_min_max() const
 {
   if (this->points_num() == 0) {
-    return false;
+    return std::nullopt;
   }
-
   this->runtime->bounds_cache.ensure(
       [&](Bounds<float3> &r_bounds) { r_bounds = *bounds::min_max(this->evaluated_positions()); });
-
-  const Bounds<float3> &bounds = this->runtime->bounds_cache.data();
-  min = math::min(bounds.min, min);
-  max = math::max(bounds.max, max);
-  return true;
+  return this->runtime->bounds_cache.data();
 }
 
 CurvesGeometry curves_copy_point_selection(
@@ -1170,6 +1165,7 @@ void CurvesGeometry::remove_points(const IndexMask &points_to_delete,
   }
   if (points_to_delete.size() == this->points_num()) {
     *this = {};
+    return;
   }
   IndexMaskMemory memory;
   const IndexMask points_to_copy = points_to_delete.complement(this->points_range(), memory);

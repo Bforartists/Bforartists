@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2009-2023 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
@@ -12,6 +14,7 @@ from bpy.types import (
     ParticleSettings,
     Texture,
 )
+from bpy.app.translations import contexts as i18n_contexts
 
 from rna_prop_ui import PropertyPanel
 from bl_ui.properties_paint_common import brush_texture_settings
@@ -532,10 +535,10 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
             sub.prop(tex, "repeat_x", text="Repeat X")
             sub.prop(tex, "repeat_y", text="Y")
 
-            row = layout.row()
+            col = flow.column(heading="Mirror")
             row.active = (tex.repeat_x > 1)
             row.use_property_split = False
-            row.prop(tex, "use_mirror_x", text="Mirror X")
+            row.prop(tex, "use_mirror_x", text="X")
             row.prop_decorator(tex, "use_mirror_x")
 
             row = layout.row()
@@ -549,11 +552,10 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
             col = flow.column()
             col.prop(tex, "checker_distance", text="Distance")
 
-            col = flow.column()
+            col = flow.column(heading="Tiles")
 
-            row = layout.row()
             row.use_property_split = False
-            row.prop(tex, "use_checker_even", text="Tiles Even")
+            row.prop(tex, "use_checker_even", text="Even", text_ctxt=i18n_contexts.amount)
             row.prop_decorator(tex, "use_checker_even")
 
             row = layout.row()
