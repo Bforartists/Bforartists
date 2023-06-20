@@ -26,12 +26,12 @@ bl_info = {
 
 
 import bpy
-import bpy.utils.previews
-
+from bpy.types import (
+    Panel,
+    AddonPreferences,
+)
 
 addon_keymaps = {}
-_icons = None
-
 
 def find_user_keyconfig(key):
     km, kmi = addon_keymaps[key]
@@ -49,7 +49,7 @@ def find_user_keyconfig(key):
     return kmi
 
 
-class BFA_PT_FIND_AND_REPLACE(bpy.types.Panel):
+class BFA_PT_FIND_AND_REPLACE(Panel):
     bl_label = 'Find and Replace'
     bl_idname = 'BFA_PT_FIND_AND_REPLACE'
     bl_space_type = 'VIEW_3D'
@@ -78,8 +78,9 @@ class BFA_PT_FIND_AND_REPLACE(bpy.types.Panel):
         else:
             layout.label(text="Can't display this panel!", icon="ERROR")
 
-        row = layout.row(heading='', align=False)
+        row = layout.row(align=False)
         split = row.split(factor=0.65, align=False)
+
         split.prop(bpy.context.scene, 'bfa_show_properties', text='Show Properties', icon="NONE", emboss=True)
 
         if bpy.context.scene.bfa_show_properties is True:
@@ -97,8 +98,8 @@ class BFA_PT_FIND_AND_REPLACE(bpy.types.Panel):
                 layout.label(text="Can't display this panel!", icon="ERROR")
 
 
-class BFA_AddonPreferences(bpy.types.AddonPreferences):
-    bl_idname = 'bfa_find_and_replace'
+class BFA_AddonPreferences(AddonPreferences):
+    bl_idname = __name__
 
     def draw(self, context):
         if not (False):
@@ -106,14 +107,15 @@ class BFA_AddonPreferences(bpy.types.AddonPreferences):
             layout.prop(find_user_keyconfig('C5E0F'), 'type', text='Keymap', full_event=True)
 
 
+classes = (BFA_PT_FIND_AND_REPLACE, BFA_AddonPreferences,)
+
 def register():
-    global _icons
-    _icons = bpy.utils.previews.new()
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
     bpy.types.Scene.bfa_show_properties = bpy.props.BoolProperty(name='Show Properties', description='Show/Hide the Text Options', default=False)
-    bpy.utils.register_class(BFA_PT_FIND_AND_REPLACE)
-    bpy.utils.register_class(BFA_AddonPreferences)
 
+    # Register Keymap
     kc = bpy.context.window_manager.keyconfigs.addon
     km = kc.keymaps.new(name='Text', space_type='TEXT_EDITOR')
     kmi = km.keymap_items.new('wm.call_panel', 'RIGHTMOUSE', 'PRESS',
@@ -124,15 +126,15 @@ def register():
 
 
 def unregister():
-    global _icons
-    bpy.utils.previews.remove(_icons)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
 
+    # Unregister Keymap
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     for km, kmi in addon_keymaps.values():
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
+
     del bpy.types.Scene.bfa_show_properties
 
-    bpy.utils.unregister_class(BFA_PT_FIND_AND_REPLACE)
-    bpy.utils.unregister_class(BFA_AddonPreferences)
