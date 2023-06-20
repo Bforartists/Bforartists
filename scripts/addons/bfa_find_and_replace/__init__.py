@@ -13,15 +13,15 @@
 
 bl_info = {
     "name" : "BFA Find and Replace",
-    "author" : "Blenux (Juso3D)", 
+    "author" : "Blenux (Juso3D)",
     "description" : "A Popup Panel for Find and Replace",
     "blender" : (3, 0, 0),
     "version" : (1, 0, 0),
     "location" : "Text Editor via Keymap (Check Addon Preferences)",
     "warning" : "",
-    "doc_url": "", 
-    "tracker_url": "", 
-    "category" : "Text Editor" 
+    "doc_url": "",
+    "tracker_url": "",
+    "category" : "Text Editor"
 }
 
 
@@ -67,7 +67,9 @@ class BFA_PT_FIND_AND_REPLACE(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text='Find and Replace', icon_value=0)
+
+        layout.label(text='Find and Replace', icon="NONE")
+
         if hasattr(bpy.types,"TEXT_PT_find"):
             if not hasattr(bpy.types.TEXT_PT_find, "poll") or bpy.types.TEXT_PT_find.poll(context):
                 bpy.types.TEXT_PT_find.draw(self, context)
@@ -75,12 +77,16 @@ class BFA_PT_FIND_AND_REPLACE(bpy.types.Panel):
                 layout.label(text="Can't display this panel here!", icon="ERROR")
         else:
             layout.label(text="Can't display this panel!", icon="ERROR")
+
         row = layout.row(heading='', align=False)
-        if not True: row.operator_context = "EXEC_DEFAULT"
         split = row.split(factor=0.65, align=False)
-        if not True: split.operator_context = "EXEC_DEFAULT"
-        split.prop(bpy.context.scene, 'bfa_show_properties', text='Show Properties', icon_value=0, emboss=True)
-        split.label(text='', icon_value=(5 if bpy.context.scene.bfa_show_properties else 4))
+        split.prop(bpy.context.scene, 'bfa_show_properties', text='Show Properties', icon="NONE", emboss=True)
+
+        if bpy.context.scene.bfa_show_properties is True:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
         if bpy.context.scene.bfa_show_properties:
             if hasattr(bpy.types,"TEXT_PT_properties"):
                 if not hasattr(bpy.types.TEXT_PT_properties, "poll") or bpy.types.TEXT_PT_properties.poll(context):
@@ -92,20 +98,22 @@ class BFA_PT_FIND_AND_REPLACE(bpy.types.Panel):
 
 
 class BFA_AddonPreferences(bpy.types.AddonPreferences):
-    bl_idname = 'bfa_find_and_replace_'
+    bl_idname = 'bfa_find_and_replace'
 
     def draw(self, context):
         if not (False):
-            layout = self.layout 
+            layout = self.layout
             layout.prop(find_user_keyconfig('C5E0F'), 'type', text='Keymap', full_event=True)
 
 
 def register():
     global _icons
     _icons = bpy.utils.previews.new()
+
     bpy.types.Scene.bfa_show_properties = bpy.props.BoolProperty(name='Show Properties', description='Show/Hide the Text Options', default=False)
     bpy.utils.register_class(BFA_PT_FIND_AND_REPLACE)
     bpy.utils.register_class(BFA_AddonPreferences)
+
     kc = bpy.context.window_manager.keyconfigs.addon
     km = kc.keymaps.new(name='Text', space_type='TEXT_EDITOR')
     kmi = km.keymap_items.new('wm.call_panel', 'RIGHTMOUSE', 'PRESS',
@@ -118,11 +126,13 @@ def register():
 def unregister():
     global _icons
     bpy.utils.previews.remove(_icons)
+
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     for km, kmi in addon_keymaps.values():
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
     del bpy.types.Scene.bfa_show_properties
+
     bpy.utils.unregister_class(BFA_PT_FIND_AND_REPLACE)
     bpy.utils.unregister_class(BFA_AddonPreferences)
