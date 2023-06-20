@@ -151,6 +151,9 @@ struct StatesAroundFrame {
 class ModifierSimulationCache {
  private:
   mutable std::mutex states_at_frames_mutex_;
+  /**
+   * All simulation states, sorted by frame.
+   */
   Vector<std::unique_ptr<ModifierSimulationStateAtFrame>> states_at_frames_;
   /**
    * Used for baking to deduplicate arrays when writing and writing from storage. Sharing info
@@ -186,6 +189,14 @@ class ModifierSimulationCache {
 
   void reset();
   void clear_prev_states();
+};
+
+/**
+ * Wrap simulation cache in `std::shared_ptr` so that it can be owned by evaluated modifier even if
+ * the original modifier has been deleted.
+ */
+struct ModifierSimulationCachePtr {
+  std::shared_ptr<ModifierSimulationCache> ptr;
 };
 
 }  // namespace blender::bke::sim
