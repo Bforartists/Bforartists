@@ -60,14 +60,6 @@ class TEXT_HT_header(Header):
         syntax.active = is_syntax_highlight_supported
         syntax.prop(st, "show_syntax_highlight", text="")
 
-        props = layout.operator("wm.context_cycle_int", text="Zoom In")
-        props.data_path = "space_data.font_size"
-        props.reverse = False
-
-        props = layout.operator("wm.context_cycle_int", text="Zoom Out")
-        props.data_path = "space_data.font_size"
-        props.reverse = True
-
 
 class TEXT_HT_footer(Header):
     bl_space_type = 'TEXT_EDITOR'
@@ -223,6 +215,16 @@ class TEXT_MT_view(Menu):
         st = context.space_data
 
         layout.prop(st, "show_region_ui")
+
+        layout.separator()
+
+        props = layout.operator("wm.context_cycle_int", text="Zoom In", icon = 'ZOOM_IN')
+        props.data_path = "space_data.font_size"
+        props.reverse = False
+
+        props = layout.operator("wm.context_cycle_int", text="Zoom Out", icon = 'ZOOM_OUT')
+        props.data_path = "space_data.font_size"
+        props.reverse = True
 
         layout.separator()
 
