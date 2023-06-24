@@ -1,4 +1,4 @@
-keyconfig_version = (4, 0, 6)
+keyconfig_version = (4, 0, 7)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -6640,15 +6640,6 @@ keyconfig_data = \
      {"type": 'ZERO', "value": 'PRESS'},
      {"properties":
       [("camera", 10),
-       ],
-      },
-     ),
-    ("sequencer.select",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
-     {"properties":
-      [("extend", False),
-       ("linked_handle", False),
-       ("linked_time", False),
        ],
       },
      ),
