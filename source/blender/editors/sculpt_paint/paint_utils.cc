@@ -807,7 +807,7 @@ static int paintface_select_loop_invoke(bContext *C, wmOperator *op, const wmEve
 void PAINT_OT_face_select_loop(wmOperatorType *ot)
 {
   ot->name = "Select Loop";
-  ot->description = "Select face loop under the cursor";
+  ot->description = "Select face loop under the cursor\nMouse Operator, please use the mouse";
   ot->idname = "PAINT_OT_face_select_loop";
 
   ot->invoke = paintface_select_loop_invoke;
