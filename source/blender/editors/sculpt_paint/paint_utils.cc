@@ -804,6 +804,26 @@ static int paintface_select_loop_invoke(bContext *C, wmOperator *op, const wmEve
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *PAINT_OT_face_select_loop_get_descriptions(struct bContext * /*C*/,
+                                                struct wmOperatorType * /*op*/,
+                                                struct PointerRNA *ptr)
+{
+  const bool select = RNA_boolean_get(ptr, "select");
+  const bool extend = RNA_boolean_get(ptr, "extend");
+
+  if (select && !extend) {
+    return BLI_strdup("Select face loop under the cursor\nMouse Operator, please use the mouse");
+  }
+  else if (select && extend) {
+    return BLI_strdup("Select face loop under the cursor and add it to the current selection\nMouse Operator, please use the mouse");
+  }
+  else if (!select && extend) {
+    return BLI_strdup("Remove the face loop under the cursor from the selection\nMouse Operator, please use the mouse");
+  }
+  return NULL;
+}
+
 void PAINT_OT_face_select_loop(wmOperatorType *ot)
 {
   ot->name = "Select Loop";
@@ -811,6 +831,7 @@ void PAINT_OT_face_select_loop(wmOperatorType *ot)
   ot->idname = "PAINT_OT_face_select_loop";
 
   ot->invoke = paintface_select_loop_invoke;
+  ot->get_description = PAINT_OT_face_select_loop_get_descriptions; /*bfa - descriptions*/
   ot->poll = facemask_paint_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
