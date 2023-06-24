@@ -2284,16 +2284,18 @@ class VIEW3D_MT_select_paint_mask(Menu):
 
         layout.separator()
 
-        myvar = layout.operator("paint.face_select_loop", text="Select Loop", icon="SELECT_EDGERING")
+        if _context.mode == 'PAINT_TEXTURE':
 
-        myvar = layout.operator("paint.face_select_loop", text="Select and Extend Loop", icon="SELECT_EDGERING")
-        myvar.extend = True
+            myvar = layout.operator("paint.face_select_loop", text="Select Loop", icon="SELECT_EDGERING")
 
-        myvar = layout.operator("paint.face_select_loop", text="Extend Loop", icon="SELECT_EDGERING")
-        myvar.select = False
-        myvar.extend = True
+            myvar = layout.operator("paint.face_select_loop", text="Add Loop to Selection", icon="SELECT_EDGERING")
+            myvar.extend = True
 
-        layout.separator()
+            myvar = layout.operator("paint.face_select_loop", text="Remove Loop from Selection", icon="SELECT_EDGERING")
+            myvar.select = False
+            myvar.extend = True
+
+            layout.separator()
 
         layout.menu("VIEW3D_MT_select_paint_mask_face_more_less")
 
