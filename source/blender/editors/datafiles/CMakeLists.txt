@@ -1792,7 +1792,7 @@ interpolate_curve
 index_of_nearest
 orientation_parent
 kuwahara
-#~ DEF_ICON_BLANK(1823)
+corners_of_edge
 
 # ------------------------- row 27  --------------------------*/
 
