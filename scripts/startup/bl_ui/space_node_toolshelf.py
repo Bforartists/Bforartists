@@ -5071,6 +5071,10 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Corners of Edge          ", icon = "CORNERS_OF_EDGE")
+            props.use_transform = True
+            props.type = "GeometryNodeCornersOfEdge"
+
             props = col.operator("node.add_node", text=" Corners of Face          ", icon = "CORNERS_OF_FACE")
             props.use_transform = True
             props.type = "GeometryNodeCornersOfFace"
@@ -5083,12 +5087,13 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeEdgesOfCorner"
 
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+
             props = col.operator("node.add_node", text=" Edges of Vertex          ", icon = "EDGES_OF_VERTEX")
             props.use_transform = True
             props.type = "GeometryNodeEdgesOfVertex"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Face of Corner             ", icon = "FACE_OF_CORNER")
             props.use_transform = True
@@ -5109,6 +5114,10 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "CORNERS_OF_EDGE")
+            props.use_transform = True
+            props.type = "GeometryNodeCornersOfEdge"
 
             props = flow.operator("node.add_node", text = "", icon = "CORNERS_OF_FACE")
             props.use_transform = True
