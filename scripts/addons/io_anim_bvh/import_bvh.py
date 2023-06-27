@@ -1,6 +1,6 @@
+# SPDX-FileCopyrightText: 2011 Campbell Barton
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Script copyright (C) Campbell Barton
 
 from math import radians, ceil
 

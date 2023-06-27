@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2012 Manfred Moitzi (mozman)
+#
 # SPDX-License-Identifier: MIT
-# Copyright 2012 Manfred Moitzi
 
 # Purpose: handle layers
 # Created: 21.07.12

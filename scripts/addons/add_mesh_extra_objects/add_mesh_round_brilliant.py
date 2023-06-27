@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2015-2023 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Author: Dominic Kröper, (dommetysk)
 
 import bpy
 from math import (

@@ -1,6 +1,6 @@
+# SPDX-FileCopyrightText: `Adam Dominec <adominec@gmail.com>`
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Copyright 2010-2021 Adam Dominec <adominec@gmail.com>
 
 ## Code structure
 # This file consists of several components, in this order:

@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2015 Sugiany
+#
 # SPDX-License-Identifier: MIT
-# Copyright 2015 Sugiany
 
 import bpy
 

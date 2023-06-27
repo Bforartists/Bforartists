@@ -1,11 +1,9 @@
+# SPDX-FileCopyrightText: 2019-2022 Alan Odom (Clockmender)
+# SPDX-FileCopyrightText: 2019-2022 Rune Morling (ermo)
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# -----------------------------------------------------------------------
-# Author: Alan Odom (Clockmender), Rune Morling (ermo) Copyright (c) 2019
-# -----------------------------------------------------------------------
-#
 # Exceptions are used in the absence of nullable types in python
-
 
 class SelectionError(Exception):
     """Selection Error Exception."""

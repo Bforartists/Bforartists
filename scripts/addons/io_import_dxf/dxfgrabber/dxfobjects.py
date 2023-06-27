@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2016 Manfred Moitzi (mozman)
+#
 # SPDX-License-Identifier: MIT
-# Copyright 2016 Manfred Moitzi
 
 # Purpose: objects classes
 # Created: 17.04.2016
