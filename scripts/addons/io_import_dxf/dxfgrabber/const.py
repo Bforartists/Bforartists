@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2012 Manfred Moitzi (mozman)
+#
 # SPDX-License-Identifier: MIT
-# Copyright 2012 Manfred Moitzi
 
 # Purpose: constant values
 # Created: 21.07.2012, taken from my ezdxf project

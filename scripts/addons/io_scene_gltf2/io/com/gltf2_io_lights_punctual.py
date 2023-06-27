@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2018-2021 The glTF-Blender-IO authors
+#
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2018-2021 The glTF-Blender-IO authors.
 
 from ...io.com.gltf2_io import from_dict, from_union, from_none, from_float, from_str, from_list
 from ...io.com.gltf2_io import to_float, to_class

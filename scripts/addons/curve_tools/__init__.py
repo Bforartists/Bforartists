@@ -1,10 +1,6 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2019-2023 Blender Foundation
 #
-# Contributed to by guy lateur, Alexander Meißner (Lichtso),
-# Dealga McArdle (zeffii), Marvin.K.Breuer (MKB),
-# Spivak Vladimir (cwolf3d)
-# Originally an addon by Mackraken
-
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 bl_info = {
     "name": "Curve Tools",

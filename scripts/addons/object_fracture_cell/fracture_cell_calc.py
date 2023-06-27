@@ -1,7 +1,6 @@
+# SPDX-FileCopyrightText: 2012 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Script copyright (C) Blender Foundation 2012
-
 
 def points_as_bmesh_cells(
         verts,

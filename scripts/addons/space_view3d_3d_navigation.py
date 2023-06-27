@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2010-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # 3D NAVIGATION TOOLBAR v1.2 - 3Dview Addon - Blender 2.5x

@@ -1,6 +1,6 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2023 Robin Hohnsbeen
 #
-# Copyright (C) 2023 Robin Hohnsbeen
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from mathutils import Vector
 from datetime import datetime
@@ -88,7 +88,7 @@ class PT_VDMBaker(bpy.types.Panel):
 
         layout.use_property_split = True
         layout.use_property_decorate = False
-        
+
         layout.operator(create_sculpt_plane.bl_idname, icon='ADD')
 
         layout.separator()
@@ -147,7 +147,7 @@ def get_new_brush_name():
 
 class create_sculpt_plane(bpy.types.Operator):
     """
-    Creates a grid with 128 vertices per side plus two multires subdivisions. 
+    Creates a grid with 128 vertices per side plus two multires subdivisions.
     It uses 'Preserve corners' so further subdivisions can be made while the corners of the grid stay pointy.
     """
     bl_idname = 'sculptplane.create'
@@ -187,7 +187,7 @@ class create_vdm_brush(bpy.types.Operator):
             return {'CANCELLED'}
 
         vdm_plane = context.active_object
-        
+
         addon_data = get_addon_data()
         new_brush_name = addon_data.draft_brush_name
         reference_brush_name = addon_data.draft_brush_name

@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2017-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # Another Noise Tool - Add Landscape
@@ -698,6 +700,8 @@ class AntAddLandscape(bpy.types.Operator):
 
         if self.smooth_mesh:
             bpy.ops.object.shade_smooth()
+        else:
+            bpy.ops.object.shade_flat()
 
         if not self.at_cursor:
             new_ob.location = (0.0, 0.0, 0.0)
@@ -744,6 +748,8 @@ class AntAddLandscape(bpy.types.Operator):
 
             if self.smooth_mesh:
                 bpy.ops.object.shade_smooth()
+            else:
+                bpy.ops.object.shade_flat()
 
             if not self.at_cursor:
                 wobj.location = (0.0, 0.0, 0.0)

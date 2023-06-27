@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2010 Fabian Fricke
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright 2010 Fabian Fricke.
 
 # Relaxes selected vertices while retaining the shape as much as possible
 

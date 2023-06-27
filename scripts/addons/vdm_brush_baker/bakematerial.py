@@ -1,13 +1,13 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2023 Robin Hohnsbeen
 #
-# Copyright (C) 2023 Robin Hohnsbeen
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 
 
 def get_vdm_bake_material():
     """Creates a material that is used to bake the displacement from a plane against its UVs.
-    
+
     Returns:
     material: Baking material
     """

@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 from typing import Optional, List, Dict, Tuple, TYPE_CHECKING

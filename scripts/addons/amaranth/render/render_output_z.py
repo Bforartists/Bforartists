@@ -1,4 +1,7 @@
+# SPDX-FileCopyrightText: 2019-2023 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
+
 """
 EXR Render: Warn when Z not connected
 Display a little warning label when exporting EXR, with Z Buffer enabled, but

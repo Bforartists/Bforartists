@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2014 Manfred Moitzi (mozman)
+#
 # SPDX-License-Identifier: MIT
-# Copyright 2014 Manfred Moitzi
 
 # Purpose: acdsdata section manager
 # Created: 05.05.2014

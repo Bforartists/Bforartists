@@ -1,9 +1,8 @@
+# SPDX-FileCopyrightText: 2019-2022 Alan Odom (Clockmender)
+# SPDX-FileCopyrightText: 2019-2022 Rune Morling (ermo)
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# -----------------------------------------------------------------------
-# Author: Alan Odom (Clockmender), Rune Morling (ermo) Copyright (c) 2019
-# -----------------------------------------------------------------------
-#
 # English Version
 #
 # If you edit this file do not change any of the PDT_ format, just the Text Value in "'s

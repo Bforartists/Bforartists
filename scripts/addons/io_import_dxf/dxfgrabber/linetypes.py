@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2014 Manfred Moitzi (mozman)
+#
 # SPDX-License-Identifier: MIT
-# Copyright 2014 Manfred Moitzi
 
 # Purpose: handle linetypes table
 # Created: 06.01.2014

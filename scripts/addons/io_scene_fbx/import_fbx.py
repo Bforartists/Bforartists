@@ -1,6 +1,6 @@
+# SPDX-FileCopyrightText: 2013-2023 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Script copyright (C) Blender Foundation
 
 # FBX 7.1.0 -> 7.4.0 loader for Blender
 
@@ -1360,9 +1360,9 @@ def blen_read_geom_layer_edge_crease(fbx_obj, mesh):
             print("warning skipping edge crease data, no valid edges...")
             return False
 
-        blen_data = mesh.edges
+        blen_data = mesh.edge_creases_ensure().data
         return blen_read_geom_array_mapped_edge(
-            mesh, blen_data, "crease", np.single,
+            mesh, blen_data, "value", np.single,
             fbx_layer_data, None,
             fbx_layer_mapping, fbx_layer_ref,
             1, 1, layer_id,
@@ -1775,9 +1775,11 @@ def blen_read_texture_image(fbx_tmpl, fbx_obj, basedir, settings):
     return image
 
 
-def blen_read_camera(fbx_tmpl, fbx_obj, global_scale):
+def blen_read_camera(fbx_tmpl, fbx_obj, settings):
     # meters to inches
     M2I = 0.0393700787
+
+    global_scale = settings.global_scale
 
     elem_name_utf8 = elem_name_ensure_class(fbx_obj, b'NodeAttribute')
 
@@ -1806,10 +1808,13 @@ def blen_read_camera(fbx_tmpl, fbx_obj, global_scale):
     camera.clip_start = elem_props_get_number(fbx_props, b'NearPlane', 0.01) * global_scale
     camera.clip_end = elem_props_get_number(fbx_props, b'FarPlane', 100.0) * global_scale
 
+    if settings.use_custom_props:
+        blen_read_custom_properties(fbx_obj, camera, settings)
+
     return camera
 
 
-def blen_read_light(fbx_tmpl, fbx_obj, global_scale):
+def blen_read_light(fbx_tmpl, fbx_obj, settings):
     import math
     elem_name_utf8 = elem_name_ensure_class(fbx_obj, b'NodeAttribute')
 
@@ -1839,12 +1844,15 @@ def blen_read_light(fbx_tmpl, fbx_obj, global_scale):
     # TODO, cycles nodes???
     lamp.color = elem_props_get_color_rgb(fbx_props, b'Color', (1.0, 1.0, 1.0))
     lamp.energy = elem_props_get_number(fbx_props, b'Intensity', 100.0) / 100.0
-    lamp.distance = elem_props_get_number(fbx_props, b'DecayStart', 25.0) * global_scale
+    lamp.distance = elem_props_get_number(fbx_props, b'DecayStart', 25.0) * settings.global_scale
     lamp.use_shadow = elem_props_get_bool(fbx_props, b'CastShadow', True)
     if hasattr(lamp, "cycles"):
         lamp.cycles.cast_shadow = lamp.use_shadow
     # Keeping this for now, but this is not used nor exposed anymore afaik...
     lamp.shadow_color = elem_props_get_color_rgb(fbx_props, b'ShadowColor', (0.0, 0.0, 0.0))
+
+    if settings.use_custom_props:
+        blen_read_custom_properties(fbx_obj, lamp, settings)
 
     return lamp
 
@@ -1859,7 +1867,7 @@ class FbxImportHelperNode:
     __slots__ = (
         '_parent', 'anim_compensation_matrix', 'is_global_animation', 'armature_setup', 'armature', 'bind_matrix',
         'bl_bone', 'bl_data', 'bl_obj', 'bone_child_matrix', 'children', 'clusters',
-        'fbx_elem', 'fbx_name', 'fbx_transform_data', 'fbx_type',
+        'fbx_elem', 'fbx_data_elem', 'fbx_name', 'fbx_transform_data', 'fbx_type',
         'is_armature', 'has_bone_children', 'is_bone', 'is_root', 'is_leaf',
         'matrix', 'matrix_as_parent', 'matrix_geom', 'meshes', 'post_matrix', 'pre_matrix')
 
@@ -1867,6 +1875,7 @@ class FbxImportHelperNode:
         self.fbx_name = elem_name_ensure_class(fbx_elem, b'Model') if fbx_elem else 'Unknown'
         self.fbx_type = fbx_elem.props[2] if fbx_elem else None
         self.fbx_elem = fbx_elem
+        self.fbx_data_elem = None               # FBX elem of a connected NodeAttribute/Geometry for helpers whose bl_data does not exist or is yet to be created.
         self.bl_obj = None
         self.bl_data = bl_data
         self.bl_bone = None                     # Name of bone if this is a bone (this may be different to fbx_name if there was a name conflict in Blender!)
@@ -2197,7 +2206,7 @@ class FbxImportHelperNode:
             for child in self.children:
                 child.collect_armature_meshes()
 
-    def build_skeleton(self, arm, parent_matrix, parent_bone_size=1, force_connect_children=False):
+    def build_skeleton(self, arm, parent_matrix, settings, parent_bone_size=1):
         def child_connect(par_bone, child_bone, child_head, connect_ctx):
             # child_bone or child_head may be None.
             force_connect_children, connected = connect_ctx
@@ -2244,6 +2253,9 @@ class FbxImportHelperNode:
         self.bl_obj = arm.bl_obj
         self.bl_data = arm.bl_data
         self.bl_bone = bone.name  # Could be different from the FBX name!
+        # Read EditBone custom props the NodeAttribute
+        if settings.use_custom_props and self.fbx_data_elem:
+            blen_read_custom_properties(self.fbx_data_elem, bone, settings)
 
         # get average distance to children
         bone_size = 0.0
@@ -2272,6 +2284,7 @@ class FbxImportHelperNode:
         # while Blender attaches to the tail.
         self.bone_child_matrix = Matrix.Translation(-bone_tail)
 
+        force_connect_children = settings.force_connect_children
         connect_ctx = [force_connect_children, ...]
         for child in self.children:
             if child.is_leaf and force_connect_children:
@@ -2280,8 +2293,7 @@ class FbxImportHelperNode:
                 child_head = (bone_matrix @ child.get_bind_matrix().normalized()).translation
                 child_connect(bone, None, child_head, connect_ctx)
             elif child.is_bone and not child.ignore:
-                child_bone = child.build_skeleton(arm, bone_matrix, bone_size,
-                                                  force_connect_children=force_connect_children)
+                child_bone = child.build_skeleton(arm, bone_matrix, settings, bone_size)
                 # Connection to parent.
                 child_connect(bone, child_bone, None, connect_ctx)
 
@@ -2376,15 +2388,18 @@ class FbxImportHelperNode:
 
             return obj
 
-    def set_pose_matrix(self, arm):
+    def set_pose_matrix_and_custom_props(self, arm, settings):
         pose_bone = arm.bl_obj.pose.bones[self.bl_bone]
         pose_bone.matrix_basis = self.get_bind_matrix().inverted_safe() @ self.get_matrix()
+
+        if settings.use_custom_props:
+            blen_read_custom_properties(self.fbx_elem, pose_bone, settings)
 
         for child in self.children:
             if child.ignore:
                 continue
             if child.is_bone:
-                child.set_pose_matrix(arm)
+                child.set_pose_matrix_and_custom_props(arm, settings)
 
     def merge_weights(self, combined_weights, fbx_cluster):
         indices = elem_prop_first(elem_find_first(fbx_cluster, b'Indexes', default=None), default=())
@@ -2480,18 +2495,18 @@ class FbxImportHelperNode:
                 if child.ignore:
                     continue
                 if child.is_bone:
-                    child.build_skeleton(self, Matrix(), force_connect_children=settings.force_connect_children)
+                    child.build_skeleton(self, Matrix(), settings)
 
             bpy.ops.object.mode_set(mode='OBJECT')
 
             arm.hide_viewport = is_hidden
 
-            # Set pose matrix
+            # Set pose matrix and PoseBone custom properties
             for child in self.children:
                 if child.ignore:
                     continue
                 if child.is_bone:
-                    child.set_pose_matrix(self)
+                    child.set_pose_matrix_and_custom_props(self, settings)
 
             # Add bone children:
             for child in self.children:
@@ -2886,7 +2901,7 @@ def load(operator, context, filepath="",
                 continue
             if fbx_obj.props[-1] == b'Camera':
                 assert(blen_data is None)
-                fbx_item[1] = blen_read_camera(fbx_tmpl, fbx_obj, global_scale)
+                fbx_item[1] = blen_read_camera(fbx_tmpl, fbx_obj, settings)
     _(); del _
 
     # ----
@@ -2900,7 +2915,7 @@ def load(operator, context, filepath="",
                 continue
             if fbx_obj.props[-1] == b'Light':
                 assert(blen_data is None)
-                fbx_item[1] = blen_read_light(fbx_tmpl, fbx_obj, global_scale)
+                fbx_item[1] = blen_read_light(fbx_tmpl, fbx_obj, settings)
     _(); del _
 
     # ----
@@ -2969,6 +2984,9 @@ def load(operator, context, filepath="",
                     if fbx_sdata.id not in {b'Geometry', b'NodeAttribute'}:
                         continue
                     parent.bl_data = bl_data
+                    if bl_data is None:
+                        # If there's no bl_data, add the fbx_sdata so that it can be read when creating the bl_data/bone
+                        parent.fbx_data_elem = fbx_sdata
                 else:
                     # set parent
                     child.parent = parent

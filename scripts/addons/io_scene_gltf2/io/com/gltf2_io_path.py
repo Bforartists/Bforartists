@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2018-2023 The glTF-Blender-IO authors
+#
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2018-2023 The glTF-Blender-IO authors.
 
 from urllib.parse import unquote, quote
 from os.path import normpath
