@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 """Translate to POV the control point compound geometries.

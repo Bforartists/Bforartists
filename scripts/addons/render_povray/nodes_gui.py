@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 """"Nodes based User interface for shaders exported to POV textures."""

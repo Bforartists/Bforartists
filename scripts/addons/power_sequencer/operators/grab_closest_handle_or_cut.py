@@ -1,5 +1,7 @@
+# SPDX-FileCopyrightText: 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+#
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+
 """
 Selects and grabs the strip handle or cut closest to the mouse cursor.
 Hover near a cut and use this operator to slide it.

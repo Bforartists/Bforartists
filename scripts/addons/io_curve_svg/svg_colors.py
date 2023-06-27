@@ -1,9 +1,8 @@
+# SPDX-FileCopyrightText: 2004-2009 JM Soler
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-#
-# Copied and adopted from paths_svg2obj.py script for Blender 2.49 which is
-# Copyright (c) jm soler juillet/novembre 2004-april 2009,
-#
+# Copied and adopted from paths_svg2obj.py script for Blender 2.49.
 
 SVGColors = {'aliceblue': (240, 248, 255),
              'antiquewhite': (250, 235, 215),

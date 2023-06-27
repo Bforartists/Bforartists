@@ -1,7 +1,7 @@
+# SPDX-FileCopyrightText: 2013 Campbell Barton
+# SPDX-FileCopyrightText: 2014 Bastien Montagne
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Script copyright (C) Campbell Barton, Bastien Montagne
-
 
 import datetime
 import math
@@ -1109,19 +1109,25 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
         ec_fbx_dtype = np.float64
         if t_pvi_edge_indices.size:
             ec_bl_dtype = np.single
-            t_ec_raw = np.empty(len(me.edges), dtype=ec_bl_dtype)
-            me.edges.foreach_get('crease', t_ec_raw)
+            edge_creases = me.edge_creases
+            if edge_creases:
+                t_ec_raw = np.empty(len(me.edges), dtype=ec_bl_dtype)
+                edge_creases.data.foreach_get("value", t_ec_raw)
 
-            # Convert to t_pvi edge-keys.
-            t_ec_ek_raw = t_ec_raw[t_pvi_edge_indices]
+                # Convert to t_pvi edge-keys.
+                t_ec_ek_raw = t_ec_raw[t_pvi_edge_indices]
 
-            # Blender squares those values before sending them to OpenSubdiv, when other software don't,
-            # so we need to compensate that to get similar results through FBX...
-            # Use the precision of the fbx dtype for the calculation since it's usually higher precision.
-            t_ec_ek_raw = t_ec_ek_raw.astype(ec_fbx_dtype, copy=False)
-            t_ec = np.square(t_ec_ek_raw, out=t_ec_ek_raw)
-            del t_ec_ek_raw
-            del t_ec_raw
+                # Blender squares those values before sending them to OpenSubdiv, when other software don't,
+                # so we need to compensate that to get similar results through FBX...
+                # Use the precision of the fbx dtype for the calculation since it's usually higher precision.
+                t_ec_ek_raw = t_ec_ek_raw.astype(ec_fbx_dtype, copy=False)
+                t_ec = np.square(t_ec_ek_raw, out=t_ec_ek_raw)
+                del t_ec_ek_raw
+                del t_ec_raw
+            else:
+                # todo: Blender edge creases are optional now, we may be able to avoid writing the array to FBX when
+                #  there are no edge creases.
+                t_ec = np.zeros(t_pvi_edge_indices.shape, dtype=ec_fbx_dtype)
         else:
             t_ec = np.empty(0, dtype=ec_fbx_dtype)
 
@@ -1718,6 +1724,14 @@ def fbx_data_video_elements(root, vid, scene_data):
     # Sounds suspect, but let's try it!
     #~ else:
         #~ elem_data_single_bytes(fbx_vid, b"Content", b"")
+
+    # Blender currently has no UI for editing custom properties on Images, but the importer will import Image custom
+    # properties from either a Video Node or a Texture Node, preferring a Video node if one exists. We'll propagate
+    # these custom properties only to Video Nodes because that is most likely where they were imported from, and Texture
+    # Nodes are more like Blender's Shader Nodes than Images, which is what we're exporting here.
+    if scene_data.settings.use_custom_props:
+        fbx_data_element_custom_properties(props, vid)
+
 
 
 def fbx_data_armature_elements(root, arm_obj, scene_data):

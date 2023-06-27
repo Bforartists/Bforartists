@@ -1,4 +1,7 @@
+# SPDX-FileCopyrightText: 2019-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
+
 """
 Object ID for Dupli Groups
 Say you have a linked character or asset, you can now set an Object ID for the

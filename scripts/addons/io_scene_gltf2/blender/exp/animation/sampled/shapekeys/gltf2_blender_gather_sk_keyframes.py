@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2018-2022 The glTF-Blender-IO authors
+#
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2018-2022 The glTF-Blender-IO authors.
 
 import numpy as np
 from ......blender.com.gltf2_blender_data_path import get_sk_exported

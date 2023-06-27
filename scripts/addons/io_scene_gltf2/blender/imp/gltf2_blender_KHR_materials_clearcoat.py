@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2018-2021 The glTF-Blender-IO authors
+#
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2018-2021 The glTF-Blender-IO authors.
 
 from ...io.com.gltf2_io import TextureInfo, MaterialNormalTextureInfoClass
 from .gltf2_blender_texture import texture
