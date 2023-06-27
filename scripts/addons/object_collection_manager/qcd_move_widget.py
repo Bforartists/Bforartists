@@ -1,11 +1,10 @@
+# SPDX-FileCopyrightText: 2011 Ryan Inch
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Copyright 2011, Ryan Inch
 
 import time
 from math import cos, sin, pi, floor
 import bpy
-import bgl
 import blf
 import gpu
 from gpu_extras.batch import batch_for_shader
@@ -91,15 +90,12 @@ def draw_rounded_rect(area, shader, color, tl=5, tr=5, bl=5, br=5, outline=False
     bl = round(bl * scale_factor())
     br = round(br * scale_factor())
 
-    bgl.glEnable(bgl.GL_BLEND)
+    gpu.state.blend_set('ALPHA')
 
     if outline:
         thickness = round(2 * scale_factor())
         thickness = max(thickness, 2)
-
-        bgl.glLineWidth(thickness)
-        bgl.glEnable(bgl.GL_LINE_SMOOTH)
-        bgl.glHint(bgl.GL_LINE_SMOOTH_HINT, bgl.GL_NICEST)
+        shader.uniform_float("lineWidth", thickness)
 
     draw_type = 'TRI_FAN' if not outline else 'LINE_STRIP'
 
@@ -115,10 +111,15 @@ def draw_rounded_rect(area, shader, color, tl=5, tr=5, bl=5, br=5, outline=False
             sine = tl * sin(side * 2 * pi / sides) + vert_y
             vertices.append((cosine,sine))
 
-    batch = batch_for_shader(shader, draw_type, {"pos": vertices})
-    shader.bind()
-    shader.uniform_float("color", color)
-    batch.draw(shader)
+    if not outline:
+        batch = batch_for_shader(shader, draw_type, {"pos": vertices})
+        shader.bind()
+        shader.uniform_float("color", color)
+        batch.draw(shader)
+    else:
+        batch = batch_for_shader(shader, draw_type, {"pos": [(v[0], v[1], 0) for v in vertices], "color": [color for v in vertices]})
+        shader.bind()
+        batch.draw(shader)
 
     # top right corner
     vert_x = area["vert"][0] + area["width"] - tr
@@ -132,10 +133,15 @@ def draw_rounded_rect(area, shader, color, tl=5, tr=5, bl=5, br=5, outline=False
             sine = tr * sin(side * 2 * pi / sides) + vert_y
             vertices.append((cosine,sine))
 
-    batch = batch_for_shader(shader, draw_type, {"pos": vertices})
-    shader.bind()
-    shader.uniform_float("color", color)
-    batch.draw(shader)
+    if not outline:
+        batch = batch_for_shader(shader, draw_type, {"pos": vertices})
+        shader.bind()
+        shader.uniform_float("color", color)
+        batch.draw(shader)
+    else:
+        batch = batch_for_shader(shader, draw_type, {"pos": [(v[0], v[1], 0) for v in vertices], "color": [color for v in vertices]})
+        shader.bind()
+        batch.draw(shader)
 
     # bottom left corner
     vert_x = area["vert"][0] + bl
@@ -149,10 +155,15 @@ def draw_rounded_rect(area, shader, color, tl=5, tr=5, bl=5, br=5, outline=False
             sine = bl * sin(side * 2 * pi / sides) + vert_y
             vertices.append((cosine,sine))
 
-    batch = batch_for_shader(shader, draw_type, {"pos": vertices})
-    shader.bind()
-    shader.uniform_float("color", color)
-    batch.draw(shader)
+    if not outline:
+        batch = batch_for_shader(shader, draw_type, {"pos": vertices})
+        shader.bind()
+        shader.uniform_float("color", color)
+        batch.draw(shader)
+    else:
+        batch = batch_for_shader(shader, draw_type, {"pos": [(v[0], v[1], 0) for v in vertices], "color": [color for v in vertices]})
+        shader.bind()
+        batch.draw(shader)
 
     # bottom right corner
     vert_x = area["vert"][0] + area["width"] - br
@@ -166,10 +177,15 @@ def draw_rounded_rect(area, shader, color, tl=5, tr=5, bl=5, br=5, outline=False
             sine = br * sin(side * 2 * pi / sides) + vert_y
             vertices.append((cosine,sine))
 
-    batch = batch_for_shader(shader, draw_type, {"pos": vertices})
-    shader.bind()
-    shader.uniform_float("color", color)
-    batch.draw(shader)
+    if not outline:
+        batch = batch_for_shader(shader, draw_type, {"pos": vertices})
+        shader.bind()
+        shader.uniform_float("color", color)
+        batch.draw(shader)
+    else:
+        batch = batch_for_shader(shader, draw_type, {"pos": [(v[0], v[1], 0) for v in vertices], "color": [color for v in vertices]})
+        shader.bind()
+        batch.draw(shader)
 
     if not outline:
         vertices = []
@@ -249,6 +265,7 @@ def draw_rounded_rect(area, shader, color, tl=5, tr=5, bl=5, br=5, outline=False
             ])
 
         batch = batch_for_shader(shader, 'TRIS', {"pos": vertices}, indices=indices)
+        shader.bind()
 
         shader.uniform_float("color", color)
         batch.draw(shader)
@@ -263,7 +280,8 @@ def draw_rounded_rect(area, shader, color, tl=5, tr=5, bl=5, br=5, outline=False
             (le_x, bl_vert[1] - (overlap if bl == 0 else 0))
             ]
 
-        batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": vertices})
+        batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": [(v[0], v[1], 0) for v in vertices], "color": [color for v in vertices]})
+        shader.bind()
         batch.draw(shader)
 
         # right edge
@@ -273,7 +291,8 @@ def draw_rounded_rect(area, shader, color, tl=5, tr=5, bl=5, br=5, outline=False
             (re_x, br_vert[1] - (overlap if br == 0 else 0))
             ]
 
-        batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": vertices})
+        batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": [(v[0], v[1], 0) for v in vertices], "color": [color for v in vertices]})
+        shader.bind()
         batch.draw(shader)
 
         # top edge
@@ -283,7 +302,8 @@ def draw_rounded_rect(area, shader, color, tl=5, tr=5, bl=5, br=5, outline=False
             (tr_vert[0] + (overlap if tr == 0 else 0), te_y)
             ]
 
-        batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": vertices})
+        batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": [(v[0], v[1], 0) for v in vertices], "color": [color for v in vertices]})
+        shader.bind()
         batch.draw(shader)
 
         # bottom edge
@@ -293,12 +313,12 @@ def draw_rounded_rect(area, shader, color, tl=5, tr=5, bl=5, br=5, outline=False
             (br_vert[0] + (overlap if br == 0 else 0), be_y)
             ]
 
-        batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": vertices})
+        batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": [(v[0], v[1], 0) for v in vertices], "color": [color for v in vertices]})
+        shader.bind()
         batch.draw(shader)
 
-        bgl.glDisable(bgl.GL_LINE_SMOOTH)
 
-    bgl.glDisable(bgl.GL_BLEND)
+    gpu.state.blend_set('NONE')
 
 def mouse_in_area(mouse_pos, area, buf = 0):
     x = mouse_pos[0]
@@ -377,6 +397,7 @@ class QCDMoveWidget(Operator):
         }
 
     last_type = ''
+    last_type_value = ''
     initialized = False
     moved = False
 
@@ -394,7 +415,7 @@ class QCDMoveWidget(Operator):
         if len(self.areas) == 1:
             return {'RUNNING_MODAL'}
 
-        if self.last_type == 'LEFTMOUSE' and event.value == 'PRESS' and event.type == 'MOUSEMOVE':
+        if self.last_type == 'LEFTMOUSE' and self.last_type_value == 'PRESS' and event.type == 'MOUSEMOVE':
             if mouse_in_area(self.mouse_pos, self.areas["Grab Bar"]):
                 x_offset = self.areas["Main Window"]["vert"][0] - self.mouse_pos[0]
                 x = event.mouse_region_x + x_offset
@@ -460,6 +481,7 @@ class QCDMoveWidget(Operator):
 
         if event.type != 'MOUSEMOVE' and event.type != 'INBETWEEN_MOUSEMOVE':
             self.last_type = event.type
+            self.last_type_value = event.value
 
         return {'RUNNING_MODAL'}
 
@@ -741,7 +763,7 @@ def draw_callback_px(self, context):
     allocate_main_ui(self, context)
 
     shader = gpu.shader.from_builtin('UNIFORM_COLOR')
-    shader.bind()
+    line_shader = gpu.shader.from_builtin('POLYLINE_SMOOTH_COLOR')
 
     addon_prefs = context.preferences.addons[__package__].preferences
 
@@ -749,7 +771,7 @@ def draw_callback_px(self, context):
     main_window = self.areas["Main Window"]
     outline_color = addon_prefs.qcd_ogl_widget_menu_back_outline
     background_color = addon_prefs.qcd_ogl_widget_menu_back_inner
-    draw_rounded_rect(main_window, shader, outline_color[:] + (1,), outline=True)
+    draw_rounded_rect(main_window, line_shader, outline_color[:] + (1,), outline=True)
     draw_rounded_rect(main_window, shader, background_color)
 
     # draw window title
@@ -764,9 +786,6 @@ def draw_callback_px(self, context):
     blf.size(font_id, int(h))
     blf.color(font_id, text_color[0], text_color[1], text_color[2], 1)
     blf.draw(font_id, text)
-
-    # refresh shader - not sure why this is needed
-    shader.bind()
 
     in_tooltip_area = False
     tooltip_slot_idx = None
@@ -833,7 +852,7 @@ def draw_callback_px(self, context):
 
             # draw button
             outline_color = addon_prefs.qcd_ogl_widget_tool_outline
-            draw_rounded_rect(button_area, shader, outline_color[:] + (1,), tl, tr, bl, br, outline=True)
+            draw_rounded_rect(button_area, line_shader, outline_color[:] + (1,), tl, tr, bl, br, outline=True)
             draw_rounded_rect(button_area, shader, button_color, tl, tr, bl, br)
 
             # ACTIVE OBJECT
@@ -841,14 +860,15 @@ def draw_callback_px(self, context):
                 active_object_indicator = self.areas[f"Button {slot_num} Active Object Indicator"]
 
                 vertices = get_circle_coords(active_object_indicator)
-                shader.uniform_float("color", icon_color[:] + (1,))
                 batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
+                shader.bind()
+                shader.uniform_float("color", icon_color[:] + (1,))
 
-                bgl.glEnable(bgl.GL_BLEND)
+                gpu.state.blend_set('ALPHA')
 
                 batch.draw(shader)
 
-                bgl.glDisable(bgl.GL_BLEND)
+                gpu.state.blend_set('NONE')
 
             # SELECTED OBJECTS
             elif not set(selected_objects).isdisjoint(collection_objects):
@@ -856,18 +876,16 @@ def draw_callback_px(self, context):
 
                 alpha = addon_prefs.qcd_ogl_selected_icon_alpha
                 vertices = get_circle_coords(selected_object_indicator)
-                shader.uniform_float("color", icon_color[:] + (alpha,))
-                batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": vertices})
+                line_shader.uniform_float("lineWidth", 2 * scale_factor())
+                color = icon_color[:] + (alpha,)
+                batch = batch_for_shader(line_shader, 'LINE_STRIP', {"pos": [(v[0], v[1], 0) for v in vertices], "color": [color for v in vertices]})
+                shader.bind()
 
-                bgl.glLineWidth(2 * scale_factor())
-                bgl.glEnable(bgl.GL_BLEND)
-                bgl.glEnable(bgl.GL_LINE_SMOOTH)
-                bgl.glHint(bgl.GL_LINE_SMOOTH_HINT, bgl.GL_NICEST)
+                gpu.state.blend_set('ALPHA')
 
-                batch.draw(shader)
+                batch.draw(line_shader)
 
-                bgl.glDisable(bgl.GL_LINE_SMOOTH)
-                bgl.glDisable(bgl.GL_BLEND)
+                gpu.state.blend_set('NONE')
 
             # OBJECTS
             elif collection_objects:
@@ -875,14 +893,15 @@ def draw_callback_px(self, context):
 
                 alpha = addon_prefs.qcd_ogl_objects_icon_alpha
                 vertices, indices = get_coords(object_indicator)
-                shader.uniform_float("color", icon_color[:] + (alpha,))
                 batch = batch_for_shader(shader, 'TRIS', {"pos": vertices}, indices=indices)
+                shader.bind()
+                shader.uniform_float("color", icon_color[:] + (alpha,))
 
-                bgl.glEnable(bgl.GL_BLEND)
+                gpu.state.blend_set('ALPHA')
 
                 batch.draw(shader)
 
-                bgl.glDisable(bgl.GL_BLEND)
+                gpu.state.blend_set('NONE')
 
 
         # X ICON
@@ -891,17 +910,15 @@ def draw_callback_px(self, context):
             X_icon_color = addon_prefs.qcd_ogl_widget_menu_back_text
 
             vertices, indices = get_x_coords(X_icon)
-            shader.uniform_float("color", X_icon_color[:] + (1,))
             batch = batch_for_shader(shader, 'TRIS', {"pos": vertices}, indices=indices)
+            shader.bind()
+            shader.uniform_float("color", X_icon_color[:] + (1,))
 
-            bgl.glEnable(bgl.GL_BLEND)
-            bgl.glEnable(bgl.GL_POLYGON_SMOOTH)
-            bgl.glHint(bgl.GL_POLYGON_SMOOTH_HINT, bgl.GL_NICEST)
+            gpu.state.blend_set('ALPHA')
 
             batch.draw(shader)
 
-            bgl.glDisable(bgl.GL_POLYGON_SMOOTH)
-            bgl.glDisable(bgl.GL_BLEND)
+            gpu.state.blend_set('NONE')
 
     if in_tooltip_area:
         if self.draw_tooltip:
@@ -912,7 +929,7 @@ def draw_callback_px(self, context):
                 "  * Shift+LMB - Toggle objects\' slot."
                 )
 
-            draw_tooltip(self, context, shader, f"{slot_string}{hotkey_string}")
+            draw_tooltip(self, context, shader, line_shader, f"{slot_string}{hotkey_string}")
 
             self.hover_time = None
 
@@ -921,7 +938,7 @@ def draw_callback_px(self, context):
                 self.hover_time = time.time()
 
 
-def draw_tooltip(self, context, shader, message):
+def draw_tooltip(self, context, shader, line_shader, message):
     addon_prefs = context.preferences.addons[__package__].preferences
 
     font_id = 0
@@ -962,7 +979,7 @@ def draw_tooltip(self, context, shader, message):
 
     outline_color = addon_prefs.qcd_ogl_widget_tooltip_outline
     background_color = addon_prefs.qcd_ogl_widget_tooltip_inner
-    draw_rounded_rect(tooltip, shader, outline_color[:] + (1,), outline=True)
+    draw_rounded_rect(tooltip, line_shader, outline_color[:] + (1,), outline=True)
     draw_rounded_rect(tooltip, shader, background_color)
 
     line_pos = padding + line_height

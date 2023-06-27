@@ -1,6 +1,6 @@
+# SPDX-FileCopyrightText: 2011 Ryan Inch
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Copyright 2011, Ryan Inch
 
 import bpy
 
@@ -1509,7 +1509,7 @@ class CMRestoreDisabledObjectsOperator(Operator):
 
     def execute(self, context):
         for obj in bpy.data.objects:
-            if obj.hide_viewport:
+            if obj.name in context.view_layer.objects and obj.hide_viewport:
                 obj.hide_viewport = False
                 obj.select_set(True)
 

@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2011 Dany Lebel (Axon_D)
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright 2011 Dany Lebel (Axon_D)
 
 bl_info = {
     "name": "Paint Palettes",

@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2015 Pratik Solanki (Draguu)
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright 2015 Pratik Solanki (Draguu)
 
 bl_info = {
     "name": "Dynamic Sky",

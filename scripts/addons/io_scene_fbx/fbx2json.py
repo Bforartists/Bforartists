@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2006-2012 assimp team
+# SPDX-FileCopyrightText: 2013 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Script copyright (C) 2006-2012, assimp team
-# Script copyright (C) 2013 Blender Foundation
 
 """
 Usage

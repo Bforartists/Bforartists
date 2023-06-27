@@ -1,13 +1,13 @@
+# SPDX-FileCopyrightText: 2011 Ryan Inch
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Copyright 2011, Ryan Inch
 
 bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (2, 24, 4),
-    "blender": (2, 80, 0),
+    "version": (2, 24, 8),
+    "blender": (3, 0, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
     "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/collection_manager.html",

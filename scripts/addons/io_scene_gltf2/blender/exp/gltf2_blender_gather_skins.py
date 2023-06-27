@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2018-2021 The glTF-Blender-IO authors
+#
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2018-2021 The glTF-Blender-IO authors.
 
 import mathutils
 from ...io.com import gltf2_io, gltf2_io_constants

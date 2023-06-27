@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2012 Paul Marshall
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright 2012 Paul Marshall.
 
 # The Blender Edgetools is to bring CAD tools to Blender.
 

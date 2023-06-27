@@ -2523,22 +2523,22 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
       tool_settings->snap_node_mode &= ~((1 << 5) | (1 << 6));
       tool_settings->snap_uv_mode &= ~(1 << 4);
       if (snap_mode & (1 << 4)) {
-        tool_settings->snap_mode |= (1 << 6); /* SCE_SNAP_MODE_INCREMENT */
+        tool_settings->snap_mode |= (1 << 6); /* SCE_SNAP_TO_INCREMENT */
       }
       if (snap_mode & (1 << 5)) {
-        tool_settings->snap_mode |= (1 << 4); /* SCE_SNAP_MODE_EDGE_MIDPOINT */
+        tool_settings->snap_mode |= (1 << 4); /* SCE_SNAP_TO_EDGE_MIDPOINT */
       }
       if (snap_mode & (1 << 6)) {
-        tool_settings->snap_mode |= (1 << 5); /* SCE_SNAP_MODE_EDGE_PERPENDICULAR */
+        tool_settings->snap_mode |= (1 << 5); /* SCE_SNAP_TO_EDGE_PERPENDICULAR */
       }
       if (snap_node_mode & (1 << 5)) {
-        tool_settings->snap_node_mode |= (1 << 0); /* SCE_SNAP_MODE_NODE_X */
+        tool_settings->snap_node_mode |= (1 << 0); /* SCE_SNAP_TO_NODE_X */
       }
       if (snap_node_mode & (1 << 6)) {
-        tool_settings->snap_node_mode |= (1 << 1); /* SCE_SNAP_MODE_NODE_Y */
+        tool_settings->snap_node_mode |= (1 << 1); /* SCE_SNAP_TO_NODE_Y */
       }
       if (snap_uv_mode & (1 << 4)) {
-        tool_settings->snap_uv_mode |= (1 << 6); /* SCE_SNAP_MODE_INCREMENT */
+        tool_settings->snap_uv_mode |= (1 << 6); /* SCE_SNAP_TO_INCREMENT */
       }
 
       SequencerToolSettings *sequencer_tool_settings = SEQ_tool_settings_ensure(scene);
@@ -2582,7 +2582,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       ToolSettings *tool_settings = scene->toolsettings;
       if (tool_settings->snap_uv_mode & (1 << 4)) {
-        tool_settings->snap_uv_mode |= (1 << 6); /* SCE_SNAP_MODE_INCREMENT */
+        tool_settings->snap_uv_mode |= (1 << 6); /* SCE_SNAP_TO_INCREMENT */
         tool_settings->snap_uv_mode &= ~(1 << 4);
       }
     }
@@ -2705,6 +2705,44 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
           do_version_constraints_spline_ik_joint_bindings(&pchan->constraints);
         }
       }
+    }
+  }
+
+  /* Move visibility from Cycles to Blender. */
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 17)) {
+    LISTBASE_FOREACH (Object *, object, &bmain->objects) {
+      IDProperty *cvisibility = version_cycles_visibility_properties_from_ID(&object->id);
+      int flag = 0;
+
+      if (cvisibility) {
+        flag |= version_cycles_property_boolean(cvisibility, "camera", true) ? 0 : OB_HIDE_CAMERA;
+        flag |= version_cycles_property_boolean(cvisibility, "diffuse", true) ? 0 :
+                                                                                OB_HIDE_DIFFUSE;
+        flag |= version_cycles_property_boolean(cvisibility, "glossy", true) ? 0 : OB_HIDE_GLOSSY;
+        flag |= version_cycles_property_boolean(cvisibility, "transmission", true) ?
+                    0 :
+                    OB_HIDE_TRANSMISSION;
+        flag |= version_cycles_property_boolean(cvisibility, "scatter", true) ?
+                    0 :
+                    OB_HIDE_VOLUME_SCATTER;
+        flag |= version_cycles_property_boolean(cvisibility, "shadow", true) ? 0 : OB_HIDE_SHADOW;
+      }
+
+      IDProperty *cobject = version_cycles_properties_from_ID(&object->id);
+      if (cobject) {
+        flag |= version_cycles_property_boolean(cobject, "is_holdout", false) ? OB_HOLDOUT : 0;
+        flag |= version_cycles_property_boolean(cobject, "is_shadow_catcher", false) ?
+                    OB_SHADOW_CATCHER :
+                    0;
+      }
+
+      if (object->type == OB_LAMP) {
+        flag |= OB_HIDE_CAMERA | OB_SHADOW_CATCHER;
+      }
+
+      /* Clear unused bits from old version, and add new flags. */
+      object->visibility_flag &= (OB_HIDE_VIEWPORT | OB_HIDE_SELECT | OB_HIDE_RENDER);
+      object->visibility_flag |= flag;
     }
   }
 
@@ -2913,6 +2951,24 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
     };
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       scene->r.scemode &= ~(R_EXR_TILE_FILE | R_FULL_SAMPLE);
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 25)) {
+    enum {
+      DENOISER_NLM = 1,
+      DENOISER_OPENIMAGEDENOISE = 4,
+    };
+
+    /* Removal of NLM denoiser. */
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      IDProperty *cscene = version_cycles_properties_from_ID(&scene->id);
+
+      if (cscene) {
+        if (version_cycles_property_int(cscene, "denoiser", DENOISER_NLM) == DENOISER_NLM) {
+          version_cycles_property_int_set(cscene, "denoiser", DENOISER_OPENIMAGEDENOISE);
+        }
+      }
     }
   }
 
@@ -4416,7 +4472,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_ATLEAST(bmain, 306, 10)) {
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       /* Set default values for new members. */
-      scene->toolsettings->snap_mode_tools = SCE_SNAP_MODE_GEOM;
+      scene->toolsettings->snap_mode_tools = SCE_SNAP_TO_GEOM;
       scene->toolsettings->plane_axis = 2;
     }
   }

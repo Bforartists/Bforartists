@@ -1,4 +1,7 @@
+# SPDX-FileCopyrightText: 2019-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
+
 """
 Nodes: XYZ Sliders for Normal Node
 

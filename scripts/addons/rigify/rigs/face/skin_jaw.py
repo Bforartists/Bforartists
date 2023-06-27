@@ -1,4 +1,7 @@
+# SPDX-FileCopyrightText: 2021-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
+
 from typing import Optional
 
 import bpy

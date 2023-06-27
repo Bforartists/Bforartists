@@ -1,6 +1,6 @@
+# SPDX-FileCopyrightText: 2011 Ryan Inch
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Copyright 2011, Ryan Inch
 
 import bpy
 
@@ -717,8 +717,14 @@ class ViewQCDSlot(Operator):
             apply_to_children(qcd_laycol, exclude_all_children)
 
         if orig_active_object:
-            if orig_active_object.name in context.view_layer.objects:
-                context.view_layer.objects.active = orig_active_object
+            try:
+                if orig_active_object.name in context.view_layer.objects:
+                    context.view_layer.objects.active = orig_active_object
+            except RuntimeError:
+                # Blender appears to have a race condition here for versions 3.4+,
+                # so if the active object is no longer in the view layer when
+                # attempting to set it just do nothing.
+                pass
 
         # restore locked objects back to their original mode
         # needed because of exclude child updates
