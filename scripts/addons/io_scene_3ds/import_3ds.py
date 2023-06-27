@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2005 Bob Holcomb
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright 2005 Bob Holcomb
 
 import os
 import bpy
@@ -32,8 +33,8 @@ COLOR_F = 0x0010  # color defined as 3 floats
 COLOR_24 = 0x0011  # color defined as 3 bytes
 LIN_COLOR_24 = 0x0012  # linear byte color
 LIN_COLOR_F = 0x0013  # linear float color
-PCT_SHORT = 0x30  # percentage short
-PCT_FLOAT = 0x31  # percentage float
+PCT_SHORT = 0x0030  # percentage short
+PCT_FLOAT = 0x0031  # percentage float
 MASTERSCALE = 0x0100  # Master scale factor
 
 # >----- sub defines of OBJECTINFO
@@ -222,13 +223,6 @@ def read_string(file):
 ##########
 # IMPORT #
 ##########
-
-def process_next_object_chunk(file, previous_chunk):
-    new_chunk = Chunk()
-
-    while (previous_chunk.bytes_read < previous_chunk.length):
-        # read the next chunk
-        read_chunk(file, new_chunk)
 
 def skip_to_end(file, skip_chunk):
     buffer_size = skip_chunk.length - skip_chunk.bytes_read
@@ -453,6 +447,11 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 smoothface = myContextMesh_smooth[f]
                 if smoothface > 0:
                     bmesh.polygons[f].use_smooth = True
+                else:
+                    bmesh.polygons[f].use_smooth = False
+        else:
+            for poly in bmesh.polygons:
+                poly.use_smooth = False
 
         if contextMatrix:
             if WORLD_MATRIX:
@@ -567,7 +566,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                                     (uoffset, voffset, 0), angle, tintcolor, mapto)
 
     def apply_constrain(vec):
-        consize = mathutils.Vector(vec) * (CONSTRAIN * 0.1) if CONSTRAIN != 0.0 else mathutils.Vector(vec)
+        convector = mathutils.Vector.Fill(3, (CONSTRAIN * 0.1))
+        consize = mathutils.Vector(vec) * convector if CONSTRAIN != 0.0 else mathutils.Vector(vec)
         return consize
 
     def calc_target(location, target):
@@ -575,8 +575,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         tilt = 0.0
         pos = location + target  # Target triangulation
         if abs(location[0] - target[0]) > abs(location[1] - target[1]):
-            foc = math.copysign(math.sqrt(pow(pos[0],2) + pow(pos[1],2)),pos[0])
-            dia = math.copysign(math.sqrt(pow(foc,2) + pow(target[2],2)),pos[0])
+            foc = math.copysign(math.sqrt(pow(pos[0],2) + pow(pos[1],2)), pos[0])
+            dia = math.copysign(math.sqrt(pow(foc,2) + pow(target[2],2)), pos[0])
             pitch = math.radians(90) - math.copysign(math.acos(foc / dia), pos[2])
             if location[0] > target[0]:
                 tilt = math.copysign(pitch, pos[0])
@@ -585,8 +585,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 tilt = -1 * (math.copysign(pitch, pos[0]))
                 pan = -1 * (math.radians(90) - math.atan(pos[1] / foc))
         elif abs(location[1] - target[1]) > abs(location[0] - target[0]):
-            foc = math.copysign(math.sqrt(pow(pos[1],2) + pow(pos[0],2)),pos[1])
-            dia = math.copysign(math.sqrt(pow(foc,2) + pow(target[2],2)),pos[1])
+            foc = math.copysign(math.sqrt(pow(pos[1],2) + pow(pos[0],2)), pos[1])
+            dia = math.copysign(math.sqrt(pow(foc,2) + pow(target[2],2)), pos[1])
             pitch = math.radians(90) - math.copysign(math.acos(foc / dia), pos[2])
             if location[1] > target[1]:
                 tilt = math.copysign(pitch, pos[1])
@@ -1121,12 +1121,16 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             new_chunk.bytes_read += read_str_len
 
         elif new_chunk.ID == OBJECT_INSTANCE_NAME:
-            object_name, read_str_len = read_string(file)
+            instance_name, read_str_len = read_string(file)
             if child.name == '$$$DUMMY':
-                child.name = object_name
-            else:
-                child.name += "." + object_name
-            object_dictionary[object_name] = child
+                child.name = instance_name
+            else:  # Child is an instance
+                child = child.copy()
+                child.name = object_name + "." + instance_name
+                context.view_layer.active_layer_collection.collection.objects.link(child)
+                object_dict[object_id] = child
+                object_list[-1] = child
+            object_dictionary[child.name] = child
             new_chunk.bytes_read += read_str_len
 
         elif new_chunk.ID == OBJECT_PIVOT:  # Pivot
@@ -1296,7 +1300,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif KEYFRAME and new_chunk.ID == HOTSPOT_TRACK_TAG and child.type == 'LIGHT' and child.data.type == 'SPOT':  # Hotspot
             keyframe_angle = {}
             cone_angle = math.degrees(child.data.spot_size)
-            default_value = cone_angle-(child.data.spot_blend * math.floor(cone_angle))   
+            default_value = cone_angle-(child.data.spot_blend * math.floor(cone_angle))
             hot_spot = math.degrees(read_track_angle(temp_chunk)[0])
             child.data.spot_blend = 1.0 - (hot_spot/cone_angle)
             for keydata in keyframe_angle.items():
@@ -1343,10 +1347,9 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif parent not in object_dict:
             if ob.parent != object_list[parent]:
                 ob.parent = object_list[parent]
-        elif ob.parent != object_dict[parent]:
-            ob.parent = object_dict.get(parent)
         else:
-            print("\tWarning: Cannot assign self to parent ", ob.name)
+            if ob.parent != object_dict[parent]:
+                ob.parent = object_dict.get(parent)
 
         #pivot_list[ind] += pivot_list[parent]  # Not sure this is correct, should parent space matrix be applied before combining?
 
@@ -1356,6 +1359,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         for ob in objs:
             if parent is not None:
                 ob.parent = parent
+    parent_dictionary.clear()
 
     # If hierarchy
     hierarchy = dict(zip(childs_list, parent_list))

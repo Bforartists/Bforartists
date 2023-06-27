@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2018-2022 The glTF-Blender-IO authors
+#
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2018-2022 The glTF-Blender-IO authors.
 
 import bpy
 from ..com.gltf2_blender_material_helpers import get_gltf_node_name, create_settings_group

@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2019-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # based upon the functionality of Mesh to wall by luxuy_BlenderCN

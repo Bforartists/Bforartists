@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2019-2023 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # Blender rock creation tool
@@ -664,65 +666,67 @@ def generateObject(context, muX, sigmaX, scaleX, upperSkewX, muY, sigmaY,
     # mesh = bpy.data.meshes[name]
     mesh = obj.data
 
+    creases = mesh.edge_creases_ensure().data
+
     # Apply creasing:
     if shape == 0:
         for i in range(12):
             # todo: "0.375 / 3"?  WTF?  That = 0.125. . . .
             #   *** Completed 7/15/2011: Changed second one ***
-            mesh.edges[i].crease = gauss(0.125, 0.125)
+            creases[i].value = gauss(0.125, 0.125)
     elif shape == 1:
         for i in [0, 2]:
-            mesh.edges[i].crease = gauss(0.5, 0.125)
+            creases[i].value = gauss(0.5, 0.125)
         for i in [6, 9, 11, 12]:
-            mesh.edges[i].crease = gauss(0.25, 0.05)
+            creases[i].value = gauss(0.25, 0.05)
         for i in [5, 7, 15, 16]:
-            mesh.edges[i].crease = gauss(0.125, 0.025)
+            creases[i].value = gauss(0.125, 0.025)
     elif shape == 2:
         for i in range(18):
-            mesh.edges[i].crease = gauss(0.125, 0.025)
+            creases[i].value = gauss(0.125, 0.025)
     elif shape == 3:
         for i in [0, 1, 6, 10, 13]:
-            mesh.edges[i].crease = gauss(0.25, 0.05)
-        mesh.edges[8].crease = gauss(0.5, 0.125)
+            creases[i].value = gauss(0.25, 0.05)
+        creases[8].value = gauss(0.5, 0.125)
     elif shape == 4:
         for i in [5, 6, 7, 10, 14, 16, 19, 21]:
-            mesh.edges[i].crease = gauss(0.5, 0.125)
+            creases[i].value = gauss(0.5, 0.125)
     elif shape == 7:
         for i in range(18):
             if i in [0, 1, 2, 3, 6, 7, 8, 9, 13, 16]:
-                mesh.edges[i].crease = gauss(0.5, 0.125)
+                creases[i].value = gauss(0.5, 0.125)
             elif i in [11, 17]:
-                mesh.edges[i].crease = gauss(0.25, 0.05)
+                creases[i].value = gauss(0.25, 0.05)
             else:
-                mesh.edges[i].crease = gauss(0.125, 0.025)
+                creases[i].value = gauss(0.125, 0.025)
     elif shape == 8:
         for i in range(12):
             if i in [0, 3, 8, 9, 10]:
-                mesh.edges[i].crease = gauss(0.5, 0.125)
+                creases[i].value = gauss(0.5, 0.125)
             elif i == 11:
-                mesh.edges[i].crease = gauss(0.25, 0.05)
+                creases[i].value = gauss(0.25, 0.05)
             else:
-                mesh.edges[i].crease = gauss(0.125, 0.025)
+                creases[i].value = gauss(0.125, 0.025)
     elif shape == 9:
         for i in range(12):
             if i in [0, 3, 4, 11]:
-                mesh.edges[i].crease = gauss(0.5, 0.125)
+                creases[i].value = gauss(0.5, 0.125)
             else:
-                mesh.edges[i].crease = gauss(0.25, 0.05)
+                creases[i].value = gauss(0.25, 0.05)
     elif shape == 10:
         for i in range(12):
             if i in [0, 2, 3, 4, 8, 11]:
-                mesh.edges[i].crease = gauss(0.5, 0.125)
+                creases[i].value = gauss(0.5, 0.125)
             elif i in [1, 5, 7]:
-                mesh.edges[i].crease = gauss(0.25, 0.05)
+                creases[i].value = gauss(0.25, 0.05)
             else:
-                mesh.edges[i].crease = gauss(0.125, 0.025)
+                creases[i].value = gauss(0.125, 0.025)
     elif shape == 11:
         for i in range(11):
             if i in [1, 2, 3, 4, 8, 11]:
-                mesh.edges[i].crease = gauss(0.25, 0.05)
+                creases[i].value = gauss(0.25, 0.05)
             else:
-                mesh.edges[i].crease = gauss(0.125, 0.025)
+                creases[i].value = gauss(0.125, 0.025)
 
     return obj
 

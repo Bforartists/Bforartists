@@ -1,5 +1,8 @@
+# SPDX-FileCopyrightText: 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+#
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+
+
 import bpy
 
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description

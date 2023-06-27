@@ -1,6 +1,9 @@
+# SPDX-FileCopyrightText: 2005 Stani Michiels (Stani)
+# SPDX-FileCopyrightText: 2008-2009 Remigiusz Fiedler (migius)
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-#dxfLibrary.py : provides functions for generating DXF files
+# dxfLibrary.py : provides functions for generating DXF files
 # --------------------------------------------------------------------------
 __version__ = "v1.35 - 2010.06.23"
 __author__ = "Stani Michiels(Stani), Remigiusz Fiedler(migius)"
@@ -62,11 +65,6 @@ v1.1 (20/6/2005) by www.stani.be/python/sdxf
  - Python library to generate dxf drawings
 ______________________________________________________________
 """ % (__author__,__version__,__license__,__url__)
-
-# --------------------------------------------------------------------------
-# DXF Library: copyright (C) 2005 by Stani Michiels (AKA Stani)
-#                       2008/2009 modif by Remigiusz Fiedler (AKA migius)
-# --------------------------------------------------------------------------
 
 #import Blender
 #from Blender import Mathutils, Window, Scene, sys, Draw

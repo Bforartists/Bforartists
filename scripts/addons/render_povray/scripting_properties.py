@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2021-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 """Declare pov native file syntax properties controllable in UI hooks and text blocks"""

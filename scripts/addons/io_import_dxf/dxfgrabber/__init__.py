@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2012 Manfred Moitzi (mozman)
+#
 # SPDX-License-Identifier: MIT
-# Copyright 2012 Manfred Moitzi (mozman)
 
 # Purpose: grab information from DXF drawings - all DXF versions supported
 # Created: 21.07.2012

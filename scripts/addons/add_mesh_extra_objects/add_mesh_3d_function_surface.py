@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2010-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # Original by Buerbaum Martin (Pontiac), Elod Csirmaz

@@ -1,5 +1,7 @@
+# SPDX-FileCopyrightText: 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+#
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+
 import bpy
 from .menu_contextual import POWER_SEQUENCER_MT_contextual
 from .menu_toolbar import (

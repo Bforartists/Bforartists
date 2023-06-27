@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2014-2023 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
@@ -591,7 +593,7 @@ class Do:
         # edges:
         bm.verts.ensure_lookup_table()
         if any((c < 0 for c in en.edge_crease_list)):
-            layerkey = bm.edges.layers.crease.new("SubsurfCrease")
+            layerkey = bm.edges.layers.float.new("crease_edge")
             for i, edge in enumerate(en.edges):
                 bme = bm.edges.new([bm.verts[edge[0]], bm.verts[edge[1]]])
                 bme[layerkey] = -en.edge_crease_list[i]

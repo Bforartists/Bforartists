@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2005 Bob Holcomb
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright 2005 Bob Holcomb
 
 """
 Exporting is based on 3ds loader from www.gametutorials.com(Thanks DigiBen) and using information
@@ -587,7 +588,7 @@ def make_material_texture_chunk(chunk_id, texslots, pct):
 
         if socket == 'Alpha':
             mapflags |= 0x40
-            if texslot.socket_dst.identifier in {'Base Color', 'Specular'}: 
+            if texslot.socket_dst.identifier in {'Base Color', 'Specular'}:
                 mapflags |= 0x80 if image.colorspace_settings.name == 'Non-Color' else 0x200
 
         mat_sub_mapflags.add_variable("mapflags", _3ds_ushort(mapflags))
@@ -1195,7 +1196,7 @@ def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
 
         elif ID == ROT_TRACK_TAG:  # Rotation (angle first [radians], followed by axis)
             track_chunk.add_variable("rotation", _3ds_point_4d((ob_rot.angle, ob_rot.axis[0], ob_rot.axis[1], ob_rot.axis[2])))
-            
+
         elif ID == SCL_TRACK_TAG:  # Scale vector
             track_chunk.add_variable("scale", _3ds_point_3d(ob_size))
 
@@ -1361,12 +1362,12 @@ def make_target_node(ob, translation, rotation, scale, name_id):
     ob_pos = translation[name]
     ob_rot = rotation[name].to_euler()
     ob_size = scale[name]
-    
+
     diagonal = math.copysign(math.sqrt(pow(ob_pos[0],2) + pow(ob_pos[1],2)), ob_pos[1])
     target_x = ob_pos[0] + (ob_pos[1] * math.tan(ob_rot[2]))
     target_y = ob_pos[1] + (ob_pos[0] * math.tan(math.radians(90) - ob_rot[2]))
     target_z = -1 * diagonal * math.tan(math.radians(90) - ob_rot[0])
-    
+
     # Add track chunks for target position
     track_chunk = _3ds_chunk(POS_TRACK_TAG)
 
@@ -1411,9 +1412,9 @@ def make_target_node(ob, translation, rotation, scale, name_id):
         track_chunk.add_variable("tcb_frame", _3ds_uint(0))
         track_chunk.add_variable("tcb_flags", _3ds_ushort())
         track_chunk.add_variable("position", _3ds_point_3d((target_x, target_y, target_z)))
-        
+
     tar_node.add_subchunk(track_chunk)
-    
+
     return tar_node
 
 
@@ -1436,7 +1437,7 @@ def make_ambient_node(world):
     amb_node_header_chunk.add_variable("flags2", _3ds_ushort(0))
     amb_node_header_chunk.add_variable("parent", _3ds_ushort(ROOT_OBJECT))
     amb_node.add_subchunk(amb_node_header_chunk)
-    
+
     if world.animation_data.action:
         action = world.animation_data.action
         if action.fcurves:
@@ -1459,7 +1460,7 @@ def make_ambient_node(world):
                 track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                 track_chunk.add_variable("tcb_flags", _3ds_ushort())
                 track_chunk.add_variable("color", _3ds_float_color(ambient))
-    
+
     else:  # Track header
         track_chunk.add_variable("track_flags", _3ds_ushort(0x40))
         track_chunk.add_variable("frame_start", _3ds_uint(0))
@@ -1469,9 +1470,9 @@ def make_ambient_node(world):
         track_chunk.add_variable("tcb_frame", _3ds_uint(0))
         track_chunk.add_variable("tcb_flags", _3ds_ushort())
         track_chunk.add_variable("color", _3ds_float_color(amb_color))
-    
+
     amb_node.add_subchunk(track_chunk)
-    
+
     return amb_node
 
 
