@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2014-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 from math import sin, cos, atan, atanh, radians, tan, sinh, asin, cosh, degrees

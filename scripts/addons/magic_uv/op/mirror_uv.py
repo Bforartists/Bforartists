@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2017-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 __author__ = "Keith (Wahooney) Boshoff, Nutti <nutti.metro@gmail.com>"

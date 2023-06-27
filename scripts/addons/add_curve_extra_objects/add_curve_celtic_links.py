@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2013 Adam Newgas
+#
 # SPDX-License-Identifier: MIT
-# Copyright 2013 Adam Newgas
 
 # Blender plugin for generating celtic knot curves from 3d meshes
 

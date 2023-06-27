@@ -1,7 +1,6 @@
+# SPDX-FileCopyrightText: 2010 Mariano Hidalgo
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright 2010 Mariano Hidalgo
-
-# Show Information About the Blend.
 
 bl_info = {
     "name": "Scene Information",

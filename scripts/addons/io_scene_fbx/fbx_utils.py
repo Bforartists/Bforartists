@@ -1,7 +1,7 @@
+# SPDX-FileCopyrightText: 2013 Campbell Barton
+# SPDX-FileCopyrightText: 2014 Bastien Montagne
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# Script copyright (C) Campbell Barton, Bastien Montagne
-
 
 import math
 import time

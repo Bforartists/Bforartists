@@ -1,6 +1,7 @@
+# SPDX-FileCopyrightText: 2019-2023 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-#
-#
+
 #  Author            : Clemens Barth (Blendphys@root-1.de)
 #  Homepage(Wiki)    : https://docs.blender.org/manual/en/dev/addons/import_export/mesh_atomic.html
 #

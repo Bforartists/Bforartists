@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2018-2022 The glTF-Blender-IO authors
+#
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2018-2022 The glTF-Blender-IO authors.
 
 from ....io.com.gltf2_io_extensions import Extension
 from ...exp import gltf2_blender_get

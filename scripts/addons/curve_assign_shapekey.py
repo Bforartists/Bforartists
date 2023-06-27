@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2019 Shrinivas Kulkarni
+#
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2019  Shrinivas Kulkarni
 
 # This Blender add-on assigns one or more Bezier Curves as shape keys to another
 # Bezier Curve

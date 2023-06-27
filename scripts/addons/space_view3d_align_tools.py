@@ -1,5 +1,6 @@
+# SPDX-FileCopyrightText: 2009-2010 gabhead, Lell, Anfeo.
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Contributed to by gabhead, Lell, Anfeo, meta-androcto.
 
 bl_info = {
     "name": "Align Tools",

@@ -58,6 +58,11 @@ class Context : public realtime_compositor::Context {
   {
   }
 
+  const Scene &get_scene() const override
+  {
+    return *DRW_context_state_get()->scene;
+  }
+
   const bNodeTree &get_node_tree() const override
   {
     return *DRW_context_state_get()->scene->nodetree;
@@ -158,9 +163,12 @@ class Context : public realtime_compositor::Context {
     return DRW_viewport_texture_list_get()->color;
   }
 
-  GPUTexture *get_input_texture(int view_layer, const char *pass_name) override
+  GPUTexture *get_input_texture(const Scene *scene, int view_layer, const char *pass_name) override
   {
-    if (view_layer == 0 && STREQ(pass_name, RE_PASSNAME_COMBINED)) {
+    if ((DEG_get_original_id(const_cast<ID *>(&scene->id)) ==
+         DEG_get_original_id(&DRW_context_state_get()->scene->id)) &&
+        view_layer == 0 && STREQ(pass_name, RE_PASSNAME_COMBINED))
+    {
       return get_output_texture();
     }
     else {

@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2013-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # Generic helper functions, to be used by any modules.

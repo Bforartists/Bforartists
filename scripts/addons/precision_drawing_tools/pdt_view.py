@@ -1,12 +1,14 @@
+# SPDX-FileCopyrightText: 2019-2022 Alan Odom (Clockmender)
+# SPDX-FileCopyrightText: 2019-2022 Rune Morling (ermo)
+# SPDX-FileCopyrightText: 2014 Reiner Prokein (tiles)
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # -----------------------------------------------------------------------
-# Author: Alan Odom (Clockmender), Rune Morling (ermo) Copyright (c) 2019
-#
-# Contains code which was inspired by the "Reset 3D View" plugin authored
-# by Reiner Prokein (tiles) Copyright (c) 2014 (see T37718)
+# Contains code which was inspired by the "Reset 3D View"
+# plugin authored by Reiner Prokein (tiles), (see #37718).
 # -----------------------------------------------------------------------
-#
+
 import bpy
 from bpy.types import Operator
 from math import pi
