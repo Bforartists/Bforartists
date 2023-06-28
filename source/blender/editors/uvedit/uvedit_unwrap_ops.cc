@@ -1619,17 +1619,39 @@ static const EnumPropertyItem pinned_islands_method_items[] = {
 static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
 {
   uiLayout *layout = op->layout;
+  uiLayout *col, *row; /*bfa, added *col and *row*/
 
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, false);
   uiItemR(layout, op->ptr, "shape_method", 0, nullptr, ICON_NONE);
 
-  uiLayout *col = uiLayoutColumn(layout, false); /*bfa -  added col*/
-
+  col = uiLayoutColumn(layout, false); /*bfa -  added col*/
   uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
   uiItemR(col, op->ptr, "scale", 0, nullptr, ICON_NONE);
   {
-    uiItemR(col, op->ptr, "rotate", 0, nullptr, ICON_NONE);
+    //uiItemR(col, op->ptr, "rotate", 0, nullptr, ICON_NONE);
+
+// ------------------ bfa new left aligned prop with triangle button
+
+    /* NOTE: split amount here needs to be synced with normal labels */
+    uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+    /* FIRST PART ................................................ */
+    row = uiLayoutRow(split, false);
+    uiLayoutSetPropDecorate(row, false);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, op->ptr, "rotate", 0, nullptr, ICON_NONE);
+
+    /* SECOND PART ................................................ */
+    row = uiLayoutRow(split, false);
+    if (RNA_boolean_get(op->ptr, "rotate")) {
+      uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_DOWN);
+    }
+    else {
+      uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    }
+
+    // ------------------------------- end bfa
 
     uiLayout *sub = uiLayoutRow(layout, true);
     //uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "rotate"));
@@ -1641,17 +1663,38 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
       uiItemS(layout);
     }
   }
-  uiItemR(layout, op->ptr, "margin_method", 0, nullptr, ICON_NONE);
-
+  uiItemR(layout, op->ptr, "margin", 0, nullptr, ICON_NONE);
   uiLayout *sub = uiLayoutRow(layout, true);
   uiItemS(sub); /*bfa - separator*/
   uiItemS(sub); /*bfa - separator*/
   uiItemS(sub); /*bfa - separator*/
-  uiItemR(sub, op->ptr, "margin", 0, nullptr, ICON_NONE);
+  uiItemR(sub, op->ptr, "margin_method", 0, nullptr, ICON_NONE);
+
   {
-    uiLayout *col = uiLayoutColumn(layout, false); /*bfa -  added col*/
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-    uiItemR(col, op->ptr, "pin", 0, nullptr, ICON_NONE);
+    //uiItemR(col, op->ptr, "pin", 0, nullptr, ICON_NONE);
+
+// ------------------ bfa new left aligned prop with triangle button
+
+    /* NOTE: split amount here needs to be synced with normal labels */
+    uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+    /* FIRST PART ................................................ */
+    row = uiLayoutRow(split, false);
+    uiLayoutSetPropDecorate(row, false);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, op->ptr, "pin", 0, nullptr, ICON_NONE);
+
+    /* SECOND PART ................................................ */
+    row = uiLayoutRow(split, false);
+    if (RNA_boolean_get(op->ptr, "pin")) {
+      uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_DOWN);
+    }
+    else {
+      uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    }
+
+    // ------------------------------- end bfa
+
     uiLayout *sub = uiLayoutRow(layout, true);
     //uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "pin"));
     if (RNA_boolean_get(op->ptr, "pin")) {
