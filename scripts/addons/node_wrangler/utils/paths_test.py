@@ -255,6 +255,38 @@ class TestPutFileNamesInSockets(unittest.TestCase):
             },
         )
 
+    def test_single_file_good(self):
+        """Regression test for https://projects.blender.org/blender/blender-addons/issues/104573"""
+
+        files = [
+            MockFile("banana-color.webp"),
+        ]
+        sockets = sockets_fixture()
+        match_files_to_socket_names(files, sockets)
+
+        assert_sockets(
+            self,
+            sockets,
+            {
+                "Base Color": "banana-color.webp",
+            },
+        )
+
+    def test_single_file_bad(self):
+        """Regression test for https://projects.blender.org/blender/blender-addons/issues/104573"""
+
+        files = [
+            MockFile("README-banana.txt"),
+        ]
+        sockets = sockets_fixture()
+        match_files_to_socket_names(files, sockets)
+
+        assert_sockets(
+            self,
+            sockets,
+            {},
+        )
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

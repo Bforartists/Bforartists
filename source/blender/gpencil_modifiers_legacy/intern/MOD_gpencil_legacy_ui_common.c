@@ -294,7 +294,7 @@ static void gpencil_modifier_ops_extra_draw(bContext *C, uiLayout *layout, void 
 /* bfa - Grease pencil modifiers - put apply into the header #2185 */
 static void gpencil_modifier_panel_header(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *row, *sub, *op_row;
+  uiLayout *row, *sub, *op_row;/*bfa*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = UI_panel_custom_data_get(panel);
@@ -337,10 +337,10 @@ static void gpencil_modifier_panel_header(const bContext *UNUSED(C), Panel *pane
 
   /* Extra operators. */
   // row = uiLayoutRow(layout, true);
-  uiItemMenuF(op_row, "", ICON_DOWNARROW_HLT, gpencil_modifier_ops_extra_draw, md);
+  uiItemMenuF(op_row, "", ICON_DOWNARROW_HLT, gpencil_modifier_ops_extra_draw, md);/*bfa*/
 
   /* Remove button. */
-  uiItemO(op_row, "", ICON_X, "OBJECT_OT_gpencil_modifier_remove");
+  uiItemO(op_row, "", ICON_X, "OBJECT_OT_gpencil_modifier_remove");/*bfa*/
 
   /* Extra padding. */
   uiItemS(layout);

@@ -111,14 +111,14 @@ void OVERLAY_grid_init(OVERLAY_Data *vedata)
     if (winmat[3][3] == 0.0f || rv3d->view == RV3D_VIEW_USER) {
       /*bfa - we show or hide the grid in all views with the ortho grid flag*/
       if (show_ortho_grid) {
-        if (show_axis_x) {
-          grid_flag |= PLANE_XY | SHOW_AXIS_X;
-        }
-        if (show_axis_y) {
-          grid_flag |= PLANE_XY | SHOW_AXIS_Y;
-        }
-        if (show_floor) {
-          grid_flag |= PLANE_XY | SHOW_GRID;
+      if (show_axis_x) {
+        grid_flag |= PLANE_XY | SHOW_AXIS_X;
+      }
+      if (show_axis_y) {
+        grid_flag |= PLANE_XY | SHOW_AXIS_Y;
+      }
+      if (show_floor) {
+        grid_flag |= PLANE_XY | SHOW_GRID;
         }
       }
     }
