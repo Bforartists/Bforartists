@@ -304,7 +304,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   uiItemR(layout, ptr, "dash_offset", 0, NULL, ICON_NONE);
 
-  row = uiLayoutRow(layout, false);
+  row = uiLayoutRow(layout, false); /*bfa*/
   uiLayoutSetPropSep(row, false);
 
   uiTemplateList(row,
@@ -322,7 +322,7 @@ static void panel_draw(const bContext *C, Panel *panel)
                  1,
                  UI_TEMPLATE_LIST_FLAG_NONE);
 
-  col = uiLayoutColumn(row, false);
+  col = uiLayoutColumn(row, false);/*bfa*/
   uiLayout *sub = uiLayoutColumn(col, true);
   uiItemO(sub, "", ICON_ADD, "GPENCIL_OT_segment_add");
   uiItemO(sub, "", ICON_REMOVE, "GPENCIL_OT_segment_remove");
