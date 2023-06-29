@@ -2742,7 +2742,8 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
         /* bfa - NOTE: this has to be called anyways for UI button's object
          * as it is possible to show property for non selected object,
          * to make sure delete/insert_frame is not called twice on same object/bone,
-         * exclude ptr.data from selected objects/bones. */
+         * exclude ptr.data from selected objects/bones.
+         the | or operator is by purpose */
         changed |= (insert_keyframe(bmain,
                                     op->reports,
                                     ptr.owner_id,
