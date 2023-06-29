@@ -420,23 +420,23 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   buttons_number++;
 
   /* Extra operators menu. */
-  uiItemMenuF(op_row, "", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);
+  uiItemMenuF(op_row, "", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);/*bfa*/
 
   /* Delete button. */
   if (modifier_can_delete(md) && !modifier_is_simulation(md)) {
-    uiItemO(op_row, "", ICON_X, "OBJECT_OT_modifier_remove");
+    uiItemO(op_row, "", ICON_X, "OBJECT_OT_modifier_remove");/*bfa*/
     buttons_number++;
   }
 
   /* Switch context buttons. */
   if (modifier_is_simulation(md) == 1) {
     uiItemStringO(
-        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PHYSICS");
+        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PHYSICS");/*bfa*/
     buttons_number++;
   }
   else if (modifier_is_simulation(md) == 2) {
     uiItemStringO(
-        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PARTICLES");
+        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PARTICLES");/*bfa*/
     buttons_number++;
   }
 

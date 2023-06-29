@@ -41,6 +41,12 @@ from .fbx_utils import (
     nors_transformed,
     parray_as_ndarray,
     astype_view_signedness,
+    MESH_ATTRIBUTE_MATERIAL_INDEX,
+    MESH_ATTRIBUTE_POSITION,
+    MESH_ATTRIBUTE_EDGE_VERTS,
+    MESH_ATTRIBUTE_CORNER_VERT,
+    MESH_ATTRIBUTE_SHARP_FACE,
+    MESH_ATTRIBUTE_SHARP_EDGE,
 )
 
 # global singleton, assign on execution
@@ -1199,12 +1205,14 @@ def blen_read_geom_layer_material(fbx_obj, mesh):
     layer_id = b'Materials'
     fbx_layer_data = elem_prop_first(elem_find_first(fbx_layer, layer_id))
 
-    blen_data = mesh.polygons
+    blen_data = MESH_ATTRIBUTE_MATERIAL_INDEX.ensure(mesh.attributes).data
+    fbx_item_size = 1
+    assert(fbx_item_size == MESH_ATTRIBUTE_MATERIAL_INDEX.item_size)
     blen_read_geom_array_mapped_polygon(
-        mesh, blen_data, "material_index", np.uintc,
+        mesh, blen_data, MESH_ATTRIBUTE_MATERIAL_INDEX.foreach_attribute, MESH_ATTRIBUTE_MATERIAL_INDEX.dtype,
         fbx_layer_data, None,
         fbx_layer_mapping, fbx_layer_ref,
-        1, 1, layer_id,
+        1, fbx_item_size, layer_id,
         )
 
 
@@ -1227,7 +1235,7 @@ def blen_read_geom_layer_uv(fbx_obj, mesh):
                       "" % (layer_id, fbx_layer_name, mesh.name))
                 continue
 
-            blen_data = uv_lay.data
+            blen_data = uv_lay.uv
 
             # some valid files omit this data
             if fbx_layer_data is None:
@@ -1235,7 +1243,7 @@ def blen_read_geom_layer_uv(fbx_obj, mesh):
                 continue
 
             blen_read_geom_array_mapped_polyloop(
-                mesh, blen_data, "uv", np.single,
+                mesh, blen_data, "vector", np.single,
                 fbx_layer_data, fbx_layer_index,
                 fbx_layer_mapping, fbx_layer_ref,
                 2, 2, layer_id,
@@ -1307,25 +1315,29 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
             print("warning skipping sharp edges data, no valid edges...")
             return False
 
-        blen_data = mesh.edges
+        blen_data = MESH_ATTRIBUTE_SHARP_EDGE.ensure(mesh.attributes).data
+        fbx_item_size = 1
+        assert(fbx_item_size == MESH_ATTRIBUTE_SHARP_EDGE.item_size)
         blen_read_geom_array_mapped_edge(
-            mesh, blen_data, "use_edge_sharp", bool,
+            mesh, blen_data, MESH_ATTRIBUTE_SHARP_EDGE.foreach_attribute, MESH_ATTRIBUTE_SHARP_EDGE.dtype,
             fbx_layer_data, None,
             fbx_layer_mapping, fbx_layer_ref,
-            1, 1, layer_id,
-            xform=np.logical_not,
+            1, fbx_item_size, layer_id,
+            xform=np.logical_not,  # in FBX, 0 (False) is sharp, but in Blender True is sharp.
             )
         # We only set sharp edges here, not face smoothing itself...
         mesh.use_auto_smooth = True
         return False
     elif fbx_layer_mapping == b'ByPolygon':
-        blen_data = mesh.polygons
+        blen_data = MESH_ATTRIBUTE_SHARP_FACE.ensure(mesh.attributes).data
+        fbx_item_size = 1
+        assert(fbx_item_size == MESH_ATTRIBUTE_SHARP_FACE.item_size)
         return blen_read_geom_array_mapped_polygon(
-            mesh, blen_data, "use_smooth", bool,
+            mesh, blen_data, MESH_ATTRIBUTE_SHARP_FACE.foreach_attribute, MESH_ATTRIBUTE_SHARP_FACE.dtype,
             fbx_layer_data, None,
             fbx_layer_mapping, fbx_layer_ref,
-            1, 1, layer_id,
-            xform=lambda s: (s != 0),  # smoothgroup bitflags, treat as booleans for now
+            1, fbx_item_size, layer_id,
+            xform=lambda s: (s == 0),  # smoothgroup bitflags, treat as booleans for now
             )
     else:
         print("warning layer %r mapping type unsupported: %r" % (fbx_layer.id, fbx_layer_mapping))
@@ -1412,8 +1424,7 @@ def blen_read_geom_layer_normal(fbx_obj, mesh, xform=None):
                 mesh.loops.foreach_set("normal", loop_normals.ravel())
             elif blen_data_type == "Vertices":
                 # We have to copy vnors to lnors! Far from elegant, but simple.
-                loop_vertex_indices = np.empty(len(mesh.loops), dtype=np.uintc)
-                mesh.loops.foreach_get("vertex_index", loop_vertex_indices)
+                loop_vertex_indices = MESH_ATTRIBUTE_CORNER_VERT.to_ndarray(mesh.attributes)
                 mesh.loops.foreach_set("normal", bdata[loop_vertex_indices].ravel())
             return True
 
@@ -1440,8 +1451,6 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
     fbx_polys = elem_prop_first(elem_find_first(fbx_obj, b'PolygonVertexIndex'))
     fbx_edges = elem_prop_first(elem_find_first(fbx_obj, b'Edges'))
 
-    bl_vcos_dtype = np.single
-
     # The dtypes when empty don't matter, but are set to what the fbx arrays are expected to be.
     fbx_verts = parray_as_ndarray(fbx_verts) if fbx_verts else np.empty(0, dtype=data_types.ARRAY_FLOAT64)
     fbx_polys = parray_as_ndarray(fbx_polys) if fbx_polys else np.empty(0, dtype=data_types.ARRAY_INT32)
@@ -1458,18 +1467,19 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
     tot_edges = len(fbx_edges)
 
     mesh = bpy.data.meshes.new(name=elem_name_utf8)
+    attributes = mesh.attributes
 
     if tot_verts:
         if geom_mat_co is not None:
-            fbx_verts = vcos_transformed(fbx_verts, geom_mat_co, bl_vcos_dtype)
+            fbx_verts = vcos_transformed(fbx_verts, geom_mat_co, MESH_ATTRIBUTE_POSITION.dtype)
         else:
-            fbx_verts = fbx_verts.astype(bl_vcos_dtype, copy=False)
+            fbx_verts = fbx_verts.astype(MESH_ATTRIBUTE_POSITION.dtype, copy=False)
 
         mesh.vertices.add(tot_verts)
-        mesh.vertices.foreach_set("co", fbx_verts.ravel())
+        MESH_ATTRIBUTE_POSITION.foreach_set(attributes, fbx_verts.ravel())
 
     if tot_loops:
-        bl_loop_start_dtype = bl_loop_vertex_index_dtype = np.uintc
+        bl_loop_start_dtype = np.uintc
 
         mesh.loops.add(tot_loops)
         # The end of each polygon is specified by an inverted index.
@@ -1480,7 +1490,8 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         # Un-invert the loop ends.
         fbx_polys[fbx_loop_end_idx] ^= -1
         # Set loop vertex indices, casting to the Blender C type first for performance.
-        mesh.loops.foreach_set("vertex_index", astype_view_signedness(fbx_polys, bl_loop_vertex_index_dtype))
+        MESH_ATTRIBUTE_CORNER_VERT.foreach_set(
+            attributes, astype_view_signedness(fbx_polys, MESH_ATTRIBUTE_CORNER_VERT.dtype))
 
         poly_loop_starts = np.empty(tot_polys, dtype=bl_loop_start_dtype)
         # The first loop is always a loop start.
@@ -1497,7 +1508,6 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
 
         if tot_edges:
             # edges in fact index the polygons (NOT the vertices)
-            bl_edge_vertex_indices_dtype = np.uintc
 
             # The first vertex index of each edge is the vertex index of the corresponding loop in fbx_polys.
             edges_a = fbx_polys[fbx_edges]
@@ -1521,12 +1531,12 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
             # Stack edges_a and edges_b as individual columns like np.column_stack((edges_a, edges_b)).
             # np.concatenate is used because np.column_stack doesn't allow specifying the dtype of the returned array.
             edges_conv = np.concatenate((edges_a.reshape(-1, 1), edges_b.reshape(-1, 1)),
-                                        axis=1, dtype=bl_edge_vertex_indices_dtype, casting='unsafe')
+                                        axis=1, dtype=MESH_ATTRIBUTE_EDGE_VERTS.dtype, casting='unsafe')
 
             # Add the edges and set their vertex indices.
             mesh.edges.add(len(edges_conv))
             # ravel() because edges_conv must be flat and C-contiguous when passed to foreach_set.
-            mesh.edges.foreach_set("vertices", edges_conv.ravel())
+            MESH_ATTRIBUTE_EDGE_VERTS.foreach_set(attributes, edges_conv.ravel())
     elif tot_edges:
         print("ERROR: No polygons, but edges exist. Ignoring the edges!")
 
@@ -1554,7 +1564,9 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         mesh.loops.foreach_get("normal", clnors)
 
         if not ok_smooth:
-            mesh.polygons.foreach_set("use_smooth", np.full(len(mesh.polygons), True, dtype=bool))
+            sharp_face = MESH_ATTRIBUTE_SHARP_FACE.get(attributes)
+            if sharp_face:
+                attributes.remove(sharp_face)
             ok_smooth = True
 
         # Iterating clnors into a nested tuple first is faster than passing clnors.reshape(-1, 3) directly into
@@ -1566,7 +1578,9 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         mesh.free_normals_split()
 
     if not ok_smooth:
-        mesh.polygons.foreach_set("use_smooth", np.full(len(mesh.polygons), True, dtype=bool))
+        sharp_face = MESH_ATTRIBUTE_SHARP_FACE.get(attributes)
+        if sharp_face:
+            attributes.remove(sharp_face)
 
     if settings.use_custom_props:
         blen_read_custom_properties(fbx_obj, mesh, settings)
@@ -1579,9 +1593,7 @@ def blen_read_shapes(fbx_tmpl, fbx_data, objects, me, scene):
         # No shape key data. Nothing to do.
         return
 
-    bl_vcos_dtype = np.single
-    me_vcos = np.empty(len(me.vertices) * 3, dtype=bl_vcos_dtype)
-    me.vertices.foreach_get("co", me_vcos)
+    me_vcos = MESH_ATTRIBUTE_POSITION.to_ndarray(me.attributes)
     me_vcos_vector_view = me_vcos.reshape(-1, 3)
 
     objects = list({node.bl_obj for node in objects})
@@ -3513,19 +3525,18 @@ def load(operator, context, filepath="",
                 if fbx_obj.props[-1] == b'Mesh':
                     mesh = fbx_item[1]
 
-                    if decal_offset != 0.0:
+                    num_verts = len(mesh.vertices)
+                    if decal_offset != 0.0 and num_verts > 0:
                         for material in mesh.materials:
                             if material in material_decals:
-                                num_verts = len(mesh.vertices)
-                                blen_cos_dtype = blen_norm_dtype = np.single
-                                vcos = np.empty(num_verts * 3, dtype=blen_cos_dtype)
+                                blen_norm_dtype = np.single
+                                vcos = MESH_ATTRIBUTE_POSITION.to_ndarray(mesh.attributes)
                                 vnorm = np.empty(num_verts * 3, dtype=blen_norm_dtype)
-                                mesh.vertices.foreach_get("co", vcos)
-                                mesh.vertices.foreach_get("normal", vnorm)
+                                mesh.vertex_normals.foreach_get("vector", vnorm)
 
                                 vcos += vnorm * decal_offset
 
-                                mesh.vertices.foreach_set("co", vcos)
+                                MESH_ATTRIBUTE_POSITION.foreach_set(mesh.attributes, vcos)
                                 break
 
                     for obj in (obj for obj in bpy.data.objects if obj.data == mesh):
