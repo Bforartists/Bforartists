@@ -761,7 +761,7 @@ def draw_maintext(self, context):
 
     # Calculate the text
     blf.position(0, pos_x, context.region.height-pos_y, 0) #titleposition
-    blf.size(font_id, context.scene.important_hotkeys_font_size, 72)
+    blf.size(font_id, context.scene.important_hotkeys_font_size) # bfa - dpi defaults to 72 when ommited
     blf.color(font_id,font_color_r, font_color_g, font_color_b, font_color_alpha * 0.8) # color variables
 
 
