@@ -103,7 +103,7 @@ def files_to_clean_file_names_for_sockets(files, sockets):
         socket_tags = socket[1]
         all_tags.update(socket_tags)
 
-    while True:
+    while len(names_to_tag_lists) > 1:
         something_changed = False
 
         # Common prefixes / suffixes provide zero information about what file

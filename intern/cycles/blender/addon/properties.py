@@ -830,7 +830,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     )
     debug_use_hair_bvh: BoolProperty(
         name="Use Curves BVH",
-        description="Use special type BVH optimized for hair (uses more ram but renders faster)\nActivates with device type GPU Compute",
+        description="Use special type BVH optimized for hair curves(uses more ram but renders faster)\nActivates with device type GPU Compute",
         default=True,
     )
     debug_use_compact_bvh: BoolProperty(
@@ -842,8 +842,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         name="BVH Time Steps",
         description="Split BVH primitives by this number of time steps to speed up render time in cost of memory\nDeactivates with Use Spatial Splits active",
         default=0,
-        min=0,
-        max=16,
+        min=0, max=16,
     )
 
     bake_type: EnumProperty(
@@ -1261,11 +1260,7 @@ class CyclesWorldSettings(bpy.types.PropertyGroup):
         description="Distance between volume shader samples when rendering the volume "
         "(lower values give more accurate and detailed results, but also increased render time)\nDeactivates when Homogenous is on",
         default=1.0,
-        min=0.0000001,
-        max=100000.0,
-        soft_min=0.1,
-        soft_max=100.0,
-        precision=4,
+        min=0.0000001, max=100000.0, soft_min=0.1, soft_max=100.0, precision=4
     )
 
     @classmethod
@@ -1470,7 +1465,7 @@ class CyclesCurveRenderSettings(bpy.types.PropertyGroup):
     def register(cls):
         bpy.types.Scene.cycles_curves = PointerProperty(
             name="Cycles Curves Rendering Settings",
-            description="Cycles Curves rendering settings",
+            description="Cycles curves rendering settings",
             type=cls,
         )
 

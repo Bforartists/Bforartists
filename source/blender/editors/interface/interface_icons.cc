@@ -532,7 +532,7 @@ static void vicon_gplayer_color_draw(Icon *icon, int x, int y, int w, int h)
   immUnbindProgram();
 }
 
-static void init_brush_icons(void)
+static void init_brush_icons()
 {
 
 #  define INIT_BRUSH_ICON(icon_id, name) \
@@ -675,7 +675,7 @@ int UI_icon_from_keymap_item(const wmKeyMapItem *kmi, int r_icon_mod[4])
   return UI_icon_from_event_type(kmi->type, kmi->val);
 }
 
-static void init_event_icons(void)
+static void init_event_icons()
 {
   DrawInfo *di_next = nullptr;
 
@@ -853,7 +853,7 @@ static ImBuf *create_mono_icon_with_border(ImBuf *buf,
   return result;
 }
 
-static void free_icons_textures(void)
+static void free_icons_textures()
 {
   if (icongltex.num_textures > 0) {
     for (int i = 0; i < 2; i++) {
@@ -866,7 +866,7 @@ static void free_icons_textures(void)
   }
 }
 
-void UI_icons_reload_internal_textures(void)
+void UI_icons_reload_internal_textures()
 {
   bTheme *btheme = UI_GetTheme();
   ImBuf *b16buf = nullptr, *b32buf = nullptr, *b16buf_border = nullptr, *b32buf_border = nullptr;
@@ -945,7 +945,7 @@ void UI_icons_reload_internal_textures(void)
   IMB_freeImBuf(b32buf_border);
 }
 
-static void init_internal_icons(void)
+static void init_internal_icons()
 {
 #  if 0 /* temp disabled */
   if ((btheme != nullptr) && btheme->tui.iconfile[0]) {
@@ -1138,14 +1138,14 @@ int UI_iconfile_get_index(const char *filename)
   return 0;
 }
 
-ListBase *UI_iconfile_list(void)
+ListBase *UI_iconfile_list()
 {
   ListBase *list = &(iconfilelist);
 
   return list;
 }
 
-void UI_icons_free(void)
+void UI_icons_free()
 {
 #ifndef WITH_HEADLESS
   free_icons_textures();
