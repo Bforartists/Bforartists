@@ -530,8 +530,9 @@ void uiTemplateMarker(uiLayout *layout,
     col = uiLayoutColumn(layout, true);
     uiLayoutSetActive(col, (cb->marker_flag & MARKER_DISABLED) == 0);
 
-    uiItemL(col, IFACE_("Position"), ICON_NONE);
+    uiItemL(col, IFACE_("Position"), ICON_NONE); 	/*bfa */
 
+	/*bfa */
     row = uiLayoutRow(col, true);
 
     /* indent */
@@ -546,8 +547,10 @@ void uiTemplateMarker(uiLayout *layout,
 
     vcol = uiLayoutColumn(row, true);
     block = uiLayoutGetBlock(vcol);
+	/*end bfa */
     UI_block_align_begin(block);
 
+	/*bfa */
     uiBut *bt = uiDefButF(block,
                           UI_BTYPE_NUM,
                           B_MARKER_POS,
@@ -564,6 +567,7 @@ void uiTemplateMarker(uiLayout *layout,
                           TIP_("X-position of marker at frame in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
+	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_POS,
@@ -581,6 +585,7 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
 
+	/*bfa */
     uiItemS(col);
     uiItemL(col, IFACE_("Offset"), ICON_NONE);
     row = uiLayoutRow(col, true);
@@ -598,7 +603,9 @@ void uiTemplateMarker(uiLayout *layout,
     vcol = uiLayoutColumn(row, true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
+	/*end bfa */
 
+	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_OFFSET,
@@ -615,6 +622,7 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("X-offset to parenting point"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
+	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_OFFSET,
@@ -631,7 +639,7 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("Y-offset to parenting point"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
-
+	/*bfa */
     uiItemS(col);
     uiItemL(col, IFACE_("Pattern Area"), ICON_NONE);
     row = uiLayoutRow(col, true);
@@ -649,7 +657,9 @@ void uiTemplateMarker(uiLayout *layout,
     vcol = uiLayoutColumn(row, true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
+	/*end bfa */
 
+	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_PAT_DIM,
@@ -666,6 +676,7 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("Width of marker's pattern in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
+	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_PAT_DIM,
@@ -683,6 +694,7 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
 
+	/*bfa */
     uiItemS(col);
     uiItemL(col, IFACE_("Search Area"), ICON_NONE);
     row = uiLayoutRow(col, true);
@@ -700,7 +712,9 @@ void uiTemplateMarker(uiLayout *layout,
     vcol = uiLayoutColumn(row, true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
+	/*end bfa */
 
+	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_SEARCH_POS,
@@ -717,6 +731,7 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("X-position of search at frame relative to marker's position"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
+	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_SEARCH_POS,
@@ -753,6 +768,7 @@ void uiTemplateMarker(uiLayout *layout,
     UI_block_align_begin(block);
     /*bfa end*/
 
+	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_SEARCH_DIM,
@@ -769,6 +785,7 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("Width of marker's search in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
+	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_SEARCH_DIM,
