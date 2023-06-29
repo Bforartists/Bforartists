@@ -9,6 +9,8 @@ import time
 from collections import namedtuple
 from collections.abc import Iterable
 from itertools import zip_longest, chain
+from dataclasses import dataclass, field
+from typing import Callable
 import numpy as np
 
 import bpy
@@ -412,8 +414,13 @@ def nors_transformed(raw_nors, m=None, dtype=None):
 
 
 def astype_view_signedness(arr, new_dtype):
-    """Unsafely views arr as new_dtype if the itemsize and byteorder of arr matches but the signedness does not,
-    otherwise calls np.ndarray.astype with copy=False.
+    """Unsafely views arr as new_dtype if the itemsize and byteorder of arr matches but the signedness does not.
+
+    Safely views arr as new_dtype if both arr and new_dtype have the same itemsize, byteorder and signedness, but could
+    have a different character code, e.g. 'i' and 'l'. np.ndarray.astype with copy=False does not normally create this
+    view, but Blender can be picky about the character code used, so this function will create the view.
+
+    Otherwise, calls np.ndarray.astype with copy=False.
 
     The benefit of copy=False is that if the array can be safely viewed as the new type, then a view is made, instead of
     a copy with the new type.
@@ -434,13 +441,14 @@ def astype_view_signedness(arr, new_dtype):
     # else is left to .astype.
     arr_kind = arr_dtype.kind
     new_kind = new_dtype.kind
+    # Signed and unsigned int are opposite in terms of signedness. Other types don't have signedness.
+    integer_kinds = {'i', 'u'}
     if (
-        # Signed and unsigned int are opposite in terms of signedness. Other types don't have signedness.
-        ((arr_kind == 'i' and new_kind == 'u') or (arr_kind == 'u' and new_kind == 'i'))
+        arr_kind in integer_kinds and new_kind in integer_kinds
         and arr_dtype.itemsize == new_dtype.itemsize
         and arr_dtype.byteorder == new_dtype.byteorder
     ):
-        # new_dtype has opposite signedness and matching itemsize and byteorder, so return a view of the new type.
+        # arr and new_dtype have signedness and matching itemsize and byteorder, so return a view of the new type.
         return arr.view(new_dtype)
     else:
         return arr.astype(new_dtype, copy=False)
@@ -590,6 +598,147 @@ def ensure_object_not_in_edit_mode(context, obj):
             scene.collection.objects.unlink(obj)
 
     return True
+
+
+# ##### Attribute utils. #####
+AttributeDataTypeInfo = namedtuple("AttributeDataTypeInfo", ["dtype", "foreach_attribute", "item_size"])
+_attribute_data_type_info_lookup = {
+    'FLOAT': AttributeDataTypeInfo(np.single, "value", 1),
+    'INT': AttributeDataTypeInfo(np.intc, "value", 1),
+    'FLOAT_VECTOR': AttributeDataTypeInfo(np.single, "vector", 3),
+    'FLOAT_COLOR': AttributeDataTypeInfo(np.single, "color", 4),  # color_srgb is an alternative
+    'BYTE_COLOR': AttributeDataTypeInfo(np.single, "color", 4),  # color_srgb is an alternative
+    'STRING': AttributeDataTypeInfo(None, "value", 1),  # Not usable with foreach_get/set
+    'BOOLEAN': AttributeDataTypeInfo(bool, "value", 1),
+    'FLOAT2': AttributeDataTypeInfo(np.single, "vector", 2),
+    'INT8': AttributeDataTypeInfo(np.intc, "value", 1),
+    'INT32_2D': AttributeDataTypeInfo(np.intc, "value", 2),
+}
+
+
+def attribute_get(attributes, name, data_type, domain):
+    """Get an attribute by its name, data_type and domain.
+
+    Returns None if no attribute with this name, data_type and domain exists."""
+    attr = attributes.get(name)
+    if not attr:
+        return None
+    if attr.data_type == data_type and attr.domain == domain:
+        return attr
+    # It shouldn't normally happen, but it's possible there are multiple attributes with the same name, but different
+    # data_types or domains.
+    for attr in attributes:
+        if attr.name == name and attr.data_type == data_type and attr.domain == domain:
+            return attr
+    return None
+
+
+def attribute_foreach_set(attribute, array_or_list, foreach_attribute=None):
+    """Set every value of an attribute with foreach_set."""
+    if foreach_attribute is None:
+        foreach_attribute = _attribute_data_type_info_lookup[attribute.data_type].foreach_attribute
+    attribute.data.foreach_set(foreach_attribute, array_or_list)
+
+
+def attribute_to_ndarray(attribute, foreach_attribute=None):
+    """Create a NumPy ndarray from an attribute."""
+    data = attribute.data
+    data_type_info = _attribute_data_type_info_lookup[attribute.data_type]
+    ndarray = np.empty(len(data) * data_type_info.item_size, dtype=data_type_info.dtype)
+    if foreach_attribute is None:
+        foreach_attribute = data_type_info.foreach_attribute
+    data.foreach_get(foreach_attribute, ndarray)
+    return ndarray
+
+
+@dataclass
+class AttributeDescription:
+    """Helper class to reduce duplicate code for handling built-in Blender attributes."""
+    name: str
+    # Valid identifiers can be found in bpy.types.Attribute.bl_rna.properties["data_type"].enum_items
+    data_type: str
+    # Valid identifiers can be found in bpy.types.Attribute.bl_rna.properties["domain"].enum_items
+    domain: str
+    # Some attributes are required to exist if certain conditions are met. If a required attribute does not exist when
+    # attempting to get it, an AssertionError is raised.
+    is_required_check: Callable[[bpy.types.AttributeGroup], bool] = None
+    # NumPy dtype that matches the internal C data of this attribute.
+    dtype: np.dtype = field(init=False)
+    # The default attribute name to use with foreach_get and foreach_set.
+    foreach_attribute: str = field(init=False)
+    # The number of elements per value of the attribute when flattened into a 1-dimensional list/array.
+    item_size: int = field(init=False)
+
+    def __post_init__(self):
+        data_type_info = _attribute_data_type_info_lookup[self.data_type]
+        self.dtype = data_type_info.dtype
+        self.foreach_attribute = data_type_info.foreach_attribute
+        self.item_size = data_type_info.item_size
+
+    def is_required(self, attributes):
+        """Check if the attribute is required to exist in the provided attributes."""
+        is_required_check = self.is_required_check
+        return is_required_check and is_required_check(attributes)
+
+    def get(self, attributes):
+        """Get the attribute.
+
+        If the attribute is required, but does not exist, an AssertionError is raised, otherwise None is returned."""
+        attr = attribute_get(attributes, self.name, self.data_type, self.domain)
+        if not attr and self.is_required(attributes):
+            raise AssertionError("Required attribute '%s' with type '%s' and domain '%s' not found in %r"
+                                 % (self.name, self.data_type, self.domain, attributes))
+        return attr
+
+    def ensure(self, attributes):
+        """Get the attribute, creating it if it does not exist.
+
+        Raises a RuntimeError if the attribute could not be created, which should only happen when attempting to create
+        an attribute with a reserved name, but with the wrong data_type or domain. See usage of
+        BuiltinCustomDataLayerProvider in Blender source for most reserved names.
+
+        There is no guarantee that the returned attribute has the desired name because the name could already be in use
+        by another attribute with a different data_type and/or domain."""
+        attr = self.get(attributes)
+        if attr:
+            return attr
+
+        attr = attributes.new(self.name, self.data_type, self.domain)
+        if not attr:
+            raise RuntimeError("Could not create attribute '%s' with type '%s' and domain '%s' in %r"
+                               % (self.name, self.data_type, self.domain, attributes))
+        return attr
+
+    def foreach_set(self, attributes, array_or_list, foreach_attribute=None):
+        """Get the attribute, creating it if it does not exist, and then set every value in the attribute."""
+        attribute_foreach_set(self.ensure(attributes), array_or_list, foreach_attribute)
+
+    def get_ndarray(self, attributes, foreach_attribute=None):
+        """Get the attribute and if it exists, return a NumPy ndarray containing its data, otherwise return None."""
+        attr = self.get(attributes)
+        return attribute_to_ndarray(attr, foreach_attribute) if attr else None
+
+    def to_ndarray(self, attributes, foreach_attribute=None):
+        """Get the attribute and if it exists, return a NumPy ndarray containing its data, otherwise return a
+        zero-length ndarray."""
+        ndarray = self.get_ndarray(attributes, foreach_attribute)
+        return ndarray if ndarray is not None else np.empty(0, dtype=self.dtype)
+
+
+# Built-in Blender attributes
+# Only attributes used by the importer/exporter are included here.
+# See usage of BuiltinCustomDataLayerProvider in Blender source to find most built-in attributes.
+MESH_ATTRIBUTE_MATERIAL_INDEX = AttributeDescription("material_index", 'INT', 'FACE')
+MESH_ATTRIBUTE_POSITION = AttributeDescription("position", 'FLOAT_VECTOR', 'POINT',
+                                               is_required_check=lambda attributes: bool(attributes.id_data.vertices))
+MESH_ATTRIBUTE_SHARP_EDGE = AttributeDescription("sharp_edge", 'BOOLEAN', 'EDGE')
+MESH_ATTRIBUTE_EDGE_VERTS = AttributeDescription(".edge_verts", 'INT32_2D', 'EDGE',
+                                                 is_required_check=lambda attributes: bool(attributes.id_data.edges))
+MESH_ATTRIBUTE_CORNER_VERT = AttributeDescription(".corner_vert", 'INT', 'CORNER',
+                                                  is_required_check=lambda attributes: bool(attributes.id_data.loops))
+MESH_ATTRIBUTE_CORNER_EDGE = AttributeDescription(".corner_edge", 'INT', 'CORNER',
+                                                  is_required_check=lambda attributes: bool(attributes.id_data.loops))
+MESH_ATTRIBUTE_SHARP_FACE = AttributeDescription("sharp_face", 'BOOLEAN', 'FACE')
 
 
 # ##### UIDs code. #####
