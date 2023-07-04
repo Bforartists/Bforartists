@@ -26,7 +26,7 @@ extern "C" {
 #define BLENDER_VERSION_CYCLE alpha
 
 /* Bforartists major and minor version. */
-#define BFORARTISTS_VERSION 40
+#define BFORARTISTS_VERSION 36
 /* Bforartists patch version for bugfix releases. */
 #define BFORARTISTS_VERSION_PATCH 0
 /** Bforartists release cycle stage: alpha/beta/rc/release. */
