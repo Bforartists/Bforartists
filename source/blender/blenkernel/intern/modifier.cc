@@ -47,7 +47,7 @@
 #include "BKE_DerivedMesh.h"
 #include "BKE_appdir.h"
 #include "BKE_editmesh.h"
-#include "BKE_editmesh_cache.h"
+#include "BKE_editmesh_cache.hh"
 #include "BKE_effect.h"
 #include "BKE_fluid.h"
 #include "BKE_global.h"
@@ -80,7 +80,7 @@ static CLG_LogRef LOG = {"bke.modifier"};
 static ModifierTypeInfo *modifier_types[NUM_MODIFIER_TYPES] = {nullptr};
 static VirtualModifierData virtualModifierCommonData;
 
-void BKE_modifier_init(void)
+void BKE_modifier_init()
 {
   ModifierData *md;
 
@@ -966,8 +966,8 @@ static void modwrap_dependsOnNormals(Mesh *me)
 {
   switch (me->runtime->wrapper_type) {
     case ME_WRAPPER_TYPE_BMESH: {
-      EditMeshData *edit_data = me->runtime->edit_data;
-      if (edit_data->vertexCos) {
+      blender::bke::EditMeshData *edit_data = me->runtime->edit_data;
+      if (!edit_data->vertexCos.is_empty()) {
         /* Note that 'ensure' is acceptable here since these values aren't modified in-place.
          * If that changes we'll need to recalculate. */
         BKE_editmesh_cache_ensure_vert_normals(me->edit_mesh, edit_data);

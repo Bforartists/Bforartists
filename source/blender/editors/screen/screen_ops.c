@@ -31,6 +31,7 @@
 #include "DNA_userdef_types.h"
 #include "DNA_workspace_types.h"
 
+#include "BKE_callbacks.h"
 #include "BKE_context.h"
 #include "BKE_editmesh.h"
 #include "BKE_fcurve.h"
@@ -821,7 +822,7 @@ static bool azone_clipped_rect_calc(const AZone *az, rcti *r_rect_clip)
 static void area_actionzone_get_rect(AZone *az, rcti *rect)
 {
   if (az->type == AZONE_REGION_SCROLL) {
-    /* For scroll azones use the area around the region's scrollbar location. */
+    /* For scroll azones use the area around the region's scroll-bar location. */
     rcti scroller_vert = (az->direction == AZ_SCROLL_HOR) ? az->region->v2d.hor :
                                                             az->region->v2d.vert;
     BLI_rcti_translate(&scroller_vert, az->region->winrct.xmin, az->region->winrct.ymin);
@@ -2835,14 +2836,20 @@ static int region_scale_modal(bContext *C, wmOperator *op, const wmEvent *event)
 
         const int size_no_snap = rmd->origval + delta;
         rmd->region->sizex = size_no_snap;
+        /* Clamp before snapping, so the snapping doesn't use a size that's invalid anyway. It will
+         * check for and respect the max-width too. */
+        CLAMP(rmd->region->sizex, 0, rmd->maxsize);
 
         if (rmd->region->type->snap_size) {
           short sizex_test = rmd->region->type->snap_size(rmd->region, rmd->region->sizex, 0);
-          if (abs(rmd->region->sizex - sizex_test) < snap_size_threshold) {
+          if ((abs(rmd->region->sizex - sizex_test) < snap_size_threshold) &&
+              /* Don't snap to a new size if that would exceed the maximum width. */
+              sizex_test <= rmd->maxsize)
+          {
             rmd->region->sizex = sizex_test;
           }
         }
-        CLAMP(rmd->region->sizex, 0, rmd->maxsize);
+        BLI_assert(rmd->region->sizex <= rmd->maxsize);
 
         if (size_no_snap < UI_UNIT_X / aspect) {
           rmd->region->sizex = rmd->origval;
@@ -2868,14 +2875,20 @@ static int region_scale_modal(bContext *C, wmOperator *op, const wmEvent *event)
 
         const int size_no_snap = rmd->origval + delta;
         rmd->region->sizey = size_no_snap;
+        /* Clamp before snapping, so the snapping doesn't use a size that's invalid anyway. It will
+         * check for and respect the max-height too. */
+        CLAMP(rmd->region->sizey, 0, rmd->maxsize);
 
         if (rmd->region->type->snap_size) {
           short sizey_test = rmd->region->type->snap_size(rmd->region, rmd->region->sizey, 1);
-          if (abs(rmd->region->sizey - sizey_test) < snap_size_threshold) {
+          if ((abs(rmd->region->sizey - sizey_test) < snap_size_threshold) &&
+              /* Don't snap to a new size if that would exceed the maximum height. */
+              (sizey_test <= rmd->maxsize))
+          {
             rmd->region->sizey = sizey_test;
           }
         }
-        CLAMP(rmd->region->sizey, 0, rmd->maxsize);
+        BLI_assert(rmd->region->sizey <= rmd->maxsize);
 
         /* NOTE: `UI_UNIT_Y / 4` means you need to drag the footer and execute region
          * almost all the way down for it to become hidden, this is done
@@ -5219,18 +5232,26 @@ int ED_screen_animation_play(bContext *C, int sync, int mode)
 {
   bScreen *screen = CTX_wm_screen(C);
   Scene *scene = CTX_data_scene(C);
-  Scene *scene_eval = DEG_get_evaluated_scene(CTX_data_ensure_evaluated_depsgraph(C));
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+  Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
+  Main *bmain = DEG_get_bmain(depsgraph);
 
   if (ED_screen_animation_playing(CTX_wm_manager(C))) {
     /* stop playback now */
     ED_screen_animation_timer(C, 0, 0, 0);
     BKE_sound_stop_scene(scene_eval);
 
+    BKE_callback_exec_id_depsgraph(
+        bmain, &scene->id, depsgraph, BKE_CB_EVT_ANIMATION_PLAYBACK_POST);
+
     /* Triggers redraw of sequencer preview so that it does not show to fps anymore after stopping
      * playback. */
     WM_event_add_notifier(C, NC_SPACE | ND_SPACE_SEQUENCER, scene);
   }
   else {
+    BKE_callback_exec_id_depsgraph(
+        bmain, &scene->id, depsgraph, BKE_CB_EVT_ANIMATION_PLAYBACK_PRE);
+
     /* these settings are currently only available from a menu in the TimeLine */
     if (mode == 1) { /* XXX only play audio forwards!? */
       BKE_sound_play_scene(scene_eval);

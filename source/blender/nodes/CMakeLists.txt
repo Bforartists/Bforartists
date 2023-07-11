@@ -18,7 +18,6 @@ set(INC
   texture
   ../editors/include
   ../blenkernel
-  ../blenlib
   ../blentranslation
   ../bmesh
   ../depsgraph
@@ -26,15 +25,11 @@ set(INC
   ../geometry
   ../gpu
   ../imbuf
-  ../makesdna
   ../makesrna
   ../render
   ../windowmanager
   ../../../extern/fmtlib/include
-  ../../../intern/guardedalloc
 
-  # dna_type_offsets.h
-  ${CMAKE_CURRENT_BINARY_DIR}/../makesdna/intern
   # RNA_prototypes.h
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
 )
@@ -72,7 +67,7 @@ set(SRC
   NOD_node_declaration.hh
   NOD_register.hh
   NOD_shader.h
-  NOD_socket.h
+  NOD_socket.hh
   NOD_socket_declarations.hh
   NOD_socket_declarations_geometry.hh
   NOD_socket_search_link.hh
@@ -84,8 +79,11 @@ set(SRC
 )
 
 set(LIB
+  PRIVATE bf::blenlib
   bf_bmesh
+  PRIVATE bf::dna
   bf_functions
+  PRIVATE bf::intern::guardedalloc
   bf_nodes_composite
   bf_nodes_function
   bf_nodes_geometry
@@ -150,7 +148,5 @@ endif()
 
 blender_add_lib(bf_nodes "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
-# Needed so we can use dna_type_offsets.h for defaults initialization.
-add_dependencies(bf_nodes bf_dna)
 # RNA_prototypes.h
 add_dependencies(bf_nodes bf_rna)

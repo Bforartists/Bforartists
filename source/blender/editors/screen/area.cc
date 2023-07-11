@@ -930,14 +930,42 @@ static void fullscreen_azone_init(ScrArea *area, ARegion *region)
   BLI_rcti_init(&az->rect, az->x1, az->x2, az->y1, az->y2);
 }
 
+/**
+ * Return true if the background color alpha is close to fully transparent. That is, a value of
+ * less than 50 on a [0-255] scale (rather arbitrary threshold). Assumes the region uses #TH_BACK
+ * for its background.
+ */
+static bool region_background_is_transparent(const ScrArea *area, const ARegion *region)
+{
+  /* Ensure the right theme is active, may not be the case on startup, for example. */
+  bThemeState theme_state;
+  UI_Theme_Store(&theme_state);
+  UI_SetTheme(area->spacetype, region->regiontype);
+
+  uchar back[4];
+  UI_GetThemeColor4ubv(TH_BACK, back);
+
+  UI_Theme_Restore(&theme_state);
+
+  return back[3] < 50;
+}
+
 #define AZONEPAD_EDGE (0.1f * U.widget_unit)
 #define AZONEPAD_ICON (0.45f * U.widget_unit)
-static void region_azone_edge(AZone *az, ARegion *region)
+static void region_azone_edge(const ScrArea *area, AZone *az, const ARegion *region)
 {
-  /* If region is overlapped (transparent background), move #AZone to content.
-   * Note this is an arbitrary amount that matches nicely with numbers elsewhere. */
-  /*bfa - changed the value from 0.4f to 0.2f since our margin is just 0.2*. See #2731*/
-  int overlap_padding = (region->overlap) ? int(0.2f * U.widget_unit) : 0;
+  /* If there is no visible region background, users typically expect the #AZone to be closer to
+   * the content, so move it a bit. */
+  const int overlap_padding =
+      /* Header-like regions are usually thin and there's not much padding around them,
+       * applying an offset would make the edge overlap buttons.*/
+      (!RGN_TYPE_IS_HEADER_ANY(region->regiontype) &&
+       /* Is the region background transparent? */
+       region->overlap && region_background_is_transparent(area, region)) ?
+          /* Note that this is an arbitrary amount that matches nicely with numbers elsewhere. */
+          /* BFA - changed the value from 0.4f to 0.2f since our margin is just 0.2*. See #2731 */
+          int(0.2f * U.widget_unit) :
+          0;
 
   switch (az->edge) {
     case AE_TOP_TO_BOTTOMRIGHT:
@@ -1054,7 +1082,7 @@ static void region_azone_edge_init(ScrArea *area,
     region_azone_tab_plus(area, az, region);
   }
   else {
-    region_azone_edge(az, region);
+    region_azone_edge(area, az, region);
   }
 }
 
@@ -3432,13 +3460,13 @@ void ED_region_header_init(ARegion *region)
   UI_view2d_region_reinit(&region->v2d, V2D_COMMONVIEW_HEADER, region->winx, region->winy);
 }
 
-int ED_area_headersize(void)
+int ED_area_headersize()
 {
   /* Accommodate widget and padding. */
   return U.widget_unit + int(UI_SCALE_FAC * HEADER_PADDING_Y);
 }
 
-int ED_area_footersize(void)
+int ED_area_footersize()
 {
   return ED_area_headersize();
 }
@@ -3523,7 +3551,7 @@ ScrArea *ED_screen_areas_iter_next(const bScreen *screen, const ScrArea *area)
   return static_cast<ScrArea *>(screen->areabase.first);
 }
 
-int ED_region_global_size_y(void)
+int ED_region_global_size_y()
 {
   return ED_area_headersize(); /* same size as header */
 }
@@ -3875,12 +3903,10 @@ int ED_region_snap_size_test(const ARegion *region)
   /* Use a larger value because toggling scrollbars can jump in size. */
   const int snap_match_threshold = 16;
   if (region->type->snap_size != nullptr) {
-    return ((((region->sizex - region->type->snap_size(region, region->sizex, 0)) <=
-              snap_match_threshold)
-             << 0) |
-            (((region->sizey - region->type->snap_size(region, region->sizey, 1)) <=
-              snap_match_threshold)
-             << 1));
+    const int snap_size_x = region->type->snap_size(region, region->sizex, 0);
+    const int snap_size_y = region->type->snap_size(region, region->sizey, 1);
+    return (((abs(region->sizex - snap_size_x) <= snap_match_threshold) << 0) |
+            ((abs(region->sizey - snap_size_y) <= snap_match_threshold) << 1));
   }
   return 0;
 }

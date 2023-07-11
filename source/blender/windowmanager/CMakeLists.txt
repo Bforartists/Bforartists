@@ -9,7 +9,6 @@ set(INC
   ../asset_system
   ../blenfont
   ../blenkernel
-  ../blenlib
   ../blenloader
   ../blentranslation
   ../compositor
@@ -18,19 +17,15 @@ set(INC
   ../draw
   ../gpu
   ../imbuf
-  ../makesdna
   ../makesrna
   ../nodes
   ../render
   ../sequencer
   ../../../intern/clog
   ../../../intern/ghost
-  ../../../intern/guardedalloc
   ../../../intern/memutil
   ../bmesh
 
-  # for writefile.c: dna_type_offsets.h
-  ${CMAKE_BINARY_DIR}/source/blender/makesdna/intern
   # RNA_prototypes.h
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
 )
@@ -102,7 +97,10 @@ set(SRC
 )
 
 set(LIB
+  PRIVATE bf::blenlib
+  PRIVATE bf::dna
   bf_editor_screen
+  PRIVATE bf::intern::guardedalloc
   bf_sequencer
 )
 
@@ -204,7 +202,5 @@ endif()
 
 blender_add_lib_nolist(bf_windowmanager "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
-# Needed so we can use dna_type_offsets.h for defaults initialization.
-add_dependencies(bf_windowmanager bf_dna)
 # RNA_prototypes.h
 add_dependencies(bf_windowmanager bf_rna)

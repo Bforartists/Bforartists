@@ -13,6 +13,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "BLI_array_utils.hh"
 #include "BLI_blenlib.h"
 #include "BLI_dial_2d.h"
 #include "BLI_ghash.h"
@@ -50,7 +51,7 @@
 #include "BKE_node_runtime.hh"
 #include "BKE_object.h"
 #include "BKE_paint.h"
-#include "BKE_pbvh.h"
+#include "BKE_pbvh_api.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_subdiv_ccg.h"
@@ -591,7 +592,7 @@ int SCULPT_vertex_face_set_get(SculptSession *ss, PBVHVertRef vertex)
       int face_set = 0;
       for (const int poly_index : ss->pmap[vertex.i]) {
         if (ss->face_sets[poly_index] > face_set) {
-          face_set = abs(ss->face_sets[poly_index]);
+          face_set = ss->face_sets[poly_index];
         }
       }
       return face_set;
@@ -737,7 +738,7 @@ static bool sculpt_check_unique_face_set_for_edge_in_base_mesh(SculptSession *ss
   }
 
   if (p1 != -1 && p2 != -1) {
-    return abs(ss->face_sets[p1]) == (ss->face_sets[p2]);
+    return ss->face_sets[p1] == ss->face_sets[p2];
   }
   return true;
 }
@@ -1808,7 +1809,8 @@ bool SCULPT_brush_test_circle_sq(SculptBrushTest *test, const float co[3])
 bool SCULPT_brush_test_cube(SculptBrushTest *test,
                             const float co[3],
                             const float local[4][4],
-                            const float roundness)
+                            const float roundness,
+                            const float /*tip_scale_x*/)
 {
   float side = 1.0f;
   float local_co[3];
@@ -2983,7 +2985,9 @@ static void calc_local_y(ViewContext *vc, const float center[3], float y[3])
 static void calc_brush_local_mat(const float rotation,
                                  Object *ob,
                                  float local_mat[4][4],
-                                 float local_mat_inv[4][4])
+                                 float local_mat_inv[4][4],
+                                 const float *co,
+                                 const float *no)
 {
   const StrokeCache *cache = ob->sculpt->cache;
   float tmat[4][4];
@@ -2991,6 +2995,13 @@ static void calc_brush_local_mat(const float rotation,
   float scale[4][4];
   float angle, v[3];
   float up[3];
+
+  if (!co) {
+    co = cache->location;
+  }
+  if (!no) {
+    no = cache->sculpt_normal;
+  }
 
   /* Ensure `ob->world_to_object` is up to date. */
   invert_m4_m4(ob->world_to_object, ob->object_to_world);
@@ -3002,20 +3013,20 @@ static void calc_brush_local_mat(const float rotation,
   mat[3][3] = 1.0f;
 
   /* Get view's up vector in object-space. */
-  calc_local_y(cache->vc, cache->location, up);
+  calc_local_y(cache->vc, co, up);
 
   /* Calculate the X axis of the local matrix. */
-  cross_v3_v3v3(v, up, cache->sculpt_normal);
+  cross_v3_v3v3(v, up, no);
   /* Apply rotation (user angle, rake, etc.) to X axis. */
   angle = rotation - cache->special_rotation;
-  rotate_v3_v3v3fl(mat[0], v, cache->sculpt_normal, angle);
+  rotate_v3_v3v3fl(mat[0], v, no, angle);
 
   /* Get other axes. */
-  cross_v3_v3v3(mat[1], cache->sculpt_normal, mat[0]);
-  copy_v3_v3(mat[2], cache->sculpt_normal);
+  cross_v3_v3v3(mat[1], no, mat[0]);
+  copy_v3_v3(mat[2], no);
 
   /* Set location. */
-  copy_v3_v3(mat[3], cache->location);
+  copy_v3_v3(mat[3], co);
 
   /* Scale by brush radius. */
   float radius = cache->radius;
@@ -3068,7 +3079,8 @@ static void update_brush_local_mat(Sculpt *sd, Object *ob)
   if (cache->mirror_symmetry_pass == 0 && cache->radial_symmetry_pass == 0) {
     const Brush *brush = BKE_paint_brush(&sd->paint);
     const MTex *mask_tex = BKE_brush_mask_texture_get(brush, OB_MODE_SCULPT);
-    calc_brush_local_mat(mask_tex->rot, ob, cache->brush_local_mat, cache->brush_local_mat_inv);
+    calc_brush_local_mat(
+        mask_tex->rot, ob, cache->brush_local_mat, cache->brush_local_mat_inv, nullptr, nullptr);
   }
 }
 
@@ -5098,15 +5110,19 @@ float SCULPT_raycast_init(ViewContext *vc,
   sub_v3_v3v3(ray_normal, ray_end, ray_start);
   dist = normalize_v3(ray_normal);
 
-  if ((rv3d->is_persp == false) &&
-      /* If the ray is clipped, don't adjust its start/end. */
-      !RV3D_CLIPPING_ENABLED(v3d, rv3d))
-  {
-    BKE_pbvh_raycast_project_ray_root(ob->sculpt->pbvh, original, ray_start, ray_end, ray_normal);
+  /* If the ray is clipped, don't adjust its start/end. */
+  if ((rv3d->is_persp == false) && !RV3D_CLIPPING_ENABLED(v3d, rv3d)) {
+    /* Get the view origin without the addition
+     * of -ray_normal * clip_start that
+     * ED_view3d_win_to_segment_clipped gave us.
+     * This is necessary to avoid floating point overflow.
+     */
+    ED_view3d_win_to_origin(vc->region, mval, ray_start);
+    mul_m4_v3(obimat, ray_start);
 
-    /* rRecalculate the normal. */
-    sub_v3_v3v3(ray_normal, ray_end, ray_start);
-    dist = normalize_v3(ray_normal);
+    BKE_pbvh_clip_ray_ortho(ob->sculpt->pbvh, original, ray_start, ray_end, ray_normal);
+
+    dist = len_v3v3(ray_start, ray_end);
   }
 
   return dist;
@@ -6158,20 +6174,12 @@ void SCULPT_boundary_info_ensure(Object *object)
   }
 
   Mesh *base_mesh = BKE_mesh_from_object(object);
-  const blender::Span<int2> edges = base_mesh->edges();
-  const OffsetIndices polys = base_mesh->polys();
-  const Span<int> corner_edges = base_mesh->corner_edges();
 
   ss->vertex_info.boundary = BLI_BITMAP_NEW(base_mesh->totvert, "Boundary info");
-  int *adjacent_faces_edge_count = static_cast<int *>(
-      MEM_calloc_arrayN(base_mesh->totedge, sizeof(int), "Adjacent face edge count"));
+  Array<int> adjacent_faces_edge_count(base_mesh->totedge, 0);
+  array_utils::count_indices(base_mesh->corner_edges(), adjacent_faces_edge_count);
 
-  for (const int i : polys.index_range()) {
-    for (const int edge : corner_edges.slice(polys[i])) {
-      adjacent_faces_edge_count[edge]++;
-    }
-  }
-
+  const blender::Span<int2> edges = base_mesh->edges();
   for (const int e : edges.index_range()) {
     if (adjacent_faces_edge_count[e] < 2) {
       const int2 &edge = edges[e];
@@ -6179,8 +6187,6 @@ void SCULPT_boundary_info_ensure(Object *object)
       BLI_BITMAP_SET(ss->vertex_info.boundary, edge[1], true);
     }
   }
-
-  MEM_freeN(adjacent_faces_edge_count);
 }
 
 void SCULPT_fake_neighbors_ensure(Sculpt *sd, Object *ob, const float max_dist)
@@ -6416,7 +6422,8 @@ void SCULPT_topology_islands_ensure(Object *ob)
   ss->islands_valid = true;
 }
 
-void SCULPT_cube_tip_init(Sculpt * /*sd*/, Object *ob, Brush *brush, float mat[4][4])
+void SCULPT_cube_tip_init(
+    Sculpt * /*sd*/, Object *ob, Brush *brush, float mat[4][4], const float *co, const float *no)
 {
   SculptSession *ss = ob->sculpt;
   float scale[4][4];
@@ -6424,7 +6431,7 @@ void SCULPT_cube_tip_init(Sculpt * /*sd*/, Object *ob, Brush *brush, float mat[4
   float unused[4][4];
 
   zero_m4(mat);
-  calc_brush_local_mat(0.0, ob, unused, mat);
+  calc_brush_local_mat(0.0, ob, unused, mat, co, no);
 
   /* Note: we ignore the radius scaling done inside of calc_brush_local_mat to
    * duplicate prior behavior.

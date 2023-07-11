@@ -105,7 +105,7 @@ bool CustomData_MeshMasks_are_matching(const CustomData_MeshMasks *mask_ref,
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Layer Type Information
+/** \name Layer Type Information Struct
  * \{ */
 
 struct LayerTypeInfo {
@@ -1557,6 +1557,10 @@ static void layerDefault_propquaternion(void *data, const int count)
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name Layer Type Information (#LAYERTYPEINFO)
+ * \{ */
+
 static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
     /* 0: CD_MVERT */ /* DEPRECATED */
     {sizeof(MVert), "MVert", 1, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
@@ -1946,7 +1950,7 @@ static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
      nullptr,
      nullptr,
      nullptr},
-    /* 51: CD_HAIRLENGTH */
+    /* 51: CD_HAIRLENGTH */ /* DEPRECATED */ /* UNUSED */
     {sizeof(float), "float", 1, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
     /* 52: CD_PROP_QUATERNION */
     {sizeof(float[4]),

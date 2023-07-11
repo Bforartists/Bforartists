@@ -10,4 +10,3 @@ lampdata.pov.shadow_ray_samples_x = 1
 lampdata.pov.shadow_ray_samples_y = 2
 lampdata.color = (1.0, 0.83, 0.986274528503418)
 lampdata.energy = 4.66287 #0.93257#4.66287#5000lm/21.446(=lux)*0.004*2.5(distance) *2 for distance is the point of half strength
-lampdata.distance = 0.1 #dist values multiplied by 10 for area lights for same power as bulb/spot/...

@@ -1955,7 +1955,7 @@ static int gpencil_brush_reset_exec(bContext *C, wmOperator *UNUSED(op))
   Brush *brush = NULL;
 
   switch (mode) {
-    case CTX_MODE_PAINT_GPENCIL: {
+    case CTX_MODE_PAINT_GPENCIL_LEGACY: {
       Paint *paint = &ts->gp_paint->paint;
       brush = paint->brush;
       if (brush && brush->gpencil_settings) {
@@ -1963,7 +1963,7 @@ static int gpencil_brush_reset_exec(bContext *C, wmOperator *UNUSED(op))
       }
       break;
     }
-    case CTX_MODE_SCULPT_GPENCIL: {
+    case CTX_MODE_SCULPT_GPENCIL_LEGACY: {
       Paint *paint = &ts->gp_sculptpaint->paint;
       brush = paint->brush;
       if (brush && brush->gpencil_settings) {
@@ -1971,7 +1971,7 @@ static int gpencil_brush_reset_exec(bContext *C, wmOperator *UNUSED(op))
       }
       break;
     }
-    case CTX_MODE_WEIGHT_GPENCIL: {
+    case CTX_MODE_WEIGHT_GPENCIL_LEGACY: {
       Paint *paint = &ts->gp_weightpaint->paint;
       brush = paint->brush;
       if (brush && brush->gpencil_settings) {
@@ -1979,7 +1979,7 @@ static int gpencil_brush_reset_exec(bContext *C, wmOperator *UNUSED(op))
       }
       break;
     }
-    case CTX_MODE_VERTEX_GPENCIL: {
+    case CTX_MODE_VERTEX_GPENCIL_LEGACY: {
       Paint *paint = &ts->gp_vertexpaint->paint;
       brush = paint->brush;
       if (brush && brush->gpencil_settings) {
@@ -2024,19 +2024,19 @@ static Brush *gpencil_brush_get_first_by_mode(Main *bmain,
       continue;
     }
 
-    if ((mode == CTX_MODE_PAINT_GPENCIL) && (brush->gpencil_tool == tool)) {
+    if ((mode == CTX_MODE_PAINT_GPENCIL_LEGACY) && (brush->gpencil_tool == tool)) {
       return brush;
     }
 
-    if ((mode == CTX_MODE_SCULPT_GPENCIL) && (brush->gpencil_sculpt_tool == tool)) {
+    if ((mode == CTX_MODE_SCULPT_GPENCIL_LEGACY) && (brush->gpencil_sculpt_tool == tool)) {
       return brush;
     }
 
-    if ((mode == CTX_MODE_WEIGHT_GPENCIL) && (brush->gpencil_weight_tool == tool)) {
+    if ((mode == CTX_MODE_WEIGHT_GPENCIL_LEGACY) && (brush->gpencil_weight_tool == tool)) {
       return brush;
     }
 
-    if ((mode == CTX_MODE_VERTEX_GPENCIL) && (brush->gpencil_vertex_tool == tool)) {
+    if ((mode == CTX_MODE_VERTEX_GPENCIL_LEGACY) && (brush->gpencil_vertex_tool == tool)) {
       return brush;
     }
   }
@@ -2053,7 +2053,7 @@ static void gpencil_brush_delete_mode_brushes(Main *bmain,
   for (Brush *brush = bmain->brushes.first; brush; brush = brush_next) {
     brush_next = brush->id.next;
 
-    if ((brush->gpencil_settings == NULL) && (brush->ob_mode != OB_MODE_PAINT_GPENCIL)) {
+    if ((brush->gpencil_settings == NULL) && (brush->ob_mode != OB_MODE_PAINT_GPENCIL_LEGACY)) {
       continue;
     }
 
@@ -2062,7 +2062,7 @@ static void gpencil_brush_delete_mode_brushes(Main *bmain,
 
     if (preset != GP_BRUSH_PRESET_UNKNOWN) {
       /* Verify to delete only the brushes of the current mode. */
-      if (mode == CTX_MODE_PAINT_GPENCIL) {
+      if (mode == CTX_MODE_PAINT_GPENCIL_LEGACY) {
         if ((preset < GP_BRUSH_PRESET_AIRBRUSH) || (preset > GP_BRUSH_PRESET_TINT)) {
           continue;
         }
@@ -2071,7 +2071,7 @@ static void gpencil_brush_delete_mode_brushes(Main *bmain,
         }
       }
 
-      if (mode == CTX_MODE_SCULPT_GPENCIL) {
+      if (mode == CTX_MODE_SCULPT_GPENCIL_LEGACY) {
         if ((preset < GP_BRUSH_PRESET_SMOOTH_STROKE) || (preset > GP_BRUSH_PRESET_CLONE_STROKE)) {
           continue;
         }
@@ -2080,7 +2080,7 @@ static void gpencil_brush_delete_mode_brushes(Main *bmain,
         }
       }
 
-      if (mode == CTX_MODE_WEIGHT_GPENCIL) {
+      if (mode == CTX_MODE_WEIGHT_GPENCIL_LEGACY) {
         if ((preset < GP_BRUSH_PRESET_WEIGHT_DRAW) || (preset > GP_BRUSH_PRESET_WEIGHT_SMEAR)) {
           continue;
         }
@@ -2089,7 +2089,7 @@ static void gpencil_brush_delete_mode_brushes(Main *bmain,
         }
       }
 
-      if (mode == CTX_MODE_VERTEX_GPENCIL) {
+      if (mode == CTX_MODE_VERTEX_GPENCIL_LEGACY) {
         if ((preset < GP_BRUSH_PRESET_VERTEX_DRAW) || (preset > GP_BRUSH_PRESET_VERTEX_REPLACE)) {
           continue;
         }
@@ -2120,19 +2120,19 @@ static int gpencil_brush_reset_all_exec(bContext *C, wmOperator *UNUSED(op))
   Paint *paint = NULL;
 
   switch (mode) {
-    case CTX_MODE_PAINT_GPENCIL: {
+    case CTX_MODE_PAINT_GPENCIL_LEGACY: {
       paint = &ts->gp_paint->paint;
       break;
     }
-    case CTX_MODE_SCULPT_GPENCIL: {
+    case CTX_MODE_SCULPT_GPENCIL_LEGACY: {
       paint = &ts->gp_sculptpaint->paint;
       break;
     }
-    case CTX_MODE_WEIGHT_GPENCIL: {
+    case CTX_MODE_WEIGHT_GPENCIL_LEGACY: {
       paint = &ts->gp_weightpaint->paint;
       break;
     }
-    case CTX_MODE_VERTEX_GPENCIL: {
+    case CTX_MODE_VERTEX_GPENCIL_LEGACY: {
       paint = &ts->gp_vertexpaint->paint;
       break;
     }
@@ -2145,19 +2145,19 @@ static int gpencil_brush_reset_all_exec(bContext *C, wmOperator *UNUSED(op))
     if (paint->brush) {
       Brush *brush_active = paint->brush;
       switch (mode) {
-        case CTX_MODE_PAINT_GPENCIL: {
+        case CTX_MODE_PAINT_GPENCIL_LEGACY: {
           tool = brush_active->gpencil_tool;
           break;
         }
-        case CTX_MODE_SCULPT_GPENCIL: {
+        case CTX_MODE_SCULPT_GPENCIL_LEGACY: {
           tool = brush_active->gpencil_sculpt_tool;
           break;
         }
-        case CTX_MODE_WEIGHT_GPENCIL: {
+        case CTX_MODE_WEIGHT_GPENCIL_LEGACY: {
           tool = brush_active->gpencil_weight_tool;
           break;
         }
-        case CTX_MODE_VERTEX_GPENCIL: {
+        case CTX_MODE_VERTEX_GPENCIL_LEGACY: {
           tool = brush_active->gpencil_vertex_tool;
           break;
         }
@@ -2171,19 +2171,19 @@ static int gpencil_brush_reset_all_exec(bContext *C, wmOperator *UNUSED(op))
     gpencil_brush_delete_mode_brushes(bmain, paint, mode);
 
     switch (mode) {
-      case CTX_MODE_PAINT_GPENCIL: {
+      case CTX_MODE_PAINT_GPENCIL_LEGACY: {
         BKE_brush_gpencil_paint_presets(bmain, ts, true);
         break;
       }
-      case CTX_MODE_SCULPT_GPENCIL: {
+      case CTX_MODE_SCULPT_GPENCIL_LEGACY: {
         BKE_brush_gpencil_sculpt_presets(bmain, ts, true);
         break;
       }
-      case CTX_MODE_WEIGHT_GPENCIL: {
+      case CTX_MODE_WEIGHT_GPENCIL_LEGACY: {
         BKE_brush_gpencil_weight_presets(bmain, ts, true);
         break;
       }
-      case CTX_MODE_VERTEX_GPENCIL: {
+      case CTX_MODE_VERTEX_GPENCIL_LEGACY: {
         BKE_brush_gpencil_vertex_presets(bmain, ts, true);
         break;
       }
@@ -2233,7 +2233,7 @@ static bool gpencil_vertex_group_poll(bContext *C)
     if (BKE_id_is_editable(bmain, &ob->id) && BKE_id_is_editable(bmain, ob->data) &&
         !BLI_listbase_is_empty(&gpd->vertex_group_names))
     {
-      if (ELEM(ob->mode, OB_MODE_EDIT_GPENCIL, OB_MODE_SCULPT_GPENCIL)) {
+      if (ELEM(ob->mode, OB_MODE_EDIT_GPENCIL_LEGACY, OB_MODE_SCULPT_GPENCIL_LEGACY)) {
         return true;
       }
     }
@@ -2252,7 +2252,7 @@ static bool gpencil_vertex_group_weight_poll(bContext *C)
     if (BKE_id_is_editable(bmain, &ob->id) && BKE_id_is_editable(bmain, ob->data) &&
         !BLI_listbase_is_empty(&gpd->vertex_group_names))
     {
-      if (ob->mode == OB_MODE_WEIGHT_GPENCIL) {
+      if (ob->mode == OB_MODE_WEIGHT_GPENCIL_LEGACY) {
         return true;
       }
     }
