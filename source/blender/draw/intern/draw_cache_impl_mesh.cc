@@ -35,7 +35,7 @@
 #include "BKE_customdata.h"
 #include "BKE_deform.h"
 #include "BKE_editmesh.h"
-#include "BKE_editmesh_cache.h"
+#include "BKE_editmesh_cache.hh"
 #include "BKE_editmesh_tangent.h"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_runtime.h"
@@ -43,7 +43,7 @@
 #include "BKE_modifier.h"
 #include "BKE_object_deform.h"
 #include "BKE_paint.h"
-#include "BKE_pbvh.h"
+#include "BKE_pbvh_api.hh"
 #include "BKE_subdiv_modifier.h"
 
 #include "atomic_ops.h"

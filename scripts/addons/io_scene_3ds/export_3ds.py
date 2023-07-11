@@ -1091,41 +1091,42 @@ def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
 
             if ID == POS_TRACK_TAG:  # Position
                 for i, frame in enumerate(kframes):
-                    position = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'location']
-                    if not position:
-                        position.append(ob_pos)
+                    pos_track = [fc for fc in fcurves if fc is not None and fc.data_path == 'location']
+                    pos_x = next((tc.evaluate(frame) for tc in pos_track if tc.array_index == 0), ob_pos.x)
+                    pos_y = next((tc.evaluate(frame) for tc in pos_track if tc.array_index == 1), ob_pos.y)
+                    pos_z = next((tc.evaluate(frame) for tc in pos_track if tc.array_index == 2), ob_pos.z)
                     track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                     track_chunk.add_variable("tcb_flags", _3ds_ushort())
-                    track_chunk.add_variable("position", _3ds_point_3d(position))
+                    track_chunk.add_variable("position", _3ds_point_3d((pos_x, pos_y, pos_z)))
 
             elif ID == ROT_TRACK_TAG:  # Rotation
                 for i, frame in enumerate(kframes):
-                    rotation = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'rotation_euler']
-                    if not rotation:
-                        rotation.append(ob_rot)
-                    quat = mathutils.Euler(rotation).to_quaternion()
-                    axis_angle = quat.angle, quat.axis[0], quat.axis[1], quat.axis[2]
+                    rot_track = [fc for fc in fcurves if fc is not None and fc.data_path == 'rotation_euler']
+                    rot_x = next((tc.evaluate(frame) for tc in rot_track if tc.array_index == 0), ob_rot.x)
+                    rot_y = next((tc.evaluate(frame) for tc in rot_track if tc.array_index == 1), ob_rot.y)
+                    rot_z = next((tc.evaluate(frame) for tc in rot_track if tc.array_index == 2), ob_rot.z)
+                    quat = mathutils.Euler((rot_x, rot_y, rot_z)).to_quaternion().inverted()
                     track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                     track_chunk.add_variable("tcb_flags", _3ds_ushort())
-                    track_chunk.add_variable("rotation", _3ds_point_4d(axis_angle))
+                    track_chunk.add_variable("rotation", _3ds_point_4d((quat.angle, quat.axis[0], quat.axis[1], quat.axis[2])))
 
             elif ID == SCL_TRACK_TAG:  # Scale
                 for i, frame in enumerate(kframes):
-                    size = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'scale']
-                    if not size:
-                        size.append(ob_size)
+                    scale_track = [fc for fc in fcurves if fc is not None and fc.data_path == 'scale']
+                    size_x = next((tc.evaluate(frame) for tc in scale_track if tc.array_index == 0), ob_size[0])
+                    size_y = next((tc.evaluate(frame) for tc in scale_track if tc.array_index == 1), ob_size[1])
+                    size_z = next((tc.evaluate(frame) for tc in scale_track if tc.array_index == 2), ob_size[2])
                     track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                     track_chunk.add_variable("tcb_flags", _3ds_ushort())
-                    track_chunk.add_variable("scale", _3ds_point_3d(size))
+                    track_chunk.add_variable("scale", _3ds_point_3d((size_x, size_y, size_z)))
 
             elif ID == ROLL_TRACK_TAG:  # Roll
                 for i, frame in enumerate(kframes):
-                    roll = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'rotation_euler']
-                    if not roll:
-                        roll.append(ob_rot)
+                    roll_track = [fc for fc in fcurves if fc is not None and fc.data_path == 'rotation_euler']
+                    roll = next((tc.evaluate(frame) for tc in roll_track if tc.array_index == 1), ob_rot.y)
                     track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                     track_chunk.add_variable("tcb_flags", _3ds_ushort())
-                    track_chunk.add_variable("roll", _3ds_float(round(math.degrees(roll[1]), 4)))
+                    track_chunk.add_variable("roll", _3ds_float(round(math.degrees(roll), 4)))
 
     elif ID in {COL_TRACK_TAG, FOV_TRACK_TAG, HOTSPOT_TRACK_TAG, FALLOFF_TRACK_TAG} and ob.data.animation_data and ob.data.animation_data.action:
         action = ob.data.animation_data.action
@@ -1146,17 +1147,15 @@ def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
                 for i, frame in enumerate(kframes):
                     color = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'color']
                     if not color:
-                        color.append(ob.data.color[:3])
+                        color = ob.data.color[:3]
                     track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                     track_chunk.add_variable("tcb_flags", _3ds_ushort())
                     track_chunk.add_variable("color", _3ds_float_color(color))
 
             elif ID == FOV_TRACK_TAG:  # Field of view
                 for i, frame in enumerate(kframes):
-                    lens = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'lens']
-                    if not lens:
-                        lens.append(ob.data.lens)
-                    fov = 2 * math.atan(ob.data.sensor_width / (2 * lens[0]))
+                    lens = next((fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'lens'), ob.data.lens)
+                    fov = 2 * math.atan(ob.data.sensor_width / (2 * lens))
                     track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                     track_chunk.add_variable("tcb_flags", _3ds_ushort())
                     track_chunk.add_variable("fov", _3ds_float(round(math.degrees(fov), 4)))
@@ -1164,22 +1163,18 @@ def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
             elif ID == HOTSPOT_TRACK_TAG:  # Hotspot
                 beam_angle = math.degrees(ob.data.spot_size)
                 for i, frame in enumerate(kframes):
-                    blend = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'spot_blend']
-                    if not blend:
-                        blend.append(ob.data.spot_blend)
-                    hot_spot = beam_angle - (blend[0] * math.floor(beam_angle))
+                    blend = next((fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'spot_blend'), ob.data.spot_blend)
+                    hot_spot = beam_angle - (blend * math.floor(beam_angle))
                     track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                     track_chunk.add_variable("tcb_flags", _3ds_ushort())
                     track_chunk.add_variable("hotspot", _3ds_float(round(hot_spot, 4)))
 
             elif ID == FALLOFF_TRACK_TAG:  # Falloff
                 for i, frame in enumerate(kframes):
-                    fall_off = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'spot_size']
-                    if not fall_off:
-                        fall_off.append(ob.data.spot_size)
+                    fall_off = next((fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'spot_size'), ob.data.spot_size)
                     track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                     track_chunk.add_variable("tcb_flags", _3ds_ushort())
-                    track_chunk.add_variable("falloff", _3ds_float(round(math.degrees(fall_off[0]), 4)))
+                    track_chunk.add_variable("falloff", _3ds_float(round(math.degrees(fall_off), 4)))
 
     else:
         track_chunk.add_variable("track_flags", _3ds_ushort(0x40))  # Based on observation default flag is 0x40
@@ -1195,16 +1190,17 @@ def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
             track_chunk.add_variable("position", _3ds_point_3d(ob_pos))
 
         elif ID == ROT_TRACK_TAG:  # Rotation (angle first [radians], followed by axis)
-            track_chunk.add_variable("rotation", _3ds_point_4d((ob_rot.angle, ob_rot.axis[0], ob_rot.axis[1], ob_rot.axis[2])))
+            quat = ob_rot.to_quaternion().inverted()
+            track_chunk.add_variable("rotation", _3ds_point_4d((quat.angle, quat.axis[0], quat.axis[1], quat.axis[2])))
 
         elif ID == SCL_TRACK_TAG:  # Scale vector
             track_chunk.add_variable("scale", _3ds_point_3d(ob_size))
 
         elif ID == ROLL_TRACK_TAG:  # Roll angle
-            track_chunk.add_variable("roll", _3ds_float(round(math.degrees(ob.rotation_euler[1]), 4)))
+            track_chunk.add_variable("roll", _3ds_float(round(math.degrees(ob_rot.y), 4)))
 
         elif ID == COL_TRACK_TAG:  # Color values
-            track_chunk.add_variable("color", _3ds_float_color(ob.data.color))
+            track_chunk.add_variable("color", _3ds_float_color(ob.data.color[:3]))
 
         elif ID == FOV_TRACK_TAG:  # Field of view
             track_chunk.add_variable("fov", _3ds_float(round(math.degrees(ob.data.angle), 4)))
@@ -1311,7 +1307,7 @@ def make_object_node(ob, translation, rotation, scale, name_id):
 
     else:  # Calculate child position and rotation of the object center, no scale applied
         ob_pos = translation[name] - translation[parent.name]
-        ob_rot = rotation[name].cross(rotation[parent.name].copy().inverted())
+        ob_rot = rotation[name].to_quaternion().cross(rotation[parent.name].to_quaternion().copy().inverted()).to_euler()
         ob_size = (1.0, 1.0, 1.0)
 
     obj_node.add_subchunk(make_track_chunk(POS_TRACK_TAG, ob, ob_pos, ob_rot, ob_size))
@@ -1360,7 +1356,7 @@ def make_target_node(ob, translation, rotation, scale, name_id):
 
     # Calculate target position
     ob_pos = translation[name]
-    ob_rot = rotation[name].to_euler()
+    ob_rot = rotation[name]
     ob_size = scale[name]
 
     diagonal = math.copysign(math.sqrt(pow(ob_pos[0],2) + pow(ob_pos[1],2)), ob_pos[1])
@@ -1387,18 +1383,17 @@ def make_target_node(ob, translation, rotation, scale, name_id):
             track_chunk.add_variable("nkeys", _3ds_uint(nkeys))
 
             for i, frame in enumerate(kframes):
-                target_pos = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'location']
-                target_rot = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'rotation_euler']
-                if not target_pos:
-                    target_pos.append(ob_pos)
-                if not target_rot:
-                    target_rot.insert(0, ob_rot.x)
-                    target_rot.insert(1, ob_rot.y)
-                    target_rot.insert(2, ob_rot.z)
-                diagonal = math.copysign(math.sqrt(pow(target_pos[0],2) + pow(target_pos[1],2)), target_pos[1])
-                target_x = target_pos[0] + (target_pos[1] * math.tan(target_rot[2]))
-                target_y = target_pos[1] + (target_pos[0] * math.tan(math.radians(90) - target_rot[2]))
-                target_z = -1 * diagonal * math.tan(math.radians(90) - target_rot[0])
+                loc_target = [fc for fc in fcurves if fc is not None and fc.data_path == 'location']
+                locate_x = next((tc.evaluate(frame) for tc in loc_target if tc.array_index == 0), ob_pos.x)
+                locate_y = next((tc.evaluate(frame) for tc in loc_target if tc.array_index == 1), ob_pos.y)
+                locate_z = next((tc.evaluate(frame) for tc in loc_target if tc.array_index == 2), ob_pos.z)
+                rot_target = [fc for fc in fcurves if fc is not None and fc.data_path == 'rotation_euler']
+                rotate_x = next((tc.evaluate(frame) for tc in rot_target if tc.array_index == 0), ob_rot.x)
+                rotate_z = next((tc.evaluate(frame) for tc in rot_target if tc.array_index == 2), ob_rot.z)
+                diagonal = math.copysign(math.sqrt(pow(locate_x, 2) + pow(locate_y, 2)), locate_y)
+                target_x = locate_x + (locate_y * math.tan(rotate_z))
+                target_y = locate_y + (locate_x * math.tan(math.radians(90) - rotate_z))
+                target_z = -1 * diagonal * math.tan(math.radians(90) - rotate_x)
                 track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                 track_chunk.add_variable("tcb_flags", _3ds_ushort())
                 track_chunk.add_variable("position", _3ds_point_3d((target_x, target_y, target_z)))
@@ -1616,21 +1611,29 @@ def save(operator, context, filepath="", use_selection=False, use_hierarchy=Fals
 
     for ob, data, matrix in mesh_objects:
         translation[ob.name] = ob.location
-        rotation[ob.name] = ob.rotation_euler.to_quaternion().inverted()
+        rotation[ob.name] = ob.rotation_euler
         scale[ob.name] = ob.scale
         name_id[ob.name] = len(name_id)
         object_id[ob.name] = len(object_id)
 
     for ob in empty_objects:
         translation[ob.name] = ob.location
-        rotation[ob.name] = ob.rotation_euler.to_quaternion().inverted()
+        rotation[ob.name] = ob.rotation_euler
         scale[ob.name] = ob.scale
         name_id[ob.name] = len(name_id)
 
     for ob in light_objects:
+        translation[ob.name] = ob.location
+        rotation[ob.name] = ob.rotation_euler
+        scale[ob.name] = ob.scale
+        name_id[ob.name] = len(name_id)
         object_id[ob.name] = len(object_id)
 
     for ob in camera_objects:
+        translation[ob.name] = ob.location
+        rotation[ob.name] = ob.rotation_euler
+        scale[ob.name] = ob.scale
+        name_id[ob.name] = len(name_id)
         object_id[ob.name] = len(object_id)
 
     # Create object chunks for all meshes
@@ -1729,10 +1732,6 @@ def save(operator, context, filepath="", use_selection=False, use_hierarchy=Fals
 
         # Export light and spotlight target node
         if write_keyframe:
-            translation[ob.name] = ob.location
-            rotation[ob.name] = ob.rotation_euler.to_quaternion()
-            scale[ob.name] = ob.scale
-            name_id[ob.name] = len(name_id)
             kfdata.add_subchunk(make_object_node(ob, translation, rotation, scale, name_id))
             if ob.data.type == 'SPOT':
                 kfdata.add_subchunk(make_target_node(ob, translation, rotation, scale, name_id))
@@ -1769,10 +1768,6 @@ def save(operator, context, filepath="", use_selection=False, use_hierarchy=Fals
 
         # Export camera and target node
         if write_keyframe:
-            translation[ob.name] = ob.location
-            rotation[ob.name] = ob.rotation_euler.to_quaternion()
-            scale[ob.name] = ob.scale
-            name_id[ob.name] = len(name_id)
             kfdata.add_subchunk(make_object_node(ob, translation, rotation, scale, name_id))
             kfdata.add_subchunk(make_target_node(ob, translation, rotation, scale, name_id))
 

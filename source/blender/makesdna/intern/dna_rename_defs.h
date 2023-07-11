@@ -11,7 +11,7 @@
  * - When renaming the member of a struct which has itself been renamed
  *   refer to the newer name, not the original.
  *
- * - Changes here only change generated code for `makesdna.c` and `makesrna.c`
+ * - Changes here only change generated code for `makesdna.cc` and `makesrna.c`
  *   without impacting Blender's run-time, besides allowing us to use the new names.
  *
  * - Renaming something that has already been renamed can be done
@@ -85,6 +85,8 @@ DNA_STRUCT_RENAME_ELEM(GreasePencil, material_array_size, material_array_num)
 DNA_STRUCT_RENAME_ELEM(GreasePencilLayerFramesMapStorage, size, num)
 DNA_STRUCT_RENAME_ELEM(HookModifierData, totindex, indexar_num)
 DNA_STRUCT_RENAME_ELEM(Image, name, filepath)
+DNA_STRUCT_RENAME_ELEM(Light, energy_new, energy)
+DNA_STRUCT_RENAME_ELEM(Light, energy, energy_deprecated)
 DNA_STRUCT_RENAME_ELEM(LaplacianDeformModifierData, total_verts, verts_num)
 DNA_STRUCT_RENAME_ELEM(Library, name, filepath)
 DNA_STRUCT_RENAME_ELEM(LineartGpencilModifierData, line_types, edge_types)

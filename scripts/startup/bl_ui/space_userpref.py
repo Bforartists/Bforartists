@@ -684,8 +684,8 @@ class USERPREF_PT_system_os_settings(SystemPanel, CenterAlignMixIn, Panel):
 
     def draw_centered(self, _context, layout):
         if _context.preferences.system.is_microsoft_store_install:
-            layout.label(text="Microsoft Store installation.")
-            layout.label(text="Use Windows 'Default Apps' to associate with blend files.")
+            layout.label(text="Microsoft Store installation")
+            layout.label(text="Use Windows 'Default Apps' to associate with blend files")
         else:
             layout.label(text="Open blend files with this Bforartists version")
             split = layout.split(factor=0.5)
@@ -1448,7 +1448,7 @@ class USERPREF_PT_file_paths_script_directories(FilePathsPanel, Panel):
 
         row = path_col.row(align=True)  # Padding
         row.separator()
-        row.label(text="Path")
+        row.label(text="Path", text_ctxt=i18n_contexts.editor_filebrowser)
 
         row.operator("preferences.script_directory_add", text="", icon='ADD', emboss=False)
 
@@ -1594,12 +1594,16 @@ class USERPREF_PT_file_paths_asset_libraries(FilePathsPanel, Panel):
         props = col.operator("preferences.asset_library_remove", text="", icon='REMOVE')
         props.index = active_library_index
 
-        if active_library_index < 0:
+        try:
+            active_library = None if active_library_index < 0 else paths.asset_libraries[active_library_index]
+        except IndexError:
+            active_library = None
+
+        if active_library is None:
             return
 
         layout.separator()
 
-        active_library = paths.asset_libraries[active_library_index]
         layout.prop(active_library, "path")
         layout.prop(active_library, "import_method", text="Import Method")
         layout.prop(active_library, "use_relative_path")

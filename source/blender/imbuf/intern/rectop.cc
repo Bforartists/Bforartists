@@ -255,8 +255,6 @@ void IMB_rect_crop(ImBuf *ibuf, const rcti *crop)
 
   /* TODO(sergey: Validate ownership. */
   rect_crop_4bytes((void **)&ibuf->byte_buffer.data, size_src, crop);
-  rect_crop_4bytes((void **)&ibuf->z_buffer.data, size_src, crop);
-  rect_crop_4bytes((void **)&ibuf->float_z_buffer.data, size_src, crop);
   rect_crop_16bytes((void **)&ibuf->float_buffer.data, size_src, crop);
 
   ibuf->x = size_dst[0];
@@ -293,8 +291,6 @@ void IMB_rect_size_set(ImBuf *ibuf, const uint size[2])
 
   /* TODO(sergey: Validate ownership. */
   rect_realloc_4bytes((void **)&ibuf->byte_buffer.data, size);
-  rect_realloc_4bytes((void **)&ibuf->z_buffer.data, size);
-  rect_realloc_4bytes((void **)&ibuf->float_z_buffer.data, size);
   rect_realloc_16bytes((void **)&ibuf->float_buffer.data, size);
 
   ibuf->x = size[0];
@@ -956,7 +952,7 @@ void IMB_rectblend(ImBuf *dbuf,
   }
 }
 
-typedef struct RectBlendThreadData {
+struct RectBlendThreadData {
   ImBuf *dbuf;
   const ImBuf *obuf, *sbuf;
   ushort *dmask;
@@ -966,7 +962,7 @@ typedef struct RectBlendThreadData {
   int srcx, srcy, width;
   IMB_BlendMode mode;
   bool accumulate;
-} RectBlendThreadData;
+};
 
 static void rectblend_thread_do(void *data_v, int scanline)
 {

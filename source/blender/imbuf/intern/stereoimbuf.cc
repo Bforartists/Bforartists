@@ -32,7 +32,7 @@ struct Stereo3DData;
 static void imb_stereo3d_write_doit(Stereo3DData *s3d_data, const Stereo3dFormat *s3d);
 static void imb_stereo3d_read_doit(Stereo3DData *s3d_data, const Stereo3dFormat *s3d);
 
-typedef struct Stereo3DData {
+struct Stereo3DData {
   struct {
     float *left, *right, *stereo;
   } rectf;
@@ -41,7 +41,7 @@ typedef struct Stereo3DData {
   } rect;
   size_t x, y, channels;
   bool is_float;
-} Stereo3DData;
+};
 
 /* -------------------------------------------------------------------- */
 /** \name Local Functions
@@ -1338,31 +1338,6 @@ void IMB_ImBufFromStereo3d(const Stereo3dFormat *s3d,
                          ibuf_stereo3d->float_buffer.data);
 
   imb_stereo3d_read_doit(&s3d_data, s3d);
-
-  if (ibuf_stereo3d->flags & (IB_zbuf | IB_zbuffloat)) {
-    if (is_float) {
-      addzbuffloatImBuf(ibuf_left);
-      addzbuffloatImBuf(ibuf_right);
-    }
-    else {
-      addzbufImBuf(ibuf_left);
-      addzbufImBuf(ibuf_right);
-    }
-
-    imb_stereo3d_data_init(&s3d_data,
-                           is_float,
-                           ibuf_left->x,
-                           ibuf_left->y,
-                           1,
-                           ibuf_left->z_buffer.data,
-                           ibuf_right->z_buffer.data,
-                           ibuf_stereo3d->z_buffer.data,
-                           ibuf_left->float_z_buffer.data,
-                           ibuf_right->float_z_buffer.data,
-                           ibuf_stereo3d->float_z_buffer.data);
-
-    imb_stereo3d_read_doit(&s3d_data, s3d);
-  }
 
   IMB_freeImBuf(ibuf_stereo3d);
 

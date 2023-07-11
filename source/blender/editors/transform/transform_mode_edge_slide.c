@@ -1294,11 +1294,11 @@ static void edge_slide_snap_apply(TransInfo *t, float *value)
     side_index = t_snap >= t_mid;
   }
 
-  if (t->tsnap.snapElem & (SCE_SNAP_TO_EDGE | SCE_SNAP_TO_FACE)) {
+  if (t->tsnap.target_type & (SCE_SNAP_TO_EDGE | SCE_SNAP_TO_FACE)) {
     float co_dir[3];
     sub_v3_v3v3(co_dir, co_dest[side_index], co_orig);
     normalize_v3(co_dir);
-    if (t->tsnap.snapElem & SCE_SNAP_TO_EDGE) {
+    if (t->tsnap.target_type & SCE_SNAP_TO_EDGE) {
       transform_constraint_snap_axis_to_edge(t, co_dir, dvec);
     }
     else {
@@ -1617,7 +1617,7 @@ void transform_mode_edge_slide_reproject_input(TransInfo *t)
 /** \} */
 
 TransModeInfo TransMode_edgeslide = {
-    /*flags*/ T_NO_CONSTRAINT | T_NO_PROJECT,
+    /*flags*/ T_NO_CONSTRAINT,
     /*init_fn*/ initEdgeSlide,
     /*transform_fn*/ applyEdgeSlide,
     /*transform_matrix_fn*/ edge_slide_transform_matrix_fn,
