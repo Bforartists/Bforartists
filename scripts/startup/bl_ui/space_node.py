@@ -236,25 +236,28 @@ class NODE_HT_header(Header):
             row.operator("wm.switch_editor_in_geometry", text="", icon='GEOMETRY_NODES_ACTIVE')
             row.operator("wm.switch_editor_to_shadereditor", text="", icon='NODE_MATERIAL')
 
+            layout.prop(snode, "geometry_nodes_type", text="")
             NODE_MT_editor_menus.draw_collapsible(context, layout)
             layout.separator_spacer()
 
-            ob = context.object
+            if snode.geometry_nodes_type == 'MODIFIER':
+                ob = context.object
 
-            row = layout.row()
-            if snode.pin:
-                row.enabled = False
-                row.template_ID(snode, "node_tree", new="node.new_geometry_node_group_assign")
-            elif ob:
-                active_modifier = ob.modifiers.active
-                if active_modifier and active_modifier.type == 'NODES':
-                    if active_modifier.node_group:
-                        row.template_ID(active_modifier, "node_group", new="object.geometry_node_tree_copy_assign")
+                row = layout.row()
+                if snode.pin:
+                    row.enabled = False
+                    row.template_ID(snode, "node_tree", new="node.new_geometry_node_group_assign")
+                elif ob:
+                    active_modifier = ob.modifiers.active
+                    if active_modifier and active_modifier.type == 'NODES':
+                        if active_modifier.node_group:
+                            row.template_ID(active_modifier, "node_group", new="object.geometry_node_tree_copy_assign")
+                        else:
+                            row.template_ID(active_modifier, "node_group", new="node.new_geometry_node_group_assign")
                     else:
-                        row.template_ID(active_modifier, "node_group", new="node.new_geometry_node_group_assign")
-                else:
-                    row.template_ID(snode, "node_tree", new="node.new_geometry_nodes_modifier")
-
+                        row.template_ID(snode, "node_tree", new="node.new_geometry_nodes_modifier")
+            else:
+                layout.template_ID(snode, "node_tree", new="node.new_geometry_node_group_assign")
         else:
             # Custom node tree is edited as independent ID block
             NODE_MT_editor_menus.draw_collapsible(context, layout)
@@ -313,7 +316,7 @@ class NODE_HT_header(Header):
         # Put pin next to ID block
         if not is_compositor:
             layout.prop(snode, "pin", text="", emboss=False)
-        
+
         # bfa - don't show up arrow if at top level.
         if not_group:
             layout.operator("node.tree_path_parent", text="", icon='FILE_PARENT')
@@ -542,9 +545,9 @@ class NODE_MT_node(Menu):
 
         layout.separator() #BFA - exposed context menu operator to header
 
-        props = layout.operator("wm.call_panel", text="Rename...", icon = "RENAME") 
-        props.name = "TOPBAR_PT_name" 
-        props.keep_open = False 
+        props = layout.operator("wm.call_panel", text="Rename...", icon = "RENAME")
+        props.name = "TOPBAR_PT_name"
+        props.keep_open = False
 
         layout.separator()
 		## BFA - set to sub-menu

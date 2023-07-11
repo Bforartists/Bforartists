@@ -1474,7 +1474,7 @@ static size_t animfilter_action(bAnimContext *ac,
 
   /* un-grouped F-Curves (only if we're not only considering those channels in the active group) */
   if (!(filter_mode & ANIMFILTER_ACTGROUPED)) {
-    FCurve *firstfcu = (lastchan) ? (lastchan->next) : static_cast<FCurve *>((act->curves.first));
+    FCurve *firstfcu = (lastchan) ? (lastchan->next) : static_cast<FCurve *>(act->curves.first);
     items += animfilter_fcurves(
         anim_data, ads, firstfcu, ANIMTYPE_FCURVE, filter_mode, nullptr, owner_id, &act->id);
   }
@@ -2359,7 +2359,7 @@ static size_t animdata_filter_ds_materials(
 /* ............ */
 
 /* Temporary context for modifier linked-data channel extraction */
-typedef struct tAnimFilterModifiersContext {
+struct tAnimFilterModifiersContext {
   bAnimContext *ac; /* anim editor context */
   bDopeSheet *ads;  /* dopesheet filtering settings */
 
@@ -2367,7 +2367,7 @@ typedef struct tAnimFilterModifiersContext {
   size_t items;      /* number of channels created */
 
   int filter_mode; /* flags for stuff we want to filter */
-} tAnimFilterModifiersContext;
+};
 
 /* dependency walker callback for modifier dependencies */
 static void animfilter_modifier_idpoin_cb(void *afm_ptr, Object *ob, ID **idpoin, int /*cb_flag*/)

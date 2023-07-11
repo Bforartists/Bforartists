@@ -53,7 +53,6 @@ from amaranth.render import (
     passepartout,
     final_resolution,
     samples_scene,
-    render_output_z,
     )
 
 from amaranth.animation import (

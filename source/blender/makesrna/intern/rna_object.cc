@@ -60,32 +60,37 @@ const EnumPropertyItem rna_enum_object_mode_items[] = {
     {OB_MODE_WEIGHT_PAINT, "WEIGHT_PAINT", ICON_WPAINT_HLT, "Weight Paint", ""},
     {OB_MODE_TEXTURE_PAINT, "TEXTURE_PAINT", ICON_TPAINT_HLT, "Texture Paint", ""},
     {OB_MODE_PARTICLE_EDIT, "PARTICLE_EDIT", ICON_PARTICLEMODE, "Particle Edit", ""},
-    {OB_MODE_EDIT_GPENCIL,
+    {OB_MODE_EDIT_GPENCIL_LEGACY,
      "EDIT_GPENCIL",
      ICON_EDITMODE_HLT,
      "Edit Mode",
      "Edit Grease Pencil Strokes"},
-    {OB_MODE_SCULPT_GPENCIL,
+    {OB_MODE_SCULPT_GPENCIL_LEGACY,
      "SCULPT_GPENCIL",
      ICON_SCULPTMODE_HLT,
      "Sculpt Mode",
      "Sculpt Grease Pencil Strokes"},
-    {OB_MODE_PAINT_GPENCIL,
+    {OB_MODE_PAINT_GPENCIL_LEGACY,
      "PAINT_GPENCIL",
      ICON_GREASEPENCIL,
      "Draw Mode",
      "Paint Grease Pencil Strokes"},
-    {OB_MODE_WEIGHT_GPENCIL,
+    {OB_MODE_WEIGHT_GPENCIL_LEGACY,
      "WEIGHT_GPENCIL",
      ICON_WPAINT_HLT,
      "Weight Paint",
      "Grease Pencil Weight Paint Strokes"},
-    {OB_MODE_VERTEX_GPENCIL,
+    {OB_MODE_VERTEX_GPENCIL_LEGACY,
      "VERTEX_GPENCIL",
      ICON_VPAINT_HLT,
      "Vertex Paint",
      "Grease Pencil Vertex Paint Strokes"},
     {OB_MODE_SCULPT_CURVES, "SCULPT_CURVES", ICON_SCULPTMODE_HLT, "Sculpt Mode", ""},
+    {OB_MODE_PAINT_GREASE_PENCIL,
+     "PAINT_GREASE_PENCIL",
+     ICON_GREASEPENCIL,
+     "Draw Mode",
+     "Paint Grease Pencil Strokes"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -98,27 +103,27 @@ const EnumPropertyItem rna_enum_workspace_object_mode_items[] = {
     {OB_MODE_WEIGHT_PAINT, "WEIGHT_PAINT", ICON_WPAINT_HLT, "Weight Paint", ""},
     {OB_MODE_TEXTURE_PAINT, "TEXTURE_PAINT", ICON_TPAINT_HLT, "Texture Paint", ""},
     {OB_MODE_PARTICLE_EDIT, "PARTICLE_EDIT", ICON_PARTICLEMODE, "Particle Edit", ""},
-    {OB_MODE_EDIT_GPENCIL,
+    {OB_MODE_EDIT_GPENCIL_LEGACY,
      "EDIT_GPENCIL",
      ICON_EDITMODE_HLT,
      "Grease Pencil Edit Mode",
      "Edit Grease Pencil Strokes"},
-    {OB_MODE_SCULPT_GPENCIL,
+    {OB_MODE_SCULPT_GPENCIL_LEGACY,
      "SCULPT_GPENCIL",
      ICON_SCULPTMODE_HLT,
      "Grease Pencil Sculpt Mode",
      "Sculpt Grease Pencil Strokes"},
-    {OB_MODE_PAINT_GPENCIL,
+    {OB_MODE_PAINT_GPENCIL_LEGACY,
      "PAINT_GPENCIL",
      ICON_GREASEPENCIL,
      "Grease Pencil Draw",
      "Paint Grease Pencil Strokes"},
-    {OB_MODE_VERTEX_GPENCIL,
+    {OB_MODE_VERTEX_GPENCIL_LEGACY,
      "VERTEX_GPENCIL",
      ICON_VPAINT_HLT,
      "Grease Pencil Vertex Paint",
      "Grease Pencil Vertex Paint Strokes"},
-    {OB_MODE_WEIGHT_GPENCIL,
+    {OB_MODE_WEIGHT_GPENCIL_LEGACY,
      "WEIGHT_GPENCIL",
      ICON_WPAINT_HLT,
      "Grease Pencil Weight Paint",
@@ -527,7 +532,7 @@ static PointerRNA rna_Object_data_get(PointerRNA *ptr)
   return rna_pointer_inherit_refine(ptr, &RNA_ID, ob->data);
 }
 
-static void rna_Object_data_set(PointerRNA *ptr, PointerRNA value, struct ReportList *reports)
+static void rna_Object_data_set(PointerRNA *ptr, PointerRNA value, ReportList *reports)
 {
   Object *ob = static_cast<Object *>(ptr->data);
   ID *id = static_cast<ID *>(value.data);
@@ -642,9 +647,7 @@ static bool rna_Object_data_poll(PointerRNA *ptr, const PointerRNA value)
   return true;
 }
 
-static void rna_Object_parent_set(PointerRNA *ptr,
-                                  PointerRNA value,
-                                  struct ReportList * /*reports*/)
+static void rna_Object_parent_set(PointerRNA *ptr, PointerRNA value, ReportList * /*reports*/)
 {
   Object *ob = static_cast<Object *>(ptr->data);
   Object *par = static_cast<Object *>(value.data);
@@ -780,7 +783,7 @@ static const EnumPropertyItem *rna_Object_instance_type_itemf(bContext * /*C*/,
 
 static void rna_Object_dup_collection_set(PointerRNA *ptr,
                                           PointerRNA value,
-                                          struct ReportList * /*reports*/)
+                                          ReportList * /*reports*/)
 {
   Object *ob = static_cast<Object *>(ptr->data);
   Collection *grp = static_cast<Collection *>(value.data);
@@ -858,7 +861,7 @@ static PointerRNA rna_Object_active_vertex_group_get(PointerRNA *ptr)
 
 static void rna_Object_active_vertex_group_set(PointerRNA *ptr,
                                                PointerRNA value,
-                                               struct ReportList *reports)
+                                               ReportList *reports)
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   if (!BKE_object_supports_vertex_groups(ob)) {
@@ -1069,7 +1072,7 @@ static PointerRNA rna_Object_active_material_get(PointerRNA *ptr)
 
 static void rna_Object_active_material_set(PointerRNA *ptr,
                                            PointerRNA value,
-                                           struct ReportList * /*reports*/)
+                                           ReportList * /*reports*/)
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
 
@@ -1303,7 +1306,7 @@ static PointerRNA rna_MaterialSlot_material_get(PointerRNA *ptr)
 
 static void rna_MaterialSlot_material_set(PointerRNA *ptr,
                                           PointerRNA value,
-                                          struct ReportList * /*reports*/)
+                                          ReportList * /*reports*/)
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   int index = rna_MaterialSlot_index(ptr);
@@ -1534,7 +1537,7 @@ static PointerRNA rna_Object_active_constraint_get(PointerRNA *ptr)
 
 static void rna_Object_active_constraint_set(PointerRNA *ptr,
                                              PointerRNA value,
-                                             struct ReportList * /*reports*/)
+                                             ReportList * /*reports*/)
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   BKE_constraints_active_set(&ob->constraints, static_cast<bConstraint *>(value.data));
@@ -2250,7 +2253,7 @@ static PointerRNA rna_LightLinking_receiver_collection_get(PointerRNA *ptr)
 
 static void rna_LightLinking_receiver_collection_set(PointerRNA *ptr,
                                                      PointerRNA value,
-                                                     struct ReportList * /*reports*/)
+                                                     ReportList * /*reports*/)
 {
   Object *object = reinterpret_cast<Object *>(ptr->owner_id);
   Collection *new_collection = static_cast<Collection *>(value.data);
@@ -2270,7 +2273,7 @@ static PointerRNA rna_LightLinking_blocker_collection_get(PointerRNA *ptr)
 
 static void rna_LightLinking_blocker_collection_set(PointerRNA *ptr,
                                                     PointerRNA value,
-                                                    struct ReportList * /*reports*/)
+                                                    ReportList * /*reports*/)
 {
   Object *object = reinterpret_cast<Object *>(ptr->owner_id);
   Collection *new_collection = static_cast<Collection *>(value.data);
@@ -3453,6 +3456,7 @@ static void rna_def_object(BlenderRNA *brna)
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "empty_image_visibility_flag");
   RNA_def_property_enum_items(prop, prop_empty_image_side_items);
   RNA_def_property_ui_text(prop, "Empty Image Side", "Show front/back side");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_IMAGE);
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, nullptr);
 
   prop = RNA_def_property(srna, "add_rest_position_attribute", PROP_BOOLEAN, PROP_NONE);
@@ -3519,7 +3523,8 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_simulation_cache", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", OB_FLAG_USE_SIMULATION_CACHE);
   RNA_def_property_ui_text(
-      prop, "Use Simulation Cache", "Cache all frames during simulation nodes playback");
+      prop, "Use Simulation Cache", "Cache frames during simulation nodes playback");
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, nullptr);
 
   rna_def_object_visibility(srna);

@@ -21,19 +21,14 @@ TreeElementIDMetaBall::TreeElementIDMetaBall(TreeElement &legacy_te, MetaBall &m
 {
 }
 
-bool TreeElementIDMetaBall::isExpandValid() const
-{
-  return true;
-}
-
 void TreeElementIDMetaBall::expand(SpaceOutliner &space_outliner) const
 {
   expand_animation_data(space_outliner, metaball_.adt);
 
-  expandMaterials(space_outliner);
+  expand_materials(space_outliner);
 }
 
-void TreeElementIDMetaBall::expandMaterials(SpaceOutliner &space_outliner) const
+void TreeElementIDMetaBall::expand_materials(SpaceOutliner &space_outliner) const
 {
   for (int a = 0; a < metaball_.totcol; a++) {
     outliner_add_element(

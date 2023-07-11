@@ -465,28 +465,9 @@ class LIGHT_PT_POV_light(PovLightButtonsPanel, Panel):
         sub.prop(light, "energy")
 
         if light.type in {"POINT", "SPOT"}:
-            sub.label(text="Falloff:")
-            sub.prop(light, "falloff_type", text="")
-            sub.prop(light, "distance")
-
-            if light.falloff_type == "LINEAR_QUADRATIC_WEIGHTED":
-                col.label(text="Attenuation Factors:")
-                sub = col.column(align=True)
-                sub.prop(light, "linear_attenuation", slider=True, text="Linear")
-                sub.prop(light, "quadratic_attenuation", slider=True, text="Quadratic")
-
-            elif light.falloff_type == "INVERSE_COEFFICIENTS":
-                col.label(text="Inverse Coefficients:")
-                sub = col.column(align=True)
-                sub.prop(light, "constant_coefficient", text="Constant")
-                sub.prop(light, "linear_coefficient", text="Linear")
-                sub.prop(light, "quadratic_coefficient", text="Quadratic")
+            sub.prop(light, "shadow_soft_size", text="Radius")
 
         if light.type == "AREA":
-            col.prop(light, "distance")
-
-            col.separator()
-
             col.prop(light, "shape")
 
             sub = col.column(align=True)
@@ -638,22 +619,6 @@ class LIGHT_PT_POV_spot(PovLightButtonsPanel, Panel):
         return (lamp and lamp.type == "SPOT") and (engine in cls.COMPAT_ENGINES)
 
     draw = properties_data_light.DATA_PT_spot.draw
-
-
-class LIGHT_PT_POV_falloff_curve(PovLightButtonsPanel, Panel):
-    bl_label = properties_data_light.DATA_PT_falloff_curve.bl_label
-    bl_options = properties_data_light.DATA_PT_falloff_curve.bl_options
-
-    @classmethod
-    def poll(cls, context):
-        lamp = context.light
-        engine = context.scene.render.engine
-
-        return (
-            lamp and lamp.type in {"POINT", "SPOT"} and lamp.falloff_type == "CUSTOM_CURVE"
-        ) and (engine in cls.COMPAT_ENGINES)
-
-    draw = properties_data_light.DATA_PT_falloff_curve.draw
 
 
 class OBJECT_PT_POV_rainbow(PovLightButtonsPanel, Panel):

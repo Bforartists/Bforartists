@@ -563,11 +563,14 @@ class MUV_OT_UVInspection_PaintUVIsland(bpy.types.Operator):
                         "name": "",
                         "location": (0, 0, 0),
                         "mouse": (0, 0),
+                        "mouse_event":  (0.0, 0.0),
                         "size": 0,
                         "pressure": 0,
                         "pen_flip": False,
                         "time": 0,
-                        "is_start": False
+                        "is_start": False,
+                        "x_tilt": 0.0,
+                        "y_tilt": 0.0,
                     }])
 
                 if compat.check_version(2, 80, 0) < 0:

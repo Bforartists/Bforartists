@@ -193,6 +193,11 @@ struct uiBut {
   uiButHandleFunc func = nullptr;
   void *func_arg1 = nullptr;
   void *func_arg2 = nullptr;
+  /**
+   * C++ version of #func above. Allows storing arbitrary data in a type safe way, no void
+   * pointer arguments.
+   */
+  std::function<void(bContext &)> apply_func;
 
   uiButHandleNFunc funcN = nullptr;
   void *func_argN = nullptr;
@@ -594,6 +599,12 @@ struct uiSafetyRct {
 /* interface.c */
 
 void ui_fontscale(float *points, float aspect);
+
+/** Project button or block (but==nullptr) to pixels in region-space. */
+void ui_but_to_pixelrect(rcti *rect,
+                         const ARegion *region,
+                         const uiBlock *block,
+                         const uiBut *but);
 
 void ui_block_to_region_fl(const ARegion *region, const uiBlock *block, float *r_x, float *r_y);
 void ui_block_to_window_fl(const ARegion *region, const uiBlock *block, float *x, float *y);
@@ -1456,11 +1467,16 @@ void ui_interface_tag_script_reload_queries();
 void ui_block_free_views(uiBlock *block);
 void ui_block_views_bounds_calc(const uiBlock *block);
 void ui_block_views_listen(const uiBlock *block, const wmRegionListenerParams *listener_params);
+void ui_block_views_draw_overlays(const ARegion *region, const uiBlock *block);
 uiViewHandle *ui_block_view_find_matching_in_old_block(const uiBlock *new_block,
                                                        const uiViewHandle *new_view);
 
 uiButViewItem *ui_block_view_find_matching_view_item_but_in_old_block(
     const uiBlock *new_block, const uiViewItemHandle *new_item_handle);
+
+/* abstract_view_item.cc */
+
+void ui_view_item_swap_button_pointers(uiViewItemHandle *a_handle, uiViewItemHandle *b_handle);
 
 /* interface_templates.cc */
 

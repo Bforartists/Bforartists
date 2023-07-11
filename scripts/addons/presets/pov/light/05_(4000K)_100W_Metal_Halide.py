@@ -10,5 +10,3 @@ lampdata.spot_size = 0.6
 lampdata.spot_blend = 0.9
 lampdata.color = (0.9490196108818054, 0.9882352948188782, 1.0)
 lampdata.energy = 20.98293#9000lm/21.446(=lux)*0.004*6.25(distance) *2 for distance is the point of half strength
-lampdata.distance = 0.025
-lampdata.falloff_type = 'INVERSE_SQUARE'

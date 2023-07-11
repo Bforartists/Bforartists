@@ -981,7 +981,7 @@ class LazyFunctionForGroupNode : public LazyFunction {
 
     GeoNodesLFUserData group_user_data = *user_data;
     group_user_data.compute_context = &compute_context;
-    if (user_data->modifier_data->socket_log_contexts) {
+    if (user_data->modifier_data && user_data->modifier_data->socket_log_contexts) {
       group_user_data.log_socket_values = user_data->modifier_data->socket_log_contexts->contains(
           compute_context.hash());
     }
@@ -3345,6 +3345,10 @@ const GeometryNodesLazyFunctionGraphInfo *ensure_geometry_nodes_lazy_function_gr
   if (btree.has_available_link_cycle()) {
     return nullptr;
   }
+  const bNodeTreeZones *tree_zones = btree.zones();
+  if (tree_zones == nullptr) {
+    return nullptr;
+  }
   if (const ID *id_orig = DEG_get_original_id(const_cast<ID *>(&btree.id))) {
     if (id_orig->tag & LIB_TAG_MISSING) {
       return nullptr;
@@ -3459,6 +3463,9 @@ Vector<const lf::FunctionNode *> GeometryNodesLazyFunctionSideEffectProvider::
 {
   GeoNodesLFUserData *user_data = dynamic_cast<GeoNodesLFUserData *>(context.user_data);
   BLI_assert(user_data != nullptr);
+  if (!user_data->modifier_data) {
+    return {};
+  }
   const ComputeContextHash &context_hash = user_data->compute_context->hash();
   const GeoNodesModifierData &modifier_data = *user_data->modifier_data;
   return modifier_data.side_effect_nodes->lookup(context_hash);
@@ -3516,6 +3523,10 @@ destruct_ptr<lf::LocalUserData> GeoNodesLFUserData::get_local(LinearAllocator<> 
 
 GeoNodesLFLocalUserData::GeoNodesLFLocalUserData(GeoNodesLFUserData &user_data)
 {
+  if (user_data.modifier_data == nullptr) {
+    this->tree_logger = nullptr;
+    return;
+  }
   if (user_data.modifier_data->eval_log != nullptr) {
     this->tree_logger = &user_data.modifier_data->eval_log->get_local_tree_logger(
         *user_data.compute_context);

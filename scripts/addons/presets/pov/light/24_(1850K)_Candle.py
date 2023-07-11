@@ -20,5 +20,3 @@ lampdata.color = (1.0, 0.7176470756530762, 0.2980392277240753)
 #Family Living Room 50
 #Sunset & Sunrise   400 lux
 lampdata.energy = 2.0 #two times lux value
-lampdata.distance = 0.004
-lampdata.falloff_type = 'INVERSE_SQUARE'

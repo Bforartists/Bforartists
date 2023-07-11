@@ -101,7 +101,6 @@ static struct ExrPass *imb_exr_get_pass(ListBase *lb, char *passname);
 static bool exr_has_multiview(MultiPartInputFile &file);
 static bool exr_has_multipart_file(MultiPartInputFile &file);
 static bool exr_has_alpha(MultiPartInputFile &file);
-static bool exr_has_zbuffer(MultiPartInputFile &file);
 static void exr_printf(const char *__restrict fmt, ...);
 static void imb_exr_type_by_channels(ChannelList &channels,
                                      StringVector &views,
@@ -463,8 +462,6 @@ static bool imb_save_openexr_half(ImBuf *ibuf, const char *filepath, const int f
 {
   const int channels = ibuf->channels;
   const bool is_alpha = (channels >= 4) && (ibuf->planes == 32);
-  const bool is_zbuf = (flags & IB_zbuffloat) &&
-                       ibuf->float_z_buffer.data != nullptr; /* summarize */
   const int width = ibuf->x;
   const int height = ibuf->y;
   OStream *file_stream = nullptr;
@@ -481,10 +478,6 @@ static bool imb_save_openexr_half(ImBuf *ibuf, const char *filepath, const int f
     header.channels().insert("B", Channel(HALF));
     if (is_alpha) {
       header.channels().insert("A", Channel(HALF));
-    }
-    if (is_zbuf) {
-      /* z we do as float always */
-      header.channels().insert("Z", Channel(Imf::FLOAT));
     }
 
     FrameBuffer frameBuffer;
@@ -510,13 +503,6 @@ static bool imb_save_openexr_half(ImBuf *ibuf, const char *filepath, const int f
     frameBuffer.insert("B", Slice(HALF, (char *)&to->b, xstride, ystride));
     if (is_alpha) {
       frameBuffer.insert("A", Slice(HALF, (char *)&to->a, xstride, ystride));
-    }
-    if (is_zbuf) {
-      frameBuffer.insert("Z",
-                         Slice(Imf::FLOAT,
-                               (char *)(ibuf->float_z_buffer.data + (height - 1) * width),
-                               sizeof(float),
-                               sizeof(float) * -width));
     }
     if (ibuf->float_buffer.data) {
       float *from;
@@ -577,8 +563,6 @@ static bool imb_save_openexr_float(ImBuf *ibuf, const char *filepath, const int 
 {
   const int channels = ibuf->channels;
   const bool is_alpha = (channels >= 4) && (ibuf->planes == 32);
-  const bool is_zbuf = (flags & IB_zbuffloat) &&
-                       ibuf->float_z_buffer.data != nullptr; /* summarize */
   const int width = ibuf->x;
   const int height = ibuf->y;
   OStream *file_stream = nullptr;
@@ -595,9 +579,6 @@ static bool imb_save_openexr_float(ImBuf *ibuf, const char *filepath, const int 
     header.channels().insert("B", Channel(Imf::FLOAT));
     if (is_alpha) {
       header.channels().insert("A", Channel(Imf::FLOAT));
-    }
-    if (is_zbuf) {
-      header.channels().insert("Z", Channel(Imf::FLOAT));
     }
 
     FrameBuffer frameBuffer;
@@ -628,13 +609,6 @@ static bool imb_save_openexr_float(ImBuf *ibuf, const char *filepath, const int 
     frameBuffer.insert("B", Slice(Imf::FLOAT, (char *)rect[2], xstride, ystride));
     if (is_alpha) {
       frameBuffer.insert("A", Slice(Imf::FLOAT, (char *)rect[3], xstride, ystride));
-    }
-    if (is_zbuf) {
-      frameBuffer.insert("Z",
-                         Slice(Imf::FLOAT,
-                               (char *)(ibuf->float_z_buffer.data + (height - 1) * width),
-                               sizeof(float),
-                               sizeof(float) * -width));
     }
 
     file.setFrameBuffer(frameBuffer);
@@ -750,7 +724,7 @@ static bool imb_exr_multilayer_parse_channels_from_file(ExrHandle *data);
 
 /* ********************** */
 
-void *IMB_exr_get_handle(void)
+void *IMB_exr_get_handle()
 {
   ExrHandle *data = MEM_cnew<ExrHandle>("exr handle");
   data->multiView = new StringVector();
@@ -1758,12 +1732,10 @@ static ExrHandle *imb_exr_begin_read_mem(IStream &file_stream,
 static void exr_printf(const char *fmt, ...)
 {
 #if 0
-  char output[1024];
   va_list args;
   va_start(args, fmt);
-  std::vsprintf(output, fmt, args);
+  vprintf(fmt, args);
   va_end(args);
-  printf("%s", output);
 #else
   (void)fmt;
 #endif
@@ -1851,12 +1823,6 @@ static bool exr_has_chroma(MultiPartInputFile &file)
   const Header &header = file.header(0);
   return header.channels().findChannel("BY") != nullptr &&
          header.channels().findChannel("RY") != nullptr;
-}
-
-static bool exr_has_zbuffer(MultiPartInputFile &file)
-{
-  const Header &header = file.header(0);
-  return !(header.channels().findChannel("Z") == nullptr);
 }
 
 static bool exr_has_alpha(MultiPartInputFile &file)
@@ -2102,16 +2068,6 @@ ImBuf *imb_load_openexr(const uchar *mem, size_t size, int flags, char colorspac
           frameBuffer.insert(exr_rgba_channelname(*file, "A"),
                              Slice(Imf::FLOAT, (char *)(first + 3), xstride, ystride, 1, 1, 1.0f));
 
-          if (exr_has_zbuffer(*file)) {
-            float *firstz;
-
-            addzbuffloatImBuf(ibuf);
-            firstz = ibuf->float_z_buffer.data - (dw.min.x - dw.min.y * width);
-            firstz += (height - 1) * width;
-            frameBuffer.insert(
-                "Z", Slice(Imf::FLOAT, (char *)firstz, sizeof(float), -width * sizeof(float)));
-          }
-
           InputPart in(*file, 0);
           in.setFrameBuffer(frameBuffer);
           in.readPixels(dw.min.y, dw.max.y);
@@ -2302,7 +2258,7 @@ ImBuf *imb_load_filepath_thumbnail_openexr(const char *filepath,
   return nullptr;
 }
 
-void imb_initopenexr(void)
+void imb_initopenexr()
 {
   /* In a multithreaded program, staticInitialize() must be called once during startup, before the
    * program accesses any other functions or classes in the IlmImf library. */
@@ -2310,7 +2266,7 @@ void imb_initopenexr(void)
   Imf::setGlobalThreadCount(BLI_system_thread_count());
 }
 
-void imb_exitopenexr(void)
+void imb_exitopenexr()
 {
   /* Tells OpenEXR to free thread pool, also ensures there is no running tasks. */
   Imf::setGlobalThreadCount(0);
