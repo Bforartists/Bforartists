@@ -17,6 +17,7 @@
 #include "DNA_ID.h"
 #include "DNA_lightprobe_types.h"
 #include "DNA_modifier_types.h"
+#include "IMB_imbuf_types.h"
 #include "RE_pipeline.h"
 
 #include "eevee_engine.h"
@@ -64,12 +65,14 @@ void Instance::init(const int2 &output_res,
   sampling.init(scene);
   camera.init();
   film.init(output_res, output_rect);
+  ambient_occlusion.init();
   velocity.init();
   depth_of_field.init();
   shadows.init();
   motion_blur.init();
   main_view.init();
   irradiance_cache.init();
+  reflection_probes.init();
 }
 
 void Instance::init_light_bake(Depsgraph *depsgraph, draw::Manager *manager)
@@ -99,6 +102,7 @@ void Instance::init_light_bake(Depsgraph *depsgraph, draw::Manager *manager)
   shadows.init();
   main_view.init();
   irradiance_cache.init();
+  reflection_probes.init();
 }
 
 void Instance::set_time(float time)
@@ -135,6 +139,7 @@ void Instance::begin_sync()
   shadows.begin_sync();
   pipelines.begin_sync();
   cryptomatte.begin_sync();
+  reflection_probes.begin_sync();
   light_probes.begin_sync();
 
   gpencil_engine_enabled = false;
@@ -148,6 +153,7 @@ void Instance::begin_sync()
   world.sync();
   film.sync();
   render_buffers.sync();
+  ambient_occlusion.sync();
   irradiance_cache.sync();
 }
 
@@ -211,7 +217,7 @@ void Instance::object_sync(Object *ob)
         sync.sync_gpencil(ob, ob_handle, res_handle);
         break;
       case OB_LIGHTPROBE:
-        light_probes.sync_probe(ob, ob_handle);
+        sync.sync_light_probe(ob, ob_handle);
         break;
       default:
         break;
@@ -243,6 +249,7 @@ void Instance::end_sync()
   cryptomatte.end_sync();
   pipelines.end_sync();
   light_probes.end_sync();
+  reflection_probes.end_sync();
 }
 
 void Instance::render_sync()
@@ -290,6 +297,7 @@ void Instance::render_sample()
 
   sampling.step();
 
+  capture_view.render();
   main_view.render();
 
   motion_blur.step();
@@ -355,7 +363,9 @@ void Instance::render_read_result(RenderLayer *render_layer, const char *view_na
       RenderPass *vector_rp = RE_pass_find_by_name(
           render_layer, vector_pass_name.c_str(), view_name);
       if (vector_rp) {
-        memset(vector_rp->buffer.data, 0, sizeof(float) * 4 * vector_rp->rectx * vector_rp->recty);
+        memset(vector_rp->ibuf->float_buffer.data,
+               0,
+               sizeof(float) * 4 * vector_rp->rectx * vector_rp->recty);
       }
     }
   }
@@ -445,9 +455,8 @@ void Instance::update_passes(RenderEngine *engine, Scene *scene, ViewLayer *view
   CHECK_PASS_EEVEE(VOLUME_LIGHT, SOCK_RGBA, 3, "RGB");
   CHECK_PASS_LEGACY(EMIT, SOCK_RGBA, 3, "RGB");
   CHECK_PASS_LEGACY(ENVIRONMENT, SOCK_RGBA, 3, "RGB");
-  /* TODO: CHECK_PASS_LEGACY(SHADOW, SOCK_RGBA, 3, "RGB");
-   * CHECK_PASS_LEGACY(AO, SOCK_RGBA, 3, "RGB");
-   * When available they should be converted from Value textures to RGB. */
+  CHECK_PASS_LEGACY(SHADOW, SOCK_RGBA, 3, "RGB");
+  CHECK_PASS_LEGACY(AO, SOCK_RGBA, 3, "RGB");
 
   LISTBASE_FOREACH (ViewLayerAOV *, aov, &view_layer->aovs) {
     if ((aov->flag & AOV_CONFLICT) != 0) {
@@ -513,6 +522,8 @@ void Instance::light_bake_irradiance(
     manager->begin_sync();
     render_sync();
     manager->end_sync();
+
+    capture_view.render();
 
     irradiance_cache.bake.surfels_create(probe);
     irradiance_cache.bake.surfels_lights_eval();

@@ -19,7 +19,7 @@
 #include "BKE_mesh.hh"
 #include "BKE_object.h"
 #include "BKE_paint.h"
-#include "BKE_pbvh.h"
+#include "BKE_pbvh_api.hh"
 #include "BKE_volume.h"
 
 /* For debug cursor position. */
@@ -2317,12 +2317,12 @@ void DRW_view_update(DRWView *view,
 #endif
 }
 
-const DRWView *DRW_view_default_get(void)
+const DRWView *DRW_view_default_get()
 {
   return DST.view_default;
 }
 
-void DRW_view_reset(void)
+void DRW_view_reset()
 {
   DST.view_default = nullptr;
   DST.view_active = nullptr;

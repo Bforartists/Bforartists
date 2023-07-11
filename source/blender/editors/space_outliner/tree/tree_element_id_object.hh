@@ -19,18 +19,17 @@ class TreeElementIDObject final : public TreeElementID {
   TreeElementIDObject(TreeElement &legacy_te, Object &object);
 
   void expand(SpaceOutliner &) const override;
-  bool isExpandValid() const override;
 
  private:
-  void expandData(SpaceOutliner &) const;
-  void expandPose(SpaceOutliner &) const;
-  void expandMaterials(SpaceOutliner &) const;
-  void expandConstraints(SpaceOutliner &) const;
-  void expandModifiers(SpaceOutliner &) const;
-  void expandGPencilModifiers(SpaceOutliner &) const;
-  void expandGPencilEffects(SpaceOutliner &) const;
-  void expandVertexGroups(SpaceOutliner &) const;
-  void expandDuplicatedGroup(SpaceOutliner &) const;
+  void expand_data(SpaceOutliner &) const;
+  void expand_pose(SpaceOutliner &) const;
+  void expand_materials(SpaceOutliner &) const;
+  void expand_constraints(SpaceOutliner &) const;
+  void expand_modifiers(SpaceOutliner &) const;
+  void expand_gpencil_modifiers(SpaceOutliner &) const;
+  void expand_gpencil_effects(SpaceOutliner &) const;
+  void expand_vertex_groups(SpaceOutliner &) const;
+  void expand_duplicated_group(SpaceOutliner &) const;
 };
 
 }  // namespace blender::ed::outliner

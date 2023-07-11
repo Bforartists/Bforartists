@@ -578,12 +578,9 @@ def fbx_data_light_elements(root, lamp, scene_data):
 
     light_key = scene_data.data_lights[lamp]
     do_light = True
-    decay_type = FBX_LIGHT_DECAY_TYPES['CONSTANT']
     do_shadow = False
     shadow_color = Vector((0.0, 0.0, 0.0))
     if lamp.type not in {'HEMI'}:
-        if lamp.type not in {'SUN', 'AREA'}:
-            decay_type = FBX_LIGHT_DECAY_TYPES[lamp.falloff_type]
         do_light = True
         do_shadow = lamp.use_shadow
         shadow_color = lamp.shadow_color
@@ -600,8 +597,8 @@ def fbx_data_light_elements(root, lamp, scene_data):
     elem_props_template_set(tmpl, props, "p_bool", b"CastLight", do_light)
     elem_props_template_set(tmpl, props, "p_color", b"Color", lamp.color)
     elem_props_template_set(tmpl, props, "p_number", b"Intensity", lamp.energy * 100.0)
-    elem_props_template_set(tmpl, props, "p_enum", b"DecayType", decay_type)
-    elem_props_template_set(tmpl, props, "p_double", b"DecayStart", lamp.distance * gscale)
+    elem_props_template_set(tmpl, props, "p_enum", b"DecayType", FBX_LIGHT_DECAY_TYPES['INVERSE_SQUARE'])
+    elem_props_template_set(tmpl, props, "p_double", b"DecayStart", 25.0 * gscale) # 25 is old Blender default
     elem_props_template_set(tmpl, props, "p_bool", b"CastShadows", do_shadow)
     elem_props_template_set(tmpl, props, "p_color", b"ShadowColor", shadow_color)
     if lamp.type in {'SPOT'}:
@@ -2929,25 +2926,20 @@ def fbx_data_from_scene(scene, depsgraph, settings):
     _objs_indices = {}
     for ma, (ma_key, ob_objs) in data_materials.items():
         for ob_obj in ob_objs:
+            connections.append((b"OO", get_fbx_uuid_from_key(ma_key), ob_obj.fbx_uuid, None))
             # Get index of this material for this object (or dupliobject).
             # Material indices for mesh faces are determined by their order in 'ma to ob' connections.
             # Only materials for meshes currently...
             # Note in case of dupliobjects a same me/ma idx will be generated several times...
             # Should not be an issue in practice, and it's needed in case we export duplis but not the original!
             if ob_obj.type not in BLENDER_OBJECT_TYPES_MESHLIKE:
-                connections.append((b"OO", get_fbx_uuid_from_key(ma_key), ob_obj.fbx_uuid, None))
                 continue
             _mesh_key, me, _free = data_meshes[ob_obj]
-            material_indices = mesh_material_indices.setdefault(me, {})
-            if ma in material_indices:
-                # Material has already been found for this mesh.
-                # XXX If a mesh has multiple material slots with the same material, they are combined into one slot.
-                # Even if duplicate materials were exported without combining them into one slot, keeping duplicate
-                # materials separated does not appear to be common behaviour of external software when importing FBX.
-                continue
-            connections.append((b"OO", get_fbx_uuid_from_key(ma_key), ob_obj.fbx_uuid, None))
             idx = _objs_indices[ob_obj] = _objs_indices.get(ob_obj, -1) + 1
-            material_indices[ma] = idx
+            # XXX If a mesh has multiple material slots with the same material, they are combined into one slot.
+            # Even if duplicate materials were exported without combining them into one slot, keeping duplicate
+            # materials separated does not appear to be common behaviour of external software when importing FBX.
+            mesh_material_indices.setdefault(me, {})[ma] = idx
     del _objs_indices
 
     # Textures

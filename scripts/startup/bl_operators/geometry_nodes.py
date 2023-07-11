@@ -237,12 +237,17 @@ class NewGeometryNodeTreeAssign(Operator):
         return geometry_modifier_poll(context)
 
     def execute(self, context):
-        modifier = get_context_modifier(context)
-        if not modifier:
-            return {'CANCELLED'}
-
-        group = geometry_node_group_empty_new()
-        modifier.node_group = group
+        space = context.space_data
+        if space and space.type == 'NODE_EDITOR' and space.geometry_nodes_type == 'OPERATOR':
+            group = geometry_node_group_empty_new()
+            space.node_tree = group
+            return {'FINISHED'}
+        else:
+            modifier = get_context_modifier(context)
+            if not modifier:
+                return {'CANCELLED'}
+            group = geometry_node_group_empty_new()
+            modifier.node_group = group
 
         return {'FINISHED'}
 
@@ -286,9 +291,16 @@ class SimulationZoneItemAddOperator(SimulationZoneOperator, Operator):
         state_items = node.state_items
 
         # Remember index to move the item.
-        dst_index = min(node.active_index + 1, len(state_items))
-        # Empty name so it is based on the type only.
-        state_items.new(self.default_socket_type, "")
+        if node.active_item:
+            dst_index = node.active_index + 1
+            dst_type = node.active_item.socket_type
+            dst_name = node.active_item.name
+        else:
+            dst_index = len(state_items)
+            dst_type = self.default_socket_type
+            # Empty name so it is based on the type.
+            dst_name = ""
+        state_items.new(dst_type, dst_name)
         state_items.move(len(state_items) - 1, dst_index)
         node.active_index = dst_index
 

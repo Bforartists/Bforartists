@@ -40,7 +40,6 @@
 #include "BKE_multires.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
-#include "BKE_pbvh.h"
 #include "BKE_scene.h"
 #include "BKE_subsurf.h"
 
@@ -1024,7 +1023,7 @@ static void ccgDM_release(DerivedMesh *dm)
   if (ccgdm->multires.modified_flags) {
     /* Check that mmd still exists */
     if (!ccgdm->multires.local_mmd &&
-        BLI_findindex(&ccgdm->multires.ob->modifiers, ccgdm->multires.mmd) < 0)
+        BLI_findindex(&ccgdm->multires.ob->modifiers, ccgdm->multires.mmd) == -1)
     {
       ccgdm->multires.mmd = nullptr;
     }

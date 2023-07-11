@@ -600,7 +600,6 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
     def read_track_data(temp_chunk):
         """Trackflags 0x1, 0x2 and 0x3 are for looping. 0x8, 0x10 and 0x20
         locks the XYZ axes. 0x100, 0x200 and 0x400 unlinks the XYZ axes"""
-        new_chunk.bytes_read += SZ_U_SHORT
         temp_data = file.read(SZ_U_SHORT)
         tflags = struct.unpack('<H', temp_data)[0]
         new_chunk.bytes_read += SZ_U_SHORT
@@ -629,8 +628,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         return keyframe_data
 
     def read_track_angle(temp_chunk):
-        new_chunk.bytes_read += SZ_U_SHORT * 5
         temp_data = file.read(SZ_U_SHORT * 5)
+        new_chunk.bytes_read += SZ_U_SHORT * 5
         temp_data = file.read(SZ_U_INT)
         nkeys = struct.unpack('<I', temp_data)[0]
         new_chunk.bytes_read += SZ_U_INT
@@ -673,7 +672,6 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             path, filename = os.path.split(file.name)
             realname, ext = os.path.splitext(filename)
             world = bpy.data.worlds.new("Ambient: " + realname)
-            world.light_settings.use_ambient_occlusion = True
             context.scene.world = world
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == COLOR_F:
@@ -1214,7 +1212,6 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
 
         elif KEYFRAME and new_chunk.ID == ROT_TRACK_TAG and tracking == 'OBJECT':  # Rotation
             keyframe_rotation = {}
-            new_chunk.bytes_read += SZ_U_SHORT
             temp_data = file.read(SZ_U_SHORT)
             tflags = struct.unpack('<H', temp_data)[0]
             new_chunk.bytes_read += SZ_U_SHORT

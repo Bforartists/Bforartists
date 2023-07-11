@@ -96,7 +96,7 @@ static eGPBrush_Presets gpencil_get_brush_preset_from_tool(bToolRef *tool,
                                                            enum eContextObjectMode mode)
 {
   switch (mode) {
-    case CTX_MODE_PAINT_GPENCIL: {
+    case CTX_MODE_PAINT_GPENCIL_LEGACY: {
       if (STREQ(tool->runtime->data_block, "DRAW")) {
         return GP_BRUSH_PRESET_PENCIL;
       }
@@ -111,7 +111,7 @@ static eGPBrush_Presets gpencil_get_brush_preset_from_tool(bToolRef *tool,
       }
       break;
     }
-    case CTX_MODE_SCULPT_GPENCIL: {
+    case CTX_MODE_SCULPT_GPENCIL_LEGACY: {
       if (STREQ(tool->runtime->data_block, "SMOOTH")) {
         return GP_BRUSH_PRESET_SMOOTH_STROKE;
       }
@@ -141,7 +141,7 @@ static eGPBrush_Presets gpencil_get_brush_preset_from_tool(bToolRef *tool,
       }
       break;
     }
-    case CTX_MODE_WEIGHT_GPENCIL: {
+    case CTX_MODE_WEIGHT_GPENCIL_LEGACY: {
       if (STREQ(tool->runtime->data_block, "DRAW")) {
         return GP_BRUSH_PRESET_WEIGHT_DRAW;
       }
@@ -156,7 +156,7 @@ static eGPBrush_Presets gpencil_get_brush_preset_from_tool(bToolRef *tool,
       }
       break;
     }
-    case CTX_MODE_VERTEX_GPENCIL: {
+    case CTX_MODE_VERTEX_GPENCIL_LEGACY: {
       if (STREQ(tool->runtime->data_block, "DRAW")) {
         return GP_BRUSH_PRESET_VERTEX_DRAW;
       }
@@ -214,19 +214,19 @@ static int brush_add_gpencil_exec(bContext *C, wmOperator * /*op*/)
 
     /* Get Brush mode base on context mode. */
     const enum eContextObjectMode mode = CTX_data_mode_enum(C);
-    eObjectMode obmode = OB_MODE_PAINT_GPENCIL;
+    eObjectMode obmode = OB_MODE_PAINT_GPENCIL_LEGACY;
     switch (mode) {
-      case CTX_MODE_PAINT_GPENCIL:
-        obmode = OB_MODE_PAINT_GPENCIL;
+      case CTX_MODE_PAINT_GPENCIL_LEGACY:
+        obmode = OB_MODE_PAINT_GPENCIL_LEGACY;
         break;
-      case CTX_MODE_SCULPT_GPENCIL:
-        obmode = OB_MODE_SCULPT_GPENCIL;
+      case CTX_MODE_SCULPT_GPENCIL_LEGACY:
+        obmode = OB_MODE_SCULPT_GPENCIL_LEGACY;
         break;
-      case CTX_MODE_WEIGHT_GPENCIL:
-        obmode = OB_MODE_WEIGHT_GPENCIL;
+      case CTX_MODE_WEIGHT_GPENCIL_LEGACY:
+        obmode = OB_MODE_WEIGHT_GPENCIL_LEGACY;
         break;
-      case CTX_MODE_VERTEX_GPENCIL:
-        obmode = OB_MODE_VERTEX_GPENCIL;
+      case CTX_MODE_VERTEX_GPENCIL_LEGACY:
+        obmode = OB_MODE_VERTEX_GPENCIL_LEGACY;
         break;
       default:
         return OPERATOR_CANCELLED;
@@ -1450,7 +1450,7 @@ static void BRUSH_OT_stencil_reset_transform(wmOperatorType *ot)
 
 /**************************** registration **********************************/
 
-void ED_operatormacros_paint(void)
+void ED_operatormacros_paint()
 {
   wmOperatorType *ot;
   wmOperatorTypeMacro *otmacro;
@@ -1466,7 +1466,7 @@ void ED_operatormacros_paint(void)
   RNA_boolean_set(otmacro->ptr, "select", false);
 }
 
-void ED_operatortypes_paint(void)
+void ED_operatortypes_paint()
 {
   /* palette */
   WM_operatortype_append(PALETTE_OT_new);

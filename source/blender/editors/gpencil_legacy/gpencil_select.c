@@ -566,10 +566,10 @@ static int gpencil_select_random_exec(bContext *C, wmOperator *op)
   const bool is_curve_edit = (bool)GPENCIL_CURVE_EDIT_SESSIONS_ON(gpd);
 
   int selectmode;
-  if (ob && ob->mode == OB_MODE_SCULPT_GPENCIL) {
+  if (ob && ob->mode == OB_MODE_SCULPT_GPENCIL_LEGACY) {
     selectmode = gpencil_select_mode_from_sculpt(ts->gpencil_selectmode_sculpt);
   }
-  else if (ob && ob->mode == OB_MODE_VERTEX_GPENCIL) {
+  else if (ob && ob->mode == OB_MODE_VERTEX_GPENCIL_LEGACY) {
     selectmode = gpencil_select_mode_from_vertex(ts->gpencil_selectmode_vertex);
   }
   else {
@@ -1694,10 +1694,10 @@ static int gpencil_circle_select_exec(bContext *C, wmOperator *op)
   const bool is_curve_edit = (bool)GPENCIL_CURVE_EDIT_SESSIONS_ON(gpd);
 
   int selectmode;
-  if (ob && ob->mode == OB_MODE_SCULPT_GPENCIL) {
+  if (ob && ob->mode == OB_MODE_SCULPT_GPENCIL_LEGACY) {
     selectmode = gpencil_select_mode_from_sculpt(ts->gpencil_selectmode_sculpt);
   }
-  else if (ob && ob->mode == OB_MODE_VERTEX_GPENCIL) {
+  else if (ob && ob->mode == OB_MODE_VERTEX_GPENCIL_LEGACY) {
     selectmode = gpencil_select_mode_from_vertex(ts->gpencil_selectmode_vertex);
   }
   else {
@@ -2184,10 +2184,10 @@ static int gpencil_generic_select_exec(bContext *C,
   const bool is_curve_edit = (bool)GPENCIL_CURVE_EDIT_SESSIONS_ON(gpd);
 
   int selectmode;
-  if (ob && ob->mode == OB_MODE_SCULPT_GPENCIL) {
+  if (ob && ob->mode == OB_MODE_SCULPT_GPENCIL_LEGACY) {
     selectmode = gpencil_select_mode_from_sculpt(ts->gpencil_selectmode_sculpt);
   }
-  else if (ob && ob->mode == OB_MODE_VERTEX_GPENCIL) {
+  else if (ob && ob->mode == OB_MODE_VERTEX_GPENCIL_LEGACY) {
     selectmode = gpencil_select_mode_from_vertex(ts->gpencil_selectmode_vertex);
   }
   else {
@@ -2459,11 +2459,11 @@ static int gpencil_select_exec(bContext *C, wmOperator *op)
   }
 
   /* if select mode is stroke, use whole stroke */
-  if ((ob) && (ob->mode == OB_MODE_SCULPT_GPENCIL)) {
+  if ((ob) && (ob->mode == OB_MODE_SCULPT_GPENCIL_LEGACY)) {
     whole |= (bool)(gpencil_select_mode_from_sculpt(ts->gpencil_selectmode_sculpt) ==
                     GP_SELECTMODE_STROKE);
   }
-  else if ((ob) && (ob->mode == OB_MODE_VERTEX_GPENCIL)) {
+  else if ((ob) && (ob->mode == OB_MODE_VERTEX_GPENCIL_LEGACY)) {
     whole |= (bool)(gpencil_select_mode_from_vertex(ts->gpencil_selectmode_sculpt) ==
                     GP_SELECTMODE_STROKE);
   }
@@ -2625,10 +2625,10 @@ static int gpencil_select_exec(bContext *C, wmOperator *op)
 
         /* expand selection to segment */
         int selectmode;
-        if (ob && ob->mode == OB_MODE_SCULPT_GPENCIL) {
+        if (ob && ob->mode == OB_MODE_SCULPT_GPENCIL_LEGACY) {
           selectmode = gpencil_select_mode_from_sculpt(ts->gpencil_selectmode_sculpt);
         }
-        else if (ob && ob->mode == OB_MODE_VERTEX_GPENCIL) {
+        else if (ob && ob->mode == OB_MODE_VERTEX_GPENCIL_LEGACY) {
           selectmode = gpencil_select_mode_from_vertex(ts->gpencil_selectmode_vertex);
         }
         else {
