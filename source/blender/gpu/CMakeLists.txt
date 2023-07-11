@@ -17,11 +17,9 @@ set(INC
   opengl
   vulkan
   ../blenkernel
-  ../blenlib
   ../bmesh
   ../draw
   ../imbuf
-  ../makesdna
   ../makesrna
 
   # For theme color access.
@@ -38,10 +36,8 @@ set(INC
   # For node muting stuff.
   ../nodes
 
-  ../../../intern/atomic
   ../../../intern/clog
   ../../../intern/ghost
-  ../../../intern/guardedalloc
   ../../../intern/mantaflow/extern
 )
 
@@ -327,7 +323,11 @@ set(METAL_SRC
 )
 
 set(LIB
+  PRIVATE bf::blenlib
+  PRIVATE bf::dna
+  PRIVATE bf::intern::atomic
   ${Epoxy_LIBRARIES}
+  PRIVATE bf::intern::guardedalloc
 )
 
 # Select Backend source based on availability
@@ -643,6 +643,7 @@ list(APPEND INC ${CMAKE_CURRENT_BINARY_DIR})
 
 set(SRC_SHADER_CREATE_INFOS
   ../draw/engines/basic/shaders/infos/basic_depth_info.hh
+  ../draw/engines/eevee_next/shaders/infos/eevee_ambient_occlusion_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_deferred_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_depth_of_field_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_film_info.hh
@@ -651,6 +652,7 @@ set(SRC_SHADER_CREATE_INFOS
   ../draw/engines/eevee_next/shaders/infos/eevee_light_culling_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_material_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_motion_blur_info.hh
+  ../draw/engines/eevee_next/shaders/infos/eevee_reflection_probe_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_shadow_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_subsurface_info.hh
   ../draw/engines/eevee_next/shaders/infos/eevee_velocity_info.hh
@@ -677,6 +679,7 @@ set(SRC_SHADER_CREATE_INFOS
   ../draw/engines/workbench/shaders/infos/workbench_effect_dof_info.hh
   ../draw/engines/workbench/shaders/infos/workbench_effect_outline_info.hh
   ../draw/engines/workbench/shaders/infos/workbench_merge_infront_info.hh
+  ../draw/engines/workbench/shaders/infos/workbench_overlay_depth_info.hh
   ../draw/engines/workbench/shaders/infos/workbench_prepass_info.hh
   ../draw/engines/workbench/shaders/infos/workbench_shadow_info.hh
   ../draw/engines/workbench/shaders/infos/workbench_transparent_resolve_info.hh
@@ -829,8 +832,7 @@ if(WITH_GPU_BUILDTIME_SHADER_BUILDER)
   add_custom_command(
     OUTPUT
     ${SRC_BAKED_CREATE_INFOS_FILE}
-    COMMAND
-      "$<TARGET_FILE:shader_builder>" ${SRC_BAKED_CREATE_INFOS_FILE}
+    COMMAND ${CMAKE_COMMAND} -E env ${PLATFORM_ENV_BUILD} $<TARGET_FILE:shader_builder> ${SRC_BAKED_CREATE_INFOS_FILE}
     DEPENDS shader_builder
   )
   set(GPU_SHADER_INFO_SRC

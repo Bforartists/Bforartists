@@ -32,7 +32,7 @@
 #include "RNA_prototypes.h"
 
 #include "NOD_node_declaration.hh"
-#include "NOD_socket.h"
+#include "NOD_socket.hh"
 #include "NOD_socket_declarations.hh"
 
 #include "../interface/interface_intern.hh" /* XXX bad level */
@@ -898,6 +898,9 @@ static void ui_node_draw_input(
               split_wrapper.decorate_column, &inputptr, "default_value", RNA_NO_INDEX);
           break;
         }
+        case SOCK_CUSTOM:
+          input.typeinfo->draw(&C, sub, &inputptr, &nodeptr, input.name);
+          break;
         default:
           add_dummy_decorator = true;
       }

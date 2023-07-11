@@ -29,7 +29,7 @@
 #include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.h"
 #include "BKE_paint.h"
-#include "BKE_pbvh.h"
+#include "BKE_pbvh_api.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_subdiv_ccg.h"
@@ -2055,17 +2055,6 @@ static void sculpt_expand_delete_face_set_id(int *r_face_sets,
 
   BLI_LINKSTACK_FREE(queue);
   BLI_LINKSTACK_FREE(queue_next);
-
-  /* Ensure that the visibility state of the modified Face Sets is the same as the original ones.
-   */
-  for (int i = 0; i < totface; i++) {
-    if (expand_cache->original_face_sets[i] >= 0) {
-      r_face_sets[i] = abs(r_face_sets[i]);
-    }
-    else {
-      r_face_sets[i] = -abs(r_face_sets[i]);
-    }
-  }
 }
 
 static void sculpt_expand_cache_initial_config_set(bContext *C,

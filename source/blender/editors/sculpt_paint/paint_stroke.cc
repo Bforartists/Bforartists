@@ -444,7 +444,7 @@ static bool paint_brush_update(bContext *C,
     }
     /* curve strokes do their own rake calculation */
     else if (!(brush->flag & BRUSH_CURVE)) {
-      if (!paint_calculate_rake_rotation(ups, brush, mouse_init, mode)) {
+      if (!paint_calculate_rake_rotation(ups, brush, mouse_init, mode, stroke->rake_started)) {
         /* Not enough motion to define an angle. */
         if (!stroke->rake_started) {
           is_dry_run = true;
@@ -1051,6 +1051,11 @@ bool paint_space_stroke_enabled(Brush *br, ePaintMode mode)
     return false;
   }
 
+  if (mode == PAINT_MODE_GPENCIL) {
+    /* No spacing needed for now. */
+    return false;
+  }
+
   return paint_supports_dynamic_size(br, mode);
 }
 
@@ -1570,7 +1575,7 @@ int paint_stroke_modal(bContext *C, wmOperator *op, const wmEvent *event, PaintS
       {
         copy_v2_v2(stroke->ups->last_rake, stroke->last_mouse_position);
       }
-      paint_calculate_rake_rotation(stroke->ups, br, mouse, mode);
+      paint_calculate_rake_rotation(stroke->ups, br, mouse, mode, true);
     }
   }
   else if (first_modal ||

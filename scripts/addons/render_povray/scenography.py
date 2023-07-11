@@ -294,7 +294,7 @@ def export_lights(lamps, file, scene, global_matrix, tab_write):
             tab_write(file, "point_at  <0, 0, -1>\n")
             if lamp.pov.use_halo:
                 tab_write(file, "looks_like{\n")
-                tab_write(file, "sphere{<0,0,0>,%.6f\n" % lamp.distance)
+                tab_write(file, "sphere{<0,0,0>,%.6f\n" % lamp.shadow_soft_size)
                 tab_write(file, "hollow\n")
                 tab_write(file, "material{\n")
                 tab_write(file, "texture{\n")
@@ -322,7 +322,6 @@ def export_lights(lamps, file, scene, global_matrix, tab_write):
             tab_write(file, "point_at  <0, 0, -1>\n")  # *must* be after 'parallel'
 
         elif lamp.type == "AREA":
-            tab_write(file, "fade_distance %.6f\n" % (lamp.distance / 2.0))
             # Area lights have no falloff type, so always use blenders lamp quad equivalent
             # for those?
             tab_write(file, "fade_power %d\n" % 2)
@@ -355,19 +354,7 @@ def export_lights(lamps, file, scene, global_matrix, tab_write):
         # Sun shouldn't be attenuated. Area lights have no falloff attribute so they
         # are put to type 2 attenuation a little higher above.
         if lamp.type not in {"SUN", "AREA"}:
-            if lamp.falloff_type == "INVERSE_SQUARE":
-                tab_write(file, "fade_distance %.6f\n" % (sqrt(lamp.distance / 2.0)))
-                tab_write(file, "fade_power %d\n" % 2)  # Use blenders lamp quad equivalent
-            elif lamp.falloff_type == "INVERSE_LINEAR":
-                tab_write(file, "fade_distance %.6f\n" % (lamp.distance / 2.0))
-                tab_write(file, "fade_power %d\n" % 1)  # Use blenders lamp linear
-            elif lamp.falloff_type == "CONSTANT":
-                tab_write(file, "fade_distance %.6f\n" % (lamp.distance / 2.0))
-                tab_write(file, "fade_power %d\n" % 3)
-                # Use blenders lamp constant equivalent no attenuation.
-            # Using Custom curve for fade power 3 for now.
-            elif lamp.falloff_type == "CUSTOM_CURVE":
-                tab_write(file, "fade_power %d\n" % 4)
+            tab_write(file, "fade_power %d\n" % 2)  # Use blenders lamp quad equivalent
 
         write_matrix(file, matrix)
 

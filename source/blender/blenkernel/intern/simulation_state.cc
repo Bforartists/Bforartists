@@ -15,6 +15,7 @@
 #include "BLI_fileops.hh"
 #include "BLI_hash_md5.h"
 #include "BLI_path_util.h"
+#include "BLI_string_utils.h"
 
 namespace blender::bke::sim {
 
@@ -78,7 +79,7 @@ void ModifierSimulationCache::try_discover_bake(const StringRefNull absolute_bak
       }
       char modified_file_name[FILE_MAX];
       STRNCPY(modified_file_name, dir_entry.relname);
-      BLI_str_replace_char(modified_file_name, '_', '.');
+      BLI_string_replace_char(modified_file_name, '_', '.');
 
       const SubFrame frame = std::stof(modified_file_name);
 
@@ -91,7 +92,7 @@ void ModifierSimulationCache::try_discover_bake(const StringRefNull absolute_bak
     }
 
     bdata_sharing_ = std::make_unique<BDataSharing>();
-    cache_state_ = CacheState::Baked;
+    this->cache_state = CacheState::Baked;
   }
 }
 
@@ -202,7 +203,7 @@ SimulationZoneState &ModifierSimulationState::get_zone_state_for_write(
                                         []() { return std::make_unique<SimulationZoneState>(); });
 }
 
-void ModifierSimulationState::ensure_bake_loaded() const
+void ModifierSimulationState::ensure_bake_loaded(const bNodeTree &ntree) const
 {
   std::scoped_lock lock{mutex_};
   if (bake_loaded_) {
@@ -223,20 +224,12 @@ void ModifierSimulationState::ensure_bake_loaded() const
   }
 
   const DiskBDataReader bdata_reader{*bdata_dir_};
-  deserialize_modifier_simulation_state(*io_root,
+  deserialize_modifier_simulation_state(ntree,
+                                        *io_root,
                                         bdata_reader,
                                         *owner_->bdata_sharing_,
                                         const_cast<ModifierSimulationState &>(*this));
   bake_loaded_ = true;
-}
-
-void ModifierSimulationCache::clear_prev_states()
-{
-  std::lock_guard lock(states_at_frames_mutex_);
-  std::unique_ptr<ModifierSimulationStateAtFrame> temp = std::move(states_at_frames_.last());
-  states_at_frames_.clear_and_shrink();
-  bdata_sharing_.reset();
-  states_at_frames_.append(std::move(temp));
 }
 
 void ModifierSimulationCache::reset()
@@ -244,7 +237,9 @@ void ModifierSimulationCache::reset()
   std::lock_guard lock(states_at_frames_mutex_);
   states_at_frames_.clear();
   bdata_sharing_.reset();
-  cache_state_ = CacheState::Valid;
+  this->realtime_cache.current_state.reset();
+  this->realtime_cache.prev_state.reset();
+  this->cache_state = CacheState::Valid;
 }
 
 }  // namespace blender::bke::sim

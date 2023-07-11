@@ -204,16 +204,19 @@ static void image_buffer_rect_update(RenderJob *rj,
    */
   /* TODO(sergey): Need to check has_combined here? */
   if (iuser->pass == 0) {
-    RenderView *rv;
     const int view_id = BKE_scene_multiview_view_id_get(&scene->r, viewname);
-    rv = RE_RenderViewGetById(rr, view_id);
+    const RenderView *rv = RE_RenderViewGetById(rr, view_id);
+
+    if (rv->ibuf == nullptr) {
+      return;
+    }
 
     /* find current float rect for display, first case is after composite... still weak */
-    if (rv->combined_buffer.data) {
-      rectf = rv->combined_buffer.data;
+    if (rv->ibuf->float_buffer.data) {
+      rectf = rv->ibuf->float_buffer.data;
     }
     else {
-      if (rv->byte_buffer.data) {
+      if (rv->ibuf->byte_buffer.data) {
         /* special case, currently only happens with sequencer rendering,
          * which updates the whole frame, so we can only mark display buffer
          * as invalid here (sergey)
@@ -407,7 +410,7 @@ static void make_renderinfo_string(const RenderStats *rs,
                                    const Scene *scene,
                                    const bool v3d_override,
                                    const char *error,
-                                   char ret[IMA_MAX_RENDER_TEXT])
+                                   char ret[IMA_MAX_RENDER_TEXT_SIZE])
 {
   const char *info_space = " ";
   const char *info_sep = "| ";
@@ -514,13 +517,13 @@ static void make_renderinfo_string(const RenderStats *rs,
   }
 
   if (G.debug & G_DEBUG) {
-    if (BLI_string_len_array(ret_array, i) >= IMA_MAX_RENDER_TEXT) {
+    if (BLI_string_len_array(ret_array, i) >= IMA_MAX_RENDER_TEXT_SIZE) {
       printf("WARNING! renderwin text beyond limit\n");
     }
   }
 
   BLI_assert(i < int(BOUNDED_ARRAY_TYPE_SIZE<decltype(ret_array)>()));
-  BLI_string_join_array(ret, IMA_MAX_RENDER_TEXT, ret_array, i);
+  BLI_string_join_array(ret, IMA_MAX_RENDER_TEXT_SIZE, ret_array, i);
 }
 
 static void image_renderinfo_cb(void *rjv, RenderStats *rs)
@@ -533,7 +536,7 @@ static void image_renderinfo_cb(void *rjv, RenderStats *rs)
   if (rr) {
     /* malloc OK here, stats_draw is not in tile threads */
     if (rr->text == nullptr) {
-      rr->text = static_cast<char *>(MEM_callocN(IMA_MAX_RENDER_TEXT, "rendertext"));
+      rr->text = static_cast<char *>(MEM_callocN(IMA_MAX_RENDER_TEXT_SIZE, "rendertext"));
     }
 
     make_renderinfo_string(rs, rj->scene, rj->v3d_override, rr->error, rr->text);

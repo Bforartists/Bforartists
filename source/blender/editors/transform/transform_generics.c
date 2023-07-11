@@ -148,7 +148,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
   t->flag = 0;
 
   if (obact && !(t->options & (CTX_CURSOR | CTX_TEXTURE_SPACE)) &&
-      ELEM(object_mode, OB_MODE_EDIT, OB_MODE_EDIT_GPENCIL))
+      ELEM(object_mode, OB_MODE_EDIT, OB_MODE_EDIT_GPENCIL_LEGACY))
   {
     t->obedit_type = obact->type;
   }
@@ -184,7 +184,6 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
   }
   copy_v2_v2_int(t->mval, mval);
   copy_v2_v2_int(t->mouse.imval, mval);
-  copy_v2_v2_int(t->con.imval, mval);
 
   t->mode_info = NULL;
 

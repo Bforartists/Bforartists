@@ -194,9 +194,7 @@ static void screen_opengl_views_setup(OGLRender *oglrender)
       RenderView *rv_del = rv->next;
       BLI_remlink(&rr->views, rv_del);
 
-      RE_RenderBuffer_data_free(&rv_del->combined_buffer);
-      RE_RenderBuffer_data_free(&rv_del->z_buffer);
-      RE_RenderByteBuffer_data_free(&rv_del->byte_buffer);
+      IMB_freeImBuf(rv_del->ibuf);
 
       MEM_freeN(rv_del);
     }
@@ -220,9 +218,7 @@ static void screen_opengl_views_setup(OGLRender *oglrender)
 
         BLI_remlink(&rr->views, rv_del);
 
-        RE_RenderBuffer_data_free(&rv_del->combined_buffer);
-        RE_RenderBuffer_data_free(&rv_del->z_buffer);
-        RE_RenderByteBuffer_data_free(&rv_del->byte_buffer);
+        IMB_freeImBuf(rv_del->ibuf);
 
         MEM_freeN(rv_del);
       }

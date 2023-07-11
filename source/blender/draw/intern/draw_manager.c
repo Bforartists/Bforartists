@@ -35,7 +35,6 @@
 #include "BKE_object.h"
 #include "BKE_paint.h"
 #include "BKE_particle.h"
-#include "BKE_pbvh.h"
 #include "BKE_pointcache.h"
 #include "BKE_pointcloud.h"
 #include "BKE_screen.h"
@@ -829,7 +828,7 @@ typedef struct IdDdtTemplate {
 static bool id_type_can_have_drawdata(const short id_type)
 {
   /* Only some ID-blocks have this info for now */
-  /* TODO: finish adding this for the other blocktypes */
+  /* TODO: finish adding this for the other block-types. */
   switch (id_type) {
     /* has DrawData */
     case ID_OB:
