@@ -462,7 +462,7 @@ static void do_versions_sequencer_speed_effect_recursive(Scene *scene, const Lis
             }
           }
           if (substr) {
-            char *new_path = BLI_str_replaceN(fcu->rna_path, "speed_factor", substr);
+            char *new_path = BLI_string_replaceN(fcu->rna_path, "speed_factor", substr);
             MEM_freeN(fcu->rna_path);
             fcu->rna_path = new_path;
           }
@@ -670,7 +670,7 @@ static bool do_versions_sequencer_init_retiming_tool_data(Sequence *seq, void *u
 
   const int content_length = SEQ_time_strip_length_get(scene, seq);
 
-  SEQ_retiming_data_ensure(seq);
+  SEQ_retiming_data_ensure(scene, seq);
 
   SeqRetimingHandle *handle = &seq->retiming_handles[seq->retiming_handle_num - 1];
   handle->strip_frame_index = round_fl_to_int(content_length / seq->speed_factor);

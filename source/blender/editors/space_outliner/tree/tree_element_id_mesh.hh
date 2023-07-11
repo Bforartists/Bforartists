@@ -19,11 +19,10 @@ class TreeElementIDMesh final : public TreeElementID {
   TreeElementIDMesh(TreeElement &legacy_te_, Mesh &mesh);
 
   void expand(SpaceOutliner &) const override;
-  bool isExpandValid() const override;
 
  private:
-  void expandKey(SpaceOutliner &) const;
-  void expandMaterials(SpaceOutliner &) const;
+  void expand_key(SpaceOutliner &) const;
+  void expand_materials(SpaceOutliner &) const;
 };
 
 }  // namespace blender::ed::outliner

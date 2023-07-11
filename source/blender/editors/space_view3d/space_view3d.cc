@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "AS_asset_representation.h"
+#include "AS_asset_representation.hh"
 
 #include "DNA_collection_types.h"
 #include "DNA_defaults.h"
@@ -51,6 +51,7 @@
 #include "BKE_viewer_path.h"
 #include "BKE_workspace.h"
 
+#include "ED_geometry.h"
 #include "ED_object.h"
 #include "ED_outliner.h"
 #include "ED_render.h"
@@ -87,7 +88,7 @@
 #include "DEG_depsgraph_build.h"
 
 #include "view3d_intern.h" /* own include */
-#include "view3d_navigate.h"
+#include "view3d_navigate.hh"
 
 /* ******************** manage regions ********************* */
 
@@ -444,6 +445,9 @@ static void view3d_main_region_init(wmWindowManager *wm, ARegion *region)
   keymap = WM_keymap_ensure(wm->defaultconf, "Grease Pencil Edit Mode", 0, 0);
   WM_event_add_keymap_handler(&region->handlers, keymap);
 
+  keymap = WM_keymap_ensure(wm->defaultconf, "Grease Pencil Paint Mode", 0, 0);
+  WM_event_add_keymap_handler(&region->handlers, keymap);
+
   /* editfont keymap swallows all... */
   keymap = WM_keymap_ensure(wm->defaultconf, "Font", 0, 0);
   WM_event_add_keymap_handler(&region->handlers, keymap);
@@ -498,7 +502,7 @@ static ID_Type view3d_drop_id_in_main_region_poll_get_id_type(bContext *C,
 
   wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
   if (asset_drag) {
-    return AS_asset_representation_id_type_get(asset_drag->asset);
+    return asset_drag->asset->get_id_type();
   }
 
   return ID_Type(0);
@@ -733,7 +737,7 @@ static bool view3d_geometry_nodes_drop_poll(bContext *C, wmDrag *drag, const wmE
     if (!asset_data) {
       return false;
     }
-    const AssetMetaData *metadata = AS_asset_representation_metadata_get(asset_data->asset);
+    const AssetMetaData *metadata = &asset_data->asset->get_metadata();
     const IDProperty *tree_type = BKE_asset_metadata_idprop_find(metadata, "type");
     if (!tree_type || IDP_Int(tree_type) != NTREE_GEOMETRY) {
       return false;
@@ -1178,7 +1182,7 @@ static void view3d_main_region_listener(const wmRegionListenerParams *params)
           break;
         case ND_OB_ACTIVE:
         case ND_OB_SELECT:
-          ATTR_FALLTHROUGH;
+          [[fallthrough]];
         case ND_FRAME:
         case ND_TRANSFORM:
         case ND_OB_VISIBLE:
@@ -1704,6 +1708,9 @@ void ED_view3d_buttons_region_layout_ex(const bContext *C,
     case CTX_MODE_EDIT_GREASE_PENCIL:
       ARRAY_SET_ITEMS(contexts, ".grease_pencil_edit");
       break;
+    case CTX_MODE_EDIT_POINT_CLOUD:
+      ARRAY_SET_ITEMS(contexts, ".point_cloud_edit");
+      break;
     case CTX_MODE_POSE:
       ARRAY_SET_ITEMS(contexts, ".posemode");
       break;
@@ -1725,16 +1732,16 @@ void ED_view3d_buttons_region_layout_ex(const bContext *C,
     case CTX_MODE_OBJECT:
       ARRAY_SET_ITEMS(contexts, ".objectmode");
       break;
-    case CTX_MODE_PAINT_GPENCIL:
+    case CTX_MODE_PAINT_GPENCIL_LEGACY:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_paint");
       break;
-    case CTX_MODE_SCULPT_GPENCIL:
+    case CTX_MODE_SCULPT_GPENCIL_LEGACY:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_sculpt");
       break;
-    case CTX_MODE_WEIGHT_GPENCIL:
+    case CTX_MODE_WEIGHT_GPENCIL_LEGACY:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
       break;
-    case CTX_MODE_VERTEX_GPENCIL:
+    case CTX_MODE_VERTEX_GPENCIL_LEGACY:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_vertex");
       break;
     case CTX_MODE_SCULPT_CURVES:
@@ -1745,19 +1752,19 @@ void ED_view3d_buttons_region_layout_ex(const bContext *C,
   }
 
   switch (mode) {
-    case CTX_MODE_PAINT_GPENCIL:
+    case CTX_MODE_PAINT_GPENCIL_LEGACY:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_paint");
       break;
-    case CTX_MODE_SCULPT_GPENCIL:
+    case CTX_MODE_SCULPT_GPENCIL_LEGACY:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_sculpt");
       break;
-    case CTX_MODE_WEIGHT_GPENCIL:
+    case CTX_MODE_WEIGHT_GPENCIL_LEGACY:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
       break;
     case CTX_MODE_EDIT_GPENCIL_LEGACY:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_edit");
       break;
-    case CTX_MODE_VERTEX_GPENCIL:
+    case CTX_MODE_VERTEX_GPENCIL_LEGACY:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_vertex");
       break;
     default:
@@ -2221,6 +2228,9 @@ void ED_spacetype_view3d()
   art = MEM_cnew<ARegionType>("spacetype view3d xr region");
   art->regionid = RGN_TYPE_XR;
   BLI_addhead(&st->regiontypes, art);
+
+  WM_menutype_add(
+      MEM_new<MenuType>(__func__, blender::ed::geometry::node_group_operator_assets_menu()));
 
   BKE_spacetype_register(st);
 }

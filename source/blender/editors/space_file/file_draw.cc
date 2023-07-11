@@ -12,7 +12,7 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "AS_asset_representation.h"
+#include "AS_asset_representation.hh"
 
 #include "BLI_blenlib.h"
 #include "BLI_fileops_types.h"
@@ -116,9 +116,9 @@ static char *file_draw_tooltip_func(bContext * /*C*/, void *argN, const char * /
 
 static char *file_draw_asset_tooltip_func(bContext * /*C*/, void *argN, const char * /*tip*/)
 {
-  const AssetRepresentation *asset = static_cast<AssetRepresentation *>(argN);
-  std::string complete_string = AS_asset_representation_name_get(asset);
-  const AssetMetaData &meta_data = *AS_asset_representation_metadata_get(asset);
+  const auto *asset = static_cast<blender::asset_system::AssetRepresentation *>(argN);
+  std::string complete_string = asset->get_name();
+  const AssetMetaData &meta_data = asset->get_metadata();
   if (meta_data.description) {
     complete_string += '\n';
     complete_string += meta_data.description;
@@ -421,6 +421,11 @@ static void file_draw_preview(const FileList *files,
 
   if (dimmed) {
     document_img_col[3] *= 0.3f;
+  }
+
+  if (!is_icon && file->typeflag & FILE_TYPE_IMAGE) {
+    /* Draw checker pattern behind image previews in case they have transparency. */
+    imm_draw_box_checker_2d(float(xco), float(yco), float(xco + ex), float(yco + ey));
   }
 
   if (!is_icon && file->typeflag & FILE_TYPE_BLENDERLIB) {

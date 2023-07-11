@@ -19,10 +19,9 @@ class TreeElementIDGPLegacy final : public TreeElementID {
   TreeElementIDGPLegacy(TreeElement &legacy_te, bGPdata &gpd);
 
   void expand(SpaceOutliner &) const override;
-  bool isExpandValid() const override;
 
  private:
-  void expandLayers(SpaceOutliner &) const;
+  void expand_layers(SpaceOutliner &) const;
 };
 
 }  // namespace blender::ed::outliner
