@@ -300,8 +300,8 @@ void ED_view3d_smooth_view_ex(
 
     sms.time_allowed = double(smooth_viewtx / 1000.0);
 
-    /* If this is view rotation only we can decrease the time allowed by the angle between quats
-     * this means small rotations won't lag. */
+    /* If this is view rotation only we can decrease the time allowed by the angle between
+     * quaternions this means small rotations won't lag. */
     if (sview->quat && !sview->ofs && !sview->dist) {
       /* scale the time allowed by the rotation */
       /* 180deg == 1.0 */
@@ -332,10 +332,10 @@ void ED_view3d_smooth_view_ex(
     }
     *rv3d->sms = sms;
     if (rv3d->smooth_timer) {
-      WM_event_remove_timer(wm, win, rv3d->smooth_timer);
+      WM_event_timer_remove(wm, win, rv3d->smooth_timer);
     }
     /* #TIMER1 is hard-coded in key-map. */
-    rv3d->smooth_timer = WM_event_add_timer(wm, win, TIMER1, 1.0 / 100.0);
+    rv3d->smooth_timer = WM_event_timer_add(wm, win, TIMER1, 1.0 / 100.0);
   }
   else {
     /* Animation is disabled, apply immediately. */
@@ -454,7 +454,7 @@ static void view3d_smoothview_apply_and_finish(bContext *C, View3D *v3d, RegionV
   MEM_freeN(rv3d->sms);
   rv3d->sms = nullptr;
 
-  WM_event_remove_timer(wm, win, rv3d->smooth_timer);
+  WM_event_timer_remove(wm, win, rv3d->smooth_timer);
   rv3d->smooth_timer = nullptr;
   rv3d->rflag &= ~RV3D_NAVIGATING;
 

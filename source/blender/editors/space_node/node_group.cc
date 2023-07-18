@@ -147,16 +147,31 @@ static void remap_pairing(bNodeTree &dst_tree,
                           const Map<int32_t, int32_t> &identifier_map)
 {
   for (bNode *dst_node : nodes) {
-    if (dst_node->type == GEO_NODE_SIMULATION_INPUT) {
-      NodeGeometrySimulationInput *data = static_cast<NodeGeometrySimulationInput *>(
-          dst_node->storage);
-      if (data->output_node_id == 0) {
-        continue;
-      }
+    switch (dst_node->type) {
+      case GEO_NODE_SIMULATION_INPUT: {
+        NodeGeometrySimulationInput *data = static_cast<NodeGeometrySimulationInput *>(
+            dst_node->storage);
+        if (data->output_node_id == 0) {
+          continue;
+        }
 
-      data->output_node_id = identifier_map.lookup_default(data->output_node_id, 0);
-      if (data->output_node_id == 0) {
-        blender::nodes::update_node_declaration_and_sockets(dst_tree, *dst_node);
+        data->output_node_id = identifier_map.lookup_default(data->output_node_id, 0);
+        if (data->output_node_id == 0) {
+          blender::nodes::update_node_declaration_and_sockets(dst_tree, *dst_node);
+        }
+        break;
+      }
+      case GEO_NODE_REPEAT_INPUT: {
+        NodeGeometryRepeatInput *data = static_cast<NodeGeometryRepeatInput *>(dst_node->storage);
+        if (data->output_node_id == 0) {
+          continue;
+        }
+
+        data->output_node_id = identifier_map.lookup_default(data->output_node_id, 0);
+        if (data->output_node_id == 0) {
+          blender::nodes::update_node_declaration_and_sockets(dst_tree, *dst_node);
+        }
+        break;
       }
     }
   }
@@ -445,10 +460,10 @@ static bool node_group_ungroup(Main *bmain, bNodeTree *ntree, bNode *gnode)
     nodeRemoveNode(bmain, ntree, node, false);
   }
 
+  update_nested_node_refs_after_ungroup(*ntree, *ngroup, *gnode, node_identifier_map);
+
   /* delete the group instance and dereference group tree */
   nodeRemoveNode(bmain, ntree, gnode, true);
-
-  update_nested_node_refs_after_ungroup(*ntree, *ngroup, *gnode, node_identifier_map);
 
   return true;
 }
@@ -838,6 +853,31 @@ static bool node_group_make_test_selected(bNodeTree &ntree,
       }
     }
   }
+  for (bNode *input_node : ntree.nodes_by_type("GeometryNodeRepeatInput")) {
+    const NodeGeometryRepeatInput &input_data = *static_cast<const NodeGeometryRepeatInput *>(
+        input_node->storage);
+
+    if (bNode *output_node = ntree.node_by_id(input_data.output_node_id)) {
+      const bool input_selected = nodes_to_group.contains(input_node);
+      const bool output_selected = nodes_to_group.contains(output_node);
+      if (input_selected && !output_selected) {
+        BKE_reportf(&reports,
+                    RPT_WARNING,
+                    "Can not add repeat input node '%s' to a group without its paired output '%s'",
+                    input_node->name,
+                    output_node->name);
+        return false;
+      }
+      if (output_selected && !input_selected) {
+        BKE_reportf(&reports,
+                    RPT_WARNING,
+                    "Can not add repeat output node '%s' to a group without its paired input '%s'",
+                    output_node->name,
+                    input_node->name);
+        return false;
+      }
+    }
+  }
 
   return true;
 }
@@ -923,45 +963,46 @@ static void update_nested_node_refs_after_moving_nodes_into_group(
     const Map<int32_t, int32_t> &node_identifier_map)
 {
   /* Update nested node references in the parent and child node tree. */
-  RandomNumberGenerator rng(int(PIL_check_seconds_timer() * 1000000.0));
+  RandomNumberGenerator rng(PIL_check_seconds_timer_i() & UINT_MAX);
   Vector<bNestedNodeRef> new_nested_node_refs;
   /* Keep all nested node references that were in the group before. */
-  for (const bNestedNodeRef &state_id : group.nested_node_refs_span()) {
-    new_nested_node_refs.append(state_id);
+  for (const bNestedNodeRef &ref : group.nested_node_refs_span()) {
+    new_nested_node_refs.append(ref);
   }
   Set<int32_t> used_nested_node_ref_ids;
   for (const bNestedNodeRef &ref : group.nested_node_refs_span()) {
     used_nested_node_ref_ids.add(ref.id);
   }
   Map<bNestedNodePath, int32_t> new_id_by_old_path;
-  for (bNestedNodeRef &state_id : ntree.nested_node_refs_span()) {
-    const int32_t new_node_id = node_identifier_map.lookup_default(state_id.path.node_id, -1);
+  for (bNestedNodeRef &ref : ntree.nested_node_refs_span()) {
+    const int32_t new_node_id = node_identifier_map.lookup_default(ref.path.node_id, -1);
     if (new_node_id == -1) {
       /* The node was not moved between node groups. */
       continue;
     }
-    bNestedNodeRef new_state_id = state_id;
-    new_state_id.path.node_id = new_node_id;
+    bNestedNodeRef new_ref = ref;
+    new_ref.path.node_id = new_node_id;
     /* Find new unique identifier for the nested node ref. */
     while (true) {
       const int32_t new_id = rng.get_int32(INT32_MAX);
       if (used_nested_node_ref_ids.add(new_id)) {
-        new_state_id.id = new_id;
+        new_ref.id = new_id;
         break;
       }
     }
-    new_id_by_old_path.add_new(state_id.path, new_state_id.id);
-    new_nested_node_refs.append(new_state_id);
+    new_id_by_old_path.add_new(ref.path, new_ref.id);
+    new_nested_node_refs.append(new_ref);
     /* Updated the nested node ref in the parent so that it points to the same node that is now
      * inside of a nested group. */
-    state_id.path.node_id = gnode.identifier;
-    state_id.path.id_in_node = new_state_id.id;
+    ref.path.node_id = gnode.identifier;
+    ref.path.id_in_node = new_ref.id;
   }
   MEM_SAFE_FREE(group.nested_node_refs);
   group.nested_node_refs = static_cast<bNestedNodeRef *>(
       MEM_malloc_arrayN(new_nested_node_refs.size(), sizeof(bNestedNodeRef), __func__));
   uninitialized_copy_n(
       new_nested_node_refs.data(), new_nested_node_refs.size(), group.nested_node_refs);
+  group.nested_node_refs_num = new_nested_node_refs.size();
 }
 
 static void node_group_make_insert_selected(const bContext &C,
