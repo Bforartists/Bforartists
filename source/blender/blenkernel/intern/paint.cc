@@ -12,6 +12,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_brush_types.h"
+#include "DNA_defaults.h"
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
@@ -1131,13 +1132,10 @@ bool BKE_paint_ensure(ToolSettings *ts, Paint **r_paint)
   }
   else if ((Sculpt **)r_paint == &ts->sculpt) {
     Sculpt *data = MEM_cnew<Sculpt>(__func__);
+
+    *data = *DNA_struct_default_get(Sculpt);
+
     paint = &data->paint;
-
-    /* Turn on X plane mirror symmetry by default. */
-    paint->symmetry_flags |= PAINT_SYMM_X;
-
-    /* Make sure at least dyntopo subdivision is enabled. */
-    data->flags |= SCULPT_DYNTOPO_SUBDIVIDE | SCULPT_DYNTOPO_COLLAPSE;
   }
   else if ((GpPaint **)r_paint == &ts->gp_paint) {
     GpPaint *data = MEM_cnew<GpPaint>(__func__);
@@ -1372,9 +1370,7 @@ bool paint_calculate_rake_rotation(UnifiedPaintSettings *ups,
     float r = paint_rake_rotation_spacing(ups, brush);
     float rotation;
 
-    /* Use a smaller limit if the stroke hasn't started
-     * to prevent excessive preroll.
-     */
+    /* Use a smaller limit if the stroke hasn't started to prevent excessive pre-roll. */
     if (!stroke_has_started) {
       r = min_ff(r, 4.0f);
     }
@@ -1739,7 +1735,7 @@ static void sculpt_update_object(
 
     /* These are assigned to the base mesh in Multires. This is needed because Face Sets operators
      * and tools use the Face Sets data from the base mesh when Multires is active. */
-    ss->vert_positions = BKE_mesh_vert_positions_for_write(me);
+    ss->vert_positions = me->vert_positions_for_write();
     ss->polys = me->polys();
     ss->corner_verts = me->corner_verts();
   }
@@ -1747,7 +1743,7 @@ static void sculpt_update_object(
     ss->totvert = me->totvert;
     ss->totpoly = me->totpoly;
     ss->totfaces = me->totpoly;
-    ss->vert_positions = BKE_mesh_vert_positions_for_write(me);
+    ss->vert_positions = me->vert_positions_for_write();
     ss->polys = me->polys();
     ss->corner_verts = me->corner_verts();
     ss->multires.active = false;
@@ -1758,7 +1754,6 @@ static void sculpt_update_object(
 
     CustomDataLayer *layer;
     eAttrDomain domain;
-
     if (BKE_pbvh_get_color_layer(me, &layer, &domain)) {
       if (layer->type == CD_PROP_COLOR) {
         ss->vcol = static_cast<MPropCol *>(layer->data);
@@ -2118,22 +2113,29 @@ void BKE_sculpt_toolsettings_data_ensure(Scene *scene)
   BKE_paint_ensure(scene->toolsettings, (Paint **)&scene->toolsettings->sculpt);
 
   Sculpt *sd = scene->toolsettings->sculpt;
-  if (!sd->detail_size) {
-    sd->detail_size = 12;
+
+  const Sculpt *defaults = DNA_struct_default_get(Sculpt);
+
+  /* We have file versioning code here for historical
+   * reasons.  Don't add more checks here, do it properly
+   * in blenloader.
+   */
+  if (sd->automasking_start_normal_limit == 0.0f) {
+    sd->automasking_start_normal_limit = defaults->automasking_start_normal_limit;
+    sd->automasking_start_normal_falloff = defaults->automasking_start_normal_falloff;
+
+    sd->automasking_view_normal_limit = defaults->automasking_view_normal_limit;
+    sd->automasking_view_normal_falloff = defaults->automasking_view_normal_limit;
   }
-  if (!sd->detail_percent) {
-    sd->detail_percent = 25;
+
+  if (sd->detail_percent == 0.0f) {
+    sd->detail_percent = defaults->detail_percent;
   }
   if (sd->constant_detail == 0.0f) {
-    sd->constant_detail = 3.0f;
+    sd->constant_detail = defaults->constant_detail;
   }
-
-  if (!sd->automasking_start_normal_limit) {
-    sd->automasking_start_normal_limit = 20.0f / 180.0f * M_PI;
-    sd->automasking_start_normal_falloff = 0.25f;
-
-    sd->automasking_view_normal_limit = 90.0f / 180.0f * M_PI;
-    sd->automasking_view_normal_falloff = 0.25f;
+  if (sd->detail_size == 0.0f) {
+    sd->detail_size = defaults->detail_size;
   }
 
   /* Set sane default tiling offsets. */
@@ -2146,6 +2148,7 @@ void BKE_sculpt_toolsettings_data_ensure(Scene *scene)
   if (!sd->paint.tile_offset[2]) {
     sd->paint.tile_offset[2] = 1.0f;
   }
+
   if (!sd->automasking_cavity_curve || !sd->automasking_cavity_curve_op) {
     BKE_sculpt_check_cavity_curves(sd);
   }

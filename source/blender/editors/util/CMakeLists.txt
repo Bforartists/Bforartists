@@ -7,7 +7,6 @@ set(INC
   ../space_sequencer
   ../../asset_system
   ../../blenfont
-  ../../blenkernel
   ../../blentranslation
   ../../bmesh
   ../../depsgraph
@@ -25,15 +24,15 @@ set(INC_SYS
 )
 
 set(SRC
-  ed_draw.c
-  ed_transverts.c
+  ed_draw.cc
+  ed_transverts.cc
   ed_util.cc
-  ed_util_imbuf.c
+  ed_util_imbuf.cc
   ed_util_ops.cc
   ed_viewer_path.cc
-  gizmo_utils.c
-  numinput.c
-  select_utils.c
+  gizmo_utils.cc
+  numinput.cc
+  select_utils.cc
 
   # general includes
   ../include/BIF_glutil.h
@@ -43,7 +42,7 @@ set(SRC
   ../include/ED_buttons.h
   ../include/ED_clip.h
   ../include/ED_curve.h
-  ../include/ED_curves.h
+  ../include/ED_curves.hh
   ../include/ED_curves_sculpt.h
   ../include/ED_datafiles.h
   ../include/ED_file_indexer.h
@@ -107,6 +106,7 @@ set(SRC
 )
 
 set(LIB
+  PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
   PRIVATE bf::dna
   PRIVATE bf::intern::guardedalloc

@@ -337,15 +337,10 @@ static void swap_old_bmain_data_for_blendfile(ReuseOldBMainData *reuse_data, con
 
   SWAP(ListBase, *new_lb, *old_lb);
 
-  /* Since all IDs here are supposed to be local, no need to call #BKE_main_namemap_clear. */
   /* TODO: Could add per-IDType control over namemaps clearing, if this becomes a performances
    * concern. */
-  if (old_bmain->name_map != nullptr) {
-    BKE_main_namemap_destroy(&old_bmain->name_map);
-  }
-  if (new_bmain->name_map != nullptr) {
-    BKE_main_namemap_destroy(&new_bmain->name_map);
-  }
+  BKE_main_namemap_clear(old_bmain);
+  BKE_main_namemap_clear(new_bmain);
 
   /* Original 'new' IDs have been moved into the old listbase and will be discarded (deleted).
    * Original 'old' IDs have been moved into the new listbase and are being reused (kept).
@@ -1322,7 +1317,7 @@ bool BKE_blendfile_userdef_write_all(ReportList *reports)
 
   if (use_template_userpref) {
     if ((cfgdir = BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, U.app_template))) {
-      /* Also save app-template prefs */
+      /* Also save app-template preferences. */
       BLI_path_join(filepath, sizeof(filepath), cfgdir, BLENDER_USERPREF_FILE);
 
       printf("Writing userprefs app-template: \"%s\" ", filepath);
