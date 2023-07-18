@@ -103,7 +103,7 @@ enum uiWidgetTypeEnum {
   UI_WTYPE_BOX,
   UI_WTYPE_SCROLL,
   UI_WTYPE_LISTITEM,
-  UI_WTYPE_PROGRESSBAR,
+  UI_WTYPE_PROGRESS,
   UI_WTYPE_NODESOCKET,
   UI_WTYPE_VIEW_ITEM,
 };
@@ -1032,6 +1032,16 @@ static void shape_preset_trias_from_rect_checkmark(uiWidgetTrias *tria, const rc
   tria->index = g_shape_preset_checkmark_face;
 }
 
+static void shape_preset_trias_from_rect_dash(uiWidgetTrias *tria, const rcti *rect)
+{
+  tria->type = ROUNDBOX_TRIA_DASH;
+
+  /* Center position and size. */
+  tria->center[0] = rect->xmin + 0.5f * BLI_rcti_size_y(rect);
+  tria->center[1] = rect->ymin + 0.5f * BLI_rcti_size_y(rect);
+  tria->size = 0.5f * BLI_rcti_size_y(rect);
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1872,6 +1882,7 @@ static void widget_draw_text(const uiFontStyle *fstyle,
   const char *drawstr = but->drawstr;
   const char *drawstr_right = nullptr;
   bool use_right_only = false;
+  const char *indeterminate_str = UI_VALUE_INDETERMINATE_CHAR;
 
 #ifdef WITH_INPUT_IME
   const wmIMEData *ime_data;
@@ -1925,6 +1936,20 @@ static void widget_draw_text(const uiFontStyle *fstyle,
         drawstr = but->editstr;
       }
     }
+  }
+
+  /* If not editing and indeterminate, show dash.*/
+  if (but->drawflag & UI_BUT_INDETERMINATE && !but->editstr &&
+      ELEM(but->type,
+           UI_BTYPE_MENU,
+           UI_BTYPE_NUM,
+           UI_BTYPE_NUM_SLIDER,
+           UI_BTYPE_TEXT,
+           UI_BTYPE_SEARCH_MENU))
+  {
+    drawstr = indeterminate_str;
+    drawstr_left_len = strlen(drawstr);
+    align = UI_STYLE_TEXT_CENTER;
   }
 
   /* text button selection, cursor, composite underline */
@@ -3604,14 +3629,12 @@ static void widget_scroll(uiBut *but,
   UI_draw_widget_scroll(wcol, rect, &rect1, (state->but_flag & UI_SELECT) ? UI_SCROLL_PRESSED : 0);
 }
 
-static void widget_progressbar(uiBut *but,
-                               uiWidgetColors *wcol,
-                               rcti *rect,
-                               const uiWidgetStateInfo * /*state*/,
-                               int roundboxalign,
-                               const float zoom)
+static void widget_progress_type_bar(uiButProgress *but_progress,
+                                     uiWidgetColors *wcol,
+                                     rcti *rect,
+                                     int roundboxalign,
+                                     const float zoom)
 {
-  uiButProgressbar *but_progressbar = (uiButProgressbar *)but;
   rcti rect_prog = *rect, rect_bar = *rect;
 
   uiWidgetBase wtb, wtb_bar;
@@ -3619,9 +3642,9 @@ static void widget_progressbar(uiBut *but,
   widget_init(&wtb_bar);
 
   /* round corners */
-  const float value = but_progressbar->progress;
+  const float factor = but_progress->progress_factor;
   const float ofs = widget_radius_from_zoom(zoom, wcol);
-  float w = value * BLI_rcti_size_x(&rect_prog);
+  float w = factor * BLI_rcti_size_x(&rect_prog);
 
   /* Ensure minimum size. */
   w = MAX2(w, ofs);
@@ -3637,6 +3660,63 @@ static void widget_progressbar(uiBut *but,
   /* "slider" bar color */
   copy_v3_v3_uchar(wcol->inner, wcol->item);
   widgetbase_draw(&wtb_bar, wcol);
+}
+
+/**
+ * Used for both ring & pie types.
+ */
+static void widget_progress_type_ring(uiButProgress *but_progress,
+                                      uiWidgetColors *wcol,
+                                      rcti *rect)
+{
+  const float ring_width = 0.6; /* 0.0 would be a pie. */
+  const float outer_rad = (rect->ymax - rect->ymin) / 2.0f;
+  const float inner_rad = outer_rad * ring_width;
+  const float x = rect->xmin + outer_rad;
+  const float y = rect->ymin + outer_rad;
+  const float start = 0.0f;
+  const float end = but_progress->progress_factor * 360.0f;
+  GPUVertFormat *format = immVertexFormat();
+  const uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+  immUniformColor3ubvAlpha(wcol->item, 255 / UI_PIXEL_AA_JITTER * 2);
+  GPU_blend(GPU_BLEND_ALPHA);
+
+  for (int i = 0; i < UI_PIXEL_AA_JITTER; i++) {
+    imm_draw_disk_partial_fill_2d(pos,
+                                  x + ui_pixel_jitter[i][0],
+                                  y + ui_pixel_jitter[i][1],
+                                  inner_rad,
+                                  outer_rad,
+                                  48,
+                                  start,
+                                  end);
+  }
+  immUnbindProgram();
+
+  if (but_progress->drawstr[0]) {
+    rect->xmin += UI_UNIT_X;
+  }
+}
+
+static void widget_progress_indicator(uiBut *but,
+                                      uiWidgetColors *wcol,
+                                      rcti *rect,
+                                      const uiWidgetStateInfo * /*state*/,
+                                      int roundboxalign,
+                                      const float zoom)
+{
+  uiButProgress *but_progress = static_cast<uiButProgress *>(but);
+  switch (but_progress->progress_type) {
+    case UI_BUT_PROGRESS_TYPE_BAR: {
+      widget_progress_type_bar(but_progress, wcol, rect, roundboxalign, zoom);
+      break;
+    }
+    case UI_BUT_PROGRESS_TYPE_RING: {
+      widget_progress_type_ring(but_progress, wcol, rect);
+      break;
+    }
+  }
 }
 
 static void widget_view_item(uiWidgetColors *wcol,
@@ -3716,7 +3796,7 @@ static void widget_numslider(uiBut *but,
   widgetbase_draw(&wtb, wcol);
 
   /* Draw slider part only when not in text editing. */
-  if (!state->is_text_input) {
+  if (!state->is_text_input && !(but->drawflag & UI_BUT_INDETERMINATE)) {
     int roundboxalign_slider = roundboxalign;
 
     uchar outline[3];
@@ -3842,6 +3922,10 @@ static void widget_swatch(uiBut *but,
   round_box_edges(&wtb, roundboxalign, rect, rad);
 
   ui_but_v3_get(but, col);
+
+  if (but->drawflag & UI_BUT_INDETERMINATE) {
+    col[0] = col[1] = col[2] = col[3] = 0.5f;
+  }
 
   if ((state->but_flag & (UI_BUT_ANIMATED | UI_BUT_ANIMATED_KEY | UI_BUT_DRIVEN |
                           UI_BUT_OVERRIDDEN | UI_BUT_REDALERT)) ||
@@ -4151,11 +4235,19 @@ static void widget_optionbut(uiWidgetColors *wcol,
   /* Keep one edge in place. */
   BLI_rcti_translate(&recttemp, text_before_widget ? delta : -delta, 0);
 
+  if (state->but_drawflag & UI_BUT_INDETERMINATE) {
+    /* The same muted background color regardless of state. */
+    color_blend_v4_v4v4(wcol->inner, wcol->inner, wcol->inner_sel, 0.75f);
+  }
+
   const float rad = widget_radius_from_rcti(&recttemp, wcol);
   round_box_edges(&wtb, UI_CNR_ALL, &recttemp, rad);
 
   /* decoration */
-  if (state->but_flag & UI_SELECT) {
+  if (state->but_drawflag & UI_BUT_INDETERMINATE) {
+    shape_preset_trias_from_rect_dash(&wtb.tria1, &recttemp);
+  }
+  else if (state->but_flag & UI_SELECT) {
     shape_preset_trias_from_rect_checkmark(&wtb.tria1, &recttemp);
   }
 
@@ -4556,9 +4648,9 @@ static uiWidgetType *widget_type(uiWidgetTypeEnum type)
       wt.draw = widget_list_itembut;
       break;
 
-    case UI_WTYPE_PROGRESSBAR:
+    case UI_WTYPE_PROGRESS:
       wt.wcol_theme = &btheme->tui.wcol_progress;
-      wt.custom = widget_progressbar;
+      wt.custom = widget_progress_indicator;
       break;
 
     case UI_WTYPE_VIEW_ITEM:
@@ -4896,8 +4988,8 @@ void ui_draw_but(const bContext *C, ARegion *region, uiStyle *style, uiBut *but,
         ui_draw_but_CURVEPROFILE(region, but, &tui->wcol_regular, rect);
         break;
 
-      case UI_BTYPE_PROGRESS_BAR:
-        wt = widget_type(UI_WTYPE_PROGRESSBAR);
+      case UI_BTYPE_PROGRESS:
+        wt = widget_type(UI_WTYPE_PROGRESS);
         fstyle = &style->widgetlabel;
         break;
 
@@ -4971,6 +5063,10 @@ void ui_draw_but(const bContext *C, ARegion *region, uiStyle *style, uiBut *but,
 #endif
   if (but->block->flag & UI_BLOCK_NO_DRAW_OVERRIDDEN_STATE) {
     state.but_flag &= ~UI_BUT_OVERRIDDEN;
+  }
+
+  if (state.but_drawflag & UI_BUT_INDETERMINATE) {
+    state.but_flag &= ~UI_SELECT;
   }
 
   const float zoom = 1.0f / but->block->aspect;

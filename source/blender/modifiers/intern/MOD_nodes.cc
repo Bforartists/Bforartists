@@ -55,7 +55,6 @@
 #include "BKE_object.h"
 #include "BKE_pointcloud.h"
 #include "BKE_screen.h"
-#include "BKE_simulation.h"
 #include "BKE_simulation_state.hh"
 #include "BKE_simulation_state_serialize.hh"
 #include "BKE_workspace.h"
@@ -103,13 +102,6 @@ namespace geo_log = blender::nodes::geo_eval_log;
 
 namespace blender {
 
-static blender::bke::sim::ModifierSimulationCachePtr *new_simulation_cache()
-{
-  auto *simulation_cache = MEM_new<blender::bke::sim::ModifierSimulationCachePtr>(__func__);
-  simulation_cache->ptr = std::make_shared<blender::bke::sim::ModifierSimulationCache>();
-  return simulation_cache;
-}
-
 static void initData(ModifierData *md)
 {
   NodesModifierData *nmd = (NodesModifierData *)md;
@@ -117,8 +109,8 @@ static void initData(ModifierData *md)
   BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(nmd, modifier));
 
   MEMCPY_STRUCT_AFTER(nmd, DNA_struct_default_get(NodesModifierData), modifier);
-
-  nmd->simulation_cache = new_simulation_cache();
+  nmd->runtime = MEM_new<NodesModifierRuntime>(__func__);
+  nmd->runtime->simulation_cache = std::make_shared<blender::bke::sim::ModifierSimulationCache>();
 }
 
 static void add_used_ids_from_sockets(const ListBase &sockets, Set<ID *> &ids)
@@ -482,6 +474,27 @@ static void find_side_effect_nodes_for_viewer_path(
         zone = next_zone;
         break;
       }
+      case VIEWER_PATH_ELEM_TYPE_REPEAT_ZONE: {
+        const auto &typed_elem = *reinterpret_cast<const RepeatZoneViewerPathElem *>(elem);
+        const bke::bNodeTreeZone *next_zone = tree_zones->get_zone_by_node(
+            typed_elem.repeat_output_node_id);
+        if (next_zone == nullptr) {
+          return;
+        }
+        if (next_zone->parent_zone != zone) {
+          return;
+        }
+        const lf::FunctionNode *lf_zone_node = lf_graph_info->mapping.zone_node_map.lookup_default(
+            next_zone, nullptr);
+        if (lf_zone_node == nullptr) {
+          return;
+        }
+        local_side_effect_nodes.add(compute_context_builder.hash(), lf_zone_node);
+        compute_context_builder.push<bke::RepeatZoneComputeContext>(*next_zone->output_node,
+                                                                    typed_elem.iteration);
+        zone = next_zone;
+        break;
+      }
       case VIEWER_PATH_ELEM_TYPE_GROUP_NODE: {
         const auto &typed_elem = *reinterpret_cast<const GroupNodeViewerPathElem *>(elem);
         const bNode *node = group->node_by_id(typed_elem.node_id);
@@ -598,14 +611,6 @@ static void find_socket_log_contexts(const NodesModifierData &nmd,
   }
 }
 
-static void clear_runtime_data(NodesModifierData *nmd)
-{
-  if (nmd->runtime_eval_log != nullptr) {
-    delete static_cast<geo_log::GeoModifierLog *>(nmd->runtime_eval_log);
-    nmd->runtime_eval_log = nullptr;
-  }
-}
-
 /**
  * \note This could be done in #initialize_group_input, though that would require adding the
  * the object as a parameter, so it's likely better to this check as a separate step.
@@ -653,6 +658,9 @@ static void prepare_simulation_states_for_evaluation(const NodesModifierData &nm
                                                      const ModifierEvalContext &ctx,
                                                      nodes::GeoNodesModifierData &exec_data)
 {
+  if (!nmd.runtime->simulation_cache) {
+    return;
+  }
   const Main *bmain = DEG_get_bmain(ctx.depsgraph);
   const SubFrame current_frame = DEG_get_ctime(ctx.depsgraph);
   const Scene *scene = DEG_get_input_scene(ctx.depsgraph);
@@ -660,7 +668,7 @@ static void prepare_simulation_states_for_evaluation(const NodesModifierData &nm
   const bool is_start_frame = current_frame == start_frame;
 
   /* This cache may be shared between original and evaluated modifiers. */
-  blender::bke::sim::ModifierSimulationCache &simulation_cache = *nmd.simulation_cache->ptr;
+  blender::bke::sim::ModifierSimulationCache &simulation_cache = *nmd.runtime->simulation_cache;
 
   {
     /* Try to use baked data. */
@@ -766,7 +774,7 @@ static void prepare_simulation_states_for_evaluation(const NodesModifierData &nm
       realtime_cache.prev_frame = realtime_cache.current_frame;
       realtime_cache.prev_state = std::move(realtime_cache.current_state);
       if (realtime_cache.prev_state) {
-        exec_data.prev_simulation_state = realtime_cache.prev_state.get();
+        exec_data.prev_simulation_state_mutable = realtime_cache.prev_state.get();
       }
 
       /* Create a new current state used to pass the data to the next frame. */
@@ -874,8 +882,7 @@ static void modifyGeometry(ModifierData *md,
       });
 
   if (logging_enabled(ctx)) {
-    delete static_cast<geo_log::GeoModifierLog *>(nmd_orig->runtime_eval_log);
-    nmd_orig->runtime_eval_log = eval_log.release();
+    nmd_orig->runtime->eval_log = std::move(eval_log);
   }
 
   if (use_orig_index_verts || use_orig_index_edges || use_orig_index_polys) {
@@ -952,12 +959,11 @@ static NodesModifierData *get_modifier_data(Main &bmain,
 
 static geo_log::GeoTreeLog *get_root_tree_log(const NodesModifierData &nmd)
 {
-  if (nmd.runtime_eval_log == nullptr) {
+  if (!nmd.runtime->eval_log) {
     return nullptr;
   }
-  auto &modifier_log = *static_cast<geo_log::GeoModifierLog *>(nmd.runtime_eval_log);
   bke::ModifierComputeContext compute_context{nullptr, nmd.modifier.name};
-  return &modifier_log.get_tree_log(compute_context.hash());
+  return &nmd.runtime->eval_log->get_tree_log(compute_context.hash());
 }
 
 static void attribute_search_update_fn(
@@ -1044,7 +1050,7 @@ static void add_attribute_search_button(const bContext &C,
                                         const bNodeSocket &socket,
                                         const bool is_output)
 {
-  if (nmd.runtime_eval_log == nullptr) {
+  if (!nmd.runtime->eval_log) {
     uiItemR(layout, md_ptr, rna_path_attribute_name.c_str(), 0, "", ICON_NONE);
     return;
   }
@@ -1469,8 +1475,8 @@ static void blendRead(BlendDataReader *reader, ModifierData *md)
     BLO_read_data_address(reader, &nmd->settings.properties);
     IDP_BlendDataRead(reader, &nmd->settings.properties);
   }
-  nmd->runtime_eval_log = nullptr;
-  nmd->simulation_cache = new_simulation_cache();
+  nmd->runtime = MEM_new<NodesModifierRuntime>(__func__);
+  nmd->runtime->simulation_cache = std::make_shared<bke::sim::ModifierSimulationCache>();
 }
 
 static void copyData(const ModifierData *md, ModifierData *target, const int flag)
@@ -1480,18 +1486,18 @@ static void copyData(const ModifierData *md, ModifierData *target, const int fla
 
   BKE_modifier_copydata_generic(md, target, flag);
 
-  tnmd->runtime_eval_log = nullptr;
+  tnmd->runtime = MEM_new<NodesModifierRuntime>(__func__);
+
   if (flag & LIB_ID_COPY_SET_COPIED_ON_WRITE) {
     /* Share the simulation cache between the original and evaluated modifier. */
-    tnmd->simulation_cache = MEM_new<blender::bke::sim::ModifierSimulationCachePtr>(
-        __func__, *nmd->simulation_cache);
+    tnmd->runtime->simulation_cache = nmd->runtime->simulation_cache;
     /* Keep bake path in the evaluated modifier. */
     tnmd->simulation_bake_directory = nmd->simulation_bake_directory ?
                                           BLI_strdup(nmd->simulation_bake_directory) :
                                           nullptr;
   }
   else {
-    tnmd->simulation_cache = new_simulation_cache();
+    tnmd->runtime->simulation_cache = std::make_shared<bke::sim::ModifierSimulationCache>();
     /* Clear the bake path when duplicating. */
     tnmd->simulation_bake_directory = nullptr;
   }
@@ -1509,10 +1515,8 @@ static void freeData(ModifierData *md)
     nmd->settings.properties = nullptr;
   }
 
-  MEM_delete(nmd->simulation_cache);
   MEM_SAFE_FREE(nmd->simulation_bake_directory);
-
-  clear_runtime_data(nmd);
+  MEM_delete(nmd->runtime);
 }
 
 static void requiredDataMask(ModifierData * /*md*/, CustomData_MeshMasks *r_cddata_masks)

@@ -141,7 +141,7 @@ static void file_but_enable_drag(uiBut *but,
                                  const SpaceFile *sfile,
                                  const FileDirEntry *file,
                                  const char *path,
-                                 ImBuf *preview_image,
+                                 const ImBuf *preview_image,
                                  int icon,
                                  float scale)
 {
@@ -310,7 +310,7 @@ static void file_add_preview_drag_but(const SpaceFile *sfile,
                                       const FileDirEntry *file,
                                       const char *path,
                                       const rcti *tile_draw_rect,
-                                      ImBuf *preview_image,
+                                      const ImBuf *preview_image,
                                       const int icon,
                                       const float scale)
 {
@@ -348,7 +348,7 @@ static void file_draw_preview(const FileList *files,
                               const FileDirEntry *file,
                               const rcti *tile_draw_rect,
                               const float icon_aspect,
-                              ImBuf *imb,
+                              const ImBuf *imb,
                               const int icon,
                               FileLayout *layout,
                               const bool is_icon,
@@ -363,8 +363,8 @@ static void file_draw_preview(const FileList *files,
   float scaledx, scaledy;
   float scale;
   int ex, ey;
-  bool show_outline = !is_icon &&
-                      (file->typeflag & (FILE_TYPE_IMAGE | FILE_TYPE_MOVIE | FILE_TYPE_BLENDER));
+  bool show_outline = !is_icon && (file->typeflag & (FILE_TYPE_IMAGE | FILE_TYPE_OBJECT_IO |
+                                                     FILE_TYPE_MOVIE | FILE_TYPE_BLENDER));
   const bool is_offline = (file->attributes & FILE_ATTR_OFFLINE);
   const bool is_loading = !filelist_is_ready(files) || file->flags & FILE_ENTRY_PREVIEW_LOADING;
 
@@ -423,7 +423,7 @@ static void file_draw_preview(const FileList *files,
     document_img_col[3] *= 0.3f;
   }
 
-  if (!is_icon && file->typeflag & FILE_TYPE_IMAGE) {
+  if (!is_icon && ELEM(file->typeflag, FILE_TYPE_IMAGE, FILE_TYPE_OBJECT_IO)) {
     /* Draw checker pattern behind image previews in case they have transparency. */
     imm_draw_box_checker_2d(float(xco), float(yco), float(xco + ex), float(yco + ey));
   }
@@ -581,7 +581,7 @@ static void file_draw_preview(const FileList *files,
     GPUVertFormat *format = immVertexFormat();
     uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
     immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
-    float border_color[4] = {1.0f, 1.0f, 1.0f, 0.4f};
+    float border_color[4] = {1.0f, 1.0f, 1.0f, 0.15f};
     float bgcolor[4];
     UI_GetThemeColor4fv(TH_BACK, bgcolor);
     if (rgb_to_grayscale(bgcolor) > 0.5f) {
@@ -590,7 +590,7 @@ static void file_draw_preview(const FileList *files,
       border_color[2] = 0.0f;
     }
     immUniformColor4fv(border_color);
-    imm_draw_box_wire_2d(pos, float(xco), float(yco), float(xco + ex), float(yco + ey));
+    imm_draw_box_wire_2d(pos, float(xco), float(yco), float(xco + ex + 1), float(yco + ey + 1));
     immUnbindProgram();
   }
 
@@ -622,7 +622,7 @@ static void renamebutton_cb(bContext *C, void * /*arg1*/, char *oldname)
       errno = 0;
       if ((BLI_rename(orgname, newname) != 0) || !BLI_exists(newname)) {
         WM_reportf(RPT_ERROR, "Could not rename: %s", errno ? strerror(errno) : "unknown error");
-        WM_report_banner_show();
+        WM_report_banner_show(wm, win);
       }
       else {
         /* If rename is successful, scroll to newly renamed entry. */
@@ -925,7 +925,6 @@ void file_draw_list(const bContext *C, ARegion *region)
   View2D *v2d = &region->v2d;
   FileList *files = sfile->files;
   FileDirEntry *file;
-  ImBuf *imb;
   uiBlock *block = UI_block_begin(C, region, __func__, UI_EMBOSS);
   int numfiles;
   int numfiles_layout;
@@ -987,13 +986,13 @@ void file_draw_list(const bContext *C, ARegion *region)
                                     !filelist_cache_previews_done(files);
       //          printf("%s: preview task: %d\n", __func__, previews_running);
       if (previews_running && !sfile->previews_timer) {
-        sfile->previews_timer = WM_event_add_timer_notifier(
+        sfile->previews_timer = WM_event_timer_add_notifier(
             wm, win, NC_SPACE | ND_SPACE_FILE_PREVIEW, 0.01);
       }
       if (!previews_running && sfile->previews_timer) {
         /* Preview is not running, no need to keep generating update events! */
         //              printf("%s: Inactive preview task, sleeping!\n", __func__);
-        WM_event_remove_timer_notifier(wm, win, sfile->previews_timer);
+        WM_event_timer_remove_notifier(wm, win, sfile->previews_timer);
         sfile->previews_timer = nullptr;
       }
     }
@@ -1042,7 +1041,7 @@ void file_draw_list(const bContext *C, ARegion *region)
     if (FILE_IMGDISPLAY == params->display) {
       const int icon = filelist_geticon(files, i, false);
       is_icon = 0;
-      imb = filelist_getimage(files, i);
+      const ImBuf *imb = filelist_getimage(files, i);
       if (!imb) {
         imb = filelist_geticon_image(files, i);
         is_icon = 1;
