@@ -120,9 +120,6 @@ RNA_MAIN_LISTBASE_FUNCS_DEF(pointclouds)
 RNA_MAIN_LISTBASE_FUNCS_DEF(scenes)
 RNA_MAIN_LISTBASE_FUNCS_DEF(screens)
 RNA_MAIN_LISTBASE_FUNCS_DEF(shapekeys)
-#  ifdef WITH_SIMULATION_DATABLOCK
-RNA_MAIN_LISTBASE_FUNCS_DEF(simulations)
-#  endif
 RNA_MAIN_LISTBASE_FUNCS_DEF(sounds)
 RNA_MAIN_LISTBASE_FUNCS_DEF(speakers)
 RNA_MAIN_LISTBASE_FUNCS_DEF(texts)
@@ -181,7 +178,12 @@ void RNA_def_main(BlenderRNA *brna)
        "Cameras",
        "Camera data",
        RNA_def_main_cameras},
-      {"scenes", "Scene", "rna_Main_scenes_begin", "Scenes", "Scene data", RNA_def_main_scenes},
+      {"scenes",
+       "Scene",
+       "rna_Main_scenes_begin",
+       "Scenes",
+       "Scene data",
+       RNA_def_main_scenes},
       {"objects",
        "Object",
        "rna_Main_objects_begin",
@@ -200,8 +202,18 @@ void RNA_def_main(BlenderRNA *brna)
        "Node Groups",
        "Node group data",
        RNA_def_main_node_groups},
-      {"meshes", "Mesh", "rna_Main_meshes_begin", "Meshes", "Mesh data", RNA_def_main_meshes},
-      {"lights", "Light", "rna_Main_lights_begin", "Lights", "Light data", RNA_def_main_lights},
+      {"meshes",
+       "Mesh",
+       "rna_Main_meshes_begin",
+       "Meshes",
+       "Mesh data",
+       RNA_def_main_meshes},
+      {"lights",
+       "Light",
+       "rna_Main_lights_begin",
+       "Lights",
+       "Light data",
+       RNA_def_main_lights},
       {"libraries",
        "Library",
        "rna_Main_libraries_begin",
@@ -220,14 +232,24 @@ void RNA_def_main(BlenderRNA *brna)
        "Window Managers",
        "Window manager data",
        RNA_def_main_window_managers},
-      {"images", "Image", "rna_Main_images_begin", "Images", "Image data", RNA_def_main_images},
+      {"images",
+       "Image",
+       "rna_Main_images_begin",
+       "Images",
+       "Image data",
+       RNA_def_main_images},
       {"lattices",
        "Lattice",
        "rna_Main_lattices_begin",
        "Lattices",
        "Lattice data",
        RNA_def_main_lattices},
-      {"curves", "Curve", "rna_Main_curves_begin", "Curves", "Curve data", RNA_def_main_curves},
+      {"curves",
+       "Curve",
+       "rna_Main_curves_begin",
+       "Curves",
+       "Curve data",
+       RNA_def_main_curves},
       {"metaballs",
        "MetaBall",
        "rna_Main_metaballs_begin",
@@ -252,14 +274,24 @@ void RNA_def_main(BlenderRNA *brna)
        "Brushes",
        "Brush data",
        RNA_def_main_brushes},
-      {"worlds", "World", "rna_Main_worlds_begin", "Worlds", "World data", RNA_def_main_worlds},
+      {"worlds",
+       "World",
+       "rna_Main_worlds_begin",
+       "Worlds",
+       "World data",
+       RNA_def_main_worlds},
       {"collections",
        "Collection",
        "rna_Main_collections_begin",
        "Collections",
        "Collection data",
        RNA_def_main_collections},
-      {"shape_keys", "Key", "rna_Main_shapekeys_begin", "Shape Keys", "Shape Key data", nullptr},
+      {"shape_keys",
+       "Key",
+       "rna_Main_shapekeys_begin",
+       "Shape Keys",
+       "Shape Key data",
+       nullptr},
       {"texts", "Text", "rna_Main_texts_begin", "Texts", "Text data-blocks", RNA_def_main_texts},
       {"speakers",
        "Speaker",
@@ -267,7 +299,12 @@ void RNA_def_main(BlenderRNA *brna)
        "Speakers",
        "Speaker data",
        RNA_def_main_speakers},
-      {"sounds", "Sound", "rna_Main_sounds_begin", "Sounds", "Sound data", RNA_def_main_sounds},
+      {"sounds",
+       "Sound",
+       "rna_Main_sounds_begin",
+       "Sounds",
+       "Sound data",
+       RNA_def_main_sounds},
       {"armatures",
        "Armature",
        "rna_Main_armatures_begin",
@@ -368,14 +405,6 @@ void RNA_def_main(BlenderRNA *brna)
        "Volumes",
        "Volume data",
        RNA_def_main_volumes},
-#  ifdef WITH_SIMULATION_DATABLOCK
-      {"simulations",
-       "Simulation",
-       "rna_Main_simulations_begin",
-       "Simulations",
-       "Simulation data",
-       RNA_def_main_simulations},
-#  endif
       {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
   };
 
@@ -383,7 +412,8 @@ void RNA_def_main(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "BlendData", nullptr);
   RNA_def_struct_ui_text(
-      srna, "Blend-File Data", "Main data structure representing a .blend file and all its data");
+      srna, "Blend-File Data", 
+      "Main data structure representing a .blend file and all its data");
   RNA_def_struct_ui_icon(srna, ICON_BLENDER);
 
   prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);

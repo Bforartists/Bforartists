@@ -113,7 +113,7 @@
 
 #ifdef __BIG_ENDIAN__
 /* Big Endian */
-#  define MAKE_ID(a, b, c, d) ((int)(a) << 24 | (int)(b) << 16 | (c) << 8 | (d))
+#  define MAKE_ID(a, b, c, d) (int(a) << 24 | int(b) << 16 | (c) << 8 | (d))
 #else
 /* Little Endian */
 #  define MAKE_ID(a, b, c, d) (int(d) << 24 | int(c) << 16 | (b) << 8 | (a))
@@ -174,7 +174,7 @@ int DNA_elem_size_nr(const SDNA *sdna, short type, short name)
   }
   else if (sdna->types_size[type]) {
     /* has the name an extra length? (array) */
-    len = (int)sdna->types_size[type] * sdna->names_array_len[name];
+    len = int(sdna->types_size[type]) * sdna->names_array_len[name];
   }
 
   return len;
@@ -190,9 +190,7 @@ static void printstruct(SDNA *sdna, short strnr)
 
   for (int b = 0; b < struct_info->members_len; b++) {
     SDNA_StructMember *struct_member = &struct_info->members[b];
-    printf("   %s %s\n",
-           sdna->types[struct_member->type],
-           sdna->names[struct_member->name]);
+    printf("   %s %s\n", sdna->types[struct_member->type], sdna->names[struct_member->name]);
   }
 }
 #endif
@@ -730,102 +728,102 @@ static void cast_primitive_type(const eSDNA_Type old_type,
       case SDNA_TYPE_CHAR: {
         const char value = *old_data;
         old_value_i = value;
-        old_value_f = (double)value;
+        old_value_f = double(value);
         break;
       }
       case SDNA_TYPE_UCHAR: {
-        const uchar value = *((uchar *)old_data);
+        const uchar value = *reinterpret_cast<const uchar *>(old_data);
         old_value_i = value;
-        old_value_f = (double)value;
+        old_value_f = double(value);
         break;
       }
       case SDNA_TYPE_SHORT: {
-        const short value = *((short *)old_data);
+        const short value = *reinterpret_cast<const short *>(old_data);
         old_value_i = value;
-        old_value_f = (double)value;
+        old_value_f = double(value);
         break;
       }
       case SDNA_TYPE_USHORT: {
-        const ushort value = *((ushort *)old_data);
+        const ushort value = *reinterpret_cast<const ushort *>(old_data);
         old_value_i = value;
-        old_value_f = (double)value;
+        old_value_f = double(value);
         break;
       }
       case SDNA_TYPE_INT: {
-        const int value = *((int *)old_data);
+        const int value = *reinterpret_cast<const int *>(old_data);
         old_value_i = value;
-        old_value_f = (double)value;
+        old_value_f = double(value);
         break;
       }
       case SDNA_TYPE_FLOAT: {
-        const float value = *((float *)old_data);
+        const float value = *reinterpret_cast<const float *>(old_data);
         /* `int64_t` range stored in a `uint64_t`. */
-        old_value_i = (uint64_t)(int64_t)value;
+        old_value_i = uint64_t(int64_t(value));
         old_value_f = value;
         break;
       }
       case SDNA_TYPE_DOUBLE: {
-        const double value = *((double *)old_data);
+        const double value = *reinterpret_cast<const double *>(old_data);
         /* `int64_t` range stored in a `uint64_t`. */
-        old_value_i = (uint64_t)(int64_t)value;
+        old_value_i = uint64_t(int64_t(value));
         old_value_f = value;
         break;
       }
       case SDNA_TYPE_INT64: {
-        const int64_t value = *((int64_t *)old_data);
-        old_value_i = (uint64_t)value;
-        old_value_f = (double)value;
+        const int64_t value = *reinterpret_cast<const int64_t *>(old_data);
+        old_value_i = uint64_t(value);
+        old_value_f = double(value);
         break;
       }
       case SDNA_TYPE_UINT64: {
-        const uint64_t value = *((uint64_t *)old_data);
+        const uint64_t value = *reinterpret_cast<const uint64_t *>(old_data);
         old_value_i = value;
-        old_value_f = (double)value;
+        old_value_f = double(value);
         break;
       }
       case SDNA_TYPE_INT8: {
-        const int8_t value = *((int8_t *)old_data);
-        old_value_i = (uint64_t)value;
-        old_value_f = (double)value;
+        const int8_t value = *reinterpret_cast<const int8_t *>(old_data);
+        old_value_i = uint64_t(value);
+        old_value_f = double(value);
       }
     }
 
     switch (new_type) {
       case SDNA_TYPE_CHAR:
-        *new_data = (char)old_value_i;
+        *new_data = char(old_value_i);
         break;
       case SDNA_TYPE_UCHAR:
-        *((uchar *)new_data) = (uchar)old_value_i;
+        *reinterpret_cast<uchar *>(new_data) = uchar(old_value_i);
         break;
       case SDNA_TYPE_SHORT:
-        *((short *)new_data) = (short)old_value_i;
+        *reinterpret_cast<short *>(new_data) = short(old_value_i);
         break;
       case SDNA_TYPE_USHORT:
-        *((ushort *)new_data) = (ushort)old_value_i;
+        *reinterpret_cast<ushort *>(new_data) = ushort(old_value_i);
         break;
       case SDNA_TYPE_INT:
-        *((int *)new_data) = (int)old_value_i;
+        *reinterpret_cast<int *>(new_data) = int(old_value_i);
         break;
       case SDNA_TYPE_FLOAT:
         if (old_type < 2) {
           old_value_f /= 255.0;
         }
-        *((float *)new_data) = old_value_f;
+        *reinterpret_cast<float *>(new_data) = old_value_f;
         break;
       case SDNA_TYPE_DOUBLE:
         if (old_type < 2) {
           old_value_f /= 255.0;
         }
-        *((double *)new_data) = old_value_f;
+        *reinterpret_cast<double *>(new_data) = old_value_f;
         break;
       case SDNA_TYPE_INT64:
-        *((int64_t *)new_data) = (int64_t)old_value_i;
+        *reinterpret_cast<int64_t *>(new_data) = int64_t(old_value_i);
         break;
       case SDNA_TYPE_UINT64:
-        *((uint64_t *)new_data) = old_value_i;
+        *reinterpret_cast<uint64_t *>(new_data) = old_value_i;
         break;
       case SDNA_TYPE_INT8:
-        *((int8_t *)new_data) = (int8_t)old_value_i;
+        *reinterpret_cast<int8_t *>(new_data) = int8_t(old_value_i);
         break;
     }
 
@@ -1410,9 +1408,9 @@ static void init_reconstruct_step_for_member(const SDNA *oldsdna,
       printf(
           "cast element, old type: %d ('%s'), new type: %d ('%s'), old offset: %d, new offset: "
           "%d, length: %d",
-          (int)step->data.cast_primitive.old_type,
+          int(step->data.cast_primitive.old_type),
           oldsdna->types[step->data.cast_primitive.old_type],
-          (int)step->data.cast_primitive.new_type,
+          int(step->data.cast_primitive.new_type),
           newsdna->types[step->data.cast_primitive.new_type],
           step->data.cast_primitive.old_offset,
           step->data.cast_primitive.new_offset,

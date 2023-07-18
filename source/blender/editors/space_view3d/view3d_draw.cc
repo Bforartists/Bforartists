@@ -1440,7 +1440,7 @@ static void draw_selected_name(
     }
   }
 
-  BLI_assert(i < (int)ARRAY_SIZE(info_array));
+  BLI_assert(i < int(ARRAY_SIZE(info_array)));
   char info[300];
   BLI_string_join_array(info, sizeof(info), info_array, i);
 
@@ -2219,8 +2219,8 @@ static void validate_object_select_id(Depsgraph *depsgraph,
   v3d->runtime.flag |= V3D_RUNTIME_DEPTHBUF_OVERRIDDEN;
 }
 
-/* TODO: Creating, attaching texture, and destroying a framebuffer is quite slow.
- *       Calling this function should be avoided during interactive drawing. */
+/* Avoid calling this function multiple times in sequence to prevent frequent CPU-GPU
+ * synchronization (which can be very slow). */
 static void view3d_opengl_read_Z_pixels(GPUViewport *viewport, rcti *rect, void *data)
 {
   GPUTexture *depth_tx = GPU_viewport_depth_texture(viewport);
