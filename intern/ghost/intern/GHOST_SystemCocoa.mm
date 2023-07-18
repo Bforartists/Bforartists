@@ -23,7 +23,9 @@
 #  pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
-#include "GHOST_ContextCGL.hh"
+#if defined(WITH_OPENGL_BACKEND) || defined(WITH_METAL_BACKEND)
+#  include "GHOST_ContextCGL.hh"
+#endif
 
 #ifdef WITH_VULKAN_BACKEND
 #  include "GHOST_ContextVK.hh"
@@ -77,7 +79,7 @@ static GHOST_TButton convertButton(int button)
  * \param recvChar: the character ignoring modifiers (except for shift)
  * \return Ghost key code
  */
-static GHOST_TKey convertKey(int rawCode, unichar recvChar, UInt16 keyAction)
+static GHOST_TKey convertKey(int rawCode, unichar recvChar)
 {
   // printf("\nrecvchar %c 0x%x",recvChar,recvChar);
   switch (rawCode) {
@@ -238,7 +240,10 @@ static GHOST_TKey convertKey(int rawCode, unichar recvChar, UInt16 keyAction)
       return GHOST_kKeyUpPage;
     case kVK_PageDown:
       return GHOST_kKeyDownPage;
-#if 0 /* TODO: why are these commented? */
+#if 0
+    /* These constants with "ANSI" in the name are labeled according to the key position on an
+     * ANSI-standard US keyboard. Therefore they may not match the physical key label on other
+     * keyboard layouts. */
     case kVK_ANSI_Minus:        return GHOST_kKeyMinus;
     case kVK_ANSI_Equal:        return GHOST_kKeyEqual;
     case kVK_ANSI_Comma:        return GHOST_kKeyComma;
@@ -284,10 +289,10 @@ static GHOST_TKey convertKey(int rawCode, unichar recvChar, UInt16 keyAction)
 
           UCKeyTranslate((UCKeyboardLayout *)CFDataGetBytePtr(uchrHandle),
                          rawCode,
-                         keyAction,
+                         kUCKeyActionDown,
                          0,
                          LMGetKbdType(),
-                         kUCKeyTranslateNoDeadKeysBit,
+                         kUCKeyTranslateNoDeadKeysMask,
                          &deadKeyState,
                          1,
                          &actualStrLength,
@@ -758,25 +763,42 @@ GHOST_IWindow *GHOST_SystemCocoa::createWindow(const char *title,
  */
 GHOST_IContext *GHOST_SystemCocoa::createOffscreenContext(GHOST_GPUSettings gpuSettings)
 {
+  const bool debug_context = (gpuSettings.flags & GHOST_gpuDebugContext) != 0;
+
+  switch (gpuSettings.context_type) {
 #ifdef WITH_VULKAN_BACKEND
-  if (gpuSettings.context_type == GHOST_kDrawingContextTypeVulkan) {
-    const bool debug_context = (gpuSettings.flags & GHOST_gpuDebugContext) != 0;
-    GHOST_Context *context = new GHOST_ContextVK(false, NULL, 1, 2, debug_context);
-    if (!context->initializeDrawingContext()) {
+    case GHOST_kDrawingContextTypeVulkan: {
+      GHOST_Context *context = new GHOST_ContextVK(false, NULL, 1, 2, debug_context);
+      if (context->initializeDrawingContext()) {
+        return context;
+      }
       delete context;
-      return NULL;
+      return nullptr;
     }
-    return context;
-  }
+#endif
+#ifdef WITH_OPENGL_BACKEND
+    case GHOST_kDrawingContextTypeOpenGL:
+#endif
+#ifdef WITH_METAL_BACKEND
+    case GHOST_kDrawingContextTypeMetal:
+#endif
+#if defined(WITH_OPENGL_BACKEND) || defined(WITH_METAL_BACKEND)
+    {
+      /* TODO(fclem): Remove OpenGL support and rename context to ContextMTL */
+      GHOST_Context *context = new GHOST_ContextCGL(
+          false, NULL, NULL, NULL, gpuSettings.context_type);
+      if (context->initializeDrawingContext()) {
+        return context;
+      }
+      delete context;
+      return nullptr;
+    }
 #endif
 
-  GHOST_Context *context = new GHOST_ContextCGL(false, NULL, NULL, NULL, gpuSettings.context_type);
-  if (context->initializeDrawingContext())
-    return context;
-  else
-    delete context;
-
-  return NULL;
+    default:
+      /* Unsupported backend. */
+      return nullptr;
+  }
 }
 
 /**
@@ -1830,18 +1852,13 @@ GHOST_TSuccess GHOST_SystemCocoa::handleKeyEvent(void *eventPtr)
 
     case NSEventTypeKeyDown:
     case NSEventTypeKeyUp:
+      /* Returns an empty string for dead keys. */
       charsIgnoringModifiers = [event charactersIgnoringModifiers];
       if ([charsIgnoringModifiers length] > 0) {
-        keyCode = convertKey([event keyCode],
-                             [charsIgnoringModifiers characterAtIndex:0],
-                             [event type] == NSEventTypeKeyDown ? kUCKeyActionDown :
-                                                                  kUCKeyActionUp);
+        keyCode = convertKey([event keyCode], [charsIgnoringModifiers characterAtIndex:0]);
       }
       else {
-        keyCode = convertKey([event keyCode],
-                             0,
-                             [event type] == NSEventTypeKeyDown ? kUCKeyActionDown :
-                                                                  kUCKeyActionUp);
+        keyCode = convertKey([event keyCode], 0);
       }
 
       characters = [event characters];
