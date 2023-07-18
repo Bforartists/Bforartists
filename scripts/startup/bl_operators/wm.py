@@ -3036,8 +3036,7 @@ class WM_OT_batch_rename(Operator):
                     row.label(text=re_error_dst)
 
                 # Row 4: case.
-                row = col.split(factor=fac)
-                row.label(text="")
+                row = col.row(align = True)
                 row.prop(action, "replace_match_case")
 
             elif ty == 'CASE':
