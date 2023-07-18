@@ -112,6 +112,9 @@ static PyObject *bpy_utils_previews_load(PyObject *UNUSED(self), PyObject *args)
   else if (STREQ(path_type_s, "FONT")) {
     path_type = THB_SOURCE_FONT;
   }
+  else if (STREQ(path_type_s, "OBJECT_IO")) {
+    path_type = THB_SOURCE_OBJECT_IO;
+  }
   else {
     PyErr_Format(PyExc_ValueError,
                  "load: invalid '%s' filetype, only [" STR_SOURCE_TYPES
@@ -164,7 +167,7 @@ PyDoc_STRVAR(
     "This object contains basic static methods to handle cached (non-ID) previews in Blender\n"
     "(low-level API, not exposed to final users).");
 static PyModuleDef bpy_utils_previews_module = {
-    PyModuleDef_HEAD_INIT,
+    /*m_base*/ PyModuleDef_HEAD_INIT,
     /*m_name*/ "bpy._utils_previews",
     /*m_doc*/ bpy_utils_previews_doc,
     /*m_size*/ 0,

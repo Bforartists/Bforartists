@@ -321,7 +321,7 @@ float (*SCULPT_mesh_deformed_positions_get(SculptSession *ss))[3]
       if (ss->shapekey_active || ss->deform_modifiers_active) {
         return BKE_pbvh_get_vert_positions(ss->pbvh);
       }
-      return ss->vert_positions;
+      return reinterpret_cast<float(*)[3]>(ss->vert_positions.data());
     case PBVH_BMESH:
     case PBVH_GRIDS:
       return nullptr;
@@ -3406,11 +3406,11 @@ void SCULPT_vertcos_to_key(Object *ob, KeyBlock *kb, const float (*vertCos)[3])
 {
   Mesh *me = (Mesh *)ob->data;
   float(*ofs)[3] = nullptr;
-  int a;
+  int a, currkey_i;
   const int kb_act_idx = ob->shapenr - 1;
 
   /* For relative keys editing of base should update other keys. */
-  if (BKE_keyblock_is_basis(me->key, kb_act_idx)) {
+  if (bool *dependent = BKE_keyblock_get_dependent_keys(me->key, kb_act_idx)) {
     ofs = BKE_keyblock_convert_to_vertcos(ob, kb);
 
     /* Calculate key coord offsets (from previous location). */
@@ -3419,13 +3419,14 @@ void SCULPT_vertcos_to_key(Object *ob, KeyBlock *kb, const float (*vertCos)[3])
     }
 
     /* Apply offsets on other keys. */
-    LISTBASE_FOREACH (KeyBlock *, currkey, &me->key->block) {
-      if ((currkey != kb) && (currkey->relative == kb_act_idx)) {
+    LISTBASE_FOREACH_INDEX (KeyBlock *, currkey, &me->key->block, currkey_i) {
+      if ((currkey != kb) && dependent[currkey_i]) {
         BKE_keyblock_update_from_offset(ob, currkey, ofs);
       }
     }
 
     MEM_freeN(ofs);
+    MEM_freeN(dependent);
   }
 
   /* Modifying of basis key should update mesh. */
@@ -4334,7 +4335,6 @@ void SCULPT_cache_free(StrokeCache *cache)
   MEM_SAFE_FREE(cache->detail_directions);
   MEM_SAFE_FREE(cache->prev_displacement);
   MEM_SAFE_FREE(cache->limit_surface_co);
-  MEM_SAFE_FREE(cache->prev_colors_vpaint);
 
   if (cache->pose_ik_chain) {
     SCULPT_pose_ik_chain_free(cache->pose_ik_chain);
@@ -4350,7 +4350,7 @@ void SCULPT_cache_free(StrokeCache *cache)
     SCULPT_cloth_simulation_free(cache->cloth_sim);
   }
 
-  MEM_freeN(cache);
+  MEM_delete(cache);
 }
 
 /* Initialize mirror modifier clipping. */
@@ -4454,8 +4454,7 @@ static void smooth_brush_toggle_off(const bContext *C, Paint *paint, StrokeCache
 static void sculpt_update_cache_invariants(
     bContext *C, Sculpt *sd, SculptSession *ss, wmOperator *op, const float mval[2])
 {
-  StrokeCache *cache = static_cast<StrokeCache *>(
-      MEM_callocN(sizeof(StrokeCache), "stroke cache"));
+  StrokeCache *cache = MEM_new<StrokeCache>(__func__);
   ToolSettings *tool_settings = CTX_data_tool_settings(C);
   UnifiedPaintSettings *ups = &tool_settings->unified_paint_settings;
   Brush *brush = BKE_paint_brush(&sd->paint);
