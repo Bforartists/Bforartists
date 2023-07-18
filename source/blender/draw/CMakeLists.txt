@@ -7,7 +7,6 @@ set(INC
   intern
 
   ../blenfont
-  ../blenkernel
   ../blenloader
   ../blentranslation
   ../bmesh
@@ -186,7 +185,7 @@ set(SRC
   engines/workbench/workbench_transparent.c
   engines/workbench/workbench_volume.c
   engines/workbench/workbench_volume_next.cc
-  engines/external/external_engine.c
+  engines/external/external_engine.cc
   engines/gpencil/gpencil_antialiasing.c
   engines/gpencil/gpencil_cache_utils.c
   engines/gpencil/gpencil_draw_data.c
@@ -352,7 +351,7 @@ set(SRC
 )
 
 set(LIB
-  bf_blenkernel
+  PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
   PRIVATE bf::dna
   PRIVATE bf::intern::guardedalloc
@@ -496,6 +495,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_geom_curves_vert.glsl
   engines/eevee_next/shaders/eevee_geom_gpencil_vert.glsl
   engines/eevee_next/shaders/eevee_geom_mesh_vert.glsl
+  engines/eevee_next/shaders/eevee_geom_point_cloud_vert.glsl
   engines/eevee_next/shaders/eevee_geom_world_vert.glsl
   engines/eevee_next/shaders/eevee_hiz_debug_frag.glsl
   engines/eevee_next/shaders/eevee_hiz_update_comp.glsl
