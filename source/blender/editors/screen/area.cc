@@ -2023,7 +2023,7 @@ static void area_offscreen_init(ScrArea *area)
 
 ScrArea *ED_area_offscreen_create(wmWindow *win, eSpace_Type space_type)
 {
-  ScrArea *area = MEM_cnew<ScrArea>(__func__);
+  ScrArea *area = static_cast<ScrArea *>(MEM_callocN(sizeof(ScrArea), __func__));
   area->spacetype = space_type;
 
   screen_area_spacelink_add(WM_window_get_active_scene(win), area, space_type);
@@ -2049,7 +2049,7 @@ static void area_offscreen_exit(wmWindowManager *wm, wmWindow *win, ScrArea *are
     MEM_SAFE_FREE(region->headerstr);
 
     if (region->regiontimer) {
-      WM_event_remove_timer(wm, win, region->regiontimer);
+      WM_event_timer_remove(wm, win, region->regiontimer);
       region->regiontimer = nullptr;
     }
 
@@ -2435,7 +2435,7 @@ static void region_align_info_to_area(
 
 void ED_area_swapspace(bContext *C, ScrArea *sa1, ScrArea *sa2)
 {
-  ScrArea *tmp = MEM_cnew<ScrArea>(__func__);
+  ScrArea *tmp = static_cast<ScrArea *>(MEM_callocN(sizeof(ScrArea), __func__));
   wmWindow *win = CTX_wm_window(C);
 
   ED_area_exit(C, sa1);

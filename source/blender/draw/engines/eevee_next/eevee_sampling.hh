@@ -31,7 +31,8 @@ class Sampling {
   /* High number of sample for viewport infinite rendering. */
   static constexpr uint64_t infinite_sample_count_ = 0xFFFFFFu;
   /* During interactive rendering, loop over the first few samples. */
-  static constexpr uint64_t interactive_sample_max_ = 8;
+  static constexpr uint64_t interactive_sample_aa_ = 8;
+  static constexpr uint64_t interactive_sample_max_ = interactive_sample_aa_;
 
   /** 0 based current sample. Might not increase sequentially in viewport. */
   uint64_t sample_ = 0;
@@ -88,19 +89,25 @@ class Sampling {
     pass->bind_ssbo(SAMPLING_BUF_SLOT, &data_);
   }
 
-  /* Returns a pseudo random number in [0..1] range. Each dimension are de-correlated. */
+  /* Returns a pseudo random number in [0..1] range. Each dimension are de-correlated.
+   * WARNING: Don't use during init or sync,
+   * results are only valid during render, after step() has been called. */
   float rng_get(eSamplingDimension dimension) const
   {
     return data_.dimensions[dimension];
   }
 
-  /* Returns a pseudo random number in [0..1] range. Each dimension are de-correlated. */
+  /* Returns a pseudo random number in [0..1] range. Each dimension are de-correlated.
+   * WARNING: Don't use during init or sync,
+   * results are only valid during render, after step() has been called. */
   float2 rng_2d_get(eSamplingDimension starting_dimension) const
   {
     return *reinterpret_cast<const float2 *>(&data_.dimensions[starting_dimension]);
   }
 
-  /* Returns a pseudo random number in [0..1] range. Each dimension are de-correlated. */
+  /* Returns a pseudo random number in [0..1] range. Each dimension are de-correlated.
+   * WARNING: Don't use during init or sync,
+   * results are only valid during render, after step() has been called. */
   float3 rng_3d_get(eSamplingDimension starting_dimension) const
   {
     return *reinterpret_cast<const float3 *>(&data_.dimensions[starting_dimension]);

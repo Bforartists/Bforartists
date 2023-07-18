@@ -577,7 +577,9 @@ static void object_blend_write(BlendWriter *writer, ID *id, const void *id_addre
     arm = (bArmature *)ob->data;
   }
 
-  BKE_pose_blend_write(writer, ob->pose, arm);
+  if (ob->pose) {
+    BKE_pose_blend_write(writer, ob->pose, arm);
+  }
   BKE_constraint_blend_write(writer, &ob->constraints);
   animviz_motionpath_blend_write(writer, ob->mpath);
 
@@ -2998,7 +3000,7 @@ void BKE_object_rot_to_mat3(const Object *ob, float mat[3][3], bool use_drot)
    * with the rotation matrix to yield the appropriate rotation
    */
 
-  /* rotations may either be quats, eulers (with various rotation orders), or axis-angle */
+  /* Rotations may either be quaternions, eulers (with various rotation orders), or axis-angle. */
   if (ob->rotmode > 0) {
     /* Euler rotations
      * (will cause gimbal lock, but this can be alleviated a bit with rotation orders). */
@@ -3853,7 +3855,7 @@ bool BKE_object_boundbox_calc_from_evaluated_geometry(Object *ob)
   }
   else if (const Mesh *mesh_eval = BKE_object_get_evaluated_mesh(ob)) {
     Bounds<float3> mesh_bounds{float3(std::numeric_limits<float>::max()),
-                               float3(std::numeric_limits<float>::min())};
+                               float3(std::numeric_limits<float>::lowest())};
     if (BKE_mesh_wrapper_minmax(mesh_eval, mesh_bounds.min, mesh_bounds.max)) {
       bounds = bounds::merge(bounds, {mesh_bounds});
     }
