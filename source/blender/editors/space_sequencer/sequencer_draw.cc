@@ -100,7 +100,7 @@ void color3ubv_from_seq(const Scene *curscene,
   Editing *ed = SEQ_editing_get(curscene);
   ListBase *channels = SEQ_channels_displayed_get(ed);
 
-  if (show_strip_color_tag && (uint)seq->color_tag < SEQUENCE_COLOR_TOT &&
+  if (show_strip_color_tag && uint(seq->color_tag) < SEQUENCE_COLOR_TOT &&
       seq->color_tag != SEQUENCE_COLOR_NONE)
   {
     bTheme *btheme = UI_GetTheme();
@@ -1701,7 +1701,7 @@ void sequencer_draw_maskedit(const bContext *C, Scene *scene, ARegion *region, S
       float aspx = 1.0f, aspy = 1.0f;
       // ED_mask_get_size(C, &width, &height);
 
-      //Scene *scene = CTX_data_scene(C);
+      // Scene *scene = CTX_data_scene(C);
       BKE_render_resolution(&scene->r, false, &width, &height);
 
       ED_mask_draw_region(mask,

@@ -14,6 +14,7 @@
 #include "BLI_math_vector_types.hh"
 #include "BLI_shared_cache.hh"
 #include "BLI_utility_mixins.hh"
+#include "BLI_virtual_array.hh"
 
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_grease_pencil_types.h"
@@ -76,6 +77,21 @@ class Drawing : public ::GreasePencilDrawing {
    */
   Span<uint3> triangles() const;
   void tag_positions_changed();
+  void tag_topology_changed();
+
+  /**
+   * Radii of the points. Values are expected to be in blender units.
+   */
+  VArray<float> radii() const;
+  MutableSpan<float> radii_for_write();
+
+  /**
+   * Opacity array for the points.
+   * Used by the render engine as an alpha value so they are expected to
+   * be between 0 and 1 inclusive.
+   */
+  VArray<float> opacities() const;
+  MutableSpan<float> opacities_for_write();
 };
 
 class LayerGroup;
@@ -506,6 +522,15 @@ inline blender::bke::greasepencil::LayerGroup &GreasePencilLayerTreeGroup::wrap(
 inline const blender::bke::greasepencil::LayerGroup &GreasePencilLayerTreeGroup::wrap() const
 {
   return *reinterpret_cast<const blender::bke::greasepencil::LayerGroup *>(this);
+}
+
+inline const blender::bke::greasepencil::LayerGroup &GreasePencil::root_group() const
+{
+  return this->root_group_ptr->wrap();
+}
+inline blender::bke::greasepencil::LayerGroup &GreasePencil::root_group()
+{
+  return this->root_group_ptr->wrap();
 }
 
 inline bool GreasePencil::has_active_layer() const

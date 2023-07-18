@@ -279,7 +279,7 @@ static StructRNA *rna_Panel_register(Main *bmain,
                 "%s '%s' is too long, maximum length is %d",
                 error_prefix,
                 identifier,
-                (int)sizeof(dummy_pt.idname));
+                int(sizeof(dummy_pt.idname)));
     return nullptr;
   }
 
@@ -720,7 +720,7 @@ static StructRNA *rna_UIList_register(Main *bmain,
                 "%s '%s' is too long, maximum length is %d",
                 error_prefix,
                 identifier,
-                (int)sizeof(dummy_ult.idname));
+                int(sizeof(dummy_ult.idname)));
     return nullptr;
   }
 
@@ -848,7 +848,7 @@ static StructRNA *rna_Header_register(Main *bmain,
                 "%s '%s' is too long, maximum length is %d",
                 error_prefix,
                 identifier,
-                (int)sizeof(dummy_ht.idname));
+                int(sizeof(dummy_ht.idname)));
     return nullptr;
   }
 
@@ -1006,7 +1006,7 @@ static StructRNA *rna_Menu_register(Main *bmain,
                 "%s '%s' is too long, maximum length is %d",
                 error_prefix,
                 identifier,
-                (int)sizeof(dummy_mt.idname));
+                int(sizeof(dummy_mt.idname)));
     return nullptr;
   }
 
