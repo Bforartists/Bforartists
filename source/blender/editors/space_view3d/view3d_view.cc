@@ -463,12 +463,12 @@ void view3d_viewmatrix_set(Depsgraph *depsgraph,
 /** \name OpenGL Select Utilities
  * \{ */
 
-void view3d_opengl_select_cache_begin(void)
+void view3d_opengl_select_cache_begin()
 {
   GPU_select_cache_begin();
 }
 
-void view3d_opengl_select_cache_end(void)
+void view3d_opengl_select_cache_end()
 {
   GPU_select_cache_end();
 }
@@ -892,8 +892,7 @@ static bool view3d_localview_init(const Depsgraph *depsgraph,
   }
 
   v3d->localvd = static_cast<View3D *>(MEM_mallocN(sizeof(View3D), "localview"));
-
-  memcpy(v3d->localvd, v3d, sizeof(View3D));
+  *v3d->localvd = blender::dna::shallow_copy(*v3d);
   v3d->local_view_uuid = local_view_bit;
 
   LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
