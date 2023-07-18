@@ -237,7 +237,7 @@ ModifierTypeInfo modifierType_Wireframe = {
     /*requiredDataMask*/ requiredDataMask,
     /*freeData*/ nullptr,
     /*isDisabled*/ nullptr,
-    /*updateDepgraph*/ nullptr,
+    /*updateDepsgraph*/ nullptr,
     /*dependsOnTime*/ nullptr,
     /*dependsOnNormals*/ dependsOnNormals,
     /*foreachIDLink*/ nullptr,

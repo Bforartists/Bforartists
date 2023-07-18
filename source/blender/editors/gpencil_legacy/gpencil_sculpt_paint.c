@@ -1314,7 +1314,7 @@ static void gpencil_sculpt_brush_exit(bContext *C, wmOperator *op)
 
   /* unregister timer (only used for realtime) */
   if (gso->timer) {
-    WM_event_remove_timer(CTX_wm_manager(C), win, gso->timer);
+    WM_event_timer_remove(CTX_wm_manager(C), win, gso->timer);
   }
 
   if (gso->rng != NULL) {
@@ -1428,15 +1428,20 @@ static float gpencil_sculpt_rotation_eval_get(tGP_BrushEditData *gso,
     }
   }
 
-  if (pt_eval->runtime.idx_orig != 0) {
-    pt_orig_prev = &gps_orig->points[pt_eval->runtime.idx_orig - 1];
+  if (pt_eval->runtime.pt_orig == NULL) {
+    pt_orig_prev = pt_prev_eval;
   }
   else {
-    if (gps_orig->totpoints > 1) {
-      pt_orig_prev = &gps_orig->points[pt_eval->runtime.idx_orig + 1];
+    if (pt_eval->runtime.idx_orig != 0) {
+      pt_orig_prev = &gps_orig->points[pt_eval->runtime.idx_orig - 1];
     }
     else {
-      return 0.0f;
+      if (gps_orig->totpoints > 1) {
+        pt_orig_prev = &gps_orig->points[pt_eval->runtime.idx_orig + 1];
+      }
+      else {
+        return 0.0f;
+      }
     }
   }
 
@@ -1463,7 +1468,6 @@ static bool gpencil_sculpt_brush_do_stroke(tGP_BrushEditData *gso,
   GP_SpaceConversion *gsc = &gso->gsc;
   rcti *rect = &gso->brush_rect;
   Brush *brush = gso->brush;
-  char tool = gso->brush->gpencil_sculpt_tool;
   const int radius = (brush->flag & GP_BRUSH_USE_PRESSURE) ? gso->brush->size * gso->pressure :
                                                              gso->brush->size;
   const bool is_masking = GPENCIL_ANY_SCULPT_MASK(gso->mask);
@@ -1542,8 +1546,7 @@ static bool gpencil_sculpt_brush_do_stroke(tGP_BrushEditData *gso,
 
           /* To each point individually... */
           pt = &gps->points[i];
-          if ((i != gps->totpoints - 2) && (pt->runtime.pt_orig == NULL) &&
-              (tool != GPSCULPT_TOOL_GRAB)) {
+          if ((i != gps->totpoints - 2) && (pt->runtime.pt_orig == NULL)) {
             continue;
           }
           pt_active = (pt->runtime.pt_orig) ? pt->runtime.pt_orig : pt;
@@ -2294,7 +2297,7 @@ static int gpencil_sculpt_brush_invoke(bContext *C, wmOperator *op, const wmEven
 
   /* register timer for increasing influence by hovering over an area */
   if (needs_timer) {
-    gso->timer = WM_event_add_timer(CTX_wm_manager(C), CTX_wm_window(C), TIMER, brush_rate);
+    gso->timer = WM_event_timer_add(CTX_wm_manager(C), CTX_wm_window(C), TIMER, brush_rate);
   }
 
   /* register modal handler */

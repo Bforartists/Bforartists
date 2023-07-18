@@ -227,8 +227,7 @@ void ANIM_set_active_channel(bAnimContext *ac,
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
       case ANIMTYPE_DSVOLUME:
-      case ANIMTYPE_NLAACTION:
-      case ANIMTYPE_DSSIMULATION: {
+      case ANIMTYPE_NLAACTION: {
         /* need to verify that this data is valid for now */
         if (ale->adt) {
           ACHANNEL_SET_FLAG(ale->adt, ACHANNEL_SETFLAG_CLEAR, ADT_UI_ACTIVE);
@@ -285,8 +284,7 @@ void ANIM_set_active_channel(bAnimContext *ac,
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
       case ANIMTYPE_DSVOLUME:
-      case ANIMTYPE_NLAACTION:
-      case ANIMTYPE_DSSIMULATION: {
+      case ANIMTYPE_NLAACTION: {
         /* need to verify that this data is valid for now */
         if (ale && ale->adt) {
           ale->adt->flag |= ADT_UI_ACTIVE;
@@ -340,8 +338,7 @@ bool ANIM_is_active_channel(bAnimListElem *ale)
     case ANIMTYPE_DSHAIR:
     case ANIMTYPE_DSPOINTCLOUD:
     case ANIMTYPE_DSVOLUME:
-    case ANIMTYPE_NLAACTION:
-    case ANIMTYPE_DSSIMULATION: {
+    case ANIMTYPE_NLAACTION: {
       return ale->adt && (ale->adt->flag & ADT_UI_ACTIVE);
     }
     case ANIMTYPE_GROUP: {
@@ -423,9 +420,9 @@ static eAnimChannels_SetFlag anim_channels_selection_flag_for_toggle(const ListB
         break;
       case ANIMTYPE_OBJECT:
 #if 0 /* for now, do not take object selection into account, since it gets too annoying */
-if (ale->flag & SELECT) {
-return ACHANNEL_SETFLAG_CLEAR;
-}
+        if (ale->flag & SELECT) {
+          return ACHANNEL_SETFLAG_CLEAR;
+        }
 #endif
         break;
       case ANIMTYPE_GROUP:
@@ -472,8 +469,7 @@ return ACHANNEL_SETFLAG_CLEAR;
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
       case ANIMTYPE_DSVOLUME:
-      case ANIMTYPE_NLAACTION:
-      case ANIMTYPE_DSSIMULATION: {
+      case ANIMTYPE_NLAACTION: {
         if ((ale->adt) && (ale->adt->flag & ADT_UI_SELECTED)) {
           return ACHANNEL_SETFLAG_CLEAR;
         }
@@ -520,15 +516,15 @@ static void anim_channels_select_set(bAnimContext *ac,
       }
       case ANIMTYPE_OBJECT: {
 #if 0 /* for now, do not take object selection into account, since it gets too annoying */
-Base *base = (Base *)ale->data;
-Object *ob = base->object;
+        Base *base = (Base *)ale->data;
+        Object *ob = base->object;
 
-ACHANNEL_SET_FLAG(base, sel, SELECT);
-ACHANNEL_SET_FLAG(ob, sel, SELECT);
+        ACHANNEL_SET_FLAG(base, sel, SELECT);
+        ACHANNEL_SET_FLAG(ob, sel, SELECT);
 
-if (ob->adt) {
-ACHANNEL_SET_FLAG(ob, sel, ADT_UI_SELECTED);
-}
+        if (ob->adt) {
+          ACHANNEL_SET_FLAG(ob, sel, ADT_UI_SELECTED);
+        }
 #endif
         break;
       }
@@ -588,8 +584,7 @@ ACHANNEL_SET_FLAG(ob, sel, ADT_UI_SELECTED);
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
       case ANIMTYPE_DSVOLUME:
-      case ANIMTYPE_NLAACTION:
-      case ANIMTYPE_DSSIMULATION: {
+      case ANIMTYPE_NLAACTION: {
         /* need to verify that this data is valid for now */
         if (ale->adt) {
           ACHANNEL_SET_FLAG(ale->adt, sel, ADT_UI_SELECTED);
@@ -2645,7 +2640,7 @@ static int animchannels_clean_empty_exec(bContext *C, wmOperator * /*op*/)
       action_empty = true;
     }
     else {
-      /* TODO: check for keyframe + fmodifier data on these too */
+      /* TODO: check for keyframe + F-modifier data on these too. */
     }
 
     /* 2) No NLA Tracks and/or NLA Strips */
@@ -3762,7 +3757,6 @@ static int mouse_anim_channels(bContext *C,
     case ANIMTYPE_DSHAIR:
     case ANIMTYPE_DSPOINTCLOUD:
     case ANIMTYPE_DSVOLUME:
-    case ANIMTYPE_DSSIMULATION:
       notifierFlags |= click_select_channel_dummy(ac, ale, selectmode);
       break;
     case ANIMTYPE_GROUP:
