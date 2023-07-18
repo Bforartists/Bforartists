@@ -545,7 +545,7 @@ static void viewops_data_init_context(bContext *C, ViewOpsData *vod)
   vod->rv3d = static_cast<RegionView3D *>(vod->region->regiondata);
 }
 
-static void viewops_data_state_capture(ViewOpsData *vod, const bool calc_dist)
+static void viewops_data_state_backup(ViewOpsData *vod, const bool calc_dist)
 {
   Depsgraph *depsgraph = vod->depsgraph;
   View3D *v3d = vod->v3d;
@@ -667,9 +667,11 @@ static void viewops_data_init_navigation(bContext *C,
       viewops_flag |= VIEWOPS_FLAG_PERSP_ENSURE;
       break;
 #ifdef WITH_INPUT_NDOF
+    case V3D_OP_MODE_NDOF_PAN:
+      viewops_flag &= ~VIEWOPS_FLAG_ORBIT_SELECT;
+      [[fallthrough]];
     case V3D_OP_MODE_NDOF_ORBIT:
     case V3D_OP_MODE_NDOF_ORBIT_ZOOM:
-    case V3D_OP_MODE_NDOF_PAN:
     case V3D_OP_MODE_NDOF_ALL:
       viewops_flag &= ~VIEWOPS_FLAG_DEPTH_NAVIGATE;
       calc_rv3d_dist = false;
@@ -712,7 +714,7 @@ static void viewops_data_init_navigation(bContext *C,
     vod->use_dyn_ofs = false;
   }
 
-  viewops_data_state_capture(vod, calc_rv3d_dist);
+  viewops_data_state_backup(vod, calc_rv3d_dist);
 
   if (viewops_flag & VIEWOPS_FLAG_PERSP_ENSURE) {
     if (ED_view3d_persp_ensure(depsgraph, vod->v3d, vod->region)) {
@@ -787,7 +789,7 @@ static void viewops_data_init_navigation(bContext *C,
       }
       negate_v3(vod->dyn_ofs);
 
-      /* XXX: The initial state captured by `viewops_data_state_capture` is being modified here.
+      /* XXX: The initial state captured by #viewops_data_state_backup is being modified here.
        * This causes the state when canceling a navigation operation to not be fully restored. */
       vod->init.dist = rv3d->dist;
       copy_v3_v3(vod->init.ofs, rv3d->ofs);
@@ -845,7 +847,7 @@ static void viewops_data_end_navigation(bContext *C, ViewOpsData *vod)
     vod->rv3d->rflag &= ~RV3D_NAVIGATING;
 
     if (vod->timer) {
-      WM_event_remove_timer(CTX_wm_manager(C), vod->timer->win, vod->timer);
+      WM_event_timer_remove(CTX_wm_manager(C), vod->timer->win, vod->timer);
     }
 
     MEM_SAFE_FREE(vod->init.dial);

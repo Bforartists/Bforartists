@@ -40,6 +40,7 @@ static CLG_LogRef LOG = {"bgl"};
 /** \name Local utility defines for wrapping OpenGL
  * \{ */
 
+#ifdef WITH_OPENGL_BACKEND
 static void report_deprecated_call(const char *function_name)
 {
   /* Only report first 10 deprecated calls. BGL is typically used inside an handler that is
@@ -67,6 +68,7 @@ static void report_deprecated_call_to_user(void)
   G.opengl_deprecation_usage_detected = true;
   PyC_FileAndNum(&G.opengl_deprecation_usage_filename, &G.opengl_deprecation_usage_lineno);
 }
+#endif
 
 /** \} */
 
@@ -623,7 +625,7 @@ static PyGetSetDef Buffer_getseters[] = {
 };
 
 PyTypeObject BGL_bufferType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
+    /*ob_base*/ PyVarObject_HEAD_INIT(NULL, 0)
     /*tp_name*/ "bgl.Buffer",
     /*tp_basicsize*/ sizeof(Buffer),
     /*tp_itemsize*/ 0,
@@ -713,6 +715,7 @@ Buffer *BGL_MakeBuffer(int type, int ndimensions, int *dimensions, void *initbuf
   return buffer;
 }
 
+#ifdef WITH_OPENGL_BACKEND
 /* Custom converter function so we can support a buffer, an integer or NULL.
  * Many OpenGL API functions can accept both an actual pointer or an offset
  * into a buffer that is already bound. */
@@ -742,6 +745,7 @@ static int BGL_BufferOrOffsetConverter(PyObject *object, BufferOrOffset *buffer)
   PyErr_SetString(PyExc_TypeError, "expected a bgl.Buffer or None");
   return 0;
 }
+#endif
 
 #define MAX_DIMENSIONS 256
 static PyObject *Buffer_new(PyTypeObject *UNUSED(type), PyObject *args, PyObject *kwds)
@@ -1121,7 +1125,7 @@ static PyObject *Buffer_repr(Buffer *self)
 /** \name OpenGL API Wrapping
  * \{ */
 
-#ifdef WITH_OPENGL
+#ifdef WITH_OPENGL_BACKEND
 #  define BGL_Wrap(funcname, ret, arg_list) \
     static PyObject *Method_##funcname(PyObject *UNUSED(self), PyObject *args) \
     { \
@@ -1439,7 +1443,7 @@ BGL_Wrap(TexImage3DMultisample,
  * \{ */
 
 static PyModuleDef BGL_module_def = {
-    PyModuleDef_HEAD_INIT,
+    /*m_base*/ PyModuleDef_HEAD_INIT,
     /*m_name*/ "bgl",
     /*m_doc*/ NULL,
     /*m_size*/ 0,
@@ -1485,7 +1489,7 @@ static void py_module_dict_add_method(PyObject *submodule,
 #  pragma GCC diagnostic ignored "-Waddress"
 #endif
 
-#ifdef WITH_OPENGL
+#ifdef WITH_OPENGL_BACKEND
 #  define PY_MOD_ADD_METHOD(func) \
     { \
       static PyMethodDef method_def = {"gl" #func, Method_##func, METH_VARARGS}; \
