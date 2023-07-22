@@ -1,5 +1,3 @@
-# SPDX-FileCopyrightText: 2011-2022 Blender Foundation
-#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 bl_info = {
@@ -45,7 +43,7 @@ class ImportSVG(bpy.types.Operator, ImportHelper):
 
 def menu_func_import(self, context):
     self.layout.operator(ImportSVG.bl_idname,
-        text="Scalable Vector Graphics (.svg)")
+        text="Scalable Vector Graphics (.svg)", icon="LOAD_SVG") #BFA - icon
 
 
 def register():
