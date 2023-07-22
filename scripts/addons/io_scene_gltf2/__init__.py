@@ -5,7 +5,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-   "version": (4, 0, 5),
+    "version": (4, 0, 5),
     'blender': (3, 5, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -466,7 +466,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     export_optimize_animation_keep_anim_armature: BoolProperty(
         name='Force keeping channels for bones',
         description=(
-            "if all keyframes are identical in a rig, "
+            "If all keyframes are identical in a rig, "
             "force keeping the minimal animation. "
             "When off, all possible channels for "
             "the bones will be exported, even if empty "
@@ -1493,7 +1493,7 @@ class ExportGLTF2(bpy.types.Operator, ExportGLTF2_Base, ExportHelper):
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)', icon="SAVE_GLTF")
+    self.layout.operator(ExportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)', icon="SAVE_GLTF") #BFA - icon
 
 
 class ImportGLTF2(Operator, ConvertGLTF2_Base, ImportHelper):
@@ -1713,7 +1713,7 @@ class GLTF_AddonPreferences(bpy.types.AddonPreferences):
         row.prop(self, "animation_ui", text="Animation UI")
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)', icon="LOAD_GLTF")
+    self.layout.operator(ImportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)', icon="LOAD_GLTF") #BFA - icon
 
 
 classes = (
