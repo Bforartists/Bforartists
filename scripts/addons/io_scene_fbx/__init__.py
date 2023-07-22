@@ -386,8 +386,8 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
     use_selection: BoolProperty(
             name="Selected Objects",
             description="Export selected and visible objects only",
-            default=True,
-            ) # bfa - only selected
+            default=False,
+            )
     use_visible: BoolProperty(
             name='Visible Objects',
             description='Export visible objects only',
@@ -865,11 +865,11 @@ class FBX_PT_export_bake_animation(bpy.types.Panel):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportFBX.bl_idname, text="FBX (.fbx)", icon = "LOAD_FBX")
+    self.layout.operator(ImportFBX.bl_idname, text="FBX (.fbx)")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportFBX.bl_idname, text="FBX (.fbx)", icon = "SAVE_FBX")
+    self.layout.operator(ExportFBX.bl_idname, text="FBX (.fbx)")
 
 
 classes = (
