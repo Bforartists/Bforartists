@@ -220,16 +220,16 @@ def read_string(file):
     return str(b''.join(s), "utf-8", "replace"), len(s) + 1
 
 
-##########
-# IMPORT #
-##########
-
 def skip_to_end(file, skip_chunk):
     buffer_size = skip_chunk.length - skip_chunk.bytes_read
     binary_format = '%ic' % buffer_size
     file.read(struct.calcsize(binary_format))
     skip_chunk.bytes_read += buffer_size
 
+
+#############
+# MATERIALS #
+#############
 
 def add_texture_to_material(image, contextWrapper, pct, extend, alpha, scale, offset, angle, tintcolor, mapto):
     shader = contextWrapper.node_principled_bsdf
@@ -318,6 +318,10 @@ def add_texture_to_material(image, contextWrapper, pct, extend, alpha, scale, of
     contextWrapper._grid_to_location(1, 0, dst_node=contextWrapper.node_out, ref_node=shader)
 
 
+#############
+# MESH DATA #
+#############
+
 childs_list = []
 parent_list = []
 
@@ -335,6 +339,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
     contextMeshMaterials = []
     contextMesh_smooth = None
     contextMeshUV = None
+    contextTrack_flag = False
 
     # TEXTURE_DICT = {}
     MATDICT = {}
@@ -353,7 +358,6 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
     object_list = []  # for hierarchy
     object_parent = []  # index of parent in hierarchy, 0xFFFF = no parent
     pivot_list = []  # pivots with hierarchy handling
-    track_flags = []  # keyframe track flags
     trackposition = {}  # keep track to position for target calculation
 
     def putContextMesh(
@@ -469,20 +473,25 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
     CreateLightObject = False
     CreateTrackData = False
 
-    def read_float_color(temp_chunk):
-        temp_data = file.read(SZ_3FLOAT)
-        temp_chunk.bytes_read += SZ_3FLOAT
-        return [float(col) for col in struct.unpack('<3f', temp_data)]
+    def read_short(temp_chunk):
+        temp_data = file.read(SZ_U_SHORT)
+        temp_chunk.bytes_read += SZ_U_SHORT
+        return struct.unpack('<H', temp_data)[0]
+
+    def read_long(temp_chunk):
+        temp_data = file.read(SZ_U_INT)
+        temp_chunk.bytes_read += SZ_U_INT
+        return struct.unpack('<I', temp_data)[0]
 
     def read_float(temp_chunk):
         temp_data = file.read(SZ_FLOAT)
         temp_chunk.bytes_read += SZ_FLOAT
         return struct.unpack('<f', temp_data)[0]
 
-    def read_short(temp_chunk):
-        temp_data = file.read(SZ_U_SHORT)
-        temp_chunk.bytes_read += SZ_U_SHORT
-        return struct.unpack('<H', temp_data)[0]
+    def read_float_array(temp_chunk):
+        temp_data = file.read(SZ_3FLOAT)
+        temp_chunk.bytes_read += SZ_3FLOAT
+        return [float(val) for val in struct.unpack('<3f', temp_data)]
 
     def read_byte_color(temp_chunk):
         temp_data = file.read(struct.calcsize('3B'))
@@ -570,84 +579,74 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         consize = mathutils.Vector(vec) * convector if CONSTRAIN != 0.0 else mathutils.Vector(vec)
         return consize
 
-    def calc_target(location, target):
+    def get_hierarchy(tree_chunk):
+        child_id = read_short(tree_chunk)
+        childs_list.insert(child_id, contextObName)
+        parent_list.insert(child_id, None)
+        if child_id in parent_list:
+            idp = parent_list.index(child_id)
+            parent_list[idp] = contextObName
+        return child_id
+
+    def get_parent(tree_chunk, child_id=-1):
+        parent_id = read_short(tree_chunk)
+        if parent_id > len(childs_list):
+            parent_list[child_id] = parent_id
+            parent_list.extend([None] * (parent_id - len(parent_list)))
+            parent_list.insert(parent_id, contextObName)
+        elif parent_id < len(childs_list):
+            parent_list[child_id] = childs_list[parent_id]
+
+    def calc_target(loca, target):
         pan = 0.0
         tilt = 0.0
-        pos = location + target  # Target triangulation
-        if abs(location[0] - target[0]) > abs(location[1] - target[1]):
-            foc = math.copysign(math.sqrt(pow(pos[0],2) + pow(pos[1],2)), pos[0])
-            dia = math.copysign(math.sqrt(pow(foc,2) + pow(target[2],2)), pos[0])
-            pitch = math.radians(90) - math.copysign(math.acos(foc / dia), pos[2])
-            if location[0] > target[0]:
-                tilt = math.copysign(pitch, pos[0])
-                pan = math.radians(90) + math.atan(pos[1] / foc)
-            else:
-                tilt = -1 * (math.copysign(pitch, pos[0]))
-                pan = -1 * (math.radians(90) - math.atan(pos[1] / foc))
-        elif abs(location[1] - target[1]) > abs(location[0] - target[0]):
-            foc = math.copysign(math.sqrt(pow(pos[1],2) + pow(pos[0],2)), pos[1])
-            dia = math.copysign(math.sqrt(pow(foc,2) + pow(target[2],2)), pos[1])
-            pitch = math.radians(90) - math.copysign(math.acos(foc / dia), pos[2])
-            if location[1] > target[1]:
-                tilt = math.copysign(pitch, pos[1])
-                pan = math.radians(90) + math.acos(pos[0] / foc)
-            else:
-                tilt = -1 * (math.copysign(pitch, pos[1]))
-                pan = -1 * (math.radians(90) - math.acos(pos[0] / foc))
+        posi = loca + target
+        adjacent = math.radians(90)  # Target triangulation
+        hyp = math.copysign(math.sqrt(pow(posi.x,2) + pow(posi.y,2)), posi.y)
+        dia = math.copysign(math.sqrt(pow(hyp,2) + pow(target.z,2)), posi.y)
+        tilt = adjacent - math.copysign(math.acos(hyp / dia), posi.z)
+        if abs(loca.x - target.x) > abs(loca.y - target.y):
+            yaw = math.atan(posi.y / hyp)
+            pan = adjacent + yaw if loca.x > target.x else -1 * (adjacent - yaw)
+        elif abs(loca.y - target.y) > abs(loca.x - target.x):
+            yaw = math.pi + math.atan2(hyp, posi.x)
+            pan = adjacent + yaw if abs(loca.y) < abs(target.y) else -1 * (adjacent - yaw)
         direction = tilt, pan
         return direction
 
-    def read_track_data(temp_chunk):
+    def read_track_data(track_chunk):
         """Trackflags 0x1, 0x2 and 0x3 are for looping. 0x8, 0x10 and 0x20
         locks the XYZ axes. 0x100, 0x200 and 0x400 unlinks the XYZ axes"""
-        temp_data = file.read(SZ_U_SHORT)
-        tflags = struct.unpack('<H', temp_data)[0]
-        new_chunk.bytes_read += SZ_U_SHORT
-        track_flags.append(tflags)
+        tflags = read_short(track_chunk)
+        contextTrack_flag = tflags
         temp_data = file.read(SZ_U_INT * 2)
-        new_chunk.bytes_read += SZ_U_INT * 2
-        temp_data = file.read(SZ_U_INT)
-        nkeys = struct.unpack('<I', temp_data)[0]
-        new_chunk.bytes_read += SZ_U_INT
+        track_chunk.bytes_read += SZ_U_INT * 2
+        nkeys = read_long(track_chunk)
         if nkeys == 0:
             keyframe_data[0] = default_data
         for i in range(nkeys):
-            temp_data = file.read(SZ_U_INT)
-            nframe = struct.unpack('<I', temp_data)[0]
-            new_chunk.bytes_read += SZ_U_INT
-            temp_data = file.read(SZ_U_SHORT)
-            nflags = struct.unpack('<H', temp_data)[0]
-            new_chunk.bytes_read += SZ_U_SHORT
+            nframe = read_long(track_chunk)
+            nflags = read_short(track_chunk)
             for f in range(bin(nflags).count('1')):
                 temp_data = file.read(SZ_FLOAT)  # Check for spline terms
-                new_chunk.bytes_read += SZ_FLOAT
-            temp_data = file.read(SZ_3FLOAT)
-            data = struct.unpack('<3f', temp_data)
-            new_chunk.bytes_read += SZ_3FLOAT
-            keyframe_data[nframe] = data
+                track_chunk.bytes_read += SZ_FLOAT
+            trackdata = read_float_array(track_chunk)
+            keyframe_data[nframe] = trackdata
         return keyframe_data
 
-    def read_track_angle(temp_chunk):
+    def read_track_angle(track_chunk):
         temp_data = file.read(SZ_U_SHORT * 5)
-        new_chunk.bytes_read += SZ_U_SHORT * 5
-        temp_data = file.read(SZ_U_INT)
-        nkeys = struct.unpack('<I', temp_data)[0]
-        new_chunk.bytes_read += SZ_U_INT
+        track_chunk.bytes_read += SZ_U_SHORT * 5
+        nkeys = read_long(track_chunk)
         if nkeys == 0:
             keyframe_angle[0] = default_value
         for i in range(nkeys):
-            temp_data = file.read(SZ_U_INT)
-            nframe = struct.unpack('<I', temp_data)[0]
-            new_chunk.bytes_read += SZ_U_INT
-            temp_data = file.read(SZ_U_SHORT)
-            nflags = struct.unpack('<H', temp_data)[0]
-            new_chunk.bytes_read += SZ_U_SHORT
+            nframe = read_long(track_chunk)
+            nflags = read_short(track_chunk)
             for f in range(bin(nflags).count('1')):
                 temp_data = file.read(SZ_FLOAT)  # Check for spline terms
-                new_chunk.bytes_read += SZ_FLOAT
-            temp_data = file.read(SZ_FLOAT)
-            angle = struct.unpack('<f', temp_data)[0]
-            new_chunk.bytes_read += SZ_FLOAT
+                track_chunk.bytes_read += SZ_FLOAT
+            angle = read_float(track_chunk)
             keyframe_angle[nframe] = math.radians(angle)
         return keyframe_angle
 
@@ -675,9 +674,9 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             context.scene.world = world
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == COLOR_F:
-                context.scene.world.color[:] = read_float_color(temp_chunk)
+                context.scene.world.color[:] = read_float_array(temp_chunk)
             elif temp_chunk.ID == LIN_COLOR_F:
-                context.scene.world.color[:] = read_float_color(temp_chunk)
+                context.scene.world.color[:] = read_float_array(temp_chunk)
             else:
                 skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
@@ -730,7 +729,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             read_chunk(file, temp_chunk)
             # to not loose this data, ambient color is stored in line color
             if temp_chunk.ID == COLOR_F:
-                contextMaterial.line_color[:3] = read_float_color(temp_chunk)
+                contextMaterial.line_color[:3] = read_float_array(temp_chunk)
             elif temp_chunk.ID == COLOR_24:
                 contextMaterial.line_color[:3] = read_byte_color(temp_chunk)
             else:
@@ -740,7 +739,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif new_chunk.ID == MAT_DIFFUSE:
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == COLOR_F:
-                contextMaterial.diffuse_color[:3] = read_float_color(temp_chunk)
+                contextMaterial.diffuse_color[:3] = read_float_array(temp_chunk)
             elif temp_chunk.ID == COLOR_24:
                 contextMaterial.diffuse_color[:3] = read_byte_color(temp_chunk)
             else:
@@ -750,7 +749,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif new_chunk.ID == MAT_SPECULAR:
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == COLOR_F:
-                contextMaterial.specular_color = read_float_color(temp_chunk)
+                contextMaterial.specular_color = read_float_array(temp_chunk)
             elif temp_chunk.ID == COLOR_24:
                 contextMaterial.specular_color = read_byte_color(temp_chunk)
             else:
@@ -760,49 +759,39 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif new_chunk.ID == MAT_SHINESS:
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == PCT_SHORT:
-                temp_data = file.read(SZ_U_SHORT)
-                temp_chunk.bytes_read += SZ_U_SHORT
-                contextMaterial.roughness = 1 - (float(struct.unpack('<H', temp_data)[0]) / 100)
+                contextMaterial.roughness = 1 - (float(read_short(temp_chunk) / 100))
             elif temp_chunk.ID == PCT_FLOAT:
-                temp_data = file.read(SZ_FLOAT)
-                temp_chunk.bytes_read += SZ_FLOAT
-                contextMaterial.roughness = 1 - float(struct.unpack('<f', temp_data)[0])
+                contextMaterial.roughness = 1.0 - float(read_float(temp_chunk))
+            else:
+                skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
 
         elif new_chunk.ID == MAT_SHIN2:
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == PCT_SHORT:
-                temp_data = file.read(SZ_U_SHORT)
-                temp_chunk.bytes_read += SZ_U_SHORT
-                contextMaterial.specular_intensity = (float(struct.unpack('<H', temp_data)[0]) / 100)
+                contextMaterial.specular_intensity = float(read_short(temp_chunk) / 100)
             elif temp_chunk.ID == PCT_FLOAT:
-                temp_data = file.read(SZ_FLOAT)
-                temp_chunk.bytes_read += SZ_FLOAT
-                contextMaterial.specular_intensity = float(struct.unpack('<f', temp_data)[0])
+                contextMaterial.specular_intensity = float(read_float(temp_chunk))
+            else:
+                skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
 
         elif new_chunk.ID == MAT_SHIN3:
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == PCT_SHORT:
-                temp_data = file.read(SZ_U_SHORT)
-                temp_chunk.bytes_read += SZ_U_SHORT
-                contextMaterial.metallic = (float(struct.unpack('<H', temp_data)[0]) / 100)
+                contextMaterial.metallic = float(read_short(temp_chunk) / 100)
             elif temp_chunk.ID == PCT_FLOAT:
-                temp_data = file.read(SZ_FLOAT)
-                temp_chunk.bytes_read += SZ_FLOAT
-                contextMaterial.metallic = float(struct.unpack('<f', temp_data)[0])
+                contextMaterial.metallic = float(read_float(temp_chunk))
+            else:
+                skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
 
         elif new_chunk.ID == MAT_TRANSPARENCY:
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == PCT_SHORT:
-                temp_data = file.read(SZ_U_SHORT)
-                temp_chunk.bytes_read += SZ_U_SHORT
-                contextMaterial.diffuse_color[3] = 1 - (float(struct.unpack('<H', temp_data)[0]) / 100)
+                contextMaterial.diffuse_color[3] = 1 - (float(read_short(temp_chunk) / 100))
             elif temp_chunk.ID == PCT_FLOAT:
-                temp_data = file.read(SZ_FLOAT)
-                temp_chunk.bytes_read += SZ_FLOAT
-                contextMaterial.diffuse_color[3] = 1 - float(struct.unpack('<f', temp_data)[0])
+                contextMaterial.diffuse_color[3] = 1.0 - float(read_float(temp_chunk))
             else:
                 skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
@@ -810,13 +799,11 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif new_chunk.ID == MAT_SELF_ILPCT:
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == PCT_SHORT:
-                temp_data = file.read(SZ_U_SHORT)
-                temp_chunk.bytes_read += SZ_U_SHORT
-                contextMaterial.line_priority = int(struct.unpack('<H', temp_data)[0])
+                contextMaterial.line_priority = int(read_short(temp_chunk))
             elif temp_chunk.ID == PCT_FLOAT:
-                temp_data = file.read(SZ_FLOAT)
-                temp_chunk.bytes_read += SZ_FLOAT
-                contextMaterial.line_priority = (float(struct.unpack('<f', temp_data)[0]) * 100)
+                contextMaterial.line_priority = (float(read_float(temp_chunk)) * 100)
+            else:
+                skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
 
         elif new_chunk.ID == MAT_SHADING:
@@ -852,13 +839,9 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif new_chunk.ID == MAT_BUMP_PERCENT:
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == PCT_SHORT:
-                temp_data = file.read(SZ_U_SHORT)
-                temp_chunk.bytes_read += SZ_U_SHORT
-                contextWrapper.normalmap_strength = (float(struct.unpack('<H', temp_data)[0]) / 100)
+                contextWrapper.normalmap_strength = (float(read_short(temp_chunk) / 100))
             elif temp_chunk.ID == PCT_FLOAT:
-                temp_data = file.read(SZ_FLOAT)
-                temp_chunk.bytes_read += SZ_FLOAT
-                contextWrapper.normalmap_strength = float(struct.unpack('<f', temp_data)[0])
+                contextWrapper.normalmap_strength = float(read_float(temp_chunk))
             else:
                 skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
@@ -878,16 +861,12 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
 
         elif new_chunk.ID == OBJECT_VERTICES:
             """Worldspace vertex locations"""
-            temp_data = file.read(SZ_U_SHORT)
-            num_verts = struct.unpack('<H', temp_data)[0]
-            new_chunk.bytes_read += 2
+            num_verts = read_short(new_chunk)
             contextMesh_vertls = struct.unpack('<%df' % (num_verts * 3), file.read(SZ_3FLOAT * num_verts))
             new_chunk.bytes_read += SZ_3FLOAT * num_verts
 
         elif new_chunk.ID == OBJECT_FACES:
-            temp_data = file.read(SZ_U_SHORT)
-            num_faces = struct.unpack('<H', temp_data)[0]
-            new_chunk.bytes_read += 2
+            num_faces = read_short(new_chunk)
             temp_data = file.read(SZ_4U_SHORT * num_faces)
             new_chunk.bytes_read += SZ_4U_SHORT * num_faces  # 4 short ints x 2 bytes each
             contextMesh_facels = struct.unpack('<%dH' % (num_faces * 4), temp_data)
@@ -897,9 +876,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif new_chunk.ID == OBJECT_MATERIAL:
             material_name, read_str_len = read_string(file)
             new_chunk.bytes_read += read_str_len  # remove 1 null character.
-            temp_data = file.read(SZ_U_SHORT)
-            num_faces_using_mat = struct.unpack('<H', temp_data)[0]
-            new_chunk.bytes_read += SZ_U_SHORT
+            num_faces_using_mat = read_short(new_chunk)
             temp_data = file.read(SZ_U_SHORT * num_faces_using_mat)
             new_chunk.bytes_read += SZ_U_SHORT * num_faces_using_mat
             temp_data = struct.unpack('<%dH' % (num_faces_using_mat), temp_data)
@@ -913,9 +890,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             contextMesh_smooth = smoothgroup
 
         elif new_chunk.ID == OBJECT_UV:
-            temp_data = file.read(SZ_U_SHORT)
-            num_uv = struct.unpack('<H', temp_data)[0]
-            new_chunk.bytes_read += 2
+            num_uv = read_short(new_chunk)
             temp_data = file.read(SZ_2FLOAT * num_uv)
             new_chunk.bytes_read += SZ_2FLOAT * num_uv
             contextMeshUV = struct.unpack('<%df' % (num_uv * 2), temp_data)
@@ -923,27 +898,16 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif new_chunk.ID == OBJECT_TRANS_MATRIX:
             # How do we know the matrix size? 54 == 4x4 48 == 4x3
             temp_data = file.read(SZ_4x3MAT)
-            data = list(struct.unpack('<ffffffffffff', temp_data))
+            mtx = list(struct.unpack('<ffffffffffff', temp_data))
             new_chunk.bytes_read += SZ_4x3MAT
             contextMatrix = mathutils.Matrix(
-                (data[:3] + [0], data[3:6] + [0], data[6:9] + [0], data[9:] + [1])).transposed()
+                (mtx[:3] + [0], mtx[3:6] + [0], mtx[6:9] + [0], mtx[9:] + [1])).transposed()
 
         # If hierarchy chunk
         elif new_chunk.ID == OBJECT_HIERARCHY:
-            child_id = read_short(new_chunk)
-            childs_list.insert(child_id, contextObName)
-            parent_list.insert(child_id, None)
-            if child_id in parent_list:
-                idp = parent_list.index(child_id)
-                parent_list[idp] = contextObName
+            child_id = get_hierarchy(new_chunk)
         elif new_chunk.ID == OBJECT_PARENT:
-            parent_id = read_short(new_chunk)
-            if parent_id > len(childs_list):
-                parent_list[child_id] = parent_id
-                parent_list.extend([None]*(parent_id-len(parent_list)))
-                parent_list.insert(parent_id, contextObName)
-            elif parent_id < len(childs_list):
-                parent_list[child_id] = childs_list[parent_id]
+            get_parent(new_chunk, child_id)
 
         # If light chunk
         elif contextObName and new_chunk.ID == OBJECT_LIGHT:  # Basic lamp support
@@ -952,63 +916,45 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             context.view_layer.active_layer_collection.collection.objects.link(contextLamp)
             imported_objects.append(contextLamp)
             object_dictionary[contextObName] = contextLamp
-            temp_data = file.read(SZ_3FLOAT)
-            contextLamp.location = struct.unpack('<3f', temp_data)
-            new_chunk.bytes_read += SZ_3FLOAT
+            contextLamp.location = read_float_array(new_chunk)  # Position
             CreateBlenderObject = False
             CreateLightObject = True
-            contextMatrix = None  # Reset matrix
-        elif CreateLightObject and new_chunk.ID == COLOR_F:  # Light color
-            temp_data = file.read(SZ_3FLOAT)
-            contextLamp.data.color = struct.unpack('<3f', temp_data)
-            new_chunk.bytes_read += SZ_3FLOAT
+            contextMatrix = None # Reset matrix
+        elif CreateLightObject and new_chunk.ID == RGB:  # Color
+            contextLamp.data.color = read_float_array(new_chunk)
         elif CreateLightObject and new_chunk.ID == LIGHT_MULTIPLIER:  # Intensity
-            temp_data = file.read(SZ_FLOAT)
-            contextLamp.data.energy = (float(struct.unpack('<f', temp_data)[0]) * 1000)
-            new_chunk.bytes_read += SZ_FLOAT
+            contextLamp.data.energy = (read_float(new_chunk) * 1000)
 
         # If spotlight chunk
         elif CreateLightObject and new_chunk.ID == LIGHT_SPOTLIGHT:  # Spotlight
             temp_data = file.read(SZ_3FLOAT)
             contextLamp.data.type = 'SPOT'
-            spot = mathutils.Vector(struct.unpack('<3f', temp_data))
+            contextLamp.data.use_shadow = False
+            spot = mathutils.Vector(read_float_array(new_chunk))  # Spot location
             aim = calc_target(contextLamp.location, spot)  # Target
             contextLamp.rotation_euler[0] = aim[0]
             contextLamp.rotation_euler[2] = aim[1]
-            new_chunk.bytes_read += SZ_3FLOAT
-            temp_data = file.read(SZ_FLOAT)  # Hotspot
-            hotspot = float(struct.unpack('<f', temp_data)[0])
-            new_chunk.bytes_read += SZ_FLOAT
-            temp_data = file.read(SZ_FLOAT)  # Beam angle
-            beam_angle = float(struct.unpack('<f', temp_data)[0])
+            hotspot = read_float(new_chunk)  # Hotspot
+            beam_angle = read_float(new_chunk)  # Beam angle
             contextLamp.data.spot_size = math.radians(beam_angle)
             contextLamp.data.spot_blend = 1.0 - (hotspot / beam_angle)
-            new_chunk.bytes_read += SZ_FLOAT
         elif CreateLightObject and new_chunk.ID == LIGHT_SPOT_ROLL:  # Roll
-            temp_data = file.read(SZ_FLOAT)
-            contextLamp.rotation_euler[1] = float(struct.unpack('<f', temp_data)[0])
-            new_chunk.bytes_read += SZ_FLOAT
-        elif CreateLightObject and new_chunk.ID == LIGHT_SPOT_SHADOWED:  # Shadow
+            contextLamp.rotation_euler[1] = read_float(new_chunk)
+        elif CreateLightObject and new_chunk.ID == LIGHT_SPOT_SHADOWED:  # Shadow flag
             contextLamp.data.use_shadow = True
-        elif CreateLightObject and new_chunk.ID == LIGHT_SPOT_SEE_CONE:  # Cone
+        elif CreateLightObject and new_chunk.ID == LIGHT_LOCAL_SHADOW2:  # Shadow parameters
+            contextLamp.data.shadow_buffer_bias = read_float(new_chunk)
+            contextLamp.data.shadow_buffer_clip_start = (read_float(new_chunk) * 0.1)
+            temp_data = file.read(SZ_U_SHORT)
+            new_chunk.bytes_read += SZ_U_SHORT
+        elif CreateLightObject and new_chunk.ID == LIGHT_SPOT_SEE_CONE:  # Cone flag
             contextLamp.data.show_cone = True
-        elif CreateLightObject and new_chunk.ID == LIGHT_SPOT_RECTANGLE:  # Square
+        elif CreateLightObject and new_chunk.ID == LIGHT_SPOT_RECTANGLE:  # Square flag
             contextLamp.data.use_square = True
-        elif CreateLightObject and new_chunk.ID == OBJECT_HIERARCHY:
-            child_id = read_short(new_chunk)
-            childs_list.insert(child_id, contextObName)
-            parent_list.insert(child_id, None)
-            if child_id in parent_list:
-                idp = parent_list.index(child_id)
-                parent_list[idp] = contextObName
+        elif CreateLightObject and new_chunk.ID == OBJECT_HIERARCHY:  # Hierarchy
+            child_id = get_hierarchy(new_chunk)
         elif CreateLightObject and new_chunk.ID == OBJECT_PARENT:
-            parent_id = read_short(new_chunk)
-            if parent_id > len(childs_list):
-                parent_list[child_id] = parent_id
-                parent_list.extend([None]*(parent_id-len(parent_list)))
-                parent_list.insert(parent_id, contextObName)
-            elif parent_id < len(childs_list):
-                parent_list[child_id] = childs_list[parent_id]
+            get_parent(new_chunk, child_id)
 
         # If camera chunk
         elif contextObName and new_chunk.ID == OBJECT_CAMERA:  # Basic camera support
@@ -1017,58 +963,33 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             context.view_layer.active_layer_collection.collection.objects.link(contextCamera)
             imported_objects.append(contextCamera)
             object_dictionary[contextObName] = contextCamera
-            temp_data = file.read(SZ_3FLOAT)
-            contextCamera.location = struct.unpack('<3f', temp_data)
-            new_chunk.bytes_read += SZ_3FLOAT
-            temp_data = file.read(SZ_3FLOAT)
-            focus = mathutils.Vector(struct.unpack('<3f', temp_data))
+            contextCamera.location = read_float_array(new_chunk)  # Position
+            focus = mathutils.Vector(read_float_array(new_chunk))
             direction = calc_target(contextCamera.location, focus)  # Target
-            new_chunk.bytes_read += SZ_3FLOAT
-            temp_data = file.read(SZ_FLOAT)
             contextCamera.rotation_euler[0] = direction[0]
-            contextCamera.rotation_euler[1] = float(struct.unpack('<f', temp_data)[0])  # Roll
+            contextCamera.rotation_euler[1] = read_float(new_chunk)  # Roll
             contextCamera.rotation_euler[2] = direction[1]
-            new_chunk.bytes_read += SZ_FLOAT
-            temp_data = file.read(SZ_FLOAT)
-            contextCamera.data.lens = float(struct.unpack('<f', temp_data)[0])  # Focus
-            new_chunk.bytes_read += SZ_FLOAT
+            contextCamera.data.lens = read_float(new_chunk)  # Focal length
             CreateBlenderObject = False
             CreateCameraObject = True
             contextMatrix = None  # Reset matrix
-        elif CreateCameraObject and new_chunk.ID == OBJECT_HIERARCHY:
-            child_id = read_short(new_chunk)
-            childs_list.insert(child_id, contextObName)
-            parent_list.insert(child_id, None)
-            if child_id in parent_list:
-                idp = parent_list.index(child_id)
-                parent_list[idp] = contextObName
+        elif CreateCameraObject and new_chunk.ID == OBJECT_HIERARCHY:  # Hierarchy
+            child_id = get_hierarchy(new_chunk)
         elif CreateCameraObject and new_chunk.ID == OBJECT_PARENT:
-            parent_id = read_short(new_chunk)
-            if parent_id > len(childs_list):
-                parent_list[child_id] = parent_id
-                parent_list.extend([None]*(parent_id-len(parent_list)))
-                parent_list.insert(parent_id, contextObName)
-            elif parent_id < len(childs_list):
-                parent_list[child_id] = childs_list[parent_id]
+            get_parent(new_chunk, child_id)
 
         # start keyframe section
         elif new_chunk.ID == EDITKEYFRAME:
             pass
 
         elif KEYFRAME and new_chunk.ID == KFDATA_KFSEG:
-            temp_data = file.read(SZ_U_INT)
-            start = struct.unpack('<I', temp_data)[0]
-            new_chunk.bytes_read += 4
+            start = read_long(new_chunk)
             context.scene.frame_start = start
-            temp_data = file.read(SZ_U_INT)
-            stop = struct.unpack('<I', temp_data)[0]
-            new_chunk.bytes_read += 4
+            stop = read_long(new_chunk)
             context.scene.frame_end = stop
 
         elif KEYFRAME and new_chunk.ID == KFDATA_CURTIME:
-            temp_data = file.read(SZ_U_INT)
-            current = struct.unpack('<I', temp_data)[0]
-            new_chunk.bytes_read += 4
+            current = read_long(new_chunk)
             context.scene.frame_current = current
 
         # including these here means their OB_NODE_HDR are scanned
@@ -1083,18 +1004,14 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             child = None
 
         elif new_chunk.ID == OBJECT_NODE_ID:
-            temp_data = file.read(SZ_U_SHORT)
-            object_id = struct.unpack('<H', temp_data)[0]
-            new_chunk.bytes_read += 2
+            object_id = read_short(new_chunk)
 
         elif new_chunk.ID == OBJECT_NODE_HDR:
             object_name, read_str_len = read_string(file)
             new_chunk.bytes_read += read_str_len
             temp_data = file.read(SZ_U_SHORT * 2)
             new_chunk.bytes_read += 4
-            temp_data = file.read(SZ_U_SHORT)
-            hierarchy = struct.unpack('<H', temp_data)[0]
-            new_chunk.bytes_read += 2
+            hierarchy = read_short(new_chunk)
             child = object_dictionary.get(object_name)
             colortrack = 'LIGHT'
             if child is None:
@@ -1132,66 +1049,62 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             new_chunk.bytes_read += read_str_len
 
         elif new_chunk.ID == OBJECT_PIVOT:  # Pivot
-            temp_data = file.read(SZ_3FLOAT)
-            pivot = struct.unpack('<3f', temp_data)
-            new_chunk.bytes_read += SZ_3FLOAT
+            pivot = read_float_array(new_chunk)
             pivot_list[len(pivot_list) - 1] = mathutils.Vector(pivot)
 
         elif new_chunk.ID == MORPH_SMOOTH and child.type == 'MESH':  # Smooth angle
             child.data.use_auto_smooth = True
-            temp_data = file.read(SZ_FLOAT)
-            smooth_angle = struct.unpack('<f', temp_data)[0]
-            new_chunk.bytes_read += SZ_FLOAT
+            smooth_angle = read_float(new_chunk)
             child.data.auto_smooth_angle = smooth_angle
 
         elif KEYFRAME and new_chunk.ID == COL_TRACK_TAG and colortrack == 'AMBIENT':  # Ambient
             keyframe_data = {}
             default_data = child.color[:]
-            child.node_tree.nodes['Background'].inputs[0].default_value[:3] = read_track_data(temp_chunk)[0]
+            child.node_tree.nodes['Background'].inputs[0].default_value[:3] = read_track_data(new_chunk)[0]
             for keydata in keyframe_data.items():
                 child.node_tree.nodes['Background'].inputs[0].default_value[:3] = keydata[1]
                 child.node_tree.keyframe_insert(data_path="nodes[\"Background\"].inputs[0].default_value", frame=keydata[0])
-            track_flags.clear()
+            contextTrack_flag = False
 
         elif KEYFRAME and new_chunk.ID == COL_TRACK_TAG and colortrack == 'LIGHT':  # Color
             keyframe_data = {}
             default_data = child.data.color[:]
-            child.data.color = read_track_data(temp_chunk)[0]
+            child.data.color = read_track_data(new_chunk)[0]
             for keydata in keyframe_data.items():
                 child.data.color = keydata[1]
                 child.data.keyframe_insert(data_path="color", frame=keydata[0])
-            track_flags.clear()
+            contextTrack_flag = False
 
         elif KEYFRAME and new_chunk.ID == POS_TRACK_TAG and tracking == 'OBJECT':  # Translation
             keyframe_data = {}
             default_data = child.location[:]
-            child.location = read_track_data(temp_chunk)[0]
+            child.location = read_track_data(new_chunk)[0]
             if child.type in {'LIGHT', 'CAMERA'}:
                 trackposition[0] = child.location
                 CreateTrackData = True
-            if track_flags[0] & 0x8:  # Flag 0x8 locks X axis
+            if contextTrack_flag & 0x8:  # Flag 0x8 locks X axis
                 child.lock_location[0] = True
-            if track_flags[0] & 0x10:  # Flag 0x10 locks Y axis
+            if contextTrack_flag & 0x10:  # Flag 0x10 locks Y axis
                 child.lock_location[1] = True
-            if track_flags[0] & 0x20:  # Flag 0x20 locks Z axis
+            if contextTrack_flag & 0x20:  # Flag 0x20 locks Z axis
                 child.lock_location[2] = True
             for keydata in keyframe_data.items():
                 trackposition[keydata[0]] = keydata[1]  # Keep track to position for target calculation
                 child.location = apply_constrain(keydata[1]) if hierarchy == ROOT_OBJECT else mathutils.Vector(keydata[1])
                 if hierarchy == ROOT_OBJECT:
                     child.location.rotate(CONVERSE)
-                if not track_flags[0] & 0x100:  # Flag 0x100 unlinks X axis
+                if not contextTrack_flag & 0x100:  # Flag 0x100 unlinks X axis
                     child.keyframe_insert(data_path="location", index=0, frame=keydata[0])
-                if not track_flags[0] & 0x200:  # Flag 0x200 unlinks Y axis
+                if not contextTrack_flag & 0x200:  # Flag 0x200 unlinks Y axis
                     child.keyframe_insert(data_path="location", index=1, frame=keydata[0])
-                if not track_flags[0] & 0x400:  # Flag 0x400 unlinks Z axis
+                if not contextTrack_flag & 0x400:  # Flag 0x400 unlinks Z axis
                     child.keyframe_insert(data_path="location", index=2, frame=keydata[0])
-            track_flags.clear()
+            contextTrack_flag = False
 
         elif KEYFRAME and new_chunk.ID == POS_TRACK_TAG and tracking == 'TARGET':  # Target position
             keyframe_data = {}
             location = child.location
-            target = mathutils.Vector(read_track_data(temp_chunk)[0])
+            target = mathutils.Vector(read_track_data(new_chunk)[0])
             direction = calc_target(location, target)
             child.rotation_euler[0] = direction[0]
             child.rotation_euler[2] = direction[1]
@@ -1208,18 +1121,14 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                     child.matrix_world = CONVERSE @ child.matrix_world
                 child.keyframe_insert(data_path="rotation_euler", index=0, frame=keydata[0])
                 child.keyframe_insert(data_path="rotation_euler", index=2, frame=keydata[0])
-            track_flags.clear()
+            contextTrack_flag = False
 
         elif KEYFRAME and new_chunk.ID == ROT_TRACK_TAG and tracking == 'OBJECT':  # Rotation
             keyframe_rotation = {}
-            temp_data = file.read(SZ_U_SHORT)
-            tflags = struct.unpack('<H', temp_data)[0]
-            new_chunk.bytes_read += SZ_U_SHORT
+            tflags = read_short(new_chunk)
             temp_data = file.read(SZ_U_INT * 2)
             new_chunk.bytes_read += SZ_U_INT * 2
-            temp_data = file.read(SZ_U_INT)
-            nkeys = struct.unpack('<I', temp_data)[0]
-            new_chunk.bytes_read += SZ_U_INT
+            nkeys = read_long(new_chunk)
             if nkeys == 0:
                 keyframe_rotation[0] = child.rotation_axis_angle[:]
             if tflags & 0x8:  # Flag 0x8 locks X axis
@@ -1228,13 +1137,11 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 child.lock_rotation[1] = True
             if tflags & 0x20:  # Flag 0x20 locks Z axis
                 child.lock_rotation[2] = True
+            if nkeys == 0:
+                keyframe_rotation[0] = child.rotation_axis_angle[:]
             for i in range(nkeys):
-                temp_data = file.read(SZ_U_INT)
-                nframe = struct.unpack('<I', temp_data)[0]
-                new_chunk.bytes_read += SZ_U_INT
-                temp_data = file.read(SZ_U_SHORT)
-                nflags = struct.unpack('<H', temp_data)[0]
-                new_chunk.bytes_read += SZ_U_SHORT
+                nframe = read_long(new_chunk)
+                nflags = read_short(new_chunk)
                 for f in range(bin(nflags).count('1')):
                     temp_data = file.read(SZ_FLOAT)  # Check for spline term values
                     new_chunk.bytes_read += SZ_FLOAT
@@ -1259,27 +1166,27 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif KEYFRAME and new_chunk.ID == SCL_TRACK_TAG and tracking == 'OBJECT':  # Scale
             keyframe_data = {}
             default_data = child.scale[:]
-            child.scale = read_track_data(temp_chunk)[0]
-            if track_flags[0] & 0x8:  # Flag 0x8 locks X axis
+            child.scale = read_track_data(new_chunk)[0]
+            if contextTrack_flag & 0x8:  # Flag 0x8 locks X axis
                 child.lock_scale[0] = True
-            if track_flags[0] & 0x10:  # Flag 0x10 locks Y axis
+            if contextTrack_flag & 0x10:  # Flag 0x10 locks Y axis
                 child.lock_scale[1] = True
-            if track_flags[0] & 0x20:  # Flag 0x20 locks Z axis
+            if contextTrack_flag & 0x20:  # Flag 0x20 locks Z axis
                 child.lock_scale[2] = True
             for keydata in keyframe_data.items():
                 child.scale = apply_constrain(keydata[1]) if hierarchy == ROOT_OBJECT else mathutils.Vector(keydata[1])
-                if not track_flags[0] & 0x100:  # Flag 0x100 unlinks X axis
+                if not contextTrack_flag & 0x100:  # Flag 0x100 unlinks X axis
                     child.keyframe_insert(data_path="scale", index=0, frame=keydata[0])
-                if not track_flags[0] & 0x200:  # Flag 0x200 unlinks Y axis
+                if not contextTrack_flag & 0x200:  # Flag 0x200 unlinks Y axis
                     child.keyframe_insert(data_path="scale", index=1, frame=keydata[0])
-                if not track_flags[0] & 0x400:  # Flag 0x400 unlinks Z axis
+                if not contextTrack_flag & 0x400:  # Flag 0x400 unlinks Z axis
                     child.keyframe_insert(data_path="scale", index=2, frame=keydata[0])
-            track_flags.clear()
+            contextTrack_flag = False
 
         elif KEYFRAME and new_chunk.ID == ROLL_TRACK_TAG and tracking == 'OBJECT':  # Roll angle
             keyframe_angle = {}
             default_value = child.rotation_euler[1]
-            child.rotation_euler[1] = read_track_angle(temp_chunk)[0]
+            child.rotation_euler[1] = read_track_angle(new_chunk)[0]
             for keydata in keyframe_angle.items():
                 child.rotation_euler[1] = keydata[1]
                 if hierarchy == ROOT_OBJECT:
@@ -1289,7 +1196,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif KEYFRAME and new_chunk.ID == FOV_TRACK_TAG and child.type == 'CAMERA':  # Field of view
             keyframe_angle = {}
             default_value = child.data.angle
-            child.data.angle = read_track_angle(temp_chunk)[0]
+            child.data.angle = read_track_angle(new_chunk)[0]
             for keydata in keyframe_angle.items():
                 child.data.lens = (child.data.sensor_width / 2) / math.tan(keydata[1] / 2)
                 child.data.keyframe_insert(data_path="lens", frame=keydata[0])
@@ -1298,8 +1205,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             keyframe_angle = {}
             cone_angle = math.degrees(child.data.spot_size)
             default_value = cone_angle-(child.data.spot_blend * math.floor(cone_angle))
-            hot_spot = math.degrees(read_track_angle(temp_chunk)[0])
-            child.data.spot_blend = 1.0 - (hot_spot/cone_angle)
+            hot_spot = math.degrees(read_track_angle(new_chunk)[0])
+            child.data.spot_blend = 1.0 - (hot_spot / cone_angle)
             for keydata in keyframe_angle.items():
                 child.data.spot_blend = 1.0 - (math.degrees(keydata[1]) / cone_angle)
                 child.data.keyframe_insert(data_path="spot_blend", frame=keydata[0])
@@ -1307,7 +1214,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif KEYFRAME and new_chunk.ID == FALLOFF_TRACK_TAG and child.type == 'LIGHT' and child.data.type == 'SPOT':  # Falloff
             keyframe_angle = {}
             default_value = math.degrees(child.data.spot_size)
-            child.data.spot_size = read_track_angle(temp_chunk)[0]
+            child.data.spot_size = read_track_angle(new_chunk)[0]
             for keydata in keyframe_angle.items():
                 child.data.spot_size = keydata[1]
                 child.data.keyframe_insert(data_path="spot_size", frame=keydata[0])
@@ -1339,14 +1246,17 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
     for ind, ob in enumerate(object_list):
         parent = object_parent[ind]
         if parent == ROOT_OBJECT:
-            if ob.parent is not None:
-                ob.parent = None
+            ob.parent = None
         elif parent not in object_dict:
-            if ob.parent != object_list[parent]:
+            try:
                 ob.parent = object_list[parent]
-        else:
-            if ob.parent != object_dict[parent]:
+            except:  # seems one object is missing, so take previous one
+                ob.parent = object_list[parent - 1]
+        else:  # get parent from node_id number
+            try:
                 ob.parent = object_dict.get(parent)
+            except:  # self to parent exception
+                ob.parent = None
 
         #pivot_list[ind] += pivot_list[parent]  # Not sure this is correct, should parent space matrix be applied before combining?
 
@@ -1377,6 +1287,10 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             ob.data.transform(pivot_matrix)
 
 
+##########
+# IMPORT #
+##########
+
 def load_3ds(filepath, context, CONSTRAIN=10.0, IMAGE_SEARCH=True, WORLD_MATRIX=False, KEYFRAME=True, APPLY_MATRIX=True, CONVERSE=None):
 
     print("importing 3DS: %r..." % (filepath), end="")
@@ -1384,7 +1298,7 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, IMAGE_SEARCH=True, WORLD_MATRIX=
     if bpy.ops.object.select_all.poll():
         bpy.ops.object.select_all(action='DESELECT')
 
-    time1 = time.time()
+    duration = time.time()
     current_chunk = Chunk()
     file = open(filepath, 'rb')
 
@@ -1460,7 +1374,7 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, IMAGE_SEARCH=True, WORLD_MATRIX=
 
     axis_min = [1000000000] * 3
     axis_max = [-1000000000] * 3
-    global_clamp_size = CONSTRAIN
+    global_clamp_size = CONSTRAIN * 10000
     if global_clamp_size != 0.0:
         # Get all object bounds
         for ob in imported_objects:
@@ -1480,14 +1394,19 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, IMAGE_SEARCH=True, WORLD_MATRIX=
         while global_clamp_size < max_axis * scale:
             scale = scale / 10.0
 
-        scale_mat = mathutils.Matrix.Scale(scale, 4)
-
+        mtx_scale = mathutils.Matrix.Scale(scale, 4)
         for obj in imported_objects:
             if obj.parent is None:
-                obj.matrix_world = scale_mat @ obj.matrix_world
+                obj.matrix_world = mtx_scale @ obj.matrix_world
+
+        for screen in bpy.data.screens:
+            for area in screen.areas:
+                if area.type == 'VIEW_3D':
+                    area.spaces[0].clip_start = scale * 0.1
+                    area.spaces[0].clip_end = scale * 10000
 
     # Select all new objects.
-    print(" done in %.4f sec." % (time.time() - time1))
+    print(" done in %.4f sec." % (time.time() - duration))
     file.close()
 
 
