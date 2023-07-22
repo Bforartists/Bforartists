@@ -69,7 +69,7 @@ MAT_MAP_USCALE = 0xA354   # U axis scaling
 MAT_MAP_VSCALE = 0xA356   # V axis scaling
 MAT_MAP_UOFFSET = 0xA358  # U axis offset
 MAT_MAP_VOFFSET = 0xA35A  # V axis offset
-MAT_MAP_ANG = 0xA35C      # UV rotation around the z-axis in rad
+MAT_MAP_ANG = 0xA35C  # UV rotation around the z-axis in rad
 MAP_COL1 = 0xA360  # Tint Color1
 MAP_COL2 = 0xA362  # Tint Color2
 MAP_RCOL = 0xA364  # Red tint
@@ -96,6 +96,7 @@ LIGHT_MULTIPLIER = 0x465B  # The light energy factor
 LIGHT_SPOTLIGHT = 0x4610  # The target of a spotlight
 LIGHT_SPOT_ROLL = 0x4656  # Light spot roll angle
 LIGHT_SPOT_SHADOWED = 0x4630  # Light spot shadow flag
+LIGHT_SPOT_LSHADOW = 0x4641  # Light spot shadow parameters
 LIGHT_SPOT_SEE_CONE = 0x4650  # Light spot show cone flag
 LIGHT_SPOT_RECTANGLE = 0x4651  # Light spot rectangle flag
 
@@ -1044,6 +1045,19 @@ def make_mesh_chunk(ob, mesh, matrix, materialDict, translation):
     return mesh_chunk
 
 
+def calc_target(posi, tilt=0.0, pan=0.0):
+    """Calculate target position for cameras and spotlights."""
+    adjacent = math.radians(90)
+    turn = 0.0 if abs(pan) < adjacent else -0.0
+    lean = 0.0 if abs(tilt) > adjacent else -0.0
+    diagonal = math.copysign(math.sqrt(pow(posi.x ,2) + pow(posi.y ,2)), posi.y)
+    target_x = math.copysign(posi.x + (posi.y * math.tan(pan)), pan)
+    target_y = math.copysign(posi.y + (posi.x * math.tan(adjacent - pan)), turn)
+    target_z = math.copysign(diagonal * math.tan(adjacent - tilt), lean)
+
+    return target_x, target_y, target_z
+
+
 #################
 # KEYFRAME DATA #
 #################
@@ -1078,6 +1092,7 @@ def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
         action = ob.animation_data.action
         if action.fcurves:
             fcurves = action.fcurves
+            fcurves.update()
             kframes = [kf.co[0] for kf in [fc for fc in fcurves if fc is not None][0].keyframe_points]
             nkeys = len(kframes)
             if not 0 in kframes:
@@ -1132,6 +1147,7 @@ def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
         action = ob.data.animation_data.action
         if action.fcurves:
             fcurves = action.fcurves
+            fcurves.update()
             kframes = [kf.co[0] for kf in [fc for fc in fcurves if fc is not None][0].keyframe_points]
             nkeys = len(kframes)
             if not 0 in kframes:
@@ -1359,10 +1375,7 @@ def make_target_node(ob, translation, rotation, scale, name_id):
     ob_rot = rotation[name]
     ob_size = scale[name]
 
-    diagonal = math.copysign(math.sqrt(pow(ob_pos[0],2) + pow(ob_pos[1],2)), ob_pos[1])
-    target_x = ob_pos[0] + (ob_pos[1] * math.tan(ob_rot[2]))
-    target_y = ob_pos[1] + (ob_pos[0] * math.tan(math.radians(90) - ob_rot[2]))
-    target_z = -1 * diagonal * math.tan(math.radians(90) - ob_rot[0])
+    target_pos = calc_target(ob_pos, ob_rot.x, ob_rot.z)
 
     # Add track chunks for target position
     track_chunk = _3ds_chunk(POS_TRACK_TAG)
@@ -1371,6 +1384,7 @@ def make_target_node(ob, translation, rotation, scale, name_id):
         action = ob.animation_data.action
         if action.fcurves:
             fcurves = action.fcurves
+            fcurves.update()
             kframes = [kf.co[0] for kf in [fc for fc in fcurves if fc is not None][0].keyframe_points]
             nkeys = len(kframes)
             if not 0 in kframes:
@@ -1384,19 +1398,16 @@ def make_target_node(ob, translation, rotation, scale, name_id):
 
             for i, frame in enumerate(kframes):
                 loc_target = [fc for fc in fcurves if fc is not None and fc.data_path == 'location']
-                locate_x = next((tc.evaluate(frame) for tc in loc_target if tc.array_index == 0), ob_pos.x)
-                locate_y = next((tc.evaluate(frame) for tc in loc_target if tc.array_index == 1), ob_pos.y)
-                locate_z = next((tc.evaluate(frame) for tc in loc_target if tc.array_index == 2), ob_pos.z)
+                loc_x = next((tc.evaluate(frame) for tc in loc_target if tc.array_index == 0), ob_pos.x)
+                loc_y = next((tc.evaluate(frame) for tc in loc_target if tc.array_index == 1), ob_pos.y)
+                loc_z = next((tc.evaluate(frame) for tc in loc_target if tc.array_index == 2), ob_pos.z)
                 rot_target = [fc for fc in fcurves if fc is not None and fc.data_path == 'rotation_euler']
-                rotate_x = next((tc.evaluate(frame) for tc in rot_target if tc.array_index == 0), ob_rot.x)
-                rotate_z = next((tc.evaluate(frame) for tc in rot_target if tc.array_index == 2), ob_rot.z)
-                diagonal = math.copysign(math.sqrt(pow(locate_x, 2) + pow(locate_y, 2)), locate_y)
-                target_x = locate_x + (locate_y * math.tan(rotate_z))
-                target_y = locate_y + (locate_x * math.tan(math.radians(90) - rotate_z))
-                target_z = -1 * diagonal * math.tan(math.radians(90) - rotate_x)
+                rot_x = next((tc.evaluate(frame) for tc in rot_target if tc.array_index == 0), ob_rot.x)
+                rot_z = next((tc.evaluate(frame) for tc in rot_target if tc.array_index == 2), ob_rot.z)
+                target_pos = calc_target(mathutils.Vector((loc_x, loc_y, loc_z)), rot_x, rot_z)
                 track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                 track_chunk.add_variable("tcb_flags", _3ds_ushort())
-                track_chunk.add_variable("position", _3ds_point_3d((target_x, target_y, target_z)))
+                track_chunk.add_variable("position", _3ds_point_3d(target_pos))
 
     else:  # Track header
         track_chunk.add_variable("track_flags", _3ds_ushort(0x40))  # Based on observation default flag is 0x40
@@ -1406,7 +1417,7 @@ def make_target_node(ob, translation, rotation, scale, name_id):
         # Keyframe header
         track_chunk.add_variable("tcb_frame", _3ds_uint(0))
         track_chunk.add_variable("tcb_flags", _3ds_ushort())
-        track_chunk.add_variable("position", _3ds_point_3d((target_x, target_y, target_z)))
+        track_chunk.add_variable("position", _3ds_point_3d(target_pos))
 
     tar_node.add_subchunk(track_chunk)
 
@@ -1416,7 +1427,7 @@ def make_target_node(ob, translation, rotation, scale, name_id):
 def make_ambient_node(world):
     """Make an ambient node for the world color, if the color is animated."""
 
-    amb_color = world.color
+    amb_color = world.color[:3]
     amb_node = _3ds_chunk(AMBIENT_NODE_TAG)
     track_chunk = _3ds_chunk(COL_TRACK_TAG)
 
@@ -1437,6 +1448,7 @@ def make_ambient_node(world):
         action = world.animation_data.action
         if action.fcurves:
             fcurves = action.fcurves
+            fcurves.update()
             kframes = [kf.co[0] for kf in [fc for fc in fcurves if fc is not None][0].keyframe_points]
             nkeys = len(kframes)
             if not 0 in kframes:
@@ -1451,7 +1463,7 @@ def make_ambient_node(world):
             for i, frame in enumerate(kframes):
                 ambient = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'color']
                 if not ambient:
-                    ambient.append(world.color)
+                    ambient = amb_color
                 track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                 track_chunk.add_variable("tcb_flags", _3ds_ushort())
                 track_chunk.add_variable("color", _3ds_float_color(ambient))
@@ -1692,18 +1704,23 @@ def save(operator, context, filepath="", use_selection=False, use_hierarchy=Fals
 
         if ob.data.type == 'SPOT':
             cone_angle = math.degrees(ob.data.spot_size)
-            hotspot = cone_angle - (ob.data.spot_blend * math.floor(cone_angle))
-            hypo = math.copysign(math.sqrt(pow(ob.location[0], 2) + pow(ob.location[1], 2)), ob.location[1])
-            pos_x = ob.location[0] + (ob.location[1] * math.tan(ob.rotation_euler[2]))
-            pos_y = ob.location[1] + (ob.location[0] * math.tan(math.radians(90) - ob.rotation_euler[2]))
-            pos_z = hypo * math.tan(math.radians(90) - ob.rotation_euler[0])
+            hot_spot = cone_angle - (ob.data.spot_blend * math.floor(cone_angle))
+            spot_pos = calc_target(ob.location, ob.rotation_euler.x, ob.rotation_euler.z)
             spotlight_chunk = _3ds_chunk(LIGHT_SPOTLIGHT)
             spot_roll_chunk = _3ds_chunk(LIGHT_SPOT_ROLL)
-            spotlight_chunk.add_variable("target", _3ds_point_3d((pos_x, pos_y, pos_z)))
-            spotlight_chunk.add_variable("hotspot", _3ds_float(round(hotspot, 4)))
+            spotlight_chunk.add_variable("target", _3ds_point_3d(spot_pos))
+            spotlight_chunk.add_variable("hotspot", _3ds_float(round(hot_spot, 4)))
             spotlight_chunk.add_variable("angle", _3ds_float(round(cone_angle, 4)))
-            spot_roll_chunk.add_variable("roll", _3ds_float(round(ob.rotation_euler[1], 6)))
+            spot_roll_chunk.add_variable("roll", _3ds_float(round(ob.rotation_euler.y, 6)))
             spotlight_chunk.add_subchunk(spot_roll_chunk)
+            if ob.data.use_shadow:
+                spot_shadow_flag = _3ds_chunk(LIGHT_SPOT_SHADOWED)
+                spot_shadow_chunk = _3ds_chunk(LIGHT_SPOT_LSHADOW)
+                spot_shadow_chunk.add_variable("bias", _3ds_float(round(ob.data.shadow_buffer_bias,4)))
+                spot_shadow_chunk.add_variable("filter", _3ds_float(round((ob.data.shadow_buffer_clip_start * 10),4)))
+                spot_shadow_chunk.add_variable("buffer", _3ds_ushort(0x200))
+                spotlight_chunk.add_subchunk(spot_shadow_flag)
+                spotlight_chunk.add_subchunk(spot_shadow_chunk)
             if ob.data.show_cone:
                 spot_cone_chunk = _3ds_chunk(LIGHT_SPOT_SEE_CONE)
                 spotlight_chunk.add_subchunk(spot_cone_chunk)
@@ -1740,14 +1757,11 @@ def save(operator, context, filepath="", use_selection=False, use_hierarchy=Fals
     for ob in camera_objects:
         object_chunk = _3ds_chunk(OBJECT)
         camera_chunk = _3ds_chunk(OBJECT_CAMERA)
-        diagonal = math.copysign(math.sqrt(pow(ob.location[0], 2) + pow(ob.location[1], 2)), ob.location[1])
-        focus_x = ob.location[0] + (ob.location[1] * math.tan(ob.rotation_euler[2]))
-        focus_y = ob.location[1] + (ob.location[0] * math.tan(math.radians(90) - ob.rotation_euler[2]))
-        focus_z = diagonal * math.tan(math.radians(90) - ob.rotation_euler[0])
+        camera_target = calc_target(ob.location, ob.rotation_euler.x, ob.rotation_euler.z)
         object_chunk.add_variable("camera", _3ds_string(sane_name(ob.name)))
         camera_chunk.add_variable("location", _3ds_point_3d(ob.location))
-        camera_chunk.add_variable("target", _3ds_point_3d((focus_x, focus_y, focus_z)))
-        camera_chunk.add_variable("roll", _3ds_float(round(ob.rotation_euler[1], 6)))
+        camera_chunk.add_variable("target", _3ds_point_3d(camera_target))
+        camera_chunk.add_variable("roll", _3ds_float(round(ob.rotation_euler.y, 6)))
         camera_chunk.add_variable("lens", _3ds_float(ob.data.lens))
         object_chunk.add_subchunk(camera_chunk)
 
