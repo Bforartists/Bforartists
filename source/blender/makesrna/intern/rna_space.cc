@@ -157,6 +157,7 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
 
     /* Data. */
     RNA_ENUM_ITEM_HEADING(N_("Data"), nullptr),
+	/*bfa - toolbar*/
     {SPACE_TOOLBAR,
      "TOOLBAR",
      ICON_TOOLBAR,

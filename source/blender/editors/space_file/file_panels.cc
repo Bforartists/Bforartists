@@ -78,7 +78,7 @@ static void file_panel_operator(const bContext *C, Panel *panel)
   /* bfa - append - sidebar - make the options more compact */
   uiLayout *col = uiLayoutColumn(panel->layout, true);
   uiTemplateOperatorPropertyButs(
-      C, col, op, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_SHOW_EMPTY);
+      C, col, op, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_SHOW_EMPTY);/*bfa*/
 
   /* Hack: temporary hide. */
   for (int i = 0; i < ARRAY_SIZE(hide); i++) {
