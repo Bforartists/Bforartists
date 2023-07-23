@@ -460,10 +460,10 @@ void ARMATURE_OT_calculate_roll(wmOperatorType *ot)
 
   /* properties */
   ot->prop = RNA_def_enum(ot->srna, "type", prop_calc_roll_types, CALC_ROLL_TAN_POS_X, "Type", "");
-  RNA_def_boolean(ot->srna, "axis_flip", 0, "Flip Axis", "Negate the alignment axis");
+  RNA_def_boolean(ot->srna, "axis_flip", false, "Flip Axis", "Negate the alignment axis");
   RNA_def_boolean(ot->srna,
                   "axis_only",
-                  0,
+                  false,
                   "Shortest Rotation",
                   "Ignore the axis direction, use the shortest rotation to align");
 }
@@ -547,7 +547,7 @@ void ARMATURE_OT_roll_clear(wmOperatorType *ot)
 
 /* temporary data-structure for merge/fill bones */
 struct EditBonePoint {
-  struct EditBonePoint *next, *prev;
+  EditBonePoint *next, *prev;
 
   EditBone *head_owner; /* EditBone which uses this point as a 'head' point */
   EditBone *tail_owner; /* EditBone which uses this point as a 'tail' point */
@@ -1555,7 +1555,8 @@ void ARMATURE_OT_hide(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* props */
-  RNA_def_boolean(ot->srna, "unselected", 0, "Unselected", "Hide unselected rather than selected");
+  RNA_def_boolean(
+      ot->srna, "unselected", false, "Unselected", "Hide unselected rather than selected");
 }
 
 /** \} */

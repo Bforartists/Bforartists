@@ -6,11 +6,7 @@ set(INC
   .
   intern
 
-  ../blenfont
   ../blenloader
-  ../blentranslation
-  ../bmesh
-  ../depsgraph
   ../editors/include
   ../editors/space_view3d
   ../functions
@@ -24,9 +20,7 @@ set(INC
   ../compositor/realtime_compositor
   ../compositor/realtime_compositor/algorithms
   ../compositor/realtime_compositor/cached_resources
-  ../windowmanager
 
-  ../../../intern/clog
   ../../../intern/opensubdiv
 
 )
@@ -351,12 +345,17 @@ set(SRC
 )
 
 set(LIB
+  PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blentranslation
+  PRIVATE bf::bmesh
+  PRIVATE bf::depsgraph
   PRIVATE bf::dna
+  PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
   bf_realtime_compositor
-  bf_windowmanager
+  PRIVATE bf::windowmanager
   PRIVATE bf::intern::atomic
 )
 
@@ -523,6 +522,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_reflection_probe_eval_lib.glsl
   engines/eevee_next/shaders/eevee_reflection_probe_lib.glsl
   engines/eevee_next/shaders/eevee_reflection_probe_remap_comp.glsl
+  engines/eevee_next/shaders/eevee_reflection_probe_update_irradiance_comp.glsl
   engines/eevee_next/shaders/eevee_sampling_lib.glsl
   engines/eevee_next/shaders/eevee_shadow_debug_frag.glsl
   engines/eevee_next/shaders/eevee_shadow_lib.glsl

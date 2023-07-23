@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(INC
-  .
-  ../imbuf
+  PUBLIC .
   ../makesrna
   ../../../intern/locale
 )
@@ -13,8 +12,8 @@ set(INC_SYS
 )
 
 set(SRC
-  intern/blt_lang.c
-  intern/blt_translation.c
+  intern/blt_lang.cc
+  intern/blt_translation.cc
 
   BLT_lang.h
   BLT_translation.h
@@ -48,6 +47,7 @@ if(WIN32 OR APPLE)
 endif()
 
 blender_add_lib(bf_blentranslation "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+add_library(bf::blentranslation ALIAS bf_blentranslation)
 
 if(WITH_INTERNATIONAL)
   add_subdirectory(msgfmt)

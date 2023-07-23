@@ -263,7 +263,7 @@ static void image_sample_apply(bContext *C, wmOperator *op, const wmEvent *event
 #endif
   }
   else {
-    info->draw = 0;
+    info->draw = false;
   }
 
   ED_space_image_release_buffer(sima, ibuf, lock);
@@ -273,7 +273,7 @@ static void image_sample_apply(bContext *C, wmOperator *op, const wmEvent *event
 static void sequencer_sample_apply(bContext *C, wmOperator *op, const wmEvent *event)
 {
   Main *bmain = CTX_data_main(C);
-  struct Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Scene *scene = CTX_data_scene(C);
   SpaceSeq *sseq = (SpaceSeq *)CTX_wm_space_data(C);
   ARegion *region = CTX_wm_region(C);
@@ -283,7 +283,7 @@ static void sequencer_sample_apply(bContext *C, wmOperator *op, const wmEvent *e
   float fx, fy;
 
   if (ibuf == nullptr) {
-    info->draw = 0;
+    info->draw = false;
     return;
   }
 
@@ -303,7 +303,7 @@ static void sequencer_sample_apply(bContext *C, wmOperator *op, const wmEvent *e
 
     info->x = x;
     info->y = y;
-    info->draw = 1;
+    info->draw = true;
     info->channels = ibuf->channels;
 
     info->colp = nullptr;
@@ -347,7 +347,7 @@ static void sequencer_sample_apply(bContext *C, wmOperator *op, const wmEvent *e
     }
   }
   else {
-    info->draw = 0;
+    info->draw = false;
   }
 
   IMB_freeImBuf(ibuf);

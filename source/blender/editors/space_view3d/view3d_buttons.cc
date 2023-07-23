@@ -6,10 +6,10 @@
  * \ingroup spview3d
  */
 /*BFORARTISTS NOTE - on merge, there are chunks that has expanded GUI a lot here, beware*/
-#include <float.h>
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
+#include <cfloat>
+#include <cmath>
+#include <cstdio>
+#include <cstring>
 
 #include "DNA_armature_types.h"
 #include "DNA_curve_types.h"
@@ -113,7 +113,7 @@ static TransformProperties *v3d_transform_props_ensure(View3D *v3d);
  * \{ */
 
 static void *editmesh_partial_update_begin_fn(bContext * /*C*/,
-                                              const struct uiBlockInteraction_Params *params,
+                                              const uiBlockInteraction_Params *params,
                                               void *arg1)
 {
   const int retval_test = B_TRANSFORM_PANEL_MEDIAN;
@@ -1538,7 +1538,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
     col = uiLayoutColumn(panel->layout, true);
     row = uiLayoutRow(col, true);
 
-    ot = WM_operatortype_find("OBJECT_OT_vertex_weight_normalize_active_vertex", 1);
+    ot = WM_operatortype_find("OBJECT_OT_vertex_weight_normalize_active_vertex", true);
     but = uiDefButO_ptr(
         block,
         UI_BTYPE_BUT,
@@ -1554,7 +1554,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
       UI_but_flag_enable(but, UI_BUT_DISABLED);
     }
 
-    ot = WM_operatortype_find("OBJECT_OT_vertex_weight_copy", 1);
+    ot = WM_operatortype_find("OBJECT_OT_vertex_weight_copy", true);
     but = uiDefButO_ptr(
         block,
         UI_BTYPE_BUT,
@@ -1573,7 +1573,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
 }
 
 static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
-{  
+{
   /* bfa - rewrite transform panel to match the Python one */
   uiLayout *col, *row, *sub;
   uiLayoutSetPropSep(layout, true); /* bfa - layout.use_property_split = True */
