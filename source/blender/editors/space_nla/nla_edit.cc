@@ -203,7 +203,7 @@ void NLA_OT_tweakmode_enter(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = nlaedit_enable_tweakmode_exec;
-  ot->get_description = nla_ot_tweakmode_enter_get_description;
+  ot->get_description = nla_ot_tweakmode_enter_get_description;/*bfa - description*/
   ot->poll = nlaop_poll_tweakmode_off;
 
   /* flags */
