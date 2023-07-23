@@ -325,12 +325,15 @@ def add_texture_to_material(image, contextWrapper, pct, extend, alpha, scale, of
 childs_list = []
 parent_list = []
 
-def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAIN, IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, CONVERSE):
+def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAIN,
+                       IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, CONVERSE, MEASURE):
 
     contextObName = None
     contextLamp = None
     contextCamera = None
     contextMaterial = None
+    contextAlpha = None
+    contextColor = None
     contextWrapper = None
     contextMatrix = None
     contextMesh_vertls = None
@@ -360,15 +363,9 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
     pivot_list = []  # pivots with hierarchy handling
     trackposition = {}  # keep track to position for target calculation
 
-    def putContextMesh(
-            context,
-            myContextMesh_vertls,
-            myContextMesh_facels,
-            myContextMesh_flag,
-            myContextMeshMaterials,
-            myContextMesh_smooth,
-            WORLD_MATRIX,
-    ):
+    def putContextMesh(context, myContextMesh_vertls, myContextMesh_facels, myContextMesh_flag,
+                       myContextMeshMaterials, myContextMesh_smooth, WORLD_MATRIX):
+
         bmesh = bpy.data.meshes.new(contextObName)
 
         if myContextMesh_facels is None:
@@ -429,8 +426,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         imported_objects.append(ob)
 
         if myContextMesh_flag:
-            """Bit 0 (0x1) sets edge CA visible, Bit 1 (0x2) sets edge BC visible and Bit 2 (0x4) sets edge AB visible
-               In Blender we use sharp edges for those flags"""
+            """Bit 0 (0x1) sets edge CA visible, Bit 1 (0x2) sets edge BC visible and
+               Bit 2 (0x4) sets edge AB visible. In Blender we use sharp edges for those flags."""
             for f, pl in enumerate(bmesh.polygons):
                 face = myContextMesh_facels[f]
                 faceflag = myContextMesh_flag[f]
@@ -506,13 +503,13 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         alpha = False
         pct = 50
 
+        contextWrapper.base_color = contextColor[:]
+        contextWrapper.metallic = contextMaterial.metallic
+        contextWrapper.roughness = contextMaterial.roughness
+        contextWrapper.specular = contextMaterial.specular_intensity
         contextWrapper.emission_color = contextMaterial.line_color[:3]
         contextWrapper.emission_strength = contextMaterial.line_priority / 100
-        contextWrapper.base_color = contextMaterial.diffuse_color[:3]
-        contextWrapper.specular = contextMaterial.specular_intensity
-        contextWrapper.roughness = contextMaterial.roughness
-        contextWrapper.metallic = contextMaterial.metallic
-        contextWrapper.alpha = contextMaterial.diffuse_color[3]
+        contextWrapper.alpha = contextMaterial.diffuse_color[3] = contextAlpha
 
         while (new_chunk.bytes_read < new_chunk.length):
             read_chunk(file, temp_chunk)
@@ -539,7 +536,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 0x40 activates alpha source, 0x80 activates tinting, 0x100 ignores alpha, 0x200 activates RGB tint.
                 Bits 0x80, 0x100, and 0x200 are only used with TEXMAP, TEX2MAP, and SPECMAP chunks.
                 0x40, when used with a TEXMAP, TEX2MAP, or SPECMAP chunk must be accompanied with a tint bit,
-                either 0x100 or 0x200, tintcolor will be processed if colorchunks are present"""
+                either 0x100 or 0x200, tintcolor will be processed if colorchunks are present."""
                 tiling = read_short(temp_chunk)
                 if tiling & 0x1:
                     extend = 'decal'
@@ -600,23 +597,25 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
     def calc_target(loca, target):
         pan = 0.0
         tilt = 0.0
-        posi = loca + target
-        adjacent = math.radians(90)  # Target triangulation
-        hyp = math.copysign(math.sqrt(pow(posi.x,2) + pow(posi.y,2)), posi.y)
-        dia = math.copysign(math.sqrt(pow(hyp,2) + pow(target.z,2)), posi.y)
-        tilt = adjacent - math.copysign(math.acos(hyp / dia), posi.z)
-        if abs(loca.x - target.x) > abs(loca.y - target.y):
-            yaw = math.atan(posi.y / hyp)
-            pan = adjacent + yaw if loca.x > target.x else -1 * (adjacent - yaw)
-        elif abs(loca.y - target.y) > abs(loca.x - target.x):
-            yaw = math.pi + math.atan2(hyp, posi.x)
-            pan = adjacent + yaw if abs(loca.y) < abs(target.y) else -1 * (adjacent - yaw)
-        direction = tilt, pan
-        return direction
+        plane = loca + target
+        angle = math.radians(90)  # Target triangulation
+        check_sign = abs(loca.y) < abs(target.y)
+        check_axes = abs(loca.x - target.x) > abs(loca.y - target.y)
+        plane_y = plane.y if check_sign else -1 * plane.y
+        sign_xy = plane.x if check_axes else plane.y
+        axis_xy = plane_y if check_axes else plane.x
+        hyp = math.sqrt(pow(plane.x,2) + pow(plane.y,2))
+        dia = math.sqrt(pow(hyp,2) + pow(plane.z,2))
+        yaw = math.atan2(math.copysign(hyp, sign_xy), axis_xy)
+        bow = math.acos(hyp / dia)
+        turn = angle - yaw if check_sign else angle + yaw
+        tilt = angle - bow if loca.z > target.z else angle + bow
+        pan = yaw if check_axes else turn
+        return tilt, pan
 
     def read_track_data(track_chunk):
         """Trackflags 0x1, 0x2 and 0x3 are for looping. 0x8, 0x10 and 0x20
-        locks the XYZ axes. 0x100, 0x200 and 0x400 unlinks the XYZ axes"""
+        locks the XYZ axes. 0x100, 0x200 and 0x400 unlinks the XYZ axes."""
         tflags = read_short(track_chunk)
         contextTrack_flag = tflags
         temp_data = file.read(SZ_U_INT * 2)
@@ -683,7 +682,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
 
         # is it an object info chunk?
         elif new_chunk.ID == OBJECTINFO:
-            process_next_chunk(context, file, new_chunk, imported_objects, CONSTRAIN, IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, CONVERSE)
+            process_next_chunk(context, file, new_chunk, imported_objects, CONSTRAIN,
+                               IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, CONVERSE, MEASURE)
 
             # keep track of how much we read in the main chunk
             new_chunk.bytes_read += temp_chunk.bytes_read
@@ -715,6 +715,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
 
         # is it a material chunk?
         elif new_chunk.ID == MATERIAL:
+            contextAlpha = True
+            contextColor = mathutils.Color((0.8, 0.8, 0.8))
             contextMaterial = bpy.data.materials.new('Material')
             contextWrapper = PrincipledBSDFWrapper(contextMaterial, is_readonly=False, use_nodes=False)
 
@@ -739,9 +741,11 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif new_chunk.ID == MAT_DIFFUSE:
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == COLOR_F:
-                contextMaterial.diffuse_color[:3] = read_float_array(temp_chunk)
+                contextColor = mathutils.Color(read_float_array(temp_chunk))
+                contextMaterial.diffuse_color[:3] = contextColor
             elif temp_chunk.ID == COLOR_24:
-                contextMaterial.diffuse_color[:3] = read_byte_color(temp_chunk)
+                contextColor = mathutils.Color(read_byte_color(temp_chunk))
+                contextMaterial.diffuse_color[:3] = contextColor
             else:
                 skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
@@ -789,11 +793,15 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif new_chunk.ID == MAT_TRANSPARENCY:
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == PCT_SHORT:
-                contextMaterial.diffuse_color[3] = 1 - (float(read_short(temp_chunk) / 100))
+                contextAlpha = 1 - (float(read_short(temp_chunk) / 100))
+                contextMaterial.diffuse_color[3] = contextAlpha
             elif temp_chunk.ID == PCT_FLOAT:
-                contextMaterial.diffuse_color[3] = 1.0 - float(read_float(temp_chunk))
+                contextAlpha = 1.0 - float(read_float(temp_chunk))
+                contextMaterial.diffuse_color[3] = contextAlpha
             else:
                 skip_to_end(file, temp_chunk)
+            if contextAlpha < 1:
+                contextMaterial.blend_method = 'BLEND'
             new_chunk.bytes_read += temp_chunk.bytes_read
 
         elif new_chunk.ID == MAT_SELF_ILPCT:
@@ -810,13 +818,13 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             shading = read_short(new_chunk)
             if shading >= 2:
                 contextWrapper.use_nodes = True
+                contextWrapper.base_color = contextColor[:]
+                contextWrapper.metallic = contextMaterial.metallic
+                contextWrapper.roughness = contextMaterial.roughness
+                contextWrapper.specular = contextMaterial.specular_intensity
                 contextWrapper.emission_color = contextMaterial.line_color[:3]
                 contextWrapper.emission_strength = contextMaterial.line_priority / 100
-                contextWrapper.base_color = contextMaterial.diffuse_color[:3]
-                contextWrapper.specular = contextMaterial.specular_intensity
-                contextWrapper.roughness = contextMaterial.roughness
-                contextWrapper.metallic = contextMaterial.metallic
-                contextWrapper.alpha = contextMaterial.diffuse_color[3]
+                contextWrapper.alpha = contextMaterial.diffuse_color[3] = contextAlpha
                 contextWrapper.use_nodes = False
                 if shading >= 3:
                     contextWrapper.use_nodes = True
@@ -920,14 +928,13 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             CreateBlenderObject = False
             CreateLightObject = True
             contextMatrix = None # Reset matrix
-        elif CreateLightObject and new_chunk.ID == RGB:  # Color
+        elif CreateLightObject and new_chunk.ID == COLOR_F:  # Color
             contextLamp.data.color = read_float_array(new_chunk)
         elif CreateLightObject and new_chunk.ID == LIGHT_MULTIPLIER:  # Intensity
             contextLamp.data.energy = (read_float(new_chunk) * 1000)
 
         # If spotlight chunk
         elif CreateLightObject and new_chunk.ID == LIGHT_SPOTLIGHT:  # Spotlight
-            temp_data = file.read(SZ_3FLOAT)
             contextLamp.data.type = 'SPOT'
             contextLamp.data.use_shadow = False
             spot = mathutils.Vector(read_float_array(new_chunk))  # Spot location
@@ -1060,8 +1067,11 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif KEYFRAME and new_chunk.ID == COL_TRACK_TAG and colortrack == 'AMBIENT':  # Ambient
             keyframe_data = {}
             default_data = child.color[:]
-            child.node_tree.nodes['Background'].inputs[0].default_value[:3] = read_track_data(new_chunk)[0]
+            child.color = read_track_data(new_chunk)[0]
+            child.node_tree.nodes['Background'].inputs[0].default_value[:3] = child.color
             for keydata in keyframe_data.items():
+                child.color = keydata[1]
+                child.keyframe_insert(data_path="color", frame=keydata[0])
                 child.node_tree.nodes['Background'].inputs[0].default_value[:3] = keydata[1]
                 child.node_tree.keyframe_insert(data_path="nodes[\"Background\"].inputs[0].default_value", frame=keydata[0])
             contextTrack_flag = False
@@ -1091,6 +1101,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             for keydata in keyframe_data.items():
                 trackposition[keydata[0]] = keydata[1]  # Keep track to position for target calculation
                 child.location = apply_constrain(keydata[1]) if hierarchy == ROOT_OBJECT else mathutils.Vector(keydata[1])
+                if MEASURE:
+                    child.location = child.location * 0.001
                 if hierarchy == ROOT_OBJECT:
                     child.location.rotate(CONVERSE)
                 if not contextTrack_flag & 0x100:  # Flag 0x100 unlinks X axis
@@ -1117,6 +1129,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 scale = mathutils.Vector.Fill(3, (CONSTRAIN * 0.1)) if CONSTRAIN != 0.0 else child.scale
                 transformation = mathutils.Matrix.LocRotScale(locate, rotate, scale)
                 child.matrix_world = transformation
+                if MEASURE:
+                    child.matrix_world = mathutils.Matrix.Scale(0.001,4) @ child.matrix_world
                 if hierarchy == ROOT_OBJECT:
                     child.matrix_world = CONVERSE @ child.matrix_world
                 child.keyframe_insert(data_path="rotation_euler", index=0, frame=keydata[0])
@@ -1291,7 +1305,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
 # IMPORT #
 ##########
 
-def load_3ds(filepath, context, CONSTRAIN=10.0, IMAGE_SEARCH=True, WORLD_MATRIX=False, KEYFRAME=True, APPLY_MATRIX=True, CONVERSE=None):
+def load_3ds(filepath, context, CONSTRAIN=10.0, MEASURE=False, IMAGE_SEARCH=True,
+             WORLD_MATRIX=False, KEYFRAME=True, APPLY_MATRIX=True, CONVERSE=None):
 
     print("importing 3DS: %r..." % (filepath), end="")
 
@@ -1301,6 +1316,7 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, IMAGE_SEARCH=True, WORLD_MATRIX=
     duration = time.time()
     current_chunk = Chunk()
     file = open(filepath, 'rb')
+    context.window.cursor_set('WAIT')
 
     # here we go!
     read_chunk(file, current_chunk)
@@ -1317,11 +1333,11 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, IMAGE_SEARCH=True, WORLD_MATRIX=
     # fixme, make unglobal, clear in case
     object_dictionary.clear()
     object_matrix.clear()
-
     scn = context.scene
 
     imported_objects = []  # Fill this list with objects
-    process_next_chunk(context, file, current_chunk, imported_objects, CONSTRAIN, IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, CONVERSE)
+    process_next_chunk(context, file, current_chunk, imported_objects, CONSTRAIN,
+                       IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, CONVERSE, MEASURE)
 
     # fixme, make unglobal
     object_dictionary.clear()
@@ -1330,15 +1346,20 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, IMAGE_SEARCH=True, WORLD_MATRIX=
     if APPLY_MATRIX:
         for ob in imported_objects:
             if ob.type == 'MESH':
-                me = ob.data
-                me.transform(ob.matrix_local.inverted())
+                ob.data.transform(ob.matrix_local.inverted())
 
-    # print(imported_objects)
+    if MEASURE:
+        unit_mtx = mathutils.Matrix.Scale(0.001,4)
+        for ob in imported_objects:
+            if ob.type == 'MESH':
+                ob.data.transform(unit_mtx)
+
     if CONVERSE and not KEYFRAME:
         for ob in imported_objects:
             ob.location.rotate(CONVERSE)
             ob.rotation_euler.rotate(CONVERSE)
 
+    # Select all new objects
     for ob in imported_objects:
         ob.select_set(True)
         if not APPLY_MATRIX:  # Reset transform
@@ -1405,30 +1426,21 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, IMAGE_SEARCH=True, WORLD_MATRIX=
                     area.spaces[0].clip_start = scale * 0.1
                     area.spaces[0].clip_end = scale * 10000
 
-    # Select all new objects.
+    context.window.cursor_set('DEFAULT')
     print(" done in %.4f sec." % (time.time() - duration))
     file.close()
 
 
-def load(operator,
-         context,
-         filepath="",
-         constrain_size=0.0,
-         use_image_search=True,
-         use_world_matrix=False,
-         read_keyframe=True,
-         use_apply_transform=True,
-         global_matrix=None,
+def load(operator, context, filepath="", constrain_size=0.0,
+         convert_measure=False, use_image_search=True,
+         use_world_matrix=False, read_keyframe=True,
+         use_apply_transform=True, global_matrix=None,
          ):
 
-    load_3ds(filepath,
-             context,
-             CONSTRAIN=constrain_size,
-             IMAGE_SEARCH=use_image_search,
-             WORLD_MATRIX=use_world_matrix,
-             KEYFRAME=read_keyframe,
-             APPLY_MATRIX=use_apply_transform,
-             CONVERSE=global_matrix,
+    load_3ds(filepath, context, CONSTRAIN=constrain_size,
+             MEASURE=convert_measure, IMAGE_SEARCH=use_image_search,
+             WORLD_MATRIX=use_world_matrix, KEYFRAME=read_keyframe,
+             APPLY_MATRIX=use_apply_transform, CONVERSE=global_matrix,
              )
 
     return {'FINISHED'}
