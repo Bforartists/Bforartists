@@ -8,7 +8,7 @@
 
 /* System includes ----------------------------------------------------- */
 
-#include <float.h>
+#include <cfloat>
 
 #include "MEM_guardedalloc.h"
 
@@ -388,8 +388,8 @@ enum eAnimKeylistDrawListElemType {
 };
 
 struct AnimKeylistDrawListElem {
-  struct AnimKeylistDrawListElem *next, *prev;
-  struct AnimKeylist *keylist;
+  AnimKeylistDrawListElem *next, *prev;
+  AnimKeylist *keylist;
   eAnimKeylistDrawListElemType type;
 
   float yscale_fac;

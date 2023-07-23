@@ -33,24 +33,27 @@ from typing import (
 # List of (source_file, all_arguments)
 ProcessedCommands = List[Tuple[str, str]]
 
-USE_MULTIPROCESS = True
-
-VERBOSE = False
-
-# Print the output of the compiler (_very_ noisy, only useful for troubleshooting compiler issues).
-VERBOSE_COMPILER = False
-
-# Print the result of each attempted edit:
-#
-# - Causes code not to compile.
-# - Compiles but changes the resulting behavior.
-# - Succeeds.
-VERBOSE_EDIT_ACTION = False
-
-
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 SOURCE_DIR = os.path.normpath(os.path.join(BASE_DIR, "..", ".."))
+
+# (id: doc-string) pairs.
+VERBOSE_INFO = [
+    (
+        "compile", (
+            "Print the compiler output (noisy).\n"
+            "Try setting '--jobs=1' for usable output.\n"
+        ),
+    ),
+    (
+        "edit_actions", (
+            "Print the result of each attempted edit, useful for troubleshooting:\n"
+            "- Causes code not to compile.\n"
+            "- Compiles but changes the resulting behavior.\n"
+            "- Succeeds.\n"
+        ),
+    )
+]
 
 
 # -----------------------------------------------------------------------------
@@ -183,8 +186,14 @@ def text_matching_bracket_backward(
 # -----------------------------------------------------------------------------
 # Execution Wrappers
 
-def run(args: Sequence[str], *, cwd: Optional[str], quiet: bool) -> int:
-    if VERBOSE_COMPILER and not quiet:
+def run(
+        args: Sequence[str],
+        *,
+        cwd: Optional[str],
+        quiet: bool,
+        verbose_compile: bool,
+) -> int:
+    if verbose_compile and not quiet:
         out = sys.stdout.fileno()
     else:
         out = subprocess.DEVNULL
@@ -1280,8 +1289,11 @@ def test_edit(
         build_cwd: Optional[str],
         data: str,
         data_test: str,
-        keep_edits: bool = True,
-        expect_failure: bool = False,
+        *,
+        keep_edits: bool,
+        expect_failure: bool,
+        verbose_compile: bool,
+        verbose_edit_actions: bool,
 ) -> bool:
     """
     Return true if `data_test` has the same object output as `data`.
@@ -1292,7 +1304,7 @@ def test_edit(
     with open(source, 'w', encoding='utf-8') as fh:
         fh.write(data_test)
 
-    ret = run(build_args, cwd=build_cwd, quiet=expect_failure)
+    ret = run(build_args, cwd=build_cwd, quiet=expect_failure, verbose_compile=verbose_compile)
     if ret == 0:
         output_bytes_test = file_as_bytes(output)
         if (output_bytes is None) or (file_as_bytes(output) == output_bytes):
@@ -1301,11 +1313,11 @@ def test_edit(
                     fh.write(data)
             return True
         else:
-            if VERBOSE_EDIT_ACTION:
+            if verbose_edit_actions:
                 print("Changed code, skip...", hex(hash(output_bytes)), hex(hash(output_bytes_test)))
     else:
         if not expect_failure:
-            if VERBOSE_EDIT_ACTION:
+            if verbose_edit_actions:
                 print("Failed to compile, skip...")
 
     with open(source, 'w', encoding='utf-8') as fh:
@@ -1339,10 +1351,31 @@ def edit_docstring_from_id(name: str) -> str:
     return dedent(result or '').strip('\n') + '\n'
 
 
+def edit_group_compatible(edits: Sequence[str]) -> Sequence[Sequence[str]]:
+    """
+    Group compatible edits, so it's possible for a single process to iterate on many edits for a single file.
+    """
+    edits_grouped = []
+
+    edit_generator_class_prev = None
+    for edit in edits:
+        edit_generator_class = edit_class_from_id(edit)
+        if edit_generator_class_prev is None or (
+                edit_generator_class.setup != edit_generator_class_prev.setup and
+                edit_generator_class.teardown != edit_generator_class_prev.teardown
+        ):
+            # Create a new group.
+            edits_grouped.append([edit])
+        else:
+            edits_grouped[-1].append(edit)
+        edit_generator_class_prev = edit_generator_class
+    return edits_grouped
+
+
 # -----------------------------------------------------------------------------
 # Accept / Reject Edits
 
-def apply_edit(data: str, text_to_replace: str, start: int, end: int, *, verbose: bool) -> str:
+def apply_edit(source_relative: str, data: str, text_to_replace: str, start: int, end: int, *, verbose: bool) -> str:
     if verbose:
         line_before = line_from_span(data, start, end)
 
@@ -1353,22 +1386,27 @@ def apply_edit(data: str, text_to_replace: str, start: int, end: int, *, verbose
         line_after = line_from_span(data, start, end)
 
         print("")
-        print("Testing edit:")
+        print("Testing edit:", source_relative)
         print(line_before)
         print(line_after)
 
     return data
 
 
-def wash_source_with_edits(
+def wash_source_with_edit(
         source: str,
         output: str,
         build_args: Sequence[str],
         build_cwd: Optional[str],
-        edit_to_apply: str,
         skip_test: bool,
+        verbose_compile: bool,
+        verbose_edit_actions: bool,
         shared_edit_data: Any,
+        edit_to_apply: str,
 ) -> None:
+    # For less verbose printing, strip the prefix.
+    source_relative = os.path.relpath(source, SOURCE_DIR)
+
     # build_args = build_args + " -Werror=duplicate-decl-specifier"
     with open(source, 'r', encoding='utf-8') as fh:
         data = fh.read()
@@ -1397,7 +1435,7 @@ def wash_source_with_edits(
         if skip_test:
             # Just apply all edits.
             for (start, end), text, _text_always_fail, _extra_build_args in edits:
-                data = apply_edit(data, text, start, end, verbose=VERBOSE)
+                data = apply_edit(source_relative, data, text, start, end, verbose=verbose_edit_actions)
             with open(source, 'w', encoding='utf-8') as fh:
                 fh.write(data)
             return
@@ -1405,6 +1443,9 @@ def wash_source_with_edits(
         test_edit(
             source, output, None, build_args, build_cwd, data, data,
             keep_edits=False,
+            expect_failure=False,
+            verbose_compile=verbose_compile,
+            verbose_edit_actions=verbose_edit_actions,
         )
         if not os.path.exists(output):
             # raise Exception("Failed to produce output file: " + output)
@@ -1429,18 +1470,24 @@ def wash_source_with_edits(
                 # Add directly after the compile command.
                 build_args_for_edit = build_args[:1] + extra_build_args + build_args[1:]
 
-            data_test = apply_edit(data, text, start, end, verbose=VERBOSE)
+            data_test = apply_edit(source_relative, data, text, start, end, verbose=verbose_edit_actions)
             if test_edit(
                     source, output, output_bytes, build_args_for_edit, build_cwd, data, data_test,
                     keep_edits=False,
+                    expect_failure=False,
+                    verbose_compile=verbose_compile,
+                    verbose_edit_actions=verbose_edit_actions,
             ):
                 # This worked, check if the change would fail if replaced with 'text_always_fail'.
-                data_test_always_fail = apply_edit(data, text_always_fail, start, end, verbose=False)
+                data_test_always_fail = apply_edit(source_relative, data, text_always_fail, start, end, verbose=False)
                 if test_edit(
                         source, output, output_bytes, build_args_for_edit, build_cwd, data, data_test_always_fail,
-                        expect_failure=True, keep_edits=False,
+                        expect_failure=True,
+                        keep_edits=False,
+                        verbose_compile=verbose_compile,
+                        verbose_edit_actions=verbose_edit_actions,
                 ):
-                    if VERBOSE_EDIT_ACTION:
+                    if verbose_edit_actions:
                         print("Edit at", (start, end), "doesn't fail, assumed to be ifdef'd out, continuing")
                     continue
 
@@ -1465,15 +1512,46 @@ def wash_source_with_edits(
                 pass
 
 
+def wash_source_with_edit_list(
+        source: str,
+        output: str,
+        build_args: Sequence[str],
+        build_cwd: Optional[str],
+        skip_test: bool,
+        verbose_compile: bool,
+        verbose_edit_actions: bool,
+        shared_edit_data: Any,
+        edit_list: Sequence[str],
+) -> None:
+    for edit_to_apply in edit_list:
+        wash_source_with_edit(
+            source,
+            output,
+            build_args,
+            build_cwd,
+            skip_test,
+            verbose_compile,
+            verbose_edit_actions,
+            shared_edit_data,
+            edit_to_apply,
+        )
+
+
 # -----------------------------------------------------------------------------
 # Edit Source Code From Args
 
 def run_edits_on_directory(
+        *,
         build_dir: str,
         regex_list: List[re.Pattern[str]],
         edits_to_apply: Sequence[str],
-        skip_test: bool = False,
+        skip_test: bool,
+        jobs: int,
+        verbose_compile: bool,
+        verbose_edit_actions: bool,
 ) -> int:
+    import multiprocessing
+
     # currently only supports ninja or makefiles
     build_file_ninja = os.path.join(build_dir, "build.ninja")
     build_file_make = os.path.join(build_dir, "Makefile")
@@ -1489,6 +1567,9 @@ def run_edits_on_directory(
             (build_file_ninja, build_file_make)
         )
         return 1
+
+    if jobs <= 0:
+        jobs = multiprocessing.cpu_count() * 2
 
     if args is None:
         # Error will have been reported.
@@ -1559,39 +1640,49 @@ def run_edits_on_directory(
         print(" ", c)
     del args_orig_len
 
-    for i, edit_to_apply in enumerate(edits_to_apply):
-        print("Applying edit:", edit_to_apply, "({:d} of {:d})".format(i + 1, len(edits_to_apply)))
-        edit_generator_class = edit_class_from_id(edit_to_apply)
+    if jobs > 1:
+        # Group edits to avoid one file holding up the queue before other edits can be worked on.
+        # Custom setup/tear-down functions still block though.
+        edits_to_apply_grouped = edit_group_compatible(edits_to_apply)
+    else:
+        # No significant advantage in grouping, split each into a group of one for simpler debugging/execution.
+        edits_to_apply_grouped = [[edit] for edit in edits_to_apply]
+
+    for i, edits_group in enumerate(edits_to_apply_grouped):
+        print("Applying edit:", edits_group, "(%d of %d)" % (i + 1, len(edits_to_apply_grouped)))
+        edit_generator_class = edit_class_from_id(edits_group[0])
 
         shared_edit_data = edit_generator_class.setup()
 
         try:
-            if USE_MULTIPROCESS:
+            if jobs > 1:
                 args_expanded = [(
                     c,
                     output_from_build_args(build_args, build_cwd),
                     build_args,
                     build_cwd,
-                    edit_to_apply,
                     skip_test,
+                    verbose_compile,
+                    verbose_edit_actions,
                     shared_edit_data,
+                    edits_group,
                 ) for (c, build_args, build_cwd) in args_with_cwd]
-                import multiprocessing
-                job_total = multiprocessing.cpu_count()
-                pool = multiprocessing.Pool(processes=job_total * 2)
-                pool.starmap(wash_source_with_edits, args_expanded)
+                pool = multiprocessing.Pool(processes=jobs)
+                pool.starmap(wash_source_with_edit_list, args_expanded)
                 del args_expanded
             else:
                 # now we have commands
                 for c, build_args, build_cwd in args_with_cwd:
-                    wash_source_with_edits(
+                    wash_source_with_edit_list(
                         c,
                         output_from_build_args(build_args, build_cwd),
                         build_args,
                         build_cwd,
-                        edit_to_apply,
                         skip_test,
+                        verbose_compile,
+                        verbose_edit_actions,
                         shared_edit_data,
+                        edits_group,
                     )
         except Exception as ex:
             raise ex
@@ -1603,9 +1694,9 @@ def run_edits_on_directory(
 
 
 def create_parser(edits_all: Sequence[str]) -> argparse.ArgumentParser:
-    from textwrap import indent, dedent
+    from textwrap import indent
 
-    # Create docstring for edits.
+    # Create doc-string for edits.
     edits_all_docs = []
     for edit in edits_all:
         # `%` -> `%%` is needed for `--help` not to interpret these as formatting arguments.
@@ -1613,6 +1704,17 @@ def create_parser(edits_all: Sequence[str]) -> argparse.ArgumentParser:
             "  %s\n%s" % (
                 edit,
                 indent(edit_docstring_from_id(edit).replace("%", "%%"), '    '),
+            )
+        )
+
+    # Create doc-string for verbose.
+    verbose_all_docs = []
+    for verbose_id, verbose_doc in VERBOSE_INFO:
+        # `%` -> `%%` is needed for `--help` not to interpret these as formatting arguments.
+        verbose_all_docs.append(
+            "  %s\n%s" % (
+                verbose_id,
+                indent(verbose_doc.replace("%", "%%"), "    "),
             )
         )
 
@@ -1641,6 +1743,16 @@ def create_parser(edits_all: Sequence[str]) -> argparse.ArgumentParser:
         required=True,
     )
     parser.add_argument(
+        "--verbose",
+        dest="verbose",
+        default="",
+        help=(
+            "Specify verbose actions.\n\n" +
+            "\n".join(verbose_all_docs) + "\n"
+            "Multiple verbose types may be passed at once (comma separated, no spaces)."),
+        required=False,
+    )
+    parser.add_argument(
         "--skip-test",
         dest="skip_test",
         default=False,
@@ -1648,6 +1760,17 @@ def create_parser(edits_all: Sequence[str]) -> argparse.ArgumentParser:
         help=(
             "Perform all edits without testing if they perform functional changes. "
             "Use to quickly preview edits, or to perform edits which are manually checked (default=False)"
+        ),
+        required=False,
+    )
+    parser.add_argument(
+        "--jobs",
+        dest="jobs",
+        type=int,
+        default=0,
+        help=(
+            "The number of processes to use. "
+            "Defaults to zero which detects the available cores, 1 is single threaded (useful for debugging)."
         ),
         required=False,
     )
@@ -1677,13 +1800,43 @@ def main() -> int:
 
     for edit in edits_all_from_args:
         if edit not in edits_all:
-            print("Error, unrecognized '--edits' argument '{:s}', expected a value in {{{:s}}}".format(
+            print("Error, unrecognized '--edits' argument '%s', expected a value in {%s}" % (
                 edit,
                 ", ".join(edits_all),
             ))
             return 1
 
-    return run_edits_on_directory(build_dir, regex_list, edits_all_from_args, args.skip_test)
+    verbose_all = [verbose_id for verbose_id, _ in VERBOSE_INFO]
+    verbose_compile = False
+    verbose_edit_actions = False
+    verbose_all_from_args = args.verbose.split(",") if args.verbose else []
+    while verbose_all_from_args:
+        match (verbose_id := verbose_all_from_args.pop()):
+            case "compile":
+                verbose_compile = True
+            case "edit_actions":
+                verbose_edit_actions = True
+            case _:
+                print("Error, unrecognized '--verbose' argument '%s', expected a value in {%s}" % (
+                    verbose_id,
+                    ", ".join(verbose_all),
+                ))
+                return 1
+
+    if len(edits_all_from_args) > 1:
+        for edit in edits_all:
+            if edit not in edits_all_from_args:
+                print("Skipping edit:", edit)
+
+    return run_edits_on_directory(
+        build_dir=build_dir,
+        regex_list=regex_list,
+        edits_to_apply=edits_all_from_args,
+        skip_test=args.skip_test,
+        jobs=args.jobs,
+        verbose_compile=verbose_compile,
+        verbose_edit_actions=verbose_edit_actions,
+    )
 
 
 if __name__ == "__main__":

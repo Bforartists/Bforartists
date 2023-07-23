@@ -8,7 +8,6 @@ set(INC
   metal
   opengl
   vulkan
-  ../bmesh
   ../draw
   ../imbuf
   ../makesrna
@@ -27,7 +26,6 @@ set(INC
   # For node muting stuff.
   ../nodes
 
-  ../../../intern/clog
   ../../../intern/ghost
   ../../../intern/mantaflow/extern
 )
@@ -316,9 +314,11 @@ set(METAL_SRC
 set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::bmesh
   PRIVATE bf::dna
   PRIVATE bf::intern::atomic
   ${Epoxy_LIBRARIES}
+  PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
 )
 

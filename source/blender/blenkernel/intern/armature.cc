@@ -6,12 +6,12 @@
  * \ingroup bke
  */
 
-#include <ctype.h>
-#include <float.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cctype>
+#include <cfloat>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "MEM_guardedalloc.h"
 
@@ -1393,7 +1393,7 @@ int BKE_pchan_bbone_spline_compute(BBoneSplineParameters *param,
   const float log_scale_out_len = logf(param->scale_out[1]);
 
   for (int i = 0; i < param->segments; i++) {
-    const float fac = (float(i)) / (param->segments - 1);
+    const float fac = float(i) / (param->segments - 1);
     segment_scales[i] = expf(interpf(log_scale_out_len, log_scale_in_len, fac));
   }
 
@@ -1429,7 +1429,7 @@ int BKE_pchan_bbone_spline_compute(BBoneSplineParameters *param,
     for (int a = 1; a < param->segments; a++) {
       evaluate_cubic_bezier(bezt_controls, bezt_points[a], cur, axis);
 
-      float fac = (float(a)) / param->segments;
+      float fac = float(a) / param->segments;
       float roll = interpf(roll2, roll1, fac);
       float scalex = interpf(param->scale_out[0], param->scale_in[0], fac);
       float scalez = interpf(param->scale_out[2], param->scale_in[2], fac);
@@ -1907,8 +1907,8 @@ void BKE_armature_mat_pose_to_bone_ex(Depsgraph *depsgraph,
 {
   bPoseChannel work_pchan = blender::dna::shallow_copy(*pchan);
 
-  /* recalculate pose matrix with only parent transformations,
-   * bone loc/sca/rot is ignored, scene and frame are not used. */
+  /* Recalculate pose matrix with only parent transformations,
+   * bone location/scale/rotation is ignored, scene and frame are not used. */
   BKE_pose_where_is_bone(depsgraph, nullptr, ob, &work_pchan, 0.0f, false);
 
   /* Find the matrix, need to remove the bone transforms first so this is calculated
@@ -2611,7 +2611,7 @@ void BKE_pose_where_is(Depsgraph *depsgraph, Scene *scene, Object *ob)
       }
       /* 5. otherwise just call the normal solver */
       else if (!(pchan->flag & POSE_DONE)) {
-        BKE_pose_where_is_bone(depsgraph, scene, ob, pchan, ctime, 1);
+        BKE_pose_where_is_bone(depsgraph, scene, ob, pchan, ctime, true);
       }
     }
     /* 6. release the IK tree */
