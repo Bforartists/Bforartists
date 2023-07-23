@@ -307,7 +307,7 @@ void SEQUENCER_OT_gap_remove(wmOperatorType *ot)
   /* Flags. */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  RNA_def_boolean(ot->srna, "all", 0, "All Gaps", "Do all gaps to right of current frame");
+  RNA_def_boolean(ot->srna, "all", false, "All Gaps", "Do all gaps to right of current frame");
 }
 
 /** \} */
@@ -916,7 +916,7 @@ void SEQUENCER_OT_mute(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   RNA_def_boolean(
-      ot->srna, "unselected", 0, "Unselected", "Mute unselected rather than selected strips");
+      ot->srna, "unselected", false, "Unselected", "Mute unselected rather than selected strips");
 }
 
 /** \} */
@@ -971,8 +971,11 @@ void SEQUENCER_OT_unmute(wmOperatorType *ot)
   /* Flags. */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  RNA_def_boolean(
-      ot->srna, "unselected", 0, "Unselected", "Unmute unselected rather than selected strips");
+  RNA_def_boolean(ot->srna,
+                  "unselected",
+                  false,
+                  "Unselected",
+                  "Unmute unselected rather than selected strips");
 }
 
 /** \} */
@@ -1097,7 +1100,7 @@ void SEQUENCER_OT_reload(wmOperatorType *ot)
 
   prop = RNA_def_boolean(ot->srna,
                          "adjust_length",
-                         0,
+                         false,
                          "Adjust Length",
                          "Adjust length of strips to their data length");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
@@ -1112,7 +1115,7 @@ void SEQUENCER_OT_reload(wmOperatorType *ot)
 static bool sequencer_refresh_all_poll(bContext *C)
 {
   if (G.is_rendering) {
-    return 0;
+    return false;
   }
   return sequencer_edit_poll(C);
 }
@@ -1298,11 +1301,11 @@ static bool sequencer_effect_poll(bContext *C)
   if (ed) {
     Sequence *last_seq = SEQ_select_active_get(scene);
     if (last_seq && (last_seq->type & SEQ_TYPE_EFFECT)) {
-      return 1;
+      return true;
     }
   }
 
-  return 0;
+  return false;
 }
 
 void SEQUENCER_OT_reassign_inputs(wmOperatorType *ot)
@@ -1601,7 +1604,7 @@ void SEQUENCER_OT_split(wmOperatorType *ot)
 
   RNA_def_boolean(ot->srna,
                   "use_cursor_position",
-                  0,
+                  false,
                   "Use Cursor Position",
                   "Split at position of the cursor instead of current frame");
 
@@ -2167,7 +2170,7 @@ static bool sequencer_strip_jump_poll(bContext *C)
 {
   /* Prevent changes during render. */
   if (G.is_rendering) {
-    return 0;
+    return false;
   }
 
   return sequencer_edit_poll(C);

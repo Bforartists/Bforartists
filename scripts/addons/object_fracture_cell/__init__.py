@@ -76,11 +76,9 @@ def main_object(context, collection, obj, level, **kw):
 
     # must apply after boolean.
     if use_recenter:
-        bpy.ops.object.origin_set(
-            {"selected_editable_objects": objects},
-            type='ORIGIN_GEOMETRY',
-            center='MEDIAN',
-        )
+        context_override = {"selected_editable_objects": objects}
+        with bpy.context.temp_override(**context_override):
+            bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
 
     # ----------
     # Recursion

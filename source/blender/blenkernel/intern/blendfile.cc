@@ -9,8 +9,8 @@
  * and functions for writing *partial* files (only selected data-blocks).
  */
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #include "MEM_guardedalloc.h"
 
@@ -152,12 +152,12 @@ static bool blendfile_or_libraries_versions_atleast(Main *bmain,
                                                     const short versionfile,
                                                     const short subversionfile)
 {
-  if (!MAIN_VERSION_ATLEAST(bmain, versionfile, subversionfile)) {
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, versionfile, subversionfile)) {
     return false;
   }
 
   LISTBASE_FOREACH (Library *, library, &bmain->libraries) {
-    if (!MAIN_VERSION_ATLEAST(library, versionfile, subversionfile)) {
+    if (!MAIN_VERSION_FILE_ATLEAST(library, versionfile, subversionfile)) {
       return false;
     }
   }
