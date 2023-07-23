@@ -6,8 +6,8 @@
  * \ingroup spgraph
  */
 
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 
 #include "DNA_scene_types.h"
 
@@ -342,11 +342,8 @@ static void GRAPH_OT_hide(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* props */
-  RNA_def_boolean(ot->srna,
-                  "unselected",
-                  0,
-                  "Unselected",
-                  "Unselected\nHide unselected rather than selected curves");
+  RNA_def_boolean(
+      ot->srna, "unselected", false, "Unselected", "Unselected\nHide unselected rather than selected curves");
 }
 
 /* ........ */

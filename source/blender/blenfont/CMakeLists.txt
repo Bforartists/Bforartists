@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(INC
-  .
-  ../blentranslation
+  PUBLIC .
   ../gpu
   ../imbuf
   ../makesrna
@@ -15,14 +14,14 @@ set(INC_SYS
 )
 
 set(SRC
-  intern/blf.c
-  intern/blf_default.c
-  intern/blf_dir.c
-  intern/blf_font.c
-  intern/blf_font_default.c
-  intern/blf_glyph.c
-  intern/blf_thumbs.c
-  intern/blf_util.c
+  intern/blf.cc
+  intern/blf_default.cc
+  intern/blf_dir.cc
+  intern/blf_font.cc
+  intern/blf_font_default.cc
+  intern/blf_glyph.cc
+  intern/blf_thumbs.cc
+  intern/blf_util.cc
 
   BLF_api.h
   intern/blf_internal.h
@@ -32,6 +31,7 @@ set(SRC
 set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blentranslation
   PRIVATE bf::dna
   bf_gpu
   PRIVATE bf::intern::guardedalloc
@@ -54,3 +54,4 @@ endif()
 
 
 blender_add_lib(bf_blenfont "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+add_library(bf::blenfont ALIAS bf_blenfont)
