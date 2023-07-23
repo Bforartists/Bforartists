@@ -210,7 +210,11 @@ class UI_OT_i18n_updatetranslation_svn_trunk(Operator):
             if uid and uid not in stats:
                 po = utils_i18n.I18nMessages(uid=uid, kind='PO', src=po_path, settings=self.settings)
                 stats[uid] = po.nbr_trans_msgs / po.nbr_msgs if po.nbr_msgs > 0 else 0
-        utils_languages_menu.gen_menu_file(stats, self.settings)
+        languages_menu_lines = utils_languages_menu.gen_menu_file(stats, self.settings)
+        with open(os.path.join(self.settings.TRUNK_MO_DIR, self.settings.LANGUAGES_FILE), 'w', encoding="utf8") as f:
+            f.write("\n".join(languages_menu_lines))
+        with open(os.path.join(self.settings.GIT_I18N_ROOT, self.settings.LANGUAGES_FILE), 'w', encoding="utf8") as f:
+            f.write("\n".join(languages_menu_lines))
         context.window_manager.progress_end()
 
         return {'FINISHED'}

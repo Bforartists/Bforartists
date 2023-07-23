@@ -6,9 +6,9 @@
  * \ingroup bke
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -229,7 +229,7 @@ static void ptcache_softbody_interpolate(int index,
   mul_v3_fl(keys[1].vel, dfra);
   mul_v3_fl(keys[2].vel, dfra);
 
-  psys_interpolate_particle(-1, keys, (cfra - cfra1) / dfra, keys, 1);
+  psys_interpolate_particle(-1, keys, (cfra - cfra1) / dfra, keys, true);
 
   mul_v3_fl(keys->vel, 1.0f / dfra);
 
@@ -450,7 +450,7 @@ static void ptcache_particle_interpolate(int index,
   mul_v3_fl(keys[1].vel, dfra * timestep);
   mul_v3_fl(keys[2].vel, dfra * timestep);
 
-  psys_interpolate_particle(-1, keys, (cfra - cfra1) / dfra, &pa->state, 1);
+  psys_interpolate_particle(-1, keys, (cfra - cfra1) / dfra, &pa->state, true);
   interp_qt_qtqt(pa->state.rot, keys[1].rot, keys[2].rot, (cfra - cfra1) / dfra);
 
   mul_v3_fl(pa->state.vel, 1.0f / (dfra * timestep));
@@ -599,7 +599,7 @@ static void ptcache_cloth_interpolate(int index,
   mul_v3_fl(keys[1].vel, dfra);
   mul_v3_fl(keys[2].vel, dfra);
 
-  psys_interpolate_particle(-1, keys, (cfra - cfra1) / dfra, keys, 1);
+  psys_interpolate_particle(-1, keys, (cfra - cfra1) / dfra, keys, true);
 
   mul_v3_fl(keys->vel, 1.0f / dfra);
 
@@ -2600,7 +2600,7 @@ void BKE_ptcache_id_clear(PTCacheID *pid, int mode, uint cfra)
 
   /* mode is same as fopen's modes */
   DIR *dir;
-  struct dirent *de;
+  dirent *de;
   char path[MAX_PTCACHE_PATH];
   char filepath[MAX_PTCACHE_FILE];
   char path_full[MAX_PTCACHE_FILE];
@@ -2830,7 +2830,7 @@ void BKE_ptcache_id_time(
     if (pid->cache->flag & PTCACHE_DISK_CACHE) {
       /* mode is same as fopen's modes */
       DIR *dir;
-      struct dirent *de;
+      dirent *de;
       char path[MAX_PTCACHE_PATH];
       char filepath[MAX_PTCACHE_FILE];
       char ext[MAX_PTCACHE_FILE];
@@ -2838,7 +2838,7 @@ void BKE_ptcache_id_time(
 
       ptcache_path(pid, path);
 
-      len = ptcache_filepath(pid, filepath, int(cfra), 0, 0); /* no path */
+      len = ptcache_filepath(pid, filepath, int(cfra), false, false); /* no path */
 
       dir = opendir(path);
       if (dir == nullptr) {
@@ -3137,9 +3137,9 @@ void BKE_ptcache_quick_cache_all(Main *bmain, Scene *scene, ViewLayer *view_laye
   baker.bmain = bmain;
   baker.scene = scene;
   baker.view_layer = view_layer;
-  baker.bake = 0;
-  baker.render = 0;
-  baker.anim_init = 0;
+  baker.bake = false;
+  baker.render = false;
+  baker.anim_init = false;
   baker.quick_step = scene->physics_settings.quick_cache_step;
 
   BKE_ptcache_bake(&baker);
@@ -3157,11 +3157,11 @@ static void ptcache_dt_to_str(char *str, size_t str_maxncpy, double dtime)
                    int(dtime) % 60);
     }
     else {
-      BLI_snprintf(str, str_maxncpy, "%im %is", int(dtime / 60) % 60, (int(dtime)) % 60);
+      BLI_snprintf(str, str_maxncpy, "%im %is", int(dtime / 60) % 60, int(dtime) % 60);
     }
   }
   else {
-    BLI_snprintf(str, str_maxncpy, "%is", (int(dtime)) % 60);
+    BLI_snprintf(str, str_maxncpy, "%is", int(dtime) % 60);
   }
 }
 
@@ -3169,7 +3169,7 @@ void BKE_ptcache_bake(PTCacheBaker *baker)
 {
   Scene *scene = baker->scene;
   ViewLayer *view_layer = baker->view_layer;
-  struct Depsgraph *depsgraph = baker->depsgraph;
+  Depsgraph *depsgraph = baker->depsgraph;
   Scene *sce_iter; /* SETLOOPER macro only */
   Base *base;
   ListBase pidlist;
@@ -3512,7 +3512,7 @@ void BKE_ptcache_disk_cache_rename(PTCacheID *pid, const char *name_src, const c
   int len; /* store the length of the string */
   /* mode is same as fopen's modes */
   DIR *dir;
-  struct dirent *de;
+  dirent *de;
   char path[MAX_PTCACHE_PATH];
   char old_filepath[MAX_PTCACHE_FILE];
   char new_path_full[MAX_PTCACHE_FILE];
@@ -3574,7 +3574,7 @@ void BKE_ptcache_load_external(PTCacheID *pid)
 
   /* mode is same as fopen's modes */
   DIR *dir;
-  struct dirent *de;
+  dirent *de;
   char path[MAX_PTCACHE_PATH];
   char filepath[MAX_PTCACHE_FILE];
   char ext[MAX_PTCACHE_PATH];

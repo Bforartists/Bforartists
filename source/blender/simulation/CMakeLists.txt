@@ -5,7 +5,6 @@
 set(INC
   .
   intern
-  ../depsgraph
   ../functions
   ../imbuf
   ../makesrna
@@ -17,10 +16,10 @@ set(INC_SYS
 )
 
 set(SRC
-  intern/SIM_mass_spring.cpp
-  intern/hair_volume.cpp
-  intern/implicit_blender.c
-  intern/implicit_eigen.cpp
+  intern/SIM_mass_spring.cc
+  intern/hair_volume.cc
+  intern/implicit_blender.cc
+  intern/implicit_eigen.cc
 
   intern/ConstrainedConjugateGradient.h
   intern/eigen_utils.h
@@ -32,6 +31,7 @@ set(SRC
 set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::intern::guardedalloc
 )

@@ -6,8 +6,8 @@
  * \ingroup edscr
  */
 
-#include <math.h>
-#include <string.h>
+#include <cmath>
+#include <cstring>
 
 #include "MEM_guardedalloc.h"
 
@@ -687,8 +687,7 @@ bool ED_operator_editmball(bContext *C)
 
 bool ED_operator_camera_poll(bContext *C)
 {
-  struct Camera *cam = static_cast<Camera *>(
-      CTX_data_pointer_get_type(C, "camera", &RNA_Camera).data);
+  Camera *cam = static_cast<Camera *>(CTX_data_pointer_get_type(C, "camera", &RNA_Camera).data);
   return (cam != nullptr && !ID_IS_LINKED(cam));
 }
 
@@ -1429,6 +1428,13 @@ static void SCREEN_OT_area_swap(wmOperatorType *ot)
  * Create new window from area.
  * \{ */
 
+/** Callback for #WM_window_open to setup the area's data. */
+static void area_dupli_fn(bScreen * /*screen*/, ScrArea *area, void *user_data)
+{
+  ScrArea *area_src = static_cast<ScrArea *>(user_data);
+  ED_area_data_copy(area, area_src, true);
+};
+
 /* operator callback */
 static int area_dupli_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
@@ -1442,25 +1448,27 @@ static int area_dupli_invoke(bContext *C, wmOperator *op, const wmEvent *event)
     area = sad->sa1;
   }
 
+  const rcti window_rect = {
+      /*xmin*/ area->totrct.xmin,
+      /*xmax*/ area->totrct.xmin + area->winx,
+      /*ymin*/ area->totrct.ymin,
+      /*ymax*/ area->totrct.ymin + area->winy,
+  };
+
   /* Create new window. No need to set space_type since it will be copied over. */
   wmWindow *newwin = WM_window_open(C,
                                     "Bforartists",
-                                    area->totrct.xmin,
-                                    area->totrct.ymin,
-                                    area->winx,
-                                    area->winy,
+                                    &window_rect,
                                     SPACE_EMPTY,
                                     false,
                                     false,
                                     false,
-                                    WIN_ALIGN_ABSOLUTE);
+                                    WIN_ALIGN_ABSOLUTE,
+                                    /* Initialize area from callback. */
+                                    area_dupli_fn,
+                                    (void *)area);
 
   if (newwin) {
-    /* copy area to new screen */
-    bScreen *newsc = WM_window_get_active_screen(newwin);
-    ED_area_data_copy((ScrArea *)newsc->areabase.first, area, true);
-    ED_area_tag_redraw((ScrArea *)newsc->areabase.first);
-
     /* screen, areas init */
     WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
   }
@@ -2800,7 +2808,7 @@ static void region_scale_toggle_hidden(bContext *C, RegionMoveData *rmd)
     UI_view2d_curRect_validate(&rmd->region->v2d);
   }
 
-  region_toggle_hidden(C, rmd->region, 0);
+  region_toggle_hidden(C, rmd->region, false);
   region_scale_validate_size(rmd);
 
   if ((rmd->region->flag & RGN_FLAG_HIDDEN) == 0) {
@@ -2810,7 +2818,7 @@ static void region_scale_toggle_hidden(bContext *C, RegionMoveData *rmd)
         if ((region_tool_header->flag & RGN_FLAG_HIDDEN_BY_USER) == 0 &&
             (region_tool_header->flag & RGN_FLAG_HIDDEN) != 0)
         {
-          region_toggle_hidden(C, region_tool_header, 0);
+          region_toggle_hidden(C, region_tool_header, false);
         }
       }
     }
@@ -3111,7 +3119,8 @@ static void SCREEN_OT_frame_jump(wmOperatorType *ot)
   ot->undo_group = "Frame Change";
 
   /* rna */
-  RNA_def_boolean(ot->srna, "end", 0, "Last Frame", "Jump to the last frame of the frame range");
+  RNA_def_boolean(
+      ot->srna, "end", false, "Last Frame", "Jump to the last frame of the frame range");
 }
 
 /** \} */
@@ -3137,7 +3146,7 @@ static int keyframe_jump_exec(bContext *C, wmOperator *op)
   const float cfra = BKE_scene_frame_get(scene);
 
   /* Initialize binary-tree-list for getting keyframes. */
-  struct AnimKeylist *keylist = ED_keylist_create();
+  AnimKeylist *keylist = ED_keylist_create();
 
   /* Speed up dummy dope-sheet context with flags to perform necessary filtering. */
   if ((scene->flag & SCE_KEYS_NO_SELONLY) == 0) {
@@ -4243,7 +4252,7 @@ static bool region_flip_poll(bContext *C)
   /* Don't flip anything around in top-bar. */
   if (area && area->spacetype == SPACE_TOPBAR) {
     CTX_wm_operator_poll_msg_set(C, "Flipping regions in the Top-bar is not allowed");
-    return 0;
+    return false;
   }
 
   return ED_operator_areaactive(C);
@@ -4600,7 +4609,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /
     }
 
     ARegion *region_header = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
-    uiLayout *col = uiLayoutColumn(layout, 0);
+    uiLayout *col = uiLayoutColumn(layout, false);
     uiLayoutSetActive(col, (region_header->flag & RGN_FLAG_HIDDEN) == 0);
 
     if (BKE_area_find_region_type(area, RGN_TYPE_TOOL_HEADER)) {
@@ -4873,7 +4882,7 @@ static bool match_region_with_redraws(const ScrArea *area,
         }
         break;
       case SPACE_SPREADSHEET:
-        if ((redraws & TIME_SPREADSHEETS)) {
+        if (redraws & TIME_SPREADSHEETS) {
           return true;
         }
         break;
@@ -5306,9 +5315,9 @@ static void SCREEN_OT_animation_play(wmOperatorType *ot)
   ot->poll = ED_operator_screenactive_norender;
 
   prop = RNA_def_boolean(
-      ot->srna, "reverse", 0, "Play in Reverse", "Animation is played backwards");
+      ot->srna, "reverse", false, "Play in Reverse", "Animation is played backwards");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
-  prop = RNA_def_boolean(ot->srna, "sync", 0, "Sync", "Drop frames to maintain framerate");
+  prop = RNA_def_boolean(ot->srna, "sync", false, "Sync", "Drop frames to maintain framerate");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -5491,18 +5500,24 @@ static int userpref_show_exec(bContext *C, wmOperator *op)
     RNA_property_update(C, &pref_ptr, active_section_prop);
   }
 
+  const rcti window_rect = {
+      /*xmin*/ event->xy[0],
+      /*xmax*/ event->xy[0] + sizex,
+      /*ymin*/ event->xy[1],
+      /*ymax*/ event->xy[1] + sizey,
+  };
+
   /* changes context! */
   if (WM_window_open(C,
-                     IFACE_("Preferences"), /*bfa - preferences, not blender preferences*/
-                     event->xy[0],
-                     event->xy[1],
-                     sizex,
-                     sizey,
+                     IFACE_("Bforartists Preferences"),
+                     &window_rect,
                      SPACE_USERPREF,
                      false,
                      false,
                      true,
-                     WIN_ALIGN_LOCATION_CENTER) != nullptr)
+                     WIN_ALIGN_LOCATION_CENTER,
+                     nullptr,
+                     nullptr) != nullptr)
   {
     /* The header only contains the editor switcher and looks empty.
      * So hiding in the temp window makes sense. */
@@ -5564,18 +5579,24 @@ static int drivers_editor_show_exec(bContext *C, wmOperator *op)
   PropertyRNA *prop;
   uiBut *but = UI_context_active_but_prop_get(C, &ptr, &prop, &index);
 
+  const rcti window_rect = {
+      /*xmin*/ event->xy[0],
+      /*xmax*/ event->xy[0] + sizex,
+      /*ymin*/ event->xy[1],
+      /*ymax*/ event->xy[1] + sizey,
+  };
+
   /* changes context! */
   if (WM_window_open(C,
                      IFACE_("Bforartists Drivers Editor"),
-                     event->xy[0],
-                     event->xy[1],
-                     sizex,
-                     sizey,
+                     &window_rect,
                      SPACE_GRAPH,
                      false,
                      false,
                      true,
-                     WIN_ALIGN_LOCATION_CENTER) != nullptr)
+                     WIN_ALIGN_LOCATION_CENTER,
+                     nullptr,
+                     nullptr) != nullptr)
   {
     ED_drivers_editor_init(C, CTX_wm_area(C));
 
@@ -5635,22 +5656,30 @@ static int info_log_show_exec(bContext *C, wmOperator *op)
   wmWindow *win_cur = CTX_wm_window(C);
   /* Use eventstate, not event from _invoke, so this can be called through exec(). */
   const wmEvent *event = win_cur->eventstate;
+  const int shift_y = 480;
+  const int mx = event->xy[0];
+  const int my = event->xy[1] + shift_y;
   int sizex = 900 * UI_SCALE_FAC;
   int sizey = 580 * UI_SCALE_FAC;
-  int shift_y = 480;
+
+  const rcti window_rect = {
+      /*xmin*/ mx,
+      /*xmax*/ mx + sizex,
+      /*ymin*/ my,
+      /*ymax*/ my + sizey,
+  };
 
   /* changes context! */
   if (WM_window_open(C,
                      IFACE_("Bforartists Info Log"),
-                     event->xy[0],
-                     event->xy[1] + shift_y,
-                     sizex,
-                     sizey,
+                     &window_rect,
                      SPACE_INFO,
                      false,
                      false,
                      true,
-                     WIN_ALIGN_LOCATION_CENTER) != nullptr)
+                     WIN_ALIGN_LOCATION_CENTER,
+                     nullptr,
+                     nullptr) != nullptr)
   {
     return OPERATOR_FINISHED;
   }

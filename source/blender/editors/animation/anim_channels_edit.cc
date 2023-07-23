@@ -6,9 +6,9 @@
  * \ingroup edanimation
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "MEM_guardedalloc.h"
 
@@ -995,7 +995,7 @@ static const EnumPropertyItem prop_animchannel_rearrange_types[] = {
 
 /* Island definition - just a listbase container */
 struct tReorderChannelIsland {
-  struct tReorderChannelIsland *next, *prev;
+  tReorderChannelIsland *next, *prev;
 
   ListBase channels; /* channels within this region with the same state */
   int flag;          /* eReorderIslandFlag */
@@ -2533,7 +2533,7 @@ static void ANIM_OT_channels_expand(wmOperatorType *ot)
 
   /* props */
   ot->prop = RNA_def_boolean(
-      ot->srna, "all", 1, "All", "Expand all channels (not just selected ones)");
+      ot->srna, "all", true, "All", "Expand all channels (not just selected ones)");
 }
 
 /** \} */

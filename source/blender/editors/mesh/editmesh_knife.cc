@@ -114,7 +114,7 @@ struct KnifeVert {
 };
 
 struct Ref {
-  struct Ref *next, *prev;
+  Ref *next, *prev;
   void *ref;
 };
 
@@ -1899,7 +1899,7 @@ static void knife_join_edge(KnifeEdge *newkfe, KnifeEdge *kfe)
 static void knife_start_cut(KnifeTool_OpData *kcd)
 {
   kcd->prev = kcd->curr;
-  kcd->curr.is_space = 0; /* TODO: Why do we do this? */
+  kcd->curr.is_space = false; /* TODO: Why do we do this? */
   kcd->mdata.is_stored = false;
 
   if (kcd->prev.vert == nullptr && kcd->prev.edge == nullptr) {
@@ -3064,8 +3064,8 @@ static void knife_find_line_hits(KnifeTool_OpData *kcd)
   {
 
     /* If we intersect any of the vertices, don't attempt to intersect the edge. */
-    if (BLI_smallhash_lookup(&kfvs, (intptr_t)kfe->v1) ||
-        BLI_smallhash_lookup(&kfvs, (intptr_t)kfe->v2))
+    if (BLI_smallhash_lookup(&kfvs, intptr_t(kfe->v1)) ||
+        BLI_smallhash_lookup(&kfvs, intptr_t(kfe->v2)))
     {
       continue;
     }
