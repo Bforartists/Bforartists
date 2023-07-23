@@ -6396,7 +6396,7 @@ static void def_sh_script(StructRNA *srna)
   RNA_def_function_flag(func, FUNC_USE_SELF_ID);
   parm = RNA_def_string(func, "name", nullptr, 0, "Name", "");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  parm = RNA_def_enum(func, "type", node_socket_type_items, SOCK_FLOAT, "Type", "");
+  parm = RNA_def_enum(func, "type", rna_enum_node_socket_type_items, SOCK_FLOAT, "Type", "");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   /*parm =*/RNA_def_boolean(func, "is_output", false, "Output", "Whether the socket is an output");
   parm = RNA_def_pointer(func, "result", "NodeSocket", "", "");
