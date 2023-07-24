@@ -117,12 +117,13 @@ def register():
 
     # Register Keymap
     kc = bpy.context.window_manager.keyconfigs.addon
-    km = kc.keymaps.new(name='Text', space_type='TEXT_EDITOR')
-    kmi = km.keymap_items.new('wm.call_panel', 'RIGHTMOUSE', 'PRESS',
-        ctrl=False, alt=False, shift=True, repeat=False)
-    kmi.properties.name = 'BFA_PT_FIND_AND_REPLACE'
-    kmi.properties.keep_open = True
-    addon_keymaps['C5E0F'] = (km, kmi)
+    if kc:
+        km = kc.keymaps.new(name='Text', space_type='TEXT_EDITOR')
+        kmi = km.keymap_items.new('wm.call_panel', 'RIGHTMOUSE', 'PRESS',
+            ctrl=False, alt=False, shift=True, repeat=False)
+        kmi.properties.name = 'BFA_PT_FIND_AND_REPLACE'
+        kmi.properties.keep_open = True
+        addon_keymaps['C5E0F'] = (km, kmi)
 
 
 def unregister():
@@ -137,4 +138,3 @@ def unregister():
     addon_keymaps.clear()
 
     del bpy.types.Scene.bfa_show_properties
-
