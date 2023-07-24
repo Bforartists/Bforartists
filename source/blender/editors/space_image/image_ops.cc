@@ -2083,11 +2083,11 @@ void IMAGE_OT_save_as(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Save As Image";
   ot->idname = "IMAGE_OT_save_as";
-  ot->description = "Saves the image with another name and/or settings"; /*bfa - descriptions*/
+  ot->description = "Saves the image with another name and/or settings";
 
   /* api callbacks */
   ot->exec = image_save_as_exec;
-  ot->get_description = image_ot_save_as_get_description;
+  ot->get_description = image_ot_save_as_get_description;/*bfa - descriptions*/
   ot->check = image_save_as_check;
   ot->invoke = image_save_as_invoke;
   ot->cancel = image_save_as_cancel;

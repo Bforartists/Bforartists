@@ -1163,7 +1163,7 @@ static int actkeys_clean_exec(bContext *C, wmOperator *op)
 
   return OPERATOR_FINISHED;
 }
-
+/*bfa - description*/
 static char *action_ot_clean_get_description(bContext * /*C*/,
                                              wmOperatorType * /*ot*/,
                                              PointerRNA *ptr)
@@ -1185,7 +1185,7 @@ void ACTION_OT_clean(wmOperatorType *ot)
   /* api callbacks */
   // ot->invoke =  /* XXX we need that number popup for this! */
   ot->exec = actkeys_clean_exec;
-  ot->get_description = action_ot_clean_get_description;
+  ot->get_description = action_ot_clean_get_description;/*bfa - description*/
   ot->poll = ED_operator_action_active;
 
   /* flags */
