@@ -442,7 +442,7 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
     uiLayoutSetActive(row,
                       !(RNA_boolean_get(&strip_ptr, "use_animated_influence") ||
                         RNA_boolean_get(&strip_ptr, "use_animated_time")));
-        
+        /* bfa */
     row = uiLayoutRow(column, false);
     uiItemS(row);
     uiItemR(row, &strip_ptr, "use_reverse", 0, nullptr, ICON_NONE);
@@ -453,6 +453,7 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
 
     uiLayoutSetPropSep(layout, true);
     uiLayoutSetPropDecorate(layout, true);  }
+	/* end bfa */
 }
 
 /* action-clip only settings for active NLA-Strip */
