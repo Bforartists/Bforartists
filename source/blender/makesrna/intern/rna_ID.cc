@@ -292,7 +292,7 @@ void rna_ID_name_set(PointerRNA *ptr, const char *value)
   }
 }
 
-static int rna_ID_name_editable(PointerRNA *ptr, const char ** /*r_info*/)
+static int rna_ID_name_editable(PointerRNA *ptr, const char **UNUSED(r_info))
 {
   ID *id = (ID *)ptr->data;
 
@@ -625,19 +625,19 @@ IDProperty **rna_PropertyGroup_idprops(PointerRNA *ptr)
   return (IDProperty **)&ptr->data;
 }
 
-bool rna_PropertyGroup_unregister(Main * /*bmain*/, StructRNA *type)
+bool rna_PropertyGroup_unregister(Main *UNUSED(bmain), StructRNA *type)
 {
   RNA_struct_free(&BLENDER_RNA, type);
   return true;
 }
 
-StructRNA *rna_PropertyGroup_register(Main * /*bmain*/,
+StructRNA *rna_PropertyGroup_register(Main *UNUSED(bmain),
                                       ReportList *reports,
                                       void *data,
                                       const char *identifier,
                                       StructValidateFunc validate,
-                                      StructCallbackFunc /*call*/,
-                                      StructFreeFunc /*free*/)
+                                      StructCallbackFunc UNUSED(call),
+                                      StructFreeFunc UNUSED(free))
 {
   PointerRNA dummy_ptr;
 
@@ -835,7 +835,7 @@ static void rna_ID_override_template_create(ID *id, ReportList *reports)
 }
 
 static void rna_ID_override_library_operations_update(ID *id,
-                                                      IDOverrideLibrary * /*override_library*/,
+                                                      IDOverrideLibrary *UNUSED(override_library),
                                                       Main *bmain,
                                                       ReportList *reports)
 {
@@ -855,7 +855,7 @@ static void rna_ID_override_library_operations_update(ID *id,
 }
 
 static void rna_ID_override_library_reset(ID *id,
-                                          IDOverrideLibrary * /*override_library*/,
+                                          IDOverrideLibrary *UNUSED(override_library),
                                           Main *bmain,
                                           ReportList *reports,
                                           bool do_hierarchy,
@@ -877,7 +877,7 @@ static void rna_ID_override_library_reset(ID *id,
 }
 
 static void rna_ID_override_library_destroy(ID *id,
-                                            IDOverrideLibrary * /*override_library*/,
+                                            IDOverrideLibrary *UNUSED(override_library),
                                             Main *bmain,
                                             ReportList *reports,
                                             bool do_hierarchy)
@@ -1042,7 +1042,7 @@ static void rna_ID_user_remap(ID *id, Main *bmain, ID *new_id)
   }
 }
 
-static ID *rna_ID_make_local(ID *self, Main *bmain, bool /*clear_proxy*/)
+static ID *rna_ID_make_local(ID *self, Main *bmain, bool UNUSED(clear_proxy))
 {
   if (ID_IS_LINKED(self)) {
     BKE_lib_id_make_local(bmain, self, 0);
