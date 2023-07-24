@@ -42,6 +42,10 @@
 
 static float dist_to_crns(const float co[2], const float pos[2], const float crns[4][2]);
 
+/* -------------------------------------------------------------------- */
+/** \name Point track marker picking.
+ * \{ */
+
 BLI_INLINE PointTrackPick point_track_pick_make_null()
 {
   PointTrackPick pick = {nullptr};

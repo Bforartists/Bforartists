@@ -2709,6 +2709,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
         const char *identifier = RNA_property_identifier(prop);
         const char *group = nullptr;
 
+	/*bfa - if (all) put on top*/
         if (all) {
           /* -1 indicates operating on the entire array (or the property itself otherwise) */
           index = -1;
