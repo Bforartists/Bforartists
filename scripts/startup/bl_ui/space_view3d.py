@@ -4461,7 +4461,6 @@ class VIEW3D_MT_face_sets_init(Menu):
         layout.operator("sculpt.face_sets_init", text="By Edge Creases", icon="CREASE").mode = 'CREASES'
         layout.operator("sculpt.face_sets_init", text="By Edge Bevel Weight", icon="BEVEL").mode = 'BEVEL_WEIGHT'
         layout.operator("sculpt.face_sets_init", text="By Sharp Edges", icon="SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
-        layout.operator("sculpt.face_sets_init", text="By Face Maps", icon="FACE_MAPS").mode = 'FACE_MAPS'
 
 
 class VIEW3D_MT_random_mask(Menu):
