@@ -73,10 +73,7 @@ class NLA_HT_header(Header):
                 row.operator("nla.tweakmode_exit", text="Tweak", icon="ACTION_TWEAK")
                 row.label(icon="CHECKBOX_DEHLT", text="Isolate")
             else:
-                row.operator(
-                    "nla.tweakmode_enter",
-                    text="Tweak",
-                    icon="ACTION_TWEAK").use_upper_stack_evaluation = False
+                row.operator("nla.tweakmode_enter", text="Tweak", icon="ACTION_TWEAK").use_upper_stack_evaluation = True
                 row.prop(addon_prefs, "nla_tweak_isolate_action")
 
         ##########################
@@ -325,9 +322,17 @@ class NLA_MT_edit(Menu):
         layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")
 
         layout.separator()
+        # TODO: names of these tools for 'tweak-mode' need changing?      
+        if scene.is_nla_tweakmode:
+            layout.operator("nla.tweakmode_exit", text="Stop Tweaking Isolated Action", icon="ACTION_TWEAK_SOLO").isolate_action = True
+            layout.operator("nla.tweakmode_exit", text="Stop Tweaking Action", icon="ACTION_TWEAK_SOLO")
+        else:
+            layout.operator("nla.tweakmode_enter", text="Tweak Isolated Action", icon="ACTION_TWEAK_SOLO").isolate_action = True
+            layout.operator("nla.tweakmode_enter",
+                            text="Tweak Action (Full Stack)", icon="ACTION_TWEAK").use_upper_stack_evaluation = True
+            layout.operator("nla.tweakmode_enter",
+                            text="Tweak Action (Lower Stack)", icon="ACTION_TWEAK").use_upper_stack_evaluation = False
 
-        layout.operator("nla.tweakmode_enter", text="Tweak (Full Stack)",
-                        icon="ACTION_TWEAK").use_upper_stack_evaluation = True
 
 
 class NLA_MT_add(Menu):
@@ -402,19 +407,19 @@ class NLA_MT_context_menu(Menu):
         if scene.is_nla_tweakmode:
             layout.operator(
                 "nla.tweakmode_exit",
-                text="Stop Editing Stashed Action",
+                text="Stop Tweaking Isolated Action",
                 icon="ACTION_TWEAK_SOLO").isolate_action = True
-            layout.operator("nla.tweakmode_exit", text="Stop Tweaking Strip Actions", icon="ACTION_TWEAK")
+            layout.operator("nla.tweakmode_exit", text="Stop Tweaking Action", icon="ACTION_TWEAK")
         else:
             layout.operator(
                 "nla.tweakmode_enter",
-                text="Start Editing Stashed Action",
+                text="Tweak Isolated Action",
                 icon="ACTION_TWEAK_SOLO").isolate_action = True
             layout.operator("nla.tweakmode_enter",
-                            text="Start Tweaking Strip Actions (Full Stack)",
+                            text="Tweak Action (Full Stack)",
                             icon="ACTION_TWEAK").use_upper_stack_evaluation = True
             layout.operator("nla.tweakmode_enter",
-                            text="Start Tweaking Strip Actions (Lower Stack)",
+                            text="Tweak Action (Lower Stack)",
                             icon="ACTION_TWEAK").use_upper_stack_evaluation = False
 
         layout.separator()
