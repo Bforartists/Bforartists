@@ -36,8 +36,8 @@ from os import path as p
 bl_info = {
     "name": "Bforartists Default Asset Library",
     "author": "Draise",
-    "version": (1, 0, 0),
-    "blender": (3, 2, 1),
+    "version": (1, 0, 1),
+    "blender": (3, 5, 0),
     "location": "Asset Browser>Default Library",
     "description": "Adds a default library with complementary assets that you can use from the Asset Browser Editor",
     "warning": "This is the first iteration of the default asset library. Expect changes. Use at own risk.",
@@ -142,4 +142,4 @@ def unregister():
     try:
         bpy.app.timers.unregister(register_library)
     except Exception:
-        print("NOTICE: Default library has been unregistered.")
+        pass
