@@ -3001,7 +3001,7 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
-            props = col.operator("sculpt.dirty_mask", text='Dirty Mask', icon = "DIRTY_VERTEX")
+            props = col.operator("sculpt.mask_from_cavity", text='Mask from Cavity', icon = "DIRTY_VERTEX")
 
 
         # icon buttons
@@ -3066,7 +3066,7 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
 
                 row = col.row(align=True)
-                props = row.operator("sculpt.dirty_mask", text='', icon = "DIRTY_VERTEX")
+                props = row.operator("sculpt.mask_from_cavity", text='', icon = "DIRTY_VERTEX")
 
 
             elif column_count == 2:
@@ -3129,7 +3129,7 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
 
                 row = col.row(align=True)
-                props = row.operator("sculpt.dirty_mask", text='', icon = "DIRTY_VERTEX")
+                props = row.operator("sculpt.mask_from_cavity", text='', icon = "DIRTY_VERTEX")
 
             elif column_count == 1:
 
@@ -3193,7 +3193,7 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
 
-                props = col.operator("sculpt.dirty_mask", text='', icon = "DIRTY_VERTEX")
+                props = col.operator("sculpt.mask_from_cavity", text='', icon = "DIRTY_VERTEX")
 
 
 class VIEW3D_PT_masktab_random_mask(toolshelf_calculate, Panel):
