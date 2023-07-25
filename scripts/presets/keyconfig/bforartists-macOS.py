@@ -1,4 +1,4 @@
-keyconfig_version = (4, 0, 7)
+keyconfig_version = (4, 0, 11)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1890,6 +1890,7 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
@@ -4741,7 +4742,13 @@ keyconfig_data = \
        ],
       },
      ),
-    ("nla.tweakmode_enter", {"type": 'TAB', "value": 'PRESS'}, None),
+    ("nla.tweakmode_enter",
+     {"type": 'TAB', "value": 'PRESS'},
+     {"properties":
+      [("use_upper_stack_evaluation", True),
+       ],
+      },
+     ),
     ("nla.tweakmode_exit", {"type": 'TAB', "value": 'PRESS'}, None),
     ("nla.tweakmode_enter",
      {"type": 'TAB', "value": 'PRESS', "shift": True},
@@ -5691,7 +5698,7 @@ keyconfig_data = \
       },
      ),
     ("paint.face_select_loop",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "oskey": True, "alt": True},
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "alt": True, "oskey": True},
      {"properties":
       [("select", False),
        ("extend", True),
@@ -7008,7 +7015,15 @@ keyconfig_data = \
  ("Text",
   {"space_type": 'TEXT_EDITOR', "region_type": 'WINDOW'},
   {"items":
-   [("text.move",
+   [("wm.call_panel",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'BFA_PT_FIND_AND_REPLACE'),
+       ("keep_open", True),
+       ],
+      },
+     ),
+    ("text.move",
      {"type": 'LEFT_ARROW', "value": 'PRESS', "alt": True},
      {"properties":
       [("type", 'PREVIOUS_WORD'),
