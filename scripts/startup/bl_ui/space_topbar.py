@@ -762,7 +762,7 @@ class TOPBAR_PT_name(Panel):
             item = context.active_sequence_strip
             if item:
                 row = row_with_icon(layout, 'SEQUENCE')
-                row.prop(item, "label", text="")
+                row.prop(item, "name", text="")
                 found = True
         elif space_type == 'NODE_EDITOR':
             layout.label(text="Node Label")
