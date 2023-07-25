@@ -3412,7 +3412,6 @@ class VIEW3D_PT_facesetstab_init_facesets(toolshelf_calculate, Panel):
             col.operator("sculpt.face_sets_init", text='By Edge Creases', icon = "CREASE").mode = 'CREASES'
             col.operator("sculpt.face_sets_init", text='By Edge Bevel Weight', icon = "BEVEL").mode = 'BEVEL_WEIGHT'
             col.operator("sculpt.face_sets_init", text='By Sharp Edges', icon = "SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
-            col.operator("sculpt.face_sets_init", text='By Face Maps', icon = "FACE_MAPS").mode = 'FACE_MAPS'
 
         # icon buttons
         else:
@@ -3436,7 +3435,6 @@ class VIEW3D_PT_facesetstab_init_facesets(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("sculpt.face_sets_init", text='', icon = "BEVEL").mode = 'BEVEL_WEIGHT'
                 row.operator("sculpt.face_sets_init", text='', icon = "SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
-                row.operator("sculpt.face_sets_init", text='', icon = "FACE_MAPS").mode = 'FACE_MAPS'
 
             elif column_count == 2:
 
@@ -3456,9 +3454,6 @@ class VIEW3D_PT_facesetstab_init_facesets(toolshelf_calculate, Panel):
                 row.operator("sculpt.face_sets_init", text='', icon = "BEVEL").mode = 'BEVEL_WEIGHT'
                 row.operator("sculpt.face_sets_init", text='', icon = "SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
 
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_init", text='', icon = "FACE_MAPS").mode = 'FACE_MAPS'
-
             elif column_count == 1:
 
                 col.operator("sculpt.face_sets_init", text='', icon = "SELECT_LOOSE").mode = 'LOOSE_PARTS'
@@ -3469,7 +3464,6 @@ class VIEW3D_PT_facesetstab_init_facesets(toolshelf_calculate, Panel):
                 col.operator("sculpt.face_sets_init", text='', icon = "CREASE").mode = 'CREASES'
                 col.operator("sculpt.face_sets_init", text='', icon = "BEVEL").mode = 'BEVEL_WEIGHT'
                 col.operator("sculpt.face_sets_init", text='', icon = "SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
-                col.operator("sculpt.face_sets_init", text='', icon = "FACE_MAPS").mode = 'FACE_MAPS'
 
 
 class VIEW3D_PT_painttab_paint(toolshelf_calculate, Panel):
