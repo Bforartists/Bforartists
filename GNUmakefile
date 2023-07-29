@@ -174,7 +174,7 @@ BLENDER_IS_PYTHON_MODULE:=
 CMAKE_CONFIG_ARGS := $(BUILD_CMAKE_ARGS)
 
 ifndef BUILD_DIR
-	BUILD_DIR:=$(shell dirname "$(BLENDER_DIR)")/build_$(OS_NCASE)
+	BUILD_DIR:=$(shell dirname "$(BLENDER_DIR)")/bfa_build_$(OS_NCASE)
 endif
 
 # Dependencies DIR's
