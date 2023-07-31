@@ -180,40 +180,40 @@ static void mix_normals(const float mix_factor,
   MEM_SAFE_FREE(facs);
 }
 
-/* Check poly normals and new loop normals are compatible, otherwise flip polygons
- * (and invert matching poly normals). */
-static bool polygons_check_flip(blender::MutableSpan<int> corner_verts,
-                                blender::MutableSpan<int> corner_edges,
-                                blender::float3 *nos,
-                                CustomData *ldata,
-                                const blender::OffsetIndices<int> polys,
-                                const blender::Span<blender::float3> poly_normals)
+/* Check face normals and new loop normals are compatible, otherwise flip faces
+ * (and invert matching face normals). */
+static bool faces_check_flip(blender::MutableSpan<int> corner_verts,
+                             blender::MutableSpan<int> corner_edges,
+                             blender::float3 *nos,
+                             CustomData *ldata,
+                             const blender::OffsetIndices<int> faces,
+                             const blender::Span<blender::float3> face_normals)
 {
   MDisps *mdisp = static_cast<MDisps *>(
       CustomData_get_layer_for_write(ldata, CD_MDISPS, corner_verts.size()));
   bool flipped = false;
 
-  for (const int i : polys.index_range()) {
-    const blender::IndexRange poly = polys[i];
+  for (const int i : faces.index_range()) {
+    const blender::IndexRange face = faces[i];
     float norsum[3] = {0.0f};
 
-    for (const int64_t j : poly) {
+    for (const int64_t j : face) {
       add_v3_v3(norsum, nos[j]);
     }
     if (!normalize_v3(norsum)) {
       continue;
     }
 
-    /* If average of new loop normals is opposed to polygon normal, flip polygon. */
-    if (dot_v3v3(poly_normals[i], norsum) < 0.0f) {
-      BKE_mesh_polygon_flip_ex(poly.start(),
-                               poly.size(),
-                               corner_verts.data(),
-                               corner_edges.data(),
-                               ldata,
-                               reinterpret_cast<float(*)[3]>(nos),
-                               mdisp,
-                               true);
+    /* If average of new loop normals is opposed to face normal, flip face. */
+    if (dot_v3v3(face_normals[i], norsum) < 0.0f) {
+      BKE_mesh_face_flip_ex(face.start(),
+                            face.size(),
+                            corner_verts.data(),
+                            corner_edges.data(),
+                            ldata,
+                            reinterpret_cast<float(*)[3]>(nos),
+                            mdisp,
+                            true);
       flipped = true;
     }
   }
@@ -238,11 +238,11 @@ static void normalEditModifier_do_radial(NormalEditModifierData *enmd,
                                          blender::MutableSpan<bool> sharp_edges,
                                          blender::MutableSpan<int> corner_verts,
                                          blender::MutableSpan<int> corner_edges,
-                                         const blender::OffsetIndices<int> polys)
+                                         const blender::OffsetIndices<int> faces)
 {
   Object *ob_target = enmd->target;
 
-  const bool do_polynors_fix = (enmd->flag & MOD_NORMALEDIT_NO_POLYNORS_FIX) == 0;
+  const bool do_facenors_fix = (enmd->flag & MOD_NORMALEDIT_NO_POLYNORS_FIX) == 0;
 
   float(*cos)[3] = static_cast<float(*)[3]>(
       MEM_malloc_arrayN(size_t(vert_positions.size()), sizeof(*cos), __func__));
@@ -326,21 +326,21 @@ static void normalEditModifier_do_radial(NormalEditModifierData *enmd,
                 nos.data());
   }
 
-  if (do_polynors_fix &&
-      polygons_check_flip(
-          corner_verts, corner_edges, nos.data(), &mesh->ldata, polys, mesh->poly_normals()))
+  if (do_facenors_fix &&
+      faces_check_flip(
+          corner_verts, corner_edges, nos.data(), &mesh->loop_data, faces, mesh->face_normals()))
   {
     BKE_mesh_tag_face_winding_changed(mesh);
   }
   const bool *sharp_faces = static_cast<const bool *>(
-      CustomData_get_layer_named(&mesh->pdata, CD_PROP_BOOL, "sharp_face"));
+      CustomData_get_layer_named(&mesh->face_data, CD_PROP_BOOL, "sharp_face"));
   blender::bke::mesh::normals_loop_custom_set(vert_positions,
                                               edges,
-                                              polys,
+                                              faces,
                                               corner_verts,
                                               corner_edges,
                                               mesh->vert_normals(),
-                                              mesh->poly_normals(),
+                                              mesh->face_normals(),
                                               sharp_faces,
                                               sharp_edges,
                                               nos,
@@ -367,11 +367,11 @@ static void normalEditModifier_do_directional(NormalEditModifierData *enmd,
                                               blender::MutableSpan<bool> sharp_edges,
                                               blender::MutableSpan<int> corner_verts,
                                               blender::MutableSpan<int> corner_edges,
-                                              const blender::OffsetIndices<int> polys)
+                                              const blender::OffsetIndices<int> faces)
 {
   Object *ob_target = enmd->target;
 
-  const bool do_polynors_fix = (enmd->flag & MOD_NORMALEDIT_NO_POLYNORS_FIX) == 0;
+  const bool do_facenors_fix = (enmd->flag & MOD_NORMALEDIT_NO_POLYNORS_FIX) == 0;
   const bool use_parallel_normals = (enmd->flag & MOD_NORMALEDIT_USE_DIRECTION_PARALLEL) != 0;
 
   blender::Array<blender::float3> nos(corner_verts.size());
@@ -434,21 +434,21 @@ static void normalEditModifier_do_directional(NormalEditModifierData *enmd,
                 nos.data());
   }
 
-  if (do_polynors_fix &&
-      polygons_check_flip(
-          corner_verts, corner_edges, nos.data(), &mesh->ldata, polys, mesh->poly_normals()))
+  if (do_facenors_fix &&
+      faces_check_flip(
+          corner_verts, corner_edges, nos.data(), &mesh->loop_data, faces, mesh->face_normals()))
   {
     BKE_mesh_tag_face_winding_changed(mesh);
   }
   const bool *sharp_faces = static_cast<const bool *>(
-      CustomData_get_layer_named(&mesh->pdata, CD_PROP_BOOL, "sharp_face"));
+      CustomData_get_layer_named(&mesh->face_data, CD_PROP_BOOL, "sharp_face"));
   blender::bke::mesh::normals_loop_custom_set(positions,
                                               edges,
-                                              polys,
+                                              faces,
                                               corner_verts,
                                               corner_edges,
                                               mesh->vert_normals(),
-                                              mesh->poly_normals(),
+                                              mesh->face_normals(),
                                               sharp_faces,
                                               sharp_edges,
                                               nos,
@@ -520,7 +520,7 @@ static Mesh *normalEditModifier_do(NormalEditModifierData *enmd,
 
   const blender::Span<blender::float3> positions = result->vert_positions();
   const blender::Span<int2> edges = result->edges();
-  const OffsetIndices polys = result->polys();
+  const OffsetIndices faces = result->faces();
   blender::MutableSpan<int> corner_verts = result->corner_verts_for_write();
   blender::MutableSpan<int> corner_edges = result->corner_edges_for_write();
 
@@ -529,7 +529,7 @@ static Mesh *normalEditModifier_do(NormalEditModifierData *enmd,
 
   blender::Array<blender::float3> loop_normals;
 
-  CustomData *ldata = &result->ldata;
+  CustomData *ldata = &result->loop_data;
 
   bke::MutableAttributeAccessor attributes = result->attributes_for_write();
   bke::SpanAttributeWriter<bool> sharp_edges = attributes.lookup_or_add_for_write_span<bool>(
@@ -542,20 +542,20 @@ static Mesh *normalEditModifier_do(NormalEditModifierData *enmd,
         CustomData_get_layer_for_write(ldata, CD_CUSTOMLOOPNORMAL, corner_verts.size()));
     loop_normals.reinitialize(corner_verts.size());
     const bool *sharp_faces = static_cast<const bool *>(
-        CustomData_get_layer_named(&result->pdata, CD_PROP_BOOL, "sharp_face"));
+        CustomData_get_layer_named(&result->face_data, CD_PROP_BOOL, "sharp_face"));
     blender::bke::mesh::normals_calc_loop(positions,
                                           edges,
-                                          polys,
+                                          faces,
                                           corner_verts,
                                           corner_edges,
                                           {},
                                           result->vert_normals(),
-                                          result->poly_normals(),
+                                          result->face_normals(),
                                           sharp_edges.span.data(),
                                           sharp_faces,
+                                          clnors,
                                           true,
                                           result->smoothresh,
-                                          clnors,
                                           nullptr,
                                           loop_normals);
   }
@@ -585,7 +585,7 @@ static Mesh *normalEditModifier_do(NormalEditModifierData *enmd,
                                  sharp_edges.span,
                                  corner_verts,
                                  corner_edges,
-                                 polys);
+                                 faces);
   }
   else if (enmd->mode == MOD_NORMALEDIT_MODE_DIRECTIONAL) {
     normalEditModifier_do_directional(enmd,
@@ -605,7 +605,7 @@ static Mesh *normalEditModifier_do(NormalEditModifierData *enmd,
                                       sharp_edges.span,
                                       corner_verts,
                                       corner_edges,
-                                      polys);
+                                      faces);
   }
 
   result->runtime->is_original_bmesh = false;
@@ -615,7 +615,7 @@ static Mesh *normalEditModifier_do(NormalEditModifierData *enmd,
   return result;
 }
 
-static void initData(ModifierData *md)
+static void init_data(ModifierData *md)
 {
   NormalEditModifierData *enmd = (NormalEditModifierData *)md;
 
@@ -624,7 +624,7 @@ static void initData(ModifierData *md)
   MEMCPY_STRUCT_AFTER(enmd, DNA_struct_default_get(NormalEditModifierData), modifier);
 }
 
-static void requiredDataMask(ModifierData *md, CustomData_MeshMasks *r_cddata_masks)
+static void required_data_mask(ModifierData *md, CustomData_MeshMasks *r_cddata_masks)
 {
   NormalEditModifierData *enmd = (NormalEditModifierData *)md;
 
@@ -636,26 +636,26 @@ static void requiredDataMask(ModifierData *md, CustomData_MeshMasks *r_cddata_ma
   }
 }
 
-static bool dependsOnNormals(ModifierData * /*md*/)
+static bool depends_on_normals(ModifierData * /*md*/)
 {
   return true;
 }
 
-static void foreachIDLink(ModifierData *md, Object *ob, IDWalkFunc walk, void *userData)
+static void foreach_ID_link(ModifierData *md, Object *ob, IDWalkFunc walk, void *user_data)
 {
   NormalEditModifierData *enmd = (NormalEditModifierData *)md;
 
-  walk(userData, ob, (ID **)&enmd->target, IDWALK_CB_NOP);
+  walk(user_data, ob, (ID **)&enmd->target, IDWALK_CB_NOP);
 }
 
-static bool isDisabled(const Scene * /*scene*/, ModifierData *md, bool /*useRenderParams*/)
+static bool is_disabled(const Scene * /*scene*/, ModifierData *md, bool /*use_render_params*/)
 {
   NormalEditModifierData *enmd = (NormalEditModifierData *)md;
 
   return !is_valid_target(enmd);
 }
 
-static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
+static void update_depsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
 {
   NormalEditModifierData *enmd = (NormalEditModifierData *)md;
   if (enmd->target) {
@@ -664,7 +664,7 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
   }
 }
 
-static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh)
+static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh)
 {
   return normalEditModifier_do((NormalEditModifierData *)md, ctx, ctx->object, mesh);
 }
@@ -683,18 +683,18 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "target", 0, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "target", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   col = uiLayoutColumn(layout, false);
   uiLayoutSetActive(col, mode == MOD_NORMALEDIT_MODE_DIRECTIONAL);
 
   /*------------------- bfa - original props */
-  // uiItemR(col, ptr, "use_direction_parallel", 0, nullptr, ICON_NONE);
+  // uiItemR(col, ptr, "use_direction_parallel", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_direction_parallel", 0, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_direction_parallel", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_direction_parallel", 0); /*bfa - decorator*/
 
   /* ------------ end bfa */
@@ -713,17 +713,17 @@ static void mix_mode_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "mix_mode", 0, nullptr, ICON_NONE);
-  uiItemR(layout, ptr, "mix_factor", 0, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "mix_mode", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "mix_factor", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", nullptr);
 
   row = uiLayoutRow(layout, true);
-  uiItemR(row, ptr, "mix_limit", 0, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "mix_limit", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(row,
           ptr,
           "no_polynors_fix",
-          0,
+          UI_ITEM_NONE,
           "",
           (RNA_boolean_get(ptr, "no_polynors_fix") ? ICON_LOCKED : ICON_UNLOCKED));
 }
@@ -744,10 +744,10 @@ static void offset_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   uiLayoutSetActive(layout, needs_object_offset);
-  uiItemR(layout, ptr, "offset", 0, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "offset", UI_ITEM_NONE, nullptr, ICON_NONE);
 }
 
-static void panelRegister(ARegionType *region_type)
+static void panel_register(ARegionType *region_type)
 {
   PanelType *panel_type = modifier_panel_register(
       region_type, eModifierType_NormalEdit, panel_draw);
@@ -757,35 +757,36 @@ static void panelRegister(ARegionType *region_type)
 }
 
 ModifierTypeInfo modifierType_NormalEdit = {
+    /*idname*/ "NormalEdit",
     /*name*/ N_("NormalEdit"),
-    /*structName*/ "NormalEditModifierData",
-    /*structSize*/ sizeof(NormalEditModifierData),
+    /*struct_name*/ "NormalEditModifierData",
+    /*struct_size*/ sizeof(NormalEditModifierData),
     /*srna*/ &RNA_NormalEditModifier,
     /*type*/ eModifierTypeType_Constructive,
     /*flags*/ eModifierTypeFlag_AcceptsMesh | eModifierTypeFlag_SupportsMapping |
         eModifierTypeFlag_SupportsEditmode | eModifierTypeFlag_EnableInEditmode,
     /*icon*/ ICON_MOD_NORMALEDIT,
 
-    /*copyData*/ BKE_modifier_copydata_generic,
+    /*copy_data*/ BKE_modifier_copydata_generic,
 
-    /*deformVerts*/ nullptr,
-    /*deformMatrices*/ nullptr,
-    /*deformVertsEM*/ nullptr,
-    /*deformMatricesEM*/ nullptr,
-    /*modifyMesh*/ modifyMesh,
-    /*modifyGeometrySet*/ nullptr,
+    /*deform_verts*/ nullptr,
+    /*deform_matrices*/ nullptr,
+    /*deform_verts_EM*/ nullptr,
+    /*deform_matrices_EM*/ nullptr,
+    /*modify_mesh*/ modify_mesh,
+    /*modify_geometry_set*/ nullptr,
 
-    /*initData*/ initData,
-    /*requiredDataMask*/ requiredDataMask,
-    /*freeData*/ nullptr,
-    /*isDisabled*/ isDisabled,
-    /*updateDepsgraph*/ updateDepsgraph,
-    /*dependsOnTime*/ nullptr,
-    /*dependsOnNormals*/ dependsOnNormals,
-    /*foreachIDLink*/ foreachIDLink,
-    /*foreachTexLink*/ nullptr,
-    /*freeRuntimeData*/ nullptr,
-    /*panelRegister*/ panelRegister,
-    /*blendWrite*/ nullptr,
-    /*blendRead*/ nullptr,
+    /*init_data*/ init_data,
+    /*required_data_mask*/ required_data_mask,
+    /*free_data*/ nullptr,
+    /*is_disabled*/ is_disabled,
+    /*update_depsgraph*/ update_depsgraph,
+    /*depends_on_time*/ nullptr,
+    /*depends_on_normals*/ depends_on_normals,
+    /*foreach_ID_link*/ foreach_ID_link,
+    /*foreach_tex_link*/ nullptr,
+    /*free_runtime_data*/ nullptr,
+    /*panel_register*/ panel_register,
+    /*blend_write*/ nullptr,
+    /*blend_read*/ nullptr,
 };

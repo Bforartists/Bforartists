@@ -6,8 +6,11 @@
 set(INC
   .
   intern
+  ../blenkernel
+  ../blentranslation
   ../compositor/realtime_compositor
   ../compositor/realtime_compositor/cached_resources
+  ../depsgraph
   ../draw
   ../gpu
   ../gpu/intern
@@ -16,6 +19,7 @@ set(INC
   ../nodes
   ../sequencer
   ../simulation
+  ../windowmanager
   ../../../intern/mikktspace
   ../../../intern/mantaflow/extern
 )
@@ -32,11 +36,12 @@ set(SRC
   intern/pipeline.cc
   intern/render_result.cc
   intern/render_types.cc
-  intern/texture_image.c
+  intern/texture_image.cc
   intern/texture_margin.cc
-  intern/texture_pointdensity.c
-  intern/texture_procedural.c
-  intern/zbuf.c
+  intern/texture_pointdensity.cc
+  intern/texture_procedural.cc
+  intern/tile_highlight.cc
+  intern/zbuf.cc
 
   RE_bake.h
   RE_compositor.hh
@@ -50,19 +55,16 @@ set(SRC
   intern/render_result.h
   intern/render_types.h
   intern/texture_common.h
+  intern/tile_highlight.h
   intern/zbuf.h
 )
 
 set(LIB
-  PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
-  PRIVATE bf::blentranslation
-  PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::intern::guardedalloc
   bf_realtime_compositor
   PRIVATE bf::intern::atomic
-  PRIVATE bf::windowmanager
 )
 
 if(WITH_PYTHON)

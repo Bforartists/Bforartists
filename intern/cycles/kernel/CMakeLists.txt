@@ -126,6 +126,7 @@ set(SRC_KERNEL_CLOSURE_HEADERS
   closure/bsdf_microfacet.h
   closure/bsdf_oren_nayar.h
   closure/bsdf_phong_ramp.h
+  closure/bsdf_sheen.h
   closure/bsdf_toon.h
   closure/bsdf_transparent.h
   closure/bsdf_util.h
@@ -135,7 +136,6 @@ set(SRC_KERNEL_CLOSURE_HEADERS
   closure/emissive.h
   closure/volume.h
   closure/bsdf_principled_diffuse.h
-  closure/bsdf_principled_sheen.h
   closure/bsdf_hair_principled.h
 )
 

@@ -8,6 +8,11 @@
 
 #pragma once
 
+#ifdef __cplusplus
+#  include <functional>
+#  include <string>
+#endif
+
 #include "BLI_compiler_attrs.h"
 #include "BLI_string_utf8_symbols.h"
 #include "BLI_sys_types.h" /* size_t */
@@ -91,8 +96,10 @@ typedef struct uiViewItemHandle uiViewItemHandle;
  */
 #define UI_VALUE_INDETERMINATE_CHAR BLI_STR_UTF8_EM_DASH
 
-/* Separator for text in search menus (right pointing arrow).
- * keep in sync with `string_search.cc`. */
+/**
+ * Separator for text in search menus (right pointing arrow).
+ * keep in sync with `string_search.cc`.
+ */
 #define UI_MENU_ARROW_SEP BLI_STR_UTF8_BLACK_RIGHT_POINTING_SMALL_TRIANGLE
 
 /* names */
@@ -108,7 +115,7 @@ typedef struct uiViewItemHandle uiViewItemHandle;
  */
 #define UI_REGION_OVERLAP_MARGIN (U.widget_unit / 3)
 
-/* use for clamping popups within the screen */
+/** Use for clamping popups within the screen. */
 #define UI_SCREEN_MARGIN 10
 
 /** #uiBlock.emboss and #uiBut.emboss */
@@ -126,7 +133,7 @@ typedef enum eUIEmbossType {
   UI_EMBOSS_UNDEFINED = 255, /* For layout engine, use emboss from block. */
 } eUIEmbossType;
 
-/* uiBlock->direction */
+/** #uiBlock::direction */
 enum {
   UI_DIR_UP = 1 << 0,
   UI_DIR_DOWN = 1 << 1,
@@ -156,10 +163,10 @@ enum {
   UI_BLOCK_OUT_1 = 1 << 10,
   UI_BLOCK_SEARCH_MENU = 1 << 11,
   UI_BLOCK_POPUP_MEMORY = 1 << 12,
-  /* Stop handling mouse events. */
+  /** Stop handling mouse events. */
   UI_BLOCK_CLIP_EVENTS = 1 << 13,
 
-  /* block->flag bits 14-17 are identical to but->drawflag bits */
+  /* #uiBlock::flags bits 14-17 are identical to #uiBut::drawflag bits. */
 
   UI_BLOCK_POPUP_HOLD = 1 << 18,
   UI_BLOCK_LIST_ITEM = 1 << 19,
@@ -196,6 +203,7 @@ enum {
 /** #uiBut.flag general state flags. */
 enum {
   /* WARNING: the first 8 flags are internal (see #UI_SELECT definition). */
+
   UI_BUT_ICON_SUBMENU = 1 << 8,
   UI_BUT_ICON_PREVIEW = 1 << 9,
 
@@ -257,10 +265,10 @@ enum {
   UI_BUT_DRAGPOIN_FREE = (1 << 1),
 };
 
-/* Default font size for normal text. */
+/** Default font size for normal text. */
 #define UI_DEFAULT_TEXT_POINTS 11.0f
 
-/* Larger size used for title text. */
+/** Larger size used for title text. */
 #define UI_DEFAULT_TITLE_POINTS 11.0f
 
 #define UI_PANEL_WIDTH 340
@@ -269,12 +277,12 @@ enum {
 #define UI_NAVIGATION_REGION_WIDTH UI_COMPACT_PANEL_WIDTH
 #define UI_NARROW_NAVIGATION_REGION_WIDTH 100
 
-/* The width of one icon column of the Toolbar. */
+/** The width of one icon column of the Toolbar. */
 #define UI_TOOLBAR_COLUMN (1.25f * ICON_DEFAULT_HEIGHT_TOOLBAR)
-/* The space between the Toolbar and the area's edge. */
+/** The space between the Toolbar and the area's edge. */
 /* bfa - margin changed from 0.5f > 0.75f to fix icons size */
 #define UI_TOOLBAR_MARGIN (0.75f * ICON_DEFAULT_HEIGHT_TOOLBAR)
-/* Total width of Toolbar showing one icon column. */
+/** Total width of Toolbar showing one icon column. */
 #define UI_TOOLBAR_WIDTH UI_TOOLBAR_MARGIN + UI_TOOLBAR_COLUMN
 
 #define UI_PANEL_CATEGORY_MARGIN_WIDTH (U.widget_unit * 1.0f)
@@ -284,19 +292,26 @@ enum {
 #define UI_PANEL_MARGIN_X (U.widget_unit * 0.2f) /*bfa - margin from 0.4 to 0.2 for now*/
 #define UI_PANEL_MARGIN_Y (U.widget_unit * 0.1f)
 
-/* but->drawflag - these flags should only affect how the button is drawn. */
-/* NOTE: currently, these flags *are not passed* to the widget's state() or draw() functions
- *       (except for the 'align' ones)!
+/**
+ * #uiBut::drawflag, these flags should only affect how the button is drawn.
+ *
+ * \note currently, these flags *are not passed* to the widgets state() or draw() functions
+ * (except for the 'align' ones)!
  */
 enum {
   /** Text and icon alignment (by default, they are centered). */
   UI_BUT_TEXT_LEFT = 1 << 1,
   UI_BUT_ICON_LEFT = 1 << 2,
   UI_BUT_TEXT_RIGHT = 1 << 3,
-  /** Prevent the button to show any tooltip. */
+  /** Prevent the button to show any tool-tip. */
   UI_BUT_NO_TOOLTIP = 1 << 4,
+  /**
+   * Show a quick tool-tip label, that is, a short tool-tip that appears faster than the full one
+   * and only shows the label. After a short delay the full tool-tip is shown if any.
+   */
+  UI_BUT_HAS_TOOLTIP_LABEL = 1 << 5,
   /** Do not add the usual horizontal padding for text drawing. */
-  UI_BUT_NO_TEXT_PADDING = 1 << 5,
+  UI_BUT_NO_TEXT_PADDING = 1 << 6,
 
   /* Button align flag, for drawing groups together.
    * Used in 'uiBlock.flag', take care! */
@@ -311,7 +326,8 @@ enum {
    * Warning - HACK!
    * Needed for buttons which are not TOP/LEFT aligned,
    * but have some top/left corner stitched to some other TOP/LEFT-aligned button,
-   * because of 'corrective' hack in widget_roundbox_set()... */
+   * because of "corrective" hack in #widget_roundbox_set().
+   */
   UI_BUT_ALIGN_STITCH_TOP = 1 << 18,
   UI_BUT_ALIGN_STITCH_LEFT = 1 << 19,
   UI_BUT_ALIGN_ALL = UI_BUT_ALIGN | UI_BUT_ALIGN_STITCH_TOP | UI_BUT_ALIGN_STITCH_LEFT,
@@ -330,10 +346,10 @@ enum {
   /** Value is animated, but the current value differs from the animated one. */
   UI_BUT_ANIMATED_CHANGED = 1 << 24,
 
-  /* Draw the checkbox buttons inverted. */
+  /** Draw the checkbox buttons inverted. */
   UI_BUT_CHECKBOX_INVERT = 1 << 25,
 
-  /* Drawn in a way that indicates that the state/value is unknown. */
+  /** Drawn in a way that indicates that the state/value is unknown. */
   UI_BUT_INDETERMINATE = 1 << 26,
 };
 
@@ -355,10 +371,13 @@ typedef enum {
   UI_BUT_POIN_BIT = 256, /* OR'd with a bit index. */
 } eButPointerType;
 
-/* requires (but->poin != NULL) */
+/** \note requires `but->poin != NULL`. */
 #define UI_BUT_POIN_TYPES (UI_BUT_POIN_FLOAT | UI_BUT_POIN_SHORT | UI_BUT_POIN_CHAR)
 
-/* assigned to but->type, OR'd with the flags above when passing args */
+/**
+ * #uiBut::type
+ * OR'd with #eButPointerType when passing as an argument.
+ */
 typedef enum {
   UI_BTYPE_BUT = 1 << 9,
   UI_BTYPE_ROW = 2 << 9,
@@ -422,7 +441,7 @@ typedef enum {
   /** Resize handle (resize UI-list). */
   UI_BTYPE_GRIP = 57 << 9,
   UI_BTYPE_DECORATOR = 58 << 9,
-  /* An item a view (see #ui::AbstractViewItem). */
+  /** An item a view (see #ui::AbstractViewItem). */
   UI_BTYPE_VIEW_ITEM = 59 << 9,
 } eButType;
 
@@ -505,10 +524,10 @@ void UI_draw_widget_scroll(struct uiWidgetColors *wcol,
  * \note in case this middle clipping would just remove a few chars,
  * it rather clips right, which is more readable.
  *
- * If rpart_sep is not Null, the part of str starting to first occurrence of rpart_sep
+ * If `rpart_sep` is not null, the part of `str` starting to first occurrence of `rpart_sep`
  * is preserved at all cost.
  * Useful for strings with shortcuts
- * (like 'AVeryLongFooBarLabelForMenuEntry|Ctrl O' -> 'AVeryLong...MenuEntry|Ctrl O').
+ * (like `A Very Long Foo Bar Label For Menu Entry|Ctrl O' -> 'AVeryLong...MenuEntry|Ctrl O`).
  */
 float UI_text_clip_middle_ex(const struct uiFontStyle *fstyle,
                              char *str,
@@ -518,9 +537,9 @@ float UI_text_clip_middle_ex(const struct uiFontStyle *fstyle,
                              char rpart_sep);
 
 /**
- * Callbacks
+ * Callbacks.
  *
- * UI_block_func_handle_set/ButmFunc are for handling events through a callback.
+ * #UI_block_func_handle_set/ButmFunc are for handling events through a callback.
  * HandleFunc gets the retval passed on, and ButmFunc gets a2. The latter is
  * mostly for compatibility with older code.
  *
@@ -567,7 +586,7 @@ typedef struct ARegion *(*uiButSearchTooltipFn)(struct bContext *C,
                                                 void *active);
 typedef void (*uiButSearchListenFn)(const struct wmRegionListenerParams *params, void *arg);
 
-/* Must return allocated string. */
+/** Must return an allocated string. */
 typedef char *(*uiButToolTipFunc)(struct bContext *C, void *argN, const char *tip);
 
 typedef void (*uiBlockHandleFunc)(struct bContext *C, void *arg, int event);
@@ -844,7 +863,7 @@ void UI_block_lock_clear(uiBlock *block);
 void UI_block_align_begin(uiBlock *block);
 void UI_block_align_end(uiBlock *block);
 
-/* block bounds/position calculation */
+/** Block bounds/position calculation. */
 typedef enum {
   UI_BLOCK_BOUNDS_NONE = 0,
   UI_BLOCK_BOUNDS = 1,
@@ -1272,7 +1291,7 @@ uiBut *uiDefIconButO_ptr(uiBlock *block,
 uiBut *uiDefButImage(
     uiBlock *block, void *imbuf, int x, int y, short width, short height, const uchar color[4]);
 uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short height);
-/* Button containing both string label and icon */
+/** Button containing both string label and icon. */
 uiBut *uiDefIconTextBut(uiBlock *block,
                         int type,
                         int retval,
@@ -1375,7 +1394,7 @@ uiBut *uiDefIconTextButO_ptr(uiBlock *block,
                              short height,
                              const char *tip);
 
-/* for passing inputs to ButO buttons */
+/** For passing inputs to ButO buttons. */
 struct PointerRNA *UI_but_operator_ptr_get(uiBut *but);
 
 void UI_but_context_ptr_set(uiBlock *block,
@@ -1395,6 +1414,10 @@ typedef enum uiStringInfoType {
   BUT_GET_RNASTRUCT_IDENTIFIER,
   BUT_GET_RNAENUM_IDENTIFIER,
   BUT_GET_LABEL,
+  /** Sometimes the button doesn't have a label itself, but provides one for the tooltip. This can
+   * be displayed in a quick tooltip, appearing after a smaller timeout and expanding to the full
+   * tooltip after the regular timeout. */
+  BUT_GET_TIP_LABEL,
   BUT_GET_RNA_LABEL,
   BUT_GET_RNAENUM_LABEL,
   BUT_GET_RNA_LABEL_CONTEXT, /* Context specified in CTX_XXX_ macros are just unreachable! */
@@ -1410,9 +1433,11 @@ typedef struct uiStringInfo {
   char *strinfo;
 } uiStringInfo;
 
-/* NOTE: Expects pointers to uiStringInfo structs as parameters.
- *       Will fill them with translated strings, when possible.
- *       Strings in uiStringInfo must be MEM_freeN'ed by caller. */
+/**
+ * \note Expects pointers to #uiStringInfo structs as parameters.
+ * Will fill them with translated strings, when possible.
+ * Strings in #uiStringInfo must be MEM_freeN'ed by caller.
+ */
 void UI_but_string_info_get(struct bContext *C, uiBut *but, ...) ATTR_SENTINEL(0);
 void UI_but_extra_icon_string_info_get(struct bContext *C, uiButExtraOpIcon *extra_icon, ...)
     ATTR_SENTINEL(0);
@@ -1594,21 +1619,21 @@ uiBut *uiDefSearchButO_ptr(uiBlock *block,
                            float a2,
                            const char *tip);
 
-/* For uiDefAutoButsRNA */
+/** For #uiDefAutoButsRNA. */
 typedef enum {
-  /* Keep current layout for aligning label with property button. */
+  /** Keep current layout for aligning label with property button. */
   UI_BUT_LABEL_ALIGN_NONE,
-  /* Align label and property button vertically. */
+  /** Align label and property button vertically. */
   UI_BUT_LABEL_ALIGN_COLUMN,
-  /* Split layout into a column for the label and one for property button. */
+  /** Split layout into a column for the label and one for property button. */
   UI_BUT_LABEL_ALIGN_SPLIT_COLUMN,
 } eButLabelAlign;
 
-/* Return info for uiDefAutoButsRNA */
+/** Return info for uiDefAutoButsRNA. */
 typedef enum eAutoPropButsReturn {
-  /* Returns when no buttons were added */
+  /** Returns when no buttons were added */
   UI_PROP_BUTS_NONE_ADDED = 1 << 0,
-  /* Returned when any property failed the custom check callback (check_prop) */
+  /** Returned when any property failed the custom check callback (check_prop) */
   UI_PROP_BUTS_ANY_FAILED_CHECK = 1 << 1,
 } eAutoPropButsReturn;
 
@@ -1755,6 +1780,9 @@ void UI_but_func_drawextra_set(
 void UI_but_func_menu_step_set(uiBut *but, uiMenuStepFunc func);
 
 void UI_but_func_tooltip_set(uiBut *but, uiButToolTipFunc func, void *arg, uiFreeArgFunc free_arg);
+#ifdef __cplusplus
+void UI_but_func_tooltip_label_set(uiBut *but, std::function<std::string(const uiBut *but)> func);
+#endif
 /**
  * Recreate tool-tip (use to update dynamic tips)
  */
@@ -2039,7 +2067,7 @@ enum {
   UI_LAYOUT_ALIGN_RIGHT = 3,
 };
 
-enum {
+typedef enum eUI_Item_Flag {
   /* UI_ITEM_O_RETURN_PROPS = 1 << 0, */ /* UNUSED */
   UI_ITEM_R_EXPAND = 1 << 1,
   UI_ITEM_R_SLIDER = 1 << 2,
@@ -2069,7 +2097,9 @@ enum {
   UI_ITEM_R_FORCE_BLANK_DECORATE = 1 << 13,
   /* Even create the property split layout if there's no name to show there. */
   UI_ITEM_R_SPLIT_EMPTY_NAME = 1 << 14,
-};
+} eUI_Item_Flag;
+ENUM_OPERATORS(eUI_Item_Flag, UI_ITEM_R_SPLIT_EMPTY_NAME)
+#define UI_ITEM_NONE eUI_Item_Flag(0)
 
 #define UI_HEADER_OFFSET ((void)0, 0.4f * UI_UNIT_X)
 
@@ -2470,6 +2500,7 @@ void uiTemplateHeader3D_mode(uiLayout *layout, struct bContext *C);
 void uiTemplateEditModeSelection(uiLayout *layout, struct bContext *C);
 void uiTemplateReportsBanner(uiLayout *layout, struct bContext *C);
 void uiTemplateInputStatus(uiLayout *layout, struct bContext *C);
+void uiTemplateStatusInfo(uiLayout *layout, struct bContext *C);
 void uiTemplateKeymapItemProperties(uiLayout *layout, struct PointerRNA *ptr);
 
 bool uiTemplateEventFromKeymapItem(struct uiLayout *layout,
@@ -2525,13 +2556,13 @@ void uiTemplateCacheFileLayers(uiLayout *layout,
                                const struct bContext *C,
                                struct PointerRNA *fileptr);
 
-/* Default UIList class name, keep in sync with its declaration in bl_ui/__init__.py */
+/** Default UIList class name, keep in sync with its declaration in `bl_ui/__init__.py`. */
 #define UI_UL_DEFAULT_CLASS_NAME "UI_UL_list"
 enum uiTemplateListFlags {
   UI_TEMPLATE_LIST_FLAG_NONE = 0,
   UI_TEMPLATE_LIST_SORT_REVERSE = (1 << 0),
   UI_TEMPLATE_LIST_SORT_LOCK = (1 << 1),
-  /* Don't allow resizing the list, i.e. don't add the grip button. */
+  /** Don't allow resizing the list, i.e. don't add the grip button. */
   UI_TEMPLATE_LIST_NO_GRIP = (1 << 2),
   /** Do not show filtering options, not even the button to expand/collapse them. Also hides the
    * grip button. */
@@ -2724,7 +2755,7 @@ void uiItemFullO_ptr(uiLayout *layout,
                      int icon,
                      struct IDProperty *properties,
                      wmOperatorCallContext context,
-                     int flag,
+                     eUI_Item_Flag flag,
                      struct PointerRNA *r_opptr);
 void uiItemFullO(uiLayout *layout,
                  const char *opname,
@@ -2732,7 +2763,7 @@ void uiItemFullO(uiLayout *layout,
                  int icon,
                  struct IDProperty *properties,
                  wmOperatorCallContext context,
-                 int flag,
+                 eUI_Item_Flag flag,
                  struct PointerRNA *r_opptr);
 void uiItemFullOMenuHold_ptr(uiLayout *layout,
                              struct wmOperatorType *ot,
@@ -2740,14 +2771,14 @@ void uiItemFullOMenuHold_ptr(uiLayout *layout,
                              int icon,
                              struct IDProperty *properties,
                              wmOperatorCallContext context,
-                             int flag,
+                             eUI_Item_Flag flag,
                              const char *menu_id, /* extra menu arg. */
                              struct PointerRNA *r_opptr);
 
 void uiItemR(uiLayout *layout,
              struct PointerRNA *ptr,
              const char *propname,
-             int flag,
+             eUI_Item_Flag flag,
              const char *name,
              int icon);
 void uiItemFullR(uiLayout *layout,
@@ -2755,7 +2786,7 @@ void uiItemFullR(uiLayout *layout,
                  struct PropertyRNA *prop,
                  int index,
                  int value,
-                 int flag,
+                 eUI_Item_Flag flag,
                  const char *name,
                  int icon);
 /**
@@ -2766,7 +2797,7 @@ void uiItemFullR_with_popover(uiLayout *layout,
                               struct PropertyRNA *prop,
                               int index,
                               int value,
-                              int flag,
+                              eUI_Item_Flag flag,
                               const char *name,
                               int icon,
                               const char *panel_type);
@@ -2775,7 +2806,7 @@ void uiItemFullR_with_menu(uiLayout *layout,
                            struct PropertyRNA *prop,
                            int index,
                            int value,
-                           int flag,
+                           eUI_Item_Flag flag,
                            const char *name,
                            int icon,
                            const char *menu_type);
@@ -2824,7 +2855,7 @@ void uiItemsFullEnumO(uiLayout *layout,
                       const char *propname,
                       struct IDProperty *properties,
                       wmOperatorCallContext context,
-                      int flag);
+                      eUI_Item_Flag flag);
 /**
  * Create UI items for enum items in \a item_array.
  *
@@ -2836,7 +2867,7 @@ void uiItemsFullEnumO_items(uiLayout *layout,
                             struct PropertyRNA *prop,
                             struct IDProperty *properties,
                             wmOperatorCallContext context,
-                            int flag,
+                            eUI_Item_Flag flag,
                             const struct EnumPropertyItem *item_array,
                             int totitem);
 
@@ -3144,10 +3175,14 @@ int UI_fontstyle_height_max(const struct uiFontStyle *fs);
  */
 void UI_draw_icon_tri(float x, float y, char dir, const float[4]);
 
-/* XXX: read a style configure */
+/**
+ * Read a style (without any scaling applied).
+ */
 const struct uiStyle *UI_style_get(void); /* use for fonts etc */
-/* for drawing, scaled with DPI setting */
-const struct uiStyle *UI_style_get_dpi(void); /* DPI scaled settings for drawing */
+/**
+ * Read a style (with the current DPI applied).
+ */
+const struct uiStyle *UI_style_get_dpi(void);
 
 /* linker workaround ack! */
 void UI_template_fix_linking(void);
@@ -3288,10 +3323,10 @@ void UI_style_init_default(void);
 
 void UI_interface_tag_script_reload(void);
 
-/* Special drawing for toolbar, mainly workarounds for inflexible icon sizing. */
+/** Special drawing for toolbar, mainly workarounds for inflexible icon sizing. */
 #define USE_UI_TOOLBAR_HACK
 
-/* Support click-drag motion which presses the button and closes a popover (like a menu). */
+/** Support click-drag motion which presses the button and closes a popover (like a menu). */
 #define USE_UI_POPOVER_ONCE
 
 /**

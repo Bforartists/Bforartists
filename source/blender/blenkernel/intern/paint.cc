@@ -594,6 +594,8 @@ ePaintMode BKE_paintmode_get_active_from_context(const bContext *C)
           return PAINT_MODE_SCULPT_UV;
         case OB_MODE_SCULPT_CURVES:
           return PAINT_MODE_SCULPT_CURVES;
+        case OB_MODE_PAINT_GREASE_PENCIL:
+          return PAINT_MODE_GPENCIL;
         default:
           return PAINT_MODE_TEXTURE_2D;
       }
@@ -1290,12 +1292,12 @@ void BKE_paint_blend_read_lib(BlendLibReader *reader, Scene *sce, Paint *p)
   }
 }
 
-bool paint_is_face_hidden(const int *looptri_polys, const bool *hide_poly, const int tri_index)
+bool paint_is_face_hidden(const int *looptri_faces, const bool *hide_poly, const int tri_index)
 {
   if (!hide_poly) {
     return false;
   }
-  return hide_poly[looptri_polys[tri_index]];
+  return hide_poly[looptri_faces[tri_index]];
 }
 
 bool paint_is_grid_face_hidden(const uint *grid_hidden, int gridsize, int x, int y)
@@ -1432,9 +1434,9 @@ void BKE_sculptsession_free_vwpaint_data(SculptSession *ss)
   gmap->vert_to_loop_offsets = {};
   gmap->vert_to_loop_indices = {};
   gmap->vert_to_loop = {};
-  gmap->vert_to_poly_offsets = {};
-  gmap->vert_to_poly_indices = {};
-  gmap->vert_to_poly = {};
+  gmap->vert_to_face_offsets = {};
+  gmap->vert_to_face_indices = {};
+  gmap->vert_to_face = {};
 }
 
 /**
@@ -1446,11 +1448,6 @@ static void sculptsession_bm_to_me_update_data_only(Object *ob, bool reorder)
 
   if (ss->bm) {
     if (ob->data) {
-      BMIter iter;
-      BMFace *efa;
-      BM_ITER_MESH (efa, &iter, ss->bm, BM_FACES_OF_MESH) {
-        BM_elem_flag_set(efa, BM_ELEM_SMOOTH, ss->bm_smooth_shading);
-      }
       if (reorder) {
         BM_log_mesh_elems_reorder(ss->bm, ss->bm_log);
       }
@@ -1485,11 +1482,11 @@ static void sculptsession_free_pbvh(Object *object)
     ss->pbvh = nullptr;
   }
 
-  ss->vert_to_poly_offsets = {};
-  ss->vert_to_poly_indices = {};
+  ss->vert_to_face_offsets = {};
+  ss->vert_to_face_indices = {};
   ss->pmap = {};
-  ss->edge_to_poly_offsets = {};
-  ss->edge_to_poly_indices = {};
+  ss->edge_to_face_offsets = {};
+  ss->edge_to_face_indices = {};
   ss->epmap = {};
   ss->vert_to_edge_offsets = {};
   ss->vert_to_edge_indices = {};
@@ -1583,7 +1580,7 @@ static MultiresModifierData *sculpt_multires_modifier_get(const Scene *scene,
 {
   Mesh *me = (Mesh *)ob->data;
   ModifierData *md;
-  VirtualModifierData virtualModifierData;
+  VirtualModifierData virtual_modifier_data;
 
   if (ob->sculpt && ob->sculpt->bm) {
     /* Can't combine multires and dynamic topology. */
@@ -1592,7 +1589,7 @@ static MultiresModifierData *sculpt_multires_modifier_get(const Scene *scene,
 
   bool need_mdisps = false;
 
-  if (!CustomData_get_layer(&me->ldata, CD_MDISPS)) {
+  if (!CustomData_get_layer(&me->loop_data, CD_MDISPS)) {
     if (!auto_create_mdisps) {
       /* Multires can't work without displacement layer. */
       return nullptr;
@@ -1606,7 +1603,8 @@ static MultiresModifierData *sculpt_multires_modifier_get(const Scene *scene,
     return nullptr;
   }
 
-  for (md = BKE_modifiers_get_virtual_modifierlist(ob, &virtualModifierData); md; md = md->next) {
+  for (md = BKE_modifiers_get_virtual_modifierlist(ob, &virtual_modifier_data); md; md = md->next)
+  {
     if (md->type == eModifierType_Multires) {
       MultiresModifierData *mmd = (MultiresModifierData *)md;
 
@@ -1616,7 +1614,7 @@ static MultiresModifierData *sculpt_multires_modifier_get(const Scene *scene,
 
       if (mmd->sculptlvl > 0 && !(mmd->flags & eMultiresModifierFlag_UseSculptBaseMesh)) {
         if (need_mdisps) {
-          CustomData_add_layer(&me->ldata, CD_MDISPS, CD_SET_DEFAULT, me->totloop);
+          CustomData_add_layer(&me->loop_data, CD_MDISPS, CD_SET_DEFAULT, me->totloop);
         }
 
         return mmd;
@@ -1639,7 +1637,7 @@ static bool sculpt_modifiers_active(Scene *scene, Sculpt *sd, Object *ob)
 {
   ModifierData *md;
   Mesh *me = (Mesh *)ob->data;
-  VirtualModifierData virtualModifierData;
+  VirtualModifierData virtual_modifier_data;
 
   if (ob->sculpt->bm || BKE_sculpt_multires_active(scene, ob)) {
     return false;
@@ -1650,7 +1648,7 @@ static bool sculpt_modifiers_active(Scene *scene, Sculpt *sd, Object *ob)
     return true;
   }
 
-  md = BKE_modifiers_get_virtual_modifierlist(ob, &virtualModifierData);
+  md = BKE_modifiers_get_virtual_modifierlist(ob, &virtual_modifier_data);
 
   /* Exception for shape keys because we can edit those. */
   for (; md; md = md->next) {
@@ -1730,27 +1728,27 @@ static void sculpt_update_object(
     ss->multires.modifier = mmd;
     ss->multires.level = mmd->sculptlvl;
     ss->totvert = me_eval->totvert;
-    ss->totpoly = me_eval->totpoly;
-    ss->totfaces = me->totpoly;
+    ss->faces_num = me_eval->faces_num;
+    ss->totfaces = me->faces_num;
 
     /* These are assigned to the base mesh in Multires. This is needed because Face Sets operators
      * and tools use the Face Sets data from the base mesh when Multires is active. */
     ss->vert_positions = me->vert_positions_for_write();
-    ss->polys = me->polys();
+    ss->faces = me->faces();
     ss->corner_verts = me->corner_verts();
   }
   else {
     ss->totvert = me->totvert;
-    ss->totpoly = me->totpoly;
-    ss->totfaces = me->totpoly;
+    ss->faces_num = me->faces_num;
+    ss->totfaces = me->faces_num;
     ss->vert_positions = me->vert_positions_for_write();
-    ss->polys = me->polys();
+    ss->faces = me->faces();
     ss->corner_verts = me->corner_verts();
     ss->multires.active = false;
     ss->multires.modifier = nullptr;
     ss->multires.level = 0;
     ss->vmask = static_cast<float *>(
-        CustomData_get_layer_for_write(&me->vdata, CD_PAINT_MASK, me->totvert));
+        CustomData_get_layer_for_write(&me->vert_data, CD_PAINT_MASK, me->totvert));
 
     CustomDataLayer *layer;
     eAttrDomain domain;
@@ -1777,14 +1775,14 @@ static void sculpt_update_object(
   /* Sculpt Face Sets. */
   if (use_face_sets) {
     ss->face_sets = static_cast<int *>(CustomData_get_layer_named_for_write(
-        &me->pdata, CD_PROP_INT32, ".sculpt_face_set", me->totpoly));
+        &me->face_data, CD_PROP_INT32, ".sculpt_face_set", me->faces_num));
   }
   else {
     ss->face_sets = nullptr;
   }
 
   ss->hide_poly = (bool *)CustomData_get_layer_named_for_write(
-      &me->pdata, CD_PROP_BOOL, ".hide_poly", me->totpoly);
+      &me->face_data, CD_PROP_BOOL, ".hide_poly", me->faces_num);
 
   ss->subdiv_ccg = me_eval->runtime->subdiv_ccg;
 
@@ -1802,11 +1800,11 @@ static void sculpt_update_object(
   sculpt_update_persistent_base(ob);
 
   if (ob->type == OB_MESH && ss->pmap.is_empty()) {
-    ss->pmap = blender::bke::mesh::build_vert_to_poly_map(me->polys(),
+    ss->pmap = blender::bke::mesh::build_vert_to_face_map(me->faces(),
                                                           me->corner_verts(),
                                                           me->totvert,
-                                                          ss->vert_to_poly_offsets,
-                                                          ss->vert_to_poly_indices);
+                                                          ss->vert_to_face_offsets,
+                                                          ss->vert_to_face_indices);
   }
 
   if (ss->pbvh) {
@@ -1823,7 +1821,7 @@ static void sculpt_update_object(
       /* If the fully evaluated mesh has the same topology as the deform-only version, use it.
        * This matters because crazyspace evaluation is very restrictive and excludes even modifiers
        * that simply recompute vertex weights (which can even include Geometry Nodes). */
-      if (me_eval_deform->totpoly == me_eval->totpoly &&
+      if (me_eval_deform->faces_num == me_eval->faces_num &&
           me_eval_deform->totloop == me_eval->totloop &&
           me_eval_deform->totvert == me_eval->totvert)
       {
@@ -2010,7 +2008,7 @@ int *BKE_sculpt_face_sets_ensure(Object *ob)
   }
 
   int *face_sets = static_cast<int *>(CustomData_get_layer_named_for_write(
-      &mesh->pdata, CD_PROP_INT32, ".sculpt_face_set", mesh->totpoly));
+      &mesh->face_data, CD_PROP_INT32, ".sculpt_face_set", mesh->faces_num));
 
   if (ss->pbvh && ELEM(BKE_pbvh_type(ss->pbvh), PBVH_FACES, PBVH_GRIDS)) {
     BKE_pbvh_face_sets_set(ss->pbvh, face_sets);
@@ -2022,12 +2020,12 @@ int *BKE_sculpt_face_sets_ensure(Object *ob)
 bool *BKE_sculpt_hide_poly_ensure(Mesh *mesh)
 {
   bool *hide_poly = static_cast<bool *>(CustomData_get_layer_named_for_write(
-      &mesh->pdata, CD_PROP_BOOL, ".hide_poly", mesh->totpoly));
+      &mesh->face_data, CD_PROP_BOOL, ".hide_poly", mesh->faces_num));
   if (hide_poly != nullptr) {
     return hide_poly;
   }
   return static_cast<bool *>(CustomData_add_layer_named(
-      &mesh->pdata, CD_PROP_BOOL, CD_SET_DEFAULT, mesh->totpoly, ".hide_poly"));
+      &mesh->face_data, CD_PROP_BOOL, CD_SET_DEFAULT, mesh->faces_num, ".hide_poly"));
 }
 
 int BKE_sculpt_mask_layers_ensure(Depsgraph *depsgraph,
@@ -2036,23 +2034,23 @@ int BKE_sculpt_mask_layers_ensure(Depsgraph *depsgraph,
                                   MultiresModifierData *mmd)
 {
   Mesh *me = static_cast<Mesh *>(ob->data);
-  const blender::OffsetIndices polys = me->polys();
+  const blender::OffsetIndices faces = me->faces();
   const Span<int> corner_verts = me->corner_verts();
   int ret = 0;
 
   const float *paint_mask = static_cast<const float *>(
-      CustomData_get_layer(&me->vdata, CD_PAINT_MASK));
+      CustomData_get_layer(&me->vert_data, CD_PAINT_MASK));
 
   /* if multires is active, create a grid paint mask layer if there
    * isn't one already */
-  if (mmd && !CustomData_has_layer(&me->ldata, CD_GRID_PAINT_MASK)) {
+  if (mmd && !CustomData_has_layer(&me->loop_data, CD_GRID_PAINT_MASK)) {
     GridPaintMask *gmask;
     int level = max_ii(1, mmd->sculptlvl);
     int gridsize = BKE_ccg_gridsize(level);
     int gridarea = gridsize * gridsize;
 
     gmask = static_cast<GridPaintMask *>(
-        CustomData_add_layer(&me->ldata, CD_GRID_PAINT_MASK, CD_SET_DEFAULT, me->totloop));
+        CustomData_add_layer(&me->loop_data, CD_GRID_PAINT_MASK, CD_SET_DEFAULT, me->totloop));
 
     for (int i = 0; i < me->totloop; i++) {
       GridPaintMask *gpm = &gmask[i];
@@ -2064,22 +2062,22 @@ int BKE_sculpt_mask_layers_ensure(Depsgraph *depsgraph,
 
     /* If vertices already have mask, copy into multires data. */
     if (paint_mask) {
-      for (const int i : polys.index_range()) {
-        const blender::IndexRange poly = polys[i];
+      for (const int i : faces.index_range()) {
+        const blender::IndexRange face = faces[i];
 
         /* Mask center. */
         float avg = 0.0f;
-        for (const int vert : corner_verts.slice(poly)) {
+        for (const int vert : corner_verts.slice(face)) {
           avg += paint_mask[vert];
         }
-        avg /= float(poly.size());
+        avg /= float(face.size());
 
         /* Fill in multires mask corner. */
-        for (const int corner : poly) {
+        for (const int corner : face) {
           GridPaintMask *gpm = &gmask[corner];
           const int vert = corner_verts[corner];
-          const int prev = corner_verts[blender::bke::mesh::poly_corner_prev(poly, vert)];
-          const int next = corner_verts[blender::bke::mesh::poly_corner_next(poly, vert)];
+          const int prev = corner_verts[blender::bke::mesh::face_corner_prev(face, vert)];
+          const int next = corner_verts[blender::bke::mesh::face_corner_next(face, vert)];
 
           gpm->data[0] = avg;
           gpm->data[1] = (paint_mask[vert] + paint_mask[next]) * 0.5f;
@@ -2099,7 +2097,7 @@ int BKE_sculpt_mask_layers_ensure(Depsgraph *depsgraph,
 
   /* Create vertex paint mask layer if there isn't one already. */
   if (!paint_mask) {
-    CustomData_add_layer(&me->vdata, CD_PAINT_MASK, CD_SET_DEFAULT, me->totvert);
+    CustomData_add_layer(&me->vert_data, CD_PAINT_MASK, CD_SET_DEFAULT, me->totvert);
     /* The evaluated mesh must be updated to contain the new data. */
     DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
     ret |= SCULPT_MASK_LAYER_CALC_VERT;
@@ -2224,7 +2222,6 @@ static PBVH *build_pbvh_for_dynamic_topology(Object *ob)
 
   BKE_pbvh_build_bmesh(pbvh,
                        ob->sculpt->bm,
-                       ob->sculpt->bm_smooth_shading,
                        ob->sculpt->bm_log,
                        ob->sculpt->attrs.dyntopo_node_id_vertex->bmesh_cd_offset,
                        ob->sculpt->attrs.dyntopo_node_id_face->bmesh_cd_offset);
@@ -2272,7 +2269,7 @@ static PBVH *build_pbvh_from_ccg(Object *ob, SubdivCCG *subdiv_ccg)
 
 PBVH *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Object *ob)
 {
-  if (ob == nullptr || ob->sculpt == nullptr) {
+  if (ob->sculpt == nullptr) {
     return nullptr;
   }
 
@@ -2342,11 +2339,6 @@ PBVH *BKE_object_sculpt_pbvh_get(Object *object)
 bool BKE_object_sculpt_use_dyntopo(const Object *object)
 {
   return object->sculpt && object->sculpt->bm;
-}
-
-void BKE_object_sculpt_dyntopo_smooth_shading_set(Object *object, const bool value)
-{
-  object->sculpt->bm_smooth_shading = value;
 }
 
 void BKE_sculpt_bvh_update_from_ccg(PBVH *pbvh, SubdivCCG *subdiv_ccg)
@@ -2442,9 +2434,9 @@ static CustomData *sculpt_get_cdata(Object *ob, eAttrDomain domain)
           return nullptr;
         }
 
-        return &me->vdata;
+        return &me->vert_data;
       case ATTR_DOMAIN_FACE:
-        return &me->pdata;
+        return &me->face_data;
       default:
         BLI_assert_unreachable();
         return nullptr;
@@ -2563,10 +2555,10 @@ static bool sculpt_attribute_create(SculptSession *ss,
 
       switch (domain) {
         case ATTR_DOMAIN_POINT:
-          cdata = &me->vdata;
+          cdata = &me->vert_data;
           break;
         case ATTR_DOMAIN_FACE:
-          cdata = &me->pdata;
+          cdata = &me->face_data;
           break;
         default:
           out->used = false;
@@ -2941,11 +2933,11 @@ bool BKE_sculpt_attribute_destroy(Object *ob, SculptAttribute *attr)
 
     switch (domain) {
       case ATTR_DOMAIN_POINT:
-        cdata = ss->bm ? &ss->bm->vdata : &me->vdata;
+        cdata = ss->bm ? &ss->bm->vdata : &me->vert_data;
         totelem = ss->totvert;
         break;
       case ATTR_DOMAIN_FACE:
-        cdata = ss->bm ? &ss->bm->pdata : &me->pdata;
+        cdata = ss->bm ? &ss->bm->pdata : &me->face_data;
         totelem = ss->totfaces;
         break;
       default:

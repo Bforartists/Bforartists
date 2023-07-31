@@ -4,6 +4,10 @@
 
 set(INC
   .
+  ../blenfont
+  ../blenkernel
+  ../blentranslation
+  ../depsgraph
   ../draw
   ../editors/include
   ../gpu
@@ -12,6 +16,9 @@ set(INC
   ../nodes
   ../render
   ../sequencer
+  ../windowmanager
+  ../../../intern/clog
+  ../bmesh
 
   # RNA_prototypes.h
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -28,7 +35,7 @@ set(SRC
   intern/readfile.cc
   intern/readfile_tempload.cc
   intern/undofile.cc
-  intern/versioning_250.c
+  intern/versioning_250.cc
   intern/versioning_260.cc
   intern/versioning_270.cc
   intern/versioning_280.cc
@@ -37,9 +44,9 @@ set(SRC
   intern/versioning_400.cc
   intern/versioning_common.cc
   intern/versioning_defaults.cc
-  intern/versioning_dna.c
-  intern/versioning_legacy.c
-  intern/versioning_userdef.c
+  intern/versioning_dna.cc
+  intern/versioning_legacy.cc
+  intern/versioning_userdef.cc
   intern/writefile.cc
 
   BLO_blend_defs.h
@@ -53,16 +60,10 @@ set(SRC
 )
 
 set(LIB
-  PRIVATE bf::blenfont
-  PRIVATE bf::blenkernel
+  bf_blenkernel
   PRIVATE bf::blenlib
-  PRIVATE bf::blentranslation
-  PRIVATE bf::bmesh
-  PRIVATE bf::depsgraph
   PRIVATE bf::dna
-  PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
-  PRIVATE bf::windowmanager
 )
 
 if(WITH_BUILDINFO)
