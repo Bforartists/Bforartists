@@ -291,8 +291,8 @@ class NLA_MT_edit(Menu):
 
         layout.separator()
         layout.operator("nla.bake", text="Bake Action", icon="BAKE_ACTION")
-        layout.operator("nla.duplicate", text="Duplicate", icon="DUPLICATE").linked = False
-        layout.operator("nla.duplicate", text="Linked Duplicate", icon="DUPLICATE").linked = True
+        layout.operator("nla.duplicate_move", text="Duplicate", icon="DUPLICATE")
+        layout.operator("nla.duplicate_linked_move", text="Linked Duplicate", icon="DUPLICATE")
         layout.operator("nla.split", icon="SPLIT")
         props = layout.operator("wm.call_panel", text="Rename", icon="RENAME")
         props.name = "TOPBAR_PT_name"
@@ -322,7 +322,7 @@ class NLA_MT_edit(Menu):
         layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")
 
         layout.separator()
-        # TODO: names of these tools for 'tweak-mode' need changing?      
+        # TODO: names of these tools for 'tweak-mode' need changing?
         if scene.is_nla_tweakmode:
             layout.operator("nla.tweakmode_exit", text="Stop Tweaking Isolated Action", icon="ACTION_TWEAK_SOLO").isolate_action = True
             layout.operator("nla.tweakmode_exit", text="Stop Tweaking Action", icon="ACTION_TWEAK_SOLO")
@@ -427,8 +427,8 @@ class NLA_MT_context_menu(Menu):
         props = layout.operator("wm.call_panel", text="Rename", icon="RENAME")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
-        layout.operator("nla.duplicate", text="Duplicate", icon="DUPLICATE").linked = False
-        layout.operator("nla.duplicate", text="Linked Duplicate", icon="DUPLICATE").linked = True
+        layout.operator("nla.duplicate_move", text="Duplicate", icon="DUPLICATE")
+        layout.operator("nla.duplicate_linked_move", text="Linked Duplicate", icon="DUPLICATE")
 
         layout.separator()
 

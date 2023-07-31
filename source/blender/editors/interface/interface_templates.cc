@@ -42,6 +42,7 @@
 #include "BLT_translation.h"
 
 #include "BKE_action.h"
+#include "BKE_blender_version.h"
 #include "BKE_blendfile.h"
 #include "BKE_cachefile.h"
 #include "BKE_colorband.h"
@@ -72,6 +73,7 @@
 #include "DEG_depsgraph_query.h"
 
 #include "ED_fileselect.h"
+#include "ED_info.h"
 #include "ED_object.h"
 #include "ED_render.h"
 #include "ED_screen.h"
@@ -1135,7 +1137,7 @@ static const char *template_id_browse_tip(const StructRNA *type)
       case ID_PT:
         return N_("Data Browser\nBrowse Point Cloud Data to be linked");
       case ID_VO:
-        return N_("Data Browser\nBrowse Volume Data to be linked");    
+        return N_("Data Browser\nBrowse Volume Data to be linked");
       case ID_GP:
         return N_("Data Browser\nBrowse Grease Pencil Data to be linked");
 
@@ -2012,7 +2014,7 @@ void uiTemplateAnyID(uiLayout *layout,
   sub = uiLayoutRow(row, true);
   uiLayoutSetAlignment(sub, UI_LAYOUT_ALIGN_EXPAND);
 
-  uiItemFullR(sub, ptr, propID, 0, 0, 0, "", ICON_NONE);
+  uiItemFullR(sub, ptr, propID, 0, 0, UI_ITEM_NONE, "", ICON_NONE);
 }
 
 /** \} */
@@ -2278,7 +2280,7 @@ void uiTemplatePathBuilder(uiLayout *layout,
   uiLayout *row = uiLayoutRow(layout, true);
 
   /* Path (existing string) Widget */
-  uiItemR(row, ptr, propname, 0, text, ICON_RNA);
+  uiItemR(row, ptr, propname, UI_ITEM_NONE, text, ICON_RNA);
 
   /* TODO: attach something to this to make allow
    * searching of nested properties to 'build' the path */
@@ -2311,7 +2313,7 @@ void uiTemplateModifiers(uiLayout * /*layout*/, bContext *C)
     UI_panels_free_instanced(C, region);
     for (ModifierData *md = static_cast<ModifierData *>(modifiers->first); md; md = md->next) {
       const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(md->type));
-      if (mti->panelRegister == nullptr) {
+      if (mti->panel_register == nullptr) {
         continue;
       }
 
@@ -2330,7 +2332,7 @@ void uiTemplateModifiers(uiLayout * /*layout*/, bContext *C)
     Panel *panel = static_cast<Panel *>(region->panels.first);
     LISTBASE_FOREACH (ModifierData *, md, modifiers) {
       const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(md->type));
-      if (mti->panelRegister == nullptr) {
+      if (mti->panel_register == nullptr) {
         continue;
       }
 
@@ -2428,7 +2430,7 @@ static void object_constraint_panel_id(void *md_link, char *r_idname)
   if (cti == nullptr) {
     return;
   }
-  BLI_string_join(r_idname, BKE_ST_MAXNAME, CONSTRAINT_TYPE_PANEL_PREFIX, cti->structName);
+  BLI_string_join(r_idname, BKE_ST_MAXNAME, CONSTRAINT_TYPE_PANEL_PREFIX, cti->struct_name);
 }
 
 static void bone_constraint_panel_id(void *md_link, char *r_idname)
@@ -2440,7 +2442,7 @@ static void bone_constraint_panel_id(void *md_link, char *r_idname)
   if (cti == nullptr) {
     return;
   }
-  BLI_string_join(r_idname, BKE_ST_MAXNAME, CONSTRAINT_BONE_TYPE_PANEL_PREFIX, cti->structName);
+  BLI_string_join(r_idname, BKE_ST_MAXNAME, CONSTRAINT_BONE_TYPE_PANEL_PREFIX, cti->struct_name);
 }
 
 void uiTemplateConstraints(uiLayout * /*layout*/, bContext *C, bool use_bone_constraints)
@@ -2563,7 +2565,7 @@ void uiTemplateGpencilModifiers(uiLayout * /*layout*/, bContext *C)
     {
       const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(
           GpencilModifierType(md->type));
-      if (mti->panelRegister == nullptr) {
+      if (mti->panel_register == nullptr) {
         continue;
       }
 
@@ -2583,7 +2585,7 @@ void uiTemplateGpencilModifiers(uiLayout * /*layout*/, bContext *C)
     LISTBASE_FOREACH (ModifierData *, md, modifiers) {
       const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(
           GpencilModifierType(md->type));
-      if (mti->panelRegister == nullptr) {
+      if (mti->panel_register == nullptr) {
         continue;
       }
 
@@ -2649,7 +2651,7 @@ void uiTemplateShaderFx(uiLayout * /*layout*/, bContext *C)
     Panel *panel = static_cast<Panel *>(region->panels.first);
     LISTBASE_FOREACH (ShaderFxData *, fx, shaderfx) {
       const ShaderFxTypeInfo *fxi = BKE_shaderfx_get_info(ShaderFxType(fx->type));
-      if (fxi->panelRegister == nullptr) {
+      if (fxi->panel_register == nullptr) {
         continue;
       }
 
@@ -2745,10 +2747,11 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
     uiItemM(row, "WM_MT_operator_presets", nullptr, ICON_NONE);
 
     wmOperatorType *ot = WM_operatortype_find("WM_OT_operator_preset_add", false);
-    uiItemFullO_ptr(row, ot, "", ICON_ADD, nullptr, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
+    uiItemFullO_ptr(row, ot, "", ICON_ADD, nullptr, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE, &op_ptr);
     RNA_string_set(&op_ptr, "operator", op->type->idname);
 
-    uiItemFullO_ptr(row, ot, "", ICON_REMOVE, nullptr, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
+    uiItemFullO_ptr(
+        row, ot, "", ICON_REMOVE, nullptr, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE, &op_ptr);
     RNA_string_set(&op_ptr, "operator", op->type->idname);
     RNA_boolean_set(&op_ptr, "remove_active", true);
   }
@@ -3027,7 +3030,7 @@ static void constraint_ops_extra_draw(bContext *C, uiLayout *layout, void *con_v
               ICON_TRIA_UP,
               nullptr,
               WM_OP_INVOKE_DEFAULT,
-              0,
+              UI_ITEM_NONE,
               &op_ptr);
   RNA_int_set(&op_ptr, "index", 0);
   if (!con->prev) {
@@ -3042,7 +3045,7 @@ static void constraint_ops_extra_draw(bContext *C, uiLayout *layout, void *con_v
               ICON_TRIA_DOWN,
               nullptr,
               WM_OP_INVOKE_DEFAULT,
-              0,
+              UI_ITEM_NONE,
               &op_ptr);
   ListBase *constraint_list = ED_object_constraint_list_from_constraint(ob, con, nullptr);
   RNA_int_set(&op_ptr, "index", BLI_listbase_count(constraint_list) - 1);
@@ -3077,10 +3080,10 @@ static void draw_constraint_header(uiLayout *layout, Object *ob, bConstraint *co
 
   uiLayout *row = uiLayoutRow(layout, true);
 
-  uiItemR(row, &ptr, "name", 0, "", ICON_NONE);
+  uiItemR(row, &ptr, "name", UI_ITEM_NONE, "", ICON_NONE);
 
   /* Enabled eye icon. */
-  uiItemR(row, &ptr, "enabled", 0, "", ICON_NONE);
+  uiItemR(row, &ptr, "enabled", UI_ITEM_NONE, "", ICON_NONE);
 
   /* Extra operators menu. */
   uiItemMenuF(row, "", ICON_DOWNARROW_HLT, constraint_ops_extra_draw, con);
@@ -3277,7 +3280,7 @@ void uiTemplatePreview(uiLayout *layout,
        * just hide the option until this feature is supported. */
       if (!BKE_scene_uses_blender_eevee(CTX_data_scene(C))) {
         uiItemS(col);
-        uiItemR(col, &material_ptr, "use_preview_world", 0, "", ICON_WORLD);
+        uiItemR(col, &material_ptr, "use_preview_world", UI_ITEM_NONE, "", ICON_WORLD);
       }
     }
 
@@ -3382,7 +3385,7 @@ void uiTemplatePreview(uiLayout *layout,
       /* Alpha button for texture preview */
       if (*pr_texture != TEX_PR_OTHER) {
         row = uiLayoutRow(layout, false);
-        uiItemR(row, &texture_ptr, "use_preview_alpha", 0, nullptr, ICON_NONE);
+        uiItemR(row, &texture_ptr, "use_preview_alpha", UI_ITEM_NONE, nullptr, ICON_NONE);
       }
     }
   }
@@ -3684,12 +3687,12 @@ static void colorband_buttons_layout(uiLayout *layout,
   row = uiLayoutRow(split, false);
 
   UI_block_align_begin(block);
-  uiItemR(row, &ptr, "color_mode", 0, "", ICON_NONE);
+  uiItemR(row, &ptr, "color_mode", UI_ITEM_NONE, "", ICON_NONE);
   if (ELEM(coba->color_mode, COLBAND_BLEND_HSV, COLBAND_BLEND_HSL)) {
-    uiItemR(row, &ptr, "hue_interpolation", 0, "", ICON_NONE);
+    uiItemR(row, &ptr, "hue_interpolation", UI_ITEM_NONE, "", ICON_NONE);
   }
   else { /* COLBAND_BLEND_RGB */
-    uiItemR(row, &ptr, "interpolation", 0, "", ICON_NONE);
+    uiItemR(row, &ptr, "interpolation", UI_ITEM_NONE, "", ICON_NONE);
   }
   UI_block_align_end(block);
 
@@ -3739,10 +3742,10 @@ static void colorband_buttons_layout(uiLayout *layout,
       UI_but_number_step_size_set(bt, 1);
 
       row = uiLayoutRow(split, false);
-      uiItemR(row, &ptr, "position", 0, IFACE_("Pos"), ICON_NONE);
+      uiItemR(row, &ptr, "position", UI_ITEM_NONE, IFACE_("Pos"), ICON_NONE);
 
       row = uiLayoutRow(layout, false);
-      uiItemR(row, &ptr, "color", 0, "", ICON_NONE);
+      uiItemR(row, &ptr, "color", UI_ITEM_NONE, "", ICON_NONE);
     }
     else {
       split = uiLayoutSplit(layout, 0.5f, false);
@@ -3769,7 +3772,7 @@ static void colorband_buttons_layout(uiLayout *layout,
       uiItemR(row, &ptr, "position", UI_ITEM_R_SLIDER, IFACE_("Pos"), ICON_NONE);
 
       row = uiLayoutRow(split, false);
-      uiItemR(row, &ptr, "color", 0, "", ICON_NONE);
+      uiItemR(row, &ptr, "color", UI_ITEM_NONE, "", ICON_NONE);
     }
 
     /* Some special (rather awkward) treatment to update UI state on certain property changes. */
@@ -5554,8 +5557,8 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
     }
   }
 
-  uiItemR(layout, ptr, "use_sample_straight_edges", 0, nullptr, ICON_NONE);
-  uiItemR(layout, ptr, "use_sample_even_lengths", 0, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "use_sample_straight_edges", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "use_sample_even_lengths", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   UI_block_funcN_set(block, nullptr, nullptr, nullptr);
 }
@@ -6518,6 +6521,126 @@ void uiTemplateInputStatus(uiLayout *layout, bContext *C)
   }
 }
 
+void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
+{
+  Main *bmain = CTX_data_main(C);
+  Scene *scene = CTX_data_scene(C);
+  ViewLayer *view_layer = CTX_data_view_layer(C);
+
+  if (!bmain->has_forward_compatibility_issues) {
+    const char *status_info_txt = ED_info_statusbar_string(bmain, scene, view_layer);
+    uiItemL(layout, status_info_txt, ICON_NONE);
+    return;
+  }
+
+  /* Blender version part is shown as warning area when there are forward compatibility issues with
+   * currently loaded .blend file. */
+
+  const char *status_info_txt = ED_info_statusbar_string_ex(
+      bmain, scene, view_layer, (U.statusbar_flag & ~STATUSBAR_SHOW_VERSION));
+  uiItemL(layout, status_info_txt, ICON_NONE);
+
+  status_info_txt = ED_info_statusbar_string_ex(bmain, scene, view_layer, STATUSBAR_SHOW_VERSION);
+
+  uiBut *but;
+
+  const uiStyle *style = UI_style_get();
+  uiLayout *ui_abs = uiLayoutAbsolute(layout, false);
+  uiBlock *block = uiLayoutGetBlock(ui_abs);
+  eUIEmbossType previous_emboss = UI_block_emboss_get(block);
+
+  UI_fontstyle_set(&style->widgetlabel);
+  int width = int(
+      BLF_width(style->widgetlabel.uifont_id, status_info_txt, strlen(status_info_txt)));
+  width = max_ii(width, int(10 * UI_SCALE_FAC));
+
+  UI_block_align_begin(block);
+
+  /* Background for icon. */
+  but = uiDefBut(block,
+                 UI_BTYPE_ROUNDBOX,
+                 0,
+                 "",
+                 0,
+                 0,
+                 UI_UNIT_X + (6 * UI_SCALE_FAC),
+                 UI_UNIT_Y,
+                 nullptr,
+                 0.0f,
+                 0.0f,
+                 0,
+                 0,
+                 "");
+  /* UI_BTYPE_ROUNDBOX's bg color is set in but->col. */
+  UI_GetThemeColorType4ubv(TH_INFO_WARNING, SPACE_INFO, but->col);
+
+  /* Background for the rest of the message. */
+  but = uiDefBut(block,
+                 UI_BTYPE_ROUNDBOX,
+                 0,
+                 "",
+                 UI_UNIT_X + (6 * UI_SCALE_FAC),
+                 0,
+                 UI_UNIT_X + width,
+                 UI_UNIT_Y,
+                 nullptr,
+                 0.0f,
+                 0.0f,
+                 0,
+                 0,
+                 "");
+
+  /* Use icon background at low opacity to highlight, but still contrasting with area TH_TEXT. */
+  UI_GetThemeColorType4ubv(TH_INFO_WARNING, SPACE_INFO, but->col);
+  but->col[3] = 64;
+
+  UI_block_align_end(block);
+  UI_block_emboss_set(block, UI_EMBOSS_NONE);
+
+  /* The report icon itself. */
+  static char compat_error_msg[256];
+  char writer_ver_str[12];
+  BKE_blender_version_blendfile_string_from_values(
+      writer_ver_str, sizeof(writer_ver_str), bmain->versionfile, -1);
+  SNPRINTF(compat_error_msg,
+           TIP_("File saved by newer Blender\n(%s), expect loss of data"),
+           writer_ver_str);
+  but = uiDefIconBut(block,
+                     UI_BTYPE_BUT,
+                     0,
+                     ICON_ERROR,
+                     int(3 * UI_SCALE_FAC),
+                     0,
+                     UI_UNIT_X,
+                     UI_UNIT_Y,
+                     nullptr,
+                     0.0f,
+                     0.0f,
+                     0.0f,
+                     0.0f,
+                     compat_error_msg);
+  UI_GetThemeColorType4ubv(TH_INFO_WARNING_TEXT, SPACE_INFO, but->col);
+  but->col[3] = 255; /* This theme color is RBG only, so have to set alpha here. */
+
+  /* The report message. */
+  but = uiDefBut(block,
+                 UI_BTYPE_BUT,
+                 0,
+                 status_info_txt,
+                 UI_UNIT_X,
+                 0,
+                 short(width + UI_UNIT_X),
+                 UI_UNIT_Y,
+                 nullptr,
+                 0.0f,
+                 0.0f,
+                 0.0f,
+                 0.0f,
+                 compat_error_msg);
+
+  UI_block_emboss_set(block, previous_emboss);
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -6560,7 +6683,7 @@ static void template_keymap_item_properties(uiLayout *layout, const char *title,
     uiLayout *row = uiLayoutRow(box, false);
 
     /* property value */
-    uiItemFullR(row, ptr, prop, -1, 0, 0, nullptr, ICON_NONE);
+    uiItemFullR(row, ptr, prop, -1, 0, UI_ITEM_NONE, nullptr, ICON_NONE);
 
     if (is_set) {
       /* unset operator */
@@ -6662,7 +6785,8 @@ void uiTemplateColorspaceSettings(uiLayout *layout, PointerRNA *ptr, const char 
 
   PointerRNA colorspace_settings_ptr = RNA_property_pointer_get(ptr, prop);
 
-  uiItemR(layout, &colorspace_settings_ptr, "name", 0, IFACE_("Color Space"), ICON_NONE);
+  uiItemR(
+      layout, &colorspace_settings_ptr, "name", UI_ITEM_NONE, IFACE_("Color Space"), ICON_NONE);
 }
 
 void uiTemplateColormanagedViewSettings(uiLayout *layout,
@@ -6683,16 +6807,16 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
       view_transform_ptr.data);
 
   uiLayout *col = uiLayoutColumn(layout, false);
-  uiItemR(col, &view_transform_ptr, "view_transform", 0, IFACE_("View"), ICON_NONE);
-  uiItemR(col, &view_transform_ptr, "look", 0, IFACE_("Look"), ICON_NONE);
+  uiItemR(col, &view_transform_ptr, "view_transform", UI_ITEM_NONE, IFACE_("View"), ICON_NONE);
+  uiItemR(col, &view_transform_ptr, "look", UI_ITEM_NONE, IFACE_("Look"), ICON_NONE);
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, &view_transform_ptr, "exposure", 0, nullptr, ICON_NONE);
-  uiItemR(col, &view_transform_ptr, "gamma", 0, nullptr, ICON_NONE);
+  uiItemR(col, &view_transform_ptr, "exposure", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, &view_transform_ptr, "gamma", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   col = uiLayoutColumn(layout, false);
   uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-  uiItemR(col, &view_transform_ptr, "use_curve_mapping", 0, nullptr, ICON_NONE);
+  uiItemR(col, &view_transform_ptr, "use_curve_mapping", UI_ITEM_NONE, nullptr, ICON_NONE);
   if (view_settings->flag & COLORMANAGE_VIEW_USE_CURVES) {
     uiTemplateCurveMapping(
         col, &view_transform_ptr, "curve_mapping", 'c', true, false, false, false);
@@ -6794,8 +6918,8 @@ void uiTemplateCacheFileVelocity(uiLayout *layout, PointerRNA *fileptr)
   /* Ensure that the context has a CacheFile as this may not be set inside of modifiers panels. */
   uiLayoutSetContextPointer(layout, "edit_cachefile", fileptr);
 
-  uiItemR(layout, fileptr, "velocity_name", 0, nullptr, ICON_NONE);
-  uiItemR(layout, fileptr, "velocity_unit", 0, nullptr, ICON_NONE);
+  uiItemR(layout, fileptr, "velocity_name", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, fileptr, "velocity_unit", UI_ITEM_NONE, nullptr, ICON_NONE);
 }
 
 void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerRNA *fileptr)
@@ -6843,7 +6967,7 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
   row = uiLayoutRow(layout, false);
   uiLayoutSetActive(row, is_alembic && engine_supports_procedural);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, fileptr, "use_render_procedural", 0, nullptr, ICON_NONE);
+  uiItemR(row, fileptr, "use_render_procedural", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "use_render_procedural", 0); /*bfa - decorator*/
 
   const bool use_render_procedural = RNA_boolean_get(fileptr, "use_render_procedural");
@@ -6852,12 +6976,12 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
   row = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(row, use_render_procedural);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, fileptr, "use_prefetch", 0, nullptr, ICON_NONE);
+  uiItemR(row, fileptr, "use_prefetch", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "use_prefetch", 0); /*bfa - decorator*/
 
   sub = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(sub, use_prefetch && use_render_procedural);
-  uiItemR(sub, fileptr, "prefetch_cache_size", 0, nullptr, ICON_NONE);
+  uiItemR(sub, fileptr, "prefetch_cache_size", UI_ITEM_NONE, nullptr, ICON_NONE);
 }
 
 void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
@@ -6874,12 +6998,12 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   row = uiLayoutRow(layout, false);
 
   /*------------------- bfa - original props */
-  // uiItemR(row, fileptr, "is_sequence", 0, nullptr, ICON_NONE);
+  // uiItemR(row, fileptr, "is_sequence", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, fileptr, "is_sequence", 0, nullptr, ICON_NONE);
+  uiItemR(row, fileptr, "is_sequence", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "is_sequence", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
@@ -6887,10 +7011,10 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   // row = uiLayoutRowWithHeading(layout, true, IFACE_("Override Frame"));
   // sub = uiLayoutRow(row, true);
   // uiLayoutSetPropDecorate(sub, false);
-  // uiItemR(sub, fileptr, "override_frame", 0, "", ICON_NONE);
+  // uiItemR(sub, fileptr, "override_frame", UI_ITEM_NONE, "", ICON_NONE);
   // subsub = uiLayoutRow(sub, true);
   // uiLayoutSetActive(subsub, RNA_boolean_get(fileptr, "override_frame"));
-  // uiItemR(subsub, fileptr, "frame", 0, "", ICON_NONE);
+  // uiItemR(subsub, fileptr, "frame", UI_ITEM_NONE, "", ICON_NONE);
   // uiItemDecoratorR(row, fileptr, "frame", 0);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
@@ -6902,12 +7026,12 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   row = uiLayoutRow(split, false);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, fileptr, "override_frame", 0, "Override Frame", ICON_NONE);
+  uiItemR(row, fileptr, "override_frame", UI_ITEM_NONE, "Override Frame", ICON_NONE);
 
   /* SECOND PART ................................................ */
   row = uiLayoutRow(split, false);
   if (RNA_boolean_get(fileptr, "override_frame")) {
-    uiItemR(row, fileptr, "frame", 0, "", ICON_NONE);
+    uiItemR(row, fileptr, "frame", UI_ITEM_NONE, "", ICON_NONE);
   }
   else {
     uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
@@ -6916,7 +7040,7 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   // ------------------------------- end bfa
 
   row = uiLayoutRow(layout, false);
-  uiItemR(row, fileptr, "frame_offset", 0, nullptr, ICON_NONE);
+  uiItemR(row, fileptr, "frame_offset", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiLayoutSetActive(row, !RNA_boolean_get(fileptr, "is_sequence"));
 }
 
@@ -7047,22 +7171,22 @@ void uiTemplateCacheFile(uiLayout *layout,
   uiLayoutSetPropSep(layout, true);
 
   row = uiLayoutRow(layout, true);
-  uiItemR(row, &fileptr, "filepath", 0, nullptr, ICON_NONE);
+  uiItemR(row, &fileptr, "filepath", UI_ITEM_NONE, nullptr, ICON_NONE);
   sub = uiLayoutRow(row, true);
   uiItemO(sub, "", ICON_FILE_REFRESH, "cachefile.reload");
 
   if (sbuts->mainb == BCONTEXT_CONSTRAINT) {
     row = uiLayoutRow(layout, false);
-    uiItemR(row, &fileptr, "scale", 0, IFACE_("Manual Scale"), ICON_NONE);
+    uiItemR(row, &fileptr, "scale", UI_ITEM_NONE, IFACE_("Manual Scale"), ICON_NONE);
   }
 
   /* TODO: unused for now, so no need to expose. */
 #if 0
   row = uiLayoutRow(layout, false);
-  uiItemR(row, &fileptr, "forward_axis", 0, "Forward Axis", ICON_NONE);
+  uiItemR(row, &fileptr, "forward_axis", UI_ITEM_NONE, "Forward Axis", ICON_NONE);
 
   row = uiLayoutRow(layout, false);
-  uiItemR(row, &fileptr, "up_axis", 0, "Up Axis", ICON_NONE);
+  uiItemR(row, &fileptr, "up_axis", UI_ITEM_NONE, "Up Axis", ICON_NONE);
 #endif
 }
 
@@ -7088,7 +7212,7 @@ int uiTemplateRecentFiles(uiLayout *layout, int rows)
                 BKE_blendfile_extension_check(filename) ? ICON_FILE_BLEND : ICON_FILE_BACKUP,
                 nullptr,
                 WM_OP_INVOKE_DEFAULT,
-                0,
+                UI_ITEM_NONE,
                 &ptr);
     RNA_string_set(&ptr, "filepath", recent->filepath);
     RNA_boolean_set(&ptr, "display_file_selector", false);

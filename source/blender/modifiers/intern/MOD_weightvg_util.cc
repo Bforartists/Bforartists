@@ -215,7 +215,7 @@ void weightvg_do_mask(const ModifierEvalContext *ctx,
     /* Proceed only if vgroup is valid, else use constant factor. */
     /* Get actual deform-verts (ie vertex group data). */
     const MDeformVert *dvert = static_cast<const MDeformVert *>(
-        CustomData_get_layer(&mesh->vdata, CD_MDEFORMVERT));
+        CustomData_get_layer(&mesh->vert_data, CD_MDEFORMVERT));
     /* Proceed only if vgroup is valid, else assume factor = O. */
     if (dvert == nullptr) {
       return;
@@ -339,11 +339,11 @@ void weightvg_ui_common(const bContext *C, PointerRNA *ob_ptr, PointerRNA *ptr, 
                  IFACE_("Mask Texture"));
 
     if (has_mask_texture) {
-      uiItemR(layout, ptr, "mask_tex_use_channel", 0, IFACE_("Channel"), ICON_NONE);
-      uiItemR(layout, ptr, "mask_tex_mapping", 0, nullptr, ICON_NONE);
+      uiItemR(layout, ptr, "mask_tex_use_channel", UI_ITEM_NONE, IFACE_("Channel"), ICON_NONE);
+      uiItemR(layout, ptr, "mask_tex_mapping", UI_ITEM_NONE, nullptr, ICON_NONE);
 
       if (mask_tex_mapping == MOD_DISP_MAP_OBJECT) {
-        uiItemR(layout, ptr, "mask_tex_map_object", 0, IFACE_("Object"), ICON_NONE);
+        uiItemR(layout, ptr, "mask_tex_map_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
       }
       else if (mask_tex_mapping == MOD_DISP_MAP_UV && RNA_enum_get(ob_ptr, "type") == OB_MESH) {
         PointerRNA obj_data_ptr = RNA_pointer_get(ob_ptr, "data");

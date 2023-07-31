@@ -20,6 +20,7 @@
 #include "BKE_global.h"
 #include "BKE_lib_remap.h"
 #include "BKE_main.h"
+#include "BKE_report.h"
 #include "BKE_screen.h"
 
 #include "RNA_access.h"
@@ -78,14 +79,14 @@ static SpaceLink *file_create(const ScrArea * /*area*/, const Scene * /*scene*/)
   BLI_addtail(&sfile->regionbase, region);
   region->regiontype = RGN_TYPE_UI;
   region->alignment = RGN_ALIGN_TOP;
-  region->flag = RGN_FLAG_DYNAMIC_SIZE;
+  region->flag = RGN_FLAG_DYNAMIC_SIZE | RGN_FLAG_NO_USER_RESIZE;
 
   /* execute region */
   region = static_cast<ARegion *>(MEM_callocN(sizeof(ARegion), "execute region for file"));
   BLI_addtail(&sfile->regionbase, region);
   region->regiontype = RGN_TYPE_EXECUTE;
   region->alignment = RGN_ALIGN_BOTTOM;
-  region->flag = RGN_FLAG_DYNAMIC_SIZE;
+  region->flag = RGN_FLAG_DYNAMIC_SIZE | RGN_FLAG_NO_USER_RESIZE;
 
   /* tools props region */
   region = static_cast<ARegion *>(MEM_callocN(sizeof(ARegion), "tool props for file"));
@@ -126,6 +127,9 @@ static void file_free(SpaceLink *sl)
 
   MEM_SAFE_FREE(sfile->params);
   MEM_SAFE_FREE(sfile->asset_params);
+  if (sfile->runtime != nullptr) {
+    BKE_reports_clear(&sfile->runtime->is_blendfile_readable_reports);
+  }
   MEM_SAFE_FREE(sfile->runtime);
 
   MEM_SAFE_FREE(sfile->layout);
@@ -143,6 +147,7 @@ static void file_init(wmWindowManager * /*wm*/, ScrArea *area)
   if (sfile->runtime == nullptr) {
     sfile->runtime = static_cast<SpaceFile_Runtime *>(
         MEM_callocN(sizeof(*sfile->runtime), __func__));
+    BKE_reports_init(&sfile->runtime->is_blendfile_readable_reports, RPT_STORE);
   }
   /* Validate the params right after file read. */
   fileselect_refresh_params(sfile);
@@ -205,6 +210,10 @@ static void file_refresh(const bContext *C, ScrArea *area)
 
   fileselect_refresh_params(sfile);
   folder_history_list_ensure_for_active_browse_mode(sfile);
+
+  if (sfile->runtime != nullptr) {
+    sfile->runtime->is_blendfile_status_set = false;
+  }
 
   if (sfile->files && (sfile->tags & FILE_TAG_REBUILD_MAIN_FILES) &&
       filelist_needs_reset_on_main_changes(sfile->files))

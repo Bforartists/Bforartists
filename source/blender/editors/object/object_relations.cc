@@ -929,7 +929,7 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
   uiItemEnumO_ptr(layout, ot, nullptr, 0, "type", PAR_OBJECT);
 #else
   uiItemFullO_ptr(
-      layout, ot, IFACE_("Object"), ICON_PARENT_OBJECT, nullptr, WM_OP_EXEC_DEFAULT, 0, &opptr);
+      layout, ot, IFACE_("Object"), ICON_PARENT_OBJECT, nullptr, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE, &opptr);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", false);
 
@@ -939,7 +939,7 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
                   ICON_PARENT_OBJECT,
                   nullptr,
                   WM_OP_EXEC_DEFAULT,
-                  0,
+                  UI_ITEM_NONE,
                   &opptr);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", true);

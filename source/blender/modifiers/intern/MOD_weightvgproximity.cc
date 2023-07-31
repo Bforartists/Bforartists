@@ -311,7 +311,7 @@ static void do_map(Object *ob,
 /**************************************
  * Modifiers functions.               *
  **************************************/
-static void initData(ModifierData *md)
+static void init_data(ModifierData *md)
 {
   WeightVGProximityModifierData *wmd = (WeightVGProximityModifierData *)md;
 
@@ -323,13 +323,13 @@ static void initData(ModifierData *md)
   BKE_curvemapping_init(wmd->cmap_curve);
 }
 
-static void freeData(ModifierData *md)
+static void free_data(ModifierData *md)
 {
   WeightVGProximityModifierData *wmd = (WeightVGProximityModifierData *)md;
   BKE_curvemapping_free(wmd->cmap_curve);
 }
 
-static void copyData(const ModifierData *md, ModifierData *target, const int flag)
+static void copy_data(const ModifierData *md, ModifierData *target, const int flag)
 {
   const WeightVGProximityModifierData *wmd = (const WeightVGProximityModifierData *)md;
   WeightVGProximityModifierData *twmd = (WeightVGProximityModifierData *)target;
@@ -339,7 +339,7 @@ static void copyData(const ModifierData *md, ModifierData *target, const int fla
   twmd->cmap_curve = BKE_curvemapping_copy(wmd->cmap_curve);
 }
 
-static void requiredDataMask(ModifierData *md, CustomData_MeshMasks *r_cddata_masks)
+static void required_data_mask(ModifierData *md, CustomData_MeshMasks *r_cddata_masks)
 {
   WeightVGProximityModifierData *wmd = (WeightVGProximityModifierData *)md;
 
@@ -354,7 +354,7 @@ static void requiredDataMask(ModifierData *md, CustomData_MeshMasks *r_cddata_ma
   /* No need to ask for CD_PREVIEW_MLOOPCOL... */
 }
 
-static bool dependsOnTime(Scene * /*scene*/, ModifierData *md)
+static bool depends_on_time(Scene * /*scene*/, ModifierData *md)
 {
   WeightVGProximityModifierData *wmd = (WeightVGProximityModifierData *)md;
 
@@ -364,21 +364,21 @@ static bool dependsOnTime(Scene * /*scene*/, ModifierData *md)
   return false;
 }
 
-static void foreachIDLink(ModifierData *md, Object *ob, IDWalkFunc walk, void *userData)
+static void foreach_ID_link(ModifierData *md, Object *ob, IDWalkFunc walk, void *user_data)
 {
   WeightVGProximityModifierData *wmd = (WeightVGProximityModifierData *)md;
 
-  walk(userData, ob, (ID **)&wmd->mask_texture, IDWALK_CB_USER);
-  walk(userData, ob, (ID **)&wmd->proximity_ob_target, IDWALK_CB_NOP);
-  walk(userData, ob, (ID **)&wmd->mask_tex_map_obj, IDWALK_CB_NOP);
+  walk(user_data, ob, (ID **)&wmd->mask_texture, IDWALK_CB_USER);
+  walk(user_data, ob, (ID **)&wmd->proximity_ob_target, IDWALK_CB_NOP);
+  walk(user_data, ob, (ID **)&wmd->mask_tex_map_obj, IDWALK_CB_NOP);
 }
 
-static void foreachTexLink(ModifierData *md, Object *ob, TexWalkFunc walk, void *userData)
+static void foreach_tex_link(ModifierData *md, Object *ob, TexWalkFunc walk, void *user_data)
 {
-  walk(userData, ob, md, "mask_texture");
+  walk(user_data, ob, md, "mask_texture");
 }
 
-static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
+static void update_depsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
 {
   WeightVGProximityModifierData *wmd = (WeightVGProximityModifierData *)md;
   bool need_transform_relation = false;
@@ -412,7 +412,7 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
   }
 }
 
-static bool isDisabled(const Scene * /*scene*/, ModifierData *md, bool /*useRenderParams*/)
+static bool is_disabled(const Scene * /*scene*/, ModifierData *md, bool /*use_render_params*/)
 {
   WeightVGProximityModifierData *wmd = (WeightVGProximityModifierData *)md;
   /* If no vertex group, bypass. */
@@ -423,7 +423,7 @@ static bool isDisabled(const Scene * /*scene*/, ModifierData *md, bool /*useRend
   return (wmd->proximity_ob_target == nullptr);
 }
 
-static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh)
+static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh)
 {
   BLI_assert(mesh != nullptr);
 
@@ -471,7 +471,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
   if (defgrp_index == -1) {
     return mesh;
   }
-  const bool has_mdef = CustomData_has_layer(&mesh->vdata, CD_MDEFORMVERT);
+  const bool has_mdef = CustomData_has_layer(&mesh->vert_data, CD_MDEFORMVERT);
   /* If no vertices were ever added to an object's vgroup, dvert might be nullptr. */
   /* As this modifier never add vertices to vgroup, just return. */
   if (!has_mdef) {
@@ -653,26 +653,26 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiItemPointerR(layout, ptr, "vertex_group", &ob_ptr, "vertex_groups", nullptr, ICON_NONE);
 
-  uiItemR(layout, ptr, "target", 0, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "target", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   uiItemS(layout);
 
-  uiItemR(layout, ptr, "proximity_mode", 0, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "proximity_mode", UI_ITEM_NONE, nullptr, ICON_NONE);
   if (RNA_enum_get(ptr, "proximity_mode") == MOD_WVG_PROXIMITY_GEOMETRY) {
     uiItemR(layout, ptr, "proximity_geometry", UI_ITEM_R_EXPAND, IFACE_("Geometry"), ICON_NONE);
   }
 
   col = uiLayoutColumn(layout, true);
-  uiItemR(col, ptr, "min_dist", 0, nullptr, ICON_NONE);
-  uiItemR(col, ptr, "max_dist", 0, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "min_dist", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "max_dist", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   /*------------------- bfa - original props */
-  // uiItemR(layout, ptr, "normalize", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "normalize", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "normalize", 0, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "normalize", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 }
@@ -688,10 +688,10 @@ static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   row = uiLayoutRow(layout, true);
-  uiItemR(row, ptr, "falloff_type", 0, IFACE_("Type"), ICON_NONE);
+  uiItemR(row, ptr, "falloff_type", UI_ITEM_NONE, IFACE_("Type"), ICON_NONE);
   sub = uiLayoutRow(row, true);
   uiLayoutSetPropSep(sub, false);
-  uiItemR(row, ptr, "invert_falloff", 0, "", ICON_ARROW_LEFTRIGHT);
+  uiItemR(row, ptr, "invert_falloff", UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
   if (RNA_enum_get(ptr, "falloff_type") == MOD_WVG_MAPPING_CURVE) {
     uiTemplateCurveMapping(layout, ptr, "map_curve", 0, false, false, false, false);
   }
@@ -708,7 +708,7 @@ static void influence_panel_draw(const bContext *C, Panel *panel)
   weightvg_ui_common(C, &ob_ptr, ptr, layout);
 }
 
-static void panelRegister(ARegionType *region_type)
+static void panel_register(ARegionType *region_type)
 {
   PanelType *panel_type = modifier_panel_register(
       region_type, eModifierType_WeightVGProximity, panel_draw);
@@ -718,7 +718,7 @@ static void panelRegister(ARegionType *region_type)
       region_type, "influence", "Influence", nullptr, influence_panel_draw, panel_type);
 }
 
-static void blendWrite(BlendWriter *writer, const ID * /*id_owner*/, const ModifierData *md)
+static void blend_write(BlendWriter *writer, const ID * /*id_owner*/, const ModifierData *md)
 {
   const WeightVGProximityModifierData *wmd = (const WeightVGProximityModifierData *)md;
 
@@ -729,7 +729,7 @@ static void blendWrite(BlendWriter *writer, const ID * /*id_owner*/, const Modif
   }
 }
 
-static void blendRead(BlendDataReader *reader, ModifierData *md)
+static void blend_read(BlendDataReader *reader, ModifierData *md)
 {
   WeightVGProximityModifierData *wmd = (WeightVGProximityModifierData *)md;
 
@@ -740,35 +740,36 @@ static void blendRead(BlendDataReader *reader, ModifierData *md)
 }
 
 ModifierTypeInfo modifierType_WeightVGProximity = {
+    /*idname*/ "VertexWeightProximity",
     /*name*/ N_("VertexWeightProximity"),
-    /*structName*/ "WeightVGProximityModifierData",
-    /*structSize*/ sizeof(WeightVGProximityModifierData),
+    /*struct_name*/ "WeightVGProximityModifierData",
+    /*struct_size*/ sizeof(WeightVGProximityModifierData),
     /*srna*/ &RNA_VertexWeightProximityModifier,
     /*type*/ eModifierTypeType_NonGeometrical,
     /*flags*/ eModifierTypeFlag_AcceptsMesh | eModifierTypeFlag_SupportsMapping |
         eModifierTypeFlag_SupportsEditmode | eModifierTypeFlag_UsesPreview,
     /*icon*/ ICON_MOD_VERTEX_WEIGHT,
 
-    /*copyData*/ copyData,
+    /*copy_data*/ copy_data,
 
-    /*deformVerts*/ nullptr,
-    /*deformMatrices*/ nullptr,
-    /*deformVertsEM*/ nullptr,
-    /*deformMatricesEM*/ nullptr,
-    /*modifyMesh*/ modifyMesh,
-    /*modifyGeometrySet*/ nullptr,
+    /*deform_verts*/ nullptr,
+    /*deform_matrices*/ nullptr,
+    /*deform_verts_EM*/ nullptr,
+    /*deform_matrices_EM*/ nullptr,
+    /*modify_mesh*/ modify_mesh,
+    /*modify_geometry_set*/ nullptr,
 
-    /*initData*/ initData,
-    /*requiredDataMask*/ requiredDataMask,
-    /*freeData*/ freeData,
-    /*isDisabled*/ isDisabled,
-    /*updateDepsgraph*/ updateDepsgraph,
-    /*dependsOnTime*/ dependsOnTime,
-    /*dependsOnNormals*/ nullptr,
-    /*foreachIDLink*/ foreachIDLink,
-    /*foreachTexLink*/ foreachTexLink,
-    /*freeRuntimeData*/ nullptr,
-    /*panelRegister*/ panelRegister,
-    /*blendWrite*/ blendWrite,
-    /*blendRead*/ blendRead,
+    /*init_data*/ init_data,
+    /*required_data_mask*/ required_data_mask,
+    /*free_data*/ free_data,
+    /*is_disabled*/ is_disabled,
+    /*update_depsgraph*/ update_depsgraph,
+    /*depends_on_time*/ depends_on_time,
+    /*depends_on_normals*/ nullptr,
+    /*foreach_ID_link*/ foreach_ID_link,
+    /*foreach_tex_link*/ foreach_tex_link,
+    /*free_runtime_data*/ nullptr,
+    /*panel_register*/ panel_register,
+    /*blend_write*/ blend_write,
+    /*blend_read*/ blend_read,
 };
