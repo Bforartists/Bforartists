@@ -139,7 +139,7 @@ void modifier_vgroup_ui(uiLayout *layout,
     uiLayout *sub = uiLayoutRow(row, true);
     uiLayoutSetActive(sub, has_vertex_group);
     uiLayoutSetPropDecorate(sub, false);
-    uiItemR(sub, ptr, invert_vgroup_prop, 0, "", ICON_ARROW_LEFTRIGHT);
+    uiItemR(sub, ptr, invert_vgroup_prop, UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
   }
 }
 
@@ -259,7 +259,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
               ICON_TRIA_UP,
               nullptr,
               WM_OP_INVOKE_DEFAULT,
-              0,
+              UI_ITEM_NONE,
               &op_ptr);
   RNA_int_set(&op_ptr, "index", 0);
   if (!md->prev) {
@@ -274,7 +274,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
               ICON_TRIA_DOWN,
               nullptr,
               WM_OP_INVOKE_DEFAULT,
-              0,
+              UI_ITEM_NONE,
               &op_ptr);
   RNA_int_set(&op_ptr, "index", BLI_listbase_count(&ob->modifiers) - 1);
   if (!md->next) {
@@ -288,7 +288,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
                 ICON_NONE,
                 nullptr,
                 WM_OP_INVOKE_DEFAULT,
-                0,
+                UI_ITEM_NONE,
                 &op_ptr);
   }
 }
@@ -313,7 +313,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   /* Modifier Icon. */
   sub = uiLayoutRow(layout, true);
   uiLayoutSetEmboss(sub, UI_EMBOSS_NONE);
-  if (mti->isDisabled && mti->isDisabled(scene, md, false)) {
+  if (mti->is_disabled && mti->is_disabled(scene, md, false)) {
     uiLayoutSetRedAlert(sub, true);
   }
   uiItemStringO(sub,
@@ -339,7 +339,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
       if (index < cage_index || !BKE_modifier_couldbe_cage(scene, md)) {
         uiLayoutSetActive(sub, false);
       }
-      uiItemR(sub, ptr, "show_on_cage", 0, "", ICON_NONE);
+      uiItemR(sub, ptr, "show_on_cage", UI_ITEM_NONE, "", ICON_NONE);
       buttons_number++;
     }
   } /* Tessellation point for curve-typed objects. */
@@ -397,7 +397,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
     }
     else if (mti->type != eModifierTypeType_Constructive) {
       /* Constructive modifiers tessellates curve before applying. */
-      uiItemR(row, ptr, "use_apply_on_spline", 0, "", ICON_NONE);
+      uiItemR(row, ptr, "use_apply_on_spline", UI_ITEM_NONE, "", ICON_NONE);
       buttons_number++;
     }
   }
@@ -406,11 +406,11 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
     if (mti->flags & eModifierTypeFlag_SupportsEditmode) {
       sub = uiLayoutRow(row, true);
       uiLayoutSetActive(sub, (md->mode & eModifierMode_Realtime));
-      uiItemR(sub, ptr, "show_in_editmode", 0, "", ICON_NONE);
+      uiItemR(sub, ptr, "show_in_editmode", UI_ITEM_NONE, "", ICON_NONE);
       buttons_number++;
     }
-    uiItemR(row, ptr, "show_viewport", 0, "", ICON_NONE);
-    uiItemR(row, ptr, "show_render", 0, "", ICON_NONE);
+    uiItemR(row, ptr, "show_viewport", UI_ITEM_NONE, "", ICON_NONE);
+    uiItemR(row, ptr, "show_render", UI_ITEM_NONE, "", ICON_NONE);
     buttons_number += 2;
   }
 
@@ -442,7 +442,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
 
   bool display_name = (panel->sizex / UI_UNIT_X - buttons_number > 5) || (panel->sizex == 0);
   if (display_name) {
-    uiItemR(name_row, ptr, "name", 0, "", ICON_NONE);
+    uiItemR(name_row, ptr, "name", UI_ITEM_NONE, "", ICON_NONE);
   }
   else {
     uiLayoutSetAlignment(row, UI_LAYOUT_ALIGN_RIGHT);

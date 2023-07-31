@@ -608,8 +608,8 @@ static void clamp_bounds_in_domain(FluidDomainSettings *fds,
 static bool is_static_object(Object *ob)
 {
   /* Check if the object has modifiers that might make the object "dynamic". */
-  VirtualModifierData virtualModifierData;
-  ModifierData *md = BKE_modifiers_get_virtual_modifierlist(ob, &virtualModifierData);
+  VirtualModifierData virtual_modifier_data;
+  ModifierData *md = BKE_modifiers_get_virtual_modifierlist(ob, &virtual_modifier_data);
   for (; md; md = md->next) {
     if (ELEM(md->type,
              eModifierType_Cloth,
@@ -2082,7 +2082,7 @@ static void emit_from_mesh(
     const int numverts = me->totvert;
     const MDeformVert *dvert = BKE_mesh_deform_verts(me);
     const float(*mloopuv)[2] = static_cast<const float(*)[2]>(
-        CustomData_get_layer_named(&me->ldata, CD_PROP_FLOAT2, ffs->uvlayer_name));
+        CustomData_get_layer_named(&me->loop_data, CD_PROP_FLOAT2, ffs->uvlayer_name));
 
     if (ffs->flags & FLUID_FLOW_INITVELOCITY) {
       vert_vel = static_cast<float *>(
@@ -3247,7 +3247,7 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds,
     return nullptr;
   }
   blender::MutableSpan<blender::float3> positions = me->vert_positions_for_write();
-  blender::MutableSpan<int> poly_offsets = me->poly_offsets_for_write();
+  blender::MutableSpan<int> face_offsets = me->face_offsets_for_write();
   blender::MutableSpan<int> corner_verts = me->corner_verts_for_write();
 
   const bool is_sharp = orgmesh->attributes()
@@ -3339,11 +3339,11 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds,
   int *material_indices = BKE_mesh_material_indices_for_write(me);
 
   /* Loop for triangles. */
-  for (const int i : poly_offsets.index_range().drop_back(1)) {
+  for (const int i : face_offsets.index_range().drop_back(1)) {
     /* Initialize from existing face. */
     material_indices[i] = mp_mat_nr;
 
-    poly_offsets[i] = i * 3;
+    face_offsets[i] = i * 3;
 
     corner_verts[i * 3 + 0] = manta_liquid_get_triangle_x_at(fds->fluid, i);
     corner_verts[i * 3 + 1] = manta_liquid_get_triangle_y_at(fds->fluid, i);
@@ -3382,7 +3382,7 @@ static Mesh *create_smoke_geometry(FluidDomainSettings *fds, Mesh *orgmesh, Obje
 
   result = BKE_mesh_new_nomain(num_verts, 0, num_faces, num_faces * 4);
   blender::MutableSpan<blender::float3> positions = result->vert_positions_for_write();
-  blender::MutableSpan<int> poly_offsets = result->poly_offsets_for_write();
+  blender::MutableSpan<int> face_offsets = result->face_offsets_for_write();
   blender::MutableSpan<int> corner_verts = result->corner_verts_for_write();
 
   if (num_verts) {
@@ -3426,8 +3426,8 @@ static Mesh *create_smoke_geometry(FluidDomainSettings *fds, Mesh *orgmesh, Obje
     co[1] = max[1];
     co[2] = min[2];
 
-    poly_offsets.fill(4);
-    blender::offset_indices::accumulate_counts_to_offsets(poly_offsets);
+    face_offsets.fill(4);
+    blender::offset_indices::accumulate_counts_to_offsets(face_offsets);
 
     /* Create faces. */
     /* Top side. */

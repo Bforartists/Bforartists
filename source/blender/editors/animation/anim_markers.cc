@@ -46,6 +46,7 @@
 #include "UI_view2d.h"
 
 #include "ED_anim_api.h"
+#include "ED_keyframes_edit.h"
 #include "ED_markers.h"
 #include "ED_numinput.h"
 #include "ED_object.h"
@@ -55,6 +56,7 @@
 #include "ED_util.h"
 
 #include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
 
 /* -------------------------------------------------------------------- */
 /** \name Marker API
@@ -1803,7 +1805,7 @@ static void MARKER_OT_make_links_scene(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Make Links to Scene";
+  ot->name = "Copy Markers to Scene";
   ot->description = "Copy selected markers to another scene";
   ot->idname = "MARKER_OT_make_links_scene";
 
@@ -1870,6 +1872,7 @@ static int ed_marker_camera_bind_exec(bContext *C, wmOperator *op)
   /* camera may have changes */
   BKE_scene_camera_switch_update(scene);
   BKE_screen_view3d_scene_sync(screen, scene);
+  DEG_relations_tag_update(CTX_data_main(C));
 
   WM_event_add_notifier(C, NC_SCENE | ND_MARKERS, nullptr);
   WM_event_add_notifier(C, NC_ANIMATION | ND_MARKERS, nullptr);

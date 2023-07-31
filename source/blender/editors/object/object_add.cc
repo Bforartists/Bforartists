@@ -1498,23 +1498,23 @@ static void object_add_ui(bContext * /*C*/, wmOperator *op)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, op->ptr, "radius", 0, nullptr, ICON_NONE);
-  uiItemR(layout, op->ptr, "align", 0, nullptr, ICON_NONE);
-  uiItemR(layout, op->ptr, "location", 0, nullptr, ICON_NONE);
-  uiItemR(layout, op->ptr, "rotation", 0, nullptr, ICON_NONE);
-  uiItemR(layout, op->ptr, "type", 0, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "radius", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "align", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "location", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "rotation", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "type", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   int type = RNA_enum_get(op->ptr, "type");
   if (ELEM(type, GP_LRT_COLLECTION, GP_LRT_OBJECT, GP_LRT_SCENE)) {
     uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
-    uiItemR(layout, op->ptr, "use_lights", 0, nullptr, ICON_NONE);
-    uiItemR(layout, op->ptr, "use_in_front", 0, nullptr, ICON_NONE);
+    uiItemR(layout, op->ptr, "use_lights", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, op->ptr, "use_in_front", UI_ITEM_NONE, nullptr, ICON_NONE);
     uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = True */
     bool in_front = RNA_boolean_get(op->ptr, "use_in_front");
     uiLayout *col = uiLayoutColumn(layout, false);
     uiLayoutSetActive(col, !in_front);
-    uiItemR(col, op->ptr, "stroke_depth_offset", 0, nullptr, ICON_NONE);
-    uiItemR(col, op->ptr, "stroke_depth_order", 0, nullptr, ICON_NONE);
+    uiItemR(col, op->ptr, "stroke_depth_offset", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, op->ptr, "stroke_depth_order", UI_ITEM_NONE, nullptr, ICON_NONE);
   }
 }
 
@@ -2236,7 +2236,7 @@ static int object_curves_empty_hair_add_exec(bContext *C, wmOperator *op)
 
   /* Decide which UV map to use for attachment. */
   Mesh *surface_mesh = static_cast<Mesh *>(surface_ob->data);
-  const char *uv_name = CustomData_get_active_layer_name(&surface_mesh->ldata, CD_PROP_FLOAT2);
+  const char *uv_name = CustomData_get_active_layer_name(&surface_mesh->loop_data, CD_PROP_FLOAT2);
   if (uv_name != nullptr) {
     curves_id->surface_uv_map = BLI_strdup(uv_name);
   }
@@ -3723,23 +3723,23 @@ static void object_convert_ui(bContext * /*C*/, wmOperator *op)
 
   uiLayoutSetPropSep(layout, false); /*bfa - checkboxes, don't split*/
 
-  uiItemR(layout, op->ptr, "target", 0, nullptr, ICON_NONE);
-  uiItemR(layout, op->ptr, "keep_original", 0, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "target", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "keep_original", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   const int target = RNA_enum_get(op->ptr, "target");
   if (target == OB_MESH) {
-    uiItemR(layout, op->ptr, "merge_customdata", 0, nullptr, ICON_NONE);
+    uiItemR(layout, op->ptr, "merge_customdata", UI_ITEM_NONE, nullptr, ICON_NONE);
   }
   else if (target == OB_GPENCIL_LEGACY) {
     uiLayoutSetPropSep(layout, true); /*bfa - split*/
 
-    uiItemR(layout, op->ptr, "thickness", 0, nullptr, ICON_NONE);
-    uiItemR(layout, op->ptr, "angle", 0, nullptr, ICON_NONE);
-    uiItemR(layout, op->ptr, "offset", 0, nullptr, ICON_NONE);
+    uiItemR(layout, op->ptr, "thickness", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, op->ptr, "angle", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, op->ptr, "offset", UI_ITEM_NONE, nullptr, ICON_NONE);
 
     uiLayoutSetPropSep(layout, false); /*bfa - boolean, don't split*/
-    uiItemR(layout, op->ptr, "seams", 0, nullptr, ICON_NONE);
-    uiItemR(layout, op->ptr, "faces", 0, nullptr, ICON_NONE);
+    uiItemR(layout, op->ptr, "seams", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, op->ptr, "faces", UI_ITEM_NONE, nullptr, ICON_NONE);
   }
 }
 

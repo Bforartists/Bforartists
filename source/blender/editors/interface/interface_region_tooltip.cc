@@ -751,6 +751,7 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
                                                                 const bool is_label)
 {
   uiStringInfo but_label = {BUT_GET_LABEL, nullptr};
+  uiStringInfo but_tip_label = {BUT_GET_TIP_LABEL, nullptr};
   uiStringInfo but_tip = {BUT_GET_TIP, nullptr};
   uiStringInfo enum_label = {BUT_GET_RNAENUM_LABEL, nullptr};
   uiStringInfo enum_tip = {BUT_GET_RNAENUM_TIP, nullptr};
@@ -770,20 +771,22 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
 
   if (extra_icon) {
     if (is_label) {
-      UI_but_extra_icon_string_info_get(C, extra_icon, &but_label, &enum_label, nullptr);
+      UI_but_extra_icon_string_info_get(C, extra_icon, &but_tip_label, &enum_label, nullptr);
     }
     else {
-      UI_but_extra_icon_string_info_get(C, extra_icon, &but_label, &but_tip, &op_keymap, nullptr);
+      UI_but_extra_icon_string_info_get(
+          C, extra_icon, &but_label, &but_tip_label, &but_tip, &op_keymap, nullptr);
     }
   }
   else {
     if (is_label) {
-      UI_but_string_info_get(C, but, &but_label, &enum_label, nullptr);
+      UI_but_string_info_get(C, but, &but_tip_label, &enum_label, nullptr);
     }
     else {
       UI_but_string_info_get(C,
                              but,
                              &but_label,
+                             &but_tip_label,
                              &but_tip,
                              &enum_label,
                              &enum_tip,
@@ -795,35 +798,27 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
     }
   }
 
-  /* Tip Label (only for buttons not already showing the label).
-   * Check prefix instead of comparing because the button may include the shortcut.
-   * Buttons with dynamic tool-tips also don't get their default label here since they
-   * can already provide more accurate and specific tool-tip content. */
-
-  /* bfa - turned off this specific check. */
-  /*   if (but_label.strinfo && !STRPREFIX(but->drawstr, but_label.strinfo) && !but->tip_func) { */
-
-  /* bfa - add the prefix everywhere in case it is not NULL! */
-  if (but_label.strinfo != NULL) {
+  /* Tip Label (only for buttons not already showing the label). */
+  /* bfa - Replaced condition in order to add the prefix everywhere in case it is not NULL! */
+  if (but_tip_label.strinfo != nullptr) {
     uiTooltipField *field = text_field_add(
         data, uiTooltipFormat::Style::Header, uiTooltipFormat::ColorID::Normal);
 
     /* bfa - Some buttons do not have an explicit button title. (e.g. the properties editor tab
      * button), it just shows a dot then where the title should be, so we check for those buttons,
      * and skip adding the button title. */
-    if (STRPREFIX(but->drawstr, but_label.strinfo)) {
-      field->text = BLI_sprintfN("%s", but_label.strinfo);
+    /* We check prefix instead of comparing because the button may include the shortcut. */
+    if (STRPREFIX(but->drawstr, but_tip_label.strinfo)) {
+      field->text = BLI_sprintfN("%s", but_tip_label.strinfo);
     }
     /* Buttons with dynamic tooltips also don't get their default label here since they
      * can already provide more accurate and specific tooltip content. */
     else if (!but->tip_func) {
-      field->text = BLI_sprintfN("%s.", but_label.strinfo);
+      field->text = BLI_sprintfN("%s.", but_tip_label.strinfo);
     }
     else {
       field->text = BLI_strdup("\n");
     }
-
-    //field->text = BLI_strdup(but_label.strinfo);
   }
 
   /* Tip */
@@ -1005,6 +1000,9 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
   /* Free strinfo's... */
   if (but_label.strinfo) {
     MEM_freeN(but_label.strinfo);
+  }
+  if (but_tip_label.strinfo) {
+    MEM_freeN(but_tip_label.strinfo);
   }
   if (but_tip.strinfo) {
     MEM_freeN(but_tip.strinfo);

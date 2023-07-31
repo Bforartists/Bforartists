@@ -219,6 +219,9 @@ struct uiBut {
   uiButToolTipFunc tip_func = nullptr;
   void *tip_arg = nullptr;
   uiFreeArgFunc tip_arg_free = nullptr;
+  /** Function to get a custom tooltip label, see #UI_BUT_HAS_TOOLTIP_LABEL. Requires
+   * #UI_BUT_HAS_TOOLTIP_LABEL drawflag. */
+  std::function<std::string(const uiBut *)> tip_label_func;
 
   /** info on why button is disabled, displayed in tooltip */
   const char *disabled_info = nullptr;
@@ -945,7 +948,7 @@ void ui_pie_menu_level_create(uiBlock *block,
                               const EnumPropertyItem *items,
                               int totitem,
                               wmOperatorCallContext context,
-                              wmOperatorCallContext flag);
+                              eUI_Item_Flag flag);
 
 /* interface_region_popup.c */
 

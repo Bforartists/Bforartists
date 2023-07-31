@@ -8,6 +8,8 @@ set(INC
   metal
   opengl
   vulkan
+  ../blenkernel
+  ../bmesh
   ../draw
   ../imbuf
   ../makesrna
@@ -26,6 +28,7 @@ set(INC
   # For node muting stuff.
   ../nodes
 
+  ../../../intern/clog
   ../../../intern/ghost
   ../../../intern/mantaflow/extern
 )
@@ -44,8 +47,8 @@ set(INC_SYS
 
 set(SRC
   intern/gpu_batch.cc
-  intern/gpu_batch_presets.c
-  intern/gpu_batch_utils.c
+  intern/gpu_batch_presets.cc
+  intern/gpu_batch_utils.cc
   intern/gpu_capabilities.cc
   intern/gpu_codegen.cc
   intern/gpu_compute.cc
@@ -54,17 +57,17 @@ set(SRC
   intern/gpu_drawlist.cc
   intern/gpu_framebuffer.cc
   intern/gpu_immediate.cc
-  intern/gpu_immediate_util.c
+  intern/gpu_immediate_util.cc
   intern/gpu_index_buffer.cc
-  intern/gpu_init_exit.c
-  intern/gpu_material.c
+  intern/gpu_init_exit.cc
+  intern/gpu_material.cc
   intern/gpu_matrix.cc
   intern/gpu_node_graph.cc
   intern/gpu_platform.cc
   intern/gpu_query.cc
-  intern/gpu_select.c
+  intern/gpu_select.cc
   intern/gpu_select_next.cc
-  intern/gpu_select_pick.c
+  intern/gpu_select_pick.cc
   intern/gpu_select_sample_query.cc
   intern/gpu_shader.cc
   intern/gpu_shader_builtin.cc
@@ -78,7 +81,7 @@ set(SRC
   intern/gpu_uniform_buffer.cc
   intern/gpu_vertex_buffer.cc
   intern/gpu_vertex_format.cc
-  intern/gpu_viewport.c
+  intern/gpu_viewport.cc
 
   GPU_batch.h
   GPU_batch_presets.h
@@ -312,13 +315,10 @@ set(METAL_SRC
 )
 
 set(LIB
-  PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
-  PRIVATE bf::bmesh
   PRIVATE bf::dna
   PRIVATE bf::intern::atomic
   ${Epoxy_LIBRARIES}
-  PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
 )
 
@@ -514,6 +514,7 @@ set(GLSL_SRC
   shaders/material/gpu_shader_material_separate_xyz.glsl
   shaders/material/gpu_shader_material_set.glsl
   shaders/material/gpu_shader_material_shader_to_rgba.glsl
+  shaders/material/gpu_shader_material_sheen.glsl
   shaders/material/gpu_shader_material_squeeze.glsl
   shaders/material/gpu_shader_material_subsurface_scattering.glsl
   shaders/material/gpu_shader_material_tangent.glsl
@@ -538,7 +539,6 @@ set(GLSL_SRC
   shaders/material/gpu_shader_material_vector_displacement.glsl
   shaders/material/gpu_shader_material_vector_math.glsl
   shaders/material/gpu_shader_material_vector_rotate.glsl
-  shaders/material/gpu_shader_material_velvet.glsl
   shaders/material/gpu_shader_material_vertex_color.glsl
   shaders/material/gpu_shader_material_volume_absorption.glsl
   shaders/material/gpu_shader_material_volume_principled.glsl
@@ -819,7 +819,6 @@ if(WITH_GPU_BUILDTIME_SHADER_BUILDER)
     bf_intern_ghost
     ${PLATFORM_LINKLIBS}
     PRIVATE bf::intern::guardedalloc
-    PRIVATE bf::blenkernel
   )
   target_include_directories(shader_builder PRIVATE ${INC} ${CMAKE_CURRENT_BINARY_DIR})
 

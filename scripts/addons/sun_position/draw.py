@@ -98,7 +98,8 @@ else:
         addon_prefs = context.preferences.addons[__package__].preferences
 
         if addon_prefs.show_overlays and sun_props.show_north:
-            _north_handle = bpy.types.SpaceView3D.draw_handler_add(north_draw, (), 'WINDOW', 'POST_VIEW')
+            if _north_handle is None:
+                _north_handle = bpy.types.SpaceView3D.draw_handler_add(north_draw, (), 'WINDOW', 'POST_VIEW')
         elif _north_handle is not None:
             bpy.types.SpaceView3D.draw_handler_remove(_north_handle, 'WINDOW')
             _north_handle = None

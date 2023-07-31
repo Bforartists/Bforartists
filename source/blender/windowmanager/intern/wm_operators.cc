@@ -1057,7 +1057,7 @@ int WM_menu_invoke_ex(bContext *C, wmOperator *op, wmOperatorCallContext opconte
                      RNA_property_identifier(prop),
                      static_cast<IDProperty *>(op->ptr->data),
                      opcontext,
-                     0);
+                     UI_ITEM_NONE);
     UI_popup_menu_end(C, pup);
     return OPERATOR_INTERFACE;
   }
@@ -1193,7 +1193,8 @@ int WM_operator_confirm_message_ex(bContext *C,
 
   uiPopupMenu *pup = UI_popup_menu_begin(C, title, icon);
   uiLayout *layout = UI_popup_menu_layout(pup);
-  uiItemFullO_ptr(layout, op->type, message, ICON_NONE, properties, opcontext, 0, nullptr);
+  uiItemFullO_ptr(
+      layout, op->type, message, ICON_NONE, properties, opcontext, UI_ITEM_NONE, nullptr);
   UI_popup_menu_end(C, pup);
 
   return OPERATOR_INTERFACE;
@@ -1459,9 +1460,9 @@ static void dialog_exec_cb(bContext *C, void *arg1, void *arg2)
 }
 
 /* Dialogs are popups that require user verification (click OK) before exec */
-static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *userData)
+static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_data)
 {
-  wmOpPopUp *data = static_cast<wmOpPopUp *>(userData);
+  wmOpPopUp *data = static_cast<wmOpPopUp *>(user_data);
   wmOperator *op = data->op;
   const uiStyle *style = UI_style_get_dpi();
 
@@ -1500,9 +1501,9 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *userD
   return block;
 }
 
-static uiBlock *wm_operator_ui_create(bContext *C, ARegion *region, void *userData)
+static uiBlock *wm_operator_ui_create(bContext *C, ARegion *region, void *user_data)
 {
-  wmOpPopUp *data = static_cast<wmOpPopUp *>(userData);
+  wmOpPopUp *data = static_cast<wmOpPopUp *>(user_data);
   wmOperator *op = data->op;
   const uiStyle *style = UI_style_get_dpi();
 
@@ -1524,9 +1525,9 @@ static uiBlock *wm_operator_ui_create(bContext *C, ARegion *region, void *userDa
   return block;
 }
 
-static void wm_operator_ui_popup_cancel(bContext *C, void *userData)
+static void wm_operator_ui_popup_cancel(bContext *C, void *user_data)
 {
-  wmOpPopUp *data = static_cast<wmOpPopUp *>(userData);
+  wmOpPopUp *data = static_cast<wmOpPopUp *>(user_data);
   wmOperator *op = data->op;
 
   if (op) {
@@ -2683,7 +2684,7 @@ static int radial_control_get_properties(bContext *C, wmOperator *op)
                                &use_secondary_ptr,
                                &use_secondary_prop,
                                0,
-                               RCPropFlags((RC_PROP_ALLOW_MISSING | RC_PROP_REQUIRE_BOOL))))
+                               RCPropFlags(RC_PROP_ALLOW_MISSING | RC_PROP_REQUIRE_BOOL)))
   {
     return 0;
   }

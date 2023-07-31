@@ -2871,7 +2871,9 @@ static int region_scale_modal(bContext *C, wmOperator *op, const wmEvent *event)
         else if (rmd->region->flag & RGN_FLAG_HIDDEN) {
           region_scale_toggle_hidden(C, rmd);
         }
-        else if (rmd->region->flag & RGN_FLAG_DYNAMIC_SIZE) {
+
+        /* Hiding/unhiding is handled above, but still fix the size as requested. */
+        if (rmd->region->flag & RGN_FLAG_NO_USER_RESIZE) {
           rmd->region->sizex = rmd->origval;
         }
       }
@@ -2913,7 +2915,9 @@ static int region_scale_modal(bContext *C, wmOperator *op, const wmEvent *event)
         else if (rmd->region->flag & RGN_FLAG_HIDDEN) {
           region_scale_toggle_hidden(C, rmd);
         }
-        else if (rmd->region->flag & RGN_FLAG_DYNAMIC_SIZE) {
+
+        /* Hiding/unhiding is handled above, but still fix the size as requested. */
+        if (rmd->region->flag & RGN_FLAG_NO_USER_RESIZE) {
           rmd->region->sizey = rmd->origval;
         }
       }
@@ -3727,7 +3731,7 @@ static int screen_area_options_invoke(bContext *C, wmOperator *op, const wmEvent
               ICON_SPLIT_VERTICAL,
               nullptr,
               WM_OP_INVOKE_DEFAULT,
-              0,
+              UI_ITEM_NONE,
               &ptr);
   /* store initial mouse cursor position. */
   RNA_int_set_array(&ptr, "cursor", event->xy);
@@ -3740,7 +3744,7 @@ static int screen_area_options_invoke(bContext *C, wmOperator *op, const wmEvent
               ICON_SPLIT_HORIZONTAL,
               nullptr,
               WM_OP_INVOKE_DEFAULT,
-              0,
+              UI_ITEM_NONE,
               &ptr);
   /* store initial mouse cursor position. */
   RNA_int_set_array(&ptr, "cursor", event->xy);
@@ -3758,7 +3762,7 @@ static int screen_area_options_invoke(bContext *C, wmOperator *op, const wmEvent
                 ICON_JOIN_AREAS,
                 nullptr,
                 WM_OP_INVOKE_DEFAULT,
-                0,
+                UI_ITEM_NONE,
                 &ptr);
     RNA_int_set_array(&ptr, "cursor", event->xy);
   }
@@ -3771,7 +3775,7 @@ static int screen_area_options_invoke(bContext *C, wmOperator *op, const wmEvent
                 ICON_SWAP_AREAS,
                 nullptr,
                 WM_OP_EXEC_DEFAULT,
-                0,
+                UI_ITEM_NONE,
                 &ptr);
     RNA_int_set_array(&ptr, "cursor", event->xy);
   }
@@ -4327,7 +4331,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
               ICON_SPLIT_VERTICAL,
               nullptr,
               WM_OP_INVOKE_DEFAULT,
-              0,
+              UI_ITEM_NONE,
               &ptr);
 
   RNA_int_set_array(&ptr, "cursor", loc);
@@ -4340,7 +4344,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
               ICON_SPLIT_HORIZONTAL,
               nullptr,
               WM_OP_INVOKE_DEFAULT,
-              0,
+              UI_ITEM_NONE,
               &ptr);
 
   RNA_int_set_array(&ptr, "cursor", &loc[0]);
@@ -4361,7 +4365,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
                   ICON_FULLSCREEN_ENTER,
                   nullptr,
                   WM_OP_INVOKE_DEFAULT,
-                  0,
+                  UI_ITEM_NONE,
                   &ptr);
       RNA_boolean_set(&ptr, "use_hide_panels", true);
     }
@@ -4605,7 +4609,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /
     PointerRNA ptr;
     RNA_pointer_create((ID *)CTX_wm_screen(C), &RNA_Space, area->spacedata.first, &ptr);
     if (!ELEM(area->spacetype, SPACE_TOPBAR)) {
-      uiItemR(layout, &ptr, "show_region_header", 0, IFACE_("Show Header"), ICON_NONE);
+      uiItemR(layout, &ptr, "show_region_header", UI_ITEM_NONE, IFACE_("Show Header"), ICON_NONE);
     }
 
     ARegion *region_header = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
@@ -4613,7 +4617,12 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /
     uiLayoutSetActive(col, (region_header->flag & RGN_FLAG_HIDDEN) == 0);
 
     if (BKE_area_find_region_type(area, RGN_TYPE_TOOL_HEADER)) {
-      uiItemR(col, &ptr, "show_region_tool_header", 0, IFACE_("Show Tool Settings"), ICON_NONE);
+      uiItemR(col,
+              &ptr,
+              "show_region_tool_header",
+              UI_ITEM_NONE,
+              IFACE_("Show Tool Settings"),
+              ICON_NONE);
     }
 
     uiItemO(col,
@@ -4729,7 +4738,7 @@ void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void * /
   {
     PointerRNA ptr;
     RNA_pointer_create((ID *)CTX_wm_screen(C), &RNA_Space, area->spacedata.first, &ptr);
-    uiItemR(layout, &ptr, "show_region_footer", 0, IFACE_("Show Footer"), ICON_NONE);
+    uiItemR(layout, &ptr, "show_region_footer", UI_ITEM_NONE, IFACE_("Show Footer"), ICON_NONE);
   }
 
   ED_screens_region_flip_menu_create(C, layout, nullptr);
@@ -4757,14 +4766,20 @@ static void ed_screens_statusbar_menu_create(uiLayout *layout, void * /*arg*/)
   PointerRNA ptr;
 
   RNA_pointer_create(nullptr, &RNA_PreferencesView, &U, &ptr);
-  uiItemR(layout, &ptr, "show_statusbar_stats", 0, IFACE_("Scene Statistics"), ICON_NONE);
-  uiItemR(layout, &ptr, "show_statusbar_scene_duration", 0, IFACE_("Scene Duration"), ICON_NONE);
-  uiItemR(layout, &ptr, "show_statusbar_memory", 0, IFACE_("System Memory"), ICON_NONE);
+  uiItemR(
+      layout, &ptr, "show_statusbar_stats", UI_ITEM_NONE, IFACE_("Scene Statistics"), ICON_NONE);
+  uiItemR(layout,
+          &ptr,
+          "show_statusbar_scene_duration",
+          UI_ITEM_NONE,
+          IFACE_("Scene Duration"),
+          ICON_NONE);
+  uiItemR(layout, &ptr, "show_statusbar_memory", UI_ITEM_NONE, IFACE_("System Memory"), ICON_NONE);
   if (GPU_mem_stats_supported()) {
-    uiItemR(layout, &ptr, "show_statusbar_vram", 0, IFACE_("Video Memory"), ICON_NONE);
+    uiItemR(layout, &ptr, "show_statusbar_vram", UI_ITEM_NONE, IFACE_("Video Memory"), ICON_NONE);
   }
   /*bfa - bforartists version, not blender version*/
-  uiItemR(layout, &ptr, "show_statusbar_version", 0, IFACE_("Bforartists Version"), ICON_NONE);
+  uiItemR(layout, &ptr, "show_statusbar_version", UI_ITEM_NONE, IFACE_("Bforartists Version"), ICON_NONE);
 }
 
 static int screen_context_menu_invoke(bContext *C, wmOperator * /*op*/, const wmEvent * /*event*/)
