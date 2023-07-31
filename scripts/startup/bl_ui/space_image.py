@@ -578,13 +578,15 @@ class IMAGE_MT_uvs(Menu):
         layout.menu("IMAGE_MT_uvs_mirror")
         layout.menu("IMAGE_MT_uvs_snap")
 
-        layout.separator()
-
-        layout.menu("IMAGE_MT_uvs_unwrap")
-
+        layout.separator()       
+## BFA order of these group of ops changed so that the pin operators are in their own group. 
         layout.operator("uv.pin", icon="PINNED").clear = False
         layout.operator("uv.pin", text="Unpin", icon="UNPINNED").clear = True
-        layout.operator("uv.pin", text="Invert Pins").invert = True
+        layout.operator("uv.pin", text="Invert Pins", icon='INVERSE').invert = True
+
+        layout.separator()
+
+        layout.menu("IMAGE_MT_uvs_unwrap") 
         layout.menu("IMAGE_MT_uvs_merge")
         layout.operator("uv.select_split", text="Split Selection", icon='SPLIT')
 
@@ -675,6 +677,7 @@ class IMAGE_MT_uvs_context_menu(Menu):
             # Modify
             layout.operator("uv.pin", icon="PINNED").clear = False
             layout.operator("uv.pin", text="Unpin", icon="UNPINNED").clear = True
+            layout.operator("uv.pin", text="Invert Pins", icon='INVERSE').invert = True #BFA - added for consistency with ehader menu
 
             layout.separator()
 
