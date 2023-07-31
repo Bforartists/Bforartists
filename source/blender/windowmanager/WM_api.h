@@ -173,6 +173,8 @@ typedef enum eWM_CapabilitiesFlag {
   WM_CAPABILITY_GPU_FRONT_BUFFER_READ = (1 << 3),
   /** Ability to copy/paste system clipboard images. */
   WM_CAPABILITY_CLIPBOARD_IMAGES = (1 << 4),
+  /** The initial value, indicates the value needs to be set by inspecting GHOST. */
+  WM_CAPABILITY_INITIALIZED = (1 << 31),
 } eWM_CapabilitiesFlag;
 ENUM_OPERATORS(eWM_CapabilitiesFlag, WM_CAPABILITY_CLIPBOARD_IMAGES)
 
@@ -1453,7 +1455,7 @@ ListBase *WM_dropboxmap_find(const char *idname, int spaceid, int regionid);
 /**
  * \param flag_extra: Additional linking flags (from #eFileSel_Params_Flag).
  */
-ID *WM_drag_asset_id_import(wmDragAsset *asset_drag, int flag_extra);
+ID *WM_drag_asset_id_import(const struct bContext *C, wmDragAsset *asset_drag, int flag_extra);
 bool WM_drag_asset_will_import_linked(const wmDrag *drag);
 void WM_drag_add_local_ID(struct wmDrag *drag, struct ID *id, struct ID *from_parent);
 struct ID *WM_drag_get_local_ID(const struct wmDrag *drag, short idcode);
@@ -1480,7 +1482,9 @@ struct AssetMetaData *WM_drag_get_asset_meta_data(const struct wmDrag *drag, int
  * Use #WM_drag_free_imported_drag_ID() as cancel callback of the drop-box, so that the asset
  * import is rolled back if the drop operator fails.
  */
-struct ID *WM_drag_get_local_ID_or_import_from_asset(const struct wmDrag *drag, int idcode);
+struct ID *WM_drag_get_local_ID_or_import_from_asset(const struct bContext *C,
+                                                     const struct wmDrag *drag,
+                                                     int idcode);
 
 /**
  * \brief Free asset ID imported for canceled drop.

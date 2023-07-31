@@ -1228,43 +1228,23 @@ static void displacement_principled_nodes(bNode *node)
   }
 }
 
-static bool node_has_roughness(const bNode *node)
-{
-  return ELEM(node->type,
-              SH_NODE_BSDF_GLASS,
-              SH_NODE_BSDF_GLOSSY_LEGACY,
-              SH_NODE_BSDF_GLOSSY,
-              SH_NODE_BSDF_REFRACTION);
-}
-
 static void square_roughness_node_insert(bNodeTree *ntree)
 {
-  bool need_update = false;
-
-  /* Update default values */
-  LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-    if (node_has_roughness(node)) {
-      bNodeSocket *roughness_input = nodeFindSocket(node, SOCK_IN, "Roughness");
-      float *roughness_value = version_cycles_node_socket_float_value(roughness_input);
-      *roughness_value = sqrtf(max_ff(*roughness_value, 0.0f));
-    }
-  }
-
-  /* Iterate backwards from end so we don't encounter newly added links. */
-  LISTBASE_FOREACH_BACKWARD_MUTABLE (bNodeLink *, link, &ntree->links) {
-    /* Detect link to replace. */
-    bNode *fromnode = link->fromnode;
-    bNodeSocket *fromsock = link->fromsock;
-    bNode *tonode = link->tonode;
-    bNodeSocket *tosock = link->tosock;
-
-    if (!(node_has_roughness(tonode) && STREQ(tosock->identifier, "Roughness"))) {
-      continue;
-    }
-
-    /* Replace links with sqrt node */
-    nodeRemLink(ntree, link);
-
+  auto check_node = [](const bNode *node) {
+    return ELEM(node->type,
+                SH_NODE_BSDF_GLASS,
+                SH_NODE_BSDF_GLOSSY_LEGACY,
+                SH_NODE_BSDF_GLOSSY,
+                SH_NODE_BSDF_REFRACTION);
+  };
+  auto update_input = [](const bNode *, bNodeSocket *input) {
+    float *value = version_cycles_node_socket_float_value(input);
+    *value = sqrtf(max_ff(*value, 0.0f));
+  };
+  auto update_input_link = [ntree](bNode *fromnode,
+                                   bNodeSocket *fromsock,
+                                   bNode *tonode,
+                                   bNodeSocket *tosock) {
     /* Add sqrt node. */
     bNode *node = nodeAddStaticNode(nullptr, ntree, SH_NODE_MATH);
     node->custom1 = NODE_MATH_POWER;
@@ -1275,13 +1255,9 @@ static void square_roughness_node_insert(bNodeTree *ntree)
     *version_cycles_node_socket_float_value(static_cast<bNodeSocket *>(node->inputs.last)) = 0.5f;
     nodeAddLink(ntree, fromnode, fromsock, node, static_cast<bNodeSocket *>(node->inputs.first));
     nodeAddLink(ntree, node, static_cast<bNodeSocket *>(node->outputs.first), tonode, tosock);
+  };
 
-    need_update = true;
-  }
-
-  if (need_update) {
-    version_socket_update_is_used(ntree);
-  }
+  version_update_node_input(ntree, check_node, "Roughness", update_input, update_input_link);
 }
 
 static void mapping_node_order_flip(bNode *node)
@@ -1847,11 +1823,11 @@ static void update_noise_node_dimensions(bNodeTree *ntree)
 /* This structure is only used to pass data to
  * update_mapping_node_fcurve_rna_path_callback.
  */
-typedef struct {
+struct MappingNodeFCurveCallbackData {
   char *nodePath;
   bNode *minimumNode;
   bNode *maximumNode;
-} MappingNodeFCurveCallbackData;
+};
 
 /* This callback function is used by update_mapping_node_inputs_and_properties.
  * It is executed on every fcurve in the nodetree id updating its RNA paths. The
@@ -2924,7 +2900,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
      * harm to be expected anyway for being over-conservative. */
     LISTBASE_FOREACH (Mesh *, me, &bmain->meshes) {
       /* Check if we need to convert mfaces to polys. */
-      if (me->totface && !me->totpoly) {
+      if (me->totface_legacy && !me->faces_num) {
         /* temporarily switch main so that reading from
          * external CustomData works */
         Main *orig_gmain = BKE_blender_globals_main_swap(bmain);
@@ -3195,11 +3171,11 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     if (DNA_struct_find(fd->filesdna, "MTexPoly")) {
       LISTBASE_FOREACH (Mesh *, me, &bmain->meshes) {
         /* If we have UVs, so this file will have MTexPoly layers too! */
-        if (CustomData_has_layer(&me->ldata, CD_MLOOPUV) ||
-            CustomData_has_layer(&me->ldata, CD_PROP_FLOAT2))
+        if (CustomData_has_layer(&me->loop_data, CD_MLOOPUV) ||
+            CustomData_has_layer(&me->loop_data, CD_PROP_FLOAT2))
         {
-          CustomData_update_typemap(&me->pdata);
-          CustomData_free_layers(&me->pdata, CD_MTEXPOLY, me->totpoly);
+          CustomData_update_typemap(&me->face_data);
+          CustomData_free_layers(&me->face_data, CD_MTEXPOLY, me->faces_num);
         }
       }
     }
@@ -6364,9 +6340,9 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
 
     /* Default Face Set Color. */
     LISTBASE_FOREACH (Mesh *, me, &bmain->meshes) {
-      if (me->totpoly > 0) {
+      if (me->faces_num > 0) {
         const int *face_sets = static_cast<const int *>(
-            CustomData_get_layer(&me->pdata, CD_SCULPT_FACE_SETS));
+            CustomData_get_layer(&me->face_data, CD_SCULPT_FACE_SETS));
         if (face_sets) {
           me->face_sets_color_default = abs(face_sets[0]);
         }

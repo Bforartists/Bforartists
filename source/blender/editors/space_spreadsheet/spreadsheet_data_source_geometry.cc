@@ -78,18 +78,18 @@ static void add_mesh_debug_column_names(
 {
   switch (domain) {
     case ATTR_DOMAIN_POINT:
-      if (CustomData_has_layer(&mesh.vdata, CD_ORIGINDEX)) {
+      if (CustomData_has_layer(&mesh.vert_data, CD_ORIGINDEX)) {
         fn({(char *)"Original Index"}, false);
       }
       break;
     case ATTR_DOMAIN_EDGE:
-      if (CustomData_has_layer(&mesh.edata, CD_ORIGINDEX)) {
+      if (CustomData_has_layer(&mesh.edge_data, CD_ORIGINDEX)) {
         fn({(char *)"Original Index"}, false);
       }
       fn({(char *)"Vertices"}, false);
       break;
     case ATTR_DOMAIN_FACE:
-      if (CustomData_has_layer(&mesh.pdata, CD_ORIGINDEX)) {
+      if (CustomData_has_layer(&mesh.face_data, CD_ORIGINDEX)) {
         fn({(char *)"Original Index"}, false);
       }
       fn({(char *)"Corner Start"}, false);
@@ -113,7 +113,7 @@ static std::unique_ptr<ColumnValues> build_mesh_debug_columns(const Mesh &mesh,
     case ATTR_DOMAIN_POINT: {
       if (name == "Original Index") {
         const int *data = static_cast<const int *>(
-            CustomData_get_layer(&mesh.vdata, CD_ORIGINDEX));
+            CustomData_get_layer(&mesh.vert_data, CD_ORIGINDEX));
         if (data) {
           return std::make_unique<ColumnValues>(name, VArray<int>::ForSpan({data, mesh.totvert}));
         }
@@ -123,7 +123,7 @@ static std::unique_ptr<ColumnValues> build_mesh_debug_columns(const Mesh &mesh,
     case ATTR_DOMAIN_EDGE: {
       if (name == "Original Index") {
         const int *data = static_cast<const int *>(
-            CustomData_get_layer(&mesh.edata, CD_ORIGINDEX));
+            CustomData_get_layer(&mesh.edge_data, CD_ORIGINDEX));
         if (data) {
           return std::make_unique<ColumnValues>(name, VArray<int>::ForSpan({data, mesh.totedge}));
         }
@@ -136,20 +136,21 @@ static std::unique_ptr<ColumnValues> build_mesh_debug_columns(const Mesh &mesh,
     case ATTR_DOMAIN_FACE: {
       if (name == "Original Index") {
         const int *data = static_cast<const int *>(
-            CustomData_get_layer(&mesh.pdata, CD_ORIGINDEX));
+            CustomData_get_layer(&mesh.face_data, CD_ORIGINDEX));
         if (data) {
-          return std::make_unique<ColumnValues>(name, VArray<int>::ForSpan({data, mesh.totpoly}));
+          return std::make_unique<ColumnValues>(name,
+                                                VArray<int>::ForSpan({data, mesh.faces_num}));
         }
       }
       if (name == "Corner Start") {
         return std::make_unique<ColumnValues>(
-            name, VArray<int>::ForSpan(mesh.poly_offsets().drop_back(1)));
+            name, VArray<int>::ForSpan(mesh.face_offsets().drop_back(1)));
       }
       if (name == "Corner Size") {
-        const OffsetIndices polys = mesh.polys();
+        const OffsetIndices faces = mesh.faces();
         return std::make_unique<ColumnValues>(
-            name, VArray<int>::ForFunc(polys.size(), [polys](int64_t index) {
-              return polys[index].size();
+            name, VArray<int>::ForFunc(faces.size(), [faces](int64_t index) {
+              return faces[index].size();
             }));
       }
       return {};
@@ -357,7 +358,8 @@ IndexMask GeometryDataSource::apply_selection_filter(IndexMaskMemory &memory) co
       BMesh *bm = mesh_orig->edit_mesh->bm;
       BM_mesh_elem_table_ensure(bm, BM_VERT);
 
-      const int *orig_indices = (const int *)CustomData_get_layer(&mesh_eval->vdata, CD_ORIGINDEX);
+      const int *orig_indices = (const int *)CustomData_get_layer(&mesh_eval->vert_data,
+                                                                  CD_ORIGINDEX);
       if (orig_indices != nullptr) {
         /* Use CD_ORIGINDEX layer if it exists. */
         VArray<bool> selection = attributes_eval.adapt_domain<bool>(

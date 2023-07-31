@@ -50,7 +50,7 @@
 #include "MOD_modifiertypes.hh"
 #include "MOD_ui_common.hh"
 
-static void initData(ModifierData *md)
+static void init_data(ModifierData *md)
 {
   ExplodeModifierData *emd = (ExplodeModifierData *)md;
 
@@ -58,13 +58,13 @@ static void initData(ModifierData *md)
 
   MEMCPY_STRUCT_AFTER(emd, DNA_struct_default_get(ExplodeModifierData), modifier);
 }
-static void freeData(ModifierData *md)
+static void free_data(ModifierData *md)
 {
   ExplodeModifierData *emd = (ExplodeModifierData *)md;
 
   MEM_SAFE_FREE(emd->facepa);
 }
-static void copyData(const ModifierData *md, ModifierData *target, const int flag)
+static void copy_data(const ModifierData *md, ModifierData *target, const int flag)
 {
 #if 0
   const ExplodeModifierData *emd = (const ExplodeModifierData *)md;
@@ -75,11 +75,11 @@ static void copyData(const ModifierData *md, ModifierData *target, const int fla
 
   temd->facepa = nullptr;
 }
-static bool dependsOnTime(Scene * /*scene*/, ModifierData * /*md*/)
+static bool depends_on_time(Scene * /*scene*/, ModifierData * /*md*/)
 {
   return true;
 }
-static void requiredDataMask(ModifierData *md, CustomData_MeshMasks *r_cddata_masks)
+static void required_data_mask(ModifierData *md, CustomData_MeshMasks *r_cddata_masks)
 {
   ExplodeModifierData *emd = (ExplodeModifierData *)md;
 
@@ -101,9 +101,10 @@ static void createFacepa(ExplodeModifierData *emd, ParticleSystemModifierData *p
   const bool invert_vgroup = (emd->flag & eExplodeFlag_INVERT_VGROUP) != 0;
 
   blender::MutableSpan<blender::float3> positions = mesh->vert_positions_for_write();
-  mface = (MFace *)CustomData_get_layer_for_write(&mesh->fdata, CD_MFACE, mesh->totface);
+  mface = (MFace *)CustomData_get_layer_for_write(
+      &mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy);
   totvert = mesh->totvert;
-  totface = mesh->totface;
+  totface = mesh->totface_legacy;
   totpart = psmd->psys->totpart;
 
   rng = BLI_rng_new_srandom(psys->seed);
@@ -217,9 +218,9 @@ static const short add_faces[24] = {
 static MFace *get_dface(Mesh *mesh, Mesh *split, int cur, int i, MFace *mf)
 {
   MFace *mfaces = static_cast<MFace *>(
-      CustomData_get_layer_for_write(&split->fdata, CD_MFACE, split->totface));
+      CustomData_get_layer_for_write(&split->fdata_legacy, CD_MFACE, split->totface_legacy));
   MFace *df = &mfaces[cur];
-  CustomData_copy_data(&mesh->fdata, &split->fdata, i, cur, 1);
+  CustomData_copy_data(&mesh->fdata_legacy, &split->fdata_legacy, i, cur, 1);
   *df = *mf;
   return df;
 }
@@ -286,13 +287,13 @@ static void remap_uvs_3_6_9_12(
   int l;
 
   for (l = 0; l < layers_num; l++) {
-    mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&split->fdata, CD_MTFACE, l, split->totface));
+    mf = static_cast<MTFace *>(CustomData_get_layer_n_for_write(
+        &split->fdata_legacy, CD_MTFACE, l, split->totface_legacy));
     df1 = mf + cur;
     df2 = df1 + 1;
     df3 = df1 + 2;
     mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&mesh->fdata, CD_MTFACE, l, mesh->totface));
+        CustomData_get_layer_n_for_write(&mesh->fdata_legacy, CD_MTFACE, l, mesh->totface_legacy));
     mf += i;
 
     copy_v2_v2(df1->uv[0], mf->uv[c0]);
@@ -348,12 +349,12 @@ static void remap_uvs_5_10(
   int l;
 
   for (l = 0; l < layers_num; l++) {
-    mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&split->fdata, CD_MTFACE, l, split->totface));
+    mf = static_cast<MTFace *>(CustomData_get_layer_n_for_write(
+        &split->fdata_legacy, CD_MTFACE, l, split->totface_legacy));
     df1 = mf + cur;
     df2 = df1 + 1;
     mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&mesh->fdata, CD_MTFACE, l, mesh->totface));
+        CustomData_get_layer_n_for_write(&mesh->fdata_legacy, CD_MTFACE, l, mesh->totface_legacy));
     mf += i;
 
     copy_v2_v2(df1->uv[0], mf->uv[c0]);
@@ -422,14 +423,14 @@ static void remap_uvs_15(
   int l;
 
   for (l = 0; l < layers_num; l++) {
-    mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&split->fdata, CD_MTFACE, l, split->totface));
+    mf = static_cast<MTFace *>(CustomData_get_layer_n_for_write(
+        &split->fdata_legacy, CD_MTFACE, l, split->totface_legacy));
     df1 = mf + cur;
     df2 = df1 + 1;
     df3 = df1 + 2;
     df4 = df1 + 3;
     mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&mesh->fdata, CD_MTFACE, l, mesh->totface));
+        CustomData_get_layer_n_for_write(&mesh->fdata_legacy, CD_MTFACE, l, mesh->totface_legacy));
     mf += i;
 
     copy_v2_v2(df1->uv[0], mf->uv[c0]);
@@ -500,13 +501,13 @@ static void remap_uvs_7_11_13_14(
   int l;
 
   for (l = 0; l < layers_num; l++) {
-    mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&split->fdata, CD_MTFACE, l, split->totface));
+    mf = static_cast<MTFace *>(CustomData_get_layer_n_for_write(
+        &split->fdata_legacy, CD_MTFACE, l, split->totface_legacy));
     df1 = mf + cur;
     df2 = df1 + 1;
     df3 = df1 + 2;
     mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&mesh->fdata, CD_MTFACE, l, mesh->totface));
+        CustomData_get_layer_n_for_write(&mesh->fdata_legacy, CD_MTFACE, l, mesh->totface_legacy));
     mf += i;
 
     copy_v2_v2(df1->uv[0], mf->uv[c0]);
@@ -562,12 +563,12 @@ static void remap_uvs_19_21_22(
   int l;
 
   for (l = 0; l < layers_num; l++) {
-    mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&split->fdata, CD_MTFACE, l, split->totface));
+    mf = static_cast<MTFace *>(CustomData_get_layer_n_for_write(
+        &split->fdata_legacy, CD_MTFACE, l, split->totface_legacy));
     df1 = mf + cur;
     df2 = df1 + 1;
     mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&mesh->fdata, CD_MTFACE, l, mesh->totface));
+        CustomData_get_layer_n_for_write(&mesh->fdata_legacy, CD_MTFACE, l, mesh->totface_legacy));
     mf += i;
 
     copy_v2_v2(df1->uv[0], mf->uv[c0]);
@@ -626,12 +627,12 @@ static void remap_uvs_23(
   int l;
 
   for (l = 0; l < layers_num; l++) {
-    mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&split->fdata, CD_MTFACE, l, split->totface));
+    mf = static_cast<MTFace *>(CustomData_get_layer_n_for_write(
+        &split->fdata_legacy, CD_MTFACE, l, split->totface_legacy));
     df1 = mf + cur;
     df2 = df1 + 1;
     mf = static_cast<MTFace *>(
-        CustomData_get_layer_n_for_write(&mesh->fdata, CD_MTFACE, l, mesh->totface));
+        CustomData_get_layer_n_for_write(&mesh->fdata_legacy, CD_MTFACE, l, mesh->totface_legacy));
     mf += i;
 
     copy_v2_v2(df1->uv[0], mf->uv[c0]);
@@ -654,12 +655,12 @@ static Mesh *cutEdges(ExplodeModifierData *emd, Mesh *mesh)
   Mesh *split_m;
   MFace *mf = nullptr, *df1 = nullptr;
   MFace *mface = static_cast<MFace *>(
-      CustomData_get_layer_for_write(&mesh->fdata, CD_MFACE, mesh->totface));
+      CustomData_get_layer_for_write(&mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy));
   float *dupve;
   EdgeHash *edgehash;
   EdgeHashIterator *ehi;
   int totvert = mesh->totvert;
-  int totface = mesh->totface;
+  int totface = mesh->totface_legacy;
 
   int *facesplit = static_cast<int *>(MEM_calloc_arrayN(totface, sizeof(int), __func__));
   int *vertpa = static_cast<int *>(MEM_calloc_arrayN(totvert, sizeof(int), __func__));
@@ -743,13 +744,13 @@ static Mesh *cutEdges(ExplodeModifierData *emd, Mesh *mesh)
   split_m = BKE_mesh_new_nomain_from_template_ex(
       mesh, totesplit, 0, totface + totfsplit, 0, 0, CD_MASK_EVERYTHING);
 
-  layers_num = CustomData_number_of_layers(&split_m->fdata, CD_MTFACE);
+  layers_num = CustomData_number_of_layers(&split_m->fdata_legacy, CD_MTFACE);
 
-  float(*split_m_positions)[3] = BKE_mesh_vert_positions_for_write(split_m);
+  blender::MutableSpan<blender::float3> split_m_positions = split_m->vert_positions_for_write();
 
   /* copy new faces & verts (is it really this painful with custom data??) */
   for (i = 0; i < totvert; i++) {
-    CustomData_copy_data(&mesh->vdata, &split_m->vdata, i, i, 1);
+    CustomData_copy_data(&mesh->vert_data, &split_m->vert_data, i, i, 1);
   }
 
   /* override original facepa (original pointer is saved in caller function) */
@@ -769,7 +770,7 @@ static Mesh *cutEdges(ExplodeModifierData *emd, Mesh *mesh)
     BLI_edgehashIterator_getKey(ehi, &ed_v1, &ed_v2);
     esplit = POINTER_AS_INT(BLI_edgehashIterator_getValue(ehi));
 
-    CustomData_copy_data(&split_m->vdata, &split_m->vdata, ed_v2, esplit, 1);
+    CustomData_copy_data(&split_m->vert_data, &split_m->vert_data, ed_v2, esplit, 1);
 
     dupve = split_m_positions[esplit];
     copy_v3_v3(dupve, split_m_positions[ed_v2]);
@@ -887,10 +888,11 @@ static Mesh *cutEdges(ExplodeModifierData *emd, Mesh *mesh)
   }
 
   MFace *split_mface = static_cast<MFace *>(
-      CustomData_get_layer_for_write(&split_m->fdata, CD_MFACE, split_m->totface));
+      CustomData_get_layer_for_write(&split_m->fdata_legacy, CD_MFACE, split_m->totface_legacy));
   for (i = 0; i < curdupface; i++) {
     mf = &split_mface[i];
-    BKE_mesh_mface_index_validate(mf, &split_m->fdata, i, ((mf->flag & ME_FACE_SEL) ? 4 : 3));
+    BKE_mesh_mface_index_validate(
+        mf, &split_m->fdata_legacy, i, ((mf->flag & ME_FACE_SEL) ? 4 : 3));
   }
 
   BLI_edgehash_free(edgehash, nullptr);
@@ -926,10 +928,10 @@ static Mesh *explodeMesh(ExplodeModifierData *emd,
   int i, v, u;
   int ed_v1, ed_v2, mindex = 0;
 
-  totface = mesh->totface;
+  totface = mesh->totface_legacy;
   totvert = mesh->totvert;
   mface = static_cast<MFace *>(
-      CustomData_get_layer_for_write(&mesh->fdata, CD_MFACE, mesh->totface));
+      CustomData_get_layer_for_write(&mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy));
   totpart = psmd->psys->totpart;
 
   sim.depsgraph = ctx->depsgraph;
@@ -994,7 +996,7 @@ static Mesh *explodeMesh(ExplodeModifierData *emd,
       mesh, totdup, 0, totface - delface, 0, 0, CD_MASK_EVERYTHING);
 
   MTFace *mtface = static_cast<MTFace *>(CustomData_get_layer_named_for_write(
-      &explode->fdata, CD_MTFACE, emd->uvname, explode->totface));
+      &explode->fdata_legacy, CD_MTFACE, emd->uvname, explode->totface_legacy));
 
   /* getting back to object space */
   invert_m4_m4(imat, ctx->object->object_to_world);
@@ -1002,7 +1004,7 @@ static Mesh *explodeMesh(ExplodeModifierData *emd,
   psys_sim_data_init(&sim);
 
   const blender::Span<blender::float3> positions = mesh->vert_positions();
-  float(*explode_positions)[3] = BKE_mesh_vert_positions_for_write(explode);
+  blender::MutableSpan<blender::float3> explode_positions = explode->vert_positions_for_write();
 
   /* duplicate & displace vertices */
   ehi = BLI_edgehashIterator_new(vertpahash);
@@ -1015,7 +1017,7 @@ static Mesh *explodeMesh(ExplodeModifierData *emd,
 
     copy_v3_v3(explode_positions[v], positions[ed_v1]);
 
-    CustomData_copy_data(&mesh->vdata, &explode->vdata, ed_v1, v, 1);
+    CustomData_copy_data(&mesh->vert_data, &explode->vert_data, ed_v1, v, 1);
 
     copy_v3_v3(explode_positions[v], positions[ed_v1]);
 
@@ -1053,7 +1055,7 @@ static Mesh *explodeMesh(ExplodeModifierData *emd,
 
   /* Map new vertices to faces. */
   MFace *explode_mface = static_cast<MFace *>(
-      CustomData_get_layer_for_write(&explode->fdata, CD_MFACE, explode->totface));
+      CustomData_get_layer_for_write(&explode->fdata_legacy, CD_MFACE, explode->totface_legacy));
   for (i = 0, u = 0; i < totface; i++) {
     MFace source;
     int orig_v4;
@@ -1095,7 +1097,7 @@ static Mesh *explodeMesh(ExplodeModifierData *emd,
       source.v4 = edgecut_get(vertpahash, source.v4, mindex);
     }
 
-    CustomData_copy_data(&mesh->fdata, &explode->fdata, i, u, 1);
+    CustomData_copy_data(&mesh->fdata_legacy, &explode->fdata_legacy, i, u, 1);
 
     *mf = source;
 
@@ -1111,7 +1113,7 @@ static Mesh *explodeMesh(ExplodeModifierData *emd,
       mtf->uv[0][1] = mtf->uv[1][1] = mtf->uv[2][1] = mtf->uv[3][1] = 0.5f;
     }
 
-    BKE_mesh_mface_index_validate(mf, &explode->fdata, u, (orig_v4 ? 4 : 3));
+    BKE_mesh_mface_index_validate(mf, &explode->fdata_legacy, u, (orig_v4 ? 4 : 3));
     u++;
   }
 
@@ -1140,7 +1142,7 @@ static ParticleSystemModifierData *findPrecedingParticlesystem(Object *ob, Modif
   }
   return psmd;
 }
-static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh)
+static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh)
 {
   ExplodeModifierData *emd = (ExplodeModifierData *)md;
   ParticleSystemModifierData *psmd = findPrecedingParticlesystem(ctx->object, md);
@@ -1163,7 +1165,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
     /* 1. find faces to be exploded if needed */
     if (emd->facepa == nullptr || psmd->flag & eParticleSystemFlag_Pars ||
         emd->flag & eExplodeFlag_CalcFaces ||
-        MEM_allocN_len(emd->facepa) / sizeof(int) != mesh->totface)
+        MEM_allocN_len(emd->facepa) / sizeof(int) != mesh->totface_legacy)
     {
       if (psmd->flag & eParticleSystemFlag_Pars) {
         psmd->flag &= ~eParticleSystemFlag_Pars;
@@ -1195,7 +1197,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *row, *col;
   uiLayout *layout = panel->layout;
-  int toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
+  const eUI_Item_Flag toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -1217,17 +1219,17 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col = uiLayoutColumn(layout, false);
 
   /*------------------- bfa - original props */
-  // uiItemR(col, ptr, "use_edge_cut", 0, nullptr, ICON_NONE);
-  // uiItemR(col, ptr, "use_size", 0, nullptr, ICON_NONE);
+  // uiItemR(col, ptr, "use_edge_cut", UI_ITEM_NONE, nullptr, ICON_NONE);
+  // uiItemR(col, ptr, "use_size", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_edge_cut", 0, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_edge_cut", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_cut", 0); /*bfa - decorator*/
 
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_size", 0, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_size", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_size", 0); /*bfa - decorator*/
 
   /* ------------ end bfa */
@@ -1236,19 +1238,19 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   row = uiLayoutRow(layout, false);
   uiLayoutSetActive(row, has_vertex_group);
-  uiItemR(row, ptr, "protect", 0, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "protect", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   uiItemO(layout, IFACE_("Refresh"), ICON_NONE, "OBJECT_OT_explode_refresh");
 
   modifier_panel_end(layout, ptr);
 }
 
-static void panelRegister(ARegionType *region_type)
+static void panel_register(ARegionType *region_type)
 {
   modifier_panel_register(region_type, eModifierType_Explode, panel_draw);
 }
 
-static void blendRead(BlendDataReader * /*reader*/, ModifierData *md)
+static void blend_read(BlendDataReader * /*reader*/, ModifierData *md)
 {
   ExplodeModifierData *psmd = (ExplodeModifierData *)md;
 
@@ -1256,33 +1258,34 @@ static void blendRead(BlendDataReader * /*reader*/, ModifierData *md)
 }
 
 ModifierTypeInfo modifierType_Explode = {
+    /*idname*/ "Explode",
     /*name*/ N_("Explode"),
-    /*structName*/ "ExplodeModifierData",
-    /*structSize*/ sizeof(ExplodeModifierData),
+    /*struct_name*/ "ExplodeModifierData",
+    /*struct_size*/ sizeof(ExplodeModifierData),
     /*srna*/ &RNA_ExplodeModifier,
     /*type*/ eModifierTypeType_Constructive,
     /*flags*/ eModifierTypeFlag_AcceptsMesh,
     /*icon*/ ICON_MOD_EXPLODE,
-    /*copyData*/ copyData,
+    /*copy_data*/ copy_data,
 
-    /*deformVerts*/ nullptr,
-    /*deformMatrices*/ nullptr,
-    /*deformVertsEM*/ nullptr,
-    /*deformMatricesEM*/ nullptr,
-    /*modifyMesh*/ modifyMesh,
-    /*modifyGeometrySet*/ nullptr,
+    /*deform_verts*/ nullptr,
+    /*deform_matrices*/ nullptr,
+    /*deform_verts_EM*/ nullptr,
+    /*deform_matrices_EM*/ nullptr,
+    /*modify_mesh*/ modify_mesh,
+    /*modify_geometry_set*/ nullptr,
 
-    /*initData*/ initData,
-    /*requiredDataMask*/ requiredDataMask,
-    /*freeData*/ freeData,
-    /*isDisabled*/ nullptr,
-    /*updateDepsgraph*/ nullptr,
-    /*dependsOnTime*/ dependsOnTime,
-    /*dependsOnNormals*/ nullptr,
-    /*foreachIDLink*/ nullptr,
-    /*foreachTexLink*/ nullptr,
-    /*freeRuntimeData*/ nullptr,
-    /*panelRegister*/ panelRegister,
-    /*blendWrite*/ nullptr,
-    /*blendRead*/ blendRead,
+    /*init_data*/ init_data,
+    /*required_data_mask*/ required_data_mask,
+    /*free_data*/ free_data,
+    /*is_disabled*/ nullptr,
+    /*update_depsgraph*/ nullptr,
+    /*depends_on_time*/ depends_on_time,
+    /*depends_on_normals*/ nullptr,
+    /*foreach_ID_link*/ nullptr,
+    /*foreach_tex_link*/ nullptr,
+    /*free_runtime_data*/ nullptr,
+    /*panel_register*/ panel_register,
+    /*blend_write*/ nullptr,
+    /*blend_read*/ blend_read,
 };

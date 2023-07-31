@@ -1111,13 +1111,6 @@ typedef struct wmDragAsset {
   int import_method; /* eAssetImportType */
   const AssetRepresentationHandle *asset;
   bool drop_collections_as_instances; /* BFA - needed for setting #use_instance from UI before executing the drop operator */
-
-  /* FIXME: This is temporary evil solution to get scene/view-layer/etc in the copy callback of the
-   * #wmDropBox.
-   * TODO: Handle link/append in operator called at the end of the drop process, and NOT in its
-   * copy callback.
-   * */
-  struct bContext *evil_C;
 } wmDragAsset;
 
 typedef struct wmDragAssetCatalog {

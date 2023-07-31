@@ -47,6 +47,7 @@ from .fbx_utils import (
     MESH_ATTRIBUTE_CORNER_VERT,
     MESH_ATTRIBUTE_SHARP_FACE,
     MESH_ATTRIBUTE_SHARP_EDGE,
+    expand_shape_key_range,
 )
 
 # global singleton, assign on execution
@@ -563,7 +564,7 @@ def blen_read_animations_curves_iter(fbx_curves, blen_start_offset, fbx_start_of
         yield (curr_blenkframe, curr_values)
 
 
-def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, global_scale):
+def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, global_scale, shape_key_deforms):
     """
     'Bake' loc/rot/scale into the action,
     taking any pre_ and post_ matrix into account to transform from fbx into blender space.
@@ -635,12 +636,14 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, glo
                 store_keyframe(fc, frame, v)
 
     elif isinstance(item, ShapeKey):
+        deform_values = shape_key_deforms.setdefault(item, [])
         for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
             value = 0.0
             for v, (fbxprop, channel, _fbx_acdata) in values:
                 assert(fbxprop == b'DeformPercent')
                 assert(channel == 0)
                 value = v / 100.0
+            deform_values.append(value)
 
             for fc, v in zip(blen_curves, (value,)):
                 store_keyframe(fc, frame, v)
@@ -741,6 +744,7 @@ def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_o
     """
     from bpy.types import ShapeKey, Material, Camera
 
+    shape_key_values = {}
     actions = {}
     for as_uuid, ((fbx_asdata, _blen_data), alayers) in stacks.items():
         stack_name = elem_name_ensure_class(fbx_asdata, b'AnimStack')
@@ -778,7 +782,22 @@ def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_o
                 if not id_data.animation_data.action:
                     id_data.animation_data.action = action
                 # And actually populate the action!
-                blen_read_animations_action_item(action, item, cnodes, scene.render.fps, anim_offset, global_scale)
+                blen_read_animations_action_item(action, item, cnodes, scene.render.fps, anim_offset, global_scale,
+                                                 shape_key_values)
+
+    # If the minimum/maximum animated value is outside the slider range of the shape key, attempt to expand the slider
+    # range until the animated range fits and has extra room to be decreased or increased further.
+    # Shape key slider_min and slider_max have hard min/max values, if an imported animation uses a value outside that
+    # range, a warning message will be printed to the console and the slider_min/slider_max values will end up clamped.
+    shape_key_values_in_range = True
+    for shape_key, deform_values in shape_key_values.items():
+        min_animated_deform = min(deform_values)
+        max_animated_deform = max(deform_values)
+        shape_key_values_in_range &= expand_shape_key_range(shape_key, min_animated_deform)
+        shape_key_values_in_range &= expand_shape_key_range(shape_key, max_animated_deform)
+    if not shape_key_values_in_range:
+        print("WARNING: The imported animated Value of a Shape Key is beyond the minimum/maximum allowed and will be"
+              " clamped during playback.")
 
 
 # ----
@@ -1599,6 +1618,9 @@ def blen_read_shapes(fbx_tmpl, fbx_data, objects, me, scene):
     objects = list({node.bl_obj for node in objects})
     assert(objects)
 
+    # Blender has a hard minimum and maximum shape key Value. If an imported shape key has a value outside this range it
+    # will be clamped, and we'll print a warning message to the console.
+    shape_key_values_in_range = True
     bc_uuid_to_keyblocks = {}
     for bc_uuid, fbx_sdata, fbx_bcdata in fbx_data:
         elem_name_utf8 = elem_name_ensure_class(fbx_sdata, b'Geometry')
@@ -1644,6 +1666,8 @@ def blen_read_shapes(fbx_tmpl, fbx_data, objects, me, scene):
             shape_cos[indices] += dvcos
             kb.data.foreach_set("co", shape_cos.ravel())
 
+        shape_key_values_in_range &= expand_shape_key_range(kb, weight)
+
         kb.value = weight
 
         # Add vgroup if necessary.
@@ -1657,6 +1681,11 @@ def blen_read_shapes(fbx_tmpl, fbx_data, objects, me, scene):
             kb.vertex_group = kb.name
 
         bc_uuid_to_keyblocks.setdefault(bc_uuid, []).append(kb)
+
+    if not shape_key_values_in_range:
+        print("WARNING: The imported Value of a Shape Key on the Mesh '%s' is beyond the minimum/maximum allowed and"
+              " has been clamped." % me.name)
+
     return bc_uuid_to_keyblocks
 
 

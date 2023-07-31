@@ -752,6 +752,37 @@ void ED_area_tag_refresh(ScrArea *area)
   }
 }
 
+void ED_area_tag_region_size_update(ScrArea *area, ARegion *changed_region)
+{
+  if (!area || (area->flag & AREA_FLAG_REGION_SIZE_UPDATE)) {
+    return;
+  }
+
+  area->flag |= AREA_FLAG_REGION_SIZE_UPDATE;
+
+  /* Floating regions don't affect other regions, so the following can be skipped. */
+  if (changed_region->alignment == RGN_ALIGN_FLOAT) {
+    return;
+  }
+
+  /* Tag the following regions for redraw, since the size change of this region may affect the
+   * available space for them. */
+  for (ARegion *following_region = changed_region->next; following_region;
+       following_region = following_region->next)
+  {
+    /* Overlapping and non-overlapping regions don't affect each others space. So layout changes
+     * of one don't require redrawing the other. */
+    if (changed_region->overlap != following_region->overlap) {
+      continue;
+    }
+    /* Floating regions don't affect space of other regions. */
+    if (following_region->alignment == RGN_ALIGN_FLOAT) {
+      continue;
+    }
+    ED_region_tag_redraw(following_region);
+  }
+}
+
 /* *************************************************************** */
 
 const char *ED_area_region_search_filter_get(const ScrArea *area, const ARegion *region)
@@ -1315,8 +1346,8 @@ static void region_rect_recursive(
     alignment = RGN_ALIGN_NONE;
   }
 
-  /* If both the #ARegion.sizex/y and the #ARegionType.prefsizex/y are 0,
-   * the region is tagged as too small, even before the layout for dynamic regions is created.
+  /* If both the #ARegion.sizex/y and the #ARegionType.prefsizex/y are 0, the region is tagged as
+   * too small, even before the layout for dynamically sized regions is created.
    * #wm_draw_window_offscreen() allows the layout to be created despite the #RGN_FLAG_TOO_SMALL
    * flag being set. But there may still be regions that don't have a separate #ARegionType.layout
    * callback. For those, set a default #ARegionType.prefsizex/y so they can become visible. */
@@ -1334,11 +1365,7 @@ static void region_rect_recursive(
                   ((region->sizex > 1) ? region->sizex + 0.5f : region->type->prefsizex);
   int prefsizey;
 
-  if (region->flag & RGN_FLAG_PREFSIZE_OR_HIDDEN) {
-    prefsizex = UI_SCALE_FAC * region->type->prefsizex;
-    prefsizey = UI_SCALE_FAC * region->type->prefsizey;
-  }
-  else if (region->regiontype == RGN_TYPE_HEADER) {
+  if (region->regiontype == RGN_TYPE_HEADER) {
     prefsizey = ED_area_headersize();
   }
   else if (region->regiontype == RGN_TYPE_TOOL_HEADER) {
@@ -3120,7 +3147,7 @@ void ED_region_panels_layout_ex(const bContext *C,
       if ((region->sizex != size_dyn[0]) || (region->sizey != size_dyn[1])) {
         region->sizex = size_dyn[0];
         region->sizey = size_dyn[1];
-        area->flag |= AREA_FLAG_REGION_SIZE_UPDATE;
+        ED_area_tag_region_size_update(area, region);
       }
       y = fabsf(region->sizey * UI_SCALE_FAC - 1);
     }
@@ -3441,7 +3468,7 @@ void ED_region_header_layout(const bContext *C, ARegion *region)
       ScrArea *area = CTX_wm_area(C);
 
       region->sizex = new_sizex;
-      area->flag |= AREA_FLAG_REGION_SIZE_UPDATE;
+      ED_area_tag_region_size_update(area, region);
     }
 
     UI_block_end(C, block);

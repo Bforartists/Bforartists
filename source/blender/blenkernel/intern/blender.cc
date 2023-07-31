@@ -128,23 +128,41 @@ const char *BKE_blender_version_string()
 /*--- bfa - the bforartists version string calculation --- */
 static char bforartists_version_string[48] = "";
 
-static void bforartists_version_init(void)
+static void bforartists_version_init()
 {
-  BLI_snprintf(bforartists_version_string,
-               ARRAY_SIZE(bforartists_version_string),
-
-               "%d.%d.%d",               /*"%d.%02d.%d%s",*/
-               BFORARTISTS_VERSION / 10, /*BLENDER_VERSION / 100*/
-               BFORARTISTS_VERSION % 10, /*BLENDER_VERSION % 100*/
-               BFORARTISTS_VERSION_PATCH);
+  SNPRINTF(bforartists_version_string,
+           "%d.%d.%d",
+           BFORARTISTS_VERSION / 10,
+           BFORARTISTS_VERSION % 10,
+           BFORARTISTS_VERSION_PATCH);
 }
 
 /*bfa - bforartists version string*/
-const char *BKE_bforartists_version_string(void)
+const char *BKE_bforartists_version_string()
 {
   return bforartists_version_string;
 }
 /* -------------- bfa - end -----------------*/
+
+void BKE_blender_version_blendfile_string_from_values(char *str_buff,
+                                                      const size_t str_buff_len,
+                                                      const short file_version,
+                                                      const short file_subversion)
+{
+  const short file_version_major = file_version / 100;
+  const short file_version_minor = file_version % 100;
+  if (file_subversion >= 0) {
+    BLI_snprintf(str_buff,
+                 str_buff_len,
+                 "%d.%d (sub %d)",
+                 file_version_major,
+                 file_version_minor,
+                 file_subversion);
+  }
+  else {
+    BLI_snprintf(str_buff, str_buff_len, "%d.%d", file_version_major, file_version_minor);
+  }
+}
 
 bool BKE_blender_version_is_alpha()
 {
