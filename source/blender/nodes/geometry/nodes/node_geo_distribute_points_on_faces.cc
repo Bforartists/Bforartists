@@ -63,12 +63,12 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 {
-  uiItemR(layout, ptr, "distribute_method", 0, "", ICON_NONE);
+  uiItemR(layout, ptr, "distribute_method", UI_ITEM_NONE, "", ICON_NONE);
 }
 
 static void node_layout_ex(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 {
-  uiItemR(layout, ptr, "use_legacy_normal", 0, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "use_legacy_normal", UI_ITEM_NONE, nullptr, ICON_NONE);
 }
 
 static void node_point_distribute_points_on_faces_update(bNodeTree *ntree, bNode *node)
@@ -275,7 +275,7 @@ BLI_NOINLINE static void interpolate_attribute(const Mesh &mesh,
       break;
     }
     case ATTR_DOMAIN_FACE: {
-      bke::mesh_surface_sample::sample_face_attribute(mesh.looptri_polys(),
+      bke::mesh_surface_sample::sample_face_attribute(mesh.looptri_faces(),
                                                       looptri_indices,
                                                       source_data,
                                                       IndexMask(output_data.size()),

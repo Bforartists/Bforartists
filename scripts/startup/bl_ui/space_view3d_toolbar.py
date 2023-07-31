@@ -954,10 +954,6 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
             col.separator()
             col.operator("sculpt.detail_flood_fill")
 
-        col.separator()
-        col.use_property_split = False
-        col.prop(sculpt, "use_smooth_shading")
-
 
 class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
     bl_context = ".sculpt_mode"  # dot on purpose (access from topbar)

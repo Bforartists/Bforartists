@@ -18,7 +18,7 @@ import bpy
 bl_info = {
     "name": "Autodesk 3DS format",
     "author": "Bob Holcomb, Campbell Barton, Andreas Atteneder, Sebastian Schrand",
-    "version": (2, 4, 3),
+    "version": (2, 4, 6),
     "blender": (3, 6, 0),
     "location": "File > Import-Export",
     "description": "3DS Import/Export meshes, UVs, materials, textures, "
@@ -40,24 +40,24 @@ if "bpy" in locals():
 @orientation_helper(axis_forward='Y', axis_up='Z')
 class Import3DS(bpy.types.Operator, ImportHelper):
     """Import from 3DS file format (.3ds)"""
-    bl_idname = "import_scene.autodesk_3ds"
+    bl_idname = "import_scene.max3ds"
     bl_label = 'Import 3DS'
-    bl_options = {'UNDO'}
+    bl_options = {'PRESET', 'UNDO'}
 
     filename_ext = ".3ds"
     filter_glob: StringProperty(default="*.3ds", options={'HIDDEN'})
 
     constrain_size: FloatProperty(
-        name="Size Constraint",
+        name="Constrain",
         description="Scale the model by 10 until it reaches the "
         "size constraint (0 to disable)",
         min=0.0, max=1000.0,
         soft_min=0.0, soft_max=1000.0,
         default=10.0,
     )
-    convert_measure: BoolProperty(
-        name="Convert Measure",
-        description="Convert from millimeters to meters",
+    use_scene_unit: BoolProperty(
+        name="Scene Units",
+        description="Converts to scene unit length settings",
         default=False,
     )
     use_image_search: BoolProperty(
@@ -66,20 +66,36 @@ class Import3DS(bpy.types.Operator, ImportHelper):
         "(Warning, may be slow)",
         default=True,
     )
+    object_filter: EnumProperty(
+        name="Object Filter", options={'ENUM_FLAG'},
+        items=(('WORLD', "World".rjust(11), "", 'WORLD_DATA', 0x1),
+               ('MESH', "Mesh".rjust(11), "", 'MESH_DATA', 0x2),
+               ('LIGHT', "Light".rjust(12), "", 'LIGHT_DATA', 0x4),
+               ('CAMERA', "Camera".rjust(11), "", 'CAMERA_DATA', 0x8),
+               ('EMPTY', "Empty".rjust(11), "", 'EMPTY_AXIS', 0x10),
+               ),
+        description="Object types to import",
+        default={'WORLD', 'MESH', 'LIGHT', 'CAMERA', 'EMPTY'},
+    )
     use_apply_transform: BoolProperty(
         name="Apply Transform",
         description="Workaround for object transformations "
         "importing incorrectly",
         default=True,
     )
-    read_keyframe: BoolProperty(
-        name="Read Keyframe",
+    use_keyframes: BoolProperty(
+        name="Animation",
         description="Read the keyframe data",
         default=True,
     )
     use_world_matrix: BoolProperty(
         name="World Space",
         description="Transform to matrix world",
+        default=False,
+    )
+    use_cursor: BoolProperty(
+        name="Cursor Origin",
+        description="Read the 3D cursor location",
         default=False,
     )
 
@@ -98,12 +114,84 @@ class Import3DS(bpy.types.Operator, ImportHelper):
 
         return import_3ds.load(self, context, **keywords)
 
+    def draw(self, context):
+        pass
+
+
+class MAX3DS_PT_import_include(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Include"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_SCENE_OT_max3ds"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = True
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_image_search")
+        layrow.label(text="", icon='OUTLINER_OB_IMAGE' if operator.use_image_search else 'IMAGE_DATA')
+        layout.column().prop(operator, "object_filter")
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_keyframes")
+        layrow.label(text="", icon='ANIM' if operator.use_keyframes else 'DECORATE_DRIVER')
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_cursor")
+        layrow.label(text="", icon='PIVOT_CURSOR' if operator.use_cursor else 'CURSOR')
+
+
+class MAX3DS_PT_import_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_SCENE_OT_max3ds"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "constrain_size")
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_scene_unit")
+        layrow.label(text="", icon='EMPTY_ARROWS' if operator.use_scene_unit else 'EMPTY_DATA')
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_apply_transform")
+        layrow.label(text="", icon='MESH_CUBE' if operator.use_apply_transform else 'MOD_SOLIDIFY')
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_world_matrix")
+        layrow.label(text="", icon='WORLD' if operator.use_world_matrix else 'META_BALL')
+        layout.prop(operator, "axis_forward")
+        layout.prop(operator, "axis_up")
+
 
 @orientation_helper(axis_forward='Y', axis_up='Z')
 class Export3DS(bpy.types.Operator, ExportHelper):
     """Export to 3DS file format (.3ds)"""
-    bl_idname = "export_scene.autodesk_3ds"
+    bl_idname = "export_scene.max3ds"
     bl_label = 'Export 3DS'
+    bl_options = {'PRESET', 'UNDO'}
 
     filename_ext = ".3ds"
     filter_glob: StringProperty(
@@ -112,25 +200,46 @@ class Export3DS(bpy.types.Operator, ExportHelper):
     )
 
     scale_factor: FloatProperty(
-        name="Scale",
-        description="Scale factor for all objects",
+        name="Scale Factor",
+        description="Master scale factor for all objects",
         min=0.0, max=100000.0,
         soft_min=0.0, soft_max=100000.0,
         default=1.0,
     )
+    use_scene_unit: BoolProperty(
+        name="Scene Units",
+        description="Take the scene unit length settings into account",
+        default=False,
+    )
     use_selection: BoolProperty(
-        name="Selection Only",
+        name="Selection",
         description="Export selected objects only",
         default=False,
     )
+    object_filter: EnumProperty(
+        name="Object Filter", options={'ENUM_FLAG'},
+        items=(('WORLD', "World".rjust(11), "", 'WORLD_DATA',0x1),
+               ('MESH', "Mesh".rjust(11), "", 'MESH_DATA', 0x2),
+               ('LIGHT', "Light".rjust(12), "", 'LIGHT_DATA',0x4),
+               ('CAMERA', "Camera".rjust(11), "", 'CAMERA_DATA',0x8),
+               ('EMPTY', "Empty".rjust(11), "", 'EMPTY_AXIS',0x10),
+               ),
+        description="Object types to export",
+        default={'WORLD', 'MESH', 'LIGHT', 'CAMERA', 'EMPTY'},
+    )
     use_hierarchy: BoolProperty(
-        name="Export Hierarchy",
+        name="Hierarchy",
         description="Export hierarchy chunks",
         default=False,
     )
-    write_keyframe: BoolProperty(
-        name="Write Keyframe",
+    use_keyframes: BoolProperty(
+        name="Animation",
         description="Write the keyframe data",
+        default=False,
+    )
+    use_cursor: BoolProperty(
+        name="Cursor Origin",
+        description="Save the 3D cursor location",
         default=False,
     )
 
@@ -149,6 +258,74 @@ class Export3DS(bpy.types.Operator, ExportHelper):
 
         return export_3ds.save(self, context, **keywords)
 
+    def draw(self, context):
+        pass
+
+
+class MAX3DS_PT_export_include(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Include"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_max3ds"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = True
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_selection")
+        layrow.label(text="", icon='RESTRICT_SELECT_OFF' if operator.use_selection else 'RESTRICT_SELECT_ON')
+        layout.column().prop(operator, "object_filter")
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_hierarchy")
+        layrow.label(text="", icon='OUTLINER' if operator.use_hierarchy else 'CON_CHILDOF')
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_keyframes")
+        layrow.label(text="", icon='ANIM' if operator.use_keyframes else 'DECORATE_DRIVER')
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_cursor")
+        layrow.label(text="", icon='PIVOT_CURSOR' if operator.use_cursor else 'CURSOR')
+
+
+class MAX3DS_PT_export_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_max3ds"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "scale_factor")
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_scene_unit")
+        layrow.label(text="", icon='EMPTY_ARROWS' if operator.use_scene_unit else 'EMPTY_DATA')
+        layout.prop(operator, "axis_forward")
+        layout.prop(operator, "axis_up")
+
 
 # Add to a menu
 def menu_func_export(self, context):
@@ -161,16 +338,22 @@ def menu_func_import(self, context):
 
 def register():
     bpy.utils.register_class(Import3DS)
+    bpy.utils.register_class(MAX3DS_PT_import_include)
+    bpy.utils.register_class(MAX3DS_PT_import_transform)
     bpy.utils.register_class(Export3DS)
-
+    bpy.utils.register_class(MAX3DS_PT_export_include)
+    bpy.utils.register_class(MAX3DS_PT_export_transform)
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
     bpy.utils.unregister_class(Import3DS)
+    bpy.utils.unregister_class(MAX3DS_PT_import_include)
+    bpy.utils.unregister_class(MAX3DS_PT_import_transform)
     bpy.utils.unregister_class(Export3DS)
-
+    bpy.utils.unregister_class(MAX3DS_PT_export_include)
+    bpy.utils.unregister_class(MAX3DS_PT_export_transform)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 

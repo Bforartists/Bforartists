@@ -25,6 +25,7 @@
 
 #include "BLI_assert.h"
 #include "BLI_listbase.h"
+#include "BLI_math.h"
 #include "BLI_set.hh"
 #include "BLI_string_ref.hh"
 
@@ -279,6 +280,65 @@ static void version_principled_transmission_roughness(bNodeTree *ntree)
   }
 }
 
+/* Convert legacy Velvet BSDF nodes into the new Sheen BSDF node. */
+static void version_replace_velvet_sheen_node(bNodeTree *ntree)
+{
+  LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+    if (node->type == SH_NODE_BSDF_SHEEN) {
+      STRNCPY(node->idname, "ShaderNodeBsdfSheen");
+
+      bNodeSocket *sigmaInput = nodeFindSocket(node, SOCK_IN, "Sigma");
+      if (sigmaInput != nullptr) {
+        node->custom1 = SHD_SHEEN_ASHIKHMIN;
+        STRNCPY(sigmaInput->identifier, "Roughness");
+        STRNCPY(sigmaInput->name, "Roughness");
+      }
+    }
+  }
+}
+
+/* Convert sheen inputs on the Principled BSDF. */
+static void version_principled_bsdf_sheen(bNodeTree *ntree)
+{
+  auto check_node = [](const bNode *node) {
+    return (node->type == SH_NODE_BSDF_PRINCIPLED) &&
+           (nodeFindSocket(node, SOCK_IN, "Sheen Roughness") == nullptr);
+  };
+  auto update_input = [ntree](bNode *node, bNodeSocket *input) {
+    /* Change socket type to Color. */
+    nodeModifySocketTypeStatic(ntree, node, input, SOCK_RGBA, 0);
+
+    /* Account for the change in intensity between the old and new model.
+     * If the Sheen input is set to a fixed value, adjust it and set the tint to white.
+     * Otherwise, if it's connected, keep it as-is but set the tint to 0.2 instead. */
+    bNodeSocket *sheen = nodeFindSocket(node, SOCK_IN, "Sheen");
+    if (sheen != nullptr && sheen->link == nullptr) {
+      *version_cycles_node_socket_float_value(sheen) *= 0.2f;
+
+      static float default_value[] = {1.0f, 1.0f, 1.0f, 1.0f};
+      copy_v4_v4(version_cycles_node_socket_rgba_value(input), default_value);
+    }
+    else {
+      static float default_value[] = {0.2f, 0.2f, 0.2f, 1.0f};
+      copy_v4_v4(version_cycles_node_socket_rgba_value(input), default_value);
+    }
+  };
+  auto update_input_link = [](bNode *, bNodeSocket *, bNode *, bNodeSocket *) {
+    /* Don't replace the link here, tint works differently enough now to make conversion
+     * impractical. */
+  };
+
+  version_update_node_input(ntree, check_node, "Sheen Tint", update_input, update_input_link);
+
+  LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+    if (check_node(node)) {
+      bNodeSocket *input = nodeAddStaticSocket(
+          ntree, node, SOCK_IN, SOCK_FLOAT, PROP_FACTOR, "Sheen Roughness", "Sheen Roughness");
+      *version_cycles_node_socket_float_value(input) = 0.5f;
+    }
+  }
+}
+
 void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 1)) {
@@ -376,19 +436,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     version_vertex_weight_edit_preserve_threshold_exclusivity(bmain);
   }
 
-  /**
-   * Versioning code until next subversion bump goes here.
-   *
-   * \note Be sure to check when bumping the version:
-   * - #do_versions_after_linking_400 in this file.
-   * - "versioning_userdef.c", #blo_do_versions_userdef
-   * - "versioning_userdef.c", #do_versions_theme
-   *
-   * \note Keep this message at the bottom of the function.
-   */
-  {
-    /* Keep this block, even when empty. */
-
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 12)) {
     if (!DNA_struct_elem_find(fd->filesdna, "LightProbe", "int", "grid_bake_samples")) {
       LISTBASE_FOREACH (LightProbe *, lightprobe, &bmain->lightprobes) {
         lightprobe->grid_bake_samples = 2048;
@@ -427,12 +475,47 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       }
     }
 
-    /* Remove Transmission Roughness from Principled BSDF. */
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
       if (ntree->type == NTREE_SHADER) {
+        /* Remove Transmission Roughness from Principled BSDF. */
         version_principled_transmission_roughness(ntree);
+        /* Convert legacy Velvet BSDF nodes into the new Sheen BSDF node. */
+        version_replace_velvet_sheen_node(ntree);
+        /* Convert sheen inputs on the Principled BSDF. */
+        version_principled_bsdf_sheen(ntree);
       }
     }
     FOREACH_NODETREE_END;
+
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
+                                                                 &sl->regionbase;
+
+          /* Layout based regions used to also disallow resizing, now these are separate flags.
+           * Make sure they are set together for old regions. */
+          LISTBASE_FOREACH (ARegion *, region, regionbase) {
+            if (region->flag & RGN_FLAG_DYNAMIC_SIZE) {
+              region->flag |= RGN_FLAG_NO_USER_RESIZE;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Versioning code until next subversion bump goes here.
+   *
+   * \note Be sure to check when bumping the version:
+   * - #do_versions_after_linking_400 in this file.
+   * - "versioning_userdef.c", #blo_do_versions_userdef
+   * - "versioning_userdef.c", #do_versions_theme
+   *
+   * \note Keep this message at the bottom of the function.
+   */
+  {
+    /* Keep this block, even when empty. */
   }
 }

@@ -90,11 +90,11 @@ static FileSelection find_file_mouse_rect(SpaceFile *sfile,
   return sel;
 }
 
-typedef enum FileSelect {
+enum FileSelect {
   FILE_SELECT_NOTHING = 0,
   FILE_SELECT_DIR = 1,
   FILE_SELECT_FILE = 2,
-} FileSelect;
+};
 
 static void clamp_to_filelist(int numfiles, FileSelection *sel)
 {
@@ -1906,7 +1906,8 @@ static void file_os_operations_menu_item(uiLayout *layout,
   RNA_enum_name(file_external_operation, operation, &title);
 
   PointerRNA props_ptr;
-  uiItemFullO_ptr(layout, ot, title, ICON_NONE, nullptr, WM_OP_INVOKE_DEFAULT, 0, &props_ptr);
+  uiItemFullO_ptr(
+      layout, ot, title, ICON_NONE, nullptr, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE, &props_ptr);
   RNA_string_set(&props_ptr, "filepath", path);
   if (operation) {
     RNA_enum_set(&props_ptr, "operation", operation);

@@ -53,7 +53,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 {
-  uiItemR(layout, ptr, "data_type", 0, "", ICON_NONE);
+  uiItemR(layout, ptr, "data_type", UI_ITEM_NONE, "", ICON_NONE);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -243,7 +243,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     params.set_default_remaining_outputs();
     return;
   }
-  if (mesh->totpoly == 0 && mesh->totvert != 0) {
+  if (mesh->faces_num == 0 && mesh->totvert != 0) {
     params.error_message_add(NodeWarningType::Error, TIP_("The source mesh must have faces"));
     params.set_default_remaining_outputs();
     return;

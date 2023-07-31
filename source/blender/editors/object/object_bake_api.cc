@@ -486,7 +486,7 @@ static bool bake_object_check(const Scene *scene,
 
   Mesh *me = (Mesh *)ob->data;
 
-  if (me->totpoly == 0) {
+  if (me->faces_num == 0) {
     BKE_reportf(reports, RPT_ERROR, "No faces found in the object \"%s\"", ob->id.name + 2);
     return false;
   }
@@ -501,7 +501,7 @@ static bool bake_object_check(const Scene *scene,
     }
   }
   else if (target == R_BAKE_TARGET_IMAGE_TEXTURES) {
-    if (CustomData_get_active_layer_index(&me->ldata, CD_PROP_FLOAT2) == -1) {
+    if (CustomData_get_active_layer_index(&me->loop_data, CD_PROP_FLOAT2) == -1) {
       BKE_reportf(
           reports, RPT_ERROR, "No active UV layer found in the object \"%s\"", ob->id.name + 2);
       return false;
@@ -717,7 +717,7 @@ static Mesh *bake_mesh_new_from_object(Depsgraph *depsgraph,
 
   if (me->flag & ME_AUTOSMOOTH) {
     ED_mesh_split_faces(me);
-    CustomData_free_layers(&me->ldata, CD_NORMAL, me->totloop);
+    CustomData_free_layers(&me->loop_data, CD_NORMAL, me->totloop);
   }
 
   return me;
@@ -1027,14 +1027,14 @@ static bool bake_targets_init_vertex_colors(Main *bmain,
   return true;
 }
 
-static int find_original_loop(const blender::OffsetIndices<int> orig_polys,
+static int find_original_loop(const blender::OffsetIndices<int> orig_faces,
                               const blender::Span<int> orig_corner_verts,
                               const int *vert_origindex,
                               const int *poly_origindex,
                               const int poly_eval,
                               const int vert_eval)
 {
-  /* Get original vertex and polygon index. There is currently no loop mapping
+  /* Get original vertex and face index. There is currently no loop mapping
    * in modifier stack evaluation. */
   const int vert_orig = vert_origindex[vert_eval];
   const int poly_orig_index = poly_origindex[poly_eval];
@@ -1043,12 +1043,12 @@ static int find_original_loop(const blender::OffsetIndices<int> orig_polys,
     return ORIGINDEX_NONE;
   }
 
-  /* Find matching loop with original vertex in original polygon. */
-  const blender::IndexRange orig_poly = orig_polys[poly_orig_index];
-  const int *poly_verts_orig = &orig_corner_verts[orig_poly.start()];
-  for (int j = 0; j < orig_poly.size(); ++j) {
+  /* Find matching loop with original vertex in original face. */
+  const blender::IndexRange orig_face = orig_faces[poly_orig_index];
+  const int *poly_verts_orig = &orig_corner_verts[orig_face.start()];
+  for (int j = 0; j < orig_face.size(); ++j) {
     if (poly_verts_orig[j] == vert_orig) {
-      return orig_poly.start() + j;
+      return orig_face.start() + j;
     }
   }
 
@@ -1079,25 +1079,25 @@ static void bake_targets_populate_pixels_color_attributes(BakeTargets *targets,
   }
 
   /* Populate through adjacent triangles, first triangle wins. */
-  const int tottri = poly_to_tri_count(me_eval->totpoly, me_eval->totloop);
+  const int tottri = poly_to_tri_count(me_eval->faces_num, me_eval->totloop);
   MLoopTri *looptri = static_cast<MLoopTri *>(MEM_mallocN(sizeof(*looptri) * tottri, __func__));
 
   const blender::Span<int> corner_verts = me_eval->corner_verts();
   blender::bke::mesh::looptris_calc(
-      me_eval->vert_positions(), me_eval->polys(), corner_verts, {looptri, tottri});
-  const blender::Span<int> looptri_polys = me_eval->looptri_polys();
+      me_eval->vert_positions(), me_eval->faces(), corner_verts, {looptri, tottri});
+  const blender::Span<int> looptri_faces = me_eval->looptri_faces();
 
   /* For mapping back to original mesh in case there are modifiers. */
   const int *vert_origindex = static_cast<const int *>(
-      CustomData_get_layer(&me_eval->vdata, CD_ORIGINDEX));
+      CustomData_get_layer(&me_eval->vert_data, CD_ORIGINDEX));
   const int *poly_origindex = static_cast<const int *>(
-      CustomData_get_layer(&me_eval->pdata, CD_ORIGINDEX));
-  const blender::OffsetIndices orig_polys = me->polys();
+      CustomData_get_layer(&me_eval->face_data, CD_ORIGINDEX));
+  const blender::OffsetIndices orig_faces = me->faces();
   const blender::Span<int> orig_corner_verts = me->corner_verts();
 
   for (int i = 0; i < tottri; i++) {
     const MLoopTri *lt = &looptri[i];
-    const int poly_i = looptri_polys[i];
+    const int face_i = looptri_faces[i];
 
     for (int j = 0; j < 3; j++) {
       uint l = lt->tri[j];
@@ -1106,7 +1106,7 @@ static void bake_targets_populate_pixels_color_attributes(BakeTargets *targets,
       /* Map back to original loop if there are modifiers. */
       if (vert_origindex != nullptr && poly_origindex != nullptr) {
         l = find_original_loop(
-            orig_polys, orig_corner_verts, vert_origindex, poly_origindex, poly_i, v);
+            orig_faces, orig_corner_verts, vert_origindex, poly_origindex, face_i, v);
         if (l == ORIGINDEX_NONE || l >= me->totloop) {
           continue;
         }
@@ -1437,7 +1437,7 @@ static int bake(const BakeAPIRender *bkr,
 
   if (bkr->uv_layer[0] != '\0') {
     Mesh *me = (Mesh *)ob_low->data;
-    if (CustomData_get_named_layer(&me->ldata, CD_PROP_FLOAT2, bkr->uv_layer) == -1) {
+    if (CustomData_get_named_layer(&me->loop_data, CD_PROP_FLOAT2, bkr->uv_layer) == -1) {
       BKE_reportf(reports,
                   RPT_ERROR,
                   "No UV layer named \"%s\" found in the object \"%s\"",
@@ -1517,7 +1517,7 @@ static int bake(const BakeAPIRender *bkr,
     /* prepare cage mesh */
     if (ob_cage) {
       me_cage_eval = bake_mesh_new_from_object(depsgraph, ob_cage_eval, preserve_origindex);
-      if ((me_low_eval->totpoly != me_cage_eval->totpoly) ||
+      if ((me_low_eval->faces_num != me_cage_eval->faces_num) ||
           (me_low_eval->totloop != me_cage_eval->totloop))
       {
         BKE_report(reports,

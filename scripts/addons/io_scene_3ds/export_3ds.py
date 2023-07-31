@@ -24,13 +24,22 @@ from bpy_extras import node_shader_utils
 PRIMARY = 0x4D4D
 
 # >----- Main Chunks
+OBJECTINFO = 0x3D3D  # Main mesh object chunk before material and object information
+MESHVERSION = 0x3D3E  # This gives the version of the mesh
 VERSION = 0x0002  # This gives the version of the .3ds file
 KFDATA = 0xB000  # This is the header for all of the keyframe info
 
 # >----- sub defines of OBJECTINFO
-OBJECTINFO = 0x3D3D  # Main mesh object chunk before material and object information
-MESHVERSION = 0x3D3E  # This gives the version of the mesh
+BITMAP = 0x1100  # The background image name
+USE_BITMAP = 0x1101  # The background image flag
+SOLIDBACKGND = 0x1200  # The background color (RGB)
+USE_SOLIDBGND = 0x1201  # The background color flag
+VGRADIENT = 0x1300  # The background gradient colors
+USE_VGRADIENT = 0x1301  # The background gradient flag
+O_CONSTS = 0x1500  # The origin of the 3D cursor
 AMBIENTLIGHT = 0x2100  # The color of the ambient light
+LAYER_FOG = 0x2302  # The fog atmosphere settings
+USE_LAYER_FOG = 0x2303  # The fog atmosphere flag
 MATERIAL = 45055  # 0xAFFF // This stored the texture info
 OBJECT = 16384  # 0x4000 // This stores the faces, vertices, etc...
 
@@ -1086,7 +1095,6 @@ def make_kfdata(revision, start=0, stop=100, curtime=0):
 def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
     """Make a chunk for track data. Depending on the ID, this will construct
     a position, rotation, scale, roll, color, fov, hotspot or falloff track."""
-    ob_distance = mathutils.Matrix.Diagonal(ob_size)
     track_chunk = _3ds_chunk(ID)
 
     if ID in {POS_TRACK_TAG, ROT_TRACK_TAG, SCL_TRACK_TAG, ROLL_TRACK_TAG} and ob.animation_data and ob.animation_data.action:
@@ -1111,7 +1119,7 @@ def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
                     pos_x = next((tc.evaluate(frame) for tc in pos_track if tc.array_index == 0), ob_pos.x)
                     pos_y = next((tc.evaluate(frame) for tc in pos_track if tc.array_index == 1), ob_pos.y)
                     pos_z = next((tc.evaluate(frame) for tc in pos_track if tc.array_index == 2), ob_pos.z)
-                    pos = ob_distance @ mathutils.Vector((pos_x, pos_y, pos_z))
+                    pos = ob_size @ mathutils.Vector((pos_x, pos_y, pos_z))
                     track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                     track_chunk.add_variable("tcb_flags", _3ds_ushort())
                     track_chunk.add_variable("position", _3ds_point_3d((pos.x, pos.y, pos.z)))
@@ -1317,18 +1325,19 @@ def make_object_node(ob, translation, rotation, scale, name_id):
             obj_morph_smooth.add_variable("angle", _3ds_float(round(ob.data.auto_smooth_angle, 6)))
             obj_node.add_subchunk(obj_morph_smooth)
 
-    # Add track chunks for color, position, rotation and scale
+    # Add track chunks for position, rotation, size
+    ob_scale = scale[name]  # and collect masterscale
     if parent is None or (parent.name not in name_id):
         ob_pos = translation[name]
         ob_rot = rotation[name]
-        ob_size = scale[name]
+        ob_size = ob.scale
 
     else:  # Calculate child position and rotation of the object center, no scale applied
         ob_pos = translation[name] - translation[parent.name]
         ob_rot = rotation[name].to_quaternion().cross(rotation[parent.name].to_quaternion().copy().inverted()).to_euler()
         ob_size = mathutils.Vector((1.0, 1.0, 1.0))
 
-    obj_node.add_subchunk(make_track_chunk(POS_TRACK_TAG, ob, ob_pos, ob_rot, ob_size))
+    obj_node.add_subchunk(make_track_chunk(POS_TRACK_TAG, ob, ob_pos, ob_rot, ob_scale))
 
     if ob.type in {'MESH', 'EMPTY'}:
         obj_node.add_subchunk(make_track_chunk(ROT_TRACK_TAG, ob, ob_pos, ob_rot, ob_size))
@@ -1375,7 +1384,7 @@ def make_target_node(ob, translation, rotation, scale, name_id):
     # Calculate target position
     ob_pos = translation[name]
     ob_rot = rotation[name]
-    ob_size = mathutils.Matrix.Diagonal(scale[name])
+    ob_scale = scale[name]
     target_pos = calc_target(ob_pos, ob_rot.x, ob_rot.z)
 
     # Add track chunks for target position
@@ -1405,7 +1414,7 @@ def make_target_node(ob, translation, rotation, scale, name_id):
                 rot_target = [fc for fc in fcurves if fc is not None and fc.data_path == 'rotation_euler']
                 rot_x = next((tc.evaluate(frame) for tc in rot_target if tc.array_index == 0), ob_rot.x)
                 rot_z = next((tc.evaluate(frame) for tc in rot_target if tc.array_index == 2), ob_rot.z)
-                target_distance = ob_size @ mathutils.Vector((loc_x, loc_y, loc_z))
+                target_distance = ob_scale @ mathutils.Vector((loc_x, loc_y, loc_z))
                 target_pos = calc_target(target_distance, rot_x, rot_z)
                 track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                 track_chunk.add_variable("tcb_flags", _3ds_ushort())
@@ -1489,10 +1498,9 @@ def make_ambient_node(world):
 # EXPORT #
 ##########
 
-def save(operator, context, filepath="", scale_factor=1.0, use_selection=False, use_hierarchy=False, write_keyframe=False, global_matrix=None):
-
+def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False, use_selection=False,
+         object_filter=None, use_hierarchy=False, use_keyframes=False, global_matrix=None, use_cursor=False):
     """Save the Blender scene to a 3ds file."""
-    mtx_scale = mathutils.Matrix.Scale(scale_factor, 4)
 
     # Time the export
     duration = time.time()
@@ -1502,6 +1510,20 @@ def save(operator, context, filepath="", scale_factor=1.0, use_selection=False, 
     layer = context.view_layer
     depsgraph = context.evaluated_depsgraph_get()
     world = scene.world
+
+    unit_measure = 1.0
+    if use_scene_unit:
+        unit_length = scene.unit_settings.length_unit
+        if unit_length == 'KILOMETERS':
+            unit_measure = 0.001
+        elif unit_length == 'CENTIMETERS':
+            unit_measure = 100
+        elif unit_length == 'MILLIMETERS':
+            unit_measure = 1000
+        elif unit_length == 'MICROMETERS':
+            unit_measure = 1000000
+
+    mtx_scale = mathutils.Matrix.Scale((scale_factor * unit_measure),4)
 
     if global_matrix is None:
         global_matrix = mathutils.Matrix()
@@ -1528,8 +1550,14 @@ def save(operator, context, filepath="", scale_factor=1.0, use_selection=False, 
     mscale.add_variable("scale", _3ds_float(1.0))
     object_info.add_subchunk(mscale)
 
+    # Add 3D cursor location
+    if use_cursor:
+        cursor_chunk = _3ds_chunk(O_CONSTS)
+        cursor_chunk.add_variable("cursor", _3ds_point_3d(scene.cursor.location))
+        object_info.add_subchunk(cursor_chunk)
+
     # Init main keyframe data chunk
-    if write_keyframe:
+    if use_keyframes:
         revision = 0x0005
         stop = scene.frame_end
         start = scene.frame_start
@@ -1537,13 +1565,56 @@ def save(operator, context, filepath="", scale_factor=1.0, use_selection=False, 
         kfdata = make_kfdata(revision, start, stop, curtime)
 
     # Add AMBIENT color
-    if world is not None:
+    if world is not None and 'WORLD' in object_filter:
         ambient_chunk = _3ds_chunk(AMBIENTLIGHT)
         ambient_light = _3ds_chunk(RGB)
         ambient_light.add_variable("ambient", _3ds_float_color(world.color))
         ambient_chunk.add_subchunk(ambient_light)
         object_info.add_subchunk(ambient_chunk)
-        if write_keyframe and world.animation_data:
+
+        # Add BACKGROUND and BITMAP
+        if world.use_nodes:
+            ntree = world.node_tree.links
+            background_color_chunk = _3ds_chunk(RGB)
+            background_chunk = _3ds_chunk(SOLIDBACKGND)
+            background_flag = _3ds_chunk(USE_SOLIDBGND)
+            bgtype = 'BACKGROUND'
+            bgshade = 'ADD_SHADER', 'MIX_SHADER', 'OUTPUT_WORLD'
+            bg_tex = 'TEX_IMAGE', 'TEX_ENVIRONMENT'
+            bg_color = next((lk.from_node.inputs[0].default_value[:3] for lk in ntree if lk.from_node.type == bgtype and lk.to_node.type in bgshade), world.color)
+            bg_mixer = next((lk.from_node.type for lk in ntree if  lk.from_node.type in {'MIX', 'MIX_RGB'} and lk.to_node.type == bgtype), bgtype)
+            bg_image = next((lk.from_node.image.name for lk in ntree if lk.from_node.type in bg_tex and lk.to_node.type == bg_mixer), False)
+            background_color_chunk.add_variable("color", _3ds_float_color(bg_color))
+            background_chunk.add_subchunk(background_color_chunk)
+            if bg_image:
+                background_image = _3ds_chunk(BITMAP)
+                background_flag = _3ds_chunk(USE_BITMAP)
+                background_image.add_variable("image", _3ds_string(sane_name(bg_image)))
+                object_info.add_subchunk(background_image)
+            object_info.add_subchunk(background_chunk)
+            object_info.add_subchunk(background_flag)
+
+            # Add LAYER_FOG settings
+            fogshader = next((lk.from_socket.node for lk in ntree if lk.from_socket.identifier and lk.to_socket.identifier == 'Volume'), False)
+            if fogshader:
+                fogflag = 0
+                if world.mist_settings.falloff == 'QUADRATIC':
+                    fogflag |= 0x1
+                if world.mist_settings.falloff == 'INVERSE_QUADRATIC':
+                    fogflag |= 0x2
+                fog_chunk = _3ds_chunk(LAYER_FOG)
+                fog_color_chunk = _3ds_chunk(RGB)
+                use_fog_flag = _3ds_chunk(USE_LAYER_FOG)
+                fog_color_chunk.add_variable("color", _3ds_float_color(fogshader.inputs['Color'].default_value[:3]))
+                fog_chunk.add_variable("lowZ", _3ds_float(world.mist_settings.start))
+                fog_chunk.add_variable("highZ", _3ds_float(world.mist_settings.depth))
+                fog_chunk.add_variable("density", _3ds_float(fogshader.inputs['Density'].default_value))
+                fog_chunk.add_variable("flags", _3ds_uint(fogflag))
+                fog_chunk.add_subchunk(fog_color_chunk)
+                object_info.add_subchunk(fog_chunk)
+                if layer.use_pass_mist:
+                    object_info.add_subchunk(use_fog_flag)
+        if use_keyframes and world.animation_data:
             kfdata.add_subchunk(make_ambient_node(world))
 
     # Make a list of all materials used in the selected meshes (use dictionary, each material is added once)
@@ -1551,9 +1622,9 @@ def save(operator, context, filepath="", scale_factor=1.0, use_selection=False, 
     mesh_objects = []
 
     if use_selection:
-        objects = [ob for ob in scene.objects if ob.visible_get(view_layer=layer) and ob.select_get(view_layer=layer)]
+        objects = [ob for ob in scene.objects if ob.type in object_filter and ob.visible_get(view_layer=layer) and ob.select_get(view_layer=layer)]
     else:
-        objects = [ob for ob in scene.objects if ob.visible_get(view_layer=layer)]
+        objects = [ob for ob in scene.objects if ob.type in object_filter and ob.visible_get(view_layer=layer)]
 
     empty_objects = [ob for ob in objects if ob.type == 'EMPTY']
     light_objects = [ob for ob in objects if ob.type == 'LIGHT']
@@ -1628,29 +1699,29 @@ def save(operator, context, filepath="", scale_factor=1.0, use_selection=False, 
     name_id = {}
 
     for ob, data, matrix in mesh_objects:
-        translation[ob.name] = mtx_scale @ ob.location.copy()
-        rotation[ob.name] = ob.rotation_euler.copy()
-        scale[ob.name] = ob.scale.copy()
+        translation[ob.name] = mtx_scale @ ob.location
+        rotation[ob.name] = ob.rotation_euler
+        scale[ob.name] = mtx_scale.copy()
         name_id[ob.name] = len(name_id)
         object_id[ob.name] = len(object_id)
 
     for ob in empty_objects:
-        translation[ob.name] = mtx_scale @ ob.location.copy()
-        rotation[ob.name] = ob.rotation_euler.copy()
-        scale[ob.name] = ob.scale.copy()
+        translation[ob.name] = mtx_scale @ ob.location
+        rotation[ob.name] = ob.rotation_euler
+        scale[ob.name] = mtx_scale.copy()
         name_id[ob.name] = len(name_id)
 
     for ob in light_objects:
-        translation[ob.name] = mtx_scale @ ob.location.copy()
-        rotation[ob.name] = ob.rotation_euler.copy()
-        scale[ob.name] = mtx_scale.copy().to_scale()
+        translation[ob.name] = mtx_scale @ ob.location
+        rotation[ob.name] = ob.rotation_euler
+        scale[ob.name] = mtx_scale.copy()
         name_id[ob.name] = len(name_id)
         object_id[ob.name] = len(object_id)
 
     for ob in camera_objects:
-        translation[ob.name] = mtx_scale @ ob.location.copy()
-        rotation[ob.name] = ob.rotation_euler.copy()
-        scale[ob.name] = mtx_scale.copy().to_scale()
+        translation[ob.name] = mtx_scale @ ob.location
+        rotation[ob.name] = ob.rotation_euler
+        scale[ob.name] = mtx_scale.copy()
         name_id[ob.name] = len(name_id)
         object_id[ob.name] = len(object_id)
 
@@ -1685,13 +1756,13 @@ def save(operator, context, filepath="", scale_factor=1.0, use_selection=False, 
             operator.report({'WARNING'}, "Object %r can't be written into a 3DS file")
 
         # Export object node
-        if write_keyframe:
+        if use_keyframes:
             kfdata.add_subchunk(make_object_node(ob, translation, rotation, scale, name_id))
 
         i += i
 
     # Create chunks for all empties - only requires a object node
-    if write_keyframe:
+    if use_keyframes:
         for ob in empty_objects:
             kfdata.add_subchunk(make_object_node(ob, translation, rotation, scale, name_id))
 
@@ -1755,7 +1826,7 @@ def save(operator, context, filepath="", scale_factor=1.0, use_selection=False, 
         object_info.add_subchunk(object_chunk)
 
         # Export light and spotlight target node
-        if write_keyframe:
+        if use_keyframes:
             kfdata.add_subchunk(make_object_node(ob, translation, rotation, scale, name_id))
             if ob.data.type == 'SPOT':
                 kfdata.add_subchunk(make_target_node(ob, translation, rotation, scale, name_id))
@@ -1789,7 +1860,7 @@ def save(operator, context, filepath="", scale_factor=1.0, use_selection=False, 
         object_info.add_subchunk(object_chunk)
 
         # Export camera and target node
-        if write_keyframe:
+        if use_keyframes:
             kfdata.add_subchunk(make_object_node(ob, translation, rotation, scale, name_id))
             kfdata.add_subchunk(make_target_node(ob, translation, rotation, scale, name_id))
 
@@ -1797,7 +1868,7 @@ def save(operator, context, filepath="", scale_factor=1.0, use_selection=False, 
     primary.add_subchunk(object_info)
 
     # Add main keyframe data chunk to primary chunk
-    if write_keyframe:
+    if use_keyframes:
         primary.add_subchunk(kfdata)
 
     # The chunk hierarchy is completely built, now check the size

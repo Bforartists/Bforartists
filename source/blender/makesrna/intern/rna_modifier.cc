@@ -445,7 +445,7 @@ const EnumPropertyItem rna_enum_dt_method_vertex_items[] = {
      0,
      "Nearest Edge Interpolated",
      "Copy from interpolated values of vertices from closest point on closest edge"},
-    {MREMAP_MODE_VERT_POLY_NEAREST,
+    {MREMAP_MODE_VERT_FACE_NEAREST,
      "POLY_NEAREST",
      0,
      "Nearest Face Vertex",
@@ -508,17 +508,17 @@ const EnumPropertyItem rna_enum_dt_method_loop_items[] = {
      "NEAREST_POLY",
      0,
      "Nearest Corner of Nearest Face",
-     "Copy from nearest corner of nearest polygon"},
+     "Copy from nearest corner of nearest face"},
     {MREMAP_MODE_LOOP_POLYINTERP_NEAREST,
      "POLYINTERP_NEAREST",
      0,
      "Nearest Face Interpolated",
-     "Copy from interpolated corners of the nearest source polygon"},
+     "Copy from interpolated corners of the nearest source face"},
     {MREMAP_MODE_LOOP_POLYINTERP_LNORPROJ,
      "POLYINTERP_LNORPROJ",
      0,
      "Projected Face Interpolated",
-     "Copy from interpolated corners of the source polygon hit by corner normal projection"},
+     "Copy from interpolated corners of the source face hit by corner normal projection"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -528,12 +528,12 @@ const EnumPropertyItem rna_enum_dt_method_poly_items[] = {
      "NEAREST",
      0,
      "Nearest Face",
-     "Copy from nearest polygon (using center points)"},
+     "Copy from nearest face (using center points)"},
     {MREMAP_MODE_POLY_NOR,
      "NORMAL",
      0,
      "Best Normal-Matching",
-     "Copy from source polygon which normal is the closest to destination one"},
+     "Copy from source face which normal is the closest to destination one"},
     {MREMAP_MODE_POLY_POLYINTERP_PNORPROJ,
      "POLYINTERP_PNORPROJ",
      0,
@@ -1076,13 +1076,13 @@ static bool rna_MultiresModifier_external_get(PointerRNA *ptr)
   Object *ob = (Object *)ptr->owner_id;
   Mesh *me = static_cast<Mesh *>(ob->data);
 
-  return CustomData_external_test(&me->ldata, CD_MDISPS);
+  return CustomData_external_test(&me->loop_data, CD_MDISPS);
 }
 
 static void rna_MultiresModifier_filepath_get(PointerRNA *ptr, char *value)
 {
   Object *ob = (Object *)ptr->owner_id;
-  CustomDataExternal *external = ((Mesh *)ob->data)->ldata.external;
+  CustomDataExternal *external = ((Mesh *)ob->data)->loop_data.external;
 
   strcpy(value, (external) ? external->filepath : "");
 }
@@ -1090,7 +1090,7 @@ static void rna_MultiresModifier_filepath_get(PointerRNA *ptr, char *value)
 static void rna_MultiresModifier_filepath_set(PointerRNA *ptr, const char *value)
 {
   Object *ob = (Object *)ptr->owner_id;
-  CustomDataExternal *external = ((Mesh *)ob->data)->ldata.external;
+  CustomDataExternal *external = ((Mesh *)ob->data)->loop_data.external;
 
   if (external && !STREQ(external->filepath, value)) {
     STRNCPY(external->filepath, value);
@@ -1101,7 +1101,7 @@ static void rna_MultiresModifier_filepath_set(PointerRNA *ptr, const char *value
 static int rna_MultiresModifier_filepath_length(PointerRNA *ptr)
 {
   Object *ob = (Object *)ptr->owner_id;
-  CustomDataExternal *external = ((Mesh *)ob->data)->ldata.external;
+  CustomDataExternal *external = ((Mesh *)ob->data)->loop_data.external;
 
   return strlen((external) ? external->filepath : "");
 }
@@ -1363,14 +1363,14 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_src_itemf(
         return item;
       }
 
-      num_data = CustomData_number_of_layers(&me_eval->ldata, CD_PROP_FLOAT2);
+      num_data = CustomData_number_of_layers(&me_eval->loop_data, CD_PROP_FLOAT2);
 
       RNA_enum_item_add_separator(&item, &totitem);
 
       for (i = 0; i < num_data; i++) {
         tmp_item.value = i;
         tmp_item.identifier = tmp_item.name = CustomData_get_layer_name(
-            &me_eval->ldata, CD_PROP_FLOAT2, i);
+            &me_eval->loop_data, CD_PROP_FLOAT2, i);
         RNA_enum_item_add(&item, &totitem, &tmp_item);
       }
     }
@@ -1401,10 +1401,10 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_src_itemf(
 
       const CustomData *cdata;
       if (domain == ATTR_DOMAIN_POINT) {
-        cdata = &mesh_eval->vdata;
+        cdata = &mesh_eval->vert_data;
       }
       else {
-        cdata = &mesh_eval->ldata;
+        cdata = &mesh_eval->loop_data;
       }
 
       eCustomDataType types[2] = {CD_PROP_COLOR, CD_PROP_BYTE_COLOR};
@@ -1480,19 +1480,19 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_dst_itemf(
 
       if (ob_dst && ob_dst->data) {
         Mesh *me_dst;
-        CustomData *ldata;
+        CustomData *loop_data;
         int num_data, i;
 
         me_dst = static_cast<Mesh *>(ob_dst->data);
-        ldata = &me_dst->ldata;
-        num_data = CustomData_number_of_layers(ldata, CD_PROP_FLOAT2);
+        loop_data = &me_dst->loop_data;
+        num_data = CustomData_number_of_layers(loop_data, CD_PROP_FLOAT2);
 
         RNA_enum_item_add_separator(&item, &totitem);
 
         for (i = 0; i < num_data; i++) {
           tmp_item.value = i;
           tmp_item.identifier = tmp_item.name = CustomData_get_layer_name(
-              ldata, CD_PROP_FLOAT2, i);
+              loop_data, CD_PROP_FLOAT2, i);
           RNA_enum_item_add(&item, &totitem, &tmp_item);
         }
       }
@@ -1514,8 +1514,8 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_dst_itemf(
 
         Mesh *me_dst = static_cast<Mesh *>(ob_dst->data);
         CustomData *cdata = STREQ(RNA_property_identifier(prop), "layers_vcol_vert_select_dst") ?
-                                &me_dst->vdata :
-                                &me_dst->ldata;
+                                &me_dst->vert_data :
+                                &me_dst->loop_data;
 
         int idx = 0;
         for (int i = 0; i < 2; i++) {
@@ -6545,7 +6545,7 @@ static void rna_def_modifier_datatransfer(BlenderRNA *brna)
                       DT_layer_poly_items,
                       0,
                       "Poly Data Types",
-                      "Which poly data layers to transfer");
+                      "Which face data layers to transfer");
   RNA_def_property_flag(prop, PROP_ENUM_FLAG);
   RNA_def_property_enum_sdna(prop, nullptr, "data_types");
   RNA_def_property_enum_funcs(

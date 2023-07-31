@@ -107,7 +107,7 @@ Mesh *doEdgeSplit(const Mesh *mesh, EdgeSplitModifierData *emd)
   return result;
 }
 
-static void initData(ModifierData *md)
+static void init_data(ModifierData *md)
 {
   EdgeSplitModifierData *emd = (EdgeSplitModifierData *)md;
 
@@ -116,7 +116,7 @@ static void initData(ModifierData *md)
   MEMCPY_STRUCT_AFTER(emd, DNA_struct_default_get(EdgeSplitModifierData), modifier);
 }
 
-static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext * /*ctx*/, Mesh *mesh)
+static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext * /*ctx*/, Mesh *mesh)
 {
   Mesh *result;
   EdgeSplitModifierData *emd = (EdgeSplitModifierData *)md;
@@ -142,10 +142,10 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   /*------------------- bfa - original props */
   // row = uiLayoutRowWithHeading(layout, true, IFACE_("Edge Angle"));
-  // uiItemR(row, ptr, "use_edge_angle", 0, "", ICON_NONE);
+  // uiItemR(row, ptr, "use_edge_angle", UI_ITEM_NONE, "", ICON_NONE);
   // sub = uiLayoutRow(row, true);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_edge_angle"));
-  // uiItemR(sub, ptr, "split_angle", 0, "", ICON_NONE);
+  // uiItemR(sub, ptr, "split_angle", UI_ITEM_NONE, "", ICON_NONE);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
@@ -156,13 +156,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row = uiLayoutRow(split, false);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_edge_angle", 0, "Edge Angle", ICON_NONE);
+  uiItemR(row, ptr, "use_edge_angle", UI_ITEM_NONE, "Edge Angle", ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_angle", 0); /*bfa - decorator*/
 
   /* SECOND PART ................................................ */
   row = uiLayoutRow(split, false);
   if (RNA_boolean_get(ptr, "use_edge_angle")) {
-    uiItemR(row, ptr, "split_angle", 0, "", ICON_NONE);
+    uiItemR(row, ptr, "split_angle", UI_ITEM_NONE, "", ICON_NONE);
   }
   else {
     uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
@@ -171,12 +171,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   // ------------------------------- end bfa
 
   /*------------------- bfa - original props */
-  // uiItemR(layout, ptr, "use_edge_sharp", 0, IFACE_("Sharp Edges"), ICON_NONE);
+  // uiItemR(layout, ptr, "use_edge_sharp", UI_ITEM_NONE, IFACE_("Sharp Edges"), ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_edge_sharp", 0, IFACE_("Sharp Edges"), ICON_NONE);
+  uiItemR(row, ptr, "use_edge_sharp", UI_ITEM_NONE, IFACE_("Sharp Edges"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_sharp", 0); /*bfa - decorator*/
 
   /* ------------ end bfa */
@@ -184,15 +184,16 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   modifier_panel_end(layout, ptr);
 }
 
-static void panelRegister(ARegionType *region_type)
+static void panel_register(ARegionType *region_type)
 {
   modifier_panel_register(region_type, eModifierType_EdgeSplit, panel_draw);
 }
 
 ModifierTypeInfo modifierType_EdgeSplit = {
+    /*idname*/ "EdgeSplit",
     /*name*/ N_("EdgeSplit"),
-    /*structName*/ "EdgeSplitModifierData",
-    /*structSize*/ sizeof(EdgeSplitModifierData),
+    /*struct_name*/ "EdgeSplitModifierData",
+    /*struct_size*/ sizeof(EdgeSplitModifierData),
     /*srna*/ &RNA_EdgeSplitModifier,
     /*type*/ eModifierTypeType_Constructive,
     /*flags*/ eModifierTypeFlag_AcceptsMesh | eModifierTypeFlag_AcceptsCVs |
@@ -200,26 +201,26 @@ ModifierTypeInfo modifierType_EdgeSplit = {
         eModifierTypeFlag_EnableInEditmode,
     /*icon*/ ICON_MOD_EDGESPLIT,
 
-    /*copyData*/ BKE_modifier_copydata_generic,
+    /*copy_data*/ BKE_modifier_copydata_generic,
 
-    /*deformVerts*/ nullptr,
-    /*deformMatrices*/ nullptr,
-    /*deformVertsEM*/ nullptr,
-    /*deformMatricesEM*/ nullptr,
-    /*modifyMesh*/ modifyMesh,
-    /*modifyGeometrySet*/ nullptr,
+    /*deform_verts*/ nullptr,
+    /*deform_matrices*/ nullptr,
+    /*deform_verts_EM*/ nullptr,
+    /*deform_matrices_EM*/ nullptr,
+    /*modify_mesh*/ modify_mesh,
+    /*modify_geometry_set*/ nullptr,
 
-    /*initData*/ initData,
-    /*requiredDataMask*/ nullptr,
-    /*freeData*/ nullptr,
-    /*isDisabled*/ nullptr,
-    /*updateDepsgraph*/ nullptr,
-    /*dependsOnTime*/ nullptr,
-    /*dependsOnNormals*/ nullptr,
-    /*foreachIDLink*/ nullptr,
-    /*foreachTexLink*/ nullptr,
-    /*freeRuntimeData*/ nullptr,
-    /*panelRegister*/ panelRegister,
-    /*blendWrite*/ nullptr,
-    /*blendRead*/ nullptr,
+    /*init_data*/ init_data,
+    /*required_data_mask*/ nullptr,
+    /*free_data*/ nullptr,
+    /*is_disabled*/ nullptr,
+    /*update_depsgraph*/ nullptr,
+    /*depends_on_time*/ nullptr,
+    /*depends_on_normals*/ nullptr,
+    /*foreach_ID_link*/ nullptr,
+    /*foreach_tex_link*/ nullptr,
+    /*free_runtime_data*/ nullptr,
+    /*panel_register*/ panel_register,
+    /*blend_write*/ nullptr,
+    /*blend_read*/ nullptr,
 };

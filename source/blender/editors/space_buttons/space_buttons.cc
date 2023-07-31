@@ -597,7 +597,7 @@ static void buttons_header_region_message_subscribe(const wmRegionMessageSubscri
 
 static void buttons_navigation_bar_region_init(wmWindowManager *wm, ARegion *region)
 {
-  region->flag |= RGN_FLAG_PREFSIZE_OR_HIDDEN;
+  region->flag |= RGN_FLAG_NO_USER_RESIZE;
 
   ED_region_panels_init(wm, region);
   region->v2d.keepzoom |= V2D_LOCKZOOM_X | V2D_LOCKZOOM_Y;
@@ -977,14 +977,14 @@ void ED_spacetype_buttons()
    * than per modifier type. */
   for (int i = 0; i < NUM_MODIFIER_TYPES; i++) {
     const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(i));
-    if (mti != nullptr && mti->panelRegister != nullptr) {
-      mti->panelRegister(art);
+    if (mti != nullptr && mti->panel_register != nullptr) {
+      mti->panel_register(art);
     }
   }
   for (int i = 0; i < NUM_GREASEPENCIL_MODIFIER_TYPES; i++) {
     const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(GpencilModifierType(i));
-    if (mti != nullptr && mti->panelRegister != nullptr) {
-      mti->panelRegister(art);
+    if (mti != nullptr && mti->panel_register != nullptr) {
+      mti->panel_register(art);
     }
   }
   for (int i = 0; i < NUM_SHADER_FX_TYPES; i++) {
@@ -992,8 +992,8 @@ void ED_spacetype_buttons()
       continue;
     }
     const ShaderFxTypeInfo *fxti = BKE_shaderfx_get_info(ShaderFxType(i));
-    if (fxti != nullptr && fxti->panelRegister != nullptr) {
-      fxti->panelRegister(art);
+    if (fxti != nullptr && fxti->panel_register != nullptr) {
+      fxti->panel_register(art);
     }
   }
 

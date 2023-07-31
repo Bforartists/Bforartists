@@ -294,7 +294,7 @@ static void sculpt_init_session(Main *bmain, Depsgraph *depsgraph, Scene *scene,
      * SCULPT_FACE_SET_NONE assigned, so we can create a new Face Set for it. */
     /* In sculpt mode all geometry that is assigned to SCULPT_FACE_SET_NONE is considered as not
      * initialized, which is used is some operators that modify the mesh topology to perform
-     * certain actions in the new polys. After these operations are finished, all polys should have
+     * certain actions in the new faces. After these operations are finished, all faces should have
      * a valid face set ID assigned (different from SCULPT_FACE_SET_NONE) to manage their
      * visibility correctly. */
     /* TODO(pablodp606): Based on this we can improve the UX in future tools for creating new
@@ -370,7 +370,7 @@ void ED_object_sculptmode_enter_ex(Main *bmain,
     MultiresModifierData *mmd = BKE_sculpt_multires_active(scene, ob);
 
     const char *message_unsupported = nullptr;
-    if (me->totloop != me->totpoly * 3) {
+    if (me->totloop != me->faces_num * 3) {
       message_unsupported = TIP_("non-triangle face");
     }
     else if (mmd != nullptr) {
@@ -406,7 +406,7 @@ void ED_object_sculptmode_enter_ex(Main *bmain,
       if (has_undo) {
         SCULPT_undo_push_begin_ex(ob, "Dynamic topology enable");
       }
-      SCULPT_dynamic_topology_enable_ex(bmain, depsgraph, scene, ob);
+      SCULPT_dynamic_topology_enable_ex(bmain, depsgraph, ob);
       if (has_undo) {
         SCULPT_undo_push_node(ob, nullptr, SCULPT_UNDO_DYNTOPO_BEGIN);
         SCULPT_undo_push_end(ob);
@@ -671,7 +671,7 @@ static void SCULPT_OT_sample_color(wmOperatorType *ot)
   ot->invoke = sculpt_sample_color_invoke;
   ot->poll = SCULPT_mode_poll;
 
-  ot->flag = OPTYPE_REGISTER;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_DEPENDS_ON_CURSOR;
 }
 
 /**
@@ -1190,13 +1190,13 @@ static void cavity_bake_ui(bContext *C, wmOperator *op)
 
   switch (source) {
     case AUTOMASK_SETTINGS_OPERATOR: {
-      uiItemR(layout, op->ptr, "mix_mode", 0, nullptr, ICON_NONE);
-      uiItemR(layout, op->ptr, "mix_factor", 0, nullptr, ICON_NONE);
-      uiItemR(layout, op->ptr, "settings_source", 0, nullptr, ICON_NONE);
-      uiItemR(layout, op->ptr, "factor", 0, nullptr, ICON_NONE);
-      uiItemR(layout, op->ptr, "blur_steps", 0, nullptr, ICON_NONE);
-      uiItemR(layout, op->ptr, "invert", 0, nullptr, ICON_NONE);
-      uiItemR(layout, op->ptr, "use_curve", 0, nullptr, ICON_NONE);
+      uiItemR(layout, op->ptr, "mix_mode", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(layout, op->ptr, "mix_factor", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(layout, op->ptr, "settings_source", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(layout, op->ptr, "factor", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(layout, op->ptr, "blur_steps", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(layout, op->ptr, "invert", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(layout, op->ptr, "use_curve", UI_ITEM_NONE, nullptr, ICON_NONE);
 
       if (sd && RNA_boolean_get(op->ptr, "use_curve")) {
         PointerRNA sculpt_ptr;
@@ -1209,9 +1209,9 @@ static void cavity_bake_ui(bContext *C, wmOperator *op)
     }
     case AUTOMASK_SETTINGS_BRUSH:
     case AUTOMASK_SETTINGS_SCENE:
-      uiItemR(layout, op->ptr, "mix_mode", 0, nullptr, ICON_NONE);
-      uiItemR(layout, op->ptr, "mix_factor", 0, nullptr, ICON_NONE);
-      uiItemR(layout, op->ptr, "settings_source", 0, nullptr, ICON_NONE);
+      uiItemR(layout, op->ptr, "mix_mode", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(layout, op->ptr, "mix_factor", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(layout, op->ptr, "settings_source", UI_ITEM_NONE, nullptr, ICON_NONE);
 
       break;
   }
@@ -1324,7 +1324,7 @@ static int sculpt_reveal_all_exec(bContext *C, wmOperator *op)
     /* As an optimization, free the hide attribute when making all geometry visible. This allows
      * reduced memory usage without manually clearing it later, and allows sculpt operations to
      * avoid checking element's hide status. */
-    CustomData_free_layer_named(&mesh->pdata, ".hide_poly", mesh->totpoly);
+    CustomData_free_layer_named(&mesh->face_data, ".hide_poly", mesh->faces_num);
     ss->hide_poly = nullptr;
   }
   else {

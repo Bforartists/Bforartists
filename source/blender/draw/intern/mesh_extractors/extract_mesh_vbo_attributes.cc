@@ -32,13 +32,13 @@ static CustomData *get_custom_data_for_domain(const MeshRenderData *mr, eAttrDom
 {
   switch (domain) {
     case ATTR_DOMAIN_POINT:
-      return (mr->extract_type == MR_EXTRACT_BMESH) ? &mr->bm->vdata : &mr->me->vdata;
+      return (mr->extract_type == MR_EXTRACT_BMESH) ? &mr->bm->vdata : &mr->me->vert_data;
     case ATTR_DOMAIN_CORNER:
-      return (mr->extract_type == MR_EXTRACT_BMESH) ? &mr->bm->ldata : &mr->me->ldata;
+      return (mr->extract_type == MR_EXTRACT_BMESH) ? &mr->bm->ldata : &mr->me->loop_data;
     case ATTR_DOMAIN_FACE:
-      return (mr->extract_type == MR_EXTRACT_BMESH) ? &mr->bm->pdata : &mr->me->pdata;
+      return (mr->extract_type == MR_EXTRACT_BMESH) ? &mr->bm->pdata : &mr->me->face_data;
     case ATTR_DOMAIN_EDGE:
-      return (mr->extract_type == MR_EXTRACT_BMESH) ? &mr->bm->edata : &mr->me->edata;
+      return (mr->extract_type == MR_EXTRACT_BMESH) ? &mr->bm->edata : &mr->me->edge_data;
     default:
       return nullptr;
   }
@@ -215,10 +215,10 @@ static void fill_vertbuf_with_attribute(const MeshRenderData *mr,
       }
       break;
     case ATTR_DOMAIN_FACE:
-      for (int poly_index = 0; poly_index < mr->poly_len; poly_index++) {
-        const IndexRange poly = mr->polys[poly_index];
-        const VBOType value = Converter::convert_value(attr_data[poly_index]);
-        for (int l = 0; l < poly.size(); l++) {
+      for (int face_index = 0; face_index < mr->face_len; face_index++) {
+        const IndexRange face = mr->faces[face_index];
+        const VBOType value = Converter::convert_value(attr_data[face_index]);
+        for (int l = 0; l < face.size(); l++) {
           *vbo_data++ = value;
         }
       }

@@ -903,7 +903,7 @@ static Mesh *subdivide_base(const Mesh *orig)
   float radrat;
 
   const MVertSkin *orignode = static_cast<const MVertSkin *>(
-      CustomData_get_layer(&orig->vdata, CD_MVERT_SKIN));
+      CustomData_get_layer(&orig->vert_data, CD_MVERT_SKIN));
   const blender::Span<blender::float3> orig_vert_positions = orig->vert_positions();
   const blender::Span<blender::int2> orig_edges = orig->edges();
   const MDeformVert *origdvert = BKE_mesh_deform_verts(orig);
@@ -929,14 +929,14 @@ static Mesh *subdivide_base(const Mesh *orig)
   blender::MutableSpan<blender::float3> out_vert_positions = result->vert_positions_for_write();
   blender::MutableSpan<blender::int2> result_edges = result->edges_for_write();
   MVertSkin *outnode = static_cast<MVertSkin *>(
-      CustomData_get_layer_for_write(&result->vdata, CD_MVERT_SKIN, result->totvert));
+      CustomData_get_layer_for_write(&result->vert_data, CD_MVERT_SKIN, result->totvert));
   MDeformVert *outdvert = nullptr;
   if (origdvert) {
     outdvert = BKE_mesh_deform_verts_for_write(result);
   }
 
   /* Copy original vertex data */
-  CustomData_copy_data(&orig->vdata, &result->vdata, 0, 0, orig_vert_num);
+  CustomData_copy_data(&orig->vert_data, &result->vert_data, 0, 0, orig_vert_num);
 
   /* Subdivide edges */
   int result_edge_i = 0;
@@ -1136,7 +1136,7 @@ static void calc_frame_center(float center[3], const Frame *frame)
   mul_v3_fl(center, 0.25f);
 }
 
-/* Does crappy fan triangulation of poly, may not be so accurate for
+/* Does crappy fan triangulation of face, may not be so accurate for
  * concave faces */
 static int isect_ray_poly(const float ray_start[3],
                           const float ray_dir[3],
@@ -1295,7 +1295,7 @@ static BMFace *skin_hole_target_face(BMesh *bm, Frame *frame)
   return f;
 }
 
-/* Use edge-length heuristic to choose from eight possible polygon bridges */
+/* Use edge-length heuristic to choose from eight possible face bridges */
 static void skin_choose_quad_bridge_order(BMVert *a[4], BMVert *b[4], int best_order[4])
 {
   int orders[8][4];
@@ -1897,8 +1897,8 @@ static BMesh *build_skin(SkinNode *skin_nodes,
 static void skin_set_orig_indices(Mesh *mesh)
 {
   int *orig = static_cast<int *>(
-      CustomData_add_layer(&mesh->pdata, CD_ORIGINDEX, CD_CONSTRUCT, mesh->totpoly));
-  copy_vn_i(orig, mesh->totpoly, ORIGINDEX_NONE);
+      CustomData_add_layer(&mesh->face_data, CD_ORIGINDEX, CD_CONSTRUCT, mesh->faces_num));
+  copy_vn_i(orig, mesh->faces_num, ORIGINDEX_NONE);
 }
 
 /*
@@ -1917,7 +1917,7 @@ static Mesh *base_skin(Mesh *origmesh, SkinModifierData *smd, eSkinErrorFlag *r_
   bool has_valid_root = false;
 
   const MVertSkin *nodes = static_cast<const MVertSkin *>(
-      CustomData_get_layer(&origmesh->vdata, CD_MVERT_SKIN));
+      CustomData_get_layer(&origmesh->vert_data, CD_MVERT_SKIN));
 
   const blender::Span<blender::float3> vert_positions = origmesh->vert_positions();
   const blender::Span<blender::int2> edges = origmesh->edges();
@@ -1959,7 +1959,7 @@ static Mesh *final_skin(SkinModifierData *smd, Mesh *mesh, eSkinErrorFlag *r_err
   Mesh *result;
 
   /* Skin node layer is required */
-  if (!CustomData_get_layer(&mesh->vdata, CD_MVERT_SKIN)) {
+  if (!CustomData_get_layer(&mesh->vert_data, CD_MVERT_SKIN)) {
     return mesh;
   }
 
@@ -1972,7 +1972,7 @@ static Mesh *final_skin(SkinModifierData *smd, Mesh *mesh, eSkinErrorFlag *r_err
 
 /**************************** Skin Modifier ***************************/
 
-static void initData(ModifierData *md)
+static void init_data(ModifierData *md)
 {
   SkinModifierData *smd = (SkinModifierData *)md;
 
@@ -1984,7 +1984,7 @@ static void initData(ModifierData *md)
   md->mode |= eModifierMode_Editmode;
 }
 
-static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh)
+static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh)
 {
   eSkinErrorFlag error = eSkinErrorFlag(0);
   Mesh *result = final_skin((SkinModifierData *)md, mesh, &error);
@@ -2008,7 +2008,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
   return result;
 }
 
-static void requiredDataMask(ModifierData * /*md*/, CustomData_MeshMasks *r_cddata_masks)
+static void required_data_mask(ModifierData * /*md*/, CustomData_MeshMasks *r_cddata_masks)
 {
   r_cddata_masks->vmask |= CD_MASK_MVERT_SKIN | CD_MASK_MDEFORMVERT;
 }
@@ -2017,7 +2017,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *row, *col; /*bfa - added *col*/
   uiLayout *layout = panel->layout;
-  int toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
+  const eUI_Item_Flag toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -2026,7 +2026,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "branch_smoothing", 0, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "branch_smoothing", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   row = uiLayoutRowWithHeading(layout, true, IFACE_("Symmetry"));
   uiItemR(row, ptr, "use_x_symmetry", toggles_flag, nullptr, ICON_NONE);
@@ -2034,12 +2034,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemR(row, ptr, "use_z_symmetry", toggles_flag, nullptr, ICON_NONE);
 
   /*------------------- bfa - original props */
-  // uiItemR(layout, ptr, "use_smooth_shade", 0, nullptr, ICON_NONE);
+  // uiItemR(layout, ptr, "use_smooth_shade", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_smooth_shade", 0, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_smooth_shade", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
@@ -2054,7 +2054,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
               ICON_NONE,
               nullptr,
               WM_OP_EXEC_DEFAULT,
-              0,
+              UI_ITEM_NONE,
               &op_ptr);
   RNA_enum_set(&op_ptr, "action", 0); /* SKIN_LOOSE_MARK */
   uiItemFullO(row,
@@ -2063,7 +2063,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
               ICON_NONE,
               nullptr,
               WM_OP_EXEC_DEFAULT,
-              0,
+              UI_ITEM_NONE,
               &op_ptr);
   RNA_enum_set(&op_ptr, "action", 1); /* SKIN_LOOSE_CLEAR */
 
@@ -2073,40 +2073,41 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   modifier_panel_end(layout, ptr);
 }
 
-static void panelRegister(ARegionType *region_type)
+static void panel_register(ARegionType *region_type)
 {
   modifier_panel_register(region_type, eModifierType_Skin, panel_draw);
 }
 
 ModifierTypeInfo modifierType_Skin = {
+    /*idname*/ "Skin",
     /*name*/ N_("Skin"),
-    /*structName*/ "SkinModifierData",
-    /*structSize*/ sizeof(SkinModifierData),
+    /*struct_name*/ "SkinModifierData",
+    /*struct_size*/ sizeof(SkinModifierData),
     /*srna*/ &RNA_SkinModifier,
     /*type*/ eModifierTypeType_Constructive,
     /*flags*/ eModifierTypeFlag_AcceptsMesh | eModifierTypeFlag_SupportsEditmode,
     /*icon*/ ICON_MOD_SKIN,
 
-    /*copyData*/ BKE_modifier_copydata_generic,
+    /*copy_data*/ BKE_modifier_copydata_generic,
 
-    /*deformVerts*/ nullptr,
-    /*deformMatrices*/ nullptr,
-    /*deformVertsEM*/ nullptr,
-    /*deformMatricesEM*/ nullptr,
-    /*modifyMesh*/ modifyMesh,
-    /*modifyGeometrySet*/ nullptr,
+    /*deform_verts*/ nullptr,
+    /*deform_matrices*/ nullptr,
+    /*deform_verts_EM*/ nullptr,
+    /*deform_matrices_EM*/ nullptr,
+    /*modify_mesh*/ modify_mesh,
+    /*modify_geometry_set*/ nullptr,
 
-    /*initData*/ initData,
-    /*requiredDataMask*/ requiredDataMask,
-    /*freeData*/ nullptr,
-    /*isDisabled*/ nullptr,
-    /*updateDepsgraph*/ nullptr,
-    /*dependsOnTime*/ nullptr,
-    /*dependsOnNormals*/ nullptr,
-    /*foreachIDLink*/ nullptr,
-    /*foreachTexLink*/ nullptr,
-    /*freeRuntimeData*/ nullptr,
-    /*panelRegister*/ panelRegister,
-    /*blendWrite*/ nullptr,
-    /*blendRead*/ nullptr,
+    /*init_data*/ init_data,
+    /*required_data_mask*/ required_data_mask,
+    /*free_data*/ nullptr,
+    /*is_disabled*/ nullptr,
+    /*update_depsgraph*/ nullptr,
+    /*depends_on_time*/ nullptr,
+    /*depends_on_normals*/ nullptr,
+    /*foreach_ID_link*/ nullptr,
+    /*foreach_tex_link*/ nullptr,
+    /*free_runtime_data*/ nullptr,
+    /*panel_register*/ panel_register,
+    /*blend_write*/ nullptr,
+    /*blend_read*/ nullptr,
 };

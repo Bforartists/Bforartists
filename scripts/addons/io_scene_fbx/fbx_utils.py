@@ -67,6 +67,9 @@ MAT_CONVERT_BONE = Matrix()
 BLENDER_OTHER_OBJECT_TYPES = {'CURVE', 'SURFACE', 'FONT', 'META'}
 BLENDER_OBJECT_TYPES_MESHLIKE = {'MESH'} | BLENDER_OTHER_OBJECT_TYPES
 
+SHAPE_KEY_SLIDER_HARD_MIN = bpy.types.ShapeKey.bl_rna.properties["slider_min"].hard_min
+SHAPE_KEY_SLIDER_HARD_MAX = bpy.types.ShapeKey.bl_rna.properties["slider_max"].hard_max
+
 
 # Lamps.
 FBX_LIGHT_TYPES = {
@@ -598,6 +601,49 @@ def ensure_object_not_in_edit_mode(context, obj):
             scene.collection.objects.unlink(obj)
 
     return True
+
+
+def expand_shape_key_range(shape_key, value_to_fit):
+    """Attempt to expand the slider_min/slider_max of a shape key to fit `value_to_fit` within the slider range,
+    expanding slightly beyond `value_to_fit` if possible, so that the new slider_min/slider_max is not the same as
+    `value_to_fit`. Blender has a hard minimum and maximum for slider values, so it may not be possible to fit the value
+    within the slider range.
+
+    If `value_to_fit` is already within the slider range, no changes are made.
+
+    First tries setting slider_min/slider_max to double `value_to_fit`, otherwise, expands the range in the direction of
+    `value_to_fit` by double the distance to `value_to_fit`.
+
+    The new slider_min/slider_max is rounded down/up to the nearest whole number for a more visually pleasing result.
+
+    Returns whether it was possible to expand the slider range to fit `value_to_fit`."""
+    if value_to_fit < (slider_min := shape_key.slider_min):
+        if value_to_fit < 0.0:
+            # For the most common case, set slider_min to double value_to_fit.
+            target_slider_min = value_to_fit * 2.0
+        else:
+            # Doubling value_to_fit would make it larger, so instead decrease slider_min by double the distance between
+            # slider_min and value_to_fit.
+            target_slider_min = slider_min - (slider_min - value_to_fit) * 2.0
+        # Set slider_min to the first whole number less than or equal to target_slider_min.
+        shape_key.slider_min = math.floor(target_slider_min)
+
+        return value_to_fit >= SHAPE_KEY_SLIDER_HARD_MIN
+    elif value_to_fit > (slider_max := shape_key.slider_max):
+        if value_to_fit > 0.0:
+            # For the most common case, set slider_max to double value_to_fit.
+            target_slider_max = value_to_fit * 2.0
+        else:
+            # Doubling value_to_fit would make it smaller, so instead increase slider_max by double the distance between
+            # slider_max and value_to_fit.
+            target_slider_max = slider_max + (value_to_fit - slider_max) * 2.0
+        # Set slider_max to the first whole number greater than or equal to target_slider_max.
+        shape_key.slider_max = math.ceil(target_slider_max)
+
+        return value_to_fit <= SHAPE_KEY_SLIDER_HARD_MAX
+    else:
+        # Value is already within the range.
+        return True
 
 
 # ##### Attribute utils. #####
