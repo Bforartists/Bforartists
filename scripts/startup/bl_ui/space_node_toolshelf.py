@@ -5345,6 +5345,53 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeVolumeToMesh"
 
+#add simulation panel
+class NODES_PT_geom_add_simulation(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Simulation"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_simulation_zone", text=" Simulation Zone       ", icon = "TIME")
+            props.use_transform = True
+            #props.type = "GeometryNodeVolumeCube"
+
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_simulation_zone", text="", icon = "TIME")
+            props.use_transform = True
+            #props.type = "GeometryNodeVolumeCube"
+
 
 #add material panel
 class NODES_PT_geom_add_material(bpy.types.Panel):
@@ -6889,6 +6936,7 @@ classes = (
 
     NODES_PT_geom_add_point,
     NODES_PT_geom_add_volume,
+    NODES_PT_geom_add_simulation,
     NODES_PT_geom_add_material,
     NODES_PT_geom_add_texture,
 

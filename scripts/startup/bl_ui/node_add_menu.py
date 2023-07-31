@@ -73,7 +73,7 @@ def add_simulation_zone(layout, label):
         translation_context = target_bl_rna.translation_context
     else:
         translation_context = i18n_contexts.default
-    props = layout.operator("node.add_simulation_zone", text=label, text_ctxt=translation_context)
+    props = layout.operator("node.add_simulation_zone", text=label, text_ctxt=translation_context, icon = "TIME") #BFA - added icon to Add Menu
     props.use_transform = True
     return props
 
