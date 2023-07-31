@@ -4,6 +4,8 @@
 
 set(INC
   .
+  ../../blenkernel
+  ../../depsgraph
   ../../makesrna
 )
 
@@ -15,7 +17,7 @@ set(SRC
   intern/dupli_parent_finder.cc
   intern/dupli_persistent_id.cc
   intern/object_identifier.cc
-  intern/orientation.c
+  intern/orientation.cc
   intern/path_util.cc
 
   IO_abstract_hierarchy_iterator.h
@@ -28,9 +30,8 @@ set(SRC
 )
 
 set(LIB
-  PRIVATE bf::blenkernel
+  bf_blenkernel
   PRIVATE bf::blenlib
-  PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::intern::guardedalloc
 )

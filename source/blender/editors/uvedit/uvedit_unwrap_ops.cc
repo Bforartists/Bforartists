@@ -607,7 +607,7 @@ static ParamHandle *construct_param_handle_subsurfed(const Scene *scene,
   /* Modifier initialization data, will  control what type of subdivision will happen. */
   SubsurfModifierData smd = {{nullptr}};
 
-  /* Holds a map to edit-faces for every subdivision-surface polygon.
+  /* Holds a map to edit-faces for every subdivision-surface face.
    * These will be used to get hidden/ selected flags etc. */
   BMFace **faceMap;
   /* Similar to the above, we need a way to map edges to their original ones. */
@@ -634,24 +634,24 @@ static ParamHandle *construct_param_handle_subsurfed(const Scene *scene,
 
   const blender::Span<blender::float3> subsurf_positions = subdiv_mesh->vert_positions();
   const blender::Span<blender::int2> subsurf_edges = subdiv_mesh->edges();
-  const blender::OffsetIndices subsurf_polys = subdiv_mesh->polys();
+  const blender::OffsetIndices subsurf_facess = subdiv_mesh->faces();
   const blender::Span<int> subsurf_corner_verts = subdiv_mesh->corner_verts();
 
   const int *origVertIndices = static_cast<const int *>(
-      CustomData_get_layer(&subdiv_mesh->vdata, CD_ORIGINDEX));
+      CustomData_get_layer(&subdiv_mesh->vert_data, CD_ORIGINDEX));
   const int *origEdgeIndices = static_cast<const int *>(
-      CustomData_get_layer(&subdiv_mesh->edata, CD_ORIGINDEX));
+      CustomData_get_layer(&subdiv_mesh->edge_data, CD_ORIGINDEX));
   const int *origPolyIndices = static_cast<const int *>(
-      CustomData_get_layer(&subdiv_mesh->pdata, CD_ORIGINDEX));
+      CustomData_get_layer(&subdiv_mesh->face_data, CD_ORIGINDEX));
 
   faceMap = static_cast<BMFace **>(
-      MEM_mallocN(subdiv_mesh->totpoly * sizeof(BMFace *), "unwrap_edit_face_map"));
+      MEM_mallocN(subdiv_mesh->faces_num * sizeof(BMFace *), "unwrap_edit_face_map"));
 
   BM_mesh_elem_index_ensure(em->bm, BM_VERT);
   BM_mesh_elem_table_ensure(em->bm, BM_EDGE | BM_FACE);
 
   /* map subsurfed faces to original editFaces */
-  for (int i = 0; i < subdiv_mesh->totpoly; i++) {
+  for (int i = 0; i < subdiv_mesh->faces_num; i++) {
     faceMap[i] = BM_face_at_index(em->bm, origPolyIndices[i]);
   }
 
@@ -667,7 +667,7 @@ static ParamHandle *construct_param_handle_subsurfed(const Scene *scene,
   }
 
   /* Prepare and feed faces to the solver. */
-  for (const int i : subsurf_polys.index_range()) {
+  for (const int i : subsurf_facess.index_range()) {
     ParamKey key, vkeys[4];
     bool pin[4], select[4];
     const float *co[4];
@@ -687,7 +687,7 @@ static ParamHandle *construct_param_handle_subsurfed(const Scene *scene,
       }
     }
 
-    const blender::Span<int> poly_corner_verts = subsurf_corner_verts.slice(subsurf_polys[i]);
+    const blender::Span<int> poly_corner_verts = subsurf_corner_verts.slice(subsurf_facess[i]);
 
     /* We will not check for v4 here. Sub-surface faces always have 4 vertices. */
     BLI_assert(poly_corner_verts.size() == 4);
@@ -880,7 +880,6 @@ static void minimize_stretch_exit(bContext *C, wmOperator *op, bool cancel)
     blender::geometry::uv_parametrizer_flush(ms->handle);
   }
 
-  blender::geometry::uv_parametrizer_stretch_end(ms->handle);
   delete (ms->handle);
 
   for (uint ob_index = 0; ob_index < ms->objects_len; ob_index++) {
@@ -1271,7 +1270,7 @@ static void uvedit_pack_islands_multi(const Scene *scene,
       /* Storage. */
       blender::Array<blender::float2> uvs(f->len);
 
-      /* Obtain UVs of polygon. */
+      /* Obtain UVs of face. */
       BMLoop *l;
       BMIter iter;
       int j;
@@ -1622,15 +1621,15 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
 
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, false);
-  uiItemR(layout, op->ptr, "shape_method", 0, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "shape_method", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   col = uiLayoutColumn(layout, false); /*bfa -  added col*/
-  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-  uiItemR(col, op->ptr, "scale", 0, nullptr, ICON_NONE);
+  uiLayoutSetPropSep(col, false);      /* bfa - use_property_split = False */
+  uiItemR(col, op->ptr, "scale", UI_ITEM_NONE, nullptr, ICON_NONE);
   {
-    //uiItemR(col, op->ptr, "rotate", 0, nullptr, ICON_NONE);
+    // uiItemR(col, op->ptr, "rotate", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-// ------------------ bfa new left aligned prop with triangle button
+    // ------------------ bfa new left aligned prop with triangle button
 
     /* NOTE: split amount here needs to be synced with normal labels */
     uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
@@ -1639,7 +1638,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     row = uiLayoutRow(split, false);
     uiLayoutSetPropDecorate(row, false);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    uiItemR(row, op->ptr, "rotate", 0, nullptr, ICON_NONE);
+    uiItemR(row, op->ptr, "rotate", UI_ITEM_NONE, nullptr, ICON_NONE);
 
     /* SECOND PART ................................................ */
     row = uiLayoutRow(split, false);
@@ -1653,26 +1652,26 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     // ------------------------------- end bfa
 
     uiLayout *sub = uiLayoutRow(layout, true);
-    //uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "rotate"));
+    // uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "rotate"));
     if (RNA_boolean_get(op->ptr, "rotate")) {
       uiItemS(sub); /*bfa - separator*/
       uiItemS(sub); /*bfa - separator*/
       uiItemS(sub); /*bfa - separator*/
-      uiItemR(sub, op->ptr, "rotate_method", 0, nullptr, ICON_NONE);
+      uiItemR(sub, op->ptr, "rotate_method", UI_ITEM_NONE, nullptr, ICON_NONE);
       uiItemS(layout);
     }
   }
-  uiItemR(layout, op->ptr, "margin", 0, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "margin", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiLayout *sub = uiLayoutRow(layout, true);
   uiItemS(sub); /*bfa - separator*/
   uiItemS(sub); /*bfa - separator*/
   uiItemS(sub); /*bfa - separator*/
-  uiItemR(sub, op->ptr, "margin_method", 0, nullptr, ICON_NONE);
+  uiItemR(sub, op->ptr, "margin_method", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   {
-    //uiItemR(col, op->ptr, "pin", 0, nullptr, ICON_NONE);
+    // uiItemR(col, op->ptr, "pin", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-// ------------------ bfa new left aligned prop with triangle button
+    // ------------------ bfa new left aligned prop with triangle button
 
     /* NOTE: split amount here needs to be synced with normal labels */
     uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
@@ -1681,7 +1680,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     row = uiLayoutRow(split, false);
     uiLayoutSetPropDecorate(row, false);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    uiItemR(row, op->ptr, "pin", 0, nullptr, ICON_NONE);
+    uiItemR(row, op->ptr, "pin", UI_ITEM_NONE, nullptr, ICON_NONE);
 
     /* SECOND PART ................................................ */
     row = uiLayoutRow(split, false);
@@ -1695,19 +1694,19 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     // ------------------------------- end bfa
 
     uiLayout *sub = uiLayoutRow(layout, true);
-    //uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "pin"));
+    // uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "pin"));
     if (RNA_boolean_get(op->ptr, "pin")) {
       uiItemS(sub); /*bfa - separator*/
       uiItemS(sub); /*bfa - separator*/
       uiItemS(sub); /*bfa - separator*/
-      uiItemR(sub, op->ptr, "pin_method", 0, IFACE_("Lock Method"), ICON_NONE);
+      uiItemR(sub, op->ptr, "pin_method", UI_ITEM_NONE, IFACE_("Lock Method"), ICON_NONE);
       uiItemS(layout);
     }
   }
   uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
-  uiItemR(layout, op->ptr, "merge_overlap", 0, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "merge_overlap", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = true */
-  uiItemR(layout, op->ptr, "udim_source", 0, nullptr, ICON_NONE);
+  uiItemR(layout, op->ptr, "udim_source", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemS(layout);
 }
 
@@ -2681,8 +2680,8 @@ static const char *uv_ot_unwrap_get_name(wmOperatorType *ot, PointerRNA *ptr)
 }
 
 /*bfa - descriptions*/
-static char *uv_ot_unwrap_get_description(bContext */*C*/,
-                                          wmOperatorType */*ot*/,
+static char *uv_ot_unwrap_get_description(bContext * /*C*/,
+                                          wmOperatorType * /*ot*/,
                                           PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "method")) {
@@ -2732,8 +2731,12 @@ void UV_OT_unwrap(wmOperatorType *ot)
       false,
       "Use Subdivision Surface",
       "Map UVs taking vertex position after Subdivision Surface modifier has been applied");
-  RNA_def_enum(
-      ot->srna, "margin_method", pack_margin_method_items, ED_UVPACK_MARGIN_SCALED, "Margin Method", "");
+  RNA_def_enum(ot->srna,
+               "margin_method",
+               pack_margin_method_items,
+               ED_UVPACK_MARGIN_SCALED,
+               "Margin Method",
+               "");
   /* bfa - change the defaults of uv margin */
   RNA_def_float_factor(
       ot->srna, "margin", 0.01f, 0.0f, 1.0f, "Margin", "Space between islands", 0.0f, 1.0f);
@@ -2761,7 +2764,8 @@ static int smart_uv_project_thickface_area_cmp_fn(const void *tf_a_p, const void
   /* Ignore the area of small faces.
    * Also, order checks so `!isfinite(...)` values are counted as zero area. */
   if (!((tf_a->area > smart_uv_project_area_ignore) ||
-        (tf_b->area > smart_uv_project_area_ignore))) {
+        (tf_b->area > smart_uv_project_area_ignore)))
+  {
     return 0;
   }
 

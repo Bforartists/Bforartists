@@ -28,7 +28,7 @@
 #include "BKE_customdata.h"
 #include "BKE_global.h"
 #include "BKE_lib_id.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 #include "BKE_mesh_legacy_convert.h"
 #include "BKE_mesh_runtime.h"
 #include "BKE_object.h"
@@ -100,7 +100,7 @@ static void distribute_grid(Mesh *mesh, ParticleSystem *psys)
 {
   ParticleData *pa = nullptr;
   float min[3], max[3], delta[3], d;
-  const float(*positions)[3] = BKE_mesh_vert_positions(mesh);
+  const blender::Span<blender::float3> positions = mesh->vert_positions();
   int totvert = mesh->totvert, from = psys->part->from;
   int i, j, k, p, res = psys->part->grid_res, size[3], axis;
 
@@ -180,9 +180,9 @@ static void distribute_grid(Mesh *mesh, ParticleSystem *psys)
     int a, a1, a2, a0mul, a1mul, a2mul, totface;
     int amax = from == PART_FROM_FACE ? 3 : 1;
 
-    totface = mesh->totface;
+    totface = mesh->totface_legacy;
     mface = mface_array = static_cast<MFace *>(
-        CustomData_get_layer_for_write(&mesh->fdata, CD_MFACE, mesh->totface));
+        CustomData_get_layer_for_write(&mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy));
 
     for (a = 0; a < amax; a++) {
       if (a == 0) {
@@ -466,8 +466,8 @@ static void distribute_from_verts_exec(ParticleTask *thread, ParticleData *pa, i
   ParticleThreadContext *ctx = thread->ctx;
   MFace *mface;
 
-  mface = static_cast<MFace *>(
-      CustomData_get_layer_for_write(&ctx->mesh->fdata, CD_MFACE, ctx->mesh->totface));
+  mface = static_cast<MFace *>(CustomData_get_layer_for_write(
+      &ctx->mesh->fdata_legacy, CD_MFACE, ctx->mesh->totface_legacy));
 
   int rng_skip_tot = PSYS_RND_DIST_SKIP; /* count how many rng_* calls won't need skipping */
 
@@ -481,7 +481,7 @@ static void distribute_from_verts_exec(ParticleTask *thread, ParticleData *pa, i
     /* This finds the first face to contain the emitting vertex,
      * this is not ideal, but is mostly fine as UV seams generally
      * map to equal-colored parts of a texture */
-    for (int i = 0; i < ctx->mesh->totface; i++, mface++) {
+    for (int i = 0; i < ctx->mesh->totface_legacy; i++, mface++) {
       if (ELEM(pa->num, mface->v1, mface->v2, mface->v3, mface->v4)) {
         uint *vert = &mface->v1;
 
@@ -528,7 +528,8 @@ static void distribute_from_faces_exec(ParticleTask *thread, ParticleData *pa, i
   int i;
   int rng_skip_tot = PSYS_RND_DIST_SKIP; /* count how many rng_* calls won't need skipping */
 
-  MFace *mfaces = (MFace *)CustomData_get_layer_for_write(&mesh->fdata, CD_MFACE, mesh->totface);
+  MFace *mfaces = (MFace *)CustomData_get_layer_for_write(
+      &mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy);
   MFace *mface;
 
   pa->num = i = ctx->index[p];
@@ -580,10 +581,11 @@ static void distribute_from_volume_exec(ParticleTask *thread, ParticleData *pa, 
   int rng_skip_tot = PSYS_RND_DIST_SKIP; /* count how many rng_* calls won't need skipping */
 
   MFace *mface;
-  const float(*positions)[3] = BKE_mesh_vert_positions(mesh);
+  const blender::Span<blender::float3> positions = mesh->vert_positions();
 
   pa->num = i = ctx->index[p];
-  MFace *mfaces = (MFace *)CustomData_get_layer_for_write(&mesh->fdata, CD_MFACE, mesh->totface);
+  MFace *mfaces = (MFace *)CustomData_get_layer_for_write(
+      &mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy);
   mface = &mfaces[i];
 
   switch (distr) {
@@ -615,10 +617,20 @@ static void distribute_from_volume_exec(ParticleTask *thread, ParticleData *pa, 
   pa->foffset = 0.0f;
 
   /* experimental */
-  tot = mesh->totface;
+  tot = mesh->totface_legacy;
 
-  psys_interpolate_face(
-      mesh, positions, BKE_mesh_vert_normals_ensure(mesh), mface, 0, 0, pa->fuv, co, nor, 0, 0, 0);
+  psys_interpolate_face(mesh,
+                        reinterpret_cast<const float(*)[3]>(positions.data()),
+                        reinterpret_cast<const float(*)[3]>(mesh->vert_normals().data()),
+                        mface,
+                        0,
+                        0,
+                        pa->fuv,
+                        co,
+                        nor,
+                        0,
+                        0,
+                        0);
 
   normalize_v3(nor);
   negate_v3(nor);
@@ -626,7 +638,7 @@ static void distribute_from_volume_exec(ParticleTask *thread, ParticleData *pa, 
   min_d = FLT_MAX;
   intersect = 0;
   mface = static_cast<MFace *>(
-      CustomData_get_layer_for_write(&mesh->fdata, CD_MFACE, mesh->totface));
+      CustomData_get_layer_for_write(&mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy));
   for (i = 0; i < tot; i++, mface++) {
     if (i == pa->num) {
       continue;
@@ -696,7 +708,8 @@ static void distribute_children_exec(ParticleTask *thread, ChildParticle *cpa, i
     return;
   }
 
-  MFace *mfaces = (MFace *)CustomData_get_layer_for_write(&mesh->fdata, CD_MFACE, mesh->totface);
+  MFace *mfaces = (MFace *)CustomData_get_layer_for_write(
+      &mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy);
   mf = &mfaces[ctx->index[p]];
 
   randu = BLI_rng_get_float(thread->rng);
@@ -905,7 +918,7 @@ static int psys_thread_context_init_distribute(ParticleThreadContext *ctx,
   }
 
   if (!BKE_mesh_is_deformed_only(final_mesh) &&
-      !CustomData_get_layer(&final_mesh->fdata, CD_ORIGINDEX))
+      !CustomData_get_layer(&final_mesh->fdata_legacy, CD_ORIGINDEX))
   {
     printf(
         "Can't create particles with the current modifier stack, disable destructive modifiers\n");
@@ -1000,9 +1013,9 @@ static int psys_thread_context_init_distribute(ParticleThreadContext *ctx,
     BKE_mesh_orco_ensure(ob, mesh);
 
     if (from == PART_FROM_VERT) {
-      const float(*positions)[3] = BKE_mesh_vert_positions(mesh);
+      const blender::Span<blender::float3> positions = mesh->vert_positions();
       const float(*orcodata)[3] = static_cast<const float(*)[3]>(
-          CustomData_get_layer(&mesh->vdata, CD_ORCO));
+          CustomData_get_layer(&mesh->vert_data, CD_ORCO));
       int totvert = mesh->totvert;
 
       tree = BLI_kdtree_3d_new(totvert);
@@ -1023,7 +1036,7 @@ static int psys_thread_context_init_distribute(ParticleThreadContext *ctx,
   }
 
   /* Get total number of emission elements and allocate needed arrays */
-  totelem = (from == PART_FROM_VERT) ? mesh->totvert : mesh->totface;
+  totelem = (from == PART_FROM_VERT) ? mesh->totvert : mesh->totface_legacy;
 
   if (totelem == 0) {
     distribute_invalid(sim, children ? PART_FROM_CHILD : 0);
@@ -1054,9 +1067,10 @@ static int psys_thread_context_init_distribute(ParticleThreadContext *ctx,
     float totarea = 0.0f, co1[3], co2[3], co3[3], co4[3];
     const float(*orcodata)[3];
 
-    orcodata = static_cast<const float(*)[3]>(CustomData_get_layer(&mesh->vdata, CD_ORCO));
+    orcodata = static_cast<const float(*)[3]>(CustomData_get_layer(&mesh->vert_data, CD_ORCO));
 
-    MFace *mfaces = (MFace *)CustomData_get_layer_for_write(&mesh->fdata, CD_MFACE, mesh->totface);
+    MFace *mfaces = (MFace *)CustomData_get_layer_for_write(
+        &mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy);
     for (i = 0; i < totelem; i++) {
       MFace *mf = &mfaces[i];
 
@@ -1074,7 +1088,7 @@ static int psys_thread_context_init_distribute(ParticleThreadContext *ctx,
         }
       }
       else {
-        const float(*positions)[3] = BKE_mesh_vert_positions_for_write(mesh);
+        blender::MutableSpan<blender::float3> positions = mesh->vert_positions_for_write();
         copy_v3_v3(co1, positions[mf->v1]);
         copy_v3_v3(co2, positions[mf->v2]);
         copy_v3_v3(co3, positions[mf->v3]);
@@ -1118,7 +1132,7 @@ static int psys_thread_context_init_distribute(ParticleThreadContext *ctx,
     }
     else { /* PART_FROM_FACE / PART_FROM_VOLUME */
       MFace *mfaces = (MFace *)CustomData_get_layer_for_write(
-          &mesh->fdata, CD_MFACE, mesh->totface);
+          &mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy);
       for (i = 0; i < totelem; i++) {
         MFace *mf = &mfaces[i];
         tweight = vweight[mf->v1] + vweight[mf->v2] + vweight[mf->v3];
@@ -1239,12 +1253,14 @@ static int psys_thread_context_init_distribute(ParticleThreadContext *ctx,
 
     if (from == PART_FROM_VERT) {
       if (mesh->totvert) {
-        orig_index = static_cast<const int *>(CustomData_get_layer(&mesh->vdata, CD_ORIGINDEX));
+        orig_index = static_cast<const int *>(
+            CustomData_get_layer(&mesh->vert_data, CD_ORIGINDEX));
       }
     }
     else {
-      if (mesh->totface) {
-        orig_index = static_cast<const int *>(CustomData_get_layer(&mesh->fdata, CD_ORIGINDEX));
+      if (mesh->totface_legacy) {
+        orig_index = static_cast<const int *>(
+            CustomData_get_layer(&mesh->fdata_legacy, CD_ORIGINDEX));
       }
     }
 

@@ -9,6 +9,8 @@
  * \brief A BVH for high poly meshes.
  */
 
+#include <string>
+
 #include "BLI_bitmap.h"
 #include "BLI_compiler_compat.h"
 #include "BLI_ghash.h"
@@ -65,7 +67,7 @@ struct PBVHProxyNode {
 };
 
 struct PBVHColorBufferNode {
-  float (*color)[4];
+  float (*color)[4] = nullptr;
 };
 
 struct PBVHPixels {
@@ -83,11 +85,11 @@ struct PBVHPixelsNode {
    *
    * Contains #blender::bke::pbvh::pixels::NodeData.
    */
-  void *node_data;
+  void *node_data = nullptr;
 };
 
 struct PBVHAttrReq {
-  char name[MAX_CUSTOMDATA_LAYER_NAME];
+  std::string name;
   eAttrDomain domain;
   eCustomDataType type;
 };
@@ -216,12 +218,8 @@ void BKE_pbvh_build_grids(PBVH *pbvh,
 /**
  * Build a PBVH from a BMesh.
  */
-void BKE_pbvh_build_bmesh(PBVH *pbvh,
-                          BMesh *bm,
-                          bool smooth_shading,
-                          BMLog *log,
-                          int cd_vert_node_offset,
-                          int cd_face_node_offset);
+void BKE_pbvh_build_bmesh(
+    PBVH *pbvh, BMesh *bm, BMLog *log, int cd_vert_node_offset, int cd_face_node_offset);
 
 void BKE_pbvh_update_bmesh_offsets(PBVH *pbvh, int cd_vert_node_offset, int cd_face_node_offset);
 
@@ -307,7 +305,9 @@ void BKE_pbvh_draw_cb(PBVH *pbvh,
                       bool update_only_visible,
                       PBVHFrustumPlanes *update_frustum,
                       PBVHFrustumPlanes *draw_frustum,
-                      void (*draw_fn)(void *user_data, PBVHBatches *batches, PBVH_GPU_Args *args),
+                      void (*draw_fn)(void *user_data,
+                                      PBVHBatches *batches,
+                                      const PBVH_GPU_Args &args),
                       void *user_data,
                       bool full_render,
                       PBVHAttrReq *attrs,
@@ -393,7 +393,7 @@ void BKE_pbvh_vert_tag_update_normal(PBVH *pbvh, PBVHVertRef vertex);
 
 void BKE_pbvh_node_get_grids(PBVH *pbvh,
                              PBVHNode *node,
-                             int **grid_indices,
+                             const int **grid_indices,
                              int *totgrid,
                              int *maxgrid,
                              int *gridsize,
@@ -494,7 +494,7 @@ struct PBVHVertexIter {
   CCGElem **grids;
   CCGElem *grid;
   BLI_bitmap **grid_hidden, *gh;
-  int *grid_indices;
+  const int *grid_indices;
   int totgrid;
   int gridsize;
 
@@ -617,15 +617,15 @@ struct PBVHFaceIter {
   int cd_hide_poly_, cd_face_set_;
   bool *hide_poly_;
   int *face_sets_;
-  const int *poly_offsets_;
-  const int *looptri_polys_;
-  const int *corner_verts_;
+  blender::OffsetIndices<int> face_offsets_;
+  blender::Span<int> looptri_faces_;
+  blender::Span<int> corner_verts_;
   int prim_index_;
   const SubdivCCG *subdiv_ccg_;
   const BMesh *bm;
   CCGKey subdiv_key_;
 
-  int last_poly_index_;
+  int last_face_index_;
 };
 
 void BKE_pbvh_face_iter_init(PBVH *pbvh, PBVHNode *node, PBVHFaceIter *fd);

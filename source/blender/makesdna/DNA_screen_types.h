@@ -305,10 +305,10 @@ typedef struct uiList { /* some list UI data need to be saved in file */
   int filter_flag;
   int filter_sort_flag;
 
-  /* Custom sub-classes properties. */
+  /** Custom sub-classes properties. */
   IDProperty *properties;
 
-  /* Dynamic data (runtime). */
+  /** Dynamic data (runtime). */
   uiListDyn *dyn_data;
 } uiList;
 
@@ -331,13 +331,16 @@ typedef struct uiPreview {
 } uiPreview;
 
 typedef struct ScrGlobalAreaData {
-  /* Global areas have a non-dynamic size. That means, changing the window
-   * size doesn't affect their size at all. However, they can still be
-   * 'collapsed', by changing this value. Ignores DPI (ED_area_global_size_y
-   * and winx/winy don't) */
+  /**
+   * Global areas have a non-dynamic size. That means, changing the window size doesn't
+   * affect their size at all. However, they can still be 'collapsed', by changing this value.
+   * Ignores DPI (#ED_area_global_size_y and winx/winy don't).
+   */
   short cur_fixed_height;
-  /* For global areas, this is the min and max size they can use depending on
-   * if they are 'collapsed' or not. */
+  /**
+   * For global areas, this is the min and max size they can use depending on
+   * if they are 'collapsed' or not.
+   */
   short size_min, size_max;
   /** GlobalAreaAlign. */
   short align;
@@ -409,19 +412,21 @@ typedef struct ScrArea {
   /** Callbacks for this space type. */
   struct SpaceType *type;
 
-  /* Non-NULL if this area is global. */
+  /** Non-NULL if this area is global. */
   ScrGlobalAreaData *global;
 
-  /* A list of space links (editors) that were open in this area before. When
+  /**
+   * #SpaceLink.
+   * A list of space links (editors) that were open in this area before. When
    * changing the editor type, we try to reuse old editor data from this list.
    * The first item is the active/visible one.
    */
-  /** #SpaceLink. */
   ListBase spacedata;
-  /* NOTE: This region list is the one from the active/visible editor (first item in
+  /**
+   * #ARegion.
+   * \note This region list is the one from the active/visible editor (first item in
    * spacedata list). Use SpaceLink.regionbase if it's inactive (but only then)!
    */
-  /** #ARegion. */
   ListBase regionbase;
   /** #wmEventHandler. */
   ListBase handlers;
@@ -433,7 +438,7 @@ typedef struct ScrArea {
 } ScrArea;
 
 typedef struct ARegion_Runtime {
-  /* Panel category to use between 'layout' and 'draw'. */
+  /** Panel category to use between 'layout' and 'draw'. */
   const char *category;
 
   /**
@@ -446,7 +451,7 @@ typedef struct ARegion_Runtime {
   /* The offset needed to not overlap with window scroll-bars. Only used by HUD regions for now. */
   int offset_x, offset_y;
 
-  /* Maps uiBlock->name to uiBlock for faster lookups. */
+  /** Maps #uiBlock::name to uiBlock for faster lookups. */
   struct GHash *block_name_map;
 } ARegion_Runtime;
 
@@ -461,8 +466,10 @@ typedef struct ARegion {
   rcti drawrct;
   /** Size. */
   short winx, winy;
-  /* This is a Y offset on the panel tabs that represents pixels, where zero represents no scroll -
-   * the first category always shows first at the top. */
+  /**
+   * This is a Y offset on the panel tabs that represents pixels,
+   * where zero represents no scroll - the first category always shows first at the top.
+   */
   int category_scroll;
   char _pad0[4];
 
@@ -581,8 +588,10 @@ enum {
 /** #bScreen.state */
 enum {
   SCREENNORMAL = 0,
-  SCREENMAXIMIZED = 1, /* one editor taking over the screen */
-  SCREENFULL = 2,      /* one editor taking over the screen with no bare-minimum UI elements */
+  /** One editor taking over the screen. */
+  SCREENMAXIMIZED = 1,
+  /** One editor taking over the screen with no bare-minimum UI elements. */
+  SCREENFULL = 2,
 };
 
 /** #bScreen.redraws_flag */
@@ -615,7 +624,7 @@ enum {
   PNL_INSTANCED_LIST_ORDER_CHANGED = (1 << 7),
 };
 
-/* Fallback panel category (only for old scripts which need updating) */
+/** Fallback panel category (only for old scripts which need updating). */
 #define PNL_CATEGORY_FALLBACK "Misc"
 
 /** #uiList.layout_type */
@@ -628,11 +637,11 @@ enum {
 
 /** #uiList.flag */
 enum {
-  /* Scroll list to make active item visible. */
+  /** Scroll list to make active item visible. */
   UILST_SCROLL_TO_ACTIVE_ITEM = 1 << 0,
 };
 
-/* Value (in number of items) we have to go below minimum shown items to enable auto size. */
+/** Value (in number of items) we have to go below minimum shown items to enable auto size. */
 #define UI_LIST_AUTO_SIZE_THRESHOLD 1
 
 /* uiList filter flags (dyn_data) */
@@ -691,14 +700,14 @@ typedef enum eRegion_Type {
 #define RGN_TYPE_NUM (RGN_TYPE_XR + 1)
 } eRegion_Type;
 
-/* use for function args */
+/** Use for function args. */
 #define RGN_TYPE_ANY -1
 
-/* Region supports panel tabs (categories). */
+/** Region supports panel tabs (categories). */
 /* bfa - readd tabs to tools area */
 #define RGN_TYPE_HAS_CATEGORY_MASK ((1 << RGN_TYPE_UI) | (1 << RGN_TYPE_TOOLS))
 
-/* Check for any kind of header region. */
+/** Check for any kind of header region. */
 #define RGN_TYPE_IS_HEADER_ANY(regiontype) \
   (((1 << (regiontype)) & \
     ((1 << RGN_TYPE_HEADER) | 1 << (RGN_TYPE_TOOL_HEADER) | (1 << RGN_TYPE_FOOTER))) != 0)
@@ -728,16 +737,13 @@ enum {
 enum {
   RGN_FLAG_HIDDEN = (1 << 0),
   RGN_FLAG_TOO_SMALL = (1 << 1),
-  /**
-   * Force delayed re-initialization of region size data, so that region size is calculated
-   * just big enough to show all its content (if enough space is available).
-   * Note that only ED_region_header supports this right now.
-   */
+  /** Enable dynamically changing the region size in the #ARegionType::layout() callback. */
   RGN_FLAG_DYNAMIC_SIZE = (1 << 2),
   /** Region data is NULL'd on read, never written. */
   RGN_FLAG_TEMP_REGIONDATA = (1 << 3),
-  /** The region must either use its prefsizex/y or be hidden. */
-  RGN_FLAG_PREFSIZE_OR_HIDDEN = (1 << 4),
+  /** Region resizing by the user is disabled, but the region edge can still be dragged to
+   * hide/unhide the region. */
+  RGN_FLAG_NO_USER_RESIZE = (1 << 4),
   /** Size has been clamped (floating regions only). */
   RGN_FLAG_SIZE_CLAMP_X = (1 << 5),
   RGN_FLAG_SIZE_CLAMP_Y = (1 << 6),
@@ -759,22 +765,26 @@ enum {
 
 /** #ARegion.do_draw */
 enum {
-  /* Region must be fully redrawn. */
+  /** Region must be fully redrawn. */
   RGN_DRAW = 1,
-  /* Redraw only part of region, for sculpting and painting to get smoother
-   * stroke painting on heavy meshes. */
+  /**
+   * Redraw only part of region, for sculpting and painting to get smoother
+   * stroke painting on heavy meshes.
+   */
   RGN_DRAW_PARTIAL = 2,
-  /* For outliner, to do faster redraw without rebuilding outliner tree.
+  /**
+   * For outliner, to do faster redraw without rebuilding outliner tree.
    * For 3D viewport, to display a new progressive render sample without
-   * while other buffers and overlays remain unchanged. */
+   * while other buffers and overlays remain unchanged.
+   */
   RGN_DRAW_NO_REBUILD = 4,
 
-  /* Set while region is being drawn. */
+  /** Set while region is being drawn. */
   RGN_DRAWING = 8,
-  /* For popups, to refresh UI layout along with drawing. */
+  /** For popups, to refresh UI layout along with drawing. */
   RGN_REFRESH_UI = 16,
 
-  /* Only editor overlays (currently gizmos only!) should be redrawn. */
+  /** Only editor overlays (currently gizmos only!) should be redrawn. */
   RGN_DRAW_EDITOR_OVERLAYS = 32,
 };
 
