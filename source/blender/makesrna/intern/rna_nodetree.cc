@@ -13400,10 +13400,10 @@ static int node_type_to_icon(int type)
       return ICON_SET_SPLINE_RESOLUTION;
 
     case GEO_NODE_SIMULATION_INPUT:
-      return ICON_GROUPINPUT;
+      return ICON_TIME;
 
     case GEO_NODE_SIMULATION_OUTPUT:
-      return ICON_GROUPOUTPUT;
+      return ICON_TIME;
 
     case GEO_NODE_SPLIT_EDGES:
       return ICON_SPLITEDGE;
