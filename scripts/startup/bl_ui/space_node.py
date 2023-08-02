@@ -1007,6 +1007,7 @@ class NODE_PT_quality(bpy.types.Panel):
         col.prop(tree, "use_viewer_border")
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(snode, "use_auto_render")
 
 
