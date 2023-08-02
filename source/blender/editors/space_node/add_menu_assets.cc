@@ -135,7 +135,7 @@ static void add_root_catalogs_draw(const bContext *C, Menu *menu)
   uiItemS(layout);
 
   if (!loading_finished) {
-    uiItemL(layout, IFACE_("Loading Asset Libraries"), ICON_INFO);
+    uiItemL(layout, IFACE_("Loading Asset Libraries"), ICON_INFO); /*BFA - preserved from Blender, they removed this*/
   }
 
   /* Avoid adding a separate root catalog when the assets have already been added to one of the
