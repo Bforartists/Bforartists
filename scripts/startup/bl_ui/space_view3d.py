@@ -4030,21 +4030,21 @@ class VIEW3D_MT_paint_weight(Menu):
 
             # Primarily for shortcut discoverability.
             layout.operator("paint.weight_set", icon="MOD_VERTEX_WEIGHT")
-            layout.operator("paint.weight_sample", text="Sample Weight")
-            layout.operator("paint.weight_sample_group", text="Sample Group")
+            layout.operator("paint.weight_sample", text="Sample Weight", icon = "EYEDROPPER")
+            layout.operator("paint.weight_sample_group", text="Sample Group", icon = "EYEDROPPER")
 
             layout.separator()
 
             # Primarily for shortcut discoverability.
-            layout.operator("paint.weight_gradient", text="Gradient (Linear)").type = 'LINEAR'
-            layout.operator("paint.weight_gradient", text="Gradient (Radial)").type = 'RADIAL'
+            layout.operator("paint.weight_gradient", text="Gradient (Linear)", icon = 'GRADIENT').type = 'LINEAR'
+            layout.operator("paint.weight_gradient", text="Gradient (Radial)", icon = 'GRADIENT').type = 'RADIAL'
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_paint_weight_lock", text="Locks")
 
-    def draw(self, _context):
-        self.draw_generic(self.layout, is_editmode=False)
+    #def draw(self, _context):
+        #self.draw_generic(self.layout, is_editmode=False)
 
 
 class VIEW3D_MT_subdivision_set(Menu):
