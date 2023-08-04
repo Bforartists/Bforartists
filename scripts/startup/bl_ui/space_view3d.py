@@ -1371,7 +1371,7 @@ class VIEW3D_MT_snap(Menu):
 
 # Tooltip and operator for Clear Seam.
 class VIEW3D_MT_uv_map_clear_seam(bpy.types.Operator):
-    """Clears the UV Seam for selected edges"""      # blender will use this as a tooltip for menu items and buttons.
+    """Clears the UV Seam for selected edges"""      #BFA - blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mesh.clear_seam"        # unique identifier for buttons and menu items to reference.
     bl_label = "Clear seam"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -4346,13 +4346,14 @@ class VIEW3D_MT_face_sets(Menu):
 
         layout.operator("sculpt.face_set_edit", text="Grow Face Set", icon='SELECTMORE').mode = 'GROW'
         layout.operator("sculpt.face_set_edit", text="Shrink Face Set", icon='SELECTLESS').mode = 'SHRINK'
-        props = layout.operator("sculpt.expand", text="Expand Face Set by Topology")
+        props = layout.operator("sculpt.expand", text="Expand Face Set by Topology", icon='FACE_MAPS')
         props.target = 'FACE_SETS'
         props.falloff_type = 'GEODESIC'
         props.invert = False
         props.use_modify_active = False
 
-        props = layout.operator("sculpt.expand", text="Expand Active Face Set")
+
+        props = layout.operator("sculpt.expand", text="Expand Active Face Set", icon='FACE_MAPS_ACTIVE')
         props.target = 'FACE_SETS'
         props.falloff_type = 'BOUNDARY_FACE_SET'
         props.invert = False
@@ -5187,7 +5188,7 @@ class VIEW3D_MT_edit_mesh_select_mode(Menu):
 
 
 class VIEW3D_MT_edit_mesh_extrude_dupli(bpy.types.Operator):
-    """Duplicate or Extrude to Cursor\nCreates a slightly rotated copy of the current mesh selection\nThe tool can also extrude the selected geometry, dependant of the selection\nHotkey tool! """      # blender will use this as a tooltip for menu items and buttons.
+    """Duplicate or Extrude to Cursor\nCreates a slightly rotated copy of the current mesh selection\nThe tool can also extrude the selected geometry, dependant of the selection\nHotkey tool! """      #BFA - blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mesh.dupli_extrude_cursor_norotate"        # unique identifier for buttons and menu items to reference.
     bl_label = "Duplicate or Extrude to Cursor"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -5198,7 +5199,7 @@ class VIEW3D_MT_edit_mesh_extrude_dupli(bpy.types.Operator):
 
 
 class VIEW3D_MT_edit_mesh_extrude_dupli_rotate(bpy.types.Operator):
-    """Duplicate or Extrude to Cursor Rotated\nCreates a slightly rotated copy of the current mesh selection, and rotates the source slightly\nThe tool can also extrude the selected geometry, dependant of the selection\nHotkey tool!"""      # blender will use this as a tooltip for menu items and buttons.
+    """Duplicate or Extrude to Cursor Rotated\nCreates a slightly rotated copy of the current mesh selection, and rotates the source slightly\nThe tool can also extrude the selected geometry, dependant of the selection\nHotkey tool!"""      #BFA-  blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mesh.dupli_extrude_cursor_rotate"        # unique identifier for buttons and menu items to reference.
     bl_label = "Duplicate or Extrude to Cursor Rotated"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
