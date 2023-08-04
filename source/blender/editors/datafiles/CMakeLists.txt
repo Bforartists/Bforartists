@@ -2055,7 +2055,7 @@ seq_remove_gaps
 seq_insert_gaps
 three_dots
 
-#~ DEF_ICON_BLANK(2086)
+face_maps_active
 #~ DEF_ICON_BLANK(2087)
 #~ DEF_ICON_BLANK(2088)
 #~ DEF_ICON_BLANK(2089)
