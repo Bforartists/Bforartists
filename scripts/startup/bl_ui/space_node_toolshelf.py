@@ -975,9 +975,9 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
 
                 if engine == 'CYCLES':
 
-                    props = col.operator("node.add_node", text=" Velvet BSDF           ", icon = "NODE_VELVET")
+                    props = col.operator("node.add_node", text=" Sheen BSDF            ", icon = "NODE_VELVET")
                     props.use_transform = True
-                    props.type = "ShaderNodeBsdfVelvet"
+                    props.type = "ShaderNodeBsdfSheen"
 
                 props = col.operator("node.add_node", text=" Volume Absorption ", icon = "NODE_VOLUMEABSORPTION")
                 props.use_transform = True
@@ -1096,7 +1096,7 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
 
                     props = flow.operator("node.add_node", text = "", icon = "NODE_VELVET")
                     props.use_transform = True
-                    props.type = "ShaderNodeBsdfVelvet"
+                    props.type = "ShaderNodeBsdfSheen"
 
                 props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEABSORPTION")
                 props.use_transform = True
