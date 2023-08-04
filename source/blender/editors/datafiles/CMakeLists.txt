@@ -1851,7 +1851,7 @@ fight
 flock
 outliner_data_volume
 
-#~ DEF_ICON_BLANK(1882)
+gradient
 #~ DEF_ICON_BLANK(1883)
 #~ DEF_ICON_BLANK(1884)
 #~ DEF_ICON_BLANK(1885)
