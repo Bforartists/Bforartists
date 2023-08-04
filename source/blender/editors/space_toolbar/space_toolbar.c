@@ -141,10 +141,10 @@ static void toolbar_blend_write(BlendWriter *writer, SpaceLink *sl)
 
 /********************* registration ********************/
 
-static void info_blend_write(BlendWriter *writer, SpaceLink *sl)
-{
-  BLO_write_struct(writer, SpaceToolbar, sl);
-}
+//static void info_blend_write(BlendWriter *writer, SpaceLink *sl)
+//{
+//  BLO_write_struct(writer, SpaceToolbar, sl);
+//}
 
 /* only called once, from space/spacetypes.c */
 void ED_spacetype_toolbar(void)
