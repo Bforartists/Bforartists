@@ -12974,6 +12974,12 @@ static int node_type_to_icon(int type)
     case FN_NODE_RANDOM_VALUE:
       return ICON_RANDOM_FLOAT;
 
+    case GEO_NODE_REPEAT_INPUT:
+      return ICON_REPEAT;
+
+    case GEO_NODE_REPEAT_OUTPUT:
+      return ICON_REPEAT;
+
     case FN_NODE_REPLACE_STRING:
       return ICON_REPLACE_STRING;
 
