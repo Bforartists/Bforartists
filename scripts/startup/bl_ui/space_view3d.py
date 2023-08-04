@@ -4043,8 +4043,8 @@ class VIEW3D_MT_paint_weight(Menu):
 
         layout.menu("VIEW3D_MT_paint_weight_lock", text="Locks")
 
-    #def draw(self, _context):
-        #self.draw_generic(self.layout, is_editmode=False)
+    def draw(self, _context):
+        self.draw_generic(self.layout, is_editmode=False)
 
 
 class VIEW3D_MT_subdivision_set(Menu):
