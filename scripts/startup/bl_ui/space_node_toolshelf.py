@@ -5625,6 +5625,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeRandomValue"
 
+            props = col.operator("node.add_repeat_zone", text=" Repeat Zone  ", icon = "REPEAT")
+            props.use_transform = True
+            #props.type = ""
+
             props = col.operator("node.add_node", text=" Switch               ", icon = "SWITCH")
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
@@ -5640,6 +5644,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomValue"
+
+            props = col.operator("node.add_repeat_zone", text="", icon = "REPEAT")
+            props.use_transform = True
+            #props.type = ""
 
             props = flow.operator("node.add_node", text = "", icon = "SWITCH")
             props.use_transform = True
