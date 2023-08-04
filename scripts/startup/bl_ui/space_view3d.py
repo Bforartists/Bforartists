@@ -4104,11 +4104,12 @@ class VIEW3D_MT_sculpt(Menu):
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        layout.operator("sculpt.face_set_invert_visibility", text="Invert Visible")
+        #BFA - located in sub menu with icons below in this same menu
+        #layout.operator("sculpt.face_set_invert_visibility", text="Invert Visible")
 
-        props = layout.operator("paint.hide_show", text="Hide Masked")
-        props.action = 'HIDE'
-        props.area = 'MASKED'
+        #props = layout.operator("paint.hide_show", text="Hide Masked")
+        #props.action = 'HIDE'
+        #props.area = 'MASKED'
 
         layout.separator()
 
