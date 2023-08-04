@@ -79,7 +79,7 @@ def add_simulation_zone(layout, label):
 
 
 def add_repeat_zone(layout, label):
-    props = layout.operator("node.add_repeat_zone", text=label)
+    props = layout.operator("node.add_repeat_zone", text=label, icon = "REPEAT") #BFA - added icon to Add Menu
     props.use_transform = True
     return props
 
