@@ -374,7 +374,7 @@ class GRAPH_MT_channel(Menu):
         layout.operator("graph.unbake", icon="CLEAR")
 
         layout.separator()
-        
+
         layout.operator("graph.reveal", icon="HIDE_OFF")
         layout.operator("graph.hide", text="Hide Selected Curves", icon="HIDE_ON").unselected = False
         layout.operator("graph.hide", text="Hide Unselected Curves", icon="HIDE_UNSELECTED").unselected = True
@@ -473,10 +473,10 @@ class GRAPH_MT_key_blending(Menu):
     def draw(self, _context):
         layout = self.layout
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("graph.breakdown", text="Breakdown")
-        layout.operator("graph.blend_to_neighbor", text="Blend to Neighbor")
-        layout.operator("graph.blend_to_default", text="Blend to Default Value")
-        layout.operator("graph.ease", text="Ease")
+        layout.operator("graph.breakdown", text = "Breakdown", icon='BREAKDOWNER_POSE')
+        layout.operator("graph.blend_to_neighbor", text = "Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
+        layout.operator("graph.blend_to_default", text = "Blend to Default Value", icon = 'BLEND_TO_DEFAULT')
+        layout.operator("graph.ease", text="Ease", icon = 'IPO_EASE_IN_OUT')
 
 
 class GRAPH_MT_key_smoothing(Menu):
@@ -485,9 +485,9 @@ class GRAPH_MT_key_smoothing(Menu):
     def draw(self, _context):
         layout = self.layout
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("graph.gaussian_smooth", text="Smooth (Gaussian)")
-        layout.operator("graph.smooth", text="Smooth (Legacy)")
-        layout.operator("graph.butterworth_smooth")
+        layout.operator("graph.gaussian_smooth", text="Smooth (Gaussian)", icon = 'PARTICLEBRUSH_SMOOTH')
+        layout.operator("graph.smooth", text="Smooth (Legacy)", icon = 'PARTICLEBRUSH_SMOOTH')
+        layout.operator("graph.butterworth_smooth", icon = 'PARTICLEBRUSH_SMOOTH')
 
 
 class GRAPH_MT_key(Menu):
@@ -534,11 +534,12 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.smooth", icon="SMOOTH_KEYFRAMES")
         layout.operator("graph.sample", icon="SAMPLE_KEYFRAMES")
 
-        layout.separator()
+        #layout.separator()
 
         # layout.menu("GRAPH_MT_key_density") # bfa we already have this
-        layout.menu("GRAPH_MT_key_blending")
-        layout.menu("GRAPH_MT_key_smoothing")
+        # So hide it from here. But keep the classes for the Blender hotkeys ...
+        # layout.menu("GRAPH_MT_key_blending")
+        # layout.menu("GRAPH_MT_key_smoothing")
 
 
 class GRAPH_MT_key_mirror(Menu):
@@ -585,7 +586,12 @@ class GRAPH_MT_slider(Menu):
         layout.operator("graph.blend_to_neighbor", text = "Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
         layout.operator("graph.blend_to_default", text = "Blend to Default Value", icon = 'BLEND_TO_DEFAULT')
         layout.operator("graph.ease", text="Ease", icon = 'IPO_EASE_IN_OUT')
-        layout.operator("graph.gaussian_smooth", text="Smooth", icon = 'PARTICLEBRUSH_SMOOTH')
+
+        layout.separator()
+
+        layout.operator("graph.gaussian_smooth", text="Smooth (Gaussian)", icon = 'PARTICLEBRUSH_SMOOTH')
+        layout.operator("graph.smooth", text="Smooth (Legacy)", icon = 'PARTICLEBRUSH_SMOOTH')
+        layout.operator("graph.butterworth_smooth", icon = 'PARTICLEBRUSH_SMOOTH')
 
 
 class GRAPH_MT_key_transform(Menu):
