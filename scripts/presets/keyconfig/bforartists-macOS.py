@@ -1,4 +1,4 @@
-keyconfig_version = (4, 0, 11)
+keyconfig_version = (4, 0, 12)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -883,7 +883,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -1486,7 +1486,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -1891,6 +1891,8 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
@@ -2647,8 +2649,8 @@ keyconfig_data = \
        ],
       },
      ),
-    ("gpencil.blank_frame_add", {"type": 'B', "value": 'PRESS', "key_modifier": 'D', "repeat": True}, None),
-    ("gpencil.active_frames_delete_all", {"type": 'DEL', "value": 'PRESS', "key_modifier": 'D', "repeat": True}, None),
+    ("gpencil.annotation_add", {"type": 'B', "value": 'PRESS', "key_modifier": 'D', "repeat": True}, None),
+    ("gpencil.annotation_active_frame_delete", {"type": 'DEL', "value": 'PRESS', "key_modifier": 'D', "repeat": True}, None),
     ("gpencil.delete",
      {"type": 'DEL', "value": 'PRESS'},
      {"properties":
@@ -2876,7 +2878,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -2982,7 +2984,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin_brush.Draw'),
        ],
@@ -3400,7 +3402,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin_brush.Draw'),
        ],
@@ -3834,7 +3836,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -3951,7 +3953,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -4435,7 +4437,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -4556,7 +4558,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -5028,7 +5030,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -5258,7 +5260,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -5956,7 +5958,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -6774,7 +6776,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -7025,6 +7027,22 @@ keyconfig_data = \
   {"space_type": 'TEXT_EDITOR', "region_type": 'WINDOW'},
   {"items":
    [("wm.call_panel",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'BFA_PT_FIND_AND_REPLACE'),
+       ("keep_open", True),
+       ],
+      },
+     ),
+    ("wm.call_panel",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'BFA_PT_FIND_AND_REPLACE'),
+       ("keep_open", True),
+       ],
+      },
+     ),
+    ("wm.call_panel",
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
      {"properties":
       [("name", 'BFA_PT_FIND_AND_REPLACE'),
@@ -7646,7 +7664,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],
@@ -7915,7 +7933,7 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
-     {"type": 'D', "value": 'PRESS'},
+     {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
        ],

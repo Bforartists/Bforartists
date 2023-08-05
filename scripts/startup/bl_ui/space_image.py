@@ -105,6 +105,12 @@ class IMAGE_MT_view(Menu):
 
         layout.separator()
 
+        layout.separator()
+
+        layout.menu("IMAGE_MT_view_annotations")
+
+        layout.separator()
+
         layout.operator("image.view_zoom_in", text="Zoom In", icon="ZOOM_IN")
         layout.operator("image.view_zoom_out", text="Zoom Out", icon="ZOOM_OUT")
         layout.operator("image.view_zoom_border", icon="ZOOM_BORDER")
@@ -146,6 +152,23 @@ class IMAGE_MT_view(Menu):
 
         layout.menu("INFO_MT_area")
         layout.menu("IMAGE_MT_view_pie_menus")
+
+# BFA - Hidden legacy operators exposed to GUI
+class IMAGE_MT_view_annotations(Menu):
+    bl_label = "Annotations (Legacy)"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("gpencil.annotate", text="Draw Annotation", icon='PAINT_DRAW',).mode = 'DRAW'
+        layout.operator("gpencil.annotate", text="Draw Line Annotation", icon='PAINT_DRAW').mode = 'DRAW_STRAIGHT'
+        layout.operator("gpencil.annotate", text="Draw Polyline Annotation", icon='PAINT_DRAW').mode = 'DRAW_POLY'
+        layout.operator("gpencil.annotate", text="Erase Annotation", icon='ERASE').mode = 'ERASER'
+
+        layout.separator()
+
+        layout.operator("gpencil.annotation_add", text="Add Annotation Layer", icon='ADD')
+        layout.operator("gpencil.annotation_active_frame_delete", text="Erase Annotation Active Keyframe", icon='DELETE')
 
 
 class IMAGE_MT_view_pie_menus(Menu):
@@ -2003,6 +2026,7 @@ classes = (
     IMAGE_MT_mask_context_menu,
     IMAGE_MT_pivot_pie,
     IMAGE_MT_uvs_snap_pie,
+    IMAGE_MT_view_annotations,
     IMAGE_MT_view_pie,
     IMAGE_HT_tool_header,
     IMAGE_HT_header,
