@@ -1445,6 +1445,10 @@ class CLIP_MT_view(Menu):
 
             layout.separator()
 
+            layout.menu("CLIP_MT_view_annotations")
+
+            layout.separator()
+
             if sc.mode == 'MASK':
                 layout.operator("clip.cursor_set", text="Set 2D Cursor", icon='CURSOR')
 
@@ -1492,6 +1496,22 @@ class CLIP_MT_view(Menu):
         layout.menu("CLIP_MT_view_pie_menus")
         layout.menu("INFO_MT_area")
 
+# BFA - Hidden legacy operators exposed to GUI
+class CLIP_MT_view_annotations(Menu):
+    bl_label = "Annotations (Legacy)"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("gpencil.annotate", text="Draw Annotation", icon='PAINT_DRAW',).mode = 'DRAW'
+        layout.operator("gpencil.annotate", text="Draw Line Annotation", icon='PAINT_DRAW').mode = 'DRAW_STRAIGHT'
+        layout.operator("gpencil.annotate", text="Draw Polyline Annotation", icon='PAINT_DRAW').mode = 'DRAW_POLY'
+        layout.operator("gpencil.annotate", text="Erase Annotation", icon='ERASE').mode = 'ERASER'
+
+        layout.separator()
+
+        layout.operator("gpencil.annotation_add", text="Add Annotation Layer", icon='ADD')
+        layout.operator("gpencil.annotation_active_frame_delete", text="Erase Annotation Active Keyframe", icon='DELETE')
 
 class CLIP_MT_view_pie_menus(Menu):
     bl_label = "Pie menus"
@@ -2149,6 +2169,7 @@ classes = (
     CLIP_PT_tools_grease_pencil_draw,
     CLIP_MT_view_zoom,
     CLIP_MT_view,
+    CLIP_MT_view_annotations,
     CLIP_MT_view_pie_menus,
     CLIP_MT_clip,
     CLIP_MT_reconstruction,
