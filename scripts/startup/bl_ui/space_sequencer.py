@@ -454,6 +454,12 @@ class SEQUENCER_MT_view(Menu):
 
         layout.separator()
 
+        layout.menu("SEQUENCER_MT_view_annotations")
+
+        layout.separator()
+
+        layout.separator()
+
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
         layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
@@ -522,6 +528,22 @@ class SEQUENCER_MT_view(Menu):
 
         layout.menu("INFO_MT_area")
 
+# BFA - Hidden legacy operators exposed to GUI
+class SEQUENCER_MT_view_annotations(Menu):
+    bl_label = "Annotations (Legacy)"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("gpencil.annotate", text="Draw Annotation", icon='PAINT_DRAW',).mode = 'DRAW'
+        layout.operator("gpencil.annotate", text="Draw Line Annotation", icon='PAINT_DRAW').mode = 'DRAW_STRAIGHT'
+        layout.operator("gpencil.annotate", text="Draw Polyline Annotation", icon='PAINT_DRAW').mode = 'DRAW_POLY'
+        layout.operator("gpencil.annotate", text="Erase Annotation", icon='ERASE').mode = 'ERASER'
+
+        layout.separator()
+
+        layout.operator("gpencil.annotation_add", text="Add Annotation Layer", icon='ADD')
+        layout.operator("gpencil.annotation_active_frame_delete", text="Erase Annotation Active Keyframe", icon='DELETE')
 
 class SEQUENCER_MT_export(Menu):
     bl_label = "Export"
@@ -2845,6 +2867,7 @@ classes = (
     SEQUENCER_MT_range,
     SEQUENCER_MT_view_pie_menus,
     SEQUENCER_MT_view,
+    SEQUENCER_MT_view_annotations,
     SEQUENCER_MT_export,
     SEQUENCER_MT_view_cache,
     SEQUENCER_MT_preview_zoom,
