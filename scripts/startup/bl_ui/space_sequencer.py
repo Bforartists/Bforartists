@@ -528,8 +528,9 @@ class SEQUENCER_MT_view(Menu):
 
         layout.menu("INFO_MT_area")
 
+# BFA - Hidden legacy operators exposed to GUI
 class SEQUENCER_MT_view_annotations(Menu):
-    bl_label = "Annotations"
+    bl_label = "Annotations (Legacy)"
 
     def draw(self, context):
         layout = self.layout

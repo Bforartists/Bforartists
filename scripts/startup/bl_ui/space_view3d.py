@@ -1448,9 +1448,9 @@ class VIEW3D_MT_view_legacy(Menu):
 
         layout.operator("view3d.cursor3d", text="Set 3D Cursor", icon='CURSOR')
 
-
+# BFA - Hidden legacy operators exposed to GUI
 class VIEW3D_MT_view_annotations(Menu):
-    bl_label = "Annotations"
+    bl_label = "Annotations (Legacy)"
 
     def draw(self, context):
         layout = self.layout
