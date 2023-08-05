@@ -153,9 +153,9 @@ class IMAGE_MT_view(Menu):
         layout.menu("INFO_MT_area")
         layout.menu("IMAGE_MT_view_pie_menus")
 
-
+# BFA - Hidden legacy operators exposed to GUI
 class IMAGE_MT_view_annotations(Menu):
-    bl_label = "Annotations"
+    bl_label = "Annotations (Legacy)"
 
     def draw(self, context):
         layout = self.layout

@@ -613,8 +613,9 @@ class NODE_MT_context_menu_show_hide_menu(Menu):
         layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
         layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
 
+# BFA - Hidden legacy operators exposed to GUI
 class NODE_MT_view_annotations(Menu):
-    bl_label = "Annotations"
+    bl_label = "Annotations (Legacy)"
 
     def draw(self, context):
         layout = self.layout
