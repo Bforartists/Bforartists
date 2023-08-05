@@ -437,6 +437,10 @@ class NODE_MT_view(Menu):
 
         layout.separator()
 
+        layout.menu("NODE_MT_view_annotations")
+
+        layout.separator()
+
         sub = layout.column()
         sub.operator_context = 'EXEC_REGION_WIN'
         sub.operator("view2d.zoom_in", icon = "ZOOM_IN")
@@ -609,6 +613,21 @@ class NODE_MT_context_menu_show_hide_menu(Menu):
         layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
         layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
 
+class NODE_MT_view_annotations(Menu):
+    bl_label = "Annotations"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("gpencil.annotate", text="Draw Annotation", icon='PAINT_DRAW',).mode = 'DRAW'
+        layout.operator("gpencil.annotate", text="Draw Line Annotation", icon='PAINT_DRAW').mode = 'DRAW_STRAIGHT'
+        layout.operator("gpencil.annotate", text="Draw Polyline Annotation", icon='PAINT_DRAW').mode = 'DRAW_POLY'
+        layout.operator("gpencil.annotate", text="Erase Annotation", icon='ERASE').mode = 'ERASER'
+
+        layout.separator()
+
+        layout.operator("gpencil.annotation_add", text="Add Annotation Layer", icon='ADD')
+        layout.operator("gpencil.annotation_active_frame_delete", text="Erase Annotation Active Keyframe", icon='DELETE')
 
 class NODE_MT_view_pie(Menu):
     bl_label = "View"
@@ -1477,6 +1496,7 @@ classes = (
     NODE_MT_context_menu_select_menu,
     NODE_MT_context_menu,
     NODE_MT_view_pie,
+    NODE_MT_view_annotations,
     NODE_PT_material_slots,
     NODE_PT_node_color_presets,
     NODE_PT_active_node_generic,
