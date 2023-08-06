@@ -2973,12 +2973,18 @@ class VIEW3D_MT_object(Menu):
 
         layout.menu("VIEW3D_MT_object_asset")
         layout.menu("VIEW3D_MT_object_parent")
-        # layout.menu("VIEW3D_MT_object_collection") # bfa, turned off
+        # layout.menu("VIEW3D_MT_object_collection") #BFA - Redundant operators, now the UX is exclusive to the outliner
         layout.menu("VIEW3D_MT_object_relations")
         layout.menu("VIEW3D_MT_object_liboverride")
         layout.menu("VIEW3D_MT_object_constraints")
         layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_make_links")
+
+        layout.separator()
+        #BFA - Added a context menu operator for consistency and discovervability...
+        #...This is a minimal UX of layout.menu("VIEW3D_MT_object_collection")
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("object.move_to_collection", icon='GROUP')
 
         # shading just for mesh and curve objects
         if obj is None:
@@ -3419,12 +3425,17 @@ class VIEW3D_MT_object_context_menu(Menu):
         layout.menu("VIEW3D_MT_snap")
         layout.menu("VIEW3D_MT_object_parent")
 
-        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.separator()
 
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("object.move_to_collection", icon='GROUP') #BFA - made it always exposed in it's own little group <3
+
+        layout.separator()
         if view and view.local_view:
+            layout.operator("view3d.localview", text="Toggle Local View", icon="VIEW_GLOBAL_LOCAL") #BFA - Can toggle in, so toggle out too
             layout.operator("view3d.localview_remove_from", icon='VIEW_REMOVE_LOCAL')
         else:
-            layout.operator("object.move_to_collection", icon='GROUP')
+            layout.operator("view3d.localview", text="Toggle Local View", icon="VIEW_GLOBAL_LOCAL") #BFA - made it relevant to local view conditional
 
         layout.separator()
 
@@ -3569,7 +3580,7 @@ class VIEW3D_MT_object_track(Menu):
             text="Clear Track - Keep Transformation",
             icon="CLEAR_TRACK").type = 'CLEAR_KEEP_TRANSFORM'
 
-
+#BFA - not referenced in the 3D View Editor - but referenced by hotkey M in Blender keymap.
 class VIEW3D_MT_object_collection(Menu):
     bl_label = "Collection"
 
