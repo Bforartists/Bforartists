@@ -31,12 +31,12 @@
 #include "GPU_capabilities.h"
 #include "GPU_context.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "BLO_read_write.h"
 
-#include "wm_window.h"
+#include "wm_window.hh"
 
 /* Rounded to nearest PowerOfTwo */
 #if defined(IRRADIANCE_SH_L2)
@@ -659,7 +659,7 @@ static void eevee_lightbake_count_probes(EEVEE_LightBake *lbake)
   /* At least one of each for the world */
   lbake->grid_len = lbake->cube_len = lbake->total_irr_samples = 1;
 
-  DEGObjectIterSettings deg_iter_settings = {0};
+  DEGObjectIterSettings deg_iter_settings = {nullptr};
   deg_iter_settings.depsgraph = depsgraph;
   deg_iter_settings.flags = DEG_OBJECT_ITER_FOR_RENDER_ENGINE_FLAGS;
   DEG_OBJECT_ITER_BEGIN (&deg_iter_settings, ob) {
@@ -1097,8 +1097,8 @@ static void compute_cell_id(EEVEE_LightGrid *egrid,
                          probe->grid_resolution_z;
 
   /* Add one for level 0 */
-  int max_lvl = (int)floorf(log2f(
-      float(MAX3(probe->grid_resolution_x, probe->grid_resolution_y, probe->grid_resolution_z))));
+  int max_lvl = int(floorf(log2f(
+      float(MAX3(probe->grid_resolution_x, probe->grid_resolution_y, probe->grid_resolution_z)))));
 
   int visited_cells = 0;
   *r_stride = 0;
@@ -1322,7 +1322,7 @@ static void eevee_lightbake_gather_probes(EEVEE_LightBake *lbake)
 
   /* Convert all lightprobes to tight UBO data from all lightprobes in the scene.
    * This allows a large number of probe to be precomputed (even dupli ones). */
-  DEGObjectIterSettings deg_iter_settings = {0};
+  DEGObjectIterSettings deg_iter_settings = {nullptr};
   deg_iter_settings.depsgraph = depsgraph;
   deg_iter_settings.flags = DEG_OBJECT_ITER_FOR_RENDER_ENGINE_FLAGS;
   DEG_OBJECT_ITER_BEGIN (&deg_iter_settings, ob) {

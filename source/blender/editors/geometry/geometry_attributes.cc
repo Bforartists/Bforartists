@@ -19,7 +19,7 @@
 #include "BKE_lib_id.h"
 #include "BKE_mesh.hh"
 #include "BKE_object_deform.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_report.h"
 
 #include "RNA_access.h"
@@ -28,15 +28,15 @@
 
 #include "DEG_depsgraph.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
-#include "ED_geometry.h"
-#include "ED_mesh.h"
-#include "ED_object.h"
+#include "ED_geometry.hh"
+#include "ED_mesh.hh"
+#include "ED_object.hh"
 
 #include "geometry_intern.hh"
 

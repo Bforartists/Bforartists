@@ -44,17 +44,17 @@
 #include "BKE_lib_id.h"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_iterators.h"
-#include "BKE_mesh_mapping.h"
-#include "BKE_mesh_runtime.h"
-#include "BKE_mesh_tangent.h"
-#include "BKE_mesh_wrapper.h"
+#include "BKE_mesh_iterators.hh"
+#include "BKE_mesh_mapping.hh"
+#include "BKE_mesh_runtime.hh"
+#include "BKE_mesh_tangent.hh"
+#include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.h"
-#include "BKE_multires.h"
+#include "BKE_multires.hh"
 #include "BKE_object.h"
 #include "BKE_object_deform.h"
-#include "BKE_paint.h"
-#include "BKE_subdiv_modifier.h"
+#include "BKE_paint.hh"
+#include "BKE_subdiv_modifier.hh"
 
 #include "BLI_sys_types.h" /* for intptr_t support */
 
@@ -555,7 +555,7 @@ static Mesh *modifier_modify_mesh_and_geometry_set(ModifierData *md,
     /* Release the mesh from the geometry set again. */
     if (geometry_set.has<MeshComponent>()) {
       MeshComponent &mesh_component = geometry_set.get_component_for_write<MeshComponent>();
-      if (mesh_component.get_for_read() != input_mesh) {
+      if (mesh_component.get() != input_mesh) {
         /* Make sure the mesh component actually owns the mesh before taking over ownership. */
         mesh_component.ensure_owns_direct_data();
       }

@@ -31,13 +31,13 @@
 #include "GPU_material.h"
 #include "GPU_texture.h"
 
-#include "UI_resources.h"
+#include "UI_resources.hh"
 
 #include "DRW_render.h"
 
 #include "draw_cache_inline.h"
 
-#include "draw_cache_impl.h" /* own include */
+#include "draw_cache_impl.hh" /* own include */
 
 using blender::Array;
 using blender::ColorGeometry4f;

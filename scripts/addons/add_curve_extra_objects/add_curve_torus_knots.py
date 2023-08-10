@@ -700,7 +700,7 @@ class torus_knot_plus(Operator, AddObjectHelper):
                 print("Approximate average TK length = %.2f" % avgTKLen)
 
             # x N factor = control points per unit length
-            self.torus_res = max(3, avgTKLen / links * 8)
+            self.torus_res = max(3, int(avgTKLen / links) * 8)
 
         # update align matrix
         self.align_matrix = align_matrix(self, context)

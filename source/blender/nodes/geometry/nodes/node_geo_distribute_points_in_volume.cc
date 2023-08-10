@@ -15,8 +15,8 @@
 #include "BKE_volume.h"
 #include "BKE_volume_openvdb.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "DEG_depsgraph_query.h"
 
@@ -209,8 +209,8 @@ static void node_geo_exec(GeoNodeExecParams params)
       geometry_set.keep_only_during_modify({GeometryComponent::Type::PointCloud});
       return;
     }
-    const VolumeComponent *component = geometry_set.get_component_for_read<VolumeComponent>();
-    const Volume *volume = component->get_for_read();
+    const VolumeComponent *component = geometry_set.get_component<VolumeComponent>();
+    const Volume *volume = component->get();
     BKE_volume_load(volume, DEG_get_bmain(params.depsgraph()));
 
     Vector<float3> positions;

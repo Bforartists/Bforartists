@@ -15,17 +15,17 @@
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_layer.h"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_scene.h"
 
 #include "DEG_depsgraph_query.h"
 
-#include "ED_mesh.h"
-#include "ED_particle.h"
-#include "ED_screen.h"
+#include "ED_mesh.hh"
+#include "ED_particle.hh"
+#include "ED_screen.hh"
 
-#include "WM_api.h"
-#include "WM_message.h"
+#include "WM_api.hh"
+#include "WM_message.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"

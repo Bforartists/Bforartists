@@ -29,22 +29,22 @@
 #include "BKE_layer.h"
 #include "BKE_mask.h"
 #include "BKE_modifier.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 
 #include "SEQ_transform.h"
 
-#include "ED_clip.h"
-#include "ED_image.h"
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_space_api.h"
-#include "ED_uvedit.h"
+#include "ED_clip.hh"
+#include "ED_image.hh"
+#include "ED_object.hh"
+#include "ED_screen.hh"
+#include "ED_space_api.hh"
+#include "ED_uvedit.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "UI_resources.h"
-#include "UI_view2d.h"
+#include "UI_resources.hh"
+#include "UI_view2d.hh"
 
 #include "SEQ_sequencer.h"
 
@@ -54,6 +54,8 @@
 #include "transform_mode.hh"
 #include "transform_orientations.hh"
 #include "transform_snap.hh"
+
+using namespace blender;
 
 /* ************************** GENERICS **************************** */
 
@@ -171,20 +173,20 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 
   t->redraw = TREDRAW_HARD; /* redraw first time */
 
-  int mval[2];
+  float2 mval;
   if (event) {
     if (t->flag & T_EVENT_DRAG_START) {
-      WM_event_drag_start_mval(event, region, mval);
+      WM_event_drag_start_mval_fl(event, region, mval);
     }
     else {
-      copy_v2_v2_int(mval, event->mval);
+      mval = float2(event->mval);
     }
   }
   else {
-    zero_v2_int(mval);
+    mval = float2(0, 0);
   }
-  copy_v2_v2_int(t->mval, mval);
-  copy_v2_v2_int(t->mouse.imval, mval);
+
+  t->mval = mval;
 
   t->mode_info = nullptr;
 
@@ -1254,9 +1256,7 @@ void calculatePropRatio(TransInfo *t)
         if (td->flag & TD_SELECTED) {
           td->factor = 1.0f;
         }
-        else if ((connected && (td->flag & TD_NOTCONNECTED || td->dist > t->prop_size)) ||
-                 (connected == 0 && td->rdist > t->prop_size))
-        {
+        else if ((connected ? td->dist : td->rdist) > t->prop_size) {
           td->factor = 0.0f;
           restoreElement(td);
         }

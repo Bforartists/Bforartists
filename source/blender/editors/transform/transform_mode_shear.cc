@@ -17,11 +17,11 @@
 #include "BKE_context.h"
 #include "BKE_unit.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "BLT_translation.h"
 
@@ -279,7 +279,7 @@ static bool clip_uv_transform_shear(const TransInfo *t, float *vec, float *vec_i
   return true;
 }
 
-static void apply_shear(TransInfo *t, const int[2] /*mval*/)
+static void apply_shear(TransInfo *t)
 {
   float value = t->values[0] + t->values_modal_offset[0];
   transform_snap_increment(t, &value);

@@ -44,7 +44,6 @@ struct Image;
 struct MovieClip;
 struct Object;
 struct Scene;
-struct SceneCollection;
 struct World;
 struct bGPdata;
 struct bNodeTree;
@@ -1809,6 +1808,24 @@ typedef struct SceneDisplay {
   View3DShading shading;
 } SceneDisplay;
 
+/**
+ * Ray-tracing parameters.
+ */
+typedef struct RaytraceEEVEE {
+  /** Higher values will take lower strides and have less blurry intersections. */
+  float screen_trace_quality;
+  /** Thickness in world space each surface will have during screen space tracing. */
+  float screen_trace_thickness;
+  /** Resolution downscale factor. */
+  int resolution_scale;
+  /** Maximum intensity a ray can have. */
+  float sample_clamp;
+  /** #RaytraceEEVEE_Flag. */
+  int flag;
+  /** #RaytraceEEVEE_DenoiseStages. */
+  int denoise_stages;
+} RaytraceEEVEE;
+
 typedef struct SceneEEVEE {
   int flag;
   int gi_diffuse_bounces;
@@ -1817,7 +1834,7 @@ typedef struct SceneEEVEE {
   float gi_irradiance_smoothing;
   float gi_glossy_clamp;
   float gi_filter_quality;
-  char _pad0[4];
+  int gi_irradiance_pool_size;
 
   float gi_cubemap_draw_size;
   float gi_irradiance_draw_size;
@@ -1870,6 +1887,12 @@ typedef struct SceneEEVEE {
   int shadow_cascade_size;
   int shadow_pool_size;
 
+  int ray_split_settings;
+  int ray_tracing_method;
+
+  struct RaytraceEEVEE reflection_options;
+  struct RaytraceEEVEE refraction_options;
+
   struct LightCache *light_cache DNA_DEPRECATED;
   struct LightCache *light_cache_data;
   /* Need a 128 byte string for some translations of some messages. */
@@ -1883,6 +1906,11 @@ typedef struct SceneGpencil {
   float smaa_threshold;
   char _pad[4];
 } SceneGpencil;
+
+typedef struct SceneHydra {
+  int export_method;
+  int _pad0;
+} SceneHydra;
 
 /** \} */
 
@@ -2021,15 +2049,14 @@ typedef struct Scene {
   ListBase view_layers;
   /** Not an actual data-block, but memory owned by scene. */
   struct Collection *master_collection;
-  struct SceneCollection *collection DNA_DEPRECATED;
 
   /** Settings to be override by work-spaces. */
   IDProperty *layer_properties;
-  void *_pad9;
 
   struct SceneDisplay display;
   struct SceneEEVEE eevee;
   struct SceneGpencil grease_pencil_settings;
+  struct SceneHydra hydra;
 } Scene;
 
 /** \} */
@@ -2801,9 +2828,26 @@ enum {
   SCE_EEVEE_DOF_HQ_SLIGHT_FOCUS = (1 << 22),
   SCE_EEVEE_DOF_JITTER = (1 << 23),
   SCE_EEVEE_SHADOW_ENABLED = (1 << 24),
-  // bfa - volumetric blending patch from lordloki
-  SCE_EEVEE_VOLUMETRIC_BLENDING = (1 << 25),
+  SCE_EEVEE_RAYTRACE_OPTIONS_SPLIT = (1 << 25),
+  SCE_EEVEE_VOLUMETRIC_BLENDING = (1 << 26), /* BFA - volumetric blending patch from lordloki */
 };
+
+typedef enum RaytraceEEVEE_Flag {
+  RAYTRACE_EEVEE_USE_DENOISE = (1 << 0),
+} RaytraceEEVEE_Flag;
+
+typedef enum RaytraceEEVEE_DenoiseStages {
+  RAYTRACE_EEVEE_DENOISE_SPATIAL = (1 << 0),
+  RAYTRACE_EEVEE_DENOISE_TEMPORAL = (1 << 1),
+  RAYTRACE_EEVEE_DENOISE_BILATERAL = (1 << 2),
+} RaytraceEEVEE_DenoiseStages;
+
+typedef enum RaytraceEEVEE_Method {
+  RAYTRACE_EEVEE_METHOD_NONE = 0,
+  RAYTRACE_EEVEE_METHOD_SCREEN = 1,
+  /* TODO(fclem): Hardware ray-tracing. */
+  // RAYTRACE_EEVEE_METHOD_HARDWARE = 2,
+} RaytraceEEVEE_Method;
 
 /** #SceneEEVEE::shadow_method */
 enum {
@@ -2828,6 +2872,13 @@ enum {
   SCE_DISPLAY_AA_SAMPLES_11 = 11,
   SCE_DISPLAY_AA_SAMPLES_16 = 16,
   SCE_DISPLAY_AA_SAMPLES_32 = 32,
+};
+
+/** #SceneHydra->export_method */
+
+enum {
+  SCE_HYDRA_EXPORT_HYDRA = 0,
+  SCE_HYDRA_EXPORT_USD = 1,
 };
 
 /** \} */

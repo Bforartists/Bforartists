@@ -48,10 +48,10 @@
 #include "BKE_customdata_file.h"
 #include "BKE_deform.h"
 #include "BKE_main.h"
-#include "BKE_mesh_mapping.h"
-#include "BKE_mesh_remap.h"
-#include "BKE_multires.h"
-#include "BKE_subsurf.h"
+#include "BKE_mesh_mapping.hh"
+#include "BKE_mesh_remap.hh"
+#include "BKE_multires.hh"
+#include "BKE_subsurf.hh"
 
 #include "BLO_read_write.h"
 
@@ -2589,8 +2589,8 @@ int CustomData_get_layer_index_n(const CustomData *data, const eCustomDataType t
   int i = CustomData_get_layer_index(data, type);
 
   if (i != -1) {
-    BLI_assert(i + n < data->totlayer);
-    i = (data->layers[i + n].type == type) ? (i + n) : (-1);
+    /* If the value of n goes past the block of layers of the correct type, return -1. */
+    i = (i + n < data->totlayer && data->layers[i + n].type == type) ? (i + n) : (-1);
   }
 
   return i;
@@ -3501,33 +3501,6 @@ void CustomData_swap_corners(CustomData *data, const int index, const int *corne
       const size_t offset = size_t(index) * typeInfo->size;
 
       typeInfo->swap(POINTER_OFFSET(data->layers[i].data, offset), corner_indices);
-    }
-  }
-}
-
-void CustomData_swap(CustomData *data, const int index_a, const int index_b)
-{
-  char buff_static[256];
-
-  if (index_a == index_b) {
-    return;
-  }
-
-  for (int i = 0; i < data->totlayer; i++) {
-    const LayerTypeInfo *typeInfo = layerType_getInfo(eCustomDataType(data->layers[i].type));
-    const size_t size = typeInfo->size;
-    const size_t offset_a = size * index_a;
-    const size_t offset_b = size * index_b;
-
-    void *buff = size <= sizeof(buff_static) ? buff_static : MEM_mallocN(size, __func__);
-    memcpy(buff, POINTER_OFFSET(data->layers[i].data, offset_a), size);
-    memcpy(POINTER_OFFSET(data->layers[i].data, offset_a),
-           POINTER_OFFSET(data->layers[i].data, offset_b),
-           size);
-    memcpy(POINTER_OFFSET(data->layers[i].data, offset_b), buff, size);
-
-    if (buff != buff_static) {
-      MEM_freeN(buff);
     }
   }
 }
@@ -5213,14 +5186,14 @@ static void blend_read_mdisps(BlendDataReader *reader,
         /* this calculation is only correct for loop mdisps;
          * if loading pre-BMesh face mdisps this will be
          * overwritten with the correct value in
-         * bm_corners_to_loops() */
+         * #bm_corners_to_loops() */
         float gridsize = sqrtf(mdisps[i].totdisp);
         mdisps[i].level = int(logf(gridsize - 1.0f) / float(M_LN2)) + 1;
       }
 
       if (BLO_read_requires_endian_switch(reader) && (mdisps[i].disps)) {
-        /* DNA_struct_switch_endian doesn't do endian swap for (*disps)[] */
-        /* this does swap for data written at write_mdisps() - readfile.c */
+        /* #DNA_struct_switch_endian doesn't do endian swap for `(*disps)[]` */
+        /* this does swap for data written at #write_mdisps() - `readfile.cc`. */
         BLI_endian_switch_float_array(*mdisps[i].disps, mdisps[i].totdisp * 3);
       }
       if (!external && !mdisps[i].disps) {

@@ -11,18 +11,18 @@
 
 #include "DEG_depsgraph.h"
 
-#include "ED_grease_pencil.h"
+#include "ED_grease_pencil.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 
 #include "DNA_scene_types.h"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 
 namespace blender::ed::greasepencil {
 
-void select_layer_channel(GreasePencil *grease_pencil, bke::greasepencil::Layer *layer)
+void select_layer_channel(GreasePencil &grease_pencil, bke::greasepencil::Layer *layer)
 {
   using namespace blender::bke::greasepencil;
 
@@ -30,8 +30,8 @@ void select_layer_channel(GreasePencil *grease_pencil, bke::greasepencil::Layer 
     layer->base.flag |= GP_LAYER_TREE_NODE_SELECT;
   }
 
-  if (grease_pencil->active_layer != layer) {
-    grease_pencil->set_active_layer(layer);
+  if (grease_pencil.active_layer != layer) {
+    grease_pencil.set_active_layer(layer);
     WM_main_add_notifier(NC_GPENCIL | ND_DATA | NA_EDITED, &grease_pencil);
   }
 }
@@ -63,7 +63,7 @@ static int grease_pencil_layer_add_exec(bContext *C, wmOperator *op)
   MEM_SAFE_FREE(new_layer_name);
 
   DEG_id_tag_update(&grease_pencil.id, ID_RECALC_GEOMETRY);
-  WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED, &grease_pencil);
+  WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_SELECTED, &grease_pencil);
 
   return OPERATOR_FINISHED;
 }
@@ -100,7 +100,7 @@ static int grease_pencil_layer_remove_exec(bContext *C, wmOperator * /*op*/)
   grease_pencil.remove_layer(*grease_pencil.get_active_layer_for_write());
 
   DEG_id_tag_update(&grease_pencil.id, ID_RECALC_GEOMETRY);
-  WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED, &grease_pencil);
+  WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_SELECTED, &grease_pencil);
 
   return OPERATOR_FINISHED;
 }

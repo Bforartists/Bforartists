@@ -13,7 +13,7 @@
 #include "BKE_lib_id.h"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_runtime.h"
+#include "BKE_mesh_runtime.hh"
 #include "BKE_volume.h"
 #include "BKE_volume_openvdb.hh"
 #include "BKE_volume_to_mesh.hh"
@@ -21,8 +21,8 @@
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 namespace blender::nodes::node_geo_volume_to_mesh_cc {
 
@@ -154,7 +154,7 @@ static Mesh *create_mesh_from_volume_grids(Span<openvdb::GridBase::ConstPtr> gri
 
 static Mesh *create_mesh_from_volume(GeometrySet &geometry_set, GeoNodeExecParams &params)
 {
-  const Volume *volume = geometry_set.get_volume_for_read();
+  const Volume *volume = geometry_set.get_volume();
   if (volume == nullptr) {
     return nullptr;
   }

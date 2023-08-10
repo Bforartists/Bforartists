@@ -57,27 +57,27 @@
 #include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_runtime.h"
-#include "BKE_multires.h"
+#include "BKE_mesh_runtime.hh"
+#include "BKE_multires.hh"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_scene.h"
-#include "BKE_subdiv_ccg.h"
-#include "BKE_subsurf.h"
+#include "BKE_subdiv_ccg.hh"
+#include "BKE_subsurf.hh"
 #include "BKE_undo_system.h"
 
 /* TODO(sergey): Ideally should be no direct call to such low level things. */
-#include "BKE_subdiv_eval.h"
+#include "BKE_subdiv_eval.hh"
 
 #include "DEG_depsgraph.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_geometry.h"
-#include "ED_object.h"
-#include "ED_sculpt.h"
-#include "ED_undo.h"
+#include "ED_geometry.hh"
+#include "ED_object.hh"
+#include "ED_sculpt.hh"
+#include "ED_undo.hh"
 
 #include "bmesh.h"
 #include "sculpt_intern.hh"
@@ -878,14 +878,13 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   SculptSession *ss = ob->sculpt;
   SubdivCCG *subdiv_ccg = ss->subdiv_ccg;
-  SculptUndoNode *unode;
   bool update = false, rebuild = false, update_mask = false, update_visibility = false;
   bool update_face_sets = false;
   bool need_mask = false;
   bool need_refine_subdiv = false;
   bool clear_automask_cache = false;
 
-  for (unode = static_cast<SculptUndoNode *>(lb->first); unode; unode = unode->next) {
+  LISTBASE_FOREACH (SculptUndoNode *, unode, lb) {
     if (!ELEM(unode->type, SCULPT_UNDO_COLOR, SCULPT_UNDO_MASK)) {
       clear_automask_cache = true;
     }
@@ -933,7 +932,7 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
   char *undo_modified_grids = nullptr;
   bool use_multires_undo = false;
 
-  for (unode = static_cast<SculptUndoNode *>(lb->first); unode; unode = unode->next) {
+  LISTBASE_FOREACH (SculptUndoNode *, unode, lb) {
 
     if (!STREQ(unode->idname, ob->id.name)) {
       continue;
@@ -1016,7 +1015,7 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
   }
 
   if (use_multires_undo) {
-    for (unode = static_cast<SculptUndoNode *>(lb->first); unode; unode = unode->next) {
+    LISTBASE_FOREACH (SculptUndoNode *, unode, lb) {
       if (!STREQ(unode->idname, ob->id.name)) {
         continue;
       }
@@ -1796,10 +1795,9 @@ void SCULPT_undo_push_end(Object *ob)
 void SCULPT_undo_push_end_ex(Object *ob, const bool use_nested_undo)
 {
   UndoSculpt *usculpt = sculpt_undo_get_nodes();
-  SculptUndoNode *unode;
 
   /* We don't need normals in the undo stack. */
-  for (unode = static_cast<SculptUndoNode *>(usculpt->nodes.first); unode; unode = unode->next) {
+  LISTBASE_FOREACH (SculptUndoNode *, unode, &usculpt->nodes) {
     if (unode->no) {
       usculpt->undo_size -= MEM_allocN_len(unode->no);
       MEM_freeN(unode->no);

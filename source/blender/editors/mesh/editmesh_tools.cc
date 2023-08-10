@@ -54,22 +54,22 @@
 #include "RNA_enum_types.h"
 #include "RNA_prototypes.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_mesh.h"
-#include "ED_object.h"
-#include "ED_outliner.h"
-#include "ED_screen.h"
-#include "ED_select_utils.h"
-#include "ED_transform.h"
-#include "ED_uvedit.h"
-#include "ED_view3d.h"
+#include "ED_mesh.hh"
+#include "ED_object.hh"
+#include "ED_outliner.hh"
+#include "ED_screen.hh"
+#include "ED_select_utils.hh"
+#include "ED_transform.hh"
+#include "ED_uvedit.hh"
+#include "ED_view3d.hh"
 
 #include "RE_texture.h"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "mesh_intern.h" /* own include */
 
@@ -1554,12 +1554,11 @@ static bool bm_vert_connect_select_history(BMesh *bm)
 static bool bm_vert_connect_select_history_edge_to_vert_path(BMesh *bm, ListBase *r_selected)
 {
   ListBase selected_orig = {nullptr, nullptr};
-  BMEditSelection *ese;
   int edges_len = 0;
   bool side = false;
 
   /* first check all edges are OK */
-  for (ese = static_cast<BMEditSelection *>(bm->selected.first); ese; ese = ese->next) {
+  LISTBASE_FOREACH (BMEditSelection *, ese, &bm->selected) {
     if (ese->htype == BM_EDGE) {
       edges_len += 1;
     }
@@ -1575,7 +1574,7 @@ static bool bm_vert_connect_select_history_edge_to_vert_path(BMesh *bm, ListBase
   SWAP(ListBase, bm->selected, selected_orig);
 
   /* convert edge selection into 2 ordered loops (where the first edge ends up in the middle) */
-  for (ese = static_cast<BMEditSelection *>(selected_orig.first); ese; ese = ese->next) {
+  LISTBASE_FOREACH (BMEditSelection *, ese, &selected_orig) {
     BMEdge *e_curr = (BMEdge *)ese->ele;
     BMEdge *e_prev = ese->prev ? (BMEdge *)ese->prev->ele : nullptr;
     BMLoop *l_curr;
@@ -5161,9 +5160,9 @@ static bool edbm_fill_grid_prepare(BMesh *bm, int offset, int *span_p, const boo
     }
     else {
       /* find the vertex with the best angle (a corner vertex) */
-      LinkData *v_link, *v_link_best = nullptr;
+      LinkData *v_link_best = nullptr;
       float angle_best = -1.0f;
-      for (v_link = static_cast<LinkData *>(verts->first); v_link; v_link = v_link->next) {
+      LISTBASE_FOREACH (LinkData *, v_link, verts) {
         const float angle = edbm_fill_grid_vert_tag_angle(static_cast<BMVert *>(v_link->data));
         if ((angle > angle_best) || (v_link_best == nullptr)) {
           angle_best = angle;

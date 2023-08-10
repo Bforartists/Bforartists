@@ -172,7 +172,7 @@ void CustomData_copy_layout(const struct CustomData *source,
                             eCDAllocType alloctype,
                             int totelem);
 
-/* BMESH_TODO, not really a public function but readfile.c needs it */
+/* BMESH_TODO, not really a public function but `readfile.cc` needs it. */
 void CustomData_update_typemap(struct CustomData *data);
 
 /**
@@ -428,11 +428,6 @@ void CustomData_bmesh_interp(struct CustomData *data,
  * \param corner_indices: A mapping 'new_index -> old_index' of sub-item data.
  */
 void CustomData_swap_corners(struct CustomData *data, int index, const int *corner_indices);
-
-/**
- * Swap two items of given custom data, in all available layers.
- */
-void CustomData_swap(struct CustomData *data, int index_a, int index_b);
 
 /**
  * Retrieve a pointer to an element of the active layer of the given \a type, chosen by the

@@ -32,7 +32,6 @@ set(INC
   ../../../intern/memutil
   ../../../intern/mikktspace
   ../../../intern/opensubdiv
-  ../../../extern/curve_fit_nd
   ../../../extern/fmtlib/include
 
   # RNA_prototypes.h
@@ -202,6 +201,7 @@ set(SRC
   intern/mesh_debug.cc
   intern/mesh_evaluate.cc
   intern/mesh_fair.cc
+  intern/mesh_flip_faces.cc
   intern/mesh_iterators.cc
   intern/mesh_legacy_convert.cc
   intern/mesh_mapping.cc
@@ -235,6 +235,7 @@ set(SRC
   intern/node_tree_anonymous_attributes.cc
   intern/node_tree_dot_export.cc
   intern/node_tree_field_inferencing.cc
+  intern/node_tree_interface.cc
   intern/node_tree_update.cc
   intern/node_tree_zones.cc
   intern/object.cc
@@ -343,7 +344,7 @@ set(SRC
   BKE_blendfile_link_append.h
   BKE_boids.h
   BKE_bpath.h
-  BKE_brush.h
+  BKE_brush.hh
   BKE_bvhutils.h
   BKE_cachefile.h
   BKE_callbacks.h
@@ -415,7 +416,7 @@ set(SRC
   BKE_lattice.h
   BKE_layer.h
   BKE_lib_id.h
-  BKE_lib_override.h
+  BKE_lib_override.hh
   BKE_lib_query.h
   BKE_lib_remap.h
   BKE_library.h
@@ -433,27 +434,28 @@ set(SRC
   BKE_mesh.h
   BKE_mesh.hh
   BKE_mesh_boolean_convert.hh
-  BKE_mesh_fair.h
-  BKE_mesh_iterators.h
-  BKE_mesh_legacy_convert.h
-  BKE_mesh_mapping.h
-  BKE_mesh_mirror.h
-  BKE_mesh_remap.h
-  BKE_mesh_remesh_voxel.h
-  BKE_mesh_runtime.h
+  BKE_mesh_fair.hh
+  BKE_mesh_iterators.hh
+  BKE_mesh_legacy_convert.hh
+  BKE_mesh_mapping.hh
+  BKE_mesh_mirror.hh
+  BKE_mesh_remap.hh
+  BKE_mesh_remesh_voxel.hh
+  BKE_mesh_runtime.hh
   BKE_mesh_sample.hh
-  BKE_mesh_tangent.h
-  BKE_mesh_types.h
-  BKE_mesh_wrapper.h
+  BKE_mesh_tangent.hh
+  BKE_mesh_types.hh
+  BKE_mesh_wrapper.hh
   BKE_modifier.h
   BKE_movieclip.h
-  BKE_multires.h
+  BKE_multires.hh
   BKE_nla.h
   BKE_node.h
   BKE_node.hh
   BKE_node_runtime.hh
   BKE_node_tree_anonymous_attributes.hh
   BKE_node_tree_dot_export.hh
+  BKE_node_tree_interface.hh
   BKE_node_tree_update.h
   BKE_node_tree_zones.hh
   BKE_object.h
@@ -461,7 +463,7 @@ set(SRC
   BKE_ocean.h
   BKE_outliner_treehash.hh
   BKE_packedFile.h
-  BKE_paint.h
+  BKE_paint.hh
   BKE_particle.h
   BKE_pbvh.h
   BKE_pbvh_api.hh
@@ -483,15 +485,15 @@ set(SRC
   BKE_sound.h
   BKE_speaker.h
   BKE_studiolight.h
-  BKE_subdiv.h
-  BKE_subdiv_ccg.h
-  BKE_subdiv_deform.h
-  BKE_subdiv_eval.h
+  BKE_subdiv.hh
+  BKE_subdiv_ccg.hh
+  BKE_subdiv_deform.hh
+  BKE_subdiv_eval.hh
   BKE_subdiv_foreach.hh
   BKE_subdiv_mesh.hh
-  BKE_subdiv_modifier.h
-  BKE_subdiv_topology.h
-  BKE_subsurf.h
+  BKE_subdiv_modifier.hh
+  BKE_subdiv_topology.hh
+  BKE_subsurf.hh
   BKE_text.h
   BKE_text_suggestions.h
   BKE_texture.h
@@ -520,15 +522,15 @@ set(SRC
   intern/attribute_access_intern.hh
   intern/data_transfer_intern.h
   intern/lib_intern.h
-  intern/multires_inline.h
+  intern/multires_inline.hh
   intern/multires_reshape.hh
   intern/multires_unsubdivide.hh
   intern/ocean_intern.h
   intern/pbvh_intern.hh
   intern/pbvh_pixels_copy.hh
   intern/pbvh_uv_islands.hh
-  intern/subdiv_converter.h
-  intern/subdiv_inline.h
+  intern/subdiv_converter.hh
+  intern/subdiv_inline.hh
 )
 
 set(LIB
@@ -541,6 +543,7 @@ set(LIB
   bf_depsgraph
   PRIVATE bf::dna
   bf_draw
+  PRIVATE bf::extern::curve_fit_nd
   bf_functions
   bf_gpencil_modifiers_legacy
   bf_gpu

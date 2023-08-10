@@ -23,7 +23,7 @@
 #include "BKE_mesh.hh"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_particle.h"
 #include "BKE_pbvh_api.hh"
 #include "BKE_pointcache.h"
@@ -33,14 +33,14 @@
 
 #include "DEG_depsgraph.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_undo.h"
+#include "ED_undo.hh"
 #include "sculpt_intern.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "bmesh.h"
 #include "bmesh_tools.h"

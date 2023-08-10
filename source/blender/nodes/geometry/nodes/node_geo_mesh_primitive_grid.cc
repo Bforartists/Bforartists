@@ -10,8 +10,8 @@
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -206,7 +206,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   Mesh *mesh = create_grid_mesh(verts_x, verts_y, size_x, size_y, uv_map_id.get());
   BKE_id_material_eval_ensure_default_slot(&mesh->id);
 
-  params.set_output("Mesh", GeometrySet::create_with_mesh(mesh));
+  params.set_output("Mesh", GeometrySet::from_mesh(mesh));
 }
 
 }  // namespace blender::nodes::node_geo_mesh_primitive_grid_cc

@@ -38,17 +38,17 @@
 #include "DEG_depsgraph_build.h"
 #include "DEG_depsgraph_query.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_curve.h"
-#include "ED_object.h"
-#include "ED_outliner.h"
-#include "ED_screen.h"
-#include "ED_select_utils.h"
-#include "ED_transform.h"
-#include "ED_transform_snap_object_context.h"
-#include "ED_view3d.h"
+#include "ED_curve.hh"
+#include "ED_object.hh"
+#include "ED_outliner.hh"
+#include "ED_screen.hh"
+#include "ED_select_utils.hh"
+#include "ED_transform.hh"
+#include "ED_transform_snap_object_context.hh"
+#include "ED_view3d.hh"
 
 #include "curve_intern.h"
 
@@ -56,8 +56,8 @@ extern "C" {
 #include "curve_fit_nd.h"
 }
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -4569,7 +4569,7 @@ static int make_segment_exec(bContext *C, wmOperator *op)
     }
 
     /* find both nurbs and points, nu1 will be put behind nu2 */
-    for (nu = static_cast<Nurb *>(nubase->first); nu; nu = nu->next) {
+    LISTBASE_FOREACH (Nurb *, nu, nubase) {
       if (nu->pntsu == 1) {
         nu->flagu &= ~CU_NURB_CYCLIC;
       }

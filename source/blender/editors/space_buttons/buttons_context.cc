@@ -35,21 +35,21 @@
 #include "BKE_material.h"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_particle.h"
 #include "BKE_screen.h"
 
 #include "RNA_access.h"
 #include "RNA_prototypes.h"
 
-#include "ED_buttons.h"
-#include "ED_physics.h"
-#include "ED_screen.h"
+#include "ED_buttons.hh"
+#include "ED_physics.hh"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 
 #include "buttons_intern.h" /* own include */
 

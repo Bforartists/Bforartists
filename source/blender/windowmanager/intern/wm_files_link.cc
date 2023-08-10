@@ -45,7 +45,7 @@
 #include "BKE_key.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
-#include "BKE_lib_override.h"
+#include "BKE_lib_override.hh"
 #include "BKE_lib_query.h"
 #include "BKE_lib_remap.h"
 #include "BKE_main.h"
@@ -63,15 +63,15 @@
 #include "IMB_colormanagement.h"
 
 #include "ED_datafiles.h"
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "wm_files.h"
+#include "wm_files.hh"
 
 static CLG_LogRef LOG = {"wm.files_link"};
 

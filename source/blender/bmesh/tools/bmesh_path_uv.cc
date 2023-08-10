@@ -30,7 +30,7 @@
 /**
  * Use skip options when we want to start measuring from a boundary.
  *
- * See #step_cost_3_v3_ex in bmesh_path.c which follows the same logic.
+ * See #step_cost_3_v3_ex in `bmesh_path.cc` which follows the same logic.
  */
 static float step_cost_3_v2_ex(
     const float v1[2], const float v2[2], const float v3[2], bool skip_12, bool skip_23)
@@ -126,7 +126,7 @@ LinkNode *BM_mesh_calc_path_uv_vert(BMesh *bm,
   BMFace *f;
 
   /* NOTE: would pass BM_EDGE except we are looping over all faces anyway. */
-  // BM_mesh_elem_index_ensure(bm, BM_LOOP); // NOT NEEDED FOR FACETAG
+  // BM_mesh_elem_index_ensure(bm, BM_LOOP); /* NOTE: not needed for facetag. */
 
   BM_ITER_MESH (f, &viter, bm, BM_FACES_OF_MESH) {
     BMLoop *l_first = BM_FACE_FIRST_LOOP(f);
@@ -556,7 +556,7 @@ LinkNode *BM_mesh_calc_path_uv_face(BMesh *bm,
   const void *const f_endpoints[2] = {f_src, f_dst};
 
   /* NOTE: would pass BM_EDGE except we are looping over all faces anyway. */
-  // BM_mesh_elem_index_ensure(bm, BM_LOOP); // NOT NEEDED FOR FACETAG
+  // BM_mesh_elem_index_ensure(bm, BM_LOOP); /* NOTE: not needed for facetag. */
 
   {
     BMFace *f;

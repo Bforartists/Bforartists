@@ -18,25 +18,25 @@
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_material_types.h"
 
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_colortools.h"
 #include "BKE_context.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_material.h"
 #include "BKE_report.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 #include "RNA_prototypes.h"
 
-#include "UI_view2d.h"
+#include "UI_view2d.hh"
 
-#include "ED_gpencil_legacy.h"
-#include "ED_screen.h"
-#include "ED_view3d.h"
+#include "ED_gpencil_legacy.hh"
+#include "ED_screen.hh"
+#include "ED_view3d.hh"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
@@ -1397,7 +1397,7 @@ static int gpencil_vertexpaint_brush_modal(bContext *C, wmOperator *op, const wm
         return OPERATOR_PASS_THROUGH;
 
       /* Camera/View Gizmo's - Allowed. */
-      /* (See rationale in gpencil_paint.c -> gpencil_draw_modal()) */
+      /* See rationale in `gpencil_paint.cc`, #gpencil_draw_modal(). */
       case EVT_PAD0:
       case EVT_PAD1:
       case EVT_PAD2:

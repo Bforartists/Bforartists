@@ -32,19 +32,19 @@
 
 #include "DEG_depsgraph_query.h"
 
-#include "ED_armature.h"
-#include "ED_view3d.h"
+#include "ED_armature.hh"
+#include "ED_view3d.hh"
 
 #include "ANIM_bone_collections.h"
 
-#include "UI_resources.h"
+#include "UI_resources.hh"
 
 #include "draw_common.h"
 #include "draw_manager_text.h"
 
 #include "overlay_private.hh"
 
-#include "draw_cache_impl.h"
+#include "draw_cache_impl.hh"
 
 #define PT_DEFAULT_RAD 0.05f /* radius of the point batch. */
 
@@ -1157,6 +1157,8 @@ static void get_pchan_color_wire(const ThemeWireColor *bcolor,
 {
   const bool draw_active = boneflag & BONE_DRAW_ACTIVE;
   const bool draw_selected = boneflag & BONE_SELECTED;
+  const bool is_edit = draw_mode == ARM_DRAW_MODE_EDIT;
+  float4 wire_color;
 
   if (bcolor) {
     if (draw_active && draw_selected) {
@@ -1174,19 +1176,19 @@ static void get_pchan_color_wire(const ThemeWireColor *bcolor,
   }
   else {
     if (draw_active && draw_selected) {
-      copy_v4_v4(r_color, G_draw.block.color_bone_pose_active);
+      wire_color = is_edit ? G_draw.block.color_bone_active : G_draw.block.color_bone_pose_active;
     }
     else if (draw_active) {
-      copy_v4_v4(r_color, G_draw.block.color_bone_pose_active_unsel);
+      wire_color = is_edit ? G_draw.block.color_bone_active_unsel :
+                             G_draw.block.color_bone_pose_active_unsel;
     }
     else if (draw_selected) {
-      copy_v4_v4(r_color, G_draw.block.color_bone_pose);
+      wire_color = is_edit ? G_draw.block.color_bone_select : G_draw.block.color_bone_pose;
     }
     else {
-      const auto wire_color = (draw_mode == ARM_DRAW_MODE_EDIT) ? G_draw.block.color_wire_edit :
-                                                                  G_draw.block.color_wire;
-      copy_v4_v4(r_color, wire_color);
+      wire_color = is_edit ? G_draw.block.color_wire_edit : G_draw.block.color_wire;
     }
+    copy_v4_v4(r_color, wire_color);
   }
 }
 
@@ -1404,13 +1406,11 @@ static void draw_bone_update_disp_matrix_default(UnifiedBonePtr bone)
 /* compute connected child pointer for B-Bone drawing */
 static void edbo_compute_bbone_child(bArmature *arm)
 {
-  EditBone *eBone;
-
-  for (eBone = static_cast<EditBone *>(arm->edbo->first); eBone; eBone = eBone->next) {
+  LISTBASE_FOREACH (EditBone *, eBone, arm->edbo) {
     eBone->bbone_child = nullptr;
   }
 
-  for (eBone = static_cast<EditBone *>(arm->edbo->first); eBone; eBone = eBone->next) {
+  LISTBASE_FOREACH (EditBone *, eBone, arm->edbo) {
     if (eBone->parent && (eBone->flag & BONE_CONNECTED)) {
       eBone->parent->bbone_child = eBone;
     }
@@ -1798,12 +1798,11 @@ static void pchan_draw_ik_lines(const ArmatureDrawContext *ctx,
                                 const bPoseChannel *pchan,
                                 const bool only_temp)
 {
-  const bConstraint *con;
   const bPoseChannel *parchan;
   const float *line_start = nullptr, *line_end = nullptr;
   const ePchan_ConstFlag constflag = ePchan_ConstFlag(pchan->constflag);
 
-  for (con = static_cast<bConstraint *>(pchan->constraints.first); con; con = con->next) {
+  LISTBASE_FOREACH (bConstraint *, con, &pchan->constraints) {
     if (con->enforce == 0.0f) {
       continue;
     }
@@ -2012,10 +2011,10 @@ static bool pchan_culling_test_with_radius_scale(const DRWView *view,
 /** \name Bone Drawing Strategies
  *
  * Bone drawing uses a strategy pattern for the different armature drawing modes.
- *
  * \{ */
 
-/** Bone drawing strategy for unknown draw types.
+/**
+ * Bone drawing strategy for unknown draw types.
  * This doesn't do anything, except call the default matrix update function.
  */
 class ArmatureBoneDrawStrategyEmpty : public ArmatureBoneDrawStrategy {
@@ -2491,7 +2490,8 @@ class ArmatureBoneDrawStrategyWire : public ArmatureBoneDrawStrategy {
 };
 
 namespace {
-/** Armature drawing strategies.
+/**
+ * Armature drawing strategies.
  *
  * Declared statically here because they cost almost no memory (no fields in any
  * of the structs, so just the virtual function table), and this makes it very

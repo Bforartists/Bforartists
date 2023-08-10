@@ -503,7 +503,7 @@ void OCIOImpl::colorSpaceIsBuiltin(OCIO_ConstConfigRcPtr *config_,
     if (!compare_floats(v, out_v, 1e-6f, 64)) {
       is_scene_linear = false;
     }
-    if (!compare_floats(srgb_to_linearrgb(v), out_v, 1e-6f, 64)) {
+    if (!compare_floats(srgb_to_linearrgb(v), out_v, 1e-4f, 64)) {
       is_srgb = false;
     }
   }
@@ -588,6 +588,11 @@ void OCIOImpl::cpuProcessorApply_predivide(OCIO_ConstCPUProcessorRcPtr *cpu_proc
   catch (Exception &exception) {
     OCIO_reportException(exception);
   }
+}
+
+bool OCIOImpl::cpuProcessorIsNoOp(OCIO_ConstCPUProcessorRcPtr *cpu_processor)
+{
+  return (*(ConstCPUProcessorRcPtr *)cpu_processor)->isNoOp();
 }
 
 void OCIOImpl::cpuProcessorApplyRGB(OCIO_ConstCPUProcessorRcPtr *cpu_processor, float *pixel)

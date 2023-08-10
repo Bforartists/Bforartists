@@ -27,17 +27,17 @@
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_gpencil_legacy.h"
+#include "ED_gpencil_legacy.hh"
 
 #include "DEG_depsgraph.h"
 
 #include "gpencil_intern.h"
 
-#include "UI_interface.h" /*bfa - for the icons*/
-#include "UI_resources.h" /*bfa - for the icons*/
+#include "UI_interface.hh" /*bfa - for the icons*/
+#include "UI_resources.hh" /*bfa - for the icons*/
 
 /* -------------------------------------------------------------------- */
 /** \name Enter Edit-Mode
