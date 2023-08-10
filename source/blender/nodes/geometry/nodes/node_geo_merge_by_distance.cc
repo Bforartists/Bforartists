@@ -8,8 +8,8 @@
 #include "GEO_mesh_merge_by_distance.hh"
 #include "GEO_point_merge_by_distance.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -101,14 +101,14 @@ static void node_geo_exec(GeoNodeExecParams params)
   const float merge_distance = params.extract_input<float>("Distance");
 
   geometry_set.modify_geometry_sets([&](GeometrySet &geometry_set) {
-    if (const PointCloud *pointcloud = geometry_set.get_pointcloud_for_read()) {
+    if (const PointCloud *pointcloud = geometry_set.get_pointcloud()) {
       PointCloud *result = pointcloud_merge_by_distance(
           *pointcloud, merge_distance, selection, params.get_output_propagation_info("Geometry"));
       if (result) {
         geometry_set.replace_pointcloud(result);
       }
     }
-    if (const Mesh *mesh = geometry_set.get_mesh_for_read()) {
+    if (const Mesh *mesh = geometry_set.get_mesh()) {
       std::optional<Mesh *> result;
       switch (mode) {
         case GEO_NODE_MERGE_BY_DISTANCE_MODE_ALL:

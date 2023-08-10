@@ -25,7 +25,7 @@
 
 #include "BLT_translation.h"
 
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_colortools.h"
 #include "BKE_context.h"
 #include "BKE_customdata.h"
@@ -33,9 +33,9 @@
 #include "BKE_layer.h"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_runtime.h"
+#include "BKE_mesh_runtime.hh"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_report.h"
 
 #include "DEG_depsgraph.h"
@@ -56,22 +56,22 @@
 
 #include "RE_texture.h"
 
-#include "ED_image.h"
-#include "ED_screen.h"
-#include "ED_view3d.h"
+#include "ED_image.hh"
+#include "ED_screen.hh"
+#include "ED_view3d.hh"
 
 #include "BLI_sys_types.h"
-#include "ED_mesh.h" /* for face mask functions */
+#include "ED_mesh.hh" /* for face mask functions */
 
 #include "DRW_select_buffer.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "paint_intern.hh"
 
 #include "BLI_string.h"      /*bfa - needed for BLI_strdup */
-#include "ED_select_utils.h" /*bfa - needed to retreive SEL_SELECT */
+#include "ED_select_utils.hh" /*bfa - needed to retreive SEL_SELECT */
 
 bool paint_convert_bb_to_rect(rcti *rect,
                               const float bb_min[3],

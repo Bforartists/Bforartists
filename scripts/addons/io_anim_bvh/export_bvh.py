@@ -77,7 +77,12 @@ def write_armature(
         if (bone.use_connect or root_transform_only) and bone.parent:
             file.write("%s\tCHANNELS 3 %srotation %srotation %srotation\n" % (indent_str, *rot_order_str))
         else:
-            file.write("%s\tCHANNELS 6 Xposition Yposition Zposition %srotation %srotation %srotation\n" % (indent_str, *rot_order_str))
+            file.write(
+                "%s\tCHANNELS 6 Xposition Yposition Zposition %srotation %srotation %srotation\n" % (
+                    indent_str,
+                    *rot_order_str,
+                )
+            )
 
         if my_children:
             # store the location for the children
@@ -250,7 +255,13 @@ def write_armature(
             if not dbone.skip_position:
                 file.write("%.6f %.6f %.6f " % (loc * global_scale)[:])
 
-            file.write("%.6f %.6f %.6f " % (degrees(rot[dbone.rot_order[0]]), degrees(rot[dbone.rot_order[1]]), degrees(rot[dbone.rot_order[2]])))
+            file.write(
+                "%.6f %.6f %.6f " % (
+                    degrees(rot[dbone.rot_order[0]]),
+                    degrees(rot[dbone.rot_order[1]]),
+                    degrees(rot[dbone.rot_order[2]]),
+                )
+            )
 
             dbone.prev_euler = rot
 

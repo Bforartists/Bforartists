@@ -18,6 +18,7 @@
 
 #include "BLI_math_base.h"
 #include "BLI_math_rotation.h"
+#include "BLI_string_utf8.h"
 #include "BLI_string_utf8_symbols.h"
 #include "BLI_utildefines.h"
 #ifdef WIN32
@@ -28,6 +29,7 @@
 
 #include "BKE_addon.h"
 #include "BKE_appdir.h"
+#include "BKE_callbacks.h"
 #include "BKE_sound.h"
 #include "BKE_studiolight.h"
 
@@ -37,12 +39,12 @@
 
 #include "GPU_platform.h"
 
-#include "UI_interface_icons.h"
+#include "UI_interface_icons.hh"
 
 #include "rna_internal.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "BLT_lang.h"
 
@@ -166,9 +168,9 @@ static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
 #  include "BKE_idprop.h"
 #  include "BKE_image.h"
 #  include "BKE_main.h"
-#  include "BKE_mesh_runtime.h"
+#  include "BKE_mesh_runtime.hh"
 #  include "BKE_object.h"
-#  include "BKE_paint.h"
+#  include "BKE_paint.hh"
 #  include "BKE_preferences.h"
 #  include "BKE_screen.h"
 
@@ -185,7 +187,7 @@ static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
 #  include "MEM_CacheLimiterC-Api.h"
 #  include "MEM_guardedalloc.h"
 
-#  include "UI_interface.h"
+#  include "UI_interface.hh"
 
 #  ifdef WITH_SDL_DYNLOAD
 #    include "sdlew.h"
@@ -292,6 +294,16 @@ static void rna_userdef_screen_update_header_default(Main *bmain, Scene *scene, 
   USERDEF_TAG_DIRTY;
 }
 
+static void rna_PreferencesExperimental_use_extension_repos_set(PointerRNA * /*ptr*/, bool value)
+{
+  Main *bmain = G.main;
+  if (U.experimental.use_extension_repos != value) {
+    BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
+    U.experimental.use_extension_repos = value;
+    BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
+  }
+}
+
 static void rna_userdef_font_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA * /*ptr*/)
 {
   BLF_cache_clear();
@@ -323,6 +335,30 @@ static void rna_userdef_asset_library_path_set(PointerRNA *ptr, const char *valu
 {
   bUserAssetLibrary *library = (bUserAssetLibrary *)ptr->data;
   BKE_preferences_asset_library_path_set(library, value);
+}
+
+static void rna_userdef_extension_repo_name_set(PointerRNA *ptr, const char *value)
+{
+  bUserExtensionRepo *repo = (bUserExtensionRepo *)ptr->data;
+  BKE_preferences_extension_repo_name_set(&U, repo, value);
+}
+
+static void rna_userdef_extension_repo_module_set(PointerRNA *ptr, const char *value)
+{
+  Main *bmain = G.main;
+  bUserExtensionRepo *repo = (bUserExtensionRepo *)ptr->data;
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
+  BKE_preferences_extension_repo_module_set(&U, repo, value);
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
+}
+
+static void rna_userdef_extension_repo_directory_set(PointerRNA *ptr, const char *value)
+{
+  Main *bmain = G.main;
+  bUserExtensionRepo *repo = (bUserExtensionRepo *)ptr->data;
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
+  BKE_preferences_extension_repo_path_set(repo, value);
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
 }
 
 static void rna_userdef_script_autoexec_update(Main * /*bmain*/,
@@ -814,6 +850,35 @@ static int rna_lang_enum_properties_get_no_international(PointerRNA * /*ptr*/)
   return 0;
 }
 #  endif
+
+static void rna_Addon_module_set(PointerRNA *ptr, const char *value)
+{
+  bAddon *addon = (bAddon *)ptr->data;
+  size_t module_len = STRNCPY_UTF8_RLEN(addon->module, value);
+
+  /* Reserve half of `bAddon::module` for a package component.
+   * Ensure the trailing component is less than half `sizeof(bAddon::module)`.
+   * This is needed because the size of the add-on name should never work on not depending on
+   * the user defined module prefix. Trimming off the trailing characters is a silent failure
+   * however there isn't a practical way to notify the user an over long name was used.
+   * In practice this is something only add-on developers should run into,
+   * so it's more of a paper cut for developers. */
+  const size_t submodule_len_limit = sizeof(bAddon::module) / 2;
+  if (UNLIKELY(module_len >= submodule_len_limit)) {
+    char *submodule_end = addon->module + module_len;
+    char *submodule_beg = addon->module;
+    for (size_t i = module_len - 1; i > 0; i--) {
+      if (addon->module[i] == '.') {
+        submodule_beg = addon->module + i;
+        break;
+      }
+    }
+    if ((submodule_end - submodule_beg) > submodule_len_limit) {
+      submodule_beg[submodule_len_limit] = '\0';
+      BLI_str_utf8_invalid_strip(submodule_beg, submodule_len_limit);
+    }
+  }
+}
 
 static IDProperty **rna_AddonPref_idprops(PointerRNA *ptr)
 {
@@ -1946,6 +2011,34 @@ static void rna_def_userdef_theme_spaces_list_main(StructRNA *srna)
   RNA_def_property_ui_text(prop, "Theme Space List", "Settings for space list");
 }
 
+static void rna_def_userdef_theme_asset_shelf(BlenderRNA *brna)
+{
+  StructRNA *srna;
+  PropertyRNA *prop;
+
+  srna = RNA_def_struct(brna, "ThemeAssetShelf", nullptr);
+  RNA_def_struct_clear_flag(srna, STRUCT_UNDO);
+  RNA_def_struct_ui_text(srna, "Theme Asset Shelf Color", "Theme settings for asset shelves");
+
+  prop = RNA_def_property(srna, "header_back", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_ui_text(prop, "Header Background", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "back", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_ui_text(prop, "Main Region Background", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+}
+
+static void rna_def_userdef_theme_spaces_asset_shelf_main(StructRNA *srna)
+{
+  PropertyRNA *prop = RNA_def_property(srna, "asset_shelf", PROP_POINTER, PROP_NONE);
+  RNA_def_property_flag(prop, PROP_NEVER_NULL);
+  RNA_def_property_struct_type(prop, "ThemeAssetShelf");
+  RNA_def_property_ui_text(prop, "Asset Shelf", "Settings for asset shelf");
+}
+
 static void rna_def_userdef_theme_spaces_vertex(StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -2457,6 +2550,8 @@ static void rna_def_userdef_theme_space_view3d(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Object Origin Size", "Diameter in pixels for object/light origin display");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  rna_def_userdef_theme_spaces_asset_shelf_main(srna);
 }
 
 static void rna_def_userdef_theme_space_graph(BlenderRNA *brna)
@@ -3270,6 +3365,12 @@ static void rna_def_userdef_theme_space_seq(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, nullptr, "effect");
   RNA_def_property_array(prop, 3);
   RNA_def_property_ui_text(prop, "Effect Strip", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "transition_strip", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, nullptr, "transition");
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "Transition Strip", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "color_strip", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -4171,6 +4272,7 @@ static void rna_def_userdef_addon(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "module", PROP_STRING, PROP_NONE);
   RNA_def_property_ui_text(prop, "Module", "Module name");
+  RNA_def_property_string_funcs(prop, nullptr, nullptr, "rna_Addon_module_set");
   RNA_def_struct_name_property(srna, prop);
 
   /* Collection active property */
@@ -4384,6 +4486,7 @@ static void rna_def_userdef_dothemes(BlenderRNA *brna)
   rna_def_userdef_theme_space_generic(brna);
   rna_def_userdef_theme_space_gradient(brna);
   rna_def_userdef_theme_space_list_generic(brna);
+  rna_def_userdef_theme_asset_shelf(brna);
 
   rna_def_userdef_theme_space_view3d(brna);
   rna_def_userdef_theme_space_graph(brna);
@@ -5417,6 +5520,15 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
       prop, "Auto-offset Margin", "Minimum distance between nodes for Auto-offsetting nodes");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
+  prop = RNA_def_property(srna, "node_preview_resolution", PROP_INT, PROP_PIXEL);
+  RNA_def_property_int_sdna(prop, nullptr, "node_preview_res");
+  RNA_def_property_range(prop, 50, 250);
+  RNA_def_property_ui_text(prop,
+                           "Node Preview Resolution",
+                           "Resolution used for Shader node previews (should be changed for "
+                           "performance convenience)");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
   /* cursor */
   prop = RNA_def_property(srna, "use_cursor_lock_adjust", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "uiflag", USER_LOCK_CURSOR_ADJUST);
@@ -6308,6 +6420,52 @@ static void rna_def_userdef_filepaths_asset_library(BlenderRNA *brna)
       prop, "Relative Path", "Use relative path when linking assets from this asset library");
 }
 
+static void rna_def_userdef_filepaths_extension_repo(BlenderRNA *brna)
+{
+  StructRNA *srna;
+  PropertyRNA *prop;
+
+  srna = RNA_def_struct(brna, "UserExtensionRepo", nullptr);
+  RNA_def_struct_sdna(srna, "bUserExtensionRepo");
+  RNA_def_struct_clear_flag(srna, STRUCT_UNDO);
+  RNA_def_struct_ui_text(srna, "Extension Repo", "Settings to define an extension repository");
+
+  prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
+  RNA_def_property_ui_text(prop, "Name", "Unique repository name");
+  RNA_def_property_string_funcs(prop, nullptr, nullptr, "rna_userdef_extension_repo_name_set");
+  RNA_def_struct_name_property(srna, prop);
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
+  prop = RNA_def_property(srna, "module", PROP_STRING, PROP_NONE);
+  RNA_def_property_ui_text(prop, "Module", "Unique module identifier");
+  RNA_def_property_string_funcs(prop, nullptr, nullptr, "rna_userdef_extension_repo_module_set");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
+  prop = RNA_def_property(srna, "directory", PROP_STRING, PROP_DIRPATH);
+  RNA_def_property_string_sdna(prop, nullptr, "dirpath");
+  RNA_def_property_ui_text(prop, "Local Directory", "The local directory containing extensions");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_FILEBROWSER);
+  RNA_def_property_string_funcs(
+      prop, nullptr, nullptr, "rna_userdef_extension_repo_directory_set");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
+  prop = RNA_def_property(srna, "remote_path", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_sdna(prop, nullptr, "remote_path");
+  RNA_def_property_ui_text(prop, "Remote Path", "Remote URL or path for extensions repository");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_FILEBROWSER);
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
+  /* NOTE(@ideasman42): this is intended to be used by a package manger component
+   * which is not yet integrated. */
+  prop = RNA_def_property(srna, "use_cache", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", USER_EXTENSION_FLAG_NO_CACHE);
+  RNA_def_property_ui_text(
+      prop,
+      "Local Cache",
+      "Store packages in local cache, "
+      "otherwise downloaded package files are immediately deleted after installation");
+}
+
 static void rna_def_userdef_script_directory(BlenderRNA *brna)
 {
   StructRNA *srna = RNA_def_struct(brna, "ScriptDirectory", nullptr);
@@ -6584,6 +6742,18 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Active Asset Library",
                            "Index of the asset library being edited in the Preferences UI");
+
+  rna_def_userdef_filepaths_extension_repo(brna);
+
+  prop = RNA_def_property(srna, "extension_repos", PROP_COLLECTION, PROP_NONE);
+  RNA_def_property_struct_type(prop, "UserExtensionRepo");
+  RNA_def_property_ui_text(prop, "Extension Repos", "");
+
+  prop = RNA_def_property(srna, "active_extension_repo", PROP_INT, PROP_NONE);
+  RNA_def_property_ui_text(prop,
+                           "Active Extension Repo",
+                           "Index of the extensions repo being edited in the Preferences UI");
+
   /* Tag for UI-only update, meaning preferences will not be tagged as changed. */
   RNA_def_property_update(prop, 0, "rna_userdef_ui_update");
 }
@@ -6667,6 +6837,11 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Cycles Debug", "Enable Cycles debugging options for developers");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
+  prop = RNA_def_property(srna, "use_eevee_debug", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "use_eevee_debug", 1);
+  RNA_def_property_ui_text(prop, "EEVEE Debug", "Enable EEVEE debugging options for developers");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
   prop = RNA_def_property(srna, "use_sculpt_tools_tilt", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "use_sculpt_tools_tilt", 1);
   RNA_def_property_ui_text(
@@ -6741,16 +6916,35 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "New Volume Nodes", "Enables visibility of the new Volume nodes in the UI");
 
-  prop = RNA_def_property(srna, "use_node_panels", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_ui_text(
-      prop, "Node Panels", "Enable node panels UI for grouping sockets in node groups");
-
   prop = RNA_def_property(srna, "use_rotation_socket", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(prop, "Rotation Socket", "Enable the new rotation node socket type");
 
   prop = RNA_def_property(srna, "use_node_group_operators", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(
       prop, "Node Group Operators", "Enable using geometry nodes as edit operators");
+
+  prop = RNA_def_property(srna, "use_asset_shelf", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_ui_text(prop,
+                           "Asset Shelf",
+                           "Enables the asset shelf regions in the 3D view. Used by the Pose "
+                           "Library add-on in Pose Mode only");
+  RNA_def_property_update(prop, 0, "rna_userdef_ui_update");
+
+  prop = RNA_def_property(srna, "use_shader_node_previews", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_ui_text(
+      prop, "Shader Node Previews", "Enables previews in the shader node editor");
+  RNA_def_property_update(prop, 0, "rna_userdef_ui_update");
+
+  prop = RNA_def_property(srna, "use_extension_repos", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_ui_text(
+      prop,
+      "Extension Repositories",
+      "Enables extension repositories, "
+      "accessible from the \"Extension Repositories\" panel in the "
+      "\"File Paths\" section of the preferences. "
+      "These paths are exposed as add-ons, package management is not yet integrated");
+  RNA_def_property_boolean_funcs(
+      prop, nullptr, "rna_PreferencesExperimental_use_extension_repos_set");
 }
 
 static void rna_def_userdef_addon_collection(BlenderRNA *brna, PropertyRNA *cprop)

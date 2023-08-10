@@ -72,9 +72,9 @@ Controller::Controller()
   _RootNode->addRef();
 
 #if 0
-  _SilhouetteNode = NULL;
-  _ProjectedSilhouette = NULL;
-  _VisibleProjectedSilhouette = NULL;
+  _SilhouetteNode = nullptr;
+  _ProjectedSilhouette = nullptr;
+  _VisibleProjectedSilhouette = nullptr;
 
   _DebugNode = new NodeGroup;
   _DebugNode->addRef();
@@ -129,14 +129,14 @@ Controller::~Controller()
   }
 
 #if 0
-  if (NULL != _SilhouetteNode) {
+  if (nullptr != _SilhouetteNode) {
     int ref = _SilhouetteNode->destroy();
     if (0 == ref) {
       delete _SilhouetteNode;
     }
   }
 
-  if (NULL != _DebugNode) {
+  if (nullptr != _DebugNode) {
     int ref = _DebugNode->destroy();
     if (0 == ref) {
       delete _DebugNode;
@@ -409,31 +409,31 @@ void Controller::DeleteViewMap(bool freeCache)
 {
 #if 0
   _pView->DetachSilhouette();
-  if (NULL != _SilhouetteNode) {
+  if (nullptr != _SilhouetteNode) {
     int ref = _SilhouetteNode->destroy();
     if (0 == ref) {
       delete _SilhouetteNode;
-      _SilhouetteNode = NULL;
+      _SilhouetteNode = nullptr;
     }
   }
 
-  if (NULL != _ProjectedSilhouette) {
+  if (nullptr != _ProjectedSilhouette) {
     int ref = _ProjectedSilhouette->destroy();
     if (0 == ref) {
       delete _ProjectedSilhouette;
-      _ProjectedSilhouette = NULL;
+      _ProjectedSilhouette = nullptr;
     }
   }
-  if (NULL != _VisibleProjectedSilhouette) {
+  if (nullptr != _VisibleProjectedSilhouette) {
     int ref = _VisibleProjectedSilhouette->destroy();
     if (0 == ref) {
       delete _VisibleProjectedSilhouette;
-      _VisibleProjectedSilhouette = NULL;
+      _VisibleProjectedSilhouette = nullptr;
     }
   }
 
   _pView->DetachDebug();
-  if (NULL != _DebugNode) {
+  if (nullptr != _DebugNode) {
     int ref = _DebugNode->destroy();
     if (0 == ref) {
       _DebugNode->addRef();
@@ -647,8 +647,8 @@ void Controller::ComputeSteerableViewMap()
   ViewMap::fedges_container &fedges = _ViewMap->FEdges();
   LineRep *fRep;
   NodeShape *ns;
-  for (ViewMap::fedges_container::iterator f = fedges.begin(), fend = fedges.end(); f != fend;
-       ++f) {
+  for (ViewMap::fedges_container::iterator f = fedges.begin(), fend = fedges.end(); f != fend; ++f)
+  {
     if ((*f)->viewedge()->qi() != 0) {
       continue;
     }
@@ -676,7 +676,7 @@ void Controller::ComputeSteerableViewMap()
     offscreenBuffer.AddNode(ng[i]);
 #  if 0
     img[i] = new GrayImage(_pView->width(), _pView->height());
-    offscreenBuffer.readPixels(0,0,_pView->width(), _pView->height(), img[i]->getArray());
+    offscreenBuffer.readPixels(0, 0, _pView->width(), _pView->height(), img[i]->getArray());
 #  endif
     pm = offscreenBuffer.renderPixmap(_pView->width(), _pView->height());
 
@@ -685,7 +685,7 @@ void Controller::ComputeSteerableViewMap()
         cout << "BuildViewMap Warning: couldn't render the steerable ViewMap" << endl;
       }
     }
-    //pm.save(QString("steerable") + QString::number(i) + QString(".bmp"), "BMP");
+    // pm.save(QString("steerable") + QString::number(i) + QString(".bmp"), "BMP");
     // FIXME!! Lost of time !
     qimg = pm.toImage();
     // FIXME !! again!

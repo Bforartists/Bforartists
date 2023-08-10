@@ -16,9 +16,9 @@
 
 #include "DNA_gpencil_legacy_types.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "BLT_translation.h"
 
@@ -32,7 +32,7 @@
 /** \name Transform (GPencil Strokes Shrink/Fatten)
  * \{ */
 
-static void applyGPShrinkFatten(TransInfo *t, const int[2] /*mval*/)
+static void applyGPShrinkFatten(TransInfo *t)
 {
   float ratio;
   int i;

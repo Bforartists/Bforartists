@@ -89,10 +89,19 @@ void ghost_wl_dynload_libraries_exit();
 #endif
 
 struct GWL_Output {
+
+  /** Wayland core types. */
+  struct {
+    wl_output *output = nullptr;
+  } wl;
+
+  /** XDG native types. */
+  struct {
+    struct zxdg_output_v1 *output = nullptr;
+  } xdg;
+
   GHOST_SystemWayland *system = nullptr;
 
-  struct wl_output *wl_output = nullptr;
-  struct zxdg_output_v1 *xdg_output = nullptr;
   /** Dimensions in pixels. */
   int32_t size_native[2] = {0, 0};
   /** Dimensions in millimeter. */
@@ -256,7 +265,7 @@ class GHOST_SystemWayland : public GHOST_System {
   void output_scale_update(GWL_Output *output);
 
   /**
-   * Clear all references to this surface to prevent accessing NULL pointers.
+   * Clear all references to this surface to prevent accessing nullptr pointers.
    *
    * \return true when any references were removed.
    */

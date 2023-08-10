@@ -8,7 +8,7 @@
 #include "DNA_image_types.h"
 #include "DNA_object_types.h"
 
-#include "ED_paint.h"
+#include "ED_paint.hh"
 
 #include "BLI_math.h"
 #include "BLI_math_color_blend.h"
@@ -20,7 +20,7 @@
 #include "IMB_colormanagement.h"
 #include "IMB_imbuf.h"
 
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_image_wrappers.hh"
 #include "BKE_pbvh_api.hh"
 #include "BKE_pbvh_pixels.hh"

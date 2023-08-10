@@ -24,7 +24,7 @@
 
 #include "MOD_modifiertypes.hh"
 
-#include "UI_resources.h"
+#include "UI_resources.hh"
 
 static void deform_verts(ModifierData * /*md*/,
                          const ModifierEvalContext *ctx,
@@ -77,7 +77,7 @@ static void deform_matrices(ModifierData *md,
 
 static void deform_verts_EM(ModifierData *md,
                             const ModifierEvalContext *ctx,
-                            BMEditMesh * /*editData*/,
+                            BMEditMesh * /*em*/,
                             Mesh *mesh,
                             float (*vertexCos)[3],
                             int verts_num)
@@ -91,7 +91,7 @@ static void deform_verts_EM(ModifierData *md,
 
 static void deform_matrices_EM(ModifierData * /*md*/,
                                const ModifierEvalContext *ctx,
-                               BMEditMesh * /*editData*/,
+                               BMEditMesh * /*em*/,
                                Mesh * /*mesh*/,
                                float (*vertexCos)[3],
                                float (*defMats)[3][3],

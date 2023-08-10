@@ -26,10 +26,10 @@
 #include "BKE_lib_id.h"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_tangent.h"
+#include "BKE_mesh_tangent.hh"
 #include "BKE_modifier.h"
-#include "BKE_multires.h"
-#include "BKE_subsurf.h"
+#include "BKE_multires.hh"
+#include "BKE_subsurf.hh"
 
 #include "DEG_depsgraph.h"
 
@@ -1088,9 +1088,12 @@ static void build_permutation_table(ushort permutation[],
    * every entry must appear exactly once
    */
 #  if 0
-  for (i = 0; i < number_of_rays; i++) temp_permutation[i] = 0;
-  for (i = 0; i < number_of_rays; i++) ++temp_permutation[permutation[i]];
-  for (i = 0; i < number_of_rays; i++) BLI_assert(temp_permutation[i] == 1);
+  for (i = 0; i < number_of_rays; i++)
+    temp_permutation[i] = 0;
+  for (i = 0; i < number_of_rays; i++)
+    ++temp_permutation[permutation[i]];
+  for (i = 0; i < number_of_rays; i++)
+    BLI_assert(temp_permutation[i] == 1);
 #  endif
 }
 
@@ -1465,13 +1468,11 @@ static void count_images(MultiresBakeRender *bkr)
 
 static void bake_images(MultiresBakeRender *bkr, MultiresBakeResult *result)
 {
-  LinkData *link;
-
   /* construct bake result */
   result->height_min = FLT_MAX;
   result->height_max = -FLT_MAX;
 
-  for (link = static_cast<LinkData *>(bkr->image.first); link; link = link->next) {
+  LISTBASE_FOREACH (LinkData *, link, &bkr->image) {
     Image *ima = (Image *)link->data;
 
     LISTBASE_FOREACH (ImageTile *, tile, &ima->tiles) {
@@ -1535,10 +1536,9 @@ static void bake_images(MultiresBakeRender *bkr, MultiresBakeResult *result)
 
 static void finish_images(MultiresBakeRender *bkr, MultiresBakeResult *result)
 {
-  LinkData *link;
   bool use_displacement_buffer = bkr->mode == RE_BAKE_DISPLACEMENT;
 
-  for (link = static_cast<LinkData *>(bkr->image.first); link; link = link->next) {
+  LISTBASE_FOREACH (LinkData *, link, &bkr->image) {
     Image *ima = (Image *)link->data;
 
     LISTBASE_FOREACH (ImageTile *, tile, &ima->tiles) {

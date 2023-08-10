@@ -25,12 +25,12 @@
 #include "DNA_particle_types.h"
 
 #include "BKE_customdata.h"
-#include "BKE_mesh.h"
-#include "BKE_mesh_legacy_convert.h"
+#include "BKE_mesh.hh"
+#include "BKE_mesh_legacy_convert.hh"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
 
-#include "ED_particle.h"
+#include "ED_particle.hh"
 
 #include "GPU_batch.h"
 #include "GPU_capabilities.h"
@@ -39,7 +39,7 @@
 
 #include "DEG_depsgraph_query.h"
 
-#include "draw_cache_impl.h" /* own include */
+#include "draw_cache_impl.hh" /* own include */
 #include "draw_hair_private.h"
 
 static void particle_batch_cache_clear(ParticleSystem *psys);
@@ -1404,7 +1404,7 @@ static void particle_batch_cache_ensure_pos(Object *object,
 
   for (curr_point = 0, i = 0, pa = psys->particles; i < psys->totpart; i++, pa++) {
     state.time = DEG_get_ctime(draw_ctx->depsgraph);
-    if (!psys_get_particle_state(&sim, i, &state, 0)) {
+    if (!psys_get_particle_state(&sim, i, &state, false)) {
       continue;
     }
 

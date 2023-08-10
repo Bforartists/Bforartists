@@ -23,10 +23,10 @@
 
 #include "DEG_depsgraph.h"
 
-#include "ED_particle.h"
+#include "ED_particle.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -268,13 +268,12 @@ static void ptcache_bake_cancel(bContext *C, wmOperator *op)
 static int ptcache_free_bake_all_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
-  PTCacheID *pid;
   ListBase pidlist;
 
   FOREACH_SCENE_OBJECT_BEGIN (scene, ob) {
     BKE_ptcache_ids_from_object(&pidlist, ob, scene, MAX_DUPLI_RECUR);
 
-    for (pid = static_cast<PTCacheID *>(pidlist.first); pid; pid = pid->next) {
+    LISTBASE_FOREACH (PTCacheID *, pid, &pidlist) {
       ptcache_free_bake(pid->cache);
     }
 

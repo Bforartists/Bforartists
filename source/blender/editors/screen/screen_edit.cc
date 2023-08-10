@@ -31,17 +31,17 @@
 #include "BKE_sound.h"
 #include "BKE_workspace.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_clip.h"
-#include "ED_node.h"
-#include "ED_screen.h"
-#include "ED_screen_types.h"
+#include "ED_clip.hh"
+#include "ED_node.hh"
+#include "ED_screen.hh"
+#include "ED_screen_types.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
-#include "WM_message.h"
+#include "WM_message.hh"
 #include "WM_toolsystem.h"
 
 #include "DEG_depsgraph_query.h"
@@ -212,7 +212,7 @@ bScreen *screen_add(Main *bmain, const char *name, const rcti *rect)
 
 void screen_data_copy(bScreen *to, bScreen *from)
 {
-  /* free contents of 'to', is from blenkernel screen.c */
+  /* Free contents of 'to', is from blenkernel `screen.cc`. */
   BKE_screen_free_data(to);
 
   to->flag = from->flag;
@@ -728,7 +728,7 @@ static bool region_poll(const bContext *C,
     return true;
   }
 
-  RegionPollParams params = {0};
+  RegionPollParams params = {nullptr};
   params.screen = screen;
   params.area = area;
   params.region = region;
@@ -1500,7 +1500,9 @@ static bScreen *screen_state_to_nonnormal(bContext *C,
                RGN_TYPE_FOOTER,
                RGN_TYPE_TOOLS,
                RGN_TYPE_NAV_BAR,
-               RGN_TYPE_EXECUTE))
+               RGN_TYPE_EXECUTE,
+               RGN_TYPE_ASSET_SHELF,
+               RGN_TYPE_ASSET_SHELF_HEADER))
       {
         region->flag |= RGN_FLAG_HIDDEN;
       }

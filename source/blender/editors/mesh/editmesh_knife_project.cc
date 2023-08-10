@@ -20,7 +20,7 @@
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_runtime.h"
+#include "BKE_mesh_runtime.hh"
 #include "BKE_object.h"
 #include "BKE_report.h"
 
@@ -32,11 +32,11 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
-#include "ED_mesh.h"
-#include "ED_screen.h"
-#include "ED_view3d.h"
+#include "ED_mesh.hh"
+#include "ED_screen.hh"
+#include "ED_view3d.hh"
 
 #include "mesh_intern.h" /* own include */
 

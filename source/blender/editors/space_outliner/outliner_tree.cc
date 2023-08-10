@@ -24,14 +24,15 @@
 #include "BKE_modifier.h"
 #include "BKE_outliner_treehash.hh"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "outliner_intern.hh"
 #include "tree/common.hh"
 #include "tree/tree_display.hh"
 #include "tree/tree_element.hh"
+#include "tree/tree_element_overrides.hh"
 
 #ifdef WIN32
 #  include "BLI_math_base.h" /* M_PI */
@@ -110,7 +111,7 @@ static void check_persistent(
     SpaceOutliner *space_outliner, TreeElement *te, ID *id, short type, short nr)
 {
   if (space_outliner->treestore == nullptr) {
-    /* if treestore was not created in readfile.c, create it here */
+    /* If treestore was not created in `readfile.cc`, create it here. */
     space_outliner->treestore = BLI_mempool_create(
         sizeof(TreeStoreElem), 1, 512, BLI_MEMPOOL_ALLOW_ITER);
   }
@@ -239,6 +240,9 @@ TreeElement *outliner_add_element(SpaceOutliner *space_outliner,
   else if (ELEM(type, TSE_GENERIC_LABEL)) {
     id = nullptr;
   }
+  else if (ELEM(type, TSE_LIBRARY_OVERRIDE, TSE_LIBRARY_OVERRIDE_OPERATION)) {
+    id = &static_cast<TreeElementOverridesData *>(idv)->id;
+  }
   else if (type == TSE_BONE) {
     id = static_cast<BoneElementCreateData *>(idv)->armature_id;
   }
@@ -263,8 +267,8 @@ TreeElement *outliner_add_element(SpaceOutliner *space_outliner,
     return nullptr;
   }
 
-  if (type == 0) {
-    /* Zero type means real ID, ensure we do not get non-outliner ID types here... */
+  if (type == TSE_SOME_ID) {
+    /* Real ID, ensure we do not get non-outliner ID types here... */
     BLI_assert(TREESTORE_ID_TYPE(id));
   }
 

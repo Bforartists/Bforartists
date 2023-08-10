@@ -26,7 +26,7 @@
 #include "RNA_enum_types.h"
 
 #include "BKE_mesh.hh"
-#include "BKE_mesh_legacy_convert.h"
+#include "BKE_mesh_legacy_convert.hh"
 
 #include "BLI_listbase.h"
 
@@ -34,8 +34,8 @@
 
 #include "rna_internal.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #ifdef RNA_RUNTIME
 static const EnumPropertyItem part_from_items[] = {
@@ -345,7 +345,7 @@ static void rna_ParticleHairKey_co_object_set(ID *id,
                                               Object *object,
                                               ParticleSystemModifierData *modifier,
                                               ParticleData *particle,
-                                              float co[3])
+                                              const float co[3])
 {
 
   if (particle == nullptr) {
@@ -966,7 +966,7 @@ static void rna_PartSettings_start_set(PointerRNA *ptr, float value)
   }
 
 #  if 0
-  if (settings->type==PART_REACTOR && value < 1.0)
+  if (settings->type == PART_REACTOR && value < 1.0)
     value = 1.0;
   else
 #  endif

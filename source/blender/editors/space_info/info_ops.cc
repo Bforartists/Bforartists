@@ -30,11 +30,11 @@
 #include "BKE_report.h"
 #include "BKE_screen.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -572,7 +572,7 @@ void FILE_OT_find_missing_files(wmOperatorType *ot)
 
 /* NOTE(@broken): Hard to decide whether to keep this as an operator,
  * or turn it into a hard_coded UI control feature,
- * handling TIMER events for all regions in `interface_handlers.c`.
+ * handling TIMER events for all regions in `interface_handlers.cc`.
  * Not sure how good that is to be accessing UI data from
  * inactive regions, so use this for now. */
 

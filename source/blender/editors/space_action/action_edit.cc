@@ -12,11 +12,14 @@
 #include <cstring>
 
 #include "BLI_blenlib.h"
+#include "BLI_map.hh"
 #include "BLI_math.h"
 #include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
+
+#include "DEG_depsgraph.h"
 
 #include "DNA_anim_types.h"
 #include "DNA_gpencil_legacy_types.h"
@@ -35,26 +38,27 @@
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_gpencil_legacy.h"
+#include "BKE_grease_pencil.hh"
 #include "BKE_key.h"
 #include "BKE_nla.h"
 #include "BKE_report.h"
 
-#include "UI_interface.h" /*bfa - needed for the icons*/
-#include "UI_resources.h" /*bfa - needed for the icons*/
-#include "UI_view2d.h"
+#include "UI_view2d.hh"
+#include "UI_resources.hh" /* BFA - needed for icons */
 
-#include "ED_anim_api.h"
-#include "ED_gpencil_legacy.h"
-#include "ED_keyframes_edit.h"
-#include "ED_keyframing.h"
-#include "ED_markers.h"
-#include "ED_mask.h"
-#include "ED_screen.h"
+#include "ED_anim_api.hh"
+#include "ED_gpencil_legacy.hh"
+#include "ED_grease_pencil.hh"
+#include "ED_keyframes_edit.hh"
+#include "ED_keyframing.hh"
+#include "ED_markers.hh"
+#include "ED_mask.hh"
+#include "ED_screen.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "action_intern.hh"
 
@@ -155,7 +159,6 @@ void ACTION_OT_markers_make_local(wmOperatorType *ot)
 static bool get_keyframe_extents(bAnimContext *ac, float *min, float *max, const short onlySel)
 {
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
   bool found = false;
 
@@ -173,14 +176,13 @@ static bool get_keyframe_extents(bAnimContext *ac, float *min, float *max, const
   /* check if any channels to set range with */
   if (anim_data.first) {
     /* go through channels, finding max extents */
-    for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+    LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
       AnimData *adt = ANIM_nla_mapping_get(ac, ale);
       if (ale->datatype == ALE_GPFRAME) {
         bGPDlayer *gpl = static_cast<bGPDlayer *>(ale->data);
-        bGPDframe *gpf;
 
         /* Find gp-frame which is less than or equal to current-frame. */
-        for (gpf = static_cast<bGPDframe *>(gpl->frames.first); gpf; gpf = gpf->next) {
+        LISTBASE_FOREACH (bGPDframe *, gpf, &gpl->frames) {
           if (!onlySel || (gpf->flag & GP_FRAME_SELECT)) {
             const float framenum = float(gpf->framenum);
             *min = min_ff(*min, framenum);
@@ -191,13 +193,8 @@ static bool get_keyframe_extents(bAnimContext *ac, float *min, float *max, const
       }
       else if (ale->datatype == ALE_MASKLAY) {
         MaskLayer *masklay = static_cast<MaskLayer *>(ale->data);
-        MaskLayerShape *masklay_shape;
-
         /* Find mask layer which is less than or equal to current-frame. */
-        for (masklay_shape = static_cast<MaskLayerShape *>(masklay->splines_shapes.first);
-             masklay_shape;
-             masklay_shape = masklay_shape->next)
-        {
+        LISTBASE_FOREACH (MaskLayerShape *, masklay_shape, &masklay->splines_shapes) {
           const float framenum = float(masklay_shape->frame);
           *min = min_ff(*min, framenum);
           *max = max_ff(*max, framenum);
@@ -711,7 +708,7 @@ void ACTION_OT_paste(wmOperatorType *ot)
       "channels, starting on the current frame";
 
   /* api callbacks */
-  //  ot->invoke = WM_operator_props_popup; // better wait for action redo panel
+  //  ot->invoke = WM_operator_props_popup; /* Better wait for action redo panel. */
   ot->get_description = actkeys_paste_description;
   ot->exec = actkeys_paste_exec;
   ot->poll = ED_operator_action_active;
@@ -765,6 +762,45 @@ static void insert_gpencil_key(bAnimContext *ac,
   if (gpd != *gpd_old) {
     BKE_gpencil_tag(gpd);
     *gpd_old = gpd;
+  }
+}
+
+static void insert_grease_pencil_key(bAnimContext *ac,
+                                     bAnimListElem *ale,
+                                     const bool hold_previous)
+{
+  using namespace blender::bke::greasepencil;
+  Layer *layer = static_cast<Layer *>(ale->data);
+  GreasePencil *grease_pencil = reinterpret_cast<GreasePencil *>(ale->id);
+  const int current_frame_number = ac->scene->r.cfra;
+
+  if (layer->frames().contains(current_frame_number)) {
+    return;
+  }
+
+  bool changed = false;
+  if (hold_previous) {
+    const FramesMapKey active_frame_number = layer->frame_key_at(current_frame_number);
+    if ((active_frame_number == -1) || (layer->frames().lookup(active_frame_number).is_null())) {
+      /* There is no active frame to hold to, or it's a null frame. Therefore just insert a blank
+       * frame. */
+      changed = grease_pencil->insert_blank_frame(
+          *layer, current_frame_number, 0, BEZT_KEYTYPE_KEYFRAME);
+    }
+    else {
+      /* Duplicate the active frame. */
+      changed = grease_pencil->insert_duplicate_frame(
+          *layer, active_frame_number, current_frame_number, false);
+    }
+  }
+  else {
+    /* Insert a blank frame. */
+    changed = grease_pencil->insert_blank_frame(
+        *layer, current_frame_number, 0, BEZT_KEYTYPE_KEYFRAME);
+  }
+
+  if (changed) {
+    DEG_id_tag_update(&grease_pencil->id, ID_RECALC_GEOMETRY);
   }
 }
 
@@ -824,7 +860,6 @@ static void insert_action_keys(bAnimContext *ac, short mode)
 {
   ListBase anim_data = {nullptr, nullptr};
   ListBase nla_cache = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
 
   Scene *scene = ac->scene;
@@ -856,18 +891,19 @@ static void insert_action_keys(bAnimContext *ac, short mode)
   else {
     add_frame_mode = GP_GETFRAME_ADD_NEW;
   }
+  const bool grease_pencil_hold_previous = ((ts->gpencil_flags & GP_TOOL_FLAG_RETAIN_LAST) != 0);
 
   /* insert keyframes */
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
       ac->depsgraph, float(scene->r.cfra));
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     switch (ale->type) {
       case ANIMTYPE_GPLAYER:
         insert_gpencil_key(ac, ale, add_frame_mode, &gpd_old);
         break;
 
       case ANIMTYPE_GREASE_PENCIL_LAYER:
-        /* GPv3: To be implemented. */
+        insert_grease_pencil_key(ac, ale, grease_pencil_hold_previous);
         break;
 
       case ANIMTYPE_FCURVE:
@@ -945,7 +981,6 @@ void ACTION_OT_keyframe_insert(wmOperatorType *ot)
 static bool duplicate_action_keys(bAnimContext *ac)
 {
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
   bool changed = false;
 
@@ -955,7 +990,7 @@ static bool duplicate_action_keys(bAnimContext *ac)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, eAnimCont_Types(ac->datatype));
 
   /* loop through filtered data and delete selected keys */
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     if (ELEM(ale->type, ANIMTYPE_FCURVE, ANIMTYPE_NLACURVE)) {
       changed |= duplicate_fcurve_keys((FCurve *)ale->key_data);
     }
@@ -1028,7 +1063,6 @@ void ACTION_OT_duplicate(wmOperatorType *ot)
 static bool delete_action_keys(bAnimContext *ac)
 {
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
   bool changed_final = false;
 
@@ -1038,14 +1072,16 @@ static bool delete_action_keys(bAnimContext *ac)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, eAnimCont_Types(ac->datatype));
 
   /* loop through filtered data and delete selected keys */
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     bool changed = false;
 
     if (ale->type == ANIMTYPE_GPLAYER) {
       changed = ED_gpencil_layer_frames_delete((bGPDlayer *)ale->data);
     }
     else if (ale->type == ANIMTYPE_GREASE_PENCIL_LAYER) {
-      /* GPv3: To be implemented. */
+      changed = blender::ed::greasepencil::remove_all_selected_frames(
+          *reinterpret_cast<GreasePencil *>(ale->id),
+          static_cast<GreasePencilLayer *>(ale->data)->wrap());
     }
     else if (ale->type == ANIMTYPE_MASKLAYER) {
       changed = ED_masklayer_frames_delete((MaskLayer *)ale->data);
@@ -1124,7 +1160,6 @@ void ACTION_OT_delete(wmOperatorType *ot)
 static void clean_action_keys(bAnimContext *ac, float thresh, bool clean_chan)
 {
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
 
   /* filter data */
@@ -1133,7 +1168,7 @@ static void clean_action_keys(bAnimContext *ac, float thresh, bool clean_chan)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, eAnimCont_Types(ac->datatype));
 
   /* loop through filtered data and clean curves */
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     clean_fcurve(ac, ale, thresh, clean_chan);
 
     ale->update |= ANIM_UPDATE_DEFAULT;
@@ -1217,7 +1252,6 @@ void ACTION_OT_clean(wmOperatorType *ot)
 static void sample_action_keys(bAnimContext *ac)
 {
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
 
   /* filter data */
@@ -1226,7 +1260,7 @@ static void sample_action_keys(bAnimContext *ac)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, eAnimCont_Types(ac->datatype));
 
   /* Loop through filtered data and add keys between selected keyframes on every frame. */
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     sample_fcurve((FCurve *)ale->key_data);
 
     ale->update |= ANIM_UPDATE_DEPS;
@@ -1316,7 +1350,6 @@ static const EnumPropertyItem prop_actkeys_expo_types[] = {
 static void setexpo_action_keys(bAnimContext *ac, short mode)
 {
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
 
   /* filter data */
@@ -1325,7 +1358,7 @@ static void setexpo_action_keys(bAnimContext *ac, short mode)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, eAnimCont_Types(ac->datatype));
 
   /* loop through setting mode per F-Curve */
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     FCurve *fcu = (FCurve *)ale->data;
 
     if (mode >= 0) {
@@ -1535,7 +1568,6 @@ void ACTION_OT_easing_type(wmOperatorType *ot)
 static void sethandles_action_keys(bAnimContext *ac, short mode)
 {
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
 
   KeyframeEditFunc edit_cb = ANIM_editkeyframes_handles(mode);
@@ -1550,7 +1582,7 @@ static void sethandles_action_keys(bAnimContext *ac, short mode)
    * NOTE: we do not supply KeyframeEditData to the looper yet.
    * Currently that's not necessary here.
    */
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     FCurve *fcu = (FCurve *)ale->key_data;
 
     /* any selected keyframes for editing? */
@@ -1624,7 +1656,6 @@ void ACTION_OT_handle_type(wmOperatorType *ot)
 static void setkeytype_action_keys(bAnimContext *ac, short mode)
 {
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
   KeyframeEditFunc set_cb = ANIM_editkeyframes_keytype(mode);
 
@@ -1637,7 +1668,7 @@ static void setkeytype_action_keys(bAnimContext *ac, short mode)
    * NOTE: we do not supply KeyframeEditData to the looper yet.
    * Currently that's not necessary here.
    */
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     switch (ale->type) {
       case ANIMTYPE_GPLAYER:
         ED_gpencil_layer_frames_keytype_set(static_cast<bGPDlayer *>(ale->data), mode);
@@ -1732,7 +1763,6 @@ static int actkeys_framejump_exec(bContext *C, wmOperator * /*op*/)
 {
   bAnimContext ac;
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
   KeyframeEditData ked = {{nullptr}};
 
@@ -1746,13 +1776,12 @@ static int actkeys_framejump_exec(bContext *C, wmOperator * /*op*/)
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_NODUPLIS);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, eAnimCont_Types(ac.datatype));
 
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     switch (ale->datatype) {
       case ALE_GPFRAME: {
         bGPDlayer *gpl = static_cast<bGPDlayer *>(ale->data);
-        bGPDframe *gpf;
 
-        for (gpf = static_cast<bGPDframe *>(gpl->frames.first); gpf; gpf = gpf->next) {
+        LISTBASE_FOREACH (bGPDframe *, gpf, &gpl->frames) {
           /* only if selected */
           if (!(gpf->flag & GP_FRAME_SELECT)) {
             continue;
@@ -1851,7 +1880,6 @@ static const EnumPropertyItem prop_actkeys_snap_types[] = {
 static void snap_action_keys(bAnimContext *ac, short mode)
 {
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
 
   KeyframeEditData ked = {{nullptr}};
@@ -1877,7 +1905,7 @@ static void snap_action_keys(bAnimContext *ac, short mode)
   }
 
   /* snap keyframes */
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 
     if (ale->type == ANIMTYPE_GPLAYER) {
@@ -1984,7 +2012,6 @@ static const EnumPropertyItem prop_actkeys_mirror_types[] = {
 static void mirror_action_keys(bAnimContext *ac, short mode)
 {
   ListBase anim_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   eAnimFilter_Flags filter;
 
   KeyframeEditData ked = {{nullptr}};
@@ -2014,7 +2041,7 @@ static void mirror_action_keys(bAnimContext *ac, short mode)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, eAnimCont_Types(ac->datatype));
 
   /* mirror keyframes */
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 
     if (ale->type == ANIMTYPE_GPLAYER) {

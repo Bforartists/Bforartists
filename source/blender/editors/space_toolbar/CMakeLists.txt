@@ -17,15 +17,15 @@ set(INC
   # dna_type_offsets.h
   ${CMAKE_CURRENT_BINARY_DIR}/../../makesdna/intern
 )
- 
+
 set(INC_SYS
 	${GLEW_INCLUDE_PATH}
 )
- 
+
 set(SRC
-	space_toolbar.c
+	space_toolbar.cc
 )
- 
+
 blender_add_lib(bf_editor_space_toolbar "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
 # dna_type_offsets.h dna_type_offsets.h

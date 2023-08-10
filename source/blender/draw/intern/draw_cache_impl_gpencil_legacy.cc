@@ -18,7 +18,7 @@
 #include "DRW_engine.h"
 #include "DRW_render.h"
 
-#include "ED_gpencil_legacy.h"
+#include "ED_gpencil_legacy.hh"
 #include "GPU_batch.h"
 
 #include "DEG_depsgraph_query.h"
@@ -28,7 +28,7 @@
 #include "BLI_polyfill_2d.h"
 
 #include "draw_cache.h"
-#include "draw_cache_impl.h"
+#include "draw_cache_impl.hh"
 
 #include "../engines/gpencil/gpencil_defines.h"
 #include "../engines/gpencil/gpencil_shader_shared.h"

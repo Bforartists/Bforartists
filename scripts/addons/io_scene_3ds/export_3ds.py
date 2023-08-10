@@ -38,8 +38,10 @@ VGRADIENT = 0x1300  # The background gradient colors
 USE_VGRADIENT = 0x1301  # The background gradient flag
 O_CONSTS = 0x1500  # The origin of the 3D cursor
 AMBIENTLIGHT = 0x2100  # The color of the ambient light
-LAYER_FOG = 0x2302  # The fog atmosphere settings
-USE_LAYER_FOG = 0x2303  # The fog atmosphere flag
+FOG = 0x2200  # The fog atmosphere settings
+USE_FOG = 0x2201  # The fog atmosphere flag
+LAYER_FOG = 0x2302  # The fog layer atmosphere settings
+USE_LAYER_FOG = 0x2303  # The fog layer atmosphere flag
 MATERIAL = 45055  # 0xAFFF // This stored the texture info
 OBJECT = 16384  # 0x4000 // This stores the faces, vertices, etc...
 
@@ -102,12 +104,18 @@ OBJECT_PARENT = 0x4F10  # Parent id of the object
 
 # >------ Sub defines of LIGHT
 LIGHT_MULTIPLIER = 0x465B  # The light energy factor
+LIGHT_INNER_RANGE = 0x4659  # Light inner range value
+LIGHT_OUTER_RANGE = 0x465A  # Light outer range value
+LIGHT_ATTENUATE = 0x4625  # Light attenuation flag
 LIGHT_SPOTLIGHT = 0x4610  # The target of a spotlight
 LIGHT_SPOT_ROLL = 0x4656  # Light spot roll angle
 LIGHT_SPOT_SHADOWED = 0x4630  # Light spot shadow flag
 LIGHT_SPOT_LSHADOW = 0x4641  # Light spot shadow parameters
 LIGHT_SPOT_SEE_CONE = 0x4650  # Light spot show cone flag
 LIGHT_SPOT_RECTANGLE = 0x4651  # Light spot rectangle flag
+LIGHT_SPOT_OVERSHOOT = 0x4652  # Light spot overshoot flag
+LIGHT_SPOT_PROJECTOR = 0x4653  # Light spot projection bitmap
+LIGHT_SPOT_ASPECT = 0x4657  # Light spot aspect ratio
 
 # >------ sub defines of CAMERA
 OBJECT_CAM_RANGES = 0x4720  # The camera range values
@@ -572,6 +580,7 @@ def make_material_texture_chunk(chunk_id, texslots, pct):
 
     def add_texslot(texslot):
         image = texslot.image
+        socket = None
 
         filename = bpy.path.basename(image.filepath)
         mat_sub_file = _3ds_chunk(MAT_MAP_FILE)
@@ -1092,6 +1101,7 @@ def make_kfdata(revision, start=0, stop=100, curtime=0):
     kfdata.add_subchunk(kfcurtime)
     return kfdata
 
+
 def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
     """Make a chunk for track data. Depending on the ID, this will construct
     a position, rotation, scale, roll, color, fov, hotspot or falloff track."""
@@ -1455,7 +1465,38 @@ def make_ambient_node(world):
     amb_node_header_chunk.add_variable("parent", _3ds_ushort(ROOT_OBJECT))
     amb_node.add_subchunk(amb_node_header_chunk)
 
-    if world.animation_data.action:
+    if world.use_nodes and world.node_tree.animation_data.action:
+        ambioutput = 'EMISSION' ,'MIX_SHADER', 'WORLD_OUTPUT'
+        action = world.node_tree.animation_data.action
+        links = world.node_tree.links
+        ambilinks = [lk for lk in links if lk.from_node.type in {'EMISSION', 'RGB'} and lk.to_node.type in ambioutput]
+        if ambilinks and action.fcurves:
+            fcurves = action.fcurves
+            fcurves.update()
+            emission = next((lk.from_socket.node for lk in ambilinks if lk.to_node.type in ambioutput), False)
+            ambinode = next((lk.from_socket.node for lk in ambilinks if lk.to_node.type == 'EMISSION'), emission)
+            kframes = [kf.co[0] for kf in [fc for fc in fcurves if fc is not None][0].keyframe_points]
+            ambipath = ('nodes[\"RGB\"].outputs[0].default_value' if ambinode and ambinode.type == 'RGB' else
+                        'nodes[\"Emission\"].inputs[0].default_value')
+            nkeys = len(kframes)
+            if not 0 in kframes:
+                kframes.append(0)
+                nkeys = nkeys + 1
+            kframes = sorted(set(kframes))
+            track_chunk.add_variable("track_flags", _3ds_ushort(0x40))
+            track_chunk.add_variable("frame_start", _3ds_uint(int(action.frame_start)))
+            track_chunk.add_variable("frame_total", _3ds_uint(int(action.frame_end)))
+            track_chunk.add_variable("nkeys", _3ds_uint(nkeys))
+
+            for i, frame in enumerate(kframes):
+                ambient = [fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == ambipath]
+                if not ambient:
+                    ambient = amb_color
+                track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
+                track_chunk.add_variable("tcb_flags", _3ds_ushort())
+                track_chunk.add_variable("color", _3ds_float_color(ambient[:3]))
+
+    elif world.animation_data.action:
         action = world.animation_data.action
         if action.fcurves:
             fcurves = action.fcurves
@@ -1514,12 +1555,20 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
     unit_measure = 1.0
     if use_scene_unit:
         unit_length = scene.unit_settings.length_unit
-        if unit_length == 'KILOMETERS':
+        if unit_length == 'MILES':
+            unit_measure = 0.000621371
+        elif unit_length == 'KILOMETERS':
             unit_measure = 0.001
+        elif unit_length == 'FEET':
+            unit_measure = 3.280839895
+        elif unit_length == 'INCHES':
+            unit_measure = 39.37007874
         elif unit_length == 'CENTIMETERS':
             unit_measure = 100
         elif unit_length == 'MILLIMETERS':
             unit_measure = 1000
+        elif unit_length == 'THOU':
+            unit_measure = 39370.07874
         elif unit_length == 'MICROMETERS':
             unit_measure = 1000000
 
@@ -1574,16 +1623,18 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
 
         # Add BACKGROUND and BITMAP
         if world.use_nodes:
+            bgtype = 'BACKGROUND'
             ntree = world.node_tree.links
             background_color_chunk = _3ds_chunk(RGB)
             background_chunk = _3ds_chunk(SOLIDBACKGND)
             background_flag = _3ds_chunk(USE_SOLIDBGND)
-            bgtype = 'BACKGROUND'
+            bgmixer = 'BACKGROUND', 'MIX', 'MIX_RGB'
             bgshade = 'ADD_SHADER', 'MIX_SHADER', 'OUTPUT_WORLD'
             bg_tex = 'TEX_IMAGE', 'TEX_ENVIRONMENT'
             bg_color = next((lk.from_node.inputs[0].default_value[:3] for lk in ntree if lk.from_node.type == bgtype and lk.to_node.type in bgshade), world.color)
-            bg_mixer = next((lk.from_node.type for lk in ntree if  lk.from_node.type in {'MIX', 'MIX_RGB'} and lk.to_node.type == bgtype), bgtype)
+            bg_mixer = next((lk.from_node.type for lk in ntree if  lk.from_node.type in bgmixer and lk.to_node.type == bgtype), bgtype)
             bg_image = next((lk.from_node.image.name for lk in ntree if lk.from_node.type in bg_tex and lk.to_node.type == bg_mixer), False)
+            gradient = next((lk.from_node.color_ramp.elements for lk in ntree if lk.from_node.type == 'VALTORGB' and lk.to_node.type in bgmixer), False)
             background_color_chunk.add_variable("color", _3ds_float_color(bg_color))
             background_chunk.add_subchunk(background_color_chunk)
             if bg_image:
@@ -1592,28 +1643,59 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
                 background_image.add_variable("image", _3ds_string(sane_name(bg_image)))
                 object_info.add_subchunk(background_image)
             object_info.add_subchunk(background_chunk)
+
+            # Add VGRADIENT chunk
+            if gradient and len(gradient) >= 3:
+                gradient_chunk = _3ds_chunk(VGRADIENT)
+                background_flag = _3ds_chunk(USE_VGRADIENT)
+                gradient_chunk.add_variable("midpoint", _3ds_float(gradient[1].position))
+                gradient_topcolor_chunk = _3ds_chunk(RGB)
+                gradient_topcolor_chunk.add_variable("color", _3ds_float_color(gradient[2].color[:3]))
+                gradient_chunk.add_subchunk(gradient_topcolor_chunk)
+                gradient_midcolor_chunk = _3ds_chunk(RGB)
+                gradient_midcolor_chunk.add_variable("color", _3ds_float_color(gradient[1].color[:3]))
+                gradient_chunk.add_subchunk(gradient_midcolor_chunk)
+                gradient_lowcolor_chunk = _3ds_chunk(RGB)
+                gradient_lowcolor_chunk.add_variable("color", _3ds_float_color(gradient[0].color[:3]))
+                gradient_chunk.add_subchunk(gradient_lowcolor_chunk)
+                object_info.add_subchunk(gradient_chunk)
             object_info.add_subchunk(background_flag)
 
-            # Add LAYER_FOG settings
-            fogshader = next((lk.from_socket.node for lk in ntree if lk.from_socket.identifier and lk.to_socket.identifier == 'Volume'), False)
-            if fogshader:
-                fogflag = 0
-                if world.mist_settings.falloff == 'QUADRATIC':
-                    fogflag |= 0x1
-                if world.mist_settings.falloff == 'INVERSE_QUADRATIC':
-                    fogflag |= 0x2
-                fog_chunk = _3ds_chunk(LAYER_FOG)
+            # Add FOG
+            fognode = next((lk.from_socket.node for lk in ntree if lk.from_socket.node.type == 'VOLUME_ABSORPTION' and lk.to_socket.node.type in bgshade), False)
+            if fognode:
+                fog_chunk = _3ds_chunk(FOG)
                 fog_color_chunk = _3ds_chunk(RGB)
-                use_fog_flag = _3ds_chunk(USE_LAYER_FOG)
-                fog_color_chunk.add_variable("color", _3ds_float_color(fogshader.inputs['Color'].default_value[:3]))
-                fog_chunk.add_variable("lowZ", _3ds_float(world.mist_settings.start))
-                fog_chunk.add_variable("highZ", _3ds_float(world.mist_settings.depth))
-                fog_chunk.add_variable("density", _3ds_float(fogshader.inputs['Density'].default_value))
-                fog_chunk.add_variable("flags", _3ds_uint(fogflag))
+                use_fog_flag = _3ds_chunk(USE_FOG)
+                fog_density = fognode.inputs['Density'].default_value * 100
+                fog_color_chunk.add_variable("color", _3ds_float_color(fognode.inputs[0].default_value[:3]))
+                fog_chunk.add_variable("nearplane", _3ds_float(world.mist_settings.start))
+                fog_chunk.add_variable("nearfog", _3ds_float(fog_density * 0.5))
+                fog_chunk.add_variable("farplane", _3ds_float(world.mist_settings.depth))
+                fog_chunk.add_variable("farfog", _3ds_float(fog_density + fog_density * 0.5))
                 fog_chunk.add_subchunk(fog_color_chunk)
                 object_info.add_subchunk(fog_chunk)
-                if layer.use_pass_mist:
-                    object_info.add_subchunk(use_fog_flag)
+
+            # Add LAYER FOG
+            foglayer = next((lk.from_socket.node for lk in ntree if lk.from_socket.node.type == 'VOLUME_SCATTER' and lk.to_socket.node.type in bgshade), False)
+            if foglayer:
+                layerfog_flag = 0
+                if world.mist_settings.falloff == 'QUADRATIC':
+                    layerfog_flag |= 0x1
+                if world.mist_settings.falloff == 'INVERSE_QUADRATIC':
+                    layerfog_flag |= 0x2
+                layerfog_chunk = _3ds_chunk(LAYER_FOG)
+                layerfog_color_chunk = _3ds_chunk(RGB)
+                use_fog_flag = _3ds_chunk(USE_LAYER_FOG)
+                layerfog_color_chunk.add_variable("color", _3ds_float_color(foglayer.inputs[0].default_value[:3]))
+                layerfog_chunk.add_variable("lowZ", _3ds_float(world.mist_settings.start))
+                layerfog_chunk.add_variable("highZ", _3ds_float(world.mist_settings.height))
+                layerfog_chunk.add_variable("density", _3ds_float(foglayer.inputs[1].default_value))
+                layerfog_chunk.add_variable("flags", _3ds_uint(layerfog_flag))
+                layerfog_chunk.add_subchunk(layerfog_color_chunk)
+                object_info.add_subchunk(layerfog_chunk)
+            if fognode or foglayer and layer.use_pass_mist:
+                object_info.add_subchunk(use_fog_flag)
         if use_keyframes and world.animation_data:
             kfdata.add_subchunk(make_ambient_node(world))
 
@@ -1772,13 +1854,23 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
         obj_light_chunk = _3ds_chunk(OBJECT_LIGHT)
         color_float_chunk = _3ds_chunk(RGB)
         light_distance = translation[ob.name]
+        light_attenuate = _3ds_chunk(LIGHT_ATTENUATE)
+        light_inner_range = _3ds_chunk(LIGHT_INNER_RANGE)
+        light_outer_range = _3ds_chunk(LIGHT_OUTER_RANGE)
         light_energy_factor = _3ds_chunk(LIGHT_MULTIPLIER)
+        light_ratio = ob.data.energy if ob.data.type == 'SUN' else ob.data.energy * 0.001
         object_chunk.add_variable("light", _3ds_string(sane_name(ob.name)))
         obj_light_chunk.add_variable("location", _3ds_point_3d(light_distance))
         color_float_chunk.add_variable("color", _3ds_float_color(ob.data.color))
-        light_energy_factor.add_variable("energy", _3ds_float(ob.data.energy * 0.001))
+        light_outer_range.add_variable("distance", _3ds_float(ob.data.cutoff_distance))
+        light_inner_range.add_variable("radius", _3ds_float(ob.data.shadow_soft_size * 100))
+        light_energy_factor.add_variable("energy", _3ds_float(light_ratio))
         obj_light_chunk.add_subchunk(color_float_chunk)
+        obj_light_chunk.add_subchunk(light_outer_range)
+        obj_light_chunk.add_subchunk(light_inner_range)
         obj_light_chunk.add_subchunk(light_energy_factor)
+        if ob.data.use_custom_distance:
+            obj_light_chunk.add_subchunk(light_attenuate)
 
         if ob.data.type == 'SPOT':
             cone_angle = math.degrees(ob.data.spot_size)
@@ -1805,6 +1897,23 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
             if ob.data.use_square:
                 spot_square_chunk = _3ds_chunk(LIGHT_SPOT_RECTANGLE)
                 spotlight_chunk.add_subchunk(spot_square_chunk)
+            if ob.scale.x and ob.scale.y != 0.0:
+                spot_aspect_chunk = _3ds_chunk(LIGHT_SPOT_ASPECT)
+                spot_aspect_chunk.add_variable("aspect", _3ds_float(round((ob.scale.x / ob.scale.y),4)))
+                spotlight_chunk.add_subchunk(spot_aspect_chunk)
+            if ob.data.use_nodes:
+                links = ob.data.node_tree.links
+                bptype = 'EMISSION'
+                bpmix = 'MIX', 'MIX_RGB', 'EMISSION'
+                bptex = 'TEX_IMAGE', 'TEX_ENVIRONMENT'
+                bpout = 'ADD_SHADER', 'MIX_SHADER', 'OUTPUT_LIGHT'
+                bshade = next((lk.from_node.type for lk in links if lk.from_node.type == bptype and lk.to_node.type in bpout), None)
+                bpnode = next((lk.from_node.type for lk in links if lk.from_node.type in bpmix and lk.to_node.type == bshade), bshade)
+                bitmap = next((lk.from_node.image for lk in links if lk.from_node.type in bptex and lk.to_node.type == bpnode), False)
+                if bitmap and bitmap is not None:
+                    spot_projector_chunk = _3ds_chunk(LIGHT_SPOT_PROJECTOR)
+                    spot_projector_chunk.add_variable("image", _3ds_string(sane_name(bitmap.name)))
+                    spotlight_chunk.add_subchunk(spot_projector_chunk)
             obj_light_chunk.add_subchunk(spotlight_chunk)
 
         # Add light to object chunk
@@ -1835,6 +1944,7 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
     for ob in camera_objects:
         object_chunk = _3ds_chunk(OBJECT)
         camera_chunk = _3ds_chunk(OBJECT_CAMERA)
+        crange_chunk = _3ds_chunk(OBJECT_CAM_RANGES)
         camera_distance = translation[ob.name]
         camera_target = calc_target(camera_distance, rotation[ob.name].x, rotation[ob.name].z)
         object_chunk.add_variable("camera", _3ds_string(sane_name(ob.name)))
@@ -1842,6 +1952,9 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
         camera_chunk.add_variable("target", _3ds_point_3d(camera_target))
         camera_chunk.add_variable("roll", _3ds_float(round(rotation[ob.name].y, 6)))
         camera_chunk.add_variable("lens", _3ds_float(ob.data.lens))
+        crange_chunk.add_variable("clipstart", _3ds_float(ob.data.clip_start * 0.1))
+        crange_chunk.add_variable("clipend", _3ds_float(ob.data.clip_end * 0.1))
+        camera_chunk.add_subchunk(crange_chunk)
         object_chunk.add_subchunk(camera_chunk)
 
         # Add hierachy chunks with ID from object_id dictionary

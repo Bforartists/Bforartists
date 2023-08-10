@@ -158,9 +158,7 @@ struct HullFinalEdges {
 
 static LinkData *final_edges_find_link(ListBase *adj, BMVert *v)
 {
-  LinkData *link;
-
-  for (link = static_cast<LinkData *>(adj->first); link; link = link->next) {
+  LISTBASE_FOREACH (LinkData *, link, adj) {
     if (link->data == v) {
       return link;
     }

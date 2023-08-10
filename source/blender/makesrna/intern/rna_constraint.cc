@@ -25,11 +25,11 @@
 
 #include "rna_internal.h"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
-#include "ED_object.h"
+#include "ED_object.hh"
 
-/* please keep the names in sync with constraint.c */
+/* Please keep the names in sync with `constraint.cc`. */
 const EnumPropertyItem rna_enum_constraint_type_items[] = {
     RNA_ENUM_ITEM_HEADING(N_("Motion Tracking"), nullptr),
     {CONSTRAINT_TYPE_CAMERASOLVER, "CAMERA_SOLVER", ICON_CON_CAMERASOLVER, "Camera Solver", ""},

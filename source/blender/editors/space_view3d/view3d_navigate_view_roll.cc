@@ -12,14 +12,14 @@
 
 #include "BKE_context.h"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 
 #include "DEG_depsgraph_query.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
 #include "view3d_intern.h"
 #include "view3d_navigate.hh" /* own include */
@@ -192,7 +192,7 @@ static int viewroll_exec(bContext *C, wmOperator *op)
 
   if (vod->depsgraph == nullptr) {
     vod->depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-    vod->init_navigation(C, nullptr, &ViewOpsType_roll, false);
+    vod->init_navigation(C, nullptr, &ViewOpsType_roll);
   }
 
   int type = RNA_enum_get(op->ptr, "type");

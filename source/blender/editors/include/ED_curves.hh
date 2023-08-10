@@ -16,7 +16,7 @@
 #include "BLI_vector.hh"
 #include "BLI_vector_set.hh"
 
-#include "ED_select_utils.h"
+#include "ED_select_utils.hh"
 
 struct bContext;
 struct Curves;
@@ -53,7 +53,7 @@ void ensure_surface_deformation_node_exists(bContext &C, Object &curves_ob);
 
 /**
  * Allocate an array of `TransVert` for cursor/selection snapping (See
- * `ED_transverts_create_from_obedit` in `view3d_snap.c`).
+ * `ED_transverts_create_from_obedit` in `view3d_snap.cc`).
  * \note: the `TransVert` elements in \a tvs are expected to write to the positions of \a curves.
  */
 void transverts_from_curves_positions_create(bke::CurvesGeometry &curves, TransVertStore *tvs);
@@ -157,7 +157,7 @@ void apply_selection_operation_at_index(GMutableSpan selection, int index, eSele
  * (De)select all the curves.
  *
  * \param action: One of SEL_TOGGLE, SEL_SELECT, SEL_DESELECT, or SEL_INVERT. See
- * "ED_select_utils.h".
+ * "ED_select_utils.hh".
  */
 void select_all(bke::CurvesGeometry &curves, eAttrDomain selection_domain, int action);
 

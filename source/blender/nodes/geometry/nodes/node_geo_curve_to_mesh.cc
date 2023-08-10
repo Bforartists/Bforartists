@@ -6,8 +6,8 @@
 
 #include "BKE_curve_to_mesh.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -30,8 +30,8 @@ static void geometry_set_curve_to_mesh(GeometrySet &geometry_set,
                                        const bool fill_caps,
                                        const AnonymousAttributePropagationInfo &propagation_info)
 {
-  const Curves &curves = *geometry_set.get_curves_for_read();
-  const Curves *profile_curves = profile_set.get_curves_for_read();
+  const Curves &curves = *geometry_set.get_curves();
+  const Curves *profile_curves = profile_set.get_curves();
 
   bke::GeometryComponentEditData::remember_deformed_curve_positions_if_necessary(geometry_set);
 

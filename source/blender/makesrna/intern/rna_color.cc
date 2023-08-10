@@ -20,8 +20,8 @@
 #include "RNA_enum_types.h"
 #include "rna_internal.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 const EnumPropertyItem rna_enum_color_space_convert_default_items[] = {
     {0,
@@ -57,7 +57,7 @@ const EnumPropertyItem rna_enum_color_space_convert_default_items[] = {
 
 #  include "DEG_depsgraph.h"
 
-#  include "ED_node.h"
+#  include "ED_node.hh"
 
 #  include "IMB_colormanagement.h"
 #  include "IMB_imbuf.h"
@@ -978,7 +978,7 @@ static void rna_def_color_ramp_element_api(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_struct_path_func(srna, "rna_ColorRampElement_path");
   RNA_def_struct_ui_text(srna, "Color Ramp Elements", "Collection of Color Ramp Elements");
 
-  /* TODO: make these functions generic in `texture.c`. */
+  /* TODO: make these functions generic in `texture.cc`. */
   func = RNA_def_function(srna, "new", "rna_ColorRampElement_new");
   RNA_def_function_ui_description(func, "Add element to Color Ramp");
   RNA_def_function_flag(func, FUNC_USE_REPORTS);
@@ -1272,6 +1272,16 @@ static void rna_def_colormanage(BlenderRNA *brna)
   RNA_def_property_boolean_funcs(prop, nullptr, "rna_ColorManagedViewSettings_use_curves_set");
   RNA_def_property_ui_text(prop, "Use Curves", "Use RGB curved for pre-display transformation");
   RNA_def_property_update(prop, NC_WINDOW, "rna_ColorManagement_update");
+
+  prop = RNA_def_property(srna, "use_hdr_view", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", COLORMANAGE_VIEW_USE_HDR);
+  RNA_def_property_ui_text(
+      prop,
+      "High Dynamic Range",
+      "Enable high dynamic range display in rendered viewport, uncapping display brightness. This "
+      "requires a monitor with HDR support and a view transform designed for HDR. "
+      "'Filmic' does not generate HDR colors");
+  RNA_def_property_update(prop, NC_WINDOW, "rna_ColorManagedColorspaceSettings_reload_update");
 
   /* ** Color-space ** */
   srna = RNA_def_struct(brna, "ColorManagedInputColorspaceSettings", nullptr);

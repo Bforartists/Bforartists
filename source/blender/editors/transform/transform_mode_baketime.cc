@@ -14,9 +14,9 @@
 #include "BKE_context.h"
 #include "BKE_unit.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "BLT_translation.h"
 
@@ -30,7 +30,7 @@
 /** \name Transform (Bake-Time)
  * \{ */
 
-static void applyBakeTime(TransInfo *t, const int mval[2])
+static void applyBakeTime(TransInfo *t)
 {
   float time;
   int i;
@@ -49,7 +49,7 @@ static void applyBakeTime(TransInfo *t, const int mval[2])
   else
 #endif
   {
-    time = float(t->center2d[0] - mval[0]) * fac;
+    time = (t->center2d[0] - t->mval[0]) * fac;
   }
 
   transform_snap_increment(t, &time);

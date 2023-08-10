@@ -21,7 +21,7 @@
 
 #  include "BKE_global.h"
 #  include "BKE_main.h"
-#  include "BKE_mesh.h"
+#  include "BKE_mesh.hh"
 
 /* all the list begin functions are added manually here, Main is not in SDNA */
 
@@ -170,7 +170,7 @@ void RNA_def_main(BlenderRNA *brna)
   StructRNA *srna;
   PropertyRNA *prop;
 
-  /* plural must match idtypes in readblenentry.c */
+  /* Plural must match ID-types in `readblenentry.cc`. */
   MainCollectionDef lists[] = {
       {"cameras",
        "Camera",

@@ -58,7 +58,7 @@
 #  include "BKE_customdata.h"
 #  include "BKE_deform.h"
 #  include "BKE_mesh.hh"
-#  include "BKE_mesh_runtime.h"
+#  include "BKE_mesh_runtime.hh"
 #  include "BKE_object.h"
 #  include "BKE_particle.h"
 #  include "BKE_scene.h"
@@ -225,12 +225,14 @@ void BKE_fluid_reallocate_copy_fluid(FluidDomainSettings *fds,
 
           /* Skip if trying to copy from old boundary cell. */
           if (xo < bwidth || yo < bwidth || zo < bwidth || xo >= o_res[0] - bwidth ||
-              yo >= o_res[1] - bwidth || zo >= o_res[2] - bwidth) {
+              yo >= o_res[1] - bwidth || zo >= o_res[2] - bwidth)
+          {
             continue;
           }
           /* Skip if trying to copy into new boundary cell. */
           if (xn < bwidth || yn < bwidth || zn < bwidth || xn >= n_res[0] - bwidth ||
-              yn >= n_res[1] - bwidth || zn >= n_res[2] - bwidth) {
+              yn >= n_res[1] - bwidth || zn >= n_res[2] - bwidth)
+          {
             continue;
           }
 #  endif
@@ -859,7 +861,7 @@ static void update_velocities(FluidEffectorSettings *fes,
   nearest.index = -1;
 
   /* Distance between two opposing vertices in a unit cube.
-   * I.e. the unit cube diagonal or sqrt(3).
+   * I.e. the unit cube diagonal or `sqrt(3)`.
    * This value is our nearest neighbor search distance. */
   const float surface_distance = 1.732;
   /* find_nearest uses squared distance */
@@ -1703,7 +1705,7 @@ static void update_distances(int index,
     BVHTreeNearest nearest = {0};
     nearest.index = -1;
     /* Distance between two opposing vertices in a unit cube.
-     * I.e. the unit cube diagonal or sqrt(3).
+     * I.e. the unit cube diagonal or `sqrt(3)`.
      * This value is our nearest neighbor search distance. */
     const float surface_distance = 1.732;
     /* find_nearest uses squared distance. */
@@ -1825,7 +1827,7 @@ static void sample_mesh(FluidFlowSettings *ffs,
   nearest.index = -1;
 
   /* Distance between two opposing vertices in a unit cube.
-   * I.e. the unit cube diagonal or sqrt(3).
+   * I.e. the unit cube diagonal or `sqrt(3)`.
    * This value is our nearest neighbor search distance. */
   const float surface_distance = 1.732;
   /* find_nearest uses squared distance. */

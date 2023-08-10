@@ -137,6 +137,14 @@ def read_bvh(context, file_path, rotate_mode='XYZ', global_scale=1.0):
             # Make sure the names are unique - Object names will match joint names exactly and both will be unique.
             name = file_lines[lineIdx][1]
 
+            # While unlikely, there exists a user report of duplicate joint names, see: #109399.
+            if name in bvh_nodes:
+                name_orig = name
+                name_index = 1
+                while (name := "%s.%03d" % (name_orig, name_index)) in bvh_nodes:
+                    name_index += 1
+                del name_orig, name_index
+
             # print '%snode: %s, parent: %s' % (len(bvh_nodes_serial) * '  ', name,  bvh_nodes_serial[-1])
 
             lineIdx += 2  # Increment to the next line (Offset)
@@ -471,7 +479,7 @@ def bvh_node_dict2armature(
             bvh_node.temp.parent = bvh_node.parent.temp
 
             # Set the connection state
-            if(
+            if (
                     (not bvh_node.has_loc) and
                     (bvh_node.parent.temp.name not in ZERO_AREA_BONES) and
                     (bvh_node.parent.rest_tail_local == bvh_node.rest_head_local)
