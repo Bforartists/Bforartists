@@ -19,7 +19,7 @@
 #include "BLI_path_util.h"
 #include "BLI_set.hh"
 #include "BLI_string.h"
-#include "BLI_string_search.h"
+#include "BLI_string_search.hh"
 #include "BLI_utildefines.h"
 
 #include "DNA_collection_types.h"
@@ -61,13 +61,12 @@
 
 #include "BLO_read_write.h"
 
-#include "UI_interface.h"
 #include "UI_interface.hh"
-#include "UI_resources.h"
+#include "UI_resources.hh"
 
 #include "BLT_translation.h"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_enum_types.h"
@@ -80,10 +79,10 @@
 #include "MOD_nodes.hh"
 #include "MOD_ui_common.hh"
 
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_spreadsheet.h"
-#include "ED_undo.h"
+#include "ED_object.hh"
+#include "ED_screen.hh"
+#include "ED_spreadsheet.hh"
+#include "ED_undo.hh"
 #include "ED_viewer_path.hh"
 
 #include "NOD_geometry.hh"
@@ -403,7 +402,8 @@ void MOD_nodes_update_interface(Object *object, NodesModifierData *nmd)
   }
   IDProperty *new_properties = nmd->settings.properties;
 
-  nodes::update_input_properties_from_node_tree(*nmd->node_group, old_properties, *new_properties);
+  nodes::update_input_properties_from_node_tree(
+      *nmd->node_group, old_properties, false, *new_properties);
   nodes::update_output_properties_from_node_tree(
       *nmd->node_group, old_properties, *new_properties);
 
@@ -765,9 +765,14 @@ static void prepare_simulation_states_for_evaluation(const NodesModifierData &nm
     if (DEG_is_active(ctx.depsgraph)) {
       bke::sim::ModifierSimulationCacheRealtime &realtime_cache = simulation_cache.realtime_cache;
 
-      /* Reset the cache when going backwards in time. */
-      if (realtime_cache.prev_frame >= current_frame) {
+      if (current_frame < realtime_cache.prev_frame) {
+        /* Reset the cache when going backwards in time. */
         simulation_cache.reset();
+      }
+      if (realtime_cache.current_frame == current_frame && realtime_cache.current_state) {
+        /* Don't simulate in the same frame again. */
+        exec_data.current_simulation_state = realtime_cache.current_state.get();
+        return;
       }
 
       /* Advance in time, making the last "current" state the new "previous" state. */
@@ -846,7 +851,7 @@ static void modifyGeometry(ModifierData *md,
   bool use_orig_index_verts = false;
   bool use_orig_index_edges = false;
   bool use_orig_index_faces = false;
-  if (const Mesh *mesh = geometry_set.get_mesh_for_read()) {
+  if (const Mesh *mesh = geometry_set.get_mesh()) {
     use_orig_index_verts = CustomData_has_layer(&mesh->vert_data, CD_ORIGINDEX);
     use_orig_index_edges = CustomData_has_layer(&mesh->edge_data, CD_ORIGINDEX);
     use_orig_index_faces = CustomData_has_layer(&mesh->face_data, CD_ORIGINDEX);
@@ -905,7 +910,7 @@ static void modifyGeometry(ModifierData *md,
 
 static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh)
 {
-  bke::GeometrySet geometry_set = bke::GeometrySet::create_with_mesh(
+  bke::GeometrySet geometry_set = bke::GeometrySet::from_mesh(
       mesh, bke::GeometryOwnershipType::Editable);
 
   modifyGeometry(md, ctx, geometry_set);

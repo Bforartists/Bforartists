@@ -18,7 +18,7 @@
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_material_types.h"
 
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_context.h"
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_gpencil_legacy.h"
@@ -26,14 +26,14 @@
 #include "BKE_material.h"
 #include "BKE_report.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "ED_gpencil_legacy.h"
-#include "ED_screen.h"
+#include "ED_gpencil_legacy.hh"
+#include "ED_screen.hh"
 
 #include "DEG_depsgraph.h"
 
@@ -582,7 +582,7 @@ static int gpencil_stroke_merge_material_exec(bContext *C, wmOperator *op)
 
   /* Review materials. */
   short *totcol = BKE_object_material_len_p(ob);
-  if (totcol == 0) {
+  if (totcol == nullptr) {
     return OPERATOR_CANCELLED;
   }
 

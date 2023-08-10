@@ -27,7 +27,7 @@
 
 #  include "BKE_action.h"
 #  include "BKE_armature.h"
-#  include "BKE_brush.h"
+#  include "BKE_brush.hh"
 #  include "BKE_camera.h"
 #  include "BKE_collection.h"
 #  include "BKE_curve.h"
@@ -45,11 +45,11 @@
 #  include "BKE_mask.h"
 #  include "BKE_material.h"
 #  include "BKE_mball.h"
-#  include "BKE_mesh.h"
+#  include "BKE_mesh.hh"
 #  include "BKE_movieclip.h"
 #  include "BKE_node.h"
 #  include "BKE_object.h"
-#  include "BKE_paint.h"
+#  include "BKE_paint.hh"
 #  include "BKE_particle.h"
 #  include "BKE_pointcloud.h"
 #  include "BKE_scene.h"
@@ -91,8 +91,8 @@
 #  include "DNA_volume_types.h"
 #  include "DNA_world_types.h"
 
-#  include "ED_node.h"
-#  include "ED_screen.h"
+#  include "ED_node.hh"
+#  include "ED_screen.hh"
 
 #  include "BLT_translation.h"
 
@@ -100,8 +100,8 @@
 #    include "BPY_extern.h"
 #  endif
 
-#  include "WM_api.h"
-#  include "WM_types.h"
+#  include "WM_api.hh"
+#  include "WM_types.hh"
 
 static void rna_idname_validate(const char *name, char *r_name)
 {
@@ -849,7 +849,8 @@ void RNA_api_main(StructRNA * /*srna*/)
    * for now they are all in collections bpy.data.images.new(...) */
   func = RNA_def_function(srna, "add_image", "rna_Main_add_image");
   RNA_def_function_ui_description(func, "Add a new image");
-  parm = RNA_def_string_file_path(func, "filepath", nullptr, 0, "", "File path to load image from");
+  parm = RNA_def_string_file_path(
+      func, "filepath", nullptr, 0, "", "File path to load image from");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   parm = RNA_def_pointer(func, "image", "Image", "", "New image");
   RNA_def_function_return(func, parm);

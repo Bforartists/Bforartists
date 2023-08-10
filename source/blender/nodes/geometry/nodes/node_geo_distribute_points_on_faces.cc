@@ -15,12 +15,12 @@
 #include "BKE_attribute_math.hh"
 #include "BKE_bvhutils.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_runtime.h"
+#include "BKE_mesh_runtime.hh"
 #include "BKE_mesh_sample.hh"
 #include "BKE_pointcloud.h"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -336,7 +336,7 @@ static void compute_normal_outputs(const Mesh &mesh,
 {
   Array<float3> corner_normals(mesh.totloop);
   BKE_mesh_calc_normals_split_ex(
-      const_cast<Mesh *>(&mesh), nullptr, reinterpret_cast<float(*)[3]>(corner_normals.data()));
+      &mesh, nullptr, reinterpret_cast<float(*)[3]>(corner_normals.data()));
 
   const Span<MLoopTri> looptris = mesh.looptris();
   threading::parallel_for(bary_coords.index_range(), 512, [&](const IndexRange range) {
@@ -495,7 +495,7 @@ static void point_distribution_calculate(GeometrySet &geometry_set,
     return;
   }
 
-  const Mesh &mesh = *geometry_set.get_mesh_for_read();
+  const Mesh &mesh = *geometry_set.get_mesh();
 
   Vector<float3> positions;
   Vector<float3> bary_coords;

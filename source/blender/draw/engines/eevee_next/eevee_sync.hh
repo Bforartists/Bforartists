@@ -167,6 +167,10 @@ class SyncModule {
                  ObjectHandle &ob_handle,
                  ResourceHandle res_handle,
                  const ObjectRef &ob_ref);
+  bool sync_sculpt(Object *ob,
+                   ObjectHandle &ob_handle,
+                   ResourceHandle res_handle,
+                   const ObjectRef &ob_ref);
   void sync_point_cloud(Object *ob,
                         ObjectHandle &ob_handle,
                         ResourceHandle res_handle,
@@ -179,6 +183,9 @@ class SyncModule {
                    ParticleSystem *particle_sys = nullptr);
   void sync_light_probe(Object *ob, ObjectHandle &ob_handle);
 };
+
+using HairHandleCallback = FunctionRef<void(ObjectHandle, ModifierData &, ParticleSystem &)>;
+void foreach_hair_particle_handle(Object *ob, ObjectHandle ob_handle, HairHandleCallback callback);
 
 /** \} */
 

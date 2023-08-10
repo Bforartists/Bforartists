@@ -22,7 +22,7 @@
 #  include "BLI_winstuff.h"
 #endif
 
-#include "BIF_glutil.h"
+#include "BIF_glutil.hh"
 
 #include "BKE_blendfile.h"
 #include "BKE_context.h"
@@ -40,24 +40,24 @@
 #include "RNA_access.h"
 #include "RNA_prototypes.h"
 
-#include "ED_fileselect.h"
-#include "ED_screen.h"
+#include "ED_fileselect.hh"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
-#include "UI_interface_icons.h"
-#include "UI_resources.h"
-#include "UI_view2d.h"
+#include "UI_interface.hh"
+#include "UI_interface_icons.hh"
+#include "UI_resources.hh"
+#include "UI_view2d.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "GPU_immediate.h"
 #include "GPU_immediate_util.h"
 #include "GPU_state.h"
 
-#include "filelist.h"
+#include "filelist.hh"
 
-#include "file_intern.h" /* own include */
+#include "file_intern.hh" /* own include */
 
 void ED_file_path_button(bScreen *screen,
                          const SpaceFile *sfile,
@@ -367,7 +367,7 @@ static void file_draw_preview(const FileList *files,
   bool show_outline = !is_icon && (file->typeflag & (FILE_TYPE_IMAGE | FILE_TYPE_OBJECT_IO |
                                                      FILE_TYPE_MOVIE | FILE_TYPE_BLENDER));
   const bool is_offline = (file->attributes & FILE_ATTR_OFFLINE);
-  const bool is_loading = !filelist_is_ready(files) || file->flags & FILE_ENTRY_PREVIEW_LOADING;
+  const bool is_loading = filelist_file_is_preview_pending(files, file);
 
   BLI_assert(imb != nullptr);
 
@@ -1090,7 +1090,7 @@ void file_draw_list(const bContext *C, ARegion *region)
                                      0,
                                      0,
                                      0,
-                                     0);
+                                     nullptr);
           UI_but_dragflag_enable(drag_but, UI_BUT_DRAG_FULL_BUT);
           file_but_enable_drag(drag_but, sfile, file, path, nullptr, icon, UI_SCALE_FAC);
         }

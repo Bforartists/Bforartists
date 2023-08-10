@@ -42,30 +42,30 @@
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
-#include "wm.h"
-#include "wm_draw.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
+#include "wm.hh"
+#include "wm_draw.hh"
 #include "wm_event_system.h"
-#include "wm_files.h"
+#include "wm_files.hh"
 #include "wm_platform_support.h"
-#include "wm_window.h"
+#include "wm_window.hh"
 #include "wm_window_private.h"
 #ifdef WITH_XR_OPENXR
 #  include "wm_xr.h"
 #endif
 
-#include "ED_anim_api.h"
-#include "ED_fileselect.h"
-#include "ED_render.h"
-#include "ED_scene.h"
-#include "ED_screen.h"
+#include "ED_anim_api.hh"
+#include "ED_fileselect.hh"
+#include "ED_render.hh"
+#include "ED_scene.hh"
+#include "ED_screen.hh"
 
 #include "IMB_imbuf.h"
 #include "IMB_imbuf_types.h"
 
-#include "UI_interface.h"
-#include "UI_interface_icons.h"
+#include "UI_interface.hh"
+#include "UI_interface_icons.hh"
 
 #include "PIL_time.h"
 
@@ -80,7 +80,7 @@
 #include "GPU_state.h"
 #include "GPU_texture.h"
 
-#include "UI_resources.h"
+#include "UI_resources.hh"
 
 /* for assert */
 #ifndef NDEBUG
@@ -483,7 +483,7 @@ void wm_window_title(wmWindowManager *wm, wmWindow *win)
     /* this is set to 1 if you don't have startup.blend open */
     const char *blendfile_path = BKE_main_blendfile_path_from_global();
     if (blendfile_path[0] != '\0') {
-      char str[sizeof(((Main *)nullptr)->filepath) + 24];
+      char str[sizeof(Main::filepath) + 24];
       SNPRINTF(str,
                "Bforartists%s [%s%s]",
                wm->file_saved ? "" : "*",
@@ -1355,9 +1355,9 @@ static bool ghost_event_proc(GHOST_EventHandle evt, GHOST_TUserDataPtr C_void_pt
 
         wm_window_make_drawable(wm, win);
 #if 0
-/* NOTE(@ideasman42): Ideally we could swap-buffers to avoid a full redraw.
-* however this causes window flickering on resize with LIBDECOR under WAYLAND. */
-wm_window_swap_buffers(win);
+        /* NOTE(@ideasman42): Ideally we could swap-buffers to avoid a full redraw.
+         * however this causes window flickering on resize with LIBDECOR under WAYLAND. */
+        wm_window_swap_buffers(win);
 #else
         WM_event_add_notifier(C, NC_WINDOW, nullptr);
 #endif
@@ -1975,8 +1975,7 @@ void WM_event_timers_free_all(wmWindowManager *wm)
 {
   BLI_assert_msg(BLI_listbase_is_empty(&wm->windows),
                  "This should only be called when freeing the window-manager");
-  wmTimer *timer;
-  while ((timer = static_cast<wmTimer *>(BLI_pophead(&wm->timers)))) {
+  while (wmTimer *timer = static_cast<wmTimer *>(BLI_pophead(&wm->timers))) {
     WM_event_timer_free_data(timer);
     MEM_freeN(timer);
   }

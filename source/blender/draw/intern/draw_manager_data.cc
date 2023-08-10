@@ -18,13 +18,13 @@
 #include "BKE_image.h"
 #include "BKE_mesh.hh"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_pbvh_api.hh"
 #include "BKE_volume.h"
 
 /* For debug cursor position. */
-#include "WM_api.h"
-#include "wm_window.h"
+#include "WM_api.hh"
+#include "wm_window.hh"
 
 #include "DNA_curve_types.h"
 #include "DNA_mesh_types.h"

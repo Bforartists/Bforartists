@@ -44,15 +44,15 @@
 
 #include "DNA_ID.h"
 
-#include "UI_interface_icons.h"
+#include "UI_interface_icons.hh"
 
 #include "MEM_guardedalloc.h"
 
 #include "RNA_enum_types.h" /* For `rna_enum_wm_job_type_items`. */
 
 /* for notifiers */
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "../generic/py_capi_rna.h"
 #include "../generic/py_capi_utils.h"
@@ -517,7 +517,7 @@ static PyObject *bpy_app_is_job_running(PyObject * /*self*/, PyObject *args, PyO
       "O&" /* `job_type` */
       ":is_job_running",
       _keywords,
-      0,
+      nullptr,
   };
   if (!_PyArg_ParseTupleAndKeywordsFast(
           args, kwds, &_parser, pyrna_enum_value_parse_string, &job_type_enum))
@@ -547,7 +547,7 @@ static PyObject *bpy_app_help_text(PyObject * /*self*/, PyObject *args, PyObject
       "O&" /* `all` */
       ":help_text",
       _keywords,
-      0,
+      nullptr,
   };
   if (!_PyArg_ParseTupleAndKeywordsFast(args, kwds, &_parser, PyC_ParseBool, &all)) {
     return nullptr;

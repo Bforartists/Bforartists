@@ -19,12 +19,12 @@
 #include "BLT_translation.h"
 
 #include "ED_curves.hh"
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_select_utils.h"
-#include "ED_view3d.h"
+#include "ED_object.hh"
+#include "ED_screen.hh"
+#include "ED_select_utils.hh"
+#include "ED_view3d.hh"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 
 #include "BKE_attribute_math.hh"
 #include "BKE_bvhutils.h"
@@ -34,11 +34,11 @@
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_legacy_convert.h"
-#include "BKE_mesh_runtime.h"
+#include "BKE_mesh_legacy_convert.hh"
+#include "BKE_mesh_runtime.hh"
 #include "BKE_mesh_sample.hh"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_particle.h"
 #include "BKE_report.h"
 
@@ -57,8 +57,8 @@
 #include "RNA_enum_types.h"
 #include "RNA_prototypes.h"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "GEO_reverse_uv_sampler.hh"
 
@@ -914,8 +914,9 @@ static int select_random_exec(bContext *C, wmOperator *op)
     const eAttrDomain selection_domain = eAttrDomain(curves_id->selection_domain);
 
     IndexMaskMemory memory;
-    const IndexMask random_elements = random_mask(
-        curves, selection_domain, seed, probability, memory);
+    const IndexMask inv_random_elements = random_mask(
+                                              curves, selection_domain, seed, probability, memory)
+                                              .complement(curves.points_range(), memory);
 
     const bool was_anything_selected = has_anything_selected(curves);
     bke::GSpanAttributeWriter selection = ensure_selection_attribute(
@@ -924,7 +925,7 @@ static int select_random_exec(bContext *C, wmOperator *op)
       curves::fill_selection_true(selection.span);
     }
 
-    curves::fill_selection_false(selection.span, random_elements);
+    curves::fill_selection_false(selection.span, inv_random_elements);
     selection.finish();
 
     /* Use #ID_RECALC_GEOMETRY instead of #ID_RECALC_SELECT because it is handled as a generic

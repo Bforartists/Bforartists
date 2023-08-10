@@ -139,9 +139,8 @@ void blf_glyph_cache_release(FontBLF *font)
 
 static void blf_glyph_cache_free(GlyphCacheBLF *gc)
 {
-  GlyphBLF *g;
   for (uint i = 0; i < ARRAY_SIZE(gc->bucket); i++) {
-    while ((g = static_cast<GlyphBLF *>(BLI_pophead(&gc->bucket[i])))) {
+    while (GlyphBLF *g = static_cast<GlyphBLF *>(BLI_pophead(&gc->bucket[i]))) {
       blf_glyph_free(g);
     }
   }
@@ -156,11 +155,9 @@ static void blf_glyph_cache_free(GlyphCacheBLF *gc)
 
 void blf_glyph_cache_clear(FontBLF *font)
 {
-  GlyphCacheBLF *gc;
-
   BLI_mutex_lock(&font->glyph_cache_mutex);
 
-  while ((gc = static_cast<GlyphCacheBLF *>(BLI_pophead(&font->cache)))) {
+  while (GlyphCacheBLF *gc = static_cast<GlyphCacheBLF *>(BLI_pophead(&font->cache))) {
     blf_glyph_cache_free(gc);
   }
 
@@ -203,7 +200,7 @@ static GlyphBLF *blf_glyph_cache_find_glyph(const GlyphCacheBLF *gc, uint charco
  */
 static uchar blf_glyph_gamma(uchar c)
 {
-  /* The following is `(char)(powf(c / 256.0f, 1.0f / 1.43f) * 256.0f)`. */
+  /* The following is `char(powf(c / 256.0f, 1.0f / 1.43f) * 256.0f)`. */
   static const uchar gamma[256] = {
       0,   5,   9,   11,  14,  16,  19,  21,  23,  25,  26,  28,  30,  32,  34,  35,  37,  38,
       40,  41,  43,  44,  46,  47,  49,  50,  52,  53,  54,  56,  57,  58,  60,  61,  62,  64,

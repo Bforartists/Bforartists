@@ -14,8 +14,8 @@
 
 #include "BLI_task.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -112,7 +112,7 @@ static void curve_fill_calculate(GeometrySet &geometry_set, const GeometryNodeCu
     return;
   }
 
-  const Curves &curves_id = *geometry_set.get_curves_for_read();
+  const Curves &curves_id = *geometry_set.get_curves();
   const bke::CurvesGeometry &curves = curves_id.geometry.wrap();
   if (curves.curves_num() == 0) {
     geometry_set.replace_curves(nullptr);

@@ -46,8 +46,8 @@
 #  include "BPY_extern.h"
 #endif
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -55,12 +55,12 @@
 #include "RNA_path.h"
 #include "RNA_prototypes.h"
 
-#include "ED_keyframing.h"
-#include "ED_object.h"
-#include "ED_screen.h"
+#include "ED_keyframing.hh"
+#include "ED_object.hh"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "object_intern.h"
 
@@ -121,13 +121,10 @@ ListBase *ED_object_constraint_list_from_constraint(Object *ob,
 
   /* if armature, try pose bones too */
   if (ob->pose) {
-    bPoseChannel *pchan;
-
     /* try each bone in order
      * NOTE: it's not possible to directly look up the active bone yet, so this will have to do
      */
-    for (pchan = static_cast<bPoseChannel *>(ob->pose->chanbase.first); pchan; pchan = pchan->next)
-    {
+    LISTBASE_FOREACH (bPoseChannel *, pchan, &ob->pose->chanbase) {
       if (BLI_findindex(&pchan->constraints, con) != -1) {
 
         if (r_pchan) {
@@ -294,7 +291,6 @@ static void test_constraint(
     Main *bmain, Object *owner, bPoseChannel *pchan, bConstraint *con, int type)
 {
   ListBase targets = {nullptr, nullptr};
-  bConstraintTarget *ct;
   bool check_targets = true;
 
   /* clear disabled-flag first */
@@ -469,7 +465,7 @@ static void test_constraint(
   /* Check targets for constraints */
   if (check_targets && BKE_constraint_targets_get(con, &targets)) {
     /* disable and clear constraints targets that are incorrect */
-    for (ct = static_cast<bConstraintTarget *>(targets.first); ct; ct = ct->next) {
+    LISTBASE_FOREACH (bConstraintTarget *, ct, &targets) {
       /* general validity checks (for those constraints that need this) */
       if (BKE_object_exists_check(bmain, ct->tar) == 0) {
         /* object doesn't exist, but constraint requires target */
@@ -573,7 +569,6 @@ static int constraint_type_get(Object *owner, bPoseChannel *pchan)
  */
 static void test_constraints(Main *bmain, Object *ob, bPoseChannel *pchan)
 {
-  bConstraint *curcon;
   ListBase *conlist = nullptr;
   int type;
 
@@ -595,7 +590,7 @@ static void test_constraints(Main *bmain, Object *ob, bPoseChannel *pchan)
 
   /* Check all constraints - is constraint valid? */
   if (conlist) {
-    for (curcon = static_cast<bConstraint *>(conlist->first); curcon; curcon = curcon->next) {
+    LISTBASE_FOREACH (bConstraint *, curcon, conlist) {
       test_constraint(bmain, ob, pchan, curcon, type);
     }
   }
@@ -608,10 +603,7 @@ void object_test_constraints(Main *bmain, Object *ob)
   }
 
   if (ob->type == OB_ARMATURE && ob->pose) {
-    bPoseChannel *pchan;
-
-    for (pchan = static_cast<bPoseChannel *>(ob->pose->chanbase.first); pchan; pchan = pchan->next)
-    {
+    LISTBASE_FOREACH (bPoseChannel *, pchan, &ob->pose->chanbase) {
       if (pchan->constraints.first) {
         test_constraints(bmain, ob, pchan);
       }
@@ -626,9 +618,7 @@ static void object_test_constraint(Main *bmain, Object *ob, bConstraint *con)
       test_constraint(bmain, ob, nullptr, con, CONSTRAINT_OBTYPE_OBJECT);
     }
     else {
-      bPoseChannel *pchan;
-      for (pchan = static_cast<bPoseChannel *>(ob->pose->chanbase.first); pchan;
-           pchan = pchan->next) {
+      LISTBASE_FOREACH (bPoseChannel *, pchan, &ob->pose->chanbase) {
         if (BLI_findindex(&pchan->constraints, con) != -1) {
           test_constraint(bmain, ob, pchan, con, CONSTRAINT_OBTYPE_BONE);
           break;

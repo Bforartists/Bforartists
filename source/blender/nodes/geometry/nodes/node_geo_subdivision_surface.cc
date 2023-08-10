@@ -10,11 +10,15 @@
 #include "BKE_attribute.hh"
 #include "BKE_lib_id.h"
 #include "BKE_mesh.hh"
-#include "BKE_subdiv.h"
+#include "BKE_subdiv.hh"
 #include "BKE_subdiv_mesh.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
+
+#include "RNA_enum_types.h"
+
+#include "NOD_rna_define.hh"
 
 #include "node_geometry_util.hh"
 
@@ -177,7 +181,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   }
 
   geometry_set.modify_geometry_sets([&](GeometrySet &geometry_set) {
-    if (const Mesh *mesh = geometry_set.get_mesh_for_read()) {
+    if (const Mesh *mesh = geometry_set.get_mesh()) {
       geometry_set.replace_mesh(
           mesh_subsurf_calc(mesh, level, vert_crease, edge_crease, boundary_smooth, uv_smooth));
     }
@@ -188,6 +192,27 @@ static void node_geo_exec(GeoNodeExecParams params)
 
 #endif
   params.set_output("Mesh", std::move(geometry_set));
+}
+
+static void node_rna(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  prop = RNA_def_property(srna, "uv_smooth", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_node_storage(prop, uv_smooth);
+  RNA_def_property_enum_items(prop, rna_enum_subdivision_uv_smooth_items);
+  RNA_def_property_enum_default(prop, SUBSURF_UV_SMOOTH_PRESERVE_BOUNDARIES);
+  RNA_def_property_ui_text(prop, "UV Smooth", "Controls how smoothing is applied to UVs");
+  RNA_def_property_update_runtime(prop, (void *)rna_Node_update);
+  RNA_def_property_update_notifier(prop, NC_NODE | NA_EDITED);
+
+  prop = RNA_def_property(srna, "boundary_smooth", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_node_storage(prop, boundary_smooth);
+  RNA_def_property_enum_items(prop, rna_enum_subdivision_boundary_smooth_items);
+  RNA_def_property_enum_default(prop, SUBSURF_BOUNDARY_SMOOTH_ALL);
+  RNA_def_property_ui_text(prop, "Boundary Smooth", "Controls how open boundaries are smoothed");
+  RNA_def_property_update_runtime(prop, (void *)rna_Node_update);
+  RNA_def_property_update_notifier(prop, NC_NODE | NA_EDITED);
 }
 
 }  // namespace blender::nodes::node_geo_subdivision_surface_cc
@@ -210,4 +235,6 @@ void register_node_type_geo_subdivision_surface()
                     node_free_standard_storage,
                     node_copy_standard_storage);
   nodeRegisterType(&ntype);
+
+  file_ns::node_rna(ntype.rna_ext.srna);
 }

@@ -10,7 +10,7 @@
  * 'rna_wm.cc', some calling into functions here to do python specific
  * functionality.
  *
- * \note This follows 'bpy_operator_wrap.c' very closely.
+ * \note This follows `bpy_operator_wrap.cc` very closely.
  * Keep in sync unless there is good reason not to!
  */
 
@@ -18,8 +18,8 @@
 
 #include "BLI_utildefines.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -60,7 +60,7 @@ static bool bpy_gizmotype_target_property_def(wmGizmoType *gzt, PyObject *item)
       "i"  /* `array_length` */
       ":register_class",
       _keywords,
-      0,
+      nullptr,
   };
   if (!_PyArg_ParseTupleAndKeywordsFast(empty_tuple,
                                         item,

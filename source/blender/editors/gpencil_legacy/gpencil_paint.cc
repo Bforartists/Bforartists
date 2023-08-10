@@ -33,7 +33,7 @@
 #include "DNA_scene_types.h"
 #include "DNA_windowmanager_types.h"
 
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_colortools.h"
 #include "BKE_context.h"
 #include "BKE_deform.h"
@@ -45,19 +45,19 @@
 #include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_report.h"
 #include "BKE_screen.h"
 #include "BKE_tracking.h"
 
-#include "UI_view2d.h"
+#include "UI_view2d.hh"
 
-#include "ED_clip.h"
-#include "ED_gpencil_legacy.h"
-#include "ED_keyframing.h"
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_view3d.h"
+#include "ED_clip.hh"
+#include "ED_gpencil_legacy.hh"
+#include "ED_keyframing.hh"
+#include "ED_object.hh"
+#include "ED_screen.hh"
+#include "ED_view3d.hh"
 
 #include "GPU_immediate.h"
 #include "GPU_immediate_util.h"
@@ -67,8 +67,8 @@
 #include "RNA_define.h"
 #include "RNA_prototypes.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
@@ -3045,7 +3045,7 @@ static void gpencil_draw_apply_event(bContext *C,
     /* get stroke angle for grids */
     if (ELEM(guide->type, GP_GUIDE_ISO)) {
       p->guide.stroke_angle = atan2f(pt[1], pt[0]);
-      /* determine iso angle, less weight is given for vertical strokes */
+      /* Determine ISO angle, less weight is given for vertical strokes. */
       if (((p->guide.stroke_angle >= 0.0f) && (p->guide.stroke_angle < DEG2RAD(75))) ||
           (p->guide.stroke_angle < DEG2RAD(-105)))
       {

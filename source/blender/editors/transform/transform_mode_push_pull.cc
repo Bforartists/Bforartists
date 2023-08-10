@@ -15,9 +15,9 @@
 #include "BKE_context.h"
 #include "BKE_unit.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "BLT_translation.h"
 
@@ -102,7 +102,7 @@ static void transdata_elem_push_pull_fn(void *__restrict iter_data_v,
 /** \name Transform (Push/Pull)
  * \{ */
 
-static void applyPushPull(TransInfo *t, const int[2] /*mval*/)
+static void applyPushPull(TransInfo *t)
 {
   float axis_global[3];
   float distance;

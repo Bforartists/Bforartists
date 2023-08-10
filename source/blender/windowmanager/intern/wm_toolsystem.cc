@@ -25,22 +25,22 @@
 #include "DNA_windowmanager_types.h"
 #include "DNA_workspace_types.h"
 
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_context.h"
 #include "BKE_idprop.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_workspace.h"
 
 #include "RNA_access.h"
 #include "RNA_enum_types.h"
 
-#include "WM_api.h"
-#include "WM_message.h"
+#include "WM_api.hh"
+#include "WM_message.hh"
 #include "WM_toolsystem.h" /* own include */
-#include "WM_types.h"
+#include "WM_types.hh"
 
 static void toolsystem_reinit_with_toolref(bContext *C, WorkSpace * /*workspace*/, bToolRef *tref);
 static bToolRef *toolsystem_reinit_ensure_toolref(bContext *C,
@@ -507,7 +507,7 @@ void WM_toolsystem_refresh_active(bContext *C)
     ScrArea *area;
     ARegion *region;
     bool is_set;
-  } context_prev = {0};
+  } context_prev = {nullptr};
 
   for (wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first); wm;
        wm = static_cast<wmWindowManager *>(wm->id.next))

@@ -6,8 +6,10 @@
 
 #include "BKE_curves.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
+
+#include "NOD_rna_define.hh"
 
 #include "node_geometry_util.hh"
 
@@ -65,7 +67,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     case GEO_NODE_CURVE_RESAMPLE_COUNT: {
       Field<int> count = params.extract_input<Field<int>>("Count");
       geometry_set.modify_geometry_sets([&](GeometrySet &geometry) {
-        if (const Curves *src_curves_id = geometry.get_curves_for_read()) {
+        if (const Curves *src_curves_id = geometry.get_curves()) {
           const bke::CurvesGeometry &src_curves = src_curves_id->geometry.wrap();
           bke::CurvesGeometry dst_curves = geometry::resample_to_count(
               src_curves, selection, count);
@@ -79,7 +81,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     case GEO_NODE_CURVE_RESAMPLE_LENGTH: {
       Field<float> length = params.extract_input<Field<float>>("Length");
       geometry_set.modify_geometry_sets([&](GeometrySet &geometry) {
-        if (const Curves *src_curves_id = geometry.get_curves_for_read()) {
+        if (const Curves *src_curves_id = geometry.get_curves()) {
           const bke::CurvesGeometry &src_curves = src_curves_id->geometry.wrap();
           bke::CurvesGeometry dst_curves = geometry::resample_to_length(
               src_curves, selection, length);
@@ -92,7 +94,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
     case GEO_NODE_CURVE_RESAMPLE_EVALUATED:
       geometry_set.modify_geometry_sets([&](GeometrySet &geometry) {
-        if (const Curves *src_curves_id = geometry.get_curves_for_read()) {
+        if (const Curves *src_curves_id = geometry.get_curves()) {
           const bke::CurvesGeometry &src_curves = src_curves_id->geometry.wrap();
           bke::CurvesGeometry dst_curves = geometry::resample_to_evaluated(src_curves, selection);
           Curves *dst_curves_id = bke::curves_new_nomain(std::move(dst_curves));
@@ -104,6 +106,39 @@ static void node_geo_exec(GeoNodeExecParams params)
   }
 
   params.set_output("Curve", std::move(geometry_set));
+}
+
+static void node_rna(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  static EnumPropertyItem mode_items[] = {
+      {GEO_NODE_CURVE_RESAMPLE_EVALUATED,
+       "EVALUATED",
+       0,
+       "Evaluated",
+       "Output the input spline's evaluated points, based on the resolution attribute for NURBS "
+       "and Bezier splines. Poly splines are unchanged"},
+      {GEO_NODE_CURVE_RESAMPLE_COUNT,
+       "COUNT",
+       0,
+       "Count",
+       "Sample the specified number of points along each spline"},
+      {GEO_NODE_CURVE_RESAMPLE_LENGTH,
+       "LENGTH",
+       0,
+       "Length",
+       "Calculate the number of samples by splitting each spline into segments with the specified "
+       "length"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
+  prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_node_storage(prop, mode);
+  RNA_def_property_enum_items(prop, mode_items);
+  RNA_def_property_ui_text(prop, "Mode", "How to specify the amount of samples");
+  RNA_def_property_update_runtime(prop, (void *)rna_Node_socket_update);
+  RNA_def_property_update_notifier(prop, NC_NODE | NA_EDITED);
 }
 
 }  // namespace blender::nodes::node_geo_curve_resample_cc
@@ -123,4 +158,6 @@ void register_node_type_geo_curve_resample()
   ntype.updatefunc = file_ns::node_update;
   ntype.geometry_node_execute = file_ns::node_geo_exec;
   nodeRegisterType(&ntype);
+
+  file_ns::node_rna(ntype.rna_ext.srna);
 }

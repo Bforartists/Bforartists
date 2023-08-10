@@ -34,7 +34,7 @@
 #include "BKE_key.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
-#include "BKE_lib_override.h"
+#include "BKE_lib_override.hh"
 #include "BKE_lib_query.h"
 #include "BKE_lib_remap.h"
 #include "BKE_main.h"
@@ -4570,6 +4570,9 @@ void BKE_lib_override_library_id_unused_cleanup(ID *local)
           if (opop->tag & LIBOVERRIDE_PROP_OP_TAG_UNUSED) {
             BKE_lib_override_library_property_operation_delete(op, opop);
           }
+        }
+        if (BLI_listbase_is_empty(&op->operations)) {
+          BKE_lib_override_library_property_delete(local->override_library, op);
         }
       }
     }

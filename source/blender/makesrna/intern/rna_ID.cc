@@ -25,7 +25,7 @@
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
 #include "rna_internal.h"
 
@@ -216,7 +216,7 @@ const IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
 #  include "BKE_global.h" /* XXX, remove me */
 #  include "BKE_idprop.h"
 #  include "BKE_idtype.h"
-#  include "BKE_lib_override.h"
+#  include "BKE_lib_override.hh"
 #  include "BKE_lib_query.h"
 #  include "BKE_lib_remap.h"
 #  include "BKE_library.h"
@@ -227,9 +227,9 @@ const IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
 #  include "DEG_depsgraph_build.h"
 #  include "DEG_depsgraph_query.h"
 
-#  include "ED_asset.h"
+#  include "ED_asset.hh"
 
-#  include "WM_api.h"
+#  include "WM_api.hh"
 
 #  ifdef WITH_PYTHON
 #    include "BPY_extern.h"
@@ -975,11 +975,11 @@ static void rna_ID_update_tag(ID *id, Main *bmain, ReportList *reports, int flag
 {
 /* XXX, new function for this! */
 #  if 0
-if (ob->type == OB_FONT) {
-Curve *cu = ob->data;
-freedisplist(&cu->disp);
-BKE_vfont_to_curve(bmain, sce, ob, FO_EDIT, nullptr);
-}
+  if (ob->type == OB_FONT) {
+    Curve *cu = ob->data;
+    freedisplist(&cu->disp);
+    BKE_vfont_to_curve(bmain, sce, ob, FO_EDIT, nullptr);
+  }
 #  endif
 
   if (flag == 0) {
@@ -999,8 +999,9 @@ BKE_vfont_to_curve(bmain, sce, ob, FO_EDIT, nullptr);
         break;
 /* Could add particle updates later */
 #  if 0
-case ID_PA: allow_flag = OB_RECALC_ALL | PSYS_RECALC;
-break;
+      case ID_PA:
+        allow_flag = OB_RECALC_ALL | PSYS_RECALC;
+        break;
 #  endif
       case ID_AC:
         allow_flag = ID_RECALC_ANIMATION;
@@ -1555,11 +1556,11 @@ static void rna_def_ID_properties(BlenderRNA *brna)
 
 /* never tested, maybe its useful to have this? */
 #  if 0
-prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
-RNA_def_property_flag(prop, PROP_IDPROPERTY);
-RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-RNA_def_property_ui_text(prop, "Name", "Unique name used in the code and scripting");
-RNA_def_struct_name_property(srna, prop);
+  prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
+  RNA_def_property_flag(prop, PROP_IDPROPERTY);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(prop, "Name", "Unique name used in the code and scripting");
+  RNA_def_struct_name_property(srna, prop);
 #  endif
 
   /* IDP_ID */
@@ -1748,7 +1749,8 @@ static void rna_def_ID_override_library_property_operation(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_EDITABLE); /* For now. */
 
   prop = RNA_def_enum(
-      srna, "flag", override_library_property_flag_items, 0, "Flags", "Optional flags (NOT USED)");
+      srna, "flag", override_library_property_flag_items, 0, "Flags", "Status flags");
+  RNA_def_property_flag(prop, PROP_ENUM_FLAG);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE); /* For now. */
 
   prop = RNA_def_string(srna,

@@ -26,8 +26,8 @@
 
 #include "DRW_engine.h"
 
-#include "ED_screen.h"
-#include "ED_space_api.h"
+#include "ED_screen.hh"
+#include "ED_space_api.hh"
 
 #include "GHOST_C-api.h"
 
@@ -38,12 +38,12 @@
 
 #include "PIL_time.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "wm_event_system.h"
-#include "wm_surface.h"
-#include "wm_window.h"
+#include "wm_surface.hh"
+#include "wm_window.hh"
 #include "wm_xr_intern.h"
 
 static wmSurface *g_xr_surface = nullptr;
@@ -75,9 +75,7 @@ static void wm_xr_session_create_cb()
 static void wm_xr_session_controller_data_free(wmXrSessionState *state)
 {
   ListBase *lb = &state->controllers;
-  wmXrController *c;
-
-  while ((c = static_cast<wmXrController *>(BLI_pophead(lb)))) {
+  while (wmXrController *c = static_cast<wmXrController *>(BLI_pophead(lb))) {
     if (c->model) {
       GPU_batch_discard(c->model);
     }
@@ -1435,9 +1433,8 @@ static void wm_xr_session_surface_free_data(wmSurface *surface)
 {
   wmXrSurfaceData *data = static_cast<wmXrSurfaceData *>(surface->customdata);
   ListBase *lb = &data->viewports;
-  wmXrViewportPair *vp;
 
-  while ((vp = static_cast<wmXrViewportPair *>(BLI_pophead(lb)))) {
+  while (wmXrViewportPair *vp = static_cast<wmXrViewportPair *>(BLI_pophead(lb))) {
     if (vp->viewport) {
       GPU_viewport_free(vp->viewport);
     }

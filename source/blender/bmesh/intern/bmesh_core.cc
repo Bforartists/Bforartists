@@ -21,7 +21,7 @@
 #include "DNA_meshdata_types.h"
 
 #include "BKE_customdata.h"
-#include "BKE_mesh.h"
+#include "BKE_mesh.hh"
 
 #include "bmesh.h"
 #include "intern/bmesh_private.h"
@@ -1406,9 +1406,9 @@ BMFace *bmesh_kernel_split_face_make_edge(BMesh *bm,
   } while ((l_iter = l_iter->next) != l_first);
 
   if (first_loop_f1) {
-    /* original first loop was in f1, find a suitable first loop for f2
+    /* Original first loop was in f1, find a suitable first loop for f2
      * which is as similar as possible to f1. the order matters for tools
-     * such as duplifaces. */
+     * such as dupli-faces. */
     if (f->l_first->prev == l_f1) {
       f2->l_first = l_f2->prev;
     }

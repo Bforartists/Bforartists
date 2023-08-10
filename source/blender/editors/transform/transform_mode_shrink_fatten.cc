@@ -16,12 +16,12 @@
 #include "BKE_report.h"
 #include "BKE_unit.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "BLT_translation.h"
 
@@ -88,7 +88,7 @@ static eRedrawFlag shrinkfatten_handleEvent(TransInfo *t, const wmEvent *event)
   return TREDRAW_NOTHING;
 }
 
-static void applyShrinkFatten(TransInfo *t, const int[2] /*mval*/)
+static void applyShrinkFatten(TransInfo *t)
 {
   float distance;
   int i;

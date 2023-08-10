@@ -15,13 +15,13 @@
 
 #include "rna_internal.h"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
 #ifdef RNA_RUNTIME
 
 #  include "DNA_brush_types.h"
 
-#  include "BKE_paint.h"
+#  include "BKE_paint.hh"
 #  include "BKE_report.h"
 static PaletteColor *rna_Palette_color_new(Palette *palette)
 {
