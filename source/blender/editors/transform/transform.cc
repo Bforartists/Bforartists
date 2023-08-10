@@ -26,23 +26,23 @@
 
 #include "GPU_state.h"
 
-#include "ED_clip.h"
-#include "ED_gpencil_legacy.h"
-#include "ED_image.h"
-#include "ED_keyframing.h"
-#include "ED_node.h"
-#include "ED_screen.h"
-#include "ED_space_api.h"
+#include "ED_clip.hh"
+#include "ED_gpencil_legacy.hh"
+#include "ED_image.hh"
+#include "ED_keyframing.hh"
+#include "ED_node.hh"
+#include "ED_screen.hh"
+#include "ED_space_api.hh"
 
 #include "SEQ_transform.h"
 
-#include "WM_api.h"
-#include "WM_message.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_message.hh"
+#include "WM_types.hh"
 
-#include "UI_interface_icons.h"
-#include "UI_resources.h"
-#include "UI_view2d.h"
+#include "UI_interface_icons.hh"
+#include "UI_resources.hh"
+#include "UI_view2d.hh"
 
 #include "RNA_access.h"
 
@@ -61,6 +61,8 @@
 /* Disabling, since when you type you know what you are doing,
  * and being able to set it to zero is handy. */
 /* #define USE_NUM_NO_ZERO */
+
+using namespace blender;
 
 bool transdata_check_local_islands(TransInfo *t, short around)
 {
@@ -648,7 +650,9 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
         return false;
       }
       if (value == TFM_MODAL_RESIZE && t->mode == TFM_RESIZE) {
-        return false;
+        /* The tracking transform in MovieClip has an alternate resize that only affects the
+         * tracker size and not the search area. */
+        return t->data_type == &TransConvertType_Tracking;
       }
       if (value == TFM_MODAL_VERT_EDGE_SLIDE &&
           (t->data_type != &TransConvertType_Mesh ||
@@ -965,7 +969,7 @@ int transformEvent(TransInfo *t, const wmEvent *event)
     handled = true;
   }
   else if (!is_navigating && event->type == MOUSEMOVE) {
-    copy_v2_v2_int(t->mval, event->mval);
+    t->mval = float2(event->mval);
 
     /* Use this for soft redraw. Might cause flicker in object mode */
     // t->redraw |= TREDRAW_SOFT;
@@ -1682,7 +1686,7 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
           /* Type is #eSnapFlag, but type must match various snap attributes in #ToolSettings. */
           short *snap_flag_ptr;
 
-          wmMsgParams_RNA msg_key_params = {{0}};
+          wmMsgParams_RNA msg_key_params = {{nullptr}};
           RNA_pointer_create(&t->scene->id, &RNA_ToolSettings, ts, &msg_key_params.ptr);
 
           if (t->spacetype == SPACE_NODE) {
@@ -2021,14 +2025,7 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
       }
     }
 
-    int mval[2];
-    if (t->flag & T_EVENT_DRAG_START) {
-      WM_event_drag_start_mval(event, t->region, mval);
-    }
-    else {
-      copy_v2_v2_int(mval, event->mval);
-    }
-    initMouseInput(t, &t->mouse, t->center2d, mval, use_accurate);
+    initMouseInput(t, &t->mouse, t->center2d, t->mval, use_accurate);
   }
 
   transform_mode_init(t, op, mode);
@@ -2109,7 +2106,7 @@ void transformApply(bContext *C, TransInfo *t)
   if (t->redraw == TREDRAW_HARD) {
     selectConstraint(t);
     if (t->mode_info) {
-      t->mode_info->transform_fn(t, t->mval); /* calls recalc_data() */
+      t->mode_info->transform_fn(t); /* calls recalc_data() */
     }
   }
 

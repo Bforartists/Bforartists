@@ -24,14 +24,14 @@
 #include "BKE_layer.h"
 #include "BKE_report.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_curve.h"
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_select_utils.h"
-#include "ED_view3d.h"
+#include "ED_curve.hh"
+#include "ED_object.hh"
+#include "ED_screen.hh"
+#include "ED_select_utils.hh"
+#include "ED_view3d.hh"
 
 #include "curve_intern.h"
 
@@ -214,9 +214,8 @@ bool ED_curve_nurb_deselect_all(const Nurb *nu)
 int ED_curve_select_count(const View3D *v3d, const EditNurb *editnurb)
 {
   int sel = 0;
-  Nurb *nu;
 
-  for (nu = static_cast<Nurb *>(editnurb->nurbs.first); nu; nu = nu->next) {
+  LISTBASE_FOREACH (Nurb *, nu, &editnurb->nurbs) {
     sel += ED_curve_nurb_select_count(v3d, nu);
   }
 

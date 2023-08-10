@@ -37,12 +37,12 @@
 #include "DNA_scene_types.h"
 #include "DNA_windowmanager_types.h"
 
-#include "UI_view2d.h"
+#include "UI_view2d.hh"
 
-#include "ED_clip.h"
-#include "ED_gpencil_legacy.h"
-#include "ED_screen.h"
-#include "ED_view3d.h"
+#include "ED_clip.hh"
+#include "ED_gpencil_legacy.hh"
+#include "ED_screen.hh"
+#include "ED_view3d.hh"
 
 #include "GPU_immediate.h"
 #include "GPU_immediate_util.h"
@@ -52,8 +52,8 @@
 #include "RNA_define.h"
 #include "RNA_prototypes.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "DEG_depsgraph.h"
 
@@ -2469,9 +2469,9 @@ static int annotation_draw_modal(bContext *C, wmOperator *op, const wmEvent *eve
  * Problem is that the stroke is converted to 3D only after it is finished.
  * This approach should work better in tools that immediately apply in 3D space. */
 #if 0
-if (event->type == NDOF_MOTION) {
-return OPERATOR_PASS_THROUGH;
-}
+  if (event->type == NDOF_MOTION) {
+    return OPERATOR_PASS_THROUGH;
+  }
 #endif
 
   if (p->status == GP_STATUS_IDLING) {

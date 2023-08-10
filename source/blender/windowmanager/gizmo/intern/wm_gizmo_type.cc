@@ -24,13 +24,13 @@
 #include "RNA_define.h"
 #include "RNA_prototypes.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
 /* only for own init/exit calls (wm_gizmotype_init/wm_gizmotype_free) */
-#include "wm.h"
+#include "wm.hh"
 
 /* own includes */
 #include "wm_gizmo_intern.h"
@@ -132,9 +132,7 @@ static void gizmotype_unlink(bContext *C, Main *bmain, wmGizmoType *gzt)
         LISTBASE_FOREACH (ARegion *, region, lb) {
           wmGizmoMap *gzmap = region->gizmo_map;
           if (gzmap) {
-            wmGizmoGroup *gzgroup;
-            for (gzgroup = static_cast<wmGizmoGroup *>(gzmap->groups.first); gzgroup;
-                 gzgroup = gzgroup->next) {
+            LISTBASE_FOREACH (wmGizmoGroup *, gzgroup, &gzmap->groups) {
               for (wmGizmo *gz = static_cast<wmGizmo *>(gzgroup->gizmos.first), *gz_next; gz;
                    gz = gz_next) {
                 gz_next = gz->next;

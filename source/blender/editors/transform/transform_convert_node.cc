@@ -22,14 +22,14 @@
 
 #include "ED_node.hh"
 
-#include "UI_interface.h"
-#include "UI_view2d.h"
+#include "UI_interface.hh"
+#include "UI_view2d.hh"
 
 #include "transform.hh"
 #include "transform_convert.hh"
 #include "transform_snap.hh"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 
 struct TransCustomDataNode {
   View2DEdgePanData edgepan_data;
@@ -206,8 +206,8 @@ static void flushTransNodes(TransInfo *t)
     else {
       /* Edge panning functions expect window coordinates, mval is relative to region */
       const int xy[2] = {
-          t->region->winrct.xmin + t->mval[0],
-          t->region->winrct.ymin + t->mval[1],
+          t->region->winrct.xmin + int(t->mval[0]),
+          t->region->winrct.ymin + int(t->mval[1]),
       };
       UI_view2d_edge_pan_apply(t->context, &customdata->edgepan_data, xy);
     }

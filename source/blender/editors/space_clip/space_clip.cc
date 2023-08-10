@@ -31,24 +31,24 @@
 
 #include "IMB_imbuf_types.h"
 
-#include "ED_anim_api.h" /* for timeline cursor drawing */
-#include "ED_clip.h"
-#include "ED_mask.h"
-#include "ED_screen.h"
-#include "ED_space_api.h"
-#include "ED_time_scrub_ui.h"
-#include "ED_uvedit.h" /* just for ED_image_draw_cursor */
+#include "ED_anim_api.hh" /* for timeline cursor drawing */
+#include "ED_clip.hh"
+#include "ED_mask.hh"
+#include "ED_screen.hh"
+#include "ED_space_api.hh"
+#include "ED_time_scrub_ui.hh"
+#include "ED_uvedit.hh" /* just for ED_image_draw_cursor */
 
 #include "IMB_imbuf.h"
 
 #include "GPU_matrix.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
-#include "UI_view2d.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
+#include "UI_view2d.hh"
 
 #include "BLO_read_write.h"
 
@@ -347,7 +347,7 @@ static void clip_listener(const wmSpaceTypeListenerParams *params)
 
 static void clip_operatortypes()
 {
-  /* ** clip_ops.c ** */
+  /* `clip_ops.cc` */
   WM_operatortype_append(CLIP_OT_open);
   WM_operatortype_append(CLIP_OT_reload);
   WM_operatortype_append(CLIP_OT_view_pan);
@@ -369,7 +369,7 @@ static void clip_operatortypes()
   WM_operatortype_append(CLIP_OT_cursor_set);
   WM_operatortype_append(CLIP_OT_lock_selection_toggle);
 
-  /* ** tracking_ops.c ** */
+  /* `tracking_ops.cc` */
 
   /* navigation */
   WM_operatortype_append(CLIP_OT_frame_jump);
@@ -449,7 +449,7 @@ static void clip_operatortypes()
   WM_operatortype_append(CLIP_OT_new_image_from_plane_marker);
   WM_operatortype_append(CLIP_OT_update_image_from_plane_marker);
 
-  /* ** clip_graph_ops.c  ** */
+  /* `clip_graph_ops.cc` */
 
   /* graph editing */
 
@@ -465,7 +465,7 @@ static void clip_operatortypes()
 
   WM_operatortype_append(CLIP_OT_graph_disable_markers);
 
-  /* ** clip_dopesheet_ops.c  ** */
+  /* `clip_dopesheet_ops.cc` */
 
   WM_operatortype_append(CLIP_OT_dopesheet_select_channel);
   WM_operatortype_append(CLIP_OT_dopesheet_view_all);
@@ -783,8 +783,9 @@ static void clip_main_region_draw(const bContext *C, ARegion *region)
     /* draw Grease Pencil - screen space only */
     clip_draw_grease_pencil((bContext *)C, false);
   }
-
-  WM_gizmomap_draw(region->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D);
+  if ((sc->gizmo_flag & SCLIP_GIZMO_HIDE) == 0) {
+    WM_gizmomap_draw(region->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D);
+  }
 }
 
 static void clip_main_region_listener(const wmRegionListenerParams *params)

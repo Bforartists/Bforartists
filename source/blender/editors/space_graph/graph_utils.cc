@@ -23,9 +23,9 @@
 #include "BKE_fcurve.h"
 #include "BKE_screen.h"
 
-#include "ED_anim_api.h"
-#include "ED_screen.h"
-#include "UI_interface.h"
+#include "ED_anim_api.hh"
+#include "ED_screen.hh"
+#include "UI_interface.hh"
 
 #include "RNA_access.h"
 #include "RNA_prototypes.h"
@@ -113,7 +113,6 @@ bAnimListElem *get_active_fcurve_channel(bAnimContext *ac)
 bool graphop_visible_keyframes_poll(bContext *C)
 {
   bAnimContext ac;
-  bAnimListElem *ale;
   ListBase anim_data = {nullptr, nullptr};
   ScrArea *area = CTX_wm_area(C);
   size_t items;
@@ -141,7 +140,7 @@ bool graphop_visible_keyframes_poll(bContext *C)
     return found;
   }
 
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     FCurve *fcu = (FCurve *)ale->data;
 
     /* visible curves for selection must fulfill the following criteria:
@@ -166,7 +165,6 @@ bool graphop_visible_keyframes_poll(bContext *C)
 bool graphop_editable_keyframes_poll(bContext *C)
 {
   bAnimContext ac;
-  bAnimListElem *ale;
   ListBase anim_data = {nullptr, nullptr};
   ScrArea *area = CTX_wm_area(C);
   size_t items;
@@ -196,7 +194,7 @@ bool graphop_editable_keyframes_poll(bContext *C)
     return found;
   }
 
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     FCurve *fcu = (FCurve *)ale->data;
 
     /* editable curves must fulfill the following criteria:

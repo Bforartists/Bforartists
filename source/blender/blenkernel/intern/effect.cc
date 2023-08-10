@@ -479,7 +479,6 @@ static float eff_calc_visibility(ListBase *colliders,
 {
   const int raycast_flag = BVH_RAYCAST_DEFAULT & ~BVH_RAYCAST_WATERTIGHT;
   ListBase *colls = colliders;
-  ColliderCache *col;
   float norm[3], len = 0.0;
   float visibility = 1.0, absorption = 0.0;
 
@@ -497,7 +496,7 @@ static float eff_calc_visibility(ListBase *colliders,
   len = normalize_v3(norm);
 
   /* check all collision objects */
-  for (col = static_cast<ColliderCache *>(colls->first); col; col = col->next) {
+  LISTBASE_FOREACH (ColliderCache *, col, colls) {
     CollisionModifierData *collmd = col->collmd;
 
     if (col->ob == eff->ob) {
@@ -872,7 +871,6 @@ static void do_texture_effector(EffectorCache *eff,
   float nabla = eff->pd->tex_nabla;
   int hasrgb;
   short mode = eff->pd->tex_mode;
-  bool scene_color_manage;
 
   if (!eff->pd->tex) {
     return;
@@ -894,10 +892,8 @@ static void do_texture_effector(EffectorCache *eff,
     madd_v3_v3fl(tex_co, efd->nor, fac);
   }
 
-  scene_color_manage = BKE_scene_check_color_management_enabled(eff->scene);
-
   hasrgb = multitex_ext(
-      eff->pd->tex, tex_co, nullptr, nullptr, 0, result, 0, nullptr, scene_color_manage, false);
+      eff->pd->tex, tex_co, nullptr, nullptr, 0, result, 0, nullptr, true, false);
 
   if (hasrgb && mode == PFIELD_TEX_RGB) {
     force[0] = (0.5f - result->trgba[0]) * strength;
@@ -908,42 +904,15 @@ static void do_texture_effector(EffectorCache *eff,
     strength /= nabla;
 
     tex_co[0] += nabla;
-    multitex_ext(eff->pd->tex,
-                 tex_co,
-                 nullptr,
-                 nullptr,
-                 0,
-                 result + 1,
-                 0,
-                 nullptr,
-                 scene_color_manage,
-                 false);
+    multitex_ext(eff->pd->tex, tex_co, nullptr, nullptr, 0, result + 1, 0, nullptr, true, false);
 
     tex_co[0] -= nabla;
     tex_co[1] += nabla;
-    multitex_ext(eff->pd->tex,
-                 tex_co,
-                 nullptr,
-                 nullptr,
-                 0,
-                 result + 2,
-                 0,
-                 nullptr,
-                 scene_color_manage,
-                 false);
+    multitex_ext(eff->pd->tex, tex_co, nullptr, nullptr, 0, result + 2, 0, nullptr, true, false);
 
     tex_co[1] -= nabla;
     tex_co[2] += nabla;
-    multitex_ext(eff->pd->tex,
-                 tex_co,
-                 nullptr,
-                 nullptr,
-                 0,
-                 result + 3,
-                 0,
-                 nullptr,
-                 scene_color_manage,
-                 false);
+    multitex_ext(eff->pd->tex, tex_co, nullptr, nullptr, 0, result + 3, 0, nullptr, true, false);
 
     if (mode == PFIELD_TEX_GRAD || !hasrgb) { /* if we don't have rgb fall back to grad */
       /* generate intensity if texture only has rgb value */
@@ -1182,7 +1151,6 @@ void BKE_effectors_apply(ListBase *effectors,
    *   (particles are guided along a curve bezier or old nurbs)
    *   (is independent of other effectors)
    */
-  EffectorCache *eff;
   EffectorData efd;
   int p = 0, tot = 1, step = 1;
 
@@ -1190,7 +1158,7 @@ void BKE_effectors_apply(ListBase *effectors,
   /* Check for min distance here? (yes would be cool to add that, ton) */
 
   if (effectors) {
-    for (eff = static_cast<EffectorCache *>(effectors->first); eff; eff = eff->next) {
+    LISTBASE_FOREACH (EffectorCache *, eff, effectors) {
       /* object effectors were fully checked to be OK to evaluate! */
 
       get_effector_tot(eff, &efd, point, &tot, &p, &step);

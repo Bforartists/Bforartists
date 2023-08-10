@@ -20,18 +20,18 @@
 
 #include "BKE_ccg.h"
 #include "BKE_context.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_pbvh_api.hh"
 
 #include "DEG_depsgraph.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 #include "sculpt_intern.hh"
 
 #include "bmesh.h"

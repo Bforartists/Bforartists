@@ -37,10 +37,10 @@
 #include "RNA_access.h"
 #include "RNA_prototypes.h"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "interface_intern.hh"
 
@@ -5878,7 +5878,7 @@ void UI_block_layout_resolve(uiBlock *block, int *r_x, int *r_y)
 
   BLI_listbase_clear(&block->layouts);
 
-  /* XXX silly trick, interface_templates.c doesn't get linked
+  /* XXX silly trick, `interface_templates.cc` doesn't get linked
    * because it's not used by other files in this module? */
   {
     UI_template_fix_linking();
@@ -6159,11 +6159,9 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
 
 static void ui_layout_introspect_items(DynStr *ds, ListBase *lb)
 {
-  uiItem *item;
-
   BLI_dynstr_append(ds, "[");
 
-  for (item = static_cast<uiItem *>(lb->first); item; item = item->next) {
+  LISTBASE_FOREACH (uiItem *, item, lb) {
 
     BLI_dynstr_append(ds, "{");
 

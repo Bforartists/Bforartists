@@ -48,7 +48,7 @@ class Import3DS(bpy.types.Operator, ImportHelper):
     filter_glob: StringProperty(default="*.3ds", options={'HIDDEN'})
 
     constrain_size: FloatProperty(
-        name="Constrain",
+        name="Constrain Size",
         description="Scale the model by 10 until it reaches the "
         "size constraint (0 to disable)",
         min=0.0, max=1000.0,
@@ -57,7 +57,12 @@ class Import3DS(bpy.types.Operator, ImportHelper):
     )
     use_scene_unit: BoolProperty(
         name="Scene Units",
-        description="Converts to scene unit length settings",
+        description="Convert to scene unit length settings",
+        default=False,
+    )
+    use_center_pivot: BoolProperty(
+        name="Pivot Origin",
+        description="Move all geometry to pivot origin",
         default=False,
     )
     use_image_search: BoolProperty(
@@ -176,6 +181,9 @@ class MAX3DS_PT_import_transform(bpy.types.Panel):
         layrow = layout.row(align=True)
         layrow.prop(operator, "use_scene_unit")
         layrow.label(text="", icon='EMPTY_ARROWS' if operator.use_scene_unit else 'EMPTY_DATA')
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_center_pivot")
+        layrow.label(text="", icon='OVERLAY' if operator.use_center_pivot else 'PIVOT_ACTIVE')
         layrow = layout.row(align=True)
         layrow.prop(operator, "use_apply_transform")
         layrow.label(text="", icon='MESH_CUBE' if operator.use_apply_transform else 'MOD_SOLIDIFY')

@@ -56,7 +56,7 @@
 
 #include "BKE_animsys.h"
 #include "BKE_blender.h"
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_cloth.h"
 #include "BKE_collection.h"
 #include "BKE_colortools.h"
@@ -75,11 +75,11 @@
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
-#include "BKE_mesh.h"
-#include "BKE_mesh_legacy_convert.h"
+#include "BKE_mesh.hh"
+#include "BKE_mesh_legacy_convert.hh"
 #include "BKE_node.h"
 #include "BKE_node_tree_update.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_pointcache.h"
 #include "BKE_report.h"
 #include "BKE_rigidbody.h"
@@ -108,7 +108,7 @@
 
 #include "MEM_guardedalloc.h"
 
-/* Make preferences read-only, use versioning_userdef.c. */
+/* Make preferences read-only, use `versioning_userdef.cc`. */
 #define U (*((const UserDef *)&U))
 
 static bScreen *screen_parent_find(const bScreen *screen)
@@ -250,168 +250,6 @@ static void do_version_workspaces_after_lib_link(Main *bmain)
     screen->scene = nullptr;
   }
 }
-
-#ifdef USE_COLLECTION_COMPAT_28
-enum {
-  COLLECTION_DEPRECATED_VISIBLE = (1 << 0),
-  COLLECTION_DEPRECATED_VIEWPORT = (1 << 0),
-  COLLECTION_DEPRECATED_SELECTABLE = (1 << 1),
-  COLLECTION_DEPRECATED_DISABLED = (1 << 2),
-  COLLECTION_DEPRECATED_RENDER = (1 << 3),
-};
-
-static void do_version_view_layer_visibility(ViewLayer *view_layer)
-{
-  /* Convert from deprecated VISIBLE flag to DISABLED */
-  LISTBASE_FOREACH (LayerCollection *, lc, &view_layer->layer_collections) {
-    if (lc->flag & COLLECTION_DEPRECATED_DISABLED) {
-      lc->flag &= ~COLLECTION_DEPRECATED_DISABLED;
-    }
-
-    if ((lc->flag & COLLECTION_DEPRECATED_VISIBLE) == 0) {
-      lc->flag |= COLLECTION_DEPRECATED_DISABLED;
-    }
-
-    lc->flag |= COLLECTION_DEPRECATED_VIEWPORT | COLLECTION_DEPRECATED_RENDER;
-  }
-}
-
-static void do_version_layer_collection_pre(ViewLayer *view_layer,
-                                            ListBase *lb,
-                                            GSet *enabled_set,
-                                            GSet *selectable_set)
-{
-  /* Convert from deprecated DISABLED to new layer collection and collection flags */
-  LISTBASE_FOREACH (LayerCollection *, lc, lb) {
-    if (lc->scene_collection) {
-      if (!(lc->flag & COLLECTION_DEPRECATED_DISABLED)) {
-        BLI_gset_insert(enabled_set, lc->scene_collection);
-      }
-      if (lc->flag & COLLECTION_DEPRECATED_SELECTABLE) {
-        BLI_gset_insert(selectable_set, lc->scene_collection);
-      }
-    }
-
-    do_version_layer_collection_pre(
-        view_layer, &lc->layer_collections, enabled_set, selectable_set);
-  }
-}
-
-static void do_version_layer_collection_post(ViewLayer *view_layer,
-                                             ListBase *lb,
-                                             GSet *enabled_set,
-                                             GSet *selectable_set,
-                                             GHash *collection_map)
-{
-  /* Apply layer collection exclude flags. */
-  LISTBASE_FOREACH (LayerCollection *, lc, lb) {
-    if (!(lc->collection->flag & COLLECTION_IS_MASTER)) {
-      SceneCollection *sc = static_cast<SceneCollection *>(
-          BLI_ghash_lookup(collection_map, lc->collection));
-      const bool enabled = (sc && BLI_gset_haskey(enabled_set, sc));
-      const bool selectable = (sc && BLI_gset_haskey(selectable_set, sc));
-
-      if (!enabled) {
-        lc->flag |= LAYER_COLLECTION_EXCLUDE;
-      }
-      if (enabled && !selectable) {
-        lc->collection->flag |= COLLECTION_HIDE_SELECT;
-      }
-    }
-
-    do_version_layer_collection_post(
-        view_layer, &lc->layer_collections, enabled_set, selectable_set, collection_map);
-  }
-}
-
-static void do_version_scene_collection_convert(
-    Main *bmain, ID *id, SceneCollection *sc, Collection *collection, GHash *collection_map)
-{
-  if (collection_map) {
-    BLI_ghash_insert(collection_map, collection, sc);
-  }
-
-  for (SceneCollection *nsc = static_cast<SceneCollection *>(sc->scene_collections.first);
-       nsc != nullptr;)
-  {
-    SceneCollection *nsc_next = nsc->next;
-    Collection *ncollection = BKE_collection_add(bmain, collection, nsc->name);
-    ncollection->id.lib = id->lib;
-    do_version_scene_collection_convert(bmain, id, nsc, ncollection, collection_map);
-    nsc = nsc_next;
-  }
-
-  LISTBASE_FOREACH (LinkData *, link, &sc->objects) {
-    Object *ob = static_cast<Object *>(link->data);
-    if (ob) {
-      BKE_collection_object_add_notest(bmain, collection, ob);
-      id_us_min(&ob->id);
-    }
-  }
-
-  BLI_freelistN(&sc->objects);
-  MEM_freeN(sc);
-}
-
-static void do_version_group_collection_to_collection(Main *bmain, Collection *group)
-{
-  /* Convert old 2.8 group collections to new unified collections. */
-  if (group->collection) {
-    do_version_scene_collection_convert(bmain, &group->id, group->collection, group, nullptr);
-  }
-
-  group->collection = nullptr;
-  group->view_layer = nullptr;
-  id_fake_user_set(&group->id);
-}
-
-static void do_version_scene_collection_to_collection(Main *bmain, Scene *scene)
-{
-  /* Convert old 2.8 scene collections to new unified collections. */
-
-  /* Temporarily clear view layers so we don't do any layer collection syncing
-   * and destroy old flags that we want to restore. */
-  ListBase view_layers = scene->view_layers;
-  BLI_listbase_clear(&scene->view_layers);
-
-  if (!scene->master_collection) {
-    scene->master_collection = BKE_collection_master_add(scene);
-  }
-
-  /* Convert scene collections. */
-  GHash *collection_map = BLI_ghash_new(BLI_ghashutil_ptrhash, BLI_ghashutil_ptrcmp, __func__);
-  if (scene->collection) {
-    do_version_scene_collection_convert(
-        bmain, &scene->id, scene->collection, scene->master_collection, collection_map);
-    scene->collection = nullptr;
-  }
-
-  scene->view_layers = view_layers;
-
-  /* Convert layer collections. */
-  LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
-    GSet *enabled_set = BLI_gset_new(BLI_ghashutil_ptrhash, BLI_ghashutil_ptrcmp, __func__);
-    GSet *selectable_set = BLI_gset_new(BLI_ghashutil_ptrhash, BLI_ghashutil_ptrcmp, __func__);
-
-    do_version_layer_collection_pre(
-        view_layer, &view_layer->layer_collections, enabled_set, selectable_set);
-
-    BKE_layer_collection_doversion_2_80(scene, view_layer);
-
-    BKE_layer_collection_sync(scene, view_layer);
-
-    do_version_layer_collection_post(
-        view_layer, &view_layer->layer_collections, enabled_set, selectable_set, collection_map);
-
-    BLI_gset_free(enabled_set, nullptr);
-    BLI_gset_free(selectable_set, nullptr);
-
-    BKE_layer_collection_sync(scene, view_layer);
-  }
-
-  BLI_ghash_free(collection_map, nullptr, nullptr);
-}
-#endif
 
 static void do_version_layers_to_collections(Main *bmain, Scene *scene)
 {
@@ -1245,7 +1083,7 @@ static void square_roughness_node_insert(bNodeTree *ntree)
                                    bNodeSocket *fromsock,
                                    bNode *tonode,
                                    bNodeSocket *tosock) {
-    /* Add sqrt node. */
+    /* Add `sqrt` node. */
     bNode *node = nodeAddStaticNode(nullptr, ntree, SH_NODE_MATH);
     node->custom1 = NODE_MATH_POWER;
     node->locx = 0.5f * (fromnode->locx + tonode->locx);
@@ -1890,7 +1728,7 @@ static void update_mapping_node_fcurve_rna_path_callback(ID * /* id */,
  * in the node. To correct this, a Vector Minimum and/or a Vector Maximum
  * nodes are added if needed.
  *
- * Finally, the TexMapping struct is freed and node->storage is set to NULL.
+ * Finally, the #TexMapping struct is freed and `node->storage` is set to null.
  *
  * Since the RNA paths of the properties changed, we also have to update the
  * rna_path of the FCurves if they exist. To do that, we loop over FCurves
@@ -1903,7 +1741,7 @@ static void update_mapping_node_inputs_and_properties(bNodeTree *ntree)
   bool need_update = false;
 
   LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-    /* If node->storage is NULL, then conversion has already taken place.
+    /* If `node->storage` is null, then conversion has already taken place.
      * This can happen if a file with the new mapping node [saved from (2, 81, 8) or newer]
      * is opened in a blender version prior to (2, 81, 8) and saved from there again. */
     if (node->type == SH_NODE_MAPPING && node->storage) {
@@ -2342,11 +2180,7 @@ static void update_wave_node_directions_and_offset(bNodeTree *ntree)
 
 void do_versions_after_linking_280(FileData *fd, Main *bmain)
 {
-  bool use_collection_compat_28 = true;
-
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 0)) {
-    use_collection_compat_28 = false;
-
     /* Convert group layer visibility flags to hidden nested collection. */
     LISTBASE_FOREACH (Collection *, collection, &bmain->collections) {
       /* Add fake user for all existing groups. */
@@ -2435,7 +2269,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
               }
 
               /* Create a tree store element for the collection. This is normally
-               * done in check_persistent (outliner_tree.c), but we need to access
+               * done in check_persistent `outliner_tree.cc`, but we need to access
                * it here :/ (expand element if it's the only one) */
               TreeStoreElem *tselem = static_cast<TreeStoreElem *>(
                   BLI_mempool_calloc(space_outliner->treestore));
@@ -2567,18 +2401,6 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
       }
     }
   }
-
-#ifdef USE_COLLECTION_COMPAT_28
-  if (use_collection_compat_28 && !MAIN_VERSION_FILE_ATLEAST(bmain, 280, 14)) {
-    LISTBASE_FOREACH (Collection *, group, &bmain->collections) {
-      do_version_group_collection_to_collection(bmain, group);
-    }
-
-    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
-      do_version_scene_collection_to_collection(bmain, scene);
-    }
-  }
-#endif
 
   /* Update Curve object Shape Key data layout to include the Radius property */
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 23)) {
@@ -2750,7 +2572,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 66)) {
-    /* Shader node tree changes. After lib linking so we have all the typeinfo
+    /* Shader node tree changes. After lib linking so we have all the type-info
      * pointers and updated sockets and we can use the high level node API to
      * manipulate nodes. */
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
@@ -3098,8 +2920,8 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
    *
    * \note Be sure to check when bumping the version:
    * - #blo_do_versions_280 in this file.
-   * - "versioning_userdef.c", #blo_do_versions_userdef
-   * - "versioning_userdef.c", #do_versions_theme
+   * - `versioning_userdef.cc`, #blo_do_versions_userdef
+   * - `versioning_userdef.cc`, #do_versions_theme
    *
    * \note Keep this message at the bottom of the function.
    */
@@ -3150,11 +2972,7 @@ ENUM_OPERATORS(eNTreeDoVersionErrors, ~int8_t{});
 /* NOLINTNEXTLINE: readability-function-size */
 void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
 {
-  bool use_collection_compat_28 = true;
-
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 0)) {
-    use_collection_compat_28 = false;
-
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       scene->r.gauss = 1.5f;
     }
@@ -3272,24 +3090,6 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
           "shader nodes.\n");
     }
 
-#ifdef USE_COLLECTION_COMPAT_28
-    if (use_collection_compat_28 &&
-        (DNA_struct_elem_find(fd->filesdna, "ViewLayer", "FreestyleConfig", "freestyle_config") ==
-         false) &&
-        DNA_struct_elem_find(fd->filesdna, "Scene", "ListBase", "view_layers"))
-    {
-      LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
-        LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
-          view_layer->flag |= VIEW_LAYER_FREESTYLE;
-          view_layer->layflag = 0x7FFF; /* solid Z-transparency halo edge strand. */
-          view_layer->passflag = SCE_PASS_COMBINED | SCE_PASS_Z;
-          view_layer->pass_alpha_threshold = 0.5f;
-          BKE_freestyle_config_init(&view_layer->freestyle_config);
-        }
-      }
-    }
-#endif
-
     {
       /* Init grease pencil edit line color */
       if (!DNA_struct_elem_find(fd->filesdna, "bGPdata", "float", "line_color[4]")) {
@@ -3333,22 +3133,6 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
       }
     }
   }
-
-#ifdef USE_COLLECTION_COMPAT_28
-  if (use_collection_compat_28 && !MAIN_VERSION_FILE_ATLEAST(bmain, 280, 3)) {
-    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
-      LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
-        do_version_view_layer_visibility(view_layer);
-      }
-    }
-
-    LISTBASE_FOREACH (Collection *, group, &bmain->collections) {
-      if (group->view_layer != nullptr) {
-        do_version_view_layer_visibility(group->view_layer);
-      }
-    }
-  }
-#endif
 
   /* Files from this version included do get a valid `win->screen` pointer written for backward
    * compatibility, however this should never be used nor needed, so clear these pointers here. */
@@ -6527,8 +6311,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
    *
    * \note Be sure to check when bumping the version:
    * - #do_versions_after_linking_280 in this file.
-   * - "versioning_userdef.c", #blo_do_versions_userdef
-   * - "versioning_userdef.c", #do_versions_theme
+   * - `versioning_userdef.cc`, #blo_do_versions_userdef
+   * - `versioning_userdef.cc`, #do_versions_theme
    *
    * \note Keep this message at the bottom of the function.
    */

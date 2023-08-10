@@ -21,25 +21,25 @@
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_layer.h"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
 #include "BKE_vfont.h"
 
 #include "DEG_depsgraph_query.h"
 
-#include "ED_mesh.h"
-#include "ED_particle.h"
-#include "ED_screen.h"
-#include "ED_transform.h"
+#include "ED_mesh.hh"
+#include "ED_particle.hh"
+#include "ED_screen.hh"
+#include "ED_transform.hh"
 
-#include "WM_api.h"
-#include "WM_message.h"
+#include "WM_api.hh"
+#include "WM_message.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "UI_resources.h"
+#include "UI_resources.hh"
 
 #include "view3d_intern.h"
 
@@ -101,7 +101,7 @@ static int vieworbit_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  vod.init_navigation(C, nullptr, &ViewOpsType_orbit, false);
+  vod.init_navigation(C, nullptr, &ViewOpsType_orbit, nullptr, false);
 
   int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
   float quat_mul[4];

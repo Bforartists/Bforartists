@@ -49,7 +49,7 @@
 #include "DNA_scene_types.h"
 
 #include "BKE_attribute.h"
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_camera.h"
 #include "BKE_colorband.h"
 #include "BKE_colortools.h"
@@ -63,12 +63,12 @@
 #include "BKE_main.h"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_mapping.h"
-#include "BKE_mesh_runtime.h"
+#include "BKE_mesh_mapping.hh"
+#include "BKE_mesh_runtime.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
@@ -78,25 +78,25 @@
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
-#include "ED_image.h"
-#include "ED_node.h"
-#include "ED_object.h"
-#include "ED_paint.h"
-#include "ED_screen.h"
-#include "ED_uvedit.h"
-#include "ED_view3d.h"
-#include "ED_view3d_offscreen.h"
+#include "ED_image.hh"
+#include "ED_node.hh"
+#include "ED_object.hh"
+#include "ED_paint.hh"
+#include "ED_screen.hh"
+#include "ED_uvedit.hh"
+#include "ED_view3d.hh"
+#include "ED_view3d_offscreen.hh"
 
 #include "GPU_capabilities.h"
 #include "GPU_init_exit.h"
 
 #include "NOD_shader.h"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -449,8 +449,6 @@ struct ProjPaintState {
 
   /* Actual material for each index, either from object or Mesh datablock... */
   Material **mat_array;
-
-  bool use_colormanagement;
 };
 
 union PixelPointer {
@@ -1998,12 +1996,7 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
             uchar rgba_ub[4];
             float rgba[4];
             project_face_pixel(lt_other_tri_uv, ibuf_other, w, rgba_ub, nullptr);
-            if (ps->use_colormanagement) {
-              srgb_to_linearrgb_uchar4(rgba, rgba_ub);
-            }
-            else {
-              rgba_uchar_to_float(rgba, rgba_ub);
-            }
+            srgb_to_linearrgb_uchar4(rgba, rgba_ub);
             straight_to_premul_v4_v4(((ProjPixelClone *)projPixel)->clonepx.f, rgba);
           }
         }
@@ -2012,12 +2005,7 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
             float rgba[4];
             project_face_pixel(lt_other_tri_uv, ibuf_other, w, nullptr, rgba);
             premul_to_straight_v4(rgba);
-            if (ps->use_colormanagement) {
-              linearrgb_to_srgb_uchar3(((ProjPixelClone *)projPixel)->clonepx.ch, rgba);
-            }
-            else {
-              rgb_float_to_uchar(((ProjPixelClone *)projPixel)->clonepx.ch, rgba);
-            }
+            linearrgb_to_srgb_uchar3(((ProjPixelClone *)projPixel)->clonepx.ch, rgba);
             ((ProjPixelClone *)projPixel)->clonepx.ch[3] = rgba[3] * 255;
           }
           else { /* char to char */
@@ -5099,12 +5087,7 @@ static void do_projectpaint_draw(ProjPaintState *ps,
   if (ps->is_texbrush) {
     mul_v3_v3v3(rgb, texrgb, ps->paint_color_linear);
     /* TODO(sergey): Support texture paint color space. */
-    if (ps->use_colormanagement) {
-      linearrgb_to_srgb_v3_v3(rgb, rgb);
-    }
-    else {
-      copy_v3_v3(rgb, rgb);
-    }
+    linearrgb_to_srgb_v3_v3(rgb, rgb);
   }
   else {
     copy_v3_v3(rgb, ps->paint_color);
@@ -5807,12 +5790,7 @@ static void paint_proj_stroke_ps(const bContext * /*C*/,
                           pressure,
                           ps->paint_color,
                           nullptr);
-    if (ps->use_colormanagement) {
-      srgb_to_linearrgb_v3_v3(ps->paint_color_linear, ps->paint_color);
-    }
-    else {
-      copy_v3_v3(ps->paint_color_linear, ps->paint_color);
-    }
+    srgb_to_linearrgb_v3_v3(ps->paint_color_linear, ps->paint_color);
   }
   else if (ps->tool == PAINT_TOOL_MASK) {
     ps->stencil_value = brush->weight;
@@ -5977,8 +5955,6 @@ static void project_state_init(bContext *C, Object *ob, ProjPaintState *ps, int 
   ps->normal_angle_inner__cos = cosf(ps->normal_angle_inner);
 
   ps->dither = settings->imapaint.dither;
-
-  ps->use_colormanagement = BKE_scene_check_color_management_enabled(CTX_data_scene(C));
 }
 
 void *paint_proj_new_stroke(bContext *C, Object *ob, const float mouse[2], int mode)
@@ -6856,11 +6832,11 @@ static int texture_paint_add_texture_paint_slot_exec(bContext *C, wmOperator *op
 static void get_default_texture_layer_name_for_object(Object *ob,
                                                       int texture_type,
                                                       char *dst,
-                                                      int dst_length)
+                                                      int dst_maxncpy)
 {
   Material *ma = BKE_object_material_get(ob, ob->actcol);
   const char *base_name = ma ? &ma->id.name[2] : &ob->id.name[2];
-  BLI_snprintf(dst, dst_length, "%s %s", base_name, layer_type_items[texture_type].name);
+  BLI_snprintf(dst, dst_maxncpy, "%s %s", base_name, layer_type_items[texture_type].name);
 }
 
 static int texture_paint_add_texture_paint_slot_invoke(bContext *C,

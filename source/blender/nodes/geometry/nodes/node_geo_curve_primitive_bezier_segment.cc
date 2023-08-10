@@ -4,8 +4,8 @@
 
 #include "BKE_curves.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -109,7 +109,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       params.extract_input<float3>("End Handle"),
       std::max(params.extract_input<int>("Resolution"), 1),
       mode);
-  params.set_output("Curve", GeometrySet::create_with_curves(curves));
+  params.set_output("Curve", GeometrySet::from_curves(curves));
 }
 
 }  // namespace blender::nodes::node_geo_curve_primitive_bezier_segment_cc

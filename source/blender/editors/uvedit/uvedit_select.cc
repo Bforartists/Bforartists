@@ -38,34 +38,34 @@
 #include "BKE_editmesh.h"
 #include "BKE_layer.h"
 #include "BKE_material.h"
-#include "BKE_mesh.h"
-#include "BKE_mesh_mapping.h"
+#include "BKE_mesh.hh"
+#include "BKE_mesh_mapping.hh"
 #include "BKE_report.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
-#include "ED_image.h"
-#include "ED_mesh.h"
-#include "ED_screen.h"
-#include "ED_select_utils.h"
-#include "ED_uvedit.h"
+#include "ED_image.hh"
+#include "ED_mesh.hh"
+#include "ED_screen.hh"
+#include "ED_select_utils.hh"
+#include "ED_uvedit.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "UI_view2d.h"
+#include "UI_view2d.hh"
 
 #include "uvedit_intern.h"
 
 #include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
-#include "UI_interface.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-#include "UI_resources.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+#include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+#include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 
 static void uv_select_all_perform(const Scene *scene, Object *obedit, int action);
 
@@ -802,7 +802,7 @@ static BMLoop *uvedit_loop_find_other_boundary_loop_with_visible_face(const Scen
 
 UvNearestHit uv_nearest_hit_init_dist_px(const View2D *v2d, const float dist_px)
 {
-  UvNearestHit hit = {0};
+  UvNearestHit hit = {nullptr};
   hit.dist_sq = square_f(U.pixelsize * dist_px);
   hit.scale[0] = UI_view2d_scale_get_x(v2d);
   hit.scale[1] = UI_view2d_scale_get_y(v2d);
@@ -811,7 +811,7 @@ UvNearestHit uv_nearest_hit_init_dist_px(const View2D *v2d, const float dist_px)
 
 UvNearestHit uv_nearest_hit_init_max(const View2D *v2d)
 {
-  UvNearestHit hit = {0};
+  UvNearestHit hit = {nullptr};
   hit.dist_sq = FLT_MAX;
   hit.scale[0] = UI_view2d_scale_get_x(v2d);
   hit.scale[1] = UI_view2d_scale_get_y(v2d);
@@ -1093,7 +1093,7 @@ bool ED_uvedit_nearest_uv_multi(const View2D *v2d,
                                 const Scene *scene,
                                 Object **objects,
                                 const uint objects_len,
-                                const int mval[2],
+                                const float mval_fl[2],
                                 const bool ignore_selected,
                                 float *dist_sq,
                                 float r_uv[2])
@@ -1105,8 +1105,6 @@ bool ED_uvedit_nearest_uv_multi(const View2D *v2d,
   UI_view2d_view_to_region_fl(v2d, 0.0f, 0.0f, &offset[0], &offset[1]);
 
   float co[2];
-
-  const float mval_fl[2] = {float(mval[0]), float(mval[1])};
   sub_v2_v2v2(co, mval_fl, offset);
 
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {

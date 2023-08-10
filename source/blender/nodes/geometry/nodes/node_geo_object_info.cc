@@ -9,8 +9,8 @@
 
 #include "DNA_object_types.h"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -83,7 +83,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       else {
         instances->add_instance(handle, float4x4::identity());
       }
-      geometry_set = GeometrySet::create_with_instances(instances.release());
+      geometry_set = GeometrySet::from_instances(instances.release());
     }
     else {
       geometry_set = bke::object_get_evaluated_geometry_set(*object);

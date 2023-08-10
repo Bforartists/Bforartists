@@ -472,7 +472,7 @@ static void bm_uuidwalk_pass_add(UUIDWalk *uuidwalk,
 
   UUIDFaceStep *fstep;
 
-  BLI_assert(faces_pass_len == (uint)BLI_linklist_count(faces_pass));
+  BLI_assert(faces_pass_len == uint(BLI_linklist_count(faces_pass)));
 
   /* rehash faces now all their verts have been added */
   bm_uuidwalk_rehash_facelinks(uuidwalk, faces_pass, faces_pass_len, true);
@@ -676,9 +676,8 @@ static bool bm_uuidwalk_facestep_begin(UUIDWalk *uuidwalk, UUIDFaceStep *fstep)
  */
 static void bm_uuidwalk_facestep_end(UUIDWalk *uuidwalk, UUIDFaceStep *fstep)
 {
-  UUIDFaceStepItem *fstep_item;
-
-  while ((fstep_item = static_cast<UUIDFaceStepItem *>(BLI_pophead(&fstep->items)))) {
+  while (
+      UUIDFaceStepItem *fstep_item = static_cast<UUIDFaceStepItem *>(BLI_pophead(&fstep->items))) {
     BLI_mempool_free(uuidwalk->step_pool_items, fstep_item);
   }
 }

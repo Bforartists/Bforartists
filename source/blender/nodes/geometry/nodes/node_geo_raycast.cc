@@ -8,8 +8,8 @@
 #include "BKE_bvhutils.h"
 #include "BKE_mesh_sample.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "NOD_socket_search_link.hh"
 
@@ -223,7 +223,7 @@ class RaycastFunction : public mf::MultiFunction {
   void call(const IndexMask &mask, mf::Params params, mf::Context /*context*/) const override
   {
     BLI_assert(target_.has_mesh());
-    const Mesh &mesh = *target_.get_mesh_for_read();
+    const Mesh &mesh = *target_.get_mesh();
 
     raycast_to_mesh(mask,
                     mesh,
@@ -326,7 +326,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  if (target.get_mesh_for_read()->faces_num == 0) {
+  if (target.get_mesh()->faces_num == 0) {
     params.error_message_add(NodeWarningType::Error, TIP_("The target mesh must have faces"));
     params.set_default_remaining_outputs();
     return;

@@ -17,9 +17,9 @@
 #include "BKE_nla.h"
 #include "BKE_unit.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "BLT_translation.h"
 
@@ -77,7 +77,7 @@ static void applyTimeScaleValue(TransInfo *t, float value)
   }
 }
 
-static void applyTimeScale(TransInfo *t, const int[2] /*mval*/)
+static void applyTimeScale(TransInfo *t)
 {
   char str[UI_MAX_DRAW_STR];
 

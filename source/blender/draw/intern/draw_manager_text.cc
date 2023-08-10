@@ -17,7 +17,8 @@
 #include "BKE_editmesh_cache.hh"
 #include "BKE_global.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_wrapper.h"
+#include "BKE_mesh_wrapper.hh"
+#include "BKE_object.h"
 #include "BKE_unit.h"
 
 #include "DNA_mesh_types.h"
@@ -29,14 +30,14 @@
 #include "GPU_matrix.h"
 #include "GPU_state.h"
 
-#include "ED_screen.h"
-#include "ED_view3d.h"
+#include "ED_screen.hh"
+#include "ED_view3d.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "BLF_api.h"
-#include "WM_api.h"
+#include "WM_api.hh"
 
 #include "draw_manager_text.h"
 #include "intern/bmesh_polygon.h"
@@ -223,7 +224,7 @@ void DRW_text_edit_mesh_measure_stats(ARegion *region,
    */
   DRWTextStore *dt = DRW_text_cache_ensure();
   const short txt_flag = DRW_TEXT_CACHE_GLOBALSPACE;
-  Mesh *me = static_cast<Mesh *>(ob->data);
+  Mesh *me = BKE_object_get_editmesh_eval_cage(ob);
   BMEditMesh *em = me->edit_mesh;
   float v1[3], v2[3], v3[3], vmid[3], fvec[3];
   char numstr[32]; /* Stores the measurement display text here */

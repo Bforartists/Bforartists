@@ -58,36 +58,36 @@
 #include "BKE_mball.h"
 #include "BKE_mesh.hh"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_scene.h"
 #include "BKE_tracking.h"
 #include "BKE_workspace.h"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 #include "WM_toolsystem.h"
-#include "WM_types.h"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
 
-#include "ED_armature.h"
-#include "ED_curve.h"
+#include "ED_armature.hh"
+#include "ED_curve.hh"
 #include "ED_curves.hh"
-#include "ED_gpencil_legacy.h"
-#include "ED_grease_pencil.h"
-#include "ED_lattice.h"
-#include "ED_mball.h"
-#include "ED_mesh.h"
-#include "ED_object.h"
-#include "ED_outliner.h"
-#include "ED_particle.h"
-#include "ED_screen.h"
-#include "ED_sculpt.h"
-#include "ED_select_utils.h"
+#include "ED_gpencil_legacy.hh"
+#include "ED_grease_pencil.hh"
+#include "ED_lattice.hh"
+#include "ED_mball.hh"
+#include "ED_mesh.hh"
+#include "ED_object.hh"
+#include "ED_outliner.hh"
+#include "ED_particle.hh"
+#include "ED_screen.hh"
+#include "ED_sculpt.hh"
+#include "ED_select_utils.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "GPU_matrix.h"
 #include "GPU_select.h"
@@ -1900,7 +1900,8 @@ static bool bone_mouse_select_menu(bContext *C,
 
   GSet *added_bones = BLI_gset_ptr_new("Bone mouse select menu");
 
-  /* Select logic taken from ed_armature_pick_bone_from_selectbuffer_impl in armature_select.c */
+  /* Select logic taken from #ed_armature_pick_bone_from_selectbuffer_impl
+   * in `armature_select.cc`. */
   for (int a = 0; a < hits; a++) {
     void *bone_ptr = nullptr;
     Base *bone_base = nullptr;

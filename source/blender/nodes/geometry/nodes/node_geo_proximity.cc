@@ -11,8 +11,8 @@
 #include "BKE_bvhutils.h"
 #include "BKE_geometry_set.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -162,12 +162,12 @@ class ProximityFunction : public mf::MultiFunction {
     bool success = false;
     if (target_.has_mesh()) {
       success |= calculate_mesh_proximity(
-          src_positions, mask, *target_.get_mesh_for_read(), type_, distances, positions);
+          src_positions, mask, *target_.get_mesh(), type_, distances, positions);
     }
 
     if (target_.has_pointcloud() && type_ == GEO_NODE_PROX_TARGET_POINTS) {
       success |= calculate_pointcloud_proximity(
-          src_positions, mask, *target_.get_pointcloud_for_read(), distances, positions);
+          src_positions, mask, *target_.get_pointcloud(), distances, positions);
     }
 
     if (!success) {

@@ -33,18 +33,18 @@
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_gizmo_library.h"
-#include "ED_screen.h"
-#include "ED_view3d.h"
+#include "ED_gizmo_library.hh"
+#include "ED_screen.hh"
+#include "ED_view3d.hh"
 
 /* own includes */
 #include "../gizmo_library_intern.h"
 
 #define GIZMO_MARGIN_OFFSET_SCALE 1.5f
-/* The same as in `draw_cache.c` */
+/* The same as in `draw_cache.cc`. */
 #define CIRCLE_RESOL 32
 
 static int gizmo_cage2d_transform_flag_get(const wmGizmo *gz);

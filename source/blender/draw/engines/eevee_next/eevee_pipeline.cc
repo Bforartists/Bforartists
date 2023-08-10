@@ -14,6 +14,8 @@
 
 #include "eevee_pipeline.hh"
 
+#include "draw_common.hh"
+
 namespace blender::eevee {
 
 /* -------------------------------------------------------------------- */
@@ -103,6 +105,38 @@ void WorldPipeline::sync(GPUMaterial *gpumat)
 void WorldPipeline::render(View &view)
 {
   inst_.manager->submit(cubemap_face_ps_, view);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name World Volume Pipeline
+ *
+ * \{ */
+
+void WorldVolumePipeline::sync(GPUMaterial *gpumat)
+{
+  world_ps_.init();
+  world_ps_.state_set(DRW_STATE_WRITE_COLOR);
+  inst_.volume.bind_properties_buffers(world_ps_);
+  inst_.sampling.bind_resources(&world_ps_);
+
+  if (GPU_material_status(gpumat) != GPU_MAT_SUCCESS) {
+    /* Skip if the material has not compiled yet. */
+    return;
+  }
+
+  world_ps_.material_set(*inst_.manager, gpumat);
+  volume_sub_pass(world_ps_, nullptr, nullptr, gpumat);
+
+  world_ps_.dispatch(math::divide_ceil(inst_.volume.grid_size(), int3(VOLUME_GROUP_SIZE)));
+  /* Sync with object property pass. */
+  world_ps_.barrier(GPU_BARRIER_SHADER_IMAGE_ACCESS);
+}
+
+void WorldVolumePipeline::render(View &view)
+{
+  inst_.manager->submit(world_ps_, view);
 }
 
 /** \} */
@@ -229,6 +263,7 @@ void ForwardPipeline::sync()
 
     inst_.lights.bind_resources(&sub);
     inst_.shadows.bind_resources(&sub);
+    inst_.volume.bind_resources(sub);
     inst_.sampling.bind_resources(&sub);
     inst_.hiz_buffer.bind_resources(&sub);
     inst_.ambient_occlusion.bind_resources(&sub);
@@ -292,11 +327,9 @@ void ForwardPipeline::render(View &view,
                              Framebuffer &combined_fb,
                              GPUTexture * /*combined_tx*/)
 {
-  UNUSED_VARS(view);
-
   DRW_stats_group_start("Forward.Opaque");
 
-  GPU_framebuffer_bind(prepass_fb);
+  prepass_fb.bind();
   inst_.manager->submit(prepass_ps_, view);
 
   // if (!DRW_pass_is_empty(prepass_ps_)) {
@@ -311,10 +344,12 @@ void ForwardPipeline::render(View &view,
   inst_.shadows.set_view(view);
   inst_.irradiance_cache.set_view(view);
 
-  GPU_framebuffer_bind(combined_fb);
+  combined_fb.bind();
   inst_.manager->submit(opaque_ps_, view);
 
   DRW_stats_group_end();
+
+  inst_.volume.draw_resolve(view);
 
   inst_.manager->submit(transparent_ps_, view);
 
@@ -405,17 +440,20 @@ void DeferredLayer::begin_sync()
 
 void DeferredLayer::end_sync()
 {
-  if (closure_bits_ & (CLOSURE_DIFFUSE | CLOSURE_REFLECTION)) {
+  eClosureBits evaluated_closures = CLOSURE_DIFFUSE | CLOSURE_REFLECTION | CLOSURE_REFRACTION;
+  if (closure_bits_ & evaluated_closures) {
     const bool is_last_eval_pass = !(closure_bits_ & CLOSURE_SSS);
 
     eval_light_ps_.init();
     /* Use stencil test to reject pixel not written by this layer. */
     eval_light_ps_.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_STENCIL_NEQUAL |
                              DRW_STATE_BLEND_CUSTOM);
-    eval_light_ps_.state_stencil(0x00u, 0x00u, (CLOSURE_DIFFUSE | CLOSURE_REFLECTION));
+    eval_light_ps_.state_stencil(0x00u, 0x00u, evaluated_closures);
     eval_light_ps_.shader_set(inst_.shaders.static_shader_get(DEFERRED_LIGHT));
     eval_light_ps_.bind_image("out_diffuse_light_img", &diffuse_light_tx_);
     eval_light_ps_.bind_image("out_specular_light_img", &specular_light_tx_);
+    eval_light_ps_.bind_image("indirect_refraction_img", &indirect_refraction_tx_);
+    eval_light_ps_.bind_image("indirect_reflection_img", &indirect_reflection_tx_);
     eval_light_ps_.bind_texture("gbuffer_closure_tx", &inst_.gbuffer.closure_tx);
     eval_light_ps_.bind_texture("gbuffer_color_tx", &inst_.gbuffer.color_tx);
     eval_light_ps_.push_constant("is_last_eval_pass", is_last_eval_pass);
@@ -465,33 +503,47 @@ PassMain::Sub *DeferredLayer::material_add(::Material *blender_mat, GPUMaterial 
   return pass;
 }
 
-void DeferredLayer::render(View &view,
+void DeferredLayer::render(View &main_view,
+                           View &render_view,
                            Framebuffer &prepass_fb,
                            Framebuffer &combined_fb,
-                           int2 extent)
+                           int2 extent,
+                           RayTraceBuffer &rt_buffer)
 {
   GPU_framebuffer_bind(prepass_fb);
-  inst_.manager->submit(prepass_ps_, view);
+  inst_.manager->submit(prepass_ps_, render_view);
 
   inst_.hiz_buffer.set_dirty();
-  inst_.shadows.set_view(view);
-  inst_.irradiance_cache.set_view(view);
+  inst_.shadows.set_view(render_view);
+  inst_.irradiance_cache.set_view(render_view);
 
   inst_.gbuffer.acquire(extent, closure_bits_);
 
   GPU_framebuffer_bind(combined_fb);
-  inst_.manager->submit(gbuffer_ps_, view);
+  inst_.manager->submit(gbuffer_ps_, render_view);
 
-  eGPUTextureUsage usage = GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_SHADER_WRITE;
+  RayTraceResult refract_result = inst_.raytracing.trace(
+      rt_buffer, closure_bits_, CLOSURE_REFRACTION, main_view, render_view);
+  indirect_refraction_tx_ = refract_result.get();
+
+  RayTraceResult reflect_result = inst_.raytracing.trace(
+      rt_buffer, closure_bits_, CLOSURE_REFLECTION, main_view, render_view);
+  indirect_reflection_tx_ = reflect_result.get();
+
+  eGPUTextureUsage usage = GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_SHADER_WRITE |
+                           GPU_TEXTURE_USAGE_ATTACHMENT;
   diffuse_light_tx_.acquire(extent, GPU_RGBA16F, usage);
-  specular_light_tx_.acquire(extent, GPU_RGBA16F, usage);
   diffuse_light_tx_.clear(float4(0.0f));
+  specular_light_tx_.acquire(extent, GPU_RGBA16F, usage);
   specular_light_tx_.clear(float4(0.0f));
 
-  inst_.manager->submit(eval_light_ps_, view);
+  inst_.manager->submit(eval_light_ps_, render_view);
+
+  refract_result.release();
+  reflect_result.release();
 
   if (closure_bits_ & CLOSURE_SSS) {
-    inst_.subsurface.render(view, combined_fb, diffuse_light_tx_);
+    inst_.subsurface.render(render_view, combined_fb, diffuse_light_tx_);
   }
 
   diffuse_light_tx_.release();
@@ -542,18 +594,48 @@ PassMain::Sub *DeferredPipeline::material_add(::Material *blender_mat, GPUMateri
   }
 }
 
-void DeferredPipeline::render(View &view,
+void DeferredPipeline::render(View &main_view,
+                              View &render_view,
                               Framebuffer &prepass_fb,
                               Framebuffer &combined_fb,
-                              int2 extent)
+                              int2 extent,
+                              RayTraceBuffer &rt_buffer_opaque_layer,
+                              RayTraceBuffer &rt_buffer_refract_layer)
 {
   DRW_stats_group_start("Deferred.Opaque");
-  opaque_layer_.render(view, prepass_fb, combined_fb, extent);
+  opaque_layer_.render(
+      main_view, render_view, prepass_fb, combined_fb, extent, rt_buffer_opaque_layer);
   DRW_stats_group_end();
 
   DRW_stats_group_start("Deferred.Refract");
-  refraction_layer_.render(view, prepass_fb, combined_fb, extent);
+  refraction_layer_.render(
+      main_view, render_view, prepass_fb, combined_fb, extent, rt_buffer_refract_layer);
   DRW_stats_group_end();
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Volume Pipeline
+ *
+ * \{ */
+
+void VolumePipeline::sync()
+{
+  volume_ps_.init();
+  volume_ps_.bind_texture(RBUFS_UTILITY_TEX_SLOT, inst_.pipelines.utility_tx);
+  inst_.volume.bind_properties_buffers(volume_ps_);
+  inst_.sampling.bind_resources(&volume_ps_);
+}
+
+PassMain::Sub *VolumePipeline::volume_material_add(GPUMaterial *gpumat)
+{
+  return &volume_ps_.sub(GPU_material_get_name(gpumat));
+}
+
+void VolumePipeline::render(View &view)
+{
+  inst_.manager->submit(volume_ps_, view);
 }
 
 /** \} */
@@ -645,6 +727,8 @@ void DeferredProbeLayer::end_sync()
     eval_light_ps_.shader_set(inst_.shaders.static_shader_get(DEFERRED_LIGHT_DIFFUSE_ONLY));
     eval_light_ps_.bind_image("out_diffuse_light_img", dummy_light_tx_);
     eval_light_ps_.bind_image("out_specular_light_img", dummy_light_tx_);
+    eval_light_ps_.bind_image("indirect_refraction_img", dummy_light_tx_);
+    eval_light_ps_.bind_image("indirect_reflection_img", dummy_light_tx_);
     eval_light_ps_.bind_texture("gbuffer_closure_tx", &inst_.gbuffer.closure_tx);
     eval_light_ps_.bind_texture("gbuffer_color_tx", &inst_.gbuffer.color_tx);
     eval_light_ps_.push_constant("is_last_eval_pass", is_last_eval_pass);

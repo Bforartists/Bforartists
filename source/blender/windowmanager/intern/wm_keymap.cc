@@ -27,7 +27,7 @@
 
 #include "BLF_api.h"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "BKE_context.h"
 #include "BKE_global.h"
@@ -41,10 +41,10 @@
 #include "RNA_access.h"
 #include "RNA_enum_types.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 #include "wm_event_system.h"
-#include "wm_event_types.h"
+#include "wm_event_types.hh"
 
 struct wmKeyMapItemFind_Params {
   bool (*filter_fn)(const wmKeyMap *km, const wmKeyMapItem *kmi, void *user_data);
@@ -445,21 +445,26 @@ bool WM_keymap_poll(bContext *C, wmKeyMap *keymap)
     }
   }
 
-  /* bfa - silenced the empty keymap warning */
-  //if (UNLIKELY(BLI_listbase_is_empty(&keymap->items))) {
-  //  /* Empty key-maps may be missing more there may be a typo in the name.
-  //   * Warn early to avoid losing time investigating each case.
-  //   * When developing a customized Blender though you may want empty keymaps. */
-  //  if (!U.app_template[0] &&
-  //      /* Fallback key-maps may be intentionally empty, don't flood the output. */
-  //      !BLI_str_endswith(keymap->idname, " (fallback)") &&
-  //      /* This is an exception which may be empty.
-  //       * Longer term we might want a flag to indicate an empty key-map is intended. */
-  //      !STREQ(keymap->idname, "Node Tool: Tweak"))
-  //  {
-  //    CLOG_WARN(WM_LOG_KEYMAPS, "empty keymap '%s'", keymap->idname);
-  //  }
-  //}
+/* bfa - silenced the empty keymap warning */
+#if 0
+  if (UNLIKELY(BLI_listbase_is_empty(&keymap->items))) {
+    /* Empty key-maps may be missing more there may be a typo in the name.
+     * Warn early to avoid losing time investigating each case.
+     * When developing a customized Blender though you may want empty keymaps. */
+    if (!U.app_template[0] &&
+        /* Fallback key-maps may be intentionally empty, don't flood the output. */
+        !BLI_str_endswith(keymap->idname, " (fallback)") &&
+        /* This is an exception which may be empty.
+         * Longer term we might want a flag to indicate an empty key-map is intended. */
+        !STREQ(keymap->idname, "Node Tool: Tweak") &&
+        /* Another exception: Asset shelf keymap is meant for add-ons to use, it's empty by
+         * default. */
+        !STREQ(keymap->idname, "Asset Shelf"))
+    {
+      CLOG_WARN(WM_LOG_KEYMAPS, "empty keymap '%s'", keymap->idname);
+    }
+  }
+#endif
 
   if (keymap->poll != nullptr) {
     return keymap->poll(C);
@@ -828,8 +833,8 @@ static void wm_keymap_diff_update(ListBase *lb,
  *
  * Name id's are for storing general or multiple keymaps.
  *
- * - Space/region ids are same as DNA_space_types.h
- * - Gets freed in wm.c
+ * - Space/region ids are same as `DNA_space_types.h`.
+ * - Gets freed in `wm.cc`.
  * \{ */
 
 wmKeyMap *WM_keymap_list_find(ListBase *lb, const char *idname, int spaceid, int regionid)

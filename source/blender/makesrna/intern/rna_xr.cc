@@ -19,7 +19,7 @@
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
 #include "rna_internal.h"
 
@@ -27,7 +27,7 @@
 
 #  include "BLI_listbase.h"
 
-#  include "WM_api.h"
+#  include "WM_api.hh"
 
 /* -------------------------------------------------------------------- */
 
@@ -706,8 +706,8 @@ static int rna_XrSessionSettings_icon_from_show_object_viewport_get(PointerRNA *
   return rna_object_type_visibility_icon_get_common(
       xr->session_settings.object_type_exclude_viewport,
 #    if 0
-    /* For the future when selection in VR is reliably supported. */
-    &xr->session_settings.object_type_exclude_select
+      /* For the future when selection in VR is reliably supported. */
+      &xr->session_settings.object_type_exclude_select
 #    else
       nullptr
 #    endif

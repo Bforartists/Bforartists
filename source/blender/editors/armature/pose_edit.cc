@@ -40,19 +40,19 @@
 #include "RNA_enum_types.h"
 #include "RNA_prototypes.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_anim_api.h"
-#include "ED_armature.h"
-#include "ED_keyframing.h"
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_view3d.h"
+#include "ED_anim_api.hh"
+#include "ED_armature.hh"
+#include "ED_keyframing.hh"
+#include "ED_object.hh"
+#include "ED_screen.hh"
+#include "ED_view3d.hh"
 
 #include "ANIM_bone_collections.h"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "armature_intern.h"
 
@@ -386,7 +386,6 @@ void POSE_OT_paths_update(wmOperatorType *ot)
 /* for the object with pose/action: clear path curves for selected bones only */
 static void ED_pose_clear_paths(Object *ob, bool only_selected)
 {
-  bPoseChannel *pchan;
   bool skipped = false;
 
   if (ELEM(nullptr, ob, ob->pose)) {
@@ -394,7 +393,7 @@ static void ED_pose_clear_paths(Object *ob, bool only_selected)
   }
 
   /* free the motionpath blocks for all bones - This is easier for users to quickly clear all */
-  for (pchan = static_cast<bPoseChannel *>(ob->pose->chanbase.first); pchan; pchan = pchan->next) {
+  LISTBASE_FOREACH (bPoseChannel *, pchan, &ob->pose->chanbase) {
     if (pchan->mpath) {
       if ((only_selected == false) || ((pchan->bone) && (pchan->bone->flag & BONE_SELECTED))) {
         animviz_free_motionpath(pchan->mpath);

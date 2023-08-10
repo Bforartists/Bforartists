@@ -47,35 +47,35 @@
 #include "BKE_sound.h"
 #include "BKE_workspace.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
-#include "ED_anim_api.h"
-#include "ED_armature.h"
-#include "ED_clip.h"
-#include "ED_fileselect.h"
-#include "ED_image.h"
-#include "ED_keyframes_keylist.h"
-#include "ED_mesh.h"
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_screen_types.h"
-#include "ED_sequencer.h"
-#include "ED_undo.h"
-#include "ED_util.h"
-#include "ED_view3d.h"
+#include "ED_anim_api.hh"
+#include "ED_armature.hh"
+#include "ED_clip.hh"
+#include "ED_fileselect.hh"
+#include "ED_image.hh"
+#include "ED_keyframes_keylist.hh"
+#include "ED_mesh.hh"
+#include "ED_object.hh"
+#include "ED_screen.hh"
+#include "ED_screen_types.hh"
+#include "ED_sequencer.hh"
+#include "ED_undo.hh"
+#include "ED_util.hh"
+#include "ED_view3d.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
 #include "RNA_prototypes.h"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
-#include "UI_view2d.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
+#include "UI_view2d.hh"
 
 #include "GPU_capabilities.h"
 
@@ -2684,14 +2684,20 @@ static int area_max_regionsize(ScrArea *area, ARegion *scale_region, AZEdge edge
         dist -= region->winx;
       }
       else if (scale_region->alignment == RGN_ALIGN_TOP &&
-               (region->alignment == RGN_ALIGN_BOTTOM ||
-                ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER, RGN_TYPE_FOOTER)))
+               (region->alignment == RGN_ALIGN_BOTTOM || ELEM(region->regiontype,
+                                                              RGN_TYPE_HEADER,
+                                                              RGN_TYPE_TOOL_HEADER,
+                                                              RGN_TYPE_FOOTER,
+                                                              RGN_TYPE_ASSET_SHELF_HEADER)))
       {
         dist -= region->winy;
       }
       else if (scale_region->alignment == RGN_ALIGN_BOTTOM &&
-               (region->alignment == RGN_ALIGN_TOP ||
-                ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER, RGN_TYPE_FOOTER)))
+               (region->alignment == RGN_ALIGN_TOP || ELEM(region->regiontype,
+                                                           RGN_TYPE_HEADER,
+                                                           RGN_TYPE_TOOL_HEADER,
+                                                           RGN_TYPE_FOOTER,
+                                                           RGN_TYPE_ASSET_SHELF_HEADER)))
       {
         dist -= region->winy;
       }
@@ -5280,6 +5286,7 @@ int ED_screen_animation_play(bContext *C, int sync, int mode)
      * playback. */
     WM_event_add_notifier(C, NC_SPACE | ND_SPACE_SEQUENCER, scene);
     WM_event_add_notifier(C, NC_SPACE | ND_SPACE_SPREADSHEET, scene);
+    WM_event_add_notifier(C, NC_SCENE | ND_TRANSFORM, scene);
   }
   else {
     BKE_callback_exec_id_depsgraph(

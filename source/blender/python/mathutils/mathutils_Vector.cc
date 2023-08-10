@@ -2693,8 +2693,8 @@ static int Vector_swizzle_set(VectorObject *self, PyObject *value, void *closure
     size_from = axis_from;
   }
   else if ((void)PyErr_Clear(), /* run but ignore the result */
-           (size_from = (size_t)mathutils_array_parse(
-                vec_assign, 2, 4, value, "Vector.**** = swizzle assignment")) == size_t(-1))
+           (size_from = size_t(mathutils_array_parse(
+                vec_assign, 2, 4, value, "Vector.**** = swizzle assignment"))) == size_t(-1))
   {
     return -1;
   }
@@ -2755,10 +2755,26 @@ static int Vector_swizzle_set(VectorObject *self, PyObject *value, void *closure
 #endif
 
 static PyGetSetDef Vector_getseters[] = {
-    {"x", (getter)Vector_axis_get, (setter)Vector_axis_set, Vector_axis_x_doc, (void *)0},
-    {"y", (getter)Vector_axis_get, (setter)Vector_axis_set, Vector_axis_y_doc, (void *)1},
-    {"z", (getter)Vector_axis_get, (setter)Vector_axis_set, Vector_axis_z_doc, (void *)2},
-    {"w", (getter)Vector_axis_get, (setter)Vector_axis_set, Vector_axis_w_doc, (void *)3},
+    {"x",
+     (getter)Vector_axis_get,
+     (setter)Vector_axis_set,
+     Vector_axis_x_doc,
+     POINTER_FROM_INT(0)},
+    {"y",
+     (getter)Vector_axis_get,
+     (setter)Vector_axis_set,
+     Vector_axis_y_doc,
+     POINTER_FROM_INT(1)},
+    {"z",
+     (getter)Vector_axis_get,
+     (setter)Vector_axis_set,
+     Vector_axis_z_doc,
+     POINTER_FROM_INT(2)},
+    {"w",
+     (getter)Vector_axis_get,
+     (setter)Vector_axis_set,
+     Vector_axis_w_doc,
+     POINTER_FROM_INT(3)},
     {"length", (getter)Vector_length_get, (setter)Vector_length_set, Vector_length_doc, nullptr},
     {"length_squared",
      (getter)Vector_length_squared_get,

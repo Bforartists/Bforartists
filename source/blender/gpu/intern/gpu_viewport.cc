@@ -8,7 +8,7 @@
  * System that manages viewport drawing.
  */
 
-#include <string.h>
+#include <cstring>
 
 #include "BLI_math_vector.h"
 #include "BLI_rect.h"
@@ -284,7 +284,7 @@ void GPU_viewport_stereo_composite(GPUViewport *viewport, Stereo3dFormat *stereo
 {
   if (!ELEM(stereo_format->display_mode, S3D_DISPLAY_ANAGLYPH, S3D_DISPLAY_INTERLACE)) {
     /* Early Exit: the other display modes need access to the full screen and cannot be
-     * done from a single viewport. See `wm_stereo.c` */
+     * done from a single viewport. See `wm_stereo.cc`. */
     return;
   }
   /* The composite framebuffer object needs to be created in the window context. */
@@ -441,6 +441,8 @@ static void gpu_viewport_draw_colormanaged(GPUViewport *viewport,
   GPUTexture *color_overlay = viewport->color_overlay_tx[view];
 
   bool use_ocio = false;
+  bool use_hdr = GPU_hdr_support() &&
+                 ((viewport->view_settings.flag & COLORMANAGE_VIEW_USE_HDR) != 0);
 
   if (viewport->do_color_management && display_colorspace) {
     /* During the binding process the last used VertexFormat is tested and can assert as it is not
@@ -467,6 +469,7 @@ static void gpu_viewport_draw_colormanaged(GPUViewport *viewport,
     GPU_batch_program_set_builtin(batch, GPU_SHADER_2D_IMAGE_OVERLAYS_MERGE);
     GPU_batch_uniform_1i(batch, "overlay", do_overlay_merge);
     GPU_batch_uniform_1i(batch, "display_transform", display_colorspace);
+    GPU_batch_uniform_1i(batch, "use_hdr", use_hdr);
   }
 
   GPU_texture_bind(color, 0);

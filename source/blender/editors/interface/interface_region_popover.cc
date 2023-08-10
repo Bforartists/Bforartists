@@ -7,7 +7,7 @@
  *
  * Pop-Over Region
  *
- * \note This is very close to 'interface_region_menu_popup.c'
+ * \note This is very close to `interface_region_menu_popup.cc`.
  *
  * We could even merge them, however menu logic is already over-loaded.
  * PopOver's have the following differences.
@@ -39,12 +39,12 @@
 #include "BKE_report.h"
 #include "BKE_screen.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "interface_intern.hh"
 #include "interface_regions_intern.hh"

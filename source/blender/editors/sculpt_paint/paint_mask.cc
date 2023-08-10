@@ -27,27 +27,27 @@
 #include "BLI_utildefines.h"
 #include "BLI_vector.hh"
 
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_ccg.h"
 #include "BKE_context.h"
 #include "BKE_lib_id.h"
 #include "BKE_mesh.hh"
-#include "BKE_multires.h"
-#include "BKE_paint.h"
+#include "BKE_multires.hh"
+#include "BKE_paint.hh"
 #include "BKE_pbvh_api.hh"
 #include "BKE_scene.h"
-#include "BKE_subsurf.h"
+#include "BKE_subsurf.hh"
 
 #include "DEG_depsgraph.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_sculpt.h"
-#include "ED_view3d.h"
+#include "ED_sculpt.hh"
+#include "ED_view3d.hh"
 
 #include "bmesh.h"
 #include "tools/bmesh_boolean.h"

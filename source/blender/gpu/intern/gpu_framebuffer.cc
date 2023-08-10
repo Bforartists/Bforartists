@@ -391,6 +391,12 @@ void GPU_framebuffer_viewport_set(GPUFrameBuffer *gpu_fb, int x, int y, int widt
   unwrap(gpu_fb)->viewport_set(viewport_rect);
 }
 
+void GPU_framebuffer_multi_viewports_set(GPUFrameBuffer *gpu_fb,
+                                         const int viewport_rects[GPU_MAX_VIEWPORTS][4])
+{
+  unwrap(gpu_fb)->viewport_multi_set(viewport_rects);
+}
+
 void GPU_framebuffer_viewport_get(GPUFrameBuffer *gpu_fb, int r_viewport[4])
 {
   unwrap(gpu_fb)->viewport_get(r_viewport);
@@ -783,6 +789,11 @@ int GPU_offscreen_height(const GPUOffScreen *ofs)
 GPUTexture *GPU_offscreen_color_texture(const GPUOffScreen *ofs)
 {
   return ofs->color;
+}
+
+eGPUTextureFormat GPU_offscreen_format(const GPUOffScreen *offscreen)
+{
+  return GPU_texture_format(offscreen->color);
 }
 
 void GPU_offscreen_viewport_data_get(GPUOffScreen *ofs,

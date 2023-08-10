@@ -46,7 +46,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_anim_data.h"
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_colortools.h"
 #include "BKE_context.h"
 #include "BKE_global.h"
@@ -74,12 +74,12 @@
 
 #include "IMB_imbuf_types.h"
 
-#include "ED_fileselect.h"
-#include "ED_gpencil_legacy.h"
-#include "ED_numinput.h"
-#include "ED_screen.h"
-#include "ED_undo.h"
-#include "ED_view3d.h"
+#include "ED_fileselect.hh"
+#include "ED_gpencil_legacy.hh"
+#include "ED_numinput.hh"
+#include "ED_screen.hh"
+#include "ED_undo.hh"
+#include "ED_view3d.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -87,19 +87,19 @@
 #include "RNA_path.h"
 #include "RNA_prototypes.h"
 
-#include "UI_interface.h"
-#include "UI_interface_icons.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_interface_icons.hh"
+#include "UI_resources.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "wm.h"
-#include "wm_draw.h"
+#include "wm.hh"
+#include "wm_draw.hh"
 #include "wm_event_system.h"
-#include "wm_event_types.h"
-#include "wm_files.h"
-#include "wm_window.h"
+#include "wm_event_types.hh"
+#include "wm_files.hh"
+#include "wm_window.hh"
 #ifdef WITH_XR_OPENXR
 #  include "wm_xr.h"
 #endif
@@ -348,7 +348,7 @@ static const char *wm_context_member_from_ptr(bContext *C, const PointerRNA *ptr
   for (link = lb.first; link; link = link->next) {
     const char *identifier = link->data;
     PointerRNA ctx_item_ptr = {{0}};
-        /* CTX_data_pointer_get(C, identifier); */ /* XXX, this isn't working. */
+    // CTX_data_pointer_get(C, identifier);  /* XXX, this isn't working. */
 
     if (ctx_item_ptr.type == nullptr) {
       continue;

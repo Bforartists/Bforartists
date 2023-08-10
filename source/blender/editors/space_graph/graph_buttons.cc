@@ -38,20 +38,20 @@
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_path.h"
 #include "RNA_prototypes.h"
 
-#include "ED_anim_api.h"
-#include "ED_keyframing.h"
-#include "ED_screen.h"
-#include "ED_undo.h"
+#include "ED_anim_api.hh"
+#include "ED_keyframing.hh"
+#include "ED_screen.hh"
+#include "ED_undo.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "graph_intern.h" /* own include */
 
@@ -1012,7 +1012,6 @@ static void graph_draw_driver_settings_panel(uiLayout *layout,
                                              const bool is_popover)
 {
   ChannelDriver *driver = fcu->driver;
-  DriverVar *dvar;
 
   PointerRNA driver_ptr;
   uiLayout *col, *row, *row_outer;
@@ -1153,7 +1152,7 @@ static void graph_draw_driver_settings_panel(uiLayout *layout,
   uiItemO(row, "", ICON_PASTEDOWN, "GRAPH_OT_driver_variables_paste");
 
   /* loop over targets, drawing them */
-  for (dvar = static_cast<DriverVar *>(driver->variables.first); dvar; dvar = dvar->next) {
+  LISTBASE_FOREACH (DriverVar *, dvar, &driver->variables) {
     PointerRNA dvar_ptr;
     uiLayout *box;
     uiLayout *subrow, *sub;
@@ -1408,7 +1407,7 @@ static void graph_panel_drivers_popover(const bContext *C, Panel *panel)
 /* -------------------------------------------------------------------- */
 /** \name F-Curve Modifiers
  *
- * \note All the drawing code is in `editors/animation/fmodifier_ui.c`
+ * \note All the drawing code is in `editors/animation/fmodifier_ui.cc`.
  * \{ */
 
 #define B_FMODIFIER_REDRAW 20

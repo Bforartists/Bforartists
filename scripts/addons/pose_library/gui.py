@@ -12,6 +12,7 @@ from bpy.types import (
     Context,
     Menu,
     Panel,
+    UILayout,
     UIList,
     WindowManager,
     WorkSpace,
@@ -29,11 +30,53 @@ class PoseLibraryPanel:
         return cls.pose_library_panel_poll(context)
 
 
+class VIEW3D_AST_pose_library(bpy.types.AssetShelf):
+    bl_space_type = "VIEW_3D"
+    # We have own keymap items to add custom drag behavior (pose blending), disable the default
+    # asset dragging.
+    bl_options = {'NO_ASSET_DRAG'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return PoseLibraryPanel.poll(context)
+
+    @classmethod
+    def asset_poll(cls, asset: AssetHandle) -> bool:
+        return asset.file_data.id_type == 'ACTION'
+
+    @classmethod
+    def draw_context_menu(cls, _context: Context, _asset: AssetHandle, layout: UILayout):
+        # Make sure these operator properties match those used in `VIEW3D_PT_pose_library`.
+        layout.operator("poselib.apply_pose_asset", text="Apply Pose").flipped = False
+        layout.operator("poselib.apply_pose_asset", text="Apply Pose Flipped").flipped = True
+
+        with operator_context(layout, 'INVOKE_DEFAULT'):
+            layout.operator("poselib.blend_pose_asset", text="Blend Pose")
+
+        layout.separator()
+        props = layout.operator("poselib.pose_asset_select_bones", text="Select Pose Bones")
+        props.select = True
+        props = layout.operator("poselib.pose_asset_select_bones", text="Deselect Pose Bones")
+        props.select = False
+
+        layout.separator()
+        layout.operator("asset.open_containing_blend_file")
+
+
 class VIEW3D_PT_pose_library(PoseLibraryPanel, Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Animation"
     bl_label = "Pose Library"
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        prefs = context.preferences
+        # Use Asset Shelf as UI instead of the old asset-view template in the sidebar.
+        if prefs.experimental.use_asset_shelf:
+            return False
+
+        return PoseLibraryPanel.poll(context)
 
     def draw(self, context: Context) -> None:
         layout = self.layout
@@ -194,6 +237,7 @@ classes = (
     DOPESHEET_PT_asset_panel,
     VIEW3D_PT_pose_library,
     ASSETBROWSER_MT_asset,
+    VIEW3D_AST_pose_library,
 )
 
 _register, _unregister = bpy.utils.register_classes_factory(classes)

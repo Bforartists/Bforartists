@@ -63,16 +63,16 @@
 
 #include "DEG_depsgraph.h"
 
-#include "UI_interface.h"
-#include "UI_interface_icons.h"
-#include "UI_resources.h"
-#include "UI_view2d.h"
+#include "UI_interface.hh"
+#include "UI_interface_icons.hh"
+#include "UI_resources.hh"
+#include "UI_view2d.hh"
 
-#include "ED_anim_api.h"
-#include "ED_keyframing.h"
+#include "ED_anim_api.hh"
+#include "ED_keyframing.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 /* *********************************************** */
 /* XXX constant defines to be moved elsewhere? */
@@ -3499,7 +3499,9 @@ static bool acf_gpl_setting_valid(bAnimContext * /*ac*/,
 }
 
 /* Get the appropriate flag(s) for the setting when it is valid. */
-static int acf_gpl_setting_flag(bAnimContext * /*ac*/, eAnimChannel_Settings setting, bool *r_neg)
+static int acf_gpl_setting_flag_legacy(bAnimContext * /*ac*/,
+                                       eAnimChannel_Settings setting,
+                                       bool *r_neg)
 {
   /* Clear extra return data first. */
   *r_neg = false;
@@ -3549,7 +3551,7 @@ static bAnimChannelType ACF_GPL_LEGACY = {
     /*icon*/ nullptr,
 
     /*has_setting*/ acf_gpl_setting_valid,
-    /*setting_flag*/ acf_gpl_setting_flag,
+    /*setting_flag*/ acf_gpl_setting_flag_legacy,
     /*setting_ptr*/ acf_gpl_setting_ptr_legacy,
 };
 
@@ -3578,6 +3580,17 @@ static bool acf_gpl_name_prop(bAnimListElem *ale, PointerRNA *r_ptr, PropertyRNA
   return (*r_prop != nullptr);
 }
 
+static int acf_gpl_setting_flag(bAnimContext * /*ac*/, eAnimChannel_Settings setting, bool *r_neg)
+{
+  *r_neg = false;
+  switch (setting) {
+    case ACHANNEL_SETTING_SELECT: /* selected */
+      return GP_LAYER_TREE_NODE_SELECT;
+
+    default: /* unsupported */
+      return 0;
+  }
+}
 /* Get pointer to the setting */
 static void *acf_gpl_setting_ptr(bAnimListElem *ale,
                                  eAnimChannel_Settings /*setting*/,
@@ -4123,7 +4136,7 @@ static void ANIM_init_channel_typeinfo_data()
     ACF_INIT = 0;
 
     /* NOTE: need to keep the order of these synchronized with the definition of
-     * channel types (eAnim_ChannelType) in ED_anim_api.h
+     * channel types (eAnim_ChannelType) in ED_anim_api.hh
      */
     animchannelTypeInfo[type++] = nullptr; /* None */
     animchannelTypeInfo[type++] = nullptr; /* AnimData */

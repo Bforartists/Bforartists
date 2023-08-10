@@ -46,7 +46,7 @@
 
 #include "BKE_anim_data.h"
 #include "BKE_attribute.h"
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_curve.h"
 #include "BKE_displist.h"
 #include "BKE_editmesh.h"
@@ -301,6 +301,27 @@ void BKE_gpencil_material_attr_init(Material *ma)
     gp_style->mix_factor = 0.5f;
 
     gp_style->flag |= GP_MATERIAL_STROKE_SHOW;
+  }
+}
+
+static void nodetree_mark_previews_dirty_reccursive(bNodeTree *tree)
+{
+  if (tree == nullptr) {
+    return;
+  }
+  tree->runtime->previews_refresh_state++;
+  for (bNode *node : tree->all_nodes()) {
+    if (node->type == NODE_GROUP) {
+      bNodeTree *nested_tree = reinterpret_cast<bNodeTree *>(node->id);
+      nodetree_mark_previews_dirty_reccursive(nested_tree);
+    }
+  }
+}
+
+void BKE_material_make_node_previews_dirty(Material *ma)
+{
+  if (ma && ma->nodetree) {
+    nodetree_mark_previews_dirty_reccursive(ma->nodetree);
   }
 }
 
@@ -773,15 +794,15 @@ Material *BKE_object_material_get_eval(Object *ob, short act)
   return nullptr;
 }
 
-int BKE_object_material_count_eval(Object *ob)
+int BKE_object_material_count_eval(const Object *ob)
 {
   BLI_assert(DEG_is_evaluated_object(ob));
   if (ob->type == OB_EMPTY) {
     return 0;
   }
   BLI_assert(ob->data != nullptr);
-  ID *id = get_evaluated_object_data_with_materials(ob);
-  const short *len_p = BKE_id_material_len_p(id);
+  const ID *id = get_evaluated_object_data_with_materials(const_cast<Object *>(ob));
+  const short *len_p = BKE_id_material_len_p(const_cast<ID *>(id));
   return len_p ? *len_p : 0;
 }
 
@@ -1377,12 +1398,9 @@ bool BKE_object_material_slot_remove(Main *bmain, Object *ob)
 
 static bNode *nodetree_uv_node_recursive(bNode *node)
 {
-  bNode *inode;
-  bNodeSocket *sock;
-
-  for (sock = static_cast<bNodeSocket *>(node->inputs.first); sock; sock = sock->next) {
+  LISTBASE_FOREACH (bNodeSocket *, sock, &node->inputs) {
     if (sock->link) {
-      inode = sock->link->fromnode;
+      bNode *inode = sock->link->fromnode;
       if (inode->typeinfo->nclass == NODE_CLASS_INPUT && inode->typeinfo->type == SH_NODE_UVMAP) {
         return inode;
       }
