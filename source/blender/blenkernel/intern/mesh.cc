@@ -53,11 +53,11 @@
 #include "BKE_main.h"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_legacy_convert.h"
-#include "BKE_mesh_runtime.h"
-#include "BKE_mesh_wrapper.h"
+#include "BKE_mesh_legacy_convert.hh"
+#include "BKE_mesh_runtime.hh"
+#include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.h"
-#include "BKE_multires.h"
+#include "BKE_multires.hh"
 #include "BKE_object.h"
 
 #include "PIL_time.h"
@@ -1778,7 +1778,7 @@ static float (*ensure_corner_normal_layer(Mesh &mesh))[3]
   return r_loop_normals;
 }
 
-void BKE_mesh_calc_normals_split_ex(Mesh *mesh,
+void BKE_mesh_calc_normals_split_ex(const Mesh *mesh,
                                     MLoopNorSpaceArray *r_lnors_spacearr,
                                     float (*r_corner_normals)[3])
 {

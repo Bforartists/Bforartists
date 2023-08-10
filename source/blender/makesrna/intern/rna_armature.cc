@@ -22,8 +22,8 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #ifdef RNA_RUNTIME
 
@@ -36,7 +36,7 @@
 #  include "BKE_main.h"
 
 #  include "BKE_armature.h"
-#  include "ED_armature.h"
+#  include "ED_armature.hh"
 
 #  include "DEG_depsgraph.h"
 #  include "DEG_depsgraph_build.h"
@@ -645,7 +645,7 @@ static bool rna_Armature_is_editmode_get(PointerRNA *ptr)
   return (arm->edbo != nullptr);
 }
 
-static void rna_Armature_transform(bArmature *arm, float mat[16])
+static void rna_Armature_transform(bArmature *arm, const float mat[16])
 {
   ED_armature_transform(arm, (const float(*)[4])mat, true);
 }

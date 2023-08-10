@@ -432,10 +432,16 @@ class EditGenerator:
 
     # Each subclass must also a default boolean: `is_default`.
     # When false, a detailed explanation must be included for why.
+    #
+    # Declare here to quiet `mypy` warning, `__init_subclass__` ensures this value is never used.
+    # This is done so the creator of edit is forced to make a decision on the reliability of the edit
+    # and document why it might need manual checking.
+    is_default = False
 
     @classmethod
     def __init_subclass__(cls) -> None:
-        if not isinstance(getattr(cls, "is_default", None), bool):
+        # Ensure the sub-class declares this.
+        if (not isinstance(getattr(cls, "is_default", None), bool)) or ("is_default" not in cls.__dict__):
             raise Exception("Class %r missing \"is_default\" boolean!" % cls)
         if getattr(cls, "edit_list_from_file") is EditGenerator.edit_list_from_file:
             raise Exception("Class %r missing \"edit_list_from_file\" callback!" % cls)
@@ -1155,6 +1161,134 @@ class edit_generators:
                 edits.append(Edit(
                     span=match.span(),
                     content='ARRAY_SIZE(%s)' % match.group(1),
+                    content_fail='__ALWAYS_FAIL__',
+                ))
+
+            return edits
+
+    class use_listbase_foreach_macro(EditGenerator):
+        """
+        Use macro ``LISTBASE_FOREACH`` or ``LISTBASE_FOREACH_BACKWARD``:
+
+        Replace:
+          for (var = static_cast<SomeType *>(list_base.first); var; var = var->next) {}
+        With:
+          LISTBASE_FOREACH(SomeType *, var, &list_base) {}
+        """
+        # This may be default but can generate shadow variable warnings that need
+        # to be manually corrected (typically by removing the local variable in the outer scope).
+        is_default = False
+
+        @staticmethod
+        def edit_list_from_file(_source: str, data: str, _shared_edit_data: Any) -> List[Edit]:
+            edits = []
+
+            re_cxx_cast = re.compile(r"[a-z_]+<([^\>]+)>\((.*)\)")
+            re_c_cast = re.compile(r"\(([^\)]+\*)\)(.*)")
+
+            # Note that this replacement is only valid in some cases,
+            # so only apply with validation that binary output matches.
+            for match in re.finditer(r"->(next|prev)\)\s+{", data, flags=re.MULTILINE):
+                # Chances are this is a for loop over a listbase.
+                is_forward = match.group(1) == "next"
+                for_paren_end = match.span()[0] + 6
+                for_paren_beg = for_paren_end
+
+                limit = max(0, for_paren_end - 2000)
+
+                i = for_paren_end - 1
+                level = 1
+                while True:
+                    if data[i] == ")":
+                        level += 1
+                    elif data[i] == "(":
+                        level -= 1
+                        if level == 0:
+                            for_paren_beg = i
+                            break
+                    i -= 1
+                    if i < limit:
+                        break
+                if for_paren_beg == for_paren_end:
+                    continue
+
+                content = data[for_paren_beg:for_paren_end + 1]
+                if content.count("=") != 2:
+                    continue
+                if content.count(";") != 2:
+                    continue
+                # It just so happens we expect the first element,
+                # not a strict check, the compile test will filter out errors.
+                if is_forward:
+                    if "first" not in content:
+                        continue
+                else:
+                    if "last" not in content:
+                        continue
+
+                # It just so happens that this case should be ignored (no check in the middle of the string).
+                if ";;" in content:
+                    continue
+                for_beg = for_paren_beg - 4
+                prefix = data[for_beg: for_paren_beg]
+                if prefix != "for ":
+                    continue
+
+                # Now we surely have a for-loop.
+                content_beg, content_mid, _content_end = content.split(";")
+                if "=" not in content_beg:
+                    continue
+
+                base = content_beg.rsplit("=", 1)[1].strip()
+
+                if match_cast := re_cxx_cast.match(base):
+                    ty = match_cast.group(1)
+                    base = match_cast.group(2)
+                else:
+                    if match_cast := re_c_cast.match(base):
+                        ty = match_cast.group(1)
+                        base = match_cast.group(2)
+                    else:
+                        continue
+                del match_cast
+
+                # There may be extra parens.
+                while base.startswith("(") and base.endswith(")"):
+                    base = base[1:-1]
+
+                if is_forward:
+                    if base.endswith("->first"):
+                        base = base[:-7]
+                        base_is_pointer = True
+                    elif base.endswith(".first"):
+                        base = base[:-6]
+                        base_is_pointer = False
+                    else:
+                        continue
+                else:
+                    if base.endswith("->last"):
+                        base = base[:-6]
+                        base_is_pointer = True
+                    elif base.endswith(".last"):
+                        base = base[:-5]
+                        base_is_pointer = False
+                    else:
+                        continue
+
+                # Get the variable, most likely it's a single value
+                # but may be `var != nullptr`, in this case only the first term is needed.
+                var = content_mid.strip().split(" ", 1)[0].strip()
+
+                edits.append(Edit(
+                    # Span covers `for (...)` {
+                    span=(for_beg, for_paren_end + 1),
+                    content='%s (%s, %s, %s%s)' % (
+                        "LISTBASE_FOREACH" if is_forward else "LISTBASE_FOREACH_BACKWARD",
+                        ty,
+                        var,
+                        "" if base_is_pointer else "&",
+                        base,
+                    ),
                     content_fail='__ALWAYS_FAIL__',
                 ))
 
@@ -1973,7 +2107,7 @@ def main() -> int:
     parser = create_parser(edits_all, edits_all_default)
     args = parser.parse_args()
 
-    build_dir = args.build_dir
+    build_dir = os.path.normpath(os.path.abspath(args.build_dir))
     regex_list = []
 
     for expr in args.match:

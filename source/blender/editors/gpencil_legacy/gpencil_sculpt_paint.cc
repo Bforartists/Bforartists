@@ -34,7 +34,7 @@
 #include "DNA_space_types.h"
 #include "DNA_view3d_types.h"
 
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_colortools.h"
 #include "BKE_context.h"
 #include "BKE_deform.h"
@@ -47,22 +47,22 @@
 #include "BKE_object_deform.h"
 #include "BKE_report.h"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
 #include "RNA_prototypes.h"
 
-#include "UI_view2d.h"
+#include "UI_view2d.hh"
 
-#include "ED_gpencil_legacy.h"
-#include "ED_keyframing.h"
-#include "ED_screen.h"
-#include "ED_view3d.h"
+#include "ED_gpencil_legacy.hh"
+#include "ED_keyframing.hh"
+#include "ED_screen.hh"
+#include "ED_view3d.hh"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
@@ -636,8 +636,7 @@ static bool gpencil_brush_push_apply(tGP_BrushEditData *gso,
 static void gpencil_brush_calc_midpoint(tGP_BrushEditData *gso)
 {
   /* Convert mouse position to 3D space
-   * See: gpencil_paint.c :: gpencil_stroke_convertcoords()
-   */
+   * See: `gpencil_paint.cc`, #gpencil_stroke_convertcoords(). */
   RegionView3D *rv3d = static_cast<RegionView3D *>(gso->region->regiondata);
   const float *rvec = gso->object->loc;
   const float zfac = ED_view3d_calc_zfac(rv3d, rvec);
@@ -924,14 +923,13 @@ struct tGPSB_CloneBrushData {
 static void gpencil_brush_clone_init(bContext *C, tGP_BrushEditData *gso)
 {
   tGPSB_CloneBrushData *data;
-  bGPDstroke *gps;
 
   /* Initialize custom-data. */
   gso->customdata = data = static_cast<tGPSB_CloneBrushData *>(
       MEM_callocN(sizeof(tGPSB_CloneBrushData), "CloneBrushData"));
 
   /* compute midpoint of strokes on clipboard */
-  for (gps = static_cast<bGPDstroke *>(gpencil_strokes_copypastebuf.first); gps; gps = gps->next) {
+  LISTBASE_FOREACH (bGPDstroke *, gps, &gpencil_strokes_copypastebuf) {
     if (ED_gpencil_stroke_can_use(C, gps)) {
       const float dfac = 1.0f / float(gps->totpoints);
       float mid[3] = {0.0f};
@@ -997,7 +995,6 @@ static void gpencil_brush_clone_add(bContext *C, tGP_BrushEditData *gso)
   Object *ob = gso->object;
   bGPdata *gpd = (bGPdata *)ob->data;
   Scene *scene = gso->scene;
-  bGPDstroke *gps;
 
   float delta[3];
   size_t strokes_added = 0;
@@ -1009,7 +1006,7 @@ static void gpencil_brush_clone_add(bContext *C, tGP_BrushEditData *gso)
   sub_v3_v3v3(delta, gso->dvec, data->buffer_midpoint);
 
   /* Copy each stroke into the layer */
-  for (gps = static_cast<bGPDstroke *>(gpencil_strokes_copypastebuf.first); gps; gps = gps->next) {
+  LISTBASE_FOREACH (bGPDstroke *, gps, &gpencil_strokes_copypastebuf) {
     if (ED_gpencil_stroke_can_use(C, gps)) {
       bGPDstroke *new_stroke;
       bGPDspoint *pt;
@@ -1242,12 +1239,10 @@ static bool gpencil_sculpt_brush_init(bContext *C, wmOperator *op)
   char tool = gso->brush->gpencil_sculpt_tool;
   switch (tool) {
     case GPSCULPT_TOOL_CLONE: {
-      bGPDstroke *gps;
       bool found = false;
 
       /* check that there are some usable strokes in the buffer */
-      for (gps = static_cast<bGPDstroke *>(gpencil_strokes_copypastebuf.first); gps;
-           gps = gps->next) {
+      LISTBASE_FOREACH (bGPDstroke *, gps, &gpencil_strokes_copypastebuf) {
         if (ED_gpencil_stroke_can_use(C, gps)) {
           found = true;
           break;
@@ -2428,7 +2423,7 @@ static int gpencil_sculpt_brush_modal(bContext *C, wmOperator *op, const wmEvent
         return OPERATOR_PASS_THROUGH;
 
       /* Camera/View Gizmo's - Allowed. */
-      /* (See rationale in gpencil_paint.c -> gpencil_draw_modal()) */
+      /* See rationale in `gpencil_paint.cc`, #gpencil_draw_modal(). */
       case EVT_PAD0:
       case EVT_PAD1:
       case EVT_PAD2:

@@ -51,7 +51,7 @@
 
 #include "DRW_engine.h"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 
 #include "pipeline.hh"
 #include "render_result.h"
@@ -849,12 +849,27 @@ static void engine_render_view_layer(Render *re,
   /* Create depsgraph with scene evaluated at render resolution. */
   ViewLayer *view_layer = static_cast<ViewLayer *>(
       BLI_findstring(&re->scene->view_layers, view_layer_iter->name, offsetof(ViewLayer, name)));
+  if (re->prepare_viewlayer) {
+    if (!re->prepare_viewlayer(re->prepare_vl_handle, view_layer, engine->depsgraph)) {
+      if (re->draw_lock) {
+        re->draw_lock(re->dlh, false);
+      }
+      return;
+    }
+  }
   engine_depsgraph_init(engine, view_layer);
 
   /* Sync data to engine, within draw lock so scene data can be accessed safely. */
   if (use_engine) {
+    const bool use_gpu_context = (engine->type->flag & RE_USE_GPU_CONTEXT);
+    if (use_gpu_context) {
+      DRW_render_context_enable(engine->re);
+    }
     if (engine->type->update) {
       engine->type->update(engine, re->main, engine->depsgraph);
+    }
+    if (use_gpu_context) {
+      DRW_render_context_disable(engine->re);
     }
   }
 

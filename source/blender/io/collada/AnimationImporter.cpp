@@ -13,7 +13,7 @@
 
 #include "DNA_armature_types.h"
 
-#include "ED_keyframing.h"
+#include "ED_keyframing.hh"
 
 #include "BLI_listbase.h"
 #include "BLI_math.h"
@@ -348,7 +348,7 @@ virtual void AnimationImporter::change_eul_to_quat(Object *ob, bAction *act)
 
   for (grp = (bActionGroup *)act->groups.first; grp; grp = grp->next) {
 
-    FCurve *eulcu[3] = {NULL, NULL, NULL};
+    FCurve *eulcu[3] = {nullptr, nullptr, nullptr};
 
     if (fcurves_actionGroup_map.find(grp) == fcurves_actionGroup_map.end()) {
       continue;
@@ -374,10 +374,10 @@ virtual void AnimationImporter::change_eul_to_quat(Object *ob, bAction *act)
     SNPRINTF(rna_path, "%s.rotation_quaternion", joint_path);
 
     FCurve *quatcu[4] = {
-      create_fcurve(0, rna_path),
-      create_fcurve(1, rna_path),
-      create_fcurve(2, rna_path),
-      create_fcurve(3, rna_path),
+        create_fcurve(0, rna_path),
+        create_fcurve(1, rna_path),
+        create_fcurve(2, rna_path),
+        create_fcurve(3, rna_path),
     };
 
     bPoseChannel *chan = BKE_pose_channel_find_name(ob->pose, grp->name);
@@ -398,9 +398,9 @@ virtual void AnimationImporter::change_eul_to_quat(Object *ob, bAction *act)
         float frame = cu->bezt[j].vec[1][0];
 
         float eul[3] = {
-          eulcu[0] ? evaluate_fcurve(eulcu[0], frame) : 0.0f,
-          eulcu[1] ? evaluate_fcurve(eulcu[1], frame) : 0.0f,
-          eulcu[2] ? evaluate_fcurve(eulcu[2], frame) : 0.0f,
+            eulcu[0] ? evaluate_fcurve(eulcu[0], frame) : 0.0f,
+            eulcu[1] ? evaluate_fcurve(eulcu[1], frame) : 0.0f,
+            eulcu[2] ? evaluate_fcurve(eulcu[2], frame) : 0.0f,
         };
 
         /* make eul relative to bone rest pose */
@@ -889,7 +889,7 @@ void AnimationImporter::apply_matrix_curves(Object *ob,
       mul_m4_m4m4(temp, par, matfra);
 
 #if 0
-      evaluate_joint_world_transform_at_frame(temp, NULL, node, fra);
+      evaluate_joint_world_transform_at_frame(temp, nullptr, node, fra);
 #endif
 
       /* calc special matrix */
@@ -929,7 +929,7 @@ void AnimationImporter::apply_matrix_curves(Object *ob,
       BLI_addtail(curves, newcu[i]);
     }
 #if 0
-    fcurve_is_used(newcu[i]);  /* never added to unused */
+    fcurve_is_used(newcu[i]); /* never added to unused */
 #endif
   }
 
@@ -1193,7 +1193,7 @@ void AnimationImporter::translate_Animations(
       for (uint j = 0; j < matBinds.getCount(); j++) {
         const COLLADAFW::UniqueId &matuid = matBinds[j].getReferencedMaterial();
         const COLLADAFW::Effect *ef = (COLLADAFW::Effect *)(FW_object_map[matuid]);
-        if (ef != nullptr) { /* can be NULL #28909. */
+        if (ef != nullptr) { /* can be nullptr #28909. */
           Material *ma = uid_material_map[matuid];
           if (!ma) {
             fprintf(stderr,
@@ -1336,7 +1336,7 @@ void AnimationImporter::add_bone_animation_sampled(Object *ob,
     calc_joint_parent_mat_rest(par, nullptr, root, node);
     mul_m4_m4m4(temp, par, matfra);
 
-    // evaluate_joint_world_transform_at_frame(temp, NULL, node, fra);
+    // evaluate_joint_world_transform_at_frame(temp, nullptr, node, fra);
 
     /* calc special matrix */
     mul_m4_series(mat, irest, temp, irest_dae, rest);
@@ -1368,7 +1368,7 @@ void AnimationImporter::add_bone_animation_sampled(Object *ob,
   for (int i = 0; i < totcu; i++) {
     add_bone_fcurve(ob, node, newcu[i]);
 #if 0
-    fcurve_is_used(newcu[i]);  /* never added to unused */
+    fcurve_is_used(newcu[i]); /* never added to unused */
 #endif
   }
 
@@ -1449,7 +1449,7 @@ AnimationImporter::AnimMix *AnimationImporter::get_animation_type(
     for (uint j = 0; j < matBinds.getCount(); j++) {
       const COLLADAFW::UniqueId &matuid = matBinds[j].getReferencedMaterial();
       const COLLADAFW::Effect *ef = (COLLADAFW::Effect *)(FW_object_map[matuid]);
-      if (ef != nullptr) { /* can be NULL #28909. */
+      if (ef != nullptr) { /* can be nullptr #28909. */
         const COLLADAFW::CommonEffectPointerArray &commonEffects = ef->getCommonEffects();
         if (!commonEffects.empty()) {
           COLLADAFW::EffectCommon *efc = commonEffects[0];
@@ -1699,7 +1699,7 @@ Object *AnimationImporter::translate_animation_OLD(
       calc_joint_parent_mat_rest(par, nullptr, root, node);
       mul_m4_m4m4(temp, par, matfra);
 
-      /* evaluate_joint_world_transform_at_frame(temp, NULL, node, fra); */
+      /* evaluate_joint_world_transform_at_frame(temp, nullptr, node, fra); */
 
       /* calc special matrix */
       mul_m4_series(mat, irest, temp, irest_dae, rest);
@@ -2107,7 +2107,7 @@ Object *AnimationImporter::get_joint_object(COLLADAFW::Node *root,
       mul_m4_m4m4(mat, ipar, temp);
     }
 
-    bc_decompose(mat, job->loc, NULL, job->quat, job->scale);
+    bc_decompose(mat, job->loc, nullptr, job->quat, job->scale);
 
     if (par_job) {
       job->parent = par_job;

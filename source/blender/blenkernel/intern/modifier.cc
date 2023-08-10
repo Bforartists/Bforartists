@@ -57,8 +57,8 @@
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_wrapper.h"
-#include "BKE_multires.h"
+#include "BKE_mesh_wrapper.hh"
+#include "BKE_multires.hh"
 #include "BKE_object.h"
 #include "BKE_pointcache.h"
 #include "BKE_screen.h"
@@ -1202,7 +1202,7 @@ void BKE_modifier_blend_write(BlendWriter *writer, const ID *id_owner, ListBase 
  * Unfortunately, this can not be done as a regular do_versions() since the modifier type is
  * set to NONE, so the do_versions code wouldn't know where the modifier came from.
  *
- * The best approach seems to have the functionality in versioning_280.c but still call the
+ * The best approach seems to have the functionality in `versioning_280.cc` but still call the
  * function from #BKE_modifier_blend_read_data().
  */
 

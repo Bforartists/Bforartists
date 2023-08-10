@@ -30,7 +30,7 @@
 
 #include "IMB_imbuf.h"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
 static const EnumPropertyItem prop_direction_items[] = {
     {0, "ADD", ICON_ADD, "Add", "Add effect of brush"},
@@ -452,14 +452,14 @@ static EnumPropertyItem rna_enum_gpencil_brush_vertex_icons_items[] = {
 
 #  include "RNA_access.h"
 
-#  include "BKE_brush.h"
+#  include "BKE_brush.hh"
 #  include "BKE_colorband.h"
 #  include "BKE_gpencil_legacy.h"
 #  include "BKE_icons.h"
 #  include "BKE_material.h"
-#  include "BKE_paint.h"
+#  include "BKE_paint.hh"
 
-#  include "WM_api.h"
+#  include "WM_api.hh"
 
 static bool rna_BrushCapabilitiesSculpt_has_accumulate_get(PointerRNA *ptr)
 {

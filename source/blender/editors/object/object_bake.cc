@@ -31,7 +31,7 @@
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.h"
-#include "BKE_multires.h"
+#include "BKE_multires.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 
@@ -46,12 +46,12 @@
 #include "IMB_imbuf.h"
 #include "IMB_imbuf_types.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_uvedit.h"
+#include "ED_object.hh"
+#include "ED_screen.hh"
+#include "ED_uvedit.hh"
 
 #include "object_intern.h"
 
@@ -466,14 +466,13 @@ static void init_multiresbake_job(bContext *C, MultiresBakeJob *bkj)
 
 static void multiresbake_startjob(void *bkv, bool *stop, bool *do_update, float *progress)
 {
-  MultiresBakerJobData *data;
   MultiresBakeJob *bkj = static_cast<MultiresBakeJob *>(bkv);
   int baked_objects = 0, tot_obj;
 
   tot_obj = BLI_listbase_count(&bkj->data);
 
   if (bkj->bake_clear) { /* clear images */
-    for (data = static_cast<MultiresBakerJobData *>(bkj->data.first); data; data = data->next) {
+    LISTBASE_FOREACH (MultiresBakerJobData *, data, &bkj->data) {
       ClearFlag clear_flag = ClearFlag(0);
 
       if (bkj->mode == RE_BAKE_NORMALS) {
@@ -487,7 +486,7 @@ static void multiresbake_startjob(void *bkv, bool *stop, bool *do_update, float 
     }
   }
 
-  for (data = static_cast<MultiresBakerJobData *>(bkj->data.first); data; data = data->next) {
+  LISTBASE_FOREACH (MultiresBakerJobData *, data, &bkj->data) {
     MultiresBakeRender bkr = {nullptr};
 
     /* copy data stored in job descriptor */
@@ -531,7 +530,6 @@ static void multiresbake_freejob(void *bkv)
 {
   MultiresBakeJob *bkj = static_cast<MultiresBakeJob *>(bkv);
   MultiresBakerJobData *data, *next;
-  LinkData *link;
 
   data = static_cast<MultiresBakerJobData *>(bkj->data.first);
   while (data) {
@@ -540,7 +538,7 @@ static void multiresbake_freejob(void *bkv)
     data->hires_dm->release(data->hires_dm);
 
     /* delete here, since this delete will be called from main thread */
-    for (link = static_cast<LinkData *>(data->images.first); link; link = link->next) {
+    LISTBASE_FOREACH (LinkData *, link, &data->images) {
       Image *ima = (Image *)link->data;
       BKE_image_partial_update_mark_full_update(ima);
     }

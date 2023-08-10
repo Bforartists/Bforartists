@@ -33,7 +33,7 @@
 #include "BKE_lib_query.h"
 #include "BKE_lib_remap.h"
 #include "BKE_main.h"
-#include "BKE_mesh_wrapper.h"
+#include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
 #include "BKE_pointcloud.h"
@@ -385,7 +385,7 @@ void BKE_pointcloud_data_update(Depsgraph *depsgraph, Scene *scene, Object *obje
 
   /* Evaluate modifiers. */
   PointCloud *pointcloud = static_cast<PointCloud *>(object->data);
-  blender::bke::GeometrySet geometry_set = blender::bke::GeometrySet::create_with_pointcloud(
+  blender::bke::GeometrySet geometry_set = blender::bke::GeometrySet::from_pointcloud(
       pointcloud, blender::bke::GeometryOwnershipType::ReadOnly);
   pointcloud_evaluate_modifiers(depsgraph, scene, object, geometry_set);
 

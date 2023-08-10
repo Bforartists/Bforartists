@@ -61,7 +61,7 @@
 #include "BKE_mask.h"     /* free mask clipboard */
 #include "BKE_material.h" /* BKE_material_copybuf_clear */
 #include "BKE_studiolight.h"
-#include "BKE_subdiv.h"
+#include "BKE_subdiv.hh"
 #include "BKE_tracking.h" /* free tracking clipboard */
 
 #include "RE_engine.h"
@@ -82,36 +82,36 @@
 
 #include "RNA_define.h"
 
-#include "WM_api.h"
-#include "WM_message.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_message.hh"
+#include "WM_types.hh"
 
-#include "wm.h"
-#include "wm_cursors.h"
+#include "wm.hh"
+#include "wm_cursors.hh"
 #include "wm_event_system.h"
-#include "wm_files.h"
+#include "wm_files.hh"
 #include "wm_platform_support.h"
-#include "wm_surface.h"
-#include "wm_window.h"
+#include "wm_surface.hh"
+#include "wm_window.hh"
 
-#include "ED_anim_api.h"
-#include "ED_armature.h"
-#include "ED_asset.h"
-#include "ED_gpencil_legacy.h"
-#include "ED_keyframes_edit.h"
-#include "ED_keyframing.h"
-#include "ED_node.h"
-#include "ED_render.h"
-#include "ED_screen.h"
-#include "ED_space_api.h"
-#include "ED_undo.h"
-#include "ED_util.h"
-#include "ED_view3d.h"
+#include "ED_anim_api.hh"
+#include "ED_armature.hh"
+#include "ED_asset.hh"
+#include "ED_gpencil_legacy.hh"
+#include "ED_keyframes_edit.hh"
+#include "ED_keyframing.hh"
+#include "ED_node.hh"
+#include "ED_render.hh"
+#include "ED_screen.hh"
+#include "ED_space_api.hh"
+#include "ED_undo.hh"
+#include "ED_util.hh"
+#include "ED_view3d.hh"
 
 #include "BLF_api.h"
 #include "BLT_lang.h"
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "GPU_context.h"
 #include "GPU_init_exit.h"
@@ -590,7 +590,7 @@ void WM_exit_ex(bContext *C, const bool do_python, const bool do_user_exit_actio
     wm_free_reports(wm);
   }
 
-  SEQ_clipboard_free(); /* sequencer.c */
+  SEQ_clipboard_free(); /* `sequencer.cc` */
   BKE_tracking_clipboard_free();
   BKE_mask_clipboard_free();
   BKE_vfont_clipboard_free();

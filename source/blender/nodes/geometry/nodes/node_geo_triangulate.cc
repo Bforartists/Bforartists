@@ -10,8 +10,8 @@
 
 #include "DNA_mesh_types.h"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -81,7 +81,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     if (!geometry_set.has_mesh()) {
       return;
     }
-    const Mesh &mesh_in = *geometry_set.get_mesh_for_read();
+    const Mesh &mesh_in = *geometry_set.get_mesh();
 
     const bke::MeshFieldContext context{mesh_in, ATTR_DOMAIN_FACE};
     FieldEvaluator evaluator{context, mesh_in.faces_num};

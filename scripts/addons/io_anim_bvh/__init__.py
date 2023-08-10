@@ -142,7 +142,6 @@ class BVH_PT_import_main(bpy.types.Panel):
     bl_parent_id = "FILE_PT_operator"
     bl_options = {'HIDE_HEADER'}
 
-
     @classmethod
     def poll(cls, context):
         sfile = context.space_data
@@ -368,6 +367,7 @@ classes = (
     BVH_PT_export_animation,
 )
 
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -382,6 +382,7 @@ def unregister():
 
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
+
 
 if __name__ == "__main__":
     register()

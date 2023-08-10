@@ -15,9 +15,9 @@
 #include "BKE_armature.h"
 #include "BKE_context.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "BLT_translation.h"
 
@@ -152,7 +152,7 @@ static void ElementMirror(TransInfo *t, TransDataContainer *tc, TransData *td, i
   }
 }
 
-static void applyMirror(TransInfo *t, const int[2] /*mval*/)
+static void applyMirror(TransInfo *t)
 {
   int i;
   char str[UI_MAX_DRAW_STR];

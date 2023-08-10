@@ -16,13 +16,10 @@ presets = (CopyPreset("Resolution",
            CopyPreset("Scale",
                       ("scale", "Render Scale", "The “Render Scale” setting"),
                       {"resolution_percentage"}),
-           CopyPreset("OSA",
-                      ("osa", "Render OSA", "The OSA toggle and sample settings"),
-                      {"use_antialiasing", "antialiasing_samples"}),
            CopyPreset("Threads",
                       ("threads", "Render Threads", "The thread mode and number settings"),
                       {"threads_mode", "threads"}),
            CopyPreset("Stamp",
                       ("stamp", "Render Stamp", "The Stamp toggle"),
                       {"use_stamp"})
-          )
+           )

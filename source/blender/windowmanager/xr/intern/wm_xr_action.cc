@@ -19,8 +19,8 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "wm_xr_intern.h"
 
@@ -336,7 +336,7 @@ bool WM_xr_action_binding_create(wmXrData *xr,
                                  const wmXrPose *poses)
 {
   const uint count = uint(BLI_listbase_count(user_paths));
-  BLI_assert(count == (uint)BLI_listbase_count(component_paths));
+  BLI_assert(count == uint(BLI_listbase_count(component_paths)));
 
   GHOST_XrActionBindingInfo *binding_infos = static_cast<GHOST_XrActionBindingInfo *>(
       MEM_calloc_arrayN(count, sizeof(*binding_infos), "XrActionBinding_Infos"));

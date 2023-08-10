@@ -5,8 +5,8 @@
 bl_info = {
     "name": "Copy Render Settings",
     "author": "Bastien Montagne",
-    "version": (1, 1, 0),
-    "blender": (3, 0, 0),
+    "version": (1, 2, 0),
+    "blender": (3, 6, 0),
     "location": "Render buttons (Properties window)",
     "description": "Allows to copy a selection of render settings "
                    "from current scene to others.",
@@ -24,17 +24,17 @@ if "bpy" in locals():
 
 else:
     from . import (
-            data,
-            operator,
-            panel,
-            translations,
-            )
+        data,
+        operator,
+        panel,
+        translations,
+    )
 
 
 import bpy
 from bpy.props import (
-        PointerProperty,
-        )
+    PointerProperty,
+)
 
 
 classes = data.classes + operator.classes + panel.classes

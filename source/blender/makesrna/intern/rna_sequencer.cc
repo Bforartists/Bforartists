@@ -54,7 +54,7 @@
 #include "SEQ_transform.h"
 #include "SEQ_utils.h"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
 struct EffectInfo {
   const char *struct_name;
@@ -96,7 +96,7 @@ const EnumPropertyItem rna_enum_strip_color_items[] = {
 #  include "BKE_movieclip.h"
 #  include "BKE_report.h"
 
-#  include "WM_api.h"
+#  include "WM_api.hh"
 
 #  include "DEG_depsgraph.h"
 #  include "DEG_depsgraph_build.h"
@@ -269,10 +269,10 @@ static int rna_SequenceEditor_elements_length(PointerRNA *ptr)
 {
   Sequence *seq = (Sequence *)ptr->data;
 
-  /* Hack? copied from sequencer.c::reload_sequence_new_file() */
+  /* Hack? copied from `sequencer.cc`, #reload_sequence_new_file(). */
   size_t olen = MEM_allocN_len(seq->strip->stripdata) / sizeof(StripElem);
 
-  /* The problem with seq->strip->len and seq->len is that it's discounted from the offset
+  /* The problem with `seq->strip->len` and `seq->len` is that it's discounted from the offset
    * (hard cut trim). */
   return int(olen);
 }
@@ -705,7 +705,8 @@ static void rna_Sequence_name_set(PointerRNA *ptr, const char *value)
 
   /* Don't rename everywhere because these are per scene. */
 #  if 0
-  BKE_animdata_fix_paths_rename_all(nullptr, "sequence_editor.sequences_all", oldname, seq->name + 2);
+  BKE_animdata_fix_paths_rename_all(
+      nullptr, "sequence_editor.sequences_all", oldname, seq->name + 2);
 #  endif
   adt = BKE_animdata_from_id(&scene->id);
   if (adt) {
@@ -980,10 +981,10 @@ static void rna_SoundSequence_filename_set(PointerRNA *ptr, const char *value)
 {
   Sequence *seq = (Sequence *)(ptr->data);
   BLI_path_split_dir_file(value,
-                    seq->strip->dirpath,
-                    sizeof(seq->strip->dirpath),
-                    seq->strip->stripdata->name,
-                    sizeof(seq->strip->stripdata->name));
+                          seq->strip->dirpath,
+                          sizeof(seq->strip->dirpath),
+                          seq->strip->stripdata->name,
+                          sizeof(seq->strip->stripdata->name));
 }
 
 static void rna_SequenceElement_filename_set(PointerRNA *ptr, const char *value)
@@ -2066,7 +2067,7 @@ static void rna_def_sequence(BlenderRNA *brna)
   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
   RNA_def_property_string_funcs(
       prop, "rna_Sequence_name_get", "rna_Sequence_name_length", "rna_Sequence_name_set");
-  RNA_def_property_string_maxlength(prop, sizeof(((Sequence *)nullptr)->name) - 2);
+  RNA_def_property_string_maxlength(prop, sizeof(Sequence::name) - 2);
   RNA_def_property_ui_text(prop, "Name", "");
   RNA_def_struct_name_property(srna, prop);
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, nullptr);
@@ -2297,7 +2298,7 @@ static void rna_def_channel(BlenderRNA *brna)
   RNA_def_struct_ui_text(srna, "Channel", "");
 
   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
-  RNA_def_property_string_maxlength(prop, sizeof(((SeqTimelineChannel *)nullptr)->name));
+  RNA_def_property_string_maxlength(prop, sizeof(SeqTimelineChannel::name));
   RNA_def_property_ui_text(prop, "Name", "");
   RNA_def_struct_name_property(srna, prop);
   RNA_def_property_string_funcs(prop, nullptr, nullptr, "rna_SequenceTimelineChannel_name_set");

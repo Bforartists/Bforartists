@@ -26,24 +26,24 @@
 
 #include "GPU_state.h"
 
-#include "ED_markers.h"
-#include "ED_screen.h"
-#include "ED_space_api.h"
-#include "ED_time_scrub_ui.h"
-#include "ED_transform.h"
-#include "ED_view3d.h"
-#include "ED_view3d_offscreen.h" /* Only for sequencer view3d drawing callback. */
+#include "ED_markers.hh"
+#include "ED_screen.hh"
+#include "ED_space_api.hh"
+#include "ED_time_scrub_ui.hh"
+#include "ED_transform.hh"
+#include "ED_view3d.hh"
+#include "ED_view3d_offscreen.hh" /* Only for sequencer view3d drawing callback. */
 
-#include "WM_api.h"
-#include "WM_message.h"
+#include "WM_api.hh"
+#include "WM_message.hh"
 
 #include "SEQ_sequencer.h"
 #include "SEQ_time.h"
 #include "SEQ_transform.h"
 #include "SEQ_utils.h"
 
-#include "UI_interface.h"
-#include "UI_view2d.h"
+#include "UI_interface.hh"
+#include "UI_view2d.hh"
 
 #include "BLO_read_write.h"
 
@@ -660,7 +660,7 @@ static void sequencer_main_region_message_subscribe(const wmRegionMessageSubscri
         &RNA_SequenceModifier,
         &RNA_SequenceColorBalanceData,
     };
-    wmMsgParams_RNA msg_key_params = {{0}};
+    wmMsgParams_RNA msg_key_params = {{nullptr}};
     for (int i = 0; i < ARRAY_SIZE(type_array); i++) {
       msg_key_params.ptr.type = type_array[i];
       WM_msg_subscribe_rna_params(

@@ -35,7 +35,7 @@
 #include "BKE_idtype.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
-#include "BKE_lib_override.h"
+#include "BKE_lib_override.hh"
 #include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_main_namemap.h"
@@ -48,22 +48,22 @@
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
 
-#include "ED_armature.h"
-#include "ED_fileselect.h"
-#include "ED_outliner.h"
-#include "ED_screen.h"
+#include "ED_armature.hh"
+#include "ED_fileselect.hh"
+#include "ED_outliner.hh"
+#include "ED_screen.hh"
 
-#include "WM_api.h"
-#include "WM_message.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_message.hh"
+#include "WM_types.hh"
 
 #include "GPU_immediate.h"
 #include "GPU_state.h"
 
-#include "UI_interface.h"
-#include "UI_interface_icons.h"
-#include "UI_resources.h"
-#include "UI_view2d.h"
+#include "UI_interface.hh"
+#include "UI_interface_icons.hh"
+#include "UI_resources.hh"
+#include "UI_view2d.hh"
 
 #include "RNA_access.h"
 
@@ -2902,7 +2902,7 @@ static bool tselem_draw_icon(uiBlock *block,
 
   /* Collection colors and icons covered by restrict buttons. */
   if (!is_clickable || x >= xmax || is_collection) {
-    /* Placement of icons, copied from interface_widgets.c */
+    /* Placement of icons, copied from `interface_widgets.cc`. */
     float aspect = (0.8f * UI_UNIT_Y) / ICON_DEFAULT_HEIGHT;
     x += 2.0f * aspect;
     y += 2.0f * aspect;

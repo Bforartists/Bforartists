@@ -169,6 +169,7 @@ def elem_prop_first(elem, default=None):
 # ----
 # Support for
 # Properties70: { ... P:
+# Custom properties ("user properties" in FBX) are ignored here and get handled separately (see #104773).
 def elem_props_find_first(elem, elem_prop_id):
     if elem is None:
         # When properties are not found... Should never happen, but happens - as usual.
@@ -185,7 +186,8 @@ def elem_props_find_first(elem, elem_prop_id):
 
     for subelem in elem.elems:
         assert(subelem.id == b'P')
-        if subelem.props[0] == elem_prop_id:
+        # 'U' flag indicates that the property has been defined by the user.
+        if subelem.props[0] == elem_prop_id and b'U' not in subelem.props[3]:
             return subelem
     return None
 
@@ -1885,7 +1887,6 @@ def blen_read_light(fbx_tmpl, fbx_obj, settings):
     # TODO, cycles nodes???
     lamp.color = elem_props_get_color_rgb(fbx_props, b'Color', (1.0, 1.0, 1.0))
     lamp.energy = elem_props_get_number(fbx_props, b'Intensity', 100.0) / 100.0
-    lamp.distance = elem_props_get_number(fbx_props, b'DecayStart', 25.0) * settings.global_scale
     lamp.use_shadow = elem_props_get_bool(fbx_props, b'CastShadow', True)
     if hasattr(lamp, "cycles"):
         lamp.cycles.cast_shadow = lamp.use_shadow

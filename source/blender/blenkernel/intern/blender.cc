@@ -26,7 +26,7 @@
 #include "BKE_blender_user_menu.h"
 #include "BKE_blender_version.h" /* own include */
 #include "BKE_blendfile.h"
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_cachefile.h"
 #include "BKE_callbacks.h"
 #include "BKE_global.h"
@@ -145,7 +145,7 @@ const char *BKE_bforartists_version_string()
 /* -------------- bfa - end -----------------*/
 
 void BKE_blender_version_blendfile_string_from_values(char *str_buff,
-                                                      const size_t str_buff_len,
+                                                      const size_t str_buff_maxncpy,
                                                       const short file_version,
                                                       const short file_subversion)
 {
@@ -153,14 +153,14 @@ void BKE_blender_version_blendfile_string_from_values(char *str_buff,
   const short file_version_minor = file_version % 100;
   if (file_subversion >= 0) {
     BLI_snprintf(str_buff,
-                 str_buff_len,
+                 str_buff_maxncpy,
                  "%d.%d (sub %d)",
                  file_version_major,
                  file_version_minor,
                  file_subversion);
   }
   else {
-    BLI_snprintf(str_buff, str_buff_len, "%d.%d", file_version_major, file_version_minor);
+    BLI_snprintf(str_buff, str_buff_maxncpy, "%d.%d", file_version_major, file_version_minor);
   }
 }
 
@@ -347,6 +347,7 @@ void BKE_blender_userdef_data_free(UserDef *userdef, bool clear_fonts)
   BLI_freelistN(&userdef->autoexec_paths);
   BLI_freelistN(&userdef->script_directories);
   BLI_freelistN(&userdef->asset_libraries);
+  BLI_freelistN(&userdef->extension_repos);
 
   BLI_freelistN(&userdef->uistyles);
   BLI_freelistN(&userdef->uifonts);
@@ -376,7 +377,7 @@ void BKE_blender_userdef_app_template_data_swap(UserDef *userdef_a, UserDef *use
   } \
   ((void)0)
 
-#define LIST_SWAP(id) \
+#define LISTBASE_SWAP(id) \
   { \
     SWAP(ListBase, userdef_a->id, userdef_b->id); \
   } \
@@ -393,12 +394,12 @@ void BKE_blender_userdef_app_template_data_swap(UserDef *userdef_a, UserDef *use
   } \
   ((void)0)
 
-  LIST_SWAP(uistyles);
-  LIST_SWAP(uifonts);
-  LIST_SWAP(themes);
-  LIST_SWAP(addons);
-  LIST_SWAP(user_keymaps);
-  LIST_SWAP(user_keyconfig_prefs);
+  LISTBASE_SWAP(uistyles);
+  LISTBASE_SWAP(uifonts);
+  LISTBASE_SWAP(themes);
+  LISTBASE_SWAP(addons);
+  LISTBASE_SWAP(user_keymaps);
+  LISTBASE_SWAP(user_keyconfig_prefs);
 
   DATA_SWAP(font_path_ui);
   DATA_SWAP(font_path_ui_mono);
@@ -414,7 +415,7 @@ void BKE_blender_userdef_app_template_data_swap(UserDef *userdef_a, UserDef *use
 
 #undef SWAP_TYPELESS
 #undef DATA_SWAP
-#undef LIST_SWAP
+#undef LISTBASE_SWAP
 #undef FLAG_SWAP
 }
 

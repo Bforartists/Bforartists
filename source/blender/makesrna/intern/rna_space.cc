@@ -23,9 +23,9 @@
 #include "BKE_studiolight.h"
 #include "BKE_viewer_path.h"
 
-#include "ED_asset.h"
-#include "ED_spreadsheet.h"
-#include "ED_text.h"
+#include "ED_asset.hh"
+#include "ED_spreadsheet.hh"
+#include "ED_text.hh"
 
 #include "BLI_listbase.h"
 #include "BLI_math.h"
@@ -54,8 +54,8 @@
 #include "SEQ_relations.h"
 #include "SEQ_sequencer.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RE_engine.h"
 #include "RE_pipeline.h"
@@ -575,7 +575,7 @@ static const EnumPropertyItem rna_enum_curve_display_handle_items[] = {
 #  include "BLI_string.h"
 
 #  include "BKE_anim_data.h"
-#  include "BKE_brush.h"
+#  include "BKE_brush.hh"
 #  include "BKE_colortools.h"
 #  include "BKE_context.h"
 #  include "BKE_global.h"
@@ -583,7 +583,7 @@ static const EnumPropertyItem rna_enum_curve_display_handle_items[] = {
 #  include "BKE_idprop.h"
 #  include "BKE_layer.h"
 #  include "BKE_nla.h"
-#  include "BKE_paint.h"
+#  include "BKE_paint.hh"
 #  include "BKE_preferences.h"
 #  include "BKE_scene.h"
 #  include "BKE_screen.h"
@@ -592,24 +592,24 @@ static const EnumPropertyItem rna_enum_curve_display_handle_items[] = {
 #  include "DEG_depsgraph.h"
 #  include "DEG_depsgraph_build.h"
 
-#  include "ED_anim_api.h"
-#  include "ED_asset.h"
-#  include "ED_buttons.h"
-#  include "ED_clip.h"
-#  include "ED_fileselect.h"
-#  include "ED_image.h"
-#  include "ED_node.h"
-#  include "ED_screen.h"
-#  include "ED_sequencer.h"
-#  include "ED_transform.h"
-#  include "ED_view3d.h"
+#  include "ED_anim_api.hh"
+#  include "ED_asset.hh"
+#  include "ED_buttons.hh"
+#  include "ED_clip.hh"
+#  include "ED_fileselect.hh"
+#  include "ED_image.hh"
+#  include "ED_node.hh"
+#  include "ED_screen.hh"
+#  include "ED_sequencer.hh"
+#  include "ED_transform.hh"
+#  include "ED_view3d.hh"
 
 #  include "GPU_material.h"
 
 #  include "IMB_imbuf_types.h"
 
-#  include "UI_interface.h"
-#  include "UI_view2d.h"
+#  include "UI_interface.hh"
+#  include "UI_view2d.hh"
 
 static StructRNA *rna_Space_refine(PointerRNA *ptr)
 {
@@ -887,6 +887,22 @@ static void rna_Space_show_region_hud_set(PointerRNA *ptr, bool value)
 static void rna_Space_show_region_hud_update(bContext *C, PointerRNA *ptr)
 {
   rna_Space_bool_from_region_flag_update_by_type(C, ptr, RGN_TYPE_HUD, RGN_FLAG_HIDDEN_BY_USER);
+}
+
+/* Asset Shelf Regions */
+static bool rna_Space_show_region_asset_shelf_get(PointerRNA *ptr)
+{
+  return !rna_Space_bool_from_region_flag_get_by_type(ptr, RGN_TYPE_ASSET_SHELF, RGN_FLAG_HIDDEN);
+}
+static void rna_Space_show_region_asset_shelf_set(PointerRNA *ptr, bool value)
+{
+  rna_Space_bool_from_region_flag_set_by_type(ptr, RGN_TYPE_ASSET_SHELF, RGN_FLAG_HIDDEN, !value);
+  rna_Space_bool_from_region_flag_set_by_type(
+      ptr, RGN_TYPE_ASSET_SHELF_HEADER, RGN_FLAG_HIDDEN, !value);
+}
+static void rna_Space_show_region_asset_shelf_update(bContext *C, PointerRNA *ptr)
+{
+  rna_Space_bool_from_region_flag_update_by_type(C, ptr, RGN_TYPE_ASSET_SHELF, RGN_FLAG_HIDDEN);
 }
 
 /** \} */
@@ -1631,8 +1647,11 @@ static int rna_SpaceView3D_icon_from_show_object_viewport_get(PointerRNA *ptr)
                                                     &v3d->object_type_exclude_select);
 }
 
-static char *rna_View3DShading_path(const PointerRNA * /*ptr*/)
+static char *rna_View3DShading_path(const PointerRNA *ptr)
 {
+  if (GS(ptr->owner_id->name) == ID_SCE) {
+    return BLI_strdup("display.shading");
+  }
   return BLI_strdup("shading");
 }
 
@@ -3507,6 +3526,10 @@ static void rna_def_space_generic_show_region_toggles(StructRNA *srna, int regio
     region_type_mask &= ~(1 << RGN_TYPE_HUD);
     DEF_SHOW_REGION_PROPERTY(show_region_hud, "Adjust Last Operation", "");
   }
+  if (region_type_mask & ((1 << RGN_TYPE_ASSET_SHELF) | (1 << RGN_TYPE_ASSET_SHELF_HEADER))) {
+    region_type_mask &= ~((1 << RGN_TYPE_ASSET_SHELF) | (1 << RGN_TYPE_ASSET_SHELF_HEADER));
+    DEF_SHOW_REGION_PROPERTY(show_region_asset_shelf, "Asset Shelf", "");
+  }
   BLI_assert(region_type_mask == 0);
 }
 
@@ -5007,7 +5030,8 @@ static void rna_def_space_view3d(BlenderRNA *brna)
 
   rna_def_space_generic_show_region_toggles(srna,
                                             ((1 << RGN_TYPE_TOOL_HEADER) | (1 << RGN_TYPE_TOOLS) |
-                                             (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_HUD)));
+                                             (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_HUD) |
+                                             (1 << RGN_TYPE_ASSET_SHELF)));
 
   prop = RNA_def_property(srna, "camera", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_EDITABLE);
@@ -7549,10 +7573,10 @@ static void rna_def_space_node(BlenderRNA *brna)
        0,
        "Modifier",
        "Edit node group from active object's active modifier"},
-      {SNODE_GEOMETRY_OPERATOR,
-       "OPERATOR",
+      {SNODE_GEOMETRY_TOOL,
+       "TOOL",
        0,
-       "Operator",
+       "Tool",
        "Edit any geometry node group for use as an operator"},
       {0, nullptr, 0, nullptr, nullptr},
   };
@@ -7728,9 +7752,12 @@ static void rna_def_space_node(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Overlay Settings", "Settings for display of overlays in the Node Editor");
 
-  prop = RNA_def_property(srna, "supports_preview", PROP_BOOLEAN, PROP_NONE);
+  prop = RNA_def_property(srna, "supports_previews", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_funcs(prop, "rna_SpaceNode_supports_previews", nullptr);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(prop,
+                           "Supports Previews",
+                           "Whether the node editor's type supports displaying node previews");
 
   rna_def_space_node_overlay(brna);
   RNA_api_space_node(srna);

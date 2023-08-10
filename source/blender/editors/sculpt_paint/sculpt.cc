@@ -36,7 +36,7 @@
 
 #include "BKE_attribute.h"
 #include "BKE_attribute.hh"
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_ccg.h"
 #include "BKE_colortools.h"
 #include "BKE_context.h"
@@ -45,30 +45,30 @@
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_mapping.h"
+#include "BKE_mesh_mapping.hh"
 #include "BKE_modifier.h"
-#include "BKE_multires.h"
+#include "BKE_multires.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_object.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_pbvh_api.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
-#include "BKE_subdiv_ccg.h"
-#include "BKE_subsurf.h"
+#include "BKE_subdiv_ccg.hh"
+#include "BKE_subsurf.hh"
 #include "BLI_math_vector.hh"
 
 #include "NOD_texture.h"
 
 #include "DEG_depsgraph.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_paint.h"
-#include "ED_screen.h"
-#include "ED_sculpt.h"
-#include "ED_view3d.h"
+#include "ED_paint.hh"
+#include "ED_screen.hh"
+#include "ED_sculpt.hh"
+#include "ED_view3d.hh"
 
 #include "paint_intern.hh"
 #include "sculpt_intern.hh"
@@ -372,24 +372,6 @@ int SCULPT_active_face_set_get(SculptSession *ss)
   return SCULPT_FACE_SET_NONE;
 }
 
-void SCULPT_vertex_visible_set(SculptSession *ss, PBVHVertRef vertex, bool visible)
-{
-  switch (BKE_pbvh_type(ss->pbvh)) {
-    case PBVH_FACES: {
-      bool *hide_vert = BKE_pbvh_get_vert_hide_for_write(ss->pbvh);
-      hide_vert[vertex.i] = visible;
-      break;
-    }
-    case PBVH_BMESH: {
-      BMVert *v = (BMVert *)vertex.i;
-      BM_elem_flag_set(v, BM_ELEM_HIDDEN, !visible);
-      break;
-    }
-    case PBVH_GRIDS:
-      break;
-  }
-}
-
 bool SCULPT_vertex_visible_get(SculptSession *ss, PBVHVertRef vertex)
 {
   switch (BKE_pbvh_type(ss->pbvh)) {
@@ -434,15 +416,10 @@ void SCULPT_face_set_visibility_set(SculptSession *ss, int face_set, bool visibl
 void SCULPT_face_visibility_all_invert(SculptSession *ss)
 {
   SCULPT_topology_islands_invalidate(ss);
-
-  BLI_assert(ss->face_sets != nullptr);
-  BLI_assert(ss->hide_poly != nullptr);
   switch (BKE_pbvh_type(ss->pbvh)) {
     case PBVH_FACES:
     case PBVH_GRIDS:
-      for (int i = 0; i < ss->totfaces; i++) {
-        ss->hide_poly[i] = !ss->hide_poly[i];
-      }
+      blender::array_utils::invert_booleans({ss->hide_poly, ss->totfaces});
       break;
     case PBVH_BMESH: {
       BMIter iter;
@@ -463,8 +440,7 @@ void SCULPT_face_visibility_all_set(SculptSession *ss, bool visible)
   switch (BKE_pbvh_type(ss->pbvh)) {
     case PBVH_FACES:
     case PBVH_GRIDS:
-      BLI_assert(ss->hide_poly != nullptr);
-      memset(ss->hide_poly, !visible, sizeof(bool) * ss->totfaces);
+      blender::MutableSpan(ss->hide_poly, ss->totfaces).fill(!visible);
       break;
     case PBVH_BMESH: {
       BMIter iter;
@@ -3030,14 +3006,6 @@ static void calc_brush_local_mat(const float rotation,
 
   /* Scale by brush radius. */
   float radius = cache->radius;
-
-  /* Square tips should scale by square root of 2. */
-  if (BKE_brush_has_cube_tip(cache->brush, PAINT_MODE_SCULPT)) {
-    radius += (radius / M_SQRT2 - radius) * cache->brush->tip_roundness;
-  }
-  else {
-    radius /= M_SQRT2;
-  }
 
   normalize_m4(mat);
   scale_m4_fl(scale, radius);
@@ -6290,7 +6258,7 @@ bool SCULPT_vertex_is_occluded(SculptSession *ss, PBVHVertRef vertex, bool origi
   copy_v3_v3(ray_start, SCULPT_vertex_co_get(ss, vertex));
   madd_v3_v3fl(ray_start, ray_normal, 0.002);
 
-  SculptRaycastData srd = {0};
+  SculptRaycastData srd = {nullptr};
   srd.original = original;
   srd.ss = ss;
   srd.hit = false;

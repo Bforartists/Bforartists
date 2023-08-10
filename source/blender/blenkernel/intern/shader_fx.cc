@@ -45,8 +45,7 @@ static ShaderFxTypeInfo *shader_fx_types[NUM_SHADER_FX_TYPES] = {nullptr};
 
 bool BKE_shaderfx_has_gpencil(const Object *ob)
 {
-  const ShaderFxData *fx;
-  for (fx = static_cast<const ShaderFxData *>(ob->shader_fx.first); fx; fx = fx->next) {
+  LISTBASE_FOREACH (const ShaderFxData *, fx, &ob->shader_fx) {
     const ShaderFxTypeInfo *fxi = BKE_shaderfx_get_info(ShaderFxType(fx->type));
     if (fxi->type == eShaderFxType_GpencilType) {
       return true;
@@ -58,7 +57,7 @@ bool BKE_shaderfx_has_gpencil(const Object *ob)
 void BKE_shaderfx_init()
 {
   /* Initialize shaders */
-  shaderfx_type_init(shader_fx_types); /* FX_shader_util.c */
+  shaderfx_type_init(shader_fx_types); /* `FX_shader_util.cc`. */
 }
 
 ShaderFxData *BKE_shaderfx_new(int type)

@@ -29,8 +29,8 @@
 
 #include "rna_internal.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 const EnumPropertyItem rna_enum_object_shaderfx_type_items[] = {
     {eShaderFxType_Blur, "FX_BLUR", ICON_NODE_BLUR, "Blur", "Apply Gaussian Blur to object"},

@@ -70,7 +70,7 @@
 #include "BKE_global.h"
 #include "BKE_idprop.h"
 #include "BKE_lib_id.h"
-#include "BKE_lib_override.h"
+#include "BKE_lib_override.hh"
 #include "BKE_lib_remap.h"
 #include "BKE_main.h"
 #include "BKE_main_namemap.h"
@@ -92,27 +92,26 @@
 #include "IMB_imbuf_types.h"
 #include "IMB_thumbs.h"
 
-#include "ED_asset.h"
+#include "ED_asset.hh"
 #include "ED_datafiles.h"
-#include "ED_fileselect.h"
-#include "ED_image.h"
-#include "ED_outliner.h"
-#include "ED_render.h"
-#include "ED_screen.h"
-#include "ED_undo.h"
-#include "ED_util.h"
-#include "ED_view3d.h"
-#include "ED_view3d_offscreen.h"
+#include "ED_fileselect.hh"
+#include "ED_image.hh"
+#include "ED_outliner.hh"
+#include "ED_render.hh"
+#include "ED_screen.hh"
+#include "ED_undo.hh"
+#include "ED_util.hh"
+#include "ED_view3d.hh"
+#include "ED_view3d_offscreen.hh"
 
 #include "GHOST_C-api.h"
 #include "GHOST_Path-api.hh"
 
 #include "GPU_context.h"
 
-#include "UI_interface.h"
 #include "UI_interface.hh"
-#include "UI_resources.h"
-#include "UI_view2d.h"
+#include "UI_resources.hh"
+#include "UI_view2d.hh"
 
 /* only to report a missing engine */
 #include "RE_engine.h"
@@ -124,15 +123,15 @@
 
 #include "DEG_depsgraph.h"
 
-#include "WM_api.h"
-#include "WM_message.h"
+#include "WM_api.hh"
+#include "WM_message.hh"
 #include "WM_toolsystem.h"
-#include "WM_types.h"
+#include "WM_types.hh"
 
-#include "wm.h"
+#include "wm.hh"
 #include "wm_event_system.h"
-#include "wm_files.h"
-#include "wm_window.h"
+#include "wm_files.hh"
+#include "wm_window.hh"
 
 #include "CLG_log.h"
 
@@ -2409,11 +2408,14 @@ static void wm_userpref_update_when_changed(bContext *C,
 
 static int wm_userpref_read_exec(bContext *C, wmOperator *op)
 {
+  Main *bmain = CTX_data_main(C);
   const bool use_data = false;
   const bool use_userdef = true;
   const bool use_factory_settings = STREQ(op->type->idname, "WM_OT_read_factory_userpref");
   const bool use_factory_settings_app_template_only =
       (use_factory_settings && RNA_boolean_get(op->ptr, "use_factory_startup_app_template_only"));
+
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
 
   UserDef U_backup = blender::dna::shallow_copy(U);
 
@@ -2431,13 +2433,13 @@ static int wm_userpref_read_exec(bContext *C, wmOperator *op)
   wm_userpref_read_exceptions(&U, &U_backup);
   SET_FLAG_FROM_TEST(G.f, use_factory_settings, G_FLAG_USERPREF_NO_SAVE_ON_EXIT);
 
-  Main *bmain = CTX_data_main(C);
-
   wm_userpref_update_when_changed(C, bmain, &U_backup, &U);
 
   if (use_factory_settings) {
     U.runtime.is_dirty = true;
   }
+
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
 
   /* Needed to recalculate UI scaling values (eg, #UserDef.inv_dpi_fac). */
   wm_window_clear_drawable(static_cast<wmWindowManager *>(bmain->wm.first));
@@ -2571,6 +2573,10 @@ static int wm_homefile_read_exec(bContext *C, wmOperator *op)
     app_template = WM_init_state_app_template_get();
   }
 
+  if (use_userdef) {
+    BKE_callback_exec_null(CTX_data_main(C), BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
+  }
+
   wmHomeFileRead_Params read_homefile_params{};
   read_homefile_params.use_data = true;
   read_homefile_params.use_userdef = use_userdef;
@@ -2593,6 +2599,10 @@ static int wm_homefile_read_exec(bContext *C, wmOperator *op)
     if (use_factory_settings) {
       U.runtime.is_dirty = true;
     }
+  }
+
+  if (use_userdef) {
+    BKE_callback_exec_null(CTX_data_main(C), BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
   }
 
   if (G.fileflags & G_FILE_NO_UI) {
@@ -3991,7 +4001,7 @@ static void wm_block_file_close_save(bContext *C, void *arg_block, void *arg_dat
 
   if (file_has_been_saved_before) {
     if (bmain->has_forward_compatibility_issues) {
-      /* Need to invoke to get the filebrowser and choose where to save the new file.
+      /* Need to invoke to get the file-browser and choose where to save the new file.
        * This also makes it impossible to keep on going with current operation, which is why
        * callback cannot be executed anymore.
        *

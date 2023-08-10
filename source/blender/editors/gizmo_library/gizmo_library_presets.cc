@@ -21,12 +21,12 @@
 
 #include "DEG_depsgraph.h"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
-#include "ED_view3d.h"
+#include "ED_view3d.hh"
 
 /* own includes */
-#include "ED_gizmo_library.h"     /* own include */
+#include "ED_gizmo_library.hh"    /* own include */
 #include "gizmo_library_intern.h" /* own include */
 
 /* TODO: this is to be used by RNA. might move to ED_gizmo_library. */
@@ -78,19 +78,19 @@ static void ed_gizmo_draw_preset_geometry(const wmGizmo *gz,
   }
 }
 
-void ED_gizmo_draw_preset_box(const wmGizmo *gz, float mat[4][4], int select_id)
+void ED_gizmo_draw_preset_box(const wmGizmo *gz, const float mat[4][4], int select_id)
 {
   ed_gizmo_draw_preset_geometry(gz, mat, select_id, &wm_gizmo_geom_data_cube);
 }
 
-void ED_gizmo_draw_preset_arrow(const wmGizmo *gz, float mat[4][4], int axis, int select_id)
+void ED_gizmo_draw_preset_arrow(const wmGizmo *gz, const float mat[4][4], int axis, int select_id)
 {
   float mat_rotate[4][4];
   single_axis_convert(OB_POSZ, mat, axis, mat_rotate);
   ed_gizmo_draw_preset_geometry(gz, mat_rotate, select_id, &wm_gizmo_geom_data_arrow);
 }
 
-void ED_gizmo_draw_preset_circle(const wmGizmo *gz, float mat[4][4], int axis, int select_id)
+void ED_gizmo_draw_preset_circle(const wmGizmo *gz, const float mat[4][4], int axis, int select_id)
 {
   float mat_rotate[4][4];
   single_axis_convert(OB_POSZ, mat, axis, mat_rotate);

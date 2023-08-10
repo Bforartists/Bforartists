@@ -8,10 +8,13 @@
  * \ingroup bke
  */
 
+#include "BLI_index_mask.hh"
+
 #include "BKE_mesh.h"
+#include "BKE_mesh_types.hh"
 
-namespace blender::bke::mesh {
-
+namespace blender::bke {
+namespace mesh {
 /* -------------------------------------------------------------------- */
 /** \name Polygon Data Evaluation
  * \{ */
@@ -270,7 +273,17 @@ inline int edge_other_vert(const int2 &edge, const int vert)
 
 /** \} */
 
-}  // namespace blender::bke::mesh
+}  // namespace mesh
+
+void mesh_flip_faces(Mesh &mesh, const IndexMask &selection);
+
+/** Set mesh vertex normals to known-correct values, avoiding future lazy computation. */
+void mesh_vert_normals_assign(Mesh &mesh, Span<float3> vert_normals);
+
+/** Set mesh vertex normals to known-correct values, avoiding future lazy computation. */
+void mesh_vert_normals_assign(Mesh &mesh, Vector<float3> vert_normals);
+
+}  // namespace blender::bke
 
 /* -------------------------------------------------------------------- */
 /** \name Inline Mesh Data Access

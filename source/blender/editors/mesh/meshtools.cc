@@ -5,7 +5,7 @@
 /** \file
  * \ingroup edmesh
  *
- * meshtools.c: no editmode (violated already :), mirror & join),
+ * `meshtools.cc`: no editmode (violated already :), mirror & join),
  * tools operating on meshes
  */
 
@@ -35,9 +35,9 @@
 #include "BKE_main.h"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_iterators.h"
-#include "BKE_mesh_runtime.h"
-#include "BKE_multires.h"
+#include "BKE_mesh_iterators.hh"
+#include "BKE_mesh_runtime.hh"
+#include "BKE_multires.hh"
 #include "BKE_object.h"
 #include "BKE_object_deform.h"
 #include "BKE_report.h"
@@ -48,12 +48,12 @@
 
 #include "DRW_select_buffer.h"
 
-#include "ED_mesh.h"
-#include "ED_object.h"
-#include "ED_view3d.h"
+#include "ED_mesh.hh"
+#include "ED_object.hh"
+#include "ED_view3d.hh"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 using blender::float3;
 using blender::int2;

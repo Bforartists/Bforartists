@@ -32,19 +32,19 @@
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_gizmo_library.h"
-#include "ED_screen.h"
-#include "ED_transform.h"
-#include "ED_view3d.h"
+#include "ED_gizmo_library.hh"
+#include "ED_screen.hh"
+#include "ED_transform.hh"
+#include "ED_view3d.hh"
 
 /* own includes */
 #include "../gizmo_geometry.h"
 #include "../gizmo_library_intern.h"
 
-/* To use custom dials exported to geom_dial_gizmo.c */
+// /** To use custom dials exported to `geom_dial_gizmo.cc`. */
 // #define USE_GIZMO_CUSTOM_DIAL
 
 struct DialInteraction {
@@ -166,9 +166,9 @@ static void dial_geom_draw(const float color[4],
       imm_draw_circle_partial_wire_3d(
           pos, 0.0f, 0.0f, 0.0f, 1.0f, DIAL_RESOLUTION, -arc_partial_deg / 2, arc_partial_deg);
 #  if 0
-if (arc_inner_factor != 0.0f) {
-BLI_assert(0);
-}
+      if (arc_inner_factor != 0.0f) {
+        BLI_assert(0);
+      }
 #  endif
     }
   }

@@ -15,7 +15,7 @@
 
 #include "DNA_lightprobe_types.h"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
 #ifdef RNA_RUNTIME
 
@@ -27,7 +27,7 @@
 #  include "DNA_collection_types.h"
 #  include "DNA_object_types.h"
 
-#  include "WM_api.h"
+#  include "WM_api.hh"
 
 static void rna_LightProbe_recalc(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
 {
@@ -197,12 +197,70 @@ static void rna_def_lightprobe(BlenderRNA *brna)
   RNA_def_property_range(prop, 1, INT_MAX);
   RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, "rna_LightProbe_recalc");
 
+  prop = RNA_def_property(srna, "grid_surface_bias", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_ui_text(prop,
+                           "Capture Surface Bias",
+                           "Moves capture points position away from surfaces to avoid artifacts");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, "rna_LightProbe_recalc");
+
+  prop = RNA_def_property(srna, "grid_escape_bias", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_ui_text(prop, "Capture Escape Bias", "Moves capture points outside objects");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, "rna_LightProbe_recalc");
+
   prop = RNA_def_property(srna, "surfel_density", PROP_FLOAT, PROP_NONE);
   RNA_def_property_range(prop, 0.0f, FLT_MAX);
   RNA_def_property_ui_text(prop,
                            "Surfel Density",
                            "Number of surfels per unit distance (higher values improve quality)");
   RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, "rna_LightProbe_recalc");
+
+  prop = RNA_def_property(srna, "grid_validity_threshold", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_ui_text(prop,
+                           "Validity Threshold",
+                           "Ratio of front-facing surface hits under which a grid sample will "
+                           "not be considered for lighting");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, "rna_LightProbe_recalc");
+
+  prop = RNA_def_property(srna, "grid_dilation_threshold", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_ui_text(prop,
+                           "Dilation Threshold",
+                           "Ratio of front-facing surface hits under which a grid sample will "
+                           "reuse neighbors grid sample lighting");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, "rna_LightProbe_recalc");
+
+  prop = RNA_def_property(srna, "grid_dilation_radius", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_ui_text(
+      prop,
+      "Dilation Radius",
+      "Radius in grid sample to search valid grid samples to copy into invalid grid samples");
+  RNA_def_property_range(prop, 1.0f, 5.0f);
+  RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, "rna_LightProbe_recalc");
+
+  prop = RNA_def_property(srna, "grid_capture_world", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "grid_flag", LIGHTPROBE_GRID_CAPTURE_WORLD);
+  RNA_def_property_ui_text(
+      prop,
+      "Capture World",
+      "Bake incoming light from the world, instead of just the visibility, "
+      "for more accurate lighting, but loose correct blending to surrounding irradiance volumes");
+  RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, nullptr);
+
+  prop = RNA_def_property(srna, "grid_capture_indirect", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "grid_flag", LIGHTPROBE_GRID_CAPTURE_INDIRECT);
+  RNA_def_property_ui_text(prop,
+                           "Capture Indirect",
+                           "Bake light bounces from light sources for more accurate lighting");
+  RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, nullptr);
+
+  prop = RNA_def_property(srna, "grid_capture_emission", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "grid_flag", LIGHTPROBE_GRID_CAPTURE_EMISSION);
+  RNA_def_property_ui_text(
+      prop, "Capture Emission", "Bake emissive surfaces for more accurate lighting");
+  RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, nullptr);
 
   prop = RNA_def_property(srna, "visibility_buffer_bias", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "vis_bias");

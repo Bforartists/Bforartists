@@ -11,11 +11,10 @@
 #include "RNA_access.h"
 #include "RNA_prototypes.h"
 
-#include "UI_interface.h"
 #include "UI_interface.hh"
 #include "UI_tree_view.hh"
 
-#include "WM_types.h"
+#include "WM_types.hh"
 
 #include "BLT_translation.h"
 
@@ -188,7 +187,7 @@ std::optional<int> GeometryDataSetTreeViewItem::count() const
 
   /* Special case for volumes since there is no grid domain. */
   if (component_type_ == bke::GeometryComponent::Type::Volume) {
-    if (const Volume *volume = geometry.get_volume_for_read()) {
+    if (const Volume *volume = geometry.get_volume()) {
       return BKE_volume_num_grids(volume);
     }
     return 0;
@@ -198,7 +197,7 @@ std::optional<int> GeometryDataSetTreeViewItem::count() const
     return std::nullopt;
   }
 
-  if (const bke::GeometryComponent *component = geometry.get_component_for_read(component_type_)) {
+  if (const bke::GeometryComponent *component = geometry.get_component(component_type_)) {
     return component->attribute_domain_size(*domain_);
   }
 
