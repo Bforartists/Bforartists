@@ -33,28 +33,28 @@
 #include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
-#include "BKE_mesh_mapping.h"
+#include "BKE_mesh_mapping.hh"
 #include "BKE_node.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
-#include "ED_image.h"
-#include "ED_mesh.h"
-#include "ED_node.h"
-#include "ED_screen.h"
-#include "ED_uvedit.h"
+#include "ED_image.hh"
+#include "ED_mesh.hh"
+#include "ED_node.hh"
+#include "ED_screen.hh"
+#include "ED_uvedit.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "WM_api.h"
-#include "WM_message.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_message.hh"
+#include "WM_types.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
-#include "UI_view2d.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
+#include "UI_view2d.hh"
 
 #include "uvedit_intern.h"
 
@@ -2052,7 +2052,7 @@ static void UV_OT_mark_seam(wmOperatorType *ot)
 
 void ED_operatortypes_uvedit()
 {
-  /* uvedit_select.c */
+  /* `uvedit_select.cc` */
   WM_operatortype_append(UV_OT_select_all);
   WM_operatortype_append(UV_OT_select);
   WM_operatortype_append(UV_OT_select_loop);

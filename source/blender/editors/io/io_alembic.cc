@@ -40,14 +40,14 @@
 #  include "RNA_define.h"
 #  include "RNA_enum_types.h"
 
-#  include "ED_fileselect.h"
-#  include "ED_object.h"
+#  include "ED_fileselect.hh"
+#  include "ED_object.hh"
 
-#  include "UI_interface.h"
-#  include "UI_resources.h"
+#  include "UI_interface.hh"
+#  include "UI_resources.hh"
 
-#  include "WM_api.h"
-#  include "WM_types.h"
+#  include "WM_api.hh"
+#  include "WM_types.hh"
 
 #  include "DEG_depsgraph.h"
 
@@ -475,7 +475,7 @@ void WM_OT_alembic_export(wmOperatorType *ot)
 
 /* ************************************************************************** */
 
-/* TODO(kevin): check on de-duplicating all this with code in image_ops.c */
+/* TODO(kevin): check on de-duplicating all this with code in `image_ops.cc` */
 
 struct CacheFrame {
   CacheFrame *next, *prev;

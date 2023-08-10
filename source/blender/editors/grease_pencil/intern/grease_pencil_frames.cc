@@ -7,6 +7,7 @@
  */
 
 #include "BLI_map.hh"
+#include "BLI_math_vector_types.hh"
 
 #include "BKE_context.h"
 #include "BKE_grease_pencil.hh"
@@ -15,15 +16,27 @@
 
 #include "DNA_scene_types.h"
 
-#include "ED_grease_pencil.h"
-#include "ED_keyframes_edit.h"
+#include "ED_grease_pencil.hh"
+#include "ED_keyframes_edit.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 
 namespace blender::ed::greasepencil {
+
+bool remove_all_selected_frames(GreasePencil &grease_pencil, bke::greasepencil::Layer &layer)
+{
+  Vector<int> frames_to_remove;
+  for (auto [frame_number, frame] : layer.frames().items()) {
+    if (!frame.is_selected()) {
+      continue;
+    }
+    frames_to_remove.append(frame_number);
+  }
+  return grease_pencil.remove_frames(layer, frames_to_remove.as_span());
+}
 
 static void select_frame(GreasePencilFrame &frame, const short select_mode)
 {
@@ -40,12 +53,12 @@ static void select_frame(GreasePencilFrame &frame, const short select_mode)
   }
 }
 
-bool select_frame_at(bke::greasepencil::Layer *layer,
+bool select_frame_at(bke::greasepencil::Layer &layer,
                      const int frame_number,
                      const short select_mode)
 {
 
-  GreasePencilFrame *frame = layer->frames_for_write().lookup_ptr(frame_number);
+  GreasePencilFrame *frame = layer.frames_for_write().lookup_ptr(frame_number);
   if (frame == nullptr) {
     return false;
   }
@@ -53,21 +66,45 @@ bool select_frame_at(bke::greasepencil::Layer *layer,
   return true;
 }
 
-void select_all_frames(bke::greasepencil::Layer *layer, const short select_mode)
+void select_all_frames(bke::greasepencil::Layer &layer, const short select_mode)
 {
-  for (auto item : layer->frames_for_write().items()) {
+  for (auto item : layer.frames_for_write().items()) {
     select_frame(item.value, select_mode);
   }
 }
 
-bool layer_has_any_frame_selected(const bke::greasepencil::Layer *layer)
+bool has_any_frame_selected(const bke::greasepencil::Layer &layer)
 {
-  for (const auto &[frame_number, frame] : layer->frames().items()) {
+  for (const auto &[frame_number, frame] : layer.frames().items()) {
     if (frame.is_selected()) {
       return true;
     }
   }
   return false;
+}
+
+void select_frames_region(KeyframeEditData *ked,
+                          bke::greasepencil::Layer &layer,
+                          const short tool,
+                          const short select_mode)
+{
+  for (auto [frame_number, frame] : layer.frames_for_write().items()) {
+    /* Construct a dummy point coordinate to do this testing with. */
+    const float2 pt(float(frame_number), ked->channel_y);
+
+    /* Check the necessary regions. */
+    if (tool == BEZT_OK_CHANNEL_LASSO) {
+      if (keyframe_region_lasso_test(static_cast<const KeyframeEdit_LassoData *>(ked->data), pt)) {
+        select_frame(frame, select_mode);
+      }
+    }
+    else if (tool == BEZT_OK_CHANNEL_CIRCLE) {
+      if (keyframe_region_circle_test(static_cast<const KeyframeEdit_CircleData *>(ked->data), pt))
+      {
+        select_frame(frame, select_mode);
+      }
+    }
+  }
 }
 
 static void append_frame_to_key_edit_data(KeyframeEditData *ked,
@@ -81,11 +118,11 @@ static void append_frame_to_key_edit_data(KeyframeEditData *ked,
 }
 
 void create_keyframe_edit_data_selected_frames_list(KeyframeEditData *ked,
-                                                    const bke::greasepencil::Layer *layer)
+                                                    const bke::greasepencil::Layer &layer)
 {
   BLI_assert(ked != nullptr);
 
-  for (const auto &[frame_number, frame] : layer->frames().items()) {
+  for (const auto &[frame_number, frame] : layer.frames().items()) {
     if (frame.is_selected()) {
       append_frame_to_key_edit_data(ked, frame_number, frame);
     }

@@ -115,12 +115,11 @@ def get_bmesh_loosevert_array(bm):
 
 
 class _Mesh_Arrays:
-    def __init__(self, obj, create_tris, create_edges, create_looseverts):
+    def __init__(self, depsgraph, obj, create_tris, create_edges, create_looseverts):
         self.tri_verts = self.edge_verts = self.looseverts = ()
         if obj.type == "MESH":
-            me = obj.data
-            if me.is_editmode:
-                bm = bmesh.from_edit_mesh(me)
+            if obj.data.is_editmode:
+                bm = bmesh.from_edit_mesh(obj.data)
                 bm.verts.ensure_lookup_table()
 
                 self.verts_co = get_bmesh_vert_co_array(bm)
@@ -131,11 +130,9 @@ class _Mesh_Arrays:
                     self.edge_verts = get_bmesh_edge_verts_array(bm)
                 if create_looseverts:
                     self.looseverts = get_bmesh_loosevert_array(bm)
-
-                del bm
             else:
-                import bpy
-
+                ob_eval = obj.evaluated_get(depsgraph)
+                me = ob_eval.data
                 self.verts_co = get_mesh_vert_co_array(me)
 
                 if create_tris:
@@ -177,21 +174,20 @@ class GPU_Indices_Mesh:
         "users",
     )
 
-    _Hash = {}
+    _cache = {}
     shader = None
     UBO_data = None
     UBO = None
 
     @classmethod
-    def end_opengl(cls):
+    def gpu_data_free(cls):
         del cls.shader
         del cls.UBO
         del cls.UBO_data
-
-        del cls
+        cls.shader = cls.UBO = cls.UBO_data = None
 
     @staticmethod
-    def init_opengl():
+    def gpu_data_ensure():
         cls = GPU_Indices_Mesh
         # OpenGL was already initialized, nothing to do here.
         if cls.shader is not None:
@@ -200,8 +196,8 @@ class GPU_Indices_Mesh:
         import atexit
 
         # Make sure we only registered the callback once.
-        atexit.unregister(cls.end_opengl)
-        atexit.register(cls.end_opengl)
+        atexit.unregister(cls.gpu_data_free)
+        atexit.register(cls.gpu_data_free)
 
         shader_info = gpu.types.GPUShaderCreateInfo()
 
@@ -280,8 +276,8 @@ class GPU_Indices_Mesh:
     def __init__(self, depsgraph, obj, draw_tris, draw_edges, draw_verts):
         self.ob_data = obj.original.data
 
-        if self.ob_data in GPU_Indices_Mesh._Hash:
-            src = GPU_Indices_Mesh._Hash[self.ob_data]
+        if self.ob_data in GPU_Indices_Mesh._cache:
+            src = GPU_Indices_Mesh._cache[self.ob_data]
             dst = self
 
             dst.draw_tris = src.draw_tris
@@ -298,10 +294,10 @@ class GPU_Indices_Mesh:
             dst.users.append(self)
 
             update = False
-
         else:
-            GPU_Indices_Mesh._Hash[self.ob_data] = self
+            GPU_Indices_Mesh._cache[self.ob_data] = self
             self.users = [self]
+
             update = True
 
         if update:
@@ -309,12 +305,10 @@ class GPU_Indices_Mesh:
             self.draw_edges = draw_edges
             self.draw_verts = draw_verts
 
-            GPU_Indices_Mesh.init_opengl()
+            GPU_Indices_Mesh.gpu_data_ensure()
 
             ## Init Array ##
-            mesh_arrays = _Mesh_Arrays(
-                depsgraph.id_eval_get(obj), draw_tris, draw_edges, draw_verts
-            )
+            mesh_arrays = _Mesh_Arrays(depsgraph, obj, draw_tris, draw_edges, draw_verts)
 
             if mesh_arrays.verts_co is None:
                 self.draw_tris = False
@@ -479,13 +473,13 @@ class GPU_Indices_Mesh:
             del self.tri_verts
             del self.edge_verts
             del self.looseverts
-            GPU_Indices_Mesh._Hash.pop(self.ob_data)
+            GPU_Indices_Mesh._cache.pop(self.ob_data)
 
         # print('mesh_del', self.obj.name)
 
 
 def gpu_Indices_enable_state(winmat, viewmat):
-    GPU_Indices_Mesh.init_opengl()
+    GPU_Indices_Mesh.gpu_data_ensure()
     gpu.matrix.push()
     gpu.matrix.push_projection()
     gpu.matrix.load_projection_matrix(winmat)
@@ -499,7 +493,7 @@ def gpu_Indices_restore_state():
 
 
 def gpu_Indices_use_clip_planes(rv3d, value):
-    GPU_Indices_Mesh.init_opengl()
+    GPU_Indices_Mesh.gpu_data_ensure()
     if value and rv3d.use_clip_planes:
         GPU_Indices_Mesh.UBO_data.use_clip_planes = True
         GPU_Indices_Mesh.UBO_data.WorldClipPlanes[0] = rv3d.clip_planes[0][:]
@@ -513,4 +507,4 @@ def gpu_Indices_use_clip_planes(rv3d, value):
 
 
 def gpu_Indices_mesh_cache_clear():
-    GPU_Indices_Mesh._Hash.clear()
+    GPU_Indices_Mesh._cache.clear()

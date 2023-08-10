@@ -24,22 +24,22 @@
 #include "BKE_context.h"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.h"
-#include "BKE_multires.h"
-#include "BKE_paint.h"
+#include "BKE_multires.hh"
+#include "BKE_paint.hh"
 #include "BKE_screen.h"
-#include "BKE_subdiv.h"
-#include "BKE_subdiv_ccg.h"
-#include "BKE_subdiv_deform.h"
+#include "BKE_subdiv.hh"
+#include "BKE_subdiv_ccg.hh"
+#include "BKE_subdiv_deform.hh"
 #include "BKE_subdiv_mesh.hh"
-#include "BKE_subsurf.h"
+#include "BKE_subsurf.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "RNA_access.h"
 #include "RNA_prototypes.h"
 
-#include "WM_types.h" /* For subdivide operator UI. */
+#include "WM_types.hh" /* For subdivide operator UI. */
 
 #include "DEG_depsgraph_query.h"
 

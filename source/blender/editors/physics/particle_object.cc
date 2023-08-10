@@ -28,8 +28,8 @@
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_legacy_convert.h"
-#include "BKE_mesh_runtime.h"
+#include "BKE_mesh_legacy_convert.hh"
+#include "BKE_mesh_runtime.hh"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
 #include "BKE_particle.h"
@@ -44,14 +44,14 @@
 #include "RNA_define.h"
 #include "RNA_prototypes.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_object.h"
-#include "ED_particle.h"
-#include "ED_screen.h"
+#include "ED_object.hh"
+#include "ED_particle.hh"
+#include "ED_screen.hh"
 
-#include "UI_resources.h"
+#include "UI_resources.hh"
 
 #include "particle_edit_utildefines.h"
 
@@ -423,14 +423,13 @@ static int dupliob_move_up_exec(bContext *C, wmOperator * /*op*/)
   PointerRNA ptr = CTX_data_pointer_get_type(C, "particle_system", &RNA_ParticleSystem);
   ParticleSystem *psys = static_cast<ParticleSystem *>(ptr.data);
   ParticleSettings *part;
-  ParticleDupliWeight *dw;
 
   if (!psys) {
     return OPERATOR_CANCELLED;
   }
 
   part = psys->part;
-  for (dw = static_cast<ParticleDupliWeight *>(part->instance_weights.first); dw; dw = dw->next) {
+  LISTBASE_FOREACH (ParticleDupliWeight *, dw, &part->instance_weights) {
     if (dw->flag & PART_DUPLIW_CURRENT && dw->prev) {
       BLI_remlink(&part->instance_weights, dw);
       BLI_insertlinkbefore(&part->instance_weights, dw->prev, dw);
@@ -463,13 +462,12 @@ static int copy_particle_dupliob_exec(bContext *C, wmOperator * /*op*/)
   PointerRNA ptr = CTX_data_pointer_get_type(C, "particle_system", &RNA_ParticleSystem);
   ParticleSystem *psys = static_cast<ParticleSystem *>(ptr.data);
   ParticleSettings *part;
-  ParticleDupliWeight *dw;
 
   if (!psys) {
     return OPERATOR_CANCELLED;
   }
   part = psys->part;
-  for (dw = static_cast<ParticleDupliWeight *>(part->instance_weights.first); dw; dw = dw->next) {
+  LISTBASE_FOREACH (ParticleDupliWeight *, dw, &part->instance_weights) {
     if (dw->flag & PART_DUPLIW_CURRENT) {
       dw->flag &= ~PART_DUPLIW_CURRENT;
       dw = static_cast<ParticleDupliWeight *>(MEM_dupallocN(dw));
@@ -511,7 +509,7 @@ static int remove_particle_dupliob_exec(bContext *C, wmOperator * /*op*/)
   }
 
   part = psys->part;
-  for (dw = static_cast<ParticleDupliWeight *>(part->instance_weights.first); dw; dw = dw->next) {
+  LISTBASE_FOREACH (ParticleDupliWeight *, dw, &part->instance_weights) {
     if (dw->flag & PART_DUPLIW_CURRENT) {
       BLI_remlink(&part->instance_weights, dw);
       MEM_freeN(dw);
@@ -551,14 +549,13 @@ static int dupliob_move_down_exec(bContext *C, wmOperator * /*op*/)
   PointerRNA ptr = CTX_data_pointer_get_type(C, "particle_system", &RNA_ParticleSystem);
   ParticleSystem *psys = static_cast<ParticleSystem *>(ptr.data);
   ParticleSettings *part;
-  ParticleDupliWeight *dw;
 
   if (!psys) {
     return OPERATOR_CANCELLED;
   }
 
   part = psys->part;
-  for (dw = static_cast<ParticleDupliWeight *>(part->instance_weights.first); dw; dw = dw->next) {
+  LISTBASE_FOREACH (ParticleDupliWeight *, dw, &part->instance_weights) {
     if (dw->flag & PART_DUPLIW_CURRENT && dw->next) {
       BLI_remlink(&part->instance_weights, dw);
       BLI_insertlinkafter(&part->instance_weights, dw->next, dw);
@@ -653,7 +650,7 @@ static int disconnect_hair_exec(bContext *C, wmOperator *op)
   }
 
   if (all) {
-    for (psys = static_cast<ParticleSystem *>(ob->particlesystem.first); psys; psys = psys->next) {
+    LISTBASE_FOREACH (ParticleSystem *, psys, &ob->particlesystem) {
       disconnect_hair(depsgraph, scene, ob, psys);
     }
   }
@@ -951,7 +948,7 @@ static int connect_hair_exec(bContext *C, wmOperator *op)
   }
 
   if (all) {
-    for (psys = static_cast<ParticleSystem *>(ob->particlesystem.first); psys; psys = psys->next) {
+    LISTBASE_FOREACH (ParticleSystem *, psys, &ob->particlesystem) {
       any_connected |= connect_hair(depsgraph, scene, ob, psys);
     }
   }

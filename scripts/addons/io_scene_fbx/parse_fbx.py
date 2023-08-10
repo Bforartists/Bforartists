@@ -13,6 +13,7 @@ __all__ = (
 from struct import unpack
 import array
 import zlib
+from io import BytesIO
 
 from . import data_types
 
@@ -20,7 +21,7 @@ from . import data_types
 # that the sub-scope exists (i.e. to distinguish between P: and P : {})
 _BLOCK_SENTINEL_LENGTH = ...
 _BLOCK_SENTINEL_DATA = ...
-read_fbx_elem_uint = ...
+read_fbx_elem_start = ...
 _IS_BIG_ENDIAN = (__import__("sys").byteorder != 'little')
 _HEAD_MAGIC = b'Kaydara FBX Binary\x20\x20\x00\x1a\x00'
 from collections import namedtuple
@@ -30,10 +31,6 @@ del namedtuple
 
 def read_uint(read):
     return unpack(b'<I', read(4))[0]
-
-
-def read_uint64(read):
-    return unpack(b'<Q', read(8))[0]
 
 
 def read_ubyte(read):
@@ -46,10 +43,24 @@ def read_string_ubyte(read):
     return data
 
 
+def read_array_params(read):
+    return unpack(b'<III', read(12))
+
+
+def read_elem_start32(read):
+    end_offset, prop_count, _prop_length, elem_id_size = unpack(b'<IIIB', read(13))
+    elem_id = read(elem_id_size) if elem_id_size else b""
+    return end_offset, prop_count, elem_id
+
+
+def read_elem_start64(read):
+    end_offset, prop_count, _prop_length, elem_id_size = unpack(b'<QQQB', read(25))
+    elem_id = read(elem_id_size) if elem_id_size else b""
+    return end_offset, prop_count, elem_id
+
+
 def unpack_array(read, array_type, array_stride, array_byteswap):
-    length = read_uint(read)
-    encoding = read_uint(read)
-    comp_len = read_uint(read)
+    length, encoding, comp_len = read_array_params(read)
 
     data = read(comp_len)
 
@@ -89,33 +100,32 @@ read_data_dict = {
 #   * The NULL block marking end of nested stuff switches from 13 bytes long to 25 bytes long.
 #   * The FBX element metadata (end_offset, prop_count and prop_length) switch from uint32 to uint64.
 def init_version(fbx_version):
-    global _BLOCK_SENTINEL_LENGTH, _BLOCK_SENTINEL_DATA, read_fbx_elem_uint
+    global _BLOCK_SENTINEL_LENGTH, _BLOCK_SENTINEL_DATA, read_fbx_elem_start
 
     _BLOCK_SENTINEL_LENGTH = ...
     _BLOCK_SENTINEL_DATA = ...
-    read_fbx_elem_uint = ...
 
     if fbx_version < 7500:
         _BLOCK_SENTINEL_LENGTH = 13
-        read_fbx_elem_uint = read_uint
+        read_fbx_elem_start = read_elem_start32
     else:
         _BLOCK_SENTINEL_LENGTH = 25
-        read_fbx_elem_uint = read_uint64
+        read_fbx_elem_start = read_elem_start64
     _BLOCK_SENTINEL_DATA = (b'\0' * _BLOCK_SENTINEL_LENGTH)
 
 
-def read_elem(read, tell, use_namedtuple):
+def read_elem(read, tell, use_namedtuple, tell_file_offset=0):
     # [0] the offset at which this block ends
     # [1] the number of properties in the scope
     # [2] the length of the property list
-    end_offset = read_fbx_elem_uint(read)
+    # [3] elem name length
+    # [4] elem name of the scope/key
+    # read_fbx_elem_start does not return [2] because we don't use it and does not return [3] because it is only used to
+    # get [4].
+    end_offset, prop_count, elem_id = read_fbx_elem_start(read)
     if end_offset == 0:
         return None
 
-    prop_count = read_fbx_elem_uint(read)
-    prop_length = read_fbx_elem_uint(read)
-
-    elem_id = read_string_ubyte(read)        # elem name of the scope/key
     elem_props_type = bytearray(prop_count)  # elem property types
     elem_props_data = [None] * prop_count    # elem properties (if any)
     elem_subtree = []                        # elem children (if any)
@@ -125,15 +135,58 @@ def read_elem(read, tell, use_namedtuple):
         elem_props_data[i] = read_data_dict[data_type](read)
         elem_props_type[i] = data_type
 
-    if tell() < end_offset:
-        while tell() < (end_offset - _BLOCK_SENTINEL_LENGTH):
-            elem_subtree.append(read_elem(read, tell, use_namedtuple))
+    pos = tell()
+    local_end_offset = end_offset - tell_file_offset
 
+    if pos < local_end_offset:
+        # The default BufferedReader used when `open()`-ing files in 'rb' mode has to get the raw stream position from
+        # the OS every time its tell() function is called. This is about 10 times slower than the tell() function of
+        # BytesIO objects, so reading chunks of bytes from the file into memory at once and exposing them through
+        # BytesIO can give better performance. We know the total size of each element's subtree so can read entire
+        # subtrees into memory at a time.
+        # The "Objects" element's subtree, however, usually makes up most of the file, so we specifically avoid reading
+        # all its sub-elements into memory at once to reduce memory requirements at the cost of slightly worse
+        # performance when memory is not a concern.
+        # If we're currently reading directly from the opened file, then tell_file_offset will be zero.
+        if tell_file_offset == 0 and elem_id != b"Objects":
+            block_bytes_remaining = local_end_offset - pos
+
+            # Read the entire subtree
+            sub_elem_bytes = read(block_bytes_remaining)
+            num_bytes_read = len(sub_elem_bytes)
+            if num_bytes_read != block_bytes_remaining:
+                raise IOError("failed to read complete nested block, expected %i bytes, but only got %i"
+                              % (block_bytes_remaining, num_bytes_read))
+
+            # BytesIO provides IO API for reading bytes in memory, so we can use the same code as reading bytes directly
+            # from a file.
+            f = BytesIO(sub_elem_bytes)
+            tell = f.tell
+            read = f.read
+            # The new `tell` function starts at zero and is offset by `pos` bytes from the start of the file.
+            start_sub_pos = 0
+            tell_file_offset = pos
+            sub_tree_end = block_bytes_remaining - _BLOCK_SENTINEL_LENGTH
+        else:
+            # The `tell` function is unchanged, so starts at the value returned by `tell()`, which is still `pos`
+            # because no reads have been made since then.
+            start_sub_pos = pos
+            sub_tree_end = local_end_offset - _BLOCK_SENTINEL_LENGTH
+
+        sub_pos = start_sub_pos
+        while sub_pos < sub_tree_end:
+            elem_subtree.append(read_elem(read, tell, use_namedtuple, tell_file_offset))
+            sub_pos = tell()
+
+        # At the end of each subtree there should be a sentinel (an empty element with all bytes set to zero).
         if read(_BLOCK_SENTINEL_LENGTH) != _BLOCK_SENTINEL_DATA:
             raise IOError("failed to read nested block sentinel, "
                           "expected all bytes to be 0")
 
-    if tell() != end_offset:
+        # Update `pos` for the number of bytes that have been read.
+        pos += (sub_pos - start_sub_pos) + _BLOCK_SENTINEL_LENGTH
+
+    if pos != local_end_offset:
         raise IOError("scope length not reached, something is wrong")
 
     args = (elem_id, elem_props_data, elem_props_type, elem_subtree)

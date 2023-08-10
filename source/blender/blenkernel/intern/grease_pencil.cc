@@ -109,7 +109,6 @@ static void grease_pencil_copy_data(Main * /*bmain*/,
         break;
       }
     }
-    /* TODO: Update drawing user counts. */
   }
 
   /* Duplicate layer tree. */
@@ -601,53 +600,57 @@ bool Layer::is_selected() const
   return ((this->base.flag & GP_LAYER_TREE_NODE_SELECT) != 0);
 }
 
-GreasePencilFrame *Layer::add_frame_internal(const int frame_number, const int drawing_index)
+Layer::SortedKeysIterator Layer::remove_leading_null_frames_in_range(
+    Layer::SortedKeysIterator begin, Layer::SortedKeysIterator end)
+{
+  Layer::SortedKeysIterator next_it = begin;
+  while (next_it != end && this->frames().lookup(*next_it).is_null()) {
+    this->frames_for_write().remove_contained(*next_it);
+    this->tag_frames_map_keys_changed();
+    next_it = std::next(next_it);
+  }
+  return next_it;
+}
+
+GreasePencilFrame *Layer::add_frame_internal(const FramesMapKey key, const int drawing_index)
 {
   BLI_assert(drawing_index != -1);
-  if (!this->frames().contains(frame_number)) {
+  if (!this->frames().contains(key)) {
     GreasePencilFrame frame{};
     frame.drawing_index = drawing_index;
-    this->frames_for_write().add(frame_number, frame);
+    this->frames_for_write().add_new(key, frame);
     this->tag_frames_map_keys_changed();
-    return this->frames_for_write().lookup_ptr(frame_number);
+    return this->frames_for_write().lookup_ptr(key);
   }
   /* Overwrite null-frames. */
-  if (this->frames().lookup(frame_number).is_null()) {
+  if (this->frames().lookup(key).is_null()) {
     GreasePencilFrame frame{};
     frame.drawing_index = drawing_index;
-    this->frames_for_write().add_overwrite(frame_number, frame);
+    this->frames_for_write().add_overwrite(key, frame);
     this->tag_frames_map_changed();
-    return this->frames_for_write().lookup_ptr(frame_number);
+    return this->frames_for_write().lookup_ptr(key);
   }
   return nullptr;
 }
 
-GreasePencilFrame *Layer::add_frame(const int frame_number,
+GreasePencilFrame *Layer::add_frame(const FramesMapKey key,
                                     const int drawing_index,
                                     const int duration)
 {
   BLI_assert(duration >= 0);
-  GreasePencilFrame *frame = this->add_frame_internal(frame_number, drawing_index);
+  GreasePencilFrame *frame = this->add_frame_internal(key, drawing_index);
   if (frame == nullptr) {
     return nullptr;
   }
-  Span<int> sorted_keys = this->sorted_keys();
-  const int end_frame_number = frame_number + duration;
-  /* Finds the next greater frame_number that is stored in the map. */
-  auto next_frame_number_it = std::upper_bound(
-      sorted_keys.begin(), sorted_keys.end(), frame_number);
+  Span<FramesMapKey> sorted_keys = this->sorted_keys();
+  const FramesMapKey end_key = key + duration;
+  /* Finds the next greater key that is stored in the map. */
+  SortedKeysIterator next_key_it = std::upper_bound(sorted_keys.begin(), sorted_keys.end(), key);
   /* If the next frame we found is at the end of the frame we're inserting, then we are done. */
-  if (next_frame_number_it != sorted_keys.end() && *next_frame_number_it == end_frame_number) {
+  if (next_key_it != sorted_keys.end() && *next_key_it == end_key) {
     return frame;
   }
-  /* While the next frame is a null frame, remove it. */
-  while (next_frame_number_it != sorted_keys.end() &&
-         this->frames().lookup(*next_frame_number_it).is_null())
-  {
-    this->frames_for_write().remove(*next_frame_number_it);
-    this->tag_frames_map_keys_changed();
-    next_frame_number_it = std::next(next_frame_number_it);
-  }
+  next_key_it = this->remove_leading_null_frames_in_range(next_key_it, sorted_keys.end());
   /* If the duration is set to 0, the frame is marked as an implicit hold.*/
   if (duration == 0) {
     frame->flag |= GP_FRAME_IMPLICIT_HOLD;
@@ -655,19 +658,58 @@ GreasePencilFrame *Layer::add_frame(const int frame_number,
   }
   /* If the next frame comes after the end of the frame we're inserting (or if there are no more
    * frames), add a null-frame. */
-  if (next_frame_number_it == sorted_keys.end() || *next_frame_number_it > end_frame_number) {
-    this->frames_for_write().add(end_frame_number, GreasePencilFrame::null());
+  if (next_key_it == sorted_keys.end() || *next_key_it > end_key) {
+    this->frames_for_write().add_new(end_key, GreasePencilFrame::null());
     this->tag_frames_map_keys_changed();
   }
   return frame;
 }
 
-Span<int> Layer::sorted_keys() const
+bool Layer::remove_frame(const FramesMapKey key)
 {
-  this->runtime->sorted_keys_cache_.ensure([&](Vector<int> &r_data) {
+  /* If the frame number is not in the frames map, do nothing. */
+  if (!this->frames().contains(key)) {
+    return false;
+  }
+  if (this->frames().size() == 1) {
+    this->frames_for_write().remove_contained(key);
+    this->tag_frames_map_keys_changed();
+    return true;
+  }
+  Span<FramesMapKey> sorted_keys = this->sorted_keys();
+  /* Find the index of the frame to remove in the `sorted_keys` array. */
+  SortedKeysIterator remove_key_it = std::lower_bound(sorted_keys.begin(), sorted_keys.end(), key);
+  /* If there is a next frame: */
+  if (std::next(remove_key_it) != sorted_keys.end()) {
+    SortedKeysIterator next_key_it = std::next(remove_key_it);
+    this->remove_leading_null_frames_in_range(next_key_it, sorted_keys.end());
+  }
+  /* If there is a previous frame: */
+  if (remove_key_it != sorted_keys.begin()) {
+    SortedKeysIterator prev_key_it = std::prev(remove_key_it);
+    const GreasePencilFrame &prev_frame = this->frames().lookup(*prev_key_it);
+    /* If the previous frame is not an implicit hold (e.g. it has a fixed duration) and it's not a
+     * null frame, we cannot just delete the frame. We need to replace it with a null frame. */
+    if (!prev_frame.is_implicit_hold() && !prev_frame.is_null()) {
+      this->frames_for_write().lookup(key) = GreasePencilFrame::null();
+      this->tag_frames_map_changed();
+      /* Since the original frame was replaced with a null frame, we consider the frame to be
+       * successfully removed here. */
+      return true;
+    }
+  }
+  /* Finally, remove the actual frame. */
+  this->frames_for_write().remove_contained(key);
+  this->tag_frames_map_keys_changed();
+  return true;
+}
+
+Span<FramesMapKey> Layer::sorted_keys() const
+{
+  this->runtime->sorted_keys_cache_.ensure([&](Vector<FramesMapKey> &r_data) {
     r_data.reinitialize(this->frames().size());
     int i = 0;
-    for (int64_t key : this->frames().keys()) {
+    for (FramesMapKey key : this->frames().keys()) {
       r_data[i++] = key;
     }
     std::sort(r_data.begin(), r_data.end());
@@ -675,7 +717,7 @@ Span<int> Layer::sorted_keys() const
   return this->runtime->sorted_keys_cache_.data();
 }
 
-int Layer::drawing_index_at(const int frame) const
+FramesMapKey Layer::frame_key_at(const int frame_number) const
 {
   Span<int> sorted_keys = this->sorted_keys();
   /* No keyframes, return no drawing. */
@@ -683,19 +725,37 @@ int Layer::drawing_index_at(const int frame) const
     return -1;
   }
   /* Before the first drawing, return no drawing. */
-  if (frame < sorted_keys.first()) {
+  if (frame_number < sorted_keys.first()) {
     return -1;
   }
   /* After or at the last drawing, return the last drawing. */
-  if (frame >= sorted_keys.last()) {
-    return this->frames().lookup(sorted_keys.last()).drawing_index;
+  if (frame_number >= sorted_keys.last()) {
+    return sorted_keys.last();
   }
   /* Search for the drawing. upper_bound will get the drawing just after. */
-  auto it = std::upper_bound(sorted_keys.begin(), sorted_keys.end(), frame);
+  SortedKeysIterator it = std::upper_bound(sorted_keys.begin(), sorted_keys.end(), frame_number);
   if (it == sorted_keys.end() || it == sorted_keys.begin()) {
     return -1;
   }
-  return this->frames().lookup(*std::prev(it)).drawing_index;
+  return *std::prev(it);
+}
+
+const GreasePencilFrame *Layer::frame_at(const int frame_number) const
+{
+  const FramesMapKey frame_key = this->frame_key_at(frame_number);
+  return (frame_key == -1) ? nullptr : this->frames().lookup_ptr(frame_key);
+}
+
+GreasePencilFrame *Layer::frame_at(const int frame_number)
+{
+  const FramesMapKey frame_key = this->frame_key_at(frame_number);
+  return (frame_key == -1) ? nullptr : this->frames_for_write().lookup_ptr(frame_key);
+}
+
+int Layer::drawing_index_at(const int frame_number) const
+{
+  const GreasePencilFrame *frame = frame_at(frame_number);
+  return (frame != nullptr) ? frame->drawing_index : -1;
 }
 
 void Layer::tag_frames_map_changed()
@@ -1129,8 +1189,8 @@ void BKE_grease_pencil_data_update(Depsgraph *depsgraph, Scene *scene, Object *o
 
   /* Evaluate modifiers. */
   GreasePencil *grease_pencil = static_cast<GreasePencil *>(object->data);
-  GeometrySet geometry_set = GeometrySet::create_with_grease_pencil(
-      grease_pencil, GeometryOwnershipType::ReadOnly);
+  GeometrySet geometry_set = GeometrySet::from_grease_pencil(grease_pencil,
+                                                             GeometryOwnershipType::ReadOnly);
   grease_pencil_evaluate_modifiers(depsgraph, scene, object, geometry_set);
 
   if (!geometry_set.has_grease_pencil()) {
@@ -1139,8 +1199,7 @@ void BKE_grease_pencil_data_update(Depsgraph *depsgraph, Scene *scene, Object *o
 
   /* For now the evaluated data is not const. We could use #get_grease_pencil_for_write, but that
    * would result in a copy when it's shared. So for now, we use a const_cast here. */
-  GreasePencil *grease_pencil_eval = const_cast<GreasePencil *>(
-      geometry_set.get_grease_pencil_for_read());
+  GreasePencil *grease_pencil_eval = const_cast<GreasePencil *>(geometry_set.get_grease_pencil());
 
   /* Assign evaluated object. */
   BKE_object_eval_assign_data(object, &grease_pencil_eval->id, false);
@@ -1282,6 +1341,9 @@ template<typename T> static void grow_array(T **array, int *num, const int add_n
   T *new_array = reinterpret_cast<T *>(MEM_cnew_array<T *>(new_array_num, __func__));
 
   blender::uninitialized_relocate_n(*array, *num, new_array);
+  if (*array != nullptr) {
+    MEM_freeN(*array);
+  }
 
   *array = new_array;
   *num = new_array_num;
@@ -1321,8 +1383,21 @@ void GreasePencil::add_empty_drawings(const int add_num)
     new_drawings[i] = reinterpret_cast<GreasePencilDrawingBase *>(
         MEM_new<blender::bke::greasepencil::Drawing>(__func__));
   }
+}
 
-  /* TODO: Update drawing user counts. */
+void GreasePencil::add_duplicate_drawings(const int duplicate_num,
+                                          const blender::bke::greasepencil::Drawing &drawing)
+{
+  using namespace blender;
+  BLI_assert(duplicate_num > 0);
+  const int prev_num = this->drawings().size();
+  grow_array<GreasePencilDrawingBase *>(
+      &this->drawing_array, &this->drawing_array_num, duplicate_num);
+  MutableSpan<GreasePencilDrawingBase *> new_drawings = this->drawings().drop_front(prev_num);
+  for (const int i : new_drawings.index_range()) {
+    new_drawings[i] = reinterpret_cast<GreasePencilDrawingBase *>(
+        MEM_new<bke::greasepencil::Drawing>(__func__, drawing));
+  }
 }
 
 bool GreasePencil::insert_blank_frame(blender::bke::greasepencil::Layer &layer,
@@ -1340,68 +1415,192 @@ bool GreasePencil::insert_blank_frame(blender::bke::greasepencil::Layer &layer,
   return true;
 }
 
-void GreasePencil::remove_drawing(const int index_to_remove)
+static int get_frame_duration(const blender::bke::greasepencil::Layer &layer,
+                              const int frame_number)
+{
+  Span<int> sorted_keys = layer.sorted_keys();
+  const int *frame_number_it = std::lower_bound(
+      sorted_keys.begin(), sorted_keys.end(), frame_number);
+  if (std::next(frame_number_it) == sorted_keys.end()) {
+    return 0;
+  }
+  const int next_frame_number = *(std::next(frame_number_it));
+  return next_frame_number - frame_number;
+}
+
+bool GreasePencil::insert_duplicate_frame(blender::bke::greasepencil::Layer &layer,
+                                          const int src_frame_number,
+                                          const int dst_frame_number,
+                                          const bool do_instance)
 {
   using namespace blender::bke::greasepencil;
-  /* In order to not change the indices of the drawings, we do the following to the drawing to be
-   * removed:
-   *  - If the drawing (A) is not the last one:
-   *     1.1) Find any frames in the layers that reference the last drawing (B) and point them to
-   *          A's index.
-   *     1.2) Swap drawing A with drawing B.
-   *  2) Destroy A and shrink the array by one.
-   *  3) Remove any frames in the layers that reference the A's index.
-   */
-  BLI_assert(this->drawing_array_num > 0);
-  BLI_assert(index_to_remove >= 0 && index_to_remove < this->drawing_array_num);
 
-  /* Move the drawing that should be removed to the last index. */
-  const int last_drawing_index = this->drawing_array_num - 1;
-  if (index_to_remove != last_drawing_index) {
-    for (Layer *layer : this->layers_for_write()) {
-      blender::Map<int, GreasePencilFrame> &frames = layer->frames_for_write();
-      for (auto [key, value] : frames.items()) {
-        if (value.drawing_index == last_drawing_index) {
+  if (!layer.frames().contains(src_frame_number)) {
+    return false;
+  }
+  const GreasePencilFrame &src_frame = layer.frames().lookup(src_frame_number);
+
+  /* Create the new frame structure, with the same duration.
+   * If we want to make an instance of the source frame, the drawing index gets copied from the
+   * source frame. Otherwise, we set the drawing index to the size of the drawings array, since we
+   * are going to add a new drawing copied from the source drawing. */
+  const int duration = src_frame.is_implicit_hold() ? 0 :
+                                                      get_frame_duration(layer, src_frame_number);
+  const int drawing_index = do_instance ? src_frame.drawing_index : int(this->drawings().size());
+  GreasePencilFrame *dst_frame = layer.add_frame(dst_frame_number, drawing_index, duration);
+
+  if (dst_frame == nullptr) {
+    return false;
+  }
+
+  dst_frame->type = src_frame.type;
+
+  const GreasePencilDrawingBase *src_drawing_base = this->drawings(src_frame.drawing_index);
+  switch (src_drawing_base->type) {
+    case GP_DRAWING: {
+      const Drawing &src_drawing =
+          reinterpret_cast<const GreasePencilDrawing *>(src_drawing_base)->wrap();
+      if (do_instance) {
+        /* Adds the duplicate frame as a new instance of the same drawing. We thus increase the
+         * user count of the corresponding drawing. */
+        src_drawing.add_user();
+      }
+      else {
+        /* Create a copy of the drawing, and add it at the end of the drawings array.
+         * Note that the frame already points to this new drawing, as the drawing index was set to
+         * `int(this->drawings().size())`. */
+        this->add_duplicate_drawings(1, src_drawing);
+      }
+      break;
+    }
+    case GP_DRAWING_REFERENCE:
+      /* TODO: Duplicate drawing references is not yet implemented.
+       * For now, just remove the frame that we inserted. */
+      layer.remove_frame(dst_frame_number);
+      return false;
+  }
+  return true;
+}
+
+bool GreasePencil::remove_frames(blender::bke::greasepencil::Layer &layer,
+                                 blender::Span<int> frame_numbers)
+{
+  using namespace blender::bke::greasepencil;
+  bool removed_any_drawing_user = false;
+  for (const int frame_number : frame_numbers) {
+    if (!layer.frames().contains(frame_number)) {
+      continue;
+    }
+    const GreasePencilFrame frame_to_remove = layer.frames().lookup(frame_number);
+    const int64_t drawing_index_to_remove = frame_to_remove.drawing_index;
+    if (!layer.remove_frame(frame_number)) {
+      /* If removing the frame was not successful, continue. */
+      continue;
+    }
+    if (frame_to_remove.is_null()) {
+      /* Null frames don't reference a drawing, continue. */
+      continue;
+    }
+    GreasePencilDrawingBase *drawing_base = this->drawings(drawing_index_to_remove);
+    if (drawing_base->type != GP_DRAWING) {
+      /* If the drawing is referenced from another object, we don't track it's users because we
+       * cannot delete drawings from another object. */
+      continue;
+    }
+    Drawing &drawing = reinterpret_cast<GreasePencilDrawing *>(drawing_base)->wrap();
+    drawing.remove_user();
+    removed_any_drawing_user = true;
+  }
+  if (removed_any_drawing_user) {
+    this->remove_drawings_with_no_users();
+    return true;
+  }
+  return false;
+}
+
+static void remove_drawings_unchecked(GreasePencil &grease_pencil,
+                                      Span<int64_t> sorted_indices_to_remove)
+{
+  using namespace blender::bke::greasepencil;
+  if (grease_pencil.drawing_array_num == 0 || sorted_indices_to_remove.size() == 0) {
+    return;
+  }
+  const int64_t drawings_to_remove = sorted_indices_to_remove.size();
+  const blender::IndexRange last_drawings_range(
+      grease_pencil.drawings().size() - drawings_to_remove, drawings_to_remove);
+
+  /* We keep track of the next available index (for swapping) by iterating from the end and
+   * skipping over drawings that are already in the range to be removed. */
+  auto next_available_index = last_drawings_range.last();
+  auto greatest_index_to_remove_it = std::rbegin(sorted_indices_to_remove);
+  auto get_next_available_index = [&]() {
+    while (next_available_index == *greatest_index_to_remove_it) {
+      greatest_index_to_remove_it = std::prev(greatest_index_to_remove_it);
+      next_available_index--;
+    }
+    return next_available_index;
+  };
+
+  /* Move the drawings to be removed to the end of the array by swapping the pointers. Make sure to
+   * remap any frames pointing to the drawings being swapped. */
+  for (const int64_t index_to_remove : sorted_indices_to_remove) {
+    if (index_to_remove >= last_drawings_range.first()) {
+      /* This drawing and all the next drawings are already in the range to be removed. */
+      break;
+    }
+    const int64_t swap_index = get_next_available_index();
+    /* Remap the drawing_index for frames that point to the drawing to be swapped with. */
+    for (Layer *layer : grease_pencil.layers_for_write()) {
+      for (auto [key, value] : layer->frames_for_write().items()) {
+        if (value.drawing_index == swap_index) {
           value.drawing_index = index_to_remove;
-        }
-        else if (value.drawing_index == index_to_remove) {
-          value.drawing_index = last_drawing_index;
         }
       }
     }
-    std::swap(this->drawings()[index_to_remove], this->drawings()[last_drawing_index]);
+    /* Swap the pointers to the drawings in the drawing array. */
+    std::swap(grease_pencil.drawings()[index_to_remove], grease_pencil.drawings()[swap_index]);
+    next_available_index--;
   }
 
-  /* Delete the last drawing. */
-  GreasePencilDrawingBase *drawing_base_to_remove = this->drawings(last_drawing_index);
-  switch (drawing_base_to_remove->type) {
-    case GP_DRAWING: {
-      GreasePencilDrawing *drawing_to_remove = reinterpret_cast<GreasePencilDrawing *>(
-          drawing_base_to_remove);
-      MEM_delete(&drawing_to_remove->wrap());
-      break;
-    }
-    case GP_DRAWING_REFERENCE: {
-      GreasePencilDrawingReference *drawing_reference_to_remove =
-          reinterpret_cast<GreasePencilDrawingReference *>(drawing_base_to_remove);
-      MEM_freeN(drawing_reference_to_remove);
-      break;
-    }
-  }
-
-  /* Remove any frame that points to the last drawing. */
-  for (Layer *layer : this->layers_for_write()) {
-    blender::Map<int, GreasePencilFrame> &frames = layer->frames_for_write();
-    int64_t frames_removed = frames.remove_if([last_drawing_index](auto item) {
-      return item.value.drawing_index == last_drawing_index;
-    });
-    if (frames_removed > 0) {
-      layer->tag_frames_map_keys_changed();
+  /* Free the last drawings. */
+  for (const int64_t drawing_index : last_drawings_range) {
+    GreasePencilDrawingBase *drawing_base_to_remove = grease_pencil.drawings(drawing_index);
+    switch (drawing_base_to_remove->type) {
+      case GP_DRAWING: {
+        GreasePencilDrawing *drawing_to_remove = reinterpret_cast<GreasePencilDrawing *>(
+            drawing_base_to_remove);
+        MEM_delete(&drawing_to_remove->wrap());
+        break;
+      }
+      case GP_DRAWING_REFERENCE: {
+        GreasePencilDrawingReference *drawing_reference_to_remove =
+            reinterpret_cast<GreasePencilDrawingReference *>(drawing_base_to_remove);
+        MEM_freeN(drawing_reference_to_remove);
+        break;
+      }
     }
   }
 
   /* Shrink drawing array. */
-  shrink_array<GreasePencilDrawingBase *>(&this->drawing_array, &this->drawing_array_num, 1);
+  shrink_array<GreasePencilDrawingBase *>(
+      &grease_pencil.drawing_array, &grease_pencil.drawing_array_num, drawings_to_remove);
+}
+
+void GreasePencil::remove_drawings_with_no_users()
+{
+  using namespace blender;
+  Vector<int64_t> drawings_to_be_removed;
+  for (const int64_t drawing_i : this->drawings().index_range()) {
+    GreasePencilDrawingBase *drawing_base = this->drawings(drawing_i);
+    if (drawing_base->type != GP_DRAWING) {
+      continue;
+    }
+    GreasePencilDrawing *drawing = reinterpret_cast<GreasePencilDrawing *>(drawing_base);
+    if (!drawing->wrap().has_users()) {
+      drawings_to_be_removed.append(drawing_i);
+    }
+  }
+  remove_drawings_unchecked(*this, drawings_to_be_removed.as_span());
 }
 
 blender::bke::greasepencil::Drawing *GreasePencil::get_editable_drawing_at(
@@ -1557,6 +1756,14 @@ void GreasePencil::set_active_layer(const blender::bke::greasepencil::Layer *lay
 {
   this->active_layer = const_cast<GreasePencilLayer *>(
       reinterpret_cast<const GreasePencilLayer *>(layer));
+}
+
+bool GreasePencil::is_layer_active(const blender::bke::greasepencil::Layer *layer) const
+{
+  if (layer == nullptr) {
+    return false;
+  }
+  return this->get_active_layer() == layer;
 }
 
 static blender::VectorSet<blender::StringRefNull> get_node_names(GreasePencil &grease_pencil)
@@ -1718,10 +1925,15 @@ void GreasePencil::remove_layer(blender::bke::greasepencil::Layer &layer)
   layer.parent_group().unlink_node(&layer.as_node());
 
   /* Remove drawings. */
-  /* TODO: In the future this should only remove drawings when the user count hits zero. */
   for (GreasePencilFrame frame : layer.frames_for_write().values()) {
-    this->remove_drawing(frame.drawing_index);
+    GreasePencilDrawingBase *drawing_base = this->drawings(frame.drawing_index);
+    if (drawing_base->type != GP_DRAWING) {
+      continue;
+    }
+    GreasePencilDrawing *drawing = reinterpret_cast<GreasePencilDrawing *>(drawing_base);
+    drawing->wrap().remove_user();
   }
+  this->remove_drawings_with_no_users();
 
   /* Delete the layer. */
   MEM_delete(&layer);
@@ -1831,8 +2043,8 @@ static void read_layer(BlendDataReader *reader,
   /* Re-create frames data in runtime map. */
   node->wrap().runtime = MEM_new<blender::bke::greasepencil::LayerRuntime>(__func__);
   for (int i = 0; i < node->frames_storage.num; i++) {
-    node->wrap().frames_for_write().add(node->frames_storage.keys[i],
-                                        node->frames_storage.values[i]);
+    node->wrap().frames_for_write().add_new(node->frames_storage.keys[i],
+                                            node->frames_storage.values[i]);
   }
 
   /* Read layer masks. */
@@ -1889,9 +2101,6 @@ static void write_layer(BlendWriter *writer, GreasePencilLayer *node)
 {
   using namespace blender::bke::greasepencil;
 
-  BLO_write_struct(writer, GreasePencilLayer, node);
-  BLO_write_string(writer, node->base.name);
-
   /* Re-create the frames storage only if it was tagged dirty. */
   if ((node->frames_storage.flag & GP_LAYER_FRAMES_STORAGE_DIRTY) != 0) {
     MEM_SAFE_FREE(node->frames_storage.keys);
@@ -1911,6 +2120,9 @@ static void write_layer(BlendWriter *writer, GreasePencilLayer *node)
     /* Reset the flag. */
     node->frames_storage.flag &= ~GP_LAYER_FRAMES_STORAGE_DIRTY;
   }
+
+  BLO_write_struct(writer, GreasePencilLayer, node);
+  BLO_write_string(writer, node->base.name);
 
   BLO_write_int32_array(writer, node->frames_storage.num, node->frames_storage.keys);
   BLO_write_struct_array(

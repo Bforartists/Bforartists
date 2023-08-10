@@ -47,7 +47,7 @@
 
 #include "BKE_image.h"
 
-#include "BIF_glutil.h"
+#include "BIF_glutil.hh"
 
 #include "GPU_context.h"
 #include "GPU_framebuffer.h"
@@ -66,7 +66,7 @@
 
 #include "wm_window_private.h"
 
-#include "WM_api.h" /* only for WM_main_playanim */
+#include "WM_api.hh" /* only for WM_main_playanim */
 
 #ifdef WITH_AUDASPACE
 #  include <AUD_Device.h>
@@ -252,7 +252,7 @@ struct PlayState {
 static void print_ps(PlayState *ps)
 {
   printf("ps:\n");
-  printf("    direction=%d,\n", (int)ps->direction);
+  printf("    direction=%d,\n", int(ps->direction));
   printf("    once=%d,\n", ps->once);
   printf("    pingpong=%d,\n", ps->pingpong);
   printf("    noskip=%d,\n", ps->noskip);

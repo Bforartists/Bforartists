@@ -15,9 +15,9 @@
 #include "BKE_context.h"
 #include "BKE_unit.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "BLT_translation.h"
 
@@ -122,7 +122,7 @@ static void applyTrackballValue(TransInfo *t, const float axis[3], const float a
   }
 }
 
-static void applyTrackball(TransInfo *t, const int[2] /*mval*/)
+static void applyTrackball(TransInfo *t)
 {
   char str[UI_MAX_DRAW_STR];
   size_t ofs = 0;

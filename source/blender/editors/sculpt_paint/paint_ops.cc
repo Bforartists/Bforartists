@@ -27,21 +27,21 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_context.h"
 #include "BKE_image.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 #include "BKE_report.h"
 
-#include "ED_image.h"
-#include "ED_paint.h"
-#include "ED_screen.h"
+#include "ED_image.hh"
+#include "ED_paint.hh"
+#include "ED_screen.hh"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 #include "WM_toolsystem.h"
-#include "WM_types.h"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"

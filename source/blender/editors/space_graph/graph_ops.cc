@@ -18,11 +18,11 @@
 #include "BKE_context.h"
 #include "BKE_global.h"
 
-#include "UI_view2d.h"
+#include "UI_view2d.hh"
 
-#include "ED_anim_api.h"
-#include "ED_screen.h"
-#include "ED_transform.h"
+#include "ED_anim_api.hh"
+#include "ED_screen.hh"
+#include "ED_transform.hh"
 
 #include "graph_intern.h"
 
@@ -31,8 +31,8 @@
 
 #include "DEG_depsgraph.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
@@ -225,7 +225,6 @@ static int graphview_curves_hide_exec(bContext *C, wmOperator *op)
   bAnimContext ac;
   ListBase anim_data = {nullptr, nullptr};
   ListBase all_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   int filter;
   const bool unselected = RNA_boolean_get(op->ptr, "unselected");
 
@@ -258,7 +257,7 @@ static int graphview_curves_hide_exec(bContext *C, wmOperator *op)
   ANIM_animdata_filter(
       &ac, &anim_data, eAnimFilter_Flags(filter), ac.data, eAnimCont_Types(ac.datatype));
 
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     /* hack: skip object channels for now, since flushing those will always flush everything,
      * but they are always included */
     /* TODO: find out why this is the case, and fix that */
@@ -289,7 +288,7 @@ static int graphview_curves_hide_exec(bContext *C, wmOperator *op)
     ANIM_animdata_filter(
         &ac, &anim_data, eAnimFilter_Flags(filter), ac.data, eAnimCont_Types(ac.datatype));
 
-    for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+    LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
       /* hack: skip object channels for now, since flushing those
        * will always flush everything, but they are always included */
 
@@ -353,7 +352,6 @@ static int graphview_curves_reveal_exec(bContext *C, wmOperator *op)
   bAnimContext ac;
   ListBase anim_data = {nullptr, nullptr};
   ListBase all_data = {nullptr, nullptr};
-  bAnimListElem *ale;
   int filter;
   const bool select = RNA_boolean_get(op->ptr, "select");
 
@@ -378,7 +376,7 @@ static int graphview_curves_reveal_exec(bContext *C, wmOperator *op)
   ANIM_animdata_filter(
       &ac, &anim_data, eAnimFilter_Flags(filter), ac.data, eAnimCont_Types(ac.datatype));
 
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale; ale = ale->next) {
+  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     /* hack: skip object channels for now, since flushing those will always flush everything,
      * but they are always included. */
     /* TODO: find out why this is the case, and fix that */

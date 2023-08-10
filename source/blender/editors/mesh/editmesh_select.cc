@@ -25,22 +25,22 @@
 #include "BKE_editmesh.h"
 #include "BKE_layer.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_wrapper.h"
+#include "BKE_mesh_wrapper.hh"
 #include "BKE_report.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
 
-#include "ED_mesh.h"
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_select_utils.h"
-#include "ED_transform.h"
-#include "ED_view3d.h"
+#include "ED_mesh.hh"
+#include "ED_object.hh"
+#include "ED_screen.hh"
+#include "ED_select_utils.hh"
+#include "ED_transform.hh"
+#include "ED_view3d.hh"
 
 #include "BLT_translation.h"
 
@@ -48,7 +48,7 @@
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 
-#include "UI_resources.h"
+#include "UI_resources.hh"
 
 #include "bmesh_tools.h"
 
@@ -1305,10 +1305,9 @@ static int edbm_select_similar_region_exec(bContext *C, wmOperator *op)
     MEM_freeN(fg);
 
     if (tot) {
-      LinkData *link;
-      while ((link = static_cast<LinkData *>(BLI_pophead(&faces_regions)))) {
-        BMFace *f, **faces = static_cast<BMFace **>(link->data);
-        while ((f = *(faces++))) {
+      while (LinkData *link = static_cast<LinkData *>(BLI_pophead(&faces_regions))) {
+        BMFace **faces = static_cast<BMFace **>(link->data);
+        while (BMFace *f = *(faces++)) {
           BM_face_select_set(bm, f, true);
         }
         MEM_freeN(link->data);
@@ -3048,8 +3047,7 @@ bool EDBM_select_interior_faces(BMEditMesh *em)
     fgroup_table[i_min] = nullptr;
     changed = true;
 
-    BMFaceLink *f_link;
-    while ((f_link = static_cast<BMFaceLink *>(BLI_pophead(&fgroup_listbase[i_min])))) {
+    while (BMFaceLink *f_link = static_cast<BMFaceLink *>(BLI_pophead(&fgroup_listbase[i_min]))) {
       BMFace *f = f_link->face;
       BM_face_select_set(bm, f, true);
       BM_elem_index_set(f, -1); /* set-dirty */

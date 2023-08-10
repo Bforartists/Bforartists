@@ -34,7 +34,7 @@
 #include "BKE_main.h"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_mapping.h"
+#include "BKE_mesh_mapping.hh"
 #include "BKE_modifier.h"
 #include "BKE_node.hh"
 #include "BKE_object.h"
@@ -53,13 +53,13 @@
 #include "IMB_imbuf.h"
 #include "IMB_imbuf_types.h"
 
-#include "WM_api.h"
-#include "WM_types.h"
+#include "WM_api.hh"
+#include "WM_types.hh"
 
-#include "ED_mesh.h"
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_uvedit.h"
+#include "ED_mesh.hh"
+#include "ED_object.hh"
+#include "ED_screen.hh"
+#include "ED_uvedit.hh"
 
 #include "object_intern.h"
 
@@ -645,8 +645,6 @@ static bool bake_objects_check(Main *bmain,
                                const bool is_selected_to_active,
                                const eBakeTarget target)
 {
-  CollectionPointerLink *link;
-
   /* error handling and tag (in case multiple materials share the same image) */
   BKE_main_id_tag_idcode(bmain, ID_IM, LIB_TAG_DOIT, false);
 
@@ -657,8 +655,7 @@ static bool bake_objects_check(Main *bmain,
       return false;
     }
 
-    for (link = static_cast<CollectionPointerLink *>(selected_objects->first); link;
-         link = link->next) {
+    LISTBASE_FOREACH (CollectionPointerLink *, link, selected_objects) {
       Object *ob_iter = (Object *)link->ptr.data;
 
       if (ob_iter == ob) {
@@ -687,8 +684,7 @@ static bool bake_objects_check(Main *bmain,
       return false;
     }
 
-    for (link = static_cast<CollectionPointerLink *>(selected_objects->first); link;
-         link = link->next) {
+    LISTBASE_FOREACH (CollectionPointerLink *, link, selected_objects) {
       if (!bake_object_check(
               scene, view_layer, static_cast<Object *>(link->ptr.data), target, reports)) {
         return false;
@@ -1448,11 +1444,9 @@ static int bake(const BakeAPIRender *bkr,
   }
 
   if (bkr->is_selected_to_active) {
-    CollectionPointerLink *link;
     tot_highpoly = 0;
 
-    for (link = static_cast<CollectionPointerLink *>(selected_objects->first); link;
-         link = link->next) {
+    LISTBASE_FOREACH (CollectionPointerLink *, link, selected_objects) {
       Object *ob_iter = static_cast<Object *>(link->ptr.data);
 
       if (ob_iter == ob_low) {
@@ -1511,7 +1505,6 @@ static int bake(const BakeAPIRender *bkr,
   }
 
   if (bkr->is_selected_to_active) {
-    CollectionPointerLink *link;
     int i = 0;
 
     /* prepare cage mesh */
@@ -1567,8 +1560,7 @@ static int bake(const BakeAPIRender *bkr,
         MEM_callocN(sizeof(BakeHighPolyData) * tot_highpoly, "bake high poly objects"));
 
     /* populate highpoly array */
-    for (link = static_cast<CollectionPointerLink *>(selected_objects->first); link;
-         link = link->next) {
+    LISTBASE_FOREACH (CollectionPointerLink *, link, selected_objects) {
       Object *ob_iter = static_cast<Object *>(link->ptr.data);
 
       if (ob_iter == ob_low) {
@@ -1908,11 +1900,8 @@ static int bake_exec(bContext *C, wmOperator *op)
     result = bake(&bkr, bkr.ob, &bkr.selected_objects, bkr.reports);
   }
   else {
-    CollectionPointerLink *link;
     bkr.is_clear = bkr.is_clear && BLI_listbase_is_single(&bkr.selected_objects);
-    for (link = static_cast<CollectionPointerLink *>(bkr.selected_objects.first); link;
-         link = link->next)
-    {
+    LISTBASE_FOREACH (CollectionPointerLink *, link, &bkr.selected_objects) {
       Object *ob_iter = static_cast<Object *>(link->ptr.data);
       result = bake(&bkr, ob_iter, nullptr, bkr.reports);
     }
@@ -1964,11 +1953,8 @@ static void bake_startjob(void *bkv, bool * /*stop*/, bool *do_update, float *pr
     bkr->result = bake(bkr, bkr->ob, &bkr->selected_objects, bkr->reports);
   }
   else {
-    CollectionPointerLink *link;
     bkr->is_clear = bkr->is_clear && BLI_listbase_is_single(&bkr->selected_objects);
-    for (link = static_cast<CollectionPointerLink *>(bkr->selected_objects.first); link;
-         link = link->next)
-    {
+    LISTBASE_FOREACH (CollectionPointerLink *, link, &bkr->selected_objects) {
       Object *ob_iter = static_cast<Object *>(link->ptr.data);
       bkr->result = bake(bkr, ob_iter, nullptr, bkr->reports);
 

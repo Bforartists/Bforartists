@@ -81,6 +81,11 @@ if(WITH_TBB)
   endif()
 endif()
 
+if(WIN32)
+  # Windows.h will define min/max macros that will collide with the stl versions.
+  add_definitions(-DNOMINMAX)
+endif()
+
 if(WITH_USD)
   # USD links libMaterialX, when using pre-compiled libraries
   # ensures `usd_ms` can find `MaterialXRender` and friends.
@@ -140,9 +145,9 @@ endif()
 
 # Setup the EXE sources and `buildinfo`.
 set(SRC
-  creator.c
-  creator_args.c
-  creator_signals.c
+  creator.cc
+  creator_args.cc
+  creator_signals.cc
 
   creator_intern.h
 )
@@ -1620,15 +1625,31 @@ if((DEFINED LIBDIR) AND TARGETDIR_LIB)
         ${USD_LIBRARY_DIR}/usd
         DESTINATION ${TARGETDIR_LIB}
       )
+      install(DIRECTORY
+        ${LIBDIR}/usd/plugin/usd/hdStorm
+        ${LIBDIR}/usd/plugin/usd/usdShaders
+        ${LIBDIR}/usd/plugin/usd/hioOiio
+        DESTINATION "./blender.shared/usd"
+      )
     elseif(USD_PYTHON_SUPPORT)
       install(DIRECTORY
         ${USD_LIBRARY_DIR}/usd
         DESTINATION ${TARGETDIR_LIB}
       )
+      install(DIRECTORY
+        ${LIBDIR}/usd/plugin/usd/hdStorm
+        ${LIBDIR}/usd/plugin/usd/usdShaders
+        DESTINATION ${TARGETDIR_LIB}/usd
+      )
     else()
       install(DIRECTORY
         ${USD_LIBRARY_DIR}/usd
         DESTINATION "${TARGETDIR_VER}/datafiles"
+      )
+      install(DIRECTORY
+        ${LIBDIR}/usd/plugin/usd/hdStorm
+        ${LIBDIR}/usd/plugin/usd/usdShaders
+        DESTINATION "${TARGETDIR_VER}/datafiles/usd"
       )
     endif()
   endif()

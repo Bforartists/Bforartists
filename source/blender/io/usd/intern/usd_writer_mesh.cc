@@ -19,7 +19,7 @@
 #include "BKE_lib_id.h"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_wrapper.h"
+#include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
 
@@ -32,7 +32,7 @@
 #include "DNA_object_fluidsim_types.h"
 #include "DNA_particle_types.h"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 
 #include <iostream>
 

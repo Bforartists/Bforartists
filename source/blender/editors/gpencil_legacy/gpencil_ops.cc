@@ -13,7 +13,7 @@
 #include "BLI_sys_types.h"
 
 #include "BKE_context.h"
-#include "BKE_paint.h"
+#include "BKE_paint.hh"
 
 #include "DNA_brush_types.h"
 #include "DNA_gpencil_legacy_types.h"
@@ -21,13 +21,13 @@
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 #include "WM_toolsystem.h"
-#include "WM_types.h"
+#include "WM_types.hh"
 
 #include "RNA_access.h"
 
-#include "ED_gpencil_legacy.h"
+#include "ED_gpencil_legacy.hh"
 
 #include "gpencil_intern.h"
 

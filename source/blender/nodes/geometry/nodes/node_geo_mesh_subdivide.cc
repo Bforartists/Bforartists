@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "BKE_mesh.hh"
-#include "BKE_subdiv.h"
+#include "BKE_subdiv.hh"
 #include "BKE_subdiv_mesh.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -64,7 +64,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   }
 
   geometry_set.modify_geometry_sets([&](GeometrySet &geometry_set) {
-    if (const Mesh *mesh = geometry_set.get_mesh_for_read()) {
+    if (const Mesh *mesh = geometry_set.get_mesh()) {
       geometry_set.replace_mesh(simple_subdivide_mesh(*mesh, level));
     }
   });

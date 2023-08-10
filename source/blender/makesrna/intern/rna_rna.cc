@@ -225,7 +225,7 @@ const EnumPropertyItem rna_enum_property_string_search_flag_items[] = {
 #  include "MEM_guardedalloc.h"
 
 #  include "BKE_idprop.h"
-#  include "BKE_lib_override.h"
+#  include "BKE_lib_override.hh"
 
 #  include <optional>
 #  include <string>
@@ -1243,8 +1243,10 @@ static int rna_BlenderRNA_structs_lookup_string(PointerRNA *ptr,
 
 /* Default override (and compare) callbacks. */
 
-/* Ensures it makes sense to go inside the pointers to compare their content
- * (if they are IDs, or have different names or RNA type, then this would be meaningless). */
+/**
+ * Ensures it makes sense to go inside the pointers to compare their content
+ * (if they are IDs, or have different names or RNA type, then this would be meaningless).
+ */
 struct RNACompareOverrideDiffPropPtrContext {
   /** General RNA diffing context. */
   RNAPropertyOverrideDiffContext &rnadiff_ctx;
@@ -1256,11 +1258,15 @@ struct RNACompareOverrideDiffPropPtrContext {
   PointerRNA propptr_b = {0};
   PropertyType property_type = PROP_BOOLEAN;
 
-  /** Indicates the RNA structure cintaining that RNA pointer does not own the data it points to.
-   *  See also #PROP_PTR_NO_OWNERSHIP documentation. */
+  /**
+   * Indicates the RNA structure containing that RNA pointer does not own the data it points to.
+   * See also #PROP_PTR_NO_OWNERSHIP documentation.
+   */
   bool no_ownership = false;
-  /** RNA collection items: do not attempt to get the item property name (i.e. only uses its
-   *  index). */
+  /**
+   * RNA collection items: do not attempt to get the item property name
+   * (i.e. only uses its index).
+   */
   bool no_prop_name = false;
   /** RNA collection items: forcefully get an item property name, even if one of the items is
    *  null/doesn't have one. Mutually exclusive with `no_prop_name`. */
@@ -1275,7 +1281,8 @@ struct RNACompareOverrideDiffPropPtrContext {
   int rna_itemindex_a = -1;
   int rna_itemindex_b = -1;
 
-  /** Status info, usually set by a call to #rna_property_override_diff_propptr_validate_diffing.
+  /**
+   * Status info, usually set by a call to #rna_property_override_diff_propptr_validate_diffing.
    */
   /** Indicate whether the two given RNA pointers can be considered 'matching data', i.e. the
    * pointers themselves should not be compared, but rather the content of the RNA structs they
@@ -1586,7 +1593,7 @@ static void rna_property_override_diff_propptr(Main *bmain,
                  index > 0 && item_index_buff_len < sizeof(item_index_buff);
                  index /= 10)
             {
-              item_index_buff[item_index_buff_len++] = '0' + (char)(index % 10);
+              item_index_buff[item_index_buff_len++] = '0' + char(index % 10);
             }
             BLI_assert(index == 0);
           }
@@ -1622,6 +1629,18 @@ static void rna_property_override_diff_propptr(Main *bmain,
                                                      liboverride_flags,
                                                      &ptrdiff_ctx.rnadiff_ctx.report_flag);
       ptrdiff_ctx.rnadiff_ctx.comparison = !match;
+
+      /* Regardless of whether the data from both pointers matches or not, a potentially existing
+       * operation on current extended rna path should be removed. This is done by tagging said
+       * operation as unused, while clearing the property tag (see also
+       * #RNA_struct_override_matches handling of #LIBOVERRIDE_PROP_OP_TAG_UNUSED). Note that a
+       * property with no operations will also be cleared by
+       * #BKE_lib_override_library_id_unused_cleanup. */
+      IDOverrideLibraryProperty *op = BKE_lib_override_library_property_find(liboverride,
+                                                                             extended_rna_path);
+      if (op != nullptr) {
+        op->tag &= ~LIBOVERRIDE_PROP_OP_TAG_UNUSED;
+      }
 
       if (!ELEM(extended_rna_path, extended_rna_path_buffer, rna_path)) {
         MEM_freeN(extended_rna_path);
@@ -1885,8 +1904,8 @@ void rna_property_override_diff_default(Main *bmain, RNAPropertyOverrideDiffCont
  * Maybe behind a eRNAOverrideMatch flag? */
 #  if 0
       rnadiff_ctx.comparison = len_str_a < len_str_b ? -1 :
-                       len_str_a > len_str_b ? 1 :
-                                               strcmp(value_a, value_b);
+                               len_str_a > len_str_b ? 1 :
+                                                       strcmp(value_a, value_b);
 #  endif
       rnadiff_ctx.comparison = strcmp(value_a, value_b);
 
@@ -2385,21 +2404,20 @@ bool rna_property_override_store_default(Main * /*bmain*/,
 }
 
 bool rna_property_override_apply_default(Main *bmain,
-                                         PointerRNA *ptr_dst,
-                                         PointerRNA *ptr_src,
-                                         PointerRNA *ptr_storage,
-                                         PropertyRNA *prop_dst,
-                                         PropertyRNA *prop_src,
-                                         PropertyRNA *prop_storage,
-                                         const int len_dst,
-                                         const int len_src,
-                                         const int len_storage,
-                                         PointerRNA * /*ptr_item_dst*/,
-                                         PointerRNA * /*ptr_item_src*/,
-                                         PointerRNA * /*ptr_item_storage*/,
-                                         IDOverrideLibraryPropertyOperation *opop)
+                                         RNAPropertyOverrideApplyContext &rnaapply_ctx)
 {
-  BLI_assert(len_dst == len_src && (!ptr_storage || len_dst == len_storage));
+  PointerRNA *ptr_dst = &rnaapply_ctx.ptr_dst;
+  PointerRNA *ptr_src = &rnaapply_ctx.ptr_src;
+  PointerRNA *ptr_storage = &rnaapply_ctx.ptr_storage;
+  PropertyRNA *prop_dst = rnaapply_ctx.prop_dst;
+  PropertyRNA *prop_src = rnaapply_ctx.prop_src;
+  PropertyRNA *prop_storage = rnaapply_ctx.prop_storage;
+  const int len_dst = rnaapply_ctx.len_src;
+  const int len_src = rnaapply_ctx.len_src;
+  const int len_storage = rnaapply_ctx.len_storage;
+  IDOverrideLibraryPropertyOperation *opop = rnaapply_ctx.liboverride_operation;
+
+  BLI_assert(len_dst == len_src && (!prop_storage || len_dst == len_storage));
   UNUSED_VARS_NDEBUG(len_src, len_storage);
 
   const bool is_array = len_dst > 0;
@@ -2492,9 +2510,9 @@ bool rna_property_override_apply_default(Main *bmain,
         }
       }
       else {
-        const int storage_value = ptr_storage ? RNA_PROPERTY_GET_SINGLE(
-                                                    int, ptr_storage, prop_storage, index) :
-                                                0;
+        const int storage_value = prop_storage ? RNA_PROPERTY_GET_SINGLE(
+                                                     int, ptr_storage, prop_storage, index) :
+                                                 0;
 
         switch (override_op) {
           case LIBOVERRIDE_OP_REPLACE:
@@ -2578,9 +2596,9 @@ bool rna_property_override_apply_default(Main *bmain,
         }
       }
       else {
-        const float storage_value = ptr_storage ? RNA_PROPERTY_GET_SINGLE(
-                                                      float, ptr_storage, prop_storage, index) :
-                                                  0.0f;
+        const float storage_value = prop_storage ? RNA_PROPERTY_GET_SINGLE(
+                                                       float, ptr_storage, prop_storage, index) :
+                                                   0.0f;
 
         switch (override_op) {
           case LIBOVERRIDE_OP_REPLACE:

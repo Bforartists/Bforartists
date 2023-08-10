@@ -17,8 +17,8 @@
 #include "BLI_string_utf8.h"
 #include "BLI_task.hh"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
 
@@ -209,8 +209,8 @@ static std::optional<TextLayout> get_text_layout(GeoNodeExecParams &params)
   cu.pos = len_chars;
   /* The reason for the additional character here is unknown, but reflects other code elsewhere. */
   cu.str = static_cast<char *>(MEM_mallocN(len_bytes + sizeof(char32_t), __func__));
-  cu.strinfo = static_cast<CharInfo *>(MEM_callocN((len_chars + 1) * sizeof(CharInfo), __func__));
   memcpy(cu.str, layout.text.c_str(), len_bytes + 1);
+  cu.strinfo = static_cast<CharInfo *>(MEM_callocN((len_chars + 1) * sizeof(CharInfo), __func__));
 
   CharTrans *chartransdata = nullptr;
   int text_len;
@@ -303,7 +303,7 @@ static Map<int, int> create_curve_instances(GeoNodeExecParams &params,
       layout.pivot_points.add_new(layout.char_codes[i], pivot_point);
     }
 
-    GeometrySet geometry_set = GeometrySet::create_with_curves(curves_id);
+    GeometrySet geometry_set = GeometrySet::from_curves(curves_id);
     handles.add_new(layout.char_codes[i], instances.add_reference(std::move(geometry_set)));
   }
   return handles;
@@ -380,7 +380,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   add_instances_from_handles(*instances, char_handles, *layout);
   create_attributes(params, *layout, *instances);
 
-  params.set_output("Curve Instances", GeometrySet::create_with_instances(instances.release()));
+  params.set_output("Curve Instances", GeometrySet::from_instances(instances.release()));
 }
 
 }  // namespace blender::nodes::node_geo_string_to_curves_cc

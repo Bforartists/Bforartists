@@ -14,9 +14,9 @@
 #include "BKE_context.h"
 #include "BKE_unit.h"
 
-#include "ED_screen.h"
+#include "ED_screen.hh"
 
-#include "UI_interface.h"
+#include "UI_interface.hh"
 
 #include "BLT_translation.h"
 
@@ -30,7 +30,7 @@
 /** \name Transform (Bone Envelope)
  * \{ */
 
-static void applyBoneEnvelope(TransInfo *t, const int[2] /*mval*/)
+static void applyBoneEnvelope(TransInfo *t)
 {
   float ratio;
   int i;

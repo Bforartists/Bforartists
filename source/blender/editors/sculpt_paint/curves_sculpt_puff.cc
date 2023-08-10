@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "BKE_attribute_math.hh"
-#include "BKE_brush.h"
+#include "BKE_brush.hh"
 #include "BKE_bvhutils.h"
 #include "BKE_context.h"
 #include "BKE_crazyspace.hh"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_runtime.h"
+#include "BKE_mesh_runtime.hh"
 
-#include "ED_screen.h"
-#include "ED_view3d.h"
+#include "ED_screen.hh"
+#include "ED_view3d.hh"
 
 #include "DEG_depsgraph.h"
 
@@ -19,7 +19,7 @@
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 
-#include "WM_api.h"
+#include "WM_api.hh"
 
 #include "BLI_length_parameterize.hh"
 #include "BLI_math_matrix.hh"

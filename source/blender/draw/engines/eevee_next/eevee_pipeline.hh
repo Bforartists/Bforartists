@@ -21,6 +21,7 @@
 namespace blender::eevee {
 
 class Instance;
+struct RayTraceBuffer;
 
 /* -------------------------------------------------------------------- */
 /** \name World Background Pipeline
@@ -68,6 +69,26 @@ class WorldPipeline {
   void render(View &view);
 
 };  // namespace blender::eevee
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name World Volume Pipeline
+ *
+ * \{ */
+
+class WorldVolumePipeline {
+ private:
+  Instance &inst_;
+
+  PassSimple world_ps_ = {"World.Volume"};
+
+ public:
+  WorldVolumePipeline(Instance &inst) : inst_(inst){};
+
+  void sync(GPUMaterial *gpumat);
+  void render(View &view);
+};
 
 /** \} */
 
@@ -175,6 +196,10 @@ class DeferredLayer {
   TextureFromPool diffuse_light_tx_ = {"diffuse_light_accum_tx"};
   TextureFromPool specular_light_tx_ = {"specular_light_accum_tx"};
 
+  /* Reference to ray-tracing result. */
+  GPUTexture *indirect_refraction_tx_ = nullptr;
+  GPUTexture *indirect_reflection_tx_ = nullptr;
+
  public:
   DeferredLayer(Instance &inst) : inst_(inst){};
 
@@ -184,7 +209,12 @@ class DeferredLayer {
   PassMain::Sub *prepass_add(::Material *blender_mat, GPUMaterial *gpumat, bool has_motion);
   PassMain::Sub *material_add(::Material *blender_mat, GPUMaterial *gpumat);
 
-  void render(View &view, Framebuffer &prepass_fb, Framebuffer &combined_fb, int2 extent);
+  void render(View &main_view,
+              View &render_view,
+              Framebuffer &prepass_fb,
+              Framebuffer &combined_fb,
+              int2 extent,
+              RayTraceBuffer &rt_buffer);
 };
 
 class DeferredPipeline {
@@ -205,7 +235,35 @@ class DeferredPipeline {
   PassMain::Sub *prepass_add(::Material *material, GPUMaterial *gpumat, bool has_motion);
   PassMain::Sub *material_add(::Material *material, GPUMaterial *gpumat);
 
-  void render(View &view, Framebuffer &prepass_fb, Framebuffer &combined_fb, int2 extent);
+  void render(View &main_view,
+              View &render_view,
+              Framebuffer &prepass_fb,
+              Framebuffer &combined_fb,
+              int2 extent,
+              RayTraceBuffer &rt_buffer_opaque_layer,
+              RayTraceBuffer &rt_buffer_refract_layer);
+};
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Volume Pass
+ *
+ * \{ */
+
+class VolumePipeline {
+ private:
+  Instance &inst_;
+
+  PassMain volume_ps_ = {"Volume.Objects"};
+
+ public:
+  VolumePipeline(Instance &inst) : inst_(inst){};
+
+  PassMain::Sub *volume_material_add(GPUMaterial *gpumat);
+
+  void sync();
+  void render(View &view);
 };
 
 /** \} */
@@ -369,10 +427,12 @@ class PipelineModule {
  public:
   BackgroundPipeline background;
   WorldPipeline world;
+  WorldVolumePipeline world_volume;
   DeferredProbePipeline probe;
   DeferredPipeline deferred;
   ForwardPipeline forward;
   ShadowPipeline shadow;
+  VolumePipeline volume;
   CapturePipeline capture;
 
   UtilityTexture utility_tx;
@@ -381,10 +441,12 @@ class PipelineModule {
   PipelineModule(Instance &inst)
       : background(inst),
         world(inst),
+        world_volume(inst),
         probe(inst),
         deferred(inst),
         forward(inst),
         shadow(inst),
+        volume(inst),
         capture(inst){};
 
   void begin_sync()
@@ -393,6 +455,7 @@ class PipelineModule {
     deferred.begin_sync();
     forward.sync();
     shadow.sync();
+    volume.sync();
     capture.sync();
   }
 
@@ -443,10 +506,8 @@ class PipelineModule {
           return forward.material_transparent_add(ob, blender_mat, gpumat);
         }
         return forward.material_opaque_add(blender_mat, gpumat);
-
       case MAT_PIPE_VOLUME:
-        /* TODO(fclem) volume pass. */
-        return nullptr;
+        return volume.volume_material_add(gpumat);
       case MAT_PIPE_SHADOW:
         return shadow.surface_material_add(gpumat);
       case MAT_PIPE_CAPTURE:

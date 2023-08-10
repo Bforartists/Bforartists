@@ -29,7 +29,7 @@
  *   Compare the results before & after to ensure all changes are reversed by renaming
  *   and the DNA remains unchanged.
  *
- * \see versioning_dna.c for actual version patching.
+ * \see `versioning_dna.cc` for actual version patching.
  */
 
 /* No include guard (intentional). */
@@ -105,6 +105,7 @@ DNA_STRUCT_RENAME_ELEM(MaskLayer, restrictflag, visibility_flag)
 DNA_STRUCT_RENAME_ELEM(MaterialLineArt, transparency_mask, material_mask_bits)
 DNA_STRUCT_RENAME_ELEM(Mesh, loc, texspace_location)
 DNA_STRUCT_RENAME_ELEM(Mesh, edata, edge_data)
+DNA_STRUCT_RENAME_ELEM(Mesh, fdata, fdata_legacy)
 DNA_STRUCT_RENAME_ELEM(Mesh, ldata, loop_data)
 DNA_STRUCT_RENAME_ELEM(Mesh, pdata, face_data)
 DNA_STRUCT_RENAME_ELEM(Mesh, poly_offset_indices, face_offset_indices)

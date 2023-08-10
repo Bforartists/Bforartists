@@ -6,8 +6,8 @@
 
 #include "DNA_collection_types.h"
 
-#include "UI_interface.h"
-#include "UI_resources.h"
+#include "UI_interface.hh"
+#include "UI_resources.hh"
 
 #include "BKE_collection.h"
 #include "BKE_instances.hh"
@@ -139,7 +139,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     instances->add_instance(handle, transform);
   }
 
-  params.set_output("Instances", GeometrySet::create_with_instances(instances.release()));
+  params.set_output("Instances", GeometrySet::from_instances(instances.release()));
 }
 
 }  // namespace blender::nodes::node_geo_collection_info_cc
