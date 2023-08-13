@@ -17,6 +17,7 @@
 #include "DNA_texture_types.h"
 
 #include "BLI_listbase.h"
+#include "BLI_math_geom.h"
 
 #include "BLT_translation.h"
 
@@ -38,9 +39,9 @@
 #include "ED_render.hh"
 #include "ED_screen.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
 
 #include "WM_api.hh"
@@ -453,19 +454,19 @@ static int node_add_group_asset_invoke(bContext *C, wmOperator *op, const wmEven
   return OPERATOR_FINISHED;
 }
 
-static char *node_add_group_asset_get_description(bContext *C,
-                                                  wmOperatorType * /*op*/,
-                                                  PointerRNA * /*values*/)
+static std::string node_add_group_asset_get_description(bContext *C,
+                                                        wmOperatorType * /*op*/,
+                                                        PointerRNA * /*values*/)
 {
   const asset_system::AssetRepresentation *asset = CTX_wm_asset(C);
   if (!asset) {
-    return nullptr;
+    return "";
   }
   const AssetMetaData &asset_data = asset->get_metadata();
   if (!asset_data.description) {
-    return nullptr;
+    return "";
   }
-  return BLI_strdup(DATA_(asset_data.description));
+  return TIP_(asset_data.description);
 }
 
 void NODE_OT_add_group_asset(wmOperatorType *ot)

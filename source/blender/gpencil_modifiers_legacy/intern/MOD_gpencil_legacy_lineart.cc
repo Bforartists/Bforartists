@@ -35,7 +35,7 @@
 #include "UI_resources.hh"
 
 #include "BKE_modifier.h"
-#include "RNA_access.h"
+#include "RNA_access.hh"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
@@ -543,7 +543,7 @@ static void options_panel_draw(const bContext * /*C*/, Panel *panel)
 
   row = uiLayoutRow(layout, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_custom_camera", UI_ITEM_NONE, "Custom Camera", 0);
+  uiItemR(row, ptr, "use_custom_camera", UI_ITEM_NONE, IFACE_("Custom Camera"), ICON_NONE);
   uiLayout *subrow = uiLayoutRow(row, true);
   uiLayoutSetActive(subrow, RNA_boolean_get(ptr, "use_custom_camera"));
   uiLayoutSetPropSep(subrow, false);

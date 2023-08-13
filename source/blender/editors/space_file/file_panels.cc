@@ -20,8 +20,8 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 #include "RNA_prototypes.h"
 
 #include "ED_fileselect.hh"
@@ -56,7 +56,7 @@ static void file_panel_operator_header(const bContext *C, Panel *panel)
   SpaceFile *sfile = CTX_wm_space_file(C);
   wmOperator *op = sfile->op;
 
-  STRNCPY(panel->drawname, WM_operatortype_name(op->type, op->ptr));
+  STRNCPY(panel->drawname, WM_operatortype_name(op->type, op->ptr).c_str());
 }
 
 static void file_panel_operator(const bContext *C, Panel *panel)

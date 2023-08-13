@@ -895,7 +895,10 @@ static void screen_cursor_set(wmWindow *win, const int xy[2])
   ScrArea *area = nullptr;
 
   LISTBASE_FOREACH (ScrArea *, area_iter, &screen->areabase) {
-    if ((az = ED_area_actionzone_find_xy(area_iter, xy))) {
+    az = ED_area_actionzone_find_xy(area_iter, xy);
+    /* Scrollers use default cursor and their zones extend outside of their
+     * areas. Ignore here so we can always detect screen edges - #110085. */
+    if (az && az->type != AZONE_REGION_SCROLL) {
       area = area_iter;
       break;
     }
@@ -976,7 +979,7 @@ void ED_screen_set_active_region(bContext *C, wmWindow *win, const int xy[2])
 
       LISTBASE_FOREACH (ARegion *, region, &area_iter->regionbase) {
         /* Call old area's deactivate if assigned. */
-        if (region == region_prev && area_iter->type->deactivate) {
+        if (region == region_prev && area_iter->type && area_iter->type->deactivate) {
           area_iter->type->deactivate(area_iter);
         }
 

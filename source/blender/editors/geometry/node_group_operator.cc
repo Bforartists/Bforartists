@@ -38,9 +38,9 @@
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "UI_interface.hh"
 #include "UI_resources.hh"
@@ -370,17 +370,18 @@ static int run_node_group_invoke(bContext *C, wmOperator *op, const wmEvent * /*
   return run_node_group_exec(C, op);
 }
 
-static char *run_node_group_get_description(bContext *C, wmOperatorType * /*ot*/, PointerRNA *ptr)
+static std::string run_node_group_get_description(bContext *C,
+                                                  wmOperatorType * /*ot*/,
+                                                  PointerRNA *ptr)
 {
   const asset_system::AssetRepresentation *asset = get_asset(*C, *ptr, nullptr);
   if (!asset) {
-    return nullptr;
+    return "";
   }
-  const char *description = asset->get_metadata().description;
-  if (!description) {
-    return nullptr;
+  if (!asset->get_metadata().description) {
+    return "";
   }
-  return BLI_strdup(description);
+  return asset->get_metadata().description;
 }
 
 static void add_attribute_search_or_value_buttons(uiLayout *layout,

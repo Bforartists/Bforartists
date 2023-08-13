@@ -13,9 +13,10 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_kdtree.h"
-#include "BLI_math.h"
+#include "BLI_math_matrix.h"
+#include "BLI_math_rotation.h"
+#include "BLI_math_vector.h"
 #include "BLI_rand.h"
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "DNA_defs.h"
@@ -23,8 +24,8 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "BKE_context.h"
 #include "BKE_layer.h"
@@ -180,23 +181,23 @@ static int mball_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *mball_ot_select_all_get_description(bContext * /*C*/,
-                                                 wmOperatorType * /*ot*/,
-                                                 PointerRNA *ptr)
+static std::string mball_ot_select_all_get_description(bContext * /*C*/,
+                                                       wmOperatorType * /*ot*/,
+                                                       PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all metaball elements");
+    return "Select all metaball elements";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all metaball elements");
+    return "Deselect all metaball elements";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 void MBALL_OT_select_all(wmOperatorType *ot)
@@ -689,14 +690,14 @@ static int hide_metaelems_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *mball_ot_hide_metaelems_get_description(bContext * /*C*/,
-                                                     wmOperatorType * /*ot*/,
-                                                     PointerRNA *ptr)
+static std::string mball_ot_hide_metaelems_get_description(bContext * /*C*/,
+                                                           wmOperatorType * /*ot*/,
+                                                           PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
-    return BLI_strdup("Hide unselected metaball element(s)");
+    return "Hide unselected metaball element(s)";
   }
-  return NULL;
+  return "";
 }
 
 void MBALL_OT_hide_metaelems(wmOperatorType *ot)

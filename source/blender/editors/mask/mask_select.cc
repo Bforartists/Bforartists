@@ -10,9 +10,7 @@
 
 #include "BLI_lasso_2d.h"
 #include "BLI_listbase.h"
-#include "BLI_math.h"
 #include "BLI_rect.h"
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "BKE_context.h"
@@ -30,8 +28,8 @@
 #include "ED_mask.hh" /* own include */
 #include "ED_select_utils.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "mask_intern.h" /* own include */
 
@@ -214,23 +212,23 @@ static int select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - description*/
-static char *wm_mask_select_all_get_description(bContext * /*C*/,
-                                                wmOperatorType * /*ot*/,
-                                                PointerRNA *ptr)
+static std::string wm_mask_select_all_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all curve points");
+    return "Select all curve points";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all curve points");
+    return "Deselect all curve points";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Invert selection of the selected curve points");
+    return "Invert selection of the selected curve points";
   }
-  return NULL;
+  return "";
 }
 
 void MASK_OT_select_all(wmOperatorType *ot)

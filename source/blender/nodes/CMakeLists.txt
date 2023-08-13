@@ -2,6 +2,43 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+set(DISCOVER_NODES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/intern/discover_nodes.py)
+
+# Creates a library with the given name that exposes one function which calls
+# the register functions of all nodes in the provided source files.
+function(add_node_discovery
+  lib_name
+  sources
+  output_file
+  output_function
+  )
+
+  set(extra_args "")
+
+  # See `add_definitions(-DUSE_MAKEFILE_WORKAROUND)` comment for `makesrna`.
+  if(CMAKE_GENERATOR MATCHES ".*Unix Makefiles")
+    set(extra_args "--use-makefile-workaround")
+  endif()
+
+  add_custom_command(
+    OUTPUT
+      ${output_file}
+    COMMAND
+      ${PYTHON_EXECUTABLE}
+        ${DISCOVER_NODES_PATH}
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${output_file}
+        ${output_function}
+        ${sources}
+        ${extra_args}
+    DEPENDS
+      ${SRC}
+      ${DISCOVER_NODES_PATH}
+  )
+  set_source_files_properties(${output_file} PROPERTIES GENERATED TRUE)
+  add_library(${lib_name} ${output_file})
+endfunction()
+
 add_subdirectory(composite)
 add_subdirectory(function)
 add_subdirectory(geometry)
@@ -49,6 +86,7 @@ set(SRC
   intern/node_geometry_exec.cc
   intern/node_multi_function.cc
   intern/node_register.cc
+  intern/node_rna_define.cc
   intern/node_socket.cc
   intern/node_socket_declarations.cc
   intern/node_util.cc

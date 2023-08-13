@@ -25,8 +25,8 @@
 
 #  include "MEM_guardedalloc.h"
 
-#  include "RNA_access.h"
-#  include "RNA_define.h"
+#  include "RNA_access.hh"
+#  include "RNA_define.hh"
 
 #  include "UI_interface.hh"
 #  include "UI_resources.hh"
@@ -288,9 +288,9 @@ void WM_OT_obj_export(wmOperatorType *ot)
   /* Object transform options. */
   prop = RNA_def_enum(
       ot->srna, "forward_axis", io_transform_axis, IO_AXIS_NEGATIVE_Z, "Forward Axis", "");
-  RNA_def_property_update_runtime(prop, (void *)io_ui_forward_axis_update);
+  RNA_def_property_update_runtime(prop, io_ui_forward_axis_update);
   prop = RNA_def_enum(ot->srna, "up_axis", io_transform_axis, IO_AXIS_Y, "Up Axis", "");
-  RNA_def_property_update_runtime(prop, (void *)io_ui_up_axis_update);
+  RNA_def_property_update_runtime(prop, io_ui_up_axis_update);
   RNA_def_float(
       ot->srna,
       "global_scale",
@@ -521,9 +521,9 @@ void WM_OT_obj_import(wmOperatorType *ot)
       1000.0f);
   prop = RNA_def_enum(
       ot->srna, "forward_axis", io_transform_axis, IO_AXIS_NEGATIVE_Z, "Forward Axis", "");
-  RNA_def_property_update_runtime(prop, (void *)io_ui_forward_axis_update);
+  RNA_def_property_update_runtime(prop, io_ui_forward_axis_update);
   prop = RNA_def_enum(ot->srna, "up_axis", io_transform_axis, IO_AXIS_Y, "Up Axis", "");
-  RNA_def_property_update_runtime(prop, (void *)io_ui_up_axis_update);
+  RNA_def_property_update_runtime(prop, io_ui_up_axis_update);
   RNA_def_boolean(ot->srna,
                   "use_split_objects",
                   true,

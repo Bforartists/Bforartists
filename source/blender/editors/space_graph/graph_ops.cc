@@ -26,15 +26,13 @@
 
 #include "graph_intern.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "DEG_depsgraph.h"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* ************************** view-based operators **********************************/
 /* XXX should these really be here? */
@@ -315,14 +313,14 @@ static int graphview_curves_hide_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *graph_ot_hide_get_description(bContext *,
-                                           wmOperatorType *,
-                                           PointerRNA *ptr)
+static std::string graph_ot_hide_get_description(bContext * /*C*/,
+                                                 wmOperatorType * /*ot*/,
+                                                 PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
-    return BLI_strdup("Hide unselected curves from Graph Editor view");
+    return "Hide unselected curves from Graph Editor view";
   }
-  return nullptr;
+  return "";
 }
 
 static void GRAPH_OT_hide(wmOperatorType *ot)
@@ -483,6 +481,8 @@ void graphedit_operatortypes()
   WM_operatortype_append(GRAPH_OT_blend_to_neighbor);
   WM_operatortype_append(GRAPH_OT_breakdown);
   WM_operatortype_append(GRAPH_OT_ease);
+  WM_operatortype_append(GRAPH_OT_blend_offset);
+  WM_operatortype_append(GRAPH_OT_blend_to_ease);
   WM_operatortype_append(GRAPH_OT_blend_to_default);
   WM_operatortype_append(GRAPH_OT_gaussian_smooth);
   WM_operatortype_append(GRAPH_OT_butterworth_smooth);

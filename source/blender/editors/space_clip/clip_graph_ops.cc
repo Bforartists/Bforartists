@@ -8,7 +8,8 @@
 
 #include "DNA_scene_types.h"
 
-#include "BLI_math.h"
+#include "BLI_math_geom.h"
+#include "BLI_math_vector.h"
 #include "BLI_rect.h"
 #include "BLI_utildefines.h"
 
@@ -24,14 +25,12 @@
 #include "ED_screen.hh"
 #include "ED_select_utils.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "UI_view2d.hh"
 
 #include "clip_intern.h" /* own include */
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /******************** common graph-editing utilities ********************/
 
@@ -493,23 +492,23 @@ static int graph_select_all_markers_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *clip_ot_graph_select_all_markers_get_description(bContext * /*C*/,
-                                                              wmOperatorType * /*ot*/,
-                                                              PointerRNA *ptr)
+static std::string clip_ot_graph_select_all_markers_get_description(bContext * /*C*/,
+                                                                    wmOperatorType * /*ot*/,
+                                                                    PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all markers");
+    return "Select all markers";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselects all markers");
+    return "Deselects all markers";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current marker selection");
+    return "Inverts the current marker selection";
   }
-  return NULL;
+  return "";
 }
 
 void CLIP_OT_graph_select_all_markers(wmOperatorType *ot)

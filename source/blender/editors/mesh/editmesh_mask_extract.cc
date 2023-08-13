@@ -10,9 +10,6 @@
 #include "DNA_modifier_types.h"
 #include "DNA_object_types.h"
 
-#include "BLI_math.h"
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
-
 #include "BLT_translation.h"
 
 #include "BKE_context.h"
@@ -26,11 +23,13 @@
 #include "BKE_screen.h"
 #include "BKE_shrinkwrap.h"
 
+#include "BLI_math_vector.h"
+
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -542,7 +541,7 @@ static int paint_mask_slice_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - tool name*/
-static const char *wm_paint_mask_slide_get_name(wmOperatorType *ot, PointerRNA *ptr)
+static std::string wm_paint_mask_slide_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   const bool fill_holes = RNA_boolean_get(ptr, "fill_holes");
   const bool new_object = RNA_boolean_get(ptr, "new_object");
@@ -559,30 +558,30 @@ static const char *wm_paint_mask_slide_get_name(wmOperatorType *ot, PointerRNA *
   else if (new_object) {
     return CTX_IFACE_(ot->translation_context, "Mask Slice to New Object");
   }
-  return NULL;
+  return "";
 }
 
 /*bfa - descriptions*/
-static char *wm_paint_mask_slide_get_description(bContext * /*C*/,
-                                                 wmOperatorType * /*ot*/,
-                                                 PointerRNA *ptr)
+static std::string wm_paint_mask_slide_get_description(bContext * /*C*/,
+                                                       wmOperatorType * /*ot*/,
+                                                       PointerRNA *ptr)
 {
   const bool fill_holes = RNA_boolean_get(ptr, "fill_holes");
   const bool new_object = RNA_boolean_get(ptr, "new_object");
 
   /*Mask Slice*/
   if (!fill_holes && !new_object) {
-    return BLI_strdup("Slices the paint mask from the mesh");
+    return "Slices the paint mask from the mesh";
   }
   /*Mask Slice and Fill Holes*/
   else if (fill_holes && !new_object) {
-    return BLI_strdup("Slices the paint mask from the mesh and fills existing holes");
+    return "Slices the paint mask from the mesh and fills existing holes";
   }
   /*Mask Slice to New Object*/
   else if (new_object) {
-    return BLI_strdup("Slices the paint mask from the mesh and separates it into a new object");
+    return "Slices the paint mask from the mesh and separates it into a new object";
   }
-  return NULL;
+  return "";
 }
 
 void MESH_OT_paint_mask_slice(wmOperatorType *ot)
