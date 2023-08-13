@@ -13,7 +13,8 @@
 
 #include "BLI_lasso_2d.h"
 #include "BLI_listbase.h"
-#include "BLI_math.h"
+#include "BLI_math_geom.h"
+#include "BLI_math_vector.h"
 #include "BLI_rect.h"
 #include "BLI_utildefines.h"
 
@@ -28,8 +29,8 @@
 #include "ED_screen.hh"
 #include "ED_select_utils.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "UI_view2d.hh"
 
@@ -37,10 +38,6 @@
 
 #include "clip_intern.h"         /* own include */
 #include "tracking_ops_intern.h" /* own include */
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
-
-static float dist_to_crns(const float co[2], const float pos[2], const float crns[4][2]);
 
 /* -------------------------------------------------------------------- */
 /** \name Point track marker picking.
@@ -1134,23 +1131,23 @@ static int select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *clip_ot_select_all_get_description(bContext * /*C*/,
-                                                wmOperatorType * /*ot*/,
-                                                PointerRNA *ptr)
+static std::string clip_ot_select_all_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all tracking markers");
+    return "Select all tracking markers";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all tracking markers");
+    return "Deselect all tracking markers";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 void CLIP_OT_select_all(wmOperatorType *ot)

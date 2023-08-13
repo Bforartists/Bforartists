@@ -8,10 +8,14 @@
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 
+#include "NOD_rna_define.hh"
+
 #include "UI_interface.hh"
 #include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
+
+#include "RNA_enum_types.hh"
 
 namespace blender::nodes::node_geo_mesh_primitive_circle_cc {
 
@@ -198,20 +202,32 @@ static void node_geo_exec(GeoNodeExecParams params)
   params.set_output("Mesh", GeometrySet::from_mesh(mesh));
 }
 
-}  // namespace blender::nodes::node_geo_mesh_primitive_circle_cc
-
-void register_node_type_geo_mesh_primitive_circle()
+static void node_rna(StructRNA *srna)
 {
-  namespace file_ns = blender::nodes::node_geo_mesh_primitive_circle_cc;
+  RNA_def_node_enum(srna,
+                    "fill_type",
+                    "Fill Type",
+                    "",
+                    rna_node_geometry_mesh_circle_fill_type_items,
+                    NOD_storage_enum_accessors(fill_type),
+                    GEO_NODE_MESH_CIRCLE_FILL_NONE);
+}
 
+static void node_register()
+{
   static bNodeType ntype;
 
   geo_node_type_base(&ntype, GEO_NODE_MESH_PRIMITIVE_CIRCLE, "Mesh Circle", NODE_CLASS_GEOMETRY);
-  ntype.initfunc = file_ns::node_init;
+  ntype.initfunc = node_init;
   node_type_storage(
       &ntype, "NodeGeometryMeshCircle", node_free_standard_storage, node_copy_standard_storage);
-  ntype.geometry_node_execute = file_ns::node_geo_exec;
-  ntype.draw_buttons = file_ns::node_layout;
-  ntype.declare = file_ns::node_declare;
+  ntype.geometry_node_execute = node_geo_exec;
+  ntype.draw_buttons = node_layout;
+  ntype.declare = node_declare;
   nodeRegisterType(&ntype);
+
+  node_rna(ntype.rna_ext.srna);
 }
+NOD_REGISTER_NODE(node_register)
+
+}  // namespace blender::nodes::node_geo_mesh_primitive_circle_cc

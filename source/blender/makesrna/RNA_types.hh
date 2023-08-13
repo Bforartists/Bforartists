@@ -13,10 +13,6 @@
 #include "../blenlib/BLI_sys_types.h"
 #include "../blenlib/BLI_utildefines.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 struct BlenderRNA;
 struct FunctionRNA;
 struct ID;
@@ -350,7 +346,7 @@ typedef enum PropertyOverrideFlag {
   /**
    * Only use indices to compare items in the property, never names (collections only).
    *
-   * Useful when nameprop of the items is generated from other data
+   * Useful when #StructRNA::nameproperty of the items is generated from other data
    * (e.g. name of material slots is actually name of assigned material).
    */
   PROPOVERRIDE_NO_PROP_NAME = (1 << 11),
@@ -800,9 +796,5 @@ typedef struct PrimitiveFloatRNA {
 typedef struct PrimitiveBooleanRNA {
   bool value;
 } PrimitiveBooleanRNA;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* __RNA_TYPES_H__ */

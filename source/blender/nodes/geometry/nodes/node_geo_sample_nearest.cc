@@ -10,8 +10,12 @@
 #include "BKE_mesh.hh"
 #include "BKE_mesh_runtime.hh"
 
+#include "NOD_rna_define.hh"
+
 #include "UI_interface.hh"
 #include "UI_resources.hh"
+
+#include "RNA_enum_types.hh"
 
 #include "node_geometry_util.hh"
 
@@ -318,18 +322,29 @@ static void node_geo_exec(GeoNodeExecParams params)
   params.set_output<Field<int>>("Index", Field<int>(std::move(op)));
 }
 
-}  // namespace blender::nodes::node_geo_sample_nearest_cc
-
-void register_node_type_geo_sample_nearest()
+static void node_rna(StructRNA *srna)
 {
-  namespace file_ns = blender::nodes::node_geo_sample_nearest_cc;
+  RNA_def_node_enum(srna,
+                    "domain",
+                    "Domain", "",
+                    rna_enum_attribute_domain_only_mesh_items,
+                    NOD_inline_enum_accessors(custom2),
+                    ATTR_DOMAIN_POINT);
+}
 
+static void node_register()
+{
   static bNodeType ntype;
 
   geo_node_type_base(&ntype, GEO_NODE_SAMPLE_NEAREST, "Sample Nearest", NODE_CLASS_GEOMETRY);
-  ntype.initfunc = file_ns::node_init;
-  ntype.declare = file_ns::node_declare;
-  ntype.geometry_node_execute = file_ns::node_geo_exec;
-  ntype.draw_buttons = file_ns::node_layout;
+  ntype.initfunc = node_init;
+  ntype.declare = node_declare;
+  ntype.geometry_node_execute = node_geo_exec;
+  ntype.draw_buttons = node_layout;
   nodeRegisterType(&ntype);
+
+  node_rna(ntype.rna_ext.srna);
 }
+NOD_REGISTER_NODE(node_register)
+
+}  // namespace blender::nodes::node_geo_sample_nearest_cc

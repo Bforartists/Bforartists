@@ -18,7 +18,9 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_ghash.h"
-#include "BLI_math.h"
+#include "BLI_math_matrix.h"
+#include "BLI_math_rotation.h"
+#include "BLI_math_vector.h"
 
 #include "BKE_action.h"
 #include "BKE_armature.h"
@@ -30,8 +32,8 @@
 #include "BKE_object.h"
 #include "BKE_report.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -46,8 +48,6 @@
 #include "DEG_depsgraph.h"
 
 #include "armature_intern.h"
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* -------------------------------------------------------------------- */
 /** \name Object Tools Public API
@@ -1524,14 +1524,14 @@ static int armature_hide_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *armature_ot_hide_get_description(bContext * /*C*/,
-                                              wmOperatorType * /*ot*/,
-                                              PointerRNA *ptr)
+static std::string armature_ot_hide_get_description(bContext * /*C*/,
+                                                    wmOperatorType * /*ot*/,
+                                                    PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
-    return BLI_strdup("Hide unselected bones in Edit Mode");
+    return "Hide unselected bones in Edit Mode";
   }
-  return NULL;
+  return "";
 }
 
 void ARMATURE_OT_hide(wmOperatorType *ot)

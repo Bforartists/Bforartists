@@ -15,7 +15,7 @@
 
 #include <Python.h>
 
-#include "RNA_types.h"
+#include "RNA_types.hh"
 
 #include "BLI_listbase.h"
 #include "BLI_utildefines.h"
@@ -26,9 +26,9 @@
 
 #include "BKE_idprop.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h" /* for defining our own rna */
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh" /* for defining our own rna */
+#include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
 
 #include "MEM_guardedalloc.h"
@@ -2267,10 +2267,8 @@ static void bpy_prop_callback_assign_update(PropertyRNA *prop, PyObject *update_
   if (update_fn && update_fn != Py_None) {
     BPyPropStore *prop_store = bpy_prop_py_data_ensure(prop);
 
-    RNA_def_property_update_runtime(prop, reinterpret_cast<const void *>(bpy_prop_update_fn));
+    RNA_def_property_update_runtime_with_context_and_property(prop, bpy_prop_update_fn);
     ASSIGN_PYOBJECT_INCREF(prop_store->py_data.update_fn, update_fn);
-
-    RNA_def_property_flag(prop, PROP_CONTEXT_PROPERTY_UPDATE);
   }
 }
 

@@ -11,7 +11,7 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "BLI_math.h"
+#include "BLI_math_vector.h"
 #include "BLI_utildefines.h"
 
 #include "BLI_string.h"
@@ -23,9 +23,9 @@
 #include "BKE_report.h"
 #include "BKE_scene.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "WM_api.hh"
 #include "WM_message.hh"
@@ -1124,7 +1124,7 @@ static void TRANSFORM_OT_tosphere(wmOperatorType *ot)
 }
 
 /*bfa - tool name*/
-static const char *transform_ot_mirror_get_name(wmOperatorType *ot, PointerRNA *ptr)
+static std::string transform_ot_mirror_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "orient_type")) {
     return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Local");
@@ -1132,22 +1132,21 @@ static const char *transform_ot_mirror_get_name(wmOperatorType *ot, PointerRNA *
   else {
     return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Global");
   }
-
-  return NULL;
+  return "";
 }
 
 /*bfa - descriptions*/
-static char *transform_ot_mirror_get_description(bContext *,
-                                                 wmOperatorType *,
-                                                 PointerRNA *ptr)
+static std::string transform_ot_mirror_get_description(bContext * /*C*/,
+                                                       wmOperatorType * /*ot*/,
+                                                       PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "orient_type")) {
-    return BLI_strdup("Mirror selected items around the selected axis in local space");
+    return "Mirror selected items around the selected axis in local space";
   }
   else {
-    return BLI_strdup("Mirror selected items around the selected axis in global space");
+    return "Mirror selected items around the selected axis in global space";
   }
-  return NULL;
+  return "";
 }
 
 static void TRANSFORM_OT_mirror(wmOperatorType *ot)

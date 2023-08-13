@@ -1,9 +1,9 @@
+# SPDX-FileCopyrightText: 2011-2022 Blender Foundation
+#
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2011-2022 Blender Foundation
-
-# <pep8 compliant>
 
 import bpy
+
 
 class StormHydraRenderEngine(bpy.types.HydraRenderEngine):
     bl_idname = 'HYDRA_STORM'

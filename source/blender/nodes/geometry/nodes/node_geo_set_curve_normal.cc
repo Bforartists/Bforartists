@@ -9,7 +9,7 @@
 
 #include "NOD_rna_define.hh"
 
-#include "RNA_enum_types.h"
+#include "RNA_enum_types.hh"
 
 #include "node_geometry_util.hh"
 
@@ -64,30 +64,27 @@ static void node_geo_exec(GeoNodeExecParams params)
 
 static void node_rna(StructRNA *srna)
 {
-  PropertyRNA *prop;
-
-  prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_node(prop, custom1);
-  RNA_def_property_enum_items(prop, rna_enum_curve_normal_modes);
-  RNA_def_property_ui_text(prop, "Mode", "Mode for curve normal evaluation");
-  RNA_def_property_update_runtime(prop, (void *)rna_Node_update);
-  RNA_def_property_update_notifier(prop, NC_NODE | NA_EDITED);
+  RNA_def_node_enum(srna,
+                    "mode",
+                    "Mode",
+                    "Mode for curve normal evaluation",
+                    rna_enum_curve_normal_modes,
+                    NOD_inline_enum_accessors(custom1));
 }
 
-}  // namespace blender::nodes::node_geo_set_curve_normal_cc
-
-void register_node_type_geo_set_curve_normal()
+static void node_register()
 {
-  namespace file_ns = blender::nodes::node_geo_set_curve_normal_cc;
-
   static bNodeType ntype;
   geo_node_type_base(&ntype, GEO_NODE_SET_CURVE_NORMAL, "Set Curve Normal", NODE_CLASS_GEOMETRY);
-  ntype.declare = file_ns::node_declare;
-  ntype.geometry_node_execute = file_ns::node_geo_exec;
-  ntype.initfunc = file_ns::node_init;
-  ntype.draw_buttons = file_ns::node_layout;
+  ntype.declare = node_declare;
+  ntype.geometry_node_execute = node_geo_exec;
+  ntype.initfunc = node_init;
+  ntype.draw_buttons = node_layout;
 
   nodeRegisterType(&ntype);
 
-  file_ns::node_rna(ntype.rna_ext.srna);
+  node_rna(ntype.rna_ext.srna);
 }
+NOD_REGISTER_NODE(node_register)
+
+}  // namespace blender::nodes::node_geo_set_curve_normal_cc

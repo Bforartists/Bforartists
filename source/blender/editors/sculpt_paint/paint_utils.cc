@@ -18,7 +18,6 @@
 #include "DNA_scene_types.h"
 
 #include "BLI_listbase.h"
-#include "BLI_math.h"
 #include "BLI_math_color.h"
 #include "BLI_rect.h"
 #include "BLI_utildefines.h"
@@ -41,8 +40,8 @@
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 #include "RNA_prototypes.h"
 
 #include "GPU_framebuffer.h"
@@ -70,7 +69,6 @@
 
 #include "paint_intern.hh"
 
-#include "BLI_string.h"      /*bfa - needed for BLI_strdup */
 #include "ED_select_utils.hh" /*bfa - needed to retreive SEL_SELECT */
 
 bool paint_convert_bb_to_rect(rcti *rect,
@@ -697,23 +695,23 @@ static int face_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *paint_ot_face_select_all_get_description(bContext * /*C*/,
-                                                      wmOperatorType * /*ot*/,
-                                                      PointerRNA *ptr)
+static std::string paint_ot_face_select_all_get_description(bContext * /*C*/,
+                                                            wmOperatorType * /*ot*/,
+                                                            PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all faces");
+    return "Select all faces";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all faces");
+    return "Deselect all faces";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 void PAINT_OT_face_select_all(wmOperatorType *ot)
@@ -807,23 +805,25 @@ static int paintface_select_loop_invoke(bContext *C, wmOperator *op, const wmEve
 }
 
 /*bfa - descriptions*/
-static char *PAINT_OT_face_select_loop_get_descriptions(struct bContext * /*C*/,
-                                                struct wmOperatorType * /*op*/,
-                                                struct PointerRNA *ptr)
+static std::string PAINT_OT_face_select_loop_get_descriptions(struct bContext * /*C*/,
+                                                              struct wmOperatorType * /*op*/,
+                                                              struct PointerRNA *ptr)
 {
   const bool select = RNA_boolean_get(ptr, "select");
   const bool extend = RNA_boolean_get(ptr, "extend");
 
   if (select && !extend) {
-    return BLI_strdup("Select face loop under the cursor\nMouse Operator, please use the mouse");
+    return "Select face loop under the cursor\nMouse Operator, please use the mouse";
   }
   else if (select && extend) {
-    return BLI_strdup("Select face loop under the cursor and add it to the current selection\nMouse Operator, please use the mouse");
+    return "Select face loop under the cursor and add it to the current selection\nMouse "
+           "Operator, please use the mouse";
   }
   else if (!select && extend) {
-    return BLI_strdup("Remove the face loop under the cursor from the selection\nMouse Operator, please use the mouse");
+    return "Remove the face loop under the cursor from the selection\nMouse Operator, please use "
+           "the mouse";
   }
-  return NULL;
+  return "";
 }
 
 void PAINT_OT_face_select_loop(wmOperatorType *ot)
@@ -852,23 +852,23 @@ static int vert_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *paint_ot_vert_select_all_get_description(bContext * /*C*/,
-                                                      wmOperatorType * /*ot*/,
-                                                      PointerRNA *ptr)
+static std::string paint_ot_vert_select_all_get_description(bContext * /*C*/,
+                                                            wmOperatorType * /*ot*/,
+                                                            PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all vertices");
+    return "Select all vertices";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all vertices");
+    return "Deselect all vertices";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 void PAINT_OT_vert_select_all(wmOperatorType *ot)

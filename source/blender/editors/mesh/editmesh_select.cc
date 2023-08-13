@@ -12,8 +12,11 @@
 #include "BLI_heap.h"
 #include "BLI_linklist.h"
 #include "BLI_listbase.h"
-#include "BLI_math.h"
 #include "BLI_math_bits.h"
+#include "BLI_math_geom.h"
+#include "BLI_math_matrix.h"
+#include "BLI_math_rotation.h"
+#include "BLI_math_vector.h"
 #include "BLI_rand.h"
 #include "BLI_string.h"
 #include "BLI_utildefines_stack.h"
@@ -31,9 +34,9 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "ED_mesh.hh"
 #include "ED_object.hh"
@@ -1392,9 +1395,9 @@ static int edbm_select_mode_invoke(bContext *C, wmOperator *op, const wmEvent *e
   return edbm_select_mode_exec(C, op);
 }
 
-static char *edbm_select_mode_get_description(bContext * /*C*/,
-                                              wmOperatorType * /*op*/,
-                                              PointerRNA *values)
+static std::string edbm_select_mode_get_description(bContext * /*C*/,
+                                                    wmOperatorType * /*op*/,
+                                                    PointerRNA *values)
 {
   const int type = RNA_enum_get(values, "type");
 
@@ -1409,19 +1412,18 @@ static char *edbm_select_mode_get_description(bContext * /*C*/,
   {
     switch (type) {
       case SCE_SELECT_VERTEX:
-        return BLI_strdup(TIP_(
-            "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"));
+        return TIP_(
+            "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection");
       case SCE_SELECT_EDGE:
-        return BLI_strdup(
-            TIP_("Edge select - Shift-Click for multiple modes, "
-                 "Ctrl-Click expands/contracts selection depending on the current mode"));
+        return TIP_(
+            "Edge select - Shift-Click for multiple modes, "
+            "Ctrl-Click expands/contracts selection depending on the current mode");
       case SCE_SELECT_FACE:
-        return BLI_strdup(
-            TIP_("Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"));
+        return TIP_("Face select - Shift-Click for multiple modes, Ctrl-Click expands selection");
     }
   }
 
-  return nullptr;
+  return "";
 }
 
 void MESH_OT_select_mode(wmOperatorType *ot)
@@ -1975,23 +1977,23 @@ static int edbm_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *mesh_ot_select_all_get_description(struct bContext * /*C*/,
-                                                struct wmOperatorType * /*op*/,
-                                                struct PointerRNA *values)
+static std::string mesh_ot_select_all_get_description(struct bContext * /*C*/,
+                                                      struct wmOperatorType * /*op*/,
+                                                      struct PointerRNA *values)
 {
   /*Select*/
   if (RNA_enum_get(values, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all vertices, edges or faces");
+    return "Select all vertices, edges or faces";
   }
   /*Deselect*/
   else if (RNA_enum_get(values, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all vertices, edges or faces");
+    return "Deselect all vertices, edges or faces";
   }
   /*Invert*/
   else if (RNA_enum_get(values, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 void MESH_OT_select_all(wmOperatorType *ot)

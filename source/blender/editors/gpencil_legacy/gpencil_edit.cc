@@ -18,7 +18,8 @@
 #include "BLI_blenlib.h"
 #include "BLI_ghash.h"
 #include "BLI_lasso_2d.h"
-#include "BLI_math.h"
+#include "BLI_math_matrix.h"
+#include "BLI_math_vector.h"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
@@ -60,9 +61,9 @@
 #include "WM_toolsystem.h"
 #include "WM_types.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "UI_view2d.hh"
 
@@ -2042,7 +2043,7 @@ static int gpencil_blank_frame_add_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - tool name*/
-static const char *GPENCIL_OT_blank_frame_add_name(wmOperatorType *ot, PointerRNA *ptr)
+static std::string GPENCIL_OT_blank_frame_add_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "all_layers")) {
     return CTX_IFACE_(ot->translation_context, "Insert Blank Frame (All Layers)");
@@ -2053,16 +2054,15 @@ static const char *GPENCIL_OT_blank_frame_add_name(wmOperatorType *ot, PointerRN
 }
 
 /*bfa - descriptions*/
-static char *GPENCIL_OT_blank_frame_add_get_description(bContext * /*C*/,
-                                                        wmOperatorType * /*ot*/,
-                                                        PointerRNA *ptr)
+static std::string GPENCIL_OT_blank_frame_add_get_description(bContext * /*C*/,
+                                                              wmOperatorType * /*ot*/,
+                                                              PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "all_layers")) {
-    return BLI_strdup(
-        "Insert a blank frame on all layers "
-        "(all subsequently existing frames, if any, are shifted right by one frame)");
+    return "Insert a blank frame on all layers "
+           "(all subsequently existing frames, if any, are shifted right by one frame)";
   }
-  return NULL;
+  return "";
 }
 
 void GPENCIL_OT_blank_frame_add(wmOperatorType *ot)
