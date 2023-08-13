@@ -15,11 +15,7 @@
 #include <limits.h>
 
 #include "DNA_listBase.h"
-#include "RNA_types.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "RNA_types.hh"
 
 #ifdef UNIT_TEST
 #  define RNA_MAX_ARRAY_LENGTH 64
@@ -453,7 +449,14 @@ void RNA_def_property_override_funcs(PropertyRNA *prop,
                                      const char *store,
                                      const char *apply);
 
-void RNA_def_property_update_runtime(PropertyRNA *prop, const void *func);
+typedef void (*RNAPropertyUpdateFunc)(struct Main *, struct Scene *, struct PointerRNA *);
+typedef void (*RNAPropertyUpdateFuncWithContextAndProperty)(struct bContext *C,
+                                                            struct PointerRNA *ptr,
+                                                            struct PropertyRNA *prop);
+
+void RNA_def_property_update_runtime(PropertyRNA *prop, RNAPropertyUpdateFunc func);
+void RNA_def_property_update_runtime_with_context_and_property(
+    PropertyRNA *prop, RNAPropertyUpdateFuncWithContextAndProperty func);
 void RNA_def_property_update_notifier(PropertyRNA *prop, int noteflag);
 void RNA_def_property_poll_runtime(PropertyRNA *prop, const void *func);
 
@@ -603,7 +606,3 @@ extern const float rna_default_scale_3d[3];
 
 /** Maximum size for dynamic defined type descriptors, this value is arbitrary. */
 #define RNA_DYN_DESCR_MAX 1024
-
-#ifdef __cplusplus
-}
-#endif

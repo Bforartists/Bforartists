@@ -55,10 +55,10 @@
 #include "UI_interface.hh"
 #include "UI_view2d.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
-#include "RNA_path.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
+#include "RNA_path.hh"
 
 #include "GPU_material.h"
 
@@ -1231,23 +1231,23 @@ static int outliner_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *outliner_ot_select_all_get_description(struct bContext * /*C*/,
-                                                    struct wmOperatorType * /*op*/,
-                                                    struct PointerRNA *values)
+static std::string outliner_ot_select_all_get_description(struct bContext * /*C*/,
+                                                          struct wmOperatorType * /*op*/,
+                                                          struct PointerRNA *values)
 {
   /*Select*/
   if (RNA_enum_get(values, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all");
+    return "Select all";
   }
   /*Deselect*/
   else if (RNA_enum_get(values, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect everything");
+    return "Deselect everything";
   }
   /*Invert*/
   else if (RNA_enum_get(values, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 void OUTLINER_OT_select_all(wmOperatorType *ot)
@@ -1511,14 +1511,14 @@ static int outliner_one_level_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *outliner_ot_show_one_level_get_description(struct bContext * /*C*/,
-                                                        struct wmOperatorType * /*op*/,
-                                                        struct PointerRNA *values)
+static std::string outliner_ot_show_one_level_get_description(struct bContext * /*C*/,
+                                                              struct wmOperatorType * /*op*/,
+                                                              struct PointerRNA *values)
 {
   if (RNA_boolean_get(values, "open")) {
-    return BLI_strdup("Expand all entries by one level");
+    return "Expand all entries by one level";
   }
-  return NULL;
+  return "";
 }
 
 void OUTLINER_OT_show_one_level(wmOperatorType *ot)
@@ -2257,9 +2257,9 @@ static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *wm_orphans_purge_get_description(struct bContext * /*C*/,
-                                              struct wmOperatorType * /*op*/,
-                                              struct PointerRNA *values)
+static std::string wm_orphans_purge_get_description(struct bContext * /*C*/,
+                                                    struct wmOperatorType * /*op*/,
+                                                    struct PointerRNA *values)
 {
   const bool linked = RNA_boolean_get(values, "do_linked_ids");
   const bool local = RNA_boolean_get(values, "do_local_ids");
@@ -2267,34 +2267,33 @@ static char *wm_orphans_purge_get_description(struct bContext * /*C*/,
 
   /*Unused data*/
   if (linked && local && !recursive) {
-    return BLI_strdup("Remove unused data from the scene");
+    return "Remove unused data from the scene";
   }
   /*Recursive Unused data*/
   else if (linked && local && recursive) {
-    return BLI_strdup(
-        "Recursively remove unused data from the scene\nChild objects will be removed too");
+    return "Recursively remove unused data from the scene\nChild objects will be removed too";
   }
   /*Unused Linked Data*/
   else if (linked && !local && !recursive) {
-    return BLI_strdup("Remove unused linked Data from the scene\nLocal data will stay intact");
+    return "Remove unused linked Data from the scene\nLocal data will stay intact";
   }
   /*Recursive Unused Linked Data*/
   else if (linked && !local && recursive) {
-    return BLI_strdup(
-        "Recursively remove unused linked Data from the scene\nLocal data will stay intact\nChild "
-        "objects will be removed too");
+    return "Recursively remove unused linked Data from the scene\nLocal data will stay "
+           "intact\nChild "
+           "objects will be removed too";
   }
   /*Unused Local Data*/
   else if (!linked && local && !recursive) {
-    return BLI_strdup("Remove unused local Data from the scene\nLinked data will stay intact");
+    return "Remove unused local Data from the scene\nLinked data will stay intact";
   }
   /*Recursive Unused Local Data*/
   else if (!linked && local && recursive) {
-    return BLI_strdup(
-        "Recursively remove unused local data from the scene\nLinked data will stay intact\nChild "
-        "objects will be removed too");
+    return "Recursively remove unused local data from the scene\nLinked data will stay "
+           "intact\nChild "
+           "objects will be removed too";
   }
-  return NULL;
+  return "";
 }
 
 void OUTLINER_OT_orphans_purge(wmOperatorType *ot)

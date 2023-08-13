@@ -20,7 +20,6 @@
 #include "BLI_array.hh"
 #include "BLI_dynstr.h"
 #include "BLI_listbase.h"
-#include "BLI_math.h"
 #include "BLI_rect.h"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
@@ -34,7 +33,7 @@
 #include "BKE_idprop.h"
 #include "BKE_screen.h"
 
-#include "RNA_access.h"
+#include "RNA_access.hh"
 #include "RNA_prototypes.h"
 
 #include "UI_interface.hh"
@@ -1027,7 +1026,7 @@ static uiBut *ui_item_with_label(uiLayout *layout,
   if (name[0]) {
 #ifdef UI_PROP_DECORATE
     if (use_prop_sep) {
-      layout_prop_decorate = uiItemL_respect_property_split(layout, name, 0);
+      layout_prop_decorate = uiItemL_respect_property_split(layout, name, ICON_NONE);
     }
     else
 #endif
@@ -1220,9 +1219,11 @@ static uiBut *uiItemFullO_ptr_ex(uiLayout *layout,
   /* Take care to fill 'r_opptr' whatever happens. */
   uiBlock *block = layout->root->block;
 
+  std::string operator_name;
   if (!name) {
     if (ot && ot->srna && (flag & UI_ITEM_R_ICON_ONLY) == 0) {
-      name = WM_operatortype_name(ot, nullptr);
+      operator_name = WM_operatortype_name(ot, nullptr);
+      name = operator_name.c_str();
     }
     else {
       name = "";
@@ -3656,8 +3657,10 @@ void uiItemMenuEnumFullO_ptr(uiLayout *layout,
   /* Caller must check */
   BLI_assert(ot->srna != nullptr);
 
+  std::string operator_name;
   if (name == nullptr) {
-    name = WM_operatortype_name(ot, nullptr);
+    operator_name = WM_operatortype_name(ot, nullptr);
+    name = operator_name.c_str();
   }
 
   if (layout->root->type == UI_LAYOUT_MENU && !icon) {

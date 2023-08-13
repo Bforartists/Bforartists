@@ -35,7 +35,8 @@
 
 #include "BLI_ghash.h"
 #include "BLI_listbase.h"
-#include "BLI_math.h"
+#include "BLI_math_matrix.h"
+#include "BLI_math_rotation.h"
 #include "BLI_string.h"
 #include "BLI_string_utf8.h"
 #include "BLI_utildefines.h"
@@ -92,9 +93,9 @@
 #include "DEG_depsgraph_build.h"
 #include "DEG_depsgraph_query.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "UI_interface.hh"
 
@@ -416,7 +417,7 @@ void ED_object_add_generic_props(wmOperatorType *ot, bool do_editmode)
   /* NOTE: this property gets hidden for add-camera operator. */
   prop = RNA_def_enum(
       ot->srna, "align", align_options, ALIGN_WORLD, "Align", "The alignment of the new object");
-  RNA_def_property_update_runtime(prop, (void *)view_align_update);
+  RNA_def_property_update_runtime(prop, view_align_update);
 
   prop = RNA_def_float_vector_xyz(ot->srna,
                                   "location",
@@ -2469,14 +2470,14 @@ static int object_delete_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *object_ot_delete_get_description(struct bContext * /*C*/,
-                                              struct wmOperatorType * /*op*/,
-                                              struct PointerRNA *values)
+static std::string object_ot_delete_get_description(struct bContext * /*C*/,
+                                                    struct wmOperatorType * /*op*/,
+                                                    struct PointerRNA *values)
 {
   if (RNA_boolean_get(values, "use_global")) {
-    return BLI_strdup("Delete selected objects from all scenes");
+    return "Delete selected objects from all scenes";
   }
-  return NULL;
+  return "";
 }
 
 void OBJECT_OT_delete(wmOperatorType *ot)

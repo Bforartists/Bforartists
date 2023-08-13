@@ -1,7 +1,6 @@
+# SPDX-FileCopyrightText: 2011-2022 Blender Foundation
+#
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2011-2022 Blender Foundation
-
-# <pep8 compliant>
 
 import bpy
 
@@ -102,7 +101,6 @@ class STORM_HYDRA_RENDER_PT_volumes_render(Panel):
         col.prop(settings, "volume_max_texture_memory_per_field")
 
 
-
 #
 # Film settings
 #
@@ -127,6 +125,7 @@ class STORM_HYDRA_RENDER_PT_passes(Panel):
 
     def draw(self, context):
         pass
+
 
 class STORM_HYDRA_RENDER_PT_passes_data(Panel):
     bl_label = "Data"

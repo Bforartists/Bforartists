@@ -473,10 +473,12 @@ class GRAPH_MT_key_blending(Menu):
     def draw(self, _context):
         layout = self.layout
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("graph.breakdown", text = "Breakdown", icon='BREAKDOWNER_POSE')
-        layout.operator("graph.blend_to_neighbor", text = "Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
-        layout.operator("graph.blend_to_default", text = "Blend to Default Value", icon = 'BLEND_TO_DEFAULT')
+        layout.operator("graph.breakdown", text="Breakdown", icon='BREAKDOWNER_POSE')
+        layout.operator("graph.blend_to_neighbor", text="Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
+        layout.operator("graph.blend_to_default", text="Blend to Default Value", icon = 'BLEND_TO_DEFAULT')
         layout.operator("graph.ease", text="Ease", icon = 'IPO_EASE_IN_OUT')
+        layout.operator("graph.blend_offset", text="Blend Offset")
+        layout.operator("graph.blend_to_ease", text="Blend to Ease")
 
 
 class GRAPH_MT_key_smoothing(Menu):
