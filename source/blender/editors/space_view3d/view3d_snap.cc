@@ -12,7 +12,8 @@
 #include "DNA_object_types.h"
 
 #include "BLI_array.h"
-#include "BLI_math.h"
+#include "BLI_math_matrix.h"
+#include "BLI_math_vector.h"
 #include "BLI_utildefines.h"
 
 #include "BKE_action.h"
@@ -33,8 +34,8 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "ED_keyframing.hh"
 #include "ED_object.hh"
@@ -45,7 +46,6 @@
 
 #include "view3d_intern.h"
 
-#include "BLI_string.h"      /*bfa - needed for BLI_strdup */
 #include "BLT_translation.h" /*bfa - needed for CTX_IFACE_ */
 
 static bool snap_curs_to_sel_ex(bContext *C, const int pivot_point, float r_cursor[3]);
@@ -617,25 +617,24 @@ static int snap_selected_to_cursor_exec(bContext *C, wmOperator *op)
   return OPERATOR_CANCELLED;
 }
 /*bfa - tool name*/
-static const char *view3d_ot_snap_selected_to_cursor_get_name(wmOperatorType *ot, PointerRNA *ptr)
+static std::string view3d_ot_snap_selected_to_cursor_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "use_offset")) {
     return CTX_IFACE_(ot->translation_context, "Snap Selection to Cursor(Keep Offset)");
   }
-  return NULL;
+  return "";
 }
 
 /*bfa - descriptions*/
-static char *view3d_ot_snap_selected_to_cursor_get_description(bContext *,
-                                                               wmOperatorType *,
-                                                               PointerRNA *ptr)
+static std::string view3d_ot_snap_selected_to_cursor_get_description(bContext * /*C*/,
+                                                                     wmOperatorType * /*ot*/,
+                                                                     PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "use_offset")) {
-    return BLI_strdup(
-        "Snap selected item(s) to the 3D cursor\nBut keep the offset of the selected items to "
-        "each other");
+    return "Snap selected item(s) to the 3D cursor\nBut keep the offset of the selected items to "
+           "each other";
   }
-  return NULL;
+  return "";
 }
 
 void VIEW3D_OT_snap_selected_to_cursor(wmOperatorType *ot)

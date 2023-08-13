@@ -50,9 +50,9 @@
 #include "ED_select_utils.hh"
 #include "ED_viewer_path.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
 
 #include "WM_api.hh"
@@ -1132,9 +1132,7 @@ bool node_is_previewable(const SpaceNode &snode, const bNodeTree &ntree, const b
     return false;
   }
   if (ntree.type == NTREE_SHADER) {
-    return U.experimental.use_shader_node_previews &&
-           !(node.is_frame() || node.is_group_input() || node.is_group_output() ||
-             node.type == SH_NODE_OUTPUT_MATERIAL);
+    return U.experimental.use_shader_node_previews && !(node.is_frame());
   }
   return node.typeinfo->flag & NODE_PREVIEW;
 }

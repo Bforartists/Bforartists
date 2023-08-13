@@ -31,8 +31,8 @@
 
 #include "DEG_depsgraph.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -622,23 +622,23 @@ static int pose_de_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *pose_ot_select_all_get_description(bContext * /*C*/,
-                                                wmOperatorType * /*ot*/,
-                                                PointerRNA *ptr)
+static std::string pose_ot_select_all_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all bones");
+    return "Select all bones";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all bones");
+    return "Deselect all bones";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 void POSE_OT_select_all(wmOperatorType *ot)

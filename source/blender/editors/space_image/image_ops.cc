@@ -22,7 +22,6 @@
 #include "BLI_blenlib.h"
 #include "BLI_fileops.h"
 #include "BLI_ghash.h"
-#include "BLI_math.h"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
@@ -60,9 +59,9 @@
 
 #include "RE_pipeline.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
 
 #include "ED_image.hh"
@@ -838,14 +837,14 @@ static int image_view_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 /*bfa - descriptions*/
-static char *image_ot_view_all_get_description(bContext *,
-                                               wmOperatorType *,
-                                               PointerRNA *ptr)
+static std::string image_ot_view_all_get_description(bContext * /*C*/,
+                                                     wmOperatorType * /*ot*/,
+                                                     PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "fit_view")) {
-    return BLI_strdup("Fits the content area into the window");
+    return "Fits the content area into the window";
   }
-  return nullptr;
+  return "";
 }
 
 void IMAGE_OT_view_all(wmOperatorType *ot)
@@ -2068,14 +2067,14 @@ static bool image_save_as_poll(bContext *C)
 }
 
 /*bfa - descriptions*/
-static char *image_ot_save_as_get_description(bContext *,
-                                              wmOperatorType *,
-                                              PointerRNA *ptr)
+static std::string image_ot_save_as_get_description(bContext * /*C*/,
+                                                    wmOperatorType * /*ot*/,
+                                                    PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "copy")) {
-    return BLI_strdup("Saves a copy of the current Image");
+    return "Saves a copy of the current Image";
   }
-  return nullptr;
+  return "";
 }
 
 void IMAGE_OT_save_as(wmOperatorType *ot)

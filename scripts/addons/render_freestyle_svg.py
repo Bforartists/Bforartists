@@ -157,7 +157,9 @@ def create_path(scene):
         frame = "{:04d}".format(scene.frame_current)
     else:
         frame = "{:04d}-{:04d}".format(scene.frame_start, scene.frame_end)
-
+        
+    os.makedirs(dirname, exist_ok=True)
+    
     return os.path.join(dirname, basename + frame + ".svg")
 
 

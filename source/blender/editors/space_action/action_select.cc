@@ -16,7 +16,6 @@
 #include "BLI_blenlib.h"
 #include "BLI_dlrbTree.h"
 #include "BLI_lasso_2d.h"
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "DNA_anim_types.h"
@@ -25,8 +24,8 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "BKE_context.h"
 #include "BKE_fcurve.h"
@@ -372,23 +371,23 @@ static int actkeys_deselectall_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *action_ot_select_all_get_description(bContext * /*C*/,
-                                                  wmOperatorType * /*ot*/,
-                                                  PointerRNA *ptr)
+static std::string action_ot_select_all_get_description(bContext * /*C*/,
+                                                        wmOperatorType * /*ot*/,
+                                                        PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Toggle selection of all keyframes");
+    return "Toggle selection of all keyframes";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all keyframes");
+    return "Deselect all keyframes";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Invert selection of the selected keyframes");
+    return "Invert selection of the selected keyframes";
   }
-  return NULL;
+  return "";
 }
 
 void ACTION_OT_select_all(wmOperatorType *ot)
@@ -1647,15 +1646,14 @@ static int actkeys_select_leftright_invoke(bContext *C, wmOperator *op, const wm
 }
 
 /*bfa - descriptions*/
-static char *action_ot_select_leftright_get_description(bContext * /*C*/,
-                                                        wmOperatorType * /*ot*/,
-                                                        PointerRNA *ptr)
+static std::string action_ot_select_leftright_get_description(bContext * /*C*/,
+                                                              wmOperatorType * /*ot*/,
+                                                              PointerRNA *ptr)
 {
   if (RNA_enum_get(ptr, "mode") == ACTKEYS_LRSEL_LEFT) {
-
-    return BLI_strdup("Select keyframes to the left of the current frame");
+    return "Select keyframes to the left of the current frame";
   }
-  return NULL;
+  return "";
 }
 
 void ACTION_OT_select_leftright(wmOperatorType *ot)

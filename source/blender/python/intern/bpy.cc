@@ -24,10 +24,10 @@
 #include "BKE_bpath.h"
 #include "BKE_global.h" /* XXX, G_MAIN only */
 
-#include "RNA_access.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
-#include "RNA_types.h"
+#include "RNA_types.hh"
 
 #include "GPU_state.h"
 
@@ -221,27 +221,32 @@ static PyObject *bpy_user_resource(PyObject * /*self*/, PyObject *args, PyObject
       {0, nullptr},
   };
   PyC_StringEnum type = {type_items};
-
-  const char *subdir = nullptr;
-
-  const char *path;
+  PyC_UnicodeAsBytesAndSize_Data subdir_data = {nullptr};
 
   static const char *_keywords[] = {"type", "path", nullptr};
   static _PyArg_Parser _parser = {
       "O&" /* `type` */
       "|$" /* Optional keyword only arguments. */
-      "s"  /* `path` */
+      "O&" /* `path` */
       ":user_resource",
       _keywords,
       nullptr,
   };
-  if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &subdir)) {
+  if (!_PyArg_ParseTupleAndKeywordsFast(args,
+                                        kw,
+                                        &_parser,
+                                        PyC_ParseStringEnum,
+                                        &type,
+                                        PyC_ParseUnicodeAsBytesAndSize,
+                                        &subdir_data))
+  {
     return nullptr;
   }
 
   /* same logic as BKE_appdir_folder_id_create(),
    * but best leave it up to the script author to create */
-  path = BKE_appdir_folder_id_user_notest(type.value_found, subdir);
+  const char *path = BKE_appdir_folder_id_user_notest(type.value_found, subdir_data.value);
+  Py_XDECREF(subdir_data.value_coerce);
 
   return PyC_UnicodeFromBytes(path ? path : "");
 }
@@ -254,7 +259,7 @@ PyDoc_STRVAR(bpy_system_resource_doc,
              "   :arg type: string in ['DATAFILES', 'SCRIPTS', 'PYTHON'].\n"
              "   :type type: string\n"
              "   :arg path: Optional subdirectory.\n"
-             "   :type path: string\n");
+             "   :type path: string or bytes\n");
 static PyObject *bpy_system_resource(PyObject * /*self*/, PyObject *args, PyObject *kw)
 {
   const PyC_StringEnumItems type_items[] = {
@@ -265,24 +270,30 @@ static PyObject *bpy_system_resource(PyObject * /*self*/, PyObject *args, PyObje
   };
   PyC_StringEnum type = {type_items};
 
-  const char *subdir = nullptr;
-
-  const char *path;
+  PyC_UnicodeAsBytesAndSize_Data subdir_data = {nullptr};
 
   static const char *_keywords[] = {"type", "path", nullptr};
   static _PyArg_Parser _parser = {
       "O&" /* `type` */
       "|$" /* Optional keyword only arguments. */
-      "s"  /* `path` */
+      "O&" /* `path` */
       ":system_resource",
       _keywords,
       nullptr,
   };
-  if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &subdir)) {
+  if (!_PyArg_ParseTupleAndKeywordsFast(args,
+                                        kw,
+                                        &_parser,
+                                        PyC_ParseStringEnum,
+                                        &type,
+                                        PyC_ParseUnicodeAsBytesAndSize,
+                                        &subdir_data))
+  {
     return nullptr;
   }
 
-  path = BKE_appdir_folder_id(type.value_found, subdir);
+  const char *path = BKE_appdir_folder_id(type.value_found, subdir_data.value);
+  Py_XDECREF(subdir_data.value_coerce);
 
   return PyC_UnicodeFromBytes(path ? path : "");
 }
@@ -527,7 +538,7 @@ static PyObject *bpy_rna_enum_items_static(PyObject * /*self*/)
     const char *id;
     const EnumPropertyItem *items;
   } enum_info[] = {
-#include "RNA_enum_items.h"
+#include "RNA_enum_items.hh"
   };
   PyObject *result = _PyDict_NewPresized(ARRAY_SIZE(enum_info));
   for (int i = 0; i < ARRAY_SIZE(enum_info); i++) {
@@ -630,7 +641,7 @@ void BPy_init_modules(bContext *C)
   if (modpath) {
     // printf("bpy: found module path '%s'.\n", modpath);
     PyObject *sys_path = PySys_GetObject("path"); /* borrow */
-    PyObject *py_modpath = PyUnicode_FromString(modpath);
+    PyObject *py_modpath = PyC_UnicodeFromBytes(modpath);
     PyList_Insert(sys_path, 0, py_modpath); /* add first */
     Py_DECREF(py_modpath);
   }

@@ -14,7 +14,8 @@
 #include "DNA_scene_types.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_math.h"
+#include "BLI_math_matrix.h"
+#include "BLI_math_vector.h"
 #include "BLI_rect.h"
 #include "BLI_string_utils.h"
 
@@ -25,8 +26,8 @@
 #include "BKE_object.h"
 #include "BKE_report.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -46,8 +47,6 @@
 
 #include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 #include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* utility macros for storing a temp int in the bone (selection flag) */
 #define EBONE_PREV_FLAG_GET(ebone) ((void)0, (ebone)->temp.i)
@@ -1398,23 +1397,23 @@ static int armature_de_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *armature_ot_select_all_get_description(bContext * /*C*/,
-                                                    wmOperatorType * /*ot*/,
-                                                    PointerRNA *ptr)
+static std::string armature_ot_select_all_get_description(bContext * /*C*/,
+                                                          wmOperatorType * /*ot*/,
+                                                          PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all bones");
+    return "Select all bones";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all bones");
+    return "Deselect all bones";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 void ARMATURE_OT_select_all(wmOperatorType *ot)

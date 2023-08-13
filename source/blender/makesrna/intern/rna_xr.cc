@@ -6,8 +6,6 @@
  * \ingroup RNA
  */
 
-#include "BLI_math.h"
-
 #include "BLT_translation.h"
 
 #include "DNA_space_types.h"
@@ -15,9 +13,9 @@
 #include "DNA_windowmanager_types.h"
 #include "DNA_xr_types.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "WM_types.hh"
 
@@ -26,6 +24,8 @@
 #ifdef RNA_RUNTIME
 
 #  include "BLI_listbase.h"
+#  include "BLI_math_rotation.h"
+#  include "BLI_math_vector.h"
 
 #  include "WM_api.hh"
 
@@ -355,7 +355,7 @@ static void rna_XrActionMapItem_op_name_get(PointerRNA *ptr, char *value)
     if (ami->op_properties_ptr) {
       wmOperatorType *ot = WM_operatortype_find(ami->op, 1);
       if (ot) {
-        strcpy(value, WM_operatortype_name(ot, ami->op_properties_ptr));
+        strcpy(value, WM_operatortype_name(ot, ami->op_properties_ptr).c_str());
         return;
       }
     }
@@ -376,7 +376,7 @@ static int rna_XrActionMapItem_op_name_length(PointerRNA *ptr)
     if (ami->op_properties_ptr) {
       wmOperatorType *ot = WM_operatortype_find(ami->op, 1);
       if (ot) {
-        return strlen(WM_operatortype_name(ot, ami->op_properties_ptr));
+        return strlen(WM_operatortype_name(ot, ami->op_properties_ptr).c_str());
       }
     }
     return strlen(ami->op);
