@@ -16,7 +16,10 @@
 #include "BLI_array_utils.h"
 #include "BLI_blenlib.h"
 #include "BLI_ghash.h"
-#include "BLI_math.h"
+#include "BLI_math_geom.h"
+#include "BLI_math_matrix.h"
+#include "BLI_math_rotation.h"
+#include "BLI_math_vector.h"
 
 #include "BLT_translation.h"
 
@@ -59,11 +62,9 @@ extern "C" {
 #include "UI_interface.hh"
 #include "UI_resources.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 void selectend_nurb(Object *obedit, enum eEndPoint_Types selfirst, bool doswap, bool selstatus);
 static void adduplicateflagNurb(
@@ -3312,14 +3313,14 @@ static int hide_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *curve_ot_hide_get_description(bContext * /*C*/,
-                                           wmOperatorType * /*ot*/,
-                                           PointerRNA *ptr)
+static std::string curve_ot_hide_get_description(bContext * /*C*/,
+                                                 wmOperatorType * /*ot*/,
+                                                 PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
-    return BLI_strdup("Hide unselected control points");
+    return "Hide unselected control points";
   }
-  return NULL;
+  return "";
 }
 
 void CURVE_OT_hide(wmOperatorType *ot)

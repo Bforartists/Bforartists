@@ -81,9 +81,9 @@
 
 #include "../../blender/blenloader/BLO_readfile.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "SEQ_relations.h"
 #include "SEQ_sequencer.h"
@@ -3683,7 +3683,7 @@ void OUTLINER_OT_data_operation(wmOperatorType *ot)
 static int outliner_operator_menu(bContext *C, const char *opname)
 {
   wmOperatorType *ot = WM_operatortype_find(opname, false);
-  uiPopupMenu *pup = UI_popup_menu_begin(C, WM_operatortype_name(ot, nullptr), ICON_NONE);
+  uiPopupMenu *pup = UI_popup_menu_begin(C, WM_operatortype_name(ot, nullptr).c_str(), ICON_NONE);
   uiLayout *layout = UI_popup_menu_layout(pup);
 
   /* set this so the default execution context is the same as submenus */

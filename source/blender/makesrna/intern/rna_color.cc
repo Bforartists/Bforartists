@@ -16,8 +16,8 @@
 
 #include "BKE_node_tree_update.h"
 
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 #include "rna_internal.h"
 
 #include "WM_api.hh"
@@ -35,8 +35,8 @@ const EnumPropertyItem rna_enum_color_space_convert_default_items[] = {
 
 #ifdef RNA_RUNTIME
 
-#  include "RNA_access.h"
-#  include "RNA_path.h"
+#  include "RNA_access.hh"
+#  include "RNA_path.hh"
 
 #  include "DNA_image_types.h"
 #  include "DNA_material_types.h"
@@ -1274,7 +1274,7 @@ static void rna_def_colormanage(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_WINDOW, "rna_ColorManagement_update");
 
   prop = RNA_def_property(srna, "use_hdr_view", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "flag", COLORMANAGE_VIEW_USE_HDR);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", COLORMANAGE_VIEW_USE_HDR);
   RNA_def_property_ui_text(
       prop,
       "High Dynamic Range",

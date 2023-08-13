@@ -26,8 +26,8 @@
 #include "ED_screen.hh"
 #include "ED_select_utils.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -36,8 +36,6 @@
 #include "UI_view2d.hh"
 
 #include "nla_intern.hh" /* own include */
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* ******************** Utilities ***************************************** */
 
@@ -173,24 +171,23 @@ static int nlaedit_deselectall_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *nla_ot_select_all_get_description(bContext *C, wmOperatorType *ot, PointerRNA *ptr)
+static std::string nla_ot_select_all_get_description(bContext * /*C*/,
+                                                     wmOperatorType * /*ot*/,
+                                                     PointerRNA *ptr)
 {
-  // C4100 warning is issued here because 'ot' and 'C' is not referenced
-  (void)C;
-  (void)ot;
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Toggle selection of all keyframes");
+    return "Toggle selection of all keyframes";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all keyframes");
+    return "Deselect all keyframes";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Invert selection of the selected keyframes");
+    return "Invert selection of the selected keyframes";
   }
-  return nullptr;
+  return "";
 }
 
 void NLA_OT_select_all(wmOperatorType *ot)

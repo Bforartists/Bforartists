@@ -24,7 +24,10 @@
 #include "BLI_linklist.h"
 #include "BLI_linklist_stack.h"
 #include "BLI_listbase.h"
-#include "BLI_math.h"
+#include "BLI_math_geom.h"
+#include "BLI_math_matrix.h"
+#include "BLI_math_rotation.h"
+#include "BLI_math_vector.h"
 #include "BLI_rand.h"
 #include "BLI_sort_utils.h"
 #include "BLI_string.h"
@@ -49,9 +52,9 @@
 
 #include "BLT_translation.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
 
 #include "WM_api.hh"
@@ -1176,7 +1179,7 @@ static int edbm_mark_sharp_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - tool name*/
-static const char *mesh_ot_mark_sharp_get_name(wmOperatorType *ot, PointerRNA *ptr)
+static std::string mesh_ot_mark_sharp_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "clear")) {
     if (RNA_boolean_get(ptr, "use_verts")) {
@@ -1191,32 +1194,30 @@ static const char *mesh_ot_mark_sharp_get_name(wmOperatorType *ot, PointerRNA *p
       return CTX_IFACE_(ot->translation_context, "Mark Sharp from Vertices");
     }
   }
-  return NULL;
+  return "";
 }
 
 /*bfa - descriptions*/
-static char *mesh_ot_mark_sharp_get_description(bContext * /*C*/,
-                                                wmOperatorType * /*ot*/,
-                                                PointerRNA *ptr)
+static std::string mesh_ot_mark_sharp_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "clear")) {
     if (RNA_boolean_get(ptr, "use_verts")) {
-      return BLI_strdup(
-          "Clear as Sharp marked selected edges from their Vertices"
-          "\nThe calculation happens from the selected vertices instead of the edges");
+      return "Clear as Sharp marked selected edges from their Vertices"
+             "\nThe calculation happens from the selected vertices instead of the edges";
     }
     else {
-      return BLI_strdup("Clear as Sharp marked edges");
+      return "Clear as Sharp marked edges";
     }
   }
   else {
     if (RNA_boolean_get(ptr, "use_verts")) {
-      return BLI_strdup(
-          "Mark selected edges as sharp from their Vertices"
-          "\nThe calculation happens from the selected vertices instead of the edges");
+      return "Mark selected edges as sharp from their Vertices"
+             "\nThe calculation happens from the selected vertices instead of the edges";
     }
   }
-  return NULL;
+  return "";
 }
 
 void MESH_OT_mark_sharp(wmOperatorType *ot)
@@ -2494,23 +2495,23 @@ static int edbm_edge_rotate_selected_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - tool name*/
-static const char *mesh_ot_edge_rotate_get_name(wmOperatorType *ot, PointerRNA *ptr)
+static std::string mesh_ot_edge_rotate_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "use_ccw")) {
     return CTX_IFACE_(ot->translation_context, "Rotate Edge CCW");
   }
-  return NULL;
+  return "";
 }
 
 /*bfa - descriptions*/
-static char *mesh_ot_edge_rotate_get_description(bContext * /*C*/,
-                                                 wmOperatorType * /*ot*/,
-                                                 PointerRNA *ptr)
+static std::string mesh_ot_edge_rotate_get_description(bContext * /*C*/,
+                                                       wmOperatorType * /*ot*/,
+                                                       PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "use_ccw")) {
-    return BLI_strdup("Rotate selected edge in counter clock wise direction");
+    return "Rotate selected edge in counter clock wise direction";
   }
-  return NULL;
+  return "";
 }
 
 void MESH_OT_edge_rotate(wmOperatorType *ot)
@@ -2596,14 +2597,14 @@ static int edbm_hide_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *mesh_ot_hide_get_description(bContext * /*C*/,
-                                          wmOperatorType * /*ot*/,
-                                          PointerRNA *ptr)
+static std::string mesh_ot_hide_get_description(bContext * /*C*/,
+                                                wmOperatorType * /*ot*/,
+                                                PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
-    return BLI_strdup("Hide unselected vertices, edges or faces");
+    return "Hide unselected vertices, edges or faces";
   }
-  return NULL;
+  return "";
 }
 
 void MESH_OT_hide(wmOperatorType *ot)
@@ -2729,14 +2730,14 @@ static int edbm_normals_make_consistent_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *mesh_ot_normals_make_consistent_get_description(bContext * /*C*/,
-                                                             wmOperatorType * /*ot*/,
-                                                             PointerRNA *ptr)
+static std::string mesh_ot_normals_make_consistent_get_description(bContext * /*C*/,
+                                                                   wmOperatorType * /*ot*/,
+                                                                   PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "inside")) {
-    return BLI_strdup("Make selected face and vertex normals point inside the mesh");
+    return "Make selected face and vertex normals point inside the mesh";
   }
-  return NULL;
+  return "";
 }
 
 void MESH_OT_normals_make_consistent(wmOperatorType *ot)

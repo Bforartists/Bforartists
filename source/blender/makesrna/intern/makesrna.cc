@@ -22,9 +22,9 @@
 #include "BLI_system.h" /* for 'BLI_system_backtrace' stub. */
 #include "BLI_utildefines.h"
 
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
-#include "RNA_types.h"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
+#include "RNA_types.hh"
 
 #include "rna_internal.h"
 
@@ -122,6 +122,13 @@ static void rna_generate_static_parameter_prototypes(FILE *f,
  */
 static int replace_if_different(const char *tmpfile, const char *dep_files[])
 {
+
+#ifdef USE_MAKEFILE_WORKAROUND
+  const bool use_makefile_workaround = true;
+#else
+  const bool use_makefile_workaround = false;
+#endif
+
   /* Use for testing hand edited `rna_*_gen.c` files. */
   // return 0;
 
@@ -176,9 +183,11 @@ static int replace_if_different(const char *tmpfile, const char *dep_files[])
    * requests the `rna_*_gen.c` files are re-generated (even if this function always returns 0).
    * It happens *every* rebuild, slowing incremental builds which isn't practical for development.
    *
-   * This is only an issue for `Unix Makefiles`, `Ninja` generator doesn't have this problem. */
+   * This is only an issue for `Unix Makefiles`, `Ninja` generator doesn't have this problem.
+   *
+   * CMake will set `use_makefile_workaround` to 0 or 1 depending on the generator used. */
 
-  if (true) {
+  if (use_makefile_workaround) {
     /* First check if `makesrna.cc` is newer than generated files.
      * For development on `makesrna.cc` you may want to disable this. */
     if (file_older(orgfile, makesrna_source_filepath)) {
@@ -611,7 +620,7 @@ static bool rna_color_quantize(PropertyRNA *prop, PropertyDefRNA *dp)
 }
 
 /**
- * Return the identifier for an enum which is defined in "RNA_enum_items.h".
+ * Return the identifier for an enum which is defined in "RNA_enum_items.hh".
  *
  * Prevents expanding duplicate enums bloating the binary size.
  */
@@ -622,7 +631,7 @@ static const char *rna_enum_id_from_pointer(const EnumPropertyItem *item)
   if (item == id) { \
     return STRINGIFY(id); \
   }
-#include "RNA_enum_items.h"
+#include "RNA_enum_items.hh"
 #undef RNA_MAKESRNA
   return nullptr;
 }
@@ -4020,7 +4029,7 @@ static void rna_generate_property(FILE *f, StructRNA *srna, const char *nest, Pr
       int i, defaultfound = 0, totflag = 0;
 
       if (eprop->item) {
-        /* Inline the enum if this is not a defined in "RNA_enum_items.h". */
+        /* Inline the enum if this is not a defined in "RNA_enum_items.hh". */
         const char *item_global_id = rna_enum_id_from_pointer(eprop->item);
         if (item_global_id == nullptr) {
           fprintf(f,
@@ -4798,8 +4807,8 @@ static void rna_generate(BlenderRNA *brna, FILE *f, const char *filename, const 
   fprintf(f, "#include \"BKE_main.h\"\n");
   fprintf(f, "#include \"BKE_report.h\"\n");
 
-  fprintf(f, "#include \"RNA_define.h\"\n");
-  fprintf(f, "#include \"RNA_types.h\"\n");
+  fprintf(f, "#include \"RNA_define.hh\"\n");
+  fprintf(f, "#include \"RNA_types.hh\"\n");
   fprintf(f, "#include \"rna_internal.h\"\n\n");
 
   /* include the generated prototypes header */
@@ -4902,7 +4911,7 @@ static void rna_generate_header(BlenderRNA * /*brna*/, FILE *f)
           "/* Automatically generated function declarations for the Data API.\n"
           " * Do not edit manually, changes will be overwritten.              */\n\n");
 
-  fprintf(f, "#include \"RNA_types.h\"\n\n");
+  fprintf(f, "#include \"RNA_types.hh\"\n\n");
   fprintf(f, "#include \"DNA_node_types.h\"\n\n");
 
   fprintf(f, "#ifdef __cplusplus\nextern \"C\" {\n#endif\n\n");
@@ -5372,8 +5381,8 @@ static void rna_generate_header_cpp(BlenderRNA * /*brna*/, FILE *f)
           " * Do not edit manually, changes will be overwritten. */\n\n");
 
   fprintf(f, "#include \"RNA_blender.h\"\n");
-  fprintf(f, "#include \"RNA_types.h\"\n");
-  fprintf(f, "#include \"RNA_access.h\"\n");
+  fprintf(f, "#include \"RNA_types.hh\"\n");
+  fprintf(f, "#include \"RNA_access.hh\"\n");
   fprintf(f, "#include \"DNA_node_types.h\"\n");
 
   fprintf(f, "%s", cpp_classes);
@@ -5568,7 +5577,7 @@ static int rna_preprocess(const char *outfile, const char *public_header_outfile
   }
 
   /* create internal rna struct prototype header file */
-  SNPRINTF(deffile, "%s%s", outfile, "rna_prototypes_gen.h");
+  SNPRINTF(deffile, "%s%s", outfile, "rna_prototypes_gen.h" TMP_EXT);
   if (status != EXIT_SUCCESS) {
     make_bad_file(deffile, __LINE__);
   }
@@ -5585,6 +5594,7 @@ static int rna_preprocess(const char *outfile, const char *public_header_outfile
     rna_generate_struct_rna_prototypes(brna, file);
     fprintf(file, "#ifdef __cplusplus\n}\n#endif\n");
     fclose(file);
+    replace_if_different(deffile, nullptr);
     if (DefRNA.error) {
       status = EXIT_FAILURE;
     }

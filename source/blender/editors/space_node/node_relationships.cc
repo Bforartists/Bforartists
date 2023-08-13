@@ -12,6 +12,7 @@
 #include "DNA_node_types.h"
 
 #include "BLI_easing.h"
+#include "BLI_math_geom.h"
 #include "BLI_stack.hh"
 
 #include "BKE_anim_data.h"
@@ -31,8 +32,8 @@
 #include "ED_util.hh"
 #include "ED_viewer_path.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 #include "RNA_prototypes.h"
 
 #include "DEG_depsgraph.h"
@@ -66,8 +67,6 @@ struct NodeInsertOfsData {
 };
 
 namespace blender::ed::space_node {
-
-bNodeSocket *get_main_socket(bNodeTree &ntree, bNode &node, eNodeSocketInOut in_out);
 
 static void clear_picking_highlight(ListBase *links)
 {
@@ -1469,24 +1468,23 @@ static int node_make_link_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - tool name*/
-static const char *NODE_OT_link_make_get_name(wmOperatorType *ot, PointerRNA *ptr)
+static std::string NODE_OT_link_make_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "replace")) {
     return CTX_IFACE_(ot->translation_context, "Make and Replace Links");
   }
-  return NULL;
+  return "";
 }
 
 /*bfa - descriptions*/
-static char *NODE_OT_link_make_get_description(struct bContext * /*C*/,
-                                               struct wmOperatorType * /*op*/,
-                                               struct PointerRNA *values)
+static std::string NODE_OT_link_make_get_description(struct bContext * /*C*/,
+                                                     struct wmOperatorType * /*op*/,
+                                                     struct PointerRNA *values)
 {
   if (RNA_boolean_get(values, "replace")) {
-    return BLI_strdup(
-        "Makes a link between selected output in input sockets and replaces existing links");
+    return "Makes a link between selected output in input sockets and replaces existing links";
   }
-  return NULL;
+  return "";
 }
 
 void NODE_OT_link_make(wmOperatorType *ot)

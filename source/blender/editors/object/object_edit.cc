@@ -19,7 +19,6 @@
 #include "BLI_blenlib.h"
 #include "BLI_ghash.h"
 #include "BLI_math_rotation.h"
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -86,10 +85,10 @@
 #include "ED_screen.hh"
 #include "ED_undo.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
-#include "RNA_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
+#include "RNA_types.hh"
 
 #include "UI_interface_icons.hh"
 
@@ -374,14 +373,14 @@ static int object_hide_view_set_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 /*bfa - descriptions*/
-static char *object_ot_hide_view_set_get_description(bContext * /*C*/,
-                                                     wmOperatorType * /*ot*/,
-                                                     PointerRNA *ptr)
+static std::string object_ot_hide_view_set_get_description(bContext * /*C*/,
+                                                           wmOperatorType * /*ot*/,
+                                                           PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
-    return BLI_strdup("Temporarily hide unselected objects from the viewport");
+    return "Temporarily hide unselected objects from the viewport";
   }
-  return NULL;
+  return "";
 }
 
 void OBJECT_OT_hide_view_set(wmOperatorType *ot)
@@ -1525,15 +1524,15 @@ static int object_clear_paths_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static char *object_clear_paths_description(bContext * /*C*/,
-                                            wmOperatorType * /*ot*/,
-                                            PointerRNA *ptr)
+static std::string object_clear_paths_description(bContext * /*C*/,
+                                                  wmOperatorType * /*ot*/,
+                                                  PointerRNA *ptr)
 {
   const bool only_selected = RNA_boolean_get(ptr, "only_selected");
   if (only_selected) {
-    return BLI_strdup(TIP_("Clear motion paths of selected objects"));
+    return TIP_("Clear motion paths of selected objects");
   }
-  return BLI_strdup(TIP_("Clear motion paths of all objects"));
+  return TIP_("Clear motion paths of all objects");
 }
 
 void OBJECT_OT_paths_clear(wmOperatorType *ot)

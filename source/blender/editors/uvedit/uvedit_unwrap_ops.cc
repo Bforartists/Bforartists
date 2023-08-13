@@ -25,7 +25,10 @@
 #include "BLI_convexhull_2d.h"
 #include "BLI_linklist.h"
 #include "BLI_listbase.h"
-#include "BLI_math.h"
+#include "BLI_math_geom.h"
+#include "BLI_math_matrix.h"
+#include "BLI_math_rotation.h"
+#include "BLI_math_vector.h"
 #include "BLI_memarena.h"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
@@ -67,8 +70,8 @@
 #include "ED_uvedit.hh"
 #include "ED_view3d.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -2671,25 +2674,24 @@ static int unwrap_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - tool name*/
-static const char *uv_ot_unwrap_get_name(wmOperatorType *ot, PointerRNA *ptr)
+static std::string uv_ot_unwrap_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "method")) {
     return CTX_IFACE_(ot->translation_context, "Unwrap Conformal");
   }
-  return NULL;
+  return "";
 }
 
 /*bfa - descriptions*/
-static char *uv_ot_unwrap_get_description(bContext * /*C*/,
-                                          wmOperatorType * /*ot*/,
-                                          PointerRNA *ptr)
+static std::string uv_ot_unwrap_get_description(bContext * /*C*/,
+                                                wmOperatorType * /*ot*/,
+                                                PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "method")) {
-    return BLI_strdup(
-        "Unwrap Conformal unwraps the "
-        "mesh with the method Least Square Conformal Mapping (LSCM)");
+    return "Unwrap Conformal unwraps the "
+           "mesh with the method Least Square Conformal Mapping (LSCM)";
   }
-  return NULL;
+  return "";
 }
 
 void UV_OT_unwrap(wmOperatorType *ot)

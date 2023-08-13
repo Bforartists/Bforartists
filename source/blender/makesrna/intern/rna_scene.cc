@@ -26,7 +26,7 @@
 #include "IMB_imbuf_types.h"
 
 #include "BLI_listbase.h"
-#include "BLI_math.h"
+#include "BLI_math_rotation.h"
 #include "BLI_string_utf8_symbols.h"
 
 #include "BLT_translation.h"
@@ -41,8 +41,8 @@
 #include "ED_object.hh"
 #include "ED_uvedit.hh"
 
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "rna_internal.h"
 
@@ -709,7 +709,7 @@ const EnumPropertyItem rna_enum_grease_pencil_selectmode_items[] = {
 #  include "DNA_text_types.h"
 #  include "DNA_workspace_types.h"
 
-#  include "RNA_access.h"
+#  include "RNA_access.hh"
 
 #  include "MEM_guardedalloc.h"
 
@@ -6422,7 +6422,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 1, SHRT_MAX);
   RNA_def_property_ui_range(prop, 1, 100, 10, 1);
-  RNA_def_property_ui_text(prop, "Resolution %", "Percentage scale for render resolution");
+  RNA_def_property_ui_text(prop, "Resolution Scale", "Percentage scale for render resolution");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_SceneSequencer_update");
 
   prop = RNA_def_property(srna, "preview_pixel_size", PROP_ENUM, PROP_NONE);

@@ -24,10 +24,9 @@
 #include "DNA_workspace_types.h"
 
 #include "BLI_listbase.h"
-#include "BLI_math.h"
 #include "BLI_math_bits.h"
+#include "BLI_math_vector.h"
 #include "BLI_rand.h"
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
@@ -67,9 +66,9 @@
 #include "UI_interface.hh"
 #include "UI_resources.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "object_intern.h"
 
@@ -851,7 +850,7 @@ static bool select_grouped_collection(bContext *C, Object *ob)
     collection = ob_collections[i];
     uiItemStringO(layout,
                   collection->id.name + 2,
-                  0,
+                  ICON_NONE,
                   "OBJECT_OT_select_same_collection",
                   "collection",
                   collection->id.name + 2);
@@ -1142,23 +1141,23 @@ static int object_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *object_ot_select_all_get_description(bContext * /*C*/,
-                                                  wmOperatorType * /*ot*/,
-                                                  PointerRNA *ptr)
+static std::string object_ot_select_all_get_description(bContext * /*C*/,
+                                                        wmOperatorType * /*ot*/,
+                                                        PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all visible objects in scene");
+    return "Select all visible objects in scene";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all visible objects in scene");
+    return "Deselect all visible objects in scene";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 void OBJECT_OT_select_all(wmOperatorType *ot)
