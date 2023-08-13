@@ -11,6 +11,7 @@
 #include "BLI_array_utils.hh"
 #include "BLI_devirtualize_parameters.hh"
 #include "BLI_kdtree.h"
+#include "BLI_math_geom.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_rand.hh"
 #include "BLI_utildefines.h"
@@ -52,9 +53,9 @@
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
 
 #include "UI_interface.hh"
@@ -868,23 +869,23 @@ static int select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *curves_ot_select_all_get_description(struct bContext * /*C*/,
-                                                  struct wmOperatorType * /*op*/,
-                                                  struct PointerRNA *values)
+static std::string curves_ot_select_all_get_description(struct bContext * /*C*/,
+                                                        struct wmOperatorType * /*op*/,
+                                                        struct PointerRNA *values)
 {
   /*Select*/
   if (RNA_enum_get(values, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all control points");
+    return "Select all control points";
   }
   /*Deselect*/
   else if (RNA_enum_get(values, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all control points");
+    return "Deselect all control points";
   }
   /*Invert*/
   else if (RNA_enum_get(values, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 static void CURVES_OT_select_all(wmOperatorType *ot)

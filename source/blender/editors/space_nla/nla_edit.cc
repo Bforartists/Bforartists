@@ -17,7 +17,6 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_math.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -37,9 +36,9 @@
 #include "ED_screen.hh"
 #include "ED_transform.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
 
 #include "WM_api.hh"
@@ -53,8 +52,6 @@
 
 #include "nla_intern.hh"
 #include "nla_private.h"
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* -------------------------------------------------------------------- */
 /** \name Public Utilities
@@ -167,26 +164,25 @@ static int nlaedit_enable_tweakmode_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 /*bfa - description*/
-static char *nla_ot_tweakmode_enter_get_description(bContext *C, wmOperatorType *ot, PointerRNA *ptr)
+static std::string nla_ot_tweakmode_enter_get_description(bContext * /*C*/,
+                                                          wmOperatorType * /*ot*/,
+                                                          PointerRNA *ptr)
 {
-  // C4100 warning is issued here because 'ot' and 'C' is not referenced
-  (void)C;
-  (void)ot;
   if (RNA_boolean_get(ptr, "isolate_action")) {
-    return BLI_strdup(
-        "Enter tweak mode to edit the keyframes of just the selected action strip of this "
-        "object\nSwitch to Dope Sheet editor to edit the keyframes\nWhen done switch back to NLA "
-        "editor and leave tweak mode");
+    return "Enter tweak mode to edit the keyframes of just the selected action strip of this "
+           "object\nSwitch to Dope Sheet editor to edit the keyframes\nWhen done switch back to "
+           "NLA "
+           "editor and leave tweak mode";
   }
   if (RNA_boolean_get(ptr, "use_upper_stack_evaluation")) {
-    return BLI_strdup(
-        "Enter tweak (Full Stack) mode to edit the keyframes of the action strips of this object"
-        "\nAllows you to insert keyframes and preserve the pose that you visually keyed while "
-        "upper strips are evaluating"
-        "\nSwitch to Dope Sheet editor to edit the keyframes "
-        "\nWhen done switch back to NLA editor and leave tweak mode");
+    return "Enter tweak (Full Stack) mode to edit the keyframes of the action strips of this "
+           "object"
+           "\nAllows you to insert keyframes and preserve the pose that you visually keyed while "
+           "upper strips are evaluating"
+           "\nSwitch to Dope Sheet editor to edit the keyframes "
+           "\nWhen done switch back to NLA editor and leave tweak mode";
   }
-  return nullptr;
+  return "";
 }
 
 void NLA_OT_tweakmode_enter(wmOperatorType *ot)

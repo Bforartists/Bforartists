@@ -5,8 +5,10 @@
 /** \file
  * \ingroup spview3d
  */
-/*BFA NOTE: For merges, this document mostly adds the Camera Lock widget, try to preserver*/
-#include "BLI_math.h"
+
+/*BFA NOTE: For merges, this document mostly adds the Camera Lock widget, try to preserve */
+
+#include "BLI_math_vector.h"
 #include "BLI_utildefines.h"
 
 #include "BKE_context.h"
@@ -21,7 +23,7 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "RNA_access.h"
+#include "RNA_access.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"

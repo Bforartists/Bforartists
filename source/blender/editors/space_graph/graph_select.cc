@@ -15,7 +15,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_lasso_2d.h"
-#include "BLI_math.h"
+#include "BLI_math_vector.h"
 #include "BLI_utildefines.h"
 
 #include "DNA_anim_types.h"
@@ -23,8 +23,8 @@
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "BKE_context.h"
 #include "BKE_fcurve.h"
@@ -41,8 +41,6 @@
 #include "WM_types.hh"
 
 #include "graph_intern.h"
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* -------------------------------------------------------------------- */
 /** \name Internal Keyframe Utilities
@@ -480,23 +478,23 @@ static int graphkeys_deselectall_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *wm_graph_ot_select_all_get_description(bContext *,
-                                                    wmOperatorType *,
-                                                    PointerRNA *ptr)
+static std::string wm_graph_ot_select_all_get_description(bContext * /*C*/,
+                                                          wmOperatorType * /*ot*/,
+                                                          PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Toggle selection of all keyframes");
+    return "Toggle selection of all keyframes";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all keyframes");
+    return "Deselect all keyframes";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Invert selection of the selected keyframes");
+    return "Invert selection of the selected keyframes";
   }
-  return nullptr;
+  return "";
 }
 
 void GRAPH_OT_select_all(wmOperatorType *ot)
@@ -1680,15 +1678,15 @@ static int graphkeys_select_leftright_invoke(bContext *C, wmOperator *op, const 
 }
 
 /*bfa - descriptions*/
-static char *graph_ot_select_leftright_get_description(bContext *,
-                                                       wmOperatorType *,
-                                                       PointerRNA *ptr)
+static std::string graph_ot_select_leftright_get_description(bContext * /*C*/,
+                                                             wmOperatorType * /*ot*/,
+                                                             PointerRNA *ptr)
 {
   if (RNA_enum_get(ptr, "mode") == GRAPHKEYS_LRSEL_LEFT) {
 
-    return BLI_strdup("Select keyframes to the left of the current frame");
+    return "Select keyframes to the left of the current frame";
   }
-  return nullptr;
+  return "";
 }
 
 void GRAPH_OT_select_leftright(wmOperatorType *ot)

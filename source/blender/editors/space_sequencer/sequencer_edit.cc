@@ -13,7 +13,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_math.h"
+#include "BLI_math_vector.h"
 #include "BLI_string.h"
 #include "BLI_timecode.h"
 #include "BLI_utildefines.h"
@@ -51,8 +51,8 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
 
 /* For menu, popup, icons, etc. */
@@ -1534,28 +1534,26 @@ static void sequencer_split_ui(bContext * /*C*/, wmOperator *op)
 }
 
 /*bfa - tool name*/
-static const char *SEQUENCER_OT_split_get_name(wmOperatorType *ot, PointerRNA *ptr)
+static std::string SEQUENCER_OT_split_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_enum_get(ptr, "type") == SEQ_SPLIT_HARD) {
     return CTX_IFACE_(ot->translation_context, "Hold Split");
   }
-  return nullptr;
+  return "";
 }
 
 /*bfa - descriptions*/
-static char *SEQUENCER_OT_split_get_description(bContext *C, wmOperatorType *ot, PointerRNA *ptr)
+static std::string SEQUENCER_OT_split_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
 {
-  // C4100 warning is issued here because 'ot' and 'C' is not referenced
-  (void)C;
-  (void)ot;
   /*Select*/
   if (RNA_enum_get(ptr, "type") == SEQ_SPLIT_HARD) {
-    return BLI_strdup(
-        "Split the selected strips in two\nBut you cannot drag the endpoints to show the frames "
-        "past the split of each resulting strip");
+    return "Split the selected strips in two\nBut you cannot drag the endpoints to show the "
+           "frames "
+           "past the split of each resulting strip";
   }
-
-  return nullptr;
+  return "";
 }
 
 void SEQUENCER_OT_split(wmOperatorType *ot)
@@ -2353,7 +2351,7 @@ static int sequencer_swap_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - tool name*/
-static const char *SEQUENCER_OT_swap_get_name(wmOperatorType *ot, PointerRNA *ptr)
+static std::string SEQUENCER_OT_swap_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_enum_get(ptr, "side") == SEQ_SIDE_RIGHT) {
     return CTX_IFACE_(ot->translation_context, "Swap Strip Right");
@@ -2361,24 +2359,23 @@ static const char *SEQUENCER_OT_swap_get_name(wmOperatorType *ot, PointerRNA *pt
   else if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
     return CTX_IFACE_(ot->translation_context, "Swap Strip Left");
   }
-  return NULL;
+  return "";
 }
 
 /*bfa - descriptions*/
-static char *SEQUENCER_OT_swap_get_description(bContext *C, wmOperatorType *ot, PointerRNA *ptr)
+static std::string SEQUENCER_OT_swap_get_description(bContext * /*C*/,
+                                                     wmOperatorType * /*ot*/,
+                                                     PointerRNA *ptr)
 {
-  // C4100 warning is issued here because 'ot' and 'C' is not referenced
-  (void)C;
-  (void)ot;
   /*Select*/
   if (RNA_enum_get(ptr, "side") == SEQ_SIDE_RIGHT) {
-    return BLI_strdup("Swap active strip with strip to the right");
+    return "Swap active strip with strip to the right";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
-    return BLI_strdup("Swap active strip with strip to the left");
+    return "Swap active strip with strip to the left";
   }
-  return NULL;
+  return "";
 }
 
 void SEQUENCER_OT_swap(wmOperatorType *ot)

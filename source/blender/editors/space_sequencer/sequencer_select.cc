@@ -13,7 +13,8 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_math.h"
+#include "BLI_math_geom.h"
+#include "BLI_math_vector.h"
 #include "BLI_utildefines.h"
 
 #include "DNA_scene_types.h"
@@ -24,7 +25,7 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "RNA_define.h"
+#include "RNA_define.hh"
 
 #include "SEQ_channels.h"
 #include "SEQ_iterator.h"
@@ -48,8 +49,6 @@
 
 /* Own include. */
 #include "sequencer_intern.h"
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* -------------------------------------------------------------------- */
 /** \name Selection Utilities
@@ -487,28 +486,24 @@ static int sequencer_de_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-
-
-
 /*bfa - descriptions*/
-static char *sequencer_ot_select_all_get_description(bContext *C, wmOperatorType *ot, PointerRNA *ptr)
+static std::string sequencer_ot_select_all_get_description(bContext * /*C*/,
+                                                           wmOperatorType * /*ot*/,
+                                                           PointerRNA *ptr)
 {
-  // C4100 warning is issued here because 'ot' and 'C' is not referenced
-  (void)C;
-  (void)ot;
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all strips");
+    return "Select all strips";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all strips");
+    return "Deselect all strips";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return nullptr;
+  return "";
 }
 
 void SEQUENCER_OT_select_all(wmOperatorType *ot)

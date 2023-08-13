@@ -12,7 +12,7 @@
 
 #include "BLI_bitmap.h"
 #include "BLI_listbase.h"
-#include "BLI_math.h"
+#include "BLI_math_vector.h"
 #include "BLI_rand.h"
 #include "BLI_utildefines.h"
 
@@ -22,9 +22,9 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "BKE_context.h"
 #include "BKE_lattice.h"
@@ -43,8 +43,6 @@
 #include "DEG_depsgraph.h"
 
 #include "lattice_intern.h"
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* -------------------------------------------------------------------- */
 /** \name Utility Functions
@@ -468,23 +466,23 @@ static int lattice_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *lattice_ot_select_all_get_description(bContext * /*C*/,
-                                                   wmOperatorType * /*ot*/,
-                                                   PointerRNA *ptr)
+static std::string lattice_ot_select_all_get_description(bContext * /*C*/,
+                                                         wmOperatorType * /*ot*/,
+                                                         PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return BLI_strdup("Select all UVW control points");
+    return "Select all UVW control points";
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return BLI_strdup("Deselect all UVW control points");
+    return "Deselect all UVW control points";
   }
   /*Invert*/
   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return BLI_strdup("Inverts the current selection");
+    return "Inverts the current selection";
   }
-  return NULL;
+  return "";
 }
 
 void LATTICE_OT_select_all(wmOperatorType *ot)

@@ -9,7 +9,8 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_bitmap.h"
-#include "BLI_math.h"
+#include "BLI_math_geom.h"
+#include "BLI_math_vector.h"
 
 #include "DNA_brush_types.h"
 #include "DNA_mesh_types.h"
@@ -17,9 +18,9 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "BKE_attribute.hh"
 #include "BKE_brush.hh"
@@ -361,7 +362,8 @@ static int weight_sample_group_invoke(bContext *C, wmOperator *op, const wmEvent
     return OPERATOR_CANCELLED;
   }
 
-  uiPopupMenu *pup = UI_popup_menu_begin(C, WM_operatortype_name(op->type, op->ptr), ICON_NONE);
+  uiPopupMenu *pup = UI_popup_menu_begin(
+      C, WM_operatortype_name(op->type, op->ptr).c_str(), ICON_NONE);
   uiLayout *layout = UI_popup_menu_layout(pup);
   wmOperatorType *ot = WM_operatortype_find("OBJECT_OT_vertex_group_set_active", false);
   wmOperatorCallContext opcontext = WM_OP_EXEC_DEFAULT;

@@ -31,9 +31,9 @@
 #include "WM_message.hh"
 #include "WM_types.hh"
 
-#include "RNA_access.h"
-#include "RNA_define.h"
-#include "RNA_enum_types.h"
+#include "RNA_access.hh"
+#include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "UI_interface.hh"
 #include "UI_resources.hh"
@@ -816,7 +816,7 @@ static void buttons_area_listener(const wmSpaceTypeListenerParams *params)
     case NC_GPENCIL:
       switch (wmn->data) {
         case ND_DATA:
-          if (ELEM(wmn->action, NA_EDITED, NA_ADDED, NA_REMOVED, NA_SELECTED)) {
+          if (ELEM(wmn->action, NA_EDITED, NA_ADDED, NA_REMOVED, NA_SELECTED, NA_RENAME)) {
             ED_area_tag_redraw(area);
           }
           break;
