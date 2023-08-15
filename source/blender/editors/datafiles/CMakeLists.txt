@@ -1919,8 +1919,8 @@ decorate_library_override
 decorate_linked
 preset_new
 
-#~ DEF_ICON_BLANK(1950)
-#~ DEF_ICON_BLANK(1951)
+blend_offset
+blend_to_ease
 #~ DEF_ICON_BLANK(1952)
 #~ DEF_ICON_BLANK(1953)
 #~ DEF_ICON_BLANK(1954)
