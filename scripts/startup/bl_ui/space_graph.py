@@ -477,8 +477,8 @@ class GRAPH_MT_key_blending(Menu):
         layout.operator("graph.blend_to_neighbor", text="Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
         layout.operator("graph.blend_to_default", text="Blend to Default Value", icon = 'BLEND_TO_DEFAULT')
         layout.operator("graph.ease", text="Ease", icon = 'IPO_EASE_IN_OUT')
-        layout.operator("graph.blend_offset", text="Blend Offset")
-        layout.operator("graph.blend_to_ease", text="Blend to Ease")
+        layout.operator("graph.blend_to_ease", text="Blend to Ease", icon = 'BLEND_TO_EASE')
+        layout.operator("graph.blend_offset", text="Blend Offset", icon = 'BLEND_OFFSET')
 
 
 class GRAPH_MT_key_smoothing(Menu):
@@ -588,6 +588,9 @@ class GRAPH_MT_slider(Menu):
         layout.operator("graph.blend_to_neighbor", text = "Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
         layout.operator("graph.blend_to_default", text = "Blend to Default Value", icon = 'BLEND_TO_DEFAULT')
         layout.operator("graph.ease", text="Ease", icon = 'IPO_EASE_IN_OUT')
+        layout.operator("graph.blend_to_ease", text="Blend to Ease", icon = 'BLEND_TO_EASE')
+        layout.operator("graph.blend_offset", text="Blend Offset", icon = 'BLEND_OFFSET')
+
 
         layout.separator()
 
