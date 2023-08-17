@@ -6,7 +6,7 @@ from .common import BrushPanelBase
 
 
 def panel_factory(
-    tools: Iterable[str],
+    tools: Iterable[str | tuple],
     icon_prefix: str,
     tool_name_attr: str,
     use_paint_attr: str,
@@ -29,8 +29,9 @@ def panel_factory(
 
     for i, tool_name in enumerate(tools):
         if isinstance(tool_name, tuple):
-            category = label = tool_name[0]
-            tool_name = tool_name[1:]
+            category = tool_name[0]
+            label = tool_name[1]
+            tool_name = tool_name[2:]
         elif isinstance(tool_name, str):
             label = tool_name.replace("_", " ").title()
             category = "Brushes"
@@ -55,7 +56,7 @@ def panel_factory(
 
 
 def panel_factory_view3d(
-    tools: Iterable[str], icon_prefix: str, tool_name_attr: str, use_paint_attr: str, tool_settings_attr: str, mode: str
+    tools: Iterable[str | tuple], icon_prefix: str, tool_name_attr: str, use_paint_attr: str, tool_settings_attr: str, mode: str
 ):
     @classmethod
     def poll(cls, context):
