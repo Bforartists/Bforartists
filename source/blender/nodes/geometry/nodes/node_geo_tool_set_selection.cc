@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2023 Blender Foundation
+/* SPDX-FileCopyrightText: 2023 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -83,7 +83,8 @@ static void node_rna(StructRNA *srna)
 {
   RNA_def_node_enum(srna,
                     "domain",
-                    "Domain", "",
+                    "Domain",
+                    "",
                     rna_enum_attribute_domain_point_face_curve_items,
                     NOD_inline_enum_accessors(custom1),
                     ATTR_DOMAIN_POINT);

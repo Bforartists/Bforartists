@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: Blender Foundation
+/* SPDX-FileCopyrightText: Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -40,7 +40,6 @@ static void lightprobe_foreach_id(ID *id, LibraryForeachIDData *data)
 {
   LightProbe *probe = (LightProbe *)id;
 
-  BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, probe->image, IDWALK_CB_USER);
   BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, probe->visibility_grp, IDWALK_CB_NOP);
 }
 
@@ -51,17 +50,6 @@ static void lightprobe_blend_write(BlendWriter *writer, ID *id, const void *id_a
   /* write LibData */
   BLO_write_id_struct(writer, LightProbe, id_address, &prb->id);
   BKE_id_blend_write(writer, &prb->id);
-
-  if (prb->adt) {
-    BKE_animdata_blend_write(writer, prb->adt);
-  }
-}
-
-static void lightprobe_blend_read_data(BlendDataReader *reader, ID *id)
-{
-  LightProbe *prb = (LightProbe *)id;
-  BLO_read_data_address(reader, &prb->adt);
-  BKE_animdata_blend_read_data(reader, prb->adt);
 }
 
 static void lightprobe_blend_read_lib(BlendLibReader *reader, ID *id)
@@ -91,7 +79,7 @@ IDTypeInfo IDType_ID_LP = {
     /*owner_pointer_get*/ nullptr,
 
     /*blend_write*/ lightprobe_blend_write,
-    /*blend_read_data*/ lightprobe_blend_read_data,
+    /*blend_read_data*/ nullptr,
     /*blend_read_lib*/ lightprobe_blend_read_lib,
     /*blend_read_expand*/ nullptr,
 

@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2008 Blender Foundation
+/* SPDX-FileCopyrightText: 2008 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -1297,15 +1297,27 @@ bool ED_region_is_overlap(int spacetype, int regiontype)
         return true;
       }
     }
-    else if (ELEM(spacetype, SPACE_VIEW3D, SPACE_IMAGE)) {
+    else if (spacetype == SPACE_VIEW3D) {
       if (ELEM(regiontype,
                RGN_TYPE_TOOLS,
                RGN_TYPE_UI,
                RGN_TYPE_TOOL_PROPS,
                RGN_TYPE_FOOTER,
+               RGN_TYPE_HEADER,
                RGN_TYPE_TOOL_HEADER,
                RGN_TYPE_ASSET_SHELF,
                RGN_TYPE_ASSET_SHELF_HEADER))
+      {
+        return true;
+      }
+    }
+    else if (spacetype == SPACE_IMAGE) {
+      if (ELEM(regiontype,
+               RGN_TYPE_TOOLS,
+               RGN_TYPE_UI,
+               RGN_TYPE_TOOL_PROPS,
+               RGN_TYPE_FOOTER,
+               RGN_TYPE_TOOL_HEADER))
       {
         return true;
       }
