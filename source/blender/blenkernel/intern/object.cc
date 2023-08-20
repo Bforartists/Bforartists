@@ -568,10 +568,6 @@ static void object_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   BLO_write_id_struct(writer, Object, id_address, &ob->id);
   BKE_id_blend_write(writer, &ob->id);
 
-  if (ob->adt) {
-    BKE_animdata_blend_write(writer, ob->adt);
-  }
-
   /* direct data */
   BLO_write_pointer_array(writer, ob->totcol, ob->mat);
   BLO_write_raw(writer, sizeof(char) * ob->totcol, ob->matbits);
@@ -665,11 +661,8 @@ static void object_blend_read_data(BlendDataReader *reader, ID *id)
     ob->mode &= ~(OB_MODE_EDIT | OB_MODE_PARTICLE_EDIT);
   }
 
-  BLO_read_data_address(reader, &ob->adt);
-  BKE_animdata_blend_read_data(reader, ob->adt);
-
   BLO_read_data_address(reader, &ob->pose);
-  BKE_pose_blend_read_data(reader, ob->pose);
+  BKE_pose_blend_read_data(reader, &ob->id, ob->pose);
 
   BLO_read_data_address(reader, &ob->mpath);
   if (ob->mpath) {
@@ -689,8 +682,8 @@ static void object_blend_read_data(BlendDataReader *reader, ID *id)
 
   /* do it here, below old data gets converted */
   BKE_modifier_blend_read_data(reader, &ob->modifiers, ob);
-  BKE_gpencil_modifier_blend_read_data(reader, &ob->greasepencil_modifiers);
-  BKE_shaderfx_blend_read_data(reader, &ob->shader_fx);
+  BKE_gpencil_modifier_blend_read_data(reader, &ob->greasepencil_modifiers, ob);
+  BKE_shaderfx_blend_read_data(reader, &ob->shader_fx, ob);
 
   BLO_read_list(reader, &ob->effect);
   paf = (PartEff *)ob->effect.first;
@@ -795,7 +788,7 @@ static void object_blend_read_data(BlendDataReader *reader, ID *id)
   BLO_read_list(reader, &ob->particlesystem);
   BKE_particle_system_blend_read_data(reader, &ob->particlesystem);
 
-  BKE_constraint_blend_read_data(reader, &ob->constraints);
+  BKE_constraint_blend_read_data(reader, &ob->id, &ob->constraints);
 
   BLO_read_list(reader, &ob->hooks);
   while (ob->hooks.first) {
@@ -894,51 +887,12 @@ static void object_blend_read_lib(BlendLibReader *reader, ID *id)
   /* XXX deprecated - old pose library, deprecated in Blender 3.5. */
   BLO_read_id_address(reader, id, &ob->poselib);
 
-  /* 2.8x drops support for non-empty dupli instances. */
-  if (ob->type == OB_EMPTY) {
-    BLO_read_id_address(reader, id, &ob->instance_collection);
-  }
-  else {
-    if (ob->instance_collection != nullptr) {
-      ID *new_id = BLO_read_get_new_id_address(
-          reader, id, ID_IS_LINKED(id), &ob->instance_collection->id);
-      BLO_reportf_wrap(reports,
-                       RPT_INFO,
-                       TIP_("Non-Empty object '%s' cannot duplicate collection '%s' "
-                            "anymore in Blender 2.80, removed instancing"),
-                       ob->id.name + 2,
-                       new_id->name + 2);
-    }
-    ob->instance_collection = nullptr;
-    ob->transflag &= ~OB_DUPLICOLLECTION;
-  }
+  BLO_read_id_address(reader, id, &ob->instance_collection);
 
+  /* XXX deprecated - old proxy system. <<< */
   BLO_read_id_address(reader, id, &ob->proxy);
-  if (ob->proxy) {
-    /* paranoia check, actually a proxy_from pointer should never be written... */
-    if (!ID_IS_LINKED(ob->proxy)) {
-      ob->proxy->proxy_from = nullptr;
-      ob->proxy = nullptr;
-
-      if (ob->id.lib) {
-        BLO_reportf_wrap(reports,
-                         RPT_INFO,
-                         TIP_("Proxy lost from object %s lib %s\n"),
-                         ob->id.name + 2,
-                         ob->id.lib->filepath);
-      }
-      else {
-        BLO_reportf_wrap(
-            reports, RPT_INFO, TIP_("Proxy lost from object %s lib <NONE>\n"), ob->id.name + 2);
-      }
-      reports->count.missing_obproxies++;
-    }
-    else {
-      /* this triggers object_update to always use a copy */
-      ob->proxy->proxy_from = ob;
-    }
-  }
   BLO_read_id_address(reader, id, &ob->proxy_group);
+  /* >>> XXX deprecated - old proxy system . */
 
   void *poin = ob->data;
   BLO_read_id_address(reader, id, &ob->data);
@@ -1009,22 +963,6 @@ static void object_blend_read_lib(BlendLibReader *reader, ID *id)
     if (fluidmd && fluidmd->fss) {
       /* XXX: deprecated - old animation system. */
       BLO_read_id_address(reader, id, &fluidmd->fss->ipo);
-    }
-  }
-
-  {
-    FluidModifierData *fmd = (FluidModifierData *)BKE_modifiers_findby_type(ob,
-                                                                            eModifierType_Fluid);
-
-    if (fmd && (fmd->type == MOD_FLUID_TYPE_DOMAIN) && fmd->domain) {
-      /* Flag for refreshing the simulation after loading */
-      fmd->domain->flags |= FLUID_DOMAIN_FILE_LOAD;
-    }
-    else if (fmd && (fmd->type == MOD_FLUID_TYPE_FLOW) && fmd->flow) {
-      fmd->flow->flags &= ~FLUID_FLOW_NEEDS_UPDATE;
-    }
-    else if (fmd && (fmd->type == MOD_FLUID_TYPE_EFFEC) && fmd->effector) {
-      fmd->effector->flags &= ~FLUID_EFFECTOR_NEEDS_UPDATE;
     }
   }
 

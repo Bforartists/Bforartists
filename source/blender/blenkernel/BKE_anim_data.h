@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2009 Blender Foundation, Joshua Leung. All rights reserved.
+/* SPDX-FileCopyrightText: 2009 Blender Authors, Joshua Leung. All rights reserved.
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -130,8 +130,8 @@ void BKE_animdata_merge_copy(struct Main *bmain,
                              eAnimData_MergeCopy_Modes action_mode,
                              bool fix_drivers);
 
-void BKE_animdata_blend_write(struct BlendWriter *writer, struct AnimData *adt);
-void BKE_animdata_blend_read_data(struct BlendDataReader *reader, struct AnimData *adt);
+void BKE_animdata_blend_write(struct BlendWriter *writer, struct ID *id);
+void BKE_animdata_blend_read_data(struct BlendDataReader *reader, struct ID *id);
 void BKE_animdata_blend_read_lib(struct BlendLibReader *reader,
                                  struct ID *id,
                                  struct AnimData *adt);

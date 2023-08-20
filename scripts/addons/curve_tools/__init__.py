@@ -6,7 +6,7 @@ bl_info = {
     "name": "Curve Tools",
     "description": "Adds some functionality for bezier/nurbs curve/surface modeling",
     "author": "Mackraken, Spivak Vladimir (cwolf3d)",
-    "version": (0, 4, 5),
+    "version": (0, 4, 6),
     "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Edit Tab",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/curve_tools.html",

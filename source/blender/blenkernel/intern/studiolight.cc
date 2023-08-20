@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2006-2007 Blender Foundation
+/* SPDX-FileCopyrightText: 2006-2007 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -33,7 +33,7 @@
 
 #include "MEM_guardedalloc.h"
 
-#include <string.h>
+#include <cstring>
 
 /* Statics */
 static ListBase studiolights;

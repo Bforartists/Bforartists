@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2023 Blender Foundation
+/* SPDX-FileCopyrightText: 2023 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -172,7 +172,8 @@ static void node_rna(StructRNA *srna)
 {
   RNA_def_node_enum(srna,
                     "mode",
-                    "Mode", "Whether to update left and right handles",
+                    "Mode",
+                    "Whether to update left and right handles",
                     rna_node_geometry_curve_handle_side_items,
                     NOD_storage_enum_accessors(mode),
                     GEO_NODE_CURVE_HANDLE_LEFT);

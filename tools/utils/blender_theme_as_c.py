@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-# SPDX-FileCopyrightText: 2023 Blender Foundation
+# SPDX-FileCopyrightText: 2023 Blender Authors
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 """
 Generates 'userdef_default_theme.c' from a 'userpref.blend' file.
 
-Pass your user preferenes blend file to this script to update the C source file.
+Pass your user preferences blend file to this script to update the C source file.
 
 eg:
 
@@ -36,7 +36,7 @@ You can also define the full path to the updated userpref.blend as mentioned abo
 
 """
 
-C_SOURCE_HEADER = r'''/* SPDX-FileCopyrightText: 2018 Blender Foundation
+C_SOURCE_HEADER = r'''/* SPDX-FileCopyrightText: 2018 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
