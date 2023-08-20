@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2023 Blender Foundation
+/* SPDX-FileCopyrightText: 2023 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -711,7 +711,7 @@ static void shader_preview_startjob(void *customdata,
   job_data->mat_output_copy->flag |= NODE_DO_OUTPUT;
 
   bNodeSocket *disp_socket = nodeFindSocket(active_user_output_node, SOCK_IN, "Displacement");
-  if (disp_socket->link != nullptr) {
+  if (disp_socket != nullptr && disp_socket->link != nullptr) {
     job_data->mat_displacement_copy = std::make_pair(disp_socket->link->fromnode,
                                                      disp_socket->link->fromsock);
   }

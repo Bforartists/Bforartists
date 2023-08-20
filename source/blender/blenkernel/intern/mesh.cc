@@ -270,10 +270,6 @@ static void mesh_blend_write(BlendWriter *writer, ID *id, const void *id_address
   BLO_write_id_struct(writer, Mesh, id_address, &mesh->id);
   BKE_id_blend_write(writer, &mesh->id);
 
-  if (mesh->adt) {
-    BKE_animdata_blend_write(writer, mesh->adt);
-  }
-
   BKE_defbase_blend_write(writer, &mesh->vertex_group_names);
   BLO_write_string(writer, mesh->active_color_attribute);
   BLO_write_string(writer, mesh->default_color_attribute);
@@ -302,6 +298,10 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
 {
   Mesh *mesh = reinterpret_cast<Mesh *>(id);
   BLO_read_pointer_array(reader, (void **)&mesh->mat);
+  /* This check added for python created meshes. */
+  if (!mesh->mat) {
+    mesh->totcol = 0;
+  }
 
   /* Deprecated pointers to custom data layers are read here for backward compatibility
    * with files where these were owning pointers rather than a view into custom data. */
@@ -314,9 +314,6 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
   BLO_read_data_address(reader, &mesh->mcol);
 
   BLO_read_data_address(reader, &mesh->mselect);
-
-  BLO_read_data_address(reader, &mesh->adt);
-  BKE_animdata_blend_read_data(reader, mesh->adt);
 
   BLO_read_list(reader, &mesh->vertex_group_names);
 
@@ -359,14 +356,8 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
 static void mesh_blend_read_lib(BlendLibReader *reader, ID *id)
 {
   Mesh *me = reinterpret_cast<Mesh *>(id);
-  /* This check added for python created meshes. */
-  if (me->mat) {
-    for (int i = 0; i < me->totcol; i++) {
-      BLO_read_id_address(reader, id, &me->mat[i]);
-    }
-  }
-  else {
-    me->totcol = 0;
+  for (int i = 0; i < me->totcol; i++) {
+    BLO_read_id_address(reader, id, &me->mat[i]);
   }
 
   BLO_read_id_address(reader, id, &me->ipo);  // XXX: deprecated: old anim sys

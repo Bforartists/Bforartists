@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2023 Blender Foundation
+/* SPDX-FileCopyrightText: 2023 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -198,7 +198,10 @@ class MTLShader : public Shader {
   MTLComputePipelineStateInstance compute_pso_instance_;
 
   /* True to enable multi-layered rendering support. */
-  bool uses_mtl_array_index_ = false;
+  bool uses_gpu_layer = false;
+
+  /* True to enable multi-viewport rendering support. */
+  bool uses_gpu_viewport_index = false;
 
   /** SSBO Vertex fetch pragma options. */
   /* Indicates whether to pass in VertexBuffer's as regular buffer bindings
