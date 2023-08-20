@@ -385,8 +385,10 @@ class SmoothStrokePanel(BrushPanel):
         brush = settings.brush
 
         self.layout.use_property_split = False
-        self.layout.prop(brush, "use_smooth_stroke",
-                         text=self.bl_label if self.is_popover else "")
+        #self.layout.prop(brush, "use_smooth_stroke",
+        #                 text=self.bl_label if self.is_popover else "")
+
+        self.layout.prop(brush, "use_smooth_stroke", text="Stabilize Stroke")
 
     def draw(self, context):
         layout = self.layout
@@ -398,8 +400,14 @@ class SmoothStrokePanel(BrushPanel):
 
         col = layout.column()
         col.active = brush.use_smooth_stroke
-        col.prop(brush, "smooth_stroke_radius", text="Radius", slider=True)
-        col.prop(brush, "smooth_stroke_factor", text="Factor", slider=True)
+        row = col.row()
+        if self.is_popover:
+            row.separator()
+        row.prop(brush, "smooth_stroke_radius", text="Radius", slider=True)
+        row = col.row()
+        if self.is_popover:
+            row.separator()
+        row.prop(brush, "smooth_stroke_factor", text="Factor", slider=True)
 
 
 class FalloffPanel(BrushPanel):
