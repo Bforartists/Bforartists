@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2004 Blender Foundation
+/* SPDX-FileCopyrightText: 2004 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -31,6 +31,7 @@
 #include "BKE_deform.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_gpencil_modifier_legacy.h"
+#include "BKE_grease_pencil.hh"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
@@ -68,6 +69,7 @@
 
 #include "outliner_intern.hh"
 #include "tree/tree_display.hh"
+#include "tree/tree_element_grease_pencil_node.hh"
 #include "tree/tree_element_seq.hh"
 #include "tree/tree_iterator.hh"
 
@@ -360,6 +362,9 @@ static void tree_element_object_activate(bContext *C,
         }
       }
     }
+    else if (recursive) {
+      /* Pass */
+    }
     else {
       /* De-select all. */
 
@@ -386,7 +391,9 @@ static void tree_element_object_activate(bContext *C,
     }
 
     if (set != OL_SETSEL_NONE) {
-      ED_object_base_activate_with_mode_exit_if_needed(C, base); /* adds notifier */
+      if (!recursive) {
+        ED_object_base_activate_with_mode_exit_if_needed(C, base); /* adds notifier */
+      }
       DEG_id_tag_update(&scene->id, ID_RECALC_SELECT);
       WM_event_add_notifier(C, NC_SCENE | ND_OB_SELECT, scene);
     }
@@ -481,6 +488,19 @@ static void tree_element_gplayer_activate(bContext *C, TreeElement *te, TreeStor
     BKE_gpencil_layer_active_set(gpd, gpl);
     DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY);
     WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_SELECTED, gpd);
+  }
+}
+
+static void tree_element_grease_pencil_layer_activate(bContext *C,
+                                                      TreeElement *te,
+                                                      TreeStoreElem *tselem)
+{
+  GreasePencil &grease_pencil = *(GreasePencil *)tselem->id;
+  bke::greasepencil::TreeNode &node = tree_element_cast<TreeElementGreasePencilNode>(te)->node();
+  if (node.is_layer()) {
+    grease_pencil.set_active_layer(&node.as_layer());
+    DEG_id_tag_update(&grease_pencil.id, ID_RECALC_GEOMETRY);
+    WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_SELECTED, &grease_pencil);
   }
 }
 
@@ -853,6 +873,9 @@ void tree_element_type_active_set(bContext *C,
     case TSE_GP_LAYER:
       tree_element_gplayer_activate(C, te, tselem);
       break;
+    case TSE_GREASE_PENCIL_NODE:
+      tree_element_grease_pencil_layer_activate(C, te, tselem);
+      break;
     case TSE_VIEW_COLLECTION_BASE:
       tree_element_master_collection_activate(C);
       break;
@@ -1013,6 +1036,16 @@ static eOLDrawState tree_element_gplayer_state_get(const TreeElement *te)
   return OL_DRAWSEL_NONE;
 }
 
+static eOLDrawState tree_element_grease_pencil_node_state_get(const TreeElement *te)
+{
+  GreasePencil &grease_pencil = *(GreasePencil *)te->store_elem->id;
+  bke::greasepencil::TreeNode &node = tree_element_cast<TreeElementGreasePencilNode>(te)->node();
+  if (node.is_layer() && grease_pencil.is_layer_active(&node.as_layer())) {
+    return OL_DRAWSEL_NORMAL;
+  }
+  return OL_DRAWSEL_NONE;
+}
+
 static eOLDrawState tree_element_master_collection_state_get(const bContext *C)
 {
   const ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -1156,6 +1189,8 @@ eOLDrawState tree_element_type_active_state_get(const bContext *C,
       return tree_element_sequence_dup_state_get(te);
     case TSE_GP_LAYER:
       return tree_element_gplayer_state_get(te);
+    case TSE_GREASE_PENCIL_NODE:
+      return tree_element_grease_pencil_node_state_get(te);
     case TSE_VIEW_COLLECTION_BASE:
       return tree_element_master_collection_state_get(C);
     case TSE_LAYER_COLLECTION:
@@ -1370,6 +1405,7 @@ static void outliner_set_properties_tab(bContext *C, TreeElement *te, TreeStoreE
         break;
       }
       case TSE_GP_LAYER:
+      case TSE_GREASE_PENCIL_NODE:
         RNA_id_pointer_create(tselem->id, &ptr);
         context = BCONTEXT_DATA;
         break;
@@ -1417,6 +1453,15 @@ static void do_outliner_item_activate_tree_element(bContext *C,
                                  (extend && tselem->type == TSE_SOME_ID) ? OL_SETSEL_EXTEND :
                                                                            OL_SETSEL_NORMAL,
                                  recursive && tselem->type == TSE_SOME_ID);
+  }
+  else if (recursive && !(space_outliner->flag & SO_SYNC_SELECT)) {
+    /* Selection of child objects in hierarchy when sync-selection is OFF. */
+    tree_iterator::all(te->subtree, [&](TreeElement *te) {
+      TreeStoreElem *tselem = TREESTORE(te);
+      if ((tselem->type == TSE_SOME_ID) && (te->idcode == ID_OB)) {
+        tselem->flag |= TSE_SELECTED;
+      }
+    });
   }
 
   if (tselem->type == TSE_SOME_ID) { /* The lib blocks. */
@@ -1488,10 +1533,13 @@ void outliner_item_select(bContext *C,
   const bool activate = select_flag & OL_ITEM_ACTIVATE;
   const bool extend = select_flag & OL_ITEM_EXTEND;
   const bool activate_data = select_flag & OL_ITEM_SELECT_DATA;
+  const bool recursive = select_flag & OL_ITEM_RECURSIVE;
 
   /* Clear previous active when activating and clear selection when not extending selection */
   const short clear_flag = (activate ? TSE_ACTIVE : 0) | (extend ? 0 : TSE_SELECTED);
-  if (clear_flag) {
+
+  /* Do not clear the active and select flag when selecting hierarchies. */
+  if (clear_flag && !recursive) {
     outliner_flag_set(*space_outliner, clear_flag, false);
   }
 
@@ -1506,7 +1554,10 @@ void outliner_item_select(bContext *C,
     TreeViewContext tvc;
     outliner_viewcontext_init(C, &tvc);
 
-    tselem->flag |= TSE_ACTIVE;
+    if (!recursive) {
+      tselem->flag |= TSE_ACTIVE;
+    }
+
     do_outliner_item_activate_tree_element(C,
                                            &tvc,
                                            space_outliner,

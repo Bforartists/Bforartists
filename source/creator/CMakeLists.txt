@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2006 Blender Foundation
+# SPDX-FileCopyrightText: 2006 Blender Authors
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -364,9 +364,9 @@ endif()
 if(UNIX AND NOT APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
-      set(TARGETDIR_BPY bpy)
-      set(TARGETDIR_VER ${CMAKE_INSTALL_PREFIX}/bpy/${BLENDER_VERSION})
-      set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX}/bpy/lib)
+      set(TARGETDIR_BPY "./bpy")
+      set(TARGETDIR_VER "./bpy/${BLENDER_VERSION}")
+      set(TARGETDIR_LIB "./bpy/lib")
     else()
       set(TARGETDIR_BPY ${PYTHON_SITE_PACKAGES}/bpy)
       set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/bpy/${BLENDER_VERSION})
@@ -374,12 +374,12 @@ if(UNIX AND NOT APPLE)
     endif()
   else()
     if(WITH_INSTALL_PORTABLE)
-      set(TARGETDIR_VER ${CMAKE_INSTALL_PREFIX}/${BLENDER_VERSION})
-      set(TARGETDIR_TEXT ${CMAKE_INSTALL_PREFIX})
-      set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX}/lib)
+      set(TARGETDIR_VER "./${BLENDER_VERSION}")
+      set(TARGETDIR_TEXT ".")
+      set(TARGETDIR_LIB "./lib")
     else()
-      set(TARGETDIR_VER share/bforartists/${BLENDER_VERSION})
-      set(TARGETDIR_TEXT share/doc/bforartists)
+      set(TARGETDIR_VER "./share/bforartists/${BLENDER_VERSION}")
+      set(TARGETDIR_TEXT "./share/doc/bforartists")
     endif()
   endif()
 
@@ -391,17 +391,17 @@ elseif(WIN32)
     set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX_WITH_CONFIG}/bpy)
     set(TARGETDIR_EXE ${CMAKE_INSTALL_PREFIX_WITH_CONFIG}/bpy)
   else()
-    set(TARGETDIR_VER ${BLENDER_VERSION})
-    set(TARGETDIR_TEXT ${CMAKE_INSTALL_PREFIX})
-    set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX}/blender.shared)
-    set(TARGETDIR_EXE ${CMAKE_INSTALL_PREFIX})
+    set(TARGETDIR_VER "./${BLENDER_VERSION}")
+    set(TARGETDIR_TEXT ".")
+    set(TARGETDIR_LIB "./blender.shared")
+    set(TARGETDIR_EXE ".")
   endif()
 elseif(APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
-      set(TARGETDIR_BPY ${CMAKE_INSTALL_PREFIX}/bpy)
-      set(TARGETDIR_VER ${CMAKE_INSTALL_PREFIX}/bpy/${BLENDER_VERSION})
-      set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX}/bpy/lib)
+      set(TARGETDIR_BPY "./bpy")
+      set(TARGETDIR_VER "./bpy/${BLENDER_VERSION}")
+      set(TARGETDIR_LIB "./bpy/lib")
     else()
       # Paths defined in terms of site-packages since the site-packages
       # directory can be a symlink (brew for example).
@@ -410,9 +410,9 @@ elseif(APPLE)
       set(TARGETDIR_LIB ${PYTHON_SITE_PACKAGES}/bpy/lib)
     endif()
   else()
-    set(TARGETDIR_VER ${CMAKE_INSTALL_PREFIX}/Bforartists.app/Contents/Resources/${BLENDER_VERSION})
-    set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX}/Bforartists.app/Contents/Resources/lib)
-    set(TARGETDIR_TEXT ${CMAKE_INSTALL_PREFIX}/Bforartists.app/Contents/Resources/text)
+    set(TARGETDIR_VER "./Bforartists.app/Contents/Resources/${BLENDER_VERSION}")
+    set(TARGETDIR_LIB "./Bforartists.app/Contents/Resources/lib")
+    set(TARGETDIR_TEXT "./Bforartists.app/Contents/Resources/text")
   endif()
   # Skip re-linking on CPACK / install.
   set_target_properties(bforartists PROPERTIES BUILD_WITH_INSTALL_RPATH true)
@@ -421,13 +421,6 @@ endif()
 
 # -----------------------------------------------------------------------------
 # Install Targets (Generic, All Platforms)
-
-
-# Important to make a clean install each time, else old scripts get loaded.
-install(
-  CODE
-  "file(REMOVE_RECURSE ${TARGETDIR_VER})"
-)
 
 if(WITH_PYTHON)
   # install(CODE "message(\"copying blender scripts...\")")
@@ -638,7 +631,7 @@ if(UNIX AND NOT APPLE)
     set(BLENDER_BIN "bforartists")
     install(
       TARGETS bforartists
-      DESTINATION ${CMAKE_INSTALL_PREFIX}
+      DESTINATION "."
     )
 
     install(
@@ -646,13 +639,13 @@ if(UNIX AND NOT APPLE)
         ${CMAKE_SOURCE_DIR}/release/freedesktop/bforartists.desktop
         ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/bforartists.svg
         ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/bforartists-symbolic.svg
-      DESTINATION ${CMAKE_INSTALL_PREFIX}
+      DESTINATION "."
     )
 
     if(WITH_BLENDER_THUMBNAILER)
       install(
         TARGETS blender-thumbnailer
-        DESTINATION ${CMAKE_INSTALL_PREFIX}
+        DESTINATION "."
       )
     endif()
 
@@ -661,15 +654,15 @@ if(UNIX AND NOT APPLE)
       # Pass.
     elseif(EXISTS ${LIBDIR}/mesa)
       install(
-        DIRECTORY ${LIBDIR}/mesa/lib/
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/mesa/
+        DIRECTORY ${LIBDIR}/mesa/lib
+        DESTINATION "./lib/mesa"
       )
 
       install(
         PROGRAMS
         # ${CMAKE_SOURCE_DIR}/release/bin/blender-launcher # BFA - Commented out blender launcher (maybe we should also use it?)
         ${CMAKE_SOURCE_DIR}/release/bin/bforartists-softwaregl
-        DESTINATION ${CMAKE_INSTALL_PREFIX}
+        DESTINATION "."
       )
 
       # Remove from old location, so existing builds don't start with software
@@ -693,26 +686,26 @@ if(UNIX AND NOT APPLE)
     set(BLENDER_BIN "bin/bforartists")
     install(
       TARGETS bforartists
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+      DESTINATION "./bin"
     )
 
     # Misc files.
     install(
       FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/bforartists.desktop
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications
+      DESTINATION "./share/applications"
     )
     install(
       FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/bforartists.svg
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps
+      DESTINATION "./share/icons/hicolor/scalable/apps"
     )
     install(
       FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/bforartists-symbolic.svg
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/symbolic/apps
+      DESTINATION "./share/icons/hicolor/symbolic/apps"
     )
     if(WITH_BLENDER_THUMBNAILER)
       install(
         TARGETS blender-thumbnailer
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+        DESTINATION "./bin"
       )
     endif()
   endif()
@@ -1019,21 +1012,23 @@ elseif(WIN32)
     DEBUG
   )
 
-  if(WITH_WINDOWS_PDB)
-    if(WITH_WINDOWS_STRIPPED_PDB)
+  if(WITH_WINDOWS_RELEASE_PDB)
+    if(WITH_WINDOWS_RELEASE_STRIPPED_PDB)
       # Icky hack for older CMAKE from https://stackoverflow.com/a/21198501
       # `$<CONFIG>` will work in newer CMAKE but the version currently (3.12)
       # on the build-bot does not support this endeavor.
       install(
         FILES ${CMAKE_CURRENT_BINARY_DIR}/\${CMAKE_INSTALL_CONFIG_NAME}/bforartists_public.pdb
-        DESTINATION ${CMAKE_INSTALL_PREFIX}
+        DESTINATION "."
         RENAME bforartists.pdb
+        CONFIGURATIONS Release
       )
     else()
       install(
         FILES $<TARGET_PDB_FILE:bforartists>
-        DESTINATION ${CMAKE_INSTALL_PREFIX}
+        DESTINATION "."
         RENAME bforartists.pdb
+        CONFIGURATIONS Release
       )
     endif()
   endif()
@@ -1255,14 +1250,14 @@ elseif(WIN32)
         install(
           FILES
             ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/libs/python${_PYTHON_VERSION_NO_DOTS}.pdb
-          DESTINATION ${CMAKE_INSTALL_PREFIX}
+          DESTINATION "."
           CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
         )
 
         install(
           FILES
             ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/libs/python${_PYTHON_VERSION_NO_DOTS}_d.pdb
-          DESTINATION ${CMAKE_INSTALL_PREFIX}
+          DESTINATION "."
           CONFIGURATIONS Debug
         )
       endif()
@@ -1360,7 +1355,7 @@ elseif(WIN32)
         ${LIBDIR}/audaspace/lib/audaspace.dll
         ${LIBDIR}/audaspace/lib/audaspace-c.dll
         ${LIBDIR}/audaspace/lib/audaspace-py.dll
-      DESTINATION ${CMAKE_INSTALL_PREFIX}
+      DESTINATION "."
     )
   endif()
 
@@ -1381,7 +1376,7 @@ elseif(WIN32)
   if(WITH_BLENDER_THUMBNAILER)
     install(
       TARGETS BlendThumb
-      DESTINATION ${CMAKE_INSTALL_PREFIX}
+      DESTINATION "."
     )
   endif()
 
@@ -1443,23 +1438,23 @@ elseif(APPLE)
   set(BLENDER_BIN "bin/bforartists")
   install(
     TARGETS bforartists
-    DESTINATION ${CMAKE_INSTALL_PREFIX}
+    DESTINATION "."
   )
 
   install(
     FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/Bforartists.app/Contents
+    DESTINATION "./Bforartists.app/Contents"
   )
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    ${CMAKE_INSTALL_PREFIX}/Bforartists.app/Contents/
+    "./Bforartists.app/Contents"
   )
 
   if(WITH_BLENDER_THUMBNAILER)
     install(
       TARGETS blender-thumbnailer
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/Bforartists.app/Contents/MacOS
+      DESTINATION "./Bforartists.app/Contents/MacOS"
     )
   endif()
 
@@ -1643,7 +1638,7 @@ if((DEFINED LIBDIR) AND TARGETDIR_LIB)
         ${LIBDIR}/usd/plugin/usd/hdStorm
         ${LIBDIR}/usd/plugin/usd/usdShaders
         ${LIBDIR}/usd/plugin/usd/hioOiio
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/blender.shared/usd
+        DESTINATION "./blender.shared/usd"
       )
     elseif(USD_PYTHON_SUPPORT)
       install(DIRECTORY
@@ -1732,19 +1727,19 @@ if(WIN32)
     PDB_NAME "bforartists_private"
     PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>"
   )
-  if(WITH_WINDOWS_PDB AND WITH_WINDOWS_STRIPPED_PDB)
+  if(WITH_WINDOWS_RELEASE_PDB AND WITH_WINDOWS_RELEASE_STRIPPED_PDB)
     # This is slightly messy, but single target generators like ninja will not have the
     # `CMAKE_CFG_INTDIR` variable and multi-target generators like `msbuild` will not have
     # `CMAKE_BUILD_TYPE`. This can be simplified by `target_link_options` and the `$<CONFIG>`
     # generator expression in newer CMAKE (2.13+) but until that time this fill have suffice.
     if(CMAKE_BUILD_TYPE)
       set_property(
-        TARGET bforartists APPEND_STRING PROPERTY LINK_FLAGS
+        TARGET bforartists APPEND_STRING PROPERTY LINK_FLAGS_RELEASE
         " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bforartists_public.pdb"
       )
     else()
       set_property(
-        TARGET bforartists APPEND_STRING PROPERTY LINK_FLAGS
+        TARGET bforartists APPEND_STRING PROPERTY LINK_FLAGS_RELEASE
         " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bforartists_public.pdb"
       )
     endif()
@@ -1759,7 +1754,7 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
   install(
     TARGETS bforartists # bforartists-launcher # BFA - Commented out the launcher. (maybe we should also use it?)
     COMPONENT Bforartists
-    DESTINATION ${CMAKE_INSTALL_PREFIX}
+    DESTINATION "."
   )
   set_target_properties(
     bforartists
@@ -1820,13 +1815,13 @@ endif()\n\
       if(WITH_INSTALL_PORTABLE)
         install(
           FILES ${CMAKE_CURRENT_BINARY_DIR}/blender.1
-          DESTINATION ${CMAKE_INSTALL_PREFIX}
+          DESTINATION "."
         )
       else()
         # Manual page (only with `blender` binary).
         install(
           FILES ${CMAKE_CURRENT_BINARY_DIR}/blender.1
-          DESTINATION share/man/man1
+          DESTINATION "./share/man/man1"
         )
       endif()
     endif()
