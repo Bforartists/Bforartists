@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2009-2023 Blender Foundation
+# SPDX-FileCopyrightText: 2009-2023 Blender Authors
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 import bpy
@@ -479,6 +479,7 @@ class GRAPH_MT_key_blending(Menu):
         layout.operator("graph.ease", text="Ease", icon = 'IPO_EASE_IN_OUT')
         layout.operator("graph.blend_to_ease", text="Blend to Ease", icon = 'BLEND_TO_EASE')
         layout.operator("graph.blend_offset", text="Blend Offset", icon = 'BLEND_OFFSET')
+        layout.operator("graph.match_slope", text="Match Slope")
 
 
 class GRAPH_MT_key_smoothing(Menu):

@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2010 Blender Foundation
+/* SPDX-FileCopyrightText: 2010 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -147,27 +147,21 @@ static void linestyle_foreach_id(ID *id, LibraryForeachIDData *data)
     if (lsm->type == LS_MODIFIER_DISTANCE_FROM_OBJECT) {
       LineStyleColorModifier_DistanceFromObject *p = (LineStyleColorModifier_DistanceFromObject *)
           lsm;
-      if (p->target) {
-        BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, p->target, IDWALK_CB_NOP);
-      }
+      BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, p->target, IDWALK_CB_NOP);
     }
   }
   LISTBASE_FOREACH (LineStyleModifier *, lsm, &linestyle->alpha_modifiers) {
     if (lsm->type == LS_MODIFIER_DISTANCE_FROM_OBJECT) {
       LineStyleAlphaModifier_DistanceFromObject *p = (LineStyleAlphaModifier_DistanceFromObject *)
           lsm;
-      if (p->target) {
-        BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, p->target, IDWALK_CB_NOP);
-      }
+      BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, p->target, IDWALK_CB_NOP);
     }
   }
   LISTBASE_FOREACH (LineStyleModifier *, lsm, &linestyle->thickness_modifiers) {
     if (lsm->type == LS_MODIFIER_DISTANCE_FROM_OBJECT) {
       LineStyleThicknessModifier_DistanceFromObject *p =
           (LineStyleThicknessModifier_DistanceFromObject *)lsm;
-      if (p->target) {
-        BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, p->target, IDWALK_CB_NOP);
-      }
+      BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, p->target, IDWALK_CB_NOP);
     }
   }
 }
@@ -433,10 +427,6 @@ static void linestyle_blend_write(BlendWriter *writer, ID *id, const void *id_ad
   BLO_write_id_struct(writer, FreestyleLineStyle, id_address, &linestyle->id);
   BKE_id_blend_write(writer, &linestyle->id);
 
-  if (linestyle->adt) {
-    BKE_animdata_blend_write(writer, linestyle->adt);
-  }
-
   write_linestyle_color_modifiers(writer, &linestyle->color_modifiers);
   write_linestyle_alpha_modifiers(writer, &linestyle->alpha_modifiers);
   write_linestyle_thickness_modifiers(writer, &linestyle->thickness_modifiers);
@@ -630,8 +620,6 @@ static void linestyle_blend_read_data(BlendDataReader *reader, ID *id)
 {
   FreestyleLineStyle *linestyle = (FreestyleLineStyle *)id;
 
-  BLO_read_data_address(reader, &linestyle->adt);
-  BKE_animdata_blend_read_data(reader, linestyle->adt);
   BLO_read_list(reader, &linestyle->color_modifiers);
   LISTBASE_FOREACH (LineStyleModifier *, modifier, &linestyle->color_modifiers) {
     direct_link_linestyle_color_modifier(reader, modifier);

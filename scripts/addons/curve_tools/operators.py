@@ -52,18 +52,23 @@ class OperatorCurveInfo(bpy.types.Operator):
 class OperatorCurveLength(bpy.types.Operator):
     bl_idname = "curvetools.operatorcurvelength"
     bl_label = "Length"
-    bl_description = "Calculates the length of the active/selected curve"
+    bl_description = "Calculates the length of the active/selected curves"
 
 
     @classmethod
     def poll(cls, context):
-        return util.Selected1Curve()
+        return util.Selected1OrMoreCurves()
 
 
     def execute(self, context):
-        curve = curves.Curve(context.active_object)
+        selCurves = util.GetSelectedCurves()
 
-        context.scene.curvetools.CurveLength = curve.length
+        length = 0
+        for blCurve in selCurves:
+            curve = curves.Curve(blCurve)
+            length += curve.length
+
+        context.scene.curvetools.CurveLength = length
 
         return {'FINISHED'}
 
