@@ -1520,8 +1520,6 @@ class VIEW3D_MT_view(Menu):
             layout.operator("view3d.render_border", icon="RENDERBORDER")
             layout.operator("view3d.clear_render_border", icon="RENDERBORDER_CLEAR")
 
-        #layout.prop(view, "show_viewer", text="Viewer Node") - bfa hidden due to one already in Overlay Options.
-
         layout.separator()
 
         layout.menu("VIEW3D_MT_view_cameras", text="Cameras")
