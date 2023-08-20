@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2016 Blender Foundation
+# SPDX-FileCopyrightText: 2016 Blender Authors
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -134,19 +134,11 @@ if(WITH_WINDOWS_BUNDLE_CRT)
     string(FIND ${lib} "ucrtbase" pos)
     if(NOT pos EQUAL -1)
       list(REMOVE_ITEM CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS ${lib})
-      install(
-        FILES ${lib}
-        DESTINATION ${CMAKE_INSTALL_PREFIX}
-        COMPONENT Libraries
-      )
+      install(FILES ${lib} DESTINATION . COMPONENT Libraries)
     endif()
   endforeach()
   # Install the CRT to the blender.crt Sub folder.
-  install(
-    FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/blender.crt
-    COMPONENT Libraries
-  )
+  install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ./blender.crt COMPONENT Libraries)
 
   windows_generate_manifest(
     FILES "${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}"
@@ -154,10 +146,7 @@ if(WITH_WINDOWS_BUNDLE_CRT)
     NAME "blender.crt"
   )
 
-  install(
-    FILES ${CMAKE_BINARY_DIR}/blender.crt.manifest
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/blender.crt
-  )
+  install(FILES ${CMAKE_BINARY_DIR}/blender.crt.manifest DESTINATION ./blender.crt)
   set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"blender.crt\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
 endif()
 if(NOT WITH_PYTHON_MODULE)
@@ -237,7 +226,7 @@ else()
   endif()
 endif()
 
-if(WITH_WINDOWS_PDB)
+if(WITH_WINDOWS_RELEASE_PDB)
   set(PDB_INFO_OVERRIDE_FLAGS "${SYMBOL_FORMAT_RELEASE}")
   set(PDB_INFO_OVERRIDE_LINKER_FLAGS "/DEBUG /OPT:REF /OPT:ICF /INCREMENTAL:NO")
 endif()
@@ -260,7 +249,7 @@ endif()
 
 string(APPEND PLATFORM_LINKFLAGS " /SUBSYSTEM:CONSOLE /STACK:2097152")
 set(PLATFORM_LINKFLAGS_RELEASE "/NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:msvcrtd.lib")
-string(APPEND PLATFORM_LINKFLAGS_DEBUG " /IGNORE:4099 /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libcmtd.lib")
+string(APPEND PLATFORM_LINKFLAGS_DEBUG "/debug:fastlink /IGNORE:4099 /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libcmtd.lib")
 
 # Ignore meaningless for us linker warnings.
 string(APPEND PLATFORM_LINKFLAGS " /ignore:4049 /ignore:4217 /ignore:4221")
@@ -375,9 +364,12 @@ set(FREETYPE_INCLUDE_DIRS
 )
 set(FREETYPE_LIBRARIES
   ${LIBDIR}/freetype/lib/freetype2ST.lib
+)
+set(BROTLI_LIBRARIES
   ${LIBDIR}/brotli/lib/brotlidec-static.lib
   ${LIBDIR}/brotli/lib/brotlicommon-static.lib
 )
+
 windows_find_package(Freetype REQUIRED)
 
 if(WITH_FFTW3)

@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2023 Blender Foundation
+/* SPDX-FileCopyrightText: 2023 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -69,7 +69,7 @@ const EnumPropertyItem rna_enum_node_socket_in_out_items[] = {{SOCK_IN, "IN", 0,
                                                               {SOCK_OUT, "OUT", 0, "Output", ""},
                                                               {0, nullptr, 0, nullptr, nullptr}};
 
-const EnumPropertyItem node_socket_data_type_items[] = {
+const EnumPropertyItem rna_node_socket_data_type_items[] = {
     {SOCK_FLOAT, "FLOAT", 0, "Float", ""},
     {SOCK_INT, "INT", 0, "Integer", ""},
     {SOCK_BOOLEAN, "BOOLEAN", 0, "Boolean", ""},
@@ -1794,7 +1794,7 @@ static bNodeType *rna_Node_register_base(Main *bmain,
   /* setup dummy node & node type to store static properties in */
   memset(&dummy_nt, 0, sizeof(bNodeType));
   /* this does some additional initialization of default values */
-  node_type_base_custom(&dummy_nt, identifier, "", 0);
+  node_type_base_custom(&dummy_nt, identifier, "", "CUSTOM", 0);
 
   memset(&dummy_node, 0, sizeof(bNode));
   dummy_node.typeinfo = &dummy_nt;
@@ -1944,7 +1944,7 @@ static const EnumPropertyItem *rna_GeometryNodeSwitch_type_itemf(bContext * /*C*
                                                                  bool *r_free)
 {
   *r_free = true;
-  return itemf_function_check(node_socket_data_type_items, switch_type_supported);
+  return itemf_function_check(rna_node_socket_data_type_items, switch_type_supported);
 }
 
 static bool geometry_node_asset_trait_flag_get(PointerRNA *ptr,
@@ -3412,7 +3412,7 @@ static const EnumPropertyItem *rna_SimulationStateItem_socket_type_itemf(bContex
                                                                          bool *r_free)
 {
   *r_free = true;
-  return itemf_function_check(node_socket_data_type_items,
+  return itemf_function_check(rna_node_socket_data_type_items,
                               rna_SimulationStateItem_socket_type_supported);
 }
 
@@ -3427,7 +3427,8 @@ static const EnumPropertyItem *rna_RepeatItem_socket_type_itemf(bContext * /*C*/
                                                                 bool *r_free)
 {
   *r_free = true;
-  return itemf_function_check(node_socket_data_type_items, rna_RepeatItem_socket_type_supported);
+  return itemf_function_check(rna_node_socket_data_type_items,
+                              rna_RepeatItem_socket_type_supported);
 }
 
 static void rna_SimulationStateItem_name_set(PointerRNA *ptr, const char *value)
@@ -4279,7 +4280,24 @@ static const EnumPropertyItem node_hair_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static const EnumPropertyItem node_principled_hair_items[] = {
+static const EnumPropertyItem node_principled_hair_model_items[] = {
+    {SHD_PRINCIPLED_HAIR_CHIANG,
+     "CHIANG",
+     0,
+     "Chiang",
+     "Near-field hair scattering model by Chiang et. al 2016, suitable for close-up looks, but is "
+     "more noisy when viewing from a distance"},
+    {SHD_PRINCIPLED_HAIR_HUANG,
+     "HUANG",
+     0,
+     "Huang",
+     "Far-field hair scattering model by Huang et. al 2022, suitable for viewing from a distance, "
+     "supports elliptical cross-sections and has more precise highlight in forward scattering "
+     "directions"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+static const EnumPropertyItem node_principled_hair_parametrization_items[] = {
     {SHD_PRINCIPLED_HAIR_DIRECT_ABSORPTION,
      "ABSORPTION",
      0,
@@ -4290,8 +4308,8 @@ static const EnumPropertyItem node_principled_hair_items[] = {
      "MELANIN",
      0,
      "Melanin Concentration",
-     "Define the melanin concentrations below to get the most realistic-looking hair "
-     "(you can get the concentrations for different types of hair online)"},
+     "Define the melanin concentrations below to get the most realistic-looking hair (you can get "
+     "the concentrations for different types of hair online)"},
     {SHD_PRINCIPLED_HAIR_REFLECTANCE,
      "COLOR",
      0,
@@ -5154,6 +5172,11 @@ static void def_sh_tex_noise(StructRNA *srna)
   RNA_def_property_enum_items(prop, rna_enum_node_tex_dimensions_items);
   RNA_def_property_ui_text(prop, "Dimensions", "Number of dimensions to output noise for");
   RNA_def_property_update(prop, 0, "rna_ShaderNode_socket_update");
+
+  prop = RNA_def_property(srna, "normalize", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "normalize", 0);
+  RNA_def_property_ui_text(prop, "Normalize", "Normalize outputs to 0.0 to 1.0 range");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
 static void def_sh_tex_checker(StructRNA *srna)
@@ -5729,19 +5752,28 @@ static void def_hair(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
-/* RNA initialization for the custom property. */
+/* RNA initialization for the custom properties. */
 static void def_hair_principled(StructRNA *srna)
 {
   PropertyRNA *prop;
 
-  prop = RNA_def_property(srna, "parametrization", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, nullptr, "custom1");
-  RNA_def_property_ui_text(
-      prop, "Color Parametrization", "Select the shader's color parametrization");
-  RNA_def_property_enum_items(prop, node_principled_hair_items);
-  RNA_def_property_enum_default(prop, SHD_PRINCIPLED_HAIR_REFLECTANCE);
+  RNA_def_struct_sdna_from(srna, "NodeShaderHairPrincipled", "storage");
+
+  prop = RNA_def_property(srna, "model", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "model");
+  RNA_def_property_ui_text(prop, "Scattering model", "Select from Chiang or Huang model");
+  RNA_def_property_enum_items(prop, node_principled_hair_model_items);
+  RNA_def_property_enum_default(prop, SHD_PRINCIPLED_HAIR_HUANG);
   /* Upon editing, update both the node data AND the UI representation */
   /* (This effectively shows/hides the relevant sockets) */
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_ShaderNode_socket_update");
+
+  prop = RNA_def_property(srna, "parametrization", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "parametrization");
+  RNA_def_property_ui_text(
+      prop, "Color Parametrization", "Select the shader's color parametrization");
+  RNA_def_property_enum_items(prop, node_principled_hair_parametrization_items);
+  RNA_def_property_enum_default(prop, SHD_PRINCIPLED_HAIR_REFLECTANCE);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_ShaderNode_socket_update");
 }
 
@@ -8818,14 +8850,35 @@ static void def_cmp_kuwahara(StructRNA *srna)
   RNA_def_property_ui_text(prop, "", "Variation of Kuwahara filter to use");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
-  prop = RNA_def_property(srna, "smoothing", PROP_INT, PROP_NONE);
-  RNA_def_property_int_sdna(prop, nullptr, "smoothing");
+  prop = RNA_def_property(srna, "uniformity", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "uniformity");
   RNA_def_property_range(prop, 0.0, 50.0);
   RNA_def_property_ui_range(prop, 0, 50, 1, -1);
   RNA_def_property_ui_text(prop,
-                           "Smoothing",
-                           "Smoothing degree before applying filter. Higher values remove details "
-                           "and give smoother edges");
+                           "Uniformity",
+                           "Controls the uniformity of the direction of the filter. Higher values "
+                           "produces more uniform directions");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "sharpness", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_float_sdna(prop, nullptr, "sharpness");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.1, 3);
+  RNA_def_property_ui_text(prop,
+                           "Sharpness",
+                           "Controls the sharpness of the filter. 0 means completely smooth while "
+                           "1 means completely sharp");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "eccentricity", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_float_sdna(prop, nullptr, "eccentricity");
+  RNA_def_property_range(prop, 0.0f, 2.0f);
+  RNA_def_property_ui_range(prop, 0.0f, 2.0f, 0.1, 3);
+  RNA_def_property_ui_text(
+      prop,
+      "Eccentricity",
+      "Controls how directional the filter is. 0 means the filter is completely omnidirectional "
+      "while 2 means it is maximally directed along the edges of the image");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -9170,7 +9223,7 @@ static void rna_def_simulation_state_item(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_SimulationStateItem_update");
 
   prop = RNA_def_property(srna, "socket_type", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, node_socket_data_type_items);
+  RNA_def_property_enum_items(prop, rna_node_socket_data_type_items);
   RNA_def_property_enum_funcs(prop, nullptr, nullptr, "rna_SimulationStateItem_socket_type_itemf");
   RNA_def_property_ui_text(prop, "Socket Type", "");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
@@ -9208,7 +9261,7 @@ static void rna_def_geo_simulation_output_items(BlenderRNA *brna)
   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN | FUNC_USE_REPORTS);
   parm = RNA_def_enum(func,
                       "socket_type",
-                      node_socket_data_type_items,
+                      rna_node_socket_data_type_items,
                       SOCK_GEOMETRY,
                       "Socket Type",
                       "Socket type of the item");
@@ -9285,7 +9338,7 @@ static void rna_def_repeat_item(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_RepeatItem_update");
 
   prop = RNA_def_property(srna, "socket_type", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, node_socket_data_type_items);
+  RNA_def_property_enum_items(prop, rna_node_socket_data_type_items);
   RNA_def_property_enum_funcs(prop, nullptr, nullptr, "rna_RepeatItem_socket_type_itemf");
   RNA_def_property_ui_text(prop, "Socket Type", "");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
@@ -9314,7 +9367,7 @@ static void rna_def_geo_repeat_output_items(BlenderRNA *brna)
   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN | FUNC_USE_REPORTS);
   parm = RNA_def_enum(func,
                       "socket_type",
-                      node_socket_data_type_items,
+                      rna_node_socket_data_type_items,
                       SOCK_GEOMETRY,
                       "Socket Type",
                       "Socket type of the item");
@@ -9446,7 +9499,7 @@ static void def_geo_switch(StructRNA *srna)
   RNA_def_struct_sdna_from(srna, "NodeSwitch", "storage");
   prop = RNA_def_property(srna, "input_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "input_type");
-  RNA_def_property_enum_items(prop, node_socket_data_type_items);
+  RNA_def_property_enum_items(prop, rna_node_socket_data_type_items);
   RNA_def_property_enum_funcs(prop, nullptr, nullptr, "rna_GeometryNodeSwitch_type_itemf");
   RNA_def_property_ui_text(prop, "Input Type", "");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
