@@ -1905,8 +1905,15 @@ static void file_os_operations_menu_item(uiLayout *layout,
   RNA_enum_name(file_external_operation, operation, &title);
 
   PointerRNA props_ptr;
-  uiItemFullO_ptr(
-      layout, ot, title, ICON_NONE, nullptr, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE, &props_ptr);
+  // bfa - draw icons in static const EnumPropertyItem file_external_operation
+  //uiItemFullO_ptr(layout, ot, title, ICON_NONE, NULL, WM_OP_INVOKE_DEFAULT, 0, &props_ptr); /*bfa - original prop*/
+  int icon = ICON_NONE;
+  if (operation) {
+    RNA_enum_icon_from_value(file_external_operation, operation, &icon);
+  }
+  uiItemFullO_ptr(layout, ot, title, icon, NULL, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE, &props_ptr);
+  //end bfa
+
   RNA_string_set(&props_ptr, "filepath", path);
   if (operation) {
     RNA_enum_set(&props_ptr, "operation", operation);
