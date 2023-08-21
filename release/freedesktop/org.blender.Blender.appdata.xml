@@ -22,21 +22,15 @@
         </p>
     </description>
     <url type="homepage">https://www.bforartists.de</url>
-    <url type="help">https://www.blender.org/support/</url>
+    <!-- <url type="help">https://www.blender.org/support/</url>
     <url type="bugtracker">https://developer.blender.org</url>
-    <url type="donation">https://www.blender.org/foundation/donation-payment/</url>
+    <url type="donation">https://www.blender.org/foundation/donation-payment/</url> -->
     <screenshots>
         <screenshot type="default">
-            <image>https://download.blender.org/demo/screenshots/blender_screenshot_1.jpg</image>
+            <image>https://www.bforartists.de/wp-content/uploads/2020/04/modelingbfa2.jpg</image>
         </screenshot>
         <screenshot>
-            <image>https://download.blender.org/demo/screenshots/blender_screenshot_2.jpg</image>
-        </screenshot>
-        <screenshot>
-            <image>https://download.blender.org/demo/screenshots/blender_screenshot_3.jpg</image>
-        </screenshot>
-        <screenshot>
-            <image>https://download.blender.org/demo/screenshots/blender_screenshot_4.jpg</image>
+            <image>https://www.bforartists.de/wp-content/uploads/2020/04/weightingbfa2.jpg</image>
         </screenshot>
     </screenshots>
     <releases>
