@@ -591,6 +591,7 @@ class GRAPH_MT_slider(Menu):
         layout.operator("graph.ease", text="Ease", icon = 'IPO_EASE_IN_OUT')
         layout.operator("graph.blend_to_ease", text="Blend to Ease", icon = 'BLEND_TO_EASE')
         layout.operator("graph.blend_offset", text="Blend Offset", icon = 'BLEND_OFFSET')
+        layout.operator("graph.match_slope", text="Match Slope", icon = 'SET_CURVE_TILT')
 
 
         layout.separator()
