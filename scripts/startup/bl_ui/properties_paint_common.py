@@ -388,7 +388,7 @@ class SmoothStrokePanel(BrushPanel):
         #self.layout.prop(brush, "use_smooth_stroke",
         #                 text=self.bl_label if self.is_popover else "")
 
-        self.layout.prop(brush, "use_smooth_stroke", text="Stabilize Stroke")
+        self.layout.prop(brush, "use_smooth_stroke", text="Stabilize Stroke") # bfa - we need the label
 
     def draw(self, context):
         layout = self.layout
@@ -866,7 +866,6 @@ def brush_shared_settings(layout, context, brush, popover=False):
     strength_pressure = False
     weight = False
     direction = False
-    use_frontface = False
 
     # 3D and 2D Texture Paint #
     if mode in {'PAINT_TEXTURE', 'PAINT_2D'}:
@@ -883,7 +882,6 @@ def brush_shared_settings(layout, context, brush, popover=False):
             strength = True
             strength_pressure = brush.sculpt_capabilities.has_strength_pressure
             direction = not brush.sculpt_capabilities.has_direction
-            use_frontface = True
 
     # Vertex Paint #
     if mode == 'PAINT_VERTEX':
@@ -892,7 +890,6 @@ def brush_shared_settings(layout, context, brush, popover=False):
             size = True
             strength = True
             strength_pressure = True
-            use_frontface = True
 
     # Weight Paint #
     if mode == 'PAINT_WEIGHT':
@@ -900,7 +897,6 @@ def brush_shared_settings(layout, context, brush, popover=False):
             size = True
             weight = brush.weight_paint_capabilities.has_weight
             strength = strength_pressure = True
-            use_frontface = True
         # Only draw blend mode for the Draw tool, because for other tools it is pointless. D5928#137944
         if brush.weight_tool == 'DRAW':
             blend_mode = True
@@ -964,19 +960,10 @@ def brush_shared_settings(layout, context, brush, popover=False):
             pressure_name=pressure_name,
             slider=True,
         )
+        layout.separator()
 
     if direction:
         layout.row().prop(brush, "direction", expand=True)
-        layout.separator()
-
-    if use_frontface:
-        col = layout.column()
-        col.use_property_split = False
-        col.prop(brush, "use_frontface", text="Front Faces Only")
-
-    if mode_string == 'SCULPT_CURVES':
-        layout.use_property_split = False
-        layout.prop(context.object.data, "use_sculpt_collision")
 
 
 def brush_settings_advanced(layout, context, brush, popover=False):
@@ -998,6 +985,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         sculpt = context.tool_settings.sculpt
         capabilities = brush.sculpt_capabilities
         use_accumulate = capabilities.has_accumulate
+        use_frontface = True
 
         col = layout.column(align = True)
         col.label(text="Auto Masking")
@@ -1057,6 +1045,8 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         is_cavity_active = brush.use_automasking_cavity or brush.use_automasking_cavity_inverted
 
         if is_cavity_active:
+            props = row.operator("sculpt.mask_from_cavity", text="Create Mask")
+            props.settings_source = 'BRUSH'
             split.label(icon='DISCLOSURE_TRI_DOWN')
         else:
             split.label(icon='DISCLOSURE_TRI_RIGHT')
@@ -1096,7 +1086,6 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             row.prop(brush, "use_automasking_custom_cavity_curve", text="Custom Curve")
 
             if brush.use_automasking_custom_cavity_curve:
-
                 col.template_curve_mapping(brush, "automasking_cavity_curve")
 
         col = layout.column()
@@ -1219,6 +1208,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
 
     if use_frontface:
         layout.prop(brush, "use_frontface", text="Front Faces Only")
+
 
 def draw_color_settings(context, layout, brush, color_type=False):
     """Draw color wheel and gradient settings."""
