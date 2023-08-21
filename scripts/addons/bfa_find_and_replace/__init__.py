@@ -16,7 +16,7 @@ bl_info = {
     "author" : "Blenux (Juso3D)",
     "description" : "A Popup Panel for Find and Replace",
     "blender" : (3, 0, 0),
-    "version" : (1, 0, 0),
+    "version" : (1, 0, 1),
     "location" : "Text Editor via Keymap (Check Addon Preferences)",
     "warning" : "",
     "doc_url": "",
@@ -50,13 +50,14 @@ def find_user_keyconfig(key):
 
 
 class BFA_PT_FIND_AND_REPLACE(Panel):
+    """Calls the Find and Replace panel\nHotkey to call the panel under the mouse: Shift + Right Mouse"""
     bl_label = 'Find and Replace'
     bl_idname = 'BFA_PT_FIND_AND_REPLACE'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
     bl_context = ''
     bl_order = 0
-    bl_ui_units_x=16
+    bl_ui_units_x=20
 
     @classmethod
     def poll(cls, context):
@@ -109,6 +110,11 @@ class BFA_AddonPreferences(AddonPreferences):
 
 classes = (BFA_PT_FIND_AND_REPLACE, BFA_AddonPreferences,)
 
+# the panel to append
+def draw_panel(self, context):
+    self.layout.popover(panel = "BFA_PT_FIND_AND_REPLACE", text = "", icon ="ZOOM_SET")
+
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -125,6 +131,9 @@ def register():
         kmi.properties.keep_open = True
         addon_keymaps['C5E0F'] = (km, kmi)
 
+    #append the panel to the header
+    bpy.types.TEXT_HT_header.append(draw_panel)
+
 
 def unregister():
     for cls in reversed(classes):
@@ -138,3 +147,6 @@ def unregister():
     addon_keymaps.clear()
 
     del bpy.types.Scene.bfa_show_properties
+
+    #remove the panel from the header
+    bpy.types.TEXT_HT_header.remove(draw_panel)
