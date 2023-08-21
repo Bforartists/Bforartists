@@ -23,9 +23,9 @@ class R3DV_OT_reset3dview(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        
+
         viewmode = "none"
-        
+
         view_matrix = ((0.41, -0.4017, 0.8188, 0.0), # This is the view matrix from Factory settings
                (0.912, 0.1936, -0.3617, 0.0),
                (-0.0133, 0.8959, 0.4458, 0.0),
@@ -35,7 +35,7 @@ class R3DV_OT_reset3dview(bpy.types.Operator):
                 rv3d = area.spaces[0].region_3d
                 if rv3d is not None:
                     # --------------------------- check for views -----------------------------------------------------------
-                    # We check if the view is in top, left, etc. by comparing the quaternion of the region3d.view_rotation                    
+                    # We check if the view is in top, left, etc. by comparing the quaternion of the region3d.view_rotation
                     viewrot = area.spaces[0].region_3d.view_rotation*10000000
 
                     vlist = [
@@ -51,7 +51,7 @@ class R3DV_OT_reset3dview(bpy.types.Operator):
                     for v, vm in vlist:
                         if viewrot == mathutils.Quaternion(v):
                             viewmode = vm
-                                
+
                     #------------------------------set the views -----------------------------------------------------------
                     # When it is top, front etc. then just the distance gets resettet The rotation already fits.
                     if viewmode == "TOP":
@@ -69,15 +69,15 @@ class R3DV_OT_reset3dview(bpy.types.Operator):
                     if viewmode == "none":
                         rv3d.view_distance = 15 # This is the original distance to the zero point from Factory settings.
                         rv3d.view_matrix = view_matrix # This resets the location and rotation back to the initial view matrix values
-                        
+
                     # ----------- final bit, reset the viewmode variable for the next try
                     viewmode = "none"
 
         return {'FINISHED'}
-    
+
 def menu_func(self, context):
     self.layout.operator(R3DV_OT_reset3dview.bl_idname, icon ="VIEW_RESET")
-    
+
 # store keymaps here to access after registration
 addon_keymaps = []
 
@@ -89,7 +89,7 @@ def register():
        register_class(cls)
     #bpy.utils.register_class(R3DV_OT_reset3dview)# the old way
     bpy.types.VIEW3D_MT_view.append(menu_func)
-    
+
     # handle the keymap
     #wm = bpy.context.window_manager
     #km = wm.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
@@ -103,7 +103,7 @@ def unregister():
 
     #bpy.utils.unregister_class(R3DV_OT_reset3dview)# the old way
     bpy.types.VIEW3D_MT_view.remove(menu_func)
-    
+
     # handle the keymap
     #wm = bpy.context.window_manager
     #for km in addon_keymaps:
@@ -114,5 +114,5 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-            
-            
+
+
