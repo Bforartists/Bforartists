@@ -17,5 +17,5 @@ if [ -n "$XDG_RUNTIME_DIR" ]; then
     fi
 fi
 
-# Run Blender
-$SNAP/blender "$@"
+# Run Bforartists
+$SNAP/bforartists "$@"

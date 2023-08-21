@@ -27,7 +27,7 @@ version: '@VERSION@'
 grade: @GRADE@
 
 parts:
-    blender:
+    bforartists:
         plugin: dump
         source: @PACKAGE_PATH@
         build-attributes: [keep-execstack, no-patchelf]
