@@ -2684,6 +2684,8 @@ class VIEW3D_MT_edit_metaball_context_menu(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_edit_meta_showhide") #BFA - added to context menu
+
         # Remove
         layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("mball.delete_metaelems", text="Delete", icon="DELETE")
@@ -3467,6 +3469,10 @@ class VIEW3D_MT_object_context_menu(Menu):
 
         layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("object.delete", text="Delete", icon="DELETE").use_global = False
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_object_showhide") #BFA - added to context menu
 
 
 class VIEW3D_MT_object_shading(Menu):
@@ -4632,6 +4638,9 @@ class VIEW3D_MT_particle_context_menu(Menu):
 
             layout.operator("particle.select_linked", text="Select Linked", icon="LINKED")
 
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_particle_showhide") #BFA - added to context menu
 
 class VIEW3D_MT_particle_showhide(Menu):
     bl_label = "Show/Hide"
@@ -4893,6 +4902,7 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.operator("pose.hide", icon="HIDE_ON").unselected = False
         layout.operator("pose.reveal", icon="HIDE_OFF")
+        layout.operator("pose.hide", icon="HIDE_UNSELECTED").unselected = True #BFA - added for consistentcy with header
 
         layout.separator()
 
@@ -5250,6 +5260,10 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator_menu_enum("mesh.separate", "type")
             col.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES')
             col.operator("mesh.delete", text="Delete Faces", icon="DELETE").type = 'FACE'
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_mesh_showhide") #BFA - added to context menu
 
 
 class VIEW3D_MT_edit_mesh_select_mode(Menu):
@@ -6004,6 +6018,9 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
         layout.operator("curve.delete", text="Delete Segment", icon="DELETE").type = 'SEGMENT'
         layout.operator("curve.delete", text="Delete Point", icon="DELETE").type = 'VERT'
 
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_curve_showhide") #BFA - added to context menu
 
 class VIEW3D_MT_edit_curve_delete(Menu):
     bl_label = "Delete"
@@ -6354,6 +6371,13 @@ class VIEW3D_MT_armature_context_menu(Menu):
         # Remove
         layout.operator("armature.split", icon="SPLIT")
         layout.operator("armature.separate", icon="SEPARATE")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_armature_showhide") #BFA - added to context menu
+
+        layout.separator()
+
         layout.operator("armature.dissolve", icon="DELETE")
         layout.operator("armature.delete", icon="DELETE")
 
@@ -9359,6 +9383,11 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
 
             col.operator("gpencil.reproject", text="Reproject")
 
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_gpencil_showhide") #BFA - added to context menu
+
+
 def draw_gpencil_layer_active(context, layout):
     gpl = context.active_gpencil_layer
     if gpl:
@@ -9534,6 +9563,9 @@ class VIEW3D_PT_gpencil_draw_context_menu(Panel):
 
         # Layers
         draw_gpencil_layer_active(context, layout)
+
+        layout.menu("VIEW3D_MT_edit_gpencil_showhide") #BFA - added to context menu
+
         # Material
         if not is_vertex:
             draw_gpencil_material_active(context, layout)
@@ -9575,6 +9607,8 @@ class VIEW3D_PT_gpencil_vertex_context_menu(Panel):
 
         # Layers
         draw_gpencil_layer_active(context, layout)
+
+        layout.menu("VIEW3D_MT_edit_gpencil_showhide") #BFA - added to context menu
 
 
 class VIEW3D_PT_paint_vertex_context_menu(Panel):
