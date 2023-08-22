@@ -4902,14 +4902,12 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.operator("pose.hide", icon="HIDE_ON").unselected = False
         layout.operator("pose.reveal", icon="HIDE_OFF")
+        layout.operator("pose.hide", icon="HIDE_UNSELECTED").unselected = True #BFA - added for consistentcy with header
 
         layout.separator()
 
         layout.operator("pose.user_transforms_clear", icon="NODE_TRANSFORM_CLEAR")
 
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_pose_showhide") #BFA - added to context menu
 
 class BoneOptions:
     def draw(self, context):
