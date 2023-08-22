@@ -509,6 +509,7 @@ class USERPREF_PT_edit_text_editor(EditingPanel, CenterAlignMixIn, Panel):
         prefs = context.preferences
         edit = prefs.edit
 
+        layout.use_property_split = False
         layout.prop(edit, "use_text_edit_auto_close")
 
 
