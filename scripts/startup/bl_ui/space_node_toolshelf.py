@@ -917,12 +917,6 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfGlossy"
 
-                if engine == 'CYCLES':
-
-                    props = col.operator("node.add_node", text=" Hair BSDF          ", icon = "CURVES")
-                    props.use_transform = True
-                    props.type = "ShaderNodeBsdfHairPrincipled"
-
                 props = col.operator("node.add_node", text=" Holdout              ", icon = "NODE_HOLDOUTSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeHoldout"
@@ -937,6 +931,12 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
 
                 col = layout.column(align=True)
                 col.scale_y = 1.5
+
+                if engine == 'CYCLES':
+
+                    props = col.operator("node.add_node", text=" Principled Hair BSDF  ", icon = "CURVES")
+                    props.use_transform = True
+                    props.type = "ShaderNodeBsdfHairPrincipled"
 
                 props = col.operator("node.add_node", text=" Principled Volume", icon = "NODE_VOLUMEPRINCIPLED")
                 props.use_transform = True
@@ -1046,12 +1046,6 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfGlossy"
 
-                if engine == 'CYCLES':
-
-                    props = flow.operator("node.add_node", text="", icon = "CURVES")
-                    props.use_transform = True
-                    props.type = "ShaderNodeBsdfHairPrincipled"
-
                 props = flow.operator("node.add_node", text = "", icon = "NODE_HOLDOUTSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeHoldout"
@@ -1063,6 +1057,12 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
                 props = flow.operator("node.add_node", text="", icon = "NODE_PRINCIPLED")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfPrincipled"
+
+                if engine == 'CYCLES':
+
+                    props = flow.operator("node.add_node", text="", icon = "CURVES")
+                    props.use_transform = True
+                    props.type = "ShaderNodeBsdfHairPrincipled"
 
                 props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEPRINCIPLED")
                 props.use_transform = True
