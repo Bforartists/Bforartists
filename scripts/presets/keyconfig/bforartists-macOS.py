@@ -4390,7 +4390,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_edit_mesh_context_menu'),
        ],
