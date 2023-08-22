@@ -2832,7 +2832,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_gpencil_edit_context_menu'),
        ],
