@@ -2488,7 +2488,7 @@ void OBJECT_OT_delete(wmOperatorType *ot)
   ot->idname = "OBJECT_OT_delete";
 
   /* api callbacks */
-  // ot->invoke = WM_operator_confirm_or_exec; // bfa - turned off the confirmation dialog for
+  ot->invoke = WM_operator_confirm_or_exec;
   // deleting an object in object mode.
   ot->exec = object_delete_exec;
   ot->get_description = object_ot_delete_get_description; /*bfa - descriptions*/
