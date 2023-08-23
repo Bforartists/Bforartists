@@ -2716,7 +2716,7 @@ void FILE_OT_directory_new(wmOperatorType *ot)
   ot->idname = "FILE_OT_directory_new";
 
   /* api callbacks */
-  /*ot->invoke = WM_operator_confirm_or_exec;*/  // bfa - turned off the confirmation dialog.
+  ot->invoke = WM_operator_confirm_or_exec;
   ot->exec = file_directory_new_exec;
   /* File browsing only operator (not asset browsing). */
   ot->poll = ED_operator_file_browsing_active; /* <- important, handler is on window level */
