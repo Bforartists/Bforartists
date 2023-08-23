@@ -318,7 +318,7 @@ void CLIP_OT_delete_marker(wmOperatorType *ot)
   ot->description = "Delete marker for current frame from selected tracks";
 
   /* api callbacks */
-  ->invoke = WM_operator_confirm_or_exec;
+  ot->invoke = WM_operator_confirm_or_exec;
   ot->exec = delete_marker_exec;
   ot->poll = ED_space_clip_tracking_poll;
 
