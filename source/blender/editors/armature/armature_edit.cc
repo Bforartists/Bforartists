@@ -1288,7 +1288,7 @@ void ARMATURE_OT_delete(wmOperatorType *ot)
   ot->description = "Remove selected bones from the armature";
 
   /* api callbacks */
-  // ot->invoke = WM_operator_confirm_or_exec; // bfa - turned off confirm on delete
+  ot->invoke = WM_operator_confirm_or_exec;
   ot->exec = armature_delete_selected_exec;
   ot->poll = ED_operator_editarmature;
 
