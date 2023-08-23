@@ -6675,7 +6675,7 @@ class VIEW3D_MT_weight_gpencil(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.weight_sample", text="Sample Weight")
+        layout.operator("gpencil.weight_sample", text="Sample Weight", icon = "EYEDROPPER")
 
         layout.separator()
 
