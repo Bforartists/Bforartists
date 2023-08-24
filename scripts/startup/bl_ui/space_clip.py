@@ -1542,7 +1542,6 @@ class CLIP_MT_clip(Menu):
 
         if clip:
             layout.operator("clip.set_scene_frames", icon="SET_FRAMES")
-            layout.operator("clip.set_center_principal", text="Set Center", icon="CENTER")
             layout.operator("clip.prefetch", icon="PREFETCH")
             layout.operator("clip.reload", icon="FILE_REFRESH")
 
