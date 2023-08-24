@@ -1084,13 +1084,13 @@ class VIEW3D_MT_editor_menus(Menu):
                          tool_settings.use_gpencil_select_mask_stroke or
                          tool_settings.use_gpencil_select_mask_segment)
                 ):
-                    layout.menu("VIEW3D_MT_select_gpencil")
+                    #layout.menu("VIEW3D_MT_select_gpencil") #BFA - deprecated from Blender
                     layout.menu("VIEW3D_MT_sculpt_gpencil_copy")
                     layout.menu("VIEW3D_MT_select_edit_gpencil")
                 elif mode_string == 'EDIT_GPENCIL':
                     layout.menu("VIEW3D_MT_select_edit_gpencil")
                 elif mode_string == 'VERTEX_GPENCIL':
-                    layout.menu("VIEW3D_MT_select_gpencil")
+                    #layout.menu("VIEW3D_MT_select_gpencil") #BFA - deprecated from Blender
                     layout.menu("VIEW3D_MT_gpencil_animation")
                     layout.menu("GPENCIL_MT_layer_active", text="Active Layer")
                     layout.menu("VIEW3D_MT_select_edit_gpencil")
@@ -2416,7 +2416,7 @@ class VIEW3D_MT_select_edit_gpencil(Menu):
         layout.menu("VIEW3D_MT_select_gpencil_grouped", text="Grouped")
 
         if context.mode == 'VERTEX_GPENCIL':
-            layout.operator("gpencil.select_vertex_color", text="Color Attribute")
+            layout.operator("gpencil.select_vertex_color", text="Color Attribute", icon="NODE_VERTEX_COLOR")
 
         layout.separator()
 
