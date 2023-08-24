@@ -1084,16 +1084,14 @@ class VIEW3D_MT_editor_menus(Menu):
                          tool_settings.use_gpencil_select_mask_stroke or
                          tool_settings.use_gpencil_select_mask_segment)
                 ):
-                    #layout.menu("VIEW3D_MT_select_gpencil") #BFA - deprecated from Blender
+                    layout.menu("VIEW3D_MT_select_edit_gpencil") #BFA - change order for consistency
                     layout.menu("VIEW3D_MT_sculpt_gpencil_copy")
-                    layout.menu("VIEW3D_MT_select_edit_gpencil")
                 elif mode_string == 'EDIT_GPENCIL':
                     layout.menu("VIEW3D_MT_select_edit_gpencil")
                 elif mode_string == 'VERTEX_GPENCIL':
-                    #layout.menu("VIEW3D_MT_select_gpencil") #BFA - deprecated from Blender
+                    layout.menu("VIEW3D_MT_select_edit_gpencil")
                     layout.menu("VIEW3D_MT_gpencil_animation")
                     layout.menu("GPENCIL_MT_layer_active", text="Active Layer")
-                    layout.menu("VIEW3D_MT_select_edit_gpencil")
         elif mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
             mesh = obj.data
             if mesh.use_paint_mask:
