@@ -1662,8 +1662,8 @@ class CLIP_MT_track(Menu):
         layout.operator("clip.create_plane_track", icon="PLANETRACK")
 
         layout.separator()
-        layout.operator("clip.new_image_from_plane_marker")
-        layout.operator("clip.update_image_from_plane_marker")
+        layout.operator("clip.new_image_from_plane_marker", icon="IMAGE_DATA")
+        layout.operator("clip.update_image_from_plane_marker", icon="FILE_REFRESH")
 
         layout.separator()
 
