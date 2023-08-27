@@ -47,13 +47,13 @@ class MyChecker():
     def check(cls, findkey, ctrl, alt, shift, oskey):
         if len(findkey) > 0:
             cmd = ""
-            if ctrl is True:
+            if ctrl :
                 cmd += "Ctrl+"
-            if alt is True:
+            if alt :
                 cmd += "Alt+"
-            if shift is True:
+            if shift :
                 cmd += "Shift+"
-            if oskey is True:
+            if oskey :
                 cmd += "OsKey+"
             cls.lastfind = cmd + findkey.upper()
             cls.lastkey = findkey.upper()
@@ -66,21 +66,21 @@ class MyChecker():
 
         for context, keyboardmap in wm.keyconfigs.user.keymaps.items():
             for myitem in keyboardmap.keymap_items:
-                if myitem.active is True and myitem.type == findkey:
-                    if ctrl is True and myitem.ctrl is not True:
+                if myitem.active and myitem.type == findkey:
+                    if ctrl and not myitem.ctrl:
                         continue
-                    if alt is True and myitem.alt is not True:
+                    if alt and not myitem.alt:
                         continue
-                    if shift is True and myitem.shift is not True:
+                    if shift and not myitem.shift:
                         continue
-                    if oskey is True and myitem.oskey is not True:
+                    if oskey and not myitem.oskey:
                         continue
                     t = (context,
                          myitem.type,
-                         "Ctrl" if myitem.ctrl is True else "",
-                         "Alt" if myitem.alt is True else "",
-                         "Shift" if myitem.shift is True else "",
-                         "OsKey" if myitem.oskey is True else "",
+                         "Ctrl" if myitem.ctrl else "",
+                         "Alt" if myitem.alt else "",
+                         "Shift" if myitem.shift else "",
+                         "OsKey" if myitem.oskey else "",
                          myitem.name)
 
                     mykeys.append(t)
@@ -512,10 +512,10 @@ class IsKeyFreeRunExportKeys(Operator):
                 col_width = padding + 2 if padding > col_width else col_width
 
                 short_type = myitem.type if myitem.type else "UNKNOWN"
-                is_ctrl = " Ctrl" if myitem.ctrl is True else ""
-                is_alt = " Alt" if myitem.alt is True else ""
-                is_shift = " Shift" if myitem.shift is True else ""
-                is_oskey = " OsKey" if myitem.oskey is True else ""
+                is_ctrl = " Ctrl" if myitem.ctrl else ""
+                is_alt = " Alt" if myitem.alt else ""
+                is_shift = " Shift" if myitem.shift else ""
+                is_oskey = " OsKey" if myitem.oskey else ""
                 short_cuts = "{}{}{}{}{}".format(short_type, is_ctrl, is_alt, is_shift, is_oskey)
 
                 t = (

@@ -2,24 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-#---------------------------------------------#
-# todo
-#---------------------------------------------#
-'''
-- add file selection for single and multiple files
-- option to enable/disable fake users
-'''
-
-#---------------------------------------------#
 import bpy
 import os
-from bpy.props import *
+from bpy.props import (
+    StringProperty,
+)
 
-# addon description
 bl_info = {
     "name": "Import BrushSet",
     "author": "Daniel Grauer (kromar), CansecoGPC",
-    "version": (1, 2, 2),
+    "version": (1, 3, 0),
     "blender": (2, 80, 0),
     "location": "File > Import > BrushSet",
     "description": "Imports all image files from a folder.",
@@ -29,80 +21,55 @@ bl_info = {
     "category": "Import-Export",
 }
 
-#---------------------------------------------#
-
-# extension filter (alternative use mimetypes)
-# TODO: rewrite so it tries to load image and if it fails we know its not a format blender can load
-ext_list = ['.bmp',
-            '.png',
-            '.jpg',
-            '.jp2',
-            '.rgb',
-            '.dds',
-            '.hdr',
-            '.exr',
-            '.dpx',
-            '.cin',
-            '.tga',
-            '.tif'];
-
-#---------------------------------------------#
-
 fakeUser = False
 
-def LoadBrushSet(filepath, filename):
-    for file in os.listdir(filepath):
-        path = (filepath + file)
 
-        # get folder name
-        (f1, f2) = os.path.split(filepath)
-        (f3, foldername) = os.path.split(f1)
+def load_brush_set(dirpath):
+    extensions = tuple(bpy.path.extensions_image)
+    for file in os.listdir(dirpath):
+        if not file.lower().endswith(extensions):
+            continue
 
-        # filter files by extensions (filter images)
-        if any(file.lower().endswith(ext) for ext in ext_list):
-            print("file: ", file)
-            # create new texture
-            texture = bpy.data.textures.new(file, 'IMAGE')
-            texture.use_fake_user = fakeUser
-            print("texture: ", texture)
-
-            # now we need to load the image into data
+        # Load the image into data.
+        path = os.path.join(dirpath, file)
+        try:
             image = bpy.data.images.load(path)
-            image.use_fake_user = fakeUser
-            # image.source = 'FILE' #default is FILE so can remove this
-            # image.filepath = path
-            print("image: ", image, " ", path)
-            print("texturename: ", texture.name)
+        except BaseException as ex:
+            print("Failed to load %r, error: %r" % (file, ex))
+            continue
 
-            # and assign the image to the texture
-            bpy.data.textures[texture.name].image = image
+        image.use_fake_user = fakeUser
 
+        # Create new texture.
+        # NOTE: use the image name instead of `file` in case
+        # it's encoding isn't `utf-8` compatible.
+        texture = bpy.data.textures.new(image.name, 'IMAGE')
+        texture.use_fake_user = fakeUser
+
+        # Assign the image to the texture.
+        texture.image = image
+
+        print("imported:", repr(file))
 
     print("Brush Set imported!")
 
-#---------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class BrushSetImporter(bpy.types.Operator):
     '''Load Brush Set'''
     bl_idname = "import_image.brushset"
     bl_label = "Import BrushSet"
 
-    filename: StringProperty(name = "File Name",
-                              description = "filepath",
-                              default = "",
-                              maxlen = 1024,
-                              options = {'ANIMATABLE'},
-                              subtype = 'NONE')
-
-    filepath: StringProperty(name = "File Name",
-                              description = "filepath",
-                              default = "",
-                              maxlen = 1024,
-                              options = {'ANIMATABLE'},
-                              subtype = 'NONE')
+    directory: StringProperty(
+        name="Directory",
+        description="Directory",
+        maxlen=1024,
+        subtype='DIR_PATH',
+    )
 
     def execute(self, context):
-        LoadBrushSet(self.properties.filepath, self.properties.filename)
+        load_brush_set(self.directory)
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -110,18 +77,15 @@ class BrushSetImporter(bpy.types.Operator):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
-#---------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 def menu_func(self, context):
-    # clear the default name for import
-    import_name = ""
-
-    self.layout.operator(BrushSetImporter.bl_idname, text = "Brush Set").filename = import_name
+    self.layout.operator(BrushSetImporter.bl_idname, text="Brush Set")
 
 
-#---------------------------------------------#
+# -----------------------------------------------------------------------------
 # GUI
-#---------------------------------------------#
 
 '''
 class Brush_set_UI(bpy.types.Panel):
@@ -140,7 +104,7 @@ class Brush_set_UI(bpy.types.Panel):
         column.prop(scn,'filepath')
 '''
 
-#---------------------------------------------#
+# -----------------------------------------------------------------------------
 
 classes = (
     BrushSetImporter,

@@ -2193,6 +2193,14 @@ static int animchannels_delete_exec(bContext *C, wmOperator * /*op*/)
         ale->update = ANIM_UPDATE_DEPS;
         break;
       }
+      case ANIMTYPE_GREASE_PENCIL_LAYER: {
+        using namespace blender::bke::greasepencil;
+        GreasePencil *grease_pencil = reinterpret_cast<GreasePencil *>(ale->id);
+        Layer *layer = static_cast<Layer *>(ale->data);
+        grease_pencil->remove_layer(*layer);
+        DEG_id_tag_update(&grease_pencil->id, ID_RECALC_GEOMETRY);
+        break;
+      }
       case ANIMTYPE_MASKLAYER: {
         /* Mask layer */
         Mask *mask = (Mask *)ale->id;
@@ -3648,6 +3656,19 @@ static int click_select_channel_grease_pencil_datablock(bAnimListElem *ale)
   return (ND_ANIMCHAN | NA_EDITED);
 }
 
+static int click_select_channel_grease_pencil_layer_group(bAnimListElem *ale)
+{
+  GreasePencilLayerTreeGroup *layer_group = static_cast<GreasePencilLayerTreeGroup *>(ale->data);
+
+  /* Toggle expand:
+   * - Although the triangle widget already allows this,
+   *   the whole channel can also be used for this purpose.
+   */
+  layer_group->base.flag ^= GP_LAYER_TREE_NODE_EXPANDED;
+
+  return (ND_ANIMCHAN | NA_EDITED);
+}
+
 static int click_select_channel_grease_pencil_layer(bContext *C,
                                                     bAnimContext *ac,
                                                     bAnimListElem *ale,
@@ -3815,6 +3836,9 @@ static int mouse_anim_channels(bContext *C,
       break;
     case ANIMTYPE_GREASE_PENCIL_DATABLOCK:
       notifierFlags |= click_select_channel_grease_pencil_datablock(ale);
+      break;
+    case ANIMTYPE_GREASE_PENCIL_LAYER_GROUP:
+      notifierFlags |= click_select_channel_grease_pencil_layer_group(ale);
       break;
     case ANIMTYPE_GREASE_PENCIL_LAYER:
       notifierFlags |= click_select_channel_grease_pencil_layer(C, ac, ale, selectmode, filter);
