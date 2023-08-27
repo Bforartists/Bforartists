@@ -69,12 +69,13 @@ static void window_manager_free_data(ID *id)
 
 static void window_manager_foreach_id(ID *id, LibraryForeachIDData *data)
 {
-  wmWindowManager *wm = (wmWindowManager *)id;
+  wmWindowManager *wm = reinterpret_cast<wmWindowManager *>(id);
+  const int flag = BKE_lib_query_foreachid_process_flags_get(data);
 
   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
     BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, win->scene, IDWALK_CB_USER_ONE);
 
-    /* This pointer can be nullptr during old files reading, better be safe than sorry. */
+    /* This pointer can be nullptr during old files reading. */
     if (win->workspace_hook != nullptr) {
       ID *workspace = (ID *)BKE_workspace_active_get(win->workspace_hook);
       BKE_lib_query_foreachid_process(data, &workspace, IDWALK_CB_USER);
@@ -87,11 +88,15 @@ static void window_manager_foreach_id(ID *id, LibraryForeachIDData *data)
 
     BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, win->unpinned_scene, IDWALK_CB_NOP);
 
-    if (BKE_lib_query_foreachid_process_flags_get(data) & IDWALK_INCLUDE_UI) {
+    if (flag & IDWALK_INCLUDE_UI) {
       LISTBASE_FOREACH (ScrArea *, area, &win->global_areas.areabase) {
         BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(data,
                                                 BKE_screen_foreach_id_screen_area(data, area));
       }
+    }
+
+    if (flag & IDWALK_DO_DEPRECATED_POINTERS) {
+      BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, win->screen, IDWALK_CB_NOP);
     }
   }
 
@@ -223,43 +228,14 @@ static void window_manager_blend_read_data(BlendDataReader *reader, ID *id)
   wm->is_interface_locked = 0;
 }
 
-static void lib_link_wm_xr_data(BlendLibReader *reader, ID *parent_id, wmXrData *xr_data)
+static void window_manager_blend_read_after_liblink(BlendLibReader *reader, ID *id)
 {
-  BLO_read_id_address(reader, parent_id, &xr_data->session_settings.base_pose_object);
-}
-
-static void lib_link_workspace_instance_hook(BlendLibReader *reader,
-                                             WorkSpaceInstanceHook *hook,
-                                             ID *id)
-{
-  WorkSpace *workspace = BKE_workspace_active_get(hook);
-  BLO_read_id_address(reader, id, &workspace);
-
-  BKE_workspace_active_set(hook, workspace);
-}
-
-static void window_manager_blend_read_lib(BlendLibReader *reader, ID *id)
-{
-  wmWindowManager *wm = (wmWindowManager *)id;
+  wmWindowManager *wm = reinterpret_cast<wmWindowManager *>(id);
 
   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    if (win->workspace_hook) { /* nullptr for old files */
-      lib_link_workspace_instance_hook(reader, win->workspace_hook, id);
-    }
-    BLO_read_id_address(reader, id, &win->scene);
-    /* deprecated, but needed for versioning (will be nullptr'ed then) */
-    BLO_read_id_address(reader, id, &win->screen);
-
-    /* The unpinned scene is a UI->Scene-data pointer, and should be nullptr'ed on linking (like
-     * WorkSpace.pin_scene). But the WindowManager ID (owning the window) is never linked. */
-    BLI_assert(!ID_IS_LINKED(id));
-    BLO_read_id_address(reader, id, &win->unpinned_scene);
-
     LISTBASE_FOREACH (ScrArea *, area, &win->global_areas.areabase) {
-      BKE_screen_area_blend_read_lib(reader, id, area);
+      BKE_screen_area_blend_read_after_liblink(reader, id, area);
     }
-
-    lib_link_wm_xr_data(reader, id, &wm->xr);
   }
 }
 
@@ -286,8 +262,7 @@ IDTypeInfo IDType_ID_WM = {
 
     /*blend_write*/ window_manager_blend_write,
     /*blend_read_data*/ window_manager_blend_read_data,
-    /*blend_read_lib*/ window_manager_blend_read_lib,
-    /*blend_read_expand*/ nullptr,
+    /*blend_read_after_liblink*/ window_manager_blend_read_after_liblink,
 
     /*blend_read_undo_preserve*/ nullptr,
 

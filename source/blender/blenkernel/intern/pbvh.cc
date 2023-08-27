@@ -26,7 +26,7 @@
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 
-#include "BKE_attribute.h"
+#include "BKE_attribute.hh"
 #include "BKE_ccg.h"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.hh"
@@ -69,8 +69,7 @@ struct PBVHStack {
 
 struct PBVHIter {
   PBVH *pbvh;
-  BKE_pbvh_SearchCallback scb;
-  void *search_data;
+  blender::FunctionRef<bool(PBVHNode &)> scb;
 
   PBVHStack *stack;
   int stacksize;
@@ -815,17 +814,11 @@ void BKE_pbvh_update_mesh_pointers(PBVH *pbvh, Mesh *mesh)
     pbvh->vert_positions = mesh->vert_positions_for_write();
   }
 
-  pbvh->hide_poly = static_cast<bool *>(CustomData_get_layer_named_for_write(
-      &mesh->face_data, CD_PROP_BOOL, ".hide_poly", mesh->faces_num));
-  pbvh->hide_vert = static_cast<bool *>(CustomData_get_layer_named_for_write(
-      &mesh->vert_data, CD_PROP_BOOL, ".hide_vert", mesh->totvert));
+  BKE_pbvh_update_hide_attributes_from_mesh(pbvh);
 
   /* Make sure cached normals start out calculated. */
-  mesh->vert_normals();
-  mesh->face_normals();
-
-  pbvh->vert_normals = mesh->runtime->vert_normals;
-  pbvh->face_normals = mesh->runtime->face_normals;
+  pbvh->vert_normals = mesh->vert_normals();
+  pbvh->face_normals = mesh->face_normals();
 
   pbvh->vert_data = &mesh->vert_data;
   pbvh->loop_data = &mesh->loop_data;
@@ -1050,14 +1043,10 @@ void BKE_pbvh_free(PBVH *pbvh)
   MEM_delete(pbvh);
 }
 
-static void pbvh_iter_begin(PBVHIter *iter,
-                            PBVH *pbvh,
-                            BKE_pbvh_SearchCallback scb,
-                            void *search_data)
+static void pbvh_iter_begin(PBVHIter *iter, PBVH *pbvh, blender::FunctionRef<bool(PBVHNode &)> scb)
 {
   iter->pbvh = pbvh;
   iter->scb = scb;
-  iter->search_data = search_data;
 
   iter->stack = iter->stackfixed;
   iter->stackspace = STACK_FIXED_DEPTH;
@@ -1117,7 +1106,7 @@ static PBVHNode *pbvh_iter_next(PBVHIter *iter, PBVHNodeFlags leaf_flag)
       return node;
     }
 
-    if (iter->scb && !iter->scb(node, iter->search_data)) {
+    if (iter->scb && !iter->scb(*node)) {
       continue; /* don't traverse, outside of search zone */
     }
 
@@ -1150,7 +1139,7 @@ static PBVHNode *pbvh_iter_next_occluded(PBVHIter *iter)
       return nullptr;
     }
 
-    if (iter->scb && !iter->scb(node, iter->search_data)) {
+    if (iter->scb && !iter->scb(*node)) {
       continue; /* don't traverse, outside of search zone */
     }
 
@@ -1230,15 +1219,17 @@ float BKE_pbvh_node_get_tmin(PBVHNode *node)
 }
 
 void BKE_pbvh_search_callback(PBVH *pbvh,
-                              BKE_pbvh_SearchCallback scb,
-                              void *search_data,
+                              blender::FunctionRef<bool(PBVHNode &)> scb,
                               BKE_pbvh_HitCallback hcb,
                               void *hit_data)
 {
+  if (pbvh->nodes.is_empty()) {
+    return;
+  }
   PBVHIter iter;
   PBVHNode *node;
 
-  pbvh_iter_begin(&iter, pbvh, scb, search_data);
+  pbvh_iter_begin(&iter, pbvh, scb);
 
   while ((node = pbvh_iter_next(&iter, PBVH_Leaf))) {
     if (node->flag & PBVH_Leaf) {
@@ -1250,16 +1241,18 @@ void BKE_pbvh_search_callback(PBVH *pbvh,
 }
 
 static void BKE_pbvh_search_callback_occluded(PBVH *pbvh,
-                                              BKE_pbvh_SearchCallback scb,
-                                              void *search_data,
+                                              blender::FunctionRef<bool(PBVHNode &)> scb,
                                               BKE_pbvh_HitOccludedCallback hcb,
                                               void *hit_data)
 {
+  if (pbvh->nodes.is_empty()) {
+    return;
+  }
   PBVHIter iter;
   PBVHNode *node;
   node_tree *tree = nullptr;
 
-  pbvh_iter_begin(&iter, pbvh, scb, search_data);
+  pbvh_iter_begin(&iter, pbvh, scb);
 
   while ((node = pbvh_iter_next_occluded(&iter))) {
     if (node->flag & PBVH_Leaf) {
@@ -1288,10 +1281,8 @@ static void BKE_pbvh_search_callback_occluded(PBVH *pbvh,
   }
 }
 
-static bool update_search_cb(PBVHNode *node, void *data_v)
+static bool update_search(PBVHNode *node, const int flag)
 {
-  int flag = POINTER_AS_INT(data_v);
-
   if (node->flag & PBVH_Leaf) {
     return (node->flag & flag) != 0;
   }
@@ -1299,7 +1290,7 @@ static bool update_search_cb(PBVHNode *node, void *data_v)
   return true;
 }
 
-static void pbvh_faces_update_normals(PBVH *pbvh, Span<PBVHNode *> nodes)
+static void pbvh_faces_update_normals(PBVH *pbvh, Span<PBVHNode *> nodes, Mesh &mesh)
 {
   using namespace blender;
   using namespace blender::bke;
@@ -1322,16 +1313,15 @@ static void pbvh_faces_update_normals(PBVH *pbvh, Span<PBVHNode *> nodes)
     return;
   }
 
-  MutableSpan<float3> vert_normals = pbvh->vert_normals;
-  MutableSpan<float3> face_normals = pbvh->face_normals;
-
   VectorSet<int> verts_to_update;
   threading::parallel_invoke(
       [&]() {
-        threading::parallel_for(faces_to_update.index_range(), 512, [&](const IndexRange range) {
-          for (const int i : faces_to_update.as_span().slice(range)) {
-            face_normals[i] = mesh::face_normal_calc(positions, corner_verts.slice(faces[i]));
-          }
+        mesh.runtime->face_normals_cache.ensure([&](Vector<float3> &r_data) {
+          threading::parallel_for(faces_to_update.index_range(), 512, [&](const IndexRange range) {
+            for (const int i : faces_to_update.as_span().slice(range)) {
+              r_data[i] = mesh::face_normal_calc(positions, corner_verts.slice(faces[i]));
+            }
+          });
         });
       },
       [&]() {
@@ -1349,14 +1339,17 @@ static void pbvh_faces_update_normals(PBVH *pbvh, Span<PBVHNode *> nodes)
         }
       });
 
-  threading::parallel_for(verts_to_update.index_range(), 1024, [&](const IndexRange range) {
-    for (const int vert : verts_to_update.as_span().slice(range)) {
-      float3 normal(0.0f);
-      for (const int face : pbvh->pmap[vert]) {
-        normal += face_normals[face];
+  const Span<float3> face_normals = mesh.face_normals();
+  mesh.runtime->vert_normals_cache.ensure([&](Vector<float3> &r_data) {
+    threading::parallel_for(verts_to_update.index_range(), 1024, [&](const IndexRange range) {
+      for (const int vert : verts_to_update.as_span().slice(range)) {
+        float3 normal(0.0f);
+        for (const int face : pbvh->pmap[vert]) {
+          normal += face_normals[face];
+        }
+        r_data[vert] = math::normalize(normal);
       }
-      vert_normals[vert] = math::normalize(normal);
-    }
+    });
   });
 }
 
@@ -1558,7 +1551,7 @@ void BKE_pbvh_update_bounds(PBVH *pbvh, int flag)
   }
 
   Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(
-      pbvh, update_search_cb, POINTER_FROM_INT(flag));
+      pbvh, [&](PBVHNode &node) { return update_search(&node, flag); });
 
   if (flag & (PBVH_UpdateBB | PBVH_UpdateOriginalBB | PBVH_UpdateRedraw)) {
     pbvh_update_BB_redraw(pbvh, nodes, flag);
@@ -1577,7 +1570,7 @@ void BKE_pbvh_update_vertex_data(PBVH *pbvh, int flag)
   }
 
   Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(
-      pbvh, update_search_cb, POINTER_FROM_INT(flag));
+      pbvh, [&](PBVHNode &node) { return update_search(&node, flag); });
 
   if (flag & (PBVH_UpdateMask)) {
     threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
@@ -1705,7 +1698,7 @@ void BKE_pbvh_update_visibility(PBVH *pbvh)
   }
 
   Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(
-      pbvh, update_search_cb, POINTER_FROM_INT(PBVH_UpdateVisibility));
+      pbvh, [&](PBVHNode &node) { return update_search(&node, PBVH_UpdateVisibility); });
 
   threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
     for (PBVHNode *node : nodes.as_span().slice(range)) {
@@ -1716,13 +1709,16 @@ void BKE_pbvh_update_visibility(PBVH *pbvh)
 
 void BKE_pbvh_redraw_BB(PBVH *pbvh, float bb_min[3], float bb_max[3])
 {
+  if (pbvh->nodes.is_empty()) {
+    return;
+  }
   PBVHIter iter;
   PBVHNode *node;
   BB bb;
 
   BB_reset(&bb);
 
-  pbvh_iter_begin(&iter, pbvh, nullptr, nullptr);
+  pbvh_iter_begin(&iter, pbvh, {});
 
   while ((node = pbvh_iter_next(&iter, PBVH_Leaf))) {
     if (node->flag & PBVH_UpdateRedraw) {
@@ -1738,11 +1734,14 @@ void BKE_pbvh_redraw_BB(PBVH *pbvh, float bb_min[3], float bb_max[3])
 
 void BKE_pbvh_get_grid_updates(PBVH *pbvh, bool clear, void ***r_gridfaces, int *r_totface)
 {
+  if (pbvh->nodes.is_empty()) {
+    return;
+  }
   GSet *face_set = BLI_gset_ptr_new(__func__);
   PBVHNode *node;
   PBVHIter iter;
 
-  pbvh_iter_begin(&iter, pbvh, nullptr, nullptr);
+  pbvh_iter_begin(&iter, pbvh, {});
 
   while ((node = pbvh_iter_next(&iter, PBVH_Leaf))) {
     if (node->flag & PBVH_UpdateNormals) {
@@ -2131,9 +2130,8 @@ struct RaycastData {
   bool original;
 };
 
-static bool ray_aabb_intersect(PBVHNode *node, void *data_v)
+static bool ray_aabb_intersect(PBVHNode *node, RaycastData *rcd)
 {
-  RaycastData *rcd = static_cast<RaycastData *>(data_v);
   const float *bb_min, *bb_max;
 
   if (rcd->original) {
@@ -2162,7 +2160,8 @@ void BKE_pbvh_raycast(PBVH *pbvh,
   isect_ray_aabb_v3_precalc(&rcd.ray, ray_start, ray_normal);
   rcd.original = original;
 
-  BKE_pbvh_search_callback_occluded(pbvh, ray_aabb_intersect, &rcd, cb, data);
+  BKE_pbvh_search_callback_occluded(
+      pbvh, [&](PBVHNode &node) { return ray_aabb_intersect(&node, &rcd); }, cb, data);
 }
 
 bool ray_face_intersection_quad(const float ray_start[3],
@@ -2594,9 +2593,8 @@ struct FindNearestRayData {
   bool original;
 };
 
-static bool nearest_to_ray_aabb_dist_sq(PBVHNode *node, void *data_v)
+static bool nearest_to_ray_aabb_dist_sq(PBVHNode *node, FindNearestRayData *rcd)
 {
-  FindNearestRayData *rcd = static_cast<FindNearestRayData *>(data_v);
   const float *bb_min, *bb_max;
 
   if (rcd->original) {
@@ -2629,7 +2627,8 @@ void BKE_pbvh_find_nearest_to_ray(PBVH *pbvh,
   dist_squared_ray_to_aabb_v3_precalc(&ncd.dist_ray_to_aabb_precalc, ray_start, ray_normal);
   ncd.original = original;
 
-  BKE_pbvh_search_callback_occluded(pbvh, nearest_to_ray_aabb_dist_sq, &ncd, cb, data);
+  BKE_pbvh_search_callback_occluded(
+      pbvh, [&](PBVHNode &node) { return nearest_to_ray_aabb_dist_sq(&node, &ncd); }, cb, data);
 }
 
 static bool pbvh_faces_node_nearest_to_ray(PBVH *pbvh,
@@ -2816,48 +2815,45 @@ static PlaneAABBIsect test_frustum_aabb(const float bb_min[3],
   return ret;
 }
 
-bool BKE_pbvh_node_frustum_contain_AABB(PBVHNode *node, void *data)
+bool BKE_pbvh_node_frustum_contain_AABB(PBVHNode *node, PBVHFrustumPlanes *data)
 {
   const float *bb_min, *bb_max;
   /* BKE_pbvh_node_get_BB */
   bb_min = node->vb.bmin;
   bb_max = node->vb.bmax;
 
-  return test_frustum_aabb(bb_min, bb_max, static_cast<PBVHFrustumPlanes *>(data)) !=
-         ISECT_OUTSIDE;
+  return test_frustum_aabb(bb_min, bb_max, data) != ISECT_OUTSIDE;
 }
 
-bool BKE_pbvh_node_frustum_exclude_AABB(PBVHNode *node, void *data)
+bool BKE_pbvh_node_frustum_exclude_AABB(PBVHNode *node, PBVHFrustumPlanes *data)
 {
   const float *bb_min, *bb_max;
   /* BKE_pbvh_node_get_BB */
   bb_min = node->vb.bmin;
   bb_max = node->vb.bmax;
 
-  return test_frustum_aabb(bb_min, bb_max, static_cast<PBVHFrustumPlanes *>(data)) != ISECT_INSIDE;
+  return test_frustum_aabb(bb_min, bb_max, data) != ISECT_INSIDE;
 }
 
 void BKE_pbvh_update_normals(PBVH *pbvh, SubdivCCG *subdiv_ccg)
 {
   /* Update normals */
   Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(
-      pbvh, update_search_cb, POINTER_FROM_INT(PBVH_UpdateNormals));
+      pbvh, [&](PBVHNode &node) { return update_search(&node, PBVH_UpdateNormals); });
 
-  if (!nodes.is_empty()) {
-    if (pbvh->header.type == PBVH_BMESH) {
-      pbvh_bmesh_normals_update(nodes);
-    }
-    else if (pbvh->header.type == PBVH_FACES) {
-      pbvh_faces_update_normals(pbvh, nodes);
-    }
-    else if (pbvh->header.type == PBVH_GRIDS) {
-      CCGFace **faces;
-      int num_faces;
-      BKE_pbvh_get_grid_updates(pbvh, true, (void ***)&faces, &num_faces);
-      if (num_faces > 0) {
-        BKE_subdiv_ccg_update_normals(subdiv_ccg, faces, num_faces);
-        MEM_freeN(faces);
-      }
+  if (pbvh->header.type == PBVH_BMESH) {
+    pbvh_bmesh_normals_update(nodes);
+  }
+  else if (pbvh->header.type == PBVH_FACES) {
+    pbvh_faces_update_normals(pbvh, nodes, *pbvh->mesh);
+  }
+  else if (pbvh->header.type == PBVH_GRIDS) {
+    CCGFace **faces;
+    int num_faces;
+    BKE_pbvh_get_grid_updates(pbvh, true, (void ***)&faces, &num_faces);
+    if (num_faces > 0) {
+      BKE_subdiv_ccg_update_normals(subdiv_ccg, faces, num_faces);
+      MEM_freeN(faces);
     }
   }
 }
@@ -2879,9 +2875,8 @@ struct PBVHDrawSearchData {
   int attrs_num;
 };
 
-static bool pbvh_draw_search_cb(PBVHNode *node, void *data_v)
+static bool pbvh_draw_search(PBVHNode *node, PBVHDrawSearchData *data)
 {
-  PBVHDrawSearchData *data = static_cast<PBVHDrawSearchData *>(data_v);
   if (data->frustum && !BKE_pbvh_node_frustum_contain_AABB(node, data->frustum)) {
     return false;
   }
@@ -2915,14 +2910,15 @@ void BKE_pbvh_draw_cb(PBVH *pbvh,
     data.accum_update_flag = 0;
     data.attrs = attrs;
     data.attrs_num = attrs_num;
-    nodes = blender::bke::pbvh::search_gather(pbvh, pbvh_draw_search_cb, &data);
+    nodes = blender::bke::pbvh::search_gather(
+        pbvh, [&](PBVHNode &node) { return pbvh_draw_search(&node, &data); });
     update_flag = data.accum_update_flag;
   }
   else {
     /* Get all nodes with draw updates, also those outside the view. */
     const int search_flag = PBVH_RebuildDrawBuffers | PBVH_UpdateDrawBuffers;
     nodes = blender::bke::pbvh::search_gather(
-        pbvh, update_search_cb, POINTER_FROM_INT(search_flag));
+        pbvh, [&](PBVHNode &node) { return update_search(&node, search_flag); });
     update_flag = PBVH_RebuildDrawBuffers | PBVH_UpdateDrawBuffers;
   }
 
@@ -2935,7 +2931,8 @@ void BKE_pbvh_draw_cb(PBVH *pbvh,
   PBVHDrawSearchData draw_data{};
   draw_data.frustum = draw_frustum;
   draw_data.accum_update_flag = 0;
-  nodes = blender::bke::pbvh::search_gather(pbvh, pbvh_draw_search_cb, &draw_data);
+  nodes = blender::bke::pbvh::search_gather(
+      pbvh, [&](PBVHNode &node) { return pbvh_draw_search(&node, &draw_data); });
 
   PBVH_GPU_Args args;
 
@@ -3102,7 +3099,7 @@ PBVHColorBufferNode *BKE_pbvh_node_color_buffer_get(PBVHNode *node)
 
 void BKE_pbvh_node_color_buffer_free(PBVH *pbvh)
 {
-  Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(pbvh, nullptr, nullptr);
+  Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(pbvh, {});
 
   for (PBVHNode *node : nodes) {
     MEM_SAFE_FREE(node->color_buffer.color);
@@ -3549,6 +3546,8 @@ bool BKE_pbvh_face_iter_done(PBVHFaceIter *fd)
 
 void BKE_pbvh_sync_visibility_from_verts(PBVH *pbvh, Mesh *mesh)
 {
+  using namespace blender;
+  using namespace blender::bke;
   switch (pbvh->header.type) {
     case PBVH_FACES: {
       BKE_mesh_flush_hidden_from_verts(mesh);
@@ -3584,47 +3583,31 @@ void BKE_pbvh_sync_visibility_from_verts(PBVH *pbvh, Mesh *mesh)
       break;
     }
     case PBVH_GRIDS: {
-      const blender::OffsetIndices faces = mesh->faces();
+      const OffsetIndices faces = mesh->faces();
       CCGKey key = pbvh->gridkey;
 
-      bool *hide_poly = static_cast<bool *>(CustomData_get_layer_named_for_write(
-          &mesh->face_data, CD_PROP_BOOL, ".hide_poly", mesh->faces_num));
+      IndexMaskMemory memory;
+      const IndexMask hidden_faces = IndexMask::from_predicate(
+          faces.index_range(), GrainSize(1024), memory, [&](const int i) {
+            const IndexRange face = faces[i];
+            return std::any_of(face.begin(), face.end(), [&](const int corner) {
+              if (!pbvh->grid_hidden[corner]) {
+                return false;
+              }
+              return BLI_BITMAP_TEST_BOOL(pbvh->grid_hidden[corner], key.grid_area - 1);
+            });
+          });
 
-      bool delete_hide_poly = true;
-      for (const int face_i : faces.index_range()) {
-        const blender::IndexRange face = faces[face_i];
-        bool hidden = false;
-
-        for (int loop_index = 0; !hidden && loop_index < face.size(); loop_index++) {
-          int grid_index = face[loop_index];
-
-          if (pbvh->grid_hidden[grid_index] &&
-              BLI_BITMAP_TEST(pbvh->grid_hidden[grid_index], key.grid_area - 1))
-          {
-            hidden = true;
-
-            break;
-          }
-        }
-
-        if (hidden && !hide_poly) {
-          hide_poly = static_cast<bool *>(CustomData_get_layer_named_for_write(
-              &mesh->face_data, CD_PROP_BOOL, ".hide_poly", mesh->faces_num));
-
-          if (!hide_poly) {
-            hide_poly = static_cast<bool *>(CustomData_add_layer_named(
-                &mesh->face_data, CD_PROP_BOOL, CD_CONSTRUCT, mesh->faces_num, ".hide_poly"));
-          }
-        }
-
-        if (hide_poly) {
-          delete_hide_poly = delete_hide_poly && !hidden;
-          hide_poly[face_i] = hidden;
-        }
+      MutableAttributeAccessor attributes = mesh->attributes_for_write();
+      if (hidden_faces.is_empty()) {
+        attributes.remove(".hide_poly");
       }
-
-      if (delete_hide_poly) {
-        CustomData_free_layer_named(&mesh->face_data, ".hide_poly", mesh->faces_num);
+      else {
+        SpanAttributeWriter<bool> hide_poly = attributes.lookup_or_add_for_write_span<bool>(
+            ".hide_poly", ATTR_DOMAIN_FACE, AttributeInitConstruct());
+        hide_poly.span.fill(false);
+        index_mask::masked_fill(hide_poly.span, true, hidden_faces);
+        hide_poly.finish();
       }
 
       BKE_mesh_flush_hidden_from_faces(mesh);
@@ -3636,14 +3619,17 @@ void BKE_pbvh_sync_visibility_from_verts(PBVH *pbvh, Mesh *mesh)
 
 namespace blender::bke::pbvh {
 Vector<PBVHNode *> search_gather(PBVH *pbvh,
-                                 BKE_pbvh_SearchCallback scb,
-                                 void *search_data,
+                                 const FunctionRef<bool(PBVHNode &)> scb,
                                  PBVHNodeFlags leaf_flag)
 {
+  if (pbvh->nodes.is_empty()) {
+    return {};
+  }
+
   PBVHIter iter;
   Vector<PBVHNode *> nodes;
 
-  pbvh_iter_begin(&iter, pbvh, scb, search_data);
+  pbvh_iter_begin(&iter, pbvh, scb);
 
   PBVHNode *node;
   while ((node = pbvh_iter_next(&iter, leaf_flag))) {
