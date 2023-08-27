@@ -157,7 +157,7 @@ void ED_spacetype_toolbar(void)
 
   st->create = toolbar_create;
   st->blend_read_data = nullptr;
-  st->blend_read_lib = nullptr;
+  st->blend_read_after_liblink = nullptr;
   st->blend_write = toolbar_blend_write;
 
   /* regions: main window */

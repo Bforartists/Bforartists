@@ -23,7 +23,7 @@ from bl_ui_utils.layout import operator_context
 class PoseLibraryPanel:
     @classmethod
     def pose_library_panel_poll(cls, context: Context) -> bool:
-        return bool(context.object and context.object.mode == 'POSE')
+        return context.mode == 'POSE'
 
     @classmethod
     def poll(cls, context: Context) -> bool:
@@ -46,7 +46,7 @@ class VIEW3D_AST_pose_library(bpy.types.AssetShelf):
 
     @classmethod
     def draw_context_menu(cls, _context: Context, _asset: AssetHandle, layout: UILayout):
-        # Make sure these operator properties match those used in `VIEW3D_PT_pose_library`.
+        # Make sure these operator properties match those used in `VIEW3D_PT_pose_library_legacy`.
         layout.operator("poselib.apply_pose_asset", text="Apply Pose").flipped = False
         layout.operator("poselib.apply_pose_asset", text="Apply Pose Flipped").flipped = True
 
@@ -63,43 +63,19 @@ class VIEW3D_AST_pose_library(bpy.types.AssetShelf):
         layout.operator("asset.open_containing_blend_file")
 
 
-class VIEW3D_PT_pose_library(PoseLibraryPanel, Panel):
+class VIEW3D_PT_pose_library_legacy(PoseLibraryPanel, Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Animation"
     bl_label = "Pose Library"
 
-    @classmethod
-    def poll(cls, context: Context) -> bool:
-        prefs = context.preferences
-        # Use Asset Shelf as UI instead of the old asset-view template in the sidebar.
-        if prefs.experimental.use_asset_shelf:
-            return False
-
-        return PoseLibraryPanel.poll(context)
-
-    def draw(self, context: Context) -> None:
+    def draw(self, _context: Context) -> None:
         layout = self.layout
-
-        if hasattr(layout, "template_asset_view"):
-            workspace = context.workspace
-            wm = context.window_manager
-            activate_op_props, drag_op_props = layout.template_asset_view(
-                "pose_assets",
-                workspace,
-                "asset_library_ref",
-                wm,
-                "pose_assets",
-                workspace,
-                "active_pose_asset_index",
-                filter_id_types={"filter_action"},
-                activate_operator="poselib.apply_pose_asset",
-                drag_operator="poselib.blend_pose_asset",
-            )
-
-            # Make sure operators properties match those used in
-            # `pose_library_list_item_context_menu` so shortcuts show in menus (see T103267).
-            activate_op_props.flipped = False
+        layout.label(text="The pose library moved.", icon='INFO')
+        sub = layout.column(align=True)
+        sub.label(text="Pose assets are now available")
+        sub.label(text="in the asset shelf.")
+        layout.operator("screen.region_toggle", text="Toggle Asset Shelf").region_type = 'ASSET_SHELF'
 
 
 def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
@@ -128,7 +104,7 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
 
     layout.separator()
 
-    # Make sure these operator properties match those used in `VIEW3D_PT_pose_library`.
+    # Make sure these operator properties match those used in `VIEW3D_PT_pose_library_legacy`.
     layout.operator("poselib.apply_pose_asset", text="Apply Pose").flipped = False
     layout.operator("poselib.apply_pose_asset", text="Apply Pose Flipped").flipped = True
 
@@ -235,7 +211,7 @@ def _on_blendfile_load_post(none, other_none) -> None:
 
 classes = (
     DOPESHEET_PT_asset_panel,
-    VIEW3D_PT_pose_library,
+    VIEW3D_PT_pose_library_legacy,
     ASSETBROWSER_MT_asset,
     VIEW3D_AST_pose_library,
 )

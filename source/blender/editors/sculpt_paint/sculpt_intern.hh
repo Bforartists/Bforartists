@@ -242,127 +242,6 @@ struct SculptRakeData {
   float angle;
 };
 
-/**
- * Generic thread data. The size of this struct has gotten a little out of hand;
- * normally we would split it up, but it might be better to see if we can't eliminate it
- * altogether after moving to C++ (where we'll be able to use lambdas).
- */
-struct SculptThreadedTaskData {
-  bContext *C;
-  Sculpt *sd;
-  Object *ob;
-  const Brush *brush;
-  Span<PBVHNode *> nodes;
-
-  VPaint *vp;
-  WPaintData *wpd;
-  WeightPaintInfo *wpi;
-  unsigned int *lcol;
-  Mesh *me;
-  /* For passing generic params. */
-  void *custom_data;
-
-  /* Data specific to some callbacks. */
-
-  /* NOTE: even if only one or two of those are used at a time,
-   *       keeping them separated, names help figuring out
-   *       what it is, and memory overhead is ridiculous anyway. */
-  float flippedbstrength;
-  float angle;
-  float strength;
-  bool smooth_mask;
-  bool has_bm_orco;
-
-  SculptProjectVector *spvc;
-  float *offset;
-  float *grab_delta;
-  float *cono;
-  float *area_no;
-  float *area_no_sp;
-  float *area_co;
-  float (*mat)[4];
-  float (*vertCos)[3];
-
-  /* When true, the displacement stored in the proxies will be applied to the original coordinates
-   * instead of to the current coordinates. */
-  bool use_proxies_orco;
-
-  /* X and Z vectors aligned to the stroke direction for operations where perpendicular vectors to
-   * the stroke direction are needed. */
-  float (*stroke_xz)[3];
-
-  int filter_type;
-  float filter_strength;
-  float *filter_fill_color;
-
-  bool use_area_cos;
-  bool use_area_nos;
-
-  /* 0=towards view, 1=flipped */
-  float (*area_cos)[3];
-  float (*area_nos)[3];
-  int *count_no;
-  int *count_co;
-
-  bool any_vertex_sampled;
-
-  float *wet_mix_sampled_color;
-
-  float *prev_mask;
-
-  float *pose_factor;
-  float *pose_initial_co;
-  int pose_chain_segment;
-
-  float multiplane_scrape_angle;
-  float multiplane_scrape_planes[2][4];
-
-  float max_distance_squared;
-  float nearest_vertex_search_co[3];
-
-  /* Stabilized strength for the Clay Thumb brush. */
-  float clay_strength;
-
-  int mask_expand_update_it;
-  bool mask_expand_invert_mask;
-  bool mask_expand_use_normals;
-  bool mask_expand_keep_prev_mask;
-  bool mask_expand_create_face_set;
-
-  float transform_mats[8][4][4];
-  float elastic_transform_mat[4][4];
-  float elastic_transform_pivot[3];
-  float elastic_transform_pivot_init[3];
-  float elastic_transform_radius;
-
-  /* Boundary brush */
-  float boundary_deform_strength;
-
-  float cloth_time_step;
-  SculptClothSimulation *cloth_sim;
-  float *cloth_sim_initial_location;
-  float cloth_sim_radius;
-
-  /* Mask By Color Tool */
-
-  float mask_by_color_threshold;
-  bool mask_by_color_invert;
-  bool mask_by_color_preserve_mask;
-
-  /* Index of the vertex that is going to be used as a reference for the colors. */
-  PBVHVertRef mask_by_color_vertex;
-  float *mask_by_color_floodfill;
-
-  int face_set;
-  int filter_undo_type;
-
-  int mask_init_mode;
-  int mask_init_seed;
-
-  ThreadMutex mutex;
-  int iteration;
-};
-
 /*************** Brush testing declarations ****************/
 struct SculptBrushTest {
   float radius_squared;
@@ -1240,11 +1119,11 @@ bool SCULPT_brush_test_circle_sq(SculptBrushTest *test, const float co[3]);
 /**
  * Test AABB against sphere.
  */
-bool SCULPT_search_sphere_cb(PBVHNode *node, void *data_v);
+bool SCULPT_search_sphere(PBVHNode *node, SculptSearchSphereData *data);
 /**
  * 2D projection (distance to line).
  */
-bool SCULPT_search_circle_cb(PBVHNode *node, void *data_v);
+bool SCULPT_search_circle(PBVHNode *node, SculptSearchCircleData *data);
 
 void SCULPT_combine_transform_proxies(Sculpt *sd, Object *ob);
 
@@ -1260,12 +1139,7 @@ SculptBrushTestFn SCULPT_brush_test_init_with_falloff_shape(SculptSession *ss,
                                                             char falloff_shape);
 const float *SCULPT_brush_frontface_normal_from_falloff_shape(SculptSession *ss,
                                                               char falloff_shape);
-void SCULPT_cube_tip_init(Sculpt *sd,
-                          Object *ob,
-                          Brush *brush,
-                          float mat[4][4],
-                          const float *co = nullptr,  /* Custom brush center. */
-                          const float *no = nullptr); /* Custom brush normal. */
+void SCULPT_cube_tip_init(Sculpt *sd, Object *ob, Brush *brush, float mat[4][4]);
 
 /**
  * Return a multiplier for brush strength on a particular vertex.
@@ -1600,7 +1474,6 @@ void SCULPT_relax_vertex(SculptSession *ss,
 bool SCULPT_pbvh_calc_area_normal(const Brush *brush,
                                   Object *ob,
                                   Span<PBVHNode *> nodes,
-                                  bool use_threading,
                                   float r_area_no[3]);
 
 /**
