@@ -36,12 +36,20 @@ def scene_render_copy_settings_update():
 
     # Get all available render settings, and update accordingly affected_settings…
     props = {}
-    for prop in current_scene.render.bl_rna.properties:
-        if prop.identifier in {'rna_type'}:
-            continue
-        if prop.is_readonly:
-            continue
-        props[prop.identifier] = prop.name
+    for prop_container_id in (('render',), ('cycles',), ('eevee',), ('display', 'shading')):
+        prop_container = current_scene
+        for pc_id_item in prop_container_id:
+            prop_container = getattr(prop_container, pc_id_item, None)
+            if prop_container is None:
+                break
+        if prop_container is None:
+            continue;
+        for prop in prop_container.bl_rna.properties:
+            if prop.identifier in {'rna_type'}:
+                continue
+            if prop.is_readonly:
+                continue
+            props[".".join(prop_container_id) + "." + prop.identifier] = prop.name
     corr = 0
     for i, sett in enumerate(cp_sett.affected_settings):
         if sett.strid not in props:
@@ -130,17 +138,28 @@ class RenderCopySettingsOPPreset(bpy.types.Operator):
 # Real interesting stuff…
 
 def do_copy(context, affected_settings, allowed_scenes):
-    # Stores render settings from current scene.
-    p = {sett: getattr(context.scene.render, sett)
-         for sett in affected_settings}
+    def resolve_rnapath_get(bdata, rna_path_items):
+        for item in rna_path_items:
+            bdata = getattr(bdata, item, None)
+            if bdata is None:
+                break
+        return bdata
+
+    def resolve_rnapath_set(bdata, rna_path_items, value):
+        bdata = resolve_rnapath_get(bdata, rna_path_items[:-1])
+        setattr(bdata, rna_path_items[-1], value)
+
+    # Stores various render settings from current scene.
+    p = {rna_path_items: resolve_rnapath_get(context.scene, rna_path_items)
+         for rna_path_items in affected_settings}
     # put it in all other (valid) scenes’ render settings!
     for scene in bpy.data.scenes:
         # If scene not in allowed scenes, skip.
         if scene.name not in allowed_scenes:
             continue
         # Propagate all affected settings.
-        for sett, val in p.items():
-            setattr(scene.render, sett, val)
+        for rna_path_items, val in p.items():
+            resolve_rnapath_set(scene, rna_path_items, val)
 
 
 class RenderCopySettingsOPCopy(bpy.types.Operator):
@@ -157,7 +176,7 @@ class RenderCopySettingsOPCopy(bpy.types.Operator):
     def execute(self, context):
         regex = None
         cp_sett = context.scene.render_copy_settings
-        affected_settings = {sett.strid for sett in cp_sett.affected_settings if sett.copy}
+        affected_settings = {tuple(sett.strid.split(".")) for sett in cp_sett.affected_settings if sett.copy}
         allowed_scenes = {sce.name for sce in cp_sett.allowed_scenes if sce.allowed}
         do_copy(context, affected_settings=affected_settings, allowed_scenes=allowed_scenes)
         return {'FINISHED'}

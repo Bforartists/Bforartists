@@ -5,8 +5,8 @@
 bl_info = {
     "name": "Copy Render Settings",
     "author": "Bastien Montagne",
-    "version": (1, 2, 0),
-    "blender": (3, 6, 0),
+    "version": (2, 0, 0),
+    "blender": (4, 0, 0),
     "location": "Render buttons (Properties window)",
     "description": "Allows to copy a selection of render settings "
                    "from current scene to others.",

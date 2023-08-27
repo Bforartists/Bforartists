@@ -195,7 +195,7 @@ ccl_device_forceinline float3 microfacet_ggx_sample_vndf(const float3 wi,
   }
 
   /* Section 4.2: Parameterization of the projected area. */
-  float2 t = concentric_sample_disk(rand);
+  float2 t = sample_uniform_disk(rand);
   t.y = mix(safe_sqrtf(1.0f - sqr(t.x)), t.y, 0.5f * (1.0f + wi_.z));
 
   /* Section 4.3: Reprojection onto hemisphere. */
@@ -423,7 +423,7 @@ ccl_device_inline float bsdf_aniso_lambda(float alpha_x, float alpha_y, float3 V
   return bsdf_lambda_from_sqr_alpha_tan_n<m_type>(sqr_alpha_tan_n);
 }
 
-/* Monodirectional shadowing-masking term. */
+/* Mono-directional shadowing-masking term. */
 template<MicrofacetType m_type> ccl_device_inline float bsdf_G(float alpha2, float cos_N)
 {
   return 1.0f / (1.0f + bsdf_lambda<m_type>(alpha2, cos_N));

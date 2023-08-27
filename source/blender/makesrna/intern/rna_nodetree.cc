@@ -69,7 +69,7 @@ const EnumPropertyItem rna_enum_node_socket_in_out_items[] = {{SOCK_IN, "IN", 0,
                                                               {SOCK_OUT, "OUT", 0, "Output", ""},
                                                               {0, nullptr, 0, nullptr, nullptr}};
 
-const EnumPropertyItem rna_node_socket_data_type_items[] = {
+const EnumPropertyItem rna_enum_node_socket_data_type_items[] = {
     {SOCK_FLOAT, "FLOAT", 0, "Float", ""},
     {SOCK_INT, "INT", 0, "Integer", ""},
     {SOCK_BOOLEAN, "BOOLEAN", 0, "Boolean", ""},
@@ -143,7 +143,7 @@ static const EnumPropertyItem rna_enum_execution_mode_items[] = {
     {NTREE_EXECUTION_MODE_REALTIME,
      "REALTIME",
      0,
-     "Realtime GPU",
+     "GPU",
      "Use GPU accelerated compositing with more limited functionality"},
     {0, nullptr, 0, nullptr, nullptr},
 };
@@ -511,12 +511,12 @@ static const EnumPropertyItem rna_node_geometry_curve_handle_type_items[] = {
      "The location is constrained to point in the opposite direction as the other handle"},
     {0, nullptr, 0, nullptr, nullptr}};
 
-const EnumPropertyItem rna_node_geometry_curve_handle_side_items[] = {
+const EnumPropertyItem rna_enum_node_geometry_curve_handle_side_items[] = {
     {GEO_NODE_CURVE_HANDLE_LEFT, "LEFT", ICON_NONE, "Left", "Use the left handles"},
     {GEO_NODE_CURVE_HANDLE_RIGHT, "RIGHT", ICON_NONE, "Right", "Use the right handles"},
     {0, nullptr, 0, nullptr, nullptr}};
 
-const EnumPropertyItem rna_node_combsep_color_items[] = {
+const EnumPropertyItem rna_enum_node_combsep_color_items[] = {
     {NODE_COMBSEP_COLOR_RGB, "RGB", ICON_NONE, "RGB", "Use RGB color processing"},
     {NODE_COMBSEP_COLOR_HSV, "HSV", ICON_NONE, "HSV", "Use HSV color processing"},
     {NODE_COMBSEP_COLOR_HSL, "HSL", ICON_NONE, "HSL", "Use HSL color processing"},
@@ -531,7 +531,7 @@ static const EnumPropertyItem rna_enum_mix_data_type_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-const EnumPropertyItem rna_node_geometry_mesh_circle_fill_type_items[] = {
+const EnumPropertyItem rna_enum_node_geometry_mesh_circle_fill_type_items[] = {
     {GEO_NODE_MESH_CIRCLE_FILL_NONE, "NONE", 0, "None", ""},
     {GEO_NODE_MESH_CIRCLE_FILL_NGON, "NGON", 0, "N-Gon", ""},
     {GEO_NODE_MESH_CIRCLE_FILL_TRIANGLE_FAN, "TRIANGLE_FAN", 0, "Triangles", ""},
@@ -604,7 +604,6 @@ static const EnumPropertyItem node_cryptomatte_layer_name_items[] = {
 #  include "DNA_scene_types.h"
 #  include "WM_api.hh"
 
-extern "C" {
 extern FunctionRNA rna_NodeTree_poll_func;
 extern FunctionRNA rna_NodeTree_update_func;
 extern FunctionRNA rna_NodeTree_get_from_context_func;
@@ -619,7 +618,6 @@ extern FunctionRNA rna_Node_free_func;
 extern FunctionRNA rna_Node_draw_buttons_func;
 extern FunctionRNA rna_Node_draw_buttons_ext_func;
 extern FunctionRNA rna_Node_draw_label_func;
-}
 
 void rna_Node_socket_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr);
 
@@ -680,13 +678,27 @@ const EnumPropertyItem *rna_node_tree_type_itemf(void *data,
 
   if (totitem == 0) {
     *r_free = false;
-    return DummyRNA_NULL_items;
+    return rna_enum_dummy_NULL_items;
   }
 
   RNA_enum_item_end(&item, &totitem);
   *r_free = true;
 
   return item;
+}
+
+int rna_node_socket_idname_to_enum(const char *idname)
+{
+  int i = 0, result = -1;
+  NODE_SOCKET_TYPES_BEGIN (stype) {
+    if (STREQ(stype->idname, idname)) {
+      result = i;
+      break;
+    }
+    i++;
+  }
+  NODE_SOCKET_TYPES_END;
+  return result;
 }
 
 bNodeSocketType *rna_node_socket_type_from_enum(int value)
@@ -734,7 +746,7 @@ const EnumPropertyItem *rna_node_socket_type_itemf(void *data,
 
   if (totitem == 0) {
     *r_free = false;
-    return DummyRNA_NULL_items;
+    return rna_enum_dummy_NULL_items;
   }
 
   RNA_enum_item_end(&item, &totitem);
@@ -1919,9 +1931,6 @@ static const EnumPropertyItem *itemf_function_check(
 
 static bool switch_type_supported(const EnumPropertyItem *item)
 {
-  if (!U.experimental.use_rotation_socket && item->value == SOCK_ROTATION) {
-    return false;
-  }
   return ELEM(item->value,
               SOCK_FLOAT,
               SOCK_INT,
@@ -1944,7 +1953,7 @@ static const EnumPropertyItem *rna_GeometryNodeSwitch_type_itemf(bContext * /*C*
                                                                  bool *r_free)
 {
   *r_free = true;
-  return itemf_function_check(rna_node_socket_data_type_items, switch_type_supported);
+  return itemf_function_check(rna_enum_node_socket_data_type_items, switch_type_supported);
 }
 
 static bool geometry_node_asset_trait_flag_get(PointerRNA *ptr,
@@ -2051,9 +2060,6 @@ static const EnumPropertyItem *rna_GeoNodeAccumulateField_type_itemf(bContext * 
 
 static bool generic_attribute_type_supported(const EnumPropertyItem *item)
 {
-  if (!U.experimental.use_rotation_socket && item->value == CD_PROP_QUATERNION) {
-    return false;
-  }
   return ELEM(item->value,
               CD_PROP_FLOAT,
               CD_PROP_FLOAT2,
@@ -2946,7 +2952,7 @@ static const EnumPropertyItem *rna_ShaderNodeMix_data_type_itemf(bContext * /*C*
 
   const auto rotation_supported_mix = [&](const EnumPropertyItem *item) -> bool {
     const eNodeSocketDatatype data_type = eNodeSocketDatatype(item->value);
-    if (U.experimental.use_rotation_socket && data_type == SOCK_ROTATION) {
+    if (data_type == SOCK_ROTATION) {
       const bNodeTree *tree = reinterpret_cast<const bNodeTree *>(ptr->owner_id);
       if (tree->type == NTREE_GEOMETRY) {
         return true;
@@ -2969,12 +2975,12 @@ static const EnumPropertyItem *rna_Node_image_layer_itemf(bContext * /*C*/,
   RenderLayer *rl;
 
   if (node->type == CMP_NODE_CRYPTOMATTE && node->custom1 != CMP_CRYPTOMATTE_SRC_IMAGE) {
-    return DummyRNA_NULL_items;
+    return rna_enum_dummy_NULL_items;
   }
 
   if (ima == nullptr || ima->rr == nullptr) {
     *r_free = false;
-    return DummyRNA_NULL_items;
+    return rna_enum_dummy_NULL_items;
   }
 
   rl = static_cast<RenderLayer *>(ima->rr->layers.first);
@@ -3057,12 +3063,12 @@ static const EnumPropertyItem *rna_Node_image_view_itemf(bContext * /*C*/,
   RenderView *rv;
 
   if (node->type == CMP_NODE_CRYPTOMATTE && node->custom1 != CMP_CRYPTOMATTE_SRC_IMAGE) {
-    return DummyRNA_NULL_items;
+    return rna_enum_dummy_NULL_items;
   }
 
   if (ima == nullptr || ima->rr == nullptr) {
     *r_free = false;
-    return DummyRNA_NULL_items;
+    return rna_enum_dummy_NULL_items;
   }
 
   rv = static_cast<RenderView *>(ima->rr->views.first);
@@ -3085,7 +3091,7 @@ static const EnumPropertyItem *rna_Node_view_layer_itemf(bContext * /*C*/,
 
   if (sce == nullptr) {
     *r_free = false;
-    return DummyRNA_NULL_items;
+    return rna_enum_dummy_NULL_items;
   }
 
   rl = static_cast<RenderLayer *>(sce->view_layers.first);
@@ -3172,7 +3178,7 @@ static const EnumPropertyItem *rna_Node_channel_itemf(bContext * /*C*/,
       RNA_enum_item_add(&item, &totitem, &tmp);
       break;
     default:
-      return DummyRNA_NULL_items;
+      return rna_enum_dummy_NULL_items;
   }
 
   RNA_enum_item_end(&item, &totitem);
@@ -3412,7 +3418,7 @@ static const EnumPropertyItem *rna_SimulationStateItem_socket_type_itemf(bContex
                                                                          bool *r_free)
 {
   *r_free = true;
-  return itemf_function_check(rna_node_socket_data_type_items,
+  return itemf_function_check(rna_enum_node_socket_data_type_items,
                               rna_SimulationStateItem_socket_type_supported);
 }
 
@@ -3427,7 +3433,7 @@ static const EnumPropertyItem *rna_RepeatItem_socket_type_itemf(bContext * /*C*/
                                                                 bool *r_free)
 {
   *r_free = true;
-  return itemf_function_check(rna_node_socket_data_type_items,
+  return itemf_function_check(rna_enum_node_socket_data_type_items,
                               rna_RepeatItem_socket_type_supported);
 }
 
@@ -5097,7 +5103,7 @@ static void def_tex_combsep_color(StructRNA *srna)
 
   prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "custom1");
-  RNA_def_property_enum_items(prop, rna_node_combsep_color_items);
+  RNA_def_property_enum_items(prop, rna_enum_node_combsep_color_items);
   RNA_def_property_ui_text(prop, "Mode", "Mode of color processing");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
 }
@@ -9144,7 +9150,7 @@ static void def_geo_curve_set_handle_type(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
 
   prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, rna_node_geometry_curve_handle_side_items);
+  RNA_def_property_enum_items(prop, rna_enum_node_geometry_curve_handle_side_items);
   RNA_def_property_ui_text(prop, "Mode", "Whether to update left and right handles");
   RNA_def_property_flag(prop, PROP_ENUM_FLAG);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
@@ -9223,7 +9229,7 @@ static void rna_def_simulation_state_item(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_SimulationStateItem_update");
 
   prop = RNA_def_property(srna, "socket_type", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, rna_node_socket_data_type_items);
+  RNA_def_property_enum_items(prop, rna_enum_node_socket_data_type_items);
   RNA_def_property_enum_funcs(prop, nullptr, nullptr, "rna_SimulationStateItem_socket_type_itemf");
   RNA_def_property_ui_text(prop, "Socket Type", "");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
@@ -9261,7 +9267,7 @@ static void rna_def_geo_simulation_output_items(BlenderRNA *brna)
   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN | FUNC_USE_REPORTS);
   parm = RNA_def_enum(func,
                       "socket_type",
-                      rna_node_socket_data_type_items,
+                      rna_enum_node_socket_data_type_items,
                       SOCK_GEOMETRY,
                       "Socket Type",
                       "Socket type of the item");
@@ -9338,7 +9344,7 @@ static void rna_def_repeat_item(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_RepeatItem_update");
 
   prop = RNA_def_property(srna, "socket_type", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, rna_node_socket_data_type_items);
+  RNA_def_property_enum_items(prop, rna_enum_node_socket_data_type_items);
   RNA_def_property_enum_funcs(prop, nullptr, nullptr, "rna_RepeatItem_socket_type_itemf");
   RNA_def_property_ui_text(prop, "Socket Type", "");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
@@ -9367,7 +9373,7 @@ static void rna_def_geo_repeat_output_items(BlenderRNA *brna)
   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN | FUNC_USE_REPORTS);
   parm = RNA_def_enum(func,
                       "socket_type",
-                      rna_node_socket_data_type_items,
+                      rna_enum_node_socket_data_type_items,
                       SOCK_GEOMETRY,
                       "Socket Type",
                       "Socket type of the item");
@@ -9441,7 +9447,7 @@ static void def_geo_curve_handle_type_selection(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
 
   prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, rna_node_geometry_curve_handle_side_items);
+  RNA_def_property_enum_items(prop, rna_enum_node_geometry_curve_handle_side_items);
   RNA_def_property_ui_text(prop, "Mode", "Whether to check the type of left and right handles");
   RNA_def_property_flag(prop, PROP_ENUM_FLAG);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
@@ -9499,7 +9505,7 @@ static void def_geo_switch(StructRNA *srna)
   RNA_def_struct_sdna_from(srna, "NodeSwitch", "storage");
   prop = RNA_def_property(srna, "input_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "input_type");
-  RNA_def_property_enum_items(prop, rna_node_socket_data_type_items);
+  RNA_def_property_enum_items(prop, rna_enum_node_socket_data_type_items);
   RNA_def_property_enum_funcs(prop, nullptr, nullptr, "rna_GeometryNodeSwitch_type_itemf");
   RNA_def_property_ui_text(prop, "Input Type", "");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
