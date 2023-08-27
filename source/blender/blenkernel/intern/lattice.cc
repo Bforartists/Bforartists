@@ -117,8 +117,14 @@ static void lattice_free_data(ID *id)
 
 static void lattice_foreach_id(ID *id, LibraryForeachIDData *data)
 {
-  Lattice *lattice = (Lattice *)id;
+  Lattice *lattice = reinterpret_cast<Lattice *>(id);
+  const int flag = BKE_lib_query_foreachid_process_flags_get(data);
+
   BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, lattice->key, IDWALK_CB_USER);
+
+  if (flag & IDWALK_DO_DEPRECATED_POINTERS) {
+    BKE_LIB_FOREACHID_PROCESS_ID_NOCHECK(data, lattice->ipo, IDWALK_CB_USER);
+  }
 }
 
 static void lattice_blend_write(BlendWriter *writer, ID *id, const void *id_address)
@@ -153,20 +159,6 @@ static void lattice_blend_read_data(BlendDataReader *reader, ID *id)
   lt->batch_cache = nullptr;
 }
 
-static void lattice_blend_read_lib(BlendLibReader *reader, ID *id)
-{
-  Lattice *lt = (Lattice *)id;
-  BLO_read_id_address(reader, id, &lt->ipo);  // XXX deprecated - old animation system
-  BLO_read_id_address(reader, id, &lt->key);
-}
-
-static void lattice_blend_read_expand(BlendExpander *expander, ID *id)
-{
-  Lattice *lt = (Lattice *)id;
-  BLO_expand(expander, lt->ipo);  // XXX deprecated - old animation system
-  BLO_expand(expander, lt->key);
-}
-
 IDTypeInfo IDType_ID_LT = {
     /*id_code*/ ID_LT,
     /*id_filter*/ FILTER_ID_LT,
@@ -189,8 +181,7 @@ IDTypeInfo IDType_ID_LT = {
 
     /*blend_write*/ lattice_blend_write,
     /*blend_read_data*/ lattice_blend_read_data,
-    /*blend_read_lib*/ lattice_blend_read_lib,
-    /*blend_read_expand*/ lattice_blend_read_expand,
+    /*blend_read_after_liblink*/ nullptr,
 
     /*blend_read_undo_preserve*/ nullptr,
 

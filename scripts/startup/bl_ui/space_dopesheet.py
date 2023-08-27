@@ -598,9 +598,9 @@ class DOPESHEET_MT_channel(Menu):
         layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
         layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
         layout.operator("anim.channels_editable_toggle", icon="LOCKED")
-        
+
         layout.separator()
-        
+
         layout.menu("DOPESHEET_MT_channel_extrapolation")
 
         layout.separator()
@@ -856,7 +856,7 @@ class DOPESHEET_MT_gpencil_channel(Menu):
             "anim.channels_move", "direction", text="Move...")
 
         layout.separator()
-        
+
         layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
 
 
@@ -947,9 +947,12 @@ class DOPESHEET_MT_channel_context_menu(Menu):
         # This menu is used from the graph editor too.
         is_graph_editor = context.area.type == 'GRAPH_EDITOR'
 
+        layout.operator_context = 'INVOKE_REGION_CHANNELS'
+
         layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
         layout.operator("anim.channels_setting_enable", text="Mute Channels", icon='MUTE_IPO_ON').type = 'MUTE'
         layout.operator("anim.channels_setting_disable", text="Unmute Channels", icon='MUTE_IPO_OFF').type = 'MUTE'
+
         layout.separator()
         layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
         layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'

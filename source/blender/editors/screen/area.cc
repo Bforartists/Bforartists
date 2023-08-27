@@ -2746,7 +2746,7 @@ static ThemeColorID region_background_color_id(const bContext *C, const ARegion 
   switch (region->regiontype) {
     case RGN_TYPE_HEADER:
     case RGN_TYPE_TOOL_HEADER:
-      if (ED_screen_area_active(C) || ED_area_is_global(area)) {
+      if (ED_screen_area_active(C) && !ED_area_is_global(area)) {
         return TH_HEADER_ACTIVE;
       }
       else {
@@ -3574,7 +3574,7 @@ bool ED_area_is_global(const ScrArea *area)
   return area->global != nullptr;
 }
 
-ScrArea *ED_area_find_under_cursor(const bContext *C, int spacetype, const int xy[2])
+ScrArea *ED_area_find_under_cursor(const bContext *C, int spacetype, const int event_xy[2])
 {
   bScreen *screen = CTX_wm_screen(C);
   wmWindow *win = CTX_wm_window(C);
@@ -3583,23 +3583,23 @@ ScrArea *ED_area_find_under_cursor(const bContext *C, int spacetype, const int x
 
   if (win->parent) {
     /* If active window is a child, check itself first. */
-    area = BKE_screen_find_area_xy(screen, spacetype, xy);
+    area = BKE_screen_find_area_xy(screen, spacetype, event_xy);
   }
 
   if (!area) {
     /* Check all windows except the active one. */
-    int scr_pos[2];
-    wmWindow *win_other = WM_window_find_under_cursor(win, xy, scr_pos);
+    int event_xy_other[2];
+    wmWindow *win_other = WM_window_find_under_cursor(win, event_xy, event_xy_other);
     if (win_other && win_other != win) {
       win = win_other;
       screen = WM_window_get_active_screen(win);
-      area = BKE_screen_find_area_xy(screen, spacetype, scr_pos);
+      area = BKE_screen_find_area_xy(screen, spacetype, event_xy_other);
     }
   }
 
   if (!area && !win->parent) {
     /* If active window is a parent window, check itself last. */
-    area = BKE_screen_find_area_xy(screen, spacetype, xy);
+    area = BKE_screen_find_area_xy(screen, spacetype, event_xy);
   }
 
   return area;

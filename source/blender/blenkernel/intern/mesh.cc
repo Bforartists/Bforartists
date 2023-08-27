@@ -131,6 +131,8 @@ static void mesh_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int 
    * when the source is persistent and edits to the destination mesh don't affect the caches.
    * Caches will be "un-shared" as necessary later on. */
   mesh_dst->runtime->bounds_cache = mesh_src->runtime->bounds_cache;
+  mesh_dst->runtime->vert_normals_cache = mesh_src->runtime->vert_normals_cache;
+  mesh_dst->runtime->face_normals_cache = mesh_src->runtime->face_normals_cache;
   mesh_dst->runtime->loose_verts_cache = mesh_src->runtime->loose_verts_cache;
   mesh_dst->runtime->verts_no_face_cache = mesh_src->runtime->verts_no_face_cache;
   mesh_dst->runtime->loose_edges_cache = mesh_src->runtime->loose_edges_cache;
@@ -211,10 +213,16 @@ static void mesh_free_data(ID *id)
 static void mesh_foreach_id(ID *id, LibraryForeachIDData *data)
 {
   Mesh *mesh = reinterpret_cast<Mesh *>(id);
+  const int flag = BKE_lib_query_foreachid_process_flags_get(data);
+
   BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, mesh->texcomesh, IDWALK_CB_NEVER_SELF);
   BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, mesh->key, IDWALK_CB_USER);
   for (int i = 0; i < mesh->totcol; i++) {
     BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, mesh->mat[i], IDWALK_CB_USER);
+  }
+
+  if (flag & IDWALK_DO_DEPRECATED_POINTERS) {
+    BKE_LIB_FOREACHID_PROCESS_ID_NOCHECK(data, mesh->ipo, IDWALK_CB_USER);
   }
 }
 
@@ -353,29 +361,6 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
   }
 }
 
-static void mesh_blend_read_lib(BlendLibReader *reader, ID *id)
-{
-  Mesh *me = reinterpret_cast<Mesh *>(id);
-  for (int i = 0; i < me->totcol; i++) {
-    BLO_read_id_address(reader, id, &me->mat[i]);
-  }
-
-  BLO_read_id_address(reader, id, &me->ipo);  // XXX: deprecated: old anim sys
-  BLO_read_id_address(reader, id, &me->key);
-  BLO_read_id_address(reader, id, &me->texcomesh);
-}
-
-static void mesh_read_expand(BlendExpander *expander, ID *id)
-{
-  Mesh *me = reinterpret_cast<Mesh *>(id);
-  for (int a = 0; a < me->totcol; a++) {
-    BLO_expand(expander, me->mat[a]);
-  }
-
-  BLO_expand(expander, me->key);
-  BLO_expand(expander, me->texcomesh);
-}
-
 IDTypeInfo IDType_ID_ME = {
     /*id_code*/ ID_ME,
     /*id_filter*/ FILTER_ID_ME,
@@ -398,8 +383,7 @@ IDTypeInfo IDType_ID_ME = {
 
     /*blend_write*/ mesh_blend_write,
     /*blend_read_data*/ mesh_blend_read_data,
-    /*blend_read_lib*/ mesh_blend_read_lib,
-    /*blend_read_expand*/ mesh_read_expand,
+    /*blend_read_after_liblink*/ nullptr,
 
     /*blend_read_undo_preserve*/ nullptr,
 
@@ -1287,7 +1271,7 @@ float (*BKE_mesh_orco_verts_get(Object *ob))[3]
   return vcos;
 }
 
-void BKE_mesh_orco_verts_transform(Mesh *me, float (*orco)[3], int totvert, int invert)
+void BKE_mesh_orco_verts_transform(Mesh *me, float (*orco)[3], int totvert, const bool invert)
 {
   float texspace_location[3], texspace_size[3];
 
