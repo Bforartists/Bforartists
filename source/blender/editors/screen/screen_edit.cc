@@ -1679,32 +1679,6 @@ ScrArea *ED_screen_temp_space_open(bContext *C,
   return area;
 }
 
-void ED_refresh_viewport_fps(bContext *C)
-{
-  wmTimer *animtimer = CTX_wm_screen(C)->animtimer;
-  Scene *scene = CTX_data_scene(C);
-
-  /* is anim playback running? */
-  if (animtimer && (U.uiflag & USER_SHOW_FPS)) {
-    ScreenFrameRateInfo *fpsi = static_cast<ScreenFrameRateInfo *>(scene->fps_info);
-
-    /* if there isn't any info, init it first */
-    if (fpsi == nullptr) {
-      fpsi = static_cast<ScreenFrameRateInfo *>(
-          scene->fps_info = MEM_callocN(sizeof(ScreenFrameRateInfo),
-                                        "refresh_viewport_fps fps_info"));
-    }
-
-    /* update the values */
-    fpsi->redrawtime = fpsi->lredrawtime;
-    fpsi->lredrawtime = animtimer->ltime;
-  }
-  else {
-    /* playback stopped or shouldn't be running */
-    MEM_SAFE_FREE(scene->fps_info);
-  }
-}
-
 void ED_screen_animation_timer(bContext *C, int redraws, int sync, int enable)
 {
   bScreen *screen = CTX_wm_screen(C);

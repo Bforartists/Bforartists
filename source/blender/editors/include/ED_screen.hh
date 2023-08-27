@@ -444,10 +444,6 @@ void ED_workspace_do_listen(bContext *C, const wmNotifier *note);
 void ED_update_for_newframe(Main *bmain, Depsgraph *depsgraph);
 
 /**
- * Update frame rate info for viewport drawing.
- */
-void ED_refresh_viewport_fps(bContext *C);
-/**
  * Toggle operator.
  */
 int ED_screen_animation_play(bContext *C, int sync, int mode);

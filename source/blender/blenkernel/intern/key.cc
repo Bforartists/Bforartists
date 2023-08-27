@@ -87,8 +87,14 @@ static void shapekey_free_data(ID *id)
 
 static void shapekey_foreach_id(ID *id, LibraryForeachIDData *data)
 {
-  Key *key = (Key *)id;
+  Key *key = reinterpret_cast<Key *>(id);
+  const int flag = BKE_lib_query_foreachid_process_flags_get(data);
+
   BKE_LIB_FOREACHID_PROCESS_ID(data, key->from, IDWALK_CB_LOOPBACK);
+
+  if (flag & IDWALK_DO_DEPRECATED_POINTERS) {
+    BKE_LIB_FOREACHID_PROCESS_ID_NOCHECK(data, key->ipo, IDWALK_CB_USER);
+  }
 }
 
 static ID **shapekey_owner_pointer_get(ID *id)
@@ -173,19 +179,12 @@ static void shapekey_blend_read_data(BlendDataReader *reader, ID *id)
   }
 }
 
-static void shapekey_blend_read_lib(BlendLibReader *reader, ID *id)
+static void shapekey_blend_read_after_liblink(BlendLibReader * /*reader*/, ID *id)
 {
-  Key *key = (Key *)id;
-  BLI_assert((key->id.tag & LIB_TAG_EXTERN) == 0);
-
-  BLO_read_id_address(reader, id, &key->ipo); /* XXX deprecated - old animation system */
-  BLO_read_id_address(reader, id, &key->from);
-}
-
-static void shapekey_blend_read_expand(BlendExpander *expander, ID *id)
-{
-  Key *key = (Key *)id;
-  BLO_expand(expander, key->ipo); /* XXX deprecated - old animation system */
+  /* ShapeKeys should always only be linked indirectly through their user ID (mesh, Curve etc.), or
+   * be fully local data. */
+  BLI_assert((id->tag & LIB_TAG_EXTERN) == 0);
+  UNUSED_VARS_NDEBUG(id);
 }
 
 IDTypeInfo IDType_ID_KE = {
@@ -212,8 +211,7 @@ IDTypeInfo IDType_ID_KE = {
 
     /*blend_write*/ shapekey_blend_write,
     /*blend_read_data*/ shapekey_blend_read_data,
-    /*blend_read_lib*/ shapekey_blend_read_lib,
-    /*blend_read_expand*/ shapekey_blend_read_expand,
+    /*blend_read_after_liblink*/ shapekey_blend_read_after_liblink,
 
     /*blend_read_undo_preserve*/ nullptr,
 
@@ -2260,11 +2258,11 @@ void BKE_keyblock_mesh_calc_normals(const KeyBlock *kb,
         {reinterpret_cast<blender::float3 *>(face_normals), faces.size()});
   }
   if (vert_normals_needed) {
-    blender::bke::mesh::normals_calc_face_vert(
+    blender::bke::mesh::normals_calc_verts(
         positions,
         faces,
         corner_verts,
-        {reinterpret_cast<blender::float3 *>(face_normals), faces.size()},
+        {reinterpret_cast<const blender::float3 *>(face_normals), faces.size()},
         {reinterpret_cast<blender::float3 *>(vert_normals), mesh->totvert});
   }
   if (loop_normals_needed) {
