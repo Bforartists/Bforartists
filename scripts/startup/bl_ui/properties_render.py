@@ -113,6 +113,7 @@ class RENDER_PT_color_management_display_settings(RenderButtonsPanel, Panel):
         sub = col.row()
         sub.active = (not view.view_transform.startswith("Filmic") and
                       not view.view_transform.startswith("AgX"))
+        sub.use_property_split = False
         sub.prop(view, "use_hdr_view")
 
 
