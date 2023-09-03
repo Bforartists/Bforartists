@@ -226,20 +226,6 @@ def create_sample(obj):
         pbone.rigify_parameters.limb_type = "paw"
     except AttributeError:
         pass
-    try:
-        pbone.rigify_parameters.fk_layers = [
-            False, False, False, False, False, False, False, False, True, False, False, False,
-            False, False, False, False, False, False, False, False, False, False, False, False,
-            False, False, False, False, False, False, False, False]
-    except AttributeError:
-        pass
-    try:
-        pbone.rigify_parameters.tweak_layers = [
-            False, False, False, False, False, False, False, False, False, True, False, False,
-            False, False, False, False, False, False, False, False, False, False, False, False,
-            False, False, False, False, False, False, False, False]
-    except AttributeError:
-        pass
     pbone = obj.pose.bones[bones['front_shin.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -278,5 +264,7 @@ def create_sample(obj):
         bone.select_tail = True
         bone.bbone_x = bone.bbone_z = bone.length * 0.05
         arm.edit_bones.active = bone
+        if bcoll := arm.collections.active:
+            bcoll.assign(bone)
 
     return bones

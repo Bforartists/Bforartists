@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /**
- * Virtual shadowmapping: Usage tagging
+ * Virtual shadow-mapping: Usage tagging
  *
  * Shadow pages are only allocated if they are visible.
  * This ray-marches the current fragment along the bounds depth and tags all the intersected shadow
@@ -12,8 +12,6 @@
 
 #pragma BLENDER_REQUIRE(eevee_shadow_tag_usage_lib.glsl)
 #pragma BLENDER_REQUIRE(common_view_lib.glsl)
-
-#pragma BLENDER_REQUIRE(common_debug_shape_lib.glsl)
 
 float ray_aabb(vec3 ray_origin, vec3 ray_direction, vec3 aabb_min, vec3 aabb_max)
 {

@@ -874,5 +874,7 @@ def create_sample(obj):
         bone.select_tail = True
         bone.bbone_x = bone.bbone_z = bone.length * 0.05
         arm.edit_bones.active = bone
+        if bcoll := arm.collections.active:
+            bcoll.assign(bone)
 
     return bones

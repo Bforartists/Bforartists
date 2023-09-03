@@ -2991,8 +2991,6 @@ static void constraint_ops_extra_draw(bContext *C, uiLayout *layout, void *con_v
 
   uiLayoutSetUnitsX(layout, 4.0f);
 
-  UI_block_flag_enable(uiLayoutGetBlock(layout), UI_BLOCK_IS_FLIP);
-
   /* Apply. */
   /*bfa - we have the apply button in the header*/
   /*
@@ -3874,7 +3872,7 @@ static uiBlock *ui_icon_view_menu_cb(bContext *C, ARegion *region, void *arg_lit
   const int h = UI_UNIT_X * (args.icon_scale + args.show_labels);
 
   uiBlock *block = UI_block_begin(C, region, "_popup", UI_EMBOSS_PULLDOWN);
-  UI_block_flag_enable(block, UI_BLOCK_LOOP | UI_BLOCK_NO_FLIP);
+  UI_block_flag_enable(block, UI_BLOCK_LOOP);
   UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
 
   bool free;
@@ -6482,7 +6480,7 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
                       0,
                       UI_UNIT_X,
                       UI_UNIT_Y,
-                      TIP_("Click to see the remaining reports in text block: 'Recent Reports'"));
+                      TIP_("Click to open the info editor"));
   UI_GetThemeColorType4ubv(UI_text_colorid_from_report_type(report->type), SPACE_INFO, but->col);
   but->col[3] = 255; /* This theme color is RBG only, so have to set alpha here. */
 

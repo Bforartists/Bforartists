@@ -4,9 +4,9 @@
 
 bl_info = {
     "name": "Rigify",
-    "version": (0, 6, 7),
+    "version": (0, 6, 8),
     "author": "Nathan Vegdahl, Lucio Rossi, Ivan Cappiello, Alexander Gavrilov",  # noqa
-    "blender": (3, 0, 0),
+    "blender": (4, 0, 0),
     "description": "Automatic rigging from building-block components",
     "location": "Armature properties, Bone properties, View3d tools panel, Armature Add menu",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/rigging/rigify/index.html",
@@ -339,6 +339,12 @@ class RigifyColorSet(bpy.types.PropertyGroup):
     )
     standard_colors_lock: BoolProperty(default=True)
 
+    def apply(self, color: bpy.types.BoneColor):
+        color.palette = 'CUSTOM'
+        color.custom.normal = utils.misc.gamma_correct(self.normal)
+        color.custom.select = utils.misc.gamma_correct(self.select)
+        color.custom.active = utils.misc.gamma_correct(self.active)
+
 
 class RigifySelectionColors(bpy.types.PropertyGroup):
     select: FloatVectorProperty(
@@ -360,6 +366,79 @@ class RigifySelectionColors(bpy.types.PropertyGroup):
 
 class RigifyParameters(bpy.types.PropertyGroup):
     name: StringProperty()
+
+
+class RigifyBoneCollectionReference(bpy.types.PropertyGroup):
+    """Reference from a RigifyParameters field to a bone collection."""
+
+    uid: IntProperty(name="Unique ID", default=-1)
+
+    def find_collection(self, *, update=False, raise_error=False) -> bpy.types.BoneCollection | None:
+        uid = self.uid
+        if uid < 0:
+            return None
+
+        arm = self.id_data.data
+
+        if name := self.get("name", ""):
+            name_coll = arm.collections.get(name)
+
+            if name_coll and name_coll.rigify_uid == uid:
+                return name_coll
+
+        for coll in arm.collections:
+            if coll.rigify_uid == uid:
+                if update:
+                    self["name"] = coll.name
+                return coll
+
+        if raise_error:
+            raise utils.errors.MetarigError(f"Broken bone collection reference: {name} #{uid}")
+
+        return None
+
+    def set_collection(self, coll: bpy.types.BoneCollection | None):
+        if not coll:
+            self.uid = -1
+            self["name"] = ""
+            return
+
+        if coll.rigify_uid < 0:
+            coll.rigify_uid = utils.misc.choose_next_uid(coll.id_data.collections, "rigify_uid")
+
+        self.uid = coll.rigify_uid
+        self["name"] = coll.name
+
+    def _name_get(self):
+        if coll := self.find_collection(update=False):
+            return coll.name
+
+        if self.uid >= 0:
+            if name := self.get("name", ""):
+                return f"? {name} #{self.uid}"
+
+        return ""
+
+    def _name_set(self, new_val):
+        if not new_val:
+            self.set_collection(None)
+            return
+
+        arm = self.id_data.data
+
+        if new_coll := arm.collections.get(new_val):
+            self.set_collection(new_coll)
+        else:
+            self.find_collection(update=True)
+
+    def _name_search(self, _context, _edit):
+        arm = self.id_data.data
+        return [coll.name for coll in arm.collections]
+
+    name: StringProperty(
+        name="Collection Name", description="Name of the referenced bone collection",
+        get=_name_get, set=_name_set, search=_name_search
+    )
 
 
 # Parameter update callback
@@ -465,41 +544,15 @@ class RigifyParameterValidator(object):
         self.__prop_table[name] = (self.__rig_name, new_def)
 
 
-class RigifyArmatureLayer(bpy.types.PropertyGroup):
-    def get_group(self):
-        if 'group_prop' in self.keys():
-            return self['group_prop']
-        else:
-            return 0
-
-    def set_group(self, value):
-        arm = utils.misc.verify_armature_obj(bpy.context.object).data
-        colors = utils.rig.get_rigify_colors(arm)
-        if value > len(colors):
-            self['group_prop'] = len(colors)
-        else:
-            self['group_prop'] = value
-
-    name: StringProperty(name="Layer Name", default=" ")
-    row: IntProperty(name="Layer Row", default=1, min=1, max=32,
-                     description='UI row for this layer')
-    # noinspection SpellCheckingInspection
-    selset: BoolProperty(name="Selection Set", default=False,
-                         description='Add Selection Set for this layer')
-    group: IntProperty(name="Bone Group", default=0, min=0, max=32,
-                       get=get_group, set=set_group,
-                       description='Assign Bone Group to this layer')
-
-
 ####################
 # REGISTER
 
 classes = (
     RigifyName,
     RigifyParameters,
+    RigifyBoneCollectionReference,
     RigifyColorSet,
     RigifySelectionColors,
-    RigifyArmatureLayer,
     RIGIFY_UL_FeatureSets,
     RigifyFeatureSets,
     RigifyPreferences,
@@ -520,8 +573,6 @@ def register():
         register_class(cls)
 
     # Properties.
-    bpy.types.Armature.rigify_layers = CollectionProperty(type=RigifyArmatureLayer)
-
     bpy.types.Armature.active_feature_set = EnumProperty(
         items=feature_set_list.feature_set_items,
         name="Feature Set",
@@ -621,6 +672,56 @@ def register():
         name="Transfer Only Selected",
         description="Transfer selected bones only", default=True)
 
+    # BoneCollection properties
+    coll_store = bpy.types.BoneCollection
+
+    coll_store.rigify_uid = IntProperty(name="Unique ID", default=-1)
+    coll_store.rigify_ui_row = IntProperty(
+        name="UI Row", default=0, min=0,
+        description="If not zero, row of the UI panel where the button for this collection is shown")
+    coll_store.rigify_ui_title = StringProperty(
+        name="UI Title", description="Text to use on the UI panel button instead of the collection name")
+    coll_store.rigify_sel_set = BoolProperty(
+        name="Add Selection Set", default=False, description='Add Selection Set for this collection')
+    coll_store.rigify_color_set_id = IntProperty(name="Color Set ID", default=0, min=0)
+
+    def ui_title_get(coll):
+        return coll.rigify_ui_title or coll.name
+
+    def ui_title_set(coll, new_val):
+        coll.rigify_ui_title = "" if new_val == coll.name else new_val
+
+    coll_store.rigify_ui_title_name = StringProperty(
+        name="UI Title", description="Text to use on the UI panel button (does not edit the collection name)",
+        get=ui_title_get, set=ui_title_set
+    )
+
+    def color_set_get(coll):
+        idx = coll.rigify_color_set_id
+        if idx <= 0:
+            return ""
+
+        sets = utils.rig.get_rigify_colors(coll.id_data)
+        return sets[idx - 1].name if idx <= len(sets) else f"? {idx}"
+
+    def color_set_set(coll, new_val):
+        if new_val == "":
+            coll.rigify_color_set_id = 0
+        else:
+            sets = utils.rig.get_rigify_colors(coll.id_data)
+            for i, cset in enumerate(sets):
+                if cset.name == new_val:
+                    coll.rigify_color_set_id = i + 1
+                    break
+
+    def color_set_search(coll, _ctx, _edit):
+        return [cset.name for cset in utils.rig.get_rigify_colors(coll.id_data)]
+
+    coll_store.rigify_color_set_name = StringProperty(
+        name="Color Set", description="Color set specifying bone colors for this group",
+        get=color_set_get, set=color_set_set, search=color_set_search
+    )
+
     prefs = RigifyPreferences.get_instance()
     prefs.register_feature_sets(True)
     prefs.update_external_rigs()
@@ -658,7 +759,6 @@ def unregister():
 
     arm_store: typing.Any = bpy.types.Armature
 
-    del arm_store.rigify_layers
     del arm_store.active_feature_set
     del arm_store.rigify_colors
     del arm_store.rigify_selection_colors
@@ -675,6 +775,16 @@ def unregister():
     del id_store.rigify_types
     del id_store.rigify_active_type
     del id_store.rigify_transfer_only_selected
+
+    coll_store: typing.Any = bpy.types.BoneCollection
+
+    del coll_store.rigify_uid
+    del coll_store.rigify_ui_row
+    del coll_store.rigify_ui_title
+    del coll_store.rigify_ui_title_name
+    del coll_store.rigify_sel_set
+    del coll_store.rigify_color_set_id
+    del coll_store.rigify_color_set_name
 
     # Classes.
     for cls in classes:
