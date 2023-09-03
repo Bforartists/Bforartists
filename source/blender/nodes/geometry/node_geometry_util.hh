@@ -136,17 +136,17 @@ void socket_declarations_for_simulation_items(Span<NodeSimulationItem> items,
                                               NodeDeclaration &r_declaration);
 const CPPType &get_simulation_item_cpp_type(eNodeSocketDatatype socket_type);
 const CPPType &get_simulation_item_cpp_type(const NodeSimulationItem &item);
-void move_values_to_simulation_state(const Span<NodeSimulationItem> node_simulation_items,
-                                     const Span<void *> input_values,
-                                     bke::sim::SimulationZoneState &r_zone_state);
+
+bke::bake::BakeState move_values_to_simulation_state(
+    const Span<NodeSimulationItem> node_simulation_items, const Span<void *> input_values);
 void move_simulation_state_to_values(const Span<NodeSimulationItem> node_simulation_items,
-                                     bke::sim::SimulationZoneState &zone_state,
+                                     bke::bake::BakeState zone_state,
                                      const Object &self_object,
                                      const ComputeContext &compute_context,
                                      const bNode &sim_output_node,
                                      Span<void *> r_output_values);
 void copy_simulation_state_to_values(const Span<NodeSimulationItem> node_simulation_items,
-                                     const bke::sim::SimulationZoneState &zone_state,
+                                     const bke::bake::BakeStateRef &zone_state,
                                      const Object &self_object,
                                      const ComputeContext &compute_context,
                                      const bNode &sim_output_node,
@@ -159,5 +159,16 @@ void copy_with_checked_indices(const GVArray &src,
 
 void socket_declarations_for_repeat_items(const Span<NodeRepeatItem> items,
                                           NodeDeclaration &r_declaration);
+
+namespace enums {
+
+const EnumPropertyItem *attribute_type_type_with_socket_fn(bContext * /*C*/,
+                                                           PointerRNA * /*ptr*/,
+                                                           PropertyRNA * /*prop*/,
+                                                           bool *r_free);
+
+bool generic_attribute_type_supported(const EnumPropertyItem &item);
+
+}  // namespace enums
 
 }  // namespace blender::nodes

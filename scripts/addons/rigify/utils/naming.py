@@ -10,6 +10,8 @@ import enum
 
 from typing import Optional, TYPE_CHECKING
 
+from .misc import map_list
+
 if TYPE_CHECKING:
     from ..base_generate import BaseGenerator
 
@@ -336,3 +338,30 @@ def choose_derived_bone(generator: 'BaseGenerator', original: str, subtype: str,
             return direct
 
     return None
+
+
+_MIRROR_MAP_RAW = [
+    ("Left", "Right"),
+    ("L", "R"),
+]
+_MIRROR_MAP = {
+    **{a: b for a, b in _MIRROR_MAP_RAW},
+    **{b: a for a, b in _MIRROR_MAP_RAW},
+    **{a.lower(): b.lower() for a, b in _MIRROR_MAP_RAW},
+    **{b.lower(): a.lower() for a, b in _MIRROR_MAP_RAW},
+}
+_MIRROR_RE = [
+    r"(?<![a-z])(left|light)(?![a-z])",
+    r"(?<=[\._])(l|r)(?![a-z])",
+]
+
+
+def mirror_name_fuzzy(name: str) -> str:
+    """Try to mirror a name by trying various patterns without expecting any rigid structure."""
+
+    for reg in _MIRROR_RE:
+        new_name = re.sub(reg, lambda m: _MIRROR_MAP.get(m[0], m[0]), name, flags=re.IGNORECASE)
+        if new_name != name:
+            return new_name
+
+    return name
