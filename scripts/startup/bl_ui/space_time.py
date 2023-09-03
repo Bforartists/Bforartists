@@ -20,7 +20,7 @@ class TIME_HT_editor_buttons:
         layout.separator_spacer()
 
         row = layout.row(align=True)
-### BFA - moved to another area.  
+### BFA - moved to another area.
 #        row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
 #        sub = row.row(align=True)
 #        sub.active = tool_settings.use_keyframe_insert_auto
@@ -107,8 +107,8 @@ class TIME_MT_editor_menus(Menu):
             sub = row.row(align=True)
         else:
             sub = layout
-            
-## BFA - moved to header options 
+
+## BFA - moved to header options
 #        sub.popover(
 #            panel="TIME_PT_playback",
 #            text="Playback",
@@ -165,7 +165,16 @@ class TIME_MT_view(Menu):
 
         layout.separator()
 
-        layout.menu("INFO_MT_area")
+        layout.prop(st, "show_markers")
+
+        layout.separator()
+
+        layout.prop(st, "show_locked_time")
+        layout.prop(st, "show_seconds")
+
+        layout.separator()
+
+        layout.prop(st, "show_region_hud")
 
 ## BFA - moved to the options panel exclusively.
 #class TIME_MT_cache(Menu):

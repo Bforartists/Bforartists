@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
+from bpy.types import UIList, UILayout, Armature
 from bpy.props import (
     BoolProperty,
     IntProperty,
@@ -10,15 +11,18 @@ from bpy.props import (
     StringProperty
 )
 
-from typing import TYPE_CHECKING, Callable
+from collections import defaultdict
+from typing import TYPE_CHECKING, Callable, Any
 from mathutils import Color
 
 from .utils.errors import MetarigError
-from .utils.rig import write_metarig, get_rigify_type, get_rigify_target_rig, get_rigify_layers, \
+from .utils.layers import ROOT_COLLECTION
+from .utils.rig import write_metarig, get_rigify_type, get_rigify_target_rig, \
     get_rigify_colors, get_rigify_params
 from .utils.widgets import write_widget
 from .utils.naming import unique_name
-from .utils.rig import upgrade_metarig_types, outdated_types
+from .utils.rig import upgrade_metarig_types, outdated_types, upgrade_metarig_layers, \
+    is_valid_metarig, metarig_needs_upgrade
 from .utils.misc import verify_armature_obj, ArmatureObject, IdPropSequence
 
 from .rigs.utils import get_limb_generated_names
@@ -82,16 +86,17 @@ class DATA_PT_rigify(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        obj = context.object
-        if not context.object:
-            return False
-        return obj.type == 'ARMATURE' \
-            and obj.data.get("rig_id") is None
+        return is_valid_metarig(context, allow_needs_upgrade=True)
 
     def draw(self, context):
         C = context
         layout = self.layout
         obj = verify_armature_obj(C.object)
+
+        if metarig_needs_upgrade(obj):
+            layout.label(text="This metarig requires upgrading to Bone Collections", icon='ERROR')
+            layout.operator("armature.rigify_upgrade_layers", text="Upgrade Metarig")
+            return
 
         WARNING = "Warning: Some features may change after generation"
         show_warning = False
@@ -107,7 +112,7 @@ class DATA_PT_rigify(bpy.types.Panel):
                 # If we are in edit mode and the bone was just created,
                 # a pose bone won't exist yet.
                 continue
-            if bone.layers[30] and (list(set(pose_bone.keys()) & set(check_props))):
+            if list(set(pose_bone.keys()) & set(check_props)):  # bone.layers[30] and
                 show_warning = True
                 break
 
@@ -166,6 +171,10 @@ class DATA_PT_rigify_advanced(bpy.types.Panel):
     bl_parent_id = 'DATA_PT_rigify'
     bl_options = {'DEFAULT_CLOSED'}
 
+    @classmethod
+    def poll(cls, context):
+        return is_valid_metarig(context)
+
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
@@ -205,12 +214,7 @@ class DATA_PT_rigify_samples(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        obj = context.object
-        if not obj:
-            return False
-        return obj.type == 'ARMATURE' \
-            and obj.data.get("rig_id") is None \
-            and obj.mode == 'EDIT'
+        return is_valid_metarig(context) and context.object.mode == 'EDIT'
 
     def draw(self, context):
         layout = self.layout
@@ -236,9 +240,34 @@ class DATA_PT_rigify_samples(bpy.types.Panel):
         props.metarig_type = rigify_types[id_store.rigify_active_type].name
 
 
+# noinspection SpellCheckingInspection
 # noinspection PyPep8Naming
-class DATA_PT_rigify_layer_names(bpy.types.Panel):
-    bl_label = "Layer Names"
+class DATA_UL_rigify_bone_collections(UIList):
+    def draw_item(self, _context, layout, armature, bcoll, _icon, _active_data,
+                  _active_prop_name, _index=0, _flt_flag=0):
+        active_bone = armature.edit_bones.active or armature.bones.active
+        has_active_bone = active_bone and bcoll.name in active_bone.collections
+
+        split = layout.split(factor=0.7)
+
+        split.prop(bcoll, "name", text="", emboss=False,
+                   icon='DOT' if has_active_bone else 'BLANK1')
+
+        if cset := bcoll.rigify_color_set_name:
+            split.label(text=cset, icon="COLOR", translate=False)
+
+        icons = layout.row(align=True)
+
+        icons.prop(bcoll, "rigify_sel_set", text="", toggle=True, emboss=False,
+                   icon='RADIOBUT_ON' if bcoll.rigify_sel_set else 'RADIOBUT_OFF')
+        icons.label(text="", icon='RESTRICT_SELECT_OFF' if bcoll.rigify_ui_row > 0 else 'RESTRICT_SELECT_ON')
+        icons.prop(bcoll, "is_visible", text="", emboss=False,
+                   icon='HIDE_OFF' if bcoll.is_visible else 'HIDE_ON')
+
+
+# noinspection PyPep8Naming
+class DATA_PT_rigify_collection_list(bpy.types.Panel):
+    bl_label = "Bone Collection UI"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
@@ -247,89 +276,227 @@ class DATA_PT_rigify_layer_names(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        if not context.object:
-            return False
-        return context.object.type == 'ARMATURE' and context.active_object.data.get("rig_id") is None
+        return is_valid_metarig(context)
 
     def draw(self, context):
         layout = self.layout
         obj = verify_armature_obj(context.object)
         arm = obj.data
 
-        rigify_layers = get_rigify_layers(arm)
-        rigify_colors = get_rigify_colors(arm)
+        # Copy the bone collection list
+        active_coll = arm.collections.active
 
-        # Ensure that the layers exist
-        if len(rigify_layers) < 29:
-            layout.operator("pose.rigify_layer_init")
-            return
+        row = layout.row()
 
-        # UI
-        main_row = layout.row(align=True).split(factor=0.05)
-        col1 = main_row.column()
-        col2 = main_row.column()
-        col1.label()
-        for i in range(32):
-            if i == 16 or i == 29:
-                col1.label()
-            col1.label(text=str(i))
+        row.template_list(
+            "DATA_UL_rigify_bone_collections",
+            "collections",
+            arm,
+            "collections",
+            arm.collections,
+            "active_index",
+            rows=(4 if active_coll else 1),
+        )
 
-        col: bpy.types.UILayout = col2
+        col = row.column(align=True)
+        col.operator("armature.collection_add", icon='ADD', text="")
+        col.operator("armature.collection_remove", icon='REMOVE', text="")
+        if active_coll:
+            col.separator()
+            col.operator("armature.collection_move", icon='TRIA_UP', text="").direction = 'UP'
+            col.operator("armature.collection_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
 
-        for i, rigify_layer in enumerate(rigify_layers):
-            # note: rigify_layer == arm.rigify_layers[i]
-            if (i % 16) == 0:
-                col = col2.column()
-                if i == 0:
-                    col.label(text="Top Row:")
-                else:
-                    col.label(text="Bottom Row:")
-            if (i % 8) == 0:
-                col = col2.column()
-            if i != 28:
-                row = col.row(align=True)
-                icon = 'RESTRICT_VIEW_OFF' if arm.layers[i] else 'RESTRICT_VIEW_ON'
-                row.prop(arm, "layers", index=i, text="", toggle=True, icon=icon)
-                # row.prop(arm, "layers", index=i, text="Layer %d" % (i + 1), toggle=True, icon=icon)
-                row.prop(rigify_layer, "name", text="")
-                row.prop(rigify_layer, "row", text="UI Row")
-                icon = 'RADIOBUT_ON' if rigify_layer.selset else 'RADIOBUT_OFF'
-                row.prop(rigify_layer, "selset", text="", toggle=True, icon=icon)
-                row.prop(rigify_layer, "group", text="Bone Group")
-            else:
-                row = col.row(align=True)
+        if active_coll:
+            col = layout.column()
+            col.use_property_split = True
+            col.use_property_decorate = False
 
-                icon = 'RESTRICT_VIEW_OFF' if arm.layers[i] else 'RESTRICT_VIEW_ON'
-                row.prop(arm, "layers", index=i, text="", toggle=True, icon=icon)
-                # row.prop(arm, "layers", index=i, text="Layer %d" % (i + 1), toggle=True, icon=icon)
-                row1 = row.split(align=True).row(align=True)
-                row1.prop(rigify_layer, "name", text="")
-                row1.prop(rigify_layer, "row", text="UI Row")
-                row1.enabled = False
-                icon = 'RADIOBUT_ON' if rigify_layer.selset else 'RADIOBUT_OFF'
-                row.prop(rigify_layer, "selset", text="", toggle=True, icon=icon)
-                row.prop(rigify_layer, "group", text="Bone Group")
-            if rigify_layer.group == 0:
-                row.label(text='None')
-            else:
-                row.label(text=rigify_colors[rigify_layer.group-1].name)
+            col.prop(active_coll, "rigify_color_set_name", icon="COLOR")
+            col.prop(active_coll, "rigify_sel_set")
+            col.separator()
 
-        col = col2.column()
-        col.label(text="Reserved:")
-        # reserved_names = {28: 'Root', 29: 'DEF', 30: 'MCH', 31: 'ORG'}
-        reserved_names = {29: 'DEF', 30: 'MCH', 31: 'ORG'}
-        # for i in range(28, 32):
-        for i in range(29, 32):
-            row = col.row(align=True)
-            icon = 'RESTRICT_VIEW_OFF' if arm.layers[i] else 'RESTRICT_VIEW_ON'
-            row.prop(arm, "layers", index=i, text="", toggle=True, icon=icon)
-            row.label(text=reserved_names[i])
+            col.prop(active_coll, "rigify_ui_row", )
+            row = col.row()
+            row.active = active_coll.rigify_ui_row > 0  # noqa
+            row.prop(active_coll, "rigify_ui_title")
+
+        if ROOT_COLLECTION not in arm.collections:
+            layout.label(text=f"The '{ROOT_COLLECTION}' collection will be added upon generation", icon='ERROR')
 
 
 # noinspection PyPep8Naming
-class DATA_OT_rigify_add_bone_groups(bpy.types.Operator):
-    bl_idname = "armature.rigify_add_bone_groups"
-    bl_label = "Rigify Add Standard Bone Groups"
+class DATA_PT_rigify_collection_ui(bpy.types.Panel):
+    bl_label = "UI Layout"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "data"
+    bl_options = set()
+    bl_parent_id = "DATA_PT_rigify_collection_list"
+
+    @classmethod
+    def poll(cls, context):
+        return is_valid_metarig(context)
+
+    @staticmethod
+    def draw_btn_block(arm: Armature, parent: UILayout, bcoll_id: int, loose=False):
+        bcoll = arm.collections[bcoll_id]
+        block = parent.row(align=True)
+
+        if bcoll == arm.collections.active:
+            block.prop(bcoll, "rigify_ui_title_name", text="", emboss=True)
+
+            if not loose:
+                props = block.operator(text="", icon="X", operator="armature.rigify_collection_set_ui_row")
+                props.index = bcoll_id
+                props.row = 0
+        else:
+            props = block.operator(text=bcoll.rigify_ui_title_name, operator="armature.rigify_collection_select")
+            props.index = bcoll_id
+
+    def draw(self, context):
+        layout = self.layout
+        obj = verify_armature_obj(context.object)
+        arm = obj.data
+
+        # Sort into button rows
+        row_table = defaultdict(list)
+
+        for i, bcoll in enumerate(arm.collections):
+            row_table[bcoll.rigify_ui_row].append(i)
+
+        active_bcoll_idx = arm.collections.active_index
+
+        if active_bcoll_idx < 0:
+            layout.label(text="Click a button to select a collection:", icon="INFO")
+
+        box = layout.box()
+        last_row = max(row_table.keys())
+
+        for row_id in range(1, last_row + 2):
+            row = box.row()
+            row_items = row_table[row_id]
+
+            grid = row.grid_flow(row_major=True, columns=len(row_items), even_columns=True)
+            for bcoll_id in row_items:
+                self.draw_btn_block(arm, grid, bcoll_id)
+
+            btn_row = row.row(align=True)
+
+            if active_bcoll_idx >= 0:
+                props = btn_row.operator(text="", icon="TRIA_LEFT", operator="armature.rigify_collection_set_ui_row")
+                props.index = active_bcoll_idx
+                props.row = row_id
+
+            if row_id < last_row + 1:
+                props = btn_row.operator(text="", icon="ADD", operator="armature.rigify_collection_add_ui_row")
+                props.row = row_id
+                props.add = True
+            else:
+                btn_row.label(text="", icon="BLANK1")
+
+            if row_id < last_row:
+                props = btn_row.operator(text="", icon="REMOVE", operator="armature.rigify_collection_add_ui_row")
+                props.row = row_id + 1
+                props.add = False
+            else:
+                btn_row.label(text="", icon="BLANK1")
+
+        if 0 in row_table:
+            box = layout.box()
+            box.label(text="No button:")
+
+            grid = box.grid_flow(row_major=True, columns=2, even_columns=True)
+
+            for i, bcoll_id in enumerate(row_table[0]):
+                self.draw_btn_block(arm, grid, bcoll_id, loose=True)
+
+
+# noinspection PyPep8Naming
+class DATA_OT_rigify_collection_select(bpy.types.Operator):
+    bl_idname = "armature.rigify_collection_select"
+    bl_label = "Make Collection Active"
+    bl_description = "Make this collection active"
+    bl_options = {'UNDO_GROUPED'}
+
+    index: IntProperty(name="Index")
+
+    @staticmethod
+    def button(layout, *, index, **kwargs):
+        props = layout.operator(**kwargs)
+        props.index = index
+
+    @classmethod
+    def poll(cls, context):
+        return context.object and context.object.type == 'ARMATURE'
+
+    def execute(self, context):
+        obj = verify_armature_obj(context.object)
+        obj.data.collections.active_index = self.index
+        return {'FINISHED'}
+
+
+# noinspection PyPep8Naming
+class DATA_OT_rigify_collection_set_ui_row(bpy.types.Operator):
+    bl_idname = "armature.rigify_collection_set_ui_row"
+    bl_label = "Move Between UI Rows"
+    bl_options = {'UNDO'}
+
+    index: IntProperty(name="Index")
+    row: IntProperty(name="Row")
+    select: BoolProperty(name="Select")
+
+    @classmethod
+    def poll(cls, context):
+        return context.object and context.object.type == 'ARMATURE'
+
+    @classmethod
+    def description(cls, context, properties: Any):
+        if properties.row == 0:
+            return "Remove this button from the UI panel"
+        else:
+            return "Move the active button to this UI panel row"
+
+    def execute(self, context):
+        obj = verify_armature_obj(context.object)
+        if self.select:
+            obj.data.collections.active_index = self.index
+        obj.data.collections[self.index].rigify_ui_row = self.row
+        return {'FINISHED'}
+
+
+# noinspection PyPep8Naming
+class DATA_OT_rigify_collection_add_ui_row(bpy.types.Operator):
+    bl_idname = "armature.rigify_collection_add_ui_row"
+    bl_label = "Add/Remove UI Rows"
+    bl_options = {'UNDO'}
+
+    row: IntProperty(name="Row")
+    add: BoolProperty(name="Add")
+
+    @classmethod
+    def poll(cls, context):
+        return context.object and context.object.type == 'ARMATURE'
+
+    @classmethod
+    def description(cls, context, properties: Any):
+        if properties.add:
+            return "Insert a new row before this one, shifting buttons down"
+        else:
+            return "Remove this row, shifting buttons up"
+
+    def execute(self, context):
+        obj = verify_armature_obj(context.object)
+        for coll in obj.data.collections:
+            if coll.rigify_ui_row >= self.row:
+                coll.rigify_ui_row += (1 if self.add else -1)
+        return {'FINISHED'}
+
+
+# noinspection PyPep8Naming
+class DATA_OT_rigify_add_color_sets(bpy.types.Operator):
+    bl_idname = "armature.rigify_add_color_sets"
+    bl_label = "Rigify Add Standard Color Sets"
+    bl_options = {'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -376,6 +543,7 @@ class DATA_OT_rigify_add_bone_groups(bpy.types.Operator):
 class DATA_OT_rigify_use_standard_colors(bpy.types.Operator):
     bl_idname = "armature.rigify_use_standard_colors"
     bl_label = "Rigify Get active/select colors from current theme"
+    bl_options = {'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -405,6 +573,7 @@ class DATA_OT_rigify_use_standard_colors(bpy.types.Operator):
 class DATA_OT_rigify_apply_selection_colors(bpy.types.Operator):
     bl_idname = "armature.rigify_apply_selection_colors"
     bl_label = "Rigify Apply user defined active/select colors"
+    bl_options = {'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -431,9 +600,10 @@ class DATA_OT_rigify_apply_selection_colors(bpy.types.Operator):
 
 
 # noinspection PyPep8Naming
-class DATA_OT_rigify_bone_group_add(bpy.types.Operator):
-    bl_idname = "armature.rigify_bone_group_add"
-    bl_label = "Rigify Add Bone Group color set"
+class DATA_OT_rigify_color_set_add(bpy.types.Operator):
+    bl_idname = "armature.rigify_color_set_add"
+    bl_label = "Rigify Add Color Set"
+    bl_options = {'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -461,9 +631,9 @@ class DATA_OT_rigify_bone_group_add(bpy.types.Operator):
 
 
 # noinspection PyPep8Naming
-class DATA_OT_rigify_bone_group_add_theme(bpy.types.Operator):
-    bl_idname = "armature.rigify_bone_group_add_theme"
-    bl_label = "Rigify Add Bone Group color set from Theme"
+class DATA_OT_rigify_color_set_add_theme(bpy.types.Operator):
+    bl_idname = "armature.rigify_color_set_add_theme"
+    bl_label = "Rigify Add Color Set from Theme"
     bl_options = {"REGISTER", "UNDO"}
 
     theme: EnumProperty(items=(
@@ -519,9 +689,10 @@ class DATA_OT_rigify_bone_group_add_theme(bpy.types.Operator):
 
 
 # noinspection PyPep8Naming
-class DATA_OT_rigify_bone_group_remove(bpy.types.Operator):
-    bl_idname = "armature.rigify_bone_group_remove"
-    bl_label = "Rigify Remove Bone Group color set"
+class DATA_OT_rigify_color_set_remove(bpy.types.Operator):
+    bl_idname = "armature.rigify_color_set_remove"
+    bl_label = "Rigify Remove Color Set"
+    bl_options = {'UNDO'}
 
     idx: IntProperty()
 
@@ -536,21 +707,22 @@ class DATA_OT_rigify_bone_group_remove(bpy.types.Operator):
         rigify_colors.remove(self.idx)
 
         # set layers references to 0
-        rigify_layers = get_rigify_layers(obj.data)
+        for coll in obj.data.collections:
+            idx = coll.rigify_color_set_id
 
-        for layer in rigify_layers:
-            if layer.group == self.idx + 1:
-                layer.group = 0
-            elif layer.group > self.idx + 1:
-                layer.group -= 1
+            if idx == self.idx + 1:
+                coll.rigify_color_set_id = 0
+            elif idx > self.idx + 1:
+                coll.rigify_color_set_id = idx - 1
 
         return {'FINISHED'}
 
 
 # noinspection PyPep8Naming
-class DATA_OT_rigify_bone_group_remove_all(bpy.types.Operator):
-    bl_idname = "armature.rigify_bone_group_remove_all"
-    bl_label = "Rigify Remove All Bone Groups"
+class DATA_OT_rigify_color_set_remove_all(bpy.types.Operator):
+    bl_idname = "armature.rigify_color_set_remove_all"
+    bl_label = "Rigify Remove All Color Sets"
+    bl_options = {'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -564,15 +736,15 @@ class DATA_OT_rigify_bone_group_remove_all(bpy.types.Operator):
             rigify_colors.remove(0)
 
         # set layers references to 0
-        for layer in get_rigify_layers(obj.data):
-            layer.group = 0
+        for coll in obj.data.collections:
+            coll.rigify_color_set_id = 0
 
         return {'FINISHED'}
 
 
 # noinspection PyPep8Naming
-class DATA_UL_rigify_bone_groups(bpy.types.UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index=0, flt_flag=0):
+class DATA_UL_rigify_color_sets(bpy.types.UIList):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_prop_name, index=0, flt_flag=0):
         row = layout.row(align=True)
         row = row.split(factor=0.1)
         row.label(text=str(index+1))
@@ -591,18 +763,19 @@ class DATA_UL_rigify_bone_groups(bpy.types.UIList):
 
 
 # noinspection PyPep8Naming
-class DATA_MT_rigify_bone_groups_context_menu(bpy.types.Menu):
-    bl_label = 'Rigify Bone Groups Specials'
+class DATA_MT_rigify_color_sets_context_menu(bpy.types.Menu):
+    bl_label = 'Rigify Color Sets Specials'
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator('armature.rigify_bone_group_remove_all')
+        layout.operator('armature.rigify_color_set_remove_all')
 
 
+# noinspection SpellCheckingInspection
 # noinspection PyPep8Naming
-class DATA_PT_rigify_bone_groups(bpy.types.Panel):
-    bl_label = "Bone Groups"
+class DATA_PT_rigify_color_sets(bpy.types.Panel):
+    bl_label = "Color Sets"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
@@ -611,9 +784,7 @@ class DATA_PT_rigify_bone_groups(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        if not context.object:
-            return False
-        return context.object.type == 'ARMATURE' and context.active_object.data.get("rig_id") is None
+        return is_valid_metarig(context)
 
     def draw(self, context):
         obj = verify_armature_obj(context.object)
@@ -634,18 +805,18 @@ class DATA_PT_rigify_bone_groups(bpy.types.Panel):
         row.prop(armature, 'rigify_colors_lock', text='Unified select/active colors', icon=icon)
         row.operator("armature.rigify_apply_selection_colors", icon='FILE_REFRESH', text='Apply')
         row = layout.row()
-        row.template_list("DATA_UL_rigify_bone_groups", "", obj.data, "rigify_colors", obj.data, "rigify_colors_index")
+        row.template_list("DATA_UL_rigify_color_sets", "", obj.data, "rigify_colors", obj.data, "rigify_colors_index")
 
         col = row.column(align=True)
-        col.operator("armature.rigify_bone_group_add", icon='ADD', text="")
-        col.operator("armature.rigify_bone_group_remove", icon='REMOVE', text="").idx = idx
-        col.menu("DATA_MT_rigify_bone_groups_context_menu", icon='DOWNARROW_HLT', text="")
+        col.operator("armature.rigify_color_set_add", icon='ADD', text="")
+        col.operator("armature.rigify_color_set_remove", icon='REMOVE', text="").idx = idx
+        col.menu("DATA_MT_rigify_color_sets_context_menu", icon='DOWNARROW_HLT', text="")
         row = layout.row()
         row.prop(armature, 'rigify_theme_to_add', text='Theme')
-        op = row.operator("armature.rigify_bone_group_add_theme", text="Add From Theme")
+        op = row.operator("armature.rigify_color_set_add_theme", text="Add From Theme")
         op.theme = theme
         row = layout.row()
-        row.operator("armature.rigify_add_bone_groups", text="Add Standard")
+        row.operator("armature.rigify_add_color_sets", text="Add Standard")
 
 
 # noinspection PyPep8Naming
@@ -658,10 +829,7 @@ class BONE_PT_rigify_buttons(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        if not context.object:
-            return False
-        return (context.object.type == 'ARMATURE' and context.active_pose_bone and
-                context.active_object.data.get("rig_id") is None)
+        return is_valid_metarig(context) and context.active_pose_bone
 
     def draw(self, context):
         C = context
@@ -822,24 +990,6 @@ def rigify_report_exception(operator, exception):
     operator.report({'ERROR'}, '\n'.join(message))
 
 
-class LayerInit(bpy.types.Operator):
-    """Initialize armature rigify layers"""
-
-    bl_idname = "pose.rigify_layer_init"
-    bl_label = "Add Rigify Layers"
-    bl_options = {'UNDO', 'INTERNAL'}
-
-    def execute(self, context):
-        obj = verify_armature_obj(context.object)
-        arm = obj.data
-        rigify_layers = get_rigify_layers(arm)
-        for i in range(1 + len(rigify_layers), 30):
-            rigify_layers.add()
-        rigify_layers[28].name = 'Root'
-        rigify_layers[28].row = 14
-        return {'FINISHED'}
-
-
 def is_metarig(obj):
     if not (obj and obj.data and obj.type == 'ARMATURE'):
         return False
@@ -895,9 +1045,20 @@ class UpgradeMetarigTypes(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     def execute(self, context):
-        for obj in bpy.data.objects:
-            if type(obj.data) == bpy.types.Armature:
-                upgrade_metarig_types(obj)
+        upgrade_metarig_types(verify_armature_obj(context.active_object))
+        return {'FINISHED'}
+
+
+class UpgradeMetarigLayers(bpy.types.Operator):
+    """Upgrades the metarig from bone layers to bone collections"""
+
+    bl_idname = "armature.rigify_upgrade_layers"
+    bl_label = "Rigify Upgrade Metarig Layers"
+    bl_description = 'Upgrades the metarig from bone layers to bone collections'
+    bl_options = {'UNDO'}
+
+    def execute(self, context):
+        upgrade_metarig_layers(verify_armature_obj(context.active_object))
         return {'FINISHED'}
 
 
@@ -1466,30 +1627,74 @@ class OBJECT_OT_Rot2Pole(bpy.types.Operator):
         return {'FINISHED'}
 
 
+# noinspection PyPep8Naming
+class POSE_OT_rigify_collection_ref_add(bpy.types.Operator):
+    bl_idname = "pose.rigify_collection_ref_add"
+    bl_label = "Add Bone Collection Reference"
+    bl_description = "Add a new row to the bone collection reference list"
+    bl_options = {'UNDO'}
+
+    prop_name: StringProperty(name="Property Name")
+
+    @classmethod
+    def poll(cls, context):
+        return is_valid_metarig(context) and context.active_pose_bone
+
+    def execute(self, context):
+        params = get_rigify_params(context.active_pose_bone)
+        getattr(params, self.prop_name).add()
+        return {'FINISHED'}
+
+
+# noinspection PyPep8Naming
+class POSE_OT_rigify_collection_ref_remove(bpy.types.Operator):
+    bl_idname = "pose.rigify_collection_ref_remove"
+    bl_label = "Remove Bone Collection Reference"
+    bl_description = "Remove this row from the bone collection reference list"
+    bl_options = {'UNDO'}
+
+    prop_name: StringProperty(name="Property Name")
+    index: IntProperty(name="Entry Index")
+
+    @classmethod
+    def poll(cls, context):
+        return is_valid_metarig(context) and context.active_pose_bone
+
+    def execute(self, context):
+        params = get_rigify_params(context.active_pose_bone)
+        getattr(params, self.prop_name).remove(self.index)
+        return {'FINISHED'}
+
+
 ###############
 # Registering
 
 classes = (
-    DATA_OT_rigify_add_bone_groups,
+    DATA_OT_rigify_add_color_sets,
     DATA_OT_rigify_use_standard_colors,
     DATA_OT_rigify_apply_selection_colors,
-    DATA_OT_rigify_bone_group_add,
-    DATA_OT_rigify_bone_group_add_theme,
-    DATA_OT_rigify_bone_group_remove,
-    DATA_OT_rigify_bone_group_remove_all,
-    DATA_UL_rigify_bone_groups,
-    DATA_MT_rigify_bone_groups_context_menu,
+    DATA_OT_rigify_color_set_add,
+    DATA_OT_rigify_color_set_add_theme,
+    DATA_OT_rigify_color_set_remove,
+    DATA_OT_rigify_color_set_remove_all,
+    DATA_UL_rigify_color_sets,
+    DATA_MT_rigify_color_sets_context_menu,
     DATA_PT_rigify,
     DATA_PT_rigify_advanced,
-    DATA_PT_rigify_bone_groups,
-    DATA_PT_rigify_layer_names,
+    DATA_PT_rigify_color_sets,
+    DATA_UL_rigify_bone_collections,
+    DATA_PT_rigify_collection_list,
+    DATA_PT_rigify_collection_ui,
+    DATA_OT_rigify_collection_select,
+    DATA_OT_rigify_collection_set_ui_row,
+    DATA_OT_rigify_collection_add_ui_row,
     DATA_PT_rigify_samples,
     BONE_PT_rigify_buttons,
     VIEW3D_PT_rigify_animation_tools,
     VIEW3D_PT_tools_rigify_dev,
-    LayerInit,
     Generate,
     UpgradeMetarigTypes,
+    UpgradeMetarigLayers,
     Sample,
     VIEW3D_MT_rigify,
     EncodeMetarig,
@@ -1501,6 +1706,8 @@ classes = (
     OBJECT_OT_TransferIKtoFK,
     OBJECT_OT_ClearAnimation,
     OBJECT_OT_Rot2Pole,
+    POSE_OT_rigify_collection_ref_add,
+    POSE_OT_rigify_collection_ref_remove,
 )
 
 

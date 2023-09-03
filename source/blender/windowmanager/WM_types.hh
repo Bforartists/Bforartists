@@ -104,6 +104,7 @@ struct wmEvent;
 struct wmOperator;
 struct wmWindowManager;
 
+#include <memory>
 #include <string>
 
 #include "BLI_compiler_attrs.h"
@@ -892,7 +893,7 @@ struct wmTimer {
   wmWindow *win;
 
   /** Set by timer user. */
-  double timestep;
+  double time_step;
   /** Set by timer user, goes to event system. */
   int event_type;
   /** Various flags controlling timer options, see below. */
@@ -901,16 +902,16 @@ struct wmTimer {
   void *customdata;
 
   /** Total running time in seconds. */
-  double duration;
+  double time_duration;
   /** Time since previous step in seconds. */
-  double delta;
+  double time_delta;
 
   /** Internal, last time timer was activated. */
-  double ltime;
+  double time_last;
   /** Internal, next time we want to activate the timer. */
-  double ntime;
+  double time_next;
   /** Internal, when the timer started. */
-  double stime;
+  double time_start;
   /** Internal, put timers to sleep when needed. */
   bool sleep;
 };
@@ -1085,6 +1086,7 @@ enum eWM_DragDataType {
   WM_DRAG_DATASTACK,
   WM_DRAG_ASSET_CATALOG,
   WM_DRAG_GREASE_PENCIL_LAYER,
+  WM_DRAG_NODE_TREE_INTERFACE,
 };
 
 enum eWM_DragFlags {
@@ -1166,7 +1168,7 @@ struct wmDragActiveDropState {
    * If `active_dropbox` is set, additional context provided by the active (i.e. hovered) button.
    * Activated before context sensitive operations (polling, drawing, dropping).
    */
-  bContextStore *ui_context;
+  std::unique_ptr<bContextStore> ui_context;
 
   /**
    * Text to show when a dropbox poll succeeds (so the dropbox itself is available) but the
