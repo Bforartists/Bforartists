@@ -14,8 +14,8 @@ from bpy.props import (
 
 def build_default_empty_geometry_node_group(name):
     group = bpy.data.node_groups.new(name, 'GeometryNodeTree')
-    group.inputs.new('NodeSocketGeometry', data_("Geometry"))
-    group.outputs.new('NodeSocketGeometry', data_("Geometry"))
+    group.interface.new_socket(data_("Geometry"), in_out={'OUTPUT'}, socket_type='NodeSocketGeometry')
+    group.interface.new_socket(data_("Geometry"), in_out={'INPUT'}, socket_type='NodeSocketGeometry')
     input_node = group.nodes.new('NodeGroupInput')
     output_node = group.nodes.new('NodeGroupOutput')
     output_node.is_active_output = True
@@ -136,7 +136,9 @@ class MoveModifierToNodes(Operator):
         # Copy default values for inputs and create named attribute input nodes.
         input_nodes = []
         first_geometry_input = None
-        for input_socket in old_group.inputs:
+        for input_socket in old_group.interface.ui_items:
+            if input_socket.item_type != 'SOCKET' or (input_socket.in_out not in {'INPUT', 'BOTH'}):
+                continue
             identifier = input_socket.identifier
             group_node_input = get_socket_with_identifier(group_node.inputs, identifier)
             if modifier_input_use_attribute(modifier, identifier):
@@ -168,7 +170,9 @@ class MoveModifierToNodes(Operator):
         # Connect outputs to store named attribute nodes to replace modifier attribute outputs.
         store_nodes = []
         first_geometry_output = None
-        for output_socket in old_group.outputs:
+        for output_socket in old_group.interface.ui_items:
+            if output_socket.item_type != 'SOCKET' or (output_socket.in_out not in {'OUTPUT', 'BOTH'}):
+                continue
             identifier = output_socket.identifier
             group_node_output = get_socket_with_identifier(group_node.outputs, identifier)
             attribute_name = modifier_attribute_name_get(modifier, identifier)
@@ -266,7 +270,8 @@ class NewGeometryNodeGroupTool(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.space_data.type == 'NODE_EDITOR' and context.space_data.geometry_nodes_type == 'TOOL'
+        space = context.space_data
+        return space and space.type == 'NODE_EDITOR' and space.geometry_nodes_type == 'TOOL'
 
     def execute(self, context):
         group = geometry_node_group_empty_new()

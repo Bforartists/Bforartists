@@ -39,7 +39,7 @@
 #include "BKE_nla.h"
 #include "BKE_sound.h"
 
-#include "BLO_read_write.h"
+#include "BLO_read_write.hh"
 
 #include "RNA_access.hh"
 #include "RNA_prototypes.h"
@@ -2304,7 +2304,7 @@ void BKE_nla_tweakmode_exit(AnimData *adt)
         BKE_nlastrip_recalculate_bounds_sync_action(strip);
       }
 
-      /* clear tweakuser flag */
+      /* Clear tweak-user flag. */
       strip->flag &= ~NLASTRIP_FLAG_TWEAKUSER;
     }
   }

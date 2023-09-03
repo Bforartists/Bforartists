@@ -46,6 +46,8 @@
 #include "ED_select_utils.hh"
 #include "ED_view3d.hh"
 
+#include "ANIM_bone_collections.h"
+
 #include "armature_intern.h"
 
 #include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
@@ -227,7 +229,7 @@ bool ED_armature_pose_select_pick_bone(const Scene *scene,
     }
 
     if (ob_act) {
-      /* In weightpaint we select the associated vertex group too. */
+      /* In weight-paint we select the associated vertex group too. */
       if (ob_act->mode & OB_MODE_ALL_WEIGHT_PAINT) {
         if (bone == arm->act_bone) {
           ED_vgroup_select_by_name(ob_act, bone->name);
@@ -603,7 +605,7 @@ static int pose_de_select_all_exec(bContext *C, wmOperator *op)
     pose_do_bone_select(pchan, action);
 
     if (ob_prev != ob) {
-      /* weightpaint or mask modifiers need depsgraph updates */
+      /* Weight-paint or mask modifiers need depsgraph updates. */
       if (multipaint || (arm->flag & ARM_HAS_VIZ_DEPS)) {
         DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
       }
@@ -775,7 +777,7 @@ static int pose_select_hierarchy_exec(bContext *C, wmOperator *op)
   const bool add_to_sel = RNA_boolean_get(op->ptr, "extend");
   bool changed = false;
 
-  pchan_act = BKE_pose_channel_active_if_layer_visible(ob);
+  pchan_act = BKE_pose_channel_active_if_bonecoll_visible(ob);
   if (pchan_act == nullptr) {
     return OPERATOR_CANCELLED;
   }
@@ -1285,7 +1287,7 @@ static int pose_select_mirror_exec(bContext *C, wmOperator *op)
     if (pchan_mirror_act) {
       arm->act_bone = pchan_mirror_act->bone;
 
-      /* In weightpaint we select the associated vertex group too. */
+      /* In weight-paint we select the associated vertex group too. */
       if (is_weight_paint) {
         ED_vgroup_select_by_name(ob_active, pchan_mirror_act->name);
         DEG_id_tag_update(&ob_active->id, ID_RECALC_GEOMETRY);

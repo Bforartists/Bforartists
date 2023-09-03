@@ -136,6 +136,8 @@ struct GlobalsUboStorage {
   float size_vertex_gpencil;
   float size_viewport_line; /* BFA - GooEngine */
   float _pad0, _pad1, _pad2; /* BFA - GooEngine */
+  float fresnel_mix_edit;
+  float _pad[3];
 };
 BLI_STATIC_ASSERT_ALIGN(GlobalsUboStorage, 16)
 
@@ -247,6 +249,7 @@ BLI_STATIC_ASSERT_ALIGN(GlobalsUboStorage, 16)
 #  define sizeChecker globalsBlock.size_checker
 #  define sizeVertexGpencil globalsBlock.size_vertex_gpencil
 #  define sizeLine globalsBlock.size_viewport_line /* BFA - GooEngine */
+#  define fresnelMixEdit globalsBlock.fresnel_mix_edit
 #endif
 
 /* See: 'draw_cache_impl.hh' for matching includes. */
