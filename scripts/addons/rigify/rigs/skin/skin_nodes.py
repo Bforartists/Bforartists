@@ -525,7 +525,7 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
         layers = self.rig.get_control_node_layers(self)
         if layers:
             bone = self.get_bone(self.control_bone).bone
-            set_bone_layers(bone, layers, not self.is_master_node)
+            set_bone_layers(bone, layers, combine=not self.is_master_node)
 
     def rig_bones(self):
         if self.is_master_node:

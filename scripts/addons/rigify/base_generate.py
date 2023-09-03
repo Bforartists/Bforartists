@@ -8,7 +8,7 @@ import traceback
 import collections
 
 from typing import Optional, TYPE_CHECKING, Collection, List
-from bpy.types import PoseBone, Bone
+from bpy.types import PoseBone, Bone, BoneCollection
 
 from .utils.errors import MetarigError, RaiseErrorMixin
 from .utils.naming import random_id
@@ -274,10 +274,9 @@ class BaseGenerator:
             return set(table.get(bone_name, []))
 
     def set_layer_group_priority(self, bone_name: str,
-                                 layers: Collection[bool], priority: float):
-        for i, val in enumerate(layers):
-            if val:
-                self.layer_group_priorities[bone_name][i] = priority
+                                 layers: Collection[BoneCollection], priority: float):
+        for coll in layers:
+            self.layer_group_priorities[bone_name][coll.name] = priority
 
     def rename_org_bone(self, old_name: str, new_name: str) -> str:
         assert self.stage == 'instantiate'

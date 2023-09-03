@@ -13,8 +13,6 @@ from . import base_generate
 
 from rna_prop_ui import rna_idprop_quote_path
 
-from .utils.rig import get_rigify_layers
-
 
 UI_IMPORTS = [
     'import bpy',
@@ -885,11 +883,7 @@ class RigBakeSettings(bpy.types.Panel):
 '''
 
 
-def layers_ui(layers, layout):
-    """ Turn a list of booleans + a list of names into a layer UI.
-    """
-
-    code = '''
+UI_LAYERS_PANEL = '''
 class RigLayers(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -906,39 +900,22 @@ class RigLayers(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        row_table = collections.defaultdict(list)
+        for coll in context.active_object.data.collections:
+            row_id = coll.get('rigify_ui_row', 0)
+            if row_id > 0:
+                row_table[row_id].append(coll)
         col = layout.column()
+        for row_id in range(min(row_table.keys()), 1 + max(row_table.keys())):
+            row = col.row()
+            row_buttons = row_table[row_id]
+            if row_buttons:
+                for coll in row_buttons:
+                    title = coll.get('rigify_ui_title') or coll.name
+                    row.prop(coll, 'is_visible', toggle=True, text=title)
+            else:
+                row.separator()
 '''
-    rows = {}
-    for i in range(28):
-        if layers[i]:
-            if layout[i][1] not in rows:
-                rows[layout[i][1]] = []
-            rows[layout[i][1]] += [(layout[i][0], i)]
-
-    keys = list(rows.keys())
-    keys.sort()
-
-    for key in keys:
-        code += "\n        row = col.row()\n"
-        i = 0
-        for layer in rows[key]:
-            if i > 3:
-                code += "\n        row = col.row()\n"
-                i = 0
-            code += f"        row.prop(context.active_object.data, 'layers', "\
-                    f"index={layer[1]}, toggle=True, text='{layer[0]}')\n"
-            i += 1
-
-    # Root layer
-    code += "\n        row = col.row()"
-    code += "\n        row.separator()"
-    code += "\n        row = col.row()"
-    code += "\n        row.separator()\n"
-    code += "\n        row = col.row()\n"
-    code += "        row.prop(context.active_object.data, 'layers', "\
-            "index=28, toggle=True, text='Root')\n"
-
-    return code
 
 
 def quote_parameters(positional: list[Any], named: dict[str, Any]):
@@ -1179,19 +1156,6 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
         metarig = self.generator.metarig
         rig_id = self.generator.rig_id
 
-        vis_layers = self.obj.data.layers
-
-        # Ensure the collection of layer names exists
-        rigify_layers = get_rigify_layers(metarig.data)
-
-        for i in range(1 + len(rigify_layers), 29):
-            rigify_layers.add()
-
-        # Create list of layer name/row pairs
-        layer_layout = []
-        for layer in rigify_layers:
-            layer_layout += [(layer.name, layer.row)]
-
         # Generate the UI script
         script = metarig.data.rigify_rig_ui
 
@@ -1227,7 +1191,7 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
             self.ui_register = UI_REGISTER_BAKE_SETTINGS + self.ui_register
             script.write(UI_BAKE_SETTINGS)
 
-        script.write(layers_ui(vis_layers, layer_layout))
+        script.write(UI_LAYERS_PANEL)
 
         script.write("\ndef register():\n")
 

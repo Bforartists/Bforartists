@@ -709,7 +709,7 @@ def make_material_chunk(material, image):
         primary_tex = False
         mtype = 'MIX', 'MIX_RGB'
         mtlks = material.node_tree.links
-        mxtex = [lk.from_node for lk in mtlks if lk.from_node.type == 'TEX_IMAGE' and lk.to_node.type in mtype]
+        mxtex = [lk.from_node for lk in mtlks if lk.from_node.type == 'TEX_IMAGE' and lk.to_socket.identifier in {'Color2', 'B_Color'}]
         mxpct = next((lk.from_node.inputs[0].default_value for lk in mtlks if lk.from_node.type in mtype and lk.to_node.type == 'BSDF_PRINCIPLED'), 0.5)
 
         if wrap.base_color_texture:
