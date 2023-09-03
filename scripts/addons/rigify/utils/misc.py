@@ -164,6 +164,14 @@ def map_apply(func, *inputs):
     collections.deque(map(func, *inputs), maxlen=0)
 
 
+def find_index(sequence, item, default=None):
+    for i, elem in enumerate(sequence):
+        if elem == item:
+            return i
+
+    return default
+
+
 ##############################################
 # Lazy references
 ##############################################
@@ -277,6 +285,13 @@ def select_object(context: bpy.types.Context, obj: bpy.types.Object, deselect_al
     view_layer.objects.active = obj
 
 
+def choose_next_uid(collection: typing.Iterable, prop_name: str, *, min_value=0):
+    return 1 + max(
+        (getattr(obj, prop_name, min_value - 1) for obj in collection),
+        default=min_value-1,
+    )
+
+
 ##############################################
 # Text
 ##############################################
@@ -347,6 +362,9 @@ class IdPropSequence(typing.Mapping[str, T], ABC):
         pass
 
     def __setitem__(self, key: str | int, value: T):
+        pass
+
+    def __iter__(self) -> typing.Iterator[T]:
         pass
 
     def add(self) -> T:

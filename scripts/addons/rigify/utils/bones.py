@@ -134,13 +134,15 @@ def copy_bone(obj: ArmatureObject, bone_name: str, assign_name='', *,
     if obj == bpy.context.active_object and bpy.context.mode == 'EDIT_ARMATURE':
         if assign_name == '':
             assign_name = bone_name
+
         # Copy the edit bone
         edit_bone_1 = obj.data.edit_bones[bone_name]
         edit_bone_2 = obj.data.edit_bones.new(assign_name)
         bone_name_2 = edit_bone_2.name
 
         # Copy edit bone attributes
-        edit_bone_2.layers = list(edit_bone_1.layers)
+        for coll in edit_bone_1.collections:
+            coll.assign(edit_bone_2)
 
         edit_bone_2.head = Vector(edit_bone_1.head)
         edit_bone_2.tail = Vector(edit_bone_1.tail)

@@ -416,6 +416,12 @@ typedef struct MenuType {
   void (*draw)(const struct bContext *C, struct Menu *menu);
   void (*listener)(const wmRegionListenerParams *params);
 
+  /**
+   * True if the menu depends on data retrieved via #CTX_data_pointer_get. If it is context
+   * dependent, menu search has to scan it in different contexts.
+   */
+  bool context_dependent;
+
   /* RNA integration */
   ExtensionRNA rna_ext;
 } MenuType;
@@ -466,7 +472,6 @@ typedef struct AssetShelfType {
 /* Space-types. */
 
 struct SpaceType *BKE_spacetype_from_id(int spaceid);
-struct ARegionType *BKE_regiontype_from_id_or_first(const struct SpaceType *st, int regionid);
 struct ARegionType *BKE_regiontype_from_id(const struct SpaceType *st, int regionid);
 const struct ListBase *BKE_spacetypes_list(void);
 void BKE_spacetype_register(struct SpaceType *st);
