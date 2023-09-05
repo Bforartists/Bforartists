@@ -32,7 +32,7 @@ from .rig import RIG_DIR, METARIG_DIR, TEMPLATE_DIR, outdated_types, upgrade_met
 from .rig import write_metarig, get_resource
 from .rig import connected_children_names, has_connected_children
 
-from .layers import get_layers, ControlLayersOption
+from .layers import ControlLayersOption
 
 # Definitions so bad as to make them strictly compatibility only
 from .bones import copy_bone as copy_bone_simple

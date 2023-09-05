@@ -54,16 +54,6 @@ class Rig:
         self.face_length = obj.data.bones[self.org_bones[0]].length
         self.params = params
 
-        if params.primary_layers_extra:
-            self.primary_layers = list(params.primary_layers)
-        else:
-            self.primary_layers = None
-
-        if params.secondary_layers_extra:
-            self.secondary_layers = list(params.secondary_layers)
-        else:
-            self.secondary_layers = None
-
     def orient_org_bones(self):
 
         bpy.ops.object.mode_set(mode='EDIT')
@@ -316,12 +306,10 @@ class Rig:
 
         for bone in tweaks:
             if bone in primary_tweaks:
-                if self.primary_layers:
-                    pb[bone].bone.layers = self.primary_layers
+                ControlLayersOption.FACE_PRIMARY.assign(self.params, pb, [bone])
                 create_face_widget(self.obj, bone, size=1.5)
             else:
-                if self.secondary_layers:
-                    pb[bone].bone.layers = self.secondary_layers
+                ControlLayersOption.FACE_SECONDARY.assign(self.params, pb, [bone])
                 create_face_widget(self.obj, bone)
 
         return {'all': tweaks}
@@ -2364,6 +2352,8 @@ def create_sample(obj):
         bone.select_head = True
         bone.select_tail = True
         arm.edit_bones.active = bone
+        if bcoll := arm.collections.active:
+            bcoll.assign(bone)
 
 
 def create_square_widget(rig, bone_name, size=1.0, bone_transform_name=None):

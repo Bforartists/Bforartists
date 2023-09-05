@@ -163,6 +163,8 @@ void AntiAliasingPass::sync(SceneResources &resources, int2 resolution)
   sample0_depth_tx_.ensure_2d(GPU_DEPTH24_STENCIL8,
                               resolution,
                               GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_ATTACHMENT);
+  sample0_depth_in_front_tx_.ensure_2d(
+      GPU_DEPTH24_STENCIL8, resolution, GPU_TEXTURE_USAGE_ATTACHMENT);
 
   taa_accumulation_ps_.init();
   taa_accumulation_ps_.state_set(sample_ == 0 ? DRW_STATE_WRITE_COLOR :
@@ -251,6 +253,7 @@ void AntiAliasingPass::draw(Manager &manager,
                             SceneResources &resources,
                             int2 resolution,
                             GPUTexture *depth_tx,
+                            GPUTexture *depth_in_front_tx,
                             GPUTexture *color_tx)
 {
   auto draw_overlay_depth = [&](GPUTexture *target) {
@@ -287,9 +290,17 @@ void AntiAliasingPass::draw(Manager &manager,
 
   if (sample_ == 0) {
     draw_overlay_depth(sample0_depth_tx_);
+    GPU_texture_copy(sample0_depth_in_front_tx_, resources.depth_in_front_tx);
   }
-  /* Copy back the saved depth buffer for correct overlays. */
-  GPU_texture_copy(depth_tx, sample0_depth_tx_);
+  if (!DRW_state_is_scene_render()) {
+    /* Copy back the saved depth buffer for correct overlays. */
+    GPU_texture_copy(depth_tx, sample0_depth_tx_);
+    GPU_texture_copy(depth_in_front_tx, sample0_depth_in_front_tx_);
+  }
+  else if (last_sample) {
+    GPU_texture_copy(depth_tx, sample0_depth_tx_);
+    /* There's no depth_in_front_tx in scene image renders. */
+  }
 
   if (!DRW_state_is_image_render() || last_sample) {
     smaa_weight_tx_.acquire(
