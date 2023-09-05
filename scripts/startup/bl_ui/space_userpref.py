@@ -821,8 +821,9 @@ class USERPREF_PT_viewport_display(ViewportPanel, CenterAlignMixIn, Panel):
             col.prop(view, "gizmo_size_navigate_v3d", text="Size")
 
         layout.separator()
-        col = layout.column(heading="Fresnel")
-        col.prop(view, "use_fresnel_edit")
+        col = layout.column()
+        col.use_property_split = False
+        col.prop(view, "use_fresnel_edit", text = "Fresnel in Edit Mode")
 
 
 class USERPREF_PT_viewport_quality(ViewportPanel, CenterAlignMixIn, Panel):
