@@ -11,6 +11,7 @@ from mathutils import Vector
 from ..utils.errors import MetarigError
 from ..utils.rig import get_rigify_type
 from ..utils.node_merger import NodeMerger
+from ..utils.layers import ControlLayersOption, set_bone_layers, union_layer_lists
 
 
 def find_face_bone(obj):
@@ -289,15 +290,22 @@ def parent_bone(obj, name_map, bone, parent=None, connect=False, **_kwargs):
 def set_layers(obj, name_map, layer_table, bone, layer=2, pri_layer=None, sec_layer=None, **_kwargs):
     bone = name_map.get(bone, bone)
     pbone = obj.pose.bones[bone]
-    pbone.bone.layers = layer_table[layer]
+    main_layers = layer_table[layer]
+    set_bone_layers(pbone.bone, main_layers)
 
-    if pri_layer:
-        pbone.rigify_parameters.skin_primary_layers_extra = True
-        pbone.rigify_parameters.skin_primary_layers = layer_table[pri_layer]
+    if pri_layer is not None:
+        pri_layers = layer_table[pri_layer]
+        ControlLayersOption.SKIN_PRIMARY.set(
+            pbone.rigify_parameters,
+            pri_layers if pri_layers != main_layers else None
+        )
 
-    if sec_layer:
-        pbone.rigify_parameters.skin_secondary_layers_extra = True
-        pbone.rigify_parameters.skin_secondary_layers = layer_table[sec_layer]
+    if sec_layer is not None:
+        sec_layers = layer_table[sec_layer]
+        ControlLayersOption.SKIN_SECONDARY.set(
+            pbone.rigify_parameters,
+            sec_layers if sec_layers != main_layers else None
+        )
 
 
 connect_ends_map = {
@@ -370,17 +378,10 @@ def update_face_rig(obj):
 
     # Find the layer settings
     face_pbone = obj.pose.bones[face_bone]
-    main_layers = list(face_pbone.bone.layers)
+    main_layers = list(face_pbone.bone.collections)
 
-    if face_pbone.rigify_parameters.primary_layers_extra:
-        primary_layers = face_pbone.rigify_parameters.primary_layers
-    else:
-        primary_layers = main_layers
-
-    if face_pbone.rigify_parameters.secondary_layers_extra:
-        secondary_layers = face_pbone.rigify_parameters.secondary_layers
-    else:
-        secondary_layers = main_layers
+    primary_layers = ControlLayersOption.FACE_PRIMARY.get(face_pbone.rigify_parameters) or main_layers
+    secondary_layers = ControlLayersOption.FACE_SECONDARY.get(face_pbone.rigify_parameters) or main_layers
 
     # Edit mode changes
     bpy.ops.object.mode_set(mode='EDIT')
@@ -397,15 +398,14 @@ def update_face_rig(obj):
     # Set bone layers
     layer_table = {
         0: main_layers, 1: primary_layers, 2: secondary_layers,
-        '*': [a or b or c for a, b, c in zip(main_layers, primary_layers, secondary_layers)],
+        '*': union_layer_lists([main_layers, primary_layers, secondary_layers]),
     }
 
     process_all(partial(set_rig, obj, name_map), name_map)
     process_all(partial(set_layers, obj, name_map, layer_table), name_map)
 
-    for i, v in enumerate(layer_table['*']):
-        if v:
-            obj.data.layers[i] = True
+    for bcoll in layer_table['*']:
+        bcoll.is_visible = True
 
 
 # noinspection PyPep8Naming

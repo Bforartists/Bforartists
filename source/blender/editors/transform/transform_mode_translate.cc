@@ -299,7 +299,7 @@ static void headerTranslation(TransInfo *t, const float vec[3], char str[UI_MAX_
   else {
     if (t->spacetype == SPACE_NODE) {
       SpaceNode *snode = (SpaceNode *)t->area->spacedata.first;
-      if ((snode->flag & SNODE_SKIP_INSOFFSET) == 0) {
+      if (U.uiflag & USER_NODE_AUTO_OFFSET) {
         const char *str_dir = (snode->insert_ofs_dir == SNODE_INSERTOFS_DIR_RIGHT) ?
                                   TIP_("right") :
                                   TIP_("left");
@@ -316,8 +316,11 @@ static void headerTranslation(TransInfo *t, const float vec[3], char str[UI_MAX_
       char str_attach_km[64];
       WM_modalkeymap_items_to_string(
           t->keymap, TFM_MODAL_NODE_ATTACH_OFF, true, str_attach_km, sizeof(str_attach_km));
-      ofs += BLI_snprintf_rlen(
-          str + ofs, UI_MAX_DRAW_STR - ofs, TIP_(", %s: Toggle auto-attach"), str_attach_km);
+      ofs += BLI_snprintf_rlen(str + ofs,
+                               UI_MAX_DRAW_STR - ofs,
+                               TIP_(", %s: Toggle auto-attach (%s)"),
+                               str_attach_km,
+                               WM_bool_as_string((t->modifiers & MOD_NODE_ATTACH) != 0));
     }
     else {
       if (t->flag & T_2D_EDIT) {

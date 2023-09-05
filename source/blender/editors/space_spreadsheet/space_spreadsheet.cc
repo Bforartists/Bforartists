@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "BLI_listbase.h"
+#include "BLI_string.h"
 
 #include "BKE_global.h"
 #include "BKE_lib_remap.h"
@@ -25,7 +26,7 @@
 #include "UI_resources.hh"
 #include "UI_view2d.hh"
 
-#include "BLO_read_write.h"
+#include "BLO_read_write.hh"
 
 #include "DEG_depsgraph_query.h"
 

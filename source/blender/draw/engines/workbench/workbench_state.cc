@@ -135,7 +135,7 @@ void SceneState::init(Object *camera_ob /*= nullptr*/)
   if (v3d && ELEM(v3d->shading.type, OB_RENDER, OB_MATERIAL)) {
     _samples_len = scene->display.viewport_aa;
   }
-  else if (DRW_state_is_image_render()) {
+  else if (DRW_state_is_scene_render()) {
     _samples_len = scene->display.render_aa;
   }
   if (is_navigating || is_playback) {

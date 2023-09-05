@@ -394,13 +394,6 @@ def create_sample(obj, *, parent=None):
         pbone.rigify_parameters.connect_chain = bool(parent)
     except AttributeError:
         pass
-    try:
-        pbone.rigify_parameters.tweak_layers = [
-            False, False, False, False, True, False, False, False, False, False, False, False,
-            False, False, False, False, False, False, False, False, False, False, False, False,
-            False, False, False, False, False, False, False, False]
-    except AttributeError:
-        pass
     pbone = obj.pose.bones[bones['neck.001']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -427,3 +420,5 @@ def create_sample(obj, *, parent=None):
         bone.select_head = True
         bone.select_tail = True
         arm.edit_bones.active = bone
+        if bcoll := arm.collections.active:
+            bcoll.assign(bone)
