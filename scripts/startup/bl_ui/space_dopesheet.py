@@ -50,7 +50,7 @@ class DopesheetFilterPopoverBase:
     bl_region_type = 'HEADER'
     bl_label = "Filters"
 
-    # Generic = Affects all datatypes
+    # Generic = Affects all data-types.
     # XXX: Perhaps we want these to stay in the header instead, for easy/fast access
     @classmethod
     def draw_generic_filters(cls, context, layout):
@@ -159,7 +159,7 @@ class DopesheetFilterPopoverBase:
         row.prop(dopesheet, "use_datablock_sort", icon='NONE')
 
 
-# Popover for Dopesheet Editor(s) - Dopesheet, Action, Shapekey, GPencil, Mask, etc.
+# Popover for Dope-sheet Editor(s) - Dope-sheet, Action, Shape-key, GPencil, Mask, etc.
 class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
     bl_space_type = 'DOPESHEET_EDITOR'
     bl_region_type = 'HEADER'

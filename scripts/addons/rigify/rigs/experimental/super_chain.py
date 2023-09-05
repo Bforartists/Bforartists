@@ -816,10 +816,6 @@ def create_sample(obj):
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
-    pbone.bone.layers = [
-        True, False, False, False, False, False, False, False, False, False, False, False, False,
-        False, False, False, False, False, False, False, False, False, False, False, False, False,
-        False, False, False, False, False, False]
     pbone = obj.pose.bones[bones['spine.001']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -827,10 +823,6 @@ def create_sample(obj):
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
-    pbone.bone.layers = [
-        True, False, False, False, False, False, False, False, False, False, False, False, False,
-        False, False, False, False, False, False, False, False, False, False, False, False, False,
-        False, False, False, False, False, False]
     pbone = obj.pose.bones[bones['spine.002']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -838,10 +830,6 @@ def create_sample(obj):
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
-    pbone.bone.layers = [
-        True, False, False, False, False, False, False, False, False, False, False, False, False,
-        False, False, False, False, False, False, False, False, False, False, False, False, False,
-        False, False, False, False, False, False]
     pbone = obj.pose.bones[bones['spine.003']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -849,10 +837,6 @@ def create_sample(obj):
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
-    pbone.bone.layers = [
-        True, False, False, False, False, False, False, False, False, False, False, False, False,
-        False, False, False, False, False, False, False, False, False, False, False, False, False,
-        False, False, False, False, False, False]
 
     bpy.ops.object.mode_set(mode='EDIT')
     for bone in arm.edit_bones:
@@ -865,5 +849,6 @@ def create_sample(obj):
         bone.select_head = True
         bone.select_tail = True
         arm.edit_bones.active = bone
+        if bcoll := arm.collections.active:
+            bcoll.assign(bone)
 
-    arm.layers = [(x in [0]) for x in range(32)]

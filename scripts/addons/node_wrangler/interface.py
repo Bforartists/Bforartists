@@ -498,11 +498,11 @@ def register():
 
     # menu items
     bpy.types.NODE_MT_select.append(select_parent_children_buttons)
-    bpy.types.NODE_MT_category_SH_NEW_INPUT.prepend(attr_nodes_menu_func)
+    bpy.types.NODE_MT_category_shader_input.prepend(attr_nodes_menu_func)
     bpy.types.NODE_PT_backdrop.append(bgreset_menu_func)
     bpy.types.NODE_PT_active_node_generic.append(save_viewer_menu_func)
-    bpy.types.NODE_MT_category_SH_NEW_TEXTURE.prepend(multipleimages_menu_func)
-    bpy.types.NODE_MT_category_CMP_INPUT.prepend(multipleimages_menu_func)
+    bpy.types.NODE_MT_category_shader_texture.prepend(multipleimages_menu_func)
+    bpy.types.NODE_MT_category_compositor_input.prepend(multipleimages_menu_func)
     bpy.types.NODE_PT_active_node_generic.prepend(reset_nodes_button)
     bpy.types.NODE_MT_node.prepend(reset_nodes_button)
 
@@ -510,11 +510,11 @@ def register():
 def unregister():
     # menu items
     bpy.types.NODE_MT_select.remove(select_parent_children_buttons)
-    bpy.types.NODE_MT_category_SH_NEW_INPUT.remove(attr_nodes_menu_func)
+    bpy.types.NODE_MT_category_shader_input.remove(attr_nodes_menu_func)
     bpy.types.NODE_PT_backdrop.remove(bgreset_menu_func)
     bpy.types.NODE_PT_active_node_generic.remove(save_viewer_menu_func)
-    bpy.types.NODE_MT_category_SH_NEW_TEXTURE.remove(multipleimages_menu_func)
-    bpy.types.NODE_MT_category_CMP_INPUT.remove(multipleimages_menu_func)
+    bpy.types.NODE_MT_category_shader_texture.remove(multipleimages_menu_func)
+    bpy.types.NODE_MT_category_compositor_input.remove(multipleimages_menu_func)
     bpy.types.NODE_PT_active_node_generic.remove(reset_nodes_button)
     bpy.types.NODE_MT_node.remove(reset_nodes_button)
 

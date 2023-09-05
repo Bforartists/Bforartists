@@ -22,6 +22,8 @@
  * the wanted viewlayer/pass for each previewed node.
  */
 
+#include "BLI_string.h"
+
 #include "DNA_camera_types.h"
 #include "DNA_material_types.h"
 #include "DNA_world_types.h"
@@ -101,7 +103,11 @@ static void ensure_nodetree_previews(const bContext &C,
 static std::optional<ComputeContextHash> get_compute_context_hash_for_node_editor(
     const SpaceNode &snode)
 {
-  Vector<const bNodeTreePath *> treepath = snode.treepath;
+  Vector<const bNodeTreePath *> treepath;
+  LISTBASE_FOREACH (const bNodeTreePath *, item, &snode.treepath) {
+    treepath.append(item);
+  }
+
   if (treepath.is_empty()) {
     return std::nullopt;
   }
@@ -376,7 +382,8 @@ static void connect_nested_node_to_node(const Span<bNodeTreePath *> treepath,
       output_node->flag |= NODE_DO_OUTPUT;
     }
 
-    ntreeAddSocketInterface(nested_nt, SOCK_OUT, nested_socket_iter->idname, route_name);
+    nested_nt->tree_interface.add_socket(
+        route_name, "", nested_socket_iter->idname, NODE_INTERFACE_SOCKET_OUTPUT, nullptr);
     BKE_ntree_update_main_tree(G.pr_main, nested_nt, nullptr);
     bNodeSocket *out_socket = blender::bke::node_find_enabled_input_socket(*output_node,
                                                                            route_name);

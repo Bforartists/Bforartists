@@ -98,9 +98,6 @@ struct bContextStoreEntry {
 };
 
 struct bContextStore {
-  bContextStore *next = nullptr;
-  bContextStore *prev = nullptr;
-
   blender::Vector<bContextStoreEntry> entries;
   bool used = false;
 };
@@ -152,17 +149,16 @@ bContext *CTX_copy(const bContext *C);
 
 /* Stored Context */
 
-bContextStore *CTX_store_add(ListBase *contexts,
+bContextStore *CTX_store_add(blender::Vector<std::unique_ptr<bContextStore>> &contexts,
                              blender::StringRefNull name,
                              const PointerRNA *ptr);
-bContextStore *CTX_store_add_all(ListBase *contexts, bContextStore *context);
-bContextStore *CTX_store_get(bContext *C);
-void CTX_store_set(bContext *C, bContextStore *store);
+bContextStore *CTX_store_add_all(blender::Vector<std::unique_ptr<bContextStore>> &contexts,
+                                 const bContextStore *context);
+const bContextStore *CTX_store_get(const bContext *C);
+void CTX_store_set(bContext *C, const bContextStore *store);
 const PointerRNA *CTX_store_ptr_lookup(const bContextStore *store,
                                        blender::StringRefNull name,
                                        const StructRNA *type = nullptr);
-bContextStore *CTX_store_copy(const bContextStore *store);
-void CTX_store_free(bContextStore *store);
 
 #endif
 
@@ -262,6 +258,21 @@ PointerRNA CTX_data_pointer_get_type_silent(const bContext *C,
                                             const char *member,
                                             StructRNA *type);
 ListBase CTX_data_collection_get(const bContext *C, const char *member);
+
+/**
+ * For each pointer in collection_pointers, remap it to point to `ptr->propname`.
+ *
+ * Example:
+ *
+ *   lb = CTX_data_collection_get(C, "selected_pose_bones"); // lb contains pose bones.
+ *   CTX_data_collection_remap_property(lb, "color");        // lb now contains bone colors.
+ *
+ * NOTE: this alters the items contained in the given listbase.
+ * It does not change the listbase itself.
+ */
+void CTX_data_collection_remap_property(ListBase /*CollectionPointerLink*/ collection_pointers,
+                                        const char *propname);
+
 /**
  * \param C: Context.
  * \param use_store: Use 'C->wm.store'.

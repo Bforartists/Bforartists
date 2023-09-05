@@ -6,27 +6,30 @@ import bpy
 import re
 import time
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from .utils.errors import MetarigError
 from .utils.bones import new_bone
-from .utils.layers import ORG_LAYER, MCH_LAYER, DEF_LAYER, ROOT_LAYER
+from .utils.layers import ORG_COLLECTION, MCH_COLLECTION, DEF_COLLECTION, ROOT_COLLECTION, set_bone_layers
 from .utils.naming import (ORG_PREFIX, MCH_PREFIX, DEF_PREFIX, ROOT_NAME, make_original_name,
                            change_name_side, get_name_side, Side)
 from .utils.widgets import WGT_PREFIX, WGT_GROUP_PREFIX
 from .utils.widgets_special import create_root_widget
 from .utils.mechanism import refresh_all_drivers
-from .utils.misc import gamma_correct, select_object, ArmatureObject, verify_armature_obj
+from .utils.misc import select_object, ArmatureObject, verify_armature_obj, choose_next_uid
 from .utils.collections import (ensure_collection, list_layer_collections,
                                 filter_layer_collections_by_object)
-from .utils.rig import get_rigify_type, get_rigify_layers, get_rigify_target_rig,\
+from .utils.rig import get_rigify_type, get_rigify_target_rig,\
     get_rigify_rig_basename, get_rigify_force_widget_update, get_rigify_finalize_script,\
-    get_rigify_mirror_widgets
+    get_rigify_mirror_widgets, get_rigify_colors
 from .utils.action_layers import ActionLayerBuilder
 
 from . import base_generate
 from . import rig_ui_template
 from . import rig_lists
+
+if TYPE_CHECKING:
+    from . import RigifyColorSet
 
 
 RIG_MODULE = "rigs"
@@ -50,6 +53,7 @@ class Generator(base_generate.BaseGenerator):
         super().__init__(context, metarig)
 
         self.id_store = context.window_manager
+        self.saved_visible_layers = {}
 
     def find_rig_class(self, rig_type):
         rig_module = rig_lists.rigs[rig_type]["module"]
@@ -66,7 +70,7 @@ class Generator(base_generate.BaseGenerator):
 
         self.collection = self.layer_collection.collection
 
-    def ensure_rig_object(self) -> ArmatureObject:
+    def ensure_rig_object(self) -> tuple[bool, ArmatureObject]:
         """Check if the generated rig already exists, so we can
         regenerate in the same object. If not, create a new
         object to generate the rig in.
@@ -75,8 +79,9 @@ class Generator(base_generate.BaseGenerator):
         meta_data = self.metarig.data
 
         target_rig = get_rigify_target_rig(meta_data)
+        found = bool(target_rig)
 
-        if not target_rig:
+        if not found:
             rig_basename = get_rigify_rig_basename(meta_data)
 
             if rig_basename:
@@ -107,7 +112,7 @@ class Generator(base_generate.BaseGenerator):
         meta_data.rigify_target_rig = target_rig
         target_rig.data.pose_position = 'POSE'
 
-        return target_rig
+        return found, target_rig
 
     def __unhide_rig_object(self, obj: bpy.types.Object):
         # Ensure the object is visible and selectable
@@ -124,6 +129,10 @@ class Generator(base_generate.BaseGenerator):
 
         if self.layer_collection not in self.usable_collections:
             raise Exception('Could not generate: Could not find a usable collection.')
+
+    def __save_rig_data(self, obj: ArmatureObject, obj_found: bool):
+        if obj_found:
+            self.saved_visible_layers = {coll.name: coll.is_visible for coll in obj.data.collections}
 
     def __find_legacy_collection(self) -> bpy.types.Collection:
         """For backwards comp, matching by name to find a legacy collection.
@@ -202,6 +211,13 @@ class Generator(base_generate.BaseGenerator):
                         assert isinstance(widget.data, bpy.types.Mesh)
                         self.widget_mirror_mesh[mid_name] = widget.data
 
+    def ensure_root_bone_collection(self):
+        collections = self.metarig.data.collections
+
+        if ROOT_COLLECTION not in collections:
+            coll = collections.new(ROOT_COLLECTION)
+            coll.rigify_ui_row = choose_next_uid(collections, 'rigify_ui_row', min_value=1)
+
     def __duplicate_rig(self):
         obj = self.obj
         metarig = self.metarig
@@ -212,6 +228,10 @@ class Generator(base_generate.BaseGenerator):
         for bone in obj.data.edit_bones:
             obj.data.edit_bones.remove(bone)
         bpy.ops.object.mode_set(mode='OBJECT')
+
+        # Remove all bone collections from the target armature.
+        for coll in list(obj.data.collections):
+            obj.data.collections.remove(coll)
 
         # Select and duplicate metarig
         select_object(context, metarig, deselect_all=True)
@@ -324,10 +344,23 @@ class Generator(base_generate.BaseGenerator):
                 pb.lock_rotation_w = True
                 pb.lock_scale = (True, True, True)
 
+    def ensure_bone_collection(self, name):
+        coll = self.obj.data.collections.get(name)
+
+        if not coll:
+            coll = self.obj.data.collections.new(name)
+
+        return coll
+
     def __assign_layers(self):
         pose_bones = self.obj.pose.bones
 
-        pose_bones[self.root_bone].bone.layers = ROOT_LAYER
+        root_coll = self.ensure_bone_collection(ROOT_COLLECTION)
+        org_coll = self.ensure_bone_collection(ORG_COLLECTION)
+        mch_coll = self.ensure_bone_collection(MCH_COLLECTION)
+        def_coll = self.ensure_bone_collection(DEF_COLLECTION)
+
+        set_bone_layers(pose_bones[self.root_bone].bone, [root_coll])
 
         # Every bone that has a name starting with "DEF-" make deforming.  All the
         # others make non-deforming.
@@ -340,16 +373,16 @@ class Generator(base_generate.BaseGenerator):
 
             # Move all the original bones to their layer.
             if name.startswith(ORG_PREFIX):
-                layers = ORG_LAYER
+                layers = [org_coll]
             # Move all the bones with names starting with "MCH-" to their layer.
             elif name.startswith(MCH_PREFIX):
-                layers = MCH_LAYER
+                layers = [mch_coll]
             # Move all the bones with names starting with "DEF-" to their layer.
             elif name.startswith(DEF_PREFIX):
-                layers = DEF_LAYER
+                layers = [def_coll]
 
             if layers is not None:
-                bone.layers = layers
+                set_bone_layers(bone, layers)
 
                 # Remove custom shapes from non-control bones
                 pbone.custom_shape = None
@@ -392,17 +425,10 @@ class Generator(base_generate.BaseGenerator):
                 bone.custom_shape = obj_table[wgt_name]
 
     def __compute_visible_layers(self):
-        # Reveal all the layers with control bones on them
-        vis_layers = [False for _ in range(0, 32)]
-
-        for bone in self.obj.data.bones:
-            for i in range(0, 32):
-                vis_layers[i] = vis_layers[i] or bone.layers[i]
-
-        for i in range(0, 32):
-            vis_layers[i] = vis_layers[i] and not (ORG_LAYER[i] or MCH_LAYER[i] or DEF_LAYER[i])
-
-        self.obj.data.layers = vis_layers
+        # Hide all layers without UI buttons
+        for coll in self.obj.data.collections:
+            user_visible = self.saved_visible_layers.get(coll.name, coll.is_visible)
+            coll.is_visible = user_visible and coll.rigify_ui_row > 0
 
     def generate(self):
         context = self.context
@@ -417,12 +443,18 @@ class Generator(base_generate.BaseGenerator):
 
         ###########################################
         # Create/find the rig object and set it up
-        self.obj = obj = self.ensure_rig_object()
+        obj_found, obj = self.ensure_rig_object()
 
+        self.obj = obj
         self.__unhide_rig_object(obj)
+
+        # Collect data from the existing rig
+        self.__save_rig_data(obj, obj_found)
 
         # Select the chosen working collection in case it changed
         self.view_layer.active_layer_collection = self.layer_collection
+
+        self.ensure_root_bone_collection()
 
         # Get rid of anim data in case the rig already existed
         print("Clear rig animation data.")
@@ -566,7 +598,7 @@ class Generator(base_generate.BaseGenerator):
         create_selection_sets(obj, metarig)
 
         # Create Bone Groups
-        create_bone_groups(obj, metarig, self.layer_group_priorities)
+        apply_bone_colors(obj, metarig, self.layer_group_priorities)
 
         t.tick("The rest: ")
 
@@ -595,6 +627,8 @@ class Generator(base_generate.BaseGenerator):
             bpy.ops.object.mode_set(mode='OBJECT')
             exec(finalize_script.as_string(), {})
             bpy.ops.object.mode_set(mode='OBJECT')
+
+        obj.data.collections.active_index = 0
 
         ###########################################
         # Restore active collection
@@ -632,7 +666,7 @@ def generate_rig(context, metarig):
         base_generate.BaseGenerator.instance = None
 
 
-def create_selection_set_for_rig_layer(rig: ArmatureObject, set_name: str, layer_idx: int) -> None:
+def create_selection_set_for_rig_layer(rig: ArmatureObject, set_name: str, coll: bpy.types.BoneCollection) -> None:
     """Create a single selection set on a rig.
 
     The set will contain all bones on the rig layer with the given index.
@@ -641,14 +675,14 @@ def create_selection_set_for_rig_layer(rig: ArmatureObject, set_name: str, layer
     sel_set.name = set_name
 
     for b in rig.pose.bones:
-        if not b.bone.layers[layer_idx] or b.name in sel_set.bone_ids:
+        if coll not in b.bone.collections or b.name in sel_set.bone_ids:
             continue
 
         bone_id = sel_set.bone_ids.add()
         bone_id.name = b.name
 
 
-def create_selection_sets(obj: ArmatureObject, metarig: ArmatureObject):
+def create_selection_sets(obj: ArmatureObject, _metarig: ArmatureObject):
     """Create selection sets if the Selection Sets addon is enabled.
 
     Whether a selection set for a rig layer is created is controlled in the
@@ -661,49 +695,40 @@ def create_selection_sets(obj: ArmatureObject, metarig: ArmatureObject):
 
     obj.selection_sets.clear()  # noqa
 
-    rigify_layers = get_rigify_layers(metarig.data)
-
-    for i, layer in enumerate(rigify_layers):
-        if layer.name == '' or not layer.selset:
+    for coll in obj.data.collections:
+        if not coll.rigify_sel_set:
             continue
 
-        create_selection_set_for_rig_layer(obj, layer.name, i)
+        create_selection_set_for_rig_layer(obj, coll.name, coll)
 
 
-def create_bone_groups(obj, metarig, priorities: Optional[dict[str, dict[int, float]]] = None):
+def apply_bone_colors(obj, metarig, priorities: Optional[dict[str, dict[str, float]]] = None):
     bpy.ops.object.mode_set(mode='OBJECT')
     pb = obj.pose.bones
-    layers = metarig.data.rigify_layers
-    groups = metarig.data.rigify_colors
+
+    color_sets = get_rigify_colors(metarig.data)
+    color_map = {i+1: cset for i, cset in enumerate(color_sets)}
+
+    collection_table: dict[str, tuple[int, 'RigifyColorSet']] = {
+        coll.name: (i, color_map[coll.rigify_color_set_id])
+        for i, coll in enumerate(obj.data.collections)
+        if coll.rigify_color_set_id in color_map
+    }
+
     priorities = priorities or {}
     dummy = {}
 
-    # Create BGs
-    for layer in layers:
-        if layer.group == 0:
-            continue
-        g_id = layer.group - 1
-        name = groups[g_id].name
-        if name not in obj.pose.bone_groups.keys():
-            bg = obj.pose.bone_groups.new(name=name)
-            bg.color_set = 'CUSTOM'
-            bg.colors.normal = gamma_correct(groups[g_id].normal)
-            bg.colors.select = gamma_correct(groups[g_id].select)
-            bg.colors.active = gamma_correct(groups[g_id].active)
-
     for b in pb:
-        try:
-            bone_priorities = priorities.get(b.name, dummy)
-            enabled = [i for i, v in enumerate(b.bone.layers) if v]
-            layer_index = max(enabled, key=lambda i: bone_priorities.get(i, 0))
-        except ValueError:
-            continue
-        if layer_index > len(layers) - 1:   # bone is on reserved layers
-            continue
-        g_id = layers[layer_index].group - 1
-        if g_id >= 0:
-            name = groups[g_id].name
-            b.bone_group = obj.pose.bone_groups[name]
+        bone_priorities = priorities.get(b.name, dummy)
+        cset_collections = [coll.name for coll in b.bone.collections if coll.name in collection_table]
+        if cset_collections:
+            best_name = max(
+                cset_collections,
+                key=lambda n: (bone_priorities.get(n, 0), -collection_table[n][0])
+            )
+            _, cset = collection_table[best_name]
+            cset.apply(b.bone.color)
+            cset.apply(b.color)
 
 
 def get_xy_spread(bones):
