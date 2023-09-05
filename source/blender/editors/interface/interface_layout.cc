@@ -549,23 +549,6 @@ static void ui_item_array(uiLayout *layout,
     const int butw = UI_UNIT_X * 0.75;
     const int buth = UI_UNIT_X * 0.75;
 
-    if (ptr->type == &RNA_Armature) {
-      bArmature *arm = static_cast<bArmature *>(ptr->data);
-
-      layer_used = arm->layer_used;
-
-      if (arm->edbo) {
-        if (arm->act_edbone) {
-          layer_active |= arm->act_edbone->layer;
-        }
-      }
-      else {
-        if (arm->act_bone) {
-          layer_active |= arm->act_bone->layer;
-        }
-      }
-    }
-
     for (int b = 0; b < cols; b++) {
       UI_block_align_begin(block);
 
@@ -1307,7 +1290,6 @@ static void ui_item_menu_hold(bContext *C, ARegion *butregion, uiBut *but)
   UI_popup_menu_but_set(pup, butregion, but);
 
   block->flag |= UI_BLOCK_POPUP_HOLD;
-  block->flag |= UI_BLOCK_IS_FLIP;
 
   char direction = UI_DIR_DOWN;
   if (!but->drawstr[0]) {
@@ -1571,9 +1553,6 @@ void uiItemsFullEnumO_items(uiLayout *layout,
       if (item->name) {
         if (item != item_array && !radial && split != nullptr) {
           target = uiLayoutColumn(split, layout->align);
-
-          /* inconsistent, but menus with labels do not look good flipped */
-          block->flag |= UI_BLOCK_NO_FLIP;
         }
 
         uiBut *but;
@@ -1664,7 +1643,7 @@ void uiItemsFullEnumO(uiLayout *layout,
     }
     else {
       bContext *C = static_cast<bContext *>(block->evil_C);
-      bContextStore *previous_ctx = CTX_store_get(C);
+      const bContextStore *previous_ctx = CTX_store_get(C);
       CTX_store_set(C, layout->context);
       RNA_property_enum_items_gettexted(C, &ptr, prop, &item_array, &totitem, &free);
       CTX_store_set(C, previous_ctx);
@@ -1676,9 +1655,6 @@ void uiItemsFullEnumO(uiLayout *layout,
     if (free) {
       MEM_freeN((void *)item_array);
     }
-
-    /* intentionally don't touch UI_BLOCK_IS_FLIP here,
-     * we don't know the context this is called in */
   }
   else if (prop && RNA_property_type(prop) != PROP_ENUM) {
     RNA_warning("%s.%s, not an enum type", RNA_struct_identifier(ptr.type), propname);
@@ -2787,8 +2763,6 @@ void uiItemsEnumR(uiLayout *layout, PointerRNA *ptr, const char *propname)
       if (item[i].name) {
         if (i != 0) {
           column = uiLayoutColumn(split, false);
-          /* inconsistent, but menus with labels do not look good flipped */
-          block->flag |= UI_BLOCK_NO_FLIP;
         }
 
         uiItemL(column, item[i].name, ICON_NONE);
@@ -2806,9 +2780,6 @@ void uiItemsEnumR(uiLayout *layout, PointerRNA *ptr, const char *propname)
   if (free) {
     MEM_freeN((void *)item);
   }
-
-  /* intentionally don't touch UI_BLOCK_IS_FLIP here,
-   * we don't know the context this is called in */
 }
 
 /* Pointer RNA button with search */
@@ -3019,20 +2990,13 @@ void uiItemPointerR(uiLayout *layout,
 void ui_item_menutype_func(bContext *C, uiLayout *layout, void *arg_mt)
 {
   MenuType *mt = (MenuType *)arg_mt;
-
   UI_menutype_draw(C, mt, layout);
-
-  /* Menus are created flipped (from event handling point of view). */
-  layout->root->block->flag ^= UI_BLOCK_IS_FLIP;
 }
 
 void ui_item_paneltype_func(bContext *C, uiLayout *layout, void *arg_pt)
 {
   PanelType *pt = (PanelType *)arg_pt;
   UI_paneltype_draw(C, pt, layout);
-
-  /* Panels are created flipped (from event handling POV). */
-  layout->root->block->flag ^= UI_BLOCK_IS_FLIP;
 }
 
 static uiBut *ui_item_menu(uiLayout *layout,
@@ -3160,7 +3124,7 @@ void uiItemMContents(uiLayout *layout, const char *menuname)
     return;
   }
 
-  bContextStore *previous_ctx = CTX_store_get(C);
+  const bContextStore *previous_ctx = CTX_store_get(C);
   UI_menutype_draw(C, mt, layout);
 
   /* Restore context that was cleared by `UI_menutype_draw`. */
@@ -3500,7 +3464,7 @@ void uiItemS_ex(uiLayout *layout, float factor)
   if (is_menu && !UI_block_can_add_separator(block)) {
     return;
   }
-  int space = (is_menu) ? 0.45f * UI_UNIT_X : 0.3f * UI_UNIT_X;
+  int space = (is_menu) ? int(0.35f * UI_UNIT_X) : int(0.3f * UI_UNIT_X);
   space *= factor;
 
   UI_block_layout_set_current(block, layout);
@@ -3640,8 +3604,6 @@ static void menu_item_enum_opname_menu(bContext * /*C*/, uiLayout *layout, void 
   uiLayoutSetOperatorContext(layout, lvl->opcontext);
   uiItemsFullEnumO(layout, lvl->opname, lvl->propname, op_props, lvl->opcontext, UI_ITEM_NONE);
 
-  layout->root->block->flag |= UI_BLOCK_IS_FLIP;
-
   /* override default, needed since this was assumed pre 2.70 */
   UI_block_direction_set(layout->root->block, UI_DIR_DOWN);
 }
@@ -3732,7 +3694,6 @@ static void menu_item_enum_rna_menu(bContext * /*C*/, uiLayout *layout, void *ar
 
   uiLayoutSetOperatorContext(layout, lvl->opcontext);
   uiItemsEnumR(layout, &lvl->rnapoin, lvl->propname);
-  layout->root->block->flag |= UI_BLOCK_IS_FLIP;
 }
 
 void uiItemMenuEnumR_prop(
@@ -5767,7 +5728,7 @@ void ui_layout_add_but(uiLayout *layout, uiBut *but)
 
   if (layout->context) {
     but->context = layout->context;
-    but->context->used = true;
+    layout->context->used = true;
   }
 
   if (layout->emboss != UI_EMBOSS_UNDEFINED) {
@@ -5896,7 +5857,7 @@ bool UI_block_layout_needs_resolving(const uiBlock *block)
 void uiLayoutSetContextPointer(uiLayout *layout, const char *name, PointerRNA *ptr)
 {
   uiBlock *block = layout->root->block;
-  layout->context = CTX_store_add(&block->contexts, name, ptr);
+  layout->context = CTX_store_add(block->contexts, name, ptr);
 }
 
 bContextStore *uiLayoutGetContextStore(uiLayout *layout)
@@ -5904,10 +5865,10 @@ bContextStore *uiLayoutGetContextStore(uiLayout *layout)
   return layout->context;
 }
 
-void uiLayoutContextCopy(uiLayout *layout, bContextStore *context)
+void uiLayoutContextCopy(uiLayout *layout, const bContextStore *context)
 {
   uiBlock *block = layout->root->block;
-  layout->context = CTX_store_add_all(&block->contexts, context);
+  layout->context = CTX_store_add_all(block->contexts, context);
 }
 
 void uiLayoutSetTooltipFunc(uiLayout *layout,

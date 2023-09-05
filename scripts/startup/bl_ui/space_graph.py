@@ -480,6 +480,7 @@ class GRAPH_MT_key_blending(Menu):
         layout.operator("graph.blend_to_ease", text="Blend to Ease", icon = 'BLEND_TO_EASE')
         layout.operator("graph.blend_offset", text="Blend Offset", icon = 'BLEND_OFFSET')
         layout.operator("graph.match_slope", text="Match Slope")
+        layout.operator("graph.shear", text="Shear Keys")
 
 
 class GRAPH_MT_key_smoothing(Menu):

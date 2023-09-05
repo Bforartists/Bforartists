@@ -1001,8 +1001,18 @@ class ALL_MT_editormenu(Menu):
             # Select mode for Editing
             if object_mode == 'EDIT':
                 row = layout.row(align=True)
-                row.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='POINT')
-                row.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='STROKE')
+                row.operator(
+                    "grease_pencil.set_selection_mode",
+                    text="",
+                    icon='GP_SELECT_POINTS',
+                    depress=(tool_settings.gpencil_selectmode_edit == 'POINT'),
+                ).mode = 'POINT'
+                row.operator(
+                    "grease_pencil.set_selection_mode",
+                    text="",
+                    icon='GP_SELECT_STROKES',
+                    depress=(tool_settings.gpencil_selectmode_edit == 'STROKE'),
+                ).mode = 'STROKE'
 
             if object_mode == 'PAINT_GREASE_PENCIL':
                 row = layout.row()
@@ -4681,7 +4691,7 @@ class VIEW3D_MT_pose(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_pose_motion")
-        layout.menu("VIEW3D_MT_pose_group")
+        layout.menu("VIEW3D_MT_bone_collections")
 
         layout.separator()
 
@@ -4773,26 +4783,35 @@ class VIEW3D_MT_pose_motion(Menu):
         layout.operator("object.paths_update_visible", text="Update All Motion Paths", icon="MOTIONPATHS_UPDATE_ALL")
 
 
-class VIEW3D_MT_pose_group(Menu):
-    bl_label = "Bone Groups"
+class VIEW3D_MT_bone_collections(Menu):
+    bl_label = "Bone Collections"
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object and context.active_object.type == 'ARMATURE'
 
     def draw(self, context):
         layout = self.layout
 
-        pose = context.active_object.pose
+        props = layout.operator("armature.collection_assign",
+                                text="Assign to New Collection")
+        props.name = "New Collection"
 
-        layout.operator_context = 'EXEC_AREA'
-        layout.operator("pose.group_assign", text="Assign to New Group", icon="NEW_GROUP").type = 0
+        arm = context.active_object.data
+        if not arm.collections.active:
+            return
 
-        if pose.bone_groups:
-            active_group = pose.bone_groups.active_index + 1
-            layout.operator("pose.group_assign", text="Assign to Group", icon="ADD_TO_ACTIVE").type = active_group
+        layout.separator()
 
-            layout.separator()
+        layout.operator("armature.collection_assign",
+                        text="Assign to '%s'" % arm.collections.active.name)
+        layout.operator("armature.collection_unassign",
+                        text="Unassign from '%s'" % arm.collections.active.name)
 
-            # layout.operator_context = 'INVOKE_AREA'
-            layout.operator("pose.group_unassign", icon="REMOVE_SELECTED_FROM_ACTIVE_GROUP")
-            layout.operator("pose.group_remove", icon="REMOVE_FROM_ALL_GROUPS")
+        layout.separator()
+
+        layout.operator("armature.collection_remove",
+                        text="Remove Collection '%s'" % arm.collections.active.name)
 
 
 class VIEW3D_MT_pose_ik(Menu):
@@ -7313,24 +7332,24 @@ class VIEW3D_PT_object_type_visibility(Panel):
 
         attr_object_types = (
             # Geometry
-            ("mesh", "Mesh", "OUTLINER_OB_MESH"),
-            ("curve", "Curve", "OUTLINER_OB_CURVE"),
-            ("surf", "Surface", "OUTLINER_OB_SURFACE"),
-            ("meta", "Meta", "OUTLINER_OB_META"),
-            ("font", "Text", "OUTLINER_OB_FONT"),
-            ("curves", "Hair Curves", "HAIR_DATA"),
-            ("pointcloud", "Point Cloud", "OUTLINER_OB_POINTCLOUD"),
-            ("volume", "Volume", "OUTLINER_OB_VOLUME"),
-            ("grease_pencil", "Grease Pencil", "OUTLINER_OB_GREASEPENCIL"),
+            ("mesh", "Mesh", 'OUTLINER_OB_MESH'),
+            ("curve", "Curve", 'OUTLINER_OB_CURVE'),
+            ("surf", "Surface", 'OUTLINER_OB_SURFACE'),
+            ("meta", "Meta", 'OUTLINER_OB_META'),
+            ("font", "Text", 'OUTLINER_OB_FONT'),
+            ("curves", "Hair Curves", 'HAIR_DATA'),
+            ("pointcloud", "Point Cloud", 'OUTLINER_OB_POINTCLOUD'),
+            ("volume", "Volume", 'OUTLINER_OB_VOLUME'),
+            ("grease_pencil", "Grease Pencil", 'OUTLINER_OB_GREASEPENCIL'),
             (None, None, None),
             # Other
-            ("armature", "Armature", "OUTLINER_OB_ARMATURE"),
-            ("lattice", "Lattice", "OUTLINER_OB_LATTICE"),
-            ("empty", "Empty", "OUTLINER_OB_EMPTY"),
-            ("light", "Light", "OUTLINER_OB_LIGHT"),
-            ("light_probe", "Light Probe", "OUTLINER_OB_LIGHTPROBE"),
-            ("camera", "Camera", "OUTLINER_OB_CAMERA"),
-            ("speaker", "Speaker", "OUTLINER_OB_SPEAKER"),
+            ("armature", "Armature", 'OUTLINER_OB_ARMATURE'),
+            ("lattice", "Lattice", 'OUTLINER_OB_LATTICE'),
+            ("empty", "Empty", 'OUTLINER_OB_EMPTY'),
+            ("light", "Light", 'OUTLINER_OB_LIGHT'),
+            ("light_probe", "Light Probe", 'OUTLINER_OB_LIGHTPROBE'),
+            ("camera", "Camera", 'OUTLINER_OB_CAMERA'),
+            ("speaker", "Speaker", 'OUTLINER_OB_SPEAKER'),
         )
 
         for attr, attr_name, icon in attr_object_types:
@@ -7554,13 +7573,8 @@ class VIEW3D_PT_shading_lighting(Panel):
 class VIEW3D_PT_shading_color(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
-    bl_label = "Color"
+    bl_label = "Wire Color"
     bl_parent_id = 'VIEW3D_PT_shading'
-
-    @classmethod
-    def poll(cls, context):
-        shading = VIEW3D_PT_shading.get_shading(context)
-        return shading.type in {'WIREFRAME', 'SOLID'}
 
     def _draw_color_type(self, context):
         layout = self.layout
@@ -7581,13 +7595,19 @@ class VIEW3D_PT_shading_color(Panel):
             layout.row().prop(shading, "background_color", text="")
 
     def draw(self, context):
+        layout = self.layout
         shading = VIEW3D_PT_shading.get_shading(context)
-        if shading.type == 'WIREFRAME':
-            self.layout.row().prop(shading, "wireframe_color_type", expand=True)
-        else:
+
+        self.layout.row().prop(shading, "wireframe_color_type", expand=True)
+        self.layout.separator()
+
+        if shading.type == 'SOLID':
+            layout.row().label(text="Color")
             self._draw_color_type(context)
             self.layout.separator()
-        self._draw_background_color(context)
+            self._draw_background_color(context)
+        elif shading.type == 'WIREFRAME':
+            self._draw_background_color(context)
 
 
 class VIEW3D_PT_shading_options(Panel):
@@ -9213,7 +9233,7 @@ class VIEW3D_PT_context_properties(Panel):
             rna_prop_ui.draw(self.layout, context, member, object, use_edit=False)
 
 
-# Grease Pencil Object - Multiframe falloff tools
+# Grease Pencil Object - Multi-frame falloff tools.
 class VIEW3D_PT_gpencil_multi_frame(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -10138,7 +10158,7 @@ classes = (
     VIEW3D_MT_pose_slide,
     VIEW3D_MT_pose_propagate,
     VIEW3D_MT_pose_motion,
-    VIEW3D_MT_pose_group,
+    VIEW3D_MT_bone_collections,
     VIEW3D_MT_pose_ik,
     VIEW3D_MT_pose_constraints,
     VIEW3D_MT_pose_names,

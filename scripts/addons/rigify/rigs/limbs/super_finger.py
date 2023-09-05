@@ -666,17 +666,6 @@ def create_sample(obj):
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
     try:
-        pbone.rigify_parameters.extra_layers = [
-            False, False, False, False, False, True, False, False, False, False, False, False,
-            False, False, False, False, False, False, False, False, False, False, False, False,
-            False, False, False, False, False, False, False, False]
-    except AttributeError:
-        pass
-    try:
-        pbone.rigify_parameters.tweak_extra_layers = False
-    except AttributeError:
-        pass
-    try:
         pbone.rigify_parameters.ik_local_location = False
     except AttributeError:
         pass
@@ -706,3 +695,5 @@ def create_sample(obj):
         bone.select_head = True
         bone.select_tail = True
         arm.edit_bones.active = bone
+        if bcoll := arm.collections.active:
+            bcoll.assign(bone)
