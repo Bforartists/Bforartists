@@ -612,6 +612,10 @@ class TOPBAR_MT_window(Menu):
 
         layout = self.layout
 
+        layout.prop(context.screen, "show_statusbar")
+
+        layout.separator()
+
         layout.operator("wm.window_new", icon = "NEW_WINDOW")
         layout.operator("wm.window_new_main", icon = "NEW_WINDOW_MAIN")
 
@@ -623,10 +627,6 @@ class TOPBAR_MT_window(Menu):
 
         layout.operator("screen.workspace_cycle", text="Next Workspace", icon = "FRAME_NEXT").direction = 'NEXT'
         layout.operator("screen.workspace_cycle", text="Previous Workspace", icon = "FRAME_PREV").direction = 'PREV'
-
-        layout.separator()
-
-        layout.prop(context.screen, "show_statusbar")
 
         layout.separator()
 
