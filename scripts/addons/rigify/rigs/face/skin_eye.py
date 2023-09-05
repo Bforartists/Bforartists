@@ -12,6 +12,7 @@ from bpy.types import PoseBone
 from mathutils import Vector, Matrix
 
 from ...rig_ui_template import PanelLayout
+from ...utils.layers import set_bone_layers, union_layer_lists
 from ...utils.naming import make_derived_name, mirror_name, change_name_side, Side, SideZ
 from ...utils.bones import align_bone_z_axis, put_bone, TypedBoneDict
 from ...utils.widgets import (widget_generator, generate_circle_geometry,
@@ -567,8 +568,7 @@ class EyeClusterControl(RigComponent):
 
     def get_master_control_layers(self):
         """Combine layers of all eyes for the cluster control."""
-        all_layers = [list(self.get_bone(rig.base_bone).layers) for rig in self.rig_list]
-        return [any(items) for items in zip(*all_layers)]
+        return union_layer_lists(list(self.get_bone(rig.base_bone).collections) for rig in self.rig_list)
 
     def get_all_rig_control_bones(self):
         """Make a list of all control bones of all clustered eyes."""
@@ -601,7 +601,7 @@ class EyeClusterControl(RigComponent):
         bone = self.get_bone(name)
         bone.matrix = self.matrix
         bone.length = self.size
-        bone.layers = self.get_master_control_layers()
+        set_bone_layers(bone, self.get_master_control_layers())
         return name
 
     def make_child_control(self, rig: Rig):
@@ -836,5 +836,7 @@ def create_sample(obj):
         bone.select_tail = True
         bone.bbone_x = bone.bbone_z = bone.length * 0.05
         arm.edit_bones.active = bone
+        if bcoll := arm.collections.active:
+            bcoll.assign(bone)
 
     return bones
