@@ -215,7 +215,7 @@ const bTheme U_theme_default = {
     },
     .wcol_list_item = {
       .outline = RGBA(0x252525ff),
-      .inner = RGBA(0x2d2d2d00),
+      .inner = RGBA(0xffffff00),
       .inner_sel = RGBA(0x5680c2ff),
       .item = RGBA(0x000000ff),
       .text = RGBA(0xccccccff),
@@ -231,15 +231,6 @@ const bTheme U_theme_default = {
       .text_sel = RGBA(0xffffffff),
       .shadetop = 10,
       .shadedown = -10,
-      .roundness = 0.2f,
-    },
-    .wcol_view_item = {
-      .outline = RGBA(0x2d2d2dff),
-      .inner = RGBA(0x303030ff),
-      .inner_sel = RGBA(0x4772b3ff),
-      .item = RGBA(0x4772b3ff),
-      .text = RGBA(0xccccccff),
-      .text_sel = RGBA(0xffffffff),
       .roundness = 0.2f,
     },
     .wcol_state = {

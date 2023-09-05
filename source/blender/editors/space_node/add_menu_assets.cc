@@ -8,6 +8,7 @@
 #include "AS_asset_representation.hh"
 
 #include "BLI_multi_value_map.hh"
+#include "BLI_string.h"
 
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
@@ -200,6 +201,7 @@ MenuType add_catalog_assets_menu_type()
   type.poll = node_add_menu_poll;
   type.draw = node_add_catalog_assets_draw;
   type.listener = asset::asset_reading_region_listen_fn;
+  type.context_dependent = true;
   return type;
 }
 

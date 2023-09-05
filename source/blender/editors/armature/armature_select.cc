@@ -43,6 +43,8 @@
 
 #include "GPU_select.h"
 
+#include "ANIM_bone_collections.h"
+
 #include "armature_intern.h"
 
 #include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/

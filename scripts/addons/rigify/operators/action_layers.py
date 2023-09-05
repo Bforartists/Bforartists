@@ -14,7 +14,7 @@ from .generic_ui_list import draw_ui_list
 
 from ..utils.naming import mirror_name
 from ..utils.action_layers import ActionSlotBase
-from ..utils.rig import get_rigify_target_rig
+from ..utils.rig import get_rigify_target_rig, is_valid_metarig
 
 
 def get_action_slots(arm: Armature) -> Sequence['ActionSlot']:
@@ -323,7 +323,7 @@ class DATA_PT_rigify_actions(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object.mode in ('POSE', 'OBJECT')
+        return context.object.mode in ('POSE', 'OBJECT') and is_valid_metarig(context)
 
     def draw(self, context: Context):
         armature_id_store = context.object.data
