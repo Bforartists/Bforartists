@@ -33,7 +33,7 @@
         >
         <wcol_regular>
           <ThemeWidgetColors
-            outline="#191919"
+            outline="#191919ff"
             inner="#999999ff"
             inner_sel="#646464ff"
             item="#191919ff"
@@ -48,7 +48,7 @@
         </wcol_regular>
         <wcol_tool>
           <ThemeWidgetColors
-            outline="#191919"
+            outline="#191919ff"
             inner="#999999ff"
             inner_sel="#646464ff"
             item="#191919ff"
@@ -63,7 +63,7 @@
         </wcol_tool>
         <wcol_toolbar_item>
           <ThemeWidgetColors
-            outline="#373737"
+            outline="#373737ff"
             inner="#585858ff"
             inner_sel="#5680c2ff"
             item="#ffffff8f"
@@ -78,7 +78,7 @@
         </wcol_toolbar_item>
         <wcol_radio>
           <ThemeWidgetColors
-            outline="#000000"
+            outline="#000000ff"
             inner="#464646ff"
             inner_sel="#5680c2ff"
             item="#ffffffff"
@@ -93,7 +93,7 @@
         </wcol_radio>
         <wcol_text>
           <ThemeWidgetColors
-            outline="#191919"
+            outline="#191919ff"
             inner="#999999ff"
             inner_sel="#999999ff"
             item="#5a5a5aff"
@@ -108,7 +108,7 @@
         </wcol_text>
         <wcol_option>
           <ThemeWidgetColors
-            outline="#000000"
+            outline="#000000ff"
             inner="#464646ff"
             inner_sel="#464646ff"
             item="#ffffffff"
@@ -123,7 +123,7 @@
         </wcol_option>
         <wcol_toggle>
           <ThemeWidgetColors
-            outline="#191919"
+            outline="#191919ff"
             inner="#999999ff"
             inner_sel="#646464ff"
             item="#191919ff"
@@ -138,7 +138,7 @@
         </wcol_toggle>
         <wcol_num>
           <ThemeWidgetColors
-            outline="#191919"
+            outline="#191919ff"
             inner="#b4b4b4ff"
             inner_sel="#999999ff"
             item="#5a5a5aff"
@@ -153,7 +153,7 @@
         </wcol_num>
         <wcol_numslider>
           <ThemeWidgetColors
-            outline="#191919"
+            outline="#191919ff"
             inner="#b4b4b4ff"
             inner_sel="#999999ff"
             item="#808080ff"
@@ -168,7 +168,7 @@
         </wcol_numslider>
         <wcol_box>
           <ThemeWidgetColors
-            outline="#191919"
+            outline="#191919ff"
             inner="#808080ff"
             inner_sel="#646464ff"
             item="#191919ff"
@@ -183,7 +183,7 @@
         </wcol_box>
         <wcol_menu>
           <ThemeWidgetColors
-            outline="#000000"
+            outline="#000000ff"
             inner="#464646ff"
             inner_sel="#464646ff"
             item="#ffffffff"
@@ -198,7 +198,7 @@
         </wcol_menu>
         <wcol_pulldown>
           <ThemeWidgetColors
-            outline="#000000"
+            outline="#000000ff"
             inner="#3f3f3fff"
             inner_sel="#5680c2ff"
             item="#ffffffff"
@@ -213,7 +213,7 @@
         </wcol_pulldown>
         <wcol_menu_back>
           <ThemeWidgetColors
-            outline="#000000"
+            outline="#000000ff"
             inner="#191919e6"
             inner_sel="#2d2d2de6"
             item="#646464ff"
@@ -228,7 +228,7 @@
         </wcol_menu_back>
         <wcol_pie_menu>
           <ThemeWidgetColors
-            outline="#0a0a0a"
+            outline="#0a0a0aff"
             inner="#191919e6"
             inner_sel="#8c8c8cff"
             item="#2d2d2de6"
@@ -243,7 +243,7 @@
         </wcol_pie_menu>
         <wcol_tooltip>
           <ThemeWidgetColors
-            outline="#000000"
+            outline="#000000ff"
             inner="#191919e6"
             inner_sel="#2d2d2de6"
             item="#646464ff"
@@ -258,7 +258,7 @@
         </wcol_tooltip>
         <wcol_menu_item>
           <ThemeWidgetColors
-            outline="#000000"
+            outline="#00000000"
             inner="#00000000"
             inner_sel="#5680c2ff"
             item="#acacac80"
@@ -273,7 +273,7 @@
         </wcol_menu_item>
         <wcol_scroll>
           <ThemeWidgetColors
-            outline="#323232"
+            outline="#323232ff"
             inner="#505050b4"
             inner_sel="#646464b4"
             item="#808080ff"
@@ -288,7 +288,7 @@
         </wcol_scroll>
         <wcol_progress>
           <ThemeWidgetColors
-            outline="#000000"
+            outline="#000000ff"
             inner="#bebebeff"
             inner_sel="#646464b4"
             item="#444444ff"
@@ -303,7 +303,7 @@
         </wcol_progress>
         <wcol_list_item>
           <ThemeWidgetColors
-            outline="#000000"
+            outline="#000000ff"
             inner="#00000000"
             inner_sel="#5680c2ff"
             item="#000000ff"
@@ -316,21 +316,6 @@
             >
           </ThemeWidgetColors>
         </wcol_list_item>
-        <wcol_view_item>
-          <ThemeWidgetColors
-            outline="#2d2d2d"
-            inner="#303030ff"
-            inner_sel="#4772b3ff"
-            item="#4772b3ff"
-            text="#cccccc"
-            text_sel="#ffffff"
-            show_shaded="FALSE"
-            shadetop="0"
-            shadedown="0"
-            roundness="0.4"
-            >
-          </ThemeWidgetColors>
-        </wcol_view_item>
         <wcol_state>
           <ThemeWidgetStateColors
             inner_anim="#73be4c"
@@ -349,7 +334,7 @@
         </wcol_state>
         <wcol_tab>
           <ThemeWidgetColors
-            outline="#2d2d2d"
+            outline="#2d2d2dff"
             inner="#323232ff"
             inner_sel="#4b4b4bff"
             item="#2d2d2dff"
@@ -458,7 +443,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <gradients>
               <ThemeGradientColors
@@ -478,6 +463,13 @@
             </panelcolors>
           </ThemeSpaceGradient>
         </space>
+        <asset_shelf>
+          <ThemeAssetShelf
+            header_back="#1d1d1dff"
+            back="#303030ff"
+            >
+          </ThemeAssetShelf>
+        </asset_shelf>
       </ThemeView3D>
     </view_3d>
     <graph_editor>
@@ -533,7 +525,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -579,7 +571,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -637,7 +629,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -713,7 +705,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -800,7 +792,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -824,6 +816,7 @@
         scene_strip="#4e983e"
         audio_strip="#2e8f8f"
         effect_strip="#a9547c"
+        transition_strip="#50458f"
         color_strip="#8f8f8f"
         meta_strip="#6d9183"
         mask_strip="#666666"
@@ -860,7 +853,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -906,7 +899,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -953,7 +946,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -999,6 +992,7 @@
         geometry_node="#00d7a4"
         attribute_node="#3f5980"
         simulation_zone="#66416233"
+        repeat_zone="#76512f33"
         >
         <space>
           <ThemeSpaceGeneric
@@ -1018,7 +1012,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -1069,7 +1063,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -1118,7 +1112,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -1152,7 +1146,7 @@
             tab_active="#4b4b4b"
             tab_inactive="#2b2b2b"
             tab_back="#232323ff"
-            tab_outline="#232323"
+            tab_outline="#232323ff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -1193,7 +1187,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -1258,7 +1252,7 @@
             tab_active="#727272"
             tab_inactive="#535353"
             tab_back="#404040ff"
-            tab_outline="#3c3c3c"
+            tab_outline="#3c3c3cff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -1301,7 +1295,7 @@
             tab_active="#5680c2"
             tab_inactive="#424242"
             tab_back="#232323ff"
-            tab_outline="#2d2d2d"
+            tab_outline="#2d2d2dff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -1335,7 +1329,7 @@
             tab_active="#5680c2"
             tab_inactive="#424242"
             tab_back="#232323ff"
-            tab_outline="#2d2d2d"
+            tab_outline="#2d2d2dff"
             >
             <panelcolors>
               <ThemePanelColors
@@ -1371,7 +1365,7 @@
             tab_active="#4b4b4b"
             tab_inactive="#2b2b2b"
             tab_back="#232323ff"
-            tab_outline="#232323"
+            tab_outline="#232323ff"
             >
             <panelcolors>
               <ThemePanelColors
