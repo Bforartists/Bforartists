@@ -259,7 +259,7 @@
         <wcol_menu_item>
           <ThemeWidgetColors
             outline="#25252500"
-            inner="#00000000"
+            inner="#5680c200"
             inner_sel="#5680c2ff"
             item="#acacac80"
             text="#cccccc"
@@ -304,7 +304,7 @@
         <wcol_list_item>
           <ThemeWidgetColors
             outline="#252525ff"
-            inner="#2d2d2d00"
+            inner="#ffffff00"
             inner_sel="#5680c2ff"
             item="#000000ff"
             text="#cccccc"
@@ -316,21 +316,6 @@
             >
           </ThemeWidgetColors>
         </wcol_list_item>
-        <wcol_view_item>
-          <ThemeWidgetColors
-            outline="#2d2d2dff"
-            inner="#303030ff"
-            inner_sel="#4772b3ff"
-            item="#4772b3ff"
-            text="#cccccc"
-            text_sel="#ffffff"
-            show_shaded="FALSE"
-            shadetop="0"
-            shadedown="0"
-            roundness="0.4"
-            >
-          </ThemeWidgetColors>
-        </wcol_view_item>
         <wcol_state>
           <ThemeWidgetStateColors
             inner_anim="#73be4c"
@@ -478,6 +463,13 @@
             </panelcolors>
           </ThemeSpaceGradient>
         </space>
+        <asset_shelf>
+          <ThemeAssetShelf
+            header_back="#1d1d1dff"
+            back="#303030ff"
+            >
+          </ThemeAssetShelf>
+        </asset_shelf>
       </ThemeView3D>
     </view_3d>
     <graph_editor>
@@ -821,9 +813,10 @@
         movie_strip="#4d6890"
         movieclip_strip="#8f4c4c"
         image_strip="#8f744b"
-        scene_strip="#828f50"
-        audio_strip="#4c8f8f"
-        effect_strip="#598f4c"
+        scene_strip="#808033"
+        audio_strip="#448080"
+        effect_strip="#514a73"
+        transition_strip="#50458f"
         color_strip="#8f8f8f"
         meta_strip="#5b4d91"
         mask_strip="#8f5656"
