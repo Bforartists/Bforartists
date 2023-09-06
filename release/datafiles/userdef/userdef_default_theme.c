@@ -161,6 +161,7 @@ const bTheme U_theme_default = {
     },
     .wcol_menu_item = {
       .outline = RGBA(0x25252500),
+      .inner = RGBA(0x5680c200),
       .inner_sel = RGBA(0x5680c2ff),
       .item = RGBA(0xacacac80),
       .text = RGBA(0xccccccff),
@@ -326,12 +327,12 @@ const bTheme U_theme_default = {
       .back = RGBA(0x464646ff),
       .sub_back = RGBA(0x00000026),
     },
-    .grid = RGBA(0x8c8c8cff),
-    .view_overlay = RGBA(0xffffff00),
     .asset_shelf = {
       .header_back = RGBA(0x1d1d1dff),
       .back = RGBA(0x303030ff),
     },
+    .grid = RGBA(0x8c8c8cff),
+    .view_overlay = RGBA(0xffffff00),
     .wire = RGBA(0x000000ff),
     .wire_edit = RGBA(0x000000ff),
     .select = RGBA(0xf15800ff),
