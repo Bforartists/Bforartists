@@ -3393,13 +3393,13 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
 
-            props = col.operator("node.add_node", text=" Self Object           ", icon = "SELF_OBJECT")
-            props.use_transform = True
-            props.type = "GeometryNodeSelfObject"
-
             props = col.operator("node.add_node", text=" Scene Time          ", icon = "TIME")
             props.use_transform = True
             props.type = "GeometryNodeInputSceneTime"
+            
+            props = col.operator("node.add_node", text=" Self Object           ", icon = "SELF_OBJECT")
+            props.use_transform = True
+            props.type = "GeometryNodeSelfObject"
 
         #### Icon Buttons
 
@@ -3425,13 +3425,13 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
 
-            props = flow.operator("node.add_node", text="", icon = "SELF_OBJECT")
-            props.use_transform = True
-            props.type = "GeometryNodeSelfObject"
-
             props = flow.operator("node.add_node", text = "", icon = "TIME")
             props.use_transform = True
             props.type = "GeometryNodeInputSceneTime"
+            
+            props = flow.operator("node.add_node", text="", icon = "SELF_OBJECT")
+            props.use_transform = True
+            props.type = "GeometryNodeSelfObject"
 
 
 #add output panel
