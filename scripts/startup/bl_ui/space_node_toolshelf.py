@@ -3510,14 +3510,14 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
+            
+            props = col.operator("node.add_node", text=" Geometry to Instance", icon = "GEOMETRY_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeGeometryToInstance"
 
             props = col.operator("node.add_node", text=" Join Geometry           ", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
-
-            props = col.operator("node.add_node", text=" Geometry to Instance", icon = "GEOMETRY_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeGeometryToInstance"
 
 
         #### Icon Buttons
@@ -3527,14 +3527,14 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+            
+            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeGeometryToInstance"
 
             props = flow.operator("node.add_node", text = "", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
-
-            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeGeometryToInstance"
 
 
 #add geometry panel, read subpanel
