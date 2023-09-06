@@ -3350,50 +3350,6 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel):
             props.type = "FunctionNodeInputVector"
 
 
-#add input panel, group subpanel
-class NODES_PT_geom_add_input_group(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Group"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_input"
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text = " Group Input      ", icon = "GROUPINPUT")
-            props.use_transform = True
-            props.type = "NodeGroupInput"
-
-        #### Icon Buttons
-
-        else:
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "GROUPINPUT")
-            props.use_transform = True
-            props.type = "NodeGroupInput"
-
-
 #add input panel, scene subpanel
 class NODES_PT_geom_add_input_scene(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -6914,7 +6870,6 @@ classes = (
 
     NODES_PT_geom_add_input,
     NODES_PT_geom_add_input_constant,
-    NODES_PT_geom_add_input_group,
     NODES_PT_geom_add_input_scene,
 
     NODES_PT_geom_add_output,
