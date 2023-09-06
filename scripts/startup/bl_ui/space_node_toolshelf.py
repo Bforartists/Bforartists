@@ -3396,7 +3396,7 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Scene Time          ", icon = "TIME")
             props.use_transform = True
             props.type = "GeometryNodeInputSceneTime"
-            
+
             props = col.operator("node.add_node", text=" Self Object           ", icon = "SELF_OBJECT")
             props.use_transform = True
             props.type = "GeometryNodeSelfObject"
@@ -3428,7 +3428,7 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "TIME")
             props.use_transform = True
             props.type = "GeometryNodeInputSceneTime"
-            
+
             props = flow.operator("node.add_node", text="", icon = "SELF_OBJECT")
             props.use_transform = True
             props.type = "GeometryNodeSelfObject"
@@ -3510,7 +3510,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Geometry to Instance", icon = "GEOMETRY_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeGeometryToInstance"
@@ -3527,7 +3527,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            
+
             props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeGeometryToInstance"
@@ -3623,6 +3623,86 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
+
+
+#add geometry panel, sample subpanel
+class NODES_PT_geom_add_geometry_sample(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Sample"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_geometry"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Geometry Proximity   ", icon = "GEOMETRY_PROXIMITY")
+            props.use_transform = True
+            props.type = "GeometryNodeProximity"
+
+            props = col.operator("node.add_node", text=" Index of Nearest        ", icon = "INDEX_OF_NEAREST")
+            props.use_transform = True
+            props.type = "GeometryNodeIndexOfNearest"
+
+            props = col.operator("node.add_node", text=" Raycast                      ", icon = "RAYCAST")
+            props.use_transform = True
+            props.type = "GeometryNodeRaycast"
+
+            props = col.operator("node.add_node", text=" Sample Index             ", icon = "SAMPLE_INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleIndex"
+
+            props = col.operator("node.add_node", text=" Sample Nearest        ", icon = "SAMPLE_NEAREST")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleNearest"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_PROXIMITY")
+            props.use_transform = True
+            props.type = "GeometryNodeMergeByDistance"
+
+            props = flow.operator("node.add_node", text="", icon = "INDEX_OF_NEAREST")
+            props.use_transform = True
+            props.type = "GeometryNodeIndexOfNearest"
+
+            props = flow.operator("node.add_node", text = "", icon = "RAYCAST")
+            props.use_transform = True
+            props.type = "GeometryNodeRaycast"
+
+            props = flow.operator("node.add_node", text="", icon = "SAMPLE_INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleIndex"
+
+            props = flow.operator("node.add_node", text="", icon = "SAMPLE_NEAREST")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleNearest"
 
 
 #add geometry panel, write subpanel
@@ -3786,86 +3866,6 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SEPARATE_GEOMETRY")
             props.use_transform = True
             props.type = "GeometryNodeSeparateGeometry"
-
-
-#add geometry panel, sample subpanel
-class NODES_PT_geom_add_geometry_sample(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Sample"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_geometry"
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Geometry Proximity   ", icon = "GEOMETRY_PROXIMITY")
-            props.use_transform = True
-            props.type = "GeometryNodeProximity"
-
-            props = col.operator("node.add_node", text=" Index of Nearest        ", icon = "INDEX_OF_NEAREST")
-            props.use_transform = True
-            props.type = "GeometryNodeIndexOfNearest"
-
-            props = col.operator("node.add_node", text=" Raycast                      ", icon = "RAYCAST")
-            props.use_transform = True
-            props.type = "GeometryNodeRaycast"
-
-            props = col.operator("node.add_node", text=" Sample Index             ", icon = "SAMPLE_INDEX")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleIndex"
-
-            props = col.operator("node.add_node", text=" Sample Nearest        ", icon = "SAMPLE_NEAREST")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleNearest"
-
-        #### Icon Buttons
-
-        else:
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_PROXIMITY")
-            props.use_transform = True
-            props.type = "GeometryNodeMergeByDistance"
-
-            props = flow.operator("node.add_node", text="", icon = "INDEX_OF_NEAREST")
-            props.use_transform = True
-            props.type = "GeometryNodeIndexOfNearest"
-
-            props = flow.operator("node.add_node", text = "", icon = "RAYCAST")
-            props.use_transform = True
-            props.type = "GeometryNodeRaycast"
-
-            props = flow.operator("node.add_node", text="", icon = "SAMPLE_INDEX")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleIndex"
-
-            props = flow.operator("node.add_node", text="", icon = "SAMPLE_NEAREST")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleNearest"
 
 
 #add Curves panel
@@ -6870,9 +6870,9 @@ classes = (
 
     NODES_PT_geom_add_geometry,
     NODES_PT_geom_add_geometry_read,
+    NODES_PT_geom_add_geometry_sample,
     NODES_PT_geom_add_geometry_write,
     NODES_PT_geom_add_geometry_operations,
-    NODES_PT_geom_add_geometry_sample,
 
     NODES_PT_geom_add_curve,
     NODES_PT_geom_add_curve_read,
