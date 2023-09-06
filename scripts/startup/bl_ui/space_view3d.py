@@ -7328,7 +7328,7 @@ class VIEW3D_PT_object_type_visibility(Panel):
 
         layout.separator()
 
-        col = layout.column()
+        col = layout.column(align=True)
 
         attr_object_types = (
             # Geometry
@@ -7337,13 +7337,13 @@ class VIEW3D_PT_object_type_visibility(Panel):
             ("surf", "Surface", 'OUTLINER_OB_SURFACE'),
             ("meta", "Meta", 'OUTLINER_OB_META'),
             ("font", "Text", 'OUTLINER_OB_FONT'),
+            (None, None, None),
             ("curves", "Hair Curves", 'HAIR_DATA'),
             ("pointcloud", "Point Cloud", 'OUTLINER_OB_POINTCLOUD'),
             ("volume", "Volume", 'OUTLINER_OB_VOLUME'),
             ("grease_pencil", "Grease Pencil", 'OUTLINER_OB_GREASEPENCIL'),
-            (None, None, None),
-            # Other
             ("armature", "Armature", 'OUTLINER_OB_ARMATURE'),
+            (None, None, None),
             ("lattice", "Lattice", 'OUTLINER_OB_LATTICE'),
             ("empty", "Empty", 'OUTLINER_OB_EMPTY'),
             ("light", "Light", 'OUTLINER_OB_LIGHT'),
@@ -7352,9 +7352,9 @@ class VIEW3D_PT_object_type_visibility(Panel):
             ("speaker", "Speaker", 'OUTLINER_OB_SPEAKER'),
         )
 
-        for attr, attr_name, icon in attr_object_types:
+        for attr, attr_name, attr_icon in attr_object_types:
             if attr is None:
-                layout.separator()
+                col.separator()
                 continue
 
             if attr == "curves" and not hasattr(bpy.data, "hair_curves"):
@@ -7365,20 +7365,14 @@ class VIEW3D_PT_object_type_visibility(Panel):
             attr_v = "show_object_viewport_" + attr
             icon_v = 'HIDE_OFF' if getattr(view, attr_v) else 'HIDE_ON'
 
-            split = layout.split(factor=0.7)
-            row = split.row(align=True)
-            row.alignment = 'LEFT'
-            row.label(icon = icon, text=attr_name)
-            row.prop(view, attr_v, text="", emboss=False)
+            row = col.row(align=True)
+            row.label(text=attr_name, icon=attr_icon)
 
             if show_select:
                 attr_s = "show_object_select_" + attr
                 icon_s = 'RESTRICT_SELECT_OFF' if getattr(view, attr_s) else 'RESTRICT_SELECT_ON'
 
-                row = split.row(align=True)
-                row.alignment = 'RIGHT'
                 rowsub = row.row(align=True)
-                row.prop(view, attr_v, text="", icon=icon_v, emboss=False)
                 rowsub.active = getattr(view, attr_v)
                 rowsub.prop(view, attr_s, text="", icon=icon_s, emboss=False)
 
@@ -7387,6 +7381,7 @@ class VIEW3D_PT_object_type_visibility(Panel):
     def draw(self, context):
         view = context.space_data
         self.draw_ex(context, view, True)
+
 
 
 class VIEW3D_PT_shading(Panel):
