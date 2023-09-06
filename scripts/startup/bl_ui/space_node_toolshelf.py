@@ -4004,6 +4004,55 @@ class NODES_PT_geom_add_curve_read(bpy.types.Panel):
             props.type = "GeometryNodeInputSplineResolution"
 
 
+#add Curves panel, read subpanel
+class NODES_PT_geom_add_curve_sample(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Sample"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_curve"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Sample Curve ", icon = "CURVE_SAMPLE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleCurve"
+
+        #### Icon Buttons
+
+        else:
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_SAMPLE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleCurve"
+
+
+
+
 #add Curves panel, write subpanel
 class NODES_PT_geom_add_curve_write(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -4171,10 +4220,6 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeReverseCurve"
 
-            props = col.operator("node.add_node", text=" Sample Curve             ", icon = "CURVE_SAMPLE")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleCurve"
-
             props = col.operator("node.add_node", text=" Subdivide Curve         ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeSubdivideCurve"
@@ -4222,10 +4267,6 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SWITCH_DIRECTION")
             props.use_transform = True
             props.type = "GeometryNodeReverseCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_SAMPLE")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleCurve"
 
             props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
@@ -6876,6 +6917,7 @@ classes = (
 
     NODES_PT_geom_add_curve,
     NODES_PT_geom_add_curve_read,
+    NODES_PT_geom_add_curve_sample,
     NODES_PT_geom_add_curve_write,
     NODES_PT_geom_add_curve_operations,
     NODES_PT_geom_add_curve_primitives,
