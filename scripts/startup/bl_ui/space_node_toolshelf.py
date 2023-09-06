@@ -4411,14 +4411,14 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
+            
+            props = col.operator("node.add_node", text=" Curve of Point              ", icon = "CURVE_OF_POINT")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveOfPoint"
 
             props = col.operator("node.add_node", text=" Offset Point in Curve   ", icon = "OFFSET_POINT_IN_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeOffsetPointInCurve"
-
-            props = col.operator("node.add_node", text=" Curve of Point              ", icon = "CURVE_OF_POINT")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveOfPoint"
 
             props = col.operator("node.add_node", text=" Points of Curve            ", icon = "POINT_OF_CURVE")
             props.use_transform = True
@@ -4431,14 +4431,14 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+            
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_OF_POINT")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveOfPoint"
 
             props = flow.operator("node.add_node", text = "", icon = "OFFSET_POINT_IN_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeOffsetPointInCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_OF_POINT")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveOfPoint"
 
             props = flow.operator("node.add_node", text = "", icon = "POINT_OF_CURVE")
             props.use_transform = True
