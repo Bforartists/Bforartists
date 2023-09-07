@@ -11488,6 +11488,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_INTERPOLATE_CURVES:
       return ICON_INTERPOLATE_CURVE;
+
+    case GEO_NODE_POINTS_TO_CURVES:
+      return ICON_POINTS_TO_CURVES;
   }
   return ICON_NONE;
 }
