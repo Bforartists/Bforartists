@@ -1037,8 +1037,8 @@
     </node_editor>
     <outliner>
       <ThemeOutliner
-        match="#337f33"
-        selected_highlight="#5b4633"
+        match="#435166"
+        selected_highlight="#5b4530"
         active="#5680c2"
         selected_object="#e96a00"
         active_object="#ffaf29"
