@@ -4619,10 +4619,10 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Face Area                ", icon = "FACEREGIONS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceArea"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Face Group Boundaries ", icon = "SELECT_BOUNDARY")
             props.use_transform = True
             props.type = "GeometryNodeMeshFaceSetBoundaries"
@@ -4642,7 +4642,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mesh Island             ", icon = "UV_ISLANDSEL")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshIsland"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -4681,7 +4681,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "FACEREGIONS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceArea"
-            
+
             props = flow.operator("node.add_node", text="", icon = "SELECT_BOUNDARY")
             props.use_transform = True
             props.type = "GeometryNodeMeshFaceSetBoundaries"
@@ -5279,9 +5279,16 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeDistributePointsOnFaces"
 
-            props = col.operator("node.add_node", text=" Points         ", icon = "DECORATE")
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Points                          ", icon = "DECORATE")
             props.use_transform = True
             props.type = "GeometryNodePoints"
+
+            props = col.operator("node.add_node", text=" Points to Curves          ", icon = "POINTS_TO_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodePointsToCurves"
 
             props = col.operator("node.add_node", text=" Points to Vertices         ", icon = "POINTS_TO_VERTICES")
             props.use_transform = True
@@ -5314,6 +5321,10 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "DECORATE")
             props.use_transform = True
             props.type = "GeometryNodePoints"
+
+            props = flow.operator("node.add_node", text="", icon = "POINTS_TO_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodePointsToCurves"
 
             props = flow.operator("node.add_node", text = "", icon = "POINTS_TO_VERTICES")
             props.use_transform = True
