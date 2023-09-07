@@ -4608,7 +4608,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputMeshEdgeNeighbors"
 
-            props = col.operator("node.add_node", text=" Edge Vertices           ", icon = "EDGE_VERTICES")
+            props = col.operator("node.add_node", text=" Edge Vertices          ", icon = "EDGE_VERTICES")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshEdgeVertices"
 
@@ -4619,20 +4619,20 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Face Area                ", icon = "FACEREGIONS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceArea"
+            
+            props = col.operator("node.add_node", text=" Face Group Boundaries ", icon = "SELECT_BOUNDARY")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshFaceSetBoundaries"
 
             props = col.operator("node.add_node", text=" Face Neighbors        ", icon = "FACE_NEIGHBORS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceNeighbors"
 
-            props = col.operator("node.add_node", text=" Face Group Boundaries ", icon = "SELECT_BOUNDARY")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshFaceSetBoundaries"
-
-            props = col.operator("node.add_node", text=" Is Face Planar           ", icon = "PLANAR")
+            props = col.operator("node.add_node", text=" Is Face Planar         ", icon = "PLANAR")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceIsPlanar"
 
-            props = col.operator("node.add_node", text=" Is Shade Smooth   ", icon = "SHADING_SMOOTH")
+            props = col.operator("node.add_node", text=" Is Shade Smooth     ", icon = "SHADING_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
 
@@ -4675,14 +4675,14 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "FACEREGIONS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceArea"
+            
+            props = flow.operator("node.add_node", text="", icon = "SELECT_BOUNDARY")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshFaceSetBoundaries"
 
             props = flow.operator("node.add_node", text = "", icon = "FACE_NEIGHBORS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceNeighbors"
-
-            props = flow.operator("node.add_node", text="", icon = "SELECT_BOUNDARY")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshFaceSetBoundaries"
 
             props = flow.operator("node.add_node", text="", icon = "PLANAR")
             props.use_transform = True
