@@ -4620,6 +4620,9 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceArea"
             
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+            
             props = col.operator("node.add_node", text=" Face Group Boundaries ", icon = "SELECT_BOUNDARY")
             props.use_transform = True
             props.type = "GeometryNodeMeshFaceSetBoundaries"
@@ -4639,6 +4642,9 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mesh Island             ", icon = "UV_ISLANDSEL")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshIsland"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text = " Shortest Edge Path ", icon = "SELECT_SHORTESTPATH")
             props.use_transform = True
