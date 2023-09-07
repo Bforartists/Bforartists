@@ -3659,7 +3659,6 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
             props.data_type = 'VGROUP_WEIGHTS'
 
             col.operator("object.vertex_group_limit_total", text="Limit Total", icon='WEIGHT_LIMIT_TOTAL')
-            col.operator("object.vertex_group_fix", text="Fix Deforms", icon='WEIGHT_FIX_DEFORMS')
 
             col.separator(factor = 0.5)
 
