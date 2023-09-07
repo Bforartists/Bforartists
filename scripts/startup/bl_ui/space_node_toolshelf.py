@@ -4411,7 +4411,7 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Curve of Point              ", icon = "CURVE_OF_POINT")
             props.use_transform = True
             props.type = "GeometryNodeCurveOfPoint"
@@ -4431,7 +4431,7 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            
+
             props = flow.operator("node.add_node", text = "", icon = "CURVE_OF_POINT")
             props.use_transform = True
             props.type = "GeometryNodeCurveOfPoint"
@@ -4701,6 +4701,62 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props.type = "GeometryNodeInputMeshVertexNeighbors"
 
 
+#add mesh panel, sample subpanel
+class NODES_PT_geom_add_mesh_sample(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Sample"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_mesh"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Sample Nearest Surface ", icon = "SAMPLE_NEAREST_SURFACE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleNearestSurface"
+
+            props = col.operator("node.add_node", text=" Sample UV Surface   ", icon = "SAMPLE_UV_SURFACE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleUVSurface"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text="", icon = "SAMPLE_NEAREST_SURFACE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleNearestSurface"
+
+            props = flow.operator("node.add_node", text="", icon = "SAMPLE_UV_SURFACE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleUVSurface"
+
+
 #add mesh panel, write subpanel
 class NODES_PT_geom_add_mesh_write(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -4819,14 +4875,6 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeMeshToVolume"
 
-            props = col.operator("node.add_node", text=" Sample Nearest Surface ", icon = "SAMPLE_NEAREST_SURFACE")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleNearestSurface"
-
-            props = col.operator("node.add_node", text=" Sample UV Surface   ", icon = "SAMPLE_UV_SURFACE")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleUVSurface"
-
             props = col.operator("node.add_node", text=" Scale Elements        ", icon = "TRANSFORM_SCALE")
             props.use_transform = True
             props.type = "GeometryNodeScaleElements"
@@ -4894,14 +4942,6 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "MESH_TO_VOLUME")
             props.use_transform = True
             props.type = "GeometryNodeMeshToVolume"
-
-            props = flow.operator("node.add_node", text="", icon = "SAMPLE_NEAREST_SURFACE")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleNearestSurface"
-
-            props = flow.operator("node.add_node", text="", icon = "SAMPLE_UV_SURFACE")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleUVSurface"
 
             props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_SCALE")
             props.use_transform = True
@@ -6927,6 +6967,7 @@ classes = (
 
     NODES_PT_geom_add_mesh,
     NODES_PT_geom_add_mesh_read,
+    NODES_PT_geom_add_mesh_sample,
     NODES_PT_geom_add_mesh_write,
     NODES_PT_geom_add_mesh_operations,
     NODES_PT_geom_add_mesh_primitives,
