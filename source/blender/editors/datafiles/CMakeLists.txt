@@ -1852,7 +1852,7 @@ flock
 outliner_data_volume
 
 gradient
-#~ DEF_ICON_BLANK(1883)
+points_to_curves
 #~ DEF_ICON_BLANK(1884)
 #~ DEF_ICON_BLANK(1885)
 #~ DEF_ICON_BLANK(1886)

@@ -12,6 +12,7 @@ import sys
 def run(cmd, *, env=None):
     print("   ", " ".join(cmd))
     subprocess.check_call(cmd, env=env)
+    #shell = True
 
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
