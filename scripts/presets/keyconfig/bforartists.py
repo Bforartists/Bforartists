@@ -1,4 +1,4 @@
-keyconfig_version = (4, 0, 16)
+keyconfig_version = (4, 0, 22)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -3522,6 +3522,8 @@ keyconfig_data = \
        ],
       },
      ),
+    ("view3d.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, None),
+    ("gpencil.weight_sample", {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True}, None),
     ],
    },
   ),
