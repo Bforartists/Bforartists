@@ -3592,6 +3592,8 @@ class VIEW3D_MT_object_parent(Menu):
             props = layout.operator("object.parent_no_inverse_set", text="Make Parent without Inverse (Keep Transform)", icon="PARENT")
             props.keep_transform = True
 
+            layout.operator("curves.surface_set", text = "Object (Attach Curves to Surface)", icon="PARENT_CURVE")
+
         layout.separator()
 
         layout.operator_enum("object.parent_clear", "type")
