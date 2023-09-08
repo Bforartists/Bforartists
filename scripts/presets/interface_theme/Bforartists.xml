@@ -465,8 +465,8 @@
         </space>
         <asset_shelf>
           <ThemeAssetShelf
-            header_back="#1d1d1dff"
-            back="#303030ff"
+            header_back="#333333ff"
+            back="#464646ff"
             >
           </ThemeAssetShelf>
         </asset_shelf>
