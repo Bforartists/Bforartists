@@ -3760,7 +3760,7 @@ class VIEW3D_MT_object_convert(Menu):
             layout.operator("gpencil.trace_image", icon='OUTLINER_OB_GREASEPENCIL')
 
         if ob and ob.type == 'CURVES':
-            layout.operator("curves.convert_to_particle_system", text="Particle System")
+            layout.operator("curves.convert_to_particle_system", text="Particle System", icon = "PARTICLES")
 
 
 class VIEW3D_MT_make_links(Menu):
