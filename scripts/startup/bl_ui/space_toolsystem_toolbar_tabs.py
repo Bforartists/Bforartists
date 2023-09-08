@@ -1048,10 +1048,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        obj = context.object
-        if obj is None:
-            return
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT'} and obj.type in {'MESH', 'CURVE', 'SURFACE'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1101,7 +1098,445 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
                 row.alignment = 'LEFT'
                 row.popover(panel="TOOLBAR_PT_normals_autosmooth", text="", icon="NORMAL_SMOOTH")
 
+# ------------------------ Utility
 
+class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
+    bl_label = "Parents"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Utility"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("object.parent_set", icon ='PARENT_SET')
+            col.operator("object.parent_clear", icon ='PARENT_CLEAR')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("object.parent_set", text="", icon ='PARENT_SET')
+                row.operator("object.parent_clear", text="", icon ='PARENT_CLEAR')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("object.parent_set", text = "", icon ='PARENT_SET')
+                row.operator("object.parent_clear", text = "", icon ='PARENT_CLEAR')
+
+            elif column_count == 1:
+
+                col.operator("object.parent_set", text = "", icon ='PARENT_SET')
+                col.operator("object.parent_clear", text = "", icon ='PARENT_CLEAR')
+
+
+
+class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
+    bl_label = "Object Data"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Utility"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("object.make_single_user", icon ='MAKE_SINGLE_USER')
+            col.menu("VIEW3D_MT_make_links", icon='LINK_DATA' )
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.make_local", icon ='MAKE_LOCAL')
+            col.operator("object.make_override_library", icon ='LIBRARY_DATA_OVERRIDE')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("object.make_single_user", text = "", icon ='MAKE_SINGLE_USER')
+                row.menu("VIEW3D_MT_make_links", text = "", icon='LINK_DATA' )
+
+                col.separator(factor = 0.5)
+
+                row = col.row(align=True)
+                row.operator("object.make_local", text = "", icon ='MAKE_LOCAL')
+                row.operator("object.make_override_library", text = "", icon ='LIBRARY_DATA_OVERRIDE')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("object.make_single_user", text = "", icon ='MAKE_SINGLE_USER')
+                row.menu("VIEW3D_MT_make_links", text = "", icon='LINK_DATA' )
+
+                col.separator(factor = 0.5)
+
+                row = col.row(align=True)
+                row.operator("object.make_local", text = "", icon ='MAKE_LOCAL')
+                row.operator("object.make_override_library", text = "", icon ='LIBRARY_DATA_OVERRIDE')
+
+            elif column_count == 1:
+
+                col.operator("object.make_single_user", text = "", icon ='MAKE_SINGLE_USER')
+                col.menu("VIEW3D_MT_make_links", text = "", icon='LINK_DATA' )
+
+                col.separator(factor = 0.5)
+
+                row = col.row(align=True)
+                col.operator("object.make_local", text = "", icon ='MAKE_LOCAL')
+                col.operator("object.make_override_library", text = "", icon ='LIBRARY_DATA_OVERRIDE')
+
+
+class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
+    bl_label = "Assets"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Utility"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("asset.mark", icon='ASSIGN')
+            col.operator("asset.clear", icon='CLEAR').set_fake_user = False
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("asset.mark", text = "", icon='ASSIGN')
+                row.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("asset.mark", text = "", icon='ASSIGN')
+                row.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
+
+            elif column_count == 1:
+
+                col.operator("asset.mark", text = "", icon='ASSIGN')
+                col.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
+
+
+class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
+    bl_label = "Constraints"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Utility"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("object.constraint_add_with_targets", icon="CONSTRAINT_DATA")
+            col.operator("object.constraints_copy", icon="COPYDOWN")
+            col.operator("object.constraints_clear", icon="CLEAR_CONSTRAINT")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("object.constraint_add_with_targets", text = "", icon="CONSTRAINT_DATA")
+                row.operator("object.constraints_copy", text = "", icon="COPYDOWN")
+                row.operator("object.constraints_clear", text = "", icon="CLEAR_CONSTRAINT")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                col.operator("object.constraint_add_with_targets", text = "", icon="CONSTRAINT_DATA")
+
+                row = col.row(align=True)
+                row.operator("object.constraints_copy", text = "", icon="COPYDOWN")
+                row.operator("object.constraints_clear", text = "", icon="CLEAR_CONSTRAINT")
+
+            elif column_count == 1:
+
+                col.operator("object.constraint_add_with_targets", text = "", icon="CONSTRAINT_DATA")
+                col.operator("object.constraints_copy", text = "", icon="COPYDOWN")
+                col.operator("object.constraints_clear", text = "", icon="CLEAR_CONSTRAINT")
+
+
+class VIEW3D_PT_utilitytab_collection(toolshelf_calculate, Panel):
+    bl_label = "Collection"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Utility"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("object.move_to_collection", icon='GROUP')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                col.operator("object.move_to_collection", text = "", icon='GROUP')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                col.operator("object.move_to_collection", text = "", icon='GROUP')
+
+            elif column_count == 1:
+
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                col.operator("object.move_to_collection", text = "", icon='GROUP')
+
+
+class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
+    bl_label = "Convert"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Utility"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            context = bpy.context
+            layout = self.layout
+            ob = context.active_object
+
+            if ob and ob.type == 'GPENCIL' and context.gpencil_data and not context.preferences.experimental.use_grease_pencil_version3:
+                col.operator_enum("gpencil.convert", "type")
+
+            else:
+                col.operator_enum("object.convert", "target")
+
+
+            # Potrace lib dependency.
+            if bpy.app.build_options.potrace:
+                col.operator("gpencil.trace_image", icon='OUTLINER_OB_GREASEPENCIL')
+
+            if ob and ob.type == 'CURVES':
+                col.operator("curves.convert_to_particle_system", text="Particle System", icon='PARTICLE_DATA')
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                context = bpy.context
+                layout = self.layout
+                ob = context.active_object
+
+                if ob and ob.type == 'GPENCIL' and context.gpencil_data and not context.preferences.experimental.use_grease_pencil_version3:
+                    row.operator("gpencil.convert", text = "", icon='CURVE_PATH').type = 'PATH'
+                    row.operator("gpencil.convert", text = "", icon='OUTLINER_OB_CURVE').type = 'CURVE'
+                    row.operator("gpencil.convert", text = "", icon='MESH_DATA').type = 'POLY'
+                    #row.operator_enum("gpencil.convert", "type")
+
+                else:
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVE').target = 'CURVE'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_MESH').target = 'MESH'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
+
+                    row = col.row(align=True)
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
+                    #row.operator_enum("object.convert", "target")
+
+
+                # Potrace lib dependency.
+                if bpy.app.build_options.potrace:
+                    col.operator("gpencil.trace_image", icon='OUTLINER_OB_GREASEPENCIL')
+
+                if ob and ob.type == 'CURVES':
+                    col.operator("curves.convert_to_particle_system", text="", icon='PARTICLE_DATA')
+
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                context = bpy.context
+                layout = self.layout
+                ob = context.active_object
+
+                if ob and ob.type == 'GPENCIL' and context.gpencil_data and not context.preferences.experimental.use_grease_pencil_version3:
+                    row.operator("gpencil.convert", text = "", icon='CURVE_PATH').type = 'PATH'
+                    row.operator("gpencil.convert", text = "", icon='OUTLINER_OB_CURVE').type = 'CURVE'
+                    #row.operator_enum("gpencil.convert", "type")
+
+                else:
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVE').target = 'CURVE'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_MESH').target = 'MESH'
+                    row = col.row(align=True)
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
+                    row = col.row(align=True)
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
+                    #row.operator_enum("object.convert", "target")
+
+                # Potrace lib dependency.
+                if bpy.app.build_options.potrace:
+                    col.operator("gpencil.trace_image", icon='OUTLINER_OB_GREASEPENCIL')
+
+                if ob and ob.type == 'CURVES':
+                    col.operator("curves.convert_to_particle_system", text="", icon='PARTICLE_DATA')
+
+            elif column_count == 1:
+
+                row = col.row(align=True)
+                context = bpy.context
+                layout = self.layout
+                ob = context.active_object
+
+                if ob and ob.type == 'GPENCIL' and context.gpencil_data and not context.preferences.experimental.use_grease_pencil_version3:
+                    col.operator("gpencil.convert", text = "", icon='CURVE_PATH').type = 'PATH'
+                    col.operator("gpencil.convert", text = "", icon='OUTLINER_OB_CURVE').type = 'CURVE'
+                    col.operator("gpencil.convert", text = "", icon='MESH_DATA').type = 'POLY'
+                    #row.operator_enum("gpencil.convert", "type")
+
+                else:
+                    col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVE').target = 'CURVE'
+                    col.operator("object.convert", text = "", icon='OUTLINER_OB_MESH').target = 'MESH'
+                    col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
+                    col.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
+                    col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
+                    col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
+                    #row.operator_enum("object.convert", "target")
+
+
+                # Potrace lib dependency.
+                if bpy.app.build_options.potrace:
+                    col.operator("gpencil.trace_image", icon='OUTLINER_OB_GREASEPENCIL')
+
+                if ob and ob.type == 'CURVES':
+                    col.operator("curves.convert_to_particle_system", text="", icon='PARTICLE_DATA')
 
 # -------------------------------------- Mesh
 
@@ -6351,6 +6786,14 @@ classes = (
     VIEW3D_PT_objecttab_apply_delta,
     VIEW3D_PT_objecttab_snap,
     VIEW3D_PT_objecttab_shading,
+
+    #Utility menu
+    VIEW3D_PT_utilitytab_parent,
+    VIEW3D_PT_utilitytab_objectdata,
+    VIEW3D_PT_utilitytab_assets,
+    VIEW3D_PT_utilitytab_constraints,
+    VIEW3D_PT_utilitytab_collection,
+    VIEW3D_PT_utilitytab_convert,
 
     #mesh menu
     VIEW3D_PT_meshtab_merge,
