@@ -59,7 +59,7 @@ static void asset_view_item_but_drag_set(uiBut *but, AssetHandle *asset_handle)
 
   ImBuf *imbuf = ED_assetlist_asset_image_get(asset_handle);
   UI_but_drag_set_asset(
-      but, asset, import_method, ED_asset_handle_get_preview_icon_id(asset_handle), imbuf, 1.0f, false); /* BFA - "false" is needed for setting #use_instance from UI before executing the drop operator */
+      but, asset, import_method, ED_asset_handle_get_preview_icon_id(asset_handle), imbuf, 1.0f, false, false); /* BFA - "false, false" is needed for setting #use_instance and location from UI before executing the drop operator */
 }
 
 static void asset_view_draw_item(uiList *ui_list,
