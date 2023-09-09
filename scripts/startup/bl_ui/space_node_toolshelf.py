@@ -510,25 +510,9 @@ class NODES_PT_comp_add_input(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Render Layers  ", icon = "RENDERLAYERS")
-            props.use_transform = True
-            props.type = "CompositorNodeRLayers"
-
-            props = col.operator("node.add_node", text=" Scene time           ", icon = "TIME")
-            props.use_transform = True
-            props.type = "CompositorNodeSceneTime"
-
             props = col.operator("node.add_node", text=" Texture             ", icon = "TEXTURE")
             props.use_transform = True
             props.type = "CompositorNodeTexture"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Time Curve      ", icon = "NODE_CURVE_TIME")
-            props.use_transform = True
-            props.type = "CompositorNodeTime"
-
 
 
         #### Image Buttons
@@ -629,7 +613,7 @@ class NODES_PT_comp_add_input_scene(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
+    #bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_comp_add_input"
 
     @staticmethod
@@ -1554,6 +1538,141 @@ class NODES_PT_comp_add_tracking(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeTrackPos"
 
+
+#Compositor, Add tab, Transform Panel
+class NODES_PT_comp_add_transform(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Transform"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Rotate               ", icon = "TRANSFORM_ROTATE")
+            props.use_transform = True
+            props.type = "CompositorNodeRotate"
+
+            props = col.operator("node.add_node", text=" Scale                ", icon = "TRANSFORM_SCALE")
+            props.use_transform = True
+            props.type = "CompositorNodeScale"
+
+            props = col.operator("node.add_node", text=" Transform         ", icon = "NODE_TRANSFORM")
+            props.use_transform = True
+            props.type = "CompositorNodeTransform"
+
+            props = col.operator("node.add_node", text=" Translate          ", icon = "TRANSFORM_MOVE")
+            props.use_transform = True
+            props.type = "CompositorNodeTranslate"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Corner Pin        ", icon = "NODE_CORNERPIN")
+            props.use_transform = True
+            props.type = "CompositorNodeCornerPin"
+
+            props = col.operator("node.add_node", text=" Crop                 ", icon = "NODE_CROP")
+            props.use_transform = True
+            props.type = "CompositorNodeCrop"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Displace          ", icon = "MOD_DISPLACE")
+            props.use_transform = True
+            props.type = "CompositorNodeDisplace"
+
+            props = col.operator("node.add_node", text=" Flip                   ", icon = "FLIP")
+            props.use_transform = True
+            props.type = "CompositorNodeFlip"
+
+            props = col.operator("node.add_node", text=" Map UV            ", icon = "GROUP_UVS")
+            props.use_transform = True
+            props.type = "CompositorNodeMapUV"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Lens Distortion ", icon = "NODE_LENSDISTORT")
+            props.use_transform = True
+            props.type = "CompositorNodeLensdist"
+
+            props = col.operator("node.add_node", text=" Movie Distortion ", icon = "NODE_MOVIEDISTORT")
+            props.use_transform = True
+            props.type = "CompositorNodeMovieDistortion"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_ROTATE")
+            props.use_transform = True
+            props.type = "CompositorNodeRotate"
+
+            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_SCALE")
+            props.use_transform = True
+            props.type = "CompositorNodeScale"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
+            props.use_transform = True
+            props.type = "CompositorNodeTransform"
+
+            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_MOVE")
+            props.use_transform = True
+            props.type = "CompositorNodeTranslate"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_CORNERPIN")
+            props.use_transform = True
+            props.type = "CompositorNodeCornerPin"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_CROP")
+            props.use_transform = True
+            props.type = "CompositorNodeCrop"
+
+            props = flow.operator("node.add_node", text = "", icon = "MOD_DISPLACE")
+            props.use_transform = True
+            props.type = "CompositorNodeDisplace"
+
+            props = flow.operator("node.add_node", text = "", icon = "FLIP")
+            props.use_transform = True
+            props.type = "CompositorNodeFlip"
+
+            props = flow.operator("node.add_node", text = "", icon = "GROUP_UVS")
+            props.use_transform = True
+            props.type = "CompositorNodeMapUV"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_LENSDISTORT")
+            props.use_transform = True
+            props.type = "CompositorNodeLensdist"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MOVIEDISTORT")
+            props.use_transform = True
+            props.type = "CompositorNodeMovieDistortion"
 
 
 #Input nodes tab, textures common panel. Texture mode
@@ -3142,147 +3261,6 @@ class NODES_PT_Modify_distort_tex(bpy.types.Panel):
             props.use_transform = True
             props.type = "TextureNodeTranslate"
 
-
-#Compositor, Add tab, Distort Panel
-class NODES_PT_comp_add_distort(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Distort"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Corner Pin        ", icon = "NODE_CORNERPIN")
-            props.use_transform = True
-            props.type = "CompositorNodeCornerPin"
-
-            props = col.operator("node.add_node", text=" Crop                 ", icon = "NODE_CROP")
-            props.use_transform = True
-            props.type = "CompositorNodeCrop"
-
-            props = col.operator("node.add_node", text=" Displace          ", icon = "MOD_DISPLACE")
-            props.use_transform = True
-            props.type = "CompositorNodeDisplace"
-
-            props = col.operator("node.add_node", text=" Flip                   ", icon = "FLIP")
-            props.use_transform = True
-            props.type = "CompositorNodeFlip"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Lens Distortion ", icon = "NODE_LENSDISTORT")
-            props.use_transform = True
-            props.type = "CompositorNodeLensdist"
-
-            props = col.operator("node.add_node", text=" Map UV            ", icon = "GROUP_UVS")
-            props.use_transform = True
-            props.type = "CompositorNodeMapUV"
-
-            props = col.operator("node.add_node", text=" Movie Distortion ", icon = "NODE_MOVIEDISTORT")
-            props.use_transform = True
-            props.type = "CompositorNodeMovieDistortion"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Rotate               ", icon = "TRANSFORM_ROTATE")
-            props.use_transform = True
-            props.type = "CompositorNodeRotate"
-
-            props = col.operator("node.add_node", text=" Scale                ", icon = "TRANSFORM_SCALE")
-            props.use_transform = True
-            props.type = "CompositorNodeScale"
-
-
-
-            props = col.operator("node.add_node", text=" Transform         ", icon = "NODE_TRANSFORM")
-            props.use_transform = True
-            props.type = "CompositorNodeTransform"
-
-            props = col.operator("node.add_node", text=" Translate          ", icon = "TRANSFORM_MOVE")
-            props.use_transform = True
-            props.type = "CompositorNodeTranslate"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-        #### Icon Buttons
-
-        else:
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CORNERPIN")
-            props.use_transform = True
-            props.type = "CompositorNodeCornerPin"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CROP")
-            props.use_transform = True
-            props.type = "CompositorNodeCrop"
-
-            props = flow.operator("node.add_node", text = "", icon = "MOD_DISPLACE")
-            props.use_transform = True
-            props.type = "CompositorNodeDisplace"
-
-            props = flow.operator("node.add_node", text = "", icon = "FLIP")
-            props.use_transform = True
-            props.type = "CompositorNodeFlip"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_LENSDISTORT")
-            props.use_transform = True
-            props.type = "CompositorNodeLensdist"
-
-            props = flow.operator("node.add_node", text = "", icon = "GROUP_UVS")
-            props.use_transform = True
-            props.type = "CompositorNodeMapUV"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MOVIEDISTORT")
-            props.use_transform = True
-            props.type = "CompositorNodeMovieDistortion"
-
-
-
-            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_ROTATE")
-            props.use_transform = True
-            props.type = "CompositorNodeRotate"
-
-            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_SCALE")
-            props.use_transform = True
-            props.type = "CompositorNodeScale"
-
-
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
-            props.use_transform = True
-            props.type = "CompositorNodeTransform"
-
-            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_MOVE")
-            props.use_transform = True
-            props.type = "CompositorNodeTranslate"
 
 
 # ------------- Relations tab -------------------------------
@@ -7272,6 +7250,7 @@ classes = (
     NODES_PT_comp_add_keying,
     NODES_PT_comp_add_mask,
     NODES_PT_comp_add_tracking,
+    NODES_PT_comp_add_transform,
 
     NODES_PT_Input_input_tex,
     NODES_PT_Input_textures_tex,
@@ -7290,7 +7269,7 @@ classes = (
     NODES_PT_comp_add_vector,
 
     NODES_PT_Modify_distort_tex,
-    NODES_PT_comp_add_distort,
+
 
     #-----------------------
 
