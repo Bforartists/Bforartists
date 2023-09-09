@@ -35,10 +35,12 @@ void UI_but_drag_set_asset(uiBut *but,
                            int icon,
                            const ImBuf *imb,
                            float scale,
-                           bool drop_collections_as_instances) /* BFA - needed for setting #use_instance from UI before executing the drop operator */
+                           bool drop_collections_as_instances, /* BFA - needed for setting #use_instance from UI before executing the drop operator */
+                           bool drop_collection_instances_at_origin) /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled */
 {
   wmDragAsset *asset_drag = WM_drag_create_asset_data(asset, import_type);
   asset_drag->drop_collections_as_instances = drop_collections_as_instances; /*BFA*/
+  asset_drag->drop_collections_at_origin = drop_collection_instances_at_origin; /*BFA*/
 
   but->dragtype = WM_DRAG_ASSET;
   ui_def_but_icon(but, icon, 0); /* no flag UI_HAS_ICON, so icon doesn't draw in button */

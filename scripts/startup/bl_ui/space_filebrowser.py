@@ -25,6 +25,8 @@ class FILEBROWSER_HT_header(Header):
         layout.separator_spacer()
 
         if params.asset_library_ref not in {'LOCAL', 'ESSENTIALS'}:
+            if not params.drop_collections_as_instances:
+                layout.row().prop(params, "drop_collections_at_origin", icon_only=True, icon="CENTER")
             layout.row().prop(params, "drop_collections_as_instances", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
             row = layout.row(align=True) #BFA - change to make row of buttons
             row.prop(params, "import_type", text="", expand=True, icon_only=True,) #BFA - change to make row of buttons
