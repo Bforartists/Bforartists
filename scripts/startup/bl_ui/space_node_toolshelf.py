@@ -529,9 +529,7 @@ class NODES_PT_comp_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeTime"
 
-            props = col.operator("node.add_node", text=" Track Position  ", icon = "NODE_TRACKPOSITION")
-            props.use_transform = True
-            props.type = "CompositorNodeTrackPos"
+
 
         #### Image Buttons
 
@@ -565,9 +563,7 @@ class NODES_PT_comp_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeTexture"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TRACKPOSITION")
-            props.use_transform = True
-            props.type = "CompositorNodeTrackPos"
+
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
             props.use_transform = True
@@ -1496,6 +1492,67 @@ class NODES_PT_comp_add_mask(bpy.types.Panel):
             props.type = "CompositorNodeDoubleEdgeMask"
 
 
+#Compositor, Add tab, Tracking Panel
+class NODES_PT_comp_add_tracking(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Tracking"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+            #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Plane Track Deform ", icon = "NODE_PLANETRACKDEFORM")
+            props.use_transform = True
+            props.type = "CompositorNodePlaneTrackDeform"
+
+            props = col.operator("node.add_node", text=" Stabilize 2D     ", icon = "NODE_STABILIZE2D")
+            props.use_transform = True
+            props.type = "CompositorNodeStabilize"
+
+            props = col.operator("node.add_node", text=" Track Position  ", icon = "NODE_TRACKPOSITION")
+            props.use_transform = True
+            props.type = "CompositorNodeTrackPos"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_PLANETRACKDEFORM")
+            props.use_transform = True
+            props.type = "CompositorNodePlaneTrackDeform"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_STABILIZE2D")
+            props.use_transform = True
+            props.type = "CompositorNodeStabilize"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_TRACKPOSITION")
+            props.use_transform = True
+            props.type = "CompositorNodeTrackPos"
 
 
 
@@ -2500,16 +2557,6 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-
-
-
-
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-
-
             props = col.operator("node.add_node", text=" Combine XYZ  ", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeCombineXYZ"
@@ -2525,12 +2572,8 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeMath"
 
-
-
             col = layout.column(align=True)
             col.scale_y = 1.5
-
-
 
             props = col.operator("node.add_node", text=" Separate XYZ  ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
@@ -2538,8 +2581,6 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-
-
 
             props = col.operator("node.add_node", text=" Switch View    ", icon = "VIEW_SWITCHACTIVECAM")
             props.use_transform = True
@@ -2553,14 +2594,6 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-
-
-
-
-
-
-
-
             props = flow.operator("node.add_node", text="", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeCombineXYZ"
@@ -2572,10 +2605,6 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
             props.use_transform = True
             props.type = "CompositorNodeMath"
-
-
-
-
 
             props = flow.operator("node.add_node", text="", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
@@ -3175,10 +3204,6 @@ class NODES_PT_comp_add_distort(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeMovieDistortion"
 
-            props = col.operator("node.add_node", text=" Plane Track Deform ", icon = "NODE_PLANETRACKDEFORM")
-            props.use_transform = True
-            props.type = "CompositorNodePlaneTrackDeform"
-
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -3190,9 +3215,7 @@ class NODES_PT_comp_add_distort(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeScale"
 
-            props = col.operator("node.add_node", text=" Stabilize 2D     ", icon = "NODE_STABILIZE2D")
-            props.use_transform = True
-            props.type = "CompositorNodeStabilize"
+
 
             props = col.operator("node.add_node", text=" Transform         ", icon = "NODE_TRANSFORM")
             props.use_transform = True
@@ -3241,9 +3264,7 @@ class NODES_PT_comp_add_distort(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeMovieDistortion"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_PLANETRACKDEFORM")
-            props.use_transform = True
-            props.type = "CompositorNodePlaneTrackDeform"
+
 
             props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_ROTATE")
             props.use_transform = True
@@ -3253,9 +3274,7 @@ class NODES_PT_comp_add_distort(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeScale"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_STABILIZE2D")
-            props.use_transform = True
-            props.type = "CompositorNodeStabilize"
+
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
             props.use_transform = True
@@ -7252,6 +7271,8 @@ classes = (
     NODES_PT_comp_add_filter_blur,
     NODES_PT_comp_add_keying,
     NODES_PT_comp_add_mask,
+    NODES_PT_comp_add_tracking,
+
     NODES_PT_Input_input_tex,
     NODES_PT_Input_textures_tex,
     NODES_PT_shader_add_shader,
