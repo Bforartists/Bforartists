@@ -820,6 +820,10 @@ class NODES_PT_comp_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeConvertColorSpace"
 
+            props = flow.operator("node.add_node", text = "", icon = "IMAGE_ALPHA")
+            props.use_transform = True
+            props.type = "CompositorNodeSetAlpha"
+
             props = flow.operator("node.add_node", text = "", icon = "NODE_INVERT")
             props.use_transform = True
             props.type = "CompositorNodeInvert"
@@ -1428,6 +1432,10 @@ class NODES_PT_comp_add_mask(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeDoubleEdgeMask"
 
+            props = col.operator("node.add_node", text=" ID Mask           ", icon = "MOD_MASK")
+            props.use_transform = True
+            props.type = "CompositorNodeIDMask"
+
         #### Icon Buttons
 
         else:
@@ -1455,6 +1463,10 @@ class NODES_PT_comp_add_mask(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "NODE_DOUBLEEDGEMASK")
             props.use_transform = True
             props.type = "CompositorNodeDoubleEdgeMask"
+
+            props = flow.operator("node.add_node", text = "", icon = "MOD_MASK")
+            props.use_transform = True
+            props.type = "CompositorNodeIDMask"
 
 
 #Compositor, Add tab, Tracking Panel
@@ -1762,6 +1774,78 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             props.type = "CompositorNodeSwitchView"
 
 
+#Compositor, Add tab, Vector Panel
+class NODES_PT_comp_add_vector(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Vector"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+            #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Combine XYZ  ", icon = "NODE_COMBINEXYZ")
+            props.use_transform = True
+            props.type = "CompositorNodeCombineXYZ"
+
+            props = col.operator("node.add_node", text=" Separate XYZ  ", icon = "NODE_SEPARATEXYZ")
+            props.use_transform = True
+            props.type = "CompositorNodeSeparateXYZ"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Normal            ", icon = "RECALC_NORMALS")
+            props.use_transform = True
+            props.type = "CompositorNodeNormal"
+
+            props = col.operator("node.add_node", text=" Vector Curves  ", icon = "NODE_VECTOR")
+            props.use_transform = True
+            props.type = "CompositorNodeCurveVec"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_COMBINEXYZ")
+            props.use_transform = True
+            props.type = "CompositorNodeCombineXYZ"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_SEPARATEXYZ")
+            props.use_transform = True
+            props.type = "CompositorNodeSeparateXYZ"
+
+            props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
+            props.use_transform = True
+            props.type = "CompositorNodeNormal"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
+            props.use_transform = True
+            props.type = "CompositorNodeCurveVec"
 
 
 #Input nodes tab, textures common panel. Texture mode
@@ -2590,8 +2674,6 @@ class NODES_PT_Input_pattern(bpy.types.Panel):
             props.type = "TextureNodeChecker"
 
 
-
-
 #Input nodes tab, Color panel. Just in texture mode
 class NODES_PT_Input_color_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -2682,7 +2764,7 @@ class NODES_PT_Input_color_tex(bpy.types.Panel):
             props.type = "TextureNodeDecompose"
 
 
-#Input nodes tab, Output panel, Texture modce
+#Input nodes tab, Output panel, Texture mode
 class NODES_PT_Input_output_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
@@ -2733,84 +2815,6 @@ class NODES_PT_Input_output_tex(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "NODE_VIEWER")
             props.use_transform = True
             props.type = "TextureNodeViewer"
-
-
-#Compositor, Add tab, Converter Panel
-class NODES_PT_comp_add_converter(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Converter"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-            #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Combine XYZ  ", icon = "NODE_COMBINEXYZ")
-            props.use_transform = True
-            props.type = "CompositorNodeCombineXYZ"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" ID Mask           ", icon = "MOD_MASK")
-            props.use_transform = True
-            props.type = "CompositorNodeIDMask"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Separate XYZ  ", icon = "NODE_SEPARATEXYZ")
-            props.use_transform = True
-            props.type = "CompositorNodeSeparateXYZ"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-
-
-        #### Icon Buttons
-
-        else:
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_COMBINEXYZ")
-            props.use_transform = True
-            props.type = "CompositorNodeCombineXYZ"
-
-            props = flow.operator("node.add_node", text = "", icon = "MOD_MASK")
-            props.use_transform = True
-            props.type = "CompositorNodeIDMask"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_SEPARATEXYZ")
-            props.use_transform = True
-            props.type = "CompositorNodeSeparateXYZ"
-
-            props = flow.operator("node.add_node", text = "", icon = "IMAGE_ALPHA")
-            props.use_transform = True
-            props.type = "CompositorNodeSetAlpha"
 
 
 #Modify nodes tab, converter panel. Just in texture mode
@@ -3187,72 +3191,6 @@ class NODES_PT_shader_add_converter(bpy.types.Panel):
             props.type = "ShaderNodeWavelength"
 
 
-#Compositor, Add tab, Vector Panel
-class NODES_PT_comp_add_vector(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Vector"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-            #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-
-
-
-
-            props = col.operator("node.add_node", text=" Normal            ", icon = "RECALC_NORMALS")
-            props.use_transform = True
-            props.type = "CompositorNodeNormal"
-
-
-
-            props = col.operator("node.add_node", text=" Vector Curves  ", icon = "NODE_VECTOR")
-            props.use_transform = True
-            props.type = "CompositorNodeCurveVec"
-
-        #### Icon Buttons
-
-        else:
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-
-
-
-
-            props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
-            props.use_transform = True
-            props.type = "CompositorNodeNormal"
-
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
-            props.use_transform = True
-            props.type = "CompositorNodeCurveVec"
-
-
 #Modify nodes tab, distort panel. Just in texture mode
 class NODES_PT_Modify_distort_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -3320,7 +3258,6 @@ class NODES_PT_Modify_distort_tex(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "TRANSFORM_MOVE")
             props.use_transform = True
             props.type = "TextureNodeTranslate"
-
 
 
 # ------------- Relations tab -------------------------------
@@ -7290,6 +7227,10 @@ classes = (
     NODES_PT_geom_textoricon_relations,
     NODES_PT_shader_add_input,
     NODES_PT_shader_add_output,
+
+    #-----------------------
+
+    #Compositor nodes add tab
     NODES_PT_comp_add_input,
     NODES_PT_comp_add_input_constant,
     NODES_PT_comp_add_input_scene,
@@ -7304,6 +7245,10 @@ classes = (
     NODES_PT_comp_add_tracking,
     NODES_PT_comp_add_transform,
     NODES_PT_comp_add_utility,
+    NODES_PT_comp_add_vector,
+
+    #-----------------------
+
     NODES_PT_Input_input_tex,
     NODES_PT_Input_textures_tex,
     NODES_PT_shader_add_shader,
@@ -7313,13 +7258,9 @@ classes = (
     NODES_PT_Input_pattern,
     NODES_PT_Input_color_tex,
     NODES_PT_Input_output_tex,
-    NODES_PT_comp_add_converter,
-
     NODES_PT_Modify_converter_tex,
     NODES_PT_shader_add_vector,
     NODES_PT_shader_add_converter,
-    NODES_PT_comp_add_vector,
-
     NODES_PT_Modify_distort_tex,
 
 
