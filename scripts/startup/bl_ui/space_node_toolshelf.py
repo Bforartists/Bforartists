@@ -1252,8 +1252,6 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-
-
             props = col.operator("node.add_node", text=" Directional Blur ", icon = "NODE_DIRECITONALBLUR")
             props.use_transform = True
             props.type = "CompositorNodeDBlur"
@@ -1293,6 +1291,210 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR_BLUR")
             props.use_transform = True
             props.type = "CompositorNodeVecBlur"
+
+
+
+#Compositor, Add tab, Keying Panel
+class NODES_PT_comp_add_keying(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Keying"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+            #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Channel Key     ", icon = "NODE_CHANNEL")
+            props.use_transform = True
+            props.type = "CompositorNodeChannelMatte"
+
+            props = col.operator("node.add_node", text=" Chroma Key     ", icon = "NODE_CHROMA")
+            props.use_transform = True
+            props.type = "CompositorNodeChromaMatte"
+
+            props = col.operator("node.add_node", text=" Color Key         ", icon = "COLOR")
+            props.use_transform = True
+            props.type = "CompositorNodeColorMatte"
+
+            props = col.operator("node.add_node", text=" Color Spill        ", icon = "NODE_SPILL")
+            props.use_transform = True
+            props.type = "CompositorNodeColorSpill"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Difference Key ", icon = "SELECT_DIFFERENCE")
+            props.use_transform = True
+            props.type = "CompositorNodeDiffMatte"
+
+            props = col.operator("node.add_node", text=" Distance Key   ", icon = "DRIVER_DISTANCE")
+            props.use_transform = True
+            props.type = "CompositorNodeDistanceMatte"
+
+            props = col.operator("node.add_node", text=" Keying              ", icon = "NODE_KEYING")
+            props.use_transform = True
+            props.type = "CompositorNodeKeying"
+
+            props = col.operator("node.add_node", text=" Keying Screen  ", icon = "NODE_KEYINGSCREEN")
+            props.use_transform = True
+            props.type = "CompositorNodeKeyingScreen"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Luminance Key ", icon = "NODE_LUMINANCE")
+            props.use_transform = True
+            props.type = "CompositorNodeLumaMatte"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_CHANNEL")
+            props.use_transform = True
+            props.type = "CompositorNodeChannelMatte"
+
+            rops = flow.operator("node.add_node", text = "", icon = "NODE_CHROMA")
+            props.use_transform = True
+            props.type = "CompositorNodeChromaMatte"
+
+            props = flow.operator("node.add_node", text = "", icon = "COLOR")
+            props.use_transform = True
+            props.type = "CompositorNodeColorMatte"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_SPILL")
+            props.use_transform = True
+            props.type = "CompositorNodeColorSpill"
+
+            props = flow.operator("node.add_node", text = "", icon = "SELECT_DIFFERENCE")
+            props.use_transform = True
+            props.type = "CompositorNodeDiffMatte"
+
+            props = flow.operator("node.add_node", text = "", icon = "DRIVER_DISTANCE")
+            props.use_transform = True
+            props.type = "CompositorNodeDistanceMatte"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_KEYING")
+            props.use_transform = True
+            props.type = "CompositorNodeKeying"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_KEYINGSCREEN")
+            props.use_transform = True
+            props.type = "CompositorNodeKeyingScreen"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_LUMINANCE")
+            props.use_transform = True
+            props.type = "CompositorNodeLumaMatte"
+
+
+#Compositor, Add tab, Mask Panel
+class NODES_PT_comp_add_mask(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Mask"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+            #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Cryptomatte    ", icon = "CRYPTOMATTE")
+            props.use_transform = True
+            props.type = "CompositorNodeCryptomatteV2"
+
+            props = col.operator("node.add_node", text=" Cryptomatte (Legacy)", icon = "CRYPTOMATTE")
+            props.use_transform = True
+            props.type = "CompositorNodeCryptomatte"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Box Mask         ", icon = "NODE_BOXMASK")
+            props.use_transform = True
+            props.type = "CompositorNodeBoxMask"
+
+            props = col.operator("node.add_node", text=" Ellipse Mask     ", icon = "NODE_ELLIPSEMASK")
+            props.use_transform = True
+            props.type = "CompositorNodeEllipseMask"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Double Edge Mask ", icon = "NODE_DOUBLEEDGEMASK")
+            props.use_transform = True
+            props.type = "CompositorNodeDoubleEdgeMask"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text="", icon = "CRYPTOMATTE")
+            props.use_transform = True
+            props.type = "CompositorNodeCryptomatte"
+
+            props = flow.operator("node.add_node", text="", icon = "CRYPTOMATTE")
+            props.use_transform = True
+            props.type = "CompositorNodeCryptomatteV2"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_BOXMASK")
+            props.use_transform = True
+            props.type = "CompositorNodeBoxMask"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_ELLIPSEMASK")
+            props.use_transform = True
+            props.type = "CompositorNodeEllipseMask"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_DOUBLEEDGEMASK")
+            props.use_transform = True
+            props.type = "CompositorNodeDoubleEdgeMask"
+
 
 
 
@@ -2841,166 +3043,6 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "CompositorNodeCurveVec"
-
-
-#Compositor, Add tab, Matte Panel
-class NODES_PT_comp_add_matte(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Matte"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-            #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Box Mask         ", icon = "NODE_BOXMASK")
-            props.use_transform = True
-            props.type = "CompositorNodeBoxMask"
-
-            props = col.operator("node.add_node", text=" Channel Key     ", icon = "NODE_CHANNEL")
-            props.use_transform = True
-            props.type = "CompositorNodeChannelMatte"
-
-            props = col.operator("node.add_node", text=" Chroma Key     ", icon = "NODE_CHROMA")
-            props.use_transform = True
-            props.type = "CompositorNodeChromaMatte"
-
-            props = col.operator("node.add_node", text=" Color Key         ", icon = "COLOR")
-            props.use_transform = True
-            props.type = "CompositorNodeColorMatte"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Color Spill        ", icon = "NODE_SPILL")
-            props.use_transform = True
-            props.type = "CompositorNodeColorSpill"
-
-            props = col.operator("node.add_node", text=" Cryptomatte    ", icon = "CRYPTOMATTE")
-            props.use_transform = True
-            props.type = "CompositorNodeCryptomatteV2"
-
-            props = col.operator("node.add_node", text=" Cryptomatte (Legacy)", icon = "CRYPTOMATTE")
-            props.use_transform = True
-            props.type = "CompositorNodeCryptomatte"
-
-            props = col.operator("node.add_node", text=" Difference Key ", icon = "SELECT_DIFFERENCE")
-            props.use_transform = True
-            props.type = "CompositorNodeDiffMatte"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Distance Key   ", icon = "DRIVER_DISTANCE")
-            props.use_transform = True
-            props.type = "CompositorNodeDistanceMatte"
-
-            props = col.operator("node.add_node", text=" Double Edge Mask ", icon = "NODE_DOUBLEEDGEMASK")
-            props.use_transform = True
-            props.type = "CompositorNodeDoubleEdgeMask"
-
-            props = col.operator("node.add_node", text=" Ellipse Mask     ", icon = "NODE_ELLIPSEMASK")
-            props.use_transform = True
-            props.type = "CompositorNodeEllipseMask"
-
-            props = col.operator("node.add_node", text=" Keying              ", icon = "NODE_KEYING")
-            props.use_transform = True
-            props.type = "CompositorNodeKeying"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Keying Screen  ", icon = "NODE_KEYINGSCREEN")
-            props.use_transform = True
-            props.type = "CompositorNodeKeyingScreen"
-
-            props = col.operator("node.add_node", text=" Luminance Key ", icon = "NODE_LUMINANCE")
-            props.use_transform = True
-            props.type = "CompositorNodeLumaMatte"
-
-        #### Icon Buttons
-
-        else:
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_BOXMASK")
-            props.use_transform = True
-            props.type = "CompositorNodeBoxMask"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CHANNEL")
-            props.use_transform = True
-            props.type = "CompositorNodeChannelMatte"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CHROMA")
-            props.use_transform = True
-            props.type = "CompositorNodeChromaMatte"
-
-            props = flow.operator("node.add_node", text = "", icon = "COLOR")
-            props.use_transform = True
-            props.type = "CompositorNodeColorMatte"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_SPILL")
-            props.use_transform = True
-            props.type = "CompositorNodeColorSpill"
-
-            props = flow.operator("node.add_node", text="", icon = "CRYPTOMATTE")
-            props.use_transform = True
-            props.type = "CompositorNodeCryptomatte"
-
-            props = flow.operator("node.add_node", text="", icon = "CRYPTOMATTE")
-            props.use_transform = True
-            props.type = "CompositorNodeCryptomatteV2"
-
-            props = flow.operator("node.add_node", text = "", icon = "SELECT_DIFFERENCE")
-            props.use_transform = True
-            props.type = "CompositorNodeDiffMatte"
-
-            props = flow.operator("node.add_node", text = "", icon = "DRIVER_DISTANCE")
-            props.use_transform = True
-            props.type = "CompositorNodeDistanceMatte"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_DOUBLEEDGEMASK")
-            props.use_transform = True
-            props.type = "CompositorNodeDoubleEdgeMask"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_ELLIPSEMASK")
-            props.use_transform = True
-            props.type = "CompositorNodeEllipseMask"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_KEYING")
-            props.use_transform = True
-            props.type = "CompositorNodeKeying"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_KEYINGSCREEN")
-            props.use_transform = True
-            props.type = "CompositorNodeKeyingScreen"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_LUMINANCE")
-            props.use_transform = True
-            props.type = "CompositorNodeLumaMatte"
 
 
 #Modify nodes tab, distort panel. Just in texture mode
@@ -7208,6 +7250,8 @@ classes = (
     NODES_PT_comp_add_color_mix,
     NODES_PT_comp_add_filter,
     NODES_PT_comp_add_filter_blur,
+    NODES_PT_comp_add_keying,
+    NODES_PT_comp_add_mask,
     NODES_PT_Input_input_tex,
     NODES_PT_Input_textures_tex,
     NODES_PT_shader_add_shader,
@@ -7223,7 +7267,7 @@ classes = (
     NODES_PT_shader_add_vector,
     NODES_PT_shader_add_converter,
     NODES_PT_comp_add_vector,
-    NODES_PT_comp_add_matte,
+
     NODES_PT_Modify_distort_tex,
     NODES_PT_comp_add_distort,
 
