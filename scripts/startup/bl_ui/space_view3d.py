@@ -9490,10 +9490,13 @@ class VIEW3D_PT_gpencil_weight_context_menu(Panel):
         brush = settings.brush
 
         layout = self.layout
+        layout.prop(brush, "weight")
+        gp_settings = brush.gpencil_settings
+        layout.prop(gp_settings, "direction", expand=True, text="")
 
         layout.prop(brush, "size", slider=True)
         layout.prop(brush, "strength")
-        layout.prop(brush, "weight")
+
 
         # Layers
         draw_gpencil_layer_active(context, layout)
