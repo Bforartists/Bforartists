@@ -160,13 +160,11 @@ static void file_but_enable_drag(uiBut *but,
     const int import_method = ED_fileselect_asset_import_method_get(sfile, file);
     BLI_assert(import_method > -1);
 
-    /* BFA - needed to set #use_instance from UI before executing the drop operator */
-    bool drop_collections_as_instances = true;
-    if (ED_fileselect_is_asset_browser(sfile) && file->asset) {
-      const FileAssetSelectParams *params = ED_fileselect_get_asset_params(sfile);
-      drop_collections_as_instances = params->drop_collections_as_instances;
-    }
-    UI_but_drag_set_asset(but, file->asset, import_method, icon, preview_image, scale, drop_collections_as_instances);
+    BLI_assert(ED_fileselect_is_asset_browser(sfile) && file->asset);
+    const FileAssetSelectParams *params = ED_fileselect_get_asset_params(sfile);
+    bool drop_collections_as_instances = params->drop_collections_as_instances;
+    bool drop_collections_at_origin = params->drop_collections_at_origin;
+    UI_but_drag_set_asset(but, file->asset, import_method, icon, preview_image, scale, drop_collections_as_instances, drop_collections_at_origin);
   }
   else if (preview_image) {
     UI_but_drag_set_image(but, path, icon, preview_image, scale);

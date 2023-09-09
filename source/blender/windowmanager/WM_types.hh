@@ -1107,6 +1107,7 @@ struct wmDragAsset {
   int import_method; /* eAssetImportType */
   const AssetRepresentationHandle *asset;
   bool drop_collections_as_instances; /* BFA - needed for setting #use_instance from UI before executing the drop operator */
+  bool drop_collections_at_origin; /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled */
 };
 
 struct wmDragAssetCatalog {
