@@ -1816,7 +1816,8 @@ void UI_but_drag_set_asset(uiBut *but,
                            int icon,
                            const ImBuf *imb,
                            float scale,
-                           bool drop_collections_as_instances); /* BFA - needed for setting #use_instance from UI before executing the drop operator */
+                           bool drop_collections_as_instances, /* BFA - needed for setting #use_instance from UI before executing the drop operator */
+                           bool drop_collections_at_origin); /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled */
 
 void UI_but_drag_set_rna(uiBut *but, PointerRNA *ptr);
 /**
