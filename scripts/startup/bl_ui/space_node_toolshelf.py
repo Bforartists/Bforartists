@@ -461,7 +461,7 @@ class NODES_PT_shader_add_output(bpy.types.Panel):
                 props.type = "ShaderNodeOutputLineStyle"
 
 
-#add input panel
+#Compositor, Add tab, input panel
 class NODES_PT_comp_add_input(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
@@ -554,7 +554,7 @@ class NODES_PT_comp_add_input(bpy.types.Panel):
             props.type = "CompositorNodeValue"
 
 
-#add Input panel - Constant supbanel
+#Compositor, Add tab, Constant supbanel
 class NODES_PT_comp_add_input_constant(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Constant"
@@ -606,7 +606,7 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel):
             props.type = "CompositorNodeValue"
 
 
-#add Input panel - Scene supbanel
+#Compositor, Add tab, Scene supbanel
 class NODES_PT_comp_add_input_scene(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Scene"
@@ -665,6 +665,7 @@ class NODES_PT_comp_add_input_scene(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeTime"
 
+
 #Compositor, Add tab, Output Panel
 class NODES_PT_comp_add_output(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -714,11 +715,6 @@ class NODES_PT_comp_add_output(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeOutputFile"
 
-            # BFA - Utilities Panel
-            #props = col.operator("node.add_node", text=" Levels             ", icon = "LEVELS")
-            #props.use_transform = True
-            #props.type = "CompositorNodeLevels"
-
 
         #### Image Buttons
 
@@ -735,10 +731,6 @@ class NODES_PT_comp_add_output(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_FILEOUTPUT")
             props.use_transform = True
             props.type = "CompositorNodeOutputFile"
-
-            props = flow.operator("node.add_node", text = "", icon = "LEVELS")
-            props.use_transform = True
-            props.type = "CompositorNodeLevels"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_VIWERSPLIT")
             props.use_transform = True
@@ -841,14 +833,7 @@ class NODES_PT_comp_add_color(bpy.types.Panel):
             # BFA - wip
 
 
-
-
-
-
-
-
-
-#add Color panel - Adjust supbanel
+#Compositor, Add tab, Color, Adjust supbanel
 class NODES_PT_comp_add_color_adjust(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Adjust"
@@ -964,10 +949,7 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel):
             props.type = "CompositorNodeTonemap"
 
 
-
-
-
-#add Color panel - Mix supbanel
+#Compositor, Add tab, Color, Mix supbanel
 class NODES_PT_comp_add_color_mix(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Mix"
@@ -1186,7 +1168,7 @@ class NODES_PT_comp_add_filter(bpy.types.Panel):
             props.type = "CompositorNodeSunBeams"
 
 
-#add Filter panel - Blur supbanel
+#Compositor, Add tab, Filter, Blur supbanel
 class NODES_PT_comp_add_filter_blur(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Blur"
@@ -1271,7 +1253,6 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR_BLUR")
             props.use_transform = True
             props.type = "CompositorNodeVecBlur"
-
 
 
 #Compositor, Add tab, Keying Panel
@@ -1673,6 +1654,114 @@ class NODES_PT_comp_add_transform(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_MOVIEDISTORT")
             props.use_transform = True
             props.type = "CompositorNodeMovieDistortion"
+
+
+#Compositor, Add tab, Utility Panel
+class NODES_PT_comp_add_utility(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Utilities"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Map Range       ", icon="NODE_MAP_RANGE")
+            props.use_transform = True
+            props.type = "CompositorNodeMapRange"
+
+            props = col.operator("node.add_node", text=" Map Value       ", icon = "NODE_VALUE")
+            props.use_transform = True
+            props.type = "CompositorNodeMapValue"
+
+            props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
+            props.use_transform = True
+            props.type = "CompositorNodeMath"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Levels             ", icon = "LEVELS")
+            props.use_transform = True
+            props.type = "CompositorNodeLevels"
+
+            props = col.operator("node.add_node", text=" Normalize        ", icon = "NODE_NORMALIZE")
+            props.use_transform = True
+            props.type = "CompositorNodeNormalize"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            if context.space_data.tree_type == 'CompositorNodeTree':
+                col = layout.column(align=True)
+                col.scale_y = 1.5
+                props = col.operator("node.add_node", text=" Switch              ", icon = "SWITCH_DIRECTION")
+                props.use_transform = True
+                props.type = "CompositorNodeSwitch"
+
+            props = col.operator("node.add_node", text=" Switch View    ", icon = "VIEW_SWITCHACTIVECAM")
+            props.use_transform = True
+            props.type = "CompositorNodeSwitchView"
+
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_RANGE")
+            props.use_transform = True
+            props.type = "CompositorNodeMapRange"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
+            props.use_transform = True
+            props.type = "CompositorNodeMapValue"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
+            props.use_transform = True
+            props.type = "CompositorNodeMath"
+
+            props = flow.operator("node.add_node", text = "", icon = "LEVELS")
+            props.use_transform = True
+            props.type = "CompositorNodeLevels"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_NORMALIZE")
+            props.use_transform = True
+            props.type = "CompositorNodeNormalize"
+
+            if context.space_data.tree_type == 'CompositorNodeTree':
+                props = flow.operator("node.add_node", text="", icon = "SWITCH_DIRECTION")
+                props.use_transform = True
+                props.type = "CompositorNodeSwitch"
+
+            props = flow.operator("node.add_node", text = "", icon = "VIEW_SWITCHACTIVECAM")
+            props.use_transform = True
+            props.type = "CompositorNodeSwitchView"
+
+
 
 
 #Input nodes tab, textures common panel. Texture mode
@@ -2687,10 +2776,6 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeIDMask"
 
-            props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
-            props.use_transform = True
-            props.type = "CompositorNodeMath"
-
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -2701,9 +2786,7 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Switch View    ", icon = "VIEW_SWITCHACTIVECAM")
-            props.use_transform = True
-            props.type = "CompositorNodeSwitchView"
+
 
         #### Icon Buttons
 
@@ -2721,10 +2804,6 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeIDMask"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
-            props.use_transform = True
-            props.type = "CompositorNodeMath"
-
             props = flow.operator("node.add_node", text="", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeSeparateXYZ"
@@ -2732,12 +2811,6 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "IMAGE_ALPHA")
             props.use_transform = True
             props.type = "CompositorNodeSetAlpha"
-
-            props = flow.operator("node.add_node", text = "", icon = "VIEW_SWITCHACTIVECAM")
-            props.use_transform = True
-            props.type = "CompositorNodeSwitchView"
-
-
 
 
 #Modify nodes tab, converter panel. Just in texture mode
@@ -3144,21 +3217,15 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Map Range       ", icon="NODE_MAP_RANGE")
-            props.use_transform = True
-            props.type = "CompositorNodeMapRange"
 
-            props = col.operator("node.add_node", text=" Map Value       ", icon = "NODE_VALUE")
-            props.use_transform = True
-            props.type = "CompositorNodeMapValue"
+
+
 
             props = col.operator("node.add_node", text=" Normal            ", icon = "RECALC_NORMALS")
             props.use_transform = True
             props.type = "CompositorNodeNormal"
 
-            props = col.operator("node.add_node", text=" Normalize        ", icon = "NODE_NORMALIZE")
-            props.use_transform = True
-            props.type = "CompositorNodeNormalize"
+
 
             props = col.operator("node.add_node", text=" Vector Curves  ", icon = "NODE_VECTOR")
             props.use_transform = True
@@ -3172,21 +3239,14 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RANGE")
-            props.use_transform = True
-            props.type = "CompositorNodeMapRange"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
-            props.use_transform = True
-            props.type = "CompositorNodeMapValue"
+
+
 
             props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
             props.use_transform = True
             props.type = "CompositorNodeNormal"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_NORMALIZE")
-            props.use_transform = True
-            props.type = "CompositorNodeNormalize"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
@@ -3421,12 +3481,7 @@ class NODES_PT_Relations_layout(bpy.types.Panel):
             props.use_transform = True
             props.type = "NodeReroute"
 
-            if context.space_data.tree_type == 'CompositorNodeTree':
-                col = layout.column(align=True)
-                col.scale_y = 1.5
-                props = col.operator("node.add_node", text=" Switch              ", icon = "SWITCH_DIRECTION")
-                props.use_transform = True
-                props.type = "CompositorNodeSwitch"
+
 
         #### Icon Buttons
 
@@ -3444,10 +3499,7 @@ class NODES_PT_Relations_layout(bpy.types.Panel):
             props.use_transform = True
             props.type = "NodeReroute"
 
-            if context.space_data.tree_type == 'CompositorNodeTree':
-                props = flow.operator("node.add_node", text="", icon = "SWITCH_DIRECTION")
-                props.use_transform = True
-                props.type = "CompositorNodeSwitch"
+
 
 # ------------- Geometry Nodes Editor - Add tab -------------------------------
 
@@ -7251,7 +7303,7 @@ classes = (
     NODES_PT_comp_add_mask,
     NODES_PT_comp_add_tracking,
     NODES_PT_comp_add_transform,
-
+    NODES_PT_comp_add_utility,
     NODES_PT_Input_input_tex,
     NODES_PT_Input_textures_tex,
     NODES_PT_shader_add_shader,
