@@ -2755,6 +2755,10 @@ static int region_scale_invoke(bContext *C, wmOperator *op, const wmEvent *event
     {
       rmd->region = az->region->prev;
     }
+    /* Flag to always forward scaling to the previous region. */
+    else if (az->region->prev && (az->region->alignment & RGN_SPLIT_SCALE_PREV)) {
+      rmd->region = az->region->prev;
+    }
     else {
       rmd->region = az->region;
     }
@@ -4619,8 +4623,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /
 {
   ScrArea *area = CTX_wm_area(C);
   {
-    PointerRNA ptr;
-    RNA_pointer_create((ID *)CTX_wm_screen(C), &RNA_Space, area->spacedata.first, &ptr);
+    PointerRNA ptr = RNA_pointer_create((ID *)CTX_wm_screen(C), &RNA_Space, area->spacedata.first);
     if (!ELEM(area->spacetype, SPACE_TOPBAR)) {
       uiItemR(layout, &ptr, "show_region_header", UI_ITEM_NONE, IFACE_("Show Header"), ICON_NONE);
     }
@@ -4749,8 +4752,7 @@ void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void * /
   ScrArea *area = CTX_wm_area(C);
 
   {
-    PointerRNA ptr;
-    RNA_pointer_create((ID *)CTX_wm_screen(C), &RNA_Space, area->spacedata.first, &ptr);
+    PointerRNA ptr = RNA_pointer_create((ID *)CTX_wm_screen(C), &RNA_Space, area->spacedata.first);
     uiItemR(layout, &ptr, "show_region_footer", UI_ITEM_NONE, IFACE_("Show Footer"), ICON_NONE);
   }
 
@@ -4776,9 +4778,7 @@ void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void * /*
 
 static void ed_screens_statusbar_menu_create(uiLayout *layout, void * /*arg*/)
 {
-  PointerRNA ptr;
-
-  RNA_pointer_create(nullptr, &RNA_PreferencesView, &U, &ptr);
+  PointerRNA ptr = RNA_pointer_create(nullptr, &RNA_PreferencesView, &U);
   uiItemR(
       layout, &ptr, "show_statusbar_stats", UI_ITEM_NONE, IFACE_("Scene Statistics"), ICON_NONE);
   uiItemR(layout,
@@ -5524,8 +5524,7 @@ static int userpref_show_exec(bContext *C, wmOperator *op)
   if (prop && RNA_property_is_set(op->ptr, prop)) {
     /* Set active section via RNA, so it can fail properly. */
 
-    PointerRNA pref_ptr;
-    RNA_pointer_create(nullptr, &RNA_Preferences, &U, &pref_ptr);
+    PointerRNA pref_ptr = RNA_pointer_create(nullptr, &RNA_Preferences, &U);
     PropertyRNA *active_section_prop = RNA_struct_find_property(&pref_ptr, "active_section");
 
     RNA_property_enum_set(&pref_ptr, active_section_prop, RNA_property_enum_get(op->ptr, prop));
@@ -5958,9 +5957,8 @@ static int space_type_set_or_cycle_exec(bContext *C, wmOperator *op)
 {
   const int space_type = RNA_enum_get(op->ptr, "space_type");
 
-  PointerRNA ptr;
   ScrArea *area = CTX_wm_area(C);
-  RNA_pointer_create((ID *)CTX_wm_screen(C), &RNA_Area, area, &ptr);
+  PointerRNA ptr = RNA_pointer_create((ID *)CTX_wm_screen(C), &RNA_Area, area);
   PropertyRNA *prop_type = RNA_struct_find_property(&ptr, "type");
   PropertyRNA *prop_ui_type = RNA_struct_find_property(&ptr, "ui_type");
 
@@ -6041,11 +6039,11 @@ static void context_cycle_prop_get(bScreen *screen,
 
   switch (area->spacetype) {
     case SPACE_PROPERTIES:
-      RNA_pointer_create(&screen->id, &RNA_SpaceProperties, area->spacedata.first, r_ptr);
+      *r_ptr = RNA_pointer_create(&screen->id, &RNA_SpaceProperties, area->spacedata.first);
       propname = "context";
       break;
     case SPACE_USERPREF:
-      RNA_pointer_create(nullptr, &RNA_Preferences, &U, r_ptr);
+      *r_ptr = RNA_pointer_create(nullptr, &RNA_Preferences, &U);
       propname = "active_section";
       break;
     default:

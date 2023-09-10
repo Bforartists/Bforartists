@@ -19,8 +19,7 @@ class PHYSICS_PT_rigid_body_constraint(PHYSICS_PT_rigidbody_constraint_panel, Pa
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -44,8 +43,7 @@ class PHYSICS_PT_rigid_body_constraint_settings(PHYSICS_PT_rigidbody_constraint_
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -95,8 +93,7 @@ class PHYSICS_PT_rigid_body_constraint_objects(PHYSICS_PT_rigidbody_constraint_p
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -121,8 +118,7 @@ class PHYSICS_PT_rigid_body_constraint_override_iterations(PHYSICS_PT_rigidbody_
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -152,8 +148,7 @@ class PHYSICS_PT_rigid_body_constraint_limits(PHYSICS_PT_rigidbody_constraint_pa
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -174,8 +169,7 @@ class PHYSICS_PT_rigid_body_constraint_limits_linear(PHYSICS_PT_rigidbody_constr
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -248,8 +242,7 @@ class PHYSICS_PT_rigid_body_constraint_limits_angular(PHYSICS_PT_rigidbody_const
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -334,8 +327,7 @@ class PHYSICS_PT_rigid_body_constraint_motor(PHYSICS_PT_rigidbody_constraint_pan
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -356,8 +348,7 @@ class PHYSICS_PT_rigid_body_constraint_motor_angular(PHYSICS_PT_rigidbody_constr
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -397,8 +388,7 @@ class PHYSICS_PT_rigid_body_constraint_motor_linear(PHYSICS_PT_rigidbody_constra
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -438,8 +428,7 @@ class PHYSICS_PT_rigid_body_constraint_springs(PHYSICS_PT_rigidbody_constraint_p
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -467,8 +456,7 @@ class PHYSICS_PT_rigid_body_constraint_springs_angular(PHYSICS_PT_rigidbody_cons
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -529,8 +517,7 @@ class PHYSICS_PT_rigid_body_constraint_springs_linear(PHYSICS_PT_rigidbody_const
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):

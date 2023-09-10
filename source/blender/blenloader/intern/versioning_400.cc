@@ -34,6 +34,7 @@
 #include "BLI_string_ref.hh"
 
 #include "BKE_armature.h"
+#include "BKE_attribute.h"
 #include "BKE_effect.h"
 #include "BKE_grease_pencil.hh"
 #include "BKE_idprop.hh"
@@ -72,7 +73,7 @@ static void version_composite_nodetree_null_id(bNodeTree *ntree, Scene *scene)
   }
 }
 
-/* Move bonegroup color to the individual bones. */
+/* Move bone-group color to the individual bones. */
 static void version_bonegroup_migrate_color(Main *bmain)
 {
   using PoseSet = blender::Set<bPose *>;
@@ -87,11 +88,17 @@ static void version_bonegroup_migrate_color(Main *bmain)
     bArmature *arm = reinterpret_cast<bArmature *>(ob->data);
     BLI_assert_msg(GS(arm->id.name) == ID_AR,
                    "Expected ARMATURE object to have an Armature as data");
+
+    /* There is no guarantee that the current state of poses is in sync with the Armature data.
+     *
+     * NOTE: No need to handle user reference-counting in readfile code. */
+    BKE_pose_ensure(bmain, ob, arm, false);
+
     PoseSet &pose_set = armature_poses.lookup_or_add_default(arm);
     pose_set.add(ob->pose);
   }
 
-  /* Move colors from the pose's bonegroup to either the armature bones or the
+  /* Move colors from the pose's bone-group to either the armature bones or the
    * pose bones, depending on how many poses use the Armature. */
   for (const PoseSet &pose_set : armature_poses.values()) {
     /* If the Armature is shared, the bone group colors might be different, and thus they have to
@@ -120,12 +127,7 @@ static void version_bonelayers_to_bonecollections(Main *bmain)
   char bcoll_name[MAX_NAME];
   char custom_prop_name[MAX_NAME];
 
-  LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
-    if (ob->type != OB_ARMATURE || !ob->pose) {
-      continue;
-    }
-
-    bArmature *arm = reinterpret_cast<bArmature *>(ob->data);
+  LISTBASE_FOREACH (bArmature *, arm, &bmain->armatures) {
     IDProperty *arm_idprops = IDP_GetProperties(&arm->id, false);
 
     BLI_assert_msg(arm->edbo == nullptr, "did not expect an Armature to be saved in edit mode");
@@ -191,6 +193,21 @@ static void version_bonegroups_to_bonecollections(Main *bmain)
     /* Convert the bone groups on a bone-by-bone basis. */
     bArmature *arm = reinterpret_cast<bArmature *>(ob->data);
     bPose *pose = ob->pose;
+
+    blender::Map<const bActionGroup *, BoneCollection *> collections_by_group;
+    /* Convert all bone groups, regardless of whether they contain any bones. */
+    LISTBASE_FOREACH (bActionGroup *, bgrp, &pose->agroups) {
+      BoneCollection *bcoll = ANIM_armature_bonecoll_new(arm, bgrp->name);
+      collections_by_group.add_new(bgrp, bcoll);
+
+      /* Before now, bone visibility was determined by armature layers, and bone
+       * groups did not have any impact on this. To retain the behavior, that
+       * hiding all layers a bone is on hides the bone, the
+       * bone-group-collections should be created hidden. */
+      ANIM_bonecoll_hide(bcoll);
+    }
+
+    /* Assign the bones to their bone group based collection. */
     LISTBASE_FOREACH (bPoseChannel *, pchan, &pose->chanbase) {
       /* Find the bone group of this pose channel. */
       const bActionGroup *bgrp = (const bActionGroup *)BLI_findlink(&pose->agroups,
@@ -199,15 +216,8 @@ static void version_bonegroups_to_bonecollections(Main *bmain)
         continue;
       }
 
-      /* Get or create the bone collection. */
-      BoneCollection *bcoll = ANIM_armature_bonecoll_get_by_name(arm, bgrp->name);
-      if (!bcoll) {
-        bcoll = ANIM_armature_bonecoll_new(arm, bgrp->name);
-
-        ANIM_bonecoll_hide(bcoll);
-      }
-
       /* Assign the bone. */
+      BoneCollection *bcoll = collections_by_group.lookup(bgrp);
       ANIM_armature_bonecoll_assign(bcoll, pchan->bone);
     }
 
@@ -974,6 +984,11 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
         scene->eevee.gi_irradiance_pool_size = 16;
       }
     }
+
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      scene->toolsettings->snap_flag_anim |= SCE_SNAP;
+      scene->toolsettings->snap_anim_mode |= SCE_SNAP_TO_FRAME;
+    }
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 20)) {
@@ -991,13 +1006,21 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     /* Legacy node tree sockets are created for forward compatibility,
      * but have to be freed after loading and versioning. */
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
-      /* Clear legacy sockets after conversion.
-       * Internal data pointers have been moved or freed already. */
       LISTBASE_FOREACH_MUTABLE (bNodeSocket *, legacy_socket, &ntree->inputs_legacy) {
+        MEM_SAFE_FREE(legacy_socket->default_attribute_name);
+        MEM_SAFE_FREE(legacy_socket->default_value);
+        if (legacy_socket->prop) {
+          IDP_FreeProperty(legacy_socket->prop);
+        }
         MEM_delete(legacy_socket->runtime);
         MEM_freeN(legacy_socket);
       }
       LISTBASE_FOREACH_MUTABLE (bNodeSocket *, legacy_socket, &ntree->outputs_legacy) {
+        MEM_SAFE_FREE(legacy_socket->default_attribute_name);
+        MEM_SAFE_FREE(legacy_socket->default_value);
+        if (legacy_socket->prop) {
+          IDP_FreeProperty(legacy_socket->prop);
+        }
         MEM_delete(legacy_socket->runtime);
         MEM_freeN(legacy_socket);
       }
@@ -1013,6 +1036,18 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       ntree->tree_interface.root_panel.flag |= NODE_INTERFACE_PANEL_ALLOW_CHILD_PANELS;
     }
     FOREACH_NODETREE_END;
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 23)) {
+    LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
+      if (ntree->type == NTREE_GEOMETRY) {
+        LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+          if (node->type == GEO_NODE_SET_SHADE_SMOOTH) {
+            node->custom1 = ATTR_DOMAIN_FACE;
+          }
+        }
+      }
+    }
   }
 
   /**
