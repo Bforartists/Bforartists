@@ -93,7 +93,14 @@ class GRAPH_HT_header(Header):
 
         layout.popover(panel="GRAPH_PT_filters", text="", icon='FILTER')
 
-        layout.prop(st, "auto_snap", text="")
+        row = layout.row(align=True)
+        row.prop(tool_settings, "use_snap_anim", text="")
+        sub = row.row(align=True)
+        sub.popover(
+            panel="GRAPH_PT_snapping",
+            icon='NONE',
+            text="Modes",
+        )
 
         row = layout.row(align=True)
         row.prop(tool_settings, "use_proportional_fcurve", text="", icon_only=True)
@@ -201,6 +208,21 @@ class GRAPH_PT_properties_view_options(Panel):
             col.prop(st, "show_markers")
         if context.space_data.mode != 'DRIVERS':
             col.prop(tool_settings, "lock_markers")
+
+
+class GRAPH_PT_snapping(Panel):
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Snapping"
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+        col.label(text="Snap To")
+        tool_settings = context.tool_settings
+        col.prop(tool_settings, "snap_anim_element", expand=True)
+        if tool_settings.snap_anim_element not in ('MARKER', ):
+            col.prop(tool_settings, "use_snap_time_absolute")
 
 
 class GRAPH_MT_editor_menus(Menu):
@@ -370,8 +392,8 @@ class GRAPH_MT_channel(Menu):
 
         layout.separator()
 
-        layout.operator("graph.bake", icon="BAKE_CURVE")
-        layout.operator("graph.unbake", icon="CLEAR")
+        layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
+        layout.operator("graph.samples_to_keys", icon="CLEAR")
 
         layout.separator()
 
@@ -447,7 +469,7 @@ class GRAPH_MT_channel_move(Menu):
         layout.operator("anim.channels_move", text="To Bottom", icon="MOVE_TO_BOTTOM").direction = 'BOTTOM'
 
         layout.separator()
-        layout.operator("anim.channels_view_selected", icon = "VIEW_SELECTED")
+        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
 
 
 class GRAPH_MT_key_density(Menu):
@@ -475,12 +497,13 @@ class GRAPH_MT_key_blending(Menu):
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("graph.breakdown", text="Breakdown", icon='BREAKDOWNER_POSE')
         layout.operator("graph.blend_to_neighbor", text="Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
-        layout.operator("graph.blend_to_default", text="Blend to Default Value", icon = 'BLEND_TO_DEFAULT')
-        layout.operator("graph.ease", text="Ease", icon = 'IPO_EASE_IN_OUT')
-        layout.operator("graph.blend_to_ease", text="Blend to Ease", icon = 'BLEND_TO_EASE')
-        layout.operator("graph.blend_offset", text="Blend Offset", icon = 'BLEND_OFFSET')
+        layout.operator("graph.blend_to_default", text="Blend to Default Value", icon='BLEND_TO_DEFAULT')
+        layout.operator("graph.ease", text="Ease", icon='IPO_EASE_IN_OUT')
+        layout.operator("graph.blend_to_ease", text="Blend to Ease", icon='BLEND_TO_EASE')
+        layout.operator("graph.blend_offset", text="Blend Offset", icon='BLEND_OFFSET')
         layout.operator("graph.match_slope", text="Match Slope")
         layout.operator("graph.shear", text="Shear Keys")
+        layout.operator("graph.scale_average", text="Scale Average")
 
 
 class GRAPH_MT_key_smoothing(Menu):
@@ -489,9 +512,9 @@ class GRAPH_MT_key_smoothing(Menu):
     def draw(self, _context):
         layout = self.layout
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("graph.gaussian_smooth", text="Smooth (Gaussian)", icon = 'PARTICLEBRUSH_SMOOTH')
-        layout.operator("graph.smooth", text="Smooth (Legacy)", icon = 'PARTICLEBRUSH_SMOOTH')
-        layout.operator("graph.butterworth_smooth", icon = 'PARTICLEBRUSH_SMOOTH')
+        layout.operator("graph.gaussian_smooth", text="Smooth (Gaussian)", icon='PARTICLEBRUSH_SMOOTH')
+        layout.operator("graph.smooth", text="Smooth (Legacy)", icon='PARTICLEBRUSH_SMOOTH')
+        layout.operator("graph.butterworth_smooth", icon='PARTICLEBRUSH_SMOOTH')
 
 
 class GRAPH_MT_key(Menu):
@@ -512,7 +535,7 @@ class GRAPH_MT_key(Menu):
 
         layout.separator()
 
-        layout.operator("graph.frame_jump", text= "Jump to Selected", icon="CENTER")
+        layout.operator("graph.frame_jump", text="Jump to Selected", icon="CENTER")
 
         layout.separator()
 
@@ -538,7 +561,7 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.smooth", icon="SMOOTH_KEYFRAMES")
         layout.operator("graph.sample", icon="SAMPLE_KEYFRAMES")
 
-        #layout.separator()
+        # layout.separator()
 
         # layout.menu("GRAPH_MT_key_density") # bfa we already have this
         # So hide it from here. But keep the classes for the Blender hotkeys ...
@@ -586,21 +609,20 @@ class GRAPH_MT_slider(Menu):
     def draw(self, _context):
         layout = self.layout
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("graph.breakdown", text = "Breakdown", icon='BREAKDOWNER_POSE')
-        layout.operator("graph.blend_to_neighbor", text = "Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
-        layout.operator("graph.blend_to_default", text = "Blend to Default Value", icon = 'BLEND_TO_DEFAULT')
-        layout.operator("graph.ease", text="Ease", icon = 'IPO_EASE_IN_OUT')
-        layout.operator("graph.blend_to_ease", text="Blend to Ease", icon = 'BLEND_TO_EASE')
-        layout.operator("graph.blend_offset", text="Blend Offset", icon = 'BLEND_OFFSET')
-        layout.operator("graph.match_slope", text="Match Slope", icon = 'SET_CURVE_TILT')
-        layout.operator("graph.shear", text="Shear", icon = 'SHEAR')
-
+        layout.operator("graph.breakdown", text="Breakdown", icon='BREAKDOWNER_POSE')
+        layout.operator("graph.blend_to_neighbor", text="Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
+        layout.operator("graph.blend_to_default", text="Blend to Default Value", icon='BLEND_TO_DEFAULT')
+        layout.operator("graph.ease", text="Ease", icon='IPO_EASE_IN_OUT')
+        layout.operator("graph.blend_to_ease", text="Blend to Ease", icon='BLEND_TO_EASE')
+        layout.operator("graph.blend_offset", text="Blend Offset", icon='BLEND_OFFSET')
+        layout.operator("graph.match_slope", text="Match Slope", icon='SET_CURVE_TILT')
+        layout.operator("graph.shear", text="Shear", icon='SHEAR')
 
         layout.separator()
 
-        layout.operator("graph.gaussian_smooth", text="Smooth (Gaussian)", icon = 'PARTICLEBRUSH_SMOOTH')
-        layout.operator("graph.smooth", text="Smooth (Legacy)", icon = 'PARTICLEBRUSH_SMOOTH')
-        layout.operator("graph.butterworth_smooth", icon = 'PARTICLEBRUSH_SMOOTH')
+        layout.operator("graph.gaussian_smooth", text="Smooth (Gaussian)", icon='PARTICLEBRUSH_SMOOTH')
+        layout.operator("graph.smooth", text="Smooth (Legacy)", icon='PARTICLEBRUSH_SMOOTH')
+        layout.operator("graph.butterworth_smooth", icon='PARTICLEBRUSH_SMOOTH')
 
 
 class GRAPH_MT_key_transform(Menu):
@@ -777,6 +799,7 @@ classes = (
     GRAPH_MT_view_pie,
     GRAPH_PT_filters,
     GRAPH_MT_slider,
+    GRAPH_PT_snapping,
 )
 
 if __name__ == "__main__":  # only for live edit.

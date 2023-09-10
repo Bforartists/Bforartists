@@ -850,13 +850,20 @@ class SEQUENCER_MT_add_effect(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         col = layout.column()
-        col.operator("sequencer.effect_strip_add", text="Add", icon='SEQ_ADD').type = 'ADD'
-        col.operator("sequencer.effect_strip_add", text="Subtract", icon='NODE_INVERT').type = 'SUBTRACT'
-        col.operator("sequencer.effect_strip_add", text="Multiply", icon='SEQ_MULTIPLY').type = 'MULTIPLY'
-        col.operator("sequencer.effect_strip_add", text="Over Drop", icon='SEQ_ALPHA_OVER').type = 'OVER_DROP'
-        col.operator("sequencer.effect_strip_add", text="Alpha Over", icon='IMAGE_ALPHA').type = 'ALPHA_OVER'
-        col.operator("sequencer.effect_strip_add", text="Alpha Under", icon='NODE_HOLDOUTSHADER').type = 'ALPHA_UNDER'
-        col.operator("sequencer.effect_strip_add", text="Color Mix", icon='NODE_MIXRGB').type = 'COLORMIX'
+        col.operator("sequencer.effect_strip_add", text="Add",
+                     text_ctxt=i18n_contexts.id_sequence, icon='SEQ_ADD').type = 'ADD'
+        col.operator("sequencer.effect_strip_add", text="Subtract",
+                     text_ctxt=i18n_contexts.id_sequence, icon='NODE_INVERT').type = 'SUBTRACT'
+        col.operator("sequencer.effect_strip_add", text="Multiply",
+                     text_ctxt=i18n_contexts.id_sequence, icon='SEQ_MULTIPLY').type = 'MULTIPLY'
+        col.operator("sequencer.effect_strip_add", text="Over Drop",
+                     text_ctxt=i18n_contexts.id_sequence, icon='SEQ_ALPHA_OVER').type = 'OVER_DROP'
+        col.operator("sequencer.effect_strip_add", text="Alpha Over",
+                     text_ctxt=i18n_contexts.id_sequence, icon='IMAGE_ALPHA').type = 'ALPHA_OVER'
+        col.operator("sequencer.effect_strip_add", text="Alpha Under",
+                     text_ctxt=i18n_contexts.id_sequence, icon='NODE_HOLDOUTSHADER').type = 'ALPHA_UNDER'
+        col.operator("sequencer.effect_strip_add", text="Color Mix",
+                     text_ctxt=i18n_contexts.id_sequence, icon='NODE_MIXRGB').type = 'COLORMIX'
         col.enabled = selected_sequences_len(context) >= 2
 
         layout.separator()
@@ -1013,11 +1020,7 @@ class SEQUENCER_MT_strip(Menu):
             if strip:
                 strip_type = strip.type
                 layout.separator()
-
-                if strip_type != 'SOUND':
-                    layout.operator_menu_enum("sequencer.strip_video_modifier_add", "type", text="Add Video Strip Modifier")
-                else:
-                    layout.operator_menu_enum("sequencer.strip_sound_modifier_add", "type", text="Add Audio Strip Modifier")
+                layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Modifier")
                 layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='COPYDOWN')
 
                 if strip_type in {
@@ -1165,18 +1168,16 @@ class SEQUENCER_MT_context_menu(Menu):
             strip_type = strip.type
             selected_sequences_count = selected_sequences_len(context)
 
+            layout.separator()
+            layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Modifier")
+            layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection")
+
             if strip_type != 'SOUND':
-                layout.separator()
-                layout.operator_menu_enum("sequencer.strip_video_modifier_add", "type", text="Add Video Strip Modifier")
-                layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='COPYDOWN')
                 if selected_sequences_count >= 2:
                     layout.separator()
                     col = layout.column()
                     col.menu("SEQUENCER_MT_add_transitions", text="Add Transition")
             else:
-                layout.separator()
-                layout.operator_menu_enum("sequencer.strip_sound_modifier_add", "type", text="Add Audio Strip Modifier")
-                layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='COPYDOWN')
                 if selected_sequences_count >= 2:
                     layout.separator()
                     layout.operator("sequencer.crossfade_sounds", text="Crossfade Sounds", icon='SPEAKER')
@@ -1971,12 +1972,6 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
         split.alignment = 'RIGHT'
         split.label(text="Channel")
         split.prop(strip, "channel", text="")
-
-        if strip.type == 'SOUND':
-            split = layout.split(factor=0.5 + max_factor)
-            split.alignment = 'RIGHT'
-            split.label(text="Speed Factor")
-            split.prop(strip, "speed_factor", text="")
 
         sub = layout.column(align=True)
         split = sub.split(factor=0.5 + max_factor, align=True)

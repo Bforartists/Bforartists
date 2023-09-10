@@ -109,6 +109,7 @@ void Instance::init_light_bake(Depsgraph *depsgraph, draw::Manager *manager)
   /* Irradiance Cache needs reflection probes to be initialized. */
   reflection_probes.init();
   irradiance_cache.init();
+  volume.init();
 }
 
 void Instance::set_time(float time)
@@ -279,6 +280,8 @@ void Instance::end_sync()
   light_probes.end_sync();
   reflection_probes.end_sync();
   volume.end_sync();
+
+  global_ubo_.push_update();
 }
 
 void Instance::render_sync()
