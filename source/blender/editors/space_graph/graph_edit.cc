@@ -895,13 +895,13 @@ void GRAPH_OT_clean(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Bake F-Curve Operator
+/** \name Keys to Samples Operator
  *
  * This operator bakes the data of the selected F-Curves to F-Points.
  * \{ */
 
 /* Bake each F-Curve into a set of samples. */
-static void bake_graph_curves(bAnimContext *ac, int start, int end)
+static void convert_keys_to_samples(bAnimContext *ac, int start, int end)
 {
   ListBase anim_data = {nullptr, nullptr};
   int filter;
@@ -935,7 +935,7 @@ static void bake_graph_curves(bAnimContext *ac, int start, int end)
 
 /* ------------------- */
 
-static int graphkeys_bake_exec(bContext *C, wmOperator * /*op*/)
+static int graphkeys_keys_to_samples_exec(bContext *C, wmOperator * /*op*/)
 {
   bAnimContext ac;
   Scene *scene = nullptr;
@@ -952,8 +952,8 @@ static int graphkeys_bake_exec(bContext *C, wmOperator * /*op*/)
   start = PSFRA;
   end = PEFRA;
 
-  /* Bake keyframes. */
-  bake_graph_curves(&ac, start, end);
+  /* Sample keyframes. */
+  convert_keys_to_samples(&ac, start, end);
 
   /* Set notifier that keyframes have changed. */
   /* NOTE: some distinction between order/number of keyframes and type should be made? */
@@ -962,16 +962,17 @@ static int graphkeys_bake_exec(bContext *C, wmOperator * /*op*/)
   return OPERATOR_FINISHED;
 }
 
-void GRAPH_OT_bake(wmOperatorType *ot)
+void GRAPH_OT_keys_to_samples(wmOperatorType *ot)
 {
   /* Identifiers */
-  ot->name = "Bake Curve";
-  ot->idname = "GRAPH_OT_bake";
-  ot->description = "Bake selected F-Curves to a set of sampled points defining a similar curve";
+  ot->name = "Keys to Samples";
+  ot->idname = "GRAPH_OT_keys_to_samples";
+  ot->description =
+      "Convert selected channels to an uneditable set of samples to save storage space";
 
   /* API callbacks */
   ot->invoke = WM_operator_confirm_or_exec;
-  ot->exec = graphkeys_bake_exec;
+  ot->exec = graphkeys_keys_to_samples_exec;
   ot->poll = graphop_selected_fcurve_poll;
 
   /* Flags */
@@ -984,13 +985,13 @@ void GRAPH_OT_bake(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Un-Bake F-Curve Operator
+/** \name Samples to Keys Operator
  *
- * This operator un-bakes the data of the selected F-Points to F-Curves.
+ * This operator converts the data of the selected F-Points to F-Curves.
  * \{ */
 
-/* Un-Bake F-Points into F-Curves. */
-static void unbake_graph_curves(bAnimContext *ac, int start, int end)
+/* Convert F-Points into F-Curves. */
+static void convert_samples_to_keys(bAnimContext *ac, int start, int end)
 {
   ListBase anim_data = {nullptr, nullptr};
 
@@ -1015,7 +1016,7 @@ static void unbake_graph_curves(bAnimContext *ac, int start, int end)
 
 /* ------------------- */
 
-static int graphkeys_unbake_exec(bContext *C, wmOperator * /*op*/)
+static int graphkeys_samples_to_keys_exec(bContext *C, wmOperator * /*op*/)
 {
   bAnimContext ac;
   Scene *scene = nullptr;
@@ -1030,8 +1031,7 @@ static int graphkeys_unbake_exec(bContext *C, wmOperator * /*op*/)
   start = PSFRA;
   end = PEFRA;
 
-  /* Unbake keyframes. */
-  unbake_graph_curves(&ac, start, end);
+  convert_samples_to_keys(&ac, start, end);
 
   /* Set notifier that keyframes have changed. */
   /* NOTE: some distinction between order/number of keyframes and type should be made? */
@@ -1040,15 +1040,15 @@ static int graphkeys_unbake_exec(bContext *C, wmOperator * /*op*/)
   return OPERATOR_FINISHED;
 }
 
-void GRAPH_OT_unbake(wmOperatorType *ot)
+void GRAPH_OT_samples_to_keys(wmOperatorType *ot)
 {
   /* Identifiers */
-  ot->name = "Un-Bake Curve";
-  ot->idname = "GRAPH_OT_unbake";
-  ot->description = "Un-Bake selected F-Points to F-Curves";
+  ot->name = "Samples to Keys";
+  ot->idname = "GRAPH_OT_samples_to_keys";
+  ot->description = "Convert selected channels from samples to keyframes";
 
   /* API callbacks */
-  ot->exec = graphkeys_unbake_exec;
+  ot->exec = graphkeys_samples_to_keys_exec;
   ot->poll = graphop_selected_fcurve_poll;
 
   /* Flags */
@@ -1060,9 +1060,9 @@ void GRAPH_OT_unbake(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Sound Bake F-Curve Operator
+/** \name Sound to Samples Operator
  *
- * This operator bakes the given sound to the selected F-Curves.
+ * This operator converts the given sound to samples on the selected F-Curves.
  * \{ */
 
 /* ------------------- */
@@ -1095,7 +1095,7 @@ static float fcurve_samplingcb_sound(FCurve * /*fcu*/, void *data, float evaltim
 
 /* ------------------- */
 
-static int graphkeys_sound_bake_exec(bContext *C, wmOperator *op)
+static int graphkeys_sound_to_samples_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   ListBase anim_data = {nullptr, nullptr};
@@ -1176,7 +1176,7 @@ static int graphkeys_sound_bake_exec(bContext *C, wmOperator *op)
 
 #else /* WITH_AUDASPACE */
 
-static int graphkeys_sound_bake_exec(bContext * /*C*/, wmOperator *op)
+static int graphkeys_sound_to_samples_exec(bContext * /*C*/, wmOperator *op)
 {
   BKE_report(op->reports, RPT_ERROR, "Compiled without sound support");
 
@@ -1185,7 +1185,7 @@ static int graphkeys_sound_bake_exec(bContext * /*C*/, wmOperator *op)
 
 #endif /* WITH_AUDASPACE */
 
-static int graphkeys_sound_bake_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static int graphkeys_sound_to_samples_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   bAnimContext ac;
 
@@ -1197,16 +1197,16 @@ static int graphkeys_sound_bake_invoke(bContext *C, wmOperator *op, const wmEven
   return WM_operator_filesel(C, op, event);
 }
 
-void GRAPH_OT_sound_bake(wmOperatorType *ot)
+void GRAPH_OT_sound_to_samples(wmOperatorType *ot)
 {
   /* Identifiers */
-  ot->name = "Bake Sound to F-Curves";
-  ot->idname = "GRAPH_OT_sound_bake";
-  ot->description = "Bakes a sound wave to selected F-Curves";
+  ot->name = "Sound to Samples";
+  ot->idname = "GRAPH_OT_sound_to_samples";
+  ot->description = "Bakes a sound wave to samples on selected channels";
 
   /* API callbacks */
-  ot->invoke = graphkeys_sound_bake_invoke;
-  ot->exec = graphkeys_sound_bake_exec;
+  ot->invoke = graphkeys_sound_to_samples_invoke;
+  ot->exec = graphkeys_sound_to_samples_exec;
   ot->poll = graphop_selected_fcurve_poll;
 
   /* Flags */

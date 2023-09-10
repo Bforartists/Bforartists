@@ -36,7 +36,7 @@ void TreeElementIDArmature::expand(SpaceOutliner &space_outliner) const
     expand_edit_bones();
   }
   else {
-    /* do not extend Armature when we have posemode */
+    /* Do not extend Armature when we have pose-mode. */
     TreeStoreElem *tselem = TREESTORE(legacy_te_.parent);
     if (TSE_IS_REAL_ID(tselem) && GS(tselem->id->name) == ID_OB &&
         ((Object *)tselem->id)->mode & OB_MODE_POSE)
@@ -54,7 +54,7 @@ void TreeElementIDArmature::expand_edit_bones() const
   int a = 0;
   LISTBASE_FOREACH_INDEX (EditBone *, ebone, arm_.edbo, a) {
     TreeElement *ten = add_element(
-        &legacy_te_.subtree, &arm_.id, &ebone, &legacy_te_, TSE_EBONE, a);
+        &legacy_te_.subtree, &arm_.id, ebone, &legacy_te_, TSE_EBONE, a);
     ebone->temp.p = ten;
   }
   /* make hierarchy */

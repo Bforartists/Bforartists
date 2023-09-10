@@ -9,12 +9,13 @@ from ....io.exp.gltf2_io_user_extensions import export_user_extensions
 from ....io.com import gltf2_io
 from ..gltf2_blender_gather_cache import cached
 from ..gltf2_blender_gather_sampler import gather_sampler
-from . import gltf2_blender_search_node_tree
+from ..gltf2_blender_get import get_tex_from_socket
 from . import gltf2_blender_gather_image
 
 @cached
 def gather_texture(
         blender_shader_sockets: typing.Tuple[bpy.types.NodeSocket],
+        default_sockets: typing.Tuple[bpy.types.NodeSocket],
         export_settings):
     """
     Gather texture sampling information and image channels from a blender shader texture attached to a shader socket.
@@ -27,7 +28,7 @@ def gather_texture(
     if not __filter_texture(blender_shader_sockets, export_settings):
         return None, None
 
-    source, factor = __gather_source(blender_shader_sockets, export_settings)
+    source, factor = __gather_source(blender_shader_sockets, default_sockets, export_settings)
 
     texture = gltf2_io.Texture(
         extensions=__gather_extensions(blender_shader_sockets, export_settings),
@@ -67,7 +68,7 @@ def __gather_name(blender_shader_sockets, export_settings):
 
 
 def __gather_sampler(blender_shader_sockets, export_settings):
-    shader_nodes = [__get_tex_from_socket(socket) for socket in blender_shader_sockets]
+    shader_nodes = [get_tex_from_socket(socket) for socket in blender_shader_sockets]
     if len(shader_nodes) > 1:
         gltf2_io_debug.print_console("WARNING",
                                      "More than one shader node tex image used for a texture. "
@@ -78,16 +79,5 @@ def __gather_sampler(blender_shader_sockets, export_settings):
         export_settings)
 
 
-def __gather_source(blender_shader_sockets, export_settings):
-    return gltf2_blender_gather_image.gather_image(blender_shader_sockets, export_settings)
-
-# Helpers
-
-# TODOExt deduplicate
-def __get_tex_from_socket(socket):
-    result = gltf2_blender_search_node_tree.from_socket(
-        socket,
-        gltf2_blender_search_node_tree.FilterByType(bpy.types.ShaderNodeTexImage))
-    if not result:
-        return None
-    return result[0]
+def __gather_source(blender_shader_sockets, default_sockets, export_settings):
+    return gltf2_blender_gather_image.gather_image(blender_shader_sockets, default_sockets, export_settings)

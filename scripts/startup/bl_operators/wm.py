@@ -2273,7 +2273,7 @@ class WM_OT_owner_disable(Operator):
 
 
 class WM_OT_tool_set_by_id(Operator):
-    """Set the tool by name (for keymaps)"""
+    """Set the tool by name (for key-maps)"""
     bl_idname = "wm.tool_set_by_id"
     bl_label = "Set Tool by Name"
 
@@ -2319,7 +2319,7 @@ class WM_OT_tool_set_by_id(Operator):
 
 
 class WM_OT_tool_set_by_index(Operator):
-    """Set the tool by index (for keymaps)"""
+    """Set the tool by index (for key-maps)"""
     bl_idname = "wm.tool_set_by_index"
     bl_label = "Set Tool by Index"
     index: IntProperty(
@@ -2798,7 +2798,7 @@ class WM_OT_batch_rename(Operator):
             'ARMATURE': ("armatures", iface_("Armature(s)"), bpy.types.Armature),
             'LATTICE': ("lattices", iface_("Lattice(s)"), bpy.types.Lattice),
             'LIGHT': ("lights", iface_("Light(s)"), bpy.types.Light),
-            'LIGHT_PROBE': ("light_probes", iface_("Light Probe(s)"), bpy.types.LightProbe),
+            'LIGHT_PROBE': ("lightprobes", iface_("Light Probe(s)"), bpy.types.LightProbe),
             'CAMERA': ("cameras", iface_("Camera(s)"), bpy.types.Camera),
             'SPEAKER': ("speakers", iface_("Speaker(s)"), bpy.types.Speaker),
         }
@@ -3450,6 +3450,9 @@ class WM_MT_region_toggle_pie(Menu):
 
         # Use to access the labels.
         enum_items = bpy.types.Region.bl_rna.properties["type"].enum_items_static_ui
+
+        # Remove empty items.
+        items[:] = [item for item in items if item != []]
 
         for region_type_list in (items + items_overflow):
             if not region_type_list:
