@@ -275,7 +275,6 @@ bool BKE_pbvh_bmesh_node_raycast_detail(PBVHNode *node,
  * projecting the far clipping plane into the local object space.  This works out to
  * dividing view3d->clip_end by the object scale, which for small object and large
  * clip_end's can easily lead to floating-point overflows.
- *
  */
 void BKE_pbvh_clip_ray_ortho(
     PBVH *pbvh, bool original, float ray_start[3], float ray_end[3], float ray_normal[3]);
@@ -462,7 +461,6 @@ void BKE_pbvh_face_sets_color_set(PBVH *pbvh, int seed, int color_default);
 
 /* Vertex Deformer. */
 
-float (*BKE_pbvh_vert_coords_alloc(PBVH *pbvh))[3];
 void BKE_pbvh_vert_coords_apply(PBVH *pbvh, const float (*vertCos)[3], int totvert);
 bool BKE_pbvh_is_deformed(PBVH *pbvh);
 
