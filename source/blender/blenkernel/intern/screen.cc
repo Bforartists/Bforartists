@@ -41,12 +41,12 @@
 #include "BLT_translation.h"
 
 #include "BKE_gpencil_legacy.h"
-#include "BKE_icons.h"
 #include "BKE_idprop.h"
 #include "BKE_idtype.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
 #include "BKE_node.h"
+#include "BKE_preview_image.hh"
 #include "BKE_screen.h"
 #include "BKE_viewer_path.h"
 #include "BKE_workspace.h"
@@ -60,6 +60,10 @@
 #ifdef WITH_PYTHON
 #  include "BPY_extern.h"
 #endif
+
+/* -------------------------------------------------------------------- */
+/** \name ID Type Implementation
+ * \{ */
 
 static void screen_free_data(ID *id)
 {
@@ -189,7 +193,11 @@ IDTypeInfo IDType_ID_SCR = {
     /*lib_override_apply_post*/ nullptr,
 };
 
-/* ************ Space-type/region-type handling ************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Space-type/region-type handling
+ * \{ */
 
 /** Keep global; this has to be accessible outside of window-manager. */
 static ListBase spacetypes = {nullptr, nullptr};
@@ -277,7 +285,11 @@ bool BKE_spacetype_exists(int spaceid)
   return BKE_spacetype_from_id(spaceid) != nullptr;
 }
 
-/* ***************** Space handling ********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Space handling
+ * \{ */
 
 void BKE_spacedata_freelist(ListBase *lb)
 {
@@ -570,7 +582,11 @@ void BKE_screen_free_data(bScreen *screen)
   screen_free_data(&screen->id);
 }
 
-/* ***************** Screen edges & verts ***************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Screen edges & verts
+ * \{ */
 
 ScrEdge *BKE_screen_find_edge(const bScreen *screen, ScrVert *v1, ScrVert *v2)
 {
@@ -725,7 +741,11 @@ void BKE_screen_remove_unused_scrverts(bScreen *screen)
   }
 }
 
-/* ***************** Utilities ********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Utilities
+ * \{ */
 
 ARegion *BKE_region_find_in_listbase_by_type(const ListBase *regionbase, const int region_type)
 {
@@ -944,6 +964,12 @@ void BKE_screen_header_alignment_reset(bScreen *screen)
   }
   screen->do_refresh = true;
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Blend File IO (Screen & Related Data)
+ * \{ */
 
 void BKE_screen_view3d_shading_blend_write(BlendWriter *writer, View3DShading *shading)
 {

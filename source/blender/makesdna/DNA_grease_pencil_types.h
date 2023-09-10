@@ -44,10 +44,6 @@ typedef struct GreasePencilLayerRuntimeHandle GreasePencilLayerRuntimeHandle;
 typedef struct GreasePencilLayerGroupRuntimeHandle GreasePencilLayerGroupRuntimeHandle;
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 struct GreasePencil;
 struct BlendDataReader;
 struct BlendWriter;
@@ -506,12 +502,11 @@ typedef struct GreasePencil {
   /**
    * Move a set of frames in a \a layer.
    *
-   * \param frame_number_destinations describes all transformations that should be applied on the
+   * \param frame_number_destinations: describes all transformations that should be applied on the
    * frame keys.
    *
    * If a transformation overlaps another frames, the frame will be overwritten, and the
    * corresponding drawing may be removed, if it no longer has users.
-   *
    */
   void move_frames(blender::bke::greasepencil::Layer &layer,
                    const blender::Map<int, int> &frame_number_destinations);
@@ -539,7 +534,3 @@ typedef struct GreasePencil {
   void print_layer_tree();
 #endif
 } GreasePencil;
-
-#ifdef __cplusplus
-}
-#endif
