@@ -209,7 +209,7 @@ Closure closure_eval(ClosureDiffuse diffuse,
   return Closure(0);
 }
 
-/* Noop since we are sampling closures. */
+/* NOP since we are sampling closures. */
 Closure closure_add(Closure cl1, Closure cl2)
 {
   return Closure(0);
@@ -255,23 +255,6 @@ vec3 nodetree_displacement();
 float nodetree_thickness();
 vec4 closure_to_rgba(Closure cl);
 #endif
-
-/* Fresnel monochromatic, perfect mirror */
-float F_eta(float eta, float cos_theta)
-{
-  /* Compute fresnel reflectance without explicitly computing
-   * the refracted direction. */
-  float c = abs(cos_theta);
-  float g = eta * eta - 1.0 + c * c;
-  if (g > 0.0) {
-    g = sqrt(g);
-    float A = (g - c) / (g + c);
-    float B = (c * (g + c) - 1.0) / (c * (g - c) + 1.0);
-    return 0.5 * A * A * (1.0 + B * B);
-  }
-  /* Total internal reflections. */
-  return 1.0;
-}
 
 /* Simplified form of F_eta(eta, 1.0). */
 float F0_from_ior(float eta)
@@ -395,11 +378,11 @@ void output_renderpass_value(int id, float value)
 void clear_aovs()
 {
 #if defined(MAT_RENDER_PASS_SUPPORT) && defined(GPU_FRAGMENT_SHADER)
-  for (int i = 0; i < AOV_MAX && i < rp_buf.aovs.color_len; i++) {
-    output_renderpass_color(rp_buf.color_len + i, vec4(0));
+  for (int i = 0; i < AOV_MAX && i < uniform_buf.render_pass.aovs.color_len; i++) {
+    output_renderpass_color(uniform_buf.render_pass.color_len + i, vec4(0));
   }
-  for (int i = 0; i < AOV_MAX && i < rp_buf.aovs.value_len; i++) {
-    output_renderpass_value(rp_buf.value_len + i, 0.0);
+  for (int i = 0; i < AOV_MAX && i < uniform_buf.render_pass.aovs.value_len; i++) {
+    output_renderpass_value(uniform_buf.render_pass.value_len + i, 0.0);
   }
 #endif
 }
@@ -407,15 +390,19 @@ void clear_aovs()
 void output_aov(vec4 color, float value, uint hash)
 {
 #if defined(MAT_RENDER_PASS_SUPPORT) && defined(GPU_FRAGMENT_SHADER)
-  for (int i = 0; i < AOV_MAX && i < rp_buf.aovs.color_len; i++) {
-    if (rp_buf.aovs.hash_color[i].x == hash) {
-      imageStore(rp_color_img, ivec3(ivec2(gl_FragCoord.xy), rp_buf.color_len + i), color);
+  for (int i = 0; i < AOV_MAX && i < uniform_buf.render_pass.aovs.color_len; i++) {
+    if (uniform_buf.render_pass.aovs.hash_color[i].x == hash) {
+      imageStore(rp_color_img,
+                 ivec3(ivec2(gl_FragCoord.xy), uniform_buf.render_pass.color_len + i),
+                 color);
       return;
     }
   }
-  for (int i = 0; i < AOV_MAX && i < rp_buf.aovs.value_len; i++) {
-    if (rp_buf.aovs.hash_value[i].x == hash) {
-      imageStore(rp_value_img, ivec3(ivec2(gl_FragCoord.xy), rp_buf.value_len + i), vec4(value));
+  for (int i = 0; i < AOV_MAX && i < uniform_buf.render_pass.aovs.value_len; i++) {
+    if (uniform_buf.render_pass.aovs.hash_value[i].x == hash) {
+      imageStore(rp_value_img,
+                 ivec3(ivec2(gl_FragCoord.xy), uniform_buf.render_pass.value_len + i),
+                 vec4(value));
       return;
     }
   }
@@ -514,7 +501,7 @@ vec3 coordinate_screen(vec3 P)
   else {
     /* TODO(fclem): Actual camera transform. */
     window.xy = project_point(ProjectionMatrix, transform_point(ViewMatrix, P)).xy * 0.5 + 0.5;
-    window.xy = window.xy * camera_buf.uv_scale + camera_buf.uv_bias;
+    window.xy = window.xy * uniform_buf.camera.uv_scale + uniform_buf.camera.uv_bias;
   }
   return window;
 }
@@ -568,7 +555,7 @@ vec4 attr_load_color_post(vec4 attr)
   return attr;
 }
 
-#else /* Noop for any other surface. */
+#else /* NOP for any other surface. */
 
 float attr_load_temperature_post(float attr)
 {
