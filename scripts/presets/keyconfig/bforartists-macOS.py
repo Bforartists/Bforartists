@@ -1,4 +1,4 @@
-keyconfig_version = (4, 0, 16)
+keyconfig_version = (4, 0, 22)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -3519,6 +3519,16 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_PT_gpencil_weight_context_menu'),
+       ],
+      },
+     ),
+    ("view3d.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True}, None),
+    ("gpencil.weight_sample", {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True}, None),
+    ("wm.radial_control",
+     {"type": 'V', "value": 'PRESS'},
+     {"properties":
+      [("data_path_primary", 'tool_settings.gpencil_weight_paint.brush.weight'),
+       ("release_confirm", True),
        ],
       },
      ),
