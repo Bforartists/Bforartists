@@ -3821,7 +3821,7 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, nullptr, "vgroup_weight");
   RNA_def_property_ui_text(prop,
                            "Vertex Group Weight",
-                           "Weight to assign in vertex groups\nHotkey in default keymap: CTRL+F");
+                           "Weight to assign in vertex groups\nHotkey in default keymap: V");
 
   prop = RNA_def_property(srna, "use_edge_path_live_unwrap", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "edge_mode_live_unwrap", 1);
@@ -4034,7 +4034,7 @@ static void rna_def_unified_paint_settings(BlenderRNA *brna)
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.001, 3);
   RNA_def_property_ui_text(
-      prop, "Weight", "Weight to assign in vertex groups\nHotkey in default keymap: CTRL+F");
+      prop, "Weight", "Weight to assign in vertex groups\nHotkey in default keymap: V");
   RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_update");
 
   prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR_GAMMA);
