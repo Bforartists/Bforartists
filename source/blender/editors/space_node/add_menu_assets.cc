@@ -91,7 +91,7 @@ static void node_add_catalog_assets_draw(const bContext *C, Menu *menu)
     uiLayout *col = uiLayoutColumn(layout, false);
     PointerRNA asset_ptr = asset::create_asset_rna_ptr(asset);
     uiLayoutSetContextPointer(col, "asset", &asset_ptr);
-    uiItemO(col, IFACE_(asset->get_name().c_str()), ICON_NONE, "NODE_OT_add_group_asset");
+    uiItemO(col, IFACE_(asset->get_name().c_str()), ICON_NODETREE, "NODE_OT_add_group_asset");
   }
 
   asset_system::AssetLibrary *all_library = ED_assetlist_library_get_once_available(
