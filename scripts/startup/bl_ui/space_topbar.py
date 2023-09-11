@@ -418,10 +418,10 @@ class TOPBAR_MT_file_export(Menu):
                 "wm.usd_export", text="Universal Scene Description (.usd*)", icon = "SAVE_USD")
 
         if bpy.app.build_options.io_gpencil:
-            # Pugixml lib dependency
+            # PUGIXML library dependency.
             if bpy.app.build_options.pugixml:
                 self.layout.operator("wm.gpencil_export_svg", text="Grease Pencil as SVG", icon = "SAVE_SVG")
-            # Haru lib dependency
+            # HARU library dependency.
             if bpy.app.build_options.haru:
                 self.layout.operator("wm.gpencil_export_pdf", text="Grease Pencil as PDF", icon = "SAVE_PDF")
 
@@ -682,6 +682,7 @@ class TOPBAR_MT_file_context_menu(Menu):
         layout.operator_context = 'INVOKE_AREA'
         layout.menu("TOPBAR_MT_file_new", text="New", text_ctxt=i18n_contexts.id_windowmanager, icon='FILE_NEW')
         layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
+        layout.menu("TOPBAR_MT_file_open_recent")
 
         layout.separator()
 

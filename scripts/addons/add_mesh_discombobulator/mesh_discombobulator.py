@@ -641,7 +641,6 @@ class discombobulator_dodads_list(Menu):
     bl_idname = "OBJECT_MT_discombobulator_dodad_list"
     bl_label = "List of saved Doodads"
     bl_description = "List of the saved Doodad Object Names"
-    bl_options = {"REGISTER"}
 
     def draw(self, context):
         layout = self.layout
@@ -660,7 +659,6 @@ class discombob_help(Menu):
     bl_idname = "HELP_MT_discombobulator"
     bl_label = "Usage Information"
     bl_description = "Help"
-    bl_options = {"REGISTER"}
 
     def draw(self, context):
         layout = self.layout

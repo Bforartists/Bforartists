@@ -76,8 +76,8 @@ class DATA_PT_display(ArmatureButtonsPanel, Panel):
         row.prop_decorator(arm, "show_bone_custom_shapes")
         row = col.row()
         row.separator()
-        row.prop(arm, "show_group_colors", text="Group Colors")
-        row.prop_decorator(arm, "show_group_colors")
+        row.prop(arm, "show_bone_colors", text="Bone Colors")
+        row.prop_decorator(arm, "show_bone_colors")
 
         if ob:
             row = col.row()
@@ -122,16 +122,10 @@ class DATA_UL_bone_collections(UIList):
 class DATA_PT_bone_collections(ArmatureButtonsPanel, Panel):
     bl_label = "Bone Collections"
 
-    @classmethod
-    def poll(cls, context):
-        ob = context.object
-        return (ob and ob.type == 'ARMATURE' and ob.pose)
-
     def draw(self, context):
         layout = self.layout
 
-        ob = context.object
-        arm = ob.data
+        arm = context.armature
         active_bcoll = arm.collections.active
 
         row = layout.row()
@@ -266,9 +260,20 @@ class DATA_PT_motion_paths_display(MotionPathButtonsPanel_display, Panel):
 
 
 class DATA_PT_custom_props_arm(ArmatureButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH', 'BLENDER_WORKBENCH_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     _context_path = "object.data"
     _property_type = bpy.types.Armature
+
+
+class DATA_PT_custom_props_bcoll(ArmatureButtonsPanel, PropertyPanel, Panel):
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    _context_path = "armature.collections.active"
+    _property_type = bpy.types.BoneCollection
+    bl_parent_id = "DATA_PT_bone_collections"
+
+    @classmethod
+    def poll(cls, context):
+        return context.armature and context.armature.collections.active
 
 
 classes = (
@@ -281,6 +286,7 @@ classes = (
     DATA_PT_display,
     DATA_PT_iksolver_itasc,
     DATA_PT_custom_props_arm,
+    DATA_PT_custom_props_bcoll,
 )
 
 if __name__ == "__main__":  # only for live edit.

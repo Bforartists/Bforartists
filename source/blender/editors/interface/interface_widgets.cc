@@ -154,13 +154,6 @@ static void color_blend_v4_v4v4(uchar r_col[4],
   r_col[3] = (faci * col1[3] + facm * col2[3]) / 256;
 }
 
-static void color_add_v3_i(uchar cp[3], int tint)
-{
-  cp[0] = clamp_i(cp[0] + tint, 0, 255);
-  cp[1] = clamp_i(cp[1] + tint, 0, 255);
-  cp[2] = clamp_i(cp[2] + tint, 0, 255);
-}
-
 static void color_ensure_contrast_v3(uchar cp[3], const uchar cp_other[3], int contrast)
 {
   BLI_assert(contrast > 0);
@@ -169,12 +162,12 @@ static void color_ensure_contrast_v3(uchar cp[3], const uchar cp_other[3], int c
   const int delta = item_value - inner_value;
   if (delta >= 0) {
     if (contrast > delta) {
-      color_add_v3_i(cp, contrast - delta);
+      add_v3_uchar_clamped(cp, contrast - delta);
     }
   }
   else {
     if (contrast > -delta) {
-      color_add_v3_i(cp, -contrast - delta);
+      add_v3_uchar_clamped(cp, -contrast - delta);
     }
   }
 }
@@ -1269,8 +1262,8 @@ static void widgetbase_draw_ex(uiWidgetBase *wtb,
     outline_col[2] = wcol->outline[2];
     outline_col[3] = wcol->outline[3];
 
-    /* emboss bottom shadow */
-    if (wtb->draw_emboss) {
+    /* Emboss shadow if enabled, and inner and outline colors are not fully transparent. */
+    if ((wtb->draw_emboss) && (wcol->inner[3] != 0.0f || wcol->outline[3] != 0.0f)) {
       UI_GetThemeColor4ubv(TH_WIDGET_EMBOSS, emboss_col);
     }
   }
@@ -2733,14 +2726,20 @@ static void widget_state_menu_item(uiWidgetType *wt,
     color_blend_v3_v3(wt->wcol.inner, wt->wcol.text, 0.5f);
     wt->wcol.inner[3] = 64;
   }
-  else if (state->but_flag & (UI_BUT_DISABLED | UI_BUT_INACTIVE)) {
+  else if (state->but_flag & UI_BUT_DISABLED) {
     /* Regular disabled. */
     color_blend_v3_v3(wt->wcol.text, wt->wcol.inner, 0.5f);
   }
-  else if ((state->but_flag & UI_BUT_LIST_ITEM) &&
-           state->but_flag & (UI_BUT_ACTIVE_DEFAULT | UI_SELECT))
-  {
-    /* Currently-selected list item. */
+  else if (state->but_flag & UI_BUT_INACTIVE) {
+    /* Inactive. */
+    if (state->but_flag & UI_ACTIVE) {
+      color_blend_v3_v3(wt->wcol.inner, wt->wcol.text, 0.2f);
+      wt->wcol.inner[3] = 255;
+    }
+    color_blend_v3_v3(wt->wcol.text, wt->wcol.inner, 0.5f);
+  }
+  else if (state->but_flag & (UI_BUT_ACTIVE_DEFAULT | UI_SELECT_DRAW)) {
+    /* Currently-selected item. */
     copy_v4_v4_uchar(wt->wcol.inner, wt->wcol.inner_sel);
     copy_v4_v4_uchar(wt->wcol.text, wt->wcol.text_sel);
   }
@@ -2834,11 +2833,9 @@ static void widget_menu_back(
   }
   else if (direction == UI_DIR_DOWN) {
     roundboxalign = (UI_CNR_BOTTOM_RIGHT | UI_CNR_BOTTOM_LEFT);
-    rect->ymin -= 0.1f * U.widget_unit;
   }
   else if (direction == UI_DIR_UP) {
     roundboxalign = UI_CNR_TOP_LEFT | UI_CNR_TOP_RIGHT;
-    rect->ymax += 0.1f * U.widget_unit;
   }
 
   GPU_blend(GPU_BLEND_ALPHA);
@@ -4976,12 +4973,14 @@ void ui_draw_but(const bContext *C, ARegion *region, uiStyle *style, uiBut *but,
         ui_draw_but_HSVCIRCLE(but, &tui->wcol_regular, rect);
         break;
 
-      case UI_BTYPE_COLORBAND:
-        /* do not draw right to edge of rect */
-        rect->xmin += (0.25f * UI_UNIT_X);
-        rect->xmax -= (0.3f * UI_UNIT_X);
+      case UI_BTYPE_COLORBAND: {
+        /* Horizontal padding to make room for handles at edges. */
+        const int padding = BLI_rcti_size_y(rect) / 6;
+        rect->xmin += padding;
+        rect->xmax -= padding;
         ui_draw_but_COLORBAND(but, &tui->wcol_regular, rect);
         break;
+      }
 
       case UI_BTYPE_UNITVEC:
         wt = widget_type(UI_WTYPE_UNITVEC);
