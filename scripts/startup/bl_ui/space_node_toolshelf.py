@@ -868,7 +868,7 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeBrightContrast"
 
-            props = col.operator("node.add_node", text=" Color Balance    ", icon = "NODE_COLORBALANCE")
+            props = col.operator("node.add_node", text=" Color Balance", icon = "NODE_COLORBALANCE")
             props.use_transform = True
             props.type = "CompositorNodeColorBalance"
 
@@ -879,30 +879,30 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Exposure          ", icon = "EXPOSURE")
+            props = col.operator("node.add_node", text=" Exposure", icon = "EXPOSURE")
             props.use_transform = True
             props.type = "CompositorNodeExposure"
 
-            props = col.operator("node.add_node", text=" Gamma            ", icon = "NODE_GAMMA")
+            props = col.operator("node.add_node", text=" Gamma", icon = "NODE_GAMMA")
             props.use_transform = True
             props.type = "CompositorNodeGamma"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Hue Correct     ", icon = "NODE_HUESATURATION")
+            props = col.operator("node.add_node", text=" Hue Correct", icon = "NODE_HUESATURATION")
             props.use_transform = True
             props.type = "CompositorNodeHueCorrect"
 
-            props = col.operator("node.add_node", text=" Hue Saturation Value", icon = "NODE_HUESATURATION")
+            props = col.operator("node.add_node", text=" Hue/Saturation/Value", icon = "NODE_HUESATURATION")
             props.use_transform = True
             props.type = "CompositorNodeHueSat"
 
-            props = col.operator("node.add_node", text=" RGB Curves     ", icon = "NODE_RGBCURVE")
+            props = col.operator("node.add_node", text=" RGB Curves", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "CompositorNodeCurveRGB"
 
-            props = col.operator("node.add_node", text=" Tonemap         ", icon = "NODE_TONEMAP")
+            props = col.operator("node.add_node", text=" Tonemap", icon = "NODE_TONEMAP")
             props.use_transform = True
             props.type = "CompositorNodeTonemap"
 
@@ -980,29 +980,29 @@ class NODES_PT_comp_add_color_mix(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Alpha Over         ", icon = "IMAGE_ALPHA")
+            props = col.operator("node.add_node", text=" Alpha Over", icon = "IMAGE_ALPHA")
             props.use_transform = True
             props.type = "CompositorNodeAlphaOver"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Combine Color                  ", icon = "COMBINE_COLOR")
+            props = col.operator("node.add_node", text=" Combine Color", icon = "COMBINE_COLOR")
             props.use_transform = True
             props.type = "CompositorNodeCombineColor"
 
-            props = col.operator("node.add_node", text=" Separate Color                 ", icon = "SEPARATE_COLOR")
+            props = col.operator("node.add_node", text=" Separate Color", icon = "SEPARATE_COLOR")
             props.use_transform = True
             props.type = "CompositorNodeSeparateColor"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Mix Color                  ", icon = "NODE_MIXRGB")
+            props = col.operator("node.add_node", text=" Mix Color", icon = "NODE_MIXRGB")
             props.use_transform = True
             props.type = "CompositorNodeMixRGB"
 
-            props = col.operator("node.add_node", text=" Z Combine      ", icon = "NODE_ZCOMBINE")
+            props = col.operator("node.add_node", text=" Z Combine", icon = "NODE_ZCOMBINE")
             props.use_transform = True
             props.type = "CompositorNodeZcombine"
 
