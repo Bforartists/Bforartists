@@ -504,7 +504,7 @@ class GRAPH_MT_key_blending(Menu):
         layout.operator("graph.blend_offset", text="Blend Offset", icon='BLEND_OFFSET')
         layout.operator("graph.match_slope", text="Match Slope", icon='SET_CURVE_TILT')
         layout.operator("graph.shear", text="Shear Keys", icon='SHEAR')
-        layout.operator("graph.scale_average", text="Scale Average")
+        layout.operator("graph.scale_average", text="Scale Average", icon='SCALE_AVERAGE')
 
 
 class GRAPH_MT_key_smoothing(Menu):
@@ -618,7 +618,7 @@ class GRAPH_MT_slider(Menu):
         layout.operator("graph.blend_offset", text="Blend Offset", icon='BLEND_OFFSET')
         layout.operator("graph.match_slope", text="Match Slope", icon='SET_CURVE_TILT')
         layout.operator("graph.shear", text="Shear", icon='SHEAR')
-        layout.operator("graph.scale_average", text="Scale Average")
+        layout.operator("graph.scale_average", text="Scale Average", icon='SCALE_AVERAGE')
 
         layout.separator()
 
