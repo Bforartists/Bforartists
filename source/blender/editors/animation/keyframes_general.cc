@@ -206,9 +206,9 @@ void clean_fcurve(bAnimContext *ac, bAnimListElem *ale, float thresh, bool clear
    * the default value and if is, remove fcurve completely. */
   if (cleardefault && fcu->totvert == 1) {
     float default_value = 0.0f;
-    PointerRNA id_ptr, ptr;
+    PointerRNA ptr;
     PropertyRNA *prop;
-    RNA_id_pointer_create(ale->id, &id_ptr);
+    PointerRNA id_ptr = RNA_id_pointer_create(ale->id);
 
     /* get property to read from, and get value as appropriate */
     if (RNA_path_resolve_property(&id_ptr, fcu->rna_path, &ptr, &prop)) {
@@ -384,6 +384,25 @@ void blend_to_default_fcurve(PointerRNA *id_ptr, FCurve *fcu, const float factor
       continue;
     }
     const float key_y_value = interpf(default_value, fcu->bezt[i].vec[1][1], factor);
+    BKE_fcurve_keyframe_move_value_with_handles(&fcu->bezt[i], key_y_value);
+  }
+}
+
+/* ---------------- */
+
+void scale_average_fcurve_segment(FCurve *fcu, FCurveSegment *segment, const float factor)
+{
+  float y = 0;
+
+  /* Find first the average of the y values to then use it in the final calculation. */
+  for (int i = segment->start_index; i < segment->start_index + segment->length; i++) {
+    y += fcu->bezt[i].vec[1][1];
+  }
+
+  const float y_average = y / segment->length;
+
+  for (int i = segment->start_index; i < segment->start_index + segment->length; i++) {
+    const float key_y_value = interpf(y_average, fcu->bezt[i].vec[1][1], 1 - factor);
     BKE_fcurve_keyframe_move_value_with_handles(&fcu->bezt[i], key_y_value);
   }
 }
@@ -1476,10 +1495,10 @@ static tAnimCopybufItem *pastebuf_match_path_property(Main *bmain,
         printf("paste_animedit_keys: error ID has been removed!\n");
       }
       else {
-        PointerRNA id_ptr, rptr;
+        PointerRNA rptr;
         PropertyRNA *prop;
 
-        RNA_id_pointer_create(aci->id, &id_ptr);
+        PointerRNA id_ptr = RNA_id_pointer_create(aci->id);
 
         if (RNA_path_resolve_property(&id_ptr, aci->rna_path, &rptr, &prop)) {
           const char *identifier = RNA_property_identifier(prop);

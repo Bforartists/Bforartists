@@ -16,7 +16,7 @@ if "bpy" in locals():
 
 import bpy
 from bpy.app.translations import pgettext_tip as tip_
-from mathutils import Matrix, Euler, Vector
+from mathutils import Matrix, Euler, Vector, Quaternion
 
 # Also imported in .fbx_utils, so importing here is unlikely to further affect Blender startup time.
 import numpy as np
@@ -49,6 +49,8 @@ from .fbx_utils import (
     MESH_ATTRIBUTE_SHARP_EDGE,
     expand_shape_key_range,
 )
+
+LINEAR_INTERPOLATION_VALUE = bpy.types.Keyframe.bl_rna.properties['interpolation'].enum_items['LINEAR'].value
 
 # global singleton, assign on execution
 fbx_elem_nil = None
@@ -524,46 +526,289 @@ def blen_read_object_transform_preprocess(fbx_props, fbx_obj, rot_alt_mat, use_p
 
 # ---------
 # Animation
-def blen_read_animations_curves_iter(fbx_curves, blen_start_offset, fbx_start_offset, fps):
-    """
-    Get raw FBX AnimCurve list, and yield values for all curves at each singular curves' keyframes,
-    together with (blender) timing, in frames.
-    blen_start_offset is expected in frames, while fbx_start_offset is expected in FBX ktime.
-    """
-    # As a first step, assume linear interpolation between key frames, we'll (try to!) handle more
-    # of FBX curves later.
+def _transformation_curves_gen(item, values_arrays, channel_keys):
+    """Yields flattened location/rotation/scaling values for imported PoseBone/Object Lcl Translation/Rotation/Scaling
+    animation curve values.
+
+    The value arrays must have the same lengths, where each index of each array corresponds to a single keyframe.
+
+    Each value array must have a corresponding channel key tuple that identifies the fbx property
+    (b'Lcl Translation'/b'Lcl Rotation'/b'Lcl Scaling') and the channel (x/y/z as 0/1/2) of that property."""
+    from operator import setitem
+    from functools import partial
+
+    if item.is_bone:
+        bl_obj = item.bl_obj.pose.bones[item.bl_bone]
+    else:
+        bl_obj = item.bl_obj
+
+    rot_mode = bl_obj.rotation_mode
+    transform_data = item.fbx_transform_data
+    rot_eul_prev = bl_obj.rotation_euler.copy()
+    rot_quat_prev = bl_obj.rotation_quaternion.copy()
+
+    # Pre-compute inverted local rest matrix of the bone, if relevant.
+    restmat_inv = item.get_bind_matrix().inverted_safe() if item.is_bone else None
+
+    transform_prop_to_attr = {
+        b'Lcl Translation': transform_data.loc,
+        b'Lcl Rotation': transform_data.rot,
+        b'Lcl Scaling': transform_data.sca,
+    }
+
+    # Create a setter into transform_data for each values array. e.g. a values array for 'Lcl Scaling' with channel == 2
+    # would set transform_data.sca[2].
+    setters = [partial(setitem, transform_prop_to_attr[fbx_prop], channel) for fbx_prop, channel in channel_keys]
+    # Create an iterator that gets one value from each array. Each iterated tuple will be all the imported
+    # Lcl Translation/Lcl Rotation/Lcl Scaling values for a single frame, in that order.
+    # Note that an FBX animation does not have to animate all the channels, so only the animated channels of each
+    # property will be present.
+    # .data, the memoryview of an np.ndarray, is faster to iterate than the ndarray itself.
+    frame_values_it = zip(*(arr.data for arr in values_arrays))
+
+    # Pre-get/calculate these to slightly reduce the work done inside the loop.
+    anim_compensation_matrix = item.anim_compensation_matrix
+    do_anim_compensation_matrix = bool(anim_compensation_matrix)
+
+    pre_matrix = item.pre_matrix
+    do_pre_matrix = bool(pre_matrix)
+
+    post_matrix = item.post_matrix
+    do_post_matrix = bool(post_matrix)
+
+    do_restmat_inv = bool(restmat_inv)
+
+    decompose = Matrix.decompose
+    to_axis_angle = Quaternion.to_axis_angle
+    to_euler = Quaternion.to_euler
+
+    # Iterate through the values for each frame.
+    for frame_values in frame_values_it:
+        # Set each value into its corresponding attribute in transform_data.
+        for setter, value in zip(setters, frame_values):
+            setter(value)
+
+        # Calculate the updated matrix for this frame.
+        mat, _, _ = blen_read_object_transform_do(transform_data)
+
+        # compensate for changes in the local matrix during processing
+        if do_anim_compensation_matrix:
+            mat = mat @ anim_compensation_matrix
+
+        # apply pre- and post matrix
+        # post-matrix will contain any correction for lights, camera and bone orientation
+        # pre-matrix will contain any correction for a parent's correction matrix or the global matrix
+        if do_pre_matrix:
+            mat = pre_matrix @ mat
+        if do_post_matrix:
+            mat = mat @ post_matrix
+
+        # And now, remove that rest pose matrix from current mat (also in parent space).
+        if do_restmat_inv:
+            mat = restmat_inv @ mat
+
+        # Now we have a virtual matrix of transform from AnimCurves, we can yield keyframe values!
+        loc, rot, sca = decompose(mat)
+        if rot_mode == 'QUATERNION':
+            if rot_quat_prev.dot(rot) < 0.0:
+                rot = -rot
+            rot_quat_prev = rot
+        elif rot_mode == 'AXIS_ANGLE':
+            vec, ang = to_axis_angle(rot)
+            rot = ang, vec.x, vec.y, vec.z
+        else:  # Euler
+            rot = to_euler(rot, rot_mode, rot_eul_prev)
+            rot_eul_prev = rot
+
+        # Yield order matches the order that the location/rotation/scale FCurves are created in.
+        yield from loc
+        yield from rot
+        yield from sca
+
+
+def _combine_curve_keyframe_times(times_and_values_tuples, initial_values):
+    """Combine multiple parsed animation curves, that affect different channels, such that every animation curve
+    contains the keyframes from every other curve, interpolating the values for the newly inserted keyframes in each
+    curve.
+
+    Currently, linear interpolation is assumed, but FBX does store how keyframes should be interpolated, so correctly
+    interpolating the keyframe values is a TODO."""
+    if len(times_and_values_tuples) == 1:
+        # Nothing to do when there is only a single curve.
+        times, values = times_and_values_tuples[0]
+        return times, [values]
+
+    all_times = [t[0] for t in times_and_values_tuples]
+
+    # Get the combined sorted unique times of all the curves.
+    sorted_all_times = np.unique(np.concatenate(all_times))
+
+    values_arrays = []
+    for (times, values), initial_value in zip(times_and_values_tuples, initial_values):
+        if sorted_all_times.size == times.size:
+            # `sorted_all_times` will always contain all values in `times` and both `times` and `sorted_all_times` must
+            # be strictly increasing, so if both arrays have the same size, they must be identical.
+            extended_values = values
+        else:
+            # For now, linear interpolation is assumed. NumPy conveniently has a fast C-compiled function for this.
+            # Efficiently implementing other FBX supported interpolation will most likely be much more complicated.
+            extended_values = np.interp(sorted_all_times, times, values, left=initial_value)
+        values_arrays.append(extended_values)
+    return sorted_all_times, values_arrays
+
+
+def blen_read_invalid_animation_curve(key_times, key_values):
+    """FBX will parse animation curves even when their keyframe times are invalid (not strictly increasing). It's
+    unclear exactly how FBX handles invalid curves, but this matches in some cases and is how the FBX IO addon has been
+    handling invalid keyframe times for a long time.
+
+    Notably, this function will also correctly parse valid animation curves, though is much slower than the trivial,
+    regular way.
+
+    The returned keyframe times are guaranteed to be strictly increasing."""
+    sorted_unique_times = np.unique(key_times)
+
+    # Unsure if this can be vectorized with numpy, so using iteration for now.
+    def index_gen():
+        idx = 0
+        key_times_data = key_times.data
+        key_times_len = len(key_times)
+        # Iterating .data, the memoryview of the array, is faster than iterating the array directly.
+        for curr_fbxktime in sorted_unique_times.data:
+            if key_times_data[idx] < curr_fbxktime:
+                if idx >= 0:
+                    idx += 1
+                    if idx >= key_times_len:
+                        # We have reached our last element for this curve, stay on it from now on...
+                        idx = -1
+            yield idx
+
+    indices = np.fromiter(index_gen(), dtype=np.int64, count=len(sorted_unique_times))
+    indexed_times = key_times[indices]
+    indexed_values = key_values[indices]
+
+    # Linear interpolate the value for each time in sorted_unique_times according to the times and values at each index
+    # and the previous index.
+    interpolated_values = np.empty_like(indexed_values)
+
+    # Where the index is 0, there's no previous value to interpolate from, so we set the value without interpolating.
+    # Because the indices are in increasing order, all zeroes must be at the start, so we can find the index of the last
+    # zero and use that to index with a slice instead of a boolean array for performance.
+    # Equivalent to, but as a slice:
+    # idx_zero_mask = indices == 0
+    # idx_nonzero_mask = ~idx_zero_mask
+    first_nonzero_idx = np.searchsorted(indices, 0, side='right')
+    idx_zero_slice = slice(0, first_nonzero_idx)  # [:first_nonzero_idx]
+    idx_nonzero_slice = slice(first_nonzero_idx, None)  # [first_nonzero_idx:]
+
+    interpolated_values[idx_zero_slice] = indexed_values[idx_zero_slice]
+
+    indexed_times_nonzero_idx = indexed_times[idx_nonzero_slice]
+    indexed_values_nonzero_idx = indexed_values[idx_nonzero_slice]
+    indices_nonzero = indices[idx_nonzero_slice]
+
+    prev_indices_nonzero = indices_nonzero - 1
+    prev_indexed_times_nonzero_idx = key_times[prev_indices_nonzero]
+    prev_indexed_values_nonzero_idx = key_values[prev_indices_nonzero]
+
+    ifac_a = sorted_unique_times[idx_nonzero_slice] - prev_indexed_times_nonzero_idx
+    ifac_b = indexed_times_nonzero_idx - prev_indexed_times_nonzero_idx
+    # If key_times contains two (or more) duplicate times in a row, then values in `ifac_b` can be zero which would
+    # result in division by zero.
+    # Use the `np.errstate` context manager to suppress printing the RuntimeWarning to the system console.
+    with np.errstate(divide='ignore'):
+        ifac = ifac_a / ifac_b
+    interpolated_values[idx_nonzero_slice] = ((indexed_values_nonzero_idx - prev_indexed_values_nonzero_idx) * ifac
+                                              + prev_indexed_values_nonzero_idx)
+
+    # If the time to interpolate at is larger than the time in indexed_times, then the value has been extrapolated.
+    # Extrapolated values are excluded.
+    valid_mask = indexed_times >= sorted_unique_times
+
+    key_times = sorted_unique_times[valid_mask]
+    key_values = interpolated_values[valid_mask]
+
+    return key_times, key_values
+
+
+def _convert_fbx_time_to_blender_time(key_times, blen_start_offset, fbx_start_offset, fps):
     from .fbx_utils import FBX_KTIME
     timefac = fps / FBX_KTIME
 
-    curves = tuple([0,
-                    elem_prop_first(elem_find_first(c[2], b'KeyTime')),
-                    elem_prop_first(elem_find_first(c[2], b'KeyValueFloat')),
-                    c]
-                   for c in fbx_curves)
+    # Convert from FBX timing to Blender timing.
+    # Cannot subtract in-place because key_times could be read directly from FBX and could be used by multiple Actions.
+    key_times = key_times - fbx_start_offset
+    # FBX times are integers and timefac is a Python float, so the new array will be a np.float64 array.
+    key_times = key_times * timefac
 
-    allkeys = sorted({item for sublist in curves for item in sublist[1]})
-    for curr_fbxktime in allkeys:
-        curr_values = []
-        for item in curves:
-            idx, times, values, fbx_curve = item
+    key_times += blen_start_offset
 
-            if times[idx] < curr_fbxktime:
-                if idx >= 0:
-                    idx += 1
-                    if idx >= len(times):
-                        # We have reached our last element for this curve, stay on it from now on...
-                        idx = -1
-                    item[0] = idx
+    return key_times
 
-            if times[idx] >= curr_fbxktime:
-                if idx == 0:
-                    curr_values.append((values[idx], fbx_curve))
-                else:
-                    # Interpolate between this key and the previous one.
-                    ifac = (curr_fbxktime - times[idx - 1]) / (times[idx] - times[idx - 1])
-                    curr_values.append(((values[idx] - values[idx - 1]) * ifac + values[idx - 1], fbx_curve))
-        curr_blenkframe = (curr_fbxktime - fbx_start_offset) * timefac + blen_start_offset
-        yield (curr_blenkframe, curr_values)
+
+def blen_read_animation_curve(fbx_curve):
+    """Read an animation curve from FBX data.
+
+    The parsed keyframe times are guaranteed to be strictly increasing."""
+    key_times = parray_as_ndarray(elem_prop_first(elem_find_first(fbx_curve, b'KeyTime')))
+    key_values = parray_as_ndarray(elem_prop_first(elem_find_first(fbx_curve, b'KeyValueFloat')))
+
+    assert(len(key_values) == len(key_times))
+
+    # The FBX SDK specifies that only one key per time is allowed and that the keys are sorted in time order.
+    # https://help.autodesk.com/view/FBX/2020/ENU/?guid=FBX_Developer_Help_cpp_ref_class_fbx_anim_curve_html
+    all_times_strictly_increasing = (key_times[1:] > key_times[:-1]).all()
+
+    if all_times_strictly_increasing:
+        return key_times, key_values
+    else:
+        # FBX will still read animation curves even if they are invalid.
+        return blen_read_invalid_animation_curve(key_times, key_values)
+
+
+def blen_store_keyframes(fbx_key_times, blen_fcurve, key_values, blen_start_offset, fps, fbx_start_offset=0):
+    """Set all keyframe times and values for a newly created FCurve.
+    Linear interpolation is currently assumed.
+
+    This is a convenience function for calling blen_store_keyframes_multi with only a single fcurve and values array."""
+    blen_store_keyframes_multi(fbx_key_times, [(blen_fcurve, key_values)], blen_start_offset, fps, fbx_start_offset)
+
+
+def blen_store_keyframes_multi(fbx_key_times, fcurve_and_key_values_pairs, blen_start_offset, fps, fbx_start_offset=0):
+    """Set all keyframe times and values for multiple pairs of newly created FCurves and keyframe values arrays, where
+    each pair has the same keyframe times.
+    Linear interpolation is currently assumed."""
+    bl_key_times = _convert_fbx_time_to_blender_time(fbx_key_times, blen_start_offset, fbx_start_offset, fps)
+    num_keys = len(bl_key_times)
+
+    # Compatible with C float type
+    bl_keyframe_dtype = np.single
+    # Compatible with C char type
+    bl_enum_dtype = np.byte
+
+    # The keyframe_points 'co' are accessed as flattened pairs of (time, value).
+    # The key times are the same for each (blen_fcurve, key_values) pair, so only the values need to be updated for each
+    # array of values.
+    keyframe_points_co = np.empty(len(bl_key_times) * 2, dtype=bl_keyframe_dtype)
+    # Even indices are times.
+    keyframe_points_co[0::2] = bl_key_times
+
+    interpolation_array = np.full(num_keys, LINEAR_INTERPOLATION_VALUE, dtype=bl_enum_dtype)
+
+    for blen_fcurve, key_values in fcurve_and_key_values_pairs:
+        # The fcurve must be newly created and thus have no keyframe_points.
+        assert(len(blen_fcurve.keyframe_points) == 0)
+
+        # Odd indices are values.
+        keyframe_points_co[1::2] = key_values
+
+        # Add the keyframe points to the FCurve and then set the 'co' and 'interpolation' of each point.
+        blen_fcurve.keyframe_points.add(num_keys)
+        blen_fcurve.keyframe_points.foreach_set('co', keyframe_points_co)
+        blen_fcurve.keyframe_points.foreach_set('interpolation', interpolation_array)
+
+        # Since we inserted our keyframes in 'ultra-fast' mode, we have to update the fcurves now.
+        blen_fcurve.update()
 
 
 def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, global_scale, shape_key_deforms):
@@ -572,27 +817,24 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, glo
     taking any pre_ and post_ matrix into account to transform from fbx into blender space.
     """
     from bpy.types import Object, PoseBone, ShapeKey, Material, Camera
-    from itertools import chain
 
-    fbx_curves = []
+    fbx_curves: dict[bytes, dict[int, FBXElem]] = {}
     for curves, fbxprop in cnodes.values():
+        channels_dict = fbx_curves.setdefault(fbxprop, {})
         for (fbx_acdata, _blen_data), channel in curves.values():
-            fbx_curves.append((fbxprop, channel, fbx_acdata))
+            if channel in channels_dict:
+                # Ignore extra curves when one has already been found for this channel because FBX's default animation
+                # system implementation only uses the first curve assigned to a channel.
+                # Additional curves per channel are allowed by the FBX specification, but the handling of these curves
+                # is considered the responsibility of the application that created them. Note that each curve node is
+                # expected to have a unique set of channels, so these additional curves with the same channel would have
+                # to belong to separate curve nodes. See the FBX SDK documentation for FbxAnimCurveNode.
+                continue
+            channels_dict[channel] = fbx_acdata
 
     # Leave if no curves are attached (if a blender curve is attached to scale but without keys it defaults to 0).
     if len(fbx_curves) == 0:
         return
-
-    blen_curves = []
-    props = []
-    keyframes = {}
-
-    # Add each keyframe to the keyframe dict
-    def store_keyframe(fc, frame, value):
-        fc_key = (fc.data_path, fc.array_index)
-        if not keyframes.get(fc_key):
-            keyframes[fc_key] = []
-        keyframes[fc_key].extend((frame, value))
 
     if isinstance(item, Material):
         grpname = item.name
@@ -627,115 +869,108 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, glo
                    for prop, nbr_channels, grpname in props for channel in range(nbr_channels)]
 
     if isinstance(item, Material):
-        for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
-            value = [0,0,0]
-            for v, (fbxprop, channel, _fbx_acdata) in values:
-                assert(fbxprop == b'DiffuseColor')
+        for fbxprop, channel_to_curve in fbx_curves.items():
+            assert(fbxprop == b'DiffuseColor')
+            for channel, curve in channel_to_curve.items():
                 assert(channel in {0, 1, 2})
-                value[channel] = v
-
-            for fc, v in zip(blen_curves, value):
-                store_keyframe(fc, frame, v)
+                blen_curve = blen_curves[channel]
+                fbx_key_times, values = blen_read_animation_curve(curve)
+                blen_store_keyframes(fbx_key_times, blen_curve, values, anim_offset, fps)
 
     elif isinstance(item, ShapeKey):
         deform_values = shape_key_deforms.setdefault(item, [])
-        for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
-            value = 0.0
-            for v, (fbxprop, channel, _fbx_acdata) in values:
-                assert(fbxprop == b'DeformPercent')
+        for fbxprop, channel_to_curve in fbx_curves.items():
+            assert(fbxprop == b'DeformPercent')
+            for channel, curve in channel_to_curve.items():
                 assert(channel == 0)
-                value = v / 100.0
-            deform_values.append(value)
+                blen_curve = blen_curves[channel]
 
-            for fc, v in zip(blen_curves, (value,)):
-                store_keyframe(fc, frame, v)
+                fbx_key_times, values = blen_read_animation_curve(curve)
+                # A fully activated shape key in FBX DeformPercent is 100.0 whereas it is 1.0 in Blender.
+                values = values / 100.0
+                blen_store_keyframes(fbx_key_times, blen_curve, values, anim_offset, fps)
+
+                # Store the minimum and maximum shape key values, so that the shape key's slider range can be expanded
+                # if necessary after reading all animations.
+                deform_values.append(values.min())
+                deform_values.append(values.max())
 
     elif isinstance(item, Camera):
-        for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
-            focal_length = 0.0
-            focus_distance = 0.0
-            for v, (fbxprop, channel, _fbx_acdata) in values:
-                assert(fbxprop == b'FocalLength' or fbxprop == b'FocusDistance' )
+        for fbxprop, channel_to_curve in fbx_curves.items():
+            is_focus_distance = fbxprop == b'FocusDistance'
+            assert(fbxprop == b'FocalLength' or is_focus_distance)
+            for channel, curve in channel_to_curve.items():
                 assert(channel == 0)
-                if (fbxprop == b'FocalLength' ):
-                    focal_length = v
-                elif(fbxprop == b'FocusDistance'):
-                    focus_distance = v / 1000 * global_scale
+                # The indices are determined by the creation of the `props` list above.
+                blen_curve = blen_curves[1 if is_focus_distance else 0]
 
-            for fc, v in zip(blen_curves, (focal_length, focus_distance)):
-                store_keyframe(fc, frame, v)
+                fbx_key_times, values = blen_read_animation_curve(curve)
+                if is_focus_distance:
+                    # Remap the imported values from FBX to Blender.
+                    values = values / 1000.0
+                    values *= global_scale
+                blen_store_keyframes(fbx_key_times, blen_curve, values, anim_offset, fps)
 
     else:  # Object or PoseBone:
-        if item.is_bone:
-            bl_obj = item.bl_obj.pose.bones[item.bl_bone]
-        else:
-            bl_obj = item.bl_obj
-
         transform_data = item.fbx_transform_data
-        rot_eul_prev = bl_obj.rotation_euler.copy()
-        rot_quat_prev = bl_obj.rotation_quaternion.copy()
 
-        # Pre-compute inverted local rest matrix of the bone, if relevant.
-        restmat_inv = item.get_bind_matrix().inverted_safe() if item.is_bone else None
+        # Each transformation curve needs to have keyframes at the times of every other transformation curve
+        # (interpolating missing values), so that we can construct a matrix at every keyframe.
+        transform_prop_to_attr = {
+            b'Lcl Translation': transform_data.loc,
+            b'Lcl Rotation': transform_data.rot,
+            b'Lcl Scaling': transform_data.sca,
+        }
 
-        for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
-            for v, (fbxprop, channel, _fbx_acdata) in values:
-                if fbxprop == b'Lcl Translation':
-                    transform_data.loc[channel] = v
-                elif fbxprop == b'Lcl Rotation':
-                    transform_data.rot[channel] = v
-                elif fbxprop == b'Lcl Scaling':
-                    transform_data.sca[channel] = v
-            mat, _, _ = blen_read_object_transform_do(transform_data)
+        times_and_values_tuples = []
+        initial_values = []
+        channel_keys = []
+        for fbxprop, channel_to_curve in fbx_curves.items():
+            if fbxprop not in transform_prop_to_attr:
+                # Currently, we only care about transformation curves.
+                continue
+            for channel, curve in channel_to_curve.items():
+                assert(channel in {0, 1, 2})
+                fbx_key_times, values = blen_read_animation_curve(curve)
 
-            # compensate for changes in the local matrix during processing
-            if item.anim_compensation_matrix:
-                mat = mat @ item.anim_compensation_matrix
+                channel_keys.append((fbxprop, channel))
 
-            # apply pre- and post matrix
-            # post-matrix will contain any correction for lights, camera and bone orientation
-            # pre-matrix will contain any correction for a parent's correction matrix or the global matrix
-            if item.pre_matrix:
-                mat = item.pre_matrix @ mat
-            if item.post_matrix:
-                mat = mat @ item.post_matrix
+                initial_values.append(transform_prop_to_attr[fbxprop][channel])
 
-            # And now, remove that rest pose matrix from current mat (also in parent space).
-            if restmat_inv:
-                mat = restmat_inv @ mat
+                times_and_values_tuples.append((fbx_key_times, values))
+        if not times_and_values_tuples:
+            # If `times_and_values_tuples` is empty, all the imported animation curves are for properties other than
+            # transformation (e.g. animated custom properties), so there is nothing to do until support for those other
+            # properties is added.
+            return
 
-            # Now we have a virtual matrix of transform from AnimCurves, we can insert keyframes!
-            loc, rot, sca = mat.decompose()
-            if rot_mode == 'QUATERNION':
-                if rot_quat_prev.dot(rot) < 0.0:
-                    rot = -rot
-                rot_quat_prev = rot
-            elif rot_mode == 'AXIS_ANGLE':
-                vec, ang = rot.to_axis_angle()
-                rot = ang, vec.x, vec.y, vec.z
-            else:  # Euler
-                rot = rot.to_euler(rot_mode, rot_eul_prev)
-                rot_eul_prev = rot
+        # Combine the keyframe times of all the transformation curves so that each curve has a value at every time.
+        combined_fbx_times, values_arrays = _combine_curve_keyframe_times(times_and_values_tuples, initial_values)
 
-            # Add each keyframe and its value to the keyframe dict
-            for fc, value in zip(blen_curves, chain(loc, rot, sca)):
-                store_keyframe(fc, frame, value)
+        # Convert from FBX Lcl Translation/Lcl Rotation/Lcl Scaling to the Blender location/rotation/scaling properties
+        # of this Object/PoseBone.
+        # The number of fcurves for the Blender properties varies depending on the rotation mode.
+        num_loc_channels = 3
+        num_rot_channels = 4 if rot_mode in {'QUATERNION', 'AXIS_ANGLE'} else 3  # Variations of EULER are all 3
+        num_sca_channels = 3
+        num_channels = num_loc_channels + num_rot_channels + num_sca_channels
+        num_frames = len(combined_fbx_times)
+        full_length = num_channels * num_frames
 
-    # Add all keyframe points to the fcurves at once and modify them after
-    for fc_key, key_values in keyframes.items():
-        data_path, index = fc_key
+        # Do the conversion.
+        flattened_channel_values_gen = _transformation_curves_gen(item, values_arrays, channel_keys)
+        flattened_channel_values = np.fromiter(flattened_channel_values_gen, dtype=np.single, count=full_length)
 
-        # Add all keyframe points at once
-        fcurve = action.fcurves.find(data_path=data_path, index=index)
-        num_keys = len(key_values) // 2
-        fcurve.keyframe_points.add(num_keys)
-        fcurve.keyframe_points.foreach_set('co', key_values)
-        linear_enum_value = bpy.types.Keyframe.bl_rna.properties['interpolation'].enum_items['LINEAR'].value
-        fcurve.keyframe_points.foreach_set('interpolation', (linear_enum_value,) * num_keys)
+        # Reshape to one row per frame and then view the transpose so that each row corresponds to a single channel.
+        # e.g.
+        # loc_channels = channel_values[:num_loc_channels]
+        # rot_channels = channel_values[num_loc_channels:num_loc_channels + num_rot_channels]
+        # sca_channels = channel_values[num_loc_channels + num_rot_channels:]
+        channel_values = flattened_channel_values.reshape(num_frames, num_channels).T
 
-    # Since we inserted our keyframes in 'ultra-fast' mode, we have to update the fcurves now.
-    for fc in blen_curves:
-        fc.update()
+        # Each channel has the same keyframe times, so the combined times can be passed once along with all the curves
+        # and values arrays.
+        blen_store_keyframes_multi(combined_fbx_times, zip(blen_curves, channel_values), anim_offset, fps)
 
 
 def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_offset, global_scale):

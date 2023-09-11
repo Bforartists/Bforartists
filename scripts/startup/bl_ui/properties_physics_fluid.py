@@ -102,8 +102,7 @@ class PHYSICS_PT_fluid(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -131,8 +130,7 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -325,8 +323,7 @@ class PHYSICS_PT_borders(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -381,8 +378,7 @@ class PHYSICS_PT_smoke(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -419,8 +415,7 @@ class PHYSICS_PT_smoke_dissolve(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -471,8 +466,7 @@ class PHYSICS_PT_fire(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -515,8 +509,7 @@ class PHYSICS_PT_liquid(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -596,8 +589,7 @@ class PHYSICS_PT_flow_source(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -650,8 +642,7 @@ class PHYSICS_PT_flow_initial_velocity(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -697,8 +688,7 @@ class PHYSICS_PT_flow_texture(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -753,8 +743,7 @@ class PHYSICS_PT_adaptive_domain(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -810,8 +799,7 @@ class PHYSICS_PT_noise(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -895,8 +883,7 @@ class PHYSICS_PT_mesh(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -948,7 +935,7 @@ class PHYSICS_PT_mesh(PhysicButtonsPanel, Panel):
             col.prop(domain, "mesh_concave_upper", text="Concavity Upper")
             col.prop(domain, "mesh_concave_lower", text="Lower")
 
-        # TODO (sebbas): for now just interpolate any upres grids, ie not sampling highres grids
+        # TODO(@sebbas): for now just interpolate any up-resolution grids, ie not sampling high-resolution grids
         # col.prop(domain, "highres_sampling", text="Flow Sampling:")
 
         if domain.cache_type == 'MODULAR':
@@ -997,8 +984,7 @@ class PHYSICS_PT_particles(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -1139,8 +1125,7 @@ class PHYSICS_PT_viscosity(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -1184,8 +1169,7 @@ class PHYSICS_PT_diffusion(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -1236,8 +1220,7 @@ class PHYSICS_PT_guide(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -1307,8 +1290,7 @@ class PHYSICS_PT_collections(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -1340,8 +1322,7 @@ class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -1430,8 +1411,7 @@ class PHYSICS_PT_export(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -1481,8 +1461,7 @@ class PHYSICS_PT_field_weights(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -1723,8 +1702,7 @@ class PHYSICS_PT_fluid_domain_render(PhysicButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-        'BLENDER_WORKBENCH_NEXT'}
+        'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):

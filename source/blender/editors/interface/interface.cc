@@ -2001,7 +2001,9 @@ void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2], int r_x
     UI_block_layout_resolve(block, nullptr, nullptr);
   }
   ui_block_align_calc(block, CTX_wm_region(C));
-  if ((block->flag & UI_BLOCK_LOOP) && (block->flag & UI_BLOCK_NUMSELECT)) {
+  if ((block->flag & UI_BLOCK_LOOP) && (block->flag & UI_BLOCK_NUMSELECT) &&
+      (block->flag & UI_BLOCK_NO_ACCELERATOR_KEYS) == 0)
+  {
     ui_menu_block_set_keyaccels(block); /* could use a different flag to check */
   }
 
@@ -2846,11 +2848,10 @@ void ui_but_string_get_ex(uiBut *but,
     const char *buf = nullptr;
     if ((but->type == UI_BTYPE_TAB) && (but->custom_data)) {
       StructRNA *ptr_type = RNA_property_pointer_type(&but->rnapoin, but->rnaprop);
-      PointerRNA ptr;
 
       /* uiBut.custom_data points to data this tab represents (e.g. workspace).
        * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
-      RNA_pointer_create(but->rnapoin.owner_id, ptr_type, but->custom_data, &ptr);
+      PointerRNA ptr = RNA_pointer_create(but->rnapoin.owner_id, ptr_type, but->custom_data);
       buf = RNA_struct_name_get_alloc(&ptr, str, str_maxncpy, &buf_len);
     }
     else if (type == PROP_STRING) {
@@ -3183,10 +3184,9 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
           RNA_property_pointer_set(&but->rnapoin, but->rnaprop, rptr, nullptr);
         }
         else if (search_but->item_active != nullptr) {
-          RNA_pointer_create(nullptr,
-                             RNA_property_pointer_type(&but->rnapoin, but->rnaprop),
-                             search_but->item_active,
-                             &rptr);
+          rptr = RNA_pointer_create(nullptr,
+                                    RNA_property_pointer_type(&but->rnapoin, but->rnaprop),
+                                    search_but->item_active);
           RNA_property_pointer_set(&but->rnapoin, but->rnaprop, rptr, nullptr);
         }
 
@@ -3212,12 +3212,11 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
   else if (but->type == UI_BTYPE_TAB) {
     if (but->rnaprop && but->custom_data) {
       StructRNA *ptr_type = RNA_property_pointer_type(&but->rnapoin, but->rnaprop);
-      PointerRNA ptr;
       PropertyRNA *prop;
 
       /* uiBut.custom_data points to data this tab represents (e.g. workspace).
        * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
-      RNA_pointer_create(but->rnapoin.owner_id, ptr_type, but->custom_data, &ptr);
+      PointerRNA ptr = RNA_pointer_create(but->rnapoin.owner_id, ptr_type, but->custom_data);
       prop = RNA_struct_name_property(ptr_type);
       if (RNA_property_editable(&ptr, prop)) {
         RNA_property_string_set(&ptr, prop, str);
@@ -4470,9 +4469,8 @@ static void ui_def_but_rna__menu(bContext * /*C*/, uiLayout *layout, void *but_p
                              -1,
                              item->description);
       }
-      item_but->flag |= UI_BUT_LIST_ITEM;
       if (item->value == current_value) {
-        item_but->flag |= UI_BUT_ACTIVE_DEFAULT;
+        item_but->flag |= UI_SELECT_DRAW;
       }
     }
   }
@@ -5849,6 +5847,11 @@ void UI_block_flag_disable(uiBlock *block, int flag)
 void UI_but_flag_enable(uiBut *but, int flag)
 {
   but->flag |= flag;
+}
+
+void UI_but_flag2_enable(uiBut *but, int flag)
+{
+  but->flag2 |= flag;
 }
 
 void UI_but_flag_disable(uiBut *but, int flag)
