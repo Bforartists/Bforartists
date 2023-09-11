@@ -1987,7 +1987,7 @@ node_texture
 anim
 trash
 
-#~ DEF_ICON_BLANK(2018)
+scale_average
 #~ DEF_ICON_BLANK(2019)
 #~ DEF_ICON_BLANK(2020)
 #~ DEF_ICON_BLANK(2021)
