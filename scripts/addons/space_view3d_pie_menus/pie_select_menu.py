@@ -113,7 +113,6 @@ class PIE_MT_SelectionsEM(Menu):
 class PIE_MT_SelectAllBySelection(Menu):
     bl_idname = "PIE_MT_selectallbyselection"
     bl_label = "Verts Edges Faces"
-    bl_options = {'REGISTER', 'UNDO'}
 
     def draw(self, context):
         layout = self.layout
@@ -194,7 +193,6 @@ class PIE_OT_vertsedgesfacesop(Operator):
 class PIE_MT_SelectLoopSelection(Menu):
     bl_idname = "OBJECT_MT_selectloopselection"
     bl_label = "Verts Edges Faces"
-    bl_options = {'REGISTER', 'UNDO'}
 
     def draw(self, context):
         layout = self.layout
