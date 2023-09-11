@@ -12,6 +12,7 @@ class StormHydraRenderEngine(bpy.types.HydraRenderEngine):
 
     bl_use_preview = True
     bl_use_gpu_context = True
+    bl_use_materialx = True
 
     bl_delegate_id = 'HdStormRendererPlugin'
 
