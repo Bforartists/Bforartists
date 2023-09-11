@@ -25,10 +25,6 @@
 #include "DNA_view2d_types.h"
 #include "DNA_viewer_path_types.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 struct BLI_mempool;
 struct FileLayout;
 struct FileList;
@@ -474,11 +470,8 @@ typedef struct SpaceGraph {
 
   /** Mode for the Graph editor (eGraphEdit_Mode). */
   short mode;
-  /**
-   * Time-transform auto-snapping settings for Graph editor
-   * (eAnimEdit_AutoSnap in DNA_action_types.h).
-   */
-  short autosnap;
+  /* Snapping now lives on the Scene. */
+  short autosnap DNA_DEPRECATED;
   /** Settings for Graph editor (eGraphEdit_Flag). */
   int flag;
 
@@ -564,8 +557,8 @@ typedef struct SpaceNla {
   char _pad0[6];
   /* End 'SpaceLink' header. */
 
-  /** This uses the same settings as autosnap for Action Editor. */
-  short autosnap;
+  /* Snapping now lives on the Scene. */
+  short autosnap DNA_DEPRECATED;
   short flag;
   char _pad[4];
 
@@ -855,7 +848,8 @@ typedef struct FileAssetSelectParams {
 
   short import_type; /* eFileAssetImportType */
   char drop_collections_as_instances; /* BFA - boolean, needed for setting #use_instance from UI before executing the drop operator*/
-  char _pad2[5];
+  char drop_collections_at_origin; /* BFA - boolean, needed for dropping collection at origin instead of cursor when #use_instance is enabled */
+  char _pad2[4]; /* BFA - modified padding */
 } FileAssetSelectParams;
 
 typedef enum eFileAssetImportType {
@@ -2141,7 +2135,3 @@ typedef enum eSpace_Type {
 #define IMG_SIZE_FALLBACK 256
 
 /** \} */
-
-#ifdef __cplusplus
-}
-#endif

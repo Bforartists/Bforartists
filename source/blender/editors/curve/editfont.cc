@@ -2246,7 +2246,6 @@ static int font_open_exec(bContext *C, wmOperator *op)
   Main *bmain = CTX_data_main(C);
   VFont *font;
   PropertyPointerRNA *pprop;
-  PointerRNA idptr;
   char filepath[FILE_MAX];
   RNA_string_get(op->ptr, "filepath", filepath);
 
@@ -2271,7 +2270,7 @@ static int font_open_exec(bContext *C, wmOperator *op)
      * pointer use also increases user, so this compensates it */
     id_us_min(&font->id);
 
-    RNA_id_pointer_create(&font->id, &idptr);
+    PointerRNA idptr = RNA_id_pointer_create(&font->id);
     RNA_property_pointer_set(&pprop->ptr, pprop->prop, idptr, nullptr);
     RNA_property_update(C, &pprop->ptr, pprop->prop);
   }
@@ -2354,7 +2353,6 @@ static int font_unlink_exec(bContext *C, wmOperator *op)
 {
   VFont *builtin_font;
 
-  PointerRNA idptr;
   PropertyPointerRNA pprop;
 
   UI_context_active_but_prop_get_templateID(C, &pprop.ptr, &pprop.prop);
@@ -2366,7 +2364,7 @@ static int font_unlink_exec(bContext *C, wmOperator *op)
 
   builtin_font = BKE_vfont_builtin_get();
 
-  RNA_id_pointer_create(&builtin_font->id, &idptr);
+  PointerRNA idptr = RNA_id_pointer_create(&builtin_font->id);
   RNA_property_pointer_set(&pprop.ptr, pprop.prop, idptr, nullptr);
   RNA_property_update(C, &pprop.ptr, pprop.prop);
 

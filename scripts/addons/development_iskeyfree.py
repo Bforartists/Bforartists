@@ -7,7 +7,7 @@
 bl_info = {
     "name": "Is key Free",
     "author": "Antonio Vazquez (antonioya)",
-    "version": (1, 1, 2),
+    "version": (1, 1, 3),
     "blender": (2, 80, 0),
     "location": "Text Editor > Sidebar > Dev Tab",
     "description": "Find free shortcuts, inform about used and print a key list",
@@ -16,6 +16,7 @@ bl_info = {
 }
 
 import bpy
+
 from bpy.props import (
     BoolProperty,
     EnumProperty,
@@ -28,6 +29,7 @@ from bpy.types import (
     PropertyGroup,
 )
 
+import unicodedata
 
 # ------------------------------------------------------
 # Class to find keymaps
@@ -498,6 +500,15 @@ class IsKeyFreeRunExportKeys(Operator):
         except:
             return None
 
+    def unicodelen(self, string):
+        n = 0
+        for c in string:
+            if unicodedata.east_asian_width(c) in 'FWA':
+                n += 2
+            else:
+                n += 1
+        return n
+
     def execute(self, context):
         wm = bpy.context.window_manager
         from collections import defaultdict
@@ -536,7 +547,7 @@ class IsKeyFreeRunExportKeys(Operator):
             textblock.write("\n[%s]\nEntries: %s\n\n" % (ctx, len(mykeys[ctx])))
             line_k = sorted(mykeys[ctx])
             for keys in line_k:
-                add_ticks = "-" * (max_line - (len(keys[0]) + len(keys[1])))
+                add_ticks = "-" * (max_line - (self.unicodelen(keys[0]) + len(keys[1])))
                 entries = "{ticks} {entry}".format(ticks=add_ticks, entry=keys[1])
                 textblock.write("{name} {entry}\n".format(name=keys[0], entry=entries))
 

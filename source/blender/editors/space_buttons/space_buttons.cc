@@ -698,6 +698,7 @@ static void buttons_area_listener(const wmSpaceTypeListenerParams *params)
         case ND_POSE:
         case ND_BONE_ACTIVE:
         case ND_BONE_SELECT:
+        case ND_BONE_COLLECTION:
           buttons_area_redraw(area, BCONTEXT_BONE);
           buttons_area_redraw(area, BCONTEXT_BONE_CONSTRAINT);
           buttons_area_redraw(area, BCONTEXT_DATA);
@@ -882,7 +883,7 @@ static void buttons_id_remap(ScrArea * /*area*/, SpaceLink *slink, const IDRemap
           break;
         }
         case ID_REMAP_RESULT_SOURCE_REMAPPED: {
-          RNA_id_pointer_create(path->ptr[i].owner_id, &path->ptr[i]);
+          path->ptr[i] = RNA_id_pointer_create(path->ptr[i].owner_id);
           /* There is no easy way to check/make path downwards valid, just nullify it.
            * Next redraw will rebuild this anyway. */
           i++;
