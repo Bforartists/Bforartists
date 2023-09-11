@@ -456,9 +456,10 @@ class OUTLINER_MT_asset(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("asset.mark", icon = "ASSIGN")
+        layout.operator("asset.mark", icon="ASSET_MANAGER")
         layout.operator("asset.clear", text="Clear Asset", icon = "CLEAR").set_fake_user = False
         layout.operator("asset.clear", text="Clear Asset (Set Fake User)", icon = "CLEAR").set_fake_user = True
+
 
 # BFA - Now hidden moved up a level in Outliner
 class OUTLINER_MT_liboverride(Menu):

@@ -17,10 +17,6 @@
 
 #include "DNA_ID.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 struct ARegion;
 struct ARegionType;
 struct PanelType;
@@ -730,7 +726,10 @@ enum {
   /* Maximum 15. */
 
   /* Flags start here. */
-  RGN_SPLIT_PREV = 32,
+  RGN_SPLIT_PREV = 1 << 5,
+  /** Always let scaling this region scale the previous region instead. Useful to let regions
+   * appear like they are one (while having independent layout, scrolling, etc.). */
+  RGN_SPLIT_SCALE_PREV = 1 << 6,
 };
 
 /** Mask out flags so we can check the alignment. */
@@ -856,7 +855,3 @@ typedef enum AssetShelfSettings_DisplayFlag {
   ASSETSHELF_SHOW_NAMES = (1 << 0),
 } AssetShelfSettings_DisplayFlag;
 ENUM_OPERATORS(AssetShelfSettings_DisplayFlag, ASSETSHELF_SHOW_NAMES);
-
-#ifdef __cplusplus
-}
-#endif

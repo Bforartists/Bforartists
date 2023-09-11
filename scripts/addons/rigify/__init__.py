@@ -4,7 +4,7 @@
 
 bl_info = {
     "name": "Rigify",
-    "version": (0, 6, 8),
+    "version": (0, 6, 9),
     "author": "Nathan Vegdahl, Lucio Rossi, Ivan Cappiello, Alexander Gavrilov",  # noqa
     "blender": (4, 0, 0),
     "description": "Automatic rigging from building-block components",
@@ -17,6 +17,8 @@ import importlib
 import sys
 import bpy
 import typing
+
+from bpy.app.translations import pgettext_iface as iface_
 
 
 # The order in which core modules of the addon are loaded and reloaded.
@@ -289,6 +291,16 @@ def draw_feature_set_prefs(layout: bpy.types.UILayout, _context, feature_set: Ri
         split = col.row().split(factor=split_factor)
         split.label(text="Version:")
         split.label(text=".".join(str(x) for x in info['version']), translate=False)
+    if 'blender' in info and info['blender'] > bpy.app.version:
+        split = col.row().split(factor=split_factor)
+        split.label(text="Warning:")
+        sub = split.row()
+        sub.alert = True
+        sub.label(text=(
+            iface_("This feature set requires Blender %s or newer to work properly. "
+                   "Expect errors.") % ".".join(str(x) for x in info['blender'])
+        ),
+            icon='ERROR', translate=False)
     if 'warning' in info:
         split = col.row().split(factor=split_factor)
         split.label(text="Warning:")

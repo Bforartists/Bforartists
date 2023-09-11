@@ -912,10 +912,9 @@ static void nlastrip_evaluate_controls(NlaStrip *strip,
 {
   /* now strip's evaluate F-Curves for these settings (if applicable) */
   if (strip->fcurves.first) {
-    PointerRNA strip_ptr;
 
     /* create RNA-pointer needed to set values */
-    RNA_pointer_create(nullptr, &RNA_NlaStrip, strip, &strip_ptr);
+    PointerRNA strip_ptr = RNA_pointer_create(nullptr, &RNA_NlaStrip, strip);
 
     /* execute these settings as per normal */
     animsys_evaluate_fcurves(&strip_ptr, &strip->fcurves, anim_eval_context, flush_to_original);
@@ -2880,7 +2879,7 @@ static void nlastrip_evaluate_meta(const int evaluation_mode,
   /* Assert currently supported modes. If new mode added, then assertion marks potentially missed
    * area.
    *
-   * NOTE: In the future if support is ever added to metastrips to support nested tracks, then
+   * NOTE: In the future if support is ever added to meta-strips to support nested tracks, then
    * STRIP_EVAL_BLEND and STRIP_EVAL_BLEND_GET_INVERTED_LOWER_SNAPSHOT cases are no longer
    * equivalent. The output of nlastrips_ctime_get_strip() may return a list of strips. The only
    * case difference should be the evaluation order.
@@ -3793,8 +3792,7 @@ void BKE_animsys_nla_remap_keyframe_values(NlaKeyframingContext *context,
   BLI_bitmap_copy_all(blended_necs->remap_domain.ptr, remap_domain, count);
 
   /* Need to send id_ptr instead of prop_ptr so fcurve RNA paths resolve properly. */
-  PointerRNA id_ptr;
-  RNA_id_pointer_create(prop_ptr->owner_id, &id_ptr);
+  PointerRNA id_ptr = RNA_id_pointer_create(prop_ptr->owner_id);
 
   /* Per iteration, remove effect of upper strip which gives output of nla stack below it. */
   LISTBASE_FOREACH_BACKWARD (NlaEvalStrip *, nes, &context->upper_estrips) {
@@ -3896,7 +3894,6 @@ void BKE_animsys_evaluate_animdata(ID *id,
                                    eAnimData_Recalc recalc,
                                    const bool flush_to_original)
 {
-  PointerRNA id_ptr;
 
   /* sanity checks */
   if (ELEM(nullptr, id, adt)) {
@@ -3904,7 +3901,7 @@ void BKE_animsys_evaluate_animdata(ID *id,
   }
 
   /* get pointer to ID-block for RNA to use */
-  RNA_id_pointer_create(id, &id_ptr);
+  PointerRNA id_ptr = RNA_id_pointer_create(id);
 
   /* recalculate keyframe data:
    * - NLA before Active Action, as Active Action behaves as 'tweaking track'
@@ -4131,7 +4128,6 @@ void BKE_animsys_eval_driver(Depsgraph *depsgraph, ID *id, int driver_index, FCu
   BLI_assert(fcu_orig != nullptr);
 
   /* TODO(sergey): De-duplicate with BKE animsys. */
-  PointerRNA id_ptr;
   bool ok = false;
 
   /* Lookup driver, accelerated with driver array map. */
@@ -4148,7 +4144,7 @@ void BKE_animsys_eval_driver(Depsgraph *depsgraph, ID *id, int driver_index, FCu
   DEG_debug_print_eval_subdata_index(
       depsgraph, __func__, id->name, id, "fcu", fcu->rna_path, fcu, fcu->array_index);
 
-  RNA_id_pointer_create(id, &id_ptr);
+  PointerRNA id_ptr = RNA_id_pointer_create(id);
 
   /* check if this driver's curve should be skipped */
   if ((fcu->flag & (FCURVE_MUTED | FCURVE_DISABLED)) == 0) {

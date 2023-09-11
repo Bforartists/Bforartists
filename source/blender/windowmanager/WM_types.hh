@@ -429,6 +429,7 @@ struct wmNotifier {
 #define ND_SHADERFX (32 << 16)
 /* For updating motion paths in 3dview. */
 #define ND_DRAW_ANIMVIZ (33 << 16)
+#define ND_BONE_COLLECTION (34 << 16)
 
 /* NC_MATERIAL Material */
 #define ND_SHADING (30 << 16)
@@ -1107,6 +1108,7 @@ struct wmDragAsset {
   int import_method; /* eAssetImportType */
   const AssetRepresentationHandle *asset;
   bool drop_collections_as_instances; /* BFA - needed for setting #use_instance from UI before executing the drop operator */
+  bool drop_collections_at_origin; /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled */
 };
 
 struct wmDragAssetCatalog {
