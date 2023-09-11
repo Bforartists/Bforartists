@@ -388,12 +388,13 @@ class GRAPH_MT_channel(Menu):
         layout.operator_context = operator_context
         layout.operator_menu_enum("graph.fmodifier_add", "type", text="Add F-Curve Modifier").only_active = False
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
-        layout.operator("graph.sound_bake", icon="BAKE_SOUND")
+        layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
 
         layout.separator()
 
         layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
         layout.operator("graph.samples_to_keys", icon="CLEAR")
+
 
         layout.separator()
 
