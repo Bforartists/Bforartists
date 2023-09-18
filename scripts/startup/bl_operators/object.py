@@ -918,6 +918,7 @@ class LoadImageAsEmpty:
     )
 
     filter_image: BoolProperty(default=True, options={'HIDDEN', 'SKIP_SAVE'})
+    filter_movie: BoolProperty(default=True, options={'HIDDEN', 'SKIP_SAVE'})
     filter_folder: BoolProperty(default=True, options={'HIDDEN', 'SKIP_SAVE'})
 
     view_align: BoolProperty(

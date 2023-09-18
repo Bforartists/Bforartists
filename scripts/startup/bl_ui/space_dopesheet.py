@@ -71,6 +71,15 @@ class DopesheetFilterPopoverBase:
     @classmethod
     def draw_search_filters(cls, context, layout, generic_filters_only=False):
         dopesheet = context.space_data.dopesheet
+        is_nla = context.area.type == 'NLA_EDITOR'
+
+        col = layout.column(align=True)
+        if not is_nla:
+            row = col.row(align=True)
+            row.prop(dopesheet, "filter_fcurve_name", text="")
+        else:
+            row = col.row(align=True)
+            row.prop(dopesheet, "filter_text", text="")
 
         if (not generic_filters_only) and bpy.data.collections:
             col = layout.column(align=True)
@@ -87,8 +96,7 @@ class DopesheetFilterPopoverBase:
 
         # datablock filters
         layout.label(text="Filter by Type:")
-        flow = layout.grid_flow(row_major=True, columns=2,
-                                even_rows=False, align=False)
+        flow = layout.grid_flow(row_major=True, columns=2, even_rows=False, align=False)
 
         flow.prop(dopesheet, "show_scenes", text="Scenes")
         flow.prop(dopesheet, "show_nodes", text="Node Trees")
@@ -154,7 +162,7 @@ class DopesheetFilterPopoverBase:
         # performance-related options (users will mostly have these enabled)
         col = layout.column(align=True)
         col.label(text="Options:")
-        row = col.row()
+        row = col.row() #BFA - seperator
         row.separator()
         row.prop(dopesheet, "use_datablock_sort", icon='NONE')
 
@@ -171,6 +179,10 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
         dopesheet = context.space_data.dopesheet
         ds_mode = context.space_data.mode
         st = context.space_data
+        
+        layout.prop(dopesheet, "show_summary", text="Summary")
+
+        DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
 
         if ds_mode in {'DOPESHEET', 'ACTION', 'GPENCIL'}:
             layout.separator()
@@ -183,12 +195,12 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
             DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
 
             row = layout.row()
-            row.separator()
+            row.separator()#BFA - Moved from header to options
             row.prop(st.dopesheet, "use_multi_word_filter",
                      text="Multi-Word Match Search")
 
 
-################################ Switch between the editors ##########################################
+################################ BFA -Switch between the editors ##########################################
 
 class ANIM_OT_switch_editors_to_dopesheet(bpy.types.Operator):
     """Switch to Dopesheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
@@ -335,8 +347,7 @@ class DOPESHEET_HT_editor_buttons:
             row.operator("action.layer_next", text="", icon='TRIA_UP')
 
             row = layout.row(align=True)
-            row.operator("action.push_down", text="Push Down",
-                         icon='NLA_PUSHDOWN')
+            row.operator("action.push_down", text="Push Down", icon='NLA_PUSHDOWN')
             row.operator("action.stash", text="Stash", icon='FREEZE')
 
             layout.separator_spacer()
@@ -352,28 +363,30 @@ class DOPESHEET_HT_editor_buttons:
             row.enabled = enable_but
             row.operator("gpencil.layer_add", icon='ADD', text="")
             row.operator("gpencil.layer_remove", icon='REMOVE', text="")
-            row.menu("GPENCIL_MT_layer_context_menu",
-                     icon='DOWNARROW_HLT', text="")
+            row.menu("GPENCIL_MT_layer_context_menu", icon='DOWNARROW_HLT', text="")
 
             row = layout.row(align=True)
             row.enabled = enable_but
-            row.operator("gpencil.layer_move",
-                         icon='TRIA_UP', text="").type = 'UP'
-            row.operator("gpencil.layer_move", icon='TRIA_DOWN',
-                         text="").type = 'DOWN'
+            row.operator("gpencil.layer_move", icon='TRIA_UP', text="").type = 'UP'
+            row.operator("gpencil.layer_move", icon='TRIA_DOWN', text="").type = 'DOWN'
 
             row = layout.row(align=True)
             row.enabled = enable_but
-            row.operator("gpencil.layer_isolate", icon='RESTRICT_VIEW_ON',
-                         text="").affect_visibility = True
-            row.operator("gpencil.layer_isolate", icon='LOCKED',
-                         text="").affect_visibility = False
+            row.operator("gpencil.layer_isolate", icon='RESTRICT_VIEW_ON', text="").affect_visibility = True
+            row.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
 
         layout.separator_spacer()
 
         layout.prop(dopesheet, "show_summary", text="")
 
-        dopesheet_filter(layout, context)
+        if st.mode == 'DOPESHEET':
+            dopesheet_filter(layout, context)
+        elif st.mode == 'ACTION':
+            dopesheet_filter(layout, context)
+        elif st.mode == 'GPENCIL':
+            row = layout.row(align=True)
+            row.prop(st.dopesheet, "show_only_selected", text="")
+            row.prop(st.dopesheet, "show_hidden", text="")
 
         if ds_mode in {'DOPESHEET'}:
             layout.popover(panel="DOPESHEET_PT_filters",
@@ -401,7 +414,7 @@ class DOPESHEET_HT_editor_buttons:
                 icon_only=True,
                 panel="DOPESHEET_PT_proportional_edit",
             )
-
+		#BFA - expose common curve operators to header
         row = layout.row(align = True)
         row.operator_menu_enum("action.easing_type", "type", text="", icon = "IPO_EASE_IN_OUT")
         row.operator_menu_enum("action.handle_type", "type", text="", icon="HANDLE_AUTO")
@@ -450,7 +463,7 @@ class DOPESHEET_MT_editor_menus(Menu):
     def draw(self, context):
         layout = self.layout
         st = context.space_data
-        # Quick favourites menu
+        # BFA - Quick favourites menu
         layout.menu("SCREEN_MT_user_menu", text="Quick")
         layout.menu("DOPESHEET_MT_view")
         layout.menu("DOPESHEET_MT_select")
@@ -476,7 +489,7 @@ class DOPESHEET_MT_view(Menu):
 
         st = context.space_data
 
-        layout.prop(st, "show_region_channels") # bfa - channels
+        layout.prop(st, "show_region_channels") # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
 
@@ -500,9 +513,14 @@ class DOPESHEET_MT_view(Menu):
 
         layout.separator()
 
-        layout.menu("DOPESHEET_MT_view_pie_menus")
+        layout.menu("DOPESHEET_MT_view_pie_menus")#BFA - make pies discoverable
         layout.menu("INFO_MT_area")
 
+        # Add this to show key-binding (reverse action in dope-sheet).
+        layout.separator()
+        props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon='GRAPH')
+        props.data_path = "area.type"
+        props.value = 'GRAPH_EDITOR'
 
 class DOPESHEET_MT_view_pie_menus(Menu):
     bl_label = "Pie menus"
@@ -632,7 +650,7 @@ class DOPESHEET_MT_channel(Menu):
 
         layout.separator()
 
-        # bfa - menu comes from space_graph
+        # BFA - menu comes from space_graph
         layout.menu("GRAPH_MT_channel_move")
 
         layout.separator()
@@ -698,11 +716,16 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.clean", icon="CLEAN_KEYS").channels = False
         layout.operator("action.clean", text = "Clean Channels", icon="CLEAN_CHANNELS").channels = True
 
-        layout.operator("action.sample", icon="SAMPLE_KEYFRAMES")
+        layout.operator("action.sample", icon="SAMPLE_KEYFRAMES")#BFA - consistenc with Fcurve editor
+
 
         layout.separator()
-        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
+        layout.operator("action.clean").channels = False
+        layout.operator("action.clean", text="Clean Channels").channels = True
+        layout.operator("action.bake_keys")
 
+        layout.separator()
+        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
 
 class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     bl_label = "View Options"
@@ -859,7 +882,7 @@ class DOPESHEET_MT_gpencil_channel(Menu):
         layout.operator("anim.channels_delete", icon="DELETE")
 
         layout.separator()
-        #bfa - menu comes from space_graph.py
+        #BFA - menu comes from space_graph.py
         layout.menu("GRAPH_MT_channel_settings_toggle")
 
         layout.separator()
@@ -897,7 +920,7 @@ class DOPESHEET_MT_gpencil_key(Menu):
         layout.operator_menu_enum("action.keyframe_insert", "type")
 
         layout.separator()
-
+        
         layout.operator("action.delete", icon="DELETE")
         layout.operator("gpencil.interpolate_reverse", icon="DELETE")
 
@@ -1068,7 +1091,7 @@ class DOPESHEET_PT_gpencil_mode(LayersDopeSheetPanel, Panel):
             col.use_property_split = False
             col.prop(gpl, "use_lights")
             col.prop(gpd, "use_autolock_layers",
-                     text="Autolock Inactive Layers")
+                     text="Autolock Inactive Layers") #BFA - consistent prop exposed
 
 
 class DOPESHEET_PT_gpencil_layer_masks(LayersDopeSheetPanel, GreasePencilLayerMasksPanel, Panel):
