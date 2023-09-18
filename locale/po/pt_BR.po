@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.0.0 Alpha (b'526f935981fd')\n"
+"Project-Id-Version: Blender 4.0.0 Alpha (b'2d057c023879')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2023-09-04 15:42:41\n"
+"POT-Creation-Date: 2023-09-18 08:31:54\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
 "Last-Translator: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "Language-Team: Leandro Paganelli, Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -281,18 +281,6 @@ msgstr "Completo"
 
 msgid "Fribidi Library"
 msgstr "Biblioteca FriBidi"
-
-
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in svn's libraries repository"
-msgstr "A biblioteca Fribidi C compilada (.so em sistemas Linux, .dll em sistemas Windows...), você provavelmente precisará editá-la se estiver no Windows, ex: usando a inclusa dentro das bibliotecas no repositório svn"
-
-
-msgid "Gettext 'msgfmt' executable"
-msgstr "O executável para catálogos do tipo Gettext"
-
-
-msgid "The gettext msgfmt 'compiler'. You’ll likely have to edit it if you’re under Windows"
-msgstr "O compilador para catálogos de mensagem tipo gettext. Você provavelmente terá de editá-lo se estiver usando Windows"
 
 
 msgid "Translation Root"
@@ -893,6 +881,186 @@ msgstr "Descrição"
 
 msgid "Tags"
 msgstr "Tags"
+
+
+msgctxt "ID"
+msgid "Action"
+msgstr "Ação"
+
+
+msgctxt "ID"
+msgid "Armature"
+msgstr "Armação"
+
+
+msgctxt "ID"
+msgid "Brush"
+msgstr "Pincel"
+
+
+msgctxt "ID"
+msgid "Cache File"
+msgstr "Arquivo(s) de cache"
+
+
+msgctxt "ID"
+msgid "Camera"
+msgstr "Câmera"
+
+
+msgctxt "ID"
+msgid "Collection"
+msgstr "Coleção"
+
+
+msgctxt "ID"
+msgid "Curve"
+msgstr "Curva"
+
+
+msgctxt "ID"
+msgid "Font"
+msgstr "Fonte"
+
+
+msgctxt "ID"
+msgid "Grease Pencil"
+msgstr "Lápis de cera"
+
+
+msgctxt "ID"
+msgid "Image"
+msgstr "Imagem"
+
+
+msgctxt "ID"
+msgid "Key"
+msgstr "Chave"
+
+
+msgctxt "ID"
+msgid "Lattice"
+msgstr "Treliça"
+
+
+msgctxt "ID"
+msgid "Library"
+msgstr "Biblioteca"
+
+
+msgctxt "ID"
+msgid "Light"
+msgstr "Luz"
+
+
+msgctxt "ID"
+msgid "Light Probe"
+msgstr "Sonda de Luz"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "Estilo de linha"
+
+
+msgctxt "ID"
+msgid "Mask"
+msgstr "Máscara"
+
+
+msgctxt "ID"
+msgid "Material"
+msgstr "Materiais"
+
+
+msgctxt "ID"
+msgid "Mesh"
+msgstr "Malha"
+
+
+msgctxt "ID"
+msgid "Metaball"
+msgstr "Meta-esfera"
+
+
+msgctxt "ID"
+msgid "Movie Clip"
+msgstr "Clipe de filme"
+
+
+msgctxt "ID"
+msgid "Node Tree"
+msgstr "Árvore de nós"
+
+
+msgctxt "ID"
+msgid "Object"
+msgstr "Objeto"
+
+
+msgctxt "ID"
+msgid "Paint Curve"
+msgstr "Curva de pintura"
+
+
+msgctxt "ID"
+msgid "Palette"
+msgstr "Paleta"
+
+
+msgctxt "ID"
+msgid "Particle"
+msgstr "Partículas"
+
+
+msgctxt "ID"
+msgid "Point Cloud"
+msgstr "Nuvem de Pontos"
+
+
+msgctxt "ID"
+msgid "Scene"
+msgstr "Cena"
+
+
+msgctxt "ID"
+msgid "Sound"
+msgstr "Som"
+
+
+msgctxt "ID"
+msgid "Speaker"
+msgstr "Alto-falante"
+
+
+msgctxt "ID"
+msgid "Text"
+msgstr "Texto"
+
+
+msgctxt "ID"
+msgid "Texture"
+msgstr "Texturas"
+
+
+msgctxt "ID"
+msgid "Volume"
+msgstr "Volume"
+
+
+msgctxt "ID"
+msgid "Window Manager"
+msgstr "Gerenciador de janelas"
+
+
+msgctxt "ID"
+msgid "Workspace"
+msgstr "Espaço de Trabalho"
+
+
+msgctxt "ID"
+msgid "World"
+msgstr "Ambiente"
 
 
 msgid "ID Name"
@@ -2627,44 +2795,16 @@ msgid "Object children will use relative transform, like deform"
 msgstr "Crianças do objeto irão usar a transformação relativa, como deformação."
 
 
+msgid "Bones"
+msgstr "Ossos"
+
+
 msgid "Visible"
 msgstr "Visíveis"
 
 
 msgid "Custom"
 msgstr "Personalizar"
-
-
-msgid "Bone Group"
-msgstr "Grupos de ossos"
-
-
-msgid "Groups of Pose Channels (Bones)"
-msgstr "Grupos de canais de pose (ossos)."
-
-
-msgid "Bone Groups"
-msgstr "Grupos de ossos"
-
-
-msgid "Collection of bone groups"
-msgstr "Coleção de grupos de ossos"
-
-
-msgid "Active Bone Group"
-msgstr "Grupo de ossos ativo"
-
-
-msgid "Active bone group for this pose"
-msgstr "Grupo de ossos ativos para esta pose."
-
-
-msgid "Active Bone Group Index"
-msgstr "Índice do grupo de ossos ativo"
-
-
-msgid "Active index in bone groups array"
-msgstr "Índice ativo dentro da matriz do grupo de ossos."
 
 
 msgid "Brush Capabilities"
@@ -6785,186 +6925,6 @@ msgid "Type of ID-block that can be used"
 msgstr "O tipo de identificador de bloco que pode ser usado."
 
 
-msgctxt "ID"
-msgid "Action"
-msgstr "Ação"
-
-
-msgctxt "ID"
-msgid "Armature"
-msgstr "Armação"
-
-
-msgctxt "ID"
-msgid "Brush"
-msgstr "Pincel"
-
-
-msgctxt "ID"
-msgid "Cache File"
-msgstr "Arquivo(s) de cache"
-
-
-msgctxt "ID"
-msgid "Camera"
-msgstr "Câmera"
-
-
-msgctxt "ID"
-msgid "Collection"
-msgstr "Coleção"
-
-
-msgctxt "ID"
-msgid "Curve"
-msgstr "Curva"
-
-
-msgctxt "ID"
-msgid "Font"
-msgstr "Fonte"
-
-
-msgctxt "ID"
-msgid "Grease Pencil"
-msgstr "Lápis de cera"
-
-
-msgctxt "ID"
-msgid "Image"
-msgstr "Imagem"
-
-
-msgctxt "ID"
-msgid "Key"
-msgstr "Chave"
-
-
-msgctxt "ID"
-msgid "Lattice"
-msgstr "Treliça"
-
-
-msgctxt "ID"
-msgid "Library"
-msgstr "Biblioteca"
-
-
-msgctxt "ID"
-msgid "Light"
-msgstr "Luz"
-
-
-msgctxt "ID"
-msgid "Light Probe"
-msgstr "Sonda de Luz"
-
-
-msgctxt "ID"
-msgid "Line Style"
-msgstr "Estilo de linha"
-
-
-msgctxt "ID"
-msgid "Mask"
-msgstr "Máscara"
-
-
-msgctxt "ID"
-msgid "Material"
-msgstr "Materiais"
-
-
-msgctxt "ID"
-msgid "Mesh"
-msgstr "Malha"
-
-
-msgctxt "ID"
-msgid "Metaball"
-msgstr "Meta-esfera"
-
-
-msgctxt "ID"
-msgid "Movie Clip"
-msgstr "Clipe de filme"
-
-
-msgctxt "ID"
-msgid "Node Tree"
-msgstr "Árvore de nós"
-
-
-msgctxt "ID"
-msgid "Object"
-msgstr "Objeto"
-
-
-msgctxt "ID"
-msgid "Paint Curve"
-msgstr "Curva de pintura"
-
-
-msgctxt "ID"
-msgid "Palette"
-msgstr "Paleta"
-
-
-msgctxt "ID"
-msgid "Particle"
-msgstr "Partículas"
-
-
-msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Nuvem de Pontos"
-
-
-msgctxt "ID"
-msgid "Scene"
-msgstr "Cena"
-
-
-msgctxt "ID"
-msgid "Sound"
-msgstr "Som"
-
-
-msgctxt "ID"
-msgid "Speaker"
-msgstr "Alto-falante"
-
-
-msgctxt "ID"
-msgid "Text"
-msgstr "Texto"
-
-
-msgctxt "ID"
-msgid "Texture"
-msgstr "Texturas"
-
-
-msgctxt "ID"
-msgid "Volume"
-msgstr "Volume"
-
-
-msgctxt "ID"
-msgid "Window Manager"
-msgstr "Gerenciador de janelas"
-
-
-msgctxt "ID"
-msgid "Workspace"
-msgstr "Espaço de Trabalho"
-
-
-msgctxt "ID"
-msgid "World"
-msgstr "Ambiente"
-
-
 msgid "Rotation Mode"
 msgstr "Modo de rotação"
 
@@ -9253,22 +9213,6 @@ msgstr "Tamanho para mostrar"
 
 msgid "Change the size of the display (width of columns or thumbnails size)"
 msgstr "Permite alterar o tamanho da amostragem (pelo comprimento das colunas ou pelo tamanho das miniaturas)."
-
-
-msgid "Tiny"
-msgstr "Minúsculas"
-
-
-msgid "Small"
-msgstr "Pequenas"
-
-
-msgid "Medium"
-msgstr "Médio(a)"
-
-
-msgid "Large"
-msgstr "Grandes"
 
 
 msgid "Display Mode"
@@ -11685,10 +11629,6 @@ msgstr "Bloco de dados de armação contendo uma hierarquia de ossos, normalment
 
 msgid "Animation data for this data-block"
 msgstr "Dados de animação para este bloco de dados."
-
-
-msgid "Bones"
-msgstr "Ossos"
 
 
 msgid "Octahedral"
@@ -14549,6 +14489,14 @@ msgid "Light Probe data-block for lighting capture objects"
 msgstr "Bloco de dados da sonda de luz para objetos de captura de luz"
 
 
+msgid "Clamp Direct"
+msgstr "Truncar diretamente"
+
+
+msgid "Clamp Indirect"
+msgstr "Truncar indiretamente"
+
+
 msgid "Resolution X"
 msgstr "Resolução X"
 
@@ -15133,6 +15081,10 @@ msgid "High quality"
 msgstr "Alta qualidade."
 
 
+msgid "Medium"
+msgstr "Médio(a)"
+
+
 msgid "Medium quality"
 msgstr "Média qualidade."
 
@@ -15191,6 +15143,10 @@ msgstr "Editar"
 
 msgid "Sculpt"
 msgstr "Escultura"
+
+
+msgid "Modifier"
+msgstr "Modificador"
 
 
 msgid "Tool"
@@ -21935,24 +21891,24 @@ msgid "Math"
 msgstr "Matemática"
 
 
-msgid "Converter"
-msgstr "Conversor"
-
-
-msgid "Distort"
-msgstr "Distorcer"
-
-
-msgid "Layout"
-msgstr "Organizar"
-
-
 msgid "Keying"
 msgstr "Inserção de chaves"
 
 
 msgid "Tracking"
 msgstr "Rastreamento"
+
+
+msgid "Layout"
+msgstr "Organizar"
+
+
+msgid "Converter"
+msgstr "Conversor"
+
+
+msgid "Distort"
+msgstr "Distorcer"
 
 
 msgid "Attribute"
@@ -21969,6 +21925,18 @@ msgstr "Nós"
 
 msgid "Node Color Specials"
 msgstr "Nós especiais de cor"
+
+
+msgid "Add Modifier"
+msgstr "Adicionar modificador"
+
+
+msgid "Generate"
+msgstr "Gerar"
+
+
+msgid "Physics"
+msgstr "Físicas"
 
 
 msgid "Particle Specials"
@@ -24470,10 +24438,6 @@ msgstr "O quadro inicial para geração de oceano."
 
 msgid "Method of modifying geometry"
 msgstr "Método de modificação da geometria."
-
-
-msgid "Generate"
-msgstr "Gerar"
 
 
 msgid "Generate ocean surface geometry at the specified resolution"
@@ -30100,6 +30064,10 @@ msgid "Operator Properties"
 msgstr "Propriedades de operador"
 
 
+msgid "Add keyframes on every frame between the selected keyframes"
+msgstr "Adiciona quadros-chave em cada quadro entre os quadros-chave selecionados."
+
+
 msgctxt "Operator"
 msgid "Clean Keyframes"
 msgstr "Limpar quadros-chave"
@@ -30438,15 +30406,6 @@ msgstr "Empurrar ação para baixo"
 
 msgid "Push action down on to the NLA stack as a new strip"
 msgstr "Empurra a ação para baixo na pilha de animação não linear como uma nova faixa."
-
-
-msgctxt "Operator"
-msgid "Sample Keyframes"
-msgstr "Quadros-chave de amostra"
-
-
-msgid "Add keyframes on every frame between the selected keyframes"
-msgstr "Adiciona quadros-chave em cada quadro entre os quadros-chave selecionados."
 
 
 msgctxt "Operator"
@@ -36250,10 +36209,6 @@ msgid "Add Segment"
 msgstr "Adicionar Segmento"
 
 
-msgid "Modifier"
-msgstr "Modificador"
-
-
 msgid "Name of the modifier to edit"
 msgstr "Nome do modificador para editar"
 
@@ -36738,15 +36693,6 @@ msgstr "Permite usar o mouse para obter uma amostra de peso dentro da janela de 
 
 
 msgctxt "Operator"
-msgid "Bake Curve"
-msgstr "Gerar e gravar curva"
-
-
-msgid "Bake selected F-Curves to a set of sampled points defining a similar curve"
-msgstr "Gera e grava as curvas-f para um conjunto de amostra de pontos que definem uma curva similar."
-
-
-msgctxt "Operator"
 msgid "Breakdown"
 msgstr "Interruptivos"
 
@@ -36992,15 +36938,6 @@ msgstr "Achatar hastes"
 
 msgid "Flatten handles for a smoother transition"
 msgstr "Achata as hastes para uma transição mais suave."
-
-
-msgctxt "Operator"
-msgid "Bake Sound to F-Curves"
-msgstr "Gerar e gravar som para as curvas-f"
-
-
-msgid "Bakes a sound wave to selected F-Curves"
-msgstr "Gera e grava uma onda de som para as curvas-f selecionadas."
 
 
 msgid "Attack Time"
@@ -40759,11 +40696,6 @@ msgstr "Adiciona um nó de re-roteamento."
 
 
 msgctxt "Operator"
-msgid "Search and Add Node"
-msgstr "Pesquisar e adicionar nó"
-
-
-msgctxt "Operator"
 msgid "Attach Nodes"
 msgstr "Conectar nós"
 
@@ -41277,6 +41209,11 @@ msgid "Add an object to the scene"
 msgstr "Permite adicionar um objeto para a cena."
 
 
+msgctxt "Operator"
+msgid "Add Modifier"
+msgstr "Adicionar modificador"
+
+
 msgid "Add named object"
 msgstr "Permite a adição de um objeto nomeado."
 
@@ -41686,11 +41623,6 @@ msgstr "Arte de Linhas da Cena"
 
 msgid "Collection Line Art"
 msgstr "Arte de Linhas da Coleção"
-
-
-msgctxt "Operator"
-msgid "Add Modifier"
-msgstr "Adicionar modificador"
 
 
 msgctxt "Operator"
@@ -48799,38 +48731,13 @@ msgstr "Salva as configurações de tradução dentro de um arquivo persistente 
 
 
 msgctxt "Operator"
-msgid "Update I18n Branches"
-msgstr "Atualizar Vertentes I18n"
-
-
-msgid "Update i18n svn's branches (po files)"
-msgstr "Atualiza as ramificações svn i18n (arquivos po)."
-
-
-msgid "Skip POT"
-msgstr "Pular a geração de POT"
-
-
-msgid "Skip POT file generation"
-msgstr "Pula a etapa geração de arquivo POT."
-
-
-msgctxt "Operator"
 msgid "Init I18n Update Settings"
 msgstr "Configurações de inicialização de atualização I18n"
-
-
-msgid "Init settings for i18n svn's update operators"
-msgstr "Configurações de inicialização para operadores de atualização de i18n."
 
 
 msgctxt "Operator"
 msgid "Init I18n Update Select Languages"
 msgstr "Inicia a atualização de seleção de línguas I18N"
-
-
-msgid "(De)select (or invert selection of) all languages for i18n svn's update operators"
-msgstr "(De)selecionar (ou inverter a seleção de) todas as traduções para os operadores de atualização svn i18n."
 
 
 msgid "Invert Selection"
@@ -48854,25 +48761,12 @@ msgid "Update I18n Statistics"
 msgstr "Atualizar as estatísticas l18n"
 
 
-msgid "Check Branches"
-msgstr "Verificar Vertentes"
+msgid "Skip POT"
+msgstr "Pular a geração de POT"
 
 
-msgid "Check po files in branches"
-msgstr "Verifica os arquivos po dentro das vertentes"
-
-
-msgid "Check Trunk"
-msgstr "Verificar tronco"
-
-
-msgid "Check po files in trunk"
-msgstr "Verifica os arquivos po dentro do tronco"
-
-
-msgctxt "Operator"
-msgid "Update I18n Trunk"
-msgstr "Atualizar tronco de I18n"
+msgid "Skip POT file generation"
+msgstr "Pula a etapa geração de arquivo POT."
 
 
 msgctxt "Operator"
@@ -52443,10 +52337,6 @@ msgid "Structure"
 msgstr "Estrutura"
 
 
-msgid "Physics"
-msgstr "Físicas"
-
-
 msgid "Movement"
 msgstr "Movimento"
 
@@ -53872,10 +53762,6 @@ msgstr "Coleção de caches de pontos."
 
 msgid "A collection of pose channels, including settings for animating bones"
 msgstr "Uma coleção de canais de pose, incluindo configurações para animação de ossos."
-
-
-msgid "Groups of the bones"
-msgstr "Grupos de ossos"
 
 
 msgid "Pose Bones"
@@ -56191,16 +56077,8 @@ msgid "Sensor is being scanned from top to bottom"
 msgstr "O sensor será escaneado do topo para a base."
 
 
-msgid "Clamp Direct"
-msgstr "Truncar diretamente"
-
-
 msgid "If non-zero, the maximum value for a direct sample, higher values will be scaled down to avoid too much noise and slow convergence at the cost of accuracy"
 msgstr "Caso não zero, o valor máximo para uma amostra direta, valores mais altos serão reduzidos em sua escala para evitar muito ruído e uma baixa convergência ao custo da precisão."
-
-
-msgid "Clamp Indirect"
-msgstr "Truncar indiretamente"
 
 
 msgid "If non-zero, the maximum value for an indirect sample, higher values will be scaled down to avoid too much noise and slow convergence at the cost of accuracy"
@@ -56435,44 +56313,12 @@ msgid "Settings/info about a language"
 msgstr "Configurações e informações sobre uma tradução."
 
 
-msgid "MO File Path"
-msgstr "Caminho de arquivo MO"
-
-
-msgid "Path to the relevant mo file"
-msgstr "Caminho para o arquivo mo relevante."
-
-
 msgid "Language Name"
 msgstr "Nome da língua"
 
 
 msgid "Numeric ID"
 msgstr "Identificador numérico"
-
-
-msgid "PO File Path"
-msgstr "Caminho de arquivo PO"
-
-
-msgid "Path to the relevant po file in branches"
-msgstr "Caminho para o arquivo po relevante dentro das ramificações."
-
-
-msgid "PO Git Master File Path"
-msgstr "Caminho dos arquivos PO mestres no Git"
-
-
-msgid "Path to the relevant po file in Blender's translations git repository"
-msgstr "O caminho para os arquivos de catálogos .po relevantes no repositório Git de traduções do Blender."
-
-
-msgid "PO Trunk File Path"
-msgstr "Caminho tronco dos arquivos PO"
-
-
-msgid "Path to the relevant po file in trunk"
-msgstr "Caminho para o arquivo .po relevante dentro do tronco."
 
 
 msgid "Language ID"
@@ -56493,10 +56339,6 @@ msgstr "Caso estes ajustes já tenham sido configurados automaticamente ou não.
 
 msgid "Languages"
 msgstr "Línguas para tradução"
-
-
-msgid "Languages to update in branches"
-msgstr "Traduções para atualizar nas ramificações."
 
 
 msgid "POT File Path"
@@ -60126,54 +59968,6 @@ msgid "Action displayed and edited in this space"
 msgstr "Ação mostrada e editada neste espaço."
 
 
-msgid "Auto Snap"
-msgstr "Atração automática"
-
-
-msgid "Automatic time snapping settings for transformations"
-msgstr "Configurações de atração automática de tempo para as transformações."
-
-
-msgid "No Auto-Snap"
-msgstr "Sem atração automática"
-
-
-msgid "Snap to 1.0 frame intervals"
-msgstr "Atrai para intervalos de 1.0 (quadros inteiros ou espaçamento da grade)."
-
-
-msgid "Second Step"
-msgstr "Intervalos de segundo"
-
-
-msgid "Snap to 1.0 second intervals"
-msgstr "Atrai para intervalos de 1.0 segundo (ou conforme remapeamento de tempo)."
-
-
-msgid "Nearest Frame"
-msgstr "Quadros mais próximos"
-
-
-msgid "Snap to actual frames (nla-action time)"
-msgstr "Atrai para os quadros atuais (tempo da ação na animação não linear)."
-
-
-msgid "Nearest Second"
-msgstr "Segundos mais próximos"
-
-
-msgid "Snap to actual seconds (nla-action time)"
-msgstr "Atrai para os segundos atuais (tempo da ação na animação não linear)."
-
-
-msgid "Nearest Marker"
-msgstr "Marcadores mais próximos"
-
-
-msgid "Snap to nearest marker"
-msgstr "Atrai para os marcadores mais próximos (em quaisquer dos lados)."
-
-
 msgid "Show the active object's cloth point cache"
 msgstr "Mostra o cache de pontos do objeto ativo de tecido."
 
@@ -63084,12 +62878,20 @@ msgid "UV Local View"
 msgstr "Visualização local de UV"
 
 
-msgid "Snap Element"
-msgstr "Elemento de atração"
-
-
 msgid "Type of element to snap to"
 msgstr "O tipo de elemento ao qual atrair."
+
+
+msgid "Nearest Marker"
+msgstr "Marcadores mais próximos"
+
+
+msgid "Snap to nearest marker"
+msgstr "Atrai para os marcadores mais próximos (em quaisquer dos lados)."
+
+
+msgid "Snap Element"
+msgstr "Elemento de atração"
 
 
 msgid "Snap to"
@@ -64698,12 +64500,12 @@ msgid "Add-on '{}' not found!"
 msgstr "Complemento '{}' não encontrado!"
 
 
-msgid "Info written to {} text datablock!"
-msgstr "Informação escrita para o bloco de textos {} !"
-
-
 msgid "Message extraction process failed!"
 msgstr "Processo de extração de mensagem falhou !"
+
+
+msgid "Info written to {} text datablock!"
+msgstr "Informação escrita para o bloco de textos {} !"
 
 
 msgid "Could not init languages data!"
@@ -64722,16 +64524,6 @@ msgstr "Redefinir configurações"
 msgctxt "Operator"
 msgid "Deselect All"
 msgstr "(De)selecionar tudo"
-
-
-msgctxt "Operator"
-msgid "Update Branches"
-msgstr "Atualizar ramificações"
-
-
-msgctxt "Operator"
-msgid "Update Trunk"
-msgstr "Atualizar tronco"
 
 
 msgctxt "Operator"
@@ -66184,11 +65976,6 @@ msgstr "Remover do quadro"
 msgctxt "Operator"
 msgid "Fit"
 msgstr "Encaixar"
-
-
-msgctxt "Operator"
-msgid "Search..."
-msgstr "Pesquisar..."
 
 
 msgctxt "Operator"
@@ -71776,10 +71563,6 @@ msgid "Update Dependencies"
 msgstr "Atualizar dependências"
 
 
-msgid "Add Modifier"
-msgstr "Adicionar modificador"
-
-
 msgid "F-Curve only has F-Modifiers"
 msgstr "Curva-f somente possui modificadores-f"
 
@@ -72192,6 +71975,10 @@ msgstr "Não é possível realocar a biblioteca '%s', vinculada indiretamente."
 
 msgid "Not yet implemented"
 msgstr "Ainda não implementado."
+
+
+msgid "Bone Groups"
+msgstr "Grupos de ossos"
 
 
 msgid "(empty)"
@@ -73432,15 +73219,6 @@ msgid "Mesh has no VCol data"
 msgstr "A malha não possui dados de cores de vértices."
 
 
-msgctxt "Armature"
-msgid "Group"
-msgstr "Grupo"
-
-
-msgid "Bone group '%s' not found in this object"
-msgstr "O grupo de ossos '%s' não foi encontrado nesse objeto."
-
-
 msgid "Constraint '%s' not found in pose bone '%s'"
 msgstr "Restrição '%s' não encontrada dentro do osso de pose '%s'"
 
@@ -73563,10 +73341,6 @@ msgstr "Valor de propriedade não está na enumeração."
 
 msgid "Only a single character supported"
 msgstr "Apenas um único caractere suportado "
-
-
-msgid "KeyMapItem '%s' cannot be removed from '%s'"
-msgstr "Item de mapa de tecla '%s' não pode ser removido a partir de '%s'."
 
 
 msgid "KeyConfig '%s' cannot be removed"
@@ -73800,18 +73574,6 @@ msgstr "Lustro"
 
 msgid "Sheen Tint"
 msgstr "Tingimento de lustro"
-
-
-msgid "Clearcoat"
-msgstr "Tinta protetiva"
-
-
-msgid "Clearcoat Roughness"
-msgstr "Rugosidade da tinta protetiva"
-
-
-msgid "Clearcoat Normal"
-msgstr "Tinta protetiva normal"
 
 
 msgid "View Vector"
@@ -74408,10 +74170,6 @@ msgid "Catalan (Català)"
 msgstr "Catalão (Català)"
 
 
-msgid "Czech (Český)"
-msgstr "Tcheco (Český)"
-
-
 msgid "Portuguese (Português)"
 msgstr "Português (Português)"
 
@@ -74490,10 +74248,6 @@ msgstr "Português do Brasil (Português do Brasil)"
 
 msgid "Esperanto (Esperanto)"
 msgstr "Esperanto (Esperanto)"
-
-
-msgid "Spanish from Spain (Español de España)"
-msgstr "Espanhol da Espanha (Español de España)"
 
 
 msgid "Amharic (አማርኛ)"
