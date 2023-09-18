@@ -145,7 +145,7 @@ class VIEW3D_HT_header(Header):
         overlay = view.overlay
         tool_settings = context.tool_settings
 
-        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         obj = context.active_object
         mode_string = context.mode
@@ -1006,11 +1006,26 @@ class _draw_tool_settings_context_mode:
 
 
 # bfa - show hide the editormenu
+# BFA - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
+
 class ALL_MT_editormenu(Menu):
     bl_label = ""
 
     def draw(self, context):
         layout = self.layout
+
+        self.draw_menus(self.layout, context)
 
         tool_settings = context.tool_settings
         view = context.space_data
@@ -1301,8 +1316,11 @@ class ALL_MT_editormenu(Menu):
             depress=draw_depressed,
         )
 
+    @staticmethod
+    def draw_menus(layout, context):
+
         row = layout.row(align=True)
-        row.template_header()  # editor type menus
+        row.template_header() # editor type menus
 
 
 class VIEW3D_MT_editor_menus(Menu):
