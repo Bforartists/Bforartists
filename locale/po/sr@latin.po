@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.0.0 Alpha (b'526f935981fd')\n"
+"Project-Id-Version: Blender 4.0.0 Alpha (b'2d057c023879')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-04 15:42:41\n"
+"POT-Creation-Date: 2023-09-18 08:31:54\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -1243,24 +1243,16 @@ msgid "Relative Parenting"
 msgstr "Relativna putanja"
 
 
+msgid "Bones"
+msgstr "Kosti"
+
+
 msgid "Visible"
 msgstr "Vidljivo"
 
 
 msgid "Custom"
 msgstr "Prilagođeno"
-
-
-msgid "Bone Group"
-msgstr "Grupa kostiju"
-
-
-msgid "Groups of Pose Channels (Bones)"
-msgstr "Grupe kanala poza (kosti)"
-
-
-msgid "Bone Groups"
-msgstr "Grupe kostiju"
 
 
 msgid "Has Overlay"
@@ -4249,22 +4241,6 @@ msgid "Directory"
 msgstr "Direktorijum"
 
 
-msgid "Tiny"
-msgstr "Sićušno"
-
-
-msgid "Small"
-msgstr "Malo"
-
-
-msgid "Medium"
-msgstr "Srednji"
-
-
-msgid "Large"
-msgstr "Veliko"
-
-
 msgid "Thumbnails"
 msgstr "Umanjeni prikazi"
 
@@ -5240,10 +5216,6 @@ msgstr "Opseg kadrova:"
 
 msgid "Groups"
 msgstr "Grupe"
-
-
-msgid "Bones"
-msgstr "Kosti"
 
 
 msgid "Stick"
@@ -6754,6 +6726,10 @@ msgid "High quality"
 msgstr "Visok kvalitet"
 
 
+msgid "Medium"
+msgstr "Srednji"
+
+
 msgid "Medium quality"
 msgstr "Srednji kvalitet"
 
@@ -6796,6 +6772,10 @@ msgstr "Uredi"
 
 msgid "Sculpt"
 msgstr "Vajanje"
+
+
+msgid "Modifier"
+msgstr "Modifikator"
 
 
 msgid "Tool"
@@ -9147,16 +9127,16 @@ msgid "Math"
 msgstr "Matematika"
 
 
-msgid "Converter"
-msgstr "Pretvarač"
-
-
 msgid "Keying"
 msgstr "Zbirka tastera"
 
 
 msgid "Tracking"
 msgstr "Praćenje"
+
+
+msgid "Converter"
+msgstr "Pretvarač"
 
 
 msgid "Attribute"
@@ -9169,6 +9149,18 @@ msgstr "Čvor"
 
 msgid "Node Color Specials"
 msgstr "Specijalni materijali"
+
+
+msgid "Add Modifier"
+msgstr "Dodaj modifikator"
+
+
+msgid "Generate"
+msgstr "Generiši"
+
+
+msgid "Physics"
+msgstr "Fizika"
 
 
 msgid "Frame Rate Presets"
@@ -10105,10 +10097,6 @@ msgstr "Količina generisane pene"
 
 msgid "Start frame of the ocean baking"
 msgstr "Početni kadar animacije"
-
-
-msgid "Generate"
-msgstr "Generiši"
 
 
 msgid "Ocean is Cached"
@@ -12176,11 +12164,6 @@ msgstr "Ubaci ključeve do tekućeg kadra"
 
 msgid "Frame Relative"
 msgstr "Relativni kadar"
-
-
-msgctxt "Operator"
-msgid "Sample Keyframes"
-msgstr "Ugledni ključni kadar"
 
 
 msgctxt "Operator"
@@ -14714,10 +14697,6 @@ msgid "Show all Grease Pencil layers"
 msgstr "Pirkaži sve slojeve skice"
 
 
-msgid "Modifier"
-msgstr "Modifikator"
-
-
 msgid "Name of the modifier to edit"
 msgstr "Ime modifikatora za uređenje"
 
@@ -14842,11 +14821,6 @@ msgstr "Bojenje čvorova "
 
 msgid "Use the mouse to sample a weight in the 3D view"
 msgstr "Način prikaza/senčenja objekata u 3D pogledu"
-
-
-msgctxt "Operator"
-msgid "Bake Curve"
-msgstr "Ispeci krivu"
 
 
 msgctxt "Operator"
@@ -16419,11 +16393,6 @@ msgstr "Dodaje čvor promene rute"
 
 
 msgctxt "Operator"
-msgid "Search and Add Node"
-msgstr "Pretraži i dodaj čvor"
-
-
-msgctxt "Operator"
 msgid "Attach Nodes"
 msgstr "Priključi čvorove"
 
@@ -16698,6 +16667,11 @@ msgid "Add an object to the scene"
 msgstr "Dodaje objekat na scenu"
 
 
+msgctxt "Operator"
+msgid "Add Modifier"
+msgstr "Dodaj modifikator"
+
+
 msgid "Add named object"
 msgstr "Dodaje ovaj objekat"
 
@@ -16849,11 +16823,6 @@ msgstr "Fh sila "
 
 msgid "Monkey"
 msgstr "Majmun"
-
-
-msgctxt "Operator"
-msgid "Add Modifier"
-msgstr "Dodaj modifikator"
 
 
 msgctxt "Operator"
@@ -20818,10 +20787,6 @@ msgid "Hair Dynamics"
 msgstr "Dinamika kose"
 
 
-msgid "Physics"
-msgstr "Fizika"
-
-
 msgid "Movement"
 msgstr "Kretanje"
 
@@ -22091,16 +22056,8 @@ msgid "Map Resolution"
 msgstr "Rezolucija"
 
 
-msgid "MO File Path"
-msgstr "Putanja do datoteka"
-
-
 msgid "Language Name"
 msgstr "Jezik"
-
-
-msgid "PO File Path"
-msgstr "Putanja do datoteka"
 
 
 msgid "Language ID"
@@ -23047,34 +23004,6 @@ msgstr "Istorijat komandi"
 
 msgid "Prompt"
 msgstr "Pitaj"
-
-
-msgid "Auto Snap"
-msgstr "Samolepljenje"
-
-
-msgid "No Auto-Snap"
-msgstr "Bez samolepljenja"
-
-
-msgid "Second Step"
-msgstr "Drugi korak"
-
-
-msgid "Nearest Frame"
-msgstr "Najbliži kadar"
-
-
-msgid "Nearest Second"
-msgstr "Drugi najbliži"
-
-
-msgid "Nearest Marker"
-msgstr "Najbliži marker"
-
-
-msgid "Snap to nearest marker"
-msgstr "Zalepi za najbliži marker"
 
 
 msgid "Action Editor"
@@ -24061,12 +23990,20 @@ msgid "UV Local View"
 msgstr "Lokalni pogled"
 
 
-msgid "Snap Element"
-msgstr "Element lepljenja"
-
-
 msgid "Type of element to snap to"
 msgstr "Vrsta elementa za koji se lepi"
+
+
+msgid "Nearest Marker"
+msgstr "Najbliži marker"
+
+
+msgid "Snap to nearest marker"
+msgstr "Zalepi za najbliži marker"
+
+
+msgid "Snap Element"
+msgstr "Element lepljenja"
 
 
 msgid "Snap to grid"
@@ -27074,10 +27011,6 @@ msgid "Update Dependencies"
 msgstr "Osveži zavisnosti"
 
 
-msgid "Add Modifier"
-msgstr "Dodaj modifikator"
-
-
 msgid "No active keyframe on F-Curve"
 msgstr "Modifikator vrednosti F-krive"
 
@@ -27137,6 +27070,10 @@ msgstr "Zamena ulaznog efekta"
 msgctxt "Action"
 msgid "Group"
 msgstr "Grupa"
+
+
+msgid "Bone Groups"
+msgstr "Grupe kostiju"
 
 
 msgid "(empty)"
@@ -27776,10 +27713,6 @@ msgid "Catalan (Català)"
 msgstr "Katalonski (Català)"
 
 
-msgid "Czech (Český)"
-msgstr "Češki (Český)"
-
-
 msgid "Simplified Chinese (简体中文)"
 msgstr "Jednostavan kineski (简体中文)"
 
@@ -27842,10 +27775,6 @@ msgstr "Hebrejski (תירִבְעִ)"
 
 msgid "Esperanto (Esperanto)"
 msgstr "Esperanto (Esperanto)"
-
-
-msgid "Spanish from Spain (Español de España)"
-msgstr "Španski (Español)"
 
 
 msgid "Amharic (አማርኛ)"
