@@ -537,9 +537,9 @@ class VIEWLAYER_PT_freestyle_linestyle_strokes(ViewLayerFreestyleLineStyle, Pane
 
         row = layout.row(align=True)
         row.alignment = 'LEFT'
-        row.label(text=lineset.name, icon='LINE_DATA')
+        row.label(text=lineset.name, icon='LINE_DATA', translate=False)
         row.label(text="", icon='RIGHTARROW')
-        row.label(text=linestyle.name)
+        row.label(text=linestyle.name, translate=False)
 
         col = layout.column(align=True)
         col.prop(linestyle, "caps", expand=False)
@@ -843,9 +843,9 @@ class VIEWLAYER_PT_freestyle_linestyle_color(ViewLayerFreestyleLineStyle, Panel)
 
         row = layout.row(align=True)
         row.alignment = 'LEFT'
-        row.label(text=lineset.name, icon='LINE_DATA')
+        row.label(text=lineset.name, icon='LINE_DATA', translate=False)
         row.label(text="", icon='RIGHTARROW')
-        row.label(text=linestyle.name)
+        row.label(text=linestyle.name, translate=False)
 
         col = layout.column()
         row = col.row()
@@ -935,9 +935,9 @@ class VIEWLAYER_PT_freestyle_linestyle_alpha(ViewLayerFreestyleLineStyle, Panel)
 
         row = layout.row(align=True)
         row.alignment = 'LEFT'
-        row.label(text=lineset.name, icon='LINE_DATA')
+        row.label(text=lineset.name, icon='LINE_DATA', translate=False)
         row.label(text="", icon='RIGHTARROW')
-        row.label(text=linestyle.name)
+        row.label(text=linestyle.name, translate=False)
 
         col = layout.column()
         row = col.row()
@@ -1049,9 +1049,9 @@ class VIEWLAYER_PT_freestyle_linestyle_thickness(ViewLayerFreestyleLineStyle, Pa
 
         row = layout.row(align=True)
         row.alignment = 'LEFT'
-        row.label(text=lineset.name, icon='LINE_DATA')
+        row.label(text=lineset.name, icon='LINE_DATA', translate=False)
         row.label(text="", icon='RIGHTARROW')
-        row.label(text=linestyle.name)
+        row.label(text=linestyle.name, translate=False)
 
         col = layout.column()
         row = col.row()
@@ -1195,9 +1195,9 @@ class VIEWLAYER_PT_freestyle_linestyle_geometry(ViewLayerFreestyleLineStyle, Pan
 
         row = layout.row(align=True)
         row.alignment = 'LEFT'
-        row.label(text=lineset.name, icon='LINE_DATA')
+        row.label(text=lineset.name, icon='LINE_DATA', translate=False)
         row.label(text="", icon='RIGHTARROW')
-        row.label(text=linestyle.name)
+        row.label(text=linestyle.name, translate=False)
 
         col = layout.column()
         col.operator_menu_enum("scene.freestyle_geometry_modifier_add", "type", text="Add Modifier")
@@ -1228,9 +1228,9 @@ class VIEWLAYER_PT_freestyle_linestyle_texture(ViewLayerFreestyleLineStyle, Pane
 
         row = layout.row(align=True)
         row.alignment = 'LEFT'
-        row.label(text=lineset.name, icon='LINE_DATA')
+        row.label(text=lineset.name, icon='LINE_DATA', translate=False)
         row.label(text="", icon='RIGHTARROW')
-        row.label(text=linestyle.name)
+        row.label(text=linestyle.name, translate=False)
 
         layout.use_property_split = False
         layout.prop(linestyle, "use_nodes")
