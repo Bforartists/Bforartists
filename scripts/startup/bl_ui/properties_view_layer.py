@@ -38,7 +38,7 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+		#BFA - props to create new view layers
         window = context.window
         screen = context.screen
         scene = window.scene
@@ -58,7 +58,7 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
         scene = context.scene
         rd = scene.render
         layer = context.view_layer
-
+		#BFA - props with float left checkboxes
         col = layout.column(align=True)
         row = col.row()
         row.use_property_split = False
@@ -268,7 +268,8 @@ class ViewLayerAOVPanel(ViewLayerButtonsPanel, Panel):
 
         row = layout.row()
         col = row.column()
-        col.template_list("VIEWLAYER_UL_aov", "aovs", view_layer, "aovs", view_layer, "active_aov_index", rows=3)
+        col.template_list("VIEWLAYER_UL_aov", "aovs", view_layer,
+                          "aovs", view_layer, "active_aov_index", rows=3)
 
         col = row.column()
         sub = col.column(align=True)
@@ -277,7 +278,8 @@ class ViewLayerAOVPanel(ViewLayerButtonsPanel, Panel):
 
         aov = view_layer.active_aov
         if aov and not aov.is_valid:
-            layout.label(text="Conflicts with another render pass with the same name", icon='ERROR')
+            layout.label(
+                text="Conflicts with another render pass with the same name", icon='ERROR')
 
 
 class VIEWLAYER_PT_layer_passes_aov(ViewLayerAOVPanel):
@@ -295,7 +297,7 @@ class ViewLayerCryptomattePanel(ViewLayerButtonsPanel, Panel):
         layout.use_property_decorate = False
 
         view_layer = context.view_layer
-
+		#BFA - added hidden content with drop downs to minimize
         col = layout.column(align=True)
         col.label(text="Include")
         col.use_property_split = False
@@ -394,6 +396,7 @@ classes = (
     VIEWLAYER_PT_workbench_layer_passes_data,
     VIEWLAYER_PT_eevee_layer_passes_data,
     VIEWLAYER_PT_eevee_layer_passes_mist,  # bfa - move mist panel to viewlayers
+    VIEWLAYER_PT_eevee_next_layer_passes_data,
     VIEWLAYER_PT_eevee_layer_passes_light,
     VIEWLAYER_PT_eevee_layer_passes_effects,
     VIEWLAYER_PT_layer_passes_cryptomatte,

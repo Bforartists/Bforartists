@@ -93,6 +93,9 @@ void BKE_blender_free()
 
 static char blender_version_string[48] = "";
 
+/* Only includes patch if non-zero. */
+static char blender_version_string_compact[48] = "";
+
 static void blender_version_init()
 {
   const char *version_cycle = "";
@@ -118,6 +121,12 @@ static void blender_version_init()
            BLENDER_VERSION % 100,
            BLENDER_VERSION_PATCH,
            version_cycle);
+
+  SNPRINTF(blender_version_string_compact,
+           "%d.%01d%s",
+           BLENDER_VERSION / 100,
+           BLENDER_VERSION % 100,
+           version_cycle);
 }
 
 const char *BKE_blender_version_string()
@@ -125,8 +134,17 @@ const char *BKE_blender_version_string()
   return blender_version_string;
 }
 
-/*--- bfa - the bforartists version string calculation --- */
+const char *BKE_blender_version_string_compact()
+{
+  return blender_version_string_compact;
+}
+
+/*--- BFA - the bforartists version string calculation --- */
+/*Note: Bforartists versionins does not include the compact release string nor the version cycle that Blender uses*/
 static char bforartists_version_string[48] = "";
+
+/* Only includes patch if non-zero. */
+//static char bforartists_version_string_compact[48] = "";
 
 static void bforartists_version_init()
 {
@@ -135,6 +153,10 @@ static void bforartists_version_init()
            BFORARTISTS_VERSION / 10,
            BFORARTISTS_VERSION % 10,
            BFORARTISTS_VERSION_PATCH);
+//  SNPRINTF(bforartists_version_string_compact,
+//           "%d.%01d%s",
+//           BFORARTISTS_VERSION / 10,
+//           BFORARTISTS_VERSION % 10);
 }
 
 /*bfa - bforartists version string*/
@@ -142,6 +164,12 @@ const char *BKE_bforartists_version_string()
 {
   return bforartists_version_string;
 }
+
+//const char *BKE_bforartists_version_string_compact()
+//{
+//  return bforartists_version_string_compact;
+//}
+
 /* -------------- bfa - end -----------------*/
 
 void BKE_blender_version_blendfile_string_from_values(char *str_buff,

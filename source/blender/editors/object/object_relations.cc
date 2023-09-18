@@ -177,11 +177,11 @@ static int vertex_parent_set_exec(bContext *C, wmOperator *op)
   }
   else if (ELEM(obedit->type, OB_SURF, OB_CURVES_LEGACY)) {
     ListBase *editnurb = object_editcurve_get(obedit);
-
+    int curr_index = 0;
     for (Nurb *nu = static_cast<Nurb *>(editnurb->first); nu != nullptr; nu = nu->next) {
       if (nu->type == CU_BEZIER) {
         BezTriple *bezt = nu->bezt;
-        for (int curr_index = 0; curr_index < nu->pntsu; curr_index++, bezt++) {
+        for (int nurb_index = 0; nurb_index < nu->pntsu; nurb_index++, bezt++, curr_index++) {
           if (BEZT_ISSEL_ANY_HIDDENHANDLES(v3d, bezt)) {
             if (par1 == INDEX_UNSET) {
               par1 = curr_index;
@@ -204,7 +204,7 @@ static int vertex_parent_set_exec(bContext *C, wmOperator *op)
       else {
         BPoint *bp = nu->bp;
         const int num_points = nu->pntsu * nu->pntsv;
-        for (int curr_index = 0; curr_index < num_points; curr_index++, bp++) {
+        for (int nurb_index = 0; nurb_index < num_points; nurb_index++, bp++, curr_index++) {
           if (bp->f1 & SELECT) {
             if (par1 == INDEX_UNSET) {
               par1 = curr_index;
@@ -2987,7 +2987,7 @@ char *ED_object_ot_drop_geometry_nodes_tooltip(bContext *C,
 
 static bool check_geometry_node_group_sockets(wmOperator *op, const bNodeTree *tree)
 {
-  tree->ensure_topology_cache();
+  tree->ensure_interface_cache();
   if (!tree->interface_inputs().is_empty()) {
     const bNodeTreeInterfaceSocket *first_input = tree->interface_inputs()[0];
     if (!first_input) {
