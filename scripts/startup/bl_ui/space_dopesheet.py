@@ -179,7 +179,7 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
         dopesheet = context.space_data.dopesheet
         ds_mode = context.space_data.mode
         st = context.space_data
-        
+
         layout.prop(dopesheet, "show_summary", text="Summary")
 
         DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
@@ -718,14 +718,13 @@ class DOPESHEET_MT_key(Menu):
 
         layout.operator("action.sample", icon="SAMPLE_KEYFRAMES")#BFA - consistenc with Fcurve editor
 
+        layout.separator()
+
+        layout.operator("action.bake_keys", icon = 'BAKE_ACTION')
 
         layout.separator()
-        layout.operator("action.clean").channels = False
-        layout.operator("action.clean", text="Clean Channels").channels = True
-        layout.operator("action.bake_keys")
 
-        layout.separator()
-        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
+        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
 
 class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     bl_label = "View Options"
@@ -920,7 +919,7 @@ class DOPESHEET_MT_gpencil_key(Menu):
         layout.operator_menu_enum("action.keyframe_insert", "type")
 
         layout.separator()
-        
+
         layout.operator("action.delete", icon="DELETE")
         layout.operator("gpencil.interpolate_reverse", icon="DELETE")
 
