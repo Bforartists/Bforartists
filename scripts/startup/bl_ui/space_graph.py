@@ -570,7 +570,6 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.clean", icon="CLEAN_KEYS").channels = False
         layout.operator("graph.clean", text="Clean Channels", icon="CLEAN_CHANNELS").channels = True
         layout.operator("graph.smooth", icon="SMOOTH_KEYFRAMES")
-        layout.operator("graph.sample", icon="SAMPLE_KEYFRAMES")
 
         # BFA - moved from Channel Settings sub-menu
         layout.separator()
