@@ -436,9 +436,6 @@ class GRAPH_MT_channel_settings_toggle(Menu):
     def draw(self, context):
         layout = self.layout
 
-        # BFA - Get the current area type, this is to make some ops conditional so when referenced by the space_dopesheet.py these operators do not show.
-        area = bpy.context.area.type
-
         layout.operator("anim.channels_setting_toggle", text="Toggle Protect", icon="LOCKED").type = 'PROTECT'
         layout.operator("anim.channels_setting_toggle", text="Toggle Mute", icon="MUTE_IPO_ON").type = 'MUTE'
 
@@ -448,13 +445,6 @@ class GRAPH_MT_channel_settings_toggle(Menu):
         layout.operator("anim.channels_setting_disable", text="Disable Protect", icon="UNLOCKED").type = 'PROTECT'
         layout.operator("anim.channels_setting_disable", text="Enable Mute", icon="MUTE_IPO_OFF").type = 'MUTE'
         layout.operator("anim.channels_setting_disable", text="Disable Mute", icon="MUTE_IPO_ON").type = 'MUTE'
-
-        # BFA - Check if the area is the FCurve editor (which is called 'GRAPH_EDITOR')
-        if area == 'GRAPH_EDITOR':
-            layout.separator()
-            layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
-            layout.operator("graph.samples_to_keys", icon="SAMPLE_KEYFRAMES")
-            layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
 
 
 class GRAPH_MT_channel_extrapolation(Menu):
@@ -582,13 +572,21 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.smooth", icon="SMOOTH_KEYFRAMES")
         layout.operator("graph.sample", icon="SAMPLE_KEYFRAMES")
 
-        # layout.separator()
+        # BFA - moved from Channel Settings sub-menu
+        layout.separator()
+        layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
+        layout.operator("graph.samples_to_keys", icon="SAMPLE_KEYFRAMES")
+        layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
 
-        # layout.menu("GRAPH_MT_key_density") # bfa we already have this
+        # BFA - redundant operators and menus
+        '''
+        layout.separator()
+
+        layout.menu("GRAPH_MT_key_density") # bfa we already have this
         # So hide it from here. But keep the classes for the Blender hotkeys ...
-        # layout.menu("GRAPH_MT_key_blending")
-        # layout.menu("GRAPH_MT_key_smoothing")
-
+        layout.menu("GRAPH_MT_key_blending")
+        layout.menu("GRAPH_MT_key_smoothing")
+        '''
 
 class GRAPH_MT_key_mirror(Menu):
     bl_label = "Mirror"
