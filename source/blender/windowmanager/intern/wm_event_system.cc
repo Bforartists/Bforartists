@@ -1005,35 +1005,38 @@ bool WM_operator_poll_context(bContext *C, wmOperatorType *ot, short context)
       C, ot, nullptr, nullptr, static_cast<wmOperatorCallContext>(context), true, nullptr);
 }
 
-bool WM_operator_check_ui_empty(wmOperatorType *ot)
+bool WM_operator_ui_poll(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (ot->macro.first != nullptr) {
     /* For macros, check all have exec() we can call. */
     LISTBASE_FOREACH (wmOperatorTypeMacro *, macro, &ot->macro) {
       wmOperatorType *otm = WM_operatortype_find(macro->idname, false);
-      if (otm && !WM_operator_check_ui_empty(otm)) {
-        return false;
+      if (otm && WM_operator_ui_poll(otm, ptr)) {
+        return true;
       }
+    }
+    return false;
+  }
+
+  if (ot->ui) {
+    if (ot->ui_poll) {
+      return ot->ui_poll(ot, ptr);
     }
     return true;
   }
 
-  /* Assume a UI callback will draw something. */
-  if (ot->ui) {
-    return false;
-  }
-
-  PointerRNA ptr;
-  WM_operator_properties_create_ptr(&ptr, ot);
-  RNA_STRUCT_BEGIN (&ptr, prop) {
+  bool result = false;
+  PointerRNA op_ptr;
+  WM_operator_properties_create_ptr(&op_ptr, ot);
+  RNA_STRUCT_BEGIN (&op_ptr, prop) {
     int flag = RNA_property_flag(prop);
-    if (flag & PROP_HIDDEN) {
-      continue;
+    if ((flag & PROP_HIDDEN) == 0) {
+      result = true;
+      break;
     }
-    return false;
   }
   RNA_STRUCT_END;
-  return true;
+  return result;
 }
 
 void WM_operator_region_active_win_set(bContext *C)
@@ -5667,7 +5670,9 @@ void wm_event_add_ghostevent(wmWindowManager *wm, wmWindow *win, const int type,
         event.utf8_buf[0] = '\0';
       }
       else {
-        if (event.utf8_buf[0] < 32 && event.utf8_buf[0] > 0) {
+        /* Check for ASCII control characters.
+         * Inline `iscntrl` because the users locale must not change behavior. */
+        if ((event.utf8_buf[0] < 32 && event.utf8_buf[0] > 0) || (event.utf8_buf[0] == 127)) {
           event.utf8_buf[0] = '\0';
         }
       }
@@ -5689,7 +5694,7 @@ void wm_event_add_ghostevent(wmWindowManager *wm, wmWindow *win, const int type,
                      utf8_buf_len);
         }
 
-        if (BLI_str_utf8_size(event.utf8_buf) == -1) {
+        if (BLI_str_utf8_size_or_error(event.utf8_buf) == -1) {
           CLOG_ERROR(WM_LOG_EVENTS,
                      "ghost detected an invalid unicode character '%d'",
                      int(uchar(event.utf8_buf[0])));
@@ -6272,10 +6277,11 @@ bool WM_window_modal_keymap_status_draw(bContext *C, wmWindow *win, uiLayout *la
       wmEventHandler_Op *handler = (wmEventHandler_Op *)handler_base;
       if (handler->op != nullptr) {
         /* 'handler->keymap' could be checked too, seems not to be used. */
-        wmKeyMap *keymap_test = WM_keymap_active(wm, handler->op->type->modalkeymap);
+        wmOperator *op_test = handler->op->opm ? handler->op->opm : handler->op;
+        wmKeyMap *keymap_test = WM_keymap_active(wm, op_test->type->modalkeymap);
         if (keymap_test && keymap_test->modal_items) {
           keymap = keymap_test;
-          op = handler->op;
+          op = op_test;
           break;
         }
       }

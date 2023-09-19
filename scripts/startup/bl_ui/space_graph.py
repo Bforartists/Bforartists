@@ -8,7 +8,7 @@ from bl_ui.space_dopesheet import (
     dopesheet_filter,
 )
 
-################################ Switch between the editors ##########################################
+################################ BFA - Switch between the editors ##########################################
 
 # The blank button, we don't want to switch to the editor in which we are already.
 
@@ -91,7 +91,8 @@ class GRAPH_HT_header(Header):
 
         dopesheet_filter(layout, context)
 
-        layout.popover(panel="GRAPH_PT_filters", text="", icon='FILTER')
+        #BFA - moved below
+        #layout.prop(st, "pivot_point", icon_only=True)
 
         row = layout.row(align=True)
         row.prop(tool_settings, "use_snap_anim", text="")
@@ -232,7 +233,7 @@ class GRAPH_MT_editor_menus(Menu):
     def draw(self, context):
         st = context.space_data
         layout = self.layout
-        layout.menu("SCREEN_MT_user_menu", text="Quick")  # Quick favourites menu
+        layout.menu("SCREEN_MT_user_menu", text="Quick")  # BFA - Quick favourites menu
         layout.menu("GRAPH_MT_view")
         layout.menu("GRAPH_MT_select")
         if st.mode != 'DRIVERS' and st.show_markers:
@@ -248,7 +249,7 @@ class GRAPH_MT_view(Menu):
         layout = self.layout
 
         st = context.space_data
-        layout.prop(st, "show_region_channels")  # bfa - channels
+        layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
 
@@ -272,6 +273,12 @@ class GRAPH_MT_view(Menu):
 
         layout.separator()
 
+        # Add this to show key-binding (reverse action in dope-sheet).
+        layout.separator()
+        props = layout.operator("wm.context_set_enum", text="Toggle Dope Sheet", icon='DOPESHEET')
+        props.data_path = "area.type"
+        props.value = 'DOPESHEET_EDITOR'
+
         layout.menu("INFO_MT_area")
         layout.menu("GRAPH_MT_view_pie_menus")
 
@@ -290,7 +297,7 @@ class GRAPH_MT_view_pie_menus(Menu):
 class GRAPH_MT_select(Menu):
     bl_label = "Select"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("graph.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
@@ -427,9 +434,9 @@ class GRAPH_MT_channel_settings_toggle(Menu):
         layout.operator("anim.channels_setting_toggle", text="Toggle Mute", icon="MUTE_IPO_ON").type = 'MUTE'
 
         layout.separator()
-
-        layout.operator("anim.channels_setting_enable", text="Enable Protect", icon="LOCKED").type = 'PROTECT'
-        layout.operator("anim.channels_setting_enable", text="Enable Mute", icon="MUTE_IPO_ON").type = 'MUTE'
+        layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
+        layout.operator("graph.samples_to_keys", icon="SAMPLE_KEYFRAMES")
+        layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
 
         layout.separator()
 
@@ -479,15 +486,15 @@ class GRAPH_MT_key_density(Menu):
     def draw(self, _context):
         from bl_ui_utils.layout import operator_context
         layout = self.layout
-        layout.operator("graph.decimate", text="Decimate (Ratio)").mode = 'RATIO'
+        layout.operator("graph.decimate", text="Decimate (Ratio)", icon="DECIMATE").mode = 'RATIO'
         # Using the modal operation doesn't make sense for this variant
         # as we do not have a modal mode for it, so just execute it.
         with operator_context(layout, 'EXEC_REGION_WIN'):
-            layout.operator("graph.decimate", text="Decimate (Allowed Change)").mode = 'ERROR'
-        layout.operator("graph.sample")
+            layout.operator("graph.decimate", text="Decimate (Allowed Change)", icon="DECIMATE").mode = 'ERROR'
+        layout.operator("graph.sample", icon="SAMPLE_KEYFRAMES")
 
         layout.separator()
-        layout.operator("graph.clean").channels = False
+        layout.operator("graph.clean", icon="CLEAN_KEYS").channels = False
 
 
 class GRAPH_MT_key_blending(Menu):
@@ -646,9 +653,9 @@ class GRAPH_MT_view_pie(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        pie.operator("graph.view_all")
+        pie.operator("graph.view_all", icon="VIEWALL")
         pie.operator("graph.view_selected", icon='ZOOM_SELECTED')
-        pie.operator("graph.view_frame")
+        pie.operator("graph.view_frame", icon="VIEW_FRAME")
 
 
 class GRAPH_MT_delete(Menu):
@@ -661,8 +668,8 @@ class GRAPH_MT_delete(Menu):
 
         layout.separator()
 
-        layout.operator("graph.clean").channels = False
-        layout.operator("graph.clean", text="Clean Channels").channels = True
+        layout.operator("graph.clean", icon="CLEAN_KEYS").channels = False
+        layout.operator("graph.clean", text="Clean Channels", icon="CLEAN_CHANNELS").channels = True
 
 
 class GRAPH_MT_context_menu(Menu):
