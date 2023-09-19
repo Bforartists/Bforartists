@@ -29,7 +29,7 @@ bl_info = {
 # ---------------------- Some variables, needed to position the text
 
 pos_x = 160 # Initial X position.
-pos_y = 80 # initial Y position. This value gets substracted from the screen height.
+pos_y = 120 # initial Y position. This value gets substracted from the screen height.
 subpos_y = 0 # needed to calculate the position of the array strings below the title.
 
 # With this function we retreive the hotkey.
@@ -420,7 +420,36 @@ def draw_modetext(self, context, obj):
             elif item == 'sketch.finish_stroke':
                 self.armature_sketching_finish_stroke = handle_keys(km, self.armature_sketching_finish_stroke)
 
-        self._flag = True # One time goingh through the tuples and setting the strings is enough.
+
+     # ----------------------------------------- Weightpaint section Grease Pencil -------------------------------------
+    keymaps_WEIGHT_GPENCIL_LEGACY = wm.keyconfigs.active.keymaps['Grease Pencil Stroke Weight Mode'] # Hotkeys in the 'Grease Pencil Stroke Weight Mode' section,
+    # keymaps_WEIGHT_GPENCIL_LEGACY is a variable name that we freely choose. I have chosen the blender internal variable name for Grease Pencil Stroke Weight Mode here.
+    # The keymap categories in the blender keymap manager doesn't count. Important is just the name.
+    # Have a look into the bfa or blender keymap to get the name of the keymap chapter that you want to retreive.
+    # In this case it is the 'Grease Pencil Stroke Weight Mode' chapter
+
+    if not self._flag:
+        print(tuple(keymaps_WEIGHT_GPENCIL_LEGACY.keymap_items.keys()))     # debug. prints the tuple content for the grease pencil keymaps.
+        for item, km in keymaps_WEIGHT_GPENCIL_LEGACY.keymap_items.items(): # all the items in the tuple. Check them to know what key items are available.
+
+            # ------------- Select bone
+            if item == 'view3d.select': #key item view3d.select, this is what shows in the tuple and what we can access then
+                self.gp_weightpaint_bone_select = handle_keys(km, self.gp_weightpaint_bone_select) # a free chosen variable that we use downwards the code to display the text.
+
+            elif item == 'wm.radial_control':
+                # ------------- Brush Size
+                if km.properties.data_path_primary == "tool_settings.gpencil_weight_paint.brush.size":
+                    self.gp_weightpaint_brush_size = handle_keys(km, self.gp_weightpaint_brush_size)
+
+                # ------------- Brush Strength
+                elif km.properties.data_path_primary == "tool_settings.gpencil_weight_paint.brush.strength":
+                    self.gp_weightpaint_brush_strength = handle_keys(km, self.gp_weightpaint_brush_strength)
+
+                # ------------- Brush weight
+                elif km.properties.data_path_primary == "tool_settings.gpencil_weight_paint.brush.weight":
+                    self.gp_weightpaint_brush_weight = handle_keys(km, self.gp_weightpaint_brush_weight)
+
+        self._flag = True # One time goingh through the tuples and setting the strings is enough. THIS HAS TO BE AT THE END !
 
     # ----------------------------------------------------------------------------
 
@@ -600,6 +629,16 @@ def draw_modetext(self, context, obj):
             "Strength -  " + self.weightpaint_brush_strength,
             "Weight - " + self.weightpaint_brush_weight
             ]))
+    elif mode == 'WEIGHT_GPENCIL':
+        texts.append(([
+            "------",
+            "Select Bone for weightpainting - " + self.gp_weightpaint_bone_select,
+            "------",
+            "Radial Control Keys:",
+            "Radius - " + self.gp_weightpaint_brush_size,
+            "Strength -  " + self.gp_weightpaint_brush_strength,
+            "Weight - " + self.gp_weightpaint_brush_weight
+            ]))
     elif mode == 'TEXTURE_PAINT':
         texts.append(([
             "------",
@@ -632,7 +671,6 @@ def draw_modetext(self, context, obj):
             "------",
             "Make Parent - "+ self.pose_parent_set,
             ]))
-
 
 
     self.mod_Y = 8.2 * scene.important_hotkeys_font_size # our second text block needs a bit offset. Every new line adds 0.55. Plus a bit more because of the + 1 to have a spacing between the lines.
@@ -730,7 +768,6 @@ def draw_maintext(self, context):
     blf.position(0, pos_x, context.region.height-pos_y, 0) #titleposition
     blf.size(font_id, context.scene.important_hotkeys_font_size) # bfa - dpi defaults to 72 when ommited
     blf.color(font_id,font_color_r, font_color_g, font_color_b, font_color_alpha * 0.8) # color variables
-
 
 
     texts = []
@@ -855,6 +892,11 @@ class IH_OT_ModalDrawOperator(bpy.types.Operator):
         self.weightpaint_brush_size = "Not found"
         self.weightpaint_brush_strength = "Not found"
         self.weightpaint_brush_weight = "Not found"
+        # grease pencil Weightpaint
+        self.gp_weightpaint_bone_select = "Not found"
+        self.gp_weightpaint_brush_size = "Not found"
+        self.gp_weightpaint_brush_strength = "Not found"
+        self.gp_weightpaint_brush_weight = "Not found"
         # Texturepaint
         self.texturepaint_brush_size = "Not found"
         self.texturepaint_brush_strength = "Not found"
