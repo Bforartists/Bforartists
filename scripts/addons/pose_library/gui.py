@@ -42,7 +42,7 @@ class VIEW3D_AST_pose_library(bpy.types.AssetShelf):
 
     @classmethod
     def asset_poll(cls, asset: AssetHandle) -> bool:
-        return asset.file_data.id_type == 'ACTION'
+        return asset.id_type == 'ACTION'
 
     @classmethod
     def draw_context_menu(cls, _context: Context, _asset: AssetHandle, layout: UILayout):
