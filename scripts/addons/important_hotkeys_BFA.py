@@ -17,8 +17,8 @@ import blf
 bl_info = {
     "name": "Important Hotkeys BFA",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (1, 3, 0),
-    "blender": (2, 80, 0),
+    "version": (1, 4, 0),
+    "blender": (3, 60, 0),
     "location": "3D View > Properties Sidebar > Important Hotkeys",
     "description": "This addon displays some important hotkeys in the upper left corner of the 3D view",
     "warning": "",
@@ -256,7 +256,7 @@ def draw_modetext(self, context, obj):
         for item, km in keymaps_WEIGHTPAINT.keymap_items.items(): # all the items in the tuple
 
             # ------------- Select bone
-            if item == 'paint.weight_sample':
+            if item == 'view3d.select':
                 self.weightpaint_bone_select = handle_keys(km, self.weightpaint_bone_select)
             # ------------- Select bone
             if item == 'paint.weight_gradient':
@@ -275,31 +275,6 @@ def draw_modetext(self, context, obj):
                 elif km.properties.data_path_primary == "tool_settings.weight_paint.brush.weight" and km.properties.data_path_secondary == "tool_settings.unified_paint_settings.weight" and km.properties.use_secondary == "tool_settings.unified_paint_settings.use_unified_weight" and km.properties.rotation_path == "tool_settings.weight_paint.brush.texture_slot.angle" and km.properties.color_path == "tool_settings.weight_paint.brush.cursor_color_add" and km.properties.image_id == "tool_settings.weight_paint.brush":
                     self.weightpaint_brush_weight = handle_keys(km, self.weightpaint_brush_weight)
 
-
-            elif item == 'brush.stencil_control':
-                # ------------- Stencil Brush control Translation
-                if km.properties.mode == 'TRANSLATION' and km.properties.texmode == 'PRIMARY':
-                    self.weightpaint_stencil_control_translate = handle_keys(km, self.weightpaint_stencil_control_translate)
-
-                # ------------- Stencil Brush control Scale
-                elif km.properties.mode == 'SCALE' and km.properties.texmode == 'PRIMARY':
-                    self.weightpaint_stencil_control_scale = handle_keys(km, self.weightpaint_stencil_control_scale)
-
-                # ------------- Stencil Brush control Rotation
-                elif km.properties.mode == 'ROTATION' and km.properties.texmode == 'PRIMARY':
-                    self.weightpaint_stencil_control_rotate = handle_keys(km, self.weightpaint_stencil_control_rotate)
-
-                # ------------- Stencil Brush control Translation Secondary
-                elif km.properties.mode == 'TRANSLATION' and km.properties.texmode == 'SECONDARY':
-                    self.weightpaint_stencil_control_translate_sec = handle_keys(km, self.weightpaint_stencil_control_translate_sec)
-
-                # ------------- Stencil Brush control Scale Secondary
-                elif km.properties.mode == 'SCALE' and km.properties.texmode == 'SECONDARY':
-                    self.weightpaint_stencil_control_scale_sec = handle_keys(km, self.weightpaint_stencil_control_scale_sec)
-
-                 # ------------- Stencil Brush control Rotation Secondary
-                elif km.properties.mode == 'ROTATION' and km.properties.texmode == 'SECONDARY':
-                    self.weightpaint_stencil_control_rotate_sec = handle_keys(km, self.weightpaint_stencil_control_rotate_sec)
 
       # ----------------------------------------- Paint Curve section -------------------------------------
     keymaps_PAINTCURVE = wm.keyconfigs.active.keymaps['Paint Curve']
@@ -623,15 +598,7 @@ def draw_modetext(self, context, obj):
             "Radial Control Keys:",
             "Radius - " + self.weightpaint_brush_size,
             "Strength -  " + self.weightpaint_brush_strength,
-            "Weight - " + self.weightpaint_brush_weight,
-            "------",
-            "Texture, Brush Mapping in Stencil mode:",
-            "Move - " + self.weightpaint_stencil_control_translate,
-            "Rotate - " + self.weightpaint_stencil_control_rotate,
-            "Scale - " + self.weightpaint_stencil_control_scale,
-            "Move secondary - " + self.weightpaint_stencil_control_translate_sec,
-            "Rotate secondary - " + self.weightpaint_stencil_control_rotate_sec,
-            "Scale secondary - " + self.weightpaint_stencil_control_scale_sec
+            "Weight - " + self.weightpaint_brush_weight
             ]))
     elif mode == 'TEXTURE_PAINT':
         texts.append(([
@@ -888,12 +855,6 @@ class IH_OT_ModalDrawOperator(bpy.types.Operator):
         self.weightpaint_brush_size = "Not found"
         self.weightpaint_brush_strength = "Not found"
         self.weightpaint_brush_weight = "Not found"
-        self.weightpaint_stencil_control_translate = "Not found"
-        self.weightpaint_stencil_control_rotate = "Not found"
-        self.weightpaint_stencil_control_scale = "Not found"
-        self.weightpaint_stencil_control_translate_sec = "Not found"
-        self.weightpaint_stencil_control_rotate_sec = "Not found"
-        self.weightpaint_stencil_control_scale_sec = "Not found"
         # Texturepaint
         self.texturepaint_brush_size = "Not found"
         self.texturepaint_brush_strength = "Not found"
