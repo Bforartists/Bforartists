@@ -5299,9 +5299,8 @@ class VIEW3D_MT_pose_context_menu(Menu):
         layout.separator()
 
         layout.operator("pose.paths_calculate", text="Calculate Motion Paths", icon='MOTIONPATHS_CALCULATE')
-        layout.operator("pose.paths_clear", text="Clear all", icon='MOTIONPATHS_CLEAR')
+        layout.operator("pose.paths_clear", text="Clear Motion Paths", icon='MOTIONPATHS_CLEAR')
         layout.operator("pose.paths_update", text="Update Armature Motion Paths", icon="MOTIONPATHS_UPDATE")
-        layout.operator("pose.paths_update_visible", text="Update All Motion Paths", icon="MOTIONPATHS_UPDATE")
 
         layout.separator()
 
