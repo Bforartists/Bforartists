@@ -723,8 +723,6 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.clean", icon="CLEAN_KEYS").channels = False
         layout.operator("action.clean", text = "Clean Channels", icon="CLEAN_CHANNELS").channels = True
 
-        layout.operator("action.sample", icon="SAMPLE_KEYFRAMES")#BFA - consistenc with Fcurve editor
-
         layout.separator()
 
         layout.operator("action.bake_keys", icon = 'BAKE_ACTION')
