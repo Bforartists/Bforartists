@@ -459,7 +459,7 @@ void ACTION_OT_view_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Frame All";
   ot->idname = "ACTION_OT_view_all";
-  ot->description = "Reset viewable area to show full keyframe range";
+  ot->description = "Zooms in or out to fit the display to show full keyframe range";
 
   /* api callbacks */
   ot->exec = actkeys_viewall_exec;
@@ -474,7 +474,7 @@ void ACTION_OT_view_selected(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Frame Selected";
   ot->idname = "ACTION_OT_view_selected";
-  ot->description = "Reset viewable area to show selected keyframes range";
+  ot->description = "Zooms in or out to fit the display to show selected keyframes range";
 
   /* api callbacks */
   ot->exec = actkeys_viewsel_exec;
