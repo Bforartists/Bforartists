@@ -36,7 +36,10 @@ class OUTLINER_HT_header(Header):
 
         layout.prop(space, "display_mode", icon_only=True)
 
-        OUTLINER_MT_editor_menus.draw_collapsible(context, layout) # Collapsing everything in OUTLINER_MT_editor_menus when ticking collapse menus checkbox
+        if display_mode == 'DATA_API':
+            OUTLINER_MT_editor_menus.draw_collapsible(context, layout)# Collapsing everything in OUTLINER_MT_editor_menus when ticking collapse menus checkbox
+        if display_mode == 'LIBRARY_OVERRIDES':
+            layout.prop(space, "lib_override_view_mode", text="")
 
         layout.separator_spacer()
 
@@ -47,9 +50,10 @@ class OUTLINER_HT_header(Header):
             # No text filtering for library override hierarchies. The tree is lazy built to avoid
             # performance issues in complex files.
             if display_mode == 'LIBRARY_OVERRIDES' and space.lib_override_view_mode == 'HIERARCHIES':
-                pass
+                filter_text_supported = False
             else:
-                row.prop(space, "filter_text", text="")
+                row = layout.row(align=True)
+                row.prop(space, "filter_text", icon='VIEWZOOM', text="")
 
         if display_mode == 'SEQUENCE':
             row = layout.row(align=True)
@@ -68,9 +72,21 @@ class OUTLINER_HT_header(Header):
             sub = row.row(align=True)
             if space.use_filter_id_type:
                 sub.prop(space, "filter_id_type", text="", icon_only=True)
+		#BFA - already shown elsewhere
+        #if display_mode == 'VIEW_LAYER':
+        #    layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW').nested = True
+		#BFA - has a drop down and button with consistenty naming
+        #elif display_mode == 'ORPHAN_DATA':
+        #    layout.operator("outliner.orphans_purge", text="Purge").do_recursive = True
 
         if space.display_mode == 'DATA_API':
             layout.separator()
+            
+            row = layout.row(align=True)
+
+            row.operator("outliner.keyingset_add_selected", icon='ADD', text="")
+            row.operator("outliner.keyingset_remove_selected", icon='REMOVE', text="")
+
 
             if ks:
                 row = layout.row()
@@ -82,7 +98,7 @@ class OUTLINER_HT_header(Header):
             else:
                 row = layout.row()
                 row.label(text="No Keying Set Active")
-
+#BFA - collection header menu
 class   OUTLINER_MT_object_collection(Menu):
     bl_label = "Collection"
 
@@ -102,7 +118,7 @@ class   OUTLINER_MT_object_collection(Menu):
         layout.operator("collection.objects_remove_active", icon = "DELETE")
 
 
-# bfa - show hide the editormenu
+# BFA - show hide the editormenu
 class ALL_MT_editormenu(Menu):
     bl_label = ""
 
@@ -220,7 +236,7 @@ class OUTLINER_MT_context_menu(Menu):
 
         #layout.separator()
 
-        ## BFA - Moved the LIbrary Override menu up a level
+        ## BFA - Moved the Library Override menu up a level
         layout.operator_menu_enum(
             "outliner.liboverride_operation",
             "selection_set",
@@ -298,6 +314,22 @@ class OUTLINER_MT_edit_datablocks(Menu):
 
         layout.operator("outliner.drivers_add_selected", icon = "DRIVER")
         layout.operator("outliner.drivers_delete_selected", icon = "DELETE")
+		
+class OUTLINER_MT_collection_view_layer(Menu):
+    bl_label = "View Layer"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("outliner.collection_exclude_set", icon="CHECKBOX_HLT")
+        layout.operator("outliner.collection_exclude_clear", icon="CHECKBOX_DEHLT")
+
+        layout.operator("outliner.collection_holdout_set", icon="HOLDOUT_ON")
+        layout.operator("outliner.collection_holdout_clear", icon="HOLDOUT_OFF")
+
+        if context.engine == 'CYCLES':
+            layout.operator("outliner.collection_indirect_only_set", icon="INDIRECT_ONLY_ON")
+            layout.operator("outliner.collection_indirect_only_clear", icon="INDIRECT_ONLY_OFF")
 
 
 class OUTLINER_MT_collection_visibility(Menu):
@@ -307,7 +339,8 @@ class OUTLINER_MT_collection_visibility(Menu):
         layout = self.layout
 
         layout.operator("outliner.collection_isolate", text="Isolate", icon="HIDE_UNSELECTED")
-
+		# BFA - redundant view toggles, removed. 
+		
         layout.separator()
 
         layout.operator("outliner.collection_show_inside", text="Show All Inside", icon="HIDE_OFF")
@@ -368,6 +401,7 @@ class OUTLINER_MT_collection(Menu):
         if space.display_mode == 'VIEW_LAYER':
 
             layout.separator()
+			#layout.menu("OUTLINER_MT_collection_view_layer", icon='RENDERLAYERS') #BFA - redundant
 
             row = layout.row(align=True)
             row.operator_enum("outliner.collection_color_tag_set", "color", icon_only=True)
@@ -456,7 +490,7 @@ class OUTLINER_MT_asset(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("asset.mark", icon="ASSET_MANAGER")
+        layout.operator("asset.mark", icon='ASSET_MANAGER')
         layout.operator("asset.clear", text="Clear Asset", icon = "CLEAR").set_fake_user = False
         layout.operator("asset.clear", text="Clear Asset (Set Fake User)", icon = "CLEAR").set_fake_user = True
 
@@ -486,7 +520,7 @@ class OUTLINER_MT_liboverride(Menu):
         layout.operator_menu_enum("outliner.liboverride_troubleshoot_operation", "type",
                                   text="Troubleshoot").selection_set = 'SELECTED'
 
-
+# BFA - this has substantial changes, beware. 
 class OUTLINER_PT_filter(Panel):
     bl_space_type = 'OUTLINER'
     bl_region_type = 'HEADER'
@@ -530,7 +564,7 @@ class OUTLINER_PT_filter(Panel):
 
         # Same exception for library overrides as in OUTLINER_HT_header.
         if display_mode == 'LIBRARY_OVERRIDES' and space.lib_override_view_mode == 'HIERARCHIES':
-            pass
+            filter_text_supported = False
         else:
             col = layout.column(align=True)
             col.label(text="Search")
@@ -661,6 +695,7 @@ classes = (
     OUTLINER_MT_collection,
     OUTLINER_MT_collection_new,
     OUTLINER_MT_collection_visibility,
+    OUTLINER_MT_collection_view_layer,
     OUTLINER_MT_object,
     OUTLINER_MT_asset,
     OUTLINER_MT_liboverride,
