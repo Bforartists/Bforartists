@@ -661,6 +661,10 @@ class DOPESHEET_MT_channel(Menu):
 
         layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
 
+        layout.separator()
+
+        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
+
 
 class DOPESHEET_MT_channel_extrapolation(Menu):
     bl_label = "Extrapolation Mode"
@@ -722,9 +726,6 @@ class DOPESHEET_MT_key(Menu):
 
         layout.operator("action.bake_keys", icon = 'BAKE_ACTION')
 
-        layout.separator()
-
-        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
 
 class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     bl_label = "View Options"
