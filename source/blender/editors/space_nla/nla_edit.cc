@@ -562,7 +562,7 @@ void NLA_OT_view_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Frame All";
   ot->idname = "NLA_OT_view_all";
-  ot->description = "Reset viewable area to show full strips range";
+  ot->description = "Zooms in or out to fit the display to show full strips range";
 
   /* api callbacks */
   ot->exec = nlaedit_viewall_exec;
@@ -577,7 +577,7 @@ void NLA_OT_view_selected(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Frame Selected";
   ot->idname = "NLA_OT_view_selected";
-  ot->description = "Reset viewable area to show selected strips range";
+  ot->description = "Zooms in or out to fit the display to show selected strips range";
 
   /* api callbacks */
   ot->exec = nlaedit_viewsel_exec;

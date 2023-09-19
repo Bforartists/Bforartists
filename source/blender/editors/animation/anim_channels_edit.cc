@@ -4220,7 +4220,7 @@ static void ANIM_OT_channels_view_selected(wmOperatorType *ot)
   /* Identifiers */
   ot->name = "Frame Selected Channels";
   ot->idname = "ANIM_OT_channels_view_selected";
-  ot->description = "Reset viewable area to show the selected channels";
+  ot->description = "Zooms in or out to fit the display of the selected channels";
 
   /* API callbacks */
   ot->exec = graphkeys_view_selected_channels_exec;
@@ -4304,7 +4304,7 @@ static void ANIM_OT_channel_view_pick(wmOperatorType *ot)
   /* Identifiers */
   ot->name = "Frame Channel Under Cursor";
   ot->idname = "ANIM_OT_channel_view_pick";
-  ot->description = "Reset viewable area to show the channel under the cursor";
+  ot->description = "Zooms in or out to fit the display to show the channel under the cursor";
 
   /* API callbacks */
   ot->invoke = graphkeys_channel_view_pick_invoke;
