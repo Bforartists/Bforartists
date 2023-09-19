@@ -384,10 +384,14 @@ class GRAPH_MT_channel(Menu):
 
         layout.menu("GRAPH_MT_channel_settings_toggle")
 
+        # BFA - Redundant operators now located in GRAPH_MT_channel_settings_toggle
+        '''
         layout.separator()
+
         layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
         layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
         layout.operator("anim.channels_editable_toggle", icon="LOCKED")
+        '''
 
         layout.separator()
         layout.menu("GRAPH_MT_channel_extrapolation")
@@ -395,13 +399,15 @@ class GRAPH_MT_channel(Menu):
         layout.operator_context = operator_context
         layout.operator_menu_enum("graph.fmodifier_add", "type", text="Add F-Curve Modifier").only_active = False
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
-        layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
 
+        # BFA - Redundant operators now located in GRAPH_MT_channel_settings_toggle
+        '''
         layout.separator()
 
         layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
         layout.operator("graph.samples_to_keys", icon="CLEAR")
-
+        layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
+        '''
 
         layout.separator()
 
@@ -430,18 +436,25 @@ class GRAPH_MT_channel_settings_toggle(Menu):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - Get the current area type, this is to make some ops conditional so when referenced by the space_dopesheet.py these operators do not show.
+        area = bpy.context.area.type
+
         layout.operator("anim.channels_setting_toggle", text="Toggle Protect", icon="LOCKED").type = 'PROTECT'
         layout.operator("anim.channels_setting_toggle", text="Toggle Mute", icon="MUTE_IPO_ON").type = 'MUTE'
 
         layout.separator()
-        layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
-        layout.operator("graph.samples_to_keys", icon="SAMPLE_KEYFRAMES")
-        layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
 
-        layout.separator()
-
-        layout.operator("anim.channels_setting_disable", text="Disable Protect", icon="LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text="Enable Protect", icon="LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text="Disable Protect", icon="UNLOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text="Enable Mute", icon="MUTE_IPO_OFF").type = 'MUTE'
         layout.operator("anim.channels_setting_disable", text="Disable Mute", icon="MUTE_IPO_ON").type = 'MUTE'
+
+        # BFA - Check if the area is the FCurve editor (which is called 'GRAPH_EDITOR')
+        if area == 'GRAPH_EDITOR':
+            layout.separator()
+            layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
+            layout.operator("graph.samples_to_keys", icon="SAMPLE_KEYFRAMES")
+            layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
 
 
 class GRAPH_MT_channel_extrapolation(Menu):
