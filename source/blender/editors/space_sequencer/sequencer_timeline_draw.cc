@@ -83,7 +83,7 @@ typedef struct StripDrawContext {
   Sequence *seq;
   float content_start, content_end, bottom, top; /* Strip boundary in timeline space. */
   float left_handle, right_handle;               /* Position in frames. */
-  float strip_content_top; /* Position in timeline space deliminates content and text overlay. */
+  float strip_content_top; /* Position in timeline space without content and text overlay. */
   float handle_width;      /* Width of strip handle in frames. */
   float strip_length;
 
@@ -119,7 +119,7 @@ static TimelineDrawContext timeline_draw_context_get(const bContext *C)
   ctx.v2d = UI_view2d_fromcontext(C);
 
   ctx.ed = SEQ_editing_get(ctx.scene);
-  ctx.channels = SEQ_channels_displayed_get(ctx.ed);
+  ctx.channels = ctx.ed ? SEQ_channels_displayed_get(ctx.ed) : nullptr;
 
   ctx.viewport = WM_draw_region_get_viewport(ctx.region);
   ctx.framebuffer_overlay = GPU_viewport_framebuffer_overlay_get(ctx.viewport);
@@ -1024,7 +1024,7 @@ static size_t draw_seq_text_get_overlay_string(TimelineDrawContext *timeline_ctx
 
   char strip_duration_text[16];
   if (timeline_ctx->sseq->timeline_overlay.flag & SEQ_TIMELINE_SHOW_STRIP_DURATION) {
-    SNPRINTF(strip_duration_text, "%d", strip_ctx->strip_length);
+    SNPRINTF(strip_duration_text, "%d", int(strip_ctx->strip_length));
     if (i != 0) {
       text_array[i++] = text_sep;
     }
@@ -2025,7 +2025,7 @@ static void draw_timeline_grid(TimelineDrawContext *ctx)
 
 static void draw_timeline_backdrop(TimelineDrawContext *ctx)
 {
-  if (ctx->sseq->view = !SEQ_VIEW_SEQUENCE || (ctx->sseq->draw_flag & SEQ_DRAW_BACKDROP) == 0) {
+  if (ctx->sseq->view != SEQ_VIEW_SEQUENCE || (ctx->sseq->draw_flag & SEQ_DRAW_BACKDROP) == 0) {
     return;
   }
 

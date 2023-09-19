@@ -380,6 +380,7 @@ void VKFrameBuffer::render_pass_create()
                                       eImageViewUsage::Attachment,
                                       IndexRange(max_ii(attachment.layer, 0), 1),
                                       IndexRange(attachment.mip, 1),
+                                      false,
                                       name_));
       image_views[attachment_location] = image_views_.last().vk_handle();
 
@@ -468,12 +469,11 @@ void VKFrameBuffer::render_pass_free()
   if (vk_render_pass_ == VK_NULL_HANDLE) {
     return;
   }
-  VK_ALLOCATION_CALLBACKS
 
-  const VKDevice &device = VKBackend::get().device_get();
+  VKDevice &device = VKBackend::get().device_get();
   if (device.is_initialized()) {
-    vkDestroyRenderPass(device.device_get(), vk_render_pass_, vk_allocation_callbacks);
-    vkDestroyFramebuffer(device.device_get(), vk_framebuffer_, vk_allocation_callbacks);
+    device.discard_render_pass(vk_render_pass_);
+    device.discard_frame_buffer(vk_framebuffer_);
   }
   image_views_.clear();
   vk_render_pass_ = VK_NULL_HANDLE;
@@ -493,6 +493,7 @@ void VKFrameBuffer::color_attachment_layout_ensure(VKContext &context,
     return;
   }
 
+  color_texture->ensure_allocated();
   color_texture->layout_ensure(context, requested_layout);
   dirty_attachments_ = true;
 }
