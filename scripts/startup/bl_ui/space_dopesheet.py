@@ -1086,6 +1086,7 @@ class DOPESHEET_PT_gpencil_mode(LayersDopeSheetPanel, Panel):
         ob = context.object
         gpd = ob.data
         gpl = gpd.layers.active
+
         if gpl:
             row = layout.row(align=True)
             row.prop(gpl, "blend_mode", text="Blend")
@@ -1096,8 +1097,8 @@ class DOPESHEET_PT_gpencil_mode(LayersDopeSheetPanel, Panel):
             col = layout.column(align=True)
             col.use_property_split = False
             col.prop(gpl, "use_lights")
-            col.prop(gpd, "use_autolock_layers",
-                     text="Autolock Inactive Layers") #BFA - consistent prop exposed
+            col.prop(gpd, "use_autolock_layers", text="Autolock Inactive Layers") #BFA - consistent prop exposed
+            col.prop(gpl, "lock_material")
 
 
 class DOPESHEET_PT_gpencil_layer_masks(LayersDopeSheetPanel, GreasePencilLayerMasksPanel, Panel):
