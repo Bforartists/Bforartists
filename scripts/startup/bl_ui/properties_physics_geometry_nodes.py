@@ -44,6 +44,7 @@ class PHYSICS_PT_geometry_nodes(Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
         ob = context.object
+        layout.use_property_split = False
         layout.prop(ob, "use_simulation_cache", text="Cache")
 
 
