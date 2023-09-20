@@ -687,6 +687,7 @@ class USERPREF_PT_system_os_settings(SystemPanel, CenterAlignMixIn, Panel):
             split.alignment = 'LEFT'
             split.operator("preferences.associate_blend", text="Register")
             split.operator("preferences.unassociate_blend", text="Unregister")
+            layout.use_property_split = False
             layout.prop(bpy.context.preferences.system, "register_all_users", text="For All Users")
 
 
