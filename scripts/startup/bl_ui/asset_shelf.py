@@ -23,6 +23,7 @@ class ASSETSHELF_PT_display(Panel):
         shelf = context.asset_shelf
 
         layout.prop(shelf, "preview_size", text="Size")
+        layout.use_property_split = False
         layout.prop(shelf, "show_names", text="Names")
 
     @classmethod
