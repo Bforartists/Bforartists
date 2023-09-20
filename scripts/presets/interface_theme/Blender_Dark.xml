@@ -96,7 +96,7 @@
             outline="#3d3d3dff"
             inner="#1d1d1dff"
             inner_sel="#181818ff"
-            item="#4772b3ff"
+            item="#ffffff33"
             text="#e6e6e6"
             text_sel="#ffffff"
             show_shaded="FALSE"
@@ -304,9 +304,9 @@
         <wcol_list_item>
           <ThemeWidgetColors
             outline="#2d2d2dff"
-            inner="#2d2d2d00"
-            inner_sel="#484a4fff"
-            item="#4772b3ff"
+            inner="#ffffff00"
+            inner_sel="#4772b3ff"
+            item="#ffffff33"
             text="#cccccc"
             text_sel="#ffffff"
             show_shaded="FALSE"
@@ -447,7 +447,7 @@
             >
             <gradients>
               <ThemeGradientColors
-                background_type="RADIAL"
+                background_type="SINGLE_COLOR"
                 high_gradient="#3d3d3d"
                 gradient="#303030"
                 >
@@ -663,7 +663,7 @@
         view_sliders="#c0c0c0"
         dopesheet_channel="#194e8080"
         dopesheet_subchannel="#0f2c4d80"
-        channels="#6e6e6e99"
+        channels="#1d1d1d99"
         channels_selected="#60c04044"
         channel_group="#1a332d37"
         active_channels_group="#216d5b67"
@@ -917,8 +917,8 @@
       <ThemeTextEditor
         line_numbers="#777777"
         line_numbers_background="#1d1d1d"
-        selected_text="#2d4366"
-        cursor="#ff0000"
+        selected_text="#4d4d4d"
+        cursor="#65a2ff"
         syntax_builtin="#e62e67"
         syntax_symbols="#ff734d"
         syntax_special="#689d06"
@@ -926,7 +926,7 @@
         syntax_reserved="#c4753b"
         syntax_comment="#939393"
         syntax_string="#e6d573"
-        syntax_numbers="#48c5e6"
+        syntax_numbers="#48d9e6"
         >
         <space>
           <ThemeSpaceGeneric
