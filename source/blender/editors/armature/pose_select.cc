@@ -1119,13 +1119,9 @@ void POSE_OT_select_grouped(wmOperatorType *ot)
 {
   /*bfa - added icons. see header, includes. UI_interface.h and UI_resources.h*/
   static const EnumPropertyItem prop_select_grouped_types[] = {
-      {POSE_SEL_SAME_COLLECTION, "COLLECTION", ICON_LAYER, "Layer", "Shared layers"},
-      {POSE_SEL_SAME_COLOR, "COLOR", ICON_GROUP, "Group", "Shared group"},
-      {POSE_SEL_SAME_KEYINGSET,
-       "KEYINGSET",
-       ICON_KEYINGSET,
-       "Keying Set",
-       "All bones affected by active Keying Set"},
+      {POSE_SEL_SAME_COLLECTION, "COLLECTION", ICON_OUTLINER_COLLECTION, "Collection", "Same collections as the active bone"},
+      {POSE_SEL_SAME_COLOR, "COLOR", ICON_COLOR, "Color", "Same color as the active bone"},
+      {POSE_SEL_SAME_KEYINGSET, "KEYINGSET", ICON_KEYINGSET, "Keying Set",  "All bones affected by the active Keying Set"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
