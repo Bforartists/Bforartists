@@ -72,7 +72,7 @@ const EnumPropertyItem rna_enum_sequence_modifier_type_items[] = {
     {seqModifierType_Mask, "MASK", ICON_MOD_MASK, "Mask", ""},
     {seqModifierType_WhiteBalance, "WHITE_BALANCE", ICON_WHITE_BALANCE, "White Balance", ""},
     {seqModifierType_Tonemap, "TONEMAP", ICON_NODE_TONEMAP, "Tone Map", ""},
-    {seqModifierType_SoundEqualizer, "SOUND_EQUALIZER", ICON_NONE, "Sound Equalizer", ""},
+    {seqModifierType_SoundEqualizer, "SOUND_EQUALIZER", ICON_MOD_EQUALIZER, "Sound Equalizer", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -88,7 +88,7 @@ const EnumPropertyItem rna_enum_sequence_video_modifier_type_items[] = {
 };
 
 const EnumPropertyItem rna_enum_sequence_sound_modifier_type_items[] = {
-    {seqModifierType_SoundEqualizer, "SOUND_EQUALIZER", ICON_NONE, "Equalizer", ""},
+    {seqModifierType_SoundEqualizer, "SOUND_EQUALIZER", ICON_MOD_EQUALIZER, "Equalizer", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
