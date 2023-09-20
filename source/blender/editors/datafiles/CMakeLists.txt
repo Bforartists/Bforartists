@@ -1853,7 +1853,7 @@ outliner_data_volume
 
 gradient
 points_to_curves
-#~ DEF_ICON_BLANK(1884)
+mod_equalizer
 #~ DEF_ICON_BLANK(1885)
 #~ DEF_ICON_BLANK(1886)
 #~ DEF_ICON_BLANK(1887)
