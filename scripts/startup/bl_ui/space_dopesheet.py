@@ -203,10 +203,10 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
 ################################ BFA -Switch between the editors ##########################################
 
 class ANIM_OT_switch_editors_to_dopesheet(bpy.types.Operator):
-    """Switch to Dopesheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    """Switch to Dope Sheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "wm.switch_editor_to_dopesheet"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
-    bl_label = "Switch to Dopesheet Editor"
+    bl_label = "Switch to Dope Sheet Editor"
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
@@ -259,9 +259,9 @@ class ANIM_OT_switch_editors_to_nla(bpy.types.Operator):
 # The blank button, we don't want to switch to the editor in which we are already.
 
 class ANIM_OT_switch_editors_in_dopesheet(bpy.types.Operator):
-    """You are in Dopesheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    """You are in Dope Sheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "wm.switch_editor_in_dopesheet"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Dopesheet Editor"         # display name in the interface.
+    bl_label = "Dope Sheet Editor"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # Blank button, we don't execute anything here.
