@@ -286,7 +286,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
     uiItemFullO(layout,
                 "OBJECT_OT_geometry_nodes_move_to_nodes",
                 nullptr,
-                ICON_NONE,
+                ICON_GEOMETRY_NODES,
                 nullptr,
                 WM_OP_INVOKE_DEFAULT,
                 UI_ITEM_NONE,
