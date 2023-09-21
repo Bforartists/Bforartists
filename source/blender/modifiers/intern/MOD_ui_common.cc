@@ -223,7 +223,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 
     uiItemBooleanO(layout,
                    CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Save as Shape Key"),
-                   ICON_NONE,
+                   ICON_SHAPEKEY_DATA,
                    "OBJECT_OT_modifier_apply_as_shapekey",
                    "keep_modifier",
                    true);
