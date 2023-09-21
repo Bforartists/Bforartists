@@ -1,4 +1,4 @@
-keyconfig_version = (4, 0, 22)
+keyconfig_version = (4, 0, 23)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -6886,6 +6886,13 @@ keyconfig_data = \
        ],
       },
      ),
+    ("sequencer.select",
+     {"type": 'LEFTMOUSE', "value": 'CLICK'},
+     {"properties":
+      [("deselect_all", True),
+       ],
+      },
+     ),
     ],
    },
   ),
@@ -7849,7 +7856,7 @@ keyconfig_data = \
  ("Vertex Paint",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("paint.vertex_paint", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
+   [("paint.vertex_paint", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, None),
     ("wm.radial_control",
      {"type": 'X', "value": 'PRESS'},
      {"properties":
@@ -7983,6 +7990,7 @@ keyconfig_data = \
      ),
     ("paint.vert_select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
     ("paint.vert_select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("view3d.select", {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True}, None),
     ],
    },
   ),
