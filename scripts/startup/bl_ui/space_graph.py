@@ -321,7 +321,7 @@ class GRAPH_MT_select(Menu):
             icon="COLUMN_CURRENT_FRAME").mode = 'CFRA'
 
         # bfa - just in graph editor. Drivers does not have markers. graph editor = FCURVES
-        if context.space_data.mode == 'FCURVES':
+        if _context.space_data.mode == 'FCURVES':
             layout.operator(
                 "graph.select_column",
                 text="Columns on Selected Markers",
