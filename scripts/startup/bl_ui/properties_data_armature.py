@@ -165,12 +165,12 @@ class DATA_PT_bone_collections(ArmatureButtonsPanel, Panel):
         row = layout.row()
 
         sub = row.row(align=True)
-        sub.operator("armature.collection_assign", text="Assign")
-        sub.operator("armature.collection_unassign", text="Remove")
+        sub.operator("armature.collection_assign", icon='NODE_GROUPINSERT', text="Assign")
+        sub.operator("armature.collection_unassign", icon='REMOVE_FROM_ALL_GROUPS', text="Remove")
 
         sub = row.row(align=True)
-        sub.operator("armature.collection_select", text="Select")
-        sub.operator("armature.collection_deselect", text="Deselect")
+        sub.operator("armature.collection_select", icon='RESTRICT_SELECT_OFF', text="Select")
+        sub.operator("armature.collection_deselect", icon='SELECT_NONE', text="Deselect")
 
 
 class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
