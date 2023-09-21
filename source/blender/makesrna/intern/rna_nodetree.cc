@@ -11499,6 +11499,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_POINTS_TO_CURVES:
       return ICON_POINTS_TO_CURVES;
+
+    case GEO_NODE_INPUT_EDGE_SMOOTH:
+      return ICON_SHADING_EDGE_SMOOTH;
   }
   return ICON_NONE;
 }
