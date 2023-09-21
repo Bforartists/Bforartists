@@ -4934,10 +4934,14 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceIsPlanar"
 
-            props = col.operator("node.add_node", text=" Is Shade Smooth     ", icon = "SHADING_SMOOTH")
+            props = col.operator("node.add_node", text=" Is Face Smooth     ", icon = "SHADING_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
 
+            props = col.operator("node.add_node", text=" is Edge Smooth      ", icon = "SHADING_EDGE_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeInputEdgeSmooth"
+            
             props = col.operator("node.add_node", text=" Mesh Island             ", icon = "UV_ISLANDSEL")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshIsland"
@@ -4996,6 +5000,14 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SHADING_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
+            
+            props = flow.operator("node.add_node", text="", icon = "SHADING_EDGE_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeInputEdgeSmooth"
+            
+            props = flow.operator("node.add_node", text="", icon = "UV_ISLANDSEL")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshIsland"
 
             props = flow.operator("node.add_node", text = "", icon = "SELECT_SHORTESTPATH")
             props.use_transform = True
