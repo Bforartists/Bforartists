@@ -1918,10 +1918,10 @@ static void rna_def_armature(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
   static const EnumPropertyItem prop_pose_position_items[] = {
-      {0, "POSE", 0, "Pose Position", "Show armature in posed state"},
+      {0, "POSE", ICON_POSE_HLT, "Pose Position", "Show armature in posed state"}, /*BFA - icon added to button*/
       {ARM_RESTPOS,
        "REST",
-       0,
+       ICON_POSE_DATA, /*BFA - icon added to button*/
        "Rest Position",
        "Show Armature in binding pose state (no posing possible)"},
       {0, nullptr, 0, nullptr, nullptr},
