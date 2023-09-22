@@ -5984,7 +5984,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeRandomValue"
 
-            props = col.operator("node.add_repeat_zone", text=" Repeat Zone  ", icon = "REPEAT")
+            props = col.operator("node.add_repeat_zone", text=" Repeat Zone      ", icon = "REPEAT")
             props.use_transform = True
             #props.type = ""
 
@@ -6494,10 +6494,42 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Align Euler to Vector", icon = "ALIGN_EULER_TO_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeAlignEulerToVector"
+            
+            props = col.operator("node.add_node", text=" Axis Angle to Rotation", icon = "AXIS_ANGLE_TO_ROTATION")
+            props.use_transform = True
+            props.type = "FunctionNodeAxisAngleToRotation"        
+            
+            props = col.operator("node.add_node", text=" Euler to Rotation ", icon = "EULER_TO_ROTATION")
+            props.use_transform = True
+            props.type = "FunctionNodeEulerToRotation"
+            
+            props = col.operator("node.add_node", text=" Invert Rotation    ", icon = "INVERT_ROTATION")
+            props.use_transform = True
+            props.type = "FunctionNodeInvertRotation"
 
-            props = col.operator("node.add_node", text=" Rotate Euler     ", icon = "ROTATE_EULER")
+            props = col.operator("node.add_node", text=" Rotate Euler         ", icon = "ROTATE_EULER")
             props.use_transform = True
             props.type = "FunctionNodeRotateEuler"
+            
+            props = col.operator("node.add_node", text=" Rotate Vector      ", icon = "NODE_VECTORROTATE")
+            props.use_transform = True
+            props.type = "FunctionNodeRotateVector"
+            
+            props = col.operator("node.add_node", text=" Rotation to Axis Angle", icon = "ROTATION_TO_AXIS_ANGLE")
+            props.use_transform = True
+            props.type = "FunctionNodeRotationToAxisAngle"
+            
+            props = col.operator("node.add_node", text=" Rotation to Euler  ", icon = "ROTATION_TO_EULER")
+            props.use_transform = True
+            props.type = "FunctionNodeRotationToEuler"
+            
+            props = col.operator("node.add_node", text=" Rotation to Quaternion ", icon = "ROTATION_TO_QUATERNION")
+            props.use_transform = True
+            props.type = "FunctionNodeRotationToQuaternion"
+            
+            props = col.operator("node.add_node", text=" Quaternion to Rotation ", icon = "QUATERNION_TO_ROTATION")
+            props.use_transform = True
+            props.type = "FunctionNodeQuaternionToRotation"
 
         #### Icon Buttons
 
@@ -6510,10 +6542,43 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "ALIGN_EULER_TO_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeAlignEulerToVector"
+            
+            props = flow.operator("node.add_node", text="", icon = "AXIS_ANGLE_TO_ROTATION")
+            props.use_transform = True
+            props.type = "FunctionNodeAxisAngleToRotation"
+            
+            props = flow.operator("node.add_node", text="", icon = "EULER_TO_ROTATION")
+            props.use_transform = True
+            props.type = "FunctionNodeEulerToRotation"
+            
+            props = flow.operator("node.add_node", text="", icon = "INVERT_ROTATION")
+            props.use_transform = True
+            props.type = "FunctionNodeInvertRotation"
 
             props = flow.operator("node.add_node", text = "", icon = "ROTATE_EULER")
             props.use_transform = True
             props.type = "FunctionNodeRotateEuler"
+            
+            props = flow.operator("node.add_node", text="", icon = "NODE_VECTORROTATE")
+            props.use_transform = True
+            props.type = "FunctionNodeRotateVector"
+            
+            props = flow.operator("node.add_node", text="", icon = "ROTATION_TO_AXIS_ANGLE")
+            props.use_transform = True
+            props.type = "FunctionNodeRotationToAxisAngle"
+            
+            props = flow.operator("node.add_node", text="", icon = "ROTATION_TO_EULER")
+            props.use_transform = True
+            props.type = "FunctionNodeRotationToEuler"
+            
+            props = flow.operator("node.add_node", text="", icon = "ROTATION_TO_QUATERNION")
+            props.use_transform = True
+            props.type = "FunctionNodeRotationToQuaternion"
+            
+            props = flow.operator("node.add_node", text="", icon = "QUATERNION_TO_ROTATION")
+            props.use_transform = True
+            props.type = "FunctionNodeQuaternionToRotation"
+
 
 
 # ---------------- shader editor common. This content shows when you activate the common switch in the display panel.
