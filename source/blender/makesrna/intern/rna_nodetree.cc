@@ -10973,14 +10973,23 @@ static int node_type_to_icon(int type)
     case FN_NODE_ALIGN_EULER_TO_VECTOR:
       return ICON_ALIGN_EULER_TO_VECTOR;
 
+    case FN_NODE_AXIS_ANGLE_TO_ROTATION:
+      return ICON_AXIS_ANGLE_TO_ROTATION;
+
     case FN_NODE_BOOLEAN_MATH:
       return ICON_BOOLEAN_MATH;
 
     case FN_NODE_COMBINE_COLOR:
       return ICON_COMBINE_COLOR;
 
+    case FN_NODE_QUATERNION_TO_ROTATION:
+      return ICON_QUATERNION_TO_ROTATION;
+
     case FN_NODE_COMPARE:
       return ICON_FLOAT_COMPARE;
+
+    case FN_NODE_EULER_TO_ROTATION:
+      return ICON_EULER_TO_ROTATION;
 
     case FN_NODE_FLOAT_TO_INT:
       return ICON_FLOAT_TO_INT;
@@ -11003,14 +11012,11 @@ static int node_type_to_icon(int type)
     case FN_NODE_INPUT_VECTOR:
       return ICON_NODE_VECTOR;
 
+    case FN_NODE_INVERT_ROTATION:
+      return ICON_INVERT_ROTATION;
+
     case FN_NODE_RANDOM_VALUE:
       return ICON_RANDOM_FLOAT;
-
-    case GEO_NODE_REPEAT_INPUT:
-      return ICON_REPEAT;
-
-    case GEO_NODE_REPEAT_OUTPUT:
-      return ICON_REPEAT;
 
     case FN_NODE_REPLACE_STRING:
       return ICON_REPLACE_STRING;
@@ -11018,8 +11024,20 @@ static int node_type_to_icon(int type)
     case FN_NODE_ROTATE_EULER:
       return ICON_ROTATE_EULER;
 
+    case FN_NODE_ROTATE_VECTOR:
+      return ICON_NODE_VECTORROTATE;
+
+    case FN_NODE_ROTATION_TO_AXIS_ANGLE:
+      return ICON_ROTATION_TO_AXIS_ANGLE;
+
+    case FN_NODE_ROTATION_TO_EULER:
+      return ICON_ROTATION_TO_EULER;
+
     case FN_NODE_SEPARATE_COLOR:
       return ICON_SEPARATE_COLOR;
+
+    case FN_NODE_ROTATION_TO_QUATERNION:
+      return ICON_ROTATION_TO_QUATERNION;
 
     case FN_NODE_SLICE_STRING:
       return ICON_STRING_SUBSTRING;
@@ -11353,11 +11371,17 @@ static int node_type_to_icon(int type)
     case GEO_NODE_RAYCAST:
       return ICON_RAYCAST;
 
+    case GEO_NODE_REALIZE_INSTANCES:
+      return ICON_MOD_INSTANCE;
+
     case GEO_NODE_REMOVE_ATTRIBUTE:
       return ICON_ATTRIBUTE_REMOVE;
 
-    case GEO_NODE_REALIZE_INSTANCES:
-      return ICON_MOD_INSTANCE;
+    case GEO_NODE_REPEAT_INPUT:
+      return ICON_REPEAT;
+
+    case GEO_NODE_REPEAT_OUTPUT:
+      return ICON_REPEAT;
 
     case GEO_NODE_REPLACE_MATERIAL:
       return ICON_MATERIAL_REPLACE;
