@@ -428,7 +428,7 @@ void SCULPT_OT_set_detail_size(wmOperatorType *ot)
   ot->name = "Set Detail Size";
   ot->idname = "SCULPT_OT_set_detail_size";
   ot->description =
-      "Set the mesh detail (either relative or constant one, depending on current dyntopo mode)";
+      "Set the mesh detail (either relative or constant one, depending on current dyntopo mode)\nActivate the tool, hover with the mouse over the mesh, and left click to apply";
 
   /* API callbacks. */
   ot->exec = sculpt_set_detail_size_exec;

@@ -1065,12 +1065,13 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
             sub.prop(sculpt, "detail_percent")
         else:
             sub.prop(sculpt, "detail_size")
+            sub.operator("sculpt.set_detail_size", text=" Set detail size ", icon = "BRUSHSIZE")
         sub.prop(sculpt, "detail_refine_method", text="Refine Method")
         sub.prop(sculpt, "detail_type_method", text="Detailing")
 
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
             col.separator()
-            col.operator("sculpt.detail_flood_fill")
+            col.operator("sculpt.detail_flood_fill", icon = "FLOODFILL")
 
 
 class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
