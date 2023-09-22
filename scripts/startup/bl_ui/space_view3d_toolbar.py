@@ -1057,22 +1057,26 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub = col.column()
         sub.active = (brush and brush.sculpt_tool != 'MASK')
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
+            sub.operator("sculpt.set_detail_size", text="Set Detail Size", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
             row = sub.row(align=True)
             row.prop(sculpt, "constant_detail_resolution")
             props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
             props.mode = 'DYNTOPO'
         elif (sculpt.detail_type_method == 'BRUSH'):
-            sub.prop(sculpt, "detail_percent")
+            sub.operator("sculpt.set_detail_size", text="Set Detail Percent", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
+            row = sub.row(align=True)
+            row.prop(sculpt, "detail_percent")
         else:
-            sub.prop(sculpt, "detail_size")
-            sub.operator("sculpt.set_detail_size", text=" Set detail size ", icon = "BRUSHSIZE")
+            sub.operator("sculpt.set_detail_size", text="Set Detail Size", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
+            row = sub.row(align=True)
+            row.prop(sculpt, "detail_size")
+
         sub.prop(sculpt, "detail_refine_method", text="Refine Method")
         sub.prop(sculpt, "detail_type_method", text="Detailing")
 
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
             col.separator()
-            col.operator("sculpt.detail_flood_fill", icon = "FLOODFILL")
-
+            col.operator("sculpt.detail_flood_fill", icon='FLOODFILL')
 
 class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
     bl_context = ".sculpt_mode"  # dot on purpose (access from topbar)
