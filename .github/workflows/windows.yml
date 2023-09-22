@@ -1,10 +1,10 @@
 name: Windows
 
 on:
-  #push:
-    #branches: [ master ]
-  schedule:
-    - cron: 0 0 * * 1
+  push:
+    branches: [ "work-sequencer" ]
+  # schedule:
+  #   - cron: 0 0 * * 1
   pull_request:
     branches: [ master ]
 
