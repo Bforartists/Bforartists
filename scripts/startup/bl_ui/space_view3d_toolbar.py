@@ -1056,27 +1056,31 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
 
         sub = col.column()
         sub.active = (brush and brush.sculpt_tool != 'MASK')
+
+        #BFA - moved to top, this defines the "modes" then options of the detail_type_method, then you tune the details (top down hirarchal UX)
+        sub.prop(sculpt, "detail_type_method", text="Detailing")
+        sub.prop(sculpt, "detail_refine_method", text="Refine Method")
+
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
-            sub.operator("sculpt.set_detail_size", text="Set Detail Size", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
             row = sub.row(align=True)
             row.prop(sculpt, "constant_detail_resolution")
             props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
+            sub.operator("sculpt.set_detail_size", text="Set Detail Size", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
             props.mode = 'DYNTOPO'
         elif (sculpt.detail_type_method == 'BRUSH'):
-            sub.operator("sculpt.set_detail_size", text="Set Detail Percent", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
             row = sub.row(align=True)
             row.prop(sculpt, "detail_percent")
+            sub.operator("sculpt.set_detail_size", text="Set Detail Percent", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
         else:
-            sub.operator("sculpt.set_detail_size", text="Set Detail Size", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
             row = sub.row(align=True)
             row.prop(sculpt, "detail_size")
-
-        sub.prop(sculpt, "detail_refine_method", text="Refine Method")
-        sub.prop(sculpt, "detail_type_method", text="Detailing")
+            sub.operator("sculpt.set_detail_size", text="Set Detail Size", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
 
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
-            col.separator()
+            #col.separator() #BFA - unnecessary
             col.operator("sculpt.detail_flood_fill", icon='FLOODFILL')
+
+
 
 class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
     bl_context = ".sculpt_mode"  # dot on purpose (access from topbar)
