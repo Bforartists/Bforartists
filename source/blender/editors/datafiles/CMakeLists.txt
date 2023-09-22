@@ -1854,13 +1854,13 @@ outliner_data_volume
 gradient
 points_to_curves
 mod_equalizer
-#~ DEF_ICON_BLANK(1885)
-#~ DEF_ICON_BLANK(1886)
-#~ DEF_ICON_BLANK(1887)
-#~ DEF_ICON_BLANK(1888)
-#~ DEF_ICON_BLANK(1889)
-#~ DEF_ICON_BLANK(1890)
-#~ DEF_ICON_BLANK(1891)
+axis_angle_to_rotation 
+euler_to_rotation 
+invert_rotation 
+quaternion_to_rotation 
+rotation_to_axis_angle 
+rotation_to_euler 
+rotation_to_quaternion 
 
 # ------------------------- row 28 --------------------------*/
 
