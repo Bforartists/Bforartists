@@ -561,9 +561,9 @@ class VIEW3D_MT_object_mirror_local_x(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_object_mirror_local_y(bpy.types.Operator):
-    """Mirror local around X axis"""      # blender will use this as a tooltip for menu items and buttons.
+    """Mirror local around Y axis"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mirror.local_y"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Mirror Local X"         # display name in the interface.
+    bl_label = "Mirror Local Y"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     def execute(self, context):        # execute() is called by blender when running the operator.
