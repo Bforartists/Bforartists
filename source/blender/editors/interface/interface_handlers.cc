@@ -6908,7 +6908,7 @@ static void ui_ndofedit_but_HSVCIRCLE(uiBut *but,
   ColorPicker *cpicker = static_cast<ColorPicker *>(but->custom_data);
   float *hsv = cpicker->hsv_perceptual;
   float rgb[3];
-  float phi, r /*, sqr */ /* UNUSED */, v[2];
+  float phi, r, v[2];
   const float sensitivity = (shift ? 0.06f : 0.3f) * ndof->dt;
 
   ui_but_v3_get(but, rgb);
@@ -6918,7 +6918,7 @@ static void ui_ndofedit_but_HSVCIRCLE(uiBut *but,
   /* Convert current color on hue/sat disc to circular coordinates phi, r */
   phi = fmodf(hsv[0] + 0.25f, 1.0f) * -2.0f * float(M_PI);
   r = hsv[1];
-  /* sqr = r > 0.0f ? sqrtf(r) : 1; */ /* UNUSED */
+  // const float sqr = r > 0.0f ? sqrtf(r) : 1; /* UNUSED */
 
   /* Convert to 2d vectors */
   v[0] = r * cosf(phi);
@@ -10298,7 +10298,13 @@ static int ui_handle_menu_letter_press(
       after->opptr = MEM_cnew<PointerRNA>(__func__);
       WM_operator_properties_create_ptr(after->opptr, ot);
       RNA_string_set(after->opptr, "menu_idname", menu->menu_idname);
-      RNA_string_set(after->opptr, "initial_query", event->utf8_buf);
+      const int num_bytes = BLI_str_utf8_size_or_error(event->utf8_buf);
+      if (num_bytes != -1) {
+        char buf[sizeof(event->utf8_buf) + 1];
+        memcpy(buf, event->utf8_buf, num_bytes);
+        buf[num_bytes] = '\0';
+        RNA_string_set(after->opptr, "initial_query", buf);
+      }
       menu->menuretval = UI_RETURN_OK;
       return WM_UI_HANDLER_BREAK;
     }

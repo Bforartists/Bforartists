@@ -357,7 +357,7 @@ def verify_mesh_obj(obj: bpy.types.Object) -> MeshObject:
     return obj  # noqa
 
 
-class IdPropSequence(typing.Mapping[str, T], ABC):
+class IdPropSequence(typing.Mapping[str, T], typing.Sequence[T], ABC):
     def __getitem__(self, item: str | int) -> T:
         pass
 

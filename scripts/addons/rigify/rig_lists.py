@@ -109,6 +109,7 @@ def get_external_rigs(set_list):
             print(f"Rigify Error: Could not load feature set '{feature_set}' rigs: exception occurred.\n")
             traceback.print_exc()
             print("")
+            feature_set_list.mark_feature_set_exception(feature_set)
             continue
 
         rigs.update(external_rigs)
