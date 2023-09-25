@@ -346,7 +346,16 @@ class GRAPH_MT_select(Menu):
         props.mode = 'RIGHT'
 
         layout.separator()
+        props = layout.operator("graph.select_key_handles", text="Select Handles")
+        props.left_handle_action = 'SELECT'
+        props.right_handle_action = 'SELECT'
+        props.key_action = 'KEEP'
+        props = layout.operator("graph.select_key_handles", text="Select Key")
+        props.left_handle_action = 'DESELECT'
+        props.right_handle_action = 'DESELECT'
+        props.key_action = 'SELECT'
 
+        layout.separator()
         layout.operator("graph.select_more", text="More", icon="SELECTMORE")
         layout.operator("graph.select_less", text="Less", icon="SELECTLESS")
 
@@ -514,8 +523,10 @@ class GRAPH_MT_key_blending(Menu):
         layout.operator("graph.blend_to_ease", text="Blend to Ease", icon='BLEND_TO_EASE')
         layout.operator("graph.blend_offset", text="Blend Offset", icon='BLEND_OFFSET')
         layout.operator("graph.match_slope", text="Match Slope", icon='SET_CURVE_TILT')
+        layout.operator("graph.push_pull", text="Push Pull")
         layout.operator("graph.shear", text="Shear Keys", icon='SHEAR')
         layout.operator("graph.scale_average", text="Scale Average", icon='SCALE_AVERAGE')
+        layout.operator("graph.time_offset", text="Time Offset")
 
 
 class GRAPH_MT_key_smoothing(Menu):

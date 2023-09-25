@@ -178,7 +178,7 @@ class Rig(BasicChainRig):
 
         return parent
 
-    def get_control_node_layers(self, node: ControlBoneNode) -> list[bool]:
+    def get_control_node_layers(self, node: ControlBoneNode) -> list[bpy.types.BoneCollection]:
         layers = None
 
         # Secondary Layers used for the middle pivot

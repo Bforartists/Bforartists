@@ -622,7 +622,8 @@ class BaseLimbRig(BaseRig):
         self.make_property(self.prop_bone, 'IK_Stretch', default=1.0, description='IK Stretch')
         panel.custom_prop(self.prop_bone, 'IK_Stretch', text='IK Stretch', slider=True)
 
-        self.make_property(self.prop_bone, 'pole_vector', default=False, description='Use a pole target control')
+        self.make_property(self.prop_bone, 'pole_vector', default=0,
+                           description='Use a pole target control')
 
         self.add_ik_only_buttons(panel, rig_name)
 
@@ -819,14 +820,12 @@ class BaseLimbRig(BaseRig):
             prev_tweak, next_tweak, fac = self.get_tweak_blend(i, entry)
 
             # Apply the final roll resulting from mixing tweaks to rest pose
-            prev_rot = self.get_bone(prev_tweak).matrix.to_quaternion()
-            next_rot = self.get_bone(next_tweak).matrix.to_quaternion()
-            rot = (prev_rot * (1-fac) + next_rot * fac).normalized()
+            prev_mat = self.get_bone(prev_tweak).matrix
+            next_mat = self.get_bone(next_tweak).matrix
+            rot_mat = prev_mat.lerp(next_mat, fac)
 
             bone = self.get_bone(tweak)
-            bone_rot = bone.matrix.to_quaternion()
-
-            bone.roll += (bone_rot.inverted() @ rot).to_swing_twist('Y')[1]
+            bone.roll += (bone.matrix.inverted() @ rot_mat).to_quaternion().to_swing_twist('Y')[1]
 
     @stage.rig_bones
     def rig_tweak_mch_chain(self):

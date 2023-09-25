@@ -219,8 +219,7 @@ ccl_device_inline void surface_shader_validate_bsdf_sample(const KernelGlobals k
 {
   /* Validate the #bsdf_label and #bsdf_roughness_eta functions
    * by estimating the values after a BSDF sample. */
-  const int comp_label = bsdf_label(kg, sc, wo);
-  kernel_assert(org_label == comp_label);
+  kernel_assert(org_label == bsdf_label(kg, sc, wo));
 
   float2 comp_roughness;
   float comp_eta;
@@ -1025,8 +1024,9 @@ ccl_device float3 surface_shader_average_normal(KernelGlobals kg, ccl_private co
 
   for (int i = 0; i < sd->num_closure; i++) {
     ccl_private const ShaderClosure *sc = &sd->closure[i];
-    if (CLOSURE_IS_BSDF_OR_BSSRDF(sc->type))
+    if (CLOSURE_IS_BSDF_OR_BSSRDF(sc->type)) {
       N += sc->N * fabsf(average(sc->weight));
+    }
   }
 
   return (is_zero(N)) ? sd->N : normalize(N);

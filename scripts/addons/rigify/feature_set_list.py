@@ -25,6 +25,32 @@ DEFAULT_NAME = 'rigify'
 INSTALL_PATH = feature_sets._install_path()
 NAME_PREFIX = feature_sets.__name__.split('.')
 
+# noinspection SpellCheckingInspection
+PROMOTED_FEATURE_SETS = [
+    {
+        "name": "CloudRig",
+        "author": "Demeter Dzadik",
+        "description": "Feature set developed by the Blender Animation Studio",
+        "doc_url": "https://gitlab.com/blender/CloudRig/-/wikis/",
+        "link": "https://gitlab.com/blender/CloudRig/",
+    },
+    {
+        "name": "Experimental Rigs by Alexander Gavrilov",
+        "author": "Alexander Gavrilov",
+        "description":
+            "Experimental and/or niche rigs made by a Rigify maintainer.\n"
+            "Includes a BlenRig-like spine, Body IK (knee & elbow IK), jiggles, skin transforms, etc.",
+        "link": "https://github.com/angavrilov/angavrilov-rigs",
+    },
+    {
+        "name": "Cessen's Rigify Extensions",
+        "author": "Nathan Vegdahl",
+        "description": "Collection of original legacy Rigify rigs minimally ported to the modern Rigify",
+        "warning": "This feature set is maintaned at the bare minimal level",
+        "link": "https://github.com/cessen/cessen_rigify_ext",
+    }
+]
+
 
 def get_install_path(*, create=False):
     if not os.path.exists(INSTALL_PATH):
@@ -68,6 +94,25 @@ def get_enabled_modules_names() -> List[str]:
     return [name for name in installed_module_names if name in enabled_module_names]
 
 
+def find_module_name_by_link(link: str) -> str | None:
+    """Returns the name of the feature set module that is associated with the specified url."""
+    if not link:
+        return None
+
+    for fs in get_prefs_feature_sets():
+        if fs.link == link:
+            return fs.module_name or None
+
+    return None
+
+
+def mark_feature_set_exception(module_name: str):
+    if module_name:
+        for fs in get_prefs_feature_sets():
+            if fs.module_name == module_name:
+                fs.has_exceptions = True
+
+
 def get_module(feature_set: str):
     return importlib.import_module('.'.join([*NAME_PREFIX, feature_set]))
 
@@ -78,6 +123,11 @@ def get_module_safe(feature_set: str):
         return get_module(feature_set)
     except:  # noqa: E722
         return None
+
+
+def get_module_by_link_safe(link: str):
+    if module_name := find_module_name_by_link(link):
+        return get_module_safe(module_name)
 
 
 def get_dir_path(feature_set: str, *extra_items: list[str]):
@@ -98,7 +148,8 @@ def get_info_dict(feature_set: str):
 
 
 def call_function_safe(module_name: str, func_name: str,
-                       args: Optional[list] = None, kwargs: Optional[dict] = None):
+                       args: Optional[list] = None, kwargs: Optional[dict] = None,
+                       mark_error=False):
     module = get_module_safe(module_name)
 
     if module:
@@ -114,11 +165,14 @@ def call_function_safe(module_name: str, func_name: str,
                 traceback.print_exc()
                 print("")
 
+                if mark_error:
+                    mark_feature_set_exception(module_name)
+
     return None
 
 
 def call_register_function(feature_set: str, do_register: bool):
-    call_function_safe(feature_set, 'register' if do_register else 'unregister')
+    call_function_safe(feature_set, 'register' if do_register else 'unregister', mark_error=do_register)
 
 
 def get_ui_name(feature_set: str):
@@ -237,11 +291,17 @@ class DATA_OT_rigify_add_feature_set(bpy.types.Operator):
                 os.rename(base_dir, fixed_dir)
 
             # Call the register callback of the new set
+            addon_prefs.refresh_installed_feature_sets()
+
             call_register_function(fixed_dirname, True)
 
             addon_prefs.update_external_rigs()
 
-            addon_prefs.active_feature_set_index = len(addon_prefs.rigify_feature_sets)-1
+            # Select the new entry
+            for i, fs in enumerate(addon_prefs.rigify_feature_sets):
+                if fs.module_name == fixed_dirname:
+                    addon_prefs.active_feature_set_index = i
+                    break
 
         return {'FINISHED'}
 
@@ -282,6 +342,7 @@ class DATA_OT_rigify_remove_feature_set(bpy.types.Operator):
         feature_set_list.remove(active_idx)
 
         # Remove the feature set's entries from the metarigs and rig types.
+        addon_prefs.refresh_installed_feature_sets()
         addon_prefs.update_external_rigs()
 
         # Update active index.
