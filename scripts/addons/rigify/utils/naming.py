@@ -10,7 +10,6 @@ import enum
 
 from typing import Optional, TYPE_CHECKING
 
-from .misc import map_list
 
 if TYPE_CHECKING:
     from ..base_generate import BaseGenerator
