@@ -4,7 +4,9 @@
 
 import bpy
 import math
+import json
 
+from typing import Optional
 from mathutils import Vector, Matrix
 
 from ...utils.rig import is_rig_base_bone
@@ -13,12 +15,15 @@ from ...utils.bones import put_bone, align_bone_orientation
 from ...utils.naming import make_derived_name
 from ...utils.misc import matrix_from_axis_roll, matrix_from_axis_pair
 from ...utils.widgets import adjust_widget_transform_mesh
+from ...utils.animation import add_fk_ik_snap_buttons
+from ...utils.mechanism import driver_var_transform
 
 from ..widgets import create_foot_widget, create_ball_socket_widget
 
 from ...base_rig import stage
+from ...rig_ui_template import PanelLayout
 
-from .limb_rigs import BaseLimbRig
+from .limb_rigs import BaseLimbRig, SCRIPT_UTILITIES_OP_SNAP_IK_FK
 
 
 DEG_360 = math.pi * 2
@@ -33,6 +38,7 @@ class Rig(BaseLimbRig):
     pivot_type: str
     heel_euler_order: str
     use_ik_toe: bool
+    use_toe_roll: bool
 
     ik_matrix: Matrix
     roll_matrix: Matrix
@@ -55,6 +61,7 @@ class Rig(BaseLimbRig):
         self.pivot_type = self.params.foot_pivot_type
         self.heel_euler_order = 'ZXY' if self.main_axis == 'x' else 'XZY'
         self.use_ik_toe = self.params.extra_ik_toe
+        self.use_toe_roll = self.params.extra_toe_roll
 
         if self.use_ik_toe:
             self.fk_name_suffix_cutoff = 3
@@ -115,6 +122,37 @@ class Rig(BaseLimbRig):
         'Rig.MchBones',
         list[str]
     ]
+
+    ####################################################
+    # UI
+
+    def add_global_buttons(self, panel, rig_name):
+        super().add_global_buttons(panel, rig_name)
+
+        ik_chain, tail_chain, fk_chain = self.get_ik_fk_position_chains()
+
+        add_leg_snap_ik_to_fk(
+            panel,
+            master=self.bones.ctrl.master,
+            fk_bones=fk_chain, ik_bones=ik_chain, tail_bones=tail_chain,
+            ik_ctrl_bones=self.get_ik_control_chain(),
+            ik_extra_ctrls=self.get_extra_ik_controls(),
+            heel_control=self.bones.ctrl.heel,
+            rig_name=rig_name
+        )
+
+    def add_ik_only_buttons(self, panel, rig_name):
+        super().add_ik_only_buttons(panel, rig_name)
+
+        if self.use_toe_roll:
+            bone = self.bones.ctrl.heel
+
+            self.make_property(
+                bone, 'Toe_Roll', default=0.0,
+                description='Pivot on the tip of the toe when rolling forward with the heel control'
+            )
+
+            panel.custom_prop(bone, 'Toe_Roll', text='Roll On Toe', slider=True)
 
     ####################################################
     # IK controls
@@ -282,7 +320,18 @@ class Rig(BaseLimbRig):
         put_bone(self.obj, rock1, heel_bone.tail, matrix=self.roll_matrix, scale=0.5)
         put_bone(self.obj, rock2, heel_bone.head, matrix=self.roll_matrix, scale=0.5)
 
-        return [rock2, rock1, roll2, roll1, result]
+        if self.use_toe_roll:
+            roll3 = self.copy_bone(toe, make_derived_name(heel, 'mch', '_roll3'), scale=0.3)
+
+            toe_pos = Vector(self.get_bone(toe).tail)
+            toe_pos.z = self.get_bone(roll2).head.z
+
+            put_bone(self.obj, roll3, toe_pos, matrix=self.roll_matrix)
+
+            return [rock2, rock1, roll2, roll3, roll1, result]
+
+        else:
+            return [rock2, rock1, roll2, roll1, result]
 
     @stage.parent_bones
     def parent_roll_mch_chain(self):
@@ -295,7 +344,36 @@ class Rig(BaseLimbRig):
         self.rig_roll_mch_bones(self.bones.mch.heel, self.bones.ctrl.heel, self.bones.org.heel)
 
     def rig_roll_mch_bones(self, chain: list[str], heel: str, org_heel: str):
-        rock2, rock1, roll2, roll1, result = chain
+        if self.use_toe_roll:
+            rock2, rock1, roll2, roll3, roll1, result = chain
+
+            # Interpolate rotation in Euler space via drivers to simplify Snap With Roll
+            self.make_driver(
+                roll3, 'rotation_euler', index=0,
+                expression='max(0,x*i)' if self.main_axis == 'x' else 'x*i',
+                variables={
+                    'x': driver_var_transform(
+                        self.obj, heel, type='ROT_X', space='LOCAL',
+                        rotation_mode=self.heel_euler_order,
+                    ),
+                    'i': (heel, 'Toe_Roll'),
+                }
+            )
+
+            self.make_driver(
+                roll3, 'rotation_euler', index=2,
+                expression='max(0,z*i)' if self.main_axis == 'z' else 'z*i',
+                variables={
+                    'z': driver_var_transform(
+                        self.obj, heel, type='ROT_Z', space='LOCAL',
+                        rotation_mode=self.heel_euler_order,
+                    ),
+                    'i': (heel, 'Toe_Roll'),
+                }
+            )
+
+        else:
+            rock2, rock1, roll2, roll1, result = chain
 
         # This order is required for correct working of the constraints
         for bone in chain:
@@ -392,22 +470,174 @@ class Rig(BaseLimbRig):
             description="Generate a separate IK toe control for better IK/FK snapping"
         )
 
+        params.extra_toe_roll = bpy.props.BoolProperty(
+            name='Toe Tip Roll',
+            default=False,
+            description="Generate a slider to pivot forward heel roll on the tip rather than the base of the toe"
+        )
+
     @classmethod
     def parameters_ui(cls, layout, params, end='Foot'):
         layout.prop(params, 'foot_pivot_type')
         layout.prop(params, 'extra_ik_toe')
+        layout.prop(params, 'extra_toe_roll')
 
         super().parameters_ui(layout, params, end)
+
+
+##########################
+# Leg IK to FK operator ##
+##########################
+
+SCRIPT_REGISTER_OP_LEG_SNAP_IK_FK = [
+    'POSE_OT_rigify_leg_roll_ik2fk', 'POSE_OT_rigify_leg_roll_ik2fk_bake']
+
+SCRIPT_UTILITIES_OP_LEG_SNAP_IK_FK = SCRIPT_UTILITIES_OP_SNAP_IK_FK + ['''
+#######################
+## Leg Snap IK to FK ##
+#######################
+
+class RigifyLegRollIk2FkBase(RigifyLimbIk2FkBase):
+    heel_control: StringProperty(name="Heel")
+    use_roll:     bpy.props.BoolVectorProperty(
+        name="Use Roll", size=3, default=(True, True, False),
+        description="Specifies which rotation axes of the heel roll control to use"
+    )
+
+    MODES = {
+        'ZXY': ((0, 2), (1, 0, 2)),
+        'XZY': ((2, 0), (2, 0, 1)),
+    }
+
+    def save_frame_state(self, context, obj):
+        return get_chain_transform_matrices(obj, self.fk_bone_list + self.ctrl_bone_list[-1:])
+
+    def assign_extra_controls(self, context, obj, all_matrices, ik_bones, ctrl_bones):
+        for extra in self.extra_ctrl_list:
+            set_transform_from_matrix(
+                obj, extra, Matrix.Identity(4), space='LOCAL', keyflags=self.keyflags
+            )
+
+        if any(self.use_roll):
+            foot_matrix = all_matrices[len(ik_bones) - 1]
+            ctrl_matrix = all_matrices[len(self.fk_bone_list)]
+            heel_bone = obj.pose.bones[self.heel_control]
+            foot_bone = ctrl_bones[-1]
+
+            # Relative rotation of heel from orientation of master IK control
+            # to actual foot orientation.
+            heel_rest = convert_pose_matrix_via_rest_delta(ctrl_matrix, foot_bone, heel_bone)
+            heel_rot = convert_pose_matrix_via_rest_delta(foot_matrix, ik_bones[-1], heel_bone)
+
+            # Decode the euler decomposition mode
+            rot_mode = heel_bone.rotation_mode
+            indices, use_map = self.MODES[rot_mode]
+            use_roll = [self.use_roll[i] for i in use_map]
+            roll, turn = indices
+
+            # If the last rotation (yaw) is unused, move it to be first for better result
+            if not use_roll[turn]:
+                rot_mode = rot_mode[1:] + rot_mode[0:1]
+
+            local_rot = (heel_rest.inverted() @ heel_rot).to_euler(rot_mode)
+
+            heel_bone.rotation_euler = [
+                (val if use else 0) for val, use in zip(local_rot, use_roll)
+            ]
+
+            if self.keyflags is not None:
+                keyframe_transform_properties(
+                    obj, bone_name, self.keyflags, no_loc=True, no_rot=no_rot, no_scale=True
+                )
+
+            if 'Toe_Roll' in heel_bone and self.tail_bone_list:
+                toe_matrix = all_matrices[len(ik_bones)]
+                toe_bone = obj.pose.bones[self.tail_bone_list[0]]
+
+                # Compute relative rotation of heel determined by toe
+                heel_rot_toe = convert_pose_matrix_via_rest_delta(toe_matrix, toe_bone, heel_bone)
+                toe_rot = (heel_rest.inverted() @ heel_rot_toe).to_euler(rot_mode)
+
+                # Determine how much of the already computed heel rotation seems to be applied
+                heel_rot = list(heel_bone.rotation_euler)
+                heel_rot[roll] = max(0.0, heel_rot[roll])
+
+                # This relies on toe roll interpolation being done in Euler space
+                ratios = [
+                    toe_rot[i] / heel_rot[i] for i in (roll, turn)
+                    if use_roll[i] and heel_rot[i] * toe_rot[i] > 0
+                ]
+
+                val = min(1.0, max(0.0, min(ratios) if ratios else 0.0))
+                if val < 1e-5:
+                    val = 0.0
+
+                set_custom_property_value(
+                    obj, heel_bone.name, 'Toe_Roll', val, keyflags=self.keyflags)
+
+    def draw(self, context):
+        row = self.layout.row(align=True)
+        row.label(text="Use:")
+        row.prop(self, 'use_roll', index=0, text="Rock", toggle=True)
+        row.prop(self, 'use_roll', index=1, text="Roll", toggle=True)
+        row.prop(self, 'use_roll', index=2, text="Yaw", toggle=True)
+
+class POSE_OT_rigify_leg_roll_ik2fk(
+        RigifyLegRollIk2FkBase, RigifySingleUpdateMixin, bpy.types.Operator):
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+    bl_idname = "pose.rigify_leg_roll_ik2fk_" + rig_id
+    bl_label = "Snap IK->FK With Roll"
+    bl_description = "Snap the IK chain to FK result, using foot roll to preserve the current IK "\
+                     "control orientation as much as possible"
+
+    def invoke(self, context, event):
+        self.init_invoke(context)
+        return self.execute(context)
+
+class POSE_OT_rigify_leg_roll_ik2fk_bake(
+        RigifyLegRollIk2FkBase, RigifyBakeKeyframesMixin, bpy.types.Operator):
+    bl_idname = "pose.rigify_leg_roll_ik2fk_bake_" + rig_id
+    bl_label = "Apply Snap IK->FK To Keyframes"
+    bl_description = "Snap the IK chain keyframes to FK result, using foot roll to preserve the "\
+                     "current IK control orientation as much as possible"
+
+    def execute_scan_curves(self, context, obj):
+        self.bake_add_bone_frames(self.fk_bone_list, TRANSFORM_PROPS_ALL)
+        self.bake_add_bone_frames(self.ctrl_bone_list[-1:], TRANSFORM_PROPS_ROTATION)
+        return self.bake_get_all_bone_curves(
+            self.ctrl_bone_list + self.extra_ctrl_list, TRANSFORM_PROPS_ALL)
+''']
+
+
+def add_leg_snap_ik_to_fk(panel: PanelLayout, *, master: Optional[str] = None,
+                          fk_bones=(), ik_bones=(), tail_bones=(),
+                          ik_ctrl_bones=(), ik_extra_ctrls=(), heel_control, rig_name=''):
+    panel.use_bake_settings()
+    panel.script.add_utilities(SCRIPT_UTILITIES_OP_LEG_SNAP_IK_FK)
+    panel.script.register_classes(SCRIPT_REGISTER_OP_LEG_SNAP_IK_FK)
+
+    assert len(fk_bones) == len(ik_bones) + len(tail_bones)
+
+    op_props = {
+        'prop_bone': master,
+        'fk_bones': json.dumps(fk_bones),
+        'ik_bones': json.dumps(ik_bones),
+        'ctrl_bones': json.dumps(ik_ctrl_bones),
+        'tail_bones': json.dumps(tail_bones),
+        'extra_ctrls': json.dumps(ik_extra_ctrls),
+        'heel_control': heel_control,
+    }
+
+    add_fk_ik_snap_buttons(
+        panel, 'pose.rigify_leg_roll_ik2fk_{rig_id}', 'pose.rigify_leg_roll_ik2fk_bake_{rig_id}',
+        label='IK->FK With Roll', rig_name=rig_name, properties=op_props,
+    )
 
 
 def create_sample(obj):
     # generated by rigify.utils.write_metarig
     bpy.ops.object.mode_set(mode='EDIT')
     arm = obj.data
-
-    def assign_bone_collections(pose_bone):
-        if active := arm.collections.active:
-            active.assign(pose_bone)
 
     bones = {}
 

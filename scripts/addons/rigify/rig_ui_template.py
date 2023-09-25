@@ -8,6 +8,7 @@ from collections import OrderedDict
 from typing import Union, Optional, Any
 
 from .utils.animation import SCRIPT_REGISTER_BAKE, SCRIPT_UTILITIES_BAKE
+from .utils.mechanism import quote_property
 
 from . import base_generate
 
@@ -918,6 +919,151 @@ class RigLayers(bpy.types.Panel):
 '''
 
 
+class PanelExpression(object):
+    """A runtime expression involving bone properties"""
+
+    _rigify_expr: str
+
+    def __init__(self, expr: str):
+        self._rigify_expr = expr
+
+    def __repr__(self):
+        return self._rigify_expr
+
+    def __add__(self, other):
+        return PanelExpression(f"({self._rigify_expr} + {repr(other)})")
+
+    def __sub__(self, other):
+        return PanelExpression(f"({self._rigify_expr} - {repr(other)})")
+
+    def __mul__(self, other):
+        return PanelExpression(f"({self._rigify_expr} * {repr(other)})")
+
+    def __matmul__(self, other):
+        return PanelExpression(f"({self._rigify_expr} @ {repr(other)})")
+
+    def __truediv__(self, other):
+        return PanelExpression(f"({self._rigify_expr} / {repr(other)})")
+
+    def __floordiv__(self, other):
+        return PanelExpression(f"({self._rigify_expr} // {repr(other)})")
+
+    def __mod__(self, other):
+        return PanelExpression(f"({self._rigify_expr} % {repr(other)})")
+
+    def __lshift__(self, other):
+        return PanelExpression(f"({self._rigify_expr} << {repr(other)})")
+
+    def __rshift__(self, other):
+        return PanelExpression(f"({self._rigify_expr} >> {repr(other)})")
+
+    def __and__(self, other):
+        return PanelExpression(f"({self._rigify_expr} & {repr(other)})")
+
+    def __xor__(self, other):
+        return PanelExpression(f"({self._rigify_expr} ^ {repr(other)})")
+
+    def __or__(self, other):
+        return PanelExpression(f"({self._rigify_expr} | {repr(other)})")
+
+    def __radd__(self, other):
+        return PanelExpression(f"({repr(other)} + {self._rigify_expr})")
+
+    def __rsub__(self, other):
+        return PanelExpression(f"({repr(other)} - {self._rigify_expr})")
+
+    def __rmul__(self, other):
+        return PanelExpression(f"({repr(other)} * {self._rigify_expr})")
+
+    def __rmatmul__(self, other):
+        return PanelExpression(f"({repr(other)} @ {self._rigify_expr})")
+
+    def __rtruediv__(self, other):
+        return PanelExpression(f"({repr(other)} / {self._rigify_expr})")
+
+    def __rfloordiv__(self, other):
+        return PanelExpression(f"({repr(other)} // {self._rigify_expr})")
+
+    def __rmod__(self, other):
+        return PanelExpression(f"({repr(other)} % {self._rigify_expr})")
+
+    def __rlshift__(self, other):
+        return PanelExpression(f"({repr(other)} << {self._rigify_expr})")
+
+    def __rrshift__(self, other):
+        return PanelExpression(f"({repr(other)} >> {self._rigify_expr})")
+
+    def __rand__(self, other):
+        return PanelExpression(f"({repr(other)} & {self._rigify_expr})")
+
+    def __rxor__(self, other):
+        return PanelExpression(f"({repr(other)} ^ {self._rigify_expr})")
+
+    def __ror__(self, other):
+        return PanelExpression(f"({repr(other)} | {self._rigify_expr})")
+
+    def __neg__(self):
+        return PanelExpression(f"-{self._rigify_expr}")
+
+    def __pos__(self):
+        return PanelExpression(f"+{self._rigify_expr}")
+
+    def __abs__(self):
+        return PanelExpression(f"abs({self._rigify_expr})")
+
+    def __invert__(self):
+        return PanelExpression(f"~{self._rigify_expr}")
+
+    def __round__(self, digits=None):
+        return PanelExpression(f"round({self._rigify_expr}, {digits})")
+
+    def __trunc__(self):
+        return PanelExpression(f"trunc({self._rigify_expr})")
+
+    def __floor__(self):
+        return PanelExpression(f"floor({self._rigify_expr})")
+
+    def __ceil__(self):
+        return PanelExpression(f"ceil({self._rigify_expr})")
+
+    def __lt__(self, other):
+        return PanelExpression(f"({self._rigify_expr} < {repr(other)})")
+
+    def __le__(self, other):
+        return PanelExpression(f"({self._rigify_expr} <= {repr(other)})")
+
+    def __eq__(self, other):
+        return PanelExpression(f"({self._rigify_expr} == {repr(other)})")
+
+    def __ne__(self, other):
+        return PanelExpression(f"({self._rigify_expr} != {repr(other)})")
+
+    def __gt__(self, other):
+        return PanelExpression(f"({self._rigify_expr} > {repr(other)})")
+
+    def __ge__(self, other):
+        return PanelExpression(f"({self._rigify_expr} >= {repr(other)})")
+
+    def __bool__(self):
+        raise NotImplementedError("This object wraps an expression, not a value; casting to boolean is meaningless")
+
+
+class PanelReferenceExpression(PanelExpression):
+    """
+    A runtime expression referencing an object.
+    @DynamicAttrs
+    """
+
+    def __getitem__(self, item):
+        return PanelReferenceExpression(f"{self._rigify_expr}[{repr(item)}]")
+
+    def __getattr__(self, item):
+        return PanelReferenceExpression(f"{self._rigify_expr}.{item}")
+
+    def get(self, item, default=None):
+        return PanelReferenceExpression(f"{self._rigify_expr}.get({repr(item)}, {repr(default)})")
+
+
 def quote_parameters(positional: list[Any], named: dict[str, Any]):
     """Quote the given positional and named parameters as a code string."""
     positional_list = [repr(v) for v in positional]
@@ -1035,6 +1181,51 @@ class PanelLayout(object):
     def split(self, **params):
         """Add a split layout to the panel."""
         return self.add_nested_layout('split', params)
+
+    @staticmethod
+    def expr_bone(bone_name):
+        """Returns an expression referencing the specified pose bone."""
+        return PanelReferenceExpression(f"pose_bones[%r]" % bone_name)
+
+    @staticmethod
+    def expr_and(*expressions):
+        """Returns a boolean and expression of its parameters."""
+        return PanelExpression("(" + " and ".join(repr(e) for e in expressions) + ")")
+
+    @staticmethod
+    def expr_or(*expressions):
+        """Returns a boolean or expression of its parameters."""
+        return PanelExpression("(" + " or ".join(repr(e) for e in expressions) + ")")
+
+    @staticmethod
+    def expr_if_else(condition, true_expr, false_expr):
+        """Returns a conditional expression."""
+        return PanelExpression(f"({repr(true_expr)} if {repr(condition)} else {repr(false_expr)})")
+
+    @staticmethod
+    def expr_call(func: str, *expressions):
+        """Returns an expression calling the specified function with given parameters."""
+        return PanelExpression(func + "(" + ", ".join(repr(e) for e in expressions) + ")")
+
+    def set_layout_property(self, prop_name: str, prop_value: Any):
+        assert self.index > 0  # Don't change properties on the root layout
+        self.add_line("%s.%s = %r" % (self.layout, prop_name, prop_value))
+
+    @property
+    def active(self):
+        raise NotImplementedError("This is a write only property")
+
+    @active.setter
+    def active(self, value):
+        self.set_layout_property('active', value)
+
+    @property
+    def enabled(self):
+        raise NotImplementedError("This is a write only property")
+
+    @enabled.setter
+    def enabled(self, value):
+        self.set_layout_property('enabled', value)
 
 
 class BoneSetPanelLayout(PanelLayout):

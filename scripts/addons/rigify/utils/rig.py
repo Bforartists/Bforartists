@@ -184,7 +184,8 @@ def resolve_layer_names(layers):
 
 
 def upgrade_metarig_layers(metarig: ArmatureObject):
-    from .layers import DEF_COLLECTION, MCH_COLLECTION, ORG_COLLECTION, ROOT_COLLECTION
+    from .layers import (REFS_LIST_SUFFIX, DEF_COLLECTION, MCH_COLLECTION, ORG_COLLECTION, ROOT_COLLECTION,
+                         ensure_collection_uid)
 
     arm = metarig.data
 
@@ -194,10 +195,6 @@ def upgrade_metarig_layers(metarig: ArmatureObject):
     for coll in arm.collections:
         if m := re.match(r'^Layer (\d+)', coll.name):
             coll_table[int(m[1]) - 1] = coll
-
-    # Assign UIDs from layer index
-    for idx, coll in coll_table.items():
-        coll.rigify_uid = idx
 
     # Assign names to special layers if they exist
     special_layers = {28: ROOT_COLLECTION, 29: DEF_COLLECTION, 30: MCH_COLLECTION, 31: ORG_COLLECTION}
@@ -226,15 +223,13 @@ def upgrade_metarig_layers(metarig: ArmatureObject):
             if new_name:
                 if not coll:
                     coll = arm.collections.new(new_name)
-                    coll.rigify_uid = i
                     coll_table[i] = coll
                 else:
                     coll.name = new_name
 
             if coll:
                 coll_idx = find_index(arm.collections, coll)
-                if hasattr(arm.collections, 'move'):
-                    arm.collections.move(coll_idx, cur_idx)
+                arm.collections.move(coll_idx, cur_idx)
                 cur_idx += 1
 
                 coll.rigify_ui_row = layer.get("row", 1)
@@ -272,8 +267,15 @@ def upgrade_metarig_layers(metarig: ArmatureObject):
     default_layers = [i == 1 for i in range(32)]
     default_map = {
         'faces.super_face': ['primary', 'secondary'],
+        'limbs.arm': ['fk', 'tweak'],
+        'limbs.front_paw': ['fk', 'tweak'],
+        'limbs.leg': ['fk', 'tweak'],
+        'limbs.paw': ['fk', 'tweak'],
+        'limbs.rear_paw': ['fk', 'tweak'],
         'limbs.simple_tentacle': ['tweak'],
         'limbs.super_finger': ['tweak'],
+        'limbs.super_limb': ['fk', 'tweak'],
+        'spines.basic_spine': ['fk', 'tweak'],
     }
 
     for pose_bone in metarig.pose.bones:
@@ -282,7 +284,7 @@ def upgrade_metarig_layers(metarig: ArmatureObject):
         # Work around the stupid legacy default where one layer is implicitly selected
         for name_stem in default_map.get(get_rigify_type(pose_bone), []):
             prop_name = name_stem + "_layers"
-            if prop_name not in params and name_stem + "_coll_refs" not in params:
+            if prop_name not in params and name_stem + REFS_LIST_SUFFIX not in params:
                 params[prop_name] = default_layers
 
         for prop_name, prop_value in list(params.items()):
@@ -292,9 +294,11 @@ def upgrade_metarig_layers(metarig: ArmatureObject):
                 for i, show in enumerate(prop_value.to_list()):
                     if show:
                         coll = coll_table.get(i)
-                        entries.append({"uid": i, "name": coll.name if coll else "<?>"})
+                        uid = ensure_collection_uid(coll) if coll else i
+                        name = coll.name if coll else f"Layer {i+1}"
+                        entries.append({"uid": uid, "name": name})
 
-                params[prop_name[:-7] + "_coll_refs"] = entries
+                params[prop_name[:-7] + REFS_LIST_SUFFIX] = entries
 
                 del params[prop_name]
 
@@ -472,7 +476,7 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
     Write a metarig as a python script, this rig is to have all info needed for
     generating the real rig with rigify.
     """
-    from .. import RigifyBoneCollectionReference
+    from .layers import REFS_LIST_SUFFIX, is_collection_ref_list_prop
 
     code = [
         "import bpy\n",
@@ -535,9 +539,7 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
         args = ', '.join(f'{k}={repr(v)}' for k, v in collection_attrs.items())
 
         code.append(f"    def add_bone_collection(name, *, {args}):")
-        code.append(f"        uid = len(arm.collections)")
         code.append(f"        new_bcoll = arm.collections.new(name)")
-        code.append(f"        new_bcoll.rigify_uid = uid")
         for k, _v in collection_attrs.items():
             code.append(f"        new_bcoll.rigify_{k} = {k}")
         code.append("        bone_collections[name] = new_bcoll")
@@ -613,8 +615,7 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
             param = _get_property_value(rigify_parameters, param_name)
 
             if isinstance(param, bpy_prop_collection):
-                if (layers and param_name.endswith("_coll_refs") and
-                        all(isinstance(item, RigifyBoneCollectionReference) for item in param)):
+                if layers and param_name.endswith(REFS_LIST_SUFFIX) and is_collection_ref_list_prop(param):
                     bcoll_set = [item.find_collection() for item in param]
                     bcoll_set = [bcoll for bcoll in bcoll_set if bcoll is not None]
                     if len(bcoll_set) > 0:

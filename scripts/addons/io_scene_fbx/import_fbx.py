@@ -526,6 +526,70 @@ def blen_read_object_transform_preprocess(fbx_props, fbx_obj, rot_alt_mat, use_p
 
 # ---------
 # Animation
+def _blen_read_object_transform_do_anim(transform_data, lcl_translation_mat, lcl_rot_euler, lcl_scale_mat,
+                                        extra_pre_matrix, extra_post_matrix):
+    """Specialized version of blen_read_object_transform_do for animation that pre-calculates the non-animated matrices
+    and returns a function that calculates (base_mat @ geom_mat). See the comments in blen_read_object_transform_do for
+    a full description of what this function is doing.
+
+    The lcl_translation_mat, lcl_rot_euler and lcl_scale_mat arguments should have their values updated each frame and
+    then calling the returned function will calculate the matrix for the current frame.
+
+    extra_pre_matrix and extra_post_matrix are any extra matrices to multiply first/last."""
+    # Translation
+    geom_loc = Matrix.Translation(transform_data.geom_loc)
+
+    # Rotation
+    def to_rot_xyz(rot):
+        # All the rotations that can be precalculated have a fixed XYZ order.
+        return Euler(convert_deg_to_rad_iter(rot), 'XYZ').to_matrix().to_4x4()
+    pre_rot = to_rot_xyz(transform_data.pre_rot)
+    pst_rot_inv = to_rot_xyz(transform_data.pst_rot).inverted_safe()
+    geom_rot = to_rot_xyz(transform_data.geom_rot)
+
+    # Offsets and pivots
+    rot_ofs = Matrix.Translation(transform_data.rot_ofs)
+    rot_piv = Matrix.Translation(transform_data.rot_piv)
+    rot_piv_inv = rot_piv.inverted_safe()
+    sca_ofs = Matrix.Translation(transform_data.sca_ofs)
+    sca_piv = Matrix.Translation(transform_data.sca_piv)
+    sca_piv_inv = sca_piv.inverted_safe()
+
+    # Scale
+    geom_scale = Matrix()
+    geom_scale[0][0], geom_scale[1][1], geom_scale[2][2] = transform_data.geom_sca
+
+    # Some matrices can be combined in advance, using the associative property of matrix multiplication, so that less
+    # matrix multiplication is required each frame.
+    geom_mat = geom_loc @ geom_rot @ geom_scale
+    post_lcl_translation = rot_ofs @ rot_piv @ pre_rot
+    post_lcl_rotation = transform_data.rot_alt_mat @ pst_rot_inv @ rot_piv_inv @ sca_ofs @ sca_piv
+    post_lcl_scaling = sca_piv_inv @ geom_mat @ extra_post_matrix
+
+    # Get the bound to_matrix method to avoid re-binding it on each call.
+    lcl_rot_euler_to_matrix_3x3 = lcl_rot_euler.to_matrix
+    # Get the unbound Matrix.to_4x4 method to avoid having to look it up again on each call.
+    matrix_to_4x4 = Matrix.to_4x4
+
+    if extra_pre_matrix == Matrix():
+        # There aren't any other matrices that must be multiplied before lcl_translation_mat that extra_pre_matrix can
+        # be combined with, so skip extra_pre_matrix when it's the identity matrix.
+        return lambda: (lcl_translation_mat @
+                        post_lcl_translation @
+                        matrix_to_4x4(lcl_rot_euler_to_matrix_3x3()) @
+                        post_lcl_rotation @
+                        lcl_scale_mat @
+                        post_lcl_scaling)
+    else:
+        return lambda: (extra_pre_matrix @
+                        lcl_translation_mat @
+                        post_lcl_translation @
+                        matrix_to_4x4(lcl_rot_euler_to_matrix_3x3()) @
+                        post_lcl_rotation @
+                        lcl_scale_mat @
+                        post_lcl_scaling)
+
+
 def _transformation_curves_gen(item, values_arrays, channel_keys):
     """Yields flattened location/rotation/scaling values for imported PoseBone/Object Lcl Translation/Rotation/Scaling
     animation curve values.
@@ -547,77 +611,85 @@ def _transformation_curves_gen(item, values_arrays, channel_keys):
     rot_eul_prev = bl_obj.rotation_euler.copy()
     rot_quat_prev = bl_obj.rotation_quaternion.copy()
 
-    # Pre-compute inverted local rest matrix of the bone, if relevant.
-    restmat_inv = item.get_bind_matrix().inverted_safe() if item.is_bone else None
+    # Pre-compute combined pre-matrix
+    # Remove that rest pose matrix from current matrix (also in parent space) by computing the inverted local rest
+    # matrix of the bone, if relevant.
+    combined_pre_matrix = item.get_bind_matrix().inverted_safe() if item.is_bone else Matrix()
+    # item.pre_matrix will contain any correction for a parent's correction matrix or the global matrix
+    if item.pre_matrix:
+        combined_pre_matrix @= item.pre_matrix
 
-    transform_prop_to_attr = {
-        b'Lcl Translation': transform_data.loc,
-        b'Lcl Rotation': transform_data.rot,
-        b'Lcl Scaling': transform_data.sca,
-    }
+    # Pre-compute combined post-matrix
+    # Compensate for changes in the local matrix during processing
+    combined_post_matrix = item.anim_compensation_matrix.copy() if item.anim_compensation_matrix else Matrix()
+    # item.post_matrix will contain any correction for lights, camera and bone orientation
+    if item.post_matrix:
+        combined_post_matrix @= item.post_matrix
 
-    # Create a setter into transform_data for each values array. e.g. a values array for 'Lcl Scaling' with channel == 2
-    # would set transform_data.sca[2].
-    setters = [partial(setitem, transform_prop_to_attr[fbx_prop], channel) for fbx_prop, channel in channel_keys]
+    # Create matrices/euler from the initial transformation values of this item.
+    # These variables will be updated in-place as we iterate through each frame.
+    lcl_translation_mat = Matrix.Translation(transform_data.loc)
+    lcl_rotation_eul = Euler(transform_data.rot, transform_data.rot_ord)
+    lcl_scaling_mat = Matrix()
+    lcl_scaling_mat[0][0], lcl_scaling_mat[1][1], lcl_scaling_mat[2][2] = transform_data.sca
+
+    # Create setters into lcl_translation_mat, lcl_rotation_eul and lcl_scaling_mat for each values_array and convert
+    # any rotation values into radians.
+    lcl_setters = []
+    values_arrays_converted = []
+    for values_array, (fbx_prop, channel) in zip(values_arrays, channel_keys):
+        if fbx_prop == b'Lcl Translation':
+            # lcl_translation_mat.translation[channel] = value
+            setter = partial(setitem, lcl_translation_mat.translation, channel)
+        elif fbx_prop == b'Lcl Rotation':
+            # FBX rotations are in degrees, but Blender uses radians, so convert all rotation values in advance.
+            values_array = np.deg2rad(values_array)
+            # lcl_rotation_eul[channel] = value
+            setter = partial(setitem, lcl_rotation_eul, channel)
+        else:
+            assert(fbx_prop == b'Lcl Scaling')
+            # lcl_scaling_mat[channel][channel] = value
+            setter = partial(setitem, lcl_scaling_mat[channel], channel)
+        lcl_setters.append(setter)
+        values_arrays_converted.append(values_array)
+
     # Create an iterator that gets one value from each array. Each iterated tuple will be all the imported
     # Lcl Translation/Lcl Rotation/Lcl Scaling values for a single frame, in that order.
     # Note that an FBX animation does not have to animate all the channels, so only the animated channels of each
     # property will be present.
     # .data, the memoryview of an np.ndarray, is faster to iterate than the ndarray itself.
-    frame_values_it = zip(*(arr.data for arr in values_arrays))
+    frame_values_it = zip(*(arr.data for arr in values_arrays_converted))
 
-    # Pre-get/calculate these to slightly reduce the work done inside the loop.
-    anim_compensation_matrix = item.anim_compensation_matrix
-    do_anim_compensation_matrix = bool(anim_compensation_matrix)
+    # Getting the unbound methods in advance avoids having to look them up again on each call within the loop.
+    mat_decompose = Matrix.decompose
+    quat_to_axis_angle = Quaternion.to_axis_angle
+    quat_to_euler = Quaternion.to_euler
+    quat_dot = Quaternion.dot
 
-    pre_matrix = item.pre_matrix
-    do_pre_matrix = bool(pre_matrix)
-
-    post_matrix = item.post_matrix
-    do_post_matrix = bool(post_matrix)
-
-    do_restmat_inv = bool(restmat_inv)
-
-    decompose = Matrix.decompose
-    to_axis_angle = Quaternion.to_axis_angle
-    to_euler = Quaternion.to_euler
+    calc_mat = _blen_read_object_transform_do_anim(transform_data,
+                                                   lcl_translation_mat, lcl_rotation_eul, lcl_scaling_mat,
+                                                   combined_pre_matrix, combined_post_matrix)
 
     # Iterate through the values for each frame.
     for frame_values in frame_values_it:
-        # Set each value into its corresponding attribute in transform_data.
-        for setter, value in zip(setters, frame_values):
-            setter(value)
+        # Set each value into its corresponding lcl matrix/euler.
+        for lcl_setter, value in zip(lcl_setters, frame_values):
+            lcl_setter(value)
 
         # Calculate the updated matrix for this frame.
-        mat, _, _ = blen_read_object_transform_do(transform_data)
-
-        # compensate for changes in the local matrix during processing
-        if do_anim_compensation_matrix:
-            mat = mat @ anim_compensation_matrix
-
-        # apply pre- and post matrix
-        # post-matrix will contain any correction for lights, camera and bone orientation
-        # pre-matrix will contain any correction for a parent's correction matrix or the global matrix
-        if do_pre_matrix:
-            mat = pre_matrix @ mat
-        if do_post_matrix:
-            mat = mat @ post_matrix
-
-        # And now, remove that rest pose matrix from current mat (also in parent space).
-        if do_restmat_inv:
-            mat = restmat_inv @ mat
+        mat = calc_mat()
 
         # Now we have a virtual matrix of transform from AnimCurves, we can yield keyframe values!
-        loc, rot, sca = decompose(mat)
+        loc, rot, sca = mat_decompose(mat)
         if rot_mode == 'QUATERNION':
-            if rot_quat_prev.dot(rot) < 0.0:
+            if quat_dot(rot_quat_prev, rot) < 0.0:
                 rot = -rot
             rot_quat_prev = rot
         elif rot_mode == 'AXIS_ANGLE':
-            vec, ang = to_axis_angle(rot)
+            vec, ang = quat_to_axis_angle(rot)
             rot = ang, vec.x, vec.y, vec.z
         else:  # Euler
-            rot = to_euler(rot, rot_mode, rot_eul_prev)
+            rot = quat_to_euler(rot, rot_mode, rot_eul_prev)
             rot_eul_prev = rot
 
         # Yield order matches the order that the location/rotation/scale FCurves are created in.
@@ -2754,7 +2826,12 @@ class FbxImportHelperNode:
                              elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
 
                 if settings.use_custom_props:
+                    # Read Armature Object custom props from the Node
                     blen_read_custom_properties(self.fbx_elem, arm, settings)
+
+                    if self.fbx_data_elem:
+                        # Read Armature Data custom props from the NodeAttribute
+                        blen_read_custom_properties(self.fbx_data_elem, arm_data, settings)
 
             # instance in scene
             view_layer.active_layer_collection.collection.objects.link(arm)
