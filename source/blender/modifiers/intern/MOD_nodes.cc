@@ -72,8 +72,8 @@
 #include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
 
-#include "DEG_depsgraph_build.h"
-#include "DEG_depsgraph_query.h"
+#include "DEG_depsgraph_build.hh"
+#include "DEG_depsgraph_query.hh"
 
 #include "MOD_modifiertypes.hh"
 #include "MOD_nodes.hh"
@@ -491,6 +491,9 @@ static void find_side_effect_nodes_for_viewer_path(
           return;
         }
         local_side_effect_nodes.nodes_by_context.add(compute_context_builder.hash(), lf_zone_node);
+        local_side_effect_nodes.iterations_by_repeat_zone.add(
+            {compute_context_builder.hash(), typed_elem.repeat_output_node_id},
+            typed_elem.iteration);
         compute_context_builder.push<bke::RepeatZoneComputeContext>(*next_zone->output_node,
                                                                     typed_elem.iteration);
         zone = next_zone;
@@ -556,6 +559,9 @@ static void find_side_effect_nodes_for_viewer_path(
   for (const auto item : local_side_effect_nodes.nodes_by_context.items()) {
     r_side_effect_nodes.nodes_by_context.add_multiple(item.key, item.value);
   }
+  for (const auto item : local_side_effect_nodes.iterations_by_repeat_zone.items()) {
+    r_side_effect_nodes.iterations_by_repeat_zone.add_multiple(item.key, item.value);
+  }
 }
 
 static void find_side_effect_nodes(const NodesModifierData &nmd,
@@ -601,6 +607,9 @@ static void find_socket_log_contexts(const NodesModifierData &nmd,
       const SpaceLink *sl = static_cast<SpaceLink *>(area->spacedata.first);
       if (sl->spacetype == SPACE_NODE) {
         const SpaceNode &snode = *reinterpret_cast<const SpaceNode *>(sl);
+        if (snode.edittree == nullptr) {
+          continue;
+        }
         const Map<const bke::bNodeTreeZone *, ComputeContextHash> hash_by_zone =
             geo_log::GeoModifierLog::get_context_hash_by_zone_for_node_editor(snode,
                                                                               nmd.modifier.name);

@@ -292,7 +292,7 @@ def delete_cage(cage):
     bpy.data.objects.remove(cage)
     bpy.data.lattices.remove(lattice)
 
-def apply_cage(gp_obj):
+def apply_cage(gp_obj, context):
     mod = gp_obj.grease_pencil_modifiers.get('tmp_lattice')
     multi_user = None
     if mod:
@@ -302,8 +302,8 @@ def apply_cage(gp_obj):
             other_user = [o for o in bpy.data.objects if o is not gp_obj and o.data is old]
             gp_obj.data = gp_obj.data.copy()
 
-        # bpy.ops.object.gpencil_modifier_apply(apply_as='DATA', modifier=mod.name)
-        bpy.ops.object.gpencil_modifier_apply({'object': gp_obj}, apply_as='DATA', modifier=mod.name)
+        with context.temp_override(object=gp_obj):
+            bpy.ops.object.gpencil_modifier_apply(apply_as='DATA', modifier=mod.name)
 
         if multi_user:
             for o in other_user: # relink
@@ -332,11 +332,11 @@ def cancel_cage(self):
     delete_cage(self.cage)
 
 
-class GP_OT_latticeGpDeform(bpy.types.Operator):
-    """Create a lattice to use as quad corner transform"""
-    bl_idname = "gp.latticedeform"
+class VIEW3D_OT_gp_box_deform(bpy.types.Operator):
+    bl_idname = "view3d.gp_box_deform"
     bl_label = "Box Deform"
-    bl_description = "Use lattice for free box transforms on grease pencil points (Ctrl+T)"
+    bl_description = "Use lattice for free box transforms on grease pencil points\
+        \n(Ctrl+T)"
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
@@ -349,7 +349,7 @@ class GP_OT_latticeGpDeform(bpy.types.Operator):
     def modal(self, context, event):
         display_text = f"Deform Cage size: {self.lat.points_u}x{self.lat.points_v} (1-9 or ctrl + ←→↑↓)  | \
 mode (M) : {'Linear' if self.lat.interpolation_type_u == 'KEY_LINEAR' else 'Spline'} | \
-valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
+valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
         context.area.header_text_set(display_text)
 
 
@@ -438,7 +438,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
             return {"RUNNING_MODAL"}
 
 
-        # change modes
+        # Change modes
         if event.type in {'M'} and event.value == 'PRESS':
             self.auto_interp = False
             interp = 'KEY_BSPLINE' if self.lat.interpolation_type_u == 'KEY_LINEAR' else 'KEY_LINEAR'
@@ -455,17 +455,17 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
                     # Let the cage as is with a unique ID
                     store_cage(self, 'lattice_cage_deform_group')
                 else:
-                    apply_cage(self.gp_obj) # must be in object mode
+                    apply_cage(self.gp_obj, context) # must be in object mode
                     assign_vg(self.gp_obj, 'lattice_cage_deform_group', delete=True)
                     for o in self.other_gp:
-                        apply_cage(o)
+                        apply_cage(o, context)
                         assign_vg(o, 'lattice_cage_deform_group', delete=True)
                     delete_cage(self.cage)
 
                 # back to original mode
                 if self.gp_mode != 'OBJECT':
                     bpy.ops.object.mode_set(mode=self.gp_mode)
-                context.area.header_text_set(None)#reset header
+                context.area.header_text_set(None) # Reset header
 
                 return {'FINISHED'}
 
@@ -477,7 +477,9 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
                 self.report({'WARNING'}, "Pressing TAB again will Cancel")
                 return {"RUNNING_MODAL"}
 
-        if event.type in {'T'} and event.value == 'PRESS' and event.ctrl:# Retyped same shortcut
+
+        if all(getattr(event, k) == v for k,v in self.shortcut_d.items()):
+            # Cancel when retyped same shortcut
             self.cancel(context)
             return {'CANCELLED'}
 
@@ -522,6 +524,15 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         context.space_data.overlay.show_overlays = True
 
     def invoke(self, context, event):
+        ## Store cancel shortcut
+        if event.type not in ('LEFTMOUSE', 'RIGHTMOUSE') and event.value == 'PRESS':
+            self.shortcut_d = {'type': event.type, 'value': event.value, 'ctrl': event.ctrl,
+                'shift': event.shift, 'alt': event.alt, 'oskey': event.oskey}
+        else:
+            self.shortcut_d = {'type': 'T', 'value': 'PRESS', 'ctrl': True,
+                'shift': False, 'alt': False, 'oskey': False}
+        self.shortcut_ui = '+'.join([k.title() for k,v in self.shortcut_d.items() if v is True] + [self.shortcut_d['type']]) 
+
         ## Restrict to 3D view
         if context.area.type != 'VIEW_3D':
             self.report({'WARNING'}, "View3D not found, cannot run operator")
@@ -626,7 +637,7 @@ def register_keymaps():
     addon = bpy.context.window_manager.keyconfigs.addon
 
     km = addon.keymaps.new(name = "Grease Pencil", space_type = "EMPTY", region_type='WINDOW')
-    kmi = km.keymap_items.new("gp.latticedeform", type ='T', value = "PRESS", ctrl = True)
+    kmi = km.keymap_items.new("view3d.gp_box_deform", type ='T', value = "PRESS", ctrl = True)
     kmi.repeat = False
     addon_keymaps.append((km, kmi))
 
@@ -641,14 +652,14 @@ def register():
     if bpy.app.background:
         return
     bpy.types.WindowManager.boxdeform_running = bpy.props.BoolProperty(default=False)
-    bpy.utils.register_class(GP_OT_latticeGpDeform)
+    bpy.utils.register_class(VIEW3D_OT_gp_box_deform)
     register_keymaps()
 
 def unregister():
     if bpy.app.background:
         return
     unregister_keymaps()
-    bpy.utils.unregister_class(GP_OT_latticeGpDeform)
+    bpy.utils.unregister_class(VIEW3D_OT_gp_box_deform)
     wm = bpy.context.window_manager
     p = 'boxdeform_running'
     if p in wm:

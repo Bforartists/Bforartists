@@ -58,29 +58,15 @@ class I18nUpdateTranslationLanguage(PropertyGroup):
     )
 
     po_path: StringProperty(
-        name="PO File Path",
-        description="Path to the relevant po file in branches",
+        name="PO Work File Path",
+        description="Path to the relevant po file in the work repository",
         subtype='FILE_PATH',
         default="",
     )
 
-    po_path_trunk: StringProperty(
-        name="PO Trunk File Path",
-        description="Path to the relevant po file in trunk",
-        subtype='FILE_PATH',
-        default="",
-    )
-
-    mo_path_trunk: StringProperty(
-        name="MO File Path",
-        description="Path to the relevant mo file",
-        subtype='FILE_PATH',
-        default="",
-    )
-
-    po_path_git: StringProperty(
-        name="PO Git Master File Path",
-        description="Path to the relevant po file in Blender's translations git repository",
+    po_path_blender: StringProperty(
+        name="PO Blender File Path",
+        description="Path to the relevant po file in Blender's source repository",
         subtype='FILE_PATH',
         default="",
     )
@@ -92,7 +78,7 @@ class I18nUpdateTranslationSettings(PropertyGroup):
     langs: CollectionProperty(
         name="Languages",
         type=I18nUpdateTranslationLanguage,
-        description="Languages to update in branches",
+        description="Languages to update in work repository",
     )
 
     active_lang: IntProperty(
@@ -140,34 +126,35 @@ class UI_PT_i18n_update_translations_settings(Panel):
 
     def draw(self, context):
         layout = self.layout
-        i18n_sett = context.window_manager.i18n_update_svn_settings
+        i18n_sett = context.window_manager.i18n_update_settings
 
-        if not i18n_sett.is_init and bpy.ops.ui.i18n_updatetranslation_svn_init_settings.poll():
+        if not i18n_sett.is_init and bpy.ops.ui.i18n_updatetranslation_init_settings.poll():
             # Cannot call the operator from here, this code might run while `pyrna_write_check()` returns False
             # (which prevents any operator call from Python), during initialization of Blender.
-            UI_OT_i18n_updatetranslation_svn_init_settings.execute_static(context, settings.settings)
+            UI_OT_i18n_updatetranslation_init_settings.execute_static(context, settings.settings)
 
         if not i18n_sett.is_init:
             layout.label(text="Could not init languages data!")
             layout.label(text="Please edit the preferences of the UI Translate add-on")
-            layout.operator("ui.i18n_updatetranslation_svn_init_settings", text="Init Settings")
+            layout.operator("ui.i18n_updatetranslation_init_settings", text="Init Settings")
         else:
             split = layout.split(factor=0.75)
             split.template_list("UI_UL_i18n_languages", "", i18n_sett, "langs", i18n_sett, "active_lang", rows=8)
             col = split.column()
-            col.operator("ui.i18n_updatetranslation_svn_init_settings", text="Reset Settings")
+            col.operator("ui.i18n_updatetranslation_init_settings", text="Reset Settings")
             deselect = any(l.use for l in i18n_sett.langs)
-            op = col.operator("ui.i18n_updatetranslation_svn_settings_select",
+            op = col.operator("ui.i18n_updatetranslation_settings_select",
                               text="Deselect All" if deselect else "Select All")
             op.use_invert = False
             op.use_select = not deselect
-            col.operator("ui.i18n_updatetranslation_svn_settings_select", text="Invert Selection").use_invert = True
+            col.operator("ui.i18n_updatetranslation_settings_select", text="Invert Selection").use_invert = True
             col.separator()
-            col.operator("ui.i18n_updatetranslation_svn_branches", text="Update Branches")
-            col.operator("ui.i18n_updatetranslation_svn_trunk", text="Update Trunk")
+            col.operator("ui.i18n_updatetranslation_work_repo", text="Update Work Repo")
+            col.operator("ui.i18n_cleanuptranslation_work_repo", text="Clean up Work Repo")
             col.separator()
-            col.operator("ui.i18n_cleanuptranslation_svn_branches", text="Clean up Branches")
-            col.operator("ui.i18n_updatetranslation_svn_statistics", text="Statistics")
+            col.operator("ui.i18n_updatetranslation_blender_repo", text="Update Blender Repo")
+            col.separator()
+            col.operator("ui.i18n_updatetranslation_statistics", text="Statistics")
 
             if i18n_sett.active_lang >= 0 and i18n_sett.active_lang < len(i18n_sett.langs):
                 lng = i18n_sett.langs[i18n_sett.active_lang]
@@ -177,9 +164,7 @@ class UI_PT_i18n_update_translations_settings(Panel):
                 row.label(text="[{}]: \"{}\" ({})".format(lng.uid, iface_(lng.name), lng.num_id), translate=False)
                 row.prop(lng, "use", text="")
                 col.prop(lng, "po_path")
-                col.prop(lng, "po_path_trunk")
-                col.prop(lng, "mo_path_trunk")
-                col.prop(lng, "po_path_git")
+                col.prop(lng, "po_path_blender")
             layout.separator()
             layout.prop(i18n_sett, "pot_path")
 
@@ -196,10 +181,10 @@ class UI_PT_i18n_update_translations_settings(Panel):
 
 # Operators ###################################################################
 
-class UI_OT_i18n_updatetranslation_svn_init_settings(Operator):
-    """Init settings for i18n svn's update operators"""
+class UI_OT_i18n_updatetranslation_init_settings(Operator):
+    """Init settings for i18n files update operators"""
 
-    bl_idname = "ui.i18n_updatetranslation_svn_init_settings"
+    bl_idname = "ui.i18n_updatetranslation_init_settings"
     bl_label = "Init I18n Update Settings"
     bl_option = {'REGISTER'}
 
@@ -209,28 +194,27 @@ class UI_OT_i18n_updatetranslation_svn_init_settings(Operator):
 
     @staticmethod
     def execute_static(context, self_settings):
-        i18n_sett = context.window_manager.i18n_update_svn_settings
+        i18n_sett = context.window_manager.i18n_update_settings
 
         # First, create the list of languages from settings.
         i18n_sett.langs.clear()
-        root_br = self_settings.BRANCHES_DIR
-        root_tr_po = self_settings.TRUNK_PO_DIR
-        root_git_po = self_settings.GIT_I18N_PO_DIR
-        root_tr_mo = os.path.join(self_settings.TRUNK_DIR, self_settings.MO_PATH_TEMPLATE, self_settings.MO_FILE_NAME)
-        if not (os.path.isdir(root_br) and os.path.isdir(root_tr_po)):
+        root_work = self_settings.WORK_DIR
+        root_blender_po = self_settings.BLENDER_I18N_PO_DIR
+        print(root_work)
+        print(root_blender_po)
+        print(self_settings.FILE_NAME_POT)
+        if not (os.path.isdir(root_work) and os.path.isdir(root_blender_po)):
             i18n_sett.is_init = False
             return;
-        for can_use, uid, num_id, name, isocode, po_path_branch in utils_i18n.list_po_dir(root_br, self_settings):
+        for can_use, uid, num_id, name, isocode, po_path_work in utils_i18n.list_po_dir(root_work, self_settings):
             lng = i18n_sett.langs.add()
             lng.use = can_use
             lng.uid = uid
             lng.num_id = num_id
             lng.name = name
             if can_use:
-                lng.po_path = po_path_branch
-                lng.po_path_trunk = os.path.join(root_tr_po, isocode + ".po")
-                lng.mo_path_trunk = root_tr_mo.format(isocode)
-                lng.po_path_git = os.path.join(root_git_po, isocode + ".po")
+                lng.po_path = po_path_work
+                lng.po_path_blender = os.path.join(root_blender_po, isocode + ".po")
 
         i18n_sett.pot_path = self_settings.FILE_NAME_POT
         i18n_sett.is_init = True
@@ -241,18 +225,17 @@ class UI_OT_i18n_updatetranslation_svn_init_settings(Operator):
 
         self.execute_static(context, self.settings)
 
-        if context.window_manager.i18n_update_svn_settings.is_init is False:
+        if context.window_manager.i18n_update_settings.is_init is False:
             return {'CANCELLED'}
         return {'FINISHED'}
 
 
-class UI_OT_i18n_updatetranslation_svn_settings_select(Operator):
-    """(De)select (or invert selection of) all languages for i18n svn's update operators"""
+class UI_OT_i18n_updatetranslation_settings_select(Operator):
+    """(De)select (or invert selection of) all languages for i18n files update operators"""
 
-    bl_idname = "ui.i18n_updatetranslation_svn_settings_select"
+    bl_idname = "ui.i18n_updatetranslation_settings_select"
     bl_label = "Init I18n Update Select Languages"
 
-    # Operator Arguments
     use_select: BoolProperty(
         name="Select All",
         description="Select all if True, else deselect all",
@@ -264,7 +247,6 @@ class UI_OT_i18n_updatetranslation_svn_settings_select(Operator):
         description="Inverse selection (overrides 'Select All' when True)",
         default=False,
     )
-    # /End Operator Arguments
 
     @classmethod
     def poll(cls, context):
@@ -272,10 +254,10 @@ class UI_OT_i18n_updatetranslation_svn_settings_select(Operator):
 
     def execute(self, context):
         if self.use_invert:
-            for lng in context.window_manager.i18n_update_svn_settings.langs:
+            for lng in context.window_manager.i18n_update_settings.langs:
                 lng.use = not lng.use
         else:
-            for lng in context.window_manager.i18n_update_svn_settings.langs:
+            for lng in context.window_manager.i18n_update_settings.langs:
                 lng.use = self.use_select
         return {'FINISHED'}
 
@@ -285,6 +267,6 @@ classes = (
     I18nUpdateTranslationSettings,
     UI_UL_i18n_languages,
     UI_PT_i18n_update_translations_settings,
-    UI_OT_i18n_updatetranslation_svn_init_settings,
-    UI_OT_i18n_updatetranslation_svn_settings_select,
+    UI_OT_i18n_updatetranslation_init_settings,
+    UI_OT_i18n_updatetranslation_settings_select,
 )
