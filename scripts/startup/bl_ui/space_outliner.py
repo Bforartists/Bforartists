@@ -81,7 +81,7 @@ class OUTLINER_HT_header(Header):
 
         if space.display_mode == 'DATA_API':
             layout.separator()
-            
+
             row = layout.row(align=True)
 
             row.operator("outliner.keyingset_add_selected", icon='ADD', text="")
@@ -231,10 +231,15 @@ class OUTLINER_MT_context_menu(Menu):
         layout.separator()
 
         ## BFA - The original from blender
+        # layout.menu("OUTLINER_MT_liboverride", icon="LIBRARY_DATA_OVERRIDE")
 
-        #layout.menu("OUTLINER_MT_liboverride")
+        # layout.separator()
 
-        #layout.separator()
+        # layout.menu("OUTLINER_MT_context_menu_view")
+
+        # layout.separator()
+
+        # layout.menu("INFO_MT_area")
 
         ## BFA - Moved the Library Override menu up a level
         layout.operator_menu_enum(
@@ -314,7 +319,7 @@ class OUTLINER_MT_edit_datablocks(Menu):
 
         layout.operator("outliner.drivers_add_selected", icon = "DRIVER")
         layout.operator("outliner.drivers_delete_selected", icon = "DELETE")
-		
+
 class OUTLINER_MT_collection_view_layer(Menu):
     bl_label = "View Layer"
 
@@ -339,8 +344,8 @@ class OUTLINER_MT_collection_visibility(Menu):
         layout = self.layout
 
         layout.operator("outliner.collection_isolate", text="Isolate", icon="HIDE_UNSELECTED")
-		# BFA - redundant view toggles, removed. 
-		
+		# BFA - redundant view toggles, removed.
+
         layout.separator()
 
         layout.operator("outliner.collection_show_inside", text="Show All Inside", icon="HIDE_OFF")
@@ -520,7 +525,7 @@ class OUTLINER_MT_liboverride(Menu):
         layout.operator_menu_enum("outliner.liboverride_troubleshoot_operation", "type",
                                   text="Troubleshoot").selection_set = 'SELECTED'
 
-# BFA - this has substantial changes, beware. 
+# BFA - this has substantial changes, beware.
 class OUTLINER_PT_filter(Panel):
     bl_space_type = 'OUTLINER'
     bl_region_type = 'HEADER'

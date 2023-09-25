@@ -16,15 +16,15 @@ class GP_PT_sidebarPanel(bpy.types.Panel):
 
         # Box deform ops
         self.layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator('gp.latticedeform', icon ="MOD_MESHDEFORM")# MOD_LATTICE, LATTICE_DATA
+        layout.operator('view3d.gp_box_deform', icon ="MOD_MESHDEFORM")
 
         # Straight line ops
-        layout.operator('gp.straight_stroke', icon ="CURVE_PATH")# IPO_LINEAR
+        layout.operator('gpencil.straight_stroke', icon ="CURVE_PATH")
 
 
         # Expose native view operators
         row = layout.row(align=True)
-        row.operator('view3d.zoom_camera_1_to_1', text = 'Zoom 1:1', icon = 'ZOOM_PREVIOUS') # FULLSCREEN_EXIT
+        row.operator('view3d.zoom_camera_1_to_1', text = 'Zoom 1:1', icon = 'ZOOM_PREVIOUS')
         row.operator('view3d.view_center_camera', text = 'Zoom Fit', icon = 'FULLSCREEN_ENTER')
 
         # Rotation save/load
@@ -48,14 +48,14 @@ def menu_boxdeform_entry(self, context):
     # {'EDIT_GPENCIL', 'PAINT_GPENCIL','SCULPT_GPENCIL','WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}
     if obj and obj.type == 'GPENCIL' and context.mode in {'OBJECT', 'EDIT_GPENCIL', 'PAINT_GPENCIL'}:
         self.layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator('gp.latticedeform', text='Box Deform')
+        layout.operator('view3d.gp_box_deform', text='Box Deform')
 
 def menu_stroke_entry(self, context):
     layout = self.layout
     # Gpencil modes : {'EDIT_GPENCIL', 'PAINT_GPENCIL','SCULPT_GPENCIL','WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}
     if context.mode in {'EDIT_GPENCIL', 'PAINT_GPENCIL'}:
         self.layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator('gp.straight_stroke', text='Straight Stroke')
+        layout.operator('gpencil.straight_stroke', text='Straight Stroke')
 
 def menu_brush_pack(self, context):
     layout = self.layout

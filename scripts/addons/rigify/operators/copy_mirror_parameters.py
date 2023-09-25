@@ -5,7 +5,7 @@
 import bpy
 import importlib
 
-from ..utils.layers import is_collection_ref_list_prop, mirror_ref_list
+from ..utils.layers import REFS_TOGGLE_SUFFIX, REFS_LIST_SUFFIX, is_collection_ref_list_prop, copy_ref_list
 from ..utils.naming import Side, get_name_base_and_sides, mirror_name
 from ..utils.misc import property_to_python
 
@@ -59,10 +59,10 @@ class POSE_OT_rigify_copy_single_parameter(bpy.types.Operator):
         num_copied = 0
 
         # If copying collection references, include the toggle
-        is_coll_refs = self.property_name.endswith("_coll_refs")
+        is_coll_refs = self.property_name.endswith(REFS_LIST_SUFFIX)
         if is_coll_refs:
             assert is_collection_ref_list_prop(value)
-            coll_refs_toggle_prop = self.property_name[:-10] + "_layers_extra"
+            coll_refs_toggle_prop = self.property_name[:-len(REFS_LIST_SUFFIX)] + REFS_TOGGLE_SUFFIX
             coll_refs_toggle_val = getattr(params, coll_refs_toggle_prop)
 
         # Copy to different bones of appropriate rig types
@@ -73,8 +73,6 @@ class POSE_OT_rigify_copy_single_parameter(bpy.types.Operator):
                 rig_class = get_rig_class(rig_type)
 
                 if rig_class and issubclass(rig_class, filter_rig_class):
-                    new_value = value
-
                     # If mirror requested and copying to a different side bone, mirror the value
                     do_mirror = False
 
@@ -87,11 +85,10 @@ class POSE_OT_rigify_copy_single_parameter(bpy.types.Operator):
                     # Assign the final value
                     sel_params = get_rigify_params(sel_pbone)
 
-                    if is_coll_refs and do_mirror:
-                        mirror_ref_list(getattr(sel_params, self.property_name), value)
-                    elif do_mirror:
-                        setattr(sel_params, self.property_name, mirror_name(value))
+                    if is_coll_refs:
+                        copy_ref_list(getattr(sel_params, self.property_name), value, mirror=do_mirror)
                     else:
+                        new_value = mirror_name(value) if do_mirror else value
                         setattr(sel_params, self.property_name, new_value)
 
                     if is_coll_refs:
@@ -155,10 +152,10 @@ def copy_rigify_params(from_bone: bpy.types.PoseBone, to_bone: bpy.types.PoseBon
             to_params_typed = get_rigify_params(to_bone)
 
             for prop_name in param_dict.keys():
-                if prop_name.endswith("_coll_refs"):
+                if prop_name.endswith(REFS_LIST_SUFFIX):
                     ref_list = getattr(from_params_typed, prop_name)
                     if is_collection_ref_list_prop(ref_list):
-                        mirror_ref_list(getattr(to_params_typed, prop_name), ref_list)
+                        copy_ref_list(getattr(to_params_typed, prop_name), ref_list, mirror=True)
         else:
             to_bone['rigify_parameters'] = param_dict
     else:
