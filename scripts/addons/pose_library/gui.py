@@ -9,6 +9,7 @@ Pose Library - GUI definition.
 import bpy
 from bpy.types import (
     AssetHandle,
+    AssetRepresentation,
     Context,
     Menu,
     Panel,
@@ -41,11 +42,11 @@ class VIEW3D_AST_pose_library(bpy.types.AssetShelf):
         return PoseLibraryPanel.poll(context)
 
     @classmethod
-    def asset_poll(cls, asset: AssetHandle) -> bool:
+    def asset_poll(cls, asset: AssetRepresentation) -> bool:
         return asset.id_type == 'ACTION'
 
     @classmethod
-    def draw_context_menu(cls, _context: Context, _asset: AssetHandle, layout: UILayout):
+    def draw_context_menu(cls, _context: Context, _asset: AssetRepresentation, layout: UILayout):
         # Make sure these operator properties match those used in `VIEW3D_PT_pose_library_legacy`.
         layout.operator("poselib.apply_pose_asset", text="Apply Pose").flipped = False
         layout.operator("poselib.apply_pose_asset", text="Apply Pose Flipped").flipped = True
@@ -89,10 +90,10 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
         return True
 
     def is_pose_library_asset_browser() -> bool:
-        asset_library_ref = getattr(context, "asset_library_ref", None)
+        asset_library_ref = getattr(context, "asset_library_reference", None)
         if not asset_library_ref:
             return False
-        asset = getattr(context, "asset_file_handle", None)
+        asset = getattr(context, "asset", None)
         if not asset:
             return False
         return bool(asset.id_type == 'ACTION')
@@ -185,7 +186,7 @@ def _on_asset_library_changed() -> None:
 
 def register_message_bus() -> None:
     bpy.msgbus.subscribe_rna(
-        key=(bpy.types.FileAssetSelectParams, "asset_library_ref"),
+        key=(bpy.types.FileAssetSelectParams, "asset_library_reference"),
         owner=_msgbus_owner,
         args=(),
         notify=_on_asset_library_changed,

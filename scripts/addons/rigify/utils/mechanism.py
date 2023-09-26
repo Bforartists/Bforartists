@@ -132,7 +132,8 @@ def make_constraint(
 
 # noinspection PyShadowingBuiltins
 def make_property(
-        owner: bpy_struct, name: str, default, *, min=0.0, max=1.0, soft_min=None, soft_max=None,
+        owner: bpy_struct, name: str, default, *,
+        min: float = 0, max: float = 1, soft_min=None, soft_max=None,
         description: Optional[str] = None, overridable=True, subtype: Optional[str] = None,
         **options):
     """
@@ -257,7 +258,7 @@ def make_driver(owner: bpy_struct, prop: str, *, index=-1, type='SUM',
 
     Specification format:
         If the variables argument is a dictionary, keys specify variable names.
-        Otherwise, names are set to var, var1, var2, ... etc:
+        Otherwise, names are set to var, var1, var2, ... etc.:
 
           variables = [ ..., ..., ... ]
           variables = { 'var': ..., 'var1': ..., 'var2': ... }
@@ -620,7 +621,7 @@ class MechanismUtilityMixin(object):
 
     # noinspection PyShadowingBuiltins
     def make_property(self, bone: str, name: str, default, *,
-                      min=0.0, max=1.0, soft_min=None, soft_max=None,
+                      min: float = 0, max: float = 1, soft_min=None, soft_max=None,
                       description: Optional[str] = None, overridable=True,
                       subtype: Optional[str] = None,
                       **args):

@@ -5,7 +5,7 @@
 bl_info = {
     "name": "Manage UI translations",
     "author": "Bastien Montagne",
-    "version": (1, 3, 4),
+    "version": (2, 0, 0),
     "blender": (4, 0, 0),
     "location": "Main \"File\" menu, text editor, any UI control",
     "description": "Allows managing UI translations directly from Blender "
@@ -17,32 +17,32 @@ bl_info = {
 }
 
 
+from . import (
+    settings,
+    edit_translation,
+    update_repo,
+    update_addon,
+    update_ui,
+)
 if "bpy" in locals():
     import importlib
     importlib.reload(settings)
     importlib.reload(edit_translation)
-    importlib.reload(update_svn)
+    importlib.reload(update_repo)
     importlib.reload(update_addon)
     importlib.reload(update_ui)
-else:
-    import bpy
-    from . import (
-        settings,
-        edit_translation,
-        update_svn,
-        update_addon,
-        update_ui,
-    )
+
+import bpy
 
 
-classes = settings.classes + edit_translation.classes + update_svn.classes + update_addon.classes + update_ui.classes
+classes = settings.classes + edit_translation.classes + update_repo.classes + update_addon.classes + update_ui.classes
 
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.WindowManager.i18n_update_svn_settings = \
+    bpy.types.WindowManager.i18n_update_settings = \
         bpy.props.PointerProperty(type=update_ui.I18nUpdateTranslationSettings)
 
     # Init addon's preferences (unfortunately, as we are using an external storage for the properties,
@@ -58,4 +58,4 @@ def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
-    del bpy.types.WindowManager.i18n_update_svn_settings
+    del bpy.types.WindowManager.i18n_update_settings

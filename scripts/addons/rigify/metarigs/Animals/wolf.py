@@ -52,9 +52,7 @@ def create(obj):  # noqa
         arm.collections.remove(bcoll)
 
     def add_bone_collection(name, *, ui_row=0, ui_title='', sel_set=False, color_set_id=0):
-        uid = len(arm.collections)
         new_bcoll = arm.collections.new(name)
-        new_bcoll.rigify_uid = uid
         new_bcoll.rigify_ui_row = ui_row
         new_bcoll.rigify_ui_title = ui_title
         new_bcoll.rigify_sel_set = sel_set

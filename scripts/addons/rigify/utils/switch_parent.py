@@ -370,7 +370,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
         prop_id = child['prop_id'] = child['prop_id'] or 'parent_switch'
 
         parent_names = [parent[1] or strip_prefix(parent[0])
-                        for parent in [(None, 'None'), *parent_bones]]
+                        for parent in [('None', 'None'), *parent_bones]]
         parent_str = ', '.join(['%s (%d)' % (name, i) for i, name in enumerate(parent_names)])
 
         ctrl_bone = child['ctrl_bone'] or bone
