@@ -1828,7 +1828,7 @@ class VIEW3D_MT_view_local(Menu):
 
         layout.operator("view3d.localview", text="Toggle Local View", icon="VIEW_GLOBAL_LOCAL")
         layout.operator("view3d.localview_remove_from", icon="VIEW_REMOVE_LOCAL")
-        
+
 
 class VIEW3D_MT_view_pie_menus(Menu):
     bl_label = "Pie menus"
@@ -3354,7 +3354,7 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_parent")
         # layout.menu("VIEW3D_MT_object_collection") #BFA - Redundant operators, now the UX is exclusive to the outliner
         layout.menu("VIEW3D_MT_object_relations")
-        layout.menu("VIEW3D_MT_object_liboverride")
+        layout.menu("VIEW3D_MT_object_liboverride", icon="LIBRARY_DATA_OVERRIDE")
         layout.menu("VIEW3D_MT_object_constraints")
         layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_make_links")
@@ -4155,7 +4155,7 @@ class VIEW3D_MT_brush_paint_modes(Menu):
         layout.prop(brush, "use_paint_weight", text="Weight Paint")
         layout.prop(brush, "use_paint_image", text="Texture Paint")
         layout.prop(brush, "use_paint_sculpt_curves", text="Sculpt Curves")
-        
+
 class VIEW3D_MT_brush(Menu):
     bl_label = "Brush"
 
@@ -5529,6 +5529,10 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.separator()
 
+            col.operator("transform.vert_crease")
+
+            col.separator()
+
             # Removal Operators
             if selected_verts_len > 1:
                 col.menu("VIEW3D_MT_edit_mesh_merge", text="Merge Vertices")
@@ -6730,9 +6734,9 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.separator()
 
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("armature.armature_layers", icon="LAYER")
-        layout.operator("armature.bone_layers", icon="BONE_LAYER")
+        layout.operator_context = 'INVOKE_DEFAULT'
+        layout.operator("armature.move_to_collection", text="Move to Bone Collection")
+        layout.menu("VIEW3D_MT_bone_collections")
 
         layout.separator()
 
@@ -8965,7 +8969,7 @@ class VIEW3D_PT_overlay_sculpt(Panel):
         overlay = view.overlay
 
         layout.label(text="Sculpt Mode Overlays")
-        
+
         row = layout.row(align=True)
         row.prop(overlay, "show_sculpt_mask", text="")
         sub = row.row()

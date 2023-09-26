@@ -41,8 +41,8 @@
 #include "BKE_report.h"
 #include "BKE_workspace.h"
 
-#include "DEG_depsgraph.h"
-#include "DEG_depsgraph_build.h"
+#include "DEG_depsgraph.hh"
+#include "DEG_depsgraph_build.hh"
 
 #include "ED_keyframing.hh"
 #include "ED_outliner.hh"

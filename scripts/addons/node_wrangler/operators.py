@@ -24,7 +24,7 @@ from itertools import chain
 
 from .interface import NWConnectionListInputs, NWConnectionListOutputs
 
-from .utils.constants import blend_types, geo_combine_operations, operations, navs, get_nodes_from_category, rl_outputs
+from .utils.constants import blend_types, geo_combine_operations, operations, navs, get_texture_node_types, rl_outputs
 from .utils.draw import draw_callback_nodeoutline
 from .utils.paths import match_files_to_socket_names, split_into_components
 from .utils.nodes import (node_mid_pt, autolink, node_at_pos, get_active_tree, get_nodes_links, is_viewer_socket,
@@ -507,14 +507,19 @@ class NWPreviewNode(Operator, NWBase):
                     return True
         return False
 
+    @classmethod
+    def get_output_sockets(cls, node_tree):
+        return [item for item in node_tree.interface.items_tree if item.item_type == 'SOCKET' and item.in_out in {'OUTPUT', 'BOTH'}]
+
     def ensure_viewer_socket(self, node, socket_type, connect_socket=None):
         # check if a viewer output already exists in a node group otherwise create
         if hasattr(node, "node_tree"):
-            index = None
-            if len(node.node_tree.outputs):
+            viewer_socket = None
+            output_sockets = self.get_output_sockets(node.node_tree)
+            if len(output_sockets):
                 free_socket = None
-                for i, socket in enumerate(node.node_tree.outputs):
-                    if is_viewer_socket(socket) and is_visible_socket(node.outputs[i]) and socket.type == socket_type:
+                for socket in output_sockets:
+                    if is_viewer_socket(socket) and socket.socket_type == socket_type:
                         # if viewer output is already used but leads to the same socket we can still use it
                         is_used = self.is_socket_used_other_mats(socket)
                         if is_used:
@@ -525,19 +530,18 @@ class NWPreviewNode(Operator, NWBase):
                             links = groupout_input.links
                             if connect_socket not in [link.from_socket for link in links]:
                                 continue
-                            index = i
+                            viewer_socket = socket
                             break
                         if not free_socket:
-                            free_socket = i
-                if not index and free_socket:
-                    index = free_socket
+                            free_socket = socket
+                if not viewer_socket and free_socket:
+                    viewer_socket = free_socket
 
-            if not index:
+            if not viewer_socket:
                 # create viewer socket
-                node.node_tree.outputs.new(socket_type, viewer_socket_name)
-                index = len(node.node_tree.outputs) - 1
-                node.node_tree.outputs[index].NWViewerSocket = True
-            return index
+                viewer_socket = node.node_tree.interface.new_socket(viewer_socket_name, in_out={'OUTPUT'}, socket_type=socket_type)
+                viewer_socket.NWViewerSocket = True
+            return viewer_socket
 
     def init_shader_variables(self, space, shader_type):
         if shader_type == 'OBJECT':
@@ -582,10 +586,9 @@ class NWPreviewNode(Operator, NWBase):
                 next_node = link.from_node
                 external_socket = link.from_socket
                 if hasattr(next_node, "node_tree"):
-                    for socket_index, s in enumerate(next_node.outputs):
-                        if s == external_socket:
+                    for socket_index, socket in enumerate(next_node.node_tree.interface.items_tree):
+                        if socket.identifier == external_socket.identifier:
                             break
-                    socket = next_node.node_tree.outputs[socket_index]
                     if is_viewer_socket(socket) and socket not in sockets:
                         sockets.append(socket)
                         # continue search inside of node group but restrict socket to where we came from
@@ -599,10 +602,16 @@ class NWPreviewNode(Operator, NWBase):
             if hasattr(node, "node_tree"):
                 if node.node_tree is None:
                     continue
-                for socket in node.node_tree.outputs:
+                for socket in cls.get_output_sockets(node.node_tree):
                     if is_viewer_socket(socket) and (socket not in sockets):
                         sockets.append(socket)
                 cls.scan_nodes(node.node_tree, sockets)
+
+    @classmethod
+    def remove_socket(cls, tree, socket):
+        interface = tree.interface
+        interface.remove(socket)
+        interface.active_index = min(interface.active_index, len(interface.items_tree) - 1)
 
     def link_leads_to_used_socket(self, link):
         # return True if link leads to a socket that is already used in this material
@@ -710,22 +719,22 @@ class NWPreviewNode(Operator, NWBase):
                     link_end = output_socket
                     while tree.nodes.active != active:
                         node = tree.nodes.active
-                        index = self.ensure_viewer_socket(
+                        viewer_socket = self.ensure_viewer_socket(
                             node, 'NodeSocketGeometry', connect_socket=active.outputs[out_i] if node.node_tree.nodes.active == active else None)
-                        link_start = node.outputs[index]
-                        node_socket = node.node_tree.outputs[index]
+                        link_start = node.outputs[viewer_socket_name]
+                        node_socket = viewer_socket
                         if node_socket in delete_sockets:
                             delete_sockets.remove(node_socket)
                         connect_sockets(link_start, link_end)
                         # Iterate
-                        link_end = self.ensure_group_output(node.node_tree).inputs[index]
+                        link_end = self.ensure_group_output(node.node_tree).inputs[viewer_socket_name]
                         tree = tree.nodes.active.node_tree
                     connect_sockets(active.outputs[out_i], link_end)
 
                 # Delete sockets
                 for socket in delete_sockets:
                     tree = socket.id_data
-                    tree.outputs.remove(socket)
+                    self.remove_socket(tree, socket)
 
                 nodes.active = active
                 active.select = True
@@ -733,15 +742,12 @@ class NWPreviewNode(Operator, NWBase):
                 return {'FINISHED'}
 
             # What follows is code for the shader editor
-            output_types = [x.nodetype for x in
-                            get_nodes_from_category('Output', context)]
             valid = False
             if active:
-                if active.rna_type.identifier not in output_types:
-                    for out in active.outputs:
-                        if is_visible_socket(out):
-                            valid = True
-                            break
+                for out in active.outputs:
+                    if is_visible_socket(out):
+                        valid = True
+                        break
             if valid:
                 # get material_output node
                 materialout = None  # placeholder node
@@ -786,15 +792,15 @@ class NWPreviewNode(Operator, NWBase):
                     link_end = output_socket
                     while tree.nodes.active != active:
                         node = tree.nodes.active
-                        index = self.ensure_viewer_socket(
+                        viewer_socket = self.ensure_viewer_socket(
                             node, socket_type, connect_socket=active.outputs[out_i] if node.node_tree.nodes.active == active else None)
-                        link_start = node.outputs[index]
-                        node_socket = node.node_tree.outputs[index]
+                        link_start = node.outputs[viewer_socket_name]
+                        node_socket = viewer_socket
                         if node_socket in delete_sockets:
                             delete_sockets.remove(node_socket)
                         connect_sockets(link_start, link_end)
                         # Iterate
-                        link_end = self.ensure_group_output(node.node_tree).inputs[index]
+                        link_end = self.ensure_group_output(node.node_tree).inputs[viewer_socket_name]
                         tree = tree.nodes.active.node_tree
                     connect_sockets(active.outputs[out_i], link_end)
 
@@ -802,7 +808,7 @@ class NWPreviewNode(Operator, NWBase):
                 for socket in delete_sockets:
                     if not self.is_socket_used_other_mats(socket):
                         tree = socket.id_data
-                        tree.outputs.remove(socket)
+                        self.remove_socket(tree, socket)
 
                 nodes.active = active
                 active.select = True
@@ -1820,8 +1826,7 @@ class NWAddTextureSetup(Operator, NWBase):
     def execute(self, context):
         nodes, links = get_nodes_links(context)
 
-        texture_types = [x.nodetype for x in
-                         get_nodes_from_category('Texture', context)]
+        texture_types = get_texture_node_types()
         selected_nodes = [n for n in nodes if n.select]
 
         for node in selected_nodes:

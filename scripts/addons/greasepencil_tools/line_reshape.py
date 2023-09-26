@@ -93,11 +93,12 @@ def get_last_index(context=None):
 
 ### --- OPS
 
-class GP_OT_straightStroke(bpy.types.Operator):
-    bl_idname = "gp.straight_stroke"
+class GPENCIL_OT_straight_stroke(bpy.types.Operator):
+    bl_idname = "gpencil.straight_stroke"
     bl_label = "Straight Stroke"
-    bl_description = "Make stroke a straight line between first and last point, tweak influence in the redo panel\
-        \nshift+click to reset infuence to 100%"
+    bl_description = "Make stroke a straight line between first and last point,\
+        \nTweak influence in the redo panel\
+        \nShift+click to reset infuence to 100%"
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
@@ -172,7 +173,7 @@ class GP_OT_straightStroke(bpy.types.Operator):
 
 
 def register():
-    bpy.utils.register_class(GP_OT_straightStroke)
+    bpy.utils.register_class(GPENCIL_OT_straight_stroke)
 
 def unregister():
-    bpy.utils.unregister_class(GP_OT_straightStroke)
+    bpy.utils.unregister_class(GPENCIL_OT_straight_stroke)

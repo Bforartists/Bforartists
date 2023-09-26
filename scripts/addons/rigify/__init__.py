@@ -40,6 +40,7 @@ initial_load_order = [
     'utils.mechanism',
     'utils.animation',
     'utils.metaclass',
+    'utils.objects',
     'feature_sets',
     'rigs',
     'rigs.utils',
@@ -143,6 +144,9 @@ def get_generator():
 class RigifyFeatureSets(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
     module_name: bpy.props.StringProperty()
+    link: bpy.props.StringProperty()
+    has_errors: bpy.props.BoolProperty()
+    has_exceptions: bpy.props.BoolProperty()
 
     def toggle_feature_set(self, context):
         feature_set_list.call_register_function(self.module_name, self.enabled)
@@ -165,11 +169,25 @@ class RIGIFY_UL_FeatureSets(bpy.types.UIList):
         feature_set_entry: RigifyFeatureSets = item
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
             row = layout.row()
-            row.prop(feature_set_entry, 'name', text="", emboss=False)
 
-            icon = 'CHECKBOX_HLT' if feature_set_entry.enabled else 'CHECKBOX_DEHLT'
-            row.enabled = feature_set_entry.enabled
-            layout.prop(feature_set_entry, 'enabled', text="", icon=icon, emboss=False)
+            name = feature_set_entry.name
+            icon = "BLANK1"
+
+            if not feature_set_entry.module_name:
+                name += iface_(" (not installed)")
+                icon = "URL"
+            elif feature_set_entry.has_errors or feature_set_entry.has_exceptions:
+                icon = "ERROR"
+                row.alert = True
+
+            row.label(text=name, icon=icon, translate=False)
+
+            if feature_set_entry.module_name:
+                icon = 'CHECKBOX_HLT' if feature_set_entry.enabled else 'CHECKBOX_DEHLT'
+                row.enabled = feature_set_entry.enabled
+                layout.prop(feature_set_entry, 'enabled', text="", icon=icon, emboss=False)
+            else:
+                row.enabled = False
         elif self.layout_type in {'GRID'}:
             pass
 
@@ -216,10 +234,32 @@ class RigifyPreferences(AddonPreferences):
                 fs.name = feature_set_list.get_ui_name(module_name)
                 fs.module_name = module_name
 
-    def update_external_rigs(self):
-        """Get external feature sets"""
+        # Update the feature set info
+        fs_info = [feature_set_list.get_info_dict(fs.module_name) for fs in feature_set_prefs]
 
-        self.refresh_installed_feature_sets()
+        for fs, info in zip(feature_set_prefs, fs_info):
+            if "name" in info:
+                fs.name = info["name"]
+            if "link" in info:
+                fs.link = info["link"]
+
+        for fs, info in zip(feature_set_prefs, fs_info):
+            fs.has_errors = check_feature_set_error(fs, info, None)
+            fs.has_exceptions = False
+
+        # Add dummy entries for promoted feature sets
+        used_links = set(fs.link for fs in feature_set_prefs)
+
+        for info in feature_set_list.PROMOTED_FEATURE_SETS:
+            if info["link"] not in used_links:
+                fs = feature_set_prefs.add()
+                fs.module_name = ""
+                fs.name = info["name"]
+                fs.link = info["link"]
+
+    @staticmethod
+    def update_external_rigs():
+        """Get external feature sets"""
 
         set_list = feature_set_list.get_enabled_modules_names()
 
@@ -262,8 +302,55 @@ class RigifyPreferences(AddonPreferences):
                 draw_feature_set_prefs(layout, context, active_fs)
 
 
-def draw_feature_set_prefs(layout: bpy.types.UILayout, _context, feature_set: RigifyFeatureSets):
-    info = feature_set_list.get_info_dict(feature_set.module_name)
+def check_feature_set_error(_feature_set: RigifyFeatureSets, info: dict, layout: bpy.types.UILayout | None):
+    split_factor = 0.15
+    error = False
+
+    if 'blender' in info and info['blender'] > bpy.app.version:
+        error = True
+        if layout:
+            split = layout.row().split(factor=split_factor)
+            split.label(text="Error:")
+            sub = split.row()
+            sub.alert = True
+            sub.label(
+                text=iface_("This feature set requires Blender %s or newer to work properly."
+                            ) % ".".join(str(x) for x in info['blender']),
+                icon='ERROR', translate=False
+            )
+
+    for dep_link in info.get("dependencies", []):
+        if not feature_set_list.get_module_by_link_safe(dep_link):
+            error = True
+            if layout:
+                split = layout.row().split(factor=split_factor)
+                split.label(text="Error:")
+                col = split.column()
+                sub = col.row()
+                sub.alert = True
+                sub.label(
+                    text="This feature set depends on the following feature set to work properly:",
+                    icon='ERROR'
+                )
+                sub_split = col.split(factor=0.8)
+                sub = sub_split.row()
+                sub.alert = True
+                sub.label(text=dep_link, translate=False, icon='BLANK1')
+                op = sub_split.operator('wm.url_open', text="Repository", icon='URL')
+                op.url = dep_link
+
+    return error
+
+
+def draw_feature_set_prefs(layout: bpy.types.UILayout, _context: bpy.types.Context, feature_set: RigifyFeatureSets):
+    if feature_set.module_name:
+        info = feature_set_list.get_info_dict(feature_set.module_name)
+    else:
+        info = {}
+        for item in feature_set_list.PROMOTED_FEATURE_SETS:
+            if item["link"] == feature_set.link:
+                info = item
+                break
 
     description = feature_set.name
     if 'description' in info:
@@ -272,15 +359,20 @@ def draw_feature_set_prefs(layout: bpy.types.UILayout, _context, feature_set: Ri
     col = layout.column()
     split_factor = 0.15
 
+    check_feature_set_error(feature_set, info, col)
+
+    if feature_set.has_exceptions:
+        split = col.row().split(factor=split_factor)
+        split.label(text="Error:")
+        sub = split.row()
+        sub.alert = True
+        sub.label(text="This feature set failed to load correctly.", icon='ERROR')
+
     split = col.row().split(factor=split_factor)
     split.label(text="Description:")
-    split.label(text=description)
-
-    mod = feature_set_list.get_module_safe(feature_set.module_name)
-    if mod:
-        split = col.row().split(factor=split_factor)
-        split.label(text="File:")
-        split.label(text=mod.__file__, translate=False)
+    col_desc = split.column()
+    for description_line in description.split("\n"):
+        col_desc.label(text=description_line)
 
     if 'author' in info:
         split = col.row().split(factor=split_factor)
@@ -291,16 +383,7 @@ def draw_feature_set_prefs(layout: bpy.types.UILayout, _context, feature_set: Ri
         split = col.row().split(factor=split_factor)
         split.label(text="Version:")
         split.label(text=".".join(str(x) for x in info['version']), translate=False)
-    if 'blender' in info and info['blender'] > bpy.app.version:
-        split = col.row().split(factor=split_factor)
-        split.label(text="Warning:")
-        sub = split.row()
-        sub.alert = True
-        sub.label(text=(
-            iface_("This feature set requires Blender %s or newer to work properly. "
-                   "Expect errors.") % ".".join(str(x) for x in info['blender'])
-        ),
-            icon='ERROR', translate=False)
+
     if 'warning' in info:
         split = col.row().split(factor=split_factor)
         split.label(text="Warning:")
@@ -319,7 +402,16 @@ def draw_feature_set_prefs(layout: bpy.types.UILayout, _context, feature_set: Ri
         op = row.operator('wm.url_open', text="Report a Bug", icon='URL')
         op.url = info['tracker_url']
 
-    row.operator("wm.rigify_remove_feature_set", text="Remove", icon='CANCEL')
+    if feature_set.module_name:
+        mod = feature_set_list.get_module_safe(feature_set.module_name)
+        if mod:
+            split = col.row().split(factor=split_factor)
+            split.label(text="File:")
+            split.label(text=mod.__file__, translate=False)
+
+        split = col.row().split(factor=split_factor)
+        split.label(text="")
+        split.operator("wm.rigify_remove_feature_set", text="Remove", icon='CANCEL')
 
 
 class RigifyName(bpy.types.PropertyGroup):
@@ -386,48 +478,22 @@ class RigifyBoneCollectionReference(bpy.types.PropertyGroup):
     uid: IntProperty(name="Unique ID", default=-1)
 
     def find_collection(self, *, update=False, raise_error=False) -> bpy.types.BoneCollection | None:
-        uid = self.uid
-        if uid < 0:
-            return None
-
-        arm = self.id_data.data
-
-        if name := self.get("name", ""):
-            name_coll = arm.collections.get(name)
-
-            if name_coll and name_coll.rigify_uid == uid:
-                return name_coll
-
-        for coll in arm.collections:
-            if coll.rigify_uid == uid:
-                if update:
-                    self["name"] = coll.name
-                return coll
-
-        if raise_error:
-            raise utils.errors.MetarigError(f"Broken bone collection reference: {name} #{uid}")
-
-        return None
+        return utils.layers.resolve_collection_reference(self.id_data, self, update=update, raise_error=raise_error)
 
     def set_collection(self, coll: bpy.types.BoneCollection | None):
-        if not coll:
+        if coll is None:
             self.uid = -1
             self["name"] = ""
-            return
-
-        if coll.rigify_uid < 0:
-            coll.rigify_uid = utils.misc.choose_next_uid(coll.id_data.collections, "rigify_uid")
-
-        self.uid = coll.rigify_uid
-        self["name"] = coll.name
+        else:
+            self.uid = utils.layers.ensure_collection_uid(coll)
+            self["name"] = coll.name
 
     def _name_get(self):
         if coll := self.find_collection(update=False):
             return coll.name
 
         if self.uid >= 0:
-            if name := self.get("name", ""):
-                return f"? {name} #{self.uid}"
+            return self.get('name') or '?'
 
         return ""
 
@@ -734,6 +800,14 @@ def register():
         get=color_set_get, set=color_set_set, search=color_set_search
     )
 
+    # Object properties
+    obj_store = bpy.types.Object
+
+    obj_store.rigify_owner_rig = PointerProperty(
+        type=bpy.types.Object,
+        name="Rigify Owner Rig",
+        description="Rig that owns this object and may delete or overwrite it upon re-generation")
+
     prefs = RigifyPreferences.get_instance()
     prefs.register_feature_sets(True)
     prefs.update_external_rigs()
@@ -797,6 +871,10 @@ def unregister():
     del coll_store.rigify_sel_set
     del coll_store.rigify_color_set_id
     del coll_store.rigify_color_set_name
+
+    obj_store: typing.Any = bpy.types.Object
+
+    del obj_store.rigify_owner_rig
 
     # Classes.
     for cls in classes:

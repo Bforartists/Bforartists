@@ -3,12 +3,19 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
+import random
+import re
+import zlib
 
+from collections import defaultdict
 from typing import TYPE_CHECKING, Sequence, Optional, Mapping, Iterable, Any
 
 from bpy.types import bpy_prop_collection  # noqa
 from bpy.types import Bone, UILayout, Object, PoseBone, Armature, BoneCollection, EditBone
+from idprop.types import IDPropertyGroup
+from rna_prop_ui import rna_idprop_value_to_python
 
+from .errors import MetarigError
 from .misc import ArmatureObject
 from .naming import mirror_name_fuzzy
 
@@ -21,6 +28,11 @@ ROOT_COLLECTION = "Root"
 DEF_COLLECTION = "DEF"
 ORG_COLLECTION = "ORG"
 MCH_COLLECTION = "MCH"
+
+SPECIAL_COLLECTIONS = (ROOT_COLLECTION, DEF_COLLECTION, MCH_COLLECTION, ORG_COLLECTION)
+
+REFS_TOGGLE_SUFFIX = '_layers_extra'
+REFS_LIST_SUFFIX = "_coll_refs"
 
 
 def set_bone_layers(bone: Bone | EditBone, layers: Sequence[BoneCollection], *, combine=False):
@@ -61,13 +73,148 @@ def is_collection_ref_list_prop(param: Any) -> bool:
             all(isinstance(item, RigifyBoneCollectionReference) for item in param))
 
 
-def mirror_ref_list(to_ref_list, from_ref_list):
+def copy_ref_list(to_ref_list, from_ref_list, *, mirror=False):
+    """Copy collection references between two RigifyBoneCollectionReference lists."""
     to_ref_list.clear()
+
     for ref in from_ref_list:
         to_ref = to_ref_list.add()
         to_ref['uid'] = ref['uid']
         to_ref['name'] = ref['name']
-        to_ref.name = mirror_name_fuzzy(ref.name)
+
+        if mirror:
+            to_ref.name = mirror_name_fuzzy(ref.name)
+
+
+def ensure_collection_uid(bcoll: BoneCollection):
+    """Retrieve the uid of the given bone collection, assigning a new one if necessary."""
+    uid = bcoll.rigify_uid
+    if uid >= 0:
+        return uid
+
+    # Choose the initial uid value
+    max_uid = 0x7fffffff
+
+    if re.fullmatch(r"Bones(\.\d+)?", bcoll.name):
+        # Use random numbers for collections with the default name
+        uid = random.randint(0, max_uid)
+    else:
+        uid = zlib.adler32(bcoll.name.encode("utf-8")) & max_uid
+
+    # Ensure the uid is unique within the armature
+    used_ids = set(coll.rigify_uid for coll in bcoll.id_data.collections)
+
+    while uid in used_ids:
+        uid = random.randint(0, max_uid)
+
+    assert uid >= 0
+    bcoll.rigify_uid = uid
+    return uid
+
+
+def resolve_collection_reference(obj: ArmatureObject, ref: Any, *,
+                                 update=False, raise_error=False) -> bpy.types.BoneCollection | None:
+    """
+    Find the bone collection referenced by the given reference.
+    The reference should be RigifyBoneCollectionReference, either typed or as a raw idproperty.
+    """
+
+    uid = ref["uid"]
+    if uid < 0:
+        return None
+
+    arm = obj.data
+
+    name = ref.get("name", "")
+    name_coll = arm.collections.get(name) if name else None
+
+    # First try an exact match of both name and uid
+    if name_coll and name_coll.rigify_uid == uid:
+        return name_coll
+
+    # Then try searching by the uid
+    for coll in arm.collections:
+        if coll.rigify_uid == uid:
+            if update:
+                ref["name"] = coll.name
+            return coll
+
+    # Fallback to lookup by name only if possible
+    if name_coll:
+        if update:
+            ref["uid"] = ensure_collection_uid(name_coll)
+        return name_coll
+
+    if raise_error:
+        raise MetarigError(f"Broken bone collection reference: {name} #{uid}")
+
+    return None
+
+
+def validate_collection_references(obj: ArmatureObject):
+    # Scan and update all references. This uses raw idprop access
+    # to avoid depending on valid rig component definitions.
+    refs = defaultdict(list)
+    warnings = []
+
+    for pose_bone in obj.pose.bones:
+        params = pose_bone.get("rigify_parameters")
+        if not params:
+            continue
+
+        for prop_name, prop_value in params.items():
+            prop_name: str
+
+            # Filter for reference list properties
+            if not prop_name.endswith(REFS_LIST_SUFFIX):
+                continue
+
+            value = rna_idprop_value_to_python(prop_value)
+            if not isinstance(value, list):
+                continue
+
+            for item in value:
+                # Scan valid reference items
+                if not isinstance(item, IDPropertyGroup):
+                    continue
+
+                name = item.get("name")
+                if not name or item.get("uid", -1) < 0:
+                    continue
+
+                ref_coll = resolve_collection_reference(obj, item, update=True)
+
+                if ref_coll:
+                    refs[ref_coll.name].append(item)
+                else:
+                    stem = prop_name[:-len(REFS_LIST_SUFFIX)].replace("_", " ").title()
+                    warnings.append(f"bone {pose_bone.name} has a broken reference to {stem} collection '{name}'")
+                    print(f"RIGIFY: {warnings[-1]}")
+
+    # Ensure uids are unique
+    known_uids = dict()
+
+    for bcoll in obj.data.collections:
+        uid = bcoll.rigify_uid
+        if uid < 0:
+            continue
+
+        prev_use = known_uids.get(uid)
+
+        if prev_use is not None:
+            warnings.append(f"collection {bcoll.name} has the same uid {uid} as {prev_use}")
+            print(f"RIGIFY: {warnings[-1]}")
+
+            # Replace the uid
+            bcoll.rigify_uid = -1
+            uid = ensure_collection_uid(bcoll)
+
+            for ref in refs[bcoll.name]:
+                ref["uid"] = uid
+
+        known_uids[uid] = bcoll.name
+
+    return warnings
 
 
 ##############################################
@@ -83,8 +230,8 @@ class ControlLayersOption:
         self.toggle_default = toggle_default
         self.description = description
 
-        self.toggle_option = self.name+'_layers_extra'
-        self.refs_option = self.name + '_coll_refs'
+        self.toggle_option = self.name + REFS_TOGGLE_SUFFIX
+        self.refs_option = self.name + REFS_LIST_SUFFIX
 
         if toggle_name:
             self.toggle_name = toggle_name
@@ -195,8 +342,9 @@ class ControlLayersOption:
 
             for i, ref in enumerate(refs):
                 row = col.row(align=True)
-                row.prop(ref, "name", text="")
                 row.alert = ref.uid >= 0 and not ref.find_collection()
+                row.prop(ref, "name", text="")
+                row.alert = False
 
                 props = row.operator(operator="pose.rigify_collection_ref_remove", text="", icon="REMOVE")
                 props.prop_name = self.refs_option

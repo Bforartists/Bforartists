@@ -1234,8 +1234,10 @@ class AnimationCurveNodeWrapper:
     and easy API to handle those.
     """
     __slots__ = (
-        'elem_keys', '_keys', 'default_values', 'fbx_group', 'fbx_gname', 'fbx_props',
-        'force_keying', 'force_startend_keying')
+        'elem_keys', 'default_values', 'fbx_group', 'fbx_gname', 'fbx_props',
+        'force_keying', 'force_startend_keying',
+        '_frame_times_array', '_frame_values_array', '_frame_write_mask_array',
+    )
 
     kinds = {
         'LCL_TRANSLATION': ("Lcl Translation", "T", ("X", "Y", "Z")),
@@ -1254,7 +1256,9 @@ class AnimationCurveNodeWrapper:
         self.fbx_props = [self.kinds[kind][2]]
         self.force_keying = force_keying
         self.force_startend_keying = force_startend_keying
-        self._keys = []  # (frame, values, write_flags)
+        self._frame_times_array = None
+        self._frame_values_array = None
+        self._frame_write_mask_array = None
         if default_values is not ...:
             assert(len(default_values) == len(self.fbx_props[0]))
             self.default_values = default_values
@@ -1263,7 +1267,7 @@ class AnimationCurveNodeWrapper:
 
     def __bool__(self):
         # We are 'True' if we do have some validated keyframes...
-        return bool(self._keys) and (True in ((True in k[2]) for k in self._keys))
+        return self._frame_write_mask_array is not None and bool(np.any(self._frame_write_mask_array))
 
     def add_group(self, elem_key, fbx_group, fbx_gname, fbx_props):
         """
@@ -1276,19 +1280,31 @@ class AnimationCurveNodeWrapper:
         self.fbx_gname.append(fbx_gname)
         self.fbx_props.append(fbx_props)
 
-    def add_keyframe(self, frame, values):
+    def set_keyframes(self, keyframe_times, keyframe_values):
         """
-        Add a new keyframe to all curves of the group.
+        Set all keyframe times and values of the group.
+        Values can be a 2D array where each row is the values for a separate curve.
         """
-        assert(len(values) == len(self.fbx_props[0]))
-        self._keys.append((frame, values, [True] * len(values)))  # write everything by default.
+        # View 1D keyframe_values as 2D with a single row, so that the same code can be used for both 1D and
+        # 2D inputs.
+        if len(keyframe_values.shape) == 1:
+            keyframe_values = keyframe_values[np.newaxis]
+        # There must be a time for each column of values.
+        assert(len(keyframe_times) == keyframe_values.shape[1])
+        # There must be as many rows of values as there are properties.
+        assert(len(self.fbx_props[0]) == len(keyframe_values))
+        write_mask = np.full_like(keyframe_values, True, dtype=bool)  # write everything by default
+        self._frame_times_array = keyframe_times
+        self._frame_values_array = keyframe_values
+        self._frame_write_mask_array = write_mask
 
     def simplify(self, fac, step, force_keep=False):
         """
         Simplifies sampled curves by only enabling samples when:
             * their values relatively differ from the previous sample ones.
         """
-        if not self._keys:
+        if self._frame_times_array is None:
+            # Keyframes have not been added yet.
             return
 
         if fac == 0.0:
@@ -1297,15 +1313,22 @@ class AnimationCurveNodeWrapper:
         # So that, with default factor and step values (1), we get:
         min_reldiff_fac = fac * 1.0e-3  # min relative value evolution: 0.1% of current 'order of magnitude'.
         min_absdiff_fac = 0.1  # A tenth of reldiff...
-        keys = self._keys
 
-        p_currframe, p_key, p_key_write = keys[0]
-        p_keyed = list(p_key)
-        are_keyed = [False] * len(p_key)
-        for currframe, key, key_write in keys:
+        are_keyed = []
+        for values, frame_write_mask in zip(self._frame_values_array, self._frame_write_mask_array):
+            # Initialise to no frames written.
+            frame_write_mask[:] = False
+
+            # Create views of the 'previous' and 'current' mask and values. The memoryview, .data, of each array is used
+            # for its iteration and indexing performance compared to the array.
+            key = values[1:].data
+            p_key = values[:-1].data
+            key_write = frame_write_mask[1:].data
+            p_key_write = frame_write_mask[:-1].data
+
+            p_keyedval = values[0]
+            is_keyed = False
             for idx, (val, p_val) in enumerate(zip(key, p_key)):
-                key_write[idx] = False
-                p_keyedval = p_keyed[idx]
                 if val == p_val:
                     # Never write keyframe when value is exactly the same as prev one!
                     continue
@@ -1319,14 +1342,14 @@ class AnimationCurveNodeWrapper:
                     # If enough difference from previous sampled value, key this value *and* the previous one!
                     key_write[idx] = True
                     p_key_write[idx] = True
-                    p_keyed[idx] = val
-                    are_keyed[idx] = True
+                    p_keyedval = val
+                    is_keyed = True
                 elif abs(val - p_keyedval) > (min_reldiff_fac * max((abs(val) + abs(p_keyedval)), min_absdiff_fac)):
                     # Else, if enough difference from previous keyed value, key this value only!
                     key_write[idx] = True
-                    p_keyed[idx] = val
-                    are_keyed[idx] = True
-            p_currframe, p_key, p_key_write = currframe, key, key_write
+                    p_keyedval = val
+                    is_keyed = True
+            are_keyed.append(is_keyed)
 
         # If we write nothing (action doing nothing) and are in 'force_keep' mode, we key everything! :P
         # See T41766.
@@ -1339,20 +1362,20 @@ class AnimationCurveNodeWrapper:
 
         # If we did key something, ensure first and last sampled values are keyed as well.
         if self.force_startend_keying:
-            for idx, is_keyed in enumerate(are_keyed):
+            for is_keyed, frame_write_mask in zip(are_keyed, self._frame_write_mask_array):
                 if is_keyed:
-                    keys[0][2][idx] = keys[-1][2][idx] = True
+                    frame_write_mask[:1] = True
+                    frame_write_mask[-1:] = True
 
     def get_final_data(self, scene, ref_id, force_keep=False):
         """
         Yield final anim data for this 'curvenode' (for all curvenodes defined).
         force_keep is to force to keep a curve even if it only has one valid keyframe.
         """
-        curves = [[] for k in self._keys[0][1]]
-        for currframe, key, key_write in self._keys:
-            for curve, val, wrt in zip(curves, key, key_write):
-                if wrt:
-                    curve.append((currframe, val))
+        curves = [
+            (self._frame_times_array[write_mask], values[write_mask])
+            for values, write_mask in zip(self._frame_values_array, self._frame_write_mask_array)
+        ]
 
         force_keep = force_keep or self.force_keying
         for elem_key, fbx_group, fbx_gname, fbx_props in \
@@ -1363,8 +1386,9 @@ class AnimationCurveNodeWrapper:
                 fbx_item = FBX_ANIM_PROPSGROUP_NAME + "|" + fbx_item
                 curve_key = get_blender_anim_curve_key(scene, ref_id, elem_key, fbx_group, fbx_item)
                 # (curve key, default value, keyframes, write flag).
-                group[fbx_item] = (curve_key, def_val, c,
-                                   True if (len(c) > 1 or (len(c) > 0 and force_keep)) else False)
+                times = c[0]
+                write_flag = len(times) > (0 if force_keep else 1)
+                group[fbx_item] = (curve_key, def_val, c, write_flag)
             yield elem_key, group_key, group, fbx_group, fbx_gname
 
 

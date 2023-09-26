@@ -71,7 +71,7 @@
 
 #include "IMB_colormanagement.h"
 
-#include "DEG_depsgraph_query.h"
+#include "DEG_depsgraph_query.hh"
 
 #include "interface_intern.hh"
 
@@ -5002,8 +5002,7 @@ int UI_preview_tile_size_x(const int size_px)
 
 int UI_preview_tile_size_y(const int size_px)
 {
-  const uiStyle *style = UI_style_get();
-  const float font_height = style->widget.points * UI_SCALE_FAC;
+  const float font_height = UI_UNIT_Y;
   /* Add some extra padding to make things less tight vertically. */
   const float pad = PREVIEW_TILE_PAD;
 
@@ -6556,10 +6555,6 @@ void UI_but_string_info_get(bContext *C, uiBut *but, ...)
       if (but->tip_label_func) {
         const std::string tooltip_label = but->tip_label_func(but);
         tmp = BLI_strdupn(tooltip_label.c_str(), tooltip_label.size());
-      }
-      /* Fallback to the regular label. */
-      else {
-        type = BUT_GET_LABEL;
       }
     }
 

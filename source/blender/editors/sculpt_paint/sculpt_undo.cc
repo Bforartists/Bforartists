@@ -37,7 +37,6 @@
 #include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_string.h"
-#include "BLI_task.h"
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
 
@@ -68,7 +67,7 @@
 /* TODO(sergey): Ideally should be no direct call to such low level things. */
 #include "BKE_subdiv_eval.hh"
 
-#include "DEG_depsgraph.h"
+#include "DEG_depsgraph.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -637,15 +636,6 @@ static bool sculpt_undo_restore_face_sets(bContext *C,
   return modified;
 }
 
-static void sculpt_undo_bmesh_restore_generic_task_cb(void *__restrict userdata,
-                                                      const int n,
-                                                      const TaskParallelTLS *__restrict /*tls*/)
-{
-  PBVHNode **nodes = static_cast<PBVHNode **>(userdata);
-
-  BKE_pbvh_node_mark_redraw(nodes[n]);
-}
-
 static void sculpt_undo_bmesh_restore_generic(SculptUndoNode *unode, Object *ob, SculptSession *ss)
 {
   if (unode->applied) {
@@ -659,14 +649,9 @@ static void sculpt_undo_bmesh_restore_generic(SculptUndoNode *unode, Object *ob,
 
   if (unode->type == SCULPT_UNDO_MASK) {
     Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(ss->pbvh, {});
-
-    TaskParallelSettings settings;
-    BKE_pbvh_parallel_range_settings(&settings, true, nodes.size());
-    BLI_task_parallel_range(0,
-                            nodes.size(),
-                            static_cast<void *>(nodes.data()),
-                            sculpt_undo_bmesh_restore_generic_task_cb,
-                            &settings);
+    for (PBVHNode *node : nodes) {
+      BKE_pbvh_node_mark_redraw(node);
+    }
   }
   else {
     SCULPT_pbvh_clear(ob);
