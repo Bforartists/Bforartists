@@ -7,7 +7,7 @@ from bpy.types import Action, Mesh, Armature
 from bl_math import clamp
 
 from .errors import MetarigError
-from .misc import MeshObject, IdPropSequence
+from .misc import MeshObject, IdPropSequence, verify_mesh_obj
 from .naming import Side, get_name_side, change_name_side, mirror_name
 from .bones import BoneUtilityMixin
 from .mechanism import MechanismUtilityMixin, driver_var_transform, quote_property
@@ -415,7 +415,7 @@ class ActionLayerBuilder(GeneratorPlugin, BoneUtilityMixin, MechanismUtilityMixi
     def rig_bones(self):
         if self.layers:
             self.child_meshes = [
-                child
+                verify_mesh_obj(child)
                 for child in self.generator.obj.children_recursive
                 if child.type == 'MESH'
             ]

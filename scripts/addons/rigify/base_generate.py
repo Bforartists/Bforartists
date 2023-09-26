@@ -21,6 +21,7 @@ from . import base_rig
 from itertools import count
 
 if TYPE_CHECKING:
+    from .utils.objects import ArtifactManager
     from .rig_ui_template import ScriptGenerator
 
 
@@ -192,6 +193,7 @@ class BaseGenerator:
     obj: ArmatureObject
 
     script: 'ScriptGenerator'
+    artifacts: 'ArtifactManager'
 
     rig_list: List[base_rig.BaseRig]
     root_rigs: List[base_rig.BaseRig]

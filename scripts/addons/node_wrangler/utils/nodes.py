@@ -170,25 +170,18 @@ def get_internal_socket(socket):
     # get the internal socket from a socket inside or outside the group
     node = socket.node
     if node.type == 'GROUP_OUTPUT':
-        source_iterator = node.inputs
-        iterator = node.id_data.outputs
+        iterator = node.id_data.interface.items_tree
     elif node.type == 'GROUP_INPUT':
-        source_iterator = node.outputs
-        iterator = node.id_data.inputs
+        iterator = node.id_data.interface.items_tree
     elif hasattr(node, "node_tree"):
-        if socket.is_output:
-            source_iterator = node.outputs
-            iterator = node.node_tree.outputs
-        else:
-            source_iterator = node.inputs
-            iterator = node.node_tree.inputs
+        iterator = node.node_tree.interface.items_tree
     else:
         return None
 
-    for i, s in enumerate(source_iterator):
-        if s == socket:
-            break
-    return iterator[i]
+    for s in iterator:
+        if s.identifier == socket.identifier:
+            return s
+    return iterator[0]
 
 
 def is_viewer_link(link, output_node):

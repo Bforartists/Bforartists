@@ -100,8 +100,8 @@
 
 #include "GPU_context.h"
 
-#include "DEG_depsgraph.h"
-#include "DEG_depsgraph_query.h"
+#include "DEG_depsgraph.hh"
+#include "DEG_depsgraph_query.hh"
 
 #include "DRW_select_buffer.h"
 
@@ -2913,8 +2913,8 @@ void DRW_draw_depth_object(
 
       GPU_batch_draw(batch);
       GPU_uniformbuf_free(ubo);
-
-    } break;
+      break;
+    }
     case OB_CURVES_LEGACY:
     case OB_SURF:
       break;
