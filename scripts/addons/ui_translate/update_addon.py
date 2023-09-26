@@ -132,7 +132,7 @@ class UI_OT_i18n_addon_translation_update(Operator):
         _cached_enum_addons[:] = []
         if not hasattr(self, "settings"):
             self.settings = settings.settings
-        i18n_sett = context.window_manager.i18n_update_svn_settings
+        i18n_sett = context.window_manager.i18n_update_settings
 
         module_name, mod = validate_module(self, context)
 
@@ -220,7 +220,7 @@ class UI_OT_i18n_addon_translation_import(Operator):
         _cached_enum_addons[:] = []
         if not hasattr(self, "settings"):
             self.settings = settings.settings
-        i18n_sett = context.window_manager.i18n_update_svn_settings
+        i18n_sett = context.window_manager.i18n_update_settings
 
         module_name, mod = validate_module(self, context)
         if not (module_name and mod):
@@ -323,7 +323,7 @@ class UI_OT_i18n_addon_translation_export(Operator):
         _cached_enum_addons[:] = []
         if not hasattr(self, "settings"):
             self.settings = settings.settings
-        i18n_sett = context.window_manager.i18n_update_svn_settings
+        i18n_sett = context.window_manager.i18n_update_settings
 
         module_name, mod = validate_module(self, context)
         if not (module_name and mod):

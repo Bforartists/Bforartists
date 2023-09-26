@@ -92,7 +92,7 @@ def make_metarig_add_execute(module):
 
 
 def make_metarig_menu_func(bl_idname: str, text: str):
-    """ For some reason lambda's don't work for adding multiple menu
+    """ For some reason lambdas don't work for adding multiple menu
         items, so we use this instead to generate the functions.
     """
     def metarig_menu(self, _context):
@@ -241,6 +241,7 @@ def get_external_metarigs(feature_module_names: list[str]):
                   f"exception occurred.\n")
             traceback.print_exc()
             print("")
+            feature_set_list.mark_feature_set_exception(module_name)
             continue
 
     metarig_ops.clear()

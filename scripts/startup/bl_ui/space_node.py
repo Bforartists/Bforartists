@@ -134,6 +134,7 @@ class NODE_HT_header(Header):
         # Now expanded via the `ui_type`.
         # layout.prop(snode, "tree_type", text="")
 
+        display_pin = True
         if snode.tree_type == 'ShaderNodeTree':
             row = layout.row(align = True)
             row.operator("wm.switch_editor_to_compositor", text="", icon='NODE_COMPOSITING')
@@ -260,11 +261,13 @@ class NODE_HT_header(Header):
                     else:
                         row.template_ID(snode, "node_tree", new="node.new_geometry_nodes_modifier")
                 if snode.node_tree and snode.node_tree.asset_data:
-                    layout.popover(panel="NODE_PT_geometry_node_asset_traits")
+                    layout.popover(panel="NODE_PT_geometry_node_modifier")
             else:
                 layout.template_ID(snode, "node_tree", new="node.new_geometry_node_group_tool")
                 if snode.node_tree and snode.node_tree.asset_data:
-                    layout.popover(panel="NODE_PT_geometry_node_asset_traits")
+                    layout.popover(panel="NODE_PT_geometry_node_tool_object_types", text="Types")
+                    layout.popover(panel="NODE_PT_geometry_node_tool_mode", text="Modes")
+                display_pin = False
         else:
             # Custom node tree is edited as independent ID block
             NODE_MT_editor_menus.draw_collapsible(context, layout)
@@ -324,7 +327,7 @@ class NODE_HT_header(Header):
 
 
         # Put pin next to ID block
-        if not is_compositor:
+        if not is_compositor and display_pin:
             layout.prop(snode, "pin", text="", emboss=False)
 
         # bfa - don't show up arrow if at top level.
@@ -695,10 +698,62 @@ class NODE_PT_material_slots(Panel):
             row.operator("object.material_slot_deselect", text="Deselect")
 
 
-class NODE_PT_geometry_node_asset_traits(Panel):
+class NODE_PT_geometry_node_tool_object_types(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'HEADER'
-    bl_label = "Asset"
+    bl_label = "Object Types"
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        layout = self.layout
+
+        snode = context.space_data
+        group = snode.node_tree
+
+        types = [("is_type_mesh", "Mesh", 'MESH_DATA'),
+                 ("is_type_curve", "Curves", 'CURVES_DATA')]
+        if context.preferences.experimental.use_new_point_cloud_type:
+            types.append(("is_type_point_cloud", "Point Cloud", 'POINTCLOUD_DATA'))
+
+        col = layout.column()
+        col.active = group.is_tool
+        for prop, name, icon in types:
+            row = col.row()
+            row_checkbox = row.row()
+            row_checkbox.prop(group, prop, text="")
+            row_label = row.row()
+            row_label.label(text=name, icon=icon)
+
+
+class NODE_PT_geometry_node_tool_mode(Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Modes"
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        layout = self.layout
+
+        snode = context.space_data
+        group = snode.node_tree
+
+        modes = [("is_mode_edit", "Edit Mode", 'EDITMODE_HLT'),
+                 ("is_mode_sculpt", "Sculpt Mode", 'SCULPTMODE_HLT')]
+
+        col = layout.column()
+        col.active = group.is_tool
+        for prop, name, icon in modes:
+            row = col.row()
+            row_checkbox = row.row()
+            row_checkbox.prop(group, prop, text="")
+            row_label = row.row()
+            row_label.label(text=name, icon=icon)
+
+
+class NODE_PT_geometry_node_modifier(Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Modifier"
 
     def draw(self, context):
         layout = self.layout
@@ -708,21 +763,7 @@ class NODE_PT_geometry_node_asset_traits(Panel):
         snode = context.space_data
         group = snode.node_tree
 
-        if snode.geometry_nodes_type == 'MODIFIER':
-            layout.prop(group, "is_modifier")
-        else:
-            col = layout.column(heading="Type")
-            col.prop(group, "is_tool")
-            col = layout.column(heading="Mode")
-            col.active = group.is_tool
-            col.prop(group, "is_mode_edit")
-            col.prop(group, "is_mode_sculpt")
-            col = layout.column(heading="Geometry")
-            col.active = group.is_tool
-            col.prop(group, "is_type_mesh")
-            col.prop(group, "is_type_curve")
-            if context.preferences.experimental.use_new_point_cloud_type:
-                col.prop(group, "is_type_point_cloud")
+        layout.prop(group, "is_modifier")
 
 
 class NODE_PT_node_color_presets(PresetPanel, Panel):
@@ -1408,7 +1449,9 @@ classes = (
     NODE_MT_view_pie,
     NODE_MT_view_annotations,
     NODE_PT_material_slots,
-    NODE_PT_geometry_node_asset_traits,
+    NODE_PT_geometry_node_modifier,
+    NODE_PT_geometry_node_tool_object_types,
+    NODE_PT_geometry_node_tool_mode,
     NODE_PT_node_color_presets,
     NODE_MT_node_tree_interface_context_menu,
     NODE_PT_node_tree_interface,
