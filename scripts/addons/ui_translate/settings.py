@@ -110,19 +110,10 @@ class UI_AP_i18n_settings(AddonPreferences):
         set=lambda self, val: _setattr(self._settings, "WARN_MSGID_NOT_CAPITALIZED", val),
     )
 
-    GETTEXT_MSGFMT_EXECUTABLE: StringProperty(
-        name="Gettext 'msgfmt' executable",
-        description="The gettext msgfmt 'compiler'. You’ll likely have to edit it if you’re under Windows",
-        subtype='FILE_PATH',
-        default="msgfmt",
-        get=lambda self: self._settings.GETTEXT_MSGFMT_EXECUTABLE,
-        set=lambda self, val: setattr(self._settings, "GETTEXT_MSGFMT_EXECUTABLE", val),
-    )
-
     FRIBIDI_LIB: StringProperty(
         name="Fribidi Library",
         description="The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have "
-                    "to edit it if you’re under Windows, e.g. using the one included in svn's libraries repository",
+                    "to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository",
         subtype='FILE_PATH',
         default="libfribidi.so.0",
         get=lambda self: self._settings.FRIBIDI_LIB,
@@ -178,7 +169,6 @@ class UI_AP_i18n_settings(AddonPreferences):
         layout.label(text="WARNING: preferences are lost when add-on is disabled, be sure to use \"Save Persistent\" "
                           "if you want to keep your settings!")
         layout.prop(self, "WARN_MSGID_NOT_CAPITALIZED")
-        layout.prop(self, "GETTEXT_MSGFMT_EXECUTABLE")
         layout.prop(self, "FRIBIDI_LIB")
         layout.prop(self, "SOURCE_DIR")
         layout.prop(self, "I18N_DIR")

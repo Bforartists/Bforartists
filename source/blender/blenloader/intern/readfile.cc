@@ -91,7 +91,7 @@
 
 #include "DRW_engine.h"
 
-#include "DEG_depsgraph.h"
+#include "DEG_depsgraph.hh"
 
 #include "BLO_blend_defs.hh"
 #include "BLO_blend_validate.hh"
@@ -995,9 +995,10 @@ static bool read_file_dna(FileData *fd, const char **r_error_message)
         fd->reconstruct_info = DNA_reconstruct_info_create(
             fd->filesdna, fd->memsdna, fd->compflags);
         /* used to retrieve ID names from (bhead+1) */
-        fd->id_name_offset = DNA_elem_offset(fd->filesdna, "ID", "char", "name[]");
+        fd->id_name_offset = DNA_struct_member_offset_by_name(
+            fd->filesdna, "ID", "char", "name[]");
         BLI_assert(fd->id_name_offset != -1);
-        fd->id_asset_data_offset = DNA_elem_offset(
+        fd->id_asset_data_offset = DNA_struct_member_offset_by_name(
             fd->filesdna, "ID", "AssetMetaData", "*asset_data");
 
         return true;
@@ -1443,10 +1444,7 @@ static void *newpackedadr(FileData *fd, const void *adr)
 }
 
 /* only lib data */
-static void *newlibadr(FileData *fd,
-                       ID * /* self_id */,
-                       const bool is_linked_only,
-                       const void *adr)
+static void *newlibadr(FileData *fd, ID * /*self_id*/, const bool is_linked_only, const void *adr)
 {
   return oldnewmap_liblookup(fd->libmap, adr, is_linked_only);
 }
