@@ -36,16 +36,20 @@ class OUTLINER_HT_header(Header):
 
         layout.prop(space, "display_mode", icon_only=True)
 
+        #BFA - Always show header view and col entries
+        OUTLINER_MT_editor_menus.draw_collapsible(context, layout) # Collapsing everything in OUTLINER_MT_editor_menus when ticking collapse menus checkbox
+        '''
         if display_mode == 'DATA_API':
             OUTLINER_MT_editor_menus.draw_collapsible(context, layout)# Collapsing everything in OUTLINER_MT_editor_menus when ticking collapse menus checkbox
         if display_mode == 'LIBRARY_OVERRIDES':
             layout.prop(space, "lib_override_view_mode", text="")
+        '''
 
         layout.separator_spacer()
 
         row = layout.row(align=True)
 
-        row.prop(addon_prefs,"outliner_show_search", icon='VIEWZOOM', text = "") # show search text prop
+        row.prop(addon_prefs,"outliner_show_search", icon="VIEWZOOM", text = "") # show search text prop
         if addon_prefs.outliner_show_search:
             # No text filtering for library override hierarchies. The tree is lazy built to avoid
             # performance issues in complex files.
@@ -53,7 +57,7 @@ class OUTLINER_HT_header(Header):
                 filter_text_supported = False
             else:
                 row = layout.row(align=True)
-                row.prop(space, "filter_text", icon='VIEWZOOM', text="")
+                row.prop(space, "filter_text", text="")
 
         if display_mode == 'SEQUENCE':
             row = layout.row(align=True)
@@ -73,12 +77,15 @@ class OUTLINER_HT_header(Header):
             if space.use_filter_id_type:
                 sub.prop(space, "filter_id_type", text="", icon_only=True)
 		#BFA - already shown elsewhere
-        #if display_mode == 'VIEW_LAYER':
-        #    layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW').nested = True
-		#BFA - has a drop down and button with consistenty naming
-        #elif display_mode == 'ORPHAN_DATA':
-        #    layout.operator("outliner.orphans_purge", text="Purge").do_recursive = True
-
+        '''
+        if display_mode == 'VIEW_LAYER':
+            layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW').nested = True
+		'''
+        #BFA - has a drop down and button with consistenty naming
+        '''
+        elif display_mode == 'ORPHAN_DATA':
+            layout.operator("outliner.orphans_purge", text="Purge").do_recursive = True
+        '''
         if space.display_mode == 'DATA_API':
             layout.separator()
 
@@ -98,6 +105,7 @@ class OUTLINER_HT_header(Header):
             else:
                 row = layout.row()
                 row.label(text="No Keying Set Active")
+
 #BFA - collection header menu
 class   OUTLINER_MT_object_collection(Menu):
     bl_label = "Collection"
@@ -140,7 +148,6 @@ class BFA_OUTLINER_PT_scene_ops(Panel):
     def draw(self, context):
         col = self.layout.column(align=True)
         col.label(text="New Scene")
-        col.separator_spacer()
         col.operator_enum(operator="scene.new", property="type")
 
 class OUTLINER_MT_editor_menus(Menu):
@@ -151,10 +158,10 @@ class OUTLINER_MT_editor_menus(Menu):
         layout = self.layout
         space = context.space_data
 
-        space = context.space_data
+        #space = context.space_data
         display_mode = space.display_mode
 
-        layout.menu("OUTLINER_MT_view") # bfa - view menu
+        layout.menu("OUTLINER_MT_view") #BFA - view menu
 
         if display_mode == 'DATA_API':
             layout.menu("OUTLINER_MT_edit_datablocks")
