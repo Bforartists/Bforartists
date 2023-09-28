@@ -70,6 +70,8 @@
 #include "ED_util.hh"
 #include "ED_view3d.hh"
 
+#include "SEQ_sequencer.h"
+
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
@@ -2965,7 +2967,7 @@ static int region_scale_modal(bContext *C, wmOperator *op, const wmEvent *event)
           }
 
           ED_area_tag_redraw(rmd->area);
-          WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+          WM_event_add_notifier(C, NC_SCENE | ND_FRAME, SEQ_get_ref_scene_for_notifiers(C));
         }
 
         region_scale_exit(op);
@@ -5045,9 +5047,7 @@ static int screen_animation_step_invoke(bContext *C, wmOperator * /*op*/, const 
   if (!(wt && wt == event->customdata)) {
     return OPERATOR_PASS_THROUGH;
   }
-
-  wmWindow *win = CTX_wm_window(C);
-
+ 
 #ifdef PROFILE_AUDIO_SYNCH
   static int old_frame = 0;
   int newfra_int;
@@ -5198,6 +5198,7 @@ static int screen_animation_step_invoke(bContext *C, wmOperator * /*op*/, const 
     old_frame = scene->r.cfra;
 #endif
   }
+  // TODO zNight: ???
 
   /* Since we follow draw-flags, we can't send notifier but tag regions ourselves. */
   if (depsgraph != nullptr) {
@@ -5306,6 +5307,25 @@ int ED_screen_animation_play(bContext *C, int sync, int mode)
     ED_screen_animation_timer(C, 0, 0, 0);
     ED_scene_fps_average_clear(scene);
     BKE_sound_stop_scene(scene_eval);
+
+    /* Stop sound in sequencer scene overrides. */
+    wmWindow *win = CTX_wm_window(C);
+    ED_screen_areas_iter (win, screen, area) {
+      LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+        if (space->spacetype == SPACE_SEQ) {
+          SpaceSeq *seq = (SpaceSeq *)space;
+          if (seq->scene_override == NULL) {
+            continue;
+          }
+          Scene *scene_override = seq->scene_override;
+          ViewLayer *view_layer_override = (ViewLayer *)(scene_override->view_layers.first);
+          Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(
+              CTX_data_main(C), scene_override, view_layer_override);
+          Scene *scene_override_eval = DEG_get_evaluated_scene(depsgraph);
+          BKE_sound_stop_scene(scene_override_eval);
+        }
+      }
+    }
 
     BKE_callback_exec_id_depsgraph(
         bmain, &scene->id, depsgraph, BKE_CB_EVT_ANIMATION_PLAYBACK_POST);

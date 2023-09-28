@@ -69,6 +69,8 @@ void sequencer_operatortypes()
   WM_operatortype_append(SEQUENCER_OT_cursor_set);
   WM_operatortype_append(SEQUENCER_OT_scene_frame_range_update);
 
+  WM_operatortype_append(SEQUENCER_OT_remove_scene_override);
+  
   /* `sequencer_retiming.cc` */
   WM_operatortype_append(SEQUENCER_OT_retiming_reset);
   WM_operatortype_append(SEQUENCER_OT_retiming_handle_move);
