@@ -156,6 +156,20 @@ bool ED_scene_delete(bContext *C, Main *bmain, Scene *scene)
     }
   }
 
+  /* Clear sequencer scene overrides using this scene. */
+  LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+      LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+        if (space->spacetype == SPACE_SEQ) {
+          SpaceSeq *seq = (SpaceSeq *)space;
+          if (seq->scene_override == scene) {
+            seq->scene_override = nullptr;
+          }
+        }
+      }
+    }
+  }
+
   BKE_id_delete(bmain, scene);
 
   return true;
