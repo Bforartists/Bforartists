@@ -420,7 +420,7 @@ class USERPREF_PT_edit_objects_duplicate_data(EditingPanel, CenterAlignMixIn, Pa
             ("use_duplicate_armature", "Armature", 'OUTLINER_DATA_ARMATURE', ''),
             ("use_duplicate_camera", "Camera", 'OUTLINER_DATA_CAMERA', ''),
             ("use_duplicate_curve", "Curve", 'OUTLINER_DATA_CURVE', ''),
-            ("use_duplicate_curves", "Curves", 'OUTLINER_DATA_CURVES', ''),
+            ("use_duplicate_curves", "Curves", 'OUTLINER_OB_CURVES', ''),
             ("use_duplicate_grease_pencil", "Grease Pencil", 'OUTLINER_OB_GREASEPENCIL', ''),
             ("use_duplicate_lattice", "Lattice", 'OUTLINER_DATA_LATTICE', ''),
             (None, None, None, None),
