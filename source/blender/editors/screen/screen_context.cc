@@ -674,11 +674,23 @@ static eContextResult screen_ctx_pose_object(const bContext *C, bContextDataResu
   }
   return CTX_RESULT_OK;
 }
-static eContextResult screen_ctx_active_sequence_strip(const bContext *C,
+static Scene *space_sequencer_get_active_scene(const bContext *C,
                                                        bContextDataResult *result)
 {
   wmWindow *win = CTX_wm_window(C);
   Scene *scene = WM_window_get_active_scene(win);
+  SpaceSeq *sseq = CTX_wm_space_seq(C);
+
+  if (sseq != NULL && sseq->scene_override != NULL) {
+    scene = sseq->scene_override;
+  }
+  return scene;
+}
+
+static eContextResult screen_ctx_active_sequence_strip(const bContext *C,
+                                                       bContextDataResult *result)
+{
+  Scene *scene = space_sequencer_get_active_scene(C);
   Sequence *seq = SEQ_select_active_get(scene);
   if (seq) {
     CTX_data_pointer_set(result, &scene->id, &RNA_Sequence, seq);
@@ -702,8 +714,7 @@ static eContextResult screen_ctx_sequences(const bContext *C, bContextDataResult
 }
 static eContextResult screen_ctx_selected_sequences(const bContext *C, bContextDataResult *result)
 {
-  wmWindow *win = CTX_wm_window(C);
-  Scene *scene = WM_window_get_active_scene(win);
+  Scene *scene = space_sequencer_get_active_scene(C);
   Editing *ed = SEQ_editing_get(scene);
   if (ed) {
     LISTBASE_FOREACH (Sequence *, seq, ed->seqbasep) {
@@ -720,7 +731,7 @@ static eContextResult screen_ctx_selected_editable_sequences(const bContext *C,
                                                              bContextDataResult *result)
 {
   wmWindow *win = CTX_wm_window(C);
-  Scene *scene = WM_window_get_active_scene(win);
+  Scene *scene = space_sequencer_get_active_scene(C);
   Editing *ed = SEQ_editing_get(scene);
   if (ed == nullptr) {
     return CTX_RESULT_NO_DATA;
