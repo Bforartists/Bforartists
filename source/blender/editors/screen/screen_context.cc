@@ -674,8 +674,7 @@ static eContextResult screen_ctx_pose_object(const bContext *C, bContextDataResu
   }
   return CTX_RESULT_OK;
 }
-static Scene *space_sequencer_get_active_scene(const bContext *C,
-                                                       bContextDataResult *result)
+static Scene *space_sequencer_get_active_scene(const bContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
   Scene *scene = WM_window_get_active_scene(win);
