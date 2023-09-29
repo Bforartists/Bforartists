@@ -25,7 +25,7 @@ jobs:
         svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
         dir
         cd ~\bforartistsrepo\Bforartists
-        .\make.bat lite
+        .\make.bat ninja lite
         dir
         cd ~\bforartistsrepo
         dir
