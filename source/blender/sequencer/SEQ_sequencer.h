@@ -153,7 +153,7 @@ void SEQ_sequence_lookup_free(const struct Scene *scene);
  */
 void SEQ_sequence_lookup_tag(const struct Scene *scene, eSequenceLookupTag tag);
 
-struct Scene SEQ_get_ref_scene_for_notifiers(const struct bContextC);
+struct Scene *SEQ_get_ref_scene_for_notifiers(const struct bContext *C);
 
 #ifdef __cplusplus
 }
