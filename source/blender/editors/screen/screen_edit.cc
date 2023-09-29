@@ -1684,7 +1684,6 @@ void ED_screen_animation_timer(bContext *C, int redraws, int sync, int enable)
   bScreen *screen = CTX_wm_screen(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win = CTX_wm_window(C);
-  ScreenAnimData *sad = animtimer->customdata;
   Scene *scene = CTX_data_scene(C);
   bScreen *stopscreen = ED_screen_animation_playing(wm);
 

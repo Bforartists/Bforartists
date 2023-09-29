@@ -729,7 +729,6 @@ static eContextResult screen_ctx_selected_sequences(const bContext *C, bContextD
 static eContextResult screen_ctx_selected_editable_sequences(const bContext *C,
                                                              bContextDataResult *result)
 {
-  wmWindow *win = CTX_wm_window(C);
   Scene *scene = space_sequencer_get_active_scene(C);
   Editing *ed = SEQ_editing_get(scene);
   if (ed == nullptr) {
