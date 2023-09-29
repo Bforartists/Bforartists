@@ -1,8 +1,8 @@
 name: Windows
 
 on:
-  push:
-    branches: [ "work-sequencer" ]
+  # push:
+  #   branches: [ "work-sequencer" ]
   # schedule:
   #   - cron: 0 0 * * 1
   pull_request:
@@ -25,7 +25,7 @@ jobs:
         svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
         dir
         cd ~\bforartistsrepo\Bforartists
-        .\make.bat ninja release
+        .\make.bat ninja lite
         dir
         cd ~\bforartistsrepo
         dir
@@ -35,4 +35,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Bforartists-Release-${{ runner.os }}
-        path: C:/Users/runneradmin/bforartistsrepo/bfa_build_windows_Release_x64_vc17_Release/bin
+        path: C:/Users/runneradmin/bforartistsrepo/bfa_build_windows_*_x64_vc17*/bin
