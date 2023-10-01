@@ -620,7 +620,7 @@ def make_material_texture_chunk(chunk_id, texslots, pct):
 
         if socket == 'Alpha':
             mapflags |= 0x40
-            if texslot.socket_dst.identifier in {'Base Color', 'Specular'}:
+            if texslot.socket_dst.identifier in {'Base Color', 'Specular Tint'}:
                 mapflags |= 0x80 if image.colorspace_settings.name == 'Non-Color' else 0x200
 
         mat_sub_mapflags.add_variable("mapflags", _3ds_ushort(mapflags))
@@ -650,11 +650,11 @@ def make_material_texture_chunk(chunk_id, texslots, pct):
         mat_sub_angle.add_variable("mapangle", _3ds_float(round(texslot.rotation[2], 6)))
         mat_sub.add_subchunk(mat_sub_angle)
 
-        if texslot.socket_dst.identifier in {'Base Color', 'Specular'}:
+        if texslot.socket_dst.identifier in {'Base Color', 'Specular Tint'}:
             rgb = _3ds_chunk(MAP_COL1)  # Add tint color
             base = texslot.owner_shader.material.diffuse_color[:3]
             spec = texslot.owner_shader.material.specular_color[:]
-            rgb.add_variable("mapcolor", _3ds_rgb_color(spec if texslot.socket_dst.identifier == 'Specular' else base))
+            rgb.add_variable("mapcolor", _3ds_rgb_color(spec if texslot.socket_dst.identifier == 'Specular Tint' else base))
             mat_sub.add_subchunk(rgb)
 
     # Store all textures for this mapto in order. This at least is what the
@@ -698,7 +698,7 @@ def make_material_chunk(material, image):
         shading.add_variable("shading", _3ds_ushort(3))  # Phong shading
         material_chunk.add_subchunk(make_material_subchunk(MATAMBIENT, wrap.emission_color[:3]))
         material_chunk.add_subchunk(make_material_subchunk(MATDIFFUSE, wrap.base_color[:3]))
-        material_chunk.add_subchunk(make_material_subchunk(MATSPECULAR, material.specular_color[:]))
+        material_chunk.add_subchunk(make_material_subchunk(MATSPECULAR, wrap.specular_tint[:3]))
         material_chunk.add_subchunk(make_percent_subchunk(MATSHINESS, 1 - wrap.roughness))
         material_chunk.add_subchunk(make_percent_subchunk(MATSHIN2, wrap.specular))
         material_chunk.add_subchunk(make_percent_subchunk(MATSHIN3, wrap.metallic))
@@ -724,8 +724,8 @@ def make_material_chunk(material, image):
             material_chunk.add_subchunk(make_texture_chunk(MAT_DIFFUSEMAP, mxtex, mxpct))
             primary_tex = True
 
-        if wrap.specular_texture:
-            spec = [wrap.specular_texture]
+        if wrap.specular_tint_texture:
+            spec = [wrap.specular_tint_texture]
             s_pct = material.specular_intensity
             matmap = make_material_texture_chunk(MAT_SPECMAP, spec, s_pct)
             if matmap:
@@ -1211,10 +1211,10 @@ def make_track_chunk(ID, ob, ob_pos, ob_rot, ob_size):
                     track_chunk.add_variable("fov", _3ds_float(round(math.degrees(fov), 4)))
 
             elif ID == HOTSPOT_TRACK_TAG:  # Hotspot
-                beam_angle = math.degrees(ob.data.spot_size)
                 for i, frame in enumerate(kframes):
+                    beamsize = next((fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'spot_size'), ob.data.spot_size)
                     blend = next((fc.evaluate(frame) for fc in fcurves if fc is not None and fc.data_path == 'spot_blend'), ob.data.spot_blend)
-                    hot_spot = beam_angle - (blend * math.floor(beam_angle))
+                    hot_spot = math.degrees(beamsize) - (blend * math.floor(math.degrees(beamsize)))
                     track_chunk.add_variable("tcb_frame", _3ds_uint(int(frame)))
                     track_chunk.add_variable("tcb_flags", _3ds_ushort())
                     track_chunk.add_variable("hotspot", _3ds_float(round(hot_spot, 4)))
@@ -1647,14 +1647,14 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
             bg_tex = 'TEX_IMAGE', 'TEX_ENVIRONMENT'
             bg_color = next((lk.from_node.inputs[0].default_value[:3] for lk in ntree if lk.from_node.type == bgtype and lk.to_node.type in bgshade), world.color)
             bg_mixer = next((lk.from_node.type for lk in ntree if  lk.from_node.type in bgmixer and lk.to_node.type == bgtype), bgtype)
-            bg_image = next((lk.from_node.image.name for lk in ntree if lk.from_node.type in bg_tex and lk.to_node.type == bg_mixer), False)
+            bg_image = next((lk.from_node.image for lk in ntree if lk.from_node.type in bg_tex and lk.to_node.type == bg_mixer), False)
             gradient = next((lk.from_node.color_ramp.elements for lk in ntree if lk.from_node.type == 'VALTORGB' and lk.to_node.type in bgmixer), False)
             background_color_chunk.add_variable("color", _3ds_float_color(bg_color))
             background_chunk.add_subchunk(background_color_chunk)
-            if bg_image:
+            if bg_image and bg_image is not None:
                 background_image = _3ds_chunk(BITMAP)
                 background_flag = _3ds_chunk(USE_BITMAP)
-                background_image.add_variable("image", _3ds_string(sane_name(bg_image)))
+                background_image.add_variable("image", _3ds_string(sane_name(bg_image.name)))
                 object_info.add_subchunk(background_image)
             object_info.add_subchunk(background_chunk)
 
@@ -1710,7 +1710,7 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
                 object_info.add_subchunk(layerfog_chunk)
             if fognode or foglayer and layer.use_pass_mist:
                 object_info.add_subchunk(use_fog_flag)
-        if use_keyframes and world.animation_data:
+        if use_keyframes and world.animation_data or world.node_tree.animation_data:
             kfdata.add_subchunk(make_ambient_node(world))
 
     # Make a list of all materials used in the selected meshes (use dictionary, each material is added once)
@@ -1938,11 +1938,10 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
             obj_hierarchy_chunk = _3ds_chunk(OBJECT_HIERARCHY)
             obj_parent_chunk = _3ds_chunk(OBJECT_PARENT)
             obj_hierarchy_chunk.add_variable("hierarchy", _3ds_ushort(object_id[ob.name]))
-            if ob.parent is None or (ob.parent.name not in object_id):
-                obj_parent_chunk.add_variable("parent", _3ds_ushort(ROOT_OBJECT))
-            else:  # Get the parent ID from the object_id dict
+            if ob.parent is not None and (ob.parent.name in object_id):
+                obj_parent_chunk = _3ds_chunk(OBJECT_PARENT)
                 obj_parent_chunk.add_variable("parent", _3ds_ushort(object_id[ob.parent.name]))
-            obj_hierarchy_chunk.add_subchunk(obj_parent_chunk)
+                obj_hierarchy_chunk.add_subchunk(obj_parent_chunk)
             object_chunk.add_subchunk(obj_hierarchy_chunk)
 
         # Add light object and hierarchy chunks to object info
@@ -1976,11 +1975,10 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
             obj_hierarchy_chunk = _3ds_chunk(OBJECT_HIERARCHY)
             obj_parent_chunk = _3ds_chunk(OBJECT_PARENT)
             obj_hierarchy_chunk.add_variable("hierarchy", _3ds_ushort(object_id[ob.name]))
-            if ob.parent is None or (ob.parent.name not in object_id):
-                obj_parent_chunk.add_variable("parent", _3ds_ushort(ROOT_OBJECT))
-            else:  # Get the parent ID from the object_id dict
+            if ob.parent is not None and (ob.parent.name in object_id):
+                obj_parent_chunk = _3ds_chunk(OBJECT_PARENT)
                 obj_parent_chunk.add_variable("parent", _3ds_ushort(object_id[ob.parent.name]))
-            obj_hierarchy_chunk.add_subchunk(obj_parent_chunk)
+                obj_hierarchy_chunk.add_subchunk(obj_parent_chunk)
             object_chunk.add_subchunk(obj_hierarchy_chunk)
 
         # Add light object and hierarchy chunks to object info

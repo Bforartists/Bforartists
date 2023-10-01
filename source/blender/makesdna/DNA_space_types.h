@@ -617,6 +617,7 @@ typedef enum eSpaceSeq_SequencerTimelineOverlay_Flag {
   SEQ_TIMELINE_SHOW_THUMBNAILS = (1 << 2),
   /** Use #Sequence::color_tag */
   SEQ_TIMELINE_SHOW_STRIP_COLOR_TAG = (1 << 3),
+  SEQ_TIMELINE_SHOW_STRIP_RETIMING = (1 << 4),
   SEQ_TIMELINE_SHOW_FCURVES = (1 << 5),
   /** Draw all wave-forms. */
   SEQ_TIMELINE_ALL_WAVEFORMS = (1 << 7),
@@ -846,13 +847,13 @@ typedef struct FileAssetSelectParams {
    * catalog to show. */
   bUUID catalog_id;
 
-  short import_type; /* eFileAssetImportType */
+  short import_method; /* eFileAssetImportType */
   char drop_collections_as_instances; /* BFA - boolean, needed for setting #use_instance from UI before executing the drop operator*/
   char drop_collections_at_origin; /* BFA - boolean, needed for dropping collection at origin instead of cursor when #use_instance is enabled */
   char _pad2[4]; /* BFA - modified padding */
 } FileAssetSelectParams;
 
-typedef enum eFileAssetImportType {
+typedef enum eFileAssetImportMethod {
   /** Regular data-block linking. */
   FILE_ASSET_IMPORT_LINK = 0,
   /** Regular data-block appending (basically linking + "Make Local"). */
@@ -863,7 +864,7 @@ typedef enum eFileAssetImportType {
   FILE_ASSET_IMPORT_APPEND_REUSE = 2,
   /** Default: Follow the preference setting for this asset library. */
   FILE_ASSET_IMPORT_FOLLOW_PREFS = 3,
-} eFileAssetImportType;
+} eFileAssetImportMethod;
 
 /**
  * A wrapper to store previous and next folder lists (#FolderList) for a specific browse mode
@@ -1626,6 +1627,13 @@ typedef struct SpaceNode {
    * #SpaceNodeGeometryNodesType.
    */
   char geometry_nodes_type;
+
+  /**
+   * Used as the editor's top-level node group for #SNODE_GEOMETRY_TOOL. This is stored in the
+   * node editor because it isn't part of the context otherwise, and it isn't meant to be set
+   * separately from the editor's regular node group.
+   */
+  struct bNodeTree *geometry_nodes_tool_tree;
 
   /** Grease-pencil data. */
   struct bGPdata *gpd;

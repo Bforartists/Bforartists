@@ -46,7 +46,7 @@ PROMOTED_FEATURE_SETS = [
         "name": "Cessen's Rigify Extensions",
         "author": "Nathan Vegdahl",
         "description": "Collection of original legacy Rigify rigs minimally ported to the modern Rigify",
-        "warning": "This feature set is maintaned at the bare minimal level",
+        "warning": "This feature set is maintained at the bare minimal level",
         "link": "https://github.com/cessen/cessen_rigify_ext",
     }
 ]

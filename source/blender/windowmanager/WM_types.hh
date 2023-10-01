@@ -97,6 +97,7 @@ struct ID;
 struct ImBuf;
 struct bContext;
 struct bContextStore;
+struct GreasePencil;
 struct GreasePencilLayer;
 struct wmDrag;
 struct wmDropBox;
@@ -1117,7 +1118,7 @@ struct wmDragID {
 };
 
 struct wmDragAsset {
-  int import_method; /* eAssetImportType */
+  int import_method; /* eAssetImportMethod */
   const AssetRepresentationHandle *asset;
   bool drop_collections_as_instances; /* BFA - needed for setting #use_instance from UI before executing the drop operator */
   bool drop_collections_at_origin; /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled */
@@ -1154,6 +1155,7 @@ struct wmDragPath {
 };
 
 struct wmDragGreasePencilLayer {
+  GreasePencil *grease_pencil;
   GreasePencilLayer *layer;
 };
 
