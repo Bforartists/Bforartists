@@ -3182,14 +3182,36 @@ class WM_MT_splash_quick_setup(Menu):
         layout = self.layout
         layout.operator_context = 'EXEC_DEFAULT'
 
-        layout.label(text="Quick Setup")
+        old_version = bpy.types.PREFERENCES_OT_copy_prev.previous_version()
+        can_import = bpy.types.PREFERENCES_OT_copy_prev.poll(context) and old_version
 
-        split = layout.split(factor=0.14)  # Left margin.
+        if can_import:
+            layout.label(text="Import Existing Settings")
+            split = layout.split(factor=0.20)  # Left margin.
+            split.label()
+
+            split = split.split(factor=0.73)  # Content width.
+            col = split.column()
+            col.operator(
+                "preferences.copy_prev",
+                text=iface_("Load Blender %d.%d Settings", "Operator") % old_version,
+                icon='DUPLICATE',
+                translate=False,
+            )
+            col.operator(
+                "wm.url_open", text="See What's New...", icon='URL',
+            ).url = "https://wiki.blender.org/wiki/Reference/Release_Notes/4.0"
+            col.separator(factor=2.0)
+
+        if can_import:
+            layout.label(text="Create New Settings")
+        else:
+            layout.label(text="Quick Setup")
+
+        split = layout.split(factor=0.20)  # Left margin.
         split.label()
         split = split.split(factor=0.73)  # Content width.
-
         col = split.column()
-
         col.use_property_split = True
         col.use_property_decorate = False
 
@@ -3218,42 +3240,22 @@ class WM_MT_splash_quick_setup(Menu):
         if has_spacebar_action:
             col.row().prop(kc_prefs, "spacebar_action", text="Spacebar")
 
-        col.separator()
-
         # Themes.
+        col.separator()
         sub = col.column(heading="Theme")
         label = bpy.types.USERPREF_MT_interface_theme_presets.bl_label
         if label == "Presets":
             label = "Bforartists"
         sub.menu("USERPREF_MT_interface_theme_presets", text=label)
 
-        # Keep height constant.
-        if not has_select_mouse:
-            col.label()
-        if not has_spacebar_action:
-            col.label()
-
-        layout.separator(factor=2.0)
-
-        # Save settings buttons.
-        sub = layout.row()
-
-        old_version = bpy.types.PREFERENCES_OT_copy_prev.previous_version()
-        if bpy.types.PREFERENCES_OT_copy_prev.poll(context) and old_version:
-            sub.operator(
-                "preferences.copy_prev",
-                text=iface_(
-                    "Load %d.%d Settings",
-                    "Operator") %
-                old_version,
-                translate=False)
-            sub.operator("wm.save_userpref", text="Save New Settings")
+        if can_import:
+            sub.label()
+            sub.operator("wm.save_userpref", text="Save New Settings", icon='CHECKMARK')
         else:
             sub.label()
-            sub.label()
-            sub.operator("wm.save_userpref", text="Next")
+            sub.operator("wm.save_userpref", text="Continue")
 
-        layout.separator(factor=2.4)
+        layout.separator(factor=2.0)
 
 
 class WM_MT_splash(Menu):
@@ -3281,8 +3283,7 @@ class WM_MT_splash(Menu):
         if found_recent:
             col2_title.label(text="Recent Files")
         else:
-
-            # Links if no recent files
+            # Links if no recent files.
             col2_title.label(text="Getting Started")
 
             col2.operator("wm.url_open", text="Manual",
@@ -3326,7 +3327,7 @@ class WM_MT_splash_about(Menu):
 
         col = split.column(align=True)
         col.scale_y = 0.8
-        col.label(text=bpy.app.version_string, translate=False)
+        col.label(text=iface_("Version: %s") % bpy.app.version_string, translate=False)
         col.separator(factor=2.5)
         col.label(text=iface_("Date: %s %s") % (bpy.app.build_commit_date.decode('utf-8', 'replace'),
                                                 bpy.app.build_commit_time.decode('utf-8', 'replace')), translate=False)
@@ -3347,12 +3348,13 @@ class WM_MT_splash_about(Menu):
 
         col = split.column(align=True)
         col.emboss = 'PULLDOWN_MENU'
-        col.operator("wm.url_open_preset", text="Release Notes", icon='URL').type = 'RELEASE_NOTES'
+        col.operator("wm.url_open_preset", text="Donate", icon='FUND').type = 'FUND'
+        col.operator("wm.url_open_preset", text="What's New", icon='URL').type = 'RELEASE_NOTES'
+        col.separator(factor=2.0)
         col.operator("wm.url_open_preset", text="Credits", icon='URL').type = 'CREDITS'
         col.operator("wm.url_open", text="License", icon='URL').url = "https://www.blender.org/about/license/"
-        col.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'
         col.operator("wm.url_open", text="Blender Store", icon='URL').url = "https://store.blender.org"
-        col.operator("wm.url_open_preset", text="Development Fund", icon='FUND').type = 'FUND'
+        col.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'
 
 
 class WM_MT_region_toggle_pie(Menu):

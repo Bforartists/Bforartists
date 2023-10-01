@@ -79,7 +79,7 @@
 #include "BKE_packedFile.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 #include "BKE_sound.h"
 #include "BKE_undo_system.h"
 #include "BKE_workspace.h"
@@ -692,6 +692,8 @@ static void wm_file_read_post(bContext *C,
     CTX_wm_window_set(C, static_cast<wmWindow *>(wm->windows.first));
   }
 
+  WM_cursor_wait(true);
+
 #ifdef WITH_PYTHON
   if (is_startup_file) {
     /* On startup (by default), Python won't have been initialized.
@@ -818,6 +820,8 @@ static void wm_file_read_post(bContext *C,
       WM_toolsystem_init(C);
     }
   }
+
+  WM_cursor_wait(false);
 }
 
 static void wm_read_callback_pre_wrapper(bContext *C, const char *filepath)
@@ -1067,6 +1071,7 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
       bf_reports.duration.whole = PIL_check_seconds_timer() - bf_reports.duration.whole;
       file_read_reports_finalize(&bf_reports);
 
+      WM_cursor_wait(true);
       success = true;
     }
   }
@@ -1170,6 +1175,8 @@ void wm_homefile_read_ex(bContext *C,
   bool filepath_startup_is_factory = true;
   char filepath_startup[FILE_MAX];
   char filepath_userdef[FILE_MAX];
+
+  WM_cursor_wait(true);
 
   /* When 'app_template' is set:
    * '{BLENDER_USER_CONFIG}/{app_template}' */
@@ -1488,6 +1495,8 @@ void wm_homefile_read_ex(bContext *C,
       CTX_wm_window_set(C, nullptr);
     }
   }
+
+  WM_cursor_wait(false);
 }
 
 void wm_homefile_read(bContext *C,
@@ -1871,13 +1880,6 @@ static bool wm_file_write_check_with_report_on_failure(Main *bmain,
     return false;
   }
 
-  /* Check if file write permission is ok */
-  if (BLI_exists(filepath) && !BLI_file_is_writable(filepath)) {
-    BKE_reportf(
-        reports, RPT_ERROR, "Cannot save blend file, path \"%s\" is not writable", filepath);
-    return false;
-  }
-
   LISTBASE_FOREACH (Library *, li, &bmain->libraries) {
     if (BLI_path_cmp(li->filepath_abs, filepath) == 0) {
       BKE_reportf(reports, RPT_ERROR, "Cannot overwrite used library '%.240s'", filepath);
@@ -1916,6 +1918,16 @@ static bool wm_file_write(bContext *C,
   /* NOTE: either #BKE_CB_EVT_SAVE_POST or #BKE_CB_EVT_SAVE_POST_FAIL must run.
    * Runs at the end of this function, don't return beforehand. */
   BKE_callback_exec_string(bmain, BKE_CB_EVT_SAVE_PRE, filepath);
+
+  /* Check if file write permission is OK. */
+  if (BLI_exists(filepath) && !BLI_file_is_writable(filepath)) {
+    BKE_reportf(
+        reports, RPT_ERROR, "Cannot save blend file, path \"%s\" is not writable", filepath);
+
+    BKE_callback_exec_string(bmain, BKE_CB_EVT_SAVE_POST_FAIL, filepath);
+    return false;
+  }
+
   ED_assets_pre_save(bmain);
 
   /* Enforce full override check/generation on file save. */
@@ -2439,6 +2451,11 @@ static int wm_userpref_read_exec(bContext *C, wmOperator *op)
   if (use_factory_settings) {
     U.runtime.is_dirty = true;
   }
+
+  /* Ensure the correct icon textures are loaded. When the current theme didn't had an
+   * #icon_border_intensity, but the loaded theme has, the icon with border intensity needs to be
+   * loaded. */
+  UI_icons_reload_internal_textures();
 
   BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
 

@@ -1073,7 +1073,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
             core_shader = node_tree.nodes.new('ShaderNodeBsdfPrincipled')
             core_shader.inputs['Emission Strength'].default_value = self.emit_strength
             core_shader.inputs['Base Color'].default_value = (0.0, 0.0, 0.0, 1.0)
-            core_shader.inputs['Specular'].default_value = 0.0
+            core_shader.inputs['Specular IOR Level'].default_value = 0.0
 
         # Connect color from texture
         if self.shader in {'PRINCIPLED', 'SHADELESS'}:

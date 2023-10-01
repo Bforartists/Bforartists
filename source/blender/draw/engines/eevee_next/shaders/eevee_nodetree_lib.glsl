@@ -32,6 +32,9 @@ float g_volume_absorption_rand;
  */
 bool closure_select(float weight, inout float total_weight, inout float r)
 {
+  if (weight < 1e-5) {
+    return false;
+  }
   total_weight += weight;
   float x = weight / total_weight;
   bool chosen = (r < x);
@@ -297,6 +300,37 @@ vec2 brdf_lut(float cos_theta, float roughness)
 #endif
 }
 
+void brdf_f82_tint_lut(vec3 F0,
+                       vec3 F82,
+                       float cos_theta,
+                       float roughness,
+                       bool do_multiscatter,
+                       out vec3 reflectance)
+{
+#ifdef EEVEE_UTILITY_TX
+  vec3 split_sum = utility_tx_sample_lut(utility_tx, cos_theta, roughness, UTIL_BSDF_LAYER).rgb;
+#else
+  vec3 split_sum = vec2(1.0, 0.0, 0.0);
+#endif
+
+  reflectance = do_multiscatter ? F_brdf_multi_scatter(F0, vec3(1.0), split_sum.xy) :
+                                  F_brdf_single_scatter(F0, vec3(1.0), split_sum.xy);
+
+  /* Precompute the F82 term factor for the Fresnel model.
+   * In the classic F82 model, the F82 input directly determines the value of the Fresnel
+   * model at ~82°, similar to F0 and F90.
+   * With F82-Tint, on the other hand, the value at 82° is the value of the classic Schlick
+   * model multiplied by the tint input.
+   * Therefore, the factor follows by setting `F82Tint(cosI) = FSchlick(cosI) - b*cosI*(1-cosI)^6`
+   * and `F82Tint(acos(1/7)) = FSchlick(acos(1/7)) * f82_tint` and solving for `b`. */
+  const float f = 6.0 / 7.0;
+  const float f5 = (f * f) * (f * f) * f;
+  const float f6 = (f * f) * (f * f) * (f * f);
+  vec3 F_schlick = mix(F0, vec3(1.0), f5);
+  vec3 b = F_schlick * (7.0 / f6) * (1.0 - F82);
+  reflectance -= b * split_sum.z;
+}
+
 /* Return texture coordinates to sample BSDF LUT. */
 vec3 lut_coords_bsdf(float cos_theta, float roughness, float ior)
 {
@@ -320,26 +354,37 @@ vec3 lut_coords_btdf(float cos_theta, float roughness, float ior)
   return vec3(sqrt((ior - 1.0) / (ior + 1.0)), sqrt(1.0 - cos_theta), roughness);
 }
 
-/* Computes the reflectance and transmittance based on the BSDF LUT. */
-vec2 bsdf_lut(float cos_theta, float roughness, float ior, float do_multiscatter)
+/* Computes the reflectance and transmittance based on the tint (`f0`, `f90`, `transmission_tint`)
+ * and the BSDF LUT. */
+void bsdf_lut(vec3 F0,
+              vec3 F90,
+              vec3 transmission_tint,
+              float cos_theta,
+              float roughness,
+              float ior,
+              bool do_multiscatter,
+              out vec3 reflectance,
+              out vec3 transmittance)
 {
 #ifdef EEVEE_UTILITY_TX
   if (ior == 1.0) {
-    return vec2(0.0, 1.0);
+    reflectance = vec3(0.0);
+    transmittance = transmission_tint;
+    return;
   }
 
   vec2 split_sum;
   float transmission_factor;
-  float F0 = F0_from_ior(ior);
-  float F90 = 1.0;
 
-  if (ior >= 1.0) {
+  if (ior > 1.0) {
     split_sum = brdf_lut(cos_theta, roughness);
     vec3 coords = lut_coords_btdf(cos_theta, roughness, ior);
     transmission_factor = utility_tx_sample_bsdf_lut(utility_tx, coords.xy, coords.z).a;
     /* Gradually increase `f90` from 0 to 1 when IOR is in the range of [1.0, 1.33], to avoid harsh
      * transition at `IOR == 1`. */
-    F90 = saturate(2.33 / 0.33 * (ior - 1.0) / (ior + 1.0));
+    if (all(equal(F90, vec3(1.0)))) {
+      F90 = vec3(saturate(2.33 / 0.33 * (ior - 1.0) / (ior + 1.0)));
+    }
   }
   else {
     vec3 coords = lut_coords_bsdf(cos_theta, roughness, ior);
@@ -348,23 +393,44 @@ vec2 bsdf_lut(float cos_theta, float roughness, float ior, float do_multiscatter
     transmission_factor = bsdf.b;
   }
 
-  float reflectance = F_brdf_single_scatter(vec3(F0), vec3(F90), split_sum).r;
-  float transmittance = (1.0 - F0) * transmission_factor;
+  reflectance = F_brdf_single_scatter(F0, F90, split_sum);
+  transmittance = (vec3(1.0) - F0) * transmission_factor * transmission_tint;
 
-  if (do_multiscatter != 0.0) {
-    float Ess = F0 * split_sum.x + split_sum.y + (1.0 - F0) * transmission_factor;
-    /* TODO: maybe add saturation for higher roughness similar as in `F_brdf_multi_scatter()`.
-     * However, it is not necessarily desirable that the users see a different color than they
-     * picked. */
-    float scale = 1.0 / Ess;
+  if (do_multiscatter) {
+    float real_F0 = F0_from_ior(ior);
+    float Ess = real_F0 * split_sum.x + split_sum.y + (1.0 - real_F0) * transmission_factor;
+    float Ems = 1.0 - Ess;
+    /* Assume that the transmissive tint makes up most of the overall color if it's not zero. */
+    vec3 Favg = all(equal(transmission_tint, vec3(0.0))) ? F0 + (F90 - F0) / 21.0 :
+                                                           transmission_tint;
+
+    vec3 scale = 1.0 / (1.0 - Ems * Favg);
     reflectance *= scale;
     transmittance *= scale;
   }
-
-  return vec2(reflectance, transmittance);
 #else
-  return vec2(0.0);
+  reflectance = vec3(0.0);
+  transmittance = vec3(0.0);
 #endif
+  return;
+}
+
+/* Computes the reflectance and transmittance based on the BSDF LUT. */
+vec2 bsdf_lut(float cos_theta, float roughness, float ior, bool do_multiscatter)
+{
+  float F0 = F0_from_ior(ior);
+  vec3 color = vec3(1.0);
+  vec3 reflectance, transmittance;
+  bsdf_lut(vec3(F0),
+           color,
+           color,
+           cos_theta,
+           roughness,
+           ior,
+           do_multiscatter,
+           reflectance,
+           transmittance);
+  return vec2(reflectance.r, transmittance.r);
 }
 
 #ifdef EEVEE_MATERIAL_STUBS

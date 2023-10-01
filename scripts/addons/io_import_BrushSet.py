@@ -11,7 +11,7 @@ from bpy.props import (
 bl_info = {
     "name": "Import BrushSet",
     "author": "Daniel Grauer (kromar), CansecoGPC",
-    "version": (1, 3, 0),
+    "version": (1, 3, 1),
     "blender": (2, 80, 0),
     "location": "File > Import > BrushSet",
     "description": "Imports all image files from a folder.",
@@ -60,6 +60,16 @@ class BrushSetImporter(bpy.types.Operator):
     '''Load Brush Set'''
     bl_idname = "import_image.brushset"
     bl_label = "Import BrushSet"
+
+
+    # creating a temporary filter to avoid overriding the users filters
+    temp_filters: bool = True
+    def draw(self, context):
+        if self.temp_filters:
+            context.space_data.params.use_filter = True
+            context.space_data.params.use_filter_folder = True  
+            context.space_data.params.use_filter_image = True  
+            self.temp_filters = False
 
     directory: StringProperty(
         name="Directory",

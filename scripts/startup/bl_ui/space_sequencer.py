@@ -239,7 +239,7 @@ class SEQUENCER_PT_overlay(Panel):
 class SEQUENCER_PT_preview_overlay(Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'HEADER'
-    bl_parent_id = 'SEQUENCER_PT_overlay'
+    bl_parent_id = "SEQUENCER_PT_overlay"
     bl_label = "Preview Overlays"
 
     @classmethod
@@ -265,7 +265,7 @@ class SEQUENCER_PT_preview_overlay(Panel):
 class SEQUENCER_PT_sequencer_overlay(Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'HEADER'
-    bl_parent_id = 'SEQUENCER_PT_overlay'
+    bl_parent_id = "SEQUENCER_PT_overlay"
     bl_label = "Sequencer Overlays"
 
     @classmethod
@@ -289,6 +289,7 @@ class SEQUENCER_PT_sequencer_overlay(Panel):
 
         layout.prop(overlay_settings, "show_strip_offset", text="Offsets")
         layout.prop(overlay_settings, "show_fcurves", text="F-Curves")
+        layout.prop(overlay_settings, "show_strip_retiming", text="Retiming")
         layout.prop(overlay_settings, "show_thumbnails", text="Thumbnails")
         layout.prop(overlay_settings, "show_grid", text="Grid")
 
@@ -983,6 +984,52 @@ class SEQUENCER_MT_strip_movie(Menu):
         layout.operator("sequencer.deinterlace_selected_movies", icon='SEQ_DEINTERLACE')
 
 
+class SEQUENCER_MT_strip_retiming(Menu):
+    bl_label = "Retiming"
+
+    def draw_strip_context(self, context):
+        layout = self.layout
+        strip = context.active_sequence_strip
+
+        layout.operator("sequencer.retiming_key_add")
+        layout.operator("sequencer.retiming_freeze_frame_add")
+        layout.separator()
+
+        layout.operator("sequencer.retiming_reset")
+        layout.separator()
+
+        layout.operator("sequencer.retiming_segment_speed_set")
+        layout.operator(
+            "sequencer.retiming_show",
+            icon='CHECKBOX_HLT' if (strip and strip.show_retiming_keys) else 'CHECKBOX_DEHLT',
+        )
+
+    def draw_retiming_context(self, context):
+        layout = self.layout
+
+        layout.operator("sequencer.retiming_key_add")
+        layout.operator("sequencer.retiming_freeze_frame_add")
+        layout.operator("sequencer.retiming_transition_add")
+        layout.separator()
+
+        layout.operator("sequencer.delete")
+        layout.separator()
+
+        layout.operator("sequencer.select_box")
+        layout.operator("sequencer.select_all")
+        layout.separator()
+
+        layout.operator("sequencer.retiming_segment_speed_set")
+        layout.operator("sequencer.retiming_show", icon='CHECKBOX_HLT')
+
+    def draw(self, context):
+        ed = context.scene.sequence_editor
+        if ed.selected_retiming_keys:
+            self.draw_retiming_context(context)
+        else:
+            self.draw_strip_context(context)
+
+
 class SEQUENCER_MT_strip(Menu):
     bl_label = "Strip"
 
@@ -992,19 +1039,26 @@ class SEQUENCER_MT_strip(Menu):
         has_sequencer, _has_preview = _space_view_types(st)
 
         layout.menu("SEQUENCER_MT_strip_transform")
-        layout.separator()
 
         if has_sequencer:
-            layout.operator("sequencer.split", text="Split", icon='CUT').type = 'SOFT'
-            layout.operator("sequencer.split", text="Hold Split", icon='HOLD_SPLIT').type = 'HARD'
+            layout.menu("SEQUENCER_MT_strip_retiming")
+            layout.separator()
+
+            props = layout.operator("sequencer.split", text="Split", icon='CUT')
+            props.type = 'SOFT'
+            props.side = 'RIGHT'
+
+            props = layout.operator("sequencer.split", text="Hold Split", icon='HOLD_SPLIT')
+            props.type = 'HARD'
+            props.side = 'RIGHT'
 
             layout.separator()
 
-        if has_sequencer:
             layout.operator("sequencer.copy", text="Copy", icon='COPYDOWN')
             layout.operator("sequencer.paste", text="Paste", icon='PASTEDOWN')
             layout.operator("sequencer.duplicate_move", icon='DUPLICATE')
 
+        layout.separator()
         layout.operator("sequencer.delete", text="Delete", icon='DELETE')
 
         strip = context.active_sequence_strip
@@ -1118,10 +1172,23 @@ class SEQUENCER_MT_image_apply(Menu):
         layout.operator("sequencer.strip_transform_fit", text="Stretch To Fill", icon = "VIEW_STRETCH").fit_method = 'STRETCH'
 
 
-class SEQUENCER_MT_context_menu(Menu):
-    bl_label = "Sequencer Context Menu"
+class SEQUENCER_MT_retiming(Menu):
+    bl_label = "Retiming"
+    bl_translation_context = i18n_contexts.operator_default
 
     def draw(self, context):
+
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        layout.operator("sequencer.retiming_key_add")
+        layout.operator("sequencer.retiming_freeze_frame_add")
+
+
+class SEQUENCER_MT_context_menu(Menu):
+    bl_label = "Sequencer"
+
+    def draw_generic(self, context):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
@@ -1161,8 +1228,6 @@ class SEQUENCER_MT_context_menu(Menu):
         layout.operator("sequencer.gap_insert", icon = "SEQ_INSERT_GAPS")
 
         layout.separator()
-
-        strip = context.active_sequence_strip
 
         if strip:
             strip_type = strip.type
@@ -1224,9 +1289,31 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.menu("SEQUENCER_MT_strip_lock_mute")
 
+    def draw_retime(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        if context.scene.sequence_editor.selected_retiming_keys:
+            layout.operator("sequencer.retiming_freeze_frame_add")
+            layout.operator("sequencer.retiming_transition_add")
+            layout.separator()
+
+            layout.operator("sequencer.retiming_segment_speed_set")
+            layout.separator()
+
+            layout.operator("sequencer.retiming_key_remove")
+
+    def draw(self, context):
+        ed = context.scene.sequence_editor
+        if ed.selected_retiming_keys:
+
+            self.draw_retime(context)
+        else:
+            self.draw_generic(context)
+
 
 class SEQUENCER_MT_preview_context_menu(Menu):
-    bl_label = "Sequencer Preview Context Menu"
+    bl_label = "Sequencer Preview"
 
     def draw(self, context):
         layout = self.layout
@@ -1239,11 +1326,6 @@ class SEQUENCER_MT_preview_context_menu(Menu):
 
         # TODO: support in preview.
         # layout.operator("sequencer.delete", text="Delete")
-
-        strip = context.active_sequence_strip
-
-        if strip:
-            pass
 
 
 class SEQUENCER_MT_pivot_pie(Menu):
@@ -2924,6 +3006,7 @@ classes = (
     SEQUENCER_MT_strip_movie,
     SEQUENCER_MT_strip,
     SEQUENCER_MT_strip_transform,
+    SEQUENCER_MT_strip_retiming,
     SEQUENCER_MT_strip_input,
     SEQUENCER_MT_strip_lock_mute,
     SEQUENCER_MT_image,
@@ -2934,6 +3017,7 @@ classes = (
     SEQUENCER_MT_context_menu,
     SEQUENCER_MT_preview_context_menu,
     SEQUENCER_MT_pivot_pie,
+    SEQUENCER_MT_retiming,
     SEQUENCER_MT_view_pie,
     SEQUENCER_MT_preview_view_pie,
 
