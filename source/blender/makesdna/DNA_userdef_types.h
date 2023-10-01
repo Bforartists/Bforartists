@@ -710,11 +710,10 @@ typedef struct UserDef_Experimental {
   char use_grease_pencil_version3;
   char enable_overlay_next;
   char use_new_volume_nodes;
-  char use_node_group_operators;
   char use_shader_node_previews;
   char use_extension_repos;
 
-  char _pad[1];
+  char _pad[2];
   /** `makesdna` does not allow empty structs. */
 } UserDef_Experimental;
 
@@ -1088,7 +1087,7 @@ typedef enum eUserPref_SpaceData_Flag {
 typedef enum eUserPref_Flag {
   USER_AUTOSAVE = (1 << 0),
   USER_FLAG_NUMINPUT_ADVANCED = (1 << 1),
-  USER_FLAG_UNUSED_2 = (1 << 2), /* cleared */
+  USER_FLAG_RECENT_SEARCHES_DISABLE = (1 << 2),
   USER_FLAG_UNUSED_3 = (1 << 3), /* cleared */
   USER_FLAG_UNUSED_4 = (1 << 4), /* cleared */
   USER_TRACKBALL = (1 << 5),
@@ -1343,6 +1342,8 @@ typedef enum eText_Draw_Options {
   USER_TEXT_HINTING_NONE = (1 << 1),
   USER_TEXT_HINTING_SLIGHT = (1 << 2),
   USER_TEXT_HINTING_FULL = (1 << 3),
+
+  USER_TEXT_RENDER_SUBPIXELAA = (1 << 4),
 } eText_Draw_Options;
 
 /**

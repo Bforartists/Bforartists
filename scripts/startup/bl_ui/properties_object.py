@@ -446,7 +446,7 @@ class OBJECT_PT_motion_paths_display(MotionPathButtonsPanel_display, Panel):
 class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
     bl_label = "Visibility"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -477,6 +477,13 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         row.separator()
         row.prop(ob, "hide_render", text = "Renders", toggle=False, invert_checkbox=True)
         row.prop_decorator(ob, "hide_render")
+
+        if context.engine == 'BLENDER_EEVEE_NEXT':
+            if ob.type in ('MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'CURVES', 'POINTCLOUD', 'VOLUME', 'LIGHT'):
+                layout.separator()
+                col = layout.column(heading="Light Probes")
+                col.prop(ob, "hide_probe_volume", text="Volume", toggle=False, invert_checkbox=True)
+                col.prop(ob, "hide_probe_cubemap", text="Cubemap", toggle=False, invert_checkbox=True)
 
         if ob.type == 'GPENCIL':
 

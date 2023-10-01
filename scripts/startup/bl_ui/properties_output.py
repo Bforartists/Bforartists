@@ -49,7 +49,8 @@ class RENDER_PT_format(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     _frame_rate_args_prev = None
     _preset_class = None
@@ -146,7 +147,8 @@ class RENDER_PT_frame_range(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     def draw(self, context):
         layout = self.layout
@@ -173,7 +175,8 @@ class RENDER_PT_time_stretching(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     def draw(self, context):
         layout = self.layout
@@ -194,7 +197,8 @@ class RENDER_PT_post_processing(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     def draw(self, context):
         layout = self.layout
@@ -222,7 +226,8 @@ class RENDER_PT_stamp(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     def draw(self, context):
         layout = self.layout
@@ -287,7 +292,8 @@ class RENDER_PT_stamp_note(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     def draw_header(self, context):
         rd = context.scene.render
@@ -311,7 +317,8 @@ class RENDER_PT_stamp_burn(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     def draw_header(self, context):
         rd = context.scene.render
@@ -343,7 +350,8 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     def draw(self, context):
         layout = self.layout
@@ -407,7 +415,8 @@ class RENDER_PT_output_views(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     @classmethod
     def poll(cls, context):
@@ -431,7 +440,8 @@ class RENDER_PT_output_color_management(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     def draw(self, context):
         scene = context.scene
@@ -471,7 +481,8 @@ class RENDER_PT_encoding(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     def draw_header_preset(self, _context):
         RENDER_PT_ffmpeg_presets.draw_panel_header(self.layout)
@@ -501,7 +512,8 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     @classmethod
     def poll(cls, context):
@@ -587,7 +599,8 @@ class RENDER_PT_encoding_audio(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
 
     @classmethod
     def poll(cls, context):
@@ -633,7 +646,8 @@ class RENDER_PT_stereoscopy(RenderOutputButtonsPanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'}
+        'BLENDER_WORKBENCH',
+    }
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):

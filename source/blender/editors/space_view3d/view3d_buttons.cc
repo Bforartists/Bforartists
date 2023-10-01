@@ -43,7 +43,7 @@
 #include "BKE_object.h"
 #include "BKE_object_deform.h"
 #include "BKE_report.h"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 
 #include "DEG_depsgraph.hh"
 
@@ -1299,7 +1299,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
       }
     }
 
-    /*      ED_undo_push(C, "Transform properties"); */
+    // ED_undo_push(C, "Transform properties");
   }
 }
 

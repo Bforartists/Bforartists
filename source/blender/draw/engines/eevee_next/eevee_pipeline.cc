@@ -114,16 +114,17 @@ void WorldPipeline::render(View &view)
 
 void WorldVolumePipeline::sync(GPUMaterial *gpumat)
 {
+  is_valid_ = GPU_material_status(gpumat) == GPU_MAT_SUCCESS;
+  if (!is_valid_) {
+    /* Skip if the material has not compiled yet. */
+    return;
+  }
+
   world_ps_.init();
   world_ps_.state_set(DRW_STATE_WRITE_COLOR);
   inst_.bind_uniform_data(&world_ps_);
   inst_.volume.bind_properties_buffers(world_ps_);
   inst_.sampling.bind_resources(&world_ps_);
-
-  if (GPU_material_status(gpumat) != GPU_MAT_SUCCESS) {
-    /* Skip if the material has not compiled yet. */
-    return;
-  }
 
   world_ps_.material_set(*inst_.manager, gpumat);
   volume_sub_pass(world_ps_, nullptr, nullptr, gpumat);
@@ -135,6 +136,11 @@ void WorldVolumePipeline::sync(GPUMaterial *gpumat)
 
 void WorldVolumePipeline::render(View &view)
 {
+  if (!is_valid_) {
+    /* Skip if the material has not compiled yet. */
+    return;
+  }
+
   inst_.manager->submit(world_ps_, view);
 }
 
@@ -589,10 +595,6 @@ void DeferredLayer::render(View &main_view,
 
   inst_.manager->submit(eval_light_ps_, render_view);
 
-  if (closure_bits_ & CLOSURE_SSS) {
-    inst_.subsurface.render(render_view, combined_fb, direct_diffuse_tx_);
-  }
-
   RayTraceResult diffuse_result = inst_.raytracing.trace(rt_buffer,
                                                          radiance_feedback_tx_,
                                                          radiance_feedback_persmat_,
@@ -612,6 +614,8 @@ void DeferredLayer::render(View &main_view,
   indirect_diffuse_tx_ = diffuse_result.get();
   indirect_reflect_tx_ = reflect_result.get();
   indirect_refract_tx_ = refract_result.get();
+
+  inst_.subsurface.render(direct_diffuse_tx_, indirect_diffuse_tx_, closure_bits_, render_view);
 
   GPU_framebuffer_bind(combined_fb);
   inst_.manager->submit(combine_ps_);

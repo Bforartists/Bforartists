@@ -264,7 +264,7 @@ def add_texture_to_material(image, contextWrapper, pct, extend, alpha, scale, of
         links.new(img_wrap.node_image.outputs['Color'], mixer.inputs[2])
         links.new(mixer.outputs['Color'], shader.inputs['Base Color'])
     elif mapto == 'SPECULARITY':
-        img_wrap = contextWrapper.specular_texture
+        img_wrap = contextWrapper.specular_tint_texture
     elif mapto == 'ALPHA':
         shader.location = (0, -300)
         img_wrap = contextWrapper.alpha_texture
@@ -527,6 +527,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         contextWrapper.metallic = contextMaterial.metallic
         contextWrapper.roughness = contextMaterial.roughness
         contextWrapper.specular = contextMaterial.specular_intensity
+        contextWrapper.specular_tint = contextMaterial.specular_color[:]
         contextWrapper.emission_color = contextMaterial.line_color[:3]
         contextWrapper.emission_strength = contextMaterial.line_priority / 100
         contextWrapper.alpha = contextMaterial.diffuse_color[3] = contextAlpha
@@ -1000,6 +1001,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 contextWrapper.metallic = contextMaterial.metallic
                 contextWrapper.roughness = contextMaterial.roughness
                 contextWrapper.specular = contextMaterial.specular_intensity
+                contextWrapper.specular_tint = contextMaterial.specular_color[:]
                 contextWrapper.emission_color = contextMaterial.line_color[:3]
                 contextWrapper.emission_strength = contextMaterial.line_priority / 100
                 contextWrapper.alpha = contextMaterial.diffuse_color[3] = contextAlpha
