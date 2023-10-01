@@ -43,7 +43,8 @@ def geometry_node_group_empty_modifier_new(name):
 
 def geometry_node_group_empty_tool_new(context):
     group = geometry_node_group_empty_new(data_("Tool"))
-    group.asset_mark()
+    # Node tools have fake users by default, otherwise Blender will delete them since they have no users.
+    group.use_fake_user = True
     group.is_tool = True
 
     ob_type = context.object.type if context.object else 'MESH'
@@ -294,7 +295,7 @@ class NewGeometryNodeTreeAssign(Operator):
 
 
 class NewGeometryNodeGroupTool(Operator):
-    """Create a new geometry node group for an tool"""
+    """Create a new geometry node group for a tool"""
     bl_idname = "node.new_geometry_node_group_tool"
     bl_label = "New Geometry Node Tool Group"
     bl_options = {'REGISTER', 'UNDO'}
@@ -306,7 +307,7 @@ class NewGeometryNodeGroupTool(Operator):
 
     def execute(self, context):
         group = geometry_node_group_empty_tool_new(context)
-        context.space_data.node_tree = group
+        context.space_data.geometry_nodes_tool_tree = group
         return {'FINISHED'}
 
 

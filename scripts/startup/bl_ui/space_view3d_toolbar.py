@@ -765,7 +765,6 @@ class VIEW3D_PT_slots_vertex_groups(Panel):
 
 class VIEW3D_PT_mask(View3DPanel, Panel):
     bl_category = "Tool"
-    bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_label = "Masking"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1811,7 +1810,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_settings(Panel, View3DPanel, GreasePen
 class VIEW3D_PT_tools_grease_pencil_brush_advanced(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
     bl_label = "Advanced"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_settings'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brush_settings"
     bl_category = "Tool"
     bl_options = {'DEFAULT_CLOSED'}
     bl_ui_units_x = 13
@@ -1892,7 +1891,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_advanced(View3DPanel, Panel):
 
 class VIEW3D_PT_tools_grease_pencil_brush_stroke(Panel, View3DPanel):
     bl_context = ".greasepencil_paint"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_settings'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brush_settings"
     bl_label = "Stroke"
     bl_category = "Tool"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1911,7 +1910,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_stroke(Panel, View3DPanel):
 
 class VIEW3D_PT_tools_grease_pencil_brush_stabilizer(Panel, View3DPanel):
     bl_context = ".greasepencil_paint"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_stroke'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brush_stroke"
     bl_label = "Stabilize Stroke"
     bl_category = "Tool"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1945,7 +1944,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_stabilizer(Panel, View3DPanel):
 
 class VIEW3D_PT_tools_grease_pencil_brush_post_processing(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_stroke'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brush_stroke"
     bl_label = "Post-Processing"
     bl_category = "Tool"
     bl_options = {'DEFAULT_CLOSED'}
@@ -2004,7 +2003,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_post_processing(View3DPanel, Panel):
 
 class VIEW3D_PT_tools_grease_pencil_brush_random(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_stroke'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brush_stroke"
     bl_label = "Randomize"
     bl_category = "Tool"
     bl_options = {'DEFAULT_CLOSED'}
@@ -2121,7 +2120,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_paint_falloff(GreasePencilBrushFalloff
 
 class VIEW3D_PT_tools_grease_pencil_brush_gap_closure(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_advanced'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brush_advanced"
     bl_label = "Gap Closure"
     bl_category = "Tool"
 
@@ -2229,7 +2228,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_sculpt_falloff(GreasePencilBrushFallof
 class VIEW3D_PT_tools_grease_pencil_sculpt_brush_advanced(GreasePencilSculptAdvancedPanel, View3DPanel, Panel):
     bl_context = ".greasepencil_sculpt"
     bl_label = "Advanced"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_sculpt_settings'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_sculpt_settings"
     bl_category = "Tool"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2327,7 +2326,7 @@ class VIEW3D_PT_tools_grease_pencil_weight_paint_settings(Panel, View3DPanel, Gr
 
 class VIEW3D_PT_tools_grease_pencil_brush_weight_falloff(GreasePencilBrushFalloff, Panel, View3DPaintPanel):
     bl_context = ".greasepencil_weight"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_weight_paint_settings'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_weight_paint_settings"
     bl_label = "Falloff"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2470,7 +2469,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_vertex_palette(View3DPanel, Panel):
     bl_context = ".greasepencil_vertex"
     bl_label = "Palette"
     bl_category = "Tool"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_vertex_color'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brush_vertex_color"
 
     @classmethod
     def poll(cls, context):
@@ -2569,7 +2568,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_mix_palette(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
     bl_label = "Palette"
     bl_category = "Tool"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_mixcolor'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brush_mixcolor"
 
     @classmethod
     def poll(cls, context):
@@ -2614,7 +2613,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_mix_palette(View3DPanel, Panel):
 # Grease Pencil Brush Appearance (one for each mode)
 class VIEW3D_PT_tools_grease_pencil_paint_appearance(GreasePencilDisplayPanel, Panel, View3DPanel):
     bl_context = ".greasepencil_paint"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_settings'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brush_settings"
     bl_label = "Cursor"
     bl_category = "Tool"
     bl_ui_units_x = 15
@@ -2622,21 +2621,21 @@ class VIEW3D_PT_tools_grease_pencil_paint_appearance(GreasePencilDisplayPanel, P
 
 class VIEW3D_PT_tools_grease_pencil_sculpt_appearance(GreasePencilDisplayPanel, Panel, View3DPanel):
     bl_context = ".greasepencil_sculpt"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_sculpt_settings'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_sculpt_settings"
     bl_label = "Cursor"
     bl_category = "Tool"
 
 
 class VIEW3D_PT_tools_grease_pencil_weight_appearance(GreasePencilDisplayPanel, Panel, View3DPanel):
     bl_context = ".greasepencil_weight"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_weight_paint_settings'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_weight_paint_settings"
     bl_category = "Tool"
     bl_label = "Cursor"
 
 
 class VIEW3D_PT_tools_grease_pencil_vertex_appearance(GreasePencilDisplayPanel, Panel, View3DPanel):
     bl_context = ".greasepencil_vertex"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_vertex_paint_settings'
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_vertex_paint_settings"
     bl_category = "Tool"
     bl_label = "Cursor"
 

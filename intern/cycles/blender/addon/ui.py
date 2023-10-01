@@ -394,7 +394,8 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         col.prop(cscene, "sample_offset")
 
         col = layout.column(align=True)
-        col.active = cscene.sampling_pattern == 'TABULATED_SOBOL'
+        # Tabulated Sobol is used when the debug UI is turned off.
+        col.active = cscene.sampling_pattern == 'TABULATED_SOBOL' or not CyclesDebugButtonsPanel.poll(context)
         col.label(text="Scrambling Distance")
         row = col.row()
         row.use_property_split = False

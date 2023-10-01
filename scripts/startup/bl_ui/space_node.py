@@ -156,8 +156,9 @@ class NODE_HT_header(Header):
 
                 # layout.separator_spacer()
 
-                types_that_support_material = {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META',
-                                               'GPENCIL', 'VOLUME', 'CURVES', 'POINTCLOUD'}
+                types_that_support_material = {
+                    'MESH', 'CURVE', 'SURFACE', 'FONT', 'META', 'GPENCIL', 'VOLUME', 'CURVES', 'POINTCLOUD',
+                }
                 # disable material slot buttons when pinned, cannot find correct slot within id_from (#36589)
                 # disable also when the selected object does not support materials
                 has_material_slots = not snode.pin and ob_type in types_that_support_material
@@ -238,9 +239,7 @@ class NODE_HT_header(Header):
             row.operator("wm.switch_editor_in_geometry", text="", icon='GEOMETRY_NODES_ACTIVE')
             row.operator("wm.switch_editor_to_shadereditor", text="", icon='NODE_MATERIAL')
 
-            if context.preferences.experimental.use_node_group_operators:
-                layout.prop(snode, "geometry_nodes_type", text="")
-
+            layout.prop(snode, "geometry_nodes_type", text="")
             NODE_MT_editor_menus.draw_collapsible(context, layout)
             layout.separator_spacer()
 
@@ -260,11 +259,9 @@ class NODE_HT_header(Header):
                             row.template_ID(active_modifier, "node_group", new="node.new_geometry_node_group_assign")
                     else:
                         row.template_ID(snode, "node_tree", new="node.new_geometry_nodes_modifier")
-                if snode.node_tree and snode.node_tree.asset_data:
-                    layout.popover(panel="NODE_PT_geometry_node_modifier")
             else:
-                layout.template_ID(snode, "node_tree", new="node.new_geometry_node_group_tool")
-                if snode.node_tree and snode.node_tree.asset_data:
+                layout.template_ID(snode, "geometry_nodes_tool_tree", new="node.new_geometry_node_group_tool")
+                if snode.node_tree:
                     layout.popover(panel="NODE_PT_geometry_node_tool_object_types", text="Types")
                     layout.popover(panel="NODE_PT_geometry_node_tool_mode", text="Modes")
                 display_pin = False
@@ -582,8 +579,8 @@ class NODE_MT_node(Menu):
 
             layout.separator()
 
-            layout.operator("node.read_viewlayers", icon = "RENDERLAYERS")
-            layout.operator("node.render_changed", icon = "RENDERLAYERS")
+            layout.operator("node.read_viewlayers", icon='RENDERLAYERS')
+            layout.operator("node.render_changed", icon='RENDERLAYERS')
 
 
 class NODE_MT_node_links(Menu):
@@ -710,8 +707,10 @@ class NODE_PT_geometry_node_tool_object_types(Panel):
         snode = context.space_data
         group = snode.node_tree
 
-        types = [("is_type_mesh", "Mesh", 'MESH_DATA'),
-                 ("is_type_curve", "Curves", 'CURVES_DATA')]
+        types = [
+            ("is_type_mesh", "Mesh", 'MESH_DATA'),
+            ("is_type_curve", "Curves", 'CURVES_DATA'),
+        ]
         if context.preferences.experimental.use_new_point_cloud_type:
             types.append(("is_type_point_cloud", "Point Cloud", 'POINTCLOUD_DATA'))
 
@@ -723,6 +722,7 @@ class NODE_PT_geometry_node_tool_object_types(Panel):
             row_checkbox.prop(group, prop, text="")
             row_label = row.row()
             row_label.label(text=name, icon=icon)
+            row_label.active = getattr(group, prop)
 
 
 class NODE_PT_geometry_node_tool_mode(Panel):
@@ -737,8 +737,10 @@ class NODE_PT_geometry_node_tool_mode(Panel):
         snode = context.space_data
         group = snode.node_tree
 
-        modes = [("is_mode_edit", "Edit Mode", 'EDITMODE_HLT'),
-                 ("is_mode_sculpt", "Sculpt Mode", 'SCULPTMODE_HLT')]
+        modes = (
+            ("is_mode_edit", "Edit Mode", 'EDITMODE_HLT'),
+            ("is_mode_sculpt", "Sculpt Mode", 'SCULPTMODE_HLT'),
+        )
 
         col = layout.column()
         col.active = group.is_tool
@@ -748,22 +750,7 @@ class NODE_PT_geometry_node_tool_mode(Panel):
             row_checkbox.prop(group, prop, text="")
             row_label = row.row()
             row_label.label(text=name, icon=icon)
-
-
-class NODE_PT_geometry_node_modifier(Panel):
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'HEADER'
-    bl_label = "Modifier"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        snode = context.space_data
-        group = snode.node_tree
-
-        layout.prop(group, "is_modifier")
+            row_label.active = getattr(group, prop)
 
 
 class NODE_PT_node_color_presets(PresetPanel, Panel):
@@ -803,7 +790,7 @@ class NODE_MT_context_menu_select_menu(Menu):
 
 
 class NODE_MT_context_menu(Menu):
-    bl_label = "Node Context Menu"
+    bl_label = "Node"
 
     def draw(self, context):
         snode = context.space_data
@@ -924,7 +911,7 @@ class NODE_PT_active_node_color(Panel):
     bl_category = "Node"
     bl_label = "Color"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = 'NODE_PT_active_node_generic'
+    bl_parent_id = "NODE_PT_active_node_generic"
 
     @classmethod
     def poll(cls, context):
@@ -1196,7 +1183,6 @@ class NODE_PT_node_tree_interface(Panel):
             if active_item.item_type == 'SOCKET':
                 layout.prop(active_item, "socket_type", text="Type")
                 layout.prop(active_item, "description")
-                layout.prop(active_item, "in_out", text="Input/Output")
                 # Display descriptions only for Geometry Nodes, since it's only used in the modifier panel.
                 if tree.type == 'GEOMETRY':
                     field_socket_types = {
@@ -1218,6 +1204,38 @@ class NODE_PT_node_tree_interface(Panel):
                 layout.prop(active_item, "default_closed", text="Closed by Default")
 
             layout.use_property_split = False
+
+
+class NODE_PT_node_tree_properties(Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Group"
+    bl_label = "Properties"
+
+    @classmethod
+    def poll(cls, context):
+        snode = context.space_data
+        if snode is None:
+            return False
+        group = snode.edit_tree
+        if group is None:
+            return False
+        if group.is_embedded_data:
+            return False
+        if group.bl_idname != "GeometryNodeTree":
+            return False
+        return True
+
+    def draw(self, context):
+        layout = self.layout
+        snode = context.space_data
+        group = snode.edit_tree
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        col = layout.column()
+        col.prop(group, "is_modifier")
+        col.prop(group, "is_tool")
 
 
 class NODE_UL_simulation_zone_items(bpy.types.UIList):
@@ -1372,6 +1390,8 @@ class NODE_PT_repeat_zone_items(Panel):
             layout.use_property_decorate = False
             layout.prop(active_item, "socket_type")
 
+        layout.prop(output_node, "inspection_index")
+
 
 # Grease Pencil properties
 class NODE_PT_annotation(AnnotationDataPanel, Panel):
@@ -1406,7 +1426,7 @@ def node_panel(cls):
     node_cls.bl_region_type = 'UI'
     node_cls.bl_category = "Options"
     if hasattr(node_cls, "bl_parent_id"):
-        node_cls.bl_parent_id = 'NODE_' + node_cls.bl_parent_id
+        node_cls.bl_parent_id = "NODE_" + node_cls.bl_parent_id
 
     return node_cls
 ## BFA - new view menu for consistency
@@ -1449,12 +1469,12 @@ classes = (
     NODE_MT_view_pie,
     NODE_MT_view_annotations,
     NODE_PT_material_slots,
-    NODE_PT_geometry_node_modifier,
     NODE_PT_geometry_node_tool_object_types,
     NODE_PT_geometry_node_tool_mode,
     NODE_PT_node_color_presets,
     NODE_MT_node_tree_interface_context_menu,
     NODE_PT_node_tree_interface,
+    NODE_PT_node_tree_properties,
     NODE_PT_active_node_generic,
     NODE_PT_active_node_color,
     NODE_PT_texture_mapping,

@@ -14,6 +14,7 @@ from bpy.types import bpy_struct, Constraint, Object, PoseBone, Bone, Armature
 
 from bpy.types import bpy_prop_array, bpy_prop_collection  # noqa
 from idprop.types import IDPropertyArray
+from mathutils import Vector
 
 from .misc import ArmatureObject, wrap_list_to_lines, IdPropSequence, find_index
 
@@ -480,6 +481,7 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
 
     code = [
         "import bpy\n",
+        "from rna_prop_ui import rna_idprop_ui_create\n",
         "from mathutils import Color\n\n",
     ]
 
@@ -572,6 +574,18 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
 
     code.append("\n    bones = {}\n")
 
+    # noinspection SpellCheckingInspection
+    extra_props = {
+        'bbone_segments': 1,
+        'bbone_mapping_mode': 'STRAIGHT',
+        'bbone_easein': 1, 'bbone_easeout': 1,
+        'bbone_rollin': 0, 'bbone_rollout': 0,
+        'bbone_curveinx': 0, 'bbone_curveinz': 0,
+        'bbone_curveoutx': 0, 'bbone_curveoutz': 0,
+        'bbone_scalein': Vector((1, 1, 1)),
+        'bbone_scaleout': Vector((1, 1, 1)),
+    }
+
     for bone_name in bones:
         bone = arm.edit_bones[bone_name]
         code.append("    bone = arm.edit_bones.new(%r)" % bone.name)
@@ -583,6 +597,10 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
             code.append("    bone.inherit_scale = %r" % str(bone.inherit_scale))
         if bone.parent:
             code.append("    bone.parent = arm.edit_bones[bones[%r]]" % bone.parent.name)
+        for prop, default in extra_props.items():
+            value = getattr(bone, prop)
+            if value != default:
+                code.append(f"    bone.{prop} = {value!r}")
         code.append("    bones[%r] = bone.name" % bone.name)
 
     bpy.ops.object.mode_set(mode='OBJECT')
@@ -630,6 +648,42 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
                     f"        pbone.rigify_parameters.{param_name} = ", param)
                 code.append("    except AttributeError:")
                 code.append("        pass")
+
+        # Custom properties
+        custom_properties = {
+            property_name: value for property_name, value in pbone.items()
+            if property_name not in pbone.bl_rna.properties.keys()
+            and type(pbone[property_name]) in (float, int)
+        }
+
+        if custom_properties:
+            code.append('    # custom properties')
+
+        for custom_property, current_value in custom_properties.items():
+            props_data = pbone.id_properties_ui(custom_property).as_dict()
+            code.append(f"    rna_idprop_ui_create(")
+            code.append(f"        pbone,")
+            code.append(f"        {custom_property!r},")
+            code.append(f"        default={props_data['default']!r},")
+            if 'min' in props_data:
+                code.append(f"        min={props_data['min']},")
+            if 'max' in props_data:
+                code.append(f"        max={props_data['max']},")
+            if 'soft_min' in props_data:
+                code.append(f"        soft_min={props_data['soft_min']},")
+            if 'soft_max' in props_data:
+                code.append(f"        soft_max={props_data['soft_max']},")
+            if 'subtype' in props_data:
+                code.append(f"        subtype={props_data['subtype']!r},")
+            if 'description' in props_data:
+                code.append(f"        description={props_data['description']!r},")
+            if 'precision' in props_data:
+                code.append(f"        precision={props_data['precision']},")
+            if 'step' in props_data:
+                code.append(f"        step={props_data['step']},")
+            code.append(f"    )")
+            if props_data['default'] != current_value:
+                code.append(f"    pbone[{custom_property!r}] = {current_value}")
 
         # Constraints
         for con in pbone.constraints:

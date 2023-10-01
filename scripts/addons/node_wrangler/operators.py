@@ -539,7 +539,7 @@ class NWPreviewNode(Operator, NWBase):
 
             if not viewer_socket:
                 # create viewer socket
-                viewer_socket = node.node_tree.interface.new_socket(viewer_socket_name, in_out={'OUTPUT'}, socket_type=socket_type)
+                viewer_socket = node.node_tree.interface.new_socket(viewer_socket_name, in_out='OUTPUT', socket_type=socket_type)
                 viewer_socket.NWViewerSocket = True
             return viewer_socket
 
@@ -1955,12 +1955,11 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
         socketnames = [
             ['Displacement', tags.displacement.split(' '), None],
             ['Base Color', tags.base_color.split(' '), None],
-            ['Subsurface Color', tags.sss_color.split(' '), None],
             ['Metallic', tags.metallic.split(' '), None],
-            ['Specular', tags.specular.split(' '), None],
+            ['Specular IOR Level', tags.specular.split(' '), None],
             ['Roughness', rough_abbr + gloss_abbr, None],
             ['Normal', normal_abbr + bump_abbr, None],
-            ['Transmission', tags.transmission.split(' '), None],
+            ['Transmission Weight', tags.transmission.split(' '), None],
             ['Emission', tags.emission.split(' '), None],
             ['Alpha', tags.alpha.split(' '), None],
             ['Ambient Occlusion', tags.ambient_occlusion.split(' '), None],

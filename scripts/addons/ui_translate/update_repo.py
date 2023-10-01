@@ -163,7 +163,7 @@ def i18n_updatetranslation_blender_repo_callback(lng, settings):
 
 
 class UI_OT_i18n_updatetranslation_blender_repo(Operator):
-    """Update i18n data (po files) in Blneder source code repository"""
+    """Update i18n data (po files) in Blender source code repository"""
     bl_idname = "ui.i18n_updatetranslation_blender_repo"
     bl_label = "Update I18n Blender Repo"
 

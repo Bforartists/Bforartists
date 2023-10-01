@@ -66,7 +66,7 @@ from .fbx_utils import (
     get_blender_nodetexture_key,
     # FBX element data.
     elem_empty,
-    elem_data_single_bool, elem_data_single_int16, elem_data_single_int32, elem_data_single_int64,
+    elem_data_single_char, elem_data_single_int16, elem_data_single_int32, elem_data_single_int64,
     elem_data_single_float32, elem_data_single_float64,
     elem_data_single_bytes, elem_data_single_string, elem_data_single_string_unicode,
     elem_data_single_bool_array, elem_data_single_int32_array, elem_data_single_int64_array,
@@ -1900,7 +1900,8 @@ def fbx_data_leaf_bone_elements(root, scene_data):
         # object type, etc.
         elem_data_single_int32(model, b"MultiLayer", 0)
         elem_data_single_int32(model, b"MultiTake", 0)
-        elem_data_single_bool(model, b"Shading", True)
+        # Probably the FbxNode.EShadingMode enum. Full description in fbx_data_object_elements.
+        elem_data_single_char(model, b"Shading", b"\x01")
         elem_data_single_string(model, b"Culling", b"CullingOff")
 
         elem_props_template_finalize(tmpl, props)
@@ -1964,7 +1965,12 @@ def fbx_data_object_elements(root, ob_obj, scene_data):
     # object type, etc.
     elem_data_single_int32(model, b"MultiLayer", 0)
     elem_data_single_int32(model, b"MultiTake", 0)
-    elem_data_single_bool(model, b"Shading", True)
+    # This is probably the FbxNode.EShadingMode enum. Not directly used by the FBX SDK, but the SDK guarantees that the
+    # value will be passed through from an imported file to an exported one. Common values are 'Y' and 'T'. 'U' and 'W'
+    # have also been seen in older FBX files. It's not clear which enum member each of these values corresponds to or if
+    # these values are actually application specific. Blender had been exporting this as a `True` bool for a long time
+    # seemingly without issue. The '\x01' char is the same value as `True` in raw bytes.
+    elem_data_single_char(model, b"Shading", b"\x01")
     elem_data_single_string(model, b"Culling", b"CullingOff")
 
     if obj_type == b"Camera":
