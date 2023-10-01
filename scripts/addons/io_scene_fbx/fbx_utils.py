@@ -969,6 +969,10 @@ def elem_data_single_bool(elem, name, value):
     return _elem_data_single(elem, name, value, "add_bool")
 
 
+def elem_data_single_char(elem, name, value):
+    return _elem_data_single(elem, name, value, "add_char")
+
+
 def elem_data_single_int8(elem, name, value):
     return _elem_data_single(elem, name, value, "add_int8")
 

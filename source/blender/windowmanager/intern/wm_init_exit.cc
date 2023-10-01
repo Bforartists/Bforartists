@@ -53,7 +53,7 @@
 #include "BKE_preview_image.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 #include "BKE_sound.h"
 #include "BKE_vfont.h"
 
@@ -111,8 +111,10 @@
 
 #include "BLF_api.h"
 #include "BLT_lang.h"
+
 #include "UI_interface.hh"
 #include "UI_resources.hh"
+#include "UI_string_search.hh"
 
 #include "GPU_context.h"
 #include "GPU_init_exit.h"
@@ -358,6 +360,10 @@ void WM_init(bContext *C, int argc, const char **argv)
 
   wm_history_file_read();
 
+  if (!G.background) {
+    blender::ui::string_search::read_recent_searches_file();
+  }
+
   STRNCPY(G.lib, BKE_main_blendfile_path_from_global());
 
   CTX_py_init_set(C, true);
@@ -537,6 +543,10 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
       WM_event_remove_handlers(C, &win->handlers);
       WM_event_remove_handlers(C, &win->modalhandlers);
       ED_screen_exit(C, win, WM_window_get_active_screen(win));
+    }
+
+    if (!G.background) {
+      blender::ui::string_search::write_recent_searches_file();
     }
 
     if (do_user_exit_actions) {
