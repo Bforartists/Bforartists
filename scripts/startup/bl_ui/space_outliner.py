@@ -231,14 +231,14 @@ class OUTLINER_MT_view(Menu):
 
 
 class OUTLINER_MT_context_menu(Menu):
-    bl_label = "Outliner Context Menu"
+    bl_label = "Outliner"
 
     @staticmethod
     def draw_common_operators(layout):
         layout.separator()
 
         ## BFA - The original from blender
-        # layout.menu("OUTLINER_MT_liboverride", icon="LIBRARY_DATA_OVERRIDE")
+        # layout.menu("OUTLINER_MT_liboverride", icon='LIBRARY_DATA_OVERRIDE')
 
         # layout.separator()
 

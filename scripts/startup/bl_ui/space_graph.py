@@ -99,8 +99,7 @@ class GRAPH_HT_header(Header):
         sub = row.row(align=True)
         sub.popover(
             panel="GRAPH_PT_snapping",
-            icon='NONE',
-            text="Modes",
+            text="",
         )
 
         row = layout.row(align=True)
@@ -695,7 +694,7 @@ class GRAPH_MT_delete(Menu):
 
 
 class GRAPH_MT_context_menu(Menu):
-    bl_label = "F-Curve Context Menu"
+    bl_label = "F-Curve"
 
     def draw(self, _context):
         layout = self.layout
@@ -754,51 +753,6 @@ class GRAPH_MT_snap_pie(Menu):
         pie.operator("graph.snap_cursor_value", text="Cursor Value to Selection")
 
 
-class GRAPH_MT_channel_context_menu(Menu):
-    bl_label = "F-Curve Channel Context Menu"
-
-    def draw(self, context):
-        layout = self.layout
-        st = context.space_data
-
-        layout.separator()
-        layout.operator("anim.channels_setting_enable", text="Mute Channels", icon='MUTE_IPO_ON').type = 'MUTE'
-        layout.operator("anim.channels_setting_disable", text="Unmute Channels", icon='MUTE_IPO_OFF').type = 'MUTE'
-        layout.separator()
-        layout.operator("anim.channels_setting_enable", text="Protect Channels", icon="LOCKED").type = 'PROTECT'
-        layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon="UNLOCKED").type = 'PROTECT'
-        layout.operator("anim.channels_editable_toggle", icon="LOCKED")
-
-        layout.separator()
-        layout.operator("anim.channels_group", icon="NEW_GROUP")
-        layout.operator("anim.channels_ungroup", icon="REMOVE_FROM_ALL_GROUPS")
-
-        layout.separator()
-        layout.operator_menu_enum("graph.extrapolation_type", "type", text="Extrapolation Mode")
-        # To get it to display the hotkey.
-        layout.operator_context = operator_context
-        layout.operator_menu_enum("graph.fmodifier_add", "type", text="Add F-Curve Modifier").only_active = False
-        layout.operator_context = 'INVOKE_REGION_CHANNELS'
-
-        layout.separator()
-        layout.operator("graph.hide", text="Hide Selected Curves", icon='HIDE_ON').unselected = False
-        layout.operator("graph.hide", text="Hide Unselected Curves", icon='HIDE_UNSELECTED').unselected = True
-        layout.operator("graph.reveal", icon='HIDE_OFF')
-
-        layout.separator()
-        layout.operator("anim.channels_expand", icon="EXPANDMENU")
-        layout.operator("anim.channels_collapse", icon="COLLAPSEMENU")
-
-        layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
-
-        layout.separator()
-
-        layout.operator("anim.channels_delete", icon="DELETE")
-        if st.mode == 'DRIVERS':
-            layout.operator("graph.driver_delete_invalid", icon="DELETE")
-
-
 classes = (
     ANIM_OT_switch_editor_in_graph,
     ANIM_OT_switch_editor_in_driver,
@@ -824,7 +778,6 @@ classes = (
     GRAPH_MT_key_blending,
     GRAPH_MT_delete,
     GRAPH_MT_context_menu,
-    GRAPH_MT_channel_context_menu,
     GRAPH_MT_pivot_pie,
     GRAPH_MT_snap_pie,
     GRAPH_MT_view_pie,

@@ -18,10 +18,6 @@ class NWPrincipledPreferences(bpy.types.PropertyGroup):
         name='Base Color',
         default='diffuse diff albedo base col color basecolor',
         description='Naming Components for Base Color maps')
-    sss_color: StringProperty(
-        name='Subsurface Color',
-        default='sss subsurface',
-        description='Naming Components for Subsurface Color maps')
     metallic: StringProperty(
         name='Metallic',
         default='metallic metalness metal mtl',
@@ -125,7 +121,6 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
             tags = self.principled_tags
 
             col.prop(tags, "base_color")
-            col.prop(tags, "sss_color")
             col.prop(tags, "metallic")
             col.prop(tags, "specular")
             col.prop(tags, "rough")

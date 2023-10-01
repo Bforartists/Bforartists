@@ -164,7 +164,7 @@ def create_path(scene):
 
 
 class SVGExporterLinesetPanel(bpy.types.Panel):
-    """Creates a Panel in the Render Layers context of the properties editor"""
+    """Creates a panel in the View Layer context of the properties editor"""
     bl_idname = "RENDER_PT_SVGExporterLinesetPanel"
     bl_space_type = 'PROPERTIES'
     bl_label = "Freestyle Line Style SVG Export"

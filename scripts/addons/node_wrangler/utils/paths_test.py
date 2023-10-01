@@ -20,7 +20,6 @@ else:
 # From NWPrincipledPreferences 2023-01-06
 TAGS_DISPLACEMENT = "displacement displace disp dsp height heightmap".split(" ")
 TAGS_BASE_COLOR = "diffuse diff albedo base col color basecolor".split(" ")
-TAGS_SUBSURFACE_COLOR = "sss subsurface".split(" ")
 TAGS_METALLIC = "metallic metalness metal mtl".split(" ")
 TAGS_SPECULAR = "specularity specular spec spc".split(" ")
 TAGS_ROUGHNESS = "roughness rough rgh".split(" ")
@@ -42,13 +41,12 @@ def sockets_fixture():
     return [
         ["Displacement", TAGS_DISPLACEMENT, None],
         ["Base Color", TAGS_BASE_COLOR, None],
-        ["Subsurface Color", TAGS_SUBSURFACE_COLOR, None],
         ["Metallic", TAGS_METALLIC, None],
         ["Specular", TAGS_SPECULAR, None],
         ["Roughness", TAGS_ROUGHNESS + TAGS_GLOSS, None],
         ["Normal", TAGS_NORMAL + TAGS_BUMP, None],
-        ["Transmission", TAGS_TRANSMISSION, None],
-        ["Emission", TAGS_EMISSION, None],
+        ["Transmission Weight", TAGS_TRANSMISSION, None],
+        ["Emission Color", TAGS_EMISSION, None],
         ["Alpha", TAGS_ALPHA, None],
         ["Ambient Occlusion", TAGS_AMBIENT_OCCLUSION, None],
     ]
