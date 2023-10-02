@@ -267,7 +267,7 @@ def work_tree_update(args: argparse.Namespace, use_fetch: bool = True) -> str:
 
 # Update blender repository.
 def blender_update(args: argparse.Namespace) -> str:
-    print_stage("Updating Blender Git Repository")
+    print_stage("Updating Bforartists Git Repository")
 
     return work_tree_update(args)
 
