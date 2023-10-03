@@ -3073,7 +3073,7 @@ static int frame_offset_exec(bContext *C, wmOperator *op)
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
+  WM_event_add_notifier(C, NC_SCENE | ND_FRAME, SEQ_get_ref_scene_for_notifiers(C));
 
   return OPERATOR_FINISHED;
 }
@@ -5047,14 +5047,13 @@ static int screen_animation_step_invoke(bContext *C, wmOperator * /*op*/, const 
   if (!(wt && wt == event->customdata)) {
     return OPERATOR_PASS_THROUGH;
   }
- 
+
 #ifdef PROFILE_AUDIO_SYNCH
   static int old_frame = 0;
   int newfra_int;
 #endif
 
   Main *bmain = CTX_data_main(C);
-  ScreenAnimData *sad = wt->customdata;
   ScreenAnimData *sad = static_cast<ScreenAnimData *>(wt->customdata);
   ViewLayer *view_layer = sad->view_layer;
   Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer);
