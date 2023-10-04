@@ -239,7 +239,7 @@ class BONE_PT_relations(BoneButtonsPanel, Panel):
             col.prop_search(bone, "parent", arm, "edit_bones")
 
         if ob and pchan:
-            row = layout.row()
+            row = col.row()
             row.use_property_split = False
             row.prop(bone, "use_relative_parent")
             row.prop_decorator(bone, "use_relative_parent")
