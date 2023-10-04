@@ -5055,6 +5055,7 @@ static int screen_animation_step_invoke(bContext *C, wmOperator * /*op*/, const 
 
   Main *bmain = CTX_data_main(C);
   ScreenAnimData *sad = static_cast<ScreenAnimData *>(wt->customdata);
+  Scene *scene = sad->scene;
   ViewLayer *view_layer = sad->view_layer;
   Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer);
   Scene *scene_eval = (depsgraph != nullptr) ? DEG_get_evaluated_scene(depsgraph) : nullptr;
