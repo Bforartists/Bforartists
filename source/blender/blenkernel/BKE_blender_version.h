@@ -53,6 +53,8 @@ const char *BKE_bforartists_version_string(void);
 
 /** As above but does not show patch version. */
 const char *BKE_blender_version_string_compact(void);
+/** bfa as above but does not show patch version. */
+const char *BKE_bforartists_version_string_compact(void);
 
 /** Returns true when version cycle is alpha, otherwise (beta, rc) returns false. */
 bool BKE_blender_version_is_alpha(void);
