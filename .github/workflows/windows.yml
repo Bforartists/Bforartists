@@ -19,13 +19,13 @@ jobs:
       run: |
         mkdir ~\bforartistsrepo
         cd ~\bforartistsrepo
-        git clone https://github.com/Bforartists/Bforartists
+        git clone -b work-sequencer https://github.com/Bforartists/Bforartists
         mkdir ~\bforartistsrepo\lib
         cd ~\bforartistsrepo\lib
         svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
         dir
         cd ~\bforartistsrepo\Bforartists
-        .\make.bat ninja lite
+        .\make.bat ninja
         dir
         cd ~\bforartistsrepo
         dir
