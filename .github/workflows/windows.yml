@@ -15,15 +15,20 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: make
+    - name: Create main folder
       run: |
         mkdir ~\bforartistsrepo
-        cd ~\bforartistsrepo
-        git clone -b work-sequencer https://github.com/Bforartists/Bforartists
+    - name: Svn lib
+      run: |
         mkdir ~\bforartistsrepo\lib
         cd ~\bforartistsrepo\lib
         svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
-        dir
+    - name: Clone Repo
+      run: |
+        cd ~\bforartistsrepo
+        git clone -b work-sequencer https://github.com/zNightlord/Bforartists.git
+    - name: Make
+      run: |
         cd ~\bforartistsrepo\Bforartists
         .\make.bat ninja
         dir
