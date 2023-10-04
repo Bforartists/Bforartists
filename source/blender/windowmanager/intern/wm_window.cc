@@ -496,8 +496,8 @@ void wm_window_title(wmWindowManager *wm, wmWindow *win)
              has_directory ? int(filename - filepath) : 0,
              has_directory ? filepath : "",
              has_directory ? "]" : "",
-             BKE_blender_version_string_compact());
-    GHOST_SetTitle(static_cast<GHOST_WindowHandle>(win->ghostwin), "Bforartists");
+             BKE_bforartists_version_string_compact());
+    GHOST_SetTitle(static_cast<GHOST_WindowHandle>(win->ghostwin), str);
 
     /* Informs GHOST of unsaved changes, to set window modified visual indicator (macOS)
      * and to give hint of unsaved changes for a user warning mechanism in case of OS application
