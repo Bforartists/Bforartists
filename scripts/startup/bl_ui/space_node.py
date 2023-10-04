@@ -1230,7 +1230,7 @@ class NODE_PT_node_tree_properties(Panel):
         layout = self.layout
         snode = context.space_data
         group = snode.edit_tree
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         col = layout.column()
