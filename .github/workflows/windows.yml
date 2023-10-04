@@ -23,6 +23,14 @@ jobs:
         mkdir ~\bforartistsrepo\lib
         cd ~\bforartistsrepo\lib
         svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
+    - name: Cache
+      env:
+        cache-name: ${{ github.ref }}
+      uses: actions/cache@v3
+      with:
+        path: ~/bforartistsrepo
+        key: build-cache-${{ env.cache-name }}
+      
     - name: Clone Repo
       run: |
         cd ~\bforartistsrepo
