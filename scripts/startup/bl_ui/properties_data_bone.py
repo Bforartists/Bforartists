@@ -244,9 +244,6 @@ class BONE_PT_relations(BoneButtonsPanel, Panel):
             row.prop(bone, "use_relative_parent")
             row.prop_decorator(bone, "use_relative_parent")
 
-            col = layout.column()
-            col.prop_search(pchan, "bone_group", ob.pose, "bone_groups", text="Bone Group")
-
         sub = col.column()
         sub.active = (bone.parent is not None)
         sub.use_property_split = False
