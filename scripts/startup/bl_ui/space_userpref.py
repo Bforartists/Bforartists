@@ -218,10 +218,11 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
             flow.prop(view, "show_tooltips_python")
         flow.prop(view, "show_developer_ui")
 
-        col.separator()
+        layout.separator()
 
-        col = layout.column(heading="Search", align=True)
-        col.prop(prefs, "use_recent_searches", text="Sort by Most Recent")
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+        flow.use_property_split = False
+        flow.prop(prefs, "use_recent_searches", text="Sort search by Most Recent")
 
 
 class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):
