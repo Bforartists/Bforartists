@@ -49,7 +49,7 @@ jobs:
     - name: Show dir
       run: |
         dir
-        cd ~\bforartistsrepo\Bforartists\bin
+        cd ~\bforartistsrepo
         dir
 
 
