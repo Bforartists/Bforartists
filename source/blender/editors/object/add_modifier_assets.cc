@@ -250,8 +250,8 @@ static void root_catalogs_draw(const bContext *C, Menu *menu)
     uiItemS(layout);
     uiItemM(layout,
             "OBJECT_MT_add_modifier_unassigned_assets",
-            IFACE_("Unassigned"),
-            ICON_FILE_HIDDEN);
+            IFACE_("Unassigned (Catalogue)"),
+            ICON_NONE);
   }
 }
 
