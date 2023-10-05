@@ -1,12 +1,12 @@
 name: Windows
 
 on:
-  push:
-    branches: [ "work-sequencer" ]
+  # push:
+  #  branches: [ "work-sequencer" ]
   # schedule:
   #   - cron: 0 0 * * 1
-  # pull_request:
-  #  branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 permissions: {}
 jobs:
@@ -33,10 +33,12 @@ jobs:
         path: ~/bforartistsrepo
         key: build-cache-${{ env.cache-name }}
       
-    - name: Clone Repo
-      run: |
-        cd ~\bforartistsrepo
-        git clone -b work-sequencer https://github.com/zNightlord/Bforartists.git
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      # run: |
+      #  cd ~\bforartistsrepo
+      #  git clone -b work-sequencer https://github.com/zNightlord/Bforartists.git
+    
     - name: Print make
       run: | 
         echo "${{ github.workspace }}\bforartistsrepo $config"
