@@ -1142,7 +1142,7 @@
             button_text="#e5e5e5"
             button_text_hi="#ffffff"
             navigation_bar="#424242ff"
-            execution_buts="#2b2b2bff"
+            execution_buts="#424242ff"
             tab_active="#4b4b4b"
             tab_inactive="#2b2b2b"
             tab_back="#232323ff"
