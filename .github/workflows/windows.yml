@@ -45,7 +45,7 @@ jobs:
     - name: Make
       run: |
         cd ~\bforartistsrepo\Bforartists
-        .\make.bat ninja lite
+        .\make.bat ninja release
     - name: Show dir
       run: |
         dir
