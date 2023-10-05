@@ -11,8 +11,10 @@ on:
 permissions: {}
 jobs:
   build:
-
     runs-on: windows-latest
+    env:
+      buildfolder: ${{ github.workspace }}
+      config : lite
 
     steps:
     - name: Create main folder
@@ -35,12 +37,17 @@ jobs:
       run: |
         cd ~\bforartistsrepo
         git clone -b work-sequencer https://github.com/zNightlord/Bforartists.git
+    - name: Print make
+      run: | 
+        echo "${{ github.workspace }}\bforartistsrepo $config"
     - name: Make
       run: |
         cd ~\bforartistsrepo\Bforartists
-        .\make.bat ninja
+        .\make.bat ninja lite
+    - name: Show dir
+      run: |
         dir
-        cd ~\bforartistsrepo
+        cd ~\bforartistsrepo\Bforartists\bin
         dir
 
 
