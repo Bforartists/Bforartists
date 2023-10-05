@@ -233,7 +233,7 @@ void AssetCatalogTreeView::add_unassigned_item()
   FileAssetSelectParams *params = params_;
 
   AssetCatalogTreeViewUnassignedItem &item = add_tree_item<AssetCatalogTreeViewUnassignedItem>(
-      IFACE_("Unassigned"), ICON_FILE_HIDDEN);
+      IFACE_("Unassigned (Catalogue)"), ICON_NONE);
 
   item.set_on_activate_fn([params](bContext & /*C*/, ui::BasicTreeViewItem & /*item*/) {
     params->asset_catalog_visibility = FILE_SHOW_ASSETS_WITHOUT_CATALOG;
