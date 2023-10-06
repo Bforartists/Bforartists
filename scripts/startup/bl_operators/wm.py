@@ -3194,12 +3194,12 @@ class WM_MT_splash_quick_setup(Menu):
             col = split.column()
             col.operator(
                 "preferences.copy_prev",
-                text=iface_("Load Blender %d.%d Settings", "Operator") % old_version,
+                text=iface_("Load Bforartists %d.%d Settings", "Operator") % old_version,
                 icon='DUPLICATE',
                 translate=False,
             )
             col.operator(
-                "wm.url_open", text="See What's New...", icon='URL',
+                "wm.url_open", text="See What's New ...", icon='URL',
             ).url = "https://wiki.blender.org/wiki/Reference/Release_Notes/4.0"
             col.separator(factor=2.0)
 
