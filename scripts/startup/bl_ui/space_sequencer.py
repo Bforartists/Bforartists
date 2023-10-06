@@ -998,7 +998,7 @@ class SEQUENCER_MT_strip_retiming(Menu):
             strip = context.active_sequence_strip
             strip_type = strip.type
 
-            if strip and strip_type == 'MOVIE':
+            if strip and strip_type == 'MOVIE' or 'IMAGE':
 
                 strip = context.active_sequence_strip
 
