@@ -369,11 +369,229 @@ class SEQUENCER_PT_sequencer_striptab_split(toolshelf_calculate, Panel):
                 col.operator("sequencer.split", text="", icon='CUT').type = 'SOFT'
                 col.operator("sequencer.split", text="", icon='HOLD_SPLIT').type = 'HARD'
 
+
+class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
+    bl_label = "Retiming"
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "Strip"
+    bl_options = {'HIDE_BG'}
+
+     # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        st = context.space_data
+
+        #view = context.space_data
+        #overlay = view.overlay
+        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.vse_show_toolshelf_tabs and st.view_type in {'SEQUENCER'}
+
+    def draw_strip_context(self, context):
+        try:
+            layout = self.layout
+
+            column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+            obj = context.object
+
+            layout.operator_context = 'INVOKE_REGION_WIN'
+
+            #text buttons
+            if column_count == 4:
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+
+                strip = context.active_sequence_strip
+                strip_type = strip.type
+
+                if strip and strip_type == 'MOVIE':
+
+                    strip = context.active_sequence_strip
+
+                    col.operator(
+                        "sequencer.retiming_show",
+                        icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text="Disable Retiming" if (strip and strip.show_retiming_keys) else "Enable Retiming"
+                    )
+                    col.separator()
+
+                    col.operator("sequencer.retiming_segment_speed_set", icon="SET_TIME")
+
+                    col.separator()
+
+                    col.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
+                    col.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
+
+                    col.separator()
+
+                    col.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
+                else:
+                    layout.label(text="Select a movie strip")
+
+
+            else:
+                # icon buttons
+                col = layout.column(align=True)
+                col.scale_x = 2
+                col.scale_y = 2
+
+                if column_count == 3:
+
+                    strip = context.active_sequence_strip
+                    strip_type = strip.type
+
+                    if strip and strip_type == 'MOVIE':
+                        row = col.row(align=True)
+                        row.operator(
+                            "sequencer.retiming_show",
+                            icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
+                        )
+                        row.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
+
+                        col.separator(factor = 0.5)
+
+                        row = col.row(align=True)
+                        row.operator("sequencer.retiming_key_add", text="", icon="KEYFRAMES_INSERT")
+                        row.operator("sequencer.retiming_freeze_frame_add", text="", icon="KEYTYPE_MOVING_HOLD_VEC")
+                        row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
+                    else:
+                        layout.label(text="Select a movie strip")
+
+                elif column_count == 2:
+
+                    strip = context.active_sequence_strip
+                    strip_type = strip.type
+
+                    if strip and strip_type == 'MOVIE':
+                        row = col.row(align=True)
+                        row.operator(
+                            "sequencer.retiming_show",
+                            icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
+                        )
+
+                        col.separator(factor = 0.5)
+
+                        row = col.row(align=True)
+                        row.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
+
+                        col.separator(factor = 0.5)
+
+                        row = col.row(align=True)
+                        row.operator("sequencer.retiming_key_add", text="", icon="KEYFRAMES_INSERT")
+                        row.operator("sequencer.retiming_freeze_frame_add", text="", icon="KEYTYPE_MOVING_HOLD_VEC")
+
+                        row = col.row(align=True)
+                        row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
+                    else:
+                        layout.label(text="Select a movie strip")
+
+                elif column_count == 1:
+
+                    strip = context.active_sequence_strip
+                    strip_type = strip.type
+
+                    if strip and strip_type == 'MOVIE':
+                        col.operator(
+                            "sequencer.retiming_show",
+                            icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
+                        )
+
+                        col.separator(factor = 0.5)
+
+                        col.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
+
+                        col.separator(factor = 0.5)
+
+                        row = col.row(align=True)
+                        col.operator("sequencer.retiming_key_add", text="", icon="KEYFRAMES_INSERT")
+                        col.operator("sequencer.retiming_freeze_frame_add", text="", icon="KEYTYPE_MOVING_HOLD_VEC")
+
+                        col.separator(factor = 0.5)
+
+                        col.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
+                    else:
+                        layout.label(text="Select a movie strip")
+
+        except:
+            layout.label(text="Select a movie strip")
+
+
+    def draw_retiming_context(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+        obj = context.object
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("sequencer.retiming_show", icon='MOD_TIME', text="Disable Retiming")
+
+            col.separator()
+
+            col.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
+            col.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
+            col.operator("sequencer.retiming_transition_add", icon="NODE_CURVE_TIME")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+                row = col.row(align=True)
+                col.operator("sequencer.retiming_show", text="", icon='MOD_TIME')
+
+                row = col.row(align=True)
+                row.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
+                row.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
+                row.operator("sequencer.retiming_transition_add", icon="NODE_CURVE_TIME")
+
+            elif column_count == 2:
+                row = col.row(align=True)
+                col.operator("sequencer.retiming_show", text="", icon='MOD_TIME')
+
+                row = col.row(align=True)
+                row.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
+                row.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
+
+                row = col.row(align=True)
+                row.operator("sequencer.retiming_transition_add", icon="NODE_CURVE_TIME")
+
+            elif column_count == 1:
+                col.operator("sequencer.retiming_show", text="", icon='MOD_TIME')
+
+                col.separator()
+
+                col.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
+                col.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
+                col.operator("sequencer.retiming_transition_add", icon="NODE_CURVE_TIME")
+
+    def draw(self, context):
+        ed = context.scene.sequence_editor
+        if ed.selected_retiming_keys:
+            self.draw_retiming_context(context)
+        else:
+            self.draw_strip_context(context)
+
+
 classes = (
     SEQUENCER_PT_imagetab_clear,
     SEQUENCER_PT_imagetab_image,
     SEQUENCER_PT_sequencer_striptab_transform,
     SEQUENCER_PT_sequencer_striptab_split,
+    SEQUENCER_PT_sequencer_striptab_retiming,
 )
 
 if __name__ == "__main__":  # only for live edit.
