@@ -408,7 +408,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                 strip = context.active_sequence_strip
                 strip_type = strip.type
 
-                if strip and strip_type == 'MOVIE':
+                if strip and strip_type == 'MOVIE' or 'IMAGE':
 
                     strip = context.active_sequence_strip
 
@@ -443,7 +443,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     strip = context.active_sequence_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE':
+                    if strip and strip_type == 'MOVIE' or 'IMAGE':
                         row = col.row(align=True)
                         row.operator(
                             "sequencer.retiming_show",
@@ -465,7 +465,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     strip = context.active_sequence_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE':
+                    if strip and strip_type == 'MOVIE' or 'IMAGE':
                         row = col.row(align=True)
                         row.operator(
                             "sequencer.retiming_show",
@@ -493,7 +493,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     strip = context.active_sequence_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE':
+                    if strip and strip_type == 'MOVIE' or 'IMAGE':
                         col.operator(
                             "sequencer.retiming_show",
                             icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
