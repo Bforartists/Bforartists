@@ -988,39 +988,66 @@ class SEQUENCER_MT_strip_retiming(Menu):
     bl_label = "Retiming"
 
     def draw_strip_context(self, context):
-        layout = self.layout
-        strip = context.active_sequence_strip
+        # BFA - Changed the contextual operator visibility to be based on movie  type selection
+        # BFA - If there is no movie strip selected, a label will advise what to do
+        try:
+            layout = self.layout
 
-        layout.operator("sequencer.retiming_key_add")
-        layout.operator("sequencer.retiming_freeze_frame_add")
-        layout.separator()
+            layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("sequencer.retiming_reset")
-        layout.separator()
+            strip = context.active_sequence_strip
+            strip_type = strip.type
 
-        layout.operator("sequencer.retiming_segment_speed_set")
-        layout.operator(
-            "sequencer.retiming_show",
-            icon='CHECKBOX_HLT' if (strip and strip.show_retiming_keys) else 'CHECKBOX_DEHLT',
-        )
+            if strip and strip_type == 'MOVIE':
+
+                strip = context.active_sequence_strip
+
+                layout.operator(
+                    "sequencer.retiming_show",
+                    icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text="Disable Retiming" if (strip and strip.show_retiming_keys) else "Enable Retiming"
+                ) #BFA - added more explicit title, and moved to top for UX
+
+                layout.separator()  #BFA - Added seperator
+
+                layout.operator("sequencer.retiming_segment_speed_set", icon="SET_TIME")  #BFA - Added seperator, moved up for UX
+
+                layout.separator()
+
+                layout.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
+                layout.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
+                layout.separator()
+
+                layout.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
+            else:
+                layout.label(text="Select a movie strip")
+        except:
+            layout.label(text="Select a movie strip")
+        # BFA - End of changes
+
 
     def draw_retiming_context(self, context):
         layout = self.layout
 
-        layout.operator("sequencer.retiming_key_add")
-        layout.operator("sequencer.retiming_freeze_frame_add")
-        layout.operator("sequencer.retiming_transition_add")
+        layout.separator() #BFA - Added seperator
+
+        layout.operator("sequencer.retiming_show", text="Disable Retiming", icon='MOD_TIME') #BFA - added more explicit title, and moved to top for UX
+
         layout.separator()
 
-        layout.operator("sequencer.delete")
+        layout.operator("sequencer.retiming_segment_speed_set", icon="SET_TIME") #BFA - Added seperator, moved up for UX
+
         layout.separator()
 
-        layout.operator("sequencer.select_box")
-        layout.operator("sequencer.select_all")
-        layout.separator()
+        layout.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
+        layout.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
+        layout.operator("sequencer.retiming_transition_add", icon="NODE_CURVE_TIME")
 
-        layout.operator("sequencer.retiming_segment_speed_set")
-        layout.operator("sequencer.retiming_show", icon='CHECKBOX_HLT')
+        #layout.operator("sequencer.delete") #BFA - Redundant operator
+        #layout.separator()
+
+        #layout.operator("sequencer.select_box")  #BFA - Redundant operator
+        #layout.operator("sequencer.select_all")  #BFA - Redundant operator
+        #layout.separator()
 
     def draw(self, context):
         ed = context.scene.sequence_editor
