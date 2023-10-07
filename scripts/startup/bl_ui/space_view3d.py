@@ -3350,12 +3350,12 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_object_asset", icon='ASSET_MANAGER')
+        layout.menu("VIEW3D_MT_object_asset")
         # layout.menu("VIEW3D_MT_object_collection") #BFA - Redundant operators, now the UX is exclusive to the outliner
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_object_liboverride", icon='LIBRARY_DATA_OVERRIDE')
+        layout.menu("VIEW3D_MT_object_liboverride")
         layout.menu("VIEW3D_MT_object_relations")
         layout.menu("VIEW3D_MT_object_parent")
         layout.menu("VIEW3D_MT_object_constraints")
