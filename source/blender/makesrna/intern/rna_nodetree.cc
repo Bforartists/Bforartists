@@ -10266,7 +10266,7 @@ static void rna_def_geometry_nodetree(BlenderRNA *brna)
   prop = RNA_def_property(srna, "is_tool", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", GEO_NODE_ASSET_TOOL);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Tool", "The node group is used as a tool");
+  RNA_def_property_ui_text(prop, "Tool", "The node group is used as a tool\nOnly relevant for marked nodegroups as assets");
   RNA_def_property_boolean_funcs(
       prop, "rna_GeometryNodeTree_is_tool_get", "rna_GeometryNodeTree_is_tool_set");
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update_asset");
@@ -10274,7 +10274,7 @@ static void rna_def_geometry_nodetree(BlenderRNA *brna)
   prop = RNA_def_property(srna, "is_modifier", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", GEO_NODE_ASSET_MODIFIER);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Modifier", "The node group is used as a geometry modifier");
+  RNA_def_property_ui_text(prop, "Modifier", "The node group is used as a geometry modifier\nOnly relevant for marked nodegroups as assets");
   RNA_def_property_boolean_funcs(
       prop, "rna_GeometryNodeTree_is_modifier_get", "rna_GeometryNodeTree_is_modifier_set");
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update_asset");
