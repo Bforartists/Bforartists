@@ -3523,7 +3523,7 @@ keyconfig_data = \
       },
      ),
     ("view3d.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True}, None),
-    ("gpencil.weight_sample", {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True}, None),
+    ("gpencil.weight_sample", {"type": 'RIGHTMOUSE', "value": 'PRESS', "oskey": True}, None),
     ("wm.radial_control",
      {"type": 'V', "value": 'PRESS'},
      {"properties":
@@ -6306,7 +6306,7 @@ keyconfig_data = \
       },
      ),
     ("brush.stencil_control",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True},
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True, "oskey": True, "alt": True},
      {"properties":
       [("mode", 'TRANSLATION'),
        ("texmode", 'SECONDARY'),
@@ -6322,7 +6322,7 @@ keyconfig_data = \
       },
      ),
     ("brush.stencil_control",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True},
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "oskey": True, "alt": True},
      {"properties":
       [("mode", 'ROTATION'),
        ("texmode", 'SECONDARY'),
