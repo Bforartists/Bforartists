@@ -3198,10 +3198,6 @@ class WM_MT_splash_quick_setup(Menu):
                 icon='DUPLICATE',
                 translate=False,
             )
-            col.operator(
-                "wm.url_open", text="See What's New ...", icon='URL',
-            ).url = "https://wiki.blender.org/wiki/Reference/Release_Notes/4.0"
-            col.separator(factor=2.0)
 
         if can_import:
             layout.label(text="Create New Settings")
