@@ -2784,7 +2784,9 @@ class FbxImportHelperNode:
                 for i, w in combined_weights.items():
                     indices.append(i)
                     if len(w) > 1:
-                        weights.append(sum(w) / len(w))
+                        # Add ignored child weights to the current bone's weight.
+                        # XXX - Weights that sum to more than 1.0 get clamped to 1.0 when set in the vertex group.
+                        weights.append(sum(w))
                     else:
                         weights.append(w[0])
 

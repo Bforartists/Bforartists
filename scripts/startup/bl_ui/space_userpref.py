@@ -261,13 +261,12 @@ class USERPREF_PT_interface_translation(InterfacePanel, CenterAlignMixIn, Panel)
 
         layout.prop(view, "language")
 
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-        flow.active = (bpy.app.translations.locale != 'en_US')
-
-        flow.use_property_split = False
-        flow.prop(view, "use_translate_tooltips", text="Tooltips")
-        flow.prop(view, "use_translate_interface", text="Interface")
-        flow.prop(view, "use_translate_new_dataname", text="New Data")
+        col = layout.column(heading="Affect")
+        col.active = (bpy.app.translations.locale != "en_US")
+        col.use_property_split = False #BFA - Left align checkboxes
+        col.prop(view, "use_translate_tooltips", text="Tooltips")
+        col.prop(view, "use_translate_interface", text="Interface")
+        col.prop(view, "use_translate_new_dataname", text="New Data")
 
 
 class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
@@ -2595,7 +2594,7 @@ class ExperimentalPanel:
 
     @classmethod
     def poll(cls, _context):
-        return bpy.app.version_cycle == 'alpha'
+        return bpy.app.version_cycle == "alpha"
 
     def _draw_items(self, context, items):
         prefs = context.preferences

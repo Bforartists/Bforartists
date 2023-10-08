@@ -435,7 +435,7 @@ class DOPESHEET_PT_snapping(Panel):
         col.label(text="Snap To")
         tool_settings = context.tool_settings
         col.prop(tool_settings, "snap_anim_element", expand=True)
-        if tool_settings.snap_anim_element not in ('MARKER', ):
+        if tool_settings.snap_anim_element != 'MARKER':
             col.prop(tool_settings, "use_snap_time_absolute")
 
 
@@ -720,7 +720,11 @@ class DOPESHEET_MT_key(Menu):
         layout.separator()
 
         layout.operator("action.clean", icon="CLEAN_KEYS").channels = False
-        layout.operator("action.clean", text = "Clean Channels", icon="CLEAN_CHANNELS").channels = True
+
+        #BFA - https://projects.blender.org/blender/blender/pulls/113335
+        from bl_ui_utils.layout import operator_context
+        with operator_context(layout, 'INVOKE_REGION_CHANNELS'):
+            layout.operator("action.clean", text = "Clean Channels", icon="CLEAN_CHANNELS").channels = True
 
         layout.separator()
 

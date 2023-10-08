@@ -602,6 +602,7 @@ class SEQUENCER_MT_select(Menu):
         layout = self.layout
         st = _context.space_data
         has_sequencer, _has_preview = _space_view_types(st)
+        is_retiming = context.scene.sequence_editor.selected_retiming_keys
 
         layout.operator("sequencer.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("sequencer.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -610,21 +611,24 @@ class SEQUENCER_MT_select(Menu):
         layout.separator()
 
         layout.operator("sequencer.select_box", text="Box Select", icon='BORDER_RECT')
+
+        col = layout.column()
         if has_sequencer:
-            props = layout.operator("sequencer.select_box", text="Box Select (Include Handles)", icon='BORDER_RECT')
+            props = col.operator("sequencer.select_box", text="Box Select (Include Handles)", icon='BORDER_RECT')
             props.include_handles = True
 
-        layout.separator()
+        col.separator()
 
         if has_sequencer:
-            layout.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame")
-            layout.menu("SEQUENCER_MT_select_handle", text="Handle")
-            layout.menu("SEQUENCER_MT_select_channel", text="Channel")
-            layout.menu("SEQUENCER_MT_select_linked", text="Linked")
+            col.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame")
+            col.menu("SEQUENCER_MT_select_handle", text="Handle")
+            col.menu("SEQUENCER_MT_select_channel", text="Channel")
+            col.menu("SEQUENCER_MT_select_linked", text="Linked")
 
-        layout.separator()
+            col.separator()
 
-        layout.operator_menu_enum("sequencer.select_grouped", "type", text="Grouped")
+        col.operator_menu_enum("sequencer.select_grouped", "type", text="Grouped")
+        col.enabled = not is_retiming
 
 
 class SEQUENCER_MT_marker(Menu):
@@ -987,80 +991,41 @@ class SEQUENCER_MT_strip_movie(Menu):
 class SEQUENCER_MT_strip_retiming(Menu):
     bl_label = "Retiming"
 
-    def draw_strip_context(self, context):
-        # BFA - Changed the contextual operator visibility to be based on movie  type selection
-        # BFA - If there is no movie strip selected, a label will advise what to do
-        try:
-            layout = self.layout
-
-            layout.operator_context = 'INVOKE_REGION_WIN'
-
-            strip = context.active_sequence_strip
-            strip_type = strip.type
-
-            if strip and strip_type == 'MOVIE' or 'IMAGE':
-
-                strip = context.active_sequence_strip
-
-                layout.operator(
-                    "sequencer.retiming_show",
-                    icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text="Disable Retiming" if (strip and strip.show_retiming_keys) else "Enable Retiming"
-                ) #BFA - added more explicit title, and moved to top for UX
-
-                layout.separator()  #BFA - Added seperator
-
-                layout.operator("sequencer.retiming_segment_speed_set", icon="SET_TIME")  #BFA - Added seperator, moved up for UX
-
-                layout.separator()
-
-                layout.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
-                layout.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
-                layout.separator()
-
-                layout.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
-            else:
-                layout.label(text="Select a movie strip")
-        except:
-            layout.label(text="Select a movie strip")
-        # BFA - End of changes
-
-
-    def draw_retiming_context(self, context):
+    def draw(self, context):
+        is_retiming = context.scene.sequence_editor.selected_retiming_keys
+        strip = context.active_sequence_strip
         layout = self.layout
 
-        layout.separator() #BFA - Added seperator
+        #BFA - Moved retiming_show and retiming_segment_speed_set to top for UX
+        layout.separator() #BFA - Added separator
+        layout.operator(
+            "sequencer.retiming_show",
+            icon='CHECKBOX_HLT' if (strip and strip.show_retiming_keys) else 'CHECKBOX_DEHLT',
+            text="Toggle Retiming Keys",
+        )
+        layout.separator()
+        layout.operator("sequencer.retiming_segment_speed_set", icon='SET_TIME')
 
-        layout.operator("sequencer.retiming_show", text="Disable Retiming", icon='MOD_TIME') #BFA - added more explicit title, and moved to top for UX
+        layout.operator("sequencer.retiming_key_add", icon='KEYFRAMES_INSERT')
+        layout.operator("sequencer.retiming_freeze_frame_add", icon='KEYTYPE_MOVING_HOLD_VEC')
+        col = layout.column()
+        col.operator("sequencer.retiming_transition_add", icon='NODE_CURVE_TIME')
+        col.enabled = is_retiming
 
         layout.separator()
 
-        layout.operator("sequencer.retiming_segment_speed_set", icon="SET_TIME") #BFA - Added seperator, moved up for UX
-
-        layout.separator()
-
-        layout.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
-        layout.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
-        layout.operator("sequencer.retiming_transition_add", icon="NODE_CURVE_TIME")
-
-        #layout.operator("sequencer.delete") #BFA - Redundant operator
-        #layout.separator()
-
-        #layout.operator("sequencer.select_box")  #BFA - Redundant operator
-        #layout.operator("sequencer.select_all")  #BFA - Redundant operator
-        #layout.separator()
-
-    def draw(self, context):
-        ed = context.scene.sequence_editor
-        if ed.selected_retiming_keys:
-            self.draw_retiming_context(context)
-        else:
-            self.draw_strip_context(context)
+        layout.operator("sequencer.delete", text="Delete Retiming Keys", icon='DELETE')
+        col = layout.column()
+        col.operator("sequencer.retiming_reset", icon='KEYFRAMES_REMOVE')
+        col.enabled = not is_retiming
 
 
 class SEQUENCER_MT_strip(Menu):
     bl_label = "Strip"
 
     def draw(self, context):
+        from bl_ui_utils.layout import operator_context
+
         layout = self.layout
         st = context.space_data
         has_sequencer, _has_preview = _space_view_types(st)
@@ -1071,13 +1036,12 @@ class SEQUENCER_MT_strip(Menu):
             layout.menu("SEQUENCER_MT_strip_retiming")
             layout.separator()
 
-            props = layout.operator("sequencer.split", text="Split", icon='CUT')
-            props.type = 'SOFT'
-            props.side = 'RIGHT'
+            with operator_context(layout, 'EXEC_REGION_WIN'):
+                props = layout.operator("sequencer.split", text="Split", icon='CUT')
+                props.type = 'SOFT'
 
-            props = layout.operator("sequencer.split", text="Hold Split", icon='HOLD_SPLIT')
-            props.type = 'HARD'
-            props.side = 'RIGHT'
+                props = layout.operator("sequencer.split", text="Hold Split", icon='HOLD_SPLIT')
+                props.type = 'HARD'
 
             layout.separator()
 
@@ -2072,33 +2036,40 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
 
         max_length = max(len(x) for x in length_list)
         max_factor = (1.9 - max_length) / 30
+        factor = 0.45
 
         layout.enabled = not strip.lock
         layout.active = not strip.mute
 
         sub = layout.row(align=True)
-        split = sub.split(factor=0.5 + max_factor)
+        split = sub.split(factor=factor + max_factor)
+        split.alignment = 'RIGHT'
+        split.label(text="")
+        split.prop(strip, "show_retiming_keys")
+
+        sub = layout.row(align=True)
+        split = sub.split(factor=factor + max_factor)
         split.alignment = 'RIGHT'
         split.label(text="Channel")
         split.prop(strip, "channel", text="")
 
         sub = layout.column(align=True)
-        split = sub.split(factor=0.5 + max_factor, align=True)
+        split = sub.split(factor=factor + max_factor, align=True)
         split.alignment = 'RIGHT'
         split.label(text="Start")
         split.prop(strip, "frame_start", text=smpte_from_frame(frame_start))
 
-        split = sub.split(factor=0.5 + max_factor, align=True)
+        split = sub.split(factor=factor + max_factor, align=True)
         split.alignment = 'RIGHT'
         split.label(text="Duration")
         split.prop(strip, "frame_final_duration", text=smpte_from_frame(frame_final_duration))
 
         # Use label, editing this value from the UI allows negative values,
         # users can adjust duration.
-        split = sub.split(factor=0.5 + max_factor, align=True)
+        split = sub.split(factor=factor + max_factor, align=True)
         split.alignment = 'RIGHT'
         split.label(text="End")
-        split = split.split(factor=0.8 + max_factor, align=True)
+        split = split.split(factor=factor + 0.3 + max_factor, align=True)
         split.label(text="%14s" % smpte_from_frame(frame_final_end))
         split.alignment = 'RIGHT'
         split.label(text=str(frame_final_end) + " ")
@@ -2108,12 +2079,12 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
             layout.alignment = 'RIGHT'
             sub = layout.column(align=True)
 
-            split = sub.split(factor=0.5 + max_factor, align=True)
+            split = sub.split(factor=factor + max_factor, align=True)
             split.alignment = 'RIGHT'
             split.label(text="Strip Offset Start")
             split.prop(strip, "frame_offset_start", text=smpte_from_frame(frame_offset_start))
 
-            split = sub.split(factor=0.5 + max_factor, align=True)
+            split = sub.split(factor=factor + max_factor, align=True)
             split.alignment = 'RIGHT'
             split.label(text="End")
             split.prop(strip, "frame_offset_end", text=smpte_from_frame(frame_offset_end))
@@ -2121,12 +2092,12 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
             layout.alignment = 'RIGHT'
             sub = layout.column(align=True)
 
-            split = sub.split(factor=0.5 + max_factor, align=True)
+            split = sub.split(factor=factor + max_factor, align=True)
             split.alignment = 'RIGHT'
             split.label(text="Hold Offset Start")
             split.prop(strip, "animation_offset_start", text=smpte_from_frame(strip.animation_offset_start))
 
-            split = sub.split(factor=0.5 + max_factor, align=True)
+            split = sub.split(factor=factor + max_factor, align=True)
             split.alignment = 'RIGHT'
             split.label(text="End")
             split.prop(strip, "animation_offset_end", text=smpte_from_frame(strip.animation_offset_end))
@@ -2138,10 +2109,10 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
             (frame_current <= frame_final_start + frame_final_duration)
         )
 
-        split = col.split(factor=0.5 + max_factor, align=True)
+        split = col.split(factor=factor + max_factor, align=True)
         split.alignment = 'RIGHT'
         split.label(text="Current Frame")
-        split = split.split(factor=0.8 + max_factor, align=True)
+        split = split.split(factor=factor + 0.3 + max_factor, align=True)
         frame_display = frame_current - frame_final_start
         split.label(text="%14s" % smpte_from_frame(frame_display))
         split.alignment = 'RIGHT'
@@ -2153,7 +2124,7 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
             if scene:
                 sta = scene.frame_start
                 end = scene.frame_end
-                split = col.split(factor=0.5 + max_factor)
+                split = col.split(factor=factor + max_factor)
                 split.alignment = 'RIGHT'
                 split.label(text="Original Frame Range")
                 split.alignment = 'LEFT'
