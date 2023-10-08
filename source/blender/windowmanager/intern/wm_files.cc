@@ -692,8 +692,6 @@ static void wm_file_read_post(bContext *C,
     CTX_wm_window_set(C, static_cast<wmWindow *>(wm->windows.first));
   }
 
-  WM_cursor_wait(true);
-
 #ifdef WITH_PYTHON
   if (is_startup_file) {
     /* On startup (by default), Python won't have been initialized.
@@ -820,8 +818,6 @@ static void wm_file_read_post(bContext *C,
       WM_toolsystem_init(C);
     }
   }
-
-  WM_cursor_wait(false);
 }
 
 static void wm_read_callback_pre_wrapper(bContext *C, const char *filepath)
@@ -1029,6 +1025,9 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
     if (bfd != nullptr) {
       wm_file_read_pre(use_data, use_userdef);
 
+      /* Close any user-loaded fonts. */
+      BLF_reset_fonts();
+
       /* Put WM into a stable state for post-readfile processes (kill jobs, removes event handlers,
        * message bus, and so on). */
       BlendFileReadWMSetupData *wm_setup_data = wm_file_read_setup_wm_init(C, bmain, false);
@@ -1071,7 +1070,6 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
       bf_reports.duration.whole = PIL_check_seconds_timer() - bf_reports.duration.whole;
       file_read_reports_finalize(&bf_reports);
 
-      WM_cursor_wait(true);
       success = true;
     }
   }
@@ -1151,6 +1149,17 @@ void wm_homefile_read_ex(bContext *C,
                          ReportList *reports,
                          wmFileReadPost_Params **r_params_file_read_post)
 {
+  /* NOTE: unlike #WM_file_read, don't set the wait cursor when reading the home-file.
+   * While technically both are reading a file and could use the wait cursor,
+   * avoid doing so for the following reasons.
+   *
+   * - When loading blend with a file (command line or external file browser)
+   *   the home-file is read before the file being loaded.
+   *   Toggling the wait cursor twice causes the cursor to flicker which looks like a glitch.
+   * - In practice it's not that useful as users tend not to set scenes with slow loading times
+   *   as their startup.
+   */
+
 /* UNUSED, keep as this may be needed later & the comment below isn't self evident. */
 #if 0
   /* Context does not always have valid main pointer here. */
@@ -1175,8 +1184,6 @@ void wm_homefile_read_ex(bContext *C,
   bool filepath_startup_is_factory = true;
   char filepath_startup[FILE_MAX];
   char filepath_userdef[FILE_MAX];
-
-  WM_cursor_wait(true);
 
   /* When 'app_template' is set:
    * '{BLENDER_USER_CONFIG}/{app_template}' */
@@ -1495,8 +1502,6 @@ void wm_homefile_read_ex(bContext *C,
       CTX_wm_window_set(C, nullptr);
     }
   }
-
-  WM_cursor_wait(false);
 }
 
 void wm_homefile_read(bContext *C,
@@ -2567,6 +2572,9 @@ static int wm_homefile_read_exec(bContext *C, wmOperator *op)
     }
   }
 
+  /* Close any user-loaded fonts. */
+  BLF_reset_fonts();
+
   char app_template_buf[sizeof(U.app_template)];
   const char *app_template;
   PropertyRNA *prop_app_template = RNA_struct_find_property(op->ptr, "app_template");
@@ -2892,7 +2900,7 @@ static int wm_open_mainfile_exec(bContext *C, wmOperator *op)
 }
 
 static std::string wm_open_mainfile_description(bContext * /*C*/,
-                                                wmOperatorType * /*op*/,
+                                                wmOperatorType * /*ot*/,
                                                 PointerRNA *params)
 {
   if (!RNA_struct_property_is_set(params, "filepath")) {
