@@ -65,6 +65,7 @@
 #include "NOD_geometry.hh"
 #include "NOD_node_declaration.hh"
 #include "NOD_shader.h"
+#include "NOD_socket.hh"
 #include "NOD_texture.h"
 #include "node_intern.hh" /* own include */
 
@@ -1518,7 +1519,9 @@ static void std_node_socket_interface_draw(ID *id,
   if (interface_socket->flag & NODE_INTERFACE_SOCKET_INPUT && node_tree->type == NTREE_GEOMETRY) {
     uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     uiItemR(col, &ptr, "hide_in_modifier", DEFAULT_FLAGS, nullptr, ICON_NONE);
-    uiItemR(col, &ptr, "force_non_field", DEFAULT_FLAGS, nullptr, ICON_NONE);
+    if (nodes::socket_type_supports_fields(type)) {
+      uiItemR(col, &ptr, "force_non_field", DEFAULT_FLAGS, nullptr, ICON_NONE);
+    }
   }
 }
 

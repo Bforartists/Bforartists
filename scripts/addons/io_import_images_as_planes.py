@@ -320,8 +320,8 @@ def get_shadeless_node(dest_node_tree):
         output_node = node_tree.nodes.new('NodeGroupOutput')
         input_node = node_tree.nodes.new('NodeGroupInput')
 
-        node_tree.outputs.new('NodeSocketShader', 'Shader')
-        node_tree.inputs.new('NodeSocketColor', 'Color')
+        node_tree.interface.new_socket('Shader', in_out='OUTPUT', socket_type='NodeSocketShader')
+        node_tree.interface.new_socket('Color', in_out='INPUT', socket_type='NodeSocketColor')
 
         # This could be faster as a transparent shader, but then no ambient occlusion
         diffuse_shader = node_tree.nodes.new('ShaderNodeBsdfDiffuse')
@@ -1079,7 +1079,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         if self.shader in {'PRINCIPLED', 'SHADELESS'}:
             node_tree.links.new(core_shader.inputs[0], tex_image.outputs['Color'])
         elif self.shader == 'EMISSION':
-            node_tree.links.new(core_shader.inputs['Emission'], tex_image.outputs['Color'])
+            node_tree.links.new(core_shader.inputs['Emission Color'], tex_image.outputs['Color'])
 
         if self.use_transparency:
             if self.shader in {'PRINCIPLED', 'EMISSION'}:

@@ -1608,6 +1608,86 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
     mesh_version.add_variable("mesh", _3ds_uint(3))
     object_info.add_subchunk(mesh_version)
 
+    # Init main keyframe data chunk
+    if use_keyframes:
+        revision = 0x0005
+        stop = scene.frame_end
+        start = scene.frame_start
+        curtime = scene.frame_current
+        kfdata = make_kfdata(revision, start, stop, curtime)
+
+    # Make a list of all materials used in the selected meshes (use dictionary, each material is added once)
+    materialDict = {}
+    mesh_objects = []
+
+    if use_selection:
+        objects = [ob for ob in scene.objects if ob.type in object_filter and ob.visible_get(view_layer=layer) and ob.select_get(view_layer=layer)]
+    else:
+        objects = [ob for ob in scene.objects if ob.type in object_filter and ob.visible_get(view_layer=layer)]
+
+    empty_objects = [ob for ob in objects if ob.type == 'EMPTY']
+    light_objects = [ob for ob in objects if ob.type == 'LIGHT']
+    camera_objects = [ob for ob in objects if ob.type == 'CAMERA']
+
+    for ob in objects:
+        # Get derived objects
+        derived_dict = bpy_extras.io_utils.create_derived_objects(depsgraph, [ob])
+        derived = derived_dict.get(ob)
+
+        if derived is None:
+            continue
+
+        for ob_derived, mtx in derived:
+            if ob.type not in {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META'}:
+                continue
+
+            try:
+                data = ob_derived.to_mesh()
+            except:
+                data = None
+
+            if data:
+                matrix = global_matrix @ mtx
+                data.transform(matrix)
+                data.transform(mtx_scale)
+                mesh_objects.append((ob_derived, data, matrix))
+                ma_ls = data.materials
+                ma_ls_len = len(ma_ls)
+
+                # Get material/image tuples
+                if data.uv_layers:
+                    if not ma_ls:
+                        ma = ma_name = None
+
+                    for f, uf in zip(data.polygons, data.uv_layers.active.data):
+                        if ma_ls:
+                            ma_index = f.material_index
+                            if ma_index >= ma_ls_len:
+                                ma_index = f.material_index = 0
+                            ma = ma_ls[ma_index]
+                            ma_name = None if ma is None else ma.name
+                        # Else there already set to none
+
+                        img = get_uv_image(ma)
+                        img_name = None if img is None else img.name
+
+                        materialDict.setdefault((ma_name, img_name), (ma, img))
+
+                else:
+                    for ma in ma_ls:
+                        if ma:  # Material may be None so check its not
+                            materialDict.setdefault((ma.name, None), (ma, None))
+
+                    # Why 0 Why!
+                    for f in data.polygons:
+                        if f.material_index >= ma_ls_len:
+                            f.material_index = 0
+
+
+    # Make MATERIAL chunks for all materials used in the meshes
+    for ma_image in materialDict.values():
+        object_info.add_subchunk(make_material_chunk(ma_image[0], ma_image[1]))
+
     # Add MASTERSCALE element
     mscale = _3ds_chunk(MASTERSCALE)
     mscale.add_variable("scale", _3ds_float(1.0))
@@ -1618,14 +1698,6 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
         cursor_chunk = _3ds_chunk(O_CONSTS)
         cursor_chunk.add_variable("cursor", _3ds_point_3d(scene.cursor.location))
         object_info.add_subchunk(cursor_chunk)
-
-    # Init main keyframe data chunk
-    if use_keyframes:
-        revision = 0x0005
-        stop = scene.frame_end
-        start = scene.frame_start
-        curtime = scene.frame_current
-        kfdata = make_kfdata(revision, start, stop, curtime)
 
     # Add AMBIENT color
     if world is not None and 'WORLD' in object_filter:
@@ -1710,80 +1782,8 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
                 object_info.add_subchunk(layerfog_chunk)
             if fognode or foglayer and layer.use_pass_mist:
                 object_info.add_subchunk(use_fog_flag)
-        if use_keyframes and world.animation_data or world.node_tree.animation_data:
+        if use_keyframes and world.animation_data or (world.node_tree and world.node_tree.animation_data):
             kfdata.add_subchunk(make_ambient_node(world))
-
-    # Make a list of all materials used in the selected meshes (use dictionary, each material is added once)
-    materialDict = {}
-    mesh_objects = []
-
-    if use_selection:
-        objects = [ob for ob in scene.objects if ob.type in object_filter and ob.visible_get(view_layer=layer) and ob.select_get(view_layer=layer)]
-    else:
-        objects = [ob for ob in scene.objects if ob.type in object_filter and ob.visible_get(view_layer=layer)]
-
-    empty_objects = [ob for ob in objects if ob.type == 'EMPTY']
-    light_objects = [ob for ob in objects if ob.type == 'LIGHT']
-    camera_objects = [ob for ob in objects if ob.type == 'CAMERA']
-
-    for ob in objects:
-        # Get derived objects
-        derived_dict = bpy_extras.io_utils.create_derived_objects(depsgraph, [ob])
-        derived = derived_dict.get(ob)
-
-        if derived is None:
-            continue
-
-        for ob_derived, mtx in derived:
-            if ob.type not in {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META'}:
-                continue
-
-            try:
-                data = ob_derived.to_mesh()
-            except:
-                data = None
-
-            if data:
-                matrix = global_matrix @ mtx
-                data.transform(matrix)
-                data.transform(mtx_scale)
-                mesh_objects.append((ob_derived, data, matrix))
-                ma_ls = data.materials
-                ma_ls_len = len(ma_ls)
-
-                # Get material/image tuples
-                if data.uv_layers:
-                    if not ma_ls:
-                        ma = ma_name = None
-
-                    for f, uf in zip(data.polygons, data.uv_layers.active.data):
-                        if ma_ls:
-                            ma_index = f.material_index
-                            if ma_index >= ma_ls_len:
-                                ma_index = f.material_index = 0
-                            ma = ma_ls[ma_index]
-                            ma_name = None if ma is None else ma.name
-                        # Else there already set to none
-
-                        img = get_uv_image(ma)
-                        img_name = None if img is None else img.name
-
-                        materialDict.setdefault((ma_name, img_name), (ma, img))
-
-                else:
-                    for ma in ma_ls:
-                        if ma:  # Material may be None so check its not
-                            materialDict.setdefault((ma.name, None), (ma, None))
-
-                    # Why 0 Why!
-                    for f in data.polygons:
-                        if f.material_index >= ma_ls_len:
-                            f.material_index = 0
-
-
-    # Make material chunks for all materials used in the meshes
-    for ma_image in materialDict.values():
-        object_info.add_subchunk(make_material_chunk(ma_image[0], ma_image[1]))
 
     # Collect translation for transformation matrix
     translation = {}
