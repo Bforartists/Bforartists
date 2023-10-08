@@ -76,7 +76,7 @@ struct EffectInfo {
   {seqModifierType_WhiteBalance, "WHITE_BALANCE", ICON_WHITE_BALANCE, "White Balance", ""}
 
 #define RNA_ENUM_SEQUENCER_AUDIO_MODIFIER_TYPE_ITEMS \
-  {seqModifierType_SoundEqualizer, "SOUND_EQUALIZER", ICON_MOD_EQUALIZER, "Equalizer", ""}
+  {seqModifierType_SoundEqualizer, "SOUND_EQUALIZER", ICON_MOD_EQUALIZER, "Sound Equalizer", ""}
 /* clang-format on */
 
 const EnumPropertyItem rna_enum_sequence_modifier_type_items[] = {
@@ -2449,7 +2449,7 @@ static void rna_def_editor(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "selected_retiming_keys", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(prop, "Retiming Key Selection Status", "");
-  RNA_def_property_boolean_funcs(prop, "rna_SequenceEditor_selected_retiming_key_get", NULL);
+  RNA_def_property_boolean_funcs(prop, "rna_SequenceEditor_selected_retiming_key_get", nullptr);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
   prop = RNA_def_property(srna, "show_overlay_frame", PROP_BOOLEAN, PROP_NONE);

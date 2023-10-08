@@ -1810,18 +1810,16 @@ def fbx_data_armature_elements(root, arm_obj, scene_data):
             elem_data_single_int32(fbx_skin, b"Version", FBX_DEFORMER_SKIN_VERSION)
             elem_data_single_float64(fbx_skin, b"Link_DeformAcuracy", 50.0)  # Only vague idea what it is...
 
-            # Pre-process vertex weights (also to check vertices assigned to more than four bones).
+            # Pre-process vertex weights so that the vertices only need to be iterated once.
             ob = ob_obj.bdata
             bo_vg_idx = {bo_obj.bdata.name: ob.vertex_groups[bo_obj.bdata.name].index
                          for bo_obj in clusters.keys() if bo_obj.bdata.name in ob.vertex_groups}
             valid_idxs = set(bo_vg_idx.values())
             vgroups = {vg.index: {} for vg in ob.vertex_groups}
-            verts_vgroups = (sorted(((vg.group, vg.weight) for vg in v.groups if vg.weight and vg.group in valid_idxs),
-                                    key=lambda e: e[1], reverse=True)
-                             for v in me.vertices)
-            for idx, vgs in enumerate(verts_vgroups):
-                for vg_idx, w in vgs:
-                    vgroups[vg_idx][idx] = w
+            for idx, v in enumerate(me.vertices):
+                for vg in v.groups:
+                    if (w := vg.weight) and (vg_idx := vg.group) in valid_idxs:
+                        vgroups[vg_idx][idx] = w
 
             for bo_obj, clstr_key in clusters.items():
                 bo = bo_obj.bdata

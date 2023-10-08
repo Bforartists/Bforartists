@@ -1318,42 +1318,154 @@ class AnimationCurveNodeWrapper:
         min_reldiff_fac = fac * 1.0e-3  # min relative value evolution: 0.1% of current 'order of magnitude'.
         min_absdiff_fac = 0.1  # A tenth of reldiff...
 
-        are_keyed = []
-        for values, frame_write_mask in zip(self._frame_values_array, self._frame_write_mask_array):
-            # Initialise to no frames written.
-            frame_write_mask[:] = False
+        # Initialise to no values enabled for writing.
+        self._frame_write_mask_array[:] = False
 
-            # Create views of the 'previous' and 'current' mask and values. The memoryview, .data, of each array is used
-            # for its iteration and indexing performance compared to the array.
-            key = values[1:].data
-            p_key = values[:-1].data
-            key_write = frame_write_mask[1:].data
-            p_key_write = frame_write_mask[:-1].data
+        # Values are enabled for writing if they differ enough from either of their adjacent values or if they differ
+        # enough from the closest previous value that is enabled due to either of these conditions.
+        for sampled_values, enabled_mask in zip(self._frame_values_array, self._frame_write_mask_array):
+            # Create overlapping views of the 'previous' (all but the last) and 'current' (all but the first)
+            # `sampled_values` and `enabled_mask`.
+            # Calculate absolute values from `sampled_values` so that the 'previous' and 'current' absolute arrays can
+            # be views into the same array instead of separately calculated arrays.
+            abs_sampled_values = np.abs(sampled_values)
+            # 'previous' views.
+            p_val_view = sampled_values[:-1]
+            p_abs_val_view = abs_sampled_values[:-1]
+            p_enabled_mask_view = enabled_mask[:-1]
+            # 'current' views.
+            c_val_view = sampled_values[1:]
+            c_abs_val_view = abs_sampled_values[1:]
+            c_enabled_mask_view = enabled_mask[1:]
 
-            p_keyedval = values[0]
-            is_keyed = False
-            for idx, (val, p_val) in enumerate(zip(key, p_key)):
-                if val == p_val:
-                    # Never write keyframe when value is exactly the same as prev one!
-                    continue
-                # This is contracted form of relative + absolute-near-zero difference:
-                #     absdiff = abs(a - b)
-                #     if absdiff < min_reldiff_fac * min_absdiff_fac:
-                #         return False
-                #     return (absdiff / ((abs(a) + abs(b)) / 2)) > min_reldiff_fac
-                # Note that we ignore the '/ 2' part here, since it's not much significant for us.
-                if abs(val - p_val) > (min_reldiff_fac * max(abs(val) + abs(p_val), min_absdiff_fac)):
-                    # If enough difference from previous sampled value, key this value *and* the previous one!
-                    key_write[idx] = True
-                    p_key_write[idx] = True
-                    p_keyedval = val
-                    is_keyed = True
-                elif abs(val - p_keyedval) > (min_reldiff_fac * max((abs(val) + abs(p_keyedval)), min_absdiff_fac)):
-                    # Else, if enough difference from previous keyed value, key this value only!
-                    key_write[idx] = True
-                    p_keyedval = val
-                    is_keyed = True
-            are_keyed.append(is_keyed)
+            # If enough difference from previous sampled value, enable the current value *and* the previous one!
+            # The difference check is symmetrical, so this will compare each value to both of its adjacent values.
+            # Unless it is forcefully enabled later, this is the only way that the first value can be enabled.
+            # This is a contracted form of relative + absolute-near-zero difference:
+            # def is_different(a, b):
+            #     abs_diff = abs(a - b)
+            #     if abs_diff < min_reldiff_fac * min_absdiff_fac:
+            #         return False
+            #     return (abs_diff / ((abs(a) + abs(b)) / 2)) > min_reldiff_fac
+            # Note that we ignore the '/ 2' part here, since it's not much significant for us.
+            # Contracted form using only builtin Python functions:
+            #     return abs(a - b) > (min_reldiff_fac * max(abs(a) + abs(b), min_absdiff_fac))
+            abs_diff = np.abs(c_val_view - p_val_view)
+            different_if_greater_than = min_reldiff_fac * np.maximum(c_abs_val_view + p_abs_val_view, min_absdiff_fac)
+            enough_diff_p_val_mask = abs_diff > different_if_greater_than
+            # Enable both the current values *and* the previous values where `enough_diff_p_val_mask` is True. Some
+            # values may get set to True twice because the views overlap, but this is not a problem.
+            p_enabled_mask_view[enough_diff_p_val_mask] = True
+            c_enabled_mask_view[enough_diff_p_val_mask] = True
+
+            # Else, if enough difference from previous enabled value, enable the current value only!
+            # For each 'current' value, get the index of the nearest previous enabled value in `sampled_values` (or
+            # itself if the value is enabled).
+            # Start with an array that is the index of the 'current' value in `sampled_values`. The 'current' values are
+            # all but the first value, so the indices will be from 1 to `len(sampled_values)` exclusive.
+            # Let len(sampled_values) == 9:
+            #   [1, 2, 3, 4, 5, 6, 7, 8]
+            p_enabled_idx_in_sampled_values = np.arange(1, len(sampled_values))
+            # Replace the indices of all disabled values with 0 in preparation of filling them in with the index of the
+            # nearest previous enabled value. We choose to replace with 0 so that if there is no nearest previous
+            # enabled value, we instead default to `sampled_values[0]`.
+            c_val_disabled_mask = ~c_enabled_mask_view
+            # Let `c_val_disabled_mask` be:
+            #   [F, F, T, F, F, T, T, T]
+            # Set indices to 0 where `c_val_disabled_mask` is True:
+            #   [1, 2, 3, 4, 5, 6, 7, 8]
+            #          v        v  v  v
+            #   [1, 2, 0, 4, 5, 0, 0, 0]
+            p_enabled_idx_in_sampled_values[c_val_disabled_mask] = 0
+            # Accumulative maximum travels across the array from left to right, filling in the zeroed indices with the
+            # maximum value so far, which will be the closest previous enabled index because the non-zero indices are
+            # strictly increasing.
+            #   [1, 2, 0, 4, 5, 0, 0, 0]
+            #          v        v  v  v
+            #   [1, 2, 2, 4, 5, 5, 5, 5]
+            p_enabled_idx_in_sampled_values = np.maximum.accumulate(p_enabled_idx_in_sampled_values)
+            # Only disabled values need to be checked against their nearest previous enabled values.
+            # We can additionally ignore all values which equal their immediately previous value because those values
+            # will never be enabled if they were not enabled by the earlier difference check against immediately
+            # previous values.
+            p_enabled_diff_to_check_mask = np.logical_and(c_val_disabled_mask, p_val_view != c_val_view)
+            # Convert from a mask to indices because we need the indices later and because the array of indices will
+            # usually be smaller than the mask array making it faster to index other arrays with.
+            p_enabled_diff_to_check_idx = np.flatnonzero(p_enabled_diff_to_check_mask)
+            # `p_enabled_idx_in_sampled_values` from earlier:
+            #   [1, 2, 2, 4, 5, 5, 5, 5]
+            # `p_enabled_diff_to_check_mask` assuming no values equal their immediately previous value:
+            #   [F, F, T, F, F, T, T, T]
+            # `p_enabled_diff_to_check_idx`:
+            #   [      2,       5, 6, 7]
+            # `p_enabled_idx_in_sampled_values_to_check`:
+            #   [      2,       5, 5, 5]
+            p_enabled_idx_in_sampled_values_to_check = p_enabled_idx_in_sampled_values[p_enabled_diff_to_check_idx]
+            # Get the 'current' disabled values that need to be checked.
+            c_val_to_check = c_val_view[p_enabled_diff_to_check_idx]
+            c_abs_val_to_check = c_abs_val_view[p_enabled_diff_to_check_idx]
+            # Get the nearest previous enabled value for each value to be checked.
+            nearest_p_enabled_val = sampled_values[p_enabled_idx_in_sampled_values_to_check]
+            abs_nearest_p_enabled_val = np.abs(nearest_p_enabled_val)
+            # Check the relative + absolute-near-zero difference again, but against the nearest previous enabled value
+            # this time.
+            abs_diff = np.abs(c_val_to_check - nearest_p_enabled_val)
+            different_if_greater_than = (min_reldiff_fac
+                                         * np.maximum(c_abs_val_to_check + abs_nearest_p_enabled_val, min_absdiff_fac))
+            enough_diff_p_enabled_val_mask = abs_diff > different_if_greater_than
+            # If there are any that are different enough from the previous enabled value, then we have to check them all
+            # iteratively because enabling a new value can change the nearest previous enabled value of some elements,
+            # which changes their relative + absolute-near-zero difference:
+            # `p_enabled_diff_to_check_idx`:
+            #   [2, 5, 6, 7]
+            # `p_enabled_idx_in_sampled_values_to_check`:
+            #   [2, 5, 5, 5]
+            # Let `enough_diff_p_enabled_val_mask` be:
+            #   [F, F, T, T]
+            # The first index that is newly enabled is 6:
+            #   [2, 5,>6<,5]
+            # But 6 > 5, so the next value's nearest previous enabled index is also affected:
+            #   [2, 5, 6,>6<]
+            # We had calculated a newly enabled index of 7 too, but that was calculated against the old nearest previous
+            # enabled index of 5, which has now been updated to 6, so whether 7 is enabled or not needs to be
+            # recalculated:
+            #   [F, F, T, ?]
+            if np.any(enough_diff_p_enabled_val_mask):
+                # Accessing .data, the memoryview of the array, iteratively or by individual index is faster than doing
+                # the same with the array itself.
+                zipped = zip(p_enabled_diff_to_check_idx.data,
+                             c_val_to_check.data,
+                             c_abs_val_to_check.data,
+                             p_enabled_idx_in_sampled_values_to_check.data,
+                             enough_diff_p_enabled_val_mask.data)
+                # While iterating, we could set updated values into `enough_diff_p_enabled_val_mask` as we go and then
+                # update `enabled_mask` in bulk after the iteration, but if we're going to update an array while
+                # iterating, we may as well update `enabled_mask` directly instead and skip the bulk update.
+                # Additionally, the number of `True` writes to `enabled_mask` is usually much less than the number of
+                # updates that would be required to `enough_diff_p_enabled_val_mask`.
+                c_enabled_mask_view_mv = c_enabled_mask_view.data
+
+                # While iterating, keep track of the most recent newly enabled index, so we can tell when we need to
+                # recalculate whether the current value needs to be enabled.
+                new_p_enabled_idx = -1
+                # Keep track of its value too for performance.
+                new_p_enabled_val = -1
+                new_abs_p_enabled_val = -1
+                for cur_idx, c_val, c_abs_val, old_p_enabled_idx, enough_diff in zipped:
+                    if new_p_enabled_idx > old_p_enabled_idx:
+                        # The nearest previous enabled value is newly enabled and was not included when
+                        # `enough_diff_p_enabled_val_mask` was calculated, so whether the current value is different
+                        # enough needs to be recalculated using the newly enabled value.
+                        # Check if the relative + absolute-near-zero difference is enough to enable this value.
+                        enough_diff = (abs(c_val - new_p_enabled_val)
+                                       > (min_reldiff_fac * max(c_abs_val + new_abs_p_enabled_val, min_absdiff_fac)))
+                    if enough_diff:
+                        # The current value needs to be enabled.
+                        c_enabled_mask_view_mv[cur_idx] = True
+                        # Update the index and values for this newly enabled value.
+                        new_p_enabled_idx = cur_idx
+                        new_p_enabled_val = c_val
+                        new_abs_p_enabled_val = c_abs_val
 
         # If we write nothing (action doing nothing) and are in 'force_keep' mode, we key everything! :P
         # See T41766.
@@ -1362,7 +1474,9 @@ class AnimationCurveNodeWrapper:
         # one key in this case.
         # See T41719, T41605, T41254...
         if self.force_keying or (force_keep and not self):
-            are_keyed[:] = [True] * len(are_keyed)
+            are_keyed = [True] * len(self._frame_write_mask_array)
+        else:
+            are_keyed = np.any(self._frame_write_mask_array, axis=1)
 
         # If we did key something, ensure first and last sampled values are keyed as well.
         if self.force_startend_keying:
