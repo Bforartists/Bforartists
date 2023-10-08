@@ -992,6 +992,7 @@ void RNA_api_ui_layout(StructRNA *srna)
   static const EnumPropertyItem id_template_filter_items[] = {
       {UI_TEMPLATE_ID_FILTER_ALL, "ALL", 0, "All", ""},
       {UI_TEMPLATE_ID_FILTER_AVAILABLE, "AVAILABLE", 0, "Available", ""},
+      {UI_TEMPLATE_ID_FILTER_INACTIVE, "INACTIVE", 0, "Inactive", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
