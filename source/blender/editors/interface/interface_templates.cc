@@ -511,7 +511,7 @@ static void id_search_cb_scenes_without_active(const bContext *C,
                                                void *arg_template,
                                                const char *str,
                                                uiSearchItems *items,
-                                               const bool UNUSED(is_first))
+                                               const bool /*is_first*/)
 {
   TemplateID *template_ui = (TemplateID *)arg_template;
   ListBase *lb = template_ui->idlb;
@@ -520,7 +520,8 @@ static void id_search_cb_scenes_without_active(const bContext *C,
 
   BKE_main_id_flag_listbase(lb, LIB_TAG_DOIT, false);
 
-  LISTBASE_FOREACH (Scene *, scene, &main->scenes) {    if (scene != active_scene) {
+  LISTBASE_FOREACH (Scene *, scene, &main->scenes) {    
+    if (scene != active_scene) {
       scene->id.tag |= LIB_TAG_DOIT;
     }
   }
