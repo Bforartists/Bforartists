@@ -314,7 +314,7 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         return context.bone or context.edit_bone
 
     def draw(self, context):
-        # note. this works ok in edit-mode but isn't
+        # NOTE: this works ok in edit-mode but isn't
         # all that useful so disabling for now.
         layout = self.layout
         layout.use_property_split = True
@@ -342,14 +342,14 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         layout.use_property_decorate = False
 
         row = layout.row(align=True)
-        row.prop(bone.color, 'palette', text='Edit Bone Color')
-        props = row.operator("armature.sync_bone_color_to_selected", text="", icon='UV_SYNC_SELECT')
+        row.prop(bone.color, "palette", text="Bone Color")
+        props = row.operator("armature.copy_bone_color_to_selected", text="", icon='UV_SYNC_SELECT')
         props.bone_type = 'EDIT'
         self.draw_bone_color_ui(layout, bone.color)
 
         row = layout.row(align=True)
-        row.prop(pose_bone.color, 'palette', text='Pose Bone Color')
-        props = row.operator("armature.sync_bone_color_to_selected", text="", icon='UV_SYNC_SELECT')
+        row.prop(pose_bone.color, "palette", text="Pose Bone Color")
+        props = row.operator("armature.copy_bone_color_to_selected", text="", icon='UV_SYNC_SELECT')
         props.bone_type = 'POSE'
         self.draw_bone_color_ui(layout, pose_bone.color)
 
@@ -358,12 +358,10 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         if bone is None:
             return
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(bone, "hide", text = "Hide", toggle=False)
-        row.prop_decorator(bone, "hide")
-
-        layout.prop(bone.color, 'palette', text='Edit Bone Color')
+        col = layout.column()
+        col.use_property_split = False # BFA - Left align checkbox
+        col.prop(bone, "hide", text="Hide", toggle=False)
+        layout.prop(bone.color, "palette", text="Bone Color")
         self.draw_bone_color_ui(layout, bone.color)
 
     def draw_bone_color_ui(self, layout, bone_color):

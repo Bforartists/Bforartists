@@ -250,9 +250,8 @@ class FBXElem:
             for elem in self.elems:
                 offset = elem._calc_offsets(offset, (elem is elem_last))
             offset += _BLOCK_SENTINEL_LENGTH
-        elif not self.props or self.id in _ELEMS_ID_ALWAYS_BLOCK_SENTINEL:
-            if not is_last:
-                offset += _BLOCK_SENTINEL_LENGTH
+        elif (not self.props and not is_last) or self.id in _ELEMS_ID_ALWAYS_BLOCK_SENTINEL:
+            offset += _BLOCK_SENTINEL_LENGTH
 
         return offset
 
@@ -282,9 +281,8 @@ class FBXElem:
                 assert(elem.id != b'')
                 elem._write(write, tell, (elem is elem_last))
             write(_BLOCK_SENTINEL_DATA)
-        elif not self.props or self.id in _ELEMS_ID_ALWAYS_BLOCK_SENTINEL:
-            if not is_last:
-                write(_BLOCK_SENTINEL_DATA)
+        elif (not self.props and not is_last) or self.id in _ELEMS_ID_ALWAYS_BLOCK_SENTINEL:
+            write(_BLOCK_SENTINEL_DATA)
 
 
 def _write_timedate_hack(elem_root):
