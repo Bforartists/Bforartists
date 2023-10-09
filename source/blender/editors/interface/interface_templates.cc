@@ -1141,7 +1141,7 @@ static const char *template_id_browse_tip(const StructRNA *type)
         break;
     }
   }
-  return N_("Data Browser\nChoose a Font to use");
+  return N_("Data Browser\nChoose the data to use");
 }
 
 /**
