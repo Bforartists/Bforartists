@@ -1511,7 +1511,7 @@ class CYCLES_OBJECT_MT_light_linking_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.light_linking_receivers_select")
+        layout.operator("object.light_linking_receivers_select", icon = 'HAND')
 
 
 class CYCLES_OBJECT_MT_shadow_linking_context_menu(Menu):
@@ -1520,7 +1520,7 @@ class CYCLES_OBJECT_MT_shadow_linking_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.light_linking_blockers_select")
+        layout.operator("object.light_linking_blockers_select", icon = 'HAND')
 
 
 class CYCLES_OBJECT_PT_light_linking(CyclesButtonsPanel, Panel):
