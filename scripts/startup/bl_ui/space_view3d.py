@@ -8811,9 +8811,6 @@ class VIEW3D_PT_overlay_edit_mesh_shading(Panel):
 
         col = layout.column()
         col.active = display_all
-        row = col.row()
-        row.separator()
-        row.prop(overlay, "show_occlude_wire")
 
         row = col.row()
         row.separator()
