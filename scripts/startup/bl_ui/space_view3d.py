@@ -9050,6 +9050,7 @@ class VIEW3D_PT_overlay_sculpt(Panel):
 
         view = context.space_data
         overlay = view.overlay
+        display_all = overlay.show_overlays
 
         layout.label(text="Sculpt Mode Overlays")
 
