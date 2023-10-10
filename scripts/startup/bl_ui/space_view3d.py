@@ -9040,6 +9040,7 @@ class VIEW3D_PT_overlay_sculpt(Panel):
     bl_context = ".sculpt_mode"
     bl_region_type = 'HEADER'
     bl_label = "Sculpt"
+    bl_ui_units_x = 13
 
     @classmethod
     def poll(cls, context):
@@ -9054,18 +9055,25 @@ class VIEW3D_PT_overlay_sculpt(Panel):
 
         layout.label(text="Sculpt Mode Overlays")
 
-        row = layout.row(align=True)
-        row.prop(overlay, "show_sculpt_mask", text="")
-        sub = row.row()
-        sub.active = overlay.show_sculpt_mask
-        sub.prop(overlay, "sculpt_mode_mask_opacity", text="Mask")
+        col = layout.column(align=True)
+        col.active = display_all
+        split = col.split()
+        row = split.row()
+        row.separator()
+        row.prop(overlay, "show_sculpt_mask", text = "Show Mask")
+
+        row = split.row(align=True)
+        if overlay.show_sculpt_mask:
+            row.prop(overlay, "sculpt_mode_mask_opacity", text="")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
         col = layout.column(align=True)
         col.active = display_all
         split = col.split()
         row = split.row()
         row.separator()
-        row.prop(overlay, "show_sculpt_face_sets")
+        row.prop(overlay, "show_sculpt_face_sets", text = "Show Face Sets")
 
         row = split.row(align=True)
         if overlay.show_sculpt_face_sets:
