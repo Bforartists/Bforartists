@@ -8815,11 +8815,14 @@ class VIEW3D_PT_overlay_edit_mesh_shading(Panel):
         row.separator()
         row.prop(overlay, "show_occlude_wire")
 
-        row = col.row(align=True)
-        row.prop(overlay, "show_retopology", text="")
-        sub = row.row()
-        sub.active = overlay.show_retopology
-        sub.prop(overlay, "retopology_offset", text="Retopology")
+        row = col.row()
+        row.separator()
+        split = row.split(factor=0.55)
+        split.prop(overlay, "show_retopology", text="Retopology")
+        if overlay.show_retopology:
+            split.prop(overlay, "retopology_offset", text = "")
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
         row = col.row()
         row.separator()
