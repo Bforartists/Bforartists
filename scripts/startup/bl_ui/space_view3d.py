@@ -9515,7 +9515,6 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
             'OBJECT': iface_("Grease Pencil"),
         }[context.mode], translate=False)
 
-
         row = layout.row()
         row.separator()
         row.prop(overlay, "use_gpencil_onion_skin", text="Onion Skin")
@@ -9570,6 +9569,7 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
                 col.label(icon='DISCLOSURE_TRI_RIGHT')
 
             if context.object.mode == 'EDIT_GPENCIL':
+                gpd = context.object.data
 
                 col = layout.column()
                 row = col.row()
@@ -9590,12 +9590,6 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
                     row = layout.row()
                     row.separator()
                     row.prop(overlay, "display_handle", text="Handles")
-
-            # Handles for Curve Edit
-            if context.object.mode == 'EDIT_GPENCIL':
-                gpd = context.object.data
-                if gpd.use_curve_edit:
-                    layout.prop(overlay, "display_handle", text="Handles")
 
         if context.object.mode == 'SCULPT_GPENCIL':
             layout.use_property_split = True
