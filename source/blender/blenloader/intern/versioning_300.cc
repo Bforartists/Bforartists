@@ -24,6 +24,9 @@
 #include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
+/* Define macros in `DNA_genfile.h`. */
+#define DNA_GENFILE_VERSIONING_MACROS
+
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_brush_types.h"
@@ -46,6 +49,8 @@
 #include "DNA_text_types.h"
 #include "DNA_tracking_types.h"
 #include "DNA_workspace_types.h"
+
+#undef DNA_GENFILE_VERSIONING_MACROS
 
 #include "BKE_action.h"
 #include "BKE_anim_data.h"
@@ -71,7 +76,7 @@
 #include "BKE_modifier.h"
 #include "BKE_nla.h"
 #include "BKE_node.hh"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 #include "BKE_workspace.h"
 
 #include "RNA_access.hh"
@@ -85,7 +90,7 @@
 #include "SEQ_channels.h"
 #include "SEQ_effects.h"
 #include "SEQ_iterator.h"
-#include "SEQ_retiming.h"
+#include "SEQ_retiming.hh"
 #include "SEQ_sequencer.h"
 #include "SEQ_time.h"
 
@@ -675,10 +680,10 @@ static bool do_versions_sequencer_init_retiming_tool_data(Sequence *seq, void *u
 
   const int content_length = SEQ_time_strip_length_get(scene, seq);
 
-  SEQ_retiming_data_ensure(scene, seq);
+  SEQ_retiming_data_ensure(seq);
 
-  SeqRetimingHandle *handle = &seq->retiming_handles[seq->retiming_handle_num - 1];
-  handle->strip_frame_index = round_fl_to_int(content_length / seq->speed_factor);
+  SeqRetimingKey *key = &seq->retiming_keys[seq->retiming_keys_num - 1];
+  key->strip_frame_index = round_fl_to_int(content_length / seq->speed_factor);
   seq->speed_factor = 1.0f;
 
   return true;
@@ -1543,13 +1548,13 @@ static bool seq_meta_channels_ensure(Sequence *seq, void * /*user_data*/)
 static void do_version_subsurface_methods(bNode *node)
 {
   if (node->type == SH_NODE_SUBSURFACE_SCATTERING) {
-    if (!ELEM(node->custom1, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK)) {
-      node->custom1 = SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS;
+    if (!ELEM(node->custom1, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK_SKIN)) {
+      node->custom1 = SHD_SUBSURFACE_RANDOM_WALK;
     }
   }
   else if (node->type == SH_NODE_BSDF_PRINCIPLED) {
-    if (!ELEM(node->custom2, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK)) {
-      node->custom2 = SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS;
+    if (!ELEM(node->custom2, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK_SKIN)) {
+      node->custom2 = SHD_SUBSURFACE_RANDOM_WALK;
     }
   }
 }
@@ -2471,14 +2476,15 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
     }
     FOREACH_NODETREE_END;
 
-    if (!DNA_struct_member_exists(fd->filesdna, "FileAssetSelectParams", "short", "import_type")) {
+    if (!DNA_struct_member_exists(fd->filesdna, "FileAssetSelectParams", "short", "import_method"))
+    {
       LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
         LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
           LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
             if (sl->spacetype == SPACE_FILE) {
               SpaceFile *sfile = (SpaceFile *)sl;
               if (sfile->asset_params) {
-                sfile->asset_params->import_type = FILE_ASSET_IMPORT_APPEND;
+                sfile->asset_params->import_method = FILE_ASSET_IMPORT_APPEND;
               }
             }
           }
@@ -2632,7 +2638,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 300, 13)) {
     /* Convert Surface Deform to sparse-capable bind structure. */
     if (!DNA_struct_member_exists(
-            fd->filesdna, "SurfaceDeformModifierData", "int", "num_mesh_verts")) {
+            fd->filesdna, "SurfaceDeformModifierData", "int", "mesh_verts_num")) {
       LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
         LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
           if (md->type == eModifierType_SurfaceDeform) {
@@ -3030,9 +3036,9 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
                                          FILE_PARAMS_FLAG_UNUSED_3 | FILE_PATH_TOKENS_ALLOW);
               }
 
-              /* New default import type: Append with reuse. */
+              /* New default import method: Append with reuse. */
               if (sfile->asset_params) {
-                sfile->asset_params->import_type = FILE_ASSET_IMPORT_APPEND_REUSE;
+                sfile->asset_params->import_method = FILE_ASSET_IMPORT_APPEND_REUSE;
               }
               break;
             }
@@ -4319,8 +4325,8 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
 
           /* When an asset browser uses the default import method, make it follow the new
            * preference setting. This means no effective default behavior change. */
-          if (sfile->asset_params->import_type == FILE_ASSET_IMPORT_APPEND_REUSE) {
-            sfile->asset_params->import_type = FILE_ASSET_IMPORT_FOLLOW_PREFS;
+          if (sfile->asset_params->import_method == FILE_ASSET_IMPORT_APPEND_REUSE) {
+            sfile->asset_params->import_method = FILE_ASSET_IMPORT_FOLLOW_PREFS;
           }
         }
       }
@@ -4512,7 +4518,8 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 306, 10)) {
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       /* Set default values for new members. */
-      scene->toolsettings->snap_mode_tools = SCE_SNAP_TO_GEOM;
+      short snap_mode_geom = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 4) | (1 << 5);
+      scene->toolsettings->snap_mode_tools = snap_mode_geom;
       scene->toolsettings->plane_axis = 2;
     }
   }

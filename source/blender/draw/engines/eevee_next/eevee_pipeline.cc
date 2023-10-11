@@ -14,6 +14,8 @@
 
 #include "eevee_pipeline.hh"
 
+#include "eevee_shadow.hh"
+
 #include "draw_common.hh"
 
 namespace blender::eevee {
@@ -114,16 +116,17 @@ void WorldPipeline::render(View &view)
 
 void WorldVolumePipeline::sync(GPUMaterial *gpumat)
 {
+  is_valid_ = GPU_material_status(gpumat) == GPU_MAT_SUCCESS;
+  if (!is_valid_) {
+    /* Skip if the material has not compiled yet. */
+    return;
+  }
+
   world_ps_.init();
   world_ps_.state_set(DRW_STATE_WRITE_COLOR);
   inst_.bind_uniform_data(&world_ps_);
   inst_.volume.bind_properties_buffers(world_ps_);
   inst_.sampling.bind_resources(&world_ps_);
-
-  if (GPU_material_status(gpumat) != GPU_MAT_SUCCESS) {
-    /* Skip if the material has not compiled yet. */
-    return;
-  }
 
   world_ps_.material_set(*inst_.manager, gpumat);
   volume_sub_pass(world_ps_, nullptr, nullptr, gpumat);
@@ -135,6 +138,11 @@ void WorldVolumePipeline::sync(GPUMaterial *gpumat)
 
 void WorldVolumePipeline::render(View &view)
 {
+  if (!is_valid_) {
+    /* Skip if the material has not compiled yet. */
+    return;
+  }
+
   inst_.manager->submit(world_ps_, view);
 }
 
@@ -147,25 +155,73 @@ void WorldVolumePipeline::render(View &view)
 
 void ShadowPipeline::sync()
 {
-  surface_ps_.init();
-  surface_ps_.state_set(DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS);
-  surface_ps_.bind_texture(RBUFS_UTILITY_TEX_SLOT, inst_.pipelines.utility_tx);
-  surface_ps_.bind_image(SHADOW_ATLAS_IMG_SLOT, inst_.shadows.atlas_tx_);
-  surface_ps_.bind_ssbo(SHADOW_RENDER_MAP_BUF_SLOT, &inst_.shadows.render_map_buf_);
-  surface_ps_.bind_ssbo(SHADOW_VIEWPORT_INDEX_BUF_SLOT, &inst_.shadows.viewport_index_buf_);
-  surface_ps_.bind_ssbo(SHADOW_PAGE_INFO_SLOT, &inst_.shadows.pages_infos_data_);
-  inst_.bind_uniform_data(&surface_ps_);
-  inst_.sampling.bind_resources(&surface_ps_);
+  render_ps_.init();
+
+  /* NOTE: TILE_COPY technique perform a three-pass implementation. First performing the clear
+   * directly on tile, followed by a fast depth-only pass, then storing the on-tile results into
+   * the shadow atlas during a final storage pass. This takes advantage of TBDR architecture,
+   * reducing overdraw and additional per-fragment calculations. */
+  bool shadow_update_tbdr = (ShadowModule::shadow_technique == ShadowTechnique::TILE_COPY);
+  if (shadow_update_tbdr) {
+    draw::PassMain::Sub &pass = render_ps_.sub("Shadow.TilePageClear");
+    pass.subpass_transition(GPU_ATTACHEMENT_WRITE, {GPU_ATTACHEMENT_WRITE});
+    pass.shader_set(inst_.shaders.static_shader_get(SHADOW_PAGE_TILE_CLEAR));
+    /* Only manually clear depth of the updated tiles.
+     * This is because the depth is initialized to near depth using attachments for fast clear and
+     * color is cleared to far depth. This way we can save a bit of bandwidth by only clearing
+     * the updated tiles depth to far depth and not touch the color attachment. */
+    pass.state_set(DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_ALWAYS);
+    pass.bind_ssbo("src_coord_buf", inst_.shadows.src_coord_buf_);
+    pass.draw_procedural_indirect(GPU_PRIM_TRIS, inst_.shadows.tile_draw_buf_);
+  }
+
+  {
+    /* Metal writes depth value in local tile memory, which is considered a color attachment. */
+    DRWState state = DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS | DRW_STATE_WRITE_COLOR;
+
+    draw::PassMain::Sub &pass = render_ps_.sub("Shadow.Surface");
+    pass.state_set(state);
+    pass.bind_texture(RBUFS_UTILITY_TEX_SLOT, inst_.pipelines.utility_tx);
+    pass.bind_ssbo(SHADOW_VIEWPORT_INDEX_BUF_SLOT, &inst_.shadows.viewport_index_buf_);
+    if (!shadow_update_tbdr) {
+      /* We do not need all of the shadow information when using the TBDR-optimized approach. */
+      pass.bind_image(SHADOW_ATLAS_IMG_SLOT, inst_.shadows.atlas_tx_);
+      pass.bind_ssbo(SHADOW_RENDER_MAP_BUF_SLOT, &inst_.shadows.render_map_buf_);
+      pass.bind_ssbo(SHADOW_PAGE_INFO_SLOT, &inst_.shadows.pages_infos_data_);
+    }
+    inst_.bind_uniform_data(&pass);
+    inst_.sampling.bind_resources(&pass);
+    surface_ps_ = &pass;
+  }
+
+  if (shadow_update_tbdr) {
+    draw::PassMain::Sub &pass = render_ps_.sub("Shadow.TilePageStore");
+    pass.shader_set(inst_.shaders.static_shader_get(SHADOW_PAGE_TILE_STORE));
+    /* The most optimal way would be to only store pixels that have been rendered to (depth > 0).
+     * But that requires that the destination pages in the atlas would have been already cleared
+     * using compute. Experiments showed that it is faster to just copy the whole tiles back.
+     *
+     * For relative performance, raster-based clear within tile update adds around 0.1ms vs 0.25ms
+     * for compute based clear for a simple test case. */
+    pass.state_set(DRW_STATE_DEPTH_ALWAYS);
+    /* Metal have implicit sync with Raster Order Groups. Other backend need to have manual
+     * sub-pass transition to allow reading the frame-buffer. This is a no-op on Metal. */
+    pass.subpass_transition(GPU_ATTACHEMENT_WRITE, {GPU_ATTACHEMENT_READ});
+    pass.bind_image(SHADOW_ATLAS_IMG_SLOT, inst_.shadows.atlas_tx_);
+    pass.bind_ssbo("dst_coord_buf", inst_.shadows.dst_coord_buf_);
+    pass.bind_ssbo("src_coord_buf", inst_.shadows.src_coord_buf_);
+    pass.draw_procedural_indirect(GPU_PRIM_TRIS, inst_.shadows.tile_draw_buf_);
+  }
 }
 
 PassMain::Sub *ShadowPipeline::surface_material_add(GPUMaterial *gpumat)
 {
-  return &surface_ps_.sub(GPU_material_get_name(gpumat));
+  return &surface_ps_->sub(GPU_material_get_name(gpumat));
 }
 
 void ShadowPipeline::render(View &view)
 {
-  inst_.manager->submit(surface_ps_, view);
+  inst_.manager->submit(render_ps_, view);
 }
 
 /** \} */
@@ -227,6 +283,8 @@ void ForwardPipeline::sync()
       inst_.shadows.bind_resources(&opaque_ps_);
       inst_.sampling.bind_resources(&opaque_ps_);
       inst_.hiz_buffer.bind_resources(&opaque_ps_);
+      inst_.irradiance_cache.bind_resources(&opaque_ps_);
+      inst_.reflection_probes.bind_resources(&opaque_ps_);
     }
 
     opaque_single_sided_ps_ = &opaque_ps_.sub("SingleSided");
@@ -589,10 +647,6 @@ void DeferredLayer::render(View &main_view,
 
   inst_.manager->submit(eval_light_ps_, render_view);
 
-  if (closure_bits_ & CLOSURE_SSS) {
-    inst_.subsurface.render(render_view, combined_fb, direct_diffuse_tx_);
-  }
-
   RayTraceResult diffuse_result = inst_.raytracing.trace(rt_buffer,
                                                          radiance_feedback_tx_,
                                                          radiance_feedback_persmat_,
@@ -612,6 +666,8 @@ void DeferredLayer::render(View &main_view,
   indirect_diffuse_tx_ = diffuse_result.get();
   indirect_reflect_tx_ = reflect_result.get();
   indirect_refract_tx_ = refract_result.get();
+
+  inst_.subsurface.render(direct_diffuse_tx_, indirect_diffuse_tx_, closure_bits_, render_view);
 
   GPU_framebuffer_bind(combined_fb);
   inst_.manager->submit(combine_ps_);
@@ -784,12 +840,6 @@ void DeferredProbeLayer::begin_sync()
     gbuffer_single_sided_ps_ = &gbuffer_ps_.sub("SingleSided");
     gbuffer_single_sided_ps_->state_set(state | DRW_STATE_CULL_BACK);
   }
-
-  /* Light evaluate resources. */
-  {
-    eGPUTextureUsage usage = GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_SHADER_WRITE;
-    dummy_light_tx_.ensure_2d(GPU_RGBA16F, int2(1), usage);
-  }
 }
 
 void DeferredProbeLayer::end_sync()
@@ -810,7 +860,6 @@ void DeferredProbeLayer::end_sync()
     inst_.shadows.bind_resources(&pass);
     inst_.sampling.bind_resources(&pass);
     inst_.hiz_buffer.bind_resources(&pass);
-    inst_.reflection_probes.bind_resources(&pass);
     inst_.irradiance_cache.bind_resources(&pass);
     pass.barrier(GPU_BARRIER_TEXTURE_FETCH | GPU_BARRIER_SHADER_IMAGE_ACCESS);
     pass.draw_procedural(GPU_PRIM_TRIS, 1, 3);

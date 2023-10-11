@@ -36,26 +36,35 @@ def create_dolly_bones(rig):
     root = bones.new("Root")
     root.tail = (0.0, 1.0, 0.0)
     root.show_wire = True
+    rig.data.collections.new(name="Controls")
+    rig.data.collections['Controls'].assign(root)
 
-    ctrl_aim_child = bones.new("Aim_shape_rotation-MCH")
+    ctrl_aim_child = bones.new("MCH-Aim_shape_rotation")
     ctrl_aim_child.head = (0.0, 10.0, 1.7)
     ctrl_aim_child.tail = (0.0, 11.0, 1.7)
-    ctrl_aim_child.layers = tuple(i == 1 for i in range(32))
+    # Create bone collection and assign bone
+    rig.data.collections.new(name="MCH")
+    rig.data.collections['MCH'].assign(ctrl_aim_child)
+    rig.data.collections['MCH'].is_visible = False
 
     ctrl_aim = bones.new("Aim")
     ctrl_aim.head = (0.0, 10.0, 1.7)
     ctrl_aim.tail = (0.0, 11.0, 1.7)
     ctrl_aim.show_wire = True
+    rig.data.collections['Controls'].assign(ctrl_aim)
 
     ctrl = bones.new("Camera")
     ctrl.head = (0.0, 0.0, 1.7)
     ctrl.tail = (0.0, 1.0, 1.7)
     ctrl.show_wire = True
+    rig.data.collections['Controls'].assign(ctrl)
 
-    ctrl_offset = bones.new("Camera_offset")
+    ctrl_offset = bones.new("Camera_Offset")
     ctrl_offset.head = (0.0, 0.0, 1.7)
     ctrl_offset.tail = (0.0, 1.0, 1.7)
     ctrl_offset.show_wire = True
+    rig.data.collections['Controls'].assign(ctrl_offset)
+
 
     # Setup hierarchy
     ctrl.parent = root
@@ -67,7 +76,7 @@ def create_dolly_bones(rig):
     bpy.ops.object.mode_set(mode='OBJECT')
     pose_bones = rig.pose.bones
     # Lock the relevant scale channels of the Camera_offset bone
-    pose_bones["Camera_offset"].lock_scale = (True,) * 3
+    pose_bones["Camera_Offset"].lock_scale = (True,) * 3
 
 
 def create_crane_bones(rig):
@@ -78,42 +87,51 @@ def create_crane_bones(rig):
     root = bones.new("Root")
     root.tail = (0.0, 1.0, 0.0)
     root.show_wire = True
+    rig.data.collections.new(name="Controls")
+    rig.data.collections['Controls'].assign(root)
 
-    ctrl_aim_child = bones.new("Aim_shape_rotation-MCH")
+    ctrl_aim_child = bones.new("MCH-Aim_shape_rotation")
     ctrl_aim_child.head = (0.0, 10.0, 1.7)
     ctrl_aim_child.tail = (0.0, 11.0, 1.7)
-    ctrl_aim_child.layers = tuple(i == 1 for i in range(32))
+    rig.data.collections.new(name="MCH")
+    rig.data.collections['MCH'].assign(ctrl_aim_child)
+    rig.data.collections['MCH'].is_visible = False
 
     ctrl_aim = bones.new("Aim")
     ctrl_aim.head = (0.0, 10.0, 1.7)
     ctrl_aim.tail = (0.0, 11.0, 1.7)
     ctrl_aim.show_wire = True
+    rig.data.collections['Controls'].assign(ctrl_aim)
 
     ctrl = bones.new("Camera")
     ctrl.head = (0.0, 1.0, 1.7)
     ctrl.tail = (0.0, 2.0, 1.7)
+    rig.data.collections['Controls'].assign(ctrl)
 
-    ctrl_offset = bones.new("Camera_offset")
+    ctrl_offset = bones.new("Camera_Offset")
     ctrl_offset.head = (0.0, 1.0, 1.7)
     ctrl_offset.tail = (0.0, 2.0, 1.7)
+    rig.data.collections['Controls'].assign(ctrl_offset)
 
-    arm = bones.new("Crane_arm")
+    arm = bones.new("Crane_Arm")
     arm.head = (0.0, 0.0, 1.7)
     arm.tail = (0.0, 1.0, 1.7)
+    rig.data.collections['Controls'].assign(arm)
 
-    height = bones.new("Crane_height")
+    height = bones.new("Crane_Height")
     height.head = (0.0, 0.0, 0.0)
     height.tail = (0.0, 0.0, 1.7)
+    rig.data.collections['Controls'].assign(height)
 
     # Setup hierarchy
     ctrl.parent = arm
     ctrl_offset.parent = ctrl
     ctrl.use_inherit_rotation = False
-    ctrl.use_inherit_scale = False
+    ctrl.inherit_scale = "NONE"
     ctrl.show_wire = True
 
     arm.parent = height
-    arm.use_inherit_scale = False
+    arm.inherit_scale = "NONE"
 
     height.parent = root
     ctrl_aim.parent = root
@@ -124,12 +142,12 @@ def create_crane_bones(rig):
     pose_bones = rig.pose.bones
 
     # Lock the relevant loc, rot and scale
-    pose_bones["Crane_arm"].lock_rotation = (False, True, False)
-    pose_bones["Crane_arm"].lock_scale = (True, False, True)
-    pose_bones["Crane_height"].lock_location = (True,) * 3
-    pose_bones["Crane_height"].lock_rotation = (True,) * 3
-    pose_bones["Crane_height"].lock_scale = (True, False, True)
-    pose_bones["Camera_offset"].lock_scale = (True,) * 3
+    pose_bones["Crane_Arm"].lock_rotation = (False, True, False)
+    pose_bones["Crane_Arm"].lock_scale = (True, False, True)
+    pose_bones["Crane_Height"].lock_location = (True,) * 3
+    pose_bones["Crane_Height"].lock_rotation = (True,) * 3
+    pose_bones["Crane_Height"].lock_scale = (True, False, True)
+    pose_bones["Camera_Offset"].lock_scale = (True,) * 3
 
 
 def setup_3d_rig(rig, cam):
@@ -149,20 +167,20 @@ def setup_3d_rig(rig, cam):
     # Build the widgets
     root_widget = create_root_widget("Camera_Root")
     camera_widget = create_camera_widget("Camera")
-    camera_offset_widget = create_camera_offset_widget("Camera_offset")
+    camera_offset_widget = create_camera_offset_widget("Camera_Offset")
     aim_widget = create_aim_widget("Aim")
 
     # Add the custom bone shapes
     pose_bones["Root"].custom_shape = root_widget
     pose_bones["Aim"].custom_shape = aim_widget
     pose_bones["Camera"].custom_shape = camera_widget
-    pose_bones["Camera_offset"].custom_shape = camera_offset_widget
+    pose_bones["Camera_Offset"].custom_shape = camera_offset_widget
 
     # Set the "Override Transform" field to the mechanism position
-    pose_bones["Aim"].custom_shape_transform = pose_bones["Aim_shape_rotation-MCH"]
+    pose_bones["Aim"].custom_shape_transform = pose_bones["MCH-Aim_shape_rotation"]
 
     # Add constraints to bones
-    con = pose_bones['Aim_shape_rotation-MCH'].constraints.new('COPY_ROTATION')
+    con = pose_bones['MCH-Aim_shape_rotation'].constraints.new('COPY_ROTATION')
     con.target = rig
     con.subtarget = "Camera"
 
@@ -189,29 +207,38 @@ def create_2d_bones(context, rig, cam):
     root = bones.new("Root")
     root.tail = Vector((0.0, 0.0, 1.0))
     root.show_wire = True
+    rig.data.collections.new(name="Controls")
+    rig.data.collections['Controls'].assign(root)
 
     ctrl = bones.new('Camera')
     ctrl.tail = Vector((0.0, 0.0, 1.0))
     ctrl.show_wire = True
+    rig.data.collections['Controls'].assign(ctrl)
 
-    left_corner = bones.new("Left_corner")
+    left_corner = bones.new("Left_Corner")
     left_corner.head = (-3, 10, -2)
     left_corner.tail = left_corner.head + Vector((0.0, 0.0, 1.0))
     left_corner.show_wire = True
+    rig.data.collections['Controls'].assign(left_corner)
 
-    right_corner = bones.new("Right_corner")
+    right_corner = bones.new("Right_Corner")
     right_corner.head = (3, 10, -2)
     right_corner.tail = right_corner.head + Vector((0.0, 0.0, 1.0))
     right_corner.show_wire = True
+    rig.data.collections['Controls'].assign(right_corner)
 
     corner_distance_x = (left_corner.head - right_corner.head).length
     corner_distance_y = -left_corner.head.z
     corner_distance_z = left_corner.head.y
+    rig.data.collections['Controls'].assign(root)
 
-    center = bones.new("Center-MCH")
+    center = bones.new("MCH-Center")
     center.head = ((right_corner.head + left_corner.head) / 2.0)
     center.tail = center.head + Vector((0.0, 0.0, 1.0))
-    center.layers = tuple(i == 1 for i in range(32))
+    center.show_wire = True
+    rig.data.collections.new(name="MCH")
+    rig.data.collections['MCH'].assign(center)
+    rig.data.collections['MCH'].is_visible = False
     center.show_wire = True
 
     # Setup hierarchy
@@ -227,7 +254,7 @@ def create_2d_bones(context, rig, cam):
         bone.rotation_mode = 'XYZ'
 
     # Bone drivers
-    center_drivers = pose_bones["Center-MCH"].driver_add("location")
+    center_drivers = pose_bones["MCH-Center"].driver_add("location")
 
     # Center X driver
     driver = center_drivers[0].driver
@@ -238,7 +265,7 @@ def create_2d_bones(context, rig, cam):
         var.name = corner
         var.type = 'TRANSFORMS'
         var.targets[0].id = rig
-        var.targets[0].bone_target = corner.capitalize() + '_corner'
+        var.targets[0].bone_target = corner.capitalize() + '_Corner'
         var.targets[0].transform_type = 'LOC_X'
         var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
@@ -255,7 +282,7 @@ def create_2d_bones(context, rig, cam):
             var.name = '%s_%s' % (corner, direction)
             var.type = 'TRANSFORMS'
             var.targets[0].id = rig
-            var.targets[0].bone_target = corner.capitalize() + '_corner'
+            var.targets[0].bone_target = corner.capitalize() + '_Corner'
             var.targets[0].transform_type = 'LOC_' + direction.upper()
             var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
@@ -275,31 +302,31 @@ def create_2d_bones(context, rig, cam):
         var.name = corner
         var.type = 'TRANSFORMS'
         var.targets[0].id = rig
-        var.targets[0].bone_target = corner.capitalize() + '_corner'
+        var.targets[0].bone_target = corner.capitalize() + '_Corner'
         var.targets[0].transform_type = 'LOC_Z'
         var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
     # Bone constraints
     con = pose_bones["Camera"].constraints.new('DAMPED_TRACK')
     con.target = rig
-    con.subtarget = "Center-MCH"
+    con.subtarget = "MCH-Center"
     con.track_axis = 'TRACK_NEGATIVE_Z'
 
     # Build the widgets
-    left_widget = create_corner_widget("Left_corner", reverse=True)
-    right_widget = create_corner_widget("Right_corner")
+    left_widget = create_corner_widget("Left_Corner", reverse=True)
+    right_widget = create_corner_widget("Right_Corner")
     parent_widget = create_circle_widget("Root", radius=0.5)
     camera_widget = create_circle_widget("Camera_2D", radius=0.3)
 
     # Add the custom bone shapes
-    pose_bones["Left_corner"].custom_shape = left_widget
-    pose_bones["Right_corner"].custom_shape = right_widget
+    pose_bones["Left_Corner"].custom_shape = left_widget
+    pose_bones["Right_Corner"].custom_shape = right_widget
     pose_bones["Root"].custom_shape = parent_widget
     pose_bones["Camera"].custom_shape = camera_widget
 
     # Lock the relevant loc, rot and scale
-    pose_bones["Left_corner"].lock_rotation = (True,) * 3
-    pose_bones["Right_corner"].lock_rotation = (True,) * 3
+    pose_bones["Left_Corner"].lock_rotation = (True,) * 3
+    pose_bones["Right_Corner"].lock_rotation = (True,) * 3
     pose_bones["Camera"].lock_rotation = (True,) * 3
     pose_bones["Camera"].lock_scale = (True,) * 3
 
@@ -331,10 +358,10 @@ def create_2d_bones(context, rig, cam):
     var.name = 'frame_width'
     var.type = 'LOC_DIFF'
     var.targets[0].id = rig
-    var.targets[0].bone_target = "Left_corner"
+    var.targets[0].bone_target = "Left_Corner"
     var.targets[0].transform_space = 'WORLD_SPACE'
     var.targets[1].id = rig
-    var.targets[1].bone_target = "Right_corner"
+    var.targets[1].bone_target = "Right_Corner"
     var.targets[1].transform_space = 'WORLD_SPACE'
 
     for corner in ('left', 'right'):
@@ -342,7 +369,7 @@ def create_2d_bones(context, rig, cam):
         var.name = corner + '_z'
         var.type = 'TRANSFORMS'
         var.targets[0].id = rig
-        var.targets[0].bone_target = corner.capitalize() + '_corner'
+        var.targets[0].bone_target = corner.capitalize() + '_Corner'
         var.targets[0].transform_type = 'LOC_Z'
         var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
@@ -363,7 +390,7 @@ def create_2d_bones(context, rig, cam):
         var.name = corner + '_x'
         var.type = 'TRANSFORMS'
         var.targets[0].id = rig
-        var.targets[0].bone_target = corner.capitalize() + '_corner'
+        var.targets[0].bone_target = corner.capitalize() + '_Corner'
         var.targets[0].transform_type = 'LOC_X'
         var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
@@ -385,7 +412,7 @@ def create_2d_bones(context, rig, cam):
             var.name = '%s_%s' % (corner, direction)
             var.type = 'TRANSFORMS'
             var.targets[0].id = rig
-            var.targets[0].bone_target = corner.capitalize() + '_corner'
+            var.targets[0].bone_target = corner.capitalize() + '_Corner'
             var.targets[0].transform_type = 'LOC_' + direction.upper()
             var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
@@ -422,7 +449,7 @@ def create_2d_bones(context, rig, cam):
             var.name = '%s_%s' % (corner, direction)
             var.type = 'TRANSFORMS'
             var.targets[0].id = rig
-            var.targets[0].bone_target = corner.capitalize() + '_corner'
+            var.targets[0].bone_target = corner.capitalize() + '_Corner'
             var.targets[0].transform_type = 'LOC_' + direction.upper()
             var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
@@ -484,7 +511,7 @@ def build_camera_rig(context, mode):
     if mode == "2D":
         cam.parent_bone = "Camera"
     else:
-        cam.parent_bone = "Camera_offset"
+        cam.parent_bone = "Camera_Offset"
 
     # Change display to BBone: it just looks nicer
     rig.data.display_type = 'BBONE'

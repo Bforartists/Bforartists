@@ -30,10 +30,12 @@ void RayTraceModule::init()
 
   reflection_options_ = sce_eevee.reflection_options;
   refraction_options_ = sce_eevee.refraction_options;
+  diffuse_options_ = sce_eevee.diffuse_options;
   tracing_method_ = RaytraceEEVEE_Method(sce_eevee.ray_tracing_method);
 
   if (sce_eevee.ray_split_settings == 0) {
     refraction_options_ = reflection_options_;
+    diffuse_options_ = reflection_options_;
   }
 }
 
@@ -104,6 +106,7 @@ void RayTraceModule::sync()
     inst_.bind_uniform_data(&pass);
     inst_.hiz_buffer.bind_resources(&pass);
     inst_.sampling.bind_resources(&pass);
+    inst_.irradiance_cache.bind_resources(&pass);
     inst_.reflection_probes.bind_resources(&pass);
     pass.dispatch(ray_dispatch_buf_);
     pass.barrier(GPU_BARRIER_SHADER_IMAGE_ACCESS);
@@ -118,6 +121,7 @@ void RayTraceModule::sync()
     pass.bind_image("ray_radiance_img", &ray_radiance_tx_);
     pass.bind_texture("depth_tx", &depth_tx);
     inst_.bind_uniform_data(&pass);
+    inst_.irradiance_cache.bind_resources(&pass);
     inst_.reflection_probes.bind_resources(&pass);
     pass.dispatch(ray_dispatch_buf_);
     pass.barrier(GPU_BARRIER_SHADER_IMAGE_ACCESS);
@@ -218,9 +222,9 @@ RayTraceResult RayTraceModule::trace(RayTraceBuffer &rt_buffer,
   RayTraceBuffer::DenoiseBuffer *denoise_buf = nullptr;
 
   if (raytrace_closure == CLOSURE_DIFFUSE) {
-    options = reflection_options_;
+    options = diffuse_options_;
     generate_ray_ps = &generate_diffuse_ps_;
-    trace_ray_ps = force_no_tracing ? &trace_diffuse_ps_ : &trace_diffuse_ps_;
+    trace_ray_ps = force_no_tracing ? &trace_fallback_ps_ : &trace_diffuse_ps_;
     denoise_spatial_ps = &denoise_spatial_diffuse_ps_;
     denoise_bilateral_ps = &denoise_bilateral_diffuse_ps_;
     denoise_buf = &rt_buffer.diffuse;

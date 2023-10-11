@@ -20,7 +20,7 @@
 #
 #    The following string options are available:
 #
-#    P BSDF Subsurface method : 'BURLEY', 'RANDOM_WALK_FIXED_RADIUS', 'RANDOM_WALK'
+#    P BSDF Subsurface method : 'BURLEY', 'RANDOM_WALK', 'RANDOM_WALK_SKIN'
 #    P BSDF Distribution      : 'GGX', 'MULTI_GGX'
 #    Eevee Blend Method       : 'OPAQUE', 'CLIP', 'HASHED', 'BLEND'
 #    Eevee Shadow Method      : 'NONE', 'OPAQUE', 'CLIP', 'HASHED'
@@ -41,22 +41,20 @@ Radius, ionic                : 1.540000
 Color                        : 1.0,1.0,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -81,22 +79,20 @@ Radius, atomic               : 0.490000
 Color                        : 0.8509803921568627,1.0,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -123,22 +119,20 @@ Radius, ionic                : 0.680000
 Color                        : 0.8,0.5019607843137255,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -167,22 +161,20 @@ Radius, ionic                : 0.350000
 Color                        : 0.7607843137254902,1.0,0.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -211,22 +203,20 @@ Radius, ionic                : 0.230000
 Color                        : 1.0,0.7098039215686275,0.7098039215686275,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -255,22 +245,20 @@ Radius, ionic                : 0.160000
 Color                        : 0.5647058823529412,0.5647058823529412,0.5647058823529412,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -303,22 +291,20 @@ Radius, ionic                : 0.130000
 Color                        : 0.18823529411764706,0.3137254901960784,0.9725490196078431,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -351,22 +337,20 @@ Radius, ionic                : 0.090000
 Color                        : 1.0,0.050980392156862744,0.050980392156862744,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -395,22 +379,20 @@ Radius, ionic                : 0.080000
 Color                        : 0.5647058823529412,0.8784313725490196,0.3137254901960784,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -437,22 +419,20 @@ Radius, ionic                : 1.120000
 Color                        : 0.7019607843137254,0.8901960784313725,0.9607843137254902,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -479,22 +459,20 @@ Radius, ionic                : 0.970000
 Color                        : 0.6705882352941176,0.3607843137254902,0.9490196078431372,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -523,22 +501,20 @@ Radius, ionic                : 0.660000
 Color                        : 0.5411764705882353,1.0,0.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -565,22 +541,20 @@ Radius, ionic                : 0.510000
 Color                        : 0.7490196078431373,0.6509803921568628,0.6509803921568628,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -613,22 +587,20 @@ Radius, ionic                : 0.420000
 Color                        : 0.9411764705882353,0.7843137254901961,0.6274509803921569,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -659,22 +631,20 @@ Radius, ionic                : 0.350000
 Color                        : 1.0,0.5019607843137255,0.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -707,22 +677,20 @@ Radius, ionic                : 0.300000
 Color                        : 1.0,1.0,0.18823529411764706,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -753,22 +721,20 @@ Radius, ionic                : 0.270000
 Color                        : 0.12156862745098039,0.9411764705882353,0.12156862745098039,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -795,22 +761,20 @@ Radius, ionic                : 1.540000
 Color                        : 0.5019607843137255,0.8196078431372549,0.8901960784313725,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -837,22 +801,20 @@ Radius, ionic                : 0.810000
 Color                        : 0.5607843137254902,0.25098039215686274,0.8313725490196079,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -881,22 +843,20 @@ Radius, ionic                : 0.990000
 Color                        : 0.23921568627450981,1.0,0.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -923,22 +883,20 @@ Radius, ionic                : 0.732000
 Color                        : 0.9019607843137255,0.9019607843137255,0.9019607843137255,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -971,22 +929,20 @@ Radius, ionic                : 0.680000
 Color                        : 0.7490196078431373,0.7607843137254902,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1019,22 +975,20 @@ Radius, ionic                : 0.590000
 Color                        : 0.6509803921568628,0.6509803921568628,0.6705882352941176,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1067,22 +1021,20 @@ Radius, ionic                : 0.520000
 Color                        : 0.5411764705882353,0.6,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1115,22 +1067,20 @@ Radius, ionic                : 0.460000
 Color                        : 0.611764705882353,0.47843137254901963,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1159,22 +1109,20 @@ Radius, ionic                : 0.640000
 Color                        : 0.8784313725490196,0.4,0.2,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1203,22 +1151,20 @@ Radius, ionic                : 0.630000
 Color                        : 0.9411764705882353,0.5647058823529412,0.6274509803921569,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1245,22 +1191,20 @@ Radius, ionic                : 0.690000
 Color                        : 0.3137254901960784,0.8156862745098039,0.3137254901960784,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1289,22 +1233,20 @@ Radius, ionic                : 0.720000
 Color                        : 0.7843137254901961,0.5019607843137255,0.2,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1333,22 +1275,20 @@ Radius, ionic                : 0.740000
 Color                        : 0.49019607843137253,0.5019607843137255,0.6901960784313725,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1377,22 +1317,20 @@ Radius, ionic                : 0.620000
 Color                        : 0.7607843137254902,0.5607843137254902,0.5607843137254902,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1423,22 +1361,20 @@ Radius, ionic                : 0.530000
 Color                        : 0.4,0.5607843137254902,0.5607843137254902,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1469,22 +1405,20 @@ Radius, ionic                : 0.460000
 Color                        : 0.7411764705882353,0.5019607843137255,0.8901960784313725,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1519,22 +1453,20 @@ Radius, ionic                : 0.420000
 Color                        : 1.0,0.6313725490196078,0.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1565,22 +1497,20 @@ Radius, ionic                : 0.390000
 Color                        : 0.6509803921568628,0.1607843137254902,0.1607843137254902,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1605,22 +1535,20 @@ Radius, atomic               : 1.240000
 Color                        : 0.3607843137254902,0.7215686274509804,0.8196078431372549,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1647,22 +1575,20 @@ Radius, ionic                : 1.470000
 Color                        : 0.4392156862745098,0.1803921568627451,0.6901960784313725,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1689,22 +1615,20 @@ Radius, ionic                : 1.120000
 Color                        : 0.0,1.0,0.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1731,22 +1655,20 @@ Radius, ionic                : 0.893000
 Color                        : 0.5803921568627451,1.0,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1775,22 +1697,20 @@ Radius, ionic                : 0.790000
 Color                        : 0.5803921568627451,0.8784313725490196,0.8784313725490196,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1821,22 +1741,20 @@ Radius, ionic                : 0.690000
 Color                        : 0.45098039215686275,0.7607843137254902,0.788235294117647,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1867,22 +1785,20 @@ Radius, ionic                : 0.620000
 Color                        : 0.32941176470588235,0.7098039215686275,0.7098039215686275,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1909,22 +1825,20 @@ Radius, ionic                : 0.979000
 Color                        : 0.23137254901960785,0.6196078431372549,0.6196078431372549,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1951,22 +1865,20 @@ Radius, ionic                : 0.670000
 Color                        : 0.1411764705882353,0.5607843137254902,0.5607843137254902,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -1993,22 +1905,20 @@ Radius, ionic                : 0.680000
 Color                        : 0.0392156862745098,0.49019607843137253,0.5490196078431373,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2037,22 +1947,20 @@ Radius, ionic                : 0.650000
 Color                        : 0.0,0.4117647058823529,0.5215686274509804,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2081,22 +1989,20 @@ Radius, ionic                : 0.890000
 Color                        : 0.7529411764705882,0.7529411764705882,0.7529411764705882,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2125,22 +2031,20 @@ Radius, ionic                : 0.970000
 Color                        : 1.0,0.8509803921568627,0.5607843137254902,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2167,22 +2071,20 @@ Radius, ionic                : 0.810000
 Color                        : 0.6509803921568628,0.4588235294117647,0.45098039215686275,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2215,22 +2117,20 @@ Radius, ionic                : 0.710000
 Color                        : 0.4,0.5019607843137255,0.5019607843137255,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2261,22 +2161,20 @@ Radius, ionic                : 0.620000
 Color                        : 0.6196078431372549,0.38823529411764707,0.7098039215686275,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2311,22 +2209,20 @@ Radius, ionic                : 0.560000
 Color                        : 0.8313725490196079,0.47843137254901963,0.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2357,22 +2253,20 @@ Radius, ionic                : 0.500000
 Color                        : 0.5803921568627451,0.0,0.5803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2397,22 +2291,20 @@ Radius, atomic               : 1.240000
 Color                        : 0.25882352941176473,0.6196078431372549,0.6901960784313725,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2439,22 +2331,20 @@ Radius, ionic                : 1.670000
 Color                        : 0.3411764705882353,0.09019607843137255,0.5607843137254902,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2483,22 +2373,20 @@ Radius, ionic                : 1.340000
 Color                        : 0.0,0.788235294117647,0.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2527,22 +2415,20 @@ Radius, ionic                : 1.061000
 Color                        : 0.4392156862745098,0.8313725490196079,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2573,22 +2459,20 @@ Radius, ionic                : 0.920000
 Color                        : 1.0,1.0,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2617,22 +2501,20 @@ Radius, ionic                : 0.900000
 Color                        : 0.8509803921568627,1.0,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2659,22 +2541,20 @@ Radius, ionic                : 0.995000
 Color                        : 0.7803921568627451,1.0,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2701,22 +2581,20 @@ Radius, ionic                : 0.979000
 Color                        : 0.6392156862745098,1.0,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2743,22 +2621,20 @@ Radius, ionic                : 0.964000
 Color                        : 0.5607843137254902,1.0,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2787,22 +2663,20 @@ Radius, ionic                : 0.950000
 Color                        : 0.3803921568627451,1.0,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2829,22 +2703,20 @@ Radius, ionic                : 0.938000
 Color                        : 0.27058823529411763,1.0,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2873,22 +2745,20 @@ Radius, ionic                : 0.840000
 Color                        : 0.18823529411764706,1.0,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2915,22 +2785,20 @@ Radius, ionic                : 0.908000
 Color                        : 0.12156862745098039,1.0,0.7803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2957,22 +2825,20 @@ Radius, ionic                : 0.894000
 Color                        : 0.0,1.0,0.611764705882353,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -2999,22 +2865,20 @@ Radius, ionic                : 0.881000
 Color                        : 0.0,0.9019607843137255,0.4588235294117647,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3041,22 +2905,20 @@ Radius, ionic                : 0.870000
 Color                        : 0.0,0.8313725490196079,0.3215686274509804,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3085,22 +2947,20 @@ Radius, ionic                : 0.858000
 Color                        : 0.0,0.7490196078431373,0.2196078431372549,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3127,22 +2987,20 @@ Radius, ionic                : 0.850000
 Color                        : 0.0,0.6705882352941176,0.1411764705882353,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3169,22 +3027,20 @@ Radius, ionic                : 0.780000
 Color                        : 0.30196078431372547,0.7607843137254902,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3211,22 +3067,20 @@ Radius, ionic                : 0.680000
 Color                        : 0.30196078431372547,0.6509803921568628,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3255,22 +3109,20 @@ Radius, ionic                : 0.620000
 Color                        : 0.12941176470588237,0.5803921568627451,0.8392156862745098,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3299,22 +3151,20 @@ Radius, ionic                : 0.560000
 Color                        : 0.14901960784313725,0.49019607843137253,0.6705882352941176,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3343,22 +3193,20 @@ Radius, ionic                : 0.690000
 Color                        : 0.14901960784313725,0.4,0.5882352941176471,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3385,22 +3233,20 @@ Radius, ionic                : 0.680000
 Color                        : 0.09019607843137255,0.32941176470588235,0.5294117647058824,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3429,22 +3275,20 @@ Radius, ionic                : 0.650000
 Color                        : 0.8156862745098039,0.8156862745098039,0.8784313725490196,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3473,22 +3317,20 @@ Radius, ionic                : 0.850000
 Color                        : 1.0,0.8196078431372549,0.13725490196078433,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3517,22 +3359,20 @@ Radius, ionic                : 1.100000
 Color                        : 0.7215686274509804,0.7215686274509804,0.8156862745098039,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3561,22 +3401,20 @@ Radius, ionic                : 0.950000
 Color                        : 0.6509803921568628,0.32941176470588235,0.30196078431372547,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3605,22 +3443,20 @@ Radius, ionic                : 0.840000
 Color                        : 0.3411764705882353,0.34901960784313724,0.3803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3651,22 +3487,20 @@ Radius, ionic                : 0.740000
 Color                        : 0.6196078431372549,0.30980392156862746,0.7098039215686275,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3693,22 +3527,20 @@ Radius, ionic                : 0.670000
 Color                        : 0.6705882352941176,0.3607843137254902,0.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3739,22 +3571,20 @@ Radius, ionic                : 0.460000
 Color                        : 0.4588235294117647,0.30980392156862746,0.27058823529411763,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3779,22 +3609,20 @@ Radius, atomic               : 1.340000
 Color                        : 0.25882352941176473,0.5098039215686274,0.5882352941176471,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3821,22 +3649,20 @@ Radius, ionic                : 1.800000
 Color                        : 0.25882352941176473,0.0,0.4,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3863,22 +3689,20 @@ Radius, ionic                : 1.430000
 Color                        : 0.0,0.49019607843137253,0.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3905,22 +3729,20 @@ Radius, ionic                : 1.180000
 Color                        : 0.4392156862745098,0.6705882352941176,0.9803921568627451,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3947,22 +3769,20 @@ Radius, ionic                : 1.020000
 Color                        : 0.0,0.7294117647058823,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -3993,22 +3813,20 @@ Radius, ionic                : 0.890000
 Color                        : 0.0,0.6313725490196078,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4037,22 +3855,20 @@ Radius, ionic                : 0.800000
 Color                        : 0.0,0.5607843137254902,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4083,22 +3899,20 @@ Radius, ionic                : 0.710000
 Color                        : 0.0,0.5019607843137255,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4127,22 +3941,20 @@ Radius, ionic                : 0.930000
 Color                        : 0.0,0.4196078431372549,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4171,22 +3983,20 @@ Radius, ionic                : 0.920000
 Color                        : 0.32941176470588235,0.3607843137254902,0.9490196078431372,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4211,22 +4021,20 @@ Radius, atomic               : 1.000000
 Color                        : 0.47058823529411764,0.3607843137254902,0.8901960784313725,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4251,22 +4059,20 @@ Radius, atomic               : 1.000000
 Color                        : 0.5411764705882353,0.30980392156862746,0.8901960784313725,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4291,22 +4097,20 @@ Radius, atomic               : 1.000000
 Color                        : 0.6313725490196078,0.21176470588235294,0.8313725490196079,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4331,22 +4135,20 @@ Radius, atomic               : 1.000000
 Color                        : 0.7019607843137254,0.12156862745098039,0.8313725490196079,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4371,22 +4173,20 @@ Radius, atomic               : 1.000000
 Color                        : 0.7019607843137254,0.12156862745098039,0.7294117647058823,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4411,22 +4211,20 @@ Radius, atomic               : 1.000000
 Color                        : 0.7019607843137254,0.050980392156862744,0.6509803921568628,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4451,22 +4249,20 @@ Radius, atomic               : 1.000000
 Color                        : 0.7411764705882353,0.050980392156862744,0.5294117647058824,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4491,22 +4287,20 @@ Radius, atomic               : 1.000000
 Color                        : 0.7803921568627451,0.0,0.4,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4531,22 +4325,20 @@ Radius, atomic               : 1.0
 Color                        : 0.5,0.5,0.5,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
-P BSDF Specular Tilt         : 0.5
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4571,21 +4363,19 @@ Radius, atomic               : 1.0
 Color                        : 1.0,1.0,1.0,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
+P BSDF Specular IOR Level    : 0.5
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0
@@ -4610,21 +4400,19 @@ Radius, atomic               : 1.0
 Color                        : 0.5,0.5,0.5,1.0
 P BSDF Subsurface method     : BURLEY
 P BSDF Distribution          : MULTI_GGX
-P BSDF Subsurface            : 0.0
-P BSDF Subsurface Color      : 1.0, 1.0, 1.0, 1.0
+P BSDF Subsurface Weight     : 0.0
 P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
 P BSDF Metallic              : 0.0
-P BSDF Specular              : 0.5
+P BSDF Specular IOR Level    : 0.5
 P BSDF Roughness             : 0.5
 P BSDF Anisotropic           : 0.5
 P BSDF Anisotropic Rotation  : 0.5
-P BSDF Sheen                 : 0.5
+P BSDF Sheen Weight          : 0.5
 P BSDF Sheen Tint            : 0.5
-P BSDF Clearcoat             : 0.0
-P BSDF Clearcoat Rough       : 0.030
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
 P BSDF IOR                   : 1.4
-P BSDF Trans                 : 0.0
-P BSDF Trans Roughness       : 0.0
+P BSDF Transmission Weight   : 0.0
 P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
 P BSDF Emission Strength     : 0.0
 P BSDF Alpha                 : 1.0

@@ -12,6 +12,9 @@
 /* allow readfile to use deprecated functionality */
 #define DNA_DEPRECATED_ALLOW
 
+/* Define macros in `DNA_genfile.h`. */
+#define DNA_GENFILE_VERSIONING_MACROS
+
 #include "DNA_anim_types.h"
 #include "DNA_brush_types.h"
 #include "DNA_camera_types.h"
@@ -36,6 +39,8 @@
 #include "DNA_view3d_types.h"
 #include "DNA_world_types.h"
 
+#undef DNA_GENFILE_VERSIONING_MACROS
+
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
@@ -57,7 +62,7 @@
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
 #include "BKE_scene.h"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 #include "BKE_text.h" /* for txt_extended_ascii_as_utf8 */
 #include "BKE_texture.h"
 #include "BKE_tracking.h"
