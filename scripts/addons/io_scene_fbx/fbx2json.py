@@ -30,7 +30,8 @@ The types are as follows:
 
 * 'Z': - INT8
 * 'Y': - INT16
-* 'C': - BOOL
+* 'B': - BOOL
+* 'C': - CHAR
 * 'I': - INT32
 * 'F': - FLOAT32
 * 'D': - FLOAT64
@@ -109,7 +110,8 @@ def unpack_array(read, array_type, array_stride, array_byteswap):
 read_data_dict = {
     b'Z'[0]: lambda read: unpack(b'<b', read(1))[0],  # 8 bit int
     b'Y'[0]: lambda read: unpack(b'<h', read(2))[0],  # 16 bit int
-    b'C'[0]: lambda read: unpack(b'?', read(1))[0],   # 1 bit bool (yes/no)
+    b'B'[0]: lambda read: unpack(b'?', read(1))[0],   # 1 bit bool (yes/no)
+    b'C'[0]: lambda read: unpack(b'<c', read(1))[0],  # char
     b'I'[0]: lambda read: unpack(b'<i', read(4))[0],  # 32 bit int
     b'F'[0]: lambda read: unpack(b'<f', read(4))[0],  # 32 bit float
     b'D'[0]: lambda read: unpack(b'<d', read(8))[0],  # 64 bit float
@@ -225,7 +227,8 @@ data_types.__dict__.update(
 dict(
 INT8 = b'Z'[0],
 INT16 = b'Y'[0],
-BOOL = b'C'[0],
+BOOL = b'B'[0],
+CHAR = b'C'[0],
 INT32 = b'I'[0],
 FLOAT32 = b'F'[0],
 FLOAT64 = b'D'[0],

@@ -2724,7 +2724,7 @@ static void widget_state_menu_item(uiWidgetType *wt,
   }
   else if (state->but_flag & UI_BUT_DISABLED) {
     /* Regular disabled. */
-    color_blend_v3_v3(wt->wcol.text, wt->wcol.inner, 0.5f);
+    wt->wcol.text[3] = 128;
   }
   else if (state->but_flag & UI_BUT_INACTIVE) {
     /* Inactive. */
@@ -3211,6 +3211,8 @@ void ui_hsvcube_pos_from_vals(
       /* exception only for value strip - use the range set in but->min/max */
       y = (hsv[2] - hsv_but->softmin) / (hsv_but->softmax - hsv_but->softmin);
       break;
+    case UI_GRAD_NONE:
+      BLI_assert_unreachable();
   }
 
   /* cursor */

@@ -15,6 +15,9 @@
 /* allow readfile to use deprecated functionality */
 #define DNA_DEPRECATED_ALLOW
 
+/* Define macros in `DNA_genfile.h`. */
+#define DNA_GENFILE_VERSIONING_MACROS
+
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_brush_types.h"
@@ -41,6 +44,8 @@
 
 #include "DNA_genfile.h"
 
+#undef DNA_GENFILE_VERSIONING_MACROS
+
 #include "BKE_anim_data.h"
 #include "BKE_animsys.h"
 #include "BKE_colortools.h"
@@ -50,7 +55,7 @@
 #include "BKE_modifier.h"
 #include "BKE_node.h"
 #include "BKE_scene.h"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 #include "BKE_tracking.h"
 #include "DNA_material_types.h"
 
@@ -1141,12 +1146,12 @@ void blo_do_versions_270(FileData *fd, Library * /*lib*/, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 277, 2)) {
-    if (!DNA_struct_member_exists(fd->filesdna, "Bone", "float", "scaleIn")) {
+    if (!DNA_struct_member_exists(fd->filesdna, "Bone", "float", "scale_in_x")) {
       LISTBASE_FOREACH (bArmature *, arm, &bmain->armatures) {
         do_version_bones_super_bbone(&arm->bonebase);
       }
     }
-    if (!DNA_struct_member_exists(fd->filesdna, "bPoseChannel", "float", "scaleIn")) {
+    if (!DNA_struct_member_exists(fd->filesdna, "bPoseChannel", "float", "scale_in_x")) {
       LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
         if (ob->pose) {
           LISTBASE_FOREACH (bPoseChannel *, pchan, &ob->pose->chanbase) {
@@ -1603,7 +1608,6 @@ void do_versions_after_linking_270(Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 279, 2)) {
     /* B-Bones (bbone_in/out -> bbone_easein/out) + Stepped FMod Frame Start/End fix */
-    /* if (!DNA_struct_member_exists(fd->filesdna, "Bone", "float", "bbone_easein")) */
     BKE_fcurves_main_cb(bmain, do_version_bbone_easing_fcurve_fix, nullptr);
   }
 }

@@ -25,6 +25,8 @@
 #include "BKE_attribute_math.hh"
 #include "BKE_curves.h"
 
+struct MDeformVert;
+
 namespace blender::bke {
 
 namespace curves::nurbs {
@@ -256,6 +258,13 @@ class CurvesGeometry : public ::CurvesGeometry {
    */
   Span<float2> surface_uv_coords() const;
   MutableSpan<float2> surface_uv_coords_for_write();
+
+  /**
+   * Vertex group data, encoded as an array of indices and weights for every vertex.
+   * \warning: May be empty.
+   */
+  Span<MDeformVert> deform_verts() const;
+  MutableSpan<MDeformVert> deform_verts_for_write();
 
   /**
    * The largest and smallest position values of evaluated points.
@@ -645,11 +654,9 @@ void set_handle_position(const float3 &position,
  * points are referred to as the control points, and the middle points are the corresponding
  * handles.
  */
-void evaluate_segment(const float3 &point_0,
-                      const float3 &point_1,
-                      const float3 &point_2,
-                      const float3 &point_3,
-                      MutableSpan<float3> result);
+template<typename T>
+void evaluate_segment(
+    const T &point_0, const T &point_1, const T &point_2, const T &point_3, MutableSpan<T> result);
 
 /**
  * Calculate all evaluated points for the Bezier curve.

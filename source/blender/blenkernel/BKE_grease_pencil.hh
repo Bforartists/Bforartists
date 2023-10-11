@@ -11,6 +11,8 @@
 
 #include <atomic>
 
+#include "BLI_array_utils.hh"
+#include "BLI_color.hh"
 #include "BLI_function_ref.hh"
 #include "BLI_map.hh"
 #include "BLI_math_vector_types.hh"
@@ -31,32 +33,6 @@ struct Material;
 namespace blender::bke {
 
 namespace greasepencil {
-
-/**
- * A single point for a stroke that is currently being drawn.
- */
-struct StrokePoint {
-  float3 position;
-  float radius;
-  float opacity;
-  float4 color;
-};
-
-/**
- * Stroke cache for a stroke that is currently being drawn.
- */
-struct StrokeCache {
-  Vector<StrokePoint> points;
-  Vector<uint3> triangles;
-  int mat = 0;
-
-  void clear()
-  {
-    this->points.clear_and_shrink();
-    this->triangles.clear_and_shrink();
-    this->mat = 0;
-  }
-};
 
 class DrawingRuntime {
  public:
@@ -101,6 +77,12 @@ class Drawing : public ::GreasePencilDrawing {
    */
   VArray<float> opacities() const;
   MutableSpan<float> opacities_for_write();
+
+  /**
+   * Vertex colors of the points. Default is black.
+   */
+  VArray<ColorGeometry4f> vertex_colors() const;
+  MutableSpan<ColorGeometry4f> vertex_colors_for_write();
 
   /**
    * Add a user for this drawing. When a drawing has multiple users, both users are allowed to
@@ -445,6 +427,8 @@ class LayerGroupRuntime {
  * A LayerGroup is a grouping of zero or more Layers.
  */
 class LayerGroup : public ::GreasePencilLayerTreeGroup {
+  friend struct ::GreasePencil;
+
  public:
   LayerGroup();
   explicit LayerGroup(StringRefNull name);
@@ -461,47 +445,6 @@ class LayerGroup : public ::GreasePencilLayerTreeGroup {
   TreeNode &as_node();
 
   /**
-   * Adds a group at the end of this group.
-   */
-  LayerGroup &add_group(LayerGroup *group);
-  LayerGroup &add_group(StringRefNull name);
-
-  /**
-   * Adds a layer group after \a link and returns it.
-   */
-  LayerGroup &add_group_after(LayerGroup *group, TreeNode *link);
-  LayerGroup &add_group_after(StringRefNull name, TreeNode *link);
-
-  /**
-   * Adds a layer at the end of this group and returns it.
-   */
-  Layer &add_layer(Layer *layer);
-  Layer &add_layer(StringRefNull name);
-
-  /**
-   * Adds a layer before \a link and returns it.
-   */
-  Layer &add_layer_before(Layer *layer, TreeNode *link);
-  Layer &add_layer_before(StringRefNull name, TreeNode *link);
-
-  /**
-   * Adds a layer after \a link and returns it.
-   */
-  Layer &add_layer_after(Layer *layer, TreeNode *link);
-  Layer &add_layer_after(StringRefNull name, TreeNode *link);
-
-  /**
-   * Move child \a node up/down by \a step.
-   */
-  void move_node_up(TreeNode *node, int step = 1);
-  void move_node_down(TreeNode *node, int step = 1);
-  /**
-   * Move child \a node to the top/bottom.
-   */
-  void move_node_top(TreeNode *node);
-  void move_node_bottom(TreeNode *node);
-
-  /**
    * Returns the number of direct nodes in this group.
    */
   int64_t num_direct_nodes() const;
@@ -510,12 +453,6 @@ class LayerGroup : public ::GreasePencilLayerTreeGroup {
    * Returns the total number of nodes in this group.
    */
   int64_t num_nodes_total() const;
-
-  /**
-   * Tries to unlink the layer from the list of nodes in this group.
-   * \returns true, if the layer was successfully unlinked.
-   */
-  bool unlink_node(TreeNode *link);
 
   /**
    * Returns a `Span` of pointers to all the `TreeNode`s in this group.
@@ -551,6 +488,46 @@ class LayerGroup : public ::GreasePencilLayerTreeGroup {
    * Print the nodes. For debugging purposes.
    */
   void print_nodes(StringRefNull header) const;
+
+ protected:
+  /**
+   * Adds a new layer named \a name at the end of this group and returns it.
+   */
+  Layer &add_layer(StringRefNull name);
+  /**
+   * Adds a new group named \a name at the end of this group and returns it.
+   */
+  LayerGroup &add_group(StringRefNull name);
+  /**
+   * Adds an existing \a node at the end of this group.
+   */
+  TreeNode &add_node(TreeNode &node);
+
+  /**
+   * Adds an existing \a node before \a link of this group.
+   */
+  void add_node_before(TreeNode &node, TreeNode &link);
+  /**
+   * Adds an existing \a node after \a link of this group.
+   */
+  void add_node_after(TreeNode &node, TreeNode &link);
+
+  /**
+   * Move child \a node up/down by \a step.
+   */
+  void move_node_up(TreeNode &node, int step = 1);
+  void move_node_down(TreeNode &node, int step = 1);
+  /**
+   * Move child \a node to the top/bottom.
+   */
+  void move_node_top(TreeNode &node);
+  void move_node_bottom(TreeNode &node);
+
+  /**
+   * Unlink the node from the list of nodes in this group.
+   * \returns true, if the node was successfully unlinked.
+   */
+  bool unlink_node(TreeNode &link);
 
  private:
   void ensure_nodes_cache() const;
@@ -668,19 +645,12 @@ class GreasePencilRuntime {
    * Allocated and freed by the drawing code. See `DRW_grease_pencil_batch_cache_*` functions.
    */
   void *batch_cache = nullptr;
-  bke::greasepencil::StrokeCache stroke_cache;
   /* The frame on which the object was evaluated (only valid for evaluated object). */
   int eval_frame;
 
  public:
   GreasePencilRuntime() {}
   ~GreasePencilRuntime() {}
-
-  /**
-   * A buffer for a single stroke while drawing.
-   */
-  Span<bke::greasepencil::StrokePoint> stroke_buffer() const;
-  bool has_stroke_buffer() const;
 };
 
 }  // namespace blender::bke
@@ -770,15 +740,26 @@ GreasePencil *BKE_grease_pencil_copy_for_eval(const GreasePencil *grease_pencil_
 BoundBox *BKE_grease_pencil_boundbox_get(Object *ob);
 void BKE_grease_pencil_data_update(Depsgraph *depsgraph, Scene *scene, Object *object);
 
+int BKE_grease_pencil_object_material_index_get(Object *ob, Material *ma);
 int BKE_grease_pencil_object_material_index_get_by_name(Object *ob, const char *name);
 Material *BKE_grease_pencil_object_material_new(Main *bmain,
                                                 Object *ob,
                                                 const char *name,
                                                 int *r_index);
+Material *BKE_grease_pencil_object_material_from_brush_get(Object *ob, Brush *brush);
 Material *BKE_grease_pencil_object_material_ensure_by_name(Main *bmain,
                                                            Object *ob,
                                                            const char *name,
                                                            int *r_index);
+Material *BKE_grease_pencil_brush_material_get(Brush *brush);
+Material *BKE_grease_pencil_object_material_ensure_from_brush(Main *bmain,
+                                                              Object *ob,
+                                                              Brush *brush);
+Material *BKE_grease_pencil_object_material_ensure_from_active_input_brush(Main *bmain,
+                                                                           Object *ob,
+                                                                           Brush *brush);
+Material *BKE_grease_pencil_object_material_ensure_from_active_input_material(Object *ob);
+Material *BKE_grease_pencil_object_material_ensure_active(Object *ob);
 
 bool BKE_grease_pencil_references_cyclic_check(const GreasePencil *id_reference,
                                                const GreasePencil *grease_pencil);

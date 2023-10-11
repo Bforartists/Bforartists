@@ -33,7 +33,7 @@
 #include "BKE_idtype.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 
 #include "GHOST_C-api.h"
 
@@ -568,12 +568,12 @@ bool WM_drag_is_ID_type(const wmDrag *drag, int idcode)
 }
 
 wmDragAsset *WM_drag_create_asset_data(const blender::asset_system::AssetRepresentation *asset,
-                                       int import_type)
+                                       int import_method)
 {
   wmDragAsset *asset_drag = MEM_new<wmDragAsset>(__func__);
 
   asset_drag->asset = asset;
-  asset_drag->import_method = import_type;
+  asset_drag->import_method = import_method;
 
   return asset_drag;
 }
@@ -1005,13 +1005,13 @@ void WM_drag_draw_default_fn(bContext *C, wmWindow *win, wmDrag *drag, const int
 
 void wm_drags_draw(bContext *C, wmWindow *win)
 {
-  int xy[2];
-  if (ELEM(win->grabcursor, GHOST_kGrabWrap, GHOST_kGrabHide)) {
-    wm_cursor_position_get(win, &xy[0], &xy[1]);
-  }
-  else {
-    xy[0] = win->eventstate->xy[0];
-    xy[1] = win->eventstate->xy[1];
+  const int *xy = win->eventstate->xy;
+
+  int xy_buf[2];
+  if (ELEM(win->grabcursor, GHOST_kGrabWrap, GHOST_kGrabHide) &&
+      wm_cursor_position_get(win, &xy_buf[0], &xy_buf[1]))
+  {
+    xy = xy_buf;
   }
 
   bScreen *screen = CTX_wm_screen(C);

@@ -497,12 +497,11 @@ def import_xyz(Ball_type,
                         mat_P_BSDF = next(n for n in material.node_tree.nodes
                                           if n.type == "BSDF_PRINCIPLED")
                         mat_P_BSDF.inputs['Metallic'].default_value = 0.1
-                        mat_P_BSDF.inputs['Specular'].default_value = 0.15
+                        mat_P_BSDF.inputs['Specular IOR Level'].default_value = 0.15
                         mat_P_BSDF.inputs['Roughness'].default_value = 0.05
-                        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.37
+                        mat_P_BSDF.inputs['Coat Roughness'].default_value = 0.37
                         mat_P_BSDF.inputs['IOR'].default_value = 0.8
-                        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
-                        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.0
+                        mat_P_BSDF.inputs['Transmission Weight'].default_value = 0.6
                         mat_P_BSDF.inputs['Alpha'].default_value = 0.5
                         # Some additional stuff for eevee.
                         material.blend_method = 'HASHED'

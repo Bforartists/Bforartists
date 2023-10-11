@@ -174,65 +174,59 @@ class ElementProp(object):
 class PBSDFProp(object):
     __slots__ = ('Subsurface_method',
                  'Distribution',
-                 'Subsurface',
-                 'Subsurface_color',
+                 'Subsurface_weight',
                  'Subsurface_radius',
                  'Metallic',
-                 'Specular',
-                 'Specular_tilt',
+                 'Specular_ior_level',
+                 'Specular_tint',
                  'Roughness',
                  'Anisotropic',
                  'Anisotropic_rotation',
-                 'Sheen',
+                 'Sheen_weight',
                  'Sheen_tint',
-                 'Clearcoat',
-                 'Clearcoat_rough',
+                 'Coat_weight',
+                 'Coat_roughness',
                  'IOR',
-                 'Trans',
-                 'Trans_rough',
+                 'Transmission_weight',
                  'Emission',
                  'Emission_strength',
                  'Alpha')
     def __init__(self,
                  Subsurface_method,
                  Distribution,
-                 Subsurface,
-                 Subsurface_color,
+                 Subsurface_weight,
                  Subsurface_radius,
                  Metallic,
-                 Specular,
-                 Specular_tilt,
+                 Specular_ior_level,
+                 Specular_tint,
                  Roughness,
                  Anisotropic,
                  Anisotropic_rotation,
-                 Sheen,
+                 Sheen_weight,
                  Sheen_tint,
-                 Clearcoat,
-                 Clearcoat_rough,
+                 Coat_weight,
+                 Coat_roughness,
                  IOR,
-                 Trans,
-                 Trans_rough,
+                 Transmission_weight,
                  Emission,
                  Emission_strength,
                  Alpha):
         self.Subsurface_method     = Subsurface_method
         self.Distribution          = Distribution
-        self.Subsurface            = Subsurface
-        self.Subsurface_color      = Subsurface_color
+        self.Subsurface_weight     = Subsurface_weight
         self.Subsurface_radius     = Subsurface_radius
         self.Metallic              = Metallic
-        self.Specular              = Specular
-        self.Specular_tilt         = Specular_tilt
+        self.Specular_ior_level    = Specular_ior_level
+        self.Specular_tint         = Specular_tint
         self.Roughness             = Roughness
         self.Anisotropic           = Anisotropic
         self.Anisotropic_rotation  = Anisotropic_rotation
-        self.Sheen                 = Sheen
+        self.Sheen_weight          = Sheen_weight
         self.Sheen_tint            = Sheen_tint
-        self.Clearcoat             = Clearcoat
-        self.Clearcoat_rough       = Clearcoat_rough
+        self.Coat_weight           = Coat_weight
+        self.Coat_roughness        = Coat_roughness
         self.IOR                   = IOR
-        self.Trans                 = Trans
-        self.Trans_rough           = Trans_rough
+        self.Transmission_weight   = Transmission_weight
         self.Emission              = Emission
         self.Emission_strength     = Emission_strength
         self.Alpha                 = Alpha
@@ -599,12 +593,11 @@ def draw_obj_material(material_type, material):
                           if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.0
-        mat_P_BSDF.inputs['Specular'].default_value = 0.5
+        mat_P_BSDF.inputs['Specular IOR Level'].default_value = 0.5
         mat_P_BSDF.inputs['Roughness'].default_value = 0.5
-        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.03
+        mat_P_BSDF.inputs['Coat Roughness'].default_value = 0.03
         mat_P_BSDF.inputs['IOR'].default_value = 1.45
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.0
-        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Transmission Weight'].default_value = 0.0
         mat_P_BSDF.inputs['Alpha'].default_value = 1.0
         # Some additional stuff for eevee.
         material_new.blend_method = 'OPAQUE'
@@ -616,12 +609,11 @@ def draw_obj_material(material_type, material):
                           if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.0
-        mat_P_BSDF.inputs['Specular'].default_value = 0.15
+        mat_P_BSDF.inputs['Specular IOR Level'].default_value = 0.15
         mat_P_BSDF.inputs['Roughness'].default_value = 0.2
-        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.37
+        mat_P_BSDF.inputs['Coat Roughness'].default_value = 0.37
         mat_P_BSDF.inputs['IOR'].default_value = 1.45
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.8
-        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Transmission Weight'].default_value = 0.8
         mat_P_BSDF.inputs['Alpha'].default_value = 0.4
         # Some additional stuff for eevee.
         material_new.blend_method = 'HASHED'
@@ -634,12 +626,11 @@ def draw_obj_material(material_type, material):
                           if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.7
-        mat_P_BSDF.inputs['Specular'].default_value = 0.15
+        mat_P_BSDF.inputs['Specular IOR Level'].default_value = 0.15
         mat_P_BSDF.inputs['Roughness'].default_value = 0.1
-        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Coat Roughness'].default_value = 0.5
         mat_P_BSDF.inputs['IOR'].default_value = 0.8
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.0
-        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Transmission Weight'].default_value = 0.0
         mat_P_BSDF.inputs['Alpha'].default_value = 1.0
         # Some additional stuff for eevee.
         material_new.blend_method = 'OPAQUE'
@@ -651,12 +642,11 @@ def draw_obj_material(material_type, material):
                           if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.5
-        mat_P_BSDF.inputs['Specular'].default_value = 0.15
+        mat_P_BSDF.inputs['Specular IOR Level'].default_value = 0.15
         mat_P_BSDF.inputs['Roughness'].default_value = 0.05
-        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.37
+        mat_P_BSDF.inputs['Coat Roughness'].default_value = 0.37
         mat_P_BSDF.inputs['IOR'].default_value = 1.45
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
-        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Transmission Weight'].default_value = 0.6
         mat_P_BSDF.inputs['Alpha'].default_value = 0.6
         # Some additional stuff for eevee.
         material_new.blend_method = 'HASHED'
@@ -965,12 +955,11 @@ def draw_obj_special(atom_shape, atom):
                           if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.7
-        mat_P_BSDF.inputs['Specular'].default_value = 0.0
+        mat_P_BSDF.inputs['Specular IOR Level'].default_value = 0.0
         mat_P_BSDF.inputs['Roughness'].default_value = 0.65
-        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Coat Roughness'].default_value = 0.0
         mat_P_BSDF.inputs['IOR'].default_value = 1.45
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
-        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Transmission Weight'].default_value = 0.6
         mat_P_BSDF.inputs['Alpha'].default_value = 0.6
         # Some additional stuff for eevee.
         material_new.blend_method = 'HASHED'
@@ -1022,12 +1011,11 @@ def draw_obj_special(atom_shape, atom):
                           if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = [0.0, 0.0, 0.8, 1.0]
         mat_P_BSDF.inputs['Metallic'].default_value = 0.7
-        mat_P_BSDF.inputs['Specular'].default_value = 0.0
+        mat_P_BSDF.inputs['Specular IOR Level'].default_value = 0.0
         mat_P_BSDF.inputs['Roughness'].default_value = 0.65
-        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Coat Roughness'].default_value = 0.0
         mat_P_BSDF.inputs['IOR'].default_value = 1.45
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
-        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Transmission Weight'].default_value = 0.6
         mat_P_BSDF.inputs['Alpha'].default_value = 0.6
         # Some additional stuff for eevee.
         material_new.blend_method = 'HASHED'
@@ -1053,12 +1041,11 @@ def draw_obj_special(atom_shape, atom):
                           if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = [0.0, 0.0, 0.8, 1.0]
         mat_P_BSDF.inputs['Metallic'].default_value = 0.8
-        mat_P_BSDF.inputs['Specular'].default_value = 0.0
+        mat_P_BSDF.inputs['Specular IOR Level'].default_value = 0.0
         mat_P_BSDF.inputs['Roughness'].default_value = 0.3
-        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Coat Roughness'].default_value = 0.0
         mat_P_BSDF.inputs['IOR'].default_value = 1.45
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
-        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Transmission Weight'].default_value = 0.6
         mat_P_BSDF.inputs['Alpha'].default_value = 1.0
         # Some additional stuff for eevee.
         material_electron.blend_method = 'OPAQUE'
@@ -1113,12 +1100,11 @@ def draw_obj_special(atom_shape, atom):
                           if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = [0.8, 0.0, 0.0, 1.0]
         mat_P_BSDF.inputs['Metallic'].default_value = 0.7
-        mat_P_BSDF.inputs['Specular'].default_value = 0.0
+        mat_P_BSDF.inputs['Specular IOR Level'].default_value = 0.0
         mat_P_BSDF.inputs['Roughness'].default_value = 0.65
-        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Coat Roughness'].default_value = 0.0
         mat_P_BSDF.inputs['IOR'].default_value = 1.45
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
-        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Transmission Weight'].default_value = 0.6
         mat_P_BSDF.inputs['Alpha'].default_value = 0.6
         # Some additional stuff for eevee.
         material_new.blend_method = 'HASHED'
@@ -1153,12 +1139,11 @@ def draw_obj_special(atom_shape, atom):
                           if n.type == "BSDF_PRINCIPLED")
         mat_P_BSDF.inputs['Base Color'].default_value = [0.0, 0.0, 0.8, 1.0]
         mat_P_BSDF.inputs['Metallic'].default_value = 0.8
-        mat_P_BSDF.inputs['Specular'].default_value = 0.0
+        mat_P_BSDF.inputs['Specular IOR Level'].default_value = 0.0
         mat_P_BSDF.inputs['Roughness'].default_value = 0.3
-        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Coat Roughness'].default_value = 0.0
         mat_P_BSDF.inputs['IOR'].default_value = 1.45
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
-        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Transmission Weight'].default_value = 0.6
         mat_P_BSDF.inputs['Alpha'].default_value = 1.0
         # Some additional stuff for eevee.
         material_electron.blend_method = 'OPAQUE'
@@ -1283,22 +1268,20 @@ def custom_datafile_change_atom_props():
             mat_P_BSDF.inputs['Base Color'].default_value = e.color
             mat_P_BSDF.subsurface_method = e.mat_P_BSDF.Subsurface_method
             mat_P_BSDF.distribution = e.mat_P_BSDF.Distribution
-            mat_P_BSDF.inputs['Subsurface'].default_value = e.mat_P_BSDF.Subsurface
-            mat_P_BSDF.inputs['Subsurface Color'].default_value = e.mat_P_BSDF.Subsurface_color
+            mat_P_BSDF.inputs['Subsurface Weight'].default_value = e.mat_P_BSDF.Subsurface_weight
             mat_P_BSDF.inputs['Subsurface Radius'].default_value = e.mat_P_BSDF.Subsurface_radius
             mat_P_BSDF.inputs['Metallic'].default_value = e.mat_P_BSDF.Metallic
-            mat_P_BSDF.inputs['Specular'].default_value = e.mat_P_BSDF.Specular
-            mat_P_BSDF.inputs['Specular Tint'].default_value = e.mat_P_BSDF.Specular_tilt
+            mat_P_BSDF.inputs['Specular IOR Level'].default_value = e.mat_P_BSDF.Specular_ior_level
+            mat_P_BSDF.inputs['Specular Tint'].default_value = e.mat_P_BSDF.Specular_tint
             mat_P_BSDF.inputs['Roughness'].default_value = e.mat_P_BSDF.Roughness
             mat_P_BSDF.inputs['Anisotropic'].default_value = e.mat_P_BSDF.Anisotropic
             mat_P_BSDF.inputs['Anisotropic Rotation'].default_value = e.mat_P_BSDF.Anisotropic_rotation
-            mat_P_BSDF.inputs['Sheen'].default_value = e.mat_P_BSDF.Sheen
+            mat_P_BSDF.inputs['Sheen Weight'].default_value = e.mat_P_BSDF.Sheen_weight
             mat_P_BSDF.inputs['Sheen Tint'].default_value = e.mat_P_BSDF.Sheen_tint
-            mat_P_BSDF.inputs['Clearcoat'].default_value = e.mat_P_BSDF.Clearcoat
-            mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = e.mat_P_BSDF.Clearcoat_rough
+            mat_P_BSDF.inputs['Coat Weight'].default_value = e.mat_P_BSDF.Coat_weight
+            mat_P_BSDF.inputs['Coat Roughness'].default_value = e.mat_P_BSDF.Coat_roughness
             mat_P_BSDF.inputs['IOR'].default_value = e.mat_P_BSDF.IOR
-            mat_P_BSDF.inputs['Transmission'].default_value = e.mat_P_BSDF.Trans
-            mat_P_BSDF.inputs['Transmission Roughness'].default_value = e.mat_P_BSDF.Trans_rough
+            mat_P_BSDF.inputs['Transmission Weight'].default_value = e.mat_P_BSDF.Transmission_weight
             mat_P_BSDF.inputs['Emission'].default_value = e.mat_P_BSDF.Emission
             mat_P_BSDF.inputs['Emission Strength'].default_value = e.mat_P_BSDF.Emission_strength
             mat_P_BSDF.inputs['Alpha'].default_value = e.mat_P_BSDF.Alpha
@@ -1398,16 +1381,9 @@ def custom_datafile(path_datafile):
                 if "P BSDF Distribution          :" in line:
                     pos = line.rfind(':') + 1
                     P_BSDF_distribution = line[pos:].strip()
-                if "P BSDF Subsurface            :" in line:
+                if "P BSDF Subsurface Weight     :" in line:
                     pos = line.rfind(':') + 1
-                    P_BSDF_subsurface = float(line[pos:].strip())
-                if "P BSDF Subsurface Color      :" in line:
-                    pos = line.rfind(':') + 1
-                    color_value = line[pos:].strip().split(',')
-                    P_BSDF_subsurface_color = [float(color_value[0]),
-                                               float(color_value[1]),
-                                               float(color_value[2]),
-                                               float(color_value[3])]
+                    P_BSDF_subsurface_weight = float(line[pos:].strip())
                 if "P BSDF Subsurface Radius     :" in line:
                     pos = line.rfind(':') + 1
                     radii_values = line[pos:].strip().split(',')
@@ -1417,12 +1393,16 @@ def custom_datafile(path_datafile):
                 if "P BSDF Metallic              :" in line:
                     pos = line.rfind(':') + 1
                     P_BSDF_metallic = float(line[pos:].strip())
-                if "P BSDF Specular              :" in line:
+                if "P BSDF Specular IOR Level    :" in line:
                     pos = line.rfind(':') + 1
-                    P_BSDF_specular = float(line[pos:].strip())
-                if "P BSDF Specular Tilt         :" in line:
+                    P_BSDF_specular_ior_level = float(line[pos:].strip())
+                if "P BSDF Specular Tint         :" in line:
                     pos = line.rfind(':') + 1
-                    P_BSDF_specular_tilt = float(line[pos:].strip())
+                    color_value = line[pos:].strip().split(',')
+                    P_BSDF_specular_tint = [float(color_value[0]),
+                                            float(color_value[1]),
+                                            float(color_value[2]),
+                                            float(color_value[3])]
                 if "P BSDF Roughness             :" in line:
                     pos = line.rfind(':') + 1
                     P_BSDF_roughness = float(line[pos:].strip())
@@ -1432,27 +1412,24 @@ def custom_datafile(path_datafile):
                 if "P BSDF Anisotropic Rotation  :" in line:
                     pos = line.rfind(':') + 1
                     P_BSDF_anisotropic_rotation = float(line[pos:].strip())
-                if "P BSDF Sheen                 : " in line:
+                if "P BSDF Sheen Weight          : " in line:
                     pos = line.rfind(':') + 1
-                    P_BSDF_sheen = float(line[pos:].strip())
+                    P_BSDF_sheen_weight = float(line[pos:].strip())
                 if "P BSDF Sheen Tint            : " in line:
                     pos = line.rfind(':') + 1
                     P_BSDF_sheen_tint = float(line[pos:].strip())
-                if "P BSDF Clearcoat             :" in line:
+                if "P BSDF Coat Weight           :" in line:
                     pos = line.rfind(':') + 1
-                    P_BSDF_clearcoat = float(line[pos:].strip())
-                if "P BSDF Clearcoat Rough       :" in line:
+                    P_BSDF_coat_weight = float(line[pos:].strip())
+                if "P BSDF Coat Roughness        :" in line:
                     pos = line.rfind(':') + 1
-                    P_BSDF_clearcoat_roughness = float(line[pos:].strip())
+                    P_BSDF_coat_roughness = float(line[pos:].strip())
                 if "P BSDF IOR                   :" in line:
                     pos = line.rfind(':') + 1
                     P_BSDF_IOR = float(line[pos:].strip())
-                if "P BSDF Trans                 :" in line:
+                if "P BSDF Transmission Weight   :" in line:
                     pos = line.rfind(':') + 1
-                    P_BSDF_transparency = float(line[pos:].strip())
-                if "P BSDF Trans Roughness       :" in line:
-                    pos = line.rfind(':') + 1
-                    P_BSDF_transparency_roughness = float(line[pos:].strip())
+                    P_BSDF_transmission_weight = float(line[pos:].strip())
                 if "P BSDF Emisssion             : " in line:
                     pos = line.rfind(':') + 1
                     color_value = line[pos:].strip().split(',')
@@ -1520,22 +1497,20 @@ def custom_datafile(path_datafile):
 
             P_BSDF_material = PBSDFProp(P_BSDF_subsurface_method,
                                         P_BSDF_distribution,
-                                        P_BSDF_subsurface,
-                                        P_BSDF_subsurface_color,
+                                        P_BSDF_subsurface_weight,
                                         P_BSDF_subsurface_radius,
                                         P_BSDF_metallic,
-                                        P_BSDF_specular,
-                                        P_BSDF_specular_tilt,
+                                        P_BSDF_specular_ior_level,
+                                        P_BSDF_specular_tint,
                                         P_BSDF_roughness,
                                         P_BSDF_anisotropic,
                                         P_BSDF_anisotropic_rotation,
-                                        P_BSDF_sheen,
+                                        P_BSDF_sheen_weight,
                                         P_BSDF_sheen_tint,
-                                        P_BSDF_clearcoat,
-                                        P_BSDF_clearcoat_roughness,
+                                        P_BSDF_coat_weight,
+                                        P_BSDF_coat_roughness,
                                         P_BSDF_IOR,
-                                        P_BSDF_transparency,
-                                        P_BSDF_transparency_roughness,
+                                        P_BSDF_transmission_weight,
                                         P_BSDF_emission,
                                         P_BSDF_emission_strength,
                                         P_BSDF_alpha)

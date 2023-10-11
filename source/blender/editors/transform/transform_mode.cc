@@ -30,6 +30,8 @@
 
 #include "BLT_translation.h"
 
+#include "ED_sequencer.hh"
+
 #include "transform.hh"
 #include "transform_convert.hh"
 #include "transform_gizmo.hh"
@@ -237,7 +239,7 @@ void protectedSizeBits(short protectflag, float size[3])
 /** \name Transform Limits
  * \{ */
 
-void constraintTransLim(const TransInfo *t, TransData *td)
+void constraintTransLim(const TransInfo *t, const TransDataContainer *tc, TransData *td)
 {
   if (td->con) {
     const bConstraintTypeInfo *ctiLoc = BKE_constraint_typeinfo_from_type(
@@ -290,8 +292,10 @@ void constraintTransLim(const TransInfo *t, TransData *td)
       if (cti) {
         /* do space conversions */
         if (con->ownspace == CONSTRAINT_SPACE_WORLD) {
-          /* just multiply by td->mtx (this should be ok) */
-          mul_m4_m3m4(cob.matrix, td->mtx, cob.matrix);
+          mul_m3_v3(td->mtx, cob.matrix[3]);
+          if (tc->use_local_mat) {
+            add_v3_v3(cob.matrix[3], tc->mat[3]);
+          }
         }
         else if (con->ownspace != CONSTRAINT_SPACE_LOCAL) {
           /* skip... incompatible spacetype */
@@ -309,8 +313,10 @@ void constraintTransLim(const TransInfo *t, TransData *td)
 
         /* convert spaces again */
         if (con->ownspace == CONSTRAINT_SPACE_WORLD) {
-          /* just multiply by td->smtx (this should be ok) */
-          mul_m4_m3m4(cob.matrix, td->smtx, cob.matrix);
+          if (tc->use_local_mat) {
+            sub_v3_v3(cob.matrix[3], tc->mat[3]);
+          }
+          mul_m3_v3(td->smtx, cob.matrix[3]);
         }
 
         /* free targets list */
@@ -633,7 +639,7 @@ void ElementRotation_ex(const TransInfo *t,
 
       add_v3_v3v3(td->loc, td->iloc, vec);
 
-      constraintTransLim(t, td);
+      constraintTransLim(t, tc, td);
     }
 
     /* rotation */
@@ -709,7 +715,7 @@ void ElementRotation_ex(const TransInfo *t,
       add_v3_v3v3(td->loc, td->iloc, vec);
     }
 
-    constraintTransLim(t, td);
+    constraintTransLim(t, tc, td);
 
     /* rotation */
     if ((t->flag & T_V3D_ALIGN) == 0) { /* Align mode doesn't rotate objects itself. */
@@ -1059,7 +1065,7 @@ void ElementResize(const TransInfo *t,
     add_v3_v3v3(td->loc, td->iloc, vec);
   }
 
-  constraintTransLim(t, td);
+  constraintTransLim(t, tc, td);
 }
 
 /** \} */
@@ -1150,6 +1156,10 @@ void transform_mode_init(TransInfo *t, wmOperator *op, const int mode)
 {
   t->mode = eTfmMode(mode);
   t->mode_info = mode_info_get(t, mode);
+
+  if (t->spacetype == SPACE_SEQ && sequencer_retiming_mode_is_active(t->context)) {
+    t->mode_info = &TransMode_translate;
+  }
 
   if (t->mode_info) {
     t->flag |= eTFlag(t->mode_info->flags);
