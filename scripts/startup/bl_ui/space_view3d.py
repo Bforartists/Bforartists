@@ -9087,6 +9087,7 @@ class VIEW3D_PT_overlay_sculpt_curves(Panel):
     bl_context = ".curves_sculpt"
     bl_region_type = 'HEADER'
     bl_label = "Sculpt"
+    bl_ui_units_x = 13
 
     @classmethod
     def poll(cls, context):
