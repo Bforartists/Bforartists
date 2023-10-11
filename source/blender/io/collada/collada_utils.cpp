@@ -215,6 +215,11 @@ static void bc_add_armature_collections(COLLADAFW::Node *node,
                                         ExtraTags *node_extra_tags,
                                         bArmature *arm)
 {
+  if (!node_extra_tags) {
+    /* No 'extra' tags means that there are no bone collections. */
+    return;
+  }
+
   std::vector<std::string> collection_names = node_extra_tags->dataSplitString("collections");
   std::vector<std::string> visible_names = node_extra_tags->dataSplitString("visible_collections");
   std::set<std::string> visible_names_set(visible_names.begin(), visible_names.end());
@@ -1188,7 +1193,7 @@ COLLADASW::ColorOrTexture bc_get_emission(Material *ma)
     return bc_get_cot(default_color);
   }
 
-  COLLADASW::ColorOrTexture cot = bc_get_cot_from_shader(shader, "Emission", default_color);
+  COLLADASW::ColorOrTexture cot = bc_get_cot_from_shader(shader, "Emission Color", default_color);
 
   /* If using texture, emission strength is not supported. */
   COLLADASW::Color col = cot.getColor();

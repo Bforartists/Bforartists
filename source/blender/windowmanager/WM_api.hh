@@ -1369,7 +1369,7 @@ bool WM_drag_is_ID_type(const wmDrag *drag, int idcode);
  * \note Does not store \a asset in any way, so it's fine to pass a temporary.
  */
 wmDragAsset *WM_drag_create_asset_data(const blender::asset_system::AssetRepresentation *asset,
-                                       int /* #eAssetImportMethod */ import_type);
+                                       int /* #eAssetImportMethod */ import_method);
 
 wmDragAsset *WM_drag_get_asset_data(const wmDrag *drag, int idcode);
 AssetMetaData *WM_drag_get_asset_meta_data(const wmDrag *drag, int idcode);
@@ -1540,11 +1540,11 @@ void WM_jobs_start(wmWindowManager *wm, wmJob *);
 /**
  * Signal job(s) from this owner or callback to stop, timer is required to get handled.
  */
-void WM_jobs_stop(wmWindowManager *wm, const void *owner, void *startjob);
+void WM_jobs_stop(wmWindowManager *wm, const void *owner, wm_jobs_start_callback startjob);
 /**
  * Actually terminate thread and job timer.
  */
-void WM_jobs_kill(wmWindowManager *wm, void *owner, void (*)(void *, bool *, bool *, float *));
+void WM_jobs_kill(wmWindowManager *wm, void *owner, wm_jobs_start_callback startjob);
 /**
  * Wait until every job ended.
  */

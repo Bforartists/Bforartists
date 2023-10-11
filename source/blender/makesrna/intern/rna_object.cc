@@ -621,8 +621,10 @@ static StructRNA *rna_Object_data_typef(PointerRNA *ptr)
       return &RNA_LightProbe;
     case OB_GPENCIL_LEGACY:
       return &RNA_GreasePencil;
+#  ifdef WITH_GREASE_PENCIL_V3
     case OB_GREASE_PENCIL:
       return &RNA_GreasePencilv3;
+#  endif
     case OB_CURVES:
       return &RNA_Curves;
     case OB_POINTCLOUD:
@@ -729,8 +731,8 @@ static bool rna_Object_parent_type_override_apply(Main *bmain,
   /* We need a special handling here because setting parent resets invert parent matrix,
    * which is evil in our case. */
   Object *ob = (Object *)(ptr_dst->data);
-  const int parent_type_dst = RNA_property_int_get(ptr_dst, prop_dst);
-  const int parent_type_src = RNA_property_int_get(ptr_src, prop_src);
+  const int parent_type_dst = RNA_property_enum_get(ptr_dst, prop_dst);
+  const int parent_type_src = RNA_property_enum_get(ptr_src, prop_src);
 
   if (parent_type_dst == parent_type_src) {
     return false;
@@ -1395,7 +1397,7 @@ static bool rna_MaterialSlot_material_poll(PointerRNA *ptr, PointerRNA value)
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   Material *ma = static_cast<Material *>(value.data);
 
-  if (ob->type == OB_GPENCIL_LEGACY) {
+  if (ELEM(ob->type, OB_GPENCIL_LEGACY, OB_GREASE_PENCIL)) {
     /* GP Materials only */
     return (ma->gp_style != nullptr);
   }
@@ -2714,8 +2716,8 @@ static void rna_def_object_particle_systems(BlenderRNA *brna, PropertyRNA *cprop
 
   PropertyRNA *prop;
 
-  /* FunctionRNA *func; */
-  /* PropertyRNA *parm; */
+  // FunctionRNA *func;
+  // PropertyRNA *parm;
 
   RNA_def_property_srna(cprop, "ParticleSystems");
   srna = RNA_def_struct(brna, "ParticleSystems", nullptr);
@@ -2921,6 +2923,17 @@ static void rna_def_object_visibility(StructRNA *srna)
   RNA_def_property_ui_text(prop, "Disable in Renders", "Globally disable in renders");
   RNA_def_property_ui_icon(prop, ICON_RESTRICT_RENDER_OFF, -1);
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_hide_update");
+
+  prop = RNA_def_property(srna, "hide_probe_volume", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "visibility_flag", OB_HIDE_PROBE_VOLUME);
+  RNA_def_property_ui_text(prop, "Disable in Volume Probes", "Globally disable in volume probes");
+  RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_internal_update_draw");
+
+  prop = RNA_def_property(srna, "hide_probe_cubemap", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "visibility_flag", OB_HIDE_PROBE_CUBEMAP);
+  RNA_def_property_ui_text(
+      prop, "Disable in Cubemap Probes", "Globally disable in cubemap probes");
+  RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_internal_update_draw");
 
   /* Instancer options. */
   prop = RNA_def_property(srna, "show_instancer_for_render", PROP_BOOLEAN, PROP_NONE);
