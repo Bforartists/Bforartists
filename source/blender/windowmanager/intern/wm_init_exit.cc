@@ -53,7 +53,7 @@
 #include "BKE_preview_image.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 #include "BKE_sound.h"
 #include "BKE_vfont.h"
 
@@ -111,8 +111,10 @@
 
 #include "BLF_api.h"
 #include "BLT_lang.h"
+
 #include "UI_interface.hh"
 #include "UI_resources.hh"
+#include "UI_string_search.hh"
 
 #include "GPU_context.h"
 #include "GPU_init_exit.h"
@@ -324,8 +326,7 @@ void WM_init(bContext *C, int argc, const char **argv)
     WM_init_gpu();
 
     if (!WM_platform_support_perform_checks()) {
-      /* No attempt to avoid memory leaks here. */
-      exit(-1);
+      WM_exit(C, -1);
     }
 
     GPU_context_begin_frame(GPU_context_active_get());
@@ -358,7 +359,11 @@ void WM_init(bContext *C, int argc, const char **argv)
 
   wm_history_file_read();
 
-  STRNCPY(G.lib, BKE_main_blendfile_path_from_global());
+  if (!G.background) {
+    blender::ui::string_search::read_recent_searches_file();
+  }
+
+  STRNCPY(G.filepath_last_library, BKE_main_blendfile_path_from_global());
 
   CTX_py_init_set(C, true);
   WM_keyconfig_init(C);
@@ -428,8 +433,12 @@ void WM_init_splash(bContext *C)
 /** Load add-ons & app-templates once on startup. */
 static void wm_init_scripts_extensions_once(bContext *C)
 {
+#ifdef WITH_PYTHON
   const char *imports[] = {"bpy", nullptr};
   BPY_run_string_eval(C, imports, "bpy.utils.load_scripts_extensions()");
+#else
+  UNUSED_VARS(C);
+#endif
 }
 
 /* free strings of open recent files */
@@ -539,6 +548,10 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
       ED_screen_exit(C, win, WM_window_get_active_screen(win));
     }
 
+    if (!G.background) {
+      blender::ui::string_search::write_recent_searches_file();
+    }
+
     if (do_user_exit_actions) {
       if ((U.pref_flag & USER_PREF_FLAG_SAVE) && ((G.f & G_FLAG_USERPREF_NO_SAVE_ON_EXIT) == 0)) {
         if (U.runtime.is_dirty) {
@@ -565,8 +578,11 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
    * passes in `CTX_data_main(C)` to un-registration functions.
    * Further: `addon_utils.disable_all()` may call into functions that expect a valid context,
    * supporting all these code-paths with a null context is quite involved for such a corner-case.
+   *
+   * Check `CTX_py_init_get(C)` in case this function runs before Python has been initialized.
+   * Which can happen when the GPU backend fails to initialize.
    */
-  if (C) {
+  if (C && CTX_py_init_get(C)) {
     const char *imports[2] = {"addon_utils", nullptr};
     BPY_run_string_eval(C, imports, "addon_utils.disable_all()");
   }

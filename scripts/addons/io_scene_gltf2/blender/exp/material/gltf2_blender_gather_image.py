@@ -21,12 +21,12 @@ def gather_image(
         default_sockets: typing.Tuple[bpy.types.NodeSocket],
         export_settings):
     if not __filter_image(blender_shader_sockets, export_settings):
-        return None, None
+        return None, None, None
 
     image_data = __get_image_data(blender_shader_sockets, default_sockets, export_settings)
     if image_data.empty():
         # The export image has no data
-        return None, None
+        return None, None, None
 
     mime_type = __gather_mime_type(blender_shader_sockets, image_data, export_settings)
     name = __gather_name(image_data, export_settings)
@@ -41,7 +41,7 @@ def gather_image(
         # In case we can't retrieve image (for example packed images, with original moved)
         # We don't create invalid image without uri
         factor_uri = None
-        if uri is None: return None, None
+        if uri is None: return None, None, None
 
     buffer_view, factor_buffer_view = __gather_buffer_view(image_data, mime_type, name, export_settings)
 
@@ -59,7 +59,8 @@ def gather_image(
 
     export_user_extensions('gather_image_hook', export_settings, image, blender_shader_sockets)
 
-    return image, factor
+    # We also return image_data, as it can be used to generate same file with another extension for webp management
+    return image, image_data, factor
 
 def __gather_original_uri(original_uri, export_settings):
 
@@ -111,10 +112,17 @@ def __gather_extras(sockets, export_settings):
 
 
 def __gather_mime_type(sockets, export_image, export_settings):
-    # force png if Alpha contained so we can export alpha
+    # force png or webp if Alpha contained so we can export alpha
     for socket in sockets:
         if socket.name == "Alpha":
-            return "image/png"
+            if export_settings["gltf_image_format"] == "WEBP":
+                return "image/webp"
+            else:
+                # If we keep image as is (no channel composition), we need to keep original format (for webp)
+                image = export_image.blender_image()
+                if image is not None and __is_blender_image_a_webp(image):
+                    return "image/webp"
+                return "image/png"
 
     if export_settings["gltf_image_format"] == "AUTO":
         if export_image.original is None: # We are going to create a new image
@@ -125,8 +133,12 @@ def __gather_mime_type(sockets, export_image, export_settings):
 
         if image is not None and __is_blender_image_a_jpeg(image):
             return "image/jpeg"
+        elif image is not None and __is_blender_image_a_webp(image):
+            return "image/webp"
         return "image/png"
 
+    elif export_settings["gltf_image_format"] == "WEBP":
+        return "image/webp"
     elif export_settings["gltf_image_format"] == "JPEG":
         return "image/jpeg"
 
@@ -182,10 +194,8 @@ def __get_image_data(sockets, default_sockets, export_settings) -> ExportImage:
     results = [get_tex_from_socket(socket) for socket in sockets]
 
     # Check if we need a simple mapping or more complex calculation
-    if any([socket.name == "Specular" and socket.node.type == "BSDF_PRINCIPLED" for socket in sockets]):
-        return __get_image_data_specular(sockets, results, export_settings)
-    else:
-        return __get_image_data_mapping(sockets, default_sockets, results, export_settings)
+    # There is currently no complex calculation for any textures
+    return __get_image_data_mapping(sockets, default_sockets, results, export_settings)
 
 def __get_image_data_mapping(sockets, default_sockets, results, export_settings) -> ExportImage:
     """
@@ -228,21 +238,21 @@ def __get_image_data_mapping(sockets, default_sockets, results, export_settings)
             # some sockets need channel rewriting (gltf pbr defines fixed channels for some attributes)
             if socket.name == 'Metallic':
                 dst_chan = Channel.B
-            elif socket.name == 'Roughness' and socket.node.type == "BSDF_PRINCIPLED":
+            elif socket.name == 'Roughness':
                 dst_chan = Channel.G
             elif socket.name == 'Occlusion':
                 dst_chan = Channel.R
             elif socket.name == 'Alpha':
                 dst_chan = Channel.A
-            elif socket.name == 'Coat':
+            elif socket.name == 'Coat Weight':
                 dst_chan = Channel.R
             elif socket.name == 'Coat Roughness':
                 dst_chan = Channel.G
             elif socket.name == 'Thickness': # For KHR_materials_volume
                 dst_chan = Channel.G
-            elif socket.name == "Specular": # For original KHR_material_specular
+            elif socket.name == "Specular IOR Level": # For KHR_material_specular
                 dst_chan = Channel.A
-            elif socket.name == "Roughness" and socket.node.type == "BSDF_SHEEN": # For KHR_materials_sheen
+            elif socket.name == "Sheen Roughness": # For KHR_materials_sheen
                 dst_chan = Channel.A
 
             if dst_chan is not None:
@@ -276,54 +286,6 @@ def __get_image_data_mapping(sockets, default_sockets, results, export_settings)
     return composed_image
 
 
-def __get_image_data_specular(sockets, results, export_settings) -> ExportImage:
-    """
-    calculating Specular Texture, settings needed data
-    """
-    from .extensions.gltf2_blender_texture_specular import specular_calculation
-    composed_image = ExportImage()
-    composed_image.set_calc(specular_calculation)
-
-    composed_image.store_data("ior", sockets[4].default_value, type="Data")
-
-    results = [get_tex_from_socket(socket) for socket in sockets[:-1]] #Do not retrieve IOR --> No texture allowed
-
-    mapping = {
-        0: "specular",
-        1: "specular_tint",
-        2: "base_color",
-        3: "transmission"
-    }
-
-    for idx, result in enumerate(results):
-        if get_tex_from_socket(sockets[idx]):
-
-            composed_image.store_data(mapping[idx], result.shader_node.image, type="Image")
-
-            # rudimentarily try follow the node tree to find the correct image data.
-            src_chan = None if idx == 2 else Channel.R
-            for elem in result.path:
-                if isinstance(elem.from_node, bpy.types.ShaderNodeSeparateColor):
-                    src_chan = {
-                        'Red': Channel.R,
-                        'Green': Channel.G,
-                        'Blue': Channel.B,
-                    }[elem.from_socket.name]
-                if elem.from_socket.name == 'Alpha':
-                    src_chan = Channel.A
-            # For base_color, keep all channels, as this is a Vec, not scalar
-            if idx != 2:
-                composed_image.store_data(mapping[idx] + "_channel", src_chan, type="Data")
-            else:
-                if src_chan is not None:
-                    composed_image.store_data(mapping[idx] + "_channel", src_chan, type="Data")
-
-        else:
-            composed_image.store_data(mapping[idx], sockets[idx].default_value, type="Data")
-
-    return composed_image
-
-
 def __is_blender_image_a_jpeg(image: bpy.types.Image) -> bool:
     if image.source != 'FILE':
         return False
@@ -332,3 +294,12 @@ def __is_blender_image_a_jpeg(image: bpy.types.Image) -> bool:
     else:
         path = image.filepath_raw.lower()
         return path.endswith('.jpg') or path.endswith('.jpeg') or path.endswith('.jpe')
+
+def __is_blender_image_a_webp(image: bpy.types.Image) -> bool:
+    if image.source != 'FILE':
+        return False
+    if image.filepath_raw == '' and image.packed_file:
+        return image.packed_file.data[8:12] == b'WEBP'
+    else:
+        path = image.filepath_raw.lower()
+        return path.endswith('.webp')

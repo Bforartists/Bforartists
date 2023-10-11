@@ -31,14 +31,14 @@ void UI_but_drag_attach_image(uiBut *but, const ImBuf *imb, const float scale)
 
 void UI_but_drag_set_asset(uiBut *but,
                            const blender::asset_system::AssetRepresentation *asset,
-                           int import_type,
+                           int import_method,
                            int icon,
                            const ImBuf *imb,
                            float scale,
                            bool drop_collections_as_instances, /* BFA - needed for setting #use_instance from UI before executing the drop operator */
                            bool drop_collection_instances_at_origin) /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled */
 {
-  wmDragAsset *asset_drag = WM_drag_create_asset_data(asset, import_type);
+  wmDragAsset *asset_drag = WM_drag_create_asset_data(asset, import_method);
   asset_drag->drop_collections_as_instances = drop_collections_as_instances; /*BFA*/
   asset_drag->drop_collections_at_origin = drop_collection_instances_at_origin; /*BFA*/
 

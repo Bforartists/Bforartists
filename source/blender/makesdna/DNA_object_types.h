@@ -307,7 +307,10 @@ typedef struct Object {
   ID id;
   /** Animation data (must be immediately after id for utilities to use it). */
   struct AnimData *adt;
-  /** Runtime (must be immediately after id for utilities to use it). */
+  /**
+   * Engines draw data, must be immediately after AnimData. See IdDdtTemplate and
+   * DRW_drawdatalist_from_id to understand this requirement.
+   */
   struct DrawDataList drawdata;
 
   struct SculptSession *sculpt;
@@ -325,7 +328,7 @@ typedef struct Object {
   struct Object *proxy_from DNA_DEPRECATED;
   /** Old animation system, deprecated for 2.5. */
   struct Ipo *ipo DNA_DEPRECATED;
-  /* struct Path *path; */
+  // struct Path *path;
   struct bAction *action DNA_DEPRECATED;  /* XXX deprecated... old animation system */
   struct bAction *poselib DNA_DEPRECATED; /* Pre-Blender 3.0 pose library, deprecated in 3.5. */
   /** Pose data, armature objects only. */
@@ -797,7 +800,9 @@ enum {
   OB_HIDE_VOLUME_SCATTER = 1 << 7,
   OB_HIDE_SHADOW = 1 << 8,
   OB_HOLDOUT = 1 << 9,
-  OB_SHADOW_CATCHER = 1 << 10
+  OB_SHADOW_CATCHER = 1 << 10,
+  OB_HIDE_PROBE_VOLUME = 1 << 11,
+  OB_HIDE_PROBE_CUBEMAP = 1 << 12,
 };
 
 /** #Object.shapeflag */

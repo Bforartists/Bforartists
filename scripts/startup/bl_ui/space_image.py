@@ -682,7 +682,7 @@ class IMAGE_MT_uvs_select_mode(Menu):
 
 
 class IMAGE_MT_uvs_context_menu(Menu):
-    bl_label = "UV Context Menu"
+    bl_label = "UV"
 
     def draw(self, context):
         layout = self.layout
@@ -1112,7 +1112,7 @@ class IMAGE_MT_editor_menus(Menu):
 
 
 class IMAGE_MT_mask_context_menu(Menu):
-    bl_label = "Mask Context Menu"
+    bl_label = "Mask"
 
     @classmethod
     def poll(cls, context):
@@ -1781,7 +1781,7 @@ class IMAGE_PT_overlay_guides(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "Guides"
-    bl_parent_id = 'IMAGE_PT_overlay'
+    bl_parent_id = "IMAGE_PT_overlay"
 
     @classmethod
     def poll(cls, context):
@@ -1848,7 +1848,7 @@ class IMAGE_PT_overlay_uv_edit(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "UV Editing"
-    bl_parent_id = 'IMAGE_PT_overlay'
+    bl_parent_id = "IMAGE_PT_overlay"
 
     @classmethod
     def poll(cls, context):
@@ -1882,7 +1882,7 @@ class IMAGE_PT_overlay_uv_edit_geometry(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "Geometry"
-    bl_parent_id = 'IMAGE_PT_overlay'
+    bl_parent_id = "IMAGE_PT_overlay"
 
     @classmethod
     def poll(cls, context):
@@ -1921,7 +1921,7 @@ class IMAGE_PT_overlay_texture_paint(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "Geometry"
-    bl_parent_id = 'IMAGE_PT_overlay'
+    bl_parent_id = "IMAGE_PT_overlay"
 
     @classmethod
     def poll(cls, context):
@@ -1943,7 +1943,7 @@ class IMAGE_PT_overlay_image(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "Image"
-    bl_parent_id = 'IMAGE_PT_overlay'
+    bl_parent_id = "IMAGE_PT_overlay"
 
     def draw(self, context):
         layout = self.layout

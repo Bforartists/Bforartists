@@ -29,7 +29,8 @@ The types are as follows:
 
 * 'Z': - INT8
 * 'Y': - INT16
-* 'C': - BOOL
+* 'B': - BOOL
+* 'C': - CHAR
 * 'I': - INT32
 * 'F': - FLOAT32
 * 'D': - FLOAT64
@@ -64,8 +65,11 @@ def parse_json_rec(fbx_root, json_node):
 
     e = elem_empty(fbx_root, name.encode())
     for d, dt in zip(data, data_types):
-        if dt == "C":
+        if dt == "B":
             e.add_bool(d)
+        elif dt == "C":
+            d = eval('b"""' + d + '"""')
+            e.add_char(d)
         elif dt == "Z":
             e.add_int8(d)
         elif dt == "Y":

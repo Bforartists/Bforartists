@@ -322,7 +322,7 @@ static void image_view_all(SpaceImage *sima, ARegion *region, wmOperator *op)
 bool space_image_main_region_poll(bContext *C)
 {
   SpaceImage *sima = CTX_wm_space_image(C);
-  /* XXX ARegion *region = CTX_wm_region(C); */
+  // ARegion *region = CTX_wm_region(C); /* XXX. */
 
   if (sima) {
     return true; /* XXX (region && region->type->regionid == RGN_TYPE_WINDOW); */
@@ -1866,7 +1866,7 @@ static bool save_image_op(
   WM_cursor_wait(false);
 
   /* Remember file path for next save. */
-  STRNCPY(G.ima, opts->filepath);
+  STRNCPY(G.filepath_last_image, opts->filepath);
 
   WM_main_add_notifier(NC_IMAGE | NA_EDITED, ima);
 
