@@ -9515,18 +9515,12 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
             'OBJECT': iface_("Grease Pencil"),
         }[context.mode], translate=False)
 
-    def draw(self, context):
-        layout = self.layout
-        view = context.space_data
-        overlay = view.overlay
 
         row = layout.row()
         row.separator()
-        row.active = display_all
         row.prop(overlay, "use_gpencil_onion_skin", text="Onion Skin")
 
         col = layout.column(align=True)
-        col.active = display_all
         split = col.split()
         row = split.row()
         row.separator()
@@ -9539,8 +9533,6 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        col = layout.column(align=True)
-        col.active = display_all
         split = col.split()
         row = split.row()
         row.separator()
@@ -9553,8 +9545,6 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        col = layout.column(align=True)
-        col.active = display_all
         split = col.split()
         row = split.row()
         row.separator()
@@ -9570,7 +9560,6 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
         if context.object.mode in {'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}:
             split = layout.split()
             col = split.column()
-            col.active = display_all
             row = col.row()
             row.separator()
             row.prop(overlay, "use_gpencil_edit_lines", text="Edit Lines")
@@ -9583,18 +9572,15 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
             if context.object.mode == 'EDIT_GPENCIL':
 
                 col = layout.column()
-                col.active = display_all
                 row = col.row()
                 row.separator()
                 row.prop(overlay, "use_gpencil_show_directions")
                 col = layout.column()
-                col.active = display_all
                 row = col.row()
                 row.separator()
                 row.prop(overlay, "use_gpencil_show_material_name", text="Material Name")
 
                 layout.use_property_split = True
-                layout.active = display_all
                 if not gpd.use_curve_edit:
                     row = layout.row()
                     row.separator()
@@ -9608,20 +9594,17 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
             # Handles for Curve Edit
             if context.object.mode == 'EDIT_GPENCIL':
                 gpd = context.object.data
-                layout.active = display_all
                 if gpd.use_curve_edit:
                     layout.prop(overlay, "display_handle", text="Handles")
 
         if context.object.mode == 'SCULPT_GPENCIL':
             layout.use_property_split = True
-            layout.active = display_all
             row = layout.row()
             row.separator()
             row.prop(overlay, "vertex_opacity", text="Vertex Opacity", slider=True)
 
         if context.object.mode in {'PAINT_GPENCIL', 'VERTEX_GPENCIL'}:
             layout.label(text="Vertex Paint")
-            layout.active = display_all
             row = layout.row()
             shading = VIEW3D_PT_shading.get_shading(context)
             row.enabled = shading.type not in {'WIREFRAME', 'RENDERED'}
