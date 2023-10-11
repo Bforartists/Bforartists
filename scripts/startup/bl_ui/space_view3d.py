@@ -9127,6 +9127,7 @@ class VIEW3D_PT_overlay_bones(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Bones"
+    bl_ui_units_x = 14
 
     @staticmethod
     def is_using_wireframe(context):
