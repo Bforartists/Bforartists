@@ -3,7 +3,8 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-BOOL = b'C'[0]
+BOOL = b'B'[0]
+CHAR = b'C'[0]
 INT8 = b'Z'[0]
 INT16 = b'Y'[0]
 INT32 = b'I'[0]

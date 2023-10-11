@@ -37,7 +37,7 @@
 #include "BKE_node.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 #include "BKE_studiolight.h"
 
 #include "DEG_depsgraph.hh"
@@ -144,19 +144,39 @@ const char *BKE_blender_version_string_compact()
 static char bforartists_version_string[48] = "";
 
 /* Only includes patch if non-zero. */
-//static char bforartists_version_string_compact[48] = "";
+static char bforartists_version_string_compact[48] = "";
 
 static void bforartists_version_init()
 {
+  const char *version_cycle = "";
+  if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "alpha")) {
+    version_cycle = " Alpha";
+  }
+  else if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "beta")) {
+    version_cycle = " Beta";
+  }
+  else if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "rc")) {
+    version_cycle = " Release Candidate";
+  }
+  else if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "release")) {
+    version_cycle = "";
+  }
+  else {
+    BLI_assert_msg(0, "Invalid Bforartists version cycle");
+  }
+  
   SNPRINTF(bforartists_version_string,
-           "%d.%d.%d",
+           "%d.%01d.%d%s",
            BFORARTISTS_VERSION / 10,
            BFORARTISTS_VERSION % 10,
-           BFORARTISTS_VERSION_PATCH);
-//  SNPRINTF(bforartists_version_string_compact,
-//           "%d.%01d%s",
-//           BFORARTISTS_VERSION / 10,
-//           BFORARTISTS_VERSION % 10);
+           BFORARTISTS_VERSION_PATCH,
+           version_cycle);
+  
+  SNPRINTF(bforartists_version_string_compact,
+           "%d.%01d%s",
+           BFORARTISTS_VERSION / 10,
+           BFORARTISTS_VERSION % 10,
+           version_cycle);
 }
 
 /*bfa - bforartists version string*/
@@ -165,10 +185,10 @@ const char *BKE_bforartists_version_string()
   return bforartists_version_string;
 }
 
-//const char *BKE_bforartists_version_string_compact()
-//{
-//  return bforartists_version_string_compact;
-//}
+const char *BKE_bforartists_version_string_compact()
+{
+ return bforartists_version_string_compact;
+}
 
 /* -------------- bfa - end -----------------*/
 
@@ -215,7 +235,7 @@ void BKE_blender_globals_init()
 
   BKE_blender_globals_main_replace(BKE_main_new());
 
-  STRNCPY(G.ima, "//");
+  STRNCPY(G.filepath_last_image, "//");
 
 #ifndef WITH_PYTHON_SECURITY /* default */
   G.f |= G_FLAG_SCRIPT_AUTOEXEC;

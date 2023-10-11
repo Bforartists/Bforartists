@@ -141,7 +141,7 @@ class CONSOLE_MT_edit_delete(Menu):
 
 
 class CONSOLE_MT_context_menu(Menu):
-    bl_label = "Console Context Menu"
+    bl_label = "Console"
 
     def draw(self, _context):
         layout = self.layout
