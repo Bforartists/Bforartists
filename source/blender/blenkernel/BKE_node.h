@@ -114,7 +114,7 @@ using NodeGeometryExecFunction = void (*)(blender::nodes::GeoNodeExecParams para
 using NodeDeclareFunction = void (*)(blender::nodes::NodeDeclarationBuilder &builder);
 using NodeDeclareDynamicFunction = void (*)(const bNodeTree &tree,
                                             const bNode &node,
-                                            blender::nodes::NodeDeclaration &r_declaration);
+                                            blender::nodes::NodeDeclarationBuilder &builder);
 using SocketGetCPPValueFunction = void (*)(const void *socket_value, void *r_value);
 using SocketGetGeometryNodesCPPValueFunction = void (*)(const void *socket_value, void *r_value);
 
@@ -225,6 +225,7 @@ typedef int (*NodeGPUExecFunction)(struct GPUMaterial *mat,
                                    struct bNodeExecData *execdata,
                                    struct GPUNodeStack *in,
                                    struct GPUNodeStack *out);
+typedef void (*NodeMaterialXFunction)(void *data, struct bNode *node, struct bNodeSocket *out);
 
 /**
  * \brief Defines a node type.
@@ -339,6 +340,8 @@ typedef struct bNodeType {
   NodeExecFunction exec_fn;
   /* gpu */
   NodeGPUExecFunction gpu_fn;
+  /* MaterialX */
+  NodeMaterialXFunction materialx_fn;
 
   /* Get an instance of this node's compositor operation. Freeing the instance is the
    * responsibility of the caller. */

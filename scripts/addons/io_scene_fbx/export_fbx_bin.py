@@ -66,7 +66,7 @@ from .fbx_utils import (
     get_blender_nodetexture_key,
     # FBX element data.
     elem_empty,
-    elem_data_single_bool, elem_data_single_int16, elem_data_single_int32, elem_data_single_int64,
+    elem_data_single_char, elem_data_single_int16, elem_data_single_int32, elem_data_single_int64,
     elem_data_single_float32, elem_data_single_float64,
     elem_data_single_bytes, elem_data_single_string, elem_data_single_string_unicode,
     elem_data_single_bool_array, elem_data_single_int32_array, elem_data_single_int64_array,
@@ -1810,18 +1810,16 @@ def fbx_data_armature_elements(root, arm_obj, scene_data):
             elem_data_single_int32(fbx_skin, b"Version", FBX_DEFORMER_SKIN_VERSION)
             elem_data_single_float64(fbx_skin, b"Link_DeformAcuracy", 50.0)  # Only vague idea what it is...
 
-            # Pre-process vertex weights (also to check vertices assigned to more than four bones).
+            # Pre-process vertex weights so that the vertices only need to be iterated once.
             ob = ob_obj.bdata
             bo_vg_idx = {bo_obj.bdata.name: ob.vertex_groups[bo_obj.bdata.name].index
                          for bo_obj in clusters.keys() if bo_obj.bdata.name in ob.vertex_groups}
             valid_idxs = set(bo_vg_idx.values())
             vgroups = {vg.index: {} for vg in ob.vertex_groups}
-            verts_vgroups = (sorted(((vg.group, vg.weight) for vg in v.groups if vg.weight and vg.group in valid_idxs),
-                                    key=lambda e: e[1], reverse=True)
-                             for v in me.vertices)
-            for idx, vgs in enumerate(verts_vgroups):
-                for vg_idx, w in vgs:
-                    vgroups[vg_idx][idx] = w
+            for idx, v in enumerate(me.vertices):
+                for vg in v.groups:
+                    if (w := vg.weight) and (vg_idx := vg.group) in valid_idxs:
+                        vgroups[vg_idx][idx] = w
 
             for bo_obj, clstr_key in clusters.items():
                 bo = bo_obj.bdata
@@ -1900,7 +1898,8 @@ def fbx_data_leaf_bone_elements(root, scene_data):
         # object type, etc.
         elem_data_single_int32(model, b"MultiLayer", 0)
         elem_data_single_int32(model, b"MultiTake", 0)
-        elem_data_single_bool(model, b"Shading", True)
+        # Probably the FbxNode.EShadingMode enum. Full description in fbx_data_object_elements.
+        elem_data_single_char(model, b"Shading", b"\x01")
         elem_data_single_string(model, b"Culling", b"CullingOff")
 
         elem_props_template_finalize(tmpl, props)
@@ -1964,7 +1963,12 @@ def fbx_data_object_elements(root, ob_obj, scene_data):
     # object type, etc.
     elem_data_single_int32(model, b"MultiLayer", 0)
     elem_data_single_int32(model, b"MultiTake", 0)
-    elem_data_single_bool(model, b"Shading", True)
+    # This is probably the FbxNode.EShadingMode enum. Not directly used by the FBX SDK, but the SDK guarantees that the
+    # value will be passed through from an imported file to an exported one. Common values are 'Y' and 'T'. 'U' and 'W'
+    # have also been seen in older FBX files. It's not clear which enum member each of these values corresponds to or if
+    # these values are actually application specific. Blender had been exporting this as a `True` bool for a long time
+    # seemingly without issue. The '\x01' char is the same value as `True` in raw bytes.
+    elem_data_single_char(model, b"Shading", b"\x01")
     elem_data_single_string(model, b"Culling", b"CullingOff")
 
     if obj_type == b"Camera":

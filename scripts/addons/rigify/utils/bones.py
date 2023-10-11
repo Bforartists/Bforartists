@@ -160,7 +160,7 @@ def copy_bone(obj: ArmatureObject, bone_name: str, assign_name='', *,
 
         if bbone:
             # noinspection SpellCheckingInspection
-            for name in ['bbone_segments',
+            for name in ['bbone_segments', 'bbone_mapping_mode',
                          'bbone_easein', 'bbone_easeout',
                          'bbone_rollin', 'bbone_rollout',
                          'bbone_curveinx', 'bbone_curveinz', 'bbone_curveoutx', 'bbone_curveoutz',

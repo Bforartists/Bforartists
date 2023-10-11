@@ -32,11 +32,11 @@ def process_all(process, name_map):
 
     process('lip.T.L', parent='jaw_master', layer=1, rig='skin.stretchy_chain', sharpen=(0, 90),
             falloff=(0.7, 1, 0.1), spherical=(True, False, True), scale=True)
-    process('lip.T.L.001')
+    process('lip.T.L.001', bbone_mapping_mode='CURVED')
 
     process('lip.B.L', parent='jaw_master', layer=1, rig='skin.stretchy_chain', sharpen=(0, 90),
             falloff=(0.7, 1, 0.1), spherical=(True, False, True), scale=True)
-    process('lip.B.L.001')
+    process('lip.B.L.001', bbone_mapping_mode='CURVED')
 
     process('jaw', parent='jaw_master', layer=1, rig='skin.basic_chain', connect_ends='next')
     process('chin', parent='jaw_master', rig='skin.stretchy_chain', connect_ends='prev')
@@ -58,11 +58,11 @@ def process_all(process, name_map):
 
     process('lip.T.R', parent='jaw_master', layer=1, rig='skin.stretchy_chain', sharpen=(0, 90),
             falloff=(0.7, 1, 0.1), spherical=(True, False, True), scale=True)
-    process('lip.T.R.001')
+    process('lip.T.R.001', bbone_mapping_mode='CURVED')
 
     process('lip.B.R', parent='jaw_master', layer=1, rig='skin.stretchy_chain', sharpen=(0, 90),
             falloff=(0.7, 1, 0.1), spherical=(True, False, True), scale=True)
-    process('lip.B.R.001')
+    process('lip.B.R.001', bbone_mapping_mode='CURVED')
 
     process('brow.B.L', rig='skin.stretchy_chain', middle=2, connect_ends='next')
     process('brow.B.L.001')
@@ -320,6 +320,7 @@ def set_rig(
     connect_ends=None, priority=0, middle=0, sharpen=None,
     falloff=None, spherical=None, falloff_length=False, scale=False,
     glue_copy=None, glue_reparent=False,
+    bbone_mapping_mode=None,
     params=None, **_kwargs
 ):
     bone = name_map.get(bone, bone)
@@ -366,6 +367,9 @@ def set_rig(
         if params:
             for k, v in params.items():
                 setattr(pbone.rigify_parameters, k, v)
+
+    if bbone_mapping_mode is not None:
+        obj.pose.bones[bone].bone.bbone_mapping_mode = bbone_mapping_mode
 
 
 def update_face_rig(obj):

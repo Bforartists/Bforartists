@@ -29,7 +29,7 @@ class FILEBROWSER_HT_header(Header):
                 layout.row().prop(params, "drop_collections_at_origin", icon_only=True, icon="CENTER")
             layout.row().prop(params, "drop_collections_as_instances", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
             row = layout.row(align=True) #BFA - change to make row of buttons
-            row.prop(params, "import_type", text="", expand=True, icon_only=True,) #BFA - change to make row of buttons
+            row.prop(params, "import_method", text="", expand=True, icon_only=True,) #BFA - change to make row of buttons
 
         #layout.separator_spacer() #BFA
 
@@ -352,6 +352,15 @@ class FILEBROWSER_PT_bookmarks_favorites(FileBrowserPanel, Panel):
             layout.operator("file.bookmark_add", icon='ADD')
 
 
+class FILEBROWSER_MT_bookmarks_recents_specials_menu(Menu):
+    bl_label = "Recent Items Specials"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("file.reset_recent", icon='X', text="Clear Recent Items")
+
+
 class FILEBROWSER_PT_bookmarks_recents(Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOLS'
@@ -376,7 +385,7 @@ class FILEBROWSER_PT_bookmarks_recents(Panel):
                               space, "recent_folders_active", item_dyntip_propname="path", rows=1, maxrows=10)
 
             col = row.column(align=True)
-            col.operator("file.reset_recent", icon='X', text="")
+            col.menu("FILEBROWSER_MT_bookmarks_recents_specials_menu", icon='DOWNARROW_HLT', text="")
 
 
 class FILEBROWSER_PT_advanced_filter(Panel):
@@ -552,7 +561,7 @@ class FILEBROWSER_MT_select(FileBrowserMenu, Menu):
 
 
 class FILEBROWSER_MT_context_menu(FileBrowserMenu, Menu):
-    bl_label = "Files Context Menu"
+    bl_label = "Files"
 
     def draw(self, context):
         layout = self.layout
@@ -892,7 +901,7 @@ class ASSETBROWSER_UL_metadata_tags(UIList):
 
 
 class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
-    bl_label = "Assets Context Menu"
+    bl_label = "Assets"
 
     def draw(self, context):
         layout = self.layout
@@ -928,6 +937,7 @@ classes = (
     FILEBROWSER_PT_bookmarks_favorites,
     FILEBROWSER_PT_bookmarks_system,
     FILEBROWSER_PT_bookmarks_volumes,
+    FILEBROWSER_MT_bookmarks_recents_specials_menu,
     FILEBROWSER_PT_bookmarks_recents,
     FILEBROWSER_PT_advanced_filter,
     FILEBROWSER_PT_directory_path,

@@ -80,6 +80,7 @@ class WorldPipeline {
 class WorldVolumePipeline {
  private:
   Instance &inst_;
+  bool is_valid_;
 
   PassSimple world_ps_ = {"World.Volume"};
 
@@ -88,6 +89,11 @@ class WorldVolumePipeline {
 
   void sync(GPUMaterial *gpumat);
   void render(View &view);
+
+  bool is_valid()
+  {
+    return is_valid_;
+  }
 };
 
 /** \} */
@@ -101,7 +107,10 @@ class ShadowPipeline {
  private:
   Instance &inst_;
 
-  PassMain surface_ps_ = {"Shadow.Surface"};
+  /* Shadow update pass. */
+  PassMain render_ps_ = {"Shadow.Surface"};
+  /* Shadow surface render sub-pass. */
+  PassMain::Sub *surface_ps_ = nullptr;
 
  public:
   ShadowPipeline(Instance &inst) : inst_(inst){};
@@ -109,6 +118,7 @@ class ShadowPipeline {
   PassMain::Sub *surface_material_add(GPUMaterial *gpumat);
 
   void sync();
+
   void render(View &view);
 };
 
@@ -297,8 +307,6 @@ class DeferredProbeLayer {
   /* Closures bits from the materials in this pass. */
   eClosureBits closure_bits_;
 
-  Texture dummy_light_tx_ = {"dummy_light_accum_tx"};
-
  public:
   DeferredProbeLayer(Instance &inst) : inst_(inst){};
 
@@ -398,16 +406,15 @@ class UtilityTexture : public Texture {
       memcpy(layer.data, lut::ltc_mat_ggx, sizeof(layer));
     }
     {
-      Layer &layer = data[UTIL_LTC_MAG_LAYER];
+      Layer &layer = data[UTIL_BSDF_LAYER];
       for (auto x : IndexRange(lut_size)) {
         for (auto y : IndexRange(lut_size)) {
           layer.data[y][x][0] = lut::brdf_ggx[y][x][0];
           layer.data[y][x][1] = lut::brdf_ggx[y][x][1];
-          layer.data[y][x][2] = lut::ltc_mag_ggx[y][x][0];
-          layer.data[y][x][3] = lut::ltc_mag_ggx[y][x][1];
+          layer.data[y][x][2] = lut::brdf_ggx[y][x][2];
+          layer.data[y][x][3] = 0.0f;
         }
       }
-      BLI_assert(UTIL_LTC_MAG_LAYER == UTIL_BSDF_LAYER);
     }
     {
       for (auto layer_id : IndexRange(16)) {

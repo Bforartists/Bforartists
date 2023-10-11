@@ -63,7 +63,7 @@ class ExportUVLayout(bpy.types.Operator):
         items=(
             ('SVG', "Scalable Vector Graphic (.svg)",
              "Export the UV layout to a vector SVG file"),
-            ('EPS', "Encapsulate PostScript (.eps)",
+            ('EPS', "Encapsulated PostScript (.eps)",
              "Export the UV layout to a vector EPS file"),
             ('PNG', "PNG Image (.png)",
              "Export the UV layout to a bitmap image"),

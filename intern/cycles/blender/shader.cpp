@@ -190,6 +190,7 @@ static SocketType::Type convert_socket_type(BL::NodeSocket &b_socket)
   switch (b_socket.type()) {
     case BL::NodeSocket::type_VALUE:
       return SocketType::FLOAT;
+    case BL::NodeSocket::type_BOOLEAN:
     case BL::NodeSocket::type_INT:
       return SocketType::INT;
     case BL::NodeSocket::type_VECTOR:
@@ -537,11 +538,11 @@ static ShaderNode *add_node(Scene *scene,
       case BL::ShaderNodeSubsurfaceScattering::falloff_BURLEY:
         subsurface->set_method(CLOSURE_BSSRDF_BURLEY_ID);
         break;
-      case BL::ShaderNodeSubsurfaceScattering::falloff_RANDOM_WALK_FIXED_RADIUS:
-        subsurface->set_method(CLOSURE_BSSRDF_RANDOM_WALK_FIXED_RADIUS_ID);
-        break;
       case BL::ShaderNodeSubsurfaceScattering::falloff_RANDOM_WALK:
         subsurface->set_method(CLOSURE_BSSRDF_RANDOM_WALK_ID);
+        break;
+      case BL::ShaderNodeSubsurfaceScattering::falloff_RANDOM_WALK_SKIN:
+        subsurface->set_method(CLOSURE_BSSRDF_RANDOM_WALK_SKIN_ID);
         break;
     }
 
@@ -651,11 +652,11 @@ static ShaderNode *add_node(Scene *scene,
       case BL::ShaderNodeBsdfPrincipled::subsurface_method_BURLEY:
         principled->set_subsurface_method(CLOSURE_BSSRDF_BURLEY_ID);
         break;
-      case BL::ShaderNodeBsdfPrincipled::subsurface_method_RANDOM_WALK_FIXED_RADIUS:
-        principled->set_subsurface_method(CLOSURE_BSSRDF_RANDOM_WALK_FIXED_RADIUS_ID);
-        break;
       case BL::ShaderNodeBsdfPrincipled::subsurface_method_RANDOM_WALK:
         principled->set_subsurface_method(CLOSURE_BSSRDF_RANDOM_WALK_ID);
+        break;
+      case BL::ShaderNodeBsdfPrincipled::subsurface_method_RANDOM_WALK_SKIN:
+        principled->set_subsurface_method(CLOSURE_BSSRDF_RANDOM_WALK_SKIN_ID);
         break;
     }
     node = principled;

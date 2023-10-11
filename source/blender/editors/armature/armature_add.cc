@@ -22,6 +22,8 @@
 #include "BLI_math_vector.h"
 #include "BLI_string_utils.h"
 
+#include "BLT_translation.h"
+
 #include "BKE_action.h"
 #include "BKE_armature.h"
 #include "BKE_constraint.h"
@@ -95,7 +97,7 @@ EditBone *ED_armature_ebone_add_primitive(Object *obedit_arm, float length, bool
   ED_armature_edit_deselect_all(obedit_arm);
 
   /* Create a bone */
-  bone = ED_armature_ebone_add(arm, "Bone");
+  bone = ED_armature_ebone_add(arm, DATA_("Bone"));
 
   arm->act_edbone = bone;
 
@@ -268,7 +270,7 @@ EditBone *add_points_bone(Object *obedit, float head[3], float tail[3])
 {
   EditBone *ebo;
 
-  ebo = ED_armature_ebone_add(static_cast<bArmature *>(obedit->data), "Bone");
+  ebo = ED_armature_ebone_add(static_cast<bArmature *>(obedit->data), DATA_("Bone"));
 
   copy_v3_v3(ebo->head, head);
   copy_v3_v3(ebo->tail, tail);
@@ -1313,6 +1315,7 @@ static int armature_symmetrize_exec(bContext *C, wmOperator *op)
         ebone->bbone_prev_type = ebone_iter->bbone_prev_type;
         ebone->bbone_next_type = ebone_iter->bbone_next_type;
 
+        ebone->bbone_mapping_mode = ebone_iter->bbone_mapping_mode;
         ebone->bbone_flag = ebone_iter->bbone_flag;
         ebone->bbone_prev_flag = ebone_iter->bbone_prev_flag;
         ebone->bbone_next_flag = ebone_iter->bbone_next_flag;
@@ -1653,6 +1656,16 @@ static int armature_bone_primitive_add_exec(bContext *C, wmOperator *op)
   bone = ED_armature_ebone_add(static_cast<bArmature *>(obedit->data), name);
   ANIM_armature_bonecoll_assign_active(static_cast<bArmature *>(obedit->data), bone);
 
+  bArmature *arm = static_cast<bArmature *>(obedit->data);
+  if (!ANIM_bonecoll_is_visible_editbone(arm, bone)) {
+    const BoneCollectionReference *bcoll_ref = static_cast<const BoneCollectionReference *>(
+        bone->bone_collections.first);
+    BLI_assert_msg(bcoll_ref,
+                   "Bone that is not visible due to its bone collections MUST be assigned to at "
+                   "least one of them.");
+    WM_reportf(RPT_WARNING, "Bone was added to a hidden collection '%s'", bcoll_ref->bcoll->name);
+  }
+
   copy_v3_v3(bone->head, curs);
 
   if (rv3d && (U.flag & USER_ADD_VIEWALIGNED)) {
@@ -1684,7 +1697,7 @@ void ARMATURE_OT_bone_primitive_add(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  RNA_def_string(ot->srna, "name", "Bone", MAXBONENAME, "Name", "Name of the newly created bone");
+  RNA_def_string(ot->srna, "name", nullptr, MAXBONENAME, "Name", "Name of the newly created bone");
 }
 
 /* ********************** Subdivide *******************************/
