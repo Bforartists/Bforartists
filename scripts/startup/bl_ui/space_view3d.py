@@ -9188,6 +9188,7 @@ class VIEW3D_PT_overlay_texture_paint(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Texture Paint"
+    bl_ui_units_x = 13
 
     @classmethod
     def poll(cls, context):
