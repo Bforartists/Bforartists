@@ -449,6 +449,8 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                             "sequencer.retiming_show",
                             icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
                         )
+                        col.separator(factor = 0.5)
+
                         row.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
 
                         col.separator(factor = 0.5)

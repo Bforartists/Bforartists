@@ -1000,8 +1000,7 @@ class SEQUENCER_MT_strip_retiming(Menu):
         layout.separator() #BFA - Added separator
         layout.operator(
             "sequencer.retiming_show",
-            icon='CHECKBOX_HLT' if (strip and strip.show_retiming_keys) else 'CHECKBOX_DEHLT',
-            text="Toggle Retiming Keys",
+            icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text="Disable Retiming" if (strip and strip.show_retiming_keys) else "Enable Retiming" #BFA - changed icon and title
         )
         layout.separator()
         layout.operator("sequencer.retiming_segment_speed_set", icon='SET_TIME')
