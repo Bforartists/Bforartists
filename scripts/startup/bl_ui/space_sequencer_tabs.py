@@ -408,7 +408,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                 strip = context.active_sequence_strip
                 strip_type = strip.type
 
-                if strip and strip_type == 'MOVIE' or 'IMAGE':
+                if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
 
                     strip = context.active_sequence_strip
 
@@ -443,7 +443,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     strip = context.active_sequence_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE' or 'IMAGE':
+                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
                         row = col.row(align=True)
                         col.operator(
                             "sequencer.retiming_show",
@@ -451,7 +451,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                         )
                         col.separator(factor = 0.5)
 
-                        col.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
+                        row.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
 
                         col.separator(factor = 0.5)
 
@@ -468,7 +468,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     strip = context.active_sequence_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE' or 'IMAGE':
+                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
                         row = col.row(align=True)
                         col.operator(
                             "sequencer.retiming_show",
@@ -497,7 +497,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     strip = context.active_sequence_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE' or 'IMAGE':
+                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
                         col.operator(
                             "sequencer.retiming_show",
                             icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
