@@ -5227,7 +5227,7 @@ class VIEW3D_MT_bone_collections(Menu):
             layout.label(text="- select bones to operate on first -")
             return
 
-        layout.operator("armature.collection_show_all")
+        layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
         layout.separator()
 
         arm = context.object.data
@@ -5257,7 +5257,8 @@ class VIEW3D_MT_bone_collections(Menu):
         layout.separator()
 
         props = layout.operator("armature.collection_assign",
-                                text="Assign to New Collection")
+                                text="Assign to New Collection",
+                                icon='NEW_GROUP')
         props.name = "New Collection"
 
 
