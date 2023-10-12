@@ -997,13 +997,14 @@ class SEQUENCER_MT_strip_retiming(Menu):
         layout = self.layout
 
         #BFA - Moved retiming_show and retiming_segment_speed_set to top for UX
-        layout.separator() #BFA - Added separator
         layout.operator(
             "sequencer.retiming_show",
             icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text="Disable Retiming" if (strip and strip.show_retiming_keys) else "Enable Retiming" #BFA - changed icon and title
         )
         layout.separator()
-        layout.operator("sequencer.retiming_segment_speed_set", icon='SET_TIME')
+        layout.operator("sequencer.retiming_segment_speed_set", icon='SET_TIME')  #BFA - moved up for UX
+
+        layout.separator() #BFA - added seperator
 
         layout.operator("sequencer.retiming_key_add", icon='KEYFRAMES_INSERT')
         layout.operator("sequencer.retiming_freeze_frame_add", icon='KEYTYPE_MOVING_HOLD_VEC')
@@ -1013,7 +1014,7 @@ class SEQUENCER_MT_strip_retiming(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.delete", text="Delete Retiming Keys", icon='DELETE')
+        #layout.operator("sequencer.delete", text="Delete Retiming Keys", icon='DELETE') #BFA - Redundant operator
         col = layout.column()
         col.operator("sequencer.retiming_reset", icon='KEYFRAMES_REMOVE')
         col.enabled = not is_retiming
