@@ -813,16 +813,17 @@ class USERPREF_PT_viewport_display(ViewportPanel, CenterAlignMixIn, Panel):
         row.prop(view, "show_view_name", text="View Name")
         row = col.row()
         row.separator()
-        row.prop(view, "show_playback_fps", text="Playback Frame Rate (FPS)")
-        row = col.row()
-        row.prop(view, "show_playback_fps", text="")
-        subrow = row.row()
-        subrow.active = view.show_playback_fps
-        subrow.prop(view, "playback_fps_samples", text="Samples")
-
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-
-
+        
+        split = row.split()
+        col = split.column()
+        col.use_property_split = False
+        col.prop(view, "show_playback_fps", text="Playback Frame Rate (FPS)")
+        
+        if view.show_playback_fps:
+            split.prop(view, "playback_fps_samples", text="Samples")
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+            
         layout.separator()
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
