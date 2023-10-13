@@ -814,14 +814,12 @@ class USERPREF_PT_viewport_display(ViewportPanel, CenterAlignMixIn, Panel):
         row = col.row()
         row.separator()
         row.prop(view, "show_playback_fps", text="Playback Frame Rate (FPS)")
-        row = col.row()
-        row.prop(view, "show_playback_fps", text="")
-        subrow = row.row()
-        subrow.active = view.show_playback_fps
-        subrow.prop(view, "playback_fps_samples", text="Samples")
+        
+        if view.show_playback_fps == True:
+            row.active = view.show_playback_fps
+            row.prop(view, "playback_fps_samples", text="Samples")
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-
 
         layout.separator()
 
