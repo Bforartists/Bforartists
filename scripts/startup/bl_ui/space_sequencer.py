@@ -994,32 +994,44 @@ class SEQUENCER_MT_strip_retiming(Menu):
     bl_label = "Retiming"
 
     def draw(self, context):
-        is_retiming = context.scene.sequence_editor.selected_retiming_keys
-        strip = context.active_sequence_strip
-        layout = self.layout
+        try: # BFA - detect if correct relevant strip is selected to apply as a clearer UX. Only works on Movie and Image strips
+            is_retiming = context.scene.sequence_editor.selected_retiming_keys
+            strip = context.active_sequence_strip
+            layout = self.layout
 
-        #BFA - Moved retiming_show and retiming_segment_speed_set to top for UX
-        layout.separator() #BFA - Added separator
-        layout.operator(
-            "sequencer.retiming_show",
-            icon='CHECKBOX_HLT' if (strip and strip.show_retiming_keys) else 'CHECKBOX_DEHLT',
-            text="Toggle Retiming Keys",
-        )
-        layout.separator()
-        layout.operator("sequencer.retiming_segment_speed_set", icon='SET_TIME')
+            layout.operator_context = 'INVOKE_REGION_WIN' #BFA
 
-        layout.operator("sequencer.retiming_key_add", icon='KEYFRAMES_INSERT')
-        layout.operator("sequencer.retiming_freeze_frame_add", icon='KEYTYPE_MOVING_HOLD_VEC')
-        col = layout.column()
-        col.operator("sequencer.retiming_transition_add", icon='NODE_CURVE_TIME')
-        col.enabled = is_retiming
+            strip = context.active_sequence_strip #BFA
+            strip_type = strip.type #BFA
 
-        layout.separator()
+            if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
+                #BFA - Moved retiming_show and retiming_segment_speed_set to top for UX
+                layout.operator(
+                    "sequencer.retiming_show",
+                    icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text="Disable Retiming" if (strip and strip.show_retiming_keys) else "Enable Retiming" #BFA - changed icon and title
+                )
+                layout.separator()
+                layout.operator("sequencer.retiming_segment_speed_set", icon='SET_TIME')  #BFA - moved up for UX
 
-        layout.operator("sequencer.delete", text="Delete Retiming Keys", icon='DELETE')
-        col = layout.column()
-        col.operator("sequencer.retiming_reset", icon='KEYFRAMES_REMOVE')
-        col.enabled = not is_retiming
+                layout.separator() #BFA - added seperator
+
+                layout.operator("sequencer.retiming_key_add", icon='KEYFRAMES_INSERT')
+                layout.operator("sequencer.retiming_freeze_frame_add", icon='KEYTYPE_MOVING_HOLD_VEC')
+                col = layout.column()
+                col.operator("sequencer.retiming_transition_add", icon='NODE_CURVE_TIME')
+                col.enabled = is_retiming
+
+                layout.separator()
+
+                #layout.operator("sequencer.delete", text="Delete Retiming Keys", icon='DELETE') #BFA - Redundant operator, tooltip was updated
+                col = layout.column()
+
+                col.operator("sequencer.retiming_reset", icon='KEYFRAMES_REMOVE')
+                col.enabled = not is_retiming
+            else:
+                layout.label(text="Select a movie strip") #BFA
+        except:
+            layout.label(text="Select a movie strip") #BFA
 
 
 class SEQUENCER_MT_strip(Menu):
