@@ -508,7 +508,7 @@ if __name__ == "__main__":
         if not blender_skip_msg:
             blender_skip_msg = blender_update(args)
         if blender_skip_msg:
-            blender_skip_msg = "Blender repository skipped: " + blender_skip_msg + "\n"
+            blender_skip_msg = "Bforartists repository skipped: " + blender_skip_msg + "\n"
     if not args.no_submodules:
         submodules_skip_msg = submodules_update(args, branch)
 
