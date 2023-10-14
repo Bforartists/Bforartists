@@ -185,9 +185,9 @@ class ARMATURE_MT_collection_context_menu(Menu):
         arm = context.armature
         active_bcoll = arm.collections.active
 
-        props = layout.operator("armature.collection_solo_visibility")
+        props = layout.operator("armature.collection_solo_visibility", icon='HIDE_UNSELECTED')
         props.name = active_bcoll.name if active_bcoll else ""
-        layout.operator("armature.collection_show_all")
+        layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
 
 
 class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
