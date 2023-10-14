@@ -119,6 +119,30 @@ def draw_color_balance(layout, color_balance):
         col.prop(color_balance, "invert_slope", text="Invert", icon='ARROW_LEFTRIGHT')
         split.template_color_picker(color_balance, "slope", value_slider=True, cubic=True)
 
+################################ BFA -Switch between the editors ##########################################
+
+# The blank button, we don't want to switch to the editor in which we are already.
+class ANIM_OT_switch_editors_in_sequencer(bpy.types.Operator):
+    """Switch in Sequence Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_sequencer"        # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "Switch to Sequence Editor"
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # Blank button, we don't execute anything here.
+        return {'FINISHED'}
+
+
+class ANIM_OT_switch_editors_to_sequencer(bpy.types.Operator):
+    """Switch to sequencer editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_sequwncer"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Sequencer Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        bpy.ops.wm.context_set_enum(data_path="space_data.view_type", value="SEQUENCE_EDITOR")
+        return {'FINISHED'}
 
 class SEQUENCER_PT_active_tool(ToolActivePanelHelper, Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
@@ -161,12 +185,23 @@ class SEQUENCER_HT_header(Header):
         st = context.space_data
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
+                # Switch between the editors
+
+        # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
+        row = layout.row(align=True)
+        row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
+        row.operator("wm.switch_editor_in_sequencer", text="", icon='NLA')
+        
         layout.prop(st, "view_type", text="")
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
         tool_settings = context.tool_settings
         sequencer_tool_settings = tool_settings.sequencer_tool_settings
 
         layout.separator_spacer()
+        row = layout.row()
+        row.ui_units_x = 6
+        row.template_ID(st, "scene_override", unlink="sequencer.remove_scene_override", filter='INACTIVE')
 
         if st.view_type == 'PREVIEW':
             row = layout.row(align=True)
@@ -181,8 +216,6 @@ class SEQUENCER_HT_header(Header):
             row.prop(tool_settings, "use_snap_sequencer", text="")
             sub = row.row(align=True)
             sub.popover(panel="SEQUENCER_PT_snapping", text = "")
-        
-        layout.template_ID(st, "scene_override", unlink="sequencer.remove_scene_override", filter='INACTIVE')
         
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             layout.prop(st, "display_mode", text="", icon_only=True)
