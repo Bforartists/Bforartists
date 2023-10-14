@@ -5115,7 +5115,7 @@ class VIEW3D_MT_pose(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_pose_motion")
-        layout.operator("armature.move_to_collection", text="Move to Bone Collection")
+        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP")
         layout.menu("VIEW3D_MT_bone_collections")
 
         layout.separator()
@@ -5227,7 +5227,7 @@ class VIEW3D_MT_bone_collections(Menu):
             layout.label(text="- select bones to operate on first -")
             return
 
-        layout.operator("armature.collection_show_all")
+        layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
         layout.separator()
 
         arm = context.object.data
@@ -5257,7 +5257,8 @@ class VIEW3D_MT_bone_collections(Menu):
         layout.separator()
 
         props = layout.operator("armature.collection_assign",
-                                text="Assign to New Collection")
+                                text="Assign to New Collection",
+                                icon='NEW_GROUP')
         props.name = "New Collection"
 
 
@@ -6807,7 +6808,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("armature.move_to_collection", text="Move to Bone Collection")
+        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP")
         layout.menu("VIEW3D_MT_bone_collections")
 
         layout.separator()
