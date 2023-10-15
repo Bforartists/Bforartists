@@ -860,6 +860,12 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
     UI_tooltip_text_field_add(
         data, BLI_strdup(but_label.strinfo), nullptr, UI_TIP_STYLE_HEADER, UI_TIP_LC_NORMAL);
   }
+  /*bfa - still no tooltip? Then add it !*/
+  else if (but_tip_label.strinfo == nullptr) {
+    UI_tooltip_text_field_add(
+          data, BLI_strdup(but_label.strinfo), nullptr, UI_TIP_STYLE_HEADER, UI_TIP_LC_NORMAL);
+    }
+  /*bfa end*/
 
   /* Tip Label (only for buttons not already showing the label). */
   /* bfa - Replaced condition in order to add the prefix everywhere in case it is not NULL! */
