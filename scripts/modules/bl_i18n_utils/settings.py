@@ -86,6 +86,8 @@ LANGUAGES = (
     (47, "Slovak (Slovenčina)", "sk_SK"),
     (48, "Georgian (ქართული)", "ka"),
     (49, "Tamil (தமிழ்)", "ta"),
+    (50, "Khmer (ខ្មែរ)", "km"),
+    (51, "Swahili (Kiswahili)", "sw"),
 )
 
 # Default context, in py (keep in sync with `BLT_translation.h`)!
@@ -273,7 +275,17 @@ PYGETTEXT_KEYWORDS = (() +
     tuple((r"\.{}\(\s*" + _msg_re + r"\s*\)").format(it)
           for it in ("description", "error_message_add")) +
 
-    # Node socket labels
+    # Node socket labels from declarations: context-less names
+    tuple((r"\.{}\(\s*" + _msg_re +
+           r"\s*\)(?![^;]*\.translation_context\()[^;]*;").format(it)
+          for it in ("short_label",)) +
+
+    # Node socket labels from declarations: names with contexts
+    tuple((r"\.{}\(\s*" + _msg_re + r"[^;]*\.translation_context\(\s*" +
+           _ctxt_re + r"\s*\)").format(it)
+          for it in ("short_label",)) +
+
+    # Dynamic node socket labels
     tuple((r"{}\(\s*[^,]+,\s*" + _msg_re + r"\s*\)").format(it)
           for it in ("node_sock_label",)) +
 
