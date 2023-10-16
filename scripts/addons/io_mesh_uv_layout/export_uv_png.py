@@ -15,14 +15,14 @@ except ImportError:
     oiio = None
 
 
-def export(filepath, face_data, colors, width, height, opacity):
+def export(filepath, tile, face_data, colors, width, height, opacity):
     offscreen = gpu.types.GPUOffScreen(width, height)
     offscreen.bind()
 
     try:
         fb = gpu.state.active_framebuffer_get()
         fb.clear(color=(0.0, 0.0, 0.0, 0.0))
-        draw_image(face_data, opacity)
+        draw_image(tile, face_data, opacity)
 
         pixel_data = fb.read_color(0, 0, width, height, 4, 0, 'UBYTE')
         pixel_data.dimensions = width * height * 4
@@ -32,11 +32,11 @@ def export(filepath, face_data, colors, width, height, opacity):
         offscreen.free()
 
 
-def draw_image(face_data, opacity):
+def draw_image(tile, face_data, opacity):
     gpu.state.blend_set('ALPHA')
 
     with gpu.matrix.push_pop():
-        gpu.matrix.load_matrix(get_normalize_uvs_matrix())
+        gpu.matrix.load_matrix(get_normalize_uvs_matrix(tile))
         gpu.matrix.load_projection_matrix(Matrix.Identity(4))
 
         draw_background_colors(face_data, opacity)
@@ -45,11 +45,11 @@ def draw_image(face_data, opacity):
     gpu.state.blend_set('NONE')
 
 
-def get_normalize_uvs_matrix():
+def get_normalize_uvs_matrix(tile):
     '''matrix maps x and y coordinates from [0, 1] to [-1, 1]'''
     matrix = Matrix.Identity(4)
-    matrix.col[3][0] = -1
-    matrix.col[3][1] = -1
+    matrix.col[3][0] = -1 - (tile[0]) * 2
+    matrix.col[3][1] = -1 - (tile[1]) * 2
     matrix[0][0] = 2
     matrix[1][1] = 2
 

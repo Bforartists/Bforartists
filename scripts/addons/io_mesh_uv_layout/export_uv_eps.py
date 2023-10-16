@@ -5,19 +5,19 @@
 import bpy
 
 
-def export(filepath, face_data, colors, width, height, opacity):
+def export(filepath, tile, face_data, colors, width, height, opacity):
     with open(filepath, 'w', encoding='utf-8') as file:
-        for text in get_file_parts(face_data, colors, width, height, opacity):
+        for text in get_file_parts(tile, face_data, colors, width, height, opacity):
             file.write(text)
 
 
-def get_file_parts(face_data, colors, width, height, opacity):
+def get_file_parts(tile, face_data, colors, width, height, opacity):
     yield from header(width, height)
     if opacity > 0.0:
         name_by_color = {}
         yield from prepare_colors(colors, name_by_color)
-        yield from draw_colored_polygons(face_data, name_by_color, width, height)
-    yield from draw_lines(face_data, width, height)
+        yield from draw_colored_polygons(tile, face_data, name_by_color, width, height)
+    yield from draw_lines(tile, face_data, width, height)
     yield from footer()
 
 
@@ -53,24 +53,24 @@ def prepare_colors(colors, out_name_by_color):
         yield "} def\n"
 
 
-def draw_colored_polygons(face_data, name_by_color, width, height):
+def draw_colored_polygons(tile, face_data, name_by_color, width, height):
     for uvs, color in face_data:
-        yield from draw_polygon_path(uvs, width, height)
+        yield from draw_polygon_path(tile, uvs, width, height)
         yield "closepath\n"
         yield "%s\n" % name_by_color[color]
 
 
-def draw_lines(face_data, width, height):
+def draw_lines(tile, face_data, width, height):
     for uvs, _ in face_data:
-        yield from draw_polygon_path(uvs, width, height)
+        yield from draw_polygon_path(tile, uvs, width, height)
         yield "closepath\n"
         yield "stroke\n"
 
 
-def draw_polygon_path(uvs, width, height):
+def draw_polygon_path(tile, uvs, width, height):
     yield "newpath\n"
     for j, uv in enumerate(uvs):
-        uv_scale = (uv[0] * width, uv[1] * height)
+        uv_scale = ((uv[0] - tile[0]) * width, (uv[1] - tile[1]) * height)
         if j == 0:
             yield "%.5f %.5f moveto\n" % uv_scale
         else:

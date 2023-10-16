@@ -4,21 +4,23 @@
 
 import typing
 import bpy
-from ....io.com import gltf2_io_debug
+
 from ....io.exp.gltf2_io_user_extensions import export_user_extensions
 from ....io.com.gltf2_io_extensions import Extension
 from ....io.exp.gltf2_io_image_data import ImageData
 from ....io.exp.gltf2_io_binary_data import BinaryData
+from ....io.com import gltf2_io_debug
 from ....io.com import gltf2_io
-from ..gltf2_blender_gather_cache import cached
 from ..gltf2_blender_gather_sampler import gather_sampler
-from ..gltf2_blender_get import get_tex_from_socket
+from ..gltf2_blender_gather_cache import cached
+from .gltf2_blender_search_node_tree import get_texture_node_from_socket, NodeSocket
 from . import gltf2_blender_gather_image
+
 
 @cached
 def gather_texture(
         blender_shader_sockets: typing.Tuple[bpy.types.NodeSocket],
-        default_sockets: typing.Tuple[bpy.types.NodeSocket],
+        default_sockets,
         export_settings):
     """
     Gather texture sampling information and image channels from a blender shader texture attached to a shader socket.
@@ -70,7 +72,7 @@ def __gather_extensions(blender_shader_sockets, source, webp_image, image_data, 
 
     ext_webp = {}
 
-    # If user want to keep original textures, and these textures are webp, we need to remove source from
+    # If user want to keep original textures, and these textures are WebP, we need to remove source from
     # gltf2_io.Texture, and populate extension
     if export_settings['gltf_keep_original_textures'] is True \
             and source is not None \
@@ -79,19 +81,19 @@ def __gather_extensions(blender_shader_sockets, source, webp_image, image_data, 
         remove_source = True
         required = True
 
-# If user want to export in webp format (so without fallback in png/jpg)
+# If user want to export in WebP format (so without fallback in png/jpg)
     if export_settings['gltf_image_format'] == "WEBP":
         # We create all image without fallback
         ext_webp["source"] = source
         remove_source = True
         required = True
 
-# If user doesn't want to export in webp format, but want webp too. Texture is not webp
+# If user doesn't want to export in WebP format, but want WebP too. Texture is not WebP
     if export_settings['gltf_image_format'] != "WEBP" \
             and export_settings['gltf_add_webp'] \
             and source is not None \
             and source.mime_type != "image/webp":
-        # We need here to create some webp textures
+        # We need here to create some WebP textures
 
         new_mime_type = "image/webp"
         new_data, _ = image_data.encode(new_mime_type, export_settings)
@@ -116,7 +118,7 @@ def __gather_extensions(blender_shader_sockets, source, webp_image, image_data, 
         ext_webp["source"] = webp_image
 
 
-# If user doesn't want to export in webp format, but want webp too. Texture is webp
+# If user doesn't want to export in WebP format, but want WebP too. Texture is WebP
     if export_settings['gltf_image_format'] != "WEBP" \
             and source is not None \
             and source.mime_type == "image/webp":
@@ -127,7 +129,7 @@ def __gather_extensions(blender_shader_sockets, source, webp_image, image_data, 
             remove_source = True
             required = True
 
-# If user doesn't want to export in webp format, but want webp too as fallback. Texture is webp
+# If user doesn't want to export in webp format, but want WebP too as fallback. Texture is WebP
     if export_settings['gltf_image_format'] != "WEBP" \
             and webp_image is not None \
             and export_settings['gltf_webp_fallback'] is True:
@@ -164,14 +166,33 @@ def __gather_name(blender_shader_sockets, export_settings):
 
 
 def __gather_sampler(blender_shader_sockets, export_settings):
-    shader_nodes = [get_tex_from_socket(socket) for socket in blender_shader_sockets]
+    shader_nodes = [get_texture_node_from_socket(socket, export_settings) for socket in blender_shader_sockets]
     if len(shader_nodes) > 1:
         gltf2_io_debug.print_console("WARNING",
                                      "More than one shader node tex image used for a texture. "
                                      "The resulting glTF sampler will behave like the first shader node tex image.")
-    first_valid_shader_node = next(filter(lambda x: x is not None, shader_nodes)).shader_node
+    first_valid_shader_node = next(filter(lambda x: x is not None, shader_nodes))
+
+    # group_path can't be a list, so transform it to str
+
+    sep_item = "##~~gltf-sep~~##"
+    sep_inside_item = "##~~gltf-inside-sep~~##"
+    group_path_str = ""
+    if len(first_valid_shader_node.group_path) > 0:
+        group_path_str += first_valid_shader_node.group_path[0].name
+    if len(first_valid_shader_node.group_path) > 1:
+        for idx, i in enumerate(first_valid_shader_node.group_path[1:]):
+            group_path_str += sep_item
+            if idx == 0:
+                group_path_str += first_valid_shader_node.group_path[0].name
+            else:
+                group_path_str += i.id_data.name
+            group_path_str += sep_inside_item
+            group_path_str += i.name
+
     return gather_sampler(
-        first_valid_shader_node,
+        first_valid_shader_node.shader_node,
+        group_path_str,
         export_settings)
 
 
@@ -209,7 +230,7 @@ def __gather_source(blender_shader_sockets, default_sockets, export_settings):
 
             png_image = __make_webp_image(buffer_view, None, None, new_mime_type, name, uri, export_settings)
 
-        # We inverted the png & webp image, to have the png as main source
+        # We inverted the png & WebP image, to have the png as main source
         return png_image, source, image_data, factor
     return source, None, image_data, factor
 
