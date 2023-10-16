@@ -244,7 +244,7 @@ def skip_to_end(file, skip_chunk):
 # MATERIALS #
 #############
 
-def add_texture_to_material(image, contextWrapper, pct, extend, alpha, scale, offset, angle, tintcolor, mapto):
+def add_texture_to_material(image, contextWrapper, pct, extend, alpha, scale, offset, angle, tint1, tint2, mapto):
     shader = contextWrapper.node_principled_bsdf
     nodetree = contextWrapper.material.node_tree
     shader.location = (-300, 0)
@@ -256,13 +256,16 @@ def add_texture_to_material(image, contextWrapper, pct, extend, alpha, scale, of
         mixer.label = "Mixer"
         mixer.inputs[0].default_value = pct / 100
         mixer.inputs[1].default_value = (
-            tintcolor[:3] + [1] if tintcolor else
-            shader.inputs['Base Color'].default_value[:]
-        )
+            tint1[:3] + [1] if tint1 else shader.inputs['Base Color'].default_value[:])
         contextWrapper._grid_to_location(1, 2, dst_node=mixer, ref_node=shader)
         img_wrap = contextWrapper.base_color_texture
-        links.new(img_wrap.node_image.outputs['Color'], mixer.inputs[2])
         links.new(mixer.outputs['Color'], shader.inputs['Base Color'])
+        if tint2 is not None:
+            img_wrap.colorspace_name = 'Non-Color'
+            mixer.inputs[2].default_value = tint2[:3] + [1]
+            links.new(img_wrap.node_image.outputs['Color'], mixer.inputs[0])
+        else:
+            links.new(img_wrap.node_image.outputs['Color'], mixer.inputs[2])
     elif mapto == 'ROUGHNESS':
         img_wrap = contextWrapper.roughness_texture
     elif mapto == 'METALLIC':
@@ -519,7 +522,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
     def read_texture(new_chunk, temp_chunk, name, mapto):
         uscale, vscale, uoffset, voffset, angle = 1.0, 1.0, 0.0, 0.0, 0.0
         contextWrapper.use_nodes = True
-        tintcolor = None
+        tint1 = tint2 = None
         extend = 'wrap'
         alpha = False
         pct = 70
@@ -543,14 +546,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 img = load_image(texture_name, dirname, place_holder=False, recursive=IMAGE_SEARCH, check_existing=True)
                 temp_chunk.bytes_read += read_str_len  # plus one for the null character that gets removed
 
-            elif temp_chunk.ID == MAT_MAP_USCALE:
-                uscale = read_float(temp_chunk)
-            elif temp_chunk.ID == MAT_MAP_VSCALE:
-                vscale = read_float(temp_chunk)
-            elif temp_chunk.ID == MAT_MAP_UOFFSET:
-                uoffset = read_float(temp_chunk)
-            elif temp_chunk.ID == MAT_MAP_VOFFSET:
-                voffset = read_float(temp_chunk)
+            elif temp_chunk.ID == MAT_BUMP_PERCENT:
+                contextWrapper.normalmap_strength = (float(read_short(temp_chunk) / 100))
 
             elif temp_chunk.ID == MAT_MAP_TILING:
                 """Control bit flags, where 0x1 activates decaling, 0x2 activates mirror,
@@ -579,11 +576,20 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 if tiling & 0x200:
                     tint = 'RGBtint'
 
+            elif temp_chunk.ID == MAT_MAP_USCALE:
+                uscale = read_float(temp_chunk)
+            elif temp_chunk.ID == MAT_MAP_VSCALE:
+                vscale = read_float(temp_chunk)
+            elif temp_chunk.ID == MAT_MAP_UOFFSET:
+                uoffset = read_float(temp_chunk)
+            elif temp_chunk.ID == MAT_MAP_VOFFSET:
+                voffset = read_float(temp_chunk)
             elif temp_chunk.ID == MAT_MAP_ANG:
                 angle = read_float(temp_chunk)
-
             elif temp_chunk.ID == MAT_MAP_COL1:
-                tintcolor = read_byte_color(temp_chunk)
+                tint1 = read_byte_color(temp_chunk)
+            elif temp_chunk.ID == MAT_MAP_COL2:
+                tint2 = read_byte_color(temp_chunk)
 
             skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
@@ -591,7 +597,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         # add the map to the material in the right channel
         if img:
             add_texture_to_material(img, contextWrapper, pct, extend, alpha, (uscale, vscale, 1),
-                                    (uoffset, voffset, 0), angle, tintcolor, mapto)
+                                    (uoffset, voffset, 0), angle, tint1, tint2, mapto)
 
     def apply_constrain(vec):
         convector = mathutils.Vector.Fill(3, (CONSTRAIN * 0.1))
@@ -1382,6 +1388,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif KEYFRAME and new_chunk.ID == POS_TRACK_TAG and tracktype == 'TARGET':  # Target position
             keyframe_data = {}
             location = child.location
+            keyframe_data[0] = trackposition[0]
             target = mathutils.Vector(read_track_data(new_chunk)[0])
             direction = calc_target(location, target)
             child.rotation_euler.x = direction[0]

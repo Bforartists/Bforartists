@@ -6,6 +6,7 @@
 
 import bpy
 from bpy.props import FloatProperty, FloatVectorProperty
+from bpy.app.translations import pgettext_iface as iface_
 import gpu
 from gpu_extras.batch import batch_for_shader
 from mathutils import Vector
@@ -248,8 +249,8 @@ class SUNPOS_OT_ShowHdr(bpy.types.Operator):
         self.initial_azimuth = context.scene.sun_pos_properties.hdr_azimuth
 
         context.workspace.status_text_set(
-            "Enter/LMB: confirm, Esc/RMB: cancel,"
-            " MMB: pan, mouse wheel: zoom, Ctrl + mouse wheel: set exposure")
+            iface_("Enter/LMB: confirm, Esc/RMB: cancel, MMB: pan, "
+                   "mouse wheel: zoom, Ctrl + mouse wheel: set exposure"))
 
         self._handle = bpy.types.SpaceView3D.draw_handler_add(
             draw_callback_px, (self, context), 'WINDOW', 'POST_PIXEL'

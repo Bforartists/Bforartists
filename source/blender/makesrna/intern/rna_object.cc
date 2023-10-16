@@ -247,9 +247,9 @@ const EnumPropertyItem rna_enum_metaelem_type_items[] = {
 };
 
 const EnumPropertyItem rna_enum_lightprobes_type_items[] = {
-    {LIGHTPROBE_TYPE_CUBE, "CUBE", ICON_LIGHTPROBE_CUBEMAP, "Cube", ""},
-    {LIGHTPROBE_TYPE_PLANAR, "PLANAR", ICON_LIGHTPROBE_PLANAR, "Planar", ""},
-    {LIGHTPROBE_TYPE_GRID, "GRID", ICON_LIGHTPROBE_GRID, "Grid", ""},
+    {LIGHTPROBE_TYPE_SPHERE, "SPHERE", ICON_LIGHTPROBE_SPHERE, "Sphere", ""},
+    {LIGHTPROBE_TYPE_PLANE, "PLANE", ICON_LIGHTPROBE_PLANE, "Plane", ""},
+    {LIGHTPROBE_TYPE_VOLUME, "VOLUME", ICON_LIGHTPROBE_VOLUME, "Volume", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -350,7 +350,7 @@ const EnumPropertyItem rna_enum_object_axis_items[] = {
 #  include "BKE_mesh.hh"
 #  include "BKE_mesh_wrapper.hh"
 #  include "BKE_modifier.h"
-#  include "BKE_object.h"
+#  include "BKE_object.hh"
 #  include "BKE_particle.h"
 #  include "BKE_scene.h"
 
@@ -2933,6 +2933,11 @@ static void rna_def_object_visibility(StructRNA *srna)
   RNA_def_property_boolean_sdna(prop, nullptr, "visibility_flag", OB_HIDE_PROBE_CUBEMAP);
   RNA_def_property_ui_text(
       prop, "Disable in Cubemap Probes", "Globally disable in cubemap probes");
+  RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_internal_update_draw");
+
+  prop = RNA_def_property(srna, "hide_probe_planar", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "visibility_flag", OB_HIDE_PROBE_PLANAR);
+  RNA_def_property_ui_text(prop, "Disable in Planar Probes", "Globally disable in planar probes");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_internal_update_draw");
 
   /* Instancer options. */
