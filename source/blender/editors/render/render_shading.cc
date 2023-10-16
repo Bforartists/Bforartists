@@ -51,7 +51,7 @@
 #include "BKE_main.h"
 #include "BKE_material.h"
 #include "BKE_node.hh"
-#include "BKE_object.h"
+#include "BKE_object.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_texture.h"
@@ -59,7 +59,7 @@
 #include "BKE_workspace.h"
 #include "BKE_world.h"
 
-#include "NOD_composite.h"
+#include "NOD_composite.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
@@ -776,7 +776,7 @@ static int new_material_exec(bContext *C, wmOperator * /*op*/)
   }
   else {
     const char *name = DATA_("Material");
-    if (!(ob != nullptr && ob->type == OB_GPENCIL_LEGACY)) {
+    if (!(ob != nullptr && ELEM(ob->type, OB_GPENCIL_LEGACY, OB_GREASE_PENCIL))) {
       ma = BKE_material_add(bmain, name);
     }
     else {
@@ -1426,10 +1426,10 @@ static int light_cache_bake_exec(bContext *C, wmOperator *op)
 
   light_cache_bake_tag_cache(scene, op);
 
-  bool stop = false, do_update;
-  float progress; /* Not actually used. */
+  /* Not actually used. */
+  wmJobWorkerStatus worker_status = {};
   /* Do the job. */
-  EEVEE_lightbake_job(rj, &stop, &do_update, &progress);
+  EEVEE_lightbake_job(rj, &worker_status);
   /* Free baking data. Result is already stored in the scene data. */
   EEVEE_lightbake_job_data_free(rj);
 
@@ -1532,7 +1532,7 @@ static blender::Vector<Object *> lightprobe_cache_irradiance_volume_subset_get(b
 
   auto is_irradiance_volume = [](Object *ob) -> bool {
     return ob->type == OB_LIGHTPROBE &&
-           static_cast<LightProbe *>(ob->data)->type == LIGHTPROBE_TYPE_GRID;
+           static_cast<LightProbe *>(ob->data)->type == LIGHTPROBE_TYPE_VOLUME;
   };
 
   blender::Vector<Object *> probes;
@@ -1664,7 +1664,8 @@ static int lightprobe_cache_bake_exec(bContext *C, wmOperator *op)
   /* TODO: abort if selected engine is not eevee. */
   void *rj = EEVEE_NEXT_lightbake_job_data_alloc(bmain, view_layer, scene, probes, scene->r.cfra);
   /* Do the job. */
-  EEVEE_NEXT_lightbake_job(rj, nullptr, nullptr, nullptr);
+  wmJobWorkerStatus worker_status = {};
+  EEVEE_NEXT_lightbake_job(rj, &worker_status);
   /* Free baking data. Result is already stored in the scene data. */
   EEVEE_NEXT_lightbake_job_data_free(rj);
 
@@ -1674,18 +1675,17 @@ static int lightprobe_cache_bake_exec(bContext *C, wmOperator *op)
 void OBJECT_OT_lightprobe_cache_bake(wmOperatorType *ot)
 {
   static const EnumPropertyItem light_cache_subset_items[] = {
-      {LIGHTCACHE_SUBSET_ALL, "ALL", 0, "All Light Probes", "Bake all light probes"},
-      {LIGHTCACHE_SUBSET_DIRTY,
-       "DIRTY",
-       0,
-       "Dirty Only",
-       "Only bake light probes that are marked as dirty"},
+      {LIGHTCACHE_SUBSET_ALL, "ALL", 0, "All Volumes", "Bake all light probe volumes"},
       {LIGHTCACHE_SUBSET_SELECTED,
        "SELECTED",
        0,
        "Selected Only",
-       "Only bake selected light probes"},
-      {LIGHTCACHE_SUBSET_ACTIVE, "ACTIVE", 0, "Active Only", "Only bake the active light probe"},
+       "Only bake selected light probe volumes"},
+      {LIGHTCACHE_SUBSET_ACTIVE,
+       "ACTIVE",
+       0,
+       "Active Only",
+       "Only bake the active light probe volume"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 

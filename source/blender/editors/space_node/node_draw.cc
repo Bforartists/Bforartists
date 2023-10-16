@@ -45,7 +45,7 @@
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_update.h"
 #include "BKE_node_tree_zones.hh"
-#include "BKE_object.h"
+#include "BKE_object.hh"
 #include "BKE_scene.h"
 #include "BKE_type_conversions.hh"
 
@@ -287,26 +287,37 @@ static bool compare_node_depth(const bNode *a, const bNode *b)
   return false;
 }
 
-void node_sort(bNodeTree &ntree)
+void tree_draw_order_update(bNodeTree &ntree)
 {
   Array<bNode *> sort_nodes = ntree.all_nodes();
   std::stable_sort(sort_nodes.begin(), sort_nodes.end(), compare_node_depth);
-
-  /* If nothing was changed, exit early. Otherwise the node tree's runtime
-   * node vector needs to be rebuilt, since it cannot be reordered in place. */
-  if (sort_nodes == ntree.all_nodes()) {
-    return;
-  }
-
-  BKE_ntree_update_tag_node_reordered(&ntree);
-
-  ntree.runtime->nodes_by_id.clear();
-  BLI_listbase_clear(&ntree.nodes);
   for (const int i : sort_nodes.index_range()) {
-    BLI_addtail(&ntree.nodes, sort_nodes[i]);
-    ntree.runtime->nodes_by_id.add_new(sort_nodes[i]);
-    sort_nodes[i]->runtime->index_in_tree = i;
+    sort_nodes[i]->ui_order = i;
   }
+}
+
+Array<bNode *> tree_draw_order_calc_nodes(bNodeTree &ntree)
+{
+  Array<bNode *> nodes = ntree.all_nodes();
+  if (nodes.is_empty()) {
+    return {};
+  }
+  std::sort(nodes.begin(), nodes.end(), [](const bNode *a, const bNode *b) {
+    return a->ui_order < b->ui_order;
+  });
+  return nodes;
+}
+
+Array<bNode *> tree_draw_order_calc_nodes_reversed(bNodeTree &ntree)
+{
+  Array<bNode *> nodes = ntree.all_nodes();
+  if (nodes.is_empty()) {
+    return {};
+  }
+  std::sort(nodes.begin(), nodes.end(), [](const bNode *a, const bNode *b) {
+    return a->ui_order > b->ui_order;
+  });
+  return nodes;
 }
 
 static Array<uiBlock *> node_uiblocks_init(const bContext &C, const Span<bNode *> nodes)
@@ -404,8 +415,16 @@ static bool node_update_basis_buttons(const bContext &C,
 
 const char *node_socket_get_label(const bNodeSocket *socket, const char *panel_label)
 {
-  const char *socket_label = bke::nodeSocketLabel(socket);
+  /* Get the short label if possible. This is used when grouping sockets under panels,
+   * to avoid redundancy in the label. */
+  const char *socket_short_label = bke::nodeSocketShortLabel(socket);
   const char *socket_translation_context = node_socket_get_translation_context(*socket);
+
+  if (socket_short_label) {
+    return CTX_IFACE_(socket_translation_context, socket_short_label);
+  }
+
+  const char *socket_label = bke::nodeSocketLabel(socket);
   const char *translated_socket_label = CTX_IFACE_(socket_translation_context, socket_label);
 
   /* Shorten socket label if it begins with the panel label. */
@@ -1383,7 +1402,14 @@ static void create_inspection_string_for_geometry_info(const geo_log::GeometryIn
         break;
       }
       case bke::GeometryComponent::Type::GreasePencil: {
-        /* TODO. Do nothing for now. */
+        const geo_log::GeometryInfoLog::GreasePencilInfo &grease_pencil_info =
+            *value_log.grease_pencil_info;
+        char line[256];
+        SNPRINTF(line,
+                 TIP_("\u2022 Grease Pencil: %s layers"),
+                 to_string(grease_pencil_info.layers_num).c_str());
+        ss << line;
+        break;
         break;
       }
     }
@@ -2642,6 +2668,35 @@ static void node_draw_extra_info_row(const bNode &node,
   }
 }
 
+static void node_draw_extra_info_panel_back(const bNode &node, const rctf &extra_info_rect)
+{
+  const rctf &node_rect = node.runtime->totr;
+  rctf panel_back_rect = extra_info_rect;
+  /* Extend the panel behind hidden nodes to accomodate the large rounded corners. */
+  if (node.flag & NODE_HIDDEN) {
+    panel_back_rect.ymin = BLI_rctf_cent_y(&node_rect);
+  }
+
+  ColorTheme4f color;
+  if (node.flag & NODE_MUTED) {
+    UI_GetThemeColorBlend4f(TH_BACK, TH_NODE, 0.2f, color);
+  }
+  else {
+    UI_GetThemeColorBlend4f(TH_BACK, TH_NODE, 0.75f, color);
+  }
+  color.a -= 0.35f;
+
+  ColorTheme4f color_outline;
+  UI_GetThemeColorBlendShade4fv(TH_BACK, TH_NODE, 0.4f, -20, color_outline);
+
+  const float outline_width = U.pixelsize;
+  BLI_rctf_pad(&panel_back_rect, outline_width, outline_width);
+
+  UI_draw_roundbox_corner_set(UI_CNR_TOP_LEFT | UI_CNR_TOP_RIGHT);
+  UI_draw_roundbox_4fv_ex(
+      &panel_back_rect, color, nullptr, 0.0f, color_outline, outline_width, BASIS_RAD);
+}
+
 static void node_draw_extra_info_panel(const Scene *scene,
                                        TreeDrawContext &tree_draw_ctx,
                                        const SpaceNode &snode,
@@ -2662,10 +2717,7 @@ static void node_draw_extra_info_panel(const Scene *scene,
   }
 
   const rctf &rct = node.runtime->totr;
-  float color[4];
   rctf extra_info_rect;
-
-  const float width = (node.width - 6.0f) * UI_SCALE_FAC;
 
   if (node.is_frame()) {
     extra_info_rect.xmin = rct.xmin;
@@ -2674,62 +2726,40 @@ static void node_draw_extra_info_panel(const Scene *scene,
     extra_info_rect.ymax = rct.ymin + 2.0f * UI_SCALE_FAC;
   }
   else {
-    float preview_height = 0;
-    rctf preview_rect;
+    const float padding = 3.0f * UI_SCALE_FAC;
 
-    extra_info_rect.xmin = rct.xmin + 3.0f * UI_SCALE_FAC;
-    extra_info_rect.xmax = extra_info_rect.xmin + width;
+    extra_info_rect.xmin = rct.xmin + padding;
+    extra_info_rect.xmax = rct.xmax - padding;
     extra_info_rect.ymin = rct.ymax;
     extra_info_rect.ymax = rct.ymax + extra_info_rows.size() * (20.0f * UI_SCALE_FAC);
+
+    float preview_height = 0.0f;
+    rctf preview_rect;
     if (preview) {
+      const float width = BLI_rctf_size_x(&extra_info_rect);
       if (preview->x > preview->y) {
-        const float preview_padding = 3.0f * UI_SCALE_FAC;
-        preview_height = (width - 2.0 * preview_padding) * float(preview->y) / float(preview->x) +
-                         2.0 * preview_padding;
-        preview_rect.ymin = extra_info_rect.ymin + preview_padding;
-        preview_rect.ymax = extra_info_rect.ymin + preview_height - preview_padding;
-        preview_rect.xmin = extra_info_rect.xmin + preview_padding;
-        preview_rect.xmax = extra_info_rect.xmax - preview_padding;
+        preview_height = (width - 2.0f * padding) * float(preview->y) / float(preview->x) +
+                         2.0f * padding;
+        preview_rect.ymin = extra_info_rect.ymin + padding;
+        preview_rect.ymax = extra_info_rect.ymin + preview_height - padding;
+        preview_rect.xmin = extra_info_rect.xmin + padding;
+        preview_rect.xmax = extra_info_rect.xmax - padding;
         extra_info_rect.ymax += preview_height;
       }
       else {
-        const float preview_padding = 3.0f * UI_SCALE_FAC;
         preview_height = width;
-        const float preview_width = (width - 2.0 * preview_padding) * float(preview->x) /
+        const float preview_width = (width - 2.0f * padding) * float(preview->x) /
                                         float(preview->y) +
-                                    2.0 * preview_padding;
-        preview_rect.ymin = extra_info_rect.ymin + preview_padding;
-        preview_rect.ymax = extra_info_rect.ymin + preview_height - preview_padding;
-        preview_rect.xmin = extra_info_rect.xmin + preview_padding + (width - preview_width) / 2;
-        preview_rect.xmax = extra_info_rect.xmax - preview_padding - (width - preview_width) / 2;
+                                    2.0f * padding;
+        preview_rect.ymin = extra_info_rect.ymin + padding;
+        preview_rect.ymax = extra_info_rect.ymin + preview_height - padding;
+        preview_rect.xmin = extra_info_rect.xmin + padding + (width - preview_width) / 2;
+        preview_rect.xmax = extra_info_rect.xmax - padding - (width - preview_width) / 2;
         extra_info_rect.ymax += preview_height;
       }
     }
 
-    if (node.flag & NODE_MUTED) {
-      UI_GetThemeColorBlend4f(TH_BACK, TH_NODE, 0.2f, color);
-    }
-    else {
-      UI_GetThemeColorBlend4f(TH_BACK, TH_NODE, 0.75f, color);
-    }
-    color[3] -= 0.35f;
-    UI_draw_roundbox_corner_set(
-        UI_CNR_ALL & ~UI_CNR_BOTTOM_LEFT &
-        ((rct.xmax) > extra_info_rect.xmax ? ~UI_CNR_BOTTOM_RIGHT : UI_CNR_ALL));
-    UI_draw_roundbox_4fv(&extra_info_rect, true, BASIS_RAD, color);
-
-    /* Draw outline. */
-    const float outline_width = 1.0f;
-    extra_info_rect.xmin -= outline_width;
-    extra_info_rect.xmax += outline_width;
-    extra_info_rect.ymin -= outline_width;
-    extra_info_rect.ymax += outline_width;
-
-    UI_GetThemeColorBlendShade4fv(TH_BACK, TH_NODE, 0.4f, -20, color);
-    UI_draw_roundbox_corner_set(
-        UI_CNR_ALL & ~UI_CNR_BOTTOM_LEFT &
-        ((rct.xmax) > extra_info_rect.xmax ? ~UI_CNR_BOTTOM_RIGHT : UI_CNR_ALL));
-    UI_draw_roundbox_4fv(&extra_info_rect, false, BASIS_RAD, color);
+    node_draw_extra_info_panel_back(node, extra_info_rect);
 
     if (preview) {
       node_draw_preview(scene, preview, &preview_rect);
@@ -3325,13 +3355,9 @@ int node_get_resize_cursor(NodeResizeDirection directions)
 
 static const bNode *find_node_under_cursor(SpaceNode &snode, const float2 &cursor)
 {
-  const Span<bNode *> nodes = snode.edittree->all_nodes();
-  if (nodes.is_empty()) {
-    return nullptr;
-  }
-  for (int i = nodes.index_range().last(); i >= 0; i--) {
-    if (BLI_rctf_isect_pt(&nodes[i]->runtime->totr, cursor[0], cursor[1])) {
-      return nodes[i];
+  for (const bNode *node : tree_draw_order_calc_nodes_reversed(*snode.edittree)) {
+    if (BLI_rctf_isect_pt(&node->runtime->totr, cursor[0], cursor[1])) {
+      return node;
     }
   }
   return nullptr;
@@ -4050,7 +4076,7 @@ static void draw_nodetree(const bContext &C,
   SpaceNode *snode = CTX_wm_space_node(&C);
   ntree.ensure_topology_cache();
 
-  const Span<bNode *> nodes = ntree.all_nodes();
+  Array<bNode *> nodes = tree_draw_order_calc_nodes(ntree);
 
   Array<uiBlock *> blocks = node_uiblocks_init(C, nodes);
 

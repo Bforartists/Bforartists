@@ -82,12 +82,12 @@ static void node_update(bNodeTree *ntree, bNode *node)
 
 static void node_gather_link_searches(GatherLinkSearchOpParams &params)
 {
-  const NodeDeclaration &declaration = *params.node_type().fixed_declaration;
+  const NodeDeclaration &declaration = *params.node_type().static_declaration;
   search_link_ops_for_declarations(params, declaration.inputs.as_span().take_front(2));
   search_link_ops_for_declarations(params, declaration.outputs.as_span().take_front(1));
 
   if (params.in_out() == SOCK_IN) {
-    const std::optional<eCustomDataType> type = node_data_type_to_custom_data_type(
+    const std::optional<eCustomDataType> type = bke::socket_type_to_custom_data_type(
         eNodeSocketDatatype(params.other_socket().type));
     if (type && *type != CD_PROP_STRING) {
       /* The input and output sockets have the same name. */
@@ -176,7 +176,8 @@ static void node_geo_exec(GeoNodeExecParams params)
     geometry_set.modify_geometry_sets([&](GeometrySet &geometry_set) {
       for (const GeometryComponent::Type type : {GeometryComponent::Type::Mesh,
                                                  GeometryComponent::Type::PointCloud,
-                                                 GeometryComponent::Type::Curve})
+                                                 GeometryComponent::Type::Curve,
+                                                 GeometryComponent::Type::GreasePencil})
       {
         if (geometry_set.has(type)) {
           GeometryComponent &component = geometry_set.get_component_for_write(type);
@@ -228,7 +229,8 @@ static void node_rna(StructRNA *srna)
                     "Which domain to store the data in",
                     rna_enum_attribute_domain_items,
                     NOD_storage_enum_accessors(domain),
-                    ATTR_DOMAIN_POINT);
+                    ATTR_DOMAIN_POINT,
+                    enums::domain_experimental_grease_pencil_version3_fn);
 }
 
 static void node_register()

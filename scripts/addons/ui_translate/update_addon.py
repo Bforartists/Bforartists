@@ -344,7 +344,9 @@ class UI_OT_i18n_addon_translation_export(Operator):
             if not lng.use:
                 print("Skipping {} language ({}).".format(lng.name, lng.uid))
                 continue
-            uid = utils_i18n.find_best_isocode_matches(lng.uid, trans.trans.keys())
+            translation_keys = {k for k in trans.trans.keys()
+                                if k != self.settings.PARSER_TEMPLATE_ID}
+            uid = utils_i18n.find_best_isocode_matches(lng.uid, translation_keys)
             if uid:
                 uids.append(uid[0])
 
@@ -357,8 +359,8 @@ class UI_OT_i18n_addon_translation_export(Operator):
                 if not os.path.isfile(path):
                     continue
                 msgs = utils_i18n.I18nMessages(kind='PO', src=path, settings=self.settings)
-                msgs.update(trans.msgs[self.settings.PARSER_TEMPLATE_ID])
-                trans.msgs[uid] = msgs
+                msgs.update(trans.trans[self.settings.PARSER_TEMPLATE_ID])
+                trans.trans[uid] = msgs
 
         trans.write(kind='PO', langs=set(uids))
 

@@ -5,7 +5,7 @@
 bl_info = {
     "name": "UV Layout",
     "author": "Campbell Barton, Matt Ebb",
-    "version": (1, 1, 6),
+    "version": (1, 2, 0),
     "blender": (3, 0, 0),
     "location": "UV Editor > UV > Export UV Layout",
     "description": "Export the UV layout as a 2D graphic",
@@ -54,6 +54,19 @@ class ExportUVLayout(bpy.types.Operator):
         description="Export all UVs in this mesh (not just visible ones)",
         default=False,
     )
+    export_tiles: EnumProperty(
+        name="Export Tiles",
+        items=(
+            ('NONE', "None",
+             "Export only UVs in the [0, 1] range"),
+            ('UDIM', "UDIM",
+             "Export tiles in the UDIM numbering scheme: 1001 + u-tile + 10*v-tile"),
+            ('UV', "UVTILE",
+             "Export tiles in the UVTILE numbering scheme: u(u-tile + 1)_v(v-tile + 1)"),
+        ),
+        description="Choose whether to export only the [0, 1 range], or all UV tiles",
+        default='NONE',
+    )
     modified: BoolProperty(
         name="Modified",
         description="Exports UVs from the modified mesh",
@@ -73,6 +86,7 @@ class ExportUVLayout(bpy.types.Operator):
         default='PNG',
     )
     size: IntVectorProperty(
+        name="Size",
         size=2,
         default=(1024, 1024),
         min=8, max=32768,
@@ -123,9 +137,6 @@ class ExportUVLayout(bpy.types.Operator):
         if is_editmode:
             bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
-        filepath = self.filepath
-        filepath = bpy.path.ensure_ext(filepath, "." + self.mode.lower())
-
         meshes = list(self.iter_meshes_to_export(context))
         polygon_data = list(self.iter_polygon_data_to_draw(context, meshes))
         different_colors = set(color for _, color in polygon_data)
@@ -135,8 +146,35 @@ class ExportUVLayout(bpy.types.Operator):
                 obj_eval = obj.evaluated_get(depsgraph)
                 obj_eval.to_mesh_clear()
 
+        tiles = self.tiles_to_export(polygon_data)
         export = self.get_exporter()
-        export(filepath, polygon_data, different_colors, self.size[0], self.size[1], self.opacity)
+        dirname, filename = os.path.split(self.filepath)
+
+        # Strip UDIM or UV numbering, and extension
+        import re
+        name_regex = r"^(.*?)"
+        udim_regex = r"(?:\.[0-9]{4})?"
+        uv_regex = r"(?:\.u[0-9]+_v[0-9]+)?"
+        ext_regex = r"(?:\.png|\.eps|\.svg)?$"
+        if self.export_tiles == 'NONE':
+            match = re.match(name_regex + ext_regex, filename)
+        elif self.export_tiles == 'UDIM':
+            match = re.match(name_regex + udim_regex + ext_regex, filename)
+        elif self.export_tiles == 'UV':
+            match = re.match(name_regex + uv_regex + ext_regex, filename)
+        if match:
+            filename = match.groups()[0]
+
+        for tile in sorted(tiles):
+            filepath = os.path.join(dirname, filename)
+            if self.export_tiles == 'UDIM':
+                filepath += f".{1001 + tile[0] + tile[1] * 10:04}"
+            elif self.export_tiles == 'UV':
+                filepath += f".u{tile[0] + 1}_v{tile[1] + 1}"
+            filepath = bpy.path.ensure_ext(filepath, "." + self.mode.lower())
+
+            export(filepath, tile, polygon_data, different_colors,
+                   self.size[0], self.size[1], self.opacity)
 
         if is_editmode:
             bpy.ops.object.mode_set(mode='EDIT', toggle=False)
@@ -160,6 +198,30 @@ class ExportUVLayout(bpy.types.Operator):
             if mesh.uv_layers.active is None:
                 continue
             yield obj
+
+    def tiles_to_export(self, polygon_data):
+        """Get a set of tiles containing UVs.
+        This assumes there is no UV edge crossing an otherwise empty tile.
+        """
+        if self.export_tiles == 'NONE':
+            return {(0, 0)}
+
+        from math import floor
+        tiles = set()
+        for poly in polygon_data:
+            for uv in poly[0]:
+                # Ignore UVs at corners - precisely touching the right or upper edge
+                # of a tile should not load its right/upper neighbor as well.
+                # From intern/cycles/scene/attribute.cpp
+                u, v = uv[0], uv[1]
+                x, y = floor(u), floor(v)
+                if x > 0 and u < x + 1e-6:
+                    x -= 1
+                if y > 0 and v < y + 1e-6:
+                    y -= 1
+                if x >= 0 and y >= 0:
+                    tiles.add((x, y))
+        return tiles
 
     @staticmethod
     def currently_image_image_editor(context):
