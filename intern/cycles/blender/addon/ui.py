@@ -955,7 +955,7 @@ class CYCLES_RENDER_PT_filter(CyclesButtonsPanel, Panel):
 
         row = col.row()
         row.separator()
-        row.prop(view_layer.cycles, 'use_denoising', text='Denoising')
+        row.prop(view_layer.cycles, "use_denoising", text="Denoising")
         row.active = scene.cycles.use_denoising
 
 
@@ -2178,6 +2178,7 @@ class CYCLES_MATERIAL_PT_settings_surface(CyclesButtonsPanel, Panel):
         col.prop(cmat, "emission_sampling")
         col.use_property_split = False
         col.prop(cmat, "use_transparent_shadow")
+        col.prop(cmat, "use_bump_map_correction")
 
     def draw(self, context):
         self.draw_shared(self, context.material)
