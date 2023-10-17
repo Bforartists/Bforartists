@@ -862,34 +862,11 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
         data, BLI_strdup(but_label.strinfo), nullptr, UI_TIP_STYLE_HEADER, UI_TIP_LC_NORMAL);
   }
   /*bfa - still no tooltip? Then add it !*/
-  else if (but_tip_label.strinfo == nullptr) {
+  else if (but_label.strinfo && !but_tip_label.strinfo) {
     UI_tooltip_text_field_add(
-          data, BLI_strdup(but_label.strinfo), nullptr, UI_TIP_STYLE_HEADER, UI_TIP_LC_NORMAL);
-    }
+        data, BLI_strdup(but_label.strinfo), nullptr, UI_TIP_STYLE_HEADER, UI_TIP_LC_NORMAL);
+  }
   /*bfa end*/
-
-  /* Tip Label (only for buttons not already showing the label). */
-  /* bfa - Replaced condition in order to add the prefix everywhere in case it is not NULL! */
-//  if (but_tip_label.strinfo != nullptr) {
-//    uiTooltipField *field = text_field_add(
-//        data, uiTooltipFormat::Style::Header, uiTooltipFormat::ColorID::Normal);
-
-    /* bfa - Some buttons do not have an explicit button title. (e.g. the properties editor tab
-     * button), it just shows a dot then where the title should be, so we check for those buttons,
-     * and skip adding the button title. */
-    /* We check prefix instead of comparing because the button may include the shortcut. */
-//    if (STRPREFIX(but->drawstr, but_tip_label.strinfo)) {
-//      field->text = BLI_sprintfN("%s", but_tip_label.strinfo);
-//    }
-    /* Buttons with dynamic tooltips also don't get their default label here since they
-     * can already provide more accurate and specific tooltip content. */
-//    else if (!but->tip_func) {
-//      field->text = BLI_sprintfN("%s.", but_tip_label.strinfo);
-//    }
-//    else {
-//      field->text = BLI_strdup("\n");
-//    }
-//  }
 
   /* Tip */
   if (but_tip.strinfo) {
