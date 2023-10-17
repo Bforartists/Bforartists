@@ -12,6 +12,10 @@
 #include <cstdio>
 #include <cstring>
 
+// BFA - include <string> and <unordered_map>
+#include <string>
+#include <unordered_map>
+
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
@@ -822,55 +826,30 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
     RNA_enum_item_add_separator(&item, &totitem);
   }
   /* bfa - set builtin keyingset enum items icons */
-  /* fill icons and keyingset idnames in same order */
-  int ks_icons[] = {ICON_DECORATE_KEYFRAME,
-                    ICON_TRANSFORM_MOVE,
-                    ICON_TRANSFORM_ROTATE,
-                    ICON_TRANSFORM_SCALE,
-                    ICON_LOC_ROT,
-                    ICON_LOC_ROT_SCALE,
-                    ICON_LOC_ROT_SCALE_CUSTOM,
-                    ICON_LOC_SCALE,
-                    ICON_ROT_SCALE,
-                    ICON_APPLYMOVEDELTA,
-                    ICON_APPLYROTATEDELTA,
-                    ICON_APPLYSCALEDELTA,
-                    ICON_VISUAL_MOVE,
-                    ICON_VISUAL_ROTATE,
-                    ICON_VISUAL_SCALE,
-                    ICON_VISUAL_LOC_ROT,
-                    ICON_VISUAL_LOC_ROT_SCALE,
-                    ICON_VISUAL_LOC_SCALE,
-                    ICON_VISUAL_ROT_SCALE,
-                    ICON_BONE_DATA,
-                    ICON_ARMATURE_DATA,
-                    ICON_MOD_ARMATURE_SELECTED};
-  int ks_icons_len = sizeof(ks_icons) / sizeof(int);
-  const char *ks_icons_idnames[] = {"Available",
-                                    "Location",
-                                    "Rotation",
-                                    "Scaling",
-                                    "BUILTIN_KSI_LocRot",
-                                    "LocRotScale",
-                                    "LocRotScaleCProp",
-                                    "BUILTIN_KSI_LocScale",
-                                    "BUILTIN_KSI_RotScale",
-                                    "BUILTIN_KSI_DeltaLocation",
-                                    "BUILTIN_KSI_DeltaRotation",
-                                    "BUILTIN_KSI_DeltaScale",
-                                    "BUILTIN_KSI_VisualLoc",
-                                    "BUILTIN_KSI_VisualRot",
-                                    "BUILTIN_KSI_VisualScaling",
-                                    "BUILTIN_KSI_VisualLocRot",
-                                    "BUILTIN_KSI_VisualLocRotScale",
-                                    "BUILTIN_KSI_VisualLocScale",
-                                    "BUILTIN_KSI_VisualRotScale",
-                                    "BUILTIN_KSI_BendyBones",
-                                    "WholeCharacter",
-                                    "WholeCharacterSelected"};
-  int ks_icons_idnames_len = sizeof(ks_icons_idnames) / sizeof(char *);
-  int ks_icons_iter_len = ks_icons_len < ks_icons_idnames_len ? ks_icons_len :
-                                                                ks_icons_idnames_len;
+  std::unordered_map<std::string, BIFIconID_Static> ks_icons_map = {
+      {"Available", ICON_DECORATE_KEYFRAME},
+      {"Location", ICON_TRANSFORM_MOVE},
+      {"Rotation", ICON_TRANSFORM_ROTATE},
+      {"Scaling", ICON_TRANSFORM_SCALE},
+      {"BUILTIN_KSI_LocRot", ICON_LOC_ROT},
+      {"LocRotScale", ICON_LOC_ROT_SCALE},
+      {"LocRotScaleCProp", ICON_LOC_ROT_SCALE_CUSTOM},
+      {"BUILTIN_KSI_LocScale", ICON_LOC_SCALE},
+      {"BUILTIN_KSI_RotScale", ICON_ROT_SCALE},
+      {"BUILTIN_KSI_DeltaLocation", ICON_APPLYMOVEDELTA},
+      {"BUILTIN_KSI_DeltaRotation", ICON_APPLYROTATEDELTA},
+      {"BUILTIN_KSI_DeltaScale", ICON_APPLYSCALEDELTA},
+      {"BUILTIN_KSI_VisualLoc", ICON_VISUAL_MOVE},
+      {"BUILTIN_KSI_VisualRot", ICON_VISUAL_ROTATE},
+      {"BUILTIN_KSI_VisualScaling", ICON_VISUAL_SCALE},
+      {"BUILTIN_KSI_VisualLocRot", ICON_VISUAL_LOC_ROT},
+      {"BUILTIN_KSI_VisualLocRotScale", ICON_VISUAL_LOC_ROT_SCALE},
+      {"BUILTIN_KSI_VisualLocScale", ICON_VISUAL_LOC_SCALE},
+      {"BUILTIN_KSI_VisualRotScale", ICON_VISUAL_ROT_SCALE},
+      {"BUILTIN_KSI_BendyBones", ICON_BONE_DATA},
+      {"WholeCharacter", ICON_ARMATURE_DATA},
+      {"WholeCharacterSelected", ICON_MOD_ARMATURE_SELECTED},
+  };
   /* endbfa */
 
   /* builtin Keying Sets */
@@ -882,17 +861,15 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
       item_tmp.name = ks->name;
       item_tmp.description = ks->description;
       item_tmp.value = enum_index;
-      /* bfa */
-      /* Have to reset icon as item_tmp is persistent*/
-      item_tmp.icon = ICON_NONE;
-      /* Match icon by keyingset idname, yes this is in theory slow */
-      /* TODO: use a map */
-      for (int j = 0; j < ks_icons_iter_len; j++) {
-        if (STREQ(ks->idname, ks_icons_idnames[j])) {
-          item_tmp.icon = ks_icons[j];
-          break;
-        }
+      /* bfa start */
+      auto it = ks_icons_map.find(ks->idname);
+      if (it != ks_icons_map.end()) {
+        item_tmp.icon = it->second;
       }
+      else {
+        item_tmp.icon = ICON_NONE;
+      }
+      /* bfa end */
       RNA_enum_item_add(&item, &totitem, &item_tmp);
     }
   }
