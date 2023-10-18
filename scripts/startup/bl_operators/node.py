@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import bpy
+
 from bpy.types import (
     Operator,
     PropertyGroup,
@@ -271,26 +272,8 @@ class NodeInterfaceOperator():
         return True
 
 
-class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
-    '''Add a new item to the interface'''
-    bl_idname = "node.interface_item_new"
-    bl_label = "New Item"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    item_type: EnumProperty(
-        name="Item Type",
-        description="Type of the item to create",
-        items=(
-            ('INPUT', "Input", ""),
-            ('OUTPUT', "Output", ""),
-            ('PANEL', "Panel", ""),
-        ),
-        default='INPUT',
-    )
-
-    # Returns a valid socket type for the given tree or None.
-    @staticmethod
-    def find_valid_socket_type(tree):
+class NodeInterfaceOperator(Operator):
+    def find_valid_socket_type(self, tree):
         socket_type = 'NodeSocketFloat'
         # Socket type validation function is only available for custom
         # node trees. Assume that 'NodeSocketFloat' is valid for
@@ -317,11 +300,11 @@ class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
         active_item = interface.active
         active_pos = active_item.position if active_item else -1
 
-        if self.item_type == 'INPUT':
-            item = interface.new_socket("Socket", socket_type=self.find_valid_socket_type(tree), in_out='INPUT')
-        elif self.item_type == 'OUTPUT':
-            item = interface.new_socket("Socket", socket_type=self.find_valid_socket_type(tree), in_out='OUTPUT')
-        elif self.item_type == 'PANEL':
+        item_type = self.item_type
+
+        if item_type in ['INPUT', 'OUTPUT']:
+            item = interface.new_socket("Socket", socket_type=self.find_valid_socket_type(tree), in_out=item_type)
+        elif item_type == 'PANEL':
             item = interface.new_panel("Panel")
         else:
             return {'CANCELLED'}
@@ -332,9 +315,48 @@ class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
                 interface.move_to_parent(item, active_item, len(active_item.interface_items))
             else:
                 interface.move_to_parent(item, active_item.parent, active_pos + 1)
-        interface.active = item
 
+        interface.active = item
         return {'FINISHED'}
+
+
+class NODE_OT_interface_item_new_input(NodeInterfaceOperator): # -bfa separate add input operator with own description.
+    '''Add a new input socket'''
+    bl_idname = "node.interface_item_new_input"
+    bl_label = "New Input Socket"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    item_type: EnumProperty(
+        name="Item Type",
+        items=(('INPUT', "Input", ""),),
+        default='INPUT'
+    )
+
+
+class NODE_OT_interface_item_new_panel(NodeInterfaceOperator): # -bfa separate add output operator with own description.
+    '''Add a new panel interface'''
+    bl_idname = "node.interface_item_new_panel"
+    bl_label = "New Panel Interface"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    item_type: EnumProperty(
+        name="Item Type",
+        items=(('PANEL', "Panel", ""),),
+        default='PANEL'
+    )
+
+
+class NODE_OT_interface_item_new_output(NodeInterfaceOperator): # -bfa separate add panel operator with own description.
+    '''Add a new output socket'''
+    bl_idname = "node.interface_item_new_output"
+    bl_label = "New Output Socket"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    item_type: EnumProperty(
+        name="Item Type",
+        items=(('OUTPUT', "Output", ""),),
+        default='OUTPUT'
+    )
 
 
 class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
@@ -345,8 +367,8 @@ class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
 
     @classmethod
     def poll(cls, context):
-        if not super().poll(context):
-            return False
+        # if not super().poll(context):
+            # return False
 
         snode = context.space_data
         tree = snode.edit_tree
@@ -392,7 +414,9 @@ classes = (
     NODE_OT_add_simulation_zone,
     NODE_OT_add_repeat_zone,
     NODE_OT_collapse_hide_unused_toggle,
-    NODE_OT_interface_item_new,
+    NODE_OT_interface_item_new_input,
+    NODE_OT_interface_item_new_output,
+    NODE_OT_interface_item_new_panel,
     NODE_OT_interface_item_duplicate,
     NODE_OT_interface_item_remove,
     NODE_OT_tree_path_parent,
