@@ -1173,9 +1173,9 @@ class NODE_PT_node_tree_interface(Panel):
         split.template_node_tree_interface(tree.interface)
 
         ops_col = split.column(align=False)
-        ops_col.operator('node.interface_item_new', text='', icon='GROUPINPUT').item_type='INPUT'
-        ops_col.operator('node.interface_item_new', text='', icon='MENU_PANEL').item_type='PANEL'
-        ops_col.operator('node.interface_item_new', text='', icon='GROUPOUTPUT').item_type='OUTPUT'
+        ops_col.operator('node.interface_item_new_input', text='', icon='GROUPINPUT').item_type='INPUT'
+        ops_col.operator('node.interface_item_new_panel', text='', icon='MENU_PANEL').item_type='PANEL'
+        ops_col.operator('node.interface_item_new_output', text='', icon='GROUPOUTPUT').item_type='OUTPUT'
 
         ops_col.separator()
         ops_col.operator("node.interface_item_duplicate", text='', icon='DUPLICATE')
