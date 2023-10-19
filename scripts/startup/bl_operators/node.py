@@ -271,7 +271,7 @@ class NodeInterfaceOperator():
             return False
         return True
 
-
+# -bfa separated the add operators with their own descriptions.
 class NodeInterfaceOperator(Operator):
     def find_valid_socket_type(self, tree):
         socket_type = 'NodeSocketFloat'
@@ -319,8 +319,8 @@ class NodeInterfaceOperator(Operator):
         interface.active = item
         return {'FINISHED'}
 
-
-class NODE_OT_interface_item_new_input(NodeInterfaceOperator): # -bfa separate add input operator with own description.
+# -bfa separated add input operator with own description.
+class NODE_OT_interface_item_new_input(NodeInterfaceOperator):
     '''Add a new input socket'''
     bl_idname = "node.interface_item_new_input"
     bl_label = "New Input Socket"
@@ -332,8 +332,8 @@ class NODE_OT_interface_item_new_input(NodeInterfaceOperator): # -bfa separate a
         default='INPUT'
     )
 
-
-class NODE_OT_interface_item_new_panel(NodeInterfaceOperator): # -bfa separate add output operator with own description.
+# -bfa separated add output operator with own description.
+class NODE_OT_interface_item_new_panel(NodeInterfaceOperator):
     '''Add a new panel interface'''
     bl_idname = "node.interface_item_new_panel"
     bl_label = "New Panel Interface"
@@ -345,8 +345,8 @@ class NODE_OT_interface_item_new_panel(NodeInterfaceOperator): # -bfa separate a
         default='PANEL'
     )
 
-
-class NODE_OT_interface_item_new_output(NodeInterfaceOperator): # -bfa separate add panel operator with own description.
+# -bfa separated add panel operator with own description.
+class NODE_OT_interface_item_new_output(NodeInterfaceOperator):
     '''Add a new output socket'''
     bl_idname = "node.interface_item_new_output"
     bl_label = "New Output Socket"
@@ -358,22 +358,12 @@ class NODE_OT_interface_item_new_output(NodeInterfaceOperator): # -bfa separate 
         default='OUTPUT'
     )
 
-
+# -bfa def poll not needed since it's top level.
 class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
     '''Add a copy of the active item to the interface'''
     bl_idname = "node.interface_item_duplicate"
     bl_label = "Duplicate Item"
     bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        # if not super().poll(context):
-            # return False
-
-        snode = context.space_data
-        tree = snode.edit_tree
-        interface = tree.interface
-        return interface.active is not None
 
     def execute(self, context):
         snode = context.space_data
