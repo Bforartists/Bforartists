@@ -271,9 +271,11 @@ class NodeInterfaceOperator():
             return False
         return True
 
-# -bfa separated the add operators with their own descriptions.
-class NodeInterfaceOperator(Operator):
-    def find_valid_socket_type(self, tree):
+
+class NODE_OT_interface_item_new(Operator): # -bfa separated the add operators with their own descriptions.
+    # Returns a valid socket type for the given tree or None.
+    @staticmethod
+    def find_valid_socket_type(tree):
         socket_type = 'NodeSocketFloat'
         # Socket type validation function is only available for custom
         # node trees. Assume that 'NodeSocketFloat' is valid for
@@ -300,11 +302,11 @@ class NodeInterfaceOperator(Operator):
         active_item = interface.active
         active_pos = active_item.position if active_item else -1
 
-        item_type = self.item_type
-
-        if item_type in ['INPUT', 'OUTPUT']:
-            item = interface.new_socket("Socket", socket_type=self.find_valid_socket_type(tree), in_out=item_type)
-        elif item_type == 'PANEL':
+        if self.item_type == 'INPUT':
+            item = interface.new_socket("Socket", socket_type=self.find_valid_socket_type(tree), in_out='INPUT')
+        elif self.item_type == 'OUTPUT':
+            item = interface.new_socket("Socket", socket_type=self.find_valid_socket_type(tree), in_out='OUTPUT')
+        elif self.item_type == 'PANEL':
             item = interface.new_panel("Panel")
         else:
             return {'CANCELLED'}
@@ -319,8 +321,8 @@ class NodeInterfaceOperator(Operator):
         interface.active = item
         return {'FINISHED'}
 
-# -bfa separated add input operator with own description.
-class NODE_OT_interface_item_new_input(NodeInterfaceOperator):
+
+class NODE_OT_interface_item_new_input(NODE_OT_interface_item_new):# -bfa separated add input operator with own description.
     '''Add a new input socket'''
     bl_idname = "node.interface_item_new_input"
     bl_label = "New Input Socket"
@@ -332,8 +334,8 @@ class NODE_OT_interface_item_new_input(NodeInterfaceOperator):
         default='INPUT'
     )
 
-# -bfa separated add output operator with own description.
-class NODE_OT_interface_item_new_panel(NodeInterfaceOperator):
+
+class NODE_OT_interface_item_new_panel(NODE_OT_interface_item_new):# -bfa separated add output operator with own description.
     '''Add a new panel interface'''
     bl_idname = "node.interface_item_new_panel"
     bl_label = "New Panel Interface"
@@ -345,8 +347,8 @@ class NODE_OT_interface_item_new_panel(NodeInterfaceOperator):
         default='PANEL'
     )
 
-# -bfa separated add panel operator with own description.
-class NODE_OT_interface_item_new_output(NodeInterfaceOperator):
+
+class NODE_OT_interface_item_new_output(NODE_OT_interface_item_new):# -bfa separated add panel operator with own description.
     '''Add a new output socket'''
     bl_idname = "node.interface_item_new_output"
     bl_label = "New Output Socket"
@@ -358,12 +360,22 @@ class NODE_OT_interface_item_new_output(NodeInterfaceOperator):
         default='OUTPUT'
     )
 
-# -bfa def poll not needed since it's top level.
+
 class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
     '''Add a copy of the active item to the interface'''
     bl_idname = "node.interface_item_duplicate"
     bl_label = "Duplicate Item"
     bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        if not super().poll(context):
+            return False
+
+        snode = context.space_data
+        tree = snode.edit_tree
+        interface = tree.interface
+        return interface.active is not None
 
     def execute(self, context):
         snode = context.space_data
@@ -404,9 +416,9 @@ classes = (
     NODE_OT_add_simulation_zone,
     NODE_OT_add_repeat_zone,
     NODE_OT_collapse_hide_unused_toggle,
-    NODE_OT_interface_item_new_input,
-    NODE_OT_interface_item_new_output,
-    NODE_OT_interface_item_new_panel,
+    NODE_OT_interface_item_new_input, # -bfa separated add input operator with own description.
+    NODE_OT_interface_item_new_output, # -bfa separated add output operator with own description.
+    NODE_OT_interface_item_new_panel, # -bfa separated add panel operator with own description.
     NODE_OT_interface_item_duplicate,
     NODE_OT_interface_item_remove,
     NODE_OT_tree_path_parent,
