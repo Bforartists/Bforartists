@@ -5,8 +5,8 @@
 bl_info = {
     "name": "Import Images as Planes",
     "author": "Florian Meyer (tstscr), mont29, matali, Ted Schundler (SpkyElctrc), mrbimax",
-    "version": (3, 5, 0),
-    "blender": (2, 91, 0),
+    "version": (3, 5, 1),
+    "blender": (4, 0, 0),
     "location": "File > Import > Images as Planes or Add > Image > Images as Planes",
     "description": "Imports images and creates planes with the appropriate aspect ratio. "
                    "The images are mapped to the planes.",
@@ -25,7 +25,10 @@ from math import pi
 
 import bpy
 from bpy.types import Operator
-from bpy.app.translations import pgettext_tip as tip_
+from bpy.app.translations import (
+    pgettext_tip as tip_,
+    contexts as i18n_contexts
+)
 from mathutils import Vector
 
 from bpy.props import (
@@ -151,6 +154,9 @@ def load_images(filenames, directory, force_reload=False, frame_start=1, find_se
         file_iter = zip(filenames, repeat(1), repeat(1))
 
     for filename, offset, frames in file_iter:
+        if not os.path.isfile(bpy.path.abspath(os.path.join(directory, filename))):
+            continue
+
         image = load_image(filename, directory, check_existing=True, force_reload=force_reload)
 
         # Size is unavailable for sequences, so we grab it early
@@ -731,7 +737,9 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         ('HASHED', "Hashed","Use noise to dither the binary visibility (works well with multi-samples)"),
         ('OPAQUE', "Opaque","Render surface without transparency"),
     )
-    blend_method: EnumProperty(name="Blend Mode", items=BLEND_METHODS, default='BLEND', description="Blend Mode for Transparent Faces")
+    blend_method: EnumProperty(
+        name="Blend Mode", items=BLEND_METHODS, default='BLEND',
+        description="Blend Mode for Transparent Faces", translation_context=i18n_contexts.id_material)
 
     SHADOW_METHODS = (
         ('CLIP', "Clip","Use the alpha threshold to clip the visibility (binary visibility)"),
@@ -739,7 +747,9 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         ('OPAQUE',"Opaque","Material will cast shadows without transparency"),
         ('NONE',"None","Material will cast no shadow"),
     )
-    shadow_method: EnumProperty(name="Shadow Mode", items=SHADOW_METHODS, default='CLIP', description="Shadow mapping method")
+    shadow_method: EnumProperty(
+        name="Shadow Mode", items=SHADOW_METHODS, default='CLIP',
+        description="Shadow mapping method", translation_context=i18n_contexts.id_material)
 
     use_backface_culling: BoolProperty(
         name="Backface Culling", default=False,
@@ -923,11 +933,11 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         if context.active_object and context.active_object.mode != 'OBJECT':
             bpy.ops.object.mode_set(mode='OBJECT')
 
-        self.import_images(context)
+        ret_code = self.import_images(context)
 
         context.preferences.edit.use_enter_edit_mode = editmode
 
-        return {'FINISHED'}
+        return ret_code
 
     def import_images(self, context):
 
@@ -938,6 +948,10 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
             force_reload=self.force_reload,
             find_sequences=self.image_sequence
         ))
+
+        if not images:
+            self.report({'WARNING'}, "Please select at least an image.")
+            return {'CANCELLED'}
 
         # Create individual planes
         planes = [self.single_image_spec_to_plane(context, img_spec) for img_spec in images]
@@ -962,6 +976,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
 
         # all done!
         self.report({'INFO'}, tip_("Added {} Image Plane(s)").format(len(planes)))
+        return {'FINISHED'}
 
     # operate on a single image
     def single_image_spec_to_plane(self, context, img_spec):
