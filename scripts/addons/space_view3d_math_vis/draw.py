@@ -156,12 +156,12 @@ def draw_callback_view():
 
     if data_euler or data_quat:
         cursor = bpy.context.scene.cursor.location.copy()
-        derived_matrices = []
-        for key, quat in data_quat.values():
+        derived_matrices = dict()
+        for key, quat in data_quat.items():
             matrix = quat.to_matrix().to_4x4()
             matrix.translation = cursor
             derived_matrices[key] = matrix
-        for key, eul in data_euler.values():
+        for key, eul in data_euler.items():
             matrix = eul.to_matrix().to_4x4()
             matrix.translation = cursor
             derived_matrices[key] = matrix
