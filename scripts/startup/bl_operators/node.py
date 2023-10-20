@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import bpy
+
 from bpy.types import (
     Operator,
     PropertyGroup,
@@ -271,23 +272,7 @@ class NodeInterfaceOperator():
         return True
 
 
-class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
-    '''Add a new item to the interface'''
-    bl_idname = "node.interface_item_new"
-    bl_label = "New Item"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    item_type: EnumProperty(
-        name="Item Type",
-        description="Type of the item to create",
-        items=(
-            ('INPUT', "Input", ""),
-            ('OUTPUT', "Output", ""),
-            ('PANEL', "Panel", ""),
-        ),
-        default='INPUT',
-    )
-
+class NODE_OT_interface_item_new(Operator): # -bfa separated the add operators with their own descriptions.
     # Returns a valid socket type for the given tree or None.
     @staticmethod
     def find_valid_socket_type(tree):
@@ -332,9 +317,48 @@ class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
                 interface.move_to_parent(item, active_item, len(active_item.interface_items))
             else:
                 interface.move_to_parent(item, active_item.parent, active_pos + 1)
-        interface.active = item
 
+        interface.active = item
         return {'FINISHED'}
+
+
+class NODE_OT_interface_item_new_input(NODE_OT_interface_item_new):# -bfa separated add input operator with own description.
+    '''Add a new input socket'''
+    bl_idname = "node.interface_item_new_input"
+    bl_label = "New Input Socket"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    item_type: EnumProperty(
+        name="Item Type",
+        items=(('INPUT', "Input", ""),),
+        default='INPUT'
+    )
+
+
+class NODE_OT_interface_item_new_panel(NODE_OT_interface_item_new):# -bfa separated add output operator with own description.
+    '''Add a new panel interface'''
+    bl_idname = "node.interface_item_new_panel"
+    bl_label = "New Panel Interface"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    item_type: EnumProperty(
+        name="Item Type",
+        items=(('PANEL', "Panel", ""),),
+        default='PANEL'
+    )
+
+
+class NODE_OT_interface_item_new_output(NODE_OT_interface_item_new):# -bfa separated add panel operator with own description.
+    '''Add a new output socket'''
+    bl_idname = "node.interface_item_new_output"
+    bl_label = "New Output Socket"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    item_type: EnumProperty(
+        name="Item Type",
+        items=(('OUTPUT', "Output", ""),),
+        default='OUTPUT'
+    )
 
 
 class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
@@ -392,7 +416,9 @@ classes = (
     NODE_OT_add_simulation_zone,
     NODE_OT_add_repeat_zone,
     NODE_OT_collapse_hide_unused_toggle,
-    NODE_OT_interface_item_new,
+    NODE_OT_interface_item_new_input, # -bfa separated add input operator with own description.
+    NODE_OT_interface_item_new_output, # -bfa separated add output operator with own description.
+    NODE_OT_interface_item_new_panel, # -bfa separated add panel operator with own description.
     NODE_OT_interface_item_duplicate,
     NODE_OT_interface_item_remove,
     NODE_OT_tree_path_parent,
