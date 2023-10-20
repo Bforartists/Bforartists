@@ -13,7 +13,7 @@ from ....io.com import gltf2_io_debug
 from ....io.exp.gltf2_io_user_extensions import export_user_extensions
 from ..gltf2_blender_gather_cache import cached
 from .extensions.gltf2_blender_image import Channel, ExportImage, FillImage
-from ..gltf2_blender_get import get_tex_from_socket
+from .gltf2_blender_search_node_tree import get_texture_node_from_socket, NodeSocket
 
 @cached
 def gather_image(
@@ -59,7 +59,7 @@ def gather_image(
 
     export_user_extensions('gather_image_hook', export_settings, image, blender_shader_sockets)
 
-    # We also return image_data, as it can be used to generate same file with another extension for webp management
+    # We also return image_data, as it can be used to generate same file with another extension for WebP management
     return image, image_data, factor
 
 def __gather_original_uri(original_uri, export_settings):
@@ -114,11 +114,11 @@ def __gather_extras(sockets, export_settings):
 def __gather_mime_type(sockets, export_image, export_settings):
     # force png or webp if Alpha contained so we can export alpha
     for socket in sockets:
-        if socket.name == "Alpha":
+        if socket.socket.name == "Alpha":
             if export_settings["gltf_image_format"] == "WEBP":
                 return "image/webp"
             else:
-                # If we keep image as is (no channel composition), we need to keep original format (for webp)
+                # If we keep image as is (no channel composition), we need to keep original format (for WebP)
                 image = export_image.blender_image()
                 if image is not None and __is_blender_image_a_webp(image):
                     return "image/webp"
@@ -191,7 +191,7 @@ def __get_image_data(sockets, default_sockets, export_settings) -> ExportImage:
     # For shared resources, such as images, we just store the portion of data that is needed in the glTF property
     # in a helper class. During generation of the glTF in the exporter these will then be combined to actual binary
     # resources.
-    results = [get_tex_from_socket(socket) for socket in sockets]
+    results = [get_texture_node_from_socket(socket, export_settings) for socket in sockets]
 
     # Check if we need a simple mapping or more complex calculation
     # There is currently no complex calculation for any textures
@@ -222,7 +222,7 @@ def __get_image_data_mapping(sockets, default_sockets, results, export_settings)
 
         else:
             # rudimentarily try follow the node tree to find the correct image data.
-            src_chan = Channel.R
+            src_chan = None
             for elem in result.path:
                 if isinstance(elem.from_node, bpy.types.ShaderNodeSeparateColor):
                     src_chan = {
@@ -233,26 +233,55 @@ def __get_image_data_mapping(sockets, default_sockets, results, export_settings)
                 if elem.from_socket.name == 'Alpha':
                     src_chan = Channel.A
 
+
+            if src_chan is None:
+                # No SeparateColor node found, so take the specification channel that is needed
+                # So export is correct if user plug the texture directly to the socket
+                if socket.socket.name == 'Metallic':
+                    src_chan = Channel.B
+                elif socket.socket.name == 'Roughness':
+                    src_chan = Channel.G
+                elif socket.socket.name == 'Occlusion':
+                    src_chan = Channel.R
+                elif socket.socket.name == 'Alpha':
+                    src_chan = Channel.A
+                elif socket.socket.name == 'Coat Weight':
+                    src_chan = Channel.R
+                elif socket.socket.name == 'Coat Roughness':
+                    src_chan = Channel.G
+                elif socket.socket.name == 'Thickness': # For KHR_materials_volume
+                    src_chan = Channel.G
+
+            if src_chan is None:
+                # Seems we can't find the channel
+                # We are in a case where user plugged a texture in a Color socket, but we may have used the alpha one
+                if socket.socket.name in ["Alpha", "Specular IOR Level", "Sheen Roughness"]:
+                    src_chan = Channel.A
+
+            if src_chan is None:
+                # We definitely can't find the channel, so keep the first channel even if this is wrong
+                src_chan = Channel.R
+
             dst_chan = None
 
             # some sockets need channel rewriting (gltf pbr defines fixed channels for some attributes)
-            if socket.name == 'Metallic':
+            if socket.socket.name == 'Metallic':
                 dst_chan = Channel.B
-            elif socket.name == 'Roughness':
+            elif socket.socket.name == 'Roughness':
                 dst_chan = Channel.G
-            elif socket.name == 'Occlusion':
+            elif socket.socket.name == 'Occlusion':
                 dst_chan = Channel.R
-            elif socket.name == 'Alpha':
+            elif socket.socket.name == 'Alpha':
                 dst_chan = Channel.A
-            elif socket.name == 'Coat Weight':
+            elif socket.socket.name == 'Coat Weight':
                 dst_chan = Channel.R
-            elif socket.name == 'Coat Roughness':
+            elif socket.socket.name == 'Coat Roughness':
                 dst_chan = Channel.G
-            elif socket.name == 'Thickness': # For KHR_materials_volume
+            elif socket.socket.name == 'Thickness': # For KHR_materials_volume
                 dst_chan = Channel.G
-            elif socket.name == "Specular IOR Level": # For KHR_material_specular
+            elif socket.socket.name == "Specular IOR Level": # For KHR_material_specular
                 dst_chan = Channel.A
-            elif socket.name == "Sheen Roughness": # For KHR_materials_sheen
+            elif socket.socket.name == "Sheen Roughness": # For KHR_materials_sheen
                 dst_chan = Channel.A
 
             if dst_chan is not None:
@@ -260,12 +289,12 @@ def __get_image_data_mapping(sockets, default_sockets, results, export_settings)
 
                 # Since metal/roughness are always used together, make sure
                 # the other channel is filled.
-                if socket.name == 'Metallic' and not composed_image.is_filled(Channel.G):
+                if socket.socket.name == 'Metallic' and not composed_image.is_filled(Channel.G):
                     if default_roughness is not None:
                         composed_image.fill_with(Channel.G, default_roughness)
                     else:
                         composed_image.fill_white(Channel.G)
-                elif socket.name == 'Roughness' and not composed_image.is_filled(Channel.B):
+                elif socket.socket.name == 'Roughness' and not composed_image.is_filled(Channel.B):
                     if default_metallic is not None:
                         composed_image.fill_with(Channel.B, default_metallic)
                     else:
