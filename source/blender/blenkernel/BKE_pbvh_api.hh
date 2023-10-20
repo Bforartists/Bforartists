@@ -305,7 +305,8 @@ bool BKE_pbvh_node_find_nearest_to_ray(PBVH *pbvh,
 void BKE_pbvh_set_frustum_planes(PBVH *pbvh, PBVHFrustumPlanes *planes);
 void BKE_pbvh_get_frustum_planes(PBVH *pbvh, PBVHFrustumPlanes *planes);
 
-void BKE_pbvh_draw_cb(PBVH *pbvh,
+void BKE_pbvh_draw_cb(const Mesh &mesh,
+                      PBVH *pbvh,
                       bool update_only_visible,
                       PBVHFrustumPlanes *update_frustum,
                       PBVHFrustumPlanes *draw_frustum,
@@ -402,8 +403,12 @@ void BKE_pbvh_node_get_grids(PBVH *pbvh,
                              int *maxgrid,
                              int *gridsize,
                              CCGElem ***r_griddata);
-void BKE_pbvh_node_num_verts(PBVH *pbvh, PBVHNode *node, int *r_uniquevert, int *r_totvert);
-const int *BKE_pbvh_node_get_vert_indices(PBVHNode *node);
+void BKE_pbvh_node_num_verts(const PBVH *pbvh,
+                             const PBVHNode *node,
+                             int *r_uniquevert,
+                             int *r_totvert);
+blender::Span<int> BKE_pbvh_node_get_vert_indices(const PBVHNode *node);
+blender::Span<int> BKE_pbvh_node_get_unique_vert_indices(const PBVHNode *node);
 void BKE_pbvh_node_get_loops(PBVH *pbvh,
                              PBVHNode *node,
                              const int **r_loop_indices,
@@ -690,22 +695,19 @@ bool BKE_pbvh_get_color_layer(Mesh *me, CustomDataLayer **r_layer, eAttrDomain *
 /* Swaps colors at each element in indices (of domain pbvh->vcol_domain)
  * with values in colors. */
 void BKE_pbvh_swap_colors(PBVH *pbvh,
-                          const int *indices,
-                          const int indices_num,
-                          float (*colors)[4]);
+                          blender::Span<int> indices,
+                          blender::MutableSpan<blender::float4> r_colors);
 
 /* Stores colors from the elements in indices (of domain pbvh->vcol_domain)
  * into colors. */
 void BKE_pbvh_store_colors(PBVH *pbvh,
-                           const int *indices,
-                           const int indices_num,
-                           float (*colors)[4]);
+                           blender::Span<int> indices,
+                           blender::MutableSpan<blender::float4> r_colors);
 
 /* Like BKE_pbvh_store_colors but handles loop->vert conversion */
 void BKE_pbvh_store_colors_vertex(PBVH *pbvh,
-                                  const int *indices,
-                                  const int indices_num,
-                                  float (*colors)[4]);
+                                  blender::Span<int> indices,
+                                  blender::MutableSpan<blender::float4> r_colors);
 
 bool BKE_pbvh_is_drawing(const PBVH *pbvh);
 
