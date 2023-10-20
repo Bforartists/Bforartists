@@ -7,15 +7,15 @@ from os.path import basename
 from xml.sax.saxutils import escape
 
 
-def export(filepath, face_data, colors, width, height, opacity):
+def export(filepath, tile, face_data, colors, width, height, opacity):
     with open(filepath, 'w', encoding='utf-8') as file:
-        for text in get_file_parts(face_data, colors, width, height, opacity):
+        for text in get_file_parts(tile, face_data, colors, width, height, opacity):
             file.write(text)
 
 
-def get_file_parts(face_data, colors, width, height, opacity):
+def get_file_parts(tile, face_data, colors, width, height, opacity):
     yield from header(width, height)
-    yield from draw_polygons(face_data, width, height, opacity)
+    yield from draw_polygons(tile, face_data, width, height, opacity)
     yield from footer()
 
 
@@ -29,7 +29,7 @@ def header(width, height):
     yield f'<desc>{escape(desc)}</desc>\n'
 
 
-def draw_polygons(face_data, width, height, opacity):
+def draw_polygons(tile, face_data, width, height, opacity):
     for uvs, color in face_data:
         fill = f'fill="{get_color_string(color)}"'
 
@@ -39,7 +39,7 @@ def draw_polygons(face_data, width, height, opacity):
         yield ' points="'
 
         for uv in uvs:
-            x, y = uv[0], 1.0 - uv[1]
+            x, y = uv[0] - tile[0], 1.0 - uv[1] + tile[1]
             yield f'{x*width:.3f},{y*height:.3f} '
         yield '" />\n'
 

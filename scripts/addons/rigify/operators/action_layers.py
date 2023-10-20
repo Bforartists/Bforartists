@@ -89,10 +89,10 @@ class ActionSlot(PropertyGroup, ActionSlotBase):
 
     target_space: EnumProperty(
         name="Transform Space",
-        items=[("WORLD", "World Space", "World Space"),
-               ("POSE", "Pose Space", "Pose Space"),
-               ("LOCAL_WITH_PARENT", "Local With Parent", "Local With Parent"),
-               ("LOCAL", "Local Space", "Local Space")],
+        items=[("WORLD", "World Space", "World Space", 0),
+               # ("POSE", "Pose Space", "Pose Space", 1),
+               # ("LOCAL_WITH_PARENT", "Local With Parent", "Local With Parent", 2),
+               ("LOCAL", "Local Space", "Local Space", 3)],
         default="LOCAL"
     )
 
