@@ -1553,8 +1553,13 @@ class VIEW3D_PT_tools_imagepaint_options_cavity(Panel):
         tool_settings = context.tool_settings
         ipaint = tool_settings.image_paint
 
-        self.layout.prop(ipaint, "use_cavity",
-                         text=self.bl_label if self.is_popover else "")
+        row = self.layout.row()
+        split = row.split(factor = 0.5)
+        split.prop(ipaint, "use_cavity", text=self.bl_label if self.is_popover else "")
+        if ipaint.use_cavity:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
     def draw(self, context):
         layout = self.layout
@@ -1562,10 +1567,8 @@ class VIEW3D_PT_tools_imagepaint_options_cavity(Panel):
         tool_settings = context.tool_settings
         ipaint = tool_settings.image_paint
 
-        layout.active = ipaint.use_cavity
-
-        layout.template_curve_mapping(ipaint, "cavity_curve", brush=True,
-                                      use_negative_slope=True)
+        if ipaint.use_cavity:
+            layout.template_curve_mapping(ipaint, "cavity_curve", brush=True, use_negative_slope=True)
 
 
 # TODO, move to space_view3d.py

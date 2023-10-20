@@ -406,9 +406,15 @@ BLI_INLINE GlyphBLF *blf_glyph_from_utf8_and_step(FontBLF *font,
   GlyphBLF *g = blf_glyph_ensure(font, gc, charcode);
   if (g && pen_x && !(font->flags & BLF_MONOSPACED)) {
     *pen_x += blf_kerning(font, g_prev, g);
-#ifndef BLF_SUBPIXEL_POSITION
+
+#ifdef BLF_SUBPIXEL_POSITION
+    if (!(font->flags & BLF_RENDER_SUBPIXELAA)) {
+      *pen_x = FT_PIX_ROUND(*pen_x);
+    }
+#else
     *pen_x = FT_PIX_ROUND(*pen_x);
 #endif
+
 #ifdef BLF_SUBPIXEL_AA
     g = blf_glyph_ensure_subpixel(font, gc, g, *pen_x);
 #endif
@@ -666,13 +672,34 @@ void blf_font_draw_buffer(FontBLF *font, const char *str, const size_t str_len, 
  * - #BLF_width_to_rstrlen
  * \{ */
 
-static bool blf_font_width_to_strlen_glyph_process(
-    FontBLF *font, GlyphBLF *g_prev, GlyphBLF *g, ft_pix *pen_x, const int width_i)
+static bool blf_font_width_to_strlen_glyph_process(FontBLF *font,
+                                                   GlyphCacheBLF *gc,
+                                                   GlyphBLF *g_prev,
+                                                   GlyphBLF *g,
+                                                   ft_pix *pen_x,
+                                                   const int width_i)
 {
   if (UNLIKELY(g == nullptr)) {
     return false; /* continue the calling loop. */
   }
-  *pen_x += blf_kerning(font, g_prev, g) + g->advance_x;
+
+  if (g && pen_x && !(font->flags & BLF_MONOSPACED)) {
+    *pen_x += blf_kerning(font, g_prev, g);
+
+#ifdef BLF_SUBPIXEL_POSITION
+    if (!(font->flags & BLF_RENDER_SUBPIXELAA)) {
+      *pen_x = FT_PIX_ROUND(*pen_x);
+    }
+#else
+    *pen_x = FT_PIX_ROUND(*pen_x);
+#endif
+
+#ifdef BLF_SUBPIXEL_AA
+    g = blf_glyph_ensure_subpixel(font, gc, g, *pen_x);
+#endif
+  }
+
+  *pen_x += g->advance_x;
 
   /* When true, break the calling loop. */
   return (ft_pix_to_int(*pen_x) >= width_i);
@@ -693,7 +720,7 @@ size_t blf_font_width_to_strlen(
        i_prev = i, width_new = pen_x, g_prev = g)
   {
     g = blf_glyph_from_utf8_and_step(font, gc, nullptr, str, str_len, &i, nullptr);
-    if (blf_font_width_to_strlen_glyph_process(font, g_prev, g, &pen_x, width_i)) {
+    if (blf_font_width_to_strlen_glyph_process(font, gc, g_prev, g, &pen_x, width_i)) {
       break;
     }
   }
@@ -736,7 +763,7 @@ size_t blf_font_width_to_rstrlen(
       BLI_assert(i_tmp == i);
     }
 
-    if (blf_font_width_to_strlen_glyph_process(font, g_prev, g, &pen_x, width)) {
+    if (blf_font_width_to_strlen_glyph_process(font, gc, g_prev, g, &pen_x, width)) {
       break;
     }
   }
@@ -1338,6 +1365,176 @@ static void blf_font_fill(FontBLF *font)
   font->buf_info.col_init[3] = 0;
 }
 
+/* Note that the data the following function creates is not yet used.
+ * But do not remove it as it will be used in the near future - Harley */
+static void blf_font_metrics(FT_Face face, FontMetrics *metrics)
+{
+  /* Members with non-zero defaults. */
+  metrics->weight = 400;
+  metrics->width = 1.0f;
+  metrics->spacing = 1.0f;
+
+  TT_OS2 *os2_table = (TT_OS2 *)FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
+  if (os2_table) {
+    /* The default (resting) font weight. */
+    if (os2_table->usWeightClass >= 1 && os2_table->usWeightClass <= 1000) {
+      metrics->weight = short(os2_table->usWeightClass);
+    }
+
+    /* Width value is one of integers 1-9 with known values. */
+    if (os2_table->usWidthClass >= 1 && os2_table->usWidthClass <= 9) {
+      switch (os2_table->usWidthClass) {
+        case 1:
+          metrics->width = 0.5f;
+          break;
+        case 2:
+          metrics->width = 0.625f;
+          break;
+        case 3:
+          metrics->width = 0.75f;
+          break;
+        case 4:
+          metrics->width = 0.875f;
+          break;
+        case 5:
+          metrics->width = 1.0f;
+          break;
+        case 6:
+          metrics->width = 1.125f;
+          break;
+        case 7:
+          metrics->width = 1.25f;
+          break;
+        case 8:
+          metrics->width = 1.5f;
+          break;
+        case 9:
+          metrics->width = 2.0f;
+          break;
+      }
+    }
+
+    metrics->strikeout_position = short(os2_table->yStrikeoutPosition);
+    metrics->strikeout_thickness = short(os2_table->yStrikeoutSize);
+    metrics->subscript_size = short(os2_table->ySubscriptYSize);
+    metrics->subscript_xoffset = short(os2_table->ySubscriptXOffset);
+    metrics->subscript_yoffset = short(os2_table->ySubscriptYOffset);
+    metrics->superscript_size = short(os2_table->ySuperscriptYSize);
+    metrics->superscript_xoffset = short(os2_table->ySuperscriptXOffset);
+    metrics->superscript_yoffset = short(os2_table->ySuperscriptYOffset);
+    metrics->family_class = short(os2_table->sFamilyClass);
+    metrics->selection_flags = short(os2_table->fsSelection);
+    metrics->first_charindex = short(os2_table->usFirstCharIndex);
+    metrics->last_charindex = short(os2_table->usLastCharIndex);
+    if (os2_table->version > 1) {
+      metrics->cap_height = short(os2_table->sCapHeight);
+      metrics->x_height = short(os2_table->sxHeight);
+    }
+  }
+
+  /* The Post table usually contains a slant value, but in counter-clockwise degrees. */
+  TT_Postscript *post_table = (TT_Postscript *)FT_Get_Sfnt_Table(face, FT_SFNT_POST);
+  if (post_table) {
+    if (post_table->italicAngle != 0) {
+      metrics->slant = float(post_table->italicAngle) / -65536.0f;
+    }
+  }
+
+  /* Metrics copied from those gathered by FreeType. */
+  metrics->units_per_EM = short(face->units_per_EM);
+  metrics->ascender = short(face->ascender);
+  metrics->descender = short(face->descender);
+  metrics->line_height = short(face->height);
+  metrics->max_advance_width = short(face->max_advance_width);
+  metrics->max_advance_height = short(face->max_advance_height);
+  metrics->underline_position = short(face->underline_position);
+  metrics->underline_thickness = short(face->underline_thickness);
+  metrics->num_glyphs = int(face->num_glyphs);
+  metrics->bounding_box.xmin = int(face->bbox.xMin);
+  metrics->bounding_box.xmax = int(face->bbox.xMax);
+  metrics->bounding_box.ymin = int(face->bbox.yMin);
+  metrics->bounding_box.ymax = int(face->bbox.yMax);
+
+  if (metrics->cap_height == 0) {
+    /* Calculate or guess cap height if it is not set in the font. */
+    FT_UInt gi = FT_Get_Char_Index(face, uint('H'));
+    if (gi && FT_Load_Glyph(face, gi, FT_LOAD_NO_SCALE | FT_LOAD_NO_BITMAP) == FT_Err_Ok) {
+      metrics->cap_height = short(face->glyph->metrics.height);
+    }
+    else {
+      metrics->cap_height = short(float(metrics->units_per_EM) * 0.7f);
+    }
+  }
+
+  if (metrics->x_height == 0) {
+    /* Calculate or guess x-height if it is not set in the font. */
+    FT_UInt gi = FT_Get_Char_Index(face, uint('x'));
+    if (gi && FT_Load_Glyph(face, gi, FT_LOAD_NO_SCALE | FT_LOAD_NO_BITMAP) == FT_Err_Ok) {
+      metrics->x_height = short(face->glyph->metrics.height);
+    }
+    else {
+      metrics->x_height = short(float(metrics->units_per_EM) * 0.5f);
+    }
+  }
+
+  FT_UInt gi = FT_Get_Char_Index(face, uint('o'));
+  if (gi && FT_Load_Glyph(face, gi, FT_LOAD_NO_SCALE | FT_LOAD_NO_BITMAP) == FT_Err_Ok) {
+    metrics->o_proportion = float(face->glyph->metrics.width) / float(face->glyph->metrics.height);
+  }
+
+  if (metrics->ascender == 0) {
+    /* Set a sane value for ascender if not set in the font. */
+    metrics->ascender = short(float(metrics->units_per_EM) * 0.8f);
+  }
+
+  if (metrics->descender == 0) {
+    /* Set a sane value for descender if not set in the font. */
+    metrics->descender = metrics->ascender - metrics->units_per_EM;
+  }
+
+  if (metrics->weight == 400 && face->style_flags & FT_STYLE_FLAG_BOLD) {
+    /* Normal weight yet this is an bold font, so set a sane weight value. */
+    metrics->weight = 700;
+  }
+
+  if (metrics->slant == 0.0f && face->style_flags & FT_STYLE_FLAG_ITALIC) {
+    /* No slant yet this is an italic font, so set a sane slant value. */
+    metrics->slant = 8.0f;
+  }
+
+  if (metrics->underline_position == 0) {
+    metrics->underline_position = short(float(metrics->units_per_EM) * -0.2f);
+  }
+
+  if (metrics->underline_thickness == 0) {
+    metrics->underline_thickness = short(float(metrics->units_per_EM) * 0.07f);
+  }
+
+  if (metrics->strikeout_position == 0) {
+    metrics->strikeout_position = short(float(metrics->x_height) * 0.6f);
+  }
+
+  if (metrics->strikeout_thickness == 0) {
+    metrics->strikeout_thickness = metrics->underline_thickness;
+  }
+
+  if (metrics->subscript_size == 0) {
+    metrics->subscript_size = short(float(metrics->units_per_EM) * 0.6f);
+  }
+
+  if (metrics->subscript_yoffset == 0) {
+    metrics->subscript_yoffset = short(float(metrics->units_per_EM) * 0.075f);
+  }
+
+  if (metrics->superscript_size == 0) {
+    metrics->superscript_size = short(float(metrics->units_per_EM) * 0.6f);
+  }
+
+  if (metrics->superscript_yoffset == 0) {
+    metrics->superscript_yoffset = short(float(metrics->units_per_EM) * 0.35f);
+  }
+}
+
 bool blf_ensure_face(FontBLF *font)
 {
   if (font->face) {
@@ -1424,6 +1621,9 @@ bool blf_ensure_face(FontBLF *font)
   if (FT_HAS_MULTIPLE_MASTERS(font)) {
     FT_Get_MM_Var(font->face, &(font->variations));
   }
+
+  blf_ensure_size(font);
+  blf_font_metrics(font->face, &font->metrics);
 
   /* Save TrueType table with bits to quickly test most unicode block coverage. */
   TT_OS2 *os2_table = (TT_OS2 *)FT_Get_Sfnt_Table(font->face, FT_SFNT_OS2);
