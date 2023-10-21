@@ -27,6 +27,8 @@ from bpy.app.translations import (
     pgettext_tip as tip_,
     contexts as i18n_contexts,
 )
+
+
 class VIEW3D_HT_header(Header):
     bl_space_type = 'VIEW_3D'
 
@@ -66,7 +68,7 @@ class VIEW3D_HT_header(Header):
             show_snap = True
         else:
             if (object_mode not in {
-                    'SCULPT', 'VERTEX_PAINT', 'WEIGHT_PAINT', 'TEXTURE_PAINT',
+                    'SCULPT', 'SCULPT_CURVES', 'VERTEX_PAINT', 'WEIGHT_PAINT', 'TEXTURE_PAINT',
                     'PAINT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL', 'VERTEX_GPENCIL', 'PAINT_GREASE_PENCIL',
             }) or has_pose_mode:
                 show_snap = True
@@ -78,6 +80,7 @@ class VIEW3D_HT_header(Header):
                     brush = paint_settings.brush
                     if brush and hasattr(brush, "stroke_method") and brush.stroke_method == 'CURVE':
                         show_snap = True
+
         if show_snap:
             snap_items = bpy.types.ToolSettings.bl_rna.properties["snap_elements"].enum_items
             snap_elements = tool_settings.snap_elements
@@ -210,9 +213,25 @@ class VIEW3D_HT_header(Header):
                     depress=(tool_settings.gpencil_selectmode_edit == 'STROKE'),
                 ).mode = 'STROKE'
 
+            if object_mode == 'PAINT_GREASE_PENCIL':
+                row = layout.row()
+                sub = row.row(align=True)
+                sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
+
         # Grease Pencil (legacy)
         if obj and obj.type == 'GPENCIL' and context.gpencil_data:
             gpd = context.gpencil_data
+
+            if gpd.is_stroke_paint_mode:
+                row = layout.row()
+                sub = row.row(align=True)
+                sub.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
+                sub.separator(factor=0.4)
+                sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
+                sub.separator(factor=0.4)
+                sub.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
+                sub.separator(factor=0.4)
+                sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
 
             # Select mode for Editing
             if gpd.use_stroke_edit_mode:
@@ -257,7 +276,6 @@ class VIEW3D_HT_header(Header):
                     gpd.is_stroke_vertex_mode
             ):
                 row = layout.row(align=True)
-
                 row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
 
                 if gpd.use_multiedit:
@@ -337,7 +355,7 @@ class VIEW3D_HT_header(Header):
                 icon = 'GROUP_VCOL' if canvas_source == 'COLOR_ATTRIBUTE' else canvas_source
                 row.popover(panel="VIEW3D_PT_slots_paint_canvas", icon=icon)
             else:
-                row.popover(panel="VIEW3D_PT_slots_color_attributes", icon="GROUP_VCOL")
+                row.popover(panel="VIEW3D_PT_slots_color_attributes", icon='GROUP_VCOL')
 
             layout.popover(
                 panel="VIEW3D_PT_sculpt_automasking",
@@ -348,12 +366,12 @@ class VIEW3D_HT_header(Header):
         elif object_mode == 'VERTEX_PAINT':
             row = layout.row()
             row.ui_units_x = 6
-            row.popover(panel="VIEW3D_PT_slots_color_attributes", icon="GROUP_VCOL")
+            row.popover(panel="VIEW3D_PT_slots_color_attributes", icon='GROUP_VCOL')
 
         elif object_mode == 'WEIGHT_PAINT':
             row = layout.row()
             row.ui_units_x = 6
-            row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon="GROUP_VERTEX")
+            row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon='GROUP_VERTEX')
 
         elif object_mode == 'TEXTURE_PAINT':
             tool_mode = tool_settings.image_paint.mode
@@ -362,8 +380,7 @@ class VIEW3D_HT_header(Header):
             row = layout.row()
             row.ui_units_x = 9
             row.popover(panel="VIEW3D_PT_slots_projectpaint", icon=icon)
-            row.popover(panel="VIEW3D_PT_mask", icon="MOD_MASK", text="")
-
+            row.popover(panel="VIEW3D_PT_mask", icon='MOD_MASK', text="")
         else:
             # Transform settings depending on tool header visibility
             VIEW3D_HT_header.draw_xform_template(layout, context)
@@ -426,7 +443,7 @@ class VIEW3D_HT_header(Header):
         row.active = (object_mode == 'EDIT') or (shading.type in {'WIREFRAME', 'SOLID'})
 
         # While exposing `shading.show_xray(_wireframe)` is correct.
-        # this hides the key shortcut from users: T70433.
+        # this hides the key shortcut from users: #70433.
         if has_pose_mode:
             draw_depressed = overlay.show_xray_bone
         elif shading.type == 'WIREFRAME':
@@ -448,6 +465,7 @@ class VIEW3D_HT_header(Header):
 
         # sub.enabled = shading.type != 'RENDERED'
         sub.popover(panel="VIEW3D_PT_shading", text="")
+
 
 
 class VIEW3D_HT_tool_header(Header):
@@ -1061,316 +1079,12 @@ class _draw_tool_settings_context_mode:
         return True
 
 
-# bfa - show hide the editormenu
 # BFA - show hide the editormenu
 class ALL_MT_editormenu(Menu):
     bl_label = ""
 
     def draw(self, context):
         self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
-
-class ALL_MT_editormenu(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        layout = self.layout
-
-        self.draw_menus(self.layout, context)
-
-        tool_settings = context.tool_settings
-        view = context.space_data
-        shading = view.shading
-
-        layout.row(align=True).template_header()
-
-        row = layout.row(align=True)
-        obj = context.active_object
-        mode_string = context.mode
-        object_mode = 'OBJECT' if obj is None else obj.mode
-        has_pose_mode = (
-            (object_mode == 'POSE') or
-            (object_mode == 'WEIGHT_PAINT' and context.pose_object is not None)
-        )
-
-        # Note: This is actually deadly in case enum_items have to be dynamically generated
-        #       (because internal RNA array iterator will free everything immediately...).
-        # XXX This is an RNA internal issue, not sure how to fix it.
-        # Note: Tried to add an accessor to get translated UI strings instead of manual call
-        #       to pgettext_iface below, but this fails because translated enum-items
-        #       are always dynamically allocated.
-        act_mode_item = bpy.types.Object.bl_rna.properties["mode"].enum_items[object_mode]
-        act_mode_i18n_context = bpy.types.Object.bl_rna.properties["mode"].translation_context
-
-        sub = row.row(align=True)
-        sub.ui_units_x = 5.5
-        sub.operator_menu_enum(
-            "object.mode_set", "mode",
-            text=iface_(act_mode_item.name, act_mode_i18n_context),
-            icon=act_mode_item.icon,
-        )
-        del act_mode_item
-
-        layout.template_header_3D_mode()
-
-        # Contains buttons like Mode, Pivot, Layer, Mesh Select Mode...
-        if obj:
-            # Particle edit
-            if object_mode == 'PARTICLE_EDIT':
-                row = layout.row()
-                row.prop(tool_settings.particle_edit, "select_mode", text="", expand=True)
-            elif object_mode in {'EDIT', 'SCULPT_CURVES'} and obj.type == 'CURVES':
-                curves = obj.data
-
-                row = layout.row(align=True)
-                domain = curves.selection_domain
-                row.operator(
-                    "curves.set_selection_domain",
-                    text="",
-                    icon='CURVE_BEZCIRCLE',
-                    depress=(domain == 'POINT'),
-                ).domain = 'POINT'
-                row.operator(
-                    "curves.set_selection_domain",
-                    text="",
-                    icon='CURVE_PATH',
-                    depress=(domain == 'CURVE'),
-                ).domain = 'CURVE'
-
-        # Grease Pencil
-        if obj and obj.type == 'GREASEPENCIL':
-            # Select mode for Editing
-            if object_mode == 'EDIT':
-                row = layout.row(align=True)
-                row.operator(
-                    "grease_pencil.set_selection_mode",
-                    text="",
-                    icon='GP_SELECT_POINTS',
-                    depress=(tool_settings.gpencil_selectmode_edit == 'POINT'),
-                ).mode = 'POINT'
-                row.operator(
-                    "grease_pencil.set_selection_mode",
-                    text="",
-                    icon='GP_SELECT_STROKES',
-                    depress=(tool_settings.gpencil_selectmode_edit == 'STROKE'),
-                ).mode = 'STROKE'
-
-            if object_mode == 'PAINT_GREASE_PENCIL':
-                row = layout.row()
-                sub = row.row(align=True)
-                sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
-
-        # Grease Pencil (legacy)
-        if obj and obj.type == 'GPENCIL' and context.gpencil_data:
-            gpd = context.gpencil_data
-
-            if gpd.is_stroke_paint_mode:
-                row = layout.row()
-                sub = row.row(align=True)
-                sub.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
-                sub.separator(factor=0.4)
-                sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
-                sub.separator(factor=0.4)
-                sub.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
-                sub.separator(factor=0.4)
-                sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
-
-            # Select mode for Editing
-            if gpd.use_stroke_edit_mode:
-                row = layout.row(align=True)
-                row.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='POINT')
-                row.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='STROKE')
-
-                subrow = row.row(align=True)
-                subrow.enabled = not gpd.use_curve_edit
-                subrow.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='SEGMENT')
-
-                # Curve edit sub-mode.
-                row = layout.row(align=True)
-                row.prop(gpd, "use_curve_edit", text="",
-                         icon='IPO_BEZIER')
-                sub = row.row(align=True)
-                sub.active = gpd.use_curve_edit
-                sub.popover(
-                    panel="VIEW3D_PT_gpencil_curve_edit",
-                    text="Curve Editing",
-                )
-
-            # Select mode for Sculpt
-            if gpd.is_stroke_sculpt_mode:
-                row = layout.row(align=True)
-                row.prop(tool_settings, "use_gpencil_select_mask_point", text="")
-                row.prop(tool_settings, "use_gpencil_select_mask_stroke", text="")
-                row.prop(tool_settings, "use_gpencil_select_mask_segment", text="")
-
-            # Select mode for Vertex Paint
-            if gpd.is_stroke_vertex_mode:
-                row = layout.row(align=True)
-                row.prop(tool_settings, "use_gpencil_vertex_select_mask_point", text="")
-                row.prop(tool_settings, "use_gpencil_vertex_select_mask_stroke", text="")
-                row.prop(tool_settings, "use_gpencil_vertex_select_mask_segment", text="")
-
-            if gpd.is_stroke_paint_mode:
-                row = layout.row(align=True)
-                row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
-
-            if (
-                    gpd.use_stroke_edit_mode or
-                    gpd.is_stroke_sculpt_mode or
-                    gpd.is_stroke_weight_mode or
-                    gpd.is_stroke_vertex_mode
-            ):
-                row = layout.row(align=True)
-                row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
-
-                sub = row.row(align=True)
-                sub.enabled = gpd.use_multiedit
-                sub.popover(
-                    panel="VIEW3D_PT_gpencil_multi_frame",
-                    text="Multiframe",
-                )
-
-        overlay = view.overlay
-
-        VIEW3D_MT_editor_menus.draw_collapsible(context, layout)
-
-        layout.separator_spacer()
-
-        if object_mode in {'PAINT_GPENCIL', 'SCULPT_GPENCIL'}:
-            # Grease pencil
-            if object_mode == 'PAINT_GPENCIL':
-                layout.prop_with_popover(
-                    tool_settings,
-                    "gpencil_stroke_placement_view3d",
-                    text="",
-                    panel="VIEW3D_PT_gpencil_origin",
-                )
-
-            if object_mode in {'PAINT_GPENCIL', 'SCULPT_GPENCIL'}:
-                layout.prop_with_popover(
-                    tool_settings.gpencil_sculpt,
-                    "lock_axis",
-                    text="",
-                    panel="VIEW3D_PT_gpencil_lock",
-                )
-
-            if object_mode == 'PAINT_GPENCIL':
-                # FIXME: this is bad practice!
-                # Tool options are to be displayed in the top-bar.
-                if context.workspace.tools.from_space_view3d_mode(object_mode).idname == "builtin_brush.Draw":
-                    settings = tool_settings.gpencil_sculpt.guide
-                    row = layout.row(align=True)
-                    row.prop(settings, "use_guide", text="", icon='GRID')
-                    sub = row.row(align=True)
-                    sub.active = settings.use_guide
-                    sub.popover(
-                        panel="VIEW3D_PT_gpencil_guide",
-                        text="Guides",
-                    )
-            if object_mode == 'SCULPT_GPENCIL':
-                layout.popover(
-                    panel="VIEW3D_PT_gpencil_sculpt_automasking",
-                    text="",
-                    icon='MOD_MASK',
-                )
-
-        elif object_mode == 'SCULPT':
-            # If the active tool supports it, show the canvas selector popover.
-            from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
-            tool = ToolSelectPanelHelper.tool_active_from_context(context)
-            is_paint_tool = tool and tool.use_paint_canvas
-
-            shading = VIEW3D_PT_shading.get_shading(context)
-            color_type = shading.color_type
-
-            row = layout.row()
-            row.ui_units_x = 6
-            row.active = is_paint_tool and color_type == 'VERTEX'
-
-            if context.preferences.experimental.use_sculpt_texture_paint:
-                canvas_source = tool_settings.paint_mode.canvas_source
-                icon = 'GROUP_VCOL' if canvas_source == 'COLOR_ATTRIBUTE' else canvas_source
-                row.popover(panel="VIEW3D_PT_slots_paint_canvas", icon=icon)
-            else:
-                row.popover(panel="VIEW3D_PT_slots_color_attributes", icon="GROUP_VCOL")
-
-            layout.popover(
-                panel="VIEW3D_PT_sculpt_automasking",
-                text="",
-                icon='MOD_MASK',
-            )
-
-        elif object_mode == 'VERTEX_PAINT':
-            row = layout.row()
-            row.ui_units_x = 6
-            row.popover(panel="VIEW3D_PT_slots_color_attributes", icon="GROUP_VCOL")
-
-        elif object_mode == 'WEIGHT_PAINT':
-            row = layout.row()
-            row.ui_units_x = 6
-            row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon="GROUP_VERTEX")
-
-        elif object_mode == 'TEXTURE_PAINT':
-            tool_mode = tool_settings.image_paint.mode
-            icon = 'MATERIAL' if tool_mode == 'MATERIAL' else 'IMAGE_DATA'
-
-            row = layout.row()
-            row.ui_units_x = 9
-            row.popover(panel="VIEW3D_PT_slots_projectpaint", icon=icon)
-            row.popover(panel="VIEW3D_PT_mask", icon="MOD_MASK", text="")
-        else:
-            # Transform settings depending on tool header visibility
-            VIEW3D_HT_header.draw_xform_template(layout, context)
-
-        layout.separator_spacer()
-
-        # Viewport Settings
-        layout.popover(
-            panel="VIEW3D_PT_object_type_visibility",
-            icon_value=view.icon_from_show_object_viewport,
-            text="",
-        )
-
-        # Gizmo toggle & popover.
-        row = layout.row(align=True)
-        # FIXME: place-holder icon.
-        row.prop(view, "show_gizmo", text="", toggle=True, icon='GIZMO')
-        sub = row.row(align=True)
-        sub.active = view.show_gizmo
-        sub.popover(
-            panel="VIEW3D_PT_gizmo_display",
-            text="",
-        )
-
-        # Overlay toggle & popover.
-        row = layout.row(align=True)
-        row.prop(overlay, "show_overlays", icon='OVERLAY', text="")
-        sub = row.row(align=True)
-        sub.active = overlay.show_overlays
-        sub.popover(panel="VIEW3D_PT_overlay", text="")
-
-        row = layout.row()
-        row.active = (object_mode == 'EDIT') or (shading.type in {'WIREFRAME', 'SOLID'})
-
-        # While exposing `shading.show_xray(_wireframe)` is correct.
-        # this hides the key shortcut from users: #70433.
-        if has_pose_mode:
-            draw_depressed = overlay.show_xray_bone
-        elif shading.type == 'WIREFRAME':
-            draw_depressed = shading.show_xray_wireframe
-        else:
-            draw_depressed = shading.show_xray
-        row.operator(
-            "view3d.toggle_xray",
-            text="",
-            icon='XRAY',
-            depress=draw_depressed,
-        )
 
     @staticmethod
     def draw_menus(layout, context):
