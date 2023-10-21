@@ -216,7 +216,7 @@ class VIEW3D_HT_tool_header(Header):
                 text="Layer: " + text,
             )
             if mode_string == 'EDIT_GPENCIL':
-                sub.popover(panel="VIEW3D_PT_gpencil_edit_options", text="Options")
+                sub.popover(panel="VIEW3D_PT_gpencil_edit_options", text="Options") # bfa menu
 
 
 class _draw_tool_settings_context_mode:
@@ -1123,7 +1123,7 @@ class VIEW3D_MT_editor_menus(Menu):
                     layout.menu("VIEW3D_MT_select_edit_gpencil")
                 elif mode_string == 'VERTEX_GPENCIL':
                     layout.menu("VIEW3D_MT_select_edit_gpencil")
-                    layout.menu("VIEW3D_MT_gpencil_animation")
+                    layout.menu("VIEW3D_MT_gpencil_animation") # bfa menu
                     layout.menu("GPENCIL_MT_layer_active", text="Active Layer")
         elif mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
             mesh = obj.data
@@ -6698,7 +6698,7 @@ class VIEW3D_MT_draw_gpencil(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_gpencil_animation")
+        layout.menu("VIEW3D_MT_gpencil_animation") #bfa menu
 
         layout.separator()
 
@@ -6752,7 +6752,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_gpencil_animation")
+        layout.menu("VIEW3D_MT_gpencil_animation") #bfa menu
         layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE")
 
         layout.separator()
@@ -6915,7 +6915,7 @@ class VIEW3D_MT_weight_gpencil(Menu):
 
         layout.menu("VIEW3D_MT_gpencil_autoweights")
 
-
+#bfa menu
 class VIEW3D_MT_gpencil_animation(Menu):
     bl_label = "Animation"
 
@@ -9734,52 +9734,7 @@ class VIEW3D_PT_gpencil_weight_context_menu(Panel):
         draw_gpencil_layer_active(context, layout)
 
 
-class VIEW3D_MT_gpencil_sculpt(Menu):
-    bl_label = "Sculpt"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("VIEW3D_MT_assign_material")
-        layout.separator()
-
-        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon="DUPLICATE")
-        layout.operator(
-            "gpencil.frame_duplicate",
-            text="Duplicate Active Frame All Layers",
-            icon="DUPLICATE").mode = 'ALL'
-
-        layout.separator()
-
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
-        layout.operator("gpencil.stroke_simplify_fixed", text="Simplify", icon="MOD_SIMPLIFY")
-        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative", icon="SIMPLIFY_ADAPTIVE")
-
-        if context.mode == 'WEIGHT_GPENCIL':
-            layout.separator()
-            layout.menu("VIEW3D_MT_gpencil_autoweights")
-
-        layout.separator()
-
-        # radial control button brush size
-        myvar = layout.operator("wm.radial_control", text="Brush Radius", icon="BRUSHSIZE")
-        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.size'
-
-        # radial control button brush strength
-        myvar = layout.operator("wm.radial_control", text="Brush Strength", icon="BRUSHSTRENGTH")
-        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
-
-        layout.separator()
-
-        # line edit toggles from the keympap
-        props = layout.operator("wm.context_toggle", text="Toggle Edit Lines", icon='STROKE')
-        props.data_path = "space_data.overlay.use_gpencil_edit_lines"
-
-        props = layout.operator("wm.context_toggle", text="Toggle Multiline Edit Only", icon='STROKE')
-        props.data_path = "space_data.overlay.use_gpencil_multiedit_line_only"
-
-
+# bfa menu
 class VIEW3D_PT_gpencil_edit_options(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -10474,7 +10429,7 @@ classes = (
     VIEW3D_MT_edit_armature_roll,
     VIEW3D_MT_edit_armature_names,
     VIEW3D_MT_edit_armature_delete,
-    VIEW3D_MT_gpencil_animation,
+    VIEW3D_MT_gpencil_animation, #bfa menu
     VIEW3D_MT_edit_gpencil_transform,
     VIEW3D_MT_edit_curves,
     VIEW3D_MT_edit_pointcloud,
@@ -10507,7 +10462,6 @@ classes = (
     VIEW3D_PT_gpencil_multi_frame,
     VIEW3D_PT_gpencil_curve_edit,
     VIEW3D_PT_gpencil_sculpt_automasking,
-    VIEW3D_MT_gpencil_sculpt,
     VIEW3D_PT_quad_view,
     VIEW3D_PT_view3d_stereo,
     VIEW3D_PT_shading,
@@ -10551,7 +10505,7 @@ classes = (
     VIEW3D_PT_gpencil_sculpt_context_menu,
     VIEW3D_PT_gpencil_weight_context_menu,
     VIEW3D_PT_gpencil_draw_context_menu,
-    VIEW3D_PT_gpencil_edit_options,
+    VIEW3D_PT_gpencil_edit_options, # bfa menu
     VIEW3D_PT_sculpt_automasking,
     VIEW3D_PT_sculpt_context_menu,
     TOPBAR_PT_gpencil_materials,
