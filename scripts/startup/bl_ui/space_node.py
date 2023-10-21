@@ -1180,7 +1180,6 @@ class NODE_PT_node_tree_interface(Panel):
             return False
         return True
 
-
     def draw(self, context):
         layout = self.layout
         snode = context.space_data
