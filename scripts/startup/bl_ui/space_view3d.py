@@ -1090,6 +1090,8 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
+    #bfa - do not place any content here, it does not belong into this class !!!
+
 
 class VIEW3D_MT_editor_menus(Menu):
     bl_label = ""
@@ -1118,12 +1120,12 @@ class VIEW3D_MT_editor_menus(Menu):
                          tool_settings.use_gpencil_select_mask_segment)
                 ):
                     layout.menu("VIEW3D_MT_select_edit_gpencil") #BFA - change order for consistency
-                    layout.menu("VIEW3D_MT_sculpt_gpencil_copy")
+                    layout.menu("VIEW3D_MT_sculpt_gpencil_copy") #bfa menu
                 elif mode_string == 'EDIT_GPENCIL':
                     layout.menu("VIEW3D_MT_select_edit_gpencil")
                 elif mode_string == 'VERTEX_GPENCIL':
                     layout.menu("VIEW3D_MT_select_edit_gpencil")
-                    layout.menu("VIEW3D_MT_gpencil_animation") # bfa menu
+                    layout.menu("VIEW3D_MT_gpencil_animation")
                     layout.menu("GPENCIL_MT_layer_active", text="Active Layer")
         elif mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
             mesh = obj.data
@@ -2376,7 +2378,7 @@ class VIEW3D_MT_edit_lattice_context_menu(Menu):
         layout = self.layout
 
         layout.menu("VIEW3D_MT_mirror")
-        layout.menu("VIEW3D_MT_edit_lattice_flip")
+        layout.menu("VIEW3D_MT_edit_lattice_flip") #bfa menu - blender uses enum
         layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
@@ -4626,45 +4628,6 @@ class VIEW3D_MT_sculpt_set_pivot(Menu):
         props.mode = 'SURFACE'
 
 
-class VIEW3D_MT_hide_mask(Menu):
-    bl_label = "Hide/Mask"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        props = layout.operator("paint.hide_show", text="Show All", icon="HIDE_OFF")
-        props.action = 'SHOW'
-        props.area = 'ALL'
-
-        props = layout.operator("paint.hide_show", text="Hide Bounding Box", icon="HIDE_ON")
-        props.action = 'HIDE'
-        props.area = 'INSIDE'
-
-        props = layout.operator("paint.hide_show", text="Show Bounding Box", icon="HIDE_OFF")
-        props.action = 'SHOW'
-        props.area = 'INSIDE'
-
-        props = layout.operator("paint.hide_show", text="Hide Masked", icon="HIDE_ON")
-        props.area = 'MASKED'
-        props.action = 'HIDE'
-
-        layout.separator()
-
-        props = layout.operator("paint.mask_flood_fill", text="Invert Mask", icon="INVERT_MASK")
-        props.mode = 'INVERT'
-
-        props = layout.operator("paint.mask_flood_fill", text="Fill Mask", icon="FILL_MASK")
-        props.mode = 'VALUE'
-        props.value = 1
-
-        props = layout.operator("paint.mask_flood_fill", text="Clear Mask", icon="CLEAR_MASK")
-        props.mode = 'VALUE'
-        props.value = 0
-
-        props = layout.operator("view3d.select_box", text="Box Mask", icon="BOX_MASK")
-        props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask", icon="LASSO_MASK")
-
-
 class VIEW3D_MT_face_sets_init(Menu):
     bl_label = "Face Sets Init"
 
@@ -5179,7 +5142,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_delete")
-        layout.menu("VIEW3D_MT_edit_mesh_dissolve")
+        layout.menu("VIEW3D_MT_edit_mesh_dissolve") #bfa menu
         layout.menu("VIEW3D_MT_edit_mesh_select_mode")
 
 
@@ -5450,6 +5413,7 @@ class VIEW3D_MT_edit_mesh_select_mode(Menu):
         layout.operator("mesh.select_mode", text="Face", icon='FACESEL').type = 'FACE'
 
 
+#bfa operator for separated tooltip
 class VIEW3D_MT_edit_mesh_extrude_dupli(bpy.types.Operator):
     """Duplicate or Extrude to Cursor\nCreates a slightly rotated copy of the current mesh selection\nThe tool can also extrude the selected geometry, dependant of the selection\nHotkey tool! """      #BFA - blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mesh.dupli_extrude_cursor_norotate"        # unique identifier for buttons and menu items to reference.
@@ -5461,6 +5425,7 @@ class VIEW3D_MT_edit_mesh_extrude_dupli(bpy.types.Operator):
         return {'FINISHED'}
 
 
+#bfa operator for separated tooltip
 class VIEW3D_MT_edit_mesh_extrude_dupli_rotate(bpy.types.Operator):
     """Duplicate or Extrude to Cursor Rotated\nCreates a slightly rotated copy of the current mesh selection, and rotates the source slightly\nThe tool can also extrude the selected geometry, dependant of the selection\nHotkey tool!"""      #BFA-  blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mesh.dupli_extrude_cursor_rotate"        # unique identifier for buttons and menu items to reference.
@@ -5523,7 +5488,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.menu("VIEW3D_MT_edit_mesh_vertices_legacy")
+        layout.menu("VIEW3D_MT_edit_mesh_vertices_legacy") #bfa menu
         layout.operator("mesh.dupli_extrude_cursor", icon="EXTRUDE_REGION").rotate_source = True
 
         layout.separator()
@@ -5557,6 +5522,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator("object.vertex_parent_set", icon="VERTEX_PARENT")
 
 
+#bfa menu
 class VIEW3D_MT_edit_mesh_vertices_legacy(Menu):
     bl_label = "Legacy"
 
@@ -5594,7 +5560,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.menu("VIEW3D_MT_edit_mesh_edges_legacy")
+        layout.menu("VIEW3D_MT_edit_mesh_edges_legacy") #bfa menu
 
         layout.operator("mesh.bridge_edge_loops", icon="BRIDGE_EDGELOOPS")
         layout.operator("mesh.screw", icon="MOD_SCREW")
@@ -5632,6 +5598,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
             layout.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon="CLEAR_FS_EDGE").clear = True
 
 
+#bfa menu
 class VIEW3D_MT_edit_mesh_edges_legacy(Menu):
     bl_label = "Legacy"
 
@@ -5693,7 +5660,7 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.menu("VIEW3D_MT_edit_mesh_faces_legacy")
+        layout.menu("VIEW3D_MT_edit_mesh_faces_legacy") #bfa menu
 
         layout.operator("mesh.poke", icon="POKEFACES")
         layout.operator("view3d.edit_mesh_extrude_move_normal",
@@ -5734,6 +5701,7 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
 
+#bfa menu
 class VIEW3D_MT_edit_mesh_faces_legacy(Menu):
     bl_label = "Legacy"
 
@@ -5932,6 +5900,7 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
         layout.operator("mesh.delete_edgeloop", text="Edge Loops", icon="DELETE")
 
 
+#bfa menu
 class VIEW3D_MT_edit_mesh_dissolve(Menu):
     bl_label = "Dissolve"
 
@@ -6009,6 +5978,7 @@ class VIEW3D_MT_edit_gpencil_delete(Menu):
         layout.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon='DELETE')
 
 
+#bfa menu
 class VIEW3D_MT_sculpt_gpencil_copy(Menu):
     bl_label = "Copy"
 
@@ -6016,7 +5986,6 @@ class VIEW3D_MT_sculpt_gpencil_copy(Menu):
         layout = self.layout
 
         layout.operator("gpencil.copy", text="Copy", icon='COPYDOWN')
-
 
 
 class VIEW3D_MT_edit_greasepencil_delete(Menu):
@@ -6077,7 +6046,7 @@ def draw_curve(self, _context):
     layout.separator()
 
     if edit_object.type == 'CURVE':
-        layout.menu("VIEW3D_MT_edit_curve_handle_type_set")
+        layout.menu("VIEW3D_MT_edit_curve_handle_type_set") #bfa menu
         layout.operator("curve.normals_make_consistent", icon='RECALC_NORMALS')
 
     layout.separator()
@@ -6121,7 +6090,7 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
 
                 layout.separator()
 
-                layout.menu("VIEW3D_MT_edit_curve_handle_type_set")
+                layout.menu("VIEW3D_MT_edit_curve_handle_type_set") #bfa menu
                 layout.operator("curve.normals_make_consistent", icon='RECALC_NORMALS')
 
                 layout.separator()
@@ -6140,7 +6109,7 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
 
         layout.operator("object.vertex_parent_set", icon="VERTEX_PARENT")
 
-
+#bfa menu
 class VIEW3D_MT_edit_curve_handle_type_set(Menu):
     bl_label = "Set Handle Type"
 
@@ -6317,7 +6286,7 @@ class VIEW3D_MT_edit_font_kerning(Menu):
         layout.operator("font.change_spacing", text="Increase Kerning", icon="INCREASE_KERNING").delta = 1.0
         layout.operator("font.change_spacing", text="Reset Kerning", icon="RESET").delta = -kerning
 
-
+#bfa menu
 class VIEW3D_MT_edit_font_move(Menu):
     bl_label = "Move Cursor"
 
@@ -6361,7 +6330,7 @@ class VIEW3D_MT_edit_font(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_font_chars")
-        layout.menu("VIEW3D_MT_edit_font_move")
+        layout.menu("VIEW3D_MT_edit_font_move")  #bfa menu
 
         layout.separator()
 
@@ -6440,7 +6409,7 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_snap")
-        layout.menu("VIEW3D_MT_edit_lattice_flip")
+        layout.menu("VIEW3D_MT_edit_lattice_flip") #bfa menu - blender uses enum
 
         layout.separator()
 
@@ -6452,7 +6421,7 @@ class VIEW3D_MT_edit_lattice(Menu):
 
         layout.operator("object.vertex_parent_set", icon="VERTEX_PARENT")
 
-
+#bfa menu - blender uses enum
 class VIEW3D_MT_edit_lattice_flip(Menu):
     bl_label = "Flip"
 
@@ -6532,7 +6501,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.operator("armature.delete", icon="DELETE")
         layout.operator("armature.dissolve", icon="DELETE")
 
-
+# bfa menu
 class VIEW3D_MT_armature_showhide(Menu):
     bl_label = "Show/Hide"
 
@@ -6698,7 +6667,7 @@ class VIEW3D_MT_draw_gpencil(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_gpencil_animation") #bfa menu
+        layout.menu("VIEW3D_MT_gpencil_animation")
 
         layout.separator()
 
@@ -6752,7 +6721,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_gpencil_animation") #bfa menu
+        layout.menu("VIEW3D_MT_gpencil_animation")
         layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE")
 
         layout.separator()
@@ -6786,13 +6755,14 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.menu("GPENCIL_MT_cleanup")
-        layout.menu("VIEW3D_MT_edit_gpencil_hide", text="Show/Hide")
+        layout.menu("VIEW3D_MT_edit_gpencil_hide", text="Show/Hide") #bfa menu
 
         layout.separator()
 
         layout.operator_menu_enum("gpencil.stroke_separate", "mode", text="Separate")
 
 
+#bfa menu
 class VIEW3D_MT_edit_gpencil_hide(Menu):
     bl_label = "Hide"
 
@@ -6808,6 +6778,7 @@ class VIEW3D_MT_edit_gpencil_hide(Menu):
         layout.operator("gpencil.selection_opacity_toggle", text="Toggle Opacity", icon="HIDE_OFF")
 
 
+#bfa menu
 class VIEW3D_MT_edit_gpencil_arrange_strokes(Menu):
     bl_label = "Arrange Strokes"
 
@@ -6843,7 +6814,7 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         layout.menu("GPENCIL_MT_move_to_layer")
         layout.menu("VIEW3D_MT_assign_material")
         layout.operator("gpencil.set_active_material", text="Set as Active Material", icon="MATERIAL")
-        layout.menu("VIEW3D_MT_edit_gpencil_arrange_strokes")
+        layout.menu("VIEW3D_MT_edit_gpencil_arrange_strokes") #bfa menu
 
         layout.separator()
 
@@ -6915,7 +6886,7 @@ class VIEW3D_MT_weight_gpencil(Menu):
 
         layout.menu("VIEW3D_MT_gpencil_autoweights")
 
-#bfa menu
+
 class VIEW3D_MT_gpencil_animation(Menu):
     bl_label = "Animation"
 
@@ -7405,6 +7376,7 @@ class VIEW3D_PT_view3d_lock(Panel):
             col.prop(view, "lock_cursor", text="To 3D Cursor")
         col.prop(view, "lock_camera", text="Camera to View")
 
+ #bfa panel
 class VIEW3D_PT_view3d_properties_edit(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -7418,7 +7390,7 @@ class VIEW3D_PT_view3d_properties_edit(Panel):
         tool_settings = context.tool_settings
         layout.prop(tool_settings, "lock_object_mode")
 
-
+#bfa panel
 class VIEW3D_PT_view3d_camera_lock(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -10220,7 +10192,7 @@ class VIEW3D_AST_sculpt_brushes(bpy.types.AssetShelf):
 classes = (
     VIEW3D_HT_header,
     VIEW3D_HT_tool_header,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu, #bfa menu
     VIEW3D_MT_editor_menus,
     VIEW3D_MT_transform,
     VIEW3D_MT_transform_object,
@@ -10249,7 +10221,7 @@ classes = (
     VIEW3D_MT_select_linked,
     VIEW3D_MT_select_object_more_less,
     VIEW3D_MT_select_pose,
-	VIEW3D_MT_select_pose_more_less, #BFA - not used
+    VIEW3D_MT_select_pose_more_less, #BFA - not used
     VIEW3D_MT_select_particle,
     VIEW3D_MT_edit_mesh,
     VIEW3D_MT_edit_mesh_legacy,
@@ -10296,13 +10268,12 @@ classes = (
     VIEW3D_MT_image_add,
     VIEW3D_MT_origin_set,
     VIEW3D_MT_object,
-    VIEW3D_MT_object_convert,
     VIEW3D_MT_object_animation,
     VIEW3D_MT_object_asset,
     VIEW3D_MT_object_rigid_body,
     VIEW3D_MT_object_clear,
     VIEW3D_MT_object_context_menu,
-	VIEW3D_MT_edit_armature_parent, #BFA - not used
+    VIEW3D_MT_object_convert,
     VIEW3D_MT_object_shading,
     VIEW3D_MT_object_apply,
     VIEW3D_MT_object_relations,
@@ -10339,7 +10310,6 @@ classes = (
     VIEW3D_MT_face_sets,
     VIEW3D_MT_face_sets_init,
     VIEW3D_MT_random_mask,
-    VIEW3D_MT_hide_mask,
     VIEW3D_MT_particle,
     VIEW3D_MT_particle_context_menu,
     VIEW3D_MT_particle_showhide,
@@ -10362,15 +10332,15 @@ classes = (
     VIEW3D_MT_edit_mesh_select_mode,
     VIEW3D_MT_edit_mesh_select_linked,
     VIEW3D_MT_edit_mesh_select_loops,
-    VIEW3D_MT_edit_mesh_extrude_dupli,
-    VIEW3D_MT_edit_mesh_extrude_dupli_rotate,
+    VIEW3D_MT_edit_mesh_extrude_dupli, #bfa operator for separated tooltip
+    VIEW3D_MT_edit_mesh_extrude_dupli_rotate, #bfa operator for separated tooltip
     VIEW3D_MT_edit_mesh_extrude,
     VIEW3D_MT_edit_mesh_vertices,
-    VIEW3D_MT_edit_mesh_vertices_legacy,
+    VIEW3D_MT_edit_mesh_vertices_legacy, #bfa menu
     VIEW3D_MT_edit_mesh_edges,
-    VIEW3D_MT_edit_mesh_edges_legacy,
+    VIEW3D_MT_edit_mesh_edges_legacy, #bfa menu
     VIEW3D_MT_edit_mesh_faces,
-    VIEW3D_MT_edit_mesh_faces_legacy,
+    VIEW3D_MT_edit_mesh_faces_legacy, #bfa menu
     VIEW3D_MT_edit_mesh_faces_data,
     VIEW3D_MT_edit_mesh_normals,
     VIEW3D_MT_edit_mesh_normals_select_strength,
@@ -10382,21 +10352,22 @@ classes = (
     VIEW3D_MT_edit_mesh_delete,
     VIEW3D_MT_edit_mesh_merge,
     VIEW3D_MT_edit_mesh_split,
-    VIEW3D_MT_edit_mesh_dissolve,
+    VIEW3D_MT_edit_mesh_dissolve, #bfa menu
     VIEW3D_MT_edit_mesh_showhide,
     VIEW3D_MT_paint_grease_pencil,
     VIEW3D_MT_paint_gpencil,
     VIEW3D_MT_draw_gpencil,
-    VIEW3D_MT_edit_gpencil_showhide,
     VIEW3D_MT_assign_material,
     VIEW3D_MT_edit_gpencil,
     VIEW3D_MT_edit_gpencil_stroke,
     VIEW3D_MT_edit_gpencil_point,
-    VIEW3D_MT_edit_gpencil_hide,
-    VIEW3D_MT_edit_gpencil_arrange_strokes,
+    VIEW3D_MT_edit_gpencil_hide, #bfa menu
+    VIEW3D_MT_edit_gpencil_arrange_strokes, #bfa menu
     VIEW3D_MT_edit_gpencil_delete,
-    VIEW3D_MT_sculpt_gpencil_copy,
+    VIEW3D_MT_sculpt_gpencil_copy, #bfa menu
+    VIEW3D_MT_edit_gpencil_showhide,
     VIEW3D_MT_weight_gpencil,
+    VIEW3D_MT_gpencil_animation,
     VIEW3D_MT_gpencil_simplify,
     VIEW3D_MT_gpencil_autoweights,
     VIEW3D_MT_gpencil_edit_context_menu,
@@ -10406,7 +10377,7 @@ classes = (
     VIEW3D_MT_edit_greasepencil_animation,
     VIEW3D_MT_edit_curve,
     VIEW3D_MT_edit_curve_ctrlpoints,
-    VIEW3D_MT_edit_curve_handle_type_set,
+    VIEW3D_MT_edit_curve_handle_type_set, #bfa menu
     VIEW3D_MT_edit_curve_segments,
 	VIEW3D_MT_edit_curve_clean, #BFa - not used
     VIEW3D_MT_edit_curve_context_menu,
@@ -10416,20 +10387,20 @@ classes = (
     VIEW3D_MT_edit_font,
     VIEW3D_MT_edit_font_chars,
     VIEW3D_MT_edit_font_kerning,
-    VIEW3D_MT_edit_font_move,
+    VIEW3D_MT_edit_font_move,  #bfa menu
     VIEW3D_MT_edit_font_delete,
     VIEW3D_MT_edit_font_context_menu,
     VIEW3D_MT_edit_meta,
     VIEW3D_MT_edit_meta_showhide,
     VIEW3D_MT_edit_lattice,
-    VIEW3D_MT_edit_lattice_flip,
+    VIEW3D_MT_edit_lattice_flip, #bfa menu - blender uses enum
     VIEW3D_MT_edit_armature,
-    VIEW3D_MT_armature_showhide,
+    VIEW3D_MT_armature_showhide,  #bfa menu
     VIEW3D_MT_armature_context_menu,
+    VIEW3D_MT_edit_armature_parent, #BFA - not used
     VIEW3D_MT_edit_armature_roll,
     VIEW3D_MT_edit_armature_names,
     VIEW3D_MT_edit_armature_delete,
-    VIEW3D_MT_gpencil_animation, #bfa menu
     VIEW3D_MT_edit_gpencil_transform,
     VIEW3D_MT_edit_curves,
     VIEW3D_MT_edit_pointcloud,
@@ -10451,9 +10422,9 @@ classes = (
     VIEW3D_PT_active_tool,
     VIEW3D_PT_active_tool_duplicate,
     VIEW3D_PT_view3d_properties,
-    VIEW3D_PT_view3d_properties_edit,
+    VIEW3D_PT_view3d_properties_edit,  #bfa panel
     VIEW3D_PT_view3d_lock, #BFA - not used
-    VIEW3D_PT_view3d_camera_lock,
+    VIEW3D_PT_view3d_camera_lock,  #bfa panel
     VIEW3D_PT_view3d_cursor,
     VIEW3D_PT_collections,
     VIEW3D_PT_object_type_visibility,
