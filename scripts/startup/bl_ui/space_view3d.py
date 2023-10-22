@@ -4017,7 +4017,7 @@ class VIEW3D_MT_brush(Menu):
 
             layout.separator()
 
-            layout.menu("VIEW3D_MT_facemask_showhide")  # show hide for face mask tool
+            layout.menu("VIEW3D_MT_facemask_showhide")  # bfa - show hide for face mask tool
 
         # Color picker just in vertex and texture paint
         if obj.mode in {'VERTEX_PAINT', 'TEXTURE_PAINT'}:
@@ -4027,25 +4027,7 @@ class VIEW3D_MT_brush(Menu):
             layout.operator("paint.sample_color", text="Color Picker", icon='EYEDROPPER')
 
 
-class VIEW3D_MT_brush_curve_presets(Menu):
-    bl_label = "Curve Preset"
-
-    def draw(self, context):
-        layout = self.layout
-
-        toolsettings = context.tool_settings.image_paint
-        brush = toolsettings.brush
-
-        layout.operator("brush.curve_preset", icon='SHARPCURVE', text="Sharp").shape = 'SHARP'
-        layout.operator("brush.curve_preset", icon='SMOOTHCURVE', text="Smooth").shape = 'SMOOTH'
-        layout.operator("brush.curve_preset", icon='NOCURVE', text="Max").shape = 'MAX'
-        layout.operator("brush.curve_preset", icon='LINCURVE', text="Line").shape = 'LINE'
-        layout.operator("brush.curve_preset", icon='ROOTCURVE', text="Root").shape = 'ROOT'
-        layout.operator("brush.curve_preset", icon='SPHERECURVE', text="Round").shape = 'ROUND'
-
-# Show hide menu for face selection masking
-
-
+# bfa - show hide menu for face selection masking
 class VIEW3D_MT_facemask_showhide(Menu):
     bl_label = "Show/Hide"
 
@@ -4197,7 +4179,7 @@ class VIEW3D_MT_paint_weight(Menu):
     @staticmethod
     def draw_generic(layout, is_editmode=False):
 
-        layout.menu("VIEW3D_MT_paint_weight_legacy", text="Legacy")
+        layout.menu("VIEW3D_MT_paint_weight_legacy", text="Legacy") #bfa menu
 
         if not is_editmode:
 
@@ -4248,6 +4230,7 @@ class VIEW3D_MT_paint_weight(Menu):
         self.draw_generic(self.layout, is_editmode=False)
 
 
+#bfa menu
 class VIEW3D_MT_paint_weight_legacy(Menu):
     bl_label = "Legacy"
 
@@ -10280,14 +10263,13 @@ classes = (
     VIEW3D_MT_make_links,
     VIEW3D_MT_brush_paint_modes,
     VIEW3D_MT_brush,
-    VIEW3D_MT_brush_curve_presets,
-    VIEW3D_MT_facemask_showhide,
+    VIEW3D_MT_facemask_showhide, #bfa menu
     VIEW3D_MT_paint_vertex,
     VIEW3D_MT_hook,
     VIEW3D_MT_vertex_group,
     VIEW3D_MT_gpencil_vertex_group,
     VIEW3D_MT_paint_weight,
-    VIEW3D_MT_paint_weight_legacy,
+    VIEW3D_MT_paint_weight_legacy, #bfa menu
     VIEW3D_MT_paint_weight_lock,
     VIEW3D_MT_subdivision_set, #bfa menu
     VIEW3D_MT_sculpt,
