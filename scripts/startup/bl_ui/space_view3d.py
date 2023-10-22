@@ -3182,7 +3182,7 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_quick_effects")
-        layout.menu("VIEW3D_MT_subdivision_set")
+        layout.menu("VIEW3D_MT_subdivision_set") #bfa menu
 
         layout.separator()
 
@@ -4270,7 +4270,7 @@ class VIEW3D_MT_paint_weight_legacy(Menu):
     def draw(self, _context):
         self.draw_generic(self.layout, is_editmode=False)
 
-
+#bfa menu
 class VIEW3D_MT_subdivision_set(Menu):
     bl_label = "Subdivide"
 
@@ -4297,27 +4297,14 @@ class VIEW3D_MT_subdivision_set(Menu):
         myvar.level = 5
 
 
-class VIEW3D_MT_paint_weight_specials(Menu):
-    bl_label = "Weights Context Menu"
-
-    def draw(self, context):
-        layout = self.layout
-        # TODO: populate with useful items.
-        layout.operator("paint.weight_set")
-        layout.separator()
-        layout.operator("object.vertex_group_normalize", text="Normalize", icon='WEIGHT_NORMALIZE')
-        layout.operator("object.vertex_group_clean", text="Clean", icon='WEIGHT_CLEAN')
-        layout.operator("object.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')
-
-
 class VIEW3D_MT_sculpt(Menu):
     bl_label = "Sculpt"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_sculpt_legacy")
-        layout.menu("VIEW3D_MT_sculpt_transform")
+        layout.menu("VIEW3D_MT_sculpt_legacy") #bfa menu
+        layout.menu("VIEW3D_MT_sculpt_transform") #bfa menu
 
         layout.separator()
 
@@ -4387,7 +4374,7 @@ class VIEW3D_MT_sculpt(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_sculpt_set_pivot", text="Set Pivot")
-        layout.menu("VIEW3D_MT_sculpt_showhide")
+        layout.menu("VIEW3D_MT_sculpt_showhide") #bfa menu
 
         layout.separator()
 
@@ -4399,6 +4386,7 @@ class VIEW3D_MT_sculpt(Menu):
         layout.operator("object.transfer_mode", text="Transfer Sculpt Mode", icon="TRANSFER_SCULPT")
 
 
+#bfa menu
 class VIEW3D_MT_sculpt_legacy(Menu):
     bl_label = "Legacy"
 
@@ -4410,6 +4398,7 @@ class VIEW3D_MT_sculpt_legacy(Menu):
         layout.operator("transform.resize", text="Scale", icon = 'TRANSFORM_SCALE')
 
 
+#bfa menu
 class VIEW3D_MT_sculpt_transform(Menu):
     bl_label = "Transform"
 
@@ -4420,6 +4409,7 @@ class VIEW3D_MT_sculpt_transform(Menu):
         props.type = 'SPHERE'
 
 
+#bfa menu
 class VIEW3D_MT_sculpt_showhide(Menu):
     bl_label = "Show/Hide"
 
@@ -4463,7 +4453,7 @@ class VIEW3D_MT_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_mask_legacy")
+        layout.menu("VIEW3D_MT_mask_legacy") #bfa menu
 
         props = layout.operator("paint.mask_flood_fill", text="Invert Mask", icon="INVERT_MASK")
         props.mode = 'INVERT'
@@ -4538,6 +4528,7 @@ class VIEW3D_MT_mask(Menu):
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
 
+#bfa menu
 class VIEW3D_MT_mask_legacy(Menu):
     bl_label = "Legacy"
 
@@ -5132,7 +5123,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_weights")
         layout.operator("mesh.attribute_set", icon = "NODE_ATTRIBUTE")
         layout.menu("VIEW3D_MT_edit_mesh_sort_elements")
-        layout.menu("VIEW3D_MT_subdivision_set")
+        layout.menu("VIEW3D_MT_subdivision_set") #bfa menu
 
         layout.separator()
 
@@ -10298,15 +10289,14 @@ classes = (
     VIEW3D_MT_paint_weight,
     VIEW3D_MT_paint_weight_legacy,
     VIEW3D_MT_paint_weight_lock,
-    VIEW3D_MT_paint_weight_specials,
-    VIEW3D_MT_subdivision_set,
+    VIEW3D_MT_subdivision_set, #bfa menu
     VIEW3D_MT_sculpt,
-    VIEW3D_MT_sculpt_legacy,
-    VIEW3D_MT_sculpt_transform,
-    VIEW3D_MT_sculpt_showhide,
+    VIEW3D_MT_sculpt_legacy, #bfa menu
+    VIEW3D_MT_sculpt_transform, #bfa menu
+    VIEW3D_MT_sculpt_showhide, #bfa menu
     VIEW3D_MT_sculpt_set_pivot,
     VIEW3D_MT_mask,
-    VIEW3D_MT_mask_legacy,
+    VIEW3D_MT_mask_legacy, #bfa menu
     VIEW3D_MT_face_sets,
     VIEW3D_MT_face_sets_init,
     VIEW3D_MT_random_mask,
