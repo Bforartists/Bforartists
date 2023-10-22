@@ -1184,7 +1184,7 @@ class VIEW3D_MT_editor_menus(Menu):
             if mode_string not in {'PAINT_TEXTURE', 'SCULPT_CURVES'}:
                 layout.menu("VIEW3D_MT_%s" % mode_string.lower())
             if mode_string in {'SCULPT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
-                layout.menu("VIEW3D_MT_brush")
+                layout.menu("VIEW3D_MT_brush") #bfa menu
             if mode_string == 'SCULPT':
                 layout.menu("VIEW3D_MT_mask")
                 layout.menu("VIEW3D_MT_face_sets")
@@ -1412,7 +1412,7 @@ class VIEW3D_MT_snap(Menu):
         layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon="CURSORTOGRID")
 
 
-# Tooltip and operator for Clear Seam.
+# bfa - Tooltip and operator for Clear Seam.
 class VIEW3D_MT_uv_map_clear_seam(bpy.types.Operator):
     """Clears the UV Seam for selected edges"""      #BFA - blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mesh.clear_seam"        # unique identifier for buttons and menu items to reference.
@@ -1485,6 +1485,7 @@ class VIEW3D_MT_switchactivecamto(bpy.types.Operator):
         return {'FINISHED'}
 
 
+#bfa menu
 class VIEW3D_MT_view_legacy(Menu):
     bl_label = "Legacy"
 
@@ -1492,6 +1493,7 @@ class VIEW3D_MT_view_legacy(Menu):
         layout = self.layout
 
         layout.operator("view3d.cursor3d", text="Set 3D Cursor", icon='CURSOR')
+
 
 # BFA - Hidden legacy operators exposed to GUI
 class VIEW3D_MT_view_annotations(Menu):
@@ -1530,11 +1532,12 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_view_legacy")
+        layout.menu("VIEW3D_MT_view_legacy") #bfa menu
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_view_annotations")
+        layout.menu("VIEW3D_MT_view_annotations") #bfa menu
+
 
         layout.separator()
 
@@ -1587,7 +1590,7 @@ class VIEW3D_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
-        layout.menu("VIEW3D_MT_view_pie_menus")
+        layout.menu("VIEW3D_MT_view_pie_menus") #bfa menu
 
  #BFA - not used
 class VIEW3D_MT_view_local(Menu):
@@ -1600,6 +1603,7 @@ class VIEW3D_MT_view_local(Menu):
         layout.operator("view3d.localview_remove_from", icon="VIEW_REMOVE_LOCAL")
 
 
+#bfa menu
 class VIEW3D_MT_view_pie_menus(Menu):
     bl_label = "Pie menus"
 
@@ -1674,6 +1678,7 @@ class VIEW3D_MT_view_viewpoint(Menu):
         layout.operator("view3d.view_axis", text="Left", text_ctxt=i18n_contexts.editor_view3d).type = 'LEFT'
 
 
+#bfa menu
 class VIEW3D_MT_view_navigation_legacy(Menu):
     bl_label = "Legacy"
 
@@ -1694,7 +1699,7 @@ class VIEW3D_MT_view_navigation(Menu):
         from math import pi
         layout = self.layout
 
-        layout.menu('VIEW3D_MT_view_navigation_legacy')
+        layout.menu('VIEW3D_MT_view_navigation_legacy') #bfa menu
 
         layout.operator("view3d.view_orbit", text="Orbit Down", icon="ORBIT_DOWN").type = 'ORBITDOWN'
         layout.operator("view3d.view_orbit", text="Orbit Up", icon="ORBIT_UP").type = 'ORBITUP'
@@ -1852,7 +1857,7 @@ class VIEW3D_MT_select_object(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
         layout.separator()
@@ -1863,9 +1868,9 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_select_grouped")
-        layout.menu("VIEW3D_MT_select_linked")
-        layout.menu("VIEW3D_MT_select_by_type")
+        layout.menu("VIEW3D_MT_select_grouped") #bfa menu
+        layout.menu("VIEW3D_MT_select_linked") #bfa menu
+        layout.menu("VIEW3D_MT_select_by_type") #bfa menu
 
         layout.separator()
         layout.operator("object.select_random", text="Random", icon="RANDOMIZE")
@@ -1878,7 +1883,7 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.menu("VIEW3D_MT_select_object_more_less")
 
-
+#bfa menu
 class VIEW3D_MT_select_object_legacy(Menu):
     bl_label = "Legacy"
 
@@ -1888,7 +1893,7 @@ class VIEW3D_MT_select_object_legacy(Menu):
         layout.operator("view3d.select_box", icon="BOX_MASK")
         layout.operator("view3d.select_circle", icon="CIRCLE_SELECT")
 
-
+#bfa menu
 class VIEW3D_MT_select_by_type(Menu):
     bl_label = "All by Type"
 
@@ -1916,6 +1921,7 @@ class VIEW3D_MT_select_by_type(Menu):
         layout.operator("object.select_by_type", text="Probe", icon="OUTLINER_OB_LIGHTPROBE").type = 'LIGHT_PROBE'
 
 
+#bfa menu
 class VIEW3D_MT_select_grouped(Menu):
     bl_label = "Grouped"
 
@@ -1941,6 +1947,7 @@ class VIEW3D_MT_select_grouped(Menu):
         layout.operator("object.select_grouped", text="Light Type", icon="LIGHT").type = 'LIGHT_TYPE'
 
 
+#bfa menu
 class VIEW3D_MT_select_linked(Menu):
     bl_label = "Linked"
 
@@ -1989,7 +1996,7 @@ class VIEW3D_MT_select_pose(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
         layout.separator()
@@ -2039,7 +2046,7 @@ class VIEW3D_MT_select_particle(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
         layout.separator()
@@ -2145,7 +2152,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
 
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
@@ -2211,7 +2218,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
 
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
@@ -2229,7 +2236,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_select_edit_curve_select_similar")
+        layout.menu("VIEW3D_MT_select_edit_curve_select_similar") #bfa menu
 
         layout.separator()
 
@@ -2249,6 +2256,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.operator("curve.select_less", text="Less", icon="SELECTLESS")
 
 
+#bfa menu
 class VIEW3D_MT_select_edit_curve_select_similar(Menu):
     bl_label = "Similar"
 
@@ -2267,7 +2275,7 @@ class VIEW3D_MT_select_edit_surface(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
         layout.separator()
@@ -2279,7 +2287,7 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.separator()
 
         layout.operator("curve.select_linked", text="Linked", icon="LINKED")
-        layout.menu("VIEW3D_MT_select_edit_curve_select_similar")
+        layout.menu("VIEW3D_MT_select_edit_curve_select_similar") #bfa menu
 
         layout.separator()
 
@@ -2341,7 +2349,7 @@ class VIEW3D_MT_select_edit_metaball(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
         layout.separator()
@@ -2352,13 +2360,14 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_select_edit_metaball_select_similar")
+        layout.menu("VIEW3D_MT_select_edit_metaball_select_similar") #bfa menu
 
         layout.separator()
 
         layout.operator("mball.select_random_metaelems", text="Random", icon="RANDOMIZE")
 
 
+#bfa menu
 class VIEW3D_MT_select_edit_metaball_select_similar(Menu):
     bl_label = "Similar"
 
@@ -2392,7 +2401,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
         layout.separator()
@@ -2422,7 +2431,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
         layout.separator()
@@ -2529,7 +2538,7 @@ class VIEW3D_MT_select_edit_gpencil(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_gpencil_legacy")
+        layout.menu("VIEW3D_MT_select_gpencil_legacy") #bfa menu
         layout.operator_menu_enum("gpencil.select_lasso", "mode")
 
         layout.separator()
@@ -2543,7 +2552,7 @@ class VIEW3D_MT_select_edit_gpencil(Menu):
         layout.operator("gpencil.select_linked", text="Linked", icon="LINKED")
         layout.operator("gpencil.select_alternate", icon="ALTERNATED")
         layout.operator("gpencil.select_random", icon="RANDOMIZE")
-        layout.menu("VIEW3D_MT_select_gpencil_grouped", text="Grouped")
+        layout.menu("VIEW3D_MT_select_gpencil_grouped", text="Grouped") #bfa menu
 
         if context.mode == 'VERTEX_GPENCIL':
             layout.operator("gpencil.select_vertex_color", text="Color Attribute", icon="NODE_VERTEX_COLOR")
@@ -2559,6 +2568,7 @@ class VIEW3D_MT_select_edit_gpencil(Menu):
         layout.operator("gpencil.select_less", text="Less", icon="SELECTLESS")
 
 
+#bfa menu
 class VIEW3D_MT_select_gpencil_legacy(Menu):
     bl_label = "Legacy"
 
@@ -2569,6 +2579,7 @@ class VIEW3D_MT_select_gpencil_legacy(Menu):
         layout.operator("gpencil.select_circle", icon="CIRCLE_SELECT")
 
 
+#bfa menu
 class VIEW3D_MT_select_gpencil_grouped(Menu):
     bl_label = "Grouped"
 
@@ -2585,7 +2596,7 @@ class VIEW3D_MT_select_paint_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
         layout.separator()
@@ -2615,9 +2626,10 @@ class VIEW3D_MT_select_paint_mask(Menu):
 
             layout.separator()
 
-        layout.menu("VIEW3D_MT_select_paint_mask_face_more_less")
+        layout.menu("VIEW3D_MT_select_paint_mask_face_more_less") #bfa menu
 
 
+#bfa menu
 class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
     bl_label = "More/Less"
 
@@ -2636,7 +2648,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_select_object_legacy")
+        layout.menu("VIEW3D_MT_select_object_legacy") #bfa menu
         layout.operator_menu_enum("view3d.select_lasso", "mode")
 
         layout.separator()
@@ -2652,9 +2664,10 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_select_paint_mask_vertex_more_less")
+        layout.menu("VIEW3D_MT_select_paint_mask_vertex_more_less")#bfa menu
 
 
+#bfa menu
 class VIEW3D_MT_select_paint_mask_vertex_more_less(Menu):
     bl_label = "More/Less"
 
@@ -3058,6 +3071,7 @@ class VIEW3D_MT_object_relations(Menu):
         layout.menu("VIEW3D_MT_make_single_user")
 
 
+#bfa menu
 class VIEW3D_MT_origin_set(Menu):
     bl_label = "Set Origin"
 
@@ -3112,7 +3126,7 @@ class VIEW3D_MT_object(Menu):
         view = _context.space_data
 
         layout.menu("VIEW3D_MT_transform_object")
-        layout.menu("VIEW3D_MT_origin_set")
+        layout.menu("VIEW3D_MT_origin_set") #bfa menu
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
@@ -3934,6 +3948,7 @@ class VIEW3D_MT_make_links(Menu):
         layout.operator("object.data_transfer", icon='TRANSFER_DATA')
         layout.operator("object.datalayout_transfer", icon='TRANSFER_DATA_LAYOUT')
 
+
 class VIEW3D_MT_brush_paint_modes(Menu):
     bl_label = "Enabled Modes"
 
@@ -3950,6 +3965,8 @@ class VIEW3D_MT_brush_paint_modes(Menu):
         layout.prop(brush, "use_paint_image", text="Texture Paint")
         layout.prop(brush, "use_paint_sculpt_curves", text="Sculpt Curves")
 
+
+#bfa menu
 class VIEW3D_MT_brush(Menu):
     bl_label = "Brush"
 
@@ -5070,7 +5087,8 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         with_bullet = bpy.app.build_options.bullet
 
-        layout.menu("VIEW3D_MT_edit_mesh_legacy")
+        layout.menu("VIEW3D_MT_edit_mesh_legacy") #bfa menu
+
 
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
@@ -5105,7 +5123,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_shading")
         layout.menu("VIEW3D_MT_edit_mesh_weights")
         layout.operator("mesh.attribute_set", icon = "NODE_ATTRIBUTE")
-        layout.menu("VIEW3D_MT_edit_mesh_sort_elements")
+        layout.menu("VIEW3D_MT_edit_mesh_sort_elements") #bfa menu
         layout.menu("VIEW3D_MT_subdivision_set") #bfa menu
 
         layout.separator()
@@ -5120,6 +5138,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_select_mode")
 
 
+#bfa menu
 class VIEW3D_MT_edit_mesh_legacy(Menu):
     bl_label = "Legacy"
 
@@ -5129,7 +5148,7 @@ class VIEW3D_MT_edit_mesh_legacy(Menu):
         layout.operator("mesh.bisect", text = "Bisect", icon = 'BISECT')
         layout.operator("mesh.knife_tool", text = "Knife", icon = 'KNIFE')
 
-
+#bfa menu
 class VIEW3D_MT_edit_mesh_sort_elements(Menu):
     bl_label = "Sort Elements"
 
@@ -10173,54 +10192,54 @@ classes = (
     VIEW3D_MT_transform_armature,
     VIEW3D_MT_mirror,
     VIEW3D_MT_snap,
-    VIEW3D_MT_uv_map_clear_seam,
+    VIEW3D_MT_uv_map_clear_seam, # bfa - Tooltip and operator for Clear Seam.
     VIEW3D_MT_uv_map,
-    VIEW3D_MT_switchactivecamto,
-    VIEW3D_MT_view_legacy,
-    VIEW3D_MT_view_annotations,
+    VIEW3D_MT_switchactivecamto, # bfa - set active camera does not exist in blender
+    VIEW3D_MT_view_legacy, #bfa menu
+    VIEW3D_MT_view_annotations, #bfa menu
     VIEW3D_MT_view,
     VIEW3D_MT_view_local, #BFA - not used
     VIEW3D_MT_view_cameras,
-    VIEW3D_MT_view_pie_menus,
-    VIEW3D_MT_view_navigation_legacy,
+    VIEW3D_MT_view_pie_menus, #bfa menu
+    VIEW3D_MT_view_navigation_legacy, #bfa menu
     VIEW3D_MT_view_navigation,
     VIEW3D_MT_view_align,
     VIEW3D_MT_view_align_selected,
     VIEW3D_MT_view_viewpoint, #BFA - not used
     VIEW3D_MT_view_regions, #BFA - not used
     VIEW3D_MT_select_object,
-    VIEW3D_MT_select_object_legacy,
-    VIEW3D_MT_select_by_type,
-    VIEW3D_MT_select_grouped,
-    VIEW3D_MT_select_linked,
+    VIEW3D_MT_select_object_legacy, #bfa menu
+    VIEW3D_MT_select_by_type, #bfa menu
+    VIEW3D_MT_select_grouped, #bfa menu
+    VIEW3D_MT_select_linked, #bfa menu
     VIEW3D_MT_select_object_more_less,
     VIEW3D_MT_select_pose,
     VIEW3D_MT_select_pose_more_less, #BFA - not used
     VIEW3D_MT_select_particle,
     VIEW3D_MT_edit_mesh,
-    VIEW3D_MT_edit_mesh_legacy,
-    VIEW3D_MT_edit_mesh_sort_elements,
+    VIEW3D_MT_edit_mesh_legacy, #bfa menu
+    VIEW3D_MT_edit_mesh_sort_elements, #bfa menu
     VIEW3D_MT_edit_mesh_select_similar,
     VIEW3D_MT_edit_mesh_select_by_trait,
     VIEW3D_MT_edit_mesh_select_more_less,
     VIEW3D_MT_select_edit_mesh,
     VIEW3D_MT_select_edit_curve,
-    VIEW3D_MT_select_edit_curve_select_similar,
+    VIEW3D_MT_select_edit_curve_select_similar, #bfa menu
     VIEW3D_MT_select_edit_surface,
     VIEW3D_MT_select_edit_text,
     VIEW3D_MT_select_edit_metaball,
     VIEW3D_MT_edit_lattice_context_menu,
-    VIEW3D_MT_select_edit_metaball_select_similar,
+    VIEW3D_MT_select_edit_metaball_select_similar, #bfa menu
     VIEW3D_MT_select_edit_lattice,
     VIEW3D_MT_select_edit_armature,
-    VIEW3D_MT_select_gpencil_legacy,
-    VIEW3D_MT_select_gpencil_grouped,
+    VIEW3D_MT_select_gpencil_legacy, #bfa menu
+    VIEW3D_MT_select_gpencil_grouped, #bfa menu
     VIEW3D_MT_select_edit_grease_pencil,
     VIEW3D_MT_select_edit_gpencil,
     VIEW3D_MT_select_paint_mask,
-    VIEW3D_MT_select_paint_mask_face_more_less,
+    VIEW3D_MT_select_paint_mask_face_more_less, #bfa menu
     VIEW3D_MT_select_paint_mask_vertex,
-    VIEW3D_MT_select_paint_mask_vertex_more_less,
+    VIEW3D_MT_select_paint_mask_vertex_more_less, #bfa menu
     VIEW3D_MT_select_edit_point_cloud,
     VIEW3D_MT_edit_curves_select_more_less,
     VIEW3D_MT_select_edit_curves,
@@ -10240,7 +10259,7 @@ classes = (
     VIEW3D_MT_grease_pencil_add,
     VIEW3D_MT_add,
     VIEW3D_MT_image_add,
-    VIEW3D_MT_origin_set,
+    VIEW3D_MT_origin_set, #bfa menu
     VIEW3D_MT_object,
     VIEW3D_MT_object_animation,
     VIEW3D_MT_object_asset,
@@ -10262,7 +10281,7 @@ classes = (
     VIEW3D_MT_make_single_user,
     VIEW3D_MT_make_links,
     VIEW3D_MT_brush_paint_modes,
-    VIEW3D_MT_brush,
+    VIEW3D_MT_brush, #bfa menu
     VIEW3D_MT_facemask_showhide, #bfa menu
     VIEW3D_MT_paint_vertex,
     VIEW3D_MT_hook,
