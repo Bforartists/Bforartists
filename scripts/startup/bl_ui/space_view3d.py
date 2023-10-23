@@ -5250,7 +5250,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.separator()
 
-            col.operator("transform.vert_crease")
+            col.operator("transform.vert_crease", icon = "VERTEX_CREASE")
 
             col.separator()
 
