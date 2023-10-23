@@ -1635,8 +1635,8 @@ static const EnumPropertyItem prop_similar_types[] = {
     {SIMEDBONE_DIRECTION, "DIRECTION", ICON_SWITCH_DIRECTION, "Direction (Y Axis)", ""},
     {SIMEDBONE_PREFIX, "PREFIX", ICON_PREFIX, "Prefix", ""},
     {SIMEDBONE_SUFFIX, "SUFFIX", ICON_SUFFIX, "Suffix", ""},
-	{SIMEDBONE_COLLECTION, "LAYER", ICON_LAYER, "Layer", ""},
-    {SIMEDBONE_COLOR, "GROUP", ICON_GROUP, "Group", ""},
+    {SIMEDBONE_COLLECTION, "BONE_COLLECTION", ICON_BONE_LAYER, "Bone Collection", ""},
+    {SIMEDBONE_COLOR, "COLOR", ICON_COLOR, "Color", ""},
     {SIMEDBONE_SHAPE, "SHAPE", ICON_SHAPE, "Shape", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
