@@ -503,7 +503,7 @@ class GRAPH_MT_key_density(Menu):
         # as we do not have a modal mode for it, so just execute it.
         with operator_context(layout, 'EXEC_REGION_WIN'):
             layout.operator("graph.decimate", text="Decimate (Allowed Change)", icon="DECIMATE").mode = 'ERROR'
-        layout.operator("graph.sample", icon="SAMPLE_KEYFRAMES")
+        layout.operator("graph.bake_keys", icon = 'BAKE_ACTION')
 
         layout.separator()
         layout.operator("graph.clean", icon="CLEAN_KEYS").channels = False
@@ -576,8 +576,6 @@ class GRAPH_MT_key(Menu):
         with operator_context(layout, 'EXEC_REGION_WIN'):
             layout.operator("graph.decimate", text="Decimate (Allowed Change)", icon="DECIMATE").mode = 'ERROR'
 
-        layout.menu("GRAPH_MT_slider", text="Slider Operators")
-
         layout.operator("graph.clean", icon="CLEAN_KEYS").channels = False
         layout.operator("graph.clean", text="Clean Channels", icon="CLEAN_CHANNELS").channels = True
         layout.operator("graph.smooth", icon="SMOOTH_KEYFRAMES")
@@ -589,14 +587,13 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
 
         # BFA - redundant operators and menus
-        '''
+
         layout.separator()
 
-        layout.menu("GRAPH_MT_key_density") # bfa we already have this
-        # So hide it from here. But keep the classes for the Blender hotkeys ...
+        layout.menu("GRAPH_MT_key_density")
         layout.menu("GRAPH_MT_key_blending")
         layout.menu("GRAPH_MT_key_smoothing")
-        '''
+
 
 class GRAPH_MT_key_mirror(Menu):
     bl_label = "Mirror"
@@ -630,31 +627,6 @@ class GRAPH_MT_key_snap(Menu):
         layout.separator()
         layout.operator("graph.frame_jump", text="Cursor to Selection", icon="JUMP_TO_KEYFRAMES")
         layout.operator("graph.snap_cursor_value", text="Cursor Value to Selection", icon="VALUE_TO_SELECTION")
-
-
-class GRAPH_MT_slider(Menu):
-    bl_label = "Slider Operators"
-
-    def draw(self, _context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("graph.breakdown", text="Breakdown", icon='BREAKDOWNER_POSE')
-        layout.operator("graph.blend_to_neighbor", text="Blend to Neighbor", icon='BLEND_TO_NEIGHBOUR')
-        layout.operator("graph.blend_to_default", text="Blend to Default Value", icon='BLEND_TO_DEFAULT')
-        layout.operator("graph.ease", text="Ease", icon='IPO_EASE_IN_OUT')
-        layout.operator("graph.blend_to_ease", text="Blend to Ease", icon='BLEND_TO_EASE')
-        layout.operator("graph.blend_offset", text="Blend Offset", icon='BLEND_OFFSET')
-        layout.operator("graph.match_slope", text="Match Slope", icon='SET_CURVE_TILT')
-        layout.operator("graph.push_pull", text="Push Pull", icon='PUSH_PULL')
-        layout.operator("graph.shear", text="Shear", icon='SHEAR')
-        layout.operator("graph.scale_average", text="Scale Average", icon='SCALE_AVERAGE')
-        layout.operator("graph.time_offset", text="Time Offset", icon='MOD_TIME')
-
-        layout.separator()
-
-        layout.operator("graph.gaussian_smooth", text="Smooth (Gaussian)", icon='PARTICLEBRUSH_SMOOTH')
-        layout.operator("graph.smooth", text="Smooth (Legacy)", icon='PARTICLEBRUSH_SMOOTH')
-        layout.operator("graph.butterworth_smooth", icon='PARTICLEBRUSH_SMOOTH')
 
 
 class GRAPH_MT_key_transform(Menu):
@@ -784,7 +756,6 @@ classes = (
     GRAPH_MT_snap_pie,
     GRAPH_MT_view_pie,
     GRAPH_PT_filters,
-    GRAPH_MT_slider,
     GRAPH_PT_snapping,
 )
 
