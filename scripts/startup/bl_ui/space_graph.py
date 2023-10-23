@@ -569,15 +569,6 @@ class GRAPH_MT_key(Menu):
 
         layout.separator()
 
-        layout.operator("graph.decimate", text="Decimate (Ratio)", icon="DECIMATE").mode = 'RATIO'
-
-        # Using the modal operation doesn't make sense for this variant
-        # as we do not have a modal mode for it, so just execute it.
-        with operator_context(layout, 'EXEC_REGION_WIN'):
-            layout.operator("graph.decimate", text="Decimate (Allowed Change)", icon="DECIMATE").mode = 'ERROR'
-
-        layout.operator("graph.clean", icon="CLEAN_KEYS").channels = False
-        layout.operator("graph.clean", text="Clean Channels", icon="CLEAN_CHANNELS").channels = True
         layout.operator("graph.smooth", icon="SMOOTH_KEYFRAMES")
 
         # BFA - moved from Channel Settings sub-menu
