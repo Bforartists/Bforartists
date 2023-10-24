@@ -245,7 +245,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
 
         view_layer = context.view_layer
         view_layer_eevee = view_layer.eevee
-        
+
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
         col = flow.column(align=True)
@@ -256,7 +256,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_pass_diffuse_color", text="Color")
-    
+
         col = flow.column(align=True)
         col.label(text="Specular")
         row = col.row()
@@ -265,14 +265,14 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_pass_glossy_color", text="Color")
-    
+
         col = flow.column(align=True)
         col.label(text="Volume")
         row = col.row()
         row.separator()
         row.prop(view_layer_eevee, "use_pass_volume_direct", text="Light")
-    
-        col = flow.column(align=True)
+
+        col = layout.column(align=True)
         col.label(text="Other")
         row = col.row()
         row.separator()
@@ -283,14 +283,24 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_pass_shadow")
-        row = col.row()
+
+        split = col.split(factor=.4)
+        split.use_property_split=False
+        row = split.row()
         row.separator()
         row.prop(view_layer, "use_pass_ambient_occlusion", text="Ambient Occlusion")
-    
-        col = layout.column()
+
+        split.alignment = 'LEFT'
         if view_layer.use_pass_ambient_occlusion:
-        # TODO Move to view layer.
-            col.prop(context.scene.eevee, "gtao_distance", text="Occlusion Distance")
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if view_layer.use_pass_ambient_occlusion:
+            row = col.row()
+            row.use_property_split = True
+            row.separator(factor = 4)
+            row.prop(context.scene.eevee, "gtao_distance", text="Occlusion Distance")
 
 
 class VIEWLAYER_PT_eevee_layer_passes_effects(ViewLayerButtonsPanel, Panel):
