@@ -332,11 +332,23 @@ class SCENE_PT_simulation(SceneButtonsPanel, Panel):
         scene = context.scene
 
         col = layout.column()
-        col.prop(scene, "use_custom_simulation_range", text="Simulation Range")
-        subcol = col.column(align=True)
-        subcol.active = scene.use_custom_simulation_range
-        subcol.prop(scene, "simulation_frame_start", text="Start")
-        subcol.prop(scene, "simulation_frame_end", text="End")
+        split = col.split(factor=.4)
+        split.use_property_split=False
+        split.prop(scene, "use_custom_simulation_range", text="Simulation Range")
+
+        split.alignment = 'LEFT'
+        if scene.use_custom_simulation_range:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if scene.use_custom_simulation_range:
+            row = col.row()
+            row.separator()
+            row.prop(scene, "simulation_frame_start", text="Start")
+            row = col.row()
+            row.separator()
+            row.prop(scene, "simulation_frame_end", text="End")
 
 
 class SCENE_PT_rigid_body_world(SceneButtonsPanel, Panel):

@@ -346,6 +346,7 @@ class RENDER_PT_eevee_next_depth_of_field(RenderButtonsPanel, Panel):
         col.prop(props, "bokeh_max_size")
         col.prop(props, "bokeh_threshold")
         col.prop(props, "bokeh_neighbor_max")
+        col.use_property_split = False
         col.prop(props, "use_bokeh_jittered")
 
         col = layout.column()
@@ -890,6 +891,7 @@ class RENDER_PT_eevee_next_sampling_viewport(RenderButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(props, "taa_samples", text="Samples")
+        col.use_property_split = False
         col.prop(props, "use_taa_reprojection", text="Temporal Reprojection")
 
         # Add SSS sample count here.
@@ -1111,8 +1113,9 @@ class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
         rd = scene.render
         props = scene.eevee
 
-        col = layout.column()
+        col = layout.column()  
         col.prop(rd, "filter_size")
+        col.use_property_split = False
         col.prop(rd, "film_transparent", text="Transparent")
 
         col = layout.column(align=False, heading="Overscan")
