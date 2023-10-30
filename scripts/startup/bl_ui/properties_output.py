@@ -12,6 +12,30 @@ from bpy.app.translations import (
 )
 
 
+# bfa -  added the render engine prop
+class RENDER_PT_context_output(Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "output"
+    bl_options = {'HIDE_HEADER'}
+    bl_label = ""
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        scene = context.scene
+        rd = scene.render
+
+        if rd.has_multiple_engines:
+            layout.prop(rd, "engine", text="Render Engine")
+
+
 class RENDER_PT_format_presets(PresetPanel, Panel):
     bl_label = "Format Presets"
     preset_subdir = "render"
@@ -691,6 +715,7 @@ class RENDER_PT_stereoscopy(RenderOutputButtonsPanel, Panel):
 
 
 classes = (
+    RENDER_PT_context_output, # bfa -  added the render engine prop
     RENDER_PT_format_presets,
     RENDER_PT_ffmpeg_presets,
     RENDER_MT_framerate_presets,
