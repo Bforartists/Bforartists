@@ -8,6 +8,30 @@ from bpy.app.translations import contexts as i18n_contexts
 from rna_prop_ui import PropertyPanel
 
 
+# bfa -  added the render engine prop
+class VIEWLAYER_PT_context(Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "view_layer"
+    bl_options = {'HIDE_HEADER'}
+    bl_label = ""
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        scene = context.scene
+        rd = scene.render
+
+        if rd.has_multiple_engines:
+            layout.prop(rd, "engine", text="Render Engine")
+
+
 class VIEWLAYER_UL_aov(UIList):
     def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname):
         row = layout.row()
@@ -462,6 +486,7 @@ class VIEWLAYER_PT_layer_custom_props(PropertyPanel, Panel):
 
 
 classes = (
+    VIEWLAYER_PT_context, # bfa -  added the render engine prop
     VIEWLAYER_MT_lightgroup_sync,
     VIEWLAYER_PT_layer,
     VIEWLAYER_PT_layer_passes,
