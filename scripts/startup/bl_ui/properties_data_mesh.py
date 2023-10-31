@@ -176,46 +176,6 @@ class DATA_PT_context_mesh(MeshButtonsPanel, Panel):
             layout.template_ID(space, "pin_id")
 
 
-class DATA_PT_normals(MeshButtonsPanel, Panel):
-    bl_label = "Normals"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {
-        'BLENDER_RENDER',
-        'BLENDER_EEVEE',
-        'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH',
-    }
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = False
-
-        mesh = context.mesh
-
-        split = layout.split()
-        split.active = not mesh.has_custom_normals
-        col = split.column()
-        col.prop(mesh, "use_auto_smooth", text="Auto Smooth")
-        col = split.column()
-        if mesh.use_auto_smooth and not mesh.has_custom_normals:
-            row = col.row(align = True)
-            row.prop(mesh, "auto_smooth_angle", text="")
-            row.prop_decorator(mesh, "auto_smooth_angle")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        col = layout.column()
-        if mesh.has_custom_normals:
-            col.label(text = "No Autosmooth. Mesh has custom normals", icon = 'INFO')
-
-        col = layout.column()
-
-        if mesh.has_custom_normals:
-            col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')
-        else:
-            col.operator("mesh.customdata_custom_splitnormals_add", icon='ADD')
-
-
 class DATA_PT_normals_auto_smooth(MeshButtonsPanel, Panel):
     bl_label = "Auto Smooth"
     bl_parent_id = "DATA_PT_normals"
@@ -768,7 +728,6 @@ classes = (
     DATA_PT_uv_texture,
     DATA_PT_vertex_colors,
     DATA_PT_mesh_attributes,
-    DATA_PT_normals,
     DATA_PT_texture_space,
     DATA_PT_remesh,
     DATA_PT_customdata,

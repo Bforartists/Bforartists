@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.0.0 Beta (b'ba3e9b352630')\n"
+"Project-Id-Version: Blender 4.0.0 Beta (b'8474716abb0d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-16 09:13:41\n"
-"PO-Revision-Date: 2023-10-14 08:54+0000\n"
+"POT-Creation-Date: 2023-10-30 16:01:56\n"
+"PO-Revision-Date: 2023-10-19 17:54+0000\n"
 "Last-Translator: Isaac Gicheha <shwaky3@gmail.com>\n"
 "Language-Team: Swahili <https://translate.blender.org/projects/blender-ui/ui/sw/>\n"
 "Language: sw\n"
@@ -199,6 +199,10 @@ msgid "Action group is selected"
 msgstr "Kikundi cha vitendo kimechaguliwa"
 
 
+msgid "Expanded"
+msgstr "Imepanuliwa"
+
+
 msgid "Expanded in Graph Editor"
 msgstr "Imepanuliwa katika Kihariri cha Grafu"
 
@@ -311,14 +315,6 @@ msgid "HIP RT enables AMD hardware ray tracing on RDNA2 and above, with shader f
 msgstr "HIP RT huwezesha ufuatiliaji wa miale ya maunzi ya AMD kwenye RDNA2 na hapo juu, na urejesho wa shader kwenye kadi za zamani. Kipengele hiki ni cha majaribio na baadhi ya matukio yanaweza kutoa kimakosa"
 
 
-msgid "MetalRT (Experimental)"
-msgstr "MetalRT (Majaribio)"
-
-
-msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
-msgstr "MetalRT kwa ufuatiliaji wa miale hutumia kumbukumbu kidogo kwa matukio ambayo hutumia mikunjo sana, na inaweza kutoa utendakazi bora katika matukio mahususi. Hata hivyo usaidizi huu ni wa majaribio na baadhi ya matukio yanaweza kutoa kimakosa"
-
-
 msgid "Embree on GPU"
 msgstr "Embree kwenye GPU"
 
@@ -389,6 +385,94 @@ msgstr "Onya Msgid Haina herufi kubwa"
 
 msgid "Warn about messages not starting by a capitalized letter (with a few allowed exceptions!)"
 msgstr "Onya kuhusu barua pepe zisizoanza kwa herufi kubwa (pamoja na vighairi vichache vinavyoruhusiwa!)"
+
+
+msgid "Persistent Data Path"
+msgstr "Njia ya Data Inayoendelea"
+
+
+msgid "Animation Data"
+msgstr "Data ya Uhuishaji"
+
+
+msgid "Action"
+msgstr "Kitendo"
+
+
+msgid "Combine"
+msgstr "Unganisha"
+
+
+msgid "Add"
+msgstr "Ongeza"
+
+
+msgid "Subtract"
+msgstr "Ondoa"
+
+
+msgid "Multiply"
+msgstr "Zidisha"
+
+
+msgid "Nothing"
+msgstr "Hakuna"
+
+
+msgid "Hold"
+msgstr "Shikilia"
+
+
+msgid "Settings for the visualization of motion"
+msgstr "Mipangilio ya taswira ya mwendo"
+
+
+msgid "Motion Paths"
+msgstr "Njia za Mwendo"
+
+
+msgid "Motion Path settings for visualization"
+msgstr "Mipangilio ya Njia ya Mwendo kwa taswira"
+
+
+msgid "Motion Path Settings"
+msgstr "Mipangilio ya Njia ya Mwendo"
+
+
+msgid "Bake Location"
+msgstr "Oka Mahali"
+
+
+msgid "Heads"
+msgstr "Vichwa"
+
+
+msgid "Calculate bone paths from heads"
+msgstr "Hesabu njia za mfupa kutoka kwa vichwa"
+
+
+msgid "Tails"
+msgstr "Mikia"
+
+
+msgid "Calculate bone paths from tails"
+msgstr "Hesabu njia za mfupa kutoka kwa mikia"
+
+
+msgid "After Current"
+msgstr "Baada ya Sasa"
+
+
+msgid "Before Current"
+msgstr "Kabla ya Sasa"
+
+
+msgid "Number of frames to show before the current frame (only for 'Around Current Frame' Onion-skinning method)"
+msgstr "Idadi ya fremu za kuonyesha kabla ya fremu ya sasa (kwa mbinu ya 'Kuzunguka Fremu ya Sasa' njia ya ngozi ya vitunguu)"
+
+
+msgid "End Frame"
+msgstr "Mwisho wa Fremu"
 
 
 msgid "Grease Pencil"
