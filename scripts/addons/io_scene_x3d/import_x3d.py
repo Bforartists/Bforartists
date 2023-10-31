@@ -3013,8 +3013,7 @@ def importShape_ProcessObject(
         # solid=false, we don't support it yet.
         creaseAngle = geom.getFieldAsFloat('creaseAngle', None, ancestry)
         if creaseAngle is not None:
-            bpydata.auto_smooth_angle = creaseAngle
-            bpydata.use_auto_smooth = True
+            bpydata.set_sharp_from_angle(angle=creaseAngle)
         else:
             bpydata.polygons.foreach_set("use_smooth", [False] * len(bpydata.polygons))
 

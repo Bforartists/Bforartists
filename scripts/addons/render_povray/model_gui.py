@@ -108,12 +108,6 @@ class PovDataButtonsPanel(properties_data_mesh.MeshButtonsPanel):
 # We cannot inherit from RNA classes (like e.g. properties_data_mesh.DATA_PT_vertex_groups).
 # Complex py/bpy/rna interactions (with metaclass and all) simply do not allow it to work.
 # So we simply have to explicitly copy here the interesting bits. ;)
-class DATA_PT_POV_normals(PovDataButtonsPanel, Panel):
-    bl_label = properties_data_mesh.DATA_PT_normals.bl_label
-
-    draw = properties_data_mesh.DATA_PT_normals.draw
-
-
 class DATA_PT_POV_texture_space(PovDataButtonsPanel, Panel):
     bl_label = properties_data_mesh.DATA_PT_texture_space.bl_label
     bl_options = properties_data_mesh.DATA_PT_texture_space.bl_options
@@ -1066,7 +1060,6 @@ class VIEW_WT_POV_blobcube_add(WorkSpaceTool):
 classes = (
     # ObjectButtonsPanel,
     # PovDataButtonsPanel,
-    DATA_PT_POV_normals,
     DATA_PT_POV_texture_space,
     DATA_PT_POV_vertex_groups,
     DATA_PT_POV_shape_keys,

@@ -180,21 +180,6 @@ class VIEW3D_OT_selecteditVertsEdgesFaces(Operator):
             return {'FINISHED'}
 
 
-# ********** Normals / Auto Smooth Menu **********
-# Thanks to marvin.k.breuer for the Autosmooth part of the menu
-
-def menu_func(self, context):
-    layout = self.layout
-    obj = context.object
-    obj_data = context.active_object.data
-    layout.separator()
-    layout.prop(obj_data, "use_auto_smooth", text="Normals: Auto Smooth")
-
-    # Auto Smooth Angle - two tab spaces to align it with the rest of the menu
-    layout.prop(obj_data, "auto_smooth_angle",
-                text="       Auto Smooth Angle")
-
-
 # List The Classes #
 
 classes = (
@@ -215,7 +200,6 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.VIEW3D_MT_edit_mesh_normals.append(menu_func)
 
 # Unregister Classes & Hotkeys #
 def unregister():
@@ -223,7 +207,6 @@ def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
-    bpy.types.VIEW3D_MT_edit_mesh_normals.remove(menu_func)
 
 if __name__ == "__main__":
     register()

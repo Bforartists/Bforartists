@@ -49,10 +49,10 @@ def get_reduced_area_coord(context):
 
     ## minus tool leftbar + sidebar right
     regs = context.area.regions
-    toolbar = regs[2]
-    sidebar = regs[3]
-    header = regs[0]
-    tool_header = regs[1]
+    toolbar = next((r for r in regs if r.type == 'TOOLS'), None)
+    sidebar = next((r for r in regs if r.type == 'UI'), None)
+    header = next((r for r in regs if r.type == 'HEADER'), None)
+    tool_header = next((r for r in regs if r.type == 'TOOL_HEADER'), None)
     up_margin = down_margin = 0
     if tool_header.alignment == 'TOP':
         up_margin += tool_header.height

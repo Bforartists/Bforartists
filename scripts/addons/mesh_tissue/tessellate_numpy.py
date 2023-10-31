@@ -802,7 +802,6 @@ def tessellate_patch(props):
             n2 = n2[masked_faces][:,None,:]
         else:
             if normals_mode == 'CUSTOM':
-                me0.calc_normals_split()
                 normals_split = [0]*len(me0.loops)*3
                 vertex_indexes = [0]*len(me0.loops)
                 me0.loops.foreach_get('normal', normals_split)
