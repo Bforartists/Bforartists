@@ -34,7 +34,7 @@
 #include "BLI_path_util.h"
 #include "BLI_rect.h"
 #include "BLI_string.h"
-#include "BLI_string_utils.h"
+#include "BLI_string_utils.hh"
 #include "BLI_timecode.h"
 #include "BLI_utildefines.h"
 
@@ -453,7 +453,8 @@ static void id_search_cb_tagged(const bContext *C,
   ListBase *lb = template_ui->idlb;
   const int flag = RNA_property_flag(template_ui->prop);
 
-  blender::string_search::StringSearch<ID> search;
+  blender::string_search::StringSearch<ID> search{nullptr,
+                                                  blender::string_search::MainWordsHeuristic::All};
 
   /* ID listbase */
   LISTBASE_FOREACH (ID *, id, lb) {
@@ -1472,7 +1473,7 @@ static void template_ID(const bContext *C,
         uiDefIconButO(block,
                       /* Using `_N` version allows us to get the 'active' state by default. */
                       UI_BTYPE_ICON_TOGGLE_N,
-                      "ASSET_OT_clear",
+                      "ASSET_OT_clear_single",
                       WM_OP_INVOKE_DEFAULT,
                       /* 'active' state of a toggle button uses icon + 1, so to get proper asset
                        * icon we need to pass its value - 1 here. */

@@ -507,7 +507,7 @@ static bool sculpt_undo_restore_hidden(bContext *C, SculptUndoNode *unode, bool 
   if (unode->maxvert) {
     for (int i = 0; i < unode->totvert; i++) {
       const int vert_index = unode->index[i];
-      if ((BLI_BITMAP_TEST(unode->vert_hidden, i) != 0) != hide_vert[vert_index]) {
+      if (unode->vert_hidden[i].test() != hide_vert[vert_index]) {
         unode->vert_hidden[i].set(!unode->vert_hidden[i].test());
         hide_vert[vert_index] = !hide_vert[vert_index];
         modified_vertices[vert_index] = true;
@@ -1514,15 +1514,12 @@ static SculptUndoNode *sculpt_undo_bmesh_push(Object *ob, PBVHNode *node, Sculpt
         break;
 
       case SCULPT_UNDO_HIDDEN: {
-        GSetIterator gs_iter;
-        GSet *faces = BKE_pbvh_bmesh_node_faces(node);
         BKE_pbvh_vertex_iter_begin (ss->pbvh, node, vd, PBVH_ITER_ALL) {
           BM_log_vert_before_modified(ss->bm_log, vd.bm_vert, vd.cd_vert_mask_offset);
         }
         BKE_pbvh_vertex_iter_end;
 
-        GSET_ITER (gs_iter, faces) {
-          BMFace *f = static_cast<BMFace *>(BLI_gsetIterator_getKey(&gs_iter));
+        for (BMFace *f : BKE_pbvh_bmesh_node_faces(node)) {
           BM_log_face_modified(ss->bm_log, f);
         }
         break;
@@ -1769,7 +1766,8 @@ static void sculpt_undo_set_active_layer(bContext *C, SculptAttrRef *attr)
    * domain and just unconvert it.
    */
   if (!layer) {
-    layer = BKE_id_attribute_search(&me->id, attr->name, CD_MASK_PROP_ALL, ATTR_DOMAIN_MASK_ALL);
+    layer = BKE_id_attribute_search_for_write(
+        &me->id, attr->name, CD_MASK_PROP_ALL, ATTR_DOMAIN_MASK_ALL);
     if (layer) {
       if (ED_geometry_attribute_convert(
               me, attr->name, eCustomDataType(attr->type), attr->domain, nullptr))

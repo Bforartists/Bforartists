@@ -19,6 +19,8 @@
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_modifier_types.h"
 #include "DNA_particle_types.h"
+#include "DNA_pointcloud_types.h"
+#include "DNA_volume_types.h"
 
 #include "draw_common.hh"
 #include "draw_sculpt.hh"
@@ -140,10 +142,6 @@ void SyncModule::sync_mesh(Object *ob,
 
   bool is_shadow_caster = false;
   bool is_alpha_blend = false;
-  bool do_reflection_probe_sync = inst_.do_reflection_probe_sync() &&
-                                  !(ob->visibility_flag & OB_HIDE_PROBE_CUBEMAP);
-  bool do_planar_probe_sync = inst_.do_planar_probe_sync() &&
-                              !(ob->visibility_flag & OB_HIDE_PROBE_PLANAR);
   for (auto i : material_array.gpu_materials.index_range()) {
     GPUBatch *geom = mat_geom[i];
     if (geom == nullptr) {
@@ -153,9 +151,10 @@ void SyncModule::sync_mesh(Object *ob,
     Material &material = material_array.materials[i];
     GPUMaterial *gpu_material = material_array.gpu_materials[i];
 
-    if (material.volume.gpumat && i == 0) {
+    if (material.has_volume && (i == 0)) {
       /* Only support single volume material for now. */
-      inst_.volume.sync_object(ob, ob_handle, res_handle, &material.volume);
+      geometry_call(material.volume_occupancy.sub_pass, geom, res_handle);
+      inst_.pipelines.volume.material_call(material.volume_material, ob, res_handle);
       /* Do not render surface if we are rendering a volume object
        * and do not have a surface closure. */
       if (gpu_material && !GPU_material_has_surface_output(gpu_material)) {
@@ -163,20 +162,16 @@ void SyncModule::sync_mesh(Object *ob,
       }
     }
 
-    geometry_call(material.shading.sub_pass, geom, res_handle);
-    geometry_call(material.prepass.sub_pass, geom, res_handle);
-    geometry_call(material.shadow.sub_pass, geom, res_handle);
     geometry_call(material.capture.sub_pass, geom, res_handle);
-    /* TODO: We should not compile the shader and create a sub-pass if the object has no visibility
-     * for these passes. */
-    if (do_reflection_probe_sync) {
-      geometry_call(material.reflection_probe_prepass.sub_pass, geom, res_handle);
-      geometry_call(material.reflection_probe_shading.sub_pass, geom, res_handle);
-    }
-    if (do_planar_probe_sync) {
-      geometry_call(material.planar_probe_prepass.sub_pass, geom, res_handle);
-      geometry_call(material.planar_probe_shading.sub_pass, geom, res_handle);
-    }
+    geometry_call(material.overlap_masking.sub_pass, geom, res_handle);
+    geometry_call(material.prepass.sub_pass, geom, res_handle);
+    geometry_call(material.shading.sub_pass, geom, res_handle);
+    geometry_call(material.shadow.sub_pass, geom, res_handle);
+
+    geometry_call(material.planar_probe_prepass.sub_pass, geom, res_handle);
+    geometry_call(material.planar_probe_shading.sub_pass, geom, res_handle);
+    geometry_call(material.reflection_probe_prepass.sub_pass, geom, res_handle);
+    geometry_call(material.reflection_probe_shading.sub_pass, geom, res_handle);
 
     is_shadow_caster = is_shadow_caster || material.shadow.sub_pass != nullptr;
     is_alpha_blend = is_alpha_blend || material.is_alpha_blend_transparent;
@@ -222,10 +217,6 @@ bool SyncModule::sync_sculpt(Object *ob,
 
   bool is_shadow_caster = false;
   bool is_alpha_blend = false;
-  bool do_reflection_probe_sync = inst_.do_reflection_probe_sync() &&
-                                  !(ob->visibility_flag & OB_HIDE_PROBE_CUBEMAP);
-  bool do_planar_probe_sync = inst_.do_reflection_probe_sync() &&
-                              !(ob->visibility_flag & OB_HIDE_PROBE_PLANAR);
   for (SculptBatch &batch :
        sculpt_batches_per_material_get(ob_ref.object, material_array.gpu_materials))
   {
@@ -236,20 +227,27 @@ bool SyncModule::sync_sculpt(Object *ob,
 
     Material &material = material_array.materials[batch.material_slot];
 
-    geometry_call(material.shading.sub_pass, geom, res_handle);
+    if (material.has_volume && (batch.material_slot == 0)) {
+      /* Only support single volume material for now. */
+      geometry_call(material.volume_occupancy.sub_pass, geom, res_handle);
+      inst_.pipelines.volume.material_call(material.volume_material, ob, res_handle);
+      /* Do not render surface if we are rendering a volume object
+       * and do not have a surface closure. */
+      if (material.has_surface == false) {
+        continue;
+      }
+    }
+
+    geometry_call(material.capture.sub_pass, geom, res_handle);
+    geometry_call(material.overlap_masking.sub_pass, geom, res_handle);
     geometry_call(material.prepass.sub_pass, geom, res_handle);
+    geometry_call(material.shading.sub_pass, geom, res_handle);
     geometry_call(material.shadow.sub_pass, geom, res_handle);
 
-    /* TODO(Miguel Pozo): Is this needed ? */
-    geometry_call(material.capture.sub_pass, geom, res_handle);
-    if (do_reflection_probe_sync) {
-      geometry_call(material.reflection_probe_prepass.sub_pass, geom, res_handle);
-      geometry_call(material.reflection_probe_shading.sub_pass, geom, res_handle);
-    }
-    if (do_planar_probe_sync) {
-      geometry_call(material.planar_probe_prepass.sub_pass, geom, res_handle);
-      geometry_call(material.planar_probe_shading.sub_pass, geom, res_handle);
-    }
+    geometry_call(material.planar_probe_prepass.sub_pass, geom, res_handle);
+    geometry_call(material.planar_probe_shading.sub_pass, geom, res_handle);
+    geometry_call(material.reflection_probe_prepass.sub_pass, geom, res_handle);
+    geometry_call(material.reflection_probe_shading.sub_pass, geom, res_handle);
 
     is_shadow_caster = is_shadow_caster || material.shadow.sub_pass != nullptr;
     is_alpha_blend = is_alpha_blend || material.is_alpha_blend_transparent;
@@ -278,7 +276,7 @@ void SyncModule::sync_point_cloud(Object *ob,
                                   ResourceHandle res_handle,
                                   const ObjectRef & /*ob_ref*/)
 {
-  int material_slot = 1;
+  const int material_slot = POINTCLOUD_MATERIAL_NR;
 
   bool has_motion = inst_.velocity.step_object_sync(
       ob, ob_handle.object_key, res_handle, ob_handle.recalc);
@@ -295,9 +293,28 @@ void SyncModule::sync_point_cloud(Object *ob,
     object_pass.draw(geometry, res_handle);
   };
 
-  drawcall_add(material.shading);
+  if (material.has_volume) {
+    /* Only support single volume material for now. */
+    drawcall_add(material.volume_occupancy);
+    inst_.pipelines.volume.material_call(material.volume_material, ob, res_handle);
+
+    /* Do not render surface if we are rendering a volume object
+     * and do not have a surface closure. */
+    if (material.has_surface == false) {
+      return;
+    }
+  }
+
+  drawcall_add(material.capture);
+  drawcall_add(material.overlap_masking);
   drawcall_add(material.prepass);
+  drawcall_add(material.shading);
   drawcall_add(material.shadow);
+
+  drawcall_add(material.planar_probe_prepass);
+  drawcall_add(material.planar_probe_shading);
+  drawcall_add(material.reflection_probe_prepass);
+  drawcall_add(material.reflection_probe_shading);
 
   inst_.cryptomatte.sync_object(ob, res_handle);
   GPUMaterial *gpu_material =
@@ -308,6 +325,30 @@ void SyncModule::sync_point_cloud(Object *ob,
   bool is_caster = material.shadow.sub_pass != nullptr;
   bool is_alpha_blend = material.is_alpha_blend_transparent;
   inst_.shadows.sync_object(ob_handle, res_handle, is_caster, is_alpha_blend);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Volume Objects
+ * \{ */
+
+void SyncModule::sync_volume(Object *ob, ObjectHandle & /*ob_handle*/, ResourceHandle res_handle)
+{
+  const int material_slot = VOLUME_MATERIAL_NR;
+
+  /* Motion is not supported on volumes yet. */
+  const bool has_motion = false;
+
+  Material &material = inst_.materials.material_get(
+      ob, has_motion, material_slot - 1, MAT_GEOM_VOLUME);
+
+  /* Use bounding box tag empty spaces. */
+  GPUBatch *geom = DRW_cache_cube_get();
+
+  geometry_call(material.volume_occupancy.sub_pass, geom, res_handle);
+
+  inst_.pipelines.volume.material_call(material.volume_material, ob, res_handle);
 }
 
 /** \} */
@@ -488,9 +529,27 @@ void SyncModule::sync_curves(Object *ob,
     }
   };
 
-  drawcall_add(material.shading);
+  if (material.has_volume) {
+    /* Only support single volume material for now. */
+    drawcall_add(material.volume_occupancy);
+    inst_.pipelines.volume.material_call(material.volume_material, ob, res_handle);
+    /* Do not render surface if we are rendering a volume object
+     * and do not have a surface closure. */
+    if (material.has_surface == false) {
+      return;
+    }
+  }
+
+  drawcall_add(material.capture);
+  drawcall_add(material.overlap_masking);
   drawcall_add(material.prepass);
+  drawcall_add(material.shading);
   drawcall_add(material.shadow);
+
+  drawcall_add(material.planar_probe_prepass);
+  drawcall_add(material.planar_probe_shading);
+  drawcall_add(material.reflection_probe_prepass);
+  drawcall_add(material.reflection_probe_shading);
 
   inst_.cryptomatte.sync_object(ob, res_handle);
   GPUMaterial *gpu_material =

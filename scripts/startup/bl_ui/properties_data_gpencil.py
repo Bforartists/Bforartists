@@ -168,7 +168,7 @@ class DATA_PT_gpencil_layers(DataButtonsPanel, Panel):
 
             col = layout.row(align=True)
             col.use_property_split = False
-            col.prop(gpl, "use_lights")
+            col.prop(gpl, "use_lights", text="Lights")
 
         col = layout.column(align = True)
         col.use_property_split = False
