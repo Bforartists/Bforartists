@@ -788,8 +788,10 @@ static void check_property_socket_sync(const Object *ob, ModifierData *md)
     }
 
     if (!nodes::id_property_type_matches_socket(*socket, *property)) {
-      BKE_modifier_set_error(
-          ob, md, "Property type does not match input socket \"(%s)\"", socket->name);
+      BKE_modifier_set_error(ob,
+                             md,
+                             "Property type does not match input socket \"(%s)\"",
+                             socket->name ? socket->name : "");
       continue;
     }
   }
@@ -1528,7 +1530,7 @@ static void add_attribute_search_or_value_buttons(const bContext &C,
     uiItemL(name_row, "", ICON_NONE);
   }
   else {
-    uiItemL(name_row, socket.name, ICON_NONE);
+    uiItemL(name_row, socket.name ? socket.name : "", ICON_NONE);
   }
 
   uiLayout *prop_row = uiLayoutRow(split, true);
@@ -1542,7 +1544,7 @@ static void add_attribute_search_or_value_buttons(const bContext &C,
     uiItemL(layout, "", ICON_BLANK1);
   }
   else {
-    const char *name = type == SOCK_BOOLEAN ? socket.name : "";
+    const char *name = type == SOCK_BOOLEAN ? (socket.name ? socket.name : "") : "";
     uiItemR(prop_row, md_ptr, rna_path.c_str(), UI_ITEM_NONE, name, ICON_NONE);
     uiItemDecoratorR(layout, md_ptr, rna_path.c_str(), -1);
   }
@@ -1595,34 +1597,42 @@ static void draw_property_for_socket(const bContext &C,
    * pointer IDProperties contain no information about their type. */
   const bNodeSocketType *typeinfo = socket.socket_typeinfo();
   const eNodeSocketDatatype type = typeinfo ? eNodeSocketDatatype(typeinfo->type) : SOCK_CUSTOM;
+  const char *name = socket.name ? socket.name : "";
   switch (type) {
     case SOCK_OBJECT: {
-      uiItemPointerR(row, md_ptr, rna_path, bmain_ptr, "objects", socket.name, ICON_OBJECT_DATA);
+      uiItemPointerR(row, md_ptr, rna_path, bmain_ptr, "objects", name, ICON_OBJECT_DATA);
       break;
     }
     case SOCK_COLLECTION: {
       uiItemPointerR(
-          row, md_ptr, rna_path, bmain_ptr, "collections", socket.name, ICON_OUTLINER_COLLECTION);
+          row, md_ptr, rna_path, bmain_ptr, "collections", name, ICON_OUTLINER_COLLECTION);
       break;
     }
     case SOCK_MATERIAL: {
-      uiItemPointerR(row, md_ptr, rna_path, bmain_ptr, "materials", socket.name, ICON_MATERIAL);
+      uiItemPointerR(row, md_ptr, rna_path, bmain_ptr, "materials", name, ICON_MATERIAL);
       break;
     }
     case SOCK_TEXTURE: {
-      uiItemPointerR(row, md_ptr, rna_path, bmain_ptr, "textures", socket.name, ICON_TEXTURE);
+      uiItemPointerR(row, md_ptr, rna_path, bmain_ptr, "textures", name, ICON_TEXTURE);
       break;
     }
     case SOCK_IMAGE: {
-      uiItemPointerR(row, md_ptr, rna_path, bmain_ptr, "images", socket.name, ICON_IMAGE);
+      uiItemPointerR(row, md_ptr, rna_path, bmain_ptr, "images", name, ICON_IMAGE);
       break;
+    }
+    case SOCK_BOOLEAN: {
+      if (is_layer_selection_field(socket)) {
+        uiItemR(row, md_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
+        break;
+      }
+      ATTR_FALLTHROUGH;
     }
     default: {
       if (nodes::input_has_attribute_toggle(*nmd->node_group, socket_index)) {
         add_attribute_search_or_value_buttons(C, row, *nmd, md_ptr, socket);
       }
       else {
-        uiItemR(row, md_ptr, rna_path, UI_ITEM_NONE, socket.name, ICON_NONE);
+        uiItemR(row, md_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
       }
     }
   }
@@ -1646,7 +1656,7 @@ static void draw_property_for_output_socket(const bContext &C,
   uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
   uiLayout *name_row = uiLayoutRow(split, false);
   //uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);// bfa - turned off, we align our labels left
-  uiItemL(name_row, socket.name, ICON_NONE);
+  uiItemL(name_row, socket.name ? socket.name : "", ICON_NONE);
 
   uiLayout *row = uiLayoutRow(split, true);
   add_attribute_search_button(C, row, nmd, md_ptr, rna_path_attribute_name, socket, true);
@@ -1685,7 +1695,8 @@ static void panel_draw(const bContext *C, Panel *panel)
 
     for (const int socket_index : nmd->node_group->interface_inputs().index_range()) {
       const bNodeTreeInterfaceSocket *socket = nmd->node_group->interface_inputs()[socket_index];
-      if (!(socket->flag & NODE_INTERFACE_SOCKET_HIDE_IN_MODIFIER)) {
+      if (is_layer_selection_field(*socket) ||
+          !(socket->flag & NODE_INTERFACE_SOCKET_HIDE_IN_MODIFIER)) {
         draw_property_for_socket(*C, layout, nmd, &bmain_ptr, ptr, *socket, socket_index);
       }
     }
@@ -1800,7 +1811,6 @@ static void internal_dependencies_panel_draw(const bContext * /*C*/, Panel *pane
 
     uiLayout *row = uiLayoutRow(split, false);
     //uiLayoutSetAlignment(row, UI_LAYOUT_ALIGN_RIGHT);// bfa - turned off, we align our labels left
-
     uiLayoutSetActive(row, false);
     uiItemL(row, ss.str().c_str(), ICON_NONE);
 

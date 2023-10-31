@@ -1106,7 +1106,7 @@ class DOPESHEET_PT_gpencil_mode(LayersDopeSheetPanel, Panel):
 
             col = layout.column(align=True)
             col.use_property_split = False
-            col.prop(gpl, "use_lights")
+            col.prop(gpl, "use_lights", text="Lights")
             col.prop(gpd, "use_autolock_layers", text="Autolock Inactive Layers") #BFA - consistent prop exposed
             col.prop(gpl, "lock_material")
 

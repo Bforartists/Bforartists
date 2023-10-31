@@ -193,36 +193,20 @@ BLI_INLINE int32_t pack_rotation_aspect_hardness(float rot, float asp, float har
 }
 
 static void grease_pencil_edit_lines_batch_ensure(
-    const Vector<blender::bke::greasepencil::Drawing *> drawings, GreasePencilBatchCache *cache)
+    const Span<const blender::bke::greasepencil::Drawing *> drawings,
+    GreasePencilBatchCache *cache)
 {
   using namespace blender::bke::greasepencil;
   int total_line_ids_num = 0;
 
   for (const Drawing *drawing : drawings) {
     const bke::CurvesGeometry &curves = drawing->strokes();
-    const OffsetIndices<int> points_by_curve = curves.points_by_curve();
-    const VArray<bool> cyclic = curves.cyclic();
-
-    /* Calculate the vertex and triangle offsets for all the curves. */
-    for (const int curve_i : curves.curves_range()) {
-      IndexRange points = points_by_curve[curve_i];
-      const bool is_cyclic = cyclic[curve_i];
-
-      if (points.size() == 0) {
-        continue;
-      }
-
-      /* Add one id for the first point in the curve. */
-      total_line_ids_num++;
-      /* Add ids for the segments. */
-      total_line_ids_num += points.size() - 1;
-      /* Add one segment for the cycle line. */
-      if (points.size() > 2 && is_cyclic) {
-        total_line_ids_num++;
-      }
-      /* Add one id for the jump to the next curve. */
-      total_line_ids_num++;
-    }
+    /* Add one id for the restart after every curve. */
+    total_line_ids_num += curves.curves_num();
+    /* Add one id for every non-cyclic segment. */
+    total_line_ids_num += curves.points_num();
+    /* Add one id for the last segment of every cyclic curve. */
+    total_line_ids_num += array_utils::count_booleans(curves.cyclic());
   }
 
   GPUIndexBufBuilder elb;
@@ -241,18 +225,14 @@ static void grease_pencil_edit_lines_batch_ensure(
 
     threading::parallel_for(curves.curves_range(), 512, [&](IndexRange range) {
       for (const int curve_i : range) {
-        IndexRange points = points_by_curve[curve_i];
+        const IndexRange points = points_by_curve[curve_i];
         const bool is_cyclic = cyclic[curve_i];
-
-        if (points.size() == 0) {
-          continue;
-        }
 
         for (const int point : points) {
           GPU_indexbuf_add_generic_vert(&elb, point + drawing_start_offset);
         }
 
-        if (points.size() > 2 && is_cyclic) {
+        if (is_cyclic) {
           GPU_indexbuf_add_generic_vert(&elb, points.first() + drawing_start_offset);
         }
 
@@ -269,7 +249,7 @@ static void grease_pencil_edit_lines_batch_ensure(
   GPU_batch_vertbuf_add(cache->edit_lines, cache->edit_points_selection, false);
 }
 
-static void grease_pencil_geom_batch_ensure(GreasePencil &grease_pencil,
+static void grease_pencil_geom_batch_ensure(const GreasePencil &grease_pencil,
                                             int cfra,
                                             const bool lines)
 {
@@ -287,9 +267,9 @@ static void grease_pencil_geom_batch_ensure(GreasePencil &grease_pencil,
   BLI_assert(cache->geom_batch == nullptr);
 
   /* Get the visible drawings. */
-  Vector<Drawing *> drawings;
+  Vector<const Drawing *> drawings;
   grease_pencil.foreach_visible_drawing(
-      cfra, [&](const int /*layer_index*/, Drawing &drawing) { drawings.append(&drawing); });
+      cfra, [&](const int /*layer_index*/, const Drawing &drawing) { drawings.append(&drawing); });
 
   /* First, count how many vertices and triangles are needed for the whole object. Also record the
    * offsets into the curves for the vertices and triangles. */

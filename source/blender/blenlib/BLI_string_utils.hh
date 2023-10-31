@@ -9,13 +9,12 @@
  */
 
 #include <stdarg.h>
+#include <string>
 
 #include "BLI_compiler_attrs.h"
+#include "BLI_function_ref.hh"
+#include "BLI_string_ref.hh"
 #include "BLI_utildefines.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 struct ListBase;
 
@@ -142,7 +141,7 @@ size_t BLI_string_flip_side_name(char *name_dst,
 
 /**
  * Ensures name is unique (according to criteria specified by caller in unique_check callback),
- * incrementing its numeric suffix as necessary. Returns true if name had to be adjusted.
+ * incrementing its numeric suffix as necessary.
  *
  * \param unique_check: Return true if name is not unique
  * \param arg: Additional arg to unique_check--meaning is up to caller
@@ -150,17 +149,28 @@ size_t BLI_string_flip_side_name(char *name_dst,
  * \param delim: Delimits numeric suffix in name
  * \param name: Name to be ensured unique
  * \param name_maxncpy: Maximum length of name area
- * \return true if there if the name was changed
  */
-bool BLI_uniquename_cb(UniquenameCheckCallback unique_check,
+void BLI_uniquename_cb(UniquenameCheckCallback unique_check,
                        void *arg,
                        const char *defname,
                        char delim,
                        char *name,
                        size_t name_maxncpy) ATTR_NONNULL(1, 3, 5);
+
+/**
+ * Ensures name is unique (according to criteria specified by caller in unique_check callback),
+ * incrementing its numeric suffix as necessary.
+ *
+ * \param unique_check: Return true if name is not unique
+ * \param delim: Delimits numeric suffix in name
+ * \param name: Name to be ensured unique
+ */
+std::string BLI_uniquename_cb(blender::FunctionRef<bool(blender::StringRef)> unique_check,
+                              char delim,
+                              blender::StringRef name);
 /**
  * Ensures that the specified block has a unique name within the containing list,
- * incrementing its numeric suffix as necessary. Returns true if name had to be adjusted.
+ * incrementing its numeric suffix as necessary.
  *
  * \param list: List containing the block
  * \param vlink: The block to check the name for
@@ -169,7 +179,7 @@ bool BLI_uniquename_cb(UniquenameCheckCallback unique_check,
  * \param name_offset: Offset of name within block structure
  * \param name_maxncpy: Maximum length of name area
  */
-bool BLI_uniquename(struct ListBase *list,
+void BLI_uniquename(struct ListBase *list,
                     void *vlink,
                     const char *defname,
                     char delim,
@@ -532,7 +542,3 @@ BLI_INLINE char *_BLI_string_join_by_sep_charN_11(_BLI_STRING_ARGS_10)
 /** \} */
 
 #undef _BLI_STRING_ARGS_0
-
-#ifdef __cplusplus
-}
-#endif

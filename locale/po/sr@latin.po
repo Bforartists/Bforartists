@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.0.0 Beta (b'ba3e9b352630')\n"
+"Project-Id-Version: Blender 4.0.0 Beta (b'8474716abb0d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-16 09:13:41\n"
+"POT-Creation-Date: 2023-10-30 16:01:56\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -205,6 +205,10 @@ msgstr "Isključeno"
 
 msgid "Full"
 msgstr "Kompletno"
+
+
+msgid "Auto"
+msgstr "Auto"
 
 
 msgid "Fribidi Library"
@@ -689,10 +693,6 @@ msgstr "Slobodno"
 
 msgid "Aligned"
 msgstr "Poravnato"
-
-
-msgid "Auto"
-msgstr "Auto"
 
 
 msgid "Handle 2"
@@ -19566,10 +19566,6 @@ msgid "PNG Image (.png)"
 msgstr "PNG slika (.png)"
 
 
-msgid "Modified"
-msgstr "Izmenjen"
-
-
 msgid "Fill Opacity"
 msgstr "Providnost ispune"
 
@@ -27534,6 +27530,10 @@ msgstr "Blender-ov pregled datoteka"
 
 msgid "unable to open the file"
 msgstr "Ne mogu da otvorim datoteku"
+
+
+msgid "Modified"
+msgstr "Izmenjen"
 
 
 msgid "Not a library"
