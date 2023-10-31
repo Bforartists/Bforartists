@@ -42,7 +42,7 @@
 #include "BLI_dynstr.h" /* For #WM_operator_pystring. */
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector_types.hh"
-#include "BLI_string_utils.h"
+#include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
 
 #include "BKE_anim_data.h"
@@ -827,8 +827,6 @@ static bool operator_last_properties_init_impl(wmOperator *op, IDProperty *last_
   IDPropertyTemplate val = {0};
   IDProperty *replaceprops = IDP_New(IDP_GROUP, &val, "wmOperatorProperties");
 
-  CLOG_INFO(WM_LOG_OPERATORS, 1, "loading previous properties for '%s'", op->type->idname);
-
   PropertyRNA *iterprop = RNA_struct_iterator_property(op->type->srna);
 
   RNA_PROP_BEGIN (op->ptr, itemptr, iterprop) {
@@ -854,6 +852,9 @@ static bool operator_last_properties_init_impl(wmOperator *op, IDProperty *last_
   }
   RNA_PROP_END;
 
+  if (changed) {
+    CLOG_INFO(WM_LOG_OPERATORS, 1, "loading previous properties for '%s'", op->type->idname);
+  }
   IDP_MergeGroup(op->properties, replaceprops, true);
   IDP_FreeProperty(replaceprops);
   return changed;
@@ -882,7 +883,9 @@ bool WM_operator_last_properties_store(wmOperator *op)
   }
 
   if (op->properties) {
-    CLOG_INFO(WM_LOG_OPERATORS, 1, "storing properties for '%s'", op->type->idname);
+    if (!BLI_listbase_is_empty(&op->properties->data.group)) {
+      CLOG_INFO(WM_LOG_OPERATORS, 1, "storing properties for '%s'", op->type->idname);
+    }
     op->type->last_properties = IDP_CopyProperty(op->properties);
   }
 
@@ -2360,21 +2363,7 @@ static void radial_control_set_initial_mouse(bContext *C, RadialControl *rc, con
     d[1] *= zoom[1];
   }
   rc->scale_fac = 1.0f;
-  /* Grease pencil draw tool needs to re-scale the cursor size. If we don't do that
-   * the size of the radial is not equal to the actual stroke size. */
-  Object *object = CTX_data_active_object(C);
-  if (object->type == OB_GREASE_PENCIL && rc->prop == &rna_UnifiedPaintSettings_size) {
-    ToolSettings *ts = CTX_data_tool_settings(C);
-    const Brush &brush = *BKE_paint_brush_for_read(&ts->gp_paint->paint);
-    /* Only the draw brush needs the re-scaling. */
-    if (brush.gpencil_tool == GPAINT_TOOL_DRAW) {
-      float cursor_radius = blender::ed::greasepencil::brush_radius_world_space(
-          *C, event->mval[0], event->mval[1]);
-      rc->scale_fac = max_ff(cursor_radius, 1.0f) / max_ff(rc->initial_value, 1.0f);
-    }
-  }
-  else if (rc->ptr.owner_id && GS(rc->ptr.owner_id->name) == ID_BR && rc->prop == &rna_Brush_size)
-  {
+  if (rc->ptr.owner_id && GS(rc->ptr.owner_id->name) == ID_BR && rc->prop == &rna_Brush_size) {
     Brush *brush = reinterpret_cast<Brush *>(rc->ptr.owner_id);
     rc->scale_fac = ED_gpencil_radial_control_scale(C, brush, rc->initial_value, event->mval);
   }

@@ -22,6 +22,8 @@ namespace blender::gpu {
 VKFrameBuffer::VKFrameBuffer(const char *name) : FrameBuffer(name)
 {
   size_set(1, 1);
+  srgb_ = false;
+  enabled_srgb_ = false;
 }
 
 VKFrameBuffer::~VKFrameBuffer()
@@ -31,7 +33,7 @@ VKFrameBuffer::~VKFrameBuffer()
 
 /** \} */
 
-void VKFrameBuffer::bind(bool /*enabled_srgb*/)
+void VKFrameBuffer::bind(bool enabled_srgb)
 {
   VKContext &context = *VKContext::get();
   /* Updating attachments can issue pipeline barriers, this should be done outside the render pass.
@@ -44,6 +46,8 @@ void VKFrameBuffer::bind(bool /*enabled_srgb*/)
   }
 
   context.activate_framebuffer(*this);
+  enabled_srgb_ = enabled_srgb;
+  Shader::set_framebuffer_srgb_target(enabled_srgb && srgb_);
 }
 
 Array<VkViewport, 16> VKFrameBuffer::vk_viewports_get() const
@@ -142,8 +146,8 @@ void VKFrameBuffer::clear(const Vector<VkClearAttachment> &attachments) const
   clear_rect.layerCount = 1;
 
   VKContext &context = *VKContext::get();
-  VKCommandBuffer &command_buffer = context.command_buffer_get();
-  command_buffer.clear(attachments, Span<VkClearRect>(&clear_rect, 1));
+  VKCommandBuffers &command_buffers = context.command_buffers_get();
+  command_buffers.clear(attachments, Span<VkClearRect>(&clear_rect, 1));
 }
 
 void VKFrameBuffer::clear(const eGPUFrameBufferBits buffers,
@@ -266,7 +270,7 @@ void VKFrameBuffer::read(eGPUFrameBufferBits plane,
 /** \name Blit operations
  * \{ */
 
-static void blit_aspect(VKCommandBuffer &command_buffer,
+static void blit_aspect(VKCommandBuffers &command_buffer,
                         VKTexture &dst_texture,
                         VKTexture &src_texture,
                         int dst_offset_x,
@@ -325,7 +329,7 @@ void VKFrameBuffer::blit_to(eGPUFrameBufferBits planes,
   UNUSED_VARS_NDEBUG(planes);
 
   VKContext &context = *VKContext::get();
-  VKCommandBuffer &command_buffer = context.command_buffer_get();
+  VKCommandBuffers &command_buffers = context.command_buffers_get();
   if (!context.has_active_framebuffer()) {
     BLI_assert_unreachable();
     return;
@@ -343,7 +347,7 @@ void VKFrameBuffer::blit_to(eGPUFrameBufferBits planes,
       dst_framebuffer.color_attachment_layout_ensure(
           context, dst_slot, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-      blit_aspect(command_buffer,
+      blit_aspect(command_buffers,
                   dst_texture,
                   src_texture,
                   dst_offset_x,
@@ -368,7 +372,7 @@ void VKFrameBuffer::blit_to(eGPUFrameBufferBits planes,
       dst_framebuffer.depth_attachment_layout_ensure(context,
                                                      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-      blit_aspect(command_buffer,
+      blit_aspect(command_buffers,
                   dst_texture,
                   src_texture,
                   dst_offset_x,
@@ -376,7 +380,6 @@ void VKFrameBuffer::blit_to(eGPUFrameBufferBits planes,
                   VK_IMAGE_ASPECT_DEPTH_BIT);
     }
   }
-  command_buffer.submit();
 }
 
 /** \} */
@@ -448,18 +451,22 @@ void VKFrameBuffer::render_pass_create()
 
       /* Ensure texture is allocated to ensure the image view. */
       VKTexture &texture = *static_cast<VKTexture *>(unwrap(attachment.tex));
+      const bool use_stencil = false;
+      const bool use_srgb = srgb_ && enabled_srgb_;
       image_views_.append(VKImageView(texture,
                                       eImageViewUsage::Attachment,
                                       IndexRange(max_ii(attachment.layer, 0), 1),
                                       IndexRange(attachment.mip, 1),
-                                      false,
+                                      use_stencil,
+                                      use_srgb,
                                       name_));
-      image_views[attachment_location] = image_views_.last().vk_handle();
+      const VKImageView &image_view = image_views_.last();
+      image_views[attachment_location] = image_view.vk_handle();
 
       VkAttachmentDescription &attachment_description =
           attachment_descriptions[attachment_location];
       attachment_description.flags = 0;
-      attachment_description.format = to_vk_format(texture.format_get());
+      attachment_description.format = image_view.vk_format();
       attachment_description.samples = VK_SAMPLE_COUNT_1_BIT;
       attachment_description.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
       attachment_description.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -612,6 +619,17 @@ void VKFrameBuffer::update_size()
     }
   }
   size_set(1, 1);
+}
+
+void VKFrameBuffer::update_srgb()
+{
+  for (int i : IndexRange(GPU_FB_MAX_COLOR_ATTACHMENT)) {
+    VKTexture *texture = unwrap(unwrap(color_tex(i)));
+    if (texture) {
+      srgb_ = (texture->format_flag_get() & GPU_FORMAT_SRGB) != 0;
+      return;
+    }
+  }
 }
 
 int VKFrameBuffer::color_attachments_resource_size() const

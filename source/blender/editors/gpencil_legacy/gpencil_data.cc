@@ -21,7 +21,7 @@
 #include "BLI_math_geom.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_vector.h"
-#include "BLI_string_utils.h"
+#include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -345,6 +345,17 @@ static int gpencil_layer_remove_exec(bContext *C, wmOperator *op)
   DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
   WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED, nullptr);
   WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_SELECTED, nullptr);
+
+  /* Free Grease Pencil data block when last annotation layer is removed, see: #112683. */
+  if (is_annotation && gpd->layers.first == nullptr) {
+    BKE_gpencil_free_data(gpd, true);
+
+    bGPdata **gpd_ptr = ED_annotation_data_get_pointers(C, nullptr);
+    *gpd_ptr = nullptr;
+
+    Main *bmain = CTX_data_main(C);
+    BKE_id_free_us(bmain, gpd);
+  }
 
   return OPERATOR_FINISHED;
 }

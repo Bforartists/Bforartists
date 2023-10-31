@@ -218,7 +218,7 @@ void extract_data_vert_bmesh(const PBVH_GPU_Args &args, const int cd_offset, GPU
 {
   VBOT *data = static_cast<VBOT *>(GPU_vertbuf_get_data(&vbo));
 
-  GSET_FOREACH_BEGIN (const BMFace *, f, args.bm_faces) {
+  for (const BMFace *f : *args.bm_faces) {
     if (BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
       continue;
     }
@@ -230,7 +230,6 @@ void extract_data_vert_bmesh(const PBVH_GPU_Args &args, const int cd_offset, GPU
     *data = convert_value<AttributeT, VBOT>(bmesh_cd_vert_get<AttributeT>(*l->next->v, cd_offset));
     data++;
   }
-  GSET_FOREACH_END();
 }
 
 template<typename AttributeT, typename VBOT>
@@ -238,7 +237,7 @@ void extract_data_corner_bmesh(const PBVH_GPU_Args &args, const int cd_offset, G
 {
   VBOT *data = static_cast<VBOT *>(GPU_vertbuf_get_data(&vbo));
 
-  GSET_FOREACH_BEGIN (const BMFace *, f, args.bm_faces) {
+  for (const BMFace *f : *args.bm_faces) {
     if (BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
       continue;
     }
@@ -250,7 +249,6 @@ void extract_data_corner_bmesh(const PBVH_GPU_Args &args, const int cd_offset, G
     *data = convert_value<AttributeT, VBOT>(bmesh_cd_loop_get<AttributeT>(*l->next, cd_offset));
     data++;
   }
-  GSET_FOREACH_END();
 }
 
 struct PBVHBatch {
@@ -353,12 +351,11 @@ struct PBVHBatches {
         break;
       }
       case PBVH_BMESH: {
-        GSET_FOREACH_BEGIN (BMFace *, f, args.bm_faces) {
+        for (const BMFace *f : *args.bm_faces) {
           if (!BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
             count++;
           }
         }
-        GSET_FOREACH_END();
       }
     }
 
@@ -482,7 +479,7 @@ struct PBVHBatches {
           face_no = convert_value<float3, short4>(args.face_normals[face_i]);
           last_face = face_i;
         }
-        std::fill(data, data + 3, face_no);
+        std::fill_n(data, 3, face_no);
         data += 3;
       }
       else {
@@ -741,7 +738,7 @@ struct PBVHBatches {
                 fset_color[0] = fset_color[1] = fset_color[2] = UCHAR_MAX;
               }
             }
-            std::fill(data, data + 3, fset_color);
+            std::fill_n(data, 3, fset_color);
             data += 3;
           }
         }
@@ -866,7 +863,7 @@ struct PBVHBatches {
     switch (vbo.type) {
       case CD_PBVH_CO_TYPE: {
         float3 *data = static_cast<float3 *>(GPU_vertbuf_get_data(vbo.vert_buf));
-        GSET_FOREACH_BEGIN (const BMFace *, f, args.bm_faces) {
+        for (const BMFace *f : *args.bm_faces) {
           if (BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
             continue;
           }
@@ -878,12 +875,11 @@ struct PBVHBatches {
           *data = l->next->v->co;
           data++;
         }
-        GSET_FOREACH_END();
         break;
       }
       case CD_PBVH_NO_TYPE: {
         short4 *data = static_cast<short4 *>(GPU_vertbuf_get_data(vbo.vert_buf));
-        GSET_FOREACH_BEGIN (const BMFace *, f, args.bm_faces) {
+        for (const BMFace *f : *args.bm_faces) {
           if (BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
             continue;
           }
@@ -897,11 +893,10 @@ struct PBVHBatches {
             data++;
           }
           else {
-            std::fill(data, data + 3, convert_value<float3, short4>(f->no));
+            std::fill_n(data, 3, convert_value<float3, short4>(f->no));
             data += 3;
           }
         }
-        GSET_FOREACH_END();
         break;
       }
       case CD_PBVH_MASK_TYPE: {
@@ -923,7 +918,7 @@ struct PBVHBatches {
 
         uchar4 *data = static_cast<uchar4 *>(GPU_vertbuf_get_data(vbo.vert_buf));
         if (cd_offset != -1) {
-          GSET_FOREACH_BEGIN (const BMFace *, f, args.bm_faces) {
+          for (const BMFace *f : *args.bm_faces) {
             if (BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
               continue;
             }
@@ -938,10 +933,9 @@ struct PBVHBatches {
               /* Skip for the default color face set to render it white. */
               fset_color[0] = fset_color[1] = fset_color[2] = UCHAR_MAX;
             }
-            std::fill(data, data + 3, fset_color);
+            std::fill_n(data, 3, fset_color);
             data += 3;
           }
-          GSET_FOREACH_END();
         }
         else {
           MutableSpan(data, GPU_vertbuf_get_vertex_len(vbo.vert_buf)).fill(uchar4(255));
@@ -1160,7 +1154,7 @@ struct PBVHBatches {
     int v_index = 0;
     lines_count = 0;
 
-    GSET_FOREACH_BEGIN (BMFace *, f, args.bm_faces) {
+    for (const BMFace *f : *args.bm_faces) {
       if (BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
         continue;
       }
@@ -1172,7 +1166,6 @@ struct PBVHBatches {
       lines_count += 3;
       v_index += 3;
     }
-    GSET_FOREACH_END();
 
     lines_index = GPU_indexbuf_build(&elb_lines);
   }

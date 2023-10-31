@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.0.0 Beta (b'ba3e9b352630')\n"
+"Project-Id-Version: Blender 4.0.0 Beta (b'8474716abb0d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-16 09:13:41\n"
+"POT-Creation-Date: 2023-10-30 16:01:56\n"
 "PO-Revision-Date: 2022-08-19 12:33+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -318,20 +318,20 @@ msgid "Full"
 msgstr "Đầy"
 
 
+msgid "On"
+msgstr "Mở"
+
+
+msgid "Auto"
+msgstr "Tự Động"
+
+
 msgid "Distribute memory across devices"
 msgstr "Phân phối bộ nhớ giữa các thiết bị"
 
 
 msgid "Make more room for large scenes to fit by distributing memory across interconnected devices (e.g. via NVLink) rather than duplicating it"
 msgstr "Cho chỗ chứa vừa đủ cho cảnh lớn bằng phân phối bộ nhớ giữa các thiết bị được liên kết với nhau (ví dụ bằng NVLink) thay thế sao chép nó"
-
-
-msgid "MetalRT (Experimental)"
-msgstr "MetalRT (Đồ Thí Nghiệm)"
-
-
-msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
-msgstr "Dùng MetalRT cho dò tia để giảm sử dụng bộ nhớ cho cảnh có đường cong nhiều,Nhưng nó là đồ thí nghiệm và có lẽ kết xuất một số cảnh không đúng"
 
 
 msgid "KHR_materials_variants_ui"
@@ -1925,10 +1925,6 @@ msgstr "Tự Do"
 
 msgid "Aligned"
 msgstr "Sắp Xếp"
-
-
-msgid "Auto"
-msgstr "Tự Động"
 
 
 msgid "Handle 2"
@@ -51420,10 +51416,6 @@ msgid "Apply sampling to all animations"
 msgstr "Áp dụng lấy mẫu vật cho tất cả hoạt hình"
 
 
-msgid "Output format and embedding options. Binary is most efficient, but JSON (embedded or separate) may be easier to edit later"
-msgstr "Định dạng ngõ ra và tùy chọn nhét đồ. Nhị phận có hiệu qủa cao nhất, nhưng JSON (được nhét vào hay để riêng) có lẽ dễ biên tập hơn trong tương lai"
-
-
 msgid "glTF Binary (.glb)"
 msgstr "Nhị Phận glTF (.glb)"
 
@@ -51438,14 +51430,6 @@ msgstr "Riêng glTF (.glb + .bin + chất liệu)"
 
 msgid "Exports multiple files, with separate JSON, binary and texture data. Easiest to edit later"
 msgstr "Xuất nhiều tập tin, với dữ liệu JSON, nhị phận và chất liệu riêng. Dễ nhất để biên tập thời sau"
-
-
-msgid "glTF Embedded (.gltf)"
-msgstr "Nhét glTF (.gltf)"
-
-
-msgid "Exports a single file, with all data packed in JSON. Less efficient than binary, but easier to edit later"
-msgstr "Xuất một tập tin, với tất cả dữ liệu được gói bằng JSON. Hiệu qủa thấp hơn so với nhị phận, nhưng biên tập dễ hơn thời sau"
 
 
 msgid "Limit to Playback Range"
@@ -72326,10 +72310,6 @@ msgstr "Ảnh PNG (.png)"
 
 msgid "Export the UV layout to a bitmap image"
 msgstr "Xuất cài đặt UV vào một mảng ảnh"
-
-
-msgid "Modified"
-msgstr "Đã Sửa Đổi"
 
 
 msgid "Exports UVs from the modified mesh"
@@ -111585,6 +111565,14 @@ msgid "Move asset out of any catalog"
 msgstr "Di chuyển tích sản ra khỏi bất cứ danh mục nào"
 
 
+msgid "Today"
+msgstr "Ngày nay"
+
+
+msgid "Yesterday"
+msgstr "Hôm qua"
+
+
 msgid "File path"
 msgstr "Đường dẫn tập tin"
 
@@ -111599,14 +111587,6 @@ msgid ""
 msgstr ""
 "Thư Viện Tích Sản là thư mục địa phương có thể chứa tập tin .blend có tích sản ở trong.\n"
 "Quản lý những Thư Viện Tích Sản từ phần Đường Dẫn trong Tùy Chọn"
-
-
-msgid "Today"
-msgstr "Ngày nay"
-
-
-msgid "Yesterday"
-msgstr "Hôm qua"
 
 
 msgid "File does not exist"
@@ -115892,10 +115872,6 @@ msgid "Cr"
 msgstr "Cr"
 
 
-msgid "On"
-msgstr "Mở"
-
-
 msgid "Val"
 msgstr "Giá Trị"
 
@@ -117447,6 +117423,10 @@ msgstr "không thể mở tập tin"
 
 msgid "File Not Found"
 msgstr "Không Tìm Được Tập Tin"
+
+
+msgid "Modified"
+msgstr "Đã Sửa Đổi"
 
 
 msgid "Save the current file in the desired location but do not make the saved file active"
