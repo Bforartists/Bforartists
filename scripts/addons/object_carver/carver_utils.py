@@ -338,8 +338,7 @@ def CreateBevel(context, CurrentObject):
 
         bpy.ops.object.shade_smooth()
 
-        context.object.data.use_auto_smooth = True
-        context.object.data.auto_smooth_angle = 1.0471975
+        context.object.data.set_sharp_from_angle(angle=1.0471975)
 
         # Restore the active object
         context.view_layer.objects.active = SavActive

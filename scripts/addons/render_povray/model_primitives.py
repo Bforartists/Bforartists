@@ -180,7 +180,6 @@ def pov_cylinder_define(context, op, ob, radius, loc, loc_cap):
         ob.name = ob.data.name = "PovCylinder"
         ob.pov.cylinder_radius = radius
         ob.pov.cylinder_location_cap = vec
-        ob.data.use_auto_smooth = True
         ob.pov.object_as = "CYLINDER"
         ob.update_tag() # as prop set via python not updated in depsgraph
 
@@ -326,7 +325,6 @@ def pov_sphere_define(context, op, ob, loc):
         bpy.ops.object.mode_set(mode="EDIT")
         bpy.ops.mesh.hide(unselected=False)
         bpy.ops.object.mode_set(mode="OBJECT")
-        ob.data.use_auto_smooth = True
         bpy.ops.object.shade_smooth()
         ob.pov.object_as = "SPHERE"
         ob.update_tag() # as prop set via python not updated in depsgraph
@@ -471,7 +469,6 @@ def pov_cone_define(context, op, ob):
         ob.pov.cone_height = height
         ob.pov.cone_base_z = zb
         ob.pov.cone_cap_z = zc
-        ob.data.use_auto_smooth = True
         bpy.ops.object.shade_smooth()
         ob.pov.object_as = "CONE"
         ob.update_tag() # as prop set via python not updated in depsgraph
@@ -659,9 +656,7 @@ def pov_torus_define(context, op, ob):
         bpy.ops.object.mode_set(mode="EDIT")
         bpy.ops.mesh.hide(unselected=False)
         bpy.ops.object.mode_set(mode="OBJECT")
-        ob.data.use_auto_smooth = True
-        ob.data.auto_smooth_angle = 0.6
-        bpy.ops.object.shade_smooth()
+        ob.data.set_sharp_from_angle(angle=0.6)
         ob.pov.object_as = "TORUS"
         ob.update_tag() # as prop set via python not updated in depsgraph
 

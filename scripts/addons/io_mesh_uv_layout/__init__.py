@@ -30,6 +30,8 @@ if "bpy" in locals():
 import os
 import bpy
 
+from bpy.app.translations import contexts as i18n_contexts
+
 from bpy.props import (
     StringProperty,
     BoolProperty,
@@ -71,6 +73,7 @@ class ExportUVLayout(bpy.types.Operator):
         name="Modified",
         description="Exports UVs from the modified mesh",
         default=False,
+        translation_context=i18n_contexts.id_mesh,
     )
     mode: EnumProperty(
         items=(
