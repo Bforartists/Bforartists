@@ -6821,12 +6821,12 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
+  /* BFA - Adjused sizes to be more useful in Thumbnail View and match from menus dropdown */
   static const EnumPropertyItem display_size_items[] = {
-      {32, "TINY", 0, "Tiny", ""},
-      {64, "SMALL", 0, "Small", ""},
-      {96, "NORMAL", 0, "Medium", ""},
-      {128, "BIG", 0, "Big", ""},
-      {192, "LARGE", 0, "Large", ""},
+      {48, "TINY", 0, "Tiny", ""},
+      {96, "SMALL", 0, "Small", ""},
+      {128, "NORMAL", 0, "Medium", ""},
+      {256, "LARGE", 0, "Large", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -7011,7 +7011,7 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_LIST, nullptr);
   RNA_def_property_int_default(prop, 96);
   RNA_def_property_range(prop, 16, 256);
-  RNA_def_property_ui_range(prop, 24, 256, 1, 0);
+  RNA_def_property_ui_range(prop, 16, 256, 1, 0);
 
   prop = RNA_def_property(srna, "display_size_discrete", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "thumbnail_size");
