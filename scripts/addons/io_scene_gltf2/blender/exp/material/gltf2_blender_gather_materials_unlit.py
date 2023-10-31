@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from . import gltf2_blender_gather_texture_info
-from .gltf2_blender_search_node_tree import get_vertex_color_info
 from .gltf2_blender_search_node_tree import \
     get_socket, \
     NodeSocket, \
@@ -143,7 +142,5 @@ def gather_base_color_texture(info, export_settings):
             export_settings,
         )
 
-        vc_info = get_vertex_color_info(sockets[0], sockets, export_settings)
-
-        return unlit_texture, {'baseColorTexture': uvmap_info}, vc_info
-    return None, {}, {"color": None, "alpha": None}
+        return unlit_texture, {'baseColorTexture': uvmap_info}
+    return None, {}

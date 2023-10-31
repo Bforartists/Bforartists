@@ -1158,7 +1158,6 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
         # NOTE: this is not supported by importer currently.
         # XXX Official docs says normals should use IndexToDirect,
         #     but this does not seem well supported by apps currently...
-        me.calc_normals_split()
 
         ln_bl_dtype = np.single
         ln_fbx_dtype = np.float64
@@ -1257,8 +1256,6 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                     del t_ln
                     # del t_lnw
                     me.free_tangents()
-
-        me.free_normals_split()
 
     # Write VertexColor Layers.
     colors_type = scene_data.settings.colors_type
