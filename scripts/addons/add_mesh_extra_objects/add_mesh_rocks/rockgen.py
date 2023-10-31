@@ -150,9 +150,6 @@ def createMeshObject(context, verts, edges, faces, name):
     # Make a mesh from a list of verts/edges/faces.
     mesh.from_pydata(verts, edges, faces)
 
-    # Set mesh to use auto smoothing:
-    mesh.use_auto_smooth = True
-
     # Update mesh geometry after adding stuff.
     mesh.update()
 

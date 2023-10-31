@@ -629,7 +629,7 @@ def _transformation_curves_gen(item, values_arrays, channel_keys):
     # Create matrices/euler from the initial transformation values of this item.
     # These variables will be updated in-place as we iterate through each frame.
     lcl_translation_mat = Matrix.Translation(transform_data.loc)
-    lcl_rotation_eul = Euler(transform_data.rot, transform_data.rot_ord)
+    lcl_rotation_eul = Euler(convert_deg_to_rad_iter(transform_data.rot), transform_data.rot_ord)
     lcl_scaling_mat = Matrix()
     lcl_scaling_mat[0][0], lcl_scaling_mat[1][1], lcl_scaling_mat[2][2] = transform_data.sca
 
@@ -1363,14 +1363,13 @@ def blen_read_geom_array_foreach_set_allsame(blen_data, blen_attr, blen_dtype, f
 
 def blen_read_geom_array_foreach_set_looptovert(mesh, blen_data, blen_attr, blen_dtype, fbx_data, stride, item_size,
                                                 descr, xform):
-    """Generic fbx_layer to blen_data foreach setter for polyloop ByVertice layers.
+    """Generic fbx_layer to blen_data foreach setter for face corner ByVertice layers.
     blen_data must be a bpy_prop_collection or 2d np.ndarray whose second axis length is item_size.
     fbx_data must be an array.array"""
-    # The fbx_data is mapped to vertices. To expand fbx_data to polygon loops, get an array of the vertex index of each
-    # polygon loop that will then be used to index fbx_data
-    loop_vertex_indices = np.empty(len(mesh.loops), dtype=np.uintc)
-    mesh.loops.foreach_get("vertex_index", loop_vertex_indices)
-    blen_read_geom_array_foreach_set_indexed(blen_data, blen_attr, blen_dtype, fbx_data, loop_vertex_indices, stride,
+    # The fbx_data is mapped to vertices. To expand fbx_data to face corners, get an array of the vertex index of each
+    # face corner that will then be used to index fbx_data.
+    corner_vertex_indices = MESH_ATTRIBUTE_CORNER_VERT.to_ndarray(mesh.attributes)
+    blen_read_geom_array_foreach_set_indexed(blen_data, blen_attr, blen_dtype, fbx_data, corner_vertex_indices, stride,
                                              item_size, descr, xform)
 
 
@@ -1653,8 +1652,6 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
             1, fbx_item_size, layer_id,
             xform=np.logical_not,  # in FBX, 0 (False) is sharp, but in Blender True is sharp.
             )
-        # We only set sharp edges here, not face smoothing itself...
-        mesh.use_auto_smooth = True
         return False
     elif fbx_layer_mapping == b'ByPolygon':
         blen_data = MESH_ATTRIBUTE_SHARP_FACE.ensure(mesh.attributes).data
@@ -1737,23 +1734,25 @@ def blen_read_geom_layer_normal(fbx_obj, mesh, xform=None):
     bl_norm_dtype = np.single
     item_size = 3
     # try loops, then polygons, then vertices.
-    tries = ((mesh.loops, "Loops", False, blen_read_geom_array_mapped_polyloop),
+    tries = ((mesh.attributes["temp_custom_normals"].data, "Loops", False, blen_read_geom_array_mapped_polyloop),
              (mesh.polygons, "Polygons", True, blen_read_geom_array_mapped_polygon),
              (mesh.vertices, "Vertices", True, blen_read_geom_array_mapped_vert))
     for blen_data, blen_data_type, is_fake, func in tries:
         bdata = np.zeros((len(blen_data), item_size), dtype=bl_norm_dtype) if is_fake else blen_data
-        if func(mesh, bdata, "normal", bl_norm_dtype,
+        if func(mesh, bdata, "vector", bl_norm_dtype,
                 fbx_layer_data, fbx_layer_index, fbx_layer_mapping, fbx_layer_ref, 3, item_size, layer_id, xform, True):
             if blen_data_type == "Polygons":
                 # To expand to per-loop normals, repeat each per-polygon normal by the number of loops of each polygon.
                 poly_loop_totals = np.empty(len(mesh.polygons), dtype=np.uintc)
                 mesh.polygons.foreach_get("loop_total", poly_loop_totals)
                 loop_normals = np.repeat(bdata, poly_loop_totals, axis=0)
-                mesh.loops.foreach_set("normal", loop_normals.ravel())
+                mesh.attributes["temp_custom_normals"].data.foreach_set("vector", loop_normals.ravel())
             elif blen_data_type == "Vertices":
+                # Note: Currently unreachable because `blen_read_geom_array_mapped_polyloop` covers all the supported
+                # import cases covered by `blen_read_geom_array_mapped_vert`.
                 # We have to copy vnors to lnors! Far from elegant, but simple.
                 loop_vertex_indices = MESH_ATTRIBUTE_CORNER_VERT.to_ndarray(mesh.attributes)
-                mesh.loops.foreach_set("normal", bdata[loop_vertex_indices].ravel())
+                mesh.attributes["temp_custom_normals"].data.foreach_set("vector", bdata[loop_vertex_indices].ravel())
             return True
 
     blen_read_geom_array_error_mapping("normal", fbx_layer_mapping)
@@ -1877,7 +1876,7 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
     if settings.use_custom_normals:
         # Note: we store 'temp' normals in loops, since validate() may alter final mesh,
         #       we can only set custom lnors *after* calling it.
-        mesh.create_normals_split()
+        mesh.attributes.new("temp_custom_normals", 'FLOAT_VECTOR', 'CORNER')
         if geom_mat_no is None:
             ok_normals = blen_read_geom_layer_normal(fbx_obj, mesh)
         else:
@@ -1889,7 +1888,7 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
     if ok_normals:
         bl_nors_dtype = np.single
         clnors = np.empty(len(mesh.loops) * 3, dtype=bl_nors_dtype)
-        mesh.loops.foreach_get("normal", clnors)
+        mesh.attributes["temp_custom_normals"].data.foreach_get("vector", clnors)
 
         if not ok_smooth:
             sharp_face = MESH_ATTRIBUTE_SHARP_FACE.get(attributes)
@@ -1900,10 +1899,8 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         # Iterating clnors into a nested tuple first is faster than passing clnors.reshape(-1, 3) directly into
         # normals_split_custom_set. We use clnors.data since it is a memoryview, which is faster to iterate than clnors.
         mesh.normals_split_custom_set(tuple(zip(*(iter(clnors.data),) * 3)))
-        mesh.use_auto_smooth = True
-
     if settings.use_custom_normals:
-        mesh.free_normals_split()
+        mesh.attributes.remove(mesh.attributes["temp_custom_normals"])
 
     if not ok_smooth:
         sharp_face = MESH_ATTRIBUTE_SHARP_FACE.get(attributes)
@@ -3470,31 +3467,56 @@ def load(operator, context, filepath="",
     def _():
         fbx_tmpl = fbx_template_get((b'Geometry', b'KFbxShape'))
 
+        # - FBX             | - Blender equivalent
+        # Mesh              | `Mesh`
+        # BlendShape        | `Key`
+        # BlendShapeChannel | `ShapeKey`, but without its `.data`.
+        # Shape             | `ShapeKey.data`, but also includes normals and the values are relative to the base Mesh
+        #                   | instead of being absolute. The data is sparse, so each Shape has an "Indexes" array too.
+        #                   | FBX 2020 introduced 'Modern Style' Shapes that also support tangents, binormals, vertex
+        #                   | colors and UVs, and can be absolute values instead of relative, but 'Modern Style' Shapes
+        #                   | are not currently supported.
+        #
+        # The FBX connections between Shapes and Meshes form multiple many-many relationships:
+        # Mesh >-< BlendShape >-< BlendShapeChannel >-< Shape
+        # In practice, the relationships are almost never many-many and are more typically 1-many or 1-1:
+        #   Mesh --- BlendShape:
+        #     usually 1-1 and the FBX SDK might enforce that each BlendShape is connected to at most one Mesh.
+        #   BlendShape --< BlendShapeChannel:
+        #     usually 1-many.
+        #   BlendShapeChannel --- or uncommonly --< Shape:
+        #     usually 1-1, but 1-many is a documented feature.
+
+        def connections_gen(c_src_uuid, fbx_id, fbx_type):
+            """Helper to reduce duplicate code"""
+            # Rarely, an imported FBX file will have duplicate connections. For Shape Key related connections, FBX
+            # appears to ignore the duplicates, or overwrite the existing duplicates such that the end result is the
+            # same as ignoring them, so keep a set of the seen connections and ignore any duplicates.
+            seen_connections = set()
+            for c_dst_uuid, ctype in fbx_connection_map.get(c_src_uuid, ()):
+                if ctype.props[0] != b'OO':
+                    # 'Object-Object' connections only.
+                    continue
+                fbx_data, bl_data = fbx_table_nodes.get(c_dst_uuid, (None, None))
+                if fbx_data is None or fbx_data.id != fbx_id or fbx_data.props[2] != fbx_type:
+                    # Either `c_dst_uuid` doesn't exist, or it has a different id or type.
+                    continue
+                connection_key = (c_src_uuid, c_dst_uuid)
+                if connection_key in seen_connections:
+                    # The connection is a duplicate, skip it.
+                    continue
+                seen_connections.add(connection_key)
+                yield c_dst_uuid, fbx_data, bl_data
+
         mesh_to_shapes = {}
-        for s_uuid, s_item in fbx_table_nodes.items():
-            fbx_sdata, bl_sdata = s_item = fbx_table_nodes.get(s_uuid, (None, None))
+        for s_uuid, (fbx_sdata, _bl_sdata) in fbx_table_nodes.items():
             if fbx_sdata is None or fbx_sdata.id != b'Geometry' or fbx_sdata.props[2] != b'Shape':
                 continue
 
             # shape -> blendshapechannel -> blendshape -> mesh.
-            for bc_uuid, bc_ctype in fbx_connection_map.get(s_uuid, ()):
-                if bc_ctype.props[0] != b'OO':
-                    continue
-                fbx_bcdata, _bl_bcdata = fbx_table_nodes.get(bc_uuid, (None, None))
-                if fbx_bcdata is None or fbx_bcdata.id != b'Deformer' or fbx_bcdata.props[2] != b'BlendShapeChannel':
-                    continue
-                for bs_uuid, bs_ctype in fbx_connection_map.get(bc_uuid, ()):
-                    if bs_ctype.props[0] != b'OO':
-                        continue
-                    fbx_bsdata, _bl_bsdata = fbx_table_nodes.get(bs_uuid, (None, None))
-                    if fbx_bsdata is None or fbx_bsdata.id != b'Deformer' or fbx_bsdata.props[2] != b'BlendShape':
-                        continue
-                    for m_uuid, m_ctype in fbx_connection_map.get(bs_uuid, ()):
-                        if m_ctype.props[0] != b'OO':
-                            continue
-                        fbx_mdata, bl_mdata = fbx_table_nodes.get(m_uuid, (None, None))
-                        if fbx_mdata is None or fbx_mdata.id != b'Geometry' or fbx_mdata.props[2] != b'Mesh':
-                            continue
+            for bc_uuid, fbx_bcdata, _bl_bcdata in connections_gen(s_uuid, b'Deformer', b'BlendShapeChannel'):
+                for bs_uuid, _fbx_bsdata, _bl_bsdata in connections_gen(bc_uuid, b'Deformer', b'BlendShape'):
+                    for m_uuid, _fbx_mdata, bl_mdata in connections_gen(bs_uuid, b'Geometry', b'Mesh'):
                         # Blenmeshes are assumed already created at that time!
                         assert(isinstance(bl_mdata, bpy.types.Mesh))
                         # Group shapes by mesh so that each mesh only needs to be processed once for all of its shape

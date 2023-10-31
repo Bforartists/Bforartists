@@ -68,20 +68,6 @@ class VIEW3D_MT_materialutilities_preferences(AddonPreferences):
             default = 0
             )
 
-    set_smooth_affect: EnumProperty(
-            name = "Set Auto Smooth Affect",
-            description = "Which objects to affect",
-            items = mu_affect_enums,
-            default = 'SELECTED'
-            )
-    auto_smooth_angle: FloatProperty(
-            name = "Auto Smooth Angle",
-            description = "Maximum angle between face normals that will be considered as smooth",
-            subtype = 'ANGLE',
-            min = 0,
-            max = radians(180),
-            default = radians(35)
-            )
 
     def draw(self, context):
         layout = self.layout
@@ -104,11 +90,6 @@ class VIEW3D_MT_materialutilities_preferences(AddonPreferences):
         c.label(text = "Set Link To")
         c.row().prop(self, "link_to", expand = False)
         c.row().prop(self, "link_to_affect", expand = False)
-
-        d = box.box()
-        d.label(text = "Set Auto Smooth")
-        d.row().prop(self, "auto_smooth_angle", expand = False)
-        d.row().prop(self, "set_smooth_affect", expand = False)
 
         box = layout.box()
         box.label(text = "Miscellaneous")
