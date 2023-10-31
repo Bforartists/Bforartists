@@ -715,7 +715,7 @@ class NODE_PT_geometry_node_tool_object_types(Panel):
 
         types = [
             ("is_type_mesh", "Mesh", 'MESH_DATA'),
-            ("is_type_curve", "Curves", 'CURVES_DATA'),
+            ("is_type_curve", "Hair Curves", 'CURVES_DATA'),
         ]
         if context.preferences.experimental.use_new_point_cloud_type:
             types.append(("is_type_point_cloud", "Point Cloud", 'POINTCLOUD_DATA'))
@@ -723,12 +723,9 @@ class NODE_PT_geometry_node_tool_object_types(Panel):
         col = layout.column()
         col.active = group.is_tool
         for prop, name, icon in types:
-            row = col.row()
-            row_checkbox = row.row()
-            row_checkbox.prop(group, prop, text="")
-            row_label = row.row()
-            row_label.label(text=name, icon=icon)
-            row_label.active = getattr(group, prop)
+            row = col.row(align=True)
+            row.label(text=name, icon=icon)
+            row.prop(group, prop, text="")
 
 
 class NODE_PT_geometry_node_tool_mode(Panel):
@@ -751,12 +748,9 @@ class NODE_PT_geometry_node_tool_mode(Panel):
         col = layout.column()
         col.active = group.is_tool
         for prop, name, icon in modes:
-            row = col.row()
-            row_checkbox = row.row()
-            row_checkbox.prop(group, prop, text="")
-            row_label = row.row()
-            row_label.label(text=name, icon=icon)
-            row_label.active = getattr(group, prop)
+            row = col.row(align=True)
+            row.label(text=name, icon=icon)
+            row.prop(group, prop, text="")
 
 
 class NODE_PT_node_color_presets(PresetPanel, Panel):

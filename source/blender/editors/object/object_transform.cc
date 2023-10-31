@@ -1264,7 +1264,7 @@ enum {
   ORIGIN_TO_CENTER_OF_MASS_VOLUME,
 };
 
-static float3 calculate_mean(const blender::Span<blender::float3> values)
+static float3 arithmetic_mean(const blender::Span<blender::float3> values)
 {
   if (values.is_empty()) {
     return float3(0);
@@ -1709,7 +1709,7 @@ static int object_origin_set_exec(bContext *C, wmOperator *op)
         cent = math::midpoint(bounds.min, bounds.max);
       }
       else if (around == V3D_AROUND_CENTER_MEDIAN) {
-        cent = calculate_mean(curves.positions());
+        cent = arithmetic_mean(curves.positions());
       }
 
       tot_change++;
@@ -1740,7 +1740,7 @@ static int object_origin_set_exec(bContext *C, wmOperator *op)
         }
       }
       else if (around == V3D_AROUND_CENTER_MEDIAN) {
-        cent = calculate_mean(positions.span);
+        cent = arithmetic_mean(positions.span);
       }
 
       tot_change++;
@@ -2085,8 +2085,7 @@ static void object_transform_axis_target_cancel(bContext *C, wmOperator *op)
 static int object_transform_axis_target_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-  ViewContext vc;
-  ED_view3d_viewcontext_init(C, &vc, depsgraph);
+  ViewContext vc = ED_view3d_viewcontext_init(C, depsgraph);
 
   if (vc.obact == nullptr || !object_is_target_compat(vc.obact)) {
     /* Falls back to texture space transform. */
