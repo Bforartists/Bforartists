@@ -1179,6 +1179,7 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.template_node_operator_asset_root_items()
             elif mode_string == 'EDIT_GREASE_PENCIL':
                 layout.menu("VIEW3D_MT_edit_greasepencil_stroke")
+                layout.menu("VIEW3D_MT_edit_greasepencil_point")
 
         elif obj:
             if mode_string not in {'PAINT_TEXTURE', 'SCULPT_CURVES'}:
@@ -1267,10 +1268,10 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
         if context.mode == 'EDIT_MESH':
             layout.operator("transform.shrink_fatten", text="Shrink/Fatten", icon='SHRINK_FATTEN').alt_navigation = alt_navigation
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
-        elif context.mode == 'EDIT_CURVE':
+        elif context.mode in ['EDIT_CURVE', 'EDIT_GREASE_PENCIL']:
             layout.operator("transform.transform", text="Radius", icon='SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
-        if context.mode != 'EDIT_CURVES':
+        if context.mode != 'EDIT_CURVES' and context.mode != 'EDIT_GREASE_PENCIL':
             layout.separator()
             props = layout.operator("transform.translate", text="Move Texture Space", icon="MOVE_TEXTURESPACE")
             props.texture_space = True
@@ -2206,6 +2207,10 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
+        layout.operator("mesh.select_by_attribute", text="By Attribute")
+
+        layout.separator()
+
         layout.menu("VIEW3D_MT_edit_mesh_select_more_less")
 
         layout.separator()
@@ -3119,11 +3124,11 @@ class VIEW3D_MT_object(Menu):
     bl_context = "objectmode"
     bl_label = "Object"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        obj = _context.object
-        view = _context.space_data
+        obj = context.object
+        view = context.space_data
 
         layout.menu("VIEW3D_MT_transform_object")
         layout.menu("VIEW3D_MT_origin_set") #bfa menu
@@ -3182,10 +3187,8 @@ class VIEW3D_MT_object(Menu):
             layout.separator()
 
             layout.operator("object.shade_smooth", icon='SHADING_SMOOTH')
-            layout.operator(
-                "object.shade_smooth",
-                text="Shade Auto Smooth",
-                icon='NORMAL_SMOOTH').use_auto_smooth = True
+            if context.object and context.object.type == 'MESH':
+                layout.operator("object.shade_smooth_by_angle", icon='NORMAL_SMOOTH')
             layout.operator("object.shade_flat", icon='SHADING_FLAT')
 
         layout.separator()
@@ -3565,10 +3568,8 @@ class VIEW3D_MT_object_context_menu(Menu):
         if obj is not None:
             if obj.type in {'MESH', 'CURVE', 'SURFACE'}:
                 layout.operator("object.shade_smooth", text="Shade Smooth", icon="SHADING_SMOOTH")
-                layout.operator(
-                    "object.shade_smooth",
-                    text="Shade Auto Smooth",
-                    icon="NORMAL_SMOOTH").use_auto_smooth = True
+                if obj.type == 'MESH':
+                    layout.operator("object.shade_smooth_by_angle", icon="NORMAL_SMOOTH")
                 layout.operator("object.shade_flat", text="Shade Flat", icon="SHADING_FLAT")
                 layout.separator()
 
@@ -4300,7 +4301,7 @@ class VIEW3D_MT_subdivision_set(Menu):
 class VIEW3D_MT_sculpt(Menu):
     bl_label = "Sculpt"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         layout.menu("VIEW3D_MT_sculpt_legacy") #bfa menu
@@ -4351,19 +4352,19 @@ class VIEW3D_MT_sculpt(Menu):
         layout.separator()
 
         sculpt_filters_types = [
-            ('SMOOTH', "Smooth", 'PARTICLEBRUSH_SMOOTH'),
-            ('SURFACE_SMOOTH', "Surface Smooth", 'SURFACE_SMOOTH'),
-            ('INFLATE', "Inflate", 'INFLATE'),
-            ('RELAX', "Relax Topology", 'RELAX_TOPOLOGY'),
-            ('RELAX_FACE_SETS', "Relax Face Sets", 'RELAX_FACE_SETS'),
-            ('SHARPEN', "Sharpen", 'SHARPEN'),
-            ('ENHANCE_DETAILS', "Enhance Details", 'ENHANCE'),
-            ('ERASE_DISCPLACEMENT', "Erase Multires Displacement", 'DELETE'),
-            ('RANDOM', "Randomize", 'RANDOMIZE'),
+            ('SMOOTH', iface_("Smooth"), 'PARTICLEBRUSH_SMOOTH'),
+            ('SURFACE_SMOOTH', iface_("Surface Smooth"), 'SURFACE_SMOOTH'),
+            ('INFLATE', iface_("Inflate"), 'INFLATE'),
+            ('RELAX', iface_("Relax Topology"), 'RELAX_TOPOLOGY'),
+            ('RELAX_FACE_SETS', iface_("Relax Face Sets"), 'RELAX_FACE_SETS'),
+            ('SHARPEN', iface_("Sharpen"), 'SHARPEN'),
+            ('ENHANCE_DETAILS', iface_("Enhance Details"), 'ENHANCE'),
+            ('ERASE_DISCPLACEMENT', iface_("Erase Multires Displacement"), 'DELETE'),
+            ('RANDOM', iface_("Randomize"), 'RANDOMIZE')
         ]
         #bfa - added icons to the list
         for filter_type, ui_name, icon in sculpt_filters_types:
-            props = layout.operator("sculpt.mesh_filter", text=ui_name, icon = icon)
+            props = layout.operator("sculpt.mesh_filter", text=ui_name, icon = icon, translate=False)
             props.type = filter_type
 
         layout.separator()
@@ -4380,6 +4381,11 @@ class VIEW3D_MT_sculpt(Menu):
 
         # Rebuild BVH
         layout.operator("sculpt.optimize", icon="FILE_REFRESH")
+
+        layout.operator(
+            "sculpt.dynamic_topology_toggle",
+            icon='CHECKBOX_HLT' if context.sculpt_object.use_dynamic_topology_sculpting else 'CHECKBOX_DEHLT',
+        )
 
         layout.separator()
 
@@ -5989,6 +5995,8 @@ class VIEW3D_MT_edit_greasepencil_delete(Menu):
 
         layout.operator_enum("grease_pencil.dissolve", "type")
 
+        layout.separator()
+
         layout.operator(
             "grease_pencil.delete_frame",
             text="Delete Active Keyframe (Active Layer)", icon="DELETE"
@@ -6947,6 +6955,10 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
     def draw(self, _context):
         layout = self.layout
+        layout.menu("VIEW3D_MT_transform")
+        layout.menu("VIEW3D_MT_mirror")
+
+        layout.separator()
         layout.menu("VIEW3D_MT_edit_greasepencil_delete")
 
 
@@ -6955,8 +6967,19 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("grease_pencil.stroke_smooth")
-        layout.operator("grease_pencil.stroke_simplify")
+        layout.operator("grease_pencil.stroke_simplify", text="Simplify")
+
+        layout.separator()
+
+        layout.operator("grease_pencil.cyclical_set", text="Toggle Cyclic").type = 'TOGGLE'
+
+
+class VIEW3D_MT_edit_greasepencil_point(Menu):
+    bl_label = "Point"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator("grease_pencil.stroke_smooth", text="Smooth Points")
 
 
 class VIEW3D_MT_edit_curves(Menu):
@@ -6967,6 +6990,7 @@ class VIEW3D_MT_edit_curves(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.separator()
+        layout.operator("curves.attribute_set")
         layout.operator("curves.delete", icon = 'DELETE')
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -9611,6 +9635,64 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
         layout.menu("VIEW3D_MT_edit_gpencil_showhide") #BFA - added to context menu
 
 
+class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        layout = self.layout
+        tool_settings = context.tool_settings
+
+        is_point_mode = tool_settings.gpencil_selectmode_edit == 'POINT'
+        is_stroke_mode = tool_settings.gpencil_selectmode_edit == 'STROKE'
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        row = layout.row()
+
+        if is_point_mode:
+            col = row.column(align=True)
+            col.label(text="Point", icon='GP_SELECT_POINTS')
+
+            # Main Strokes Operators
+            col.operator("grease_pencil.stroke_simplify", text="Simplify")
+
+            col.separator()
+
+            # Deform Operators
+            col.operator("transform.tosphere", text="To Sphere")
+            col.operator("transform.shear", text="Shear")
+            col.operator("transform.bend", text="Bend")
+            col.operator("transform.push_pull", text="Push/Pull")
+            col.operator("transform.transform", text="Radius").mode = 'GPENCIL_SHRINKFATTEN'
+            col.operator("grease_pencil.stroke_smooth", text="Smooth Points")
+
+            col.separator()
+
+            col.menu("VIEW3D_MT_mirror", text="Mirror Points")
+
+            # Removal Operators
+            col.separator()
+
+            col.operator_enum("grease_pencil.dissolve", "type")
+
+        if is_stroke_mode:
+            col = row.column(align=True)
+            col.label(text="Stroke", icon='GP_SELECT_STROKES')
+
+            # Main Strokes Operators
+            col.operator("grease_pencil.stroke_simplify", text="Simplify")
+
+            col.separator()
+
+            # Deform Operators
+            col.operator("grease_pencil.stroke_smooth", text="Smooth Points")
+            col.operator("transform.transform", text="Radius").mode = 'CURVE_SHRINKFATTEN'
+
+            col.separator()
+
+            col.menu("VIEW3D_MT_mirror")
+
+
 def draw_gpencil_layer_active(context, layout):
     gpl = context.active_gpencil_layer
     if gpl:
@@ -10362,9 +10444,11 @@ classes = (
     VIEW3D_MT_gpencil_simplify,
     VIEW3D_MT_gpencil_autoweights,
     VIEW3D_MT_gpencil_edit_context_menu,
+    VIEW3D_MT_greasepencil_edit_context_menu,
     VIEW3D_MT_edit_greasepencil,
     VIEW3D_MT_edit_greasepencil_delete,
     VIEW3D_MT_edit_greasepencil_stroke,
+    VIEW3D_MT_edit_greasepencil_point,
     VIEW3D_MT_edit_greasepencil_animation,
     VIEW3D_MT_edit_curve,
     VIEW3D_MT_edit_curve_ctrlpoints,

@@ -235,7 +235,7 @@ void Instance::object_sync(Object *ob)
         sync.sync_point_cloud(ob, ob_handle, res_handle, ob_ref);
         break;
       case OB_VOLUME:
-        volume.sync_object(ob, ob_handle, res_handle);
+        sync.sync_volume(ob, ob_handle, res_handle);
         break;
       case OB_CURVES:
         sync.sync_curves(ob, ob_handle, res_handle);
@@ -273,7 +273,8 @@ void Instance::object_sync_render(void *instance_,
 void Instance::end_sync()
 {
   velocity.end_sync();
-  shadows.end_sync(); /** \note: Needs to be before lights. */
+  volume.end_sync();  /* Needs to be before shadows. */
+  shadows.end_sync(); /* Needs to be before lights. */
   lights.end_sync();
   sampling.end_sync();
   subsurface.end_sync();
@@ -283,7 +284,6 @@ void Instance::end_sync()
   light_probes.end_sync();
   reflection_probes.end_sync();
   planar_probes.end_sync();
-  volume.end_sync();
 
   global_ubo_.push_update();
 }
@@ -610,11 +610,20 @@ void Instance::light_bake_irradiance(
     capture_view.render_world();
 
     irradiance_cache.bake.surfels_create(probe);
+
+    if (irradiance_cache.bake.should_break()) {
+      return;
+    }
+
     irradiance_cache.bake.surfels_lights_eval();
 
     irradiance_cache.bake.clusters_build();
     irradiance_cache.bake.irradiance_offset();
   });
+
+  if (irradiance_cache.bake.should_break()) {
+    return;
+  }
 
   sampling.init(probe);
   while (!sampling.finished()) {

@@ -21,8 +21,8 @@
 #ifdef WIN32
 #  include "BLI_fileops_types.h"
 #  include "BLI_winstuff.h"
-#  include "utf_winfunc.h"
-#  include "utfconv.h"
+#  include "utf_winfunc.hh"
+#  include "utfconv.hh"
 #  include <io.h>
 #  include <shellapi.h>
 #  include <shobjidl.h>
@@ -44,7 +44,7 @@
 #include "BLI_fileops.h"
 #include "BLI_path_util.h"
 #include "BLI_string.h"
-#include "BLI_string_utils.h"
+#include "BLI_string_utils.hh"
 #include "BLI_sys_types.h" /* for intptr_t support */
 #include "BLI_utildefines.h"
 
@@ -53,7 +53,7 @@
 
 #ifdef WIN32
 /* Text string used as the "verb" for Windows shell operations. */
-static char *windows_operation_string(FileExternalOperation operation)
+static const char *windows_operation_string(FileExternalOperation operation)
 {
   switch (operation) {
     case FILE_EXTERNAL_OPERATION_OPEN:
@@ -145,7 +145,7 @@ int64_t BLI_read(int fd, void *buf, size_t nbytes)
 bool BLI_file_external_operation_supported(const char *filepath, FileExternalOperation operation)
 {
 #ifdef WIN32
-  char *opstring = windows_operation_string(operation);
+  const char *opstring = windows_operation_string(operation);
   return BLI_windows_external_operation_supported(filepath, opstring);
 #else
   UNUSED_VARS(filepath, operation);
@@ -156,7 +156,7 @@ bool BLI_file_external_operation_supported(const char *filepath, FileExternalOpe
 bool BLI_file_external_operation_execute(const char *filepath, FileExternalOperation operation)
 {
 #ifdef WIN32
-  char *opstring = windows_operation_string(operation);
+  const char *opstring = windows_operation_string(operation);
   if (BLI_windows_external_operation_supported(filepath, opstring) &&
       BLI_windows_external_operation_execute(filepath, opstring))
   {
@@ -262,12 +262,12 @@ bool BLI_file_magic_is_gzip(const char header[4])
 
 bool BLI_file_magic_is_zstd(const char header[4])
 {
-  /* ZSTD files consist of concatenated frames, each either a Zstd frame or a skippable frame.
-   * Both types of frames start with a magic number: 0xFD2FB528 for Zstd frames and 0x184D2A5*
+  /* ZSTD files consist of concatenated frames, each either a ZSTD frame or a skippable frame.
+   * Both types of frames start with a magic number: `0xFD2FB528` for ZSTD frames and `0x184D2A5`
    * for skippable frames, with the * being anything from 0 to F.
    *
-   * To check whether a file is Zstd-compressed, we just check whether the first frame matches
-   * either. Seeking through the file until a Zstd frame is found would make things more
+   * To check whether a file is ZSTD-compressed, we just check whether the first frame matches
+   * either. Seeking through the file until a ZSTD frame is found would make things more
    * complicated and the probability of a false positive is rather low anyways.
    *
    * Note that LZ4 uses a compatible format, so even though its compressed frames have a
@@ -316,7 +316,7 @@ bool BLI_file_touch(const char *filepath)
 {
   FILE *f = BLI_fopen(filepath, "r+b");
 
-  if (f != NULL) {
+  if (f != nullptr) {
     int c = getc(f);
 
     if (c == EOF) {
@@ -402,7 +402,7 @@ bool BLI_dir_create_recursive(const char *dirname)
 
   size_t len = strlen(dirname);
   if (len >= sizeof(dirname_static_buf)) {
-    dirname_mut = MEM_mallocN(len + 1, __func__);
+    dirname_mut = MEM_cnew_array<char>(len + 1, __func__);
   }
   memcpy(dirname_mut, dirname, len + 1);
 
@@ -564,23 +564,23 @@ static bool delete_soft(const wchar_t *path_16, const char **error_message)
      * S_FALSE, which is not an error. Both HRESULT values S_OK and S_FALSE indicate success. */
 
     hr = CoCreateInstance(
-        &CLSID_FileOperation, NULL, CLSCTX_ALL, &IID_IFileOperation, (void **)&pfo);
+        CLSID_FileOperation, NULL, CLSCTX_ALL, IID_IFileOperation, (void **)&pfo);
 
     if (SUCCEEDED(hr)) {
       /* Flags for deletion:
        * FOF_ALLOWUNDO: Enables moving file to recycling bin.
        * FOF_SILENT: Don't show progress dialog box.
        * FOF_WANTNUKEWARNING: Show dialog box if file can't be moved to recycling bin. */
-      hr = pfo->lpVtbl->SetOperationFlags(pfo, FOF_ALLOWUNDO | FOF_SILENT | FOF_WANTNUKEWARNING);
+      hr = pfo->SetOperationFlags(FOF_ALLOWUNDO | FOF_SILENT | FOF_WANTNUKEWARNING);
 
       if (SUCCEEDED(hr)) {
-        hr = SHCreateItemFromParsingName(path_16, NULL, &IID_IShellItem, (void **)&psi);
+        hr = SHCreateItemFromParsingName(path_16, NULL, IID_IShellItem, (void **)&psi);
 
         if (SUCCEEDED(hr)) {
-          hr = pfo->lpVtbl->DeleteItem(pfo, psi, NULL);
+          hr = pfo->DeleteItem(psi, NULL);
 
           if (SUCCEEDED(hr)) {
-            hr = pfo->lpVtbl->PerformOperations(pfo);
+            hr = pfo->PerformOperations();
 
             if (FAILED(hr)) {
               *error_message = "Failed to prepare delete operation";
@@ -589,7 +589,7 @@ static bool delete_soft(const wchar_t *path_16, const char **error_message)
           else {
             *error_message = "Failed to prepare delete operation";
           }
-          psi->lpVtbl->Release(psi);
+          psi->Release();
         }
         else {
           *error_message = "Failed to parse path";
@@ -598,7 +598,7 @@ static bool delete_soft(const wchar_t *path_16, const char **error_message)
       else {
         *error_message = "Failed to set operation flags";
       }
-      pfo->lpVtbl->Release(pfo);
+      pfo->Release();
     }
     else {
       *error_message = "Failed to create FileOperation instance";
@@ -731,7 +731,7 @@ static const char *path_destination_ensure_filename(const char *path_src,
       size_t buf_size_needed = path_dst_len + strlen(filename_src) + 1;
       char *path_dst_with_filename = (buf_size_needed <= buf_size) ?
                                          buf :
-                                         MEM_mallocN(buf_size_needed, __func__);
+                                         MEM_cnew_array<char>(buf_size_needed, __func__);
       BLI_string_join(path_dst_with_filename, buf_size_needed, path_dst, filename_src);
       return path_dst_with_filename;
     }
@@ -822,11 +822,11 @@ static void join_dirfile_alloc(char **dst, size_t *alloc_len, const char *dir, c
 {
   size_t len = strlen(dir) + strlen(file) + 1;
 
-  if (*dst == NULL) {
-    *dst = MEM_mallocN(len + 1, "join_dirfile_alloc path");
+  if (*dst == nullptr) {
+    *dst = MEM_cnew_array<char>(len + 1, "join_dirfile_alloc path");
   }
   else if (*alloc_len < len) {
-    *dst = MEM_reallocN(*dst, len + 1);
+    *dst = static_cast<char *>(MEM_reallocN(*dst, len + 1));
   }
 
   *alloc_len = len;
@@ -862,9 +862,9 @@ static int recursive_operation(const char *startfrom,
                                RecursiveOp_Callback callback_dir_post)
 {
   struct stat st;
-  char *from = NULL, *to = NULL;
-  char *from_path = NULL, *to_path = NULL;
-  struct dirent **dirlist = NULL;
+  char *from = NULL, *to = nullptr;
+  char *from_path = NULL, *to_path = nullptr;
+  struct dirent **dirlist = nullptr;
   size_t from_alloc_len = -1, to_alloc_len = -1;
   int i, n = 0, ret = 0;
 
@@ -884,7 +884,7 @@ static int recursive_operation(const char *startfrom,
     if (!S_ISDIR(st.st_mode)) {
       /* source isn't a directory, can't do recursive walking for it,
        * so just call file callback and leave */
-      if (callback_file != NULL) {
+      if (callback_file != nullptr) {
         ret = callback_file(from, to);
         if (ret != RecursiveOp_Callback_OK) {
           ret = -1;
@@ -893,7 +893,7 @@ static int recursive_operation(const char *startfrom,
       break;
     }
 
-    n = scandir(startfrom, &dirlist, NULL, alphasort);
+    n = scandir(startfrom, &dirlist, nullptr, alphasort);
     if (n < 0) {
       /* error opening directory for listing */
       perror("scandir");
@@ -901,7 +901,7 @@ static int recursive_operation(const char *startfrom,
       break;
     }
 
-    if (callback_dir_pre != NULL) {
+    if (callback_dir_pre != nullptr) {
       ret = callback_dir_pre(from, to);
       if (ret != RecursiveOp_Callback_OK) {
         if (ret == RecursiveOp_Callback_StopRecurs) {
@@ -946,7 +946,7 @@ static int recursive_operation(const char *startfrom,
         ret = recursive_operation(
             from_path, to_path, callback_dir_pre, callback_file, callback_dir_post);
       }
-      else if (callback_file != NULL) {
+      else if (callback_file != nullptr) {
         ret = callback_file(from_path, to_path);
         if (ret != RecursiveOp_Callback_OK) {
           ret = -1;
@@ -961,7 +961,7 @@ static int recursive_operation(const char *startfrom,
       break;
     }
 
-    if (callback_dir_post != NULL) {
+    if (callback_dir_post != nullptr) {
       ret = callback_dir_post(from, to);
       if (ret != RecursiveOp_Callback_OK) {
         ret = -1;
@@ -969,29 +969,29 @@ static int recursive_operation(const char *startfrom,
     }
   } while (false);
 
-  if (dirlist != NULL) {
+  if (dirlist != nullptr) {
     for (i = 0; i < n; i++) {
       free(dirlist[i]);
     }
     free(dirlist);
   }
-  if (from_path != NULL) {
+  if (from_path != nullptr) {
     MEM_freeN(from_path);
   }
-  if (to_path != NULL) {
+  if (to_path != nullptr) {
     MEM_freeN(to_path);
   }
-  if (from != NULL) {
+  if (from != nullptr) {
     MEM_freeN(from);
   }
-  if (to != NULL) {
+  if (to != nullptr) {
     MEM_freeN(to);
   }
 
   return ret;
 }
 
-static int delete_callback_post(const char *from, const char *UNUSED(to))
+static int delete_callback_post(const char *from, const char * /*to*/)
 {
   if (rmdir(from)) {
     perror("rmdir");
@@ -1002,7 +1002,7 @@ static int delete_callback_post(const char *from, const char *UNUSED(to))
   return RecursiveOp_Callback_OK;
 }
 
-static int delete_single_file(const char *from, const char *UNUSED(to))
+static int delete_single_file(const char *from, const char * /*to*/)
 {
   if (unlink(from)) {
     perror("unlink");
@@ -1069,14 +1069,14 @@ static int delete_soft(const char *file, const char **error_message)
     args[1] = "move";
     args[2] = file;
     args[3] = "trash:/";
-    args[4] = NULL;
+    args[4] = nullptr;
     process_failed = "kioclient5 reported failure";
   }
   else {
     args[0] = "gio";
     args[1] = "trash";
     args[2] = file;
-    args[3] = NULL;
+    args[3] = nullptr;
     process_failed = "gio reported failure";
   }
 
@@ -1141,7 +1141,7 @@ int BLI_delete(const char *path, bool dir, bool recursive)
   BLI_assert(!BLI_path_is_rel(path));
 
   if (recursive) {
-    return recursive_operation(path, NULL, NULL, delete_single_file, delete_callback_post);
+    return recursive_operation(path, nullptr, nullptr, delete_single_file, delete_callback_post);
   }
   if (dir) {
     return rmdir(path);
@@ -1252,7 +1252,7 @@ static int copy_single_file(const char *from, const char *to)
       need_free = 0;
     }
     else {
-      link_buffer = MEM_callocN(st.st_size + 2, "copy_single_file link_buffer");
+      link_buffer = MEM_cnew_array<char>(st.st_size + 2, "copy_single_file link_buffer");
       need_free = 1;
     }
 
@@ -1352,10 +1352,11 @@ static int move_single_file(const char *from, const char *to)
 
 int BLI_path_move(const char *path_src, const char *path_dst)
 {
-  int ret = recursive_operation(path_src, path_dst, move_callback_pre, move_single_file, NULL);
+  int ret = recursive_operation(path_src, path_dst, move_callback_pre, move_single_file, nullptr);
 
   if (ret && ret != -1) {
-    return recursive_operation(path_src, NULL, NULL, delete_single_file, delete_callback_post);
+    return recursive_operation(
+        path_src, nullptr, nullptr, delete_single_file, delete_callback_post);
   }
 
   return ret;
@@ -1373,7 +1374,7 @@ static const char *path_destination_ensure_filename(const char *path_src,
       const size_t buf_size_needed = strlen(path_dst) + 1 + strlen(filename_src) + 1;
       char *path_dst_with_filename = (buf_size_needed <= buf_size) ?
                                          buf :
-                                         MEM_mallocN(buf_size_needed, __func__);
+                                         MEM_cnew_array<char>(buf_size_needed, __func__);
       BLI_path_join(path_dst_with_filename, buf_size_needed, path_dst, filename_src);
       path_dst = path_dst_with_filename;
     }
@@ -1390,7 +1391,7 @@ int BLI_copy(const char *path_src, const char *path_dst)
   int ret;
 
   ret = recursive_operation(
-      path_src, path_dst_with_filename, copy_callback_pre, copy_single_file, NULL);
+      path_src, path_dst_with_filename, copy_callback_pre, copy_single_file, nullptr);
 
   if (!ELEM(path_dst_with_filename, path_dst_buf, path_dst)) {
     MEM_freeN((void *)path_dst_with_filename);

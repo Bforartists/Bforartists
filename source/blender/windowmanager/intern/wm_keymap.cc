@@ -21,7 +21,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_string_utils.h"
+#include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
 
 #include "BLF_api.h"
@@ -1814,6 +1814,8 @@ enum {
 
   /* ensure all wmKeyMap have their operator types validated after removing an operator */
   WM_KEYMAP_UPDATE_OPERATORTYPE = (1 << 1),
+
+  WM_KEYMAP_UPDATE_POSTPONE = (1 << 2),
 };
 
 static char wm_keymap_update_flag = 0;
@@ -1868,6 +1870,16 @@ void WM_keyconfig_update_suppress_end()
   wm_keymap_update_suppress_flag = 0;
 }
 
+void WM_keyconfig_update_postpone_begin()
+{
+  wm_keymap_update_flag |= WM_KEYMAP_UPDATE_POSTPONE;
+}
+
+void WM_keyconfig_update_postpone_end()
+{
+  wm_keymap_update_flag &= ~WM_KEYMAP_UPDATE_POSTPONE;
+}
+
 static bool wm_keymap_test_and_clear_update(wmKeyMap *km)
 {
   int update = (km->flag & KEYMAP_UPDATE);
@@ -1902,6 +1914,12 @@ void WM_keyconfig_update_ex(wmWindowManager *wm, bool keep_properties)
   bool compat_update = false;
 
   if (wm_keymap_update_flag == 0) {
+    return;
+  }
+
+  /* Postpone update until after the key-map has been initialized
+   * to ensure add-ons have been loaded, see: #113603. */
+  if (wm_keymap_update_flag & WM_KEYMAP_UPDATE_POSTPONE) {
     return;
   }
 

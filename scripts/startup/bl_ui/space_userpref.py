@@ -1157,6 +1157,7 @@ class USERPREF_PT_theme_text_style(ThemePanel, CenterAlignMixIn, Panel):
 
         col = flow.column()
         col.prop(font_style, "points")
+        col.prop(font_style, "character_weight", text="Weight")
 
         col = flow.column(align=True)
         col.prop(font_style, "shadow_offset_x", text="Shadow Offset X")
@@ -1656,51 +1657,6 @@ class USERPREF_UL_asset_libraries(bpy.types.UIList):
             layout.prop(asset_library, "name", text="", emboss=False)
 
 
-class USERPREF_PT_file_paths_extension_repos(FilePathsPanel, Panel):
-    bl_label = "Extension Repositories"
-
-    @classmethod
-    def poll(cls, context):
-        return context.preferences.experimental.use_extension_repos
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = False
-        layout.use_property_decorate = False
-
-        paths = context.preferences.filepaths
-        active_library_index = paths.active_extension_repo
-
-        row = layout.row()
-
-        row.template_list(
-            "USERPREF_UL_extension_repos", "user_extension_repos",
-            paths, "extension_repos",
-            paths, "active_extension_repo"
-        )
-
-        col = row.column(align=True)
-        col.operator("preferences.extension_repo_add", text="", icon='ADD')
-        props = col.operator("preferences.extension_repo_remove", text="", icon='REMOVE')
-        props.index = active_library_index
-
-        try:
-            active_repo = None if active_library_index < 0 else paths.extension_repos[active_library_index]
-        except IndexError:
-            active_repo = None
-
-        if active_repo is None:
-            return
-
-        layout.separator()
-
-        layout.prop(active_repo, "directory")
-        layout.prop(active_repo, "remote_path")
-        row = layout.row()
-        row.prop(active_repo, "use_cache")
-        row.prop(active_repo, "module")
-
-
 class USERPREF_UL_extension_repos(bpy.types.UIList):
     def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
         repo = item
@@ -2161,6 +2117,51 @@ class USERPREF_PT_extensions(ExtensionsPanel, Panel):
         row.operator(
             "wm.url_open", text="Extension Add-on Repo", icon='URL',
         ).url = "https://projects.blender.org/ideasman42/bl_ext"
+
+
+class USERPREF_PT_extensions_repos(ExtensionsPanel, Panel):
+    bl_label = "Extension Repositories"
+
+    @classmethod
+    def poll(cls, context):
+        return context.preferences.experimental.use_extension_repos
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = False
+        layout.use_property_decorate = False
+
+        paths = context.preferences.filepaths
+        active_library_index = paths.active_extension_repo
+
+        row = layout.row()
+
+        row.template_list(
+            "USERPREF_UL_extension_repos", "user_extension_repos",
+            paths, "extension_repos",
+            paths, "active_extension_repo"
+        )
+
+        col = row.column(align=True)
+        col.operator("preferences.extension_repo_add", text="", icon='ADD')
+        props = col.operator("preferences.extension_repo_remove", text="", icon='REMOVE')
+        props.index = active_library_index
+
+        try:
+            active_repo = None if active_library_index < 0 else paths.extension_repos[active_library_index]
+        except IndexError:
+            active_repo = None
+
+        if active_repo is None:
+            return
+
+        layout.separator()
+
+        layout.prop(active_repo, "directory")
+        layout.prop(active_repo, "remote_path")
+        row = layout.row()
+        row.prop(active_repo, "use_cache")
+        row.prop(active_repo, "module")
 
 
 # -----------------------------------------------------------------------------
@@ -2789,7 +2790,6 @@ classes = (
     USERPREF_PT_file_paths_render,
     USERPREF_PT_file_paths_asset_libraries,
     USERPREF_PT_file_paths_script_directories,
-    USERPREF_PT_file_paths_extension_repos,
     USERPREF_PT_file_paths_applications,
     USERPREF_PT_text_editor,
     USERPREF_PT_text_editor_presets,
@@ -2814,8 +2814,10 @@ classes = (
 
     USERPREF_PT_keymap,
 
-    USERPREF_PT_extensions,
     USERPREF_PT_addons,
+
+    USERPREF_PT_extensions,
+    USERPREF_PT_extensions_repos,
 
     USERPREF_PT_studiolight_lights,
     USERPREF_PT_studiolight_light_editor,
