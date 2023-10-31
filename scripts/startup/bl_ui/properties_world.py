@@ -9,6 +9,30 @@ from rna_prop_ui import PropertyPanel
 from bpy_extras.node_utils import find_node_input
 
 
+# bfa -  added the render engine prop
+class WORLD_PT_context(Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "world"
+    bl_options = {'HIDE_HEADER'}
+    bl_label = ""
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        scene = context.scene
+        rd = scene.render
+
+        if rd.has_multiple_engines:
+            layout.prop(rd, "engine", text="Render Engine")
+
+
 class WorldButtonsPanel:
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -187,6 +211,7 @@ class WORLD_PT_viewport_display(WorldButtonsPanel, Panel):
 
 
 classes = (
+    WORLD_PT_context, # bfa -  added the render engine prop
     WORLD_PT_context_world,
     EEVEE_WORLD_PT_surface,
     EEVEE_WORLD_PT_volume,
