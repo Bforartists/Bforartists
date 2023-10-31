@@ -54,6 +54,8 @@ MATSHINESS = 0xA040  # Specular intensity of the object/material (percent)
 MATSHIN2 = 0xA041  # Reflection of the object/material (percent)
 MATSHIN3 = 0xA042  # metallic/mirror of the object/material (percent)
 MATTRANS = 0xA050  # Transparency value (100-OpacityValue) (percent)
+MATXPFALL = 0xA052  # Transparency falloff ratio (percent)
+MATREFBLUR = 0xA053  # Reflection blurring ratio (percent)
 MATSELFILLUM = 0xA080  # # Material self illumination flag
 MATSELFILPCT = 0xA084  # Self illumination strength (percent)
 MATWIRE = 0xA085  # Material wireframe rendered flag
@@ -626,8 +628,11 @@ def make_material_texture_chunk(chunk_id, texslots, pct):
         mat_sub_mapflags.add_variable("mapflags", _3ds_ushort(mapflags))
         mat_sub.add_subchunk(mat_sub_mapflags)
 
-        mat_sub_texblur = _3ds_chunk(MAT_MAP_TEXBLUR)  # Based on observation this is usually 1.0
-        mat_sub_texblur.add_variable("maptexblur", _3ds_float(1.0))
+        texblur = 0.0
+        mat_sub_texblur = _3ds_chunk(MAT_MAP_TEXBLUR)
+        if texslot.socket_dst.identifier in {'Base Color', 'Specular Tint'}:
+            texblur = texslot.node_dst.inputs['Sheen Weight'].default_value
+        mat_sub_texblur.add_variable("maptexblur", _3ds_float(round(texblur, 6)))
         mat_sub.add_subchunk(mat_sub_texblur)
 
         mat_sub_uscale = _3ds_chunk(MAT_MAP_USCALE)
@@ -650,12 +655,15 @@ def make_material_texture_chunk(chunk_id, texslots, pct):
         mat_sub_angle.add_variable("mapangle", _3ds_float(round(texslot.rotation[2], 6)))
         mat_sub.add_subchunk(mat_sub_angle)
 
-        if texslot.socket_dst.identifier in {'Base Color', 'Specular Tint'}:
-            rgb = _3ds_chunk(MAP_COL1)  # Add tint color
-            base = texslot.owner_shader.material.diffuse_color[:3]
-            spec = texslot.owner_shader.material.specular_color[:]
-            rgb.add_variable("mapcolor", _3ds_rgb_color(spec if texslot.socket_dst.identifier == 'Specular Tint' else base))
-            mat_sub.add_subchunk(rgb)
+        if texslot.socket_dst.identifier in {'Base Color', 'Specular Tint'}: # Add tint color
+            tint = texslot.socket_dst.identifier == 'Base Color' and texslot.image.colorspace_settings.name == 'Non-Color'
+            if tint or texslot.socket_dst.identifier == 'Specular Tint':
+                tint1 = _3ds_chunk(MAP_COL1)
+                tint2 = _3ds_chunk(MAP_COL2)
+                tint1.add_variable("tint1", _3ds_rgb_color(texslot.node_dst.inputs['Coat Tint'].default_value[:3]))
+                tint2.add_variable("tint2", _3ds_rgb_color(texslot.node_dst.inputs['Sheen Tint'].default_value[:3]))
+                mat_sub.add_subchunk(tint1)
+                mat_sub.add_subchunk(tint2)
 
     # Store all textures for this mapto in order. This at least is what the
     # 3DS exporter did so far, afaik most readers will just skip over 2nd textures
@@ -703,7 +711,9 @@ def make_material_chunk(material, image):
         material_chunk.add_subchunk(make_percent_subchunk(MATSHIN2, wrap.specular))
         material_chunk.add_subchunk(make_percent_subchunk(MATSHIN3, wrap.metallic))
         material_chunk.add_subchunk(make_percent_subchunk(MATTRANS, 1 - wrap.alpha))
+        material_chunk.add_subchunk(make_percent_subchunk(MATXPFALL, wrap.transmission))
         material_chunk.add_subchunk(make_percent_subchunk(MATSELFILPCT, wrap.emission_strength))
+        material_chunk.add_subchunk(make_percent_subchunk(MATREFBLUR, wrap.node_principled_bsdf.inputs['Coat Weight'].default_value))
         material_chunk.add_subchunk(shading)
 
         primary_tex = False
@@ -1297,10 +1307,8 @@ def make_object_node(ob, translation, rotation, scale, name_id):
     else:  # Add flag variables - Based on observation flags1 is usually 0x0040 and 0x4000 for empty objects
         obj_node_header_chunk.add_variable("name", _3ds_string(sane_name(name)))
         obj_node_header_chunk.add_variable("flags1", _3ds_ushort(0x0040))
-
-        """Flags2 defines 0x01 for display path, 0x02 use autosmooth, 0x04 object frozen,
-        0x10 for motion blur, 0x20 for material morph and bit 0x40 for mesh morph."""
-        if ob.type == 'MESH' and ob.data.use_auto_smooth:
+        # Flag 0x01 display path 0x02 use autosmooth 0x04 object frozen 0x10 motion blur 0x20 material morph 0x40 mesh morph
+        if ob.type == 'MESH' and 'Smooth by Angle' in ob.modifiers:
             obj_node_header_chunk.add_variable("flags2", _3ds_ushort(0x02))
         else:
             obj_node_header_chunk.add_variable("flags2", _3ds_ushort(0))
@@ -1343,10 +1351,10 @@ def make_object_node(ob, translation, rotation, scale, name_id):
         obj_boundbox.add_variable("max", _3ds_point_3d(ob.bound_box[6]))
         obj_node.add_subchunk(obj_boundbox)
 
-        # Add smooth angle if autosmooth is used
-        if ob.type == 'MESH' and ob.data.use_auto_smooth:
+        # Add smooth angle if smooth modifier is used
+        if ob.type == 'MESH' and 'Smooth by Angle' in ob.modifiers:
             obj_morph_smooth = _3ds_chunk(OBJECT_MORPH_SMOOTH)
-            obj_morph_smooth.add_variable("angle", _3ds_float(round(ob.data.auto_smooth_angle, 6)))
+            obj_morph_smooth.add_variable("angle", _3ds_float(round(ob.modifiers['Smooth by Angle']['Input_1'], 6)))
             obj_node.add_subchunk(obj_morph_smooth)
 
     # Add track chunks for position, rotation, size

@@ -171,13 +171,6 @@ class VIEW3D_MT_materialutilities_specials(bpy.types.Menu):
                         text = "Join by material",
                         icon = "OBJECT_DATAMODE")
 
-        layout.separator()
-
-        op = layout.operator(MATERIAL_OT_materialutilities_auto_smooth_angle.bl_idname,
-                        text = "Set Auto Smooth",
-                        icon = "SHADING_SOLID")
-        op.affect = mu_prefs.set_smooth_affect
-        op.angle = mu_prefs.auto_smooth_angle
 
 class VIEW3D_MT_materialutilities_main(bpy.types.Menu):
     """Main menu for Material Utilities"""

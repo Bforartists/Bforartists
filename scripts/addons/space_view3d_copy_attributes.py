@@ -153,9 +153,10 @@ def pVisRotExec(bone, active, context):
 
 def pVisScaExec(bone, active, context):
     obj_bone = bone.id_data
-    bone.scale = getmat(bone, active, context,
-                        not obj_bone.data.bones[bone.name].use_inherit_scale)\
-        .to_scale()
+    bone.scale = getmat(
+        bone, active, context,
+        obj_bone.data.bones[bone.name].inherit_scale not in {'NONE', 'NONE_LEGACY'}
+    ).to_scale()
 
 
 def pDrwExec(bone, active, context):

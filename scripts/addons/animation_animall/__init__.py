@@ -5,8 +5,8 @@
 bl_info = {
     "name": "AnimAll",
     "author": "Daniel Salazar (ZanQdo), Damien Picard (pioverfour)",
-    "version": (0, 9, 6),
-    "blender": (3, 3, 0),
+    "version": (0, 10, 0),
+    "blender": (4, 0, 0),
     "location": "3D View > Toolbox > Animation tab > AnimAll",
     "description": "Allows animation of mesh, lattice, curve and surface data",
     "warning": "",
@@ -22,6 +22,7 @@ from bpy.app.translations import (pgettext_iface as iface_,
                                   pgettext_data as data_)
 from . import translations
 
+import re
 
 # Property Definitions
 class AnimallProperties(bpy.types.PropertyGroup):
@@ -49,10 +50,12 @@ class AnimallProperties(bpy.types.PropertyGroup):
         name="Vertex Bevel",
         description="Insert keyframes on vertex bevel weight",
         default=False)
-    # key_vertex_crease: BoolProperty(
-    #     name="Vertex Crease",
-    #     description="Insert keyframes on vertex crease weight",
-    #     default=False)
+
+    key_vertex_crease: BoolProperty(
+        name="Vertex Crease",
+        description="Insert keyframes on vertex crease weight",
+        default=False)
+
     key_vertex_group: BoolProperty(
         name="Vertex Group",
         description="Insert keyframes on active vertex group values",
@@ -67,8 +70,8 @@ class AnimallProperties(bpy.types.PropertyGroup):
         description="Insert keyframes on edge creases",
         default=False)
 
-    key_attribute: BoolProperty(
-        name="Attribute",
+    key_active_attribute: BoolProperty(
+        name="Active Attribute",
         description="Insert keyframes on active attribute values",
         default=False)
     key_uvs: BoolProperty(
@@ -115,6 +118,55 @@ def delete_key(data, key):
         pass
 
 
+def get_attribute(data, name, type=None, domain=None):
+    if name in data.attributes:
+        return data.attributes[name]
+    if type is not None and domain is not None:
+        return data.attributes.new(name, type, domain)
+
+
+def get_attribute_paths(data, attribute, key_selected):
+    # Cannot animate string attributes?
+    if attribute.data_type == 'STRING':
+        yield ("", "")
+
+    if attribute.data_type in {'FLOAT', 'INT', 'BOOLEAN', 'INT8'}:
+        attribute_key = "value"
+    elif attribute.data_type in {'FLOAT_COLOR', 'BYTE_COLOR'}:
+        attribute_key = "color"
+    elif attribute.data_type in {'FLOAT_VECTOR', 'FLOAT2'}:
+        attribute_key = "vector"
+
+    if attribute.domain == 'POINT':
+        group = data_("Vertex %s")
+    elif attribute.domain == 'EDGE':
+        group = data_("Edge %s")
+    elif attribute.domain == 'FACE':
+        group = data_("Face %s")
+    elif attribute.domain == 'CORNER':
+        group = data_("Loop %s")
+
+    for e_i, _attribute_data in enumerate(attribute.data):
+        if (not key_selected
+                or attribute.domain == 'POINT' and data.vertices[e_i].select
+                or attribute.domain == 'EDGE' and data.edges[e_i].select
+                or attribute.domain == 'FACE' and data.polygons[e_i].select
+                or attribute.domain == 'CORNER' and is_selected_vert_loop(data, e_i)):
+            yield (f'attributes["{attribute.name}"].data[{e_i}].{attribute_key}', group % e_i)
+
+
+def insert_attribute_key(data, attribute, key_selected):
+    for path, group in get_attribute_paths(data, attribute, key_selected):
+        if path:
+            insert_key(data, path, group=group)
+
+
+def delete_attribute_key(data, attribute, key_selected):
+    for path, group in get_attribute_paths(data, attribute, key_selected):
+        if path:
+            delete_key(data, path)
+
+
 def is_selected_vert_loop(data, loop_i):
     """Get selection status of vertex corresponding to a loop"""
     vertex_index = data.loops[loop_i].vertex_index
@@ -126,7 +178,7 @@ def is_selected_vert_loop(data, loop_i):
 class VIEW3D_PT_animall(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "Animate"
+    bl_category = "Animation"
     bl_label = ''
 
     @classmethod
@@ -137,7 +189,7 @@ class VIEW3D_PT_animall(Panel):
 
         layout = self.layout
         row = layout.row()
-        row.label (text = 'AnimAll', icon = 'ARMATURE_DATA')
+        row.label(text='AnimAll', icon='ARMATURE_DATA')
 
     def draw(self, context):
         obj = context.active_object
@@ -161,6 +213,7 @@ class VIEW3D_PT_animall(Panel):
             col = layout.column(heading="Points", align=True)
             col.prop(animall_properties, "key_point_location")
             col.prop(animall_properties, "key_vertex_bevel", text="Bevel")
+            col.prop(animall_properties, "key_vertex_crease", text="Crease")
             col.prop(animall_properties, "key_vertex_group")
 
             col = layout.column(heading="Edges", align=True)
@@ -171,7 +224,7 @@ class VIEW3D_PT_animall(Panel):
             col.prop(animall_properties, "key_material_index")
 
             col = layout.column(heading="Others", align=True)
-            col.prop(animall_properties, "key_attribute")
+            col.prop(animall_properties, "key_active_attribute")
             col.prop(animall_properties, "key_uvs")
             col.prop(animall_properties, "key_shape_key")
 
@@ -179,10 +232,10 @@ class VIEW3D_PT_animall(Panel):
             if (obj.data.animation_data is not None
                     and obj.data.animation_data.action is not None):
                 for fcurve in context.active_object.data.animation_data.action.fcurves:
-                    if fcurve.data_path.startswith("vertex_colors"):
+                    if bpy.ops.anim.update_attribute_animation_animall.poll():
                         col = layout.column(align=True)
-                        col.label(text="Object includes old-style vertex colors. Consider updating them.", icon="ERROR")
-                        col.operator("anim.update_vertex_color_animation_animall", icon="FILE_REFRESH")
+                        col.label(text="Object includes old-style attributes. Consider updating them.", icon="ERROR")
+                        col.operator("anim.update_attribute_animation_animall", icon="FILE_REFRESH")
                         break
 
         elif obj.type in {'CURVE', 'SURFACE'}:
@@ -315,13 +368,12 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                             insert_key(vert, 'co', group=data_("Vertex %s") % v_i)
 
                 if animall_properties.key_vertex_bevel:
-                    for v_i, vert in enumerate(data.vertices):
-                        if not animall_properties.key_selected or vert.select:
-                            insert_key(vert, 'bevel_weight', group=data_("Vertex %s") % v_i)
-                # if animall_properties.key_vertex_crease:
-                #     for v_i, vert in enumerate(data.vertices):
-                #         if not animall_properties.key_selected or vert.select:
-                #             insert_key(vert, 'crease', group=data_("Vertex %s") % v_i)
+                    attribute = get_attribute(data, "bevel_weight_vert", 'FLOAT', 'POINT')
+                    insert_attribute_key(data, attribute, animall_properties.key_selected)
+
+                if animall_properties.key_vertex_crease:
+                    attribute = get_attribute(data, "crease_vert", 'FLOAT', 'POINT')
+                    insert_attribute_key(data, attribute, animall_properties.key_selected)
 
                 if animall_properties.key_vertex_group:
                     for v_i, vert in enumerate(data.vertices):
@@ -330,55 +382,31 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                                 insert_key(group, 'weight', group=data_("Vertex %s") % v_i)
 
                 if animall_properties.key_edge_bevel:
-                    for e_i, edge in enumerate(data.edges):
-                        if not animall_properties.key_selected or edge.select:
-                            insert_key(edge, 'bevel_weight', group=data_("Edge %s") % e_i)
+                    attribute = get_attribute(data, "bevel_weight_edge", 'FLOAT', 'EDGE')
+                    insert_attribute_key(data, attribute, animall_properties.key_selected)
 
                 if animall_properties.key_edge_crease:
-                    for e_i, edge in enumerate(data.edges):
-                        if not animall_properties.key_selected or edge.select:
-                            insert_key(edge, 'crease', group=data_("Edge %s") % e_i)
+                    attribute = get_attribute(data, "crease_edge", 'FLOAT', 'EDGE')
+                    insert_attribute_key(data, attribute, animall_properties.key_selected)
 
                 if animall_properties.key_material_index:
                     for p_i, polygon in enumerate(data.polygons):
                         if not animall_properties.key_selected or polygon.select:
                             insert_key(polygon, 'material_index', group=data_("Face %s") % p_i)
 
-                if animall_properties.key_attribute:
+                if animall_properties.key_active_attribute:
                     if data.attributes.active is not None:
-                        attribute = data.attributes.active
-                        if attribute.data_type != 'STRING':
-                            # Cannot animate string attributes?
-                            if attribute.data_type in {'FLOAT', 'INT', 'BOOLEAN', 'INT8'}:
-                                attribute_key = "value"
-                            elif attribute.data_type in {'FLOAT_COLOR', 'BYTE_COLOR'}:
-                                attribute_key = "color"
-                            elif attribute.data_type in {'FLOAT_VECTOR', 'FLOAT2'}:
-                                attribute_key = "vector"
-
-                            if attribute.domain == 'POINT':
-                                group = data_("Vertex %s")
-                            elif attribute.domain == 'EDGE':
-                                group = data_("Edge %s")
-                            elif attribute.domain == 'FACE':
-                                group = data_("Face %s")
-                            elif attribute.domain == 'CORNER':
-                                group = data_("Loop %s")
-
-                            for e_i, _attribute_data in enumerate(attribute.data):
-                                if (not animall_properties.key_selected
-                                        or attribute.domain == 'POINT' and data.vertices[e_i].select
-                                        or attribute.domain == 'EDGE' and data.edges[e_i].select
-                                        or attribute.domain == 'FACE' and data.polygons[e_i].select
-                                        or attribute.domain == 'CORNER' and is_selected_vert_loop(data, e_i)):
-                                    insert_key(data, f'attributes["{attribute.name}"].data[{e_i}].{attribute_key}',
-                                            group=group % e_i)
+                        for path, group in get_attribute_paths(
+                                data, data.attributes.active,
+                                animall_properties.key_selected):
+                            if path:
+                                insert_key(data, path, group=group)
 
                 if animall_properties.key_uvs:
                     if data.uv_layers.active is not None:
                         for uv_i, uv in enumerate(data.uv_layers.active.data):
                             if not animall_properties.key_selected or uv.select:
-                                insert_key(uv, 'uv', group=data_("UV layer %s") % uv_i)
+                                insert_key(uv, 'uv', group=data_("UV Layer %s") % uv_i)
 
                 if animall_properties.key_shape_key:
                     if obj.active_shape_key_index > 0:
@@ -402,9 +430,15 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                                     if obj.active_shape_key_index > 0:
                                         CV = obj.active_shape_key.data[global_spline_index]
                                         insert_key(CV, 'co', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
-                                        insert_key(CV, 'handle_left', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
-                                        insert_key(CV, 'handle_right', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
-                                        insert_key(CV, 'radius', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
+                                        insert_key(
+                                            CV, 'handle_left', group=data_("%s Spline %s CV %s") %
+                                            (sk_name, s_i, v_i))
+                                        insert_key(
+                                            CV, 'handle_right', group=data_("%s Spline %s CV %s") %
+                                            (sk_name, s_i, v_i))
+                                        insert_key(
+                                            CV, 'radius', group=data_("%s Spline %s CV %s") %
+                                            (sk_name, s_i, v_i))
                                         insert_key(CV, 'tilt', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
                                 global_spline_index += 1
 
@@ -414,7 +448,8 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                                     if obj.active_shape_key_index > 0:
                                         CV = obj.active_shape_key.data[global_spline_index]
                                         insert_key(CV, 'co', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
-                                        insert_key(CV, 'radius', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
+                                        insert_key(
+                                            CV, 'radius', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
                                         insert_key(CV, 'tilt', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
                                 global_spline_index += 1
 
@@ -443,15 +478,22 @@ class ANIM_OT_delete_keyframe_animall(Operator):
         for obj in objects:
             data = obj.data
             if obj.type == 'MESH':
+                bpy.ops.object.mode_set(mode='OBJECT')
+
                 if animall_properties.key_point_location:
                     for vert in data.vertices:
                         if not animall_properties.key_selected or vert.select:
                             delete_key(vert, 'co')
 
                 if animall_properties.key_vertex_bevel:
-                    for vert in data.vertices:
-                        if not animall_properties.key_selected or vert.select:
-                            delete_key(vert, 'bevel_weight')
+                    attribute = get_attribute(data, "bevel_weight_vert", 'FLOAT', 'POINT')
+                    if attribute is not None:
+                        delete_attribute_key(data, attribute, animall_properties.key_selected)
+
+                if animall_properties.key_vertex_crease:
+                    attribute = get_attribute(data, "crease_vert", 'FLOAT', 'POINT')
+                    if attribute is not None:
+                        delete_attribute_key(data, attribute, animall_properties.key_selected)
 
                 if animall_properties.key_vertex_group:
                     for vert in data.vertices:
@@ -459,20 +501,20 @@ class ANIM_OT_delete_keyframe_animall(Operator):
                             for group in vert.groups:
                                 delete_key(group, 'weight')
 
-                # if animall_properties.key_vertex_crease:
-                #     for vert in data.vertices:
-                #         if not animall_properties.key_selected or vert.select:
-                #             delete_key(vert, 'crease')
-
                 if animall_properties.key_edge_bevel:
-                    for edge in data.edges:
-                        if not animall_properties.key_selected or edge.select:
-                            delete_key(edge, 'bevel_weight')
+                    attribute = get_attribute(data, "bevel_weight_edge", 'FLOAT', 'EDGE')
+                    if attribute is not None:
+                        delete_attribute_key(data, attribute, animall_properties.key_selected)
 
                 if animall_properties.key_edge_crease:
-                    for edge in data.edges:
-                        if not animall_properties.key_selected or vert.select:
-                            delete_key(edge, 'crease')
+                    attribute = get_attribute(data, "crease_edge", 'FLOAT', 'EDGE')
+                    if attribute is not None:
+                        delete_attribute_key(data, attribute, animall_properties.key_selected)
+
+                if animall_properties.key_material_index:
+                    for p_i, polygon in enumerate(data.polygons):
+                        if not animall_properties.key_selected or polygon.select:
+                            delete_key(polygon, 'material_index')
 
                 if animall_properties.key_shape_key:
                     if obj.active_shape_key:
@@ -486,25 +528,15 @@ class ANIM_OT_delete_keyframe_animall(Operator):
                             if not animall_properties.key_selected or uv.select:
                                 delete_key(uv, 'uv')
 
-                if animall_properties.key_attribute:
+                if animall_properties.key_active_attribute:
                     if data.attributes.active is not None:
-                        attribute = data.attributes.active
-                        if attribute.data_type != 'STRING':
-                            # Cannot animate string attributes?
-                            if attribute.data_type in {'FLOAT', 'INT', 'BOOLEAN', 'INT8'}:
-                                attribute_key = "value"
-                            elif attribute.data_type in {'FLOAT_COLOR', 'BYTE_COLOR'}:
-                                attribute_key = "color"
-                            elif attribute.data_type in {'FLOAT_VECTOR', 'FLOAT2'}:
-                                attribute_key = "vector"
+                        for path, _group in get_attribute_paths(
+                                data, data.attributes.active,
+                                animall_properties.key_selected):
+                            if path:
+                                delete_key(data, path)
 
-                            for e_i, _attribute_data in enumerate(attribute.data):
-                                if (not animall_properties.key_selected
-                                        or attribute.domain == 'POINT' and data.vertices[e_i].select
-                                        or attribute.domain == 'EDGE' and data.edges[e_i].select
-                                        or attribute.domain == 'FACE' and data.polygons[e_i].select
-                                        or attribute.domain == 'CORNER' and is_selected_vert_loop(data, e_i)):
-                                    delete_key(data, f'attributes["{attribute.name}"].data[{e_i}].{attribute_key}')
+                bpy.ops.object.mode_set(mode=mode)
 
             elif obj.type == 'LATTICE':
                 if animall_properties.key_shape_key:
@@ -588,11 +620,19 @@ class ANIM_OT_clear_animation_animall(Operator):
         return {'FINISHED'}
 
 
-class ANIM_OT_update_vertex_color_animation_animall(Operator):
-    bl_label = "Update Vertex Color Animation"
-    bl_idname = "anim.update_vertex_color_animation_animall"
-    bl_description = "Update old vertex color channel formats from pre-3.3 versions"
+class ANIM_OT_update_attribute_animation_animall(Operator):
+    bl_label = "Update Attribute Animation"
+    bl_idname = "anim.update_attribute_animation_animall"
+    bl_description = "Update attributes from the old format"
     bl_options = {'REGISTER', 'UNDO'}
+
+    path_re = re.compile(r"^vertex_colors|(vertices|edges)\[([0-9]+)\]\.(bevel_weight|crease)")
+    attribute_map = {
+        ("vertices", "bevel_weight"): ("bevel_weight_vert", "FLOAT", "POINT"),
+        ("edges", "bevel_weight"):    ("bevel_weight_edge", "FLOAT", "POINT"),
+        ("vertices", "crease"):       ("crease_vert", "FLOAT", "EDGE"),
+        ("edges", "crease"):          ("crease_edge", "FLOAT", "EDGE"),
+    }
 
     @classmethod
     def poll(self, context):
@@ -602,21 +642,30 @@ class ANIM_OT_update_vertex_color_animation_animall(Operator):
                 or context.active_object.data.animation_data.action is None):
             return False
         for fcurve in context.active_object.data.animation_data.action.fcurves:
-            if fcurve.data_path.startswith("vertex_colors"):
+            if self.path_re.match(fcurve.data_path):
                 return True
 
     def execute(self, context):
         for fcurve in context.active_object.data.animation_data.action.fcurves:
             if fcurve.data_path.startswith("vertex_colors"):
+                # Update pre-3.3 vertex colors
                 fcurve.data_path = fcurve.data_path.replace("vertex_colors", "attributes")
+            else:
+                # Update pre-4.0 attributes
+                match = self.path_re.match(fcurve.data_path)
+                if match is None:
+                    continue
+                domain, index, src_attribute = match.groups()
+                attribute, type, domain = self.attribute_map[(domain, src_attribute)]
+                get_attribute(context.active_object.data, attribute, type, domain)
+                fcurve.data_path = f'attributes["{attribute}"].data[{index}].value'
         return {'FINISHED'}
+
 
 # Add-ons Preferences Update Panel
 
 # Define Panel classes for updating
-panels = [
-        VIEW3D_PT_animall
-        ]
+panels = [VIEW3D_PT_animall]
 
 
 def update_panel(self, context):
@@ -643,7 +692,7 @@ class AnimallAddonPreferences(AddonPreferences):
     category: StringProperty(
         name="Tab Category",
         description="Choose a name for the category of the panel",
-        default="Animate",
+        default="Animation",
         update=update_panel
     )
 
@@ -658,7 +707,7 @@ class AnimallAddonPreferences(AddonPreferences):
 register_classes, unregister_classes = bpy.utils.register_classes_factory(
     (AnimallProperties, VIEW3D_PT_animall, ANIM_OT_insert_keyframe_animall,
      ANIM_OT_delete_keyframe_animall, ANIM_OT_clear_animation_animall,
-     ANIM_OT_update_vertex_color_animation_animall, AnimallAddonPreferences))
+     ANIM_OT_update_attribute_animation_animall, AnimallAddonPreferences))
 
 def register():
     register_classes()
