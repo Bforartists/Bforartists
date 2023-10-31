@@ -628,10 +628,11 @@ class ASSETBROWSER_PT_display(asset_utils.AssetBrowserPanel, Panel):
         space = context.space_data
         params = space.params
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False  # No animation.
 
         if params.display_type == 'THUMBNAIL':
+            layout.prop(params, "display_size_discrete", text="Text", expand=True) # BFA - added quick thumbnail sizes.
             layout.prop(params, "display_size", text="Size")
         else:
             col = layout.column(heading="Columns", align=True)
