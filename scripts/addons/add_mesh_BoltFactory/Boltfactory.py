@@ -418,7 +418,6 @@ class add_mesh_bolt(Operator, AddObjectHelper):
                 (context.active_object.data is not None) and ('Bolt' in context.active_object.data.keys()) and \
                 (self.change == True):
                 obj = context.active_object
-                use_auto_smooth = bool(obj.data.use_auto_smooth)        # Copy value, do not take a reference
                 use_smooth = bool(obj.data.polygons[0].use_smooth)      # Copy value, do not take a reference
 
                 mesh = createMesh.Create_New_Mesh(self, context)
@@ -430,7 +429,6 @@ class add_mesh_bolt(Operator, AddObjectHelper):
                 bm.free()
 
                 # Preserve flat/smooth choice. New mesh is flat by default
-                obj.data.use_auto_smooth = use_auto_smooth
                 if use_smooth:
                     bpy.ops.object.shade_smooth()
                 else:

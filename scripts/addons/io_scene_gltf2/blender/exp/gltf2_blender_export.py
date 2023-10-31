@@ -116,7 +116,7 @@ def __fix_json(obj):
 
 
 def __should_include_json_value(key, value):
-    allowed_empty_collections = ["KHR_materials_unlit", "KHR_materials_specular"]
+    allowed_empty_collections = ["KHR_materials_unlit"]
 
     if value is None:
         return False

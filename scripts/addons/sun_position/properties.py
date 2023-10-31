@@ -116,6 +116,7 @@ class SunPosProperties(PropertyGroup):
         description="Enter coordinates from an online map",
         get=get_coordinates,
         set=set_coordinates,
+        default="00°00′00.00″ 00°00′00.00″",
         options={'SKIP_SAVE'})
 
     latitude: FloatProperty(

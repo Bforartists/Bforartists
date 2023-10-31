@@ -17,11 +17,12 @@ def create_and_link_mesh(name, faces, face_nors, points, global_matrix):
     mesh.from_pydata(points, [], faces)
 
     if face_nors:
-        # Note: we store 'temp' normals in loops, since validate() may alter final mesh,
-        #       we can only set custom lnors *after* calling it.
-        mesh.create_normals_split()
+        # Write imported normals to a temporary attribute so they are interpolated by #mesh.validate().
+        # It's important to validate before calling #mesh.normals_split_custom_set() which expects a
+        # valid mesh.
         lnors = tuple(chain(*chain(*zip(face_nors, face_nors, face_nors))))
-        mesh.loops.foreach_set("normal", lnors)
+        mesh.attributes.new("temp_custom_normals", 'FLOAT_VECTOR', 'CORNER')
+        mesh.attributes["temp_custom_normals"].data.foreach_set("vector", lnors)
 
     mesh.transform(global_matrix)
 
@@ -30,13 +31,12 @@ def create_and_link_mesh(name, faces, face_nors, points, global_matrix):
 
     if face_nors:
         clnors = array.array('f', [0.0] * (len(mesh.loops) * 3))
-        mesh.loops.foreach_get("normal", clnors)
+        mesh.attributes["temp_custom_normals"].data.foreach_get("vector", clnors)
 
         mesh.polygons.foreach_set("use_smooth", [True] * len(mesh.polygons))
 
         mesh.normals_split_custom_set(tuple(zip(*(iter(clnors),) * 3)))
-        mesh.use_auto_smooth = True
-        mesh.free_normals_split()
+        mesh.attributes.remove(mesh.attributes["temp_custom_normals"])
 
     mesh.update()
 

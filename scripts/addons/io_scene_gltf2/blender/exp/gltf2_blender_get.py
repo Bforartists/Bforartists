@@ -25,3 +25,4 @@ def get_object_from_datapath(blender_object, data_path: str):
         # path_attr = data_path
 
     return prop
+

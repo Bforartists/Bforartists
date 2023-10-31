@@ -78,7 +78,19 @@ class SUNPOS_OT_ShowHdr(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         sun_props = context.scene.sun_pos_properties
-        return sun_props.hdr_texture and sun_props.sun_object is not None
+        if sun_props.sun_object is None:
+            self.poll_message_set("Please select a Sun object")
+            return False
+        if not sun_props.hdr_texture:
+            self.poll_message_set("Please select an Environment Texture node")
+            return False
+
+        nt = context.scene.world.node_tree.nodes
+        env_tex_node = nt.get(context.scene.sun_pos_properties.hdr_texture)
+        if env_tex_node is None or env_tex_node.type != "TEX_ENVIRONMENT":
+            self.poll_message_set("Please select a valid Environment Texture node")
+            return False
+        return True
 
     def update(self, context, event):
         sun_props = context.scene.sun_pos_properties
