@@ -400,7 +400,7 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
 # Options subpanel for the output panel
 class RENDER_PT_output_options(RenderOutputButtonsPanel, Panel):
     bl_label = "Options"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
     bl_parent_id = "RENDER_PT_output"
     bl_options = {'DEFAULT_CLOSED'}
 
