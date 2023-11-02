@@ -4382,13 +4382,6 @@ class VIEW3D_MT_sculpt(Menu):
         # Rebuild BVH
         layout.operator("sculpt.optimize", icon="FILE_REFRESH")
 
-        layout.operator(
-            "sculpt.dynamic_topology_toggle",
-            icon='CHECKBOX_HLT' if context.sculpt_object.use_dynamic_topology_sculpting else 'CHECKBOX_DEHLT',
-        )
-
-        layout.separator()
-
         layout.operator("object.transfer_mode", text="Transfer Sculpt Mode", icon="TRANSFER_SCULPT")
 
 
