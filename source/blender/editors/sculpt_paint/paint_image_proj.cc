@@ -6882,10 +6882,12 @@ static void texture_paint_add_texture_paint_slot_ui(bContext *C, wmOperator *op)
       uiLayout *col = uiLayoutColumn(layout, true);
       uiItemR(col, op->ptr, "width", UI_ITEM_NONE, nullptr, ICON_NONE);
       uiItemR(col, op->ptr, "height", UI_ITEM_NONE, nullptr, ICON_NONE);
-
-      uiItemR(layout, op->ptr, "alpha", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+      uiItemR(col, op->ptr, "alpha", UI_ITEM_NONE, nullptr, ICON_NONE);
       uiItemR(layout, op->ptr, "generated_type", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
       uiItemR(layout, op->ptr, "float", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = back to true */
       break;
     }
     case PAINT_CANVAS_SOURCE_COLOR_ATTRIBUTE:
