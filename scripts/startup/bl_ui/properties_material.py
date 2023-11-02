@@ -413,7 +413,7 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
         lineart = mat.lineart
 
         row = layout.row()
-        split = row.split(factor = 0.5)
+        split = row.split(factor = 0.4)
         row = split.row()
         row.prop(lineart, "use_material_mask", text="Material Mask")
         row = split.row()
@@ -438,11 +438,18 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
         row = layout.row(align=True, heading="Custom Occlusion")
         row.prop(lineart, "mat_occlusion", text="Levels")
 
-        row = layout.row(heading="Intersection Priority")
-        row.prop(lineart, "use_intersection_priority_override", text="")
-        subrow = row.row()
-        subrow.active = lineart.use_intersection_priority_override
-        subrow.prop(lineart, "intersection_priority", text="")
+        col = layout.column()
+        split = col.split(factor=.4)
+        split.use_property_split=False
+        split.prop(lineart, "use_intersection_priority_override", text="Intersection Priority")
+
+        split.alignment = 'LEFT'
+        if lineart.use_intersection_priority_override:
+            row = split.row()
+            row.prop(lineart, "intersection_priority", text="")
+            row.prop_decorator(lineart, "intersection_priority")
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 classes = (
