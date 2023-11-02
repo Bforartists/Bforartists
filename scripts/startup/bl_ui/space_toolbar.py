@@ -1271,55 +1271,6 @@ class TOOLBAR_PT_menu_tools(Panel):
 ############### bfa - menu hidable by the flag in the right click menu
 
 
-class TOOLBAR_PT_normals_autosmooth(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'HEADER'
-    bl_label = "Auto Smooth"
-
-    @classmethod
-    def poll(cls, context):
-        if context.active_object is None:
-            return False
-
-        if context.active_object.type != "MESH":
-            return False
-
-        return True
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-
-        if context.active_object is None:
-            return
-
-        if context.active_object.type != "MESH":
-            return
-
-        mesh = context.active_object.data
-
-        split = layout.split()
-        split.active = not mesh.has_custom_normals
-        split.use_property_split = False
-        col = split.column()
-        col.prop(mesh, "use_auto_smooth", text="Auto Smooth")
-        col = split.column()
-        row = col.row(align = True)
-        row.prop(mesh, "auto_smooth_angle", text="")
-        row.prop_decorator(mesh, "auto_smooth_angle")
-
-        col = layout.column()
-        if mesh.has_custom_normals:
-            col.label(text = "No Autosmooth. Custom normals", icon = 'INFO')
-
-        col = layout.column()
-
-        if mesh.has_custom_normals:
-            col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')
-        else:
-            col.operator("mesh.customdata_custom_splitnormals_add", icon='ADD')
-
-
 class TOOLBAR_MT_tools(Menu):
     bl_idname = "TOOLBAR_MT_tools"
     bl_label = ""
@@ -1404,8 +1355,8 @@ class TOOLBAR_MT_tools(Menu):
 
                         row = layout.row(align=True)
                         row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
+                        row.operator("object.shade_smooth_by_angle", icon="NORMAL_SMOOTH", text="")
                         row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
-                        row.popover(panel="TOOLBAR_PT_normals_autosmooth", text="", icon="NORMAL_SMOOTH")
 
                 if addon_prefs.tools_datatransfer:
 
@@ -1950,7 +1901,6 @@ classes = (
     VIEW3D_MT_object_apply_all,
     VIEW3D_MT_object_apply_rotscale,
     TOOLBAR_PT_menu_animation,
-    TOOLBAR_PT_normals_autosmooth,
     TOOLBAR_PT_menu_tools,
     TOOLBAR_PT_menu_image,
     TOOLBAR_PT_menu_primitives,
