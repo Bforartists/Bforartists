@@ -325,22 +325,35 @@ class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
 
         mat = context.material
 
-        col = layout.column(heading="Backface Culling")
-        col.prop(mat, "use_backface_culling", text="Camera")
-        col.prop(mat, "use_backface_culling_shadow", text="Shadow")
+        col = layout.column()
+        col.label(text = "Backface Culling")
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(mat, "use_backface_culling", text="Camera")
+        row = col.row()
+        row.separator()
+        row.prop(mat, "use_backface_culling_shadow", text="Shadow")
 
         # TODO(fclem): Displacement option
         # TODO(fclem): Transparent shadow option
 
         col = layout.column()
         col.prop(mat, "surface_render_method", text="Render Method")
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
         if mat.surface_render_method == 'BLENDED':
-            col.prop(mat, "show_transparent_back", text="Transparency Overlap")
+            row.prop(mat, "show_transparent_back", text="Transparency Overlap")
         elif mat.surface_render_method == 'DITHERED':
-            col.prop(mat, "use_screen_refraction", text="Raytraced Refraction")
+            row.prop(mat, "use_screen_refraction", text="Raytraced Refraction")
 
-        col = layout.column(heading="Light Probe Volume")
-        col.prop(mat, "lightprobe_volume_single_sided", text="Single Sided")
+        col = layout.column()
+        col.label(text = "Light Probe Volume")
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(mat, "lightprobe_volume_single_sided", text="Single Sided")
 
 
 class EEVEE_NEXT_MATERIAL_PT_settings_volume(MaterialButtonsPanel, Panel):
