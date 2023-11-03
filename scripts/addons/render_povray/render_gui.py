@@ -383,7 +383,7 @@ class RENDER_PT_POV_radiosity(RenderButtonsPanel, Panel):
         if scene.pov.radio_enable:
             self.layout.prop(scene.pov, "radio_enable", text="", icon="OUTLINER_OB_LIGHTPROBE")
         else:
-            self.layout.prop(scene.pov, "radio_enable", text="", icon="LIGHTPROBE_CUBEMAP")
+            self.layout.prop(scene.pov, "radio_enable", text="", icon="LIGHTPROBE_SPHERE")
 
     def draw(self, context):
         layout = self.layout
