@@ -480,9 +480,9 @@ light_hemi
 light_point
 light_spot
 light_sun
-lightprobe_cubemap
-lightprobe_grid
-lightprobe_planar
+lightprobe_sphere
+lightprobe_plane
+lightprobe_volume
 view_remove_local
 shape
 
