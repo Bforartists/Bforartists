@@ -804,9 +804,9 @@ class TOOLBAR_MT_primitives(Menu):
             if addon_prefs.primitives_lightprobe:
 
                 row = layout.row(align=True)
-                row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_CUBEMAP').type='CUBEMAP'
-                row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANAR').type='PLANAR'
-                row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_GRID').type='GRID'
+                row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_SPHERE').type='CUBEMAP'
+                row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_VOLUME').type='PLANAR'
+                row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_VOLUME').type='GRID'
 
             if addon_prefs.primitives_forcefield:
 
@@ -943,9 +943,9 @@ class TOOLBAR_MT_primitives(Menu):
                 if addon_prefs.primitives_lightprobe:
 
                     row = layout.row(align=True)
-                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_CUBEMAP').type='CUBEMAP'
-                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANAR').type='PLANAR'
-                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_GRID').type='GRID'
+                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANE').type='CUBEMAP'
+                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANE').type='PLANAR'
+                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_VOLUME').type='GRID'
 
                 if addon_prefs.primitives_forcefield:
 
