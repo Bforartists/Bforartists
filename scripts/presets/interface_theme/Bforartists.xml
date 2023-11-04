@@ -1615,6 +1615,7 @@
     <panel_title>
       <ThemeFontStyle
         points="11"
+        character_weight="400"
         shadow="1"
         shadow_offset_x="0"
         shadow_offset_y="-1"
@@ -1626,6 +1627,7 @@
     <widget_label>
       <ThemeFontStyle
         points="11"
+        character_weight="400"
         shadow="3"
         shadow_offset_x="0"
         shadow_offset_y="-1"
@@ -1637,6 +1639,7 @@
     <widget>
       <ThemeFontStyle
         points="11"
+        character_weight="400"
         shadow="0"
         shadow_offset_x="0"
         shadow_offset_y="0"
