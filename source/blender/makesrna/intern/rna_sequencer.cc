@@ -38,21 +38,21 @@
 
 #include "rna_internal.h"
 
-#include "SEQ_add.h"
-#include "SEQ_channels.h"
-#include "SEQ_effects.h"
-#include "SEQ_iterator.h"
-#include "SEQ_modifier.h"
-#include "SEQ_prefetch.h"
-#include "SEQ_proxy.h"
-#include "SEQ_relations.h"
+#include "SEQ_add.hh"
+#include "SEQ_channels.hh"
+#include "SEQ_effects.hh"
+#include "SEQ_iterator.hh"
+#include "SEQ_modifier.hh"
+#include "SEQ_prefetch.hh"
+#include "SEQ_proxy.hh"
+#include "SEQ_relations.hh"
 #include "SEQ_retiming.hh"
-#include "SEQ_select.h"
-#include "SEQ_sequencer.h"
-#include "SEQ_sound.h"
-#include "SEQ_time.h"
-#include "SEQ_transform.h"
-#include "SEQ_utils.h"
+#include "SEQ_select.hh"
+#include "SEQ_sequencer.hh"
+#include "SEQ_sound.hh"
+#include "SEQ_time.hh"
+#include "SEQ_transform.hh"
+#include "SEQ_utils.hh"
 
 #include "WM_types.hh"
 
@@ -123,7 +123,7 @@ const EnumPropertyItem rna_enum_strip_color_items[] = {
 
 #  include "IMB_imbuf.h"
 
-#  include "SEQ_edit.h"
+#  include "SEQ_edit.hh"
 
 struct SequenceSearchData {
   Sequence *seq;
@@ -933,19 +933,6 @@ static int rna_Sequence_proxy_filepath_length(PointerRNA *ptr)
 static void rna_Sequence_audio_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
 {
   DEG_id_tag_update(ptr->owner_id, ID_RECALC_SEQUENCER_STRIPS | ID_RECALC_AUDIO);
-}
-
-static void rna_Sequence_speed_factor_update(Main *bmain, Scene *scene, PointerRNA *ptr)
-{
-  SEQ_cache_cleanup(scene);
-  rna_Sequence_audio_update(bmain, scene, ptr);
-}
-
-static void rna_Sequence_speed_factor_set(PointerRNA *ptr, float value)
-{
-  Sequence *seq = (Sequence *)ptr->data;
-  Scene *scene = (Scene *)ptr->owner_id;
-  SEQ_time_speed_factor_set(scene, seq, value);
 }
 
 static void rna_Sequence_pan_range(
@@ -2556,19 +2543,6 @@ static void rna_def_editor(BlenderRNA *brna)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 }
 
-static void rna_def_speed_factor(StructRNA *srna)
-{
-  PropertyRNA *prop = RNA_def_property(srna, "speed_factor", PROP_FLOAT, PROP_NONE);
-  RNA_def_property_float_sdna(prop, nullptr, "speed_factor");
-  RNA_def_property_float_default(prop, 1.0f);
-  RNA_def_property_range(prop, 0.1f, FLT_MAX);
-  RNA_def_property_ui_range(prop, 1.0f, 100.0f, 10.0, 3);
-  RNA_def_property_ui_text(prop, "Speed Factor", "Multiply playback speed");
-  RNA_def_property_float_funcs(
-      prop, nullptr, "rna_Sequence_speed_factor_set", nullptr); /* overlap test */
-  RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_Sequence_speed_factor_update");
-}
-
 static void rna_def_filter_video(StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -3073,7 +3047,6 @@ static void rna_def_sound(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, nullptr);
 
   rna_def_input(srna);
-  rna_def_speed_factor(srna);
 }
 
 static void rna_def_effect(BlenderRNA *brna)
