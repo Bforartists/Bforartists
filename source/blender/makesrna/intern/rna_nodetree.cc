@@ -11413,7 +11413,7 @@ static int node_type_to_icon(int type)
       return ICON_TIME;
 
     case GEO_NODE_SPLIT_TO_INSTANCES:
-      return ICON_DELETE;
+      return ICON_SPLIT_TO_INSTANCES;
 
     case GEO_NODE_SPLIT_EDGES:
       return ICON_SPLITEDGE;
