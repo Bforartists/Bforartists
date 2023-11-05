@@ -17,6 +17,7 @@
 #include "BLI_hash.hh"
 #include "BLI_math_color.hh"
 #include "BLI_math_matrix.h"
+#include "BLI_math_quaternion.hh"
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector.h"
 #include "BLI_vector.hh"
@@ -147,6 +148,191 @@ static void generate_vertex_map(const Mesh *mesh,
   }
 }
 
+static float *find_or_add_attribute(const StringRef name,
+                                    int64_t size,
+                                    uint32_t vertex_offset,
+                                    Vector<PlyCustomAttribute> &r_attributes)
+{
+  /* Do we have this attribute from some other object already? */
+  for (PlyCustomAttribute &attr : r_attributes) {
+    if (attr.name == name) {
+      BLI_assert(attr.data.size() == vertex_offset);
+      attr.data.resize(attr.data.size() + size, 0.0f);
+      return attr.data.data() + vertex_offset;
+    }
+  }
+  /* We don't have it yet, create and fill with zero data for previous objects. */
+  r_attributes.append(PlyCustomAttribute(name, vertex_offset + size));
+  return r_attributes.last().data.data() + vertex_offset;
+}
+
+static void load_custom_attributes(const Mesh *mesh,
+                                   const Vector<int> &ply_to_vertex,
+                                   uint32_t vertex_offset,
+                                   Vector<PlyCustomAttribute> &r_attributes)
+{
+  const bke::AttributeAccessor attributes = mesh->attributes();
+  const StringRef color_name = mesh->active_color_attribute;
+  const StringRef uv_name = CustomData_get_active_layer_name(&mesh->loop_data, CD_PROP_FLOAT2);
+  const int64_t size = ply_to_vertex.size();
+
+  attributes.for_all([&](const bke::AttributeIDRef &attribute_id,
+                         const bke::AttributeMetaData &meta_data) {
+    /* Skip internal, standard and non-vertex domain attributes. */
+    if (meta_data.domain != ATTR_DOMAIN_POINT || attribute_id.name()[0] == '.' ||
+        attribute_id.is_anonymous() || ELEM(attribute_id.name(), "position", color_name, uv_name))
+    {
+      return true;
+    }
+
+    const GVArraySpan attribute = *mesh->attributes().lookup(
+        attribute_id, meta_data.domain, meta_data.data_type);
+    if (attribute.is_empty()) {
+      return true;
+    }
+    switch (meta_data.data_type) {
+      case CD_PROP_FLOAT: {
+        float *attr = find_or_add_attribute(
+            attribute_id.name(), size, vertex_offset, r_attributes);
+        auto typed = attribute.typed<float>();
+        for (const int64_t i : ply_to_vertex.index_range()) {
+          attr[i] = typed[ply_to_vertex[i]];
+        }
+        break;
+      }
+      case CD_PROP_INT8: {
+        float *attr = find_or_add_attribute(
+            attribute_id.name(), size, vertex_offset, r_attributes);
+        auto typed = attribute.typed<int8_t>();
+        for (const int64_t i : ply_to_vertex.index_range()) {
+          attr[i] = typed[ply_to_vertex[i]];
+        }
+        break;
+      }
+      case CD_PROP_INT32: {
+        float *attr = find_or_add_attribute(
+            attribute_id.name(), size, vertex_offset, r_attributes);
+        auto typed = attribute.typed<int32_t>();
+        for (const int64_t i : ply_to_vertex.index_range()) {
+          attr[i] = typed[ply_to_vertex[i]];
+        }
+        break;
+      }
+      case CD_PROP_INT32_2D: {
+        float *attr_x = find_or_add_attribute(
+            attribute_id.name() + "_x", size, vertex_offset, r_attributes);
+        float *attr_y = find_or_add_attribute(
+            attribute_id.name() + "_y", size, vertex_offset, r_attributes);
+        auto typed = attribute.typed<int2>();
+        for (const int64_t i : ply_to_vertex.index_range()) {
+          int j = ply_to_vertex[i];
+          attr_x[i] = typed[j].x;
+          attr_y[i] = typed[j].y;
+        }
+        break;
+      }
+      case CD_PROP_FLOAT2: {
+        float *attr_x = find_or_add_attribute(
+            attribute_id.name() + "_x", size, vertex_offset, r_attributes);
+        float *attr_y = find_or_add_attribute(
+            attribute_id.name() + "_y", size, vertex_offset, r_attributes);
+        auto typed = attribute.typed<float2>();
+        for (const int64_t i : ply_to_vertex.index_range()) {
+          int j = ply_to_vertex[i];
+          attr_x[i] = typed[j].x;
+          attr_y[i] = typed[j].y;
+        }
+        break;
+      }
+      case CD_PROP_FLOAT3: {
+        float *attr_x = find_or_add_attribute(
+            attribute_id.name() + "_x", size, vertex_offset, r_attributes);
+        float *attr_y = find_or_add_attribute(
+            attribute_id.name() + "_y", size, vertex_offset, r_attributes);
+        float *attr_z = find_or_add_attribute(
+            attribute_id.name() + "_z", size, vertex_offset, r_attributes);
+        auto typed = attribute.typed<float3>();
+        for (const int64_t i : ply_to_vertex.index_range()) {
+          int j = ply_to_vertex[i];
+          attr_x[i] = typed[j].x;
+          attr_y[i] = typed[j].y;
+          attr_z[i] = typed[j].z;
+        }
+        break;
+      }
+      case CD_PROP_BYTE_COLOR: {
+        float *attr_r = find_or_add_attribute(
+            attribute_id.name() + "_r", size, vertex_offset, r_attributes);
+        float *attr_g = find_or_add_attribute(
+            attribute_id.name() + "_g", size, vertex_offset, r_attributes);
+        float *attr_b = find_or_add_attribute(
+            attribute_id.name() + "_b", size, vertex_offset, r_attributes);
+        float *attr_a = find_or_add_attribute(
+            attribute_id.name() + "_a", size, vertex_offset, r_attributes);
+        auto typed = attribute.typed<ColorGeometry4b>();
+        for (const int64_t i : ply_to_vertex.index_range()) {
+          ColorGeometry4f col = typed[ply_to_vertex[i]].decode();
+          attr_r[i] = col.r;
+          attr_g[i] = col.g;
+          attr_b[i] = col.b;
+          attr_a[i] = col.a;
+        }
+        break;
+      }
+      case CD_PROP_COLOR: {
+        float *attr_r = find_or_add_attribute(
+            attribute_id.name() + "_r", size, vertex_offset, r_attributes);
+        float *attr_g = find_or_add_attribute(
+            attribute_id.name() + "_g", size, vertex_offset, r_attributes);
+        float *attr_b = find_or_add_attribute(
+            attribute_id.name() + "_b", size, vertex_offset, r_attributes);
+        float *attr_a = find_or_add_attribute(
+            attribute_id.name() + "_a", size, vertex_offset, r_attributes);
+        auto typed = attribute.typed<ColorGeometry4f>();
+        for (const int64_t i : ply_to_vertex.index_range()) {
+          ColorGeometry4f col = typed[ply_to_vertex[i]];
+          attr_r[i] = col.r;
+          attr_g[i] = col.g;
+          attr_b[i] = col.b;
+          attr_a[i] = col.a;
+        }
+        break;
+      }
+      case CD_PROP_BOOL: {
+        float *attr = find_or_add_attribute(
+            attribute_id.name(), size, vertex_offset, r_attributes);
+        auto typed = attribute.typed<bool>();
+        for (const int64_t i : ply_to_vertex.index_range()) {
+          attr[i] = typed[ply_to_vertex[i]] ? 1.0f : 0.0f;
+        }
+        break;
+      }
+      case CD_PROP_QUATERNION: {
+        float *attr_x = find_or_add_attribute(
+            attribute_id.name() + "_x", size, vertex_offset, r_attributes);
+        float *attr_y = find_or_add_attribute(
+            attribute_id.name() + "_y", size, vertex_offset, r_attributes);
+        float *attr_z = find_or_add_attribute(
+            attribute_id.name() + "_z", size, vertex_offset, r_attributes);
+        float *attr_w = find_or_add_attribute(
+            attribute_id.name() + "_w", size, vertex_offset, r_attributes);
+        auto typed = attribute.typed<math::Quaternion>();
+        for (const int64_t i : ply_to_vertex.index_range()) {
+          int j = ply_to_vertex[i];
+          attr_x[i] = typed[j].x;
+          attr_y[i] = typed[j].y;
+          attr_z[i] = typed[j].z;
+          attr_w[i] = typed[j].w;
+        }
+        break;
+      }
+      default:
+        BLI_assert_msg(0, "Unsupported attribute type for PLY export.");
+    }
+    return true;
+  });
+}
+
 void load_plydata(PlyData &plyData, Depsgraph *depsgraph, const PLYExportParams &export_params)
 {
   DEGObjectIterSettings deg_iter_settings{};
@@ -255,7 +441,11 @@ void load_plydata(PlyData &plyData, Depsgraph *depsgraph, const PLYExportParams 
             *attributes.lookup_or_default<ColorGeometry4f>(
                 name, ATTR_DOMAIN_POINT, {0.0f, 0.0f, 0.0f, 0.0f});
         if (!color_attribute.is_empty()) {
-          plyData.vertex_colors.reserve(ply_to_vertex.size());
+          if (plyData.vertex_colors.size() != vertex_offset) {
+            plyData.vertex_colors.resize(vertex_offset, float4(0));
+          }
+
+          plyData.vertex_colors.reserve(vertex_offset + ply_to_vertex.size());
           for (int vertex_index : ply_to_vertex) {
             float4 color = float4(color_attribute[vertex_index]);
             if (export_params.vertex_colors == PLY_VERTEX_COLOR_SRGB) {
@@ -265,6 +455,11 @@ void load_plydata(PlyData &plyData, Depsgraph *depsgraph, const PLYExportParams 
           }
         }
       }
+    }
+
+    /* Custom attributes */
+    if (export_params.export_attributes) {
+      load_custom_attributes(mesh, ply_to_vertex, vertex_offset, plyData.vertex_custom_attr);
     }
 
     /* Loose edges */
@@ -285,6 +480,16 @@ void load_plydata(PlyData &plyData, Depsgraph *depsgraph, const PLYExportParams 
   }
 
   DEG_OBJECT_ITER_END;
+
+  /* Make sure color and attribute arrays are encompassing all input objects */
+  if (!plyData.vertex_colors.is_empty()) {
+    BLI_assert(plyData.vertex_colors.size() <= vertex_offset);
+    plyData.vertex_colors.resize(vertex_offset, float4(0));
+  }
+  for (PlyCustomAttribute &attr : plyData.vertex_custom_attr) {
+    BLI_assert(attr.data.size() <= vertex_offset);
+    attr.data.resize(vertex_offset, 0.0f);
+  }
 }
 
 }  // namespace blender::io::ply
