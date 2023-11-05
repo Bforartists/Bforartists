@@ -241,16 +241,18 @@ void VKFrameBuffer::read(eGPUFrameBufferBits plane,
                          void *r_data)
 {
   VKContext &context = *VKContext::get();
-  VKTexture *texture = nullptr;
+  GPUAttachment *attachment = nullptr;
   switch (plane) {
     case GPU_COLOR_BIT:
+      attachment = &attachments_[GPU_FB_COLOR_ATTACHMENT0 + slot];
       color_attachment_layout_ensure(context, slot, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-      texture = unwrap(unwrap(color_tex(slot)));
       break;
 
     case GPU_DEPTH_BIT:
+      attachment = attachments_[GPU_FB_DEPTH_ATTACHMENT].tex ?
+                       &attachments_[GPU_FB_DEPTH_ATTACHMENT] :
+                       &attachments_[GPU_FB_DEPTH_STENCIL_ATTACHMENT];
       depth_attachment_layout_ensure(context, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-      texture = unwrap(unwrap(depth_tex()));
       break;
 
     default:
@@ -258,10 +260,16 @@ void VKFrameBuffer::read(eGPUFrameBufferBits plane,
       return;
   }
 
+  VKTexture *texture = unwrap(unwrap(attachment->tex));
   BLI_assert_msg(texture,
                  "Trying to read back texture from framebuffer, but no texture is available in "
                  "requested slot.");
-  texture->read_sub(0, format, area, r_data);
+  if (texture == nullptr) {
+    return;
+  }
+
+  IndexRange layers(max_ii(attachment->layer, 0), 1);
+  texture->read_sub(0, format, area, layers, r_data);
 }
 
 /** \} */
@@ -275,7 +283,7 @@ static void blit_aspect(VKCommandBuffers &command_buffer,
                         VKTexture &src_texture,
                         int dst_offset_x,
                         int dst_offset_y,
-                        VkImageAspectFlagBits image_aspect)
+                        VkImageAspectFlags image_aspect)
 {
   /* Prefer texture copy, as some platforms don't support using D32_SFLOAT_S8_UINT to be used as
    * a blit destination. */
