@@ -6,6 +6,7 @@
  * \ingroup edcurves
  */
 
+#include "BLI_path_util.h"
 #include "BLI_string.h"
 
 #include "ED_curves.hh"
@@ -39,6 +40,7 @@
 #include "DNA_scene_types.h"
 
 #include "DEG_depsgraph.hh"
+#include "DEG_depsgraph_build.hh"
 #include "DEG_depsgraph_query.hh"
 
 #include "RNA_access.hh"
@@ -51,6 +53,7 @@
 #include "ED_asset_menu_utils.hh"
 #include "ED_geometry.hh"
 #include "ED_mesh.hh"
+#include "ED_sculpt.hh"
 
 #include "BLT_translation.h"
 
@@ -162,11 +165,10 @@ static bke::GeometrySet get_original_geometry_eval_copy(Object &object)
   }
 }
 
-static void store_result_geometry(Main &bmain,
-                                  Scene &scene,
-                                  Object &object,
-                                  bke::GeometrySet geometry)
+static void store_result_geometry(
+    const wmOperator &op, Main &bmain, Scene &scene, Object &object, bke::GeometrySet geometry)
 {
+  geometry.ensure_owns_direct_data();
   switch (object.type) {
     case OB_CURVES: {
       Curves &curves = *static_cast<Curves *>(object.data);
@@ -202,33 +204,92 @@ static void store_result_geometry(Main &bmain,
     }
     case OB_MESH: {
       Mesh &mesh = *static_cast<Mesh *>(object.data);
+
+      if (object.mode == OB_MODE_SCULPT) {
+        ED_sculpt_undo_geometry_begin(&object, &op);
+      }
+
       Mesh *new_mesh = geometry.get_component_for_write<bke::MeshComponent>().release();
       if (!new_mesh) {
         BKE_mesh_clear_geometry(&mesh);
-        if (object.mode == OB_MODE_EDIT) {
-          EDBM_mesh_make(&object, scene.toolsettings->selectmode, true);
-        }
-        break;
+      }
+      else {
+        /* Anonymous attributes shouldn't be available on the applied geometry. */
+        new_mesh->attributes_for_write().remove_anonymous();
+
+        BKE_object_material_from_eval_data(&bmain, &object, &new_mesh->id);
+        BKE_mesh_nomain_to_mesh(new_mesh, &mesh, &object);
       }
 
-      /* Anonymous attributes shouldn't be available on the applied geometry. */
-      new_mesh->attributes_for_write().remove_anonymous();
-
-      BKE_object_material_from_eval_data(&bmain, &object, &new_mesh->id);
-      BKE_mesh_nomain_to_mesh(new_mesh, &mesh, &object);
       if (object.mode == OB_MODE_EDIT) {
         EDBM_mesh_make(&object, scene.toolsettings->selectmode, true);
         BKE_editmesh_looptri_and_normals_calc(mesh.edit_mesh);
+      }
+      else if (object.mode == OB_MODE_SCULPT) {
+        ED_sculpt_undo_geometry_end(&object);
       }
       break;
     }
   }
 }
 
+/**
+ * Create a dependency graph referencing all data-blocks used by the tree, and all selected
+ * objects. Adding the selected objects is necessary because they are currently compared by pointer
+ * to other evaluated objects inside of geometry nodes.
+ */
+static Depsgraph *build_depsgraph_from_indirect_ids(Main &bmain,
+                                                    Scene &scene,
+                                                    ViewLayer &view_layer,
+                                                    const bNodeTree &node_tree_orig,
+                                                    const Span<const Object *> objects,
+                                                    const IDProperty &properties)
+{
+  Set<ID *> ids_for_relations;
+  bool needs_own_transform_relation = false;
+  nodes::find_node_tree_dependencies(
+      node_tree_orig, ids_for_relations, needs_own_transform_relation);
+  IDP_foreach_property(
+      &const_cast<IDProperty &>(properties),
+      IDP_TYPE_FILTER_ID,
+      [](IDProperty *property, void *user_data) {
+        if (ID *id = IDP_Id(property)) {
+          static_cast<Set<ID *> *>(user_data)->add(id);
+        }
+      },
+      &ids_for_relations);
+
+  Vector<const ID *> ids;
+  ids.append(&node_tree_orig.id);
+  ids.extend(objects.cast<const ID *>());
+  ids.insert(ids.size(), ids_for_relations.begin(), ids_for_relations.end());
+
+  Depsgraph *depsgraph = DEG_graph_new(&bmain, &scene, &view_layer, DAG_EVAL_VIEWPORT);
+  DEG_graph_build_from_ids(depsgraph, const_cast<ID **>(ids.data()), ids.size());
+  return depsgraph;
+}
+
+static IDProperty *replace_inputs_evaluated_data_blocks(const IDProperty &op_properties,
+                                                        const Depsgraph &depsgraph)
+{
+  /* We just create a temporary copy, so don't adjust data-block user count. */
+  IDProperty *properties = IDP_CopyProperty_ex(&op_properties, LIB_ID_CREATE_NO_USER_REFCOUNT);
+  IDP_foreach_property(
+      properties,
+      IDP_TYPE_FILTER_ID,
+      [](IDProperty *property, void *user_data) {
+        if (ID *id = IDP_Id(property)) {
+          Depsgraph *depsgraph = static_cast<Depsgraph *>(user_data);
+          property->data.pointer = DEG_get_evaluated_id(depsgraph, id);
+        }
+      },
+      &const_cast<Depsgraph &>(depsgraph));
+  return properties;
+}
+
 static int run_node_group_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Object *active_object = CTX_data_active_object(C);
@@ -240,10 +301,23 @@ static int run_node_group_exec(bContext *C, wmOperator *op)
   }
   const eObjectMode mode = eObjectMode(active_object->mode);
 
-  const bNodeTree *node_tree = get_node_group(*C, *op->ptr, op->reports);
-  if (!node_tree) {
+  const bNodeTree *node_tree_orig = get_node_group(*C, *op->ptr, op->reports);
+  if (!node_tree_orig) {
     return OPERATOR_CANCELLED;
   }
+
+  uint objects_len = 0;
+  Object **objects = BKE_view_layer_array_from_objects_in_mode_unique_data(
+      scene, view_layer, CTX_wm_view3d(C), &objects_len, mode);
+  BLI_SCOPED_DEFER([&]() { MEM_SAFE_FREE(objects); });
+
+  Depsgraph *depsgraph = build_depsgraph_from_indirect_ids(
+      *bmain, *scene, *view_layer, *node_tree_orig, {objects, objects_len}, *op->properties);
+  DEG_evaluate_on_refresh(depsgraph);
+  BLI_SCOPED_DEFER([&]() { DEG_graph_free(depsgraph); });
+
+  const bNodeTree *node_tree = reinterpret_cast<const bNodeTree *>(
+      DEG_get_evaluated_id(depsgraph, const_cast<ID *>(&node_tree_orig->id)));
 
   const nodes::GeometryNodesLazyFunctionGraphInfo *lf_graph_info =
       nodes::ensure_geometry_nodes_lazy_function_graph(*node_tree);
@@ -257,9 +331,8 @@ static int run_node_group_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  uint objects_len = 0;
-  Object **objects = BKE_view_layer_array_from_objects_in_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C), &objects_len, mode);
+  IDProperty *properties = replace_inputs_evaluated_data_blocks(*op->properties, *depsgraph);
+  BLI_SCOPED_DEFER([&]() { IDP_FreeProperty_ex(properties, false); });
 
   OperatorComputeContext compute_context(op->type->idname);
 
@@ -269,14 +342,14 @@ static int run_node_group_exec(bContext *C, wmOperator *op)
     }
     nodes::GeoNodesOperatorData operator_eval_data{};
     operator_eval_data.depsgraph = depsgraph;
-    operator_eval_data.self_object = object;
-    operator_eval_data.scene = scene;
+    operator_eval_data.self_object = DEG_get_evaluated_object(depsgraph, object);
+    operator_eval_data.scene = DEG_get_evaluated_scene(depsgraph);
 
     bke::GeometrySet geometry_orig = get_original_geometry_eval_copy(*object);
 
     bke::GeometrySet new_geometry = nodes::execute_geometry_nodes_on_geometry(
         *node_tree,
-        op->properties,
+        properties,
         compute_context,
         std::move(geometry_orig),
         [&](nodes::GeoNodesLFUserData &user_data) {
@@ -284,13 +357,11 @@ static int run_node_group_exec(bContext *C, wmOperator *op)
           user_data.log_socket_values = false;
         });
 
-    store_result_geometry(*bmain, *scene, *object, std::move(new_geometry));
+    store_result_geometry(*op, *bmain, *scene, *object, std::move(new_geometry));
 
     DEG_id_tag_update(static_cast<ID *>(object->data), ID_RECALC_GEOMETRY);
     WM_event_add_notifier(C, NC_GEOM | ND_DATA, object->data);
   }
-
-  MEM_SAFE_FREE(objects);
 
   return OPERATOR_FINISHED;
 }
@@ -483,7 +554,7 @@ static std::string run_node_group_get_name(wmOperatorType * /*ot*/, PointerRNA *
       ptr, "relative_asset_identifier", nullptr, 0, &len);
   BLI_SCOPED_DEFER([&]() { MEM_SAFE_FREE(library_asset_identifier); })
   StringRef ref(library_asset_identifier, len);
-  return ref.drop_prefix(ref.find_last_of('/') + 1);
+  return ref.drop_prefix(ref.find_last_of(SEP_STR) + 1);
 }
 
 void GEOMETRY_OT_execute_node_group(wmOperatorType *ot)
