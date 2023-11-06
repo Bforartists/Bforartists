@@ -1023,7 +1023,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         else:
             split.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        col = layout.column()
+        #col = layout.column()
         split = col.split(factor=0.9)
         split.use_property_split=False
         row = split.row()
@@ -1058,7 +1058,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         else:
             split.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        col = layout.column()
+        #col = layout.column()
         split = col.split(factor=0.9)
         split.use_property_split=False
         row = split.row()
@@ -1123,7 +1123,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
                 row.separator(factor = 3.5)
                 row.prop(sculpt, "automasking_view_normal_falloff", text="Falloff")
 
-        col = layout.column()
+        #col = layout.column()
         split = col.split(factor=0.9)
         split.use_property_split=False
         row = split.row()
