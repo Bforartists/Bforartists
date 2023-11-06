@@ -1236,10 +1236,10 @@ class VIEW3D_MT_transform_base:
             context.window_manager.keyconfigs.active.preferences,
             "use_alt_navigation",
             False)
-
-        layout.operator("transform.translate", icon = 'TRANSFORM_MOVE').alt_navigation = alt_navigation
-        layout.operator("transform.rotate", icon = 'TRANSFORM_ROTATE').alt_navigation = alt_navigation
-        layout.operator("transform.resize", text="Scale", icon = 'TRANSFORM_SCALE').alt_navigation = alt_navigation
+        #BFA - removed as redundant
+        #layout.operator("transform.translate", icon = 'TRANSFORM_MOVE').alt_navigation = alt_navigation
+        #layout.operator("transform.rotate", icon = 'TRANSFORM_ROTATE').alt_navigation = alt_navigation
+        #layout.operator("transform.resize", text="Scale", icon = 'TRANSFORM_SCALE').alt_navigation = alt_navigation
 
         layout.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
         layout.operator("transform.shear", text="Shear", icon="SHEAR")
