@@ -689,9 +689,9 @@ class SEQUENCER_MT_change(Menu):
                     layout.operator_menu_enum("sequencer.change_effect_input", "swap")
                     layout.operator_menu_enum("sequencer.change_effect_type", "type")
                 else:
-                    layout.label(text="Please select a changeable strip")
+                    layout.label(text="Please select a changeable strip", icon="QUESTION")
         except:
-            layout.label(text="Please select a strip")
+            layout.label(text="Please select a strip", icon="QUESTION")
         # BFA - End of changes
 
 class SEQUENCER_MT_navigation(Menu):
