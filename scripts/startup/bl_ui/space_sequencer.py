@@ -2371,7 +2371,12 @@ class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
         col = layout.column()
         col.prop(strip, "color_saturation", text="Saturation")
         col.prop(strip, "color_multiply", text="Multiply")
-        col.prop(strip, "multiply_alpha")
+
+        row = col.row()
+        row.use_property_split = False
+        row.prop(strip, "multiply_alpha")
+        row.prop_decorator(strip, "multiply_alpha")
+
         row = col.row()
         row.use_property_split = False
         row.prop(strip, "use_float", text="Convert to Float")
