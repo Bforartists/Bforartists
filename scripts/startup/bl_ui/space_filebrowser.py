@@ -109,7 +109,7 @@ class FileBrowserPanel:
 class FILEBROWSER_PT_display(FileBrowserPanel, Panel):
     bl_region_type = 'HEADER'
     bl_label = "Display Settings"  # Shows as tooltip in popover
-    bl_ui_units_x = 10
+    bl_ui_units_x = 16
 
     def draw(self, context):
         layout = self.layout
@@ -121,6 +121,7 @@ class FILEBROWSER_PT_display(FileBrowserPanel, Panel):
         layout.use_property_decorate = False  # No animation.
 
         if params.display_type == 'THUMBNAIL':
+            layout.prop(params, "display_size_discrete", text="Thumbnail Presets", expand=True) # BFA - added quick thumbnail sizes.
             layout.prop(params, "display_size", text="Size")
         else:
 
