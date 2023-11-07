@@ -1118,8 +1118,6 @@ class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
 
         col = layout.column()  
         col.prop(rd, "filter_size")
-        col.use_property_split = False
-        col.prop(rd, "film_transparent", text="Transparent")
 
         col = layout.column(align=False, heading="Overscan")
         row = col.row(align=True)
