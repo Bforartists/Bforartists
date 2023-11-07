@@ -1323,16 +1323,30 @@ static int gpencil_isolate_layer_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string GPENCIL_OT_layer_isolate_get_description(struct bContext * /*C*/,
+                                                    struct wmOperatorType * /*op*/,
+                                                    struct PointerRNA *values)
+{
+  if (RNA_boolean_get(values, "affect_visibility")) {
+    return "Toggle whether the active layer is the only one that can be edited and/or visible"
+      "\nLocks and hides the not selected layers";
+  }
+  return "";
+}
+
 void GPENCIL_OT_layer_isolate(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Isolate Layer";
   ot->idname = "GPENCIL_OT_layer_isolate";
   ot->description =
-      "Toggle whether the active layer is the only one that can be edited and/or visible";
+      "Toggle whether the active layer is the only one that can be edited and/or visible"
+    "\nLocks the not selected layers";
 
   /* callbacks */
   ot->exec = gpencil_isolate_layer_exec;
+  ot->get_description = GPENCIL_OT_layer_isolate_get_description; /*bfa - descriptions*/
   ot->poll = gpencil_active_layer_poll;
 
   /* flags */
