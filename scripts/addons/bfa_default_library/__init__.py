@@ -96,7 +96,7 @@ def register_library():
     path = p.dirname(__file__)
     sub_folder = LIB_NAME
 
-    full_path = os.p.join(path, sub_folder)
+    full_path = os.path.join(path, sub_folder)
 
     # In case the library doesn't exist in the preferences, create it.
     if index == -1:
