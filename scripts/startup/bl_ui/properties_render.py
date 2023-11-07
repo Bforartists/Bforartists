@@ -1116,16 +1116,21 @@ class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
         rd = scene.render
         props = scene.eevee
 
-        col = layout.column()  
+        col = layout.column()
         col.prop(rd, "filter_size")
 
-        col = layout.column(align=False, heading="Overscan")
-        row = col.row(align=True)
-        sub = row.row(align=True)
-        sub.prop(props, "use_overscan", text="")
-        sub = sub.row(align=True)
-        sub.active = props.use_overscan
-        sub.prop(props, "overscan_size", text="")
+        split = layout.split(factor=.4)
+        split.use_property_split=False
+        split.prop(props, "use_overscan", text=" Overscan")
+
+        split.alignment = 'LEFT'
+        if props.use_overscan:
+            split.use_property_split = False
+            row = split.row()
+            row.prop(props, "overscan_size", text="")
+            row.separator( factor = 2)
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 def draw_curves_settings(self, context):
