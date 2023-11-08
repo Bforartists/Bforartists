@@ -374,6 +374,7 @@
         vertex_bevel="#00a5ff"
         vertex_unreferenced="#000000"
         edge_select="#ffa000"
+        edge_mode_select="#000000"
         edge_seam="#db2512"
         edge_sharp="#00ffff"
         edge_crease="#cc0099"
@@ -382,6 +383,7 @@
         freestyle_edge_mark="#7fff7f"
         face="#ffffff14"
         face_select="#ff85003c"
+        face_mode_select="#00000000"
         face_dot="#ff8500"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
@@ -431,7 +433,7 @@
             title="#ffffff"
             text="#ffffff"
             text_hi="#ffffff"
-            header="#33333300"
+            header="#333333cc"
             header_text="#ffffff"
             header_text_hi="#ffffff"
             button="#40404000"
@@ -740,6 +742,7 @@
         vertex_unreferenced="#000000"
         face="#ffffff0a"
         face_select="#ff85003c"
+        face_mode_select="#00000000"
         face_dot="#ff8500"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
@@ -1615,6 +1618,7 @@
     <panel_title>
       <ThemeFontStyle
         points="11"
+        character_weight="400"
         shadow="1"
         shadow_offset_x="0"
         shadow_offset_y="-1"
@@ -1626,6 +1630,7 @@
     <widget_label>
       <ThemeFontStyle
         points="11"
+        character_weight="400"
         shadow="3"
         shadow_offset_x="0"
         shadow_offset_y="-1"
@@ -1637,6 +1642,7 @@
     <widget>
       <ThemeFontStyle
         points="11"
+        character_weight="400"
         shadow="0"
         shadow_offset_x="0"
         shadow_offset_y="0"

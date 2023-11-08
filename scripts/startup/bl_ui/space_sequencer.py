@@ -689,9 +689,9 @@ class SEQUENCER_MT_change(Menu):
                     layout.operator_menu_enum("sequencer.change_effect_input", "swap")
                     layout.operator_menu_enum("sequencer.change_effect_type", "type")
                 else:
-                    layout.label(text="Please select a changeable strip")
+                    layout.label(text="Please select a changeable strip", icon="QUESTION")
         except:
-            layout.label(text="Please select a strip")
+            layout.label(text="Please select a strip", icon="QUESTION")
         # BFA - End of changes
 
 class SEQUENCER_MT_navigation(Menu):
@@ -1027,9 +1027,9 @@ class SEQUENCER_MT_strip_retiming(Menu):
                 col.operator("sequencer.retiming_reset", icon='KEYFRAMES_REMOVE')
                 col.enabled = not is_retiming
             else:
-                layout.label(text="Select a movie strip") #BFA
+                layout.label(text="To Retime, select a movie strip", icon="QUESTION") #BFA
         except:
-            layout.label(text="Select a movie strip") #BFA
+            layout.label(text="To Retime, select a movie strip", icon="QUESTION") #BFA
 
 
 class SEQUENCER_MT_strip(Menu):
@@ -2056,8 +2056,25 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
         sub = layout.row(align=True)
         split = sub.split(factor=factor + max_factor)
         split.alignment = 'RIGHT'
-        split.label(text="")
-        split.prop(strip, "show_retiming_keys")
+
+        try: # BFA - detect if correct relevant strip is selected to apply as a clearer UX. Only works on Movie and Image strips
+            is_retiming = context.scene.sequence_editor.selected_retiming_keys
+            strip = context.active_sequence_strip
+            layout = self.layout
+
+            layout.operator_context = 'INVOKE_REGION_WIN' #BFA
+
+            strip = context.active_sequence_strip #BFA
+            strip_type = strip.type #BFA
+
+            if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
+                #BFA - Made the show_retiming_keys conditional
+                col = layout.column()
+                col.prop(strip, "show_retiming_keys", text="Show Retiming Keys")
+            else:
+                layout.label(text="To retime, select a movie strip", icon="QUESTION") #BFA
+        except:
+            layout.label(text="To retime, select a movie strip", icon="QUESTION") #BFA
 
         sub = layout.row(align=True)
         split = sub.split(factor=factor + max_factor)
@@ -2371,7 +2388,12 @@ class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
         col = layout.column()
         col.prop(strip, "color_saturation", text="Saturation")
         col.prop(strip, "color_multiply", text="Multiply")
-        col.prop(strip, "multiply_alpha")
+
+        row = col.row()
+        row.use_property_split = False
+        row.prop(strip, "multiply_alpha")
+        row.prop_decorator(strip, "multiply_alpha")
+
         row = col.row()
         row.use_property_split = False
         row.prop(strip, "use_float", text="Convert to Float")

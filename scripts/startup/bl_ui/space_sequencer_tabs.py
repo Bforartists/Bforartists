@@ -429,8 +429,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     #col.operator("sequencer.delete", text="Delete Retiming Keys", icon='DELETE') #BFA - Redundant operator
                     col.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
                 else:
-                    layout.label(text="Select a movie strip")
-
+                    layout.label(text="Select a movie strip", icon="QUESTION")
 
             else:
                 # icon buttons
@@ -445,12 +444,13 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
 
                     if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
                         row = col.row(align=True)
-                        col.operator(
+                        row.operator(
                             "sequencer.retiming_show",
                             icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
                         )
                         col.separator(factor = 0.5)
 
+                        row = col.row(align=True)
                         row.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
 
                         col.separator(factor = 0.5)
@@ -461,7 +461,8 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                         #row.operator("sequencer.delete", text="", icon='DELETE')  #BFA - Redundant operator
                         row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
                     else:
-                        layout.label(text="Select a movie strip")
+                        layout.label(text="Select a", icon="QUESTION")
+                        layout.label(text="movie strip")
 
                 elif column_count == 2:
 
@@ -490,7 +491,8 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                         #row.operator("sequencer.delete", text="", icon='DELETE')  #BFA - Redundant operator
                         row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
                     else:
-                        layout.label(text="Select a movie strip")
+                        layout.label(text="Select a", icon="QUESTION")
+                        layout.label(text="movie strip")
 
                 elif column_count == 1:
 
@@ -518,7 +520,8 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                         #col.operator("sequencer.delete", text="", icon='DELETE') #BFA - Redundant operator
                         col.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
                     else:
-                        layout.label(text="Select a movie strip")
+                        layout.label(text="Select a", icon="QUESTION")
+                        layout.label(text="movie strip")
 
         except:
             layout.label(text="Select a movie strip")
