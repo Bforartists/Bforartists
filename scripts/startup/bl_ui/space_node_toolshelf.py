@@ -4126,6 +4126,10 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSeparateGeometry"
 
+            props = col.operator("node.add_node", text=" Split to Instances   ", icon = "SPLIT_TO_INSTANCES")
+            props.use_transform = True
+            props.type = "GeometryNodeSplitToInstances"
+
         #### Icon Buttons
 
         else:
@@ -4165,6 +4169,10 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SEPARATE_GEOMETRY")
             props.use_transform = True
             props.type = "GeometryNodeSeparateGeometry"
+
+            props = flow.operator("node.add_node", text = "", icon = "SPLIT_TO_INSTANCES")
+            props.use_transform = True
+            props.type = "GeometryNodeSplitToInstances"
 
 
 #add Curves panel
@@ -4941,7 +4949,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = col.operator("node.add_node", text=" is Edge Smooth      ", icon = "SHADING_EDGE_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputEdgeSmooth"
-            
+
             props = col.operator("node.add_node", text=" Mesh Island             ", icon = "UV_ISLANDSEL")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshIsland"
@@ -5000,11 +5008,11 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SHADING_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
-            
+
             props = flow.operator("node.add_node", text="", icon = "SHADING_EDGE_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputEdgeSmooth"
-            
+
             props = flow.operator("node.add_node", text="", icon = "UV_ISLANDSEL")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshIsland"
@@ -6047,11 +6055,11 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel):
             props = col.operator("node.add_node", text=" ColorRamp           ", icon = "NODE_COLORRAMP")
             props.use_transform = True
             props.type = "ShaderNodeValToRGB"
-            
+
             props = col.operator("node.add_node", text=" RGB Curves          ", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -6075,7 +6083,7 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
             props.use_transform = True
             props.type = "ShaderNodeValToRGB"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
@@ -6494,15 +6502,15 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Align Euler to Vector", icon = "ALIGN_EULER_TO_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeAlignEulerToVector"
-            
+
             props = col.operator("node.add_node", text=" Axis Angle to Rotation", icon = "AXIS_ANGLE_TO_ROTATION")
             props.use_transform = True
-            props.type = "FunctionNodeAxisAngleToRotation"        
-            
+            props.type = "FunctionNodeAxisAngleToRotation"
+
             props = col.operator("node.add_node", text=" Euler to Rotation ", icon = "EULER_TO_ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeEulerToRotation"
-            
+
             props = col.operator("node.add_node", text=" Invert Rotation    ", icon = "INVERT_ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeInvertRotation"
@@ -6510,23 +6518,23 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Rotate Euler         ", icon = "ROTATE_EULER")
             props.use_transform = True
             props.type = "FunctionNodeRotateEuler"
-            
+
             props = col.operator("node.add_node", text=" Rotate Vector      ", icon = "NODE_VECTORROTATE")
             props.use_transform = True
             props.type = "FunctionNodeRotateVector"
-            
+
             props = col.operator("node.add_node", text=" Rotation to Axis Angle", icon = "ROTATION_TO_AXIS_ANGLE")
             props.use_transform = True
             props.type = "FunctionNodeRotationToAxisAngle"
-            
+
             props = col.operator("node.add_node", text=" Rotation to Euler  ", icon = "ROTATION_TO_EULER")
             props.use_transform = True
             props.type = "FunctionNodeRotationToEuler"
-            
+
             props = col.operator("node.add_node", text=" Rotation to Quaternion ", icon = "ROTATION_TO_QUATERNION")
             props.use_transform = True
             props.type = "FunctionNodeRotationToQuaternion"
-            
+
             props = col.operator("node.add_node", text=" Quaternion to Rotation ", icon = "QUATERNION_TO_ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeQuaternionToRotation"
@@ -6542,15 +6550,15 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "ALIGN_EULER_TO_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeAlignEulerToVector"
-            
+
             props = flow.operator("node.add_node", text="", icon = "AXIS_ANGLE_TO_ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeAxisAngleToRotation"
-            
+
             props = flow.operator("node.add_node", text="", icon = "EULER_TO_ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeEulerToRotation"
-            
+
             props = flow.operator("node.add_node", text="", icon = "INVERT_ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeInvertRotation"
@@ -6558,23 +6566,23 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "ROTATE_EULER")
             props.use_transform = True
             props.type = "FunctionNodeRotateEuler"
-            
+
             props = flow.operator("node.add_node", text="", icon = "NODE_VECTORROTATE")
             props.use_transform = True
             props.type = "FunctionNodeRotateVector"
-            
+
             props = flow.operator("node.add_node", text="", icon = "ROTATION_TO_AXIS_ANGLE")
             props.use_transform = True
             props.type = "FunctionNodeRotationToAxisAngle"
-            
+
             props = flow.operator("node.add_node", text="", icon = "ROTATION_TO_EULER")
             props.use_transform = True
             props.type = "FunctionNodeRotationToEuler"
-            
+
             props = flow.operator("node.add_node", text="", icon = "ROTATION_TO_QUATERNION")
             props.use_transform = True
             props.type = "FunctionNodeRotationToQuaternion"
-            
+
             props = flow.operator("node.add_node", text="", icon = "QUATERNION_TO_ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeQuaternionToRotation"

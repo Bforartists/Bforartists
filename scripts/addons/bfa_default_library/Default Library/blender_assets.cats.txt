@@ -6,28 +6,38 @@
 
 VERSION 1
 
+7e6b7476-c3ec-41e3-a656-29adfc00adfd:Collections:Collections
 8250fedd-f0e8-4f30-a82c-4ec132b06062:Collections:Collections
+3af0b203-39db-4201-80e5-0ee0cc0771c3:Collections/Lights:Collections-Lights
 fe2efd2a-b482-4543-b917-8222f6f1cabf:Collections/Lights:Collections-Lights
 2047f9d0-6fd3-4fb8-9227-8e7b125895bf:Collections/Static Meshes:Collections-Static Meshes
 7330e2d1-25b0-4fa6-8ab4-1f7f6d41d5e1:Collections/Static Meshes/Backgrounds:Collections-Static Meshes-Backgrounds
 4bb18048-62ea-4868-951c-31e08f6e9dd9:Collections/Static Meshes/Utility:Collections-Static Meshes-Utility
 6fb38818-1a3d-4f90-8fdb-b7883ab58436:Materials:Materials
+e038739b-6354-4e3b-8fd6-e9d25b8c11fa:Materials:Materials
 6d148120-6504-4110-bc73-8bc3f3fb512b:Materials/Ceramic:Materials-Ceramic
-f31fc01a-104d-405a-bb5e-006a52808dd8:Materials/Cloth:Materials-Cloth
-37e08d77-097d-4924-b11f-54c78be6f27d:Materials/Foilage:Materials-Foilage
+91c07734-72ba-49e4-863f-91482b4e0ac4:Materials/Ceramic:Materials-Ceramic
+a4527851-5f63-4bf5-bc62-5ceb93882815:Materials/Clay:Materials-Clay
+df8dd537-f439-4035-968d-acbb67aea9f3:Materials/Fabric:Materials-Fabric
+e1d94229-2880-4f79-8159-7bdc1f80ac74:Materials/Foliage:Materials-Foliage
+34b130e2-c0e7-4210-98e9-b3c9ebdb254c:Materials/Glass:Materials-Glass
 f0dbf15b-1d34-41b9-bb58-f8df431b4ec4:Materials/Glass:Materials-Glass
-b2c67557-40cd-4c0a-988b-3fd4e978dbd5:Materials/Liquids:Materials-Liquids
-101582ce-aad6-4fef-9343-065a45d1c46c:Materials/Metals:Materials-Metals
-9f5718a2-bc18-4934-9cf0-f2f0fb12c8c0:Materials/Misc:Materials-Misc
+1f2decb9-fab6-413f-a246-77650018da65:Materials/Liquid:Materials-Liquid
+3a1bcb83-a447-4e1c-82fb-243e99bf1d7a:Materials/Metal:Materials-Metal
+5654cdc7-9b86-4a8e-a00e-55e9e84643d9:Materials/Miscellaneous:Materials-Miscellaneous
 1fd09d3f-fb24-4bfb-8a2b-20e96b0b6756:Materials/Paint:Materials-Paint
+36ed9bf7-72d3-4cce-979f-162725cf1a2e:Materials/Paint:Materials-Paint
+d56c240c-7f4f-4772-ab80-c21cdea05d17:Materials/Paint:Materials-Paint
+dc4c5697-21c1-46d2-876b-eb764d5cfb77:Materials/Plaster:Materials-Plaster
 249d0eb0-981e-4233-ab0d-35a5899f5070:Materials/Plastic:Materials-Plastic
 3706cd6c-e4a2-4a1a-89f6-584df9d9bc7c:Materials/Rubber:Materials-Rubber
 7503ec84-3c4d-49ec-98b5-b4d919cbd9dd:Materials/Templates:Materials-Templates
+56315bf5-cbc8-4133-9360-e01a9188aa26:Materials/Utility:Materials-Utility
 95b23c4e-c24b-4d78-96da-3b61c4ead98b:Materials/Utility:Materials-Utility
+10c53a17-fa9c-4ab0-b24d-d77957976f58:Materials/Wood:Materials-Wood
 d599c93e-01af-4eb6-b0e7-8be1126e73f4:Materials/Wood:Materials-Wood
 12fb39dd-73a9-43ee-9371-3d42336f96ec:Node Groups:Node Groups
-6e7cc585-ab55-4914-b430-799705ebbe4d:Node Groups/Compositor Nodes:Node Groups-Compositor Nodes
-0657bf4a-868d-4fc6-8ec2-6bafd45fbcd4:Node Groups/Geometry Nodes:Node Groups-Geometry Nodes
+86cc9ae1-1430-416e-baee-431bcc7292e8:Node Groups:Node Groups
 8326942c-1bff-424b-8849-05dd4b45602d:Node Groups/Shader:Node Groups-Shader
 59d20e91-69f9-4d55-8eec-87ed6d8f1ae5:Node Groups/Shader/Coordinates:Node Groups-Shader-Coordinates
 ee99fef1-67f7-4d64-86ef-318131f082bd:Node Groups/Shader/Layers:Node Groups-Shader-Layers

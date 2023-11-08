@@ -1307,7 +1307,7 @@ void UI_view2d_dot_grid_draw(const View2D *v2d,
   immBindBuiltinProgram(GPU_SHADER_2D_POINT_UNIFORM_SIZE_UNIFORM_COLOR_AA);
 
   /* Scaling the dots fully with the zoom looks too busy, but a bit of size variation is nice. */
-  const float min_point_size = 2.0f * U.pixelsize;
+  const float min_point_size = 2.6f * U.pixelsize; // bfa increased size from 2.0 to 2.6
   const float point_size_factor = 1.5f;
   const float max_point_size = point_size_factor * min_point_size;
 
