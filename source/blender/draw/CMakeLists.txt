@@ -491,6 +491,10 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_depth_of_field_tiles_flatten_comp.glsl
   engines/eevee_next/shaders/eevee_display_probe_grid_frag.glsl
   engines/eevee_next/shaders/eevee_display_probe_grid_vert.glsl
+  engines/eevee_next/shaders/eevee_display_probe_planar_frag.glsl
+  engines/eevee_next/shaders/eevee_display_probe_planar_vert.glsl
+  engines/eevee_next/shaders/eevee_display_probe_reflection_frag.glsl
+  engines/eevee_next/shaders/eevee_display_probe_reflection_vert.glsl
   engines/eevee_next/shaders/eevee_film_comp.glsl
   engines/eevee_next/shaders/eevee_film_cryptomatte_post_comp.glsl
   engines/eevee_next/shaders/eevee_film_frag.glsl
@@ -504,6 +508,9 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_geom_world_vert.glsl
   engines/eevee_next/shaders/eevee_hiz_debug_frag.glsl
   engines/eevee_next/shaders/eevee_hiz_update_comp.glsl
+  engines/eevee_next/shaders/eevee_horizon_scan_eval_lib.glsl
+  engines/eevee_next/shaders/eevee_horizon_scan_lib.glsl
+  engines/eevee_next/shaders/eevee_horizon_scan_test.glsl
   engines/eevee_next/shaders/eevee_light_culling_debug_frag.glsl
   engines/eevee_next/shaders/eevee_light_culling_select_comp.glsl
   engines/eevee_next/shaders/eevee_light_culling_sort_comp.glsl
