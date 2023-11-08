@@ -56,7 +56,7 @@ class VKTexture : public Texture, public VKBindableResource {
 
   void generate_mipmap() override;
   void copy_to(Texture *tex) override;
-  void copy_to(VKTexture &dst_texture, VkImageAspectFlagBits vk_image_aspect);
+  void copy_to(VKTexture &dst_texture, VkImageAspectFlags vk_image_aspect);
   void clear(eGPUDataFormat format, const void *data) override;
   void clear_depth_stencil(const eGPUFrameBufferBits buffer,
                            float clear_depth,
@@ -64,7 +64,8 @@ class VKTexture : public Texture, public VKBindableResource {
   void swizzle_set(const char swizzle_mask[4]) override;
   void mip_range_set(int min, int max) override;
   void *read(int mip, eGPUDataFormat format) override;
-  void read_sub(int mip, eGPUDataFormat format, const int area[4], void *r_data);
+  void read_sub(
+      int mip, eGPUDataFormat format, const int area[4], IndexRange layers, void *r_data);
   void update_sub(
       int mip, int offset[3], int extent[3], eGPUDataFormat format, const void *data) override;
   void update_sub(int offset[3],
@@ -140,7 +141,12 @@ class VKTexture : public Texture, public VKBindableResource {
    *
    * When texture is already in the requested layout, nothing will be done.
    */
-  void layout_ensure(VKContext &context, VkImageLayout requested_layout);
+  void layout_ensure(VKContext &context,
+                     VkImageLayout requested_layout,
+                     VkPipelineStageFlags src_stage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                     VkAccessFlags src_access = VK_ACCESS_MEMORY_WRITE_BIT,
+                     VkPipelineStageFlags dst_stage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                     VkAccessFlags dst_access = VK_ACCESS_MEMORY_READ_BIT);
 
  private:
   /**
@@ -151,7 +157,11 @@ class VKTexture : public Texture, public VKBindableResource {
   void layout_ensure(VKContext &context,
                      IndexRange mipmap_range,
                      VkImageLayout current_layout,
-                     VkImageLayout requested_layout);
+                     VkImageLayout requested_layout,
+                     VkPipelineStageFlags src_stage,
+                     VkAccessFlags src_access,
+                     VkPipelineStageFlags dst_stage,
+                     VkAccessFlags dst_access);
 
   /** \} */
 
