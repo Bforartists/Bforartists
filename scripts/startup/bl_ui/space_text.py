@@ -422,8 +422,6 @@ class TEXT_MT_edit_move_select(Menu):
         layout.operator("text.move_select", text = "Next Word", icon = "HAND").type = 'NEXT_WORD'
         layout.operator("text.move_select", text = "Previous Line", icon = "HAND").type = 'PREVIOUS_LINE'
         layout.operator("text.move_select", text = "Next Line", icon = "HAND").type = 'NEXT_LINE'
-        layout.operator("text.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
-        layout.operator("text.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
 
 
 class TEXT_MT_context_menu(Menu):
