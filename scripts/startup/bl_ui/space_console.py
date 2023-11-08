@@ -78,6 +78,53 @@ class CONSOLE_MT_console(Menu):
 
         layout.menu("INFO_MT_area")
 
+
+# bfa - select text menu
+class CONSOLE_MT_edit_select_text(Menu):
+    bl_label = "Select Text"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("console.select_all", text ="Select all", icon = "SELECT_ALL")
+
+        layout.separator()
+
+        myvar = layout.operator("console.move", text ="Cursor to Line Begin", icon = "HAND")
+        myvar.type = 'LINE_BEGIN'
+        myvar.select = True
+        myvar = layout.operator("console.move", text ="Cursor to Line End", icon = "HAND")
+        myvar.type = 'LINE_END'
+        myvar.select = True
+        myvar = layout.operator("console.move", text ="Cursor to Previous Word", icon = "HAND")
+        myvar.type = 'PREVIOUS_WORD'
+        myvar.select = True
+        myvar = layout.operator("console.move", text ="Cursor to Next Word", icon = "HAND")
+        myvar.type = 'NEXT_WORD'
+        myvar.select = True
+        myvar = layout.operator("console.move", text ="Cursor to Previous Character", icon = "HAND")
+        myvar.type = 'PREVIOUS_CHARACTER'
+        myvar.select = True
+        myvar = layout.operator("console.move", text ="Cursor to Next Character", icon = "HAND")
+        myvar.type = 'NEXT_CHARACTER'
+        myvar.select = True
+
+
+# bfa - move cursor submenu
+class CONSOLE_MT_edit_move_cursor(Menu):
+    bl_label = "Move Cursor"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("console.move", text ="Cursor to Line Begin", icon = "CARET_LINE_BEGIN").type = "LINE_BEGIN"
+        layout.operator("console.move", text ="Cursor to Line End", icon = "CARET_LINE_END").type = "LINE_END"
+        layout.operator("console.move", text ="Cursor to Previous Word", icon = "CARET_PREV_WORD").type = "PREVIOUS_WORD"
+        layout.operator("console.move", text ="Cursor to Next Word", icon = "CARET_NEXT_WORD").type = "NEXT_WORD"
+        layout.operator("console.move", text ="Cursor to Previous Character", icon = "CARET_PREV_CHAR").type = "PREVIOUS_CHARACTER"
+        layout.operator("console.move", text ="Cursor to Next Character", icon = "CARET_NEXT_CHAR").type = "NEXT_CHARACTER"
+
+
 class CONSOLE_MT_edit(Menu):
     bl_label = "Edit"
 
@@ -89,12 +136,8 @@ class CONSOLE_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("console.move", text ="Cursor to Previous Word", icon = "CARET_PREV_WORD").type = "PREVIOUS_WORD"
-        layout.operator("console.move", text ="Cursor to Next Word", icon = "CARET_NEXT_WORD").type = "NEXT_WORD"
-        layout.operator("console.move", text ="Cursor to Line Begin", icon = "CARET_LINE_BEGIN").type = "LINE_BEGIN"
-        layout.operator("console.move", text ="Cursor to Line End", icon = "CARET_LINE_END").type = "LINE_END"
-        layout.operator("console.move", text ="Cursor to Previous Character", icon = "CARET_PREV_CHAR").type = "PREVIOUS_CHARACTER"
-        layout.operator("console.move", text ="Cursor to Next Character", icon = "CARET_NEXT_CHAR").type = "NEXT_CHARACTER"
+        layout.menu("CONSOLE_MT_edit_select_text") # bfa menu
+        layout.menu("CONSOLE_MT_edit_move_cursor") # bfa menu
 
         layout.separator()
 
@@ -181,6 +224,8 @@ def add_scrollback(text, text_type):
 classes = (
     CONSOLE_HT_header,
     ALL_MT_editormenu,
+    CONSOLE_MT_edit_select_text, # bfa menu
+    CONSOLE_MT_edit_move_cursor, # bfa menu
     CONSOLE_MT_edit,
     CONSOLE_MT_editor_menus,
     CONSOLE_MT_console,
