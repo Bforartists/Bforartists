@@ -90,22 +90,22 @@ class CONSOLE_MT_edit_select_text(Menu):
 
         layout.separator()
 
-        myvar = layout.operator("console.move", text ="Cursor to Line Begin", icon = "HAND")
+        myvar = layout.operator("console.move", text ="Line Begin", icon = "HAND")
         myvar.type = 'LINE_BEGIN'
         myvar.select = True
-        myvar = layout.operator("console.move", text ="Cursor to Line End", icon = "HAND")
+        myvar = layout.operator("console.move", text ="Line End", icon = "HAND")
         myvar.type = 'LINE_END'
         myvar.select = True
-        myvar = layout.operator("console.move", text ="Cursor to Previous Word", icon = "HAND")
+        myvar = layout.operator("console.move", text ="Previous Word", icon = "HAND")
         myvar.type = 'PREVIOUS_WORD'
         myvar.select = True
-        myvar = layout.operator("console.move", text ="Cursor to Next Word", icon = "HAND")
+        myvar = layout.operator("console.move", text ="Next Word", icon = "HAND")
         myvar.type = 'NEXT_WORD'
         myvar.select = True
-        myvar = layout.operator("console.move", text ="Cursor to Previous Character", icon = "HAND")
+        myvar = layout.operator("console.move", text ="Previous Character", icon = "HAND")
         myvar.type = 'PREVIOUS_CHARACTER'
         myvar.select = True
-        myvar = layout.operator("console.move", text ="Cursor to Next Character", icon = "HAND")
+        myvar = layout.operator("console.move", text ="Next Character", icon = "HAND")
         myvar.type = 'NEXT_CHARACTER'
         myvar.select = True
 
