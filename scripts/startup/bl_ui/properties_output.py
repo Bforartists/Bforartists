@@ -385,13 +385,14 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
         rd = context.scene.render
         image_settings = rd.image_settings
         is_eevee = context.scene.render.engine == 'BLENDER_EEVEE'
+        is_eevee_next = context.scene.render.engine == 'BLENDER_EEVEE_NEXT'
         is_workbench = context.scene.render.engine == 'BLENDER_WORKBENCH'
 
         layout.prop(rd, "filepath", text="")
 
         layout.template_image_settings(image_settings, color_management=False)
 
-        if is_eevee or is_workbench:
+        if is_eevee or is_workbench or is_eevee_next:
             row = layout.row()
             row.prop(rd, "film_transparent", text="Transparent")
             row.prop_decorator(rd, "film_transparent")

@@ -45,17 +45,17 @@
 
 #include "RNA_prototypes.h"
 
-#include "SEQ_channels.h"
-#include "SEQ_effects.h"
-#include "SEQ_iterator.h"
-#include "SEQ_prefetch.h"
-#include "SEQ_relations.h"
-#include "SEQ_render.h"
-#include "SEQ_select.h"
-#include "SEQ_sequencer.h"
-#include "SEQ_time.h"
-#include "SEQ_transform.h"
-#include "SEQ_utils.h"
+#include "SEQ_channels.hh"
+#include "SEQ_effects.hh"
+#include "SEQ_iterator.hh"
+#include "SEQ_prefetch.hh"
+#include "SEQ_relations.hh"
+#include "SEQ_render.hh"
+#include "SEQ_select.hh"
+#include "SEQ_sequencer.hh"
+#include "SEQ_time.hh"
+#include "SEQ_transform.hh"
+#include "SEQ_utils.hh"
 
 #include "UI_interface.hh"
 #include "UI_resources.hh"
@@ -2086,6 +2086,7 @@ void draw_timeline_seq(const bContext *C, ARegion *region)
   draw_seq_strips(&ctx);
   sequencer_draw_retiming(C);
   draw_timeline_markers(&ctx);
+  UI_view2d_view_ortho(ctx.v2d);
   ANIM_draw_previewrange(C, ctx.v2d, 1);
   draw_timeline_gizmos(&ctx);
   draw_timeline_post_view_callbacks(&ctx);
