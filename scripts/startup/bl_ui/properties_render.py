@@ -196,7 +196,9 @@ class RENDER_PT_eevee_next_horizon_scan(RenderButtonsPanel, Panel):
         props = scene.eevee
 
         col = layout.column()
-        col.prop(props, "gtao_quality", text="Precision")
+        col.prop(props, "horizon_quality", text="Precision")
+        col.prop(props, "horizon_thickness", text="Thickness")
+        col.prop(props, "horizon_bias", text="Bias")
 
 
 class RENDER_PT_eevee_motion_blur(RenderButtonsPanel, Panel):
@@ -346,12 +348,21 @@ class RENDER_PT_eevee_next_depth_of_field(RenderButtonsPanel, Panel):
         col.prop(props, "bokeh_max_size")
         col.prop(props, "bokeh_threshold")
         col.prop(props, "bokeh_neighbor_max")
-        col.use_property_split = False
-        col.prop(props, "use_bokeh_jittered")
 
+        split = layout.split(factor=.4)
+        split.use_property_split=False
+        split.prop(props, "use_bokeh_jittered")
+
+        split.alignment = 'LEFT'
+        if props.use_bokeh_jittered:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
         col = layout.column()
-        col.active = props.use_bokeh_jittered
-        col.prop(props, "bokeh_overblur")
+        if props.use_bokeh_jittered:
+            row = col.row()
+            row.separator()
+            row.prop(props, "bokeh_overblur")
 
 
 class RENDER_PT_eevee_bloom(RenderButtonsPanel, Panel):
@@ -1114,18 +1125,21 @@ class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
         rd = scene.render
         props = scene.eevee
 
-        col = layout.column()  
+        col = layout.column()
         col.prop(rd, "filter_size")
-        col.use_property_split = False
-        col.prop(rd, "film_transparent", text="Transparent")
 
-        col = layout.column(align=False, heading="Overscan")
-        row = col.row(align=True)
-        sub = row.row(align=True)
-        sub.prop(props, "use_overscan", text="")
-        sub = sub.row(align=True)
-        sub.active = props.use_overscan
-        sub.prop(props, "overscan_size", text="")
+        split = layout.split(factor=.4)
+        split.use_property_split=False
+        split.prop(props, "use_overscan", text=" Overscan")
+
+        split.alignment = 'LEFT'
+        if props.use_overscan:
+            split.use_property_split = False
+            row = split.row()
+            row.prop(props, "overscan_size", text="")
+            row.separator( factor = 2)
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 def draw_curves_settings(self, context):
