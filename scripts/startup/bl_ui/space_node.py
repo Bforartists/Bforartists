@@ -399,21 +399,26 @@ class NODE_MT_add(bpy.types.Menu):
 
         layout = self.layout
 
-        if layout.operator_context == 'EXEC_REGION_WIN':
-            layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_add"
-            layout.separator()
+        #BFA - changed to show in all add menus for discoverability, instead of being conditional to the invoked region by hotkey only.
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         snode = context.space_data
         if snode.tree_type == 'GeometryNodeTree':
+            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_geometry_node_add_all"
+            layout.separator()
             layout.menu_contents("NODE_MT_geometry_node_add_all")
         elif snode.tree_type == 'CompositorNodeTree':
+            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_compositor_node_add_all"
+            layout.separator()
             layout.menu_contents("NODE_MT_compositor_node_add_all")
         elif snode.tree_type == 'ShaderNodeTree':
+            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_shader_node_add_all"
+            layout.separator()
             layout.menu_contents("NODE_MT_shader_node_add_all")
         elif snode.tree_type == 'TextureNodeTree':
+            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_texture_node_add_all"
+            layout.separator()
             layout.menu_contents("NODE_MT_texture_node_add_all")
         elif nodeitems_utils.has_node_categories(context):
             # Actual node sub-menus are defined by draw functions from node categories.
