@@ -168,8 +168,8 @@ class DATA_PT_bone_collections(ArmatureButtonsPanel, Panel):
         row = layout.row()
 
         sub = row.row(align=True)
-        sub.operator("armature.collection_assign", icon='NODE_GROUPINSERT', text="Assign")
-        sub.operator("armature.collection_unassign", icon='REMOVE_FROM_ALL_GROUPS', text="Remove")
+        sub.operator("armature.collection_assign", icon='COLLECTION_BONE_ADD', text="Assign")
+        sub.operator("armature.collection_unassign", icon='COLLECTION_BONE_REMOVE', text="Remove")
 
         sub = row.row(align=True)
         sub.operator("armature.collection_select", icon='RESTRICT_SELECT_OFF', text="Select")
