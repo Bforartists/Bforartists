@@ -4950,7 +4950,6 @@ keyconfig_data = \
      {"properties":
       [("tweak", True),
        ],
-    "active":False,
       },
      ),
     ("node.select_lasso", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "alt": True, "oskey": True}, None),
