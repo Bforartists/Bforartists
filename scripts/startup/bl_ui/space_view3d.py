@@ -4777,7 +4777,7 @@ class VIEW3D_MT_pose(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_pose_motion")
-        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP")
+        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP_BONE")
         layout.menu("VIEW3D_MT_bone_collections")
 
         layout.separator()
@@ -4886,7 +4886,7 @@ class VIEW3D_MT_bone_collections(Menu):
             # there will hide this menu completely from the Pose menu, and
             # that's going too far.
             layout.enabled = False
-            layout.label(text="- select bones to operate on first -")
+            layout.label(text="Select bones to operate on first", icon="QUESTION")
             return
 
         layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
@@ -4904,23 +4904,23 @@ class VIEW3D_MT_bone_collections(Menu):
             if bcoll.name in bone.collections:
                 props = layout.operator("armature.collection_unassign",
                                         text=bcoll.name,
-                                        icon='REMOVE')
+                                        icon='COLLECTION_BONE_REMOVE')
             else:
                 props = layout.operator("armature.collection_assign",
                                         text=bcoll.name,
-                                        icon='ADD')
+                                        icon='COLLECTION_BONE_ADD')
             props.name = bcoll.name
 
         if arm.collections and not found_editable_bcoll:
             row = layout.row()
             row.enabled = False
-            row.label(text="All bone collections are read-only")
+            row.label(text="All bone collections are read-only", icon="QUESTION")
 
         layout.separator()
 
         props = layout.operator("armature.collection_assign",
                                 text="Assign to New Collection",
-                                icon='NEW_GROUP')
+                                icon='COLLECTION_BONE_NEW')
         props.name = "New Collection"
 
 
@@ -6479,7 +6479,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP")
+        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP_BONE")
         layout.menu("VIEW3D_MT_bone_collections")
 
         layout.separator()
