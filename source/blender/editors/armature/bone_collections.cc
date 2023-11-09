@@ -906,7 +906,7 @@ static bool bone_collection_enum_itemf_for_object(Object *ob,
     }
     item_tmp.identifier = bcoll->name;
     item_tmp.name = bcoll->name;
-    item_tmp.icon = ICON_BONE_DATA;
+    item_tmp.icon = ICON_GROUP_BONE;
     item_tmp.value = bcoll_index;
     RNA_enum_item_add(item, totitem, &item_tmp);
   }
