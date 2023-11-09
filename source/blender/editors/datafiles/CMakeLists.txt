@@ -1928,7 +1928,7 @@ split_to_instances
 #~ DEF_ICON_BLANK(1956)
 #~ DEF_ICON_BLANK(1957)
 #~ DEF_ICON_BLANK(1958)
-#~ DEF_ICON_BLANK(1959)
+collection_bone_remove
 
 # ------------------------- row 29 --------------------------*/
 
@@ -1996,7 +1996,7 @@ set_time
 #~ DEF_ICON_BLANK(2024)
 #~ DEF_ICON_BLANK(2025)
 #~ DEF_ICON_BLANK(2026)
-#~ DEF_ICON_BLANK(2027)
+collection_bone_add
 
 # ------------------------- row 30 --------------------------*/
 
@@ -2064,7 +2064,7 @@ face_maps_active
 #~ DEF_ICON_BLANK(2092)
 #~ DEF_ICON_BLANK(2093)
 #~ DEF_ICON_BLANK(2094)
-#~ DEF_ICON_BLANK(2095)
+collection_bone_new
 )
 
 # This section is maintained by the updating script, keep BEGIN/END comments.
