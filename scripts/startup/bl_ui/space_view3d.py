@@ -2210,13 +2210,14 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.select_by_attribute", text="By Attribute")
+        layout.operator("mesh.select_by_attribute", text="By Attribute", icon = "NODE_ATTRIBUTE")
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_select_more_less")
 
         layout.separator()
+
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
 
