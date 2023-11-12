@@ -709,6 +709,8 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
       }
       break;
     }
+    case TFM_MODAL_PASSTHROUGH_NAVIGATE:
+      return t->vod != nullptr;
   }
   return true;
 }
@@ -763,6 +765,7 @@ wmKeyMap *transform_modal_keymap(wmKeyConfig *keyconf)
       {TFM_MODAL_AUTOCONSTRAINT, "AUTOCONSTRAIN", 0, "Automatic Constraint", ""},
       {TFM_MODAL_AUTOCONSTRAINTPLANE, "AUTOCONSTRAINPLANE", 0, "Automatic Constraint Plane", ""},
       {TFM_MODAL_PRECISION, "PRECISION", 0, "Precision Mode", ""},
+      {TFM_MODAL_PASSTHROUGH_NAVIGATE, "PASSTHROUGH_NAVIGATE", 0, "Navigate", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -1533,7 +1536,7 @@ static void drawAutoKeyWarning(TransInfo *t, ARegion *region)
         offset = U.gizmo_size_navigate_v3d;
         break;
       case USER_MINI_AXIS_TYPE_MINIMAL:
-        offset = U.rvisize * MIN2((U.pixelsize / U.scale_factor), 1.0f) * 2.5f;
+        offset = U.rvisize * std::min((U.pixelsize / U.scale_factor), 1.0f) * 2.5f;
         break;
       case USER_MINI_AXIS_TYPE_NONE:
         offset = U.rvisize;

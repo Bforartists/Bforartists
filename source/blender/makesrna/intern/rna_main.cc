@@ -334,20 +334,15 @@ void RNA_def_main(BlenderRNA *brna)
       {"grease_pencils",
        "GreasePencil",
        "rna_Main_gpencils_begin",
-#  ifdef WITH_GREASE_PENCIL_V3
-       "Grease Pencil (legacy)",
-       "Grease Pencil (legacy) data",
-#  else
        "Grease Pencil",
-       "Grease Pencil data",
-#  endif
+       "Grease Pencil data-blocks",
        RNA_def_main_gpencil_legacy},
 #  ifdef WITH_GREASE_PENCIL_V3
       {"grease_pencils_v3",
        "GreasePencilv3",
        "rna_Main_grease_pencils_begin",
-       "Grease Pencil",
-       "Grease Pencil data-blocks",
+       "Grease Pencil v3",
+       "Grease Pencil v3 data-blocks",
        RNA_def_main_grease_pencil},
 #  endif
       {"movieclips",
@@ -416,7 +411,7 @@ void RNA_def_main(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "BlendData", nullptr);
   RNA_def_struct_ui_text(
-      srna, "Blend-File Data", 
+      srna, "Blend-File Data",
       "Main data structure representing a .blend file and all its data");
   RNA_def_struct_ui_icon(srna, ICON_BLENDER);
 

@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2023 Blender Foundation
+/* SPDX-FileCopyrightText: 2023 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -9,6 +9,8 @@
 #include <cfloat>
 #include <cmath>
 
+#include "ANIM_action.hh"
+#include "ANIM_animdata.hh"
 #include "ANIM_fcurve.hh"
 #include "ANIM_keyframing.hh"
 #include "ANIM_rna.hh"
@@ -31,7 +33,6 @@
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"
 #include "DNA_anim_types.h"
-#include "ED_anim_api.hh"
 #include "ED_keyframing.hh"
 #include "MEM_guardedalloc.h"
 #include "RNA_access.hh"
@@ -365,39 +366,29 @@ static AnimationEvalContext nla_time_remap(const AnimationEvalContext *anim_eval
   return *anim_eval_context;
 }
 
-/* Insert the specified keyframe value into a single F-Curve. */
-static bool insert_keyframe_value(ReportList *reports,
-                                  PointerRNA *ptr,
-                                  PropertyRNA *prop,
-                                  FCurve *fcu,
-                                  const AnimationEvalContext *anim_eval_context,
-                                  float curval,
-                                  eBezTriple_KeyframeType keytype,
-                                  eInsertKeyFlags flag)
+/* Adjust frame on which to add keyframe, to make it easier to add corrective drivers. */
+static float remap_driver_frame(const AnimationEvalContext *anim_eval_context,
+                                PointerRNA *ptr,
+                                PropertyRNA *prop,
+                                const FCurve *fcu)
 {
-  if (BKE_fcurve_is_keyframable(fcu) == 0) {
-    BKE_reportf(
-        reports,
-        RPT_ERROR,
-        "F-Curve with path '%s[%d]' cannot be keyframed, ensure that it is not locked or sampled, "
-        "and try removing F-Modifiers",
-        fcu->rna_path,
-        fcu->array_index);
-    return false;
-  }
-
   float cfra = anim_eval_context->eval_time;
+  PathResolvedRNA anim_rna;
+  if (RNA_path_resolved_create(ptr, prop, fcu->array_index, &anim_rna)) {
+    cfra = evaluate_driver(&anim_rna, fcu->driver, fcu->driver, anim_eval_context);
+  }
+  else {
+    cfra = 0.0f;
+  }
+  return cfra;
+}
 
-  /* Adjust frame on which to add keyframe, to make it easier to add corrective drivers. */
-  if ((flag & INSERTKEY_DRIVER) && (fcu->driver)) {
-    PathResolvedRNA anim_rna;
-
-    if (RNA_path_resolved_create(ptr, prop, fcu->array_index, &anim_rna)) {
-      cfra = evaluate_driver(&anim_rna, fcu->driver, fcu->driver, anim_eval_context);
-    }
-    else {
-      cfra = 0.0f;
-    }
+/* Insert the specified keyframe value into a single F-Curve. */
+static bool insert_keyframe_value(
+    FCurve *fcu, float cfra, float curval, eBezTriple_KeyframeType keytype, eInsertKeyFlags flag)
+{
+  if (!BKE_fcurve_is_keyframable(fcu)) {
+    return false;
   }
 
   /* Adjust coordinates for cycle aware insertion. */
@@ -506,8 +497,22 @@ bool insert_keyframe_direct(ReportList *reports,
     return false;
   }
 
-  return insert_keyframe_value(
-      reports, &ptr, prop, fcu, anim_eval_context, current_value, keytype, flag);
+  float cfra = anim_eval_context->eval_time;
+  if ((flag & INSERTKEY_DRIVER) && (fcu->driver)) {
+    cfra = remap_driver_frame(anim_eval_context, &ptr, prop, fcu);
+  }
+
+  const bool success = insert_keyframe_value(fcu, cfra, current_value, keytype, flag);
+
+  if (!success) {
+    BKE_reportf(reports,
+                RPT_ERROR,
+                "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not "
+                "locked or sampled, and try removing F-Modifiers",
+                fcu->rna_path,
+                fcu->array_index);
+  }
+  return success;
 }
 
 /** Find or create the FCurve based on the given path, and insert the specified value into it. */
@@ -564,8 +569,21 @@ static bool insert_keyframe_fcurve_value(Main *bmain,
   /* Update F-Curve flags to ensure proper behavior for property type. */
   update_autoflags_fcurve_direct(fcu, prop);
 
-  const bool success = insert_keyframe_value(
-      reports, ptr, prop, fcu, anim_eval_context, curval, keytype, flag);
+  float cfra = anim_eval_context->eval_time;
+  if ((flag & INSERTKEY_DRIVER) && (fcu->driver)) {
+    cfra = remap_driver_frame(anim_eval_context, ptr, prop, fcu);
+  }
+
+  const bool success = insert_keyframe_value(fcu, cfra, curval, keytype, flag);
+
+  if (!success) {
+    BKE_reportf(reports,
+                RPT_ERROR,
+                "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not "
+                "locked or sampled, and try removing F-Modifiers",
+                fcu->rna_path,
+                fcu->array_index);
+  }
 
   /* If the curve is new, make it cyclic if appropriate. */
   if (is_cyclic_action && is_new_curve) {
@@ -936,7 +954,7 @@ int clear_keyframe(Main *bmain,
       continue;
     }
 
-    ANIM_fcurve_delete_from_animdata(nullptr, adt, fcu);
+    animdata_fcurve_delete(nullptr, adt, fcu);
 
     key_count++;
   }
