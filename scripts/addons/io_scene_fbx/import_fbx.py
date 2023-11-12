@@ -1928,7 +1928,11 @@ def blen_read_shapes(fbx_tmpl, fbx_data, objects, me, scene):
     # will be clamped, and we'll print a warning message to the console.
     shape_key_values_in_range = True
     bc_uuid_to_keyblocks = {}
-    for bc_uuid, fbx_sdata, fbx_bcdata in fbx_data:
+    for bc_uuid, fbx_sdata, fbx_bcdata, shapes_assigned_to_channel in fbx_data:
+        num_shapes_assigned_to_channel = len(shapes_assigned_to_channel)
+        if num_shapes_assigned_to_channel > 1:
+            # Relevant design task: #104698
+            raise RuntimeError("FBX in-between Shapes are not currently supported")  # See bug report #84111
         elem_name_utf8 = elem_name_ensure_class(fbx_sdata, b'Geometry')
         indices = elem_prop_first(elem_find_first(fbx_sdata, b'Indexes'))
         dvcos = elem_prop_first(elem_find_first(fbx_sdata, b'Vertices'))
@@ -1943,22 +1947,44 @@ def blen_read_shapes(fbx_tmpl, fbx_data, objects, me, scene):
             dvcos = dvcos[:-remainder]
         dvcos = dvcos.reshape(-1, 3)
 
+        # There must be the same number of indices as vertex coordinate differences.
+        assert(len(indices) == len(dvcos))
+
         # We completely ignore normals here!
         weight = elem_prop_first(elem_find_first(fbx_bcdata, b'DeformPercent'), default=100.0) / 100.0
 
-        vgweights = elem_prop_first(elem_find_first(fbx_bcdata, b'FullWeights'))
-        vgweights = parray_as_ndarray(vgweights) if vgweights else np.empty(0, dtype=data_types.ARRAY_FLOAT64)
-        # Not doing the division in-place in-case it's possible for FBX shape keys to be used by more than one mesh.
-        vgweights = vgweights / 100.0
+        # The FullWeights array stores the deformation percentages of the BlendShapeChannel that fully activate each
+        # Shape assigned to the BlendShapeChannel. Blender also uses this array to store Vertex Group weights, but this
+        # is not part of the FBX standard.
+        full_weights = elem_prop_first(elem_find_first(fbx_bcdata, b'FullWeights'))
+        full_weights = parray_as_ndarray(full_weights) if full_weights else np.empty(0, dtype=data_types.ARRAY_FLOAT64)
 
-        create_vg = (vgweights != 1.0).any()
-
-        # Special case, in case all weights are the same, FullWeight can have only one element - *sigh!*
-        nbr_indices = len(indices)
-        if len(vgweights) == 1 and nbr_indices > 1:
-            vgweights = np.full_like(indices, vgweights[0], dtype=vgweights.dtype)
-
-        assert(len(vgweights) == nbr_indices == len(dvcos))
+        # Special case for Blender exported Shape Keys with a Vertex Group assigned. The Vertex Group weights are stored
+        # in the FullWeights array.
+        # XXX - It's possible, though very rare, to get a false positive here and create a Vertex Group when we
+        #       shouldn't. This should only be possible when there are extraneous FullWeights or when there is a single
+        #       FullWeight and its value is not 100.0.
+        if (
+                # Blender exported Shape Keys only ever export as 1 Shape per BlendShapeChannel.
+                num_shapes_assigned_to_channel == 1
+                # There should be one vertex weight for each vertex moved by the Shape.
+                and len(full_weights) == len(indices)
+                # Skip creating a Vertex Group when all the weights are 100.0 because such a Vertex Group has no effect.
+                # This also avoids creating a Vertex Group for imported Shapes that only move a single vertex because
+                # their BlendShapeChannel's singular FullWeight is expected to always be 100.0.
+                and not np.all(full_weights == 100.0)
+                # Blender vertex weights are always within the [0.0, 1.0] range (scaled to [0.0, 100.0] when saving to
+                # FBX). This can eliminate imported BlendShapeChannels from Unreal that have extraneous FullWeights
+                # because the extraneous values are usually negative.
+                and np.all((full_weights >= 0.0) & (full_weights <= 100.0))
+        ):
+            # Not doing the division in-place because it's technically possible for FBX BlendShapeChannels to be used by
+            # more than one FBX BlendShape, though this shouldn't be the case for Blender exported Shape Keys.
+            vgweights = full_weights / 100.0
+        else:
+            vgweights = None
+            # There must be a FullWeight for each Shape. Any extra FullWeights are ignored.
+            assert(len(full_weights) >= num_shapes_assigned_to_channel)
 
         # To add shape keys to the mesh, an Object using the mesh is needed.
         if me.shape_keys is None:
@@ -1977,7 +2003,7 @@ def blen_read_shapes(fbx_tmpl, fbx_data, objects, me, scene):
         kb.value = weight
 
         # Add vgroup if necessary.
-        if create_vg:
+        if vgweights is not None:
             # VertexGroup.add only allows sequences of int indices, but iterating the indices array directly would
             # produce numpy scalars of types such as np.int32. The underlying memoryview of the indices array, however,
             # does produce standard Python ints when iterated, so pass indices.data to add_vgroup_to_objects instead of
@@ -3508,6 +3534,11 @@ def load(operator, context, filepath="",
                 seen_connections.add(connection_key)
                 yield c_dst_uuid, fbx_data, bl_data
 
+        # XXX - Multiple Shapes can be assigned to a single BlendShapeChannel to create a progressive blend between the
+        #       base mesh and the assigned Shapes, with the percentage at which each Shape is fully blended being stored
+        #       in the BlendShapeChannel's FullWeights array. This is also known as 'in-between shapes'.
+        #       We don't have any support for in-between shapes currently.
+        blend_shape_channel_to_shapes = {}
         mesh_to_shapes = {}
         for s_uuid, (fbx_sdata, _bl_sdata) in fbx_table_nodes.items():
             if fbx_sdata is None or fbx_sdata.id != b'Geometry' or fbx_sdata.props[2] != b'Shape':
@@ -3515,6 +3546,9 @@ def load(operator, context, filepath="",
 
             # shape -> blendshapechannel -> blendshape -> mesh.
             for bc_uuid, fbx_bcdata, _bl_bcdata in connections_gen(s_uuid, b'Deformer', b'BlendShapeChannel'):
+                # Track the Shapes connected to each BlendShapeChannel.
+                shapes_assigned_to_channel = blend_shape_channel_to_shapes.setdefault(bc_uuid, [])
+                shapes_assigned_to_channel.append(s_uuid)
                 for bs_uuid, _fbx_bsdata, _bl_bsdata in connections_gen(bc_uuid, b'Deformer', b'BlendShape'):
                     for m_uuid, _fbx_mdata, bl_mdata in connections_gen(bs_uuid, b'Geometry', b'Mesh'):
                         # Blenmeshes are assumed already created at that time!
@@ -3534,7 +3568,10 @@ def load(operator, context, filepath="",
                             mesh_to_shapes[bl_mdata] = (objects, shapes_list)
                         else:
                             shapes_list = mesh_to_shapes[bl_mdata][1]
-                        shapes_list.append((bc_uuid, fbx_sdata, fbx_bcdata))
+                        # Only the number of shapes assigned to each BlendShapeChannel needs to be passed through to
+                        # `blen_read_shapes`, but that number isn't known until all the connections have been
+                        # iterated, so pass the `shapes_assigned_to_channel` list instead.
+                        shapes_list.append((bc_uuid, fbx_sdata, fbx_bcdata, shapes_assigned_to_channel))
                     # BlendShape deformers are only here to connect BlendShapeChannels to meshes, nothing else to do.
 
         # Iterate through each mesh and create its shape keys

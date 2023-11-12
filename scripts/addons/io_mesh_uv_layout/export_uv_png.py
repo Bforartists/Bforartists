@@ -4,7 +4,7 @@
 
 import bpy
 import gpu
-from mathutils import Vector, Matrix
+from mathutils import Matrix
 from mathutils.geometry import tessellate_polygon
 from gpu_extras.batch import batch_for_shader
 
@@ -48,8 +48,8 @@ def draw_image(tile, face_data, opacity):
 def get_normalize_uvs_matrix(tile):
     '''matrix maps x and y coordinates from [0, 1] to [-1, 1]'''
     matrix = Matrix.Identity(4)
-    matrix.col[3][0] = -1 - (tile[0]) * 2
-    matrix.col[3][1] = -1 - (tile[1]) * 2
+    matrix.col[3][0] = -1 - (tile[0] * 2)
+    matrix.col[3][1] = -1 - (tile[1] * 2)
     matrix[0][0] = 2
     matrix[1][1] = 2
 
