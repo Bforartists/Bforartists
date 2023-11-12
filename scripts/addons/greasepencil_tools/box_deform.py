@@ -531,7 +531,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
         else:
             self.shortcut_d = {'type': 'T', 'value': 'PRESS', 'ctrl': True,
                 'shift': False, 'alt': False, 'oskey': False}
-        self.shortcut_ui = '+'.join([k.title() for k,v in self.shortcut_d.items() if v is True] + [self.shortcut_d['type']]) 
+        self.shortcut_ui = '+'.join([k.title() for k,v in self.shortcut_d.items() if v is True] + [self.shortcut_d['type']])
 
         ## Restrict to 3D view
         if context.area.type != 'VIEW_3D':

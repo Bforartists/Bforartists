@@ -519,9 +519,9 @@ set(MATERIALX_HASH d49c9fdef34b5702fc60058d3e1864f2)
 set(MATERIALX_HASH_TYPE MD5)
 set(MATERIALX_FILE materialx-v${MATERIALX_VERSION}.tar.gz)
 
-set(OIDN_VERSION 1.4.3)
+set(OIDN_VERSION 2.1.0)
 set(OIDN_URI https://github.com/OpenImageDenoise/oidn/releases/download/v${OIDN_VERSION}/oidn-${OIDN_VERSION}.src.tar.gz)
-set(OIDN_HASH 027093eaf5e8b4e45835b991137b38e6)
+set(OIDN_HASH 997251847c49ce0f3ab21c7fc712bfb4)
 set(OIDN_HASH_TYPE MD5)
 set(OIDN_FILE oidn-${OIDN_VERSION}.src.tar.gz)
 
@@ -573,6 +573,13 @@ set(WAYLAND_LIBDECOR_URI https://gitlab.gnome.org/jadahl/libdecor/uploads/81adf9
 set(WAYLAND_LIBDECOR_HASH 47b59eba76faa3787f0878bf8700e912)
 set(WAYLAND_LIBDECOR_HASH_TYPE MD5)
 set(WAYLAND_LIBDECOR_HOMEPAGE https://gitlab.freedesktop.org/libdecor/libdecor)
+
+set(WAYLAND_WESTON_VERSION 12.0.92)
+set(WAYLAND_WESTON_FILE weston-${WAYLAND_WESTON_VERSION}.tar.xz)
+set(WAYLAND_WESTON_URI https://gitlab.freedesktop.org/wayland/weston/-/releases/${WAYLAND_WESTON_VERSION}/downloads/weston-${WAYLAND_WESTON_VERSION}.tar.xz)
+set(WAYLAND_WESTON_HASH 44542b60bf9b9fe3add904af11bbad98)
+set(WAYLAND_WESTON_HASH_TYPE MD5)
+set(WAYLAND_WESTON_HOMEPAGE https://wayland.freedesktop.org)
 
 set(ISPC_VERSION v1.17.0)
 set(ISPC_URI https://github.com/ispc/ispc/archive/${ISPC_VERSION}.tar.gz)

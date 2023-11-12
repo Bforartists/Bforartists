@@ -915,7 +915,7 @@ KeyingSet *ANIM_keyingset_get_from_idname(Scene *scene, const char *idname)
 
 bool ANIM_keyingset_context_ok_poll(bContext *C, KeyingSet *ks)
 {
-  if ((ks->flag & KEYINGSET_ABSOLUTE)) {
+  if (ks->flag & KEYINGSET_ABSOLUTE) {
     return true;
   }
 
@@ -979,7 +979,7 @@ eModifyKey_Returns ANIM_validate_keyingset(bContext *C,
   }
 
   /* if relative Keying Sets, poll and build up the paths */
-  if ((ks->flag & KEYINGSET_ABSOLUTE)) {
+  if (ks->flag & KEYINGSET_ABSOLUTE) {
     return MODIFYKEY_SUCCESS;
   }
 
