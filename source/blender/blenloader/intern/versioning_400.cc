@@ -47,11 +47,13 @@
 #include "BKE_animsys.h"
 #include "BKE_armature.h"
 #include "BKE_attribute.h"
+#include "BKE_collection.h"
 #include "BKE_curve.h"
 #include "BKE_effect.h"
 #include "BKE_grease_pencil.hh"
 #include "BKE_idprop.hh"
 #include "BKE_main.h"
+#include "BKE_material.h"
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
@@ -298,6 +300,30 @@ static void version_principled_bsdf_update_animdata(ID *owner_id, bNodeTree *ntr
   }
 }
 
+static void versioning_eevee_shadow_settings(Object *object)
+{
+  /** EEVEE no longer uses the Material::blend_shadow property.
+   * Instead, it uses Object::visibility_flag for disabling shadow casting
+   */
+
+  short *material_len = BKE_object_material_len_p(object);
+  if (!material_len) {
+    return;
+  }
+
+  using namespace blender;
+  bool hide_shadows = *material_len > 0;
+  for (int i : IndexRange(*material_len)) {
+    Material *material = BKE_object_material_get(object, i + 1);
+    if (!material || material->blend_shadow != MA_BS_NONE) {
+      hide_shadows = false;
+    }
+  }
+
+  /* Enable the hide_shadow flag only if there's not any shadow casting material. */
+  SET_FLAG_FROM_TEST(object->visibility_flag, hide_shadows, OB_HIDE_SHADOW);
+}
+
 void do_versions_after_linking_400(FileData *fd, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 9)) {
@@ -382,6 +408,16 @@ void do_versions_after_linking_400(FileData *fd, Main *bmain)
     BKE_mesh_legacy_face_map_to_generic(bmain);
   }
 
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 401, 5)) {
+    Scene *scene = static_cast<Scene *>(bmain->scenes.first);
+    bool is_cycles = scene && STREQ(scene->r.engine, RE_engine_id_CYCLES);
+    if (!is_cycles) {
+      LISTBASE_FOREACH (Object *, object, &bmain->objects) {
+        versioning_eevee_shadow_settings(object);
+      }
+    }
+  }
+
   /**
    * Versioning code until next subversion bump goes here.
    *
@@ -452,15 +488,6 @@ static void version_movieclips_legacy_camera_object(Main *bmain)
 {
   LISTBASE_FOREACH (MovieClip *, movieclip, &bmain->movieclips) {
     version_motion_tracking_legacy_camera_object(*movieclip);
-  }
-}
-
-static void version_geometry_nodes_add_realize_instance_nodes(bNodeTree *ntree)
-{
-  LISTBASE_FOREACH_MUTABLE (bNode *, node, &ntree->nodes) {
-    if (STREQ(node->idname, "GeometryNodeMeshBoolean")) {
-      add_realize_instances_before_socket(ntree, node, nodeFindSocket(node, SOCK_IN, "Mesh 2"));
-    }
   }
 }
 
@@ -1165,14 +1192,6 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     }
   }
 
-  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 3)) {
-    LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
-      if (ntree->type == NTREE_GEOMETRY) {
-        version_geometry_nodes_add_realize_instance_nodes(ntree);
-      }
-    }
-  }
-
   /* 400 4 did not require any do_version here. */
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 5)) {
@@ -1782,6 +1801,31 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       versioning_grease_pencil_stroke_radii_scaling(grease_pencil);
     }
   }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 401, 5)) {
+    /* Unify Material::blend_shadow and Cycles.use_transparent_shadows into the
+     * Material::blend_flag. */
+    Scene *scene = static_cast<Scene *>(bmain->scenes.first);
+    bool is_cycles = scene && STREQ(scene->r.engine, RE_engine_id_CYCLES);
+    if (is_cycles) {
+      LISTBASE_FOREACH (Material *, material, &bmain->materials) {
+        bool transparent_shadows = true;
+        if (IDProperty *cmat = version_cycles_properties_from_ID(&material->id)) {
+          transparent_shadows = version_cycles_property_boolean(
+              cmat, "use_transparent_shadow", true);
+        }
+        SET_FLAG_FROM_TEST(material->blend_flag, transparent_shadows, MA_BL_TRANSPARENT_SHADOW);
+      }
+    }
+    else {
+      LISTBASE_FOREACH (Material *, material, &bmain->materials) {
+        bool transparent_shadow = material->blend_shadow != MA_BS_SOLID;
+        SET_FLAG_FROM_TEST(material->blend_flag, transparent_shadow, MA_BL_TRANSPARENT_SHADOW);
+      }
+    }
+  }
+
+  /* 401 6 did not require any do_version here. */
 
   /**
    * Versioning code until next subversion bump goes here.

@@ -1108,7 +1108,7 @@ static const char *template_id_browse_tip(const StructRNA *type)
       case ID_PA:
         return N_("Particle Settings Browser\nChoose Particle Settings to use");
       case ID_GD_LEGACY:
-        return N_("Data Browser\nChoose Grease Pencil (legacy) Data to be linked");
+        return N_("Data Browser\nBrowse Grease Pencil Data to be linked");
       case ID_MC:
         return N_("Clip Browser\nChoose Movie Clip to use");
       case ID_MSK:
@@ -1130,7 +1130,7 @@ static const char *template_id_browse_tip(const StructRNA *type)
       case ID_VO:
         return N_("Data Browser\nBrowse Volume Data to be linked");
       case ID_GP:
-        return N_("Data Browser\nBrowse Grease Pencil Data to be linked");
+        return N_("Data Browser\nBrowse Grease Pencil v3 Data to be linked");
 
       /* Use generic text. */
       case ID_LI:
@@ -3724,7 +3724,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                      UI_UNIT_Y,
                      &coba->cur,
                      0.0,
-                     float(MAX2(0, coba->tot - 1)),
+                     float(std::max(0, coba->tot - 1)),
                      0,
                      0,
                      TIP_("Choose active color stop"));
@@ -3751,7 +3751,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                      UI_UNIT_Y,
                      &coba->cur,
                      0.0,
-                     float(MAX2(0, coba->tot - 1)),
+                     float(std::max(0, coba->tot - 1)),
                      0,
                      0,
                      TIP_("Choose active color stop"));
@@ -5851,7 +5851,7 @@ void uiTemplatePalette(uiLayout *layout, PointerRNA *ptr, const char *propname, 
   PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
   uiBut *but = nullptr;
 
-  const int cols_per_row = MAX2(uiLayoutGetWidth(layout) / UI_UNIT_X, 1);
+  const int cols_per_row = std::max(uiLayoutGetWidth(layout) / UI_UNIT_X, 1);
 
   if (!prop) {
     RNA_warning("property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
