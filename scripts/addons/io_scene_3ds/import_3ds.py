@@ -427,8 +427,11 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                     # in rare cases no materials defined.
 
                 bmesh.materials.append(bmat)  # can be None
-                for fidx in faces:
-                    bmesh.polygons[fidx].material_index = mat_idx
+                if bmesh.polygons:
+                    for fidx in faces:
+                        bmesh.polygons[fidx].material_index = mat_idx
+                else:
+                    print("\tError: Mesh has no faces!")
 
             if uv_faces:
                 uvl = bmesh.uv_layers.active.data[:]
@@ -1168,6 +1171,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 context.view_layer.active_layer_collection.collection.objects.link(contextLamp)
                 imported_objects.append(contextLamp)
                 object_dictionary[contextObName] = contextLamp
+                contextLamp.data.use_shadow = False
                 contextLamp.location = read_float_array(new_chunk)  # Position
             contextMatrix = None # Reset matrix
         elif CreateLightObject and new_chunk.ID == COLOR_F:  # Color
@@ -1184,7 +1188,6 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         # If spotlight chunk
         elif CreateLightObject and new_chunk.ID == LIGHT_SPOTLIGHT:  # Spotlight
             contextLamp.data.type = 'SPOT'
-            contextLamp.data.use_shadow = False
             spot = mathutils.Vector(read_float_array(new_chunk))  # Spot location
             aim = calc_target(contextLamp.location, spot)  # Target
             contextLamp.rotation_euler.x = aim[0]
@@ -1625,6 +1628,7 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, UNITS=False, IMAGE_SEARCH=True,
     # here we go!
     read_chunk(file, current_chunk)
     if current_chunk.ID != PRIMARY:
+        context.window.cursor_set('DEFAULT')
         print("\tFatal Error:  Not a valid 3ds file: %r" % filepath)
         file.close()
         return

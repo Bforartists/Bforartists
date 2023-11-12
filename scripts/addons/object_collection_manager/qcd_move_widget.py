@@ -771,7 +771,7 @@ def draw_callback_px(self, context):
     main_window = self.areas["Main Window"]
     outline_color = addon_prefs.qcd_ogl_widget_menu_back_outline
     background_color = addon_prefs.qcd_ogl_widget_menu_back_inner
-    draw_rounded_rect(main_window, line_shader, outline_color[:] + (1,), outline=True)
+    draw_rounded_rect(main_window, line_shader, outline_color[:], outline=True)
     draw_rounded_rect(main_window, shader, background_color)
 
     # draw window title
@@ -852,7 +852,7 @@ def draw_callback_px(self, context):
 
             # draw button
             outline_color = addon_prefs.qcd_ogl_widget_tool_outline
-            draw_rounded_rect(button_area, line_shader, outline_color[:] + (1,), tl, tr, bl, br, outline=True)
+            draw_rounded_rect(button_area, line_shader, outline_color[:], tl, tr, bl, br, outline=True)
             draw_rounded_rect(button_area, shader, button_color, tl, tr, bl, br)
 
             # ACTIVE OBJECT
@@ -979,7 +979,7 @@ def draw_tooltip(self, context, shader, line_shader, message):
 
     outline_color = addon_prefs.qcd_ogl_widget_tooltip_outline
     background_color = addon_prefs.qcd_ogl_widget_tooltip_inner
-    draw_rounded_rect(tooltip, line_shader, outline_color[:] + (1,), outline=True)
+    draw_rounded_rect(tooltip, line_shader, outline_color[:], outline=True)
     draw_rounded_rect(tooltip, shader, background_color)
 
     line_pos = padding + line_height
