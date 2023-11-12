@@ -661,7 +661,7 @@ class EeveeRaytracingDenoisePanel(RenderButtonsPanel, Panel):
 
     def draw_internal(self, props):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         col = layout.column()
         col.active = props.use_denoise
