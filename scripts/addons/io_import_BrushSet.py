@@ -67,8 +67,8 @@ class BrushSetImporter(bpy.types.Operator):
     def draw(self, context):
         if self.temp_filters:
             context.space_data.params.use_filter = True
-            context.space_data.params.use_filter_folder = True  
-            context.space_data.params.use_filter_image = True  
+            context.space_data.params.use_filter_folder = True
+            context.space_data.params.use_filter_image = True
             self.temp_filters = False
 
     directory: StringProperty(

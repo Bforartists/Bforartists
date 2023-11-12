@@ -35,6 +35,7 @@ set(INC_SYS
 )
 
 set(SRC
+  intern/attribute_convert.cc
   intern/draw_cache.cc
   intern/draw_cache_extract_mesh.cc
   intern/draw_cache_extract_mesh_render_data.cc
@@ -231,6 +232,7 @@ set(SRC
   DRW_select_buffer.hh
   intern/DRW_gpu_wrapper.hh
   intern/DRW_render.h
+  intern/attribute_convert.hh
   intern/draw_attributes.hh
   intern/draw_cache.h
   intern/draw_cache_extract.hh

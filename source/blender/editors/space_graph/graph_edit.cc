@@ -48,6 +48,8 @@
 #include "UI_view2d.hh"
 #include "UI_resources.hh" /* BFA - needed for icons */
 
+#include "ANIM_animdata.hh"
+#include "ANIM_fcurve.hh"
 #include "ANIM_keyframing.hh"
 #include "ED_anim_api.hh"
 #include "ED_keyframes_edit.hh"
@@ -153,7 +155,7 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
       AnimData *adt = ANIM_nla_mapping_get(ac, ale);
       FCurve *fcu = (FCurve *)ale->key_data;
 
-      short mapping_flag = ANIM_get_normalization_flags(ac);
+      short mapping_flag = ANIM_get_normalization_flags(ac->sl);
       float offset;
       float unit_scale = ANIM_unit_mapping_get_factor(
           ac->scene, ale->id, static_cast<FCurve *>(ale->key_data), mapping_flag, &offset);
@@ -180,7 +182,7 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
       }
 
       /* Insert keyframe directly into the F-Curve. */
-      insert_vert_fcurve(
+      blender::animrig::insert_vert_fcurve(
           fcu, x, y, eBezTriple_KeyframeType(ts->keyframe_type), eInsertKeyFlags(0));
 
       ale->update |= ANIM_UPDATE_DEFAULT;
@@ -229,7 +231,7 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
         }
 
         const float curval = evaluate_fcurve_only_curve(fcu, cfra);
-        insert_vert_fcurve(
+        blender::animrig::insert_vert_fcurve(
             fcu, cfra, curval, eBezTriple_KeyframeType(ts->keyframe_type), eInsertKeyFlags(0));
       }
 
@@ -320,7 +322,7 @@ static int graphkeys_click_insert_exec(bContext *C, wmOperator *op)
     ListBase anim_data;
     ToolSettings *ts = ac.scene->toolsettings;
 
-    short mapping_flag = ANIM_get_normalization_flags(&ac);
+    short mapping_flag = ANIM_get_normalization_flags(ac.sl);
     float scale, offset;
 
     /* Preserve selection? */
@@ -346,7 +348,7 @@ static int graphkeys_click_insert_exec(bContext *C, wmOperator *op)
     val = val * scale - offset;
 
     /* Insert keyframe on the specified frame + value. */
-    insert_vert_fcurve(
+    blender::animrig::insert_vert_fcurve(
         fcu, frame, val, eBezTriple_KeyframeType(ts->keyframe_type), eInsertKeyFlags(0));
 
     ale->update |= ANIM_UPDATE_DEPS;
@@ -765,7 +767,7 @@ static bool delete_graph_keys(bAnimContext *ac)
 
     /* Only delete curve too if it won't be doing anything anymore. */
     if (BKE_fcurve_is_empty(fcu)) {
-      ANIM_fcurve_delete_from_animdata(ac, adt, fcu);
+      blender::animrig::animdata_fcurve_delete(ac, adt, fcu);
       ale->key_data = nullptr;
     }
   }
@@ -2119,7 +2121,7 @@ static KeyframeEditData sum_selected_keyframes(bAnimContext *ac)
 
   LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     AnimData *adt = ANIM_nla_mapping_get(ac, ale);
-    short mapping_flag = ANIM_get_normalization_flags(ac);
+    short mapping_flag = ANIM_get_normalization_flags(ac->sl);
     KeyframeEditData current_ked;
     float offset;
     float unit_scale = ANIM_unit_mapping_get_factor(ac->scene,
@@ -2441,7 +2443,7 @@ static void snap_graph_keys(bAnimContext *ac, short mode)
 
     /* Normalize cursor value (for normalized F-Curves display). */
     if (mode == GRAPHKEYS_SNAP_VALUE) {
-      short mapping_flag = ANIM_get_normalization_flags(ac);
+      short mapping_flag = ANIM_get_normalization_flags(ac->sl);
       float offset;
       float unit_scale = ANIM_unit_mapping_get_factor(
           ac->scene, ale->id, static_cast<FCurve *>(ale->key_data), mapping_flag, &offset);
@@ -2754,7 +2756,7 @@ static void mirror_graph_keys(bAnimContext *ac, short mode)
 
     /* Apply unit corrections. */
     if (mode == GRAPHKEYS_MIRROR_VALUE) {
-      short mapping_flag = ANIM_get_normalization_flags(ac);
+      short mapping_flag = ANIM_get_normalization_flags(ac->sl);
       float offset;
       float unit_scale = ANIM_unit_mapping_get_factor(ac->scene,
                                                       ale->id,

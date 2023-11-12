@@ -460,7 +460,6 @@ def create_glass_material(matname, replace, rv=0.333, gv=0.342, bv=0.9):
 
     node = nodes.new('ShaderNodeBsdfGlossy')
     node.name = 'Glossy_0'
-    node.distribution = 'SHARP'
     node.location = 250, 100
 
     node = nodes.new('ShaderNodeBsdfTransparent')

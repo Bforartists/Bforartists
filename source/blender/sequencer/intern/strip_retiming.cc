@@ -215,7 +215,7 @@ bool SEQ_retiming_key_is_transition_start(const SeqRetimingKey *key)
 
 SeqRetimingKey *SEQ_retiming_transition_start_get(SeqRetimingKey *key)
 {
-  if ((key->flag & SEQ_SPEED_TRANSITION_OUT)) {
+  if (key->flag & SEQ_SPEED_TRANSITION_OUT) {
     return key - 1;
   }
   if (key->flag & SEQ_SPEED_TRANSITION_IN) {
@@ -978,7 +978,8 @@ void SEQ_retiming_key_timeline_frame_set(const Scene *scene,
   }
 
   SEQ_time_update_meta_strip_range(scene, seq_sequence_lookup_meta_by_seq(scene, seq));
-  seq_time_update_effects_strip_range(scene, seq_sequence_lookup_effects_by_seq(scene, seq));
+  blender::Span effects = seq_sequence_lookup_effects_by_seq(scene, seq);
+  seq_time_update_effects_strip_range(scene, effects);
 }
 
 void SEQ_retiming_key_speed_set(const Scene *scene,

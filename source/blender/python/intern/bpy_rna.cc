@@ -5460,7 +5460,7 @@ static PyObject *foreach_getset(BPy_PropertyRNA *self, PyObject *args, int set)
     buffer_is_compat = false;
     if (PyObject_CheckBuffer(seq)) {
       Py_buffer buf;
-      if (PyObject_GetBuffer(seq, &buf, PyBUF_SIMPLE | PyBUF_FORMAT) == -1) {
+      if (PyObject_GetBuffer(seq, &buf, PyBUF_ND | PyBUF_FORMAT) == -1) {
         /* Request failed. A `PyExc_BufferError` will have been raised,
          * so clear it to silently fall back to accessing as a sequence. */
         PyErr_Clear();
@@ -5521,7 +5521,7 @@ static PyObject *foreach_getset(BPy_PropertyRNA *self, PyObject *args, int set)
     buffer_is_compat = false;
     if (PyObject_CheckBuffer(seq)) {
       Py_buffer buf;
-      if (PyObject_GetBuffer(seq, &buf, PyBUF_SIMPLE | PyBUF_FORMAT) == -1) {
+      if (PyObject_GetBuffer(seq, &buf, PyBUF_ND | PyBUF_FORMAT) == -1) {
         /* Request failed. A `PyExc_BufferError` will have been raised,
          * so clear it to silently fall back to accessing as a sequence. */
         PyErr_Clear();
@@ -5665,7 +5665,7 @@ static PyObject *pyprop_array_foreach_getset(BPy_PropertyArrayRNA *self,
   }
 
   Py_buffer buf;
-  if (PyObject_GetBuffer(seq, &buf, PyBUF_SIMPLE | PyBUF_FORMAT) == -1) {
+  if (PyObject_GetBuffer(seq, &buf, PyBUF_ND | PyBUF_FORMAT) == -1) {
     PyErr_Clear();
 
     switch (prop_type) {
@@ -9091,8 +9091,15 @@ PyDoc_STRVAR(pyrna_unregister_class_doc,
              "\n"
              "   Unload the Python class from blender.\n"
              "\n"
-             "   If the class has an *unregister* class method it will be called\n"
-             "   before unregistering.\n");
+             "   :arg cls: Blender type class, \n"
+             "      see :mod:`bpy.utils.register_class` for classes which can \n"
+             "      be registered.\n"
+             "   :type cls: class\n"
+             "\n"
+             "   .. note::\n"
+             "\n"
+             "      If the class has an *unregister* class method it will be called\n"
+             "      before unregistering.\n");
 PyMethodDef meth_bpy_unregister_class = {
     "unregister_class",
     pyrna_unregister_class,
