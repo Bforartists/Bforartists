@@ -47,13 +47,14 @@
 #include "UI_view2d.hh"
 #include "UI_resources.hh" /* BFA - needed for icons in the grouped enum */
 
-#include "ED_anim_api.hh"
 #include "ED_armature.hh"
 #include "ED_keyframes_edit.hh" /* XXX move the select modes out of there! */
 #include "ED_markers.hh"
 #include "ED_object.hh"
 #include "ED_screen.hh"
 #include "ED_select_utils.hh"
+
+#include "ANIM_animdata.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -63,7 +64,9 @@
  * \{ */
 
 static bool get_normalized_fcurve_bounds(FCurve *fcu,
-                                         bAnimContext *ac,
+                                         AnimData *anim_data,
+                                         SpaceLink *space_link,
+                                         Scene *scene,
                                          bAnimListElem *ale,
                                          const bool include_handles,
                                          const float range[2],
@@ -77,11 +80,10 @@ static bool get_normalized_fcurve_bounds(FCurve *fcu,
     return false;
   }
 
-  const short mapping_flag = ANIM_get_normalization_flags(ac);
+  const short mapping_flag = ANIM_get_normalization_flags(space_link);
 
   float offset;
-  const float unit_fac = ANIM_unit_mapping_get_factor(
-      ac->scene, ale->id, fcu, mapping_flag, &offset);
+  const float unit_fac = ANIM_unit_mapping_get_factor(scene, ale->id, fcu, mapping_flag, &offset);
 
   r_bounds->ymin = (r_bounds->ymin + offset) * unit_fac;
   r_bounds->ymax = (r_bounds->ymax + offset) * unit_fac;
@@ -92,9 +94,8 @@ static bool get_normalized_fcurve_bounds(FCurve *fcu,
     r_bounds->ymin -= (min_height - height) / 2;
     r_bounds->ymax += (min_height - height) / 2;
   }
-  AnimData *adt = ANIM_nla_mapping_get(ac, ale);
-  r_bounds->xmin = BKE_nla_tweakedit_remap(adt, r_bounds->xmin, NLATIME_CONVERT_MAP);
-  r_bounds->xmax = BKE_nla_tweakedit_remap(adt, r_bounds->xmax, NLATIME_CONVERT_MAP);
+  r_bounds->xmin = BKE_nla_tweakedit_remap(anim_data, r_bounds->xmin, NLATIME_CONVERT_MAP);
+  r_bounds->xmax = BKE_nla_tweakedit_remap(anim_data, r_bounds->xmax, NLATIME_CONVERT_MAP);
 
   return true;
 }
@@ -140,7 +141,9 @@ static bool get_channel_bounds(bAnimContext *ac,
     }
     case ALE_FCURVE: {
       FCurve *fcu = (FCurve *)ale->key_data;
-      found_bounds = get_normalized_fcurve_bounds(fcu, ac, ale, include_handles, range, r_bounds);
+      AnimData *anim_data = ANIM_nla_mapping_get(ac, ale);
+      found_bounds = get_normalized_fcurve_bounds(
+          fcu, anim_data, ac->sl, ac->scene, ale, include_handles, range, r_bounds);
       break;
     }
   }
@@ -856,82 +859,6 @@ void ANIM_frame_channel_y_extents(bContext *C, bAnimContext *ac)
 
   ANIM_animdata_freelist(&anim_data);
 }
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Public F-Curves API
- * \{ */
-
-void ANIM_fcurve_delete_from_animdata(bAnimContext *ac, AnimData *adt, FCurve *fcu)
-{
-  /* - if no AnimData, we've got nowhere to remove the F-Curve from
-   *   (this doesn't guarantee that the F-Curve is in there, but at least we tried
-   * - if no F-Curve, there is nothing to remove
-   */
-  if (ELEM(nullptr, adt, fcu)) {
-    return;
-  }
-
-  /* remove from whatever list it came from
-   * - Action Group
-   * - Action
-   * - Drivers
-   * - TODO... some others?
-   */
-  if ((ac) && (ac->datatype == ANIMCONT_DRIVERS)) {
-    /* driver F-Curve */
-    BLI_remlink(&adt->drivers, fcu);
-  }
-  else if (adt->action) {
-    bAction *act = adt->action;
-
-    /* remove from group or action, whichever one "owns" the F-Curve */
-    if (fcu->grp) {
-      bActionGroup *agrp = fcu->grp;
-
-      /* remove F-Curve from group+action */
-      action_groups_remove_channel(act, fcu);
-
-      /* if group has no more channels, remove it too,
-       * otherwise can have many dangling groups #33541.
-       */
-      if (BLI_listbase_is_empty(&agrp->channels)) {
-        BLI_freelinkN(&act->groups, agrp);
-      }
-    }
-    else {
-      BLI_remlink(&act->curves, fcu);
-    }
-
-    /* if action has no more F-Curves as a result of this, unlink it from
-     * AnimData if it did not come from a NLA Strip being tweaked.
-     *
-     * This is done so that we don't have dangling Object+Action entries in
-     * channel list that are empty, and linger around long after the data they
-     * are for has disappeared (and probably won't come back).
-     */
-    ANIM_remove_empty_action_from_animdata(adt);
-  }
-
-  /* free the F-Curve itself */
-  BKE_fcurve_free(fcu);
-}
-
-bool ANIM_remove_empty_action_from_animdata(AnimData *adt)
-{
-  if (adt->action != nullptr) {
-    bAction *act = adt->action;
-
-    if (BLI_listbase_is_empty(&act->curves) && (adt->flag & ADT_NLA_EDIT_ON) == 0) {
-      id_us_min(&act->id);
-      adt->action = nullptr;
-      return true;
-    }
-  }
-
-  return false;
-}
-
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -2212,7 +2139,7 @@ static int animchannels_delete_exec(bContext *C, wmOperator * /*op*/)
         FCurve *fcu = (FCurve *)ale->data;
 
         /* try to free F-Curve */
-        ANIM_fcurve_delete_from_animdata(&ac, adt, fcu);
+        blender::animrig::animdata_fcurve_delete(&ac, adt, fcu);
         tag_update_animation_element(ale);
         break;
       }

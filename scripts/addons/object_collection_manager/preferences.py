@@ -50,7 +50,7 @@ def get_tool_text(self):
         return self["tool_text_color"]
     else:
         color = bpy.context.preferences.themes[0].user_interface.wcol_tool.text
-        self["tool_text_color"] = color.r, color.g, color.b
+        self["tool_text_color"] = color[0], color[1], color[2]
         return self["tool_text_color"]
 
 def set_tool_text(self, values):
@@ -62,7 +62,7 @@ def get_tool_text_sel(self):
         return self["tool_text_sel_color"]
     else:
         color = bpy.context.preferences.themes[0].user_interface.wcol_tool.text_sel
-        self["tool_text_sel_color"] = color.r, color.g, color.b
+        self["tool_text_sel_color"] = color[0], color[1], color[2]
         return self["tool_text_sel_color"]
 
 def set_tool_text_sel(self, values):
@@ -98,11 +98,11 @@ def get_tool_outline(self):
         return self["tool_outline_color"]
     else:
         color = bpy.context.preferences.themes[0].user_interface.wcol_tool.outline
-        self["tool_outline_color"] = color.r, color.g, color.b
+        self["tool_outline_color"] = color[0], color[1], color[2], color[3]
         return self["tool_outline_color"]
 
 def set_tool_outline(self, values):
-    self["tool_outline_color"] = values[0], values[1], values[2]
+    self["tool_outline_color"] = values[0], values[1], values[2], values[3]
 
 
 def get_menu_back_text(self):
@@ -110,7 +110,7 @@ def get_menu_back_text(self):
         return self["menu_back_text_color"]
     else:
         color = bpy.context.preferences.themes[0].user_interface.wcol_menu_back.text
-        self["menu_back_text_color"] = color.r, color.g, color.b
+        self["menu_back_text_color"] = color[0], color[1], color[2]
         return self["menu_back_text_color"]
 
 def set_menu_back_text(self, values):
@@ -134,11 +134,11 @@ def get_menu_back_outline(self):
         return self["menu_back_outline_color"]
     else:
         color = bpy.context.preferences.themes[0].user_interface.wcol_menu_back.outline
-        self["menu_back_outline_color"] = color.r, color.g, color.b
+        self["menu_back_outline_color"] = color[0], color[1], color[2], color[3]
         return self["menu_back_outline_color"]
 
 def set_menu_back_outline(self, values):
-    self["menu_back_outline_color"] = values[0], values[1], values[2]
+    self["menu_back_outline_color"] = values[0], values[1], values[2], values[3]
 
 
 def get_tooltip_text(self):
@@ -146,7 +146,7 @@ def get_tooltip_text(self):
         return self["tooltip_text_color"]
     else:
         color = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.text
-        self["tooltip_text_color"] = color.r, color.g, color.b
+        self["tooltip_text_color"] = color[0], color[1], color[2]
         return self["tooltip_text_color"]
 
 def set_tooltip_text(self, values):
@@ -170,11 +170,11 @@ def get_tooltip_outline(self):
         return self["tooltip_outline_color"]
     else:
         color = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.outline
-        self["tooltip_outline_color"] = color.r, color.g, color.b
+        self["tooltip_outline_color"] = color[0], color[1], color[2], color[3]
         return self["tooltip_outline_color"]
 
 def set_tooltip_outline(self, values):
-    self["tooltip_outline_color"] = values[0], values[1], values[2]
+    self["tooltip_outline_color"] = values[0], values[1], values[2], values[3]
 
 
 class CMPreferences(AddonPreferences):

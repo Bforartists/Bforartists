@@ -851,4 +851,3 @@ def create_sample(obj):
         arm.edit_bones.active = bone
         if bcoll := arm.collections.active:
             bcoll.assign(bone)
-

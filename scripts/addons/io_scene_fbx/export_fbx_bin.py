@@ -1155,51 +1155,69 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     # Loop normals.
     tspacenumber = 0
     if write_normals:
-        # NOTE: this is not supported by importer currently.
+        # NOTE: ByVertice-IndexToDirect is not supported by the importer currently.
         # XXX Official docs says normals should use IndexToDirect,
         #     but this does not seem well supported by apps currently...
 
-        ln_bl_dtype = np.single
-        ln_fbx_dtype = np.float64
-        t_ln = np.empty(len(me.loops) * 3,  dtype=ln_bl_dtype)
-        me.loops.foreach_get("normal", t_ln)
-        t_ln = nors_transformed(t_ln, geom_mat_no, ln_fbx_dtype)
+        normal_bl_dtype = np.single
+        normal_fbx_dtype = np.float64
+        match me.normals_domain:
+            case 'POINT':
+                # All faces are smooth shaded, so we can get normals from the vertices.
+                normal_source = me.vertex_normals
+                normal_mapping = b"ByVertice"
+            case 'FACE':
+                # Either all faces or all edges are sharp, so we can get normals from the faces.
+                normal_source = me.polygon_normals
+                normal_mapping = b"ByPolygon"
+            case 'CORNER':
+                # We have a mix of sharp/smooth edges/faces or custom split normals, so need to get normals from
+                # corners.
+                normal_source = me.corner_normals
+                normal_mapping = b"ByPolygonVertex"
+            case _:
+                # Unreachable
+                raise AssertionError("Unexpected normals domain '%s'" % me.normals_domain)
+        # Each normal has 3 components, so the length is multiplied by 3.
+        t_normal = np.empty(len(normal_source) * 3, dtype=normal_bl_dtype)
+        normal_source.foreach_get("vector", t_normal)
+        t_normal = nors_transformed(t_normal, geom_mat_no, normal_fbx_dtype)
         if 0:
-            lnidx_fbx_dtype = np.int32
+            normal_idx_fbx_dtype = np.int32
             lay_nor = elem_data_single_int32(geom, b"LayerElementNormal", 0)
             elem_data_single_int32(lay_nor, b"Version", FBX_GEOMETRY_NORMAL_VERSION)
             elem_data_single_string(lay_nor, b"Name", b"")
-            elem_data_single_string(lay_nor, b"MappingInformationType", b"ByPolygonVertex")
+            elem_data_single_string(lay_nor, b"MappingInformationType", normal_mapping)
             elem_data_single_string(lay_nor, b"ReferenceInformationType", b"IndexToDirect")
 
-            # Tuple of unique sorted normals and then the index in the unique sorted normals of each normal in t_ln.
+            # Tuple of unique sorted normals and then the index in the unique sorted normals of each normal in t_normal.
             # Since we don't care about how the normals are sorted, only that they're unique, we can use the fast unique
             # helper function.
-            t_ln, t_lnidx = fast_first_axis_unique(t_ln.reshape(-1, 3), return_inverse=True)
+            t_normal, t_normal_idx = fast_first_axis_unique(t_normal.reshape(-1, 3), return_inverse=True)
 
             # Convert to the type for fbx
-            t_lnidx = astype_view_signedness(t_lnidx, lnidx_fbx_dtype)
+            t_normal_idx = astype_view_signedness(t_normal_idx, normal_idx_fbx_dtype)
 
-            elem_data_single_float64_array(lay_nor, b"Normals", t_ln)
+            elem_data_single_float64_array(lay_nor, b"Normals", t_normal)
             # Normal weights, no idea what it is.
-            # t_lnw = np.zeros(len(t_ln), dtype=np.float64)
-            # elem_data_single_float64_array(lay_nor, b"NormalsW", t_lnw)
+            # t_normal_w = np.zeros(len(t_normal), dtype=np.float64)
+            # elem_data_single_float64_array(lay_nor, b"NormalsW", t_normal_w)
 
-            elem_data_single_int32_array(lay_nor, b"NormalsIndex", t_lnidx)
+            elem_data_single_int32_array(lay_nor, b"NormalsIndex", t_normal_idx)
 
-            del t_lnidx
-            # del t_lnw
+            del t_normal_idx
+            # del t_normal_w
         else:
             lay_nor = elem_data_single_int32(geom, b"LayerElementNormal", 0)
             elem_data_single_int32(lay_nor, b"Version", FBX_GEOMETRY_NORMAL_VERSION)
             elem_data_single_string(lay_nor, b"Name", b"")
-            elem_data_single_string(lay_nor, b"MappingInformationType", b"ByPolygonVertex")
+            elem_data_single_string(lay_nor, b"MappingInformationType", normal_mapping)
             elem_data_single_string(lay_nor, b"ReferenceInformationType", b"Direct")
-            elem_data_single_float64_array(lay_nor, b"Normals", t_ln)
+            elem_data_single_float64_array(lay_nor, b"Normals", t_normal)
             # Normal weights, no idea what it is.
-            # t_ln = np.zeros(len(me.loops), dtype=np.float64)
-            # elem_data_single_float64_array(lay_nor, b"NormalsW", t_ln)
-        del t_ln
+            # t_normal = np.zeros(len(me.loops), dtype=np.float64)
+            # elem_data_single_float64_array(lay_nor, b"NormalsW", t_normal)
+        del t_normal
 
         # tspace
         if scene_data.settings.use_tspace:
@@ -1218,7 +1236,7 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                 else:
                     del t_lt
                     num_loops = len(me.loops)
-                    t_ln = np.empty(num_loops * 3, dtype=ln_bl_dtype)
+                    t_ln = np.empty(num_loops * 3, dtype=normal_bl_dtype)
                     # t_lnw = np.zeros(len(me.loops), dtype=np.float64)
                     uv_names = [uvlayer.name for uvlayer in me.uv_layers]
                     # Annoying, `me.calc_tangent` errors in case there is no geometry...
@@ -1236,7 +1254,7 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                         elem_data_single_string(lay_nor, b"MappingInformationType", b"ByPolygonVertex")
                         elem_data_single_string(lay_nor, b"ReferenceInformationType", b"Direct")
                         elem_data_single_float64_array(lay_nor, b"Binormals",
-                                                       nors_transformed(t_ln, geom_mat_no, ln_fbx_dtype))
+                                                       nors_transformed(t_ln, geom_mat_no, normal_fbx_dtype))
                         # Binormal weights, no idea what it is.
                         # elem_data_single_float64_array(lay_nor, b"BinormalsW", t_lnw)
 
@@ -1249,7 +1267,7 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                         elem_data_single_string(lay_nor, b"MappingInformationType", b"ByPolygonVertex")
                         elem_data_single_string(lay_nor, b"ReferenceInformationType", b"Direct")
                         elem_data_single_float64_array(lay_nor, b"Tangents",
-                                                       nors_transformed(t_ln, geom_mat_no, ln_fbx_dtype))
+                                                       nors_transformed(t_ln, geom_mat_no, normal_fbx_dtype))
                         # Tangent weights, no idea what it is.
                         # elem_data_single_float64_array(lay_nor, b"TangentsW", t_lnw)
 
