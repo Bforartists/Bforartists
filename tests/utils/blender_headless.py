@@ -116,7 +116,8 @@ class backend_wayland(backend_base):
         """
         # NOTE(@ideasman42): WESTON does not make it convenient to run a portable instance,
         # a reasonable amount of logic here is simply to get WESTON running with references to portable paths.
-        # Once pcakges are available on RedHad8, we might consider to remove this entire function.
+        # Once packages are available on the Linux distribution used for the CI-environment,
+        # we can consider removing this entire function.
         weston_env = {}
         weston_ini = []
         ld_library_paths = []
@@ -287,7 +288,12 @@ class backend_wayland(backend_base):
 
                 blender_env = {**os.environ, "WAYLAND_DISPLAY": socket}
 
+                # Needed so Blender can find WAYLAND libraries such as `libwayland-cursor.so`.
+                if weston_env is not None and "LD_LIBRARY_PATH" in weston_env:
+                    blender_env["LD_LIBRARY_PATH"] = weston_env["LD_LIBRARY_PATH"]
+
                 cmd = [
+                    # "strace",  # Can be useful for debugging any startup issues.
                     BLENDER_BIN,
                     *blender_args,
                 ]

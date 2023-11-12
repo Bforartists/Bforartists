@@ -111,8 +111,8 @@ class RENDER_PT_color_management_display_settings(RenderButtonsPanel, Panel):
         # Only display HDR toggle for non-Filmic display transforms.
         col = layout.column(align=True)
         sub = col.row()
-        sub.active = (not view.view_transform.startswith("Filmic") and
-                      not view.view_transform.startswith("AgX"))
+        sub.active = (not view.view_transform.startswith("Filmic") and not view.view_transform.startswith("AgX") and not
+                      view.view_transform.startswith("False Color"))
         sub.use_property_split = False
         sub.prop(view, "use_hdr_view")
 
@@ -624,9 +624,6 @@ class EeveeRaytracingOptionsPanel(RenderButtonsPanel, Panel):
     def draw_internal(self, context, props):
         layout = self.layout
         layout.use_property_split = True
-
-        scene = context.scene
-        eevee = scene.eevee
 
         layout.prop(props, "resolution_scale")
         layout.prop(props, "sample_clamp")

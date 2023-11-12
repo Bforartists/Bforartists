@@ -20,10 +20,6 @@ def drawlayout(context, layout, mode='non-panel'):
     col.menu(NWMergeNodesMenu.bl_idname)
     col.separator()
 
-    col = layout.column(align=True)
-    col.menu(NWSwitchNodeTypeMenu.bl_idname, text="Switch Node Type")
-    col.separator()
-
     if tree_type == 'ShaderNodeTree':
         col = layout.column(align=True)
         col.operator(operators.NWAddTextureSetup.bl_idname, text="Add Texture Setup", icon='NODE_SEL')
@@ -385,32 +381,8 @@ class NWSwitchNodeTypeMenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        categories = [c for c in node_categories_iter(context)
-                      if c.name not in ['Group', 'Script']]
-        for cat in categories:
-            idname = f"NODE_MT_nw_switch_{cat.identifier}_submenu"
-            if hasattr(bpy.types, idname):
-                layout.menu(idname)
-            else:
-                layout.label(text="Unable to load altered node lists.")
-                layout.label(text="Please re-enable Node Wrangler.")
-                break
-
-
-def draw_switch_category_submenu(self, context):
-    layout = self.layout
-    if self.category.name == 'Layout':
-        for node in self.category.items(context):
-            if node.nodetype != 'NodeFrame':
-                props = layout.operator(operators.NWSwitchNodeType.bl_idname, text=node.label)
-                props.to_type = node.nodetype
-    else:
-        for node in self.category.items(context):
-            if isinstance(node, NodeItemCustom):
-                node.draw(self, layout, context)
-                continue
-            props = layout.operator(operators.NWSwitchNodeType.bl_idname, text=node.label)
-            props.to_type = node.nodetype
+        layout.label(text="This operator is removed due to the changes of node menus.", icon='ERROR')
+        layout.label(text="A native implementation of the function is expected in the future.")
 
 #
 #  APPENDAGES TO EXISTING UI

@@ -6,8 +6,8 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (2, 24, 8),
-    "blender": (3, 0, 0),
+    "version": (2, 24, 9),
+    "blender": (4, 0, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
     "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/collection_manager.html",

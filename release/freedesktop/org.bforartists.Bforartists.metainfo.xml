@@ -34,6 +34,24 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="4.0" date="2023-11-14">
+            <description>
+                <p>New features:</p>
+                <ul>
+                    <li>New Principled BSDF. More energy conserving, more efficient, and more flexible.</li>
+                    <li>A new view transform has been added: AgX, providing better color handling in over-exposed areas compared to Filmic.</li>
+                    <li>Cycles now has support for Light Linking</li>
+                    <li>Geometry Nodes Tools</li>
+                </ul>
+                <p>Enhancements:</p>
+                <ul>
+                    <li>The Voronoi Texture node has support for fractal noise.</li>
+                    <li>Cycles Path Guiding now works on glossy surfaces in addition to diffuse surfaces.</li>
+                    <li>Performance and drawing optimizations in the Graph Editor.</li>
+                    <li>Support for Bone collections.</li>
+                </ul>
+            </description>
+        </release>
         <release version="3.6" date="2023-06-27">
             <description>
                 <p>New features:</p>
@@ -44,7 +62,7 @@
                 </ul>
                 <p>Enhancements:</p>
                 <ul>
-                    <li> PLY I/O:About 4x-20x faster export, 8x-30x faster import</li>
+                    <li>PLY I/O:About 4x-20x faster export, 8x-30x faster import</li>
                     <li>Improved UV packing</li>
                     <li>Python API: Custom script directories</li>
                     <li>USD Curves/Hair export</li>
@@ -371,5 +389,6 @@
                 </ul>
             </description>
         </release>
-  </releases>
+    </releases>
+    <content_rating type="oars-1.1" />
 </component>
