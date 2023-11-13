@@ -337,7 +337,9 @@ class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
 
         layout.prop(mat, "max_vertex_displacement", text="Max Displacement")
 
+        layout.use_property_split = False
         layout.prop(mat, "use_transparent_shadow")
+        layout.use_property_split = True
 
         col = layout.column()
         col.prop(mat, "surface_render_method", text="Render Method")
