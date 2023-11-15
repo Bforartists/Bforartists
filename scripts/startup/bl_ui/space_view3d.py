@@ -8501,12 +8501,9 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
         split = col.split()
 
         sub = split.column()
-        sub.active = is_any_solid_shading
         row = sub.row()
         row.separator()
-        row.prop(overlay, "show_edges", text="Edges")
-        sub = split.column()
-        sub.prop(overlay, "show_faces", text="Faces")
+        row.prop(overlay, "show_faces", text="Faces")
         sub = split.column()
         sub.active = is_any_solid_shading
         sub.prop(overlay, "show_face_center", text="Center")
