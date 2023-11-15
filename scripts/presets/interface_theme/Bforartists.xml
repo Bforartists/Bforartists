@@ -374,7 +374,7 @@
         vertex_bevel="#00a5ff"
         vertex_unreferenced="#000000"
         edge_select="#ffa000"
-        edge_mode_select="#000000"
+        edge_mode_select="#ffd800"
         edge_seam="#db2512"
         edge_sharp="#00ffff"
         edge_crease="#cc0099"
