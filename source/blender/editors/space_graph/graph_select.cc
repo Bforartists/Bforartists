@@ -2229,17 +2229,30 @@ static void graphkeys_select_key_handles_ui(bContext * /*C*/, wmOperator *op)
   uiItemR(row, op->ptr, "key_action", UI_ITEM_NONE, nullptr, ICON_NONE);
 }
 
+
+/*BFA - descriptions*/
+static std::string GRAPH_OT_select_key_handles_description(struct bContext * /*C*/,
+                                                    struct wmOperatorType * /*op*/,
+                                                    struct PointerRNA *ptr)
+{
+  if (RNA_enum_get(ptr, "left_handle_action") == SELECT) {
+    return "For selected keyframes, select only the keyframe and deselect the handles";
+  }
+  return "";
+}
+
 void GRAPH_OT_select_key_handles(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Key / Handles";
   ot->idname = "GRAPH_OT_select_key_handles";
   ot->description =
-      "For selected keyframes, select/deselect any combination of the key itself and its handles";
+      "For selected keyframes, also select the handles of the keyframes"; /*BFA - changed tooltip to be unique*/
 
   /* callbacks */
   ot->poll = graphop_visible_keyframes_poll;
   ot->exec = graphkeys_select_key_handles_exec;
+  ot->get_description = GRAPH_OT_select_key_handles_description; /*BFA - descriptions*/
   ot->ui = graphkeys_select_key_handles_ui;
 
   /* flags */
