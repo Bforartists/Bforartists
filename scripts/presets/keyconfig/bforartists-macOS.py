@@ -1,4 +1,4 @@
-keyconfig_version = (4, 1, 4)
+keyconfig_version = (4, 1, 6)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -6353,7 +6353,7 @@ keyconfig_data = \
       },
      ),
     ("brush.stencil_control",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True, "oskey": True, "alt": True},
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True, "alt": True, "oskey": True},
      {"properties":
       [("mode", 'TRANSLATION'),
        ("texmode", 'SECONDARY'),
@@ -6369,7 +6369,7 @@ keyconfig_data = \
       },
      ),
     ("brush.stencil_control",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS', "oskey": True, "alt": True},
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True, "oskey": True},
      {"properties":
       [("mode", 'ROTATION'),
        ("texmode", 'SECONDARY'),
@@ -7517,6 +7517,7 @@ keyconfig_data = \
     ("VERT_EDGE_SLIDE", {"type": 'W', "value": 'PRESS'}, None),
     ("TRACKBALL", {"type": 'E', "value": 'PRESS'}, None),
     ("ROTATE_NORMALS", {"type": 'N', "value": 'PRESS'}, None),
+    ("PASSTHROUGH_NAVIGATE", {"type": 'LEFT_ALT', "value": 'ANY', "any": True}, None),
     ],
    },
   ),
@@ -8094,6 +8095,20 @@ keyconfig_data = \
      {"type": 'G', "value": 'PRESS'},
      {"properties":
       [("name", 'builtin.select_circle'),
+       ],
+      },
+     ),
+    ("paint.weight_paint",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("mode", 'INVERT'),
+       ],
+      },
+     ),
+    ("paint.weight_paint",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("mode", 'SMOOTH'),
        ],
       },
      ),
