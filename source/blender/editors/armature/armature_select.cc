@@ -20,10 +20,11 @@
 #include "BLI_string_utils.hh"
 
 #include "BKE_action.h"
-#include "BKE_armature.h"
-#include "BKE_context.h"
+#include "BKE_armature.hh"
+#include "BKE_context.hh"
 #include "BKE_layer.h"
 #include "BKE_object.hh"
+#include "BKE_object_types.hh"
 #include "BKE_report.h"
 
 #include "RNA_access.hh"
@@ -69,7 +70,7 @@ Base *ED_armature_base_and_ebone_from_select_buffer(Base **bases,
   EditBone *ebone = nullptr;
   /* TODO(@ideasman42): optimize, eg: sort & binary search. */
   for (uint base_index = 0; base_index < bases_len; base_index++) {
-    if (bases[base_index]->object->runtime.select_id == hit_object) {
+    if (bases[base_index]->object->runtime->select_id == hit_object) {
       base = bases[base_index];
       break;
     }
@@ -93,7 +94,7 @@ Object *ED_armature_object_and_ebone_from_select_buffer(Object **objects,
   EditBone *ebone = nullptr;
   /* TODO(@ideasman42): optimize, eg: sort & binary search. */
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
-    if (objects[ob_index]->runtime.select_id == hit_object) {
+    if (objects[ob_index]->runtime->select_id == hit_object) {
       ob = objects[ob_index];
       break;
     }
@@ -117,7 +118,7 @@ Base *ED_armature_base_and_pchan_from_select_buffer(Base **bases,
   bPoseChannel *pchan = nullptr;
   /* TODO(@ideasman42): optimize, eg: sort & binary search. */
   for (uint base_index = 0; base_index < bases_len; base_index++) {
-    if (bases[base_index]->object->runtime.select_id == hit_object) {
+    if (bases[base_index]->object->runtime->select_id == hit_object) {
       base = bases[base_index];
       break;
     }
@@ -772,7 +773,7 @@ cache_end:
 
       if (use_cycle) {
         bArmature *arm = static_cast<bArmature *>(obedit_orig->data);
-        int ob_index = obedit_orig->runtime.select_id & 0xFFFF;
+        int ob_index = obedit_orig->runtime->select_id & 0xFFFF;
         int bone_index = BLI_findindex(arm->edbo, ebone_active_orig);
         /* Offset from the current active bone, so we cycle onto the next. */
         cycle_order.offset.ob = ob_index;

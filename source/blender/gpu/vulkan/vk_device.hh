@@ -15,7 +15,7 @@
 #include "vk_common.hh"
 #include "vk_debug.hh"
 #include "vk_descriptor_pools.hh"
-#include "vk_sampler.hh"
+#include "vk_samplers.hh"
 
 namespace blender::gpu {
 class VKBackend;
@@ -58,10 +58,8 @@ class VKDevice : public NonCopyable {
   VkDevice vk_device_ = VK_NULL_HANDLE;
   uint32_t vk_queue_family_ = 0;
   VkQueue vk_queue_ = VK_NULL_HANDLE;
-  VkCommandPool vk_command_pool_ = VK_NULL_HANDLE;
 
-  /* Dummy sampler for now. */
-  VKSampler sampler_;
+  VKSamplers samplers_;
 
   /**
    * Available Contexts for this device.
@@ -76,7 +74,6 @@ class VKDevice : public NonCopyable {
 
   /** Allocator used for texture and buffers and other resources. */
   VmaAllocator mem_allocator_ = VK_NULL_HANDLE;
-  VKDescriptorPools descriptor_pools_;
 
   /** Limits of the device linked to this context. */
   VkPhysicalDeviceProperties vk_physical_device_properties_ = {};
@@ -142,14 +139,9 @@ class VKDevice : public NonCopyable {
     return vk_queue_;
   }
 
-  VKDescriptorPools &descriptor_pools_get()
+  const uint32_t queue_family_get() const
   {
-    return descriptor_pools_;
-  }
-
-  const uint32_t *queue_family_ptr_get() const
-  {
-    return &vk_queue_family_;
+    return vk_queue_family_;
   }
 
   VmaAllocator mem_allocator_get() const
@@ -167,14 +159,9 @@ class VKDevice : public NonCopyable {
     return debugging_tools_;
   }
 
-  const VKSampler &sampler_get() const
+  VKSamplers &samplers()
   {
-    return sampler_;
-  }
-
-  const VkCommandPool vk_command_pool_get() const
-  {
-    return vk_command_pool_;
+    return samplers_;
   }
 
   bool is_initialized() const;
@@ -231,8 +218,6 @@ class VKDevice : public NonCopyable {
   void init_physical_device_features();
   void init_debug_callbacks();
   void init_memory_allocator();
-  void init_command_pools();
-  void init_descriptor_pools();
 
   /* During initialization the backend requires access to update the workarounds. */
   friend VKBackend;
