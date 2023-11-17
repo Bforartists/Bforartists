@@ -28,24 +28,24 @@ class GPENCIL_MT_material_context_menu(Menu):
             layout.operator("gpencil.material_lock_all", icon='LOCKED', text="Lock All")
             layout.operator("gpencil.material_unlock_all", icon='UNLOCKED', text="Unlock All")
 
-	        layout.operator("gpencil.material_lock_unused", text="Lock Unselected", icon='LOCKED')
-	        layout.operator("gpencil.lock_layer", text="Lock Unused", icon='LOCKED')
+            layout.operator("gpencil.material_lock_unused", text="Lock Unselected", icon='LOCKED')
+            layout.operator("gpencil.lock_layer", text="Lock Unused", icon='LOCKED')
 	
-	        layout.separator()
+            layout.separator()
 	        
-	        layout.operator("gpencil.material_to_vertex_color", text="Convert Materials to Color Attribute", icon='NODE_VERTEX_COLOR')
-	        layout.operator("gpencil.extract_palette_vertex", text="Extract Palette from Color Attribute", icon='MATERIAL_DATA')
+            layout.operator("gpencil.material_to_vertex_color", text="Convert Materials to Color Attribute", icon='NODE_VERTEX_COLOR')
+            layout.operator("gpencil.extract_palette_vertex", text="Extract Palette from Color Attribute", icon='MATERIAL_DATA')
 	        
-	        layout.separator()
+            layout.separator()
 	        
-			layout.operator("gpencil.materials_copy_to_object", text="Copy Material to Selected", icon = "COPYDOWN").only_active = True
-	        layout.operator("gpencil.materials_copy_to_object", text="Copy All Materials to Selected",  icon = "COPYDOWN").only_active = False
+            layout.operator("gpencil.materials_copy_to_object", text="Copy Material to Selected", icon = "COPYDOWN").only_active = True
+            layout.operator("gpencil.materials_copy_to_object", text="Copy All Materials to Selected",  icon = "COPYDOWN").only_active = False
 	
-	        layout.separator()
+            layout.separator()
 	        
-	        layout.operator("gpencil.stroke_merge_material", text="Merge Similar", icon = "MERGE")
+            layout.operator("gpencil.stroke_merge_material", text="Merge Similar", icon = "MERGE")
 	        
-	    layout.operator("object.material_slot_remove_unused", icon = "DELETE")
+        layout.operator("object.material_slot_remove_unused", icon = "DELETE")
 
 
 class GPENCIL_UL_matslots(UIList):
