@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <iomanip>
+#include <iostream>
 
 namespace blender::timeit {
 
@@ -16,7 +17,7 @@ void print_duration(Nanoseconds duration)
     std::cout << duration.count() << " ns";
   }
   else if (duration < seconds(5)) {
-    std::cout << std::fixed << std::setprecision(1) << duration.count() / 1.0e6 << " ms";
+    std::cout << std::fixed << std::setprecision(2) << duration.count() / 1.0e6 << " ms";
   }
   else if (duration > seconds(90)) {
     /* Long durations: print seconds, and also H:m:s */
@@ -29,6 +30,16 @@ void print_duration(Nanoseconds duration)
   else {
     std::cout << std::fixed << std::setprecision(1) << duration.count() / 1.0e9 << " s";
   }
+}
+
+ScopedTimer::~ScopedTimer()
+{
+  const TimePoint end = Clock::now();
+  const Nanoseconds duration = end - start_;
+
+  std::cout << "Timer '" << name_ << "' took ";
+  print_duration(duration);
+  std::cout << '\n';
 }
 
 ScopedTimerAveraged::~ScopedTimerAveraged()
