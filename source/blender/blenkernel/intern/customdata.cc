@@ -6,7 +6,7 @@
  * \ingroup bke
  * Implementation of CustomData.
  *
- * BKE_customdata.h contains the function prototypes for this file.
+ * BKE_customdata.hh contains the function prototypes for this file.
  */
 
 #include "MEM_guardedalloc.h"
@@ -43,7 +43,7 @@
 #include "BLT_translation.h"
 
 #include "BKE_anonymous_attribute_id.hh"
-#include "BKE_customdata.h"
+#include "BKE_customdata.hh"
 #include "BKE_customdata_file.h"
 #include "BKE_deform.h"
 #include "BKE_main.h"
@@ -3257,38 +3257,6 @@ int CustomData_number_of_layers_typemask(const CustomData *data, const eCustomDa
   }
 
   return number;
-}
-
-void CustomData_free_temporary(CustomData *data, const int totelem)
-{
-  int i, j;
-  bool changed = false;
-  for (i = 0, j = 0; i < data->totlayer; i++) {
-    CustomDataLayer *layer = &data->layers[i];
-
-    if (i != j) {
-      data->layers[j] = data->layers[i];
-    }
-
-    if ((layer->flag & CD_FLAG_TEMPORARY) == CD_FLAG_TEMPORARY) {
-      customData_free_layer__internal(layer, totelem);
-      changed = true;
-    }
-    else {
-      j++;
-    }
-  }
-
-  data->totlayer = j;
-
-  if (data->totlayer <= data->maxlayer - CUSTOMDATA_GROW) {
-    customData_resize(data, -CUSTOMDATA_GROW);
-    changed = true;
-  }
-
-  if (changed) {
-    customData_update_offsets(data);
-  }
 }
 
 void CustomData_set_only_copy(const CustomData *data, const eCustomDataMask mask)
