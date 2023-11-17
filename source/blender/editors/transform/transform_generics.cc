@@ -26,10 +26,10 @@
 #include "GPU_immediate.h"
 #include "GPU_matrix.h"
 
-#include "BKE_context.h"
+#include "BKE_context.hh"
 #include "BKE_layer.h"
 #include "BKE_mask.h"
-#include "BKE_modifier.h"
+#include "BKE_modifier.hh"
 #include "BKE_paint.hh"
 
 #include "SEQ_transform.hh"
@@ -841,15 +841,15 @@ void applyTransObjects(TransInfo *t)
 
 static void transdata_restore_basic(TransDataBasic *td_basic)
 {
-  if (td_basic->val) {
-    *td_basic->val = td_basic->ival;
+  if (td_basic->loc) {
+    copy_v3_v3(td_basic->loc, td_basic->iloc);
   }
 
   /* TODO(mano-wii): Only use 3D or larger vectors in `td->loc`.
    * If `loc` and `val` point to the same address, it may indicate that `loc` is not 3D which is
    * not safe for `copy_v3_v3`. */
-  if (td_basic->loc && td_basic->val != td_basic->loc) {
-    copy_v3_v3(td_basic->loc, td_basic->iloc);
+  if (td_basic->val && td_basic->val != td_basic->loc) {
+    *td_basic->val = td_basic->ival;
   }
 }
 

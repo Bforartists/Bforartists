@@ -1204,10 +1204,11 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_select_sculpt_curves")
                 layout.menu("VIEW3D_MT_sculpt_curves")
                 layout.template_node_operator_asset_root_items()
-
+            else:
+                layout.template_node_operator_asset_root_items()
         else:
             layout.menu("VIEW3D_MT_object")
-
+            layout.template_node_operator_asset_root_items()
 
 # ********** Menu **********
 
@@ -3344,6 +3345,7 @@ class VIEW3D_MT_object(Menu):
                     text="Interactive Light Track",
                     icon="NODE_LIGHTPATH")
 
+        layout.template_node_operator_asset_menu_items(catalog_path="Object")
 
 class VIEW3D_MT_object_animation(Menu):
     bl_label = "Animation"
@@ -3645,6 +3647,7 @@ class VIEW3D_MT_object_context_menu(Menu):
 
         layout.menu("VIEW3D_MT_object_showhide")  # BFA - added to context menu
 
+        layout.template_node_operator_asset_menu_items(catalog_path="Object")
 
 class VIEW3D_MT_object_shading(Menu):
     # XXX, this menu is a place to store shading operator in object mode
@@ -3738,6 +3741,7 @@ class VIEW3D_MT_object_apply(Menu):
             text_ctxt=i18n_contexts.default,
             icon="APPLY_PARENT_INVERSE")
 
+        layout.template_node_operator_asset_menu_items(catalog_path="Object/Apply")
 
 class VIEW3D_MT_object_parent(Menu):
     bl_label = "Parent"
@@ -3833,7 +3837,7 @@ class VIEW3D_MT_object_quick_effects(Menu):
         layout.operator("object.quick_explode", icon="MOD_EXPLODE")
         layout.operator("object.quick_smoke", icon="MOD_SMOKE")
         layout.operator("object.quick_liquid", icon="MOD_FLUIDSIM")
-
+        layout.template_node_operator_asset_menu_items(catalog_path="Object/Quick Effects")
 
 class VIEW3D_MT_object_showhide(Menu):
     bl_label = "Show/Hide"
@@ -3931,6 +3935,7 @@ class VIEW3D_MT_object_convert(Menu):
         if ob and ob.type == 'CURVES':
             layout.operator("curves.convert_to_particle_system", text="Particle System", icon="PARTICLES")
 
+        layout.template_node_operator_asset_menu_items(catalog_path="Object/Convert")
 
 class VIEW3D_MT_make_links(Menu):
     bl_label = "Link/Transfer Data"
@@ -5994,6 +5999,10 @@ class VIEW3D_MT_edit_greasepencil_delete(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        #layout.operator("grease_pencil.delete", icon="DELETE") #BFA - removed due to redundency
+
+        #layout.separator()
 
         layout.operator_enum("grease_pencil.dissolve", "type")
 
