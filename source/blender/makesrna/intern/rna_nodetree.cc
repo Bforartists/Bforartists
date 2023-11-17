@@ -38,7 +38,7 @@
 #include "BKE_image.h"
 #include "BKE_node.h"
 #include "BKE_node_runtime.hh"
-#include "BKE_node_tree_update.h"
+#include "BKE_node_tree_update.hh"
 #include "BKE_texture.h"
 
 #include "RNA_access.hh"
@@ -593,7 +593,7 @@ static const EnumPropertyItem node_cryptomatte_layer_name_items[] = {
 #  include "BLI_linklist.h"
 #  include "BLI_string.h"
 
-#  include "BKE_context.h"
+#  include "BKE_context.hh"
 #  include "BKE_idprop.h"
 
 #  include "BKE_global.h"
@@ -1800,6 +1800,15 @@ static bool rna_GeometryNodeTree_is_modifier_get(PointerRNA *ptr)
 static void rna_GeometryNodeTree_is_modifier_set(PointerRNA *ptr, bool value)
 {
   geometry_node_asset_trait_flag_set(ptr, GEO_NODE_ASSET_MODIFIER, value);
+}
+
+static bool rna_GeometryNodeTree_is_mode_object_get(PointerRNA *ptr)
+{
+  return geometry_node_asset_trait_flag_get(ptr, GEO_NODE_ASSET_OBJECT);
+}
+static void rna_GeometryNodeTree_is_mode_object_set(PointerRNA *ptr, bool value)
+{
+  geometry_node_asset_trait_flag_set(ptr, GEO_NODE_ASSET_OBJECT, value);
 }
 
 static bool rna_GeometryNodeTree_is_mode_edit_get(PointerRNA *ptr)
@@ -10267,6 +10276,14 @@ static void rna_def_geometry_nodetree(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Modifier", "The node group is used as a geometry modifier\nOnly relevant for marked nodegroups as assets");
   RNA_def_property_boolean_funcs(
       prop, "rna_GeometryNodeTree_is_modifier_get", "rna_GeometryNodeTree_is_modifier_set");
+  RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update_asset");
+
+  prop = RNA_def_property(srna, "is_mode_object", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", GEO_NODE_ASSET_EDIT);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_ui_text(prop, "Edit", "The node group is used in object mode");
+  RNA_def_property_boolean_funcs(
+      prop, "rna_GeometryNodeTree_is_mode_object_get", "rna_GeometryNodeTree_is_mode_object_set");
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update_asset");
 
   prop = RNA_def_property(srna, "is_mode_edit", PROP_BOOLEAN, PROP_NONE);
