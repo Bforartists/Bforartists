@@ -13,9 +13,9 @@
 #include "BKE_lib_query.h"
 #include "BKE_mesh_runtime.hh"
 #include "BKE_mesh_wrapper.hh"
-#include "BKE_modifier.h"
+#include "BKE_modifier.hh"
 #include "BKE_object.hh"
-#include "BKE_volume.h"
+#include "BKE_volume.hh"
 
 #include "BLT_translation.h"
 
@@ -202,7 +202,7 @@ ModifierTypeInfo modifierType_MeshToVolume = {
     /*struct_name*/ "MeshToVolumeModifierData",
     /*struct_size*/ sizeof(MeshToVolumeModifierData),
     /*srna*/ &RNA_MeshToVolumeModifier,
-    /*type*/ eModifierTypeType_Constructive,
+    /*type*/ ModifierTypeType::Constructive,
     /*flags*/ static_cast<ModifierTypeFlag>(0),
     /*icon*/ ICON_VOLUME_DATA, /* TODO: Use correct icon. */
 

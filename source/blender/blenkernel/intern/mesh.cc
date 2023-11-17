@@ -45,7 +45,7 @@
 #include "BKE_attribute.hh"
 #include "BKE_bpath.h"
 #include "BKE_deform.h"
-#include "BKE_editmesh.h"
+#include "BKE_editmesh.hh"
 #include "BKE_global.h"
 #include "BKE_idtype.h"
 #include "BKE_key.h"
@@ -57,7 +57,7 @@
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_mesh_runtime.hh"
 #include "BKE_mesh_wrapper.hh"
-#include "BKE_modifier.h"
+#include "BKE_modifier.hh"
 #include "BKE_multires.hh"
 #include "BKE_object.hh"
 
