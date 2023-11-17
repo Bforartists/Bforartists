@@ -17,9 +17,10 @@
 #include "BKE_lib_id.h"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_wrapper.hh"
-#include "BKE_modifier.h"
+#include "BKE_modifier.hh"
+#include "BKE_object_types.hh"
 #include "BKE_pointcloud.h"
-#include "BKE_volume.h"
+#include "BKE_volume.hh"
 
 #include "DNA_collection_types.h"
 #include "DNA_object_types.h"
@@ -753,7 +754,7 @@ void GeometrySet::modify_geometry_sets(ForeachSubGeometryCallback callback)
 
 bool object_has_geometry_set_instances(const Object &object)
 {
-  const GeometrySet *geometry_set = object.runtime.geometry_set_eval;
+  const GeometrySet *geometry_set = object.runtime->geometry_set_eval;
   if (geometry_set == nullptr) {
     return false;
   }
