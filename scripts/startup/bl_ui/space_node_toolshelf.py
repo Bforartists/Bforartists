@@ -4969,6 +4969,11 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceNeighbors"
 
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = col.operator("node.add_node", text=" Face Set        ", icon = "FACE_SET")
+                props.use_transform = True
+                props.type = "GeometryNodeToolFaceSet"
+
             props = col.operator("node.add_node", text=" Is Face Planar         ", icon = "PLANAR")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceIsPlanar"
@@ -4981,12 +4986,12 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputEdgeSmooth"
 
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
             props = col.operator("node.add_node", text=" Mesh Island             ", icon = "UV_ISLANDSEL")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshIsland"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text = " Shortest Edge Path ", icon = "SELECT_SHORTESTPATH")
             props.use_transform = True
@@ -5031,6 +5036,11 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "FACE_NEIGHBORS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceNeighbors"
+
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = flow.operator("node.add_node", text="", icon = "FACE_SET")
+                props.use_transform = True
+                props.type = "GeometryNodeToolFaceSet"
 
             props = flow.operator("node.add_node", text="", icon = "PLANAR")
             props.use_transform = True
@@ -5144,6 +5154,11 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = col.operator("node.add_node", text=" Set Face Set   ", icon = "FACE_SET")
+                props.use_transform = True
+                props.type = "GeometryNodeToolFaceSet"
+
             props = col.operator("node.add_node", text=" Set Shade Smooth   ", icon = "SET_SHADE_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeSetShadeSmooth"
@@ -5155,6 +5170,11 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = flow.operator("node.add_node", text="", icon = "SET_FACE_SET")
+                props.use_transform = True
+                props.type = "GeometryNodeToolSetFaceSet"
 
             props = flow.operator("node.add_node", text = "", icon = "SET_SHADE_SMOOTH")
             props.use_transform = True
