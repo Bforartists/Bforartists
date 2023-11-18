@@ -3891,6 +3891,11 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
 
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = col.operator("node.add_node", text=" Selection                 ", icon = "RESTRICT_SELECT_OFF")
+                props.use_transform = True
+                props.type = "GeometryNodeToolSelection"
+
         #### Icon Buttons
 
         else:
@@ -3922,6 +3927,11 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
+
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = flow.operator("node.add_node", text="", icon = "RESTRICT_SELECT_OFF")
+                props.use_transform = True
+                props.type = "GeometryNodeToolSelection"
 
 
 #add geometry panel, sample subpanel
@@ -4043,6 +4053,11 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSetPosition"
 
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = col.operator("node.add_node", text=" Set Selection                 ", icon = "SET_SELECTION")
+                props.use_transform = True
+                props.type = "GeometryNodeToolSetSelection"
+
         #### Icon Buttons
 
         else:
@@ -4058,6 +4073,11 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
             props.use_transform = True
             props.type = "GeometryNodeTransform"
+
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = flow.operator("node.add_node", text="", icon = "SET_SELECTION")
+                props.use_transform = True
+                props.type = "GeometryNodeToolSetSelection"
 
 
 #add geometry panel, operations subpanel
