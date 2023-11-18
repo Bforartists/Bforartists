@@ -2057,8 +2057,8 @@ three_dots
 
 face_maps_active
 select_key
-#~ DEF_ICON_BLANK(2088)
-#~ DEF_ICON_BLANK(2089)
+face_set
+set_face_set
 #~ DEF_ICON_BLANK(2090)
 #~ DEF_ICON_BLANK(2091)
 #~ DEF_ICON_BLANK(2092)
