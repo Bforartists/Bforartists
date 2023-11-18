@@ -3676,6 +3676,11 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = col.operator("node.add_node", text=" Cursor           ", icon = "CURSOR")
+                props.use_transform = True
+                props.type = "GeometryNodeTool3DCursor"
+
             props = col.operator("node.add_node", text=" Collection Info     ", icon = "COLLECTION_INFO")
             props.use_transform = True
             props.type = "GeometryNodeCollectionInfo"
@@ -3700,6 +3705,7 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSelfObject"
 
+
         #### Icon Buttons
 
         else:
@@ -3707,6 +3713,11 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = flow.operator("node.add_node", text="", icon = "CURSOR")
+                props.use_transform = True
+                props.type = "GeometryNodeTool3DCursor"
 
             props = flow.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
             props.use_transform = True
