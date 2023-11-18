@@ -720,7 +720,7 @@ class NODE_PT_geometry_node_tool_object_types(Panel):
 
         types = [
             ("is_type_mesh", "Mesh", 'MESH_DATA'),
-            ("is_type_curve", "Hair Curves", 'CURVES_DATA'),
+            ("is_type_curve", "Hair Curves", 'CURVES'),
         ]
         if context.preferences.experimental.use_new_point_cloud_type:
             types.append(("is_type_point_cloud", "Point Cloud", 'POINTCLOUD_DATA'))
