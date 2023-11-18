@@ -11214,6 +11214,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_MESH_FACE_NEIGHBORS:
       return ICON_FACE_NEIGHBORS;
 
+    case GEO_NODE_TOOL_FACE_SET:
+      return ICON_FACE_SET;
+
     case GEO_NODE_INPUT_MESH_ISLAND:
       return ICON_UV_ISLANDSEL;
 
@@ -11438,6 +11441,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_TOOL_SET_SELECTION:
       return ICON_SET_SELECTION;
+
+    case GEO_NODE_TOOL_SET_FACE_SET:
+      return ICON_SET_FACE_SET;
 
     case GEO_NODE_SET_SHADE_SMOOTH:
       return ICON_SET_SHADE_SMOOTH;
