@@ -735,6 +735,10 @@ class SEQUENCER_MT_add(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
+        layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "SEQUENCER_MT_add"
+
+        layout.separator()
+
         layout.menu("SEQUENCER_MT_add_scene", text="Scene", icon='SCENE_DATA')
 
         bpy_data_movieclips_len = len(bpy.data.movieclips)
