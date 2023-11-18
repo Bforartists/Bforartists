@@ -11040,6 +11040,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CAPTURE_ATTRIBUTE:
       return ICON_ATTRIBUTE_CAPTURE;
 
+    case GEO_NODE_TOOL_3D_CURSOR:
+      return ICON_CURSOR;
+
     case GEO_NODE_COLLECTION_INFO:
       return ICON_COLLECTION_INFO;
 
