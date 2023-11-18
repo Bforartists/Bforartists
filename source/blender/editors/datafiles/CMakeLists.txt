@@ -1989,7 +1989,7 @@ trash
 
 scale_average
 set_time
-#~ DEF_ICON_BLANK(2020)
+set_selection
 #~ DEF_ICON_BLANK(2021)
 #~ DEF_ICON_BLANK(2022)
 #~ DEF_ICON_BLANK(2023)
