@@ -11226,6 +11226,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_RADIUS:
       return ICON_RADIUS;
 
+    case GEO_NODE_TOOL_SELECTION:
+      return ICON_RESTRICT_SELECT_OFF;
+
     case GEO_NODE_INPUT_SCENE_TIME:
       return ICON_TIME;
 
@@ -11429,6 +11432,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_SET_POSITION:
       return ICON_SET_POSITION;
+
+    case GEO_NODE_TOOL_SET_SELECTION:
+      return ICON_SET_SELECTION;
 
     case GEO_NODE_SET_SHADE_SMOOTH:
       return ICON_SET_SHADE_SMOOTH;
