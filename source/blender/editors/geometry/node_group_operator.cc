@@ -878,7 +878,7 @@ static void catalog_assets_draw(const bContext *C, Menu *menu)
     uiItemFullO_ptr(layout,
                     ot,
                     IFACE_(asset->get_name().c_str()),
-                    ICON_NONE,
+                    ICON_NODETREE, /*BFA*/
                     nullptr,
                     WM_OP_INVOKE_REGION_WIN,
                     UI_ITEM_NONE,
@@ -986,7 +986,7 @@ static void catalog_assets_draw_unassigned(const bContext *C, Menu *menu)
       add_separator = false;
     }
     if (first) {
-      uiItemL(layout, IFACE_("Non-Assets"), ICON_NONE);
+      uiItemL(layout, IFACE_("Local Unmarked Assets:"), ICON_NONE);
       first = false;
     }
 
@@ -994,7 +994,7 @@ static void catalog_assets_draw_unassigned(const bContext *C, Menu *menu)
     uiItemFullO_ptr(layout,
                     ot,
                     group->id.name + 2,
-                    ICON_NONE,
+                    ICON_NODETREE, /*BFA*/
                     nullptr,
                     WM_OP_INVOKE_REGION_WIN,
                     UI_ITEM_NONE,
