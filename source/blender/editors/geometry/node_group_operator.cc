@@ -958,7 +958,7 @@ static void catalog_assets_draw_unassigned(const bContext *C, Menu *menu)
     uiItemFullO_ptr(layout,
                     ot,
                     IFACE_(asset->get_name().c_str()),
-                    ICON_NONE,
+                    ICON_NODETREE, /*BFA*/
                     nullptr,
                     WM_OP_INVOKE_REGION_WIN,
                     UI_ITEM_NONE,
