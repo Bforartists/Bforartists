@@ -3,13 +3,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-from bpy.types import Operator, Menu
+from bpy.types import Operator
 from bl_operators.presets import AddPresetBase
 from bl_ui.utils import PresetPanel
-import os
-from math import degrees
 
-from .sun_calc import format_lat_long, format_time, format_hms, sun
+from .sun_calc import format_time, format_hms, sun
 
 
 # -------------------------------------------------------------------

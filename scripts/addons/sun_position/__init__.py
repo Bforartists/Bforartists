@@ -31,10 +31,11 @@ if "bpy" in locals():
     importlib.reload(properties)
     importlib.reload(ui_sun)
     importlib.reload(hdr)
+    importlib.reload(sun_calc)
     importlib.reload(translations)
 
 else:
-    from . import properties, ui_sun, hdr, translations
+    from . import properties, ui_sun, hdr, sun_calc, translations
 
 import bpy
 from bpy.app.handlers import persistent
