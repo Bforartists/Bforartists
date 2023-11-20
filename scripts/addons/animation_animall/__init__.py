@@ -17,7 +17,6 @@ bl_info = {
 import bpy
 from bpy.types import (Operator, Panel, AddonPreferences)
 from bpy.props import (BoolProperty, StringProperty)
-from bpy.app.handlers import persistent
 from bpy.app.translations import (pgettext_iface as iface_,
                                   pgettext_data as data_)
 from . import translations
@@ -128,7 +127,7 @@ def get_attribute(data, name, type=None, domain=None):
 def get_attribute_paths(data, attribute, key_selected):
     # Cannot animate string attributes?
     if attribute.data_type == 'STRING':
-        yield ("", "")
+        return ()
 
     if attribute.data_type in {'FLOAT', 'INT', 'BOOLEAN', 'INT8'}:
         attribute_key = "value"
