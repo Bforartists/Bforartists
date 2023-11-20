@@ -1771,7 +1771,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
             ['Roughness', rough_abbr + gloss_abbr, None],
             ['Normal', normal_abbr + bump_abbr, None],
             ['Transmission Weight', tags.transmission.split(' '), None],
-            ['Emission', tags.emission.split(' '), None],
+            ['Emission Color', tags.emission.split(' '), None],
             ['Alpha', tags.alpha.split(' '), None],
             ['Ambient Occlusion', tags.ambient_occlusion.split(' '), None],
         ]
@@ -1887,8 +1887,8 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                     # This is a simple connection Texture --> Input slot
                     link = connect_sockets(active_node.inputs[sname[0]], texture_node.outputs[0])
 
-                # Use non-color for all but 'Base Color' Textures
-                if not sname[0] in ['Base Color', 'Emission'] and texture_node.image:
+                # Use non-color except for color inputs
+                if sname[0] not in ['Base Color', 'Emission Color'] and texture_node.image:
                     texture_node.image.colorspace_settings.is_data = True
 
             else:
