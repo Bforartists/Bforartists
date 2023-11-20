@@ -176,7 +176,7 @@ static void unassigned_assets_draw(const bContext *C, Menu *menu)
       add_separator = false;
     }
     if (first) {
-      uiItemL(layout, IFACE_("Non-Assets"), ICON_NONE);
+      uiItemL(layout, IFACE_("Local Unmarked Assets:"), ICON_NONE); /*BFA - changed label*/
       first = false;
     }
 
@@ -184,7 +184,7 @@ static void unassigned_assets_draw(const bContext *C, Menu *menu)
     uiItemFullO_ptr(layout,
                     ot,
                     group->id.name + 2,
-                    ICON_NONE,
+                    ICON_NODETREE, /*BFA*/
                     nullptr,
                     WM_OP_INVOKE_DEFAULT,
                     UI_ITEM_NONE,
