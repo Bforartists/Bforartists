@@ -119,7 +119,6 @@ def draw_color_balance(layout, color_balance):
         col.prop(color_balance, "invert_slope", text="Invert", icon='ARROW_LEFTRIGHT')
         split.template_color_picker(color_balance, "slope", value_slider=True, cubic=True)
 
-
 class SEQUENCER_PT_active_tool(ToolActivePanelHelper, Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
@@ -155,18 +154,25 @@ class SEQUENCER_HT_tool_header(Header):
 class SEQUENCER_HT_header(Header):
     bl_space_type = 'SEQUENCE_EDITOR'
 
+    def draw_seq(self, layout, context): # BFA - 3D Sequencer
+        pass
+
     def draw(self, context):
         layout = self.layout
 
         st = context.space_data
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
         layout.prop(st, "view_type", text="")
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
         tool_settings = context.tool_settings
         sequencer_tool_settings = tool_settings.sequencer_tool_settings
 
         layout.separator_spacer()
+        row = layout.row() # BFA - 3D Sequencer
+        row.ui_units_x = 6 # BFA - 3D Sequencer
+        row.template_ID(st, "scene_override", unlink="sequencer.remove_scene_override", filter='INACTIVE') # BFA - 3D Sequencer
 
         if st.view_type == 'PREVIEW':
             row = layout.row(align=True)
@@ -181,7 +187,7 @@ class SEQUENCER_HT_header(Header):
             row.prop(tool_settings, "use_snap_sequencer", text="")
             sub = row.row(align=True)
             sub.popover(panel="SEQUENCER_PT_snapping", text = "")
-
+        
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             layout.prop(st, "display_mode", text="", icon_only=True)
             layout.prop(st, "preview_channels", text="", icon_only=True)
@@ -1314,7 +1320,6 @@ class SEQUENCER_MT_context_menu(Menu):
     def draw(self, context):
         ed = context.scene.sequence_editor
         if ed.selected_retiming_keys:
-
             self.draw_retime(context)
         else:
             self.draw_generic(context)
