@@ -681,6 +681,8 @@ typedef struct SpaceSeq {
   struct SequencerPreviewOverlay preview_overlay;
   struct SequencerTimelineOverlay timeline_overlay;
 
+  struct Scene *scene_override; /*BFA - 3D Sequencer*/
+
   /** Multi-view current eye - for internal use. */
   char multiview_eye;
   char _pad2[7];
