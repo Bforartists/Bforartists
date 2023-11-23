@@ -444,7 +444,7 @@ static void sequencer_select_do_updates(bContext *C, Scene *scene) /*BFA - warni
 static int sequencer_de_select_all_exec(bContext *C, wmOperator *op)
 {
   int action = RNA_enum_get(op->ptr, "action");
-  Scene *scene = CTX_data_scene(C); /*BFA - warning, 'scene': local variable is initialized but not referenced*/
+  /*Scene *scene = CTX_data_scene(C);*/ /*BFA - warning, 'scene': local variable is initialized but not referenced*/
 
   if (sequencer_view_has_preview_poll(C) && !sequencer_view_preview_only_poll(C)) {
     return OPERATOR_CANCELLED;
@@ -538,7 +538,7 @@ void SEQUENCER_OT_select_all(wmOperatorType *ot)
 
 static int sequencer_select_inverse_exec(bContext *C, wmOperator * /*op*/)
 {
-  Scene *scene = CTX_data_scene(C); /*BFA - warning, 'scene': local variable is initialized but not referenced*/
+  /*Scene *scene = CTX_data_scene(C);*/ /*BFA - warning, 'scene': local variable is initialized but not referenced*/
 
   if (sequencer_view_has_preview_poll(C) && !sequencer_view_preview_only_poll(C)) {
     return OPERATOR_CANCELLED;
