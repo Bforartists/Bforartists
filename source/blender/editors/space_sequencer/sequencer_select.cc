@@ -428,7 +428,8 @@ static bool seq_point_image_isect(const Scene *scene, const Sequence *seq, float
       point, seq_image_quad[0], seq_image_quad[1], seq_image_quad[2], seq_image_quad[3]);
 }
 
-static void sequencer_select_do_updates(bContext *C, Scene *scene)
+static void sequencer_select_do_updates(bContext *C, Scene *scene) /*BFA - warning, 'scene': unreferenced formal parameter*/
+
 {
   ED_outliner_select_sync_from_sequence_tag(C);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
@@ -443,7 +444,7 @@ static void sequencer_select_do_updates(bContext *C, Scene *scene)
 static int sequencer_de_select_all_exec(bContext *C, wmOperator *op)
 {
   int action = RNA_enum_get(op->ptr, "action");
-  Scene *scene = CTX_data_scene(C);
+  Scene *scene = CTX_data_scene(C); /*BFA - warning, 'scene': local variable is initialized but not referenced*/
 
   if (sequencer_view_has_preview_poll(C) && !sequencer_view_preview_only_poll(C)) {
     return OPERATOR_CANCELLED;
@@ -537,7 +538,7 @@ void SEQUENCER_OT_select_all(wmOperatorType *ot)
 
 static int sequencer_select_inverse_exec(bContext *C, wmOperator * /*op*/)
 {
-  Scene *scene = CTX_data_scene(C);
+  Scene *scene = CTX_data_scene(C); /*BFA - warning, 'scene': local variable is initialized but not referenced*/
 
   if (sequencer_view_has_preview_poll(C) && !sequencer_view_preview_only_poll(C)) {
     return OPERATOR_CANCELLED;
