@@ -39,7 +39,7 @@ static int sequencer_rename_channel_invoke(bContext *C, wmOperator * /*op*/, con
   float mouse_y = UI_view2d_region_to_view_y(context.timeline_region_v2d, event->mval[1]);
 
   sseq->runtime.rename_channel_index = mouse_y;
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, CTX_data_scene(C));
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
   return OPERATOR_FINISHED;
 }
 

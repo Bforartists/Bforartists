@@ -4254,6 +4254,33 @@ const EnumPropertyItem *RNA_scene_without_active_itemf(bContext *C,
                       rna_id_enum_filter_single,
                       scene_active);
 }
+/*############## BFA - 3D Sequencer ##############*/
+const EnumPropertyItem *RNA_seq_scene_without_active_itemf(bContext *C,
+                                                           PointerRNA * /*ptr*/,
+                                                           PropertyRNA * /*prop*/,
+                                                           bool *r_free)
+{
+  Scene *scene_active;
+  if (C != nullptr) {
+    SpaceSeq *seq = CTX_wm_space_seq(C);
+    if (seq != nullptr
+ && seq->scene_override != nullptr) {
+      scene_active = seq->scene_override;
+    }
+    else {
+      scene_active = CTX_data_scene(C);
+    }
+  }
+  else {
+    scene_active = nullptr;
+  }
+  return rna_id_itemf(r_free,
+                      C ? (ID *)CTX_data_main(C)->scenes.first : nullptr,
+                      false,
+                      rna_id_enum_filter_single,
+                      scene_active);
+}
+/*############## BFA - 3D Sequencer END ##############*/
 const EnumPropertyItem *RNA_movieclip_itemf(bContext *C,
                                             PointerRNA * /*ptr*/,
                                             PropertyRNA * /*prop*/,
