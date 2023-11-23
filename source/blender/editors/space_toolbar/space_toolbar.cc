@@ -52,6 +52,15 @@ static SpaceLink *toolbar_create(const ScrArea * /*area*/, const Scene * /*scene
   return (SpaceLink *)stoolbar;
 }
 
+static SpaceLink *toolbar_duplicate(SpaceLink *sl)
+{
+  SpaceToolbar *stoolbarn = static_cast<SpaceToolbar *>(MEM_dupallocN(sl));
+
+  /* clear or remove stuff from old */
+
+  return (SpaceLink *)stoolbarn;
+}
+
 /* add handlers, stuff you only do once or on area/region changes */
 static void toolbar_main_area_init(wmWindowManager * /*wm*/, ARegion *region)
 {
@@ -141,21 +150,23 @@ static void toolbar_blend_write(BlendWriter *writer, SpaceLink *sl)
 
 /********************* registration ********************/
 
-//static void info_blend_write(BlendWriter *writer, SpaceLink *sl)
-//{
-//  BLO_write_struct(writer, SpaceToolbar, sl);
-//}
+static void info_blend_write(BlendWriter *writer, SpaceLink *sl)
+{
+  BLO_write_struct(writer, SpaceToolbar, sl);
+}
 
-/* only called once, from space/spacetypes.c */
+/* only called once, from space/spacetypes.cc */
 void ED_spacetype_toolbar(void)
 {
-  SpaceType *st = static_cast<SpaceType *>(MEM_callocN(sizeof(SpaceType), "spacetype toolbar"));
+  /*SpaceType *st = static_cast<SpaceType *>(MEM_callocN(sizeof(SpaceType), "spacetype toolbar"));*/
+  SpaceType *st = static_cast<SpaceType *>(MEM_callocN(sizeof(*st), "spacetype toolbar"));
   ARegionType *art;
 
   st->spaceid = SPACE_TOOLBAR;
   STRNCPY(st->name, "Toolbar");
 
   st->create = toolbar_create;
+  st->duplicate = toolbar_duplicate;
   st->blend_read_data = nullptr;
   st->blend_read_after_liblink = nullptr;
   st->blend_write = toolbar_blend_write;
