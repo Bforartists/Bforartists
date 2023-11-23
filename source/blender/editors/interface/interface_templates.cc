@@ -504,7 +504,31 @@ static void id_search_cb_objects_from_scene(const bContext *C,
   FOREACH_SCENE_OBJECT_END;
   id_search_cb_tagged(C, arg_template, str, items);
 }
+/*############## BFA - 3D Sequencer ##############*/
+/**
+ * A version of 'id_search_cb' that lists all scences but the active one.
+ */
+static void id_search_cb_scenes_without_active(const bContext *C,
+                                               void *arg_template,
+                                               const char *str,
+                                               uiSearchItems *items,
+                                               const bool /*is_first*/)
+{
+  TemplateID *template_ui = (TemplateID *)arg_template;
+  ListBase *lb = template_ui->idlb;
+  Scene *active_scene = WM_window_get_active_scene(CTX_wm_window(C));
+  Main *main = CTX_data_main(C);
 
+  BKE_main_id_flag_listbase(lb, LIB_TAG_DOIT, false);
+
+  LISTBASE_FOREACH (Scene *, scene, &main->scenes) {    
+    if (scene != active_scene) {
+      scene->id.tag |= LIB_TAG_DOIT;
+    }
+  }
+  id_search_cb_tagged(C, arg_template, str, items);
+}
+/*############## BFA - 3D Sequencer End ##############*/
 static ARegion *template_ID_search_menu_item_tooltip(
     bContext *C, ARegion *region, const rcti *item_rect, void *arg, void *active)
 {
@@ -545,6 +569,13 @@ static uiBlock *id_search_menu(bContext *C, ARegion *region, void *arg_litem)
     if (template_ui.idcode == ID_OB) {
       if (template_ui.filter == UI_TEMPLATE_ID_FILTER_AVAILABLE) {
         id_search_update_fn = id_search_cb_objects_from_scene;
+      }
+    }
+
+    /* Used to filter out the active scene. */
+    if (template_ui.idcode == ID_SCE) {
+      if (template_ui.filter == UI_TEMPLATE_ID_FILTER_INACTIVE) {
+        id_search_update_fn = id_search_cb_scenes_without_active;
       }
     }
   }

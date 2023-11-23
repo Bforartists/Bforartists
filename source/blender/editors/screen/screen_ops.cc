@@ -70,6 +70,8 @@
 #include "ED_util.hh"
 #include "ED_view3d.hh"
 
+#include "SEQ_sequencer.hh"
+
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
@@ -2972,7 +2974,7 @@ static int region_scale_modal(bContext *C, wmOperator *op, const wmEvent *event)
           }
 
           ED_area_tag_redraw(rmd->area);
-          WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+          WM_event_add_notifier(C, NC_SCENE | ND_FRAME, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
         }
 
         region_scale_exit(op);
@@ -3078,7 +3080,7 @@ static int frame_offset_exec(bContext *C, wmOperator *op)
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
+  WM_event_add_notifier(C, NC_SCENE | ND_FRAME, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -5053,19 +5055,17 @@ static int screen_animation_step_invoke(bContext *C, wmOperator * /*op*/, const 
     return OPERATOR_PASS_THROUGH;
   }
 
-  wmWindow *win = CTX_wm_window(C);
-
 #ifdef PROFILE_AUDIO_SYNCH
   static int old_frame = 0;
   int newfra_int;
 #endif
 
   Main *bmain = CTX_data_main(C);
-  Scene *scene = CTX_data_scene(C);
-  ViewLayer *view_layer = WM_window_get_active_view_layer(win);
+  ScreenAnimData *sad = static_cast<ScreenAnimData *>(wt->customdata);  /*BFA - 3D Sequencer*/
+  Scene *scene = sad->scene;  /*BFA - 3D Sequencer*/
+  ViewLayer *view_layer = sad->view_layer;  /*BFA - 3D Sequencer*/
   Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer);
   Scene *scene_eval = (depsgraph != nullptr) ? DEG_get_evaluated_scene(depsgraph) : nullptr;
-  ScreenAnimData *sad = static_cast<ScreenAnimData *>(wt->customdata);
   wmWindowManager *wm = CTX_wm_manager(C);
   int sync;
   double time;
@@ -5313,7 +5313,26 @@ int ED_screen_animation_play(bContext *C, int sync, int mode)
     ED_screen_animation_timer(C, 0, 0, 0);
     ED_scene_fps_average_clear(scene);
     BKE_sound_stop_scene(scene_eval);
-
+/*############## BFA - 3D Sequencer ##############*/
+    /* Stop sound in sequencer scene overrides. */
+    wmWindow *win = CTX_wm_window(C);
+    ED_screen_areas_iter (win, screen, area) {
+      LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+        if (space->spacetype == SPACE_SEQ) {
+          SpaceSeq *seq = (SpaceSeq *)space;
+          if (seq->scene_override == NULL) {
+            continue;
+          }
+          Scene *scene_override = seq->scene_override;
+          ViewLayer *view_layer_override = (ViewLayer *)(scene_override->view_layers.first);
+          Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(
+              CTX_data_main(C), scene_override, view_layer_override);
+          Scene *scene_override_eval = DEG_get_evaluated_scene(depsgraph);
+          BKE_sound_stop_scene(scene_override_eval);
+        }
+      }
+    }
+/*############## BFA - 3D Sequencer End ##############*/
     BKE_callback_exec_id_depsgraph(
         bmain, &scene->id, depsgraph, BKE_CB_EVT_ANIMATION_PLAYBACK_POST);
 

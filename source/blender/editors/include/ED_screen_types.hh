@@ -19,6 +19,9 @@ struct ARegion;
  */
 struct ScreenAnimData {
   ARegion *region; /* do not read from this, only for comparing if region exists */
+  Scene *scene; /* the scene that is playing (might different from the active scene and overridden
+                   by the sequencer). */  /*BFA - 3D Sequencer*/
+  ViewLayer *view_layer; /* The view_layer to use in the scene that is playing */  /*BFA - 3D Sequencer*/
   short redraws;
   short flag;                 /* flags for playback */
   int sfra;                   /* frame that playback was started from */
