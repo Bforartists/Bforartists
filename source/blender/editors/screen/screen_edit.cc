@@ -1701,6 +1701,9 @@ void ED_screen_animation_timer(bContext *C, int redraws, int sync, int enable)
     screen->animtimer = WM_event_timer_add(wm, win, TIMER0, (1.0 / FPS));
 
     sad->region = CTX_wm_region(C);
+    sad->scene = scene; /*BFA - 3D Sequencer*/
+    sad->view_layer = CTX_data_view_layer(C);  /*BFA - 3D Sequencer*/
+
     /* If start-frame is larger than current frame, we put current-frame on start-frame.
      * NOTE(ton): first frame then is not drawn! */
     if (PRVRANGEON) {

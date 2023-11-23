@@ -15,7 +15,6 @@ from bl_ui.space_dopesheet import (
 
 # The blank button, we don't want to switch to the editor in which we are already.
 
-
 class ANIM_OT_switch_editors_in_nla(bpy.types.Operator):
     """You are in Nonlinear Animation Editor"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "wm.switch_editor_in_nla"        # unique identifier for buttons and menu items to reference.
