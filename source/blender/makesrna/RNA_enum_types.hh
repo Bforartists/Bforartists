@@ -98,9 +98,14 @@ const EnumPropertyItem *RNA_scene_without_active_itemf(bContext *C,
                                                        PointerRNA *ptr,
                                                        PropertyRNA *prop,
                                                        bool *r_free);
-const EnumPropertyItem *RNA_scene_local_itemf(bContext *C,
-                                              PointerRNA *ptr,
-                                              PropertyRNA *prop,
+/*BFA - 3D Sequencer*/
+const EnumPropertyItem *RNA_seq_scene_without_active_itemf(bContext *C, /*BFA - 3D Sequencer*/
+                                                           PointerRNA *ptr,
+                                                           PropertyRNA *prop,
+                                                           bool *r_free);
+const EnumPropertyItem *RNA_scene_local_itemf(struct bContext *C,
+                                              struct PointerRNA *ptr,
+                                              struct PropertyRNA *prop,
                                               bool *r_free);
 const EnumPropertyItem *RNA_movieclip_itemf(bContext *C,
                                             PointerRNA *ptr,
