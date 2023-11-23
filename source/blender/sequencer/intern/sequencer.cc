@@ -16,8 +16,10 @@
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_sound_types.h"
+#include "DNA_space_types.h" /*BFA - 3D Sequencer*/
 
 #include "BLI_listbase.h"
+#include "BKE_context.hh" /*BFA - 3D Sequencer*/
 #include "BLI_path_util.h"
 
 #include "BKE_fcurve.h"
@@ -946,3 +948,26 @@ void SEQ_eval_sequences(Depsgraph *depsgraph, Scene *scene, ListBase *seqbase)
   SEQ_edit_update_muting(scene->ed);
   SEQ_sound_update_bounds_all(scene);
 }
+/*############## BFA - 3D Sequencer ##############*/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Scene override functions
+ * \{ */
+
+Scene *SEQ_get_ref_scene_for_notifiers(const bContext *C)
+{
+  SpaceSeq *seq = CTX_wm_space_seq(C);
+  if (seq != NULL && seq->scene_override != NULL) {
+    /* Passing NULL in the reference of `WM_event_add_notifier` will not restrict the update to one
+     * particular scene/screen. This needs to be done because when the notifiers are evaluated, the
+     * current scene is always expected to be the active scene in the window. In the case of an
+     * override, passing the overriden scene as a reference to the notifier will no longer cause
+     * updates. So we need to update everything for this to work. */
+    return NULL;
+  }
+  return CTX_data_scene(C);
+}
+
+/** \} */
+/*############## BFA - 3D Sequencer END ##############*/

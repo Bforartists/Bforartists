@@ -362,7 +362,18 @@ static int /*eContextResult*/ sequencer_context(const bContext *C,
     }
     return CTX_RESULT_OK;
   }
-
+  /*############## BFA - 3D Sequencer ##############*/
+  /* Scene override for the sequencer. */
+  if (CTX_data_equals(member, "scene")) {
+    SpaceSeq *sseq = CTX_wm_space_seq(C);
+    /* Check if scene is overwritten. */
+    if ((sseq != NULL) && (sseq->scene_override != NULL)) {
+      scene = sseq->scene_override;
+    }
+    CTX_data_id_pointer_set(result, &scene->id);
+    return CTX_RESULT_OK;
+  }
+  /*############## BFA - 3D Sequencer End ##############*/
   return CTX_RESULT_MEMBER_NOT_FOUND;
 }
 
@@ -928,6 +939,7 @@ static void sequencer_foreach_id(SpaceLink *space_link, LibraryForeachIDData *da
 {
   SpaceSeq *sseq = reinterpret_cast<SpaceSeq *>(space_link);
   BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, sseq->gpd, IDWALK_CB_USER);
+  BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, sseq->scene_override, IDWALK_CB_USER_ONE);
 }
 
 /* ************************************* */
