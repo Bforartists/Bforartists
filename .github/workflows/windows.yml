@@ -1,31 +1,53 @@
 name: Windows
 
 on:
-  #push:
-    #branches: [ master ]
-  schedule:
-    - cron: 0 0 * * 1
+  # push:
+  #  branches: [ "work-sequencer" ]
+  # schedule:
+  #   - cron: 0 0 * * 1
   pull_request:
     branches: [ master ]
 
 permissions: {}
 jobs:
   build:
-
     runs-on: windows-latest
+    env:
+      buildfolder: ${{ github.workspace }}
+      config : lite
 
     steps:
-    - name: make
+    - name: Create main folder
       run: |
         mkdir ~\bforartistsrepo
-        cd ~\bforartistsrepo
-        git clone https://github.com/Bforartists/Bforartists
+    - name: Svn lib
+      run: |
         mkdir ~\bforartistsrepo\lib
         cd ~\bforartistsrepo\lib
         svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
-        dir
+    # - name: Cache
+    #   env:
+    #     cache-name: ${{ github.ref }}
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: ~/bforartistsrepo
+    #     key: build-cache-${{ env.cache-name }}
+      
+    - name: Clone Repository
+      # uses: actions/checkout@v3
+      run: |
+       cd ~\bforartistsrepo
+       git clone -b work-sequencer https://github.com/zNightlord/Bforartists.git
+    
+    - name: Print make
+      run: | 
+        echo "${{ github.workspace }}\bforartistsrepo $config"
+    - name: Make
+      run: |
         cd ~\bforartistsrepo\Bforartists
         .\make.bat ninja release
+    - name: Show dir
+      run: |
         dir
         cd ~\bforartistsrepo
         dir
@@ -35,4 +57,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Bforartists-Release-${{ runner.os }}
-        path: C:/Users/runneradmin/bforartistsrepo/bfa_build_windows_Release_x64_vc16_Release/bin
+        path: C:/Users/runneradmin/bforartistsrepo/bfa_build_windows*_x64_vc17*/bin
