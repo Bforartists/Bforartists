@@ -453,6 +453,9 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
             row = col.row()
             row.separator()
             row.prop(mesh, "use_remesh_preserve_vertex_colors", text="Color Attributes")
+            row = col.row()
+            row.separator()
+            row.prop(mesh, "use_remesh_preserve_attributes", text="Attributes")
 
             row = col.row()
             row.operator("object.voxel_remesh", text="Voxel Remesh")

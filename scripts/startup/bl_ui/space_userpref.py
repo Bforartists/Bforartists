@@ -604,7 +604,7 @@ class USERPREF_PT_animation_keyframes(AnimationPanel, CenterAlignMixIn, Panel):
         edit = prefs.edit
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-
+        flow.prop(edit, "key_insert_channels", expand=True)
         flow.use_property_split = False
         flow.prop(edit, "use_visual_keying")
         flow.prop(edit, "use_keyframe_insert_needed", text="Only Insert Needed")
@@ -813,17 +813,17 @@ class USERPREF_PT_viewport_display(ViewportPanel, CenterAlignMixIn, Panel):
         row.prop(view, "show_view_name", text="View Name")
         row = col.row()
         row.separator()
-        
+
         split = row.split()
         col = split.column()
         col.use_property_split = False
         col.prop(view, "show_playback_fps", text="Playback Frame Rate (FPS)")
-        
+
         if view.show_playback_fps:
             split.prop(view, "playback_fps_samples", text="Samples")
         else:
             split.label(icon='DISCLOSURE_TRI_RIGHT')
-            
+
         layout.separator()
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
@@ -2115,7 +2115,7 @@ class USERPREF_PT_extensions(ExtensionsPanel, Panel):
         row = layout.row()
         row.label(text="The add-on to use extensions is disabled! See:")
         row.operator(
-            "wm.url_open", text="Extension Add-on Repo", icon='URL',
+            "wm.url_open", text="Extension Add-on Repository", icon='URL',
         ).url = "https://projects.blender.org/ideasman42/bl_ext"
 
 

@@ -2174,7 +2174,7 @@ class CYCLES_MATERIAL_PT_settings_surface(CyclesButtonsPanel, Panel):
         col = layout.column()
 
         col.use_property_split = True
-        col.prop(cmat, "displacement_method", text="Displacement")
+        col.prop(mat, "displacement_method", text="Displacement")
         col.prop(cmat, "emission_sampling")
         col.use_property_split = False
         col.prop(mat, "use_transparent_shadow")
