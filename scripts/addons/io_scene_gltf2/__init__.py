@@ -5,7 +5,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (4, 1, 33),
+    "version": (4, 1, 34),
     'blender': (4, 1, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -353,12 +353,15 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
         default=False)
 
     export_unused_textures: BoolProperty(
-        name='Unused textures',
-        description='Export image texture nodes not assigned to any material',
+        name='Prepare Unused textures',
+        description=(
+            'Export image texture nodes not assigned to any material. '
+            'This feature is not standard and needs an external extension to be included in the glTF file'
+        ),
         default=False)
 
     export_colors: BoolProperty(
-        name='dummy',
+        name='Dummy',
         description='Keep for compatibility only',
         default=True
     )
@@ -522,7 +525,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     export_armature_object_remove: BoolProperty(
         name='Remove Armature Object',
         description=(
-            'Remove Armature object if possible.'
+            'Remove Armature object if possible. '
             'If Armature has multiple root bones, object will not be removed'
             ),
         default=False
@@ -746,8 +749,8 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
         default=False)
 
     export_hierarchy_full_collections: BoolProperty(
-        name='Full Collection hierarchy',
-        description='Export full hierarchy, including inbetween collection',
+        name='Full Collection Hierarchy',
+        description='Export full hierarchy, including intermediate collections',
         default=False
     )
 

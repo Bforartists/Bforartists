@@ -31,8 +31,6 @@ void BackgroundPipeline::sync(GPUMaterial *gpumat, const float background_opacit
   Manager &manager = *inst_.manager;
   RenderBuffers &rbufs = inst_.render_buffers;
 
-  ResourceHandle handle = manager.resource_handle(float4x4::identity());
-
   world_ps_.init();
   world_ps_.state_set(DRW_STATE_WRITE_COLOR);
   world_ps_.material_set(manager, gpumat);
@@ -44,10 +42,8 @@ void BackgroundPipeline::sync(GPUMaterial *gpumat, const float background_opacit
   world_ps_.bind_image("rp_cryptomatte_img", &rbufs.cryptomatte_tx);
   /* Required by validation layers. */
   inst_.cryptomatte.bind_resources(world_ps_);
-
   inst_.bind_uniform_data(&world_ps_);
-
-  world_ps_.draw(DRW_cache_fullscreen_quad_get(), handle);
+  world_ps_.draw_procedural(GPU_PRIM_TRIS, 1, 3);
   /* To allow opaque pass rendering over it. */
   world_ps_.barrier(GPU_BARRIER_SHADER_IMAGE_ACCESS);
 }
@@ -78,12 +74,9 @@ void WorldPipeline::sync(GPUMaterial *gpumat)
   pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_ALWAYS);
 
   Manager &manager = *inst_.manager;
-  ResourceHandle handle = manager.resource_handle(float4x4::identity());
   pass.material_set(manager, gpumat);
   pass.push_constant("world_opacity_fade", 1.0f);
-
   pass.bind_texture(RBUFS_UTILITY_TEX_SLOT, inst_.pipelines.utility_tx);
-  inst_.bind_uniform_data(&pass);
   pass.bind_image("rp_normal_img", dummy_renderpass_tx_);
   pass.bind_image("rp_light_img", dummy_renderpass_tx_);
   pass.bind_image("rp_diffuse_color_img", dummy_renderpass_tx_);
@@ -92,14 +85,13 @@ void WorldPipeline::sync(GPUMaterial *gpumat)
   pass.bind_image("rp_cryptomatte_img", dummy_cryptomatte_tx_);
   pass.bind_image("rp_color_img", dummy_aov_color_tx_);
   pass.bind_image("rp_value_img", dummy_aov_value_tx_);
-  /* Required by validation layers. */
-  inst_.cryptomatte.bind_resources(pass);
-
   pass.bind_image("aov_color_img", dummy_aov_color_tx_);
   pass.bind_image("aov_value_img", dummy_aov_value_tx_);
   pass.bind_ssbo("aov_buf", &inst_.film.aovs_info);
-
-  pass.draw(DRW_cache_fullscreen_quad_get(), handle);
+  /* Required by validation layers. */
+  inst_.cryptomatte.bind_resources(pass);
+  inst_.bind_uniform_data(&pass);
+  pass.draw_procedural(GPU_PRIM_TRIS, 1, 3);
 }
 
 void WorldPipeline::render(View &view)
@@ -116,7 +108,7 @@ void WorldPipeline::render(View &view)
 
 void WorldVolumePipeline::sync(GPUMaterial *gpumat)
 {
-  is_valid_ = GPU_material_status(gpumat) == GPU_MAT_SUCCESS;
+  is_valid_ = (gpumat != nullptr) && (GPU_material_status(gpumat) == GPU_MAT_SUCCESS);
   if (!is_valid_) {
     /* Skip if the material has not compiled yet. */
     return;
@@ -139,7 +131,11 @@ void WorldVolumePipeline::sync(GPUMaterial *gpumat)
 void WorldVolumePipeline::render(View &view)
 {
   if (!is_valid_) {
-    /* Skip if the material has not compiled yet. */
+    /* Clear the properties buffer instead of rendering if there is no valid shader. */
+    inst_.volume.prop_scattering_tx_.clear(float4(0.0f));
+    inst_.volume.prop_extinction_tx_.clear(float4(0.0f));
+    inst_.volume.prop_emission_tx_.clear(float4(0.0f));
+    inst_.volume.prop_phase_tx_.clear(float4(0.0f));
     return;
   }
 
@@ -382,24 +378,14 @@ PassMain::Sub *ForwardPipeline::material_transparent_add(const Object *ob,
   return pass;
 }
 
-void ForwardPipeline::render(View &view,
-                             Framebuffer &prepass_fb,
-                             Framebuffer &combined_fb,
-                             GPUTexture * /*combined_tx*/)
+void ForwardPipeline::render(View &view, Framebuffer &prepass_fb, Framebuffer &combined_fb)
 {
   DRW_stats_group_start("Forward.Opaque");
 
   prepass_fb.bind();
   inst_.manager->submit(prepass_ps_, view);
 
-  // if (!DRW_pass_is_empty(prepass_ps_)) {
   inst_.hiz_buffer.set_dirty();
-  // }
-
-  // if (inst_.raytracing.enabled()) {
-  //   rt_buffer.radiance_copy(combined_tx);
-  //   inst_.hiz_buffer.update();
-  // }
 
   inst_.shadows.set_view(view);
   inst_.irradiance_cache.set_view(view);
@@ -413,10 +399,6 @@ void ForwardPipeline::render(View &view,
 
   combined_fb.bind();
   inst_.manager->submit(transparent_ps_, view);
-
-  // if (inst_.raytracing.enabled()) {
-  //   gbuffer.ray_radiance_tx.release();
-  // }
 }
 
 /** \} */
@@ -483,8 +465,8 @@ void DeferredLayer::begin_sync()
       inst_.cryptomatte.bind_resources(gbuffer_ps_);
     }
 
-    DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_CUSTOM | DRW_STATE_DEPTH_EQUAL |
-                     DRW_STATE_WRITE_STENCIL | DRW_STATE_STENCIL_ALWAYS;
+    DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL | DRW_STATE_WRITE_STENCIL |
+                     DRW_STATE_STENCIL_ALWAYS;
 
     gbuffer_double_sided_ps_ = &gbuffer_ps_.sub("DoubleSided");
     gbuffer_double_sided_ps_->state_set(state);
@@ -858,6 +840,8 @@ void VolumeLayer::render(View &view, Texture &occupancy_tx)
 void VolumePipeline::sync()
 {
   enabled_ = false;
+  has_scatter_ = false;
+  has_absorption_ = false;
   for (auto &layer : layers_) {
     layer->sync();
   }
@@ -964,6 +948,12 @@ void VolumePipeline::material_call(MaterialPass &volume_material_pass,
     object_pass->dispatch(math::divide_ceil(visible_aabb.extent(), int3(VOLUME_GROUP_SIZE)));
     /* Notify the volume module to enable itself. */
     enabled_ = true;
+    if (GPU_material_flag_get(volume_material_pass.gpumat, GPU_MATFLAG_VOLUME_SCATTER)) {
+      has_scatter_ = true;
+    }
+    if (GPU_material_flag_get(volume_material_pass.gpumat, GPU_MATFLAG_VOLUME_ABSORPTION)) {
+      has_absorption_ = true;
+    }
   }
 }
 
@@ -1032,8 +1022,8 @@ void DeferredProbeLayer::begin_sync()
       inst_.cryptomatte.bind_resources(gbuffer_ps_);
     }
 
-    DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_CUSTOM | DRW_STATE_DEPTH_EQUAL |
-                     DRW_STATE_WRITE_STENCIL | DRW_STATE_STENCIL_ALWAYS;
+    DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL | DRW_STATE_WRITE_STENCIL |
+                     DRW_STATE_STENCIL_ALWAYS;
 
     gbuffer_double_sided_ps_ = &gbuffer_ps_.sub("DoubleSided");
     gbuffer_double_sided_ps_->state_set(state);
@@ -1191,7 +1181,7 @@ void PlanarProbePipeline::begin_sync()
     gbuffer_ps_.bind_image(RBUFS_VALUE_SLOT, &inst_.render_buffers.rp_value_tx);
     inst_.cryptomatte.bind_resources(gbuffer_ps_);
 
-    DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_CUSTOM | DRW_STATE_DEPTH_EQUAL;
+    DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL;
 
     gbuffer_double_sided_ps_ = &gbuffer_ps_.sub("DoubleSided");
     gbuffer_double_sided_ps_->state_set(state);

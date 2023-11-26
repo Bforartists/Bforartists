@@ -62,11 +62,11 @@ class ExportUVLayout(bpy.types.Operator):
             ('NONE', "None",
              "Export only UVs in the [0, 1] range"),
             ('UDIM', "UDIM",
-             "Export tiles in the UDIM numbering scheme: 1001 + u-tile + 10*v-tile"),
+             "Export tiles in the UDIM numbering scheme: 1001 + u_tile + 10*v_tile"),
             ('UV', "UVTILE",
-             "Export tiles in the UVTILE numbering scheme: u(u-tile + 1)_v(v-tile + 1)"),
+             "Export tiles in the UVTILE numbering scheme: u(u_tile + 1)_v(v_tile + 1)"),
         ),
-        description="Choose whether to export only the [0, 1 range], or all UV tiles",
+        description="Choose whether to export only the [0, 1] range, or all UV tiles",
         default='NONE',
     )
     modified: BoolProperty(
