@@ -34,6 +34,8 @@ class Rig(SimpleChainRig):
     ##############################
     # Initialization
 
+    stretch_control_mode: str | None = None  # Override in a subclass to disable the Tip Control option
+
     name_base: str
     name_sep: str
     name_suffix: str
@@ -81,8 +83,11 @@ class Rig(SimpleChainRig):
         self.spline_obj = self.generator.artifacts.create_new(self, 'CURVE', 'spline')
 
         # Options
-        self.use_stretch = (self.params.sik_stretch_control == 'MANUAL_STRETCH')
-        self.use_tip = (self.params.sik_stretch_control == 'DIRECT_TIP')
+        if self.stretch_control_mode is None:
+            self.stretch_control_mode = self.params.sik_stretch_control
+
+        self.use_stretch = (self.stretch_control_mode == 'MANUAL_STRETCH')
+        self.use_tip = (self.stretch_control_mode == 'DIRECT_TIP')
         self.use_fk = self.params.sik_fk_controls
 
         # Compute org chain lengths and control distribution
@@ -934,7 +939,8 @@ class Rig(SimpleChainRig):
         layout.prop(params, 'sik_mid_controls')
         layout.prop(params, 'sik_end_controls')
 
-        layout.prop(params, 'sik_stretch_control', text='')
+        if cls.stretch_control_mode is None:
+            layout.prop(params, 'sik_stretch_control', text='')
 
         layout.prop(params, 'sik_radius_scaling')
 
