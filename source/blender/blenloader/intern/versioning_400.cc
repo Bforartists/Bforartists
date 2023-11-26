@@ -1292,8 +1292,9 @@ static void change_input_socket_to_rotation_type(bNodeTree &ntree,
     if (link->tosock != &socket) {
       continue;
     }
-    if (ELEM(link->fromsock->type, SOCK_VECTOR, SOCK_FLOAT) &&
-        link->fromnode->type != NODE_REROUTE) {
+    if (ELEM(link->fromsock->type, SOCK_ROTATION, SOCK_VECTOR, SOCK_FLOAT) &&
+        link->fromnode->type != NODE_REROUTE)
+    {
       /* No need to add the conversion node when implicit conversions will work. */
       continue;
     }
@@ -1321,7 +1322,8 @@ static void change_output_socket_to_rotation_type(bNodeTree &ntree,
     if (link->fromsock != &socket) {
       continue;
     }
-    if (link->tosock->type == SOCK_VECTOR && link->tonode->type != NODE_REROUTE) {
+    if (ELEM(link->tosock->type, SOCK_ROTATION, SOCK_VECTOR) && link->tonode->type != NODE_REROUTE)
+    {
       /* No need to add the conversion node when implicit conversions will work. */
       continue;
     }
@@ -1351,7 +1353,7 @@ static void version_geometry_nodes_use_rotation_socket(bNodeTree &ntree)
       bNodeSocket *socket = nodeFindSocket(node, SOCK_IN, "Rotation");
       change_input_socket_to_rotation_type(ntree, *node, *socket);
     }
-    if (STREQ(node->idname, "GeometryNodeDistributePointsOnFaces")) {
+    if (STR_ELEM(node->idname, "GeometryNodeDistributePointsOnFaces", "GeometryNodeObjectInfo")) {
       bNodeSocket *socket = nodeFindSocket(node, SOCK_OUT, "Rotation");
       change_output_socket_to_rotation_type(ntree, *node, *socket);
     }
@@ -2498,6 +2500,32 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
       if (ntree->type == NTREE_GEOMETRY) {
         version_geometry_nodes_use_rotation_socket(*ntree);
+      }
+    }
+
+    LISTBASE_FOREACH (Mesh *, mesh, &bmain->meshes) {
+      blender::bke::mesh_sculpt_mask_to_generic(*mesh);
+    }
+
+    if (!DNA_struct_member_exists(
+            fd->filesdna, "RaytraceEEVEE", "float", "screen_trace_max_roughness"))
+    {
+      LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+        scene->eevee.reflection_options.screen_trace_max_roughness = 0.5f;
+        scene->eevee.refraction_options.screen_trace_max_roughness = 0.5f;
+        scene->eevee.diffuse_options.screen_trace_max_roughness = 0.5f;
+      }
+    }
+
+    if (!DNA_struct_member_exists(fd->filesdna, "Material", "char", "displacement_method")) {
+      /* Replace Cycles.displacement_method by Material::displacement_method. */
+      LISTBASE_FOREACH (Material *, material, &bmain->materials) {
+        int displacement_method = MA_DISPLACEMENT_BUMP;
+        if (IDProperty *cmat = version_cycles_properties_from_ID(&material->id)) {
+          displacement_method = version_cycles_property_int(
+              cmat, "displacement_method", MA_DISPLACEMENT_BUMP);
+        }
+        material->displacement_method = displacement_method;
       }
     }
   }

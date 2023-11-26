@@ -500,11 +500,6 @@ class RENDER_PT_eevee_next_volumes_lighting(RenderButtonsPanel, Panel):
     bl_parent_id = "RENDER_PT_eevee_next_volumes"
     COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
 
-    def draw_header(self, context):
-        scene = context.scene
-        props = scene.eevee
-        self.layout.prop(props, "use_volumetric_lights", text="")
-
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
@@ -512,7 +507,6 @@ class RENDER_PT_eevee_next_volumes_lighting(RenderButtonsPanel, Panel):
         scene = context.scene
         props = scene.eevee
 
-        layout.active = props.use_volumetric_lights
         layout.prop(props, "volumetric_light_clamp", text="Light Clamping")
 
 
@@ -645,6 +639,7 @@ class EeveeRaytracingScreenOption(RenderButtonsPanel, Panel):
 
         layout.prop(props, "screen_trace_quality", text="Precision")
         layout.prop(props, "screen_trace_thickness", text="Thickness")
+        layout.prop(props, "screen_trace_max_roughness", text="Max Roughness")
 
 
 class EeveeRaytracingDenoisePanel(RenderButtonsPanel, Panel):

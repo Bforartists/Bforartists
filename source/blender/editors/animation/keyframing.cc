@@ -15,6 +15,7 @@
 
 #include "BLT_translation.h"
 
+#include "DNA_ID.h"
 #include "DNA_action_types.h"
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
@@ -32,6 +33,7 @@
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_idtype.h"
+#include "BKE_lib_id.h"
 #include "BKE_nla.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
@@ -48,6 +50,7 @@
 #include "ANIM_fcurve.hh"
 #include "ANIM_keyframing.hh"
 #include "ANIM_rna.hh"
+#include "ANIM_visualkey.hh"
 
 #include "UI_interface.hh"
 #include "UI_resources.hh"
@@ -80,7 +83,7 @@ eInsertKeyFlags ANIM_get_keyframing_flags(Scene *scene, const bool use_autokey_m
   /* standard flags */
   {
     /* visual keying */
-    if (is_autokey_flag(scene, AUTOKEY_FLAG_AUTOMATKEY)) {
+    if (is_autokey_flag(scene, AUTOKEY_FLAG_VISUALKEY)) {
       flag |= INSERTKEY_MATRIX;
     }
 
@@ -88,14 +91,12 @@ eInsertKeyFlags ANIM_get_keyframing_flags(Scene *scene, const bool use_autokey_m
     if (is_autokey_flag(scene, AUTOKEY_FLAG_INSERTNEEDED)) {
       flag |= INSERTKEY_NEEDED;
     }
-
-    /* default F-Curve color mode - RGB from XYZ indices */
-    if (is_autokey_flag(scene, AUTOKEY_FLAG_XYZ2RGB)) {
-      flag |= INSERTKEY_XYZ2RGB;
-    }
   }
 
   /* only if including settings from the autokeying mode... */
+  /* TODO: The fact that this flag needs to be passed as true is confusing because it is not clear
+   * why those two flags would be exclusive to autokeying. Refactor flags so they are separate
+   * between normal keying and autokeying. */
   if (use_autokey_mode) {
     /* keyframing mode - only replace existing keyframes */
     if (is_autokey_mode(scene, AUTOKEY_MODE_EDITKEYS)) {
@@ -268,21 +269,14 @@ static bool modify_key_op_poll(bContext *C)
 
 /* Insert Key Operator ------------------------ */
 
-static int insert_key_exec(bContext *C, wmOperator *op)
+static int insert_key_with_keyingset(bContext *C, wmOperator *op, KeyingSet *ks)
 {
   Scene *scene = CTX_data_scene(C);
   Object *obedit = CTX_data_edit_object(C);
   bool ob_edit_mode = false;
 
   const float cfra = BKE_scene_frame_get(scene);
-  int num_channels;
   const bool confirm = op->flag & OP_IS_INVOKE;
-
-  KeyingSet *ks = keyingset_get_from_op_with_error(op, op->type->prop, scene);
-  if (ks == nullptr) {
-    return OPERATOR_CANCELLED;
-  }
-
   /* exit the edit mode to make sure that those object data properties that have been
    * updated since the last switching to the edit mode will be keyframed correctly
    */
@@ -292,7 +286,7 @@ static int insert_key_exec(bContext *C, wmOperator *op)
   }
 
   /* try to insert keyframes for the channels specified by KeyingSet */
-  num_channels = ANIM_apply_keyingset(C, nullptr, ks, MODIFYKEY_MODE_INSERT, cfra);
+  const int num_channels = ANIM_apply_keyingset(C, nullptr, ks, MODIFYKEY_MODE_INSERT, cfra);
   if (G.debug & G_DEBUG) {
     BKE_reportf(op->reports,
                 RPT_INFO,
@@ -334,15 +328,147 @@ static int insert_key_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static blender::Vector<std::string> construct_rna_paths(PointerRNA *ptr)
+{
+  eRotationModes rotation_mode;
+  IDProperty *properties;
+  blender::Vector<std::string> paths;
+
+  if (ptr->type == &RNA_PoseBone) {
+    bPoseChannel *pchan = static_cast<bPoseChannel *>(ptr->data);
+    rotation_mode = eRotationModes(pchan->rotmode);
+    properties = pchan->prop;
+  }
+  else if (ptr->type == &RNA_Object) {
+    Object *ob = static_cast<Object *>(ptr->data);
+    rotation_mode = eRotationModes(ob->rotmode);
+    properties = ob->id.properties;
+  }
+  else {
+    /* Pointer type not supported. */
+    return paths;
+  }
+
+  eKeyInsertChannels insert_channel_flags = eKeyInsertChannels(U.key_insert_channels);
+  if (insert_channel_flags & USER_ANIM_KEY_CHANNEL_LOCATION) {
+    paths.append("location");
+  }
+  if (insert_channel_flags & USER_ANIM_KEY_CHANNEL_ROTATION) {
+    switch (rotation_mode) {
+      case ROT_MODE_QUAT:
+        paths.append("rotation_quaternion");
+        break;
+      case ROT_MODE_AXISANGLE:
+        paths.append("rotation_axis_angle");
+        break;
+      case ROT_MODE_XYZ:
+      case ROT_MODE_XZY:
+      case ROT_MODE_YXZ:
+      case ROT_MODE_YZX:
+      case ROT_MODE_ZXY:
+      case ROT_MODE_ZYX:
+        paths.append("rotation_euler");
+      default:
+        break;
+    }
+  }
+  if (insert_channel_flags & USER_ANIM_KEY_CHANNEL_SCALE) {
+    paths.append("scale");
+  }
+  if (insert_channel_flags & USER_ANIM_KEY_CHANNEL_ROTATION_MODE) {
+    paths.append("rotation_mode");
+  }
+  if (insert_channel_flags & USER_ANIM_KEY_CHANNEL_CUSTOM_PROPERTIES) {
+    if (properties) {
+      LISTBASE_FOREACH (IDProperty *, prop, &properties->data.group) {
+        std::string name = prop->name;
+        std::string rna_path = "[\"" + name + "\"]";
+        paths.append(rna_path);
+      }
+    }
+  }
+  return paths;
+}
+
+/* Fill the list with CollectionPointerLink depending on the mode of the context. */
+static bool get_selection(bContext *C, ListBase *r_selection)
+{
+  const eContextObjectMode context_mode = CTX_data_mode_enum(C);
+
+  switch (context_mode) {
+    case CTX_MODE_OBJECT: {
+      CTX_data_selected_objects(C, r_selection);
+      break;
+    }
+    case CTX_MODE_POSE: {
+      CTX_data_selected_pose_bones(C, r_selection);
+      break;
+    }
+    default:
+      return false;
+  }
+
+  return true;
+}
+
+static int insert_key(bContext *C, wmOperator *op)
+{
+  using namespace blender;
+
+  ListBase selection = {nullptr, nullptr};
+  const bool found_selection = get_selection(C, &selection);
+  if (!found_selection) {
+    BKE_reportf(op->reports, RPT_ERROR, "Unsupported context mode");
+  }
+
+  Main *bmain = CTX_data_main(C);
+  Scene *scene = CTX_data_scene(C);
+  const float scene_frame = BKE_scene_frame_get(scene);
+
+  /* Passing autokey mode as true because that is needed to get the cycle aware keying flag. */
+  const bool use_autokey_mode = true;
+  const eInsertKeyFlags insert_key_flags = ANIM_get_keyframing_flags(scene, use_autokey_mode);
+  const eBezTriple_KeyframeType key_type = eBezTriple_KeyframeType(
+      scene->toolsettings->keyframe_type);
+
+  LISTBASE_FOREACH (CollectionPointerLink *, collection_ptr_link, &selection) {
+    ID *selected_id = collection_ptr_link->ptr.owner_id;
+    if (!BKE_id_is_editable(bmain, selected_id)) {
+      BKE_reportf(op->reports, RPT_ERROR, "'%s' is not editable", selected_id->name + 2);
+      continue;
+    }
+    PointerRNA id_ptr = collection_ptr_link->ptr;
+    Vector<std::string> rna_paths = construct_rna_paths(&collection_ptr_link->ptr);
+
+    animrig::insert_key_rna(
+        &id_ptr, rna_paths.as_span(), scene_frame, insert_key_flags, key_type, bmain, op->reports);
+  }
+
+  WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_ADDED, nullptr);
+  BLI_freelistN(&selection);
+
+  return OPERATOR_FINISHED;
+}
+
+static int insert_key_exec(bContext *C, wmOperator *op)
+{
+  Scene *scene = CTX_data_scene(C);
+  /* Use the active keying set if there is one. */
+  KeyingSet *ks = ANIM_keyingset_get_from_enum_type(scene, scene->active_keyingset);
+  if (ks) {
+    return insert_key_with_keyingset(C, op, ks);
+  }
+  return insert_key(C, op);
+}
+
 void ANIM_OT_keyframe_insert(wmOperatorType *ot)
 {
-  PropertyRNA *prop;
-
   /* identifiers */
   ot->name = "Insert Keyframe";
   ot->idname = "ANIM_OT_keyframe_insert";
   ot->description =
-      "Insert keyframes on the current frame for all properties in the specified Keying Set";
+      "Insert keyframes on the current frame using either the active keying set, or the user "
+      "preferences if no keying set is active";
 
   /* callbacks */
   ot->exec = insert_key_exec;
@@ -350,13 +476,16 @@ void ANIM_OT_keyframe_insert(wmOperatorType *ot)
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
 
-  /* keyingset to use (dynamic enum) */
-  prop = RNA_def_enum(
-      ot->srna, "type", rna_enum_dummy_DEFAULT_items, 0, "Keying Set", "The Keying Set to use");
-  RNA_def_enum_funcs(prop, ANIM_keying_sets_enum_itemf);
-  RNA_def_property_flag(prop, PROP_HIDDEN);
-  ot->prop = prop;
+static int keyframe_insert_with_keyingset_exec(bContext *C, wmOperator *op)
+{
+  Scene *scene = CTX_data_scene(C);
+  KeyingSet *ks = keyingset_get_from_op_with_error(op, op->type->prop, scene);
+  if (ks == nullptr) {
+    return OPERATOR_CANCELLED;
+  }
+  return insert_key_with_keyingset(C, op, ks);
 }
 
 void ANIM_OT_keyframe_insert_by_name(wmOperatorType *ot)
@@ -369,7 +498,7 @@ void ANIM_OT_keyframe_insert_by_name(wmOperatorType *ot)
   ot->description = "Alternate access to 'Insert Keyframe' for keymaps to use";
 
   /* callbacks */
-  ot->exec = insert_key_exec;
+  ot->exec = keyframe_insert_with_keyingset_exec;
   ot->poll = modify_key_op_poll;
 
   /* flags */
@@ -459,7 +588,7 @@ void ANIM_OT_keyframe_insert_menu(wmOperatorType *ot)
 
   /* callbacks */
   ot->invoke = insert_key_menu_invoke;
-  ot->exec = insert_key_exec;
+  ot->exec = keyframe_insert_with_keyingset_exec;
   ot->poll = ED_operator_areaactive;
 
   /* flags */
