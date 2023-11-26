@@ -89,11 +89,6 @@ class WorldVolumePipeline {
 
   void sync(GPUMaterial *gpumat);
   void render(View &view);
-
-  bool is_valid()
-  {
-    return is_valid_;
-  }
 };
 
 /** \} */
@@ -148,8 +143,6 @@ class ForwardPipeline {
   PassSortable transparent_ps_ = {"Forward.Transparent"};
   float3 camera_forward_;
 
-  // GPUTexture *input_screen_radiance_tx_ = nullptr;
-
  public:
   ForwardPipeline(Instance &inst) : inst_(inst){};
 
@@ -165,10 +158,7 @@ class ForwardPipeline {
                                           ::Material *blender_mat,
                                           GPUMaterial *gpumat);
 
-  void render(View &view,
-              Framebuffer &prepass_fb,
-              Framebuffer &combined_fb,
-              GPUTexture *combined_tx);
+  void render(View &view, Framebuffer &prepass_fb, Framebuffer &combined_fb);
 };
 
 /** \} */
@@ -359,6 +349,9 @@ class VolumePipeline {
 
   /* True if any volume (any object type) creates a volume draw-call. Enables the volume module. */
   bool enabled_ = false;
+  /* Aggregated properties of all volume objects. */
+  bool has_scatter_ = false;
+  bool has_absorption_ = false;
 
  public:
   VolumePipeline(Instance &inst) : inst_(inst){};
@@ -382,6 +375,14 @@ class VolumePipeline {
   bool is_enabled() const
   {
     return enabled_;
+  }
+  bool has_scatter() const
+  {
+    return has_scatter_;
+  }
+  bool has_absorption() const
+  {
+    return has_absorption_;
   }
 
   /* Returns true if any volume layer uses the hist list. */
