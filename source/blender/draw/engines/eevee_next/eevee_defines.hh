@@ -103,7 +103,6 @@
 /* Keep this as a define to avoid shader variations. */
 #define RAYTRACE_RADIANCE_FORMAT GPU_R11F_G11F_B10F
 #define RAYTRACE_RAYTIME_FORMAT GPU_R32F
-#define RAYTRACE_HORIZON_FORMAT GPU_R32UI
 #define RAYTRACE_VARIANCE_FORMAT GPU_R16F
 #define RAYTRACE_TILEMASK_FORMAT GPU_R8UI
 
@@ -155,6 +154,9 @@
 #define VOLUME_GROUP_SIZE 4
 #define VOLUME_INTEGRATION_GROUP_SIZE 8
 #define VOLUME_HIT_DEPTH_MAX 16
+
+/* Velocity. */
+#define VERTEX_COPY_GROUP_SIZE 64
 
 /* Resource bindings. */
 
