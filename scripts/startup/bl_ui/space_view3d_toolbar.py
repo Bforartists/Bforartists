@@ -1116,15 +1116,6 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
         row = col.row()
         row.separator()
         row.prop(mesh, "use_remesh_preserve_attributes", text="Attributes")
-        row = col.row()
-        row.separator()
-        row.prop(mesh, "use_remesh_preserve_paint_mask", text="Paint Mask")
-        row = col.row()
-        row.separator()
-        row.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
-        row = col.row()
-        row.separator()
-        row.prop(mesh, "use_remesh_preserve_vertex_colors", text="Color Attributes")
 
         layout.operator("object.voxel_remesh", text="Voxel Remesh")
 
