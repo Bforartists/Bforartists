@@ -991,7 +991,7 @@ class DOPESHEET_MT_context_menu(Menu):
 
 
 class DOPESHEET_MT_channel_context_menu(Menu):
-    bl_label = "Dope Sheet Channel"
+    bl_label = "Channel" # BFA - changed to have coherent label in Fcurve, Timeline and Dopesheet context
 
     def draw(self, context):
         layout = self.layout
@@ -1042,7 +1042,7 @@ class DOPESHEET_MT_channel_context_menu(Menu):
         layout.operator("anim.channels_delete", icon='DELETE')
 
         if is_graph_editor and context.space_data.mode == 'DRIVERS':
-            layout.operator("graph.driver_delete_invalid")
+            layout.operator("graph.driver_delete_invalid", icon='DELETE')
 
 
 class DOPESHEET_MT_snap_pie(Menu):
