@@ -6054,12 +6054,6 @@ def draw_curve(self, _context):
 
     layout.separator()
 
-    if edit_object.type == 'CURVE':
-        layout.operator("transform.tilt", icon="TILT")
-        layout.operator("curve.tilt_clear", icon="CLEAR_TILT")
-
-    layout.separator()
-
     # BFA - redundant operators, located exclusively in VIEW3D_MT_edit_curve_ctrlpoints
 
     layout.menu("VIEW3D_MT_edit_curve_showhide")
