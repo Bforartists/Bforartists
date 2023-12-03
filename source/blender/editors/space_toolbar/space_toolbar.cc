@@ -5,8 +5,6 @@
  *  \ingroup sptoolbar
  */
 
-// BFA - barebone
-
 #include <string.h>
 
 #include "MEM_guardedalloc.h"
@@ -27,6 +25,8 @@
 #include "UI_view2d.hh"
 
 #include "BLO_read_write.hh"
+
+/* ******************** default callbacks for toolbar space ***************** */
 
 static SpaceLink *toolbar_create(const ScrArea * /*area*/, const Scene * /*scene*/)
 {
@@ -70,8 +70,6 @@ static void toolbar_main_area_init(wmWindowManager * /*wm*/, ARegion *region)
 static void toolbar_main_area_draw(const bContext *C, ARegion *region)
 {
   /* draw entirely, view changes should be handled here */
-  /*SpaceToolbar *stoolbar = CTX_wm_space_toolbar(C);*/ /*bfa - commented out. variable not needed
-                                                           yet*/
   View2D *v2d = &region->v2d;
 
   /* clear and setup matrix */
@@ -87,12 +85,12 @@ static void toolbar_main_area_draw(const bContext *C, ARegion *region)
   UI_view2d_scrollers_draw(v2d, nullptr);
 }
 
-static void toolbar_header_area_init(wmWindowManager * /*wm*/, ARegion *region)
+static void toolbar_header_region_init(wmWindowManager * /*wm*/, ARegion *region)
 {
   ED_region_header_init(region);
 }
 
-static void toolbar_header_area_draw(const bContext *C, ARegion *region)
+static void toolbar_header_region_draw(const bContext *C, ARegion *region)
 {
   ED_region_header(C, region);
 }
@@ -101,8 +99,6 @@ static void toolbar_main_area_listener(const wmRegionListenerParams *params)
 {
   ScrArea *area = params->area;
   const wmNotifier *wmn = params->notifier;
-  // SpaceInfo *sinfo = sa->spacedata.first;
-
   /* context changes */
   switch (wmn->category) {
     case NC_SPACE:
@@ -153,7 +149,6 @@ static void toolbar_blend_write(BlendWriter *writer, SpaceLink *sl)
 /* only called once, from space/spacetypes.cc */
 void ED_spacetype_toolbar(void)
 {
-  /*SpaceType *st = static_cast<SpaceType *>(MEM_callocN(sizeof(SpaceType), "spacetype toolbar"));*/
   SpaceType *st = static_cast<SpaceType *>(MEM_callocN(sizeof(*st), "spacetype toolbar"));
   ARegionType *art;
 
@@ -182,8 +177,8 @@ void ED_spacetype_toolbar(void)
   art->prefsizey = HEADERY;
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_HEADER;
   art->listener = toolbar_header_listener;
-  art->init = toolbar_header_area_init;
-  art->draw = toolbar_header_area_draw;
+  art->init = toolbar_header_region_init;
+  art->draw = toolbar_header_region_draw;
 
   BLI_addhead(&st->regiontypes, art);
 
