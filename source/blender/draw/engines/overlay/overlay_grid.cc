@@ -157,7 +157,8 @@ void OVERLAY_grid_init(OVERLAY_Data *vedata)
     grid_axes[2] = float((grid_flag & (PLANE_YZ | PLANE_XZ)) != 0);
 
     /* Z axis if needed */
-    if (((rv3d->view == RV3D_VIEW_USER) || (rv3d->persp != RV3D_ORTHO)) && show_axis_z) {
+    /*bfa - also hides the Axis Z*/
+    if (show_ortho_grid && ((rv3d->view == RV3D_VIEW_USER) || (rv3d->persp != RV3D_ORTHO)) && show_axis_z) {
       zpos_flag = SHOW_AXIS_Z;
 
       float zvec[3], campos[3];
