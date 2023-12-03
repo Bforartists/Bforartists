@@ -991,7 +991,7 @@ class DOPESHEET_MT_context_menu(Menu):
 
 
 class DOPESHEET_MT_channel_context_menu(Menu):
-    bl_label = "Dope Sheet Channel"
+    bl_label = "Channel" # BFA - changed to have coherent label in Fcurve, Timeline and Dopesheet context
 
     def draw(self, context):
         layout = self.layout
@@ -1026,9 +1026,9 @@ class DOPESHEET_MT_channel_context_menu(Menu):
         if is_graph_editor:
             layout.operator_menu_enum("graph.fmodifier_add", "type", text="Add F-Curve Modifier").only_active = False
             layout.separator()
-            layout.operator("graph.hide", text="Hide Selected Curves").unselected = False
-            layout.operator("graph.hide", text="Hide Unselected Curves").unselected = True
-            layout.operator("graph.reveal")
+            layout.operator("graph.reveal", icon="HIDE_OFF")
+            layout.operator("graph.hide", text="Hide Selected Curves", icon="HIDE_ON").unselected = False
+            layout.operator("graph.hide", text="Hide Unselected Curves", icon="HIDE_UNSELECTED").unselected = True
 
         layout.separator()
         layout.operator("anim.channels_expand", icon='EXPANDMENU')
@@ -1042,7 +1042,7 @@ class DOPESHEET_MT_channel_context_menu(Menu):
         layout.operator("anim.channels_delete", icon='DELETE')
 
         if is_graph_editor and context.space_data.mode == 'DRIVERS':
-            layout.operator("graph.driver_delete_invalid")
+            layout.operator("graph.driver_delete_invalid", icon='DELETE')
 
 
 class DOPESHEET_MT_snap_pie(Menu):
