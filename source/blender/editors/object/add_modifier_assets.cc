@@ -176,7 +176,7 @@ static void unassigned_assets_draw(const bContext *C, Menu *menu)
       add_separator = false;
     }
     if (first) {
-      uiItemL(layout, IFACE_("Local Unmarked Assets:"), ICON_NONE); /*BFA - changed label*/
+      uiItemL(layout, IFACE_("Unmarked Assets:"), ICON_NONE); /*BFA - changed label*/
       first = false;
     }
 
