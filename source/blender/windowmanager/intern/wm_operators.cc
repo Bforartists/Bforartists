@@ -55,13 +55,13 @@
 #include "BKE_image_format.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_preview_image.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.hh" /* BKE_ST_MAXNAME */
-#include "BKE_unit.h"
+#include "BKE_unit.hh"
 
 #include "BKE_idtype.h"
 

@@ -34,8 +34,12 @@ const EnumPropertyItem rna_enum_asset_library_type_items[] = {
      "ESSENTIALS",
      ICON_BLENDER,
      "Essentials",
-     "Show the basic building blocks and utilities included with Bforartists"},
-    {ASSET_LIBRARY_CUSTOM, "CUSTOM", 0, "Custom", "All external 'normal' asset repositories"},
+     "Show the basic building blocks and utilities coming with Bforartists"},
+    {ASSET_LIBRARY_CUSTOM,
+     "CUSTOM",
+     0,
+     "Custom",
+     "Show assets from the asset libraries configured in the Preferences"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 

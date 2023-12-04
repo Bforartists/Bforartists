@@ -48,6 +48,9 @@ from .fbx_utils import (
     MESH_ATTRIBUTE_SHARP_FACE,
     MESH_ATTRIBUTE_SHARP_EDGE,
     expand_shape_key_range,
+    FBX_KTIME_V7,
+    FBX_KTIME_V8,
+    FBX_TIMECODE_DEFINITION_TO_KTIME_PER_SECOND,
 )
 
 LINEAR_INTERPOLATION_VALUE = bpy.types.Keyframe.bl_rna.properties['interpolation'].enum_items['LINEAR'].value
@@ -803,9 +806,8 @@ def blen_read_invalid_animation_curve(key_times, key_values):
     return key_times, key_values
 
 
-def _convert_fbx_time_to_blender_time(key_times, blen_start_offset, fbx_start_offset, fps):
-    from .fbx_utils import FBX_KTIME
-    timefac = fps / FBX_KTIME
+def _convert_fbx_time_to_blender_time(key_times, blen_start_offset, fbx_start_offset, fps, fbx_ktime):
+    timefac = fps / fbx_ktime
 
     # Convert from FBX timing to Blender timing.
     # Cannot subtract in-place because key_times could be read directly from FBX and could be used by multiple Actions.
@@ -838,19 +840,21 @@ def blen_read_animation_curve(fbx_curve):
         return blen_read_invalid_animation_curve(key_times, key_values)
 
 
-def blen_store_keyframes(fbx_key_times, blen_fcurve, key_values, blen_start_offset, fps, fbx_start_offset=0):
+def blen_store_keyframes(fbx_key_times, blen_fcurve, key_values, blen_start_offset, fps, fbx_ktime, fbx_start_offset=0):
     """Set all keyframe times and values for a newly created FCurve.
     Linear interpolation is currently assumed.
 
     This is a convenience function for calling blen_store_keyframes_multi with only a single fcurve and values array."""
-    blen_store_keyframes_multi(fbx_key_times, [(blen_fcurve, key_values)], blen_start_offset, fps, fbx_start_offset)
+    blen_store_keyframes_multi(fbx_key_times, [(blen_fcurve, key_values)], blen_start_offset, fps, fbx_ktime,
+                               fbx_start_offset)
 
 
-def blen_store_keyframes_multi(fbx_key_times, fcurve_and_key_values_pairs, blen_start_offset, fps, fbx_start_offset=0):
+def blen_store_keyframes_multi(fbx_key_times, fcurve_and_key_values_pairs, blen_start_offset, fps, fbx_ktime,
+                               fbx_start_offset=0):
     """Set all keyframe times and values for multiple pairs of newly created FCurves and keyframe values arrays, where
     each pair has the same keyframe times.
     Linear interpolation is currently assumed."""
-    bl_key_times = _convert_fbx_time_to_blender_time(fbx_key_times, blen_start_offset, fbx_start_offset, fps)
+    bl_key_times = _convert_fbx_time_to_blender_time(fbx_key_times, blen_start_offset, fbx_start_offset, fps, fbx_ktime)
     num_keys = len(bl_key_times)
 
     # Compatible with C float type
@@ -883,7 +887,8 @@ def blen_store_keyframes_multi(fbx_key_times, fcurve_and_key_values_pairs, blen_
         blen_fcurve.update()
 
 
-def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, global_scale, shape_key_deforms):
+def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, global_scale, shape_key_deforms,
+                                     fbx_ktime):
     """
     'Bake' loc/rot/scale into the action,
     taking any pre_ and post_ matrix into account to transform from fbx into blender space.
@@ -947,10 +952,9 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, glo
                 assert(channel in {0, 1, 2})
                 blen_curve = blen_curves[channel]
                 fbx_key_times, values = blen_read_animation_curve(curve)
-                blen_store_keyframes(fbx_key_times, blen_curve, values, anim_offset, fps)
+                blen_store_keyframes(fbx_key_times, blen_curve, values, anim_offset, fps, fbx_ktime)
 
     elif isinstance(item, ShapeKey):
-        deform_values = shape_key_deforms.setdefault(item, [])
         for fbxprop, channel_to_curve in fbx_curves.items():
             assert(fbxprop == b'DeformPercent')
             for channel, curve in channel_to_curve.items():
@@ -960,12 +964,14 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, glo
                 fbx_key_times, values = blen_read_animation_curve(curve)
                 # A fully activated shape key in FBX DeformPercent is 100.0 whereas it is 1.0 in Blender.
                 values = values / 100.0
-                blen_store_keyframes(fbx_key_times, blen_curve, values, anim_offset, fps)
+                blen_store_keyframes(fbx_key_times, blen_curve, values, anim_offset, fps, fbx_ktime)
 
                 # Store the minimum and maximum shape key values, so that the shape key's slider range can be expanded
                 # if necessary after reading all animations.
-                deform_values.append(values.min())
-                deform_values.append(values.max())
+                if values.size:
+                    deform_values = shape_key_deforms.setdefault(item, [])
+                    deform_values.append(values.min())
+                    deform_values.append(values.max())
 
     elif isinstance(item, Camera):
         for fbxprop, channel_to_curve in fbx_curves.items():
@@ -981,7 +987,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, glo
                     # Remap the imported values from FBX to Blender.
                     values = values / 1000.0
                     values *= global_scale
-                blen_store_keyframes(fbx_key_times, blen_curve, values, anim_offset, fps)
+                blen_store_keyframes(fbx_key_times, blen_curve, values, anim_offset, fps, fbx_ktime)
 
     else:  # Object or PoseBone:
         transform_data = item.fbx_transform_data
@@ -1042,10 +1048,10 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, glo
 
         # Each channel has the same keyframe times, so the combined times can be passed once along with all the curves
         # and values arrays.
-        blen_store_keyframes_multi(combined_fbx_times, zip(blen_curves, channel_values), anim_offset, fps)
+        blen_store_keyframes_multi(combined_fbx_times, zip(blen_curves, channel_values), anim_offset, fps, fbx_ktime)
 
 
-def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_offset, global_scale):
+def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_offset, global_scale, fbx_ktime):
     """
     Recreate an action per stack/layer/object combinations.
     Only the first found action is linked to objects, more complex setups are not handled,
@@ -1092,7 +1098,7 @@ def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_o
                     id_data.animation_data.action = action
                 # And actually populate the action!
                 blen_read_animations_action_item(action, item, cnodes, scene.render.fps, anim_offset, global_scale,
-                                                 shape_key_values)
+                                                 shape_key_values, fbx_ktime)
 
     # If the minimum/maximum animated value is outside the slider range of the shape key, attempt to expand the slider
     # range until the animated range fits and has extra room to be decreased or increased further.
@@ -1392,7 +1398,18 @@ def blen_read_geom_array_mapped_vert(
         xform=None, quiet=False,
         ):
     if fbx_layer_mapping == b'ByVertice':
-        if fbx_layer_ref == b'Direct':
+        if fbx_layer_ref == b'IndexToDirect':
+            # XXX Looks like we often get no fbx_layer_index in this case, shall not happen but happens...
+            #     We fallback to 'Direct' mapping in this case.
+            #~ assert(fbx_layer_index is not None)
+            if fbx_layer_index is None:
+                blen_read_geom_array_foreach_set_direct(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride,
+                                                        item_size, descr, xform)
+            else:
+                blen_read_geom_array_foreach_set_indexed(blen_data, blen_attr, blen_dtype, fbx_layer_data,
+                                                         fbx_layer_index, stride, item_size, descr, xform)
+            return True
+        elif fbx_layer_ref == b'Direct':
             assert(fbx_layer_index is None)
             blen_read_geom_array_foreach_set_direct(blen_data, blen_attr, blen_dtype, fbx_layer_data, stride, item_size,
                                                     descr, xform)
@@ -1748,8 +1765,6 @@ def blen_read_geom_layer_normal(fbx_obj, mesh, xform=None):
                 loop_normals = np.repeat(bdata, poly_loop_totals, axis=0)
                 mesh.attributes["temp_custom_normals"].data.foreach_set("vector", loop_normals.ravel())
             elif blen_data_type == "Vertices":
-                # Note: Currently unreachable because `blen_read_geom_array_mapped_polyloop` covers all the supported
-                # import cases covered by `blen_read_geom_array_mapped_vert`.
                 # We have to copy vnors to lnors! Far from elegant, but simple.
                 loop_vertex_indices = MESH_ATTRIBUTE_CORNER_VERT.to_ndarray(mesh.attributes)
                 mesh.attributes["temp_custom_normals"].data.foreach_set("vector", bdata[loop_vertex_indices].ravel())
@@ -3620,6 +3635,21 @@ def load(operator, context, filepath="",
 
         # Animation!
         def _():
+            # Find the number of "ktimes" per second for this file.
+            # Start with the default for this FBX version.
+            fbx_ktime = FBX_KTIME_V8 if version >= 8000 else FBX_KTIME_V7
+            # Try to find the value of the nested elem_root->'FBXHeaderExtension'->'OtherFlags'->'TCDefinition' element
+            # and look up the "ktimes" per second for its value.
+            if header := elem_find_first(elem_root, b'FBXHeaderExtension'):
+                # The header version that added TCDefinition support is 1004.
+                if elem_prop_first(elem_find_first(header, b'FBXHeaderVersion'), default=0) >= 1004:
+                    if other_flags := elem_find_first(header, b'OtherFlags'):
+                        if timecode_definition := elem_find_first(other_flags, b'TCDefinition'):
+                            timecode_definition_value = elem_prop_first(timecode_definition)
+                            # If its value is unknown or missing, default to FBX_KTIME_V8.
+                            fbx_ktime = FBX_TIMECODE_DEFINITION_TO_KTIME_PER_SECOND.get(timecode_definition_value,
+                                                                                        FBX_KTIME_V8)
+
             fbx_tmpl_astack = fbx_template_get((b'AnimationStack', b'FbxAnimStack'))
             fbx_tmpl_alayer = fbx_template_get((b'AnimationLayer', b'FbxAnimLayer'))
             stacks = {}
@@ -3733,7 +3763,8 @@ def load(operator, context, filepath="",
                     curvenodes[acn_uuid][ac_uuid] = (fbx_acitem, channel)
 
             # And now that we have sorted all this, apply animations!
-            blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, settings.anim_offset, global_scale)
+            blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, settings.anim_offset, global_scale,
+                                 fbx_ktime)
 
         _(); del _
 

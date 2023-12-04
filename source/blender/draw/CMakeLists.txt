@@ -12,7 +12,6 @@ set(INC
   ../bmesh
   ../editors/include
   ../editors/space_view3d
-  ../functions
   ../gpu
   ../gpu/intern
   ../makesrna
@@ -251,7 +250,7 @@ set(SRC
   intern/draw_manager_testing.h
   intern/draw_manager_text.h
   intern/draw_pass.hh
-  intern/draw_pbvh.h
+  intern/draw_pbvh.hh
   intern/draw_resource.hh
   intern/draw_sculpt.hh
   intern/draw_shader.h
@@ -351,6 +350,7 @@ set(LIB
   PRIVATE bf::blenlib
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
+  PRIVATE bf::functions
   PRIVATE bf::imbuf
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
@@ -468,6 +468,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_colorspace_lib.glsl
   engines/eevee_next/shaders/eevee_cryptomatte_lib.glsl
   engines/eevee_next/shaders/eevee_cubemap_lib.glsl
+  engines/eevee_next/shaders/eevee_debug_gbuffer_frag.glsl
   engines/eevee_next/shaders/eevee_debug_surfels_vert.glsl
   engines/eevee_next/shaders/eevee_debug_surfels_frag.glsl
   engines/eevee_next/shaders/eevee_debug_irradiance_grid_vert.glsl
