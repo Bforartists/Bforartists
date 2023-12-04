@@ -10,8 +10,8 @@
 
 #include "BKE_idtype.h"
 #include "BKE_lib_id.h"
-#include "BKE_main.h"
-#include "BKE_main_namemap.h"
+#include "BKE_main.hh"
+#include "BKE_main_namemap.hh"
 
 #include "DNA_ID.h"
 #include "DNA_mesh_types.h"

@@ -16,6 +16,10 @@
  * \ingroup bke
  */
 
+namespace blender::draw::pbvh {
+struct PBVHBatches;
+}
+
 struct PBVHGPUFormat;
 struct MLoopTri;
 struct BMVert;
@@ -35,7 +39,7 @@ struct BBC {
  * union'd structs */
 struct PBVHNode {
   /* Opaque handle for drawing code */
-  PBVHBatches *draw_batches = nullptr;
+  blender::draw::pbvh::PBVHBatches *draw_batches = nullptr;
 
   /* Voxel bounds */
   BB vb = {};
@@ -164,25 +168,16 @@ struct PBVH {
   blender::Span<blender::float3> vert_normals;
   blender::Span<blender::float3> face_normals;
 
-  blender::OffsetIndices<int> faces;
-  bool *hide_vert;
-  bool *hide_poly;
   /** Only valid for polygon meshes. */
+  blender::OffsetIndices<int> faces;
   blender::Span<int> corner_verts;
   /* Owned by the #PBVH, because after deformations they have to be recomputed. */
   blender::Array<MLoopTri> looptri;
   blender::Span<int> looptri_faces;
-  CustomData *vert_data;
-  CustomData *loop_data;
-  CustomData *face_data;
 
   /* Grid Data */
   CCGKey gridkey;
-  CCGElem **grids;
-  blender::Span<int> grid_to_face_map;
-  const DMFlagMat *grid_flag_mats;
-  int totgrid;
-  BLI_bitmap **grid_hidden;
+  SubdivCCG *subdiv_ccg;
 
   /* Used during BVH build and later to mark that a vertex needs to update
    * (its normal must be recalculated). */
@@ -205,7 +200,6 @@ struct PBVH {
   int num_planes;
 
   BMLog *bm_log;
-  SubdivCCG *subdiv_ccg;
 
   blender::GroupedSpan<int> pmap;
 
@@ -292,4 +286,4 @@ void pbvh_bmesh_normals_update(blender::Span<PBVHNode *> nodes);
 
 void pbvh_node_pixels_free(PBVHNode *node);
 void pbvh_pixels_free(PBVH *pbvh);
-void pbvh_free_draw_buffers(PBVH *pbvh, PBVHNode *node);
+void pbvh_free_draw_buffers(PBVH &pbvh, PBVHNode *node);

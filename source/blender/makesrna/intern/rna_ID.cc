@@ -18,7 +18,7 @@
 
 #include "BKE_icons.h"
 #include "BKE_lib_id.h"
-#include "BKE_main_namemap.h"
+#include "BKE_main_namemap.hh"
 #include "BKE_object.hh"
 
 #include "RNA_access.hh"
@@ -221,11 +221,11 @@ const IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
 #  include "BKE_idtype.h"
 #  include "BKE_lib_override.hh"
 #  include "BKE_lib_query.h"
-#  include "BKE_lib_remap.h"
+#  include "BKE_lib_remap.hh"
 #  include "BKE_library.h"
 #  include "BKE_material.h"
 #  include "BKE_preview_image.hh"
-#  include "BKE_vfont.h"
+#  include "BKE_vfont.hh"
 
 #  include "DEG_depsgraph.hh"
 #  include "DEG_depsgraph_build.hh"

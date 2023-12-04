@@ -100,7 +100,7 @@ set(SRC
   GPU_matrix.h
   GPU_platform.h
   GPU_primitive.h
-  GPU_select.h
+  GPU_select.hh
   GPU_shader.h
   GPU_shader_builtin.h
   GPU_shader_shared.h
@@ -854,6 +854,7 @@ if(WITH_GPU_BUILDTIME_SHADER_BUILDER)
     bf_intern_ghost
     ${PLATFORM_LINKLIBS}
     PRIVATE bf::intern::guardedalloc
+    PRIVATE bf::imbuf
   )
   target_include_directories(shader_builder PRIVATE ${INC} ${CMAKE_CURRENT_BINARY_DIR})
 

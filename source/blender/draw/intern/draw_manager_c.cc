@@ -28,7 +28,7 @@
 #include "BKE_gpencil_legacy.h"
 #include "BKE_grease_pencil.h"
 #include "BKE_lattice.hh"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_mball.h"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
@@ -746,10 +746,8 @@ static void duplidata_key_free(void *key)
     temp_object.runtime = &runtime;
 
     /* Do not modify the original bound-box. */
-    temp_object.runtime->bb = nullptr;
     BKE_object_replace_data_on_shallow_copy(&temp_object, dupli_key->ob_data);
     drw_batch_cache_generate_requested(&temp_object);
-    MEM_SAFE_FREE(temp_object.runtime->bb);
   }
   MEM_freeN(key);
 }
