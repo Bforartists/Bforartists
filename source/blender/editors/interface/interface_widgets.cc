@@ -3294,7 +3294,8 @@ static void ui_draw_but_HSV_v(uiBut *but, const rcti *rect)
   UI_draw_roundbox_4fv_ex(&rectf, inner1, inner2, U.pixelsize, outline, 1.0f, 0.0f);
 
   /* cursor */
-  const float y = rect->ymin + v * BLI_rcti_size_y(rect);
+  float y = rect->ymin + v * BLI_rcti_size_y(rect);
+  CLAMP(y, float(rect->ymin) + (2.0f * UI_SCALE_FAC), float(rect->ymax) - (2.0f * UI_SCALE_FAC));
   rectf.ymin = y - (4.0f * UI_SCALE_FAC) - U.pixelsize;
   rectf.ymax = y + (4.0f * UI_SCALE_FAC) + U.pixelsize;
   float col[4] = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -4751,7 +4752,7 @@ static int widget_roundbox_set(uiBut *but, rcti *rect)
   if (but->active && (but->type != UI_BTYPE_POPOVER) && !ui_but_menu_draw_as_popover(but)) {
     const int direction = ui_but_menu_direction(but);
 
-    /* Pulldown menus that open above or below a button can have more than one direction. */
+    /* Pull-down menus that open above or below a button can have more than one direction. */
     if (direction & UI_DIR_UP) {
       roundbox &= ~(UI_CNR_TOP_RIGHT | UI_CNR_TOP_LEFT);
     }

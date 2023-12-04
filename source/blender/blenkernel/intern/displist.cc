@@ -41,7 +41,7 @@
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
-#include "BKE_vfont.h"
+#include "BKE_vfont.hh"
 
 #include "BLI_sys_types.h" /* For #intptr_t support. */
 
@@ -1366,8 +1366,6 @@ void BKE_displist_make_curveTypes(Depsgraph *depsgraph,
 
     ob->runtime->geometry_set_eval = new blender::bke::GeometrySet(std::move(geometry));
   }
-
-  BKE_object_boundbox_calc_from_evaluated_geometry(ob);
 }
 
 void BKE_displist_minmax(const ListBase *dispbase, float min[3], float max[3])

@@ -22,7 +22,7 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_node.h"
 
@@ -46,7 +46,8 @@
 #define MAX_COLOR_BAND 128
 #define MAX_GPU_SKIES 8
 
-/** Whether the optimized variant of the GPUPass should be created asynchronously.
+/**
+ * Whether the optimized variant of the GPUPass should be created asynchronously.
  * Usage of this depends on whether there are possible threading challenges of doing so.
  * Currently, the overhead of GPU_generate_pass is relatively small in comparison to shader
  * compilation, though this option exists in case any potential scenarios for material graph
@@ -345,7 +346,7 @@ void GPU_material_uniform_buffer_create(GPUMaterial *material, ListBase *inputs)
   material->ubo = GPU_uniformbuf_create_from_list(inputs, material->name);
 }
 
-ListBase GPU_material_attributes(GPUMaterial *material)
+ListBase GPU_material_attributes(const GPUMaterial *material)
 {
   return material->graph.attributes;
 }

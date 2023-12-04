@@ -31,7 +31,7 @@
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_override.hh"
-#include "BKE_lib_remap.h"
+#include "BKE_lib_remap.hh"
 #include "BKE_material.h"
 #include "BKE_node.hh"
 #include "BKE_report.h"
@@ -64,7 +64,7 @@
 #include "ED_keyframing.hh"
 
 /* only for UI_OT_editsource */
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BLI_ghash.h"
 #include "ED_screen.hh"
 #include "ED_text.hh"
@@ -1679,7 +1679,7 @@ static bool jump_to_target_button(bContext *C, bool poll)
   PropertyRNA *prop;
   int index;
 
-  UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+  const uiBut *but = UI_context_active_but_prop_get(C, &ptr, &prop, &index);
 
   /* If there is a valid property... */
   if (ptr.data && prop) {
@@ -1693,7 +1693,6 @@ static bool jump_to_target_button(bContext *C, bool poll)
     }
     /* For string properties with prop_search, look up the search collection item. */
     if (type == PROP_STRING) {
-      const uiBut *but = UI_context_active_but_get(C);
       const uiButSearch *search_but = (but->type == UI_BTYPE_SEARCH_MENU) ? (uiButSearch *)but :
                                                                             nullptr;
 

@@ -12,9 +12,10 @@
 #include <optional>
 #include <string>
 
-#include "BLI_bitmap.h"
+#include "BLI_bit_group_vector.hh"
 #include "BLI_compiler_compat.h"
 #include "BLI_function_ref.hh"
+#include "BLI_index_mask.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_offset_indices.hh"
 #include "BLI_span.hh"
@@ -40,13 +41,16 @@ struct MLoopTri;
 struct Mesh;
 struct PBVH;
 struct PBVHNode;
-struct PBVHBatches;
-struct PBVH_GPU_Args;
 struct SculptSession;
+struct SubdivCCGFace;
 struct SubdivCCG;
 struct TaskParallelSettings;
 struct Image;
 struct ImageUser;
+namespace blender::draw::pbvh {
+struct PBVHBatches;
+struct PBVH_GPU_Args;
+}  // namespace blender::draw::pbvh
 
 /*
  * These structs represent logical verts/edges/faces.
@@ -88,16 +92,6 @@ struct PBVHPixelsNode {
    * Contains #blender::bke::pbvh::pixels::NodeData.
    */
   void *node_data = nullptr;
-};
-
-class PBVHAttrReq {
- public:
-  PBVHAttrReq() = default;
-  PBVHAttrReq(const eAttrDomain domain, const eCustomDataType type) : domain(domain), type(type) {}
-
-  std::string name;
-  eAttrDomain domain;
-  eCustomDataType type;
 };
 
 struct PBVHFrustumPlanes {
@@ -213,15 +207,7 @@ void BKE_pbvh_update_mesh_pointers(PBVH *pbvh, Mesh *mesh);
 /**
  * Do a full rebuild with on Grids data structure.
  */
-void BKE_pbvh_build_grids(PBVH *pbvh,
-                          CCGElem **grids,
-                          int totgrid,
-                          CCGKey *key,
-                          blender::Span<int> grid_to_face_map,
-                          DMFlagMat *flagmats,
-                          unsigned int **grid_hidden,
-                          Mesh *me,
-                          SubdivCCG *subdiv_ccg);
+void BKE_pbvh_build_grids(PBVH *pbvh, CCGKey *key, Mesh *me, SubdivCCG *subdiv_ccg);
 /**
  * Build a PBVH from a BMesh.
  */
@@ -259,6 +245,8 @@ bool BKE_pbvh_node_raycast(PBVH *pbvh,
                            PBVHNode *node,
                            float (*origco)[3],
                            bool use_origco,
+                           blender::Span<int> corner_verts,
+                           const bool *hide_poly,
                            const float ray_start[3],
                            const float ray_normal[3],
                            IsectRayPrecalc *isect_precalc,
@@ -297,6 +285,8 @@ bool BKE_pbvh_node_find_nearest_to_ray(PBVH *pbvh,
                                        PBVHNode *node,
                                        float (*origco)[3],
                                        bool use_origco,
+                                       blender::Span<int> corner_verts,
+                                       const bool *hide_poly,
                                        const float ray_start[3],
                                        const float ray_normal[3],
                                        float *depth,
@@ -304,7 +294,7 @@ bool BKE_pbvh_node_find_nearest_to_ray(PBVH *pbvh,
 
 /* Drawing */
 void BKE_pbvh_set_frustum_planes(PBVH *pbvh, PBVHFrustumPlanes *planes);
-void BKE_pbvh_get_frustum_planes(PBVH *pbvh, PBVHFrustumPlanes *planes);
+void BKE_pbvh_get_frustum_planes(const PBVH *pbvh, PBVHFrustumPlanes *planes);
 
 void BKE_pbvh_draw_cb(const Mesh &mesh,
                       PBVH *pbvh,
@@ -312,12 +302,9 @@ void BKE_pbvh_draw_cb(const Mesh &mesh,
                       PBVHFrustumPlanes *update_frustum,
                       PBVHFrustumPlanes *draw_frustum,
                       void (*draw_fn)(void *user_data,
-                                      PBVHBatches *batches,
-                                      const PBVH_GPU_Args &args),
-                      void *user_data,
-                      bool full_render,
-                      PBVHAttrReq *attrs,
-                      int attrs_num);
+                                      blender::draw::pbvh::PBVHBatches *batches,
+                                      const blender::draw::pbvh::PBVH_GPU_Args &args),
+                      void *user_data);
 
 /* PBVH Access */
 
@@ -328,17 +315,12 @@ bool BKE_pbvh_has_faces(const PBVH *pbvh);
  */
 void BKE_pbvh_bounding_box(const PBVH *pbvh, float min[3], float max[3]);
 
-/**
- * Multi-res hidden data, only valid for type == PBVH_GRIDS.
- */
-unsigned int **BKE_pbvh_grid_hidden(const PBVH *pbvh);
-
 void BKE_pbvh_sync_visibility_from_verts(PBVH *pbvh, Mesh *me);
 
 /**
  * Returns the number of visible quads in the nodes' grids.
  */
-int BKE_pbvh_count_grid_quads(BLI_bitmap **grid_hidden,
+int BKE_pbvh_count_grid_quads(const blender::BitGroupVector<> &grid_visibility,
                               const int *grid_indices,
                               int totgrid,
                               int gridsize,
@@ -349,8 +331,6 @@ int BKE_pbvh_count_grid_quads(BLI_bitmap **grid_hidden,
  */
 const CCGKey *BKE_pbvh_get_grid_key(const PBVH *pbvh);
 
-CCGElem **BKE_pbvh_get_grids(const PBVH *pbvh);
-BLI_bitmap **BKE_pbvh_get_grid_visibility(const PBVH *pbvh);
 int BKE_pbvh_get_grid_num_verts(const PBVH *pbvh);
 int BKE_pbvh_get_grid_num_faces(const PBVH *pbvh);
 
@@ -397,13 +377,8 @@ bool BKE_pbvh_node_fully_unmasked_get(PBVHNode *node);
 void BKE_pbvh_mark_rebuild_pixels(PBVH *pbvh);
 void BKE_pbvh_vert_tag_update_normal(PBVH *pbvh, PBVHVertRef vertex);
 
-void BKE_pbvh_node_get_grids(PBVH *pbvh,
-                             PBVHNode *node,
-                             const int **grid_indices,
-                             int *totgrid,
-                             int *maxgrid,
-                             int *gridsize,
-                             CCGElem ***r_griddata);
+blender::Span<int> BKE_pbvh_node_get_grid_indices(const PBVHNode &node);
+
 void BKE_pbvh_node_num_verts(const PBVH *pbvh,
                              const PBVHNode *node,
                              int *r_uniquevert,
@@ -411,10 +386,7 @@ void BKE_pbvh_node_num_verts(const PBVH *pbvh,
 int BKE_pbvh_node_num_unique_verts(const PBVH &pbvh, const PBVHNode &node);
 blender::Span<int> BKE_pbvh_node_get_vert_indices(const PBVHNode *node);
 blender::Span<int> BKE_pbvh_node_get_unique_vert_indices(const PBVHNode *node);
-void BKE_pbvh_node_get_loops(PBVH *pbvh,
-                             PBVHNode *node,
-                             const int **r_loop_indices,
-                             const int **r_corner_verts);
+void BKE_pbvh_node_get_loops(PBVHNode *node, const int **r_loop_indices);
 blender::Vector<int> BKE_pbvh_node_calc_face_indices(const PBVH &pbvh, const PBVHNode &node);
 
 /* Get number of faces in the mesh; for PBVH_GRIDS the
@@ -457,22 +429,11 @@ void BKE_pbvh_update_vertex_data(PBVH *pbvh, int flags);
 void BKE_pbvh_update_visibility(PBVH *pbvh);
 void BKE_pbvh_update_normals(PBVH *pbvh, SubdivCCG *subdiv_ccg);
 void BKE_pbvh_redraw_BB(PBVH *pbvh, float bb_min[3], float bb_max[3]);
-void BKE_pbvh_get_grid_updates(PBVH *pbvh, bool clear, void ***r_gridfaces, int *r_totface);
-void BKE_pbvh_grids_update(PBVH *pbvh,
-                           CCGElem **grids,
-                           blender::Span<int> grid_to_face_map,
-                           DMFlagMat *flagmats,
-                           unsigned int **grid_hidden,
-                           CCGKey *key);
+blender::IndexMask BKE_pbvh_get_grid_updates(const PBVH *pbvh,
+                                             blender::Span<const PBVHNode *> nodes,
+                                             blender::IndexMaskMemory &memory);
+void BKE_pbvh_grids_update(PBVH *pbvh, CCGKey *key);
 void BKE_pbvh_subdiv_cgg_set(PBVH *pbvh, SubdivCCG *subdiv_ccg);
-
-/**
- * If an operation causes the hide status stored in the mesh to change, this must be called
- * to update the references to those attributes, since they are only added when necessary.
- */
-void BKE_pbvh_update_hide_attributes_from_mesh(PBVH *pbvh);
-
-/* Vertex Deformer. */
 
 void BKE_pbvh_vert_coords_apply(PBVH *pbvh, blender::Span<blender::float3> vert_positions);
 bool BKE_pbvh_is_deformed(PBVH *pbvh);
@@ -501,9 +462,10 @@ struct PBVHVertexIter {
 
   /* grid */
   CCGKey key;
-  CCGElem **grids;
+  CCGElem *const *grids;
   CCGElem *grid;
-  BLI_bitmap **grid_hidden, *gh;
+  const blender::BitGroupVector<> *grid_hidden;
+  std::optional<blender::BoundedBitSpan> gh;
   const int *grid_indices;
   int totgrid;
   int gridsize;
@@ -547,7 +509,12 @@ void pbvh_vertex_iter_init(PBVH *pbvh, PBVHNode *node, PBVHVertexIter *vi, int m
       vi.index = vi.vertex.i = vi.grid_indices[vi.g] * vi.key.grid_area - 1; \
       vi.grid = CCG_elem_offset(&vi.key, vi.grids[vi.grid_indices[vi.g]], -1); \
       if (mode == PBVH_ITER_UNIQUE) { \
-        vi.gh = vi.grid_hidden[vi.grid_indices[vi.g]]; \
+        if (vi.grid_hidden) { \
+          vi.gh.emplace((*vi.grid_hidden)[vi.grid_indices[vi.g]]); \
+        } \
+        else { \
+          vi.gh.reset(); \
+        } \
       } \
     } \
     else { \
@@ -566,7 +533,7 @@ void pbvh_vertex_iter_init(PBVH *pbvh, PBVHNode *node, PBVHVertexIter *vi, int m
           vi.vertex.i++; \
           vi.visible = true; \
           if (vi.gh) { \
-            if (BLI_BITMAP_TEST(vi.gh, vi.gy * vi.gridsize + vi.gx)) { \
+            if ((*vi.gh)[vi.gy * vi.gridsize + vi.gx]) { \
               continue; \
             } \
           } \
@@ -640,10 +607,6 @@ void BKE_pbvh_parallel_range_settings(TaskParallelSettings *settings,
 
 blender::MutableSpan<blender::float3> BKE_pbvh_get_vert_positions(const PBVH *pbvh);
 const float (*BKE_pbvh_get_vert_normals(const PBVH *pbvh))[3];
-const bool *BKE_pbvh_get_vert_hide(const PBVH *pbvh);
-bool *BKE_pbvh_get_vert_hide_for_write(PBVH *pbvh);
-
-const bool *BKE_pbvh_get_poly_hide(const PBVH *pbvh);
 
 PBVHColorBufferNode *BKE_pbvh_node_color_buffer_get(PBVHNode *node);
 void BKE_pbvh_node_color_buffer_free(PBVH *pbvh);
