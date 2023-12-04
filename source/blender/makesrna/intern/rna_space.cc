@@ -4403,24 +4403,21 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "gridflag", V3D_SHOW_X);
   RNA_def_property_ui_text(prop,
                            "Display X Axis",
-                           "Show the X axis line in perspectivic view.\nNote that in orthographic "
-                           "view this button has no effect");
+                           "Show the X axis line in perspective / orthographic views");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "show_axis_y", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gridflag", V3D_SHOW_Y);
   RNA_def_property_ui_text(prop,
                            "Display Y Axis",
-                           "Show the Y axis line in perspectivic view.\nNote that in orthographic "
-                           "view this button has no effect");
+                           "Show the Y axis line in perspective / orthographic views");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "show_axis_z", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gridflag", V3D_SHOW_Z);
   RNA_def_property_ui_text(prop,
                            "Display Z Axis",
-                           "Show the Z axis line in perspectivic view.\nNote that in orthographic "
-                           "view this button has no effect");
+                           "Show the Z axis line in perspective / orthographic views");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "grid_scale", PROP_FLOAT, PROP_NONE);
