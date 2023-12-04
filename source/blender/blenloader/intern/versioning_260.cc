@@ -53,7 +53,7 @@
 
 #include "BKE_anim_visualization.h"
 #include "BKE_image.h"
-#include "BKE_main.h"  /* for Main */
+#include "BKE_main.hh" /* for Main */
 #include "BKE_mesh.hh" /* for ME_ defines (patching) */
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_modifier.hh"
@@ -72,7 +72,7 @@
 #include "SEQ_utils.hh"
 
 #ifdef WITH_FFMPEG
-#  include "BKE_writeffmpeg.h"
+#  include "BKE_writeffmpeg.hh"
 #endif
 
 #include "IMB_imbuf.h" /* for proxy / time-code versioning stuff. */

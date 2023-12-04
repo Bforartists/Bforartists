@@ -25,10 +25,6 @@
 #include "BLI_compiler_attrs.h"
 #include "BLI_sys_types.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 struct BLI_mempool;
 struct BlendThumbnail;
 struct GHash;
@@ -37,19 +33,20 @@ struct IDNameLib_Map;
 struct ImBuf;
 struct Library;
 struct MainLock;
+struct ReportList;
 struct UniqueName_Map;
 
 /**
  * Blender thumbnail, as written to the `.blend` file (width, height, and data as char RGBA).
  */
-typedef struct BlendThumbnail {
+struct BlendThumbnail {
   int width, height;
   /** Pixel data, RGBA (repeated): `sizeof(char[4]) * width * height`. */
   char rect[0];
-} BlendThumbnail;
+};
 
 /** Structs caching relations between data-blocks in a given Main. */
-typedef struct MainIDRelationsEntryItem {
+struct MainIDRelationsEntryItem {
   struct MainIDRelationsEntryItem *next;
 
   union {
@@ -62,9 +59,9 @@ typedef struct MainIDRelationsEntryItem {
   uint session_uuid;
 
   int usage_flag; /* Using IDWALK_ enums, defined in BKE_lib_query.h */
-} MainIDRelationsEntryItem;
+};
 
-typedef struct MainIDRelationsEntry {
+struct MainIDRelationsEntry {
   /* Linked list of IDs using that ID. */
   struct MainIDRelationsEntryItem *from_ids;
   /* Linked list of IDs used by that ID. */
@@ -75,10 +72,10 @@ typedef struct MainIDRelationsEntry {
 
   /* Runtime tags, users should ensure those are reset after usage. */
   uint tags;
-} MainIDRelationsEntry;
+};
 
 /** #MainIDRelationsEntry.tags */
-typedef enum eMainIDRelationsEntryTags {
+enum eMainIDRelationsEntryTags {
   /* Generic tag marking the entry as to be processed. */
   MAINIDRELATIONS_ENTRY_TAGS_DOIT = 1 << 0,
 
@@ -102,9 +99,9 @@ typedef enum eMainIDRelationsEntryTags {
    * handling. */
   MAINIDRELATIONS_ENTRY_TAGS_INPROGRESS = MAINIDRELATIONS_ENTRY_TAGS_INPROGRESS_TO |
                                           MAINIDRELATIONS_ENTRY_TAGS_INPROGRESS_FROM,
-} eMainIDRelationsEntryTags;
+};
 
-typedef struct MainIDRelations {
+struct MainIDRelations {
   /* Mapping from an ID pointer to all of its parents (IDs using it) and children (IDs it uses).
    * Values are `MainIDRelationsEntry` pointers. */
   struct GHash *relations_from_pointers;
@@ -114,15 +111,15 @@ typedef struct MainIDRelations {
 
   /* Private... */
   struct BLI_mempool *entry_items_pool;
-} MainIDRelations;
+};
 
 enum {
   /* Those bmain relations include pointers/usages from editors. */
   MAINIDRELATIONS_INCLUDE_UI = 1 << 0,
 };
 
-typedef struct Main {
-  struct Main *next, *prev;
+struct Main {
+  Main *next, *prev;
   /**
    * The file-path of this blend file, an empty string indicates an unsaved file.
    *
@@ -187,7 +184,7 @@ typedef struct Main {
 
   BlendThumbnail *blen_thumb;
 
-  struct Library *curlib;
+  Library *curlib;
   ListBase scenes;
   ListBase libraries;
   ListBase objects;
@@ -238,20 +235,20 @@ typedef struct Main {
    * know when, who and how it was created.
    * Used by code doing a lot of remapping etc. at once to speed things up.
    */
-  struct MainIDRelations *relations;
+  MainIDRelations *relations;
 
   /** IDMap of IDs. Currently used when reading (expanding) libraries. */
-  struct IDNameLib_Map *id_map;
+  IDNameLib_Map *id_map;
 
   /** Used for efficient calculations of unique names. */
-  struct UniqueName_Map *name_map;
+  UniqueName_Map *name_map;
 
   /* Used for efficient calculations of unique names. Covers all names in current Main, including
    * linked data ones. */
-  struct UniqueName_Map *name_map_global;
+  UniqueName_Map *name_map_global;
 
-  struct MainLock *lock;
-} Main;
+  MainLock *lock;
+};
 
 /**
  * Create a new Main data-base.
@@ -259,22 +256,57 @@ typedef struct Main {
  * \note Always generate a non-global Main, use #BKE_blender_globals_main_replace to put a newly
  * created one in `G_MAIN`.
  */
-struct Main *BKE_main_new(void);
-void BKE_main_free(struct Main *mainvar);
+Main *BKE_main_new(void);
+void BKE_main_free(Main *mainvar);
+
+/** Struct packaging log/report info about a Main merge result. */
+struct MainMergeReport {
+  ReportList *reports = nullptr;
+
+  /** Number of IDs from source Main that have been moved into destination Main. */
+  int num_merged_ids = 0;
+  /** Number of (non-library) IDs from source Main that were expected to have a matching ID in
+   * destination Main, but did not. These have not been moved, and their usages have been remapped
+   * to null. */
+  int num_unknown_ids = 0;
+  /** Number of (non-library) IDs from source Main that already had a matching ID in destination
+   * Main. */
+  int num_remapped_ids = 0;
+  /** Number of Library IDs from source Main that already had a matching Library ID in destination
+   * Main. */
+  int num_remapped_libraries = 0;
+};
+
+/** Merge the content of `bmain_src` into `bmain_dst`.
+ *
+ * In case of collision (ID from same library with same name), the existing ID in `bmain_dst` is
+ * kept, the one from `bmain_src` is left in its original Main, and its usages in `bmain_dst` (from
+ * newly moved-in IDs) are remapped to its matching counterpart already in `bmain_dst`.
+ *
+ * Libraries are also de-duplicated, based on their absolute filepath, and remapped accordingly.
+ * Note that local IDs in source Main always remain local IDs in destination Main.
+ *
+ * In case some source IDs are linked data from the blendfile of `bmain_dst`, they are never moved.
+ * If a matching destination local ID is found, their usage get remapped as expected, otherwise
+ * they are dropped, their usages are remapped to null, and a warning is printed.
+ *
+ * Since `bmain_src` is either empty or contains left-over IDs with (likely) invalid ID
+ * relationships and other potential issues after the merge, it is always freed. */
+void BKE_main_merge(Main *bmain_dst, Main **r_bmain_src, MainMergeReport &reports);
 
 /**
  * Check whether given `bmain` is empty or contains some IDs.
  */
-bool BKE_main_is_empty(struct Main *bmain);
+bool BKE_main_is_empty(Main *bmain);
 
-void BKE_main_lock(struct Main *bmain);
-void BKE_main_unlock(struct Main *bmain);
+void BKE_main_lock(Main *bmain);
+void BKE_main_unlock(Main *bmain);
 
 /** Generate the mappings between used IDs and their users, and vice-versa. */
-void BKE_main_relations_create(struct Main *bmain, short flag);
-void BKE_main_relations_free(struct Main *bmain);
+void BKE_main_relations_create(Main *bmain, short flag);
+void BKE_main_relations_free(Main *bmain);
 /** Set or clear given `tag` in all relation entries of given `bmain`. */
-void BKE_main_relations_tag_set(struct Main *bmain, eMainIDRelationsEntryTags tag, bool value);
+void BKE_main_relations_tag_set(Main *bmain, eMainIDRelationsEntryTags tag, bool value);
 
 /**
  * Create a #GSet storing all IDs present in given \a bmain, by their pointers.
@@ -282,7 +314,7 @@ void BKE_main_relations_tag_set(struct Main *bmain, eMainIDRelationsEntryTags ta
  * \param gset: If not NULL, given GSet will be extended with IDs from given \a bmain,
  * instead of creating a new one.
  */
-struct GSet *BKE_main_gset_create(struct Main *bmain, struct GSet *gset);
+GSet *BKE_main_gset_create(Main *bmain, GSet *gset);
 
 /* Temporary runtime API to allow re-using local (already appended)
  * IDs instead of appending a new copy again. */
@@ -293,12 +325,11 @@ struct GSet *BKE_main_gset_create(struct Main *bmain, struct GSet *gset);
  *
  * This uses the information stored in `ID.library_weak_reference`.
  */
-struct GHash *BKE_main_library_weak_reference_create(struct Main *bmain) ATTR_NONNULL();
+GHash *BKE_main_library_weak_reference_create(Main *bmain) ATTR_NONNULL();
 /**
  * Destroy the data generated by #BKE_main_library_weak_reference_create.
  */
-void BKE_main_library_weak_reference_destroy(struct GHash *library_weak_reference_mapping)
-    ATTR_NONNULL();
+void BKE_main_library_weak_reference_destroy(GHash *library_weak_reference_mapping) ATTR_NONNULL();
 /**
  * Search for a local ID matching the given linked ID reference.
  *
@@ -308,10 +339,9 @@ void BKE_main_library_weak_reference_destroy(struct GHash *library_weak_referenc
  * \param library_id_name: the full ID name, including the leading two chars encoding the ID
  * type.
  */
-struct ID *BKE_main_library_weak_reference_search_item(
-    struct GHash *library_weak_reference_mapping,
-    const char *library_filepath,
-    const char *library_id_name) ATTR_NONNULL();
+ID *BKE_main_library_weak_reference_search_item(GHash *library_weak_reference_mapping,
+                                                const char *library_filepath,
+                                                const char *library_id_name) ATTR_NONNULL();
 /**
  * Add the given ID weak library reference to given local ID and the runtime mapping.
  *
@@ -321,10 +351,10 @@ struct ID *BKE_main_library_weak_reference_search_item(
  * \param library_id_name: the full ID name, including the leading two chars encoding the ID type.
  * \param new_id: New local ID matching given weak reference.
  */
-void BKE_main_library_weak_reference_add_item(struct GHash *library_weak_reference_mapping,
+void BKE_main_library_weak_reference_add_item(GHash *library_weak_reference_mapping,
                                               const char *library_filepath,
                                               const char *library_id_name,
-                                              struct ID *new_id) ATTR_NONNULL();
+                                              ID *new_id) ATTR_NONNULL();
 /**
  * Update the status of the given ID weak library reference in current local IDs and the runtime
  * mapping.
@@ -339,11 +369,11 @@ void BKE_main_library_weak_reference_add_item(struct GHash *library_weak_referen
  * \param old_id: Existing local ID matching given weak reference.
  * \param new_id: New local ID matching given weak reference.
  */
-void BKE_main_library_weak_reference_update_item(struct GHash *library_weak_reference_mapping,
+void BKE_main_library_weak_reference_update_item(GHash *library_weak_reference_mapping,
                                                  const char *library_filepath,
                                                  const char *library_id_name,
-                                                 struct ID *old_id,
-                                                 struct ID *new_id) ATTR_NONNULL();
+                                                 ID *old_id,
+                                                 ID *new_id) ATTR_NONNULL();
 /**
  * Remove the given ID weak library reference from the given local ID and the runtime mapping.
  *
@@ -353,18 +383,18 @@ void BKE_main_library_weak_reference_update_item(struct GHash *library_weak_refe
  * \param library_id_name: the full ID name, including the leading two chars encoding the ID type.
  * \param old_id: Existing local ID matching given weak reference.
  */
-void BKE_main_library_weak_reference_remove_item(struct GHash *library_weak_reference_mapping,
+void BKE_main_library_weak_reference_remove_item(GHash *library_weak_reference_mapping,
                                                  const char *library_filepath,
                                                  const char *library_id_name,
-                                                 struct ID *old_id) ATTR_NONNULL();
+                                                 ID *old_id) ATTR_NONNULL();
 
 /* *** Generic utils to loop over whole Main database. *** */
 
 #define FOREACH_MAIN_LISTBASE_ID_BEGIN(_lb, _id) \
   { \
-    ID *_id_next = (ID *)(_lb)->first; \
-    for ((_id) = _id_next; (_id) != NULL; (_id) = _id_next) { \
-      _id_next = (ID *)(_id)->next;
+    ID *_id_next = static_cast<ID *>((_lb)->first); \
+    for ((_id) = _id_next; (_id) != nullptr; (_id) = _id_next) { \
+      _id_next = static_cast<ID *>((_id)->next);
 
 #define FOREACH_MAIN_LISTBASE_ID_END \
   } \
@@ -411,7 +441,7 @@ void BKE_main_library_weak_reference_remove_item(struct GHash *library_weak_refe
  * \param img: ImBuf image to generate thumbnail data from.
  * \return The generated .blend file raw thumbnail data.
  */
-struct BlendThumbnail *BKE_main_thumbnail_from_imbuf(struct Main *bmain, struct ImBuf *img);
+BlendThumbnail *BKE_main_thumbnail_from_imbuf(Main *bmain, ImBuf *img);
 /**
  * Generates an image from raw .blend file thumbnail \a data.
  *
@@ -419,16 +449,16 @@ struct BlendThumbnail *BKE_main_thumbnail_from_imbuf(struct Main *bmain, struct 
  * \param data: Raw .blend file thumbnail data.
  * \return An ImBuf from given data, or NULL if invalid.
  */
-struct ImBuf *BKE_main_thumbnail_to_imbuf(struct Main *bmain, struct BlendThumbnail *data);
+ImBuf *BKE_main_thumbnail_to_imbuf(Main *bmain, BlendThumbnail *data);
 /**
  * Generates an empty (black) thumbnail for given Main.
  */
-void BKE_main_thumbnail_create(struct Main *bmain);
+void BKE_main_thumbnail_create(Main *bmain);
 
 /**
  * Return file-path of given \a main.
  */
-const char *BKE_main_blendfile_path(const struct Main *bmain) ATTR_NONNULL();
+const char *BKE_main_blendfile_path(const Main *bmain) ATTR_NONNULL();
 /**
  * Return file-path of global main #G_MAIN.
  *
@@ -440,7 +470,7 @@ const char *BKE_main_blendfile_path_from_global(void);
 /**
  * \return A pointer to the \a ListBase of given \a bmain for requested \a type ID type.
  */
-struct ListBase *which_libbase(struct Main *bmain, short type);
+ListBase *which_libbase(Main *bmain, short type);
 
 //#define INDEX_ID_MAX 41
 /**
@@ -453,9 +483,9 @@ struct ListBase *which_libbase(struct Main *bmain, short type);
  * \param lb: Array of lists #INDEX_ID_MAX in length.
  *
  * \note The order of each ID type #ListBase in the array is determined by the `INDEX_ID_<IDTYPE>`
- * enum definitions in `DNA_ID.h`. See also the #FOREACH_MAIN_ID_BEGIN macro in `BKE_main.h`
+ * enum definitions in `DNA_ID.h`. See also the #FOREACH_MAIN_ID_BEGIN macro in `BKE_main.hh`
  */
-int set_listbasepointers(struct Main *main, struct ListBase *lb[]);
+int set_listbasepointers(Main *main, ListBase *lb[]);
 
 #define MAIN_VERSION_FILE_ATLEAST(main, ver, subver) \
   ((main)->versionfile > (ver) || \
@@ -483,7 +513,3 @@ int set_listbasepointers(struct Main *main, struct ListBase *lb[]);
 /** Protect against buffer overflow vulnerability & negative sizes. */
 #define BLEN_THUMB_MEMSIZE_IS_VALID(_x, _y) \
   (((_x) > 0 && (_y) > 0) && ((uint64_t)(_x) * (uint64_t)(_y) < (SIZE_MAX / (sizeof(int) * 4))))
-
-#ifdef __cplusplus
-}
-#endif

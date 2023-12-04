@@ -62,10 +62,10 @@
 #include "BKE_lib_id.h"
 #include "BKE_lib_override.hh"
 #include "BKE_lib_query.h"
-#include "BKE_lib_remap.h"
+#include "BKE_lib_remap.hh"
 #include "BKE_light.h"
 #include "BKE_lightprobe.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_mball.h"
 #include "BKE_mesh.hh"
@@ -2593,7 +2593,7 @@ static int make_override_library_invoke(bContext *C, wmOperator *op, const wmEve
 
   blender::VectorSet<Collection *> potential_root_collections;
   LISTBASE_FOREACH (Collection *, collection, &bmain->collections) {
-    /* Only check for linked collections from the same library, in the current viewlayer. */
+    /* Only check for linked collections from the same library, in the current view-layer. */
     if (!ID_IS_LINKED(&collection->id) || collection->id.lib != obact->id.lib ||
         !BKE_view_layer_has_collection(view_layer, collection))
     {
@@ -3032,19 +3032,6 @@ char *ED_object_ot_drop_geometry_nodes_tooltip(bContext *C,
 static bool check_geometry_node_group_sockets(wmOperator *op, const bNodeTree *tree)
 {
   tree->ensure_interface_cache();
-  if (!tree->interface_inputs().is_empty()) {
-    const bNodeTreeInterfaceSocket *first_input = tree->interface_inputs()[0];
-    if (!first_input) {
-      BKE_report(op->reports, RPT_ERROR, "The node group must have a geometry input socket");
-      return false;
-    }
-    const bNodeSocketType *typeinfo = first_input->socket_typeinfo();
-    const eNodeSocketDatatype type = typeinfo ? eNodeSocketDatatype(typeinfo->type) : SOCK_CUSTOM;
-    if (type != SOCK_GEOMETRY) {
-      BKE_report(op->reports, RPT_ERROR, "The first input must be a geometry socket");
-      return false;
-    }
-  }
   if (!tree->interface_outputs().is_empty()) {
     const bNodeTreeInterfaceSocket *first_output = tree->interface_outputs()[0];
     if (!first_output) {
