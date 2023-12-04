@@ -48,7 +48,7 @@
 #include "BKE_idprop.hh"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_node_runtime.hh"
@@ -325,20 +325,22 @@ static void update_existing_bake_caches(NodesModifierData &nmd)
   bake::ModifierCache &modifier_cache = *nmd.runtime->cache;
   std::lock_guard lock{modifier_cache.mutex};
 
-  Map<int, std::unique_ptr<bake::NodeCache>> &old_cache_by_id = modifier_cache.cache_by_id;
-  Map<int, std::unique_ptr<bake::NodeCache>> new_cache_by_id;
+  Map<int, std::unique_ptr<bake::SimulationNodeCache>> &old_cache_by_id =
+      modifier_cache.simulation_cache_by_id;
+  Map<int, std::unique_ptr<bake::SimulationNodeCache>> new_cache_by_id;
   for (const NodesModifierBake &bake : Span{nmd.bakes, nmd.bakes_num}) {
-    std::unique_ptr<bake::NodeCache> node_cache;
-    std::unique_ptr<bake::NodeCache> *old_node_cache_ptr = old_cache_by_id.lookup_ptr(bake.id);
+    std::unique_ptr<bake::SimulationNodeCache> node_cache;
+    std::unique_ptr<bake::SimulationNodeCache> *old_node_cache_ptr = old_cache_by_id.lookup_ptr(
+        bake.id);
     if (old_node_cache_ptr == nullptr) {
-      node_cache = std::make_unique<bake::NodeCache>();
+      node_cache = std::make_unique<bake::SimulationNodeCache>();
     }
     else {
       node_cache = std::move(*old_node_cache_ptr);
     }
     new_cache_by_id.add(bake.id, std::move(node_cache));
   }
-  modifier_cache.cache_by_id = std::move(new_cache_by_id);
+  modifier_cache.simulation_cache_by_id = std::move(new_cache_by_id);
 }
 
 static void update_bakes_from_node_group(NodesModifierData &nmd)
@@ -751,7 +753,8 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
     if (depsgraph_is_active_) {
       /* Invalidate data on user edits. */
       if (nmd.modifier.flag & eModifierFlag_UserModified) {
-        for (std::unique_ptr<bake::NodeCache> &node_cache : modifier_cache_->cache_by_id.values())
+        for (std::unique_ptr<bake::SimulationNodeCache> &node_cache :
+             modifier_cache_->simulation_cache_by_id.values())
         {
           if (node_cache->cache_status != bake::CacheStatus::Baked) {
             node_cache->cache_status = bake::CacheStatus::Invalid;
@@ -760,10 +763,10 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
       }
       this->reset_invalid_node_bakes();
     }
-    for (const std::unique_ptr<bake::NodeCache> &node_cache_ptr :
-         modifier_cache_->cache_by_id.values())
+    for (const std::unique_ptr<bake::SimulationNodeCache> &node_cache_ptr :
+         modifier_cache_->simulation_cache_by_id.values())
     {
-      const bake::NodeCache &node_cache = *node_cache_ptr;
+      const bake::SimulationNodeCache &node_cache = *node_cache_ptr;
       if (node_cache.cache_status == bake::CacheStatus::Invalid) {
         has_invalid_simulation_ = true;
         break;
@@ -773,9 +776,9 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
 
   void reset_invalid_node_bakes()
   {
-    for (auto item : modifier_cache_->cache_by_id.items()) {
+    for (auto item : modifier_cache_->simulation_cache_by_id.items()) {
       const int id = item.key;
-      bake::NodeCache &node_cache = *item.value;
+      bake::SimulationNodeCache &node_cache = *item.value;
       if (node_cache.cache_status != bake::CacheStatus::Invalid) {
         continue;
       }
@@ -819,11 +822,12 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
 
   void init_simulation_info(const int zone_id, nodes::SimulationZoneBehavior &zone_behavior) const
   {
-    if (!modifier_cache_->cache_by_id.contains(zone_id)) {
+    if (!modifier_cache_->simulation_cache_by_id.contains(zone_id)) {
       /* Should have been created in #update_existing_bake_caches. */
       return;
     }
-    bake::NodeCache &node_cache = *modifier_cache_->cache_by_id.lookup(zone_id);
+    bake::SimulationNodeCache &node_cache = *modifier_cache_->simulation_cache_by_id.lookup(
+        zone_id);
     const IndexRange sim_frame_range = *bake::get_node_bake_frame_range(
         *scene_, *ctx_.object, nmd_, zone_id);
     const SubFrame sim_start_frame{int(sim_frame_range.first())};
@@ -944,7 +948,7 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
     }
   }
 
-  FrameIndices get_frame_indices(const bake::NodeCache &node_cache) const
+  FrameIndices get_frame_indices(const bake::SimulationNodeCache &node_cache) const
   {
     FrameIndices frame_indices;
     if (!node_cache.frame_caches.is_empty()) {
@@ -982,7 +986,7 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
     zone_behavior.output.emplace<sim_output::PassThrough>();
   }
 
-  void output_store_frame_cache(bake::NodeCache &node_cache,
+  void output_store_frame_cache(bake::SimulationNodeCache &node_cache,
                                 nodes::SimulationZoneBehavior &zone_behavior) const
   {
     auto &store_new_state_info = zone_behavior.output.emplace<sim_output::StoreNewState>();
@@ -997,7 +1001,7 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
     };
   }
 
-  void store_as_prev_items(bake::NodeCache &node_cache,
+  void store_as_prev_items(bake::SimulationNodeCache &node_cache,
                            nodes::SimulationZoneBehavior &zone_behavior) const
   {
     auto &store_new_state_info = zone_behavior.output.emplace<sim_output::StoreNewState>();
@@ -1014,7 +1018,7 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
   }
 
   void read_from_cache(const FrameIndices &frame_indices,
-                       bake::NodeCache &node_cache,
+                       bake::SimulationNodeCache &node_cache,
                        nodes::SimulationZoneBehavior &zone_behavior) const
   {
     if (frame_indices.prev) {
@@ -1049,7 +1053,7 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
   }
 
   void read_single(const int frame_index,
-                   bake::NodeCache &node_cache,
+                   bake::SimulationNodeCache &node_cache,
                    nodes::SimulationZoneBehavior &zone_behavior) const
   {
     bake::FrameCache &frame_cache = *node_cache.frame_caches[frame_index];
@@ -1060,7 +1064,7 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
 
   void read_interpolated(const int prev_frame_index,
                          const int next_frame_index,
-                         bake::NodeCache &node_cache,
+                         bake::SimulationNodeCache &node_cache,
                          nodes::SimulationZoneBehavior &zone_behavior) const
   {
     bake::FrameCache &prev_frame_cache = *node_cache.frame_caches[prev_frame_index];
@@ -1075,7 +1079,8 @@ class NodesModifierSimulationParams : public nodes::GeoNodesSimulationParams {
     read_interpolated_info.next_state = next_frame_cache.state;
   }
 
-  void ensure_bake_loaded(bake::NodeCache &node_cache, bake::FrameCache &frame_cache) const
+  void ensure_bake_loaded(bake::SimulationNodeCache &node_cache,
+                          bake::FrameCache &frame_cache) const
   {
     if (!frame_cache.state.items_by_id.is_empty()) {
       return;
@@ -1151,36 +1156,36 @@ static void modifyGeometry(ModifierData *md,
     use_orig_index_faces = CustomData_has_layer(&mesh->face_data, CD_ORIGINDEX);
   }
 
+  nodes::GeoNodesCallData call_data;
+
   nodes::GeoNodesModifierData modifier_eval_data{};
   modifier_eval_data.depsgraph = ctx->depsgraph;
   modifier_eval_data.self_object = ctx->object;
   auto eval_log = std::make_unique<geo_log::GeoModifierLog>();
+  call_data.modifier_data = &modifier_eval_data;
 
   NodesModifierSimulationParams simulation_params(*nmd, *ctx);
-  modifier_eval_data.simulation_params = &simulation_params;
+  call_data.simulation_params = &simulation_params;
 
   Set<ComputeContextHash> socket_log_contexts;
   if (logging_enabled(ctx)) {
-    modifier_eval_data.eval_log = eval_log.get();
+    call_data.eval_log = eval_log.get();
 
     find_socket_log_contexts(*nmd, *ctx, socket_log_contexts);
-    modifier_eval_data.socket_log_contexts = &socket_log_contexts;
+    call_data.socket_log_contexts = &socket_log_contexts;
   }
 
   nodes::GeoNodesSideEffectNodes side_effect_nodes;
   find_side_effect_nodes(*nmd, *ctx, side_effect_nodes);
-  modifier_eval_data.side_effect_nodes = &side_effect_nodes;
+  call_data.side_effect_nodes = &side_effect_nodes;
 
   bke::ModifierComputeContext modifier_compute_context{nullptr, nmd->modifier.name};
 
-  geometry_set = nodes::execute_geometry_nodes_on_geometry(
-      tree,
-      nmd->settings.properties,
-      modifier_compute_context,
-      std::move(geometry_set),
-      [&](nodes::GeoNodesLFUserData &user_data) {
-        user_data.modifier_data = &modifier_eval_data;
-      });
+  geometry_set = nodes::execute_geometry_nodes_on_geometry(tree,
+                                                           nmd->settings.properties,
+                                                           modifier_compute_context,
+                                                           call_data,
+                                                           std::move(geometry_set));
 
   if (logging_enabled(ctx)) {
     nmd_orig->runtime->eval_log = std::move(eval_log);

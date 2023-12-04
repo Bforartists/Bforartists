@@ -19,7 +19,7 @@
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
 #include "BKE_lib_id.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_update.hh"
@@ -1189,10 +1189,10 @@ static void node_link_find_socket(bContext &C, wmOperator &op, const float2 &cur
 }
 
 enum class NodeLinkAction : int {
-  Begin,
-  Cancel,
-  Swap,
-  Confirm,
+  Begin = 0,
+  Cancel = 1,
+  Swap = 2,
+  Confirm = 3,
 };
 
 wmKeyMap *node_link_modal_keymap(wmKeyConfig *keyconf)

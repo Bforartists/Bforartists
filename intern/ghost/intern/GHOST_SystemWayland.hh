@@ -245,10 +245,17 @@ class GHOST_SystemWayland : public GHOST_System {
   /* WAYLAND utility functions. */
 
   /**
+   * Use this function instead of #GHOST_System::getMilliSeconds,
+   * passing in the time-stamp from WAYLAND input to get the event
+   * time-stamp with an offset applied to make it compatible with `getMilliSeconds`.
+   */
+  uint64_t ms_from_input_time(const uint32_t timestamp_as_uint);
+
+  /**
    * Push an event, with support for calling from a thread.
    * NOTE: only needed for `USE_EVENT_BACKGROUND_THREAD`.
    */
-  GHOST_TSuccess pushEvent_maybe_pending(GHOST_IEvent *event);
+  GHOST_TSuccess pushEvent_maybe_pending(const GHOST_IEvent *event);
 
   /** Set this seat to be active. */
   void seat_active_set(const struct GWL_Seat *seat);
