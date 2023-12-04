@@ -139,7 +139,7 @@ class MAX3DS_PT_import_include(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
-        layout.use_property_decorate = True
+        layout.use_property_decorate = False
 
         sfile = context.space_data
         operator = sfile.active_operator

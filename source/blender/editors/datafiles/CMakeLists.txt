@@ -1579,14 +1579,14 @@ object_hidden
 desktop
 
 volume_distribute
-volume_distribute 
-corners_of_face 
-corners_of_vertex 
-edges_of_corner 
-edges_of_vertex 
-face_of_corner 
-offset_corner_in_face 
-vertex_of_corner 
+volume_distribute
+corners_of_face
+corners_of_vertex
+edges_of_corner
+edges_of_vertex
+face_of_corner
+offset_corner_in_face
+vertex_of_corner
 sample_nearest_surface
 sample_uv_surface
 
@@ -1718,12 +1718,12 @@ con_trackto
 winding
 facegroup
 current_file
-box_show 
-box_hide 
-box_trim 
-box_add 
-lasso_add 
-lasso_trim 
+box_show
+box_hide
+box_trim
+box_add
+lasso_add
+lasso_trim
 line_project
 
 # ------------------------- row 26 --------------------------*/
@@ -1783,11 +1783,11 @@ follow_leader
 goal
 protect
 
-surface_smooth 
-inflate 
-relax_face_sets 
-relax_topology 
-enhance 
+surface_smooth
+inflate
+relax_face_sets
+relax_topology
+enhance
 interpolate_curve
 index_of_nearest
 orientation_parent
@@ -1854,13 +1854,13 @@ outliner_data_volume
 gradient
 points_to_curves
 mod_equalizer
-axis_angle_to_rotation 
-euler_to_rotation 
-invert_rotation 
-quaternion_to_rotation 
-rotation_to_axis_angle 
-rotation_to_euler 
-rotation_to_quaternion 
+axis_angle_to_rotation
+euler_to_rotation
+invert_rotation
+quaternion_to_rotation
+rotation_to_axis_angle
+rotation_to_euler
+rotation_to_quaternion
 
 # ------------------------- row 28 --------------------------*/
 
