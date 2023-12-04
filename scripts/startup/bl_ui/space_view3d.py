@@ -8242,7 +8242,7 @@ class VIEW3D_PT_overlay(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Overlays"
-    bl_ui_units_x = 13
+    bl_ui_units_x = 14
 
     def draw(self, _context):
         layout = self.layout
@@ -8267,7 +8267,6 @@ class VIEW3D_PT_overlay_guides(Panel):
         region = context.area.spaces.active.region_3d
 
         col = layout.column()
-        col.active = display_all
 
         split = col.split()
         sub = split.column()
@@ -8277,32 +8276,27 @@ class VIEW3D_PT_overlay_guides(Panel):
         col.use_property_split = False
         col.prop(overlay, "show_ortho_grid")
         col = split.column()
+
         if overlay.show_ortho_grid:
             col.prop(overlay, "show_floor", text="Floor", text_ctxt=i18n_contexts.editor_view3d)
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if overlay.show_ortho_grid:
+            col = layout.column(heading='Axes', align=False)
 
-            split = layout.split()
-            row = split.row()
-            row.active = display_all
+            row = col.row()
+            row.use_property_split = True
+            row.use_property_decorate = False
             row.separator()
-            row.label(text="Axes")
-
-            # subrow = row.row(align=True)
-            row = split.row(align=True)
-            row.active = display_all
-            subrow = row.row(align=True)
-            subrow.active = region.view_perspective != 'ORTHO'
-            subrow.prop(overlay, "show_axis_x", text="X", toggle=True)
-            subrow.prop(overlay, "show_axis_y", text="Y", toggle=True)
-            subrow.prop(overlay, "show_axis_z", text="Z", toggle=True)
+            row.prop(overlay, "show_axis_x", text="X", toggle=True)
+            row.prop(overlay, "show_axis_y", text="Y", toggle=True)
+            row.prop(overlay, "show_axis_z", text="Z", toggle=True)
 
             if overlay.show_floor or overlay.show_ortho_grid:
                 col = layout.column()
-                col.active = display_all
                 col.use_property_split = True
+                col.use_property_decorate = False
                 if (overlay.show_floor) or (overlay.show_ortho_grid):
                     row = col.row()
                     row.separator()
@@ -8311,6 +8305,7 @@ class VIEW3D_PT_overlay_guides(Panel):
                     if scene.unit_settings.system == 'NONE':
                         col = layout.column()
                         col.use_property_split = True
+                        col.use_property_decorate = False
                         row = col.row()
                         row.separator()
                         row.prop(overlay, "grid_subdivisions", text="Subdivisions")
