@@ -1155,10 +1155,6 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     # Loop normals.
     tspacenumber = 0
     if write_normals:
-        # NOTE: ByVertice-IndexToDirect is not supported by the importer currently.
-        # XXX Official docs says normals should use IndexToDirect,
-        #     but this does not seem well supported by apps currently...
-
         normal_bl_dtype = np.single
         normal_fbx_dtype = np.float64
         match me.normals_domain:
@@ -1182,41 +1178,31 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
         t_normal = np.empty(len(normal_source) * 3, dtype=normal_bl_dtype)
         normal_source.foreach_get("vector", t_normal)
         t_normal = nors_transformed(t_normal, geom_mat_no, normal_fbx_dtype)
-        if 0:
-            normal_idx_fbx_dtype = np.int32
-            lay_nor = elem_data_single_int32(geom, b"LayerElementNormal", 0)
-            elem_data_single_int32(lay_nor, b"Version", FBX_GEOMETRY_NORMAL_VERSION)
-            elem_data_single_string(lay_nor, b"Name", b"")
-            elem_data_single_string(lay_nor, b"MappingInformationType", normal_mapping)
-            elem_data_single_string(lay_nor, b"ReferenceInformationType", b"IndexToDirect")
+        normal_idx_fbx_dtype = np.int32
+        lay_nor = elem_data_single_int32(geom, b"LayerElementNormal", 0)
+        elem_data_single_int32(lay_nor, b"Version", FBX_GEOMETRY_NORMAL_VERSION)
+        elem_data_single_string(lay_nor, b"Name", b"")
+        elem_data_single_string(lay_nor, b"MappingInformationType", normal_mapping)
+        # FBX SDK documentation says that normals should use IndexToDirect.
+        elem_data_single_string(lay_nor, b"ReferenceInformationType", b"IndexToDirect")
 
-            # Tuple of unique sorted normals and then the index in the unique sorted normals of each normal in t_normal.
-            # Since we don't care about how the normals are sorted, only that they're unique, we can use the fast unique
-            # helper function.
-            t_normal, t_normal_idx = fast_first_axis_unique(t_normal.reshape(-1, 3), return_inverse=True)
+        # Tuple of unique sorted normals and then the index in the unique sorted normals of each normal in t_normal.
+        # Since we don't care about how the normals are sorted, only that they're unique, we can use the fast unique
+        # helper function.
+        t_normal, t_normal_idx = fast_first_axis_unique(t_normal.reshape(-1, 3), return_inverse=True)
 
-            # Convert to the type for fbx
-            t_normal_idx = astype_view_signedness(t_normal_idx, normal_idx_fbx_dtype)
+        # Convert to the type for fbx
+        t_normal_idx = astype_view_signedness(t_normal_idx, normal_idx_fbx_dtype)
 
-            elem_data_single_float64_array(lay_nor, b"Normals", t_normal)
-            # Normal weights, no idea what it is.
-            # t_normal_w = np.zeros(len(t_normal), dtype=np.float64)
-            # elem_data_single_float64_array(lay_nor, b"NormalsW", t_normal_w)
+        elem_data_single_float64_array(lay_nor, b"Normals", t_normal)
+        # Normal weights, no idea what it is.
+        # t_normal_w = np.zeros(len(t_normal), dtype=np.float64)
+        # elem_data_single_float64_array(lay_nor, b"NormalsW", t_normal_w)
 
-            elem_data_single_int32_array(lay_nor, b"NormalsIndex", t_normal_idx)
+        elem_data_single_int32_array(lay_nor, b"NormalsIndex", t_normal_idx)
 
-            del t_normal_idx
-            # del t_normal_w
-        else:
-            lay_nor = elem_data_single_int32(geom, b"LayerElementNormal", 0)
-            elem_data_single_int32(lay_nor, b"Version", FBX_GEOMETRY_NORMAL_VERSION)
-            elem_data_single_string(lay_nor, b"Name", b"")
-            elem_data_single_string(lay_nor, b"MappingInformationType", normal_mapping)
-            elem_data_single_string(lay_nor, b"ReferenceInformationType", b"Direct")
-            elem_data_single_float64_array(lay_nor, b"Normals", t_normal)
-            # Normal weights, no idea what it is.
-            # t_normal = np.zeros(len(me.loops), dtype=np.float64)
-            # elem_data_single_float64_array(lay_nor, b"NormalsW", t_normal)
+        del t_normal_idx
+        # del t_normal_w
         del t_normal
 
         # tspace

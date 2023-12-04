@@ -51,7 +51,7 @@
 #include "BKE_image.h"
 #include "BKE_image_format.h"
 #include "BKE_lib_id.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.hh"
@@ -3448,9 +3448,9 @@ static void mesh_tris_spherecast_dp(void *userdata,
                                     BVHTreeRayHit *hit)
 {
   const BVHTreeFromMesh *data = (BVHTreeFromMesh *)userdata;
-  const float(*positions)[3] = data->vert_positions;
-  const MLoopTri *looptris = data->looptri;
-  const int *corner_verts = data->corner_verts;
+  const blender::Span<blender::float3> positions = data->vert_positions;
+  const MLoopTri *looptris = data->looptris.data();
+  const int *corner_verts = data->corner_verts.data();
 
   const float *t0, *t1, *t2;
   float dist;
@@ -3480,9 +3480,9 @@ static void mesh_tris_nearest_point_dp(void *userdata,
                                        BVHTreeNearest *nearest)
 {
   const BVHTreeFromMesh *data = (BVHTreeFromMesh *)userdata;
-  const float(*positions)[3] = data->vert_positions;
-  const MLoopTri *looptris = data->looptri;
-  const int *corner_verts = data->corner_verts;
+  const blender::Span<blender::float3> positions = data->vert_positions;
+  const MLoopTri *looptris = data->looptris.data();
+  const int *corner_verts = data->corner_verts.data();
   float nearest_tmp[3], dist_sq;
 
   const float *t0, *t1, *t2;
