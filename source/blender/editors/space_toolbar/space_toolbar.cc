@@ -1,5 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- */
+/* SPDX-FileCopyrightText: 2008 Blender Authors
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file blender/editors/space_toolbar/space_toolbar.c
  *  \ingroup sptoolbar
@@ -43,8 +44,8 @@ static SpaceLink *toolbar_create(const ScrArea * /*area*/, const Scene * /*scene
   region->regiontype = RGN_TYPE_HEADER;
   region->alignment = RGN_ALIGN_TOP;
 
-  /* main area */
-  region = static_cast<ARegion *>(MEM_callocN(sizeof(ARegion), "main area for toolbar"));
+  /* main region */
+  region = static_cast<ARegion *>(MEM_callocN(sizeof(ARegion), "main region for toolbar"));
 
   BLI_addtail(&stoolbar->regionbase, region);
   region->regiontype = RGN_TYPE_WINDOW;
@@ -62,12 +63,12 @@ static SpaceLink *toolbar_duplicate(SpaceLink *sl)
 }
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void toolbar_main_area_init(wmWindowManager * /*wm*/, ARegion *region)
+static void toolbar_main_region_init(wmWindowManager * /*wm*/, ARegion *region)
 {
   UI_view2d_region_reinit(&region->v2d, V2D_COMMONVIEW_CUSTOM, region->winx, region->winy);
 }
 
-static void toolbar_main_area_draw(const bContext *C, ARegion *region)
+static void toolbar_main_region_draw(const bContext *C, ARegion *region)
 {
   /* draw entirely, view changes should be handled here */
   View2D *v2d = &region->v2d;
@@ -75,7 +76,7 @@ static void toolbar_main_area_draw(const bContext *C, ARegion *region)
   /* clear and setup matrix */
   UI_ThemeClearColor(TH_BACK);
 
-  /* works best with no view2d matrix set */
+  /* Works best with no view2d matrix set */
   UI_view2d_view_ortho(v2d);
 
   /* reset view matrix */
@@ -95,16 +96,17 @@ static void toolbar_header_region_draw(const bContext *C, ARegion *region)
   ED_region_header(C, region);
 }
 
-static void toolbar_main_area_listener(const wmRegionListenerParams *params)
+static void toolbar_main_region_listener(const wmRegionListenerParams *params)
 {
-  ScrArea *area = params->area;
+  ARegion *region = params->region;
   const wmNotifier *wmn = params->notifier;
+
   /* context changes */
   switch (wmn->category) {
     case NC_SPACE:
       if (wmn->data == ND_SPACE_INFO_REPORT) {
         /* redraw also but only for report view, could do less redraws by checking the type */
-        ED_area_tag_redraw(area);
+        ED_region_tag_redraw(region);
       }
       break;
   }
@@ -112,44 +114,44 @@ static void toolbar_main_area_listener(const wmRegionListenerParams *params)
 
 static void toolbar_header_listener(const wmRegionListenerParams *params)
 {
-  ScrArea *area = params->area;
+  ARegion *region = params->region;
   const wmNotifier *wmn = params->notifier;
+
   /* context changes */
   switch (wmn->category) {
     case NC_WM:
       if (wmn->data == ND_JOB) {
-        ED_area_tag_redraw(area);
+        ED_region_tag_redraw(region);
       }
       break;
     case NC_SCENE:
       if (wmn->data == ND_RENDER_RESULT) {
-        ED_area_tag_redraw(area);
+        ED_region_tag_redraw(region);
       }
       break;
     case NC_SPACE:
       if (wmn->data == ND_SPACE_INFO) {
-        ED_area_tag_redraw(area);
+        ED_region_tag_redraw(region);
       }
       break;
     case NC_ID:
       if (wmn->action == NA_RENAME) {
-        ED_area_tag_redraw(area);
+        ED_region_tag_redraw(region);
       }
       break;
   }
 }
 
-static void toolbar_blend_write(BlendWriter *writer, SpaceLink *sl)
+static void toolbar_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
   BLO_write_struct(writer, SpaceToolbar, sl);
 }
 
 /********************* registration ********************/
 
-/* only called once, from space/spacetypes.cc */
 void ED_spacetype_toolbar(void)
 {
-  SpaceType *st = static_cast<SpaceType *>(MEM_callocN(sizeof(*st), "spacetype toolbar"));
+  SpaceType *st = static_cast<SpaceType *>(MEM_callocN(sizeof(SpaceType), "spacetype toolbar"));
   ARegionType *art;
 
   st->spaceid = SPACE_TOOLBAR;
@@ -157,17 +159,15 @@ void ED_spacetype_toolbar(void)
 
   st->create = toolbar_create;
   st->duplicate = toolbar_duplicate;
-  st->blend_read_data = nullptr;
-  st->blend_read_after_liblink = nullptr;
-  st->blend_write = toolbar_blend_write;
+  st->blend_write = toolbar_space_blend_write;
 
   /* regions: main window */
   art = static_cast<ARegionType *>(MEM_callocN(sizeof(ARegionType), "spacetype toolbar region"));
   art->regionid = RGN_TYPE_WINDOW;
 
-  art->init = toolbar_main_area_init;
-  art->draw = toolbar_main_area_draw;
-  art->listener = toolbar_main_area_listener;
+  art->init = toolbar_main_region_init;
+  art->draw = toolbar_main_region_draw;
+  art->listener = toolbar_main_region_listener;
 
   BLI_addhead(&st->regiontypes, art);
 
