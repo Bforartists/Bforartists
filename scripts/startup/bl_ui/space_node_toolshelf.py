@@ -4081,9 +4081,9 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSetID"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
+            props = flow.operator("node.add_node", text="", icon = "SET_POSITION")
             props.use_transform = True
-            props.type = "GeometryNodeTransform"
+            props.type = "GeometryNodeSetPosition"
 
             if context.space_data.geometry_nodes_type == 'TOOL':
                 props = flow.operator("node.add_node", text="", icon = "SET_SELECTION")
