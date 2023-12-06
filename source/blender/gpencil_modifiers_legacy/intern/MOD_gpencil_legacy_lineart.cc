@@ -369,11 +369,13 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
   // uiLayout *col = uiLayoutColumn(layout, true);
   col = uiLayoutColumn(layout, true);
 
-  sub = uiLayoutRowWithHeading(col, false, IFACE_("Create"));
+  sub = uiLayoutRow(col, false);
   uiItemR(sub, ptr, "use_contour", UI_ITEM_NONE, "", ICON_NONE);
 
   uiLayout *entry = uiLayoutRow(sub, true);
+
   uiLayoutSetActive(entry, RNA_boolean_get(ptr, "use_contour"));
+  uiLayoutSetPropSep(entry, false); /* bfa - use_property_split = False */
   uiItemR(entry, ptr, "silhouette_filtering", UI_ITEM_NONE, "", ICON_NONE);
 
   const int silhouette_filtering = RNA_enum_get(ptr, "silhouette_filtering");
@@ -386,13 +388,17 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
     uiItemR(sub, ptr, "use_crease", UI_ITEM_NONE, IFACE_("Crease (Angle Cached)"), ICON_NONE);
   }
   else {
-    uiItemR(sub, ptr, "use_crease", UI_ITEM_NONE, "", ICON_NONE);
-    uiItemR(sub,
-            ptr,
-            "crease_threshold",
-            UI_ITEM_R_SLIDER | UI_ITEM_R_FORCE_BLANK_DECORATE,
-            nullptr,
-            ICON_NONE);
+    /*------------------- bfa - original props */
+    //uiItemR(sub, ptr, "use_crease", UI_ITEM_NONE, "", ICON_NONE);
+    //uiItemR(sub, ptr, "crease_threshold", UI_ITEM_R_SLIDER | UI_ITEM_R_FORCE_BLANK_DECORATE, nullptr, ICON_NONE);
+
+    sub = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(sub, false); /* bfa - use_property_split = False */
+    uiItemS(sub);
+    uiItemR(sub, ptr, "use_crease", UI_ITEM_NONE, IFACE_("Crease"), ICON_NONE);
+    uiItemR(sub, ptr, "crease_threshold", UI_ITEM_R_SLIDER | UI_ITEM_R_FORCE_BLANK_DECORATE, nullptr,ICON_NONE);
+    uiItemDecoratorR(sub, ptr, "crease_threshold", 0); /*bfa - decorator*/
+    /*------------------- end bfa -------------------- */
   }
 
   /*------------------- bfa - original props */
