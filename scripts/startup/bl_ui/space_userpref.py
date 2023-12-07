@@ -606,9 +606,11 @@ class USERPREF_PT_animation_keyframes(AnimationPanel, CenterAlignMixIn, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
         flow.prop(edit, "key_insert_channels", expand=True)
         flow.use_property_split = False
+
+        flow = flow.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
         flow.prop(edit, "use_visual_keying")
         flow.prop(edit, "use_keyframe_insert_needed", text="Only Insert Needed")
-
+        flow.use_property_split = True
 
 class USERPREF_PT_animation_autokey(AnimationPanel, CenterAlignMixIn, Panel):
     bl_label = "Auto-Keyframing"
