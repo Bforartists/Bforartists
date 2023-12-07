@@ -1951,10 +1951,6 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel):
             props.use_transform = True
             props.type = "TextureNodeTexMarble"
 
-            props = col.operator("node.add_node", text=" Musgrave          ", icon = "MUSGRAVE_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexMusgrave"
-
             props = col.operator("node.add_node", text=" Noise                 ", icon = "NOISE_TEX")
             props.use_transform = True
             props.type = "TextureNodeTexNoise"
@@ -1963,11 +1959,11 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel):
             props.use_transform = True
             props.type = "TextureNodeTexStucci"
 
-            col = layout.column(align=True)
-
             props = col.operator("node.add_node", text=" Voronoi             ", icon = "VORONI_TEX")
             props.use_transform = True
             props.type = "TextureNodeTexVoronoi"
+
+            col = layout.column(align=True)
 
             props = col.operator("node.add_node", text=" Wood                ", icon = "WOOD_TEX")
             props.use_transform = True
@@ -2003,10 +1999,6 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel):
             props.use_transform = True
             props.type = "TextureNodeTexMarble"
 
-            props = row.operator("node.add_node", text="", icon = "MUSGRAVE_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexMusgrave"
-
             props = row.operator("node.add_node", text="", icon = "NOISE_TEX")
             props.use_transform = True
             props.type = "TextureNodeTexNoise"
@@ -2015,12 +2007,12 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel):
             props.use_transform = True
             props.type = "TextureNodeTexStucci"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
             props = row.operator("node.add_node", text="", icon = "VORONI_TEX")
             props.use_transform = True
             props.type = "TextureNodeTexVoronoi"
+
+            row = layout.row()
+            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text="", icon = "WOOD_TEX")
             props.use_transform = True
@@ -2367,10 +2359,6 @@ class NODES_PT_shader_add_texture(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexMagic"
 
-            props = col.operator("node.add_node", text=" Musgrave Texture   ", icon = "MUSGRAVE_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexMusgrave"
-
             props = col.operator("node.add_node", text=" Noise Texture         ", icon = "NOISE_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexNoise"
@@ -2379,12 +2367,12 @@ class NODES_PT_shader_add_texture(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexPointDensity"
 
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
             props = col.operator("node.add_node", text=" Sky Texture             ", icon = "NODE_SKY")
             props.use_transform = True
             props.type = "ShaderNodeTexSky"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Voronoi Texture       ", icon = "VORONI_TEX")
             props.use_transform = True
@@ -2433,10 +2421,6 @@ class NODES_PT_shader_add_texture(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MAGIC_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexMagic"
-
-            props = flow.operator("node.add_node", text = "", icon = "MUSGRAVE_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexMusgrave"
 
             props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
             props.use_transform = True
@@ -5940,10 +5924,6 @@ class NODES_PT_geom_add_texture(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexMagic"
 
-            props = col.operator("node.add_node", text=" Musgrave Texture ", icon = "MUSGRAVE_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexMusgrave"
-
             props = col.operator("node.add_node", text=" Noise Texture        ", icon = "NOISE_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexNoise"
@@ -5987,10 +5967,6 @@ class NODES_PT_geom_add_texture(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MAGIC_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexMagic"
-
-            props = flow.operator("node.add_node", text = "", icon = "MUSGRAVE_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexMusgrave"
 
             props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
             props.use_transform = True
