@@ -121,7 +121,7 @@ normal_setstrength
 plugin
 magic_tex
 marble_tex
-#~ DEF_ICON_BLANK(124)
+view_graph_all
 noise_tex
 
 roll_x_tang_pos
@@ -1990,7 +1990,7 @@ trash
 scale_average
 set_time
 set_selection
-#~ DEF_ICON_BLANK(2021)
+view_graph
 #~ DEF_ICON_BLANK(2022)
 #~ DEF_ICON_BLANK(2023)
 #~ DEF_ICON_BLANK(2024)

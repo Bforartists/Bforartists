@@ -270,6 +270,8 @@ class GRAPH_MT_view(Menu):
         layout.operator("graph.view_selected", icon="VIEW_SELECTED")
         layout.operator("graph.view_frame", icon="VIEW_FRAME")
 
+        layout.operator("anim.view_curve_in_grapheditor", icon="VIEW_GRAPH")
+
         layout.separator()
 
         layout.menu("INFO_MT_area")
