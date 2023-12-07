@@ -121,7 +121,7 @@ normal_setstrength
 plugin
 magic_tex
 marble_tex
-musgrave_tex
+#~ DEF_ICON_BLANK(124)
 noise_tex
 
 roll_x_tang_pos

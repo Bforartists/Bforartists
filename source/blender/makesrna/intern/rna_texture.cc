@@ -74,16 +74,11 @@ const EnumPropertyItem rna_enum_texture_type_items[] = {
      ICON_MARBLE_TEX,
      "Marble",
      "Procedural - marble-like noise texture with wave generated bands"},
-    {TEX_MUSGRAVE,
-     "MUSGRAVE",
-     ICON_MUSGRAVE_TEX,
-     "Musgrave",
-     "Procedural - highly flexible fractal noise texture"},
     {TEX_NOISE,
      "NOISE",
      ICON_NOISE_TEX,
      "Noise",
-     "Procedural - random noise, gives a different result every time, for every frame, for every "
+     "Procedural - highly flexible fractal random noise, gives a different result every time, for every frame, for every "
      "pixel"},
     {TEX_STUCCI,
      "STUCCI",
