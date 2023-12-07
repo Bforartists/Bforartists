@@ -1922,7 +1922,7 @@ preset_new
 blend_offset
 blend_to_ease
 split_to_instances
-#~ DEF_ICON_BLANK(1953)
+index_switch
 #~ DEF_ICON_BLANK(1954)
 #~ DEF_ICON_BLANK(1955)
 #~ DEF_ICON_BLANK(1956)
