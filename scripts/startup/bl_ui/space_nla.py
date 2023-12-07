@@ -418,29 +418,8 @@ class NLA_MT_strips(Menu):
         )
         layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")
 
-        layout.separator()
-        if scene.is_nla_tweakmode:
-            layout.operator(
-                "nla.tweakmode_exit",
-                text="Stop Tweaking Isolated Action",
-                icon="ACTION_TWEAK_SOLO",
-            ).isolate_action = True
-            layout.operator(
-                "nla.tweakmode_exit",
-                text="Stop Tweaking Action",
-                icon="ACTION_TWEAK_SOLO",
-            )
-        else:
-            layout.operator(
-                "nla.tweakmode_enter",
-                text="Tweak Isolated Action",
-                icon="ACTION_TWEAK_SOLO",
-            ).isolate_action = True
-            layout.operator(
-                "nla.tweakmode_enter",
-                text="Tweak Action (Full Stack)",
-                icon="ACTION_TWEAK",
-            ).use_upper_stack_evaluation = True
+        if not scene.is_nla_tweakmode:
+            layout.separator()
             layout.operator(
                 "nla.tweakmode_enter",
                 text="Tweak Action (Lower Stack)",
