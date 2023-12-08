@@ -658,17 +658,35 @@ class EeveeRaytracingDenoisePanel(RenderButtonsPanel, Panel):
         layout = self.layout
         layout.use_property_split = False
 
-        col = layout.column()
-        col.active = props.use_denoise
-        col.prop(props, "denoise_spatial")
+        layout.active = props.use_denoise
 
-        col = layout.column()
-        col.active = props.use_denoise and props.denoise_spatial
-        col.prop(props, "denoise_temporal")
+        split = layout.split(factor=.4)
+        split.use_property_split=False
+        split.prop(props, "denoise_spatial")
 
-        col = layout.column()
-        col.active = props.use_denoise and props.denoise_spatial and props.denoise_temporal
-        col.prop(props, "denoise_bilateral")
+        split.alignment = 'LEFT'
+        if props.denoise_spatial:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if props.denoise_spatial:
+            split = layout.split(factor=.5)
+            split.use_property_split=False
+            row = split.row()
+            row.separator()
+            row.prop(props, "denoise_temporal")
+
+            split.alignment = 'LEFT'
+            if props.denoise_temporal:
+                split.label(icon='DISCLOSURE_TRI_DOWN')
+            else:
+                split.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if props.denoise_temporal and props.denoise_spatial:
+            row = layout.row()
+            row.separator(factor = 4.0)
+            row.prop(props, "denoise_bilateral")
 
 
 class RENDER_PT_eevee_next_raytracing_reflection(EeveeRaytracingOptionsPanel):
