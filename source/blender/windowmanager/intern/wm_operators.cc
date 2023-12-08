@@ -1892,7 +1892,9 @@ static void WM_OT_search_menu(wmOperatorType *ot)
 {
   ot->name = "Search Menu";
   ot->idname = "WM_OT_search_menu";
-  ot->description = "Pop-up a search over all menus in the current context";
+  ot->description =
+      "Search for menu items in current context, means in general or in a specific menu\nIn Add menus, expand the menu and start to type to start the "
+      "search\nIn other menus, expand the menu and press spacebar to start the search";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -1903,7 +1905,7 @@ static void WM_OT_search_operator(wmOperatorType *ot)
 {
   ot->name = "Search Operator";
   ot->idname = "WM_OT_search_operator";
-  ot->description = "Pop-up a search over all available operators in current context";
+  ot->description = "Search for all available operators";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -1914,7 +1916,9 @@ static void WM_OT_search_single_menu(wmOperatorType *ot)
 {
   ot->name = "Search Single Menu";
   ot->idname = "WM_OT_search_single_menu";
-  ot->description = "Pop-up a search a menu in current context \nAlternatively, press spacebar or type to search";
+  ot->description =
+      "Search for menu items in this menu\nAlternatively, expand the add menu and start to type to start the "
+      "search";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
