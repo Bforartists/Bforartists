@@ -348,6 +348,7 @@ class NLA_MT_add(Menu):
         layout.operator("nla.soundclip_add", text="Sound")
 
         layout.separator()
+
         layout.operator("nla.selected_objects_add", text="Selected Objects")
 
 
@@ -357,17 +358,15 @@ class NLA_MT_tracks(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("nla.tracks_add", text="Add").above_selected = False
-        layout.operator(
-            "nla.tracks_add", text="Add Above Selected"
-        ).above_selected = True
-        layout.operator("nla.tracks_delete", text="Delete")
+        layout.operator("nla.tracks_delete", text="Delete", icon = 'DELETE')
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Move")
+
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering")
 
         layout.separator()
-        layout.operator("anim.channels_clean_empty")
+
+        layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")
 
 
 class NLA_MT_strips(Menu):
@@ -382,6 +381,7 @@ class NLA_MT_strips(Menu):
         layout.operator_menu_enum("nla.snap", "type", text="Snap")
 
         layout.separator()
+
         layout.operator("nla.bake", text="Bake Action", icon="BAKE_ACTION")
         layout.operator(
             "nla.duplicate", text="Duplicate", icon="DUPLICATE"
@@ -397,25 +397,27 @@ class NLA_MT_strips(Menu):
         layout.operator("nla.tracks_delete", icon="DELETE")
 
         layout.separator()
+
         layout.operator("nla.mute_toggle", icon="MUTE_IPO_ON")
 
         layout.separator()
+
         layout.operator("nla.apply_scale", icon="APPLYSCALE")
         layout.operator("nla.clear_scale", icon="CLEARSCALE")
         layout.operator("nla.action_sync_length", icon="SYNC").active = False
 
         layout.separator()
+
         layout.operator("nla.make_single_user", icon="MAKE_SINGLE_USER")
 
         layout.separator()
+
         layout.operator("nla.swap", icon="SWAP")
         layout.operator("nla.move_up", icon="MOVE_UP")
         layout.operator("nla.move_down", icon="MOVE_DOWN")
 
         layout.separator()
-        layout.operator_menu_enum(
-            "anim.channels_move", "direction", text="Track Ordering"
-        )
+
         layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")
 
         if not scene.is_nla_tweakmode:
