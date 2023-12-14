@@ -21,7 +21,7 @@ struct Object;
 struct Scene;
 
 /** Return the number of derived triangles (looptris). */
-int BKE_mesh_runtime_looptri_len(const Mesh *mesh);
+int BKE_mesh_runtime_looptris_len(const Mesh *mesh);
 
 void BKE_mesh_runtime_ensure_edit_data(Mesh *mesh);
 
@@ -31,7 +31,7 @@ void BKE_mesh_runtime_ensure_edit_data(Mesh *mesh);
  * directly or making other large changes to topology. It does not need to be called on new meshes.
  *
  * For "smaller" changes to meshes like updating positions, consider calling a more specific update
- * function like #BKE_mesh_tag_positions_changed.
+ * function like #Mesh::tag_positions_changed().
  *
  * Also note that some derived caches like #CD_TANGENT are stored directly in #CustomData.
  */
@@ -48,10 +48,10 @@ void BKE_mesh_runtime_clear_cache(Mesh *mesh);
 /**
  * Convert triangles encoded as face corner indices to triangles encoded as vertex indices.
  */
-void BKE_mesh_runtime_verttri_from_looptri(MVertTri *r_verttri,
-                                           const int *corner_verts,
-                                           const MLoopTri *looptri,
-                                           int looptri_num);
+void BKE_mesh_runtime_verttris_from_looptris(MVertTri *r_verttri,
+                                             const int *corner_verts,
+                                             const MLoopTri *looptris,
+                                             int looptris_num);
 
 /* NOTE: the functions below are defined in DerivedMesh.cc, and are intended to be moved
  * to a more suitable location when that file is removed.

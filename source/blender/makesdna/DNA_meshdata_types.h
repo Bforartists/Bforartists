@@ -54,7 +54,9 @@ enum {
  * the array is recalculated from scratch; there is no extra attempt to maintain the validity over
  * time.
  *
- * #MLoopTri is stored in an array, where each faces's triangles are stored contiguously.
+ * #MLoopTri is stored in an array, where triangles from each face are stored sequentially.
+ * The triangles order is guaranteed to match the face order where the first triangle will always
+ * be from the first face, and the last triangle from the last face.
  * The number of triangles for each polygon is guaranteed to be the corner count - 2, even for
  * degenerate geometry (see #bke::mesh::face_triangles_num).
  *
@@ -67,22 +69,22 @@ enum {
  * \code{.cc}
  * // Access vertex locations.
  * std::array<float3, 3> tri_positions{
- *   positions[corner_verts[tri.tri[0]]],
- *   positions[corner_verts[tri.tri[1]]],
- *   positions[corner_verts[tri.tri[2]]],
+ *   positions[corner_verts[lt.tri[0]]],
+ *   positions[corner_verts[lt.tri[1]]],
+ *   positions[corner_verts[lt.tri[2]]],
  * };
  *
  * // Access UV coordinates (works for all face corner data, vertex colors... etc).
  * std::array<float2, 3> tri_uvs{
- *   uv_map[tri.tri[0]],
- *   uv_map[tri.tri[1]],
- *   uv_map[tri.tri[2]],
+ *   uv_map[lt.tri[0]],
+ *   uv_map[lt.tri[1]],
+ *   uv_map[lt.tri[2]],
  * };
  *
  * // Access all triangles in a given face.
  * const IndexRange face = faces[i];
- * const Span<MLoopTri> face_tris = looptris.slice(poly_to_tri_count(i, face.start()),
- *                                                 bke::mesh::face_triangles_num(face.size()));
+ * const Span<MLoopTri> looptris = looptris.slice(poly_to_tri_count(i, face.start()),
+ *                                                bke::mesh::face_triangles_num(face.size()));
  * \endcode
  *
  * It may also be useful to check whether or not two vertices of a triangle form an edge in the
