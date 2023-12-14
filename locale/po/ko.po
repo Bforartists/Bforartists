@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.1.0 Alpha (b'd293f72ab6e7')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'274dc815eb35')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-27 10:28:34\n"
+"POT-Creation-Date: 2023-12-11 11:18:04\n"
 "PO-Revision-Date: 2023-11-14 19:14+0000\n"
 "Last-Translator: Lee YeonJoo <yzoo2@naver.com>\n"
 "Language-Team: Korean <https://translate.blender.org/projects/blender-ui/ui/ko/>\n"
@@ -10409,6 +10409,18 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "이 경로는 북마크에서 저장되는지 여부, 또는 OS로부터 생성되는지"
 
 
+msgid "File Extensions"
+msgstr "파일 확장자"
+
+
+msgid "Operator"
+msgstr "작업자"
+
+
+msgid "Label"
+msgstr "레이블"
+
+
 msgid "Icon ID"
 msgstr "아이콘 ID"
 
@@ -18748,10 +18760,6 @@ msgid "Node tree consisting of linked nodes used for shading, textures and compo
 msgstr "셰이딩, 텍스처 및 컴포지팅에 사용되는 연결된 노드로 구성된 노드 트리"
 
 
-msgid "Label"
-msgstr "레이블"
-
-
 msgid "The node tree label"
 msgstr "노드 트리 레이블"
 
@@ -25991,6 +25999,10 @@ msgid "Vertex Group Specials"
 msgstr "버텍스 그룹 지정"
 
 
+msgid "Strip"
+msgstr "스트립"
+
+
 msgid "Math"
 msgstr "수학"
 
@@ -26086,10 +26098,6 @@ msgstr "채널을 선택"
 
 msgid "Select Handle"
 msgstr "핸들을 선택"
-
-
-msgid "Strip"
-msgstr "스트립"
 
 
 msgid "Inputs"
@@ -33273,10 +33281,6 @@ msgstr "분리 XYZ"
 
 msgid "Set Alpha"
 msgstr "알파 설정"
-
-
-msgid "Split Viewer"
-msgstr "분할 뷰어"
 
 
 msgid "Stabilize 2D"
@@ -42281,6 +42285,10 @@ msgid "Flat"
 msgstr "플랫"
 
 
+msgid "Duplicate"
+msgstr "복제"
+
+
 msgctxt "Operator"
 msgid "Select Mode"
 msgstr "선택 모드"
@@ -44013,10 +44021,6 @@ msgid "Reverse Colors"
 msgstr "컬러를 반전"
 
 
-msgid "Flip direction of vertex colors inside faces"
-msgstr "페이스 내부의 버텍스 컬러의 방향을 뒤집기"
-
-
 msgctxt "Operator"
 msgid "Rotate Colors"
 msgstr "컬러를 회전"
@@ -44285,10 +44289,6 @@ msgstr "선택된 버텍스를 복제, 에지 또는 페이스"
 
 msgid "Duplicate mesh and move"
 msgstr "메쉬를 복제하고 이동"
-
-
-msgid "Duplicate"
-msgstr "복제"
 
 
 msgctxt "Operator"
@@ -52944,10 +52944,6 @@ msgid "Number of times that the filter is going to be applied"
 msgstr "필터가 적용되는 횟수"
 
 
-msgid "Operator"
-msgstr "작업자"
-
-
 msgid "Applies a filter to modify the current mesh"
 msgstr "현재 메쉬를 수정하기 위해 필터를 적용합니다"
 
@@ -58927,14 +58923,6 @@ msgid "Panel containing UI elements"
 msgstr "UI 요소가 포함된 패널"
 
 
-msgid "Refraction"
-msgstr "굴절"
-
-
-msgid "Denoising"
-msgstr "노이즈 제거"
-
-
 msgid "Integrator Presets"
 msgstr "적분기 프리셋"
 
@@ -59639,6 +59627,10 @@ msgstr "블룸"
 
 msgid "Indirect Lighting"
 msgstr "간접 라이트닝"
+
+
+msgid "Denoising"
+msgstr "노이즈 제거"
 
 
 msgid "Shadows"
@@ -65017,10 +65009,6 @@ msgstr "렌더 지역을 자르기"
 
 msgid "Crop the rendered frame to the defined render region size"
 msgstr "렌더링된 프레임을 정의된 렌더링 영역 크기로 자릅니다"
-
-
-msgid "File Extensions"
-msgstr "파일 확장자"
 
 
 msgid "Add the file format extensions to the rendered file name (eg: filename + .jpg)"
@@ -73154,8 +73142,8 @@ msgid "Display vertex-per-face normals as lines"
 msgstr "라인으로 페이스 당 버텍스 노멀을 표시"
 
 
-msgid "Stat Vis"
-msgstr "스탯 비스"
+msgid "Mesh Analysis"
+msgstr "메쉬 분석"
 
 
 msgid "Display statistical information about the mesh"
@@ -75347,13 +75335,13 @@ msgstr "반전"
 
 
 msgctxt "Operator"
-msgid "Lock Unused"
-msgstr "미사용을 잠금"
+msgid "Lock Unselected"
+msgstr "선택되지 않음 잠금"
 
 
 msgctxt "Operator"
-msgid "Lock Unselected"
-msgstr "선택되지 않음 잠금"
+msgid "Lock Unused"
+msgstr "미사용을 잠금"
 
 
 msgid "Flip Colors"
@@ -76079,6 +76067,10 @@ msgstr "자동-단계"
 
 msgid "Light Clamping"
 msgstr "라이트 클램핑"
+
+
+msgid "Refraction"
+msgstr "굴절"
 
 
 msgid "Cascade Size"
@@ -76939,8 +76931,8 @@ msgstr "전체 화면 영역을 토글"
 
 
 msgctxt "Operator"
-msgid "Track Ordering..."
-msgstr "트랙 정리..."
+msgid "Sound"
+msgstr "사운드"
 
 
 msgctxt "Operator"
@@ -76949,13 +76941,13 @@ msgstr "이름을 변경..."
 
 
 msgctxt "Operator"
-msgid "Stop Tweaking Strip Actions"
-msgstr "트위킹 스트립 액션을 중지"
+msgid "Track Ordering..."
+msgstr "트랙 정리..."
 
 
 msgctxt "Operator"
-msgid "Add Tracks Above Selected"
-msgstr "트랙을 선택된 위에 추가"
+msgid "Stop Tweaking Strip Actions"
+msgstr "트위킹 스트립 액션을 중지"
 
 
 msgctxt "Operator"
@@ -77198,11 +77190,6 @@ msgstr "다음 스트립(중심)으로 이동"
 msgctxt "Operator"
 msgid "Movie"
 msgstr "무비"
-
-
-msgctxt "Operator"
-msgid "Sound"
-msgstr "사운드"
 
 
 msgctxt "Operator"
@@ -78725,10 +78712,6 @@ msgid "Vertex Group Weights"
 msgstr "버텍스 그룹 웨이트"
 
 
-msgid "Mesh Analysis"
-msgstr "메쉬 분석"
-
-
 msgid "Face Angle"
 msgstr "페이스 각도"
 
@@ -79513,10 +79496,6 @@ msgid "Int"
 msgstr "정수"
 
 
-msgid "PreviewCol"
-msgstr "PreviewCol"
-
-
 msgid "TexturedCol"
 msgstr "택스처화 Col"
 
@@ -79539,10 +79518,6 @@ msgstr "셰이프키"
 
 msgid "OS Loop"
 msgstr "OS 루프"
-
-
-msgid "PreviewLoopCol"
-msgstr "PreviewLoopCol"
 
 
 msgid "Source or destination meshes do not have any vertices, cannot transfer vertex data"
@@ -83913,6 +83888,10 @@ msgid "File '%s' could not be loaded"
 msgstr "파일 '%s'을 불러올 수 없습니다"
 
 
+msgid "Please select all related strips"
+msgstr "관련 스트립을 모두 선택하십시오"
+
+
 msgid "Cannot apply effects to audio sequence strips"
 msgstr "오디오 시퀀스 스트립에 이펙트를 적용 할 수 없습니다"
 
@@ -83935,10 +83914,6 @@ msgstr "TODO: 어떤 경우에 이런 일이 발생합니까?"
 
 msgid "No valid inputs to swap"
 msgstr "교환하는 유효한 입력이 없음"
-
-
-msgid "Please select all related strips"
-msgstr "관련 스트립을 모두 선택하십시오"
 
 
 msgid "Please select two strips"
@@ -84788,10 +84763,6 @@ msgstr "프리스타일: 뷰 맵 제작"
 
 msgid "Freestyle: Stroke rendering"
 msgstr "프리스타일: 스트로크 렌더링"
-
-
-msgid "Cannot open file: %s"
-msgstr "읽을 수 없는 파일: %s"
 
 
 msgid "Bone Envelopes"

@@ -12,6 +12,7 @@ if(WITH_COMPOSITOR_CPU)
     operations
     ../blenkernel
     ../blentranslation
+    ../imbuf
     ../makesrna
     ../nodes
     ../windowmanager
@@ -122,6 +123,8 @@ if(WITH_COMPOSITOR_CPU)
     nodes/COM_RenderLayersNode.h
     nodes/COM_SceneTimeNode.cc
     nodes/COM_SceneTimeNode.h
+    nodes/COM_SplitNode.cc
+    nodes/COM_SplitNode.h
     nodes/COM_SwitchNode.cc
     nodes/COM_SwitchNode.h
     nodes/COM_SwitchViewNode.cc
@@ -136,8 +139,6 @@ if(WITH_COMPOSITOR_CPU)
     # output nodes
     nodes/COM_CompositorNode.cc
     nodes/COM_CompositorNode.h
-    nodes/COM_SplitViewerNode.cc
-    nodes/COM_SplitViewerNode.h
     nodes/COM_ViewLevelsNode.cc
     nodes/COM_ViewLevelsNode.h
     nodes/COM_ViewerNode.cc
@@ -599,7 +600,6 @@ if(WITH_COMPOSITOR_CPU)
     PRIVATE bf::blenlib
     PRIVATE bf::depsgraph
     PRIVATE bf::dna
-    PRIVATE bf::imbuf
     PRIVATE bf::intern::clog
     PRIVATE bf::intern::guardedalloc
     extern_clew

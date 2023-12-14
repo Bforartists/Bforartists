@@ -31,6 +31,15 @@
 namespace blender::bke::pbvh::pixels {
 
 /**
+ * Splitting of pixel nodes has been disabled as it was designed for C. When migrating to CPP
+ * the splitting data structure will corrupt memory.
+ *
+ * TODO(jbakker): This should be fixed or replaced with a different solution. If we go into a
+ * direction of compute shaders this might not be needed anymore.
+ */
+constexpr bool PBVH_PIXELS_SPLIT_NODES_ENABLED = false;
+
+/**
  * Calculate the delta of two neighbor UV coordinates in the given image buffer.
  */
 static float2 calc_barycentric_delta(const float2 uvs[3],
@@ -105,10 +114,9 @@ static void split_thread_job(TaskPool *__restrict pool, void *taskdata);
 static void split_pixel_node(
     PBVH *pbvh, SplitNodePair *split, Image *image, ImageUser *image_user, SplitQueueData *tdata)
 {
-  BB cb;
   PBVHNode *node = &split->node;
 
-  cb = node->vb;
+  const Bounds<float3> cb = node->vb;
 
   if (count_node_pixels(*node) <= pbvh->pixel_leaf_limit || split->depth >= pbvh->depth_limit) {
     BKE_pbvh_pixels_node_data_get(split->node).rebuild_undo_regions();
@@ -116,8 +124,8 @@ static void split_pixel_node(
   }
 
   /* Find widest axis and its midpoint */
-  const int axis = BB_widest_axis(&cb);
-  const float mid = (cb.bmax[axis] + cb.bmin[axis]) * 0.5f;
+  const int axis = math::dominant_axis(cb.max - cb.min);
+  const float mid = (cb.max[axis] + cb.min[axis]) * 0.5f;
 
   node->flag = (PBVHNodeFlags)(int(node->flag) & int(~PBVH_TexLeaf));
 
@@ -134,10 +142,10 @@ static void split_pixel_node(
   child2->flag = PBVH_TexLeaf;
 
   child1->vb = cb;
-  child1->vb.bmax[axis] = mid;
+  child1->vb.max[axis] = mid;
 
   child2->vb = cb;
-  child2->vb.bmin[axis] = mid;
+  child2->vb.min[axis] = mid;
 
   NodeData &data = BKE_pbvh_pixels_node_data_get(split->node);
 
@@ -806,7 +814,7 @@ using namespace blender::bke::pbvh::pixels;
 
 void BKE_pbvh_build_pixels(PBVH *pbvh, Mesh *mesh, Image *image, ImageUser *image_user)
 {
-  if (update_pixels(pbvh, mesh, image, image_user)) {
+  if (update_pixels(pbvh, mesh, image, image_user) && PBVH_PIXELS_SPLIT_NODES_ENABLED) {
     split_pixel_nodes(pbvh, mesh, image, image_user);
   }
 }
