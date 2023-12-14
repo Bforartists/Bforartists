@@ -4117,8 +4117,7 @@ def km_curves(params):
         # Selection Modes
         ("curves.set_selection_domain", {"type": 'ONE', "value": 'PRESS'}, {"properties": [("domain", 'POINT')]}),
         ("curves.set_selection_domain", {"type": 'TWO', "value": 'PRESS'}, {"properties": [("domain", 'CURVE')]}),
-        ("curves.disable_selection", {"type": 'ONE', "value": 'PRESS', "alt": True}, None),
-        ("curves.disable_selection", {"type": 'TWO', "value": 'PRESS', "alt": True}, None),
+        ("curves.duplicate_move", {"type": 'D', "value": 'PRESS', "ctrl": True}, None),
         # Selection Operators
         ("curves.select_all", {"type": 'A', "value": 'PRESS', "ctrl": True}, {"properties": [("action", 'SELECT')]}),
         ("curves.select_all", {"type": 'A', "value": 'PRESS', "shift": True,
@@ -4514,7 +4513,7 @@ def generate_keymaps_impl(params=None):
         km_animation_channels(params),
 
         # Modes.
-        km_grease_pencil(params),
+        # km_grease_pencil(params), # Empty.
         km_grease_pencil_stroke_edit_mode(params),
         km_grease_pencil_stroke_paint_mode(params),
         km_grease_pencil_stroke_paint_draw_brush(params),
