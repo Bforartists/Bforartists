@@ -123,12 +123,12 @@ static void drw_state_prepare_clean_for_draw(DRWManager *dst)
  * where we don't re-use data by accident across different
  * draw calls.
  */
-#ifdef DEBUG
+#ifndef NDEBUG
 static void drw_state_ensure_not_reused(DRWManager *dst)
 {
   memset(dst, 0xff, offsetof(DRWManager, system_gpu_context));
 }
-#endif
+#endif /* !NDEBUG */
 
 static bool drw_draw_show_annotation()
 {
@@ -645,7 +645,7 @@ static void drw_manager_exit(DRWManager *dst)
   }
   dst->vmempool = nullptr;
   dst->viewport = nullptr;
-#ifdef DEBUG
+#ifndef NDEBUG
   /* Avoid accidental reuse. */
   drw_state_ensure_not_reused(dst);
 #endif
@@ -2886,16 +2886,16 @@ void DRW_draw_depth_object(
     case OB_MESH: {
       GPUBatch *batch;
 
-      Mesh *me = static_cast<Mesh *>(object->data);
+      Mesh *mesh = static_cast<Mesh *>(object->data);
 
       if (object->mode & OB_MODE_EDIT) {
-        batch = DRW_mesh_batch_cache_get_edit_triangles(me);
+        batch = DRW_mesh_batch_cache_get_edit_triangles(mesh);
       }
       else {
-        batch = DRW_mesh_batch_cache_get_surface(me);
+        batch = DRW_mesh_batch_cache_get_surface(mesh);
       }
       TaskGraph *task_graph = BLI_task_graph_create();
-      DRW_mesh_batch_cache_create_requested(task_graph, object, me, scene, false, true);
+      DRW_mesh_batch_cache_create_requested(task_graph, object, mesh, scene, false, true);
       BLI_task_graph_work_and_wait(task_graph);
       BLI_task_graph_free(task_graph);
 

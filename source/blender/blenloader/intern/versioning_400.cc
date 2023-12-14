@@ -65,7 +65,7 @@
 #include "SEQ_sequencer.hh"
 
 #include "ANIM_armature_iter.hh"
-#include "ANIM_bone_collections.h"
+#include "ANIM_bone_collections.hh"
 
 #include "ED_armature.hh"
 
@@ -323,6 +323,35 @@ static void versioning_eevee_shadow_settings(Object *object)
 
   /* Enable the hide_shadow flag only if there's not any shadow casting material. */
   SET_FLAG_FROM_TEST(object->visibility_flag, hide_shadows, OB_HIDE_SHADOW);
+}
+
+static void versioning_replace_splitviewer(bNodeTree *ntree)
+{
+  /* Split viewer was replaced with a regular split node, so add a viewer node,
+   * and link it to the new split node to achieve the same behavior of the split viewer node. */
+
+  LISTBASE_FOREACH_MUTABLE (bNode *, node, &ntree->nodes) {
+    if (node->type != CMP_NODE_SPLITVIEWER__DEPRECATED) {
+      continue;
+    }
+
+    STRNCPY(node->idname, "CompositorNodeSplit");
+    node->type = CMP_NODE_SPLIT;
+    MEM_freeN(node->storage);
+    node->storage = nullptr;
+
+    bNode *viewer_node = nodeAddStaticNode(nullptr, ntree, CMP_NODE_VIEWER);
+    /* Nodes are created stacked on top of each other, so separate them a bit. */
+    viewer_node->locx = node->locx + node->width + viewer_node->width / 4.0f;
+    viewer_node->locy = node->locy;
+    viewer_node->flag &= ~NODE_PREVIEW;
+
+    bNodeSocket *split_out_socket = nodeAddStaticSocket(
+        ntree, node, SOCK_OUT, SOCK_IMAGE, PROP_NONE, "Image", "Image");
+    bNodeSocket *viewer_in_socket = nodeFindSocket(viewer_node, SOCK_IN, "Image");
+
+    nodeAddLink(ntree, node, split_out_socket, viewer_node, viewer_in_socket);
+  }
 }
 
 void do_versions_after_linking_400(FileData *fd, Main *bmain)
@@ -972,7 +1001,7 @@ static void versioning_replace_musgrave_texture_node(bNodeTree *ntree)
           *version_cycles_node_socket_float_value(mul_socket_B) = *detail;
 
           if (noise_type == SHD_NOISE_MULTIFRACTAL) {
-            /* Add Add Math node after Multiply Math node. */
+            /* Add an Add Math node after Multiply Math node. */
 
             bNode *add_node = nodeAddStaticNode(nullptr, ntree, SH_NODE_MATH);
             add_node->parent = node->parent;
@@ -1759,16 +1788,6 @@ static void versioning_grease_pencil_stroke_radii_scaling(GreasePencil *grease_p
   }
 }
 
-static void version_ensure_opaque_bone_colors_recursive(Bone *bone)
-{
-  bone->color.custom.solid[3] = 255;
-  bone->color.custom.select[3] = 255;
-  bone->color.custom.active[3] = 255;
-  LISTBASE_FOREACH (Bone *, child_bone, &bone->childbase) {
-    version_ensure_opaque_bone_colors_recursive(child_bone);
-  }
-}
-
 void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 1)) {
@@ -1943,21 +1962,8 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 14)) {
-    if (!DNA_struct_member_exists(
-            fd->filesdna, "SceneEEVEE", "RaytraceEEVEE", "reflection_options")) {
+    if (!DNA_struct_member_exists(fd->filesdna, "SceneEEVEE", "int", "ray_tracing_method")) {
       LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
-        scene->eevee.reflection_options.flag = RAYTRACE_EEVEE_USE_DENOISE;
-        scene->eevee.reflection_options.denoise_stages = RAYTRACE_EEVEE_DENOISE_SPATIAL |
-                                                         RAYTRACE_EEVEE_DENOISE_TEMPORAL |
-                                                         RAYTRACE_EEVEE_DENOISE_BILATERAL;
-        scene->eevee.reflection_options.screen_trace_quality = 0.25f;
-        scene->eevee.reflection_options.screen_trace_thickness = 0.2f;
-        scene->eevee.reflection_options.sample_clamp = 10.0f;
-        scene->eevee.reflection_options.resolution_scale = 2;
-
-        scene->eevee.refraction_options = scene->eevee.reflection_options;
-
-        scene->eevee.ray_split_settings = 0;
         scene->eevee.ray_tracing_method = RAYTRACE_EEVEE_METHOD_SCREEN;
       }
     }
@@ -2255,13 +2261,6 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
         light->shadow_trace_distance = default_light.shadow_trace_distance;
       }
     }
-
-    if (!DNA_struct_member_exists(fd->filesdna, "SceneEEVEE", "RaytraceEEVEE", "diffuse_options"))
-    {
-      LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
-        scene->eevee.diffuse_options = scene->eevee.reflection_options;
-      }
-    }
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 28)) {
@@ -2431,6 +2430,13 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
         SET_FLAG_FROM_TEST(material->blend_flag, transparent_shadow, MA_BL_TRANSPARENT_SHADOW);
       }
     }
+
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type == NTREE_COMPOSIT) {
+        versioning_replace_splitviewer(ntree);
+      }
+    }
+    FOREACH_NODETREE_END;
   }
 
   /* 401 6 did not require any do_version here. */
@@ -2503,20 +2509,6 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       }
     }
 
-    LISTBASE_FOREACH (Mesh *, mesh, &bmain->meshes) {
-      blender::bke::mesh_sculpt_mask_to_generic(*mesh);
-    }
-
-    if (!DNA_struct_member_exists(
-            fd->filesdna, "RaytraceEEVEE", "float", "screen_trace_max_roughness"))
-    {
-      LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
-        scene->eevee.reflection_options.screen_trace_max_roughness = 0.5f;
-        scene->eevee.refraction_options.screen_trace_max_roughness = 0.5f;
-        scene->eevee.diffuse_options.screen_trace_max_roughness = 0.5f;
-      }
-    }
-
     if (!DNA_struct_member_exists(fd->filesdna, "Material", "char", "displacement_method")) {
       /* Replace Cycles.displacement_method by Material::displacement_method. */
       LISTBASE_FOREACH (Material *, material, &bmain->materials) {
@@ -2532,9 +2524,11 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     /* Prevent custom bone colors from having alpha zero.
      * Part of the fix for issue #115434. */
     LISTBASE_FOREACH (bArmature *, arm, &bmain->armatures) {
-      LISTBASE_FOREACH (Bone *, bone, &arm->bonebase) {
-        version_ensure_opaque_bone_colors_recursive(bone);
-      }
+      blender::animrig::ANIM_armature_foreach_bone(&arm->bonebase, [](Bone *bone) {
+        bone->color.custom.solid[3] = 255;
+        bone->color.custom.select[3] = 255;
+        bone->color.custom.active[3] = 255;
+      });
       if (arm->edbo) {
         LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
           ebone->color.custom.solid[3] = 255;
@@ -2567,5 +2561,27 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
    */
   {
     /* Keep this block, even when empty. */
+
+    if (!DNA_struct_member_exists(
+            fd->filesdna, "SceneEEVEE", "RaytraceEEVEE", "ray_tracing_options")) {
+      LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+        scene->eevee.ray_tracing_options.flag = RAYTRACE_EEVEE_USE_DENOISE;
+        scene->eevee.ray_tracing_options.denoise_stages = RAYTRACE_EEVEE_DENOISE_SPATIAL |
+                                                          RAYTRACE_EEVEE_DENOISE_TEMPORAL |
+                                                          RAYTRACE_EEVEE_DENOISE_BILATERAL;
+        scene->eevee.ray_tracing_options.screen_trace_quality = 0.25f;
+        scene->eevee.ray_tracing_options.screen_trace_thickness = 0.2f;
+        scene->eevee.ray_tracing_options.screen_trace_max_roughness = 0.5f;
+        scene->eevee.ray_tracing_options.sample_clamp = 10.0f;
+        scene->eevee.ray_tracing_options.resolution_scale = 2;
+      }
+    }
+  }
+
+  /* Always run this versioning; meshes are written with the legacy format which always needs to
+   * be converted to the new format on file load. Can be moved to a subversion check in a larger
+   * breaking release. */
+  LISTBASE_FOREACH (Mesh *, mesh, &bmain->meshes) {
+    blender::bke::mesh_sculpt_mask_to_generic(*mesh);
   }
 }

@@ -10,6 +10,7 @@ set(INC
   ../../blentranslation
   ../../draw
   ../../gpu
+  ../../imbuf
   ../../makesrna
   ../../nodes
   ../../render
@@ -82,6 +83,7 @@ set(SRC
   algorithms/COM_algorithm_symmetric_separable_blur_variable_size.hh
   algorithms/COM_algorithm_transform.hh
 
+  cached_resources/intern/bokeh_kernel.cc
   cached_resources/intern/cached_mask.cc
   cached_resources/intern/cached_shader.cc
   cached_resources/intern/cached_texture.cc
@@ -93,6 +95,7 @@ set(SRC
   cached_resources/intern/symmetric_blur_weights.cc
   cached_resources/intern/symmetric_separable_blur_weights.cc
 
+  cached_resources/COM_bokeh_kernel.hh
   cached_resources/COM_cached_mask.hh
   cached_resources/COM_cached_resource.hh
   cached_resources/COM_cached_shader.hh
@@ -111,7 +114,7 @@ set(LIB
   bf_gpu
   PRIVATE bf::intern::guardedalloc
   bf_nodes
-  PRIVATE bf::imbuf
+  bf_imbuf
   bf_render
   PRIVATE bf::blenlib
   bf_blenkernel
@@ -179,7 +182,7 @@ set(GLSL_SRC
   shaders/compositor_smaa_blending_weight_calculation.glsl
   shaders/compositor_smaa_edge_detection.glsl
   shaders/compositor_smaa_neighborhood_blending.glsl
-  shaders/compositor_split_viewer.glsl
+  shaders/compositor_split.glsl
   shaders/compositor_summed_area_table_compute_complete_blocks.glsl
   shaders/compositor_summed_area_table_compute_complete_x_prologues.glsl
   shaders/compositor_summed_area_table_compute_complete_y_prologues.glsl
@@ -294,7 +297,7 @@ set(SRC_SHADER_CREATE_INFOS
   shaders/infos/compositor_realize_on_domain_info.hh
   shaders/infos/compositor_screen_lens_distortion_info.hh
   shaders/infos/compositor_smaa_info.hh
-  shaders/infos/compositor_split_viewer_info.hh
+  shaders/infos/compositor_split_info.hh
   shaders/infos/compositor_summed_area_table_info.hh
   shaders/infos/compositor_sun_beams_info.hh
   shaders/infos/compositor_symmetric_blur_info.hh

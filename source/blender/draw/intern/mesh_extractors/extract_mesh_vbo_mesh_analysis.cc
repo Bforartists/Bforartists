@@ -215,7 +215,7 @@ static void statvis_calc_thickness(const MeshRenderData &mr, float *r_thickness)
   else {
     BVHTreeFromMesh treeData = {nullptr};
 
-    BVHTree *tree = BKE_bvhtree_from_mesh_get(&treeData, mr.me, BVHTREE_FROM_LOOPTRI, 4);
+    BVHTree *tree = BKE_bvhtree_from_mesh_get(&treeData, mr.mesh, BVHTREE_FROM_LOOPTRI, 4);
     const Span<MLoopTri> looptris = mr.looptris;
     const Span<int> looptri_faces = mr.looptri_faces;
     for (const int i : looptris.index_range()) {
@@ -343,7 +343,7 @@ static void statvis_calc_intersect(const MeshRenderData &mr, float *r_intersect)
     uint overlap_len;
     BVHTreeFromMesh treeData = {nullptr};
 
-    BVHTree *tree = BKE_bvhtree_from_mesh_get(&treeData, mr.me, BVHTREE_FROM_LOOPTRI, 4);
+    BVHTree *tree = BKE_bvhtree_from_mesh_get(&treeData, mr.mesh, BVHTREE_FROM_LOOPTRI, 4);
 
     BVHTree_OverlapData data = {};
     data.positions = mr.vert_positions;
@@ -397,7 +397,7 @@ static void statvis_calc_distort(const MeshRenderData &mr, float *r_distort)
     BMFace *f;
 
     if (!mr.bm_vert_coords.is_empty()) {
-      BKE_editmesh_cache_ensure_face_normals(em, mr.edit_data);
+      BKE_editmesh_cache_ensure_face_normals(*em, *mr.edit_data);
 
       /* Most likely this is already valid, ensure just in case.
        * Needed for #BM_loop_calc_face_normal_safe_vcos. */

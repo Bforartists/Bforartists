@@ -267,6 +267,7 @@ static void main_merge_add_id_to_move(Main *bmain_dst,
   bool is_id_src_from_bmain_dst = false;
   if (is_id_src_linked) {
     BLI_assert(!is_library);
+    UNUSED_VARS_NDEBUG(is_library);
     blender::Vector<ID *> id_src_lib_dst = id_map_dst.lookup_default(id_src->lib->filepath_abs,
                                                                      {});
     /* The current library of the source ID would be remapped to null, which means that it comes
@@ -297,7 +298,7 @@ static void main_merge_add_id_to_move(Main *bmain_dst,
 void BKE_main_merge(Main *bmain_dst, Main **r_bmain_src, MainMergeReport &reports)
 {
   Main *bmain_src = *r_bmain_src;
-  /* NOTE: Dedicated mapping type is needed here, to handle propoerly the library cases. */
+  /* NOTE: Dedicated mapping type is needed here, to handle properly the library cases. */
   blender::Map<std::string, blender::Vector<ID *>> id_map_dst;
   ID *id_iter_dst, *id_iter_src;
   FOREACH_MAIN_ID_BEGIN (bmain_dst, id_iter_dst) {
@@ -410,8 +411,8 @@ void BKE_main_merge(Main *bmain_dst, Main **r_bmain_src, MainMergeReport &report
       reports.reports,
       RPT_INFO,
       "Merged %d IDs from '%s' Main into '%s' Main; %d IDs and %d Libraries already existed as "
-      "part of the destination Main, and %d IDs missing from desination Main, were freed together "
-      "with the source Main",
+      "part of the destination Main, and %d IDs missing from destination Main, were freed "
+      "together with the source Main",
       reports.num_merged_ids,
       bmain_src->filepath,
       bmain_dst->filepath,
