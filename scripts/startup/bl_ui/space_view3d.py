@@ -1051,6 +1051,9 @@ class VIEW3D_HT_header(Header):
             sub.popover(panel="VIEW3D_PT_overlay_vertex_paint", text="", icon='VPAINT_HLT')
         elif obj is not None and obj.type == 'GPENCIL':
             sub.popover(panel="VIEW3D_PT_overlay_gpencil_options", text="", icon='OUTLINER_DATA_GREASEPENCIL')
+        elif obj is not None and obj.type == 'GREASEPENCIL':
+            sub.popover(panel="VIEW3D_PT_overlay_grease_pencil_options", text="", icon='OUTLINER_DATA_GREASEPENCIL')
+
 
         # Separate from `elif` chain because it may coexist with weight-paint.
         if (
@@ -4346,7 +4349,7 @@ class VIEW3D_MT_sculpt(Menu):
         props.area = 'ALL'
 
         # BFA - located in sub menu with icons below in this same menu
-        # layout.operator("sculpt.face_set_invert_visibility", text="Invert Visible")
+        # layout.operator("paint.visibility_invert", text="Invert Visible")
 
         # props = layout.operator("paint.hide_show", text="Hide Masked")
         # props.action = 'HIDE'
@@ -4454,7 +4457,7 @@ class VIEW3D_MT_sculpt_showhide(Menu):
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        props = layout.operator("sculpt.face_set_invert_visibility", text="Invert Visible", icon="HIDE_ON")
+        props = layout.operator("sculpt.visibility_invert", text="Invert Visible", icon="HIDE_ON")
 
         props = layout.operator("paint.hide_show", text="Hide Masked", icon="MOD_MASK_OFF")
         props.action = 'HIDE'
@@ -4617,7 +4620,7 @@ class VIEW3D_MT_face_sets(Menu):
 
         layout.separator()
 
-        layout.operator("sculpt.face_set_invert_visibility", text="Invert Visible Face Sets", icon='INVERT_MASK')
+        layout.operator("sculpt.visibility_invert", text="Invert Visible Face Sets", icon='INVERT_MASK')
         props = layout.operator("paint.hide_show", text="Show All Face Sets", icon='HIDE_OFF')
         props.action = "SHOW"
         props.area = "ALL"
@@ -7015,6 +7018,10 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.menu("VIEW3D_MT_edit_greasepencil_delete")
 
+        layout.separator()
+
+        layout.operator("grease_pencil.clean_loose")
+
 
 class VIEW3D_MT_edit_greasepencil_stroke(Menu):
     bl_label = "Stroke"
@@ -7053,6 +7060,8 @@ class VIEW3D_MT_edit_curves(Menu):
         layout = self.layout
 
         layout.menu("VIEW3D_MT_transform")
+        layout.separator()
+        layout.operator("curves.duplicate_move")
         layout.separator()
         layout.operator("curves.attribute_set", icon='NODE_ATTRIBUTE')
         layout.operator("curves.delete", icon='DELETE')
@@ -7304,7 +7313,7 @@ class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
         props = pie.operator("sculpt.face_sets_create", text="Face Set from Visible")
         props.mode = 'VISIBLE'
 
-        pie.operator("sculpt.face_set_invert_visibility", text="Invert Visible")
+        pie.operator("sculpt.visibility_invert", text="Invert Visible")
 
         props = pie.operator("paint.hide_show", text="Show All")
         props.action = "SHOW"
@@ -9373,6 +9382,32 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
             row.use_property_split = True
             row.prop(overlay, "gpencil_vertex_paint_opacity", text="Opacity", slider=True)
 
+class VIEW3D_PT_overlay_grease_pencil_options(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = ""
+    bl_ui_units_x = 13
+
+    @classmethod
+    def poll(cls, context):
+        return context.object and context.object.type == 'GREASEPENCIL'
+
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data
+        overlay = view.overlay
+
+        layout.label(text={
+            'PAINT_GREASE_PENCIL': iface_("Draw Grease Pencil"),
+            'EDIT_GREASE_PENCIL': iface_("Edit Grease Pencil"),
+            'OBJECT': iface_("Grease Pencil"),
+        }[context.mode], translate=False)
+
+        if context.object.mode in {'EDIT'}:
+            split = layout.split()
+            col = split.column()
+            col.prop(overlay, "use_gpencil_edit_lines", text="Edit Lines")
+
 
 class VIEW3D_PT_quad_view(Panel):
     bl_space_type = 'VIEW_3D'
@@ -10727,6 +10762,7 @@ classes = (
     VIEW3D_PT_gpencil_guide,
     VIEW3D_PT_transform_orientations,
     VIEW3D_PT_overlay_gpencil_options,
+    VIEW3D_PT_overlay_grease_pencil_options,
     VIEW3D_PT_context_properties,
     VIEW3D_PT_paint_vertex_context_menu,
     VIEW3D_PT_paint_texture_context_menu,

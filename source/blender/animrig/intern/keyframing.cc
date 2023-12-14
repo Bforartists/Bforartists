@@ -45,6 +45,28 @@
 
 namespace blender::animrig {
 
+void update_autoflags_fcurve_direct(FCurve *fcu, PropertyRNA *prop)
+{
+  /* Set additional flags for the F-Curve (i.e. only integer values). */
+  fcu->flag &= ~(FCURVE_INT_VALUES | FCURVE_DISCRETE_VALUES);
+  switch (RNA_property_type(prop)) {
+    case PROP_FLOAT:
+      /* Do nothing. */
+      break;
+    case PROP_INT:
+      /* Do integer (only 'whole' numbers) interpolation between all points. */
+      fcu->flag |= FCURVE_INT_VALUES;
+      break;
+    default:
+      /* Do 'discrete' (i.e. enum, boolean values which cannot take any intermediate
+       * values at all) interpolation between all points.
+       *    - however, we must also ensure that evaluated values are only integers still.
+       */
+      fcu->flag |= (FCURVE_DISCRETE_VALUES | FCURVE_INT_VALUES);
+      break;
+  }
+}
+
 /** Used to make curves newly added to a cyclic Action cycle with the correct period. */
 static void make_new_fcurve_cyclic(const bAction *act, FCurve *fcu)
 {
@@ -310,19 +332,22 @@ static bool insert_keyframe_value(
     }
   }
 
+  KeyframeSettings settings = get_keyframe_settings((flag & INSERTKEY_NO_USERPREF) == 0);
+  settings.keyframe_type = keytype;
+
   if (flag & INSERTKEY_NEEDED) {
     if (!new_key_needed(fcu, cfra, curval)) {
       return false;
     }
 
-    if (insert_vert_fcurve(fcu, cfra, curval, keytype, flag) < 0) {
+    if (insert_vert_fcurve(fcu, {cfra, curval}, settings, flag) < 0) {
       return false;
     }
 
     return true;
   }
 
-  return insert_vert_fcurve(fcu, cfra, curval, keytype, flag) >= 0;
+  return insert_vert_fcurve(fcu, {cfra, curval}, settings, flag) >= 0;
 }
 
 bool insert_keyframe_direct(ReportList *reports,
@@ -511,7 +536,7 @@ int insert_keyframe(Main *bmain,
 
   /* If no action is provided, keyframe to the default one attached to this ID-block. */
   if (act == nullptr) {
-    act = ED_id_action_ensure(bmain, id);
+    act = id_action_ensure(bmain, id);
     if (act == nullptr) {
       BKE_reportf(reports,
                   RPT_ERROR,
@@ -911,7 +936,7 @@ void insert_key_rna(PointerRNA *rna_pointer,
                     ReportList *reports)
 {
   ID *id = rna_pointer->owner_id;
-  bAction *action = ED_id_action_ensure(bmain, id);
+  bAction *action = id_action_ensure(bmain, id);
   if (action == nullptr) {
     BKE_reportf(reports,
                 RPT_ERROR,

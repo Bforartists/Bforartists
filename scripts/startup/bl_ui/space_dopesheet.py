@@ -991,7 +991,7 @@ class DOPESHEET_MT_context_menu(Menu):
 
 
 class DOPESHEET_MT_channel_context_menu(Menu):
-    bl_label = "Channel" # BFA - changed to have coherent label in Fcurve, Timeline and Dopesheet context
+    bl_label = "Channel"
 
     def draw(self, context):
         layout = self.layout

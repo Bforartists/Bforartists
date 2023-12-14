@@ -799,6 +799,14 @@ static RetimingRangeData seq_retiming_range_data_get(const Scene *scene, const S
 
 void SEQ_retiming_sound_animation_data_set(const Scene *scene, const Sequence *seq)
 {
+  /* Content cut off by `anim_startofs` is as if it does not exist for sequencer. But Audaspace
+   * seeking relies on having animation buffer initialized for whole sequence. */
+  if (seq->anim_startofs > 0) {
+    const int seq_start = SEQ_time_start_frame_get(seq);
+    BKE_sound_set_scene_sound_pitch_constant_range(
+        seq->scene_sound, seq_start - seq->anim_startofs, seq_start, 1.0f);
+  }
+
   RetimingRangeData retiming_data = seq_retiming_range_data_get(scene, seq);
   for (int i = 0; i < retiming_data.ranges.size(); i++) {
     RetimingRange range = retiming_data.ranges[i];
@@ -988,10 +996,8 @@ void SEQ_retiming_key_timeline_frame_set(const Scene *scene,
   SEQ_time_update_meta_strip_range(scene, seq_sequence_lookup_meta_by_seq(scene, seq));
 }
 
-void SEQ_retiming_key_speed_set(const Scene *scene,
-                                Sequence *seq,
-                                SeqRetimingKey *key,
-                                const float speed)
+void SEQ_retiming_key_speed_set(
+    const Scene *scene, Sequence *seq, SeqRetimingKey *key, const float speed, bool keep_retiming)
 {
   if (key->strip_frame_index == 0) {
     return;
@@ -1007,10 +1013,20 @@ void SEQ_retiming_key_speed_set(const Scene *scene,
   const int segment_duration = frame_retimed - frame_retimed_prev;
   const int new_duration = segment_duration * speed_fac;
 
+  const int orig_timeline_frame = SEQ_retiming_key_timeline_frame_get(scene, seq, key);
   const int new_timeline_frame = SEQ_retiming_key_timeline_frame_get(scene, seq, key_prev) +
                                  new_duration;
 
   SEQ_retiming_key_timeline_frame_set(scene, seq, key, new_timeline_frame);
+
+  if (keep_retiming) {
+    const int key_index = SEQ_retiming_key_index_get(seq, key);
+    const int offset = new_timeline_frame - orig_timeline_frame;
+    for (int i = key_index + 1; i < SEQ_retiming_keys_count(seq); i++) {
+      SeqRetimingKey *key_iter = &SEQ_retiming_keys_get(seq)[i];
+      seq_retiming_key_offset(scene, seq, key_iter, offset);
+    }
+  }
 }
 
 bool SEQ_retiming_selection_clear(const Editing *ed)
