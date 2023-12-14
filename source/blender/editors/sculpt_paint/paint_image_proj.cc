@@ -106,7 +106,7 @@
 
 #include "IMB_colormanagement.h"
 
-//#include "bmesh_tools.h"
+//#include "bmesh_tools.hh"
 
 #include "paint_intern.hh"
 
@@ -1322,7 +1322,7 @@ static void uv_image_outset(const ProjPaintState *ps,
   int fidx[2];
   uint loop_index;
   uint vert[2];
-  const MLoopTri *ltri = &ps->looptris_eval[tri_index];
+  const MLoopTri *lt = &ps->looptris_eval[tri_index];
 
   float ibuf_inv[2];
 
@@ -1338,7 +1338,7 @@ static void uv_image_outset(const ProjPaintState *ps,
       continue;
     }
 
-    loop_index = ltri->tri[fidx[0]];
+    loop_index = lt->tri[fidx[0]];
 
     seam_data = &ps->loopSeamData[loop_index];
     seam_uvs = seam_data->seam_uvs;
@@ -1350,7 +1350,7 @@ static void uv_image_outset(const ProjPaintState *ps,
     fidx[1] = (fidx[0] == 2) ? 0 : fidx[0] + 1;
 
     vert[0] = ps->corner_verts_eval[loop_index];
-    vert[1] = ps->corner_verts_eval[ltri->tri[fidx[1]]];
+    vert[1] = ps->corner_verts_eval[lt->tri[fidx[1]]];
 
     for (uint i = 0; i < 2; i++) {
       VertSeam *seam;
@@ -6415,7 +6415,7 @@ bool ED_paint_proj_mesh_data_check(Scene *scene,
                                    bool *r_has_tex,
                                    bool *r_has_stencil)
 {
-  Mesh *me;
+  Mesh *mesh;
   int layernum;
   ImagePaintSettings *imapaint = &scene->toolsettings->imapaint;
   Brush *br = BKE_paint_brush(&imapaint->paint);
@@ -6466,8 +6466,8 @@ bool ED_paint_proj_mesh_data_check(Scene *scene,
     }
   }
 
-  me = BKE_mesh_from_object(ob);
-  layernum = CustomData_number_of_layers(&me->loop_data, CD_PROP_FLOAT2);
+  mesh = BKE_mesh_from_object(ob);
+  layernum = CustomData_number_of_layers(&mesh->loop_data, CD_PROP_FLOAT2);
 
   if (layernum == 0) {
     has_uvs = false;

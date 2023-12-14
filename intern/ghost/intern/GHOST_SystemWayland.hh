@@ -154,6 +154,8 @@ class GHOST_SystemWayland : public GHOST_System {
 
   uint8_t getNumDisplays() const override;
 
+  uint64_t getMilliSeconds() const override;
+
   GHOST_TSuccess getCursorPositionClientRelative(const GHOST_IWindow *window,
                                                  int32_t &x,
                                                  int32_t &y) const override;
@@ -236,9 +238,13 @@ class GHOST_SystemWayland : public GHOST_System {
 
   struct wl_shm *wl_shm_get() const;
 
-  void ime_begin(
-      GHOST_WindowWayland *win, int32_t x, int32_t y, int32_t w, int32_t h, bool completed) const;
-  void ime_end(GHOST_WindowWayland *win) const;
+  void ime_begin(const GHOST_WindowWayland *win,
+                 int32_t x,
+                 int32_t y,
+                 int32_t w,
+                 int32_t h,
+                 bool completed) const;
+  void ime_end(const GHOST_WindowWayland *win) const;
 
   static const char *xdg_app_id_get();
 
