@@ -128,7 +128,7 @@ static void wm_block_splash_image_roundcorners_add(ImBuf *ibuf)
     }
   }
 }
-#endif /* WITH_HEADLESS */
+#endif /* !WITH_HEADLESS */
 
 static ImBuf *wm_block_splash_image(int width, int *r_height)
 {
@@ -305,7 +305,7 @@ static uiBlock *wm_block_create_about(bContext *C, ARegion *region, void * /*arg
     row = uiLayoutRow(layout, false);
     uiItemS_ex(row, 2.7f);
   }
-#endif /* WITH_HEADLESS */
+#endif /* !WITH_HEADLESS */
 
   uiLayout *col = uiLayoutColumn(layout, true);
 

@@ -172,7 +172,7 @@ class UniformCommon : public DataBuffer<T, len, false>, NonMovable, NonCopyable 
  protected:
   GPUUniformBuf *ubo_;
 
-#ifdef DEBUG
+#ifndef NDEBUG
   const char *name_ = typeid(T).name();
 #else
   const char *name_ = "UniformBuffer";
@@ -215,7 +215,7 @@ class StorageCommon : public DataBuffer<T, len, false>, NonMovable, NonCopyable 
  protected:
   GPUStorageBuf *ssbo_;
 
-#ifdef DEBUG
+#ifndef NDEBUG
   const char *name_ = typeid(T).name();
 #else
   const char *name_ = "StorageBuffer";
@@ -975,8 +975,12 @@ class Texture : NonCopyable {
    */
   static void swap(Texture &a, Texture &b)
   {
-    SWAP(GPUTexture *, a.tx_, b.tx_);
-    SWAP(const char *, a.name_, b.name_);
+    std::swap(a.tx_, b.tx_);
+    std::swap(a.name_, b.name_);
+    std::swap(a.stencil_view_, b.stencil_view_);
+    std::swap(a.layer_range_view_, b.layer_range_view_);
+    std::swap(a.mip_views_, b.mip_views_);
+    std::swap(a.layer_views_, b.layer_views_);
   }
 
  private:

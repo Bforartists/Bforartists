@@ -12,8 +12,10 @@ set(INC
   ../bmesh
   ../editors/include
   ../editors/space_view3d
+  ../functions
   ../gpu
   ../gpu/intern
+  ../imbuf
   ../makesrna
   ../nodes
   ../render
@@ -350,8 +352,6 @@ set(LIB
   PRIVATE bf::blenlib
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
-  PRIVATE bf::functions
-  PRIVATE bf::imbuf
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
   bf_realtime_compositor
@@ -477,6 +477,10 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_deferred_capture_frag.glsl
   engines/eevee_next/shaders/eevee_deferred_combine_frag.glsl
   engines/eevee_next/shaders/eevee_deferred_planar_frag.glsl
+  engines/eevee_next/shaders/eevee_deferred_tile_classify_frag.glsl
+  engines/eevee_next/shaders/eevee_deferred_tile_compact_vert.glsl
+  engines/eevee_next/shaders/eevee_deferred_tile_stencil_frag.glsl
+  engines/eevee_next/shaders/eevee_deferred_tile_stencil_vert.glsl
   engines/eevee_next/shaders/eevee_depth_of_field_accumulator_lib.glsl
   engines/eevee_next/shaders/eevee_depth_of_field_bokeh_lut_comp.glsl
   engines/eevee_next/shaders/eevee_depth_of_field_downsample_comp.glsl
@@ -531,6 +535,8 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_lightprobe_irradiance_offset_comp.glsl
   engines/eevee_next/shaders/eevee_lightprobe_irradiance_load_comp.glsl
   engines/eevee_next/shaders/eevee_lightprobe_lib.glsl
+  engines/eevee_next/shaders/eevee_lookdev_display_frag.glsl
+  engines/eevee_next/shaders/eevee_lookdev_display_vert.glsl
   engines/eevee_next/shaders/eevee_ltc_lib.glsl
   engines/eevee_next/shaders/eevee_lut_comp.glsl
   engines/eevee_next/shaders/eevee_motion_blur_dilate_comp.glsl
@@ -591,6 +597,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_surf_deferred_frag.glsl
   engines/eevee_next/shaders/eevee_surf_depth_frag.glsl
   engines/eevee_next/shaders/eevee_surf_forward_frag.glsl
+  engines/eevee_next/shaders/eevee_surf_hybrid_frag.glsl
   engines/eevee_next/shaders/eevee_surf_lib.glsl
   engines/eevee_next/shaders/eevee_surf_occupancy_frag.glsl
   engines/eevee_next/shaders/eevee_surf_shadow_frag.glsl
