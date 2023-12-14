@@ -29,7 +29,7 @@
 
 #include "BKE_appdir.h"
 #include "BKE_blender_copybuffer.h"
-#include "BKE_blendfile.h"
+#include "BKE_blendfile.hh"
 #include "BKE_context.hh"
 #include "BKE_fcurve.h"
 #include "BKE_lib_id.h"
@@ -50,6 +50,8 @@
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
+
+#include "ANIM_animdata.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -175,7 +177,7 @@ static bool sequencer_write_copy_paste_file(Main *bmain_src,
 
   if (!BLI_listbase_is_empty(&fcurves_dst) || !BLI_listbase_is_empty(&drivers_dst)) {
     BLI_assert(scene_dst->adt == nullptr);
-    bAction *act_dst = ED_id_action_ensure(bmain_src, &scene_dst->id);
+    bAction *act_dst = blender::animrig::id_action_ensure(bmain_src, &scene_dst->id);
     BLI_movelisttolist(&act_dst->curves, &fcurves_dst);
     BLI_movelisttolist(&scene_dst->adt->drivers, &drivers_dst);
   }
@@ -229,7 +231,8 @@ int sequencer_clipboard_copy_exec(bContext *C, wmOperator *op)
   }
 
   /* We are all done! */
-  BKE_report(op->reports, RPT_INFO, "Copied the selected VSE strips to internal clipboard");
+  BKE_report(
+      op->reports, RPT_INFO, "Copied the selected Video Sequencer strips to internal clipboard");
   return OPERATOR_FINISHED;
 }
 
@@ -250,7 +253,7 @@ static bool sequencer_paste_animation(Main *bmain_dst, Scene *scene_dst, Scene *
   }
   else {
     /* get action to add F-Curve+keyframe to */
-    act_dst = ED_id_action_ensure(bmain_dst, &scene_dst->id);
+    act_dst = blender::animrig::id_action_ensure(bmain_dst, &scene_dst->id);
   }
 
   LISTBASE_FOREACH (FCurve *, fcu, &scene_src->adt->action->curves) {
@@ -290,7 +293,7 @@ int sequencer_clipboard_paste_exec(bContext *C, wmOperator *op)
   }
 
   if (!scene_src || !scene_src->ed) {
-    BKE_report(op->reports, RPT_ERROR, "No clipboard scene to paste VSE data from");
+    BKE_report(op->reports, RPT_ERROR, "No clipboard scene to paste Video Sequencer data from");
     BKE_main_free(bmain_src);
     return OPERATOR_CANCELLED;
   }
