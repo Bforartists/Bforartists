@@ -714,7 +714,9 @@ void MTLFrameBuffer::update_attachments(bool /*update_viewport*/)
       case GPU_FB_COLOR_ATTACHMENT2:
       case GPU_FB_COLOR_ATTACHMENT3:
       case GPU_FB_COLOR_ATTACHMENT4:
-      case GPU_FB_COLOR_ATTACHMENT5: {
+      case GPU_FB_COLOR_ATTACHMENT5:
+      case GPU_FB_COLOR_ATTACHMENT6:
+      case GPU_FB_COLOR_ATTACHMENT7: {
         int color_slot_ind = type - GPU_FB_COLOR_ATTACHMENT0;
         if (attach.tex) {
           /* If we already had a color attachment, preserve load/clear-state parameters,
@@ -760,11 +762,6 @@ void MTLFrameBuffer::update_attachments(bool /*update_viewport*/)
     GPU_texture_get_mipmap_size(attach.tex, attach.mip, size);
     this->size_set(size[0], size[1]);
     srgb_ = (GPU_texture_format(attach.tex) == GPU_SRGB8_A8);
-  }
-  else {
-    /* Empty frame-buffer. */
-    width_ = 0;
-    height_ = 0;
   }
 
   /* We have now updated our internal structures. */
@@ -1247,7 +1244,7 @@ void MTLFrameBuffer::ensure_render_target_size()
   {
 
     /* Reset default size for empty framebuffer. */
-    this->default_size_set(0, 0);
+    this->default_size_set(width_, height_);
   }
 }
 
@@ -1493,16 +1490,9 @@ bool MTLFrameBuffer::validate_render_pass()
     this->update_attachments(true);
   }
 
-  /* Verify attachment count. */
-  int used_attachments = 0;
-  for (int attachment = 0; attachment < GPU_FB_MAX_COLOR_ATTACHMENT; attachment++) {
-    if (mtl_color_attachments_[attachment].used) {
-      used_attachments++;
-    }
-  }
-  used_attachments += (mtl_depth_attachment_.used) ? 1 : 0;
-  used_attachments += (mtl_stencil_attachment_.used) ? 1 : 0;
-  return (used_attachments > 0);
+  /* NOTE: Attachment-less render targets now supported so we do not need to validate attachment
+   * counts. Keeping this function in place if other parameters need to be validate. */
+  return true;
 }
 
 MTLLoadAction mtl_load_action_from_gpu(eGPULoadOp action)
@@ -1555,25 +1545,20 @@ MTLRenderPassDescriptor *MTLFrameBuffer::bake_render_pass_descriptor(bool load_c
   uint descriptor_config = (load_contents) ? MTL_FB_CONFIG_LOAD :
                                              ((this->get_pending_clear()) ? MTL_FB_CONFIG_CLEAR :
                                                                             MTL_FB_CONFIG_CUSTOM);
+
+  /* NOTE: If `GPU_framebuffer_bind_loadstore` is used, the `use_explicit_load_store_` flag will be
+   * set in which case, we should always use the custom configuration. Calls with this flag will
+   * only happen for the first render pass after binding. */
+  if (use_explicit_load_store_) {
+    descriptor_config = MTL_FB_CONFIG_CUSTOM;
+    descriptor_dirty_[descriptor_config] = true;
+  }
+
   if (descriptor_dirty_[descriptor_config] || framebuffer_descriptor_[descriptor_config] == nil) {
 
     /* Create descriptor if it does not exist. */
     if (framebuffer_descriptor_[descriptor_config] == nil) {
       framebuffer_descriptor_[descriptor_config] = [[MTLRenderPassDescriptor alloc] init];
-    }
-
-    if (@available(macOS 11.00, *)) {
-      /* Optimization: Use smaller tile size on Apple Silicon if exceeding a certain bpp limit. */
-      bool is_tile_based_gpu = [metal_ctx->device hasUnifiedMemory];
-      if (is_tile_based_gpu) {
-        uint framebuffer_bpp = this->get_bits_per_pixel();
-        bool use_small_tiles = (framebuffer_bpp > 64);
-
-        if (use_small_tiles) {
-          framebuffer_descriptor_[descriptor_config].tileWidth = 16;
-          framebuffer_descriptor_[descriptor_config].tileHeight = 16;
-        }
-      }
     }
 
     /* Configure multilayered rendering. */
@@ -1651,12 +1636,15 @@ MTLRenderPassDescriptor *MTLFrameBuffer::bake_render_pass_descriptor(bool load_c
           /* MTL_FB_CONFIG_LOAD must always load. */
           load_action = GPU_LOADACTION_LOAD;
         }
-        else if (descriptor_config == MTL_FB_CONFIG_CUSTOM &&
-                 load_action == GPU_LOADACTION_CLEAR && !texture_is_memoryless)
+        else if (descriptor_config == MTL_FB_CONFIG_CUSTOM && load_action == GPU_LOADACTION_CLEAR)
         {
-          /* Custom config should be LOAD or DONT_CARE only, unless attachment is memoryless and
-           * cannot be cleared/written to by another pass. */
-          load_action = GPU_LOADACTION_LOAD;
+          /* If Custom load config is used, fallback to loading if explicit bind state flag is
+           * unset. This is to ensure attachments are loaded by default in the case a framebuffer
+           * is unbound and rebound, or, if a render pass breaks mid-pass for compute or blit
+           * operations. */
+          if (!use_explicit_load_store_ && !texture_is_memoryless) {
+            load_action = GPU_LOADACTION_LOAD;
+          }
         }
 
         /* Ensure memoryless attachment cannot load or store results. */
@@ -1713,12 +1701,13 @@ MTLRenderPassDescriptor *MTLFrameBuffer::bake_render_pass_descriptor(bool load_c
         /* MTL_FB_CONFIG_LOAD must always load. */
         load_action = GPU_LOADACTION_LOAD;
       }
-      else if (descriptor_config == MTL_FB_CONFIG_CUSTOM && load_action == GPU_LOADACTION_CLEAR &&
-               !texture_is_memoryless)
-      {
-        /* Custom config should be LOAD or DONT_CARE only, unless attachment is memoryless and
-         * cannot be cleared/written to by another pass. */
-        load_action = GPU_LOADACTION_LOAD;
+      else if (descriptor_config == MTL_FB_CONFIG_CUSTOM && load_action == GPU_LOADACTION_CLEAR) {
+        /* If Custom load config is used, fallback to loading if explicit bind state flag is unset.
+         * This is to ensure attachments are loaded by default in the case a framebuffer is unbound
+         * and rebound, or, if a render pass breaks mid-pass for compute or blit operations. */
+        if (!use_explicit_load_store_ && !texture_is_memoryless) {
+          load_action = GPU_LOADACTION_LOAD;
+        }
       }
 
       /* Ensure memoryless attachment cannot load or store results. */
@@ -1761,12 +1750,13 @@ MTLRenderPassDescriptor *MTLFrameBuffer::bake_render_pass_descriptor(bool load_c
         /* MTL_FB_CONFIG_LOAD must always load. */
         load_action = GPU_LOADACTION_LOAD;
       }
-      else if (descriptor_config == MTL_FB_CONFIG_CUSTOM && load_action == GPU_LOADACTION_CLEAR &&
-               !texture_is_memoryless)
-      {
-        /* Custom config should be LOAD or DONT_CARE only, unless attachment is memoryless and
-         * cannot be cleared/written to by another pass. */
-        load_action = GPU_LOADACTION_LOAD;
+      else if (descriptor_config == MTL_FB_CONFIG_CUSTOM && load_action == GPU_LOADACTION_CLEAR) {
+        /* If Custom load config is used, fallback to loading if explicit bind state flag is unset.
+         * This is to ensure attachments are loaded by default in the case a framebuffer is unbound
+         * and rebound, or, if a render pass breaks mid-pass for compute or blit operations. */
+        if (!use_explicit_load_store_ && !texture_is_memoryless) {
+          load_action = GPU_LOADACTION_LOAD;
+        }
       }
 
       /* Ensure memoryless attachment cannot load or store results. */
@@ -1794,10 +1784,26 @@ MTLRenderPassDescriptor *MTLFrameBuffer::bake_render_pass_descriptor(bool load_c
     else {
       framebuffer_descriptor_[descriptor_config].stencilAttachment.texture = nil;
     }
+
+    /* Attachmentless render support. */
+    int total_num_attachments = colour_attachments + (mtl_depth_attachment_.used ? 1 : 0) +
+                                (mtl_stencil_attachment_.used ? 1 : 0);
+    if (total_num_attachments == 0) {
+      BLI_assert(width_ > 0 && height_ > 0);
+      framebuffer_descriptor_[descriptor_config].renderTargetWidth = width_;
+      framebuffer_descriptor_[descriptor_config].renderTargetHeight = height_;
+      framebuffer_descriptor_[descriptor_config].defaultRasterSampleCount = 1;
+    }
+
     descriptor_dirty_[descriptor_config] = false;
   }
+  /* Clear dirty state flags. */
   is_dirty_ = false;
   is_loadstore_dirty_ = false;
+
+  /* Clear explicit bind flag. */
+  use_explicit_load_store_ = false;
+
   return framebuffer_descriptor_[descriptor_config];
 }
 
