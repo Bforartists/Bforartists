@@ -237,8 +237,8 @@ float Light::point_radiance_get(const ::Light *la)
 
 void Light::debug_draw()
 {
-#ifdef DEBUG
-  drw_debug_sphere(_position, influence_radius_max, float4(0.8f, 0.3f, 0.0f, 1.0f));
+#ifndef NDEBUG
+  drw_debug_sphere(float3(_position), influence_radius_max, float4(0.8f, 0.3f, 0.0f, 1.0f));
 #endif
 }
 
@@ -265,7 +265,12 @@ void LightModule::begin_sync()
 
   /* In begin_sync so it can be animated. */
   if (assign_if_different(light_threshold_, max_ff(1e-16f, inst_.scene->eevee.light_threshold))) {
-    inst_.sampling.reset();
+    /* All local lights need to be re-sync. */
+    for (Light &light : light_map_.values()) {
+      if (!ELEM(light.type, LIGHT_SUN, LIGHT_SUN_ORTHO)) {
+        light.initialized = false;
+      }
+    }
   }
 
   sun_lights_len_ = 0;
@@ -324,11 +329,6 @@ void LightModule::end_sync()
   }
   /* This scene data buffer is then immutable after this point. */
   light_buf_.push_update();
-
-  /* Update sampling on deletion or un-hiding (use_scene_lights). */
-  if (assign_if_different(light_map_size_, light_map_.size())) {
-    inst_.sampling.reset();
-  }
 
   /* If exceeding the limit, just trim off the excess to avoid glitchy rendering. */
   if (sun_lights_len_ + local_lights_len_ > CULLING_MAX_ITEM) {
