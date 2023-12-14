@@ -163,6 +163,20 @@ bool gbuffer_has_closure(uint header, eClosureBits closure)
     return has_diffuse;
   }
 
+  bool has_translucent = (gbuffer_header_unpack(header, layer) == GBUF_TRANSLUCENT);
+  layer += int(has_translucent);
+
+  if (closure == eClosureBits(CLOSURE_TRANSLUCENT)) {
+    return has_translucent;
+  }
+
+  bool has_sss = (gbuffer_header_unpack(header, layer) == GBUF_SSS);
+  layer += int(has_sss);
+
+  if (closure == eClosureBits(CLOSURE_SSS)) {
+    return has_sss;
+  }
+
   return false;
 }
 
@@ -174,6 +188,7 @@ struct GBufferDataPacked {
 };
 
 GBufferDataPacked gbuffer_pack(ClosureDiffuse diffuse,
+                               ClosureTranslucent translucent,
                                ClosureReflection reflection,
                                ClosureRefraction refraction,
                                vec3 default_N,
@@ -185,6 +200,7 @@ GBufferDataPacked gbuffer_pack(ClosureDiffuse diffuse,
   bool has_refraction = refraction.weight > 1e-5;
   bool has_reflection = reflection.weight > 1e-5;
   bool has_diffuse = diffuse.weight > 1e-5;
+  bool has_translucent = translucent.weight > 1e-5;
   bool has_sss = diffuse.sss_id > 0;
 
   int layer = 0;
@@ -234,7 +250,16 @@ GBufferDataPacked gbuffer_pack(ClosureDiffuse diffuse,
     layer += 1;
   }
 
-  if (has_sss) {
+  if (has_translucent) {
+    gbuf.color[layer] = gbuffer_color_pack(translucent.color);
+    gbuf.closure[layer].xy = gbuffer_normal_pack(translucent.N);
+    gbuf.closure[layer].z = 0.0; /* Unused. */
+    gbuf.closure[layer].w = gbuffer_thickness_pack(thickness);
+    gbuf.header |= gbuffer_header_pack(GBUF_TRANSLUCENT, layer);
+    layer += 1;
+  }
+  /* TODO(fclem): For now, override SSS if we have translucency. */
+  else if (has_sss) {
     gbuf.closure[layer].xyz = gbuffer_sss_radii_pack(diffuse.sss_radius);
     gbuf.closure[layer].w = gbuffer_object_id_unorm16_pack(diffuse.sss_id);
     gbuf.header |= gbuffer_header_pack(GBUF_SSS, layer);
@@ -242,7 +267,7 @@ GBufferDataPacked gbuffer_pack(ClosureDiffuse diffuse,
   }
 
   if (layer == 0) {
-    /* If no lit BDSF is outputed, still output the surface normal in the first layer.
+    /* If no lit BDSF is outputted, still output the surface normal in the first layer.
      * This is needed by some algorithms. */
     gbuf.color[layer] = vec4(0.0);
     gbuf.closure[layer].xy = gbuffer_normal_pack(default_N);
@@ -257,16 +282,20 @@ GBufferDataPacked gbuffer_pack(ClosureDiffuse diffuse,
 struct GBufferData {
   /* Only valid (or null) if `has_diffuse`, `has_reflection` or `has_refraction` is true. */
   ClosureDiffuse diffuse;
+  ClosureTranslucent translucent;
   ClosureReflection reflection;
   ClosureRefraction refraction;
   /* First world normal stored in the gbuffer. Only valid if `has_any_surface` is true. */
   vec3 surface_N;
   float thickness;
   bool has_diffuse;
+  bool has_translucent;
   bool has_reflection;
   bool has_refraction;
+  bool has_sss;
   bool has_any_surface;
   uint header;
+  uint closure_count;
 };
 
 GBufferData gbuffer_read(usampler2D header_tx,
@@ -287,6 +316,7 @@ GBufferData gbuffer_read(usampler2D header_tx,
   }
 
   gbuf.thickness = 0.0;
+  gbuf.closure_count = 0u;
 
   /* First closure is always written. */
   gbuf.surface_N = gbuffer_normal_unpack(texelFetch(closure_tx, ivec3(texel, 0), 0).xy);
@@ -318,6 +348,8 @@ GBufferData gbuffer_read(usampler2D header_tx,
     gbuf.diffuse.sss_radius = vec3(0.0, 0.0, 0.0);
     gbuf.diffuse.sss_id = 0u;
 
+    gbuf.closure_count = 2u;
+
     return gbuf;
   }
 
@@ -333,6 +365,7 @@ GBufferData gbuffer_read(usampler2D header_tx,
     gbuf.refraction.N = gbuffer_normal_unpack(closure_packed.xy);
     gbuf.refraction.roughness = closure_packed.z;
     gbuf.refraction.ior = gbuffer_ior_unpack(closure_packed.w);
+    gbuf.closure_count += 1u;
     layer += 1;
   }
   else {
@@ -352,6 +385,7 @@ GBufferData gbuffer_read(usampler2D header_tx,
     gbuf.reflection.color = gbuffer_color_unpack(color_packed);
     gbuf.reflection.N = gbuffer_normal_unpack(closure_packed.xy);
     gbuf.reflection.roughness = closure_packed.z;
+    gbuf.closure_count += 1u;
     layer += 1;
   }
   else {
@@ -370,6 +404,7 @@ GBufferData gbuffer_read(usampler2D header_tx,
     gbuf.diffuse.color = gbuffer_color_unpack(color_packed);
     gbuf.diffuse.N = gbuffer_normal_unpack(closure_packed.xy);
     gbuf.thickness = gbuffer_thickness_unpack(closure_packed.w);
+    gbuf.closure_count += 1u;
     layer += 1;
   }
   else {
@@ -379,9 +414,27 @@ GBufferData gbuffer_read(usampler2D header_tx,
     gbuf.thickness = 0.0;
   }
 
-  bool has_sss = (gbuffer_header_unpack(gbuf.header, layer) == GBUF_SSS);
+  gbuf.has_translucent = (gbuffer_header_unpack(gbuf.header, layer) == GBUF_TRANSLUCENT);
 
-  if (has_sss) {
+  if (gbuf.has_translucent) {
+    vec4 closure_packed = texelFetch(closure_tx, ivec3(texel, layer), 0);
+    vec4 color_packed = texelFetch(color_tx, ivec3(texel, layer), 0);
+
+    gbuf.translucent.color = gbuffer_color_unpack(color_packed);
+    gbuf.translucent.N = gbuffer_normal_unpack(closure_packed.xy);
+    gbuf.thickness = gbuffer_thickness_unpack(closure_packed.w);
+    gbuf.closure_count += 1u;
+    layer += 1;
+  }
+  else {
+    /* Default values. */
+    gbuf.translucent.color = vec3(0.0);
+    gbuf.translucent.N = vec3(0.0, 0.0, 1.0);
+  }
+
+  gbuf.has_sss = (gbuffer_header_unpack(gbuf.header, layer) == GBUF_SSS);
+
+  if (gbuf.has_sss) {
     vec4 closure_packed = texelFetch(closure_tx, ivec3(texel, layer), 0);
 
     gbuf.diffuse.sss_radius = gbuffer_sss_radii_unpack(closure_packed.xyz);

@@ -110,7 +110,7 @@ static void deform_verts(ModifierData *md,
     int mvert_num = 0;
 
     mesh->vert_positions_for_write().copy_from(positions);
-    BKE_mesh_tag_positions_changed(mesh);
+    mesh->tag_positions_changed();
 
     current_time = DEG_get_ctime(ctx->depsgraph);
 
@@ -159,7 +159,7 @@ static void deform_verts(ModifierData *md,
         collmd->tri_num = looptris.size();
         MVertTri *tri = static_cast<MVertTri *>(
             MEM_mallocN(sizeof(*tri) * collmd->tri_num, __func__));
-        BKE_mesh_runtime_verttri_from_looptri(
+        BKE_mesh_runtime_verttris_from_looptris(
             tri, mesh->corner_verts().data(), looptris.data(), collmd->tri_num);
         collmd->tri = tri;
       }
