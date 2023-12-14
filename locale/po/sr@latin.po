@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.1.0 Alpha (b'd293f72ab6e7')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'274dc815eb35')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-27 10:28:34\n"
+"POT-Creation-Date: 2023-12-11 11:18:04\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -4241,6 +4241,18 @@ msgid "Save"
 msgstr "Sačuvaj"
 
 
+msgid "File Extensions"
+msgstr "Nastavci datoteka"
+
+
+msgid "Operator"
+msgstr "Operator"
+
+
+msgid "Label"
+msgstr "Naziv"
+
+
 msgid "Relative Path"
 msgstr "Relativna putanja"
 
@@ -6694,10 +6706,6 @@ msgid "Node tree consisting of linked nodes used for shading, textures and compo
 msgstr "Drvo čvorova koje čine povezani čvorovi senčenja, tekstura i slaganja"
 
 
-msgid "Label"
-msgstr "Naziv"
-
-
 msgid "Grease Pencil Data"
 msgstr "Podaci skiciranja"
 
@@ -9131,6 +9139,10 @@ msgid "Vertex Group Specials"
 msgstr "Specijalna grupa temena"
 
 
+msgid "Strip"
+msgstr "Odstrani"
+
+
 msgid "Math"
 msgstr "Matematika"
 
@@ -9189,10 +9201,6 @@ msgstr "Primeni"
 
 msgid "Navigation"
 msgstr "Navigacija"
-
-
-msgid "Strip"
-msgstr "Odstrani"
 
 
 msgid "Inputs"
@@ -11449,10 +11457,6 @@ msgstr "YUVA razdvajanje"
 
 msgid "Set Alpha"
 msgstr "Postavi alfu"
-
-
-msgid "Split Viewer"
-msgstr "Podeli pregledač"
 
 
 msgid "Stabilize 2D"
@@ -14876,6 +14880,10 @@ msgid "Flat"
 msgstr "Ravno"
 
 
+msgid "Duplicate"
+msgstr "Dupliraj"
+
+
 msgctxt "Operator"
 msgid "Select Mode"
 msgstr "Mod izabora"
@@ -15496,10 +15504,6 @@ msgstr "Rotiraj izvor"
 
 msgid "Duplicate mesh and move"
 msgstr "Duplira i premeša meš"
-
-
-msgid "Duplicate"
-msgstr "Dupliraj"
 
 
 msgctxt "Operator"
@@ -18464,10 +18468,6 @@ msgstr "Ignoriši klik na pozadinu"
 
 msgid "Falloff Type"
 msgstr "Vrsta opadanja"
-
-
-msgid "Operator"
-msgstr "Operator"
 
 
 msgid "Sharpen"
@@ -22133,10 +22133,6 @@ msgid "Process the render result through the compositing pipeline, if compositin
 msgstr "Obradi rezultat renderovanja kroz proces slaganje, ako su omogućeni čvorovi slaganja"
 
 
-msgid "File Extensions"
-msgstr "Nastavci datoteka"
-
-
 msgid "Draw stylized strokes using Freestyle"
 msgstr "Crtaj slobodoručne stilizovane poteze"
 
@@ -25101,13 +25097,13 @@ msgstr "Raspakuj"
 
 
 msgctxt "Operator"
-msgid "Track Ordering..."
-msgstr "Redosled praćenja..."
+msgid "Sound"
+msgstr "Zvuk"
 
 
 msgctxt "Operator"
-msgid "Add Tracks Above Selected"
-msgstr "Dodaje staze iznad izabrane"
+msgid "Track Ordering..."
+msgstr "Redosled praćenja..."
 
 
 msgctxt "Operator"
@@ -25154,11 +25150,6 @@ msgstr "Grupisano"
 msgctxt "Operator"
 msgid "Movie"
 msgstr "Film"
-
-
-msgctxt "Operator"
-msgid "Sound"
-msgstr "Zvuk"
 
 
 msgid "Storage"
@@ -27148,10 +27139,6 @@ msgstr "Prepiši %s"
 
 msgid "UV Vertex"
 msgstr "UV teme"
-
-
-msgid "Cannot open file: %s"
-msgstr "Ne mogu da otvorim datoteku: %s"
 
 
 msgctxt "Action"

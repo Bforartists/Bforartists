@@ -11,6 +11,7 @@
 #include "BLI_blenlib.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_rotation.h"
+#include "BLI_math_vector.hh"
 
 #include "BLT_translation.h"
 
@@ -45,6 +46,8 @@
 
 #include <cmath>
 #include <cstdlib>
+
+namespace blender::ed::sculpt_paint::dyntopo {
 
 static CLG_LogRef LOG = {"sculpt.detail"};
 
@@ -88,10 +91,8 @@ static int sculpt_detail_flood_fill_exec(bContext *C, wmOperator *op)
   Sculpt *sd = CTX_data_tool_settings(C)->sculpt;
   Object *ob = CTX_data_active_object(C);
   SculptSession *ss = ob->sculpt;
-  float size;
-  float bb_min[3], bb_max[3], center[3], dim[3];
 
-  blender::Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(ss->pbvh, {});
+  Vector<PBVHNode *> nodes = bke::pbvh::search_gather(ss->pbvh, {});
 
   if (nodes.is_empty()) {
     return OPERATOR_CANCELLED;
@@ -101,19 +102,18 @@ static int sculpt_detail_flood_fill_exec(bContext *C, wmOperator *op)
     BKE_pbvh_node_mark_topology_update(node);
   }
   /* Get the bounding box, its center and size. */
-  BKE_pbvh_bounding_box(ob->sculpt->pbvh, bb_min, bb_max);
-  add_v3_v3v3(center, bb_min, bb_max);
-  mul_v3_fl(center, 0.5f);
-  sub_v3_v3v3(dim, bb_max, bb_min);
-  size = max_fff(dim[0], dim[1], dim[2]);
+  const Bounds<float3> bounds = BKE_pbvh_bounding_box(ob->sculpt->pbvh);
+  const float3 center = math::midpoint(bounds.min, bounds.max);
+  const float3 dim = bounds.max - bounds.min;
+  const float size = math::reduce_max(dim);
 
   /* Update topology size. */
   float object_space_constant_detail = 1.0f /
                                        (sd->constant_detail * mat4_to_scale(ob->object_to_world));
   BKE_pbvh_bmesh_detail_size_set(ss->pbvh, object_space_constant_detail);
 
-  SCULPT_undo_push_begin(ob, op);
-  SCULPT_undo_push_node(ob, nullptr, SCULPT_UNDO_COORDS);
+  undo::push_begin(ob, op);
+  undo::push_node(ob, nullptr, undo::Type::Position);
 
   const double start_time = PIL_check_seconds_timer();
 
@@ -127,7 +127,7 @@ static int sculpt_detail_flood_fill_exec(bContext *C, wmOperator *op)
 
   CLOG_INFO(&LOG, 2, "Detail flood fill took %f seconds.", PIL_check_seconds_timer() - start_time);
 
-  SCULPT_undo_push_end(ob);
+  undo::push_end(ob);
 
   /* Force rebuild of PBVH for better BB placement. */
   SCULPT_pbvh_clear(ob);
@@ -181,7 +181,7 @@ static void sample_detail_voxel(bContext *C, ViewContext *vc, const int mval[2])
   /* Update the active vertex. */
   const float mval_fl[2] = {float(mval[0]), float(mval[1])};
   SCULPT_cursor_geometry_info_update(C, &sgi, mval_fl, false);
-  BKE_sculpt_update_object_for_edit(depsgraph, ob, true, false, false);
+  BKE_sculpt_update_object_for_edit(depsgraph, ob, false);
 
   /* Average the edge length of the connected edges to the active vertex. */
   PBVHVertRef active_vertex = SCULPT_active_vertex_get(ss);
@@ -783,5 +783,7 @@ void SCULPT_OT_dyntopo_detail_size_edit(wmOperatorType *ot)
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
+
+}  // namespace blender::ed::sculpt_paint::dyntopo
 
 /** \} */

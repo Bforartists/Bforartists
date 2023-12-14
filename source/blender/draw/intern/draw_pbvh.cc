@@ -51,7 +51,7 @@
 #include "DRW_pbvh.hh"
 
 #include "attribute_convert.hh"
-#include "bmesh.h"
+#include "bmesh.hh"
 #include "draw_pbvh.hh"
 #include "gpu_private.h"
 
@@ -127,13 +127,13 @@ void extract_data_vert_faces(const PBVH_GPU_Args &args, const Span<T> attribute,
   using Converter = AttributeConverter<T>;
   using VBOType = typename Converter::VBOType;
   const Span<int> corner_verts = args.corner_verts;
-  const Span<MLoopTri> looptris = args.mlooptri;
+  const Span<MLoopTri> looptris = args.looptris;
   const Span<int> looptri_faces = args.looptri_faces;
-  const bool *hide_poly = args.hide_poly;
+  const Span<bool> hide_poly = args.hide_poly;
 
   VBOType *data = static_cast<VBOType *>(GPU_vertbuf_get_data(&vbo));
   for (const int looptri_i : args.prim_indices) {
-    if (hide_poly && hide_poly[looptri_faces[looptri_i]]) {
+    if (!hide_poly.is_empty() && hide_poly[looptri_faces[looptri_i]]) {
       continue;
     }
     for (int i : IndexRange(3)) {
@@ -151,12 +151,12 @@ void extract_data_face_faces(const PBVH_GPU_Args &args, const Span<T> attribute,
   using VBOType = typename Converter::VBOType;
 
   const Span<int> looptri_faces = args.looptri_faces;
-  const bool *hide_poly = args.hide_poly;
+  const Span<bool> hide_poly = args.hide_poly;
 
   VBOType *data = static_cast<VBOType *>(GPU_vertbuf_get_data(&vbo));
   for (const int looptri_i : args.prim_indices) {
     const int face = looptri_faces[looptri_i];
-    if (hide_poly && hide_poly[face]) {
+    if (!hide_poly.is_empty() && hide_poly[face]) {
       continue;
     }
     std::fill_n(data, 3, Converter::convert(attribute[face]));
@@ -170,13 +170,13 @@ void extract_data_corner_faces(const PBVH_GPU_Args &args, const Span<T> attribut
   using Converter = AttributeConverter<T>;
   using VBOType = typename Converter::VBOType;
 
-  const Span<MLoopTri> looptris = args.mlooptri;
+  const Span<MLoopTri> looptris = args.looptris;
   const Span<int> looptri_faces = args.looptri_faces;
-  const bool *hide_poly = args.hide_poly;
+  const Span<bool> hide_poly = args.hide_poly;
 
   VBOType *data = static_cast<VBOType *>(GPU_vertbuf_get_data(&vbo));
   for (const int looptri_i : args.prim_indices) {
-    if (hide_poly && hide_poly[looptri_faces[looptri_i]]) {
+    if (!hide_poly.is_empty() && hide_poly[looptri_faces[looptri_i]]) {
       continue;
     }
     for (int i : IndexRange(3)) {
@@ -338,7 +338,7 @@ struct PBVHBatches {
 
     switch (args.pbvh_type) {
       case PBVH_FACES: {
-        if (args.hide_poly) {
+        if (!args.hide_poly.is_empty()) {
           for (const int looptri_i : args.prim_indices) {
             if (!args.hide_poly[args.looptri_faces[looptri_i]]) {
               count++;
@@ -438,18 +438,19 @@ struct PBVHBatches {
 
   void fill_vbo_normal_faces(const PBVH_GPU_Args &args, GPUVertBuf &vert_buf)
   {
-    const bool *sharp_faces = static_cast<const bool *>(
-        CustomData_get_layer_named(args.face_data, CD_PROP_BOOL, "sharp_face"));
+    const bke::AttributeAccessor attributes = args.mesh->attributes();
+    const VArraySpan sharp_faces = *attributes.lookup<bool>("sharp_face", ATTR_DOMAIN_FACE);
+
     short4 *data = static_cast<short4 *>(GPU_vertbuf_get_data(&vert_buf));
 
     short4 face_no;
     int last_face = -1;
     for (const int looptri_i : args.prim_indices) {
       const int face_i = args.looptri_faces[looptri_i];
-      if (args.hide_poly && args.hide_poly[face_i]) {
+      if (!args.hide_poly.is_empty() && args.hide_poly[face_i]) {
         continue;
       }
-      if (sharp_faces && sharp_faces[face_i]) {
+      if (!sharp_faces.is_empty() && sharp_faces[face_i]) {
         if (face_i != last_face) {
           face_no = normal_float_to_short(args.face_normals[face_i]);
           last_face = face_i;
@@ -459,7 +460,7 @@ struct PBVHBatches {
       }
       else {
         for (const int i : IndexRange(3)) {
-          const int vert = args.corner_verts[args.mlooptri[looptri_i].tri[i]];
+          const int vert = args.corner_verts[args.looptris[looptri_i].tri[i]];
           *data = normal_float_to_short(args.vert_normals[vert]);
           data++;
         }
@@ -498,10 +499,15 @@ struct PBVHBatches {
           break;
         }
         case CustomRequest::Normal: {
+          const Span<int> grid_to_face_map = args.subdiv_ccg->grid_to_face_map;
+          const bke::AttributeAccessor attributes = args.mesh->attributes();
+          const VArraySpan sharp_faces = *attributes.lookup<bool>("sharp_face", ATTR_DOMAIN_FACE);
+
           foreach_grids([&](int /*x*/, int /*y*/, int grid_index, CCGElem *elems[4], int /*i*/) {
             float3 no(0.0f, 0.0f, 0.0f);
 
-            const bool smooth = !args.grid_flag_mats[grid_index].sharp;
+            const bool smooth = !(!sharp_faces.is_empty() &&
+                                  sharp_faces[grid_to_face_map[grid_index]]);
 
             if (smooth) {
               no = CCG_elem_no(&args.ccg_key, elems[0]);
@@ -538,7 +544,7 @@ struct PBVHBatches {
           break;
         }
         case CustomRequest::FaceSet: {
-          const bke::AttributeAccessor attributes = args.me->attributes();
+          const bke::AttributeAccessor attributes = args.mesh->attributes();
           if (const VArray<int> face_sets = *attributes.lookup<int>(".sculpt_face_set",
                                                                     ATTR_DOMAIN_FACE)) {
             const VArraySpan<int> face_sets_span(face_sets);
@@ -661,7 +667,7 @@ struct PBVHBatches {
 
     GPUVertBuf &vert_buf = *vbo.vert_buf;
 
-    const bke::AttributeAccessor attributes = args.me->attributes();
+    const bke::AttributeAccessor attributes = args.mesh->attributes();
 
     if (const CustomRequest *request_type = std::get_if<CustomRequest>(&vbo.request)) {
       switch (*request_type) {
@@ -679,12 +685,12 @@ struct PBVHBatches {
                                                                    ATTR_DOMAIN_POINT)) {
             const VArraySpan<float> mask_span(mask);
             const Span<int> corner_verts = args.corner_verts;
-            const Span<MLoopTri> looptris = args.mlooptri;
+            const Span<MLoopTri> looptris = args.looptris;
             const Span<int> looptri_faces = args.looptri_faces;
-            const bool *hide_poly = args.hide_poly;
+            const Span<bool> hide_poly = args.hide_poly;
 
             for (const int looptri_i : args.prim_indices) {
-              if (hide_poly && hide_poly[looptri_faces[looptri_i]]) {
+              if (!hide_poly.is_empty() && hide_poly[looptri_faces[looptri_i]]) {
                 continue;
               }
               for (int i : IndexRange(3)) {
@@ -708,7 +714,7 @@ struct PBVHBatches {
             uchar4 fset_color(UCHAR_MAX);
 
             for (const int looptri_i : args.prim_indices) {
-              if (args.hide_poly && args.hide_poly[args.looptri_faces[looptri_i]]) {
+              if (!args.hide_poly.is_empty() && args.hide_poly[args.looptri_faces[looptri_i]]) {
                 continue;
               }
               const int face_i = args.looptri_faces[looptri_i];
@@ -738,7 +744,7 @@ struct PBVHBatches {
       }
     }
     else {
-      const bke::AttributeAccessor attributes = args.me->attributes();
+      const bke::AttributeAccessor attributes = args.mesh->attributes();
       const GenericRequest &request = std::get<GenericRequest>(vbo.request);
       const StringRef name = request.name;
       const eAttrDomain domain = request.domain;
@@ -1023,27 +1029,23 @@ struct PBVHBatches {
 
   void create_index_faces(const PBVH_GPU_Args &args)
   {
-    const int *mat_index = static_cast<const int *>(
-        CustomData_get_layer_named(args.face_data, CD_PROP_INT32, "material_index"));
+    const bke::AttributeAccessor attributes = args.mesh->attributes();
+    const VArray material_indices = *attributes.lookup_or_default<int>(
+        "material_index", ATTR_DOMAIN_FACE, 0);
+    material_index = material_indices[args.looptri_faces[args.prim_indices.first()]];
 
-    if (mat_index && !args.prim_indices.is_empty()) {
-      const int looptri_i = args.prim_indices[0];
-      const int face_i = args.looptri_faces[looptri_i];
-      material_index = mat_index[face_i];
-    }
-
-    const Span<int2> edges = args.me->edges();
+    const Span<int2> edges = args.mesh->edges();
 
     /* Calculate number of edges. */
     int edge_count = 0;
     for (const int looptri_i : args.prim_indices) {
       const int face_i = args.looptri_faces[looptri_i];
-      if (args.hide_poly && args.hide_poly[face_i]) {
+      if (!args.hide_poly.is_empty() && args.hide_poly[face_i]) {
         continue;
       }
 
       const int3 real_edges = bke::mesh::looptri_get_real_edges(
-          edges, args.corner_verts, args.corner_edges, args.mlooptri[looptri_i]);
+          edges, args.corner_verts, args.corner_edges, args.looptris[looptri_i]);
 
       if (real_edges[0] != -1) {
         edge_count++;
@@ -1062,12 +1064,12 @@ struct PBVHBatches {
     int vertex_i = 0;
     for (const int looptri_i : args.prim_indices) {
       const int face_i = args.looptri_faces[looptri_i];
-      if (args.hide_poly && args.hide_poly[face_i]) {
+      if (!args.hide_poly.is_empty() && args.hide_poly[face_i]) {
         continue;
       }
 
       const int3 real_edges = bke::mesh::looptri_get_real_edges(
-          edges, args.corner_verts, args.corner_edges, args.mlooptri[looptri_i]);
+          edges, args.corner_verts, args.corner_edges, args.looptris[looptri_i]);
 
       if (real_edges[0] != -1) {
         GPU_indexbuf_add_line_verts(&elb_lines, vertex_i, vertex_i + 1);
@@ -1111,14 +1113,15 @@ struct PBVHBatches {
 
   void create_index_grids(const PBVH_GPU_Args &args, bool do_coarse)
   {
+    const bke::AttributeAccessor attributes = args.mesh->attributes();
+    const VArraySpan sharp_faces = *attributes.lookup<bool>("sharp_face", ATTR_DOMAIN_FACE);
+    const VArray material_indices = *attributes.lookup_or_default<int>(
+        "material_index", ATTR_DOMAIN_FACE, 0);
     const BitGroupVector<> &grid_hidden = args.subdiv_ccg->grid_hidden;
-    const int *mat_index = static_cast<const int *>(
-        CustomData_get_layer_named(args.face_data, CD_PROP_INT32, "material_index"));
+    const Span<int> grid_to_face_map = args.subdiv_ccg->grid_to_face_map;
 
-    if (mat_index && !args.grid_indices.is_empty()) {
-      int face_i = BKE_subdiv_ccg_grid_to_face_index(*args.subdiv_ccg, args.grid_indices[0]);
-      material_index = mat_index[face_i];
-    }
+    material_index = material_indices[BKE_subdiv_ccg_grid_to_face_index(
+        *args.subdiv_ccg, args.grid_indices.first())];
 
     needs_tri_index = true;
     int gridsize = args.ccg_key.grid_size;
@@ -1134,7 +1137,7 @@ struct PBVHBatches {
     }
 
     for (const int grid_index : args.grid_indices) {
-      bool smooth = !args.grid_flag_mats[grid_index].sharp;
+      bool smooth = !(!sharp_faces.is_empty() && sharp_faces[grid_to_face_map[grid_index]]);
       if (!grid_hidden.is_empty()) {
         const BoundedBitSpan gh = grid_hidden[grid_index];
         for (int y = 0; y < gridsize - 1; y += skip) {

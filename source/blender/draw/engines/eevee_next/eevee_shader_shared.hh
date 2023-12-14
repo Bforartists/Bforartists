@@ -749,10 +749,10 @@ struct LightData {
 #define _clipmap_origin_y object_mat[3][3]
   /** Aliases for axes. */
 #ifndef USE_GPU_SHADER_CREATE_INFO
-#  define _right object_mat[0].xyz()
-#  define _up object_mat[1].xyz()
-#  define _back object_mat[2].xyz()
-#  define _position object_mat[3].xyz()
+#  define _right object_mat[0]
+#  define _up object_mat[1]
+#  define _back object_mat[2]
+#  define _position object_mat[3]
 #else
 #  define _right object_mat[0].xyz
 #  define _up object_mat[1].xyz
@@ -1182,11 +1182,13 @@ enum eClosureBits : uint32_t {
   CLOSURE_SSS = (1u << 1u),
   CLOSURE_REFLECTION = (1u << 2u),
   CLOSURE_REFRACTION = (1u << 3u),
+  CLOSURE_TRANSLUCENT = (1u << 4u),
   CLOSURE_TRANSPARENCY = (1u << 8u),
   CLOSURE_EMISSION = (1u << 9u),
   CLOSURE_HOLDOUT = (1u << 10u),
   CLOSURE_VOLUME = (1u << 11u),
   CLOSURE_AMBIENT_OCCLUSION = (1u << 12u),
+  CLOSURE_SHADER_TO_RGBA = (1u << 13u),
 };
 
 enum GBufferMode : uint32_t {
@@ -1197,9 +1199,10 @@ enum GBufferMode : uint32_t {
   GBUF_REFRACTION = 2u,
   GBUF_DIFFUSE = 3u,
   GBUF_SSS = 4u,
+  GBUF_TRANSLUCENT = 5u,
 
   /** Special configurations. Packs multiple closures into 1 layer. */
-  GBUF_OPAQUE_DIELECTRIC = 4u,
+  GBUF_OPAQUE_DIELECTRIC = 14u,
 
   /** Set for surfaces without lit closures. This stores only the normal to the surface. */
   GBUF_UNLIT = 15u,
@@ -1232,7 +1235,7 @@ struct RayTraceData {
   bool1 skip_denoise;
   /** Closure being ray-traced. */
   eClosureBits closure_active;
-  int _pad0;
+  int closure_index;
   int _pad1;
 };
 BLI_STATIC_ASSERT_ALIGN(RayTraceData, 16)
@@ -1424,9 +1427,9 @@ BLI_STATIC_ASSERT_ALIGN(ProbePlanarDisplayData, 16)
 
 struct PipelineInfoData {
   float alpha_hash_scale;
-  float _pad0;
+  bool1 is_probe_reflection;
   float _pad1;
-  float _pad3;
+  float _pad2;
 };
 BLI_STATIC_ASSERT_ALIGN(PipelineInfoData, 16)
 
@@ -1528,6 +1531,7 @@ float4 utility_tx_sample_lut(sampler2DArray util_tx, float cos_theta, float roug
 
 using AOVsInfoDataBuf = draw::StorageBuffer<AOVsInfoData>;
 using CameraDataBuf = draw::UniformBuffer<CameraData>;
+using ClosureTileBuf = draw::StorageArrayBuffer<uint, 1024, true>;
 using DepthOfFieldDataBuf = draw::UniformBuffer<DepthOfFieldData>;
 using DepthOfFieldScatterListBuf = draw::StorageArrayBuffer<ScatterRect, 16, true>;
 using DrawIndirectBuf = draw::StorageBuffer<DrawCommand, true>;

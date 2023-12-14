@@ -55,20 +55,7 @@ vec3 from_accumulation_space(vec3 color)
 
 vec3 load_normal(ivec2 texel)
 {
-  GBufferData gbuf = gbuffer_read(gbuf_header_tx, gbuf_closure_tx, gbuf_color_tx, texel);
-
-  /* TODO(fclem): Load preprocessed Normal. */
-  vec3 N = vec3(0.0);
-  if (gbuf.has_diffuse) {
-    N = gbuf.diffuse.N;
-  }
-  else if (gbuf.has_reflection) {
-    N = gbuf.reflection.N;
-  }
-  else if (gbuf.has_refraction) {
-    N = gbuf.refraction.N;
-  }
-  return N;
+  return gbuffer_read(gbuf_header_tx, gbuf_closure_tx, gbuf_color_tx, texel).surface_N;
 }
 
 void main()
@@ -135,11 +122,10 @@ void main()
       ivec2 sample_texel = texel + ivec2(x, y);
       ivec2 sample_texel_fullres = sample_texel * uniform_buf.raytrace.resolution_scale +
                                    uniform_buf.raytrace.resolution_bias;
-      ivec2 sample_tile = sample_texel_fullres / RAYTRACE_GROUP_SIZE;
+      int closure_index = uniform_buf.raytrace.closure_index;
+      ivec3 sample_tile = ivec3(sample_texel_fullres / RAYTRACE_GROUP_SIZE, closure_index);
       /* Make sure the sample has been processed and do not contain garbage data. */
-      uint tile_mask = imageLoad(tile_mask_img, sample_tile).r;
-      bool unprocessed_tile = !flag_test(tile_mask, 1u << 1u);
-      if (unprocessed_tile) {
+      if (imageLoad(tile_mask_img, sample_tile).r == 0u) {
         continue;
       }
 

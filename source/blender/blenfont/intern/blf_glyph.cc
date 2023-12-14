@@ -347,7 +347,7 @@ static GlyphBLF *blf_glyph_cache_add_glyph(FontBLF *font,
       }
     }
     else {
-      memcpy(g->bitmap, glyph->bitmap.buffer, (size_t)buffer_size);
+      memcpy(g->bitmap, glyph->bitmap.buffer, size_t(buffer_size));
     }
   }
 
@@ -765,7 +765,7 @@ static FT_UInt blf_glyph_index_from_charcode(FontBLF **font, const uint charcode
     }
   }
 
-#ifdef DEBUG
+#ifndef NDEBUG
   printf("Unicode character U+%04X not found in loaded fonts. \n", charcode);
 #endif
 
@@ -1368,7 +1368,7 @@ static void blf_glyph_calc_rect_test(rcti *rect, GlyphBLF *g, const int x, const
   /* Intentionally check with `g->advance`, because this is the
    * width used by BLF_width. This allows that the text slightly
    * overlaps the clipping border to achieve better alignment. */
-  rect->xmin = x + g->pos[0] + 1;
+  rect->xmin = x + abs(g->pos[0]) + 1;
   rect->xmax = x + std::min(ft_pix_to_int(g->advance_x), g->dims[0]);
   rect->ymin = y;
   rect->ymax = rect->ymin - g->dims[1];

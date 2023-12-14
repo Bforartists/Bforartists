@@ -82,12 +82,13 @@ void ShadingView::render()
 
   DRW_stats_group_start(name_);
 
-  /* Needs to be before anything else because it query its own gbuffer. */
-  inst_.planar_probes.set_view(render_view_, extent_);
-
-  /* Query temp textures and create frame-buffers. */
+  /* Needs to be before planar_probes because it needs correct crypto-matte & render-pass buffers
+   * to reuse the same deferred shaders. */
   RenderBuffers &rbufs = inst_.render_buffers;
   rbufs.acquire(extent_);
+
+  /* Needs to be before anything else because it query its own gbuffer. */
+  inst_.planar_probes.set_view(render_view_, extent_);
 
   combined_fb_.ensure(GPU_ATTACHMENT_TEXTURE(rbufs.depth_tx),
                       GPU_ATTACHMENT_TEXTURE(rbufs.combined_tx));
@@ -116,14 +117,13 @@ void ShadingView::render()
   GPU_framebuffer_bind(combined_fb_);
   GPU_framebuffer_clear_color_depth(combined_fb_, clear_color, 1.0f);
 
-  inst_.hiz_buffer.set_source(&inst_.render_buffers.depth_tx);
-  inst_.hiz_buffer.set_dirty();
-
-  inst_.pipelines.background.render(render_view_);
-
   /* TODO(fclem): Move it after the first prepass (and hiz update) once pipeline is stabilized. */
   inst_.lights.set_view(render_view_, extent_);
   inst_.reflection_probes.set_view(render_view_);
+
+  inst_.pipelines.background.render(render_view_);
+
+  inst_.hiz_buffer.set_source(&inst_.render_buffers.depth_tx);
 
   inst_.volume.draw_prepass(render_view_);
 
@@ -211,7 +211,7 @@ void ShadingView::update_view()
   jitter *= 2.0f;
 
   window_translate_m4(winmat.ptr(), winmat.ptr(), UNPACK2(jitter));
-  jitter_view_.sync(winmat, winmat);
+  jitter_view_.sync(viewmat, winmat);
 
   /* FIXME(fclem): The offset may be noticeably large and the culling might make object pop
    * out of the blurring radius. To fix this, use custom enlarged culling matrix. */
@@ -324,6 +324,36 @@ void CaptureView::render_probes()
     /* TODO: only update the regions that have been updated. */
     inst_.reflection_probes.update_probes_texture_mipmaps();
   }
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Lookdev View
+ * \{ */
+
+void LookdevView::render()
+{
+  if (!inst_.lookdev.enabled_) {
+    return;
+  }
+  GPU_debug_group_begin("Lookdev");
+
+  const float4x4 &view_m4 = inst_.camera.data_get().viewmat;
+  const float sphere_scale = inst_.lookdev.sphere_scale;
+  const float clip_near = inst_.camera.data_get().clip_near;
+  float4x4 win_m4 = math::projection::orthographic(-sphere_scale,
+                                                   sphere_scale,
+                                                   -sphere_scale,
+                                                   sphere_scale,
+                                                   clip_near - sphere_scale,
+                                                   clip_near + sphere_scale);
+  view_.sync(view_m4, win_m4);
+
+  inst_.lookdev.draw(view_);
+  inst_.lookdev.display();
+
+  GPU_debug_group_end();
 }
 
 /** \} */
