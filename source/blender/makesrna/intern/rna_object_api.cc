@@ -522,7 +522,7 @@ static void rna_Mesh_assign_verts_to_group(
     return;
   }
 
-  Mesh *me = (Mesh *)ob->data;
+  Mesh *mesh = (Mesh *)ob->data;
   int group_index = BLI_findlink(&ob->defbase, group);
   if (group_index == -1) {
     BKE_report(reports, RPT_ERROR, "No vertex groups assigned to mesh");
@@ -535,13 +535,13 @@ static void rna_Mesh_assign_verts_to_group(
   }
 
   /* makes a set of dVerts corresponding to the mVerts */
-  if (!me->dvert) {
-    create_dverts(&me->id);
+  if (!mesh->dvert) {
+    create_dverts(&mesh->id);
   }
 
   /* Loop list adding verts to group. */
   for (i = 0; i < totindex; i++) {
-    if (i < 0 || i >= me->totvert) {
+    if (i < 0 || i >= mesh->totvert) {
       BKE_report(reports, RPT_ERROR, "Bad vertex index in list");
       return;
     }
@@ -629,7 +629,7 @@ static void rna_Object_ray_cast(Object *ob,
 
     /* No need to managing allocation or freeing of the BVH data.
      * This is generated and freed as needed. */
-    BKE_bvhtree_from_mesh_get(&treeData, mesh_eval, BVHTREE_FROM_LOOPTRI, 4);
+    BKE_bvhtree_from_mesh_get(&treeData, mesh_eval, BVHTREE_FROM_LOOPTRIS, 4);
 
     /* may fail if the mesh has no faces, in that case the ray-cast misses */
     if (treeData.tree != nullptr) {
@@ -687,7 +687,7 @@ static void rna_Object_closest_point_on_mesh(Object *ob,
   /* No need to managing allocation or freeing of the BVH data.
    * this is generated and freed as needed. */
   Mesh *mesh_eval = BKE_object_get_evaluated_mesh(ob);
-  BKE_bvhtree_from_mesh_get(&treeData, mesh_eval, BVHTREE_FROM_LOOPTRI, 4);
+  BKE_bvhtree_from_mesh_get(&treeData, mesh_eval, BVHTREE_FROM_LOOPTRIS, 4);
 
   if (treeData.tree == nullptr) {
     BKE_reportf(reports,
@@ -1344,7 +1344,7 @@ void RNA_api_object(StructRNA *srna)
   RNA_def_parameter_flags(
       parm, PROP_THICK_WRAP, ParameterFlag(0)); /* needed for string return value */
   RNA_def_function_output(func, parm);
-#  endif /* NDEBUG */
+#  endif /* !NDEBUG */
 
   func = RNA_def_function(srna, "update_from_editmode", "rna_Object_update_from_editmode");
   RNA_def_function_ui_description(func, "Load the objects edit-mode data into the object data");
