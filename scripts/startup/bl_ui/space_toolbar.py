@@ -9,7 +9,6 @@ from bpy.types import (
     Panel,
 )
 from bpy.app.translations import contexts as i18n_contexts
-#import math
 
 class TOOLBAR_HT_header(Header):
     bl_space_type = 'TOOLBAR'
@@ -1082,26 +1081,24 @@ class TOOLBAR_MT_image_uv_rotate_clockwise(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        for area in bpy.context.screen.areas:
+        for area in context.screen.areas:
             if area.type == 'IMAGE_EDITOR':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.transform.rotate(override, value = math.pi/2 )
+                with context.temp_override(area=area, region=area.regions[-1]):
+                    bpy.ops.transform.rotate(value=math.pi/2)
         return {'FINISHED'}
 
 
 class TOOLBAR_MT_image_uv_rotate_counterclockwise(bpy.types.Operator):
-    """Rotate selected UV geometry counter clockwise by 90 degrees"""
+    """Rotate selected UV geometry counterclockwise by 90 degrees"""
     bl_idname = "image.uv_rotate_counterclockwise"
     bl_label = "Rotate UV by minus 90"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        for area in bpy.context.screen.areas:
+        for area in context.screen.areas:
             if area.type == 'IMAGE_EDITOR':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.transform.rotate(override, value = math.pi/-2 )
+                with context.temp_override(area=area, region=area.regions[-1]):
+                    bpy.ops.transform.rotate(value=math.pi/-2)
         return {'FINISHED'}
 
 
@@ -1112,13 +1109,11 @@ class TOOLBAR_MT_image_uv_mirror_x(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        for area in bpy.context.screen.areas:
+        for area in context.screen.areas:
             if area.type == 'IMAGE_EDITOR':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.transform.mirror(override, constraint_axis=(True, False, False))
+                with context.temp_override(area=area, region=area.regions[-1]):
+                    bpy.ops.transform.mirror(constraint_axis=(True, False, False))
         return {'FINISHED'}
-
 
 class TOOLBAR_MT_image_uv_mirror_y(bpy.types.Operator):
     """Mirror selected UV geometry along Y axis"""
@@ -1127,11 +1122,10 @@ class TOOLBAR_MT_image_uv_mirror_y(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        for area in bpy.context.screen.areas:
+        for area in context.screen.areas:
             if area.type == 'IMAGE_EDITOR':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.transform.mirror(override, constraint_axis=(False, True, False))
+                with context.temp_override(area=area, region=area.regions[-1]):
+                    bpy.ops.transform.mirror(constraint_axis=(False, True, False))
         return {'FINISHED'}
 
 
