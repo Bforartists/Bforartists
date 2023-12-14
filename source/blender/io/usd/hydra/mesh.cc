@@ -10,7 +10,7 @@
 #include "BLI_string.h"
 #include "BLI_vector_set.hh"
 
-#include "BKE_attribute.h"
+#include "BKE_attribute.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_runtime.hh"
@@ -277,10 +277,10 @@ void gather_corner_data(const Span<MLoopTri> looptris,
                         MutableSpan<T> dst_data)
 {
   triangles.foreach_index_optimized<int>(GrainSize(1024), [&](const int src, const int dst) {
-    const MLoopTri &tri = looptris[src];
-    dst_data[dst * 3 + 0] = src_data[tri.tri[0]];
-    dst_data[dst * 3 + 1] = src_data[tri.tri[1]];
-    dst_data[dst * 3 + 2] = src_data[tri.tri[2]];
+    const MLoopTri &lt = looptris[src];
+    dst_data[dst * 3 + 0] = src_data[lt.tri[0]];
+    dst_data[dst * 3 + 1] = src_data[lt.tri[1]];
+    dst_data[dst * 3 + 2] = src_data[lt.tri[2]];
   });
 }
 
@@ -315,10 +315,10 @@ static void copy_submesh(const Mesh &mesh,
      * for vertices actually used by the subset of triangles. */
     verts.reserve(triangles.size());
     triangles.foreach_index([&](const int src, const int dst) {
-      const MLoopTri &tri = looptris[src];
-      sm.face_vertex_indices[dst * 3 + 0] = verts.index_of_or_add(corner_verts[tri.tri[0]]);
-      sm.face_vertex_indices[dst * 3 + 1] = verts.index_of_or_add(corner_verts[tri.tri[1]]);
-      sm.face_vertex_indices[dst * 3 + 2] = verts.index_of_or_add(corner_verts[tri.tri[2]]);
+      const MLoopTri &lt = looptris[src];
+      sm.face_vertex_indices[dst * 3 + 0] = verts.index_of_or_add(corner_verts[lt.tri[0]]);
+      sm.face_vertex_indices[dst * 3 + 1] = verts.index_of_or_add(corner_verts[lt.tri[1]]);
+      sm.face_vertex_indices[dst * 3 + 2] = verts.index_of_or_add(corner_verts[lt.tri[2]]);
     });
     dst_verts_num = verts.size();
   }
@@ -343,10 +343,10 @@ static void copy_submesh(const Mesh &mesh,
       break;
     case bke::MeshNormalDomain::Point:
       triangles.foreach_index(GrainSize(1024), [&](const int src, const int dst) {
-        const MLoopTri &tri = looptris[src];
-        dst_normals[dst * 3 + 0] = src_normals[corner_verts[tri.tri[0]]];
-        dst_normals[dst * 3 + 1] = src_normals[corner_verts[tri.tri[1]]];
-        dst_normals[dst * 3 + 2] = src_normals[corner_verts[tri.tri[2]]];
+        const MLoopTri &lt = looptris[src];
+        dst_normals[dst * 3 + 0] = src_normals[corner_verts[lt.tri[0]]];
+        dst_normals[dst * 3 + 1] = src_normals[corner_verts[lt.tri[1]]];
+        dst_normals[dst * 3 + 2] = src_normals[corner_verts[lt.tri[2]]];
       });
       break;
     case bke::MeshNormalDomain::Corner:
@@ -373,21 +373,20 @@ void MeshData::write_submeshes(const Mesh *mesh)
   const Span<int> corner_verts = mesh->corner_verts();
   const Span<MLoopTri> looptris = mesh->looptris();
   const Span<int> looptri_faces = mesh->looptri_faces();
-
   const std::pair<bke::MeshNormalDomain, Span<float3>> normals = get_mesh_normals(*mesh);
+  const bke::AttributeAccessor attributes = mesh->attributes();
+  const StringRef active_uv = CustomData_get_active_layer_name(&mesh->loop_data, CD_PROP_FLOAT2);
+  const VArraySpan uv_map = *attributes.lookup<float2>(active_uv, ATTR_DOMAIN_CORNER);
+  const VArraySpan material_indices = *attributes.lookup<int>("material_index", ATTR_DOMAIN_FACE);
 
-  const float2 *uv_map = static_cast<const float2 *>(
-      CustomData_get_layer(&mesh->loop_data, CD_PROP_FLOAT2));
-
-  const int *material_indices = BKE_mesh_material_indices(mesh);
-  if (!material_indices) {
+  if (material_indices.is_empty()) {
     copy_submesh(*mesh,
                  vert_positions,
                  corner_verts,
                  looptris,
                  looptri_faces,
                  normals,
-                 uv_map ? Span<float2>(uv_map, mesh->totloop) : Span<float2>(),
+                 uv_map,
                  looptris.index_range(),
                  submeshes_.first());
     return;
@@ -410,7 +409,7 @@ void MeshData::write_submeshes(const Mesh *mesh)
                    looptris,
                    looptri_faces,
                    normals,
-                   uv_map ? Span<float2>(uv_map, mesh->totloop) : Span<float2>(),
+                   uv_map,
                    triangles_by_material[i],
                    submeshes_[i]);
     }
