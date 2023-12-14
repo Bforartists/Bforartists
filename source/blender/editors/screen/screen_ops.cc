@@ -1443,6 +1443,7 @@ static void area_dupli_fn(bScreen * /*screen*/, ScrArea *area, void *user_data)
 {
   ScrArea *area_src = static_cast<ScrArea *>(user_data);
   ED_area_data_copy(area, area_src, true);
+  ED_area_tag_redraw(area);
 };
 
 /* operator callback */
@@ -6301,7 +6302,7 @@ static bool blend_file_drop_poll(bContext * /*C*/, wmDrag *drag, const wmEvent *
 static void blend_file_drop_copy(bContext * /*C*/, wmDrag *drag, wmDropBox *drop)
 {
   /* copy drag path to properties */
-  RNA_string_set(drop->ptr, "filepath", WM_drag_get_path(drag));
+  RNA_string_set(drop->ptr, "filepath", WM_drag_get_single_path(drag));
 }
 
 void ED_keymap_screen(wmKeyConfig *keyconf)
