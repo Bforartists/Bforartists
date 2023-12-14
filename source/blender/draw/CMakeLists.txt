@@ -250,7 +250,7 @@ set(SRC
   intern/draw_manager.hh
   intern/draw_manager_profiling.hh
   intern/draw_manager_testing.h
-  intern/draw_manager_text.h
+  intern/draw_manager_text.hh
   intern/draw_pass.hh
   intern/draw_pbvh.hh
   intern/draw_resource.hh
@@ -506,6 +506,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_film_cryptomatte_post_comp.glsl
   engines/eevee_next/shaders/eevee_film_frag.glsl
   engines/eevee_next/shaders/eevee_film_lib.glsl
+  engines/eevee_next/shaders/eevee_forward_lib.glsl
   engines/eevee_next/shaders/eevee_gbuffer_lib.glsl
   engines/eevee_next/shaders/eevee_geom_curves_vert.glsl
   engines/eevee_next/shaders/eevee_geom_gpencil_vert.glsl
@@ -928,8 +929,8 @@ if(WITH_XR_OPENXR)
 endif()
 
 if(WITH_GTESTS)
-  if(WITH_OPENGL_DRAW_TESTS)
-    add_definitions(-DWITH_OPENGL_DRAW_TESTS)
+  if(WITH_GPU_DRAW_TESTS)
+    add_definitions(-DWITH_GPU_DRAW_TESTS)
     if(WITH_OPENGL_BACKEND)
       add_definitions(-DWITH_OPENGL_BACKEND)
     endif()
@@ -964,7 +965,7 @@ blender_add_lib(bf_draw "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
 
 if(WITH_GTESTS)
-  if(WITH_OPENGL_DRAW_TESTS)
+  if(WITH_GPU_DRAW_TESTS)
     set(TEST_SRC
       tests/draw_pass_test.cc
       tests/draw_testing.cc

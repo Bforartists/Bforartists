@@ -20,6 +20,7 @@
 #include "BLI_timeit.hh"
 
 #include "BKE_bvhutils.hh"
+#include "BKE_customdata.hh"
 #include "BKE_editmesh_cache.hh"
 #include "BKE_lib_id.h"
 #include "BKE_mesh.hh"
@@ -261,21 +262,21 @@ blender::Span<int> Mesh::looptri_faces() const
   return this->runtime->looptri_faces_cache.data();
 }
 
-int BKE_mesh_runtime_looptri_len(const Mesh *mesh)
+int BKE_mesh_runtime_looptris_len(const Mesh *mesh)
 {
   /* Allow returning the size without calculating the cache. */
   return poly_to_tri_count(mesh->faces_num, mesh->totloop);
 }
 
-void BKE_mesh_runtime_verttri_from_looptri(MVertTri *r_verttri,
-                                           const int *corner_verts,
-                                           const MLoopTri *looptri,
-                                           int looptri_num)
+void BKE_mesh_runtime_verttris_from_looptris(MVertTri *r_verttri,
+                                             const int *corner_verts,
+                                             const MLoopTri *looptris,
+                                             int looptris_num)
 {
-  for (int i = 0; i < looptri_num; i++) {
-    r_verttri[i].tri[0] = corner_verts[looptri[i].tri[0]];
-    r_verttri[i].tri[1] = corner_verts[looptri[i].tri[1]];
-    r_verttri[i].tri[2] = corner_verts[looptri[i].tri[2]];
+  for (int i = 0; i < looptris_num; i++) {
+    r_verttri[i].tri[0] = corner_verts[looptris[i].tri[0]];
+    r_verttri[i].tri[1] = corner_verts[looptris[i].tri[1]];
+    r_verttri[i].tri[2] = corner_verts[looptris[i].tri[2]];
   }
 }
 
@@ -318,73 +319,73 @@ void BKE_mesh_runtime_clear_geometry(Mesh *mesh)
   mesh->flag &= ~ME_NO_OVERLAPPING_TOPOLOGY;
 }
 
-void BKE_mesh_tag_edges_split(Mesh *mesh)
+void Mesh::tag_edges_split()
 {
   /* Triangulation didn't change because vertex positions and loop vertex indices didn't change. */
-  free_bvh_cache(*mesh->runtime);
-  mesh->runtime->vert_normals_cache.tag_dirty();
-  mesh->runtime->subdiv_ccg.reset();
-  mesh->runtime->vert_to_face_offset_cache.tag_dirty();
-  mesh->runtime->vert_to_face_map_cache.tag_dirty();
-  mesh->runtime->vert_to_corner_map_cache.tag_dirty();
-  if (mesh->runtime->loose_edges_cache.is_cached() &&
-      mesh->runtime->loose_edges_cache.data().count != 0)
+  free_bvh_cache(*this->runtime);
+  this->runtime->vert_normals_cache.tag_dirty();
+  this->runtime->subdiv_ccg.reset();
+  this->runtime->vert_to_face_offset_cache.tag_dirty();
+  this->runtime->vert_to_face_map_cache.tag_dirty();
+  this->runtime->vert_to_corner_map_cache.tag_dirty();
+  if (this->runtime->loose_edges_cache.is_cached() &&
+      this->runtime->loose_edges_cache.data().count != 0)
   {
-    mesh->runtime->loose_edges_cache.tag_dirty();
+    this->runtime->loose_edges_cache.tag_dirty();
   }
-  if (mesh->runtime->loose_verts_cache.is_cached() &&
-      mesh->runtime->loose_verts_cache.data().count != 0)
+  if (this->runtime->loose_verts_cache.is_cached() &&
+      this->runtime->loose_verts_cache.data().count != 0)
   {
-    mesh->runtime->loose_verts_cache.tag_dirty();
+    this->runtime->loose_verts_cache.tag_dirty();
   }
-  if (mesh->runtime->verts_no_face_cache.is_cached() &&
-      mesh->runtime->verts_no_face_cache.data().count != 0)
+  if (this->runtime->verts_no_face_cache.is_cached() &&
+      this->runtime->verts_no_face_cache.data().count != 0)
   {
-    mesh->runtime->verts_no_face_cache.tag_dirty();
+    this->runtime->verts_no_face_cache.tag_dirty();
   }
-  mesh->runtime->subsurf_face_dot_tags.clear_and_shrink();
-  mesh->runtime->subsurf_optimal_display_edges.clear_and_shrink();
-  mesh->runtime->shrinkwrap_data.reset();
+  this->runtime->subsurf_face_dot_tags.clear_and_shrink();
+  this->runtime->subsurf_optimal_display_edges.clear_and_shrink();
+  this->runtime->shrinkwrap_data.reset();
 }
 
-void BKE_mesh_tag_sharpness_changed(Mesh *mesh)
+void Mesh::tag_sharpness_changed()
 {
-  mesh->runtime->corner_normals_cache.tag_dirty();
+  this->runtime->corner_normals_cache.tag_dirty();
 }
 
-void BKE_mesh_tag_face_winding_changed(Mesh *mesh)
+void Mesh::tag_face_winding_changed()
 {
-  mesh->runtime->vert_normals_cache.tag_dirty();
-  mesh->runtime->face_normals_cache.tag_dirty();
-  mesh->runtime->corner_normals_cache.tag_dirty();
-  mesh->runtime->vert_to_corner_map_cache.tag_dirty();
+  this->runtime->vert_normals_cache.tag_dirty();
+  this->runtime->face_normals_cache.tag_dirty();
+  this->runtime->corner_normals_cache.tag_dirty();
+  this->runtime->vert_to_corner_map_cache.tag_dirty();
 }
 
-void BKE_mesh_tag_positions_changed(Mesh *mesh)
+void Mesh::tag_positions_changed()
 {
-  mesh->runtime->vert_normals_cache.tag_dirty();
-  mesh->runtime->face_normals_cache.tag_dirty();
-  mesh->runtime->corner_normals_cache.tag_dirty();
-  BKE_mesh_tag_positions_changed_no_normals(mesh);
+  this->runtime->vert_normals_cache.tag_dirty();
+  this->runtime->face_normals_cache.tag_dirty();
+  this->runtime->corner_normals_cache.tag_dirty();
+  this->tag_positions_changed_no_normals();
 }
 
-void BKE_mesh_tag_positions_changed_no_normals(Mesh *mesh)
+void Mesh::tag_positions_changed_no_normals()
 {
-  free_bvh_cache(*mesh->runtime);
-  mesh->runtime->looptris_cache.tag_dirty();
-  mesh->runtime->bounds_cache.tag_dirty();
+  free_bvh_cache(*this->runtime);
+  this->runtime->looptris_cache.tag_dirty();
+  this->runtime->bounds_cache.tag_dirty();
 }
 
-void BKE_mesh_tag_positions_changed_uniformly(Mesh *mesh)
+void Mesh::tag_positions_changed_uniformly()
 {
   /* The normals and triangulation didn't change, since all verts moved by the same amount. */
-  free_bvh_cache(*mesh->runtime);
-  mesh->runtime->bounds_cache.tag_dirty();
+  free_bvh_cache(*this->runtime);
+  this->runtime->bounds_cache.tag_dirty();
 }
 
-void BKE_mesh_tag_topology_changed(Mesh *mesh)
+void Mesh::tag_topology_changed()
 {
-  BKE_mesh_runtime_clear_geometry(mesh);
+  BKE_mesh_runtime_clear_geometry(this);
 }
 
 /** \} */

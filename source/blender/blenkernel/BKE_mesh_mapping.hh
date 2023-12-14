@@ -119,8 +119,8 @@ void BKE_mesh_uv_vert_map_free(UvVertMap *vmap);
 void BKE_mesh_vert_looptri_map_create(MeshElemMap **r_map,
                                       int **r_mem,
                                       int totvert,
-                                      const MLoopTri *mlooptri,
-                                      int totlooptri,
+                                      const MLoopTri *looptris,
+                                      int totlooptris,
                                       const int *corner_verts,
                                       int totloop);
 /**
@@ -140,14 +140,14 @@ void BKE_mesh_vert_looptri_map_create(MeshElemMap **r_map,
 void BKE_mesh_origindex_map_create(
     MeshElemMap **r_map, int **r_mem, int totsource, const int *final_origindex, int totfinal);
 /**
- * A version of #BKE_mesh_origindex_map_create that takes a looptri array.
- * Making a face -> looptri map.
+ * A version of #BKE_mesh_origindex_map_create that takes a #MLoopTri array.
+ * Making a face -> #MLoopTri map.
  */
 void BKE_mesh_origindex_map_create_looptri(MeshElemMap **r_map,
                                            int **r_mem,
                                            blender::OffsetIndices<int> faces,
                                            const int *looptri_faces,
-                                           int looptri_num);
+                                           int looptris_num);
 
 /* islands */
 
@@ -248,6 +248,8 @@ bool BKE_mesh_calc_islands_loop_face_uvmap(float (*vert_positions)[3],
 /**
  * Calculate smooth groups from sharp edges.
  *
+ * \param sharp_edges: Optional (possibly empty) span.
+ * \param sharp_faces: Optional (possibly empty) span.
  * \param r_totgroup: The total number of groups, 1 or more.
  * \return Polygon aligned array of group index values (bitflags if use_bitflags is true),
  * starting at 1 (0 being used as 'invalid' flag).
@@ -256,12 +258,12 @@ bool BKE_mesh_calc_islands_loop_face_uvmap(float (*vert_positions)[3],
 int *BKE_mesh_calc_smoothgroups(int edges_num,
                                 blender::OffsetIndices<int> faces,
                                 blender::Span<int> corner_edges,
-                                const bool *sharp_edges,
-                                const bool *sharp_faces,
+                                blender::Span<bool> sharp_edges,
+                                blender::Span<bool> sharp_faces,
                                 int *r_totgroup,
                                 bool use_bitflags);
 
-/* use on looptri vertex values */
+/* Use on #MLoopTri vertex values. */
 #define BKE_MESH_TESSTRI_VINDEX_ORDER(_tri, _v) \
   ((CHECK_TYPE_ANY( \
         _tri, unsigned int *, int *, int[3], const unsigned int *, const int *, const int[3]), \
