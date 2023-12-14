@@ -237,9 +237,9 @@ static void update_pyconstraint_cb(void *arg1, void *arg2)
   if (owner && con) {
     BPY_pyconstraint_update(owner, con);
   }
-#  endif
+#  endif /* WITH_PYTHON */
 }
-#endif /* UNUSED */
+#endif   /* UNUSED */
 
 /** \} */
 
@@ -1450,7 +1450,7 @@ static int constraint_delete_exec(bContext *C, wmOperator *op)
   STRNCPY(name, con->name);
 
   /* free the constraint */
-  if (BKE_constraint_remove_ex(lb, ob, con, true)) {
+  if (BKE_constraint_remove_ex(lb, ob, con)) {
     /* Needed to set the flags on pose-bones correctly. */
     ED_object_constraint_update(bmain, ob);
 

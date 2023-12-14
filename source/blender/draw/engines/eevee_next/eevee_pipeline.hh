@@ -175,6 +175,10 @@ struct DeferredLayerBase {
   PassMain::Sub *prepass_double_sided_moving_ps_ = nullptr;
 
   PassMain gbuffer_ps_ = {"Shading"};
+  /* Shaders that use the ClosureToRGBA node needs to be rendered first.
+   * Consider they hybrid forward and deferred. */
+  PassMain::Sub *gbuffer_single_sided_hybrid_ps_ = nullptr;
+  PassMain::Sub *gbuffer_double_sided_hybrid_ps_ = nullptr;
   PassMain::Sub *gbuffer_single_sided_ps_ = nullptr;
   PassMain::Sub *gbuffer_double_sided_ps_ = nullptr;
 
@@ -204,6 +208,8 @@ class DeferredLayer : DeferredLayerBase {
  private:
   Instance &inst_;
 
+  static constexpr int max_lighting_tile_count_ = 128 * 128;
+
   /* Evaluate all light objects contribution. */
   PassSimple eval_light_ps_ = {"EvalLights"};
   /* Combine direct and indirect light contributions and apply BSDF color. */
@@ -216,14 +222,27 @@ class DeferredLayer : DeferredLayerBase {
    * BSDF color and do additive blending for each of the lighting step.
    *
    * NOTE: Not to be confused with the render passes.
+   * NOTE: Using array of texture instead of texture array to allow to use TextureFromPool.
    */
-  TextureFromPool direct_diffuse_tx_ = {"direct_diffuse_tx"};
-  TextureFromPool direct_reflect_tx_ = {"direct_reflect_tx"};
-  TextureFromPool direct_refract_tx_ = {"direct_refract_tx"};
+  TextureFromPool direct_radiance_txs_[3] = {
+      {"direct_radiance_1"}, {"direct_radiance_2"}, {"direct_radiance_3"}};
   /* Reference to ray-tracing result. */
   GPUTexture *indirect_diffuse_tx_ = nullptr;
   GPUTexture *indirect_reflect_tx_ = nullptr;
   GPUTexture *indirect_refract_tx_ = nullptr;
+
+  /* Parameters for the light evaluation pass. */
+  int closure_tile_size_shift_ = 0;
+  /* Tile buffers for different lighting complexity levels. */
+  struct {
+    DrawIndirectBuf draw_buf_ = {"DrawIndirectBuf"};
+    ClosureTileBuf tile_buf_ = {"ClosureTileBuf"};
+  } closure_bufs_[3];
+  /**
+   * Tile texture containing several bool per tile indicating presence of feature.
+   * It is used to select specialized shader for each tile.
+   */
+  Texture tile_mask_tx_ = {"tile_mask_tx_"};
 
   /* TODO(fclem): This should be a TextureFromPool. */
   Texture radiance_behind_tx_ = {"radiance_behind_tx"};
@@ -529,8 +548,11 @@ class PlanarProbePipeline : DeferredLayerBase {
   PassMain::Sub *prepass_add(::Material *material, GPUMaterial *gpumat);
   PassMain::Sub *material_add(::Material *material, GPUMaterial *gpumat);
 
-  void render(
-      View &view, Framebuffer &gbuffer, Framebuffer &combined_fb, int layer_id, int2 extent);
+  void render(View &view,
+              GPUTexture *depth_layer_tx,
+              Framebuffer &gbuffer,
+              Framebuffer &combined_fb,
+              int2 extent);
 };
 
 /** \} */
