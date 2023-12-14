@@ -1125,10 +1125,7 @@ static void sculpt_gesture_face_set_apply_for_symmetry_pass(bContext * /*C*/,
   }
 }
 
-static void sculpt_gesture_face_set_end(bContext * /*C*/, SculptGestureContext *sgcontext)
-{
-  BKE_pbvh_update_visibility(sgcontext->ss->pbvh);
-}
+static void sculpt_gesture_face_set_end(bContext * /*C*/, SculptGestureContext * /*sgcontext*/) {}
 
 static void sculpt_gesture_init_face_set_properties(SculptGestureContext *sgcontext,
                                                     wmOperator * /*op*/)
@@ -1224,7 +1221,7 @@ static void sculpt_gesture_mask_end(bContext *C, SculptGestureContext *sgcontext
   if (BKE_pbvh_type(sgcontext->ss->pbvh) == PBVH_GRIDS) {
     multires_mark_as_modified(depsgraph, sgcontext->vc.obact, MULTIRES_COORDS_MODIFIED);
   }
-  BKE_pbvh_update_mask(sgcontext->ss->pbvh);
+  blender::bke::pbvh::update_mask(*sgcontext->ss->pbvh);
 }
 
 static void sculpt_gesture_init_mask_properties(bContext *C,
@@ -1650,7 +1647,7 @@ static void sculpt_gesture_trim_geometry_generate(SculptGestureContext *sgcontex
     loop_index += 3;
   }
 
-  BKE_mesh_smooth_flag_set(trim_operation->mesh, false);
+  bke::mesh_smooth_set(*trim_operation->mesh, false);
 
   BKE_mesh_calc_edges(trim_operation->mesh, false, false);
   sculpt_gesture_trim_normals_update(sgcontext);

@@ -244,7 +244,7 @@ bool BKE_pbvh_node_raycast(PBVH *pbvh,
                            float (*origco)[3],
                            bool use_origco,
                            blender::Span<int> corner_verts,
-                           const bool *hide_poly,
+                           blender::Span<bool> hide_poly,
                            const float ray_start[3],
                            const float ray_normal[3],
                            IsectRayPrecalc *isect_precalc,
@@ -284,7 +284,7 @@ bool BKE_pbvh_node_find_nearest_to_ray(PBVH *pbvh,
                                        float (*origco)[3],
                                        bool use_origco,
                                        blender::Span<int> corner_verts,
-                                       const bool *hide_poly,
+                                       blender::Span<bool> hide_poly,
                                        const float ray_start[3],
                                        const float ray_normal[3],
                                        float *depth,
@@ -376,18 +376,27 @@ void BKE_pbvh_vert_tag_update_normal(PBVH *pbvh, PBVHVertRef vertex);
 
 blender::Span<int> BKE_pbvh_node_get_grid_indices(const PBVHNode &node);
 
-void BKE_pbvh_node_num_verts(const PBVH *pbvh,
-                             const PBVHNode *node,
-                             int *r_uniquevert,
-                             int *r_totvert);
 int BKE_pbvh_node_num_unique_verts(const PBVH &pbvh, const PBVHNode &node);
 blender::Span<int> BKE_pbvh_node_get_vert_indices(const PBVHNode *node);
 blender::Span<int> BKE_pbvh_node_get_unique_vert_indices(const PBVHNode *node);
-void BKE_pbvh_node_get_loops(const PBVHNode *node, const int **r_loop_indices);
+blender::Span<int> BKE_pbvh_node_get_loops(const PBVHNode *node);
 
-void BKE_pbvh_node_calc_face_indices(const PBVH &pbvh,
-                                     const PBVHNode &node,
-                                     blender::Vector<int> &faces);
+namespace blender::bke::pbvh {
+
+/**
+ * Gather the indices of all faces (not triangles) used by the node.
+ * For convenience, pass a reference to the data in the result.
+ */
+Span<int> node_face_indices_calc_mesh(const PBVH &pbvh, const PBVHNode &node, Vector<int> &faces);
+
+/**
+ * Gather the indices of all base mesh faces in the node.
+ * For convenience, pass a reference to the data in the result.
+ */
+Span<int> node_face_indices_calc_grids(const PBVH &pbvh, const PBVHNode &node, Vector<int> &faces);
+
+}  // namespace blender::bke::pbvh
+
 blender::Vector<int> BKE_pbvh_node_calc_face_indices(const PBVH &pbvh, const PBVHNode &node);
 
 /* Get number of faces in the mesh; for PBVH_GRIDS the
@@ -422,13 +431,13 @@ const blender::Set<BMFace *, 0> &BKE_pbvh_bmesh_node_faces(PBVHNode *node);
 void BKE_pbvh_bmesh_node_save_orig(BMesh *bm, BMLog *log, PBVHNode *node, bool use_original);
 void BKE_pbvh_bmesh_after_stroke(PBVH *pbvh);
 
-/* Update Bounding Box/Redraw and clear flags. */
+namespace blender::bke::pbvh {
+void update_bounds(PBVH &pbvh, int flags);
+void update_mask(PBVH &pbvh);
+void update_visibility(PBVH &pbvh);
+void update_normals(PBVH &pbvh, SubdivCCG *subdiv_ccg);
+}  // namespace blender::bke::pbvh
 
-void BKE_pbvh_update_bounds(PBVH *pbvh, int flags);
-void BKE_pbvh_update_mask(PBVH *pbvh);
-void BKE_pbvh_update_vertex_data(PBVH *pbvh, int flags);
-void BKE_pbvh_update_visibility(PBVH *pbvh);
-void BKE_pbvh_update_normals(PBVH *pbvh, SubdivCCG *subdiv_ccg);
 blender::Bounds<blender::float3> BKE_pbvh_redraw_BB(PBVH *pbvh);
 blender::IndexMask BKE_pbvh_get_grid_updates(const PBVH *pbvh,
                                              blender::Span<const PBVHNode *> nodes,
@@ -593,18 +602,9 @@ void BKE_pbvh_node_get_bm_orco_data(PBVHNode *node,
  */
 bool BKE_pbvh_node_has_vert_with_normal_update_tag(PBVH *pbvh, PBVHNode *node);
 
-// void BKE_pbvh_node_BB_reset(PBVHNode *node);
-// void BKE_pbvh_node_BB_expand(PBVHNode *node, float co[3]);
-
 bool pbvh_has_mask(const PBVH *pbvh);
 
 bool pbvh_has_face_sets(PBVH *pbvh);
-
-/* Parallelization. */
-
-void BKE_pbvh_parallel_range_settings(TaskParallelSettings *settings,
-                                      bool use_threading,
-                                      int totnode);
 
 blender::Span<blender::float3> BKE_pbvh_get_vert_positions(const PBVH *pbvh);
 blender::MutableSpan<blender::float3> BKE_pbvh_get_vert_positions(PBVH *pbvh);
@@ -632,9 +632,6 @@ void BKE_pbvh_store_colors_vertex(PBVH *pbvh,
                                   blender::MutableSpan<blender::float4> r_colors);
 
 bool BKE_pbvh_is_drawing(const PBVH *pbvh);
-
-/* Do not call in PBVH_GRIDS mode */
-void BKE_pbvh_node_num_loops(PBVH *pbvh, PBVHNode *node, int *r_totloop);
 
 void BKE_pbvh_update_active_vcol(PBVH *pbvh, Mesh *mesh);
 

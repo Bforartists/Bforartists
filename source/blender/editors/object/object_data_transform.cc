@@ -552,7 +552,7 @@ void ED_object_data_xform_by_mat4(XFormObjectData *xod_base, const float mat[4][
         for (const int i : positions.index_range()) {
           mul_v3_m4v3(positions[i], mat, xod->elem_array[i]);
         }
-        BKE_mesh_tag_positions_changed(mesh);
+        mesh->tag_positions_changed();
       }
 
       if (key != nullptr) {
@@ -661,7 +661,7 @@ void ED_object_data_xform_restore(XFormObjectData *xod_base)
       else {
         mesh->vert_positions_for_write().copy_from(
             {reinterpret_cast<const blender::float3 *>(xod->elem_array), mesh->totvert});
-        BKE_mesh_tag_positions_changed(mesh);
+        mesh->tag_positions_changed();
       }
 
       if ((key != nullptr) && (xod->key_data != nullptr)) {
@@ -750,7 +750,7 @@ void ED_object_data_xform_tag_update(XFormObjectData *xod_base)
       Mesh *mesh = (Mesh *)xod_base->id;
       if (xod_base->is_edit_mode) {
         EDBMUpdate_Params params{};
-        params.calc_looptri = true;
+        params.calc_looptris = true;
         params.calc_normals = true;
         params.is_destructive = false;
         EDBM_update(mesh, &params);
