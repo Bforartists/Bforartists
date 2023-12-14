@@ -418,10 +418,10 @@ static void update_geom_primitives(PBVH &pbvh, const uv_islands::MeshData &mesh_
 {
   PBVHData &pbvh_data = BKE_pbvh_pixels_data_get(pbvh);
   pbvh_data.clear_data();
-  for (const MLoopTri &looptri : mesh_data.looptris) {
-    pbvh_data.geom_primitives.append(int3(mesh_data.corner_verts[looptri.tri[0]],
-                                          mesh_data.corner_verts[looptri.tri[1]],
-                                          mesh_data.corner_verts[looptri.tri[2]]));
+  for (const MLoopTri &lt : mesh_data.looptris) {
+    pbvh_data.geom_primitives.append(int3(mesh_data.corner_verts[lt.tri[0]],
+                                          mesh_data.corner_verts[lt.tri[1]],
+                                          mesh_data.corner_verts[lt.tri[2]]));
   }
 }
 
@@ -466,11 +466,8 @@ struct EncodePixelsUserData {
   const UVPrimitiveLookup *uv_primitive_lookup;
 };
 
-static void do_encode_pixels(void *__restrict userdata,
-                             const int n,
-                             const TaskParallelTLS *__restrict /*tls*/)
+static void do_encode_pixels(EncodePixelsUserData *data, const int n)
 {
-  EncodePixelsUserData *data = static_cast<EncodePixelsUserData *>(userdata);
   const uv_islands::MeshData &mesh_data = *data->mesh_data;
   Image *image = data->image;
   ImageUser image_user = *data->image_user;
@@ -676,7 +673,7 @@ static bool update_pixels(PBVH *pbvh, Mesh *mesh, Image *image, ImageUser *image
   const VArraySpan uv_map = *attributes.lookup<float2>(active_uv_name, ATTR_DOMAIN_CORNER);
 
   uv_islands::MeshData mesh_data(
-      pbvh->looptri, mesh->corner_verts(), uv_map, pbvh->vert_positions);
+      pbvh->looptris, mesh->corner_verts(), uv_map, pbvh->vert_positions);
   uv_islands::UVIslands islands(mesh_data);
 
   uv_islands::UVIslandsMask uv_masks;
@@ -710,9 +707,11 @@ static bool update_pixels(PBVH *pbvh, Mesh *mesh, Image *image, ImageUser *image
   user_data.uv_primitive_lookup = &uv_primitive_lookup;
   user_data.uv_masks = &uv_masks;
 
-  TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, true, nodes_to_update.size());
-  BLI_task_parallel_range(0, nodes_to_update.size(), &user_data, do_encode_pixels, &settings);
+  threading::parallel_for(nodes_to_update.index_range(), 1, [&](const IndexRange range) {
+    for (const int i : range) {
+      do_encode_pixels(&user_data, i);
+    }
+  });
   if (USE_WATERTIGHT_CHECK) {
     apply_watertight_check(pbvh, image, image_user);
   }

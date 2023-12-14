@@ -520,6 +520,8 @@ static void do_multires_bake(MultiresBakeRender *bkr,
   if (require_tangent) {
     if (CustomData_get_layer_index(&dm->loopData, CD_TANGENT) == -1) {
       const blender::Span<blender::float3> corner_normals = temp_mesh->corner_normals();
+      const bool *sharp_faces = static_cast<const bool *>(
+          CustomData_get_layer_named(&dm->polyData, CD_PROP_BOOL, "sharp_face"));
       BKE_mesh_calc_loop_tangent_ex(
           reinterpret_cast<const float(*)[3]>(positions.data()),
           faces,
@@ -527,8 +529,7 @@ static void do_multires_bake(MultiresBakeRender *bkr,
           looptris.data(),
           looptri_faces.data(),
           looptris.size(),
-          static_cast<const bool *>(
-              CustomData_get_layer_named(&dm->polyData, CD_PROP_BOOL, "sharp_face")),
+          sharp_faces ? blender::Span(sharp_faces, faces.size()) : blender::Span<bool>(),
           &dm->loopData,
           true,
           nullptr,
@@ -761,14 +762,14 @@ static void interp_bilinear_mpoly(const blender::Span<blender::float3> vert_posi
   interp_bilinear_quad_v3(data, u, v, res);
 }
 
-static void interp_barycentric_mlooptri(const blender::Span<blender::float3> vert_positions,
-                                        const blender::Span<blender::float3> vert_normals,
-                                        const blender::Span<int> corner_verts,
-                                        const MLoopTri *lt,
-                                        const float u,
-                                        const float v,
-                                        const int mode,
-                                        float res[3])
+static void interp_barycentric_looptri(const blender::Span<blender::float3> vert_positions,
+                                       const blender::Span<blender::float3> vert_normals,
+                                       const blender::Span<int> corner_verts,
+                                       const MLoopTri *lt,
+                                       const float u,
+                                       const float v,
+                                       const int mode,
+                                       float res[3])
 {
   float data[3][3];
 
@@ -909,9 +910,9 @@ static void apply_heights_callback(const blender::Span<blender::float3> vert_pos
       interp_bilinear_mpoly(vert_positions, vert_normals, corner_verts, face, uv[0], uv[1], 0, n);
     }
     else {
-      interp_barycentric_mlooptri(
+      interp_barycentric_looptri(
           vert_positions, vert_normals, corner_verts, lt, uv[0], uv[1], 1, p0);
-      interp_barycentric_mlooptri(
+      interp_barycentric_looptri(
           vert_positions, vert_normals, corner_verts, lt, uv[0], uv[1], 0, n);
     }
   }

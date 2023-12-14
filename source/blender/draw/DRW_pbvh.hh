@@ -80,9 +80,9 @@ struct PBVH_GPU_Args {
 
   Span<int> prim_indices;
 
-  const bool *hide_poly;
+  VArraySpan<bool> hide_poly;
 
-  Span<MLoopTri> mlooptri;
+  Span<MLoopTri> looptris;
   Span<int> looptri_faces;
 
   /* BMesh. */
