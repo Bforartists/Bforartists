@@ -602,7 +602,6 @@ class SEQUENCER_MT_select(Menu):
         layout = self.layout
         st = _context.space_data
         has_sequencer, _has_preview = _space_view_types(st)
-        is_retiming = context.scene.sequence_editor.selected_retiming_keys
 
         layout.operator("sequencer.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("sequencer.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -625,10 +624,8 @@ class SEQUENCER_MT_select(Menu):
             col.menu("SEQUENCER_MT_select_channel", text="Channel")
             col.menu("SEQUENCER_MT_select_linked", text="Linked")
 
-            col.separator()
-
         col.operator_menu_enum("sequencer.select_grouped", "type", text="Grouped")
-        col.enabled = not is_retiming
+
 
 
 class SEQUENCER_MT_marker(Menu):
