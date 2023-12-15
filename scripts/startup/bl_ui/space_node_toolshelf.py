@@ -6027,6 +6027,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
 
+            props = col.operator("node.add_node", text=" Index Switch               ", icon = "INDEX_SWITCH")
+            props.use_transform = True
+            props.type = "GeometryNodeIndexSwitch"
+
         #### Icon Buttons
 
         else:
@@ -6039,13 +6043,17 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeRandomValue"
 
-            props = col.operator("node.add_repeat_zone", text="", icon = "REPEAT")
+            props = flow.operator("node.add_repeat_zone", text="", icon = "REPEAT")
             props.use_transform = True
             #props.type = ""
 
             props = flow.operator("node.add_node", text = "", icon = "SWITCH")
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
+
+            props = flow.operator("node.add_node", text = "", icon = "INDEX_SWITCH")
+            props.use_transform = True
+            props.type = "GeometryNodeIndexSwitch"
 
 
 #add utilities panel, color subpanel
