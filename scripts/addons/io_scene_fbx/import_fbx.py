@@ -1638,7 +1638,7 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
     fbx_layer = elem_find_first(fbx_obj, b'LayerElementSmoothing')
 
     if fbx_layer is None:
-        return False
+        return
 
     # all should be valid
     (fbx_layer_name,
@@ -1651,13 +1651,13 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
 
     # udk has 'Direct' mapped, with no Smoothing, not sure why, but ignore these
     if fbx_layer_data is None:
-        return False
+        return
 
     if fbx_layer_mapping == b'ByEdge':
         # some models have bad edge data, we can't use this info...
         if not mesh.edges:
             print("warning skipping sharp edges data, no valid edges...")
-            return False
+            return
 
         blen_data = MESH_ATTRIBUTE_SHARP_EDGE.ensure(mesh.attributes).data
         fbx_item_size = 1
@@ -1669,21 +1669,23 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
             1, fbx_item_size, layer_id,
             xform=np.logical_not,  # in FBX, 0 (False) is sharp, but in Blender True is sharp.
             )
-        return False
     elif fbx_layer_mapping == b'ByPolygon':
-        blen_data = MESH_ATTRIBUTE_SHARP_FACE.ensure(mesh.attributes).data
+        sharp_face = MESH_ATTRIBUTE_SHARP_FACE.ensure(mesh.attributes)
+        blen_data = sharp_face.data
         fbx_item_size = 1
         assert(fbx_item_size == MESH_ATTRIBUTE_SHARP_FACE.item_size)
-        return blen_read_geom_array_mapped_polygon(
+        sharp_face_set_successfully = blen_read_geom_array_mapped_polygon(
             mesh, blen_data, MESH_ATTRIBUTE_SHARP_FACE.foreach_attribute, MESH_ATTRIBUTE_SHARP_FACE.dtype,
             fbx_layer_data, None,
             fbx_layer_mapping, fbx_layer_ref,
             1, fbx_item_size, layer_id,
             xform=lambda s: (s == 0),  # smoothgroup bitflags, treat as booleans for now
             )
+        if not sharp_face_set_successfully:
+            mesh.attributes.remove(sharp_face)
     else:
         print("warning layer %r mapping type unsupported: %r" % (fbx_layer.id, fbx_layer_mapping))
-        return False
+
 
 def blen_read_geom_layer_edge_crease(fbx_obj, mesh):
     fbx_layer = elem_find_first(fbx_obj, b'LayerElementEdgeCrease')
@@ -1883,7 +1885,7 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         print("ERROR: No polygons, but edges exist. Ignoring the edges!")
 
     # must be after edge, face loading.
-    ok_smooth = blen_read_geom_layer_smooth(fbx_obj, mesh)
+    blen_read_geom_layer_smooth(fbx_obj, mesh)
 
     blen_read_geom_layer_edge_crease(fbx_obj, mesh)
 
@@ -1905,22 +1907,11 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
         clnors = np.empty(len(mesh.loops) * 3, dtype=bl_nors_dtype)
         mesh.attributes["temp_custom_normals"].data.foreach_get("vector", clnors)
 
-        if not ok_smooth:
-            sharp_face = MESH_ATTRIBUTE_SHARP_FACE.get(attributes)
-            if sharp_face:
-                attributes.remove(sharp_face)
-            ok_smooth = True
-
         # Iterating clnors into a nested tuple first is faster than passing clnors.reshape(-1, 3) directly into
         # normals_split_custom_set. We use clnors.data since it is a memoryview, which is faster to iterate than clnors.
         mesh.normals_split_custom_set(tuple(zip(*(iter(clnors.data),) * 3)))
     if settings.use_custom_normals:
         mesh.attributes.remove(mesh.attributes["temp_custom_normals"])
-
-    if not ok_smooth:
-        sharp_face = MESH_ATTRIBUTE_SHARP_FACE.get(attributes)
-        if sharp_face:
-            attributes.remove(sharp_face)
 
     if settings.use_custom_props:
         blen_read_custom_properties(fbx_obj, mesh, settings)
@@ -2779,7 +2770,13 @@ class FbxImportHelperNode:
         pose_bone = arm.bl_obj.pose.bones[self.bl_bone]
         pose_bone.matrix_basis = self.get_bind_matrix().inverted_safe() @ self.get_matrix()
 
-        if settings.use_custom_props:
+        # `self.fbx_elem` can be `None` in cases where the imported hierarchy contains a mix of bone and non-bone FBX
+        # Nodes parented to one another, e.g. "bone1"->"mesh1"->"bone2". In Blender, an Armature can only consist of
+        # bones, so to maintain the imported hierarchy, a placeholder bone with the same name as "mesh1" is inserted
+        # into the Armature and then the imported "mesh1" Object is parented to the placeholder bone. The placeholder
+        # bone won't have a `self.fbx_elem` because it belongs to the "mesh1" Object instead.
+        # See FbxImportHelperNode.find_fake_bones().
+        if settings.use_custom_props and self.fbx_elem:
             blen_read_custom_properties(self.fbx_elem, pose_bone, settings)
 
         for child in self.children:
