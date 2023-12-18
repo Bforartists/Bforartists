@@ -26,7 +26,7 @@ class COLLECTION_UL_shared_collections(bpy.types.UIList):
             row.alignment = "EXPAND"
             row = layout.row()
             row.alignment = "RIGHT"
-            # Shot context: expose link/unlink operators
+            # Scene context: expose link/unlink operators
             if context.area.type == "VIEW_3D":
                 # Unlinked
                 if context.scene not in users:
