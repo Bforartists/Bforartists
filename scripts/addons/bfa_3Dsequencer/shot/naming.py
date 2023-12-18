@@ -12,14 +12,14 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 
 class ShotPrefix(Enum):
-    """Internal presets for shot prefixes."""
+    """Internal presets for scene prefixes."""
 
     PREVIZ = "PSH"
     SHOT = "SH"
 
 
 class ShotNameData(NamedTuple):
-    """Simple data structure to hold shot name components."""
+    """Simple data structure to hold scene name components."""
 
     prefix: str
     number: int
@@ -28,23 +28,23 @@ class ShotNameData(NamedTuple):
 
 class ShotNaming:
     """
-    ShotNaming centralizes the logic for shot naming convention.
+    ShotNaming centralizes the logic for scene naming convention.
     """
 
-    # Shot prefixes.
+    # Scene prefixes.
     prefixes: list[str] = [item.value for item in ShotPrefix]
-    # Shot number digits count
+    # Scene number digits count
     number_digits: int = 4
-    # Shot default number
+    # Scene default number
     number_default: int = 10
-    # Shot number default increment
+    # Scene number default increment
     number_spacing: int = 10
-    # Shot takes count
+    # Scene takes count
     takes_count: int = 6  # [0-26]
-    # Shot name components separator
+    # Scene name components separator
     separator: str = ""
 
-    # Shot "no-take" value
+    # Scene "no-take" value
     _take_none: str = ""
 
     @property
@@ -54,7 +54,7 @@ class ShotNaming:
 
     @property
     def number_max(self):
-        """Get maximal shot number."""
+        """Get maximal Scene number."""
         return 10**self.number_digits - 1
 
     @property
@@ -95,7 +95,7 @@ class ShotNaming:
             raise ValueError("Value does not match pattern")
 
     def shot_regex(self):
-        """Returns the regex defining the shot naming convention."""
+        """Returns the regex defining the Scene naming convention."""
 
         # Escape string attributes
         sep = re.escape(self.separator)
@@ -111,12 +111,12 @@ class ShotNaming:
     def build_shot_name(
         self, number: int, prefix: Optional[str] = None, take: Optional[str] = None
     ) -> str:
-        """Build a shot name using given shot name data values.
+        """Build a Scene name using given Scene name data values.
 
-        :param number: The shot number.
-        :param prefix: The shot prefix, default prefix is used if None.
-        :param take: The shot take, default take used if None.
-        :return: The shot name.
+        :param number: The Scene number.
+        :param prefix: The Scene prefix, default prefix is used if None.
+        :param take: The Scene take, default take used if None.
+        :return: The Scene name.
         """
         if prefix:
             self.validate_value(self.prefix_regex_str, prefix)
@@ -130,11 +130,11 @@ class ShotNaming:
         )
 
     def default_shot_name(self):
-        """Get the default shot name based on current configuration."""
+        """Get the default Scene name based on current configuration."""
         return self.build_shot_name(self.number_default, self.prefix_default)
 
     def match_name(self, name: str) -> Union[re.Match, None]:
-        """Match `name` to internal shot naming regexp.
+        """Match `name` to internal Scene naming regexp.
 
         :param name: The name to consider.
         :return: The Match object on success, None otherwise.
@@ -142,11 +142,11 @@ class ShotNaming:
         return re.fullmatch(self.shot_regex(), name)
 
     def shot_data_from_name(self, name: str, strict: bool = True) -> ShotNameData:
-        """Extract shot name data components from `name`.
+        """Extract Scene name data components from `name`.
 
         :param name: The name to extract data from.
         :param strict: Whether the name matching should be strict.
-        :return: The extracted shot name data.
+        :return: The extracted Scene name data.
         """
         prefix = self.prefix_default
         number = self.number_default
@@ -169,10 +169,10 @@ class ShotNaming:
         return ShotNameData(prefix, number, take)
 
     def get_next_number(self, number: int) -> int:
-        """Get next shot number snapped to spacing.
+        """Get next Scene number snapped to spacing.
 
-        :param number: The shot number to start from.
-        :return: The next shot number snapped to spacing.
+        :param number: The Scene number to start from.
+        :return: The next Scene number snapped to spacing.
         """
         # Add spacing.
         number += self.number_spacing
@@ -182,7 +182,7 @@ class ShotNaming:
     def next_shot_name_from_name(
         self, shot_name: str, custom_increment: Optional[int] = None
     ) -> str:
-        """Get the next shot name from `shot_name`."""
+        """Get the next Scene name from `sceme_name`."""
         shot_data = self.shot_data_from_name(shot_name)
         number = self.shot_data_from_name(shot_name).number
         if custom_increment:
@@ -194,7 +194,7 @@ class ShotNaming:
         return self.build_shot_name(number, shot_data.prefix, shot_data.take)
 
     def get_all_shot_scenes(self) -> list[bpy.types.Scene]:
-        """Get all scenes in the current file matching the shot naming convention.
+        """Get all scenes in the current file matching the scene naming convention.
 
         :return: The list of scenes.
         """
@@ -202,9 +202,9 @@ class ShotNaming:
 
     def next_shot_name_from_scenes(self, custom_increment: Optional[int] = None) -> str:
         """
-        Get the next available shot name (incremented number) based on existing scenes.
+        Get the next available scene name (incremented number) based on existing scenes.
 
-        :return: The next available shot name.
+        :return: The next available scene name.
         """
         shots = sorted([s.name for s in self.get_all_shot_scenes()])
         if not shots:
@@ -215,7 +215,7 @@ class ShotNaming:
         self, sed: bpy.types.SequenceEditor
     ) -> list[bpy.types.SceneSequence]:
         """
-        Get all scene strips in the given sequence editor matching the shot naming
+        Get all scene strips in the given sequence editor matching the scene naming
         convention.
 
         :param sed: The sequence editor.
@@ -230,11 +230,11 @@ class ShotNaming:
     def next_shot_name_from_sequences(
         self, sed: bpy.types.SequenceEditor, custom_increment: Optional[int] = None
     ) -> str:
-        """Get next shot name from the sequences contained in the given sequence editor.
+        """Get next scene name from the sequences contained in the given sequence editor.
 
         :param sed: The sequence editor.
         :param custom_increment: Optional custom increment.
-        :return: The next shot name.
+        :return: The next scene name.
         """
         shots = sorted([s.name for s in self.get_all_shot_strips(sed)])
         if not shots:
@@ -243,14 +243,14 @@ class ShotNaming:
 
     def next_take_name(self, shot_name: str) -> str:
         """
-        Get the next available take name (incremented take) for `shot_name` based on
+        Get the next available take name (incremented take) for `scene_name` based on
         existing scenes.
 
-        :param shot_name: The name of the shot.
+        :param scene_name: The name of the scne.
         :return: The next available take name.
         """
         if not self.takes_count:
-            raise RuntimeError("Shot takes are not supported")
+            raise RuntimeError("Scene takes are not supported")
 
         take_values = self.take_values
         shot_data = self.shot_data_from_name(shot_name)
@@ -311,21 +311,21 @@ class ShotNamingProperty(bpy.types.PropertyGroup):
 
     take: bpy.props.EnumProperty(
         name="Take",
-        description="Shot Take",
+        description="Scene Take",
         items=get_takes,
         default=0,
         options={"SKIP_SAVE"},
     )
 
     def set_use_next_shot_name(self, val):
-        """Update naming to use next available shot name."""
+        """Update naming to use next available scene name."""
         sed = bpy.context.scene.sequence_editor
         self.init_from_name(shot_naming.next_shot_name_from_sequences(sed))
 
     # Helper "function-property" with a set method that makes naming use next shot name
     use_next_shot_name: bpy.props.BoolProperty(
-        name="Use Next Available Shot Name",
-        description="Update naming to use the next available shot name",
+        name="Use Next Available Scene Name",
+        description="Update naming to use the next available scene name",
         set=set_use_next_shot_name,
         options={"HIDDEN", "SKIP_SAVE"},
     )
@@ -338,7 +338,7 @@ class ShotNamingProperty(bpy.types.PropertyGroup):
         self.take = self.take_to_enum(shot_data.take)
 
     def to_string(self) -> str:
-        """Return the shot name based on current properties values."""
+        """Return the scene name based on current properties values."""
         return shot_naming.build_shot_name(
             self.number, self.prefix, self.enum_to_take(self.take)
         )
@@ -346,7 +346,7 @@ class ShotNamingProperty(bpy.types.PropertyGroup):
     def draw(
         self,
         layout: bpy.types.UILayout,
-        text: str = "Shot Name",
+        text: str = "Scene Name",
         show_init_from_next: bool = False,
     ):
         """Helper function to draw this PropertyGroup."""
