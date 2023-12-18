@@ -86,8 +86,8 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
 
 class SEQUENCE_OT_active_shot_camera_set(bpy.types.Operator):
     bl_idname = "sequence.active_shot_camera_set"
-    bl_label = "Set Active Shot Camera"
-    bl_description = "Set active shot camera"
+    bl_label = "Set Active Scene Camera"
+    bl_description = "Set active Scene camera"
     bl_options = {"UNDO"}
 
     camera: bpy.props.StringProperty(
@@ -112,13 +112,13 @@ class SEQUENCE_OT_active_shot_camera_set(bpy.types.Operator):
 
 class SEQUENCE_OT_active_shot_scene_set(bpy.types.Operator):
     bl_idname = "sequence.active_shot_scene_set"
-    bl_label = "Set Active Shot Scene"
-    bl_description = "Set active shot scene"
+    bl_label = "Set Active Scene"
+    bl_description = "Set active scene"
     bl_options = {"UNDO"}
 
     scene: bpy.props.StringProperty(
         name="Scene",
-        description="Scene to set on active shot",
+        description="Scene to set on active",
         options={"SKIP_SAVE"},
     )
 
