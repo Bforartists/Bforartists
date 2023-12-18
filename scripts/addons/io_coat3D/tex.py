@@ -521,7 +521,7 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
 
             main_material.links.new(applink_tree.outputs[5], disp_node.inputs[0])
             main_material.links.new(disp_node.outputs[0], out_mat.inputs[2])
-            coatMat.cycles.displacement_method = 'BOTH'
+            coatMat.displacement_method = 'BOTH'
 
         else:
             if (texcoat['alpha'] != []):

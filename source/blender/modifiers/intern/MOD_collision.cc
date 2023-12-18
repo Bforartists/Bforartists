@@ -109,7 +109,8 @@ static void deform_verts(ModifierData *md,
     float current_time = 0;
     int mvert_num = 0;
 
-    BKE_mesh_vert_coords_apply(mesh, reinterpret_cast<const float(*)[3]>(positions.data()));
+    mesh->vert_positions_for_write().copy_from(positions);
+    mesh->tag_positions_changed();
 
     current_time = DEG_get_ctime(ctx->depsgraph);
 
@@ -135,7 +136,11 @@ static void deform_verts(ModifierData *md,
 
     if (collmd->time_xnew == -1000) { /* first time */
 
-      collmd->x = BKE_mesh_vert_coords_alloc(mesh, &mvert_num); /* frame start position */
+      mvert_num = mesh->totvert;
+      collmd->x = static_cast<float(*)[3]>(
+          MEM_malloc_arrayN(mvert_num, sizeof(float[3]), __func__));
+      blender::MutableSpan(reinterpret_cast<blender::float3 *>(collmd->x), mvert_num)
+          .copy_from(mesh->vert_positions());
 
       for (uint i = 0; i < mvert_num; i++) {
         /* we save global positions */
@@ -154,7 +159,7 @@ static void deform_verts(ModifierData *md,
         collmd->tri_num = looptris.size();
         MVertTri *tri = static_cast<MVertTri *>(
             MEM_mallocN(sizeof(*tri) * collmd->tri_num, __func__));
-        BKE_mesh_runtime_verttri_from_looptri(
+        BKE_mesh_runtime_verttris_from_looptris(
             tri, mesh->corner_verts().data(), looptris.data(), collmd->tri_num);
         collmd->tri = tri;
       }

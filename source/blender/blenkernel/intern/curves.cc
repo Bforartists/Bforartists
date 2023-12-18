@@ -35,8 +35,8 @@
 #include "BKE_idtype.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
-#include "BKE_lib_remap.h"
-#include "BKE_main.h"
+#include "BKE_lib_remap.hh"
+#include "BKE_main.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
@@ -169,23 +169,6 @@ void *BKE_curves_add(Main *bmain, const char *name)
   Curves *curves = static_cast<Curves *>(BKE_id_new(bmain, ID_CV, name));
 
   return curves;
-}
-
-BoundBox BKE_curves_boundbox_get(Object *ob)
-{
-  using namespace blender;
-  BLI_assert(ob->type == OB_CURVES);
-  const Curves *curves_id = static_cast<const Curves *>(ob->data);
-  const bke::CurvesGeometry &curves = curves_id->geometry.wrap();
-
-  BoundBox bb;
-  if (const std::optional<Bounds<float3>> bounds = curves.bounds_min_max()) {
-    BKE_boundbox_init_from_minmax(&bb, bounds->min, bounds->max);
-  }
-  else {
-    BKE_boundbox_init_from_minmax(&bb, float3(-1), float3(1));
-  }
-  return bb;
 }
 
 bool BKE_curves_attribute_required(const Curves * /*curves*/, const char *name)

@@ -43,7 +43,7 @@
 
 #include "BKE_action.h"
 #include "BKE_blender_version.h"
-#include "BKE_blendfile.h"
+#include "BKE_blendfile.hh"
 #include "BKE_cachefile.h"
 #include "BKE_colorband.h"
 #include "BKE_colortools.h"
@@ -58,7 +58,7 @@
 #include "BKE_lib_id.h"
 #include "BKE_lib_override.hh"
 #include "BKE_linestyle.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
 #include "BKE_packedFile.h"

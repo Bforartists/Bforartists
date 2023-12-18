@@ -55,13 +55,13 @@
 #include "BKE_image_format.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_preview_image.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.hh" /* BKE_ST_MAXNAME */
-#include "BKE_unit.h"
+#include "BKE_unit.hh"
 
 #include "BKE_idtype.h"
 
@@ -1892,7 +1892,9 @@ static void WM_OT_search_menu(wmOperatorType *ot)
 {
   ot->name = "Search Menu";
   ot->idname = "WM_OT_search_menu";
-  ot->description = "Pop-up a search over all menus in the current context";
+  ot->description =
+      "Search for menu items in current context, means in general or in a specific menu\nIn Add menus, expand the menu and start to type to start the "
+      "search\nIn other menus, expand the menu and press spacebar to start the search";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -1903,7 +1905,7 @@ static void WM_OT_search_operator(wmOperatorType *ot)
 {
   ot->name = "Search Operator";
   ot->idname = "WM_OT_search_operator";
-  ot->description = "Pop-up a search over all available operators in current context";
+  ot->description = "Search for all available operators";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -1914,7 +1916,9 @@ static void WM_OT_search_single_menu(wmOperatorType *ot)
 {
   ot->name = "Search Single Menu";
   ot->idname = "WM_OT_search_single_menu";
-  ot->description = "Pop-up a search a menu in current context \nAlternatively, press spacebar or type to search";
+  ot->description =
+      "Search for menu items in this menu\nAlternatively, expand the add menu and start to type to start the "
+      "search";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -2386,8 +2390,7 @@ static void radial_control_set_tex(RadialControl *rc)
                                             ibuf->y,
                                             1,
                                             GPU_R8,
-                                            GPU_TEXTURE_USAGE_SHADER_READ |
-                                                GPU_TEXTURE_USAGE_MIP_SWIZZLE_VIEW,
+                                            GPU_TEXTURE_USAGE_SHADER_READ,
                                             ibuf->float_buffer.data);
 
         GPU_texture_filter_mode(rc->texture, true);

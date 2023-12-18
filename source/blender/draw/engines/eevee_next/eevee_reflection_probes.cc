@@ -207,7 +207,6 @@ void ReflectionProbeModule::begin_sync()
   update_probes_this_sample_ = false;
   if (update_probes_next_sample_) {
     update_probes_this_sample_ = true;
-    instance_.sampling.reset();
   }
 
   {
@@ -238,7 +237,7 @@ static int layer_subdivision_for(const int max_resolution,
   return max_ii(int(log2(max_resolution)) - i_probe_resolution, 0);
 }
 
-void ReflectionProbeModule::sync_world(::World *world, WorldHandle & /*ob_handle*/)
+void ReflectionProbeModule::sync_world(::World *world)
 {
   ReflectionProbe &probe = probes_.lookup(world_object_key_);
 
@@ -254,6 +253,7 @@ void ReflectionProbeModule::sync_world(::World *world, WorldHandle & /*ob_handle
 void ReflectionProbeModule::sync_world_lookdev()
 {
   ReflectionProbe &probe = probes_.lookup(world_object_key_);
+
   const eLightProbeResolution resolution = reflection_probe_resolution();
   int layer_subdivision = layer_subdivision_for(max_resolution_, resolution);
   if (layer_subdivision != probe.atlas_coord.layer_subdivision) {
@@ -388,10 +388,6 @@ bool ReflectionProbeModule::remove_unused_probes()
 {
   const int64_t removed_count = probes_.remove_if(
       [](const ReflectionProbes::Item &item) { return !item.value.is_probe_used; });
-
-  if (removed_count > 0) {
-    instance_.sampling.reset();
-  }
   return removed_count > 0;
 }
 

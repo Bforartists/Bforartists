@@ -55,6 +55,7 @@ class VIEW3D_MT_materialutilities_assign_material(bpy.types.Menu):
         layout.separator()
 
         for material_name, material in materials:
+            material.preview_ensure()
             op = layout.operator(bl_id,
                     text = material_name,
                     icon_value = material.preview.icon_id)
@@ -119,6 +120,7 @@ class VIEW3D_MT_materialutilities_select_by_material(bpy.types.Menu):
                 # There's no point in showing materials with 0 users
                 #  (It will still show materials with fake user though)
                 if material.users > 0:
+                    material.preview_ensure()
                     op = layout.operator(bl_id,
                                     text = material_name,
                                     icon_value = material.preview.icon_id
@@ -140,6 +142,7 @@ class VIEW3D_MT_materialutilities_select_by_material(bpy.types.Menu):
                     if material.name in materials_added:
                         continue
 
+                    material.preview_ensure()
                     op = layout.operator(bl_id,
                                     text = material.name,
                                     icon_value = material.preview.icon_id

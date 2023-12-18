@@ -238,13 +238,13 @@ class TEXT_MT_redraw_timer(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("wm.redraw_timer", text = 'Draw Region').type ='DRAW'
-        layout.operator("wm.redraw_timer", text = 'Draw Region  Swap').type ='DRAW_SWAP'
-        layout.operator("wm.redraw_timer", text = 'Draw Window').type ='DRAW_WIN'
-        layout.operator("wm.redraw_timer", text = 'Draw Window  Swap').type ='DRAW_WIN_SWAP'
-        layout.operator("wm.redraw_timer", text = 'Anim Step').type ='ANIM_STEP'
-        layout.operator("wm.redraw_timer", text = 'Anim Play').type ='ANIM_PLAY'
-        layout.operator("wm.redraw_timer", text = 'Undo/Redo').type ='UNDO'
+        layout.operator("wm.redraw_timer", text = 'Draw Region', icon = 'TIME').type ='DRAW'
+        layout.operator("wm.redraw_timer", text = 'Draw Region Swap', icon = 'TIME').type ='DRAW_SWAP'
+        layout.operator("wm.redraw_timer", text = 'Draw Window', icon = 'TIME').type ='DRAW_WIN'
+        layout.operator("wm.redraw_timer", text = 'Draw Window  Swap', icon = 'TIME').type ='DRAW_WIN_SWAP'
+        layout.operator("wm.redraw_timer", text = 'Anim Step', icon = 'TIME').type ='ANIM_STEP'
+        layout.operator("wm.redraw_timer", text = 'Anim Play', icon = 'TIME').type ='ANIM_PLAY'
+        layout.operator("wm.redraw_timer", text = 'Undo/Redo', icon = 'TIME').type ='UNDO'
 
 
 class TEXT_MT_text(Menu):
@@ -284,7 +284,7 @@ class TEXT_MT_text(Menu):
 
         layout.separator()
 
-        layout.menu("TEXT_MT_redraw_timer", icon='TIME') #Redraw timer sub menu - Debug stuff
+        layout.menu("TEXT_MT_redraw_timer") #Redraw timer sub menu - Debug stuff
         layout.operator("wm.debug_menu", icon='DEBUG') # debug menu
         layout.operator("script.reload", icon='FILE_REFRESH') # Reload all python scripts. Mainly meant for the UI scripts.
 

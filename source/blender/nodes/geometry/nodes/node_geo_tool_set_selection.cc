@@ -37,14 +37,15 @@ static void node_geo_exec(GeoNodeExecParams params)
   if (!check_tool_context_and_error(params)) {
     return;
   }
-  if (params.user_data()->operator_data->mode == OB_MODE_OBJECT) {
+  GeometrySet geometry = params.extract_input<GeometrySet>("Geometry");
+  if (params.user_data()->call_data->operator_data->mode == OB_MODE_OBJECT) {
     params.error_message_add(NodeWarningType::Error,
                              "Selection control is not supported in object mode");
+    params.set_output("Geometry", std::move(geometry));
     return;
   }
   const Field<bool> selection = params.extract_input<Field<bool>>("Selection");
   const eAttrDomain domain = eAttrDomain(params.node().custom1);
-  GeometrySet geometry = params.extract_input<GeometrySet>("Geometry");
   geometry.modify_geometry_sets([&](GeometrySet &geometry) {
     if (Mesh *mesh = geometry.get_mesh_for_write()) {
       switch (domain) {
@@ -57,14 +58,14 @@ static void node_geo_exec(GeoNodeExecParams params)
                                              ".select_vert",
                                              ATTR_DOMAIN_POINT,
                                              selection);
-          BKE_mesh_flush_select_from_verts(mesh);
+          bke::mesh_select_vert_flush(*mesh);
           break;
         case ATTR_DOMAIN_EDGE:
           bke::try_capture_field_on_geometry(geometry.get_component_for_write<MeshComponent>(),
                                              ".select_edge",
                                              ATTR_DOMAIN_EDGE,
                                              selection);
-          BKE_mesh_flush_select_from_edges(mesh);
+          bke::mesh_select_edge_flush(*mesh);
           break;
         case ATTR_DOMAIN_FACE:
           /* Remove attributes in case they are on the wrong domain, which can happen after
@@ -75,7 +76,7 @@ static void node_geo_exec(GeoNodeExecParams params)
                                              ".select_poly",
                                              ATTR_DOMAIN_FACE,
                                              selection);
-          BKE_mesh_flush_select_from_faces(mesh);
+          bke::mesh_select_face_flush(*mesh);
           break;
         default:
           break;

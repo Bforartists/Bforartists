@@ -37,7 +37,7 @@
 #include "BKE_global.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
@@ -120,13 +120,14 @@ static std::optional<ComputeContextHash> get_compute_context_hash_for_node_edito
   ComputeContextBuilder compute_context_builder;
   for (const int i : treepath.index_range().drop_back(1)) {
     /* The tree path contains the name of the node but not its ID. */
-    const bNode *node = nodeFindNodebyName(treepath[i]->nodetree, treepath[i + 1]->node_name);
+    bNodeTree *tree = treepath[i]->nodetree;
+    const bNode *node = nodeFindNodebyName(tree, treepath[i + 1]->node_name);
     if (node == nullptr) {
       /* The current tree path is invalid, probably because some parent group node has been
        * deleted. */
       return std::nullopt;
     }
-    compute_context_builder.push<bke::NodeGroupComputeContext>(*node);
+    compute_context_builder.push<bke::GroupNodeComputeContext>(*node, *tree);
   }
   return compute_context_builder.hash();
 }
@@ -451,7 +452,7 @@ static void connect_node_to_surface_output(const Span<bNodeTreePath *> treepath,
 static void connect_nodes_to_aovs(const Span<bNodeTreePath *> treepath,
                                   const Span<NodeSocketPair> &nodesocket_span)
 {
-  if (nodesocket_span.size() == 0) {
+  if (nodesocket_span.is_empty()) {
     return;
   }
   bNodeTree *main_nt = treepath.first()->nodetree;
