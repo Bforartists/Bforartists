@@ -17,7 +17,7 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 
 class DOPESHEET_PT_Sequence(bpy.types.Panel):
-    bl_label = "Scene Syncronization"
+    bl_label = "3D View Syncronization"
     bl_space_type = 'DOPESHEET_EDITOR'
     bl_region_type = 'HEADER'
     bl_parent_id = "DOPESHEET_PT_view_view_options"
@@ -59,7 +59,7 @@ class SEQUENCE_MT_active_shot_scene_select(bpy.types.Menu):
 
     def draw(self, context):
         strip, _ = get_sync_master_strip(True)
-        # Draw a menu entry for each valid shot scene.
+        # Draw a menu entry for each valid scene.
         for scene in get_valid_shot_scenes():
             props = self.layout.operator(
                 "sequence.active_shot_scene_set",
@@ -114,7 +114,7 @@ class SEQUENCE_UL_shot(bpy.types.UIList):
 
 
 class VIEW3D_PT_sequence(bpy.types.Panel):
-    bl_label = "Scene Syncronization"
+    bl_label = "3D View Syncronization"
     bl_category = "View"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -135,16 +135,18 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
             or not master_scene.sequence_editor
             or not master_scene.sequence_editor.sequences
         ):
+            self.layout.label(text="Set the Master scene to sync from Sequencer", icon="QUESTION")
             return
 
-        # Draw shot lists in the master sequence.
+        self.layout.label(text="Shows the Active Scene Strips from Sequencer", icon="QUESTION")
+        # Draw scene lists in the master sequence.
         self.draw_shots_list(context, master_scene.sequence_editor)
-        # Draw active shot details if any.
+        # Draw active scene details if any.
         if strip := get_sync_master_strip(use_cache=True)[0]:
             self.draw_shot_strip(context, strip)
 
     def draw_shots_list(self, context, sed):
-        """Draw scene list in the given sequence editor."""
+        """Draw scene list in the given sequence editor"""
         self.layout.template_list(
             SEQUENCE_UL_shot.bl_idname,
             "",
@@ -159,6 +161,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
     # Camera Sub Panels
     def draw_shot_strip(self, context, strip):
         """Draw scene strip details."""
+        self.layout.label(text="Scene Strip Settings:")
         shot_box = self.layout.box()
         row = shot_box.row(align=True)
         row.label(text=strip.name, icon="SEQUENCE")
