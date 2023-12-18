@@ -78,7 +78,7 @@ def ensure_sequencer_frame_visible(context: bpy.types.Context, frame: int):
 class SEQUENCER_OT_shot_new(bpy.types.Operator):
     bl_idname = "sequencer.shot_new"
     bl_label = "New Shot"
-    bl_description = "Create a new shot and append it to the timeline"
+    bl_description = "Create a new scene and append it to the timeline"
     bl_options = {"REGISTER", "UNDO"}
 
     template_names = []
@@ -118,7 +118,7 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
 
     scene_mode: bpy.props.EnumProperty(
         name="Scene",
-        description="Shot creation mode",
+        description="Scene creation mode",
         items=(
             ("EXISTING", "Use Existing", "Use existing scene"),
             ("TEMPLATE", "New From Template", "Create a new scene from a template"),
@@ -129,19 +129,19 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
 
     source_scene: bpy.props.EnumProperty(
         name="Source",
-        description="The scene the new shot will use (either directly or a copy of it)",
+        description="The scene the new scene will use (either directly or a copy of it)",
         items=get_template_scenes,
     )
 
     name: bpy.props.StringProperty(
-        name="Shot Name",
+        name="Scene Name",
         default="",
         options={"SKIP_SAVE"},
     )
 
     naming: bpy.props.PointerProperty(
         type=ShotNamingProperty,
-        name="Shot Naming",
+        name="Scene Naming",
     )
 
     duration: bpy.props.IntProperty(
@@ -240,10 +240,10 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
         # Move current frame to the new strip's start frame.
         context.scene.frame_set(insert_frame)
 
-        # Ensure newly created shot is visible.
+        # Ensure newly created scene is visible.
         ensure_sequencer_frame_visible(context, new_strip.frame_final_end)
 
-        self.report({"INFO"}, f"Created new shot '{new_strip.name}'")
+        self.report({"INFO"}, f"Created new scene '{new_strip.name}'")
 
         return {"FINISHED"}
 
@@ -251,7 +251,7 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
 class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
     bl_idname = "sequencer.shot_duplicate"
     bl_label = "Duplicate"
-    bl_description = "Duplicate selected shot(s) and append them to the timeline"
+    bl_description = "Duplicate selected scene(s) and append them to the timeline"
     bl_options = {"UNDO"}
 
     duplicate_scene: bpy.props.BoolProperty(
@@ -327,15 +327,15 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
         # Ensure created strips are visible.
         ensure_sequencer_frame_visible(context, new_strips[0].frame_final_end)
 
-        self.report({"INFO"}, f"Duplicated {len(new_strips)} shot(s)")
+        self.report({"INFO"}, f"Duplicated {len(new_strips)} scene(s)")
 
         return {"FINISHED"}
 
 
 class SEQUENCER_OT_shot_delete(bpy.types.Operator):
     bl_idname = "sequencer.shot_delete"
-    bl_label = "Delete Shot"
-    bl_description = "Delete selected shot(s) and optionally attached datablocks"
+    bl_label = "Delete Scene"
+    bl_description = "Delete selected scene(s) and optionally attached datablocks"
     bl_options = {"UNDO"}
 
     delete_scenes: bpy.props.BoolProperty(
@@ -360,7 +360,7 @@ class SEQUENCER_OT_shot_delete(bpy.types.Operator):
             context.scene.sequence_editor.sequences
         )
         if not self.strips:
-            self.report({"ERROR"}, "No selected shots")
+            self.report({"ERROR"}, "No selected scenes")
             return {"CANCELLED"}
 
         self.scenes = set([s.scene for s in self.strips if s.scene])
@@ -368,7 +368,7 @@ class SEQUENCER_OT_shot_delete(bpy.types.Operator):
 
     def draw(self, context):
         row = self.layout.row()
-        row.label(text=f"Delete {len(self.strips)} selected shot strip(s)?")
+        row.label(text=f"Delete {len(self.strips)} selected scene strip(s)?")
         box = self.layout.box()
         box.label(text="Advanced", icon="SETTINGS")
         row = box.row(align=True)
@@ -403,7 +403,7 @@ class SEQUENCER_OT_shot_delete(bpy.types.Operator):
         context.area.tag_redraw()
         self.report(
             {"INFO"},
-            f"Deleted {len(strips)} shots and {deleted_datablocks} datablock(s)",
+            f"Deleted {len(strips)} scenes and {deleted_datablocks} datablock(s)",
         )
 
         return {"FINISHED"}
@@ -412,7 +412,7 @@ class SEQUENCER_OT_shot_delete(bpy.types.Operator):
 class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
     bl_idname = "sequencer.shot_timing_adjust"
     bl_label = "Adjust Timing"
-    bl_description = "Adjust the timing of the active shot interactively"
+    bl_description = "Adjust the timing of the active scene interactively"
     bl_options = {"GRAB_CURSOR_X", "BLOCKING", "UNDO"}
 
     offset: bpy.props.IntProperty(
@@ -460,7 +460,7 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
     def setup(self, context: bpy.types.Context):
         self.strip = self.get_active_strip(context)
         if not self.strip:
-            self.report({"ERROR"}, "No current Shot Strip")
+            self.report({"ERROR"}, "No current Scene Strip")
             return False
         return True
 
@@ -488,7 +488,7 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
     def update_header_text(self, context, event):
         text = (
             f"Offset: {self.offset}"
-            f" | New Shot Duration: {self.strip.frame_final_duration}"
+            f" | New Scene Duration: {self.strip.frame_final_duration}"
         )
         context.area.header_text_set(text)
 
@@ -581,12 +581,12 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
 class SEQUENCER_OT_shot_rename(bpy.types.Operator):
     bl_idname = "sequencer.shot_rename"
     bl_label = "Rename"
-    bl_description = "Rename the active shot"
+    bl_description = "Rename the active scene"
     bl_options = {"REGISTER", "UNDO"}
 
     naming: bpy.props.PointerProperty(
         type=ShotNamingProperty,
-        description="Name of the shot using shot naming system",
+        description="Name of the scene using shot naming system",
     )
 
     rename_scene: bpy.props.BoolProperty(
@@ -664,7 +664,7 @@ class SEQUENCER_OT_shot_rename(bpy.types.Operator):
 
         # First, evaluate whether all renaming steps (strip/scene) can occur.
         do_rename_strip = do_rename_scene = False
-        # Evaluate shot strip renaming.
+        # Evaluate scene strip renaming.
         if new_name != shot_strip.name:
             # Ensure strip name is available.
             if new_name in context.scene.sequence_editor.sequences:
