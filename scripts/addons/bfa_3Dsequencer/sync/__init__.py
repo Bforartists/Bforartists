@@ -2,7 +2,7 @@
 
 
 """
-Timeline Synchronization package.
+3D View Synchronization package.
 """
 
 from bfa_3Dsequencer.sync import (

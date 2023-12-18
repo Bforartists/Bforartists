@@ -27,7 +27,7 @@ def get_shot_prefix_enum(self, ctx):
 
 class SEQUENCER_OT_edit_conform_shots_from_panels(bpy.types.Operator):
     bl_idname = "sequencer.edit_conform_shots_from_panels"
-    bl_label = "Generate Shots From Panels"
+    bl_label = "Generate scenes From Panels"
     bl_description = "Generate a scene strip track based on a media track with panels"
     bl_options = {"UNDO", "REGISTER"}
 
@@ -38,14 +38,14 @@ class SEQUENCER_OT_edit_conform_shots_from_panels(bpy.types.Operator):
     )
 
     shot_id_regex: bpy.props.StringProperty(
-        name="Shot ID Regex",
-        description="Single capture group regex to extract shot id from panel names",
+        name="Scene ID Regex",
+        description="Single capture group regex to extract scene id from panel names",
         default=r"\w*_s(\d*)_?\w*",
     )
 
     shot_prefix: bpy.props.EnumProperty(
-        name="Shot Prefix",
-        description="Shot prefix",
+        name="Scene Prefix",
+        description="Scene prefix",
         items=get_shot_prefix_enum,
     )
 
@@ -62,19 +62,19 @@ class SEQUENCER_OT_edit_conform_shots_from_panels(bpy.types.Operator):
             if s != context.scene and s.camera
         ]
         if not scenes:
-            scenes = [("NONE", "No Valid Shot Scene", "No valid shot scene found")]
+            scenes = [("NONE", "No Valid Scene", "No valid scene found")]
         SEQUENCER_OT_edit_conform_shots_from_panels._scenes = scenes
         return SEQUENCER_OT_edit_conform_shots_from_panels._scenes
 
     shot_scene: bpy.props.EnumProperty(
         name="Shot Scene",
-        description="The scene the generated shot scene strips should use",
+        description="The scene the generated scene strips should use",
         items=get_scenes,
     )
 
     target_channel: bpy.props.IntProperty(
         name="Target Channel",
-        description="Channel to create the shot scene strips on",
+        description="Channel to create the scene strips on",
         default=2,
     )
 
@@ -87,7 +87,7 @@ class SEQUENCER_OT_edit_conform_shots_from_panels(bpy.types.Operator):
 
     def execute(self, context: bpy.types.Context):
         if self.shot_scene == "NONE":
-            self.report({"ERROR"}, "No valid shot Scene")
+            self.report({"ERROR"}, "No valid Scene")
             return {"CANCELLED"}
 
         seq_editor = context.scene.sequence_editor
@@ -98,12 +98,12 @@ class SEQUENCER_OT_edit_conform_shots_from_panels(bpy.types.Operator):
             key=lambda x: x.frame_final_start,
         )
 
-        # Build strip groups based on shot regex.
+        # Build strip groups based on scene regex.
         strips_groups = gather_strips_groups_by_regex(ref_strips, self.shot_id_regex)
 
         shot_naming = ShotNaming()
 
-        # Build shot scene strips based on reference strip groups.
+        # Build scene strips based on reference strip groups.
         shot_scene = bpy.data.scenes[self.shot_scene]
         for number, group in enumerate(strips_groups):
             shot_name = shot_naming.build_shot_name((number + 1) * 10, self.shot_prefix)
@@ -127,14 +127,14 @@ class SEQUENCER_OT_edit_conform_shots_from_panels(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Created {len(strips_groups)} shots from {len(ref_strips)} panels",
+            f"Created {len(strips_groups)} scenes from {len(ref_strips)} panels",
         )
         return {"FINISHED"}
 
 
 class SEQUENCER_OT_edit_conform_shots_from_editorial(bpy.types.Operator):
     bl_idname = "sequencer.edit_conform_shots_from_editorial"
-    bl_label = "Conform Shots From Editorial"
+    bl_label = "Conform Scenes From Editorial"
     bl_description = (
         "Generate a scene strip track based on a media track with movie strips"
     )
@@ -153,14 +153,14 @@ class SEQUENCER_OT_edit_conform_shots_from_editorial(bpy.types.Operator):
     )
 
     shot_prefix: bpy.props.EnumProperty(
-        name="Shot Prefix",
-        description="Shot prefix",
+        name="Scene Prefix",
+        description="Scene prefix",
         items=get_shot_prefix_enum,
     )
 
     shot_id_regex: bpy.props.StringProperty(
-        name="Shot ID Regex",
-        description="Single capture group regex to extract shot id from panel names",
+        name="Scene ID Regex",
+        description="Single capture group regex to extract scene id from panel names",
         default=r"\w*_PSH(\d*)\.\w*",
     )
 
@@ -243,7 +243,7 @@ class SEQUENCER_OT_edit_conform_shots_from_editorial(bpy.types.Operator):
                 source_frame_start += self.freeze_frame_handles[0]
                 source_frame_end -= self.freeze_frame_handles[1]
 
-            # Try to extract shot name from strip name.
+            # Try to extract scene name from strip name.
             res = regex.search(strip.name)
             if res:
                 shot_number = int(res.group(1))
@@ -262,7 +262,7 @@ class SEQUENCER_OT_edit_conform_shots_from_editorial(bpy.types.Operator):
             start_offset = frame_start + strip.frame_offset_start - 1
             slip_shot_content(shot_strip, start_offset)
 
-            # Detect if shot is exceeding initial rendering range.
+            # Detect if scene is exceeding initial rendering range.
             if self.freeze_frame_handles_warning:
                 frame_start = remap_frame_value(
                     shot_strip.frame_final_start, shot_strip
