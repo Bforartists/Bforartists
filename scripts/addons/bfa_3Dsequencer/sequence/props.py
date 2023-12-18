@@ -20,19 +20,19 @@ class SequenceSettings(bpy.types.PropertyGroup):
     )
 
     def shot_active_index_get_cb(self):
-        """Get sequence active shot index."""
+        """Get sequence active scene index."""
         return get_sync_settings().last_master_strip_idx
 
     def shot_active_index_set_cb(self, idx):
-        """Set sequence active shot index."""
-        # Move to beginning of shot strip in master scene.
+        """Set sequence active scene index."""
+        # Move to beginning of scene strip in master scene.
         scene = get_sync_settings().master_scene
         frame = scene.sequence_editor.sequences[idx].frame_final_start
         scene.frame_set(frame)
 
     shot_active_index: bpy.props.IntProperty(
-        name="Active Shot Index",
-        description="Index of the active shot in sequence",
+        name="Active Scene Index",
+        description="Index of the active scene in sequence",
         get=shot_active_index_get_cb,
         set=shot_active_index_set_cb,
         options=set(),

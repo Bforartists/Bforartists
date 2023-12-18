@@ -92,7 +92,7 @@ class SEQUENCE_OT_active_shot_camera_set(bpy.types.Operator):
 
     camera: bpy.props.StringProperty(
         name="Camera",
-        description="Scene to set on active shot",
+        description="Scene to set on active",
         options={"SKIP_SAVE"},
     )
 
@@ -197,7 +197,7 @@ class SEQUENCE_OT_check_obj_users_scene(bpy.types.Operator):
 class SEQUENCE_OT_child_scene_setup_create(bpy.types.Operator):
     bl_idname = "sequence.child_scene_setup_create"
     bl_label = "Create Child Scene Setup"
-    bl_description = "From the current scene, make a new scene and add a new collection"
+    bl_description = "Duplicate Linked active scene as a new scene\n Then update active scene strip to thenew scene"
     bl_property = "setup_name"
     bl_options = {"UNDO"}
 

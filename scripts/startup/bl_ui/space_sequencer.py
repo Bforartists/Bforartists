@@ -171,8 +171,7 @@ class SEQUENCER_HT_header(Header):
 
         layout.separator_spacer()
         row = layout.row() # BFA - 3D Sequencer
-        row.label(text="Master Scene:", icon="SEQ_STRIP_DUPLICATE") # BFA - 3D Sequencer
-        row.ui_units_x = 15 # BFA - 3D Sequencer
+        row.label(text="Active Scene:", icon="SEQUENCE") # BFA - 3D Sequencer
         row.template_ID(st, "scene_override", unlink="sequencer.remove_scene_override") # BFA - 3D Sequencer
 
         if st.view_type == 'PREVIEW':
@@ -3135,7 +3134,7 @@ classes = (
 
 #BFA
     SEQUENCER_PT_view_options,
-    SEQUENCER_MT_fades_add
+    SEQUENCER_MT_fades_add,
 )
 
 if __name__ == "__main__":  # only for live edit.

@@ -6,11 +6,10 @@ import bpy
 from bfa_3Dsequencer.sync.core import get_sync_settings
 from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
-
 class SEQUENCER_PT_SyncPanel(bpy.types.Panel):
-    """Scene Synchronization Panel."""
+    """3D View Synchronization Panel."""
 
-    bl_label = "Scene Synchronization"
+    bl_label = "3D View Synchronization"
     bl_space_type = "SEQUENCE_EDITOR"
     bl_region_type = "UI"
     bl_category = "View"
@@ -19,17 +18,19 @@ class SEQUENCER_PT_SyncPanel(bpy.types.Panel):
         self.layout.use_property_split = True
         self.layout.use_property_decorate = False
         settings = get_sync_settings()
-        self.layout.operator(
-            "wm.timeline_sync_toggle",
-            text="Synchronize",
-            icon="UV_SYNC_SELECT",
-            depress=settings.enabled,
-        )
+
+        # Master Scene prop
         self.layout.prop(settings, "master_scene", text="Master Scene:", icon="SEQ_STRIP_DUPLICATE")
+
+        # Operator to syncronize viewport
+        self.layout.operator("wm.timeline_sync_toggle", text="Synchronize to 3D View", icon="VIEW3D", depress=settings.enabled)
+
+        # Operator to toggle active scene
+        self.layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="SCENE_DATA")
 
 
 class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
-    """Scene Synchronization advanced settings Panel."""
+    """3D View Synchronization advanced settings Panel."""
 
     bl_label = "Advanced Settings"
     bl_parent_id = "SEQUENCER_PT_SyncPanel"
