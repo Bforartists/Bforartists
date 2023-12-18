@@ -8,12 +8,12 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 
 class SEQUENCER_PT_SyncPanel(bpy.types.Panel):
-    """Timeline Synchronization Panel."""
+    """Scene Synchronization Panel."""
 
-    bl_label = "Timeline Synchronization"
+    bl_label = "Scene Synchronization"
     bl_space_type = "SEQUENCE_EDITOR"
     bl_region_type = "UI"
-    bl_category = "Sequencer"
+    bl_category = "View"
 
     def draw(self, context):
         self.layout.use_property_split = True
@@ -25,11 +25,11 @@ class SEQUENCER_PT_SyncPanel(bpy.types.Panel):
             icon="UV_SYNC_SELECT",
             depress=settings.enabled,
         )
-        self.layout.prop(settings, "master_scene")
+        self.layout.prop(settings, "master_scene", text="Master Scene:", icon="SEQ_STRIP_DUPLICATE")
 
 
 class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
-    """Timeline Synchronization advanced settings Panel."""
+    """Scene Synchronization advanced settings Panel."""
 
     bl_label = "Advanced Settings"
     bl_parent_id = "SEQUENCER_PT_SyncPanel"
