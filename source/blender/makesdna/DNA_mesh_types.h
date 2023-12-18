@@ -11,7 +11,6 @@
 #include "DNA_ID.h"
 #include "DNA_customdata_types.h"
 #include "DNA_defs.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_session_uuid_types.h"
 
 /** Workaround to forward-declare C++ type in C header. */
@@ -19,13 +18,18 @@
 
 #  include <optional>
 
-#  include "BLI_bounds_types.hh"
 #  include "BLI_math_vector_types.hh"
-#  include "BLI_offset_indices.hh"
 
 namespace blender {
-template<typename T> class Span;
+template<typename T> struct Bounds;
+namespace offset_indices {
+template<typename T> struct GroupedSpan;
+template<typename T> class OffsetIndices;
+}  // namespace offset_indices
+using offset_indices::GroupedSpan;
+using offset_indices::OffsetIndices;
 template<typename T> class MutableSpan;
+template<typename T> class Span;
 namespace bke {
 struct MeshRuntime;
 class AttributeAccessor;
@@ -303,7 +307,6 @@ typedef struct Mesh {
 
   /**
    * Calculate the largest and smallest position values of vertices.
-   * \note Does not take non-mesh data (edit mesh) into account, see #BKE_mesh_wrapper_minmax,
    */
   std::optional<blender::Bounds<blender::float3>> bounds_min_max() const;
 
@@ -396,6 +399,21 @@ typedef struct Mesh {
    * using #face_normals() or #vert_normals() when possible (see #normals_domain()).
    */
   blender::Span<blender::float3> corner_normals() const;
+
+  /** Call after changing vertex positions to tag lazily calculated caches for recomputation. */
+  void tag_positions_changed();
+  /** Call after moving every mesh vertex by the same translation. */
+  void tag_positions_changed_uniformly();
+  /** Like #tag_positions_changed but doesn't tag normals; they must be updated separately. */
+  void tag_positions_changed_no_normals();
+  /** Call when changing "sharp_face" or "sharp_edge" data. */
+  void tag_sharpness_changed();
+  /** Call when face vertex order has changed but positions and faces haven't changed. */
+  void tag_face_winding_changed();
+  /** Call when new edges and vertices have been created but vertices and faces haven't changed. */
+  void tag_edges_split();
+  /** Call for topology updates not described by other update tags. */
+  void tag_topology_changed();
 #endif
 } Mesh;
 
@@ -453,7 +471,7 @@ enum {
   ME_AUTOSMOOTH_LEGACY = 1 << 5, /* deprecated */
   ME_FLAG_UNUSED_6 = 1 << 6,     /* cleared */
   ME_FLAG_UNUSED_7 = 1 << 7,     /* cleared */
-  ME_REMESH_REPROJECT_VERTEX_COLORS = 1 << 8,
+  ME_REMESH_REPROJECT_ATTRIBUTES = 1 << 8,
   ME_DS_EXPAND = 1 << 9,
   ME_SCULPT_DYNAMIC_TOPOLOGY = 1 << 10,
   /**
@@ -462,10 +480,10 @@ enum {
    * to improve performance and it only takes one bit, it is stored in the mesh instead.
    */
   ME_NO_OVERLAPPING_TOPOLOGY = 1 << 11,
-  ME_REMESH_REPROJECT_PAINT_MASK = 1 << 12,
+  ME_FLAG_UNUSED_8 = 1 << 12, /* deprecated */
   ME_REMESH_FIX_POLES = 1 << 13,
   ME_REMESH_REPROJECT_VOLUME = 1 << 14,
-  ME_REMESH_REPROJECT_SCULPT_FACE_SETS = 1 << 15,
+  ME_FLAG_UNUSED_9 = 1 << 15, /* deprecated */
 };
 
 #ifdef DNA_DEPRECATED_ALLOW

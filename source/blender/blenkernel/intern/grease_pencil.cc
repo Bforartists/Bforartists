@@ -232,6 +232,8 @@ namespace blender::bke::greasepencil {
 
 DrawingTransforms::DrawingTransforms(const Object &grease_pencil_ob)
 {
+  /* TODO: For now layer space = object space. This needs to change once the layers have a
+   * transform. */
   this->layer_space_to_world_space = float4x4_view(grease_pencil_ob.object_to_world);
   this->world_space_to_layer_space = math::invert(this->layer_space_to_world_space);
 }
@@ -769,7 +771,7 @@ FramesMapKey Layer::frame_key_at(const int frame_number) const
 {
   Span<int> sorted_keys = this->sorted_keys();
   /* No keyframes, return no drawing. */
-  if (sorted_keys.size() == 0) {
+  if (sorted_keys.is_empty()) {
     return -1;
   }
   /* Before the first drawing, return no drawing. */
@@ -1125,23 +1127,6 @@ GreasePencil *BKE_grease_pencil_copy_for_eval(const GreasePencil *grease_pencil_
       BKE_id_copy_ex(nullptr, &grease_pencil_src->id, nullptr, LIB_ID_COPY_LOCALIZE));
   grease_pencil->runtime->eval_frame = grease_pencil_src->runtime->eval_frame;
   return grease_pencil;
-}
-
-BoundBox BKE_grease_pencil_boundbox_get(Object *ob)
-{
-  using namespace blender;
-  BLI_assert(ob->type == OB_GREASE_PENCIL);
-  const GreasePencil *grease_pencil = static_cast<const GreasePencil *>(ob->data);
-
-  BoundBox bb;
-  if (const std::optional<Bounds<float3>> bounds = grease_pencil->bounds_min_max()) {
-    BKE_boundbox_init_from_minmax(&bb, bounds->min, bounds->max);
-  }
-  else {
-    BKE_boundbox_init_from_minmax(&bb, float3(-1), float3(1));
-  }
-
-  return bb;
 }
 
 static void grease_pencil_evaluate_modifiers(Depsgraph *depsgraph,
@@ -1676,7 +1661,7 @@ static void remove_drawings_unchecked(GreasePencil &grease_pencil,
                                       Span<int64_t> sorted_indices_to_remove)
 {
   using namespace blender::bke::greasepencil;
-  if (grease_pencil.drawing_array_num == 0 || sorted_indices_to_remove.size() == 0) {
+  if (grease_pencil.drawing_array_num == 0 || sorted_indices_to_remove.is_empty()) {
     return;
   }
   const int64_t drawings_to_remove = sorted_indices_to_remove.size();
@@ -1875,7 +1860,7 @@ blender::bke::greasepencil::Drawing *GreasePencil::get_editable_drawing_at(
   return &drawing->wrap();
 }
 
-std::optional<blender::Bounds<blender::float3>> GreasePencil::bounds_min_max() const
+std::optional<blender::Bounds<blender::float3>> GreasePencil::bounds_min_max(const int frame) const
 {
   using namespace blender;
   std::optional<Bounds<float3>> bounds;
@@ -1885,14 +1870,17 @@ std::optional<blender::Bounds<blender::float3>> GreasePencil::bounds_min_max() c
     if (!layer->is_visible()) {
       continue;
     }
-    if (const bke::greasepencil::Drawing *drawing = this->get_drawing_at(
-            layer, this->runtime->eval_frame))
-    {
+    if (const bke::greasepencil::Drawing *drawing = this->get_drawing_at(layer, frame)) {
       const bke::CurvesGeometry &curves = drawing->strokes();
       bounds = bounds::merge(bounds, curves.bounds_min_max());
     }
   }
   return bounds;
+}
+
+std::optional<blender::Bounds<blender::float3>> GreasePencil::bounds_min_max_eval() const
+{
+  return this->bounds_min_max(this->runtime->eval_frame);
 }
 
 blender::Span<const blender::bke::greasepencil::Layer *> GreasePencil::layers() const

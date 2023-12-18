@@ -85,8 +85,8 @@ class INFO_MT_area(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("screen.area_split", text="Horizontal Split", icon="SPLIT_HORIZONTAL").direction = 'HORIZONTAL'
-        layout.operator("screen.area_split", text="Vertical Split", icon="SPLIT_VERTICAL").direction = 'VERTICAL'
+        layout.operator("screen.area_split", icon="SPLIT_HORIZONTAL", text="Horizontal Split").direction = 'HORIZONTAL'
+        layout.operator("screen.area_split", icon="SPLIT_VERTICAL", text="Vertical Split").direction = 'VERTICAL'
 
         layout.separator()
 

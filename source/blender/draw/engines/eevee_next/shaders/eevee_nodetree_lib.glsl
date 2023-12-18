@@ -18,12 +18,14 @@ float g_holdout;
 
 /* Sampled closure parameters. */
 ClosureDiffuse g_diffuse_data;
+ClosureTranslucent g_translucent_data;
 ClosureReflection g_reflection_data;
 ClosureRefraction g_refraction_data;
 ClosureVolumeScatter g_volume_scatter_data;
 ClosureVolumeAbsorption g_volume_absorption_data;
 /* Random number per sampled closure type. */
 float g_diffuse_rand;
+float g_translucent_rand;
 float g_reflection_rand;
 float g_refraction_rand;
 float g_volume_scatter_rand;
@@ -63,6 +65,10 @@ void closure_weights_reset()
   g_diffuse_data.sss_radius = vec3(0.0);
   g_diffuse_data.sss_id = uint(0);
 
+  g_translucent_data.weight = 0.0;
+  g_translucent_data.color = vec3(0.0);
+  g_translucent_data.N = vec3(0.0);
+
   g_reflection_data.weight = 0.0;
   g_reflection_data.color = vec3(0.0);
   g_reflection_data.N = vec3(0.0);
@@ -82,10 +88,11 @@ void closure_weights_reset()
   g_volume_absorption_data.absorption = vec3(0.0);
 
 #if defined(GPU_FRAGMENT_SHADER)
-  g_diffuse_rand = g_reflection_rand = g_refraction_rand = g_closure_rand;
+  g_diffuse_rand = g_translucent_rand = g_reflection_rand = g_refraction_rand = g_closure_rand;
   g_volume_scatter_rand = g_volume_absorption_rand = g_closure_rand;
 #else
   g_diffuse_rand = 0.0;
+  g_translucent_rand = 0.0;
   g_reflection_rand = 0.0;
   g_refraction_rand = 0.0;
   g_volume_scatter_rand = 0.0;
@@ -106,7 +113,7 @@ Closure closure_eval(ClosureDiffuse diffuse)
 
 Closure closure_eval(ClosureTranslucent translucent)
 {
-  /* TODO */
+  SELECT_CLOSURE(g_translucent_data, g_translucent_rand, translucent);
   return Closure(0);
 }
 
@@ -232,19 +239,50 @@ float ambient_occlusion_eval(vec3 normal,
   // clang-format off
 #if defined(GPU_FRAGMENT_SHADER) && defined(MAT_AMBIENT_OCCLUSION) && !defined(MAT_DEPTH) && !defined(MAT_SHADOW)
   // clang-format on
+#  if 0 /* TODO(fclem): Finish inverted horizon scan. */
+  /* TODO(fclem): Replace eevee_ambient_occlusion_lib by eevee_horizon_scan_eval_lib when this is
+   * finished. */
+  vec3 vP = drw_point_world_to_view(g_data.P);
+  vec3 vN = drw_normal_world_to_view(normal);
+
+  ivec2 texel = ivec2(gl_FragCoord.xy);
+  vec2 noise;
+  noise.x = interlieved_gradient_noise(vec2(texel), 3.0, 0.0);
+  noise.y = utility_tx_fetch(utility_tx, vec2(texel), UTIL_BLUE_NOISE_LAYER).r;
+  noise = fract(noise + sampling_rng_2D_get(SAMPLING_AO_U));
+
+  ClosureOcclusion occlusion;
+  occlusion.N = (inverted != 0.0) ? -vN : vN;
+
+  HorizonScanContext ctx;
+  ctx.occlusion = occlusion;
+
+  horizon_scan_eval(vP,
+                    ctx,
+                    noise,
+                    uniform_buf.ao.pixel_size,
+                    max_distance,
+                    uniform_buf.ao.thickness,
+                    uniform_buf.ao.angle_bias,
+                    10,
+                    inverted != 0.0);
+
+  return saturate(ctx.occlusion_result.r);
+#  else
   vec3 vP = drw_point_world_to_view(g_data.P);
   ivec2 texel = ivec2(gl_FragCoord.xy);
   OcclusionData data = ambient_occlusion_search(
       vP, hiz_tx, texel, max_distance, inverted, sample_count);
 
   vec3 V = drw_world_incident_vector(g_data.P);
-  vec3 N = g_data.N;
+  vec3 N = normal;
   vec3 Ng = g_data.Ng;
 
   float unused_error, visibility;
   vec3 unused;
   ambient_occlusion_eval(data, texel, V, N, Ng, inverted, visibility, unused_error, unused);
   return visibility;
+#  endif
 #else
   return 1.0;
 #endif
@@ -507,7 +545,7 @@ vec3 coordinate_camera(vec3 P)
     vP = P;
   }
   else {
-#ifdef MAT_WORLD
+#ifdef MAT_GEOM_WORLD
     vP = drw_normal_world_to_view(P);
 #else
     vP = drw_point_world_to_view(P);
@@ -525,8 +563,12 @@ vec3 coordinate_screen(vec3 P)
     window.xy = vec2(0.5);
   }
   else {
+#ifdef MAT_GEOM_WORLD
+    window.xy = drw_point_view_to_screen(interp.P).xy;
+#else
     /* TODO(fclem): Actual camera transform. */
     window.xy = drw_point_world_to_screen(P).xy;
+#endif
     window.xy = window.xy * uniform_buf.camera.uv_scale + uniform_buf.camera.uv_bias;
   }
   return window;
@@ -534,7 +576,7 @@ vec3 coordinate_screen(vec3 P)
 
 vec3 coordinate_reflect(vec3 P, vec3 N)
 {
-#ifdef MAT_WORLD
+#ifdef MAT_GEOM_WORLD
   return N;
 #else
   return -reflect(drw_world_incident_vector(P), N);
@@ -543,7 +585,7 @@ vec3 coordinate_reflect(vec3 P, vec3 N)
 
 vec3 coordinate_incoming(vec3 P)
 {
-#ifdef MAT_WORLD
+#ifdef MAT_GEOM_WORLD
   return -P;
 #else
   return drw_world_incident_vector(P);

@@ -38,7 +38,7 @@
 #include "BKE_key.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_mball.h"
 #include "BKE_mesh.hh"
@@ -319,12 +319,12 @@ static Mesh *mesh_nurbs_displist_to_mesh(const Curve *cu, const ListBase *dispba
  * differently for curve and mesh, since curves use control points and handles to calculate the
  * bounding box, and mesh uses the tessellated curve.
  */
-static void mesh_copy_texture_space_from_curve_type(const Curve *cu, Mesh *me)
+static void mesh_copy_texture_space_from_curve_type(const Curve *cu, Mesh *mesh)
 {
-  me->texspace_flag = cu->texspace_flag & ~CU_TEXSPACE_FLAG_AUTO;
-  copy_v3_v3(me->texspace_location, cu->texspace_location);
-  copy_v3_v3(me->texspace_size, cu->texspace_size);
-  BKE_mesh_texspace_calc(me);
+  mesh->texspace_flag = cu->texspace_flag & ~CU_TEXSPACE_FLAG_AUTO;
+  copy_v3_v3(mesh->texspace_location, cu->texspace_location);
+  copy_v3_v3(mesh->texspace_size, cu->texspace_size);
+  BKE_mesh_texspace_calc(mesh);
 }
 
 Mesh *BKE_mesh_new_nomain_from_curve_displist(const Object *ob, const ListBase *dispbase)
@@ -374,12 +374,12 @@ static void appendPolyLineVert(ListBase *lb, uint index)
   BLI_addtail(lb, vl);
 }
 
-void BKE_mesh_to_curve_nurblist(const Mesh *me, ListBase *nurblist, const int edge_users_test)
+void BKE_mesh_to_curve_nurblist(const Mesh *mesh, ListBase *nurblist, const int edge_users_test)
 {
-  const Span<float3> positions = me->vert_positions();
-  const Span<blender::int2> mesh_edges = me->edges();
-  const blender::OffsetIndices polys = me->faces();
-  const Span<int> corner_edges = me->corner_edges();
+  const Span<float3> positions = mesh->vert_positions();
+  const Span<blender::int2> mesh_edges = mesh->edges();
+  const blender::OffsetIndices polys = mesh->faces();
+  const Span<int> corner_edges = mesh->corner_edges();
 
   /* only to detect edge polylines */
   int *edge_users;
@@ -690,8 +690,12 @@ static void curve_to_mesh_eval_ensure(Object &object)
    * Brecht says hold off with that. */
   BKE_displist_make_curveTypes(nullptr, nullptr, &object, true);
 
-  BKE_object_runtime_free_data(&bevel_object);
-  BKE_object_runtime_free_data(&taper_object);
+  if (bevel_object.runtime) {
+    BKE_object_runtime_free_data(&bevel_object);
+  }
+  if (taper_object.runtime) {
+    BKE_object_runtime_free_data(&taper_object);
+  }
 }
 
 static const Curves *get_evaluated_curves_from_object(const Object *object)
@@ -971,6 +975,29 @@ Mesh *BKE_mesh_new_from_object_to_bmain(Main *bmain,
   return mesh_in_bmain;
 }
 
+static void copy_loose_vert_hint(const Mesh &src, Mesh &dst)
+{
+  const auto &src_cache = src.runtime->loose_verts_cache;
+  if (src_cache.is_cached() && src_cache.data().count == 0) {
+    dst.tag_loose_verts_none();
+  }
+}
+
+static void copy_loose_edge_hint(const Mesh &src, Mesh &dst)
+{
+  const auto &src_cache = src.runtime->loose_edges_cache;
+  if (src_cache.is_cached() && src_cache.data().count == 0) {
+    dst.tag_loose_edges_none();
+  }
+}
+
+static void copy_overlapping_hint(const Mesh &src, Mesh &dst)
+{
+  if (src.no_overlapping_topology()) {
+    dst.tag_overlapping_none();
+  }
+}
+
 static KeyBlock *keyblock_ensure_from_uid(Key &key, const int uid, const StringRefNull name)
 {
   if (KeyBlock *kb = BKE_keyblock_find_uid(&key, uid)) {
@@ -1073,6 +1100,13 @@ void BKE_mesh_nomain_to_mesh(Mesh *mesh_src, Mesh *mesh_dst, Object *ob)
       mesh_dst->key = nullptr;
     }
   }
+
+  /* Caches can have a large memory impact and aren't necessarily used, so don't indiscriminately
+   * store all of them in the #Main data-base mesh. However, some caches are quite small and
+   * copying them is "free" relative to how much work would be required if the data was needed. */
+  copy_loose_vert_hint(*mesh_src, *mesh_dst);
+  copy_loose_edge_hint(*mesh_src, *mesh_dst);
+  copy_overlapping_hint(*mesh_src, *mesh_dst);
 
   BKE_id_free(nullptr, mesh_src);
 }

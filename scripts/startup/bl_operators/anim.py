@@ -201,7 +201,7 @@ class NLA_OT_bake(Operator):
     )
     step: IntProperty(
         name="Frame Step",
-        description="Frame Step",
+        description="Number of frames to skip forward while baking each frame",
         min=1, max=120,
         default=1,
     )
@@ -254,7 +254,7 @@ class NLA_OT_bake(Operator):
             ('LOCATION', "Location", "Bake location channels"),
             ('ROTATION', "Rotation", "Bake rotation channels"),
             ('SCALE', "Scale", "Bake scale channels"),
-            ('BBONE', "B-Bone", "Bake b-bone channels"),
+            ('BBONE', "B-Bone", "Bake B-Bone channels"),
         ),
         default={'LOCATION', 'ROTATION', 'SCALE', 'BBONE'},
     )
@@ -487,11 +487,11 @@ class ARMATURE_OT_copy_bone_color_to_selected(Operator):
                 return {'CANCELLED'}
 
         if not bone_source:
-            self.report({'ERROR'}, "No active bone to copy from.")
+            self.report({'ERROR'}, "No active bone to copy from")
             return {'CANCELLED'}
 
         if not bones_dest:
-            self.report({'ERROR'}, "No selected bones to copy to.")
+            self.report({'ERROR'}, "No selected bones to copy to")
             return {'CANCELLED'}
 
         num_pose_color_overrides = 0

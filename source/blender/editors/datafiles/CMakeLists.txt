@@ -121,7 +121,7 @@ normal_setstrength
 plugin
 magic_tex
 marble_tex
-musgrave_tex
+view_graph_all
 noise_tex
 
 roll_x_tang_pos
@@ -1579,14 +1579,14 @@ object_hidden
 desktop
 
 volume_distribute
-volume_distribute 
-corners_of_face 
-corners_of_vertex 
-edges_of_corner 
-edges_of_vertex 
-face_of_corner 
-offset_corner_in_face 
-vertex_of_corner 
+volume_distribute
+corners_of_face
+corners_of_vertex
+edges_of_corner
+edges_of_vertex
+face_of_corner
+offset_corner_in_face
+vertex_of_corner
 sample_nearest_surface
 sample_uv_surface
 
@@ -1718,12 +1718,12 @@ con_trackto
 winding
 facegroup
 current_file
-box_show 
-box_hide 
-box_trim 
-box_add 
-lasso_add 
-lasso_trim 
+box_show
+box_hide
+box_trim
+box_add
+lasso_add
+lasso_trim
 line_project
 
 # ------------------------- row 26 --------------------------*/
@@ -1783,11 +1783,11 @@ follow_leader
 goal
 protect
 
-surface_smooth 
-inflate 
-relax_face_sets 
-relax_topology 
-enhance 
+surface_smooth
+inflate
+relax_face_sets
+relax_topology
+enhance
 interpolate_curve
 index_of_nearest
 orientation_parent
@@ -1854,13 +1854,13 @@ outliner_data_volume
 gradient
 points_to_curves
 mod_equalizer
-axis_angle_to_rotation 
-euler_to_rotation 
-invert_rotation 
-quaternion_to_rotation 
-rotation_to_axis_angle 
-rotation_to_euler 
-rotation_to_quaternion 
+axis_angle_to_rotation
+euler_to_rotation
+invert_rotation
+quaternion_to_rotation
+rotation_to_axis_angle
+rotation_to_euler
+rotation_to_quaternion
 
 # ------------------------- row 28 --------------------------*/
 
@@ -1922,7 +1922,7 @@ preset_new
 blend_offset
 blend_to_ease
 split_to_instances
-#~ DEF_ICON_BLANK(1953)
+index_switch
 #~ DEF_ICON_BLANK(1954)
 #~ DEF_ICON_BLANK(1955)
 #~ DEF_ICON_BLANK(1956)
@@ -1990,7 +1990,7 @@ trash
 scale_average
 set_time
 set_selection
-#~ DEF_ICON_BLANK(2021)
+view_graph
 #~ DEF_ICON_BLANK(2022)
 #~ DEF_ICON_BLANK(2023)
 #~ DEF_ICON_BLANK(2024)
@@ -2274,6 +2274,7 @@ if(WITH_BLENDER)
     # Blend files.
     data_to_c_simple(../../../../release/datafiles/preview.blend SRC)
     data_to_c_simple(../../../../release/datafiles/preview_grease_pencil.blend SRC)
+    data_to_c_simple(../../../../release/datafiles/preview_grease_pencil_legacy.blend SRC)
 
     # Images.
     data_to_c_simple(../../../../release/datafiles/splash.png SRC)
