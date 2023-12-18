@@ -18,7 +18,7 @@
 #include "BKE_context.hh"
 #include "BKE_idprop.h"
 #include "BKE_lib_id.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_report.h"
 #include "BKE_screen.hh"
 
@@ -176,7 +176,7 @@ static void unassigned_assets_draw(const bContext *C, Menu *menu)
       add_separator = false;
     }
     if (first) {
-      uiItemL(layout, IFACE_("Local Unmarked Assets:"), ICON_NONE); /*BFA - changed label*/
+      uiItemL(layout, IFACE_("Unmarked Assets:"), ICON_NONE); /*BFA - changed label*/
       first = false;
     }
 

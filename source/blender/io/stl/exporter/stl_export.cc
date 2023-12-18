@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2023 Blender Authors
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup stl
@@ -30,12 +32,11 @@
 
 namespace blender::io::stl {
 
-void exporter_main(bContext *C, const STLExportParams &export_params)
+void export_frame(Depsgraph *depsgraph,
+                  float scene_unit_scale,
+                  const STLExportParams &export_params)
 {
   std::unique_ptr<FileWriter> writer;
-
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-  Scene *scene = CTX_data_scene(C);
 
   /* If not exporting in batch, create single writer for all objects. */
   if (!export_params.use_batch) {
@@ -67,7 +68,7 @@ void exporter_main(bContext *C, const STLExportParams &export_params)
       /* Include object name in the exported file name. */
       std::string suffix = object_name + ".stl";
       char filepath[FILE_MAX];
-      BLI_strncpy(filepath, export_params.filepath, FILE_MAX);
+      STRNCPY(filepath, export_params.filepath);
       BLI_path_extension_replace(filepath, FILE_MAX, suffix.c_str());
       writer = std::make_unique<FileWriter>(export_params.filepath, export_params.ascii_format);
     }
@@ -77,10 +78,7 @@ void exporter_main(bContext *C, const STLExportParams &export_params)
                                                  BKE_object_get_pre_modified_mesh(obj_eval);
 
     /* Calculate transform. */
-    float global_scale = export_params.global_scale;
-    if ((scene->unit.system != USER_UNIT_NONE) && export_params.use_scene_unit) {
-      global_scale *= scene->unit.scale_length;
-    }
+    float global_scale = export_params.global_scale * scene_unit_scale;
     float axes_transform[3][3];
     unit_m3(axes_transform);
     float xform[4][4];
@@ -108,6 +106,17 @@ void exporter_main(bContext *C, const STLExportParams &export_params)
     }
   }
   DEG_OBJECT_ITER_END;
+}
+
+void exporter_main(bContext *C, const STLExportParams &export_params)
+{
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+  Scene *scene = CTX_data_scene(C);
+  float scene_unit_scale = 1.0f;
+  if ((scene->unit.system != USER_UNIT_NONE) && export_params.use_scene_unit) {
+    scene_unit_scale = scene->unit.scale_length;
+  }
+  export_frame(depsgraph, scene_unit_scale, export_params);
 }
 
 }  // namespace blender::io::stl

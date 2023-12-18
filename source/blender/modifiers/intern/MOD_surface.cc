@@ -118,8 +118,8 @@ static void deform_verts(ModifierData *md,
     uint mesh_verts_num = 0, i = 0;
     int init = 0;
 
-    BKE_mesh_vert_coords_apply(surmd->runtime.mesh,
-                               reinterpret_cast<const float(*)[3]>(positions.data()));
+    surmd->runtime.mesh->vert_positions_for_write().copy_from(positions);
+    surmd->runtime.mesh->tag_positions_changed();
 
     mesh_verts_num = surmd->runtime.mesh->totvert;
 
@@ -168,7 +168,7 @@ static void deform_verts(ModifierData *md,
 
       if (has_face) {
         BKE_bvhtree_from_mesh_get(
-            surmd->runtime.bvhtree, surmd->runtime.mesh, BVHTREE_FROM_LOOPTRI, 2);
+            surmd->runtime.bvhtree, surmd->runtime.mesh, BVHTREE_FROM_LOOPTRIS, 2);
       }
       else if (has_edge) {
         BKE_bvhtree_from_mesh_get(

@@ -31,7 +31,7 @@
 #include "BKE_colorband.h"
 #include "BKE_idprop.h"
 #include "BKE_keyconfig.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_preferences.h"
 
 #include "BLO_readfile.h"
@@ -903,6 +903,12 @@ void blo_do_versions_userdef(UserDef *userdef)
       style->widgetlabel.character_weight = 400;
       style->widget.character_weight = 400;
     }
+  }
+
+  if (!USER_VERSION_ATLEAST(401, 9)) {
+    userdef->key_insert_channels = (USER_ANIM_KEY_CHANNEL_LOCATION |
+                                    USER_ANIM_KEY_CHANNEL_ROTATION | USER_ANIM_KEY_CHANNEL_SCALE |
+                                    USER_ANIM_KEY_CHANNEL_CUSTOM_PROPERTIES);
   }
 
   /**

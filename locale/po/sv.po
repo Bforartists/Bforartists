@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.0.0 Release Candidate (b'f2d15d4fd19a')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'274dc815eb35')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-13 11:45:13\n"
+"POT-Creation-Date: 2023-12-11 11:18:04\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -117,6 +117,14 @@ msgid "Width"
 msgstr "Bredd"
 
 
+msgid "All"
+msgstr "Alla"
+
+
+msgid "Custom"
+msgstr "Anpassad"
+
+
 msgid "Options"
 msgstr "Alternativ"
 
@@ -131,6 +139,10 @@ msgstr "Kant"
 
 msgid "Face"
 msgstr "Yta"
+
+
+msgid "Layer"
+msgstr "Lager"
 
 
 msgid "File Path"
@@ -261,10 +273,6 @@ msgid "Local Location"
 msgstr "Lokalposition"
 
 
-msgid "Custom"
-msgstr "Anpassad"
-
-
 msgid "Remove"
 msgstr "Ta bort"
 
@@ -279,10 +287,6 @@ msgstr "Material"
 
 msgid "Direction"
 msgstr "Riktning"
-
-
-msgid "All"
-msgstr "Alla"
 
 
 msgid "Radius"
@@ -685,6 +689,14 @@ msgid "Weights"
 msgstr "Viktningar"
 
 
+msgid "File Extensions"
+msgstr "Filändelse"
+
+
+msgid "Operator"
+msgstr "Operator"
+
+
 msgid "File Name"
 msgstr "Filnamn"
 
@@ -781,10 +793,6 @@ msgid "Onion Skinning"
 msgstr "Lökskal"
 
 
-msgid "Layer"
-msgstr "Lager"
-
-
 msgid "Grid"
 msgstr "Rutnät"
 
@@ -853,6 +861,34 @@ msgid "Statistical view of the levels of color in an image"
 msgstr "Statistisk vy över bildens färgnivåer"
 
 
+msgid "Font"
+msgstr "Typsnitt"
+
+
+msgid "Light"
+msgstr "Ljus"
+
+
+msgid "Mesh"
+msgstr "Mesh"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Sound"
+msgstr "Ljud"
+
+
+msgid "Text"
+msgstr "Text"
+
+
+msgid "World"
+msgstr "Värld"
+
+
 msgid "Groups"
 msgstr "Grupper"
 
@@ -891,10 +927,6 @@ msgstr "Visa bakgrundsbilder"
 
 msgid "Path"
 msgstr "Bana"
-
-
-msgid "Font"
-msgstr "Typsnitt"
 
 
 msgid "Shear"
@@ -1041,10 +1073,6 @@ msgid "Tool"
 msgstr "Verktyg"
 
 
-msgid "Mesh"
-msgstr "Mesh"
-
-
 msgid "Cylinder"
 msgstr "Cylinder"
 
@@ -1119,10 +1147,6 @@ msgstr "3D-markör"
 
 msgid "Frame Dropping"
 msgstr "Tappa rutor"
-
-
-msgid "Sound"
-msgstr "Ljud"
 
 
 msgid "Blend"
@@ -1233,10 +1257,6 @@ msgid "Shape Key Specials"
 msgstr "Specialare för formnycklar"
 
 
-msgid "Text"
-msgstr "Text"
-
-
 msgid "Node"
 msgstr "Nod"
 
@@ -1287,14 +1307,6 @@ msgstr "Förinställningar"
 
 msgid "Names"
 msgstr "Namn"
-
-
-msgid "Metaball"
-msgstr "Metaball"
-
-
-msgid "Light"
-msgstr "Ljus"
 
 
 msgid "Rigid Body"
@@ -1355,10 +1367,6 @@ msgstr "Normaliserad"
 
 msgid "Random Seed"
 msgstr "Slumpfrö"
-
-
-msgid "World"
-msgstr "Värld"
 
 
 msgid "Limits"
@@ -1918,10 +1926,6 @@ msgid "ID name of the menu this was called from"
 msgstr "ID-namn på menyn som detta anropades från"
 
 
-msgid "Operator"
-msgstr "Operator"
-
-
 msgctxt "Operator"
 msgid "Deinterlace Movies"
 msgstr "Avläta filmer"
@@ -2286,10 +2290,6 @@ msgstr "Lågupplöst mesh"
 
 msgid "Calculate heights against unsubdivided low resolution mesh"
 msgstr "Beräkna höjder mot icke-uppdelat lågupplöst mesh"
-
-
-msgid "File Extensions"
-msgstr "Filändelse"
 
 
 msgid "Stamp Filename"

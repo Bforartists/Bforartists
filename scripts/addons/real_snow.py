@@ -6,8 +6,8 @@ bl_info = {
     "name": "Real Snow",
     "description": "Generate snow mesh",
     "author": "Marco Pavanello, Drew Perttula",
-    "version": (1, 3),
-    "blender": (3, 1, 0),
+    "version": (1, 3, 2),
+    "blender": (4, 1, 0),
     "location": "View 3D > Properties Panel",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/object/real_snow.html",
     "tracker_url": "https://gitlab.com/marcopavanello/real-snow/-/issues",
@@ -273,20 +273,19 @@ def add_material(obj: bpy.types.Object):
     coord.location = (-1900, 0)
     # Change node parameters
     principled.distribution = "MULTI_GGX"
-    principled.subsurface_method = "RANDOM_WALK"
-    principled.inputs[0].default_value[0] = 0.904
+    principled.subsurface_method = "RANDOM_WALK_SKIN"
+    principled.inputs[0].default_value[0] = 0.904   # Base color
     principled.inputs[0].default_value[1] = 0.904
     principled.inputs[0].default_value[2] = 0.904
-    principled.inputs[1].default_value = 1
-    principled.inputs[2].default_value[0] = 0.36
-    principled.inputs[2].default_value[1] = 0.46
-    principled.inputs[2].default_value[2] = 0.6
-    principled.inputs[3].default_value[0] = 0.904
-    principled.inputs[3].default_value[1] = 0.904
-    principled.inputs[3].default_value[2] = 0.904
-    principled.inputs[7].default_value = 0.224
-    principled.inputs[9].default_value = 0.1
-    principled.inputs[15].default_value = 0.1
+    principled.inputs[7].default_value = 1          # Subsurface weight
+    principled.inputs[9].default_value = 1          # Subsurface scale
+    principled.inputs[8].default_value[0] = 0.36    # Subsurface radius
+    principled.inputs[8].default_value[1] = 0.46
+    principled.inputs[8].default_value[2] = 0.6
+    principled.inputs[12].default_value = 0.224     # Specular
+    principled.inputs[2].default_value = 0.1        # Roughness
+    principled.inputs[19].default_value = 0.1       # Coat roughness
+    principled.inputs[20].default_value = 1.2       # Coat IOR
     vec_math.operation = "MULTIPLY"
     vec_math.inputs[1].default_value[0] = 0.5
     vec_math.inputs[1].default_value[1] = 0.5
@@ -321,7 +320,7 @@ def add_material(obj: bpy.types.Object):
     # Link nodes
     link = mat.node_tree.links
     link.new(principled.outputs[0], output.inputs[0])
-    link.new(vec_math.outputs[0], principled.inputs[2])
+    link.new(vec_math.outputs[0], principled.inputs[8])
     link.new(com_xyz.outputs[0], vec_math.inputs[0])
     link.new(dis.outputs[0], output.inputs[2])
     link.new(mul1.outputs[0], dis.inputs[0])
@@ -329,7 +328,7 @@ def add_material(obj: bpy.types.Object):
     link.new(add2.outputs[0], add1.inputs[0])
     link.new(mul2.outputs[0], add2.inputs[0])
     link.new(mul3.outputs[0], add2.inputs[1])
-    link.new(range1.outputs[0], principled.inputs[14])
+    link.new(range1.outputs[0], principled.inputs[18])
     link.new(range2.outputs[0], mul3.inputs[0])
     link.new(range3.outputs[0], add1.inputs[1])
     link.new(vor.outputs[4], range1.inputs[0])
@@ -342,7 +341,7 @@ def add_material(obj: bpy.types.Object):
     link.new(mapping.outputs[0], noise3.inputs[0])
     link.new(coord.outputs[3], mapping.inputs[0])
     # Set displacement and add material
-    mat.cycles.displacement_method = "DISPLACEMENT"
+    mat.displacement_method = "DISPLACEMENT"
     obj.data.materials.append(mat)
 
 

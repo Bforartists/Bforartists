@@ -35,11 +35,11 @@
 #include "BKE_animsys.h"
 #include "BKE_context.hh"
 #include "BKE_idprop.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.hh"
-#include "BKE_unit.h"
+#include "BKE_unit.hh"
 
 #include "ED_asset.hh"
 
@@ -1284,7 +1284,7 @@ static bool ui_but_event_operator_string_from_menu(const bContext *C,
   /* annoying, create a property */
   const IDPropertyTemplate val = {0};
   IDProperty *prop_menu = IDP_New(IDP_GROUP, &val, __func__); /* Dummy, name is unimportant. */
-  IDP_AddToGroup(prop_menu, IDP_NewStringMaxSize(mt->idname, "name", sizeof(mt->idname)));
+  IDP_AddToGroup(prop_menu, IDP_NewStringMaxSize(mt->idname, sizeof(mt->idname), "name"));
 
   if (WM_key_event_operator_string(
           C, "WM_OT_call_menu", WM_OP_INVOKE_REGION_WIN, prop_menu, true, buf, buf_maxncpy))
@@ -1311,7 +1311,7 @@ static bool ui_but_event_operator_string_from_panel(const bContext *C,
   const IDPropertyTemplate group_val = {0};
   IDProperty *prop_panel = IDP_New(
       IDP_GROUP, &group_val, __func__); /* Dummy, name is unimportant. */
-  IDP_AddToGroup(prop_panel, IDP_NewStringMaxSize(pt->idname, "name", sizeof(pt->idname)));
+  IDP_AddToGroup(prop_panel, IDP_NewStringMaxSize(pt->idname, sizeof(pt->idname), "name"));
   IDPropertyTemplate space_type_val = {0};
   space_type_val.i = pt->space_type;
   IDP_AddToGroup(prop_panel, IDP_New(IDP_INT, &space_type_val, "space_type"));
@@ -4349,18 +4349,32 @@ static void ui_def_but_rna__menu(bContext *C, uiLayout *layout, void *but_p)
     }
     if (!item->identifier[0] && item->name) {
       categories++;
+      /* The category name adds to the column length. */
+      col_rows++;
     }
     if (item->icon) {
       has_item_with_icon = true;
     }
     if (item->name && item->name[0]) {
       float item_width = BLF_width(BLF_default(), item->name, BLF_DRAW_STR_DUMMY_MAX);
-      col_width = MAX2(col_width, item_width + (120.0f * UI_SCALE_FAC));
+      col_width = std::max(col_width, item_width + (100.0f * UI_SCALE_FAC));
     }
-    rows = MAX2(rows, col_rows);
+    rows = std::max(rows, col_rows);
   }
   text_width += col_width;
   text_width /= but->block->aspect;
+
+  /* Wrap long single-column lists. */
+  if (categories == 0) {
+    columns = std::max((totitems + 20) / 20, 1);
+    if (columns > 8) {
+      columns = (totitems + 25) / 25;
+    }
+    rows = std::max(totitems / columns, 1);
+    while (rows * columns < totitems) {
+      rows++;
+    }
+  }
 
   /* If the estimated width is greater than available size, collapse to one column. */
   if (columns > 1 && text_width > win->sizex) {
@@ -6368,7 +6382,7 @@ void UI_but_func_search_set(uiBut *but,
   search_but->arg_free_fn = search_arg_free_fn;
 
   if (search_exec_fn) {
-#ifdef DEBUG
+#ifndef NDEBUG
     if (but->func) {
       /* watch this, can be cause of much confusion, see: #47691 */
       printf("%s: warning, overwriting button callback with search function callback!\n",

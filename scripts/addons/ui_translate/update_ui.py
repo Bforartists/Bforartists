@@ -149,10 +149,10 @@ class UI_PT_i18n_update_translations_settings(Panel):
             op.use_select = not deselect
             col.operator("ui.i18n_updatetranslation_settings_select", text="Invert Selection").use_invert = True
             col.separator()
-            col.operator("ui.i18n_updatetranslation_work_repo", text="Update Work Repo")
-            col.operator("ui.i18n_cleanuptranslation_work_repo", text="Clean up Work Repo")
+            col.operator("ui.i18n_updatetranslation_work_repo", text="Update Work Repository")
+            col.operator("ui.i18n_cleanuptranslation_work_repo", text="Clean up Work Repository")
             col.separator()
-            col.operator("ui.i18n_updatetranslation_blender_repo", text="Update Blender Repo")
+            col.operator("ui.i18n_updatetranslation_blender_repo", text="Update Blender Repository")
             col.separator()
             col.operator("ui.i18n_updatetranslation_statistics", text="Statistics")
 
