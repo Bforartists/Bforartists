@@ -274,12 +274,12 @@ class DATA_PT_vertex_groups(MeshButtonsPanel, Panel):
             row = layout.row()
 
             sub = row.row(align=True)
-            sub.operator("object.vertex_group_assign", text="Assign")
-            sub.operator("object.vertex_group_remove_from", text="Remove")
+            sub.operator("object.vertex_group_assign", text="Assign", icon="NODE_GROUPINSERT")
+            sub.operator("object.vertex_group_remove_from", text="Remove", icon="REMOVE_SELECTED_FROM_ACTIVE_GROUP")
 
             sub = row.row(align=True)
-            sub.operator("object.vertex_group_select", text="Select")
-            sub.operator("object.vertex_group_deselect", text="Deselect")
+            sub.operator("object.vertex_group_select", text="Select", icon="RESTRICT_SELECT_OFF")
+            sub.operator("object.vertex_group_deselect", text="Deselect", icon="SELECT_NONE")
 
             layout.prop(context.tool_settings, "vertex_group_weight", text="Weight")
 
@@ -446,13 +446,7 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
             row.prop(mesh, "use_remesh_preserve_volume", text="Volume")
             row = col.row()
             row.separator()
-            row.prop(mesh, "use_remesh_preserve_paint_mask", text="Paint Mask")
-            row = col.row()
-            row.separator()
-            row.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
-            row = col.row()
-            row.separator()
-            row.prop(mesh, "use_remesh_preserve_vertex_colors", text="Color Attributes")
+            row.prop(mesh, "use_remesh_preserve_attributes", text="Attributes")
 
             row = col.row()
             row.operator("object.voxel_remesh", text="Voxel Remesh")

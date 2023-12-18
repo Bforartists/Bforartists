@@ -23,6 +23,7 @@ from . import encode_bin, data_types
 
 # "Constants"
 FBX_VERSION = 7400
+# 1004 adds use of "OtherFlags"->"TCDefinition" to control the FBX_KTIME opt-in in FBX version 7700.
 FBX_HEADER_VERSION = 1003
 FBX_SCENEINFO_VERSION = 100
 FBX_TEMPLATES_VERSION = 100
@@ -54,7 +55,19 @@ FBX_ANIM_KEY_VERSION = 4008
 FBX_NAME_CLASS_SEP = b"\x00\x01"
 FBX_ANIM_PROPSGROUP_NAME = "d"
 
-FBX_KTIME = 46186158000  # This is the number of "ktimes" in one second (yep, precision over the nanosecond...)
+FBX_KTIME_V7 = 46186158000  # This is the number of "ktimes" in one second (yep, precision over the nanosecond...)
+# FBX 2019.5 (FBX version 7700) changed the number of "ktimes" per second, however, the new value is opt-in until FBX
+# version 8000 where it will probably become opt-out.
+FBX_KTIME_V8 = 141120000
+# To explicitly use the V7 value in FBX versions 7700-7XXX: fbx_root->"FBXHeaderExtension"->"OtherFlags"->"TCDefinition"
+# is set to 127.
+# To opt in to the V8 value in FBX version 7700-7XXX: "TCDefinition" is set to 0.
+FBX_TIMECODE_DEFINITION_TO_KTIME_PER_SECOND = {
+    0: FBX_KTIME_V8,
+    127: FBX_KTIME_V7,
+}
+# The "ktimes" per second for Blender exported FBX is constant because the exported `FBX_VERSION` is constant.
+FBX_KTIME = FBX_KTIME_V8 if FBX_VERSION >= 8000 else FBX_KTIME_V7
 
 
 MAT_CONVERT_LIGHT = Matrix.Rotation(math.pi / 2.0, 4, 'X')  # Blender is -Z, FBX is -Y.
@@ -216,7 +229,7 @@ UNITS = {
     "degree": 360.0,
     "radian": math.pi * 2.0,
     "second": 1.0,  # Ref unit!
-    "ktime": FBX_KTIME,
+    "ktime": FBX_KTIME,  # For export use only because the imported "ktimes" per second may vary.
 }
 
 

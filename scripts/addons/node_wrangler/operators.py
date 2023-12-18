@@ -518,7 +518,7 @@ class NWPreviewNode(Operator, NWBase):
             output_sockets = self.get_output_sockets(node.node_tree)
             if len(output_sockets):
                 free_socket = None
-                for socket in output_sockets:
+                for i, socket in enumerate(output_sockets):
                     if is_viewer_socket(socket) and socket.socket_type == socket_type:
                         # if viewer output is already used but leads to the same socket we can still use it
                         is_used = self.is_socket_used_other_mats(socket)
@@ -694,7 +694,6 @@ class NWPreviewNode(Operator, NWBase):
                                 else:
                                     out_i = valid_outputs[0]
 
-                make_links = []  # store sockets for new links
                 if active.outputs:
                     # If there is no 'GEOMETRY' output type - We can't preview the node
                     if out_i is None:
@@ -708,26 +707,25 @@ class NWPreviewNode(Operator, NWBase):
                             break
                     if geometryoutindex is None:
                         # Create geometry socket
-                        geometryoutput.inputs.new(socket_type, 'Geometry')
-                        geometryoutindex = len(geometryoutput.inputs) - 1
+                        geometry_output_socket = base_node_tree.interface.new_socket(
+                            'Geometry', in_out='OUTPUT', socket_type='NodeSocketGeometry')
+                        geometryoutindex = geometry_output_socket.index
 
-                    make_links.append((active.outputs[out_i], geometryoutput.inputs[geometryoutindex]))
                     output_socket = geometryoutput.inputs[geometryoutindex]
-                    for li_from, li_to in make_links:
-                        connect_sockets(li_from, li_to)
+
+                    # Create links through node groups until we reach the active node
                     tree = base_node_tree
                     link_end = output_socket
                     while tree.nodes.active != active:
                         node = tree.nodes.active
                         viewer_socket = self.ensure_viewer_socket(
                             node, 'NodeSocketGeometry', connect_socket=active.outputs[out_i] if node.node_tree.nodes.active == active else None)
-                        link_start = node.outputs[viewer_socket_name]
-                        node_socket = viewer_socket
-                        if node_socket in delete_sockets:
-                            delete_sockets.remove(node_socket)
+                        link_start = node.outputs[viewer_socket.identifier]
+                        if viewer_socket in delete_sockets:
+                            delete_sockets.remove(viewer_socket)
                         connect_sockets(link_start, link_end)
                         # Iterate
-                        link_end = self.ensure_group_output(node.node_tree).inputs[viewer_socket_name]
+                        link_end = self.ensure_group_output(node.node_tree).inputs[viewer_socket.identifier]
                         tree = tree.nodes.active.node_tree
                     connect_sockets(active.outputs[out_i], link_end)
 
@@ -778,14 +776,10 @@ class NWPreviewNode(Operator, NWBase):
                                 else:
                                     out_i = valid_outputs[0]
 
-                make_links = []  # store sockets for new links
                 if active.outputs:
                     socket_type = 'NodeSocketShader'
                     materialout_index = 1 if active.outputs[out_i].name == "Volume" else 0
-                    make_links.append((active.outputs[out_i], materialout.inputs[materialout_index]))
                     output_socket = materialout.inputs[materialout_index]
-                    for li_from, li_to in make_links:
-                        connect_sockets(li_from, li_to)
 
                     # Create links through node groups until we reach the active node
                     tree = base_node_tree
@@ -794,13 +788,12 @@ class NWPreviewNode(Operator, NWBase):
                         node = tree.nodes.active
                         viewer_socket = self.ensure_viewer_socket(
                             node, socket_type, connect_socket=active.outputs[out_i] if node.node_tree.nodes.active == active else None)
-                        link_start = node.outputs[viewer_socket_name]
-                        node_socket = viewer_socket
-                        if node_socket in delete_sockets:
-                            delete_sockets.remove(node_socket)
+                        link_start = node.outputs[viewer_socket.identifier]
+                        if viewer_socket in delete_sockets:
+                            delete_sockets.remove(viewer_socket)
                         connect_sockets(link_start, link_end)
                         # Iterate
-                        link_end = self.ensure_group_output(node.node_tree).inputs[viewer_socket_name]
+                        link_end = self.ensure_group_output(node.node_tree).inputs[viewer_socket.identifier]
                         tree = tree.nodes.active.node_tree
                     connect_sockets(active.outputs[out_i], link_end)
 

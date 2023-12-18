@@ -149,6 +149,15 @@ static const EnumPropertyItem rna_enum_userdef_viewport_aa_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+static const EnumPropertyItem rna_enum_key_insert_channels[] = {
+    {USER_ANIM_KEY_CHANNEL_LOCATION, "LOCATION", 0, "Location", ""},
+    {USER_ANIM_KEY_CHANNEL_ROTATION, "ROTATION", 0, "Rotation", ""},
+    {USER_ANIM_KEY_CHANNEL_SCALE, "SCALE", 0, "Scale", ""},
+    {USER_ANIM_KEY_CHANNEL_ROTATION_MODE, "ROTATE_MODE", 0, "Rotation Mode", ""},
+    {USER_ANIM_KEY_CHANNEL_CUSTOM_PROPERTIES, "CUSTOM_PROPS", 0, "Custom Properties", ""},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
 static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
     {GPU_BACKEND_OPENGL, "OPENGL", 0, "OpenGL", "Use OpenGL backend"},
     {GPU_BACKEND_METAL, "METAL", 0, "Metal", "Use Metal backend"},
@@ -168,7 +177,7 @@ static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
 #  include "BKE_global.h"
 #  include "BKE_idprop.h"
 #  include "BKE_image.h"
-#  include "BKE_main.h"
+#  include "BKE_main.hh"
 #  include "BKE_mesh_runtime.hh"
 #  include "BKE_object.hh"
 #  include "BKE_paint.hh"
@@ -178,7 +187,7 @@ static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
 #  include "DEG_depsgraph.hh"
 
 #  include "GPU_capabilities.h"
-#  include "GPU_select.h"
+#  include "GPU_select.hh"
 #  include "GPU_texture.h"
 
 #  include "BLF_api.h"
@@ -1109,48 +1118,6 @@ static int rna_UserDef_studiolight_path_length(PointerRNA *ptr)
   return strlen(sl->filepath);
 }
 
-/* StudioLight.path_irr_cache */
-static void rna_UserDef_studiolight_path_irr_cache_get(PointerRNA *ptr, char *value)
-{
-  StudioLight *sl = (StudioLight *)ptr->data;
-  if (sl->path_irr_cache) {
-    strcpy(value, sl->path_irr_cache);
-  }
-  else {
-    value[0] = '\0';
-  }
-}
-
-static int rna_UserDef_studiolight_path_irr_cache_length(PointerRNA *ptr)
-{
-  StudioLight *sl = (StudioLight *)ptr->data;
-  if (sl->path_irr_cache) {
-    return strlen(sl->path_irr_cache);
-  }
-  return 0;
-}
-
-/* StudioLight.path_sh_cache */
-static void rna_UserDef_studiolight_path_sh_cache_get(PointerRNA *ptr, char *value)
-{
-  StudioLight *sl = (StudioLight *)ptr->data;
-  if (sl->path_sh_cache) {
-    strcpy(value, sl->path_sh_cache);
-  }
-  else {
-    value[0] = '\0';
-  }
-}
-
-static int rna_UserDef_studiolight_path_sh_cache_length(PointerRNA *ptr)
-{
-  StudioLight *sl = (StudioLight *)ptr->data;
-  if (sl->path_sh_cache) {
-    return strlen(sl->path_sh_cache);
-  }
-  return 0;
-}
-
 /* StudioLight.index */
 static int rna_UserDef_studiolight_index_get(PointerRNA *ptr)
 {
@@ -1178,17 +1145,6 @@ static int rna_UserDef_studiolight_type_get(PointerRNA *ptr)
 {
   StudioLight *sl = (StudioLight *)ptr->data;
   return sl->flag & STUDIOLIGHT_FLAG_ORIENTATIONS;
-}
-
-static void rna_UserDef_studiolight_spherical_harmonics_coefficients_get(PointerRNA *ptr,
-                                                                         float *values)
-{
-  StudioLight *sl = (StudioLight *)ptr->data;
-  float *value = values;
-  for (int i = 0; i < STUDIOLIGHT_SH_EFFECTIVE_COEFS_LEN; i++) {
-    copy_v3_v3(value, sl->spherical_harmonics_coefs[i]);
-    value += 3;
-  }
 }
 
 /* StudioLight.solid_lights */
@@ -4517,31 +4473,6 @@ static void rna_def_userdef_studiolight(BlenderRNA *brna)
       prop, "Ambient Color", "Color of the ambient light that uniformly lit the scene");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
-  prop = RNA_def_property(srna, "path_irr_cache", PROP_STRING, PROP_DIRPATH);
-  RNA_def_property_string_funcs(prop,
-                                "rna_UserDef_studiolight_path_irr_cache_get",
-                                "rna_UserDef_studiolight_path_irr_cache_length",
-                                nullptr);
-  RNA_def_property_ui_text(
-      prop, "Irradiance Cache Path", "Path where the irradiance cache is stored");
-  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-
-  prop = RNA_def_property(srna, "path_sh_cache", PROP_STRING, PROP_DIRPATH);
-  RNA_def_property_string_funcs(prop,
-                                "rna_UserDef_studiolight_path_sh_cache_get",
-                                "rna_UserDef_studiolight_path_sh_cache_length",
-                                nullptr);
-  RNA_def_property_ui_text(
-      prop, "SH Cache Path", "Path where the spherical harmonics cache is stored");
-  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-
-  const int spherical_harmonics_dim[] = {STUDIOLIGHT_SH_EFFECTIVE_COEFS_LEN, 3};
-  prop = RNA_def_property(srna, "spherical_harmonics_coefficients", PROP_FLOAT, PROP_COLOR);
-  RNA_def_property_multi_array(prop, 2, spherical_harmonics_dim);
-  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_float_funcs(
-      prop, "rna_UserDef_studiolight_spherical_harmonics_coefficients_get", nullptr, nullptr);
-
   RNA_define_verify_sdna(true);
 }
 
@@ -5419,7 +5350,7 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
                            "(default setting used for new Scenes)");
 
   prop = RNA_def_property(srna, "use_keyframe_insert_available", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_INSERTAVAIL);
+  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_INSERTAVAILABLE);
   RNA_def_property_ui_text(prop,
                            "Auto Keyframe Insert Available",
                            "Automatic keyframe insertion in available F-Curves");
@@ -5432,13 +5363,21 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
       "Show warning indicators when transforming objects and bones if auto keying is enabled");
 
   /* keyframing settings */
+  prop = RNA_def_property(srna, "key_insert_channels", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_bitflag_sdna(prop, nullptr, "key_insert_channels");
+  RNA_def_property_enum_items(prop, rna_enum_key_insert_channels);
+  RNA_def_property_flag(prop, PROP_ENUM_FLAG);
+  RNA_def_property_ui_text(prop,
+                           "Default Key Channels",
+                           "Which channels to insert keys at when no keying set is active");
+
   prop = RNA_def_property(srna, "use_keyframe_insert_needed", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_INSERTNEEDED);
   RNA_def_property_ui_text(
       prop, "Keyframe Insert Needed", "Keyframe insertion only when keyframe needed");
 
   prop = RNA_def_property(srna, "use_visual_keying", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_AUTOMATKEY);
+  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_VISUALKEY);
   RNA_def_property_ui_text(
       prop, "Visual Keying", "Use Visual keying automatically for constrained objects");
 
@@ -6306,7 +6245,7 @@ static void rna_def_userdef_input(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Mouse Drag Threshold",
                            "Number of pixels to drag before a drag event is triggered "
-                           "for mouse/track-pad input "
+                           "for mouse/trackpad input "
                            "(otherwise click events are detected)");
 
   prop = RNA_def_property(srna, "drag_threshold_tablet", PROP_INT, PROP_PIXEL);

@@ -147,19 +147,6 @@ void NodeDeclarationBuilder::set_active_panel_builder(const PanelDeclarationBuil
 
 namespace anonymous_attribute_lifetime {
 
-bool operator==(const RelationsInNode &a, const RelationsInNode &b)
-{
-  return a.propagate_relations == b.propagate_relations &&
-         a.reference_relations == b.reference_relations && a.eval_relations == b.eval_relations &&
-         a.available_relations == b.available_relations &&
-         a.available_on_none == b.available_on_none;
-}
-
-bool operator!=(const RelationsInNode &a, const RelationsInNode &b)
-{
-  return !(a == b);
-}
-
 std::ostream &operator<<(std::ostream &stream, const RelationsInNode &relations)
 {
   stream << "Propagate Relations: " << relations.propagate_relations.size() << "\n";
@@ -857,26 +844,6 @@ Span<int> OutputFieldDependency::linked_input_indices() const
   return linked_input_indices_;
 }
 
-bool operator==(const OutputFieldDependency &a, const OutputFieldDependency &b)
-{
-  return a.type_ == b.type_ && a.linked_input_indices_ == b.linked_input_indices_;
-}
-
-bool operator!=(const OutputFieldDependency &a, const OutputFieldDependency &b)
-{
-  return !(a == b);
-}
-
-bool operator==(const FieldInferencingInterface &a, const FieldInferencingInterface &b)
-{
-  return a.inputs == b.inputs && a.outputs == b.outputs;
-}
-
-bool operator!=(const FieldInferencingInterface &a, const FieldInferencingInterface &b)
-{
-  return !(a == b);
-}
-
 const CompositorInputRealizationOptions &SocketDeclaration::compositor_realization_options() const
 {
   return compositor_realization_options_;
@@ -921,24 +888,24 @@ namespace implicit_field_inputs {
 
 void position(const bNode & /*node*/, void *r_value)
 {
-  new (r_value) bke::ValueOrField<float3>(bke::AttributeFieldInput::Create<float3>("position"));
+  new (r_value) bke::SocketValueVariant(bke::AttributeFieldInput::Create<float3>("position"));
 }
 
 void normal(const bNode & /*node*/, void *r_value)
 {
   new (r_value)
-      bke::ValueOrField<float3>(fn::Field<float3>(std::make_shared<bke::NormalFieldInput>()));
+      bke::SocketValueVariant(fn::Field<float3>(std::make_shared<bke::NormalFieldInput>()));
 }
 
 void index(const bNode & /*node*/, void *r_value)
 {
-  new (r_value) bke::ValueOrField<int>(fn::Field<int>(std::make_shared<fn::IndexFieldInput>()));
+  new (r_value) bke::SocketValueVariant(fn::Field<int>(std::make_shared<fn::IndexFieldInput>()));
 }
 
 void id_or_index(const bNode & /*node*/, void *r_value)
 {
   new (r_value)
-      bke::ValueOrField<int>(fn::Field<int>(std::make_shared<bke::IDAttributeFieldInput>()));
+      bke::SocketValueVariant(fn::Field<int>(std::make_shared<bke::IDAttributeFieldInput>()));
 }
 
 }  // namespace implicit_field_inputs

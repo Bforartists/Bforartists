@@ -229,7 +229,7 @@ class SunPosProperties(PropertyGroup):
 
     object_collection_type: EnumProperty(
         name="Display type",
-        description="Type of Sun motion to visualize.",
+        description="Type of Sun motion to visualize",
         items=(
             ('ANALEMMA', "Analemma", "Trajectory of the Sun in the sky during the year, for a given time of the day"),
             ('DIURNAL', "Diurnal", "Trajectory of the Sun in the sky during a single day"),
