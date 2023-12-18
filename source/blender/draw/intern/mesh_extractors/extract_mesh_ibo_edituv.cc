@@ -6,11 +6,11 @@
  * \ingroup draw
  */
 
-#include "BLI_bitmap.h"
-
 #include "extract_mesh.hh"
 
-#include "draw_subdivision.h"
+#include "GPU_index_buffer.h"
+
+#include "draw_subdivision.hh"
 
 namespace blender::draw {
 /* ---------------------------------------------------------------------- */
@@ -55,7 +55,7 @@ static void extract_edituv_tris_iter_looptri_bm(const MeshRenderData & /*mr*/,
 }
 
 static void extract_edituv_tris_iter_looptri_mesh(const MeshRenderData &mr,
-                                                  const MLoopTri *mlt,
+                                                  const MLoopTri *lt,
                                                   const int elt_index,
                                                   void *_data)
 {
@@ -65,7 +65,7 @@ static void extract_edituv_tris_iter_looptri_mesh(const MeshRenderData &mr,
   const bool mp_hidden = (efa) ? BM_elem_flag_test_bool(efa, BM_ELEM_HIDDEN) : true;
   const bool mp_select = (efa) ? BM_elem_flag_test_bool(efa, BM_ELEM_SELECT) : false;
 
-  edituv_tri_add(data, mp_hidden, mp_select, mlt->tri[0], mlt->tri[1], mlt->tri[2]);
+  edituv_tri_add(data, mp_hidden, mp_select, lt->tri[0], lt->tri[1], lt->tri[2]);
 }
 
 static void extract_edituv_tris_finish(const MeshRenderData & /*mr*/,
@@ -217,8 +217,8 @@ static void extract_edituv_lines_iter_face_mesh(const MeshRenderData &mr,
     mp_select = (efa) ? BM_elem_flag_test_bool(efa, BM_ELEM_SELECT) : false;
   }
   else {
-    mp_hidden = (mr.hide_poly) ? mr.hide_poly[face_index] : false;
-    mp_select = mr.select_poly && mr.select_poly[face_index];
+    mp_hidden = mr.hide_poly.is_empty() ? false : mr.hide_poly[face_index];
+    mp_select = !mr.select_poly.is_empty() && mr.select_poly[face_index];
   }
 
   for (const int ml_index : face) {
@@ -295,8 +295,8 @@ static void extract_edituv_lines_iter_subdiv_mesh(const DRWSubdivCache &subdiv_c
     mp_select = (efa) ? BM_elem_flag_test_bool(efa, BM_ELEM_SELECT) : false;
   }
   else {
-    mp_hidden = (mr.hide_poly) ? mr.hide_poly[coarse_face_index] : false;
-    mp_select = mr.select_poly && mr.select_poly[coarse_face_index];
+    mp_hidden = mr.hide_poly.is_empty() ? false : mr.hide_poly[coarse_face_index];
+    mp_select = !mr.select_poly.is_empty() && mr.select_poly[coarse_face_index];
   }
 
   uint start_loop_idx = subdiv_quad_index * 4;
@@ -549,7 +549,7 @@ static void extract_edituv_fdots_iter_face_mesh(const MeshRenderData &mr,
   const bool mp_select = (efa) ? BM_elem_flag_test_bool(efa, BM_ELEM_SELECT) : false;
 
   if (mr.use_subsurf_fdots) {
-    const BitSpan facedot_tags = mr.me->runtime->subsurf_face_dot_tags;
+    const BitSpan facedot_tags = mr.mesh->runtime->subsurf_face_dot_tags;
 
     for (const int ml_index : mr.faces[face_index]) {
       const int vert = mr.corner_verts[ml_index];

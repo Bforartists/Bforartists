@@ -50,10 +50,10 @@ BEGIN
       VALUE "FileVersion", BLEN_VER_RC_STR
       VALUE "ProductVersion", BLEN_VER_RC_STR
       VALUE "CompanyName", "Bforartists"
-      VALUE "FileDescription", "Bforartists3"
+      VALUE "FileDescription", "Bforartists4"
       VALUE "LegalCopyright", "GPLv3 (Bforartists)"
       VALUE "OriginalFilename", "bforartists.exe"
-      VALUE "ProductName", "Bforartists3"
+      VALUE "ProductName", "Bforartists4"
     END
   END
   BLOCK "VarFileInfo"

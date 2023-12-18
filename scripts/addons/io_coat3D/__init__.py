@@ -5,8 +5,8 @@
 bl_info = {
     "name": "3D-Coat Applink",
     "author": "Kalle-Samuli Riihikoski (haikalle)",
-    "version": (4, 9, 34),
-    "blender": (2, 80, 0),
+    "version": (4, 9, 35),
+    "blender": (4, 1, 0),
     "location": "Scene > 3D-Coat Applink",
     "description": "Transfer data between 3D-Coat/Blender",
     "warning": "",

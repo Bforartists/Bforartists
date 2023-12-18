@@ -728,7 +728,7 @@ static bool cloth_from_object(
     clmd->clothObject->old_solver_type = 255;
   }
   else {
-    BKE_modifier_set_error(ob, &(clmd->modifier), "Out of memory on allocating clmd->clothObject");
+    BKE_modifier_set_error(ob, &(clmd->modifier), "Out of memory on allocating cloth object");
     return false;
   }
 
@@ -835,9 +835,7 @@ static void cloth_from_mesh(ClothModifierData *clmd, const Object *ob, Mesh *mes
   clmd->clothObject->verts = MEM_cnew_array<ClothVertex>(clmd->clothObject->mvert_num, __func__);
   if (clmd->clothObject->verts == nullptr) {
     cloth_free_modifier(clmd);
-    BKE_modifier_set_error(
-        ob, &(clmd->modifier), "Out of memory on allocating clmd->clothObject->verts");
-    printf("cloth_free_modifier clmd->clothObject->verts\n");
+    BKE_modifier_set_error(ob, &(clmd->modifier), "Out of memory on allocating vertices");
     return;
   }
 
@@ -853,12 +851,10 @@ static void cloth_from_mesh(ClothModifierData *clmd, const Object *ob, Mesh *mes
       MEM_malloc_arrayN(looptris.size(), sizeof(MVertTri), __func__));
   if (clmd->clothObject->tri == nullptr) {
     cloth_free_modifier(clmd);
-    BKE_modifier_set_error(
-        ob, &(clmd->modifier), "Out of memory on allocating clmd->clothObject->looptri");
-    printf("cloth_free_modifier clmd->clothObject->looptri\n");
+    BKE_modifier_set_error(ob, &(clmd->modifier), "Out of memory on allocating triangles");
     return;
   }
-  BKE_mesh_runtime_verttri_from_looptri(
+  BKE_mesh_runtime_verttris_from_looptris(
       clmd->clothObject->tri, corner_verts.data(), looptris.data(), looptris.size());
 
   clmd->clothObject->edges = mesh->edges().data();
@@ -1173,7 +1169,7 @@ static Mesh *cloth_make_rest_mesh(ClothModifierData *clmd, Mesh *mesh)
   for (const int i : positions.index_range()) {
     positions[i] = verts[i].xrest;
   }
-  BKE_mesh_tag_positions_changed(new_mesh);
+  new_mesh->tag_positions_changed();
 
   return new_mesh;
 }
@@ -1420,7 +1416,7 @@ static bool find_internal_spring_target_vertex(BVHTreeFromMesh *treedata,
       treedata->tree, new_co, no, radius, &rayhit, treedata->raycast_callback, treedata);
 
   int vert_idx = -1;
-  const int *corner_verts = treedata->corner_verts;
+  const int *corner_verts = treedata->corner_verts.data();
   const MLoopTri *lt = nullptr;
 
   if (rayhit.index != -1 && rayhit.dist <= max_length) {
@@ -1430,7 +1426,7 @@ static bool find_internal_spring_target_vertex(BVHTreeFromMesh *treedata,
     }
 
     float min_len = FLT_MAX;
-    lt = &treedata->looptri[rayhit.index];
+    lt = &treedata->looptris[rayhit.index];
 
     for (int i = 0; i < 3; i++) {
       int tmp_vert_idx = corner_verts[lt->tri[i]];
@@ -1517,7 +1513,7 @@ static bool cloth_build_springs(ClothModifierData *clmd, Mesh *mesh)
     }
 
     Set<OrderedEdge> existing_vert_pairs;
-    BKE_bvhtree_from_mesh_get(&treedata, tmp_mesh ? tmp_mesh : mesh, BVHTREE_FROM_LOOPTRI, 2);
+    BKE_bvhtree_from_mesh_get(&treedata, tmp_mesh ? tmp_mesh : mesh, BVHTREE_FROM_LOOPTRIS, 2);
     rng = BLI_rng_new_srandom(0);
 
     const blender::Span<blender::float3> vert_normals = tmp_mesh ? tmp_mesh->vert_normals() :

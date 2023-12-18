@@ -43,7 +43,7 @@ def i18n_updatetranslation_work_repo_callback(pot, lng, settings):
 class UI_OT_i18n_updatetranslation_work_repo(Operator):
     """Update i18n working repository (po files)"""
     bl_idname = "ui.i18n_updatetranslation_work_repo"
-    bl_label = "Update I18n Work Repo"
+    bl_label = "Update I18n Work Repository"
 
     use_skip_pot_gen: BoolProperty(
         name="Skip POT",
@@ -118,7 +118,7 @@ def i18n_cleanuptranslation_work_repo_callback(lng, settings):
 class UI_OT_i18n_cleanuptranslation_work_repo(Operator):
     """Clean up i18n working repository (po files)"""
     bl_idname = "ui.i18n_cleanuptranslation_work_repo"
-    bl_label = "Clean up I18n Work Repo"
+    bl_label = "Clean up I18n Work Repository"
 
     def execute(self, context):
         if not hasattr(self, "settings"):
@@ -165,7 +165,7 @@ def i18n_updatetranslation_blender_repo_callback(lng, settings):
 class UI_OT_i18n_updatetranslation_blender_repo(Operator):
     """Update i18n data (po files) in Blender source code repository"""
     bl_idname = "ui.i18n_updatetranslation_blender_repo"
-    bl_label = "Update I18n Blender Repo"
+    bl_label = "Update I18n Blender Repository"
 
     def execute(self, context):
         if not hasattr(self, "settings"):

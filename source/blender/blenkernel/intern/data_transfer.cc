@@ -378,8 +378,7 @@ static void data_transfer_dtdata_type_postprocess(Mesh *me_dst,
     bke::MutableAttributeAccessor attributes = me_dst->attributes_for_write();
     bke::SpanAttributeWriter<bool> sharp_edges = attributes.lookup_or_add_for_write_span<bool>(
         "sharp_edge", ATTR_DOMAIN_EDGE);
-    const bool *sharp_faces = static_cast<const bool *>(
-        CustomData_get_layer_named(&me_dst->face_data, CD_PROP_BOOL, "sharp_face"));
+    const VArraySpan sharp_faces = *attributes.lookup<bool>("sharp_face", ATTR_DOMAIN_FACE);
     /* Note loop_nors_dst contains our custom normals as transferred from source... */
     blender::bke::mesh::normals_loop_custom_set(me_dst->vert_positions(),
                                                 me_dst->edges(),
@@ -1023,6 +1022,24 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
           CustomData_get_layer_named(&me_src->edge_data, CD_PROP_FLOAT, "bevel_weight_edge"),
           CustomData_get_layer_named_for_write(
               &me_dst->edge_data, CD_PROP_FLOAT, "bevel_weight_edge", me_dst->totedge),
+          interp,
+          interp_data);
+      return true;
+    }
+    if (r_map && cddata_type == CD_FAKE_CREASE) {
+      if (!CustomData_get_layer_named(&me_dst->edge_data, CD_PROP_FLOAT, "crease_edge")) {
+        CustomData_add_layer_named(
+            &me_dst->edge_data, CD_PROP_FLOAT, CD_SET_DEFAULT, me_dst->totedge, "crease_edge");
+      }
+      data_transfer_layersmapping_add_item_cd(
+          r_map,
+          CD_PROP_FLOAT,
+          mix_mode,
+          mix_factor,
+          mix_weights,
+          CustomData_get_layer_named(&me_src->edge_data, CD_PROP_FLOAT, "crease_edge"),
+          CustomData_get_layer_named_for_write(
+              &me_dst->edge_data, CD_PROP_FLOAT, "crease_edge", me_dst->totedge),
           interp,
           interp_data);
       return true;

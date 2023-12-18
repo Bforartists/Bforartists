@@ -16,7 +16,7 @@ bl_info = {
     'author': 'Robin Hohnsbeen',
     'description': 'Bake vector displacement brushes easily from a plane',
     'blender': (3, 5, 0),
-    'version': (1, 0, 2),
+    'version': (1, 0, 3),
     'location': 'Sculpt Mode: View3D > Sidebar > Tool Tab',
     'warning': '',
     'category': 'Baking',
@@ -88,7 +88,6 @@ class PT_VDMBaker(bpy.types.Panel):
 
         layout.use_property_split = True
         layout.use_property_decorate = False
-
         layout.operator(create_sculpt_plane.bl_idname, icon='ADD')
 
         layout.separator()
@@ -187,7 +186,6 @@ class create_vdm_brush(bpy.types.Operator):
             return {'CANCELLED'}
 
         vdm_plane = context.active_object
-
         addon_data = get_addon_data()
         new_brush_name = addon_data.draft_brush_name
         reference_brush_name = addon_data.draft_brush_name
@@ -214,6 +212,7 @@ class create_vdm_brush(bpy.types.Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
 
         vdm_bake_material = bakematerial.get_vdm_bake_material()
+        vdm_texture_image = None
         try:
             # Prepare baking
             scene.render.engine = 'CYCLES'

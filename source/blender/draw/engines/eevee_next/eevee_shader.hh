@@ -32,11 +32,17 @@ enum eShaderType {
   FILM_COMP,
   FILM_CRYPTOMATTE_POST,
 
-  DEFERRED_COMBINE,
-  DEFERRED_LIGHT,
   DEFERRED_CAPTURE_EVAL,
+  DEFERRED_COMBINE,
+  DEFERRED_LIGHT_SINGLE,
+  DEFERRED_LIGHT_DOUBLE,
+  DEFERRED_LIGHT_TRIPLE,
   DEFERRED_PLANAR_EVAL,
+  DEFERRED_TILE_CLASSIFY,
+  DEFERRED_TILE_COMPACT,
+  DEFERRED_TILE_STENCIL,
 
+  DEBUG_GBUFFER,
   DEBUG_SURFELS,
   DEBUG_IRRADIANCE_GRID,
 
@@ -66,6 +72,12 @@ enum eShaderType {
   HIZ_UPDATE_LAYER,
   HIZ_DEBUG,
 
+  HORIZON_DENOISE,
+  HORIZON_SCAN_DIFFUSE,
+  HORIZON_SCAN_REFLECT,
+  HORIZON_SCAN_REFRACT,
+  HORIZON_SETUP,
+
   LIGHT_CULLING_DEBUG,
   LIGHT_CULLING_SELECT,
   LIGHT_CULLING_SORT,
@@ -76,6 +88,8 @@ enum eShaderType {
   LIGHTPROBE_IRRADIANCE_OFFSET,
   LIGHTPROBE_IRRADIANCE_RAY,
   LIGHTPROBE_IRRADIANCE_LOAD,
+
+  LOOKDEV_DISPLAY,
 
   MOTION_BLUR_GATHER,
   MOTION_BLUR_TILE_DILATE,
@@ -131,6 +145,8 @@ enum eShaderType {
   SURFEL_LIST_SORT,
   SURFEL_RAY,
 
+  VERTEX_COPY,
+
   VOLUME_INTEGRATION,
   VOLUME_OCCUPANCY_CONVERT,
   VOLUME_RESOLVE,
@@ -167,8 +183,7 @@ class ShaderModule {
                                    ListBase &materials,
                                    bNodeTree *nodetree,
                                    eMaterialPipeline pipeline_type,
-                                   eMaterialGeometry geometry_type,
-                                   bool is_lookdev);
+                                   eMaterialGeometry geometry_type);
 
   void material_create_info_ammend(GPUMaterial *mat, GPUCodegenOutput *codegen);
 

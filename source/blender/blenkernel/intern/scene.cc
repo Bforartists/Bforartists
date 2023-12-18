@@ -74,9 +74,9 @@
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
-#include "BKE_lib_remap.h"
+#include "BKE_lib_remap.hh"
 #include "BKE_linestyle.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_mask.h"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
@@ -88,7 +88,7 @@
 #include "BKE_scene.h"
 #include "BKE_screen.hh"
 #include "BKE_sound.h"
-#include "BKE_unit.h"
+#include "BKE_unit.hh"
 #include "BKE_workspace.h"
 #include "BKE_world.h"
 
@@ -116,7 +116,7 @@
 
 #include "DRW_engine.h"
 
-#include "bmesh.h"
+#include "bmesh.hh"
 
 CurveMapping *BKE_sculpt_default_cavity_curve()
 
@@ -278,7 +278,7 @@ static void scene_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int
                    (ID *)scene_src->master_collection,
                    (ID **)&scene_dst->master_collection,
                    flag_private_id_data);
-    scene_dst->master_collection->runtime.owner_id = &scene_dst->id;
+    scene_dst->master_collection->owner_id = &scene_dst->id;
   }
 
   /* View Layers */
@@ -1186,6 +1186,9 @@ static void scene_blend_write(BlendWriter *writer, ID *id, const void *id_addres
   if (sce->master_collection) {
     BLO_write_init_id_buffer_from_id(
         temp_embedded_id_buffer, &sce->master_collection->id, BLO_write_is_undo(writer));
+    BKE_collection_blend_write_prepare_nolib(
+        writer,
+        reinterpret_cast<Collection *>(BLO_write_get_id_buffer_temp_id(temp_embedded_id_buffer)));
     BLO_write_struct_at_address(writer,
                                 Collection,
                                 sce->master_collection,

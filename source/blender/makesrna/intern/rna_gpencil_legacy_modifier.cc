@@ -3847,7 +3847,7 @@ static void rna_def_modifier_gpencillineart(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, modifier_lineart_shadow_region_filtering);
   RNA_def_property_ui_text(prop,
                            "Shadow Region Filtering",
-                           "Select feature lines that comes from lit or shaded regions. Will not "
+                           "Select feature lines that comes from lit or shaded regions. Requires a light object. Will not "
                            "affect cast shadow and light contour since they are at the border");
   RNA_def_property_update(prop, 0, "rna_GpencilModifier_dependency_update");
 

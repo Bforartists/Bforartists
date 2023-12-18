@@ -26,7 +26,7 @@
 #include "BKE_geometry_set.hh"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_wrapper.hh"
@@ -69,6 +69,8 @@
 #include "AS_asset_representation.hh"
 
 #include "geometry_intern.hh"
+
+namespace geo_log = blender::nodes::geo_eval_log;
 
 namespace blender::ed::geometry {
 
@@ -206,7 +208,7 @@ static void store_result_geometry(
       Mesh &mesh = *static_cast<Mesh *>(object.data);
 
       if (object.mode == OB_MODE_SCULPT) {
-        ED_sculpt_undo_geometry_begin(&object, &op);
+        sculpt_paint::undo::geometry_begin(&object, &op);
       }
 
       Mesh *new_mesh = geometry.get_component_for_write<bke::MeshComponent>().release();
@@ -223,10 +225,10 @@ static void store_result_geometry(
 
       if (object.mode == OB_MODE_EDIT) {
         EDBM_mesh_make(&object, scene.toolsettings->selectmode, true);
-        BKE_editmesh_looptri_and_normals_calc(mesh.edit_mesh);
+        BKE_editmesh_looptris_and_normals_calc(mesh.edit_mesh);
       }
       else if (object.mode == OB_MODE_SCULPT) {
-        ED_sculpt_undo_geometry_end(&object);
+        sculpt_paint::undo::geometry_end(&object);
       }
       break;
     }
@@ -247,8 +249,11 @@ static Depsgraph *build_depsgraph_from_indirect_ids(Main &bmain,
 {
   Set<ID *> ids_for_relations;
   bool needs_own_transform_relation = false;
-  nodes::find_node_tree_dependencies(
-      node_tree_orig, ids_for_relations, needs_own_transform_relation);
+  bool needs_scene_camera_relation = false;
+  nodes::find_node_tree_dependencies(node_tree_orig,
+                                     ids_for_relations,
+                                     needs_own_transform_relation,
+                                     needs_scene_camera_relation);
   IDP_foreach_property(
       &const_cast<IDProperty &>(properties),
       IDP_TYPE_FILTER_ID,
@@ -374,6 +379,7 @@ static int run_node_group_exec(bContext *C, wmOperator *op)
   BLI_SCOPED_DEFER([&]() { IDP_FreeProperty_ex(properties, false); });
 
   OperatorComputeContext compute_context(op->type->idname);
+  auto eval_log = std::make_unique<geo_log::GeoModifierLog>();
 
   for (Object *object : objects) {
     nodes::GeoNodesOperatorData operator_eval_data{};
@@ -382,22 +388,30 @@ static int run_node_group_exec(bContext *C, wmOperator *op)
     operator_eval_data.self_object = DEG_get_evaluated_object(depsgraph, object);
     operator_eval_data.scene = DEG_get_evaluated_scene(depsgraph);
 
+    nodes::GeoNodesCallData call_data{};
+    call_data.operator_data = &operator_eval_data;
+    call_data.eval_log = eval_log.get();
+
     bke::GeometrySet geometry_orig = get_original_geometry_eval_copy(*object);
 
     bke::GeometrySet new_geometry = nodes::execute_geometry_nodes_on_geometry(
-        *node_tree,
-        properties,
-        compute_context,
-        std::move(geometry_orig),
-        [&](nodes::GeoNodesLFUserData &user_data) {
-          user_data.operator_data = &operator_eval_data;
-          user_data.log_socket_values = false;
-        });
+        *node_tree, properties, compute_context, call_data, std::move(geometry_orig));
 
     store_result_geometry(*op, *bmain, *scene, *object, std::move(new_geometry));
 
     DEG_id_tag_update(static_cast<ID *>(object->data), ID_RECALC_GEOMETRY);
     WM_event_add_notifier(C, NC_GEOM | ND_DATA, object->data);
+  }
+
+  geo_log::GeoTreeLog &tree_log = eval_log->get_tree_log(compute_context.hash());
+  tree_log.ensure_node_warnings();
+  for (const geo_log::NodeWarning &warning : tree_log.all_warnings) {
+    if (warning.type == geo_log::NodeWarningType::Info) {
+      BKE_report(op->reports, RPT_INFO, warning.message.c_str());
+    }
+    else {
+      BKE_report(op->reports, RPT_WARNING, warning.message.c_str());
+    }
   }
 
   return OPERATOR_FINISHED;
@@ -986,7 +1000,7 @@ static void catalog_assets_draw_unassigned(const bContext *C, Menu *menu)
       add_separator = false;
     }
     if (first) {
-      uiItemL(layout, IFACE_("Local Unmarked Assets:"), ICON_NONE);
+      uiItemL(layout, IFACE_("Unmarked Assets:"), ICON_NONE);  /*BFA - changed label*/
       first = false;
     }
 

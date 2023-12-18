@@ -3225,7 +3225,7 @@ def km_pose(params):
         ("pose.select_hierarchy", {"type": 'DOWN_ARROW', "value": 'PRESS', "shift": True, "repeat": True},
          {"properties": [("direction", 'CHILD'), ("extend", True)]}),
         ("pose.select_linked", {"type": 'L', "value": 'PRESS', "ctrl": True}, None),
-        ("anim.keyframe_insert_menu", {"type": 'S', "value": 'PRESS', "shift": True}, None),
+        ("anim.keyframe_insert", {"type": 'S', "value": 'PRESS', "shift": True}, None),
         ("anim.keyframe_insert_by_name", {"type": 'S', "value": 'PRESS'},
          {"properties": [("type", 'LocRotScale')]}),
         ("anim.keyframe_insert_by_name", {"type": 'W', "value": 'PRESS', "shift": True},
@@ -3297,7 +3297,7 @@ def km_object_mode(params):
          {"properties": [("use_global", True), ("confirm", False)]}),
         ("object.duplicate_move", {"type": 'D', "value": 'PRESS', "ctrl": True}, None),
         # Keyframing
-        ("anim.keyframe_insert_menu", {"type": 'S', "value": 'PRESS', "shift": True}, None),
+        ("anim.keyframe_insert", {"type": 'S', "value": 'PRESS', "shift": True}, None),
         ("anim.keyframe_insert_by_name", {"type": 'S', "value": 'PRESS'},
          {"properties": [("type", 'LocRotScale')]}),
         ("anim.keyframe_insert_by_name", {"type": 'W', "value": 'PRESS', "shift": True},
@@ -3702,8 +3702,6 @@ def km_sculpt(params):
          {"properties": [("mode", 'TOGGLE')]}),
         ("paint.hide_show", {"type": 'H', "value": 'PRESS', "ctrl": True},
          {"properties": [("action", 'HIDE'), ("area", 'MASKED')]}),
-        ("sculpt.reveal_all", {"type": 'H', "value": 'PRESS', "alt": True},
-         {"properties": []}),
         ("paint.hide_show", {"type": 'H', "value": 'PRESS', "alt": True},
          {"properties": [("action", 'SHOW'), ("area", 'ALL')]}),
         # Subdivision levels
@@ -4119,8 +4117,7 @@ def km_curves(params):
         # Selection Modes
         ("curves.set_selection_domain", {"type": 'ONE', "value": 'PRESS'}, {"properties": [("domain", 'POINT')]}),
         ("curves.set_selection_domain", {"type": 'TWO', "value": 'PRESS'}, {"properties": [("domain", 'CURVE')]}),
-        ("curves.disable_selection", {"type": 'ONE', "value": 'PRESS', "alt": True}, None),
-        ("curves.disable_selection", {"type": 'TWO', "value": 'PRESS', "alt": True}, None),
+        ("curves.duplicate_move", {"type": 'D', "value": 'PRESS', "ctrl": True}, None),
         # Selection Operators
         ("curves.select_all", {"type": 'A', "value": 'PRESS', "ctrl": True}, {"properties": [("action", 'SELECT')]}),
         ("curves.select_all", {"type": 'A', "value": 'PRESS', "shift": True,
@@ -4516,7 +4513,7 @@ def generate_keymaps_impl(params=None):
         km_animation_channels(params),
 
         # Modes.
-        km_grease_pencil(params),
+        # km_grease_pencil(params), # Empty.
         km_grease_pencil_stroke_edit_mode(params),
         km_grease_pencil_stroke_paint_mode(params),
         km_grease_pencil_stroke_paint_draw_brush(params),

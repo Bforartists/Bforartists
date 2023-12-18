@@ -19,7 +19,7 @@
 
 #include "BKE_anim_data.h"
 #include "BKE_image.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_anonymous_attributes.hh"
@@ -512,7 +512,7 @@ class NodeTreeMainUpdater {
       result.interface_changed = true;
     }
 
-#ifdef DEBUG
+#ifndef NDEBUG
     /* Check the uniqueness of node identifiers. */
     Set<int32_t> node_identifiers;
     const Span<const bNode *> nodes = ntree.all_nodes();

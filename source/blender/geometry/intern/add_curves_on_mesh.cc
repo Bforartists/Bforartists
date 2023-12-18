@@ -37,12 +37,12 @@ struct NeighborCurve {
 static constexpr int max_neighbors = 5;
 using NeighborCurves = Vector<NeighborCurve, max_neighbors>;
 
-float3 compute_surface_point_normal(const MLoopTri &looptri,
+float3 compute_surface_point_normal(const MLoopTri &lt,
                                     const float3 &bary_coord,
                                     const Span<float3> corner_normals)
 {
   const float3 value = bke::mesh_surface_sample::sample_corner_attribute_with_bary_coords(
-      bary_coord, looptri, corner_normals);
+      bary_coord, lt, corner_normals);
   return math::normalize(value);
 }
 
@@ -258,14 +258,14 @@ AddCurvesOnMeshOutputs add_curves_on_mesh(CurvesGeometry &curves,
       outputs.uv_error = true;
       continue;
     }
-    const MLoopTri &looptri = inputs.surface_looptris[result.looptri_index];
+    const MLoopTri &lt = inputs.surface_looptris[result.looptri_index];
     bary_coords.append(result.bary_weights);
     looptri_indices.append(result.looptri_index);
     const float3 root_position_su = bke::attribute_math::mix3<float3>(
         result.bary_weights,
-        surface_positions[surface_corner_verts[looptri.tri[0]]],
-        surface_positions[surface_corner_verts[looptri.tri[1]]],
-        surface_positions[surface_corner_verts[looptri.tri[2]]]);
+        surface_positions[surface_corner_verts[lt.tri[0]]],
+        surface_positions[surface_corner_verts[lt.tri[1]]],
+        surface_positions[surface_corner_verts[lt.tri[2]]]);
     root_positions_cu.append(
         math::transform_point(inputs.transforms->surface_to_curves, root_position_su));
     used_uvs.append(uv);
@@ -397,22 +397,12 @@ AddCurvesOnMeshOutputs add_curves_on_mesh(CurvesGeometry &curves,
   }
 
   /* Explicitly set all other attributes besides those processed above to default values. */
-  Set<std::string> attributes_to_skip{
-      {"position", "curve_type", "surface_uv_coordinate", "resolution"}};
-  attributes.for_all(
-      [&](const bke::AttributeIDRef &id, const bke::AttributeMetaData /*meta_data*/) {
-        if (attributes_to_skip.contains(id.name())) {
-          return true;
-        }
-        bke::GSpanAttributeWriter attribute = attributes.lookup_for_write_span(id);
-        const CPPType &type = attribute.span.type();
-        GMutableSpan new_data = attribute.span.slice(attribute.domain == ATTR_DOMAIN_POINT ?
-                                                         outputs.new_points_range :
-                                                         outputs.new_curves_range);
-        type.fill_assign_n(type.default_value(), new_data.data(), new_data.size());
-        attribute.finish();
-        return true;
-      });
+  bke::fill_attribute_range_default(
+      attributes, ATTR_DOMAIN_POINT, {"position"}, outputs.new_points_range);
+  bke::fill_attribute_range_default(attributes,
+                                    ATTR_DOMAIN_CURVE,
+                                    {"curve_type", "surface_uv_coordinate", "resolution"},
+                                    outputs.new_curves_range);
 
   return outputs;
 }
