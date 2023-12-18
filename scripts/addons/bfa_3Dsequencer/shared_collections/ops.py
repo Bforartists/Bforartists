@@ -9,8 +9,8 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 class COLLECTION_OT_shared_folder_from_collection(bpy.types.Operator):
     bl_idname = "collection.shared_folder_from_collection"
-    bl_label = "Make Shared Folder"
-    bl_description = "Create a shared folder from an existing collection"
+    bl_label = "Make Shared Collection"
+    bl_description = "Create a shared collection from an existing collection"
     bl_options = {"UNDO"}
 
     @classmethod
@@ -58,14 +58,14 @@ def build_collection_colors_enum():
 
 class COLLECTION_OT_shared_folder_new(bpy.types.Operator):
     bl_idname = "collection.shared_folder_new"
-    bl_label = "New Shared Folder"
-    bl_description = "Create a new shared folder"
+    bl_label = "New Shared Collection"
+    bl_description = "Create a new shared collection"
     bl_options = {"UNDO"}
     # Setup "name" as primary property (gets UI focus)
     bl_property = "name"
 
     name: bpy.props.StringProperty(
-        name="Name", description="Name of the Shared Folder", options={"SKIP_SAVE"}
+        name="Name", description="Name of the shared collection", options={"SKIP_SAVE"}
     )
 
     # Build the color enum items list once
@@ -73,7 +73,7 @@ class COLLECTION_OT_shared_folder_new(bpy.types.Operator):
 
     color: bpy.props.EnumProperty(
         name="Color",
-        description="Shared Folder color",
+        description="Shared collection color",
         items=COLLECTION_COLOR_ENUM,
     )
 
@@ -81,8 +81,8 @@ class COLLECTION_OT_shared_folder_new(bpy.types.Operator):
         name="Link in Shots",
         items=(
             ("NONE", "None", "None"),
-            ("CURRENT", "Current", "Current Shot"),
-            ("SELECTED", "Selected", "Selected Shots"),
+            ("CURRENT", "Current", "Current Scene"),
+            ("SELECTED", "Selected", "Selected Scene"),
         ),
         default="SELECTED",
     )
@@ -99,14 +99,14 @@ class COLLECTION_OT_shared_folder_new(bpy.types.Operator):
 
     def execute(self, context: bpy.types.Context):
         if not self.name:
-            self.report({"ERROR"}, "Shared folder name is empty")
+            self.report({"ERROR"}, "Shared collection name is empty")
             return {"CANCELLED"}
 
         # Get scenes based on context
         scenes = get_active_or_selected_scenes(context)
         if context.area.type == "SEQUENCE_EDITOR":
             if self.sequencer_link_mode == "CURRENT":
-                # Easy way of getting the currently active shot in a VSE override setup
+                # Easy way of getting the currently active scene in a VSE override setup
                 scenes = [context.window.scene]
             elif self.sequencer_link_mode == "NONE":
                 scenes = []
@@ -117,7 +117,7 @@ class COLLECTION_OT_shared_folder_new(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Shared folder '{self.name}' created and linked in {len(linked)} shot(s)",
+            f"Shared collection '{self.name}' created and linked in {len(linked)} scene(s)",
         )
 
         if context.area.type == "SEQUENCE_EDITOR":
@@ -128,11 +128,11 @@ class COLLECTION_OT_shared_folder_new(bpy.types.Operator):
 
 class COLLECTION_OT_shared_folder_shots_link(bpy.types.Operator):
     bl_idname = "collection.shared_folder_shots_link"
-    bl_label = "Link Shared Folder in Shots"
-    bl_description = "Link a shared folder in active or selected shots"
+    bl_label = "Link Shared Collection in Shots"
+    bl_description = "Link a shared collection in active or selected scenes"
     bl_options = {"UNDO"}
 
-    shared_folder_name: bpy.props.StringProperty(name="Shared Folder")
+    shared_folder_name: bpy.props.StringProperty(name="Shared Collection")
 
     def execute(self, context: bpy.types.Context):
         scenes = get_active_or_selected_scenes(context)
@@ -142,7 +142,7 @@ class COLLECTION_OT_shared_folder_shots_link(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Linked shared folder '{self.shared_folder_name}' in {len(linked)} shot(s)",
+            f"Linked shared collection '{self.shared_folder_name}' in {len(linked)} scene(s)",
         )
 
         if not linked:
@@ -153,11 +153,11 @@ class COLLECTION_OT_shared_folder_shots_link(bpy.types.Operator):
 
 class COLLECTION_OT_shared_folder_shots_unlink(bpy.types.Operator):
     bl_idname = "collection.shared_folder_shots_unlink"
-    bl_label = "Unlink Shared Folder from Shots"
-    bl_description = "Unlink a shared folder from active or selected shots"
+    bl_label = "Unlink Shared Collection from Scenes"
+    bl_description = "Unlink a shared collection from active or selected scenes"
     bl_options = {"UNDO"}
 
-    shared_folder_name: bpy.props.StringProperty(name="Shared Folder")
+    shared_folder_name: bpy.props.StringProperty(name="Shared Collection")
 
     def execute(self, context: bpy.types.Context):
         scenes = get_active_or_selected_scenes(context)
@@ -167,7 +167,7 @@ class COLLECTION_OT_shared_folder_shots_unlink(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Unlinked shared folder '{self.shared_folder_name}' from {len(unlinked)} shot(s)",
+            f"Unlinked shared collection '{self.shared_folder_name}' from {len(unlinked)} scene(s)",
         )
 
         if not unlinked:
@@ -178,11 +178,11 @@ class COLLECTION_OT_shared_folder_shots_unlink(bpy.types.Operator):
 
 class COLLECTION_OT_shared_folder_shots_select(bpy.types.Operator):
     bl_idname = "collection.shared_folder_shots_select"
-    bl_label = "Select Shots by Shared Folder"
-    bl_description = "Select shots that uses a shared folder"
+    bl_label = "Select Scenes by Shared collection"
+    bl_description = "Select scenes that uses a shared collection"
     bl_options = {"UNDO"}
 
-    shared_folder_name: bpy.props.StringProperty(name="Shared Folder")
+    shared_folder_name: bpy.props.StringProperty(name="Shared collection")
 
     @classmethod
     def poll(self, context: bpy.types.Context):
@@ -201,15 +201,15 @@ class COLLECTION_OT_shared_folder_shots_select(bpy.types.Operator):
 
 class COLLECTION_OT_shared_folder_delete(bpy.types.Operator):
     bl_idname = "collection.shared_folder_delete"
-    bl_label = "Delete Shared Folder"
-    bl_description = "Delete a shared folder"
+    bl_label = "Delete Shared collection"
+    bl_description = "Delete a shared collection"
     bl_options = {"UNDO"}
 
-    shared_folder_name: bpy.props.StringProperty(name="Shared Folder")
+    shared_folder_name: bpy.props.StringProperty(name="Shared collection")
 
     def execute(self, context: bpy.types.Context):
         core.delete_shared_folder(bpy.data.collections[self.shared_folder_name])
-        self.report({"INFO"}, f"Deleted shared folder '{self.shared_folder_name}'")
+        self.report({"INFO"}, f"Deleted shared collection '{self.shared_folder_name}'")
 
         return {"FINISHED"}
 
