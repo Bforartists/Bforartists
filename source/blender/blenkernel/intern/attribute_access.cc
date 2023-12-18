@@ -31,15 +31,6 @@
 
 #include "attribute_access_intern.hh"
 
-using blender::float3;
-using blender::GMutableSpan;
-using blender::GSpan;
-using blender::GVArrayImpl_For_GSpan;
-using blender::Set;
-using blender::StringRef;
-using blender::StringRefNull;
-using blender::bke::AttributeIDRef;
-
 namespace blender::bke {
 
 std::ostream &operator<<(std::ostream &stream, const AttributeIDRef &attribute_id)
@@ -598,11 +589,9 @@ bool CustomDataAttributeProvider::foreach_attribute(const void *owner,
 /** \name Attribute API
  * \{ */
 
-static blender::GVArray try_adapt_data_type(blender::GVArray varray,
-                                            const blender::CPPType &to_type)
+static GVArray try_adapt_data_type(GVArray varray, const CPPType &to_type)
 {
-  const blender::bke::DataTypeConversions &conversions =
-      blender::bke::get_implicit_type_conversions();
+  const DataTypeConversions &conversions = get_implicit_type_conversions();
   return conversions.try_convert(std::move(varray), to_type);
 }
 
@@ -681,7 +670,7 @@ void MutableAttributeAccessor::remove_anonymous()
 /**
  * Debug utility that checks whether the #finish function of an #AttributeWriter has been called.
  */
-#ifdef DEBUG
+#ifndef NDEBUG
 struct FinishCallChecker {
   std::string name;
   bool finish_called = false;
@@ -700,7 +689,7 @@ GAttributeWriter MutableAttributeAccessor::lookup_for_write(const AttributeIDRef
 {
   GAttributeWriter attribute = fn_->lookup_for_write(owner_, attribute_id);
   /* Check that the #finish method is called in debug builds. */
-#ifdef DEBUG
+#ifndef NDEBUG
   if (attribute) {
     auto checker = std::make_shared<FinishCallChecker>();
     checker->name = attribute_id.name();
@@ -817,32 +806,31 @@ fn::GField AttributeValidator::validate_field_if_necessary(const fn::GField &fie
 }
 
 Vector<AttributeTransferData> retrieve_attributes_for_transfer(
-    const bke::AttributeAccessor src_attributes,
-    bke::MutableAttributeAccessor dst_attributes,
+    const AttributeAccessor src_attributes,
+    MutableAttributeAccessor dst_attributes,
     const eAttrDomainMask domain_mask,
     const AnonymousAttributePropagationInfo &propagation_info,
     const Set<std::string> &skip)
 {
   Vector<AttributeTransferData> attributes;
-  src_attributes.for_all(
-      [&](const bke::AttributeIDRef &id, const bke::AttributeMetaData meta_data) {
-        if (!(ATTR_DOMAIN_AS_MASK(meta_data.domain) & domain_mask)) {
-          return true;
-        }
-        if (id.is_anonymous() && !propagation_info.propagate(id.anonymous_id())) {
-          return true;
-        }
-        if (skip.contains(id.name())) {
-          return true;
-        }
+  src_attributes.for_all([&](const AttributeIDRef &id, const AttributeMetaData meta_data) {
+    if (!(ATTR_DOMAIN_AS_MASK(meta_data.domain) & domain_mask)) {
+      return true;
+    }
+    if (id.is_anonymous() && !propagation_info.propagate(id.anonymous_id())) {
+      return true;
+    }
+    if (skip.contains(id.name())) {
+      return true;
+    }
 
-        const GVArray src = *src_attributes.lookup(id, meta_data.domain);
-        bke::GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
-            id, meta_data.domain, meta_data.data_type);
-        attributes.append({std::move(src), meta_data, std::move(dst)});
+    const GVArray src = *src_attributes.lookup(id, meta_data.domain);
+    GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
+        id, meta_data.domain, meta_data.data_type);
+    attributes.append({std::move(src), meta_data, std::move(dst)});
 
-        return true;
-      });
+    return true;
+  });
   return attributes;
 }
 
@@ -866,15 +854,14 @@ void gather_attributes(const AttributeAccessor src_attributes,
     if (skip.contains(id.name())) {
       return true;
     }
-    const bke::GAttributeReader src = src_attributes.lookup(id, domain);
+    const GAttributeReader src = src_attributes.lookup(id, domain);
     if (selection.size() == src_size && src.sharing_info && src.varray.is_span()) {
-      const bke::AttributeInitShared init(src.varray.get_internal_span().data(),
-                                          *src.sharing_info);
+      const AttributeInitShared init(src.varray.get_internal_span().data(), *src.sharing_info);
       if (dst_attributes.add(id, domain, meta_data.data_type, init)) {
         return true;
       }
     }
-    bke::GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
+    GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
         id, domain, meta_data.data_type);
     if (!dst) {
       return true;
@@ -905,7 +892,7 @@ static bool indices_are_range(const Span<int> indices, const IndexRange range)
         }
         return true;
       },
-      [](const bool a, const bool b) { return a && b; });
+      std::logical_and());
 }
 
 void gather_attributes(const AttributeAccessor src_attributes,
@@ -929,8 +916,8 @@ void gather_attributes(const AttributeAccessor src_attributes,
       if (skip.contains(id.name())) {
         return true;
       }
-      const bke::GAttributeReader src = src_attributes.lookup(id, domain);
-      bke::GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
+      const GAttributeReader src = src_attributes.lookup(id, domain);
+      GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
           id, domain, meta_data.data_type);
       if (!dst) {
         return true;
@@ -940,30 +927,6 @@ void gather_attributes(const AttributeAccessor src_attributes,
       return true;
     });
   }
-}
-
-template<typename T>
-static void gather_group_to_group(const OffsetIndices<int> src_offsets,
-                                  const OffsetIndices<int> dst_offsets,
-                                  const IndexMask &selection,
-                                  const Span<T> src,
-                                  MutableSpan<T> dst)
-{
-  selection.foreach_index(GrainSize(512), [&](const int64_t src_i, const int64_t dst_i) {
-    dst.slice(dst_offsets[dst_i]).copy_from(src.slice(src_offsets[src_i]));
-  });
-}
-
-static void gather_group_to_group(const OffsetIndices<int> src_offsets,
-                                  const OffsetIndices<int> dst_offsets,
-                                  const IndexMask &selection,
-                                  const GSpan src,
-                                  GMutableSpan dst)
-{
-  attribute_math::convert_to_static_type(src.type(), [&](auto dummy) {
-    using T = decltype(dummy);
-    gather_group_to_group(src_offsets, dst_offsets, selection, src.typed<T>(), dst.typed<T>());
-  });
 }
 
 void gather_attributes_group_to_group(const AttributeAccessor src_attributes,
@@ -986,12 +949,42 @@ void gather_attributes_group_to_group(const AttributeAccessor src_attributes,
       return true;
     }
     const GVArraySpan src = *src_attributes.lookup(id, domain);
-    bke::GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
+    GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
         id, domain, meta_data.data_type);
     if (!dst) {
       return true;
     }
-    gather_group_to_group(src_offsets, dst_offsets, selection, src, dst.span);
+    attribute_math::gather_group_to_group(src_offsets, dst_offsets, selection, src, dst.span);
+    dst.finish();
+    return true;
+  });
+}
+
+void gather_attributes_to_groups(const AttributeAccessor src_attributes,
+                                 const eAttrDomain domain,
+                                 const AnonymousAttributePropagationInfo &propagation_info,
+                                 const Set<std::string> &skip,
+                                 const OffsetIndices<int> dst_offsets,
+                                 const IndexMask &src_selection,
+                                 MutableAttributeAccessor dst_attributes)
+{
+  src_attributes.for_all([&](const AttributeIDRef &id, const AttributeMetaData meta_data) {
+    if (meta_data.domain != domain) {
+      return true;
+    }
+    if (id.is_anonymous() && !propagation_info.propagate(id.anonymous_id())) {
+      return true;
+    }
+    if (skip.contains(id.name())) {
+      return true;
+    }
+    const GVArraySpan src = *src_attributes.lookup(id, domain);
+    GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
+        id, domain, meta_data.data_type);
+    if (!dst) {
+      return true;
+    }
+    attribute_math::gather_to_groups(dst_offsets, src_selection, src, dst.span);
     dst.finish();
     return true;
   });
@@ -1035,13 +1028,34 @@ void copy_attributes_group_to_group(const AttributeAccessor src_attributes,
       return true;
     }
     const GVArraySpan src = *src_attributes.lookup(id, domain);
-    bke::GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
+    GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
         id, domain, meta_data.data_type);
     if (!dst) {
       return true;
     }
     array_utils::copy_group_to_group(src_offsets, dst_offsets, selection, src, dst.span);
     dst.finish();
+    return true;
+  });
+}
+
+void fill_attribute_range_default(MutableAttributeAccessor attributes,
+                                  const eAttrDomain domain,
+                                  const Set<std::string> &skip,
+                                  const IndexRange range)
+{
+  attributes.for_all([&](const AttributeIDRef &id, const AttributeMetaData meta_data) {
+    if (meta_data.domain != domain) {
+      return true;
+    }
+    if (skip.contains(id.name())) {
+      return true;
+    }
+    GSpanAttributeWriter attribute = attributes.lookup_for_write_span(id);
+    const CPPType &type = attribute.span.type();
+    GMutableSpan data = attribute.span.slice(range);
+    type.fill_assign_n(type.default_value(), data.data(), data.size());
+    attribute.finish();
     return true;
   });
 }

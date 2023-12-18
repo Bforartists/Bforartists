@@ -31,6 +31,7 @@
 #include "BKE_anim_data.h"
 #include "BKE_global.h"
 #include "BKE_idtype.h"
+#include "BKE_lib_override.hh"
 #include "BKE_node.hh"
 #include "BKE_scene.h"
 #include "BKE_screen.hh"
@@ -556,7 +557,14 @@ void graph_tag_ids_for_visible_update(Depsgraph *graph)
     if (id_type == ID_OB) {
       flags |= ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY;
     }
-    graph_id_tag_update(bmain, graph, id_node->id_orig, flags, DEG_UPDATE_SOURCE_VISIBILITY);
+    /* For non-COW datablocks like images, there is no need to update when
+     * they just got added to the depsgraph and there is no flag indicating
+     * a specific change that was made to them. Unlike COW datablocks which
+     * have just been copied.
+     * This helps preserve cached image draw data for the compositor. */
+    if (ID_TYPE_IS_COW(id_type) || flags != 0) {
+      graph_id_tag_update(bmain, graph, id_node->id_orig, flags, DEG_UPDATE_SOURCE_VISIBILITY);
+    }
     if (id_type == ID_SCE) {
       /* Make sure collection properties are up to date. */
       id_node->tag_update(graph, DEG_UPDATE_SOURCE_VISIBILITY);
@@ -634,6 +642,10 @@ void id_tag_update(Main *bmain, ID *id, uint flags, eUpdateSource update_source)
   graph_id_tag_update(bmain, nullptr, id, flags, update_source);
   for (deg::Depsgraph *depsgraph : deg::get_all_registered_graphs(bmain)) {
     graph_id_tag_update(bmain, depsgraph, id, flags, update_source);
+  }
+
+  if (update_source & DEG_UPDATE_SOURCE_USER_EDIT) {
+    BKE_lib_override_id_tag_on_deg_tag_from_user(id);
   }
 
   /* Accumulate all tags for an ID between two undo steps, so they can be

@@ -126,38 +126,54 @@ void OVERLAY_grid_init(OVERLAY_Data *vedata)
     }
     /*bfa - show floor in ortho view too*/
     else {
-      if (show_ortho_grid && ELEM(rv3d->view, RV3D_VIEW_RIGHT, RV3D_VIEW_LEFT)) {
-        if (show_floor) {
-          grid_flag = PLANE_YZ | SHOW_AXIS_Y | SHOW_AXIS_Z | SHOW_GRID | GRID_BACK;
-        }
-        else {
-          grid_flag = PLANE_YZ | SHOW_AXIS_Y | SHOW_AXIS_Z;
-        }
-      }
-      else if (show_ortho_grid && ELEM(rv3d->view, RV3D_VIEW_TOP, RV3D_VIEW_BOTTOM)) {
-        if (show_floor) {
-          grid_flag = PLANE_XY | SHOW_AXIS_X | SHOW_AXIS_Y | SHOW_GRID | GRID_BACK;
-        }
-        else {
-          grid_flag = PLANE_XY | SHOW_AXIS_X | SHOW_AXIS_Y;
-        }
-      }
-      else if (show_ortho_grid && ELEM(rv3d->view, RV3D_VIEW_FRONT, RV3D_VIEW_BACK)) {
-        if (show_floor) {
-          grid_flag = PLANE_XZ | SHOW_AXIS_X | SHOW_AXIS_Z | SHOW_GRID | GRID_BACK;
-        }
-        else {
-          grid_flag = PLANE_XZ | SHOW_AXIS_X | SHOW_AXIS_Z;
-        }
-      }
+       if (show_ortho_grid && ELEM(rv3d->view, RV3D_VIEW_RIGHT, RV3D_VIEW_LEFT)) {
+         grid_flag = PLANE_YZ;
+         if (show_floor) {
+           grid_flag = (grid_flag | SHOW_GRID | GRID_BACK);
+         }
+         /*bfa - toggles axis y/z in ortho left/right views*/
+         if (show_axis_y) {
+           grid_flag = (grid_flag | SHOW_AXIS_Y);
+         }
+         if (show_axis_z) {
+           grid_flag = (grid_flag | SHOW_AXIS_Z);
+         }
+       }
+       else if (show_ortho_grid && ELEM(rv3d->view, RV3D_VIEW_TOP, RV3D_VIEW_BOTTOM)) {
+         grid_flag = PLANE_XY;
+         if (show_floor) {
+           grid_flag = (grid_flag | SHOW_GRID | GRID_BACK);
+         }
+         /*bfa - toggles axis x/y in ortho top/bottom views*/
+         if (show_axis_x) {
+           grid_flag = (grid_flag | SHOW_AXIS_X);
+         }
+         if (show_axis_y) {
+           grid_flag = (grid_flag | SHOW_AXIS_Y);
+         }
+       }
+       else if (show_ortho_grid && ELEM(rv3d->view, RV3D_VIEW_FRONT, RV3D_VIEW_BACK)) {
+         grid_flag = PLANE_XZ;
+         if (show_floor) {
+           grid_flag = (grid_flag | SHOW_GRID | GRID_BACK);
+         }
+         /*bfa - toggles axis x/z in ortho front/back views*/
+         if (show_axis_x) {
+           grid_flag = (grid_flag | SHOW_AXIS_X);
+         }
+         if (show_axis_z) {
+           grid_flag = (grid_flag | SHOW_AXIS_Z);
     }
+  }
+}
 
     grid_axes[0] = float((grid_flag & (PLANE_XZ | PLANE_XY)) != 0);
     grid_axes[1] = float((grid_flag & (PLANE_YZ | PLANE_XY)) != 0);
     grid_axes[2] = float((grid_flag & (PLANE_YZ | PLANE_XZ)) != 0);
 
     /* Z axis if needed */
-    if (((rv3d->view == RV3D_VIEW_USER) || (rv3d->persp != RV3D_ORTHO)) && show_axis_z) {
+    /*bfa - also hides the Axis Z*/
+    if (show_ortho_grid && ((rv3d->view == RV3D_VIEW_USER) || (rv3d->persp != RV3D_ORTHO)) && show_axis_z) {
       zpos_flag = SHOW_AXIS_Z;
 
       float zvec[3], campos[3];

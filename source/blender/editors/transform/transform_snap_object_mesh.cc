@@ -36,7 +36,7 @@ static void snap_object_data_mesh_get(const Mesh *me_eval,
 {
   /* The BVHTree from looptris is always required. */
   BKE_bvhtree_from_mesh_get(
-      r_treedata, me_eval, use_hide ? BVHTREE_FROM_LOOPTRI_NO_HIDDEN : BVHTREE_FROM_LOOPTRI, 4);
+      r_treedata, me_eval, use_hide ? BVHTREE_FROM_LOOPTRIS_NO_HIDDEN : BVHTREE_FROM_LOOPTRIS, 4);
 }
 
 /** \} */
@@ -49,18 +49,18 @@ static void snap_object_data_mesh_get(const Mesh *me_eval,
  * Support for storing all depths, not just the first (ray-cast 'all'). */
 
 /* Callback to ray-cast with back-face culling (#Mesh). */
-static void mesh_looptri_raycast_backface_culling_cb(void *userdata,
-                                                     int index,
-                                                     const BVHTreeRay *ray,
-                                                     BVHTreeRayHit *hit)
+static void mesh_looptris_raycast_backface_culling_cb(void *userdata,
+                                                      int index,
+                                                      const BVHTreeRay *ray,
+                                                      BVHTreeRayHit *hit)
 {
   const BVHTreeFromMesh *data = (BVHTreeFromMesh *)userdata;
-  const float(*vert_positions)[3] = data->vert_positions;
-  const MLoopTri *lt = &data->looptri[index];
+  const blender::Span<blender::float3> positions = data->vert_positions;
+  const MLoopTri *lt = &data->looptris[index];
   const float *vtri_co[3] = {
-      vert_positions[data->corner_verts[lt->tri[0]]],
-      vert_positions[data->corner_verts[lt->tri[1]]],
-      vert_positions[data->corner_verts[lt->tri[2]]],
+      positions[data->corner_verts[lt->tri[0]]],
+      positions[data->corner_verts[lt->tri[1]]],
+      positions[data->corner_verts[lt->tri[2]]],
   };
   float dist = bvhtree_ray_tri_intersection(ray, hit->dist, UNPACK3(vtri_co));
 
@@ -104,7 +104,7 @@ static bool raycastMesh(SnapObjectContext *sctx,
     local_depth *= local_scale;
   }
 
-  /* Test BoundBox */
+  /* Test bounding box */
   if (ob_eval->data == me_eval) {
     const Bounds<float3> bounds = *me_eval->bounds_min_max();
     /* was BKE_boundbox_ray_hit_check, see: cf6ca226fa58 */
@@ -166,7 +166,7 @@ static bool raycastMesh(SnapObjectContext *sctx,
                              0.0f,
                              &hit,
                              sctx->runtime.params.use_backface_culling ?
-                                 mesh_looptri_raycast_backface_culling_cb :
+                                 mesh_looptris_raycast_backface_culling_cb :
                                  treedata.raycast_callback,
                              &treedata) != -1)
     {
@@ -533,7 +533,7 @@ static eSnapMode snapMesh(SnapObjectContext *sctx,
   else {
     BLI_assert(snap_to & SCE_SNAP_TO_EDGE_ENDPOINT);
     if (bvhtree[0]) {
-      /* Snap to loose edge verts. */
+      /* Snap to loose edges verts. */
       BLI_bvhtree_find_nearest_projected(
           bvhtree[0],
           nearest2d.pmat_local.ptr(),
@@ -547,7 +547,7 @@ static eSnapMode snapMesh(SnapObjectContext *sctx,
     }
 
     if (treedata.tree) {
-      /* Snap to looptri verts. */
+      /* Snap to looptris verts. */
       BLI_bvhtree_find_nearest_projected(
           treedata.tree,
           nearest2d.pmat_local.ptr(),

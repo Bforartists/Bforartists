@@ -153,7 +153,7 @@ void SceneState::init(Object *camera_ob /*=nullptr*/)
   }
 
   if (assign_if_different(overlays_enabled, v3d && !(v3d->flag2 & V3D_HIDE_OVERLAYS))) {
-    /** Reset TAA when enabling overlays, since we won't have valid sample0 depth textures.
+    /* Reset TAA when enabling overlays, since we won't have valid sample0 depth textures.
      * (See #113741) */
     reset_taa = true;
   }
@@ -219,9 +219,9 @@ ObjectState::ObjectState(const SceneState &scene_state, Object *ob)
   bool has_uv = false;
 
   if (ob->type == OB_MESH) {
-    const Mesh *me = static_cast<Mesh *>(ob->data);
-    const CustomData *cd_vdata = get_vert_custom_data(me);
-    const CustomData *cd_ldata = get_loop_custom_data(me);
+    const Mesh *mesh = static_cast<Mesh *>(ob->data);
+    const CustomData *cd_vdata = get_vert_custom_data(mesh);
+    const CustomData *cd_ldata = get_loop_custom_data(mesh);
 
     has_color = (CustomData_has_layer(cd_vdata, CD_PROP_COLOR) ||
                  CustomData_has_layer(cd_vdata, CD_PROP_BYTE_COLOR) ||

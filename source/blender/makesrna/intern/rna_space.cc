@@ -2171,13 +2171,16 @@ static void rna_ConsoleLine_body_set(PointerRNA *ptr, const char *value)
   }
 }
 
-static void rna_ConsoleLine_cursor_index_range(
-    PointerRNA *ptr, int *min, int *max, int * /*softmin*/, int * /*softmax*/)
+static int rna_ConsoleLine_current_character_get(PointerRNA *ptr)
+{
+  const ConsoleLine *ci = (ConsoleLine *)ptr->data;
+  return BLI_str_utf8_offset_to_index(ci->line, ci->len, ci->cursor);
+}
+
+static void rna_ConsoleLine_current_character_set(PointerRNA *ptr, const int index)
 {
   ConsoleLine *ci = (ConsoleLine *)ptr->data;
-
-  *min = 0;
-  *max = ci->len; /* intentionally _not_ -1 */
+  ci->cursor = BLI_str_utf8_offset_from_index(ci->line, ci->len, index);
 }
 
 /* Space Dopesheet */
@@ -4403,24 +4406,21 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "gridflag", V3D_SHOW_X);
   RNA_def_property_ui_text(prop,
                            "Display X Axis",
-                           "Show the X axis line in perspectivic view.\nNote that in orthographic "
-                           "view this button has no effect");
+                           "Show the X axis line in perspective / orthographic views");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "show_axis_y", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gridflag", V3D_SHOW_Y);
   RNA_def_property_ui_text(prop,
                            "Display Y Axis",
-                           "Show the Y axis line in perspectivic view.\nNote that in orthographic "
-                           "view this button has no effect");
+                           "Show the Y axis line in perspective / orthographic views");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "show_axis_z", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gridflag", V3D_SHOW_Z);
   RNA_def_property_ui_text(prop,
                            "Display Z Axis",
-                           "Show the Z axis line in perspectivic view.\nNote that in orthographic "
-                           "view this button has no effect");
+                           "Show the Z axis line in perspective / orthographic views");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "grid_scale", PROP_FLOAT, PROP_NONE);
@@ -4719,7 +4719,8 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_statvis", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "overlay.edit_flag", V3D_OVERLAY_EDIT_STATVIS);
-  RNA_def_property_ui_text(prop, "Stat Vis", "Display statistical information about the mesh");
+  RNA_def_property_ui_text(
+      prop, "Mesh Analysis", "Display statistical information about the mesh");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "show_extra_edge_length", PROP_BOOLEAN, PROP_NONE);
@@ -6641,8 +6642,10 @@ static void rna_def_console_line(BlenderRNA *brna)
 
   prop = RNA_def_property(
       srna, "current_character", PROP_INT, PROP_NONE); /* copied from text editor */
-  RNA_def_property_int_sdna(prop, nullptr, "cursor");
-  RNA_def_property_int_funcs(prop, nullptr, nullptr, "rna_ConsoleLine_cursor_index_range");
+  RNA_def_property_int_funcs(prop,
+                             "rna_ConsoleLine_current_character_get",
+                             "rna_ConsoleLine_current_character_set",
+                             nullptr);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_CONSOLE, nullptr);
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);

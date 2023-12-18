@@ -265,6 +265,20 @@ enum class ImageType {
   DEPTH_2D_ARRAY,
   DEPTH_CUBE,
   DEPTH_CUBE_ARRAY,
+  /** Atomic texture type wrappers.
+   * For OpenGL, these map to the equivalent (U)INT_* types.
+   * NOTE: Atomic variants MUST be used if the texture bound to this resource has usage flag:
+   * `GPU_TEXTURE_USAGE_ATOMIC`, even if atomic texture operations are not used in the given
+   * shader.
+   * The shader source MUST also utilize the correct atomic sampler handle e.g.
+   * `usampler2DAtomic` in conjunction with these types, for passing texture/image resources into
+   * functions. */
+  UINT_2D_ATOMIC,
+  UINT_2D_ARRAY_ATOMIC,
+  UINT_3D_ATOMIC,
+  INT_2D_ATOMIC,
+  INT_2D_ARRAY_ATOMIC,
+  INT_3D_ATOMIC
 };
 
 /* Storage qualifiers. */
@@ -805,6 +819,8 @@ struct ShaderCreateInfo {
 
   Self &push_constant(Type type, StringRefNull name, int array_size = 0)
   {
+    /* We don't have support for UINT push constants yet, use INT instead.*/
+    BLI_assert(type != Type::UINT);
     BLI_assert_msg(name.find("[") == -1,
                    "Array syntax is forbidden for push constants."
                    "Use the array_size parameter instead.");

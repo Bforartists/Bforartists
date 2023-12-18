@@ -51,7 +51,7 @@
 #include "BKE_image.h"
 #include "BKE_image_format.h"
 #include "BKE_lib_id.h"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.hh"
@@ -141,7 +141,7 @@ struct Bounds3D {
   bool valid;
 };
 
-struct VolumeGrid {
+struct DynamicPaintVolumeGrid {
   int dim[3];
   /** whole grid bounds */
   Bounds3D grid_bounds;
@@ -196,7 +196,7 @@ struct PaintBakeData {
   double average_dist;
   /* space partitioning */
   /** space partitioning grid to optimize brush checks */
-  VolumeGrid *grid;
+  DynamicPaintVolumeGrid *grid;
 
   /* velocity and movement */
   /** speed vector in global space movement per frame, if required */
@@ -340,8 +340,8 @@ bool dynamicPaint_outputLayerExists(DynamicPaintSurface *surface, Object *ob, in
 
   if (surface->format == MOD_DPAINT_SURFACE_F_VERTEX) {
     if (surface->type == MOD_DPAINT_SURFACE_T_PAINT) {
-      Mesh *me = static_cast<Mesh *>(ob->data);
-      return (CustomData_get_named_layer_index(&me->loop_data, CD_PROP_BYTE_COLOR, name) != -1);
+      Mesh *mesh = static_cast<Mesh *>(ob->data);
+      return (CustomData_get_named_layer_index(&mesh->loop_data, CD_PROP_BYTE_COLOR, name) != -1);
     }
     if (surface->type == MOD_DPAINT_SURFACE_T_WEIGHT) {
       return (BKE_object_defgroup_name_index(ob, name) != -1);
@@ -625,7 +625,7 @@ static float getSurfaceDimension(PaintSurfaceData *sData)
 static void freeGrid(PaintSurfaceData *data)
 {
   PaintBakeData *bData = data->bData;
-  VolumeGrid *grid = bData->grid;
+  DynamicPaintVolumeGrid *grid = bData->grid;
 
   if (grid->bounds) {
     MEM_freeN(grid->bounds);
@@ -671,7 +671,7 @@ static void grid_cell_points_cb_ex(void *__restrict userdata,
                                    const TaskParallelTLS *__restrict tls)
 {
   PaintBakeData *bData = static_cast<PaintBakeData *>(userdata);
-  VolumeGrid *grid = bData->grid;
+  DynamicPaintVolumeGrid *grid = bData->grid;
   int *temp_t_index = grid->temp_t_index;
   int *s_num = static_cast<int *>(tls->userdata_chunk);
 
@@ -692,7 +692,7 @@ static void grid_cell_points_reduce(const void *__restrict userdata,
                                     void *__restrict chunk)
 {
   const PaintBakeData *bData = static_cast<const PaintBakeData *>(userdata);
-  const VolumeGrid *grid = bData->grid;
+  const DynamicPaintVolumeGrid *grid = bData->grid;
   const int grid_cells = grid->dim[0] * grid->dim[1] * grid->dim[2];
 
   int *join_s_num = static_cast<int *>(chunk_join);
@@ -709,7 +709,7 @@ static void grid_cell_bounds_cb(void *__restrict userdata,
                                 const TaskParallelTLS *__restrict /*tls*/)
 {
   PaintBakeData *bData = static_cast<PaintBakeData *>(userdata);
-  VolumeGrid *grid = bData->grid;
+  DynamicPaintVolumeGrid *grid = bData->grid;
   float *dim = bData->dim;
   int *grid_dim = grid->dim;
 
@@ -731,7 +731,7 @@ static void surfaceGenerateGrid(DynamicPaintSurface *surface)
 {
   PaintSurfaceData *sData = surface->data;
   PaintBakeData *bData = sData->bData;
-  VolumeGrid *grid;
+  DynamicPaintVolumeGrid *grid;
   int grid_cells, axis = 3;
   int *temp_t_index = nullptr;
   int *temp_s_num = nullptr;
@@ -740,7 +740,7 @@ static void surfaceGenerateGrid(DynamicPaintSurface *surface)
     freeGrid(sData);
   }
 
-  bData->grid = MEM_cnew<VolumeGrid>(__func__);
+  bData->grid = MEM_cnew<DynamicPaintVolumeGrid>(__func__);
   grid = bData->grid;
 
   {
@@ -2042,13 +2042,13 @@ static Mesh *dynamicPaint_Modifier_apply(DynamicPaintModifierData *pmd, Object *
             settings.use_threading = (sData->total_points > 1000);
             BLI_task_parallel_range(
                 0, sData->total_points, &data, dynamic_paint_apply_surface_wave_cb, &settings);
-            BKE_mesh_tag_positions_changed(result);
+            result->tag_positions_changed();
           }
 
           /* displace */
           if (surface->type == MOD_DPAINT_SURFACE_T_DISPLACE) {
             dynamicPaint_applySurfaceDisplace(surface, result);
-            BKE_mesh_tag_positions_changed(result);
+            result->tag_positions_changed();
           }
         }
       }
@@ -2403,10 +2403,10 @@ static void dynamic_paint_create_uv_surface_neighbor_cb(void *__restrict userdat
 
 #undef JITTER_SAMPLES
 
-static float dist_squared_to_looptri_uv_edges(const blender::Span<MLoopTri> looptris,
-                                              const float (*mloopuv)[2],
-                                              int tri_index,
-                                              const float point[2])
+static float dist_squared_to_looptris_uv_edges(const blender::Span<MLoopTri> looptris,
+                                               const float (*mloopuv)[2],
+                                               int tri_index,
+                                               const float point[2])
 {
   BLI_assert(tri_index >= 0);
 
@@ -2568,7 +2568,7 @@ static void dynamic_paint_find_island_border(const DynamicPaintCreateUVSurfaceDa
     const int vert1 = corner_verts[loop_idx[(edge_idx + 1) % 3]];
 
     /* Use a pre-computed vert-to-looptri mapping,
-     * speeds up things a lot compared to looping over all looptri. */
+     * speeds up things a lot compared to looping over all looptris. */
     const MeshElemMap *map = &bdata->vert_to_looptri_map[vert0];
 
     bool found_other = false;
@@ -2687,7 +2687,7 @@ static void dynamic_paint_find_island_border(const DynamicPaintCreateUVSurfaceDa
       const float final_pt[2] = {((final_index % w) + 0.5f) / w, ((final_index / w) + 0.5f) / h};
       const float threshold = square_f(0.7f) / (w * h);
 
-      if (dist_squared_to_looptri_uv_edges(looptris, mloopuv, final_tri_index, final_pt) >
+      if (dist_squared_to_looptris_uv_edges(looptris, mloopuv, final_tri_index, final_pt) >
           threshold) {
         continue;
       }
@@ -3448,9 +3448,9 @@ static void mesh_tris_spherecast_dp(void *userdata,
                                     BVHTreeRayHit *hit)
 {
   const BVHTreeFromMesh *data = (BVHTreeFromMesh *)userdata;
-  const float(*positions)[3] = data->vert_positions;
-  const MLoopTri *looptris = data->looptri;
-  const int *corner_verts = data->corner_verts;
+  const blender::Span<blender::float3> positions = data->vert_positions;
+  const MLoopTri *looptris = data->looptris.data();
+  const int *corner_verts = data->corner_verts.data();
 
   const float *t0, *t1, *t2;
   float dist;
@@ -3480,9 +3480,9 @@ static void mesh_tris_nearest_point_dp(void *userdata,
                                        BVHTreeNearest *nearest)
 {
   const BVHTreeFromMesh *data = (BVHTreeFromMesh *)userdata;
-  const float(*positions)[3] = data->vert_positions;
-  const MLoopTri *looptris = data->looptri;
-  const int *corner_verts = data->corner_verts;
+  const blender::Span<blender::float3> positions = data->vert_positions;
+  const MLoopTri *looptris = data->looptris.data();
+  const int *corner_verts = data->corner_verts.data();
   float nearest_tmp[3], dist_sq;
 
   const float *t0, *t1, *t2;
@@ -3950,7 +3950,7 @@ static void dynamic_paint_paint_mesh_cell_point_cb_ex(void *__restrict userdata,
   const DynamicPaintSurface *surface = data->surface;
   const PaintSurfaceData *sData = surface->data;
   const PaintBakeData *bData = sData->bData;
-  VolumeGrid *grid = bData->grid;
+  DynamicPaintVolumeGrid *grid = bData->grid;
 
   const DynamicPaintBrushSettings *brush = data->brush;
 
@@ -4304,7 +4304,7 @@ static bool dynamicPaint_paintMesh(Depsgraph *depsgraph,
     int numOfVerts;
     int ii;
     Bounds3D mesh_bb = {{0}};
-    VolumeGrid *grid = bData->grid;
+    DynamicPaintVolumeGrid *grid = bData->grid;
 
     mesh = BKE_mesh_copy_for_eval(brush_mesh);
     blender::MutableSpan<blender::float3> positions = mesh->vert_positions_for_write();
@@ -4342,7 +4342,7 @@ static bool dynamicPaint_paintMesh(Depsgraph *depsgraph,
     /* check bounding box collision */
     if (grid && meshBrush_boundsIntersect(&grid->grid_bounds, &mesh_bb, brush, brush_radius)) {
       /* Build a bvh tree from transformed vertices */
-      if (BKE_bvhtree_from_mesh_get(&treeData, mesh, BVHTREE_FROM_LOOPTRI, 4)) {
+      if (BKE_bvhtree_from_mesh_get(&treeData, mesh, BVHTREE_FROM_LOOPTRIS, 4)) {
         int c_index;
         int total_cells = grid->dim[0] * grid->dim[1] * grid->dim[2];
 
@@ -4407,7 +4407,7 @@ static void dynamic_paint_paint_particle_cell_point_cb_ex(
   const DynamicPaintSurface *surface = data->surface;
   const PaintSurfaceData *sData = surface->data;
   const PaintBakeData *bData = sData->bData;
-  VolumeGrid *grid = bData->grid;
+  DynamicPaintVolumeGrid *grid = bData->grid;
 
   const DynamicPaintBrushSettings *brush = data->brush;
 
@@ -4584,7 +4584,7 @@ static bool dynamicPaint_paintParticles(DynamicPaintSurface *surface,
   ParticleSettings *part = psys->part;
   PaintSurfaceData *sData = surface->data;
   PaintBakeData *bData = sData->bData;
-  VolumeGrid *grid = bData->grid;
+  DynamicPaintVolumeGrid *grid = bData->grid;
 
   KDTree_3d *tree;
   int particlesAdded = 0;

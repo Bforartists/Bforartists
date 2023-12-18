@@ -6,8 +6,8 @@
 bl_info = {
     "name": "Bsurfaces GPL Edition",
     "author": "Eclectiel, Vladimir Spivak (cwolf3d)",
-    "version": (1, 8, 1),
-    "blender": (2, 80, 0),
+    "version": (1, 8, 2),
+    "blender": (4, 0, 0),
     "location": "View3D EditMode > Sidebar > Edit Tab",
     "description": "Modeling and retopology tool",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/bsurfaces.html",
@@ -3539,11 +3539,10 @@ class MESH_OT_SURFSK_init(Operator):
             global_mesh_object = mesh_object.name
             bpy.context.scene.bsurfaces.SURFSK_mesh = bpy.data.objects[global_mesh_object]
 
-            bpy.context.scene.tool_settings.snap_elements = {'FACE'}
+            bpy.context.scene.tool_settings.snap_elements = {'FACE_PROJECT'}
             bpy.context.scene.tool_settings.use_snap = True
             bpy.context.scene.tool_settings.use_snap_self = False
             bpy.context.scene.tool_settings.use_snap_align_rotation = True
-            bpy.context.scene.tool_settings.use_snap_project = True
             bpy.context.scene.tool_settings.use_snap_rotate = True
             bpy.context.scene.tool_settings.use_snap_scale = True
 
