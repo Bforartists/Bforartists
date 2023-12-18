@@ -12,7 +12,9 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "draw_subdivision.h"
+#include "GPU_index_buffer.h"
+
+#include "draw_subdivision.hh"
 #include "extract_mesh.hh"
 
 namespace blender::draw {
@@ -124,22 +126,22 @@ static void extract_lines_adjacency_iter_looptri_bm(const MeshRenderData & /*mr*
 }
 
 static void extract_lines_adjacency_iter_looptri_mesh(const MeshRenderData &mr,
-                                                      const MLoopTri *mlt,
+                                                      const MLoopTri *lt,
                                                       const int elt_index,
                                                       void *_data)
 {
   MeshExtract_LineAdjacency_Data *data = static_cast<MeshExtract_LineAdjacency_Data *>(_data);
   const int face_i = mr.looptri_faces[elt_index];
-  const bool hidden = mr.use_hide && mr.hide_poly && mr.hide_poly[face_i];
+  const bool hidden = mr.use_hide && !mr.hide_poly.is_empty() && mr.hide_poly[face_i];
   if (hidden) {
     return;
   }
-  lines_adjacency_triangle(mr.corner_verts[mlt->tri[0]],
-                           mr.corner_verts[mlt->tri[1]],
-                           mr.corner_verts[mlt->tri[2]],
-                           mlt->tri[0],
-                           mlt->tri[1],
-                           mlt->tri[2],
+  lines_adjacency_triangle(mr.corner_verts[lt->tri[0]],
+                           mr.corner_verts[lt->tri[1]],
+                           mr.corner_verts[lt->tri[2]],
+                           lt->tri[0],
+                           lt->tri[1],
+                           lt->tri[2],
                            data);
 }
 

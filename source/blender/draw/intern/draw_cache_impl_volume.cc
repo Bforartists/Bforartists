@@ -312,8 +312,7 @@ static DRWVolumeGrid *volume_grid_cache_get(const Volume *volume,
                                                 UNPACK3(dense_grid.resolution),
                                                 1,
                                                 format,
-                                                GPU_TEXTURE_USAGE_SHADER_READ |
-                                                    GPU_TEXTURE_USAGE_MIP_SWIZZLE_VIEW,
+                                                GPU_TEXTURE_USAGE_SHADER_READ,
                                                 dense_grid.voxels);
     /* The texture can be null if the resolution along one axis is larger than
      * GL_MAX_3D_TEXTURE_SIZE. */
@@ -343,7 +342,7 @@ DRWVolumeGrid *DRW_volume_batch_cache_get_grid(Volume *volume, const VolumeGrid 
   return (grid->texture != nullptr) ? grid : nullptr;
 }
 
-int DRW_volume_material_count_get(Volume *volume)
+int DRW_volume_material_count_get(const Volume *volume)
 {
   return max_ii(1, volume->totcol);
 }

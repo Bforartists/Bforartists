@@ -28,7 +28,7 @@
 #include "BKE_idprop.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
-#include "BKE_lib_remap.h"
+#include "BKE_lib_remap.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_zones.hh"
@@ -371,7 +371,7 @@ bool push_compute_context_for_tree_path(const SpaceNode &snode,
         }
       }
     }
-    compute_context_builder.push<bke::NodeGroupComputeContext>(*group_node);
+    compute_context_builder.push<bke::GroupNodeComputeContext>(*group_node, *tree);
   }
   return true;
 }
@@ -616,7 +616,7 @@ static void node_area_listener(const wmSpaceTypeListenerParams *params)
       break;
     case NC_NODE:
       if (wmn->action == NA_EDITED) {
-        if (wmn->reference == snode->id || snode->id == nullptr) {
+        if (ELEM(wmn->reference, snode->nodetree, snode->id, nullptr) || snode->id == nullptr) {
           node_area_tag_tree_recalc(snode, area);
         }
       }
@@ -766,7 +766,7 @@ static void node_cursor(wmWindow *win, ScrArea *area, ARegion *region)
                            &snode->runtime->cursor[1]);
 
   /* here snode->runtime->cursor is used to detect the node edge for sizing */
-  node_set_cursor(*win, *snode, snode->runtime->cursor);
+  node_set_cursor(*win, *region, *snode, snode->runtime->cursor);
 
   /* XXX snode->runtime->cursor is in placing new nodes space */
   snode->runtime->cursor[0] /= UI_SCALE_FAC;
@@ -897,7 +897,7 @@ static void node_id_path_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
     return;
   }
 
-  const char *path = WM_drag_get_path(drag);
+  const char *path = WM_drag_get_single_path(drag);
   if (path) {
     RNA_string_set(drop->ptr, "filepath", path);
     RNA_struct_property_unset(drop->ptr, "name");
@@ -1155,6 +1155,11 @@ static void node_id_remap_cb(ID *old_id, ID *new_id, void *user_data)
     }
   }
   else if (GS(old_id->name) == ID_NT) {
+
+    if (&snode->geometry_nodes_tool_tree->id == old_id) {
+      snode->geometry_nodes_tool_tree = reinterpret_cast<bNodeTree *>(new_id);
+    }
+
     bNodeTreePath *path, *path_next;
 
     for (path = (bNodeTreePath *)snode->treepath.first; path; path = path->next) {

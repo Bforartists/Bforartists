@@ -75,9 +75,8 @@ void ED_sequencer_special_preview_set(bContext *C, const int mval[2])
 {
   Scene *scene = CTX_data_scene(C);
   ARegion *region = CTX_wm_region(C);
-  int hand;
-  Sequence *seq;
-  seq = find_nearest_seq(scene, &region->v2d, &hand, mval);
+  int hand_dummy;
+  Sequence *seq = find_nearest_seq(scene, &region->v2d, mval, &hand_dummy);
   sequencer_special_update_set(seq);
 }
 
@@ -135,8 +134,9 @@ ImBuf *sequencer_ibuf_get(Main *bmain,
     GPU_framebuffer_restore();
   }
 
-  if (special_seq_update) {
-    ibuf = SEQ_render_give_ibuf_direct(&context, timeline_frame + frame_ofs, special_seq_update);
+  if (ED_sequencer_special_preview_get()) {
+    ibuf = SEQ_render_give_ibuf_direct(
+        &context, timeline_frame + frame_ofs, ED_sequencer_special_preview_get());
   }
   else {
     ibuf = SEQ_render_give_ibuf(&context, timeline_frame + frame_ofs, sseq->chanshown);
@@ -569,14 +569,17 @@ static ImBuf *sequencer_get_scope(Scene *scene, SpaceSeq *sseq, ImBuf *ibuf, boo
     switch (sseq->mainb) {
       case SEQ_DRAW_IMG_IMBUF:
         if (!scopes->zebra_ibuf) {
-          ImBuf *display_ibuf = IMB_dupImBuf(ibuf);
 
-          if (display_ibuf->float_buffer.data) {
+          if (ibuf->float_buffer.data) {
+            ImBuf *display_ibuf = IMB_dupImBuf(ibuf);
             IMB_colormanagement_imbuf_make_display_space(
                 display_ibuf, &scene->view_settings, &scene->display_settings);
+            scopes->zebra_ibuf = make_zebra_view_from_ibuf(display_ibuf, sseq->zebra);
+            IMB_freeImBuf(display_ibuf);
           }
-          scopes->zebra_ibuf = make_zebra_view_from_ibuf(display_ibuf, sseq->zebra);
-          IMB_freeImBuf(display_ibuf);
+          else {
+            scopes->zebra_ibuf = make_zebra_view_from_ibuf(ibuf, sseq->zebra);
+          }
         }
         scope = scopes->zebra_ibuf;
         break;

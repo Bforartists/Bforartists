@@ -93,11 +93,11 @@ MaterialModule::MaterialModule(Instance &inst) : inst_(inst)
     nodeSetActive(ntree, output);
   }
   {
-    glossy_mat = (::Material *)BKE_id_new_nomain(ID_MA, "EEVEE default metal");
+    metallic_mat = (::Material *)BKE_id_new_nomain(ID_MA, "EEVEE default metal");
     bNodeTree *ntree = bke::ntreeAddTreeEmbedded(
-        nullptr, &glossy_mat->id, "Shader Nodetree", ntreeType_Shader->idname);
-    glossy_mat->use_nodes = true;
-    glossy_mat->surface_render_method = MA_SURFACE_METHOD_FORWARD;
+        nullptr, &metallic_mat->id, "Shader Nodetree", ntreeType_Shader->idname);
+    metallic_mat->use_nodes = true;
+    metallic_mat->surface_render_method = MA_SURFACE_METHOD_FORWARD;
 
     bNode *bsdf = nodeAddStaticNode(nullptr, ntree, SH_NODE_BSDF_GLOSSY);
     bNodeSocket *base_color = nodeFindSocket(bsdf, SOCK_IN, "Color");
@@ -140,7 +140,7 @@ MaterialModule::MaterialModule(Instance &inst) : inst_(inst)
 
 MaterialModule::~MaterialModule()
 {
-  BKE_id_free(nullptr, glossy_mat);
+  BKE_id_free(nullptr, metallic_mat);
   BKE_id_free(nullptr, diffuse_mat);
   BKE_id_free(nullptr, error_mat_);
 }
@@ -200,6 +200,8 @@ MaterialPass MaterialModule::material_pass_get(Object *ob,
   inst_.manager->register_layer_attributes(matpass.gpumat);
 
   if (GPU_material_recalc_flag_get(matpass.gpumat)) {
+    /* TODO(Miguel Pozo): This is broken, it consumes the flag,
+     * but GPUMats can be shared across viewports.*/
     inst_.sampling.reset();
   }
 
@@ -236,7 +238,8 @@ Material &MaterialModule::material_sync(Object *ob,
                                         bool has_motion)
 {
   if (geometry_type == MAT_GEOM_VOLUME) {
-    MaterialKey material_key(blender_mat, geometry_type, MAT_PIPE_VOLUME_MATERIAL);
+    MaterialKey material_key(
+        blender_mat, geometry_type, MAT_PIPE_VOLUME_MATERIAL, ob->visibility_flag);
     Material &mat = material_map_.lookup_or_add_cb(material_key, [&]() {
       Material mat = {};
       mat.volume_occupancy = material_pass_get(
@@ -274,7 +277,7 @@ Material &MaterialModule::material_sync(Object *ob,
     prepass_pipe = has_motion ? MAT_PIPE_PREPASS_DEFERRED_VELOCITY : MAT_PIPE_PREPASS_DEFERRED;
   }
 
-  MaterialKey material_key(blender_mat, geometry_type, surface_pipe);
+  MaterialKey material_key(blender_mat, geometry_type, surface_pipe, ob->visibility_flag);
 
   Material &mat = material_map_.lookup_or_add_cb(material_key, [&]() {
     Material mat;
@@ -337,8 +340,11 @@ Material &MaterialModule::material_sync(Object *ob,
       }
     }
 
-    if (true /* TODO: Ray visibility. */) {
+    if (!(ob->visibility_flag & OB_HIDE_SHADOW)) {
       mat.shadow = material_pass_get(ob, blender_mat, MAT_PIPE_SHADOW, geometry_type);
+    }
+    else {
+      mat.shadow = MaterialPass();
     }
 
     mat.is_alpha_blend_transparent = use_forward_pipeline &&

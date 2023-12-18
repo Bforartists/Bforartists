@@ -294,7 +294,7 @@ Sequence *find_neighboring_sequence(Scene *scene, Sequence *test, int lr, int se
   return nullptr;
 }
 
-Sequence *find_nearest_seq(const Scene *scene, const View2D *v2d, int *hand, const int mval[2])
+Sequence *find_nearest_seq(const Scene *scene, const View2D *v2d, const int mval[2], int *r_hand)
 {
   Sequence *seq;
   Editing *ed = SEQ_editing_get(scene);
@@ -302,7 +302,7 @@ Sequence *find_nearest_seq(const Scene *scene, const View2D *v2d, int *hand, con
   float pixelx;
   float handsize;
   float displen;
-  *hand = SEQ_SIDE_NONE;
+  *r_hand = SEQ_SIDE_NONE;
 
   if (ed == nullptr) {
     return nullptr;
@@ -347,10 +347,10 @@ Sequence *find_nearest_seq(const Scene *scene, const View2D *v2d, int *hand, con
             }
 
             if (handsize + SEQ_time_left_handle_frame_get(scene, seq) >= x) {
-              *hand = SEQ_SIDE_LEFT;
+              *r_hand = SEQ_SIDE_LEFT;
             }
             else if (-handsize + SEQ_time_right_handle_frame_get(scene, seq) <= x) {
-              *hand = SEQ_SIDE_RIGHT;
+              *r_hand = SEQ_SIDE_RIGHT;
             }
           }
         }
@@ -428,8 +428,8 @@ static bool seq_point_image_isect(const Scene *scene, const Sequence *seq, float
       point, seq_image_quad[0], seq_image_quad[1], seq_image_quad[2], seq_image_quad[3]);
 }
 
-static void sequencer_select_do_updates(bContext *C, Scene *scene) /*BFA - warning, 'scene': unreferenced formal parameter*/
-
+/*static void sequencer_select_do_updates(bContext *C, Scene *scene)*/ /*BFA - warning, 'scene': unreferenced formal parameter*/
+static void sequencer_select_do_updates(bContext *C, Scene *)
 {
   ED_outliner_select_sync_from_sequence_tag(C);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
@@ -909,6 +909,12 @@ static void sequencer_select_strip_impl(const Editing *ed,
   }
 }
 
+static bool use_retiming_mode(const bContext *C, const Sequence *seq_key_test)
+{
+  return seq_key_test && SEQ_retiming_data_is_editable(seq_key_test) &&
+         !sequencer_retiming_mode_is_active(C) && retiming_keys_are_visible(C);
+}
+
 int sequencer_select_exec(bContext *C, wmOperator *op)
 {
   View2D *v2d = UI_view2d_fromcontext(C);
@@ -950,20 +956,28 @@ int sequencer_select_exec(bContext *C, wmOperator *op)
     seq = seq_select_seq_from_preview(C, mval, toggle, extend, center);
   }
   else {
-    seq = find_nearest_seq(scene, v2d, &handle_clicked, mval);
+    seq = find_nearest_seq(scene, v2d, mval, &handle_clicked);
   }
+
+  Sequence *seq_key_test = nullptr;
+  SeqRetimingKey *key = retiming_mousover_key_get(C, mval, &seq_key_test);
 
   /* NOTE: `side_of_frame` and `linked_time` functionality is designed to be shared on one keymap,
    * therefore both properties can be true at the same time. */
   if (seq && RNA_boolean_get(op->ptr, "linked_time")) {
-    if (!extend && !toggle) {
-      ED_sequencer_deselect_all(scene);
+    if (use_retiming_mode(C, seq_key_test)) {
+      return sequencer_retiming_select_linked_time(C, op);
     }
-    sequencer_select_strip_impl(ed, seq, handle_clicked, extend, deselect, toggle);
-    select_linked_time(scene, ed->seqbasep, seq);
-    sequencer_select_do_updates(C, scene);
-    sequencer_select_set_active(scene, seq);
-    return OPERATOR_FINISHED;
+    else {
+      if (!extend && !toggle) {
+        ED_sequencer_deselect_all(scene);
+      }
+      sequencer_select_strip_impl(ed, seq, handle_clicked, extend, deselect, toggle);
+      select_linked_time(scene, ed->seqbasep, seq);
+      sequencer_select_do_updates(C, scene);
+      sequencer_select_set_active(scene, seq);
+      return OPERATOR_FINISHED;
+    }
   }
 
   /* Select left, right or overlapping the current frame. */
@@ -995,12 +1009,7 @@ int sequencer_select_exec(bContext *C, wmOperator *op)
     return OPERATOR_RUNNING_MODAL;
   }
 
-  Sequence *seq_key_test = nullptr;
-  SeqRetimingKey *key = retiming_mousover_key_get(C, mval, &seq_key_test);
-
-  if (seq_key_test && SEQ_retiming_data_is_editable(seq_key_test) &&
-      !sequencer_retiming_mode_is_active(C) && retiming_keys_are_visible(C))
-  {
+  if (use_retiming_mode(C, seq_key_test)) {
 
     /* Realize "fake" key, if it is clicked on. */
     if (key == nullptr && seq_key_test != nullptr) {
@@ -1273,7 +1282,7 @@ static int sequencer_select_linked_pick_invoke(bContext *C, wmOperator *op, cons
   int selected, hand;
 
   /* This works like UV, not mesh. */
-  mouse_seq = find_nearest_seq(scene, v2d, &hand, event->mval);
+  mouse_seq = find_nearest_seq(scene, v2d, event->mval, &hand);
   if (!mouse_seq) {
     return OPERATOR_FINISHED; /* User error as with mesh?? */
   }
@@ -1787,7 +1796,7 @@ static int sequencer_box_select_invoke(bContext *C, wmOperator *op, const wmEven
     int hand_dummy;
     int mval[2];
     WM_event_drag_start_mval(event, region, mval);
-    Sequence *seq = find_nearest_seq(scene, v2d, &hand_dummy, mval);
+    Sequence *seq = find_nearest_seq(scene, v2d, mval, &hand_dummy);
     if (seq != nullptr) {
       return OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH;
     }
