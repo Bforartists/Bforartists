@@ -517,7 +517,7 @@ def adjust_shot_duration(
     if not strip.scene:
         raise ValueError(f"Invalid shot: no scene set for '{strip.name}'")
 
-    # Ensure the shot lasts at least 1 frame and compute effective offset
+    # Ensure the scene lasts at least 1 frame and compute effective offset
     new_duration = max(strip.frame_final_duration + frame_offset, 1)
     new_frame_offset = new_duration - strip.frame_final_duration
 
