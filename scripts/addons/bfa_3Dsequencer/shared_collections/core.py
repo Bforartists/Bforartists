@@ -6,17 +6,17 @@ from typing import Union
 import bpy
 
 
-# Name of the collection holding the shared folders collections
+# Name of the collection holding the shared collections
 shared_collections_ROOT_NAME = ".shared_collections"
 
 
 def get_shared_collections_root_collection() -> Union[bpy.types.Collection, None]:
-    """Get the root collection holding all the collection used as shared folders."""
+    """Get the root collection holding all the collection used as shared collections."""
     return bpy.data.collections.get(shared_collections_ROOT_NAME, None)
 
 
 def get_or_create_shared_collections_root_collection() -> bpy.types.Collection:
-    """Get or create the root collection that holds shared folders.
+    """Get or create the root collection that holds shared collections.
 
     :return: The shared_collections root collection.
     """
@@ -91,7 +91,7 @@ def ensure_shared_folder(collection: bpy.types.Collection):
 
 
 def delete_shared_folder(collection: bpy.types.Collection):
-    """Delete the shared folder `collection`.
+    """Delete the shared collection `collection`.
 
     :param collection: The shared collection to delete.
     """
@@ -104,8 +104,8 @@ def link_shared_folder(collection: bpy.types.Collection, scenes: list[bpy.types.
     Link the shared collection `collection` in each scene's collection in `scenes`.
     Does nothing for scenes in which `collection` is already linked.
 
-    :param collection: The shared folder.
-    :param scenes: The scenes to link the shared folder in.
+    :param collection: The shared collection.
+    :param scenes: The scenes to link the shared collection in.
     :return: The list of scenes in which the folder was acually linked.
     """
     ensure_shared_folder(collection)
@@ -121,11 +121,11 @@ def unlink_shared_folder(
     collection: bpy.types.Collection, scenes: list[bpy.types.Scene]
 ) -> list[bpy.types.Scene]:
     """
-    Unlink the shared folder `collection` from each scene in `scenes`.
+    Unlink the shared collection `collection` from each scene in `scenes`.
     Does nothing for scenes in which `collection` is not linked.
 
-    :param collection: The shared folder.
-    :param scenes: The scenes to unlink the shared folder from.
+    :param collection: The shared collection.
+    :param scenes: The scenes to unlink the shared collection from.
     :return: The list of scenes from which the folder was acually unlinked.
     """
     ensure_shared_folder(collection)
@@ -140,11 +140,11 @@ def unlink_shared_folder(
 def create_and_link_shared_folder(
     name: str, scenes: list[bpy.types.Scene]
 ) -> tuple[bpy.types.Collection, list[bpy.types.Scene]]:
-    """Create new shared folder named `name` and link it in `scenes`.
+    """Create new shared collection named `name` and link it in `scenes`.
 
-    :param name: The shared folder name.
-    :param scenes: The scenes to link the shared folder in.
-    :return: The created shared folder collection and the list of scenes in which it was linked.
+    :param name: The shared collection name.
+    :param scenes: The scenes to link the shared collection in.
+    :return: The created shared collection collection and the list of scenes in which it was linked.
     """
     collection = create_shared_folder(name)
     linked_scenes = link_shared_folder(collection, scenes)
@@ -154,7 +154,7 @@ def create_and_link_shared_folder(
 def get_scene_users(collection: bpy.types.Collection) -> list[bpy.types.Scene]:
     """Get all scene that uses `collection`.
 
-    :param collection: The shared folder.
+    :param collection: The shared collection.
     """
     return [
         user
@@ -168,7 +168,7 @@ def get_scene_sequence_users(
 ) -> list[bpy.types.SceneSequence]:
     """Get all scene sequence strips with scenes that uses `collection`.
 
-    :param collection: The shared folder.
+    :param collection: The shared collection.
     :param sed: The sequence editor containing the scene sequences.
     """
     scene_users = get_scene_users(collection)
@@ -183,9 +183,9 @@ def get_active_shared_folder(
     context: bpy.types.Context,
 ) -> Union[bpy.types.Collection, None]:
     """
-    Get the shared folder for current `WindowManager.active_shared_folder_index` value.
+    Get the shared collection for current `WindowManager.active_shared_folder_index` value.
 
-    :return: The shared folder collection or None if not applicable.
+    :return: The shared collection collection or None if not applicable.
     """
     if not (root := get_shared_collections_root_collection()):
         return None
@@ -198,7 +198,7 @@ def get_active_shared_folder(
 def set_active_shared_folder(
     context: bpy.types.Context, collection: bpy.types.Collection
 ):
-    """Make `collection` the active shared folder."""
+    """Make `collection` the active shared collection."""
     context.window_manager.active_shared_folder_index = (
         get_shared_collections_root_collection().children.find(collection.name)
     )
@@ -225,7 +225,7 @@ def find_layer_collection(
 
 def on_active_shared_folder_update(self, context: bpy.types.Context):
     """
-    Make shared folder collection active in `context`'s scene if applicable.
+    Make shared collection collection active in `context`'s scene if applicable.
 
     :param context: The context.
     """
@@ -236,7 +236,7 @@ def on_active_shared_folder_update(self, context: bpy.types.Context):
 
 
 def register():
-    # Active shared folder index property
+    # Active shared collection index property
     bpy.types.WindowManager.active_shared_folder_index = bpy.props.IntProperty(
         options=set(),
         update=on_active_shared_folder_update,

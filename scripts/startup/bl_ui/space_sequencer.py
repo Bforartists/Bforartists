@@ -171,8 +171,9 @@ class SEQUENCER_HT_header(Header):
 
         layout.separator_spacer()
         row = layout.row() # BFA - 3D Sequencer
-        row.ui_units_x = 6 # BFA - 3D Sequencer
-        row.template_ID(st, "scene_override", unlink="sequencer.remove_scene_override", filter='INACTIVE') # BFA - 3D Sequencer
+        row.label(text="Master Scene:", icon="SEQ_STRIP_DUPLICATE") # BFA - 3D Sequencer
+        row.ui_units_x = 15 # BFA - 3D Sequencer
+        row.template_ID(st, "scene_override", unlink="sequencer.remove_scene_override") # BFA - 3D Sequencer
 
         if st.view_type == 'PREVIEW':
             row = layout.row(align=True)

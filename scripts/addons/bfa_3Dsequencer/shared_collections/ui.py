@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-
+#BFA - temporariliy removed
 
 import bpy
 
@@ -12,7 +12,7 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 
 class COLLECTION_UL_shared_collections(bpy.types.UIList):
-    """Display shared folder items."""
+    """Display shared collection items."""
 
     bl_idname = "COLLECTION_UL_shared_collections"
 
@@ -53,7 +53,7 @@ class COLLECTION_UL_shared_collections(bpy.types.UIList):
 
 
 class BASE_PT_SharedFoldersPanel(bpy.types.Panel):
-    bl_label = "Shared Folders"
+    bl_label = "shared collections"
     bl_category = "Sequencer"
     bl_region_type = "UI"
     bl_options = {"DEFAULT_CLOSED"}
@@ -120,8 +120,8 @@ class BASE_PT_SharedFoldersPanel(bpy.types.Panel):
 
 class VIEW3D_PT_SharedFoldersPanel(BASE_PT_SharedFoldersPanel):
     """
-    Panel that displays and gives control over the list of shared folders within the
-    active shot.
+    Panel that displays and gives control over the list of shared collections within the
+    active scene.
     """
 
     bl_space_type = "VIEW_3D"
@@ -129,7 +129,7 @@ class VIEW3D_PT_SharedFoldersPanel(BASE_PT_SharedFoldersPanel):
 
 class SEQUENCER_PT_SharedFoldersPanel(BASE_PT_SharedFoldersPanel):
     """
-    Panel that displays and gives control over the list of shared folders within the
+    Panel that displays and gives control over the list of shared collections within the
     sequence editor.
     """
 
@@ -137,7 +137,7 @@ class SEQUENCER_PT_SharedFoldersPanel(BASE_PT_SharedFoldersPanel):
 
 
 def draw_shared_folder_menu(self, context: bpy.types.Context):
-    """Shared folder entries in outliner context menu for collections."""
+    """Shared collection entries in outliner context menu for collections."""
     self.layout.separator()
     self.layout.operator(
         "collection.shared_folder_from_collection", icon="OUTLINER_COLLECTION"
