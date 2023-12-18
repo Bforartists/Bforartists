@@ -104,7 +104,7 @@ void debug_randomize_vert_order(Mesh *mesh)
     v = new_by_old_map[v];
   }
 
-  BKE_mesh_tag_topology_changed(mesh);
+  mesh->tag_topology_changed();
 }
 
 void debug_randomize_edge_order(Mesh *mesh)
@@ -122,7 +122,7 @@ void debug_randomize_edge_order(Mesh *mesh)
     e = new_by_old_map[e];
   }
 
-  BKE_mesh_tag_topology_changed(mesh);
+  mesh->tag_topology_changed();
 }
 
 static Array<int> make_new_offset_indices(const OffsetIndices<int> old_offsets,
@@ -159,7 +159,7 @@ static void reorder_customdata_groups(CustomData &data,
 
 void debug_randomize_face_order(Mesh *mesh)
 {
-  if (mesh == nullptr || !use_debug_randomization()) {
+  if (mesh == nullptr || mesh->faces_num == 0 || !use_debug_randomization()) {
     return;
   }
 
@@ -177,7 +177,7 @@ void debug_randomize_face_order(Mesh *mesh)
 
   mesh->face_offsets_for_write().copy_from(new_face_offsets);
 
-  BKE_mesh_tag_topology_changed(mesh);
+  mesh->tag_topology_changed();
 }
 
 void debug_randomize_point_order(PointCloud *pointcloud)

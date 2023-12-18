@@ -22,12 +22,13 @@
 #include "BLI_vector.hh"
 
 #include "BKE_editmesh.hh"
+#include "BKE_object.hh"
 
 #include "GPU_capabilities.h"
 
 #include "draw_cache_extract.hh"
 #include "draw_cache_inline.h"
-#include "draw_subdivision.h"
+#include "draw_subdivision.hh"
 
 #include "mesh_extractors/extract_mesh.hh"
 
@@ -36,6 +37,17 @@
 #ifdef DEBUG_TIME
 #  include "PIL_time_utildefines.h"
 #endif
+
+int mesh_render_mat_len_get(const Object *object, const Mesh *mesh)
+{
+  if (mesh->edit_mesh != nullptr) {
+    const Mesh *editmesh_eval_final = BKE_object_get_editmesh_eval_final(object);
+    if (editmesh_eval_final != nullptr) {
+      return std::max<int>(1, editmesh_eval_final->totcol);
+    }
+  }
+  return std::max<int>(1, mesh->totcol);
+}
 
 namespace blender::draw {
 
@@ -260,6 +272,7 @@ static void extract_range_iter_looptri_bm(void *__restrict userdata,
   void *extract_data = tls->userdata_chunk;
   const MeshRenderData &mr = *data->mr;
   BMLoop **elt = ((BMLoop * (*)[3]) data->elems)[iter];
+  BLI_assert(iter < mr.edit_bmesh->tottri);
   for (const ExtractorRunData &run_data : data->extractors) {
     run_data.extractor->iter_looptri_bm(
         mr, elt, iter, POINTER_OFFSET(extract_data, run_data.data_offset));
@@ -274,10 +287,10 @@ static void extract_range_iter_looptri_mesh(void *__restrict userdata,
 
   const ExtractorIterData *data = static_cast<ExtractorIterData *>(userdata);
   const MeshRenderData &mr = *data->mr;
-  const MLoopTri *mlt = &((const MLoopTri *)data->elems)[iter];
+  const MLoopTri *lt = &((const MLoopTri *)data->elems)[iter];
   for (const ExtractorRunData &run_data : data->extractors) {
     run_data.extractor->iter_looptri_mesh(
-        mr, mlt, iter, POINTER_OFFSET(extract_data, run_data.data_offset));
+        mr, lt, iter, POINTER_OFFSET(extract_data, run_data.data_offset));
   }
 }
 
@@ -553,7 +566,7 @@ void mesh_buffer_cache_create_requested(TaskGraph *task_graph,
                                         MeshBatchCache &cache,
                                         MeshBufferCache &mbc,
                                         Object *object,
-                                        Mesh *me,
+                                        Mesh *mesh,
 
                                         const bool is_editmode,
                                         const bool is_paint_mode,
@@ -597,7 +610,7 @@ void mesh_buffer_cache_create_requested(TaskGraph *task_graph,
    */
   const bool do_hq_normals = (scene->r.perf_flag & SCE_PERF_HQ_NORMALS) != 0 ||
                              GPU_use_hq_normals_workaround();
-  const bool override_single_mat = mesh_render_mat_len_get(object, me) <= 1;
+  const bool override_single_mat = mesh_render_mat_len_get(object, mesh) <= 1;
 
   /* Create an array containing all the extractors that needs to be executed. */
   ExtractorRunDatas extractors;
@@ -682,10 +695,11 @@ void mesh_buffer_cache_create_requested(TaskGraph *task_graph,
 #endif
 
   MeshRenderData *mr = mesh_render_data_create(
-      object, me, is_editmode, is_paint_mode, is_mode_active, obmat, do_final, do_uvedit, ts);
+      object, mesh, is_editmode, is_paint_mode, is_mode_active, obmat, do_final, do_uvedit, ts);
   mr->use_hide = use_hide;
-  mr->use_subsurf_fdots = mr->me && !mr->me->runtime->subsurf_face_dot_tags.is_empty();
+  mr->use_subsurf_fdots = mr->mesh && !mr->mesh->runtime->subsurf_face_dot_tags.is_empty();
   mr->use_final_mesh = do_final;
+  mr->use_simplify_normals = (scene->r.mode & R_SIMPLIFY) && (scene->r.mode & R_SIMPLIFY_NORMALS);
 
 #ifdef DEBUG_TIME
   double rdata_end = PIL_check_seconds_timer();

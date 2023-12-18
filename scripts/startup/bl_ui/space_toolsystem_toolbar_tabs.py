@@ -5520,7 +5520,7 @@ class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
 
         column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
 
-        #text buttons
+        # text buttons
         if column_count == 4:
 
             col = layout.column(align=True)
@@ -5533,6 +5533,10 @@ class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
 
             col.operator("gpencil.vertex_group_invert", text="Invert", icon='WEIGHT_INVERT')
             col.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')
+
+            col.separator(factor = 0.5)
+
+            col.operator("gpencil.weight_sample", text="Sample Weight", icon='EYEDROPPER')
 
         # icon buttons
         else:
@@ -5550,6 +5554,7 @@ class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("gpencil.vertex_group_smooth", text="", icon='WEIGHT_SMOOTH')
+                row.operator("gpencil.weight_sample", text="", icon='EYEDROPPER')
 
             elif column_count == 2:
 
@@ -5561,6 +5566,9 @@ class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
                 row.operator("gpencil.vertex_group_invert", text="", icon='WEIGHT_INVERT')
                 row.operator("gpencil.vertex_group_smooth", text="", icon='WEIGHT_SMOOTH')
 
+                row = col.row(align=True)
+                row.operator("gpencil.weight_sample", text="", icon='EYEDROPPER')
+
             elif column_count == 1:
 
                 col.operator("gpencil.vertex_group_normalize_all", text="", icon = "WEIGHT_NORMALIZE_ALL")
@@ -5570,6 +5578,10 @@ class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
 
                 col.operator("gpencil.vertex_group_invert", text="", icon='WEIGHT_INVERT')
                 col.operator("gpencil.vertex_group_smooth", text="", icon='WEIGHT_SMOOTH')
+
+                col.separator(factor = 0.5)
+
+                col.operator("gpencil.weight_sample", text="", icon='EYEDROPPER')
 
 
 class VIEW3D_PT_gp_weightstab_generate_weights(toolshelf_calculate, Panel):

@@ -950,7 +950,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         ))
 
         if not images:
-            self.report({'WARNING'}, "Please select at least an image.")
+            self.report({'WARNING'}, "Please select at least one image")
             return {'CANCELLED'}
 
         # Create individual planes

@@ -21,8 +21,8 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Bool>("End Vertex").default_value(false).hide_value().supports_field();
   b.add_input<decl::Float>("Edge Cost").default_value(1.0f).hide_value().supports_field();
-  b.add_output<decl::Int>("Next Vertex Index").reference_pass_all();
-  b.add_output<decl::Float>("Total Cost").reference_pass_all();
+  b.add_output<decl::Int>("Next Vertex Index").field_source().reference_pass_all();
+  b.add_output<decl::Float>("Total Cost").field_source().reference_pass_all();
 }
 
 using VertPriority = std::pair<float, int>;
@@ -59,11 +59,11 @@ static void shortest_paths(const Mesh &mesh,
         continue;
       }
       const float edge_cost = std::max(0.0f, input_cost[edge_i]);
-      const float new_neighbour_cost = cost_i + edge_cost;
-      if (new_neighbour_cost < r_cost[neighbor_vert_i]) {
-        r_cost[neighbor_vert_i] = new_neighbour_cost;
+      const float new_neighbor_cost = cost_i + edge_cost;
+      if (new_neighbor_cost < r_cost[neighbor_vert_i]) {
+        r_cost[neighbor_vert_i] = new_neighbor_cost;
         r_next_index[neighbor_vert_i] = vert_i;
-        queue.emplace(new_neighbour_cost, neighbor_vert_i);
+        queue.emplace(new_neighbor_cost, neighbor_vert_i);
       }
     }
   }

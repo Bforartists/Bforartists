@@ -105,7 +105,11 @@ static void createTransCurvesVerts(bContext * /*C*/, TransInfo *t)
           "radius",
           ATTR_DOMAIN_POINT,
           bke::AttributeInitVArray(VArray<float>::ForSingle(0.01f, curves.points_num())));
-
+      value_attribute = attribute_writer.span;
+    }
+    else if (t->mode == TFM_TILT) {
+      bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
+      attribute_writer = attributes.lookup_or_add_for_write_span<float>("tilt", ATTR_DOMAIN_POINT);
       value_attribute = attribute_writer.span;
     }
 
@@ -114,8 +118,11 @@ static void createTransCurvesVerts(bContext * /*C*/, TransInfo *t)
                                       value_attribute,
                                       selection_per_object[i],
                                       use_proportional_edit,
+                                      curves.curves_range(),
                                       use_connected_only,
                                       0 /* No data offset for curves. */);
+
+    /* TODO: This is wrong. The attribute writer should live at least as long as the span. */
     attribute_writer.finish();
   }
 }
@@ -126,9 +133,16 @@ static void recalcData_curves(TransInfo *t)
   for (const TransDataContainer &tc : trans_data_contrainers) {
     Curves *curves_id = static_cast<Curves *>(tc.obedit->data);
     bke::CurvesGeometry &curves = curves_id->geometry.wrap();
-
-    curves.calculate_bezier_auto_handles();
-    curves.tag_positions_changed();
+    if (t->mode == TFM_CURVE_SHRINKFATTEN) {
+      /* No cache to update currently. */
+    }
+    else if (t->mode == TFM_TILT) {
+      curves.tag_normals_changed();
+    }
+    else {
+      curves.tag_positions_changed();
+      curves.calculate_bezier_auto_handles();
+    }
     DEG_id_tag_update(&curves_id->id, ID_RECALC_GEOMETRY);
   }
 }
@@ -140,6 +154,7 @@ void curve_populate_trans_data_structs(TransDataContainer &tc,
                                        std::optional<blender::MutableSpan<float>> value_attribute,
                                        const blender::IndexMask &selected_indices,
                                        bool use_proportional_edit,
+                                       const blender::IndexMask &affected_curves,
                                        bool use_connected_only,
                                        int trans_data_offset)
 {
@@ -154,9 +169,9 @@ void curve_populate_trans_data_structs(TransDataContainer &tc,
     const OffsetIndices<int> points_by_curve = curves.points_by_curve();
     const VArray<bool> selection = *curves.attributes().lookup_or_default<bool>(
         ".selection", ATTR_DOMAIN_POINT, true);
-    threading::parallel_for(curves.curves_range(), 512, [&](const IndexRange range) {
+    affected_curves.foreach_segment(GrainSize(512), [&](const IndexMaskSegment segment) {
       Vector<float> closest_distances;
-      for (const int curve_i : range) {
+      for (const int curve_i : segment) {
         const IndexRange points = points_by_curve[curve_i];
         const bool has_any_selected = ed::curves::has_anything_selected(selection, points);
         if (!has_any_selected && use_connected_only) {
@@ -164,7 +179,7 @@ void curve_populate_trans_data_structs(TransDataContainer &tc,
             TransData &td = tc.data[point_i + trans_data_offset];
             td.flag |= TD_SKIP;
           }
-          continue;
+          return;
         }
 
         closest_distances.reinitialize(points.size());

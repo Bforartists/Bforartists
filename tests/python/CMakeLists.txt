@@ -394,6 +394,11 @@ add_blender_test(
 )
 
 add_blender_test(
+  bl_animation_nla_strip
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_animation_nla_strip.py
+)
+
+add_blender_test(
   bl_rigging_symmetrize
   --python ${CMAKE_CURRENT_LIST_DIR}/bl_rigging_symmetrize.py
   --
@@ -425,66 +430,6 @@ add_blender_test(
 
 # ------------------------------------------------------------------------------
 # IO TESTS
-
-# STL Import tests
-# disabled until updated & working
-if(FALSE)
-add_blender_test(
-  import_stl_cube
-  --python ${CMAKE_CURRENT_LIST_DIR}/bl_test.py --
-  --run={'FINISHED'}&bpy.ops.import_mesh.stl\(filepath='${TEST_SRC_DIR}/io_tests/stl/cube.stl'\)
-  --md5=8ceb5bb7e1cb5f4342fa1669988c66b4 --md5_method=SCENE
-  --write-blend=${TEST_OUT_DIR}/io_tests/import_stl_cube.blend
-)
-
-add_blender_test(
-  import_stl_conrod
-  --python ${CMAKE_CURRENT_LIST_DIR}/bl_test.py --
-  --run={'FINISHED'}&bpy.ops.import_mesh.stl\(filepath='${TEST_SRC_DIR}/io_tests/stl/conrod.stl'\)
-  --md5=690a4b8eb9002dcd8631c5a575ea7348 --md5_method=SCENE
-  --write-blend=${TEST_OUT_DIR}/io_tests/import_stl_conrod.blend
-)
-
-add_blender_test(
-  import_stl_knot_max_simplified
-  --python ${CMAKE_CURRENT_LIST_DIR}/bl_test.py --
-  --run={'FINISHED'}&bpy.ops.import_mesh.stl\(filepath='${TEST_SRC_DIR}/io_tests/stl/knot_max_simplified.stl'\)
-  --md5=baf82803f45a84ec4ddbad9cef57dd3e --md5_method=SCENE
-  --write-blend=${TEST_OUT_DIR}/io_tests/import_stl_knot_max_simplified.blend
-)
-endif()
-
-# STL Export
-# disabled until updated & working
-if(FALSE)
-add_blender_test(
-  export_stl_cube_all_data
-  ${TEST_SRC_DIR}/io_tests/blend_geometry/cube_all_data.blend
-  --python ${CMAKE_CURRENT_LIST_DIR}/bl_test.py --
-  --run={'FINISHED'}&bpy.ops.export_mesh.stl\(filepath='${TEST_OUT_DIR}/io_tests/export_stl_cube_all_data.stl'\)
-  --md5_source=${TEST_OUT_DIR}/io_tests/export_stl_cube_all_data.stl
-  --md5=64cb97c0cabb015e1c3f76369835075a --md5_method=FILE
-)
-
-add_blender_test(
-  export_stl_suzanne_all_data
-  ${TEST_SRC_DIR}/io_tests/blend_geometry/suzanne_all_data.blend
-  --python ${CMAKE_CURRENT_LIST_DIR}/bl_test.py --
-  --run={'FINISHED'}&bpy.ops.export_mesh.stl\(filepath='${TEST_OUT_DIR}/io_tests/export_stl_suzanne_all_data.stl'\)
-  --md5_source=${TEST_OUT_DIR}/io_tests/export_stl_suzanne_all_data.stl
-  --md5=e9b23c97c139ad64961c635105bb9192 --md5_method=FILE
-)
-
-add_blender_test(
-  export_stl_vertices # lame, add a better one
-  ${TEST_SRC_DIR}/io_tests/blend_geometry/vertices.blend
-  --python ${CMAKE_CURRENT_LIST_DIR}/bl_test.py --
-  --run={'FINISHED'}&bpy.ops.export_mesh.stl\(filepath='${TEST_OUT_DIR}/io_tests/export_stl_vertices.stl'\)
-  --md5_source=${TEST_OUT_DIR}/io_tests/export_stl_vertices.stl
-  --md5=3fd3c877e573beeebc782532cc005820 --md5_method=FILE
-)
-endif()
-
 
 # X3D Import
 # disabled until updated & working
@@ -657,7 +602,7 @@ if(TRUE)
   endif()
 endif()
 
-if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
+if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
   if(NOT OPENIMAGEIO_IDIFF)
     message(WARNING "Disabling render tests because OIIO idiff does not exist")
   elseif(NOT EXISTS "${TEST_SRC_DIR}/render/shader")
@@ -712,7 +657,7 @@ if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
     #  list(APPEND render_tests guiding)
     #endif()
 
-    if(WITH_OPENGL_RENDER_TESTS)
+    if(WITH_GPU_RENDER_TESTS)
       list(APPEND render_tests grease_pencil)
     endif()
 
@@ -748,7 +693,7 @@ if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
       unset(_cycles_blacklist)
     endif()
 
-    if(WITH_OPENGL_RENDER_TESTS)
+    if(WITH_GPU_RENDER_TESTS)
       # Eevee
       foreach(render_test ${render_tests})
         add_render_test(
@@ -929,7 +874,7 @@ else()
 endif()
 
 
-if(WITH_OPENGL_DRAW_TESTS)
+if(WITH_GPU_DRAW_TESTS)
   if(NOT OPENIMAGEIO_IDIFF)
     message(STATUS "Disabling OpenGL draw tests because OIIO idiff does not exist")
   elseif(NOT EXISTS "${TEST_SRC_DIR}/opengl")
