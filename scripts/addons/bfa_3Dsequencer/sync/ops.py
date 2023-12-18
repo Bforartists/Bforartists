@@ -8,10 +8,11 @@ from bfa_3Dsequencer.sync.core import get_sync_settings, sync_system_update
 from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 
+
 class WM_OT_timeline_sync_toggle(bpy.types.Operator):
     bl_idname = "wm.timeline_sync_toggle"
-    bl_label = "Toggle Scene Synchronization"
-    bl_description = "Toggle Scene Synchronization System"
+    bl_label = "Toggle 3D View Synchronization"
+    bl_description = "Toggle 3D View Synchronization System. \nSet the Sequencer Active Scene to the Master Scene \nthen the 3D View will syncronize with the Sequencer"
     bl_options = set()
 
     def execute(self, context: bpy.types.Context):
@@ -58,10 +59,43 @@ class WM_OT_timeline_sync_play_master(bpy.types.Operator):
             bpy.ops.screen.animation_play("INVOKE_DEFAULT")
         return {"FINISHED"}
 
+class SEQUENCER_OT_change_3d_view_scene(bpy.types.Operator):
+    """Change scene to active strip scene"""
+    bl_idname = "sequencer.change_3d_view_scene"
+    bl_label = "Toggle Scene Strip"
+    bl_description = "Changes 3D View Scene to active Scene Strip"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        # Get the active strip
+        seq_editor = context.scene.sequence_editor
+        if seq_editor is None or seq_editor.active_strip is None:
+            self.report({'WARNING'}, "No active strip")
+            return {'CANCELLED'}
+
+        strip = seq_editor.active_strip
+
+        # Check if the strip is a scene strip
+        if strip.type != 'SCENE':
+            self.report({'WARNING'}, "Active strip is not a scene strip")
+            return {'CANCELLED'}
+
+        # Get the scene from the strip
+        scene = strip.scene
+        if scene is None:
+            self.report({'WARNING'}, "Scene strip has no scene")
+            return {'CANCELLED'}
+
+        # Change the current scene to the strip's scene
+        context.window.scene = scene
+
+        return {'FINISHED'}
+
 
 classes = (
     WM_OT_timeline_sync_toggle,
     WM_OT_timeline_sync_play_master,
+    SEQUENCER_OT_change_3d_view_scene,
 )
 
 
