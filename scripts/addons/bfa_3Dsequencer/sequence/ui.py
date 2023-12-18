@@ -17,10 +17,10 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 
 class DOPESHEET_PT_Sequence(bpy.types.Panel):
-    bl_label = "Sequence"
-    bl_space_type = "DOPESHEET_EDITOR"
-    bl_region_type = "UI"
-    bl_category = "Sequencer"
+    bl_label = "Scene Syncronization"
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_parent_id = "DOPESHEET_PT_view_view_options"
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
@@ -37,7 +37,7 @@ class DOPESHEET_PT_Sequence(bpy.types.Panel):
 class SEQUENCE_MT_active_shot_camera_select(bpy.types.Menu):
     bl_idname = "SHOT_MT_camera_select"
     bl_label = "Camera"
-    bl_description = "Select active shot's camera"
+    bl_description = "Select active scene's camera"
 
     def draw(self, context):
         strip, _ = get_sync_master_strip(True)
@@ -55,7 +55,7 @@ class SEQUENCE_MT_active_shot_camera_select(bpy.types.Menu):
 class SEQUENCE_MT_active_shot_scene_select(bpy.types.Menu):
     bl_idname = "SHOT_MT_scene_select"
     bl_label = "Scene"
-    bl_description = "Select active shot's scene"
+    bl_description = "Select active scene"
 
     def draw(self, context):
         strip, _ = get_sync_master_strip(True)
@@ -114,8 +114,8 @@ class SEQUENCE_UL_shot(bpy.types.UIList):
 
 
 class VIEW3D_PT_sequence(bpy.types.Panel):
-    bl_label = "Sequence"
-    bl_category = "Sequencer"
+    bl_label = "Scene Syncronization"
+    bl_category = "View"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
 
@@ -144,7 +144,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
             self.draw_shot_strip(context, strip)
 
     def draw_shots_list(self, context, sed):
-        """Draw shot list in the given sequence editor."""
+        """Draw scene list in the given sequence editor."""
         self.layout.template_list(
             SEQUENCE_UL_shot.bl_idname,
             "",
@@ -158,18 +158,18 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
 
     # Camera Sub Panels
     def draw_shot_strip(self, context, strip):
-        """Draw shot strip details."""
+        """Draw scene strip details."""
         shot_box = self.layout.box()
         row = shot_box.row(align=True)
         row.label(text=strip.name, icon="SEQUENCE")
 
-        row.operator("sequence.child_scene_setup_create", text="", icon="DUPLICATE")
         # Scene selection.
         row.menu(
             SEQUENCE_MT_active_shot_scene_select.bl_idname,
             text=strip.scene.name,
             icon="SCENE_DATA",
         )
+        row.operator("sequence.child_scene_setup_create", text="", icon="DUPLICATE")
 
         # Camera selection.
         col = shot_box.column()
@@ -186,7 +186,9 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
             )
             icon = "OUTLINER_OB_CAMERA" if active_cam == strip_cam else "CAMERA_DATA"
 
-        row = col.row(align=True, heading="Camera")
+
+        row = col.row(align=True, heading="")
+        row.label(text="Camera", icon="OUTLINER_DATA_CAMERA")
         row.menu(
             SEQUENCE_MT_active_shot_camera_select.bl_idname,
             text=text,
@@ -204,9 +206,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
                 text="",
             )
             props.camera = context.scene.camera.name
-        row = col.row()
-        #row.operator("scene.camera_select", icon="RESTRICT_SELECT_OFF", text="Select")
-        row.operator("object.select_camera", icon="RESTRICT_SELECT_OFF", text="Select")
+        row.operator("object.select_camera", icon="RESTRICT_SELECT_OFF", text="")
 
 class PROPERTIES_PT_obj_users_scene_check(bpy.types.Panel):
     bl_space_type = "PROPERTIES"
