@@ -25,9 +25,8 @@ class SEQUENCER_PT_SyncPanel(bpy.types.Panel):
         # Operator to syncronize viewport
         self.layout.operator("wm.timeline_sync_toggle", text="Synchronize to 3D View", icon="VIEW3D", depress=settings.enabled)
 
-        # Operator to toggle active scene
-        self.layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="SCENE_DATA")
-
+        # Operator to update to active scene strip
+        self.layout.operator('sequencer.change_3d_view_scene', text='Update to active Scene Strip', icon="FILE_REFRESH")
 
 class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
     """3D View Synchronization advanced settings Panel."""
