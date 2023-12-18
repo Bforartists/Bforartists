@@ -12,7 +12,7 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 class WM_OT_timeline_sync_toggle(bpy.types.Operator):
     bl_idname = "wm.timeline_sync_toggle"
     bl_label = "Toggle 3D View Synchronization"
-    bl_description = "Toggle 3D View Synchronization System. \nSet the Sequencer Active Scene to the Master Scene \nthen the 3D View will syncronize with the Sequencer"
+    bl_description = "Toggle 3D View Synchronization System. \nTo use, set the Sequencer active scene to the Master Scene \nthen toggle to syncronize the 3D View with the Sequencer"
     bl_options = set()
 
     def execute(self, context: bpy.types.Context):
@@ -59,11 +59,12 @@ class WM_OT_timeline_sync_play_master(bpy.types.Operator):
             bpy.ops.screen.animation_play("INVOKE_DEFAULT")
         return {"FINISHED"}
 
+
 class SEQUENCER_OT_change_3d_view_scene(bpy.types.Operator):
     """Change scene to active strip scene"""
     bl_idname = "sequencer.change_3d_view_scene"
     bl_label = "Toggle Scene Strip"
-    bl_description = "Changes 3D View Scene to active Scene Strip"
+    bl_description = "Updates Scene to active Scene Strip \nIf Active Scene in Sequencer not set, this will set the Scene to active Scene Strip"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):

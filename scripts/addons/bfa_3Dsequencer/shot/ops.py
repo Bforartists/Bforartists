@@ -796,6 +796,37 @@ class SEQUENCER_OT_shot_chronological_numbering(bpy.types.Operator):
         context.area.tag_redraw()
         return {"FINISHED"}
 
+class SEQUENCER_OT_change_3d_view_scene(bpy.types.Operator):
+    """Change scene to active strip scene"""
+    bl_idname = "sequencer.change_3d_view_scene"
+    bl_label = "Toggle Scene Strip"
+    bl_description = "Updates Scene to active Scene Strip \nIf Active Scene in Sequencer not set, this will set the Scene to active Scene Strip"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        # Get the active strip
+        seq_editor = context.scene.sequence_editor
+        if seq_editor is None or seq_editor.active_strip is None:
+            self.report({'WARNING'}, "No active strip")
+            return {'CANCELLED'}
+
+        strip = seq_editor.active_strip
+
+        # Check if the strip is a scene strip
+        if strip.type != 'SCENE':
+            self.report({'WARNING'}, "Active strip is not a scene strip")
+            return {'CANCELLED'}
+
+        # Get the scene from the strip
+        scene = strip.scene
+        if scene is None:
+            self.report({'WARNING'}, "Scene strip has no scene")
+            return {'CANCELLED'}
+
+        # Change the current scene to the strip's scene
+        context.window.scene = scene
+
+        return {'FINISHED'}
 
 classes = (
     SEQUENCER_OT_shot_new,
@@ -804,6 +835,7 @@ classes = (
     SEQUENCER_OT_shot_timing_adjust,
     SEQUENCER_OT_shot_rename,
     SEQUENCER_OT_shot_chronological_numbering,
+    SEQUENCER_OT_change_3d_view_scene,
 )
 
 

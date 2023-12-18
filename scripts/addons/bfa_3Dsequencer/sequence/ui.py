@@ -30,7 +30,7 @@ class DOPESHEET_PT_Sequence(bpy.types.Panel):
         self.layout.prop(
             context.window_manager.sequence_settings,
             "overlay_dopesheet",
-            text="Timeline Overlay",
+            text="Scene Strip Overlay",
         )
 
 
@@ -138,7 +138,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
             self.layout.label(text="Set the Master scene to sync from Sequencer", icon="QUESTION")
             return
 
-        self.layout.label(text="Shows the Active Scene Strips from Sequencer", icon="QUESTION")
+        self.layout.label(text="Sequencer Scene Strips:")
         # Draw scene lists in the master sequence.
         self.draw_shots_list(context, master_scene.sequence_editor)
         # Draw active scene details if any.
