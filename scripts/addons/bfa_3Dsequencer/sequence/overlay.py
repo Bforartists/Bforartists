@@ -17,9 +17,9 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 # - Overlay UI global settings
 
-# Height of a shot strip item
+# Height of a scene strip item
 STRIP_HEIGHT = 20
-# Vertical offset for active shot
+# Vertical offset for active
 ACTIVE_SHOT_Y_OFFSET = STRIP_HEIGHT * 0.5
 # Height of the timeline area
 TIMELINE_HEIGHT = STRIP_HEIGHT + 8
@@ -59,12 +59,12 @@ def draw_shot_strip(
     active: bool = False,
 ):
     """
-    Draw a shot `strip` in the given `region`.
+    Draw a scene `strip` in the given `region`.
 
     :param region: The draw region.
     :param drawer: A PolyDrawer instance.
-    :param strip: The shot strip to draw.
-    :param active: Whether this shot strip is the active one.
+    :param strip: The scene strip to draw.
+    :param active: Whether this scene strip is the active one.
     """
     strip_height = ui_scaled(STRIP_HEIGHT)
     base_y_pos = shot_baseline_y_pos(bpy.context)
@@ -90,7 +90,7 @@ def draw_shot_strip(
         frame_out - handle_width, y, handle_width, strip_height, handle_r_col
     )
 
-    # Shot name
+    # Scene name
     font_id = 0
     blf.color(font_id, *(TEXT_COLOR_ACTIVE if active else TEXT_COLOR_BASE))
     blf.size(font_id, int(11 * bpy.context.preferences.system.ui_scale) / 72)
@@ -275,7 +275,7 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
         )
 
         strip_handle_height = strip_height * 0.5
-        # Shot handle
+        # Scene handle
         self.set_gizmo_geom(
             self.shot_handle,
             x=frame_in,
@@ -297,14 +297,14 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
         return gizmo, props
 
     def setup(self, context):
-        # Active shot gizmos
+        # Active scene gizmos
         # - Left handle
         self.left_handle, props = self.add_gizmo("sequencer.shot_timing_adjust")
         props.strip_handle = "LEFT"
         # - Right handle
         self.right_handle, props = self.add_gizmo("sequencer.shot_timing_adjust")
         props.strip_handle = "RIGHT"
-        # - Shot handle (slip content)
+        # - Scene handle (slip content)
         self.shot_handle, props = self.add_gizmo("sequencer.shot_timing_adjust")
         self.shot_handle.alpha = 0.2
         self.shot_handle.alpha_highlight = 0.7
