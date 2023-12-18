@@ -1,3 +1,5 @@
+# BFA - temporariliy removed
+
 import bpy
 
 from bfa_3Dsequencer.utils import register_classes, unregister_classes

@@ -10,8 +10,8 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 class WM_OT_timeline_sync_toggle(bpy.types.Operator):
     bl_idname = "wm.timeline_sync_toggle"
-    bl_label = "Toggle Timeline Synchronization"
-    bl_description = "Toggle Timeline Synchronization System"
+    bl_label = "Toggle Scene Synchronization"
+    bl_description = "Toggle Scene Synchronization System"
     bl_options = set()
 
     def execute(self, context: bpy.types.Context):
