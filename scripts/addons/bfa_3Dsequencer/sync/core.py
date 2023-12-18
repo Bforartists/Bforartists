@@ -13,24 +13,26 @@ SequenceType = Type[bpy.types.Sequence]
 
 
 class TimelineSyncSettings(bpy.types.PropertyGroup):
-    """Timeline Synchronization Settings."""
+    """3D View Synchronization Settings."""
 
     enabled: bpy.props.BoolProperty(
         name="Enabled",
-        description="Status of Timeline Synchronization system",
+        description="Status of 3D View Synchronization system",
         default=False,
     )
 
     master_scene: bpy.props.PointerProperty(
         type=bpy.types.Scene,
         name="Master Scene",
-        description="The Scene that drives the Timeline Synchronization",
+        description=(
+            "The master scene should contain all children Scene Strips in the Sequencer Editor timeline\n"
+            "Each Scene Strip in the sequencer timeline will change the active 3D View Camera and Scene"),
     )
 
     bidirectional: bpy.props.BoolProperty(
         name="Bidirectional",
         description=(
-            "Whether changing the active Scene's time should update "
+            "Whether changing the Active Scene's time should update "
             "the Master Scene's current frame"
         ),
         default=True,
@@ -38,7 +40,7 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
 
     sync_all_windows: bpy.props.BoolProperty(
         name="Synchronize all Windows",
-        description="Whether the Timeline Synchronization impacts all Main Windows",
+        description="Whether the 3D View Synchronization impacts all Main Windows",
         default=False,
     )
 
@@ -58,7 +60,7 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     use_preview_range: bpy.props.BoolProperty(
         name="Use Preview Range",
         description=(
-            "Update the preview range of current strip's scene to match the useful "
+            "Update the preview range of current strip's scene to match the useful\n "
             "range of this strip"
         ),
         default=True,
@@ -343,7 +345,7 @@ def get_sync_master_strip(
     use_cache: bool = False,
 ) -> tuple[Union[bpy.types.SceneSequence, None], int]:
     """
-    Return the scene strip currently used by the Timeline Synchronization.
+    Return the scene strip currently used by the 3D View Synchronization.
 
     :param use_cache: If True, return last cached value. Compute from current master time otherwise.
     """
@@ -557,13 +559,13 @@ def on_frame_changed(scene: bpy.types.Scene, depsgraph: bpy.types.Depsgraph):
     if not isinstance(bpy.context, bpy.types.Context):
         return
 
-    # Update Timeline Synchronization system
+    # Update 3D View Synchronization system
     sync_system_update(bpy.context)
 
 
 def update_sync_cache_from_current_state():
     """
-    Update Timeline Synchronization cached values based on file's current state.
+    Update 3D View Synchronization cached values based on file's current state.
     """
     sync_settings = get_sync_settings()
     sync_settings.last_master_frame = sync_settings.master_scene.frame_current
@@ -581,7 +583,7 @@ def update_sync_cache_from_current_state():
 @bpy.app.handlers.persistent
 def on_load_pre(*args):
     sync_settings = get_sync_settings()
-    # Reset Timeline Synchronization settings
+    # Reset 3D View Synchronization settings
     sync_settings.enabled = False
     sync_settings.master_scene = None
     sync_settings.last_master_frame = -1
@@ -645,7 +647,7 @@ def register():
     # NOTE: this is not saved in the Blender file
     bpy.types.WindowManager.timeline_sync_settings = bpy.props.PointerProperty(
         type=TimelineSyncSettings,
-        name="Timeline Synchronization Settings",
+        name="Secne Synchronization Settings",
     )
 
     # React to scenes current frame changes

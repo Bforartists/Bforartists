@@ -165,7 +165,7 @@ class ShotNaming:
                 number = int(match.group())
         # Throw otherwise
         else:
-            raise ValueError("Invalid shot name")
+            raise ValueError("Invalid scene name")
         return ShotNameData(prefix, number, take)
 
     def get_next_number(self, number: int) -> int:
@@ -322,7 +322,7 @@ class ShotNamingProperty(bpy.types.PropertyGroup):
         sed = bpy.context.scene.sequence_editor
         self.init_from_name(shot_naming.next_shot_name_from_sequences(sed))
 
-    # Helper "function-property" with a set method that makes naming use next shot name
+    # Helper "function-property" with a set method that makes naming use next scene name
     use_next_shot_name: bpy.props.BoolProperty(
         name="Use Next Available Scene Name",
         description="Update naming to use the next available scene name",

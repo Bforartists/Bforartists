@@ -601,7 +601,7 @@ def slip_shot_content(
     Slip `strip` content by `frame_offset`.
     A positive offset moves strip's internal range forwards.
 
-    :param strip: The shot strip to consider.
+    :param strip: The scene strip to consider.
     :param frame_offset: The frame offset to apply.
     :param clamp_start: Whether to clamp to scene's frame start.
     """
@@ -633,7 +633,7 @@ def slip_shot_content(
 
 
 def get_valid_shot_scenes() -> list[bpy.types.Scene]:
-    """Return the list of scenes considered as usable by a shot strip."""
+    """Return the list of scenes considered as usable by a scene strip."""
     prefs = get_addon_prefs()
     return [
         scene
