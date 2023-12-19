@@ -171,7 +171,7 @@ class SEQUENCER_HT_header(Header):
 
         layout.separator_spacer()
         row = layout.row() # BFA - 3D Sequencer
-        row.label(text="Active Scene:", icon="SEQUENCE") # BFA - 3D Sequencer
+        row.label(text="Timeline:", icon="SEQUENCE") # BFA - 3D Sequencer
         row.template_ID(st, "scene_override", unlink="sequencer.remove_scene_override") # BFA - 3D Sequencer
 
         if st.view_type == 'PREVIEW':
