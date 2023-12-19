@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-
+# Thanks to Znight and Spa Studios for the work of making this real
 
 import bpy
 
@@ -11,8 +11,8 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 class WM_OT_timeline_sync_toggle(bpy.types.Operator):
     bl_idname = "wm.timeline_sync_toggle"
-    bl_label = "Toggle 3D View Synchronization"
-    bl_description = "Toggle 3D View Synchronization System. \nTo use, set the Sequencer active scene to the Master Scene \nthen toggle to syncronize the 3D View with the Sequencer"
+    bl_label = "Toggle 3D View Sync"
+    bl_description = "Toggles syncronization between the timeline scene strips and scene \nTo use, set the sequencer timeline to the master scene \nThen toggle to syncronize the 3D View with the Sequencer"
     bl_options = set()
 
     def execute(self, context: bpy.types.Context):
@@ -40,15 +40,6 @@ class WM_OT_timeline_sync_play_master(bpy.types.Operator):
     bl_description = "Toggle playback of master scene"
     bl_options = set()
 
-    bl_keymaps = [
-        {
-            "space_type": "EMPTY",
-            "category_name": "Frames",
-            "key": "SPACE",
-            "shift": True,
-        }
-    ]
-
     @classmethod
     def poll(cls, context: bpy.types.Context):
         return get_sync_settings().master_scene is not None
@@ -64,7 +55,7 @@ class SEQUENCER_OT_change_3d_view_scene(bpy.types.Operator):
     """Change scene to active strip scene"""
     bl_idname = "sequencer.change_3d_view_scene"
     bl_label = "Toggle Scene Strip"
-    bl_description = "Updates Scene to active Scene Strip \nIf Active Scene in Sequencer not set, this will set the Scene to active Scene Strip"
+    bl_description = "Updates the current scene to active scene strip \nIf timeline in sequencer not set, this toggles the current scene to active scene strip in the sequencer"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):

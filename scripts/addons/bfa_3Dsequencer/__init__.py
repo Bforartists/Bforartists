@@ -31,7 +31,7 @@ from bfa_3Dsequencer import (
 bl_info = {
     "name": "BFA - 3D Sequencer",
     "author": "The SPA Studios, Znight, Draise",
-    "description": "Toolset for a 3D sequencer scene workflow to switch scenes/cameras with a sequencer timeline.",
+    "description": "Toolset for a 3D sequencer scene workflow to switch scenes/cameras with a master sequencer timeline.",
     "blender": (4, 0, 2),
     "version": (1, 0, 1),
     "location": "",
