@@ -560,6 +560,7 @@ enum {
 enum {
   SCREEN_DEPRECATED = 1,
   SCREEN_COLLAPSE_STATUSBAR = 2,
+  SCREEN_BFA_TOP_BAR = 4, /* BFA Top Toolbar */
 };
 
 /** #bScreen.state */
