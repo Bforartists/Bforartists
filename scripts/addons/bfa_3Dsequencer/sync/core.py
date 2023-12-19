@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-
+# Thanks to Znight and Spa Studios for the work of making this real
 
 from contextlib import contextmanager
 from typing import Any, Callable, Optional, Union, Type
@@ -13,11 +13,11 @@ SequenceType = Type[bpy.types.Sequence]
 
 
 class TimelineSyncSettings(bpy.types.PropertyGroup):
-    """3D View Synchronization Settings."""
+    """3D View Sync Settings."""
 
     enabled: bpy.props.BoolProperty(
         name="Enabled",
-        description="Status of 3D View Synchronization system",
+        description="Status of 3D View Sync system",
         default=False,
     )
 
@@ -40,7 +40,7 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
 
     sync_all_windows: bpy.props.BoolProperty(
         name="Synchronize all Windows",
-        description="Whether the 3D View Synchronization impacts all Main Windows",
+        description="Whether the 3D View Sync impacts all Main Windows",
         default=False,
     )
 
@@ -345,7 +345,7 @@ def get_sync_master_strip(
     use_cache: bool = False,
 ) -> tuple[Union[bpy.types.SceneSequence, None], int]:
     """
-    Return the scene strip currently used by the 3D View Synchronization.
+    Return the scene strip currently used by the 3D View Sync.
 
     :param use_cache: If True, return last cached value. Compute from current master time otherwise.
     """
@@ -559,13 +559,13 @@ def on_frame_changed(scene: bpy.types.Scene, depsgraph: bpy.types.Depsgraph):
     if not isinstance(bpy.context, bpy.types.Context):
         return
 
-    # Update 3D View Synchronization system
+    # Update 3D View Sync system
     sync_system_update(bpy.context)
 
 
 def update_sync_cache_from_current_state():
     """
-    Update 3D View Synchronization cached values based on file's current state.
+    Update 3D View Sync cached values based on file's current state.
     """
     sync_settings = get_sync_settings()
     sync_settings.last_master_frame = sync_settings.master_scene.frame_current
@@ -583,7 +583,7 @@ def update_sync_cache_from_current_state():
 @bpy.app.handlers.persistent
 def on_load_pre(*args):
     sync_settings = get_sync_settings()
-    # Reset 3D View Synchronization settings
+    # Reset 3D View Sync settings
     sync_settings.enabled = False
     sync_settings.master_scene = None
     sync_settings.last_master_frame = -1
