@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-
+# Thanks to Znight and Spa Studios for the work of making this real
 
 import bpy
 
@@ -17,7 +17,7 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 
 class DOPESHEET_PT_Sequence(bpy.types.Panel):
-    bl_label = "3D View Syncronization"
+    bl_label = "Sequencer Sync"
     bl_space_type = 'DOPESHEET_EDITOR'
     bl_region_type = 'HEADER'
     bl_parent_id = "DOPESHEET_PT_view_view_options"
@@ -114,7 +114,7 @@ class SEQUENCE_UL_shot(bpy.types.UIList):
 
 
 class VIEW3D_PT_sequence(bpy.types.Panel):
-    bl_label = "3D View Syncronization"
+    bl_label = "Sequencer Sync"
     bl_category = "View"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -135,7 +135,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
             or not master_scene.sequence_editor
             or not master_scene.sequence_editor.sequences
         ):
-            self.layout.label(text="Set the Master scene to sync from Sequencer", icon="QUESTION")
+            self.layout.label(text="Set the master scene to sync from Sequencer", icon="QUESTION")
             return
 
         self.layout.label(text="Sequencer Scene Strips:")
