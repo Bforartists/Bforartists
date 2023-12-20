@@ -210,6 +210,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
             )
             props.camera = context.scene.camera.name
         row.operator("object.select_camera", icon="RESTRICT_SELECT_OFF", text="")
+        row.operator("sequence.active_shot_camera_none", icon="X", text="")
 
 class PROPERTIES_PT_obj_users_scene_check(bpy.types.Panel):
     bl_space_type = "PROPERTIES"
