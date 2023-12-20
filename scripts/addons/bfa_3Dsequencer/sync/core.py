@@ -25,15 +25,16 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
         type=bpy.types.Scene,
         name="Master Scene",
         description=(
-            "The master scene should contain all children Scene Strips in the Sequencer Editor timeline\n"
-            "Each Scene Strip in the sequencer timeline will change the active 3D View Camera and Scene"),
+            "The master scene contains all children Scene Strips in the Sequencer editor timeline\n"
+            "Each Scene Strip in the sequencer timeline will change the active 3D View Camera and Scene\n"
+            "To syncronize, set the Master Scene also to the Sequencer timeline."),
     )
 
     bidirectional: bpy.props.BoolProperty(
         name="Bidirectional",
         description=(
-            "Whether changing the Active Scene's time should update "
-            "the Master Scene's current frame"
+            "Whether changing the active scene's time should update "
+            "the Master Scene's current frame in the Sequencer"
         ),
         default=True,
     )
@@ -46,7 +47,7 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
 
     keep_gpencil_tool_settings: bpy.props.BoolProperty(
         name="Keep Grease Pencil Settings",
-        description="Keep active Grease Pencil tool settings while navigating Shots",
+        description="Keep active Grease Pencil tool settings while navigating Scene Strips",
         default=True,
     )
 
@@ -60,8 +61,8 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     use_preview_range: bpy.props.BoolProperty(
         name="Use Preview Range",
         description=(
-            "Update the preview range of current strip's scene to match the useful\n "
-            "range of this strip"
+            "Update the current Scene Strip to match the range\n "
+            "of the timeline preview range"
         ),
         default=True,
         update=use_preview_range_update_callback,
@@ -77,38 +78,38 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     )
 
     last_master_strip: bpy.props.StringProperty(
-        description="Name of the Scene Strip used during the last Synchronization update",
+        description="Name of the Scene Strip used during the last synchronization update",
         default="",
         options={"HIDDEN"},
     )
 
     last_master_strip_idx: bpy.props.IntProperty(
-        description="Index of the Scene Strip used during the last Synchronization update",
+        description="Index of the Scene Strip used during the last synchronization update",
         default=-1,
         options={"HIDDEN"},
     )
 
     last_strip_scene_frame: bpy.props.IntProperty(
-        description="Last frame value that triggered an update in master strip's Scene",
+        description="Last frame value that triggered an update in master scene's Scene Strip",
         default=-1,
         options={"HIDDEN"},
     )
 
     last_strip_scene_frame_out_of_range: bpy.props.BoolProperty(
-        description="Whether frame value in master strip's Scene is out of strip range",
+        description="Whether frame value in master scene's Scene Strip is out of strip range",
         default=True,
         options={"HIDDEN"},
     )
 
     last_gp_mode: bpy.props.StringProperty(
-        description="Last grease pencil interaction mode",
+        description="Keep last grease pencil interaction mode",
         default="",
         options={"HIDDEN"},
     )
 
     active_follows_playhead: bpy.props.BoolProperty(
         name="Active Follows Playhead",
-        description=("Update the active strip while scrubbing the sequencer"),
+        description=("Update the active Scene Strip while scrubbing the sequencer"),
         default=False,
         update=use_preview_range_update_callback,
     )
