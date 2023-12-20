@@ -27,7 +27,7 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
         description=(
             "The master scene contains all children Scene Strips in the Sequencer editor timeline\n"
             "Each Scene Strip in the sequencer timeline will change the active 3D View Camera and Scene\n"
-            "To syncronize, set the Master Scene also to the Sequencer timeline."),
+            "To syncronize, set the Master Scene also to the Sequencer timeline"),
     )
 
     bidirectional: bpy.props.BoolProperty(
