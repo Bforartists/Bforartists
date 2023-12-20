@@ -109,6 +109,23 @@ class SEQUENCE_OT_active_shot_camera_set(bpy.types.Operator):
         strip.scene.camera = cam
         return {"FINISHED"}
 
+class SEQUENCE_OT_active_shot_camera_none(bpy.types.Operator):
+    bl_idname = "sequence.active_shot_camera_none"
+    bl_label = "Set Scene camera to none "
+    bl_description = "Set active Scene camera to none, defaulting to active or camera makers"
+    bl_options = {"UNDO"}
+
+    @classmethod
+    def poll(cls, context: bpy.types.Context):
+        return get_sync_master_strip(use_cache=True)[0] is not None
+
+    def execute(self, context: bpy.types.Context):
+        strip = get_sync_master_strip(use_cache=True)[0]
+        # Update strip's camera.
+        strip.scene_camera = None
+        # Set this camera active in underlying scene.
+        strip.scene.camera = None
+        return {"FINISHED"}
 
 class SEQUENCE_OT_active_shot_scene_set(bpy.types.Operator):
     bl_idname = "sequence.active_shot_scene_set"
@@ -251,6 +268,7 @@ classes = (
     SEQUENCE_OT_check_obj_users_scene,
     DOPESHEET_OT_sequence_navigate,
     SEQUENCE_OT_active_shot_camera_set,
+    SEQUENCE_OT_active_shot_camera_none,
     SEQUENCE_OT_active_shot_scene_set,
     SEQUENCE_OT_child_scene_setup_create,
 )
