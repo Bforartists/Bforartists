@@ -761,14 +761,17 @@ def draw_ts_pref(prefs, layout):
 
 addon_keymaps = []
 
+
 def register_keymaps():
     prefs = get_addon_prefs().ts
     if not prefs.use:
         return
 
-    addon = bpy.context.window_manager.keyconfigs.addon
-    km = addon.keymaps.new(name="Grease Pencil",
-                           space_type="EMPTY", region_type='WINDOW')
+    kc = bpy.context.window_manager.keyconfigs.addon
+    if kc is None:
+        return
+
+    km = kc.keymaps.new(name="Grease Pencil", space_type="EMPTY", region_type='WINDOW')
 
     if not prefs.keycode:
         print(r'/!\ Timeline scrub: no keycode entered for keymap')
@@ -792,7 +795,7 @@ def register_keymaps():
         ]
 
         for editor, space, operator in editor_l:
-            km = addon.keymaps.new(name=editor, space_type=space)
+            km = kc.keymaps.new(name=editor, space_type=space)
             kmi = km.keymap_items.new(
                 operator, type=prefs.keycode, value='PRESS',
                 alt=prefs.use_alt, ctrl=prefs.use_ctrl, shift=prefs.use_shift)
