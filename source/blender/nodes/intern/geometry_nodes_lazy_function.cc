@@ -478,6 +478,21 @@ class LazyFunctionForUndefinedNode : public LazyFunction {
   }
 };
 
+static void set_default_value_for_output_socket(lf::Params &params,
+                                                const int lf_index,
+                                                const bNodeSocket &bsocket)
+{
+  const CPPType &cpp_type = *bsocket.typeinfo->geometry_nodes_cpp_type;
+  void *output_value = params.get_output_data_ptr(lf_index);
+  if (bsocket.typeinfo->geometry_nodes_default_cpp_value) {
+    cpp_type.copy_construct(bsocket.typeinfo->geometry_nodes_default_cpp_value, output_value);
+  }
+  else {
+    cpp_type.value_initialize(output_value);
+  }
+  params.output_set(lf_index);
+}
+
 void set_default_remaining_node_outputs(lf::Params &params, const bNode &node)
 {
   const bNodeTree &ntree = node.owner_tree();
@@ -491,15 +506,7 @@ void set_default_remaining_node_outputs(lf::Params &params, const bNode &node)
     if (params.output_was_set(lf_index)) {
       continue;
     }
-    const CPPType &cpp_type = *bsocket->typeinfo->geometry_nodes_cpp_type;
-    void *output_value = params.get_output_data_ptr(lf_index);
-    if (bsocket->typeinfo->geometry_nodes_default_cpp_value) {
-      cpp_type.copy_construct(bsocket->typeinfo->geometry_nodes_default_cpp_value, output_value);
-    }
-    else {
-      cpp_type.value_initialize(output_value);
-    }
-    params.output_set(lf_index);
+    set_default_value_for_output_socket(params, lf_index, *bsocket);
   }
 }
 
@@ -573,10 +580,13 @@ static void execute_multi_function_on_value_variant(const MultiFunction &fn,
  */
 class LazyFunctionForMutedNode : public LazyFunction {
  private:
-  Array<int> input_by_output_index_;
+  const bNode &node_;
+  Span<int> lf_index_by_bsocket_;
+  Array<const bNodeSocket *> input_by_output_index_;
 
  public:
   LazyFunctionForMutedNode(const bNode &node, MutableSpan<int> r_lf_index_by_bsocket)
+      : node_(node), lf_index_by_bsocket_(r_lf_index_by_bsocket)
   {
     debug_name_ = "Muted";
     lazy_function_interface_from_node(node, inputs_, outputs_, r_lf_index_by_bsocket);
@@ -589,63 +599,62 @@ class LazyFunctionForMutedNode : public LazyFunction {
     }
 
     input_by_output_index_.reinitialize(outputs_.size());
-    input_by_output_index_.fill(-1);
+    input_by_output_index_.fill(nullptr);
     for (const bNodeLink &internal_link : node.internal_links()) {
       const int input_i = r_lf_index_by_bsocket[internal_link.fromsock->index_in_tree()];
       const int output_i = r_lf_index_by_bsocket[internal_link.tosock->index_in_tree()];
       if (ELEM(-1, input_i, output_i)) {
         continue;
       }
-      input_by_output_index_[output_i] = input_i;
+      input_by_output_index_[internal_link.tosock->index()] = internal_link.fromsock;
       inputs_[input_i].usage = lf::ValueUsage::Maybe;
     }
   }
 
   void execute_impl(lf::Params &params, const lf::Context & /*context*/) const override
   {
-    for (const int output_i : outputs_.index_range()) {
-      if (params.output_was_set(output_i)) {
+    for (const bNodeSocket *output_bsocket : node_.output_sockets()) {
+      const int lf_output_index = lf_index_by_bsocket_[output_bsocket->index_in_tree()];
+      if (lf_output_index == -1) {
         continue;
       }
-      if (params.get_output_usage(output_i) != lf::ValueUsage::Used) {
+      if (params.output_was_set(lf_output_index)) {
         continue;
       }
-      const CPPType &output_type = *outputs_[output_i].type;
-      void *output_value = params.get_output_data_ptr(output_i);
-      const int input_i = input_by_output_index_[output_i];
-      if (input_i == -1) {
-        /* The output does not have a corresponding input. */
-        output_type.value_initialize(output_value);
-        params.output_set(output_i);
+      if (params.get_output_usage(lf_output_index) != lf::ValueUsage::Used) {
         continue;
       }
-      const void *input_value = params.try_get_input_data_ptr_or_request(input_i);
+      const bNodeSocket *input_bsocket = input_by_output_index_[output_bsocket->index()];
+      if (input_bsocket == nullptr) {
+        set_default_value_for_output_socket(params, lf_output_index, *output_bsocket);
+        continue;
+      }
+      const int lf_input_index = lf_index_by_bsocket_[input_bsocket->index_in_tree()];
+      const void *input_value = params.try_get_input_data_ptr_or_request(lf_input_index);
       if (input_value == nullptr) {
+        /* Wait for value to be available. */
         continue;
       }
-      const CPPType &input_type = *inputs_[input_i].type;
-      if (input_type == output_type) {
-        /* Forward the value as is. */
-        input_type.copy_construct(input_value, output_value);
-        params.output_set(output_i);
+      void *output_value = params.get_output_data_ptr(lf_output_index);
+      if (input_bsocket->type == output_bsocket->type) {
+        inputs_[lf_input_index].type->copy_construct(input_value, output_value);
+        params.output_set(lf_output_index);
         continue;
       }
-      /* Perform a type conversion and then format the value. */
       const bke::DataTypeConversions &conversions = bke::get_implicit_type_conversions();
-      if (conversions.is_convertible(input_type, output_type)) {
+      if (conversions.is_convertible(*input_bsocket->typeinfo->base_cpp_type,
+                                     *output_bsocket->typeinfo->base_cpp_type))
+      {
         const MultiFunction &multi_fn = *conversions.get_conversion_multi_function(
-            mf::DataType::ForSingle(input_type), mf::DataType::ForSingle(output_type));
-        SocketValueVariant input_value_variant = *static_cast<const SocketValueVariant *>(
-            input_value);
-        SocketValueVariant *output_value_variant = new (output_value) SocketValueVariant();
-        execute_multi_function_on_value_variant(
-            multi_fn, {}, {&input_value_variant}, {output_value_variant});
+            mf::DataType::ForSingle(*input_bsocket->typeinfo->base_cpp_type),
+            mf::DataType::ForSingle(*output_bsocket->typeinfo->base_cpp_type));
+        SocketValueVariant input_variant = *static_cast<const SocketValueVariant *>(input_value);
+        SocketValueVariant *output_variant = new (output_value) SocketValueVariant();
+        execute_multi_function_on_value_variant(multi_fn, {}, {&input_variant}, {output_variant});
+        params.output_set(lf_output_index);
+        continue;
       }
-      params.output_set(output_i);
-      continue;
-      /* Use a value initialization if the conversion does not work. */
-      output_type.value_initialize(output_value);
-      params.output_set(output_i);
+      set_default_value_for_output_socket(params, lf_output_index, *output_bsocket);
     }
   }
 };
@@ -790,14 +799,14 @@ class LazyFunctionForViewerNode : public LazyFunction {
       SocketValueVariant *value_variant = params.try_get_input_data_ptr<SocketValueVariant>(1);
       BLI_assert(value_variant != nullptr);
       GField field = value_variant->extract<GField>();
-      const eAttrDomain domain = eAttrDomain(storage->domain);
+      const AttrDomain domain = AttrDomain(storage->domain);
       const StringRefNull viewer_attribute_name = ".viewer";
-      if (domain == ATTR_DOMAIN_INSTANCE) {
+      if (domain == AttrDomain::Instance) {
         if (geometry.has_instances()) {
           GeometryComponent &component = geometry.get_component_for_write(
               bke::GeometryComponent::Type::Instance);
           bke::try_capture_field_on_geometry(
-              component, viewer_attribute_name, ATTR_DOMAIN_INSTANCE, field);
+              component, viewer_attribute_name, AttrDomain::Instance, field);
         }
       }
       else {
@@ -808,15 +817,15 @@ class LazyFunctionForViewerNode : public LazyFunction {
           {
             if (geometry.has(type)) {
               GeometryComponent &component = geometry.get_component_for_write(type);
-              eAttrDomain used_domain = domain;
-              if (used_domain == ATTR_DOMAIN_AUTO) {
-                if (const std::optional<eAttrDomain> detected_domain =
-                        bke::try_detect_field_domain(component, field))
+              AttrDomain used_domain = domain;
+              if (used_domain == AttrDomain::Auto) {
+                if (const std::optional<AttrDomain> detected_domain = bke::try_detect_field_domain(
+                        component, field))
                 {
                   used_domain = *detected_domain;
                 }
                 else {
-                  used_domain = ATTR_DOMAIN_POINT;
+                  used_domain = AttrDomain::Point;
                 }
               }
               bke::try_capture_field_on_geometry(
@@ -917,6 +926,50 @@ class LazyFunctionForSimulationInputsUsage : public LazyFunction {
   {
     params.set_output(0, false);
     params.set_output(1, false);
+  }
+};
+
+class LazyFunctionForBakeInputsUsage : public LazyFunction {
+ private:
+  const bNode *bnode_;
+
+ public:
+  LazyFunctionForBakeInputsUsage(const bNode &bnode) : bnode_(&bnode)
+  {
+    debug_name_ = "Bake Inputs Usage";
+    outputs_.append_as("Used", CPPType::get<bool>());
+  }
+
+  void execute_impl(lf::Params &params, const lf::Context &context) const override
+  {
+    const GeoNodesLFUserData &user_data = *static_cast<GeoNodesLFUserData *>(context.user_data);
+    if (!user_data.call_data->bake_params) {
+      this->set_default_outputs(params);
+      return;
+    }
+    const std::optional<FoundNestedNodeID> found_id = find_nested_node_id(user_data,
+                                                                          bnode_->identifier);
+    if (!found_id) {
+      this->set_default_outputs(params);
+      return;
+    }
+    if (found_id->is_in_loop || found_id->is_in_simulation) {
+      this->set_default_outputs(params);
+      return;
+    }
+    BakeNodeBehavior *behavior = user_data.call_data->bake_params->get(found_id->id);
+    if (!behavior) {
+      this->set_default_outputs(params);
+      return;
+    }
+    const bool need_inputs = std::holds_alternative<sim_output::PassThrough>(*behavior) ||
+                             std::holds_alternative<sim_output::StoreNewState>(*behavior);
+    params.set_output(0, need_inputs);
+  }
+
+  void set_default_outputs(lf::Params &params) const
+  {
+    params.set_output(0, false);
   }
 };
 
@@ -3049,6 +3102,10 @@ struct GeometryNodesLazyFunctionBuilder {
         this->build_index_switch_node(bnode, graph_params);
         break;
       }
+      case GEO_NODE_BAKE: {
+        this->build_bake_node(bnode, graph_params);
+        break;
+      }
       default: {
         if (node_type->geometry_node_execute) {
           this->build_geometry_node(bnode, graph_params);
@@ -3512,6 +3569,42 @@ struct GeometryNodesLazyFunctionBuilder {
       mapping_->bsockets_by_lf_socket_map.add(&lf_socket, &bsocket);
     }
     return lf_node;
+  }
+
+  void build_bake_node(const bNode &bnode, BuildGraphParams &graph_params)
+  {
+    std::unique_ptr<LazyFunction> lazy_function = get_bake_lazy_function(bnode, *lf_graph_info_);
+    lf::FunctionNode &lf_node = graph_params.lf_graph.add_function(*lazy_function);
+    scope_.add(std::move(lazy_function));
+
+    for (const int i : bnode.input_sockets().index_range().drop_back(1)) {
+      const bNodeSocket &bsocket = bnode.input_socket(i);
+      lf::InputSocket &lf_socket = lf_node.input(
+          mapping_->lf_index_by_bsocket[bsocket.index_in_tree()]);
+      graph_params.lf_inputs_by_bsocket.add(&bsocket, &lf_socket);
+      mapping_->bsockets_by_lf_socket_map.add(&lf_socket, &bsocket);
+    }
+    for (const int i : bnode.output_sockets().index_range().drop_back(1)) {
+      const bNodeSocket &bsocket = bnode.output_socket(i);
+      lf::OutputSocket &lf_socket = lf_node.output(
+          mapping_->lf_index_by_bsocket[bsocket.index_in_tree()]);
+      graph_params.lf_output_by_bsocket.add(&bsocket, &lf_socket);
+      mapping_->bsockets_by_lf_socket_map.add(&lf_socket, &bsocket);
+    }
+
+    mapping_->possible_side_effect_node_map.add(&bnode, &lf_node);
+
+    this->build_bake_node_socket_usage(bnode, graph_params);
+  }
+
+  void build_bake_node_socket_usage(const bNode &bnode, BuildGraphParams &graph_params)
+  {
+    const LazyFunction &usage_fn = scope_.construct<LazyFunctionForBakeInputsUsage>(bnode);
+    lf::FunctionNode &lf_usage_node = graph_params.lf_graph.add_function(usage_fn);
+    const int items_num = bnode.input_sockets().size() - 1;
+    for (const int i : IndexRange(items_num)) {
+      graph_params.usage_by_bsocket.add(&bnode.input_socket(i), &lf_usage_node.output(0));
+    }
   }
 
   void build_switch_node(const bNode &bnode, BuildGraphParams &graph_params)

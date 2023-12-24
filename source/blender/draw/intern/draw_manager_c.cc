@@ -18,7 +18,8 @@
 
 #include "BLF_api.h"
 
-#include "BKE_colortools.h"
+#include "BLT_translation.h"
+
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
 #include "BKE_curves.h"
@@ -45,7 +46,6 @@
 
 #include "DNA_camera_types.h"
 #include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_userdef_types.h"
 #include "DNA_view3d_types.h"
 #include "DNA_world_types.h"
@@ -1151,7 +1151,7 @@ void DRW_draw_region_engine_info(int xoffset, int *yoffset, int line_height)
       BLF_shadow(font_id, 5, blender::float4{0.0f, 0.0f, 0.0f, 1.0f});
       BLF_shadow_offset(font_id, 1, -1);
 
-      const char *buf_step = data->info;
+      const char *buf_step = IFACE_(data->info);
       do {
         const char *buf = buf_step;
         buf_step = BLI_strchr_or_end(buf, '\n');
