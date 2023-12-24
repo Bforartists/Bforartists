@@ -138,23 +138,8 @@ def store_mouse_cursor(context, event):
         space.cursor_location = tree.view_center
 
 
-def get_active_tree(context):
-    tree = context.space_data.node_tree
-    path = []
-    # Get nodes from currently edited tree.
-    # If user is editing a group, space_data.node_tree is still the base level (outside group).
-    # context.active_node is in the group though, so if space_data.node_tree.nodes.active is not
-    # the same as context.active_node, the user is in a group.
-    # Check recursively until we find the real active node_tree:
-    if tree.nodes.active:
-        while tree.nodes.active != context.active_node:
-            tree = tree.nodes.active.node_tree
-            path.append(tree)
-    return tree, path
-
-
 def get_nodes_links(context):
-    tree, path = get_active_tree(context)
+    tree = context.space_data.edit_tree
     return tree.nodes, tree.links
 
 
@@ -194,9 +179,9 @@ def is_viewer_link(link, output_node):
     return False
 
 
-def get_group_output_node(tree):
+def get_group_output_node(tree, output_node_type='GROUP_OUTPUT'):
     for node in tree.nodes:
-        if node.type == 'GROUP_OUTPUT' and node.is_active_output:
+        if node.type == output_node_type and node.is_active_output:
             return node
 
 
@@ -217,15 +202,19 @@ def get_output_location(tree):
 
 def nw_check(context):
     space = context.space_data
-    valid_trees = ["ShaderNodeTree", "CompositorNodeTree", "TextureNodeTree", "GeometryNodeTree"]
 
-    if (space.type == 'NODE_EDITOR'
+    return (space.type == 'NODE_EDITOR'
             and space.node_tree is not None
-            and space.node_tree.library is None
-            and space.tree_type in valid_trees):
-        return True
+            and space.node_tree.library is None)
 
-    return False
+
+def nw_check_space_type(cls, context, *args):
+    if context.space_data.tree_type not in args:
+        tree_types_str = ", ".join(t.split('NodeTree')[0].lower() for t in sorted(args))
+        cls.poll_message_set("Current node tree type not supported.\n"
+                             "Should be one of " + tree_types_str + ".")
+        return False
+    return True
 
 
 def get_first_enabled_output(node):
