@@ -96,7 +96,12 @@ void WorldPipeline::sync(GPUMaterial *gpumat)
 
 void WorldPipeline::render(View &view)
 {
+  /* TODO(Miguel Pozo): All world probes are rendered as RAY_TYPE_GLOSSY. */
+  inst_.pipelines.data.is_probe_reflection = true;
+  inst_.push_uniform_data();
   inst_.manager->submit(cubemap_face_ps_, view);
+  inst_.pipelines.data.is_probe_reflection = false;
+  inst_.push_uniform_data();
 }
 
 /** \} */
@@ -417,8 +422,8 @@ void DeferredLayerBase::gbuffer_pass_sync(Instance &inst)
                                   GPU_ATTACHEMENT_WRITE,
                                   GPU_ATTACHEMENT_WRITE});
   /* G-buffer. */
+  gbuffer_ps_.bind_image(GBUF_NORMAL_SLOT, &inst.gbuffer.normal_img_tx);
   gbuffer_ps_.bind_image(GBUF_CLOSURE_SLOT, &inst.gbuffer.closure_img_tx);
-  gbuffer_ps_.bind_image(GBUF_COLOR_SLOT, &inst.gbuffer.color_img_tx);
   /* RenderPasses & AOVs. */
   gbuffer_ps_.bind_image(RBUFS_COLOR_SLOT, &inst.render_buffers.rp_color_tx);
   gbuffer_ps_.bind_image(RBUFS_VALUE_SLOT, &inst.render_buffers.rp_value_tx);
@@ -574,7 +579,17 @@ void DeferredLayer::end_sync()
           inst_.sampling.bind_resources(sub);
           inst_.hiz_buffer.bind_resources(sub);
           sub.state_stencil(0xFFu, 1u << i, 0xFFu);
-          sub.draw_procedural(GPU_PRIM_TRIS, 1, 3);
+          if (GPU_backend_get_type() == GPU_BACKEND_METAL) {
+            /* WORKAROUND: On Apple silicon the stencil test is broken. Only issue one expensive
+             * lighting evaluation. */
+            if (i == 2) {
+              sub.state_set(DRW_STATE_WRITE_STENCIL | DRW_STATE_DEPTH_GREATER);
+              sub.draw_procedural(GPU_PRIM_TRIS, 1, 3);
+            }
+          }
+          else {
+            sub.draw_procedural(GPU_PRIM_TRIS, 1, 3);
+          }
         }
       }
     }
@@ -684,7 +699,9 @@ void DeferredLayer::render(View &main_view,
   inst_.shadows.set_view(render_view, inst_.render_buffers.depth_tx);
 
   if (/* FIXME(fclem): Vulkan doesn't implement load / store config yet. */
-      GPU_backend_get_type() == GPU_BACKEND_VULKAN)
+      GPU_backend_get_type() == GPU_BACKEND_VULKAN ||
+      /* FIXME(fclem): Metal has bug in backend. */
+      GPU_backend_get_type() == GPU_BACKEND_METAL)
   {
     inst_.gbuffer.header_tx.clear(int4(0));
   }
@@ -710,14 +727,21 @@ void DeferredLayer::render(View &main_view,
   tile_mask_tx_.ensure_2d_array(GPU_R8UI, tile_mask_size, 4, usage_rw);
   tile_mask_tx_.clear(uint4(0));
 
-  GPU_framebuffer_bind_ex(gbuffer_fb,
-                          {
-                              {GPU_LOADACTION_LOAD, GPU_STOREACTION_STORE},       /* Depth */
-                              {GPU_LOADACTION_LOAD, GPU_STOREACTION_STORE},       /* Combined */
-                              {GPU_LOADACTION_CLEAR, GPU_STOREACTION_STORE, {0}}, /* GBuf Header */
-                              {GPU_LOADACTION_DONT_CARE, GPU_STOREACTION_STORE}, /* GBuf Closure */
-                              {GPU_LOADACTION_DONT_CARE, GPU_STOREACTION_STORE}, /* GBuf Color */
-                          });
+  if (GPU_backend_get_type() == GPU_BACKEND_METAL) {
+    /* TODO(fclem): Load/store action is broken on Metal. */
+    GPU_framebuffer_bind(gbuffer_fb);
+  }
+  else {
+    GPU_framebuffer_bind_ex(
+        gbuffer_fb,
+        {
+            {GPU_LOADACTION_LOAD, GPU_STOREACTION_STORE},       /* Depth */
+            {GPU_LOADACTION_LOAD, GPU_STOREACTION_STORE},       /* Combined */
+            {GPU_LOADACTION_CLEAR, GPU_STOREACTION_STORE, {0}}, /* GBuf Header */
+            {GPU_LOADACTION_DONT_CARE, GPU_STOREACTION_STORE},  /* GBuf Closure */
+            {GPU_LOADACTION_DONT_CARE, GPU_STOREACTION_STORE},  /* GBuf Color */
+        });
+  }
 
   inst_.manager->submit(gbuffer_ps_, render_view);
 
