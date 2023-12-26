@@ -634,9 +634,11 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
 
 addon_keymaps = []
 def register_keymaps():
-    addon = bpy.context.window_manager.keyconfigs.addon
+    kc = bpy.context.window_manager.keyconfigs.addon
+    if kc is None:
+        return
 
-    km = addon.keymaps.new(name = "Grease Pencil", space_type = "EMPTY", region_type='WINDOW')
+    km = kc.keymaps.new(name = "Grease Pencil", space_type = "EMPTY", region_type='WINDOW')
     kmi = km.keymap_items.new("view3d.gp_box_deform", type ='T', value = "PRESS", ctrl = True)
     kmi.repeat = False
     addon_keymaps.append((km, kmi))

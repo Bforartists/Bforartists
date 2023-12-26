@@ -31,6 +31,7 @@ set(SRC
   nodes/node_geo_attribute_capture.cc
   nodes/node_geo_attribute_domain_size.cc
   nodes/node_geo_attribute_statistic.cc
+  nodes/node_geo_bake.cc
   nodes/node_geo_blur_attribute.cc
   nodes/node_geo_boolean.cc
   nodes/node_geo_bounding_box.cc
@@ -77,6 +78,7 @@ set(SRC
   nodes/node_geo_extrude_mesh.cc
   nodes/node_geo_flip_faces.cc
   nodes/node_geo_geometry_to_instance.cc
+  nodes/node_geo_get_named_grid.cc
   nodes/node_geo_image.cc
   nodes/node_geo_image_info.cc
   nodes/node_geo_image_texture.cc
@@ -179,6 +181,7 @@ set(SRC
   nodes/node_geo_simulation_output.cc
   nodes/node_geo_split_to_instances.cc
   nodes/node_geo_store_named_attribute.cc
+  nodes/node_geo_store_named_grid.cc
   nodes/node_geo_string_join.cc
   nodes/node_geo_string_to_curves.cc
   nodes/node_geo_subdivision_surface.cc
@@ -259,6 +262,9 @@ if(WITH_GMP)
 endif()
 
 if(WITH_OPENVDB)
+  list(APPEND INC
+    ../../../../intern/openvdb
+  )
   list(APPEND INC_SYS
     ${OPENVDB_INCLUDE_DIRS}
   )
