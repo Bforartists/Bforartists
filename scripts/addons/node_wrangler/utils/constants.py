@@ -161,21 +161,22 @@ draw_color_sets = {
 
 def get_texture_node_types():
     return [
-       "ShaderNodeTexBrick",
-       "ShaderNodeTexChecker",
-       "ShaderNodeTexEnvironment",
-       "ShaderNodeTexGradient",
-       "ShaderNodeTexIES",
-       "ShaderNodeTexImage",
-       "ShaderNodeTexMagic",
-       "ShaderNodeTexMusgrave",
-       "ShaderNodeTexNoise",
-       "ShaderNodeTexPointDensity",
-       "ShaderNodeTexSky",
-       "ShaderNodeTexVoronoi",
-       "ShaderNodeTexWave",
-       "ShaderNodeTexWhiteNoise"
+        "ShaderNodeTexBrick",
+        "ShaderNodeTexChecker",
+        "ShaderNodeTexEnvironment",
+        "ShaderNodeTexGradient",
+        "ShaderNodeTexIES",
+        "ShaderNodeTexImage",
+        "ShaderNodeTexMagic",
+        "ShaderNodeTexMusgrave",
+        "ShaderNodeTexNoise",
+        "ShaderNodeTexPointDensity",
+        "ShaderNodeTexSky",
+        "ShaderNodeTexVoronoi",
+        "ShaderNodeTexWave",
+        "ShaderNodeTexWhiteNoise"
     ]
+
 
 def nice_hotkey_name(punc):
     # convert the ugly string name into the actual character

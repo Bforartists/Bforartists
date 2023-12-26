@@ -961,11 +961,8 @@ static int apply_objects_internal(bContext *C,
     }
     else if (ob->type == OB_POINTCLOUD) {
       PointCloud &pointcloud = *static_cast<PointCloud *>(ob->data);
-      bke::MutableAttributeAccessor attributes = pointcloud.attributes_for_write();
-      bke::SpanAttributeWriter position = attributes.lookup_or_add_for_write_span<float3>(
-          "position", ATTR_DOMAIN_POINT);
-      transform_positions(position.span, float4x4(mat));
-      position.finish();
+      transform_positions(pointcloud.positions_for_write(), float4x4(mat));
+      pointcloud.tag_positions_changed();
     }
     else if (ob->type == OB_CAMERA) {
       MovieClip *clip = BKE_object_movieclip_get(scene, ob, false);
@@ -1724,9 +1721,7 @@ static int object_origin_set_exec(bContext *C, wmOperator *op)
     }
     else if (ob->type == OB_POINTCLOUD) {
       PointCloud &pointcloud = *static_cast<PointCloud *>(ob->data);
-      bke::MutableAttributeAccessor attributes = pointcloud.attributes_for_write();
-      bke::SpanAttributeWriter positions = attributes.lookup_or_add_for_write_span<float3>(
-          "position", ATTR_DOMAIN_POINT);
+      MutableSpan<float3> positions = pointcloud.positions_for_write();
       if (ELEM(centermode, ORIGIN_TO_CENTER_OF_MASS_SURFACE, ORIGIN_TO_CENTER_OF_MASS_VOLUME) ||
           !ELEM(around, V3D_AROUND_CENTER_BOUNDS, V3D_AROUND_CENTER_MEDIAN))
       {
@@ -1745,12 +1740,12 @@ static int object_origin_set_exec(bContext *C, wmOperator *op)
         }
       }
       else if (around == V3D_AROUND_CENTER_MEDIAN) {
-        cent = arithmetic_mean(positions.span);
+        cent = arithmetic_mean(positions);
       }
 
       tot_change++;
-      translate_positions(positions.span, -cent);
-      positions.finish();
+      translate_positions(positions, -cent);
+      pointcloud.tag_positions_changed();
       pointcloud.id.tag |= LIB_TAG_DOIT;
       do_inverse_offset = true;
     }

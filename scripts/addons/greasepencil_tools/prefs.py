@@ -267,12 +267,14 @@ def register_keymaps():
     pref = get_addon_prefs()
     if not pref.canvas_use_shortcut:
         return
-    addon = bpy.context.window_manager.keyconfigs.addon
+    kc = bpy.context.window_manager.keyconfigs.addon
+    if kc is None:
+        return
 
-    km = addon.keymaps.new(name = "3D View", space_type = "VIEW_3D")
+    km = kc.keymaps.new(name = "3D View", space_type = "VIEW_3D")
 
     if 'view3d.rotate_canvas' not in km.keymap_items:
-        km = addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+        km = kc.keymaps.new(name='3D View', space_type='VIEW_3D')
         kmi = km.keymap_items.new('view3d.rotate_canvas',
         type=pref.mouse_click, value="PRESS", alt=pref.use_alt, ctrl=pref.use_ctrl, shift=pref.use_shift, any=False)
 

@@ -701,7 +701,7 @@ class VIEW3D_HT_header(Header):
                     icon = snap_items[elem].icon
                     break
             else:
-                text = "Mix"
+                text = iface_("Mix", i18n_contexts.editor_view3d)
                 icon = 'NONE'
             del snap_items, snap_elements
 
@@ -713,6 +713,7 @@ class VIEW3D_HT_header(Header):
                 panel="VIEW3D_PT_snapping",
                 icon=icon,
                 text=text,
+                translate=False,
             )
 
         # Proportional editing
@@ -4956,7 +4957,7 @@ class VIEW3D_MT_bone_collections(Menu):
 
         layout.separator()
 
-        props = layout.operator("armature.collection_assign",
+        props = layout.operator("armature.collection_create_and_assign",
                                 text="Assign to New Collection",
                                 icon='COLLECTION_BONE_NEW')
         props.name = "New Collection"
@@ -8467,6 +8468,33 @@ class VIEW3D_PT_overlay_geometry(Panel):
         # sub.prop(overlay, "show_onion_skins")
 
 
+class VIEW3D_PT_overlay_viewer_node(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_parent_id = "VIEW3D_PT_overlay"
+    bl_label = "Viewer Node"
+
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data
+        overlay = view.overlay
+        display_all = overlay.show_overlays
+
+        col = layout.column()
+        col.active = display_all
+
+        row = col.row(align=True)
+        row.active = view.show_viewer
+        row.prop(overlay, "show_viewer_attribute", text="")
+        subrow = row.row(align=True)
+        subrow.active = overlay.show_viewer_attribute
+        subrow.prop(overlay, "viewer_attribute_opacity", text="Color Opacity")
+
+        row = col.row(align=True)
+        row.active = view.show_viewer
+        row.prop(overlay, "show_viewer_text", text="Attribute Text")
+
+
 class VIEW3D_PT_overlay_motion_tracking(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -10742,6 +10770,7 @@ classes = (
     VIEW3D_PT_overlay_guides,
     VIEW3D_PT_overlay_object,
     VIEW3D_PT_overlay_geometry,
+    VIEW3D_PT_overlay_viewer_node,
     VIEW3D_PT_overlay_motion_tracking,
     VIEW3D_PT_overlay_edit_mesh,
     VIEW3D_PT_overlay_edit_mesh_shading,
