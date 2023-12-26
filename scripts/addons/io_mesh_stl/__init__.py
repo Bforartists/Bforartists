@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 bl_info = {
-    "name": "STL format",
+    "name": "STL format (legacy)",
     "author": "Guillaume Bouchard (Guillaum)",
     "version": (1, 1, 3),
     "blender": (2, 81, 6),
@@ -60,7 +60,7 @@ from bpy.types import (
 @orientation_helper(axis_forward='Y', axis_up='Z')
 class ImportSTL(Operator, ImportHelper):
     bl_idname = "import_mesh.stl"
-    bl_label = "Import STL"
+    bl_label = "Import STL (legacy)"
     bl_description = "Load STL triangle mesh data"
     bl_options = {'UNDO'}
 
@@ -190,7 +190,7 @@ class STL_PT_import_geometry(bpy.types.Panel):
 @orientation_helper(axis_forward='Y', axis_up='Z')
 class ExportSTL(Operator, ExportHelper):
     bl_idname = "export_mesh.stl"
-    bl_label = "Export STL"
+    bl_label = "Export STL (legacy)"
     bl_description = """Save STL triangle mesh data"""
 
     filename_ext = ".stl"
@@ -403,11 +403,11 @@ class STL_PT_export_geometry(bpy.types.Panel):
 
 
 def menu_import(self, context):
-    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl)", icon = "LOAD_STL") #BFA - icon added
+    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl) (legacy)", icon = "LOAD_STL") #BFA - icon added
 
 
 def menu_export(self, context):
-    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl)", icon = "SAVE_STL") #BFA - icon added
+    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl) (legacy)", icon = "SAVE_STL") #BFA - icon added
 
 
 classes = (

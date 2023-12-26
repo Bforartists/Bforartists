@@ -74,12 +74,14 @@ def button_save_reload(self, context):
 def register():
     bpy.utils.register_class(AMTH_WM_OT_save_reload)
     bpy.types.TOPBAR_MT_file.append(button_save_reload)
+
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
-    km = kc.keymaps.new(name="Window")
-    kmi = km.keymap_items.new("wm.save_reload", "W", "PRESS",
-                              shift=True, ctrl=True)
-    KEYMAPS.append((km, kmi))
+    if kc is not None:
+        km = kc.keymaps.new(name="Window")
+        kmi = km.keymap_items.new("wm.save_reload", "W", "PRESS",
+                                  shift=True, ctrl=True)
+        KEYMAPS.append((km, kmi))
 
 
 def unregister():

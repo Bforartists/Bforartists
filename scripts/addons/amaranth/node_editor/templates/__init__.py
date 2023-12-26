@@ -55,11 +55,13 @@ def register():
     bpy.utils.register_class(AMTH_NODE_OT_AddTemplateVignette)
     bpy.utils.register_class(AMTH_NODE_OT_AddTemplateVectorBlur)
     bpy.types.NODE_HT_header.append(node_templates_pulldown)
+
     kc = bpy.context.window_manager.keyconfigs.addon
-    km = kc.keymaps.new(name="Node Editor", space_type="NODE_EDITOR")
-    kmi = km.keymap_items.new("wm.call_menu", "W", "PRESS")
-    kmi.properties.name = "AMTH_NODE_MT_amaranth_templates"
-    KEYMAPS.append((km, kmi))
+    if kc is not None:
+        km = kc.keymaps.new(name="Node Editor", space_type="NODE_EDITOR")
+        kmi = km.keymap_items.new("wm.call_menu", "W", "PRESS")
+        kmi.properties.name = "AMTH_NODE_MT_amaranth_templates"
+        KEYMAPS.append((km, kmi))
 
 
 def unregister():

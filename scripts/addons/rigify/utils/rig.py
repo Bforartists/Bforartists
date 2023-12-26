@@ -138,7 +138,7 @@ def resolve_layer_names(layers):
     name_counts = defaultdict(int)
 
     for i, layer in enumerate(layers):
-        if name := layer.get("name").strip():
+        if name := layer.get("name", "").strip():
             name_counts[name] += 1
             ui_rows[layer.get("row", 1)].append(name)
 
