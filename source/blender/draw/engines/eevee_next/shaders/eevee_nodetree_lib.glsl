@@ -12,29 +12,54 @@ vec3 g_emission;
 vec3 g_transmittance;
 float g_holdout;
 
+vec3 g_volume_scattering;
+float g_volume_anisotropy;
+vec3 g_volume_absorption;
+
 /* The Closure type is never used. Use float as dummy type. */
 #define Closure float
 #define CLOSURE_DEFAULT 0.0
 
 /* Sampled closure parameters. */
-ClosureDiffuse g_diffuse_data;
-ClosureTranslucent g_translucent_data;
-ClosureReflection g_reflection_data;
-ClosureRefraction g_refraction_data;
-ClosureVolumeScatter g_volume_scatter_data;
-ClosureVolumeAbsorption g_volume_absorption_data;
+ClosureUndetermined g_diffuse_data;
+ClosureUndetermined g_translucent_data;
+ClosureUndetermined g_reflection_data;
+ClosureUndetermined g_refraction_data;
 /* Random number per sampled closure type. */
 float g_diffuse_rand;
 float g_translucent_rand;
 float g_reflection_rand;
 float g_refraction_rand;
-float g_volume_scatter_rand;
-float g_volume_absorption_rand;
+
+ClosureType closure_type_get(ClosureDiffuse cl)
+{
+  return CLOSURE_BSDF_DIFFUSE_ID;
+}
+
+ClosureType closure_type_get(ClosureTranslucent cl)
+{
+  return CLOSURE_BSDF_TRANSLUCENT_ID;
+}
+
+ClosureType closure_type_get(ClosureReflection cl)
+{
+  return CLOSURE_BSDF_MICROFACET_GGX_REFLECTION_ID;
+}
+
+ClosureType closure_type_get(ClosureRefraction cl)
+{
+  return CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID;
+}
+
+// ClosureType closure_type_get(ClosureSubsurface cl)
+// {
+//   return CLOSURE_BSSRDF_BURLEY_ID;
+// }
 
 /**
  * Returns true if the closure is to be selected based on the input weight.
  */
-bool closure_select(float weight, inout float total_weight, inout float r)
+bool closure_select_check(float weight, inout float total_weight, inout float r)
 {
   if (weight < 1e-5) {
     return false;
@@ -48,84 +73,93 @@ bool closure_select(float weight, inout float total_weight, inout float r)
   return chosen;
 }
 
-#define SELECT_CLOSURE(destination, random, candidate) \
-  if (closure_select(candidate.weight, destination.weight, random)) { \
-    float tmp = destination.weight; \
-    destination = candidate; \
-    destination.weight = tmp; \
+/**
+ * Assign `candidate` to `destination` based on a random value and the respective weights.
+ */
+void closure_select(inout ClosureUndetermined destination,
+                    float random,
+                    ClosureUndetermined candidate)
+{
+  if (closure_select_check(candidate.weight, destination.weight, random)) {
+    float tmp = destination.weight;
+    destination = candidate;
+    destination.weight = tmp;
   }
+}
 
 float g_closure_rand;
 
 void closure_weights_reset()
 {
   g_diffuse_data.weight = 0.0;
-  g_diffuse_data.color = vec3(0.0);
-  g_diffuse_data.N = vec3(0.0);
-  g_diffuse_data.sss_radius = vec3(0.0);
-  g_diffuse_data.sss_id = uint(0);
-
   g_translucent_data.weight = 0.0;
-  g_translucent_data.color = vec3(0.0);
-  g_translucent_data.N = vec3(0.0);
-
   g_reflection_data.weight = 0.0;
-  g_reflection_data.color = vec3(0.0);
-  g_reflection_data.N = vec3(0.0);
-  g_reflection_data.roughness = 0.0;
-
   g_refraction_data.weight = 0.0;
-  g_refraction_data.color = vec3(0.0);
-  g_refraction_data.N = vec3(0.0);
-  g_refraction_data.roughness = 0.0;
-  g_refraction_data.ior = 0.0;
 
-  g_volume_scatter_data.weight = 0.0;
-  g_volume_scatter_data.scattering = vec3(0.0);
-  g_volume_scatter_data.anisotropy = 0.0;
-
-  g_volume_absorption_data.weight = 0.0;
-  g_volume_absorption_data.absorption = vec3(0.0);
+  g_volume_scattering = vec3(0.0);
+  g_volume_anisotropy = 0.0;
+  g_volume_absorption = vec3(0.0);
 
 #if defined(GPU_FRAGMENT_SHADER)
   g_diffuse_rand = g_translucent_rand = g_reflection_rand = g_refraction_rand = g_closure_rand;
-  g_volume_scatter_rand = g_volume_absorption_rand = g_closure_rand;
 #else
   g_diffuse_rand = 0.0;
   g_translucent_rand = 0.0;
   g_reflection_rand = 0.0;
   g_refraction_rand = 0.0;
-  g_volume_scatter_rand = 0.0;
-  g_volume_absorption_rand = 0.0;
 #endif
 
   g_emission = vec3(0.0);
   g_transmittance = vec3(0.0);
+  g_volume_scattering = vec3(0.0);
+  g_volume_absorption = vec3(0.0);
   g_holdout = 0.0;
 }
+
+#define closure_base_copy(cl, in_cl) \
+  cl.weight = in_cl.weight; \
+  cl.color = in_cl.color; \
+  cl.N = in_cl.N; \
+  cl.type = closure_type_get(in_cl);
 
 /* Single BSDFs. */
 Closure closure_eval(ClosureDiffuse diffuse)
 {
-  SELECT_CLOSURE(g_diffuse_data, g_diffuse_rand, diffuse);
+  ClosureUndetermined cl;
+  closure_base_copy(cl, diffuse);
+  /* TODO: Have dedicated ClosureSubsurface */
+  if (diffuse.sss_id != 0u) {
+    cl.type = CLOSURE_BSSRDF_BURLEY_ID;
+    cl.data.rgb = diffuse.sss_radius;
+  }
+  closure_select(g_diffuse_data, g_diffuse_rand, cl);
   return Closure(0);
 }
 
 Closure closure_eval(ClosureTranslucent translucent)
 {
-  SELECT_CLOSURE(g_translucent_data, g_translucent_rand, translucent);
+  ClosureUndetermined cl;
+  closure_base_copy(cl, translucent);
+  closure_select(g_translucent_data, g_translucent_rand, cl);
   return Closure(0);
 }
 
 Closure closure_eval(ClosureReflection reflection)
 {
-  SELECT_CLOSURE(g_reflection_data, g_reflection_rand, reflection);
+  ClosureUndetermined cl;
+  closure_base_copy(cl, reflection);
+  cl.data.r = reflection.roughness;
+  closure_select(g_reflection_data, g_reflection_rand, cl);
   return Closure(0);
 }
 
 Closure closure_eval(ClosureRefraction refraction)
 {
-  SELECT_CLOSURE(g_refraction_data, g_refraction_rand, refraction);
+  ClosureUndetermined cl;
+  closure_base_copy(cl, refraction);
+  cl.data.r = refraction.roughness;
+  cl.data.g = refraction.ior;
+  closure_select(g_refraction_data, g_refraction_rand, cl);
   return Closure(0);
 }
 
@@ -144,15 +178,14 @@ Closure closure_eval(ClosureTransparency transparency)
 
 Closure closure_eval(ClosureVolumeScatter volume_scatter)
 {
-  /* TODO: Combine instead of selecting. */
-  SELECT_CLOSURE(g_volume_scatter_data, g_volume_scatter_rand, volume_scatter);
+  g_volume_scattering += volume_scatter.scattering * volume_scatter.weight;
+  g_volume_anisotropy += volume_scatter.anisotropy * volume_scatter.weight;
   return Closure(0);
 }
 
 Closure closure_eval(ClosureVolumeAbsorption volume_absorption)
 {
-  /* TODO: Combine instead of selecting. */
-  SELECT_CLOSURE(g_volume_absorption_data, g_volume_absorption_rand, volume_absorption);
+  g_volume_absorption += volume_absorption.absorption * volume_absorption.weight;
   return Closure(0);
 }
 
@@ -165,24 +198,24 @@ Closure closure_eval(ClosureHair hair)
 /* Glass BSDF. */
 Closure closure_eval(ClosureReflection reflection, ClosureRefraction refraction)
 {
-  SELECT_CLOSURE(g_reflection_data, g_reflection_rand, reflection);
-  SELECT_CLOSURE(g_refraction_data, g_refraction_rand, refraction);
+  closure_eval(reflection);
+  closure_eval(refraction);
   return Closure(0);
 }
 
 /* Dielectric BSDF. */
 Closure closure_eval(ClosureDiffuse diffuse, ClosureReflection reflection)
 {
-  SELECT_CLOSURE(g_diffuse_data, g_diffuse_rand, diffuse);
-  SELECT_CLOSURE(g_reflection_data, g_reflection_rand, reflection);
+  closure_eval(diffuse);
+  closure_eval(reflection);
   return Closure(0);
 }
 
 /* Coat BSDF. */
 Closure closure_eval(ClosureReflection reflection, ClosureReflection coat)
 {
-  SELECT_CLOSURE(g_reflection_data, g_reflection_rand, reflection);
-  SELECT_CLOSURE(g_reflection_data, g_reflection_rand, coat);
+  closure_eval(reflection);
+  closure_eval(coat);
   return Closure(0);
 }
 
@@ -200,9 +233,9 @@ Closure closure_eval(ClosureVolumeScatter volume_scatter,
 /* Specular BSDF. */
 Closure closure_eval(ClosureDiffuse diffuse, ClosureReflection reflection, ClosureReflection coat)
 {
-  SELECT_CLOSURE(g_diffuse_data, g_diffuse_rand, diffuse);
-  SELECT_CLOSURE(g_reflection_data, g_reflection_rand, reflection);
-  SELECT_CLOSURE(g_reflection_data, g_reflection_rand, coat);
+  closure_eval(diffuse);
+  closure_eval(reflection);
+  closure_eval(coat);
   return Closure(0);
 }
 
@@ -212,10 +245,10 @@ Closure closure_eval(ClosureDiffuse diffuse,
                      ClosureReflection coat,
                      ClosureRefraction refraction)
 {
-  SELECT_CLOSURE(g_diffuse_data, g_diffuse_rand, diffuse);
-  SELECT_CLOSURE(g_reflection_data, g_reflection_rand, reflection);
-  SELECT_CLOSURE(g_reflection_data, g_reflection_rand, coat);
-  SELECT_CLOSURE(g_refraction_data, g_refraction_rand, refraction);
+  closure_eval(diffuse);
+  closure_eval(reflection);
+  closure_eval(coat);
+  closure_eval(refraction);
   return Closure(0);
 }
 
