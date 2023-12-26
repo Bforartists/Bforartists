@@ -92,13 +92,15 @@ def register():
 
     # register hotkeys
     wm = bpy.context.window_manager
-    modes = ('Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint', 'Particle')
+    kc = wm.keyconfigs.addon
 
-    for mode in modes:
-        km = wm.keyconfigs.addon.keymaps.new(name=mode)
-        kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS')
-        kmi.properties.name = "VIEW3D_MT_sv3_brush_options"
-        addon_keymaps.append((km, kmi))
+    if kc is not None:
+        modes = ('Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint', 'Particle')
+        for mode in modes:
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS')
+            kmi.properties.name = "VIEW3D_MT_sv3_brush_options"
+            addon_keymaps.append((km, kmi))
 
 
 def unregister():

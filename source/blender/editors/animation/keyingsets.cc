@@ -482,6 +482,86 @@ static int keyingset_active_menu_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/* Build the enum for all keyingsets except the active keyingset. */
+
+/* bfa - set builtin keyingset enum items icons */
+std::unordered_map<std::string, BIFIconID_Static> ks_icons_map = {
+    {"Available", ICON_DECORATE_KEYFRAME},
+    {"Location", ICON_TRANSFORM_MOVE},
+    {"Rotation", ICON_TRANSFORM_ROTATE},
+    {"Scaling", ICON_TRANSFORM_SCALE},
+    {"BUILTIN_KSI_LocRot", ICON_LOC_ROT},
+    {"LocRotScale", ICON_LOC_ROT_SCALE},
+    {"LocRotScaleCProp", ICON_LOC_ROT_SCALE_CUSTOM},
+    {"BUILTIN_KSI_LocScale", ICON_LOC_SCALE},
+    {"BUILTIN_KSI_RotScale", ICON_ROT_SCALE},
+    {"BUILTIN_KSI_DeltaLocation", ICON_APPLYMOVEDELTA},
+    {"BUILTIN_KSI_DeltaRotation", ICON_APPLYROTATEDELTA},
+    {"BUILTIN_KSI_DeltaScale", ICON_APPLYSCALEDELTA},
+    {"BUILTIN_KSI_VisualLoc", ICON_VISUAL_MOVE},
+    {"BUILTIN_KSI_VisualRot", ICON_VISUAL_ROTATE},
+    {"BUILTIN_KSI_VisualScaling", ICON_VISUAL_SCALE},
+    {"BUILTIN_KSI_VisualLocRot", ICON_VISUAL_LOC_ROT},
+    {"BUILTIN_KSI_VisualLocRotScale", ICON_VISUAL_LOC_ROT_SCALE},
+    {"BUILTIN_KSI_VisualLocScale", ICON_VISUAL_LOC_SCALE},
+    {"BUILTIN_KSI_VisualRotScale", ICON_VISUAL_ROT_SCALE},
+    {"BUILTIN_KSI_BendyBones", ICON_BONE_DATA},
+    {"WholeCharacter", ICON_ARMATURE_DATA},
+    {"WholeCharacterSelected", ICON_MOD_ARMATURE_SELECTED},
+};
+/* endbfa */
+
+static void build_keyingset_enum(bContext *C, EnumPropertyItem **item, int *totitem, bool *r_free)
+{
+  /* user-defined Keying Sets
+   * - these are listed in the order in which they were defined for the active scene
+   */
+  EnumPropertyItem item_tmp = {0};
+
+  Scene *scene = CTX_data_scene(C);
+  KeyingSet *ks;
+  int enum_index = 1;
+  if (scene->keyingsets.first) {
+    for (ks = static_cast<KeyingSet *>(scene->keyingsets.first); ks; ks = ks->next, enum_index++) {
+      if (ANIM_keyingset_context_ok_poll(C, ks)) {
+        item_tmp.identifier = ks->idname;
+        item_tmp.name = ks->name;
+        item_tmp.description = ks->description;
+        item_tmp.value = enum_index;
+        /* bfa start */
+        auto it = ks_icons_map.find(ks->idname);
+        if (it != ks_icons_map.end()) {
+          item_tmp.icon = it->second;
+        }
+        else {
+          item_tmp.icon = ICON_NONE;
+        }
+        /* bfa end */
+        RNA_enum_item_add(item, totitem, &item_tmp);
+      }
+    }
+
+    /* separator */
+    RNA_enum_item_add_separator(item, totitem);
+  }
+
+  /* builtin Keying Sets */
+  enum_index = -1;
+  for (ks = static_cast<KeyingSet *>(builtin_keyingsets.first); ks; ks = ks->next, enum_index--) {
+    /* only show KeyingSet if context is suitable */
+    if (ANIM_keyingset_context_ok_poll(C, ks)) {
+      item_tmp.identifier = ks->idname;
+      item_tmp.name = ks->name;
+      item_tmp.description = ks->description;
+      item_tmp.value = enum_index;
+      RNA_enum_item_add(item, totitem, &item_tmp);
+    }
+  }
+
+  RNA_enum_item_end(item, totitem);
+  *r_free = true;
+}
+
 void ANIM_OT_keying_set_active_set(wmOperatorType *ot)
 {
   PropertyRNA *prop;
@@ -778,8 +858,6 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
                                                     PropertyRNA * /*prop*/,
                                                     bool *r_free)
 {
-  int enum_index = 0;
-
   if (C == nullptr) {
     return rna_enum_dummy_DEFAULT_items;
   }
@@ -794,84 +872,14 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
     /* active Keying Set */
     item_tmp.identifier = "__ACTIVE__";
     item_tmp.name = "Active Keying Set";
-    item_tmp.value = enum_index;
+    item_tmp.value = 0;
     RNA_enum_item_add(&item, &totitem, &item_tmp);
 
     /* separator */
     RNA_enum_item_add_separator(&item, &totitem);
   }
 
-  enum_index++;
-
-  /* user-defined Keying Sets
-   * - these are listed in the order in which they were defined for the active scene
-   */
-  KeyingSet *ks;
-  if (scene->keyingsets.first) {
-    for (ks = static_cast<KeyingSet *>(scene->keyingsets.first); ks; ks = ks->next, enum_index++) {
-      if (ANIM_keyingset_context_ok_poll(C, ks)) {
-        item_tmp.identifier = ks->idname;
-        item_tmp.name = ks->name;
-        item_tmp.description = ks->description;
-        item_tmp.value = enum_index;
-        RNA_enum_item_add(&item, &totitem, &item_tmp);
-      }
-    }
-
-    /* separator */
-    RNA_enum_item_add_separator(&item, &totitem);
-  }
-  /* bfa - set builtin keyingset enum items icons */
-  std::unordered_map<std::string, BIFIconID_Static> ks_icons_map = {
-      {"Available", ICON_DECORATE_KEYFRAME},
-      {"Location", ICON_TRANSFORM_MOVE},
-      {"Rotation", ICON_TRANSFORM_ROTATE},
-      {"Scaling", ICON_TRANSFORM_SCALE},
-      {"BUILTIN_KSI_LocRot", ICON_LOC_ROT},
-      {"LocRotScale", ICON_LOC_ROT_SCALE},
-      {"LocRotScaleCProp", ICON_LOC_ROT_SCALE_CUSTOM},
-      {"BUILTIN_KSI_LocScale", ICON_LOC_SCALE},
-      {"BUILTIN_KSI_RotScale", ICON_ROT_SCALE},
-      {"BUILTIN_KSI_DeltaLocation", ICON_APPLYMOVEDELTA},
-      {"BUILTIN_KSI_DeltaRotation", ICON_APPLYROTATEDELTA},
-      {"BUILTIN_KSI_DeltaScale", ICON_APPLYSCALEDELTA},
-      {"BUILTIN_KSI_VisualLoc", ICON_VISUAL_MOVE},
-      {"BUILTIN_KSI_VisualRot", ICON_VISUAL_ROTATE},
-      {"BUILTIN_KSI_VisualScaling", ICON_VISUAL_SCALE},
-      {"BUILTIN_KSI_VisualLocRot", ICON_VISUAL_LOC_ROT},
-      {"BUILTIN_KSI_VisualLocRotScale", ICON_VISUAL_LOC_ROT_SCALE},
-      {"BUILTIN_KSI_VisualLocScale", ICON_VISUAL_LOC_SCALE},
-      {"BUILTIN_KSI_VisualRotScale", ICON_VISUAL_ROT_SCALE},
-      {"BUILTIN_KSI_BendyBones", ICON_BONE_DATA},
-      {"WholeCharacter", ICON_ARMATURE_DATA},
-      {"WholeCharacterSelected", ICON_MOD_ARMATURE_SELECTED},
-  };
-  /* endbfa */
-
-  /* builtin Keying Sets */
-  enum_index = -1;
-  for (ks = static_cast<KeyingSet *>(builtin_keyingsets.first); ks; ks = ks->next, enum_index--) {
-    /* only show KeyingSet if context is suitable */
-    if (ANIM_keyingset_context_ok_poll(C, ks)) {
-      item_tmp.identifier = ks->idname;
-      item_tmp.name = ks->name;
-      item_tmp.description = ks->description;
-      item_tmp.value = enum_index;
-      /* bfa start */
-      auto it = ks_icons_map.find(ks->idname);
-      if (it != ks_icons_map.end()) {
-        item_tmp.icon = it->second;
-      }
-      else {
-        item_tmp.icon = ICON_NONE;
-      }
-      /* bfa end */
-      RNA_enum_item_add(&item, &totitem, &item_tmp);
-    }
-  }
-
-  RNA_enum_item_end(&item, &totitem);
-  *r_free = true;
+  build_keyingset_enum(C, &item, &totitem, r_free);
 
   return item;
 }

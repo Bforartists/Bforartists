@@ -878,9 +878,11 @@ def draw_nav_pref(prefs, layout):
 addon_keymaps = []
 
 def register_keymaps():
-    addon = bpy.context.window_manager.keyconfigs.addon
+    kc = bpy.context.window_manager.keyconfigs.addon
+    if kc is None:
+        return
 
-    km = addon.keymaps.new(name = "Grease Pencil", space_type = "EMPTY", region_type='WINDOW')
+    km = kc.keymaps.new(name = "Grease Pencil", space_type = "EMPTY", region_type='WINDOW')
     kmi = km.keymap_items.new('gpencil.viewport_layer_nav_osd', type='Y', value='PRESS')
     kmi.repeat = False
     addon_keymaps.append((km, kmi))
