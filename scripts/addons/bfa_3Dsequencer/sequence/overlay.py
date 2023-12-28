@@ -39,6 +39,7 @@ TEXT_COLOR_BASE: Vec4f = (0.8, 0.8, 0.8, 0.7)
 TEXT_COLOR_ACTIVE: Vec4f = (0.8, 0.8, 0.8, 0.9)
 
 
+
 def ui_scaled(val):
     """Return value multiplied by UI scale factor."""
     return val * bpy.context.preferences.system.ui_scale
@@ -93,7 +94,7 @@ def draw_shot_strip(
     # Scene name
     font_id = 0
     blf.color(font_id, *(TEXT_COLOR_ACTIVE if active else TEXT_COLOR_BASE))
-    blf.size(font_id, int(11 * bpy.context.preferences.system.ui_scale) / 72)
+    blf.size(font_id, int(11 * bpy.context.preferences.system.ui_scale)/1)
 
     # Compute text dimensions for horizontal centering
     dims = blf.dimensions(0, strip.name)
