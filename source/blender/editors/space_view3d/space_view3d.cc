@@ -846,16 +846,13 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   RNA_int_set(drop->ptr, "session_uuid", int(id->session_uuid));
 
   /* BFA - This sets #use_instance from UI before executing the drop operator */
-  if (asset_drag->drop_collections_as_instances) {
-    RNA_boolean_set(drop->ptr, "use_instance", true);
+  RNA_boolean_set(drop->ptr, "use_instance", asset_drag->drop_collections_as_instances);
+  if (asset_drag->drop_collections_at_origin) {
+    float origin[3] = {0.0f, 0.0f, 0.0f};
+    RNA_float_set_array(drop->ptr, "location", origin);
   }
   else {
-    /* BFA - drop collection at origin if drop collections as instances is off */
-    RNA_boolean_set(drop->ptr, "use_instance", false);
-    /*if (asset_drag->drop_collections_at_origin) {*/
-      /*float origin[3] = {0.0f, 0.0f, 0.0f};*/
-      /*RNA_float_set_array(drop->ptr, "location", origin);*/
-    /*}*/
+    RNA_struct_property_unset(drop->ptr, "location");
   }
 
   /* Make an object active, just use the first one in the collection. */
