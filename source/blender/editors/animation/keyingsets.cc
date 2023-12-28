@@ -528,15 +528,6 @@ static void build_keyingset_enum(bContext *C, EnumPropertyItem **item, int *toti
         item_tmp.name = ks->name;
         item_tmp.description = ks->description;
         item_tmp.value = enum_index;
-        /* bfa start */
-        auto it = ks_icons_map.find(ks->idname);
-        if (it != ks_icons_map.end()) {
-          item_tmp.icon = it->second;
-        }
-        else {
-          item_tmp.icon = ICON_NONE;
-        }
-        /* bfa end */
         RNA_enum_item_add(item, totitem, &item_tmp);
       }
     }
@@ -554,6 +545,14 @@ static void build_keyingset_enum(bContext *C, EnumPropertyItem **item, int *toti
       item_tmp.name = ks->name;
       item_tmp.description = ks->description;
       item_tmp.value = enum_index;
+      /* bfa start */
+      if (auto it = ks_icons_map.find(ks->idname); it != ks_icons_map.end()) {
+        item_tmp.icon = it->second;
+      }
+      else {
+        item_tmp.icon = ICON_NONE;
+      }
+      /* bfa end */
       RNA_enum_item_add(item, totitem, &item_tmp);
     }
   }

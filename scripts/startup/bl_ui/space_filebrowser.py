@@ -25,11 +25,7 @@ class FILEBROWSER_HT_header(Header):
         layout.separator_spacer()
 
         if params.asset_library_reference not in {'LOCAL', 'ESSENTIALS'}:
-            #BFA - WIP, still not ready.
-            '''
-            if not params.drop_collections_as_instances:
-                layout.row().prop(params, "drop_collections_at_origin", icon_only=True, icon="CENTER")
-            '''
+            layout.row().prop(params, "drop_collections_at_origin", icon_only=True, icon="CENTER") # BFA - drop collections at origin
             layout.row().prop(params, "drop_collections_as_instances", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE") #BFA - set collection to instance toggle
             row = layout.row(align=True) #BFA - change to make row of buttons
             row.prop(params, "import_method", text="", expand=True, icon_only=True,) #BFA - change to make row of buttons
