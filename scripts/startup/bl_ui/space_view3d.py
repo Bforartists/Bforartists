@@ -8276,6 +8276,7 @@ class VIEW3D_PT_overlay_guides(Panel):
         display_all = overlay.show_overlays
         region = context.area.spaces.active.region_3d
 
+        layout.active = display_all
         col = layout.column()
 
         split = col.split()
@@ -8433,19 +8434,6 @@ class VIEW3D_PT_overlay_geometry(Panel):
         row.separator()
         row.prop(overlay, "show_face_orientation")
 
-        col = layout.column(align=True)
-        col.active = display_all
-        split = col.split()
-        row = split.row()
-        row.separator()
-        row.prop(overlay, "show_viewer_attribute")
-
-        row = split.row(align=True)
-        if overlay.show_viewer_attribute:
-            row.prop(overlay, "viewer_attribute_opacity", text="")
-        else:
-            row.label(icon='DISCLOSURE_TRI_RIGHT')
-
         # These properties should be always available in the UI for all modes
         # other than Object.
         # Even when the Fade Inactive Geometry overlay is not affecting the
@@ -8480,18 +8468,23 @@ class VIEW3D_PT_overlay_viewer_node(Panel):
         overlay = view.overlay
         display_all = overlay.show_overlays
 
-        col = layout.column()
+        col = layout.column(align=True)
         col.active = display_all
+        split = col.split()
+        row = split.row()
+        row.separator()
+        row.prop(overlay, "show_viewer_attribute")
 
-        row = col.row(align=True)
-        row.active = view.show_viewer
-        row.prop(overlay, "show_viewer_attribute", text="")
-        subrow = row.row(align=True)
-        subrow.active = overlay.show_viewer_attribute
-        subrow.prop(overlay, "viewer_attribute_opacity", text="Color Opacity")
+        row = split.row(align=True)
+        if overlay.show_viewer_attribute:
+            row.active = view.show_viewer
+            row.prop(overlay, "viewer_attribute_opacity", text="")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        row = col.row(align=True)
+        row = col.row()
         row.active = view.show_viewer
+        row.separator()
         row.prop(overlay, "show_viewer_text", text="Attribute Text")
 
 
