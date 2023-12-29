@@ -1243,7 +1243,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
             layout.separator()
             layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Modifier")
-            layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection")
+            layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='COPYDOWN')
 
             if strip_type != 'SOUND':
                 if selected_sequences_count >= 2:
