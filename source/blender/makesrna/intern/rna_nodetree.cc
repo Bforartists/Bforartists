@@ -11163,6 +11163,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_ATTRIBUTE_STATISTIC:
       return ICON_ATTRIBUTE_STATISTIC;
 
+    case GEO_NODE_BAKE:
+      return ICON_BAKE;
+
     case GEO_NODE_BLUR_ATTRIBUTE:
       return ICON_BLUR_ATTRIBUTE;
 
