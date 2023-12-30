@@ -1923,7 +1923,7 @@ blend_offset
 blend_to_ease
 split_to_instances
 index_switch
-#~ DEF_ICON_BLANK(1954)
+bake
 #~ DEF_ICON_BLANK(1955)
 #~ DEF_ICON_BLANK(1956)
 #~ DEF_ICON_BLANK(1957)
