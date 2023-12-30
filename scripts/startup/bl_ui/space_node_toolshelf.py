@@ -4106,6 +4106,10 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Bake                            ", icon = "BAKE")
+            props.use_transform = True
+            props.type = "GeometryNodeBake"
+            
             props = col.operator("node.add_node", text=" Bounding Box             ", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
             props.type = "GeometryNodeBoundBox"
@@ -4152,6 +4156,10 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+            
+            props = flow.operator("node.add_node", text = "", icon = "Bake")
+            props.use_transform = True
+            props.type = "GeometryNodeBake"
 
             props = flow.operator("node.add_node", text = "", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
