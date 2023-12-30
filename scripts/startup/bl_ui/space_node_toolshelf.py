@@ -700,10 +700,6 @@ class NODES_PT_comp_add_output(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeComposite"
 
-            props = col.operator("node.add_node", text=" Split Viewer    ", icon = "NODE_VIWERSPLIT")
-            props.use_transform = True
-            props.type = "CompositorNodeSplitViewer"
-
             props = col.operator("node.add_node", text=" Viewer            ", icon = "NODE_VIEWER")
             props.use_transform = True
             props.type = "CompositorNodeViewer"
@@ -731,10 +727,6 @@ class NODES_PT_comp_add_output(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_FILEOUTPUT")
             props.use_transform = True
             props.type = "CompositorNodeOutputFile"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VIWERSPLIT")
-            props.use_transform = True
-            props.type = "CompositorNodeSplitViewer"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_VIEWER")
             props.use_transform = True
@@ -1727,6 +1719,11 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             if context.space_data.tree_type == 'CompositorNodeTree':
                 col = layout.column(align=True)
                 col.scale_y = 1.5
+
+                props = col.operator("node.add_node", text=" Split                 ", icon = "NODE_VIWERSPLIT")
+                props.use_transform = True
+                props.type = "CompositorNodeSplit"
+
                 props = col.operator("node.add_node", text=" Switch              ", icon = "SWITCH_DIRECTION")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
@@ -1765,6 +1762,11 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             props.type = "CompositorNodeNormalize"
 
             if context.space_data.tree_type == 'CompositorNodeTree':
+
+                props = flow.operator("node.add_node", text = "", icon = "NODE_VIWERSPLIT")
+                props.use_transform = True
+                props.type = "CompositorNodeSplit"
+
                 props = flow.operator("node.add_node", text="", icon = "SWITCH_DIRECTION")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
@@ -6043,7 +6045,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
 
-            props = col.operator("node.add_node", text=" Index Switch               ", icon = "INDEX_SWITCH")
+            props = col.operator("node.add_node", text=" Index Switch    ", icon = "INDEX_SWITCH")
             props.use_transform = True
             props.type = "GeometryNodeIndexSwitch"
 
