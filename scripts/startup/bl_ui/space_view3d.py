@@ -8462,30 +8462,42 @@ class VIEW3D_PT_overlay_viewer_node(Panel):
     bl_parent_id = "VIEW3D_PT_overlay"
     bl_label = "Viewer Node"
 
+    # BFA - We modified this method
     def draw(self, context):
         layout = self.layout
         view = context.space_data
+        if not view.show_viewer:
+            layout.label(text="Viewer Nodes Overlay Is Disabled", icon='ERROR')
+            return
+
         overlay = view.overlay
         display_all = overlay.show_overlays
-
         col = layout.column(align=True)
         col.active = display_all
         split = col.split()
         row = split.row()
         row.separator()
-        row.prop(overlay, "show_viewer_attribute")
+        row.prop(overlay, "show_viewer_attribute", text="Color Overlay")
 
         row = split.row(align=True)
-        if overlay.show_viewer_attribute:
-            row.active = view.show_viewer
-            row.prop(overlay, "viewer_attribute_opacity", text="")
-        else:
+        if not overlay.show_viewer_attribute:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
+        else:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+            split = col.split()
+            row = split.row()
+            row.separator()
+            col2 = row.column()
+            split = col2.split()
+            row = split.row()
+            row.separator()
+            row.use_property_split = True
+            row.prop(overlay, "viewer_attribute_opacity", text="Opacity")
 
-        row = col.row()
-        row.active = view.show_viewer
+        split = col.split()
+        row = split.row()
         row.separator()
-        row.prop(overlay, "show_viewer_text", text="Attribute Text")
+        row.prop(overlay, "show_viewer_text", text="Text Overlay")
 
 
 class VIEW3D_PT_overlay_motion_tracking(Panel):
