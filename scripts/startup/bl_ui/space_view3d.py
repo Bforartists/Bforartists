@@ -4816,7 +4816,6 @@ class VIEW3D_MT_pose(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_pose_motion")
-        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP_BONE")
         layout.menu("VIEW3D_MT_bone_collections")
 
         layout.separator()
@@ -4917,46 +4916,12 @@ class VIEW3D_MT_bone_collections(Menu):
     def draw(self, context):
         layout = self.layout
 
-        if not context.selected_pose_bones and not context.selected_bones:
-            # If there are no bones to assign to any collection, there's no need
-            # to go over all the bone collections & try to build up the menu.
-            #
-            # The poll function shouldn't test for this, because returning False
-            # there will hide this menu completely from the Pose menu, and
-            # that's going too far.
-            layout.enabled = False
-            layout.label(text="Select bones to operate on first", icon="QUESTION")
-            return
-
-        layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
-        layout.separator()
-
-        arm = context.object.data
-        bone = context.active_bone
-
-        found_editable_bcoll = False
-        for bcoll in arm.collections:
-            if not bcoll.is_editable:
-                continue
-            found_editable_bcoll = True
-
-            if bcoll.name in bone.collections:
-                props = layout.operator("armature.collection_unassign",
-                                        text=bcoll.name,
-                                        icon='COLLECTION_BONE_REMOVE')
-            else:
-                props = layout.operator("armature.collection_assign",
-                                        text=bcoll.name,
-                                        icon='COLLECTION_BONE_ADD')
-            props.name = bcoll.name
-
-        if arm.collections and not found_editable_bcoll:
-            row = layout.row()
-            row.enabled = False
-            row.label(text="All bone collections are read-only", icon="QUESTION")
+        layout.operator("armature.move_to_collection", icon="GROUP_BONE")
+        layout.operator("armature.assign_to_collection", icon="ADD")
 
         layout.separator()
 
+        layout.operator("armature.collection_show_all")
         props = layout.operator("armature.collection_create_and_assign",
                                 text="Assign to New Collection",
                                 icon='COLLECTION_BONE_NEW')
@@ -6260,38 +6225,39 @@ class VIEW3D_MT_edit_font_chars(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("font.text_insert", text="Copyright", icon="COPYRIGHT").text = "\u00A9"
-        layout.operator("font.text_insert", text="Registered Trademark", icon="TRADEMARK").text = "\u00AE"
+        layout.operator("font.text_insert", text="Copyright \u00A9", icon="COPYRIGHT").text = "\u00A9"
+        layout.operator("font.text_insert", text="Registered Trademark \u00AE", icon="TRADEMARK").text = "\u00AE"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Degree Sign", icon="DEGREE").text = "\u00B0"
-        layout.operator("font.text_insert", text="Multiplication Sign", icon="MULTIPLICATION").text = "\u00D7"
-        layout.operator("font.text_insert", text="Circle", icon="CIRCLE").text = "\u008A"
+        layout.operator("font.text_insert", text="Degree \u00B0", icon="DEGREE").text = "\u00B0"
+        layout.operator("font.text_insert", text="Multiplication \u00D7", icon="MULTIPLICATION").text = "\u00D7"
+        layout.operator("font.text_insert", text="Circle \u2022", icon="CIRCLE").text = "\u2022"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Superscript 1", icon="SUPER_ONE").text = "\u00B9"
-        layout.operator("font.text_insert", text="Superscript 2", icon="SUPER_TWO").text = "\u00B2"
-        layout.operator("font.text_insert", text="Superscript 3", icon="SUPER_THREE").text = "\u00B3"
+        layout.operator("font.text_insert", text="Superscript \u00B9", icon="SUPER_ONE").text = "\u00B9"
+        layout.operator("font.text_insert", text="Superscript \u00B2", icon="SUPER_TWO").text = "\u00B2"
+        layout.operator("font.text_insert", text="Superscript \u00B3", icon="SUPER_THREE").text = "\u00B3"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Double >>", icon="DOUBLE_RIGHT").text = "\u00BB"
-        layout.operator("font.text_insert", text="Double <<", icon="DOUBLE_LEFT").text = "\u00AB"
-        layout.operator("font.text_insert", text="Promillage", icon="PROMILLE").text = "\u2030"
+        layout.operator("font.text_insert", text="Guillemet \u00BB", icon="DOUBLE_RIGHT").text = "\u00BB"
+        layout.operator("font.text_insert", text="Guillemet \u00AB", icon="DOUBLE_LEFT").text = "\u00AB"
+        layout.operator("font.text_insert", text="Per Mille \u2030", icon="PROMILLE").text = "\u2030"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Dutch Florin", icon="DUTCH_FLORIN").text = "\u00A4"
-        layout.operator("font.text_insert", text="British Pound", icon="POUND").text = "\u00A3"
-        layout.operator("font.text_insert", text="Japanese Yen", icon="YEN").text = "\u00A5"
+        layout.operator("font.text_insert", text="Euro \u20AC").text = "\u20AC"
+        layout.operator("font.text_insert", text="Florin \u0192", icon="DUTCH_FLORIN").text = "\u0192"
+        layout.operator("font.text_insert", text="Pound \u00A3", icon="POUND").text = "\u00A3"
+        layout.operator("font.text_insert", text="Yen \u00A5", icon="YEN").text = "\u00A5"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="German S", icon="GERMAN_S").text = "\u00DF"
-        layout.operator("font.text_insert", text="Spanish Question Mark", icon="SPANISH_QUESTION").text = "\u00BF"
-        layout.operator("font.text_insert", text="Spanish Exclamation Mark", icon="SPANISH_EXCLAMATION").text = "\u00A1"
+        layout.operator("font.text_insert", text="German Eszett \u00DF", icon="GERMAN_S").text = "\u00DF"
+        layout.operator("font.text_insert", text="Inverted Question Mark \u00BF", icon="SPANISH_QUESTION").text = "\u00BF"
+        layout.operator("font.text_insert", text="Inverted Exclamation Mark \u00A1", icon="SPANISH_EXCLAMATION").text = "\u00A1"
 
 
 class VIEW3D_MT_edit_font_kerning(Menu):
