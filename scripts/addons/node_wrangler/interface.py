@@ -361,7 +361,8 @@ class NWAttributeMenu(bpy.types.Menu):
         for obj in objs:
             if obj.data.attributes:
                 for attr in obj.data.attributes:
-                    attrs.append(attr.name)
+                    if not attr.is_internal:
+                        attrs.append(attr.name)
         attrs = list(set(attrs))  # get a unique list
 
         if attrs:
