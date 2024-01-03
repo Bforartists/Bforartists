@@ -260,6 +260,7 @@ def add_texture_to_material(image, contextWrapper, pct, extend, alpha, scale, of
             tint1[:3] + [1] if tint1 else shader.inputs['Base Color'].default_value[:])
         contextWrapper._grid_to_location(1, 2, dst_node=mixer, ref_node=shader)
         img_wrap = contextWrapper.base_color_texture
+        image.alpha_mode = 'CHANNEL_PACKED'
         links.new(mixer.outputs['Color'], shader.inputs['Base Color'])
         if tint2 is not None:
             img_wrap.colorspace_name = 'Non-Color'
