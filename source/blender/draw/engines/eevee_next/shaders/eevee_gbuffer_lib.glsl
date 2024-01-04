@@ -228,7 +228,6 @@ vec4 gbuffer_sss_radii_pack(vec3 sss_radii)
                                          gbuffer_ior_pack(sss_radii.y),
                                          gbuffer_ior_pack(sss_radii.z)));
 }
-
 vec3 gbuffer_sss_radii_unpack(vec4 sss_radii_packed)
 {
   /* TODO(fclem): Something better. */
@@ -237,7 +236,6 @@ vec3 gbuffer_sss_radii_unpack(vec4 sss_radii_packed)
               gbuffer_ior_unpack(radii_packed.y),
               gbuffer_ior_unpack(radii_packed.z));
 }
-
 
 /**
  * Pack value in the range of [0..8] using a 2 bit exponent.
