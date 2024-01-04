@@ -700,10 +700,6 @@ class NODES_PT_comp_add_output(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeComposite"
 
-            props = col.operator("node.add_node", text=" Split Viewer    ", icon = "NODE_VIWERSPLIT")
-            props.use_transform = True
-            props.type = "CompositorNodeSplitViewer"
-
             props = col.operator("node.add_node", text=" Viewer            ", icon = "NODE_VIEWER")
             props.use_transform = True
             props.type = "CompositorNodeViewer"
@@ -731,10 +727,6 @@ class NODES_PT_comp_add_output(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_FILEOUTPUT")
             props.use_transform = True
             props.type = "CompositorNodeOutputFile"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VIWERSPLIT")
-            props.use_transform = True
-            props.type = "CompositorNodeSplitViewer"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_VIEWER")
             props.use_transform = True
@@ -1727,6 +1719,11 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             if context.space_data.tree_type == 'CompositorNodeTree':
                 col = layout.column(align=True)
                 col.scale_y = 1.5
+
+                props = col.operator("node.add_node", text=" Split                 ", icon = "NODE_VIWERSPLIT")
+                props.use_transform = True
+                props.type = "CompositorNodeSplit"
+
                 props = col.operator("node.add_node", text=" Switch              ", icon = "SWITCH_DIRECTION")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
@@ -1765,6 +1762,11 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             props.type = "CompositorNodeNormalize"
 
             if context.space_data.tree_type == 'CompositorNodeTree':
+
+                props = flow.operator("node.add_node", text = "", icon = "NODE_VIWERSPLIT")
+                props.use_transform = True
+                props.type = "CompositorNodeSplit"
+
                 props = flow.operator("node.add_node", text="", icon = "SWITCH_DIRECTION")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
@@ -3661,9 +3663,13 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             col.scale_y = 1.5
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                props = col.operator("node.add_node", text=" Cursor           ", icon = "CURSOR")
+                props = col.operator("node.add_node", text=" Cursor                  ", icon = "CURSOR")
                 props.use_transform = True
                 props.type = "GeometryNodeTool3DCursor"
+
+            props = col.operator("node.add_node", text=" Active Camera     ", icon = "VIEW_SWITCHTOCAM")
+            props.use_transform = True
+            props.type = "GeometryNodeInputActiveCamera"
 
             props = col.operator("node.add_node", text=" Collection Info     ", icon = "COLLECTION_INFO")
             props.use_transform = True
@@ -3702,6 +3708,10 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
                 props = flow.operator("node.add_node", text="", icon = "CURSOR")
                 props.use_transform = True
                 props.type = "GeometryNodeTool3DCursor"
+
+            props = flow.operator("node.add_node", text="", icon = "VIEW_SWITCHTOCAM")
+            props.use_transform = True
+            props.type = "GeometryNodeInputActiveCamera"
 
             props = flow.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
             props.use_transform = True
@@ -4106,6 +4116,10 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Bake                            ", icon = "BAKE")
+            props.use_transform = True
+            props.type = "GeometryNodeBake"
+
             props = col.operator("node.add_node", text=" Bounding Box             ", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
             props.type = "GeometryNodeBoundBox"
@@ -4152,6 +4166,10 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "Bake")
+            props.use_transform = True
+            props.type = "GeometryNodeBake"
 
             props = flow.operator("node.add_node", text = "", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
@@ -6027,7 +6045,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
 
-            props = col.operator("node.add_node", text=" Index Switch               ", icon = "INDEX_SWITCH")
+            props = col.operator("node.add_node", text=" Index Switch    ", icon = "INDEX_SWITCH")
             props.use_transform = True
             props.type = "GeometryNodeIndexSwitch"
 

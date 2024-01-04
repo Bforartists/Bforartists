@@ -10,7 +10,6 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_ghash.h"
-#include "BLI_gsqueue.h"
 #include "BLI_math_geom.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_vector.h"
@@ -2716,7 +2715,7 @@ void SCULPT_do_mask_brush(Sculpt *sd, Object *ob, Span<PBVHNode *> nodes)
       SCULPT_do_mask_brush_draw(sd, ob, nodes);
       break;
     case BRUSH_MASK_SMOOTH:
-      smooth::do_smooth_brush(sd, ob, nodes, ss->cache->bstrength, true);
+      smooth::do_smooth_mask_brush(sd, ob, nodes, ss->cache->bstrength);
       break;
   }
 }
