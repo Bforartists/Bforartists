@@ -11163,6 +11163,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_ATTRIBUTE_STATISTIC:
       return ICON_ATTRIBUTE_STATISTIC;
 
+    case GEO_NODE_BAKE:
+      return ICON_BAKE;
+
     case GEO_NODE_BLUR_ATTRIBUTE:
       return ICON_BLUR_ATTRIBUTE;
 
@@ -11301,11 +11304,8 @@ static int node_type_to_icon(int type)
     case GEO_NODE_IMAGE:
       return ICON_FILE_IMAGE;
 
-    case GEO_NODE_INPUT_NAMED_ATTRIBUTE:
-      return ICON_NAMED_ATTRIBUTE;
-
-    case GEO_NODE_INPUT_NAMED_LAYER_SELECTION:
-      return ICON_DELETE;
+    case GEO_NODE_INPUT_ACTIVE_CAMERA:
+      return ICON_VIEW_SWITCHTOCAM;
 
     case GEO_NODE_INPUT_CURVE_HANDLES:
       return ICON_CURVE_HANDLE_POSITIONS;
@@ -11357,6 +11357,12 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_INPUT_MESH_VERTEX_NEIGHBORS:
       return ICON_VERTEX_NEIGHBORS;
+
+    case GEO_NODE_INPUT_NAMED_ATTRIBUTE:
+      return ICON_NAMED_ATTRIBUTE;
+
+    case GEO_NODE_INPUT_NAMED_LAYER_SELECTION:
+      return ICON_DELETE;
 
     case GEO_NODE_INPUT_NORMAL:
       return ICON_RECALC_NORMALS;
