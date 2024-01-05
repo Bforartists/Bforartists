@@ -12,7 +12,7 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 class WM_OT_timeline_sync_toggle(bpy.types.Operator):
     bl_idname = "wm.timeline_sync_toggle"
     bl_label = "Toggle 3D View Sync"
-    bl_description = "Toggles syncronization between the timeline scene strips and scene \nTo use, set the sequencer timeline to the master scene \nThen toggle to syncronize the 3D View with the Sequencer"
+    bl_description = "Toggles syncronization between the Timeline scene strips from the Master Scene and 3D View. \nTo use, set the sequencer Timeline to the Master Scene, \nThen toggle to syncronize the 3D View with the Sequencer"
     bl_options = set()
 
     def execute(self, context: bpy.types.Context):
@@ -37,7 +37,7 @@ class WM_OT_timeline_sync_toggle(bpy.types.Operator):
 class WM_OT_timeline_sync_play_master(bpy.types.Operator):
     bl_idname = "wm.timeline_sync_play_master"
     bl_label = "Play Master Scene"
-    bl_description = "Toggle playback of master scene"
+    bl_description = "Toggle playback of master scene in the Timeline"
     bl_options = set()
 
     @classmethod

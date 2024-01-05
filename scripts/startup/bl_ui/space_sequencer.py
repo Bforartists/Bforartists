@@ -171,7 +171,7 @@ class SEQUENCER_HT_header(Header):
 
         layout.separator_spacer()
         row = layout.row() # BFA - 3D Sequencer
-        row.label(text="Timeline:", icon="SEQUENCE") # BFA - 3D Sequencer
+        row.label(text="Timeline:", icon="VIEW3D") # BFA - 3D Sequencer
         row.template_ID(st, "scene_override", unlink="sequencer.remove_scene_override") # BFA - 3D Sequencer
 
         if st.view_type == 'PREVIEW':
@@ -809,10 +809,10 @@ class SEQUENCER_MT_add_scene(Menu):
         layout.operator("sequencer.scene_strip_add_new", text="New Scene", icon='ADD').type = 'NEW'
 
         bpy_data_scenes_len = len(bpy.data.scenes)
-        if bpy_data_scenes_len > 10:
+        if bpy_data_scenes_len > 14: #BFA - increased to 14 from 10
             layout.separator()
             layout.operator_context = 'INVOKE_DEFAULT'
-            layout.operator("sequencer.scene_strip_add", text="Scene...")
+            layout.operator("sequencer.scene_strip_add", text="Scene...", icon='SEQUENCE') #BFA - added icon
         elif bpy_data_scenes_len > 1:
             layout.separator()
             scene = context.scene
@@ -821,7 +821,7 @@ class SEQUENCER_MT_add_scene(Menu):
                     continue
 
                 layout.operator_context = 'INVOKE_REGION_WIN'
-                layout.operator("sequencer.scene_strip_add", text=sc_item.name).scene = sc_item.name
+                layout.operator("sequencer.scene_strip_add", text=sc_item.name, icon='SEQUENCE' ).scene = sc_item.name #BFA - added icon
 
         del bpy_data_scenes_len
 
