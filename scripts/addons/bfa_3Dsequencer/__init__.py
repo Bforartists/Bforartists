@@ -23,7 +23,7 @@ from bfa_3Dsequencer import (
     #render, #BFA - temporariliy removed
     sequence,
     #shared_collections, #BFA - temporariliy removed
-    shot,
+    scene,
     sync,
 )
 
@@ -42,7 +42,7 @@ bl_info = {
 
 packages = (
     sync,
-    shot,
+    scene,
     sequence,
     #render, #BFA - temporariliy removed
     #editorial, #BFA - temporariliy removed

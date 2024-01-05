@@ -87,7 +87,7 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
 class SEQUENCE_OT_active_shot_camera_set(bpy.types.Operator):
     bl_idname = "sequence.active_shot_camera_set"
     bl_label = "Set Active Scene Camera"
-    bl_description = "Set active Scene camera"
+    bl_description = "Set active Scene camera in the Scene Strip settomgs, overrides active camera set by the timeline"
     bl_options = {"UNDO"}
 
     camera: bpy.props.StringProperty(
@@ -112,7 +112,7 @@ class SEQUENCE_OT_active_shot_camera_set(bpy.types.Operator):
 class SEQUENCE_OT_active_shot_camera_none(bpy.types.Operator):
     bl_idname = "sequence.active_shot_camera_none"
     bl_label = "Set Scene camera to none "
-    bl_description = "Set active Scene camera to none, defaulting to active or camera makers"
+    bl_description = "Set active Scene camera to none, defaulting to none \n Please reassign an active camera"
     bl_options = {"UNDO"}
 
     @classmethod

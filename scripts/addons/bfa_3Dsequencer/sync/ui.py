@@ -22,12 +22,15 @@ class SEQUENCER_PT_SyncPanel(bpy.types.Panel):
         # Master Scene prop
         self.layout.prop(settings, "master_scene", text="Master Scene:", icon="SEQ_STRIP_DUPLICATE")
 
-        # Operator to syncronize viewport
-        self.layout.operator("wm.timeline_sync_toggle", text="Synchronize Timeline to 3D View", icon="VIEW3D", depress=settings.enabled)
+#        # Operator to syncronize viewport
+#        self.layout.operator("wm.timeline_sync_toggle", text="Synchronize Timeline to 3D View", icon="VIEW3D", depress=settings.enabled)
 
-        # Operator to update to active scene strip
-        self.layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="FILE_REFRESH")
+#        # Operator to update to active scene strip
+#        self.layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="FILE_REFRESH")
 
+def SEQUENCER_HT_Syncbutton(self, context):
+    settings = get_sync_settings()
+    self.layout.operator("wm.timeline_sync_toggle", text="Sync", icon="VIEW3D", depress=settings.enabled)
 
 class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
     """3D View Sync advanced settings Panel."""
@@ -49,7 +52,18 @@ class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
 def SEQUENCER_OT_toggle_active(self, context):
     layout = self.layout
     layout.separator()
-    layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="FILE_REFRESH")
+
+    strip = context.active_sequence_strip
+    # Operator to syncronize viewport
+    #layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="FILE_REFRESH")
+    try:
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        if strip and strip.type == 'SCENE':
+            layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="FILE_REFRESH")
+        else:
+            pass
+    except:
+        pass
 
 
 classes = (
@@ -62,7 +76,11 @@ def register():
     register_classes(classes)
     bpy.types.SEQUENCER_MT_context_menu.append(SEQUENCER_OT_toggle_active)
 
+    bpy.types.SEQUENCER_HT_header.append(SEQUENCER_HT_Syncbutton)
+
 
 def unregister():
     unregister_classes(classes)
     bpy.types.SEQUENCER_MT_context_menu.remove(SEQUENCER_OT_toggle_active)
+
+    bpy.types.SEQUENCER_HT_header.remove(SEQUENCER_HT_Syncbutton)

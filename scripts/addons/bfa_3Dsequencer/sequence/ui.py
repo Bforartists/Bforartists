@@ -3,7 +3,7 @@
 
 import bpy
 
-from bfa_3Dsequencer.shot.core import (
+from bfa_3Dsequencer.scene.core import (
     get_scene_cameras,
     get_valid_shot_scenes,
 )
@@ -119,23 +119,25 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
 
-    def draw_header_preset(self, context: bpy.types.Context):
+    def draw(self, context):
+        self.layout.use_property_split = True
+        self.layout.use_property_decorate = False
+
+        master_scene = get_sync_settings().master_scene
+
         self.layout.prop(
             context.window_manager.timeline_sync_settings,
             "master_scene",
-            text="",
+            text="Master Scene:",
             icon="SEQ_STRIP_DUPLICATE",
         )
 
-    def draw(self, context):
-        self.layout.use_property_split = True
-        master_scene = get_sync_settings().master_scene
         if (
             not master_scene
             or not master_scene.sequence_editor
             or not master_scene.sequence_editor.sequences
         ):
-            self.layout.label(text="Set the master scene to sync from Sequencer", icon="QUESTION")
+            self.layout.label(text="Set the Master Scene to sync from Sequencer", icon="QUESTION")
             return
 
         self.layout.label(text="Sequencer Scene Strips:")
@@ -178,8 +180,14 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
         col = shot_box.column()
         active_cam = context.scene.camera
         strip_cam = strip.scene_camera
-        if not active_cam or not strip_cam:
+        #if not active_cam or not strip_cam:
+        #    text = "None"
+        #    icon = "NONE"
+        if not active_cam:
             text = "None"
+            icon = "NONE"
+        elif not strip_cam:
+            text = "Active"
             icon = "NONE"
         else:
             text = (
@@ -192,6 +200,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
 
         row = col.row(align=True, heading="")
         row.label(text="Camera", icon="OUTLINER_DATA_CAMERA")
+
         row.menu(
             SEQUENCE_MT_active_shot_camera_select.bl_idname,
             text=text,
@@ -199,21 +208,23 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
         )
 
         if not active_cam:
-            return
+            row.operator("view3d.switchactivecamto", icon="VIEW_SWITCHACTIVECAM", text="")
 
         # Helper button to set strip camera to scene's active camera.
         if active_cam != strip_cam:
+            row.operator("object.select_camera", icon="RESTRICT_SELECT_OFF", text="")
             props = row.operator(
                 "sequence.active_shot_camera_set",
                 icon="OUTLINER_OB_CAMERA",
                 text="",
             )
             props.camera = context.scene.camera.name
-        row.operator("object.select_camera", icon="RESTRICT_SELECT_OFF", text="")
 
         # Operator to remove camera
         if strip_cam:
+            row.operator("object.select_camera", icon="RESTRICT_SELECT_OFF", text="")
             row.operator("sequence.active_shot_camera_none", icon="X", text="")
+
 
 class PROPERTIES_PT_obj_users_scene_check(bpy.types.Panel):
     bl_space_type = "PROPERTIES"
