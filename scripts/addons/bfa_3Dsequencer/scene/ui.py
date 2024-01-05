@@ -27,13 +27,21 @@ class SEQUENCER_MT_shot(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
 
+        # Operator to slip and adjust time of active scene strip
+        layout.operator("sequencer.shot_timing_adjust", icon="TIME")
+
+        # Operator to update to active scene strip
+        layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="FILE_REFRESH")
+
+        # Operator to playback the master scene
+        layout.operator('wm.timeline_sync_play_master', icon="PLAY")
+
         #layout.operator("sequencer.shot_new", text="New...")  #BFA - temporariliy removed
         #layout.operator("sequencer.shot_duplicate")  #BFA - temporariliy removed
         #layout.operator("sequencer.shot_delete", text="Delete...")  #BFA - temporariliy removed
-        #layout.separator()
+
         #layout.operator("sequencer.shot_rename", text="Rename...")  #BFA - temporariliy removed
-        layout.operator("sequencer.shot_timing_adjust", icon="TIME")
-        #layout.separator()
+
         #layout.menu("SEQUENCER_MT_shot_clean_up")  #BFA - temporariliy removed
 
 
