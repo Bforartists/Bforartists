@@ -6,7 +6,7 @@ from typing import Optional
 import bpy
 
 from bfa_3Dsequencer.preferences import get_addon_prefs
-from bfa_3Dsequencer.shot.core import (
+from bfa_3Dsequencer.scene.core import (
     adjust_shot_duration,
     delete_scene,
     duplicate_scene,
@@ -14,7 +14,7 @@ from bfa_3Dsequencer.shot.core import (
     rename_scene,
     slip_shot_content,
 )
-from bfa_3Dsequencer.shot.naming import shot_naming, ShotNamingProperty
+from bfa_3Dsequencer.scene.naming import shot_naming, ShotNamingProperty
 from bfa_3Dsequencer.sync.core import (
     get_sync_master_strip,
     get_sync_settings,
