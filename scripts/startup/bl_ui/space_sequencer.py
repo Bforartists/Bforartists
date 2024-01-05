@@ -1195,8 +1195,8 @@ class SEQUENCER_MT_retiming(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("sequencer.retiming_key_add")
-        layout.operator("sequencer.retiming_freeze_frame_add")
+        layout.operator("sequencer.retiming_key_add", icon='KEYFRAMES_INSERT')
+        layout.operator("sequencer.retiming_freeze_frame_add", icon='KEYTYPE_MOVING_HOLD_VEC')
 
 
 class SEQUENCER_MT_context_menu(Menu):
@@ -1308,14 +1308,11 @@ class SEQUENCER_MT_context_menu(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         if context.scene.sequence_editor.selected_retiming_keys:
-            layout.operator("sequencer.retiming_freeze_frame_add")
-            layout.operator("sequencer.retiming_transition_add")
+            layout.operator("sequencer.retiming_segment_speed_set", icon='SET_TIME')
             layout.separator()
 
-            layout.operator("sequencer.retiming_segment_speed_set")
-            layout.separator()
-
-            layout.operator("sequencer.retiming_key_remove")
+            layout.operator("sequencer.retiming_freeze_frame_add", icon='KEYTYPE_MOVING_HOLD_VEC')
+            layout.operator("sequencer.retiming_transition_add", icon='NODE_CURVE_TIME')
 
     def draw(self, context):
         ed = context.scene.sequence_editor
