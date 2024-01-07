@@ -37,6 +37,7 @@
 #include "DNA_pointcloud_types.h"
 #include "DNA_rigidbody_types.h"
 #include "DNA_screen_types.h"
+#include "DNA_sequence_types.h"
 #include "DNA_shader_fx_types.h"
 #include "DNA_space_types.h"
 #include "DNA_text_types.h"
@@ -1118,7 +1119,8 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
 
     /* Initialize additional velocity parameter for #CacheFile's. */
     if (!DNA_struct_member_exists(
-            fd->filesdna, "MeshSeqCacheModifierData", "float", "velocity_scale")) {
+            fd->filesdna, "MeshSeqCacheModifierData", "float", "velocity_scale"))
+    {
       LISTBASE_FOREACH (Object *, object, &bmain->objects) {
         LISTBASE_FOREACH (ModifierData *, md, &object->modifiers) {
           if (md->type == eModifierType_MeshSequenceCache) {
@@ -1331,7 +1333,8 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
     if (!DNA_struct_member_exists(fd->filesdna, "WorkSpaceDataRelation", "int", "parentid")) {
       LISTBASE_FOREACH (WorkSpace *, workspace, &bmain->workspaces) {
         LISTBASE_FOREACH_MUTABLE (
-            WorkSpaceDataRelation *, relation, &workspace->hook_layout_relations) {
+            WorkSpaceDataRelation *, relation, &workspace->hook_layout_relations)
+        {
           relation->parent = blo_read_get_new_globaldata_address(fd, relation->parent);
           BLI_assert(relation->parentid == 0);
           if (relation->parent != nullptr) {
@@ -1395,7 +1398,8 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
     }
 
     if (!DNA_struct_member_exists(
-            fd->filesdna, "FluidModifierData", "float", "fractions_distance")) {
+            fd->filesdna, "FluidModifierData", "float", "fractions_distance"))
+    {
       LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
         LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
           if (md->type == eModifierType_Fluid) {
