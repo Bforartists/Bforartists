@@ -43,8 +43,8 @@ set(SRC
   intern/BLI_mmap.c
   intern/BLI_timer.c
   intern/DLRB_tree.c
-  intern/array_store.c
-  intern/array_store_utils.c
+  intern/array_store.cc
+  intern/array_store_utils.cc
   intern/array_utils.c
   intern/array_utils.cc
   intern/astar.c
@@ -571,8 +571,7 @@ if(WITH_GTESTS)
   set(TEST_LIB
     bf_blenlib
   )
-  include(GTestTesting)
-  blender_add_test_executable(blenlib "${TEST_SRC}" "${INC};${TEST_INC}" "${INC_SYS}" "${LIB};${TEST_LIB}")
+  blender_add_test_suite_executable(BLI "${TEST_SRC}" "${INC};${TEST_INC}" "${INC_SYS}" "${LIB};${TEST_LIB}")
 
   add_subdirectory(tests/performance)
 endif()
