@@ -1541,7 +1541,8 @@ static void rna_3DViewShading_render_pass_set(PointerRNA *ptr, int value)
     STRNCPY(shading->aov_name, aov->name);
   }
   else if (value == EEVEE_RENDER_PASS_BLOOM &&
-           ((scene->eevee.flag & SCE_EEVEE_BLOOM_ENABLED) == 0)) {
+           ((scene->eevee.flag & SCE_EEVEE_BLOOM_ENABLED) == 0))
+  {
     shading->render_pass = EEVEE_RENDER_PASS_COMBINED;
   }
   else {
@@ -4807,12 +4808,6 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Constant Screen Size Normals",
                            "Keep size of normals constant in relation to 3D view");
-  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
-
-  prop = RNA_def_property(srna, "backwire_opacity", PROP_FLOAT, PROP_FACTOR);
-  RNA_def_property_float_sdna(prop, nullptr, "overlay.backwire_opacity");
-  RNA_def_property_ui_text(prop, "Backwire Opacity", "Opacity when rendering transparent wires");
-  RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "texture_paint_mode_opacity", PROP_FLOAT, PROP_FACTOR);
