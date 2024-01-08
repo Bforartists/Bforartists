@@ -155,7 +155,21 @@ bool ED_scene_delete(bContext *C, Main *bmain, Scene *scene)
       WM_window_set_active_scene(bmain, C, win, scene_new);
     }
   }
-
+/*############## BFA - 3D Sequencer ##############*/
+  /* Clear sequencer scene overrides using this scene. */
+  LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+      LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+        if (space->spacetype == SPACE_SEQ) {
+          SpaceSeq *seq = (SpaceSeq *)space;
+          if (seq->scene_override == scene) {
+            seq->scene_override = nullptr;
+          }
+        }
+      }
+    }
+  }
+/*############## BFA - 3D Sequencer End ##############*/
   BKE_id_delete(bmain, scene);
 
   return true;
