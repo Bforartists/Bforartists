@@ -464,9 +464,35 @@ void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
   }
   /* Update all the dependency graphs of visible view layers. */
   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+    Main *bmain = CTX_data_main(C);
     Scene *scene = WM_window_get_active_scene(win);
     ViewLayer *view_layer = WM_window_get_active_view_layer(win);
-    Main *bmain = CTX_data_main(C);
+    bScreen *screen = WM_window_get_active_screen(win); /*BFA - 3D Sequencer*/
+
+/*############## BFA - 3D Sequencer ##############*/
+    /* Find overridden scenes in this window and ensure they have a depsgraph. */
+    ED_screen_areas_iter (win, screen, area) {
+      LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+        if (space->spacetype == SPACE_SEQ) {
+          SpaceSeq *seq = (SpaceSeq *)space;
+          if (seq->scene_override) {
+            Scene *scene_override = seq->scene_override;
+            /* For now we will always use the first (default) view_layer in the overridden scene */
+            ViewLayer *view_layer_override = static_cast<ViewLayer *>(
+                scene_override->view_layers.first);
+            Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(
+                bmain, scene_override, view_layer_override);
+            if (is_after_open_file) {
+              DEG_graph_relations_update(depsgraph);
+              DEG_tag_on_visible_update(bmain, depsgraph);
+            }
+            BKE_scene_graph_update_tagged(depsgraph, bmain);
+          }
+        }
+      }
+    }
+/*############## BFA - 3D Sequencer END##############*/
+
     /* Copied to set's in scene_update_tagged_recursive() */
     scene->customdata_mask = win_combine_v3d_datamask;
     /* XXX, hack so operators can enforce data-masks #26482, GPU render. */
