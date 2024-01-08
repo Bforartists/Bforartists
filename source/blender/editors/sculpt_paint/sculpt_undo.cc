@@ -82,7 +82,7 @@
 namespace blender::ed::sculpt_paint::undo {
 
 /* Uncomment to print the undo stack in the console on push/undo/redo. */
-//#define SCULPT_UNDO_DEBUG
+// #define SCULPT_UNDO_DEBUG
 
 /* Implementation of undo system for objects in sculpt mode.
  *
@@ -935,7 +935,8 @@ static void restore_list(bContext *C, Depsgraph *depsgraph, UndoSculpt &usculpt)
     }
     else if (unode->maxgrid && subdiv_ccg != nullptr) {
       if ((subdiv_ccg->grids.size() != unode->maxgrid) ||
-          (subdiv_ccg->grid_size != unode->gridsize)) {
+          (subdiv_ccg->grid_size != unode->gridsize))
+      {
         continue;
       }
 
@@ -1173,7 +1174,7 @@ static Node *alloc_node(Object *ob, PBVHNode *node, Type type)
     unode->maxgrid = ss->subdiv_ccg->grids.size();
     unode->gridsize = ss->subdiv_ccg->grid_size;
 
-    verts_num = unode->maxgrid * unode->gridsize;
+    verts_num = unode->maxgrid * unode->gridsize * unode->gridsize;
 
     unode->grids = BKE_pbvh_node_get_grid_indices(*node);
     usculpt->undo_size += unode->grids.as_span().size_in_bytes();

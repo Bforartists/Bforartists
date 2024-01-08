@@ -3284,13 +3284,18 @@ class NODES_PT_Relations_group(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text = " Group Input      ", icon = "GROUPINPUT")
-            props.use_transform = True
-            props.type = "NodeGroupInput"
+            space_node = context.space_data
+            node_tree = space_node.edit_tree
+            all_node_groups = context.blend_data.node_groups
 
-            props = col.operator("node.add_node", text = " Group Output    ", icon = "GROUPOUTPUT")
-            props.use_transform = True
-            props.type = "NodeGroupOutput"
+            if node_tree in all_node_groups.values():
+                props = col.operator("node.add_node", text = " Group Input      ", icon = "GROUPINPUT")
+                props.use_transform = True
+                props.type = "NodeGroupInput"
+
+                props = col.operator("node.add_node", text = " Group Output    ", icon = "GROUPOUTPUT")
+                props.use_transform = True
+                props.type = "NodeGroupOutput"
 
 
         #### Icon Buttons
@@ -3307,13 +3312,18 @@ class NODES_PT_Relations_group(bpy.types.Panel):
 
             flow.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
 
-            props = flow.operator("node.add_node", text = "", icon = "GROUPINPUT")
-            props.use_transform = True
-            props.type = "NodeGroupInput"
+            space_node = context.space_data
+            node_tree = space_node.edit_tree
+            all_node_groups = context.blend_data.node_groups
 
-            props = flow.operator("node.add_node", text = "", icon = "GROUPOUTPUT")
-            props.use_transform = True
-            props.type = "NodeGroupOutput"
+            if node_tree in all_node_groups.values():
+                props = flow.operator("node.add_node", text = "", icon = "GROUPINPUT")
+                props.use_transform = True
+                props.type = "NodeGroupInput"
+
+                props = flow.operator("node.add_node", text = "", icon = "GROUPOUTPUT")
+                props.use_transform = True
+                props.type = "NodeGroupOutput"
 
 
 #Shader Editor - Relations tab, Node Group Panel
