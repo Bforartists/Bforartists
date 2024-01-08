@@ -416,8 +416,8 @@ static int view_ghost_border_exec(bContext *C, wmOperator *op)
 
   scene->ed->overlay_frame_rect = rect;
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
-
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  
   return OPERATOR_FINISHED;
 }
 
