@@ -85,7 +85,7 @@ struct PBVHFrustumPlanes {
 
 BLI_INLINE BMesh *BKE_pbvh_get_bmesh(PBVH *pbvh)
 {
-  return ((struct PBVHPublic *)pbvh)->bm;
+  return ((PBVHPublic *)pbvh)->bm;
 }
 
 Mesh *BKE_pbvh_get_mesh(PBVH *pbvh);
@@ -563,7 +563,7 @@ void BKE_pbvh_vertex_color_get(const PBVH *pbvh, PBVHVertRef vertex, float r_col
 void BKE_pbvh_ensure_node_loops(PBVH *pbvh);
 int BKE_pbvh_debug_draw_gen_get(PBVHNode *node);
 
-void BKE_pbvh_pmap_set(PBVH *pbvh, blender::GroupedSpan<int> pmap);
+void BKE_pbvh_pmap_set(PBVH *pbvh, blender::GroupedSpan<int> vert_to_face_map);
 
 namespace blender::bke::pbvh {
 Vector<PBVHNode *> search_gather(PBVH *pbvh,
