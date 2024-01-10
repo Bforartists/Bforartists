@@ -147,3 +147,5 @@ void SEQ_sequence_lookup_free(const Scene *scene);
  * \param tag: tag to set
  */
 void SEQ_sequence_lookup_tag(const Scene *scene, eSequenceLookupTag tag);
+
+struct Scene *SEQ_get_ref_scene_for_notifiers(const struct bContext *C); /*BFA - 3D Sequencer*/
