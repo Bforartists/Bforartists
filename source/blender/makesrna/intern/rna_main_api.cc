@@ -197,6 +197,21 @@ static void rna_Main_scenes_remove(
 #  endif
       }
     }
+    /*############## BFA - 3D Sequencer ##############*/
+    /* Clear sequencer scene overrides using this scene. */
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+          if (space->spacetype == SPACE_SEQ) {
+            SpaceSeq *seq = (SpaceSeq *)space;
+            if (seq->scene_override == scene) {
+              seq->scene_override = NULL;
+            }
+          }
+        }
+      }
+    }
+    /*############## BFA - 3D Sequencer END ##############*/
     rna_Main_ID_remove(bmain, reports, scene_ptr, do_unlink, true, true);
   }
   else {
