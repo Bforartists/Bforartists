@@ -7369,6 +7369,15 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "New Point Cloud Type", "Enable the new point cloud type in the ui");
 
+  /* BFA - GooEngine disable_search_on_keypress */ 
+  prop = RNA_def_property(srna, "disable_search_on_keypress", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "disable_search_on_keypress", 1);
+  RNA_def_property_ui_text(
+      prop,
+      "Disable Search On Key Press",
+      "Ignore menus tagged with Search On Key Press, and fallback to using accelerator keys instead");
+   /* BFA - GooEngine end */
+  
   prop = RNA_def_property(srna, "use_new_curves_tools", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "use_new_curves_tools", 1);
   RNA_def_property_ui_text(
