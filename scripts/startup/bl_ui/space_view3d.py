@@ -1667,22 +1667,22 @@ class VIEW3D_MT_view_viewpoint(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("view3d.view_camera", text="Camera", text_ctxt=i18n_contexts.editor_view3d)
+        layout.operator("view3d.view_camera", text="Camera", icon="CAMERA_DATA", text_ctxt=i18n_contexts.editor_view3d) #BFA - Icon
 
         layout.separator()
 
-        layout.operator("view3d.view_axis", text="Top", text_ctxt=i18n_contexts.editor_view3d).type = 'TOP'
-        layout.operator("view3d.view_axis", text="Bottom", text_ctxt=i18n_contexts.editor_view3d).type = 'BOTTOM'
+        layout.operator("view3d.view_axis", text="Top", icon="VIEW_TOP", text_ctxt=i18n_contexts.editor_view3d).type = 'TOP'  #BFA - Icon
+        layout.operator("view3d.view_axis", text="Bottom", icon="VIEW_BOTTOM", text_ctxt=i18n_contexts.editor_view3d).type = 'BOTTOM'  #BFA - Icon
 
         layout.separator()
 
-        layout.operator("view3d.view_axis", text="Front", text_ctxt=i18n_contexts.editor_view3d).type = 'FRONT'
-        layout.operator("view3d.view_axis", text="Back", text_ctxt=i18n_contexts.editor_view3d).type = 'BACK'
+        layout.operator("view3d.view_axis", text="Front", icon="VIEW_FRONT", text_ctxt=i18n_contexts.editor_view3d).type = 'FRONT'  #BFA - Icon
+        layout.operator("view3d.view_axis", text="Back", icon="VIEW_BACK", text_ctxt=i18n_contexts.editor_view3d).type = 'BACK'  #BFA - Icon
 
         layout.separator()
 
-        layout.operator("view3d.view_axis", text="Right", text_ctxt=i18n_contexts.editor_view3d).type = 'RIGHT'
-        layout.operator("view3d.view_axis", text="Left", text_ctxt=i18n_contexts.editor_view3d).type = 'LEFT'
+        layout.operator("view3d.view_axis", text="Right", icon="VIEW_RIGHT", text_ctxt=i18n_contexts.editor_view3d).type = 'RIGHT'  #BFA - Icon
+        layout.operator("view3d.view_axis", text="Left", icon="VIEW_LEFT", text_ctxt=i18n_contexts.editor_view3d).type = 'LEFT'  #BFA - Icon
 
 
 # bfa menu
@@ -7062,8 +7062,24 @@ class VIEW3D_MT_view_pie(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        pie.operator_enum("view3d.view_axis", "type")
+        #pie.operator_enum("view3d.view_axis", "type") #BFA - Opted to the operators that contain consistenty iconography
+
+        # 4 - LEFT
+        pie.operator("view3d.view_axis", text="Left", icon='VIEW_LEFT').type = 'LEFT' #BFA - Icon changed
+        # 6 - RIGHT
+        pie.operator("view3d.view_axis", text="Right", icon='VIEW_RIGHT').type = 'RIGHT' #BFA - Icon changed
+        # 2 - BOTTOM
+        pie.operator("view3d.view_axis", text="Bottom", icon='VIEW_BOTTOM').type = 'BOTTOM'  #BFA - Icon changed
+        # 8 - TOP
+        pie.operator("view3d.view_axis", text="Top", icon='VIEW_TOP').type = 'TOP'  #BFA - Icon changed
+        # 7 - TOP - LEFT
+        pie.operator("view3d.view_axis", text="Back", icon='VIEW_BACK').type = 'BACK' #BFA - Icon Added
+        # 9 - TOP - RIGHT
+        pie.operator("view3d.view_axis", text="Front", icon='VIEW_FRONT').type = 'FRONT' #BFA - Icon Added
+
+        # 1 - BOTTOM - LEFT
         pie.operator("view3d.view_camera", text="View Camera", icon='CAMERA_DATA')
+        # 3 - BOTTOM - RIGHT
         pie.operator("view3d.view_selected", text="View Selected", icon='VIEW_SELECTED')
 
 
@@ -7075,15 +7091,15 @@ class VIEW3D_MT_transform_gizmo_pie(Menu):
 
         pie = layout.menu_pie()
         # 1: Left
-        pie.operator("view3d.transform_gizmo_set", text="Move").type = {'TRANSLATE'}
+        pie.operator("view3d.transform_gizmo_set", text="Move", icon="TRANSFORM_MOVE").type = {'TRANSLATE'}
         # 2: Right
-        pie.operator("view3d.transform_gizmo_set", text="Rotate").type = {'ROTATE'}
+        pie.operator("view3d.transform_gizmo_set", text="Rotate", icon="TRANSFORM_ROTATE").type = {'ROTATE'}
         # 3: Down
-        pie.operator("view3d.transform_gizmo_set", text="Scale").type = {'SCALE'}
+        pie.operator("view3d.transform_gizmo_set", text="Scale", icon="TRANSFORM_SCALE").type = {'SCALE'}
         # 4: Up
         pie.prop(context.space_data, "show_gizmo", text="Show Gizmos", icon='GIZMO')
         # 5: Up/Left
-        pie.operator("view3d.transform_gizmo_set", text="All").type = {'TRANSLATE', 'ROTATE', 'SCALE'}
+        pie.operator("view3d.transform_gizmo_set", text="All", icon="GIZMO").type = {'TRANSLATE', 'ROTATE', 'SCALE'}
 
 
 class VIEW3D_MT_shading_pie(Menu):
@@ -7211,23 +7227,23 @@ class VIEW3D_MT_sculpt_mask_edit_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        props = pie.operator("paint.mask_flood_fill", text="Invert Mask")
+        props = pie.operator("paint.mask_flood_fill", text="Invert Mask", icon="INVERT_MASK") #BFA - icon
         props.mode = 'INVERT'
-        props = pie.operator("paint.mask_flood_fill", text="Clear Mask")
+        props = pie.operator("paint.mask_flood_fill", text="Clear Mask", icon="CLEAR_MASK") #BFA - icon
         props.mode = 'VALUE'
         props.value = 0.0
-        props = pie.operator("sculpt.mask_filter", text="Smooth Mask")
+        props = pie.operator("sculpt.mask_filter", text="Smooth Mask", icon="PARTICLEBRUSH_SMOOTH") #BFA - icon
         props.filter_type = 'SMOOTH'
-        props = pie.operator("sculpt.mask_filter", text="Sharpen Mask")
+        props = pie.operator("sculpt.mask_filter", text="Sharpen Mask", icon="SHARPEN") #BFA - icon
         props.filter_type = 'SHARPEN'
-        props = pie.operator("sculpt.mask_filter", text="Grow Mask")
+        props = pie.operator("sculpt.mask_filter", text="Grow Mask", icon="SELECTMORE") #BFA - icon
         props.filter_type = 'GROW'
-        props = pie.operator("sculpt.mask_filter", text="Shrink Mask")
+        props = pie.operator("sculpt.mask_filter", text="Shrink Mask", icon="SELECTLESS") #BFA - icon
         props.filter_type = 'SHRINK'
-        props = pie.operator("sculpt.mask_filter", text="Increase Contrast")
+        props = pie.operator("sculpt.mask_filter", text="Increase Contrast", icon="INC_CONTRAST") #BFA - icon
         props.filter_type = 'CONTRAST_INCREASE'
         props.auto_iteration_count = False
-        props = pie.operator("sculpt.mask_filter", text="Decrease Contrast")
+        props = pie.operator("sculpt.mask_filter", text="Decrease Contrast", icon="DEC_CONTRAST") #BFA - icon
         props.filter_type = 'CONTRAST_DECREASE'
         props.auto_iteration_count = False
 
@@ -7275,15 +7291,15 @@ class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        props = pie.operator("sculpt.face_sets_create", text="Face Set from Masked")
+        props = pie.operator("sculpt.face_sets_create", text="Face Set from Masked", icon="MOD_MASK") #BFA - Icon
         props.mode = 'MASKED'
 
-        props = pie.operator("sculpt.face_sets_create", text="Face Set from Visible")
+        props = pie.operator("sculpt.face_sets_create", text="Face Set from Visible", icon="FILL_MASK") #BFA - Icon
         props.mode = 'VISIBLE'
 
-        pie.operator("paint.visibility_invert", text="Invert Visible", icon="HIDE_ON")
+        pie.operator("paint.visibility_invert", text="Invert Visible", icon="INVERT_MASK") #BFA - Icon
 
-        props = pie.operator("paint.hide_show", text="Show All")
+        props = pie.operator("paint.hide_show", text="Show All", icon="HIDE_OFF") #BFA - Icon
         props.action = "SHOW"
         props.area = "ALL"
 
@@ -7311,13 +7327,13 @@ class VIEW3D_MT_wpaint_vgroup_lock_pie(Menu):
         props = pie.operator("object.vertex_group_lock", icon='LOCKED', text="Lock Unselected")
         props.action, props.mask = 'LOCK', 'UNSELECTED'
         # 6: Up/Right
-        props = pie.operator("object.vertex_group_lock", text="Lock Only Selected")
+        props = pie.operator("object.vertex_group_lock", text="Lock Only Selected", icon='RESTRICT_SELECT_OFF')
         props.action, props.mask = 'LOCK', 'INVERT_UNSELECTED'
         # 7: Down/Left
-        props = pie.operator("object.vertex_group_lock", text="Lock Only Unselected")
+        props = pie.operator("object.vertex_group_lock", text="Lock Only Unselected", icon='RESTRICT_SELECT_ON')
         props.action, props.mask = 'UNLOCK', 'INVERT_UNSELECTED'
         # 8: Down/Right
-        props = pie.operator("object.vertex_group_lock", text="Invert Locks")
+        props = pie.operator("object.vertex_group_lock", text="Invert Locks", icon='INVERSE')
         props.action, props.mask = 'INVERT', 'ALL'
 
 
