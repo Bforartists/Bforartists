@@ -76,14 +76,14 @@ class PIE_MT_Manipulator(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator("w.manipulators", text="Rotate", icon='NONE').type = 'ROTATE'
+        pie.operator("w.manipulators", text="Rotate", icon='TRANSFORM_ROTATE').type = 'ROTATE' #BFA - Icon Added
         # 6 - RIGHT
-        pie.operator("w.manipulators", text="Scale", icon='NONE').type = 'SCALE'
+        pie.operator("w.manipulators", text="Scale", icon='TRANSFORM_SCALE').type = 'SCALE' #BFA - Icon Added
         # 2 - BOTTOM
-        props = pie.operator("wm.context_toggle", text="Show/Hide Toggle", icon='NONE')
+        props = pie.operator("wm.context_toggle", text="Show/Hide Toggle", icon='GIZMO') #BFA - Icon Added
         props.data_path = "space_data.show_gizmo_context"
         # 8 - TOP
-        pie.operator("w.manipulators", text="Translate", icon='NONE').type = 'TRANSLATE'
+        pie.operator("w.manipulators", text="Translate", icon='TRANSFORM_MOVE').type = 'TRANSLATE' #BFA - Icon Added
 
 
 classes = (

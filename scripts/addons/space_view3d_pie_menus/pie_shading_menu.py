@@ -31,11 +31,11 @@ class PIE_MT_ShadingView(Menu):
 
         if context.active_object:
             if context.mode == 'EDIT_MESH':
-                pie.operator("MESH_OT_faces_shade_smooth")
-                pie.operator("MESH_OT_faces_shade_flat")
+                pie.operator("MESH_OT_faces_shade_smooth", icon="SHADING_SMOOTH") #BFA - Icon added
+                pie.operator("MESH_OT_faces_shade_flat", icon="SHADING_FLAT") #BFA - Icon added
             else:
-                pie.operator("OBJECT_OT_shade_smooth")
-                pie.operator("OBJECT_OT_shade_flat")
+                pie.operator("OBJECT_OT_shade_smooth", icon="SHADING_SMOOTH") #BFA - Icon added
+                pie.operator("OBJECT_OT_shade_flat", icon="SHADING_FLAT") #BFA - Icon added
 
 
 classes = (
