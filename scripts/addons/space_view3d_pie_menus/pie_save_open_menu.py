@@ -55,17 +55,17 @@ class PIE_MT_SaveOpen(Menu):
         # 7 - TOP - LEFT
         pie.operator("wm.save_mainfile", text="Save", icon='FILE_TICK')
         # 9 - TOP - RIGHT
-        pie.operator("wm.save_as_mainfile", text="Save As...", icon='NONE')
+        pie.operator("wm.save_as_mainfile", text="Save As...", icon='SAVE_AS') #BFA - Icon Added
         # 1 - BOTTOM - LEFT
         if bpy.data.is_saved:
             default_operator_contest = layout.operator_context
             layout.operator_context = 'EXEC_DEFAULT'
             pie.operator(
-                "wm.save_as_mainfile", text="Incremental Save", icon='NONE',
+                "wm.save_as_mainfile", text="Incremental Save", icon='SAVE_AS' #BFA - Icon Added
             ).filepath = self._save_as_mainfile_calc_incremental_name()
             layout.operator_context = default_operator_contest
         else:
-            pie.box().label(text="Incremental Save (unsaved)")
+            pie.box().label(text="Incremental Save (unsaved)", icon='SAVE_AS')
 
         # 3 - BOTTOM - RIGHT
         pie.menu("PIE_MT_recover", text="Recovery Menu", icon='RECOVER_LAST')
