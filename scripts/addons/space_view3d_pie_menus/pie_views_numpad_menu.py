@@ -69,23 +69,23 @@ class PIE_MT_ViewNumpad(Menu):
         rd = scene.render
 
         # 4 - LEFT
-        pie.operator("view3d.view_axis", text="Left", icon='TRIA_LEFT').type = 'LEFT'
+        pie.operator("view3d.view_axis", text="Left", icon='VIEW_LEFT').type = 'LEFT' #BFA - Icon changed
         # 6 - RIGHT
-        pie.operator("view3d.view_axis", text="Right", icon='TRIA_RIGHT').type = 'RIGHT'
+        pie.operator("view3d.view_axis", text="Right", icon='VIEW_RIGHT').type = 'RIGHT' #BFA - Icon changed
         # 2 - BOTTOM
-        pie.operator("view3d.view_axis", text="Bottom", icon='TRIA_DOWN').type = 'BOTTOM'
+        pie.operator("view3d.view_axis", text="Bottom", icon='VIEW_BOTTOM').type = 'BOTTOM'  #BFA - Icon changed
         # 8 - TOP
-        pie.operator("view3d.view_axis", text="Top", icon='TRIA_UP').type = 'TOP'
+        pie.operator("view3d.view_axis", text="Top", icon='VIEW_TOP').type = 'TOP'  #BFA - Icon changed
         # 7 - TOP - LEFT
-        pie.operator("view3d.view_axis", text="Back").type = 'BACK'
+        pie.operator("view3d.view_axis", text="Back", icon='VIEW_BACK').type = 'BACK' #BFA - Icon Added
         # 9 - TOP - RIGHT
-        pie.operator("view3d.view_axis", text="Front").type = 'FRONT'
+        pie.operator("view3d.view_axis", text="Front", icon='VIEW_FRONT').type = 'FRONT' #BFA - Icon Added
         # 1 - BOTTOM - LEFT
         box = pie.split().column()
 
         row = box.row(align=True)
-        row.operator("view3d.view_camera", text="View Cam", icon='HIDE_OFF')
-        row.operator("view3d.camera_to_view", text="Cam To View", icon='NONE')
+        row.operator("view3d.view_camera", text="View Cam", icon='CAMERA_DATA')#BFA - Icon Added
+        row.operator("view3d.camera_to_view", text="Cam To View", icon="ALIGNCAMERA_VIEW")
 
         row = box.row(align=True)
         if context.space_data.lock_camera is False:
@@ -107,16 +107,16 @@ class PIE_MT_ViewNumpad(Menu):
         box = pie.split().column()
 
         row = box.row(align=True)
-        row.operator("view3d.view_all").center = True
-        row.operator("view3d.view_selected", text="Selected")
+        row.operator("view3d.view_all", text="Frame All", icon="VIEWALL").center = True
+        row.operator("view3d.view_selected", text="View Selected", icon='VIEW_SELECTED')
 
         row = box.row(align=True)
-        row.operator("view3d.view_persportho", text="Persp/Ortho")
-        row.operator("view3d.localview", text="Local/Global")
+        row.operator("view3d.view_persportho", text="Persp/Ortho", icon="PERSP_ORTHO")
+        row.operator("view3d.localview", text="Local/Global", icon="VIEW_GLOBAL_LOCAL")
 
         row = box.row(align=True)
-        row.operator("screen.region_quadview", text="Toggle Quad")
-        row.operator("screen.screen_full_area", text="Toggle Full")
+        row.operator("screen.region_quadview", text="Toggle Quad", icon="QUADVIEW")
+        row.operator("screen.screen_full_area", text="Toggle Full", icon="FULLSCREEN_ENTER")
 
 
 classes = (
