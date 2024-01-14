@@ -21,7 +21,10 @@ from mathutils import (
     Vector,
 )
 
-from bpy.app.translations import pgettext_tip as tip_
+from bpy.app.translations import (
+    pgettext_tip as tip_,
+    pgettext_rpt as rpt_,
+)
 
 
 class NodeSetting(PropertyGroup):
@@ -95,7 +98,7 @@ class NodeAddOperator:
             except AttributeError as ex:
                 self.report(
                     {'ERROR_INVALID_INPUT'},
-                    tip_("Node has no attribute %s") % setting.name)
+                    rpt_("Node has no attribute %s") % setting.name)
                 print(str(ex))
                 # Continue despite invalid attribute
 

@@ -1965,11 +1965,23 @@ static void rna_set_raw_property(PropertyDefRNA *dp, PropertyRNA *prop)
   }
 
   if (STREQ(dp->dnatype, "char")) {
-    prop->rawtype = PROP_RAW_CHAR;
+    prop->rawtype = prop->type == PROP_BOOLEAN ? PROP_RAW_BOOLEAN : PROP_RAW_CHAR;
+    prop->flag_internal |= PROP_INTERN_RAW_ACCESS;
+  }
+  else if (STREQ(dp->dnatype, "int8_t")) {
+    prop->rawtype = prop->type == PROP_BOOLEAN ? PROP_RAW_BOOLEAN : PROP_RAW_INT8;
+    prop->flag_internal |= PROP_INTERN_RAW_ACCESS;
+  }
+  else if (STREQ(dp->dnatype, "uchar")) {
+    prop->rawtype = prop->type == PROP_BOOLEAN ? PROP_RAW_BOOLEAN : PROP_RAW_UINT8;
     prop->flag_internal |= PROP_INTERN_RAW_ACCESS;
   }
   else if (STREQ(dp->dnatype, "short")) {
     prop->rawtype = PROP_RAW_SHORT;
+    prop->flag_internal |= PROP_INTERN_RAW_ACCESS;
+  }
+  else if (STREQ(dp->dnatype, "ushort")) {
+    prop->rawtype = PROP_RAW_UINT16;
     prop->flag_internal |= PROP_INTERN_RAW_ACCESS;
   }
   else if (STREQ(dp->dnatype, "int")) {
@@ -1982,6 +1994,14 @@ static void rna_set_raw_property(PropertyDefRNA *dp, PropertyRNA *prop)
   }
   else if (STREQ(dp->dnatype, "double")) {
     prop->rawtype = PROP_RAW_DOUBLE;
+    prop->flag_internal |= PROP_INTERN_RAW_ACCESS;
+  }
+  else if (STREQ(dp->dnatype, "int64_t")) {
+    prop->rawtype = PROP_RAW_INT64;
+    prop->flag_internal |= PROP_INTERN_RAW_ACCESS;
+  }
+  else if (STREQ(dp->dnatype, "uint64_t")) {
+    prop->rawtype = PROP_RAW_UINT64;
     prop->flag_internal |= PROP_INTERN_RAW_ACCESS;
   }
 }
