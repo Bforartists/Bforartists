@@ -11,6 +11,7 @@
 
 #pragma BLENDER_REQUIRE(eevee_lightprobe_eval_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_bxdf_sampling_lib.glsl)
+#pragma BLENDER_REQUIRE(eevee_colorspace_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_sampling_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_gbuffer_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_ray_types_lib.glsl)
@@ -35,14 +36,9 @@ void main()
   ivec2 texel_fullres = texel * uniform_buf.raytrace.resolution_scale +
                         uniform_buf.raytrace.resolution_bias;
 
-#ifndef GPU_METAL
-  /* TODO(fclem): Support specialization on OpenGL and Vulkan. */
-  int closure_index = uniform_buf.raytrace.closure_index;
-#endif
-
   uint gbuf_header = texelFetch(gbuf_header_tx, texel_fullres, 0).r;
   GBufferReader gbuf = gbuffer_read_header_closure_types(gbuf_header);
-  uint closure_type = gbuffer_closure_get(gbuf, closure_index).type;
+  ClosureType closure_type = gbuffer_closure_get(gbuf, closure_index).type;
 
   if ((closure_type == CLOSURE_BSDF_TRANSLUCENT_ID) ||
       (closure_type == CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID))
@@ -110,8 +106,7 @@ void main()
     hit.time = 10000.0;
   }
 
-  float luma = max(1e-8, reduce_max(radiance));
-  radiance *= 1.0 - max(0.0, luma - uniform_buf.raytrace.brightness_clamp) / luma;
+  radiance = colorspace_brightness_clamp_max(radiance, uniform_buf.raytrace.brightness_clamp);
 
   imageStore(ray_time_img, texel, vec4(hit.time));
   imageStore(ray_radiance_img, texel, vec4(radiance, 0.0));
