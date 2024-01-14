@@ -11,7 +11,7 @@ from bpy.types import (
 from bpy.app.translations import (
     contexts as i18n_contexts,
     pgettext_iface as iface_,
-    pgettext_tip as tip_,
+    pgettext_rpt as rpt_,
 )
 from bl_ui.utils import PresetPanel
 
@@ -266,6 +266,7 @@ class USERPREF_PT_interface_translation(InterfacePanel, CenterAlignMixIn, Panel)
         col.use_property_split = False #BFA - Left align checkboxes
         col.prop(view, "use_translate_tooltips", text="Tooltips")
         col.prop(view, "use_translate_interface", text="Interface")
+        col.prop(view, "use_translate_reports", text="Reports")
         col.prop(view, "use_translate_new_dataname", text="New Data")
 
 
@@ -2346,11 +2347,11 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                     if info["description"]:
                         split = colsub.row().split(factor=0.15)
                         split.label(text="Description:")
-                        split.label(text=tip_(info["description"]))
+                        split.label(text=iface_(info["description"]))
                     if info["location"]:
                         split = colsub.row().split(factor=0.15)
                         split.label(text="Location:")
-                        split.label(text=tip_(info["location"]))
+                        split.label(text=iface_(info["location"]))
                     if mod:
                         split = colsub.row().split(factor=0.15)
                         split.label(text="File:")
@@ -2366,7 +2367,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                     if info["warning"]:
                         split = colsub.row().split(factor=0.15)
                         split.label(text="Warning:")
-                        split.label(text="  " + info["warning"], icon='ERROR')
+                        split.label(text="  " + iface_(info["warning"]), icon='ERROR')
 
                     user_addon = USERPREF_PT_addons.is_user_addon(mod, user_addon_paths)
                     if info["doc_url"] or info.get("tracker_url"):
@@ -2477,7 +2478,7 @@ class StudioLightPanelMixin:
             layout.label(text=self.get_error_message())
 
     def get_error_message(self):
-        return tip_("No custom %s configured") % self.bl_label
+        return rpt_("No custom %s configured") % self.bl_label
 
     def draw_studio_light(self, layout, studio_light):
         box = layout.box()
@@ -2505,7 +2506,7 @@ class USERPREF_PT_studiolight_matcaps(StudioLightPanel, StudioLightPanelMixin, P
         layout.separator()
 
     def get_error_message(self):
-        return tip_("No custom MatCaps configured")
+        return rpt_("No custom MatCaps configured")
 
 
 class USERPREF_PT_studiolight_world(StudioLightPanel, StudioLightPanelMixin, Panel):
@@ -2518,7 +2519,7 @@ class USERPREF_PT_studiolight_world(StudioLightPanel, StudioLightPanelMixin, Pan
         layout.separator()
 
     def get_error_message(self):
-        return tip_("No custom HDRIs configured")
+        return rpt_("No custom HDRIs configured")
 
 
 class USERPREF_PT_studiolight_lights(StudioLightPanel, StudioLightPanelMixin, Panel):
@@ -2533,7 +2534,7 @@ class USERPREF_PT_studiolight_lights(StudioLightPanel, StudioLightPanelMixin, Pa
         layout.separator()
 
     def get_error_message(self):
-        return tip_("No custom Studio Lights configured")
+        return rpt_("No custom Studio Lights configured")
 
 
 class USERPREF_PT_studiolight_light_editor(StudioLightPanel, Panel):

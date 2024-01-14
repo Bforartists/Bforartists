@@ -646,10 +646,10 @@ static void sequencer_slip_update_header(Scene *scene, ScrArea *area, SlipData *
     if (hasNumInput(&data->num_input)) {
       char num_str[NUM_STR_REP_LEN];
       outputNumInput(&data->num_input, num_str, &scene->unit);
-      SNPRINTF(msg, TIP_("Slip offset: %s"), num_str);
+      SNPRINTF(msg, RPT_("Slip offset: %s"), num_str);
     }
     else {
-      SNPRINTF(msg, TIP_("Slip offset: %d"), offset);
+      SNPRINTF(msg, RPT_("Slip offset: %d"), offset);
     }
   }
 
@@ -1703,7 +1703,7 @@ static int sequencer_delete_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  if (sequencer_retiming_mode_is_active(C)) {
+  if (RNA_boolean_get(op->ptr, "use_retiming_mode")) {
     sequencer_retiming_key_remove_exec(C, op);
   }
 
@@ -1723,25 +1723,42 @@ static int sequencer_delete_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/* Not used by BFA */
-//static int sequencer_delete_invoke(bContext* C, wmOperator* op, const wmEvent* event)
-//{
-//  Scene* scene = CTX_data_scene(C);
-//  ListBase* markers = &scene->markers;
-//
-//  if (!BLI_listbase_is_empty(markers)) {
-//    ARegion* region = CTX_wm_region(C);
-//    if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
-//      /* Bounding box of 30 pixels is used for markers shortcuts,
-//       * prevent conflict with markers shortcuts here. */
-//      if (event->mval[1] <= 30) {
-//        return OPERATOR_PASS_THROUGH;
-//      }
-//    }
-//  }
-//
-//  return sequencer_delete_exec(C, op);
-//}
+/* bfa - [[maybe_unused]] */
+[[maybe_unused]] static int sequencer_delete_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+{
+  Scene *scene = CTX_data_scene(C);
+  ListBase *markers = &scene->markers;
+
+  if (!BLI_listbase_is_empty(markers)) {
+    ARegion *region = CTX_wm_region(C);
+    if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
+      /* Bounding box of 30 pixels is used for markers shortcuts,
+       * prevent conflict with markers shortcuts here. */
+      if (event->mval[1] <= 30) {
+        return OPERATOR_PASS_THROUGH;
+      }
+    }
+  }
+
+  if (sequencer_retiming_mode_is_active(C)) {
+    RNA_boolean_set(op->ptr, "use_retiming_mode", true);
+  }
+
+  return sequencer_delete_exec(C, op);
+}
+
+static bool sequencer_delete_poll_property(const bContext * /* C */,
+                                           wmOperator *op,
+                                           const PropertyRNA *prop)
+{
+  const char *prop_id = RNA_property_identifier(prop);
+
+  if (STREQ(prop_id, "delete_data") && RNA_boolean_get(op->ptr, "use_retiming_mode")) {
+    return false;
+  }
+
+  return true;
+}
 
 void SEQUENCER_OT_delete(wmOperatorType *ot)
 {
@@ -1755,6 +1772,7 @@ void SEQUENCER_OT_delete(wmOperatorType *ot)
   /*ot->invoke = sequencer_delete_invoke;*/ /*bfa - turned this dialog off*/
   ot->exec = sequencer_delete_exec;
   ot->poll = sequencer_edit_poll;
+  ot->poll_property = sequencer_delete_poll_property;
 
   /* Flags. */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1766,6 +1784,13 @@ void SEQUENCER_OT_delete(wmOperatorType *ot)
                              "Delete Data",
                              "After removing the Strip, delete the associated data also");
   RNA_def_property_flag(ot->prop, PROP_SKIP_SAVE);
+
+  ot->prop = RNA_def_boolean(ot->srna,
+                             "use_retiming_mode",
+                             false,
+                             "Use Retiming Data",
+                             "Operate on retiming data instead of strips");
+  RNA_def_property_flag(ot->prop, PROP_HIDDEN);
 }
 
 /** \} */
