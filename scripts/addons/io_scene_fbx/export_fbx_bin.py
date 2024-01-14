@@ -3495,31 +3495,35 @@ def save_single(operator, scene, depsgraph, filepath="",
     # Generate some data about exported scene...
     scene_data = fbx_data_from_scene(scene, depsgraph, settings)
 
-    root = elem_empty(None, b"")  # Root element has no id, as it is not saved per se!
+    # Enable multithreaded array compression in FBXElem and wait until all threads are done before exiting the context
+    # manager.
+    with encode_bin.FBXElem.enable_multithreading_cm():
+        # Writing elements into an FBX hierarchy can now begin.
+        root = elem_empty(None, b"")  # Root element has no id, as it is not saved per se!
 
-    # Mostly FBXHeaderExtension and GlobalSettings.
-    fbx_header_elements(root, scene_data)
+        # Mostly FBXHeaderExtension and GlobalSettings.
+        fbx_header_elements(root, scene_data)
 
-    # Documents and References are pretty much void currently.
-    fbx_documents_elements(root, scene_data)
-    fbx_references_elements(root, scene_data)
+        # Documents and References are pretty much void currently.
+        fbx_documents_elements(root, scene_data)
+        fbx_references_elements(root, scene_data)
 
-    # Templates definitions.
-    fbx_definitions_elements(root, scene_data)
+        # Templates definitions.
+        fbx_definitions_elements(root, scene_data)
 
-    # Actual data.
-    fbx_objects_elements(root, scene_data)
+        # Actual data.
+        fbx_objects_elements(root, scene_data)
 
-    # How data are inter-connected.
-    fbx_connections_elements(root, scene_data)
+        # How data are inter-connected.
+        fbx_connections_elements(root, scene_data)
 
-    # Animation.
-    fbx_takes_elements(root, scene_data)
+        # Animation.
+        fbx_takes_elements(root, scene_data)
 
-    # Cleanup!
-    fbx_scene_data_cleanup(scene_data)
+        # Cleanup!
+        fbx_scene_data_cleanup(scene_data)
 
-    # And we are down, we can write the whole thing!
+    # And we are done, all multithreaded tasks are complete, and we can write the whole thing to file!
     encode_bin.write(filepath, root, FBX_VERSION)
 
     # Clear cached ObjectWrappers!
