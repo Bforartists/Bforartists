@@ -129,7 +129,7 @@ static file_tooltip_data *file_tooltip_data_create(const SpaceFile *sfile,
   return data;
 }
 
-static void file_draw_tooltip_custom_func(bContext * /*C*/, struct uiTooltipData *tip, void *argN)
+static void file_draw_tooltip_custom_func(bContext * /*C*/, uiTooltipData *tip, void *argN)
 {
   file_tooltip_data *file_data = static_cast<file_tooltip_data *>(argN);
   const SpaceFile *sfile = file_data->sfile;
@@ -287,7 +287,7 @@ static void file_draw_tooltip_custom_func(bContext * /*C*/, struct uiTooltipData
     bool is_today, is_yesterday;
     std::string day_string = ("");
     BLI_filelist_entry_datetime_to_string(
-        NULL, file->time, false, time_st, date_st, &is_today, &is_yesterday);
+        nullptr, file->time, false, time_st, date_st, &is_today, &is_yesterday);
     if (is_today || is_yesterday) {
       day_string = (is_today ? N_("Today") : N_("Yesterday")) + std::string(" ");
     }
@@ -303,7 +303,7 @@ static void file_draw_tooltip_custom_func(bContext * /*C*/, struct uiTooltipData
 
     if (!(file->typeflag & FILE_TYPE_DIR) && file->size > 0) {
       char size[16];
-      BLI_filelist_entry_size_to_string(NULL, file->size, false, size);
+      BLI_filelist_entry_size_to_string(nullptr, file->size, false, size);
       if (file->size < 10000) {
         char size_full[16];
         BLI_str_format_uint64_grouped(size_full, file->size);
@@ -1456,7 +1456,7 @@ static void file_draw_invalid_asset_library_hint(const bContext *C,
   int sy = v2d->tot.ymax;
 
   {
-    const char *message = TIP_("Path to asset library does not exist:");
+    const char *message = RPT_("Path to asset library does not exist:");
     file_draw_string_multiline(sx, sy, message, width, line_height, text_col, nullptr, &sy);
 
     sy -= line_height;
@@ -1469,7 +1469,7 @@ static void file_draw_invalid_asset_library_hint(const bContext *C,
   {
     UI_icon_draw(sx, sy - UI_UNIT_Y, ICON_INFO);
 
-    const char *suggestion = TIP_(
+    const char *suggestion = RPT_(
         "Asset Libraries are local directories that can contain .blend files with assets inside.\n"
         "Manage Asset Libraries from the File Paths section in Preferences");
     file_draw_string_multiline(
@@ -1513,7 +1513,7 @@ static void file_draw_invalid_library_hint(const bContext * /*C*/,
   int sy = v2d->tot.ymax;
 
   {
-    const char *message = TIP_("Unreadable Blender library file:");
+    const char *message = RPT_("Unreadable Blender library file:");
     file_draw_string_multiline(sx, sy, message, width, line_height, text_col, nullptr, &sy);
 
     sy -= line_height;
@@ -1537,7 +1537,7 @@ static void file_draw_invalid_library_hint(const bContext * /*C*/,
 
     file_draw_string_multiline(sx + UI_UNIT_X,
                                sy,
-                               TIP_(report->message),
+                               RPT_(report->message),
                                width - UI_UNIT_X,
                                line_height,
                                text_col,

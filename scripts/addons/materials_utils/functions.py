@@ -16,7 +16,7 @@ def mu_assign_material_slots(object, material_list):
     active_object = bpy.context.active_object
     bpy.context.view_layer.objects.active = object
 
-    for s in object.material_slots:
+    for _ in range(len(object.material_slots)):
         bpy.ops.object.material_slot_remove()
 
     # re-add them and assign material
