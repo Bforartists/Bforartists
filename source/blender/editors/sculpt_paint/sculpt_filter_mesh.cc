@@ -529,9 +529,6 @@ static void mesh_filter_task(Object *ob,
       add_v3_v3v3(final_pos, orig_co, disp);
     }
     copy_v3_v3(vd.co, final_pos);
-    if (vd.is_mesh) {
-      BKE_pbvh_vert_tag_update_normal(ss->pbvh, vd.vertex);
-    }
   }
   BKE_pbvh_vertex_iter_end;
 
@@ -717,13 +714,13 @@ static void sculpt_mesh_update_status_bar(bContext *C, wmOperator *op)
       op->type, (_id), true, UI_MAX_SHORTCUT_STR, &available_len, &p)
 
   SNPRINTF(header,
-           TIP_("%s: Confirm, %s: Cancel"),
+           RPT_("%s: Confirm, %s: Cancel"),
            WM_MODALKEY(FILTER_MESH_MODAL_CONFIRM),
            WM_MODALKEY(FILTER_MESH_MODAL_CANCEL));
 
 #undef WM_MODALKEY
 
-  ED_workspace_status_text(C, TIP_(header));
+  ED_workspace_status_text(C, RPT_(header));
 }
 
 static void sculpt_mesh_filter_apply(bContext *C, wmOperator *op)

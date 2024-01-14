@@ -164,12 +164,19 @@ class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
 
     def draw(self, context):
         layout = self.layout
+        st = context.space_data
 
         DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
         layout.separator()
         DopesheetFilterPopoverBase.draw_search_filters(context, layout)
         layout.separator()
         DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
+
+        if st.mode == 'DRIVERS':
+            layout.separator()
+            col = layout.column(align=True)
+            col.label(text="Drivers:")
+            col.prop(st.dopesheet, "show_driver_fallback_as_error")
 
 
 class GRAPH_PT_properties_view_options(Panel):
