@@ -85,7 +85,7 @@ struct GBufferReader {
 /* -------------------------------------------------------------------- */
 /** \name Load / Store macros
  *
- * This allows for writting unit tests that read and write during the same shader invocation.
+ * This allows for writing unit tests that read and write during the same shader invocation.
  * \{ */
 
 #ifdef GBUFFER_LOAD
@@ -666,7 +666,7 @@ GBufferWriter gbuffer_pack(GBufferDataUndetermined data_in)
 
   if (has_diffuse) {
     if (has_sss) {
-      /* Subsurface need to be first to be outputed in first lighting texture. */
+      /* Subsurface need to be first to be outputted in first lighting texture. */
       gbuffer_closure_subsurface_pack(gbuf, data_in.diffuse);
     }
     else {
@@ -692,7 +692,7 @@ GBufferWriter gbuffer_pack(GBufferDataUndetermined data_in)
     }
   }
 
-  /* TODO(fclem): Allow misxing of translucent and refraction. */
+  /* TODO(@fclem): Allow mixing of translucent and refraction. */
   if (has_translucent && !has_refraction) {
     gbuffer_closure_translucent_pack(gbuf, data_in.translucent);
   }
@@ -703,7 +703,7 @@ GBufferWriter gbuffer_pack(GBufferDataUndetermined data_in)
     gbuffer_append_normal(gbuf, data_in.surface_N);
   }
 
-  if (has_sss || has_translucent) {
+  if (has_sss || has_translucent || has_refraction) {
     gbuffer_additional_info_pack(gbuf, data_in.thickness, data_in.object_id);
   }
 
@@ -711,14 +711,14 @@ GBufferWriter gbuffer_pack(GBufferDataUndetermined data_in)
 }
 
 /* Return the number of closure as encoded in the give header value. */
-uint gbuffer_closure_count(uint header)
+int gbuffer_closure_count(uint header)
 {
   uvec4 closure_types = (uvec4(header) >> uvec4(0u, 4u, 8u, 12u)) & 15u;
 
   if (closure_types.x == GBUF_METAL_CLEARCOAT) {
-    return 2u;
+    return 2;
   }
-  return reduce_add(vec4(not(equal(closure_types, uvec4(0u)))));
+  return reduce_add(ivec4(not(equal(closure_types, uvec4(0u)))));
 }
 
 GBufferReader gbuffer_read_header_closure_types(uint header)
@@ -728,7 +728,7 @@ GBufferReader gbuffer_read_header_closure_types(uint header)
 
   for (int layer = 0; layer < GBUFFER_LAYER_MAX; layer++) {
     GBufferMode mode = gbuffer_header_unpack(header, layer);
-    int closure_type = CLOSURE_NONE_ID;
+    ClosureType closure_type = CLOSURE_NONE_ID;
     switch (mode) {
       case GBUF_DIFFUSE:
         closure_type = CLOSURE_BSDF_DIFFUSE_ID;
@@ -814,6 +814,7 @@ GBufferReader gbuffer_read(samplerGBufferHeader header_tx,
       case GBUF_REFRACTION:
         gbuffer_closure_refraction_load(gbuf, layer, closure_tx, normal_tx);
         gbuf.closure_count++;
+        has_additional_data = true;
         break;
       case GBUF_REFLECTION_COLORLESS:
         gbuffer_closure_reflection_colorless_load(gbuf, layer, closure_tx, normal_tx);
@@ -822,6 +823,7 @@ GBufferReader gbuffer_read(samplerGBufferHeader header_tx,
       case GBUF_REFRACTION_COLORLESS:
         gbuffer_closure_refraction_colorless_load(gbuf, layer, closure_tx, normal_tx);
         gbuf.closure_count++;
+        has_additional_data = true;
         break;
     }
   }

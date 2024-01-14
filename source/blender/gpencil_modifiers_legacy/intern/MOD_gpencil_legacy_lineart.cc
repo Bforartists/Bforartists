@@ -535,7 +535,7 @@ static void options_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetEnabled(layout, !is_baked);
 
   if (use_cache && !is_first) {
-    uiItemL(layout, TIP_("Cached from the first line art modifier"), ICON_INFO);
+    uiItemL(layout, RPT_("Cached from the first line art modifier"), ICON_INFO);
     return;
   }
 
@@ -637,7 +637,7 @@ static void occlusion_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetEnabled(layout, !is_baked);
 
   if (!show_in_front) {
-    uiItemL(layout, TIP_("Object is not in front"), ICON_INFO);
+    uiItemL(layout, RPT_("Object is not in front"), ICON_INFO);
   }
 
   layout = uiLayoutColumn(layout, false);
@@ -807,7 +807,7 @@ static void face_mark_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetEnabled(layout, !is_baked);
 
   if (use_cache && !is_first) {
-    uiItemL(layout, TIP_("Cached from the first line art modifier"), ICON_INFO);
+    uiItemL(layout, RPT_("Cached from the first line art modifier"), ICON_INFO);
     return;
   }
 
@@ -855,7 +855,7 @@ static void chaining_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetEnabled(layout, !is_baked);
 
   if (use_cache && !is_first) {
-    uiItemL(layout, TIP_("Cached from the first line art modifier"), ICON_INFO);
+    uiItemL(layout, RPT_("Cached from the first line art modifier"), ICON_INFO);
     return;
   }
 
@@ -935,7 +935,7 @@ static void vgroup_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetEnabled(layout, !is_baked);
 
   if (use_cache && !is_first) {
-    uiItemL(layout, TIP_("Cached from the first line art modifier"), ICON_INFO);
+    uiItemL(layout, RPT_("Cached from the first line art modifier"), ICON_INFO);
     return;
   }
 
@@ -976,7 +976,7 @@ static void bake_panel_draw(const bContext * /*C*/, Panel *panel)
   if (is_baked) {
     uiLayout *col = uiLayoutColumn(layout, false);
     uiLayoutSetPropSep(col, false);
-    uiItemL(col, TIP_("Modifier has baked data"), ICON_NONE);
+    uiItemL(col, RPT_("Modifier has baked data"), ICON_NONE);
     uiItemR(
         col, ptr, "is_baked", UI_ITEM_R_TOGGLE, IFACE_("Continue Without Clearing"), ICON_NONE);
   }
@@ -1015,7 +1015,7 @@ static void composition_panel_draw(const bContext * /*C*/, Panel *panel)
   /* ------------ end bfa */
 
   if (show_in_front) {
-    uiItemL(layout, TIP_("Object is shown in front"), ICON_ERROR);
+    uiItemL(layout, RPT_("Object is shown in front"), ICON_ERROR);
   }
 
   col = uiLayoutColumn(layout, false);
