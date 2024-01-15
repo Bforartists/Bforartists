@@ -1172,15 +1172,27 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
   return (changed) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
+/*bfa - descriptions*/
+static std::string ANIM_OT_keyframe_insert_button_get_description(struct bContext * /*C*/,
+                                                            struct wmOperatorType * /*op*/,
+                                                            struct PointerRNA *values)
+{
+  if (RNA_boolean_get(values, "all")) {
+    return "Insert a keyframe for all UI elements of the property";
+  }
+  return "";
+}
+
 void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Insert Keyframe (Buttons)";
   ot->idname = "ANIM_OT_keyframe_insert_button";
-  ot->description = "Insert a keyframe for current UI-active property";
+  ot->description = "Insert a keyframe for the single property";
 
   /* callbacks */
   ot->exec = insert_key_button_exec;
+  ot->get_description = ANIM_OT_keyframe_insert_button_get_description; /*bfa - descriptions*/
   ot->poll = modify_key_op_poll;
 
   /* flags */
