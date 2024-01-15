@@ -1189,7 +1189,7 @@ class NODE_PT_node_tree_interface(Panel):
         split = layout.row()
         split.template_node_tree_interface(tree.interface)
 
-        ops_col = split.column(align=False)
+        ops_col = split.column(align=True)
         ops_col.alignment = 'RIGHT'
         #ops_col.operator_menu_enum("node.interface_item_new", "item_type", icon='ADD', text="") # bfa - keep as reminder. Blender might add more content!
         ops_col.popover(panel="NODE_PT_node_tree_interface_new_input", text="")
@@ -1197,6 +1197,11 @@ class NODE_PT_node_tree_interface(Panel):
         ops_col.separator()
         ops_col.operator("node.interface_item_duplicate", text='', icon='DUPLICATE')
         ops_col.operator("node.interface_item_remove", icon='REMOVE', text="")
+
+        ops_col.separator()
+
+        ops_col.operator("node.interface_item_move", icon='TRIA_UP', text="").direction = "UP" # BFA operator for GUI buttons to re-order
+        ops_col.operator("node.interface_item_move", icon='TRIA_DOWN', text="").direction = "DOWN" # BFA operator for GUI buttons to re-order
 
         active_item = tree.interface.active
         if active_item is not None:
