@@ -363,14 +363,24 @@ class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):
 
                 elif bg.source == 'MOVIE_CLIP':
                     box.use_property_split = False
-                    box.prop(bg, "use_camera_clip", text="Active Clip")
+
+                    row = box.row()
+                    row.use_property_split = False
+                    split = row.split(factor = 0.5)
+                    row = split.row()
+                    row.prop(bg, "use_camera_clip", text="Active Clip")
+                    row = split.row()
+                    if not bg.use_camera_clip:
+                        row.label(icon='DISCLOSURE_TRI_DOWN')
+                    else:
+                        row.label(icon='DISCLOSURE_TRI_RIGHT')
 
                     column = box.column()
-                    column.active = not bg.use_camera_clip
-                    column.template_ID(bg, "clip", open="clip.open")
+                    if not bg.use_camera_clip:
+                        column.template_ID(bg, "clip", open="clip.open")
 
-                    if bg.clip:
-                        column.template_movieclip(bg, "clip", compact=True)
+                        if bg.clip:
+                            column.template_movieclip(bg, "clip", compact=True)
 
                     if bg.use_camera_clip or bg.clip:
                         has_bg = True
