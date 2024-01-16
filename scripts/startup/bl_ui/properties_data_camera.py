@@ -396,6 +396,7 @@ class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):
                     row.prop(bg, "offset")
 
                     col = box.column()
+                    col.use_property_split = True
                     col.prop(bg, "rotation")
                     col.prop(bg, "scale")
 
