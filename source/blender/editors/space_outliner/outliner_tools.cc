@@ -3693,7 +3693,7 @@ static const EnumPropertyItem *outliner_data_op_sets_enum_item_fn(bContext *C,
       {0, nullptr, 0, nullptr, nullptr}};
 
   static const EnumPropertyItem optype_sel_linked[] = {
-      {OL_DOP_SELECT_LINKED, "SELECT_LINKED", 0, "Select Linked", ""},
+      {OL_DOP_SELECT_LINKED, "SELECT_LINKED", ICON_LINKED, "Select Linked", ""},
       {0, nullptr, 0, nullptr, nullptr}};
 
   if (tselem->type == TSE_RNA_STRUCT) {
