@@ -3833,13 +3833,13 @@ static void rna_def_modifier_gpencillineart(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "edge_types", LRT_EDGE_FLAG_LIGHT_CONTOUR);
   RNA_def_property_ui_text(prop,
                            "Use Light Contour",
-                           "Generate light/shadow separation lines from a reference light object");
+                           "Generate light/shadow separation lines from a reference light object\nRequires a light object, see Light Reference Panel below");
   RNA_def_property_update(prop, 0, "rna_GpencilModifier_update");
 
   prop = RNA_def_property(srna, "use_shadow", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "edge_types", LRT_EDGE_FLAG_PROJECTED_SHADOW);
   RNA_def_property_ui_text(
-      prop, "Use Shadow", "Project contour lines using a light source object");
+      prop, "Use Shadow", "Project contour lines using a light source object\nRequires a light object, see Light Reference Panel below");
   RNA_def_property_update(prop, 0, "rna_GpencilModifier_update");
 
   prop = RNA_def_property(srna, "shadow_region_filtering", PROP_ENUM, PROP_NONE);
