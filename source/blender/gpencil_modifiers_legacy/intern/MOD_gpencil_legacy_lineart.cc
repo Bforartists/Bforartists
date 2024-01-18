@@ -437,13 +437,16 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetActive(entry, has_light);
 
   sub = uiLayoutRow(entry, false);
+  uiItemL(sub, TIP_("Light Object"), ICON_NONE);
+  sub = uiLayoutRow(entry, false);
+  uiItemS(sub); /*bfa*/
   uiItemR(sub, ptr, "use_light_contour", UI_ITEM_NONE, IFACE_("Light Contour"), ICON_NONE);
 
-  uiItemR(entry,
+  uiItemR(sub,
           ptr,
           "use_shadow",
           UI_ITEM_NONE,
-          CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, "Cast Shadow"),
+          CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, "Cast Shadow"),/*bfa - changed to sub so */
           ICON_NONE);
 
   /*------------------- bfa - original props */
