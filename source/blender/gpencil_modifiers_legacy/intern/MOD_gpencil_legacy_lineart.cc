@@ -342,6 +342,8 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *layout = panel->layout;
   uiLayout *row, *col; /*bfa, added *col, *row*/
+  uiLayout *sub = uiLayoutRow(layout, false);
+
   PointerRNA ob_ptr;
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, &ob_ptr);
 
@@ -356,21 +358,15 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayout *sub = uiLayoutRow(layout, false);
-  uiLayoutSetActive(sub, has_light);
-  uiItemR(sub,
-          ptr,
-          "shadow_region_filtering",
-          UI_ITEM_NONE,
-          IFACE_("Illumination Filtering"),
-          ICON_NONE);
-
   /*bfa - original prop*/
   // uiLayout *col = uiLayoutColumn(layout, true);
   col = uiLayoutColumn(layout, true);
 
+  uiItemL(sub, TIP_("Create"), ICON_NONE); /*bfa*/
+
   sub = uiLayoutRow(col, false);
-  uiItemR(sub, ptr, "use_contour", UI_ITEM_NONE, "", ICON_NONE);
+  uiLayoutSetPropSep(sub, false); /* bfa - use_property_split = False */
+  uiItemR(sub, ptr, "use_contour", UI_ITEM_NONE, "Contour", ICON_NONE);
 
   uiLayout *entry = uiLayoutRow(sub, true);
 
@@ -439,7 +435,7 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
   sub = uiLayoutRow(entry, false);
   uiItemL(sub, TIP_("Light Object"), ICON_NONE);
   sub = uiLayoutRow(entry, false);
-  uiItemS(sub); /*bfa*/
+  uiItemS(sub); /*bfa - indent*/
   uiItemR(sub, ptr, "use_light_contour", UI_ITEM_NONE, IFACE_("Light Contour"), ICON_NONE);
 
   uiItemR(sub,
@@ -447,6 +443,16 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
           "use_shadow",
           UI_ITEM_NONE,
           CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, "Cast Shadow"),/*bfa - changed to sub so */
+          ICON_NONE);
+  /*bfa - moved to here*/
+  sub = uiLayoutRow(layout, false);
+  uiItemS(sub); /*bfa - indent*/
+  uiLayoutSetActive(sub, has_light);
+  uiItemR(sub,
+          ptr,
+          "shadow_region_filtering",
+          UI_ITEM_NONE,
+          IFACE_("Illumination Filtering"),
           ICON_NONE);
 
   /*------------------- bfa - original props */
