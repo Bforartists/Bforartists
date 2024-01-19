@@ -365,11 +365,11 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemL(sub, TIP_("Create"), ICON_NONE); /*bfa*/
 
   sub = uiLayoutRow(col, false);
+  uiItemS(sub);                   /*bfa - indent*/
   uiLayoutSetPropSep(sub, false); /* bfa - use_property_split = False */
   uiItemR(sub, ptr, "use_contour", UI_ITEM_NONE, "Contour", ICON_NONE);
 
   uiLayout *entry = uiLayoutRow(sub, true);
-
   uiLayoutSetActive(entry, RNA_boolean_get(ptr, "use_contour"));
   uiLayoutSetPropSep(entry, false); /* bfa - use_property_split = False */
   uiItemR(entry, ptr, "silhouette_filtering", UI_ITEM_NONE, "", ICON_NONE);
@@ -388,7 +388,7 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
     //uiItemR(sub, ptr, "use_crease", UI_ITEM_NONE, "", ICON_NONE);
     //uiItemR(sub, ptr, "crease_threshold", UI_ITEM_R_SLIDER | UI_ITEM_R_FORCE_BLANK_DECORATE, nullptr, ICON_NONE);
 
-    sub = uiLayoutRow(col, true);
+    sub = uiLayoutRow(col, false);
     uiLayoutSetPropSep(sub, false); /* bfa - use_property_split = False */
     uiItemS(sub);
     uiItemR(sub, ptr, "use_crease", UI_ITEM_NONE, IFACE_("Crease"), ICON_NONE);
@@ -403,25 +403,25 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(col, ptr, "use_edge_mark", UI_ITEM_NONE, IFACE_("Edge Marks"), ICON_NONE);
   // uiItemR(col, ptr, "use_loose", UI_ITEM_NONE, IFACE_("Loose"), ICON_NONE);
 
-  row = uiLayoutRow(col, true);
+  row = uiLayoutRow(col, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
   uiItemR(row, ptr, "use_material", UI_ITEM_NONE, IFACE_("Material Borders"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_material", 0); /*bfa - decorator*/
 
-  row = uiLayoutRow(col, true);
+  row = uiLayoutRow(col, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
   uiItemR(row, ptr, "use_intersection", UI_ITEM_NONE, IFACE_("Intersections"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_intersection", 0); /*bfa - decorator*/
 
-  row = uiLayoutRow(col, true);
+  row = uiLayoutRow(col, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
   uiItemR(row, ptr, "use_edge_mark", UI_ITEM_NONE, IFACE_("Edge Marks"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_mark", 0); /*bfa - decorator*/
 
-  row = uiLayoutRow(col, true);
+  row = uiLayoutRow(col, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
   uiItemR(row, ptr, "use_loose", UI_ITEM_NONE, IFACE_("Loose"), ICON_NONE);
@@ -429,7 +429,7 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
   /* ------------ end bfa */
 
   uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-  entry = uiLayoutColumn(col, false);
+  entry = uiLayoutColumn(col, true); /*bfa - align*/
   uiLayoutSetActive(entry, has_light);
 
   sub = uiLayoutRow(entry, false);
@@ -438,22 +438,20 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemS(sub); /*bfa - indent*/
   uiItemR(sub, ptr, "use_light_contour", UI_ITEM_NONE, IFACE_("Light Contour"), ICON_NONE);
 
+  sub = uiLayoutRow(entry, false);
+  uiItemS(sub); /*bfa - indent*/
   uiItemR(sub,
           ptr,
           "use_shadow",
           UI_ITEM_NONE,
           CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, "Cast Shadow"),/*bfa - changed to sub so */
           ICON_NONE);
+
   /*bfa - moved to here*/
   sub = uiLayoutRow(layout, false);
   uiItemS(sub); /*bfa - indent*/
   uiLayoutSetActive(sub, has_light);
-  uiItemR(sub,
-          ptr,
-          "shadow_region_filtering",
-          UI_ITEM_NONE,
-          IFACE_("Illumination Filtering"),
-          ICON_NONE);
+  uiItemR(sub, ptr, "shadow_region_filtering", UI_ITEM_NONE, IFACE_("Illumination Filtering"), ICON_NONE);
 
   /*------------------- bfa - original props */
   // uiItemL(layout, IFACE_("Options"), ICON_NONE);
