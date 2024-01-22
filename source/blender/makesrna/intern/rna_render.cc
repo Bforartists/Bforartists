@@ -92,8 +92,8 @@ const EnumPropertyItem rna_enum_bake_pass_type_items[] = {
 
 #  include "GPU_capabilities.h"
 #  include "GPU_shader.h"
-#  include "IMB_colormanagement.h"
-#  include "IMB_imbuf_types.h"
+#  include "IMB_colormanagement.hh"
+#  include "IMB_imbuf_types.hh"
 
 #  include "DEG_depsgraph_query.hh"
 
@@ -348,6 +348,13 @@ static StructRNA *rna_RenderEngine_register(Main *bmain,
   et = static_cast<RenderEngineType *>(
       BLI_findstring(&R_engines, dummy_et.idname, offsetof(RenderEngineType, idname)));
   if (et) {
+    BKE_reportf(reports,
+                RPT_INFO,
+                "%s '%s', bl_idname '%s' has been registered before, unregistering previous",
+                error_prefix,
+                identifier,
+                dummy_et.idname);
+
     StructRNA *srna = et->rna_ext.srna;
     if (!(srna && rna_RenderEngine_unregister(bmain, srna))) {
       BKE_reportf(reports,

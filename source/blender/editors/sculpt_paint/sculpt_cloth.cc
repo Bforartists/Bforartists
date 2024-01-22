@@ -36,6 +36,8 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+#include "ED_sculpt.hh"
+
 #include "sculpt_intern.hh"
 
 #include "RNA_access.hh"
@@ -79,31 +81,25 @@ Vector<PBVHNode *> brush_affected_nodes_gather(SculptSession *ss, Brush *brush)
 
   switch (brush->cloth_simulation_area_type) {
     case BRUSH_CLOTH_SIMULATION_AREA_LOCAL: {
-      SculptSearchSphereData data{};
-      data.ss = ss;
-      data.radius_squared = square_f(ss->cache->initial_radius * (1.0 + brush->cloth_sim_limit));
-      data.original = false;
-      data.ignore_fully_ineffective = false;
-      data.center = ss->cache->initial_location;
-      return bke::pbvh::search_gather(
-          ss->pbvh, [&](PBVHNode &node) { return SCULPT_search_sphere(&node, &data); });
+      const float radius_squared = math::square(ss->cache->initial_radius *
+                                                (1.0 + brush->cloth_sim_limit));
+      return bke::pbvh::search_gather(ss->pbvh, [&](PBVHNode &node) {
+        return node_in_sphere(node, ss->cache->initial_location, radius_squared, false);
+      });
     }
     case BRUSH_CLOTH_SIMULATION_AREA_GLOBAL:
       return bke::pbvh::search_gather(ss->pbvh, {});
     case BRUSH_CLOTH_SIMULATION_AREA_DYNAMIC: {
-      SculptSearchSphereData data{};
-      data.ss = ss;
-      data.radius_squared = square_f(ss->cache->radius * (1.0 + brush->cloth_sim_limit));
-      data.original = false;
-      data.ignore_fully_ineffective = false;
-      data.center = ss->cache->location;
-      return bke::pbvh::search_gather(
-          ss->pbvh, [&](PBVHNode &node) { return SCULPT_search_sphere(&node, &data); });
+      const float radius_squared = math::square(ss->cache->radius *
+                                                (1.0 + brush->cloth_sim_limit));
+      return bke::pbvh::search_gather(ss->pbvh, [&](PBVHNode &node) {
+        return node_in_sphere(node, ss->cache->location, radius_squared, false);
+      });
     }
   }
 
   BLI_assert_unreachable();
-  return Vector<PBVHNode *>();
+  return {};
 }
 
 bool is_cloth_deform_brush(const Brush *brush)
@@ -935,11 +931,11 @@ static void cloth_brush_apply_brush_foces(Sculpt *sd, Object *ob, Span<PBVHNode 
   SculptSession *ss = ob->sculpt;
   Brush *brush = BKE_paint_brush(&sd->paint);
 
-  float grab_delta[3];
-  float mat[4][4];
-  float area_no[3];
-  float area_co[3];
-  float offset[3];
+  float3 grab_delta;
+  float4x4 mat;
+  float3 area_no;
+  float3 area_co;
+  float3 offset;
 
   BKE_curvemapping_init(brush->curve);
 
@@ -973,11 +969,11 @@ static void cloth_brush_apply_brush_foces(Sculpt *sd, Object *ob, Span<PBVHNode 
     mat[2][3] = 0.0f;
     copy_v3_v3(mat[3], ss->cache->location);
     mat[3][3] = 1.0f;
-    normalize_m4(mat);
+    normalize_m4(mat.ptr());
 
     /* Update matrix for the cursor preview. */
     if (ss->cache->mirror_symmetry_pass == 0) {
-      copy_m4_m4(ss->cache->stroke_local_mat, mat);
+      ss->cache->stroke_local_mat = mat;
     }
   }
 
@@ -992,7 +988,8 @@ static void cloth_brush_apply_brush_foces(Sculpt *sd, Object *ob, Span<PBVHNode 
 
   threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
     for (const int i : range) {
-      do_cloth_brush_apply_forces_task(ob, sd, brush, offset, grab_delta, mat, area_co, nodes[i]);
+      do_cloth_brush_apply_forces_task(
+          ob, sd, brush, offset, grab_delta, mat.ptr(), area_co, nodes[i]);
     }
   });
 }
@@ -1262,14 +1259,13 @@ void plane_falloff_preview_draw(const uint gpuattr,
                                 const float outline_col[3],
                                 float outline_alpha)
 {
-  float local_mat[4][4];
-  copy_m4_m4(local_mat, ss->cache->stroke_local_mat);
+  float4x4 local_mat = ss->cache->stroke_local_mat;
 
   if (ss->cache->brush->cloth_deform_type == BRUSH_CLOTH_DEFORM_GRAB) {
     add_v3_v3v3(local_mat[3], ss->cache->true_location, ss->cache->grab_delta);
   }
 
-  GPU_matrix_mul(local_mat);
+  GPU_matrix_mul(local_mat.ptr());
 
   const float dist = ss->cache->radius;
   const float arrow_x = ss->cache->radius * 0.2f;
@@ -1406,7 +1402,8 @@ static void cloth_filter_apply_forces_task(Object *ob,
     auto_mask::node_update(automask_data, vd);
 
     float fade = vd.mask;
-    fade *= auto_mask::factor_get(ss->filter_cache->automasking, ss, vd.vertex, &automask_data);
+    fade *= auto_mask::factor_get(
+        ss->filter_cache->automasking.get(), ss, vd.vertex, &automask_data);
     fade = 1.0f - fade;
     float force[3] = {0.0f, 0.0f, 0.0f};
     float disp[3], temp[3], transform[3][3];
@@ -1543,6 +1540,10 @@ static int sculpt_cloth_filter_invoke(bContext *C, wmOperator *op, const wmEvent
 
   /* Needs mask data to be available as it is used when solving the constraints. */
   BKE_sculpt_update_object_for_edit(depsgraph, ob, false);
+
+  if (ED_sculpt_report_if_shape_key_is_locked(ob, op->reports)) {
+    return OPERATOR_CANCELLED;
+  }
 
   SCULPT_stroke_id_next(ob);
 

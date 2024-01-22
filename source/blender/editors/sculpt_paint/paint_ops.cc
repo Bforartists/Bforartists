@@ -19,8 +19,8 @@
 
 #include "BLT_translation.h"
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "DNA_brush_types.h"
 #include "DNA_customdata_types.h"
@@ -30,7 +30,7 @@
 #include "BKE_brush.hh"
 #include "BKE_context.hh"
 #include "BKE_image.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_paint.hh"
 #include "BKE_report.h"
@@ -1272,7 +1272,7 @@ static bool stencil_control_poll(bContext *C)
   Paint *paint;
   Brush *br;
 
-  if (!paint_supports_texture(mode)) {
+  if (!blender::ed::sculpt_paint::paint_supports_texture(mode)) {
     return false;
   }
 

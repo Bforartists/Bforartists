@@ -55,8 +55,6 @@ class AutoKeying:
             options.add('INSERTKEY_VISUAL')
         if prefs.edit.use_keyframe_insert_needed:
             options.add('INSERTKEY_NEEDED')
-        if prefs.edit.use_insertkey_xyz_to_rgb:
-            options.add('INSERTKEY_XYZ_TO_RGB')
         if ts.use_keyframe_cycle_aware:
             options.add('INSERTKEY_CYCLE_AWARE')
         return options

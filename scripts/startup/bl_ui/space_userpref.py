@@ -109,7 +109,10 @@ class USERPREF_MT_save_load(Menu):
         if prefs.use_preferences_save:
             layout.operator("wm.save_userpref", text="Save Preferences", icon='SAVE_PREFS')
         sub_revert = layout.column(align=True)
-        sub_revert.active = prefs.is_dirty
+        # NOTE: regarding `factory_startup`. To correctly show the active state of this menu item,
+        # the user preferences themselves would need to have a `factory_startup` state.
+        # Since showing an active menu item whenever factory-startup is used is not such a problem, leave this as-is.
+        sub_revert.active = prefs.is_dirty or bpy.app.factory_startup
         sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences", icon = "UNDO")
 
         layout.operator_context = 'INVOKE_AREA'
@@ -606,12 +609,12 @@ class USERPREF_PT_animation_keyframes(AnimationPanel, CenterAlignMixIn, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
         flow.prop(edit, "key_insert_channels", expand=True)
-        flow.use_property_split = False
 
         flow = flow.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
         flow.prop(edit, "use_visual_keying")
-        flow.prop(edit, "use_keyframe_insert_needed", text="Only Insert Needed")
-        flow.use_property_split = True
+        row = flow.row(align=True, heading="Only Insert Needed")
+        row.prop(edit, "use_keyframe_insert_needed", text="Manual", toggle=1)
+        row.prop(edit, "use_auto_keyframe_insert_needed", text="Auto", toggle=1)
 
 class USERPREF_PT_animation_autokey(AnimationPanel, CenterAlignMixIn, Panel):
     bl_label = "Auto-Keyframing"

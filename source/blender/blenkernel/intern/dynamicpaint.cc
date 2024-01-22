@@ -50,7 +50,7 @@
 #include "BKE_effect.h"
 #include "BKE_image.h"
 #include "BKE_image_format.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
@@ -66,8 +66,8 @@
 #include "DEG_depsgraph_query.hh"
 
 /* for image output */
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "RE_texture.h"
 

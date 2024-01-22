@@ -40,14 +40,14 @@
 
 #include "BKE_fcurve.h"
 #include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_movieclip.h"
 #include "BKE_object.hh"
 #include "BKE_scene.h"
 #include "BKE_tracking.h"
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "RNA_access.hh"
 #include "RNA_prototypes.h"

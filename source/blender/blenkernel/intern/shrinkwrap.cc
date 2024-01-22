@@ -30,7 +30,7 @@
 #include "BKE_attribute.hh"
 #include "BKE_cdderivedmesh.h"
 #include "BKE_lattice.hh"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_modifier.hh"
 #include "BKE_shrinkwrap.hh"
 
@@ -49,7 +49,7 @@
 
 /* for timing... */
 #if 0
-#  include "PIL_time_utildefines.h"
+#  include "BLI_time_utildefines.h"
 #else
 #  define TIMEIT_BENCH(expr, id) (expr)
 #endif

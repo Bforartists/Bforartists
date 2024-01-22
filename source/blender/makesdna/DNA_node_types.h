@@ -728,7 +728,7 @@ typedef struct bNodeTree {
   const bNestedNodeRef *nested_node_ref_from_node_id_path(blender::Span<int> node_ids) const;
   [[nodiscard]] bool node_id_path_from_nested_node_ref(const int32_t nested_node_id,
                                                        blender::Vector<int32_t> &r_node_ids) const;
-  const bNode *find_nested_node(int32_t nested_node_id) const;
+  const bNode *find_nested_node(int32_t nested_node_id, const bNodeTree **r_tree = nullptr) const;
 
   /**
    * Update a run-time cache for the node tree based on its current state. This makes many methods
@@ -1034,7 +1034,7 @@ typedef struct NodeImageLayer {
   /** Index in the `image->layers->passes` lists. */
   int pass_index DNA_DEPRECATED;
   /* render pass name */
-  /** Amount defined in IMB_openexr.h. */
+  /** Amount defined in IMB_openexr.hh. */
   char pass_name[64];
 } NodeImageLayer;
 
@@ -1067,6 +1067,8 @@ typedef struct NodeKuwaharaData {
   int uniformity;
   float sharpness;
   float eccentricity;
+  char high_precision;
+  char _pad[3];
 } NodeKuwaharaData;
 
 typedef struct NodeAntiAliasingData {
@@ -2538,6 +2540,14 @@ typedef enum CMPNodeCombSepColorMode {
   CMP_NODE_COMBSEP_COLOR_YCC = 3,
   CMP_NODE_COMBSEP_COLOR_YUV = 4,
 } CMPNodeCombSepColorMode;
+
+/* Filtering modes Compositor MapUV node, stored in custom2. */
+typedef enum CMPNodeMapUVFiltering {
+  CMP_NODE_MAP_UV_FILTERING_NEAREST = 0,
+  CMP_NODE_MAP_UV_FILTERING_BILINEAR = 1,
+  CMP_NODE_MAP_UV_FILTERING_BICUBIC = 2,
+  CMP_NODE_MAP_UV_FILTERING_ANISOTROPIC = 3,
+} CMPNodeMapUVFiltering;
 
 /* Cryptomatte node source. */
 typedef enum CMPNodeCryptomatteSource {

@@ -26,7 +26,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_global.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_mask.h"
 #include "BKE_movieclip.h"
@@ -34,7 +34,7 @@
 #include "BKE_scene.h"
 #include "BKE_sound.h"
 
-#include "IMB_imbuf.h"
+#include "IMB_imbuf.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"

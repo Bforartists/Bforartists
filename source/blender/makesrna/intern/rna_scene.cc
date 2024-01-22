@@ -23,18 +23,19 @@
 #include "DNA_view3d_types.h"
 #include "DNA_world_types.h"
 
-#include "IMB_colormanagement.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf_types.hh"
 
 #include "BLI_listbase.h"
+#include "BLI_math_matrix.h"
 #include "BLI_math_rotation.h"
+#include "BLI_math_vector.h"
 #include "BLI_string_utf8_symbols.h"
 
 #include "BLT_translation.h"
 
 #include "BKE_armature.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_idtype.h"
+#include "BKE_idtype.hh"
 #include "BKE_paint.hh"
 #include "BKE_volume.hh"
 
@@ -2123,14 +2124,14 @@ static int rna_Scene_transform_orientation_slots_length(PointerRNA * /*ptr*/)
 static bool rna_Scene_use_audio_get(PointerRNA *ptr)
 {
   Scene *scene = (Scene *)ptr->data;
-  return (scene->audio.flag & AUDIO_MUTE) != 0;
+  return (scene->audio.flag & AUDIO_MUTE) == 0;
 }
 
 static void rna_Scene_use_audio_set(PointerRNA *ptr, bool value)
 {
   Scene *scene = (Scene *)ptr->data;
 
-  if (value) {
+  if (!value) {
     scene->audio.flag |= AUDIO_MUTE;
   }
   else {
@@ -3842,7 +3843,7 @@ static void rna_def_tool_settings(BlenderRNA *brna)
                            "Mode of automatic keyframe insertion for Objects, Bones and Masks");
 
   prop = RNA_def_property(srna, "use_record_with_nla", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_LAYERED_RECORD);
+  RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", AUTOKEY_FLAG_LAYERED_RECORD);
   RNA_def_property_ui_text(
       prop,
       "Layered",
@@ -3850,14 +3851,14 @@ static void rna_def_tool_settings(BlenderRNA *brna)
       "to allow non-destructive tweaking");
 
   prop = RNA_def_property(srna, "use_keyframe_insert_keyingset", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_ONLYKEYINGSET);
+  RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", AUTOKEY_FLAG_ONLYKEYINGSET);
   RNA_def_property_ui_text(prop,
                            "Auto Keyframe Insert Keying Set",
                            "Automatic keyframe insertion using active Keying Set only");
   RNA_def_property_ui_icon(prop, ICON_KEYINGSET, 0);
 
   prop = RNA_def_property(srna, "use_keyframe_cycle_aware", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_CYCLEAWARE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", KEYING_FLAG_CYCLEAWARE);
   RNA_def_property_ui_text(
       prop,
       "Cycle-Aware Keying",
@@ -8685,7 +8686,7 @@ void RNA_def_scene(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_audio", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_funcs(prop, "rna_Scene_use_audio_get", "rna_Scene_use_audio_set");
   RNA_def_property_ui_text(
-      prop, "Audio Muted", "Play back of audio from Sequence Editor will be muted");
+      prop, "Play Audio", "Play back of audio from Sequence Editor, otherwise mute audio");
   RNA_def_property_update(prop, NC_SCENE, "rna_Scene_use_audio_update");
 
 #  if 0 /* XXX: Is this actually needed? */

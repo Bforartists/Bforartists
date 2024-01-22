@@ -185,17 +185,21 @@ def intersect_boundbox_threshold(sctx, MVP, ray_origin_local, ray_direction_loca
         return (sctx.mval - p).length_squared < sctx._dist_px_sq
 
 
-def intersect_ray_segment_fac(v0, v1, ray_direction, ray_origin):
-    a = v1 - v0
-    t = v0 - ray_origin
-    n = a.cross(ray_direction)
+def intersect_ray_ray_fac(orig_a, dir_a, orig_b, dir_b):
+    t = orig_a - orig_b
+    n = dir_a.cross(dir_b)
     nlen = n.length_squared
 
     # if (nlen == 0.0f) the lines are parallel, has no nearest point, only distance squared.*/
     if nlen == 0.0:
         # Calculate the distance to the nearest point to origin then #
-        return a.dot(ray_direction) < 0
+        return intersect_point_line(orig_a, orig_b, orig_b + dir_b)
     else:
         c = n - t
-        cray = c.cross(ray_direction)
+        cray = c.cross(dir_b)
         return cray.dot(n) / nlen
+
+
+def intersect_ray_segment_fac(v0, v1, ray_direction, ray_origin):
+    dir_a = v1 - v0
+    return intersect_ray_ray_fac(v0, dir_a, ray_origin, ray_direction)
