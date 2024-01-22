@@ -8,13 +8,12 @@
 
 #include <cfloat>
 
-#include "PIL_time.h"
-
 #include "DNA_windowmanager_types.h"
 
 #include "BLI_blenlib.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_rotation.h"
+#include "BLI_time.h"
 #include "BLI_utildefines.h"
 
 #include "GPU_immediate.h"
@@ -280,7 +279,7 @@ void drawSnapping(TransInfo *t)
         rv3d, source_loc, target_loc, t->tsnap.source_type, t->tsnap.target_type, col, activeCol);
 
     /* Draw normal if needed. */
-    if (usingSnappingNormal(t) && validSnappingNormal(t) && target_loc) {
+    if (target_loc && usingSnappingNormal(t) && validSnappingNormal(t)) {
       uint pos = GPU_vertformat_attr_add(
           immVertexFormat(), "pos", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
 
@@ -569,7 +568,7 @@ void transform_snap_mixed_apply(TransInfo *t, float *vec)
   }
 
   if (t->tsnap.mode & ~(SCE_SNAP_TO_INCREMENT | SCE_SNAP_TO_GRID)) {
-    double current = PIL_check_seconds_timer();
+    double current = BLI_check_seconds_timer();
 
     /* Time base quirky code to go around find-nearest slowness. */
     /* TODO: add exception for object mode, no need to slow it down then. */

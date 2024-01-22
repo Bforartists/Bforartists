@@ -56,14 +56,14 @@
 #include "BKE_customdata.hh"
 #include "BKE_fcurve.h"
 #include "BKE_gpencil_legacy.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_multires.hh"
 #include "BKE_node.hh"
 
-#include "IMB_imbuf.h"
+#include "IMB_imbuf.hh"
 #include "MEM_guardedalloc.h"
 
 #include "RNA_access.hh"

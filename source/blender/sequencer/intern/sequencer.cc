@@ -24,14 +24,13 @@
 
 #include "BKE_fcurve.h"
 #include "BKE_idprop.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_sound.h"
 
 #include "DEG_depsgraph.hh"
 
-#include "IMB_colormanagement.h"
-#include "IMB_imbuf.h"
+#include "IMB_imbuf.hh"
 
 #include "SEQ_channels.hh"
 #include "SEQ_edit.hh"

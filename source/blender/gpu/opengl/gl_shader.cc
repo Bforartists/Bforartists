@@ -144,7 +144,7 @@ static const char *to_string(const Type &type)
   return "unknown";
 }
 
-static const int to_component_count(const Type &type)
+static int to_component_count(const Type &type)
 {
   switch (type) {
     case Type::FLOAT:
@@ -200,7 +200,7 @@ static const int to_component_count(const Type &type)
   return -1;
 }
 
-static const Type to_component_type(const Type &type)
+static Type to_component_type(const Type &type)
 {
   switch (type) {
     case Type::FLOAT:
@@ -1459,11 +1459,11 @@ GLSource::GLSource(const char *other)
 {
   if (!gpu_shader_dependency_get_filename_from_source_string(other).is_empty()) {
     source = "";
-    source_ref = StringRefNull(other);
+    source_ref = other;
   }
   else {
     source = other;
-    source_ref = StringRefNull(source);
+    source_ref = nullptr;
   }
 }
 
@@ -1490,7 +1490,12 @@ Vector<const char *> GLSources::sources_get() const
   result.reserve(size());
 
   for (const GLSource &source : *this) {
-    result.append(source.source_ref.c_str());
+    if (source.source_ref) {
+      result.append(source.source_ref);
+    }
+    else {
+      result.append(source.source.c_str());
+    }
   }
   return result;
 }

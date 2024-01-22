@@ -18,7 +18,7 @@
 #include "BKE_anim_data.h"
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
@@ -1913,7 +1913,7 @@ static bNode *node_find_frame_to_attach(ARegion &region, bNodeTree &ntree, const
 
   for (bNode *frame : tree_draw_order_calc_nodes_reversed(ntree)) {
     /* skip selected, those are the nodes we want to attach */
-    if ((frame->type != NODE_FRAME) || (frame->flag & NODE_SELECT)) {
+    if (!frame->is_frame() || (frame->flag & NODE_SELECT)) {
       continue;
     }
     if (BLI_rctf_isect_pt_v(&frame->runtime->totr, cursor)) {
@@ -1935,6 +1935,8 @@ static int node_attach_invoke(bContext *C, wmOperator * /*op*/, const wmEvent *e
     return OPERATOR_FINISHED;
   }
 
+  bool changed = false;
+
   for (bNode *node : tree_draw_order_calc_nodes_reversed(*snode.edittree)) {
     if (!(node->flag & NODE_SELECT)) {
       continue;
@@ -1947,6 +1949,11 @@ static int node_attach_invoke(bContext *C, wmOperator * /*op*/, const wmEvent *e
 
     if (node->parent == nullptr) {
       nodeAttachNode(&ntree, node, frame);
+      changed = true;
+      continue;
+    }
+
+    if (node->parent == frame) {
       continue;
     }
 
@@ -1958,27 +1965,26 @@ static int node_attach_invoke(bContext *C, wmOperator * /*op*/, const wmEvent *e
 
     nodeDetachNode(&ntree, node);
     nodeAttachNode(&ntree, node, frame);
+    changed = true;
   }
 
-  tree_draw_order_update(ntree);
-  WM_event_add_notifier(C, NC_NODE | ND_DISPLAY, nullptr);
+  if (changed) {
+    tree_draw_order_update(ntree);
+    WM_event_add_notifier(C, NC_NODE | ND_DISPLAY, nullptr);
+  }
 
   return OPERATOR_FINISHED;
 }
 
 void NODE_OT_attach(wmOperatorType *ot)
 {
-  /* identifiers */
   ot->name = "Attach Nodes";
   ot->description = "Attach active node to a frame";
   ot->idname = "NODE_OT_attach";
 
-  /* api callbacks */
-
   ot->invoke = node_attach_invoke;
   ot->poll = ED_operator_node_editable;
 
-  /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 

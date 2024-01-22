@@ -18,7 +18,7 @@
 #include "BKE_appdir.h"
 #include "BKE_context.hh"
 #include "BKE_global.h"
-#include "BKE_lib_query.h"
+#include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
 #include "BKE_main.hh"
 #include "BKE_report.h"
@@ -38,8 +38,8 @@
 #include "ED_screen.hh"
 #include "ED_space_api.hh"
 
-#include "IMB_imbuf_types.h"
-#include "IMB_thumbs.h"
+#include "IMB_imbuf_types.hh"
+#include "IMB_thumbs.hh"
 
 #include "UI_resources.hh"
 #include "UI_view2d.hh"

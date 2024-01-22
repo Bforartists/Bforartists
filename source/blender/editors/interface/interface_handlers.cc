@@ -30,9 +30,8 @@
 #include "BLI_string.h"
 #include "BLI_string_cursor_utf8.h"
 #include "BLI_string_utf8.h"
+#include "BLI_time.h"
 #include "BLI_utildefines.h"
-
-#include "PIL_time.h"
 
 #include "BKE_animsys.h"
 #include "BKE_blender_undo.h"
@@ -50,7 +49,7 @@
 
 #include "GHOST_C-api.h"
 
-#include "IMB_colormanagement.h"
+#include "IMB_colormanagement.hh"
 
 #include "ED_screen.hh"
 #include "ED_undo.hh"
@@ -4304,6 +4303,7 @@ static void ui_block_open_begin(bContext *C, uiBut *but, uiHandleButtonData *dat
   uiBlockHandleCreateFunc handlefunc = nullptr;
   uiMenuCreateFunc menufunc = nullptr;
   uiMenuCreateFunc popoverfunc = nullptr;
+  PanelType *popover_panel_type = nullptr;
   void *arg = nullptr;
 
   switch (but->type) {
@@ -4319,15 +4319,21 @@ static void ui_block_open_begin(bContext *C, uiBut *but, uiHandleButtonData *dat
       }
       break;
     case UI_BTYPE_MENU:
-    case UI_BTYPE_POPOVER:
       BLI_assert(but->menu_create_func);
-      if ((but->type == UI_BTYPE_POPOVER) || ui_but_menu_draw_as_popover(but)) {
+      if (ui_but_menu_draw_as_popover(but)) {
         popoverfunc = but->menu_create_func;
+        const char *idname = static_cast<const char *>(but->func_argN);
+        popover_panel_type = WM_paneltype_find(idname, false);
       }
       else {
         menufunc = but->menu_create_func;
+        arg = but->poin;
       }
-      arg = but->poin;
+      break;
+    case UI_BTYPE_POPOVER:
+      BLI_assert(but->menu_create_func);
+      popoverfunc = but->menu_create_func;
+      popover_panel_type = reinterpret_cast<PanelType *>(but->poin);
       break;
     case UI_BTYPE_COLOR:
       ui_but_v3_get(but, data->origvec);
@@ -4336,6 +4342,8 @@ static void ui_block_open_begin(bContext *C, uiBut *but, uiHandleButtonData *dat
 
       if (ui_but_menu_draw_as_popover(but)) {
         popoverfunc = but->menu_create_func;
+        const char *idname = static_cast<const char *>(but->func_argN);
+        popover_panel_type = WM_paneltype_find(idname, false);
       }
       else {
         handlefunc = ui_block_func_COLOR;
@@ -4364,7 +4372,7 @@ static void ui_block_open_begin(bContext *C, uiBut *but, uiHandleButtonData *dat
     }
   }
   else if (popoverfunc) {
-    data->menu = ui_popover_panel_create(C, data->region, but, popoverfunc, arg);
+    data->menu = ui_popover_panel_create(C, data->region, but, popoverfunc, popover_panel_type);
     if (but->block->handle) {
       data->menu->popup = but->block->handle->popup;
     }
@@ -4390,7 +4398,7 @@ static void ui_block_open_end(bContext *C, uiBut *but, uiHandleButtonData *data)
     but->editval = nullptr;
     but->editvec = nullptr;
 
-    but->block->auto_open_last = PIL_check_seconds_timer();
+    but->block->auto_open_last = BLI_check_seconds_timer();
   }
 
   if (data->menu) {
@@ -8639,7 +8647,7 @@ static void button_activate_init(bContext *C,
    * want to allow auto opening adjacent menus even if no button is activated
    * in between going over to the other button, but only for a short while */
   if (type == BUTTON_ACTIVATE_OVER && but->block->auto_open == true) {
-    if (but->block->auto_open_last + BUTTON_AUTO_OPEN_THRESH < PIL_check_seconds_timer()) {
+    if (but->block->auto_open_last + BUTTON_AUTO_OPEN_THRESH < BLI_check_seconds_timer()) {
       but->block->auto_open = false;
     }
   }
@@ -8685,7 +8693,7 @@ static void button_activate_init(bContext *C,
   if (UI_but_has_tooltip_label(but)) {
     /* Show a label for this button. */
     bScreen *screen = WM_window_get_active_screen(data->window);
-    if ((PIL_check_seconds_timer() - WM_tooltip_time_closed()) < 0.1) {
+    if ((BLI_check_seconds_timer() - WM_tooltip_time_closed()) < 0.1) {
       WM_tooltip_immediate_init(C, CTX_wm_window(C), data->area, region, ui_but_tooltip_init);
       if (screen->tool_tip) {
         screen->tool_tip->pass = 1;
@@ -9966,7 +9974,7 @@ static void ui_mouse_motion_towards_init_ex(uiPopupBlockHandle *menu,
       menu->towardstime = DBL_MAX; /* unlimited time */
     }
     else {
-      menu->towardstime = PIL_check_seconds_timer();
+      menu->towardstime = BLI_check_seconds_timer();
     }
   }
 }
@@ -10046,7 +10054,7 @@ static bool ui_mouse_motion_towards_check(uiBlock *block,
   }
 
   /* 1 second timer */
-  if (PIL_check_seconds_timer() - menu->towardstime > BUTTON_MOUSE_TOWARDS_THRESH) {
+  if (BLI_check_seconds_timer() - menu->towardstime > BUTTON_MOUSE_TOWARDS_THRESH) {
     menu->dotowards = false;
   }
 
