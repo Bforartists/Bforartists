@@ -8,6 +8,8 @@ import bmesh
 from mathutils import Vector
 from mathutils.geometry import intersect_point_line
 
+from .snap_context_l.utils_projection import intersect_ray_ray_fac
+
 from .common_utilities import snap_utilities
 from .common_classes import (
     CharMap,
@@ -243,6 +245,7 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
         self.bool_update = True
         self.vector_constrain = ()
         self.len = 0
+        self.curr_dir = Vector()
 
         if not (self.bm and self.obj):
             self.obj = context.edit_object
@@ -261,8 +264,6 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
     def modal(self, context, event):
         if self.navigation_ops.run(context, event, self.prevloc if self.vector_constrain else self.location):
             return {'RUNNING_MODAL'}
-
-        context.area.tag_redraw()
 
         if event.ctrl and event.type == 'Z' and event.value == 'PRESS':
             bpy.ops.ed.undo()
@@ -287,44 +288,50 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
 
         is_making_lines = bool(self.list_verts_co)
 
-        if (event.type == 'MOUSEMOVE' or self.bool_update) and self.charmap.length_entered_value == 0.0:
+        if (event.type == 'MOUSEMOVE' or self.bool_update):
             mval = Vector((event.mouse_region_x, event.mouse_region_y))
-
-            if self.rv3d.view_matrix != self.rotMat:
-                self.rotMat = self.rv3d.view_matrix.copy()
-                self.bool_update = True
-                snap_utilities.cache.clear()
-            else:
-                self.bool_update = False
-
-            self.snap_obj, self.prevloc, self.location, self.type, self.bm, self.geom, self.len = snap_utilities(
-                self.sctx,
-                self.main_snap_obj,
-                mval,
-                constrain=self.vector_constrain,
-                previous_vert=(
-                    self.list_verts[-1] if self.list_verts else None),
-                increment=self.incremental)
-
-            self.snap_to_grid()
-
-            if is_making_lines and self.preferences.auto_constrain:
+            if self.charmap.length_entered_value != 0.0:
+                ray_dir, ray_orig = self.sctx.get_ray(mval)
                 loc = self.list_verts_co[-1]
-                vec, type = self.constrain.update(
-                    self.sctx.region, self.sctx.rv3d, mval, loc)
-                self.vector_constrain = [loc, loc + vec, type]
+                fac = intersect_ray_ray_fac(loc, self.curr_dir, ray_orig, ray_dir)
+                if fac < 0.0:
+                    self.curr_dir.negate()
+                    self.location = loc - (self.location - loc)
+            else:
+                if self.rv3d.view_matrix != self.rotMat:
+                    self.rotMat = self.rv3d.view_matrix.copy()
+                    self.bool_update = True
+                    snap_utilities.cache.clear()
+                else:
+                    self.bool_update = False
 
-        if event.value == 'PRESS':
+                self.snap_obj, self.prevloc, self.location, self.type, self.bm, self.geom, self.len = snap_utilities(
+                    self.sctx,
+                    self.main_snap_obj,
+                    mval,
+                    constrain=self.vector_constrain,
+                    previous_vert=(
+                        self.list_verts[-1] if self.list_verts else None),
+                    increment=self.incremental)
+
+                self.snap_to_grid()
+
+                if is_making_lines:
+                    loc = self.list_verts_co[-1]
+                    self.curr_dir = self.location - loc
+                    if self.preferences.auto_constrain:
+                        vec, cons_type = self.constrain.update(
+                            self.sctx.region, self.sctx.rv3d, mval, loc)
+                        self.vector_constrain = [loc, loc + vec, cons_type]
+
+        elif event.value == 'PRESS':
             if is_making_lines and self.charmap.modal_(context, event):
                 self.bool_update = self.charmap.length_entered_value == 0.0
 
                 if not self.bool_update:
                     text_value = self.charmap.length_entered_value
-                    vector = (self.location -
-                              self.list_verts_co[-1]).normalized()
-                    self.location = self.list_verts_co[-1] + \
-                        (vector * text_value)
-                    del vector
+                    vector = self.curr_dir.normalized()
+                    self.location = self.list_verts_co[-1] + (vector * text_value)
 
             elif self.constrain.modal(event, self._shift_contrain_callback):
                 self.bool_update = True
@@ -379,6 +386,8 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
                     self.list_verts = []
                     self.list_verts_co = []
                     self.charmap.clear()
+        else:
+            return {'RUNNING_MODAL'}
 
         a = ""
         if is_making_lines:
@@ -387,10 +396,8 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
         context.area.header_text_set(
             text="hit: %.3f %.3f %.3f %s" % (*self.location, a))
 
-        if True or is_making_lines:
-            return {'RUNNING_MODAL'}
-
-        return {'PASS_THROUGH'}
+        context.area.tag_redraw()
+        return {'RUNNING_MODAL'}
 
     def draw_callback_px(self):
         if self.bm:

@@ -24,7 +24,7 @@
 #include "BKE_customdata.hh"
 #include "BKE_global.h"
 #include "BKE_image.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_tangent.hh"
@@ -39,8 +39,8 @@
 #include "RE_texture.h"
 #include "RE_texture_margin.h"
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 using MPassKnownData = void (*)(blender::Span<blender::float3> vert_positions,
                                 blender::Span<blender::float3> vert_normals,
