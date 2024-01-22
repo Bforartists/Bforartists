@@ -43,9 +43,9 @@
 
 #include "BKE_gpencil_legacy.h"
 #include "BKE_idprop.h"
-#include "BKE_idtype.h"
-#include "BKE_lib_id.h"
-#include "BKE_lib_query.h"
+#include "BKE_idtype.hh"
+#include "BKE_lib_id.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_node.h"
 #include "BKE_preview_image.hh"
 #include "BKE_screen.hh"

@@ -405,7 +405,7 @@ set(SRC
   BKE_icons.h
   BKE_idprop.h
   BKE_idprop.hh
-  BKE_idtype.h
+  BKE_idtype.hh
   BKE_image.h
   BKE_image_format.h
   BKE_image_partial_update.hh
@@ -418,9 +418,9 @@ set(SRC
   BKE_keyconfig.h
   BKE_lattice.hh
   BKE_layer.h
-  BKE_lib_id.h
+  BKE_lib_id.hh
   BKE_lib_override.hh
-  BKE_lib_query.h
+  BKE_lib_query.hh
   BKE_lib_remap.hh
   BKE_library.hh
   BKE_light.h
@@ -504,7 +504,7 @@ set(SRC
   BKE_texture.h
   BKE_tracking.h
   BKE_type_conversions.hh
-  BKE_undo_system.h
+  BKE_undo_system.hh
   BKE_unit.hh
   BKE_vfont.hh
   BKE_vfontdata.hh

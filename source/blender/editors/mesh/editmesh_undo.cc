@@ -28,11 +28,11 @@
 #include "BKE_editmesh.hh"
 #include "BKE_key.h"
 #include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh.hh"
 #include "BKE_object.hh"
-#include "BKE_undo_system.h"
+#include "BKE_undo_system.hh"
 
 #include "DEG_depsgraph.hh"
 
@@ -50,7 +50,7 @@
 // #  define DEBUG_PRINT
 // #  define DEBUG_TIME
 #  ifdef DEBUG_TIME
-#    include "PIL_time_utildefines.h"
+#    include "BLI_time_utildefines.h"
 #  endif
 
 #  include "BLI_array_store.h"

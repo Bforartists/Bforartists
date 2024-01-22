@@ -28,12 +28,12 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "IMB_colormanagement.h"
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
-#include "IMB_metadata.h"
-#include "IMB_moviecache.h"
-#include "IMB_openexr.h"
+#include "IMB_colormanagement.hh"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
+#include "IMB_metadata.hh"
+#include "IMB_moviecache.hh"
+#include "IMB_openexr.hh"
 
 /* Allow using deprecated functionality for .blend file I/O. */
 #define DNA_DEPRECATED_ALLOW
@@ -56,6 +56,7 @@
 #include "BLI_system.h"
 #include "BLI_task.h"
 #include "BLI_threads.h"
+#include "BLI_time.h"
 #include "BLI_timecode.h" /* For stamp time-code format. */
 #include "BLI_utildefines.h"
 
@@ -65,10 +66,10 @@
 #include "BKE_colortools.hh"
 #include "BKE_global.h"
 #include "BKE_icons.h"
-#include "BKE_idtype.h"
+#include "BKE_idtype.hh"
 #include "BKE_image.h"
 #include "BKE_image_format.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
@@ -80,8 +81,6 @@
 #include "BKE_workspace.h"
 
 #include "BLF_api.h"
-
-#include "PIL_time.h"
 
 #include "RE_pipeline.h"
 
@@ -237,12 +236,12 @@ static void image_foreach_cache(ID *id,
   Image *image = (Image *)id;
   IDCacheKey key;
   key.id_session_uuid = id->session_uuid;
-  key.offset_in_ID = offsetof(Image, cache);
+  key.identifier = offsetof(Image, cache);
   function_callback(id, &key, (void **)&image->cache, 0, user_data);
 
-  key.offset_in_ID = offsetof(Image, anims.first);
+  key.identifier = offsetof(Image, anims.first);
   function_callback(id, &key, (void **)&image->anims.first, 0, user_data);
-  key.offset_in_ID = offsetof(Image, anims.last);
+  key.identifier = offsetof(Image, anims.last);
   function_callback(id, &key, (void **)&image->anims.last, 0, user_data);
 
   auto gputexture_offset = [image](int target, int eye) {
@@ -258,16 +257,16 @@ static void image_foreach_cache(ID *id,
       if (texture == nullptr) {
         continue;
       }
-      key.offset_in_ID = gputexture_offset(a, eye);
+      key.identifier = gputexture_offset(a, eye);
       function_callback(id, &key, (void **)&image->gputexture[a][eye], 0, user_data);
     }
   }
 
-  key.offset_in_ID = offsetof(Image, rr);
+  key.identifier = offsetof(Image, rr);
   function_callback(id, &key, (void **)&image->rr, 0, user_data);
 
   LISTBASE_FOREACH (RenderSlot *, slot, &image->renderslots) {
-    key.offset_in_ID = size_t(BLI_ghashutil_strhash_p(slot->name));
+    key.identifier = size_t(BLI_ghashutil_strhash_p(slot->name));
     function_callback(id, &key, (void **)&slot->render, 0, user_data);
   }
 }
@@ -1485,7 +1484,7 @@ void BKE_image_packfiles_from_mem(ReportList *reports,
 
 void BKE_image_tag_time(Image *ima)
 {
-  ima->lastused = PIL_check_seconds_timer_i();
+  ima->lastused = BLI_check_seconds_timer_i();
 }
 
 static uintptr_t image_mem_size(Image *image)

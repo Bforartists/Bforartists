@@ -32,7 +32,7 @@
 
 #include "ED_screen.hh"
 
-#include "IMB_colormanagement.h"
+#include "IMB_colormanagement.hh"
 
 #include "interface_intern.hh"
 
@@ -199,7 +199,7 @@ static void ui_update_color_picker_buts_rgb(uiBut *from_but,
        * push, so disable it on RNA buttons in the color picker block */
       UI_but_flag_disable(bt, UI_BUT_UNDO);
     }
-    else if (STREQ(bt->str, "Hex:")) {
+    else if (bt->str == "Hex:") {
       float rgb_hex[3];
       uchar rgb_hex_uchar[3];
       char col[16];

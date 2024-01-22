@@ -22,7 +22,7 @@
 #include "BKE_gpencil_legacy.h"
 #include "BKE_image.h"
 #include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_object.hh"
 #include "BKE_report.h"
@@ -36,7 +36,7 @@
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf_types.hh"
 
 #include "ED_gpencil_legacy.hh"
 #include "ED_object.hh"
