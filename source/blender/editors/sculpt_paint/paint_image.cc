@@ -20,8 +20,8 @@
 
 #include "BLT_translation.h"
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "DNA_brush_types.h"
 #include "DNA_material_types.h"
@@ -66,7 +66,7 @@
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 
-#include "IMB_colormanagement.h"
+#include "IMB_colormanagement.hh"
 
 #include "paint_intern.hh"
 
@@ -818,8 +818,12 @@ static blender::float3 paint_init_pivot_mesh(Object *ob)
 static blender::float3 paint_init_pivot_curves(Object *ob)
 {
   const Curves &curves = *static_cast<const Curves *>(ob->data);
-  const blender::Bounds<blender::float3> bounds = *curves.geometry.wrap().bounds_min_max();
-  return blender::math::midpoint(bounds.min, bounds.max);
+  const std::optional<blender::Bounds<blender::float3>> bounds =
+      curves.geometry.wrap().bounds_min_max();
+  if (bounds.has_value()) {
+    return blender::math::midpoint(bounds->min, bounds->max);
+  }
+  return blender::float3(0);
 }
 
 static blender::float3 paint_init_pivot_grease_pencil(Object *ob, const int frame)

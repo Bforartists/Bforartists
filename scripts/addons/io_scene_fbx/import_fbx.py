@@ -2169,7 +2169,7 @@ def blen_read_camera(fbx_tmpl, fbx_obj, settings):
 
     camera.type = 'ORTHO' if elem_props_get_enum(fbx_props, b'CameraProjectionType', 0) == 1 else 'PERSP'
 
-    camera.dof.focus_distance = elem_props_get_number(fbx_props, b'FocusDistance', 10 * 1000) / 1000 * global_scale
+    camera.dof.focus_distance = elem_props_get_number(fbx_props, b'FocusDistance', 10) * global_scale
     if (elem_props_get_bool(fbx_props, b'UseDepthOfField', False)):
         camera.dof.use_dof = True
 

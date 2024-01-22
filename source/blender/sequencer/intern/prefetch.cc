@@ -21,15 +21,15 @@
 #include "BLI_listbase.h"
 #include "BLI_threads.h"
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "BKE_anim_data.h"
 #include "BKE_animsys.h"
 #include "BKE_context.hh"
 #include "BKE_global.h"
 #include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_scene.h"
 

@@ -324,7 +324,7 @@ static void rna_userdef_font_update(Main * /*bmain*/, Scene * /*scene*/, Pointer
   UI_reinit_font();
 }
 
-static void rna_userdef_language_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA * /*ptr*/)
+static void rna_userdef_language_update(Main *bmain, Scene * /*scene*/, PointerRNA * /*ptr*/)
 {
   BLT_lang_set(nullptr);
 
@@ -336,6 +336,14 @@ static void rna_userdef_language_update(Main * /*bmain*/, Scene * /*scene*/, Poi
     U.transopts |= (USER_TR_IFACE | USER_TR_TOOLTIPS | USER_TR_REPORTS | USER_TR_NEWDATANAME);
   }
 
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_TRANSLATION_UPDATE_POST);
+  USERDEF_TAG_DIRTY;
+}
+
+static void rna_userdef_translation_update(Main *bmain, Scene * /*scene*/, PointerRNA * /*ptr*/)
+{
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_TRANSLATION_UPDATE_POST);
+  WM_main_add_notifier(NC_WINDOW, nullptr);
   USERDEF_TAG_DIRTY;
 }
 
@@ -959,6 +967,12 @@ static int rna_lang_enum_properties_get_no_international(PointerRNA * /*ptr*/)
 static void rna_Addon_module_set(PointerRNA *ptr, const char *value)
 {
   bAddon *addon = (bAddon *)ptr->data;
+
+  /* The module may be empty (for newly created data), skip the preferences search.
+   * Note that changing existing add-ons module isn't a common operation.
+   * Support this to allow for an extension repositories module to change at run-time. */
+  bAddonPrefType *apt = addon->module[0] ? BKE_addon_pref_type_find(addon->module, true) : nullptr;
+
   size_t module_len = STRNCPY_UTF8_RLEN(addon->module, value);
 
   /* Reserve half of `bAddon::module` for a package component.
@@ -982,6 +996,11 @@ static void rna_Addon_module_set(PointerRNA *ptr, const char *value)
       submodule_beg[submodule_len_limit] = '\0';
       BLI_str_utf8_invalid_strip(submodule_beg, submodule_len_limit);
     }
+  }
+
+  if (apt) {
+    /* Keep the associated preferences. */
+    STRNCPY(apt->idname, addon->module);
   }
 }
 
@@ -1059,6 +1078,13 @@ static StructRNA *rna_AddonPref_register(Main *bmain,
   /* Check if we have registered this add-on preference type before, and remove it. */
   apt = BKE_addon_pref_type_find(dummy_addon.module, true);
   if (apt) {
+    BKE_reportf(reports,
+                RPT_INFO,
+                "%s '%s', bl_idname '%s' has been registered before, unregistering previous",
+                error_prefix,
+                identifier,
+                dummy_apt.idname);
+
     StructRNA *srna = apt->rna_ext.srna;
     if (!(srna && rna_AddonPref_unregister(bmain, srna))) {
       BKE_reportf(reports,
@@ -5226,7 +5252,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Translate Tooltips",
                            "Translate the descriptions when hovering UI elements (recommended)");
-  RNA_def_property_update(prop, 0, "rna_userdef_update");
+  RNA_def_property_update(prop, 0, "rna_userdef_translation_update");
 
   prop = RNA_def_property(srna, "use_translate_interface", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "transopts", USER_TR_IFACE);
@@ -5235,19 +5261,20 @@ static void rna_def_userdef_view(BlenderRNA *brna)
       "Translate Interface",
       "Translate all labels in menus, buttons and panels "
       "(note that this might make it hard to follow tutorials or the manual)");
-  RNA_def_property_update(prop, 0, "rna_userdef_update");
+  RNA_def_property_update(prop, 0, "rna_userdef_translation_update");
 
   prop = RNA_def_property(srna, "use_translate_reports", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "transopts", USER_TR_REPORTS);
   RNA_def_property_ui_text(
       prop, "Translate Reports", "Translate additional information, such as error messages");
-  RNA_def_property_update(prop, 0, "rna_userdef_update");
+  RNA_def_property_update(prop, 0, "rna_userdef_translation_update");
 
   prop = RNA_def_property(srna, "use_translate_new_dataname", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "transopts", USER_TR_NEWDATANAME);
-  RNA_def_property_ui_text(
-      prop, "Translate New Names", "Translate the names of new data (objects, materials...)");
-  RNA_def_property_update(prop, 0, "rna_userdef_update");
+  RNA_def_property_ui_text(prop,
+                           "Translate New Names",
+                           "Translate the names of new data (objects, materials...)");
+  RNA_def_property_update(prop, 0, "rna_userdef_translation_update");
 
   /* Status-bar. */
 
@@ -5402,13 +5429,13 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
                            "(default setting used for new Scenes)");
 
   prop = RNA_def_property(srna, "use_keyframe_insert_available", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_INSERTAVAILABLE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", AUTOKEY_FLAG_INSERTAVAILABLE);
   RNA_def_property_ui_text(prop,
                            "Auto Keyframe Insert Available",
                            "Automatic keyframe insertion in available F-Curves");
 
   prop = RNA_def_property(srna, "use_auto_keying_warning", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_NOWARNING);
+  RNA_def_property_boolean_negative_sdna(prop, nullptr, "keying_flag", AUTOKEY_FLAG_NOWARNING);
   RNA_def_property_ui_text(
       prop,
       "Show Auto Keying Warning",
@@ -5423,18 +5450,23 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
                            "Default Key Channels",
                            "Which channels to insert keys at when no keying set is active");
 
+  prop = RNA_def_property(srna, "use_auto_keyframe_insert_needed", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", AUTOKEY_FLAG_INSERTNEEDED);
+  RNA_def_property_ui_text(
+      prop, "Autokey Insert Needed", "Auto-Keyframe insertion only when keyframe needed");
+
   prop = RNA_def_property(srna, "use_keyframe_insert_needed", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_INSERTNEEDED);
+  RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", MANUALKEY_FLAG_INSERTNEEDED);
   RNA_def_property_ui_text(
       prop, "Keyframe Insert Needed", "Keyframe insertion only when keyframe needed");
 
   prop = RNA_def_property(srna, "use_visual_keying", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_VISUALKEY);
+  RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", KEYING_FLAG_VISUALKEY);
   RNA_def_property_ui_text(
       prop, "Visual Keying", "Use Visual keying automatically for constrained objects");
 
   prop = RNA_def_property(srna, "use_insertkey_xyz_to_rgb", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_XYZ2RGB);
+  RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", KEYING_FLAG_XYZ2RGB);
   RNA_def_property_ui_text(
       prop,
       "New F-Curve Colors - XYZ to RGB",

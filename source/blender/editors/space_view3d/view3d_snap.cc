@@ -64,7 +64,7 @@ static bool snap_calc_active_center(bContext *C, const bool select_only, float r
  * \{ */
 
 /** Snaps every individual object center to its nearest point on the grid. */
-static int snap_sel_to_grid_exec(bContext *C, wmOperator * /*op*/)
+static int snap_sel_to_grid_exec(bContext *C, wmOperator *op)
 {
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   ViewLayer *view_layer_eval = DEG_get_evaluated_view_layer(depsgraph);
@@ -93,6 +93,10 @@ static int snap_sel_to_grid_exec(bContext *C, wmOperator * /*op*/)
         if (em->bm->totvertsel == 0) {
           continue;
         }
+      }
+
+      if (ED_object_edit_report_if_shape_key_is_locked(obedit, op->reports)) {
+        continue;
       }
 
       if (ED_transverts_check_obedit(obedit)) {
@@ -300,6 +304,7 @@ void VIEW3D_OT_snap_selected_to_grid(wmOperatorType *ot)
  * or if every object origin should be snapped to the given location.
  */
 static bool snap_selected_to_location(bContext *C,
+                                      wmOperator *op,
                                       const float snap_target_global[3],
                                       const bool use_offset,
                                       const int pivot_point,
@@ -341,6 +346,10 @@ static bool snap_selected_to_location(bContext *C,
         if (em->bm->totvertsel == 0) {
           continue;
         }
+      }
+
+      if (ED_object_edit_report_if_shape_key_is_locked(obedit, op->reports)) {
+        continue;
       }
 
       if (ED_transverts_check_obedit(obedit)) {
@@ -570,6 +579,7 @@ static bool snap_selected_to_location(bContext *C,
 }
 
 bool ED_view3d_snap_selected_to_location(bContext *C,
+                                         wmOperator *op,
                                          const float snap_target_global[3],
                                          const int pivot_point)
 {
@@ -580,7 +590,7 @@ bool ED_view3d_snap_selected_to_location(bContext *C,
    * so this can be used as a low level function. */
   const bool use_toolsettings = false;
   return snap_selected_to_location(
-      C, snap_target_global, use_offset, pivot_point, use_toolsettings);
+      C, op, snap_target_global, use_offset, pivot_point, use_toolsettings);
 }
 
 /** \} */
@@ -598,7 +608,7 @@ static int snap_selected_to_cursor_exec(bContext *C, wmOperator *op)
   const float *snap_target_global = scene->cursor.location;
   const int pivot_point = scene->toolsettings->transform_pivot_point;
 
-  if (snap_selected_to_location(C, snap_target_global, use_offset, pivot_point, true)) {
+  if (snap_selected_to_location(C, op, snap_target_global, use_offset, pivot_point, true)) {
     return OPERATOR_FINISHED;
   }
   return OPERATOR_CANCELLED;
@@ -664,7 +674,7 @@ static int snap_selected_to_active_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  if (!snap_selected_to_location(C, snap_target_global, false, -1, true)) {
+  if (!snap_selected_to_location(C, op, snap_target_global, false, -1, true)) {
     return OPERATOR_CANCELLED;
   }
   return OPERATOR_FINISHED;
@@ -1058,7 +1068,7 @@ bool ED_view3d_minmax_verts(Object *obedit, float r_min[3], float r_max[3])
     }
     return changed;
   }
-  else if (obedit->type == OB_CURVES) {
+  if (obedit->type == OB_CURVES) {
     const Object &ob_orig = *DEG_get_original_object(obedit);
     const Curves &curves_id = *static_cast<const Curves *>(ob_orig.data);
     const bke::CurvesGeometry &curves = curves_id.geometry.wrap();

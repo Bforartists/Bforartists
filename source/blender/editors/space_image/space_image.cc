@@ -22,8 +22,8 @@
 #include "BKE_context.hh"
 #include "BKE_image.h"
 #include "BKE_layer.h"
-#include "BKE_lib_id.h"
-#include "BKE_lib_query.h"
+#include "BKE_lib_id.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
 #include "BKE_screen.hh"
 
@@ -33,7 +33,7 @@
 
 #include "DEG_depsgraph.hh"
 
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf_types.hh"
 
 #include "ED_image.hh"
 #include "ED_mask.hh"

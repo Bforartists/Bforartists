@@ -44,11 +44,12 @@
 #include "BLI_string_utf8.h"
 #include "BLI_string_utils.hh"
 #include "BLI_threads.h"
+#include "BLI_time.h"
 #include "BLI_utildefines.h"
 #include "BLI_vector_set.hh"
 #include "BLT_translation.h"
 
-#include "IMB_imbuf.h"
+#include "IMB_imbuf.hh"
 
 #include "BKE_anim_data.h"
 #include "BKE_animsys.h"
@@ -60,10 +61,10 @@
 #include "BKE_global.h"
 #include "BKE_idprop.h"
 #include "BKE_idprop.hh"
-#include "BKE_idtype.h"
+#include "BKE_idtype.hh"
 #include "BKE_image_format.h"
-#include "BKE_lib_id.h"
-#include "BKE_lib_query.h"
+#include "BKE_lib_id.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_main.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
@@ -94,8 +95,6 @@
 #include "DEG_depsgraph_build.hh"
 
 #include "BLO_read_write.hh"
-
-#include "PIL_time.h"
 
 #define NODE_DEFAULT_MAX_WIDTH 700
 
@@ -400,7 +399,7 @@ static void node_foreach_cache(ID *id,
   bNodeTree *nodetree = reinterpret_cast<bNodeTree *>(id);
   IDCacheKey key = {0};
   key.id_session_uuid = id->session_uuid;
-  key.offset_in_ID = offsetof(bNodeTree, previews);
+  key.identifier = offsetof(bNodeTree, previews);
 
   /* TODO: see also `direct_link_nodetree()` in `readfile.cc`. */
 #if 0
@@ -410,7 +409,7 @@ static void node_foreach_cache(ID *id,
   if (nodetree->type == NTREE_COMPOSIT) {
     for (bNode *node : nodetree->all_nodes()) {
       if (node->type == CMP_NODE_MOVIEDISTORTION) {
-        key.offset_in_ID = size_t(BLI_ghashutil_strhash_p(node->name));
+        key.identifier = size_t(BLI_ghashutil_strhash_p(node->name));
         function_callback(id, &key, static_cast<void **>(&node->storage), 0, user_data);
       }
     }
@@ -476,6 +475,7 @@ static void write_node_socket_interface(BlendWriter *writer, const bNodeSocket *
 static bNodeSocket *make_socket(bNodeTree *ntree,
                                 const eNodeSocketInOut in_out,
                                 const StringRef idname,
+
                                 const StringRef name,
                                 const StringRef identifier)
 {
@@ -501,6 +501,59 @@ static bNodeSocket *make_socket(bNodeTree *ntree,
   return sock;
 }
 
+/* Include the subtype suffix for old socket idnames. */
+static StringRef get_legacy_socket_subtype_idname(StringRef idname, const void *socket_data)
+{
+  if (idname == "NodeSocketFloat") {
+    const bNodeSocketValueFloat &float_data = *static_cast<const bNodeSocketValueFloat *>(
+        socket_data);
+    switch (float_data.subtype) {
+      case PROP_UNSIGNED:
+        return "NodeSocketFloatUnsigned";
+      case PROP_PERCENTAGE:
+        return "NodeSocketFloatPercentage";
+      case PROP_FACTOR:
+        return "NodeSocketFloatFactor";
+      case PROP_ANGLE:
+        return "NodeSocketFloatAngle";
+      case PROP_TIME:
+        return "NodeSocketFloatTime";
+      case PROP_TIME_ABSOLUTE:
+        return "NodeSocketFloatTimeAbsolute";
+      case PROP_DISTANCE:
+        return "NodeSocketFloatDistance";
+    }
+  }
+  if (idname == "NodeSocketInt") {
+    const bNodeSocketValueInt &int_data = *static_cast<const bNodeSocketValueInt *>(socket_data);
+    switch (int_data.subtype) {
+      case PROP_UNSIGNED:
+        return "NodeSocketIntUnsigned";
+      case PROP_PERCENTAGE:
+        return "NodeSocketIntPercentage";
+      case PROP_FACTOR:
+        return "NodeSocketIntFactor";
+    }
+  }
+  if (idname == "NodeSocketVector") {
+    const bNodeSocketValueVector &vector_data = *static_cast<const bNodeSocketValueVector *>(
+        socket_data);
+    switch (vector_data.subtype) {
+      case PROP_TRANSLATION:
+        return "NodeSocketVectorTranslation";
+      case PROP_DIRECTION:
+        return "NodeSocketVectorDirection";
+      case PROP_VELOCITY:
+        return "NodeSocketVectorVelocity";
+      case PROP_ACCELERATION:
+        return "NodeSocketVectorAcceleration";
+      case PROP_EULER:
+        return "NodeSocketVectorEuler";
+    }
+  }
+  return idname;
+}
+
 /**
  * Socket interface reconstruction for forward compatibility.
  * To enable previous Blender versions to read the new interface DNA data,
@@ -516,7 +569,11 @@ static void construct_interface_as_legacy_sockets(bNodeTree *ntree)
   auto make_legacy_socket = [&](const bNodeTreeInterfaceSocket &socket,
                                 eNodeSocketInOut in_out) -> bNodeSocket * {
     bNodeSocket *iosock = make_socket(
-        ntree, in_out, socket.socket_type, socket.name ? socket.name : "", socket.identifier);
+        ntree,
+        in_out,
+        get_legacy_socket_subtype_idname(socket.socket_type, socket.socket_data),
+        socket.name ? socket.name : "",
+        socket.identifier);
     if (!iosock) {
       return nullptr;
     }
@@ -2450,7 +2507,7 @@ void nodeUniqueName(bNodeTree *ntree, bNode *node)
 void nodeUniqueID(bNodeTree *ntree, bNode *node)
 {
   /* Use a pointer cast to avoid overflow warnings. */
-  const double time = PIL_check_seconds_timer() * 1000000.0;
+  const double time = BLI_check_seconds_timer() * 1000000.0;
   blender::RandomNumberGenerator id_rng{*reinterpret_cast<const uint32_t *>(&time)};
 
   /* In the unlikely case that the random ID doesn't match, choose a new one until it does. */
@@ -2471,6 +2528,7 @@ bNode *nodeAddNode(const bContext *C, bNodeTree *ntree, const char *idname)
   node->runtime = MEM_new<bNodeRuntime>(__func__);
   BLI_addtail(&ntree->nodes, node);
   nodeUniqueID(ntree, node);
+  node->ui_order = ntree->all_nodes().size();
 
   STRNCPY(node->idname, idname);
   blender::bke::node_set_typeinfo(C, ntree, node, nodeTypeFind(idname));
