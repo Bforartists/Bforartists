@@ -39,7 +39,7 @@
 
 #  include "BKE_global.h"
 #  include "BKE_image_format.h"
-#  include "BKE_lib_id.h"
+#  include "BKE_lib_id.hh"
 #  include "BKE_main.hh"
 #  include "BKE_report.h"
 #  include "BKE_scene.h"
@@ -48,7 +48,7 @@
 #  include "GPU_context.h"
 
 #  ifdef WITH_FFMPEG
-#    include "IMB_imbuf.h"
+#    include "IMB_imbuf.hh"
 #  endif
 
 #  ifdef WITH_PYTHON

@@ -58,7 +58,7 @@
 #include "BKE_gpencil_legacy.h"
 #include "BKE_grease_pencil.hh"
 #include "BKE_key.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_nla.h"
 
@@ -5043,7 +5043,7 @@ static void achannel_setting_slider_cb(bContext *C, void *id_poin, void *fcu_poi
   cfra = BKE_nla_tweakedit_remap(adt, float(scene->r.cfra), NLATIME_CONVERT_UNMAP);
 
   /* Get flags for keyframing. */
-  flag = ANIM_get_keyframing_flags(scene, true);
+  flag = ANIM_get_keyframing_flags(scene);
 
   /* try to resolve the path stored in the F-Curve */
   if (RNA_path_resolve_property(&id_ptr, fcu->rna_path, &ptr, &prop)) {
@@ -5106,7 +5106,7 @@ static void achannel_setting_slider_shapekey_cb(bContext *C, void *key_poin, voi
       key->adt, anim_eval_context.eval_time, NLATIME_CONVERT_UNMAP);
 
   /* get flags for keyframing */
-  flag = ANIM_get_keyframing_flags(scene, true);
+  flag = ANIM_get_keyframing_flags(scene);
 
   /* try to resolve the path stored in the F-Curve */
   if (RNA_path_resolve_property(&id_ptr, rna_path, &ptr, &prop)) {
@@ -5166,7 +5166,7 @@ static void achannel_setting_slider_nla_curve_cb(bContext *C, void * /*id_poin*/
   cfra = float(scene->r.cfra);
 
   /* get flags for keyframing */
-  flag = ANIM_get_keyframing_flags(scene, true);
+  flag = ANIM_get_keyframing_flags(scene);
 
   /* Get pointer and property from the slider -
    * this should all match up with the NlaStrip required. */
