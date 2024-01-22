@@ -17,7 +17,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_icons.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main_namemap.hh"
 #include "BKE_object.hh"
 
@@ -218,9 +218,9 @@ const IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
 #  include "BKE_anim_data.h"
 #  include "BKE_global.h" /* XXX, remove me */
 #  include "BKE_idprop.h"
-#  include "BKE_idtype.h"
+#  include "BKE_idtype.hh"
 #  include "BKE_lib_override.hh"
-#  include "BKE_lib_query.h"
+#  include "BKE_lib_query.hh"
 #  include "BKE_lib_remap.hh"
 #  include "BKE_library.hh"
 #  include "BKE_material.h"
@@ -286,7 +286,7 @@ void rna_ID_name_set(PointerRNA *ptr, const char *value)
   BKE_main_namemap_remove_name(G_MAIN, id, id->name + 2);
   BLI_strncpy_utf8(id->name + 2, value, sizeof(id->name) - 2);
   BLI_assert(BKE_id_is_in_global_main(id));
-  BLI_libblock_ensure_unique_name(G_MAIN, id->name);
+  BKE_libblock_ensure_unique_name(G_MAIN, id);
 
   if (GS(id->name) == ID_OB) {
     Object *ob = (Object *)id;

@@ -24,8 +24,8 @@
 #include "DNA_shader_fx_types.h"
 
 #include "BKE_gpencil_legacy.h"
-#include "BKE_lib_id.h"
-#include "BKE_lib_query.h"
+#include "BKE_lib_id.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_object.hh"
 #include "BKE_screen.hh"
 #include "BKE_shader_fx.h"

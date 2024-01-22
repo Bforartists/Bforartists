@@ -30,7 +30,7 @@
 #include "BKE_customdata.hh"
 #include "BKE_effect.h"
 #include "BKE_global.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_runtime.hh"
 #include "BKE_modifier.hh"
@@ -38,7 +38,7 @@
 
 #include "SIM_mass_spring.h"
 
-// #include "PIL_time.h"  /* timing for debug prints */
+// #include "BLI_time.h"  /* timing for debug prints */
 
 /* ********** cloth engine ******* */
 /* Prototypes for internal functions.

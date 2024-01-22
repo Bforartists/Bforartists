@@ -17,8 +17,8 @@
 #  include <io.h>
 #endif
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "DNA_image_types.h"
 #include "DNA_scene_types.h"
@@ -26,7 +26,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_math_color.h"
-#include "BLI_math_interp.h"
+#include "BLI_math_interp.hh"
 #include "BLI_math_vector.h"
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"

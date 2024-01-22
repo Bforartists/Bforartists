@@ -26,9 +26,9 @@
 #include "BKE_colortools.hh"
 #include "BKE_context.hh"
 #include "BKE_gpencil_legacy.h"
-#include "BKE_idtype.h"
-#include "BKE_lib_id.h"
-#include "BKE_lib_query.h"
+#include "BKE_idtype.hh"
+#include "BKE_lib_id.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
 #include "BKE_main.hh"
 #include "BKE_material.h"
@@ -36,9 +36,9 @@
 #include "BKE_preview_image.hh"
 #include "BKE_texture.h"
 
-#include "IMB_colormanagement.h"
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_colormanagement.hh"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "RE_texture.h" /* RE_texture_evaluate */
 

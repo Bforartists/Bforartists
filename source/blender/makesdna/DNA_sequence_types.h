@@ -643,7 +643,7 @@ enum {
 };
 
 /**
- * \warning has to be same as `IMB_imbuf.h`: `IMB_PROXY_*` and `IMB_TC_*`.
+ * \warning has to be same as `IMB_imbuf.hh`: `IMB_PROXY_*` and `IMB_TC_*`.
  */
 enum {
   SEQ_PROXY_IMAGE_SIZE_25 = 1 << 0,
@@ -653,7 +653,7 @@ enum {
 };
 
 /**
- * \warning has to be same as `IMB_imbuf.h`: `IMB_TC_*`.
+ * \warning has to be same as `IMB_imbuf.hh`: `IMB_TC_*`.
  */
 enum {
   SEQ_PROXY_TC_NONE = 0,
@@ -839,6 +839,7 @@ enum {
   SEQ_TRANSFORM_FILTER_NEAREST = 0,
   SEQ_TRANSFORM_FILTER_BILINEAR = 1,
   SEQ_TRANSFORM_FILTER_NEAREST_3x3 = 2,
+  SEQ_TRANSFORM_FILTER_BICUBIC = 3,
 };
 
 typedef enum eSeqChannelFlag {

@@ -35,14 +35,13 @@
 
 #include "BLT_translation.h"
 
-#include "PIL_time.h"
-
 #include "BLI_blenlib.h"
 #include "BLI_dial_2d.h"
 #include "BLI_dynstr.h" /* For #WM_operator_pystring. */
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector_types.hh"
 #include "BLI_string_utils.hh"
+#include "BLI_time.h"
 #include "BLI_utildefines.h"
 
 #include "BKE_anim_data.h"
@@ -53,8 +52,8 @@
 #include "BKE_idprop.h"
 #include "BKE_image.h"
 #include "BKE_image_format.h"
-#include "BKE_lib_id.h"
-#include "BKE_lib_query.h"
+#include "BKE_lib_id.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_preview_image.hh"
@@ -63,7 +62,7 @@
 #include "BKE_screen.hh" /* BKE_ST_MAXNAME */
 #include "BKE_unit.hh"
 
-#include "BKE_idtype.h"
+#include "BKE_idtype.hh"
 
 #include "BLF_api.h"
 
@@ -72,7 +71,7 @@
 #include "GPU_matrix.h"
 #include "GPU_state.h"
 
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf_types.hh"
 
 #include "ED_fileselect.hh"
 #include "ED_gpencil_legacy.hh"
@@ -3666,7 +3665,7 @@ static int redraw_timer_exec(bContext *C, wmOperator *op)
 
   WM_cursor_wait(true);
 
-  double time_start = PIL_check_seconds_timer();
+  double time_start = BLI_check_seconds_timer();
 
   wm_window_make_drawable(wm, win);
 
@@ -3676,14 +3675,14 @@ static int redraw_timer_exec(bContext *C, wmOperator *op)
     iter_steps += 1;
 
     if (time_limit != 0.0) {
-      if ((PIL_check_seconds_timer() - time_start) > time_limit) {
+      if ((BLI_check_seconds_timer() - time_start) > time_limit) {
         break;
       }
       a = 0;
     }
   }
 
-  double time_delta = (PIL_check_seconds_timer() - time_start) * 1000;
+  double time_delta = (BLI_check_seconds_timer() - time_start) * 1000;
 
   RNA_enum_description(redraw_timer_type_items, type, &infostr);
 
