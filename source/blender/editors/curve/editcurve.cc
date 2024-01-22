@@ -32,7 +32,7 @@
 #include "BKE_global.h"
 #include "BKE_key.h"
 #include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object_types.hh"
@@ -84,6 +84,13 @@ ListBase *object_editcurve_get(Object *ob)
     return &cu->editnurb->nurbs;
   }
   return nullptr;
+}
+
+KeyBlock *ED_curve_get_edit_shape_key(const Curve *cu)
+{
+  BLI_assert(cu->editnurb);
+
+  return BKE_keyblock_find_by_index(cu->key, cu->editnurb->shapenr - 1);
 }
 
 /** \} */
@@ -2701,8 +2708,17 @@ static int set_radius_exec(bContext *C, wmOperator *op)
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
       scene, view_layer, CTX_wm_view3d(C), &objects_len);
 
+  int totobjects = 0;
+
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *obedit = objects[ob_index];
+
+    if (ED_object_edit_report_if_shape_key_is_locked(obedit, op->reports)) {
+      continue;
+    }
+
+    totobjects++;
+
     ListBase *editnurb = object_editcurve_get(obedit);
     BezTriple *bezt;
     BPoint *bp;
@@ -2732,7 +2748,7 @@ static int set_radius_exec(bContext *C, wmOperator *op)
 
   MEM_freeN(objects);
 
-  return OPERATOR_FINISHED;
+  return totobjects ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 void CURVE_OT_radius_set(wmOperatorType *ot)
@@ -2804,7 +2820,7 @@ static void smooth_single_bp(BPoint *bp,
   }
 }
 
-static int smooth_exec(bContext *C, wmOperator * /*op*/)
+static int smooth_exec(bContext *C, wmOperator *op)
 {
   const float factor = 1.0f / 6.0f;
   const Scene *scene = CTX_data_scene(C);
@@ -2813,8 +2829,17 @@ static int smooth_exec(bContext *C, wmOperator * /*op*/)
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
       scene, view_layer, CTX_wm_view3d(C), &objects_len);
 
+  int totobjects = 0;
+
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *obedit = objects[ob_index];
+
+    if (ED_object_edit_report_if_shape_key_is_locked(obedit, op->reports)) {
+      continue;
+    }
+
+    totobjects++;
+
     ListBase *editnurb = object_editcurve_get(obedit);
 
     int a, a_end;
@@ -2892,7 +2917,7 @@ static int smooth_exec(bContext *C, wmOperator * /*op*/)
 
   MEM_freeN(objects);
 
-  return OPERATOR_FINISHED;
+  return totobjects ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 void CURVE_OT_smooth(wmOperatorType *ot)
@@ -3146,7 +3171,7 @@ void CURVE_OT_smooth_weight(wmOperatorType *ot)
 /** \name Smooth Radius Operator
  * \{ */
 
-static int curve_smooth_radius_exec(bContext *C, wmOperator * /*op*/)
+static int curve_smooth_radius_exec(bContext *C, wmOperator *op)
 {
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -3154,8 +3179,17 @@ static int curve_smooth_radius_exec(bContext *C, wmOperator * /*op*/)
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
       scene, view_layer, CTX_wm_view3d(C), &objects_len);
 
+  int totobjects = 0;
+
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *obedit = objects[ob_index];
+
+    if (ED_object_edit_report_if_shape_key_is_locked(obedit, op->reports)) {
+      continue;
+    }
+
+    totobjects++;
+
     ListBase *editnurb = object_editcurve_get(obedit);
 
     curve_smooth_value(editnurb, offsetof(BezTriple, radius), offsetof(BPoint, radius));
@@ -3166,7 +3200,7 @@ static int curve_smooth_radius_exec(bContext *C, wmOperator * /*op*/)
 
   MEM_freeN(objects);
 
-  return OPERATOR_FINISHED;
+  return totobjects ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 void CURVE_OT_smooth_radius(wmOperatorType *ot)
@@ -3190,7 +3224,7 @@ void CURVE_OT_smooth_radius(wmOperatorType *ot)
 /** \name Smooth Tilt Operator
  * \{ */
 
-static int curve_smooth_tilt_exec(bContext *C, wmOperator * /*op*/)
+static int curve_smooth_tilt_exec(bContext *C, wmOperator *op)
 {
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -3198,8 +3232,17 @@ static int curve_smooth_tilt_exec(bContext *C, wmOperator * /*op*/)
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
       scene, view_layer, CTX_wm_view3d(C), &objects_len);
 
+  int totobjects = 0;
+
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *obedit = objects[ob_index];
+
+    if (ED_object_edit_report_if_shape_key_is_locked(obedit, op->reports)) {
+      continue;
+    }
+
+    totobjects++;
+
     ListBase *editnurb = object_editcurve_get(obedit);
 
     curve_smooth_value(editnurb, offsetof(BezTriple, tilt), offsetof(BPoint, tilt));
@@ -3210,7 +3253,7 @@ static int curve_smooth_tilt_exec(bContext *C, wmOperator * /*op*/)
 
   MEM_freeN(objects);
 
-  return OPERATOR_FINISHED;
+  return totobjects ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 void CURVE_OT_smooth_tilt(wmOperatorType *ot)
@@ -4059,6 +4102,9 @@ static int curve_normals_make_consistent_exec(bContext *C, wmOperator *op)
   uint objects_len;
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
       scene, view_layer, CTX_wm_view3d(C), &objects_len);
+
+  int totobjects = 0;
+
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *obedit = objects[ob_index];
     Curve *cu = static_cast<Curve *>(obedit->data);
@@ -4067,6 +4113,12 @@ static int curve_normals_make_consistent_exec(bContext *C, wmOperator *op)
       continue;
     }
 
+    if (ED_object_edit_report_if_shape_key_is_locked(obedit, op->reports)) {
+      continue;
+    }
+
+    totobjects++;
+
     ListBase *editnurb = object_editcurve_get(obedit);
     BKE_nurbList_handles_recalculate(editnurb, calc_length, SELECT);
 
@@ -4074,7 +4126,7 @@ static int curve_normals_make_consistent_exec(bContext *C, wmOperator *op)
     DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
   }
   MEM_freeN(objects);
-  return OPERATOR_FINISHED;
+  return totobjects ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 void CURVE_OT_normals_make_consistent(wmOperatorType *ot)
@@ -7054,7 +7106,7 @@ int ED_curve_join_objects_exec(bContext *C, wmOperator *op)
 /** \name Clear Tilt Operator
  * \{ */
 
-static int clear_tilt_exec(bContext *C, wmOperator * /*op*/)
+static int clear_tilt_exec(bContext *C, wmOperator *op)
 {
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -7063,6 +7115,9 @@ static int clear_tilt_exec(bContext *C, wmOperator * /*op*/)
   uint objects_len;
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
       scene, view_layer, CTX_wm_view3d(C), &objects_len);
+
+  int totobjects = 0;
+
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *obedit = objects[ob_index];
     Curve *cu = static_cast<Curve *>(obedit->data);
@@ -7070,6 +7125,12 @@ static int clear_tilt_exec(bContext *C, wmOperator * /*op*/)
     if (!ED_curve_select_check(v3d, cu->editnurb)) {
       continue;
     }
+
+    if (ED_object_edit_report_if_shape_key_is_locked(obedit, op->reports)) {
+      continue;
+    }
+
+    totobjects++;
 
     ListBase *editnurb = object_editcurve_get(obedit);
     BezTriple *bezt;
@@ -7103,7 +7164,7 @@ static int clear_tilt_exec(bContext *C, wmOperator * /*op*/)
     DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
   }
   MEM_freeN(objects);
-  return OPERATOR_FINISHED;
+  return totobjects ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 void CURVE_OT_tilt_clear(wmOperatorType *ot)

@@ -60,7 +60,7 @@
 #include "BKE_scene.h"
 #include "BKE_subdiv_ccg.hh"
 #include "BKE_subsurf.hh"
-#include "BKE_undo_system.h"
+#include "BKE_undo_system.hh"
 
 /* TODO(sergey): Ideally should be no direct call to such low level things. */
 #include "BKE_subdiv_eval.hh"
@@ -1340,8 +1340,9 @@ static void store_hidden(Object *ob, Node *unode)
 
   PBVHNode *node = static_cast<PBVHNode *>(unode->node);
   const Span<int> verts = BKE_pbvh_node_get_vert_indices(node);
-  for (const int i : verts.index_range())
+  for (const int i : verts.index_range()) {
     unode->vert_hidden[i].set(hide_vert[verts[i]]);
+  }
 }
 
 static void store_face_hidden(Object &object, Node &unode)
@@ -1354,8 +1355,9 @@ static void store_face_hidden(Object &object, Node &unode)
     return;
   }
   const Span<int> faces = unode.face_indices;
-  for (const int i : faces.index_range())
+  for (const int i : faces.index_range()) {
     unode.face_hidden[i].set(hide_poly[faces[i]]);
+  }
 }
 
 static void store_mask(Object *ob, Node *unode)

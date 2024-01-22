@@ -24,7 +24,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_gpencil_legacy.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_paint.hh"
@@ -32,7 +32,7 @@
 
 #include "UI_interface.hh"
 
-#include "IMB_colormanagement.h"
+#include "IMB_colormanagement.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"

@@ -104,7 +104,7 @@ set(SRC
   intern/math_color_inline.c
   intern/math_geom.cc
   intern/math_geom_inline.c
-  intern/math_interp.c
+  intern/math_interp.cc
   intern/math_matrix.c
   intern/math_matrix.cc
   intern/math_rotation.c
@@ -287,7 +287,7 @@ set(SRC
   BLI_math_euler_types.hh
   BLI_math_geom.h
   BLI_math_inline.h
-  BLI_math_interp.h
+  BLI_math_interp.hh
   BLI_math_matrix.h
   BLI_math_matrix.hh
   BLI_math_matrix_types.hh
@@ -363,6 +363,8 @@ set(SRC
   BLI_task.hh
   BLI_tempfile.h
   BLI_threads.h
+  BLI_time.h
+  BLI_time_utildefines.h
   BLI_timecode.h
   BLI_timeit.hh
   BLI_timer.h
@@ -383,8 +385,6 @@ set(SRC
   BLI_voxel.h
   BLI_winstuff.h
   BLI_winstuff_com.hh
-  PIL_time.h
-  PIL_time_utildefines.h
 
   # Without these files listed, they aren't known to CMake.
   ../../../extern/json/include/json.hpp

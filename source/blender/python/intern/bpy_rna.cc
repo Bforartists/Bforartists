@@ -53,7 +53,7 @@
 #include "BKE_context.hh"
 #include "BKE_global.h" /* evil G.* */
 #include "BKE_idprop.h"
-#include "BKE_idtype.h"
+#include "BKE_idtype.hh"
 #include "BKE_main.hh"
 #include "BKE_report.h"
 
@@ -5304,7 +5304,7 @@ static int foreach_parse_args(BPy_PropertyRNA *self,
                               const char **r_attr,
                               PyObject **r_seq,
                               int *r_tot,
-                              int *r_size,
+                              size_t *r_size,
                               RawPropertyType *r_raw_type,
                               int *r_attr_tot,
                               bool *r_attr_signed)
@@ -5466,7 +5466,8 @@ static PyObject *foreach_getset(BPy_PropertyRNA *self, PyObject *args, int set)
   /* Get/set both take the same args currently. */
   const char *attr;
   PyObject *seq;
-  int tot, size, attr_tot;
+  int tot, attr_tot;
+  size_t size;
   bool attr_signed;
   RawPropertyType raw_type;
 
@@ -5718,6 +5719,8 @@ static PyObject *pyprop_array_foreach_getset(BPy_PropertyArrayRNA *self,
     return nullptr;
   }
 
+  /* NOTE: in this case it's important to use the flat-array size and *not* the result of
+   * `len()`, which uses #pyrna_prop_array_length, see !116457 for details. */
   size = RNA_property_array_length(&self->ptr, self->prop);
   seq_size = PySequence_Size(seq);
 

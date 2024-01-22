@@ -68,9 +68,9 @@
 #include "BKE_key.h"
 #include "BKE_lattice.hh"
 #include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
-#include "BKE_lib_query.h"
+#include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
 #include "BKE_light.h"
 #include "BKE_lightprobe.h"
@@ -4248,7 +4248,7 @@ static int object_transform_to_mouse_exec(bContext *C, wmOperator *op)
        *
        * The caller is responsible for ensuring the selection state gives useful results.
        * Link/append does this using #FILE_AUTOSELECT. */
-      ED_view3d_snap_selected_to_location(C, cursor, V3D_AROUND_ACTIVE);
+      ED_view3d_snap_selected_to_location(C, op, cursor, V3D_AROUND_ACTIVE);
     }
   }
 
