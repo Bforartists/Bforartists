@@ -1051,7 +1051,7 @@ static std::pair<int, bool> menu_custom_data_decode(void *menu_custom_data)
 
 static int icon_for_bone_collection(const bool collection_contains_active_bone)
 {
-  return collection_contains_active_bone ? ICON_REMOVE : ICON_ADD;
+  return collection_contains_active_bone ? ICON_COLLECTION_BONE_REMOVE : ICON_COLLECTION_BONE_ADD; /*BFA*/
 }
 
 static void menu_add_item_for_move_assign_unassign(uiLayout *layout,
@@ -1063,7 +1063,7 @@ static void menu_add_item_for_move_assign_unassign(uiLayout *layout,
   if (is_move_operation) {
     uiItemIntO(layout,
                bcoll->name,
-               ICON_GROUP_BONE,
+               ICON_GROUP_BONE, /*BFA*/
                "ARMATURE_OT_move_to_collection",
                "collection_index",
                bcoll_index);
@@ -1106,7 +1106,7 @@ static void move_to_collection_menu_create(bContext *C, uiLayout *layout, void *
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
   uiItemIntO(layout,
              "New Bone Collection",
-             ICON_NONE,
+             ICON_ADD, /*BFA*/
              is_move_operation ? "ARMATURE_OT_move_to_collection" :
                                  "ARMATURE_OT_assign_to_collection",
              "collection_index",
@@ -1140,7 +1140,7 @@ static void move_to_collection_menu_create(bContext *C, uiLayout *layout, void *
     if (blender::animrig::bonecoll_has_children(bcoll)) {
       uiItemMenuF(layout,
                   bcoll->name,
-                  ICON_ADD,
+                  ICON_COLLECTION_BONE_ADD, /*BFA*/
                   move_to_collection_menu_create,
                   menu_custom_data_encode(index, is_move_operation));
     }
