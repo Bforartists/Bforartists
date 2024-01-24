@@ -3178,7 +3178,6 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_asset")
-        # layout.menu("VIEW3D_MT_object_collection") #BFA - Redundant operators, now the UX is exclusive to the outliner
 
         layout.separator()
 
@@ -3194,6 +3193,7 @@ class VIEW3D_MT_object(Menu):
         # ...This is a minimal UX of layout.menu("VIEW3D_MT_object_collection")
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("object.move_to_collection", icon='GROUP')
+        layout.menu("VIEW3D_MT_object_collection") #BFA - Could be redundant operators, the UX was exclusive to the outliner
 
         # shading just for mesh and curve objects
         if obj is None:
@@ -3813,7 +3813,7 @@ class VIEW3D_MT_object_collection(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.move_to_collection", icon='GROUP')
+        #layout.operator("object.move_to_collection", icon='GROUP') #BFA - Double entry
         layout.operator("object.link_to_collection", icon='GROUP')
 
         layout.separator()
@@ -4820,6 +4820,10 @@ class VIEW3D_MT_pose(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_pose_motion")
+
+        layout.separator()
+
+        #layout.operator("object.move_to_collection", icon='GROUP') #BFA - not available in this mode
         layout.menu("VIEW3D_MT_bone_collections")
 
         layout.separator()
@@ -4920,12 +4924,11 @@ class VIEW3D_MT_bone_collections(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("armature.move_to_collection", icon="GROUP_BONE")
-        layout.operator("armature.assign_to_collection", icon="ADD")
+        layout.operator("armature.assign_to_collection", icon="COLLECTION_BONE_ADD")
 
         layout.separator()
 
-        layout.operator("armature.collection_show_all")
+        layout.operator("armature.collection_show_all", icon="SHOW_UNSELECTED")
         props = layout.operator("armature.collection_create_and_assign",
                                 text="Assign to New Collection",
                                 icon='COLLECTION_BONE_NEW')
@@ -5031,6 +5034,10 @@ class VIEW3D_MT_pose_context_menu(Menu):
         layout.operator("pose.paths_calculate", text="Calculate Motion Paths", icon='MOTIONPATHS_CALCULATE')
         layout.operator("pose.paths_clear", text="Clear Motion Paths", icon='MOTIONPATHS_CLEAR')
         layout.operator("pose.paths_update", text="Update Armature Motion Paths", icon="MOTIONPATHS_UPDATE")
+
+        layout.separator()
+
+        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP_BONE") #BFA - added to context menu
 
         layout.separator()
 
@@ -6553,6 +6560,10 @@ class VIEW3D_MT_armature_context_menu(Menu):
         # Remove
         layout.operator("armature.split", icon="SPLIT")
         layout.operator("armature.separate", icon="SEPARATE")
+
+        layout.separator()
+
+        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP_BONE") # BFA - added to context menu
 
         layout.separator()
 
