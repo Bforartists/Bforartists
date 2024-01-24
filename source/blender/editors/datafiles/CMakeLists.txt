@@ -89,6 +89,17 @@ planar
 attribute_combine_xyz
 attribute_separate_xyz
 
+#~ DEF_ICON_BLANK(109)
+#~ DEF_ICON_BLANK(110)
+#~ DEF_ICON_BLANK(111)
+#~ DEF_ICON_BLANK(112)
+#~ DEF_ICON_BLANK(113)
+#~ DEF_ICON_BLANK(114)
+#~ DEF_ICON_BLANK(115)
+#~ DEF_ICON_BLANK(116)
+#~ DEF_ICON_BLANK(117)
+#~ DEF_ICON_BLANK(118)
+
 # ------------------------- row 2 --------------------------*/
 
 fullscreen
@@ -156,6 +167,17 @@ attribute_remove
 node_vectorrotate
 mask_slice
 mesh_line
+
+#~ DEF_ICON_BLANK(188)
+#~ DEF_ICON_BLANK(189)
+#~ DEF_ICON_BLANK(190)
+#~ DEF_ICON_BLANK(191)
+#~ DEF_ICON_BLANK(192)
+#~ DEF_ICON_BLANK(193)
+#~ DEF_ICON_BLANK(194)
+#~ DEF_ICON_BLANK(195)
+#~ DEF_ICON_BLANK(196)
+#~ DEF_ICON_BLANK(197)
 
 # ------------------------- row 3 --------------------------*/
 
@@ -225,6 +247,17 @@ save_svg
 save_pdf
 load_svg_gpencil
 
+#~ DEF_ICON_BLANK(267)
+#~ DEF_ICON_BLANK(268)
+#~ DEF_ICON_BLANK(269)
+#~ DEF_ICON_BLANK(270)
+#~ DEF_ICON_BLANK(271)
+#~ DEF_ICON_BLANK(272)
+#~ DEF_ICON_BLANK(273)
+#~ DEF_ICON_BLANK(274)
+#~ DEF_ICON_BLANK(275)
+#~ DEF_ICON_BLANK(276)
+
 # ------------------------- row 4 --------------------------*/
 
 sharpen
@@ -292,6 +325,17 @@ attribute_curvemap
 attribute_transfer
 curve_resample
 attribute_vector_rotate
+
+#~ DEF_ICON_BLANK(346)
+#~ DEF_ICON_BLANK(347)
+#~ DEF_ICON_BLANK(348)
+#~ DEF_ICON_BLANK(349)
+#~ DEF_ICON_BLANK(350)
+#~ DEF_ICON_BLANK(351)
+#~ DEF_ICON_BLANK(352)
+#~ DEF_ICON_BLANK(353)
+#~ DEF_ICON_BLANK(354)
+#~ DEF_ICON_BLANK(355)
 
 # ------------------------- row 5 --------------------------*/
 
@@ -361,6 +405,17 @@ split_byvertices
 separate_bymaterial
 separate_loose
 
+#~ DEF_ICON_BLANK(425)
+#~ DEF_ICON_BLANK(426)
+#~ DEF_ICON_BLANK(427)
+#~ DEF_ICON_BLANK(428)
+#~ DEF_ICON_BLANK(429)
+#~ DEF_ICON_BLANK(430)
+#~ DEF_ICON_BLANK(431)
+#~ DEF_ICON_BLANK(432)
+#~ DEF_ICON_BLANK(433)
+#~ DEF_ICON_BLANK(434)
+
 # ------------------------- row 6 --------------------------*/
 
 object_datamode
@@ -428,6 +483,17 @@ rotateccw
 projectfromview_bounds
 join_areas
 swap_areas
+
+#~ DEF_ICON_BLANK(504)
+#~ DEF_ICON_BLANK(505)
+#~ DEF_ICON_BLANK(506)
+#~ DEF_ICON_BLANK(507)
+#~ DEF_ICON_BLANK(508)
+#~ DEF_ICON_BLANK(509)
+#~ DEF_ICON_BLANK(510)
+#~ DEF_ICON_BLANK(511)
+#~ DEF_ICON_BLANK(512)
+#~ DEF_ICON_BLANK(513)
 
 # ------------------------- row 7  --------------------------*/
 
@@ -497,6 +563,17 @@ separate_gp_layer
 bone_layer
 clean_channels_frames
 
+#~ DEF_ICON_BLANK(584)
+#~ DEF_ICON_BLANK(585)
+#~ DEF_ICON_BLANK(586)
+#~ DEF_ICON_BLANK(587)
+#~ DEF_ICON_BLANK(588)
+#~ DEF_ICON_BLANK(589)
+#~ DEF_ICON_BLANK(590)
+#~ DEF_ICON_BLANK(591)
+#~ DEF_ICON_BLANK(592)
+#~ DEF_ICON_BLANK(593)
+
 # ------------------------- row 8 --------------------------*/
 
 brush_data
@@ -564,6 +641,17 @@ select_by_material
 pose_from_breakdown
 pose_relax_to_breakdown
 raycast
+
+#~ DEF_ICON_BLANK(663)
+#~ DEF_ICON_BLANK(664)
+#~ DEF_ICON_BLANK(665)
+#~ DEF_ICON_BLANK(666)
+#~ DEF_ICON_BLANK(667)
+#~ DEF_ICON_BLANK(668)
+#~ DEF_ICON_BLANK(669)
+#~ DEF_ICON_BLANK(670)
+#~ DEF_ICON_BLANK(671)
+#~ DEF_ICON_BLANK(672)
 
 # ------------------------- row 9 --------------------------*/
 
@@ -633,6 +721,17 @@ float_to_int
 curve_quadrilateral
 curve_trim
 
+#~ DEF_ICON_BLANK(742)
+#~ DEF_ICON_BLANK(743)
+#~ DEF_ICON_BLANK(744)
+#~ DEF_ICON_BLANK(745)
+#~ DEF_ICON_BLANK(746)
+#~ DEF_ICON_BLANK(747)
+#~ DEF_ICON_BLANK(748)
+#~ DEF_ICON_BLANK(749)
+#~ DEF_ICON_BLANK(750)
+#~ DEF_ICON_BLANK(751)
+
 # ------------------------- row 10 --------------------------*/
 
 outliner_ob_empty
@@ -701,6 +800,17 @@ posterize
 mod_dash
 search_menu
 
+#~ DEF_ICON_BLANK(821)
+#~ DEF_ICON_BLANK(822)
+#~ DEF_ICON_BLANK(823)
+#~ DEF_ICON_BLANK(824)
+#~ DEF_ICON_BLANK(825)
+#~ DEF_ICON_BLANK(826)
+#~ DEF_ICON_BLANK(827)
+#~ DEF_ICON_BLANK(828)
+#~ DEF_ICON_BLANK(829)
+#~ DEF_ICON_BLANK(830)
+
 # ------------------------- row 11 --------------------------*/
 
 outliner_data_empty
@@ -768,6 +878,17 @@ string_substring
 string_to_curve
 value_to_string
 attribute_statistic
+
+#~ DEF_ICON_BLANK(900)
+#~ DEF_ICON_BLANK(901)
+#~ DEF_ICON_BLANK(902)
+#~ DEF_ICON_BLANK(903)
+#~ DEF_ICON_BLANK(904)
+#~ DEF_ICON_BLANK(905)
+#~ DEF_ICON_BLANK(906)
+#~ DEF_ICON_BLANK(907)
+#~ DEF_ICON_BLANK(908)
+#~ DEF_ICON_BLANK(909)
 
 # ------------------------- row 12 --------------------------*/
 
@@ -838,6 +959,17 @@ geometry_proximity
 position
 index
 
+#~ DEF_ICON_BLANK(980)
+#~ DEF_ICON_BLANK(981)
+#~ DEF_ICON_BLANK(982)
+#~ DEF_ICON_BLANK(983)
+#~ DEF_ICON_BLANK(984)
+#~ DEF_ICON_BLANK(985)
+#~ DEF_ICON_BLANK(986)
+#~ DEF_ICON_BLANK(987)
+#~ DEF_ICON_BLANK(988)
+#~ DEF_ICON_BLANK(989)
+
 # ------------------------- row 13 --------------------------*/
 
 # primitives */
@@ -906,6 +1038,17 @@ curve_tilt
 is_spline_cyclic
 set_curve_handle_positions
 set_curve_radius
+
+#~ DEF_ICON_BLANK(1048)
+#~ DEF_ICON_BLANK(1049)
+#~ DEF_ICON_BLANK(1050)
+#~ DEF_ICON_BLANK(1051)
+#~ DEF_ICON_BLANK(1052)
+#~ DEF_ICON_BLANK(1053)
+#~ DEF_ICON_BLANK(1054)
+#~ DEF_ICON_BLANK(1055)
+#~ DEF_ICON_BLANK(1056)
+#~ DEF_ICON_BLANK(1057)
 
 # ------------------------- row 14 --------------------------*/
 
@@ -976,6 +1119,17 @@ material_index
 set_material_index
 set_shade_smooth
 
+#~ DEF_ICON_BLANK(1140)
+#~ DEF_ICON_BLANK(1141)
+#~ DEF_ICON_BLANK(1142)
+#~ DEF_ICON_BLANK(1143)
+#~ DEF_ICON_BLANK(1144)
+#~ DEF_ICON_BLANK(1145)
+#~ DEF_ICON_BLANK(1146)
+#~ DEF_ICON_BLANK(1147)
+#~ DEF_ICON_BLANK(1148)
+#~ DEF_ICON_BLANK(1149)
+
 # ------------------------- row 15 --------------------------*/
 
 snaptopixel_center
@@ -1043,6 +1197,17 @@ input_bool
 instances_to_points
 replace_string
 color_tag
+
+#~ DEF_ICON_BLANK(1219)
+#~ DEF_ICON_BLANK(1220)
+#~ DEF_ICON_BLANK(1221)
+#~ DEF_ICON_BLANK(1222)
+#~ DEF_ICON_BLANK(1223)
+#~ DEF_ICON_BLANK(1224)
+#~ DEF_ICON_BLANK(1225)
+#~ DEF_ICON_BLANK(1226)
+#~ DEF_ICON_BLANK(1227)
+#~ DEF_ICON_BLANK(1228)
 
 # ------------------------- row 16 --------------------------*/
 
@@ -1112,6 +1277,17 @@ visual_move
 visual_rotate
 visual_scale
 
+#~ DEF_ICON_BLANK(1298)
+#~ DEF_ICON_BLANK(1299)
+#~ DEF_ICON_BLANK(1300)
+#~ DEF_ICON_BLANK(1301)
+#~ DEF_ICON_BLANK(1302)
+#~ DEF_ICON_BLANK(1303)
+#~ DEF_ICON_BLANK(1304)
+#~ DEF_ICON_BLANK(1305)
+#~ DEF_ICON_BLANK(1306)
+#~ DEF_ICON_BLANK(1307)
+
 # ------------------------- row 17 --------------------------*/
 
 inset_faces
@@ -1180,6 +1356,17 @@ visual_rot_scale
 loc_rot_scale_custom
 separate_copy
 
+#~ DEF_ICON_BLANK(1377)
+#~ DEF_ICON_BLANK(1378)
+#~ DEF_ICON_BLANK(1379)
+#~ DEF_ICON_BLANK(1380)
+#~ DEF_ICON_BLANK(1381)
+#~ DEF_ICON_BLANK(1382)
+#~ DEF_ICON_BLANK(1383)
+#~ DEF_ICON_BLANK(1384)
+#~ DEF_ICON_BLANK(1385)
+#~ DEF_ICON_BLANK(1386)
+
 # ------------------------- row 18 --------------------------*/
 
 modifier
@@ -1247,6 +1434,17 @@ edge_vertices
 face_neighbors
 geometry_instance
 vertex_neighbors
+
+#~ DEF_ICON_BLANK(1456)
+#~ DEF_ICON_BLANK(1457)
+#~ DEF_ICON_BLANK(1458)
+#~ DEF_ICON_BLANK(1459)
+#~ DEF_ICON_BLANK(1460)
+#~ DEF_ICON_BLANK(1461)
+#~ DEF_ICON_BLANK(1462)
+#~ DEF_ICON_BLANK(1463)
+#~ DEF_ICON_BLANK(1464)
+#~ DEF_ICON_BLANK(1465)
 
 # ------------------------- row 19 --------------------------*/
 
@@ -1317,6 +1515,17 @@ point_info
 paint_add
 paint_average
 
+#~ DEF_ICON_BLANK(1536)
+#~ DEF_ICON_BLANK(1537)
+#~ DEF_ICON_BLANK(1538)
+#~ DEF_ICON_BLANK(1539)
+#~ DEF_ICON_BLANK(1540)
+#~ DEF_ICON_BLANK(1541)
+#~ DEF_ICON_BLANK(1542)
+#~ DEF_ICON_BLANK(1543)
+#~ DEF_ICON_BLANK(1544)
+#~ DEF_ICON_BLANK(1545)
+
 # ------------------------- row 20 --------------------------*/
 
 rec
@@ -1384,6 +1593,17 @@ paint_smear
 paint_subtract
 blend_to_default
 apply_parent_inverse
+
+#~ DEF_ICON_BLANK(1615)
+#~ DEF_ICON_BLANK(1616)
+#~ DEF_ICON_BLANK(1617)
+#~ DEF_ICON_BLANK(1618)
+#~ DEF_ICON_BLANK(1619)
+#~ DEF_ICON_BLANK(1620)
+#~ DEF_ICON_BLANK(1621)
+#~ DEF_ICON_BLANK(1622)
+#~ DEF_ICON_BLANK(1623)
+#~ DEF_ICON_BLANK(1624)
 
 # ------------------------- row 21 --------------------------*/
 
@@ -1453,6 +1673,17 @@ instance_rotate
 instance_scale
 volume_cube
 
+#~ DEF_ICON_BLANK(1694)
+#~ DEF_ICON_BLANK(1695)
+#~ DEF_ICON_BLANK(1696)
+#~ DEF_ICON_BLANK(1697)
+#~ DEF_ICON_BLANK(1698)
+#~ DEF_ICON_BLANK(1699)
+#~ DEF_ICON_BLANK(1700)
+#~ DEF_ICON_BLANK(1701)
+#~ DEF_ICON_BLANK(1702)
+#~ DEF_ICON_BLANK(1703)
+
 # ------------------------- row 22 --------------------------*/
 
 vertexsel
@@ -1520,6 +1751,17 @@ edge_paths_to_curves
 mesh_to_volume
 startpoint
 outline
+
+#~ DEF_ICON_BLANK(1775)
+#~ DEF_ICON_BLANK(1776)
+#~ DEF_ICON_BLANK(1777)
+#~ DEF_ICON_BLANK(1778)
+#~ DEF_ICON_BLANK(1779)
+#~ DEF_ICON_BLANK(1780)
+#~ DEF_ICON_BLANK(1781)
+#~ DEF_ICON_BLANK(1782)
+#~ DEF_ICON_BLANK(1783)
+#~ DEF_ICON_BLANK(1784)
 
 # ------------------------- row 23 --------------------------*/
 
@@ -1590,6 +1832,17 @@ vertex_of_corner
 sample_nearest_surface
 sample_uv_surface
 
+#~ DEF_ICON_BLANK(1852)
+#~ DEF_ICON_BLANK(1853)
+#~ DEF_ICON_BLANK(1854)
+#~ DEF_ICON_BLANK(1855)
+#~ DEF_ICON_BLANK(1856)
+#~ DEF_ICON_BLANK(1857)
+#~ DEF_ICON_BLANK(1858)
+#~ DEF_ICON_BLANK(1859)
+#~ DEF_ICON_BLANK(1860)
+#~ DEF_ICON_BLANK(1861)
+
 # ------------------------- row 24 --------------------------*/
 
 pastedown
@@ -1657,6 +1910,17 @@ sample_nearest
 image_info
 blur_attribute
 node_mix
+
+#~ DEF_ICON_BLANK(1931)
+#~ DEF_ICON_BLANK(1932)
+#~ DEF_ICON_BLANK(1933)
+#~ DEF_ICON_BLANK(1934)
+#~ DEF_ICON_BLANK(1935)
+#~ DEF_ICON_BLANK(1936)
+#~ DEF_ICON_BLANK(1937)
+#~ DEF_ICON_BLANK(1938)
+#~ DEF_ICON_BLANK(1939)
+#~ DEF_ICON_BLANK(1940)
 
 # ------------------------- row 25 --------------------------*/
 
@@ -1726,6 +1990,17 @@ lasso_add
 lasso_trim
 line_project
 
+#~ DEF_ICON_BLANK(2010)
+#~ DEF_ICON_BLANK(2011)
+#~ DEF_ICON_BLANK(2012)
+#~ DEF_ICON_BLANK(2013)
+#~ DEF_ICON_BLANK(2014)
+#~ DEF_ICON_BLANK(2015)
+#~ DEF_ICON_BLANK(2016)
+#~ DEF_ICON_BLANK(2017)
+#~ DEF_ICON_BLANK(2018)
+#~ DEF_ICON_BLANK(2019)
+
 # ------------------------- row 26 --------------------------*/
 
 load_3ds
@@ -1793,6 +2068,17 @@ index_of_nearest
 orientation_parent
 kuwahara
 corners_of_edge
+
+#~ DEF_ICON_BLANK(2089)
+#~ DEF_ICON_BLANK(2090)
+#~ DEF_ICON_BLANK(2091)
+#~ DEF_ICON_BLANK(2092)
+#~ DEF_ICON_BLANK(2093)
+#~ DEF_ICON_BLANK(2094)
+#~ DEF_ICON_BLANK(2095)
+#~ DEF_ICON_BLANK(2096)
+#~ DEF_ICON_BLANK(2097)
+#~ DEF_ICON_BLANK(2098)
 
 # ------------------------- row 27  --------------------------*/
 
@@ -1862,6 +2148,17 @@ rotation_to_axis_angle
 rotation_to_euler
 rotation_to_quaternion
 
+#~ DEF_ICON_BLANK(2168)
+#~ DEF_ICON_BLANK(2169)
+#~ DEF_ICON_BLANK(2170)
+#~ DEF_ICON_BLANK(2171)
+#~ DEF_ICON_BLANK(2172)
+#~ DEF_ICON_BLANK(2173)
+#~ DEF_ICON_BLANK(2174)
+#~ DEF_ICON_BLANK(2175)
+#~ DEF_ICON_BLANK(2176)
+#~ DEF_ICON_BLANK(2177)
+
 # ------------------------- row 28 --------------------------*/
 
 recover_auto
@@ -1924,11 +2221,22 @@ blend_to_ease
 split_to_instances
 index_switch
 bake
-#~ DEF_ICON_BLANK(1955)
-#~ DEF_ICON_BLANK(1956)
-#~ DEF_ICON_BLANK(1957)
-#~ DEF_ICON_BLANK(1958)
+#~ DEF_ICON_BLANK(2241)
+#~ DEF_ICON_BLANK(2242)
+#~ DEF_ICON_BLANK(2243)
+#~ DEF_ICON_BLANK(2244)
 collection_bone_remove
+
+#~ DEF_ICON_BLANK(2247)
+#~ DEF_ICON_BLANK(2248)
+#~ DEF_ICON_BLANK(2249)
+#~ DEF_ICON_BLANK(2250)
+#~ DEF_ICON_BLANK(2251)
+#~ DEF_ICON_BLANK(2252)
+#~ DEF_ICON_BLANK(2253)
+#~ DEF_ICON_BLANK(2254)
+#~ DEF_ICON_BLANK(2255)
+#~ DEF_ICON_BLANK(2256)
 
 # ------------------------- row 29 --------------------------*/
 
@@ -1991,12 +2299,23 @@ scale_average
 set_time
 set_selection
 view_graph
-#~ DEF_ICON_BLANK(2022)
-#~ DEF_ICON_BLANK(2023)
-#~ DEF_ICON_BLANK(2024)
-#~ DEF_ICON_BLANK(2025)
-#~ DEF_ICON_BLANK(2026)
+#~ DEF_ICON_BLANK(2319)
+#~ DEF_ICON_BLANK(2320)
+#~ DEF_ICON_BLANK(2321)
+#~ DEF_ICON_BLANK(2322)
+#~ DEF_ICON_BLANK(2323)
 collection_bone_add
+
+#~ DEF_ICON_BLANK(2326)
+#~ DEF_ICON_BLANK(2327)
+#~ DEF_ICON_BLANK(2328)
+#~ DEF_ICON_BLANK(2329)
+#~ DEF_ICON_BLANK(2330)
+#~ DEF_ICON_BLANK(2331)
+#~ DEF_ICON_BLANK(2332)
+#~ DEF_ICON_BLANK(2333)
+#~ DEF_ICON_BLANK(2334)
+#~ DEF_ICON_BLANK(2335)
 
 # ------------------------- row 30 --------------------------*/
 
@@ -2059,12 +2378,23 @@ face_maps_active
 select_key
 face_set
 set_face_set
-#~ DEF_ICON_BLANK(2090)
-#~ DEF_ICON_BLANK(2091)
-#~ DEF_ICON_BLANK(2092)
-#~ DEF_ICON_BLANK(2093)
-#~ DEF_ICON_BLANK(2094)
+#~ DEF_ICON_BLANK(2398)
+#~ DEF_ICON_BLANK(2399)
+#~ DEF_ICON_BLANK(2400)
+#~ DEF_ICON_BLANK(2401)
+#~ DEF_ICON_BLANK(2402)
 collection_bone_new
+
+#~ DEF_ICON_BLANK(2405)
+#~ DEF_ICON_BLANK(2406)
+#~ DEF_ICON_BLANK(2407)
+#~ DEF_ICON_BLANK(2408)
+#~ DEF_ICON_BLANK(2409)
+#~ DEF_ICON_BLANK(2410)
+#~ DEF_ICON_BLANK(2411)
+#~ DEF_ICON_BLANK(2412)
+#~ DEF_ICON_BLANK(2413)
+#~ DEF_ICON_BLANK(2414)
 )
 
 # This section is maintained by the updating script, keep BEGIN/END comments.
