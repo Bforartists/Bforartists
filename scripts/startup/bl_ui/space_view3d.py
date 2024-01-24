@@ -4823,7 +4823,7 @@ class VIEW3D_MT_pose(Menu):
 
         layout.separator()
 
-        #layout.operator("object.move_to_collection", icon='GROUP') #BFA - not available in this mode
+        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP_BONE") #BFA - added for consistency
         layout.menu("VIEW3D_MT_bone_collections")
 
         layout.separator()
