@@ -172,6 +172,18 @@ class ARMATURE_MT_collection_context_menu(Menu):
         arm = context.armature
         active_bcoll = arm.collections.active
 
+        active_bcoll_is_locked = arm.collections.active and not arm.collections.active.is_editable
+
+        # The poll function doesn't have access to the parent index property, so
+        # it cannot disable this operator depending on whether the parent is
+        # editable or not. That means this menu has to do the disabling for it.
+        sub = layout.column()
+        sub.enabled = not active_bcoll_is_locked
+        props = sub.operator(
+            "armature.collection_add", text="Add Child Collection", icon="COLLECTION_NEW"
+        )
+        props.parent_index = arm.collections.active_index
+
         props = layout.operator("armature.collection_solo_visibility", icon='HIDE_UNSELECTED')
         props.name = active_bcoll.name if active_bcoll else ""
         layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
@@ -192,15 +204,15 @@ class ARMATURE_MT_collection_tree_context_menu(Menu):
         sub = layout.column()
         sub.enabled = not active_bcoll_is_locked
         props = sub.operator(
-            "armature.collection_add", text="Add Child Collection"
+            "armature.collection_add", text="Add Child Collection", icon="COLLECTION_NEW"
         )
         props.parent_index = arm.collections.active_index
-        sub.operator("armature.collection_remove")
+        sub.operator("armature.collection_remove", icon="REMOVE")
 
         layout.separator()
 
-        layout.operator("armature.collection_solo_visibility")
-        layout.operator("armature.collection_show_all")
+        layout.operator("armature.collection_solo_visibility", icon="HIDE_UNSELECTED")
+        layout.operator("armature.collection_show_all", icon="SHOW_UNSELECTED")
 
         layout.separator()
 
@@ -209,13 +221,13 @@ class ARMATURE_MT_collection_tree_context_menu(Menu):
         # they have the same limitation as described above.
         sub = layout.column()
         sub.enabled = not active_bcoll_is_locked
-        sub.operator("armature.collection_assign", text="Assign Selected Bones")
-        sub.operator("armature.collection_unassign", text="Remove Selected Bones")
+        sub.operator("armature.collection_assign", text="Assign Selected Bones", icon="COLLECTION_BONE_ADD")
+        sub.operator("armature.collection_unassign", text="Remove Selected Bones", icon="COLLECTION_BONE_REMOVE")
 
         layout.separator()
 
-        layout.operator("armature.collection_select", text="Select Bones")
-        layout.operator("armature.collection_deselect", text="Deselect Bones")
+        layout.operator("armature.collection_select", text="Select Bones", icon="RESTRICT_SELECT_OFF")
+        layout.operator("armature.collection_deselect", text="Deselect Bones", icon="SELECT_NONE")
 
 
 class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
