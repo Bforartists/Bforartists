@@ -129,7 +129,7 @@ class NODE_HT_header(Header):
         is_compositor = snode.tree_type == 'CompositorNodeTree'
         not_group = (len(snode.path) > 1) # bfa - don't show up arrow if at top level.
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu_node.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
         # Now expanded via the `ui_type`.
         # layout.prop(snode, "tree_type", text="")
@@ -361,8 +361,8 @@ class NODE_HT_header(Header):
         sub.active = overlay.show_overlays
         sub.popover(panel="NODE_PT_overlay", text="")
 
-# BFA - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_node(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -1540,7 +1540,7 @@ class NODE_PT_view(bpy.types.Panel):
         layout.prop(snode, "use_insert_offset")
 
 classes = (
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_node,
     NODE_HT_header,
     NODE_MT_editor_menus,
     NODE_MT_add,
