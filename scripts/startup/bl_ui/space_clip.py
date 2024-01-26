@@ -267,7 +267,7 @@ class CLIP_HT_header(Header):
 
         sc = context.space_data
 
-        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+        ALL_MT_editormenu_clip.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         layout.prop(sc, "mode", text="")
         if sc.mode == 'TRACKING':
@@ -314,8 +314,8 @@ class CLIP_PT_options(Panel):
         col.prop(sc, "show_locked_time")
 
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_clip(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -2124,7 +2124,7 @@ class CLIP_PT_gizmo_display(Panel):
 
 classes = (
     CLIP_PT_options,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_clip,
     CLIP_UL_tracking_objects,
     CLIP_PT_proportional_edit,
     CLIP_HT_header,

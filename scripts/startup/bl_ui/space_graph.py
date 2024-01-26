@@ -44,7 +44,7 @@ class GRAPH_HT_header(Header):
 
         st = context.space_data
 
-        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+        ALL_MT_editormenu_graph.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         # Now a exposed as a sub-space type
         # layout.prop(st, "mode", text="")
@@ -125,10 +125,10 @@ class GRAPH_HT_header(Header):
         row = layout.row()
         row.popover(panel="GRAPH_PT_properties_view_options", text="Options")
 
-# bfa - show hide the editormenu
+# bfa - show hide the editormenu, editor suffix is needed.
 
 
-class ALL_MT_editormenu(Menu):
+class ALL_MT_editormenu_graph(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -733,7 +733,7 @@ class GRAPH_MT_snap_pie(Menu):
 classes = (
     ANIM_OT_switch_editor_in_graph,
     ANIM_OT_switch_editor_in_driver,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_graph,
     GRAPH_HT_header,
     GRAPH_PT_properties_view_options,
     GRAPH_PT_proportional_edit,
