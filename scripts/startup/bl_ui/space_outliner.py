@@ -25,7 +25,7 @@ class OUTLINER_HT_header(Header):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu_outliner.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
         # bfa - The tab to switch to properties
         # Editor types:
@@ -126,8 +126,8 @@ class   OUTLINER_MT_object_collection(Menu):
         layout.operator("collection.objects_remove_active", icon = "DELETE")
 
 
-# BFA - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_outliner(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -698,7 +698,7 @@ class OUTLINER_PT_filter(Panel):
 classes = (
     OUTLINER_HT_header,
     OUTLINER_MT_object_collection,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_outliner,
     BFA_OUTLINER_PT_scene_ops,
     OUTLINER_MT_editor_menus,
     OUTLINER_MT_pie_menus,
