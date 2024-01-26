@@ -13,7 +13,7 @@ class PROPERTIES_HT_header(Header):
         region = context.region
         ui_scale = context.preferences.system.ui_scale
 
-        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+        ALL_MT_editormenu_properties.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         # bfa - The tab to switch to outliner
         row = layout.row(align=True)
@@ -75,8 +75,8 @@ class PROPERTIES_PT_options(Panel):
         col.row().prop(space, "outliner_sync", expand=True)
 
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_properties(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -93,7 +93,7 @@ classes = (
     PROPERTIES_HT_header,
     PROPERTIES_PT_navigation_bar,
     PROPERTIES_PT_options,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_properties,
 )
 
 if __name__ == "__main__":  # only for live edit.

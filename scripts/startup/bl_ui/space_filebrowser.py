@@ -63,7 +63,7 @@ class FILEBROWSER_HT_header(Header):
 
         if space_data.active_operator is None:
             # layout.template_header()
-            ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+            ALL_MT_editormenu_filebrowser.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         if SpaceAssetInfo.is_asset_browser(space_data):
             ASSETBROWSER_MT_editor_menus.draw_collapsible(context, layout)
@@ -77,8 +77,8 @@ class FILEBROWSER_HT_header(Header):
             layout.template_running_jobs()
 
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_filebrowser(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -929,7 +929,7 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
 
 
 classes = (
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_filebrowser,
     FILEBROWSER_HT_header,
     FILEBROWSER_PT_display,
     FILEBROWSER_PT_filter,
