@@ -13,7 +13,7 @@ class INFO_HT_header(Header):
     def draw(self, context):
         layout = self.layout
 
-        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+        ALL_MT_editormenu_info.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
         INFO_MT_editor_menus.draw_collapsible(context, layout)
 
 
@@ -64,8 +64,8 @@ class INFO_MT_info(Menu):
         layout.operator("info.report_copy", text="Copy", icon='COPYDOWN')
 
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_info(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -116,7 +116,7 @@ class INFO_MT_context_menu(Menu):
 
 
 classes = (
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_info,
     INFO_HT_header,
     INFO_MT_editor_menus,
     INFO_MT_area,

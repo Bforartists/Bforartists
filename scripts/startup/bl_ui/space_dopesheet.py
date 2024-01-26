@@ -280,8 +280,8 @@ class DOPESHEET_HT_header(Header):
 
         st = context.space_data
 
-        # bfa - show hide the editormenu
-        ALL_MT_editormenu.draw_hidden(context, layout)
+        # bfa - show hide the editormenu, editor suffix is needed.
+        ALL_MT_editormenu_dopesheet.draw_hidden(context, layout)
 
         if st.mode == 'TIMELINE':
             from bl_ui.space_time import (
@@ -310,10 +310,10 @@ class DOPESHEET_HT_header(Header):
             DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
             DOPESHEET_HT_editor_buttons.draw_header(context, layout)
 
-# bfa - show hide the editormenu
+# bfa - show hide the editormenu, editor suffix is needed.
 
 
-class ALL_MT_editormenu(Menu):
+class ALL_MT_editormenu_dopesheet(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -1142,7 +1142,7 @@ class DOPESHEET_PT_gpencil_layer_display(LayersDopeSheetPanel, GreasePencilLayer
 
 
 classes = (
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_dopesheet,
     ANIM_OT_switch_editors_to_dopesheet,
     ANIM_OT_switch_editors_to_graph,
     ANIM_OT_switch_editors_to_driver,
