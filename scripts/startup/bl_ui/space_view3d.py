@@ -760,7 +760,7 @@ class VIEW3D_HT_header(Header):
         shading = view.shading
         overlay = view.overlay
 
-        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+        ALL_MT_editormenu_view3d.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         obj = context.active_object
         mode_string = context.mode
@@ -1091,8 +1091,8 @@ class VIEW3D_HT_header(Header):
         sub.popover(panel="VIEW3D_PT_shading", text="")
 
 
-# BFA - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_view3d(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -10549,7 +10549,7 @@ class VIEW3D_AST_sculpt_brushes(bpy.types.AssetShelf):
 classes = (
     VIEW3D_HT_header,
     VIEW3D_HT_tool_header,
-    ALL_MT_editormenu,  # bfa menu
+    ALL_MT_editormenu_view3d,  # bfa menu
     VIEW3D_MT_editor_menus,
     VIEW3D_MT_transform,
     VIEW3D_MT_transform_object,
