@@ -41,7 +41,7 @@ class NLA_HT_header(Header):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+        ALL_MT_editormenu_nla.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         # Switch between the editors
 
@@ -118,8 +118,8 @@ class NLA_PT_snapping(Panel):
             col.prop(tool_settings, "use_snap_time_absolute")
 
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_nla(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -586,7 +586,7 @@ class NLA_MT_channel_context_menu(Menu):
 
 classes = (
     ANIM_OT_switch_editors_in_nla,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_nla,
     NLA_HT_header,
     NLA_MT_editor_menus,
     NLA_MT_view,

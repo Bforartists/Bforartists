@@ -979,7 +979,7 @@ class IMAGE_HT_header(Header):
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
 
-        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+        ALL_MT_editormenu_image.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         # bfa - hide disfunctional tools and settings for render result
         is_render = False
@@ -1068,8 +1068,8 @@ class IMAGE_HT_header(Header):
         row.popover(panel="IMAGE_PT_image_options", text="Options")
 
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_image(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -2003,7 +2003,7 @@ class IMAGE_OT_switch_editors_to_image(bpy.types.Operator):
 
 
 classes = (
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_image,
     IMAGE_MT_view_legacy,
     IMAGE_MT_view,
     IMAGE_MT_view_pie_menus,

@@ -163,7 +163,7 @@ class SEQUENCER_HT_header(Header):
 
         st = context.space_data
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu_sequencer.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
         layout.prop(st, "view_type", text="")
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
@@ -308,8 +308,8 @@ class SEQUENCER_PT_sequencer_overlay(Panel):
         layout.row().prop(overlay_settings, "waveform_display_style", expand=True)
 
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_sequencer(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -3042,7 +3042,7 @@ class SEQUENCER_MT_fades_add(Menu):
 
 
 classes = (
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_sequencer,
     SEQUENCER_MT_change,
     SEQUENCER_HT_tool_header,
     SEQUENCER_HT_header,

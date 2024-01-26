@@ -5,8 +5,8 @@
 import bpy
 from bpy.types import Header, Menu, Panel
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_spreadsheet(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -29,7 +29,7 @@ class SPREADSHEET_HT_header(bpy.types.Header):
         #layout.template_header()
         viewer_path = space.viewer_path.path
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu_spreadsheet.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
         if len(viewer_path) == 0:
             self.draw_without_viewer_path(layout)
@@ -135,7 +135,7 @@ class SPREADSHEET_HT_header(bpy.types.Header):
 
 classes = (
     SPREADSHEET_HT_header,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_spreadsheet,
 )
 
 if __name__ == "__main__":  # Only for live edit.
