@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-    <id>org.bforartists.Bforartists</id>
+    <id>de.bforartists.Bforartists</id>
     <launchable type="desktop-id">bforartists.desktop</launchable>
     <name>Bforartists</name>
     <summary>Free and open source 3D creation suite</summary>
