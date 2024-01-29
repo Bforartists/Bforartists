@@ -11,6 +11,7 @@
 #include <queue>
 
 #include "BKE_attribute.hh"
+#include "BKE_paint.hh"
 #include "BKE_pbvh_api.hh"
 
 #include "BLI_array.hh"
@@ -529,7 +530,7 @@ struct StrokeCache {
   float4x4 stroke_local_mat;
   float multiplane_scrape_angle;
 
-  float wet_mix_prev_color[4];
+  float4 wet_mix_prev_color;
   float density_seed;
 
   rcti previous_r; /* previous redraw rectangle */

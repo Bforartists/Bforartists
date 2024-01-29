@@ -297,6 +297,7 @@ void BKE_mesh_runtime_clear_geometry(Mesh *mesh)
   mesh->runtime->corner_to_face_map_cache.tag_dirty();
   mesh->runtime->vert_normals_cache.tag_dirty();
   mesh->runtime->face_normals_cache.tag_dirty();
+  mesh->runtime->corner_normals_cache.tag_dirty();
   mesh->runtime->loose_edges_cache.tag_dirty();
   mesh->runtime->loose_verts_cache.tag_dirty();
   mesh->runtime->verts_no_face_cache.tag_dirty();
@@ -338,6 +339,11 @@ void Mesh::tag_edges_split()
 }
 
 void Mesh::tag_sharpness_changed()
+{
+  this->runtime->corner_normals_cache.tag_dirty();
+}
+
+void Mesh::tag_custom_normals_changed()
 {
   this->runtime->corner_normals_cache.tag_dirty();
 }

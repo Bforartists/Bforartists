@@ -2002,7 +2002,7 @@ def blen_read_shapes(fbx_tmpl, fbx_data, objects, me, scene):
         if dvcos.any():
             shape_cos = me_vcos_vector_view.copy()
             shape_cos[indices] += dvcos
-            kb.data.foreach_set("co", shape_cos.ravel())
+            kb.points.foreach_set("co", shape_cos.ravel())
 
         shape_key_values_in_range &= expand_shape_key_range(kb, weight)
 

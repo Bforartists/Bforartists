@@ -48,8 +48,8 @@ enum {
 };
 
 struct IDCacheKey {
-  /* The session UUID of the ID owning the cached data. */
-  unsigned int id_session_uuid;
+  /* The session UID of the ID owning the cached data. */
+  unsigned int id_session_uid;
   /* Value uniquely identifying the cache within its ID.
    * Typically the offset of its member in the data-block struct, but can be anything. */
   size_t identifier;
@@ -121,7 +121,7 @@ struct IDTypeInfo {
 
   /** The user visible name for this data-block, also used as default name for a new data-block. */
   const char *name;
-  /** Plural version of the user-visble name. */
+  /** Plural version of the user-visible name. */
   const char *name_plural;
   /** Translation context to use for UI messages related to that type of data-block. */
   const char *translation_context;

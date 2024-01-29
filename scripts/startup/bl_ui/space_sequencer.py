@@ -456,7 +456,6 @@ class SEQUENCER_MT_view(Menu):
         layout.prop(st, "show_region_tool_header")
 
         layout.operator_context = 'INVOKE_DEFAULT'
-
         if is_sequencer_view:
             layout.prop(st, "show_region_hud")
             layout.prop(st, "show_region_channels")
@@ -469,6 +468,9 @@ class SEQUENCER_MT_view(Menu):
 
         layout.separator()
 
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("sequencer.refresh_all", icon='FILE_REFRESH', text="Refresh All")
+        layout.operator_context = 'INVOKE_DEFAULT'
         layout.separator()
 
         layout.operator_context = 'INVOKE_REGION_WIN'
@@ -500,9 +502,7 @@ class SEQUENCER_MT_view(Menu):
             layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
 
             layout.separator()
-
             layout.menu("SEQUENCER_MT_proxy")
-
             layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.separator()
@@ -517,7 +517,6 @@ class SEQUENCER_MT_view(Menu):
         props = layout.operator("render.opengl", text="Sequence Render Animation", icon='RENDER_ANIMATION')
         props.animation = True
         props.sequencer = True
-
         layout.separator()
 
         # Note that the context is needed for the shortcut to display properly.
