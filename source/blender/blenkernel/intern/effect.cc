@@ -6,10 +6,10 @@
  * \ingroup bke
  */
 
+#include <algorithm>
+#include <cmath>
 #include <cstdarg>
 #include <cstddef>
-
-#include <cmath>
 #include <cstdlib>
 
 #include "MEM_guardedalloc.h"
@@ -45,7 +45,7 @@
 #include "BKE_effect.h"
 #include "BKE_fluid.h"
 #include "BKE_global.h"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
@@ -524,7 +524,7 @@ static float eff_calc_visibility(ListBase *colliders,
         absorption = col->ob->pd->absorption;
 
         /* visibility is only between 0 and 1, calculated from 1-absorption */
-        visibility *= CLAMPIS(1.0f - absorption, 0.0f, 1.0f);
+        visibility *= std::clamp(1.0f - absorption, 0.0f, 1.0f);
 
         if (visibility <= 0.0f) {
           break;
@@ -1075,8 +1075,8 @@ static void do_physical_effector(EffectorCache *eff,
       copy_v3_v3(force, point->vel);
       fac = normalize_v3(force) * point->vel_to_sec;
 
-      strength = MIN2(strength, 2.0f);
-      damp = MIN2(damp, 2.0f);
+      strength = std::min(strength, 2.0f);
+      damp = std::min(damp, 2.0f);
 
       mul_v3_fl(force, -efd->falloff * fac * (strength * fac + damp));
       break;

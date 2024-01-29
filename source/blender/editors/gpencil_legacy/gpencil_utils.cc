@@ -6,6 +6,7 @@
  * \ingroup edgpencil
  */
 
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
@@ -20,6 +21,7 @@
 #include "BLI_lasso_2d.h"
 #include "BLI_math_color.h"
 #include "BLI_math_matrix.h"
+#include "BLI_math_vector.hh"
 #include "BLI_rand.h"
 #include "BLI_time.h"
 #include "BLI_utildefines.h"
@@ -1770,7 +1772,7 @@ float ED_gpencil_cursor_radius(bContext *C, int x, int y)
     point2D.m_xy[0] = float(x + 64);
     gpencil_stroke_convertcoords_tpoint(scene, region, ob, &point2D, nullptr, p2);
     /* Clip extreme zoom level (and avoid division by zero). */
-    distance = MAX2(len_v3v3(p1, p2), 0.001f);
+    distance = std::max(len_v3v3(p1, p2), 0.001f);
 
     /* Handle layer thickness change. */
     float brush_size = float(brush->size);
@@ -2892,7 +2894,7 @@ static void gpencil_sbuffer_vertex_color_random(
     int ix = int(tpt->m_xy[0] * seed);
     int iy = int(tpt->m_xy[1] * seed);
     int iz = ix + iy * seed;
-    float hsv[3];
+    blender::float3 hsv;
     float factor_value[3];
     zero_v3(factor_value);
 
@@ -2959,7 +2961,7 @@ static void gpencil_sbuffer_vertex_color_random(
       hsv[0] -= 1.0f;
     }
 
-    CLAMP3(hsv, 0.0f, 1.0f);
+    hsv = blender::math::clamp(hsv, 0.0f, 1.0f);
     hsv_to_rgb_v(hsv, tpt->vert_color);
   }
 }
