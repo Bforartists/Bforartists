@@ -1259,7 +1259,7 @@ def choose_0_or_180(piv, rot_co3d_pos, rot_co3d_neg, rot_ang_rad, mouse_co):
 
 def prep_rotation_info(curr_ms_stor, new_ms_stor):
     '''
-    Reduces the provided rotation amount (new_ms_stor) to an "equivalent" 
+    Reduces the provided rotation amount (new_ms_stor) to an "equivalent"
     value less than or equal to 180 degrees. Calculates the angle offset
     from curr_ms_stor to achieve a new_ms_stor value.
     '''

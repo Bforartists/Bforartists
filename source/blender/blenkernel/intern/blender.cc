@@ -22,9 +22,9 @@
 #include "IMB_moviecache.hh"
 
 #include "BKE_addon.h"
-#include "BKE_blender.h" /* own include */
-#include "BKE_blender_user_menu.h"
-#include "BKE_blender_version.h" /* own include */
+#include "BKE_blender.h"            /* own include */
+#include "BKE_blender_user_menu.hh" /* own include */
+#include "BKE_blender_version.h"    /* own include */
 #include "BKE_blendfile.hh"
 #include "BKE_brush.hh"
 #include "BKE_cachefile.h"
@@ -32,7 +32,7 @@
 #include "BKE_global.h"
 #include "BKE_idprop.h"
 #include "BKE_image.h"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_main.hh"
 #include "BKE_node.h"
 #include "BKE_report.h"

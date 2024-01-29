@@ -624,6 +624,10 @@ typedef struct bUserExtensionRepo {
    */
   char module[48];
 
+  /**
+   * The "local" directory where extensions are stored.
+   * When unset, use `{BLENDER_USER_SCRIPTS}/extensions/{bUserExtensionRepo::module}`.
+   */
   char dirpath[1024];     /* FILE_MAX */
   char remote_path[1024]; /* FILE_MAX */
 
@@ -1299,7 +1303,7 @@ typedef enum eKeying_Flag {
   KEYING_FLAG_XYZ2RGB = (1 << 3),
   KEYING_FLAG_CYCLEAWARE = (1 << 8),
 
-  /* Autokey options. */
+  /* Auto-key options. */
   AUTOKEY_FLAG_INSERTAVAILABLE = (1 << 0),
   AUTOKEY_FLAG_INSERTNEEDED = (1 << 1),
   AUTOKEY_FLAG_ONLYKEYINGSET = (1 << 6),

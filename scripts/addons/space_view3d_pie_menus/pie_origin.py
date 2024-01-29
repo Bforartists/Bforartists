@@ -43,6 +43,22 @@ class PIE_OT_PivotToSelection(Operator):
 
 # Pivot to Bottom
 
+def origin_to_bottom(ob):
+    if ob.type != 'MESH':
+        return
+
+    init = 0
+    for x in ob.data.vertices:
+        if init == 0:
+            a = x.co.z
+            init = 1
+        elif x.co.z < a:
+            a = x.co.z
+
+    for x in ob.data.vertices:
+        x.co.z -= a
+
+    ob.location.z += a
 
 class PIE_OT_PivotBottom(Operator):
     bl_idname = "object.pivotobottom"
@@ -59,19 +75,9 @@ class PIE_OT_PivotBottom(Operator):
     def execute(self, context):
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
-        o = context.active_object
-        init = 0
-        for x in o.data.vertices:
-            if init == 0:
-                a = x.co.z
-                init = 1
-            elif x.co.z < a:
-                a = x.co.z
 
-        for x in o.data.vertices:
-            x.co.z -= a
-
-        o.location.z += a
+        for ob in context.selected_objects:
+            origin_to_bottom(ob)
 
         return {'FINISHED'}
 
@@ -93,19 +99,10 @@ class PIE_OT_PivotBottom_edit(Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
-        o = context.active_object
-        init = 0
-        for x in o.data.vertices:
-            if init == 0:
-                a = x.co.z
-                init = 1
-            elif x.co.z < a:
-                a = x.co.z
 
-        for x in o.data.vertices:
-            x.co.z -= a
+        for ob in context.selected_objects:
+            origin_to_bottom(ob)
 
-        o.location.z += a
         bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}

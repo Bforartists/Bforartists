@@ -232,6 +232,7 @@ set(SRC
   intern/multires_versioning.cc
   intern/nla.cc
   intern/node.cc
+  intern/node_enum_definition.cc
   intern/node_runtime.cc
   intern/node_socket_value.cc
   intern/node_tree_anonymous_attributes.cc
@@ -326,22 +327,22 @@ set(SRC
   BKE_anim_visualization.h
   BKE_animsys.h
   BKE_anonymous_attribute_id.hh
-  BKE_appdir.h
+  BKE_appdir.hh
   BKE_armature.hh
   BKE_asset.hh
   BKE_attribute.h
   BKE_attribute.hh
   BKE_attribute_math.hh
-  BKE_autoexec.h
+  BKE_autoexec.hh
   BKE_bake_geometry_nodes_modifier.hh
   BKE_bake_items.hh
   BKE_bake_items_paths.hh
   BKE_bake_items_serialize.hh
   BKE_bake_items_socket.hh
   BKE_blender.h
-  BKE_blender_copybuffer.h
-  BKE_blender_undo.h
-  BKE_blender_user_menu.h
+  BKE_blender_copybuffer.hh
+  BKE_blender_undo.hh
+  BKE_blender_user_menu.hh
   BKE_blender_version.h
   BKE_blendfile.hh
   BKE_blendfile_link_append.hh
@@ -417,7 +418,7 @@ set(SRC
   BKE_key.h
   BKE_keyconfig.h
   BKE_lattice.hh
-  BKE_layer.h
+  BKE_layer.hh
   BKE_lib_id.hh
   BKE_lib_override.hh
   BKE_lib_query.hh
@@ -432,8 +433,8 @@ set(SRC
   BKE_main_namemap.hh
   BKE_mask.h
   BKE_material.h
-  BKE_mball.h
-  BKE_mball_tessellate.h
+  BKE_mball.hh
+  BKE_mball_tessellate.hh
   BKE_mesh.h
   BKE_mesh.hh
   BKE_mesh_boolean_convert.hh
@@ -456,6 +457,7 @@ set(SRC
   BKE_nla.h
   BKE_node.h
   BKE_node.hh
+  BKE_node_enum.hh
   BKE_node_runtime.hh
   BKE_node_socket_value.hh
   BKE_node_tree_anonymous_attributes.hh
