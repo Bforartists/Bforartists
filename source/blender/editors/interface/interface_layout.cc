@@ -6,6 +6,7 @@
  * \ingroup edinterface
  */
 
+#include <algorithm>
 #include <climits>
 #include <cmath>
 #include <cstdlib>
@@ -1311,7 +1312,7 @@ static void ui_item_menu_hold(bContext *C, ARegion *butregion, uiBut *but)
   block->flag |= UI_BLOCK_POPUP_HOLD;
 
   char direction = UI_DIR_DOWN;
-  if (!but->drawstr[0]) {
+  if (but->drawstr.empty()) {
     switch (RGN_ALIGN_ENUM_FROM_MASK(butregion->alignment)) {
       case RGN_ALIGN_LEFT:
         direction = UI_DIR_RIGHT;
@@ -1635,7 +1636,7 @@ void uiItemsFullEnumO(uiLayout *layout,
 
   if (!ot || !ot->srna) {
     ui_item_disabled(layout, opname);
-    RNA_warning("%s '%s'", ot ? "unknown operator" : "operator missing srna", opname);
+    RNA_warning("%s '%s'", ot ? "operator missing srna" : "unknown operator", opname);
     return;
   }
 
@@ -4349,7 +4350,7 @@ static void ui_litem_estimate_column_flow(uiLayout *litem)
   int totitem = 0;
   LISTBASE_FOREACH (uiItem *, item, &litem->items) {
     ui_item_size(item, &itemw, &itemh);
-    maxw = MAX2(maxw, itemw);
+    maxw = std::max(maxw, itemw);
     toth += itemh;
     totitem++;
   }
@@ -5020,11 +5021,10 @@ uiLayout *uiLayoutRow(uiLayout *layout, bool align)
   return litem;
 }
 
-uiLayout *uiLayoutPanel(const bContext *C,
-                        uiLayout *layout,
-                        const char *name,
-                        PointerRNA *open_prop_owner,
-                        const char *open_prop_name)
+PanelLayout uiLayoutPanelWithHeader(const bContext *C,
+                                    uiLayout *layout,
+                                    PointerRNA *open_prop_owner,
+                                    const char *open_prop_name)
 {
   const ARegion *region = CTX_wm_region(C);
 
@@ -5032,6 +5032,7 @@ uiLayout *uiLayoutPanel(const bContext *C,
   const bool search_filter_active = region->flag & RGN_FLAG_SEARCH_FILTER_ACTIVE;
   const bool is_open = is_real_open || search_filter_active;
 
+  PanelLayout panel_layout{};
   {
     uiLayoutItemPanelHeader *header_litem = MEM_cnew<uiLayoutItemPanelHeader>(__func__);
     uiLayout *litem = &header_litem->litem;
@@ -5041,30 +5042,33 @@ uiLayout *uiLayoutPanel(const bContext *C,
     header_litem->open_prop_owner = *open_prop_owner;
     STRNCPY(header_litem->open_prop_name, open_prop_name);
 
-    UI_block_layout_set_current(layout->root->block, litem);
+    uiLayout *row = uiLayoutRow(litem, true);
+    uiLayoutSetUnitsY(row, 1.2f);
 
-    uiBlock *block = uiLayoutGetBlock(layout);
+    uiBlock *block = uiLayoutGetBlock(row);
     const int icon = is_open ? ICON_DOWNARROW_HLT : ICON_RIGHTARROW;
-    const int width = ui_text_icon_width(layout, name, icon, false);
+    const int width = ui_text_icon_width(layout, "", icon, false);
     uiDefIconTextBut(block,
                      UI_BTYPE_LABEL,
                      0,
                      icon,
-                     name,
+                     "",
                      0,
                      0,
                      width,
-                     UI_UNIT_Y * 1.2f,
+                     UI_UNIT_Y,
                      nullptr,
-                     0.0,
-                     0.0,
-                     0.0,
-                     0.0,
+                     0.0f,
+                     0.0f,
+                     0.0f,
+                     0.0f,
                      "");
+
+    panel_layout.header = row;
   }
 
   if (!is_open) {
-    return nullptr;
+    return panel_layout;
   }
 
   uiLayoutItemPanelBody *body_litem = MEM_cnew<uiLayoutItemPanelBody>(__func__);
@@ -5073,7 +5077,21 @@ uiLayout *uiLayoutPanel(const bContext *C,
   litem->space = layout->root->style->templatespace;
   ui_litem_init_from_parent(litem, layout, false);
   UI_block_layout_set_current(layout->root->block, litem);
-  return litem;
+  panel_layout.body = litem;
+
+  return panel_layout;
+}
+
+uiLayout *uiLayoutPanel(const bContext *C,
+                        uiLayout *layout,
+                        const char *name,
+                        PointerRNA *open_prop_owner,
+                        const char *open_prop_name)
+{
+  PanelLayout panel = uiLayoutPanelWithHeader(C, layout, open_prop_owner, open_prop_name);
+  uiItemL(panel.header, name, ICON_NONE);
+
+  return panel.body;
 }
 
 bool uiLayoutEndsWithPanelHeader(const uiLayout &layout)
@@ -6213,7 +6231,7 @@ static bool ui_layout_has_panel_label(const uiLayout *layout, const PanelType *p
     if (subitem->type == ITEM_BUTTON) {
       uiButtonItem *bitem = (uiButtonItem *)subitem;
       if (!(bitem->but->flag & UI_HIDDEN) &&
-          STREQ(bitem->but->str.c_str(), CTX_IFACE_(pt->translation_context, pt->label)))
+          bitem->but->str == CTX_IFACE_(pt->translation_context, pt->label))
       {
         return true;
       }
@@ -6311,7 +6329,7 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
 {
   uiBut *but = bitem->but;
   BLI_dynstr_appendf(ds, "'type':%d, ", int(but->type));
-  BLI_dynstr_appendf(ds, "'draw_string':'''%s''', ", but->drawstr);
+  BLI_dynstr_appendf(ds, "'draw_string':'''%s''', ", but->drawstr.c_str());
   /* Not exactly needed, rna has this. */
   BLI_dynstr_appendf(ds, "'tip':'''%s''', ", but->tip ? but->tip : "");
 
@@ -6429,7 +6447,7 @@ uiLayout *uiItemsAlertBox(uiBlock *block, const int size, const eAlertIcon icon)
 {
   const uiStyle *style = UI_style_get_dpi();
   const short icon_size = 64 * UI_SCALE_FAC;
-  const int text_points_max = MAX2(style->widget.points, style->widgetlabel.points);
+  const int text_points_max = std::max(style->widget.points, style->widgetlabel.points);
   const int dialog_width = icon_size + (text_points_max * size * UI_SCALE_FAC);
   /* By default, the space between icon and text/buttons will be equal to the 'columnspace',
    * this extra padding will add some space by increasing the left column width,

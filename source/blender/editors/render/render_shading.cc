@@ -34,15 +34,15 @@
 
 #include "BKE_anim_data.h"
 #include "BKE_animsys.h"
-#include "BKE_appdir.h"
-#include "BKE_blender_copybuffer.h"
+#include "BKE_appdir.hh"
+#include "BKE_blender_copybuffer.hh"
 #include "BKE_brush.hh"
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_global.h"
 #include "BKE_image.h"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
@@ -98,8 +98,9 @@
 
 #include "render_intern.hh" /* own include */
 
-#include "UI_interface.hh" /*bfa - needed for the icons*/
 #include "UI_resources.hh" /*bfa - needed for the icons*/
+
+using blender::Vector;
 
 static bool object_materials_supported_poll_ex(bContext *C, const Object *ob);
 
@@ -123,10 +124,10 @@ static bool object_array_for_shading_edit_mode_enabled_filter(const Object *ob, 
   return false;
 }
 
-static Object **object_array_for_shading_edit_mode_enabled(bContext *C, uint *r_objects_len)
+static Vector<Object *> object_array_for_shading_edit_mode_enabled(bContext *C)
 {
   return ED_object_array_in_mode_or_selected(
-      C, object_array_for_shading_edit_mode_enabled_filter, C, r_objects_len);
+      C, object_array_for_shading_edit_mode_enabled_filter, C);
 }
 
 static bool object_array_for_shading_edit_mode_disabled_filter(const Object *ob, void *user_data)
@@ -140,10 +141,10 @@ static bool object_array_for_shading_edit_mode_disabled_filter(const Object *ob,
   return false;
 }
 
-static Object **object_array_for_shading_edit_mode_disabled(bContext *C, uint *r_objects_len)
+static Vector<Object *> object_array_for_shading_edit_mode_disabled(bContext *C)
 {
   return ED_object_array_in_mode_or_selected(
-      C, object_array_for_shading_edit_mode_disabled_filter, C, r_objects_len);
+      C, object_array_for_shading_edit_mode_disabled_filter, C);
 }
 
 /** \} */
@@ -287,10 +288,8 @@ static int material_slot_assign_exec(bContext *C, wmOperator * /*op*/)
   Object *obact = CTX_data_active_object(C);
   const Material *mat_active = obact ? BKE_object_material_get(obact, obact->actcol) : nullptr;
 
-  uint objects_len = 0;
-  Object **objects = object_array_for_shading_edit_mode_enabled(C, &objects_len);
-  for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
-    Object *ob = objects[ob_index];
+  Vector<Object *> objects = object_array_for_shading_edit_mode_enabled(C);
+  for (Object *ob : objects) {
     short mat_nr_active = -1;
 
     if (ob->totcol == 0) {
@@ -361,7 +360,6 @@ static int material_slot_assign_exec(bContext *C, wmOperator * /*op*/)
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
     }
   }
-  MEM_freeN(objects);
 
   return (changed_multi) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
@@ -393,10 +391,8 @@ static int material_slot_de_select(bContext *C, bool select)
   Object *obact = CTX_data_active_object(C);
   const Material *mat_active = obact ? BKE_object_material_get(obact, obact->actcol) : nullptr;
 
-  uint objects_len = 0;
-  Object **objects = object_array_for_shading_edit_mode_enabled(C, &objects_len);
-  for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
-    Object *ob = objects[ob_index];
+  Vector<Object *> objects = object_array_for_shading_edit_mode_enabled(C);
+  for (Object *ob : objects) {
     short mat_nr_active = -1;
 
     if (ob->totcol == 0) {
@@ -487,8 +483,6 @@ static int material_slot_de_select(bContext *C, bool select)
       WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
     }
   }
-
-  MEM_freeN(objects);
 
   return (changed_multi) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
@@ -691,10 +685,8 @@ static int material_slot_remove_unused_exec(bContext *C, wmOperator *op)
   Main *bmain = CTX_data_main(C);
   int removed = 0;
 
-  uint objects_len = 0;
-  Object **objects = object_array_for_shading_edit_mode_disabled(C, &objects_len);
-  for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
-    Object *ob = objects[ob_index];
+  Vector<Object *> objects = object_array_for_shading_edit_mode_disabled(C);
+  for (Object *ob : objects) {
     int actcol = ob->actcol;
     for (int slot = 1; slot <= ob->totcol; slot++) {
       while (slot <= ob->totcol && !BKE_object_material_slot_used(ob, slot)) {
@@ -712,7 +704,6 @@ static int material_slot_remove_unused_exec(bContext *C, wmOperator *op)
 
     DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
   }
-  MEM_freeN(objects);
 
   if (!removed) {
     return OPERATOR_CANCELLED;
@@ -1565,18 +1556,16 @@ static blender::Vector<Object *> lightprobe_cache_irradiance_volume_subset_get(b
       break;
     }
     case LIGHTCACHE_SUBSET_SELECTED: {
-      uint objects_len = 0;
       ObjectsInViewLayerParams parameters;
       parameters.filter_fn = nullptr;
       parameters.no_dup_data = true;
-      Object **objects = BKE_view_layer_array_selected_objects_params(
-          view_layer, nullptr, &objects_len, &parameters);
-      for (Object *ob : blender::MutableSpan<Object *>(objects, objects_len)) {
+      Vector<Object *> objects = BKE_view_layer_array_selected_objects_params(
+          view_layer, nullptr, &parameters);
+      for (Object *ob : objects) {
         if (is_irradiance_volume(ob)) {
           irradiance_volume_setup(ob);
         }
       }
-      MEM_freeN(objects);
       break;
     }
     case LIGHTCACHE_SUBSET_ACTIVE: {

@@ -989,7 +989,6 @@ def brush_settings_advanced(layout, context, brush, popover=False):
     use_frontface = False
 
     if mode == 'SCULPT':
-        sculpt = context.tool_settings.sculpt
         capabilities = brush.sculpt_capabilities
         use_accumulate = capabilities.has_accumulate
         use_frontface = True
@@ -1118,10 +1117,10 @@ def brush_settings_advanced(layout, context, brush, popover=False):
                 subcol.use_property_split = True
                 row = subcol.row()
                 row.separator(factor = 3.5)
-                row.prop(sculpt, "automasking_view_normal_limit", text="Limit")
+                row.prop(brush, "automasking_view_normal_limit", text="Limit")
                 row = subcol.row()
                 row.separator(factor = 3.5)
-                row.prop(sculpt, "automasking_view_normal_falloff", text="Falloff")
+                row.prop(brush, "automasking_view_normal_falloff", text="Falloff")
 
         #col = layout.column()
         split = col.split(factor=0.9)
@@ -1139,10 +1138,10 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             col = layout.column(align=True)
             row = col.row()
             row.separator(factor = 3.5)
-            row.prop(sculpt, "automasking_start_normal_limit", text="Limit")
+            row.prop(brush, "automasking_start_normal_limit", text="Limit")
             row = col.row()
             row.separator(factor = 3.5)
-            row.prop(sculpt, "automasking_start_normal_falloff", text="Falloff")
+            row.prop(brush, "automasking_start_normal_falloff", text="Falloff")
             col.separator()
 
         layout.separator()

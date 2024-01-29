@@ -2753,7 +2753,7 @@ def fbx_data_from_scene(scene, depsgraph, settings):
                 _cos = MESH_ATTRIBUTE_POSITION.to_ndarray(me.attributes)
             else:
                 _cos = np.empty(len(me.vertices) * 3, dtype=co_bl_dtype)
-                shape_key.data.foreach_get("co", _cos)
+                shape_key.points.foreach_get("co", _cos)
             return vcos_transformed(_cos, geom_mat_co, co_fbx_dtype)
 
         for shape in me.shape_keys.key_blocks[1:]:
