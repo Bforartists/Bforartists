@@ -11,6 +11,7 @@ if "bpy" in locals():
     del reload
 
 _modules = [
+    "anim",
     "asset_shelf",
     "node_add_menu",
     "node_add_menu_compositor",
@@ -124,6 +125,8 @@ def translation_update(_):
 
 def register():
     from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
     for mod in _modules_loaded:
         for cls in mod.classes:
             register_class(cls)
@@ -199,6 +202,9 @@ def unregister():
         for cls in reversed(mod.classes):
             if cls.is_registered:
                 unregister_class(cls)
+    for cls in reversed(classes):
+        if cls.is_registered:
+            unregister_class(cls)
 
     try:
         bpy.app.handlers.translation_update_post.remove(translation_update)
@@ -266,9 +272,6 @@ class UI_UL_list(bpy.types.UIList):
         return cls.sort_items_helper(_sort, lambda e: e[1].lower())
 
 
-bpy.utils.register_class(UI_UL_list)
-
-
 class UI_MT_list_item_context_menu(bpy.types.Menu):
     """
     UI List item context menu definition. Scripts can append/prepend this to
@@ -283,9 +286,6 @@ class UI_MT_list_item_context_menu(bpy.types.Menu):
         # Dummy function. This type is just for scripts to append their own
         # context menu items.
         pass
-
-
-bpy.utils.register_class(UI_MT_list_item_context_menu)
 
 
 class UI_MT_button_context_menu(bpy.types.Menu):
@@ -305,4 +305,8 @@ class UI_MT_button_context_menu(bpy.types.Menu):
             self.layout.menu_contents("WM_MT_button_context")
 
 
-bpy.utils.register_class(UI_MT_button_context_menu)
+classes = (
+    UI_UL_list,
+    UI_MT_list_item_context_menu,
+    UI_MT_button_context_menu,
+)

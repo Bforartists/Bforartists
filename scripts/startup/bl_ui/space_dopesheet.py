@@ -491,7 +491,11 @@ class DOPESHEET_MT_view(Menu):
         layout.prop(st, "show_region_channels") # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
+        layout.separator()
 
+        layout.operator("action.view_selected")
+        layout.operator("action.view_all")
+        layout.operator("action.view_frame")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
@@ -516,7 +520,6 @@ class DOPESHEET_MT_view(Menu):
         layout.menu("INFO_MT_area")
 
         # Add this to show key-binding (reverse action in dope-sheet).
-        layout.separator()
         props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon='GRAPH')
         props.data_path = "area.type"
         props.value = 'GRAPH_EDITOR'

@@ -382,6 +382,7 @@
         freestyle_edge_mark="#7fff7f"
         face="#18181812"
         face_select="#ffa82940"
+        face_mode_select="#ffaf384d"
         face_dot="#ffa829"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
