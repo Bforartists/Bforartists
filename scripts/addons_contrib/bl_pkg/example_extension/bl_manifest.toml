@@ -1,0 +1,10 @@
+# Example
+id = "my_example_package"
+name = "Test Package"
+type = "addon"
+version = "0.2.0"
+blender_version_min = "2.80.0"
+author = "see AUTHORS"
+license = "CC-0"
+copyright = "see AUTHORS"
+description = "This is another package."

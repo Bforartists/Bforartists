@@ -52,7 +52,7 @@ struct ImBuf;
 struct rctf;
 struct rcti;
 
-struct anim;
+struct ImBufAnim;
 
 struct ColorManagedDisplay;
 
@@ -264,25 +264,26 @@ void IMB_rectblend_threaded(ImBuf *dbuf,
 enum eIMBInterpolationFilterMode {
   IMB_FILTER_NEAREST,
   IMB_FILTER_BILINEAR,
-  IMB_FILTER_BICUBIC,
+  IMB_FILTER_CUBIC_BSPLINE,
+  IMB_FILTER_CUBIC_MITCHELL,
 };
 
 /**
  * Defaults to BL_proxy within the directory of the animation.
  */
-void IMB_anim_set_index_dir(anim *anim, const char *dir);
-void IMB_anim_get_filename(anim *anim, char *filename, int filename_maxncpy);
+void IMB_anim_set_index_dir(ImBufAnim *anim, const char *dir);
+void IMB_anim_get_filename(ImBufAnim *anim, char *filename, int filename_maxncpy);
 
-int IMB_anim_index_get_frame_index(anim *anim, IMB_Timecode_Type tc, int position);
+int IMB_anim_index_get_frame_index(ImBufAnim *anim, IMB_Timecode_Type tc, int position);
 
-int IMB_anim_proxy_get_existing(anim *anim);
+int IMB_anim_proxy_get_existing(ImBufAnim *anim);
 
 struct IndexBuildContext;
 
 /**
  * Prepare context for proxies/time-codes builder
  */
-IndexBuildContext *IMB_anim_index_rebuild_context(anim *anim,
+IndexBuildContext *IMB_anim_index_rebuild_context(ImBufAnim *anim,
                                                   IMB_Timecode_Type tcs_in_use,
                                                   int proxy_sizes_in_use,
                                                   int quality,
@@ -306,34 +307,37 @@ void IMB_anim_index_rebuild_finish(IndexBuildContext *context, bool stop);
 /**
  * Return the length (in frames) of the given \a anim.
  */
-int IMB_anim_get_duration(anim *anim, IMB_Timecode_Type tc);
+int IMB_anim_get_duration(ImBufAnim *anim, IMB_Timecode_Type tc);
 
 /**
  * Return the encoded start offset (in seconds) of the given \a anim.
  */
-double IMD_anim_get_offset(anim *anim);
+double IMD_anim_get_offset(ImBufAnim *anim);
 
 /**
  * Return the fps contained in movie files (function rval is false,
  * and frs_sec and frs_sec_base untouched if none available!)
  */
-bool IMB_anim_get_fps(const anim *anim, bool no_av_base, short *r_frs_sec, float *r_frs_sec_base);
+bool IMB_anim_get_fps(const ImBufAnim *anim,
+                      bool no_av_base,
+                      short *r_frs_sec,
+                      float *r_frs_sec_base);
 
-anim *IMB_open_anim(const char *filepath,
-                    int ib_flags,
-                    int streamindex,
-                    char colorspace[IM_MAX_SPACE]);
-void IMB_suffix_anim(anim *anim, const char *suffix);
-void IMB_close_anim(anim *anim);
-void IMB_close_anim_proxies(anim *anim);
-bool IMB_anim_can_produce_frames(const anim *anim);
+ImBufAnim *IMB_open_anim(const char *filepath,
+                         int ib_flags,
+                         int streamindex,
+                         char colorspace[IM_MAX_SPACE]);
+void IMB_suffix_anim(ImBufAnim *anim, const char *suffix);
+void IMB_close_anim(ImBufAnim *anim);
+void IMB_close_anim_proxies(ImBufAnim *anim);
+bool IMB_anim_can_produce_frames(const ImBufAnim *anim);
 
 int ismovie(const char *filepath);
-int IMB_anim_get_image_width(anim *anim);
-int IMB_anim_get_image_height(anim *anim);
-bool IMB_get_gop_decode_time(anim *anim);
+int IMB_anim_get_image_width(ImBufAnim *anim);
+int IMB_anim_get_image_height(ImBufAnim *anim);
+bool IMB_get_gop_decode_time(ImBufAnim *anim);
 
-ImBuf *IMB_anim_absolute(anim *anim,
+ImBuf *IMB_anim_absolute(ImBufAnim *anim,
                          int position,
                          IMB_Timecode_Type tc /* = 1 = IMB_TC_RECORD_RUN */,
                          IMB_Proxy_Size preview_size /* = 0 = IMB_PROXY_NONE */);
@@ -341,9 +345,9 @@ ImBuf *IMB_anim_absolute(anim *anim,
 /**
  * fetches a define preview-frame, usually half way into the movie.
  */
-ImBuf *IMB_anim_previewframe(anim *anim);
+ImBuf *IMB_anim_previewframe(ImBufAnim *anim);
 
-void IMB_free_anim(anim *anim);
+void IMB_free_anim(ImBufAnim *anim);
 
 #define FILTER_MASK_NULL 0
 #define FILTER_MASK_MARGIN 1
@@ -509,46 +513,8 @@ void IMB_buffer_byte_from_byte(unsigned char *rect_to,
  */
 void IMB_convert_rgba_to_abgr(ImBuf *ibuf);
 
-void bicubic_interpolation(const ImBuf *in, ImBuf *out, float u, float v, int xout, int yout);
-void nearest_interpolation(const ImBuf *in, ImBuf *out, float u, float v, int xout, int yout);
-void bilinear_interpolation(const ImBuf *in, ImBuf *out, float u, float v, int xout, int yout);
-
-typedef void (*InterpolationColorFunction)(
-    const ImBuf *in, unsigned char outI[4], float outF[4], float u, float v);
-void bicubic_interpolation_color(
-    const ImBuf *in, unsigned char outI[4], float outF[4], float u, float v);
-
-/* Functions assumes out to be zeroed, only does RGBA. */
-
-void nearest_interpolation_color_char(
-    const ImBuf *in, unsigned char outI[4], float outF[4], float u, float v);
-void nearest_interpolation_color_fl(
-    const ImBuf *in, unsigned char outI[4], float outF[4], float u, float v);
-void nearest_interpolation_color(
-    const ImBuf *in, unsigned char outI[4], float outF[4], float u, float v);
-void nearest_interpolation_color_wrap(
-    const ImBuf *in, unsigned char outI[4], float outF[4], float u, float v);
-void bilinear_interpolation_color(
-    const ImBuf *in, unsigned char outI[4], float outF[4], float u, float v);
-void bilinear_interpolation_color_char(const ImBuf *in, unsigned char outI[4], float u, float v);
-void bilinear_interpolation_color_fl(const ImBuf *in, float outF[4], float u, float v);
-/**
- * Note about wrapping, the u/v still needs to be within the image bounds,
- * just the interpolation is wrapped.
- * This the same as bilinear_interpolation_color except it wraps
- * rather than using empty and emptyI.
- */
-void bilinear_interpolation_color_wrap(
-    const ImBuf *in, unsigned char outI[4], float outF[4], float u, float v);
-
 void IMB_alpha_under_color_float(float *rect_float, int x, int y, float backcol[3]);
 void IMB_alpha_under_color_byte(unsigned char *rect, int x, int y, const float backcol[3]);
-
-/**
- * Sample pixel of image using NEAREST method.
- */
-void IMB_sampleImageAtLocation(
-    ImBuf *ibuf, float x, float y, bool make_linear_rgb, float color[4]);
 
 ImBuf *IMB_loadifffile(int file, int flags, char colorspace[IM_MAX_SPACE], const char *descr);
 

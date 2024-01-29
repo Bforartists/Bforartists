@@ -21,7 +21,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_mask.h"
 #include "BKE_scene.h"
 
@@ -528,7 +528,7 @@ static void viewRedrawPost(bContext *C, TransInfo *t)
   ED_area_status_text(t->area, nullptr);
 
   if (t->spacetype == SPACE_VIEW3D) {
-    /* if autokeying is enabled, send notifiers that keyframes were added */
+    /* If auto-keying is enabled, send notifiers that keyframes were added. */
     if (blender::animrig::is_autokey_on(t->scene)) {
       WM_main_add_notifier(NC_ANIMATION | ND_KEYFRAME | NA_EDITED, nullptr);
     }
@@ -1504,8 +1504,10 @@ static void drawTransformView(const bContext * /*C*/, ARegion *region, void *arg
   }
 }
 
-/* just draw a little warning message in the top-right corner of the viewport
- * to warn that autokeying is enabled */
+/**
+ * Just draw a little warning message in the top-right corner of the viewport
+ * to warn that auto-keying is enabled.
+ */
 static void drawAutoKeyWarning(TransInfo *t, ARegion *region)
 {
   const char *printable = IFACE_("Auto Keying On");
@@ -1557,7 +1559,7 @@ static void drawAutoKeyWarning(TransInfo *t, ARegion *region)
   uchar color[3];
   UI_GetThemeColorShade3ubv(TH_TEXT_HI, -50, color);
   BLF_color3ubv(font_id, color);
-  BLF_draw_default(xco, yco, 0.0f, printable, BLF_DRAW_STR_DUMMY_MAX);
+  BLF_draw_default_shadowed(xco, yco, 0.0f, printable, BLF_DRAW_STR_DUMMY_MAX);
 
   /* autokey recording icon... */
   GPU_blend(GPU_BLEND_ALPHA);

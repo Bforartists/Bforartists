@@ -111,6 +111,8 @@ const EnumPropertyItem rna_enum_strip_color_items[] = {
 
 #ifdef RNA_RUNTIME
 
+#  include <algorithm>
+
 #  include "BKE_global.h"
 #  include "BKE_idprop.h"
 #  include "BKE_movieclip.h"
@@ -501,7 +503,7 @@ static void rna_Sequence_anim_startofs_final_set(PointerRNA *ptr, int value)
   Sequence *seq = (Sequence *)ptr->data;
   Scene *scene = (Scene *)ptr->owner_id;
 
-  seq->anim_startofs = MIN2(value, seq->len + seq->anim_startofs);
+  seq->anim_startofs = std::min(value, seq->len + seq->anim_startofs);
 
   SEQ_add_reload_new_file(G.main, scene, seq, false);
   do_sequence_frame_change_update(scene, seq);
@@ -512,7 +514,7 @@ static void rna_Sequence_anim_endofs_final_set(PointerRNA *ptr, int value)
   Sequence *seq = (Sequence *)ptr->data;
   Scene *scene = (Scene *)ptr->owner_id;
 
-  seq->anim_endofs = MIN2(value, seq->len + seq->anim_endofs);
+  seq->anim_endofs = std::min(value, seq->len + seq->anim_endofs);
 
   SEQ_add_reload_new_file(G.main, scene, seq, false);
   do_sequence_frame_change_update(scene, seq);
@@ -1707,14 +1709,28 @@ static void rna_def_strip_crop(BlenderRNA *brna)
 }
 
 static const EnumPropertyItem transform_filter_items[] = {
-    {SEQ_TRANSFORM_FILTER_NEAREST, "NEAREST", 0, "Nearest", ""},
-    {SEQ_TRANSFORM_FILTER_BILINEAR, "BILINEAR", 0, "Bilinear", ""},
-    {SEQ_TRANSFORM_FILTER_BICUBIC, "BICUBIC", 0, "Bicubic", ""},
+    {SEQ_TRANSFORM_FILTER_NEAREST, "NEAREST", 0, "Nearest", "Use nearest sample"},
+    {SEQ_TRANSFORM_FILTER_BILINEAR,
+     "BILINEAR",
+     0,
+     "Bilinear",
+     "Interpolate between 2" BLI_STR_UTF8_MULTIPLICATION_SIGN "2 samples"},
+    {SEQ_TRANSFORM_FILTER_CUBIC_MITCHELL,
+     "CUBIC_MITCHELL",
+     0,
+     "Cubic Mitchell",
+     "Cubic Mitchell filter on 4" BLI_STR_UTF8_MULTIPLICATION_SIGN "4 samples"},
+    {SEQ_TRANSFORM_FILTER_CUBIC_BSPLINE,
+     "CUBIC_BSPLINE",
+     0,
+     "Cubic B-Spline",
+     "Cubic B-Spline filter (blurry but no ringing) on 4" BLI_STR_UTF8_MULTIPLICATION_SIGN
+     "4 samples"},
     {SEQ_TRANSFORM_FILTER_NEAREST_3x3,
      "SUBSAMPLING_3x3",
      0,
      "Subsampling (3" BLI_STR_UTF8_MULTIPLICATION_SIGN "3)",
-     "Use nearest with 3" BLI_STR_UTF8_MULTIPLICATION_SIGN "3 subsamples during rendering"},
+     "Use nearest with 3" BLI_STR_UTF8_MULTIPLICATION_SIGN "3 subsamples"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 

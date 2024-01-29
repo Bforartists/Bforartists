@@ -29,7 +29,7 @@
 #include "BLT_translation.h"
 
 #include "BKE_addon.h"
-#include "BKE_appdir.h"
+#include "BKE_appdir.hh"
 #include "BKE_callbacks.h"
 #include "BKE_sound.h"
 #include "BKE_studiolight.h"
@@ -57,6 +57,7 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_EDITING, "EDITING", 0, "Editing", ""},
     {USER_SECTION_ANIMATION, "ANIMATION", 0, "Animation", ""},
     RNA_ENUM_ITEM_SEPR,
+    {USER_SECTION_EXTENSIONS, "EXTENSIONS", 0, "Extensions", ""},
     {USER_SECTION_ADDONS, "ADDONS", 0, "Add-ons", ""},
 #if 0 /* def WITH_USERDEF_WORKSPACES */
     RNA_ENUM_ITEM_SEPR,
@@ -72,7 +73,6 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_SYSTEM, "SYSTEM", 0, "System", ""},
     {USER_SECTION_SAVE_LOAD, "SAVE_LOAD", 0, "Save & Load", ""},
     {USER_SECTION_FILE_PATHS, "FILE_PATHS", 0, "File Paths", ""},
-    {USER_SECTION_EXTENSIONS, "EXTENSIONS", 0, "Extensions", ""},
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_EXPERIMENTAL, "EXPERIMENTAL", 0, "Experimental", ""},
     {0, nullptr, 0, nullptr, nullptr},
@@ -6619,7 +6619,10 @@ static void rna_def_userdef_filepaths_extension_repo(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "directory", PROP_STRING, PROP_DIRPATH);
   RNA_def_property_string_sdna(prop, nullptr, "dirpath");
-  RNA_def_property_ui_text(prop, "Local Directory", "The local directory containing extensions");
+  RNA_def_property_ui_text(prop,
+                           "Local Directory",
+                           "The local directory containing extensions. "
+                           "When unset, a path is used based on the user scripts path");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_FILEBROWSER);
   RNA_def_property_string_funcs(
       prop, nullptr, nullptr, "rna_userdef_extension_repo_directory_set");
