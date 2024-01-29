@@ -191,6 +191,8 @@ static const EnumPropertyItem rna_enum_driver_target_context_property_items[] = 
 
 #ifdef RNA_RUNTIME
 
+#  include <algorithm>
+
 #  include "WM_api.hh"
 
 static StructRNA *rna_FModifierType_refine(PointerRNA *ptr)
@@ -1034,7 +1036,7 @@ static void rna_FModifierStepped_frame_start_set(PointerRNA *ptr, float value)
   float prop_clamp_min = -FLT_MAX, prop_clamp_max = FLT_MAX, prop_soft_min, prop_soft_max;
   rna_FModifierStepped_start_frame_range(
       ptr, &prop_clamp_min, &prop_clamp_max, &prop_soft_min, &prop_soft_max);
-  value = CLAMPIS(value, prop_clamp_min, prop_clamp_max);
+  value = std::clamp(value, prop_clamp_min, prop_clamp_max);
 
   /* Need to set both step-data's start/end and the start/end on the base-data,
    * or else Restrict-Range doesn't work due to RNA-property shadowing (#52009)
@@ -1051,7 +1053,7 @@ static void rna_FModifierStepped_frame_end_set(PointerRNA *ptr, float value)
   float prop_clamp_min = -FLT_MAX, prop_clamp_max = FLT_MAX, prop_soft_min, prop_soft_max;
   rna_FModifierStepped_end_frame_range(
       ptr, &prop_clamp_min, &prop_clamp_max, &prop_soft_min, &prop_soft_max);
-  value = CLAMPIS(value, prop_clamp_min, prop_clamp_max);
+  value = std::clamp(value, prop_clamp_min, prop_clamp_max);
 
   /* Need to set both step-data's start/end and the start/end on the base-data,
    * or else Restrict-Range doesn't work due to RNA-property shadowing (#52009)

@@ -17,6 +17,7 @@
  * For now it's not a priority, so leave as-is.
  */
 
+#include <algorithm>
 #include <cstdarg>
 #include <cstdlib>
 #include <cstring>
@@ -466,7 +467,7 @@ static uiTooltipData *ui_tooltip_data_from_tool(bContext *C, uiBut *but, bool is
    * doesn't have access to information about non-active tools. */
 
   /* Title (when icon-only). */
-  if (but->drawstr[0] == '\0') {
+  if (but->drawstr.empty()) {
     const char *expr_imports[] = {"bpy", "bl_ui", nullptr};
     char expr[256];
     SNPRINTF(expr,
@@ -575,7 +576,7 @@ static uiTooltipData *ui_tooltip_data_from_tool(bContext *C, uiBut *but, bool is
     std::string shortcut = UI_but_string_get_operator_keymap(*C, *but);
 
     if (shortcut.empty()) {
-      const ePaintMode paint_mode = BKE_paintmode_get_active_from_context(C);
+      const PaintMode paint_mode = BKE_paintmode_get_active_from_context(C);
       const char *tool_attr = BKE_paint_get_tool_prop_id_from_paintmode(paint_mode);
       if (tool_attr != nullptr) {
         const EnumPropertyItem *items = BKE_paint_get_tool_enum_from_paintmode(paint_mode);
@@ -865,7 +866,9 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
    * prefix instead of comparing because the button may include the shortcut. Buttons with dynamic
    * tool-tips also don't get their default label here since they can already provide more accurate
    * and specific tool-tip content. */
-  else if (!but_label.empty() && !STRPREFIX(but->drawstr, but_label.c_str()) && !but->tip_func) {
+  else if (!but_label.empty() && !blender::StringRef(but->drawstr).startswith(but_label) &&
+           !but->tip_func)
+  {
     UI_tooltip_text_field_add(data, but_label, {}, UI_TIP_STYLE_HEADER, UI_TIP_LC_NORMAL);
   }
   /*bfa - still no tooltip? Then add it !*/
