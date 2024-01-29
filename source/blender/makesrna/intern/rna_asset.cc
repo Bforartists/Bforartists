@@ -45,7 +45,9 @@ const EnumPropertyItem rna_enum_asset_library_type_items[] = {
 
 #ifdef RNA_RUNTIME
 
-#  include "AS_asset_library.h"
+#  include <algorithm>
+
+#  include "AS_asset_library.hh"
 #  include "AS_asset_representation.hh"
 
 #  include "BKE_asset.hh"
@@ -311,7 +313,7 @@ static void rna_AssetMetaData_active_tag_range(
 {
   const AssetMetaData *asset_data = static_cast<const AssetMetaData *>(ptr->data);
   *min = *softmin = 0;
-  *max = *softmax = MAX2(asset_data->tot_tags - 1, 0);
+  *max = *softmax = std::max(int(asset_data->tot_tags - 1), 0);
 }
 
 static void rna_AssetMetaData_catalog_id_get(PointerRNA *ptr, char *value)
@@ -357,7 +359,8 @@ void rna_AssetMetaData_catalog_id_update(bContext *C, PointerRNA *ptr)
     return;
   }
 
-  ::AssetLibrary *asset_library = ED_fileselect_active_asset_library_get(sfile);
+  blender::asset_system::AssetLibrary *asset_library = ED_fileselect_active_asset_library_get(
+      sfile);
   if (asset_library == nullptr) {
     /* The SpaceFile may not be an asset browser but a regular file browser. */
     return;
@@ -460,7 +463,7 @@ const EnumPropertyItem *rna_asset_library_reference_itemf(bContext * /*C*/,
                                                           PropertyRNA * /*prop*/,
                                                           bool *r_free)
 {
-  const EnumPropertyItem *items = ED_asset_library_reference_to_rna_enum_itemf(true);
+  const EnumPropertyItem *items = blender::ed::asset::library_reference_to_rna_enum_itemf(true);
   if (!items) {
     *r_free = false;
   }

@@ -34,7 +34,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_animsys.h"
-#include "BKE_blender_undo.h"
+#include "BKE_blender_undo.hh"
 #include "BKE_brush.hh"
 #include "BKE_colorband.hh"
 #include "BKE_colortools.hh"
@@ -506,7 +506,7 @@ struct uiAfterFunc {
   std::optional<bContextStore> context;
 
   char undostr[BKE_UNDO_STR_MAX];
-  char drawstr[UI_MAX_DRAW_STR];
+  std::string drawstr;
 };
 
 static void button_activate_init(bContext *C,
@@ -794,7 +794,7 @@ static void ui_handle_afterfunc_add_operator_ex(wmOperatorType *ot,
   }
 
   if (context_but) {
-    ui_but_drawstr_without_sep_char(context_but, after->drawstr, sizeof(after->drawstr));
+    after->drawstr = ui_but_drawstr_without_sep_char(context_but);
   }
 }
 
@@ -909,7 +909,7 @@ static void ui_apply_but_func(bContext *C, uiBut *but)
     after->context = *but->context;
   }
 
-  ui_but_drawstr_without_sep_char(but, after->drawstr, sizeof(after->drawstr));
+  after->drawstr = ui_but_drawstr_without_sep_char(but);
 
   but->optype = nullptr;
   but->opcontext = wmOperatorCallContext(0);
@@ -929,11 +929,11 @@ static void ui_apply_but_undo(uiBut *but)
 
   /* define which string to use for undo */
   if (but->type == UI_BTYPE_MENU) {
-    str = but->drawstr;
+    str = but->drawstr.empty() ? nullptr : but->drawstr.c_str();
     str_len_clip = ui_but_drawstr_len_without_sep_char(but);
   }
-  else if (but->drawstr[0]) {
-    str = but->drawstr;
+  else if (!but->drawstr.empty()) {
+    str = but->drawstr.c_str();
     str_len_clip = ui_but_drawstr_len_without_sep_char(but);
   }
   else {
@@ -970,7 +970,7 @@ static void ui_apply_but_undo(uiBut *but)
     /* XXX: disable all undo pushes from UI changes from sculpt mode as they cause memfile undo
      * steps to be written which cause lag: #71434. */
     if (BKE_paintmode_get_active_from_context(static_cast<bContext *>(but->block->evil_C)) ==
-        PAINT_MODE_SCULPT)
+        PaintMode::Sculpt)
     {
       skip_undo = true;
     }
@@ -1042,7 +1042,7 @@ static void ui_apply_but_funcs_after(bContext *C)
                                                        after.opcontext,
                                                        (after.opptr) ? &opptr : nullptr,
                                                        nullptr,
-                                                       after.drawstr);
+                                                       after.drawstr.c_str());
     }
 
     if (after.opptr) {
@@ -2946,7 +2946,7 @@ void ui_but_clipboard_free()
 
 static int ui_text_position_from_hidden(uiBut *but, int pos)
 {
-  const char *butstr = (but->editstr) ? but->editstr : but->drawstr;
+  const char *butstr = (but->editstr) ? but->editstr : but->drawstr.c_str();
   const char *strpos = butstr;
   const char *str_end = butstr + strlen(butstr);
   for (int i = 0; i < pos; i++) {
@@ -2958,7 +2958,7 @@ static int ui_text_position_from_hidden(uiBut *but, int pos)
 
 static int ui_text_position_to_hidden(uiBut *but, int pos)
 {
-  const char *butstr = (but->editstr) ? but->editstr : but->drawstr;
+  const char *butstr = (but->editstr) ? but->editstr : but->drawstr.c_str();
   return BLI_strnlen_utf8(butstr, pos);
 }
 
@@ -2970,7 +2970,7 @@ void ui_but_text_password_hide(char password_str[UI_MAX_PASSWORD_STR],
     return;
   }
 
-  char *butstr = (but->editstr) ? but->editstr : but->drawstr;
+  char *butstr = (but->editstr) ? but->editstr : but->drawstr.data();
 
   if (restore) {
     /* restore original string */
@@ -4616,7 +4616,7 @@ static int ui_do_but_HOTKEYEVT(bContext *C,
     if (ELEM(event->type, LEFTMOUSE, EVT_PADENTER, EVT_RETKEY, EVT_BUT_OPEN) &&
         (event->val == KM_PRESS))
     {
-      but->drawstr[0] = 0;
+      but->drawstr.clear();
       hotkey_but->modifier_key = 0;
       button_activate_state(C, but, BUTTON_STATE_WAIT_KEY_EVENT);
       return WM_UI_HANDLER_BREAK;
@@ -6396,41 +6396,43 @@ static int ui_do_but_COLOR(bContext *C, uiBut *but, uiHandleButtonData *data, co
         if ((event->modifier & KM_CTRL) == 0) {
           float color[3];
           Paint *paint = BKE_paint_get_active_from_context(C);
-          Brush *brush = BKE_paint_brush(paint);
+          if (paint != nullptr) {
+            Brush *brush = BKE_paint_brush(paint);
 
-          if (brush->flag & BRUSH_USE_GRADIENT) {
-            float *target = &brush->gradient->data[brush->gradient->cur].r;
+            if (brush->flag & BRUSH_USE_GRADIENT) {
+              float *target = &brush->gradient->data[brush->gradient->cur].r;
 
-            if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR_GAMMA) {
-              RNA_property_float_get_array(&but->rnapoin, but->rnaprop, target);
-              IMB_colormanagement_srgb_to_scene_linear_v3(target, target);
+              if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR_GAMMA) {
+                RNA_property_float_get_array(&but->rnapoin, but->rnaprop, target);
+                IMB_colormanagement_srgb_to_scene_linear_v3(target, target);
+              }
+              else if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR) {
+                RNA_property_float_get_array(&but->rnapoin, but->rnaprop, target);
+              }
             }
-            else if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR) {
-              RNA_property_float_get_array(&but->rnapoin, but->rnaprop, target);
-            }
-          }
-          else {
-            Scene *scene = CTX_data_scene(C);
-            bool updated = false;
+            else {
+              Scene *scene = CTX_data_scene(C);
+              bool updated = false;
 
-            if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR_GAMMA) {
-              RNA_property_float_get_array(&but->rnapoin, but->rnaprop, color);
-              BKE_brush_color_set(scene, brush, color);
-              updated = true;
-            }
-            else if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR) {
-              RNA_property_float_get_array(&but->rnapoin, but->rnaprop, color);
-              IMB_colormanagement_scene_linear_to_srgb_v3(color, color);
-              BKE_brush_color_set(scene, brush, color);
-              updated = true;
-            }
+              if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR_GAMMA) {
+                RNA_property_float_get_array(&but->rnapoin, but->rnaprop, color);
+                BKE_brush_color_set(scene, brush, color);
+                updated = true;
+              }
+              else if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR) {
+                RNA_property_float_get_array(&but->rnapoin, but->rnaprop, color);
+                IMB_colormanagement_scene_linear_to_srgb_v3(color, color);
+                BKE_brush_color_set(scene, brush, color);
+                updated = true;
+              }
 
-            if (updated) {
-              PropertyRNA *brush_color_prop;
+              if (updated) {
+                PropertyRNA *brush_color_prop;
 
-              PointerRNA brush_ptr = RNA_id_pointer_create(&brush->id);
-              brush_color_prop = RNA_struct_find_property(&brush_ptr, "color");
-              RNA_property_update(C, &brush_ptr, brush_color_prop);
+                PointerRNA brush_ptr = RNA_id_pointer_create(&brush->id);
+                brush_color_prop = RNA_struct_find_property(&brush_ptr, "color");
+                RNA_property_update(C, &brush_ptr, brush_color_prop);
+              }
             }
           }
 

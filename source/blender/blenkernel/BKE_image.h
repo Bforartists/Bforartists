@@ -19,6 +19,7 @@ extern "C" {
 struct Depsgraph;
 struct ID;
 struct ImBuf;
+struct ImBufAnim;
 struct Image;
 struct ImageFormatData;
 struct ImagePool;
@@ -31,7 +32,6 @@ struct RenderResult;
 struct ReportList;
 struct Scene;
 struct StampData;
-struct anim;
 
 #define IMA_MAX_SPACE 64
 #define IMA_UDIM_MAX 2000
@@ -108,14 +108,14 @@ int BKE_imbuf_write_as(struct ImBuf *ibuf,
 /**
  * Used by sequencer too.
  */
-struct anim *openanim(const char *filepath,
-                      int flags,
-                      int streamindex,
-                      char colorspace[IMA_MAX_SPACE]);
-struct anim *openanim_noload(const char *filepath,
-                             int flags,
-                             int streamindex,
-                             char colorspace[IMA_MAX_SPACE]);
+struct ImBufAnim *openanim(const char *filepath,
+                           int flags,
+                           int streamindex,
+                           char colorspace[IMA_MAX_SPACE]);
+struct ImBufAnim *openanim_noload(const char *filepath,
+                                  int flags,
+                                  int streamindex,
+                                  char colorspace[IMA_MAX_SPACE]);
 
 void BKE_image_tag_time(struct Image *ima);
 
@@ -533,12 +533,8 @@ void BKE_image_ensure_gpu_texture(struct Image *image, struct ImageUser *iuser);
 struct GPUTexture *BKE_image_get_gpu_texture(struct Image *image,
                                              struct ImageUser *iuser,
                                              struct ImBuf *ibuf);
-struct GPUTexture *BKE_image_get_gpu_tiles(struct Image *image,
-                                           struct ImageUser *iuser,
-                                           struct ImBuf *ibuf);
-struct GPUTexture *BKE_image_get_gpu_tilemap(struct Image *image,
-                                             struct ImageUser *iuser,
-                                             struct ImBuf *ibuf);
+struct GPUTexture *BKE_image_get_gpu_tiles(struct Image *image, struct ImageUser *iuser);
+struct GPUTexture *BKE_image_get_gpu_tilemap(struct Image *image, struct ImageUser *iuser);
 /**
  * Is the alpha of the `GPUTexture` for a given image/ibuf premultiplied.
  */

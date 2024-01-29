@@ -37,7 +37,7 @@
 
 #include "BLI_utildefines.h"
 
-#include "BKE_appdir.h"
+#include "BKE_appdir.hh"
 #include "BKE_blender_version.h"
 #include "BKE_global.h"
 #include "BKE_main.hh"
@@ -124,8 +124,10 @@ static PyStructSequence_Field app_info_fields[] = {
     {nullptr},
 };
 
-PyDoc_STRVAR(bpy_app_doc,
-             "This module contains application values that remain unchanged during runtime.");
+PyDoc_STRVAR(
+    /* Wrap. */
+    bpy_app_doc,
+    "This module contains application values that remain unchanged during runtime.");
 
 static PyStructSequence_Desc app_info_desc = {
     "bpy.app",       /* name */
@@ -223,9 +225,11 @@ static PyObject *make_app_info()
 /* a few getsets because it makes sense for them to be in bpy.app even though
  * they are not static */
 
-PyDoc_STRVAR(bpy_app_debug_doc,
-             "Boolean, for debug info "
-             "(started with ``--debug`` / ``--debug-*`` matching this attribute name)");
+PyDoc_STRVAR(
+    /* Wrap. */
+    bpy_app_debug_doc,
+    "Boolean, for debug info "
+    "(started with ``--debug`` / ``--debug-*`` matching this attribute name)");
 static PyObject *bpy_app_debug_get(PyObject * /*self*/, void *closure)
 {
   const int flag = POINTER_AS_INT(closure);
@@ -252,9 +256,11 @@ static int bpy_app_debug_set(PyObject * /*self*/, PyObject *value, void *closure
   return 0;
 }
 
-PyDoc_STRVAR(bpy_app_global_flag_doc,
-             "Boolean, for application behavior "
-             "(started with ``--enable-*`` matching this attribute name)");
+PyDoc_STRVAR(
+    /* Wrap. */
+    bpy_app_global_flag_doc,
+    "Boolean, for application behavior "
+    "(started with ``--enable-*`` matching this attribute name)");
 static PyObject *bpy_app_global_flag_get(PyObject * /*self*/, void *closure)
 {
   const int flag = POINTER_AS_INT(closure);
@@ -293,8 +299,10 @@ static int bpy_app_global_flag_set__only_disable(PyObject * /*self*/,
   return bpy_app_global_flag_set(nullptr, value, closure);
 }
 
-PyDoc_STRVAR(bpy_app_debug_value_doc,
-             "Short, number which can be set to non-zero values for testing purposes");
+PyDoc_STRVAR(
+    /* Wrap. */
+    bpy_app_debug_value_doc,
+    "Short, number which can be set to non-zero values for testing purposes");
 static PyObject *bpy_app_debug_value_get(PyObject * /*self*/, void * /*closure*/)
 {
   return PyLong_FromLong(G.debug_value);
@@ -317,13 +325,17 @@ static int bpy_app_debug_value_set(PyObject * /*self*/, PyObject *value, void * 
   return 0;
 }
 
-PyDoc_STRVAR(bpy_app_tempdir_doc, "String, the temp directory used by blender (read-only)");
+PyDoc_STRVAR(
+    /* Wrap. */
+    bpy_app_tempdir_doc,
+    "String, the temp directory used by blender (read-only)");
 static PyObject *bpy_app_tempdir_get(PyObject * /*self*/, void * /*closure*/)
 {
   return PyC_UnicodeFromBytes(BKE_tempdir_session());
 }
 
 PyDoc_STRVAR(
+    /* Wrap. */
     bpy_app_driver_dict_doc,
     "Dictionary for drivers namespace, editable in-place, reset on file load (read-only)");
 static PyObject *bpy_app_driver_dict_get(PyObject * /*self*/, void * /*closure*/)
@@ -338,8 +350,10 @@ static PyObject *bpy_app_driver_dict_get(PyObject * /*self*/, void * /*closure*/
   return Py_INCREF_RET(bpy_pydriver_Dict);
 }
 
-PyDoc_STRVAR(bpy_app_preview_render_size_doc,
-             "Reference size for icon/preview renders (read-only)");
+PyDoc_STRVAR(
+    /* Wrap. */
+    bpy_app_preview_render_size_doc,
+    "Reference size for icon/preview renders (read-only)");
 static PyObject *bpy_app_preview_render_size_get(PyObject * /*self*/, void *closure)
 {
   return PyLong_FromLong(
@@ -351,10 +365,12 @@ static PyObject *bpy_app_autoexec_fail_message_get(PyObject * /*self*/, void * /
   return PyC_UnicodeFromBytes(G.autoexec_fail);
 }
 
-PyDoc_STRVAR(bpy_app_binary_path_doc,
-             "The location of Blender's executable, useful for utilities that open new instances. "
-             "Read-only unless Blender is built as a Python module - in this case the value is "
-             "an empty string which script authors may point to a Blender binary.");
+PyDoc_STRVAR(
+    /* Wrap. */
+    bpy_app_binary_path_doc,
+    "The location of Blender's executable, useful for utilities that open new instances. "
+    "Read-only unless Blender is built as a Python module - in this case the value is "
+    "an empty string which script authors may point to a Blender binary.");
 static PyObject *bpy_app_binary_path_get(PyObject * /*self*/, void * /*closure*/)
 {
   return PyC_UnicodeFromBytes(BKE_appdir_program_path());
@@ -498,15 +514,17 @@ static PyGetSetDef bpy_app_getsets[] = {
     {nullptr, nullptr, nullptr, nullptr, nullptr},
 };
 
-PyDoc_STRVAR(bpy_app_is_job_running_doc,
-             ".. staticmethod:: is_job_running(job_type)\n"
-             "\n"
-             "   Check whether a job of the given type is running.\n"
-             "\n"
-             "   :arg job_type: job type in :ref:`rna_enum_wm_job_type_items`.\n"
-             "   :type job_type: str\n"
-             "   :return: Whether a job of the given type is currently running.\n"
-             "   :rtype: bool.\n");
+PyDoc_STRVAR(
+    /* Wrap. */
+    bpy_app_is_job_running_doc,
+    ".. staticmethod:: is_job_running(job_type)\n"
+    "\n"
+    "   Check whether a job of the given type is running.\n"
+    "\n"
+    "   :arg job_type: job type in :ref:`rna_enum_wm_job_type_items`.\n"
+    "   :type job_type: str\n"
+    "   :return: Whether a job of the given type is currently running.\n"
+    "   :rtype: bool.\n");
 static PyObject *bpy_app_is_job_running(PyObject * /*self*/, PyObject *args, PyObject *kwds)
 {
   BPy_EnumProperty_Parse job_type_enum{};
@@ -532,14 +550,16 @@ static PyObject *bpy_app_is_job_running(PyObject * /*self*/, PyObject *args, PyO
 
 char *(*BPY_python_app_help_text_fn)(bool all) = nullptr;
 
-PyDoc_STRVAR(bpy_app_help_text_doc,
-             ".. staticmethod:: help_text(all=False)\n"
-             "\n"
-             "   Return the help text as a string.\n"
-             "\n"
-             "   :arg all: Return all arguments, "
-             "even those which aren't available for the current platform.\n"
-             "   :type all: bool\n");
+PyDoc_STRVAR(
+    /* Wrap. */
+    bpy_app_help_text_doc,
+    ".. staticmethod:: help_text(all=False)\n"
+    "\n"
+    "   Return the help text as a string.\n"
+    "\n"
+    "   :arg all: Return all arguments, "
+    "even those which aren't available for the current platform.\n"
+    "   :type all: bool\n");
 static PyObject *bpy_app_help_text(PyObject * /*self*/, PyObject *args, PyObject *kwds)
 {
   bool all = false;

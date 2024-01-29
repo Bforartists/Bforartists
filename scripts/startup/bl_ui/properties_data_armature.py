@@ -170,10 +170,7 @@ class ARMATURE_MT_collection_context_menu(Menu):
         layout = self.layout
 
         arm = context.armature
-        active_bcoll = arm.collections.active
-
         active_bcoll_is_locked = arm.collections.active and not arm.collections.active.is_editable
-
         # The poll function doesn't have access to the parent index property, so
         # it cannot disable this operator depending on whether the parent is
         # editable or not. That means this menu has to do the disabling for it.
@@ -183,10 +180,10 @@ class ARMATURE_MT_collection_context_menu(Menu):
             "armature.collection_add", text="Add Child Collection", icon="COLLECTION_NEW"
         )
         props.parent_index = arm.collections.active_index
-
-        props = layout.operator("armature.collection_solo_visibility", icon='HIDE_UNSELECTED')
-        props.name = active_bcoll.name if active_bcoll else ""
         layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
+        layout.operator("armature.collection_unsolo_all")
+        layout.separator()
+        layout.operator("armature.collection_remove_unused", text="Remove Unused")
 
 
 class ARMATURE_MT_collection_tree_context_menu(Menu):
@@ -208,11 +205,12 @@ class ARMATURE_MT_collection_tree_context_menu(Menu):
         )
         props.parent_index = arm.collections.active_index
         sub.operator("armature.collection_remove", icon="REMOVE")
+        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections")
 
         layout.separator()
 
-        layout.operator("armature.collection_solo_visibility", icon="HIDE_UNSELECTED")
         layout.operator("armature.collection_show_all", icon="SHOW_UNSELECTED")
+        layout.operator("armature.collection_unsolo_all")
 
         layout.separator()
 
