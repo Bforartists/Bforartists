@@ -838,7 +838,7 @@ class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
 
         row = layout.row(align=True)
         row.prop(wm, "asset_path_dummy", text="Source", icon='CURRENT_FILE' if is_local_asset else 'NONE')
-        row.operator("asset.open_containing_blend_file", text="", icon='FILE_BLEND')
+        row.operator("asset.open_containing_blend_file", text="", icon='FILE_FOLDER')
 
         metadata = asset.metadata
         self.metadata_prop(layout, metadata, "description")
