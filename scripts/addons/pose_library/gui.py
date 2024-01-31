@@ -124,7 +124,7 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
 
     layout.separator()
     if is_pose_asset_view():
-        layout.operator("asset.open_containing_blend_file")
+        layout.operator("asset.open_containing_blend_file", icon="FILE_FOLDER")
 
         props.select = False
 
