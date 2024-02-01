@@ -7565,12 +7565,12 @@ static void rna_def_space_node(BlenderRNA *brna)
   static const EnumPropertyItem geometry_nodes_type_items[] = {
       {SNODE_GEOMETRY_MODIFIER,
        "MODIFIER",
-       0,
+       ICON_MODIFIER, /*BFA - icon added*/
        "Modifier",
        "Edit node group from active object's active modifier"},
       {SNODE_GEOMETRY_TOOL,
        "TOOL",
-       0,
+       ICON_TOOL_SETTINGS, /*BFA - icon added*/
        "Tool",
        "Edit any geometry node group for use as an operator"},
       {0, nullptr, 0, nullptr, nullptr},
