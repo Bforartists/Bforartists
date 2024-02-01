@@ -4924,13 +4924,13 @@ class VIEW3D_MT_bone_collections(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("armature.assign_to_collection", icon="COLLECTION_BONE_ADD")
+        layout.operator("armature.assign_to_collection", text="Add", icon="COLLECTION_BONE_ADD")  #BFA - shortned label
 
         layout.separator()
 
         layout.operator("armature.collection_show_all", icon="SHOW_UNSELECTED")
-        props = layout.operator("armature.collection_create_and_assign",
-                                text="Assign to New Collection",
+        props = layout.operator("armature.collection_create_and_assign", #BFA - shortned label
+                                text="Assign to New",
                                 icon='COLLECTION_BONE_NEW')
         props.name = "New Collection"
 
