@@ -893,7 +893,7 @@ static void catalog_assets_draw(const bContext *C, Menu *menu)
     uiItemFullO_ptr(layout,
                     ot,
                     IFACE_(asset->get_name().c_str()),
-                    ICON_NODETREE, /*BFA*/
+                    ICON_TOOL_SETTINGS, /*BFA*/
                     nullptr,
                     WM_OP_INVOKE_REGION_WIN,
                     UI_ITEM_NONE,
@@ -974,7 +974,7 @@ static void catalog_assets_draw_unassigned(const bContext *C, Menu *menu)
     uiItemFullO_ptr(layout,
                     ot,
                     IFACE_(asset->get_name().c_str()),
-                    ICON_NODETREE, /*BFA*/
+                    ICON_TOOL_SETTINGS, /*BFA*/
                     nullptr,
                     WM_OP_INVOKE_REGION_WIN,
                     UI_ITEM_NONE,
@@ -1011,7 +1011,7 @@ static void catalog_assets_draw_unassigned(const bContext *C, Menu *menu)
     uiItemFullO_ptr(layout,
                     ot,
                     group->id.name + 2,
-                    ICON_NODETREE, /*BFA*/
+                    ICON_TOOL_SETTINGS, /*BFA*/
                     nullptr,
                     WM_OP_INVOKE_REGION_WIN,
                     UI_ITEM_NONE,
@@ -1099,7 +1099,7 @@ void ui_template_node_operator_asset_root_items(uiLayout &layout, const bContext
   });
 
   if (!tree->unassigned_assets.is_empty() || unassigned_local_poll(C)) {
-    uiItemM(&layout, "GEO_MT_node_operator_unassigned", "", ICON_FILE_HIDDEN);
+    uiItemM(&layout, "GEO_MT_node_operator_unassigned", "", ICON_TOOL_SETTINGS); /*BFA - icon*/
   }
 }
 
