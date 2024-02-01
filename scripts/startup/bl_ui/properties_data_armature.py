@@ -176,14 +176,14 @@ class ARMATURE_MT_collection_context_menu(Menu):
         # editable or not. That means this menu has to do the disabling for it.
         sub = layout.column()
         sub.enabled = not active_bcoll_is_locked
-        props = sub.operator(
-            "armature.collection_add", text="Add Child Collection", icon="COLLECTION_NEW"
-        )
-        props.parent_index = arm.collections.active_index
-        layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
-        layout.operator("armature.collection_unsolo_all")
+        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections", icon="DELETE")
+
         layout.separator()
-        layout.operator("armature.collection_remove_unused", text="Remove Unused")
+
+        layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
+        layout.operator("armature.collection_unsolo_all", icon="SOLO_OFF")
+
+
 
 
 class ARMATURE_MT_collection_tree_context_menu(Menu):
@@ -200,17 +200,14 @@ class ARMATURE_MT_collection_tree_context_menu(Menu):
         # editable or not. That means this menu has to do the disabling for it.
         sub = layout.column()
         sub.enabled = not active_bcoll_is_locked
-        props = sub.operator(
-            "armature.collection_add", text="Add Child Collection", icon="COLLECTION_NEW"
-        )
-        props.parent_index = arm.collections.active_index
+        sub.operator("armature.collection_add", text="Add Collection", icon="ADD")
         sub.operator("armature.collection_remove", icon="REMOVE")
-        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections")
+        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections", icon="DELETE")
 
         layout.separator()
 
         layout.operator("armature.collection_show_all", icon="SHOW_UNSELECTED")
-        layout.operator("armature.collection_unsolo_all")
+        layout.operator("armature.collection_unsolo_all", icon="SOLO_OFF")
 
         layout.separator()
 
