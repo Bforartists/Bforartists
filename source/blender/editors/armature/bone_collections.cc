@@ -145,7 +145,7 @@ void ARMATURE_OT_collection_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add Bone Collection";
   ot->idname = "ARMATURE_OT_collection_add";
-  ot->description = "Add a new bone collection";
+  ot->description = "Add a new bone collection\nTo create a child collection, click and drag an existing collection onto a parent collection";
 
   /* api callbacks */
   ot->exec = bone_collection_add_exec;
