@@ -76,8 +76,8 @@ class TIME_HT_editor_buttons:
 
         row.separator()
 
-        row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
-        row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
+        row.operator("anim.keyframe_insert", text="", icon='KEYFRAMES_INSERT') # BFA - updated icon
+        row.operator("anim.keyframe_delete_v3d", text="", icon='KEYFRAMES_REMOVE') # BFA - updated to work like it would in the 3D View (as expected)
 
         layout.separator_spacer()
 
@@ -86,7 +86,6 @@ class TIME_HT_editor_buttons:
         if tool_settings.use_keyframe_insert_auto:
             sub.popover(panel="TIME_PT_auto_keyframing", text="")
         row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
-
         row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
 
         row.popover(panel="TIME_PT_playback", text="Playback")
