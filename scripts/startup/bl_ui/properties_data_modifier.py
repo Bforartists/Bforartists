@@ -4,6 +4,7 @@
 
 import bpy
 from bpy.types import Panel, Menu, Operator
+from bl_ui.generic_column_menu import GenericColumnMenu, fetch_op_data, InvokeMenuOperator
 
 
 class ModifierButtonsPanel:
@@ -238,8 +239,42 @@ class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator_menu_enum("object.gpencil_modifier_add", "type")
+        layout.operator("object.add_gpencil_modifier_menu", text="Add Modifier", icon='ADD')
         layout.template_grease_pencil_modifiers()
+
+
+class OBJECT_MT_gpencil_modifier_add(GenericColumnMenu, Menu):
+    bl_description = "Add a procedural operation/effect to the active grease pencil object"
+
+    op_id = "object.gpencil_modifier_add"
+    OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="GpencilModifier")
+    
+    @classmethod
+    def poll(cls, context):
+        ob = context.object
+        return ob and ob.type == 'GPENCIL'
+
+    def draw(self, _context):
+        layout = self.layout.row()
+
+        self.draw_operator_column(layout, header="Modify", icon='MODIFIER_DATA',
+            types=('GP_TEXTURE', 'GP_TIME', 'GP_WEIGHT_ANGLE', 'GP_WEIGHT_PROXIMITY'))
+        self.draw_operator_column(layout, header="Generate", icon='FILE_3D',
+            types=('GP_ARRAY', 'GP_BUILD', 'GP_DASH', 'GP_ENVELOPE', 'GP_LENGTH', 'GP_LINEART', 'GP_MIRROR', 'GP_MULTIPLY', 'GP_OUTLINE', 'GP_SIMPLIFY', 'GP_SUBDIV'))
+        self.draw_operator_column(layout, header="Deform", icon='STROKE',
+            types=('GP_ARMATURE', 'GP_HOOK', 'GP_LATTICE', 'GP_NOISE', 'GP_OFFSET', 'SHRINKWRAP', 'GP_SMOOTH', 'GP_THICK'))
+        self.draw_operator_column(layout, header="Color", icon='OVERLAY', 
+            types=('GP_COLOR', 'GP_OPACITY', 'GP_TINT'))
+
+
+class OBJECT_OT_add_gpencil_modifier_menu(InvokeMenuOperator, Operator):
+    bl_idname = "object.add_gpencil_modifier_menu"
+    bl_label = "Add Grease Pencil Modifier"
+    bl_description = "Add a procedural operation/effect to the active grease pencil object"
+
+    menu_id = "OBJECT_MT_gpencil_modifier_add"
+    space_type = 'PROPERTIES'
+    space_context = 'MODIFIER'
 
 
 class AddModifierMenu(Operator):
@@ -268,6 +303,8 @@ classes = (
     OBJECT_MT_modifier_add_physics,
     OBJECT_MT_modifier_add_color,
     DATA_PT_gpencil_modifiers,
+    OBJECT_MT_gpencil_modifier_add,
+    OBJECT_OT_add_gpencil_modifier_menu,
     AddModifierMenu,
 )
 
