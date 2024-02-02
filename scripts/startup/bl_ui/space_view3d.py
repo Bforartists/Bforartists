@@ -3368,11 +3368,10 @@ class VIEW3D_MT_object_animation(Menu):
         layout = self.layout
 
         layout.operator("anim.keyframe_insert", text="Insert Keyframe", icon='KEYFRAMES_INSERT')
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEYFRAMES_INSERT').always_prompt = True
         layout.operator("anim.keyframe_delete_v3d", text="Delete Keyframes", icon='KEYFRAMES_REMOVE')
         layout.operator("anim.keyframe_clear_v3d", text="Clear Keyframes", icon='KEYFRAMES_CLEAR')
         layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon='KEYINGSET')
-
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEY_HLT').always_prompt = True
         layout.separator()
 
         layout.operator("nla.bake", text="Bake Action", icon='BAKE_ACTION')
@@ -3652,7 +3651,7 @@ class VIEW3D_MT_object_context_menu(Menu):
         layout.separator()
 
         layout.operator("anim.keyframe_insert", text="Insert Keyframe", icon='KEYFRAMES_INSERT')
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEYFRAMES_INSERT').always_prompt = True
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEY_HLT').always_prompt = True
 
         layout.separator()
 
@@ -5008,7 +5007,7 @@ class VIEW3D_MT_pose_context_menu(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("anim.keyframe_insert", text="Insert Keyframe", icon='KEYFRAMES_INSERT')
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEYFRAMES_INSERT').always_prompt = True
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEY_HLT').always_prompt = True
 
         layout.separator()
 
