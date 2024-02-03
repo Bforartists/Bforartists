@@ -65,6 +65,7 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
 class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
     bl_label = ""
     bl_options = {'SEARCH_ON_KEY_PRESS'}
+    search_header = "Modifier"
 
     @staticmethod
     def draw_menu_column(layout, menu, icon):
@@ -72,13 +73,18 @@ class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
         menu_idname = menu.__name__
 
         col = layout.column()
-        col.label(text=header, icon=icon)
-        col.separator()
+        
+        if layout.operator_context != 'INVOKE_REGION_WIN':
+            col.label(text=header, icon=icon)
+            col.separator()
         col.menu_contents(menu_idname)
 
     def draw(self, context):
         layout = self.layout.row()
         ob_type = context.object.type
+
+        if layout.operator_context == 'INVOKE_REGION_WIN':
+            layout.label(text=self.search_header)
 
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_edit, icon='EDITMODE_HLT')
@@ -330,6 +336,7 @@ class OBJECT_MT_gpencil_modifier_add(GenericColumnMenu, Menu):
 
     op_id = "object.gpencil_modifier_add"
     OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="GpencilModifier")
+    search_header = "Grease Pencil Modifier"
     
     @classmethod
     def poll(cls, context):
