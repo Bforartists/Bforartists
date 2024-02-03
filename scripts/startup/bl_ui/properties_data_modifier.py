@@ -45,12 +45,16 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         ob = context.object
         return ob and ob.type != 'GPENCIL'
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
-        
+        ob_type = context.object.type
+        geometry_nodes_supported = ob_type in {'MESH', 'CURVE', 'CURVES',
+                                               'FONT', 'VOLUME', 'POINTCLOUD', 'GREASEPENCIL'}
+
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False)
         flow.column().operator("object.add_modifier_menu", icon='ADD')
-        flow.column().operator("object.add_asset_modifier_menu", icon='ADD')
+        if geometry_nodes_supported:
+            flow.column().operator("object.add_asset_modifier_menu", icon='ADD')
 
         layout.template_modifiers()
 
