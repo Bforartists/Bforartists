@@ -47,8 +47,11 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("object.add_modifier_menu", icon='ADD')
-        layout.operator("object.add_asset_modifier_menu", icon='ADD')
+        
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False)
+        flow.column().operator("object.add_modifier_menu", icon='ADD')
+        flow.column().operator("object.add_asset_modifier_menu", icon='ADD')
+
         layout.template_modifiers()
 
 
