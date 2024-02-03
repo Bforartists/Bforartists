@@ -34,6 +34,7 @@ class OBJECT_MT_gpencil_shaderfx_add(GenericColumnMenu, Menu):
 
     op_id = "object.shaderfx_add"
     OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="ShaderFx")
+    search_header = "Effect"
 
     @classmethod
     def poll(cls, context):
