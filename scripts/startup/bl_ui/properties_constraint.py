@@ -40,6 +40,7 @@ class OBJECT_MT_constraint_add(GenericColumnMenu, Menu):
 
     op_id = "object.constraint_add"
     OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="Constraint")
+    search_header = "Object Constraint"
 
     def draw(self, _context):
         layout = self.layout.row()
@@ -82,6 +83,7 @@ class BONE_MT_constraint_add(GenericColumnMenu, Menu):
 
     op_id = "pose.constraint_add"
     OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="Constraint")
+    search_header = "Bone Constraint"
 
     def draw(self, _context):
         layout = self.layout.row()
