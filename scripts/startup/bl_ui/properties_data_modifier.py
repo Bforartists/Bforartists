@@ -52,9 +52,12 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
                                                'FONT', 'VOLUME', 'POINTCLOUD', 'GREASEPENCIL'}
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False)
-        flow.column().operator("object.add_modifier_menu", icon='ADD')
+        col1 = flow.column()
+        col2 = flow.column()
+
+        col1.operator("object.add_modifier_menu", icon='ADD')
         if geometry_nodes_supported:
-            flow.column().operator("object.add_asset_modifier_menu", icon='ADD')
+            col2.operator("object.add_asset_modifier_menu", icon='ADD')
 
         layout.template_modifiers()
 
