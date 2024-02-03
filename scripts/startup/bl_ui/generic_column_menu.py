@@ -19,13 +19,18 @@ class GenericColumnMenu:
     bl_label = ""
     bl_options = {'SEARCH_ON_KEY_PRESS'}
 
+    search_header = ""
+
     @classmethod
     def draw_operator_column(cls, layout, header, types, icon='NONE'):
         text_ctxt = cls.TRANSLATION_CONTEXT
-        
         col = layout.column()
-        col.label(text=header, icon=icon)
-        col.separator()
+        
+        if layout.operator_context == 'INVOKE_REGION_WIN':
+            col.label(text=cls.search_header)
+        else:
+            col.label(text=header, icon=icon)
+            col.separator()
 
         for op_type in types:
             label, op_icon = cls.OPERATOR_DATA[op_type]
