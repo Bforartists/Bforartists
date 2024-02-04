@@ -45,13 +45,13 @@ class OBJECT_MT_constraint_add(GenericColumnMenu, Menu):
     def draw(self, _context):
         layout = self.layout.row()
 
-        self.draw_operator_column(layout, header="Motion Tracking", icon='TRACKING',
+        self.draw_operator_column(layout, header="Motion Tracking",
             types=('CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER'))
-        self.draw_operator_column(layout, header="Transform", icon='OBJECT_HIDDEN',
+        self.draw_operator_column(layout, header="Transform",
             types=('COPY_LOCATION', 'COPY_ROTATION', 'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE', 'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE'))
-        self.draw_operator_column(layout, header="Tracking", icon='TRACKER',
+        self.draw_operator_column(layout, header="Tracking",
             types=('CLAMP_TO', 'DAMPED_TRACK', 'LOCKED_TRACK', 'STRETCH_TO', 'TRACK_TO'))
-        self.draw_operator_column(layout, header="Relationship", icon='DRIVER',
+        self.draw_operator_column(layout, header="Relationship",
             types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'SHRINKWRAP'))
 
 
@@ -88,13 +88,13 @@ class BONE_MT_constraint_add(GenericColumnMenu, Menu):
     def draw(self, _context):
         layout = self.layout.row()
 
-        self.draw_operator_column(layout, header="Motion Tracking", icon='TRACKING',
+        self.draw_operator_column(layout, header="Motion Tracking",
             types=('CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER'))
-        self.draw_operator_column(layout, header="Transform", icon='OBJECT_HIDDEN',
+        self.draw_operator_column(layout, header="Transform",
             types=('COPY_LOCATION', 'COPY_ROTATION', 'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE', 'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE'))
-        self.draw_operator_column(layout, header="Tracking", icon='TRACKER',
+        self.draw_operator_column(layout, header="Tracking",
             types=('CLAMP_TO', 'DAMPED_TRACK', 'IK', 'LOCKED_TRACK', 'SPLINE_IK', 'STRETCH_TO', 'TRACK_TO'))
-        self.draw_operator_column(layout, header="Relationship", icon='DRIVER',
+        self.draw_operator_column(layout, header="Relationship",
             types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'SHRINKWRAP'))
 
 
