@@ -44,7 +44,7 @@ class OBJECT_MT_gpencil_shaderfx_add(GenericColumnMenu, Menu):
     def draw(self, _context):
         layout = self.layout.row()
 
-        self.draw_operator_column(layout, header="Add Effect", icon='SHADERFX',
+        self.draw_operator_column(layout, header="Add Effect",
             types=('FX_BLUR', 'FX_COLORIZE', 'FX_FLIP', 'FX_GLOW', 'FX_PIXEL', 'FX_RIM', 'FX_SHADOW', 'FX_SWIRL', 'FX_WAVE'))
 
 
