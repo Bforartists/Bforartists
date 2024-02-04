@@ -4,6 +4,7 @@
 
 import bpy
 from bpy.types import Panel, Menu, Operator
+from bl_ui.generic_column_menu import GenericColumnMenu, fetch_op_data, InvokeMenuOperator
 
 
 class ModifierButtonsPanel:
@@ -44,46 +45,61 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         ob = context.object
         return ob and ob.type != 'GPENCIL'
 
-    def draw(self, _context):
-        layout = self.layout
-        layout.operator("wm.call_menu", text="Add Modifier", icon='ADD').name = "OBJECT_MT_modifier_add"
-        layout.template_modifiers()
-
-
-class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
-    bl_label = "Add Modifier"
-    bl_options = {'SEARCH_ON_KEY_PRESS'}
-
     def draw(self, context):
         layout = self.layout
         ob_type = context.object.type
         geometry_nodes_supported = ob_type in {'MESH', 'CURVE', 'CURVES',
                                                'FONT', 'VOLUME', 'POINTCLOUD', 'GREASEPENCIL'}
 
-        if layout.operator_context == 'EXEC_REGION_WIN':
-            layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("WM_OT_search_single_menu", text="Search...",
-                            icon='VIEWZOOM').menu_idname = "OBJECT_MT_modifier_add"
-            layout.separator()
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False)
+        col1 = flow.column()
+        col2 = flow.column()
 
-        layout.operator_context = 'EXEC_REGION_WIN'
-
+        col1.operator("object.add_modifier_menu", icon='ADD')
         if geometry_nodes_supported:
-            self.operator_modifier_add(layout, 'NODES')
-            layout.separator()
+            col2.operator("object.add_asset_modifier_menu", icon='ADD')
+
+        layout.template_modifiers()
+
+
+class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
+    bl_label = ""
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+    search_header = "Modifier"
+
+    @staticmethod
+    def draw_menu_column(layout, menu, icon='NONE'):
+        header = menu.bl_label
+        menu_idname = menu.__name__
+
+        col = layout.column()
+        
+        if layout.operator_context != 'INVOKE_REGION_WIN':
+            col.label(text=header, icon=icon)
+            col.separator()
+        col.menu_contents(menu_idname)
+
+    def draw(self, context):
+        layout = self.layout.row()
+        ob_type = context.object.type
+
+        if layout.operator_context == 'INVOKE_REGION_WIN':
+            layout.label(text=self.search_header)
+
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
-            layout.menu("OBJECT_MT_modifier_add_edit")
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_edit)
+
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'VOLUME', 'GREASEPENCIL'}:
-            layout.menu("OBJECT_MT_modifier_add_generate")
-        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE', 'VOLUME', 'GREASEPENCIL'}:
-            layout.menu("OBJECT_MT_modifier_add_deform")
-        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
-            layout.menu("OBJECT_MT_modifier_add_physics")
-        if ob_type in {'GREASEPENCIL'}:
-            layout.menu("OBJECT_MT_modifier_add_color")
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_generate)
 
-        if geometry_nodes_supported:
-            layout.menu_contents("OBJECT_MT_modifier_add_root_catalogs")
+        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE', 'VOLUME', 'GREASEPENCIL'}:
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_deform)
+
+        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_physics)
+
+        if ob_type in {'GREASEPENCIL'}:
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_color)
 
 
 class OBJECT_MT_modifier_add_edit(ModifierAddMenu, Menu):
@@ -107,7 +123,6 @@ class OBJECT_MT_modifier_add_edit(ModifierAddMenu, Menu):
             self.operator_modifier_add(layout, 'VERTEX_WEIGHT_EDIT')
             self.operator_modifier_add(layout, 'VERTEX_WEIGHT_MIX')
             self.operator_modifier_add(layout, 'VERTEX_WEIGHT_PROXIMITY')
-        layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
 
 
 class OBJECT_MT_modifier_add_generate(ModifierAddMenu, Menu):
@@ -117,6 +132,9 @@ class OBJECT_MT_modifier_add_generate(ModifierAddMenu, Menu):
     def draw(self, context):
         layout = self.layout
         ob_type = context.object.type
+        geometry_nodes_supported = ob_type in {'MESH', 'CURVE', 'CURVES',
+                                               'FONT', 'VOLUME', 'POINTCLOUD', 'GREASEPENCIL'}
+
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE'}:
             self.operator_modifier_add(layout, 'ARRAY')
             self.operator_modifier_add(layout, 'BEVEL')
@@ -126,6 +144,8 @@ class OBJECT_MT_modifier_add_generate(ModifierAddMenu, Menu):
             self.operator_modifier_add(layout, 'BUILD')
             self.operator_modifier_add(layout, 'DECIMATE')
             self.operator_modifier_add(layout, 'EDGE_SPLIT')
+        if geometry_nodes_supported:
+            self.operator_modifier_add(layout, 'NODES')
         if ob_type == 'MESH':
             self.operator_modifier_add(layout, 'MASK')
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE'}:
@@ -151,7 +171,6 @@ class OBJECT_MT_modifier_add_generate(ModifierAddMenu, Menu):
             self.operator_modifier_add(layout, 'WIREFRAME')
         if ob_type == 'GREASEPENCIL':
             self.operator_modifier_add(layout, 'GREASE_PENCIL_SUBDIV')
-        layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
 
 
 class OBJECT_MT_modifier_add_deform(ModifierAddMenu, Menu):
@@ -190,7 +209,6 @@ class OBJECT_MT_modifier_add_deform(ModifierAddMenu, Menu):
         if ob_type == 'GREASEPENCIL':
             self.operator_modifier_add(layout, 'GREASE_PENCIL_OFFSET')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_SMOOTH')
-        layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
 
 
 class OBJECT_MT_modifier_add_physics(ModifierAddMenu, Menu):
@@ -211,7 +229,6 @@ class OBJECT_MT_modifier_add_physics(ModifierAddMenu, Menu):
             self.operator_modifier_add(layout, 'PARTICLE_SYSTEM')
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
             self.operator_modifier_add(layout, 'SOFT_BODY')
-        layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
 
 
 class OBJECT_MT_modifier_add_color(ModifierAddMenu, Menu):
@@ -225,7 +242,79 @@ class OBJECT_MT_modifier_add_color(ModifierAddMenu, Menu):
             self.operator_modifier_add(layout, 'GREASE_PENCIL_COLOR')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_TINT')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_OPACITY')
-        layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
+
+
+class OBJECT_MT_modifier_add_assets(ModifierAddMenu, Menu):
+    bl_label = "Assets"
+    bl_description = "Add a modifier nodegroup to the active object"
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+
+    def draw(self, context):
+        layout = self.layout
+        ob_type = context.object.type
+        geometry_nodes_supported = ob_type in {'MESH', 'CURVE', 'CURVES',
+                                               'FONT', 'VOLUME', 'POINTCLOUD', 'GREASEPENCIL'}
+
+        if layout.operator_context == 'EXEC_REGION_WIN':
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("wm.search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = self.bl_idname
+            layout.separator()
+
+        layout.operator_context = 'EXEC_REGION_WIN'
+
+        layout.separator()
+        self.operator_modifier_add(layout, 'NODES')
+        layout.separator()
+
+        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
+            layout.menu("OBJECT_MT_modifier_add_edit_assets")
+
+        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'VOLUME', 'GREASEPENCIL'}:
+            layout.menu("OBJECT_MT_modifier_add_generate_assets")
+
+        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE', 'VOLUME', 'GREASEPENCIL'}:
+            layout.menu("OBJECT_MT_modifier_add_deform_assets")
+
+        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
+            layout.menu("OBJECT_MT_modifier_add_physics_assets")
+
+        if ob_type in {'GREASEPENCIL'}:
+            layout.menu("OBJECT_MT_modifier_add_color_assets")
+
+        layout.separator()
+        
+        if geometry_nodes_supported:
+            layout.menu_contents("OBJECT_MT_modifier_add_root_catalogs")
+
+
+class AssetSubmenu:
+    def draw(self, context):
+        self.layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
+
+class OBJECT_MT_modifier_add_edit_assets(AssetSubmenu, ModifierAddMenu, Menu):
+    bl_label = OBJECT_MT_modifier_add_edit.bl_label
+
+class OBJECT_MT_modifier_add_generate_assets(AssetSubmenu, ModifierAddMenu, Menu):
+    bl_label = OBJECT_MT_modifier_add_generate.bl_label
+
+class OBJECT_MT_modifier_add_deform_assets(AssetSubmenu, ModifierAddMenu, Menu):
+    bl_label = OBJECT_MT_modifier_add_deform.bl_label
+
+class OBJECT_MT_modifier_add_physics_assets(AssetSubmenu, ModifierAddMenu, Menu):
+    bl_label = OBJECT_MT_modifier_add_physics.bl_label
+
+class OBJECT_MT_modifier_add_color_assets(AssetSubmenu, ModifierAddMenu, Menu):
+    bl_label = OBJECT_MT_modifier_add_color.bl_label
+
+
+class OBJECT_OT_add_asset_modifier_menu(InvokeMenuOperator, Operator):
+    bl_idname = "object.add_asset_modifier_menu"
+    bl_label = "Add Asset Modifier"
+    bl_description = "Add a modifier nodegroup to the active object"
+    
+    menu_id = "OBJECT_MT_modifier_add_assets"
+    space_type = 'PROPERTIES'
+    space_context = 'MODIFIER'
 
 
 class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
@@ -238,13 +327,49 @@ class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator_menu_enum("object.gpencil_modifier_add", "type")
+        layout.operator("object.add_gpencil_modifier_menu", text="Add Modifier", icon='ADD')
         layout.template_grease_pencil_modifiers()
+
+
+class OBJECT_MT_gpencil_modifier_add(GenericColumnMenu, Menu):
+    bl_description = "Add a procedural operation/effect to the active grease pencil object"
+
+    op_id = "object.gpencil_modifier_add"
+    OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="GpencilModifier")
+    search_header = "Grease Pencil Modifier"
+    
+    @classmethod
+    def poll(cls, context):
+        ob = context.object
+        return ob and ob.type == 'GPENCIL'
+
+    def draw(self, _context):
+        layout = self.layout.row()
+
+        self.draw_operator_column(layout, header="Modify",
+            types=('GP_TEXTURE', 'GP_TIME', 'GP_WEIGHT_ANGLE', 'GP_WEIGHT_PROXIMITY'))
+        self.draw_operator_column(layout, header="Generate",
+            types=('GP_ARRAY', 'GP_BUILD', 'GP_DASH', 'GP_ENVELOPE', 'GP_LENGTH', 'GP_LINEART', 'GP_MIRROR', 'GP_MULTIPLY', 'GP_OUTLINE', 'GP_SIMPLIFY', 'GP_SUBDIV'))
+        self.draw_operator_column(layout, header="Deform",
+            types=('GP_ARMATURE', 'GP_HOOK', 'GP_LATTICE', 'GP_NOISE', 'GP_OFFSET', 'SHRINKWRAP', 'GP_SMOOTH', 'GP_THICK'))
+        self.draw_operator_column(layout, header="Color", 
+            types=('GP_COLOR', 'GP_OPACITY', 'GP_TINT'))
+
+
+class OBJECT_OT_add_gpencil_modifier_menu(InvokeMenuOperator, Operator):
+    bl_idname = "object.add_gpencil_modifier_menu"
+    bl_label = "Add Grease Pencil Modifier"
+    bl_description = "Add a procedural operation/effect to the active grease pencil object"
+
+    menu_id = "OBJECT_MT_gpencil_modifier_add"
+    space_type = 'PROPERTIES'
+    space_context = 'MODIFIER'
 
 
 class AddModifierMenu(Operator):
     bl_idname = "object.add_modifier_menu"
     bl_label = "Add Modifier"
+    bl_description = "Add a procedural operation/effect to the active object"
 
     @classmethod
     def poll(cls, context):
@@ -267,7 +392,16 @@ classes = (
     OBJECT_MT_modifier_add_deform,
     OBJECT_MT_modifier_add_physics,
     OBJECT_MT_modifier_add_color,
+    OBJECT_MT_modifier_add_assets,
+    OBJECT_MT_modifier_add_edit_assets,
+    OBJECT_MT_modifier_add_generate_assets,
+    OBJECT_MT_modifier_add_deform_assets,
+    OBJECT_MT_modifier_add_physics_assets,
+    OBJECT_MT_modifier_add_color_assets,
+    OBJECT_OT_add_asset_modifier_menu,
     DATA_PT_gpencil_modifiers,
+    OBJECT_MT_gpencil_modifier_add,
+    OBJECT_OT_add_gpencil_modifier_menu,
     AddModifierMenu,
 )
 
