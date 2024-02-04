@@ -68,7 +68,7 @@ class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
     search_header = "Modifier"
 
     @staticmethod
-    def draw_menu_column(layout, menu, icon):
+    def draw_menu_column(layout, menu, icon='NONE'):
         header = menu.bl_label
         menu_idname = menu.__name__
 
@@ -87,19 +87,19 @@ class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
             layout.label(text=self.search_header)
 
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
-            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_edit, icon='EDITMODE_HLT')
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_edit)
 
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'VOLUME', 'GREASEPENCIL'}:
-            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_generate, icon='FILE_3D')
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_generate)
 
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE', 'VOLUME', 'GREASEPENCIL'}:
-            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_deform, icon='STROKE')
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_deform)
 
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
-            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_physics, icon='PHYSICS')
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_physics)
 
         if ob_type in {'GREASEPENCIL'}:
-            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_color, icon='OVERLAY')
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_color)
 
 
 class OBJECT_MT_modifier_add_edit(ModifierAddMenu, Menu):
@@ -346,13 +346,13 @@ class OBJECT_MT_gpencil_modifier_add(GenericColumnMenu, Menu):
     def draw(self, _context):
         layout = self.layout.row()
 
-        self.draw_operator_column(layout, header="Modify", icon='MODIFIER_DATA',
+        self.draw_operator_column(layout, header="Modify",
             types=('GP_TEXTURE', 'GP_TIME', 'GP_WEIGHT_ANGLE', 'GP_WEIGHT_PROXIMITY'))
-        self.draw_operator_column(layout, header="Generate", icon='FILE_3D',
+        self.draw_operator_column(layout, header="Generate",
             types=('GP_ARRAY', 'GP_BUILD', 'GP_DASH', 'GP_ENVELOPE', 'GP_LENGTH', 'GP_LINEART', 'GP_MIRROR', 'GP_MULTIPLY', 'GP_OUTLINE', 'GP_SIMPLIFY', 'GP_SUBDIV'))
-        self.draw_operator_column(layout, header="Deform", icon='STROKE',
+        self.draw_operator_column(layout, header="Deform",
             types=('GP_ARMATURE', 'GP_HOOK', 'GP_LATTICE', 'GP_NOISE', 'GP_OFFSET', 'SHRINKWRAP', 'GP_SMOOTH', 'GP_THICK'))
-        self.draw_operator_column(layout, header="Color", icon='OVERLAY', 
+        self.draw_operator_column(layout, header="Color", 
             types=('GP_COLOR', 'GP_OPACITY', 'GP_TINT'))
 
 
