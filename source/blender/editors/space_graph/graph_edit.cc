@@ -812,7 +812,7 @@ void GRAPH_OT_delete(wmOperatorType *ot)
   ot->description = "Remove all selected keyframes";
 
   /* API callbacks */
-  ot->invoke = WM_operator_confirm_or_exec;
+  /*ot->invoke = WM_operator_confirm_or_exec;*/ /* BFA - we don't confirm delete*/
   ot->exec = graphkeys_delete_exec;
   ot->poll = graphop_editable_keyframes_poll;
 
