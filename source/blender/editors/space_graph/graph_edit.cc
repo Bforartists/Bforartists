@@ -809,16 +809,16 @@ void GRAPH_OT_delete(wmOperatorType *ot)
   /* Identifiers */
   ot->name = "Delete Keyframes";
   ot->idname = "GRAPH_OT_delete";
-  ot->description = "Remove all selected keyframes";
+  ot->description = "Remove all selectedeyframes";
 
   /* API callbacks */
-  /*ot->invoke = WM_operator_confirm_or_exec;*/ /* BFA - we don't confirm delete*/
+  ot->invoke = WM_operator_confirm_or_exec; /* BFA - we don't confirm delete, set in the keymap*/
   ot->exec = graphkeys_delete_exec;
   ot->poll = graphop_editable_keyframes_poll;
 
   /* Flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-  /*WM_operator_properties_confirm_or_exec(ot);*/ /* BFA - we don't confirm delete*/
+  WM_operator_properties_confirm_or_exec(ot); /* BFA - we don't confirm delete, set in the keymap*/
 }
 
 /** \} */
