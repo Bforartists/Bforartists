@@ -716,7 +716,7 @@ void ANIM_OT_keyframe_clear_v3d(wmOperatorType *ot)
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-  WM_operator_properties_confirm_or_exec(ot);
+  WM_operator_properties_confirm_or_exec(ot); /* BFA - we don't confirm delete*/
 }
 
 static int delete_key_v3d_without_keying_set(bContext *C, wmOperator *op)
@@ -851,14 +851,14 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
   ot->idname = "ANIM_OT_keyframe_delete_v3d";
 
   /* callbacks */
-  ot->invoke = WM_operator_confirm_or_exec;
+  /*ot->invoke = WM_operator_confirm_or_exec;*/ /* BFA - we don't confirm delete*/
   ot->exec = delete_key_v3d_exec;
 
   ot->poll = ED_operator_areaactive;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-  /*WM_operator_properties_confirm_or_exec(ot); */ /* BFA - we don't confirm delete*/
+  /*WM_operator_properties_confirm_or_exec(ot);*/ /* BFA - we don't confirm delete*/
 }
 
 /* bfa - Apply animation to all selected pose bones through UI animate property */
