@@ -25,7 +25,6 @@ class GenericColumnMenu:
     def draw_operator_column(cls, layout, header, types, icon='NONE'):
         text_ctxt = cls.TRANSLATION_CONTEXT
         col = layout.column()
-
         if layout.operator_context == 'INVOKE_REGION_WIN':
             col.label(text=cls.search_header)
         else:
