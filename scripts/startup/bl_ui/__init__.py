@@ -62,6 +62,7 @@ _modules = [
     "properties_world",
     "properties_collection",
     "generic_ui_list",
+    "generic_column_menu",
 
     # Generic Space Modules
     #
