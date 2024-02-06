@@ -4,7 +4,7 @@
 
 import bpy
 from bpy_extras.node_utils import connect_sockets
-from math import hypot
+from math import hypot, inf
 
 
 def force_update(context):
@@ -200,21 +200,83 @@ def get_output_location(tree):
     return loc_x, loc_y
 
 
-def nw_check(context):
+def nw_check(cls, context):
     space = context.space_data
+    if space.type != 'NODE_EDITOR':
+        cls.poll_message_set("Current editor is not a node editor.")
+        return False
+    if space.node_tree is None:
+        cls.poll_message_set("No node tree was found in the current node editor.")
+        return False
+    if space.node_tree.library is not None:
+        cls.poll_message_set("Current node tree is linked from another .blend file.")
+        return False
+    return True
 
-    return (space.type == 'NODE_EDITOR'
-            and space.node_tree is not None
-            and space.node_tree.library is None)
+
+def nw_check_not_empty(cls, context):
+    if not context.space_data.node_tree.nodes:
+        cls.poll_message_set("Current node tree does not contain any nodes.")
+        return False
+    return True
 
 
-def nw_check_space_type(cls, context, *args):
-    if context.space_data.tree_type not in args:
-        tree_types_str = ", ".join(t.split('NodeTree')[0].lower() for t in sorted(args))
+def nw_check_active(cls, context):
+    if context.active_node is None or not context.active_node.select:
+        cls.poll_message_set("No active node.")
+        return False
+    return True
+
+
+def nw_check_selected(cls, context, min=1, max=inf):
+    num_selected = len(context.selected_nodes)
+    if num_selected < min:
+        if min > 1:
+            cls.poll_message_set(f"At least {min} nodes must be selected.")
+        else:
+            cls.poll_message_set(f"At least {min} node must be selected.")
+        return False
+    if num_selected > max:
+        cls.poll_message_set(f"{num_selected} nodes are selected, but this operator can only work on {max}.")
+        return False
+    return True
+
+
+def nw_check_space_type(cls, context, types):
+    if context.space_data.tree_type not in types:
+        tree_types_str = ", ".join(t.split('NodeTree')[0].lower() for t in sorted(types))
         cls.poll_message_set("Current node tree type not supported.\n"
                              "Should be one of " + tree_types_str + ".")
         return False
     return True
+
+
+def nw_check_node_type(cls, context, type, invert=False):
+    if invert and context.active_node.type == type:
+        cls.poll_message_set(f"Active node should be not of type {type}.")
+        return False
+    elif not invert and context.active_node.type != type:
+        cls.poll_message_set(f"Active node should be of type {type}.")
+        return False
+    return True
+
+
+def nw_check_visible_outputs(cls, context):
+    if not any(is_visible_socket(out) for out in context.active_node.outputs):
+        cls.poll_message_set("Current node has no visible outputs.")
+        return False
+    return True
+
+
+def nw_check_viewer_node(cls):
+    for img in bpy.data.images:
+        # False if not connected or connected but no image
+        if (img.source == 'VIEWER'
+                and len(img.render_slots) == 0
+                and sum(img.size) > 0):
+            return True
+    cls.poll_message_set("Viewer image not found.")
+    return False
 
 
 def get_first_enabled_output(node):
@@ -232,4 +294,13 @@ def is_visible_socket(socket):
 class NWBase:
     @classmethod
     def poll(cls, context):
-        return nw_check(context)
+        return nw_check(cls, context)
+
+
+class NWBaseMenu:
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        return (space.type == 'NODE_EDITOR'
+                and space.node_tree is not None
+                and space.node_tree.library is None)

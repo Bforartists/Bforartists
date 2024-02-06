@@ -35,7 +35,7 @@ PKG_EXT = ".txz"
 # PKG_REPO_LIST_FILENAME = "bl_ext_repo.json"
 PKG_MANIFEST_FILENAME = "bl_ext_pkg_manifest.json"
 
-PKG_MANIFEST_FILENAME_TOML = "bl_manifest.toml"
+PKG_MANIFEST_FILENAME_TOML = "blender_manifest.toml"
 
 # Use an in-memory temp, when available.
 TEMP_PREFIX = tempfile.gettempdir()
@@ -113,11 +113,16 @@ def my_create_package(dirpath: str, filename: str, *, metadata: Dict[str, Any], 
             # NOTE: escaping is not supported, this is primitive TOML writing for tests.
             data = "".join((
                 """# Example\n""",
+                """schema_version = "{:s}"\n""".format(metadata_copy.pop("schema_version")),
                 """id = "{:s}"\n""".format(metadata_copy.pop("id")),
                 """name = "{:s}"\n""".format(metadata_copy.pop("name")),
-                """type = "{:s}"\n""".format(metadata_copy.pop("type")),
+                """tagline = "{:s}"\n""".format(metadata_copy.pop("tagline")),
                 """version = "{:s}"\n""".format(metadata_copy.pop("version")),
-                """description = "{:s}"\n""".format(metadata_copy.pop("description")),
+                """type = "{:s}"\n""".format(metadata_copy.pop("type")),
+                """tags = [{:s}]\n""".format(", ".join("\"{:s}\"".format(v) for v in metadata_copy.pop("tags"))),
+                """blender_version_min = "{:s}"\n""".format(metadata_copy.pop("blender_version_min")),
+                """maintainer = "{:s}"\n""".format(metadata_copy.pop("maintainer")),
+                """license = [{:s}]\n""".format(", ".join("\"{:s}\"".format(v) for v in metadata_copy.pop("license"))),
             )).encode('utf-8')
             fh.write(data)
 
@@ -162,11 +167,16 @@ def my_generate_repo(
         my_create_package(
             dirpath, template.idname + PKG_EXT,
             metadata={
+                "schema_version": "1.0.0",
                 "id": template.idname,
                 "name": template.name,
-                "type": "addon",
+                "tagline": """This package has a tagline.""",
                 "version": template.version,
-                "description": """This package has some info.""",
+                "type": "add-on",
+                "tags": ["UV", "Modeling"],
+                "blender_version_min": "0.0.0",
+                "maintainer": "Some Developer",
+                "license": ["SPDX:GPL-2.0-or-later"],
             },
             files={
                 "__init__.py": b"# This is a script\n",
@@ -273,7 +283,7 @@ class TestCLI_WithRepo(unittest.TestCase):
 
     def test_server_generate(self) -> None:
         output = command_output(["server-generate", "--repo-dir", self.dirpath])
-        self.assertEqual(output, "STATUS: found 3 packages.\n")
+        self.assertEqual(output, "found 3 packages.\n")
 
     def test_client_list(self) -> None:
         # TODO: only run once.
@@ -282,9 +292,9 @@ class TestCLI_WithRepo(unittest.TestCase):
         output = command_output(["list", "--repo-dir", self.dirpath_url, "--local-dir", ""])
         self.assertEqual(
             output, (
-                "STATUS: another_package(1.5.2): Another Package\n"
-                "STATUS: foo_bar(1.0.5): Foo Bar\n"
-                "STATUS: test_package(1.5.2): Test Package\n"
+                "another_package(1.5.2): Another Package\n"
+                "foo_bar(1.0.5): Foo Bar\n"
+                "test_package(1.5.2): Test Package\n"
             )
         )
         del output

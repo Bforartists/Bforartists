@@ -14,7 +14,6 @@ set(INC
 set(INC_SYS
   ../../../extern/wcwidth
   ../../../extern/json/include
-  ../../../extern/fmtlib/include
 
   ${EIGEN3_INCLUDE_DIRS}
   ${ZLIB_INCLUDE_DIRS}
@@ -29,7 +28,7 @@ set(SRC
   intern/BLI_dynstr.c
   intern/BLI_filelist.cc
   intern/BLI_ghash.c
-  intern/BLI_ghash_utils.c
+  intern/BLI_ghash_utils.cc
   intern/BLI_heap.c
   intern/BLI_heap_simple.c
   intern/BLI_index_range.cc
@@ -77,9 +76,9 @@ set(SRC
   intern/generic_virtual_array.cc
   intern/generic_virtual_vector_array.cc
   intern/gsqueue.c
-  intern/hash_md5.c
-  intern/hash_mm2a.c
-  intern/hash_mm3.c
+  intern/hash_md5.cc
+  intern/hash_mm2a.cc
+  intern/hash_mm3.cc
   intern/hash_tables.cc
   intern/implicit_sharing.cc
   intern/index_mask.cc
@@ -242,9 +241,9 @@ set(SRC
   BLI_gsqueue.h
   BLI_hash.h
   BLI_hash.hh
-  BLI_hash_md5.h
-  BLI_hash_mm2a.h
-  BLI_hash_mm3.h
+  BLI_hash_md5.hh
+  BLI_hash_mm2a.hh
+  BLI_hash_mm3.hh
   BLI_hash_tables.hh
   BLI_heap.h
   BLI_heap_simple.h
@@ -252,6 +251,7 @@ set(SRC
   BLI_implicit_sharing.hh
   BLI_implicit_sharing_ptr.hh
   BLI_index_mask.hh
+  BLI_index_mask_fwd.hh
   BLI_index_range.hh
   BLI_inplace_priority_queue.hh
   BLI_iterator.h
@@ -381,6 +381,7 @@ set(SRC
   BLI_vector_set.hh
   BLI_vector_set_slots.hh
   BLI_virtual_array.hh
+  BLI_virtual_array_fwd.hh
   BLI_virtual_vector_array.hh
   BLI_voxel.h
   BLI_winstuff.h
@@ -392,6 +393,7 @@ set(SRC
 
 set(LIB
   PUBLIC bf::dna
+  PRIVATE bf::extern::fmtlib
   bf_intern_eigen
   PRIVATE bf::intern::guardedalloc
   extern_wcwidth

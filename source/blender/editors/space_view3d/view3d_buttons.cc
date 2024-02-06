@@ -37,7 +37,7 @@
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
 #include "BKE_customdata.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_layer.hh"
 #include "BKE_object.hh"
@@ -576,8 +576,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                     &tfp->ve_median.generic.location[0],
                     -lim,
                     lim,
-                    0,
-                    0,
                     "");
     UI_but_number_step_size_set(but, 10);
     UI_but_number_precision_set(but, RNA_TRANSLATION_PREC_DEFAULT);
@@ -594,8 +592,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                     &tfp->ve_median.generic.location[1],
                     -lim,
                     lim,
-                    0,
-                    0,
                     "");
     UI_but_number_step_size_set(but, 10);
     UI_but_number_precision_set(but, RNA_TRANSLATION_PREC_DEFAULT);
@@ -612,8 +608,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                     &tfp->ve_median.generic.location[2],
                     -lim,
                     lim,
-                    0,
-                    0,
                     "");
     UI_but_number_step_size_set(but, 10);
     UI_but_number_precision_set(but, RNA_TRANSLATION_PREC_DEFAULT);
@@ -632,8 +626,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                       &(tfp->ve_median.curve.b_weight),
                       0.01,
                       100.0,
-                      0,
-                      0,
                       "");
       UI_but_number_step_size_set(but, 1);
       UI_but_number_precision_set(but, 3);
@@ -711,8 +703,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         &ve_median->bv_weight,
                         0.0,
                         1.0,
-                        0,
-                        0,
                         TIP_("Vertex weight used by Bevel modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 2);
@@ -729,8 +719,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         &ve_median->v_crease,
                         0.0,
                         1.0,
-                        0,
-                        0,
                         TIP_("Weight used by the Subdivision Surface modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 2);
@@ -759,8 +747,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         &ve_median->skin[0],
                         0.0,
                         100.0,
-                        0,
-                        0,
                         TIP_("X radius used by Skin modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
@@ -776,8 +762,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         &ve_median->skin[1],
                         0.0,
                         100.0,
-                        0,
-                        0,
                         TIP_("Y radius used by Skin modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
@@ -814,8 +798,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         &ve_median->be_weight,
                         0.0,
                         1.0,
-                        0,
-                        0,
                         TIP_("Edge weight used by Bevel modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 2);
@@ -832,8 +814,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         &ve_median->e_crease,
                         0.0,
                         1.0,
-                        0,
-                        0,
                         TIP_("Weight used by the Subdivision Surface modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 2);
@@ -927,8 +907,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         &ve_median->weight,
                         0.0,
                         1.0,
-                        0,
-                        0,
                         TIP_("Weight used for Soft Body Goal"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
@@ -944,8 +922,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         &ve_median->radius,
                         0.0,
                         100.0,
-                        0,
-                        0,
                         TIP_("Radius of curve control points"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
@@ -961,8 +937,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         &ve_median->tilt,
                         -tilt_limit,
                         tilt_limit,
-                        0,
-                        0,
                         TIP_("Tilt of curve control points"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
@@ -1019,8 +993,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         &ve_median->weight,
                         0.0,
                         1.0,
-                        0,
-                        0,
                         TIP_("Weight used for Soft Body Goal"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
@@ -1353,8 +1325,6 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
                       &(tfp->ob_dims[i]),
                       0.0f,
                       lim,
-                      0,
-                      0,
                       "");
       UI_but_number_step_size_set(but, 10);
       UI_but_number_precision_set(but, 3);
@@ -1495,7 +1465,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
                               (x = UI_UNIT_X * 5),
                               UI_UNIT_Y,
                               "");
-          but_ptr = UI_but_operator_ptr_get(but);
+          but_ptr = UI_but_operator_ptr_ensure(but);
           RNA_int_set(but_ptr, "weight_group", i);
           /* bfa - middle align text */
           /*UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);*/
@@ -1522,8 +1492,6 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
                           &vertex_weight,
                           0.0,
                           1.0,
-                          0,
-                          0,
                           "");
           UI_but_number_step_size_set(but, 1);
           UI_but_number_precision_set(but, 3);
@@ -1575,7 +1543,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
         UI_BTYPE_BUT,
         ot,
         WM_OP_EXEC_DEFAULT,
-        "Normalize",
+        IFACE_("Normalize"),
         0,
         yco,
         UI_UNIT_X * 5,
@@ -1591,7 +1559,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
         UI_BTYPE_BUT,
         ot,
         WM_OP_EXEC_DEFAULT,
-        "Copy",
+        IFACE_("Copy"),
         UI_UNIT_X * 5,
         yco,
         UI_UNIT_X * 5,

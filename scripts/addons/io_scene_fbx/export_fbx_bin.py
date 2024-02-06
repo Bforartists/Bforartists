@@ -3108,9 +3108,9 @@ def fbx_header_elements(root, scene_data, time=None):
     app_name = "Blender (stable FBX IO)"
     app_ver = bpy.app.version_string
 
-    import addon_utils
-    import sys
-    addon_ver = addon_utils.module_bl_info(sys.modules[__package__])['version']
+    from . import bl_info
+    addon_ver = bl_info["version"]
+    del bl_info
 
     # ##### Start of FBXHeaderExtension element.
     header_ext = elem_empty(root, b"FBXHeaderExtension")

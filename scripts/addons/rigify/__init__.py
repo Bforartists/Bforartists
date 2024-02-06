@@ -504,14 +504,14 @@ class RigifyBoneCollectionReference(bpy.types.PropertyGroup):
 
         arm = self.id_data.data
 
-        if new_coll := arm.collections.get(new_val):
+        if new_coll := arm.collections_all.get(new_val):
             self.set_collection(new_coll)
         else:
             self.find_collection(update=True)
 
     def _name_search(self, _context, _edit):
         arm = self.id_data.data
-        return [coll.name for coll in arm.collections]
+        return [coll.name for coll in utils.misc.flatten_children(arm.collections)]
 
     name: StringProperty(
         name="Collection Name", description="Name of the referenced bone collection",
