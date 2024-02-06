@@ -48,7 +48,7 @@
 #include "BLO_readfile.h"
 #include "BLT_translation.h"
 
-#include "BLF_api.h"
+#include "BLF_api.hh"
 
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
@@ -3405,6 +3405,12 @@ static int wm_save_as_mainfile_exec(bContext *C, wmOperator *op)
   }
 
   WM_event_add_notifier(C, NC_WM | ND_FILESAVE, nullptr);
+  if (wmWindowManager *wm = CTX_wm_manager(C)) {
+    /* Restart auto-save timer to avoid unnecessary unexpected freezing (because of auto-save) when
+     * often saving manually. */
+    wm_autosave_timer_end(wm);
+    wm_autosave_timer_begin(wm);
+  }
 
   if (!is_save_as && RNA_boolean_get(op->ptr, "exit")) {
     wm_exit_schedule_delayed(C);
@@ -3584,15 +3590,15 @@ void WM_OT_save_mainfile(wmOperatorType *ot)
 /** \name Clear Recent Files List Operator
  * \{ */
 
-static void wm_clear_recent_files_confirm(bContext * /*C*/,
-                                          wmOperator * /*op*/,
-                                          wmConfirmDetails *confirm)
+static int wm_clear_recent_files_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
-  confirm->message = IFACE_("Remove all items from the recent files list");
-  confirm->confirm_text = IFACE_("Remove All");
-  confirm->position = WM_WARNING_POSITION_CENTER;
-  confirm->size = WM_WARNING_SIZE_LARGE;
-  confirm->cancel_default = true;
+  return WM_operator_confirm_ex(C,
+                                op,
+                                nullptr,
+                                IFACE_("Remove all items from the recent files list"),
+                                IFACE_("Remove All"),
+                                ALERT_ICON_WARNING,
+                                false);
 }
 
 static int wm_clear_recent_files_exec(bContext * /*C*/, wmOperator * /*op*/)
@@ -3609,9 +3615,8 @@ void WM_OT_clear_recent_files(wmOperatorType *ot)
   ot->idname = "WM_OT_clear_recent_files";
   ot->description = "Clear the recent files list";
 
-  ot->invoke = WM_operator_confirm;
+  ot->invoke = wm_clear_recent_files_invoke;
   ot->exec = wm_clear_recent_files_exec;
-  ot->confirm = wm_clear_recent_files_confirm;
 }
 
 /** \} */

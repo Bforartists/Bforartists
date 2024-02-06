@@ -2455,7 +2455,7 @@ static int text_jump_exec(bContext *C, wmOperator *op)
 
 static int text_jump_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
-  return WM_operator_props_dialog_popup(C, op, 200);
+  return WM_operator_props_dialog_popup(C, op, 200, IFACE_("Jump to Line Number"));
 }
 
 void TEXT_OT_jump(wmOperatorType *ot)
@@ -4106,6 +4106,9 @@ static int text_jump_to_file_at_point_exec(bContext *C, wmOperator *op)
     BKE_report(op->reports, RPT_WARNING, "File path property not set");
     return OPERATOR_CANCELLED;
   }
+
+  /* Useful to copy-paste from the terminal. */
+  printf("%s:%d:%d\n", filepath, line_index + 1, column_index);
 
   bool success;
   if (U.text_editor[0] != '\0') {

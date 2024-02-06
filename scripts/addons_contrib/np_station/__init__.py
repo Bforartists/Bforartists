@@ -29,33 +29,34 @@ bl_info = {
     'category': '3D View'}
 
 if 'bpy' in locals():
-    import imp
-    imp.reload(np_point_move)
-    imp.reload(np_point_copy)
-    imp.reload(np_point_instance)
-    imp.reload(np_point_array)
-    imp.reload(np_roto_move)
-    imp.reload(np_point_scale)
-    imp.reload(np_float_rectangle)
-    imp.reload(np_float_box)
-    imp.reload(np_point_align)
-    imp.reload(np_point_distance)
-    imp.reload(np_float_poly)
-    imp.reload(np_shader_brush)
-
+    import importlib
+    importlib.reload(np_point_move)
+    importlib.reload(np_point_copy)
+    importlib.reload(np_point_instance)
+    importlib.reload(np_point_array)
+    importlib.reload(np_roto_move)
+    importlib.reload(np_point_scale)
+    importlib.reload(np_float_rectangle)
+    importlib.reload(np_float_box)
+    importlib.reload(np_point_align)
+    importlib.reload(np_point_distance)
+    importlib.reload(np_float_poly)
+    importlib.reload(np_shader_brush)
 else:
-    from . import np_point_move
-    from . import np_point_copy
-    from . import np_point_instance
-    from . import np_point_array
-    from . import np_roto_move
-    from . import np_point_scale
-    from . import np_float_rectangle
-    from . import np_float_box
-    from . import np_point_align
-    from . import np_point_distance
-    from . import np_float_poly
-    from . import np_shader_brush
+    from . import (
+        np_point_move,
+        np_point_copy,
+        np_point_instance,
+        np_point_array,
+        np_roto_move,
+        np_point_scale,
+        np_float_rectangle,
+        np_float_box,
+        np_point_align,
+        np_point_distance,
+        np_float_poly,
+        np_shader_brush,
+    )
 
 import bpy
 

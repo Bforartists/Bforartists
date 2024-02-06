@@ -398,7 +398,7 @@ class IMAGE_MT_image(Menu):
 
                 layout.menu("IMAGE_MT_image_invert")
                 layout.operator("image.resize", text="Resize", icon="MAN_SCALE")
-                layout.menu("IMAGE_MT_image_flip")
+                layout.menu("IMAGE_MT_image_transform")
 
                 if not show_render:
                     if ima.packed_file:
@@ -420,13 +420,17 @@ class IMAGE_MT_image(Menu):
                         icon="GREASEPENCIL")
 
 
-class IMAGE_MT_image_flip(Menu):
-    bl_label = "Flip"
+class IMAGE_MT_image_transform(Menu):
+    bl_label = "Transform"
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("image.flip", text="Horizontally", icon="FLIP_Y").use_flip_x = True
-        layout.operator("image.flip", text="Vertically", icon="FLIP_X").use_flip_y = True
+        layout.operator("image.flip", text="Flip Horizontally", icon="FLIP_Y").use_flip_x = True
+        layout.operator("image.flip", text="Flip Vertically", icon="FLIP_X").use_flip_y = True
+        layout.separator()
+        layout.operator("image.rotate_orthogonal", text="Rotate 90\u00B0 Clockwise").degrees = '90'
+        layout.operator("image.rotate_orthogonal", text="Rotate 90\u00B0 Counter-Clockwise").degrees = '270'
+        layout.operator("image.rotate_orthogonal", text="Rotate 180\u00B0").degrees = '180'
 
 
 class IMAGE_MT_image_invert(Menu):
@@ -601,15 +605,15 @@ class IMAGE_MT_uvs(Menu):
         layout.menu("IMAGE_MT_uvs_mirror")
         layout.menu("IMAGE_MT_uvs_snap")
 
-        layout.separator()       
-## BFA order of these group of ops changed so that the pin operators are in their own group. 
+        layout.separator()
+## BFA order of these group of ops changed so that the pin operators are in their own group.
         layout.operator("uv.pin", icon="PINNED").clear = False
         layout.operator("uv.pin", text="Unpin", icon="UNPINNED").clear = True
         layout.operator("uv.pin", text="Invert Pins", icon='INVERSE').invert = True
 
         layout.separator()
 
-        layout.menu("IMAGE_MT_uvs_unwrap") 
+        layout.menu("IMAGE_MT_uvs_unwrap")
         layout.menu("IMAGE_MT_uvs_merge")
         layout.operator("uv.select_split", text="Split Selection", icon='SPLIT')
 
@@ -2012,7 +2016,7 @@ classes = (
     IMAGE_MT_select_legacy,
     IMAGE_MT_select_linked,
     IMAGE_MT_image,
-    IMAGE_MT_image_flip,
+    IMAGE_MT_image_transform,
     IMAGE_MT_image_invert,
     IMAGE_MT_uvs_clear_seam,
     IMAGE_MT_uvs,

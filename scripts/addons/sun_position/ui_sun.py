@@ -23,7 +23,7 @@ class SUNPOS_PT_Presets(PresetPanel, bpy.types.Panel):
 
 
 class SUNPOS_OT_AddPreset(AddPresetBase, Operator):
-    '''Add Sun Position preset'''
+    '''Add a new preset for Sun Position settings'''
     bl_idname = "world.sunpos_add_preset"
     bl_label = "Add Sun Position preset"
     preset_menu = "SUNPOS_PT_Presets"

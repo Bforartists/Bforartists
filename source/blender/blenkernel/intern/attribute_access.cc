@@ -6,7 +6,7 @@
 
 #include "BKE_attribute_math.hh"
 #include "BKE_customdata.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_geometry_set.hh"
 #include "BKE_type_conversions.hh"
 
@@ -587,7 +587,6 @@ bool CustomDataAttributeProvider::try_delete(void *owner, const AttributeIDRef &
     return false;
   }
   const int element_num = custom_data_access_.get_element_num(owner);
-  ;
   for (const int i : IndexRange(custom_data->totlayer)) {
     const CustomDataLayer &layer = custom_data->layers[i];
     if (this->type_is_supported((eCustomDataType)layer.type) &&
