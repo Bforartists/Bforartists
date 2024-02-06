@@ -818,7 +818,7 @@ void GRAPH_OT_delete(wmOperatorType *ot)
 
   /* Flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-  /*WM_operator_properties_confirm_or_exec(ot);*/ /* BFA - we don't confirm delete*/
+  WM_operator_properties_confirm_or_exec(ot);
 }
 
 /** \} */
