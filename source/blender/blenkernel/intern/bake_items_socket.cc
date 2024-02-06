@@ -3,16 +3,15 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "BKE_bake_items_socket.hh"
-
 #include "BKE_geometry_fields.hh"
 #include "BKE_node.hh"
-
 #include "BKE_node_socket_value.hh"
 
 namespace blender::bke::bake {
 
 Array<std::unique_ptr<BakeItem>> move_socket_values_to_bake_items(const Span<void *> socket_values,
-                                                                  const BakeSocketConfig &config)
+                                                                  const BakeSocketConfig &config,
+                                                                  BakeDataBlockMap *data_block_map)
 {
   BLI_assert(socket_values.size() == config.types.size());
   BLI_assert(socket_values.size() == config.geometries_by_attribute.size());
@@ -99,7 +98,13 @@ Array<std::unique_ptr<BakeItem>> move_socket_values_to_bake_items(const Span<voi
       continue;
     }
     GeometrySet &geometry = static_cast<GeometryBakeItem *>(bake_items[i].get())->geometry;
-    GeometryBakeItem::cleanup_geometry(geometry);
+    GeometryBakeItem::prepare_geometry_for_bake(geometry, data_block_map);
+  }
+
+  for (const int i : bake_items.index_range()) {
+    if (std::unique_ptr<BakeItem> &item = bake_items[i]) {
+      item->name = config.names[i];
+    }
   }
 
   return bake_items;
@@ -192,17 +197,31 @@ static void rename_attributes(const Span<GeometrySet *> geometries,
   }
 }
 
+static void restore_data_blocks(const Span<GeometrySet *> geometries,
+                                BakeDataBlockMap *data_block_map)
+{
+  for (GeometrySet *main_geometry : geometries) {
+    GeometryBakeItem::try_restore_data_blocks(*main_geometry, data_block_map);
+  }
+}
+
 static void default_initialize_socket_value(const eNodeSocketDatatype socket_type, void *r_value)
 {
   const char *socket_idname = nodeStaticSocketType(socket_type, 0);
   const bNodeSocketType *typeinfo = nodeSocketTypeFind(socket_idname);
-  typeinfo->geometry_nodes_cpp_type->copy_construct(typeinfo->geometry_nodes_default_cpp_value,
-                                                    r_value);
+  if (typeinfo->geometry_nodes_default_cpp_value) {
+    typeinfo->geometry_nodes_cpp_type->copy_construct(typeinfo->geometry_nodes_default_cpp_value,
+                                                      r_value);
+  }
+  else {
+    typeinfo->geometry_nodes_cpp_type->value_initialize(r_value);
+  }
 }
 
 void move_bake_items_to_socket_values(
     const Span<BakeItem *> bake_items,
     const BakeSocketConfig &config,
+    BakeDataBlockMap *data_block_map,
     FunctionRef<std::shared_ptr<AnonymousAttributeFieldInput>(int, const CPPType &)>
         make_attribute_field,
     const Span<void *> r_socket_values)
@@ -237,11 +256,13 @@ void move_bake_items_to_socket_values(
   }
 
   rename_attributes(geometries, attribute_map);
+  restore_data_blocks(geometries, data_block_map);
 }
 
 void copy_bake_items_to_socket_values(
     const Span<const BakeItem *> bake_items,
     const BakeSocketConfig &config,
+    BakeDataBlockMap *data_block_map,
     FunctionRef<std::shared_ptr<AnonymousAttributeFieldInput>(int, const CPPType &)>
         make_attribute_field,
     const Span<void *> r_socket_values)
@@ -273,6 +294,7 @@ void copy_bake_items_to_socket_values(
   }
 
   rename_attributes(geometries, attribute_map);
+  restore_data_blocks(geometries, data_block_map);
 }
 
 }  // namespace blender::bke::bake

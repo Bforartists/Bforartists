@@ -24,6 +24,7 @@
 #include "DNA_mask_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
+#include "DNA_modifier_types.h"
 #include "DNA_node_types.h"
 #include "DNA_object_types.h"
 #include "DNA_rigidbody_types.h"
@@ -79,6 +80,7 @@
 #include "BKE_linestyle.h"
 #include "BKE_main.hh"
 #include "BKE_mask.h"
+#include "BKE_modifier.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_object.hh"
@@ -97,6 +99,7 @@
 #include "DEG_depsgraph_build.hh"
 #include "DEG_depsgraph_debug.hh"
 #include "DEG_depsgraph_query.hh"
+#include "DEG_depsgraph_writeback_sync.hh"
 
 #include "RE_engine.h"
 
@@ -2567,7 +2570,7 @@ static void scene_graph_update_tagged(Depsgraph *depsgraph, Main *bmain, bool on
     prepare_mesh_for_viewport_render(bmain, scene, view_layer);
     /* Update all objects: drivers, matrices, etc. flags set
      * by depsgraph or manual, no layer check here, gets correct flushed. */
-    DEG_evaluate_on_refresh(depsgraph);
+    DEG_evaluate_on_refresh(depsgraph, DEG_EVALUATE_SYNC_WRITEBACK_YES);
     /* Update sound system. */
     BKE_scene_update_sound(depsgraph, bmain);
     /* Notify python about depsgraph update. */
@@ -2638,7 +2641,6 @@ void BKE_scene_graph_update_for_newframe_ex(Depsgraph *depsgraph, const bool cle
      * call this at the start so modifiers with textures don't lag 1 frame.
      */
     BKE_image_editors_update_frame(bmain, scene->r.cfra);
-    BKE_sound_set_cfra(scene->r.cfra);
     DEG_graph_relations_update(depsgraph);
     /* Update all objects: drivers, matrices, etc. flags set
      * by depsgraph or manual, no layer check here, gets correct flushed.
@@ -2648,10 +2650,10 @@ void BKE_scene_graph_update_for_newframe_ex(Depsgraph *depsgraph, const bool cle
      * lose any possible unkeyed changes made by the handler. */
     if (pass == 0) {
       const float frame = BKE_scene_frame_get(scene);
-      DEG_evaluate_on_framechange(depsgraph, frame);
+      DEG_evaluate_on_framechange(depsgraph, frame, DEG_EVALUATE_SYNC_WRITEBACK_YES);
     }
     else {
-      DEG_evaluate_on_refresh(depsgraph);
+      DEG_evaluate_on_refresh(depsgraph, DEG_EVALUATE_SYNC_WRITEBACK_YES);
     }
     /* Update sound system animation. */
     BKE_scene_update_sound(depsgraph, bmain);
