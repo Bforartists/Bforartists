@@ -102,7 +102,7 @@
 #include "ED_util.hh"
 #include "ED_view3d.hh"
 
-#include "BLF_api.h"
+#include "BLF_api.hh"
 #include "BLT_lang.h"
 
 #include "UI_interface.hh"
@@ -111,7 +111,7 @@
 
 #include "GPU_context.h"
 #include "GPU_init_exit.h"
-#include "GPU_material.h"
+#include "GPU_material.hh"
 
 #include "COM_compositor.hh"
 
