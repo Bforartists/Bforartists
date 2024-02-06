@@ -32,10 +32,10 @@ if flag is False:
 # Import modules
 # ----------------------------------------------
 if "bpy" in locals():
-    import imp
+    import importlib
 
-    imp.reload(import_ase)
-    imp.reload(import_krita)
+    importlib.reload(import_ase)
+    importlib.reload(import_krita)
 else:
     import import_ase
     import import_krita

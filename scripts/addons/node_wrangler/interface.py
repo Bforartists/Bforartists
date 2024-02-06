@@ -10,7 +10,7 @@ from nodeitems_utils import node_categories_iter, NodeItemCustom
 from . import operators
 
 from .utils.constants import blend_types, geo_combine_operations, operations
-from .utils.nodes import get_nodes_links, nw_check, NWBase
+from .utils.nodes import get_nodes_links, NWBaseMenu
 
 
 def drawlayout(context, layout, mode='non-panel'):
@@ -71,7 +71,7 @@ def drawlayout(context, layout, mode='non-panel'):
     col.separator()
 
 
-class NodeWranglerPanel(Panel, NWBase):
+class NodeWranglerPanel(Panel, NWBaseMenu):
     bl_idname = "NODE_PT_nw_node_wrangler"
     bl_space_type = 'NODE_EDITOR'
     bl_label = "Node Wrangler"
@@ -92,7 +92,7 @@ class NodeWranglerPanel(Panel, NWBase):
 #
 #  M E N U S
 #
-class NodeWranglerMenu(Menu, NWBase):
+class NodeWranglerMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_node_wrangler_menu"
     bl_label = "Node Wrangler"
 
@@ -101,7 +101,7 @@ class NodeWranglerMenu(Menu, NWBase):
         drawlayout(context, self.layout)
 
 
-class NWMergeNodesMenu(Menu, NWBase):
+class NWMergeNodesMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_merge_nodes_menu"
     bl_label = "Merge Selected Nodes"
 
@@ -124,7 +124,7 @@ class NWMergeNodesMenu(Menu, NWBase):
             props.merge_type = 'ALPHAOVER'
 
 
-class NWMergeGeometryMenu(Menu, NWBase):
+class NWMergeGeometryMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_merge_geometry_menu"
     bl_label = "Merge Selected Nodes using Geometry Nodes"
 
@@ -137,7 +137,7 @@ class NWMergeGeometryMenu(Menu, NWBase):
             props.merge_type = 'GEOMETRY'
 
 
-class NWMergeShadersMenu(Menu, NWBase):
+class NWMergeShadersMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_merge_shaders_menu"
     bl_label = "Merge Selected Nodes using Shaders"
 
@@ -150,7 +150,7 @@ class NWMergeShadersMenu(Menu, NWBase):
             props.merge_type = 'SHADER'
 
 
-class NWMergeMixMenu(Menu, NWBase):
+class NWMergeMixMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_merge_mix_menu"
     bl_label = "Merge Selected Nodes using Mix"
 
@@ -162,7 +162,7 @@ class NWMergeMixMenu(Menu, NWBase):
             props.merge_type = 'MIX'
 
 
-class NWConnectionListOutputs(Menu, NWBase):
+class NWConnectionListOutputs(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_connection_list_out"
     bl_label = "From:"
 
@@ -180,7 +180,7 @@ class NWConnectionListOutputs(Menu, NWBase):
                     icon="RADIOBUT_OFF").from_socket = index
 
 
-class NWConnectionListInputs(Menu, NWBase):
+class NWConnectionListInputs(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_connection_list_in"
     bl_label = "To:"
 
@@ -201,7 +201,7 @@ class NWConnectionListInputs(Menu, NWBase):
                 op.to_socket = index
 
 
-class NWMergeMathMenu(Menu, NWBase):
+class NWMergeMathMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_merge_math_menu"
     bl_label = "Merge Selected Nodes using Math"
 
@@ -213,7 +213,7 @@ class NWMergeMathMenu(Menu, NWBase):
             props.merge_type = 'MATH'
 
 
-class NWBatchChangeNodesMenu(Menu, NWBase):
+class NWBatchChangeNodesMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_batch_change_nodes_menu"
     bl_label = "Batch Change Selected Nodes"
 
@@ -223,7 +223,7 @@ class NWBatchChangeNodesMenu(Menu, NWBase):
         layout.menu(NWBatchChangeOperationMenu.bl_idname)
 
 
-class NWBatchChangeBlendTypeMenu(Menu, NWBase):
+class NWBatchChangeBlendTypeMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_batch_change_blend_type_menu"
     bl_label = "Batch Change Blend Type"
 
@@ -235,7 +235,7 @@ class NWBatchChangeBlendTypeMenu(Menu, NWBase):
             props.operation = 'CURRENT'
 
 
-class NWBatchChangeOperationMenu(Menu, NWBase):
+class NWBatchChangeOperationMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_batch_change_operation_menu"
     bl_label = "Batch Change Math Operation"
 
@@ -247,7 +247,7 @@ class NWBatchChangeOperationMenu(Menu, NWBase):
             props.operation = type
 
 
-class NWCopyToSelectedMenu(Menu, NWBase):
+class NWCopyToSelectedMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_copy_node_properties_menu"
     bl_label = "Copy to Selected"
 
@@ -257,7 +257,7 @@ class NWCopyToSelectedMenu(Menu, NWBase):
         layout.menu(NWCopyLabelMenu.bl_idname)
 
 
-class NWCopyLabelMenu(Menu, NWBase):
+class NWCopyLabelMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_copy_label_menu"
     bl_label = "Copy Label"
 
@@ -268,7 +268,7 @@ class NWCopyLabelMenu(Menu, NWBase):
         layout.operator(operators.NWCopyLabel.bl_idname, text="from Linked Output's Name").option = 'FROM_SOCKET'
 
 
-class NWAddReroutesMenu(Menu, NWBase):
+class NWAddReroutesMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_add_reroutes_menu"
     bl_label = "Add Reroutes"
     bl_description = "Add Reroute Nodes to Selected Nodes' Outputs"
@@ -280,7 +280,7 @@ class NWAddReroutesMenu(Menu, NWBase):
         layout.operator(operators.NWAddReroutes.bl_idname, text="to Linked Outputs").option = 'LINKED'
 
 
-class NWLinkActiveToSelectedMenu(Menu, NWBase):
+class NWLinkActiveToSelectedMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_link_active_to_selected_menu"
     bl_label = "Link Active to Selected"
 
@@ -291,7 +291,7 @@ class NWLinkActiveToSelectedMenu(Menu, NWBase):
         layout.menu(NWLinkUseOutputsNamesMenu.bl_idname)
 
 
-class NWLinkStandardMenu(Menu, NWBase):
+class NWLinkStandardMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_link_standard_menu"
     bl_label = "To All Selected"
 
@@ -307,7 +307,7 @@ class NWLinkStandardMenu(Menu, NWBase):
         props.use_outputs_names = False
 
 
-class NWLinkUseNodeNameMenu(Menu, NWBase):
+class NWLinkUseNodeNameMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_link_use_node_name_menu"
     bl_label = "Use Node Name/Label"
 
@@ -323,7 +323,7 @@ class NWLinkUseNodeNameMenu(Menu, NWBase):
         props.use_outputs_names = False
 
 
-class NWLinkUseOutputsNamesMenu(Menu, NWBase):
+class NWLinkUseOutputsNamesMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_link_use_outputs_names_menu"
     bl_label = "Use Outputs Names"
 
@@ -345,7 +345,11 @@ class NWAttributeMenu(bpy.types.Menu):
 
     @classmethod
     def poll(cls, context):
-        return nw_check(context) and context.space_data.tree_type == 'ShaderNodeTree'
+        space = context.space_data
+        return (space.type == 'NODE_EDITOR'
+                and space.node_tree is not None
+                and space.node_tree.library is None
+                and space.tree_type == 'ShaderNodeTree')
 
     def draw(self, context):
         l = self.layout
@@ -372,7 +376,7 @@ class NWAttributeMenu(bpy.types.Menu):
             l.label(text="No attributes on objects with this material")
 
 
-class NWSwitchNodeTypeMenu(Menu, NWBase):
+class NWSwitchNodeTypeMenu(Menu, NWBaseMenu):
     bl_idname = "NODE_MT_nw_switch_node_type_menu"
     bl_label = "Switch Type to..."
 
@@ -411,8 +415,11 @@ def bgreset_menu_func(self, context):
 
 
 def save_viewer_menu_func(self, context):
-    if (nw_check(context)
-            and context.space_data.tree_type == 'CompositorNodeTree'
+    space = context.space_data
+    if (space.type == 'NODE_EDITOR'
+            and space.node_tree is not None
+            and space.node_tree.library is None
+            and space.tree_type == 'CompositorNodeTree'
             and context.scene.node_tree.nodes.active
             and context.scene.node_tree.nodes.active.type == "VIEWER"):
         self.layout.operator(operators.NWSaveViewer.bl_idname, icon='FILE_IMAGE')
@@ -421,18 +428,22 @@ def save_viewer_menu_func(self, context):
 def reset_nodes_button(self, context):
     node_active = context.active_node
     node_selected = context.selected_nodes
-    node_ignore = ["FRAME", "REROUTE", "GROUP"]
 
-    # Check if active node is in the selection and respective type
-    if (len(node_selected) == 1) and node_active and node_active.select and node_active.type not in node_ignore:
-        row = self.layout.row()
-        row.operator(operators.NWResetNodes.bl_idname, text="Reset Node", icon="FILE_REFRESH")
-        self.layout.separator()
+    # Check if active node is in the selection, ignore some node types
+    if (len(node_selected) != 1
+            or node_active is None
+            or not node_active.select
+            or node_active.type in {"REROUTE", "GROUP"}):
+        return
 
-    elif (len(node_selected) == 1) and node_active and node_active.select and node_active.type == "FRAME":
-        row = self.layout.row()
+    row = self.layout.row()
+
+    if node_active.type == "FRAME":
         row.operator(operators.NWResetNodes.bl_idname, text="Reset Nodes in Frame", icon="FILE_REFRESH")
-        self.layout.separator()
+    else:
+        row.operator(operators.NWResetNodes.bl_idname, text="Reset Node", icon="FILE_REFRESH")
+
+    self.layout.separator()
 
 
 classes = (

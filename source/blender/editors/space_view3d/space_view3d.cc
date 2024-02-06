@@ -1802,7 +1802,8 @@ void ED_view3d_buttons_region_layout_ex(const bContext *C,
     paneltypes = &art->paneltypes;
   }
 
-  ED_region_panels_layout_ex(C, region, paneltypes, contexts_base, category_override);
+  ED_region_panels_layout_ex(
+      C, region, paneltypes, WM_OP_INVOKE_REGION_WIN, contexts_base, category_override);
 }
 
 static void view3d_buttons_region_layout(const bContext *C, ARegion *region)
@@ -1931,7 +1932,7 @@ static void view3d_tools_region_init(wmWindowManager *wm, ARegion *region)
 static void view3d_tools_region_draw(const bContext *C, ARegion *region)
 {
   const char *contexts[] = {CTX_data_mode_string(C), nullptr};
-  ED_region_panels_ex(C, region, contexts);
+  ED_region_panels_ex(C, region, WM_OP_INVOKE_REGION_WIN, contexts);
 }
 
 static void view3d_tools_header_region_draw(const bContext *C, ARegion *region)
@@ -2116,7 +2117,7 @@ static void view3d_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 void ED_spacetype_view3d()
 {
   using namespace blender::ed;
-  SpaceType *st = MEM_cnew<SpaceType>("spacetype view3d");
+  std::unique_ptr<SpaceType> st = std::make_unique<SpaceType>();
   ARegionType *art;
 
   st->spaceid = SPACE_VIEW3D;
@@ -2246,5 +2247,5 @@ void ED_spacetype_view3d()
   WM_menutype_add(MEM_new<MenuType>(
       __func__, blender::ed::geometry::node_group_operator_assets_menu_unassigned()));
 
-  BKE_spacetype_register(st);
+  BKE_spacetype_register(std::move(st));
 }

@@ -42,7 +42,7 @@
 
 #include "UI_interface_icons.hh"
 
-#include "rna_internal.h"
+#include "rna_internal.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -57,7 +57,6 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_EDITING, "EDITING", 0, "Editing", ""},
     {USER_SECTION_ANIMATION, "ANIMATION", 0, "Animation", ""},
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_EXTENSIONS, "EXTENSIONS", 0, "Extensions", ""},
     {USER_SECTION_ADDONS, "ADDONS", 0, "Add-ons", ""},
 #if 0 /* def WITH_USERDEF_WORKSPACES */
     RNA_ENUM_ITEM_SEPR,
@@ -191,7 +190,7 @@ static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
 #  include "GPU_select.hh"
 #  include "GPU_texture.h"
 
-#  include "BLF_api.h"
+#  include "BLF_api.hh"
 
 #  include "BLI_path_util.h"
 
@@ -379,17 +378,36 @@ static void rna_userdef_extension_repo_directory_set(PointerRNA *ptr, const char
   Main *bmain = G.main;
   bUserExtensionRepo *repo = (bUserExtensionRepo *)ptr->data;
   BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
-  BKE_preferences_extension_repo_path_set(repo, value);
+  BKE_preferences_extension_repo_custom_dirpath_set(repo, value);
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
+}
+
+static void rna_userdef_extension_repo_generic_flag_set_impl(PointerRNA *ptr,
+                                                             const bool value,
+                                                             const int flag)
+{
+  Main *bmain = G.main;
+  bUserExtensionRepo *repo = (bUserExtensionRepo *)ptr->data;
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
+  SET_FLAG_FROM_TEST(repo->flag, value, flag);
   BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
 }
 
 static void rna_userdef_extension_repo_enabled_set(PointerRNA *ptr, bool value)
 {
-  Main *bmain = G.main;
-  bUserExtensionRepo *repo = (bUserExtensionRepo *)ptr->data;
-  BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
-  SET_FLAG_FROM_TEST(repo->flag, !value, USER_EXTENSION_REPO_FLAG_DISABLED);
-  BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
+  rna_userdef_extension_repo_generic_flag_set_impl(ptr, !value, USER_EXTENSION_REPO_FLAG_DISABLED);
+}
+
+static void rna_userdef_extension_repo_use_custom_directory_set(PointerRNA *ptr, bool value)
+{
+  rna_userdef_extension_repo_generic_flag_set_impl(
+      ptr, value, USER_EXTENSION_REPO_FLAG_USE_CUSTOM_DIRECTORY);
+}
+
+static void rna_userdef_extension_repo_use_remote_path_set(PointerRNA *ptr, bool value)
+{
+  rna_userdef_extension_repo_generic_flag_set_impl(
+      ptr, value, USER_EXTENSION_REPO_FLAG_USE_REMOTE_PATH);
 }
 
 static void rna_userdef_script_autoexec_update(Main * /*bmain*/,
@@ -490,16 +508,22 @@ static void rna_userdef_asset_library_remove(ReportList *reports, PointerRNA *pt
 
 static bUserExtensionRepo *rna_userdef_extension_repo_new(const char *name,
                                                           const char *module,
-                                                          const char *directory,
+                                                          const char *custom_directory,
                                                           const char *remote_path)
 {
   Main *bmain = G.main;
   BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
 
   bUserExtensionRepo *repo = BKE_preferences_extension_repo_add(
-      &U, name ? name : "", module ? module : "", directory ? directory : "");
+      &U, name ? name : "", module ? module : "", custom_directory ? custom_directory : "");
+
   if (remote_path) {
     STRNCPY(repo->remote_path, remote_path);
+    repo->flag |= USER_EXTENSION_REPO_FLAG_USE_REMOTE_PATH;
+  }
+
+  if (repo->custom_dirpath[0]) {
+    repo->flag |= USER_EXTENSION_REPO_FLAG_USE_CUSTOM_DIRECTORY;
   }
 
   BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
@@ -669,7 +693,7 @@ static const EnumPropertyItem *rna_UseDef_active_section_itemf(bContext * /*C*/,
   const bool use_developer_ui = (userdef->flag & USER_DEVELOPER_UI) != 0;
   const bool use_extension_repos = use_developer_ui && U.experimental.use_extension_repos;
 
-  if (use_developer_ui && use_extension_repos) {
+  if (use_developer_ui && use_extension_repos == false) {
     *r_free = false;
     return rna_enum_preference_section_items;
   }
@@ -685,12 +709,15 @@ static const EnumPropertyItem *rna_UseDef_active_section_itemf(bContext * /*C*/,
         continue;
       }
     }
-    else if (it->value == USER_SECTION_EXTENSIONS) {
-      if (use_extension_repos == false) {
-        continue;
+
+    RNA_enum_item_add(&items, &totitem, it);
+
+    /* Rename "Add-ons" to "Extensions" when extensions are enabled. */
+    if (it->value == USER_SECTION_ADDONS) {
+      if (use_extension_repos) {
+        items[totitem - 1].name = "Extensions";
       }
     }
-    RNA_enum_item_add(&items, &totitem, it);
   }
 
   RNA_enum_item_end(&items, &totitem);
@@ -5432,7 +5459,7 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", AUTOKEY_FLAG_INSERTAVAILABLE);
   RNA_def_property_ui_text(prop,
                            "Auto Keyframe Insert Available",
-                           "Automatic keyframe insertion in available F-Curves");
+                           "Insert Keyframes only for properties that are already animated");
 
   prop = RNA_def_property(srna, "use_auto_keying_warning", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "keying_flag", AUTOKEY_FLAG_NOWARNING);
@@ -5452,13 +5479,16 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_auto_keyframe_insert_needed", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", AUTOKEY_FLAG_INSERTNEEDED);
-  RNA_def_property_ui_text(
-      prop, "Autokey Insert Needed", "Auto-Keyframe insertion only when keyframe needed");
+  RNA_def_property_ui_text(prop,
+                           "Autokey Insert Needed",
+                           "Auto-Keying will skip inserting keys that don't affect the animation");
 
   prop = RNA_def_property(srna, "use_keyframe_insert_needed", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", MANUALKEY_FLAG_INSERTNEEDED);
   RNA_def_property_ui_text(
-      prop, "Keyframe Insert Needed", "Keyframe insertion only when keyframe needed");
+      prop,
+      "Keyframe Insert Needed",
+      "When keying manually, skip inserting keys that don't affect the animation");
 
   prop = RNA_def_property(srna, "use_visual_keying", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", KEYING_FLAG_VISUALKEY);
@@ -6617,12 +6647,9 @@ static void rna_def_userdef_filepaths_extension_repo(BlenderRNA *brna)
   RNA_def_property_string_funcs(prop, nullptr, nullptr, "rna_userdef_extension_repo_module_set");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
-  prop = RNA_def_property(srna, "directory", PROP_STRING, PROP_DIRPATH);
-  RNA_def_property_string_sdna(prop, nullptr, "dirpath");
-  RNA_def_property_ui_text(prop,
-                           "Local Directory",
-                           "The local directory containing extensions. "
-                           "When unset, a path is used based on the user scripts path");
+  prop = RNA_def_property(srna, "custom_directory", PROP_STRING, PROP_DIRPATH);
+  RNA_def_property_string_sdna(prop, nullptr, "custom_dirpath");
+  RNA_def_property_ui_text(prop, "Custom Directory", "The local directory containing extensions");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_FILEBROWSER);
   RNA_def_property_string_funcs(
       prop, nullptr, nullptr, "rna_userdef_extension_repo_directory_set");
@@ -6648,6 +6675,19 @@ static void rna_def_userdef_filepaths_extension_repo(BlenderRNA *brna)
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", USER_EXTENSION_REPO_FLAG_DISABLED);
   RNA_def_property_ui_text(prop, "Enabled", "Enable the repository");
   RNA_def_property_boolean_funcs(prop, nullptr, "rna_userdef_extension_repo_enabled_set");
+
+  prop = RNA_def_property(srna, "use_custom_directory", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "flag", USER_EXTENSION_REPO_FLAG_USE_CUSTOM_DIRECTORY);
+  RNA_def_property_ui_text(
+      prop, "Custom Directory", "Manually set the path for extensions to be stored");
+  RNA_def_property_boolean_funcs(
+      prop, nullptr, "rna_userdef_extension_repo_use_custom_directory_set");
+
+  prop = RNA_def_property(srna, "use_remote_path", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_EXTENSION_REPO_FLAG_USE_REMOTE_PATH);
+  RNA_def_property_ui_text(prop, "Use Remote", "Synchonize the repository with a remote URL/path");
+  RNA_def_property_boolean_funcs(prop, nullptr, "rna_userdef_extension_repo_use_remote_path_set");
 }
 
 static void rna_def_userdef_script_directory(BlenderRNA *brna)
@@ -6762,8 +6802,12 @@ static void rna_def_userdef_extension_repos_collection(BlenderRNA *brna, Propert
 
   RNA_def_string(func, "name", nullptr, sizeof(bUserExtensionRepo::name), "Name", "");
   RNA_def_string(func, "module", nullptr, sizeof(bUserExtensionRepo::module), "Module", "");
-  RNA_def_string(
-      func, "directory", nullptr, sizeof(bUserExtensionRepo::dirpath), "Directories", "");
+  RNA_def_string(func,
+                 "custom_directory",
+                 nullptr,
+                 sizeof(bUserExtensionRepo::custom_dirpath),
+                 "Custom Directory",
+                 "");
   RNA_def_string(
       func, "remote_path", nullptr, sizeof(bUserExtensionRepo::remote_path), "Remote Path", "");
 
