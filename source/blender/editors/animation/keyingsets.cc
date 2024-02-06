@@ -871,7 +871,6 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
     item_tmp.identifier = "__ACTIVE__";
     item_tmp.name = "Active Keying Set";
     item_tmp.value = 0;
-    item_tmp.icon = ICON_CLEAR; /*BFA - added icon*/
     RNA_enum_item_add(&item, &totitem, &item_tmp);
 
     RNA_enum_item_add_separator(&item, &totitem);
