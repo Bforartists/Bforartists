@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-from bpy.types import Panel
+from bpy.types import Panel, Menu, Operator
 from bpy.app.translations import contexts as i18n_contexts
-
+from bl_ui.generic_column_menu import GenericColumnMenu, fetch_op_data, InvokeMenuOperator
 
 class ObjectConstraintPanel:
     bl_context = "constraint"
@@ -30,10 +30,39 @@ class OBJECT_PT_constraints(ObjectConstraintPanel, Panel):
 
     def draw(self, _context):
         layout = self.layout
-
-        layout.operator_menu_enum("object.constraint_add", "type", text="Add Object Constraint")
+        layout.operator("object.add_constraints_menu", icon='ADD')
 
         layout.template_constraints(use_bone_constraints=False)
+
+
+class OBJECT_MT_constraint_add(GenericColumnMenu, Menu):
+    bl_description = "Add a constraint to the active object"
+
+    op_id = "object.constraint_add"
+    OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="Constraint")
+    search_header = "Object Constraint"
+
+    def draw(self, _context):
+        layout = self.layout.row()
+
+        self.draw_operator_column(layout, header="Motion Tracking",
+            types=('CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER'))
+        self.draw_operator_column(layout, header="Transform",
+            types=('COPY_LOCATION', 'COPY_ROTATION', 'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE', 'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE'))
+        self.draw_operator_column(layout, header="Tracking",
+            types=('CLAMP_TO', 'DAMPED_TRACK', 'LOCKED_TRACK', 'STRETCH_TO', 'TRACK_TO'))
+        self.draw_operator_column(layout, header="Relationship",
+            types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'SHRINKWRAP'))
+
+
+class OBJECT_OT_add_constraints_menu(InvokeMenuOperator, Operator):
+    bl_idname = "object.add_constraints_menu"
+    bl_label = "Add Object Constraint"
+    bl_description = "Add a constraint to the active object"
+
+    menu_id = "OBJECT_MT_constraint_add"
+    space_type = 'PROPERTIES'
+    space_context = 'CONSTRAINT'
 
 
 class BONE_PT_constraints(BoneConstraintPanel, Panel):
@@ -44,10 +73,39 @@ class BONE_PT_constraints(BoneConstraintPanel, Panel):
 
     def draw(self, _context):
         layout = self.layout
-
-        layout.operator_menu_enum("pose.constraint_add", "type", text="Add Bone Constraint")
+        layout.operator("bone.add_constraints_menu", icon='ADD')
 
         layout.template_constraints(use_bone_constraints=True)
+
+
+class BONE_MT_constraint_add(GenericColumnMenu, Menu):
+    bl_description = "Add a constraint to the active bone"
+
+    op_id = "pose.constraint_add"
+    OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="Constraint")
+    search_header = "Bone Constraint"
+
+    def draw(self, _context):
+        layout = self.layout.row()
+
+        self.draw_operator_column(layout, header="Motion Tracking",
+            types=('CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER'))
+        self.draw_operator_column(layout, header="Transform",
+            types=('COPY_LOCATION', 'COPY_ROTATION', 'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE', 'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE'))
+        self.draw_operator_column(layout, header="Tracking",
+            types=('CLAMP_TO', 'DAMPED_TRACK', 'IK', 'LOCKED_TRACK', 'SPLINE_IK', 'STRETCH_TO', 'TRACK_TO'))
+        self.draw_operator_column(layout, header="Relationship",
+            types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'SHRINKWRAP'))
+
+
+class BONE_OT_add_constraints_menu(InvokeMenuOperator, Operator):
+    bl_idname = "bone.add_constraints_menu"
+    bl_label = "Add Bone Constraint"
+    bl_description = "Add a constraint to the active bone"
+
+    menu_id = "BONE_MT_constraint_add"
+    space_type = 'PROPERTIES'
+    space_context = 'BONE_CONSTRAINT'
 
 
 # Parent class for constraint panels, with templates and drawing methods
@@ -1868,7 +1926,11 @@ class BONE_PT_bKinematicConstraint(BoneConstraintPanel, ConstraintButtonsPanel, 
 classes = (
     # Object Panels
     OBJECT_PT_constraints,
+    OBJECT_MT_constraint_add,
+    OBJECT_OT_add_constraints_menu,
     BONE_PT_constraints,
+    BONE_MT_constraint_add,
+    BONE_OT_add_constraints_menu,
     OBJECT_PT_bChildOfConstraint,
     OBJECT_PT_bTrackToConstraint,
     OBJECT_PT_bKinematicConstraint,
