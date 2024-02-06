@@ -185,19 +185,33 @@ static bool is_constrained_by_radius(const Brush *br)
   return false;
 }
 
+/* Fetch the propogation_steps value, preferring the brush level value over the global sculpt tool
+ * value. */
+static int boundary_propagation_steps(const Sculpt *sd, const Brush *brush)
+{
+  return brush && brush->automasking_flags &
+                      (BRUSH_AUTOMASKING_BOUNDARY_EDGES | BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS) ?
+             brush->automasking_boundary_edges_propagation_steps :
+             sd->automasking_boundary_edges_propagation_steps;
+}
+
+/* Determine if the given automasking settings require values to be precomputed and cached. */
 static bool needs_factors_cache(const Sculpt *sd, const Brush *brush)
 {
-
   const int automasking_flags = calc_effective_bits(sd, brush);
 
   if (automasking_flags & BRUSH_AUTOMASKING_TOPOLOGY && brush && is_constrained_by_radius(brush)) {
     return true;
   }
 
-  if (automasking_flags & (BRUSH_AUTOMASKING_BOUNDARY_EDGES |
-                           BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS | BRUSH_AUTOMASKING_VIEW_NORMAL))
-  {
+  if (automasking_flags & BRUSH_AUTOMASKING_VIEW_NORMAL) {
     return brush && brush->automasking_boundary_edges_propagation_steps != 1;
+  }
+
+  if (automasking_flags &
+      (BRUSH_AUTOMASKING_BOUNDARY_EDGES | BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS))
+  {
+    return boundary_propagation_steps(sd, brush) != 1;
   }
   return false;
 }
@@ -618,10 +632,10 @@ static bool floodfill_cb(
               SCULPT_vertex_co_get(ss, to_v), data->location, data->radius, data->symm));
 }
 
-static void topology_automasking_init(Sculpt *sd, Object *ob)
+static void topology_automasking_init(const Sculpt *sd, Object *ob)
 {
   SculptSession *ss = ob->sculpt;
-  Brush *brush = BKE_paint_brush(&sd->paint);
+  const Brush *brush = BKE_paint_brush_for_read(&sd->paint);
 
   const int totvert = SCULPT_vertex_count_get(ss);
   for (int i : IndexRange(totvert)) {
@@ -647,10 +661,10 @@ static void topology_automasking_init(Sculpt *sd, Object *ob)
   flood_fill::execute(ss, &flood, floodfill_cb, &fdata);
 }
 
-static void init_face_sets_masking(Sculpt *sd, Object *ob)
+static void init_face_sets_masking(const Sculpt *sd, Object *ob)
 {
   SculptSession *ss = ob->sculpt;
-  Brush *brush = BKE_paint_brush(&sd->paint);
+  const Brush *brush = BKE_paint_brush_for_read(&sd->paint);
 
   if (!is_enabled(sd, ss, brush)) {
     return;
@@ -726,7 +740,10 @@ static void init_boundary_masking(Object *ob, eBoundaryAutomaskMode mode, int pr
 }
 
 /* Updates the cached values, preferring brush settings over tool-level settings. */
-static void cache_settings_update(Cache &automasking, SculptSession *ss, Sculpt *sd, Brush *brush)
+static void cache_settings_update(Cache &automasking,
+                                  SculptSession *ss,
+                                  const Sculpt *sd,
+                                  const Brush *brush)
 {
   automasking.settings.flags = calc_effective_bits(sd, brush);
   automasking.settings.initial_face_set = face_set::active_face_set_get(ss);
@@ -802,10 +819,14 @@ bool tool_can_reuse_automask(int sculpt_tool)
               SCULPT_TOOL_DRAW_FACE_SETS);
 }
 
-std::unique_ptr<Cache> cache_init(Sculpt *sd, Brush *brush, Object *ob)
+std::unique_ptr<Cache> cache_init(const Sculpt *sd, Object *ob)
+{
+  return cache_init(sd, nullptr, ob);
+}
+
+std::unique_ptr<Cache> cache_init(const Sculpt *sd, const Brush *brush, Object *ob)
 {
   SculptSession *ss = ob->sculpt;
-  const int totvert = SCULPT_vertex_count_get(ss);
 
   if (!is_enabled(sd, ss, brush)) {
     return nullptr;
@@ -817,7 +838,6 @@ std::unique_ptr<Cache> cache_init(Sculpt *sd, Brush *brush, Object *ob)
 
   automasking->current_stroke_id = ss->stroke_id;
 
-  bool use_stroke_id = false;
   int mode = calc_effective_bits(sd, brush);
 
   if (mode & BRUSH_AUTOMASKING_TOPOLOGY && ss->active_vertex.i != PBVH_REF_NONE) {
@@ -825,6 +845,7 @@ std::unique_ptr<Cache> cache_init(Sculpt *sd, Brush *brush, Object *ob)
     automasking->settings.initial_island_nr = SCULPT_vertex_island_get(ss, ss->active_vertex);
   }
 
+  bool use_stroke_id = false;
   if ((mode & BRUSH_AUTOMASKING_VIEW_OCCLUSION) && (mode & BRUSH_AUTOMASKING_VIEW_NORMAL)) {
     use_stroke_id = true;
 
@@ -881,6 +902,8 @@ std::unique_ptr<Cache> cache_init(Sculpt *sd, Brush *brush, Object *ob)
     }
   }
 
+  /* Avoid precomputing data on the vertex level if the current auto-masking modes do not require
+   * it to function. */
   if (!needs_factors_cache(sd, brush)) {
     if (ss->attrs.automasking_factor) {
       BKE_sculpt_attribute_destroy(ob, ss->attrs.automasking_factor);
@@ -898,28 +921,16 @@ std::unique_ptr<Cache> cache_init(Sculpt *sd, Brush *brush, Object *ob)
       SCULPT_ATTRIBUTE_NAME(automasking_factor),
       &params);
 
-  float initial_value;
+  /* Topology builds up the mask from zero which other modes can subtract from.
+   * If it isn't enabled, initialize to 1. */
+  float initial_value = !(mode & BRUSH_AUTOMASKING_TOPOLOGY) ? 1.0f : 0.0f;
 
-  /* Topology, boundary and boundary face sets build up the mask
-   * from zero which other modes can subtract from.  If none of them are
-   * enabled initialize to 1.
-   */
-  if (!(mode & BRUSH_AUTOMASKING_TOPOLOGY)) {
-    initial_value = 1.0f;
-  }
-  else {
-    initial_value = 0.0f;
-  }
-
+  const int totvert = SCULPT_vertex_count_get(ss);
   for (int i : IndexRange(totvert)) {
     PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ss->pbvh, i);
 
     (*(float *)SCULPT_vertex_attr_get(vertex, ss->attrs.automasking_factor)) = initial_value;
   }
-
-  const int boundary_propagation_steps = brush ?
-                                             brush->automasking_boundary_edges_propagation_steps :
-                                             1;
 
   /* Additive modes. */
   if (mode_enabled(sd, brush, BRUSH_AUTOMASKING_TOPOLOGY)) {
@@ -934,13 +945,14 @@ std::unique_ptr<Cache> cache_init(Sculpt *sd, Brush *brush, Object *ob)
     init_face_sets_masking(sd, ob);
   }
 
+  const int steps = boundary_propagation_steps(sd, brush);
   if (mode_enabled(sd, brush, BRUSH_AUTOMASKING_BOUNDARY_EDGES)) {
     SCULPT_vertex_random_access_ensure(ss);
-    init_boundary_masking(ob, AUTOMASK_INIT_BOUNDARY_EDGES, boundary_propagation_steps);
+    init_boundary_masking(ob, AUTOMASK_INIT_BOUNDARY_EDGES, steps);
   }
   if (mode_enabled(sd, brush, BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS)) {
     SCULPT_vertex_random_access_ensure(ss);
-    init_boundary_masking(ob, AUTOMASK_INIT_BOUNDARY_FACE_SETS, boundary_propagation_steps);
+    init_boundary_masking(ob, AUTOMASK_INIT_BOUNDARY_FACE_SETS, steps);
   }
 
   /* Subtractive modes. */

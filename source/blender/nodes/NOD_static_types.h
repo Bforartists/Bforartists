@@ -280,6 +280,7 @@ DefNode(FunctionNode, FN_NODE_INVERT_ROTATION, 0, "INVERT_ROTATION", InvertRotat
 DefNode(FunctionNode, FN_NODE_RANDOM_VALUE, def_fn_random_value,  "RANDOM_VALUE",  RandomValue,  "Random Value",  "Add a Random Value Function node\nAdds a random value")
 DefNode(FunctionNode, FN_NODE_REPLACE_STRING, 0,  "REPLACE_STRING",  ReplaceString,  "Replace String",  "Add a Replace String Function node\nAllows you to replace a string")
 DefNode(FunctionNode, FN_NODE_ROTATE_EULER, def_fn_rotate_euler,  "ROTATE_EULER",  RotateEuler,  "Rotate Euler",  "Add a Rotate Euler Function node\nRotate in euler angles")
+DefNode(FunctionNode, FN_NODE_ROTATE_ROTATION, 0, "ROTATE_ROTATION", RotateRotation, "Rotate Rotation", "")
 DefNode(FunctionNode, FN_NODE_ROTATE_VECTOR, 0, "ROTATE_VECTOR", RotateVector, "Rotate Vector", "Add a Rotate Vector Function node\nRotate by a rotation vector")
 DefNode(FunctionNode, FN_NODE_ROTATION_TO_AXIS_ANGLE, 0, "ROTATION_TO_AXIS_ANGLE", RotationToAxisAngle, "Rotation to Axis Angle", "Add a Rotation to Axis Angle Function node\nConverts a rotation vector to a axis angle")
 DefNode(FunctionNode, FN_NODE_ROTATION_TO_EULER, 0, "ROTATION_TO_EULER", RotationToEuler, "Rotation to Euler", "Add a Rotation to Euler Function node\nConverts a rotation vector to an euler angle vector")
