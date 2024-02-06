@@ -29,13 +29,19 @@ from .utils.draw import draw_callback_nodeoutline
 from .utils.paths import match_files_to_socket_names, split_into_components
 from .utils.nodes import (node_mid_pt, autolink, node_at_pos, get_nodes_links, is_viewer_socket, is_viewer_link,
                           get_group_output_node, get_output_location, force_update, get_internal_socket, nw_check,
-                          nw_check_space_type, NWBase, get_first_enabled_output, is_visible_socket, viewer_socket_name)
+                          nw_check_not_empty, nw_check_selected, nw_check_active, nw_check_space_type,
+                          nw_check_node_type, nw_check_visible_outputs, nw_check_viewer_node, NWBase,
+                          get_first_enabled_output, is_visible_socket, viewer_socket_name)
 
 class NWLazyMix(Operator, NWBase):
     """Add a Mix RGB/Shader node by interactively drawing lines between nodes"""
     bl_idname = "node.nw_lazy_mix"
     bl_label = "Mix Nodes"
     bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_not_empty(cls, context)
 
     def modal(self, context, event):
         context.area.tag_redraw()
@@ -114,6 +120,10 @@ class NWLazyConnect(Operator, NWBase):
     bl_label = "Lazy Connect"
     bl_options = {'REGISTER', 'UNDO'}
     with_menu: BoolProperty()
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_not_empty(cls, context)
 
     def modal(self, context, event):
         context.area.tag_redraw()
@@ -244,10 +254,10 @@ class NWDeleteUnused(Operator, NWBase):
     @classmethod
     def poll(cls, context):
         """Disabled for custom nodes as we do not know which nodes are supported."""
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'ShaderNodeTree', 'CompositorNodeTree',
-                                        'TextureNodeTree', 'GeometryNodeTree')
-                and context.space_data.node_tree.nodes)
+        return (nw_check(cls, context)
+                and nw_check_not_empty(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
+                                        'TextureNodeTree', 'GeometryNodeTree'}))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -334,7 +344,7 @@ class NWSwapLinks(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        return nw_check(context) and context.selected_nodes and len(context.selected_nodes) <= 2
+        return nw_check(cls, context) and nw_check_selected(cls, context, max=2)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -448,8 +458,7 @@ class NWResetBG(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'CompositorNodeTree'))
+        return nw_check(cls, context) and nw_check_space_type(cls, context, {'CompositorNodeTree'})
 
     def execute(self, context):
         context.space_data.backdrop_zoom = 1
@@ -468,8 +477,7 @@ class NWAddAttrNode(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'ShaderNodeTree'))
+        return nw_check(cls, context) and nw_check_space_type(cls, context, {'ShaderNodeTree'})
 
     def execute(self, context):
         bpy.ops.node.add_node('INVOKE_DEFAULT', use_transform=True, type="ShaderNodeAttribute")
@@ -495,10 +503,8 @@ class NWPreviewNode(Operator, NWBase):
     @classmethod
     def poll(cls, context):
         """Already implemented natively for compositing nodes."""
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'ShaderNodeTree', 'GeometryNodeTree')
-                and (not context.active_node
-                     or context.active_node.type not in {"OUTPUT_MATERIAL", "OUTPUT_WORLD"}))
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'GeometryNodeTree'}))
 
     @staticmethod
     def get_output_sockets(node_tree):
@@ -759,6 +765,12 @@ class NWPreviewNode(Operator, NWBase):
             active_node_socket_index = self.get_output_index(
                 active, output_node, base_node_tree == active_tree, 'SHADER'
             )
+
+            # Cancel if no socket was found. This can happen for group input
+            # nodes with only a virtual socket output.
+            if active_node_socket_index is None:
+                return {'CANCELLED'}
+
             if active.outputs[active_node_socket_index].name == "Volume":
                 output_node_socket_index = 1
             else:
@@ -839,11 +851,10 @@ class NWReloadImages(Operator):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'ShaderNodeTree', 'CompositorNodeTree',
-                                        'TextureNodeTree', 'GeometryNodeTree')
-                and context.active_node is not None
-                and any(is_visible_socket(out) for out in context.active_node.outputs))
+        """Disabled for custom nodes."""
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
+                                        'TextureNodeTree', 'GeometryNodeTree'}))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -969,9 +980,10 @@ class NWMergeNodes(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'ShaderNodeTree', 'CompositorNodeTree',
-                                        'TextureNodeTree', 'GeometryNodeTree'))
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
+                                        'TextureNodeTree', 'GeometryNodeTree'})
+                and nw_check_selected(cls, context))
 
     def execute(self, context):
         settings = context.preferences.addons[__package__].preferences
@@ -1292,9 +1304,10 @@ class NWBatchChangeNodes(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'ShaderNodeTree', 'CompositorNodeTree',
-                                        'TextureNodeTree', 'GeometryNodeTree'))
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
+                                        'TextureNodeTree', 'GeometryNodeTree'})
+                and nw_check_selected(cls, context))
 
     def execute(self, context):
         blend_type = self.blend_type
@@ -1348,6 +1361,10 @@ class NWChangeMixFactor(Operator, NWBase):
     bl_description = "Change Factors of Mix Nodes and Mix Shader Nodes"
     bl_options = {'REGISTER', 'UNDO'}
 
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
+
     # option: Change factor.
     # If option is 1.0 or 0.0 - set to 1.0 or 0.0
     # Else - change factor by option value.
@@ -1381,24 +1398,15 @@ class NWCopySettings(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and context.active_node is not None
-                and context.active_node.type != 'FRAME')
+        return (nw_check(cls, context)
+                and nw_check_active(cls, context)
+                and nw_check_selected(cls, context, min=2)
+                and nw_check_node_type(cls, context, 'FRAME', invert=True))
 
     def execute(self, context):
         node_active = context.active_node
         node_selected = context.selected_nodes
-
-        # Error handling
-        if not (len(node_selected) > 1):
-            self.report({'ERROR'}, "2 nodes must be selected at least")
-            return {'CANCELLED'}
-
-        # Check if active node is in the selection
         selected_node_names = [n.name for n in node_selected]
-        if node_active.name not in selected_node_names:
-            self.report({'ERROR'}, "No active node")
-            return {'CANCELLED'}
 
         # Get nodes in selection by type
         valid_nodes = [n for n in node_selected if n.type == node_active.type]
@@ -1474,7 +1482,7 @@ class NWCopySettings(Operator, NWBase):
                 new_node.location = node_loc
 
             for str_from, str_to in reconnections:
-                node_tree.connect_sockets(eval(str_from), eval(str_to))
+                connect_sockets(eval(str_from), eval(str_to))
 
             success_names.append(new_node.name)
 
@@ -1492,6 +1500,7 @@ class NWCopyLabel(Operator, NWBase):
     bl_idname = "node.nw_copy_label"
     bl_label = "Copy Label"
     bl_options = {'REGISTER', 'UNDO'}
+    bl_description = "Copy label from active to selected nodes"
 
     option: EnumProperty(
         name="option",
@@ -1502,6 +1511,10 @@ class NWCopyLabel(Operator, NWBase):
             ('FROM_SOCKET', 'from socket', 'from socket linked to selected node'),
         )
     )
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context, min=2)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -1536,8 +1549,13 @@ class NWClearLabel(Operator, NWBase):
     bl_idname = "node.nw_clear_label"
     bl_label = "Clear Label"
     bl_options = {'REGISTER', 'UNDO'}
+    bl_description = "Clear labels on selected nodes"
 
     option: BoolProperty()
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -1554,7 +1572,7 @@ class NWClearLabel(Operator, NWBase):
 
 
 class NWModifyLabels(Operator, NWBase):
-    """Modify Labels of all selected nodes"""
+    """Modify labels of all selected nodes"""
     bl_idname = "node.nw_modify_labels"
     bl_label = "Modify Labels"
     bl_options = {'REGISTER', 'UNDO'}
@@ -1571,6 +1589,10 @@ class NWModifyLabels(Operator, NWBase):
     replace_to: StringProperty(
         name="Replace with"
     )
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -1599,8 +1621,9 @@ class NWAddTextureSetup(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'ShaderNodeTree'))
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree'})
+                and nw_check_selected(cls, context))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -1702,23 +1725,22 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'ShaderNodeTree'))
+        return (nw_check(cls, context)
+                and nw_check_active(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree'})
+                and nw_check_node_type(cls, context, 'BSDF_PRINCIPLED'))
 
     def execute(self, context):
         # Check if everything is ok
         if not self.directory:
-            self.report({'INFO'}, 'No Folder Selected')
+            self.report({'INFO'}, 'No folder selected')
             return {'CANCELLED'}
         if not self.files[:]:
-            self.report({'INFO'}, 'No Files Selected')
+            self.report({'INFO'}, 'No files selected')
             return {'CANCELLED'}
 
         nodes, links = get_nodes_links(context)
         active_node = nodes.active
-        if not (active_node and active_node.bl_idname == 'ShaderNodeBsdfPrincipled'):
-            self.report({'INFO'}, 'Select Principled BSDF')
-            return {'CANCELLED'}
 
         # Filter textures names for texturetypes in filenames
         # [Socket Name, [abbreviations and keyword list], Filename placeholder]
@@ -1976,85 +1998,75 @@ class NWAddReroutes(Operator, NWBase):
         ]
     )
 
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
+
     def execute(self, context):
-        tree_type = context.space_data.node_tree.type
-        option = self.option
-        nodes, links = get_nodes_links(context)
-        # output valid when option is 'all' or when 'loose' output has no links
-        valid = False
-        post_select = []  # nodes to be selected after execution
-        # create reroutes and recreate links
+        nodes, _links = get_nodes_links(context)
+        post_select = []  # Nodes to be selected after execution.
+        y_offset = -22.0
+
+        # Create reroutes and recreate links.
         for node in [n for n in nodes if n.select]:
-            if node.outputs:
-                x = node.location.x
-                y = node.location.y
-                width = node.width
-                # unhide 'REROUTE' nodes to avoid issues with location.y
-                if node.type == 'REROUTE':
-                    node.hide = False
-                # Hack needed to calculate real width
-                if node.hide:
-                    bpy.ops.node.select_all(action='DESELECT')
-                    helper = nodes.new('NodeReroute')
-                    helper.select = True
-                    node.select = True
-                    # resize node and helper to zero. Then check locations to calculate width
-                    bpy.ops.transform.resize(value=(0.0, 0.0, 0.0))
-                    width = 2.0 * (helper.location.x - node.location.x)
-                    # restore node location
-                    node.location = x, y
-                    # delete helper
-                    node.select = False
-                    # only helper is selected now
-                    bpy.ops.node.delete()
-                x = node.location.x + width + 20.0
-                if node.type != 'REROUTE':
-                    y -= 35.0
-                y_offset = -22.0
-                loc = x, y
-            reroutes_count = 0  # will be used when aligning reroutes added to hidden nodes
+            if not node.outputs:
+                continue
+            x = node.location.x + node.width + 20.0
+            y = node.location.y
+            new_node_reroutes = []
+
+            # Unhide 'REROUTE' nodes to avoid issues with location.y
+            if node.type == 'REROUTE':
+                node.hide = False
+            else:
+                y -= 35.0
+
+            reroutes_count = 0  # Will be used when aligning reroutes added to hidden nodes.
             for out_i, output in enumerate(node.outputs):
-                pass_used = False  # initial value to be analyzed if 'R_LAYERS'
-                # if node != 'R_LAYERS' - "pass_used" not needed, so set it to True
-                if node.type != 'R_LAYERS':
-                    pass_used = True
-                else:  # if 'R_LAYERS' check if output represent used render pass
+                if output.is_unavailable:
+                    continue
+                if node.type == 'R_LAYERS' and output.name != 'Alpha':
+                    # If 'R_LAYERS' check if output is used in render pass.
+                    # If output is "Alpha", assume it's used. Not available in passes.
                     node_scene = node.scene
                     node_layer = node.layer
-                    # If output - "Alpha" is analyzed - assume it's used. Not represented in passes.
-                    if output.name == 'Alpha':
-                        pass_used = True
-                    else:
-                        # check entries in global 'rl_outputs' variable
-                        for rlo in rl_outputs:
-                            if output.name in {rlo.output_name, rlo.exr_output_name}:
-                                pass_used = getattr(node_scene.view_layers[node_layer], rlo.render_pass)
-                                break
-                if pass_used:
-                    valid = ((option == 'ALL') or
-                             (option == 'LOOSE' and not output.links) or
-                             (option == 'LINKED' and output.links))
-                    # Add reroutes only if valid, but offset location in all cases.
-                    if valid:
-                        n = nodes.new('NodeReroute')
-                        nodes.active = n
-                        for link in output.links:
-                            connect_sockets(n.outputs[0], link.to_socket)
-                        connect_sockets(output, n.inputs[0])
-                        n.location = loc
-                        post_select.append(n)
+                    for rlo in rl_outputs:
+                        # Check entries in global 'rl_outputs' variable.
+                        if output.name in {rlo.output_name, rlo.exr_output_name}:
+                            if not getattr(node_scene.view_layers[node_layer], rlo.render_pass):
+                                continue
+                # Output is valid when option is 'all' or when 'loose' output has no links.
+                valid = ((self.option == 'ALL') or
+                         (self.option == 'LOOSE' and not output.links) or
+                         (self.option == 'LINKED' and output.links))
+                if valid:
+                    # Add reroutes only if valid.
+                    n = nodes.new('NodeReroute')
+                    nodes.active = n
+                    for link in output.links:
+                        connect_sockets(n.outputs[0], link.to_socket)
+                    connect_sockets(output, n.inputs[0])
+                    n.location = x, y
+                    new_node_reroutes.append(n)
+                    post_select.append(n)
+                if valid or not output.hide:
+                    # Offset reroutes for all outputs, except hidden ones.
                     reroutes_count += 1
                     y += y_offset
-                    loc = x, y
-            # disselect the node so that after execution of script only newly created nodes are selected
-            node.select = False
-            # nicer reroutes distribution along y when node.hide
+
+            # Nicer reroutes distribution along y when node.hide.
             if node.hide:
                 y_translate = reroutes_count * y_offset / 2.0 - y_offset - 35.0
-                for reroute in [r for r in nodes if r.select]:
+                for reroute in new_node_reroutes:
                     reroute.location.y -= y_translate
-            for node in post_select:
-                node.select = True
+
+        if post_select:
+            for node in nodes:
+                # Select only newly created nodes.
+                node.select = node in post_select
+        else:
+            # No new nodes were created.
+            return {'CANCELLED'}
 
         return {'FINISHED'}
 
@@ -2071,9 +2083,9 @@ class NWLinkActiveToSelected(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and context.active_node is not None
-                and context.active_node.select)
+        return (nw_check(cls, context)
+                and nw_check_active(cls, context)
+                and nw_check_selected(cls, context, min=2))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2143,6 +2155,10 @@ class NWAlignNodes(Operator, NWBase):
     bl_label = "Align Nodes"
     bl_options = {'REGISTER', 'UNDO'}
     margin: IntProperty(name='Margin', default=50, description='The amount of space between nodes')
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_not_empty(cls, context)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2222,6 +2238,10 @@ class NWSelectParentChildren(Operator, NWBase):
         )
     )
 
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
+
     def execute(self, context):
         nodes, links = get_nodes_links(context)
         option = self.option
@@ -2245,6 +2265,10 @@ class NWDetachOutputs(Operator, NWBase):
     bl_idname = "node.nw_detach_outputs"
     bl_label = "Detach Outputs"
     bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2271,11 +2295,11 @@ class NWLinkToOutputNode(Operator):
     @classmethod
     def poll(cls, context):
         """Disabled for custom nodes as we do not know which nodes are outputs."""
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'ShaderNodeTree', 'CompositorNodeTree',
-                                        'TextureNodeTree', 'GeometryNodeTree')
-                and context.active_node is not None
-                and any(is_visible_socket(out) for out in context.active_node.outputs))
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
+                                        'TextureNodeTree', 'GeometryNodeTree'})
+                and nw_check_active(cls, context)
+                and nw_check_visible_outputs(cls, context))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2395,6 +2419,11 @@ class NWAddSequence(Operator, NWBase, ImportHelper):
         default=True
     )
 
+    @classmethod
+    def poll(cls, context):
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree'}))
+
     def draw(self, context):
         layout = self.layout
         layout.alignment = 'LEFT'
@@ -2507,6 +2536,11 @@ class NWAddMultipleImages(Operator, NWBase, ImportHelper):
         options={'HIDDEN', 'SKIP_SAVE'}
     )
 
+    @classmethod
+    def poll(cls, context):
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree'}))
+
     def execute(self, context):
         nodes, links = get_nodes_links(context)
 
@@ -2556,8 +2590,8 @@ class NWViewerFocus(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'CompositorNodeTree'))
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'CompositorNodeTree'}))
 
     def execute(self, context):
         return {'FINISHED'}
@@ -2627,12 +2661,9 @@ class NWSaveViewer(bpy.types.Operator, ExportHelper):
 
     @classmethod
     def poll(cls, context):
-        return (nw_check(context)
-                and nw_check_space_type(cls, context, 'CompositorNodeTree')
-                and any(img.source == 'VIEWER'
-                        and img.render_slots == 0
-                        for img in bpy.data.images)
-                and sum(bpy.data.images["Viewer Node"].size) > 0)  # False if not connected or connected but no image
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'CompositorNodeTree'})
+                and nw_check_viewer_node(cls))
 
     def execute(self, context):
         fp = self.filepath
@@ -2670,18 +2701,14 @@ class NWResetNodes(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        space = context.space_data
-        return space.type == 'NODE_EDITOR'
+        return (nw_check(cls, context)
+                and nw_check_selected(cls, context)
+                and nw_check_active(cls, context))
 
     def execute(self, context):
         node_active = context.active_node
         node_selected = context.selected_nodes
         node_ignore = ["FRAME", "REROUTE", "GROUP", "SIMULATION_INPUT", "SIMULATION_OUTPUT"]
-
-        # Check if one node is selected at least
-        if not (len(node_selected) > 0):
-            self.report({'ERROR'}, "1 node must be selected at least")
-            return {'CANCELLED'}
 
         active_node_name = node_active.name if node_active.select else None
         valid_nodes = [n for n in node_selected if n.type not in node_ignore]

@@ -48,7 +48,7 @@ def create(obj):  # noqa
 
     bone_collections = {}
 
-    for bcoll in list(arm.collections):
+    for bcoll in list(arm.collections_all):
         arm.collections.remove(bcoll)
 
     def add_bone_collection(name, *, ui_row=0, ui_title='', sel_set=False, color_set_id=0):

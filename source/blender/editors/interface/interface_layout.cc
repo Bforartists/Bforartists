@@ -649,9 +649,10 @@ static void ui_item_array(uiLayout *layout,
                                  UI_UNIT_Y);
       if (slider && but->type == UI_BTYPE_NUM) {
         uiButNumber *number_but = (uiButNumber *)but;
-
-        but->a1 = number_but->step_size;
+        const float step_size = number_but->step_size;
         but = ui_but_change_type(but, UI_BTYPE_NUM_SLIDER);
+        uiButNumberSlider *slider_but = reinterpret_cast<uiButNumberSlider *>(but);
+        slider_but->step_size = step_size;
       }
     }
   }
@@ -719,9 +720,10 @@ static void ui_item_array(uiLayout *layout,
             block, ptr, prop, a, str_buf, icon, 0, 0, width_item, UI_UNIT_Y);
         if (slider && but->type == UI_BTYPE_NUM) {
           uiButNumber *number_but = (uiButNumber *)but;
-
-          but->a1 = number_but->step_size;
+          const float step_size = number_but->step_size;
           but = ui_but_change_type(but, UI_BTYPE_NUM_SLIDER);
+          uiButNumberSlider *slider_but = reinterpret_cast<uiButNumberSlider *>(but);
+          slider_but->step_size = step_size;
         }
         if ((toggle == 1) && but->type == UI_BTYPE_CHECKBOX) {
           but->type = UI_BTYPE_TOGGLE;
@@ -1286,7 +1288,7 @@ static uiBut *uiItemFullO_ptr_ex(uiLayout *layout,
 
   /* assign properties */
   if (properties || r_opptr) {
-    PointerRNA *opptr = UI_but_operator_ptr_get(but);
+    PointerRNA *opptr = UI_but_operator_ptr_ensure(but);
     if (properties) {
       opptr->data = properties;
     }
@@ -2490,10 +2492,11 @@ void uiItemFullR(uiLayout *layout,
     but = uiDefAutoButR(block, ptr, prop, index, name, icon, 0, 0, w, h);
 
     if (slider && but->type == UI_BTYPE_NUM) {
-      uiButNumber *num_but = (uiButNumber *)but;
-
-      but->a1 = num_but->step_size;
+      uiButNumber *number_but = (uiButNumber *)but;
+      const float step_size = number_but->step_size;
       but = ui_but_change_type(but, UI_BTYPE_NUM_SLIDER);
+      uiButNumberSlider *slider_but = reinterpret_cast<uiButNumberSlider *>(but);
+      slider_but->step_size = step_size;
     }
 
     if (flag & UI_ITEM_R_CHECKBOX_INVERT) {
@@ -3649,6 +3652,9 @@ static int menu_item_enum_opname_menu_active(bContext *C, uiBut *but, MenuItemLe
   /* so the context is passed to itemf functions (some need it) */
   WM_operator_properties_sanitize(&ptr, false);
   PropertyRNA *prop = RNA_struct_find_property(&ptr, lvl->propname);
+  if (!prop) {
+    return -1;
+  }
   RNA_property_enum_items_gettexted(C, &ptr, prop, &item_array, &totitem, &free);
   int active = RNA_enum_from_name(item_array, but->str.c_str());
   if (free) {
@@ -5021,10 +5027,10 @@ uiLayout *uiLayoutRow(uiLayout *layout, bool align)
   return litem;
 }
 
-PanelLayout uiLayoutPanelWithHeader(const bContext *C,
-                                    uiLayout *layout,
-                                    PointerRNA *open_prop_owner,
-                                    const char *open_prop_name)
+PanelLayout uiLayoutPanelProp(const bContext *C,
+                              uiLayout *layout,
+                              PointerRNA *open_prop_owner,
+                              const char *open_prop_name)
 {
   const ARegion *region = CTX_wm_region(C);
 
@@ -5082,14 +5088,40 @@ PanelLayout uiLayoutPanelWithHeader(const bContext *C,
   return panel_layout;
 }
 
+uiLayout *uiLayoutPanelProp(const bContext *C,
+                            uiLayout *layout,
+                            PointerRNA *open_prop_owner,
+                            const char *open_prop_name,
+                            const char *label)
+{
+  PanelLayout panel = uiLayoutPanelProp(C, layout, open_prop_owner, open_prop_name);
+  uiItemL(panel.header, label, ICON_NONE);
+
+  return panel.body;
+}
+
+PanelLayout uiLayoutPanel(const bContext *C,
+                          uiLayout *layout,
+                          const char *idname,
+                          const bool default_closed)
+{
+  Panel *panel = uiLayoutGetRootPanel(layout);
+  BLI_assert(panel != nullptr);
+
+  LayoutPanelState *state = BKE_panel_layout_panel_state_ensure(panel, idname, default_closed);
+  PointerRNA state_ptr = RNA_pointer_create(nullptr, &RNA_LayoutPanelState, state);
+
+  return uiLayoutPanelProp(C, layout, &state_ptr, "is_open");
+}
+
 uiLayout *uiLayoutPanel(const bContext *C,
                         uiLayout *layout,
-                        const char *name,
-                        PointerRNA *open_prop_owner,
-                        const char *open_prop_name)
+                        const char *idname,
+                        const bool default_closed,
+                        const char *label)
 {
-  PanelLayout panel = uiLayoutPanelWithHeader(C, layout, open_prop_owner, open_prop_name);
-  uiItemL(panel.header, name, ICON_NONE);
+  PanelLayout panel = uiLayoutPanel(C, layout, idname, default_closed);
+  uiItemL(panel.header, label, ICON_NONE);
 
   return panel.body;
 }
@@ -6334,25 +6366,23 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
   BLI_dynstr_appendf(ds, "'tip':'''%s''', ", but->tip ? but->tip : "");
 
   if (but->optype) {
-    char *opstr = WM_operator_pystring_ex(static_cast<bContext *>(but->block->evil_C),
-                                          nullptr,
-                                          false,
-                                          true,
-                                          but->optype,
-                                          but->opptr);
-    BLI_dynstr_appendf(ds, "'operator':'''%s''', ", opstr ? opstr : "");
-    MEM_freeN(opstr);
+    std::string opstr = WM_operator_pystring_ex(static_cast<bContext *>(but->block->evil_C),
+                                                nullptr,
+                                                false,
+                                                true,
+                                                but->optype,
+                                                but->opptr);
+    BLI_dynstr_appendf(ds, "'operator':'''%s''', ", opstr.c_str());
   }
 
   {
     PropertyRNA *prop = nullptr;
     wmOperatorType *ot = UI_but_operatortype_get_from_enum_menu(but, &prop);
     if (ot) {
-      char *opstr = WM_operator_pystring_ex(
+      std::string opstr = WM_operator_pystring_ex(
           static_cast<bContext *>(but->block->evil_C), nullptr, false, true, ot, nullptr);
-      BLI_dynstr_appendf(ds, "'operator':'''%s''', ", opstr ? opstr : "");
+      BLI_dynstr_appendf(ds, "'operator':'''%s''', ", opstr.c_str());
       BLI_dynstr_appendf(ds, "'property':'''%s''', ", prop ? RNA_property_identifier(prop) : "");
-      MEM_freeN(opstr);
     }
   }
 
@@ -6443,12 +6473,12 @@ const char *UI_layout_introspect(uiLayout *layout)
 /** \name Alert Box with Big Icon
  * \{ */
 
-uiLayout *uiItemsAlertBox(uiBlock *block, const int size, const eAlertIcon icon)
+uiLayout *uiItemsAlertBox(uiBlock *block,
+                          const uiStyle *style,
+                          const int dialog_width,
+                          const eAlertIcon icon,
+                          const int icon_size)
 {
-  const uiStyle *style = UI_style_get_dpi();
-  const short icon_size = 64 * UI_SCALE_FAC;
-  const int text_points_max = std::max(style->widget.points, style->widgetlabel.points);
-  const int dialog_width = icon_size + (text_points_max * size * UI_SCALE_FAC);
   /* By default, the space between icon and text/buttons will be equal to the 'columnspace',
    * this extra padding will add some space by increasing the left column width,
    * making the icon placement more symmetrical, between the block edge and the text. */
@@ -6473,6 +6503,15 @@ uiLayout *uiItemsAlertBox(uiBlock *block, const int size, const eAlertIcon icon)
   layout = uiLayoutColumn(split_block, false);
 
   return layout;
+}
+
+uiLayout *uiItemsAlertBox(uiBlock *block, const int size, const eAlertIcon icon)
+{
+  const uiStyle *style = UI_style_get_dpi();
+  const short icon_size = 64 * UI_SCALE_FAC;
+  const int text_points_max = std::max(style->widget.points, style->widgetlabel.points);
+  const int dialog_width = icon_size + (text_points_max * size * UI_SCALE_FAC);
+  return uiItemsAlertBox(block, style, dialog_width, icon, icon_size);
 }
 
 /** \} */

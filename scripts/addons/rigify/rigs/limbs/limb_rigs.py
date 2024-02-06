@@ -622,7 +622,7 @@ class BaseLimbRig(BaseRig):
         self.make_property(self.prop_bone, 'IK_Stretch', default=1.0, description='IK Stretch')
         panel.custom_prop(self.prop_bone, 'IK_Stretch', text='IK Stretch', slider=True)
 
-        self.make_property(self.prop_bone, 'pole_vector', default=0,
+        self.make_property(self.prop_bone, 'pole_vector', default=False,
                            description='Use a pole target control')
 
         self.add_ik_only_buttons(panel, rig_name)
@@ -1200,7 +1200,7 @@ class RigifyLimbTogglePoleBase(RigifyLimbIk2FkBase):
 
         # Set the pole property
         set_custom_property_value(
-            obj, self.prop_bone, self.pole_prop, int(self.use_pole),
+            obj, self.prop_bone, self.pole_prop, bool(self.use_pole),
             keyflags=self.keyflags_switch
         )
 
@@ -1249,7 +1249,7 @@ class POSE_OT_rigify_limb_toggle_pole_bake(RigifyLimbTogglePoleBase, RigifyBakeK
         return rot_curves + pole_curves
 
     def execute_before_apply(self, context, obj, range, range_raw):
-        self.bake_replace_custom_prop_keys_constant(self.prop_bone, self.pole_prop, int(self.use_pole))
+        self.bake_replace_custom_prop_keys_constant(self.prop_bone, self.pole_prop, bool(self.use_pole))
 
     def draw(self, context):
         self.layout.prop(self, 'use_pole')
@@ -1272,9 +1272,10 @@ def add_limb_toggle_pole(panel: 'PanelLayout', *,
     }
 
     row = panel.row(align=True)
-    left_split = row.split(factor=0.75, align=True)
+    left_split = row.split(factor=0.65, align=True)
     left_split.operator('pose.rigify_limb_toggle_pole_{rig_id}',
                         icon='FORCE_MAGNETIC', properties=op_props)
-    left_split.custom_prop(master, 'pole_vector', text='')
+    icon = left_split.expr_if_else(left_split.expr_bone(master)['pole_vector'], 'CHECKBOX_HLT', 'CHECKBOX_DEHLT')
+    left_split.custom_prop(master, 'pole_vector', text='', icon=icon)
     row.operator('pose.rigify_limb_toggle_pole_bake_{rig_id}',
                  text='', icon='ACTION_TWEAK', properties=op_props)

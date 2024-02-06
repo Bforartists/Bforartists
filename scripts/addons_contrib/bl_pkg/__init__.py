@@ -35,6 +35,11 @@ class BlExtPreferences(AddonPreferences):
         name="Time Out",
         default=10,
     )
+    show_development: BoolProperty(
+        name="Show Development Utilities",
+        description="Show utilities intended for developing the extension",
+        default=False,
+    )
 
 
 class StatusInfoUI:
@@ -58,9 +63,23 @@ def cookie_from_session():
     # Don't use a constant as it may be changed at run-time.
     return bpy.app.tempdir
 
+
+# -----------------------------------------------------------------------------
+# Shared Low Level Utilities
+
+def repo_paths_or_none(repo_item):
+    if (directory := repo_item.directory) == "":
+        return None, None
+    if repo_item.use_remote_path:
+        if not (remote_path := repo_item.remote_path):
+            return None, None
+    else:
+        remote_path = ""
+    return directory, remote_path
+
+
 # -----------------------------------------------------------------------------
 # Wrap Handlers
-
 
 _monkeypatch_extenions_repos_update_dirs = set()
 
@@ -72,8 +91,11 @@ def monkeypatch_extenions_repos_update_pre_impl():
     for repo_item in extension_repos:
         if not repo_item.enabled:
             continue
+        directory, _repo_path = repo_paths_or_none(repo_item)
+        if directory is None:
+            continue
 
-        _monkeypatch_extenions_repos_update_dirs.add(repo_item.directory)
+        _monkeypatch_extenions_repos_update_dirs.add(directory)
 
 
 def monkeypatch_extenions_repos_update_post_impl():
@@ -86,13 +108,15 @@ def monkeypatch_extenions_repos_update_post_impl():
     for repo_item in extension_repos:
         if not repo_item.enabled:
             continue
+        directory, _repo_path = repo_paths_or_none(repo_item)
+        if directory is None:
+            continue
 
-        directory = repo_item.directory
         if directory in _monkeypatch_extenions_repos_update_dirs:
             continue
         # Ignore missing because the new repo might not have a JSON file.
-        repo_cache_store.refresh_remote_from_directory(directory=directory, force=True)
-        repo_cache_store.refresh_local_from_directory(directory=directory, ignore_missing=True)
+        repo_cache_store.refresh_remote_from_directory(directory=directory, error_fn=print, force=True)
+        repo_cache_store.refresh_local_from_directory(directory=directory, error_fn=print, ignore_missing=True)
 
     _monkeypatch_extenions_repos_update_dirs.clear()
 
@@ -172,6 +196,45 @@ repo_status_text = StatusInfoUI()
 repo_cache_store = None
 
 
+# -----------------------------------------------------------------------------
+# Theme Integration
+
+def theme_preset_draw(menu, context):
+    layout = menu.layout
+    repos_all = [
+        repo_item for repo_item in context.preferences.filepaths.extension_repos
+        if repo_item.enabled
+    ]
+    if not repos_all:
+        return
+    import os
+    menu_idname = type(menu).__name__
+    for i, pkg_manifest_local in enumerate(repo_cache_store.pkg_manifest_from_local_ensure(error_fn=print)):
+        if pkg_manifest_local is None:
+            continue
+        repo_item = repos_all[i]
+        directory = repo_item.directory
+        for pkg_idname, value in pkg_manifest_local.items():
+            if value["type"] != "theme":
+                continue
+
+            theme_dir = os.path.join(directory, pkg_idname)
+            theme_files = [
+                filename for entry in os.scandir(theme_dir)
+                if ((not entry.is_dir()) and
+                    (not (filename := entry.name).startswith(".")) and
+                    filename.lower().endswith(".xml"))
+            ]
+            theme_files.sort()
+            for filename in theme_files:
+                props = layout.operator(menu.preset_operator, text=bpy.path.display_name(filename))
+                props.filepath = os.path.join(theme_dir, os.path.join(theme_dir, filename))
+                props.menu_idname = menu_idname
+
+
+# -----------------------------------------------------------------------------
+# Registration
+
 classes = (
     BlExtPreferences,
 )
@@ -211,20 +274,25 @@ def register():
             None,
             ('ADDON', "Add-ons", "Only show add-ons"),
             ('THEME', "Themes", "Only show themes"),
-            ('KEYMAP', "Key Maps", "Only show key-maps"),
+            ('KEYMAP', "Keymaps", "Only show keymaps"),
         ),
         name="Filter by Type",
         description="Show extensions by type",
         default='ALL',
+    )
+    WindowManager.extension_enabled_only = BoolProperty(
+        name="Enabled Extensions Only",
+        description="Only show enabled extensions",
     )
     WindowManager.extension_installed_only = BoolProperty(
         name="Installed Extensions Only",
         description="Only show installed extensions",
     )
 
-    monkeypatch_install()
+    from bl_ui.space_userpref import USERPREF_MT_interface_theme_presets
+    USERPREF_MT_interface_theme_presets.append(theme_preset_draw)
 
-    # addon_prefs = bpy.context.preferences.addons[__name__].preferences
+    monkeypatch_install()
 
 
 def unregister():
@@ -242,6 +310,7 @@ def unregister():
 
     del WindowManager.extension_search
     del WindowManager.extension_type
+    del WindowManager.extension_enabled_only
     del WindowManager.extension_installed_only
 
     for cls in classes:
@@ -252,5 +321,8 @@ def unregister():
     else:
         repo_cache_store.clear()
         repo_cache_store = None
+
+    from bl_ui.space_userpref import USERPREF_MT_interface_theme_presets
+    USERPREF_MT_interface_theme_presets.remove(theme_preset_draw)
 
     monkeypatch_uninstall()
