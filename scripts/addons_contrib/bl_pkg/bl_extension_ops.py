@@ -33,8 +33,9 @@ from bpy.types import (
     Operator,
 )
 from bpy.props import (
+    CollectionProperty,
+    EnumProperty,
     StringProperty,
-    # BoolProperty,
     IntProperty,
 )
 from bpy.app.translations import (
@@ -60,10 +61,23 @@ from .bl_extension_utils import (
 USE_ENABLE_ON_INSTALL = True
 
 
-rna_prop_directory = StringProperty(name="Directory", subtype='FILE_PATH')
+rna_prop_directory = StringProperty(name="Repo Directory", subtype='FILE_PATH')
 rna_prop_repo_index = IntProperty(name="Repo Index", default=-1)
 rna_prop_repo_url = StringProperty(name="Repo URL", subtype='FILE_PATH')
 rna_prop_pkg_id = StringProperty(name="Package ID")
+
+
+def rna_prop_repo_enum_local_only_itemf(_self, context):
+    if context is None:
+        return []
+    return [
+        (
+            repo_item.module,
+            repo_item.name if repo_item.enabled else (repo_item.name + " (disabled)"),
+            "",
+        )
+        for repo_item in repo_iter_valid_local_only(context)
+    ]
 
 
 is_background = bpy.app.background
@@ -80,7 +94,7 @@ blender_extension_show = set()
 blender_filter_by_type_map = {
     "ALL": "",
     "ADDON": "add-on",
-    "KEYMAP": "key-map",
+    "KEYMAP": "keymap",
     "THEME": "theme",
 }
 
@@ -134,11 +148,30 @@ def lock_result_any_failed_with_report(op, lock_result, report_type='ERROR'):
     return any_errors
 
 
-def pkg_info_check_exclude_filter(item, search_lower):
+def pkg_info_check_exclude_filter_ex(name, tagline, search_lower):
     return (
-        (search_lower in item["name"].lower() or search_lower in iface_(item["name"]).lower()) or
-        (search_lower in item["description"].lower() or search_lower in iface_(item["description"]).lower())
+        (search_lower in name.lower() or search_lower in iface_(name).lower()) or
+        (search_lower in tagline.lower() or search_lower in iface_(tagline).lower())
     )
+
+
+def pkg_info_check_exclude_filter(item, search_lower):
+    return pkg_info_check_exclude_filter_ex(item["name"], item["tagline"], search_lower)
+
+
+def repo_iter_valid_local_only(context):
+    from . import repo_paths_or_none
+    extension_repos = context.preferences.filepaths.extension_repos
+    for repo_item in extension_repos:
+        if not repo_item.enabled:
+            continue
+        # Ignore repositories that have invalid settings.
+        directory, remote_path = repo_paths_or_none(repo_item)
+        if directory is None:
+            continue
+        if remote_path:
+            continue
+        yield repo_item
 
 
 class RepoItem(NamedTuple):
@@ -151,13 +184,19 @@ class RepoItem(NamedTuple):
 
 def repo_cache_store_refresh_from_prefs(include_disabled=False):
     from . import repo_cache_store
+    from . import repo_paths_or_none
     extension_repos = bpy.context.preferences.filepaths.extension_repos
-    repo_cache_store.refresh_from_repos(
-        repos=[
-            (repo.directory_or_default, repo.remote_path) for repo in extension_repos
-            if include_disabled or repo.enabled
-        ],
-    )
+    repos = []
+    for repo_item in extension_repos:
+        if not include_disabled:
+            if not repo_item.enabled:
+                continue
+        directory, remote_path = repo_paths_or_none(repo_item)
+        if directory is None:
+            continue
+        repos.append((directory, remote_path))
+
+    repo_cache_store.refresh_from_repos(repos=repos)
 
 
 def _preferences_ensure_disabled(*, repo_item, pkg_id_sequence, default_set):
@@ -211,7 +250,7 @@ def _preferences_ensure_disabled(*, repo_item, pkg_id_sequence, default_set):
 
     # NOTE(@ideasman42): clearing the modules is not great practice,
     # however we need to ensure this is fully un-loaded then reloaded.
-    for key, value in list(sys.modules.items()):
+    for key in list(sys.modules.keys()):
         if not key.startswith(prefix_base):
             continue
         if not (
@@ -269,17 +308,23 @@ def _preferences_ui_refresh_addons():
     addon_utils.modules._is_first = True
 
 
-def extension_repos_read_index(index):
+def extension_repos_read_index(index, *, include_disabled=False):
+    from . import repo_paths_or_none
     extension_repos = bpy.context.preferences.filepaths.extension_repos
     index_test = 0
     for repo_item in extension_repos:
-        if not repo_item.enabled:
+        if not include_disabled:
+            if not repo_item.enabled:
+                continue
+        directory, remote_path = repo_paths_or_none(repo_item)
+        if directory is None:
             continue
+
         if index == index_test:
             return RepoItem(
                 name=repo_item.name,
-                directory=repo_item.directory_or_default,
-                repo_url=repo_item.remote_path,
+                directory=directory,
+                repo_url=remote_path,
                 module=repo_item.module,
                 use_cache=repo_item.use_cache,
             )
@@ -287,19 +332,29 @@ def extension_repos_read_index(index):
     return None
 
 
-def extension_repos_read(include_disabled=False):
+def extension_repos_read(*, include_disabled=False):
+    from . import repo_paths_or_none
     extension_repos = bpy.context.preferences.filepaths.extension_repos
-    return [
-        RepoItem(
+    result = []
+
+    for repo_item in extension_repos:
+        if not include_disabled:
+            if not repo_item.enabled:
+                continue
+
+        # Ignore repositories that have invalid settings.
+        directory, remote_path = repo_paths_or_none(repo_item)
+        if directory is None:
+            continue
+
+        result.append(RepoItem(
             name=repo_item.name,
-            directory=repo_item.directory_or_default,
-            repo_url=repo_item.remote_path,
+            directory=directory,
+            repo_url=remote_path,
             module=repo_item.module,
             use_cache=repo_item.use_cache,
-        )
-        for repo_item in extension_repos
-        if include_disabled or repo_item.enabled
-    ]
+        ))
+    return result
 
 
 def _extension_repos_index_from_directory(directory):
@@ -313,26 +368,6 @@ def _extension_repos_index_from_directory(directory):
             if os.path.normpath(repo_item.directory) == directory:
                 return i
     return -1
-
-
-def _extension_repos_add(directory, repo_url):
-    addon_prefs = bpy.context.preferences.addons[__package__].preferences
-    repo_item = addon_prefs.repos.add()
-    repo_item.directory = directory
-    repo_item.repo_url = repo_url
-    # Pick a name, the update function ensures it's a valid module name & unique.
-    repo_item.module = directory.replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
-    addon_prefs.active_repo_index = len(addon_prefs.repos) - 1
-
-
-def _extension_repos_remove(directory):
-    addon_prefs = bpy.context.preferences.addons[__package__].preferences
-    i = _extension_repos_index_from_directory(directory)
-    if i == -1:
-        return
-    if i >= addon_prefs.active_repo_index:
-        addon_prefs.active_repo_index -= 1
-    addon_prefs.repos.remove(i)
 
 
 def _extensions_repo_from_directory(directory):
@@ -525,6 +560,10 @@ class _BlPkgCmdMixIn:
     def exec_command_finish(self):
         raise Exception("Subclass must define!")
 
+    def error_fn_from_exception(self, ex):
+        # A bit silly setting every time, but it's needed to ensure there is a title.
+        repo_status_text.log.append(("ERROR", str(ex)))
+
     def execute(self, context):
         is_modal = _is_modal(self)
         cmd_batch = self.exec_command_iter(is_modal)
@@ -532,6 +571,11 @@ class _BlPkgCmdMixIn:
         # In this case `exec_command_iter` should report an error.
         if cmd_batch is None:
             return {'CANCELLED'}
+
+        # Needed in cast there are no commands within `cmd_batch`,
+        # the title should still be set.
+        repo_status_text.title = cmd_batch.title
+
         result = CommandHandle.op_exec_from_iter(self, context, cmd_batch, is_modal)
         if 'FINISHED' in result:
             self.exec_command_finish()
@@ -567,15 +611,13 @@ class BlPkgDummyProgress(Operator, _BlPkgCmdMixIn):
 class BlPkgRepoSync(Operator, _BlPkgCmdMixIn):
     bl_idname = "bl_pkg.repo_sync"
     bl_label = "Ext Repo Sync"
-    __slots__ = _BlPkgCmdMixIn.cls_slots + (
-        "directory",
-    )
+    __slots__ = _BlPkgCmdMixIn.cls_slots
 
-    directory: rna_prop_directory
+    repo_directory: rna_prop_directory
     repo_index: rna_prop_repo_index
 
     def exec_command_iter(self, is_modal):
-        directory = _repo_dir_and_index_get(self.repo_index, self.directory, self.report)
+        directory = _repo_dir_and_index_get(self.repo_index, self.repo_directory, self.report)
         if not directory:
             return None
 
@@ -590,23 +632,27 @@ class BlPkgRepoSync(Operator, _BlPkgCmdMixIn):
                 return {'CANCELLED'}
 
         # Needed to refresh.
-        self.directory = directory
+        self.repo_directory = directory
 
         # Lock repositories.
         self.repo_lock = RepoLock(repo_directories=[directory], cookie=cookie_from_session())
         if lock_result_any_failed_with_report(self, self.repo_lock.acquire()):
             return None
 
-        return bl_extension_utils.CommandBatch(
-            title="Sync",
-            batch=[
+        cmd_batch = []
+        if repo_item.repo_url:
+            cmd_batch.append(
                 partial(
                     bl_extension_utils.repo_sync,
                     directory=directory,
                     repo_url=repo_item.repo_url,
                     use_idle=is_modal,
                 )
-            ],
+            )
+
+        return bl_extension_utils.CommandBatch(
+            title="Sync",
+            batch=cmd_batch,
         )
 
     def exec_command_finish(self):
@@ -617,7 +663,11 @@ class BlPkgRepoSync(Operator, _BlPkgCmdMixIn):
         del self.repo_lock
 
         repo_cache_store_refresh_from_prefs()
-        repo_cache_store.refresh_remote_from_directory(directory=self.directory, force=True)
+        repo_cache_store.refresh_remote_from_directory(
+            directory=self.repo_directory,
+            error_fn=self.error_fn_from_exception,
+            force=True,
+        )
         _preferences_ui_redraw()
 
 
@@ -642,12 +692,14 @@ class BlPkgRepoSyncAll(Operator, _BlPkgCmdMixIn):
 
         cmd_batch = []
         for repo_item in repos_all:
-            cmd_batch.append(partial(
-                bl_extension_utils.repo_sync,
-                directory=repo_item.directory,
-                repo_url=repo_item.repo_url,
-                use_idle=is_modal,
-            ))
+            # Local only repositories should still refresh, but not run the sync.
+            if repo_item.repo_url:
+                cmd_batch.append(partial(
+                    bl_extension_utils.repo_sync,
+                    directory=repo_item.directory,
+                    repo_url=repo_item.repo_url,
+                    use_idle=is_modal,
+                ))
 
         repos_lock = [repo_item.directory for repo_item in repos_all]
 
@@ -671,7 +723,11 @@ class BlPkgRepoSyncAll(Operator, _BlPkgCmdMixIn):
         repo_cache_store_refresh_from_prefs()
 
         for repo_item in extension_repos_read():
-            repo_cache_store.refresh_remote_from_directory(directory=repo_item.directory, force=True)
+            repo_cache_store.refresh_remote_from_directory(
+                directory=repo_item.directory,
+                error_fn=self.error_fn_from_exception,
+                force=True,
+            )
 
         _preferences_ui_redraw()
 
@@ -696,8 +752,12 @@ class BlPkgPkgUpgradeAll(Operator, _BlPkgCmdMixIn):
         packages_to_upgrade = [[] for _ in range(len(repos_all))]
         package_count = 0
 
-        pkg_manifest_local_all = list(repo_cache_store.pkg_manifest_from_local_ensure())
-        for repo_index, pkg_manifest_remote in enumerate(repo_cache_store.pkg_manifest_from_remote_ensure()):
+        pkg_manifest_local_all = list(repo_cache_store.pkg_manifest_from_local_ensure(
+            error_fn=self.error_fn_from_exception,
+        ))
+        for repo_index, pkg_manifest_remote in enumerate(repo_cache_store.pkg_manifest_from_remote_ensure(
+            error_fn=self.error_fn_from_exception,
+        )):
             if pkg_manifest_remote is None:
                 continue
 
@@ -734,7 +794,7 @@ class BlPkgPkgUpgradeAll(Operator, _BlPkgCmdMixIn):
             self._repo_directories.add(repo_item.directory)
 
         if not cmd_batch:
-            self.report({'ERROR'}, "No installed packages to upgrade")
+            self.report({'ERROR'}, "No installed packages to update")
             return None
 
         # Lock repositories.
@@ -764,7 +824,10 @@ class BlPkgPkgUpgradeAll(Operator, _BlPkgCmdMixIn):
         # Refresh installed packages for repositories that were operated on.
         from . import repo_cache_store
         for directory in self._repo_directories:
-            repo_cache_store.refresh_local_from_directory(directory=directory)
+            repo_cache_store.refresh_local_from_directory(
+                directory=directory,
+                error_fn=self.error_fn_from_exception,
+            )
 
         for repo_item, pkg_id_sequence, result in self._addon_restore:
             _preferences_ensure_enabled(
@@ -787,7 +850,9 @@ class BlPkgPkgInstallMarked(Operator, _BlPkgCmdMixIn):
     def exec_command_iter(self, is_modal):
         from . import repo_cache_store
         repos_all = extension_repos_read()
-        pkg_manifest_remote_all = list(repo_cache_store.pkg_manifest_from_remote_ensure())
+        pkg_manifest_remote_all = list(repo_cache_store.pkg_manifest_from_remote_ensure(
+            error_fn=self.error_fn_from_exception,
+        ))
         repo_pkg_map = _pkg_marked_by_repo(pkg_manifest_remote_all)
         self._repo_directories = set()
         package_count = 0
@@ -796,7 +861,10 @@ class BlPkgPkgInstallMarked(Operator, _BlPkgCmdMixIn):
         for repo_index, pkg_id_sequence in sorted(repo_pkg_map.items()):
             repo_item = repos_all[repo_index]
             # Filter out already installed.
-            pkg_manifest_local = repo_cache_store.refresh_local_from_directory(repo_item.directory)
+            pkg_manifest_local = repo_cache_store.refresh_local_from_directory(
+                directory=repo_item.directory,
+                error_fn=self.error_fn_from_exception,
+            )
             if pkg_manifest_local is None:
                 continue
             pkg_id_sequence = [pkg_id for pkg_id in pkg_id_sequence if pkg_id not in pkg_manifest_local]
@@ -837,7 +905,10 @@ class BlPkgPkgInstallMarked(Operator, _BlPkgCmdMixIn):
         # Refresh installed packages for repositories that were operated on.
         from . import repo_cache_store
         for directory in self._repo_directories:
-            repo_cache_store.refresh_local_from_directory(directory=directory)
+            repo_cache_store.refresh_local_from_directory(
+                directory=directory,
+                error_fn=self.error_fn_from_exception,
+            )
 
         _preferences_ui_redraw()
         _preferences_ui_refresh_addons()
@@ -855,7 +926,9 @@ class BlPkgPkgUninstallMarked(Operator, _BlPkgCmdMixIn):
         # TODO: check if the packages are already installed (notify the user).
         # Perhaps re-install?
         repos_all = extension_repos_read()
-        pkg_manifest_local_all = list(repo_cache_store.pkg_manifest_from_local_ensure())
+        pkg_manifest_local_all = list(repo_cache_store.pkg_manifest_from_local_ensure(
+            error_fn=self.error_fn_from_exception,
+        ))
         repo_pkg_map = _pkg_marked_by_repo(pkg_manifest_local_all)
         package_count = 0
 
@@ -869,7 +942,10 @@ class BlPkgPkgUninstallMarked(Operator, _BlPkgCmdMixIn):
             repo_item = repos_all[repo_index]
 
             # Filter out not installed.
-            pkg_manifest_local = repo_cache_store.refresh_local_from_directory(repo_item.directory)
+            pkg_manifest_local = repo_cache_store.refresh_local_from_directory(
+                directory=repo_item.directory,
+                error_fn=self.error_fn_from_exception,
+            )
             if pkg_manifest_local is None:
                 continue
             pkg_id_sequence = [pkg_id for pkg_id in pkg_id_sequence if pkg_id in pkg_manifest_local]
@@ -919,10 +995,211 @@ class BlPkgPkgUninstallMarked(Operator, _BlPkgCmdMixIn):
         # Refresh installed packages for repositories that were operated on.
         from . import repo_cache_store
         for directory in self._repo_directories:
-            repo_cache_store.refresh_local_from_directory(directory=directory)
+            repo_cache_store.refresh_local_from_directory(
+                directory=directory,
+                error_fn=self.error_fn_from_exception,
+            )
 
         _preferences_ui_redraw()
         _preferences_ui_refresh_addons()
+
+
+class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
+    """Install an extension from a file into a locally managed repository"""
+    bl_idname = "bl_pkg.pkg_install_files"
+    bl_label = "Install from Files"
+    __slots__ = _BlPkgCmdMixIn.cls_slots + (
+        "repo_directory",
+        "pkg_id_sequence"
+    )
+
+    filter_glob: StringProperty(default="*.txz", options={'HIDDEN'})
+
+    directory: StringProperty(
+        name="Directory",
+        subtype='DIR_PATH',
+        default="",
+    )
+    files: CollectionProperty(
+        type=bpy.types.OperatorFileListElement,
+        options={'HIDDEN', 'SKIP_SAVE'}
+    )
+
+    # Use for for scripts.
+    filepath: StringProperty(
+        subtype='FILE_PATH',
+    )
+
+    repo: EnumProperty(
+        name="Local Repository",
+        items=rna_prop_repo_enum_local_only_itemf,
+        description="The local repository to install extensions into",
+    )
+
+    def exec_command_iter(self, is_modal):
+        from .bl_extension_utils import (
+            pkg_manifest_dict_from_file_or_error,
+        )
+
+        self._addon_restore = []
+
+        # Happens when run from scripts and this argument isn't passed in.
+        if not self.properties.is_property_set("repo"):
+            self.report({'ERROR'}, "Repository not set")
+            return None
+
+        # Repository accessed.
+        repo_module_name = self.repo
+        repo_item = next(
+            (repo_item for repo_item in extension_repos_read() if repo_item.module == repo_module_name),
+            None,
+        )
+        # This should really never happen as poll means this shouldn't be possible.
+        assert repo_item is not None
+        del repo_module_name
+        # Done with the repository.
+
+        source_files = [os.path.join(file.name) for file in self.files]
+        source_directory = self.directory
+        # Support a single `filepath`, more convenient when calling from scripts.
+        if not (source_directory and source_files):
+            source_directory, source_file = os.path.split(self.filepath)
+            if not (source_directory and source_file):
+                self.report({'ERROR'}, "No source paths set")
+                return None
+            source_files = [source_file]
+            del source_file
+        assert len(source_files) > 0
+
+        # Make absolute paths.
+        source_files = [os.path.join(source_directory, filename) for filename in source_files]
+
+        # Extract meta-data from package files.
+        # Note that errors are ignored here, let the underlying install operation do this.
+        pkg_id_sequence = []
+        for source_filepath in source_files:
+            result = pkg_manifest_dict_from_file_or_error(source_filepath)
+            if isinstance(result, str):
+                continue
+            pkg_id = result["id"]
+            if pkg_id in pkg_id_sequence:
+                continue
+            pkg_id_sequence.append(pkg_id)
+
+        directory = repo_item.directory
+        assert directory != ""
+
+        # Collect package ID's.
+        self.repo_directory = directory
+        self.pkg_id_sequence = pkg_id_sequence
+
+        # Detect upgrade.
+        if pkg_id_sequence:
+            from . import repo_cache_store
+            pkg_manifest_local = repo_cache_store.refresh_local_from_directory(
+                directory=self.repo_directory,
+                error_fn=self.error_fn_from_exception,
+            )
+            if pkg_manifest_local is not None:
+                pkg_id_sequence_installed = [pkg_id for pkg_id in pkg_id_sequence if pkg_id in pkg_manifest_local]
+                if pkg_id_sequence_installed:
+                    result, errors = _preferences_ensure_disabled(
+                        repo_item=repo_item,
+                        pkg_id_sequence=pkg_id_sequence_installed,
+                        default_set=False,
+                    )
+                    self._addon_restore.append((repo_item, pkg_id_sequence_installed, result))
+            del repo_cache_store, pkg_manifest_local
+
+        # Lock repositories.
+        self.repo_lock = RepoLock(repo_directories=[repo_item.directory], cookie=cookie_from_session())
+        if lock_result_any_failed_with_report(self, self.repo_lock.acquire()):
+            return None
+
+        return bl_extension_utils.CommandBatch(
+            title="Install Package Files",
+            batch=[
+                partial(
+                    bl_extension_utils.pkg_install_files,
+                    directory=directory,
+                    files=source_files,
+                    use_idle=is_modal,
+                )
+            ],
+        )
+
+    def exec_command_finish(self):
+
+        # Unlock repositories.
+        lock_result_any_failed_with_report(self, self.repo_lock.release(), report_type='WARNING')
+        del self.repo_lock
+
+        # Refresh installed packages for repositories that were operated on.
+        from . import repo_cache_store
+
+        # Re-generate JSON meta-data from TOML files (needed for offline repository).
+        repo_cache_store.refresh_remote_from_directory(
+            directory=self.repo_directory,
+            error_fn=self.error_fn_from_exception,
+            force=True,
+        )
+        repo_cache_store.refresh_local_from_directory(
+            directory=self.repo_directory,
+            error_fn=self.error_fn_from_exception,
+        )
+
+        _preferences_ui_redraw()
+        _preferences_ui_refresh_addons()
+
+        pkg_id_sequence_installed = []
+        if self._addon_restore:
+            # Upgrade.
+            for repo_item, pkg_id_sequence, result in self._addon_restore:
+                _preferences_ensure_enabled(
+                    repo_item=repo_item,
+                    pkg_id_sequence=pkg_id_sequence,
+                    result=result,
+                )
+                pkg_id_sequence_installed = pkg_id_sequence
+
+        # Install.
+        if USE_ENABLE_ON_INSTALL:
+            import addon_utils
+
+            # TODO: it would be nice to include this message in the banner.
+            def handle_error(ex):
+                self.report({'ERROR'}, str(ex))
+
+            repo_item = _extensions_repo_from_directory(self.repo_directory)
+            for pkg_id in self.pkg_id_sequence:
+                # Check if the add-on will have been enabled from re-installing.
+                if pkg_id in pkg_id_sequence_installed:
+                    continue
+                addon_module_name = "bl_ext.{:s}.{:s}".format(repo_item.module, pkg_id)
+
+                addon_utils.enable(addon_module_name, default_set=True, handle_error=handle_error)
+
+    @classmethod
+    def poll(cls, context):
+        if next(repo_iter_valid_local_only(context), None) is None:
+            cls.poll_message_set("There must be at least one \"Local\" repository set to install extensions into")
+            return False
+        return True
+
+    def invoke(self, context, _event):
+        # Ensure the value is marked as set (else an error is reported).
+        self.repo = self.repo
+
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
+    def draw(self, context):
+        # Override draw because the repository names may be over-long and not fit well in the UI.
+        # Show the text & repository names in two separate rows.
+        layout = self.layout
+        col = layout.column()
+        col.label(text="Repository:")
+        col.prop(self, "repo", text="")
 
 
 class BlPkgPkgInstall(Operator, _BlPkgCmdMixIn):
@@ -930,7 +1207,7 @@ class BlPkgPkgInstall(Operator, _BlPkgCmdMixIn):
     bl_label = "Ext Package Install"
     __slots__ = _BlPkgCmdMixIn.cls_slots
 
-    directory: rna_prop_directory
+    repo_directory: rna_prop_directory
     repo_index: rna_prop_repo_index
 
     pkg_id: rna_prop_pkg_id
@@ -938,10 +1215,10 @@ class BlPkgPkgInstall(Operator, _BlPkgCmdMixIn):
     def exec_command_iter(self, is_modal):
         self._addon_restore = []
 
-        directory = _repo_dir_and_index_get(self.repo_index, self.directory, self.report)
+        directory = _repo_dir_and_index_get(self.repo_index, self.repo_directory, self.report)
         if not directory:
             return None
-        self.directory = directory
+        self.repo_directory = directory
 
         if (repo_item := _extensions_repo_from_directory_and_report(directory, self.report)) is None:
             return None
@@ -952,7 +1229,10 @@ class BlPkgPkgInstall(Operator, _BlPkgCmdMixIn):
 
         # Detect upgrade.
         from . import repo_cache_store
-        pkg_manifest_local = repo_cache_store.refresh_local_from_directory(directory=self.directory)
+        pkg_manifest_local = repo_cache_store.refresh_local_from_directory(
+            directory=self.repo_directory,
+            error_fn=self.error_fn_from_exception,
+        )
         is_installed = pkg_manifest_local is not None and (pkg_id in pkg_manifest_local)
         del repo_cache_store, pkg_manifest_local
 
@@ -993,7 +1273,10 @@ class BlPkgPkgInstall(Operator, _BlPkgCmdMixIn):
 
         # Refresh installed packages for repositories that were operated on.
         from . import repo_cache_store
-        repo_cache_store.refresh_local_from_directory(directory=self.directory)
+        repo_cache_store.refresh_local_from_directory(
+            directory=self.repo_directory,
+            error_fn=self.error_fn_from_exception,
+        )
 
         _preferences_ui_redraw()
         _preferences_ui_refresh_addons()
@@ -1015,7 +1298,7 @@ class BlPkgPkgInstall(Operator, _BlPkgCmdMixIn):
                 def handle_error(ex):
                     self.report({'ERROR'}, str(ex))
 
-                repo_item = _extensions_repo_from_directory(self.directory)
+                repo_item = _extensions_repo_from_directory(self.repo_directory)
                 addon_module_name = "bl_ext.{:s}.{:s}".format(repo_item.module, self.pkg_id)
                 addon_utils.enable(addon_module_name, default_set=True, handle_error=handle_error)
 
@@ -1025,17 +1308,17 @@ class BlPkgPkgUninstall(Operator, _BlPkgCmdMixIn):
     bl_label = "Ext Package Uninstall"
     __slots__ = _BlPkgCmdMixIn.cls_slots
 
-    directory: rna_prop_directory
+    repo_directory: rna_prop_directory
     repo_index: rna_prop_repo_index
 
     pkg_id: rna_prop_pkg_id
 
     def exec_command_iter(self, is_modal):
 
-        directory = _repo_dir_and_index_get(self.repo_index, self.directory, self.report)
+        directory = _repo_dir_and_index_get(self.repo_index, self.repo_directory, self.report)
         if not directory:
             return None
-        self.directory = directory
+        self.repo_directory = directory
 
         if (repo_item := _extensions_repo_from_directory_and_report(directory, self.report)) is None:
             return None
@@ -1075,7 +1358,10 @@ class BlPkgPkgUninstall(Operator, _BlPkgCmdMixIn):
 
         # Refresh installed packages for repositories that were operated on.
         from . import repo_cache_store
-        repo_cache_store.refresh_local_from_directory(directory=self.directory)
+        repo_cache_store.refresh_local_from_directory(
+            directory=self.repo_directory,
+            error_fn=self.error_fn_from_exception,
+        )
 
         _preferences_ui_redraw()
         _preferences_ui_refresh_addons()
@@ -1162,7 +1448,7 @@ class BlPkgPkgShowSettings(Operator):
     pkg_id: rna_prop_pkg_id
     repo_index: rna_prop_repo_index
 
-    def execute(self, context):
+    def execute(self, _context):
         repo_item = extension_repos_read_index(self.repo_index)
         bpy.ops.preferences.addon_show(module="bl_ext.{:s}.{:s}".format(repo_item.module, self.pkg_id))
         return {'FINISHED'}
@@ -1176,7 +1462,7 @@ class BlPkgPkgShowSettings(Operator):
 class BlPkgObsoleteMarked(Operator):
     """Zeroes package versions, useful for development - to test upgrading"""
     bl_idname = "bl_pkg.obsolete_marked"
-    bl_label = "Obsolete Marked Packages (Testing)"
+    bl_label = "Obsolete Marked"
 
     def execute(self, _context):
         from . import (
@@ -1184,7 +1470,7 @@ class BlPkgObsoleteMarked(Operator):
         )
 
         repos_all = extension_repos_read()
-        pkg_manifest_local_all = list(repo_cache_store.pkg_manifest_from_local_ensure())
+        pkg_manifest_local_all = list(repo_cache_store.pkg_manifest_from_local_ensure(error_fn=print))
         repo_pkg_map = _pkg_marked_by_repo(pkg_manifest_local_all)
         found = False
 
@@ -1198,7 +1484,10 @@ class BlPkgObsoleteMarked(Operator):
 
             for repo_index, pkg_id_sequence in sorted(repo_pkg_map.items()):
                 repo_item = repos_all[repo_index]
-                pkg_manifest_local = repo_cache_store.refresh_local_from_directory(repo_item.directory)
+                pkg_manifest_local = repo_cache_store.refresh_local_from_directory(
+                    repo_item.directory,
+                    error_fn=print,
+                )
                 found_for_repo = False
                 for pkg_id in pkg_id_sequence:
                     is_installed = pkg_id in pkg_manifest_local
@@ -1217,8 +1506,15 @@ class BlPkgObsoleteMarked(Operator):
                 return {'CANCELLED'}
 
             for directory in directories_update:
-                repo_cache_store.refresh_remote_from_directory(directory=directory, force=True)
-                repo_cache_store.refresh_local_from_directory(directory=directory)
+                repo_cache_store.refresh_remote_from_directory(
+                    directory=directory,
+                    error_fn=print,
+                    force=True,
+                )
+                repo_cache_store.refresh_local_from_directory(
+                    directory=directory,
+                    error_fn=print,
+                )
             _preferences_ui_redraw()
 
         return {'FINISHED'}
@@ -1277,6 +1573,7 @@ classes = (
     BlPkgRepoSync,
     BlPkgRepoSyncAll,
 
+    BlPkgPkgInstallFiles,
     BlPkgPkgInstall,
     BlPkgPkgUninstall,
 

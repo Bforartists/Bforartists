@@ -96,6 +96,13 @@ def ternarySearch(f, left, right, absolutePrecision):
             left = leftThird
         else:
             right = rightThird
+
+def flatten_children(iterable):
+    """Enumerate the iterator items as well as their children in the tree order."""
+    for item in iterable:
+        yield item
+        yield from flatten_children(item.children)
+
 '''
 
 UTILITIES_FUNC_COMMON_IK_FK = ['''
@@ -902,7 +909,7 @@ class RigLayers(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         row_table = collections.defaultdict(list)
-        for coll in context.active_object.data.collections:
+        for coll in flatten_children(context.active_object.data.collections):
             row_id = coll.get('rigify_ui_row', 0)
             if row_id > 0:
                 row_table[row_id].append(coll)
@@ -913,7 +920,9 @@ class RigLayers(bpy.types.Panel):
             if row_buttons:
                 for coll in row_buttons:
                     title = coll.get('rigify_ui_title') or coll.name
-                    row.prop(coll, 'is_visible', toggle=True, text=title)
+                    row2 = row.row()
+                    row2.active = coll.is_visible_ancestors
+                    row2.prop(coll, 'is_visible', toggle=True, text=title)
             else:
                 row.separator()
 '''

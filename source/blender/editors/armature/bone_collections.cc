@@ -135,6 +135,7 @@ static int bone_collection_add_exec(bContext *C, wmOperator * /*op*/)
   }
 
   ANIM_armature_bonecoll_active_set(armature, bcoll);
+  /* TODO: ensure the ancestors of the new bone collection are all expanded. */
 
   WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
   return OPERATOR_FINISHED;
@@ -417,6 +418,8 @@ static bool bone_collection_assign_poll(bContext *C)
                                  "override; explicitly create an override on the Armature");
     return false;
   }
+
+  CTX_wm_operator_poll_msg_set(C, "Linked bone collections are not editable");
 
   /* The target bone collection can be specified by name in an operator property, but that's not
    * available here. So just allow in the poll function, and do the final check in the execute. */
@@ -929,6 +932,10 @@ static int add_or_move_to_collection_exec(bContext *C,
 
   bArmature *arm = static_cast<bArmature *>(ob->data);
   BoneCollection *target_bcoll = add_or_move_to_collection_bcoll(op, arm);
+  if (!target_bcoll) {
+    /* add_or_move_to_collection_bcoll() already reported the reason. */
+    return OPERATOR_CANCELLED;
+  }
 
   bool made_any_changes = false;
   bool had_bones_to_assign = false;
@@ -998,6 +1005,8 @@ static bool move_to_collection_poll(bContext *C)
                                  "explicitly create an override on the Armature");
     return false;
   }
+
+  CTX_wm_operator_poll_msg_set(C, "Linked bone collections are not editable");
 
   /* Ideally this would also check the target bone collection to move/assign to.
    * However, that requires access to the operator properties, and those are not
@@ -1107,7 +1116,9 @@ static void move_to_collection_menu_create(bContext *C, uiLayout *layout, void *
     child_count = arm->collection_root_count;
   }
   else {
-    /* Add a menu item to assign to the parent first, before listing the children. */
+    /* Add a menu item to assign to the parent first, before listing the children.
+     * The parent is assumed to be editable, because otherwise the menu would
+     * have been disabled already one recursion level higher. */
     const BoneCollection *parent = arm->collection_array[parent_bcoll_index];
     menu_add_item_for_move_assign_unassign(
         layout, arm, parent, parent_bcoll_index, is_move_operation);
@@ -1121,6 +1132,15 @@ static void move_to_collection_menu_create(bContext *C, uiLayout *layout, void *
    * bone collection wouldn't have been drawn as a menu. */
   for (int index = child_index; index < child_index + child_count; index++) {
     const BoneCollection *bcoll = arm->collection_array[index];
+
+    /* Avoid assigning/moving to a linked bone collection. */
+    if (!ANIM_armature_bonecoll_is_editable(arm, bcoll)) {
+      uiLayout *sub = uiLayoutRow(layout, false);
+      uiLayoutSetEnabled(sub, false);
+
+      menu_add_item_for_move_assign_unassign(sub, arm, bcoll, index, is_move_operation);
+      continue;
+    }
 
     if (blender::animrig::bonecoll_has_children(bcoll)) {
       uiItemMenuF(layout,
@@ -1151,7 +1171,8 @@ static int move_to_collection_regular_invoke(bContext *C, wmOperator *op)
 
 static int move_to_new_collection_invoke(bContext *C, wmOperator *op)
 {
-  return WM_operator_props_dialog_popup(C, op, 200);
+  return WM_operator_props_dialog_popup(
+      C, op, 200, IFACE_("Move to New Collection"), IFACE_("Move"));
 }
 
 static int move_to_collection_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
