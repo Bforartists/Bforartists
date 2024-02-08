@@ -268,18 +268,6 @@ class OBJECT_MT_modifier_add_assets(ModifierAddMenu, Menu):
         self.operator_modifier_add(layout, 'NODES')
         layout.separator()
 
-        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
-            layout.menu("OBJECT_MT_modifier_add_edit_assets")
-
-        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'VOLUME', 'GREASEPENCIL'}:
-            layout.menu("OBJECT_MT_modifier_add_generate_assets")
-
-        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE', 'VOLUME', 'GREASEPENCIL'}:
-            layout.menu("OBJECT_MT_modifier_add_deform_assets")
-
-        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
-            layout.menu("OBJECT_MT_modifier_add_physics_assets")
-
         if ob_type in {'GREASEPENCIL'}:
             layout.menu("OBJECT_MT_modifier_add_color_assets")
 
@@ -392,10 +380,6 @@ classes = (
     OBJECT_MT_modifier_add_physics,
     OBJECT_MT_modifier_add_color,
     OBJECT_MT_modifier_add_assets,
-    OBJECT_MT_modifier_add_edit_assets,
-    OBJECT_MT_modifier_add_generate_assets,
-    OBJECT_MT_modifier_add_deform_assets,
-    OBJECT_MT_modifier_add_physics_assets,
     OBJECT_MT_modifier_add_color_assets,
     OBJECT_OT_add_asset_modifier_menu,
     DATA_PT_gpencil_modifiers,
