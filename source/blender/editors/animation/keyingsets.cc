@@ -508,6 +508,7 @@ static void build_keyingset_enum(bContext *C, EnumPropertyItem **item, int *toti
         item_tmp.name = keyingset->name;
         item_tmp.description = keyingset->description;
         item_tmp.value = enum_index;
+        item_tmp.icon = ICON_KEYINGSET;
         RNA_enum_item_add(item, totitem, &item_tmp);
       }
     }
