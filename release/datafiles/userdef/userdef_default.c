@@ -108,7 +108,7 @@ const UserDef U_default = {
     .autoexec_paths = {NULL},
     .user_menus = {NULL},
 
-    .keyconfigstr = "bforartists", /*bfa - the active keymap*/
+    .keyconfigstr = "Bforartists", /*bfa - the active keymap*/
     .undosteps = 32,
     .undomemory = 0,
     .gp_manhattandist = 1,
