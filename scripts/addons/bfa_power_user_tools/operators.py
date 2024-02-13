@@ -106,7 +106,6 @@ class BFA_OT_insertframe_right(op):
         wm = context.window_manager
         if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes:
             self.layout.operator(BFA_OT_insertframe_right.bl_idname, icon=BFA_OT_insertframe_right.bl_icon)
-            self.layout.separator()
 
 
 
