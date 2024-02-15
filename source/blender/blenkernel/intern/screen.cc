@@ -39,7 +39,7 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_gpencil_legacy.h"
 #include "BKE_idprop.h"
@@ -238,7 +238,6 @@ SpaceType::~SpaceType()
   }
 
   BLI_freelistN(&this->regiontypes);
-  BLI_freelistN(&this->asset_shelf_types);
 }
 
 void BKE_spacetypes_free()

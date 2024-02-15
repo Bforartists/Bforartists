@@ -21,7 +21,7 @@
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_action.h"
 #include "BKE_anim_data.h"
@@ -29,14 +29,14 @@
 #include "BKE_curve.hh"
 #include "BKE_displist.h"
 #include "BKE_fcurve.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_key.hh"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object_types.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
@@ -3949,7 +3949,7 @@ void CURVE_OT_spline_type_set(wmOperatorType *ot)
 {
   static const EnumPropertyItem type_items[] = {
       {CU_POLY, "POLY", ICON_MESH_DATA, "Poly", ""},
-      {CU_BEZIER, "BEZIER", ICON_CURVE_DATA, "Bezier", ""},
+      {CU_BEZIER, "BEZIER", ICON_CURVE_DATA, "Bézier", ""},
       {CU_NURBS, "NURBS", ICON_CURVE_DATA, "NURBS", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
@@ -3973,7 +3973,7 @@ void CURVE_OT_spline_type_set(wmOperatorType *ot)
                   "use_handles",
                   false,
                   "Handles",
-                  "Use handles when converting bezier curves into polygons");
+                  "Use handles when converting Bézier curves into polygons");
 }
 
 /** \} */
@@ -6801,7 +6801,7 @@ static int curve_decimate_exec(bContext *C, wmOperator *op)
   }
 
   if (all_supported_multi == false) {
-    BKE_report(op->reports, RPT_WARNING, "Only bezier curves are supported");
+    BKE_report(op->reports, RPT_WARNING, "Only Bézier curves are supported");
   }
 
   return OPERATOR_FINISHED;

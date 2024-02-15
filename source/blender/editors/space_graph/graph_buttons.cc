@@ -23,14 +23,14 @@
 #include "BLI_math_rotation.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_anim_data.h"
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
 #include "BKE_fcurve.h"
 #include "BKE_fcurve_driver.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_main.hh"
 #include "BKE_screen.hh"
 #include "BKE_unit.hh"
@@ -431,8 +431,6 @@ static void graph_panel_key_properties(const bContext *C, Panel *panel)
                       0,
                       0,
                       0,
-                      0,
-                      0,
                       nullptr);
       UI_but_func_set(but, graphedit_activekey_update_cb, fcu, bezt);
 
@@ -448,8 +446,6 @@ static void graph_panel_key_properties(const bContext *C, Panel *panel)
                       &bezt_ptr,
                       "co_ui",
                       1,
-                      0,
-                      0,
                       0,
                       0,
                       nullptr);
@@ -475,8 +471,6 @@ static void graph_panel_key_properties(const bContext *C, Panel *panel)
                       0,
                       0,
                       0,
-                      -1,
-                      -1,
                       "Type of left handle");
       UI_but_func_set(but, graphedit_activekey_handles_cb, fcu, bezt);
 
@@ -491,8 +485,6 @@ static void graph_panel_key_properties(const bContext *C, Panel *panel)
                       UI_UNIT_Y,
                       &bezt_ptr,
                       "handle_left",
-                      0,
-                      0,
                       0,
                       0,
                       0,
@@ -511,8 +503,6 @@ static void graph_panel_key_properties(const bContext *C, Panel *panel)
                       &bezt_ptr,
                       "handle_left",
                       1,
-                      0,
-                      0,
                       0,
                       0,
                       nullptr);
@@ -539,8 +529,6 @@ static void graph_panel_key_properties(const bContext *C, Panel *panel)
                       0,
                       0,
                       0,
-                      -1,
-                      -1,
                       "Type of right handle");
       UI_but_func_set(but, graphedit_activekey_handles_cb, fcu, bezt);
 
@@ -555,8 +543,6 @@ static void graph_panel_key_properties(const bContext *C, Panel *panel)
                       UI_UNIT_Y,
                       &bezt_ptr,
                       "handle_right",
-                      0,
-                      0,
                       0,
                       0,
                       0,
@@ -575,8 +561,6 @@ static void graph_panel_key_properties(const bContext *C, Panel *panel)
                       &bezt_ptr,
                       "handle_right",
                       1,
-                      0,
-                      0,
                       0,
                       0,
                       nullptr);
@@ -955,8 +939,6 @@ static void graph_draw_driven_property_enabled_btn(uiLayout *layout,
             UI_UNIT_Y,
             &fcurve_ptr,
             "mute",
-            0,
-            0,
             0,
             0,
             0,

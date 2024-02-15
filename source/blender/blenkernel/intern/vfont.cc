@@ -29,7 +29,7 @@
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_curve_types.h"
 #include "DNA_object_types.h"
@@ -37,9 +37,9 @@
 #include "DNA_vfont_types.h"
 
 #include "BKE_anim_path.h"
-#include "BKE_bpath.h"
+#include "BKE_bpath.hh"
 #include "BKE_curve.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"

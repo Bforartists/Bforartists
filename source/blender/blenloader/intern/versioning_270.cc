@@ -57,7 +57,7 @@
 #include "BKE_mask.h"
 #include "BKE_modifier.hh"
 #include "BKE_node.h"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_tracking.h"
 #include "DNA_material_types.h"
@@ -72,9 +72,9 @@
 #include "BLI_string.h"
 #include "BLI_string_utils.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
-#include "BLO_readfile.h"
+#include "BLO_readfile.hh"
 
 #include "NOD_common.h"
 #include "NOD_composite.hh"

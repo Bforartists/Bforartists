@@ -14,12 +14,12 @@
 #include "BKE_appdir.hh"
 #include "BKE_blendfile.hh"
 #include "BKE_context.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_main.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 #include "BKE_screen.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #ifdef WIN32
 #  include "BLI_winstuff.h"

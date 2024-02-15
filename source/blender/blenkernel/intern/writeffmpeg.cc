@@ -29,12 +29,12 @@
 #  include "BLI_threads.h"
 #  include "BLI_utildefines.h"
 
-#  include "BKE_global.h"
+#  include "BKE_global.hh"
 #  include "BKE_idprop.h"
 #  include "BKE_image.h"
 #  include "BKE_lib_id.hh"
 #  include "BKE_main.hh"
-#  include "BKE_report.h"
+#  include "BKE_report.hh"
 #  include "BKE_sound.h"
 #  include "BKE_writeffmpeg.hh"
 
@@ -1195,7 +1195,7 @@ static int start_ffmpeg_impl(FFMpegContext *context,
 
   of = avformat_alloc_context();
   if (!of) {
-    BKE_report(reports, RPT_ERROR, "Can't allocate FFMPEG format context");
+    BKE_report(reports, RPT_ERROR, "Can't allocate FFmpeg format context");
     return 0;
   }
 
@@ -1266,7 +1266,7 @@ static int start_ffmpeg_impl(FFMpegContext *context,
     if (context->ffmpeg_audio_codec != AV_CODEC_ID_NONE &&
         rd->ffcodecdata.audio_mixrate != 48000 && rd->ffcodecdata.audio_channels != 2)
     {
-      BKE_report(reports, RPT_ERROR, "FFMPEG only supports 48khz / stereo audio for DV!");
+      BKE_report(reports, RPT_ERROR, "FFmpeg only supports 48khz / stereo audio for DV!");
       goto fail;
     }
   }

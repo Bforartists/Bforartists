@@ -21,7 +21,7 @@
 #include "BLI_timecode.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
@@ -30,7 +30,7 @@
 
 #include "BKE_colortools.hh"
 #include "BKE_context.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_image.h"
 #include "BKE_image_format.h"
 #include "BKE_layer.hh"
@@ -39,8 +39,8 @@
 #include "BKE_node.hh"
 #include "BKE_node_tree_update.hh"
 #include "BKE_object.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 
 #include "NOD_composite.hh"
@@ -1184,7 +1184,7 @@ void RENDER_OT_render(wmOperatorType *ot)
       "write_still",
       false,
       "Write Image",
-      "Save rendered the image to the output path (used only when animation is disabled)");
+      "Save the rendered image to the output path (used only when animation is disabled)");
   prop = RNA_def_boolean(ot->srna,
                          "use_viewport",
                          false,

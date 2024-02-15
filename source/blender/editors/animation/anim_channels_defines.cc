@@ -18,7 +18,7 @@
 #include "BLI_math_color.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
@@ -5617,8 +5617,6 @@ void ANIM_channel_draw_widgets(const bContext *C,
                       -1,
                       0,
                       0,
-                      -1,
-                      -1,
                       nullptr);
 
       /* copy what outliner does here, see outliner_buttons */

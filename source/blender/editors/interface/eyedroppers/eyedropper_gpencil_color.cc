@@ -16,7 +16,7 @@
 #include "BLI_listbase.h"
 #include "BLI_string.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_material_types.h"
@@ -28,7 +28,7 @@
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_paint.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "UI_interface.hh"
 
@@ -67,7 +67,7 @@ struct EyedropperGPencil {
 static void eyedropper_gpencil_status_indicators(bContext *C)
 {
   char msg_str[UI_MAX_DRAW_STR];
-  STRNCPY(msg_str, RPT_("LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"));
+  STRNCPY(msg_str, IFACE_("LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"));
 
   ED_workspace_status_text(C, msg_str);
 }

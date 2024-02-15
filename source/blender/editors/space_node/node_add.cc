@@ -19,7 +19,7 @@
 #include "BLI_listbase.h"
 #include "BLI_math_geom.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_context.hh"
 #include "BKE_image.h"
@@ -28,8 +28,8 @@
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_update.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_texture.h"
 
 #include "DEG_depsgraph_build.hh"
@@ -266,7 +266,7 @@ static bool node_group_add_poll(const bNodeTree &node_tree,
     if (disabled_hint) {
       BKE_reportf(&reports,
                   RPT_ERROR,
-                  "Can not add node group '%s' to '%s':\n  %s",
+                  "Cannot add node group '%s' to '%s':\n  %s",
                   node_group.id.name + 2,
                   node_tree.id.name + 2,
                   disabled_hint);
@@ -274,7 +274,7 @@ static bool node_group_add_poll(const bNodeTree &node_tree,
     else {
       BKE_reportf(&reports,
                   RPT_ERROR,
-                  "Can not add node group '%s' to '%s'",
+                  "Cannot add node group '%s' to '%s'",
                   node_group.id.name + 2,
                   node_tree.id.name + 2);
     }

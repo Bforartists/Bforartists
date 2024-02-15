@@ -42,7 +42,7 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_anim_data.h"
 #include "BKE_attribute.hh"
@@ -65,7 +65,7 @@
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
 #include "BKE_preview_image.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_vfont.hh"
 
 #include "DEG_depsgraph.hh"

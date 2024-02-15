@@ -23,7 +23,7 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_gpencil_modifier_types.h"
@@ -38,7 +38,7 @@
 #include "BKE_brush.hh"
 #include "BKE_context.hh"
 #include "BKE_deform.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_curve_legacy.h"
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_gpencil_legacy.h"
@@ -49,8 +49,8 @@
 #include "BKE_material.h"
 #include "BKE_object.hh"
 #include "BKE_paint.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_workspace.h"
 
 #include "UI_interface.hh"
@@ -1669,7 +1669,7 @@ static int gpencil_strokes_paste_exec(bContext *C, wmOperator *op)
   }
   else if ((BKE_gpencil_layer_is_editable(gpl) == false) && (type == GP_COPY_TO_ACTIVE)) {
     BKE_report(
-        op->reports, RPT_ERROR, "Can not paste strokes when active layer is hidden or locked");
+        op->reports, RPT_ERROR, "Cannot paste strokes when active layer is hidden or locked");
     return OPERATOR_CANCELLED;
   }
   else {

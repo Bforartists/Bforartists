@@ -29,6 +29,8 @@
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
 
+#include "BLT_translation.hh"
+
 #include "RNA_types.hh"
 
 #include "bpy.h"
@@ -45,7 +47,7 @@
 
 #include "BKE_appdir.hh"
 #include "BKE_context.hh"
-#include "BKE_global.h" /* Only for script checking. */
+#include "BKE_global.hh" /* Only for script checking. */
 #include "BKE_main.hh"
 #include "BKE_text.h"
 
@@ -689,7 +691,7 @@ void BPY_modules_load_user(bContext *C)
       if (!(G.f & G_FLAG_SCRIPT_AUTOEXEC)) {
         if (!(G.f & G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET)) {
           G.f |= G_FLAG_SCRIPT_AUTOEXEC_FAIL;
-          SNPRINTF(G.autoexec_fail, "Text '%s'", text->id.name + 2);
+          SNPRINTF(G.autoexec_fail, RPT_("Text '%s'"), text->id.name + 2);
 
           printf("scripts disabled for \"%s\", skipping '%s'\n",
                  BKE_main_blendfile_path(bmain),

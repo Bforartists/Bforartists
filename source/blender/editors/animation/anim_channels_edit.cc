@@ -32,14 +32,14 @@
 #include "BKE_anim_data.h"
 #include "BKE_context.hh"
 #include "BKE_fcurve.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_grease_pencil.hh"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_mask.h"
 #include "BKE_nla.h"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_workspace.h"
 
@@ -4313,7 +4313,7 @@ static void ANIM_OT_channel_view_pick(wmOperatorType *ot)
 }
 
 static const EnumPropertyItem channel_bake_key_options[] = {
-    {BEZT_IPO_BEZ, "BEZIER", 0, "Bezier", "New keys will be beziers"},
+    {BEZT_IPO_BEZ, "BEZIER", 0, "Bézier", "New keys will be Bézier"},
     {BEZT_IPO_LIN, "LIN", 0, "Linear", "New keys will be linear"},
     {BEZT_IPO_CONST, "CONST", 0, "Constant", "New keys will be constant"},
     {0, nullptr, 0, nullptr, nullptr},

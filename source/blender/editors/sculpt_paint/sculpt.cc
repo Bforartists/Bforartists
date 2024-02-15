@@ -44,6 +44,7 @@
 #include "BKE_customdata.hh"
 #include "BKE_image.h"
 #include "BKE_key.hh"
+#include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh.hh"
@@ -55,8 +56,8 @@
 #include "BKE_object_types.hh"
 #include "BKE_paint.hh"
 #include "BKE_pbvh_api.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_subdiv_ccg.hh"
 #include "BKE_subsurf.hh"
 #include "BLI_math_vector.hh"
@@ -1864,6 +1865,8 @@ static void calc_area_normal_and_center_task(Object *ob,
 
       float3 no;
       int flip_index;
+
+      r_any_vertex_sampled = true;
 
       normal_tri_v3(no, UNPACK3(co_tri));
 
@@ -4894,7 +4897,10 @@ bool SCULPT_cursor_geometry_info_update(bContext *C,
   ob = vc.obact;
   ss = ob->sculpt;
 
-  if (!ss->pbvh || !vc.rv3d) {
+  const View3D *v3d = CTX_wm_view3d(C);
+  const Base *base = CTX_data_active_base(C);
+
+  if (!ss->pbvh || !vc.rv3d || !BKE_base_is_visible(v3d, base)) {
     zero_v3(out->location);
     zero_v3(out->normal);
     zero_v3(out->active_vertex_co);
@@ -5277,6 +5283,8 @@ void SCULPT_flush_update_step(bContext *C, SculptUpdateType update_flags)
          * are trivial to access from the PBVH. Updating the object's evaluated geometry bounding
          * box is necessary because sculpt strokes don't cause an object reevaluation. */
         mesh->tag_positions_changed_no_normals();
+        /* Sculpt mode does node use or recalculate face corner normals, so they are cleared. */
+        mesh->runtime->corner_normals_cache.tag_dirty();
       }
       else {
         /* Drawing happens from the modifier stack evaluation result.
@@ -5633,16 +5641,13 @@ static int sculpt_brush_stroke_invoke(bContext *C, wmOperator *op, const wmEvent
   int retval;
   Object *ob = CTX_data_active_object(C);
 
+  const View3D *v3d = CTX_wm_view3d(C);
+  const Base *base = CTX_data_active_base(C);
   /* Test that ob is visible; otherwise we won't be able to get evaluated data
    * from the depsgraph. We do this here instead of SCULPT_mode_poll
    * to avoid falling through to the translate operator in the
-   * global view3d keymap.
-   *
-   * NOTE: #BKE_object_is_visible_in_viewport is not working here (it returns false
-   * if the object is in local view); instead, test for OB_HIDE_VIEWPORT directly.
-   */
-
-  if (ob->visibility_flag & OB_HIDE_VIEWPORT) {
+   * global view3d keymap. */
+  if (!BKE_base_is_visible(v3d, base)) {
     return OPERATOR_CANCELLED;
   }
 

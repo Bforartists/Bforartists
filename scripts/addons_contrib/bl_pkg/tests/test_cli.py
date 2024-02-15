@@ -30,7 +30,7 @@ unittest.util._MAX_LENGTH = 10_000
 # See the variable with the same name in `blender_ext.py`.
 REMOTE_REPO_HAS_JSON_IMPLIED = True
 
-PKG_EXT = ".txz"
+PKG_EXT = ".zip"
 
 # PKG_REPO_LIST_FILENAME = "bl_ext_repo.json"
 PKG_MANIFEST_FILENAME = "bl_ext_pkg_manifest.json"

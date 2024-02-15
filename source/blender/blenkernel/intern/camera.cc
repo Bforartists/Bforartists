@@ -38,10 +38,10 @@
 #include "BKE_lib_query.hh"
 #include "BKE_main.hh"
 #include "BKE_object.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DEG_depsgraph_query.hh"
 

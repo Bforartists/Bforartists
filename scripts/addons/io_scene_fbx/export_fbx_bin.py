@@ -1162,11 +1162,13 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                 # All faces are smooth shaded, so we can get normals from the vertices.
                 normal_source = me.vertex_normals
                 normal_mapping = b"ByVertice"
-            case 'FACE':
-                # Either all faces or all edges are sharp, so we can get normals from the faces.
-                normal_source = me.polygon_normals
-                normal_mapping = b"ByPolygon"
-            case 'CORNER':
+            # External software support for b"ByPolygon" normals does not seem to be as widely available as the other
+            # mappings. See blender/blender#117470.
+            # case 'FACE':
+            #     # Either all faces or all edges are sharp, so we can get normals from the faces.
+            #     normal_source = me.polygon_normals
+            #     normal_mapping = b"ByPolygon"
+            case 'CORNER' | 'FACE':
                 # We have a mix of sharp/smooth edges/faces or custom split normals, so need to get normals from
                 # corners.
                 normal_source = me.corner_normals
