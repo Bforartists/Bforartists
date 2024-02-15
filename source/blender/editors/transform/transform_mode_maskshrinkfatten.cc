@@ -18,7 +18,7 @@
 
 #include "UI_interface.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "transform.hh"
 #include "transform_convert.hh"
@@ -50,10 +50,10 @@ static void applyMaskShrinkFatten(TransInfo *t)
     char c[NUM_STR_REP_LEN];
 
     outputNumInput(&(t->num), c, &t->scene->unit);
-    SNPRINTF(str, RPT_("Feather Shrink/Fatten: %s"), c);
+    SNPRINTF(str, IFACE_("Feather Shrink/Fatten: %s"), c);
   }
   else {
-    SNPRINTF(str, RPT_("Feather Shrink/Fatten: %3f"), ratio);
+    SNPRINTF(str, IFACE_("Feather Shrink/Fatten: %3f"), ratio);
   }
 
   /* detect if no points have feather yet */

@@ -24,7 +24,7 @@
     .energy_deprecated = 10.0f, \
     .spotsize = DEG2RADF(45.0f), \
     .spotblend = 0.15f, \
-    .mode = LA_SHADOW | LA_SHAD_CONTACT, /* BFA - Shadows and Contact shadows on by default */ \
+    .mode = LA_SHADOW | LA_USE_SOFT_FALLOFF | LA_SHAD_CONTACT, /* BFA - Shadows and Contact shadows on by default */ \
     .clipsta = 0.05f, \
     .clipend = 40.0f, \
     .bias = 1.0f, \

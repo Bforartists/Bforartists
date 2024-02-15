@@ -148,6 +148,7 @@ class TIME_MT_view(Menu):
 
         layout.prop(st, "show_region_ui")#BFA
         layout.prop(st, "show_region_hud")
+        layout.prop(st, "show_region_channels")
 
         layout.separator()
 ## BFA - these properties were moved to the header options properties

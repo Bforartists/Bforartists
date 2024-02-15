@@ -27,7 +27,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_context.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 #include "BKE_screen.hh"
 
 #include "WM_api.hh"
@@ -37,7 +37,7 @@
 
 #include "UI_interface.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "ED_screen.hh"
 
@@ -404,7 +404,7 @@ static uiPopupBlockHandle *ui_popup_menu_create(
     pup->but = but;
 
     if (but->type == UI_BTYPE_PULLDOWN) {
-      ED_workspace_status_text(C, TIP_("Press spacebar to search..."));
+      ED_workspace_status_text(C, IFACE_("Press spacebar to search..."));
     }
   }
 
@@ -625,10 +625,10 @@ static void ui_popup_menu_create_from_menutype(bContext *C,
   handle->can_refresh = true;
 
   if (bool(mt->flag & MenuTypeFlag::SearchOnKeyPress)) {
-    ED_workspace_status_text(C, RPT_("Type to search..."));
+    ED_workspace_status_text(C, IFACE_("Type to search..."));
   }
   else if (mt->idname[0]) {
-    ED_workspace_status_text(C, RPT_("Press spacebar to search..."));
+    ED_workspace_status_text(C, IFACE_("Press spacebar to search..."));
   }
 }
 

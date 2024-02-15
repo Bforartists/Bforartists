@@ -72,7 +72,7 @@
 #include "SEQ_iterator.hh"
 #include "SEQ_sequencer.hh"
 
-#include "BLO_readfile.h"
+#include "BLO_readfile.hh"
 
 #include "readfile.hh"
 
@@ -618,8 +618,8 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
   if (bmain->versionfile <= 153) {
     Scene *sce = static_cast<Scene *>(bmain->scenes.first);
     while (sce) {
-      if (sce->r.blurfac == 0.0f) {
-        sce->r.blurfac = 1.0f;
+      if (sce->r.motion_blur_shutter == 0.0f) {
+        sce->r.motion_blur_shutter = 1.0f;
       }
       sce = static_cast<Scene *>(sce->id.next);
     }

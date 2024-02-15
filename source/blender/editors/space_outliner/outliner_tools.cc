@@ -40,11 +40,11 @@
 #include "BKE_anim_data.h"
 #include "BKE_animsys.h"
 #include "BKE_armature.hh"
-#include "BKE_collection.h"
+#include "BKE_collection.hh"
 #include "BKE_constraint.h"
 #include "BKE_context.hh"
 #include "BKE_fcurve.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_grease_pencil.hh"
 #include "BKE_idtype.hh"
 #include "BKE_layer.hh"
@@ -54,8 +54,8 @@
 #include "BKE_lib_remap.hh"
 #include "BKE_main.hh"
 #include "BKE_object.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 
 #include "DEG_depsgraph.hh"
@@ -69,8 +69,8 @@
 #include "ED_sequencer.hh"
 #include "ED_undo.hh"
 
-#include "BLT_translation.h" /* BFA - included by us */
-#include "ED_util.hh" /* BFA - included by us */
+#include "BLT_translation.hh" /* BFA - included by us */
+#include "ED_util.hh"         /* BFA - included by us */
 
 #include "WM_api.hh"
 #include "WM_message.hh"
@@ -80,7 +80,7 @@
 #include "UI_resources.hh"
 #include "UI_view2d.hh"
 
-#include "../../blender/blenloader/BLO_readfile.h"
+#include "../../blender/blenloader/BLO_readfile.hh"
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
@@ -554,7 +554,7 @@ enum eOutlinerLibOpSelectionSet {
 static const EnumPropertyItem prop_lib_op_selection_set[] = {
     {OUTLINER_LIB_SELECTIONSET_SELECTED,
      "SELECTED",
-    ICON_LIBRARY_DATA_OVERRIDE,
+     ICON_LIBRARY_DATA_OVERRIDE,
      "Selected",
      "Apply the operation over selected data-blocks only"},
     {OUTLINER_LIB_LIB_SELECTIONSET_CONTENT,
@@ -565,7 +565,7 @@ static const EnumPropertyItem prop_lib_op_selection_set[] = {
      "sub-tree)"},
     {OUTLINER_LIB_LIB_SELECTIONSET_SELECTED_AND_CONTENT,
      "SELECTED_AND_CONTENT",
-    ICON_LIBRARY,
+     ICON_LIBRARY,
      "Selected & Content",
      "Apply the operation over selected data-blocks and all their dependencies"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -821,7 +821,8 @@ static int outliner_scene_operation_exec(bContext *C, wmOperator *op)
                 OL_SCENE_OP_NEW,
                 OL_SCENE_OP_COPY_SETTINGS,
                 OL_SCENE_OP_COPY_LINKED,
-                OL_SCENE_OP_COPY_FULL)) {
+                OL_SCENE_OP_COPY_FULL))
+  {
     DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
     DEG_relations_tag_update(bmain);
     outliner_cleanup_tree(space_outliner);

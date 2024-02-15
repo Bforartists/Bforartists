@@ -9,6 +9,7 @@
 
 #include "BLI_ghash.h"
 #include "BLI_hash.hh"
+#include "BLI_math_base.hh"
 #include "BLI_rect.h"
 #include "BLI_span.hh"
 #include "BLI_threads.h"
@@ -18,6 +19,7 @@
 #include "COM_MemoryBuffer.h"
 #include "COM_MetaData.h"
 
+#include "BKE_node.h"
 #include "BKE_node_runtime.hh"
 
 #include "clew.h"
@@ -309,6 +311,8 @@ class NodeOperation {
  private:
   int id_;
   std::string name_;
+  bNodeInstanceKey node_instance_key_{NODE_INSTANCE_KEY_NONE};
+
   Vector<NodeOperationInput> inputs_;
   Vector<NodeOperationOutput> outputs_;
 
@@ -374,6 +378,15 @@ class NodeOperation {
   const int get_id() const
   {
     return id_;
+  }
+
+  const void set_node_instance_key(const bNodeInstanceKey &node_instance_key)
+  {
+    node_instance_key_ = node_instance_key;
+  }
+  const bNodeInstanceKey get_node_instance_key() const
+  {
+    return node_instance_key_;
   }
 
   /** Get constant value when operation is constant, otherwise return default_value. */
@@ -589,6 +602,14 @@ class NodeOperation {
   inline void read(float result[4], int x, int y, void *chunk_data)
   {
     execute_pixel(result, x, y, chunk_data);
+  }
+
+  inline void read_clamped(float result[4], int x, int y, void *chunk_data)
+  {
+    execute_pixel(result,
+                  math::clamp(x, 0, int(this->get_width()) - 1),
+                  math::clamp(y, 0, int(this->get_height()) - 1),
+                  chunk_data);
   }
 
   virtual void *initialize_tile_data(rcti * /*rect*/)
