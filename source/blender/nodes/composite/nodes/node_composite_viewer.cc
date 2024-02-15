@@ -8,7 +8,7 @@
 
 #include "BLI_math_vector_types.hh"
 
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_image.h"
 
 #include "RNA_access.hh"
@@ -72,6 +72,11 @@ class ViewerOperation : public NodeOperation {
 
   void execute() override
   {
+    /* See the compute_domain method for more information on the first condition. */
+    if (!context().use_composite_output() && !context().is_valid_compositing_region()) {
+      return;
+    }
+
     const Result &image = get_input("Image");
     const Result &alpha = get_input("Alpha");
 

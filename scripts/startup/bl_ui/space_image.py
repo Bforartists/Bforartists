@@ -1678,11 +1678,13 @@ class IMAGE_PT_view_vectorscope(ImageScopesPanel, Panel):
         layout.use_property_split = True
 
         sima = context.space_data
+
         layout.template_vectorscope(sima, "scopes")
 
         row = layout.split(factor=0.5)
         row.label(text="Opacity")
         row.prop(sima.scopes, "vectorscope_alpha", text="")
+        row.prop(sima.scopes, "vectorscope_mode", text="")
 
 
 class IMAGE_PT_sample_line(ImageScopesPanel, Panel):

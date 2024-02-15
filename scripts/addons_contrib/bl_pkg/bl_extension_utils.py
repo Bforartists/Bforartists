@@ -58,6 +58,7 @@ from typing import (
     Optional,
     Dict,
     Sequence,
+    Set,
     Tuple,
     Union,
 )
@@ -828,6 +829,7 @@ class RepoCacheStore:
             *,
             error_fn: Callable[[BaseException], None],
             ignore_missing: bool = False,
+            directory_subset: Optional[Set[str]] = None,
     ) -> Optional[Dict[str, Dict[str, Any]]]:
         for repo_entry in self._repos:
             if directory == repo_entry.directory:
@@ -845,8 +847,13 @@ class RepoCacheStore:
             error_fn: Callable[[BaseException], None],
             check_files: bool = False,
             ignore_missing: bool = False,
+            directory_subset: Optional[Set[str]] = None,
     ) -> Generator[Optional[Dict[str, Dict[str, Any]]], None, None]:
         for repo_entry in self._repos:
+            if directory_subset is not None:
+                if repo_entry.directory not in directory_subset:
+                    continue
+
             json_data = repo_entry._json_data_ensure(
                 check_files=check_files,
                 ignore_missing=ignore_missing,
@@ -866,11 +873,14 @@ class RepoCacheStore:
             *,
             error_fn: Callable[[BaseException], None],
             check_files: bool = False,
+            directory_subset: Optional[Set[str]] = None,
     ) -> Generator[Optional[Dict[str, Dict[str, Any]]], None, None]:
-        if check_files:
-            for repo_entry in self._repos:
-                repo_entry.force_local_refresh()
         for repo_entry in self._repos:
+            if directory_subset is not None:
+                if repo_entry.directory not in directory_subset:
+                    continue
+            if check_files:
+                repo_entry.force_local_refresh()
             yield repo_entry.pkg_manifest_from_local_ensure(error_fn=error_fn)
 
     def clear(self) -> None:

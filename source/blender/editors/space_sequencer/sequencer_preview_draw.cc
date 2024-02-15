@@ -22,8 +22,8 @@
 #include "DNA_space_types.h"
 
 #include "BKE_context.hh"
-#include "BKE_global.h"
-#include "BKE_scene.h"
+#include "BKE_global.hh"
+#include "BKE_scene.hh"
 
 #include "IMB_colormanagement.hh"
 #include "IMB_imbuf.hh"
@@ -640,7 +640,7 @@ static void draw_vectorscope_graticule(ARegion *region, SeqQuadsBatch &quads, co
   const float w = BLI_rctf_size_x(&area);
   const float h = BLI_rctf_size_y(&area);
   const float2 center{BLI_rctf_cent_x(&area), BLI_rctf_cent_y(&area)};
-  /* Vectorscope image is scaled over UV range (+/-0.615). */
+  /* Vector-scope image is scaled over UV range (+/-0.615). */
   const float radius = ((w < h) ? w : h) * 0.5f * (0.5f / 0.615f);
 
   /* Precalculate circle points/colors. */

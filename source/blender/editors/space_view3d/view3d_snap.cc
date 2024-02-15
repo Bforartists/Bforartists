@@ -28,8 +28,8 @@
 #include "BKE_main.hh"
 #include "BKE_mball.hh"
 #include "BKE_object.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_tracking.h"
 
 #include "DEG_depsgraph.hh"
@@ -52,7 +52,7 @@
 
 #include "view3d_intern.h"
 
-#include "BLT_translation.h" /*bfa - needed for CTX_IFACE_ */
+#include "BLT_translation.hh" /* BFA - needed for CTX_IFACE_ */
 
 using blender::Vector;
 

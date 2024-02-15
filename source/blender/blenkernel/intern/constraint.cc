@@ -26,7 +26,7 @@
 #include "BLI_math_vector.h"
 #include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_action_types.h"
 #include "DNA_armature_types.h"
@@ -49,7 +49,7 @@
 #include "BKE_animsys.h"
 #include "BKE_armature.hh"
 #include "BKE_bvhutils.hh"
-#include "BKE_cachefile.h"
+#include "BKE_cachefile.hh"
 #include "BKE_camera.h"
 #include "BKE_constraint.h"
 #include "BKE_curve.hh"
@@ -57,7 +57,7 @@
 #include "BKE_displist.h"
 #include "BKE_editmesh.hh"
 #include "BKE_fcurve_driver.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_idprop.h"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_query.hh"
@@ -66,7 +66,7 @@
 #include "BKE_movieclip.h"
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_shrinkwrap.hh"
 #include "BKE_tracking.h"
 
@@ -88,7 +88,7 @@
 #endif
 
 #ifdef WITH_USD
-#  include "usd.h"
+#  include "usd.hh"
 #endif
 
 /* ---------------------------------------------------------------------------- */
@@ -5395,7 +5395,8 @@ static void transformcache_evaluate(bConstraint *con, bConstraintOb *cob, ListBa
       break;
     case CACHEFILE_TYPE_USD:
 #  ifdef WITH_USD
-      USD_get_transform(data->reader, cob->matrix, time * FPS, cache_file->scale);
+      blender::io::usd::USD_get_transform(
+          data->reader, cob->matrix, time * FPS, cache_file->scale);
 #  endif
       break;
     case CACHE_FILE_TYPE_INVALID:

@@ -7,7 +7,7 @@
 #include "BLI_listbase.h"
 #include "BLI_string.h"
 
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_lib_remap.hh"
 #include "BKE_screen.hh"
 
@@ -35,7 +35,7 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BLF_api.hh"
 

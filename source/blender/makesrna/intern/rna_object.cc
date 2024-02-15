@@ -29,10 +29,10 @@
 #include "BLI_math_vector.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_camera.h"
-#include "BKE_collection.h"
+#include "BKE_collection.hh"
 #include "BKE_editlattice.h"
 #include "BKE_editmesh.hh"
 #include "BKE_layer.hh"
@@ -346,7 +346,7 @@ const EnumPropertyItem rna_enum_object_axis_items[] = {
 #  include "BKE_curve.hh"
 #  include "BKE_deform.hh"
 #  include "BKE_effect.h"
-#  include "BKE_global.h"
+#  include "BKE_global.hh"
 #  include "BKE_gpencil_modifier_legacy.h"
 #  include "BKE_key.hh"
 #  include "BKE_light_linking.h"
@@ -356,7 +356,7 @@ const EnumPropertyItem rna_enum_object_axis_items[] = {
 #  include "BKE_modifier.hh"
 #  include "BKE_object.hh"
 #  include "BKE_particle.h"
-#  include "BKE_scene.h"
+#  include "BKE_scene.hh"
 
 #  include "DEG_depsgraph.hh"
 #  include "DEG_depsgraph_build.hh"
@@ -1879,7 +1879,9 @@ bool rna_Object_modifiers_override_apply(Main *bmain,
   ParticleSystem *psys_dst = (mod_dst->type == eModifierType_ParticleSystem) ?
                                  (reinterpret_cast<ParticleSystemModifierData *>(mod_dst))->psys :
                                  nullptr;
+  const int persistent_uid = mod_dst->persistent_uid;
   BKE_modifier_copydata(mod_src, mod_dst);
+  mod_dst->persistent_uid = persistent_uid;
   if (mod_dst->type == eModifierType_ParticleSystem) {
     psys_dst->flag &= ~PSYS_DELETE;
     (reinterpret_cast<ParticleSystemModifierData *>(mod_dst))->psys = psys_dst;

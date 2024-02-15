@@ -25,7 +25,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_armature.hh"
-#include "BKE_collection.h"
+#include "BKE_collection.hh"
 #include "BKE_constraint.h"
 #include "BKE_context.hh"
 #include "BKE_deform.hh"
@@ -38,7 +38,7 @@
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
 #include "BKE_particle.h"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 #include "BKE_shader_fx.h"
 
 #include "DEG_depsgraph.hh"

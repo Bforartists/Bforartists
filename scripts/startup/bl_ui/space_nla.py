@@ -189,7 +189,7 @@ class NLA_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # bfa - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-
+        layout.prop(st, "show_region_channels")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon="BORDER_RECT")
@@ -353,6 +353,7 @@ class NLA_MT_add(Menu):
 
 class NLA_MT_tracks(Menu):
     bl_label = "Track"
+    bl_translation_context = i18n_contexts.id_action
 
     def draw(self, _context):
         layout = self.layout
