@@ -14,7 +14,7 @@
 #include "BLI_math_matrix.h"
 #include "BLI_math_vector.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_brush_types.h"
 #include "DNA_gpencil_legacy_types.h"
@@ -25,7 +25,7 @@
 #include "BKE_context.hh"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_material.h"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -691,8 +691,8 @@ static bool brush_smear_apply(tGP_BrushVertexpaintData *gso,
 static void gpencil_vertexpaint_brush_header_set(bContext *C)
 {
   ED_workspace_status_text(C,
-                           RPT_("GPencil Vertex Paint: LMB to paint | RMB/Escape to Exit"
-                                " | Ctrl to Invert Action"));
+                           IFACE_("GPencil Vertex Paint: LMB to paint | RMB/Escape to Exit"
+                                  " | Ctrl to Invert Action"));
 }
 
 /* ************************************************ */

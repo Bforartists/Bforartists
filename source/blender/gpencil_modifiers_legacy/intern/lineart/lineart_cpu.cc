@@ -24,12 +24,12 @@
 
 #include "BKE_attribute.hh"
 #include "BKE_camera.h"
-#include "BKE_collection.h"
+#include "BKE_collection.hh"
 #include "BKE_customdata.hh"
 #include "BKE_deform.hh"
 #include "BKE_duplilist.h"
 #include "BKE_editmesh.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_gpencil_modifier_legacy.h"
@@ -40,7 +40,7 @@
 #include "BKE_mesh_runtime.hh"
 #include "BKE_object.hh"
 #include "BKE_pointcache.h"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "DEG_depsgraph_query.hh"
 

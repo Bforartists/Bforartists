@@ -203,6 +203,7 @@ class GRAPH_PT_properties_view_options(Panel):
             layout.operator("anim.show_group_colors_deprecated", icon='CHECKBOX_HLT')
         col.prop(st, "use_auto_merge_keyframes")
         col.prop(st, "use_beauty_drawing")
+        layout.prop(st, "autolock_translation_axis")
 
         col = layout.column(align=True)
         col.prop(st, "show_extrapolation")
@@ -258,7 +259,7 @@ class GRAPH_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-
+        layout.prop(st, "show_region_channels")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')

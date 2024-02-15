@@ -1,13 +1,13 @@
 /* SPDX-FileCopyrightText: 2019 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
-#include "usd_writer_mesh.h"
+#include "usd_writer_mesh.hh"
 
-#include "usd_armature_utils.h"
-#include "usd_blend_shape_utils.h"
-#include "usd_hierarchy_iterator.h"
-#include "usd_skel_convert.h"
-#include "usd_writer_armature.h"
+#include "usd_armature_utils.hh"
+#include "usd_blend_shape_utils.hh"
+#include "usd_hierarchy_iterator.hh"
+#include "usd_skel_convert.hh"
+#include "usd_writer_armature.hh"
 
 #include <pxr/usd/usdGeom/bboxCache.h>
 #include <pxr/usd/usdGeom/mesh.h>
@@ -37,7 +37,7 @@
 #include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "DEG_depsgraph.hh"
 

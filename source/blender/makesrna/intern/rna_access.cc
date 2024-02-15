@@ -30,19 +30,19 @@
 #include "BLI_utildefines.h"
 
 #include "BLF_api.hh"
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_anim_data.h"
-#include "BKE_collection.h"
+#include "BKE_collection.hh"
 #include "BKE_context.hh"
 #include "BKE_fcurve.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_idprop.h"
 #include "BKE_idtype.hh"
 #include "BKE_lib_override.hh"
 #include "BKE_main.hh"
 #include "BKE_node.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "CLG_log.h"
 
@@ -532,6 +532,7 @@ void rna_property_rna_or_id_get(PropertyRNA *prop,
             idprop->ui_data);
         if (ui_data_int && ui_data_int->enum_items_num > 0) {
           r_prop_rna_or_id->rnaprop = &rna_PropertyGroupItem_enum;
+          return;
         }
       }
       r_prop_rna_or_id->rnaprop = typemap[int(idprop->type)];

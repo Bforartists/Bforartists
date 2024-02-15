@@ -1,15 +1,15 @@
 /* SPDX-FileCopyrightText: 2019 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
-#include "usd_writer_abstract.h"
-#include "usd_writer_material.h"
+#include "usd_writer_abstract.hh"
+#include "usd_writer_material.hh"
 
 #include <pxr/base/tf/stringUtils.h>
 #include <pxr/usd/usdGeom/bboxCache.h>
 #include <pxr/usd/usdGeom/scope.h>
 
 #include "BKE_customdata.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "BLI_assert.h"
 

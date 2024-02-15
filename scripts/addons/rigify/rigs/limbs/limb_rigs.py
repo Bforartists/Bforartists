@@ -1275,7 +1275,7 @@ def add_limb_toggle_pole(panel: 'PanelLayout', *,
     left_split = row.split(factor=0.65, align=True)
     left_split.operator('pose.rigify_limb_toggle_pole_{rig_id}',
                         icon='FORCE_MAGNETIC', properties=op_props)
-    icon = left_split.expr_if_else(left_split.expr_bone(master)['pole_vector'], 'CHECKBOX_HLT', 'CHECKBOX_DEHLT')
-    left_split.custom_prop(master, 'pole_vector', text='', icon=icon)
+    text = left_split.expr_if_else(left_split.expr_bone(master)['pole_vector'], 'On', 'Off')
+    left_split.custom_prop(master, 'pole_vector', text=text, toggle=True)
     row.operator('pose.rigify_limb_toggle_pole_bake_{rig_id}',
                  text='', icon='ACTION_TWEAK', properties=op_props)

@@ -13,6 +13,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <fmt/format.h>
 
 #include "AS_asset_library.hh"
 
@@ -35,19 +36,19 @@
 
 #include "BKE_context.hh"
 #include "BKE_customdata.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_idprop.h"
 #include "BKE_lib_remap.hh"
 #include "BKE_main.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_undo_system.hh"
 #include "BKE_workspace.h"
 
 #include "BKE_sound.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "ED_asset.hh"
 #include "ED_fileselect.hh"
@@ -899,7 +900,7 @@ void wm_event_handler_ui_cancel_ex(bContext *C,
       wmEvent event;
       wm_event_init_from_window(win, &event);
       event.type = EVT_BUT_CANCEL;
-      event.val = reactivate_button ? 0 : 1;
+      event.val = reactivate_button ? KM_NOTHING : KM_PRESS;
       event.flag = (eWM_EventFlag)0;
       handler->handle_fn(C, &event, handler->user_data);
     }
@@ -2025,8 +2026,8 @@ void WM_operator_name_call_ptr_with_depends_on_cursor(bContext *C,
     char header_text[UI_MAX_DRAW_STR];
     SNPRINTF(header_text,
              "%s %s",
-             RPT_("Input pending "),
-             (drawstr && drawstr[0]) ? drawstr : CTX_RPT_(ot->translation_context, ot->name));
+             IFACE_("Input pending "),
+             (drawstr && drawstr[0]) ? drawstr : CTX_IFACE_(ot->translation_context, ot->name));
     if (area != nullptr) {
       ED_area_status_text(area, header_text);
     }
@@ -2421,8 +2422,8 @@ static void wm_event_modalkeymap_begin(const bContext *C,
       /* Avoid double-click events even in the case of #EVT_MODAL_MAP,
        * since it's possible users configure double-click key-map items
        * which would break when modal functions expect press/release. */
-      if (event->prev_type == KM_DBL_CLICK) {
-        event->prev_type = KM_PRESS;
+      if (event->prev_val == KM_DBL_CLICK) {
+        event->prev_val = KM_PRESS;
         event_backup->dbl_click_disabled = true;
       }
     }
@@ -2939,21 +2940,15 @@ static const char *keymap_handler_log_action_str(const eHandlerActionFlag action
   return "un-handled";
 }
 
-static const char *keymap_handler_log_kmi_event_str(const wmKeyMapItem *kmi,
-                                                    char *buf,
-                                                    size_t buf_maxncpy)
+static std::optional<std::string> keymap_handler_log_kmi_event_str(const wmKeyMapItem *kmi)
 {
   /* Short representation of the key that was pressed,
    * include this since it may differ from the event in minor details
    * which can help looking up the key-map definition. */
-  WM_keymap_item_to_string(kmi, false, buf, buf_maxncpy);
-  return buf;
+  return WM_keymap_item_to_string(kmi, false);
 }
 
-static const char *keymap_handler_log_kmi_op_str(bContext *C,
-                                                 const wmKeyMapItem *kmi,
-                                                 char *buf,
-                                                 size_t buf_maxncpy)
+static std::string keymap_handler_log_kmi_op_str(bContext *C, const wmKeyMapItem *kmi)
 {
   /* The key-map item properties can further help distinguish this item from others. */
   std::optional<std::string> kmi_props;
@@ -2963,11 +2958,12 @@ static const char *keymap_handler_log_kmi_op_str(bContext *C,
       kmi_props = RNA_pointer_as_string_keywords(C, kmi->ptr, false, false, true, 512);
     }
     else { /* Fallback. */
-      kmi_props = IDP_reprN(kmi->properties, nullptr);
+      char *c_str = IDP_reprN(kmi->properties, nullptr);
+      kmi_props = c_str;
+      MEM_freeN(c_str);
     }
   }
-  BLI_snprintf(buf, buf_maxncpy, "%s(%s)", kmi->idname, kmi_props.value_or("").c_str());
-  return buf;
+  return fmt::format("{}({})", kmi->idname, kmi_props.value_or(""));
 }
 
 #define PRINT \
@@ -3004,15 +3000,13 @@ static eHandlerActionFlag wm_handlers_do_keymap_with_keymap_handler(
           action |= wm_handler_operator_call(
               C, handlers, &handler->head, event, kmi->ptr, kmi->idname);
 
-          char op_buf[512];
-          char kmi_buf[128];
           CLOG_INFO(WM_LOG_HANDLERS,
                     2,
                     "keymap '%s', %s, %s, event: %s",
                     keymap->idname,
-                    keymap_handler_log_kmi_op_str(C, kmi, op_buf, sizeof(op_buf)),
+                    keymap_handler_log_kmi_op_str(C, kmi).c_str(),
                     keymap_handler_log_action_str(action),
-                    keymap_handler_log_kmi_event_str(kmi, kmi_buf, sizeof(kmi_buf)));
+                    keymap_handler_log_kmi_event_str(kmi).value_or("").c_str());
 
           if (action & WM_HANDLER_BREAK) {
             /* Not always_pass here, it denotes removed handler_base. */
@@ -4324,9 +4318,6 @@ void WM_event_add_fileselect(bContext *C, wmOperator *op)
   ScrArea *root_area = nullptr;
   ARegion *root_region = nullptr;
 
-  /* Close any popups, like when opening a file browser from the splash. */
-  UI_popup_handlers_remove_all(C, &root_win->modalhandlers);
-
   /* Setting the context window unsets the context area & screen. Avoid doing that, so operators
    * calling the file browser can operate in the context the browser was opened in. */
   if (ctx_win != root_win) {
@@ -4923,7 +4914,7 @@ void WM_event_add_mousemove(wmWindow *win)
 /**
  * \return The WM enum for key or #EVENT_NONE (which should be ignored).
  */
-static int convert_key(GHOST_TKey key)
+static int wm_event_type_from_ghost_key(GHOST_TKey key)
 {
   if (key >= GHOST_kKeyA && key <= GHOST_kKeyZ) {
     return (EVT_AKEY + (int(key) - GHOST_kKeyA));
@@ -5718,7 +5709,7 @@ void wm_event_add_ghostevent(wmWindowManager *wm,
     case GHOST_kEventKeyDown:
     case GHOST_kEventKeyUp: {
       const GHOST_TEventKeyData *kd = static_cast<const GHOST_TEventKeyData *>(customdata);
-      event.type = convert_key(kd->key);
+      event.type = wm_event_type_from_ghost_key(kd->key);
       if (UNLIKELY(event.type == EVENT_NONE)) {
         break;
       }
@@ -6408,15 +6399,10 @@ bool WM_window_modal_keymap_status_draw(bContext *C, wmWindow *win, uiLayout *la
       }
     }
     if (show_text) {
-      char buf[UI_MAX_DRAW_STR];
-      int available_len = sizeof(buf);
-      char *p = buf;
-      WM_modalkeymap_operator_items_to_string_buf(
-          op->type, items[i].value, true, UI_MAX_SHORTCUT_STR, &available_len, &p);
-      p -= 1;
-      if (p > buf) {
-        BLI_snprintf(p, available_len, ": %s", items[i].name);
-        uiItemL(row, buf, ICON_NONE);
+      if (std::optional<std::string> str = WM_modalkeymap_operator_items_to_string(
+              op->type, items[i].value, true))
+      {
+        uiItemL(row, fmt::format("{}: {}", *str, items[i].name).c_str(), ICON_NONE);
       }
     }
   }

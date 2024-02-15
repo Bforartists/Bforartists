@@ -19,7 +19,7 @@
 
 #include "BLF_api.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_curves_types.h"
 #include "DNA_material_types.h"
@@ -595,7 +595,7 @@ static const EnumPropertyItem node_cryptomatte_layer_name_items[] = {
 #  include "BKE_context.hh"
 #  include "BKE_idprop.h"
 
-#  include "BKE_global.h"
+#  include "BKE_global.hh"
 
 #  include "ED_node.hh"
 #  include "ED_render.hh"
@@ -6200,7 +6200,7 @@ static void def_cmp_vector_blur(StructRNA *srna)
   prop = RNA_def_property(srna, "use_curved", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "curved", 1);
   RNA_def_property_ui_text(
-      prop, "Curved", "Interpolate between frames in a Bezier curve, rather than linearly");
+      prop, "Curved", "Interpolate between frames in a Bézier curve, rather than linearly");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -8441,6 +8441,7 @@ static void def_cmp_trackpos(StructRNA *srna)
   prop = RNA_def_property(srna, "track_name", PROP_STRING, PROP_NONE);
   RNA_def_property_string_sdna(prop, nullptr, "track_name");
   RNA_def_property_ui_text(prop, "Track", "");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_MOVIECLIP);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 

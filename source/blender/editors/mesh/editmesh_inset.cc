@@ -14,11 +14,11 @@
 #include "BLI_math_vector.h"
 #include "BLI_string.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_context.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_layer.hh"
 #include "BKE_unit.hh"
 
@@ -73,8 +73,8 @@ static void edbm_inset_update_header(wmOperator *op, bContext *C)
 {
   InsetData *opdata = static_cast<InsetData *>(op->customdata);
 
-  const char *str = RPT_(
-      "Confirm: Enter/LClick, Cancel: (Esc/RClick), Thickness: %s, "
+  const char *str = IFACE_(
+      "Confirm: Enter/LMB, Cancel: (Esc/RMB), Thickness: %s, "
       "Depth (Ctrl to tweak): %s (%s), Outset (O): (%s), Boundary (B): (%s), Individual (I): "
       "(%s)");
 

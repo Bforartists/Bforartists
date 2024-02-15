@@ -20,7 +20,7 @@
 
 #include "WM_types.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "spreadsheet_dataset_draw.hh"
 #include "spreadsheet_draw.hh"
@@ -158,7 +158,7 @@ class GeometryDataSetTreeView : public ui::AbstractTreeView {
     pointcloud.add_tree_item<GeometryDataSetTreeViewItem>(bke::GeometryComponent::Type::PointCloud,
                                                           bke::AttrDomain::Point,
                                                           IFACE_("Point"),
-                                                          ICON_PARTICLE_POINT);
+                                                          ICON_POINTCLOUD_DATA);
 
     this->add_tree_item<GeometryDataSetTreeViewItem>(
         bke::GeometryComponent::Type::Volume, IFACE_("Volume Grids"), ICON_VOLUME_DATA);

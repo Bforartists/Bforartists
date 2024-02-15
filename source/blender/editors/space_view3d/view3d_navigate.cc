@@ -18,7 +18,7 @@
 #include "BLI_math_vector.hh"
 #include "BLI_rect.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_armature.hh"
 #include "BKE_context.hh"
@@ -27,7 +27,7 @@
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
 #include "BKE_paint.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_vfont.hh"
 
@@ -452,16 +452,8 @@ struct ViewOpsData_Utility : ViewOpsData {
         if (kmi_merge->oskey == 1 || ELEM(kmi_merge->type, EVT_OSKEY)) {
           kmi_cpy->oskey = 1;
         }
-        if (!ELEM(kmi_merge->type,
-                  EVT_LEFTCTRLKEY,
-                  EVT_LEFTALTKEY,
-                  EVT_RIGHTALTKEY,
-                  EVT_RIGHTCTRLKEY,
-                  EVT_RIGHTSHIFTKEY,
-                  EVT_LEFTSHIFTKEY,
-                  EVT_OSKEY))
-        {
-          kmi_cpy->keymodifier |= kmi_merge->type;
+        if (!ISKEYMODIFIER(kmi_merge->type)) {
+          kmi_cpy->keymodifier = kmi_merge->type;
         }
       }
     }

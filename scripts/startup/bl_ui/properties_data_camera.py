@@ -397,7 +397,7 @@ class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):
                         col.use_property_split = False
                         col.prop(bg.image, "use_view_as_render")
                         col.use_property_split = True
-                    col.prop(bg, "alpha", slider=True)
+                    col.prop(bg, "alpha")
                     col.row().prop(bg, "display_depth", expand=True)
 
                     col.row().prop(bg, "frame_method", expand=True)

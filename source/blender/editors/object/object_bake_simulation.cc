@@ -32,7 +32,7 @@
 #include "BKE_bake_geometry_nodes_modifier.hh"
 #include "BKE_context.hh"
 #include "BKE_curves.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_instances.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -41,10 +41,10 @@
 #include "BKE_node_runtime.hh"
 #include "BKE_object.hh"
 #include "BKE_pointcloud.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
@@ -835,7 +835,7 @@ static Vector<NodeBakeRequest> bake_single_node_gather_bake_request(bContext *C,
   const std::optional<bake::BakePath> bake_path = bake::get_node_bake_path(
       *bmain, *object, nmd, bake_id);
   if (!bake_path.has_value()) {
-    BKE_report(op->reports, RPT_ERROR, "Can not determine bake location on disk");
+    BKE_report(op->reports, RPT_ERROR, "Cannot determine bake location on disk");
     return {};
   }
   request.path = std::move(*bake_path);

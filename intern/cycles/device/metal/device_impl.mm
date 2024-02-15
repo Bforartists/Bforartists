@@ -723,12 +723,6 @@ MetalDevice::MetalMem *MetalDevice::generic_alloc(device_memory &mem)
     id<MTLBuffer> metal_buffer = nil;
     MTLResourceOptions options = default_storage_mode;
 
-    /* Workaround for "bake" unit tests which fail if RenderBuffers is allocated with
-     * MTLResourceStorageModeShared. */
-    if (strstr(mem.name, "RenderBuffers")) {
-      options = MTLResourceStorageModeManaged;
-    }
-
     if (size > 0) {
       if (mem.type == MEM_DEVICE_ONLY && !capture_enabled) {
         options = MTLResourceStorageModePrivate;
@@ -1393,6 +1387,11 @@ bool MetalDevice::should_use_graphics_interop()
 {
   /* METAL_WIP - provide fast interop */
   return false;
+}
+
+void *MetalDevice::get_native_buffer(device_ptr ptr)
+{
+  return ((MetalMem *)ptr)->mtlBuffer;
 }
 
 void MetalDevice::flush_delayed_free_list()
