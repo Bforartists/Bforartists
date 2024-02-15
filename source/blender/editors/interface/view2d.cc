@@ -27,7 +27,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_context.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_screen.hh"
 
 #include "GPU_immediate.h"
@@ -179,13 +179,6 @@ static void view2d_masks(View2D *v2d, const rcti *mask_scroll)
       v2d->vert = *mask_scroll;
       v2d->vert.xmax++; /* one pixel extra... was leaving a minor gap... */
       v2d->vert.xmin = v2d->vert.xmax - scroll_width;
-    }
-
-    /* Currently, all regions that have vertical scale handles,
-     * also have the scrubbing area at the top.
-     * So the scroll-bar has to move down a bit. */
-    if (scroll & V2D_SCROLL_VERTICAL_HANDLES) {
-      v2d->vert.ymax -= UI_TIME_SCRUB_MARGIN_Y;
     }
 
     /* horizontal scroller */

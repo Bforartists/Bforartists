@@ -15,7 +15,7 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_action.h"
 
@@ -2217,7 +2217,7 @@ static void rna_def_fkeyframe(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "Keyframe", nullptr);
   RNA_def_struct_sdna(srna, "BezTriple");
   RNA_def_struct_ui_text(
-      srna, "Keyframe", "Bezier curve point with two handles defining a Keyframe on an F-Curve");
+      srna, "Keyframe", "Bézier curve point with two handles defining a Keyframe on an F-Curve");
 
   /* Boolean values */
   prop = RNA_def_property(srna, "select_left_handle", PROP_BOOLEAN, PROP_NONE);

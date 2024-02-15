@@ -34,11 +34,11 @@ import re
 import shutil
 import signal  # Override `Ctrl-C`.
 import sys
-import tarfile
 import tomllib
 import urllib.error  # For `URLError`.
 import urllib.parse  # For `urljoin`.
 import urllib.request  # For accessing remote `https://` paths.
+import zipfile
 
 
 from typing import (
@@ -82,7 +82,7 @@ PkgManifest_RepoDict = Dict[str, Any]
 
 VERSION = "0.1"
 
-PKG_EXT = ".txz"
+PKG_EXT = ".zip"
 # PKG_JSON_INFO = "bl_ext_repo.json"
 
 PKG_REPO_LIST_FILENAME = "bl_ext_repo.json"
@@ -104,8 +104,17 @@ RE_MANIFEST_SEMVER = re.compile(
     r'(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
 )
 
-# Small value (in bytes).
-CHUNK_SIZE_DEFAULT = 32  # 16
+# Progress updates are displayed after each chunk of this size is downloaded.
+# Small values add unnecessary overhead showing progress, large values will make
+# progress not update often enough.
+#
+# Note that this could be dynamic although it's not a priority.
+#
+# 16kb to be responsive even on slow connections.
+CHUNK_SIZE_DEFAULT = 1 << 14
+
+# Default for JSON requests this allows top-level URL's to be used.
+URL_REQUEST_JSON_HEADERS = {"Accept": "application/json"}
 
 # Standard out may be communicating with a parent process,
 # arbitrary prints are NOT acceptable.
@@ -415,14 +424,48 @@ def pkg_manifest_from_toml_and_validate_all_errors(filepath: str) -> Union[PkgMa
     return pkg_manifest_from_dict_and_validate_all_errros(pkg_idname, data, from_repo=False)
 
 
-def pkg_manifest_from_tarfile_and_validate(
-        tar_fh: tarfile.TarFile,
+def pkg_zipfile_detect_subdir_or_none(
+        zip_fh: zipfile.ZipFile,
+) -> Optional[str]:
+    if PKG_MANIFEST_FILENAME_TOML in zip_fh.NameToInfo:
+        return ""
+    # Support one directory containing the expected TOML.
+    # ZIP's always use "/" (not platform specific).
+    test_suffix = "/" + PKG_MANIFEST_FILENAME_TOML
+
+    base_dir = None
+    for filename in zip_fh.NameToInfo.keys():
+        if filename.startswith("."):
+            continue
+        if not filename.endswith(test_suffix):
+            continue
+        # Only a single directory (for sanity sake).
+        if filename.find("/", len(filename) - len(test_suffix)) == -1:
+            continue
+
+        # Multiple packages in a single archive, bail out as this is not a supported scenario.
+        if base_dir is not None:
+            base_dir = None
+            break
+
+        # Don't break in case there are multiple, in that case this function should return None.
+        base_dir = filename[:-len(PKG_MANIFEST_FILENAME_TOML)]
+
+    return base_dir
+
+
+def pkg_manifest_from_zipfile_and_validate(
+        zip_fh: zipfile.ZipFile,
+        archive_subdir: str,
 ) -> Union[PkgManifest, str]:
     """
     Validate the manifest and return all errors.
     """
+    # `archive_subdir` from `pkg_zipfile_detect_subdir_or_none`.
+    assert archive_subdir == "" or archive_subdir.endswith("/")
+
     try:
-        file_content = tar_fh.extractfile(PKG_MANIFEST_FILENAME_TOML)
+        file_content = zip_fh.read(archive_subdir + PKG_MANIFEST_FILENAME_TOML)
     except KeyError:
         # TODO: check if there is a nicer way to handle this?
         # From a quick look there doesn't seem to be a good way
@@ -432,7 +475,7 @@ def pkg_manifest_from_tarfile_and_validate(
     if file_content is None:
         return "Archive does not contain a manifest"
 
-    manifest_dict = toml_from_bytes(file_content.read())
+    manifest_dict = toml_from_bytes(file_content)
     assert isinstance(manifest_dict, dict)
 
     # TODO: forward actual error.
@@ -448,14 +491,44 @@ def pkg_manifest_from_archive_and_validate(
         filepath: str,
 ) -> Union[PkgManifest, str]:
     # TODO: handle errors.
-    with tarfile.open(filepath, mode="r:xz") as tar_fh:
-        return pkg_manifest_from_tarfile_and_validate(tar_fh)
+    with zipfile.ZipFile(filepath, mode="r") as zip_fh:
+        if (archive_subdir := pkg_zipfile_detect_subdir_or_none(zip_fh)) is None:
+            return "Archive has no manifest"
+        return pkg_manifest_from_zipfile_and_validate(zip_fh, archive_subdir)
 
 
 def remote_url_from_repo_url(url: str) -> str:
     if REMOTE_REPO_HAS_JSON_IMPLIED:
         return url
     return urllib.parse.urljoin(url, PKG_REPO_LIST_FILENAME)
+
+
+# -----------------------------------------------------------------------------
+# ZipFile Helpers
+
+def zipfile_make_root_directory(
+        zip_fh: zipfile.ZipFile,
+        root_dir: str,
+) -> None:
+    """
+    Make ``root_dir`` the new root of this ``zip_fh``, remove all other files.
+    """
+    # WARNING: this works but it's not pretty,
+    # alternative solutions involve duplicating too much of ZipFile's internal logic.
+    assert root_dir.endswith("/")
+    filelist = zip_fh.filelist
+    filelist_copy = filelist[:]
+    filelist.clear()
+    for member in filelist_copy:
+        filename = member.filename
+        if not filename.startswith(root_dir):
+            continue
+        # Ensure the path is not _ony_ the directory (can happen for some ZIP files).
+        if not (filename := filename[len(root_dir):]):
+            continue
+
+        member.filename = filename
+        filelist.append(member)
 
 
 # -----------------------------------------------------------------------------
@@ -468,6 +541,7 @@ def url_retrieve_to_data_iter(
         url: str,
         *,
         data: Optional[Any] = None,
+        headers: Dict[str, str],
         chunk_size: int,
         timeout_in_seconds: float,
 ) -> Generator[Tuple[bytes, int, Any], None, None]:
@@ -489,19 +563,21 @@ def url_retrieve_to_data_iter(
     from urllib.error import ContentTooShortError
     from urllib.request import urlopen
 
-    with contextlib.closing(urlopen(
-            url,
-            data,
-            timeout=timeout_in_seconds,
-    )) as fp:
-        headers = fp.info()
+    request = urllib.request.Request(
+        url,
+        data=data,
+        headers=headers,
+    )
+
+    with contextlib.closing(urlopen(request, timeout=timeout_in_seconds)) as fp:
+        response_headers = fp.info()
 
         size = -1
         read = 0
-        if "content-length" in headers:
-            size = int(headers["Content-Length"])
+        if "content-length" in response_headers:
+            size = int(response_headers["Content-Length"])
 
-        yield (b'', size, headers)
+        yield (b'', size, response_headers)
 
         if timeout_in_seconds == -1.0:
             while True:
@@ -509,37 +585,42 @@ def url_retrieve_to_data_iter(
                 if not block:
                     break
                 read += len(block)
-                yield (block, size, headers)
+                yield (block, size, response_headers)
         else:
             while True:
                 block = read_with_timeout(fp, chunk_size, timeout_in_seconds=timeout_in_seconds)
                 if not block:
                     break
                 read += len(block)
-                yield (block, size, headers)
+                yield (block, size, response_headers)
 
     if size >= 0 and read < size:
-        raise ContentTooShortError("retrieval incomplete: got only %i out of %i bytes" % (read, size), headers)
+        raise ContentTooShortError(
+            "retrieval incomplete: got only %i out of %i bytes" % (read, size),
+            response_headers,
+        )
 
 
 def url_retrieve_to_filepath_iter(
         url: str,
         filepath: str,
         *,
+        headers: Dict[str, str],
         data: Optional[Any] = None,
         chunk_size: int,
         timeout_in_seconds: float,
 ) -> Generator[Tuple[int, int, Any], None, None]:
     # Handle temporary file setup.
     with open(filepath, 'wb') as fh_output:
-        for block, size, headers in url_retrieve_to_data_iter(
+        for block, size, response_headers in url_retrieve_to_data_iter(
                 url,
+                headers=headers,
                 data=data,
                 chunk_size=chunk_size,
                 timeout_in_seconds=timeout_in_seconds,
         ):
             fh_output.write(block)
-            yield (len(block), size, headers)
+            yield (len(block), size, response_headers)
 
 
 def filepath_retrieve_to_filepath_iter(
@@ -562,6 +643,7 @@ def filepath_retrieve_to_filepath_iter(
 def url_retrieve_to_data_iter_or_filesystem(
         path: str,
         is_filesystem: bool,
+        headers: Dict[str, str],
         chunk_size: int,
         timeout_in_seconds: float,
 ) -> Generator[bytes, None, None]:
@@ -573,9 +655,10 @@ def url_retrieve_to_data_iter_or_filesystem(
         for (
                 block,
                 _size,
-                _headers,
+                _response_headers,
         ) in url_retrieve_to_data_iter(
             path,
+            headers=headers,
             chunk_size=chunk_size,
             timeout_in_seconds=timeout_in_seconds,
         ):
@@ -586,6 +669,7 @@ def url_retrieve_to_filepath_iter_or_filesystem(
         path: str,
         filepath: str,
         is_filesystem: bool,
+        headers: Dict[str, str],
         chunk_size: int,
         timeout_in_seconds: float,
 ) -> Generator[Tuple[int, int], None, None]:
@@ -597,9 +681,10 @@ def url_retrieve_to_filepath_iter_or_filesystem(
             timeout_in_seconds=timeout_in_seconds,
         )
     else:
-        for (read, size, _headers) in url_retrieve_to_filepath_iter(
+        for (read, size, _response_headers) in url_retrieve_to_filepath_iter(
             path,
             filepath,
+            headers=headers,
             chunk_size=chunk_size,
             timeout_in_seconds=timeout_in_seconds,
         ):
@@ -934,6 +1019,7 @@ def repo_sync_from_remote(*, msg_fn: MessageFn, repo_dir: str, local_dir: str, t
                     remote_json_path,
                     local_json_path_temp,
                     is_filesystem=is_repo_filesystem,
+                    headers=URL_REQUEST_JSON_HEADERS,
                     chunk_size=CHUNK_SIZE_DEFAULT,
                     timeout_in_seconds=timeout_in_seconds,
             ):
@@ -1264,8 +1350,9 @@ class subcmd_client:
             for block in url_retrieve_to_data_iter_or_filesystem(
                     filepath_repo_json,
                     is_filesystem=is_repo_filesystem,
-                    timeout_in_seconds=timeout_in_seconds,
+                    headers=URL_REQUEST_JSON_HEADERS,
                     chunk_size=CHUNK_SIZE_DEFAULT,
+                    timeout_in_seconds=timeout_in_seconds,
             ):
                 result.write(block)
 
@@ -1330,8 +1417,16 @@ class subcmd_client:
         # Remove `filepath_local_pkg_temp` if this block exits.
         directories_to_clean: List[str] = []
         with CleanupPathsContext(files=(), directories=directories_to_clean):
-            with tarfile.open(filepath_archive, mode="r:xz") as tar_fh:
-                manifest = pkg_manifest_from_tarfile_and_validate(tar_fh)
+            with zipfile.ZipFile(filepath_archive, mode="r") as zip_fh:
+                archive_subdir = pkg_zipfile_detect_subdir_or_none(zip_fh)
+                if archive_subdir is None:
+                    message_warn(
+                        msg_fn,
+                        "Missing manifest from: {:s}".format(filepath_archive),
+                    )
+                    return False
+
+                manifest = pkg_manifest_from_zipfile_and_validate(zip_fh, archive_subdir)
                 if isinstance(manifest, str):
                     message_warn(
                         msg_fn,
@@ -1375,8 +1470,14 @@ class subcmd_client:
                     shutil.rmtree(filepath_local_pkg_temp)
 
                 directories_to_clean.append(filepath_local_pkg_temp)
+
+                if archive_subdir:
+                    zipfile_make_root_directory(zip_fh, archive_subdir)
+                del archive_subdir
+
                 try:
-                    tar_fh.extractall(filepath_local_pkg_temp)
+                    for member in zip_fh.infolist():
+                        zip_fh.extract(member, filepath_local_pkg_temp)
                 except BaseException as ex:
                     message_warn(
                         msg_fn,
@@ -1527,6 +1628,7 @@ class subcmd_client:
                         for block in url_retrieve_to_data_iter_or_filesystem(
                                 filepath_remote_archive,
                                 is_filesystem=is_pkg_filesystem,
+                                headers={},
                                 chunk_size=CHUNK_SIZE_DEFAULT,
                                 timeout_in_seconds=timeout_in_seconds,
                         ):
@@ -1715,7 +1817,7 @@ class subcmd_author:
             return False
 
         with CleanupPathsContext(files=(outfile_temp,), directories=()):
-            with tarfile.open(outfile_temp, "w:xz") as tar:
+            with zipfile.ZipFile(outfile_temp, 'w', zipfile.ZIP_LZMA) as zip_fh:
                 for filepath_abs, filepath_rel in scandir_recursive(
                         pkg_source_dir,
                         # Be more advanced in the future, for now ignore dot-files (`.git`) .. etc.
@@ -1724,13 +1826,9 @@ class subcmd_author:
                     if filepath_rel in filenames_root_exclude:
                         continue
 
-                    with open(filepath_abs, 'rb') as fh:
-                        size = os.fstat(fh.fileno()).st_size
-                        message_status(msg_fn, "add \"{:s}\", {:d}".format(filepath_rel, size))
-                        info = tarfile.TarInfo(filepath_rel)
-                        info.size = size
-                        del size
-                        tar.addfile(info, fh)
+                    # Handy for testing that sub-directories:
+                    # zip_fh.write(filepath_abs, manifest.id + "/" + filepath_rel)
+                    zip_fh.write(filepath_abs, filepath_rel)
 
                 request_exit |= message_status(msg_fn, "complete")
                 if request_exit:
@@ -1816,6 +1914,12 @@ def unregister():
                         if i > 1000:
                             break
                         fh.write("# {:s}\n".format(line))
+
+                # Write a sub-directory (check this is working).
+                docs = os.path.join(pkg_src_dir, "docs")
+                os.makedirs(docs)
+                with open(os.path.join(docs, "readme.txt"), "w", encoding="utf-8") as fh:
+                    fh.write("Example readme.")
 
                 # `{cmd} pkg-build --pkg-source-dir {pkg_src_dir} --pkg-output-dir {repo_dir}`.
                 if not subcmd_author.pkg_build(
