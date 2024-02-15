@@ -15,7 +15,7 @@
 #include "BLI_math_matrix.h"
 #include "BLI_math_vector.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "transform.hh"
 #include "transform_convert.hh"
@@ -64,7 +64,7 @@ static void applyAlign(TransInfo *t)
 
   recalc_data(t);
 
-  ED_area_status_text(t->area, RPT_("Align"));
+  ED_area_status_text(t->area, IFACE_("Align"));
 }
 
 static void initAlign(TransInfo *t, wmOperator * /*op*/)

@@ -23,7 +23,7 @@
 #include "BLI_time.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_brush_types.h"
 #include "DNA_gpencil_legacy_types.h"
@@ -38,13 +38,13 @@
 #include "BKE_colortools.hh"
 #include "BKE_context.hh"
 #include "BKE_deform.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_paint.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "UI_interface.hh"
 #include "UI_resources.hh"
@@ -420,40 +420,42 @@ static void gpencil_primitive_status_indicators(bContext *C, tGPDprimitive *tgpi
   if (tgpi->type == GP_STROKE_LINE) {
     BLI_strncpy(
         msg_str,
-        RPT_("Line: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to "
-             "adjust subdivision number, Shift to align, Alt to center, E: extrude, G: grab"),
+        IFACE_("Line: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to "
+               "adjust subdivision number, Shift to align, Alt to center, E: extrude, G: grab"),
         UI_MAX_DRAW_STR);
   }
   else if (tgpi->type == GP_STROKE_POLYLINE) {
     BLI_strncpy(msg_str,
-                RPT_("Polyline: ESC to cancel, LMB to set, Enter/MMB to confirm, WHEEL/+- to "
-                     "adjust subdivision number, Shift to align, G: grab"),
+                IFACE_("Polyline: ESC to cancel, LMB to set, Enter/MMB to confirm, WHEEL/+- to "
+                       "adjust subdivision number, Shift to align, G: grab"),
                 UI_MAX_DRAW_STR);
   }
   else if (tgpi->type == GP_STROKE_BOX) {
     BLI_strncpy(msg_str,
-                RPT_("Rectangle: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- "
-                     "to adjust subdivision number, Shift to square, Alt to center, G: grab"),
+                IFACE_("Rectangle: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- "
+                       "to adjust subdivision number, Shift to square, Alt to center, G: grab"),
                 UI_MAX_DRAW_STR);
   }
   else if (tgpi->type == GP_STROKE_CIRCLE) {
-    BLI_strncpy(msg_str,
-                RPT_("Circle: ESC to cancel, Enter/MMB to confirm, WHEEL/+- to adjust subdivision "
-                     "number, Shift to square, Alt to center, G: grab"),
-                UI_MAX_DRAW_STR);
+    BLI_strncpy(
+        msg_str,
+        IFACE_("Circle: ESC to cancel, Enter/MMB to confirm, WHEEL/+- to adjust subdivision "
+               "number, Shift to square, Alt to center, G: grab"),
+        UI_MAX_DRAW_STR);
   }
   else if (tgpi->type == GP_STROKE_ARC) {
     BLI_strncpy(
         msg_str,
-        RPT_("Arc: ESC to cancel, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, "
-             "Shift to square, Alt to center, M: Flip, E: extrude, G: grab"),
+        IFACE_("Arc: ESC to cancel, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, "
+               "Shift to square, Alt to center, M: Flip, E: extrude, G: grab"),
         UI_MAX_DRAW_STR);
   }
   else if (tgpi->type == GP_STROKE_CURVE) {
-    BLI_strncpy(msg_str,
-                RPT_("Curve: ESC to cancel, Enter/MMB to confirm, WHEEL/+- to adjust subdivision "
-                     "number, Shift to square, Alt to center, E: extrude, G: grab"),
-                UI_MAX_DRAW_STR);
+    BLI_strncpy(
+        msg_str,
+        IFACE_("Curve: ESC to cancel, Enter/MMB to confirm, WHEEL/+- to adjust subdivision "
+               "number, Shift to square, Alt to center, E: extrude, G: grab"),
+        UI_MAX_DRAW_STR);
   }
 
   if (ELEM(tgpi->type,

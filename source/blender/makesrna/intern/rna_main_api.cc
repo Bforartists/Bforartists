@@ -29,7 +29,7 @@
 #  include "BKE_armature.hh"
 #  include "BKE_brush.hh"
 #  include "BKE_camera.h"
-#  include "BKE_collection.h"
+#  include "BKE_collection.hh"
 #  include "BKE_curve.hh"
 #  include "BKE_curves.h"
 #  include "BKE_displist.h"
@@ -52,7 +52,7 @@
 #  include "BKE_paint.hh"
 #  include "BKE_particle.h"
 #  include "BKE_pointcloud.hh"
-#  include "BKE_scene.h"
+#  include "BKE_scene.hh"
 #  include "BKE_sound.h"
 #  include "BKE_speaker.h"
 #  include "BKE_text.h"
@@ -94,7 +94,7 @@
 #  include "ED_node.hh"
 #  include "ED_screen.hh"
 
-#  include "BLT_translation.h"
+#  include "BLT_translation.hh"
 
 #  ifdef WITH_PYTHON
 #    include "BPY_extern.h"
@@ -120,7 +120,7 @@ static void rna_Main_ID_remove(Main *bmain,
   if (id->tag & LIB_TAG_NO_MAIN) {
     BKE_reportf(reports,
                 RPT_ERROR,
-                "%s '%s' is outside of main database and can not be removed from it",
+                "%s '%s' is outside of main database and cannot be removed from it",
                 BKE_idtype_idcode_to_name(GS(id->name)),
                 id->name + 2);
     return;
@@ -227,7 +227,7 @@ static Object *rna_Main_objects_new(Main *bmain, ReportList *reports, const char
   if (data != nullptr && (data->tag & LIB_TAG_NO_MAIN)) {
     BKE_report(reports,
                RPT_ERROR,
-               "Can not create object in main database with an evaluated data data-block");
+               "Cannot create object in main database with an evaluated data data-block");
     return nullptr;
   }
 

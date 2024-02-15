@@ -23,7 +23,7 @@
 #include "BLI_rect.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_brush.hh"
 #include "BKE_colortools.hh"
@@ -36,7 +36,7 @@
 #include "BKE_mesh_runtime.hh"
 #include "BKE_object.hh"
 #include "BKE_paint.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"

@@ -26,7 +26,7 @@
 #include "BKE_idprop.h"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_sound.h"
 
 #include "DEG_depsgraph.hh"
@@ -79,7 +79,7 @@ static Strip *seq_strip_alloc(int type)
     strip->transform->scale_y = 1;
     strip->transform->origin[0] = 0.5f;
     strip->transform->origin[1] = 0.5f;
-    strip->transform->filter = SEQ_TRANSFORM_FILTER_BILINEAR;
+    strip->transform->filter = SEQ_TRANSFORM_FILTER_AUTO;
     strip->crop = static_cast<StripCrop *>(MEM_callocN(sizeof(StripCrop), "StripCrop"));
   }
 

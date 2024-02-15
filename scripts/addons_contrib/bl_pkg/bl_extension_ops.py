@@ -33,6 +33,7 @@ from bpy.types import (
     Operator,
 )
 from bpy.props import (
+    BoolProperty,
     CollectionProperty,
     EnumProperty,
     StringProperty,
@@ -332,10 +333,20 @@ def extension_repos_read_index(index, *, include_disabled=False):
     return None
 
 
-def extension_repos_read(*, include_disabled=False):
+def extension_repos_read(*, include_disabled=False, use_active_only=False):
     from . import repo_paths_or_none
-    extension_repos = bpy.context.preferences.filepaths.extension_repos
+    paths = bpy.context.preferences.filepaths
+    extension_repos = paths.extension_repos
     result = []
+
+    if use_active_only:
+        try:
+            extension_active = extension_repos[paths.active_extension_repo]
+        except IndexError:
+            return result
+
+        extension_repos = [extension_active]
+        del extension_active
 
     for repo_item in extension_repos:
         if not include_disabled:
@@ -676,8 +687,15 @@ class BlPkgRepoSyncAll(Operator, _BlPkgCmdMixIn):
     bl_label = "Ext Repo Sync All"
     __slots__ = _BlPkgCmdMixIn.cls_slots
 
+    use_active_only: BoolProperty(
+        name="Active Only",
+        description="Only sync the active repository",
+    )
+
     def exec_command_iter(self, is_modal):
-        repos_all = extension_repos_read()
+        use_active_only = self.use_active_only
+        repos_all = extension_repos_read(use_active_only=use_active_only)
+
         if not repos_all:
             self.report({'INFO'}, "No repositories to sync")
             return None
@@ -687,7 +705,7 @@ class BlPkgRepoSyncAll(Operator, _BlPkgCmdMixIn):
                 try:
                     os.makedirs(repo_item.directory)
                 except BaseException as ex:
-                    self.report({'ERROR'}, str(ex))
+                    self.report({'WARNING'}, str(ex))
                     return None
 
         cmd_batch = []
@@ -709,7 +727,7 @@ class BlPkgRepoSyncAll(Operator, _BlPkgCmdMixIn):
             return None
 
         return bl_extension_utils.CommandBatch(
-            title="Sync All",
+            title="Sync \"{:s}\"".format(repos_all[0].name) if use_active_only else "Sync All",
             batch=cmd_batch,
         )
 
@@ -739,12 +757,23 @@ class BlPkgPkgUpgradeAll(Operator, _BlPkgCmdMixIn):
         "_repo_directories",
     )
 
+    use_active_only: BoolProperty(
+        name="Active Only",
+        description="Only sync the active repository",
+    )
+
     def exec_command_iter(self, is_modal):
         from . import repo_cache_store
         self._repo_directories = set()
         self._addon_restore = []
 
-        repos_all = extension_repos_read()
+        use_active_only = self.use_active_only
+        repos_all = extension_repos_read(use_active_only=use_active_only)
+        repo_directory_supset = [repo_entry.directory for repo_entry in repos_all] if use_active_only else None
+
+        if not repos_all:
+            self.report({'INFO'}, "No repositories to upgrade")
+            return None
 
         # Track add-ons to disable before uninstalling.
         handle_addons_info = []
@@ -754,9 +783,11 @@ class BlPkgPkgUpgradeAll(Operator, _BlPkgCmdMixIn):
 
         pkg_manifest_local_all = list(repo_cache_store.pkg_manifest_from_local_ensure(
             error_fn=self.error_fn_from_exception,
+            directory_subset=repo_directory_supset,
         ))
         for repo_index, pkg_manifest_remote in enumerate(repo_cache_store.pkg_manifest_from_remote_ensure(
             error_fn=self.error_fn_from_exception,
+            directory_subset=repo_directory_supset,
         )):
             if pkg_manifest_remote is None:
                 continue
@@ -794,7 +825,7 @@ class BlPkgPkgUpgradeAll(Operator, _BlPkgCmdMixIn):
             self._repo_directories.add(repo_item.directory)
 
         if not cmd_batch:
-            self.report({'ERROR'}, "No installed packages to update")
+            self.report({'INFO'}, "No installed packages to update")
             return None
 
         # Lock repositories.
@@ -811,7 +842,10 @@ class BlPkgPkgUpgradeAll(Operator, _BlPkgCmdMixIn):
             self._addon_restore.append((repo_item, pkg_id_sequence, result))
 
         return bl_extension_utils.CommandBatch(
-            title="Update {:d} Package(s)".format(package_count),
+            title=(
+                "Update {:d} Package(s) from \"{:s}\"".format(package_count, repos_all[0].name) if use_active_only else
+                "Update {:d} Package(s)".format(package_count)
+            ),
             batch=cmd_batch,
         )
 
@@ -1013,7 +1047,7 @@ class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
         "pkg_id_sequence"
     )
 
-    filter_glob: StringProperty(default="*.txz", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.zip", options={'HIDDEN'})
 
     directory: StringProperty(
         name="Directory",
@@ -1367,12 +1401,34 @@ class BlPkgPkgUninstall(Operator, _BlPkgCmdMixIn):
         _preferences_ui_refresh_addons()
 
 
+class BlPkgPkgDisable_TODO(Operator):
+    """NOTE: this operation is not yet supported"""
+    bl_idname = "bl_pkg.extension_disable"
+    bl_label = "Disable the extension"
+
+    def execute(self, _context):
+        self.report({'WARNING'}, "Disabling not yet supported")
+        return {'CANCELLED'}
+
+
 # -----------------------------------------------------------------------------
 # Non Wrapped Actions
 #
 # These actions don't wrap command line access.
 #
 # NOTE: create/destroy might not be best names.
+
+
+class BlPkgDisplayErrorsClear(Operator):
+    bl_idname = "bl_pkg.pkg_display_errors_clear"
+    bl_label = "Clear Status"
+
+    def execute(self, _context):
+        from .bl_extension_ui import display_errors
+        display_errors.clear()
+        _preferences_ui_redraw()
+        return {'FINISHED'}
+
 
 class BlPkgStatusClear(Operator):
     bl_idname = "bl_pkg.pkg_status_clear"
@@ -1576,12 +1632,14 @@ classes = (
     BlPkgPkgInstallFiles,
     BlPkgPkgInstall,
     BlPkgPkgUninstall,
+    BlPkgPkgDisable_TODO,
 
     BlPkgPkgUpgradeAll,
     BlPkgPkgInstallMarked,
     BlPkgPkgUninstallMarked,
 
     # UI only operator (to select a package).
+    BlPkgDisplayErrorsClear,
     BlPkgStatusClear,
     BlPkgPkgShowSet,
     BlPkgPkgShowClear,

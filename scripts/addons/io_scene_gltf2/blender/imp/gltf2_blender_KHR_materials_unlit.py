@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from .gltf2_blender_pbrMetallicRoughness import base_color, make_output_nodes
+from .gltf2_blender_pbrMetallicRoughness import base_color
 
 
 def unlit(mh):

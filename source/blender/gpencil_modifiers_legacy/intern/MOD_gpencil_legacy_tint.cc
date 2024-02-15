@@ -14,7 +14,7 @@
 #include "BLI_math_matrix.h"
 #include "BLI_math_vector.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_defaults.h"
 #include "DNA_gpencil_legacy_types.h"
@@ -35,7 +35,7 @@
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_modifier.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 
 #include "MEM_guardedalloc.h"

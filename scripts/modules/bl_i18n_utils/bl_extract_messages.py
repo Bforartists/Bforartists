@@ -11,6 +11,7 @@ import os
 import re
 import sys
 import glob
+from pathlib import PurePath
 
 # XXX Relative import does not work here when used from Blender...
 from bl_i18n_utils import settings as settings_i18n, utils
@@ -575,6 +576,7 @@ def dump_py_messages_from_files(msgs, reports, files, settings):
         ("pgettext_tip", ("tip_",)),
         ("pgettext_rpt", ("rpt_",)),
         ("pgettext_data", ("data_",)),
+        ("poll_message_set", ()),
     )
     pgettext_variants_args = {"msgid": (0, {"msgctxt": 1})}
 
@@ -664,6 +666,7 @@ def dump_py_messages_from_files(msgs, reports, files, settings):
             root_node = ast.parse(filedata.read(), fp, 'exec')
 
         fp_rel = make_rel(fp)
+        fp_rel = PurePath(fp_rel).as_posix()
 
         for node in ast.walk(root_node):
             if type(node) == ast.Call:
@@ -778,7 +781,7 @@ def dump_src_messages(msgs, reports, settings):
 
     def clean_str(s):
         # The encode/decode to/from 'raw_unicode_escape' allows to transform the C-type unicode hexadecimal escapes
-        # (like '\u2715' for the '×' symbol) back into a proper unicode character.
+        # (like '\u00d7' for the '×' symbol) back into a proper unicode character.
         return "".join(
             m.group("clean") for m in _clean_str(s)
         ).encode('raw_unicode_escape').decode('raw_unicode_escape')

@@ -21,7 +21,7 @@
 #include "BLI_utildefines.h"
 
 #include "BLF_api.hh"
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_object_types.h"
@@ -32,7 +32,7 @@
 #include "DNA_view3d_types.h"
 
 #include "BKE_context.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_legacy.h"
 
 #include "WM_api.hh"

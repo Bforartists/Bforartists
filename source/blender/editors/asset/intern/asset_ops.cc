@@ -10,12 +10,12 @@
 #include "AS_asset_representation.hh"
 
 #include "BKE_asset.hh"
-#include "BKE_bpath.h"
+#include "BKE_bpath.hh"
 #include "BKE_context.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_preferences.h"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "BLI_fileops.h" /* MSVC needs this for `PATH_MAX` */
 #include "BLI_fnmatch.h"
@@ -28,7 +28,7 @@
 /* XXX needs access to the file list, should all be done via the asset system in future. */
 #include "ED_fileselect.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"

@@ -18,7 +18,7 @@
 
 #include "GPU_platform.h"
 
-#include "BLO_readfile.h" /* own include */
+#include "BLO_userdef_default.h" /* own include */
 
 /* bfa - for the flag names have a look into source\blender\makesrna\intern\rna_userdef.c*/
 /*bfa -  added USER_TOOLTIPS_PYTHON, USER_DEVELOPER_UI and USER_FILENOUI to the .flag*/
