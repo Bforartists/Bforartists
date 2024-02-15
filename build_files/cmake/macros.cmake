@@ -853,7 +853,7 @@ function(get_blender_version)
   # - BFORARTISTS_VERSION_MINOR
   # - BFORARTISTS_VERSION_PATCH
 
-  # So CMAKE depends on `BKE_blender.h`, beware of infinite-loops!
+  # So CMAKE depends on `BKE_blender_version.h`, beware of infinite-loops!
   configure_file(
     ${CMAKE_SOURCE_DIR}/source/blender/blenkernel/BKE_blender_version.h
     ${CMAKE_BINARY_DIR}/source/blender/blenkernel/BKE_blender_version.h.done

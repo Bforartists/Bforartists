@@ -31,7 +31,7 @@
 #include "BLI_math_vector.h"
 #include "BLI_string_utf8_symbols.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_armature.hh"
 #include "BKE_editmesh.hh"
@@ -729,10 +729,10 @@ const EnumPropertyItem rna_enum_grease_pencil_selectmode_items[] = {
 #  include "BKE_animsys.h"
 #  include "BKE_bake_geometry_nodes_modifier.hh"
 #  include "BKE_brush.hh"
-#  include "BKE_collection.h"
+#  include "BKE_collection.hh"
 #  include "BKE_context.hh"
 #  include "BKE_freestyle.h"
-#  include "BKE_global.h"
+#  include "BKE_global.hh"
 #  include "BKE_gpencil_legacy.h"
 #  include "BKE_idprop.h"
 #  include "BKE_image.h"
@@ -742,7 +742,7 @@ const EnumPropertyItem rna_enum_grease_pencil_selectmode_items[] = {
 #  include "BKE_mesh.hh"
 #  include "BKE_node.h"
 #  include "BKE_pointcache.h"
-#  include "BKE_scene.h"
+#  include "BKE_scene.hh"
 #  include "BKE_screen.hh"
 #  include "BKE_unit.hh"
 
@@ -1870,7 +1870,7 @@ static void rna_SceneRenderView_name_set(PointerRNA *ptr, const char *value)
                  sizeof(rv->name));
 }
 
-void rna_ViewLayer_material_override_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
+void rna_ViewLayer_override_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
 {
   Scene *scene = (Scene *)ptr->owner_id;
   rna_Scene_render_update(bmain, scene, ptr);
@@ -2018,7 +2018,10 @@ static void rna_Scene_uv_select_mode_update(bContext *C, PointerRNA * /*ptr*/)
   ED_uvedit_selectmode_clean_multi(C);
 }
 
-static void object_simplify_update(Scene *scene, Object *ob, bool update_normals)
+static void object_simplify_update(Scene *scene,
+                                   Object *ob,
+                                   bool update_normals,
+                                   Depsgraph *depsgraph)
 {
   ModifierData *md;
   ParticleSystem *psys;
@@ -2030,6 +2033,14 @@ static void object_simplify_update(Scene *scene, Object *ob, bool update_normals
   ob->id.tag &= ~LIB_TAG_DOIT;
 
   for (md = static_cast<ModifierData *>(ob->modifiers.first); md; md = md->next) {
+    if (md->type == eModifierType_Nodes && depsgraph != nullptr) {
+      Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob);
+      const blender::bke::GeometrySet *geometry_set = ob_eval->runtime->geometry_set_eval;
+      if (geometry_set != nullptr && geometry_set->has_volume()) {
+        DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
+      }
+      continue;
+    }
     if (ELEM(
             md->type, eModifierType_Subsurf, eModifierType_Multires, eModifierType_ParticleSystem))
     {
@@ -2043,7 +2054,7 @@ static void object_simplify_update(Scene *scene, Object *ob, bool update_normals
 
   if (ob->instance_collection) {
     FOREACH_COLLECTION_OBJECT_RECURSIVE_BEGIN (ob->instance_collection, ob_collection) {
-      object_simplify_update(scene, ob_collection, update_normals);
+      object_simplify_update(scene, ob_collection, update_normals, depsgraph);
     }
     FOREACH_COLLECTION_OBJECT_RECURSIVE_END;
   }
@@ -2059,19 +2070,22 @@ static void object_simplify_update(Scene *scene, Object *ob, bool update_normals
   }
 }
 
-static void rna_Scene_simplify_update_impl(Main *bmain, Scene *sce, bool update_normals)
+static void rna_Scene_simplify_update_impl(Main *bmain,
+                                           Scene *sce,
+                                           bool update_normals,
+                                           Depsgraph *depsgraph)
 {
   Scene *sce_iter;
   Base *base;
 
   BKE_main_id_tag_listbase(&bmain->objects, LIB_TAG_DOIT, true);
   FOREACH_SCENE_OBJECT_BEGIN (sce, ob) {
-    object_simplify_update(sce, ob, update_normals);
+    object_simplify_update(sce, ob, update_normals, depsgraph);
   }
   FOREACH_SCENE_OBJECT_END;
 
   for (SETLOOPER_SET_ONLY(sce, sce_iter, base)) {
-    object_simplify_update(sce, base->object, update_normals);
+    object_simplify_update(sce, base->object, update_normals, depsgraph);
   }
 
   WM_main_add_notifier(NC_GEOM | ND_DATA, nullptr);
@@ -2079,16 +2093,28 @@ static void rna_Scene_simplify_update_impl(Main *bmain, Scene *sce, bool update_
   DEG_id_tag_update(&sce->id, ID_RECALC_COPY_ON_WRITE);
 }
 
-static void rna_Scene_use_simplify_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
+static void rna_Scene_use_simplify_update(bContext *C, PointerRNA *ptr)
 {
-  Scene *sce = (Scene *)ptr->owner_id;
-  rna_Scene_simplify_update_impl(bmain, sce, false);
+  Scene *scene = (Scene *)ptr->owner_id;
+  Main *bmain = CTX_data_main(C);
+  Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
+  rna_Scene_simplify_update_impl(bmain, scene, false, depsgraph);
+}
+
+static void rna_Scene_simplify_volume_update(bContext *C, PointerRNA *ptr)
+{
+  Scene *scene = (Scene *)ptr->owner_id;
+  Main *bmain = CTX_data_main(C);
+  Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
+  if (scene->r.mode & R_SIMPLIFY) {
+    rna_Scene_simplify_update_impl(bmain, scene, false, depsgraph);
+  }
 }
 
 static void rna_Scene_simplify_update(Main *bmain, Scene *scene, PointerRNA * /*ptr*/)
 {
   if (scene->r.mode & R_SIMPLIFY) {
-    rna_Scene_simplify_update_impl(bmain, scene, false);
+    rna_Scene_simplify_update_impl(bmain, scene, false, nullptr);
   }
 }
 
@@ -2097,7 +2123,7 @@ static void rna_Scene_use_simplify_normals_update(Main *bmain, Scene *scene, Poi
   /* NOTE: Ideally this would just force recalculation of the draw batch cache normals.
    * That's complicated enough to not be worth it here. */
   if (scene->r.mode & R_SIMPLIFY) {
-    rna_Scene_simplify_update_impl(bmain, scene, true);
+    rna_Scene_simplify_update_impl(bmain, scene, true, nullptr);
   }
 }
 
@@ -4273,7 +4299,7 @@ static void rna_def_curve_paint_settings(BlenderRNA *brna)
 
   static const EnumPropertyItem curve_type_items[] = {
       {CU_POLY, "POLY", 0, "Poly", ""},
-      {CU_BEZIER, "BEZIER", 0, "Bezier", ""},
+      {CU_BEZIER, "BEZIER", 0, "Bézier", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -4711,8 +4737,15 @@ void rna_def_view_layer_common(BlenderRNA *brna, StructRNA *srna, const bool sce
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
     RNA_def_property_ui_text(
         prop, "Material Override", "Material to override all other materials in this view layer");
-    RNA_def_property_update(
-        prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_material_override_update");
+    RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_override_update");
+
+    prop = RNA_def_property(srna, "world_override", PROP_POINTER, PROP_NONE);
+    RNA_def_property_pointer_sdna(prop, nullptr, "world_override");
+    RNA_def_property_struct_type(prop, "World");
+    RNA_def_property_flag(prop, PROP_EDITABLE);
+    RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
+    RNA_def_property_ui_text(prop, "World Override", "Override world in this view layer");
+    RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_override_update");
 
     prop = RNA_def_property(srna, "samples", PROP_INT, PROP_UNSIGNED);
     RNA_def_property_ui_text(prop,
@@ -6001,7 +6034,6 @@ static void rna_def_image_format_stereo3d_format(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "Stereo3dFormat", nullptr);
   RNA_def_struct_sdna(srna, "Stereo3dFormat");
-  RNA_def_struct_clear_flag(srna, STRUCT_UNDO);
   RNA_def_struct_ui_text(srna, "Stereo Output", "Settings for stereo output");
 
   prop = RNA_def_property(srna, "display_mode", PROP_ENUM, PROP_NONE);
@@ -6582,6 +6614,17 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
+  static const EnumPropertyItem motion_blur_position_items[] = {
+      {SCE_MB_START, "START", 0, "Start on Frame", "The shutter opens at the current frame"},
+      {SCE_MB_CENTER,
+       "CENTER",
+       0,
+       "Center on Frame",
+       "The shutter is open during the current frame"},
+      {SCE_MB_END, "END", 0, "End on Frame", "The shutter closes at the current frame"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   static const EnumPropertyItem hair_shape_type_items[] = {
       {SCE_HAIR_SHAPE_STRAND, "STRAND", 0, "Strand", ""},
       {SCE_HAIR_SHAPE_STRIP, "STRIP", 0, "Strip", ""},
@@ -6760,11 +6803,19 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_render_update");
 
   prop = RNA_def_property(srna, "motion_blur_shutter", PROP_FLOAT, PROP_FACTOR);
-  RNA_def_property_float_sdna(prop, nullptr, "blurfac");
   RNA_def_property_range(prop, 0.0f, FLT_MAX);
   RNA_def_property_ui_range(prop, 0.01f, 1.0f, 1, 2);
   RNA_def_property_ui_text(prop, "Shutter", "Time taken in frames between shutter open and close");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_render_update");
+
+  prop = RNA_def_property(srna, "motion_blur_position", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, motion_blur_position_items);
+  RNA_def_property_ui_text(prop,
+                           "Motion Blur Position",
+                           "Offset for the shutter's time interval, "
+                           "allows to change the motion blur trails");
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
+  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
   prop = RNA_def_property(srna, "motion_blur_shutter_curve", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, nullptr, "mblur_shutter_curve");
@@ -7207,6 +7258,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "mode", R_SIMPLIFY);
   RNA_def_property_ui_text(
       prop, "Use Simplify", "Enable simplification of scene for quicker preview renders");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, 0, "rna_Scene_use_simplify_update");
 
   prop = RNA_def_property(srna, "simplify_subdivision", PROP_INT, PROP_UNSIGNED);
@@ -7237,7 +7289,8 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_range(prop, 0.0, 1.0f);
   RNA_def_property_ui_text(
       prop, "Simplify Volumes", "Resolution percentage of volume objects in viewport");
-  RNA_def_property_update(prop, 0, "rna_Scene_simplify_update");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_update(prop, 0, "rna_Scene_simplify_volume_update");
 
   prop = RNA_def_property(srna, "use_simplify_normals", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "mode", R_SIMPLIFY_NORMALS);
@@ -7732,17 +7785,6 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
-  static const EnumPropertyItem eevee_motion_blur_position_items[] = {
-      {SCE_EEVEE_MB_START, "START", 0, "Start on Frame", "The shutter opens at the current frame"},
-      {SCE_EEVEE_MB_CENTER,
-       "CENTER",
-       0,
-       "Center on Frame",
-       "The shutter is open during the current frame"},
-      {SCE_EEVEE_MB_END, "END", 0, "End on Frame", "The shutter closes at the current frame"},
-      {0, nullptr, 0, nullptr, nullptr},
-  };
-
   static const EnumPropertyItem ray_tracing_method_items[] = {
       {RAYTRACE_EEVEE_METHOD_NONE, "NONE", 0, "None", "No intersection with scene geometry"},
       {RAYTRACE_EEVEE_METHOD_SCREEN,
@@ -8218,19 +8260,6 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
   /* Motion blur */
-  prop = RNA_def_property(srna, "use_motion_blur", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SCE_EEVEE_MOTION_BLUR_ENABLED);
-  RNA_def_property_ui_text(prop, "Motion Blur", "Enable motion blur effect (only in camera view)");
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
-  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
-
-  prop = RNA_def_property(srna, "motion_blur_shutter", PROP_FLOAT, PROP_FACTOR);
-  RNA_def_property_ui_text(prop, "Shutter", "Time taken in frames between shutter open and close");
-  RNA_def_property_range(prop, 0.0f, FLT_MAX);
-  RNA_def_property_ui_range(prop, 0.01f, 1.0f, 1, 2);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
-  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
-
   prop = RNA_def_property(srna, "motion_blur_depth_scale", PROP_FLOAT, PROP_NONE);
   RNA_def_property_ui_text(prop,
                            "Background Separation",
@@ -8255,15 +8284,6 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
                            "more steps means longer render time");
   RNA_def_property_range(prop, 1, INT_MAX);
   RNA_def_property_ui_range(prop, 1, 64, 1, -1);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
-  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
-
-  prop = RNA_def_property(srna, "motion_blur_position", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, eevee_motion_blur_position_items);
-  RNA_def_property_ui_text(prop,
-                           "Motion Blur Position",
-                           "Offset for the shutter's time interval, "
-                           "allows to change the motion blur trails");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 

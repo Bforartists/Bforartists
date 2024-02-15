@@ -37,12 +37,12 @@
 #  include "BKE_blendfile.hh"
 #  include "BKE_context.hh"
 
-#  include "BKE_global.h"
+#  include "BKE_global.hh"
 #  include "BKE_image_format.h"
 #  include "BKE_lib_id.hh"
 #  include "BKE_main.hh"
-#  include "BKE_report.h"
-#  include "BKE_scene.h"
+#  include "BKE_report.hh"
+#  include "BKE_scene.hh"
 #  include "BKE_sound.h"
 
 #  include "GPU_context.h"
@@ -1550,7 +1550,7 @@ static const char arg_handle_audio_set_doc[] =
 static int arg_handle_audio_set(int argc, const char **argv, void * /*data*/)
 {
   if (argc < 1) {
-    fprintf(stderr, "-setaudio require one argument\n");
+    fprintf(stderr, "-setaudio requires one argument\n");
     exit(1);
   }
 

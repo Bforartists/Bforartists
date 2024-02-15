@@ -16,7 +16,7 @@
 #include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_mask_types.h"
 #include "DNA_scene_types.h"
@@ -86,7 +86,6 @@ static ImBuf *modifier_render_mask_input(const SeqRenderData *context,
   if (mask_input_type == SEQUENCE_MASK_INPUT_STRIP) {
     if (mask_sequence) {
       SeqRenderState state;
-      seq_render_state_init(&state);
 
       mask_input = seq_render_strip(context, &state, mask_sequence, timeline_frame);
 

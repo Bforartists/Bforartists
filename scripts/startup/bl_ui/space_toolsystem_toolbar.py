@@ -837,6 +837,7 @@ class _defs_edit_mesh:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.spin")
             layout.prop(props, "steps")
+            layout.prop(props, "dupli")
             props = tool.gizmo_group_properties("MESH_GGT_spin")
             layout.prop(props, "axis")
 
@@ -844,23 +845,6 @@ class _defs_edit_mesh:
             idname="builtin.spin",
             label="Spin",
             icon="ops.mesh.spin",
-            widget="MESH_GGT_spin",
-            keymap=(),
-            draw_settings=draw_settings,
-        )
-
-    @ToolDef.from_fn
-    def spin_duplicate():
-        def draw_settings(_context, layout, tool):
-            props = tool.operator_properties("mesh.spin")
-            layout.prop(props, "steps")
-            props = tool.gizmo_group_properties("MESH_GGT_spin")
-            layout.prop(props, "axis")
-
-        return dict(
-            idname="builtin.spin_duplicates",
-            label="Spin Duplicates",
-            icon="ops.mesh.spin.duplicate",
             widget="MESH_GGT_spin",
             keymap=(),
             draw_settings=draw_settings,
@@ -3084,10 +3068,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 _defs_edit_mesh.bisect,
             ),
             _defs_edit_mesh.poly_build,
-            (
-                _defs_edit_mesh.spin,
-                _defs_edit_mesh.spin_duplicate,
-            ),
+            _defs_edit_mesh.spin,
             (
                 _defs_edit_mesh.vertex_smooth,
                 _defs_edit_mesh.vertex_randomize,

@@ -15,7 +15,7 @@
 #include "DNA_scene_types.h"
 
 #include "BKE_context.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_image.h"
 #include "BKE_main.hh"
 #include "BKE_node.hh"
@@ -180,12 +180,13 @@ void ntreeCompositExecTree(Render *render,
                            bool rendering,
                            int do_preview,
                            const char *view_name,
-                           blender::realtime_compositor::RenderContext *render_context)
+                           blender::realtime_compositor::RenderContext *render_context,
+                           blender::compositor::ProfilerData &profiler_data)
 {
 #ifdef WITH_COMPOSITOR_CPU
-  COM_execute(render, rd, scene, ntree, rendering, view_name, render_context);
+  COM_execute(render, rd, scene, ntree, rendering, view_name, render_context, profiler_data);
 #else
-  UNUSED_VARS(render, scene, ntree, rd, rendering, view_name, render_context);
+  UNUSED_VARS(render, scene, ntree, rd, rendering, view_name, render_context, profiler_data);
 #endif
 
   UNUSED_VARS(do_preview);

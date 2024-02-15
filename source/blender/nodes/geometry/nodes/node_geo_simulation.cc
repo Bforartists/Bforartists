@@ -18,7 +18,7 @@
 #include "BKE_modifier.hh"
 #include "BKE_node_socket_value.hh"
 #include "BKE_object.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "DEG_depsgraph_query.hh"
 
@@ -42,7 +42,9 @@
 
 #include "MOD_nodes.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
+
+#include "GEO_mix_geometries.hh"
 
 #include "GEO_mix_geometries.hh"
 
