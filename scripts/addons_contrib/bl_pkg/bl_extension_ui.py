@@ -8,6 +8,7 @@ Written to allow a UI without modifying Blender.
 """
 
 __all__ = (
+    "display_errors",
     "register",
     "unregister",
 )
@@ -47,6 +48,26 @@ def sizes_as_percentage_string(size_partial: int, size_final: int) -> str:
         percent = size_partial / size_final
 
     return "{:-6.2f}%".format(percent * 100)
+
+
+def license_info_to_text(license_list):
+    # See: https://spdx.org/licenses/
+    # - Note that we could include all, for now only common, GPL compatible licenses.
+    # - Note that many of the human descriptions are not especially more humanly readable
+    #   than the short versions, so it's questionable if we should attempt to add all of these.
+    _spdx_id_to_text = {
+        "GPL-2.0-only": "GNU General Public License v2.0 only",
+        "GPL-2.0-or-later": "GNU General Public License v2.0 or later",
+        "GPL-3.0-only": "GNU General Public License v3.0 only",
+        "GPL-3.0-or-later": "GNU General Public License v3.0 or later",
+    }
+    result = []
+    for item in license_list:
+        if item.startswith("SPDX:"):
+            item = item[5:]
+            item = _spdx_id_to_text.get(item, item)
+        result.append(item)
+    return ", ".join(result)
 
 
 def extensions_panel_draw_legacy_addons(
@@ -114,7 +135,7 @@ def extensions_panel_draw_legacy_addons(
 
         sub = row.row()
         sub.active = is_enabled
-        sub.label(text=bl_info["name"])
+        sub.label(text="Legacy: " + bl_info["name"])
 
         if bl_info["warning"]:
             sub.label(icon='ERROR')
@@ -122,7 +143,7 @@ def extensions_panel_draw_legacy_addons(
         row_right = row.row()
         row_right.alignment = 'RIGHT'
 
-        row_right.label(text="Installed (Legacy)   ")
+        row_right.label(text="Installed   ")
         row_right.active = False
 
         if bl_info["show_expanded"]:
@@ -190,6 +211,40 @@ def extensions_panel_draw_legacy_addons(
                     USERPREF_PT_addons.draw_addon_preferences(layout, context, addon_preferences)
 
 
+class display_errors:
+    """
+    This singleton class is used to store errors which are generated while drawing,
+    note that these errors are reasonably obscure, examples are:
+    - Failure to parse the repository JSON file.
+    - Failure to access the file-system for reading where the repository is stored.
+
+    The current and previous state are compared, when they match no drawing is done,
+    this allows the current display errors to be dismissed.
+    """
+    errors_prev = []
+    errors_curr = []
+
+    @staticmethod
+    def clear():
+        display_errors.errors_prev = display_errors.errors_curr
+
+    @staticmethod
+    def draw(layout):
+        if display_errors.errors_curr == display_errors.errors_prev:
+            return
+        box_header = layout.box()
+        # Don't clip longer names.
+        row = box_header.split(factor=0.9)
+        row.label(text="Repository Access Errors:", icon='ERROR')
+        rowsub = row.row(align=True)
+        rowsub.alignment = 'RIGHT'
+        rowsub.operator("bl_pkg.pkg_display_errors_clear", text="", icon='X', emboss=False)
+
+        box_contents = box_header.box()
+        for err in display_errors.errors_curr:
+            box_contents.label(text=err)
+
+
 def extensions_panel_draw_impl(
         self,
         context,
@@ -230,6 +285,9 @@ def extensions_panel_draw_impl(
     if show_addons:
         used_addon_module_name_map = {addon.module: addon for addon in context.preferences.addons}
 
+    # Collect exceptions accessing repositories, and optionally show them.
+    errors_on_draw = []
+
     remote_ex = None
     local_ex = None
 
@@ -255,25 +313,23 @@ def extensions_panel_draw_impl(
         # or cause a trace-back which breaks the UI.
         if (remote_ex is not None) or (local_ex is not None):
             repo = repos_all[repo_index]
-            box = layout_topmost.box()
             if remote_ex is not None:
-                box.label(text="Repository Remote \"{:s}\": {:s}".format(repo.name, str(remote_ex)))
+                errors_on_draw.append("Remote of \"{:s}\": {:s}".format(repo.name, str(remote_ex)))
                 remote_ex = None
 
             if local_ex is not None:
-                box.label(text="Repository Local \"{:s}\": {:s}".format(repo.name, str(local_ex)))
+                errors_on_draw.append("Local of \"{:s}\": {:s}".format(repo.name, str(remote_ex)))
                 local_ex = None
             continue
 
         if pkg_manifest_remote is None:
-            box = layout_topmost.box()
             repo = repos_all[repo_index]
             has_remote = (repo.repo_url != "")
             if has_remote:
                 # NOTE: it would be nice to detect when the repository ran sync and it failed.
                 # This isn't such an important distinction though, the main thing users should be aware of
                 # is that a "sync" is required.
-                box.label(text="Repository: \"{:s}\" must sync with the remote repository.".format(repo.name))
+                errors_on_draw.append("Repository: \"{:s}\" must sync with the remote repository.".format(repo.name))
             del repo
             continue
         else:
@@ -293,16 +349,24 @@ def extensions_panel_draw_impl(
             if installed_only and (is_installed == 0):
                 continue
 
-            if is_installed and (item_local["type"] == "add-on"):
-                addon_module_name = "bl_ext.{:s}.{:s}".format(repos_all[repo_index].module, pkg_id)
-                is_enabled_addon = addon_module_name in used_addon_module_name_map
+            is_addon = (item_remote["type"] == "add-on")
 
-                # This only makes sense for add-ons at the moment.
-                if enabled_only and (not is_enabled_addon):
-                    continue
+            if is_addon:
+                if is_installed:
+                    # Currently we only need to know the module name once installed.
+                    addon_module_name = "bl_ext.{:s}.{:s}".format(repos_all[repo_index].module, pkg_id)
+                    is_enabled = addon_module_name in used_addon_module_name_map
+
+                else:
+                    is_enabled = False
+                    addon_module_name = None
             else:
-                is_enabled_addon = False
+                # TODO: ability to disable.
+                is_enabled = is_installed
                 addon_module_name = None
+
+            if enabled_only and (not is_enabled):
+                continue
 
             item_version = item_remote["version"]
             if item_local is None:
@@ -321,7 +385,8 @@ def extensions_panel_draw_impl(
             box = layout.box()
 
             # Left align so the operator text isn't centered.
-            row = box.row(align=True)
+            colsub = box.column()
+            row = colsub.row(align=True)
             # row.label
             if show:
                 props = row.operator("bl_pkg.pkg_show_clear", text="", icon='DISCLOSURE_TRI_DOWN', emboss=False)
@@ -331,34 +396,40 @@ def extensions_panel_draw_impl(
             props.repo_index = repo_index
             del props
 
-            row_button = row.row()
-            row_button.alignment = 'LEFT'
-
-            label = item_remote["name"]
-            if is_outdated:
-                label = label + " (outdated)"
+            if is_installed:
+                if is_addon:
+                    row.operator(
+                        "preferences.addon_disable" if is_enabled else "preferences.addon_enable",
+                        icon='CHECKBOX_HLT' if is_enabled else 'CHECKBOX_DEHLT',
+                        text="",
+                        emboss=False,
+                    ).module = addon_module_name
+                else:
+                    # Use a place-holder checkbox icon to avoid odd text alignment when mixing with installed add-ons.
+                    # Non add-ons have no concept of "enabled" right now, use installed.
+                    row.operator(
+                        "bl_pkg.extension_disable",
+                        text="",
+                        icon='CHECKBOX_HLT',
+                        emboss=False,
+                    )
+            else:
+                # Not installed, always placeholder.
+                row.label(text="", icon='CHECKBOX_DEHLT')
 
             if show_development:
                 if mark:
-                    props = row_button.operator("bl_pkg.pkg_mark_clear", text="", icon='RADIOBUT_ON', emboss=False)
+                    props = row.operator("bl_pkg.pkg_mark_clear", text="", icon='RADIOBUT_ON', emboss=False)
                 else:
-                    props = row_button.operator("bl_pkg.pkg_mark_set", text="", icon='RADIOBUT_OFF', emboss=False)
+                    props = row.operator("bl_pkg.pkg_mark_set", text="", icon='RADIOBUT_OFF', emboss=False)
                 props.pkg_id = pkg_id
                 props.repo_index = repo_index
                 del props
 
-            if is_installed and (addon_module_name is not None):
-                row_button.operator(
-                    "preferences.addon_disable" if is_enabled_addon else "preferences.addon_enable",
-                    icon='CHECKBOX_HLT' if is_enabled_addon else 'CHECKBOX_DEHLT',
-                    text=label,
-                    emboss=False,
-                ).module = addon_module_name
-            else:
-                # Use a blank icon to avoid odd text alignment when mixing with installed add-ons.
-                row_button.active = is_installed
-                row_button.label(text=label, icon='BLANK1')
-            del label
+            sub = row.row()
+            sub.active = is_enabled
+            sub.label(text=item_remote["name"])
+            del sub
 
             row_right = row.row()
             row_right.alignment = 'RIGHT'
@@ -382,7 +453,7 @@ def extensions_panel_draw_impl(
                     del props
             else:
                 # Right space for alignment with the button.
-                row_right.label(text="Installed (Local)   ")
+                row_right.label(text="Installed   ")
                 row_right.active = False
 
             if show:
@@ -402,7 +473,7 @@ def extensions_panel_draw_impl(
                 col_b.label(text=item_remote["maintainer"])
 
                 col_a.label(text="License:")
-                col_b.label(text=",".join([x.removeprefix("SPDX:") for x in item_remote["license"]]))
+                col_b.label(text=license_info_to_text(item_remote["license"]))
 
                 col_a.label(text="Version:")
                 if is_outdated:
@@ -440,7 +511,7 @@ def extensions_panel_draw_impl(
                     del props, rowsub
 
                 # Show addon user preferences.
-                if is_enabled_addon:
+                if is_enabled and is_addon:
                     if (addon_preferences := used_addon_module_name_map[addon_module_name].preferences) is not None:
                         USERPREF_PT_addons.draw_addon_preferences(layout, context, addon_preferences)
 
@@ -453,6 +524,11 @@ def extensions_panel_draw_impl(
             installed_only=installed_only,
             used_addon_module_name_map=used_addon_module_name_map,
         )
+
+    # Finally show any errors in a single panel which can be dismissed.
+    display_errors.errors_curr = errors_on_draw
+    if errors_on_draw:
+        display_errors.draw(layout_topmost)
 
 
 class USERPREF_PT_extensions_bl_pkg_filter(Panel):
@@ -479,12 +555,12 @@ class USERPREF_MT_extensions_bl_pkg_settings(Menu):
         addon_prefs = context.preferences.addons[__package__].preferences
 
         layout.operator("bl_pkg.repo_sync_all", text="Check for Updates", icon='FILE_REFRESH')
-        layout.operator("bl_pkg.pkg_upgrade_all", text="Update All", icon='FILE_REFRESH')
+        layout.operator("bl_pkg.pkg_upgrade_all", text="Update All", icon='IMPORT')
 
         layout.separator()
 
-        layout.operator("bl_pkg.pkg_install_files", icon='IMPORT', text="Install Extensions (from file)...")
-        layout.operator("preferences.addon_install", icon='IMPORT', text="Install Legacy Add-on (from file)...")
+        layout.operator("bl_pkg.pkg_install_files", icon='IMPORT', text="Install from Disk")
+        layout.operator("preferences.addon_install", icon='IMPORT', text="Install Legacy Add-on")
 
         layout.separator()
 
@@ -537,11 +613,12 @@ def extensions_panel_draw(panel, context):
 
     if repo_status_text.log:
         box = layout.box()
-        row = box.split(factor=0.5, align=True)
+        # Don't clip longer names.
+        row = box.split(factor=0.9, align=True)
         if repo_status_text.running:
-            row.label(text=repo_status_text.title + "...")
+            row.label(text=repo_status_text.title + "...", icon='INFO')
         else:
-            row.label(text=repo_status_text.title)
+            row.label(text=repo_status_text.title, icon='INFO')
         rowsub = row.row(align=True)
         rowsub.alignment = 'RIGHT'
         rowsub.operator("bl_pkg.pkg_status_clear", text="", icon='X', emboss=False)

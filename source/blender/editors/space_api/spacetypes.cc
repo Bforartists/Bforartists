@@ -84,7 +84,7 @@ void ED_spacetypes_init()
   ED_spacetype_clip();
   ED_spacetype_statusbar();
   ED_spacetype_topbar();
-  ED_spacetype_toolbar();
+  ED_spacetype_toolbar(); /* BFA - toolbar */
   spreadsheet::register_spacetype();
 
   /* Register operator types for screen and all spaces. */

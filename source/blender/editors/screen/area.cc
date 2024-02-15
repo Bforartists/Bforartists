@@ -20,7 +20,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_context.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_image.h"
 #include "BKE_screen.hh"
 #include "BKE_workspace.h"
@@ -2795,8 +2795,6 @@ int ED_area_header_switchbutton(const bContext *C, uiBlock *block, int yco)
             &areaptr,
             "ui_type",
             0,
-            0.0f,
-            0.0f,
             0.0f,
             0.0f,
             "");

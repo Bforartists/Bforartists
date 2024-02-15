@@ -75,7 +75,8 @@ static bool rna_KeyMapItem_compare(wmKeyMapItem *k1, wmKeyMapItem *k2)
 
 static void rna_KeyMapItem_to_string(wmKeyMapItem *kmi, bool compact, char *result)
 {
-  WM_keymap_item_to_string(kmi, compact, result, UI_MAX_SHORTCUT_STR);
+  BLI_strncpy(
+      result, WM_keymap_item_to_string(kmi, compact).value_or("").c_str(), UI_MAX_SHORTCUT_STR);
 }
 
 static wmKeyMap *rna_keymap_active(wmKeyMap *km, bContext *C)
@@ -122,10 +123,10 @@ static bool rna_event_modal_handler_add(bContext *C, ReportList *reports, wmOper
   return WM_event_add_modal_handler_ex(win, area, region, op) != nullptr;
 }
 
-/* XXX, need a way for python to know event types, 0x0110 is hard coded */
 static wmTimer *rna_event_timer_add(wmWindowManager *wm, float time_step, wmWindow *win)
 {
-  return WM_event_timer_add(wm, win, 0x0110, time_step);
+  /* NOTE: we need a way for Python to know event types, `TIMER` is hard coded. */
+  return WM_event_timer_add(wm, win, TIMER, time_step);
 }
 
 static void rna_event_timer_remove(wmWindowManager *wm, wmTimer *timer)
@@ -240,7 +241,12 @@ static int rna_Operator_props_dialog_popup(bContext *C,
 {
   title = RNA_translate_ui_text(title, text_ctxt, nullptr, nullptr, translate);
   confirm_text = RNA_translate_ui_text(confirm_text, text_ctxt, nullptr, nullptr, translate);
-  return WM_operator_props_dialog_popup(C, op, width, title, confirm_text);
+  return WM_operator_props_dialog_popup(
+      C,
+      op,
+      width,
+      title ? std::make_optional<std::string>(title) : std::nullopt,
+      confirm_text ? std::make_optional<std::string>(confirm_text) : std::nullopt);
 }
 
 static int keymap_item_modifier_flag_from_args(bool any, int shift, int ctrl, int alt, int oskey)
@@ -342,7 +348,7 @@ static wmKeyMapItem *rna_KeyMap_item_new_from_item(wmKeyMap *km,
   // wmWindowManager *wm = CTX_wm_manager(C);
 
   if ((km->flag & KEYMAP_MODAL) == (kmi_src->idname[0] != '\0')) {
-    BKE_report(reports, RPT_ERROR, "Can not mix modal/non-modal items");
+    BKE_report(reports, RPT_ERROR, "Cannot mix modal/non-modal items");
     return nullptr;
   }
 

@@ -15,6 +15,8 @@
 #include "DNA_session_uid_types.h"
 
 #ifdef __cplusplus
+#  include "BLI_span.hh"
+
 namespace blender {
 struct NodesModifierRuntime;
 }
@@ -102,6 +104,8 @@ typedef enum ModifierType {
   eModifierType_GreasePencilNoise = 67,
   eModifierType_GreasePencilMirror = 68,
   eModifierType_GreasePencilThickness = 69,
+  eModifierType_GreasePencilLattice = 70,
+  eModifierType_GreasePencilDash = 71,
   NUM_MODIFIER_TYPES,
 } ModifierType;
 
@@ -136,14 +140,22 @@ typedef struct ModifierData {
    * and easily conflict with the explicit mapping of bits to panels here.
    */
   uint16_t layout_panel_open_flag;
-  char _pad[6];
+  char _pad[2];
+  /**
+   * Uniquely identifies the modifier within the object. This identifier is stable across Blender
+   * sessions. Modifiers on the original and corresponding evaluated object have matching
+   * identifiers. The identifier stays the same if the modifier is renamed or moved in the modifier
+   * stack.
+   *
+   * A valid identifier is non-negative (>= 1). Modifiers that are currently not on an object may
+   * have invalid identifiers. It has to be initialized with #BKE_modifiers_persistent_uid_init
+   * when it is added to an object.
+   */
+  int persistent_uid;
   /** MAX_NAME. */
   char name[64];
 
   char *error;
-
-  /** Runtime field which contains unique identifier of the modifier. */
-  SessionUID session_uid;
 
   /** Runtime field which contains runtime data which is specific to a modifier type. */
   void *runtime;
@@ -2764,3 +2776,43 @@ typedef enum GreasePencilThicknessModifierFlag {
   MOD_GREASE_PENCIL_THICK_NORMALIZE = (1 << 0),
   MOD_GREASE_PENCIL_THICK_WEIGHT_FACTOR = (1 << 1),
 } GreasePencilThicknessModifierFlag;
+
+typedef struct GreasePencilLatticeModifierData {
+  ModifierData modifier;
+  GreasePencilModifierInfluenceData influence;
+  struct Object *object;
+  float strength;
+  char _pad[4];
+} GreasePencilLatticeModifierData;
+
+typedef struct GreasePencilDashModifierSegment {
+  char name[64];
+  int dash;
+  int gap;
+  float radius;
+  float opacity;
+  int mat_nr;
+  /** #GreasePencilDashModifierFlag */
+  int flag;
+} GreasePencilDashModifierSegment;
+
+typedef struct GreasePencilDashModifierData {
+  ModifierData modifier;
+  GreasePencilModifierInfluenceData influence;
+
+  GreasePencilDashModifierSegment *segments_array;
+  int segments_num;
+  int segment_active_index;
+
+  int dash_offset;
+  char _pad[4];
+
+#ifdef __cplusplus
+  blender::Span<GreasePencilDashModifierSegment> segments() const;
+  blender::MutableSpan<GreasePencilDashModifierSegment> segments();
+#endif
+} GreasePencilDashModifierData;
+
+typedef enum GreasePencilDashModifierFlag {
+  MOD_GREASE_PENCIL_DASH_USE_CYCLIC = (1 << 0),
+} GreasePencilDashModifierFlag;
