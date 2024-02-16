@@ -121,13 +121,13 @@ static NavigateGizmoInfo g_navigate_params[GZ_INDEX_TOTAL] = {
     {
         "WM_OT_context_toggle",
         "GIZMO_GT_button_2d",
-        ICON_LOCK_TO_CAMVIEW,
+        ICON_LOCK_TO_CAMVIEW_ON,
         navigate_context_toggle_camera_lock_init,
     },
     {
         "WM_OT_context_toggle",
         "GIZMO_GT_button_2d",
-        ICON_LOCK_TO_CAMVIEW_ON,
+        ICON_LOCK_TO_CAMVIEW,
         navigate_context_toggle_camera_lock_init,
     },
 };
