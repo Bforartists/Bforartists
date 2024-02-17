@@ -387,9 +387,11 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
                 row = layout.column()
                 row.active = enable_edit_value
                 row.prop(key, "eval_time")
-
-        layout.use_property_split = False
-        layout.prop(ob, "add_rest_position_attribute")
+        
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(ob, "add_rest_position_attribute")
+        row.prop_decorator(ob, "add_rest_position_attribute")
 
 
 class DATA_PT_uv_texture(MeshButtonsPanel, Panel):
