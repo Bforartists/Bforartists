@@ -388,6 +388,7 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
                 row.active = enable_edit_value
                 row.prop(key, "eval_time")
 
+        layout.use_property_split = False
         layout.prop(ob, "add_rest_position_attribute")
 
 
