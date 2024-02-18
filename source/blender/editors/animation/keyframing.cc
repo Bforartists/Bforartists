@@ -866,7 +866,7 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-  WM_operator_properties_confirm_or_exec(ot);
+  // WM_operator_properties_confirm_or_exec(ot); // BFA - Remove confirmation dialog
 }
 
 /* bfa - Apply animation to all selected pose bones through UI animate property */
