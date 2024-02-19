@@ -23,13 +23,13 @@
 #include "DNA_object_types.h"
 
 #include "BKE_gpencil_curve_legacy.h"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 
 #include "DEG_depsgraph.hh"
 
 #include "ED_outliner.hh"
 
-#include "rna_internal.h" /* own include */
+#include "rna_internal.hh" /* own include */
 
 #define MESH_DM_INFO_STR_MAX 16384
 
@@ -56,16 +56,16 @@ static const EnumPropertyItem space_items[] = {
 #  include "BKE_context.hh"
 #  include "BKE_crazyspace.hh"
 #  include "BKE_customdata.hh"
-#  include "BKE_global.h"
-#  include "BKE_layer.h"
+#  include "BKE_global.hh"
+#  include "BKE_layer.hh"
 #  include "BKE_main.hh"
-#  include "BKE_mball.h"
+#  include "BKE_mball.hh"
 #  include "BKE_mesh.hh"
 #  include "BKE_mesh_runtime.hh"
 #  include "BKE_modifier.hh"
 #  include "BKE_object.hh"
 #  include "BKE_object_types.hh"
-#  include "BKE_report.h"
+#  include "BKE_report.hh"
 #  include "BKE_vfont.hh"
 
 #  include "ED_object.hh"
@@ -73,7 +73,6 @@ static const EnumPropertyItem space_items[] = {
 
 #  include "DNA_curve_types.h"
 #  include "DNA_mesh_types.h"
-#  include "DNA_meshdata_types.h"
 #  include "DNA_scene_types.h"
 #  include "DNA_view3d_types.h"
 
@@ -253,7 +252,7 @@ static bool rna_Object_local_view_get(Object *ob, ReportList *reports, View3D *v
     return false;
   }
 
-  return ((ob->base_local_view_bits & v3d->local_view_uuid) != 0);
+  return ((ob->base_local_view_bits & v3d->local_view_uid) != 0);
 }
 
 static void rna_Object_local_view_set(Object *ob,
@@ -269,7 +268,7 @@ static void rna_Object_local_view_set(Object *ob,
     return; /* Error reported. */
   }
   const short local_view_bits_prev = base->local_view_bits;
-  SET_FLAG_FROM_TEST(base->local_view_bits, state, v3d->local_view_uuid);
+  SET_FLAG_FROM_TEST(base->local_view_bits, state, v3d->local_view_uid);
   if (local_view_bits_prev != base->local_view_bits) {
     DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS);
     ScrArea *area = ED_screen_area_find_with_spacedata(screen, (SpaceLink *)v3d, true);
@@ -541,7 +540,7 @@ static void rna_Mesh_assign_verts_to_group(
 
   /* Loop list adding verts to group. */
   for (i = 0; i < totindex; i++) {
-    if (i < 0 || i >= mesh->totvert) {
+    if (i < 0 || i >= mesh->verts_num) {
       BKE_report(reports, RPT_ERROR, "Bad vertex index in list");
       return;
     }
@@ -552,10 +551,10 @@ static void rna_Mesh_assign_verts_to_group(
 #  endif
 
 /* don't call inside a loop */
-static int mesh_looptri_to_face_index(Mesh *me_eval, const int tri_index)
+static int mesh_corner_tri_to_face_index(Mesh *me_eval, const int tri_index)
 {
-  const blender::Span<int> looptri_faces = me_eval->looptri_faces();
-  const int face_i = looptri_faces[tri_index];
+  const blender::Span<int> tri_faces = me_eval->corner_tri_faces();
+  const int face_i = tri_faces[tri_index];
   const int *index_mp_to_orig = static_cast<const int *>(
       CustomData_get_layer(&me_eval->face_data, CD_ORIGINDEX));
   return index_mp_to_orig ? index_mp_to_orig[face_i] : face_i;
@@ -629,7 +628,7 @@ static void rna_Object_ray_cast(Object *ob,
 
     /* No need to managing allocation or freeing of the BVH data.
      * This is generated and freed as needed. */
-    BKE_bvhtree_from_mesh_get(&treeData, mesh_eval, BVHTREE_FROM_LOOPTRIS, 4);
+    BKE_bvhtree_from_mesh_get(&treeData, mesh_eval, BVHTREE_FROM_CORNER_TRIS, 4);
 
     /* may fail if the mesh has no faces, in that case the ray-cast misses */
     if (treeData.tree != nullptr) {
@@ -651,7 +650,7 @@ static void rna_Object_ray_cast(Object *ob,
 
           copy_v3_v3(r_location, hit.co);
           copy_v3_v3(r_normal, hit.no);
-          *r_index = mesh_looptri_to_face_index(mesh_eval, hit.index);
+          *r_index = mesh_corner_tri_to_face_index(mesh_eval, hit.index);
         }
       }
 
@@ -687,7 +686,7 @@ static void rna_Object_closest_point_on_mesh(Object *ob,
   /* No need to managing allocation or freeing of the BVH data.
    * this is generated and freed as needed. */
   Mesh *mesh_eval = BKE_object_get_evaluated_mesh(ob);
-  BKE_bvhtree_from_mesh_get(&treeData, mesh_eval, BVHTREE_FROM_LOOPTRIS, 4);
+  BKE_bvhtree_from_mesh_get(&treeData, mesh_eval, BVHTREE_FROM_CORNER_TRIS, 4);
 
   if (treeData.tree == nullptr) {
     BKE_reportf(reports,
@@ -709,7 +708,7 @@ static void rna_Object_closest_point_on_mesh(Object *ob,
 
       copy_v3_v3(r_location, nearest.co);
       copy_v3_v3(r_normal, nearest.no);
-      *r_index = mesh_looptri_to_face_index(mesh_eval, nearest.index);
+      *r_index = mesh_corner_tri_to_face_index(mesh_eval, nearest.index);
 
       goto finally;
     }
@@ -1078,7 +1077,7 @@ void RNA_api_object(StructRNA *srna)
       func,
       "Create a Mesh data from the current state of the object. The object owns the "
       "data. To force free it use to_mesh_clear(). "
-      "The result is temporary and can not be used by objects from the main database");
+      "The result is temporary and cannot be used by objects from the main database");
   RNA_def_function_flag(func, FUNC_USE_REPORTS);
   RNA_def_boolean(func,
                   "preserve_all_data_layers",
@@ -1105,7 +1104,7 @@ void RNA_api_object(StructRNA *srna)
       func,
       "Create a Curve data-block from the current state of the object. This only works for curve "
       "and text objects. The object owns the data-block. To force free it, use to_curve_clear(). "
-      "The result is temporary and can not be used by objects from the main database");
+      "The result is temporary and cannot be used by objects from the main database");
   RNA_def_function_flag(func, FUNC_USE_REPORTS);
   parm = RNA_def_pointer(
       func, "depsgraph", "Depsgraph", "Dependency Graph", "Evaluated dependency graph");

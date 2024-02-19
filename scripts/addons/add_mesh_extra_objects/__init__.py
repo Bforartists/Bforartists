@@ -13,7 +13,7 @@
 bl_info = {
     "name": "Extra Objects",
     "author": "Multiple Authors",
-    "version": (0, 3, 9),
+    "version": (0, 3, 11),
     "blender": (2, 80, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add extra mesh object types",

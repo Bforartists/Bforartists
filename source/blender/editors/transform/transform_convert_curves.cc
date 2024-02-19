@@ -13,6 +13,7 @@
 #include "BLI_math_matrix.h"
 #include "BLI_span.hh"
 
+#include "BKE_attribute.hh"
 #include "BKE_curves.hh"
 
 #include "ED_curves.hh"
@@ -94,7 +95,8 @@ static void createTransCurvesVerts(bContext * /*C*/, TransInfo *t)
     if (tc.data_len == 0) {
       continue;
     }
-    Curves *curves_id = static_cast<Curves *>(tc.obedit->data);
+    Object *object = tc.obedit;
+    Curves *curves_id = static_cast<Curves *>(object->data);
     bke::CurvesGeometry &curves = curves_id->geometry.wrap();
 
     std::optional<MutableSpan<float>> value_attribute;
@@ -103,18 +105,20 @@ static void createTransCurvesVerts(bContext * /*C*/, TransInfo *t)
       bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
       attribute_writer = attributes.lookup_or_add_for_write_span<float>(
           "radius",
-          ATTR_DOMAIN_POINT,
+          bke::AttrDomain::Point,
           bke::AttributeInitVArray(VArray<float>::ForSingle(0.01f, curves.points_num())));
       value_attribute = attribute_writer.span;
     }
     else if (t->mode == TFM_TILT) {
       bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-      attribute_writer = attributes.lookup_or_add_for_write_span<float>("tilt", ATTR_DOMAIN_POINT);
+      attribute_writer = attributes.lookup_or_add_for_write_span<float>("tilt",
+                                                                        bke::AttrDomain::Point);
       value_attribute = attribute_writer.span;
     }
 
     curve_populate_trans_data_structs(tc,
                                       curves,
+                                      float4x4(object->object_to_world),
                                       value_attribute,
                                       selection_per_object[i],
                                       use_proportional_edit,
@@ -151,9 +155,10 @@ static void recalcData_curves(TransInfo *t)
 
 void curve_populate_trans_data_structs(TransDataContainer &tc,
                                        blender::bke::CurvesGeometry &curves,
+                                       const blender::float4x4 &transform,
                                        std::optional<blender::MutableSpan<float>> value_attribute,
                                        const blender::IndexMask &selected_indices,
-                                       bool use_proportional_edit,
+                                       const bool use_proportional_edit,
                                        const blender::IndexMask &affected_curves,
                                        bool use_connected_only,
                                        int trans_data_offset)
@@ -161,14 +166,14 @@ void curve_populate_trans_data_structs(TransDataContainer &tc,
   using namespace blender;
 
   float mtx[3][3], smtx[3][3];
-  copy_m3_m4(mtx, tc.obedit->object_to_world);
+  copy_m3_m4(mtx, transform.ptr());
   pseudoinverse_m3_m3(smtx, mtx, PSEUDOINVERSE_EPSILON);
 
   MutableSpan<float3> positions = curves.positions_for_write();
   if (use_proportional_edit) {
     const OffsetIndices<int> points_by_curve = curves.points_by_curve();
     const VArray<bool> selection = *curves.attributes().lookup_or_default<bool>(
-        ".selection", ATTR_DOMAIN_POINT, true);
+        ".selection", bke::AttrDomain::Point, true);
     affected_curves.foreach_segment(GrainSize(512), [&](const IndexMaskSegment segment) {
       Vector<float> closest_distances;
       for (const int curve_i : segment) {
@@ -179,7 +184,7 @@ void curve_populate_trans_data_structs(TransDataContainer &tc,
             TransData &td = tc.data[point_i + trans_data_offset];
             td.flag |= TD_SKIP;
           }
-          return;
+          continue;
         }
 
         closest_distances.reinitialize(points.size());

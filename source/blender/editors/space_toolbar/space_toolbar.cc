@@ -6,7 +6,7 @@
  *  \ingroup sptoolbar
  */
 
-#include <string.h>
+#include <cstring>
 
 #include "MEM_guardedalloc.h"
 
@@ -151,7 +151,8 @@ static void toolbar_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 
 void ED_spacetype_toolbar(void)
 {
-  SpaceType *st = static_cast<SpaceType *>(MEM_callocN(sizeof(SpaceType), "spacetype toolbar"));
+  std::unique_ptr<SpaceType> st = std::make_unique<SpaceType>();
+
   ARegionType *art;
 
   st->spaceid = SPACE_TOOLBAR;
@@ -182,5 +183,5 @@ void ED_spacetype_toolbar(void)
 
   BLI_addhead(&st->regiontypes, art);
 
-  BKE_spacetype_register(st);
+  BKE_spacetype_register(std::move(st));
 }

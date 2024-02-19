@@ -20,7 +20,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_geometry_set.hh"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_socket_value.hh"
@@ -371,9 +371,6 @@ static const char *get_current_socket_identifier_for_future_socket(
     const Span<const SocketDeclaration *> socket_decls)
 {
   switch (node.type) {
-    case GEO_NODE_SAMPLE_CURVE: {
-      return get_identifier_from_decl("Value", socket, socket_decls);
-    }
     case FN_NODE_RANDOM_VALUE: {
       return get_identifier_from_decl({"Min", "Max", "Value"}, socket, socket_decls);
     }
@@ -551,8 +548,14 @@ void update_node_declaration_and_sockets(bNodeTree &ntree, bNode &node)
 
 bool socket_type_supports_fields(const eNodeSocketDatatype socket_type)
 {
-  return ELEM(
-      socket_type, SOCK_FLOAT, SOCK_VECTOR, SOCK_RGBA, SOCK_BOOLEAN, SOCK_INT, SOCK_ROTATION);
+  return ELEM(socket_type,
+              SOCK_FLOAT,
+              SOCK_VECTOR,
+              SOCK_RGBA,
+              SOCK_BOOLEAN,
+              SOCK_INT,
+              SOCK_ROTATION,
+              SOCK_MENU);
 }
 
 }  // namespace blender::nodes
@@ -649,6 +652,13 @@ void node_socket_init_default_value_data(eNodeSocketDatatype datatype, int subty
       *data = dval;
       break;
     }
+    case SOCK_MENU: {
+      bNodeSocketValueMenu *dval = MEM_cnew<bNodeSocketValueMenu>("node socket value menu");
+      dval->value = -1;
+
+      *data = dval;
+      break;
+    }
     case SOCK_OBJECT: {
       bNodeSocketValueObject *dval = MEM_cnew<bNodeSocketValueObject>("node socket value object");
       dval->value = nullptr;
@@ -741,6 +751,12 @@ void node_socket_copy_default_value_data(eNodeSocketDatatype datatype, void *to,
     case SOCK_STRING: {
       bNodeSocketValueString *toval = (bNodeSocketValueString *)to;
       bNodeSocketValueString *fromval = (bNodeSocketValueString *)from;
+      *toval = *fromval;
+      break;
+    }
+    case SOCK_MENU: {
+      bNodeSocketValueMenu *toval = (bNodeSocketValueMenu *)to;
+      bNodeSocketValueMenu *fromval = (bNodeSocketValueMenu *)from;
       *toval = *fromval;
       break;
     }
@@ -859,7 +875,7 @@ static bNodeSocketType *make_standard_socket_type(int type, int subtype)
   StructRNA *srna;
 
   stype = MEM_cnew<bNodeSocketType>("node socket C type");
-  stype->free_self = (void (*)(bNodeSocketType * stype)) MEM_freeN;
+  stype->free_self = (void (*)(bNodeSocketType *stype))MEM_freeN;
   STRNCPY(stype->idname, socket_idname);
   STRNCPY(stype->label, socket_label);
   STRNCPY(stype->subtype_label, socket_subtype_label);
@@ -903,7 +919,7 @@ static bNodeSocketType *make_socket_type_virtual()
   StructRNA *srna;
 
   stype = MEM_cnew<bNodeSocketType>("node socket C type");
-  stype->free_self = (void (*)(bNodeSocketType * stype)) MEM_freeN;
+  stype->free_self = (void (*)(bNodeSocketType *stype))MEM_freeN;
   STRNCPY(stype->idname, socket_idname);
 
   /* set the RNA type
@@ -1048,6 +1064,23 @@ static bNodeSocketType *make_socket_type_string()
   return socktype;
 }
 
+static bNodeSocketType *make_socket_type_menu()
+{
+  bNodeSocketType *socktype = make_standard_socket_type(SOCK_MENU, PROP_NONE);
+  socktype->base_cpp_type = &blender::CPPType::get<int>();
+  socktype->get_base_cpp_value = [](const void *socket_value, void *r_value) {
+    *(int *)r_value = ((bNodeSocketValueMenu *)socket_value)->value;
+  };
+  socktype->geometry_nodes_cpp_type = &blender::CPPType::get<SocketValueVariant>();
+  socktype->get_geometry_nodes_cpp_value = [](const void *socket_value, void *r_value) {
+    const int value = ((bNodeSocketValueMenu *)socket_value)->value;
+    new (r_value) SocketValueVariant(value);
+  };
+  static SocketValueVariant default_value{0};
+  socktype->geometry_nodes_default_cpp_value = &default_value;
+  return socktype;
+}
+
 static bNodeSocketType *make_socket_type_object()
 {
   bNodeSocketType *socktype = make_standard_socket_type(SOCK_OBJECT, PROP_NONE);
@@ -1152,6 +1185,8 @@ void register_standard_node_socket_types()
   nodeRegisterSocketType(make_socket_type_rgba());
 
   nodeRegisterSocketType(make_socket_type_string());
+
+  nodeRegisterSocketType(make_socket_type_menu());
 
   nodeRegisterSocketType(make_standard_socket_type(SOCK_SHADER, PROP_NONE));
 

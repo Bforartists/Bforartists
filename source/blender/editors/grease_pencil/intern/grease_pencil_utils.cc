@@ -6,11 +6,12 @@
  * \ingroup edgreasepencil
  */
 
+#include "BKE_attribute.hh"
 #include "BKE_brush.hh"
 #include "BKE_context.hh"
 #include "BKE_grease_pencil.hh"
 #include "BKE_material.h"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "BLI_bit_span_ops.hh"
 #include "BLI_bit_vector.hh"
@@ -33,9 +34,12 @@ namespace blender::ed::greasepencil {
 DrawingPlacement::DrawingPlacement(const Scene &scene,
                                    const ARegion &region,
                                    const View3D &view3d,
-                                   const Object &object)
-    : region_(&region), view3d_(&view3d), transforms_(object)
+                                   const Object &eval_object,
+                                   const bke::greasepencil::Layer &layer)
+    : region_(&region), view3d_(&view3d)
 {
+  layer_space_to_world_space_ = layer.to_world_space(eval_object);
+  world_space_to_layer_space_ = math::invert(layer_space_to_world_space_);
   /* Initialize DrawingPlacementPlane from toolsettings. */
   switch (scene.toolsettings->gp_sculpt.lock_axis) {
     case GP_LOCKAXIS_VIEW:
@@ -65,7 +69,7 @@ DrawingPlacement::DrawingPlacement(const Scene &scene,
   switch (scene.toolsettings->gpencil_v3d_align) {
     case GP_PROJECT_VIEWSPACE:
       depth_ = DrawingPlacementDepth::ObjectOrigin;
-      placement_loc_ = transforms_.layer_space_to_world_space.location();
+      placement_loc_ = layer_space_to_world_space_.location();
       break;
     case (GP_PROJECT_VIEWSPACE | GP_PROJECT_CURSOR):
       depth_ = DrawingPlacementDepth::Cursor;
@@ -75,12 +79,12 @@ DrawingPlacement::DrawingPlacement(const Scene &scene,
       depth_ = DrawingPlacementDepth::Surface;
       surface_offset_ = scene.toolsettings->gpencil_surface_offset;
       /* Default to view placement with the object origin if we don't hit a surface. */
-      placement_loc_ = transforms_.layer_space_to_world_space.location();
+      placement_loc_ = layer_space_to_world_space_.location();
       break;
     case (GP_PROJECT_VIEWSPACE | GP_PROJECT_DEPTH_STROKE):
       depth_ = DrawingPlacementDepth::NearestStroke;
       /* Default to view placement with the object origin if we don't hit a stroke. */
-      placement_loc_ = transforms_.layer_space_to_world_space.location();
+      placement_loc_ = layer_space_to_world_space_.location();
       break;
   }
 
@@ -132,7 +136,7 @@ void DrawingPlacement::set_origin_to_nearest_stroke(const float2 co)
   }
   else {
     /* If nothing was hit, use origin. */
-    placement_loc_ = transforms_.layer_space_to_world_space.location();
+    placement_loc_ = layer_space_to_world_space_.location();
   }
   plane_from_point_normal_v3(placement_plane_, placement_loc_, placement_normal_);
 }
@@ -168,7 +172,7 @@ float3 DrawingPlacement::project(const float2 co) const
       ED_view3d_win_to_3d(view3d_, region_, placement_loc_, co, proj_point);
     }
   }
-  return math::transform_point(transforms_.world_space_to_layer_space, proj_point);
+  return math::transform_point(world_space_to_layer_space_, proj_point);
 }
 
 void DrawingPlacement::project(const Span<float2> src, MutableSpan<float3> dst) const
@@ -178,61 +182,6 @@ void DrawingPlacement::project(const Span<float2> src, MutableSpan<float3> dst) 
       dst[i] = this->project(src[i]);
     }
   });
-}
-
-static float3 drawing_origin(const Scene *scene, const Object *object, char align_flag)
-{
-  BLI_assert(object != nullptr && object->type == OB_GREASE_PENCIL);
-  if (align_flag & GP_PROJECT_VIEWSPACE) {
-    if (align_flag & GP_PROJECT_CURSOR) {
-      return float3(scene->cursor.location);
-    }
-    /* Use the object location. */
-    return float3(object->object_to_world[3]);
-  }
-  return float3(scene->cursor.location);
-}
-
-static float3 screen_space_to_3d(
-    const Scene *scene, const ARegion *region, const View3D *v3d, const Object *object, float2 co)
-{
-  float3 origin = drawing_origin(scene, object, scene->toolsettings->gpencil_v3d_align);
-  float3 r_co;
-  ED_view3d_win_to_3d(v3d, region, origin, co, r_co);
-  return r_co;
-}
-
-float brush_radius_world_space(bContext &C, int x, int y)
-{
-  ARegion *region = CTX_wm_region(&C);
-  View3D *v3d = CTX_wm_view3d(&C);
-  Scene *scene = CTX_data_scene(&C);
-  Object *object = CTX_data_active_object(&C);
-  Brush *brush = scene->toolsettings->gp_paint->paint.brush;
-
-  /* Default radius. */
-  float radius = 2.0f;
-  if (brush == nullptr || object->type != OB_GREASE_PENCIL) {
-    return radius;
-  }
-
-  /* Use an (arbitrary) screen space offset in the x direction to measure the size. */
-  const int x_offest = 64;
-  const float brush_size = float(BKE_brush_size_get(scene, brush));
-
-  /* Get two 3d coordinates to measure the distance from. */
-  const float2 screen1(x, y);
-  const float2 screen2(x + x_offest, y);
-  const float3 pos1 = screen_space_to_3d(scene, region, v3d, object, screen1);
-  const float3 pos2 = screen_space_to_3d(scene, region, v3d, object, screen2);
-
-  /* Clip extreme zoom level (and avoid division by zero). */
-  const float distance = math::max(math::distance(pos1, pos2), 0.001f);
-
-  /* Calculate the radius of the brush in world space. */
-  radius = (1.0f / distance) * (brush_size / 64.0f);
-
-  return radius;
 }
 
 static Array<int> get_frame_numbers_for_layer(const bke::greasepencil::Layer &layer,
@@ -262,16 +211,39 @@ Array<MutableDrawingInfo> retrieve_editable_drawings(const Scene &scene,
   Vector<MutableDrawingInfo> editable_drawings;
   Span<const Layer *> layers = grease_pencil.layers();
   for (const int layer_i : layers.index_range()) {
-    const Layer *layer = layers[layer_i];
-    if (!layer->is_editable()) {
+    const Layer &layer = *layers[layer_i];
+    if (!layer.is_editable()) {
       continue;
     }
     const Array<int> frame_numbers = get_frame_numbers_for_layer(
-        *layer, current_frame, use_multi_frame_editing);
+        layer, current_frame, use_multi_frame_editing);
     for (const int frame_number : frame_numbers) {
       if (Drawing *drawing = grease_pencil.get_editable_drawing_at(layer, frame_number)) {
         editable_drawings.append({*drawing, layer_i, frame_number});
       }
+    }
+  }
+
+  return editable_drawings.as_span();
+}
+
+Array<MutableDrawingInfo> retrieve_editable_drawings_from_layer(
+    const Scene &scene,
+    GreasePencil &grease_pencil,
+    const blender::bke::greasepencil::Layer &layer)
+{
+  using namespace blender::bke::greasepencil;
+  const int current_frame = scene.r.cfra;
+  const ToolSettings *toolsettings = scene.toolsettings;
+  const bool use_multi_frame_editing = (toolsettings->gpencil_flags &
+                                        GP_USE_MULTI_FRAME_EDITING) != 0;
+
+  Vector<MutableDrawingInfo> editable_drawings;
+  const Array<int> frame_numbers = get_frame_numbers_for_layer(
+      layer, current_frame, use_multi_frame_editing);
+  for (const int frame_number : frame_numbers) {
+    if (Drawing *drawing = grease_pencil.get_editable_drawing_at(layer, frame_number)) {
+      editable_drawings.append({*drawing, layer.drawing_index_at(frame_number), frame_number});
     }
   }
 
@@ -289,12 +261,12 @@ Array<DrawingInfo> retrieve_visible_drawings(const Scene &scene, const GreasePen
   Vector<DrawingInfo> visible_drawings;
   Span<const Layer *> layers = grease_pencil.layers();
   for (const int layer_i : layers.index_range()) {
-    const Layer *layer = layers[layer_i];
-    if (!layer->is_visible()) {
+    const Layer &layer = *layers[layer_i];
+    if (!layer.is_visible()) {
       continue;
     }
     const Array<int> frame_numbers = get_frame_numbers_for_layer(
-        *layer, current_frame, use_multi_frame_editing);
+        layer, current_frame, use_multi_frame_editing);
     for (const int frame_number : frame_numbers) {
       if (const Drawing *drawing = grease_pencil.get_drawing_at(layer, frame_number)) {
         visible_drawings.append({*drawing, layer_i, frame_number});
@@ -353,7 +325,7 @@ IndexMask retrieve_editable_strokes(Object &object,
   const IndexRange curves_range = drawing.strokes().curves_range();
   const bke::AttributeAccessor attributes = curves.attributes();
 
-  const VArray<int> materials = *attributes.lookup<int>("material_index", ATTR_DOMAIN_CURVE);
+  const VArray<int> materials = *attributes.lookup<int>("material_index", bke::AttrDomain::Curve);
   if (!materials) {
     /* If the attribute does not exist then the default is the first material. */
     if (editable_material_indices.contains(0)) {
@@ -366,6 +338,42 @@ IndexMask retrieve_editable_strokes(Object &object,
       curves_range, GrainSize(4096), memory, [&](const int64_t curve_i) {
         const int material_index = materials[curve_i];
         return editable_material_indices.contains(material_index);
+      });
+}
+
+IndexMask retrieve_editable_strokes_by_material(Object &object,
+                                                const bke::greasepencil::Drawing &drawing,
+                                                const int mat_i,
+                                                IndexMaskMemory &memory)
+{
+  using namespace blender;
+
+  /* Get all the editable material indices */
+  VectorSet<int> editable_material_indices = get_editable_material_indices(object);
+  if (editable_material_indices.is_empty()) {
+    return {};
+  }
+
+  const bke::CurvesGeometry &curves = drawing.strokes();
+  const IndexRange curves_range = drawing.strokes().curves_range();
+  const bke::AttributeAccessor attributes = curves.attributes();
+
+  const VArray<int> materials = *attributes.lookup<int>("material_index", bke::AttrDomain::Curve);
+  if (!materials) {
+    /* If the attribute does not exist then the default is the first material. */
+    if (editable_material_indices.contains(0)) {
+      return curves_range;
+    }
+    return {};
+  }
+  /* Get all the strokes that share the same material and have it unlocked. */
+  return IndexMask::from_predicate(
+      curves_range, GrainSize(4096), memory, [&](const int64_t curve_i) {
+        const int material_index = materials[curve_i];
+        if (material_index == mat_i) {
+          return editable_material_indices.contains(material_index);
+        }
+        return false;
       });
 }
 
@@ -384,7 +392,7 @@ IndexMask retrieve_editable_points(Object &object,
   const bke::AttributeAccessor attributes = curves.attributes();
 
   /* Propagate the material index to the points. */
-  const VArray<int> materials = *attributes.lookup<int>("material_index", ATTR_DOMAIN_POINT);
+  const VArray<int> materials = *attributes.lookup<int>("material_index", bke::AttrDomain::Point);
   if (!materials) {
     /* If the attribute does not exist then the default is the first material. */
     if (editable_material_indices.contains(0)) {
@@ -402,13 +410,13 @@ IndexMask retrieve_editable_points(Object &object,
 
 IndexMask retrieve_editable_elements(Object &object,
                                      const bke::greasepencil::Drawing &drawing,
-                                     const eAttrDomain selection_domain,
+                                     const bke::AttrDomain selection_domain,
                                      IndexMaskMemory &memory)
 {
-  if (selection_domain == ATTR_DOMAIN_CURVE) {
+  if (selection_domain == bke::AttrDomain::Curve) {
     return ed::greasepencil::retrieve_editable_strokes(object, drawing, memory);
   }
-  else if (selection_domain == ATTR_DOMAIN_POINT) {
+  else if (selection_domain == bke::AttrDomain::Point) {
     return ed::greasepencil::retrieve_editable_points(object, drawing, memory);
   }
   return {};
@@ -433,7 +441,7 @@ IndexMask retrieve_visible_strokes(Object &object,
 
   /* Get all the strokes that have their material visible. */
   const VArray<int> materials = *attributes.lookup_or_default<int>(
-      "material_index", ATTR_DOMAIN_CURVE, -1);
+      "material_index", bke::AttrDomain::Curve, -1);
   return IndexMask::from_predicate(
       curves_range, GrainSize(4096), memory, [&](const int64_t curve_i) {
         const int material_index = materials[curve_i];
@@ -483,13 +491,13 @@ IndexMask retrieve_editable_and_selected_points(Object &object,
 
 IndexMask retrieve_editable_and_selected_elements(Object &object,
                                                   const bke::greasepencil::Drawing &drawing,
-                                                  const eAttrDomain selection_domain,
+                                                  const bke::AttrDomain selection_domain,
                                                   IndexMaskMemory &memory)
 {
-  if (selection_domain == ATTR_DOMAIN_CURVE) {
+  if (selection_domain == bke::AttrDomain::Curve) {
     return ed::greasepencil::retrieve_editable_and_selected_strokes(object, drawing, memory);
   }
-  else if (selection_domain == ATTR_DOMAIN_POINT) {
+  else if (selection_domain == bke::AttrDomain::Point) {
     return ed::greasepencil::retrieve_editable_and_selected_points(object, drawing, memory);
   }
   return {};

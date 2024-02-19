@@ -6,7 +6,7 @@
  * \ingroup eevee
  */
 
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_node.hh"
 #include "BKE_world.h"
 #include "DEG_depsgraph_query.hh"
@@ -95,6 +95,9 @@ void World::sync()
     has_update = lookdev_world_.sync(LookdevParameters(inst_.v3d));
     bl_world = lookdev_world_.world_get();
   }
+  else if ((inst_.view_layer->layflag & SCE_LAY_SKY) == 0) {
+    bl_world = default_world_get();
+  }
   else if (has_volume_absorption_) {
     bl_world = default_world_get();
   }
@@ -116,16 +119,13 @@ void World::sync()
     }
   }
 
-  inst_.reflection_probes.sync_world(bl_world);
-  if (has_update) {
-    inst_.reflection_probes.do_world_update_set(true);
-  }
-
   /* We have to manually test here because we have overrides. */
   ::World *orig_world = (::World *)DEG_get_original_id(&bl_world->id);
   if (assign_if_different(prev_original_world, orig_world)) {
-    inst_.reflection_probes.do_world_update_set(true);
+    has_update = true;
   }
+
+  inst_.light_probes.sync_world(bl_world, has_update);
 
   GPUMaterial *gpumat = inst_.shaders.world_shader_get(bl_world, ntree, MAT_PIPE_DEFERRED);
 
@@ -151,7 +151,7 @@ void World::sync_volume()
   }
 
   if (gpumat && (GPU_material_status(gpumat) == GPU_MAT_SUCCESS)) {
-    has_volume_ = true;
+    has_volume_ = GPU_material_has_volume_output(gpumat);
     has_volume_scatter_ = GPU_material_flag_get(gpumat, GPU_MATFLAG_VOLUME_SCATTER);
     has_volume_absorption_ = GPU_material_flag_get(gpumat, GPU_MATFLAG_VOLUME_ABSORPTION);
   }

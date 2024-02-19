@@ -131,7 +131,7 @@ def move_sun(context):
                 azimuth, elevation = get_sun_coordinates(
                     local_time, sun_props.latitude,
                     sun_props.longitude, zone,
-                    sun_props.month, sun_props.day)
+                    sun_props.month, sun_props.day, sun_props.year)
                 obj.location = get_sun_vector(azimuth, elevation) * sun_props.sun_distance
                 local_time -= time_increment
                 obj.rotation_euler = ((elevation - pi/2, 0, -azimuth))

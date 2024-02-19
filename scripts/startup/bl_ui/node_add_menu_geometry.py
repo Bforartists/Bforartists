@@ -209,11 +209,13 @@ class NODE_MT_geometry_node_GEO_GEOMETRY_OPERATIONS(Menu):
 
     def draw(self, _context):
         layout = self.layout
+        node_add_menu.add_node_type(layout, "GeometryNodeBake")
         node_add_menu.add_node_type(layout, "GeometryNodeBoundBox")
         node_add_menu.add_node_type(layout, "GeometryNodeConvexHull")
         node_add_menu.add_node_type(layout, "GeometryNodeDeleteGeometry")
         node_add_menu.add_node_type(layout, "GeometryNodeDuplicateElements")
         node_add_menu.add_node_type(layout, "GeometryNodeMergeByDistance")
+        node_add_menu.add_node_type(layout, "GeometryNodeSortElements")
         node_add_menu.add_node_type(layout, "GeometryNodeTransform")
         layout.separator()
         node_add_menu.add_node_type(layout, "GeometryNodeSeparateComponents")
@@ -540,12 +542,23 @@ class NODE_MT_category_GEO_UTILITIES(Menu):
         layout.menu("NODE_MT_category_GEO_UTILITIES_FIELD")
         layout.menu("NODE_MT_category_GEO_UTILITIES_MATH")
         layout.menu("NODE_MT_category_GEO_UTILITIES_ROTATION")
+        layout.menu("NODE_MT_category_GEO_UTILITIES_DEPRECATED")
         layout.separator()
+        node_add_menu.add_node_type(layout, "GeometryNodeIndexSwitch")
+        node_add_menu.add_node_type(layout, "GeometryNodeMenuSwitch")
         node_add_menu.add_node_type(layout, "FunctionNodeRandomValue")
         node_add_menu.add_repeat_zone(layout, label="Repeat Zone")
         node_add_menu.add_node_type(layout, "GeometryNodeSwitch")
-        node_add_menu.add_node_type(layout, "GeometryNodeIndexSwitch")
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
+
+
+class NODE_MT_category_GEO_UTILITIES_DEPRECATED(Menu):
+    bl_idname = "NODE_MT_category_GEO_UTILITIES_DEPRECATED"
+    bl_label = "Deprecated"
+
+    def draw(self, context):
+        layout = self.layout
+        node_add_menu.add_node_type(layout, "FunctionNodeRotateEuler")
 
 
 class NODE_MT_category_GEO_UTILITIES_FIELD(Menu):
@@ -570,7 +583,7 @@ class NODE_MT_category_GEO_UTILITIES_ROTATION(Menu):
         node_add_menu.add_node_type(layout, "FunctionNodeAxisAngleToRotation")
         node_add_menu.add_node_type(layout, "FunctionNodeEulerToRotation")
         node_add_menu.add_node_type(layout, "FunctionNodeInvertRotation")
-        node_add_menu.add_node_type(layout, "FunctionNodeRotateEuler")
+        node_add_menu.add_node_type(layout, "FunctionNodeRotateRotation")
         node_add_menu.add_node_type(layout, "FunctionNodeRotateVector")
         node_add_menu.add_node_type(layout, "FunctionNodeRotationToAxisAngle")
         node_add_menu.add_node_type(layout, "FunctionNodeRotationToEuler")
@@ -633,9 +646,53 @@ class NODE_MT_category_GEO_VOLUME(Menu):
 
     def draw(self, context):
         layout = self.layout
-        node_add_menu.add_node_type(layout, "GeometryNodeVolumeCube")
-        node_add_menu.add_node_type(layout, "GeometryNodeVolumeToMesh")
+        if context.preferences.experimental.use_new_volume_nodes:
+            layout.menu("NODE_MT_geometry_node_GEO_VOLUME_READ")
+            layout.menu("NODE_MT_geometry_node_GEO_VOLUME_WRITE")
+            layout.separator()
+        layout.menu("NODE_MT_geometry_node_GEO_VOLUME_OPERATIONS")
+        layout.menu("NODE_MT_geometry_node_GEO_VOLUME_PRIMITIVES")
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
+
+
+class NODE_MT_geometry_node_GEO_VOLUME_READ(Menu):
+    bl_idname = "NODE_MT_geometry_node_GEO_VOLUME_READ"
+    bl_label = "Read"
+
+    def draw(self, context):
+        layout = self.layout
+        node_add_menu.add_node_type(layout, "GeometryNodeGetNamedGrid")
+        node_add_menu.draw_assets_for_catalog(layout, "Volume/Read")
+
+
+class NODE_MT_geometry_node_GEO_VOLUME_WRITE(Menu):
+    bl_idname = "NODE_MT_geometry_node_GEO_VOLUME_WRITE"
+    bl_label = "Write"
+
+    def draw(self, context):
+        layout = self.layout
+        node_add_menu.add_node_type(layout, "GeometryNodeStoreNamedGrid")
+        node_add_menu.draw_assets_for_catalog(layout, "Volume/Write")
+
+
+class NODE_MT_geometry_node_GEO_VOLUME_OPERATIONS(Menu):
+    bl_idname = "NODE_MT_geometry_node_GEO_VOLUME_OPERATIONS"
+    bl_label = "Operations"
+
+    def draw(self, context):
+        layout = self.layout
+        node_add_menu.add_node_type(layout, "GeometryNodeVolumeToMesh")
+        node_add_menu.draw_assets_for_catalog(layout, "Volume/Operations")
+
+
+class NODE_MT_geometry_node_GEO_VOLUME_PRIMITIVES(Menu):
+    bl_idname = "NODE_MT_geometry_node_GEO_VOLUME_PRIMITIVES"
+    bl_label = "Primitives"
+
+    def draw(self, context):
+        layout = self.layout
+        node_add_menu.add_node_type(layout, "GeometryNodeVolumeCube")
+        node_add_menu.draw_assets_for_catalog(layout, "Volume/Primitives")
 
 
 class NODE_MT_category_GEO_GROUP(Menu):
@@ -709,6 +766,10 @@ classes = (
     NODE_MT_category_GEO_POINT,
     NODE_MT_category_simulation,
     NODE_MT_category_GEO_VOLUME,
+    NODE_MT_geometry_node_GEO_VOLUME_READ,
+    NODE_MT_geometry_node_GEO_VOLUME_WRITE,
+    NODE_MT_geometry_node_GEO_VOLUME_OPERATIONS,
+    NODE_MT_geometry_node_GEO_VOLUME_PRIMITIVES,
     NODE_MT_geometry_node_GEO_MATERIAL,
     NODE_MT_category_GEO_TEXTURE,
     NODE_MT_category_GEO_UTILITIES,
@@ -718,6 +779,7 @@ classes = (
     NODE_MT_category_GEO_UTILITIES_FIELD,
     NODE_MT_category_GEO_UTILITIES_MATH,
     NODE_MT_category_GEO_UTILITIES_ROTATION,
+    NODE_MT_category_GEO_UTILITIES_DEPRECATED,
     NODE_MT_category_GEO_GROUP,
 )
 

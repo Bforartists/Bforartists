@@ -28,14 +28,14 @@
 #include "BLI_rect.h"
 #include "BLI_threads.h"
 
-#include "BLF_api.h"
+#include "BLF_api.hh"
 
 #include "DNA_curve_types.h"
 
 #include "GPU_capabilities.h"
 
-#include "blf_internal.h"
-#include "blf_internal_types.h"
+#include "blf_internal.hh"
+#include "blf_internal_types.hh"
 
 #include "BLI_math_vector.h"
 #include "BLI_strict_flags.h"
@@ -296,7 +296,8 @@ static GlyphBLF *blf_glyph_cache_add_glyph(FontBLF *font,
     if (ELEM(glyph->bitmap.pixel_mode,
              FT_PIXEL_MODE_GRAY,
              FT_PIXEL_MODE_GRAY2,
-             FT_PIXEL_MODE_GRAY4)) {
+             FT_PIXEL_MODE_GRAY4))
+    {
       /* Scale 1, 2, 4-bit gray to 8-bit. */
       const char scale = char(255 / (glyph->bitmap.num_grays - 1));
       for (int i = 0; i < buffer_size; i++) {
@@ -1321,7 +1322,7 @@ GlyphBLF *blf_glyph_ensure(FontBLF *font, GlyphCacheBLF *gc, const uint charcode
 #ifdef BLF_SUBPIXEL_AA
 GlyphBLF *blf_glyph_ensure_subpixel(FontBLF *font, GlyphCacheBLF *gc, GlyphBLF *g, int32_t pen_x)
 {
-  if (!(font->flags & BLF_RENDER_SUBPIXELAA) || (font->flags & BLF_MONOCHROME)) {
+  if (!(font->flags & BLF_RENDER_SUBPIXELAA)) {
     /* Not if we are in mono mode (aliased) or the feature is turned off. */
     return g;
   }
@@ -1662,7 +1663,8 @@ static void blf_glyph_to_curves(FT_Outline ftoutline, ListBase *nurbsbase, const
       {
         const int l_next = (k < n - 1) ? (l + 1) : l_first;
         if (ftoutline.tags[l] == FT_Curve_Tag_Conic &&
-            ftoutline.tags[l_next] == FT_Curve_Tag_Conic) {
+            ftoutline.tags[l_next] == FT_Curve_Tag_Conic)
+        {
           onpoints[j]++;
         }
       }
@@ -1697,7 +1699,8 @@ static void blf_glyph_to_curves(FT_Outline ftoutline, ListBase *nurbsbase, const
       {
         const int l_next = (k < n - 1) ? (l + 1) : l_first;
         if (ftoutline.tags[l] == FT_Curve_Tag_Conic &&
-            ftoutline.tags[l_next] == FT_Curve_Tag_Conic) {
+            ftoutline.tags[l_next] == FT_Curve_Tag_Conic)
+        {
           dx = float(ftoutline.points[l].x + ftoutline.points[l_next].x) * scale / 2.0f;
           dy = float(ftoutline.points[l].y + ftoutline.points[l_next].y) * scale / 2.0f;
 

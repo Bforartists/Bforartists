@@ -6,32 +6,94 @@
 
 #include "BKE_attribute_math.hh"
 #include "BKE_customdata.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_geometry_set.hh"
-#include "BKE_mesh.hh"
-#include "BKE_pointcloud.h"
 #include "BKE_type_conversions.hh"
 
-#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
-#include "DNA_pointcloud_types.h"
 
 #include "BLI_array_utils.hh"
 #include "BLI_color.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_span.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "FN_field.hh"
-
-#include "BLT_translation.h"
 
 #include "CLG_log.h"
 
 #include "attribute_access_intern.hh"
 
 namespace blender::bke {
+
+const blender::CPPType *custom_data_type_to_cpp_type(const eCustomDataType type)
+{
+  switch (type) {
+    case CD_PROP_FLOAT:
+      return &CPPType::get<float>();
+    case CD_PROP_FLOAT2:
+      return &CPPType::get<float2>();
+    case CD_PROP_FLOAT3:
+      return &CPPType::get<float3>();
+    case CD_PROP_INT32:
+      return &CPPType::get<int>();
+    case CD_PROP_INT32_2D:
+      return &CPPType::get<int2>();
+    case CD_PROP_COLOR:
+      return &CPPType::get<ColorGeometry4f>();
+    case CD_PROP_BOOL:
+      return &CPPType::get<bool>();
+    case CD_PROP_INT8:
+      return &CPPType::get<int8_t>();
+    case CD_PROP_BYTE_COLOR:
+      return &CPPType::get<ColorGeometry4b>();
+    case CD_PROP_QUATERNION:
+      return &CPPType::get<math::Quaternion>();
+    case CD_PROP_STRING:
+      return &CPPType::get<MStringProperty>();
+    default:
+      return nullptr;
+  }
+}
+
+eCustomDataType cpp_type_to_custom_data_type(const blender::CPPType &type)
+{
+  if (type.is<float>()) {
+    return CD_PROP_FLOAT;
+  }
+  if (type.is<float2>()) {
+    return CD_PROP_FLOAT2;
+  }
+  if (type.is<float3>()) {
+    return CD_PROP_FLOAT3;
+  }
+  if (type.is<int>()) {
+    return CD_PROP_INT32;
+  }
+  if (type.is<int2>()) {
+    return CD_PROP_INT32_2D;
+  }
+  if (type.is<ColorGeometry4f>()) {
+    return CD_PROP_COLOR;
+  }
+  if (type.is<bool>()) {
+    return CD_PROP_BOOL;
+  }
+  if (type.is<int8_t>()) {
+    return CD_PROP_INT8;
+  }
+  if (type.is<ColorGeometry4b>()) {
+    return CD_PROP_BYTE_COLOR;
+  }
+  if (type.is<math::Quaternion>()) {
+    return CD_PROP_QUATERNION;
+  }
+  if (type.is<MStringProperty>()) {
+    return CD_PROP_STRING;
+  }
+  return static_cast<eCustomDataType>(-1);
+}
 
 std::ostream &operator<<(std::ostream &stream, const AttributeIDRef &attribute_id)
 {
@@ -45,7 +107,7 @@ std::ostream &operator<<(std::ostream &stream, const AttributeIDRef &attribute_i
 }
 
 const char *no_procedural_access_message = N_(
-    "This attribute can not be accessed in a procedural context");
+    "This attribute cannot be accessed in a procedural context");
 
 bool allow_procedural_attribute_access(StringRef attribute_name)
 {
@@ -65,6 +127,9 @@ bool allow_procedural_attribute_access(StringRef attribute_name)
     return false;
   }
   if (attribute_name.startswith(".uv")) {
+    return false;
+  }
+  if (attribute_name == ".reference_index") {
     return false;
   }
   if (attribute_name.startswith("." UV_VERTSEL_NAME ".")) {
@@ -133,22 +198,22 @@ eCustomDataType attribute_data_type_highest_complexity(Span<eCustomDataType> dat
  * \note Generally the order should mirror the order of the domains
  * established in each component's ComponentAttributeProviders.
  */
-static int attribute_domain_priority(const eAttrDomain domain)
+static int attribute_domain_priority(const AttrDomain domain)
 {
   switch (domain) {
-    case ATTR_DOMAIN_INSTANCE:
+    case AttrDomain::Instance:
       return 0;
-    case ATTR_DOMAIN_LAYER:
+    case AttrDomain::Layer:
       return 1;
-    case ATTR_DOMAIN_CURVE:
+    case AttrDomain::Curve:
       return 2;
-    case ATTR_DOMAIN_FACE:
+    case AttrDomain::Face:
       return 3;
-    case ATTR_DOMAIN_EDGE:
+    case AttrDomain::Edge:
       return 4;
-    case ATTR_DOMAIN_POINT:
+    case AttrDomain::Point:
       return 5;
-    case ATTR_DOMAIN_CORNER:
+    case AttrDomain::Corner:
       return 6;
     default:
       /* Domain not supported in nodes yet. */
@@ -157,12 +222,12 @@ static int attribute_domain_priority(const eAttrDomain domain)
   }
 }
 
-eAttrDomain attribute_domain_highest_priority(Span<eAttrDomain> domains)
+AttrDomain attribute_domain_highest_priority(Span<AttrDomain> domains)
 {
   int highest_priority = INT_MIN;
-  eAttrDomain highest_priority_domain = ATTR_DOMAIN_CORNER;
+  AttrDomain highest_priority_domain = AttrDomain::Corner;
 
-  for (const eAttrDomain domain : domains) {
+  for (const AttrDomain domain : domains) {
     const int priority = attribute_domain_priority(domain);
     if (priority > highest_priority) {
       highest_priority = priority;
@@ -259,10 +324,8 @@ static const void *add_generic_custom_data_layer_with_existing_data(
     return CustomData_add_layer_anonymous_with_data(
         &custom_data, data_type, &anonymous_id, domain_size, layer_data, sharing_info);
   }
-  char attribute_name_c[MAX_CUSTOMDATA_LAYER_NAME];
-  attribute_id.name().copy(attribute_name_c);
   return CustomData_add_layer_named_with_data(
-      &custom_data, data_type, layer_data, domain_size, attribute_name_c, sharing_info);
+      &custom_data, data_type, layer_data, domain_size, attribute_id.name(), sharing_info);
 }
 
 static bool add_custom_data_layer_from_attribute_init(const AttributeIDRef &attribute_id,
@@ -324,7 +387,7 @@ static bool custom_data_layer_matches_attribute_id(const CustomDataLayer &layer,
 bool BuiltinCustomDataLayerProvider::layer_exists(const CustomData &custom_data) const
 {
   if (stored_as_named_attribute_) {
-    return CustomData_get_named_layer_index(&custom_data, stored_type_, name_.c_str()) != -1;
+    return CustomData_get_named_layer_index(&custom_data, stored_type_, name_) != -1;
   }
   return CustomData_has_layer(&custom_data, stored_type_);
 }
@@ -348,7 +411,7 @@ GAttributeReader BuiltinCustomDataLayerProvider::try_get_for_read(const void *ow
 
   int index;
   if (stored_as_named_attribute_) {
-    index = CustomData_get_named_layer_index(custom_data, stored_type_, name_.c_str());
+    index = CustomData_get_named_layer_index(custom_data, stored_type_, name_);
   }
   else {
     index = CustomData_get_layer_index(custom_data, stored_type_);
@@ -384,8 +447,7 @@ GAttributeWriter BuiltinCustomDataLayerProvider::try_get_for_write(void *owner) 
 
   void *data = nullptr;
   if (stored_as_named_attribute_) {
-    data = CustomData_get_layer_named_for_write(
-        custom_data, stored_type_, name_.c_str(), element_num);
+    data = CustomData_get_layer_named_for_write(custom_data, stored_type_, name_, element_num);
   }
   else {
     data = CustomData_get_layer_for_write(custom_data, stored_type_, element_num);
@@ -414,7 +476,7 @@ bool BuiltinCustomDataLayerProvider::try_delete(void *owner) const
 
   const int element_num = custom_data_access_.get_element_num(owner);
   if (stored_as_named_attribute_) {
-    if (CustomData_free_layer_named(custom_data, name_.c_str(), element_num)) {
+    if (CustomData_free_layer_named(custom_data, name_, element_num)) {
       update();
       return true;
     }
@@ -443,7 +505,7 @@ bool BuiltinCustomDataLayerProvider::try_create(void *owner,
 
   const int element_num = custom_data_access_.get_element_num(owner);
   if (stored_as_named_attribute_) {
-    if (CustomData_has_layer_named(custom_data, data_type_, name_.c_str())) {
+    if (CustomData_has_layer_named(custom_data, data_type_, name_)) {
       /* Exists already. */
       return false;
     }
@@ -466,7 +528,7 @@ bool BuiltinCustomDataLayerProvider::exists(const void *owner) const
     return false;
   }
   if (stored_as_named_attribute_) {
-    return CustomData_has_layer_named(custom_data, stored_type_, name_.c_str());
+    return CustomData_has_layer_named(custom_data, stored_type_, name_);
   }
   return CustomData_get_layer(custom_data, stored_type_) != nullptr;
 }
@@ -525,7 +587,6 @@ bool CustomDataAttributeProvider::try_delete(void *owner, const AttributeIDRef &
     return false;
   }
   const int element_num = custom_data_access_.get_element_num(owner);
-  ;
   for (const int i : IndexRange(custom_data->totlayer)) {
     const CustomDataLayer &layer = custom_data->layers[i];
     if (this->type_is_supported((eCustomDataType)layer.type) &&
@@ -540,7 +601,7 @@ bool CustomDataAttributeProvider::try_delete(void *owner, const AttributeIDRef &
 
 bool CustomDataAttributeProvider::try_create(void *owner,
                                              const AttributeIDRef &attribute_id,
-                                             const eAttrDomain domain,
+                                             const AttrDomain domain,
                                              const eCustomDataType data_type,
                                              const AttributeInit &initializer) const
 {
@@ -596,7 +657,7 @@ static GVArray try_adapt_data_type(GVArray varray, const CPPType &to_type)
 }
 
 GAttributeReader AttributeAccessor::lookup(const AttributeIDRef &attribute_id,
-                                           const std::optional<eAttrDomain> domain,
+                                           const std::optional<AttrDomain> domain,
                                            const std::optional<eCustomDataType> data_type) const
 {
   GAttributeReader attribute = this->lookup(attribute_id);
@@ -627,7 +688,7 @@ GAttributeReader AttributeAccessor::lookup(const AttributeIDRef &attribute_id,
 }
 
 GAttributeReader AttributeAccessor::lookup_or_default(const AttributeIDRef &attribute_id,
-                                                      const eAttrDomain domain,
+                                                      const AttrDomain domain,
                                                       const eCustomDataType data_type,
                                                       const void *default_value) const
 {
@@ -717,7 +778,7 @@ GSpanAttributeWriter MutableAttributeAccessor::lookup_for_write_span(
 
 GAttributeWriter MutableAttributeAccessor::lookup_or_add_for_write(
     const AttributeIDRef &attribute_id,
-    const eAttrDomain domain,
+    const AttrDomain domain,
     const eCustomDataType data_type,
     const AttributeInit &initializer)
 {
@@ -736,7 +797,7 @@ GAttributeWriter MutableAttributeAccessor::lookup_or_add_for_write(
 
 GSpanAttributeWriter MutableAttributeAccessor::lookup_or_add_for_write_span(
     const AttributeIDRef &attribute_id,
-    const eAttrDomain domain,
+    const AttrDomain domain,
     const eCustomDataType data_type,
     const AttributeInit &initializer)
 {
@@ -749,7 +810,7 @@ GSpanAttributeWriter MutableAttributeAccessor::lookup_or_add_for_write_span(
 }
 
 GSpanAttributeWriter MutableAttributeAccessor::lookup_or_add_for_write_only_span(
-    const AttributeIDRef &attribute_id, const eAttrDomain domain, const eCustomDataType data_type)
+    const AttributeIDRef &attribute_id, const AttrDomain domain, const eCustomDataType data_type)
 {
   GAttributeWriter attribute = this->lookup_or_add_for_write(
       attribute_id, domain, data_type, AttributeInitConstruct());
@@ -808,7 +869,7 @@ fn::GField AttributeValidator::validate_field_if_necessary(const fn::GField &fie
 Vector<AttributeTransferData> retrieve_attributes_for_transfer(
     const AttributeAccessor src_attributes,
     MutableAttributeAccessor dst_attributes,
-    const eAttrDomainMask domain_mask,
+    const AttrDomainMask domain_mask,
     const AnonymousAttributePropagationInfo &propagation_info,
     const Set<std::string> &skip)
 {
@@ -837,7 +898,7 @@ Vector<AttributeTransferData> retrieve_attributes_for_transfer(
 /** \} */
 
 void gather_attributes(const AttributeAccessor src_attributes,
-                       const eAttrDomain domain,
+                       const AttrDomain domain,
                        const AnonymousAttributePropagationInfo &propagation_info,
                        const Set<std::string> &skip,
                        const IndexMask &selection,
@@ -872,37 +933,14 @@ void gather_attributes(const AttributeAccessor src_attributes,
   });
 }
 
-static bool indices_are_range(const Span<int> indices, const IndexRange range)
-{
-  if (indices.size() != range.size()) {
-    return false;
-  }
-  return threading::parallel_reduce(
-      range,
-      4096,
-      true,
-      [&](const IndexRange range, const bool init) {
-        if (!init) {
-          return false;
-        }
-        for (const int i : range) {
-          if (indices[i] != i) {
-            return false;
-          }
-        }
-        return true;
-      },
-      std::logical_and());
-}
-
 void gather_attributes(const AttributeAccessor src_attributes,
-                       const eAttrDomain domain,
+                       const AttrDomain domain,
                        const AnonymousAttributePropagationInfo &propagation_info,
                        const Set<std::string> &skip,
                        const Span<int> indices,
                        MutableAttributeAccessor dst_attributes)
 {
-  if (indices_are_range(indices, IndexRange(src_attributes.domain_size(domain)))) {
+  if (array_utils::indices_are_range(indices, IndexRange(src_attributes.domain_size(domain)))) {
     copy_attributes(src_attributes, domain, propagation_info, skip, dst_attributes);
   }
   else {
@@ -930,7 +968,7 @@ void gather_attributes(const AttributeAccessor src_attributes,
 }
 
 void gather_attributes_group_to_group(const AttributeAccessor src_attributes,
-                                      const eAttrDomain domain,
+                                      const AttrDomain domain,
                                       const AnonymousAttributePropagationInfo &propagation_info,
                                       const Set<std::string> &skip,
                                       const OffsetIndices<int> src_offsets,
@@ -961,7 +999,7 @@ void gather_attributes_group_to_group(const AttributeAccessor src_attributes,
 }
 
 void gather_attributes_to_groups(const AttributeAccessor src_attributes,
-                                 const eAttrDomain domain,
+                                 const AttrDomain domain,
                                  const AnonymousAttributePropagationInfo &propagation_info,
                                  const Set<std::string> &skip,
                                  const OffsetIndices<int> dst_offsets,
@@ -991,7 +1029,7 @@ void gather_attributes_to_groups(const AttributeAccessor src_attributes,
 }
 
 void copy_attributes(const AttributeAccessor src_attributes,
-                     const eAttrDomain domain,
+                     const AttrDomain domain,
                      const AnonymousAttributePropagationInfo &propagation_info,
                      const Set<std::string> &skip,
                      MutableAttributeAccessor dst_attributes)
@@ -1006,7 +1044,7 @@ void copy_attributes(const AttributeAccessor src_attributes,
 }
 
 void copy_attributes_group_to_group(const AttributeAccessor src_attributes,
-                                    const eAttrDomain domain,
+                                    const AttrDomain domain,
                                     const AnonymousAttributePropagationInfo &propagation_info,
                                     const Set<std::string> &skip,
                                     const OffsetIndices<int> src_offsets,
@@ -1040,7 +1078,7 @@ void copy_attributes_group_to_group(const AttributeAccessor src_attributes,
 }
 
 void fill_attribute_range_default(MutableAttributeAccessor attributes,
-                                  const eAttrDomain domain,
+                                  const AttrDomain domain,
                                   const Set<std::string> &skip,
                                   const IndexRange range)
 {

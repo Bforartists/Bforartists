@@ -2,7 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BLI_rect.h"
 
 #include "GPU_capabilities.h"
@@ -11,7 +11,7 @@
 #include "ED_screen.hh"
 #include "ED_view3d.hh"
 
-#include "DRW_render.h"
+#include "DRW_render.hh"
 
 #include "RE_pipeline.h"
 
@@ -103,8 +103,12 @@ static void eevee_engine_init(void *vedata)
 static void eevee_draw_scene(void *vedata)
 {
   EEVEE_Data *ved = reinterpret_cast<EEVEE_Data *>(vedata);
-  DefaultFramebufferList *dfbl = DRW_viewport_framebuffer_list_get();
-  ved->instance->draw_viewport(dfbl);
+  if (DRW_state_is_viewport_image_render()) {
+    ved->instance->draw_viewport_image_render();
+  }
+  else {
+    ved->instance->draw_viewport();
+  }
   STRNCPY(ved->info, ved->instance->info.c_str());
   /* Reset view for other following engines. */
   DRW_view_set_active(nullptr);
@@ -208,7 +212,7 @@ RenderEngineType DRW_engine_viewport_eevee_next_type = {
     /*next*/ nullptr,
     /*prev*/ nullptr,
     /*idname*/ "BLENDER_EEVEE_NEXT",
-    /*name*/ N_("EEVEE"),
+    /*name*/ N_("EEVEE-Next"),
     /*flag*/ RE_INTERNAL | RE_USE_PREVIEW | RE_USE_STEREO_VIEWPORT | RE_USE_GPU_CONTEXT,
     /*update*/ nullptr,
     /*render*/ &DRW_render_to_image,

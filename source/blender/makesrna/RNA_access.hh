@@ -2,7 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-/* Use a define instead of `#pragma once` because of `rna_internal.h` */
+/* Use a define instead of `#pragma once` because of `rna_internal.hh` */
 #ifndef __RNA_ACCESS_H__
 #define __RNA_ACCESS_H__
 
@@ -10,7 +10,9 @@
  * \ingroup RNA
  */
 
+#include <optional>
 #include <stdarg.h>
+#include <string>
 
 #include "RNA_types.hh"
 
@@ -112,6 +114,22 @@ bool RNA_struct_idprops_contains_datablock(const StructRNA *type);
 bool RNA_struct_idprops_unset(PointerRNA *ptr, const char *identifier);
 
 PropertyRNA *RNA_struct_find_property(PointerRNA *ptr, const char *identifier);
+
+/**
+ * Same as `RNA_struct_find_property` but returns `nullptr` if the property type is no same to
+ * `property_type_check`.
+ */
+PropertyRNA *RNA_struct_find_property_check(PointerRNA &props,
+                                            const char *name,
+                                            const PropertyType property_type_check);
+/**
+ * Same as `RNA_struct_find_property` but returns `nullptr` if the property type is not
+ * #PropertyType::PROP_COLLECTION or property struct type is different to `struct_type_check`.
+ */
+PropertyRNA *RNA_struct_find_collection_property_check(PointerRNA &props,
+                                                       const char *name,
+                                                       const StructRNA *struct_type_check);
+
 bool RNA_struct_contains_property(PointerRNA *ptr, PropertyRNA *prop_test);
 unsigned int RNA_struct_count_properties(StructRNA *srna);
 
@@ -464,7 +482,7 @@ int RNA_property_collection_raw_set(ReportList *reports,
                                     void *array,
                                     RawPropertyType type,
                                     int len);
-int RNA_raw_type_sizeof(RawPropertyType type);
+size_t RNA_raw_type_sizeof(RawPropertyType type);
 RawPropertyType RNA_property_raw_type(PropertyRNA *prop);
 
 /* to create ID property groups */
@@ -620,34 +638,34 @@ void RNA_struct_property_unset(PointerRNA *ptr, const char *identifier);
 /**
  * Python compatible string representation of this property, (must be freed!).
  */
-char *RNA_property_as_string(
+std::string RNA_property_as_string(
     bContext *C, PointerRNA *ptr, PropertyRNA *prop, int index, int max_prop_length);
 /**
  * String representation of a property, Python compatible but can be used for display too.
  * \param C: can be NULL.
  */
-char *RNA_pointer_as_string_id(bContext *C, PointerRNA *ptr);
-char *RNA_pointer_as_string(bContext *C,
-                            PointerRNA *ptr,
-                            PropertyRNA *prop_ptr,
-                            PointerRNA *ptr_prop);
+std::string RNA_pointer_as_string_id(bContext *C, PointerRNA *ptr);
+std::optional<std::string> RNA_pointer_as_string(bContext *C,
+                                                 PointerRNA *ptr,
+                                                 PropertyRNA *prop_ptr,
+                                                 PointerRNA *ptr_prop);
 /**
  * \param C: can be NULL.
  */
-char *RNA_pointer_as_string_keywords_ex(bContext *C,
-                                        PointerRNA *ptr,
-                                        bool as_function,
-                                        bool all_args,
-                                        bool nested_args,
-                                        int max_prop_length,
-                                        PropertyRNA *iterprop);
-char *RNA_pointer_as_string_keywords(bContext *C,
-                                     PointerRNA *ptr,
-                                     bool as_function,
-                                     bool all_args,
-                                     bool nested_args,
-                                     int max_prop_length);
-char *RNA_function_as_string_keywords(
+std::string RNA_pointer_as_string_keywords_ex(bContext *C,
+                                              PointerRNA *ptr,
+                                              bool as_function,
+                                              bool all_args,
+                                              bool nested_args,
+                                              int max_prop_length,
+                                              PropertyRNA *iterprop);
+std::string RNA_pointer_as_string_keywords(bContext *C,
+                                           PointerRNA *ptr,
+                                           bool as_function,
+                                           bool all_args,
+                                           bool nested_args,
+                                           int max_prop_length);
+std::string RNA_function_as_string_keywords(
     bContext *C, FunctionRNA *func, bool as_function, bool all_args, int max_prop_length);
 
 /* Function */
@@ -755,7 +773,7 @@ void _RNA_warning(const char *format, ...) ATTR_PRINTF_FORMAT(1, 2);
  * \note In practice, #EQ_STRICT and #EQ_COMPARE have same behavior currently,
  * and will yield same result.
  */
-typedef enum eRNACompareMode {
+enum eRNACompareMode {
   /* Only care about equality, not full comparison. */
   /** Set/unset ignored. */
   RNA_EQ_STRICT,
@@ -765,7 +783,7 @@ typedef enum eRNACompareMode {
   RNA_EQ_UNSET_MATCH_NONE,
   /** Full comparison. */
   RNA_EQ_COMPARE,
-} eRNACompareMode;
+};
 
 bool RNA_property_equals(
     Main *bmain, PointerRNA *ptr_a, PointerRNA *ptr_b, PropertyRNA *prop, eRNACompareMode mode);
@@ -774,7 +792,7 @@ bool RNA_struct_equals(Main *bmain, PointerRNA *ptr_a, PointerRNA *ptr_b, eRNACo
 /* Override. */
 
 /** Flags for #RNA_struct_override_matches. */
-typedef enum eRNAOverrideMatch {
+enum eRNAOverrideMatch {
   /** Do not compare properties that are not overridable. */
   RNA_OVERRIDE_COMPARE_IGNORE_NON_OVERRIDABLE = 1 << 0,
   /** Do not compare properties that are already overridden. */
@@ -786,10 +804,10 @@ typedef enum eRNAOverrideMatch {
   RNA_OVERRIDE_COMPARE_RESTORE = 1 << 17,
   /** Tag for restoration of property's value(s) to reference ones, if needed and possible. */
   RNA_OVERRIDE_COMPARE_TAG_FOR_RESTORE = 1 << 18,
-} eRNAOverrideMatch;
+};
 ENUM_OPERATORS(eRNAOverrideMatch, RNA_OVERRIDE_COMPARE_TAG_FOR_RESTORE)
 
-typedef enum eRNAOverrideMatchResult {
+enum eRNAOverrideMatchResult {
   RNA_OVERRIDE_MATCH_RESULT_INIT = 0,
 
   /**
@@ -804,10 +822,10 @@ typedef enum eRNAOverrideMatchResult {
   RNA_OVERRIDE_MATCH_RESULT_RESTORE_TAGGED = 1 << 1,
   /** Some properties were reset to reference values. */
   RNA_OVERRIDE_MATCH_RESULT_RESTORED = 1 << 2,
-} eRNAOverrideMatchResult;
+};
 ENUM_OPERATORS(eRNAOverrideMatchResult, RNA_OVERRIDE_MATCH_RESULT_RESTORED)
 
-typedef enum eRNAOverrideStatus {
+enum eRNAOverrideStatus {
   /** The property is overridable. */
   RNA_OVERRIDE_STATUS_OVERRIDABLE = 1 << 0,
   /** The property is overridden. */
@@ -816,7 +834,7 @@ typedef enum eRNAOverrideStatus {
   RNA_OVERRIDE_STATUS_MANDATORY = 1 << 2,
   /** The override status of this property is locked. */
   RNA_OVERRIDE_STATUS_LOCKED = 1 << 3,
-} eRNAOverrideStatus;
+};
 ENUM_OPERATORS(eRNAOverrideStatus, RNA_OVERRIDE_STATUS_LOCKED)
 
 /**
@@ -848,7 +866,7 @@ bool RNA_struct_override_store(Main *bmain,
                                PointerRNA *ptr_storage,
                                IDOverrideLibrary *override);
 
-typedef enum eRNAOverrideApplyFlag {
+enum eRNAOverrideApplyFlag {
   RNA_OVERRIDE_APPLY_FLAG_NOP = 0,
   /**
    * Hack to work around/fix older broken overrides: Do not apply override operations affecting ID
@@ -861,7 +879,7 @@ typedef enum eRNAOverrideApplyFlag {
 
   /** Only perform restore operations. */
   RNA_OVERRIDE_APPLY_FLAG_RESTORE_ONLY = 1 << 2,
-} eRNAOverrideApplyFlag;
+};
 
 /**
  * Apply given \a override operations on \a id_ptr_dst, using \a id_ptr_src

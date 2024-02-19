@@ -6,21 +6,23 @@
  * \ingroup edsculpt
  */
 
+#include <fmt/format.h>
+
 #include "DNA_modifier_types.h"
 #include "DNA_windowmanager_types.h"
+
 #include "MEM_guardedalloc.h"
 
 #include "BLI_hash.h"
 #include "BLI_index_range.hh"
+#include "BLI_math_base.hh"
 #include "BLI_math_matrix.h"
 #include "BLI_math_vector.h"
 #include "BLI_math_vector_types.hh"
 #include "BLI_string.h"
 #include "BLI_task.h"
 
-#include "BLT_translation.h"
-
-#include "DNA_meshdata_types.h"
+#include "BLT_translation.hh"
 
 #include "BKE_brush.hh"
 #include "BKE_context.hh"
@@ -34,6 +36,7 @@
 #include "WM_types.hh"
 
 #include "ED_screen.hh"
+#include "ED_sculpt.hh"
 #include "ED_util.hh"
 #include "ED_view3d.hh"
 
@@ -116,18 +119,11 @@ void cache_init(bContext *C,
     BKE_pbvh_ensure_node_loops(ss->pbvh);
   }
 
-  const float center[3] = {0.0f};
-  SculptSearchSphereData search_data{};
-  search_data.original = true;
-  search_data.center = center;
-  search_data.radius_squared = FLT_MAX;
-  search_data.ignore_fully_ineffective = true;
-
   ss->filter_cache->nodes = bke::pbvh::search_gather(
-      pbvh, [&](PBVHNode &node) { return SCULPT_search_sphere(&node, &search_data); });
+      pbvh, [&](PBVHNode &node) { return !node_fully_masked_or_hidden(node); });
 
   for (PBVHNode *node : ss->filter_cache->nodes) {
-    BKE_pbvh_node_mark_normals_update(node);
+    BKE_pbvh_node_mark_positions_update(node);
   }
 
   /* `mesh->runtime.subdiv_ccg` is not available. Updating of the normals is done during drawing.
@@ -178,22 +174,18 @@ void cache_init(bContext *C,
       radius = paint_calc_object_space_radius(&vc, co, float(ups->size) * area_normal_radius);
     }
 
-    SculptSearchSphereData search_data2{};
-    search_data2.original = true;
-    search_data2.center = co;
-    search_data2.radius_squared = radius * radius;
-    search_data2.ignore_fully_ineffective = true;
+    const float radius_sq = math::square(radius);
+    nodes = bke::pbvh::search_gather(pbvh, [&](PBVHNode &node) {
+      return !node_fully_masked_or_hidden(node) && node_in_sphere(node, co, radius_sq, true);
+    });
 
-    nodes = bke::pbvh::search_gather(
-        pbvh, [&](PBVHNode &node) { return SCULPT_search_sphere(&node, &search_data2); });
-
-    if (BKE_paint_brush(&sd->paint) &&
-        SCULPT_pbvh_calc_area_normal(brush, ob, nodes, ss->filter_cache->initial_normal))
-    {
-      copy_v3_v3(ss->last_normal, ss->filter_cache->initial_normal);
+    const std::optional<float3> area_normal = SCULPT_pbvh_calc_area_normal(brush, ob, nodes);
+    if (BKE_paint_brush(&sd->paint) && area_normal) {
+      ss->filter_cache->initial_normal = *area_normal;
+      ss->last_normal = ss->filter_cache->initial_normal;
     }
     else {
-      copy_v3_v3(ss->filter_cache->initial_normal, ss->last_normal);
+      ss->filter_cache->initial_normal = ss->last_normal;
     }
 
     /* Update last stroke location */
@@ -227,9 +219,6 @@ void cache_free(SculptSession *ss)
   if (ss->filter_cache->cloth_sim) {
     cloth::simulation_free(ss->filter_cache->cloth_sim);
   }
-  if (ss->filter_cache->automasking) {
-    auto_mask::cache_free(ss->filter_cache->automasking);
-  }
   MEM_SAFE_FREE(ss->filter_cache->mask_update_it);
   MEM_SAFE_FREE(ss->filter_cache->prev_mask);
   MEM_SAFE_FREE(ss->filter_cache->normal_factor);
@@ -239,7 +228,7 @@ void cache_free(SculptSession *ss)
   MEM_SAFE_FREE(ss->filter_cache->detail_directions);
   MEM_SAFE_FREE(ss->filter_cache->limit_surface_co);
   MEM_SAFE_FREE(ss->filter_cache->pre_smoothed_color);
-  MEM_delete<filter::Cache>(ss->filter_cache);
+  MEM_delete(ss->filter_cache);
   ss->filter_cache = nullptr;
 }
 
@@ -356,7 +345,7 @@ static void mesh_filter_task(Object *ob,
    * boundaries. */
   const bool relax_face_sets = !(ss->filter_cache->iteration_count % 3 == 0);
   auto_mask::NodeData automask_data = auto_mask::node_begin(
-      *ob, ss->filter_cache->automasking, *node);
+      *ob, ss->filter_cache->automasking.get(), *node);
 
   PBVHVertexIter vd;
   BKE_pbvh_vertex_iter_begin (ss->pbvh, node, vd, PBVH_ITER_UNIQUE) {
@@ -367,7 +356,8 @@ static void mesh_filter_task(Object *ob,
     float fade = vd.mask;
     fade = 1.0f - fade;
     fade *= filter_strength;
-    fade *= auto_mask::factor_get(ss->filter_cache->automasking, ss, vd.vertex, &automask_data);
+    fade *= auto_mask::factor_get(
+        ss->filter_cache->automasking.get(), ss, vd.vertex, &automask_data);
 
     if (fade == 0.0f && filter_type != MESH_FILTER_SURFACE_SMOOTH) {
       /* Surface Smooth can't skip the loop for this vertex as it needs to calculate its
@@ -530,9 +520,6 @@ static void mesh_filter_task(Object *ob,
       add_v3_v3v3(final_pos, orig_co, disp);
     }
     copy_v3_v3(vd.co, final_pos);
-    if (vd.is_mesh) {
-      BKE_pbvh_vert_tag_update_normal(ss->pbvh, vd.vertex);
-    }
   }
   BKE_pbvh_vertex_iter_end;
 
@@ -656,7 +643,7 @@ static void mesh_filter_surface_smooth_displace_task(Object *ob,
   PBVHVertexIter vd;
 
   auto_mask::NodeData automask_data = auto_mask::node_begin(
-      *ob, ss->filter_cache->automasking, *node);
+      *ob, ss->filter_cache->automasking.get(), *node);
 
   BKE_pbvh_vertex_iter_begin (ss->pbvh, node, vd, PBVH_ITER_UNIQUE) {
     auto_mask::node_update(automask_data, vd);
@@ -664,7 +651,8 @@ static void mesh_filter_surface_smooth_displace_task(Object *ob,
     float fade = vd.mask;
     fade = 1.0f - fade;
     fade *= filter_strength;
-    fade *= auto_mask::factor_get(ss->filter_cache->automasking, ss, vd.vertex, &automask_data);
+    fade *= auto_mask::factor_get(
+        ss->filter_cache->automasking.get(), ss, vd.vertex, &automask_data);
     if (fade == 0.0f) {
       continue;
     }
@@ -708,23 +696,15 @@ wmKeyMap *modal_keymap(wmKeyConfig *keyconf)
 
 static void sculpt_mesh_update_status_bar(bContext *C, wmOperator *op)
 {
-  char header[UI_MAX_DRAW_STR];
-  char buf[UI_MAX_DRAW_STR];
-  int available_len = sizeof(buf);
+  auto get_modal_key_str = [&](int id) {
+    return WM_modalkeymap_operator_items_to_string(op->type, id, true).value_or("");
+  };
 
-  char *p = buf;
-#define WM_MODALKEY(_id) \
-  WM_modalkeymap_operator_items_to_string_buf( \
-      op->type, (_id), true, UI_MAX_SHORTCUT_STR, &available_len, &p)
+  const std::string header = fmt::format(IFACE_("{}: Confirm, {}: Cancel"),
+                                         get_modal_key_str(FILTER_MESH_MODAL_CONFIRM),
+                                         get_modal_key_str(FILTER_MESH_MODAL_CANCEL));
 
-  SNPRINTF(header,
-           TIP_("%s: Confirm, %s: Cancel"),
-           WM_MODALKEY(FILTER_MESH_MODAL_CONFIRM),
-           WM_MODALKEY(FILTER_MESH_MODAL_CANCEL));
-
-#undef WM_MODALKEY
-
-  ED_workspace_status_text(C, TIP_(header));
+  ED_workspace_status_text(C, header.c_str());
 }
 
 static void sculpt_mesh_filter_apply(bContext *C, wmOperator *op)
@@ -981,6 +961,11 @@ static int sculpt_mesh_filter_start(bContext *C, wmOperator *op)
   const bool needs_topology_info = sculpt_mesh_filter_needs_pmap(filter_type) || use_automasking;
 
   BKE_sculpt_update_object_for_edit(depsgraph, ob, false);
+
+  if (ED_sculpt_report_if_shape_key_is_locked(ob, op->reports)) {
+    return OPERATOR_CANCELLED;
+  }
+
   SculptSession *ss = ob->sculpt;
 
   const eMeshFilterDeformAxis deform_axis = eMeshFilterDeformAxis(
@@ -1019,7 +1004,7 @@ static int sculpt_mesh_filter_start(bContext *C, wmOperator *op)
 
   filter::Cache *filter_cache = ss->filter_cache;
   filter_cache->active_face_set = SCULPT_FACE_SET_NONE;
-  filter_cache->automasking = auto_mask::cache_init(sd, nullptr, ob);
+  filter_cache->automasking = auto_mask::cache_init(sd, ob);
 
   sculpt_filter_specific_init(filter_type, op, ss);
 

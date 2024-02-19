@@ -6,6 +6,7 @@
  * \ingroup edtransform
  */
 
+#include "DNA_sequence_types.h"
 #include "DNA_space_types.h"
 
 #include "MEM_guardedalloc.h"
@@ -16,7 +17,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_main.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "ED_markers.hh"
 #include "ED_time_scrub_ui.hh"

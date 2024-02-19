@@ -44,6 +44,18 @@ set(SRC
   intern/MOD_edgesplit.cc
   intern/MOD_explode.cc
   intern/MOD_fluid.cc
+  intern/MOD_grease_pencil_color.cc
+  intern/MOD_grease_pencil_dash.cc
+  intern/MOD_grease_pencil_lattice.cc
+  intern/MOD_grease_pencil_mirror.cc
+  intern/MOD_grease_pencil_noise.cc
+  intern/MOD_grease_pencil_offset.cc
+  intern/MOD_grease_pencil_opacity.cc
+  intern/MOD_grease_pencil_smooth.cc
+  intern/MOD_grease_pencil_subdiv.cc
+  intern/MOD_grease_pencil_thickness.cc
+  intern/MOD_grease_pencil_tint.cc
+  intern/MOD_grease_pencil_util.cc
   intern/MOD_hook.cc
   intern/MOD_laplaciandeform.cc
   intern/MOD_laplaciansmooth.cc
@@ -97,6 +109,7 @@ set(SRC
 
   MOD_modifiertypes.hh
   MOD_nodes.hh
+  intern/MOD_grease_pencil_util.hh
   intern/MOD_meshcache_util.hh
   intern/MOD_solidify_util.hh
   intern/MOD_ui_common.hh
@@ -111,6 +124,7 @@ set(LIB
   PRIVATE bf::depsgraph
   PUBLIC bf::dna
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::extern::fmtlib
 )
 
 if(WITH_ALEMBIC)

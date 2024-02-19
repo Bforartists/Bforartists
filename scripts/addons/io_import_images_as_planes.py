@@ -911,7 +911,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
     # Core functionality
     def invoke(self, context, event):
         engine = context.scene.render.engine
-        if engine not in {'CYCLES', 'BLENDER_EEVEE'}:
+        if engine not in {'CYCLES', 'BLENDER_EEVEE','BLENDER_EEVEE_NEXT'}:
             if engine != 'BLENDER_WORKBENCH':
                 self.report({'ERROR'}, tip_("Cannot generate materials for unknown %s render engine") % engine)
                 return {'CANCELLED'}
@@ -986,7 +986,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
 
         # Configure material
         engine = context.scene.render.engine
-        if engine in {'CYCLES', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}:
+        if engine in {'CYCLES', 'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}:
             material = self.create_cycles_material(context, img_spec)
 
         # Create and position plane object

@@ -72,6 +72,7 @@ class TOPBAR_PT_tool_settings_extra(Panel):
     bl_region_type = 'HEADER'
     bl_space_type = 'TOPBAR'
     bl_label = "Extra Options"
+    bl_description = "Extra options"
 
     def draw(self, context):
         from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
@@ -398,9 +399,9 @@ class TOPBAR_MT_file_import(Menu):
         if bpy.app.build_options.io_wavefront_obj:
             self.layout.operator("wm.obj_import", text="Wavefront (.obj)", icon="LOAD_OBJ")
         if bpy.app.build_options.io_ply:
-            self.layout.operator("wm.ply_import", text="Stanford PLY (.ply) (experimental)", icon="LOAD_PLY")
+            self.layout.operator("wm.ply_import", text="Stanford PLY (.ply)", icon="LOAD_PLY")
         if bpy.app.build_options.io_stl:
-            self.layout.operator("wm.stl_import", text="STL (.stl) (experimental)", icon="LOAD_STL")
+            self.layout.operator("wm.stl_import", text="STL (.stl)", icon="LOAD_STL")
 
 
 class TOPBAR_MT_file_export(Menu):
@@ -430,7 +431,7 @@ class TOPBAR_MT_file_export(Menu):
         if bpy.app.build_options.io_ply:
             self.layout.operator("wm.ply_export", text="Stanford PLY (.ply)", icon = "SAVE_PLY")
         if bpy.app.build_options.io_stl:
-            self.layout.operator("wm.stl_export", text="STL (.stl) (experimental)")
+            self.layout.operator("wm.stl_export", text="STL (.stl)",icon = "SAVE_STL")
 
 
 class TOPBAR_MT_file_external_data(Menu):

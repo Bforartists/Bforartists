@@ -55,7 +55,7 @@ static void add_instances_from_component(
     const GeoNodeExecParams &params,
     const Map<AttributeIDRef, AttributeKind> &attributes_to_propagate)
 {
-  const eAttrDomain domain = ATTR_DOMAIN_POINT;
+  const AttrDomain domain = AttrDomain::Point;
   const int domain_num = src_attributes.domain_size(domain);
 
   VArray<bool> pick_instance;
@@ -85,7 +85,8 @@ static void add_instances_from_component(
   const int select_len = selection.index_range().size();
   dst_component.resize(start_len + select_len);
 
-  MutableSpan<int> dst_handles = dst_component.reference_handles().slice(start_len, select_len);
+  MutableSpan<int> dst_handles = dst_component.reference_handles_for_write().slice(start_len,
+                                                                                   select_len);
   MutableSpan<float4x4> dst_transforms = dst_component.transforms().slice(start_len, select_len);
 
   const VArraySpan positions = *src_attributes.lookup<float3>("position");
@@ -159,7 +160,7 @@ static void add_instances_from_component(
   for (const auto item : attributes_to_propagate.items()) {
     const AttributeIDRef &id = item.key;
     const eCustomDataType data_type = item.value.data_type;
-    const bke::GAttributeReader src = src_attributes.lookup(id, ATTR_DOMAIN_POINT, data_type);
+    const bke::GAttributeReader src = src_attributes.lookup(id, AttrDomain::Point, data_type);
     if (!src) {
       /* Domain interpolation can fail if the source domain is empty. */
       continue;
@@ -167,13 +168,14 @@ static void add_instances_from_component(
 
     if (!dst_attributes.contains(id)) {
       if (src.varray.size() == dst_component.instances_num() && src.sharing_info &&
-          src.varray.is_span()) {
+          src.varray.is_span())
+      {
         const bke::AttributeInitShared init(src.varray.get_internal_span().data(),
                                             *src.sharing_info);
-        dst_attributes.add(id, ATTR_DOMAIN_INSTANCE, data_type, init);
+        dst_attributes.add(id, AttrDomain::Instance, data_type, init);
         continue;
       }
-      dst_attributes.add(id, ATTR_DOMAIN_INSTANCE, data_type, bke::AttributeInitConstruct());
+      dst_attributes.add(id, AttrDomain::Instance, data_type, bke::AttributeInitConstruct());
     }
 
     GSpanAttributeWriter dst = dst_attributes.lookup_for_write_span(id);
@@ -212,11 +214,12 @@ static void node_geo_exec(GeoNodeExecParams params)
                                                    propagation_info,
                                                    attributes_to_propagate);
     attributes_to_propagate.remove("position");
+    attributes_to_propagate.remove(".reference_index");
 
     for (const GeometryComponent::Type type : types) {
       if (geometry_set.has(type)) {
         const GeometryComponent &component = *geometry_set.get_component(type);
-        const bke::GeometryFieldContext field_context{component, ATTR_DOMAIN_POINT};
+        const bke::GeometryFieldContext field_context{component, AttrDomain::Point};
         add_instances_from_component(*dst_instances,
                                      *component.attributes(),
                                      instance,
@@ -245,7 +248,7 @@ static void node_geo_exec(GeoNodeExecParams params)
         /* TODO: Attributes are not propagating from the curves or the points. */
         bke::Instances *instances = new bke::Instances();
         const bke::GreasePencilLayerFieldContext field_context(
-            grease_pencil, ATTR_DOMAIN_POINT, layer_index);
+            grease_pencil, AttrDomain::Point, layer_index);
         add_instances_from_component(*instances,
                                      src_curves.attributes(),
                                      instance,

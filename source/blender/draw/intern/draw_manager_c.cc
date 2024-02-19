@@ -16,20 +16,21 @@
 #include "BLI_task.h"
 #include "BLI_threads.h"
 
-#include "BLF_api.h"
+#include "BLF_api.hh"
 
-#include "BKE_colortools.h"
+#include "BLT_translation.hh"
+
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
 #include "BKE_curves.h"
 #include "BKE_duplilist.h"
 #include "BKE_editmesh.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_grease_pencil.h"
 #include "BKE_lattice.hh"
 #include "BKE_main.hh"
-#include "BKE_mball.h"
+#include "BKE_mball.hh"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
@@ -37,7 +38,7 @@
 #include "BKE_paint.hh"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
-#include "BKE_pointcloud.h"
+#include "BKE_pointcloud.hh"
 #include "BKE_screen.hh"
 #include "BKE_subdiv_modifier.hh"
 #include "BKE_viewer_path.hh"
@@ -45,7 +46,6 @@
 
 #include "DNA_camera_types.h"
 #include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_userdef_types.h"
 #include "DNA_view3d_types.h"
 #include "DNA_world_types.h"
@@ -65,8 +65,6 @@
 #include "GPU_uniform_buffer.h"
 #include "GPU_viewport.h"
 
-#include "IMB_colormanagement.h"
-
 #include "RE_engine.h"
 #include "RE_pipeline.h"
 
@@ -81,7 +79,7 @@
 #include "draw_manager_profiling.hh"
 #include "draw_manager_testing.h"
 #include "draw_manager_text.hh"
-#include "draw_shader.h"
+#include "draw_shader.hh"
 #include "draw_subdivision.hh"
 #include "draw_texture_pool.h"
 
@@ -975,9 +973,10 @@ static void drw_drawdata_unlink_dupli(ID *id)
 
 void DRW_cache_free_old_batches(Main *bmain)
 {
+  using namespace blender::draw;
   Scene *scene;
   static int lasttime = 0;
-  int ctime = int(PIL_check_seconds_timer());
+  int ctime = int(BLI_check_seconds_timer());
 
   if (U.vbotimeout == 0 || (ctime - lasttime) < U.vbocollectrate || ctime == lasttime) {
     return;
@@ -1146,21 +1145,14 @@ void DRW_draw_region_engine_info(int xoffset, int *yoffset, int line_height)
     if (data->info[0] != '\0') {
       const int font_id = BLF_default();
       UI_FontThemeColor(font_id, TH_TEXT_HI);
-
-      BLF_enable(font_id, BLF_SHADOW);
-      BLF_shadow(font_id, 5, blender::float4{0.0f, 0.0f, 0.0f, 1.0f});
-      BLF_shadow_offset(font_id, 1, -1);
-
-      const char *buf_step = data->info;
+      const char *buf_step = IFACE_(data->info);
       do {
         const char *buf = buf_step;
         buf_step = BLI_strchr_or_end(buf, '\n');
         const int buf_len = buf_step - buf;
         *yoffset -= line_height;
-        BLF_draw_default(xoffset, *yoffset, 0.0f, buf, buf_len);
+        BLF_draw_default_shadowed(xoffset, *yoffset, 0.0f, buf, buf_len);
       } while (*buf_step ? ((void)buf_step++, true) : false);
-
-      BLF_disable(font_id, BLF_SHADOW);
     }
   }
 }
@@ -1650,6 +1642,7 @@ void DRW_draw_render_loop_ex(Depsgraph *depsgraph,
                              GPUViewport *viewport,
                              const bContext *evil_C)
 {
+  using namespace blender::draw;
   Scene *scene = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_evaluated_view_layer(depsgraph);
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
@@ -1970,6 +1963,7 @@ void DRW_render_gpencil(RenderEngine *engine, Depsgraph *depsgraph)
 
 void DRW_render_to_image(RenderEngine *engine, Depsgraph *depsgraph)
 {
+  using namespace blender::draw;
   Scene *scene = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_evaluated_view_layer(depsgraph);
   RenderEngineType *engine_type = engine->type;
@@ -2064,6 +2058,7 @@ void DRW_render_object_iter(
     Depsgraph *depsgraph,
     void (*callback)(void *vedata, Object *ob, RenderEngine *engine, Depsgraph *depsgraph))
 {
+  using namespace blender::draw;
   const DRWContextState *draw_ctx = DRW_context_state_get();
   DRW_pointcloud_init();
   DRW_curves_init(DST.vmempool);
@@ -2103,6 +2098,7 @@ void DRW_render_object_iter(
 
 void DRW_custom_pipeline_begin(DrawEngineType *draw_engine_type, Depsgraph *depsgraph)
 {
+  using namespace blender::draw;
   Scene *scene = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_evaluated_view_layer(depsgraph);
 
@@ -2168,6 +2164,7 @@ void DRW_custom_pipeline(DrawEngineType *draw_engine_type,
 
 void DRW_cache_restart()
 {
+  using namespace blender::draw;
   DRW_smoke_exit(DST.vmempool);
 
   drw_manager_init(&DST, DST.viewport, blender::int2{int(DST.size[0]), int(DST.size[1])});
@@ -2395,6 +2392,7 @@ void DRW_draw_select_loop(Depsgraph *depsgraph,
                           DRW_ObjectFilterFn object_filter_fn,
                           void *object_filter_user_data)
 {
+  using namespace blender::draw;
   Scene *scene = DEG_get_evaluated_scene(depsgraph);
   RenderEngineType *engine_type = ED_view3d_engine_type(scene, v3d->shading.type);
   ViewLayer *view_layer = DEG_get_evaluated_view_layer(depsgraph);
@@ -2639,6 +2637,7 @@ void DRW_draw_depth_loop(Depsgraph *depsgraph,
                          const bool use_basic,
                          const bool use_overlay)
 {
+  using namespace blender::draw;
   Scene *scene = DEG_get_evaluated_scene(depsgraph);
   RenderEngineType *engine_type = ED_view3d_engine_type(scene, v3d->shading.type);
   ViewLayer *view_layer = DEG_get_evaluated_view_layer(depsgraph);
@@ -2850,6 +2849,7 @@ void DRW_draw_select_id(Depsgraph *depsgraph, ARegion *region, View3D *v3d)
 void DRW_draw_depth_object(
     Scene *scene, ARegion *region, View3D *v3d, GPUViewport *viewport, Object *object)
 {
+  using namespace blender::draw;
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
 
   GPU_matrix_projection_set(rv3d->winmat);
@@ -3041,6 +3041,7 @@ void DRW_engine_register(DrawEngineType *draw_engine_type)
 
 void DRW_engines_register()
 {
+  using namespace blender::draw;
   RE_engines_register(&DRW_engine_viewport_eevee_type);
   /* Always register EEVEE Next so it can be used in background mode with `--factory-startup`.
    * (Needed for tests). */
@@ -3120,6 +3121,7 @@ static void drw_registered_engines_free()
 
 void DRW_engines_free()
 {
+  using namespace blender::draw;
   drw_registered_engines_free();
 
   if (DST.system_gpu_context == nullptr) {

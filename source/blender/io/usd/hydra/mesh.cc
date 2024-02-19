@@ -11,18 +11,19 @@
 #include "BLI_vector_set.hh"
 
 #include "BKE_attribute.hh"
+#include "BKE_customdata.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_runtime.hh"
 
-#include "hydra_scene_delegate.h"
-#include "mesh.h"
-
-PXR_NAMESPACE_OPEN_SCOPE
-TF_DEFINE_PRIVATE_TOKENS(tokens_, (st));
-PXR_NAMESPACE_CLOSE_SCOPE
+#include "hydra_scene_delegate.hh"
+#include "mesh.hh"
 
 namespace blender::io::hydra {
+
+namespace usdtokens {
+static const pxr::TfToken st("st", pxr::TfToken::Immortal);
+}
 
 MeshData::MeshData(HydraSceneDelegate *scene_delegate,
                    const Object *object,
@@ -98,7 +99,7 @@ pxr::VtValue MeshData::get_data(pxr::SdfPath const &id, pxr::TfToken const &key)
   if (key == pxr::HdTokens->normals) {
     return pxr::VtValue(submesh(id).normals);
   }
-  if (key == pxr::tokens_->st) {
+  if (key == usdtokens::st) {
     return pxr::VtValue(submesh(id).uvs);
   }
   if (key == pxr::HdTokens->points) {
@@ -149,7 +150,7 @@ pxr::HdPrimvarDescriptorVector MeshData::primvar_descriptors(
     }
     if (!submeshes_[0].uvs.empty()) {
       primvars.emplace_back(
-          pxr::tokens_->st, interpolation, pxr::HdPrimvarRoleTokens->textureCoordinate);
+          usdtokens::st, interpolation, pxr::HdPrimvarRoleTokens->textureCoordinate);
     }
   }
   return primvars;
@@ -260,35 +261,35 @@ void gather_vert_data(const Span<int> verts,
 }
 
 template<typename T>
-void gather_face_data(const Span<int> looptri_faces,
+void gather_face_data(const Span<int> tri_faces,
                       const IndexMask &triangles,
                       const Span<T> src_data,
                       MutableSpan<T> dst_data)
 {
   triangles.foreach_index_optimized<int>(GrainSize(1024), [&](const int src, const int dst) {
-    dst_data[dst] = src_data[looptri_faces[src]];
+    dst_data[dst] = src_data[tri_faces[src]];
   });
 }
 
 template<typename T>
-void gather_corner_data(const Span<MLoopTri> looptris,
+void gather_corner_data(const Span<int3> corner_tris,
                         const IndexMask &triangles,
                         const Span<T> src_data,
                         MutableSpan<T> dst_data)
 {
   triangles.foreach_index_optimized<int>(GrainSize(1024), [&](const int src, const int dst) {
-    const MLoopTri &lt = looptris[src];
-    dst_data[dst * 3 + 0] = src_data[lt.tri[0]];
-    dst_data[dst * 3 + 1] = src_data[lt.tri[1]];
-    dst_data[dst * 3 + 2] = src_data[lt.tri[2]];
+    const int3 &tri = corner_tris[src];
+    dst_data[dst * 3 + 0] = src_data[tri[0]];
+    dst_data[dst * 3 + 1] = src_data[tri[1]];
+    dst_data[dst * 3 + 2] = src_data[tri[2]];
   });
 }
 
 static void copy_submesh(const Mesh &mesh,
                          const Span<float3> vert_positions,
                          const Span<int> corner_verts,
-                         const Span<MLoopTri> looptris,
-                         const Span<int> looptri_faces,
+                         const Span<int3> corner_tris,
+                         const Span<int> tri_faces,
                          const std::pair<bke::MeshNormalDomain, Span<float3>> normals,
                          const Span<float2> uv_map,
                          const IndexMask &triangles,
@@ -298,16 +299,16 @@ static void copy_submesh(const Mesh &mesh,
 
   /* If all triangles are part of this submesh and there are no loose vertices that shouldn't be
    * copied (Hydra will warn about this), vertex index compression can be completely skipped. */
-  const bool copy_all_verts = triangles.size() == looptris.size() &&
+  const bool copy_all_verts = triangles.size() == corner_tris.size() &&
                               mesh.verts_no_face().count == 0;
 
   int dst_verts_num;
   VectorSet<int> verts;
   if (copy_all_verts) {
-    /* Copy the vertex indices from the corner indices stored in every triangle. */
-    array_utils::gather(corner_verts,
-                        looptris.cast<int>(),
-                        MutableSpan(sm.face_vertex_indices.data(), sm.face_vertex_indices.size()));
+    bke::mesh::vert_tris_from_corner_tris(
+        corner_verts,
+        corner_tris,
+        MutableSpan(sm.face_vertex_indices.data(), sm.face_vertex_indices.size()).cast<int3>());
     dst_verts_num = vert_positions.size();
   }
   else {
@@ -315,10 +316,10 @@ static void copy_submesh(const Mesh &mesh,
      * for vertices actually used by the subset of triangles. */
     verts.reserve(triangles.size());
     triangles.foreach_index([&](const int src, const int dst) {
-      const MLoopTri &lt = looptris[src];
-      sm.face_vertex_indices[dst * 3 + 0] = verts.index_of_or_add(corner_verts[lt.tri[0]]);
-      sm.face_vertex_indices[dst * 3 + 1] = verts.index_of_or_add(corner_verts[lt.tri[1]]);
-      sm.face_vertex_indices[dst * 3 + 2] = verts.index_of_or_add(corner_verts[lt.tri[2]]);
+      const int3 &tri = corner_tris[src];
+      sm.face_vertex_indices[dst * 3 + 0] = verts.index_of_or_add(corner_verts[tri[0]]);
+      sm.face_vertex_indices[dst * 3 + 1] = verts.index_of_or_add(corner_verts[tri[1]]);
+      sm.face_vertex_indices[dst * 3 + 2] = verts.index_of_or_add(corner_verts[tri[2]]);
     });
     dst_verts_num = verts.size();
   }
@@ -338,26 +339,26 @@ static void copy_submesh(const Mesh &mesh,
   switch (normals.first) {
     case bke::MeshNormalDomain::Face:
       triangles.foreach_index(GrainSize(1024), [&](const int src, const int dst) {
-        std::fill_n(&dst_normals[dst * 3], 3, src_normals[looptri_faces[src]]);
+        std::fill_n(&dst_normals[dst * 3], 3, src_normals[tri_faces[src]]);
       });
       break;
     case bke::MeshNormalDomain::Point:
       triangles.foreach_index(GrainSize(1024), [&](const int src, const int dst) {
-        const MLoopTri &lt = looptris[src];
-        dst_normals[dst * 3 + 0] = src_normals[corner_verts[lt.tri[0]]];
-        dst_normals[dst * 3 + 1] = src_normals[corner_verts[lt.tri[1]]];
-        dst_normals[dst * 3 + 2] = src_normals[corner_verts[lt.tri[2]]];
+        const int3 &tri = corner_tris[src];
+        dst_normals[dst * 3 + 0] = src_normals[corner_verts[tri[0]]];
+        dst_normals[dst * 3 + 1] = src_normals[corner_verts[tri[1]]];
+        dst_normals[dst * 3 + 2] = src_normals[corner_verts[tri[2]]];
       });
       break;
     case bke::MeshNormalDomain::Corner:
-      gather_corner_data(looptris, triangles, src_normals, dst_normals);
+      gather_corner_data(corner_tris, triangles, src_normals, dst_normals);
       break;
   }
 
   if (!uv_map.is_empty()) {
     resize_uninitialized(sm.uvs, triangles.size() * 3);
     gather_corner_data(
-        looptris, triangles, uv_map, MutableSpan(sm.uvs.data(), sm.uvs.size()).cast<float2>());
+        corner_tris, triangles, uv_map, MutableSpan(sm.uvs.data(), sm.uvs.size()).cast<float2>());
   }
 }
 
@@ -371,23 +372,24 @@ void MeshData::write_submeshes(const Mesh *mesh)
 
   const Span<float3> vert_positions = mesh->vert_positions();
   const Span<int> corner_verts = mesh->corner_verts();
-  const Span<MLoopTri> looptris = mesh->looptris();
-  const Span<int> looptri_faces = mesh->looptri_faces();
+  const Span<int3> corner_tris = mesh->corner_tris();
+  const Span<int> tri_faces = mesh->corner_tri_faces();
   const std::pair<bke::MeshNormalDomain, Span<float3>> normals = get_mesh_normals(*mesh);
   const bke::AttributeAccessor attributes = mesh->attributes();
-  const StringRef active_uv = CustomData_get_active_layer_name(&mesh->loop_data, CD_PROP_FLOAT2);
-  const VArraySpan uv_map = *attributes.lookup<float2>(active_uv, ATTR_DOMAIN_CORNER);
-  const VArraySpan material_indices = *attributes.lookup<int>("material_index", ATTR_DOMAIN_FACE);
+  const StringRef active_uv = CustomData_get_active_layer_name(&mesh->corner_data, CD_PROP_FLOAT2);
+  const VArraySpan uv_map = *attributes.lookup<float2>(active_uv, bke::AttrDomain::Corner);
+  const VArraySpan material_indices = *attributes.lookup<int>("material_index",
+                                                              bke::AttrDomain::Face);
 
   if (material_indices.is_empty()) {
     copy_submesh(*mesh,
                  vert_positions,
                  corner_verts,
-                 looptris,
-                 looptri_faces,
+                 corner_tris,
+                 tri_faces,
                  normals,
                  uv_map,
-                 looptris.index_range(),
+                 corner_tris.index_range(),
                  submeshes_.first());
     return;
   }
@@ -396,9 +398,9 @@ void MeshData::write_submeshes(const Mesh *mesh)
   Array<IndexMask> triangles_by_material(submeshes_.size());
   const int max_index = std::max(mat_count - 1, 0);
   IndexMask::from_groups<int>(
-      looptris.index_range(),
+      corner_tris.index_range(),
       memory,
-      [&](const int i) { return std::min(material_indices[looptri_faces[i]], max_index); },
+      [&](const int i) { return std::min(material_indices[tri_faces[i]], max_index); },
       triangles_by_material);
 
   threading::parallel_for(submeshes_.index_range(), 1, [&](const IndexRange range) {
@@ -406,8 +408,8 @@ void MeshData::write_submeshes(const Mesh *mesh)
       copy_submesh(*mesh,
                    vert_positions,
                    corner_verts,
-                   looptris,
-                   looptri_faces,
+                   corner_tris,
+                   tri_faces,
                    normals,
                    uv_map,
                    triangles_by_material[i],

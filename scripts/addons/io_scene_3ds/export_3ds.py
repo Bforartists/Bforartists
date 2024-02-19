@@ -174,7 +174,7 @@ def sane_name(name):
         return name_fixed
 
     # Strip non ascii chars
-    new_name_clean = new_name = name.encode("ASCII", "replace").decode("ASCII")[:12]
+    new_name_clean = new_name = name.encode("ASCII", "replace").decode("ASCII")[:16]
     i = 0
 
     while new_name in name_unique:

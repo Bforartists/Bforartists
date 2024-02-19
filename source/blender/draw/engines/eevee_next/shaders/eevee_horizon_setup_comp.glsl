@@ -10,6 +10,7 @@
 
 #pragma BLENDER_REQUIRE(draw_view_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_gbuffer_lib.glsl)
+#pragma BLENDER_REQUIRE(eevee_colorspace_lib.glsl)
 #pragma BLENDER_REQUIRE(gpu_shader_math_matrix_lib.glsl)
 
 void main()
@@ -19,11 +20,11 @@ void main()
                         uniform_buf.raytrace.resolution_bias;
 
   /* Load Gbuffer. */
-  GBufferData gbuf = gbuffer_read(gbuf_header_tx, gbuf_closure_tx, gbuf_color_tx, texel_fullres);
+  GBufferReader gbuf = gbuffer_read(
+      gbuf_header_tx, gbuf_closure_tx, gbuf_normal_tx, texel_fullres);
 
   /* Export normal. */
-  /* TODO(fclem): Export the most visible normal. */
-  vec3 N = gbuf.has_diffuse ? gbuf.diffuse.N : gbuf.reflection.N;
+  vec3 N = gbuf.surface_N;
   if (is_zero(N)) {
     /* Avoid NaN. But should be fixed in any case. */
     N = vec3(1.0, 0.0, 0.0);
@@ -39,9 +40,7 @@ void main()
   vec3 ssP_prev = drw_ndc_to_screen(project_point(uniform_buf.raytrace.radiance_persmat, P));
 
   vec4 radiance = texture(in_radiance_tx, ssP_prev.xy);
-
-  float luma = max(1e-8, reduce_max(radiance.rgb));
-  radiance *= 1.0 - max(0.0, luma - uniform_buf.raytrace.brightness_clamp) / luma;
+  radiance = colorspace_brightness_clamp_max(radiance, uniform_buf.raytrace.brightness_clamp);
 
   imageStore(out_radiance_img, texel, radiance);
 }

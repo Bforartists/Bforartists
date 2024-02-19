@@ -6,6 +6,8 @@
  * \ingroup ikplugin
  */
 
+#include <algorithm>
+
 #include "MEM_guardedalloc.h"
 
 #include "BIK_api.h"
@@ -142,11 +144,11 @@ static void initialize_posetree(Object * /*ob*/, bPoseChannel *pchan_tip)
       BLI_addtail(&pchan_root->iktree, tree);
     }
     else {
-      tree->iterations = MAX2(data->iterations, tree->iterations);
+      tree->iterations = std::max<int>(data->iterations, tree->iterations);
       tree->stretch = tree->stretch && !(data->flag & CONSTRAINT_IK_STRETCH);
 
       /* Skip common pose channels and add remaining. */
-      const int size = MIN2(segcount, tree->totchannel);
+      const int size = std::min(segcount, tree->totchannel);
       int a, t;
       a = t = 0;
       while (a < size && t < tree->totchannel) {
@@ -158,7 +160,8 @@ static void initialize_posetree(Object * /*ob*/, bPoseChannel *pchan_tip)
           break;
         }
         for (; a < size && t < tree->totchannel && tree->pchan[t] == chanlist[segcount - a - 1];
-             a++, t++) {
+             a++, t++)
+        {
           /* pass */
         }
       }
@@ -213,7 +216,7 @@ static void initialize_posetree(Object * /*ob*/, bPoseChannel *pchan_tip)
     pchan_root->flag |= POSE_IKTREE;
 
     /* Per bone only one active IK constraint is supported. Inactive constraints still need to be
-     * added for the depsgraph to evaluate properly.*/
+     * added for the depsgraph to evaluate properly. */
     if (constraint->enforce != 0.0 && !(constraint->flag & CONSTRAINT_OFF)) {
       break;
     }
