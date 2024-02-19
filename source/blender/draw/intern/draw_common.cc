@@ -6,7 +6,7 @@
  * \ingroup draw
  */
 
-#include "DRW_render.h"
+#include "DRW_render.hh"
 
 #include "GPU_matrix.h"
 #include "GPU_shader.h"
@@ -16,8 +16,8 @@
 
 #include "BLI_math_color.h"
 
-#include "BKE_colorband.h"
-#include "BKE_global.h"
+#include "BKE_colorband.hh"
+#include "BKE_global.hh"
 #include "BKE_object.hh"
 
 #include "draw_common.h"

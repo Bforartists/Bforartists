@@ -806,11 +806,12 @@ void draw_nla_main_data(bAnimContext *ac, SpaceNla *snla, ARegion *region)
        ale = ale->next, ymax -= NLATRACK_STEP(snla))
   {
     float ymin = ymax - NLATRACK_HEIGHT(snla);
-    float ycenter = (ymax + ymin) / 2.0f;
+    float ycenter = (ymax + ymin + 2 * NLATRACK_SKIP - 1) / 2.0f;
 
     /* check if visible */
     if (IN_RANGE(ymin, v2d->cur.ymin, v2d->cur.ymax) ||
-        IN_RANGE(ymax, v2d->cur.ymin, v2d->cur.ymax)) {
+        IN_RANGE(ymax, v2d->cur.ymin, v2d->cur.ymax))
+    {
       /* data to draw depends on the type of track */
       switch (ale->type) {
         case ANIMTYPE_NLATRACK: {
@@ -868,8 +869,11 @@ void draw_nla_main_data(bAnimContext *ac, SpaceNla *snla, ARegion *region)
            */
           switch (adt->act_extendmode) {
             case NLASTRIP_EXTEND_HOLD: {
-              immRectf(
-                  pos, v2d->cur.xmin, ymin + NLATRACK_SKIP, v2d->cur.xmax, ymax - NLATRACK_SKIP);
+              immRectf(pos,
+                       v2d->cur.xmin,
+                       ymin + NLATRACK_SKIP,
+                       v2d->cur.xmax,
+                       ymax + NLATRACK_SKIP - 1);
               break;
             }
             case NLASTRIP_EXTEND_HOLD_FORWARD: {
@@ -893,7 +897,7 @@ void draw_nla_main_data(bAnimContext *ac, SpaceNla *snla, ARegion *region)
                                     static_cast<bAction *>(ale->data),
                                     ycenter,
                                     ymin + NLATRACK_SKIP,
-                                    ymax - NLATRACK_SKIP);
+                                    ymax + NLATRACK_SKIP - 1);
 
           GPU_blend(GPU_BLEND_NONE);
           break;
@@ -947,7 +951,8 @@ void draw_nla_track_list(const bContext *C, bAnimContext *ac, ARegion *region)
 
       /* check if visible */
       if (IN_RANGE(ymin, v2d->cur.ymin, v2d->cur.ymax) ||
-          IN_RANGE(ymax, v2d->cur.ymin, v2d->cur.ymax)) {
+          IN_RANGE(ymax, v2d->cur.ymin, v2d->cur.ymax))
+      {
         /* draw all tracks using standard channel-drawing API */
         ANIM_channel_draw(ac, ale, ymin, ymax, track_index);
       }
@@ -969,7 +974,8 @@ void draw_nla_track_list(const bContext *C, bAnimContext *ac, ARegion *region)
 
       /* check if visible */
       if (IN_RANGE(ymin, v2d->cur.ymin, v2d->cur.ymax) ||
-          IN_RANGE(ymax, v2d->cur.ymin, v2d->cur.ymax)) {
+          IN_RANGE(ymax, v2d->cur.ymin, v2d->cur.ymax))
+      {
         /* draw all tracks using standard channel-drawing API */
         rctf track_rect;
         BLI_rctf_init(&track_rect, 0, v2d->cur.xmax, ymin, ymax);

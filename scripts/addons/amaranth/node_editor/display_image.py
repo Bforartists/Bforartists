@@ -109,11 +109,13 @@ def ui(self, context):
 
 def register():
     bpy.utils.register_class(AMTH_NODE_OT_show_active_node_image)
+
     kc = bpy.context.window_manager.keyconfigs.addon
-    km = kc.keymaps.new(name="Node Editor", space_type="NODE_EDITOR")
-    kmi = km.keymap_items.new("node.show_active_node_image",
-                              "LEFTMOUSE", "DOUBLE_CLICK")
-    KEYMAPS.append((km, kmi))
+    if kc is not None:
+        km = kc.keymaps.new(name="Node Editor", space_type="NODE_EDITOR")
+        kmi = km.keymap_items.new("node.show_active_node_image",
+                                  "LEFTMOUSE", "DOUBLE_CLICK")
+        KEYMAPS.append((km, kmi))
 
     bpy.types.NODE_MT_node.append(ui)
     bpy.types.NODE_MT_context_menu.append(ui)

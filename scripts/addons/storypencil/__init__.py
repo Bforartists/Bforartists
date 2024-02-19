@@ -99,8 +99,10 @@ def save_mode(self, context):
 
 addon_keymaps = []
 def register_keymaps():
-    addon = bpy.context.window_manager.keyconfigs.addon
-    km = addon.keymaps.new(name="Sequencer", space_type="SEQUENCE_EDITOR")
+    kc = bpy.context.window_manager.keyconfigs.addon
+    if kc is None:
+        return
+    km = kc.keymaps.new(name="Sequencer", space_type="SEQUENCE_EDITOR")
     kmi = km.keymap_items.new(
         idname="storypencil.tabswitch",
         type="TAB",

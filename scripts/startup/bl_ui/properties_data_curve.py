@@ -331,7 +331,7 @@ class DATA_PT_active_spline(CurveButtonsPanelActive, Panel):
 
             if act_spline.type == 'NURBS':
                 sub = col.column(align = True)
-                sub.label(text = "Bezier")
+                sub.label(text = "Bézier")
                 sub.use_property_split = False
                 row = sub.row()
                 row.separator()

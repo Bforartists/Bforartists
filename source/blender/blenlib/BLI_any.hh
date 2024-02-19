@@ -15,7 +15,6 @@
  */
 
 #include <algorithm>
-#include <cstring>
 #include <utility>
 
 #include "BLI_memory_utils.hh"
@@ -160,7 +159,9 @@ class Any {
         info_->copy_construct(&buffer_, &other.buffer_);
       }
       else {
-        memcpy(&buffer_, &other.buffer_, RealInlineBufferCapacity);
+        std::copy_n(static_cast<const std::byte *>(other.buffer_.ptr()),
+                    RealInlineBufferCapacity,
+                    static_cast<std::byte *>(buffer_.ptr()));
       }
     }
   }
@@ -176,7 +177,9 @@ class Any {
         info_->move_construct(&buffer_, &other.buffer_);
       }
       else {
-        memcpy(&buffer_, &other.buffer_, RealInlineBufferCapacity);
+        std::copy_n(static_cast<const std::byte *>(other.buffer_.ptr()),
+                    RealInlineBufferCapacity,
+                    static_cast<std::byte *>(buffer_.ptr()));
       }
     }
   }
@@ -278,6 +281,36 @@ class Any {
       std::unique_ptr<DecayT> *stored_value = new (&buffer_)
           std::unique_ptr<DecayT>(new DecayT(std::forward<Args>(args)...));
       return **stored_value;
+    }
+  }
+
+  /**
+   * Like #emplace but does *not* actually construct the value. The caller is responsible for
+   * calling the constructor before the value is used.
+   */
+  template<typename T> void *allocate()
+  {
+    this->reset();
+    return this->allocate_on_empty<T>();
+  }
+
+  /**
+   * Like #emplace_on_empty but does *not* actually construct the value. The caller is responsible
+   * for calling the constructor before the value is used.
+   */
+  template<typename T> void *allocate_on_empty()
+  {
+    BLI_assert(!this->has_value());
+    static_assert(is_allowed_v<T>);
+    info_ = &this->template get_info<T>();
+    if constexpr (is_inline_v<T>) {
+      return buffer_.ptr();
+    }
+    else {
+      /* Using raw allocation here. The caller is responsible for constructing the value. */
+      T *value = static_cast<T *>(::operator new(sizeof(T)));
+      new (&buffer_) std::unique_ptr<T>(value);
+      return value;
     }
   }
 

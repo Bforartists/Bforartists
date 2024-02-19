@@ -102,7 +102,7 @@ def ensure_collection_uid(bcoll: BoneCollection):
         uid = zlib.adler32(bcoll.name.encode("utf-8")) & max_uid
 
     # Ensure the uid is unique within the armature
-    used_ids = set(coll.rigify_uid for coll in bcoll.id_data.collections)
+    used_ids = set(coll.rigify_uid for coll in bcoll.id_data.collections_all)
 
     while uid in used_ids:
         uid = random.randint(0, max_uid)
@@ -126,14 +126,14 @@ def resolve_collection_reference(obj: ArmatureObject, ref: Any, *,
     arm = obj.data
 
     name = ref.get("name", "")
-    name_coll = arm.collections.get(name) if name else None
+    name_coll = arm.collections_all.get(name) if name else None
 
     # First try an exact match of both name and uid
     if name_coll and name_coll.rigify_uid == uid:
         return name_coll
 
     # Then try searching by the uid
-    for coll in arm.collections:
+    for coll in arm.collections_all:
         if coll.rigify_uid == uid:
             if update:
                 ref["name"] = coll.name
@@ -194,7 +194,7 @@ def validate_collection_references(obj: ArmatureObject):
     # Ensure uids are unique
     known_uids = dict()
 
-    for bcoll in obj.data.collections:
+    for bcoll in obj.data.collections_all:
         uid = bcoll.rigify_uid
         if uid < 0:
             continue

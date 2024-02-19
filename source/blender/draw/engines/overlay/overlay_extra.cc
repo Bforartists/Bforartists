@@ -6,7 +6,7 @@
  * \ingroup draw_engine
  */
 
-#include "DRW_render.h"
+#include "DRW_render.hh"
 
 #include "UI_resources.hh"
 
@@ -18,8 +18,8 @@
 #include "BKE_camera.h"
 #include "BKE_constraint.h"
 #include "BKE_curve.hh"
-#include "BKE_global.h"
-#include "BKE_mball.h"
+#include "BKE_global.hh"
+#include "BKE_mball.hh"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_movieclip.h"

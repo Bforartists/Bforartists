@@ -12,7 +12,7 @@
 
 #include "node_texture_register.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "RE_texture.h"
 
@@ -50,7 +50,7 @@ struct TexParams {
   const MTex *mtex;
 };
 
-typedef void (*TexFn)(float *out, TexParams *params, bNode *node, bNodeStack **in, short thread);
+using TexFn = void (*)(float *out, TexParams *params, bNode *node, bNodeStack **in, short thread);
 
 struct TexDelegate {
   TexCallData *cdata;

@@ -7,6 +7,7 @@
  */
 
 #include "BLI_string.h"
+#include "BLI_time.h"
 
 #include "GPU_state.h"
 #include "gpu_backend.hh"
@@ -19,8 +20,6 @@
 #include "mtl_storage_buffer.hh"
 #include "mtl_uniform_buffer.hh"
 #include "mtl_vertex_buffer.hh"
-
-#include "PIL_time.h"
 
 namespace blender::gpu {
 
@@ -385,8 +384,8 @@ void MTLStorageBuf::read(void *data)
     this->init();
   }
 
-  /* Device-only storage buffers cannot be read directly and require staging. This path should only
-  be used for unit testing. */
+  /* Device-only storage buffers cannot be read directly and require staging.
+   * This path should only be used for unit testing. */
   bool device_only = (usage_ == GPU_USAGE_DEVICE_ONLY);
   if (device_only) {
     /** Read storage buffer contents via staging buffer. */
@@ -431,7 +430,7 @@ void MTLStorageBuf::read(void *data)
     if (gpu_write_fence_ != nil) {
       /* Ensure the GPU updates are visible to the host before reading. */
       while (gpu_write_fence_.signaledValue < host_read_signal_value_) {
-        PIL_sleep_ms(1);
+        BLI_sleep_ms(1);
       }
     }
 

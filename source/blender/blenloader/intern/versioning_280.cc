@@ -9,6 +9,7 @@
 /* allow readfile to use deprecated functionality */
 #define DNA_DEPRECATED_ALLOW
 
+#include <algorithm>
 #include <cfloat>
 #include <cstring>
 
@@ -50,6 +51,7 @@
 #include "DNA_rigidbody_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
+#include "DNA_sequence_types.h"
 #include "DNA_shader_fx_types.h"
 #include "DNA_text_types.h"
 #include "DNA_texture_types.h"
@@ -60,25 +62,25 @@
 #undef DNA_GENFILE_VERSIONING_MACROS
 
 #include "BKE_animsys.h"
-#include "BKE_blender.h"
+#include "BKE_blender.hh"
 #include "BKE_brush.hh"
 #include "BKE_cloth.hh"
-#include "BKE_collection.h"
-#include "BKE_colortools.h"
+#include "BKE_collection.hh"
+#include "BKE_colortools.hh"
 #include "BKE_constraint.h"
 #include "BKE_curveprofile.h"
 #include "BKE_customdata.hh"
 #include "BKE_fcurve.h"
 #include "BKE_fcurve_driver.h"
 #include "BKE_freestyle.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_idprop.h"
-#include "BKE_key.h"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_key.hh"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_legacy_convert.hh"
@@ -86,7 +88,7 @@
 #include "BKE_node_tree_update.hh"
 #include "BKE_paint.hh"
 #include "BKE_pointcache.h"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 #include "BKE_rigidbody.h"
 #include "BKE_screen.hh"
 #include "BKE_studiolight.h"
@@ -99,15 +101,15 @@
 
 #include "NOD_shader.h"
 
-#include "IMB_colormanagement.h"
-#include "IMB_imbuf.h"
+#include "IMB_colormanagement.hh"
+#include "IMB_imbuf.hh"
 
 #include "DEG_depsgraph.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BLO_read_write.hh"
-#include "BLO_readfile.h"
+#include "BLO_readfile.hh"
 #include "readfile.hh"
 
 #include "versioning_common.hh"
@@ -328,6 +330,7 @@ static void do_version_layers_to_collections(Main *bmain, Scene *scene)
     view_layer->pass_alpha_threshold = srl->pass_alpha_threshold;
     view_layer->samples = srl->samples;
     view_layer->mat_override = srl->mat_override;
+    view_layer->world_override = srl->world_override;
 
     BKE_freestyle_config_free(&view_layer->freestyle_config, true);
     view_layer->freestyle_config = srl->freestyleConfig;
@@ -1404,7 +1407,8 @@ static void update_vector_math_node_dot_product_operator(bNodeTree *ntree)
     if (node->type == SH_NODE_VECTOR_MATH) {
       bNodeSocket *sockOutVector = nodeFindSocket(node, SOCK_OUT, "Vector");
       if (version_node_socket_is_used(sockOutVector) &&
-          node->custom1 == NODE_VECTOR_MATH_DOT_PRODUCT) {
+          node->custom1 == NODE_VECTOR_MATH_DOT_PRODUCT)
+      {
         LISTBASE_FOREACH_MUTABLE (bNodeLink *, link, &ntree->links) {
           if (link->fromsock == sockOutVector) {
             switch (link->tosock->type) {
@@ -2881,10 +2885,10 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
       ToolSettings *ts = scene->toolsettings;
 
       /* Ensure new Paint modes. */
-      BKE_paint_ensure_from_paintmode(scene, PAINT_MODE_GPENCIL);
-      BKE_paint_ensure_from_paintmode(scene, PAINT_MODE_VERTEX_GPENCIL);
-      BKE_paint_ensure_from_paintmode(scene, PAINT_MODE_SCULPT_GPENCIL);
-      BKE_paint_ensure_from_paintmode(scene, PAINT_MODE_WEIGHT_GPENCIL);
+      BKE_paint_ensure_from_paintmode(scene, PaintMode::GPencil);
+      BKE_paint_ensure_from_paintmode(scene, PaintMode::VertexGPencil);
+      BKE_paint_ensure_from_paintmode(scene, PaintMode::SculptGPencil);
+      BKE_paint_ensure_from_paintmode(scene, PaintMode::WeightGPencil);
 
       /* Set default Draw brush. */
       if (brush != nullptr) {
@@ -2925,9 +2929,9 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
     /* Reset all grease pencil brushes. */
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       /* Ensure new Paint modes. */
-      BKE_paint_ensure_from_paintmode(scene, PAINT_MODE_VERTEX_GPENCIL);
-      BKE_paint_ensure_from_paintmode(scene, PAINT_MODE_SCULPT_GPENCIL);
-      BKE_paint_ensure_from_paintmode(scene, PAINT_MODE_WEIGHT_GPENCIL);
+      BKE_paint_ensure_from_paintmode(scene, PaintMode::VertexGPencil);
+      BKE_paint_ensure_from_paintmode(scene, PaintMode::SculptGPencil);
+      BKE_paint_ensure_from_paintmode(scene, PaintMode::WeightGPencil);
     }
   }
 
@@ -2959,7 +2963,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
       if (ob->type != OB_EMPTY && ob->instance_collection != nullptr) {
         BLO_reportf_wrap(fd->reports,
                          RPT_INFO,
-                         TIP_("Non-Empty object '%s' cannot duplicate collection '%s' "
+                         RPT_("Non-Empty object '%s' cannot duplicate collection '%s' "
                               "anymore in Blender 2.80 and later, removed instancing"),
                          ob->id.name + 2,
                          ob->instance_collection->id.name + 2);
@@ -2970,18 +2974,11 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
   }
 
   /**
-   * Versioning code until next subversion bump goes here.
-   *
-   * \note Be sure to check when bumping the version:
-   * - #blo_do_versions_280 in this file.
-   * - `versioning_userdef.cc`, #blo_do_versions_userdef
-   * - `versioning_userdef.cc`, #do_versions_theme
+   * Always bump subversion in BKE_blender_version.h when adding versioning
+   * code here, and wrap it inside a MAIN_VERSION_FILE_ATLEAST check.
    *
    * \note Keep this message at the bottom of the function.
    */
-  {
-    /* Keep this block, even when empty. */
-  }
 }
 
 /* NOTE: This version patch is intended for versions < 2.52.2,
@@ -3043,8 +3040,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     if (DNA_struct_exists(fd->filesdna, "MTexPoly")) {
       LISTBASE_FOREACH (Mesh *, me, &bmain->meshes) {
         /* If we have UVs, so this file will have MTexPoly layers too! */
-        if (CustomData_has_layer(&me->loop_data, CD_MLOOPUV) ||
-            CustomData_has_layer(&me->loop_data, CD_PROP_FLOAT2))
+        if (CustomData_has_layer(&me->corner_data, CD_MLOOPUV) ||
+            CustomData_has_layer(&me->corner_data, CD_PROP_FLOAT2))
         {
           CustomData_update_typemap(&me->face_data);
           CustomData_free_layers(&me->face_data, CD_MTEXPOLY, me->faces_num);
@@ -3096,7 +3093,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
           }
 
           else if (node->type == SH_NODE_EEVEE_SPECULAR &&
-                   STREQ(node->idname, "ShaderNodeOutputSpecular")) {
+                   STREQ(node->idname, "ShaderNodeOutputSpecular"))
+          {
             STRNCPY(node->idname, "ShaderNodeEeveeSpecular");
             error |= eNTreeDoVersionErrors::NTREE_DOVERSION_NEED_OUTPUT;
           }
@@ -3161,7 +3159,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
 
       /* Grease pencil multi-frame falloff curve. */
       if (!DNA_struct_member_exists(
-              fd->filesdna, "GP_Sculpt_Settings", "CurveMapping", "cur_falloff")) {
+              fd->filesdna, "GP_Sculpt_Settings", "CurveMapping", "cur_falloff"))
+      {
         LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
           /* sculpt brushes */
           GP_Sculpt_Settings *gset = &scene->toolsettings->gp_sculpt;
@@ -3201,7 +3200,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 3)) {
     /* init grease pencil grids and paper */
     if (!DNA_struct_member_exists(
-            fd->filesdna, "View3DOverlay", "float", "gpencil_paper_color[3]")) {
+            fd->filesdna, "View3DOverlay", "float", "gpencil_paper_color[3]"))
+    {
       LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
         LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
           LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
@@ -3314,8 +3314,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
       /* Calculate window width/height from screen vertices */
       int win_width = 0, win_height = 0;
       LISTBASE_FOREACH (ScrVert *, vert, &screen->vertbase) {
-        win_width = MAX2(win_width, vert->vec.x);
-        win_height = MAX2(win_height, vert->vec.y);
+        win_width = std::max<int>(win_width, vert->vec.x);
+        win_height = std::max<int>(win_height, vert->vec.y);
       }
 
       for (ScrArea *area = static_cast<ScrArea *>(screen->areabase.first), *area_next; area;
@@ -3325,7 +3325,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
 
         if (area->spacetype == SPACE_INFO) {
           if ((area->v2->vec.y == win_height) && (area->v1->vec.x == 0) &&
-              (area->v4->vec.x == win_width)) {
+              (area->v4->vec.x == win_width))
+          {
             BKE_screen_area_free(area);
 
             BLI_remlink(&screen->areabase, area);
@@ -3396,7 +3397,6 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
             copy_v3_fl(v3d->shading.single_color, 0.8f);
             v3d->shading.shadow_intensity = 0.5;
 
-            v3d->overlay.backwire_opacity = 0.5f;
             v3d->overlay.normals_length = 0.1f;
             v3d->overlay.flag = 0;
           }
@@ -3468,7 +3468,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
         scene->eevee.bloom_clamp = 0.0f;
 
         scene->eevee.motion_blur_samples = 8;
-        scene->eevee.motion_blur_shutter = 0.5f;
+        scene->eevee.motion_blur_shutter_deprecated = 0.5f;
 
         scene->eevee.shadow_method = SHADOW_ESM;
         scene->eevee.shadow_cube_size = 512;
@@ -3539,7 +3539,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
         EEVEE_GET_BOOL(props, gtao_bounce, SCE_EEVEE_GTAO_BOUNCE);
         EEVEE_GET_BOOL(props, dof_enable, SCE_EEVEE_DOF_ENABLED);
         EEVEE_GET_BOOL(props, bloom_enable, SCE_EEVEE_BLOOM_ENABLED);
-        EEVEE_GET_BOOL(props, motion_blur_enable, SCE_EEVEE_MOTION_BLUR_ENABLED);
+        EEVEE_GET_BOOL(props, motion_blur_enable, SCE_EEVEE_MOTION_BLUR_ENABLED_DEPRECATED);
         EEVEE_GET_BOOL(props, shadow_high_bitdepth, SCE_EEVEE_SHADOW_HIGH_BITDEPTH);
         EEVEE_GET_BOOL(props, taa_reprojection, SCE_EEVEE_TAA_REPROJECTION);
         // EEVEE_GET_BOOL(props, sss_enable, SCE_EEVEE_SSS_ENABLED);
@@ -3588,7 +3588,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
         EEVEE_GET_FLOAT(props, bloom_clamp);
 
         EEVEE_GET_INT(props, motion_blur_samples);
-        EEVEE_GET_FLOAT(props, motion_blur_shutter);
+        EEVEE_GET_FLOAT(props, motion_blur_shutter_deprecated);
 
         EEVEE_GET_INT(props, shadow_method);
         EEVEE_GET_INT(props, shadow_cube_size);
@@ -3886,7 +3886,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     }
 
     if (!DNA_struct_member_exists(
-            fd->filesdna, "RigidBodyWorld", "RigidBodyWorld_Shared", "*shared")) {
+            fd->filesdna, "RigidBodyWorld", "RigidBodyWorld_Shared", "*shared"))
+    {
       LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
         RigidBodyWorld *rbw = scene->rigidbody_world;
 
@@ -4531,7 +4532,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 36)) {
     if (!DNA_struct_member_exists(
-            fd->filesdna, "View3DShading", "float", "curvature_ridge_factor")) {
+            fd->filesdna, "View3DShading", "float", "curvature_ridge_factor"))
+    {
       LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
         LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
           LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
@@ -4580,7 +4582,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     if (!DNA_struct_member_exists(fd->filesdna, "SceneDisplay", "float", "shadow_focus")) {
       LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
         float *dir = scene->display.light_direction;
-        SWAP(float, dir[2], dir[1]);
+        std::swap(dir[2], dir[1]);
         dir[2] = -dir[2];
         dir[0] = -dir[0];
       }
@@ -4594,7 +4596,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
 
     /* Grease pencil primitive curve */
     if (!DNA_struct_member_exists(
-            fd->filesdna, "GP_Sculpt_Settings", "CurveMapping", "cur_primitive")) {
+            fd->filesdna, "GP_Sculpt_Settings", "CurveMapping", "cur_primitive"))
+    {
       LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
         GP_Sculpt_Settings *gset = &scene->toolsettings->gp_sculpt;
         if ((gset) && (gset->cur_primitive == nullptr)) {
@@ -4722,7 +4725,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 40)) {
     if (!DNA_struct_member_exists(
-            fd->filesdna, "ToolSettings", "char", "snap_transform_mode_flag")) {
+            fd->filesdna, "ToolSettings", "char", "snap_transform_mode_flag"))
+    {
       LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
         scene->toolsettings->snap_transform_mode_flag = SCE_SNAP_TRANSFORM_MODE_TRANSLATE;
       }
@@ -4885,7 +4889,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     }
 
     LISTBASE_FOREACH (bArmature *, arm, &bmain->armatures) {
-      arm->flag &= ~(ARM_FLAG_UNUSED_1 | ARM_DRAW_RELATION_FROM_HEAD | ARM_FLAG_UNUSED_6 |
+      arm->flag &= ~(ARM_FLAG_UNUSED_1 | ARM_DRAW_RELATION_FROM_HEAD | ARM_BCOLL_SOLO_ACTIVE |
                      ARM_FLAG_UNUSED_7 | ARM_FLAG_UNUSED_12);
     }
 
@@ -5154,7 +5158,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     }
 
     if (!DNA_struct_member_exists(
-            fd->filesdna, "View3DOverlay", "float", "sculpt_mode_mask_opacity")) {
+            fd->filesdna, "View3DOverlay", "float", "sculpt_mode_mask_opacity"))
+    {
       LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
         LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
           LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
@@ -5363,7 +5368,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     }
 
     LISTBASE_FOREACH (bArmature *, arm, &bmain->armatures) {
-      arm->flag &= ~(ARM_FLAG_UNUSED_6);
+      arm->flag &= ~(ARM_BCOLL_SOLO_ACTIVE);
     }
   }
 
@@ -5489,7 +5494,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
             region_ui->flag |= RGN_FLAG_DYNAMIC_SIZE;
 
             if (region_toolprops &&
-                (region_toolprops->alignment == (RGN_ALIGN_BOTTOM | RGN_SPLIT_PREV))) {
+                (region_toolprops->alignment == (RGN_ALIGN_BOTTOM | RGN_SPLIT_PREV)))
+            {
               SpaceType *stype = BKE_spacetype_from_id(sl->spacetype);
 
               /* Remove empty region at old location. */
@@ -5575,7 +5581,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     }
 
     if (!DNA_struct_member_exists(
-            fd->filesdna, "LayerCollection", "short", "local_collections_bits")) {
+            fd->filesdna, "LayerCollection", "short", "local_collections_bits"))
+    {
       LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
         LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
           LISTBASE_FOREACH (LayerCollection *, layer_collection, &view_layer->layer_collections) {
@@ -6082,7 +6089,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
             }
             case eGpencilModifierType_Thick: {
               if (!DNA_struct_member_exists(
-                      fd->filesdna, "ThickGpencilModifierData", "float", "thickness_fac")) {
+                      fd->filesdna, "ThickGpencilModifierData", "float", "thickness_fac"))
+              {
                 ThickGpencilModifierData *mmd = (ThickGpencilModifierData *)md;
                 mmd->thickness_fac = mmd->thickness;
               }
@@ -6275,7 +6283,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 283, 14)) {
     /* Solidify modifier merge tolerance. */
     if (!DNA_struct_member_exists(
-            fd->filesdna, "SolidifyModifierData", "float", "merge_tolerance")) {
+            fd->filesdna, "SolidifyModifierData", "float", "merge_tolerance"))
+    {
       LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
         LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
           if (md->type == eModifierType_Solidify) {
@@ -6380,16 +6389,9 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
   }
 
   /**
-   * Versioning code until next subversion bump goes here.
-   *
-   * \note Be sure to check when bumping the version:
-   * - #do_versions_after_linking_280 in this file.
-   * - `versioning_userdef.cc`, #blo_do_versions_userdef
-   * - `versioning_userdef.cc`, #do_versions_theme
+   * Always bump subversion in BKE_blender_version.h when adding versioning
+   * code here, and wrap it inside a MAIN_VERSION_FILE_ATLEAST check.
    *
    * \note Keep this message at the bottom of the function.
    */
-  {
-    /* Keep this block, even when empty. */
-  }
 }

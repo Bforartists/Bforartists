@@ -15,7 +15,6 @@ from bl_ui.space_dopesheet import (
 
 # The blank button, we don't want to switch to the editor in which we are already.
 
-
 class ANIM_OT_switch_editors_in_nla(bpy.types.Operator):
     """You are in Nonlinear Animation Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
@@ -42,7 +41,7 @@ class NLA_HT_header(Header):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+        ALL_MT_editormenu_nla.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         # Switch between the editors
 
@@ -119,8 +118,8 @@ class NLA_PT_snapping(Panel):
             col.prop(tool_settings, "use_snap_time_absolute")
 
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_nla(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -190,7 +189,7 @@ class NLA_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # bfa - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-
+        layout.prop(st, "show_region_channels")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon="BORDER_RECT")
@@ -354,6 +353,7 @@ class NLA_MT_add(Menu):
 
 class NLA_MT_tracks(Menu):
     bl_label = "Track"
+    bl_translation_context = i18n_contexts.id_action
 
     def draw(self, _context):
         layout = self.layout
@@ -587,7 +587,7 @@ class NLA_MT_channel_context_menu(Menu):
 
 classes = (
     ANIM_OT_switch_editors_in_nla,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_nla,
     NLA_HT_header,
     NLA_MT_editor_menus,
     NLA_MT_view,

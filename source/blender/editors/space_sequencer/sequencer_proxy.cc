@@ -14,9 +14,9 @@
 #include "DNA_scene_types.h"
 
 #include "BKE_context.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_main.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "SEQ_iterator.hh"
 #include "SEQ_proxy.hh"
@@ -221,8 +221,8 @@ static int sequencer_enable_proxies_exec(bContext *C, wmOperator *op)
     }
   }
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
-
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  
   return OPERATOR_FINISHED;
 }
 

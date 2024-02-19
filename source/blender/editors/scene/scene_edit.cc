@@ -16,18 +16,18 @@
 #include "DNA_sequence_types.h"
 
 #include "BKE_context.hh"
-#include "BKE_global.h"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_global.hh"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_node.h"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "ED_object.hh"
 #include "ED_render.hh"
@@ -155,7 +155,21 @@ bool ED_scene_delete(bContext *C, Main *bmain, Scene *scene)
       WM_window_set_active_scene(bmain, C, win, scene_new);
     }
   }
-
+/*############## BFA - 3D Sequencer ##############*/
+  /* Clear sequencer scene overrides using this scene. */
+  LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+      LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+        if (space->spacetype == SPACE_SEQ) {
+          SpaceSeq *seq = (SpaceSeq *)space;
+          if (seq->scene_override == scene) {
+            seq->scene_override = nullptr;
+          }
+        }
+      }
+    }
+  }
+/*############## BFA - 3D Sequencer End ##############*/
   BKE_id_delete(bmain, scene);
 
   return true;

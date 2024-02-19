@@ -25,9 +25,9 @@
 #include "BKE_armature.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_lattice.hh"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_object.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "DEG_depsgraph_query.hh"
 

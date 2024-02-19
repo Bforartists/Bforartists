@@ -247,7 +247,7 @@ static GSet *bm_edgering_pair_calc(BMesh *bm, ListBase *eloops_rim)
           pair_test.second = el_store_other;
 
           if (pair_test.first > pair_test.second) {
-            SWAP(const void *, pair_test.first, pair_test.second);
+            std::swap(pair_test.first, pair_test.second);
           }
 
           void **pair_key_p;
@@ -641,7 +641,8 @@ static void bm_edgering_pair_interpolate(BMesh *bm,
           LinkData *v_iter;
 
           for (v_iter = static_cast<LinkData *>(lb_ring->first), i = 0; v_iter;
-               v_iter = v_iter->next, i++) {
+               v_iter = v_iter->next, i++)
+          {
             if (i > 0 && i < resolu - 1) {
               /* shape */
               if (falloff_cache) {

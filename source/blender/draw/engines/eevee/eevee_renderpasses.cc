@@ -6,12 +6,12 @@
  * \ingroup draw_engine
  */
 
-#include "DRW_engine.h"
-#include "DRW_render.h"
+#include "DRW_engine.hh"
+#include "DRW_render.hh"
 
 #include "draw_color_management.h" /* TODO: remove dependency. */
 
-#include "BKE_global.h" /* for G.debug_value */
+#include "BKE_global.hh" /* for G.debug_value */
 
 #include "BLI_hash.h"
 #include "BLI_string_utils.hh"
@@ -82,7 +82,8 @@ void EEVEE_renderpasses_init(EEVEE_Data *vedata)
     g_data->aov_hash = 0;
 
     if (render_pass == EEVEE_RENDER_PASS_BLOOM &&
-        ((scene->eevee.flag & SCE_EEVEE_BLOOM_ENABLED) == 0)) {
+        ((scene->eevee.flag & SCE_EEVEE_BLOOM_ENABLED) == 0))
+    {
       render_pass = EEVEE_RENDER_PASS_COMBINED;
     }
     if (render_pass == EEVEE_RENDER_PASS_AOV) {
@@ -409,7 +410,8 @@ void EEVEE_renderpasses_output_accumulate(EEVEE_ViewLayerData *sldata,
   }
   else {
     if ((render_pass & EEVEE_RENDER_PASS_BLOOM) != 0 &&
-        (effects->enabled_effects & EFFECT_BLOOM) != 0) {
+        (effects->enabled_effects & EFFECT_BLOOM) != 0)
+    {
       EEVEE_bloom_output_accumulate(sldata, vedata);
     }
   }
@@ -436,7 +438,8 @@ void EEVEE_renderpasses_draw(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
   UNUSED_VARS(needs_color_transfer);
 
   if ((render_pass & EEVEE_RENDER_PASS_BLOOM) != 0 &&
-      (effects->enabled_effects & EFFECT_BLOOM) == 0) {
+      (effects->enabled_effects & EFFECT_BLOOM) == 0)
+  {
     is_valid = false;
   }
 

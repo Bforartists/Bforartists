@@ -23,11 +23,11 @@
 
 #include "BKE_action.h" /* BKE_pose_channel_find_name */
 #include "BKE_attribute.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_image.h"
 #include "BKE_lattice.hh"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_wrapper.hh"
 #include "BKE_object.hh"
@@ -65,7 +65,7 @@ void MOD_get_texture_coords(MappingInfoModifierData *dmd,
   /* TODO: to be renamed to `get_texture_coords` once we are done with moving modifiers to Mesh. */
 
   using namespace blender;
-  const int verts_num = mesh->totvert;
+  const int verts_num = mesh->verts_num;
   int i;
   int texmapping = dmd->texmapping;
   float mapref_imat[4][4];
@@ -95,15 +95,16 @@ void MOD_get_texture_coords(MappingInfoModifierData *dmd,
 
   /* UVs need special handling, since they come from faces */
   if (texmapping == MOD_DISP_MAP_UV) {
-    if (CustomData_has_layer(&mesh->loop_data, CD_PROP_FLOAT2)) {
+    if (CustomData_has_layer(&mesh->corner_data, CD_PROP_FLOAT2)) {
       const OffsetIndices faces = mesh->faces();
       const Span<int> corner_verts = mesh->corner_verts();
       BLI_bitmap *done = BLI_BITMAP_NEW(verts_num, __func__);
       char uvname[MAX_CUSTOMDATA_LAYER_NAME];
-      CustomData_validate_layer_name(&mesh->loop_data, CD_PROP_FLOAT2, dmd->uvlayer_name, uvname);
+      CustomData_validate_layer_name(
+          &mesh->corner_data, CD_PROP_FLOAT2, dmd->uvlayer_name, uvname);
       const bke::AttributeAccessor attributes = mesh->attributes();
       const VArraySpan uv_map = *attributes.lookup_or_default<float2>(
-          uvname, ATTR_DOMAIN_CORNER, float2(0));
+          uvname, bke::AttrDomain::Corner, float2(0));
 
       /* verts are given the UV from the first face that uses them */
       for (const int i : faces.index_range()) {
@@ -269,5 +270,16 @@ void modifier_type_init(ModifierTypeInfo *types[])
   INIT_TYPE(VolumeDisplace);
   INIT_TYPE(VolumeToMesh);
   INIT_TYPE(Nodes);
+  INIT_TYPE(GreasePencilOpacity);
+  INIT_TYPE(GreasePencilSubdiv);
+  INIT_TYPE(GreasePencilColor);
+  INIT_TYPE(GreasePencilTint);
+  INIT_TYPE(GreasePencilSmooth);
+  INIT_TYPE(GreasePencilOffset);
+  INIT_TYPE(GreasePencilNoise);
+  INIT_TYPE(GreasePencilMirror);
+  INIT_TYPE(GreasePencilThickness);
+  INIT_TYPE(GreasePencilLattice);
+  INIT_TYPE(GreasePencilDash);
 #undef INIT_TYPE
 }

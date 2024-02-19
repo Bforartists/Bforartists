@@ -28,8 +28,8 @@
 #include "utf_winfunc.hh"
 #include "utfconv.hh"
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "GHOST_DisplayManagerWin32.hh"
 #include "GHOST_EventButton.hh"
@@ -135,8 +135,7 @@ static void initRawInput()
 
 typedef BOOL(API *GHOST_WIN32_EnableNonClientDpiScaling)(HWND);
 
-GHOST_SystemWin32::GHOST_SystemWin32()
-    : m_hasPerformanceCounter(false), m_freq(0), m_start(0), m_lfstart(0)
+GHOST_SystemWin32::GHOST_SystemWin32() : m_hasPerformanceCounter(false), m_freq(0)
 {
   m_displayManager = new GHOST_DisplayManagerWin32();
   GHOST_ASSERT(m_displayManager, "GHOST_SystemWin32::GHOST_SystemWin32(): m_displayManager==0\n");
@@ -178,22 +177,17 @@ GHOST_SystemWin32::~GHOST_SystemWin32()
 uint64_t GHOST_SystemWin32::performanceCounterToMillis(__int64 perf_ticks) const
 {
   /* Calculate the time passed since system initialization. */
-  __int64 delta = (perf_ticks - m_start) * 1000;
+  __int64 delta = perf_ticks * 1000;
 
   uint64_t t = uint64_t(delta / m_freq);
   return t;
-}
-
-uint64_t GHOST_SystemWin32::tickCountToMillis(__int64 ticks) const
-{
-  return ticks - m_lfstart;
 }
 
 uint64_t GHOST_SystemWin32::getMilliSeconds() const
 {
   /* Hardware does not support high resolution timers. We will use GetTickCount instead then. */
   if (!m_hasPerformanceCounter) {
-    return tickCountToMillis(::GetTickCount());
+    return ::GetTickCount64();
   }
 
   /* Retrieve current count */
@@ -204,10 +198,9 @@ uint64_t GHOST_SystemWin32::getMilliSeconds() const
 }
 
 /**
- * Returns the number of milliseconds since the start of the Blender process to the time of the
- * last message, using the high frequency timer if available. This should be used instead of
- * getMilliSeconds when you need the time a message was delivered versus collected, so for all
- * event creation that are in response to receiving a Windows message.
+ * Returns the message time, compatible with the time value from #getMilliSeconds.
+ * This should be used instead of #getMilliSeconds when you need the time a message was delivered
+ * versus collected, so for all event creation that are in response to receiving a Windows message.
  */
 static uint64_t getMessageTime(GHOST_SystemWin32 *system)
 {
@@ -219,7 +212,7 @@ static uint64_t getMessageTime(GHOST_SystemWin32 *system)
     t_delta -= int64_t(UINT32_MAX) + 1;
   }
 
-  /* Return message time as 64-bit milliseconds since Blender start. */
+  /* Return message time as 64-bit milliseconds with the delta applied. */
   return system->getMilliSeconds() + t_delta;
 }
 
@@ -575,16 +568,8 @@ GHOST_TSuccess GHOST_SystemWin32::init()
   SetProcessDPIAware();
   initRawInput();
 
-  m_lfstart = ::GetTickCount();
   /* Determine whether this system has a high frequency performance counter. */
   m_hasPerformanceCounter = ::QueryPerformanceFrequency((LARGE_INTEGER *)&m_freq) == TRUE;
-  if (m_hasPerformanceCounter) {
-    GHOST_PRINT("GHOST_SystemWin32::init: High Frequency Performance Timer available\n");
-    ::QueryPerformanceCounter((LARGE_INTEGER *)&m_start);
-  }
-  else {
-    GHOST_PRINT("GHOST_SystemWin32::init: High Frequency Performance Timer not available\n");
-  }
 
   if (success) {
     WNDCLASSW wc = {0};
@@ -964,7 +949,8 @@ void GHOST_SystemWin32::processWintabEvent(GHOST_WindowWin32 *window)
          * event queue. */
         MSG msg;
         if (PeekMessage(&msg, window->getHWND(), message, message, PM_NOYIELD) &&
-            msg.message != WM_QUIT) {
+            msg.message != WM_QUIT)
+        {
 
           /* Test for Win32/Wintab button down match. */
           useWintabPos = wt->testCoordinates(msg.pt.x, msg.pt.y, info.x, info.y);
@@ -1283,7 +1269,8 @@ GHOST_EventKey *GHOST_SystemWin32::processKeyEvent(GHOST_WindowWin32 *window, RA
       /* TODO: #ToUnicodeEx can respond with up to 4 utf16 chars (only 2 here).
        * Could be up to 24 utf8 bytes. */
       if ((r = ToUnicodeEx(
-               vk, raw.data.keyboard.MakeCode, state, utf16, 2, 0, system->m_keylayout))) {
+               vk, raw.data.keyboard.MakeCode, state, utf16, 2, 0, system->m_keylayout)))
+      {
         if ((r > 0 && r < 3)) {
           utf16[r] = 0;
           conv_utf_16_to_8(utf16, utf8_char, 6);

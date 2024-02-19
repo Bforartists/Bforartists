@@ -21,7 +21,7 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_context.hh"
 #include "BKE_movieclip.h"
@@ -41,8 +41,8 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "clip_intern.h" /* own include */
 
@@ -520,8 +520,6 @@ void uiTemplateMarker(uiLayout *layout,
                  &cb->marker_flag,
                  0,
                  0,
-                 0,
-                 0,
                  tip);
 
     /* bfa - new expanded prop UI style */
@@ -562,8 +560,6 @@ void uiTemplateMarker(uiLayout *layout,
                           &cb->marker_pos[0],
                           -10 * width,
                           10.0 * width,
-                          0,
-                          0,
                           TIP_("X-position of marker at frame in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
@@ -579,8 +575,6 @@ void uiTemplateMarker(uiLayout *layout,
                    &cb->marker_pos[1],
                    -10 * height,
                    10.0 * height,
-                   0,
-                   0,
                    TIP_("Y-position of marker at frame in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
@@ -617,8 +611,6 @@ void uiTemplateMarker(uiLayout *layout,
                    &cb->track_offset[0],
                    -10 * width,
                    10.0 * width,
-                   0,
-                   0,
                    TIP_("X-offset to parenting point"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
@@ -634,8 +626,6 @@ void uiTemplateMarker(uiLayout *layout,
                    &cb->track_offset[1],
                    -10 * height,
                    10.0 * height,
-                   0,
-                   0,
                    TIP_("Y-offset to parenting point"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
@@ -671,8 +661,6 @@ void uiTemplateMarker(uiLayout *layout,
                    &cb->marker_pat[0],
                    3.0f,
                    10.0 * width,
-                   0,
-                   0,
                    TIP_("Width of marker's pattern in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
@@ -688,8 +676,6 @@ void uiTemplateMarker(uiLayout *layout,
                    &cb->marker_pat[1],
                    3.0f,
                    10.0 * height,
-                   0,
-                   0,
                    TIP_("Height of marker's pattern in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
@@ -726,8 +712,6 @@ void uiTemplateMarker(uiLayout *layout,
                    &cb->marker_search_pos[0],
                    -width,
                    width,
-                   0,
-                   0,
                    TIP_("X-position of search at frame relative to marker's position"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
@@ -743,8 +727,6 @@ void uiTemplateMarker(uiLayout *layout,
                    &cb->marker_search_pos[1],
                    -height,
                    height,
-                   0,
-                   0,
                    TIP_("Y-position of search at frame relative to marker's position"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
@@ -780,8 +762,6 @@ void uiTemplateMarker(uiLayout *layout,
                    &cb->marker_search[0],
                    3.0f,
                    10.0 * width,
-                   0,
-                   0,
                    TIP_("Width of marker's search in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
@@ -797,8 +777,6 @@ void uiTemplateMarker(uiLayout *layout,
                    &cb->marker_search[1],
                    3.0f,
                    10.0 * height,
-                   0,
-                   0,
                    TIP_("Height of marker's search in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
@@ -853,27 +831,27 @@ void uiTemplateMovieclipInformation(uiLayout *layout,
 
   char str[1024];
   size_t ofs = 0;
-  ofs += BLI_snprintf_rlen(str + ofs, sizeof(str) - ofs, TIP_("%d x %d"), width, height);
+  ofs += BLI_snprintf_rlen(str + ofs, sizeof(str) - ofs, RPT_("%d x %d"), width, height);
 
   if (ibuf) {
     if (ibuf->float_buffer.data) {
       if (ibuf->channels != 4) {
         ofs += BLI_snprintf_rlen(
-            str + ofs, sizeof(str) - ofs, TIP_(", %d float channel(s)"), ibuf->channels);
+            str + ofs, sizeof(str) - ofs, RPT_(", %d float channel(s)"), ibuf->channels);
       }
       else if (ibuf->planes == R_IMF_PLANES_RGBA) {
-        ofs += BLI_strncpy_rlen(str + ofs, TIP_(", RGBA float"), sizeof(str) - ofs);
+        ofs += BLI_strncpy_rlen(str + ofs, RPT_(", RGBA float"), sizeof(str) - ofs);
       }
       else {
-        ofs += BLI_strncpy_rlen(str + ofs, TIP_(", RGB float"), sizeof(str) - ofs);
+        ofs += BLI_strncpy_rlen(str + ofs, RPT_(", RGB float"), sizeof(str) - ofs);
       }
     }
     else {
       if (ibuf->planes == R_IMF_PLANES_RGBA) {
-        ofs += BLI_strncpy_rlen(str + ofs, TIP_(", RGBA byte"), sizeof(str) - ofs);
+        ofs += BLI_strncpy_rlen(str + ofs, RPT_(", RGBA byte"), sizeof(str) - ofs);
       }
       else {
-        ofs += BLI_strncpy_rlen(str + ofs, TIP_(", RGB byte"), sizeof(str) - ofs);
+        ofs += BLI_strncpy_rlen(str + ofs, RPT_(", RGB byte"), sizeof(str) - ofs);
       }
     }
 
@@ -882,12 +860,12 @@ void uiTemplateMovieclipInformation(uiLayout *layout,
       float frs_sec_base;
       if (IMB_anim_get_fps(clip->anim, true, &frs_sec, &frs_sec_base)) {
         ofs += BLI_snprintf_rlen(
-            str + ofs, sizeof(str) - ofs, TIP_(", %.2f fps"), float(frs_sec) / frs_sec_base);
+            str + ofs, sizeof(str) - ofs, RPT_(", %.2f fps"), float(frs_sec) / frs_sec_base);
       }
     }
   }
   else {
-    ofs += BLI_strncpy_rlen(str + ofs, TIP_(", failed to load"), sizeof(str) - ofs);
+    ofs += BLI_strncpy_rlen(str + ofs, RPT_(", failed to load"), sizeof(str) - ofs);
   }
 
   uiItemL(col, str, ICON_NONE);
@@ -895,10 +873,10 @@ void uiTemplateMovieclipInformation(uiLayout *layout,
   /* Display current frame number. */
   int framenr = BKE_movieclip_remap_scene_to_clip_frame(clip, user->framenr);
   if (framenr <= clip->len) {
-    SNPRINTF(str, TIP_("Frame: %d / %d"), framenr, clip->len);
+    SNPRINTF(str, RPT_("Frame: %d / %d"), framenr, clip->len);
   }
   else {
-    SNPRINTF(str, TIP_("Frame: - / %d"), clip->len);
+    SNPRINTF(str, RPT_("Frame: - / %d"), clip->len);
   }
   uiItemL(col, str, ICON_NONE);
 
@@ -915,7 +893,7 @@ void uiTemplateMovieclipInformation(uiLayout *layout,
       file = "-";
     }
 
-    SNPRINTF(str, TIP_("File: %s"), file);
+    SNPRINTF(str, RPT_("File: %s"), file);
 
     uiItemL(col, str, ICON_NONE);
   }

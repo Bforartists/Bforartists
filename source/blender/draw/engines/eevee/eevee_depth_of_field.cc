@@ -15,7 +15,7 @@
  *   difference with our actual implementation that prioritize quality.
  */
 
-#include "DRW_render.h"
+#include "DRW_render.hh"
 
 #include "DNA_camera_types.h"
 #include "DNA_screen_types.h"
@@ -527,15 +527,15 @@ static void dof_dilate_tiles_pass_draw(EEVEE_FramebufferList *fbl,
       GPU_framebuffer_bind(fbl->dof_dilate_tiles_fb);
       DRW_draw_pass(drw_pass);
 
-      SWAP(GPUFrameBuffer *, fbl->dof_dilate_tiles_fb, fbl->dof_flatten_tiles_fb);
-      SWAP(GPUTexture *, fx->dof_coc_dilated_tiles_bg_tx, fx->dof_coc_tiles_bg_tx);
-      SWAP(GPUTexture *, fx->dof_coc_dilated_tiles_fg_tx, fx->dof_coc_tiles_fg_tx);
+      std::swap(fbl->dof_dilate_tiles_fb, fbl->dof_flatten_tiles_fb);
+      std::swap(fx->dof_coc_dilated_tiles_bg_tx, fx->dof_coc_tiles_bg_tx);
+      std::swap(fx->dof_coc_dilated_tiles_fg_tx, fx->dof_coc_tiles_fg_tx);
     }
   }
   /* Swap again so that final textures are dof_coc_dilated_tiles_*_tx. */
-  SWAP(GPUFrameBuffer *, fbl->dof_dilate_tiles_fb, fbl->dof_flatten_tiles_fb);
-  SWAP(GPUTexture *, fx->dof_coc_dilated_tiles_bg_tx, fx->dof_coc_tiles_bg_tx);
-  SWAP(GPUTexture *, fx->dof_coc_dilated_tiles_fg_tx, fx->dof_coc_tiles_fg_tx);
+  std::swap(fbl->dof_dilate_tiles_fb, fbl->dof_flatten_tiles_fb);
+  std::swap(fx->dof_coc_dilated_tiles_bg_tx, fx->dof_coc_tiles_bg_tx);
+  std::swap(fx->dof_coc_dilated_tiles_fg_tx, fx->dof_coc_tiles_fg_tx);
 }
 
 /**

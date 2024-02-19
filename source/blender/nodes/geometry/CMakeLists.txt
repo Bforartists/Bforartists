@@ -18,7 +18,6 @@ set(INC
   ../../modifiers
   ../../render
   ../../windowmanager
-  ../../../../extern/fmtlib/include
   # RNA_prototypes.h
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
 )
@@ -31,6 +30,7 @@ set(SRC
   nodes/node_geo_attribute_capture.cc
   nodes/node_geo_attribute_domain_size.cc
   nodes/node_geo_attribute_statistic.cc
+  nodes/node_geo_bake.cc
   nodes/node_geo_blur_attribute.cc
   nodes/node_geo_boolean.cc
   nodes/node_geo_bounding_box.cc
@@ -77,6 +77,7 @@ set(SRC
   nodes/node_geo_extrude_mesh.cc
   nodes/node_geo_flip_faces.cc
   nodes/node_geo_geometry_to_instance.cc
+  nodes/node_geo_get_named_grid.cc
   nodes/node_geo_image.cc
   nodes/node_geo_image_info.cc
   nodes/node_geo_image_texture.cc
@@ -120,6 +121,7 @@ set(SRC
   nodes/node_geo_material_replace.cc
   nodes/node_geo_material_selection.cc
   nodes/node_geo_merge_by_distance.cc
+  nodes/node_geo_menu_switch.cc
   nodes/node_geo_mesh_face_group_boundaries.cc
   nodes/node_geo_mesh_primitive_circle.cc
   nodes/node_geo_mesh_primitive_cone.cc
@@ -151,8 +153,7 @@ set(SRC
   nodes/node_geo_raycast.cc
   nodes/node_geo_realize_instances.cc
   nodes/node_geo_remove_attribute.cc
-  nodes/node_geo_repeat_input.cc
-  nodes/node_geo_repeat_output.cc
+  nodes/node_geo_repeat.cc
   nodes/node_geo_rotate_instances.cc
   nodes/node_geo_sample_index.cc
   nodes/node_geo_sample_nearest.cc
@@ -175,10 +176,11 @@ set(SRC
   nodes/node_geo_set_shade_smooth.cc
   nodes/node_geo_set_spline_cyclic.cc
   nodes/node_geo_set_spline_resolution.cc
-  nodes/node_geo_simulation_input.cc
-  nodes/node_geo_simulation_output.cc
+  nodes/node_geo_simulation.cc
+  nodes/node_geo_sort_elements.cc
   nodes/node_geo_split_to_instances.cc
   nodes/node_geo_store_named_attribute.cc
+  nodes/node_geo_store_named_grid.cc
   nodes/node_geo_string_join.cc
   nodes/node_geo_string_to_curves.cc
   nodes/node_geo_subdivision_surface.cc
@@ -212,7 +214,7 @@ set(LIB
   bf_geometry
   PRIVATE bf::intern::guardedalloc
   bf_nodes
-  extern_fmtlib
+  PRIVATE bf::extern::fmtlib
 )
 
 if(WITH_BULLET)
@@ -259,6 +261,9 @@ if(WITH_GMP)
 endif()
 
 if(WITH_OPENVDB)
+  list(APPEND INC
+    ../../../../intern/openvdb
+  )
   list(APPEND INC_SYS
     ${OPENVDB_INCLUDE_DIRS}
   )
@@ -279,10 +284,7 @@ list(APPEND LIB
 blender_add_lib(bf_nodes_geometry "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 target_link_libraries(bf_nodes_geometry_generated bf_nodes_geometry)
 
-if(WITH_UNITY_BUILD)
-  set_target_properties(bf_nodes_geometry PROPERTIES UNITY_BUILD ON)
-  set_target_properties(bf_nodes_geometry PROPERTIES UNITY_BUILD_BATCH_SIZE 10)
-endif()
+blender_set_target_unity_build(bf_nodes_geometry 10)
 
 # RNA_prototypes.h
 add_dependencies(bf_nodes_geometry bf_rna)

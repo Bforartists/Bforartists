@@ -10,6 +10,7 @@
 #include "RNA_access.hh"
 #include "RNA_enum_types.hh"
 
+#include "BKE_mesh.hh"
 #include "BKE_type_conversions.hh"
 
 #include "NOD_rna_define.hh"
@@ -54,7 +55,7 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
   NodeGeometryStoreNamedAttribute *data = MEM_cnew<NodeGeometryStoreNamedAttribute>(__func__);
   data->data_type = CD_PROP_FLOAT;
-  data->domain = ATTR_DOMAIN_POINT;
+  data->domain = int8_t(AttrDomain::Point);
   node->storage = data;
 }
 
@@ -97,7 +98,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   const NodeGeometryStoreNamedAttribute &storage = node_storage(params.node());
   const eCustomDataType data_type = eCustomDataType(storage.data_type);
-  const eAttrDomain domain = eAttrDomain(storage.domain);
+  const AttrDomain domain = AttrDomain(storage.domain);
 
   const Field<bool> selection = params.extract_input<Field<bool>>("Selection");
 
@@ -114,7 +115,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   std::atomic<bool> failure = false;
 
   /* Run on the instances component separately to only affect the top level of instances. */
-  if (domain == ATTR_DOMAIN_INSTANCE) {
+  if (domain == AttrDomain::Instance) {
     if (geometry_set.has_instances()) {
       GeometryComponent &component = geometry_set.get_component_for_write(
           GeometryComponent::Type::Instance);
@@ -134,10 +135,14 @@ static void node_geo_exec(GeoNodeExecParams params)
       {
         if (geometry_set.has(type)) {
           GeometryComponent &component = geometry_set.get_component_for_write(type);
-          if (!bke::try_capture_field_on_geometry(component, name, domain, selection, field)) {
-            if (component.attribute_domain_size(domain) != 0) {
-              failure.store(true);
+          if (bke::try_capture_field_on_geometry(component, name, domain, selection, field)) {
+            if (component.type() == GeometryComponent::Type::Mesh) {
+              Mesh &mesh = *geometry_set.get_mesh_for_write();
+              bke::mesh_ensure_default_color_attribute_on_add(mesh, name, domain, data_type);
             }
+          }
+          else if (component.attribute_domain_size(domain) != 0) {
+            failure.store(true);
           }
         }
       }
@@ -146,7 +151,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   if (failure) {
     const char *domain_name = nullptr;
-    RNA_enum_name_from_value(rna_enum_attribute_domain_items, domain, &domain_name);
+    RNA_enum_name_from_value(rna_enum_attribute_domain_items, int(domain), &domain_name);
     const char *type_name = nullptr;
     RNA_enum_name_from_value(rna_enum_attribute_type_items, data_type, &type_name);
     const std::string message = fmt::format(
@@ -182,7 +187,7 @@ static void node_rna(StructRNA *srna)
                     "Which domain to store the data in",
                     rna_enum_attribute_domain_items,
                     NOD_storage_enum_accessors(domain),
-                    ATTR_DOMAIN_POINT,
+                    int(AttrDomain::Point),
                     enums::domain_experimental_grease_pencil_version3_fn);
 }
 

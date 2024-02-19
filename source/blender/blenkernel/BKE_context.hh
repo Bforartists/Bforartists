@@ -236,6 +236,18 @@ struct bContextPollMsgDyn_Params {
 };
 
 const char *CTX_wm_operator_poll_msg_get(bContext *C, bool *r_free);
+
+/**
+ * Set a message to be shown when the operator is disabled in the UI.
+ *
+ * \note even though the function name does not include the word "disabled", the
+ * message is only shown when the operator (in the UI) is in fact disabled.
+ *
+ * \note even though the function name suggests this is limited to situations
+ * when the poll function returns false, this is not the case. Even when the
+ * operator is disabled because it is added to a disabled uiLayout, this message
+ * will show.
+ */
 void CTX_wm_operator_poll_msg_set(bContext *C, const char *msg);
 void CTX_wm_operator_poll_msg_set_dynamic(bContext *C, const bContextPollMsgDyn_Params *params);
 void CTX_wm_operator_poll_msg_clear(bContext *C);
@@ -322,7 +334,8 @@ bool CTX_data_dir(const char *member);
     CollectionPointerLink *ctx_link; \
     CTX_data_##member(C, &ctx_data_list); \
     for (ctx_link = (CollectionPointerLink *)ctx_data_list.first; ctx_link; \
-         ctx_link = ctx_link->next) { \
+         ctx_link = ctx_link->next) \
+    { \
       Type instance = (Type)ctx_link->ptr.data;
 
 #define CTX_DATA_END \

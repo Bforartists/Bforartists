@@ -26,12 +26,12 @@
 #include "DNA_sdna_types.h"
 
 #include "BKE_asset.hh"
-#include "BKE_idtype.h"
+#include "BKE_idtype.hh"
 #include "BKE_main.hh"
 #include "BKE_preview_image.hh"
 
 #include "BLO_blend_defs.hh"
-#include "BLO_readfile.h"
+#include "BLO_readfile.hh"
 #include "BLO_undofile.hh"
 
 #include "readfile.hh"

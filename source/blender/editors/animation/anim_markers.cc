@@ -16,15 +16,15 @@
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_context.hh"
 #include "BKE_fcurve.h"
 #include "BKE_idprop.h"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_main.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_unit.hh"
 
@@ -866,14 +866,14 @@ static void ed_marker_move_update_header(bContext *C, wmOperator *op)
   if (totmark == 1 && selmarker) {
     /* we print current marker value */
     if (use_time) {
-      SNPRINTF(str, TIP_("Marker %.2f offset %s"), FRA2TIME(selmarker->frame), str_ofs);
+      SNPRINTF(str, IFACE_("Marker %.2f offset %s"), FRA2TIME(selmarker->frame), str_ofs);
     }
     else {
-      SNPRINTF(str, TIP_("Marker %d offset %s"), selmarker->frame, str_ofs);
+      SNPRINTF(str, IFACE_("Marker %d offset %s"), selmarker->frame, str_ofs);
     }
   }
   else {
-    SNPRINTF(str, TIP_("Marker offset %s"), str_ofs);
+    SNPRINTF(str, IFACE_("Marker offset %s"), str_ofs);
   }
 
   ED_area_status_text(CTX_wm_area(C), str);
@@ -991,7 +991,8 @@ static void ed_marker_move_apply(bContext *C, wmOperator *op)
 
   ofs = RNA_int_get(op->ptr, "frames");
   for (a = 0, marker = static_cast<TimeMarker *>(mm->markers->first); marker;
-       marker = marker->next) {
+       marker = marker->next)
+  {
     if (marker->flag & SELECT) {
       marker->frame = mm->oldframe[a] + ofs;
       a++;
