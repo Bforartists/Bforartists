@@ -1,7 +1,20 @@
-# SPDX-FileCopyrightText: 2017-2023 Blender Foundation
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
-
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 # --------------------------- LATTICE ALONG SURFACE -------------------------- #
 # -------------------------------- version 0.3 ------------------------------- #
 #                                                                              #
@@ -327,6 +340,7 @@ class lattice_along_surface(Operator):
         grid_mesh = temp_grid_obj.data
         for v in grid_mesh.vertices:
             v.co = grid_obj.matrix_world @ v.co
+        #grid_mesh.calc_normals()
 
         if len(grid_mesh.polygons) > 64 * 64:
             bpy.data.objects.remove(temp_grid_obj)
@@ -372,13 +386,16 @@ class lattice_along_surface(Operator):
             lattice.scale.z = 1
 
         context.view_layer.objects.active = obj
-        lattice_modifier = context.object.modifiers.new("", 'LATTICE')
-        lattice_modifier.object = lattice
+        bpy.ops.object.modifier_add(type='LATTICE')
+        obj.modifiers[-1].object = lattice
 
         # set as parent
         if self.set_parent:
-            override = {'active_object': obj, 'selected_objects' : [lattice,obj]}
-            bpy.ops.object.parent_set(override, type='OBJECT', keep_transform=False)
+            override = context.copy()
+            override['active_object'] = obj
+            override['selected_objects'] = [lattice,obj]
+            with context.temp_override(**override):
+                bpy.ops.object.parent_set(type='OBJECT', keep_transform=False)
 
         # reading grid structure
         verts_grid, edges_grid, faces_grid = grid_from_mesh(
@@ -434,7 +451,7 @@ class lattice_along_surface(Operator):
             bpy.ops.object.delete(use_global=False)
             context.view_layer.objects.active = obj
             obj.select_set(True)
-            bpy.ops.object.modifier_remove(modifier=lattice_modifier.name)
+            bpy.ops.object.modifier_remove(modifier=obj.modifiers[-1].name)
             if nu > 64 or nv > 64:
                 self.report({'ERROR'}, "Maximum resolution allowed for Lattice is 64")
                 return {'CANCELLED'}

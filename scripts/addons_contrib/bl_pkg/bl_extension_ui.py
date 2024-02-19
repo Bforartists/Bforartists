@@ -252,6 +252,7 @@ def extensions_panel_draw_impl(
         filter_by_type,
         enabled_only,
         installed_only,
+        show_legacy_addons,
         show_development,
 ):
     """
@@ -515,7 +516,7 @@ def extensions_panel_draw_impl(
                     if (addon_preferences := used_addon_module_name_map[addon_module_name].preferences) is not None:
                         USERPREF_PT_addons.draw_addon_preferences(layout, context, addon_preferences)
 
-    if show_addons:
+    if show_addons and show_legacy_addons:
         extensions_panel_draw_legacy_addons(
             layout,
             context,
@@ -544,6 +545,7 @@ class USERPREF_PT_extensions_bl_pkg_filter(Panel):
         wm = context.window_manager
         layout.prop(wm, "extension_enabled_only")
         layout.prop(wm, "extension_installed_only")
+        layout.prop(wm, "extension_show_legacy_addons")
 
 
 class USERPREF_MT_extensions_bl_pkg_settings(Menu):
@@ -602,7 +604,7 @@ def extensions_panel_draw(panel, context):
     row = layout.split(factor=0.5)
     row_a = row.row()
     row_a.prop(wm, "extension_search", text="", icon='VIEWZOOM')
-    row_b = row.row()
+    row_b = row.row(align=True)
     row_b.prop(wm, "extension_type", text="")
     row_b.popover("USERPREF_PT_extensions_bl_pkg_filter", text="", icon='FILTER')
 
@@ -657,6 +659,7 @@ def extensions_panel_draw(panel, context):
         blender_filter_by_type_map[wm.extension_type],
         wm.extension_enabled_only,
         wm.extension_installed_only,
+        wm.extension_show_legacy_addons,
         addon_prefs.show_development,
     )
 

@@ -1169,8 +1169,9 @@ static void panel_draw_aligned_backdrop(const ARegion *region,
                                         const rcti *rect,
                                         const rcti *header_rect)
 {
-  const bool is_subpanel = panel->type->parent != nullptr;
   const bool is_open = !UI_panel_is_closed(panel);
+  const bool is_subpanel = panel->type->parent != nullptr;
+  const bool has_header = (panel->type->flag & PANEL_TYPE_NO_HEADER) == 0;
   /*bfa - transparent background for the tool shelf panels*/
   const float hide_bg = panel->type->flag & PANEL_HIDE_BG;
 
@@ -1186,15 +1187,19 @@ static void panel_draw_aligned_backdrop(const ARegion *region,
   GPU_blend(GPU_BLEND_ALPHA);
 
   /* Panel backdrop. */
-  if (is_open || panel->type->flag & PANEL_TYPE_NO_HEADER) {
+  if (is_open || !has_header) {
     float panel_backcolor[4];
     UI_draw_roundbox_corner_set(is_open ? UI_CNR_BOTTOM_RIGHT | UI_CNR_BOTTOM_LEFT : UI_CNR_ALL);
-    /*bfa - transparent background */
-    if (hide_bg) {
-      immUniformThemeColorAlpha(is_subpanel ? TH_PANEL_SUB_BACK : TH_PANEL_BACK, 0.f);
+    if (!has_header) {
+      UI_GetThemeColor4fv(TH_BACK, panel_backcolor);
     }
     else {
       UI_GetThemeColor4fv((is_subpanel ? TH_PANEL_SUB_BACK : TH_PANEL_BACK), panel_backcolor);
+    }
+
+    /* bfa - transparent background */
+    if (hide_bg) {
+      panel_backcolor[3] = 0.0f;
     }
 
     rctf box_rect;
@@ -1232,7 +1237,7 @@ static void panel_draw_aligned_backdrop(const ARegion *region,
   }
 
   /* Panel header backdrops for non sub-panels. */
-  if (!is_subpanel) {
+  if (!is_subpanel && has_header) {
     float panel_headercolor[4];
     UI_GetThemeColor4fv(UI_panel_matches_search_filter(panel) ? TH_MATCH : TH_PANEL_HEADER,
                         panel_headercolor);
@@ -1269,7 +1274,7 @@ void ui_draw_aligned_panel(const ARegion *region,
       rect->ymax + int(floor(PNL_HEADER / block->aspect + 0.001f)),
   };
 
-  if (show_background) {
+  if (show_background || (panel->type->flag & PANEL_TYPE_NO_HEADER)) {
     panel_draw_aligned_backdrop(region, panel, rect, &header_rect);
   }
 
@@ -1801,7 +1806,7 @@ static void ui_do_animate(bContext *C, Panel *panel)
   uiHandlePanelData *data = static_cast<uiHandlePanelData *>(panel->activedata);
   ARegion *region = CTX_wm_region(C);
 
-  float fac = (BLI_check_seconds_timer() - data->starttime) / ANIMATION_TIME;
+  float fac = (BLI_time_now_seconds() - data->starttime) / ANIMATION_TIME;
   fac = min_ff(sqrtf(fac), 1.0f);
 
   if (uiAlignPanelStep(region, fac, false)) {
@@ -2659,7 +2664,7 @@ static void panel_handle_data_ensure(const bContext *C,
   data->startofsy = panel->ofsy;
   data->start_cur_xmin = region->v2d.cur.xmin;
   data->start_cur_ymin = region->v2d.cur.ymin;
-  data->starttime = BLI_check_seconds_timer();
+  data->starttime = BLI_time_now_seconds();
 }
 
 /**

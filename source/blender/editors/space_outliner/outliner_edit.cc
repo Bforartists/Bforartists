@@ -23,7 +23,6 @@
 #include "BLI_blenlib.h"
 #include "BLI_dynstr.h"
 #include "BLI_path_util.h"
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.hh"
@@ -2185,8 +2184,8 @@ static void unused_message_gen(std::string &message,
           (is_first) ? "" : ", ",
           num_tagged[i],
           (num_tagged[i] > 1) ?
-              IFACE_(BKE_idtype_idcode_to_name_plural(BKE_idtype_idcode_from_index(i))) :
-              IFACE_(BKE_idtype_idcode_to_name(BKE_idtype_idcode_from_index(i))));
+              IFACE_(BKE_idtype_idcode_to_name_plural(BKE_idtype_index_to_idcode(i))) :
+              IFACE_(BKE_idtype_idcode_to_name(BKE_idtype_index_to_idcode(i))));
       is_first = false;
     }
   }
@@ -2298,6 +2297,46 @@ static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static void outliner_orphans_purge_cancel(bContext * /*C*/, wmOperator *op)
+{
+  outliner_orphans_purge_cleanup(op);
+}
+
+static void outliner_orphans_purge_ui(bContext * /*C*/, wmOperator *op)
+{
+  uiLayout *layout = op->layout;
+  PointerRNA *ptr = op->ptr;
+  if (!op->customdata) {
+    /* This should only happen on 'adjust last operation' case, since `invoke` will not have  been
+     * called then before showing the UI (the 'redo panel' UI uses WM-stored operator properties
+     * and a newly-created operator).
+     *
+     * Since that operator is not 'registered' for adjusting from undo stack, this should never
+     * happen currently. */
+    BLI_assert_unreachable();
+    op->customdata = MEM_new<LibQueryUnusedIDsData>(__func__);
+  }
+  LibQueryUnusedIDsData &data = *static_cast<LibQueryUnusedIDsData *>(op->customdata);
+
+  std::string unused_message = "";
+  unused_message_gen(unused_message, data.num_local);
+  uiLayout *column = uiLayoutColumn(layout, true);
+  uiItemR(column, ptr, "do_local_ids", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiLayout *row = uiLayoutRow(column, true);
+  uiItemS_ex(row, 2.67f);
+  uiItemL(row, unused_message.c_str(), ICON_NONE);
+
+  unused_message = "";
+  unused_message_gen(unused_message, data.num_linked);
+  column = uiLayoutColumn(layout, true);
+  uiItemR(column, ptr, "do_linked_ids", UI_ITEM_NONE, nullptr, ICON_NONE);
+  row = uiLayoutRow(column, true);
+  uiItemS_ex(row, 2.67f);
+  uiItemL(row, unused_message.c_str(), ICON_NONE);
+
+  uiItemR(layout, ptr, "do_recursive", UI_ITEM_NONE, nullptr, ICON_NONE);
+}
+
 /*bfa - descriptions*/
 static std::string wm_orphans_purge_get_description(struct bContext * /*C*/,
                                                     struct wmOperatorType * /*op*/,
@@ -2336,48 +2375,6 @@ static std::string wm_orphans_purge_get_description(struct bContext * /*C*/,
            "objects will be removed too";
   }
   return "";
-}
-
-static void outliner_orphans_purge_cancel(bContext * /*C*/, wmOperator *op)
-{
-  outliner_orphans_purge_cleanup(op);
-}
-
-static void outliner_orphans_purge_ui(bContext * /*C*/, wmOperator *op)
-{
-  uiLayout *layout = op->layout;
-  PointerRNA *ptr = op->ptr;
-  if (!op->customdata) {
-    /* This should only happen on 'adjust last operation' case, since `invoke` will not have  been
-     * called then before showing the UI (the 'redo panel' UI uses WM-stored operator properties
-     * and a newly-created operator).
-     *
-     * Since that operator is not 'registered' for adjusting from undo stack, this should never
-     * happen currently. */
-    BLI_assert_unreachable();
-    op->customdata = MEM_new<LibQueryUnusedIDsData>(__func__);
-  }
-  LibQueryUnusedIDsData &data = *static_cast<LibQueryUnusedIDsData *>(op->customdata);
-
-  uiItemS_ex(layout, 0.5f);
-
-  std::string unused_message = "";
-  unused_message_gen(unused_message, data.num_local);
-  uiLayout *column = uiLayoutColumn(layout, true);
-  uiItemR(column, ptr, "do_local_ids", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiLayout *row = uiLayoutRow(column, true);
-  uiItemS_ex(row, 2.67f);
-  uiItemL(row, unused_message.c_str(), ICON_NONE);
-
-  unused_message = "";
-  unused_message_gen(unused_message, data.num_linked);
-  column = uiLayoutColumn(layout, true);
-  uiItemR(column, ptr, "do_linked_ids", UI_ITEM_NONE, nullptr, ICON_NONE);
-  row = uiLayoutRow(column, true);
-  uiItemS_ex(row, 2.67f);
-  uiItemL(row, unused_message.c_str(), ICON_NONE);
-
-  uiItemR(layout, ptr, "do_recursive", UI_ITEM_NONE, nullptr, ICON_NONE);
 }
 
 void OUTLINER_OT_orphans_purge(wmOperatorType *ot)

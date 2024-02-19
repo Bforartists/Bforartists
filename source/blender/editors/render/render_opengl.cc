@@ -19,7 +19,6 @@
 #include "BLI_task.hh"
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
-#include "DNA_camera_types.h"
 
 #include "DNA_action_types.h"
 #include "DNA_anim_types.h"
@@ -859,7 +858,7 @@ static bool screen_opengl_render_init(bContext *C, wmOperator *op)
   BLI_condition_init(&oglrender->task_condition);
 
 #ifdef DEBUG_TIME
-  oglrender->time_start = BLI_check_seconds_timer();
+  oglrender->time_start = BLI_time_now_seconds();
 #endif
 
   return true;
@@ -895,7 +894,7 @@ static void screen_opengl_render_end(bContext *C, OGLRender *oglrender)
   BLI_condition_end(&oglrender->task_condition);
 
 #ifdef DEBUG_TIME
-  printf("Total render time: %f\n", BLI_check_seconds_timer() - oglrender->time_start);
+  printf("Total render time: %f\n", BLI_time_now_seconds() - oglrender->time_start);
 #endif
 
   MEM_SAFE_FREE(oglrender->render_frames);
