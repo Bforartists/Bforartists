@@ -18,7 +18,6 @@
 #include "BLT_translation.hh"
 
 #include "BKE_context.hh"
-#include "BKE_editmesh.hh"
 #include "BKE_global.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
@@ -1146,10 +1145,7 @@ static std::string transform_ot_mirror_get_name(wmOperatorType *ot, PointerRNA *
   if (RNA_boolean_get(ptr, "orient_type")) {
     return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Local");
   }
-  else {
-    return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Global");
-  }
-  return "";
+  return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Global");
 }
 
 /*bfa - descriptions*/
@@ -1160,10 +1156,7 @@ static std::string transform_ot_mirror_get_description(bContext * /*C*/,
   if (RNA_boolean_get(ptr, "orient_type")) {
     return "Mirror selected items around the selected axis in local space";
   }
-  else {
-    return "Mirror selected items around the selected axis in global space";
-  }
-  return "";
+  return "Mirror selected items around the selected axis in global space";
 }
 
 static void TRANSFORM_OT_mirror(wmOperatorType *ot)

@@ -22,7 +22,6 @@
 #include "DNA_sound_types.h"
 
 #include "BKE_context.hh"
-#include "BKE_fcurve.h"
 #include "BKE_global.hh"
 #include "BKE_main.hh"
 #include "BKE_report.hh"
@@ -66,9 +65,6 @@
 
 /* Own include. */
 #include "sequencer_intern.hh"
-
-#include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-#include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 
 /* -------------------------------------------------------------------- */
 /** \name Structs & Enums
@@ -2364,7 +2360,7 @@ static std::string SEQUENCER_OT_swap_get_name(wmOperatorType *ot, PointerRNA *pt
   if (RNA_enum_get(ptr, "side") == SEQ_SIDE_RIGHT) {
     return CTX_IFACE_(ot->translation_context, "Swap Strip Right");
   }
-  else if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
+  if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
     return CTX_IFACE_(ot->translation_context, "Swap Strip Left");
   }
   return "";
@@ -2380,7 +2376,7 @@ static std::string SEQUENCER_OT_swap_get_description(bContext * /*C*/,
     return "Swap active strip with strip to the right";
   }
   /*Deselect*/
-  else if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
+  if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
     return "Swap active strip with strip to the left";
   }
   return "";

@@ -44,8 +44,7 @@ ExecutionSystem::ExecutionSystem(RenderData *rd,
     context_.set_quality((eCompositorQuality)editingtree->edit_quality);
   }
   context_.set_rendering(rendering);
-  context_.setHasActiveOpenCLDevices(WorkScheduler::has_gpu_devices() &&
-                                     (editingtree->flag & NTREE_COM_OPENCL));
+  context_.setHasActiveOpenCLDevices(WorkScheduler::has_gpu_devices() && false);
 
   context_.set_render_data(rd);
 
@@ -88,8 +87,8 @@ ExecutionSystem::~ExecutionSystem()
   groups_.clear();
 }
 
-void ExecutionSystem::set_operations(const Vector<NodeOperation *> &operations,
-                                     const Vector<ExecutionGroup *> &groups)
+void ExecutionSystem::set_operations(const Span<NodeOperation *> operations,
+                                     const Span<ExecutionGroup *> groups)
 {
   operations_ = operations;
   groups_ = groups;
