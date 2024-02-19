@@ -16,8 +16,6 @@
 #include "DEG_depsgraph.hh"
 
 #include "DNA_brush_types.h"
-#include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
 
 #include "WM_api.hh"
 
@@ -69,15 +67,13 @@ struct PuffOperationExecutor {
   float brush_strength_;
   float2 brush_pos_re_;
 
-  eBrushFalloffShape falloff_shape_;
-
   CurvesSurfaceTransforms transforms_;
 
   const Object *surface_ob_ = nullptr;
   const Mesh *surface_ = nullptr;
   Span<float3> surface_positions_;
   Span<int> surface_corner_verts_;
-  Span<MLoopTri> surface_looptris_;
+  Span<int3> surface_corner_tris_;
   Span<float3> corner_normals_su_;
   BVHTreeFromMesh surface_bvh_;
 
@@ -107,10 +103,10 @@ struct PuffOperationExecutor {
     brush_pos_re_ = stroke_extension.mouse_position;
 
     point_factors_ = *curves_->attributes().lookup_or_default<float>(
-        ".selection", ATTR_DOMAIN_POINT, 1.0f);
+        ".selection", bke::AttrDomain::Point, 1.0f);
     curve_selection_ = curves::retrieve_selected_curves(*curves_id_, selected_curve_memory_);
 
-    falloff_shape_ = static_cast<eBrushFalloffShape>(brush_->falloff_shape);
+    const eBrushFalloffShape falloff_shape = eBrushFalloffShape(brush_->falloff_shape);
 
     surface_ob_ = curves_id_->surface;
     surface_ = static_cast<const Mesh *>(surface_ob_->data);
@@ -119,13 +115,13 @@ struct PuffOperationExecutor {
 
     surface_positions_ = surface_->vert_positions();
     surface_corner_verts_ = surface_->corner_verts();
-    surface_looptris_ = surface_->looptris();
+    surface_corner_tris_ = surface_->corner_tris();
     corner_normals_su_ = surface_->corner_normals();
-    BKE_bvhtree_from_mesh_get(&surface_bvh_, surface_, BVHTREE_FROM_LOOPTRIS, 2);
+    BKE_bvhtree_from_mesh_get(&surface_bvh_, surface_, BVHTREE_FROM_CORNER_TRIS, 2);
     BLI_SCOPED_DEFER([&]() { free_bvhtree_from_mesh(&surface_bvh_); });
 
     if (stroke_extension.is_first) {
-      if (falloff_shape_ == PAINT_FALLOFF_SHAPE_SPHERE) {
+      if (falloff_shape == PAINT_FALLOFF_SHAPE_SPHERE) {
         self.brush_3d_ = *sample_curves_3d_brush(*ctx_.depsgraph,
                                                  *ctx_.region,
                                                  *ctx_.v3d,
@@ -141,10 +137,10 @@ struct PuffOperationExecutor {
 
     Array<float> curve_weights(curves_->curves_num());
 
-    if (falloff_shape_ == PAINT_FALLOFF_SHAPE_TUBE) {
+    if (falloff_shape == PAINT_FALLOFF_SHAPE_TUBE) {
       this->find_curve_weights_projected_with_symmetry(curve_weights);
     }
-    else if (falloff_shape_ == PAINT_FALLOFF_SHAPE_SPHERE) {
+    else if (falloff_shape == PAINT_FALLOFF_SHAPE_SPHERE) {
       this->find_curves_weights_spherical_with_symmetry(curve_weights);
     }
     else {
@@ -264,7 +260,7 @@ struct PuffOperationExecutor {
             brush_, dist_to_brush_cu, brush_radius_cu);
         math::max_inplace(max_weight, radius_falloff);
       }
-      r_curve_weights[curve_i] = max_weight;
+      math::max_inplace(r_curve_weights[curve_i], max_weight);
     });
   }
 
@@ -292,15 +288,15 @@ struct PuffOperationExecutor {
                                  surface_bvh_.nearest_callback,
                                  &surface_bvh_);
 
-        const MLoopTri &lt = surface_looptris_[nearest.index];
+        const int3 &tri = surface_corner_tris_[nearest.index];
         const float3 closest_pos_su = nearest.co;
-        const float3 &v0_su = surface_positions_[surface_corner_verts_[lt.tri[0]]];
-        const float3 &v1_su = surface_positions_[surface_corner_verts_[lt.tri[1]]];
-        const float3 &v2_su = surface_positions_[surface_corner_verts_[lt.tri[2]]];
+        const float3 &v0_su = surface_positions_[surface_corner_verts_[tri[0]]];
+        const float3 &v1_su = surface_positions_[surface_corner_verts_[tri[1]]];
+        const float3 &v2_su = surface_positions_[surface_corner_verts_[tri[2]]];
         float3 bary_coords;
         interp_weights_tri_v3(bary_coords, v0_su, v1_su, v2_su, closest_pos_su);
         const float3 normal_su = geometry::compute_surface_point_normal(
-            lt, bary_coords, corner_normals_su_);
+            tri, bary_coords, corner_normals_su_);
         const float3 normal_cu = math::normalize(
             math::transform_direction(transforms_.surface_to_curves_normal, normal_su));
 

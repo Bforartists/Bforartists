@@ -12,13 +12,13 @@ class CONSOLE_HT_header(Header):
     def draw(self, context):
         layout = self.layout.row()
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu_console.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
         CONSOLE_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.operator("console.autocomplete", text="Autocomplete")
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_console(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -223,7 +223,7 @@ def add_scrollback(text, text_type):
 
 classes = (
     CONSOLE_HT_header,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_console,
     CONSOLE_MT_edit_select_text, # bfa menu
     CONSOLE_MT_edit_move_cursor, # bfa menu
     CONSOLE_MT_edit,

@@ -17,15 +17,15 @@
 #include "BLI_task.h"
 #include "BLI_utildefines.h"
 
-#include "BKE_key.h"
+#include "BKE_key.hh"
 #include "BKE_object.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "DNA_key_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "DRW_engine.h"
+#include "DRW_engine.hh"
 
 #include "DEG_depsgraph.hh"
 

@@ -15,24 +15,30 @@ bl_info = {
     "category": "Object"
     }
 
+if "bpy" in locals():
+    import importlib
+
+    importlib.reload(carver_utils)
+    importlib.reload(carver_profils)
+    importlib.reload(carver_draw)
+    importlib.reload(carver_operator)
+
 import bpy
-import imp
+
 from bpy.props import (
         BoolProperty,
         StringProperty,
         IntProperty
-        )
+)
 from bpy.types import (AddonPreferences, WorkSpaceTool)
 from bpy.utils.toolsystem import ToolDef
 
-from . import carver_utils
-imp.reload(carver_utils)
-from . import carver_profils
-imp.reload(carver_profils)
-from . import carver_draw
-imp.reload(carver_draw)
-from . import carver_operator
-imp.reload(carver_operator)
+from . import (
+    carver_utils,
+    carver_profils,
+    carver_draw,
+    carver_operator,
+)
 
 # TODO : Create an icon for Carver MT
 # Add an icon in the toolbar

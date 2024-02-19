@@ -23,7 +23,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_context.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -123,7 +123,7 @@ static int console_delete_editable_selection(SpaceConsole *sc)
   int del_end = sc->sel_end;
 
   if (del_end > cl->len) {
-    /* Adjust range to only editable portion.  */
+    /* Adjust range to only editable portion. */
     del_end = cl->len;
   }
 

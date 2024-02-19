@@ -2,22 +2,26 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+#include "BKE_attribute.hh"
 #include "BKE_brush.hh"
-#include "BKE_colortools.h"
+#include "BKE_colortools.hh"
 #include "BKE_context.hh"
 #include "BKE_curves.hh"
 #include "BKE_grease_pencil.h"
 #include "BKE_grease_pencil.hh"
 #include "BKE_material.h"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "BLI_length_parameterize.hh"
+#include "BLI_math_color.h"
 #include "BLI_math_geom.h"
 
 #include "DEG_depsgraph_query.hh"
 
 #include "ED_grease_pencil.hh"
 #include "ED_view3d.hh"
+
+#include "GEO_smooth_curves.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -142,6 +146,7 @@ struct PaintOperationExecutor {
 
   BrushGpencilSettings *settings_;
   float4 vertex_color_;
+  float hardness_;
 
   bke::greasepencil::Drawing *drawing_;
 
@@ -165,12 +170,15 @@ struct PaintOperationExecutor {
                                                      brush_->rgb[2],
                                                      settings_->vertex_factor) :
                                               float4(0.0f);
+    srgb_to_linearrgb_v4(vertex_color_, vertex_color_);
+    /* TODO: UI setting. */
+    hardness_ = 1.0f;
 
     // const bool use_vertex_color_fill = use_vertex_color && ELEM(
     //     brush->gpencil_settings->vertex_mode, GPPAINT_MODE_STROKE, GPPAINT_MODE_BOTH);
 
     BLI_assert(grease_pencil->has_active_layer());
-    drawing_ = grease_pencil->get_editable_drawing_at(grease_pencil->get_active_layer(),
+    drawing_ = grease_pencil->get_editable_drawing_at(*grease_pencil->get_active_layer(),
                                                       scene_->r.cfra);
     BLI_assert(drawing_ != nullptr);
   }
@@ -225,26 +233,32 @@ struct PaintOperationExecutor {
 
     bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
     bke::SpanAttributeWriter<int> materials = attributes.lookup_or_add_for_write_span<int>(
-        "material_index", ATTR_DOMAIN_CURVE);
+        "material_index", bke::AttrDomain::Curve);
     bke::SpanAttributeWriter<bool> cyclic = attributes.lookup_or_add_for_write_span<bool>(
-        "cyclic", ATTR_DOMAIN_CURVE);
+        "cyclic", bke::AttrDomain::Curve);
+    bke::SpanAttributeWriter<float> hardnesses = attributes.lookup_or_add_for_write_span<float>(
+        "hardness",
+        bke::AttrDomain::Curve,
+        bke::AttributeInitVArray(VArray<float>::ForSingle(1.0f, curves.curves_num())));
     cyclic.span.last() = false;
     materials.span.last() = material_index;
+    hardnesses.span.last() = hardness_;
 
     cyclic.finish();
     materials.finish();
+    hardnesses.finish();
 
     curves.curve_types_for_write().last() = CURVE_TYPE_POLY;
     curves.update_curve_types();
 
     /* Initialize the rest of the attributes with default values. */
     bke::fill_attribute_range_default(attributes,
-                                      ATTR_DOMAIN_POINT,
+                                      bke::AttrDomain::Point,
                                       {"position", "radius", "opacity", "vertex_color"},
                                       curves.points_range().take_back(1));
     bke::fill_attribute_range_default(attributes,
-                                      ATTR_DOMAIN_CURVE,
-                                      {"curve_type", "material_index", "cyclic"},
+                                      bke::AttrDomain::Curve,
+                                      {"curve_type", "material_index", "cyclic", "hardness"},
                                       curves.curves_range().take_back(1));
 
     drawing_->tag_topology_changed();
@@ -275,13 +289,13 @@ struct PaintOperationExecutor {
      * stable) fit. */
     Array<float2> coords_pre_blur(smooth_window.size());
     const int pre_blur_iterations = 3;
-    ed::greasepencil::gaussian_blur_1D(coords_to_smooth,
-                                       pre_blur_iterations,
-                                       settings_->active_smooth,
-                                       true,
-                                       true,
-                                       false,
-                                       coords_pre_blur.as_mutable_span());
+    geometry::gaussian_blur_1D(coords_to_smooth,
+                               pre_blur_iterations,
+                               settings_->active_smooth,
+                               true,
+                               true,
+                               false,
+                               coords_pre_blur.as_mutable_span());
 
     /* Curve fitting. The output will be a set of handles (float2 triplets) in a flat array. */
     const float max_error_threshold_px = 5.0f;
@@ -405,7 +419,7 @@ struct PaintOperationExecutor {
 
     /* Initialize the rest of the attributes with default values. */
     bke::fill_attribute_range_default(attributes,
-                                      ATTR_DOMAIN_POINT,
+                                      bke::AttrDomain::Point,
                                       {"position", "radius", "opacity", "vertex_color"},
                                       curves.points_range().take_back(1));
   }
@@ -419,10 +433,12 @@ struct PaintOperationExecutor {
 
 void PaintOperation::on_stroke_begin(const bContext &C, const InputSample &start_sample)
 {
+  Depsgraph *depsgraph = CTX_data_depsgraph_pointer(&C);
   ARegion *region = CTX_wm_region(&C);
   View3D *view3d = CTX_wm_view3d(&C);
   Scene *scene = CTX_data_scene(&C);
   Object *object = CTX_data_active_object(&C);
+  Object *eval_object = DEG_get_evaluated_object(depsgraph, object);
   GreasePencil *grease_pencil = static_cast<GreasePencil *>(object->data);
 
   Paint *paint = &scene->toolsettings->gp_paint->paint;
@@ -439,7 +455,8 @@ void PaintOperation::on_stroke_begin(const bContext &C, const InputSample &start
   BKE_curvemapping_init(brush->gpencil_settings->curve_rand_value);
 
   /* Initialize helper class for projecting screen space coordinates. */
-  placement_ = ed::greasepencil::DrawingPlacement(*scene, *region, *view3d, *object);
+  placement_ = ed::greasepencil::DrawingPlacement(
+      *scene, *region, *view3d, *eval_object, *grease_pencil->get_active_layer());
   if (placement_.use_project_to_surface()) {
     placement_.cache_viewport_depths(CTX_data_depsgraph_pointer(&C), region, view3d);
   }
@@ -450,7 +467,7 @@ void PaintOperation::on_stroke_begin(const bContext &C, const InputSample &start
 
   Material *material = BKE_grease_pencil_object_material_ensure_from_active_input_brush(
       CTX_data_main(&C), object, brush);
-  const int material_index = BKE_grease_pencil_object_material_index_get(object, material);
+  const int material_index = BKE_object_material_index_get(object, material);
 
   PaintOperationExecutor executor{C};
   executor.process_start_sample(*this, C, start_sample, material_index);
@@ -514,7 +531,7 @@ void PaintOperation::simplify_stroke(bke::greasepencil::Drawing &drawing, const 
 
   if (total_points_to_delete > 0) {
     IndexMaskMemory memory;
-    curves.remove_points(IndexMask::from_bools(points_to_delete, memory));
+    curves.remove_points(IndexMask::from_bools(points_to_delete, memory), {});
   }
 }
 
@@ -550,7 +567,7 @@ void PaintOperation::on_stroke_done(const bContext &C)
 
   /* Grease Pencil should have an active layer. */
   BLI_assert(grease_pencil.has_active_layer());
-  bke::greasepencil::Layer &active_layer = *grease_pencil.get_active_layer_for_write();
+  bke::greasepencil::Layer &active_layer = *grease_pencil.get_active_layer();
   const int drawing_index = active_layer.drawing_index_at(scene->r.cfra);
 
   /* Drawing should exist. */

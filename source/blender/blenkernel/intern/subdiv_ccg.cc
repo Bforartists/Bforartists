@@ -8,9 +8,6 @@
 
 #include "BKE_subdiv_ccg.hh"
 
-#include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
-
 #include "MEM_guardedalloc.h"
 
 #include "BLI_enumerable_thread_specific.hh"
@@ -24,7 +21,7 @@
 
 #include "BKE_DerivedMesh.hh"
 #include "BKE_ccg.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_mesh.hh"
 #include "BKE_subdiv.hh"
 #include "BKE_subdiv_eval.hh"

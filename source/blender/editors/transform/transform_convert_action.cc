@@ -20,8 +20,8 @@
 #include "BKE_fcurve.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_grease_pencil.hh"
-#include "BKE_key.h"
-#include "BKE_layer.h"
+#include "BKE_key.hh"
+#include "BKE_layer.hh"
 #include "BKE_mask.h"
 #include "BKE_nla.h"
 
@@ -38,11 +38,11 @@
 #include "transform_convert.hh"
 
 /* Weak way of identifying whether TransData was set by #GPLayerToTransData or
- * #MaskLayerToTransData. This way we can identify whether the #td->extra is a pointer to an
- * integer value and we can correctly flush the #recalcData_actedit. */
-static bool data_is_gp_or_mask(TransData *td, TransData2D *td2d)
+ * #MaskLayerToTransData. This way we can identify whether the #td->loc2d_i is a pointer to an
+ * integer value and we can correctly flush in #recalcData_actedit. */
+static bool is_td2d_int(TransData2D *td2d)
 {
-  return td->extra && !td2d->loc2d;
+  return td2d->loc2d_i && td2d->h1 == nullptr;
 }
 
 /* -------------------------------------------------------------------- */
@@ -349,7 +349,7 @@ static void TimeToTransData(
   /* Set flags to move handles as necessary. */
   td->flag |= TD_MOVEHANDLE1 | TD_MOVEHANDLE2;
 
-  BLI_assert(!data_is_gp_or_mask(td, td2d));
+  BLI_assert(!is_td2d_int(td2d));
 }
 
 /* This function advances the address to which td points to, so it must return
@@ -419,6 +419,7 @@ static int GPLayerToTransData(TransData *td,
     if (is_prop_edit || is_selected) {
       if (FrameOnMouseSide(side, float(gpf->framenum), cfra)) {
         td2d->loc[0] = float(gpf->framenum);
+        td2d->loc2d_i = &gpf->framenum;
 
         td->loc = td->val = td2d->loc;
         td->iloc[0] = td->ival = td2d->loc[0];
@@ -426,14 +427,11 @@ static int GPLayerToTransData(TransData *td,
         td->center[0] = td->ival;
         td->center[1] = ypos;
 
-        /* Store the int value in #td->extra, so we can flush later. */
-        td->extra = &gpf->framenum;
-
         if (is_selected) {
           td->flag = TD_SELECTED;
         }
 
-        BLI_assert(data_is_gp_or_mask(td, td2d));
+        BLI_assert(is_td2d_int(td2d));
 
         /* Advance `td` now. */
         td++;
@@ -492,7 +490,7 @@ static int GreasePencilLayerToTransData(TransData *td,
     td->flag |= TD_GREASE_PENCIL_FRAME;
     td->extra = layer;
 
-    BLI_assert(!data_is_gp_or_mask(td, td2d));
+    BLI_assert(!is_td2d_int(td2d));
 
     /* Advance `td` now. */
     td++;
@@ -537,6 +535,7 @@ static int MaskLayerToTransData(TransData *td,
     if (is_prop_edit || (masklay_shape->flag & MASK_SHAPE_SELECT)) {
       if (FrameOnMouseSide(side, float(masklay_shape->frame), cfra)) {
         td2d->loc[0] = float(masklay_shape->frame);
+        td2d->loc2d_i = &masklay_shape->frame;
 
         td->loc = td->val = td2d->loc;
         td->iloc[0] = td->ival = td2d->loc[0];
@@ -544,10 +543,7 @@ static int MaskLayerToTransData(TransData *td,
         td->center[0] = td->ival;
         td->center[1] = ypos;
 
-        /* Store the int value in #td->extra, so we can flush later. */
-        td->extra = &masklay_shape->frame;
-
-        BLI_assert(data_is_gp_or_mask(td, td2d));
+        BLI_assert(is_td2d_int(td2d));
 
         /* advance td now */
         td++;
@@ -799,7 +795,8 @@ static void createTransActionData(bContext *C, TransInfo *t)
         if (use_duplicated) {
           /* Also count for duplicated frames. */
           for (const auto [frame_number, frame] :
-               layer->runtime->trans_data_.temp_frames_buffer.items()) {
+               layer->runtime->trans_data_.temp_frames_buffer.items())
+          {
             grease_pencil_closest_selected_frame(frame_number, frame.is_selected());
           }
         }
@@ -940,10 +937,10 @@ static void recalcData_actedit(TransInfo *t)
           round_fl_to_int(td2d->loc[0]),
           use_duplicated);
     }
-    else if (data_is_gp_or_mask(td, td2d)) {
+    else if (is_td2d_int(td2d)) {
       /* (Grease Pencil Legacy)
        * This helps flush transdata written to tempdata into the gp-frames. */
-      *reinterpret_cast<int *>(td->extra) = round_fl_to_int(td2d->loc[0]);
+      *td2d->loc2d_i = round_fl_to_int(td2d->loc[0]);
     }
   }
 

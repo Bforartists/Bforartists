@@ -13,8 +13,8 @@ struct Library;
 struct LibraryLink_Params;
 struct ReportList;
 
-typedef struct BlendfileLinkAppendContext BlendfileLinkAppendContext;
-typedef struct BlendfileLinkAppendContextItem BlendfileLinkAppendContextItem;
+struct BlendfileLinkAppendContext;
+struct BlendfileLinkAppendContextItem;
 
 /**
  * Allocate and initialize a new context to link/append data-blocks.
@@ -29,7 +29,7 @@ void BKE_blendfile_link_append_context_free(BlendfileLinkAppendContext *lapp_con
  *
  * \param flag: A combination of:
  * - #eFileSel_Params_Flag from `DNA_space_types.h` &
- * - #eBLOLibLinkFlags * from `BLO_readfile.h`.
+ * - #eBLOLibLinkFlags * from `BLO_readfile.hh`.
  * \param do_set: Set the given \a flag if true, clear it otherwise.
  */
 void BKE_blendfile_link_append_context_flag_set(BlendfileLinkAppendContext *lapp_context,
@@ -136,10 +136,10 @@ enum eBlendfileLinkAppendForeachItemFlag {
  *
  * \return `true` if iteration should continue, `false` otherwise.
  */
-typedef bool (*BKE_BlendfileLinkAppendContexteItemFunction)(
-    BlendfileLinkAppendContext *lapp_context,
-    BlendfileLinkAppendContextItem *item,
-    void *userdata);
+using BKE_BlendfileLinkAppendContexteItemFunction =
+    bool (*)(BlendfileLinkAppendContext *lapp_context,
+             BlendfileLinkAppendContextItem *item,
+             void *userdata);
 /**
  * Iterate over all (or a subset) of the items listed in given #BlendfileLinkAppendContext,
  * and call the `callback_function` on them.

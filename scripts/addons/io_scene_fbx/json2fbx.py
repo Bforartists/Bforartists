@@ -133,10 +133,10 @@ def json2fbx(fn):
 
     fn_fbx = "%s.fbx" % os.path.splitext(fn)[0]
     print("Writing: %r " % fn_fbx, end="")
-    json_root = []
     with open(fn) as f_json:
         json_root = json.load(f_json)
-    fbx_root, fbx_version = parse_json(json_root)
+    with encode_bin.FBXElem.enable_multithreading_cm():
+        fbx_root, fbx_version = parse_json(json_root)
     print("(Version %d) ..." % fbx_version)
     encode_bin.write(fn_fbx, fbx_root, fbx_version)
 

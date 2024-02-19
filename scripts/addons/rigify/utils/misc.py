@@ -172,6 +172,20 @@ def find_index(sequence, item, default=None):
     return default
 
 
+def flatten_children(iterable: typing.Iterable):
+    """Enumerate the iterator items as well as their children in the tree order."""
+    for item in iterable:
+        yield item
+        yield from flatten_children(item.children)
+
+
+def flatten_parents(item):
+    """Enumerate the item and all its parents."""
+    while item:
+        yield item
+        item = item.parent
+
+
 ##############################################
 # Lazy references
 ##############################################

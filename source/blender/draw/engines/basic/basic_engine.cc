@@ -9,9 +9,9 @@
  * When we only need simple flat shaders.
  */
 
-#include "DRW_render.h"
+#include "DRW_render.hh"
 
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
 #include "BKE_paint.hh"
@@ -154,6 +154,7 @@ static void basic_cache_populate_particles(void *vedata, Object *ob)
 
 static void basic_cache_populate(void *vedata, Object *ob)
 {
+  using namespace blender::draw;
   BASIC_StorageList *stl = ((BASIC_Data *)vedata)->stl;
 
   /* TODO(fclem): fix selection of smoke domains. */

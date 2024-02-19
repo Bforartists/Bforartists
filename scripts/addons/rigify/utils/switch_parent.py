@@ -371,14 +371,15 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
         parent_names = [parent[1] or strip_prefix(parent[0])
                         for parent in [('None', 'None'), *parent_bones]]
-        parent_str = ', '.join(['%s (%d)' % (name, i) for i, name in enumerate(parent_names)])
+        parent_items = [(f"P{i}", name, "") for i, name in enumerate(parent_names)]
 
         ctrl_bone = child['ctrl_bone'] or bone
 
         self.make_property(
             prop_bone, prop_id, select_index,
             min=0, max=len(parent_bones),
-            description='Switch parent of %s: %s' % (ctrl_bone, parent_str)
+            description=f"Switch parent of {ctrl_bone}",
+            items=parent_items,
         )
 
         # Find which channels don't depend on the parent
@@ -406,7 +407,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
         }
 
         row = panel.row(align=True)
-        left_split = row.split(factor=0.75, align=True)
+        left_split = row.split(factor=0.65, align=True)
         left_split.operator('pose.rigify_switch_parent_{rig_id}', text=prop_name,
                             icon='DOWNARROW_HLT', properties=op_props)
         left_split.custom_prop(prop_bone, prop_id, text='')

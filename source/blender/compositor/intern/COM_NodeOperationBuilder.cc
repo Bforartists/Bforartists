@@ -124,6 +124,7 @@ void NodeOperationBuilder::add_operation(NodeOperation *operation)
   operations_.append(operation);
   if (current_node_) {
     operation->set_name(current_node_->get_bnode()->name);
+    operation->set_node_instance_key(current_node_->get_instance_key());
   }
   operation->set_execution_model(context_->get_execution_model());
   operation->set_execution_system(exec_system_);
@@ -289,7 +290,8 @@ void NodeOperationBuilder::add_datatype_conversions()
     NodeOperation *from_op = &link.from()->get_operation();
     NodeOperation *to_op = &link.to()->get_operation();
     if (!(from_op->get_flags().use_datatype_conversion ||
-          to_op->get_flags().use_datatype_conversion)) {
+          to_op->get_flags().use_datatype_conversion))
+    {
       continue;
     }
 

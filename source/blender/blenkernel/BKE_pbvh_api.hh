@@ -25,7 +25,6 @@
 #include "DNA_customdata_types.h"
 
 /* For embedding CCGKey in iterator. */
-#include "BKE_attribute.h"
 #include "BKE_ccg.h"
 #include "BKE_pbvh.hh"
 
@@ -43,10 +42,15 @@ struct PBVHNode;
 struct SubdivCCG;
 struct Image;
 struct ImageUser;
-namespace blender::draw::pbvh {
+namespace blender {
+namespace bke {
+enum class AttrDomain : int8_t;
+}
+namespace draw::pbvh {
 struct PBVHBatches;
 struct PBVH_GPU_Args;
-}  // namespace blender::draw::pbvh
+}  // namespace draw::pbvh
+}  // namespace blender
 
 struct PBVHProxyNode {
   blender::Vector<blender::float3> co;
@@ -81,7 +85,7 @@ struct PBVHFrustumPlanes {
 
 BLI_INLINE BMesh *BKE_pbvh_get_bmesh(PBVH *pbvh)
 {
-  return ((struct PBVHPublic *)pbvh)->bm;
+  return ((PBVHPublic *)pbvh)->bm;
 }
 
 Mesh *BKE_pbvh_get_mesh(PBVH *pbvh);
@@ -219,10 +223,6 @@ void draw_cb(const Mesh &mesh,
 
 }  // namespace blender::bke::pbvh
 
-/* PBVH Access */
-
-bool BKE_pbvh_has_faces(const PBVH *pbvh);
-
 /**
  * Get the PBVH root's bounding box.
  */
@@ -285,7 +285,7 @@ void BKE_pbvh_node_mark_update_face_sets(PBVHNode *node);
 void BKE_pbvh_node_mark_update_visibility(PBVHNode *node);
 void BKE_pbvh_node_mark_rebuild_draw(PBVHNode *node);
 void BKE_pbvh_node_mark_redraw(PBVHNode *node);
-void BKE_pbvh_node_mark_normals_update(PBVHNode *node);
+void BKE_pbvh_node_mark_positions_update(PBVHNode *node);
 void BKE_pbvh_node_mark_topology_update(PBVHNode *node);
 void BKE_pbvh_node_fully_hidden_set(PBVHNode *node, int fully_hidden);
 bool BKE_pbvh_node_fully_hidden_get(const PBVHNode *node);
@@ -295,7 +295,6 @@ void BKE_pbvh_node_fully_unmasked_set(PBVHNode *node, int fully_masked);
 bool BKE_pbvh_node_fully_unmasked_get(const PBVHNode *node);
 
 void BKE_pbvh_mark_rebuild_pixels(PBVH *pbvh);
-void BKE_pbvh_vert_tag_update_normal(PBVH *pbvh, PBVHVertRef vertex);
 
 blender::Span<int> BKE_pbvh_node_get_grid_indices(const PBVHNode &node);
 
@@ -321,11 +320,6 @@ Span<int> node_face_indices_calc_grids(const PBVH &pbvh, const PBVHNode &node, V
 }  // namespace blender::bke::pbvh
 
 blender::Vector<int> BKE_pbvh_node_calc_face_indices(const PBVH &pbvh, const PBVHNode &node);
-
-/* Get number of faces in the mesh; for PBVH_GRIDS the
- * number of base mesh faces is returned.
- */
-int BKE_pbvh_num_faces(const PBVH *pbvh);
 
 blender::Bounds<blender::float3> BKE_pbvh_node_get_BB(const PBVHNode *node);
 blender::Bounds<blender::float3> BKE_pbvh_node_get_original_BB(const PBVHNode *node);
@@ -362,9 +356,11 @@ void update_normals(PBVH &pbvh, SubdivCCG *subdiv_ccg);
 }  // namespace blender::bke::pbvh
 
 blender::Bounds<blender::float3> BKE_pbvh_redraw_BB(PBVH *pbvh);
-blender::IndexMask BKE_pbvh_get_grid_updates(const PBVH *pbvh,
-                                             blender::Span<const PBVHNode *> nodes,
-                                             blender::IndexMaskMemory &memory);
+namespace blender::bke::pbvh {
+IndexMask nodes_to_face_selection_grids(const SubdivCCG &subdiv_ccg,
+                                        Span<const PBVHNode *> nodes,
+                                        IndexMaskMemory &memory);
+}
 void BKE_pbvh_grids_update(PBVH *pbvh, const CCGKey *key);
 void BKE_pbvh_subdiv_cgg_set(PBVH *pbvh, SubdivCCG *subdiv_ccg);
 
@@ -518,13 +514,6 @@ void BKE_pbvh_node_get_bm_orco_data(PBVHNode *node,
                                     float (**r_orco_coords)[3],
                                     BMVert ***r_orco_verts);
 
-/**
- * \note doing a full search on all vertices here seems expensive,
- * however this is important to avoid having to recalculate bound-box & sync the buffers to the
- * GPU (which is far more expensive!) See: #47232.
- */
-bool BKE_pbvh_node_has_vert_with_normal_update_tag(PBVH *pbvh, PBVHNode *node);
-
 bool pbvh_has_mask(const PBVH *pbvh);
 
 bool pbvh_has_face_sets(PBVH *pbvh);
@@ -535,7 +524,9 @@ blender::Span<blender::float3> BKE_pbvh_get_vert_normals(const PBVH *pbvh);
 
 PBVHColorBufferNode *BKE_pbvh_node_color_buffer_get(PBVHNode *node);
 void BKE_pbvh_node_color_buffer_free(PBVH *pbvh);
-bool BKE_pbvh_get_color_layer(Mesh *mesh, CustomDataLayer **r_layer, eAttrDomain *r_domain);
+bool BKE_pbvh_get_color_layer(Mesh *mesh,
+                              CustomDataLayer **r_layer,
+                              blender::bke::AttrDomain *r_domain);
 
 /* Swaps colors at each element in indices (of domain pbvh->vcol_domain)
  * with values in colors. */
@@ -562,10 +553,9 @@ void BKE_pbvh_vertex_color_set(PBVH *pbvh, PBVHVertRef vertex, const float color
 void BKE_pbvh_vertex_color_get(const PBVH *pbvh, PBVHVertRef vertex, float r_color[4]);
 
 void BKE_pbvh_ensure_node_loops(PBVH *pbvh);
-bool BKE_pbvh_draw_cache_invalid(const PBVH *pbvh);
 int BKE_pbvh_debug_draw_gen_get(PBVHNode *node);
 
-void BKE_pbvh_pmap_set(PBVH *pbvh, blender::GroupedSpan<int> pmap);
+void BKE_pbvh_pmap_set(PBVH *pbvh, blender::GroupedSpan<int> vert_to_face_map);
 
 namespace blender::bke::pbvh {
 Vector<PBVHNode *> search_gather(PBVH *pbvh,

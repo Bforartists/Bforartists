@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.1.0 Alpha (b'274dc815eb35')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'3d7e84f57d8a')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-11 11:18:04\n"
+"POT-Creation-Date: 2024-02-05 09:44+0000\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -1619,6 +1619,10 @@ msgid "Translate"
 msgstr "Жылдыруу"
 
 
+msgid "Bake"
+msgstr "Бышыруу"
+
+
 msgid "Background"
 msgstr "Фон"
 
@@ -2291,10 +2295,6 @@ msgstr "Түшүрүү"
 msgctxt "Operator"
 msgid "Refresh"
 msgstr "Жаңылоо"
-
-
-msgid "Bake"
-msgstr "Бышыруу"
 
 
 msgctxt "Operator"
@@ -3364,6 +3364,10 @@ msgid "New Data"
 msgstr "Жаңы маалыматтар"
 
 
+msgid "Error (see console)"
+msgstr "Ката (консолду караңыз)"
+
+
 msgid "Description:"
 msgstr "Баяндамасы:"
 
@@ -3388,21 +3392,9 @@ msgid "Internet:"
 msgstr "Интернет:"
 
 
-msgid "description"
-msgstr "баяндама"
-
-
-msgid "location"
-msgstr "жайгашкан жери"
-
-
 msgctxt "Operator"
 msgid "Documentation"
 msgstr "Документация"
-
-
-msgid "Error (see console)"
-msgstr "Ката (консолду караңыз)"
 
 
 msgctxt "Operator"
@@ -3634,6 +3626,10 @@ msgstr "Жаңы"
 msgctxt "FreestyleLineStyle"
 msgid "New"
 msgstr "Жаңы"
+
+
+msgid "Rigging"
+msgstr "Риггинг"
 
 
 msgctxt "Mesh"
@@ -3905,10 +3901,6 @@ msgstr "Ийрилерди кошуу"
 
 msgid "Import-Export"
 msgstr "Импорт-экспорт"
-
-
-msgid "Rigging"
-msgstr "Риггинг"
 
 
 msgid "English (English)"

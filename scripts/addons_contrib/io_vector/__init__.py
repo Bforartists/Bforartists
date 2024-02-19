@@ -29,17 +29,29 @@ bl_info = {
   "category": "Import-Export"}
 
 if "bpy" in locals():
-    import imp
+    import importlib
+
+    importlib.reload(geom)
+    importlib.reload(model)
+    importlib.reload(vecfile)
+    importlib.reload(import_vecfile)
+    importlib.reload(offset)
+    importlib.reload(pdf)
+    importlib.reload(svg)
+    importlib.reload(triquad)
+    importlib.reload(art2polyarea)
 else:
-    from . import geom
-    from . import model
-    from . import vecfile
-    from . import import_vecfile
-    from . import offset
-    from . import pdf
-    from . import svg
-    from . import triquad
-    from . import art2polyarea
+    from . import (
+        geom,
+        model,
+        vecfile,
+        import_vecfile,
+        offset,
+        pdf,
+        svg,
+        triquad,
+        art2polyarea,
+    )
 
 import math
 import bpy

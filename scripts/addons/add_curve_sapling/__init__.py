@@ -106,10 +106,7 @@ def getPresetpaths():
     """Return paths for both local and user preset folders"""
     userDir = os.path.join(bpy.utils.script_path_user(), 'presets', 'operator', 'add_curve_sapling')
 
-    if os.path.isdir(userDir):
-        pass
-    else:
-        os.makedirs(userDir)
+    os.makedirs(userDir, exist_ok=True)
 
     script_file = os.path.realpath(__file__)
     directory = os.path.dirname(script_file)
