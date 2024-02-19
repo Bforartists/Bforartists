@@ -15,7 +15,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "BLI_math_geom.h"
 #include "BLI_math_matrix.h"
@@ -37,9 +37,9 @@
 
 #include "UI_resources.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
-#include "mesh_intern.h" /* own include */
+#include "mesh_intern.hh" /* own include */
 
 /* -------------------------------------------------------------------- */
 /** \name Helper Functions

@@ -25,14 +25,14 @@
 #include "BKE_crazyspace.hh"
 #include "BKE_curve.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_grease_pencil.hh"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_object.hh"
 #include "BKE_paint.hh"
 #include "BKE_pointcache.h"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "WM_api.hh"
 #include "WM_message.hh"
@@ -607,16 +607,13 @@ static int gizmo_3d_foreach_selected(const bContext *C,
 #define FOREACH_EDIT_OBJECT_BEGIN(ob_iter, use_mat_local) \
   { \
     invert_m4_m4(obedit->world_to_object, obedit->object_to_world); \
-    uint objects_len = 0; \
-    Object **objects = BKE_view_layer_array_from_objects_in_edit_mode( \
-        scene, view_layer, CTX_wm_view3d(C), &objects_len); \
-    for (uint ob_index = 0; ob_index < objects_len; ob_index++) { \
-      Object *ob_iter = objects[ob_index]; \
+    Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode( \
+        scene, view_layer, CTX_wm_view3d(C)); \
+    for (Object * ob_iter : objects) { \
       const bool use_mat_local = (ob_iter != obedit);
 
 #define FOREACH_EDIT_OBJECT_END() \
   } \
-  MEM_freeN(objects); \
   } \
   ((void)0)
 
@@ -847,11 +844,9 @@ static int gizmo_3d_foreach_selected(const bContext *C,
   else if (ob && (ob->mode & OB_MODE_POSE)) {
     invert_m4_m4(ob->world_to_object, ob->object_to_world);
 
-    uint objects_len = 0;
-    Object **objects = BKE_object_pose_array_get(scene, view_layer, v3d, &objects_len);
+    Vector<Object *> objects = BKE_object_pose_array_get(scene, view_layer, v3d);
 
-    for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
-      Object *ob_iter = objects[ob_index];
+    for (Object *ob_iter : objects) {
       const bool use_mat_local = (ob_iter != ob);
       /* mislead counting bones... bah. We don't know the gizmo mode, could be mixed */
       const int mode = TFM_ROTATION;
@@ -880,7 +875,6 @@ static int gizmo_3d_foreach_selected(const bContext *C,
         }
       }
     }
-    MEM_freeN(objects);
   }
   else if (ob && (ob->mode & OB_MODE_ALL_PAINT)) {
     if (ob->mode & OB_MODE_SCULPT) {

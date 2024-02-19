@@ -8,6 +8,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "DNA_sequence_types.h"
 #include "DNA_space_types.h"
 
 #include "BLI_listbase.h"
@@ -16,7 +17,7 @@
 #include "BLI_math_vector.h"
 
 #include "BKE_context.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "SEQ_channels.hh"
 #include "SEQ_iterator.hh"

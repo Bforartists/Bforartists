@@ -10,6 +10,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <fmt/format.h>
+
 #include "MEM_guardedalloc.h"
 
 #include "DNA_anim_types.h"
@@ -39,14 +41,14 @@
 #include "BLI_utildefines.h"
 #include "BLI_vector_set.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_DerivedMesh.hh"
 #include "BKE_action.h"
 #include "BKE_anim_data.h"
 #include "BKE_armature.hh"
 #include "BKE_camera.h"
-#include "BKE_collection.h"
+#include "BKE_collection.hh"
 #include "BKE_constraint.h"
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
@@ -56,18 +58,18 @@
 #include "BKE_fcurve.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_idprop.h"
-#include "BKE_idtype.h"
+#include "BKE_idtype.hh"
 #include "BKE_lattice.hh"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
-#include "BKE_lib_query.h"
+#include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
 #include "BKE_light.h"
 #include "BKE_lightprobe.h"
 #include "BKE_main.hh"
 #include "BKE_material.h"
-#include "BKE_mball.h"
+#include "BKE_mball.hh"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_node.h"
@@ -75,9 +77,9 @@
 #include "BKE_node_tree_interface.hh"
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
-#include "BKE_pointcloud.h"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_pointcloud.hh"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_speaker.h"
 #include "BKE_texture.h"
 #include "BKE_volume.hh"
@@ -654,7 +656,8 @@ bool ED_object_parent_set(ReportList *reports,
                 ((CurveModifierData *)md)->object = par;
               }
               if (par->runtime->curve_cache &&
-                  par->runtime->curve_cache->anim_path_accum_length == nullptr) {
+                  par->runtime->curve_cache->anim_path_accum_length == nullptr)
+              {
                 DEG_id_tag_update(&par->id, ID_RECALC_GEOMETRY);
               }
             }
@@ -1201,7 +1204,8 @@ static int object_track_clear_exec(bContext *C, wmOperator *op)
       if (ELEM(con->type,
                CONSTRAINT_TYPE_TRACKTO,
                CONSTRAINT_TYPE_LOCKTRACK,
-               CONSTRAINT_TYPE_DAMPTRACK)) {
+               CONSTRAINT_TYPE_DAMPTRACK))
+      {
         BKE_constraint_remove(&ob->constraints, con);
       }
     }
@@ -1558,7 +1562,8 @@ static int make_links_data_exec(bContext *C, wmOperator *op)
 
             /* now add in the collections from the link nodes */
             for (collection_node = ob_collections; collection_node;
-                 collection_node = collection_node->next) {
+                 collection_node = collection_node->next)
+            {
               if (ob_dst->instance_collection != collection_node->link) {
                 BKE_collection_object_add(
                     bmain, static_cast<Collection *>(collection_node->link), ob_dst);
@@ -1811,7 +1816,7 @@ static Collection *single_object_users_collection(Main *bmain,
        * state currently. With current code, that would lead to a memory leak - because of
        * reasons. It would be a useless loss of computing anyway, since caller has to fully
        * refresh view-layers/collections caching at the end. */
-      BKE_collection_child_add_no_sync(collection, collection_child_new);
+      BKE_collection_child_add_no_sync(bmain, collection, collection_child_new);
       BLI_remlink(&collection->children, child);
       MEM_freeN(child);
       if (child == orig_child_last) {
@@ -2175,7 +2180,8 @@ static bool make_local_all__instance_indirect_unused(Main *bmain,
   bool changed = false;
 
   for (ob = static_cast<Object *>(bmain->objects.first); ob;
-       ob = static_cast<Object *>(ob->id.next)) {
+       ob = static_cast<Object *>(ob->id.next))
+  {
     if (ID_IS_LINKED(ob) && (ob->id.us == 0)) {
       Base *base;
 
@@ -2297,7 +2303,8 @@ static int make_local_exec(bContext *C, wmOperator *op)
       }
 
       if (ELEM(mode, MAKE_LOCAL_SELECT_OBDATA, MAKE_LOCAL_SELECT_OBDATA_MATERIAL) &&
-          ob->data != nullptr) {
+          ob->data != nullptr)
+      {
         ID *ob_data = static_cast<ID *>(ob->data);
         ob_data->tag &= ~LIB_TAG_PRE_EXISTING;
         make_local_animdata_tag(BKE_animdata_from_id(ob_data));
@@ -2398,8 +2405,8 @@ static int make_override_library_exec(bContext *C, wmOperator *op)
   }
   else if (!make_override_library_object_overridable_check(bmain, obact)) {
     const int i = RNA_property_int_get(op->ptr, op->type->prop);
-    const uint collection_session_uuid = *((const uint *)&i);
-    if (collection_session_uuid == MAIN_ID_SESSION_UUID_UNSET) {
+    const uint collection_session_uid = *((const uint *)&i);
+    if (collection_session_uid == MAIN_ID_SESSION_UID_UNSET) {
       BKE_reportf(op->reports,
                   RPT_ERROR_INVALID_INPUT,
                   "Could not find an overridable root hierarchy for object '%s'",
@@ -2408,9 +2415,9 @@ static int make_override_library_exec(bContext *C, wmOperator *op)
     }
     Collection *collection = static_cast<Collection *>(
         BLI_listbase_bytes_find(&bmain->collections,
-                                &collection_session_uuid,
-                                sizeof(collection_session_uuid),
-                                offsetof(ID, session_uuid)));
+                                &collection_session_uid,
+                                sizeof(collection_session_uid),
+                                offsetof(ID, session_uid)));
     id_root = &collection->id;
     user_overrides_from_selected_objects = true;
   }
@@ -2455,7 +2462,7 @@ static int make_override_library_exec(bContext *C, wmOperator *op)
   else if (user_overrides_from_selected_objects) {
     /* Only selected objects can be 'user overrides'. */
     FOREACH_SELECTED_OBJECT_BEGIN (view_layer, CTX_wm_view3d(C), ob_iter) {
-      BLI_gset_add(user_overrides_objects_uids, POINTER_FROM_UINT(ob_iter->id.session_uuid));
+      BLI_gset_add(user_overrides_objects_uids, POINTER_FROM_UINT(ob_iter->id.session_uid));
     }
     FOREACH_SELECTED_OBJECT_END;
   }
@@ -2463,7 +2470,7 @@ static int make_override_library_exec(bContext *C, wmOperator *op)
     /* Only armatures inside the root collection (and their children) can be 'user overrides'. */
     FOREACH_COLLECTION_OBJECT_RECURSIVE_BEGIN ((Collection *)id_root, ob_iter) {
       if (ob_iter->type == OB_ARMATURE) {
-        BLI_gset_add(user_overrides_objects_uids, POINTER_FROM_UINT(ob_iter->id.session_uuid));
+        BLI_gset_add(user_overrides_objects_uids, POINTER_FROM_UINT(ob_iter->id.session_uid));
       }
     }
     FOREACH_COLLECTION_OBJECT_RECURSIVE_END;
@@ -2481,7 +2488,7 @@ static int make_override_library_exec(bContext *C, wmOperator *op)
       }
       LISTBASE_FOREACH (CollectionObject *, coll_ob_iter, &coll_iter->gobject) {
         if (BLI_gset_haskey(user_overrides_objects_uids,
-                            POINTER_FROM_UINT(coll_ob_iter->ob->id.session_uuid)))
+                            POINTER_FROM_UINT(coll_ob_iter->ob->id.session_uid)))
         {
           /* Tag for remapping when creating overrides. */
           coll_iter->id.tag |= LIB_TAG_DOIT;
@@ -2513,7 +2520,7 @@ static int make_override_library_exec(bContext *C, wmOperator *op)
         continue;
       }
       if (BLI_gset_haskey(user_overrides_objects_uids,
-                          POINTER_FROM_UINT(id_iter->override_library->reference->session_uuid)))
+                          POINTER_FROM_UINT(id_iter->override_library->reference->session_uid)))
       {
         id_iter->override_library->flag &= ~LIBOVERRIDE_FLAG_SYSTEM_DEFINED;
       }
@@ -2535,7 +2542,8 @@ static int make_override_library_exec(bContext *C, wmOperator *op)
         case ID_GR: {
           Collection *collection_root = (Collection *)id_root;
           LISTBASE_FOREACH_MUTABLE (
-              CollectionParent *, collection_parent, &collection_root->runtime.parents) {
+              CollectionParent *, collection_parent, &collection_root->runtime.parents)
+          {
             if (ID_IS_LINKED(collection_parent->collection) ||
                 !BKE_view_layer_has_collection(view_layer, collection_parent->collection))
             {
@@ -2640,12 +2648,12 @@ static int make_override_library_invoke(bContext *C, wmOperator *op, const wmEve
   }
 
   if (potential_root_collections.is_empty()) {
-    RNA_property_int_set(op->ptr, op->type->prop, MAIN_ID_SESSION_UUID_UNSET);
+    RNA_property_int_set(op->ptr, op->type->prop, MAIN_ID_SESSION_UID_UNSET);
     return make_override_library_exec(C, op);
   }
   if (potential_root_collections.size() == 1) {
     Collection *collection_root = potential_root_collections.pop();
-    RNA_property_int_set(op->ptr, op->type->prop, *((int *)&collection_root->id.session_uuid));
+    RNA_property_int_set(op->ptr, op->type->prop, *((int *)&collection_root->id.session_uid));
     return make_override_library_exec(C, op);
   }
 
@@ -2690,11 +2698,11 @@ void OBJECT_OT_make_override_library(wmOperatorType *ot)
   PropertyRNA *prop;
   prop = RNA_def_int(ot->srna,
                      "collection",
-                     MAIN_ID_SESSION_UUID_UNSET,
+                     MAIN_ID_SESSION_UID_UNSET,
                      INT_MIN,
                      INT_MAX,
                      "Override Collection",
-                     "Session UUID of the directly linked collection containing the selected "
+                     "Session UID of the directly linked collection containing the selected "
                      "object, to make an override from",
                      INT_MIN,
                      INT_MAX);
@@ -2940,27 +2948,27 @@ void OBJECT_OT_make_single_user(wmOperatorType *ot)
 /** \name Drop Named Material on Object Operator
  * \{ */
 
-char *ED_object_ot_drop_named_material_tooltip(bContext *C, const char *name, const int mval[2])
+std::string ED_object_ot_drop_named_material_tooltip(bContext *C,
+                                                     const char *name,
+                                                     const int mval[2])
 {
   int mat_slot = 0;
   Object *ob = ED_view3d_give_material_slot_under_cursor(C, mval, &mat_slot);
   if (ob == nullptr) {
-    return BLI_strdup("");
+    return {};
   }
   mat_slot = max_ii(mat_slot, 1);
 
   Material *prev_mat = BKE_object_material_get(ob, mat_slot);
 
-  char *result;
   if (prev_mat) {
-    const char *tooltip = TIP_("Drop %s on %s (slot %d, replacing %s)");
-    result = BLI_sprintfN(tooltip, name, ob->id.name + 2, mat_slot, prev_mat->id.name + 2);
+    return fmt::format(TIP_("Drop {} on {} (slot {}, replacing {})"),
+                       name,
+                       ob->id.name + 2,
+                       mat_slot,
+                       prev_mat->id.name + 2);
   }
-  else {
-    const char *tooltip = TIP_("Drop %s on %s (slot %d)");
-    result = BLI_sprintfN(tooltip, name, ob->id.name + 2, mat_slot);
-  }
-  return result;
+  return fmt::format(TIP_("Drop {} on {} (slot {})"), name, ob->id.name + 2, mat_slot);
 }
 
 static int drop_named_material_invoke(bContext *C, wmOperator *op, const wmEvent *event)
@@ -2970,7 +2978,7 @@ static int drop_named_material_invoke(bContext *C, wmOperator *op, const wmEvent
   Object *ob = ED_view3d_give_material_slot_under_cursor(C, event->mval, &mat_slot);
   mat_slot = max_ii(mat_slot, 1);
 
-  Material *ma = (Material *)WM_operator_properties_id_lookup_from_name_or_session_uuid(
+  Material *ma = (Material *)WM_operator_properties_id_lookup_from_name_or_session_uid(
       bmain, op->ptr, ID_MA);
 
   if (ob == nullptr || ma == nullptr) {
@@ -3011,23 +3019,23 @@ void OBJECT_OT_drop_named_material(wmOperatorType *ot)
 /** \name Drop Geometry Nodes on Object Operator
  * \{ */
 
-char *ED_object_ot_drop_geometry_nodes_tooltip(bContext *C,
-                                               PointerRNA *properties,
-                                               const int mval[2])
+std::string ED_object_ot_drop_geometry_nodes_tooltip(bContext *C,
+                                                     PointerRNA *properties,
+                                                     const int mval[2])
 {
   const Object *ob = ED_view3d_give_object_under_cursor(C, mval);
   if (ob == nullptr) {
-    return BLI_strdup("");
+    return {};
   }
 
-  const uint32_t session_uuid = RNA_int_get(properties, "session_uuid");
-  const ID *id = BKE_libblock_find_session_uuid(CTX_data_main(C), ID_NT, session_uuid);
+  const uint32_t session_uid = RNA_int_get(properties, "session_uid");
+  const ID *id = BKE_libblock_find_session_uid(CTX_data_main(C), ID_NT, session_uid);
   if (!id) {
-    return BLI_strdup("");
+    return {};
   }
 
-  const char *tooltip = TIP_("Add modifier with node group \"%s\" on object \"%s\"");
-  return BLI_sprintfN(tooltip, id->name, ob->id.name);
+  return fmt::format(
+      TIP_("Add modifier with node group \"{}\" on object \"{}\""), id->name, ob->id.name);
 }
 
 static bool check_geometry_node_group_sockets(wmOperator *op, const bNodeTree *tree)
@@ -3059,8 +3067,8 @@ static int drop_geometry_nodes_invoke(bContext *C, wmOperator *op, const wmEvent
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
 
-  const uint32_t uuid = RNA_int_get(op->ptr, "session_uuid");
-  bNodeTree *node_tree = (bNodeTree *)BKE_libblock_find_session_uuid(bmain, ID_NT, uuid);
+  const uint32_t uid = RNA_int_get(op->ptr, "session_uid");
+  bNodeTree *node_tree = (bNodeTree *)BKE_libblock_find_session_uid(bmain, ID_NT, uid);
   if (!node_tree) {
     return OPERATOR_CANCELLED;
   }
@@ -3105,12 +3113,12 @@ void OBJECT_OT_drop_geometry_nodes(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
 
   PropertyRNA *prop = RNA_def_int(ot->srna,
-                                  "session_uuid",
+                                  "session_uid",
                                   0,
                                   INT32_MIN,
                                   INT32_MAX,
-                                  "Session UUID",
-                                  "Session UUID of the geometry node group being dropped",
+                                  "Session UID",
+                                  "Session UID of the geometry node group being dropped",
                                   INT32_MIN,
                                   INT32_MAX);
   RNA_def_property_flag(prop, (PropertyFlag)(PROP_HIDDEN | PROP_SKIP_SAVE));

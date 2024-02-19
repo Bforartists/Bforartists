@@ -9,7 +9,6 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_modifier_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
@@ -26,14 +25,14 @@
 #include "BKE_editmesh.hh"
 #include "BKE_geometry_set.hh"
 #include "BKE_grease_pencil.hh"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.hh"
 #include "BKE_multires.hh"
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "DEG_depsgraph_query.hh"
 
@@ -192,7 +191,7 @@ void BKE_crazyspace_set_quats_mesh(Mesh *mesh,
 {
   using namespace blender;
   using namespace blender::bke;
-  BitVector<> vert_tag(mesh->totvert);
+  BitVector<> vert_tag(mesh->verts_num);
 
   /* first store two sets of tangent vectors in vertices, we derive it just from the face-edges */
   const Span<float3> positions = mesh->vert_positions();
@@ -377,7 +376,7 @@ int BKE_sculpt_get_first_deform_matrices(Depsgraph *depsgraph,
         Mesh *mesh = static_cast<Mesh *>(object_eval.data);
         me_eval = BKE_mesh_copy_for_eval(mesh);
         deformcos = mesh->vert_positions();
-        deformmats.reinitialize(mesh->totvert);
+        deformmats.reinitialize(mesh->verts_num);
         deformmats.fill(blender::float3x3::identity());
       }
 
@@ -428,7 +427,7 @@ void BKE_crazyspace_build_sculpt(Depsgraph *depsgraph,
 
     if (deformcos.is_empty()) {
       deformcos = mesh->vert_positions();
-      deformmats.reinitialize(mesh->totvert);
+      deformmats.reinitialize(mesh->verts_num);
       deformmats.fill(blender::float3x3::identity());
     }
 
@@ -466,11 +465,11 @@ void BKE_crazyspace_build_sculpt(Depsgraph *depsgraph,
       }
     }
 
-    quats = static_cast<float(*)[4]>(MEM_mallocN(mesh->totvert * sizeof(*quats), "crazy quats"));
+    quats = static_cast<float(*)[4]>(MEM_mallocN(mesh->verts_num * sizeof(*quats), "crazy quats"));
 
     BKE_crazyspace_set_quats_mesh(mesh, origVerts, deformedVerts, quats);
 
-    for (i = 0; i < mesh->totvert; i++) {
+    for (i = 0; i < mesh->verts_num; i++) {
       float qmat[3][3], tmat[3][3];
 
       quat_to_mat3(qmat, quats[i]);
@@ -489,7 +488,7 @@ void BKE_crazyspace_build_sculpt(Depsgraph *depsgraph,
     Mesh *mesh = (Mesh *)object->data;
 
     deformcos = mesh->vert_positions();
-    deformmats.reinitialize(mesh->totvert);
+    deformmats.reinitialize(mesh->verts_num);
     deformmats.fill(blender::float3x3::identity());
   }
 }
@@ -693,7 +692,7 @@ GeometryDeformation get_evaluated_grease_pencil_drawing_deformation(const Object
   {
     if (const GreasePencil *grease_pencil_eval = grease_pencil_component_eval->get()) {
       Span<const bke::greasepencil::Layer *> layers_eval = grease_pencil_eval->layers();
-      if (layers_eval.size() != layers_orig.size()) {
+      if (layers_eval.size() == layers_orig.size()) {
         const bke::greasepencil::Layer *layer_eval = layers_eval[layer_index];
         const int drawing_index_eval = layer_eval->drawing_index_at(frame);
         if (drawing_index_eval != -1) {

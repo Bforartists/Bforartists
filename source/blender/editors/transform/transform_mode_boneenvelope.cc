@@ -18,7 +18,7 @@
 
 #include "UI_interface.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "transform.hh"
 #include "transform_convert.hh"
@@ -49,10 +49,10 @@ static void applyBoneEnvelope(TransInfo *t)
     char c[NUM_STR_REP_LEN];
 
     outputNumInput(&(t->num), c, &t->scene->unit);
-    SNPRINTF(str, TIP_("Envelope: %s"), c);
+    SNPRINTF(str, IFACE_("Envelope: %s"), c);
   }
   else {
-    SNPRINTF(str, TIP_("Envelope: %3f"), ratio);
+    SNPRINTF(str, IFACE_("Envelope: %3f"), ratio);
   }
 
   FOREACH_TRANS_DATA_CONTAINER (t, tc) {

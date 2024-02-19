@@ -44,7 +44,7 @@ class GRAPH_HT_header(Header):
 
         st = context.space_data
 
-        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+        ALL_MT_editormenu_graph.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         # Now a exposed as a sub-space type
         # layout.prop(st, "mode", text="")
@@ -125,10 +125,10 @@ class GRAPH_HT_header(Header):
         row = layout.row()
         row.popover(panel="GRAPH_PT_properties_view_options", text="Options")
 
-# bfa - show hide the editormenu
+# bfa - show hide the editormenu, editor suffix is needed.
 
 
-class ALL_MT_editormenu(Menu):
+class ALL_MT_editormenu_graph(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -164,12 +164,19 @@ class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
 
     def draw(self, context):
         layout = self.layout
+        st = context.space_data
 
         DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
         layout.separator()
         DopesheetFilterPopoverBase.draw_search_filters(context, layout)
         layout.separator()
         DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
+
+        if st.mode == 'DRIVERS':
+            layout.separator()
+            col = layout.column(align=True)
+            col.label(text="Drivers:")
+            col.prop(st.dopesheet, "show_driver_fallback_as_error")
 
 
 class GRAPH_PT_properties_view_options(Panel):
@@ -196,6 +203,7 @@ class GRAPH_PT_properties_view_options(Panel):
             layout.operator("anim.show_group_colors_deprecated", icon='CHECKBOX_HLT')
         col.prop(st, "use_auto_merge_keyframes")
         col.prop(st, "use_beauty_drawing")
+        layout.prop(st, "autolock_translation_axis")
 
         col = layout.column(align=True)
         col.prop(st, "show_extrapolation")
@@ -251,7 +259,7 @@ class GRAPH_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-
+        layout.prop(st, "show_region_channels")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
@@ -528,6 +536,7 @@ class GRAPH_MT_key_blending(Menu):
         layout.operator("graph.push_pull", text="Push Pull", icon='PUSH_PULL')
         layout.operator("graph.shear", text="Shear Keys", icon='SHEAR')
         layout.operator("graph.scale_average", text="Scale Average", icon='SCALE_AVERAGE')
+        layout.operator("graph.scale_from_neighbor", text="Scale from Neighbor", icon='MAN_SCALE')
         layout.operator("graph.time_offset", text="Time Offset", icon='MOD_TIME')
 
 
@@ -725,7 +734,7 @@ class GRAPH_MT_snap_pie(Menu):
 classes = (
     ANIM_OT_switch_editor_in_graph,
     ANIM_OT_switch_editor_in_driver,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_graph,
     GRAPH_HT_header,
     GRAPH_PT_properties_view_options,
     GRAPH_PT_proportional_edit,

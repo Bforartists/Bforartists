@@ -164,6 +164,18 @@ class OIDNDenoiseContext {
     oidn_filter.setProgressMonitorFunction(oidn_progress_monitor_function, denoiser_);
     oidn_filter.set("hdr", true);
     oidn_filter.set("srgb", false);
+
+#  if OIDN_VERSION_MAJOR >= 2
+    switch (denoise_params_.quality) {
+      case DENOISER_QUALITY_BALANCED:
+        oidn_filter.set("quality", OIDN_QUALITY_BALANCED);
+        break;
+      case DENOISER_QUALITY_HIGH:
+      default:
+        oidn_filter.set("quality", OIDN_QUALITY_HIGH);
+    }
+#  endif
+
     if (denoise_params_.prefilter == DENOISER_PREFILTER_NONE ||
         denoise_params_.prefilter == DENOISER_PREFILTER_ACCURATE)
     {
@@ -215,7 +227,8 @@ class OIDNDenoiseContext {
     DCHECK(!oidn_pass.use_compositing);
 
     if (denoise_params_.prefilter != DENOISER_PREFILTER_ACCURATE &&
-        !is_pass_scale_needed(oidn_pass)) {
+        !is_pass_scale_needed(oidn_pass))
+    {
       /* Pass data is available as-is from the render buffers. */
       return;
     }

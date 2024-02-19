@@ -32,14 +32,14 @@
 #include "BKE_anim_data.h"
 #include "BKE_context.hh"
 #include "BKE_fcurve.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_grease_pencil.hh"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_mask.h"
 #include "BKE_nla.h"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_workspace.h"
 
@@ -3508,7 +3508,8 @@ static int click_select_channel_group(bAnimContext *ac,
 
     /* only select channels in group and group itself */
     for (fcu = static_cast<FCurve *>(agrp->channels.first); fcu && fcu->grp == agrp;
-         fcu = fcu->next) {
+         fcu = fcu->next)
+    {
       fcu->flag |= FCURVE_SELECTED;
     }
     agrp->flag |= AGRP_SELECTED;
@@ -4312,7 +4313,7 @@ static void ANIM_OT_channel_view_pick(wmOperatorType *ot)
 }
 
 static const EnumPropertyItem channel_bake_key_options[] = {
-    {BEZT_IPO_BEZ, "BEZIER", 0, "Bezier", "New keys will be beziers"},
+    {BEZT_IPO_BEZ, "BEZIER", 0, "Bézier", "New keys will be Bézier"},
     {BEZT_IPO_LIN, "LIN", 0, "Linear", "New keys will be linear"},
     {BEZT_IPO_CONST, "CONST", 0, "Constant", "New keys will be constant"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -4533,7 +4534,7 @@ static rctf calculate_selection_fcurve_bounds_and_unhide(
     bContext *C,
     ListBase /* CollectionPointerLink */ *selection,
     PropertyRNA *prop,
-    char *id_to_prop_path,
+    const blender::StringRefNull id_to_prop_path,
     const int index,
     const bool whole_array)
 {
@@ -4560,9 +4561,9 @@ static rctf calculate_selection_fcurve_bounds_and_unhide(
     }
     PointerRNA resolved_ptr;
     PropertyRNA *resolved_prop;
-    if (id_to_prop_path != nullptr) {
+    if (!id_to_prop_path.is_empty()) {
       const bool resolved = RNA_path_resolve_property(
-          &selected->ptr, id_to_prop_path, &resolved_ptr, &resolved_prop);
+          &selected->ptr, id_to_prop_path.c_str(), &resolved_ptr, &resolved_prop);
       if (!resolved) {
         continue;
       }
@@ -4571,7 +4572,8 @@ static rctf calculate_selection_fcurve_bounds_and_unhide(
       resolved_ptr = selected->ptr;
       resolved_prop = prop;
     }
-    char *path = RNA_path_from_ID_to_property(&resolved_ptr, resolved_prop);
+    const std::optional<std::string> path = RNA_path_from_ID_to_property(&resolved_ptr,
+                                                                         resolved_prop);
 
     AnimData *anim_data = BKE_animdata_from_id(selected_id);
     blender::Vector<FCurve *> fcurves;
@@ -4579,7 +4581,7 @@ static rctf calculate_selection_fcurve_bounds_and_unhide(
       const int length = RNA_property_array_length(&selected->ptr, prop);
       for (int i = 0; i < length; i++) {
         FCurve *fcurve = BKE_animadata_fcurve_find_by_rna_path(
-            anim_data, path, i, nullptr, nullptr);
+            anim_data, path->c_str(), i, nullptr, nullptr);
         if (fcurve != nullptr) {
           fcurves.append(fcurve);
         }
@@ -4587,13 +4589,11 @@ static rctf calculate_selection_fcurve_bounds_and_unhide(
     }
     else {
       FCurve *fcurve = BKE_animadata_fcurve_find_by_rna_path(
-          anim_data, path, index, nullptr, nullptr);
+          anim_data, path->c_str(), index, nullptr, nullptr);
       if (fcurve != nullptr) {
         fcurves.append(fcurve);
       }
     }
-
-    MEM_freeN(path);
 
     for (FCurve *fcurve : fcurves) {
       fcurve->flag |= (FCURVE_SELECTED | FCURVE_VISIBLE);
@@ -4633,7 +4633,7 @@ static int view_curve_in_graph_editor_exec(bContext *C, wmOperator *op)
   ListBase selection = {nullptr, nullptr};
 
   bool path_from_id;
-  char *id_to_prop_path;
+  std::optional<std::string> id_to_prop_path;
   const bool selected_list_success = UI_context_copy_to_selected_list(
       C, &ptr, prop, &selection, &path_from_id, &id_to_prop_path);
 
@@ -4663,13 +4663,9 @@ static int view_curve_in_graph_editor_exec(bContext *C, wmOperator *op)
   const bool whole_array = RNA_boolean_get(op->ptr, "all");
 
   rctf bounds = calculate_selection_fcurve_bounds_and_unhide(
-      C, &selection, prop, id_to_prop_path, index, whole_array);
+      C, &selection, prop, id_to_prop_path.value_or(""), index, whole_array);
 
   BLI_freelistN(&selection);
-
-  if (id_to_prop_path != nullptr) {
-    MEM_freeN(id_to_prop_path);
-  }
 
   if (!BLI_rctf_is_valid(&bounds)) {
     WM_report(RPT_ERROR, "F-Curves have no valid size");

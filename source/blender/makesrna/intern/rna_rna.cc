@@ -18,7 +18,7 @@
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
 
-#include "rna_internal.h"
+#include "rna_internal.hh"
 
 /* -------------------------------------------------------------------- */
 /** \name Generic Enum's
@@ -154,8 +154,13 @@ const EnumPropertyItem rna_enum_property_unit_items[] = {
 };
 
 const EnumPropertyItem rna_enum_property_flag_items[] = {
-    {PROP_HIDDEN, "HIDDEN", 0, "Hidden", ""},
-    {PROP_SKIP_SAVE, "SKIP_SAVE", 0, "Skip Save", ""},
+    {PROP_HIDDEN, "HIDDEN", 0, "Hidden", "Hidden in the user interface. Inherits 'SKIP_PRESET'"},
+    {PROP_SKIP_SAVE,
+     "SKIP_SAVE",
+     0,
+     "Skip Save",
+     "Do not use ghost values. Inherits 'SKIP_PRESET'"},
+    {PROP_SKIP_PRESET, "SKIP_PRESET", 0, "Skip Preset", "Do not write in presets"},
     {PROP_ANIMATABLE, "ANIMATABLE", 0, "Animatable", ""},
     {PROP_LIB_EXCEPTION, "LIBRARY_EDITABLE", 0, "Library Editable", ""},
     {PROP_PROPORTIONAL, "PROPORTIONAL", 0, "Adjust values proportionally to each other", ""},
@@ -311,7 +316,8 @@ static int rna_idproperty_known(CollectionPropertyIterator *iter, void *data)
     for (prop = static_cast<PropertyRNA *>(ptype->cont.properties.first); prop; prop = prop->next)
     {
       if ((prop->flag_internal & PROP_INTERN_BUILTIN) == 0 &&
-          STREQ(prop->identifier, idprop->name)) {
+          STREQ(prop->identifier, idprop->name))
+      {
         return 1;
       }
     }
@@ -731,6 +737,12 @@ static bool rna_Property_is_skip_save_get(PointerRNA *ptr)
 {
   PropertyRNA *prop = (PropertyRNA *)ptr->data;
   return (prop->flag & PROP_SKIP_SAVE) != 0;
+}
+
+static bool rna_Property_is_skip_preset_get(PointerRNA *ptr)
+{
+  PropertyRNA *prop = (PropertyRNA *)ptr->data;
+  return (prop->flag & (PROP_SKIP_SAVE | PROP_HIDDEN | PROP_SKIP_PRESET)) != 0;
 }
 
 static bool rna_Property_is_enum_flag_get(PointerRNA *ptr)
@@ -1551,11 +1563,13 @@ static void rna_property_override_diff_propptr(Main *bmain,
                         id_a->name);
             }
             else if (id_a->override_library != nullptr &&
-                     id_a->override_library->reference == id_b) {
+                     id_a->override_library->reference == id_b)
+            {
               opop->flag |= LIBOVERRIDE_OP_FLAG_IDPOINTER_MATCH_REFERENCE;
             }
             else if (id_b->override_library != nullptr &&
-                     id_b->override_library->reference == id_a) {
+                     id_b->override_library->reference == id_a)
+            {
               opop->flag |= LIBOVERRIDE_OP_FLAG_IDPOINTER_MATCH_REFERENCE;
             }
             else {
@@ -1579,7 +1593,8 @@ static void rna_property_override_diff_propptr(Main *bmain,
        * Note that we do not need the RNA path for insertion operations. */
       if (rna_path) {
         if ((rna_itemname_a && !rna_itemname_a->empty()) &&
-            (rna_itemname_b && !rna_itemname_b->empty())) {
+            (rna_itemname_b && !rna_itemname_b->empty()))
+        {
           BLI_assert(*rna_itemname_a == *rna_itemname_b);
 
           char esc_item_name[RNA_PATH_BUFFSIZE];
@@ -3145,7 +3160,12 @@ static void rna_def_property(BlenderRNA *brna)
   prop = RNA_def_property(srna, "is_skip_save", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_boolean_funcs(prop, "rna_Property_is_skip_save_get", nullptr);
-  RNA_def_property_ui_text(prop, "Skip Save", "True when the property is not saved in presets");
+  RNA_def_property_ui_text(prop, "Skip Save", "True when the property uses ghost values");
+
+  prop = RNA_def_property(srna, "is_skip_preset", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_boolean_funcs(prop, "rna_Property_is_skip_preset_get", nullptr);
+  RNA_def_property_ui_text(prop, "Skip Preset", "True when the property is not saved in presets");
 
   prop = RNA_def_property(srna, "is_output", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);

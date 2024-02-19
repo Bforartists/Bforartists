@@ -14,7 +14,7 @@
 #include "BLI_math_matrix.h"
 #include "BLI_math_vector.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_defaults.h"
 #include "DNA_gpencil_legacy_types.h"
@@ -26,16 +26,16 @@
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 
-#include "BKE_colorband.h"
-#include "BKE_colortools.h"
+#include "BKE_colorband.hh"
+#include "BKE_colortools.hh"
 #include "BKE_context.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_gpencil_modifier_legacy.h"
-#include "BKE_lib_query.h"
+#include "BKE_lib_query.hh"
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_modifier.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 
 #include "MEM_guardedalloc.h"
@@ -173,7 +173,8 @@ static void deform_stroke(GpencilModifierData *md,
 
         /* If not using Vertex Color, use the material color. */
         if ((gp_style != nullptr) && (gps->vert_color_fill[3] == 0.0f) &&
-            (gp_style->fill_rgba[3] > 0.0f)) {
+            (gp_style->fill_rgba[3] > 0.0f))
+        {
           copy_v4_v4(gps->vert_color_fill, gp_style->fill_rgba);
           gps->vert_color_fill[3] = 1.0f;
         }
@@ -223,7 +224,8 @@ static void deform_stroke(GpencilModifierData *md,
 
       /* If not using Vertex Color, use the material color. */
       if ((gp_style != nullptr) && (pt->vert_color[3] == 0.0f) &&
-          (gp_style->stroke_rgba[3] > 0.0f)) {
+          (gp_style->stroke_rgba[3] > 0.0f))
+      {
         copy_v4_v4(pt->vert_color, gp_style->stroke_rgba);
         pt->vert_color[3] = 1.0f;
       }

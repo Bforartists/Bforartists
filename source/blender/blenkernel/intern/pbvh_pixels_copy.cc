@@ -10,8 +10,8 @@
 #include "BLI_task.hh"
 #include "BLI_vector.hh"
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "BKE_image_wrappers.hh"
 #include "BKE_pbvh_api.hh"
@@ -95,8 +95,7 @@ static const Edge<CoordSpace::Tile> convert_coord_space(const Edge<CoordSpace::U
   };
 }
 
-class NonManifoldTileEdges : public Vector<Edge<CoordSpace::Tile>> {
-};
+class NonManifoldTileEdges : public Vector<Edge<CoordSpace::Tile>> {};
 
 class NonManifoldUVEdges : public Vector<Edge<CoordSpace::UV>> {
  public:
@@ -104,17 +103,17 @@ class NonManifoldUVEdges : public Vector<Edge<CoordSpace::UV>> {
   {
     int num_non_manifold_edges = count_non_manifold_edges(mesh_data);
     reserve(num_non_manifold_edges);
-    for (const int primitive_id : mesh_data.looptris.index_range()) {
+    for (const int primitive_id : mesh_data.corner_tris.index_range()) {
       for (const int edge_id : mesh_data.primitive_to_edge_map[primitive_id]) {
         if (is_manifold(mesh_data, edge_id)) {
           continue;
         }
-        const MLoopTri &lt = mesh_data.looptris[primitive_id];
+        const int3 &tri = mesh_data.corner_tris[primitive_id];
         const uv_islands::MeshEdge &mesh_edge = mesh_data.edges[edge_id];
         Edge<CoordSpace::UV> edge;
 
-        edge.vertex_1.coordinate = find_uv(mesh_data, lt, mesh_edge.vert1);
-        edge.vertex_2.coordinate = find_uv(mesh_data, lt, mesh_edge.vert2);
+        edge.vertex_1.coordinate = find_uv(mesh_data, tri, mesh_edge.vert1);
+        edge.vertex_2.coordinate = find_uv(mesh_data, tri, mesh_edge.vert2);
         append(edge);
       }
     }
@@ -138,7 +137,7 @@ class NonManifoldUVEdges : public Vector<Edge<CoordSpace::UV>> {
   static int64_t count_non_manifold_edges(const uv_islands::MeshData &mesh_data)
   {
     int64_t result = 0;
-    for (const int primitive_id : mesh_data.looptris.index_range()) {
+    for (const int primitive_id : mesh_data.corner_tris.index_range()) {
       for (const int edge_id : mesh_data.primitive_to_edge_map[primitive_id]) {
         if (is_manifold(mesh_data, edge_id)) {
           continue;
@@ -154,10 +153,10 @@ class NonManifoldUVEdges : public Vector<Edge<CoordSpace::UV>> {
     return mesh_data.edge_to_primitive_map[edge_id].size() == 2;
   }
 
-  static float2 find_uv(const uv_islands::MeshData &mesh_data, const MLoopTri &lt, int vertex_i)
+  static float2 find_uv(const uv_islands::MeshData &mesh_data, const int3 &tri, int vertex_i)
   {
     for (int i = 0; i < 3; i++) {
-      const int loop_i = lt.tri[i];
+      const int loop_i = tri[i];
       const int vert = mesh_data.corner_verts[loop_i];
       if (vert == vertex_i) {
         return mesh_data.uv_map[loop_i];

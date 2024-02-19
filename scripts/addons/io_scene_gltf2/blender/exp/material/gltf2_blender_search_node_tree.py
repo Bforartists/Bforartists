@@ -177,7 +177,7 @@ def get_socket_from_gltf_material_node(blender_material: bpy.types.Material, nam
     if blender_material.node_tree and blender_material.use_nodes:
         nodes = get_material_nodes(blender_material.node_tree, [blender_material], bpy.types.ShaderNodeGroup)
         # Some weird node groups with missing datablock can have no node_tree, so checking n.node_tree (See #1797)
-        nodes = [n for n in nodes if n[0].node_tree is not None and ( n[0].node_tree.name.lower().startswith(get_gltf_old_group_node_name()) or n[0].node_tree.name.lower() in gltf_node_group_names)]
+        nodes = [n for n in nodes if n[0].node_tree is not None and any([[n[0].node_tree.name.lower().startswith(g) for g in gltf_node_group_names]])]
         inputs = sum([[(input, node[1]) for input in node[0].inputs if input.name == name] for node in nodes], [])
         if inputs:
             return NodeSocket(inputs[0][0], inputs[0][1])
@@ -461,6 +461,12 @@ def get_vertex_color_info(color_socket, alpha_socket, export_settings):
                     attribute_color_type = "active"
                 elif use_vc is True and use_active is None and attribute_color is not None:
                     attribute_color_type = "name"
+            elif node.node.type in ["ATTRIBUTE", "VERTEX_COLOR"]:
+                use_vc, attribute_color, use_active = get_attribute_name(NodeSocket(node.node.outputs[0], node.group_path), export_settings)
+                if use_vc is True and use_active is True:
+                    attribute_color_type = "active"
+                elif use_vc is True and use_active is None and attribute_color is not None:
+                    attribute_color_type = "name"
 
     if alpha_socket is not None and alpha_socket.socket is not None:
         node = previous_node(alpha_socket)
@@ -473,6 +479,12 @@ def get_vertex_color_info(color_socket, alpha_socket, export_settings):
                     attribute_alpha_type = "active"
                 elif use_vc is True and use_active is None and attribute_alpha is not None:
                     attribute_alpha_type = "name"
+            elif node.node.type in ["ATTRIBUTE", "VERTEX_COLOR"]:
+                use_vc, attribute_color, use_active = get_attribute_name(NodeSocket(node.node.outputs[0], node.group_path), export_settings)
+                if use_vc is True and use_active is True:
+                    attribute_color_type = "active"
+                elif use_vc is True and use_active is None and attribute_color is not None:
+                    attribute_color_type = "name"
 
     return {"color": attribute_color, "alpha": attribute_alpha, "color_type": attribute_color_type, "alpha_type": attribute_alpha_type}
 

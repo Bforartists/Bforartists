@@ -12,8 +12,6 @@
 #include "BLI_rand.hh"
 #include "BLI_vector.hh"
 
-#include "PIL_time.h"
-
 #include "DEG_depsgraph.hh"
 
 #include "BKE_attribute_math.hh"
@@ -28,8 +26,6 @@
 #include "DNA_brush_enums.h"
 #include "DNA_brush_types.h"
 #include "DNA_curves_types.h"
-#include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
@@ -107,8 +103,7 @@ struct DeleteOperationExecutor {
 
     transforms_ = CurvesSurfaceTransforms(*object_, curves_id_->surface);
 
-    const eBrushFalloffShape falloff_shape = static_cast<eBrushFalloffShape>(
-        brush_->falloff_shape);
+    const eBrushFalloffShape falloff_shape = eBrushFalloffShape(brush_->falloff_shape);
 
     if (stroke_extension.is_first) {
       if (falloff_shape == PAINT_FALLOFF_SHAPE_SPHERE) {

@@ -5,7 +5,7 @@
 #include "DNA_volume_types.h"
 
 #include "BKE_geometry_set.hh"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_volume.hh"
 
 namespace blender::bke {
@@ -87,7 +87,9 @@ void VolumeComponent::ensure_owns_direct_data()
 {
   BLI_assert(this->is_mutable());
   if (ownership_ != GeometryOwnershipType::Owned) {
-    volume_ = BKE_volume_copy_for_eval(volume_);
+    if (volume_) {
+      volume_ = BKE_volume_copy_for_eval(volume_);
+    }
     ownership_ = GeometryOwnershipType::Owned;
   }
 }

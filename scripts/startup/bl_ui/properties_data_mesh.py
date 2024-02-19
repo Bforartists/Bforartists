@@ -8,7 +8,7 @@ from rna_prop_ui import PropertyPanel
 
 from bpy.app.translations import (
     pgettext_iface as iface_,
-    pgettext_tip as tip_,
+    pgettext_tip as rpt_,
 )
 
 
@@ -69,6 +69,9 @@ class MESH_MT_shape_key_context_menu(Menu):
         props.all = True
         props.apply_mix = True
         layout.separator()
+        layout.operator("object.shape_key_lock", icon='LOCKED', text="Lock All").action = 'LOCK'
+        layout.operator("object.shape_key_lock", icon='UNLOCKED', text="Unlock All").action = 'UNLOCK'
+        layout.separator()
         layout.operator("object.shape_key_move", icon='TRIA_UP_BAR', text="Move to Top").type = 'TOP'
         layout.operator("object.shape_key_move", icon='TRIA_DOWN_BAR', text="Move to Bottom").type = 'BOTTOM'
 
@@ -125,6 +128,7 @@ class MESH_UL_shape_keys(UIList):
             else:
                 row.label(text="")
             row.prop(key_block, "mute", text="", emboss=False)
+            row.prop(key_block, "lock_shape", text="", emboss=False)
         elif self.layout_type == 'GRID':
             layout.alignment = 'CENTER'
             layout.label(text="", icon_value=icon)
@@ -236,7 +240,7 @@ class DATA_PT_vertex_groups(MeshButtonsPanel, Panel):
     def poll(cls, context):
         engine = context.engine
         obj = context.object
-        return (obj and obj.type in {'MESH', 'LATTICE'} and (engine in cls.COMPAT_ENGINES))
+        return (obj and obj.type in {'MESH', 'LATTICE', 'GREASEPENCIL'} and (engine in cls.COMPAT_ENGINES))
 
     def draw(self, context):
         layout = self.layout
@@ -383,8 +387,11 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
                 row = layout.column()
                 row.active = enable_edit_value
                 row.prop(key, "eval_time")
-
-        layout.prop(ob, "add_rest_position_attribute")
+        
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(ob, "add_rest_position_attribute")
+        row.prop_decorator(ob, "add_rest_position_attribute")
 
 
 class DATA_PT_uv_texture(MeshButtonsPanel, Panel):
@@ -518,6 +525,10 @@ class MESH_UL_attributes(UIList):
         for idx, item in enumerate(attributes):
             flags[idx] = 0 if item.is_internal else flags[idx]
 
+        # Reorder by name.
+        if self.use_filter_sort_alpha:
+            indices = bpy.types.UI_UL_list.sort_items_by_name(attributes, "name")
+
         return flags, indices
 
     def draw_item(self, _context, layout, _data, attribute, _icon, _active_data, _active_propname, _index):
@@ -600,7 +611,7 @@ def draw_attribute_warnings(context, layout):
     if not colliding_names:
         return
 
-    layout.label(text=tip_("Name collisions: ") + ", ".join(set(colliding_names)),
+    layout.label(text=rpt_("Name collisions: ") + ", ".join(set(colliding_names)),
                  icon='ERROR', translate=False)
 
 
@@ -631,6 +642,10 @@ class ColorAttributesListBase():
                 item.is_internal
             )
             flags[idx] = 0 if skip else flags[idx]
+
+        # Reorder by name.
+        if self.use_filter_sort_alpha:
+            indices = bpy.types.UI_UL_list.sort_items_by_name(attributes, "name")
 
         return flags, indices
 

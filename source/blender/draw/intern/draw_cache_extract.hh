@@ -14,11 +14,14 @@
 
 #include "draw_attributes.hh"
 
-struct DRWSubdivCache;
 struct GPUBatch;
 struct GPUIndexBuf;
-struct MeshRenderData;
 struct TaskGraph;
+
+namespace blender::draw {
+
+struct MeshRenderData;
+struct DRWSubdivCache;
 
 /* Vertex Group Selection and display options */
 struct DRW_MeshWeightState {
@@ -45,7 +48,7 @@ enum {
 };
 
 enum eMRIterType {
-  MR_ITER_LOOPTRI = 1 << 0,
+  MR_ITER_CORNER_TRI = 1 << 0,
   MR_ITER_POLY = 1 << 1,
   MR_ITER_LOOSE_EDGE = 1 << 2,
   MR_ITER_LOOSE_VERT = 1 << 3,
@@ -56,7 +59,7 @@ enum eMRDataType {
   MR_DATA_NONE = 0,
   MR_DATA_POLY_NOR = 1 << 1,
   MR_DATA_LOOP_NOR = 1 << 2,
-  MR_DATA_LOOPTRI = 1 << 3,
+  MR_DATA_CORNER_TRI = 1 << 3,
   MR_DATA_LOOSE_GEOM = 1 << 4,
   /** Force loop normals calculation. */
   MR_DATA_TAN_LOOP_NOR = 1 << 5,
@@ -114,7 +117,7 @@ struct MeshBufferList {
     /* no loose edges. */
     GPUIndexBuf *lines_paint_mask;
     GPUIndexBuf *lines_adjacency;
-    /* Uv overlays. (visibility can differ from 3D view) */
+    /** UV overlays. (visibility can differ from 3D view). */
     GPUIndexBuf *edituv_tris;
     GPUIndexBuf *edituv_lines;
     GPUIndexBuf *edituv_points;
@@ -206,16 +209,16 @@ BLI_STATIC_ASSERT(MBC_BATCH_LEN < 32, "Number of batches exceeded the limit of b
 
 struct MeshExtractLooseGeom {
   /** Indices of all vertices not used by edges in the #Mesh or #BMesh. */
-  blender::Array<int> verts;
+  Array<int> verts;
   /** Indices of all edges not used by faces in the #Mesh or #BMesh. */
-  blender::Array<int> edges;
+  Array<int> edges;
 };
 
 struct SortedFaceData {
   /** The first triangle index for each polygon, sorted into slices by material. */
-  blender::Array<int> tri_first_index;
+  Array<int> tri_first_index;
   /** The number of visible triangles assigned to each material. */
-  blender::Array<int> mat_tri_len;
+  Array<int> mat_tri_len;
   /* The total number of visible triangles (a sum of the values in #mat_tri_len). */
   int visible_tri_len;
 };
@@ -292,8 +295,6 @@ struct MeshBatchCache {
 #define MBC_EDITUV \
   (MBC_EDITUV_FACES_STRETCH_AREA | MBC_EDITUV_FACES_STRETCH_ANGLE | MBC_EDITUV_FACES | \
    MBC_EDITUV_EDGES | MBC_EDITUV_VERTS | MBC_EDITUV_FACEDOTS | MBC_WIRE_LOOPS_UVS)
-
-namespace blender::draw {
 
 void mesh_buffer_cache_create_requested(TaskGraph *task_graph,
                                         MeshBatchCache &cache,

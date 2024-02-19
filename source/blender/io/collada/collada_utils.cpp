@@ -37,17 +37,17 @@
 #include "BKE_constraint.h"
 #include "BKE_context.hh"
 #include "BKE_customdata.hh"
-#include "BKE_global.h"
-#include "BKE_key.h"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_global.hh"
+#include "BKE_key.hh"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_mesh_runtime.hh"
 #include "BKE_node.hh"
 #include "BKE_object.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "ANIM_bone_collections.hh"
 
@@ -226,10 +226,10 @@ static void bc_add_armature_collections(COLLADAFW::Node *node,
   for (const std::string &name : collection_names) {
     BoneCollection *bcoll = ANIM_armature_bonecoll_new(arm, name.c_str());
     if (visible_names_set.find(name) == visible_names_set.end()) {
-      ANIM_bonecoll_hide(bcoll);
+      ANIM_bonecoll_hide(arm, bcoll);
     }
     else {
-      ANIM_bonecoll_show(bcoll);
+      ANIM_bonecoll_show(arm, bcoll);
     }
   }
 
@@ -365,7 +365,7 @@ bool bc_is_root_bone(Bone *aBone, bool deform_bones_only)
 int bc_get_active_UVLayer(Object *ob)
 {
   Mesh *mesh = (Mesh *)ob->data;
-  return CustomData_get_active_layer_index(&mesh->loop_data, CD_PROP_FLOAT2);
+  return CustomData_get_active_layer_index(&mesh->corner_data, CD_PROP_FLOAT2);
 }
 
 std::string bc_url_encode(std::string data)
@@ -1066,9 +1066,10 @@ void bc_copy_m4d_v44(double (&r)[4][4], std::vector<std::vector<double>> &a)
  */
 static std::string bc_get_active_uvlayer_name(Mesh *mesh)
 {
-  int num_layers = CustomData_number_of_layers(&mesh->loop_data, CD_PROP_FLOAT2);
+  int num_layers = CustomData_number_of_layers(&mesh->corner_data, CD_PROP_FLOAT2);
   if (num_layers) {
-    const char *layer_name = bc_CustomData_get_active_layer_name(&mesh->loop_data, CD_PROP_FLOAT2);
+    const char *layer_name = bc_CustomData_get_active_layer_name(&mesh->corner_data,
+                                                                 CD_PROP_FLOAT2);
     if (layer_name) {
       return std::string(layer_name);
     }
@@ -1091,9 +1092,10 @@ static std::string bc_get_active_uvlayer_name(Object *ob)
  */
 static std::string bc_get_uvlayer_name(Mesh *mesh, int layer)
 {
-  int num_layers = CustomData_number_of_layers(&mesh->loop_data, CD_PROP_FLOAT2);
+  int num_layers = CustomData_number_of_layers(&mesh->corner_data, CD_PROP_FLOAT2);
   if (num_layers && layer < num_layers) {
-    const char *layer_name = bc_CustomData_get_layer_name(&mesh->loop_data, CD_PROP_FLOAT2, layer);
+    const char *layer_name = bc_CustomData_get_layer_name(
+        &mesh->corner_data, CD_PROP_FLOAT2, layer);
     if (layer_name) {
       return std::string(layer_name);
     }

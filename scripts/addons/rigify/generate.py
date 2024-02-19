@@ -17,7 +17,8 @@ from .utils.naming import (ORG_PREFIX, MCH_PREFIX, DEF_PREFIX, ROOT_NAME, make_o
 from .utils.widgets import WGT_PREFIX, WGT_GROUP_PREFIX
 from .utils.widgets_special import create_root_widget
 from .utils.mechanism import refresh_all_drivers
-from .utils.misc import select_object, ArmatureObject, verify_armature_obj, choose_next_uid
+from .utils.misc import select_object, ArmatureObject, verify_armature_obj, choose_next_uid, flatten_children,\
+    flatten_parents
 from .utils.collections import (ensure_collection, list_layer_collections,
                                 filter_layer_collections_by_object)
 from .utils.rig import get_rigify_type, get_rigify_target_rig,\
@@ -134,7 +135,7 @@ class Generator(base_generate.BaseGenerator):
 
     def __save_rig_data(self, obj: ArmatureObject, obj_found: bool):
         if obj_found:
-            self.saved_visible_layers = {coll.name: coll.is_visible for coll in obj.data.collections}
+            self.saved_visible_layers = {coll.name: coll.is_visible for coll in obj.data.collections_all}
 
             self.artifacts.generate_init_existing(obj)
 
@@ -216,14 +217,14 @@ class Generator(base_generate.BaseGenerator):
                         self.widget_mirror_mesh[mid_name] = widget.data
 
     def ensure_root_bone_collection(self):
-        collections = self.metarig.data.collections
+        collections = self.metarig.data.collections_all
 
         validate_collection_references(self.metarig)
 
         coll = collections.get(ROOT_COLLECTION)
 
         if not coll:
-            coll = collections.new(ROOT_COLLECTION)
+            coll = self.metarig.data.collections.new(ROOT_COLLECTION)
 
         if coll.rigify_ui_row <= 0:
             coll.rigify_ui_row = 2 + choose_next_uid(collections, 'rigify_ui_row', min_value=1)
@@ -240,7 +241,7 @@ class Generator(base_generate.BaseGenerator):
         bpy.ops.object.mode_set(mode='OBJECT')
 
         # Remove all bone collections from the target armature.
-        for coll in list(obj.data.collections):
+        for coll in list(obj.data.collections_all):
             obj.data.collections.remove(coll)
 
         # Select and duplicate metarig
@@ -355,7 +356,7 @@ class Generator(base_generate.BaseGenerator):
                 pb.lock_scale = (True, True, True)
 
     def ensure_bone_collection(self, name):
-        coll = self.obj.data.collections.get(name)
+        coll = self.obj.data.collections_all.get(name)
 
         if not coll:
             coll = self.obj.data.collections.new(name)
@@ -435,10 +436,16 @@ class Generator(base_generate.BaseGenerator):
                 bone.custom_shape = obj_table[wgt_name]
 
     def __compute_visible_layers(self):
+        has_ui_buttons = set().union(*[
+            {p.name for p in flatten_parents(coll)}
+            for coll in self.obj.data.collections_all
+            if coll.rigify_ui_row > 0
+        ])
+
         # Hide all layers without UI buttons
-        for coll in self.obj.data.collections:
+        for coll in self.obj.data.collections_all:
             user_visible = self.saved_visible_layers.get(coll.name, coll.is_visible)
-            coll.is_visible = user_visible and coll.rigify_ui_row > 0
+            coll.is_visible = user_visible and coll.name in has_ui_buttons
 
     def generate(self):
         context = self.context
@@ -709,7 +716,7 @@ def create_selection_sets(obj: ArmatureObject, _metarig: ArmatureObject):
 
     obj.selection_sets.clear()  # noqa
 
-    for coll in obj.data.collections:
+    for coll in obj.data.collections_all:
         if not coll.rigify_sel_set:
             continue
 
@@ -725,7 +732,7 @@ def apply_bone_colors(obj, metarig, priorities: Optional[dict[str, dict[str, flo
 
     collection_table: dict[str, tuple[int, 'RigifyColorSet']] = {
         coll.name: (i, color_map[coll.rigify_color_set_id])
-        for i, coll in enumerate(obj.data.collections)
+        for i, coll in enumerate(flatten_children(obj.data.collections))
         if coll.rigify_color_set_id in color_map
     }
 

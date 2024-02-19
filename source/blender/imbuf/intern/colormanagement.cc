@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2012 Blender Authors
+/* SPDX-FileCopyrightText: 2024 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -6,8 +6,8 @@
  * \ingroup imbuf
  */
 
-#include "IMB_colormanagement.h"
-#include "IMB_colormanagement_intern.h"
+#include "IMB_colormanagement.hh"
+#include "IMB_colormanagement_intern.hh"
 
 #include <cmath>
 #include <cstring>
@@ -16,14 +16,15 @@
 #include "DNA_image_types.h"
 #include "DNA_movieclip_types.h"
 #include "DNA_scene_types.h"
+#include "DNA_sequence_types.h"
 #include "DNA_space_types.h"
 
-#include "IMB_filetype.h"
-#include "IMB_filter.h"
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
-#include "IMB_metadata.h"
-#include "IMB_moviecache.h"
+#include "IMB_filetype.hh"
+#include "IMB_filter.hh"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
+#include "IMB_metadata.hh"
+#include "IMB_moviecache.hh"
 
 #include "MEM_guardedalloc.h"
 
@@ -35,8 +36,8 @@
 #include "BLI_task.hh"
 #include "BLI_threads.h"
 
-#include "BKE_appdir.h"
-#include "BKE_colortools.h"
+#include "BKE_appdir.hh"
+#include "BKE_colortools.hh"
 #include "BKE_context.hh"
 #include "BKE_image.h"
 #include "BKE_image_format.h"
@@ -652,7 +653,6 @@ static void colormanage_free_config()
 void colormanagement_init()
 {
   const char *ocio_env;
-  const char *configdir;
   char configfile[FILE_MAX];
   OCIO_ConstConfigRcPtr *config = nullptr;
 
@@ -668,10 +668,11 @@ void colormanagement_init()
   }
 
   if (config == nullptr) {
-    configdir = BKE_appdir_folder_id(BLENDER_DATAFILES, "colormanagement");
+    const std::optional<std::string> configdir = BKE_appdir_folder_id(BLENDER_DATAFILES,
+                                                                      "colormanagement");
 
-    if (configdir) {
-      BLI_path_join(configfile, sizeof(configfile), configdir, BCM_CONFIG_FILE);
+    if (configdir.has_value()) {
+      BLI_path_join(configfile, sizeof(configfile), configdir->c_str(), BCM_CONFIG_FILE);
 
       config = OCIO_configCreateFromFile(configfile);
     }
@@ -1572,7 +1573,8 @@ static void display_buffer_apply_get_linear_buffer(DisplayBufferThread *handle,
 
     /* first convert byte buffer to float, keep in image space */
     for (i = 0, fp = linear_buffer, cp = byte_buffer; i != i_last;
-         i++, fp += channels, cp += channels) {
+         i++, fp += channels, cp += channels)
+    {
       if (channels == 3) {
         rgb_uchar_to_float(fp, cp);
       }
@@ -2569,8 +2571,6 @@ ImBuf *IMB_colormanagement_imbuf_for_write(ImBuf *ibuf,
    * with color management conversions applied. This may be for either applying the
    * display transform for renders, or a user specified color space for the file. */
   const bool byte_output = BKE_image_format_is_byte(image_format);
-
-  BLI_assert(!(byte_output && linear_float_output));
 
   /* If we're saving from RGBA to RGB buffer then it's not so much useful to just ignore alpha --
    * it leads to bad artifacts especially when saving byte images.

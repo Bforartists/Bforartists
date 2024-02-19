@@ -165,25 +165,26 @@ def register():
     # register keyboard shortcuts
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
+    if kc is not None:
 
-    km = kc.keymaps.new(name="Frames")
-    kmi = km.keymap_items.new('screen.amth_keyframe_jump_inbetween', 'UP_ARROW', 'PRESS', shift=True, ctrl=True)
-    kmi.properties.backwards = False
-    KEYMAPS.append((km, kmi))
+        km = kc.keymaps.new(name="Frames")
+        kmi = km.keymap_items.new('screen.amth_keyframe_jump_inbetween', 'UP_ARROW', 'PRESS', shift=True, ctrl=True)
+        kmi.properties.backwards = False
+        KEYMAPS.append((km, kmi))
 
-    kmi = km.keymap_items.new('screen.amth_keyframe_jump_inbetween', 'DOWN_ARROW', 'PRESS', shift=True, ctrl=True)
-    kmi.properties.backwards = True
-    KEYMAPS.append((km, kmi))
+        kmi = km.keymap_items.new('screen.amth_keyframe_jump_inbetween', 'DOWN_ARROW', 'PRESS', shift=True, ctrl=True)
+        kmi.properties.backwards = True
+        KEYMAPS.append((km, kmi))
 
-    kmi = km.keymap_items.new(
-        "screen.amaranth_frame_jump", "UP_ARROW", "PRESS", shift=True)
-    kmi.properties.forward = True
-    KEYMAPS.append((km, kmi))
+        kmi = km.keymap_items.new(
+            "screen.amaranth_frame_jump", "UP_ARROW", "PRESS", shift=True)
+        kmi.properties.forward = True
+        KEYMAPS.append((km, kmi))
 
-    kmi = km.keymap_items.new(
-        "screen.amaranth_frame_jump", "DOWN_ARROW", "PRESS", shift=True)
-    kmi.properties.forward = False
-    KEYMAPS.append((km, kmi))
+        kmi = km.keymap_items.new(
+            "screen.amaranth_frame_jump", "DOWN_ARROW", "PRESS", shift=True)
+        kmi.properties.forward = False
+        KEYMAPS.append((km, kmi))
 
 
 def unregister():

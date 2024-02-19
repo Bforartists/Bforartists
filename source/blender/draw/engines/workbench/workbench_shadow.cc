@@ -16,7 +16,7 @@
  */
 
 #include "BKE_object.hh"
-#include "DRW_render.h"
+#include "DRW_render.hh"
 #include "GPU_compute.h"
 
 #include "workbench_private.hh"
@@ -341,7 +341,7 @@ void ShadowPass::init(const SceneState &scene_state, SceneResources &resources)
 
   float3 direction_ws = scene.display.light_direction;
   /* Turn the light in a way where it's more user friendly to control. */
-  SWAP(float, direction_ws.y, direction_ws.z);
+  std::swap(direction_ws.y, direction_ws.z);
   direction_ws *= float3(-1, 1, -1);
 
   float planes[6][4];
