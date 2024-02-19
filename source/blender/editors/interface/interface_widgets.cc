@@ -1873,7 +1873,7 @@ static void widget_draw_text(const uiFontStyle *fstyle,
     align = UI_STYLE_TEXT_LEFT;
   }
   else if (but->drawflag & UI_BUT_TEXT_RIGHT) {
-    align = UI_STYLE_TEXT_LEFT; /* bfa align text in splitted props left */
+    align = UI_STYLE_TEXT_LEFT; /* bfa align text in split props left */
   }
   else {
     align = UI_STYLE_TEXT_CENTER;
@@ -4846,6 +4846,8 @@ void ui_draw_but(const bContext *C, ARegion *region, uiStyle *style, uiBut *but,
       case UI_BTYPE_SEPR:
         break;
       case UI_BTYPE_SEPR_LINE:
+        /* Add horizontal padding between the line and menu sides. */
+        BLI_rcti_pad(rect, int(-7.0f * UI_SCALE_FAC), 0);
         ui_draw_separator(&tui->wcol_menu_item, but, rect);
         break;
       default: {
