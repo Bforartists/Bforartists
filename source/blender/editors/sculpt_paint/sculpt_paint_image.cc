@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /* Paint a color made from hash of node pointer. */
-//#define DEBUG_PIXEL_NODES
+// #define DEBUG_PIXEL_NODES
 
+#include "DNA_brush_types.h"
 #include "DNA_image_types.h"
 #include "DNA_object_types.h"
 
@@ -17,8 +18,8 @@
 #  include "BLI_hash.h"
 #endif
 
-#include "IMB_colormanagement.h"
-#include "IMB_imbuf.h"
+#include "IMB_colormanagement.hh"
+#include "IMB_imbuf.hh"
 
 #include "BKE_brush.hh"
 #include "BKE_image_wrappers.hh"
@@ -361,7 +362,8 @@ static void do_paint_pixels(TexturePaintingUserData *data, const int n)
 
   brush_color[3] = 1.0f;
 
-  auto_mask::NodeData automask_data = auto_mask::node_begin(*ob, ss->cache->automasking, *node);
+  auto_mask::NodeData automask_data = auto_mask::node_begin(
+      *ob, ss->cache->automasking.get(), *node);
 
   ImageUser image_user = *data->image_data.image_user;
   bool pixels_updated = false;

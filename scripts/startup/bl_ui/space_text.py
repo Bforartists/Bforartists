@@ -20,7 +20,7 @@ class TEXT_HT_header(Header):
         text = st.text
         is_syntax_highlight_supported = st.is_syntax_highlight_supported()
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu_text.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
         TEXT_MT_editor_menus.draw_collapsible(context, layout)
 
         row = layout.row(align=True)
@@ -92,8 +92,8 @@ class TEXT_HT_footer(Header):
                 )
 
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_text(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -468,7 +468,7 @@ class TEXT_MT_edit_delete(Menu):
 
 
 classes = (
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_text,
     TEXT_HT_header,
     TEXT_HT_footer,
     TEXT_MT_editor_menus,

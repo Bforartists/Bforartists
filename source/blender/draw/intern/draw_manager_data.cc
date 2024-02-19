@@ -12,9 +12,10 @@
 #include "draw_manager.h"
 #include "draw_pbvh.hh"
 
+#include "BKE_attribute.hh"
 #include "BKE_curve.hh"
 #include "BKE_duplilist.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_image.h"
 #include "BKE_mesh.hh"
 #include "BKE_object.hh"
@@ -44,7 +45,7 @@
 #endif
 
 #include "GPU_capabilities.h"
-#include "GPU_material.h"
+#include "GPU_material.hh"
 #include "GPU_uniform_buffer.h"
 
 #include "intern/gpu_codegen.h"
@@ -644,11 +645,16 @@ static void drw_call_calc_orco(const Object *ob, float (*r_orcofacs)[4])
     switch (GS(ob_data->name)) {
       case ID_VO: {
         const Volume &volume = *reinterpret_cast<const Volume *>(ob_data);
-        const blender::Bounds<blender::float3> bounds = *BKE_volume_min_max(&volume);
-        mid_v3_v3v3(static_buf.texspace_location, bounds.max, bounds.min);
-        sub_v3_v3v3(static_buf.texspace_size, bounds.max, bounds.min);
-        texspace_location = static_buf.texspace_location;
-        texspace_size = static_buf.texspace_size;
+        const std::optional<blender::Bounds<blender::float3>> bounds = BKE_volume_min_max(&volume);
+        if (bounds) {
+          texspace_location = static_buf.texspace_location;
+          texspace_size = static_buf.texspace_size;
+          mid_v3_v3v3(texspace_location, bounds->max, bounds->min);
+          sub_v3_v3v3(texspace_size, bounds->max, bounds->min);
+          texspace_size[0] = std::max(texspace_size[0], 0.001f);
+          texspace_size[1] = std::max(texspace_size[1], 0.001f);
+          texspace_size[2] = std::max(texspace_size[2], 0.001f);
+        }
         break;
       }
       case ID_ME:
@@ -709,7 +715,7 @@ static void drw_call_obinfos_init(DRWObjectInfos *ob_infos, const Object *ob)
   drw_call_calc_orco(ob, ob_infos->orcotexfac);
   /* Random float value. */
   uint random = (DST.dupli_source) ?
-                     DST.dupli_source->random_id :
+                    DST.dupli_source->random_id :
                      /* TODO(fclem): this is rather costly to do at runtime. Maybe we can
                       * put it in ob->runtime and make depsgraph ensure it is up to date. */
                      BLI_hash_int_2d(BLI_hash_string(ob->id.name + 2), 0);
@@ -1380,7 +1386,7 @@ static void drw_sculpt_generate_calls(DRWSculptCallbackData *scd)
     DRW_debug_modelmat(scd->ob->object_to_world);
     BKE_pbvh_draw_debug_cb(
         pbvh,
-        (void (*)(PBVHNode * n, void *d, const float min[3], const float max[3], PBVHNodeFlags f))
+        (void (*)(PBVHNode *n, void *d, const float min[3], const float max[3], PBVHNodeFlags f))
             DRW_sculpt_debug_cb,
         &debug_node_nr);
   }
@@ -1421,15 +1427,16 @@ void DRW_shgroup_call_sculpt(DRWShadingGroup *shgroup,
   if (use_color) {
     if (const char *name = mesh->active_color_attribute) {
       if (const std::optional<bke::AttributeMetaData> meta_data = attributes.lookup_meta_data(
-              name)) {
+              name))
+      {
         attrs.append(pbvh::GenericRequest{name, meta_data->data_type, meta_data->domain});
       }
     }
   }
 
   if (use_uv) {
-    if (const char *name = CustomData_get_active_layer_name(&mesh->loop_data, CD_PROP_FLOAT2)) {
-      attrs.append(pbvh::GenericRequest{name, CD_PROP_FLOAT2, ATTR_DOMAIN_CORNER});
+    if (const char *name = CustomData_get_active_layer_name(&mesh->corner_data, CD_PROP_FLOAT2)) {
+      attrs.append(pbvh::GenericRequest{name, CD_PROP_FLOAT2, bke::AttrDomain::Corner});
     }
   }
 
@@ -1443,6 +1450,7 @@ void DRW_shgroup_call_sculpt_with_materials(DRWShadingGroup **shgroups,
                                             int num_shgroups,
                                             const Object *ob)
 {
+  using namespace blender;
   using namespace blender::draw;
   DRW_Attributes draw_attrs;
   DRW_MeshCDMask cd_needed;
@@ -1470,10 +1478,10 @@ void DRW_shgroup_call_sculpt_with_materials(DRWShadingGroup **shgroups,
   /* UV maps are not in attribute requests. */
   for (uint i = 0; i < 32; i++) {
     if (cd_needed.uv & (1 << i)) {
-      int layer_i = CustomData_get_layer_index_n(&mesh->loop_data, CD_PROP_FLOAT2, i);
-      CustomDataLayer *layer = layer_i != -1 ? mesh->loop_data.layers + layer_i : nullptr;
+      int layer_i = CustomData_get_layer_index_n(&mesh->corner_data, CD_PROP_FLOAT2, i);
+      CustomDataLayer *layer = layer_i != -1 ? mesh->corner_data.layers + layer_i : nullptr;
       if (layer) {
-        attrs.append(pbvh::GenericRequest{layer->name, CD_PROP_FLOAT2, ATTR_DOMAIN_CORNER});
+        attrs.append(pbvh::GenericRequest{layer->name, CD_PROP_FLOAT2, bke::AttrDomain::Corner});
       }
     }
   }
@@ -1796,18 +1804,15 @@ void DRW_shgroup_add_material_resources(DRWShadingGroup *grp, GPUMaterial *mater
   /* Bind all textures needed by the material. */
   LISTBASE_FOREACH (GPUMaterialTexture *, tex, &textures) {
     if (tex->ima) {
-      /* Image */
-      GPUTexture *gputex;
+      const bool use_tile_mapping = tex->tiled_mapping_name[0];
       ImageUser *iuser = tex->iuser_available ? &tex->iuser : nullptr;
-      if (tex->tiled_mapping_name[0]) {
-        gputex = BKE_image_get_gpu_tiles(tex->ima, iuser, nullptr);
-        drw_shgroup_material_texture(grp, gputex, tex->sampler_name, tex->sampler_state);
-        gputex = BKE_image_get_gpu_tilemap(tex->ima, iuser, nullptr);
-        drw_shgroup_material_texture(grp, gputex, tex->tiled_mapping_name, tex->sampler_state);
-      }
-      else {
-        gputex = BKE_image_get_gpu_texture(tex->ima, iuser, nullptr);
-        drw_shgroup_material_texture(grp, gputex, tex->sampler_name, tex->sampler_state);
+      ImageGPUTextures gputex = BKE_image_get_gpu_material_texture(
+          tex->ima, iuser, use_tile_mapping);
+
+      drw_shgroup_material_texture(grp, gputex.texture, tex->sampler_name, tex->sampler_state);
+      if (gputex.tile_mapping) {
+        drw_shgroup_material_texture(
+            grp, gputex.tile_mapping, tex->tiled_mapping_name, tex->sampler_state);
       }
     }
     else if (tex->colorband) {

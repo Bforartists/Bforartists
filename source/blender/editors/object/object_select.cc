@@ -30,22 +30,22 @@
 #include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_action.h"
 #include "BKE_armature.hh"
-#include "BKE_collection.h"
+#include "BKE_collection.hh"
 #include "BKE_context.hh"
-#include "BKE_deform.h"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_deform.hh"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_object.hh"
 #include "BKE_paint.hh"
 #include "BKE_particle.h"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_workspace.h"
 
 #include "DEG_depsgraph.hh"
@@ -953,7 +953,8 @@ static bool select_grouped_color(bContext *C, Object *ob)
 
   CTX_DATA_BEGIN (C, Base *, base, selectable_bases) {
     if (((base->flag & BASE_SELECTED) == 0) &&
-        compare_v3v3(base->object->color, ob->color, 0.005f)) {
+        compare_v3v3(base->object->color, ob->color, 0.005f))
+    {
       ED_object_base_select(base, BA_SELECT);
       changed = true;
     }

@@ -15,14 +15,13 @@
 #include "BLI_math_vector.h"
 #include "BLI_utildefines.h"
 
-#include "BLI_string.h"
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_context.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_global.h"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_global.hh"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
@@ -30,7 +29,7 @@
 
 #include "WM_api.hh"
 #include "WM_message.hh"
-#include "WM_toolsystem.h"
+#include "WM_toolsystem.hh"
 #include "WM_types.hh"
 
 #include "UI_interface.hh"
@@ -569,7 +568,8 @@ static bool transform_poll_property(const bContext *C, wmOperator *op, const Pro
         /* Special case: show constraint axis if we don't have values,
          * needed for mirror operator. */
         if (STREQ(prop_id, "constraint_axis") &&
-            (RNA_struct_find_property(op->ptr, "value") == nullptr)) {
+            (RNA_struct_find_property(op->ptr, "value") == nullptr))
+        {
           return true;
         }
 

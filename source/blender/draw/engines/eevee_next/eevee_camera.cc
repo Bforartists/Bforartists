@@ -8,7 +8,7 @@
 
 #include <array>
 
-#include "DRW_render.h"
+#include "DRW_render.hh"
 
 #include "DNA_camera_types.h"
 #include "DNA_view3d_types.h"
@@ -110,7 +110,7 @@ void Camera::sync()
 
   if (inst_.is_baking()) {
     /* Any view so that shadows and light culling works during irradiance bake. */
-    draw::View &view = inst_.irradiance_cache.bake.view_z_;
+    draw::View &view = inst_.volume_probes.bake.view_z_;
     data.viewmat = view.viewmat();
     data.viewinv = view.viewinv();
     data.winmat = view.winmat();

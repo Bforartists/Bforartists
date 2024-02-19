@@ -15,7 +15,7 @@
 
 #include "CLG_log.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_ID.h"
 #include "DNA_collection_types.h"
@@ -25,15 +25,15 @@
 #include "BKE_main.hh"
 #include "BKE_node.h"
 
-#include "BKE_idtype.h"
+#include "BKE_idtype.hh"
 
 // static CLG_LogRef LOG = {"bke.idtype"};
 
 uint BKE_idtype_cache_key_hash(const void *key_v)
 {
   const IDCacheKey *key = static_cast<const IDCacheKey *>(key_v);
-  size_t hash = BLI_ghashutil_uinthash(key->id_session_uuid);
-  hash = BLI_ghashutil_combine_hash(hash, BLI_ghashutil_uinthash(uint(key->offset_in_ID)));
+  size_t hash = BLI_ghashutil_uinthash(key->id_session_uid);
+  hash = BLI_ghashutil_combine_hash(hash, BLI_ghashutil_uinthash(uint(key->identifier)));
   return uint(hash);
 }
 
@@ -41,8 +41,8 @@ bool BKE_idtype_cache_key_cmp(const void *key_a_v, const void *key_b_v)
 {
   const IDCacheKey *key_a = static_cast<const IDCacheKey *>(key_a_v);
   const IDCacheKey *key_b = static_cast<const IDCacheKey *>(key_b_v);
-  return (key_a->id_session_uuid != key_b->id_session_uuid) ||
-         (key_a->offset_in_ID != key_b->offset_in_ID);
+  return (key_a->id_session_uid != key_b->id_session_uid) ||
+         (key_a->identifier != key_b->identifier);
 }
 
 static IDTypeInfo *id_types[INDEX_ID_MAX] = {nullptr};
@@ -110,17 +110,20 @@ void BKE_idtype_init()
   id_type_init();
 }
 
-const IDTypeInfo *BKE_idtype_get_info_from_idcode(const short id_code)
+const IDTypeInfo *BKE_idtype_get_info_from_idtype_index(const int idtype_index)
 {
-  int id_index = BKE_idtype_idcode_to_index(id_code);
-
-  if (id_index >= 0 && id_index < ARRAY_SIZE(id_types) && id_types[id_index] != nullptr &&
-      id_types[id_index]->name[0] != '\0')
+  if (idtype_index >= 0 && idtype_index < ARRAY_SIZE(id_types) &&
+      id_types[idtype_index] != nullptr && id_types[idtype_index]->name[0] != '\0')
   {
-    return id_types[id_index];
+    return id_types[idtype_index];
   }
 
   return nullptr;
+}
+
+const IDTypeInfo *BKE_idtype_get_info_from_idcode(const short id_code)
+{
+  return BKE_idtype_get_info_from_idtype_index(BKE_idtype_idcode_to_index(id_code));
 }
 
 const IDTypeInfo *BKE_idtype_get_info_from_id(const ID *id)

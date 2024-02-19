@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.1.0 Alpha (b'274dc815eb35')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'3d7e84f57d8a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-11 11:18:04\n"
+"POT-Creation-Date: 2024-02-05 09:44+0000\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -619,6 +619,14 @@ msgid "Bones"
 msgstr "हड्डियों"
 
 
+msgid "Index"
+msgstr "सूचकांक"
+
+
+msgid "Solo"
+msgstr "एकल"
+
+
 msgid "Count"
 msgstr "गिनती"
 
@@ -1030,10 +1038,6 @@ msgstr "समतल"
 
 msgid "View"
 msgstr "दृश्य"
-
-
-msgid "Index"
-msgstr "सूचकांक"
 
 
 msgid "Render"
@@ -3138,10 +3142,6 @@ msgid "Meta"
 msgstr "मेटा"
 
 
-msgid "Solo"
-msgstr "एकल"
-
-
 msgid "NLA Track is locked"
 msgstr "अरैखिक अनुप्राणन ट्रैक अवरोधित है"
 
@@ -3252,6 +3252,10 @@ msgstr "स्थानांतर"
 
 msgid "Equal"
 msgstr "बराबर"
+
+
+msgid "Bake"
+msgstr "भर्जन"
 
 
 msgid "Z Up"
@@ -3594,6 +3598,10 @@ msgid "Report"
 msgstr "विवरण"
 
 
+msgid "Duplicate"
+msgstr "अनुकृति"
+
+
 msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "चक्रीय बंद/बुझ"
@@ -3665,10 +3673,6 @@ msgid "Only Selected"
 msgstr "केवल चयनित"
 
 
-msgid "Ascii"
-msgstr "ऐस्की"
-
-
 msgid "X Up"
 msgstr "X ऊर्ध्व"
 
@@ -3687,6 +3691,10 @@ msgstr "-Y ऊर्ध्व"
 
 msgid "-Z Up"
 msgstr "-Z ऊर्ध्व"
+
+
+msgid "Ascii"
+msgstr "ऐस्की"
 
 
 msgid "Null"
@@ -3778,10 +3786,6 @@ msgstr "अगले अनुबोधक चिन्ह"
 
 msgid "Flat"
 msgstr "समतल"
-
-
-msgid "Duplicate"
-msgstr "अनुकृति"
 
 
 msgctxt "Operator"
@@ -4114,8 +4118,8 @@ msgid "Copy Pose"
 msgstr "मुद्रा की प्रतिलिपि बनाएँ"
 
 
-msgid "Bake"
-msgstr "भर्जन"
+msgid "URL"
+msgstr "यूआरएल"
 
 
 msgctxt "Operator"
@@ -4607,10 +4611,6 @@ msgstr "वर्तमान ब्लेंडर संचिका सहे
 msgctxt "Operator"
 msgid "Search Menu"
 msgstr "खोज विकल्प-सूची"
-
-
-msgid "URL"
-msgstr "यूआरएल"
 
 
 msgid "Shapes"
@@ -5415,6 +5415,16 @@ msgid "Manual"
 msgstr "नियम पुस्तिका"
 
 
+msgctxt "Operator"
+msgid "Location"
+msgstr "स्थिति"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "घूर्णन"
+
+
 msgid "Unknown"
 msgstr "अज्ञात"
 
@@ -5616,11 +5626,6 @@ msgstr "परिष्कृत करें:"
 
 
 msgctxt "Operator"
-msgid "Location"
-msgstr "स्थिति"
-
-
-msgctxt "Operator"
 msgid "Floor"
 msgstr "मंजिल"
 
@@ -5790,11 +5795,6 @@ msgid "Glow"
 msgstr "चमक"
 
 
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "घूर्णन"
-
-
 msgid "Unpack"
 msgstr "खोल देना"
 
@@ -5829,6 +5829,10 @@ msgid "Python API Reference"
 msgstr "पाइथन एपीआई संदर्भ"
 
 
+msgid "Preferences:"
+msgstr "वरीयताएँ:"
+
+
 msgid "Description:"
 msgstr "वर्णन:"
 
@@ -5851,18 +5855,6 @@ msgstr "संस्करण:"
 
 msgid "Warning:"
 msgstr "चेतावनी:"
-
-
-msgid "description"
-msgstr "विवरण"
-
-
-msgid "location"
-msgstr "स्थिति"
-
-
-msgid "Preferences:"
-msgstr "वरीयताएँ:"
 
 
 msgctxt "Operator"
@@ -6339,6 +6331,10 @@ msgid "Stop animation playback"
 msgstr "अनुप्राणन चलाएँ रोकें"
 
 
+msgid "Modified"
+msgstr "संशोधित"
+
+
 msgctxt "Object"
 msgid "New"
 msgstr "नई"
@@ -6436,6 +6432,10 @@ msgstr "नई"
 
 msgid "%d items"
 msgstr "%d वस्तु"
+
+
+msgid "Rigging"
+msgstr "हेराफेरी"
 
 
 msgctxt "Mesh"
@@ -6932,10 +6932,6 @@ msgid "Blender File View"
 msgstr "ब्लेंडर संचिका दृश्य"
 
 
-msgid "Modified"
-msgstr "संशोधित"
-
-
 msgid "ON"
 msgstr "ऑन"
 
@@ -6959,10 +6955,6 @@ msgstr "जाल जोड़ें"
 
 msgid "Import-Export"
 msgstr "आयात-निर्यात"
-
-
-msgid "Rigging"
-msgstr "हेराफेरी"
 
 
 msgid "English (English)"

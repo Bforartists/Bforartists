@@ -11,7 +11,7 @@
 
 #include "BKE_bvhutils.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_mesh.hh"
 #include "BKE_object.hh"
 
@@ -52,7 +52,7 @@ struct SnapCache_EditMesh : public SnapObjectContext::SnapCache {
     }
   }
 
-  ~SnapCache_EditMesh()
+  ~SnapCache_EditMesh() override
   {
     this->clear();
   }
@@ -110,7 +110,7 @@ static SnapCache_EditMesh *snap_object_data_editmesh_get(SnapObjectContext *sctx
   bool init = false;
 
   if (std::unique_ptr<SnapObjectContext::SnapCache> *em_cache_p = sctx->editmesh_caches.lookup_ptr(
-          em))
+          ob_eval->runtime->data_orig))
   {
     em_cache = static_cast<SnapCache_EditMesh *>(em_cache_p->get());
     bool is_dirty = false;
@@ -157,7 +157,7 @@ static SnapCache_EditMesh *snap_object_data_editmesh_get(SnapObjectContext *sctx
   else if (create) {
     std::unique_ptr<SnapCache_EditMesh> em_cache_ptr = std::make_unique<SnapCache_EditMesh>();
     em_cache = em_cache_ptr.get();
-    sctx->editmesh_caches.add_new(em, std::move(em_cache_ptr));
+    sctx->editmesh_caches.add_new(ob_eval->runtime->data_orig, std::move(em_cache_ptr));
     init = true;
   }
 
@@ -267,7 +267,7 @@ static void editmesh_looptris_raycast_backface_culling_cb(void *userdata,
                                                           BVHTreeRayHit *hit)
 {
   BMEditMesh *em = static_cast<BMEditMesh *>(userdata);
-  const BMLoop **ltri = (const BMLoop **)em->looptris[index];
+  const BMLoop **ltri = const_cast<const BMLoop **>(em->looptris[index]);
 
   const float *t0, *t1, *t2;
   t0 = ltri[0]->v->co;
@@ -430,20 +430,20 @@ class SnapData_EditMesh : public SnapData {
   SnapData_EditMesh(SnapObjectContext *sctx, BMesh *bm, const float4x4 &obmat)
       : SnapData(sctx, obmat), bm(bm){};
 
-  void get_vert_co(const int index, const float **r_co)
+  void get_vert_co(const int index, const float **r_co) override
   {
     BMVert *eve = BM_vert_at_index(this->bm, index);
     *r_co = eve->co;
   }
 
-  void get_edge_verts_index(const int index, int r_v_index[2])
+  void get_edge_verts_index(const int index, int r_v_index[2]) override
   {
     BMEdge *eed = BM_edge_at_index(this->bm, index);
     r_v_index[0] = BM_elem_index_get(eed->v1);
     r_v_index[1] = BM_elem_index_get(eed->v2);
   }
 
-  void copy_vert_no(const int index, float r_no[3])
+  void copy_vert_no(const int index, float r_no[3]) override
   {
     BMVert *eve = BM_vert_at_index(this->bm, index);
     copy_v3_v3(r_no, eve->no);

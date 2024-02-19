@@ -22,7 +22,7 @@ class TOOLBAR_HT_header(Header):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu_toolbar.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
         layout.popover(panel="TOOLBAR_PT_type", text = "")
 
@@ -80,7 +80,7 @@ class TOOLBAR_HT_header(Header):
 ########################################################################
 
 # bfa - show hide the editortype menu
-class ALL_MT_editormenu(Menu):
+class ALL_MT_editormenu_toolbar(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -354,8 +354,8 @@ class TOOLBAR_MT_file(Menu):
         if addon_prefs.file_import_uncommon:
 
             row = layout.row(align=True)
-            row.operator("import_mesh.stl", text="", icon='LOAD_STL')
-            row.operator("import_mesh.ply", text="", icon='LOAD_PLY')
+            row.operator("wm.stl_import", text="", icon='LOAD_STL')
+            row.operator("wm.ply_import", text="", icon='LOAD_PLY')
             row.operator("import_scene.x3d", text="", icon='LOAD_X3D')
             row.operator("import_curve.svg", text="", icon='LOAD_SVG')
 
@@ -381,8 +381,8 @@ class TOOLBAR_MT_file(Menu):
         if addon_prefs.file_export_uncommon:
 
             row = layout.row(align=True)
-            row.operator("export_mesh.stl", text="", icon='SAVE_STL')
-            row.operator("export_mesh.ply", text="", icon='SAVE_PLY')
+            row.operator("wm.stl_export", text="", icon='SAVE_STL')
+            row.operator("wm.ply_export", text="", icon='SAVE_PLY')
             row.operator("export_scene.x3d", text="", icon='SAVE_X3D')
 
         ## ------------------ Render
@@ -1883,7 +1883,7 @@ class TOOLBAR_MT_misc(Menu):
 classes = (
 
     TOOLBAR_HT_header,
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_toolbar,
     TOOLBAR_MT_toolbar_type,
     TOOLBAR_PT_menu_file,
     TOOLBAR_PT_menu_misc,

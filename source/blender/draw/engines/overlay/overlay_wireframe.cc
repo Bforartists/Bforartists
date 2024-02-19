@@ -16,7 +16,7 @@
 #include "BKE_displist.h"
 #include "BKE_duplilist.h"
 #include "BKE_editmesh.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_object.hh"
 #include "BKE_paint.hh"
 #include "BKE_particle.h"
@@ -24,7 +24,7 @@
 #include "BLI_hash.h"
 #include "BLI_math_base.hh"
 
-#include "DRW_render.h"
+#include "DRW_render.hh"
 #include "GPU_shader.h"
 
 #include "ED_view3d.hh"
@@ -186,7 +186,7 @@ void OVERLAY_wireframe_cache_populate(OVERLAY_Data *vedata,
         mesh = editmesh_eval_final;
       }
     }
-    is_mesh_verts_only = mesh->totedge == 0 && mesh->totvert > 0;
+    is_mesh_verts_only = mesh->edges_num == 0 && mesh->verts_num > 0;
   }
 
   const bool use_wire = !is_mesh_verts_only && ((pd->overlay.flag & V3D_OVERLAY_WIREFRAMES) ||

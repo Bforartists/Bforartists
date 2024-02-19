@@ -6,7 +6,7 @@
  * \ingroup draw_engine
  */
 
-#include "DRW_render.h"
+#include "DRW_render.hh"
 
 #include "BLI_alloca.h"
 #include "BLI_ghash.h"
@@ -16,7 +16,7 @@
 #include "BLI_rand.h"
 #include "BLI_string_utils.hh"
 
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_paint.hh"
 #include "BKE_particle.h"
 
@@ -25,7 +25,7 @@
 #include "DNA_view3d_types.h"
 #include "DNA_world_types.h"
 
-#include "GPU_material.h"
+#include "GPU_material.hh"
 
 #include "DEG_depsgraph_query.hh"
 
@@ -881,7 +881,8 @@ void EEVEE_materials_cache_populate(EEVEE_Data *vedata,
             /* Do not render surface if we are rendering a volume object
              * and do not have a surface closure. */
             if (use_volume_material &&
-                (gpumat_array[i] && !GPU_material_has_surface_output(gpumat_array[i]))) {
+                (gpumat_array[i] && !GPU_material_has_surface_output(gpumat_array[i])))
+            {
               continue;
             }
 
@@ -970,6 +971,7 @@ void EEVEE_object_curves_cache_populate(EEVEE_Data *vedata,
                                         Object *ob,
                                         bool *cast_shadow)
 {
+  using namespace blender::draw;
   EeveeMaterialCache matcache = eevee_material_cache_get(
       vedata, sldata, ob, CURVES_MATERIAL_NR - 1, true);
 

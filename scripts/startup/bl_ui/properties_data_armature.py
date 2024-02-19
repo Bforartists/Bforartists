@@ -139,31 +139,20 @@ class DATA_PT_bone_collections(ArmatureButtonsPanel, Panel):
         active_bcoll = arm.collections.active
 
         row = layout.row()
-
-        rows = 1
-        if active_bcoll:
-            rows = 4
-
-        row.template_list(
-            "DATA_UL_bone_collections",
-            "collections",
-            arm,
-            "collections",
-            arm.collections,
-            "active_index",
-            rows=rows,
-        )
+        row.template_bone_collection_tree()
 
         col = row.column(align=True)
         col.operator("armature.collection_add", icon='ADD', text="")
         col.operator("armature.collection_remove", icon='REMOVE', text="")
+
+        col.separator()
+
+        col.menu("ARMATURE_MT_collection_context_menu", icon='DOWNARROW_HLT', text="")
+
         if active_bcoll:
             col.separator()
             col.operator("armature.collection_move", icon='TRIA_UP', text="").direction = 'UP'
             col.operator("armature.collection_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
-            col.separator()
-
-        col.menu("ARMATURE_MT_collection_context_menu", icon='DOWNARROW_HLT', text="")
 
         row = layout.row()
 
@@ -183,11 +172,59 @@ class ARMATURE_MT_collection_context_menu(Menu):
         layout = self.layout
 
         arm = context.armature
-        active_bcoll = arm.collections.active
+        active_bcoll_is_locked = arm.collections.active and not arm.collections.active.is_editable
+        # The poll function doesn't have access to the parent index property, so
+        # it cannot disable this operator depending on whether the parent is
+        # editable or not. That means this menu has to do the disabling for it.
+        sub = layout.column()
+        sub.enabled = not active_bcoll_is_locked
+        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections", icon="DELETE")
 
-        props = layout.operator("armature.collection_solo_visibility", icon='HIDE_UNSELECTED')
-        props.name = active_bcoll.name if active_bcoll else ""
+        layout.separator()
+
         layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
+        layout.operator("armature.collection_unsolo_all", icon="SOLO_OFF")
+
+
+
+
+class ARMATURE_MT_collection_tree_context_menu(Menu):
+    bl_label = "Bone Collections"
+
+    def draw(self, context):
+        layout = self.layout
+        arm = context.armature
+
+        active_bcoll_is_locked = arm.collections.active and not arm.collections.active.is_editable
+
+        # The poll function doesn't have access to the parent index property, so
+        # it cannot disable this operator depending on whether the parent is
+        # editable or not. That means this menu has to do the disabling for it.
+        sub = layout.column()
+        sub.enabled = not active_bcoll_is_locked
+        sub.operator("armature.collection_add", text="Add Collection", icon="ADD")
+        sub.operator("armature.collection_remove", icon="REMOVE")
+        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections", icon="DELETE")
+
+        layout.separator()
+
+        layout.operator("armature.collection_show_all", icon="SHOW_UNSELECTED")
+        layout.operator("armature.collection_unsolo_all", icon="SOLO_OFF")
+
+        layout.separator()
+
+        # These operators can be used to assign to a named collection as well, and
+        # don't necessarily always use the active bone collection. That means that
+        # they have the same limitation as described above.
+        sub = layout.column()
+        sub.enabled = not active_bcoll_is_locked
+        sub.operator("armature.collection_assign", text="Assign Selected Bones", icon="COLLECTION_BONE_ADD")
+        sub.operator("armature.collection_unassign", text="Remove Selected Bones", icon="COLLECTION_BONE_REMOVE")
+
+        layout.separator()
+
+        layout.operator("armature.collection_select", text="Select Bones", icon="RESTRICT_SELECT_OFF")
+        layout.operator("armature.collection_deselect", text="Deselect Bones", icon="SELECT_NONE")
 
 
 class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
@@ -319,6 +356,7 @@ classes = (
     DATA_PT_bone_collections,
     DATA_UL_bone_collections,
     ARMATURE_MT_collection_context_menu,
+    ARMATURE_MT_collection_tree_context_menu,
     DATA_PT_motion_paths,
     DATA_PT_motion_paths_display,
     DATA_PT_display,

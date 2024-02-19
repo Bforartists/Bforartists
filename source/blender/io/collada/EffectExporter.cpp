@@ -22,7 +22,7 @@
 #include "DNA_mesh_types.h"
 #include "DNA_world_types.h"
 
-#include "BKE_collection.h"
+#include "BKE_collection.hh"
 #include "BKE_customdata.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
@@ -31,9 +31,9 @@ static std::string getActiveUVLayerName(Object *ob)
 {
   Mesh *mesh = (Mesh *)ob->data;
 
-  int num_layers = CustomData_number_of_layers(&mesh->loop_data, CD_PROP_FLOAT2);
+  int num_layers = CustomData_number_of_layers(&mesh->corner_data, CD_PROP_FLOAT2);
   if (num_layers) {
-    return std::string(bc_CustomData_get_active_layer_name(&mesh->loop_data, CD_PROP_FLOAT2));
+    return std::string(bc_CustomData_get_active_layer_name(&mesh->corner_data, CD_PROP_FLOAT2));
   }
 
   return "";

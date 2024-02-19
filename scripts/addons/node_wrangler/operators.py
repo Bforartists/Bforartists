@@ -27,16 +27,21 @@ from .interface import NWConnectionListInputs, NWConnectionListOutputs
 from .utils.constants import blend_types, geo_combine_operations, operations, navs, get_texture_node_types, rl_outputs
 from .utils.draw import draw_callback_nodeoutline
 from .utils.paths import match_files_to_socket_names, split_into_components
-from .utils.nodes import (node_mid_pt, autolink, node_at_pos, get_active_tree, get_nodes_links, is_viewer_socket,
-                          is_viewer_link, get_group_output_node, get_output_location, force_update, get_internal_socket,
-                          nw_check, NWBase, get_first_enabled_output, is_visible_socket, viewer_socket_name)
-
+from .utils.nodes import (node_mid_pt, autolink, node_at_pos, get_nodes_links, is_viewer_socket, is_viewer_link,
+                          get_group_output_node, get_output_location, force_update, get_internal_socket, nw_check,
+                          nw_check_not_empty, nw_check_selected, nw_check_active, nw_check_space_type,
+                          nw_check_node_type, nw_check_visible_outputs, nw_check_viewer_node, NWBase,
+                          get_first_enabled_output, is_visible_socket, viewer_socket_name)
 
 class NWLazyMix(Operator, NWBase):
     """Add a Mix RGB/Shader node by interactively drawing lines between nodes"""
     bl_idname = "node.nw_lazy_mix"
     bl_label = "Mix Nodes"
     bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_not_empty(cls, context)
 
     def modal(self, context, event):
         context.area.tag_redraw()
@@ -115,6 +120,10 @@ class NWLazyConnect(Operator, NWBase):
     bl_label = "Lazy Connect"
     bl_options = {'REGISTER', 'UNDO'}
     with_menu: BoolProperty()
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_not_empty(cls, context)
 
     def modal(self, context, event):
         context.area.tag_redraw()
@@ -244,11 +253,11 @@ class NWDeleteUnused(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        valid = False
-        if nw_check(context):
-            if context.space_data.node_tree.nodes:
-                valid = True
-        return valid
+        """Disabled for custom nodes as we do not know which nodes are supported."""
+        return (nw_check(cls, context)
+                and nw_check_not_empty(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
+                                        'TextureNodeTree', 'GeometryNodeTree'}))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -335,11 +344,7 @@ class NWSwapLinks(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        valid = False
-        if nw_check(context):
-            if context.selected_nodes:
-                valid = len(context.selected_nodes) <= 2
-        return valid
+        return nw_check(cls, context) and nw_check_selected(cls, context, max=2)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -453,11 +458,7 @@ class NWResetBG(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        valid = False
-        if nw_check(context):
-            snode = context.space_data
-            valid = snode.tree_type == 'CompositorNodeTree'
-        return valid
+        return nw_check(cls, context) and nw_check_space_type(cls, context, {'CompositorNodeTree'})
 
     def execute(self, context):
         context.space_data.backdrop_zoom = 1
@@ -473,6 +474,10 @@ class NWAddAttrNode(Operator, NWBase):
     bl_options = {'REGISTER', 'UNDO'}
 
     attr_name: StringProperty()
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_space_type(cls, context, {'ShaderNodeTree'})
 
     def execute(self, context):
         bpy.ops.node.add_node('INVOKE_DEFAULT', use_transform=True, type="ShaderNodeAttribute")
@@ -497,76 +502,61 @@ class NWPreviewNode(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        if nw_check(context):
-            space = context.space_data
-            if space.tree_type == 'ShaderNodeTree' or space.tree_type == 'GeometryNodeTree':
-                if context.active_node:
-                    if context.active_node.type != "OUTPUT_MATERIAL" or context.active_node.type != "OUTPUT_WORLD":
-                        return True
-                else:
-                    return True
-        return False
+        """Already implemented natively for compositing nodes."""
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'GeometryNodeTree'}))
 
-    @classmethod
-    def get_output_sockets(cls, node_tree):
-        return [item for item in node_tree.interface.items_tree if item.item_type == 'SOCKET' and item.in_out in {'OUTPUT', 'BOTH'}]
-
-    def ensure_viewer_socket(self, node, socket_type, connect_socket=None):
-        # check if a viewer output already exists in a node group otherwise create
-        if hasattr(node, "node_tree"):
-            viewer_socket = None
-            output_sockets = self.get_output_sockets(node.node_tree)
-            if len(output_sockets):
-                free_socket = None
-                for i, socket in enumerate(output_sockets):
-                    if is_viewer_socket(socket) and socket.socket_type == socket_type:
-                        # if viewer output is already used but leads to the same socket we can still use it
-                        is_used = self.is_socket_used_other_mats(socket)
-                        if is_used:
-                            if connect_socket is None:
-                                continue
-                            groupout = get_group_output_node(node.node_tree)
-                            groupout_input = groupout.inputs[i]
-                            links = groupout_input.links
-                            if connect_socket not in [link.from_socket for link in links]:
-                                continue
-                            viewer_socket = socket
-                            break
-                        if not free_socket:
-                            free_socket = socket
-                if not viewer_socket and free_socket:
-                    viewer_socket = free_socket
-
-            if not viewer_socket:
-                # create viewer socket
-                viewer_socket = node.node_tree.interface.new_socket(viewer_socket_name, in_out='OUTPUT', socket_type=socket_type)
-                viewer_socket.NWViewerSocket = True
-            return viewer_socket
+    @staticmethod
+    def get_output_sockets(node_tree):
+        return [item for item in node_tree.interface.items_tree
+                if item.item_type == 'SOCKET' and item.in_out in {'OUTPUT', 'BOTH'}]
 
     def init_shader_variables(self, space, shader_type):
         if shader_type == 'OBJECT':
-            if space.id not in [light for light in bpy.data.lights]:  # cannot use bpy.data.lights directly as iterable
-                self.shader_output_type = "OUTPUT_MATERIAL"
-                self.shader_output_ident = "ShaderNodeOutputMaterial"
-            else:
+            if space.id in bpy.data.lights.values():
                 self.shader_output_type = "OUTPUT_LIGHT"
                 self.shader_output_ident = "ShaderNodeOutputLight"
+            else:
+                self.shader_output_type = "OUTPUT_MATERIAL"
+                self.shader_output_ident = "ShaderNodeOutputMaterial"
 
         elif shader_type == 'WORLD':
             self.shader_output_type = "OUTPUT_WORLD"
             self.shader_output_ident = "ShaderNodeOutputWorld"
 
-    def get_shader_output_node(self, tree):
-        for node in tree.nodes:
-            if node.type == self.shader_output_type and node.is_active_output:
-                return node
+    def ensure_viewer_socket(self, node_tree, socket_type, connect_socket=None):
+        """Check if a viewer output already exists in a node group, otherwise create it"""
+        viewer_socket = None
+        output_sockets = self.get_output_sockets(node_tree)
+        if len(output_sockets):
+            for i, socket in enumerate(output_sockets):
+                if is_viewer_socket(socket) and socket.socket_type == socket_type:
+                    # If viewer output is already used but leads to the same socket we can still use it
+                    is_used = self.is_socket_used_other_mats(socket)
+                    if is_used:
+                        if connect_socket is None:
+                            continue
+                        groupout = get_group_output_node(node_tree)
+                        groupout_input = groupout.inputs[i]
+                        links = groupout_input.links
+                        if connect_socket not in [link.from_socket for link in links]:
+                            continue
+                        viewer_socket = socket
+                        break
 
-    @classmethod
-    def ensure_group_output(cls, tree):
-        # check if a group output node exists otherwise create
-        groupout = get_group_output_node(tree)
-        if not groupout:
-            groupout = tree.nodes.new('NodeGroupOutput')
+        if viewer_socket is None:
+            # Create viewer socket
+            viewer_socket = node_tree.interface.new_socket(
+                viewer_socket_name, in_out='OUTPUT', socket_type=socket_type)
+            viewer_socket.NWViewerSocket = True
+        return viewer_socket
+
+    @staticmethod
+    def ensure_group_output(node_tree):
+        """Check if a group output node exists, otherwise create it"""
+        groupout = get_group_output_node(node_tree)
+        if groupout is None:
+            groupout = node_tree.nodes.new('NodeGroupOutput')
             loc_x, loc_y = get_output_location(tree)
             groupout.location.x = loc_x
             groupout.location.y = loc_y
@@ -577,7 +567,7 @@ class NWPreviewNode(Operator, NWBase):
 
     @classmethod
     def search_sockets(cls, node, sockets, index=None):
-        # recursively scan nodes for viewer sockets and store in list
+        """Recursively scan nodes for viewer sockets and store them in a list"""
         for i, input_socket in enumerate(node.inputs):
             if index and i != index:
                 continue
@@ -597,7 +587,7 @@ class NWPreviewNode(Operator, NWBase):
 
     @classmethod
     def scan_nodes(cls, tree, sockets):
-        # get all viewer sockets in a material tree
+        """Recursively get all viewer sockets in a material tree"""
         for node in tree.nodes:
             if hasattr(node, "node_tree"):
                 if node.node_tree is None:
@@ -607,38 +597,101 @@ class NWPreviewNode(Operator, NWBase):
                         sockets.append(socket)
                 cls.scan_nodes(node.node_tree, sockets)
 
-    @classmethod
-    def remove_socket(cls, tree, socket):
+    @staticmethod
+    def remove_socket(tree, socket):
         interface = tree.interface
         interface.remove(socket)
         interface.active_index = min(interface.active_index, len(interface.items_tree) - 1)
 
     def link_leads_to_used_socket(self, link):
-        # return True if link leads to a socket that is already used in this material
+        """Return True if link leads to a socket that is already used in this node"""
         socket = get_internal_socket(link.to_socket)
-        return (socket and self.is_socket_used_active_mat(socket))
+        return socket and self.is_socket_used_active_tree(socket)
 
-    def is_socket_used_active_mat(self, socket):
-        # ensure used sockets in active material is calculated and check given socket
+    def is_socket_used_active_tree(self, socket):
+        """Ensure used sockets in active node tree is calculated and check given socket"""
         if not hasattr(self, "used_viewer_sockets_active_mat"):
             self.used_viewer_sockets_active_mat = []
-            materialout = self.get_shader_output_node(bpy.context.space_data.node_tree)
-            if materialout:
-                self.search_sockets(materialout, self.used_viewer_sockets_active_mat)
+
+            node_tree = bpy.context.space_data.node_tree
+            output_node = None
+            if node_tree.type == 'GEOMETRY':
+                output_node = get_group_output_node(node_tree)
+            elif node_tree.type == 'SHADER':
+                output_node = get_group_output_node(node_tree,
+                                                    output_node_type=self.shader_output_type)
+
+            if output_node is not None:
+                self.search_sockets(output_node, self.used_viewer_sockets_active_mat)
         return socket in self.used_viewer_sockets_active_mat
 
     def is_socket_used_other_mats(self, socket):
-        # ensure used sockets in other materials are calculated and check given socket
+        """Ensure used sockets in other materials are calculated and check given socket"""
         if not hasattr(self, "used_viewer_sockets_other_mats"):
             self.used_viewer_sockets_other_mats = []
             for mat in bpy.data.materials:
                 if mat.node_tree == bpy.context.space_data.node_tree or not hasattr(mat.node_tree, "nodes"):
                     continue
-                # get viewer node
-                materialout = self.get_shader_output_node(mat.node_tree)
-                if materialout:
-                    self.search_sockets(materialout, self.used_viewer_sockets_other_mats)
+                # Get viewer node
+                output_node = get_group_output_node(mat.node_tree,
+                                                    output_node_type=self.shader_output_type)
+                if output_node is not None:
+                    self.search_sockets(output_node, self.used_viewer_sockets_other_mats)
         return socket in self.used_viewer_sockets_other_mats
+
+    def get_output_index(self, node, output_node, is_base_node_tree, socket_type, check_type=False):
+        """Get the next available output socket in the active node"""
+        out_i = None
+        valid_outputs = []
+        for i, out in enumerate(node.outputs):
+            if is_visible_socket(out) and (not check_type or out.type == socket_type):
+                valid_outputs.append(i)
+        if valid_outputs:
+            out_i = valid_outputs[0]  # Start index of node's outputs
+        for i, valid_i in enumerate(valid_outputs):
+            for out_link in node.outputs[valid_i].links:
+                if is_viewer_link(out_link, output_node):
+                    if is_base_node_tree or self.link_leads_to_used_socket(out_link):
+                        if i < len(valid_outputs) - 1:
+                            out_i = valid_outputs[i + 1]
+                        else:
+                            out_i = valid_outputs[0]
+        return out_i
+
+    def create_links(self, path, node, active_node_socket_id, socket_type):
+        """Create links at each step in the node group path."""
+        path = list(reversed(path))
+        # Starting from the level of the active node
+        for path_index, path_element in enumerate(path[:-1]):
+            # Ensure there is a viewer node and it has an input
+            tree = path_element.node_tree
+            viewer_socket = self.ensure_viewer_socket(
+                tree, socket_type,
+                connect_socket = node.outputs[active_node_socket_id]
+                if path_index == 0 else None)
+            if viewer_socket in self.delete_sockets:
+                self.delete_sockets.remove(viewer_socket)
+
+            # Connect the current to its viewer
+            link_start = node.outputs[active_node_socket_id]
+            link_end = self.ensure_group_output(tree).inputs[viewer_socket.identifier]
+            connect_sockets(link_start, link_end)
+
+            # Go up in the node group hierarchy
+            next_tree = path[path_index + 1].node_tree
+            node = next(n for n in next_tree.nodes
+                        if n.type == 'GROUP'
+                        and n.node_tree == tree)
+            tree = next_tree
+            active_node_socket_id = viewer_socket.identifier
+        return node.outputs[active_node_socket_id]
+
+    def cleanup(self):
+        # Delete sockets
+        for socket in self.delete_sockets:
+            if not self.is_socket_used_other_mats(socket):
+                tree = socket.id_data
+                self.remove_socket(tree, socket)
 
     def invoke(self, context, event):
         space = context.space_data
@@ -646,171 +699,98 @@ class NWPreviewNode(Operator, NWBase):
         if self.run_in_geometry_nodes != (space.tree_type == "GeometryNodeTree"):
             return {'PASS_THROUGH'}
 
-        shader_type = space.shader_type
-        self.init_shader_variables(space, shader_type)
         mlocx = event.mouse_region_x
         mlocy = event.mouse_region_y
         select_node = bpy.ops.node.select(location=(mlocx, mlocy), extend=False)
-        if 'FINISHED' in select_node:  # only run if mouse click is on a node
-            active_tree, path_to_tree = get_active_tree(context)
-            nodes, links = active_tree.nodes, active_tree.links
-            base_node_tree = space.node_tree
-            active = nodes.active
-
-            # For geometry node trees we just connect to the group output
-            if space.tree_type == "GeometryNodeTree":
-                valid = False
-                if active:
-                    for out in active.outputs:
-                        if is_visible_socket(out):
-                            valid = True
-                            break
-                # Exit early
-                if not valid:
-                    return {'FINISHED'}
-
-                delete_sockets = []
-
-                # Scan through all nodes in tree including nodes inside of groups to find viewer sockets
-                self.scan_nodes(base_node_tree, delete_sockets)
-
-                # Find (or create if needed) the output of this node tree
-                geometryoutput = self.ensure_group_output(base_node_tree)
-
-                # Analyze outputs, make links
-                out_i = None
-                valid_outputs = []
-                for i, out in enumerate(active.outputs):
-                    if is_visible_socket(out) and out.type == 'GEOMETRY':
-                        valid_outputs.append(i)
-                if valid_outputs:
-                    out_i = valid_outputs[0]  # Start index of node's outputs
-                for i, valid_i in enumerate(valid_outputs):
-                    for out_link in active.outputs[valid_i].links:
-                        if is_viewer_link(out_link, geometryoutput):
-                            if nodes == base_node_tree.nodes or self.link_leads_to_used_socket(out_link):
-                                if i < len(valid_outputs) - 1:
-                                    out_i = valid_outputs[i + 1]
-                                else:
-                                    out_i = valid_outputs[0]
-
-                if active.outputs:
-                    # If there is no 'GEOMETRY' output type - We can't preview the node
-                    if out_i is None:
-                        return {'FINISHED'}
-                    socket_type = 'GEOMETRY'
-                    # Find an input socket of the output of type geometry
-                    geometryoutindex = None
-                    for i, inp in enumerate(geometryoutput.inputs):
-                        if inp.type == socket_type:
-                            geometryoutindex = i
-                            break
-                    if geometryoutindex is None:
-                        # Create geometry socket
-                        geometry_output_socket = base_node_tree.interface.new_socket(
-                            'Geometry', in_out='OUTPUT', socket_type='NodeSocketGeometry')
-                        geometryoutindex = geometry_output_socket.index
-
-                    output_socket = geometryoutput.inputs[geometryoutindex]
-
-                    # Create links through node groups until we reach the active node
-                    tree = base_node_tree
-                    link_end = output_socket
-                    while tree.nodes.active != active:
-                        node = tree.nodes.active
-                        viewer_socket = self.ensure_viewer_socket(
-                            node, 'NodeSocketGeometry', connect_socket=active.outputs[out_i] if node.node_tree.nodes.active == active else None)
-                        link_start = node.outputs[viewer_socket.identifier]
-                        if viewer_socket in delete_sockets:
-                            delete_sockets.remove(viewer_socket)
-                        connect_sockets(link_start, link_end)
-                        # Iterate
-                        link_end = self.ensure_group_output(node.node_tree).inputs[viewer_socket.identifier]
-                        tree = tree.nodes.active.node_tree
-                    connect_sockets(active.outputs[out_i], link_end)
-
-                # Delete sockets
-                for socket in delete_sockets:
-                    tree = socket.id_data
-                    self.remove_socket(tree, socket)
-
-                nodes.active = active
-                active.select = True
-                force_update(context)
-                return {'FINISHED'}
-
-            # What follows is code for the shader editor
-            valid = False
-            if active:
-                for out in active.outputs:
-                    if is_visible_socket(out):
-                        valid = True
-                        break
-            if valid:
-                # get material_output node
-                materialout = None  # placeholder node
-                delete_sockets = []
-
-                # scan through all nodes in tree including nodes inside of groups to find viewer sockets
-                self.scan_nodes(base_node_tree, delete_sockets)
-
-                materialout = self.get_shader_output_node(base_node_tree)
-                if not materialout:
-                    materialout = base_node_tree.nodes.new(self.shader_output_ident)
-                    materialout.location = get_output_location(base_node_tree)
-                    materialout.select = False
-                # Analyze outputs
-                out_i = None
-                valid_outputs = []
-                for i, out in enumerate(active.outputs):
-                    if is_visible_socket(out):
-                        valid_outputs.append(i)
-                if valid_outputs:
-                    out_i = valid_outputs[0]  # Start index of node's outputs
-                for i, valid_i in enumerate(valid_outputs):
-                    for out_link in active.outputs[valid_i].links:
-                        if is_viewer_link(out_link, materialout):
-                            if nodes == base_node_tree.nodes or self.link_leads_to_used_socket(out_link):
-                                if i < len(valid_outputs) - 1:
-                                    out_i = valid_outputs[i + 1]
-                                else:
-                                    out_i = valid_outputs[0]
-
-                if active.outputs:
-                    socket_type = 'NodeSocketShader'
-                    materialout_index = 1 if active.outputs[out_i].name == "Volume" else 0
-                    output_socket = materialout.inputs[materialout_index]
-
-                    # Create links through node groups until we reach the active node
-                    tree = base_node_tree
-                    link_end = output_socket
-                    while tree.nodes.active != active:
-                        node = tree.nodes.active
-                        viewer_socket = self.ensure_viewer_socket(
-                            node, socket_type, connect_socket=active.outputs[out_i] if node.node_tree.nodes.active == active else None)
-                        link_start = node.outputs[viewer_socket.identifier]
-                        if viewer_socket in delete_sockets:
-                            delete_sockets.remove(viewer_socket)
-                        connect_sockets(link_start, link_end)
-                        # Iterate
-                        link_end = self.ensure_group_output(node.node_tree).inputs[viewer_socket.identifier]
-                        tree = tree.nodes.active.node_tree
-                    connect_sockets(active.outputs[out_i], link_end)
-
-                # Delete sockets
-                for socket in delete_sockets:
-                    if not self.is_socket_used_other_mats(socket):
-                        tree = socket.id_data
-                        self.remove_socket(tree, socket)
-
-                nodes.active = active
-                active.select = True
-
-                force_update(context)
-
-            return {'FINISHED'}
-        else:
+        if 'FINISHED' not in select_node:  # only run if mouse click is on a node
             return {'CANCELLED'}
+
+        base_node_tree = space.node_tree
+        active_tree = context.space_data.edit_tree
+        path = context.space_data.path
+        nodes = active_tree.nodes
+        active = nodes.active
+
+        if not active and not any(is_visible_socket(out) for out in active.outputs):
+            return {'CANCELLED'}
+
+        # Scan through all nodes in tree including nodes inside of groups to find viewer sockets
+        self.delete_sockets = []
+        self.scan_nodes(base_node_tree, self.delete_sockets)
+
+        if not active.outputs:
+            self.cleanup()
+            return {'CANCELLED'}
+
+        # For geometry node trees, we just connect to the group output
+        if space.tree_type == "GeometryNodeTree":
+            socket_type = 'NodeSocketGeometry'
+
+            # Find (or create if needed) the output of this node tree
+            output_node = self.ensure_group_output(base_node_tree)
+
+            active_node_socket_index = self.get_output_index(
+                active, output_node, base_node_tree == active_tree, 'GEOMETRY', check_type=True
+            )
+            # If there is no 'GEOMETRY' output type - We can't preview the node
+            if active_node_socket_index is None:
+                return {'CANCELLED'}
+
+            # Find an input socket of the output of type geometry
+            output_node_socket_index = None
+            for i, inp in enumerate(output_node.inputs):
+                if inp.type == 'GEOMETRY':
+                    output_node_socket_index = i
+                    break
+            if output_node_socket_index is None:
+                # Create geometry socket
+                geometry_out_socket = base_node_tree.interface.new_socket(
+                    'Geometry', in_out='OUTPUT', socket_type=socket_type
+                )
+                output_node_socket_index = geometry_out_socket.index
+
+        # For shader node trees, we connect to a material output
+        elif space.tree_type == "ShaderNodeTree":
+            socket_type = 'NodeSocketShader'
+            self.init_shader_variables(space, space.shader_type)
+
+            # Get or create material_output node
+            output_node = get_group_output_node(base_node_tree,
+                                                output_node_type=self.shader_output_type)
+            if not output_node:
+                output_node = base_node_tree.nodes.new(self.shader_output_ident)
+                output_node.location = get_output_location(base_node_tree)
+                output_node.select = False
+
+            active_node_socket_index = self.get_output_index(
+                active, output_node, base_node_tree == active_tree, 'SHADER'
+            )
+
+            # Cancel if no socket was found. This can happen for group input
+            # nodes with only a virtual socket output.
+            if active_node_socket_index is None:
+                return {'CANCELLED'}
+
+            if active.outputs[active_node_socket_index].name == "Volume":
+                output_node_socket_index = 1
+            else:
+                output_node_socket_index = 0
+
+        # If there are no nested node groups, the link starts at the active node
+        node_output = active.outputs[active_node_socket_index]
+        if len(path) > 1:
+            # Recursively connect inside nested node groups and get the one from base level
+            node_output = self.create_links(path, active, active_node_socket_index, socket_type)
+        output_node_input = output_node.inputs[output_node_socket_index]
+
+        # Connect at base level
+        connect_sockets(node_output, output_node_input)
+
+        self.cleanup()
+        nodes.active = active
+        active.select = True
+        force_update(context)
+        return {'FINISHED'}
 
 
 class NWFrameSelected(Operator, NWBase):
@@ -871,14 +851,10 @@ class NWReloadImages(Operator):
 
     @classmethod
     def poll(cls, context):
-        valid = False
-        if nw_check(context) and context.space_data.tree_type != 'GeometryNodeTree':
-            if context.active_node is not None:
-                for out in context.active_node.outputs:
-                    if is_visible_socket(out):
-                        valid = True
-                        break
-        return valid
+        """Disabled for custom nodes."""
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
+                                        'TextureNodeTree', 'GeometryNodeTree'}))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -1002,6 +978,13 @@ class NWMergeNodes(Operator, NWBase):
                 connect_sockets(new_node.outputs[0], link.to_node.inputs[0])
         return new_node
 
+    @classmethod
+    def poll(cls, context):
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
+                                        'TextureNodeTree', 'GeometryNodeTree'})
+                and nw_check_selected(cls, context))
+
     def execute(self, context):
         settings = context.preferences.addons[__package__].preferences
         merge_hide = settings.merge_hide
@@ -1096,6 +1079,12 @@ class NWMergeNodes(Operator, NWBase):
         if selected_mix and selected_math and merge_type == 'AUTO':
             selected_mix += selected_math
             selected_math = []
+
+        # If no nodes are selected, do nothing and pass through.
+        if not (selected_mix + selected_shader + selected_geometry + selected_math
+                + selected_vector + selected_z + selected_alphaover):
+            return {'PASS_THROUGH'}
+
         for nodes_list in [
                 selected_mix,
                 selected_shader,
@@ -1313,6 +1302,13 @@ class NWBatchChangeNodes(Operator, NWBase):
         items=operations + navs,
     )
 
+    @classmethod
+    def poll(cls, context):
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
+                                        'TextureNodeTree', 'GeometryNodeTree'})
+                and nw_check_selected(cls, context))
+
     def execute(self, context):
         blend_type = self.blend_type
         operation = self.operation
@@ -1365,6 +1361,10 @@ class NWChangeMixFactor(Operator, NWBase):
     bl_description = "Change Factors of Mix Nodes and Mix Shader Nodes"
     bl_options = {'REGISTER', 'UNDO'}
 
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
+
     # option: Change factor.
     # If option is 1.0 or 0.0 - set to 1.0 or 0.0
     # Else - change factor by option value.
@@ -1398,29 +1398,15 @@ class NWCopySettings(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        valid = False
-        if nw_check(context):
-            if (
-                    context.active_node is not None and
-                    context.active_node.type != 'FRAME'
-            ):
-                valid = True
-        return valid
+        return (nw_check(cls, context)
+                and nw_check_active(cls, context)
+                and nw_check_selected(cls, context, min=2)
+                and nw_check_node_type(cls, context, 'FRAME', invert=True))
 
     def execute(self, context):
         node_active = context.active_node
         node_selected = context.selected_nodes
-
-        # Error handling
-        if not (len(node_selected) > 1):
-            self.report({'ERROR'}, "2 nodes must be selected at least")
-            return {'CANCELLED'}
-
-        # Check if active node is in the selection
         selected_node_names = [n.name for n in node_selected]
-        if node_active.name not in selected_node_names:
-            self.report({'ERROR'}, "No active node")
-            return {'CANCELLED'}
 
         # Get nodes in selection by type
         valid_nodes = [n for n in node_selected if n.type == node_active.type]
@@ -1496,7 +1482,7 @@ class NWCopySettings(Operator, NWBase):
                 new_node.location = node_loc
 
             for str_from, str_to in reconnections:
-                node_tree.connect_sockets(eval(str_from), eval(str_to))
+                connect_sockets(eval(str_from), eval(str_to))
 
             success_names.append(new_node.name)
 
@@ -1514,6 +1500,7 @@ class NWCopyLabel(Operator, NWBase):
     bl_idname = "node.nw_copy_label"
     bl_label = "Copy Label"
     bl_options = {'REGISTER', 'UNDO'}
+    bl_description = "Copy label from active to selected nodes"
 
     option: EnumProperty(
         name="option",
@@ -1524,6 +1511,10 @@ class NWCopyLabel(Operator, NWBase):
             ('FROM_SOCKET', 'from socket', 'from socket linked to selected node'),
         )
     )
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context, min=2)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -1558,8 +1549,13 @@ class NWClearLabel(Operator, NWBase):
     bl_idname = "node.nw_clear_label"
     bl_label = "Clear Label"
     bl_options = {'REGISTER', 'UNDO'}
+    bl_description = "Clear labels on selected nodes"
 
     option: BoolProperty()
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -1576,7 +1572,7 @@ class NWClearLabel(Operator, NWBase):
 
 
 class NWModifyLabels(Operator, NWBase):
-    """Modify Labels of all selected nodes"""
+    """Modify labels of all selected nodes"""
     bl_idname = "node.nw_modify_labels"
     bl_label = "Modify Labels"
     bl_options = {'REGISTER', 'UNDO'}
@@ -1593,6 +1589,10 @@ class NWModifyLabels(Operator, NWBase):
     replace_to: StringProperty(
         name="Replace with"
     )
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -1621,11 +1621,9 @@ class NWAddTextureSetup(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        if nw_check(context):
-            space = context.space_data
-            if space.tree_type == 'ShaderNodeTree':
-                return True
-        return False
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree'})
+                and nw_check_selected(cls, context))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -1727,27 +1725,22 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
 
     @classmethod
     def poll(cls, context):
-        valid = False
-        if nw_check(context):
-            space = context.space_data
-            if space.tree_type == 'ShaderNodeTree':
-                valid = True
-        return valid
+        return (nw_check(cls, context)
+                and nw_check_active(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree'})
+                and nw_check_node_type(cls, context, 'BSDF_PRINCIPLED'))
 
     def execute(self, context):
         # Check if everything is ok
         if not self.directory:
-            self.report({'INFO'}, 'No Folder Selected')
+            self.report({'INFO'}, 'No folder selected')
             return {'CANCELLED'}
         if not self.files[:]:
-            self.report({'INFO'}, 'No Files Selected')
+            self.report({'INFO'}, 'No files selected')
             return {'CANCELLED'}
 
         nodes, links = get_nodes_links(context)
         active_node = nodes.active
-        if not (active_node and active_node.bl_idname == 'ShaderNodeBsdfPrincipled'):
-            self.report({'INFO'}, 'Select Principled BSDF')
-            return {'CANCELLED'}
 
         # Filter textures names for texturetypes in filenames
         # [Socket Name, [abbreviations and keyword list], Filename placeholder]
@@ -1762,7 +1755,8 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
             ['Metallic', tags.metallic.split(' '), None],
             ['Specular IOR Level', tags.specular.split(' '), None],
             ['Roughness', rough_abbr + gloss_abbr, None],
-            ['Normal', normal_abbr + bump_abbr, None],
+            ['Bump', bump_abbr, None],
+            ['Normal', normal_abbr, None],
             ['Transmission Weight', tags.transmission.split(' '), None],
             ['Emission Color', tags.emission.split(' '), None],
             ['Alpha', tags.alpha.split(' '), None],
@@ -1793,6 +1787,9 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
         disp_texture = None
         ao_texture = None
         normal_node = None
+        normal_node_texture = None
+        bump_node = None
+        bump_node_texture = None
         roughness_node = None
         for i, sname in enumerate(socketnames):
             print(i, sname[0], sname[2])
@@ -1823,8 +1820,48 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
 
                 continue
 
+            # BUMP NODES
+            elif sname[0] == 'Bump':
+                # Test if new texture node is bump map
+                fname_components = split_into_components(sname[2])
+                match_bump = set(bump_abbr).intersection(set(fname_components))
+                if match_bump:
+                    # If Bump add bump node in between
+                    bump_node_texture = nodes.new(type='ShaderNodeTexImage')
+                    img = bpy.data.images.load(path.join(import_path, sname[2]))
+                    bump_node_texture.image = img
+                    bump_node_texture.label = 'Bump'
+
+                    # Add bump node
+                    bump_node = nodes.new(type='ShaderNodeBump')
+                    link = connect_sockets(bump_node.inputs[2], bump_node_texture.outputs[0])
+                    link = connect_sockets(active_node.inputs['Normal'], bump_node.outputs[0])
+                continue
+
+            # NORMAL NODES
+            elif sname[0] == 'Normal':
+                # Test if new texture node is normal map
+                fname_components = split_into_components(sname[2])
+                match_normal = set(normal_abbr).intersection(set(fname_components))
+                if match_normal:
+                    # If Normal add normal node in between
+                    normal_node_texture = nodes.new(type='ShaderNodeTexImage')
+                    img = bpy.data.images.load(path.join(import_path, sname[2]))
+                    normal_node_texture.image = img
+                    normal_node_texture.label = 'Normal'
+
+                    # Add normal node
+                    normal_node = nodes.new(type='ShaderNodeNormalMap')
+                    link = connect_sockets(normal_node.inputs[1], normal_node_texture.outputs[0])
+                    # Connect to bump node if it was created before, otherwise to the BSDF
+                    if bump_node is None:
+                        link = connect_sockets(active_node.inputs[sname[0]], normal_node.outputs[0])
+                    else:
+                        link = connect_sockets(bump_node.inputs[sname[0]], normal_node.outputs[sname[0]])
+                continue
+
             # AMBIENT OCCLUSION TEXTURE
-            if sname[0] == 'Ambient Occlusion':
+            elif sname[0] == 'Ambient Occlusion':
                 ao_texture = nodes.new(type='ShaderNodeTexImage')
                 img = bpy.data.images.load(path.join(import_path, sname[2]))
                 ao_texture.image = img
@@ -1840,25 +1877,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                 img = bpy.data.images.load(path.join(import_path, sname[2]))
                 texture_node.image = img
 
-                # NORMAL NODES
-                if sname[0] == 'Normal':
-                    # Test if new texture node is normal or bump map
-                    fname_components = split_into_components(sname[2])
-                    match_normal = set(normal_abbr).intersection(set(fname_components))
-                    match_bump = set(bump_abbr).intersection(set(fname_components))
-                    if match_normal:
-                        # If Normal add normal node in between
-                        normal_node = nodes.new(type='ShaderNodeNormalMap')
-                        link = connect_sockets(normal_node.inputs[1], texture_node.outputs[0])
-                    elif match_bump:
-                        # If Bump add bump node in between
-                        normal_node = nodes.new(type='ShaderNodeBump')
-                        link = connect_sockets(normal_node.inputs[2], texture_node.outputs[0])
-
-                    link = connect_sockets(active_node.inputs[sname[0]], normal_node.outputs[0])
-                    normal_node_texture = texture_node
-
-                elif sname[0] == 'Roughness':
+                if sname[0] == 'Roughness':
                     # Test if glossy or roughness map
                     fname_components = split_into_components(sname[2])
                     match_rough = set(rough_abbr).intersection(set(fname_components))
@@ -1894,6 +1913,10 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
 
         if disp_texture:
             texture_nodes.append(disp_texture)
+        if bump_node_texture:
+            texture_nodes.append(bump_node_texture)
+        if normal_node_texture:
+            texture_nodes.append(normal_node_texture)
 
         if ao_texture:
             # We want the ambient occlusion texture to be the top most texture node
@@ -1907,6 +1930,10 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
         if normal_node:
             # Extra alignment if normal node was added
             normal_node.location = normal_node_texture.location + Vector((300, 0))
+
+        if bump_node:
+            # Extra alignment if bump node was added
+            bump_node.location = bump_node_texture.location + Vector((300, 0))
 
         if roughness_node:
             # Alignment of invert node if glossy map
@@ -1928,7 +1955,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
         else:
             link = connect_sockets(texture_nodes[0].inputs[0], mapping.outputs[0])
 
-        # Connect texture_coordiantes to mapping node
+        # Connect texture_coordinates to mapping node
         texture_input = nodes.new(type='ShaderNodeTexCoord')
         texture_input.location = mapping.location + Vector((-200, 0))
         link = connect_sockets(mapping.inputs[0], texture_input.outputs[2])
@@ -1971,85 +1998,75 @@ class NWAddReroutes(Operator, NWBase):
         ]
     )
 
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
+
     def execute(self, context):
-        tree_type = context.space_data.node_tree.type
-        option = self.option
-        nodes, links = get_nodes_links(context)
-        # output valid when option is 'all' or when 'loose' output has no links
-        valid = False
-        post_select = []  # nodes to be selected after execution
-        # create reroutes and recreate links
+        nodes, _links = get_nodes_links(context)
+        post_select = []  # Nodes to be selected after execution.
+        y_offset = -22.0
+
+        # Create reroutes and recreate links.
         for node in [n for n in nodes if n.select]:
-            if node.outputs:
-                x = node.location.x
-                y = node.location.y
-                width = node.width
-                # unhide 'REROUTE' nodes to avoid issues with location.y
-                if node.type == 'REROUTE':
-                    node.hide = False
-                # Hack needed to calculate real width
-                if node.hide:
-                    bpy.ops.node.select_all(action='DESELECT')
-                    helper = nodes.new('NodeReroute')
-                    helper.select = True
-                    node.select = True
-                    # resize node and helper to zero. Then check locations to calculate width
-                    bpy.ops.transform.resize(value=(0.0, 0.0, 0.0))
-                    width = 2.0 * (helper.location.x - node.location.x)
-                    # restore node location
-                    node.location = x, y
-                    # delete helper
-                    node.select = False
-                    # only helper is selected now
-                    bpy.ops.node.delete()
-                x = node.location.x + width + 20.0
-                if node.type != 'REROUTE':
-                    y -= 35.0
-                y_offset = -22.0
-                loc = x, y
-            reroutes_count = 0  # will be used when aligning reroutes added to hidden nodes
+            if not node.outputs:
+                continue
+            x = node.location.x + node.width + 20.0
+            y = node.location.y
+            new_node_reroutes = []
+
+            # Unhide 'REROUTE' nodes to avoid issues with location.y
+            if node.type == 'REROUTE':
+                node.hide = False
+            else:
+                y -= 35.0
+
+            reroutes_count = 0  # Will be used when aligning reroutes added to hidden nodes.
             for out_i, output in enumerate(node.outputs):
-                pass_used = False  # initial value to be analyzed if 'R_LAYERS'
-                # if node != 'R_LAYERS' - "pass_used" not needed, so set it to True
-                if node.type != 'R_LAYERS':
-                    pass_used = True
-                else:  # if 'R_LAYERS' check if output represent used render pass
+                if output.is_unavailable:
+                    continue
+                if node.type == 'R_LAYERS' and output.name != 'Alpha':
+                    # If 'R_LAYERS' check if output is used in render pass.
+                    # If output is "Alpha", assume it's used. Not available in passes.
                     node_scene = node.scene
                     node_layer = node.layer
-                    # If output - "Alpha" is analyzed - assume it's used. Not represented in passes.
-                    if output.name == 'Alpha':
-                        pass_used = True
-                    else:
-                        # check entries in global 'rl_outputs' variable
-                        for rlo in rl_outputs:
-                            if output.name in {rlo.output_name, rlo.exr_output_name}:
-                                pass_used = getattr(node_scene.view_layers[node_layer], rlo.render_pass)
-                                break
-                if pass_used:
-                    valid = ((option == 'ALL') or
-                             (option == 'LOOSE' and not output.links) or
-                             (option == 'LINKED' and output.links))
-                    # Add reroutes only if valid, but offset location in all cases.
-                    if valid:
-                        n = nodes.new('NodeReroute')
-                        nodes.active = n
-                        for link in output.links:
-                            connect_sockets(n.outputs[0], link.to_socket)
-                        connect_sockets(output, n.inputs[0])
-                        n.location = loc
-                        post_select.append(n)
+                    for rlo in rl_outputs:
+                        # Check entries in global 'rl_outputs' variable.
+                        if output.name in {rlo.output_name, rlo.exr_output_name}:
+                            if not getattr(node_scene.view_layers[node_layer], rlo.render_pass):
+                                continue
+                # Output is valid when option is 'all' or when 'loose' output has no links.
+                valid = ((self.option == 'ALL') or
+                         (self.option == 'LOOSE' and not output.links) or
+                         (self.option == 'LINKED' and output.links))
+                if valid:
+                    # Add reroutes only if valid.
+                    n = nodes.new('NodeReroute')
+                    nodes.active = n
+                    for link in output.links:
+                        connect_sockets(n.outputs[0], link.to_socket)
+                    connect_sockets(output, n.inputs[0])
+                    n.location = x, y
+                    new_node_reroutes.append(n)
+                    post_select.append(n)
+                if valid or not output.hide:
+                    # Offset reroutes for all outputs, except hidden ones.
                     reroutes_count += 1
                     y += y_offset
-                    loc = x, y
-            # disselect the node so that after execution of script only newly created nodes are selected
-            node.select = False
-            # nicer reroutes distribution along y when node.hide
+
+            # Nicer reroutes distribution along y when node.hide.
             if node.hide:
                 y_translate = reroutes_count * y_offset / 2.0 - y_offset - 35.0
-                for reroute in [r for r in nodes if r.select]:
+                for reroute in new_node_reroutes:
                     reroute.location.y -= y_translate
-            for node in post_select:
-                node.select = True
+
+        if post_select:
+            for node in nodes:
+                # Select only newly created nodes.
+                node.select = node in post_select
+        else:
+            # No new nodes were created.
+            return {'CANCELLED'}
 
         return {'FINISHED'}
 
@@ -2066,12 +2083,9 @@ class NWLinkActiveToSelected(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        valid = False
-        if nw_check(context):
-            if context.active_node is not None:
-                if context.active_node.select:
-                    valid = True
-        return valid
+        return (nw_check(cls, context)
+                and nw_check_active(cls, context)
+                and nw_check_selected(cls, context, min=2))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2141,6 +2155,10 @@ class NWAlignNodes(Operator, NWBase):
     bl_label = "Align Nodes"
     bl_options = {'REGISTER', 'UNDO'}
     margin: IntProperty(name='Margin', default=50, description='The amount of space between nodes')
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_not_empty(cls, context)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2220,6 +2238,10 @@ class NWSelectParentChildren(Operator, NWBase):
         )
     )
 
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
+
     def execute(self, context):
         nodes, links = get_nodes_links(context)
         option = self.option
@@ -2243,6 +2265,10 @@ class NWDetachOutputs(Operator, NWBase):
     bl_idname = "node.nw_detach_outputs"
     bl_label = "Detach Outputs"
     bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return nw_check(cls, context) and nw_check_selected(cls, context)
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2268,14 +2294,12 @@ class NWLinkToOutputNode(Operator):
 
     @classmethod
     def poll(cls, context):
-        valid = False
-        if nw_check(context):
-            if context.active_node is not None:
-                for out in context.active_node.outputs:
-                    if is_visible_socket(out):
-                        valid = True
-                        break
-        return valid
+        """Disabled for custom nodes as we do not know which nodes are outputs."""
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
+                                        'TextureNodeTree', 'GeometryNodeTree'})
+                and nw_check_active(cls, context)
+                and nw_check_visible_outputs(cls, context))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2395,6 +2419,11 @@ class NWAddSequence(Operator, NWBase, ImportHelper):
         default=True
     )
 
+    @classmethod
+    def poll(cls, context):
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree'}))
+
     def draw(self, context):
         layout = self.layout
         layout.alignment = 'LEFT'
@@ -2507,6 +2536,11 @@ class NWAddMultipleImages(Operator, NWBase, ImportHelper):
         options={'HIDDEN', 'SKIP_SAVE'}
     )
 
+    @classmethod
+    def poll(cls, context):
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree'}))
+
     def execute(self, context):
         nodes, links = get_nodes_links(context)
 
@@ -2556,7 +2590,8 @@ class NWViewerFocus(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return nw_check(context) and context.space_data.tree_type == 'CompositorNodeTree'
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'CompositorNodeTree'}))
 
     def execute(self, context):
         return {'FINISHED'}
@@ -2626,13 +2661,9 @@ class NWSaveViewer(bpy.types.Operator, ExportHelper):
 
     @classmethod
     def poll(cls, context):
-        valid = False
-        if nw_check(context):
-            if context.space_data.tree_type == 'CompositorNodeTree':
-                if "Viewer Node" in [i.name for i in bpy.data.images]:
-                    if sum(bpy.data.images["Viewer Node"].size) > 0:  # False if not connected or connected but no image
-                        valid = True
-        return valid
+        return (nw_check(cls, context)
+                and nw_check_space_type(cls, context, {'CompositorNodeTree'})
+                and nw_check_viewer_node(cls))
 
     def execute(self, context):
         fp = self.filepath
@@ -2670,18 +2701,14 @@ class NWResetNodes(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        space = context.space_data
-        return space.type == 'NODE_EDITOR'
+        return (nw_check(cls, context)
+                and nw_check_selected(cls, context)
+                and nw_check_active(cls, context))
 
     def execute(self, context):
         node_active = context.active_node
         node_selected = context.selected_nodes
         node_ignore = ["FRAME", "REROUTE", "GROUP", "SIMULATION_INPUT", "SIMULATION_OUTPUT"]
-
-        # Check if one node is selected at least
-        if not (len(node_selected) > 0):
-            self.report({'ERROR'}, "1 node must be selected at least")
-            return {'CANCELLED'}
 
         active_node_name = node_active.name if node_active.select else None
         valid_nodes = [n for n in node_selected if n.type not in node_ignore]

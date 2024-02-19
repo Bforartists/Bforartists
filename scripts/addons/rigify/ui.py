@@ -23,7 +23,7 @@ from .utils.widgets import write_widget
 from .utils.naming import unique_name
 from .utils.rig import upgrade_metarig_types, outdated_types, upgrade_metarig_layers, \
     is_valid_metarig, metarig_needs_upgrade
-from .utils.misc import verify_armature_obj, ArmatureObject, IdPropSequence
+from .utils.misc import verify_armature_obj, ArmatureObject, IdPropSequence, flatten_children
 
 from .rigs.utils import get_limb_generated_names
 
@@ -243,6 +243,29 @@ class DATA_PT_rigify_samples(bpy.types.Panel):
 # noinspection SpellCheckingInspection
 # noinspection PyPep8Naming
 class DATA_UL_rigify_bone_collections(UIList):
+    def filter_items(self, _context, data, propname):
+        assert propname == 'collections_all'
+        collections = data.collections_all
+        flags = []
+
+        # Filtering by name
+        if self.filter_name:
+            print(self.filter_name, self.use_filter_invert)
+            flags = bpy.types.UI_UL_list.filter_items_by_name(
+                self.filter_name, self.bitflag_filter_item, collections, "name")
+        if not flags:
+            flags = [self.bitflag_filter_item] * len(collections)
+
+        # Reorder by name.
+        if self.use_filter_sort_alpha:
+            indices = bpy.types.UI_UL_list.sort_items_by_name(collections, "name")
+        # Sort by tree order
+        else:
+            index_map = {c.name: i for i, c in enumerate(flatten_children(data.collections))}
+            indices = [index_map[c.name] for c in collections]
+
+        return flags, indices
+
     def draw_item(self, _context, layout, armature, bcoll, _icon, _active_data,
                   _active_prop_name, _index=0, _flt_flag=0):
         active_bone = armature.edit_bones.active or armature.bones.active
@@ -290,9 +313,9 @@ class DATA_PT_rigify_collection_list(bpy.types.Panel):
 
         row.template_list(
             "DATA_UL_rigify_bone_collections",
-            "collections",
+            "",
             arm,
-            "collections",
+            "collections_all",
             arm.collections,
             "active_index",
             rows=(4 if active_coll else 1),
@@ -322,7 +345,7 @@ class DATA_PT_rigify_collection_list(bpy.types.Panel):
             row.active = active_coll.rigify_ui_row > 0  # noqa
             row.prop(active_coll, "rigify_ui_title")
 
-        if ROOT_COLLECTION not in arm.collections:
+        if ROOT_COLLECTION not in arm.collections_all:
             layout.label(text=f"The '{ROOT_COLLECTION}' collection will be added upon generation", icon='INFO')
 
 
@@ -337,11 +360,11 @@ class DATA_PT_rigify_collection_ui(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return is_valid_metarig(context) and len(verify_armature_obj(context.object).data.collections)
+        return is_valid_metarig(context) and len(verify_armature_obj(context.object).data.collections_all)
 
     @staticmethod
     def draw_btn_block(arm: Armature, parent: UILayout, bcoll_id: int, loose=False):
-        bcoll = arm.collections[bcoll_id]
+        bcoll = arm.collections_all[bcoll_id]
         block = parent.row(align=True)
 
         if bcoll == arm.collections.active:
@@ -364,8 +387,10 @@ class DATA_PT_rigify_collection_ui(bpy.types.Panel):
         row_table = defaultdict(list)
         has_buttons = False
 
-        for i, bcoll in enumerate(arm.collections):
-            row_table[bcoll.rigify_ui_row].append(i)
+        index_map = {c.name: i for i, c in enumerate(arm.collections_all)}
+
+        for bcoll in flatten_children(arm.collections):
+            row_table[bcoll.rigify_ui_row].append(index_map[bcoll.name])
 
             if bcoll.rigify_ui_row > 0:
                 has_buttons = True
@@ -469,7 +494,7 @@ class DATA_OT_rigify_collection_set_ui_row(bpy.types.Operator):
         obj = verify_armature_obj(context.object)
         if self.select:
             obj.data.collections.active_index = self.index
-        obj.data.collections[self.index].rigify_ui_row = self.row
+        obj.data.collections_all[self.index].rigify_ui_row = self.row
         return {'FINISHED'}
 
 
@@ -495,7 +520,7 @@ class DATA_OT_rigify_collection_add_ui_row(bpy.types.Operator):
 
     def execute(self, context):
         obj = verify_armature_obj(context.object)
-        for coll in obj.data.collections:
+        for coll in obj.data.collections_all:
             if coll.rigify_ui_row >= self.row:
                 coll.rigify_ui_row += (1 if self.add else -1)
         return {'FINISHED'}
@@ -716,7 +741,7 @@ class DATA_OT_rigify_color_set_remove(bpy.types.Operator):
         rigify_colors.remove(self.idx)
 
         # set layers references to 0
-        for coll in obj.data.collections:
+        for coll in obj.data.collections_all:
             idx = coll.rigify_color_set_id
 
             if idx == self.idx + 1:
@@ -745,7 +770,7 @@ class DATA_OT_rigify_color_set_remove_all(bpy.types.Operator):
             rigify_colors.remove(0)
 
         # set layers references to 0
-        for coll in obj.data.collections:
+        for coll in obj.data.collections_all:
             coll.rigify_color_set_id = 0
 
         return {'FINISHED'}
@@ -1025,7 +1050,7 @@ class Generate(bpy.types.Operator):
     def execute(self, context):
         metarig = verify_armature_obj(context.object)
 
-        for bcoll in metarig.data.collections:
+        for bcoll in metarig.data.collections_all:
             if bcoll.rigify_ui_row > 0 and bcoll.name not in SPECIAL_COLLECTIONS:
                 break
         else:

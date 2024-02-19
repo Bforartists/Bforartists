@@ -12,7 +12,7 @@
 #include "BLI_math_matrix.h"
 #include "BLI_math_vector.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_defaults.h"
 #include "DNA_mesh_types.h"
@@ -21,12 +21,12 @@
 #include "DNA_screen_types.h"
 
 #include "BKE_action.h"
-#include "BKE_colortools.h"
+#include "BKE_colortools.hh"
 #include "BKE_context.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_lib_id.h"
-#include "BKE_lib_query.h"
+#include "BKE_lib_id.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.hh"
@@ -367,7 +367,7 @@ static void deformVerts_do(HookModifierData *hmd,
       int verts_orig_num = positions.size();
       if (ob->type == OB_MESH) {
         const Mesh *me_orig = static_cast<const Mesh *>(ob->data);
-        verts_orig_num = me_orig->totvert;
+        verts_orig_num = me_orig->verts_num;
       }
       BLI_bitmap *indexar_used = hook_index_array_to_bitmap(hmd, verts_orig_num);
       for (i = 0; i < positions.size(); i++) {
@@ -583,4 +583,5 @@ ModifierTypeInfo modifierType_Hook = {
     /*panel_register*/ panel_register,
     /*blend_write*/ blend_write,
     /*blend_read*/ blend_read,
+    /*foreach_cache*/ nullptr,
 };

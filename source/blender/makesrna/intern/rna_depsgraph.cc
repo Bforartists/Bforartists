@@ -17,7 +17,7 @@
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
 
-#include "rna_internal.h"
+#include "rna_internal.hh"
 
 #include "DNA_object_types.h"
 
@@ -37,7 +37,7 @@
 
 #  include "BKE_duplilist.h"
 #  include "BKE_object.hh"
-#  include "BKE_scene.h"
+#  include "BKE_scene.hh"
 
 #  include "DEG_depsgraph_build.hh"
 #  include "DEG_depsgraph_debug.hh"

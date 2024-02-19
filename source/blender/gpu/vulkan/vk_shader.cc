@@ -20,7 +20,7 @@
 #include "BLI_string_utils.hh"
 #include "BLI_vector.hh"
 
-#include "BKE_global.h"
+#include "BKE_global.hh"
 
 using namespace blender::gpu::shader;
 
@@ -610,7 +610,7 @@ void VKShader::build_shader_module(MutableSpan<const char *> sources,
                       shaderc_compute_shader),
                  "Only forced ShaderC shader kinds are supported.");
   const VKDevice &device = VKBackend::get().device_get();
-  sources[0] = device.glsl_patch_get();
+  sources[SOURCES_INDEX_VERSION] = device.glsl_patch_get();
   Vector<uint32_t> spirv_module = compile_glsl_to_spirv(sources, stage);
   build_shader_module(spirv_module, r_shader_module);
 }
@@ -1001,6 +1001,31 @@ std::string VKShader::resources_declare(const shader::ShaderCreateInfo &info) co
   interface.init(info);
   std::stringstream ss;
 
+  /* TODO: Add support for specialization constants at compile time. */
+  ss << "\n/* Specialization Constants (pass-through). */\n";
+  for (const ShaderCreateInfo::SpecializationConstant &sc : info.specialization_constants_) {
+    switch (sc.type) {
+      case Type::INT:
+        ss << "const int " << sc.name << "=" << std::to_string(sc.default_value.i) << ";\n";
+        break;
+      case Type::UINT:
+        ss << "const uint " << sc.name << "=" << std::to_string(sc.default_value.u) << "u;\n";
+        break;
+      case Type::BOOL:
+        ss << "const bool " << sc.name << "=" << (sc.default_value.u ? "true" : "false") << ";\n";
+        break;
+      case Type::FLOAT:
+        /* Use uint representation to allow exact same bit pattern even if NaN. uintBitsToFloat
+         * isn't supported during global const initialization.  */
+        ss << "#define " << sc.name << " uintBitsToFloat(" << std::to_string(sc.default_value.u)
+           << "u)\n";
+        break;
+      default:
+        BLI_assert_unreachable();
+        break;
+    }
+  }
+
   ss << "\n/* Pass Resources. */\n";
   for (const ShaderCreateInfo::Resource &res : info.pass_resources_) {
     print_resource(ss, interface, res);
@@ -1062,7 +1087,8 @@ std::string VKShader::vertex_interface_declare(const shader::ShaderCreateInfo &i
     ss << "layout(location=" << (location++) << ") out int gpu_Layer;\n ";
   }
   if (workarounds.shader_output_viewport_index &&
-      bool(info.builtins_ & BuiltinBits::VIEWPORT_INDEX)) {
+      bool(info.builtins_ & BuiltinBits::VIEWPORT_INDEX))
+  {
     ss << "layout(location=" << (location++) << ") out int gpu_ViewportIndex;\n";
   }
   if (bool(info.builtins_ & BuiltinBits::BARYCENTRIC_COORD)) {
@@ -1108,7 +1134,8 @@ std::string VKShader::fragment_interface_declare(const shader::ShaderCreateInfo 
     ss << "#define gpu_Layer gl_Layer\n";
   }
   if (workarounds.shader_output_viewport_index &&
-      bool(info.builtins_ & BuiltinBits::VIEWPORT_INDEX)) {
+      bool(info.builtins_ & BuiltinBits::VIEWPORT_INDEX))
+  {
     ss << "#define gpu_ViewportIndex gl_ViewportIndex\n";
   }
 

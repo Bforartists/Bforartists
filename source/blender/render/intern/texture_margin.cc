@@ -18,11 +18,8 @@
 #include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.hh"
 
-#include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
-
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_interp.hh"
 
 #include "MEM_guardedalloc.h"
 
@@ -150,8 +147,8 @@ class TextureMarginMap {
  */
 #define PackDijkstraPixel(dist, dir) (0x80000000 + ((dist) << 4) + (dir))
 #define DijkstraPixelGetDistance(dp) (((dp) ^ 0x80000000) >> 4)
-#define DijkstraPixelGetDirection(dp) ((dp)&0xF)
-#define IsDijkstraPixel(dp) ((dp)&0x80000000)
+#define DijkstraPixelGetDirection(dp) ((dp) & 0xF)
+#define IsDijkstraPixel(dp) ((dp) & 0x80000000)
 #define DijkstraPixelIsUnset(dp) ((dp) == 0xFFFFFFFF)
 
   /**
@@ -224,9 +221,12 @@ class TextureMarginMap {
    */
   void lookup_pixels(ImBuf *ibuf, char *mask, int maxPolygonSteps)
   {
+    float4 *ibuf_ptr_fl = reinterpret_cast<float4 *>(ibuf->float_buffer.data);
+    uchar4 *ibuf_ptr_ch = reinterpret_cast<uchar4 *>(ibuf->byte_buffer.data);
+    size_t pixel_index = 0;
     for (int y = 0; y < h_; y++) {
       for (int x = 0; x < w_; x++) {
-        uint32_t dp = get_pixel(x, y);
+        uint32_t dp = pixel_data_[pixel_index];
         if (IsDijkstraPixel(dp) && !DijkstraPixelIsUnset(dp)) {
           int dist = DijkstraPixelGetDistance(dp);
           int direction = DijkstraPixelGetDirection(dp);
@@ -273,9 +273,16 @@ class TextureMarginMap {
             }
 
             if (found_pixel_in_polygon) {
-              bilinear_interpolation(ibuf, ibuf, destX, destY, x, y);
+              if (ibuf_ptr_fl) {
+                ibuf_ptr_fl[pixel_index] = imbuf::interpolate_bilinear_border_fl(
+                    ibuf, destX, destY);
+              }
+              if (ibuf_ptr_ch) {
+                ibuf_ptr_ch[pixel_index] = imbuf::interpolate_bilinear_border_byte(
+                    ibuf, destX, destY);
+              }
               /* Add our new pixels to the assigned pixel map. */
-              mask[y * w_ + x] = 1;
+              mask[pixel_index] = 1;
             }
           }
         }
@@ -283,8 +290,9 @@ class TextureMarginMap {
           /* These are not margin pixels, make sure the extend filter which is run after this step
            * leaves them alone.
            */
-          mask[y * w_ + x] = 1;
+          mask[pixel_index] = 1;
         }
+        pixel_index++;
       }
     }
   }
@@ -300,7 +308,7 @@ class TextureMarginMap {
 
   void build_tables()
   {
-    loop_to_face_map_ = blender::bke::mesh::build_loop_to_face_map(faces_);
+    loop_to_face_map_ = blender::bke::mesh::build_corner_to_face_map(faces_);
 
     loop_adjacency_map_.resize(corner_edges_.size(), -1);
 
@@ -498,11 +506,11 @@ static void generate_margin(ImBuf *ibuf,
                             const Span<float2> mloopuv,
                             const float uv_offset[2])
 {
-  Array<MLoopTri> looptris(poly_to_tri_count(faces.size(), corner_edges.size()));
-  bke::mesh::looptris_calc(vert_positions, faces, corner_verts, looptris);
+  Array<int3> corner_tris(poly_to_tri_count(faces.size(), corner_edges.size()));
+  bke::mesh::corner_tris_calc(vert_positions, faces, corner_verts, corner_tris);
 
-  Array<int> looptri_faces(looptris.size());
-  bke::mesh::looptris_calc_face_indices(faces, looptri_faces);
+  Array<int> tri_faces(corner_tris.size());
+  bke::mesh::corner_tris_calc_face_indices(faces, tri_faces);
 
   TextureMarginMap map(ibuf->x, ibuf->y, uv_offset, edges_num, faces, corner_edges, mloopuv);
 
@@ -517,12 +525,12 @@ static void generate_margin(ImBuf *ibuf,
     draw_new_mask = true;
   }
 
-  for (const int i : looptris.index_range()) {
-    const MLoopTri *lt = &looptris[i];
+  for (const int i : corner_tris.index_range()) {
+    const int3 tri = corner_tris[i];
     float vec[3][2];
 
     for (int a = 0; a < 3; a++) {
-      const float *uv = mloopuv[lt->tri[a]];
+      const float *uv = mloopuv[tri[a]];
 
       /* NOTE(@ideasman42): workaround for pixel aligned UVs which are common and can screw up
        * our intersection tests where a pixel gets in between 2 faces or the middle of a quad,
@@ -533,9 +541,9 @@ static void generate_margin(ImBuf *ibuf,
     }
 
     /* NOTE: we need the top bit for the dijkstra distance map. */
-    BLI_assert(looptri_faces[i] < 0x80000000);
+    BLI_assert(tri_faces[i] < 0x80000000);
 
-    map.rasterize_tri(vec[0], vec[1], vec[2], looptri_faces[i], mask, draw_new_mask);
+    map.rasterize_tri(vec[0], vec[1], vec[2], tri_faces[i], mask, draw_new_mask);
   }
 
   char *tmpmask = (char *)MEM_dupallocN(mask);
@@ -568,19 +576,20 @@ void RE_generate_texturemargin_adjacentfaces(ImBuf *ibuf,
                                              char const *uv_layer,
                                              const float uv_offset[2])
 {
+  using namespace blender;
   const blender::StringRef uv_map_name = (uv_layer && uv_layer[0]) ?
                                              uv_layer :
-                                             CustomData_get_active_layer_name(&mesh->loop_data,
+                                             CustomData_get_active_layer_name(&mesh->corner_data,
                                                                               CD_PROP_FLOAT2);
   const blender::bke::AttributeAccessor attributes = mesh->attributes();
-  const blender::VArraySpan<blender::float2> uv_map = *attributes.lookup<blender::float2>(
-      uv_map_name, ATTR_DOMAIN_CORNER);
+  const VArraySpan<float2> uv_map = *attributes.lookup<float2>(uv_map_name,
+                                                               bke::AttrDomain::Corner);
 
   blender::render::texturemargin::generate_margin(ibuf,
                                                   mask,
                                                   margin,
                                                   mesh->vert_positions(),
-                                                  mesh->totedge,
+                                                  mesh->edges_num,
                                                   mesh->faces(),
                                                   mesh->corner_edges(),
                                                   mesh->corner_verts(),

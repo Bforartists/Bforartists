@@ -29,10 +29,10 @@
 
 #include "BKE_action.h"
 #include "BKE_armature.hh"
-#include "BKE_blender.h"
+#include "BKE_blender.hh"
 #include "BKE_context.hh"
 #include "BKE_gpencil_legacy.h"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_object.hh"
 #include "BKE_tracking.h"
 
@@ -55,6 +55,8 @@
 #include "ANIM_bone_collections.hh"
 
 #include "screen_intern.h"
+
+using blender::Vector;
 
 const char *screen_context_dir[] = {
     "scene",
@@ -270,11 +272,9 @@ static eContextResult screen_ctx_visible_or_editable_bones_(const bContext *C,
   EditBone *flipbone = nullptr;
 
   if (arm && arm->edbo) {
-    uint objects_len;
-    Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-        scene, view_layer, CTX_wm_view3d(C), &objects_len);
-    for (uint i = 0; i < objects_len; i++) {
-      Object *ob = objects[i];
+    Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
+        scene, view_layer, CTX_wm_view3d(C));
+    for (Object *ob : objects) {
       arm = static_cast<bArmature *>(ob->data);
 
       /* Attention: X-Axis Mirroring is also handled here... */
@@ -314,7 +314,6 @@ static eContextResult screen_ctx_visible_or_editable_bones_(const bContext *C,
         }
       }
     }
-    MEM_freeN(objects);
 
     CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
     return CTX_RESULT_OK;
@@ -343,11 +342,9 @@ static eContextResult screen_ctx_selected_bones_(const bContext *C,
   EditBone *flipbone = nullptr;
 
   if (arm && arm->edbo) {
-    uint objects_len;
-    Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-        scene, view_layer, CTX_wm_view3d(C), &objects_len);
-    for (uint i = 0; i < objects_len; i++) {
-      Object *ob = objects[i];
+    Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
+        scene, view_layer, CTX_wm_view3d(C));
+    for (Object *ob : objects) {
       arm = static_cast<bArmature *>(ob->data);
 
       /* Attention: X-Axis Mirroring is also handled here... */
@@ -387,7 +384,6 @@ static eContextResult screen_ctx_selected_bones_(const bContext *C,
         }
       }
     }
-    MEM_freeN(objects);
 
     CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
     return CTX_RESULT_OK;
@@ -674,11 +670,24 @@ static eContextResult screen_ctx_pose_object(const bContext *C, bContextDataResu
   }
   return CTX_RESULT_OK;
 }
-static eContextResult screen_ctx_active_sequence_strip(const bContext *C,
-                                                       bContextDataResult *result)
+static Scene *space_sequencer_get_active_scene(const bContext *C)  /*BFA - 3D Sequencer*/
 {
   wmWindow *win = CTX_wm_window(C);
   Scene *scene = WM_window_get_active_scene(win);
+  /*############## BFA - 3D Sequencer ##############*/
+  SpaceSeq *sseq = CTX_wm_space_seq(C);
+
+  if (sseq != NULL && sseq->scene_override != NULL) {
+    scene = sseq->scene_override;
+  }
+  return scene;
+}
+
+static eContextResult screen_ctx_active_sequence_strip(const bContext *C,
+                                                       bContextDataResult *result)
+{
+  Scene *scene = space_sequencer_get_active_scene(C);
+  /*############## BFA - 3D Sequencer End ##############*/
   Sequence *seq = SEQ_select_active_get(scene);
   if (seq) {
     CTX_data_pointer_set(result, &scene->id, &RNA_Sequence, seq);
@@ -702,8 +711,7 @@ static eContextResult screen_ctx_sequences(const bContext *C, bContextDataResult
 }
 static eContextResult screen_ctx_selected_sequences(const bContext *C, bContextDataResult *result)
 {
-  wmWindow *win = CTX_wm_window(C);
-  Scene *scene = WM_window_get_active_scene(win);
+  Scene *scene = space_sequencer_get_active_scene(C); /*BFA - 3D Sequencer*/
   Editing *ed = SEQ_editing_get(scene);
   if (ed) {
     LISTBASE_FOREACH (Sequence *, seq, ed->seqbasep) {
@@ -719,8 +727,7 @@ static eContextResult screen_ctx_selected_sequences(const bContext *C, bContextD
 static eContextResult screen_ctx_selected_editable_sequences(const bContext *C,
                                                              bContextDataResult *result)
 {
-  wmWindow *win = CTX_wm_window(C);
-  Scene *scene = WM_window_get_active_scene(win);
+  Scene *scene = space_sequencer_get_active_scene(C); /*BFA - 3D Sequencer*/
   Editing *ed = SEQ_editing_get(scene);
   if (ed == nullptr) {
     return CTX_RESULT_NO_DATA;

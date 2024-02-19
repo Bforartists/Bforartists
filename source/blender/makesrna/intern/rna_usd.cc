@@ -10,16 +10,18 @@
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
 
-#include "rna_internal.h"
+#include "rna_internal.hh"
 
 #include "WM_types.hh"
 
-#include "usd.h"
+#include "usd.hh"
 
 #ifdef RNA_RUNTIME
 
 #  include "DNA_object_types.h"
 #  include "WM_api.hh"
+
+using namespace blender::io::usd;
 
 static StructRNA *rna_USDHook_refine(PointerRNA *ptr)
 {
@@ -82,6 +84,13 @@ static StructRNA *rna_USDHook_register(Main *bmain,
   /* check if we have registered this hook before, and remove it */
   hook = USD_find_hook_name(dummy_hook.idname);
   if (hook) {
+    BKE_reportf(reports,
+                RPT_INFO,
+                "%s '%s', bl_idname '%s' has been registered before, unregistering previous",
+                error_prefix,
+                identifier,
+                dummy_hook.idname);
+
     StructRNA *srna = hook->rna_ext.srna;
     if (!rna_USDHook_unregister(bmain, srna)) {
       BKE_reportf(reports,

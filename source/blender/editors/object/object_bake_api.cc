@@ -23,15 +23,15 @@
 #include "BLI_path_util.h"
 #include "BLI_string.h"
 
-#include "BKE_attribute.h"
-#include "BKE_callbacks.h"
+#include "BKE_attribute.hh"
+#include "BKE_callbacks.hh"
 #include "BKE_context.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_image.h"
 #include "BKE_image_format.h"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
@@ -39,8 +39,8 @@
 #include "BKE_modifier.hh"
 #include "BKE_node.hh"
 #include "BKE_object.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 
 #include "DEG_depsgraph.hh"
@@ -50,9 +50,9 @@
 #include "RE_engine.h"
 #include "RE_pipeline.h"
 
-#include "IMB_colormanagement.h"
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_colormanagement.hh"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -502,7 +502,7 @@ static bool bake_object_check(const Scene *scene,
     }
   }
   else if (target == R_BAKE_TARGET_IMAGE_TEXTURES) {
-    if (CustomData_get_active_layer_index(&mesh->loop_data, CD_PROP_FLOAT2) == -1) {
+    if (CustomData_get_active_layer_index(&mesh->corner_data, CD_PROP_FLOAT2) == -1) {
       BKE_reportf(
           reports, RPT_ERROR, "No active UV layer found in the object \"%s\"", ob->id.name + 2);
       return false;
@@ -687,7 +687,8 @@ static bool bake_objects_check(Main *bmain,
 
     LISTBASE_FOREACH (CollectionPointerLink *, link, selected_objects) {
       if (!bake_object_check(
-              scene, view_layer, static_cast<Object *>(link->ptr.data), target, reports)) {
+              scene, view_layer, static_cast<Object *>(link->ptr.data), target, reports))
+      {
         return false;
       }
     }
@@ -1013,7 +1014,7 @@ static bool bake_targets_init_vertex_colors(Main *bmain,
   targets->materials_num = ob->totcol;
 
   BakeImage *bk_image = &targets->images[0];
-  bk_image->width = mesh->totloop;
+  bk_image->width = mesh->corners_num;
   bk_image->height = 1;
   bk_image->offset = 0;
   bk_image->image = nullptr;
@@ -1075,14 +1076,14 @@ static void bake_targets_populate_pixels_color_attributes(BakeTargets *targets,
   }
 
   /* Populate through adjacent triangles, first triangle wins. */
-  const int looptris_num = poly_to_tri_count(me_eval->faces_num, me_eval->totloop);
-  MLoopTri *looptris = static_cast<MLoopTri *>(
-      MEM_mallocN(sizeof(*looptris) * looptris_num, __func__));
+  const int corner_tris_num = poly_to_tri_count(me_eval->faces_num, me_eval->corners_num);
+  blender::int3 *corner_tris = static_cast<blender::int3 *>(
+      MEM_mallocN(sizeof(*corner_tris) * corner_tris_num, __func__));
 
   const blender::Span<int> corner_verts = me_eval->corner_verts();
-  blender::bke::mesh::looptris_calc(
-      me_eval->vert_positions(), me_eval->faces(), corner_verts, {looptris, looptris_num});
-  const blender::Span<int> looptri_faces = me_eval->looptri_faces();
+  blender::bke::mesh::corner_tris_calc(
+      me_eval->vert_positions(), me_eval->faces(), corner_verts, {corner_tris, corner_tris_num});
+  const blender::Span<int> tri_faces = me_eval->corner_tri_faces();
 
   /* For mapping back to original mesh in case there are modifiers. */
   const int *vert_origindex = static_cast<const int *>(
@@ -1092,19 +1093,19 @@ static void bake_targets_populate_pixels_color_attributes(BakeTargets *targets,
   const blender::OffsetIndices orig_faces = mesh->faces();
   const blender::Span<int> orig_corner_verts = mesh->corner_verts();
 
-  for (int i = 0; i < looptris_num; i++) {
-    const MLoopTri *lt = &looptris[i];
-    const int face_i = looptri_faces[i];
+  for (int i = 0; i < corner_tris_num; i++) {
+    const blender::int3 &tri = corner_tris[i];
+    const int face_i = tri_faces[i];
 
     for (int j = 0; j < 3; j++) {
-      uint l = lt->tri[j];
+      uint l = tri[j];
       const int v = corner_verts[l];
 
       /* Map back to original loop if there are modifiers. */
       if (vert_origindex != nullptr && poly_origindex != nullptr) {
         l = find_original_loop(
             orig_faces, orig_corner_verts, vert_origindex, poly_origindex, face_i, v);
-        if (l == ORIGINDEX_NONE || l >= mesh->totloop) {
+        if (l == ORIGINDEX_NONE || l >= mesh->corners_num) {
           continue;
         }
       }
@@ -1138,7 +1139,7 @@ static void bake_targets_populate_pixels_color_attributes(BakeTargets *targets,
     }
   }
 
-  MEM_freeN(looptris);
+  MEM_freeN(corner_tris);
 }
 
 static void bake_result_add_to_rgba(float rgba[4], const float *result, const int channels_num)
@@ -1177,28 +1178,29 @@ static void convert_float_color_to_byte_color(const MPropCol *float_colors,
 
 static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
 {
+  using namespace blender;
   Mesh *mesh = static_cast<Mesh *>(ob->data);
   BMEditMesh *em = mesh->edit_mesh;
   const CustomDataLayer *active_color_layer = BKE_id_attributes_color_find(
       &mesh->id, mesh->active_color_attribute);
   BLI_assert(active_color_layer != nullptr);
-  const eAttrDomain domain = BKE_id_attribute_domain(&mesh->id, active_color_layer);
+  const bke::AttrDomain domain = BKE_id_attribute_domain(&mesh->id, active_color_layer);
 
   const int channels_num = targets->channels_num;
   const bool is_noncolor = targets->is_noncolor;
   const float *result = targets->result;
 
-  if (domain == ATTR_DOMAIN_POINT) {
-    const int totvert = mesh->totvert;
-    const int totloop = mesh->totloop;
+  if (domain == bke::AttrDomain::Point) {
+    const int totvert = mesh->verts_num;
+    const int totloop = mesh->corners_num;
 
     MPropCol *mcol = static_cast<MPropCol *>(
         MEM_malloc_arrayN(totvert, sizeof(MPropCol), __func__));
 
     /* Accumulate float vertex colors in scene linear color space. */
     int *num_loops_for_vertex = static_cast<int *>(
-        MEM_callocN(sizeof(int) * mesh->totvert, "num_loops_for_vertex"));
-    memset(mcol, 0, sizeof(MPropCol) * mesh->totvert);
+        MEM_callocN(sizeof(int) * mesh->verts_num, "num_loops_for_vertex"));
+    memset(mcol, 0, sizeof(MPropCol) * mesh->verts_num);
 
     const blender::Span<int> corner_verts = mesh->corner_verts();
     for (int i = 0; i < totloop; i++) {
@@ -1236,7 +1238,7 @@ static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
     else {
       /* Copy to mesh. */
       if (active_color_layer->type == CD_PROP_COLOR) {
-        memcpy(active_color_layer->data, mcol, sizeof(MPropCol) * mesh->totvert);
+        memcpy(active_color_layer->data, mcol, sizeof(MPropCol) * mesh->verts_num);
       }
       else {
         convert_float_color_to_byte_color(
@@ -1248,7 +1250,7 @@ static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
 
     MEM_SAFE_FREE(num_loops_for_vertex);
   }
-  else if (domain == ATTR_DOMAIN_CORNER) {
+  else if (domain == bke::AttrDomain::Corner) {
     if (em) {
       /* Copy to bmesh. */
       const int active_color_offset = CustomData_get_offset_named(
@@ -1280,14 +1282,14 @@ static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
       /* Copy to mesh. */
       if (active_color_layer->type == CD_PROP_COLOR) {
         MPropCol *colors = static_cast<MPropCol *>(active_color_layer->data);
-        for (int i = 0; i < mesh->totloop; i++) {
+        for (int i = 0; i < mesh->corners_num; i++) {
           zero_v4(colors[i].color);
           bake_result_add_to_rgba(colors[i].color, &result[i * channels_num], channels_num);
         }
       }
       else {
         MLoopCol *colors = static_cast<MLoopCol *>(active_color_layer->data);
-        for (int i = 0; i < mesh->totloop; i++) {
+        for (int i = 0; i < mesh->corners_num; i++) {
           MPropCol color;
           zero_v4(color.color);
           bake_result_add_to_rgba(color.color, &result[i * channels_num], channels_num);
@@ -1434,7 +1436,7 @@ static int bake(const BakeAPIRender *bkr,
 
   if (bkr->uv_layer[0] != '\0') {
     Mesh *mesh = (Mesh *)ob_low->data;
-    if (CustomData_get_named_layer(&mesh->loop_data, CD_PROP_FLOAT2, bkr->uv_layer) == -1) {
+    if (CustomData_get_named_layer(&mesh->corner_data, CD_PROP_FLOAT2, bkr->uv_layer) == -1) {
       BKE_reportf(reports,
                   RPT_ERROR,
                   "No UV layer named \"%s\" found in the object \"%s\"",
@@ -1512,7 +1514,7 @@ static int bake(const BakeAPIRender *bkr,
     if (ob_cage) {
       me_cage_eval = bake_mesh_new_from_object(depsgraph, ob_cage_eval, preserve_origindex);
       if ((me_low_eval->faces_num != me_cage_eval->faces_num) ||
-          (me_low_eval->totloop != me_cage_eval->totloop))
+          (me_low_eval->corners_num != me_cage_eval->corners_num))
       {
         BKE_report(reports,
                    RPT_ERROR,
@@ -1738,7 +1740,8 @@ static int bake(const BakeAPIRender *bkr,
   else {
     /* save the results */
     if (bake_targets_output(
-            bkr, &targets, ob_low, ob_low_eval, me_low_eval, pixel_array_low, reports)) {
+            bkr, &targets, ob_low, ob_low_eval, me_low_eval, pixel_array_low, reports))
+    {
       op_result = OPERATOR_FINISHED;
     }
     else {

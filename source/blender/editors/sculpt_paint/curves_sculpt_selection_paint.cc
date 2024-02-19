@@ -109,8 +109,7 @@ struct SelectionPaintOperationExecutor {
 
     transforms_ = CurvesSurfaceTransforms(*object_, curves_id_->surface);
 
-    const eBrushFalloffShape falloff_shape = static_cast<eBrushFalloffShape>(
-        brush_->falloff_shape);
+    const eBrushFalloffShape falloff_shape = eBrushFalloffShape(brush_->falloff_shape);
 
     selection_goal_ = self_->use_select_ ? 1.0f : 0.0f;
 
@@ -120,7 +119,7 @@ struct SelectionPaintOperationExecutor {
       }
     }
 
-    if (selection_.domain == ATTR_DOMAIN_POINT) {
+    if (selection_.domain == bke::AttrDomain::Point) {
       if (falloff_shape == PAINT_FALLOFF_SHAPE_TUBE) {
         this->paint_point_selection_projected_with_symmetry(selection_.span);
       }

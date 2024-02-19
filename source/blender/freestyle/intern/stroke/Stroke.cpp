@@ -12,7 +12,7 @@
 #include "StrokeIterators.h"
 #include "StrokeRenderer.h"
 
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_node.hh"
 
 namespace Freestyle {
@@ -795,7 +795,8 @@ Interface0DIterator Stroke::pointsEnd(float /*t*/)
 void Stroke::ScaleThickness(float iFactor)
 {
   for (vertex_container::iterator it = _Vertices.begin(), itend = _Vertices.end(); it != itend;
-       ++it) {
+       ++it)
+  {
     StrokeAttribute &attr = (*it)->attribute();
     attr.setThickness(iFactor * attr.getThicknessR(), iFactor * attr.getThicknessL());
   }

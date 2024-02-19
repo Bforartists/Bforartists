@@ -17,6 +17,9 @@ struct bNodeType;
 struct PointerRNA;
 struct PropertyRNA;
 struct bContext;
+namespace blender::bke {
+struct RuntimeNodeEnumItems;
+}
 
 /* Types */
 #define DEF_ENUM(id) extern const EnumPropertyItem id[];
@@ -98,6 +101,11 @@ const EnumPropertyItem *RNA_scene_without_active_itemf(bContext *C,
                                                        PointerRNA *ptr,
                                                        PropertyRNA *prop,
                                                        bool *r_free);
+/*BFA - 3D Sequencer*/
+const EnumPropertyItem *RNA_seq_scene_without_active_itemf(bContext *C, /*BFA - 3D Sequencer*/
+                                                           PointerRNA *ptr,
+                                                           PropertyRNA *prop,
+                                                           bool *r_free);
 const EnumPropertyItem *RNA_scene_local_itemf(bContext *C,
                                               PointerRNA *ptr,
                                               PropertyRNA *prop,
@@ -121,3 +129,6 @@ const EnumPropertyItem *RNA_mask_local_itemf(bContext *C,
 
 /* Non confirming, utility function. */
 const EnumPropertyItem *RNA_enum_node_tree_types_itemf_impl(bContext *C, bool *r_free);
+
+const EnumPropertyItem *RNA_node_enum_definition_itemf(
+    const blender::bke::RuntimeNodeEnumItems &enum_items, bool *r_free);

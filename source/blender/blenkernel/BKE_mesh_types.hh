@@ -20,16 +20,17 @@
 #include "BLI_vector.hh"
 
 #include "DNA_customdata_types.h"
-#include "DNA_meshdata_types.h"
 
 struct BVHCache;
 struct Mesh;
-struct MLoopTri;
 struct ShrinkwrapBoundaryData;
 struct SubdivCCG;
 struct SubsurfRuntimeData;
 namespace blender::bke {
 struct EditMeshData;
+}
+namespace blender::bke::bake {
+struct BakeMaterialsList;
 }
 
 /** #MeshRuntime.wrapper_type */
@@ -86,13 +87,11 @@ struct LooseGeomCache {
 /**
  * Cache of a mesh's loose edges, accessed with #Mesh::loose_edges(). *
  */
-struct LooseEdgeCache : public LooseGeomCache {
-};
+struct LooseEdgeCache : public LooseGeomCache {};
 /**
  * Cache of a mesh's loose vertices or vertices not used by faces.
  */
-struct LooseVertCache : public LooseGeomCache {
-};
+struct LooseVertCache : public LooseGeomCache {};
 
 struct MeshRuntime {
   /* Evaluated mesh for objects which do not have effective modifiers.
@@ -125,10 +124,10 @@ struct MeshRuntime {
    */
   void *batch_cache = nullptr;
 
-  /** Cache for derived triangulation of the mesh, accessed with #Mesh::looptris(). */
-  SharedCache<Array<MLoopTri>> looptris_cache;
-  /** Cache for triangle to original face index map, accessed with #Mesh::looptri_faces(). */
-  SharedCache<Array<int>> looptri_faces_cache;
+  /** Cache for derived triangulation of the mesh, accessed with #Mesh::corner_tris(). */
+  SharedCache<Array<int3>> corner_tris_cache;
+  /** Cache for triangle to original face index map, accessed with #Mesh::corner_tri_faces(). */
+  SharedCache<Array<int>> corner_tri_faces_cache;
 
   /** Cache for BVH trees generated for the mesh. Defined in 'BKE_bvhutil.c' */
   BVHCache *bvh_cache = nullptr;
@@ -174,9 +173,9 @@ struct MeshRuntime {
 
   /** Lazily computed vertex normals (#Mesh::vert_normals()). */
   SharedCache<Vector<float3>> vert_normals_cache;
-  /** Lazily computed face normals (#Mesh::vert_normals()). */
+  /** Lazily computed face normals (#Mesh::face_normals()). */
   SharedCache<Vector<float3>> face_normals_cache;
-  /** Lazily computed face corner normals (#Mesh::vert_normals()). */
+  /** Lazily computed face corner normals (#Mesh::corner_normals()). */
   SharedCache<Vector<float3>> corner_normals_cache;
 
   /**
@@ -210,6 +209,9 @@ struct MeshRuntime {
    * Otherwise it will be empty.
    */
   BitVector<> subsurf_optimal_display_edges;
+
+  /** Stores weak references to material data blocks. */
+  std::unique_ptr<bake::BakeMaterialsList> bake_materials;
 
   MeshRuntime();
   ~MeshRuntime();
