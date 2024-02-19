@@ -10,15 +10,10 @@
 
 #include "BLI_task.h"
 
-#include "DNA_mesh_types.h"
-#include "DNA_modifier_types.h"
-
 #include "BKE_context.hh"
+#include "BKE_layer.hh"
 #include "BKE_paint.hh"
 #include "BKE_pbvh_api.hh"
-#include "BKE_scene.hh"
-
-#include "DEG_depsgraph.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -166,6 +161,12 @@ static int sculpt_mask_filter_exec(bContext *C, wmOperator *op)
   const Scene *scene = CTX_data_scene(C);
   int filter_type = RNA_enum_get(op->ptr, "filter_type");
 
+  const View3D *v3d = CTX_wm_view3d(C);
+  const Base *base = CTX_data_active_base(C);
+  if (!BKE_base_is_visible(v3d, base)) {
+    return OPERATOR_CANCELLED;
+  }
+
   MultiresModifierData *mmd = BKE_sculpt_multires_active(scene, ob);
   BKE_sculpt_mask_layers_ensure(CTX_data_depsgraph_pointer(C), CTX_data_main(C), ob, mmd);
 
@@ -253,12 +254,12 @@ void SCULPT_OT_mask_filter(wmOperatorType *ot)
       "Auto Iteration Count",
       "Use a automatic number of iterations based on the number of vertices of the sculpt");
 
-  /* properties */
-  /*bfa - get the mode and its tooltip from the prop_sculpt_face_sets_init_types array */
+  /* BFA - use filter_type enum property as label and tooltip source when the operator is expanded
+   * or searched */
   ot->prop = RNA_def_enum(ot->srna,
                           "filter_type",
                           prop_mask_filter_types,
-                          0,
+                          MASK_FILTER_SMOOTH,
                           "Filter",
                           "Filter that is going to be applied to the mask");
 }
