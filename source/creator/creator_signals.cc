@@ -29,8 +29,6 @@
 #  include <cstdlib>
 #  include <cstring>
 
-#  include "BLI_sys_types.h"
-
 #  ifdef WIN32
 #    include "BLI_winstuff.h"
 #  endif
@@ -46,6 +44,7 @@
 #  include "BKE_global.hh"
 #  include "BKE_main.hh"
 #  include "BKE_report.hh"
+#  include "BKE_wm_runtime.hh"
 
 #  include <csignal>
 
@@ -159,7 +158,7 @@ static void sig_handle_crash(int signum)
   }
   else {
     if (wm) {
-      BKE_report_write_file_fp(fp, &wm->reports, header);
+      BKE_report_write_file_fp(fp, &wm->runtime->reports, header);
     }
 
     sig_handle_crash_backtrace(fp);
