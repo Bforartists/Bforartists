@@ -614,17 +614,36 @@ static Vector<NodeInterfaceItemData> node_build_item_data(bNode &node)
     if (const nodes::SocketDeclaration *socket_decl =
             dynamic_cast<const nodes::SocketDeclaration *>(item_decl->get()))
     {
-      switch (socket_decl->in_out) {
-        case SOCK_IN:
-          BLI_assert(input != input_end);
-          result.append({socket_decl, *input, nullptr});
-          ++input;
-          break;
-        case SOCK_OUT:
-          BLI_assert(output != output_end);
-          result.append({socket_decl, nullptr, *output});
-          ++output;
-          break;
+      if (socket_decl->align_with_previous_socket) {
+        NodeInterfaceItemData &last_item = result.last();
+        switch (socket_decl->in_out) {
+          case SOCK_IN:
+            BLI_assert(input != input_end);
+            BLI_assert(last_item.input == nullptr);
+            last_item.input = *input;
+            ++input;
+            break;
+          case SOCK_OUT:
+            BLI_assert(output != output_end);
+            BLI_assert(last_item.output == nullptr);
+            last_item.output = *output;
+            ++output;
+            break;
+        }
+      }
+      else {
+        switch (socket_decl->in_out) {
+          case SOCK_IN:
+            BLI_assert(input != input_end);
+            result.append({socket_decl, *input, nullptr});
+            ++input;
+            break;
+          case SOCK_OUT:
+            BLI_assert(output != output_end);
+            result.append({socket_decl, nullptr, *output});
+            ++output;
+            break;
+        }
       }
       ++item_decl;
     }
@@ -1302,6 +1321,14 @@ static void create_inspection_string_for_generic_value(const bNodeSocket &socket
   else if (socket_type.is<bool>()) {
     ss << fmt::format(TIP_("{} (Boolean)"),
                       ((*static_cast<bool *>(socket_value)) ? TIP_("True") : TIP_("False")));
+  }
+  else if (socket_type.is<float4x4>()) {
+    const float4x4 &value = *static_cast<const float4x4 *>(socket_value);
+    ss << value[0] << ",\n";
+    ss << value[1] << ",\n";
+    ss << value[2] << ",\n";
+    ss << value[3] << ",\n";
+    ss << TIP_("(Matrix)");
   }
 }
 
@@ -4219,7 +4246,7 @@ static bool realtime_compositor_is_in_use(const bContext &context)
   }
 
   if (U.experimental.use_full_frame_compositor &&
-      scene->nodetree->execution_mode == NTREE_EXECUTION_MODE_REALTIME)
+      scene->nodetree->execution_mode == NTREE_EXECUTION_MODE_GPU)
   {
     return true;
   }

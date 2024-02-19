@@ -31,7 +31,6 @@
 #include "BLI_math_vector.h"
 #include "BLI_rand.h"
 #include "BLI_sort_utils.h"
-#include "BLI_string.h"
 
 #include "BKE_attribute.hh"
 #include "BKE_context.hh"
@@ -41,12 +40,11 @@
 #include "BKE_key.hh"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
-#include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 #include "BKE_object.hh"
+#include "BKE_object_types.hh"
 #include "BKE_report.hh"
-#include "BKE_texture.h"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
@@ -69,8 +67,6 @@
 #include "ED_transform.hh"
 #include "ED_uvedit.hh"
 #include "ED_view3d.hh"
-
-#include "RE_texture.h"
 
 #include "UI_interface.hh"
 #include "UI_resources.hh"
@@ -1157,14 +1153,10 @@ static std::string mesh_ot_mark_sharp_get_name(wmOperatorType *ot, PointerRNA *p
     if (RNA_boolean_get(ptr, "use_verts")) {
       return CTX_IFACE_(ot->translation_context, "Clear Sharp from Vertices");
     }
-    else {
-      return CTX_IFACE_(ot->translation_context, "Clear Sharp");
-    }
+    return CTX_IFACE_(ot->translation_context, "Clear Sharp");
   }
-  else {
-    if (RNA_boolean_get(ptr, "use_verts")) {
-      return CTX_IFACE_(ot->translation_context, "Mark Sharp from Vertices");
-    }
+  if (RNA_boolean_get(ptr, "use_verts")) {
+    return CTX_IFACE_(ot->translation_context, "Mark Sharp from Vertices");
   }
   return "";
 }
@@ -2685,7 +2677,7 @@ static std::string mesh_ot_normals_make_consistent_get_description(bContext * /*
 void MESH_OT_normals_make_consistent(wmOperatorType *ot)
 {
   /* identifiers */
-/*bfa - recalc inside has its own name and tooltip*/
+  /* BFA - recalculate inside has its own name and tooltip */
   ot->name = "Recalculate Normals Outside";
   ot->description = "Make selected face and vertex normals point outside the mesh";
   ot->idname = "MESH_OT_normals_make_consistent";
@@ -3400,8 +3392,8 @@ static bool merge_target(BMEditMesh *em,
   if (use_cursor) {
     vco = scene->cursor.location;
     copy_v3_v3(co, vco);
-    invert_m4_m4(ob->world_to_object, ob->object_to_world);
-    mul_m4_v3(ob->world_to_object, co);
+    invert_m4_m4(ob->runtime->world_to_object.ptr(), ob->object_to_world().ptr());
+    mul_m4_v3(ob->world_to_object().ptr(), co);
   }
   else {
     float fac;
@@ -4076,6 +4068,9 @@ static int edbm_solidify_exec(bContext *C, wmOperator *op)
 
     /* select the newly generated faces */
     BMO_slot_buffer_hflag_enable(bm, bmop.slots_out, "geom.out", BM_FACE, BM_ELEM_SELECT, true);
+
+    /* No need to flush the selection, any selection history is no longer valid. */
+    BM_select_history_clear(bm);
 
     if (!EDBM_op_finish(em, &bmop, op, true)) {
       continue;
@@ -6697,7 +6692,7 @@ static void sort_bmelem_flag(bContext *C,
     int coidx = (action == SRT_VIEW_ZAXIS) ? 2 : 0;
 
     /* Apply the view matrix to the object matrix. */
-    mul_m4_m4m4(mat, rv3d->viewmat, ob->object_to_world);
+    mul_m4_m4m4(mat, rv3d->viewmat, ob->object_to_world().ptr());
 
     if (totelem[0]) {
       pb = pblock[0] = static_cast<char *>(MEM_callocN(sizeof(char) * totelem[0], __func__));
@@ -6769,7 +6764,7 @@ static void sort_bmelem_flag(bContext *C,
 
     copy_v3_v3(cur, scene->cursor.location);
 
-    invert_m4_m4(mat, ob->object_to_world);
+    invert_m4_m4(mat, ob->object_to_world().ptr());
     mul_m4_v3(mat, cur);
 
     if (totelem[0]) {

@@ -1,6 +1,22 @@
-# SPDX-FileCopyrightText: 2022-2023 Blender Foundation
-#
 # SPDX-License-Identifier: GPL-2.0-or-later
+
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 
 # ---------------------------- ADAPTIVE DUPLIFACES --------------------------- #
 # ------------------------------- version 0.84 ------------------------------- #
@@ -29,7 +45,9 @@ from bpy.props import (
     StringProperty,
     PointerProperty
 )
+from .utils import tissue_time
 from . import config
+import time
 
 
 def update_dependencies(ob, objects):
@@ -50,6 +68,8 @@ def get_deps(ob):
         return [ob.tissue_tessellate.generator, ob.tissue_tessellate.component]
     elif type == 'TO_CURVE':
         return [ob.tissue_to_curve.object]
+    elif type == 'POLYHEDRA':
+        return [ob.tissue_polyhedra.object]
     else: return []
 
 def anim_tessellate_active(self, context):
@@ -75,10 +95,9 @@ def anim_tessellate_object(ob):
 #from bpy.app.handlers import persistent
 
 
-def anim_tessellate(scene, depsgraph=None):
-    print('Tissue: animating tessellations...')
-
-    #config.evaluatedDepsgraph = depsgraph
+def anim_tissue(scene, depsgraph=None):
+    tissue_time(None,'Tissue: Animating Tissue objects at frame {}...'.format(scene.frame_current), levels=0)
+    start_time = time.time()
 
     try:
         active_object = bpy.context.object
@@ -109,10 +128,15 @@ def anim_tessellate(scene, depsgraph=None):
                         override['mode'] = 'OBJECT'
                         override['view_layer'] = scene.view_layers[0]
                         break
-            if ob.tissue.tissue_type == 'TESSELLATE':
-                bpy.ops.object.tissue_update_tessellate(override)
-            elif ob.tissue.tissue_type == 'TO_CURVE':
-                bpy.ops.object.tissue_convert_to_curve_update(override)
+            with bpy.context.temp_override(**override):
+                if ob.tissue.tissue_type == 'TESSELLATE':
+                    bpy.ops.object.tissue_update_tessellate()
+                elif ob.tissue.tissue_type == 'TO_CURVE':
+                    bpy.ops.object.tissue_update_convert_to_curve()
+                elif ob.tissue.tissue_type == 'POLYHEDRA':
+                    bpy.ops.object.tissue_update_polyhedra()
+                elif ob.tissue.tissue_type == 'CONTOUR_CURVES':
+                    bpy.ops.object.tissue_update_contour_curves()
 
         if old_mode != None:
             objects = bpy.context.view_layer.objects
@@ -121,68 +145,40 @@ def anim_tessellate(scene, depsgraph=None):
             bpy.ops.object.mode_set(mode=old_mode)
 
     config.evaluatedDepsgraph = None
-    print('end')
+    tissue_time(start_time,'Animated Tissue objects at frame {}'.format(scene.frame_current), levels=0)
     return
-'''
-def OLD_anim_tessellate(scene, depsgraph):
-    print('Tissue: animating tessellations...')
 
-    #global evaluatedDepsgraph
-    #print(evaluatedDepsgraph)
-    print(config.evaluatedDepsgraph)
-    config.evaluatedDepsgraph = depsgraph
-    print(config.evaluatedDepsgraph)
-
-    try:
-        active_object = bpy.context.object
-        old_mode = bpy.context.object.mode
-        selected_objects = bpy.context.selected_objects
-    except: active_object = old_mode = selected_objects = None
-
-    if old_mode in ('OBJECT', 'PAINT_WEIGHT') or True:
-        update_objects = []
-        for ob in scene.objects:
-            if ob.tissue.bool_run and not ob.tissue.bool_lock:
-                if ob not in update_objects: update_objects.append(ob)
-                update_objects = list(reversed(update_dependencies(ob, update_objects)))
-        for ob in update_objects:
-            for window in bpy.context.window_manager.windows:
-                screen = window.screen
-                for area in screen.areas:
-                    if area.type == 'VIEW_3D':
-                        override = bpy.context.copy()
-                        override['window'] = window
-                        override['screen'] = screen
-                        override['area'] = area
-                        override['selected_objects'] = [ob]
-                        override['object'] = ob
-                        override['active_object'] = ob
-                        override['selected_editable_objects'] = [ob]
-                        override['mode'] = 'OBJECT'
-                        override['view_layer'] = scene.view_layers[0]
-                        break
-            bpy.ops.object.tissue_update_tessellate(override)
-
-    config.evaluatedDepsgraph = None
-    print('end')
-    print(config.evaluatedDepsgraph)
-    return
-'''
-def remove_tessellate_handler():
+def remove_tissue_handler():
     tissue_handlers = []
     blender_handlers = bpy.app.handlers.frame_change_post
     for h in blender_handlers:
-        if "anim_tessellate" in str(h):
+        if "anim_tissue" in str(h):
             tissue_handlers.append(h)
     for h in tissue_handlers: blender_handlers.remove(h)
 
-def set_tessellate_handler(self, context):
-
-    remove_tessellate_handler()
+def set_tissue_handler(self, context):
+    remove_tissue_handler()
     for o in context.scene.objects:
         if o.tissue.bool_run:
             blender_handlers = bpy.app.handlers.frame_change_post
-            blender_handlers.append(anim_tessellate)
+            blender_handlers.append(anim_tissue)
+            break
+    return
+
+def remove_polyhedra_handler():
+    tissue_handlers = []
+    blender_handlers = bpy.app.handlers.frame_change_post
+    for h in blender_handlers:
+        if "anim_polyhedra" in str(h):
+            tissue_handlers.append(h)
+    for h in tissue_handlers: blender_handlers.remove(h)
+
+def set_polyhedra_handler(self, context):
+    remove_polyhedra_handler()
+    for o in context.scene.objects:
+        if o.tissue.bool_run:
+            blender_handlers = bpy.app.handlers.frame_change_post
+            blender_handlers.append(anim_polyhedra)
             break
     return
 
@@ -190,7 +186,7 @@ def set_tessellate_handler(self, context):
 class tissue_prop(PropertyGroup):
     bool_lock : BoolProperty(
         name="Lock",
-        description="Prevent automatic update on settings changes or if other objects have it in the hierarchy",
+        description="Prevent automatic update on settings changes or if other objects have it in the hierarchy.",
         default=False
         )
     bool_dependencies : BoolProperty(
@@ -202,16 +198,23 @@ class tissue_prop(PropertyGroup):
         name="Animatable",
         description="Automatically recompute the geometry when the frame is changed. Tessellations may not work using the default Render Animation",
         default = False,
-        update = set_tessellate_handler
+        update = set_tissue_handler
         )
     tissue_type : EnumProperty(
         items=(
                 ('NONE', "None", ""),
                 ('TESSELLATE', "Tessellate", ""),
-                ('TO_CURVE', "To Curve", "")
+                ('TO_CURVE', "To Curve", ""),
+                ('POLYHEDRA', "Polyhedra", ""),
+                ('CONTOUR_CURVES', "Contour Curves", "")
                 ),
         default='NONE',
         name=""
+        )
+    bool_hold : BoolProperty(
+            name="Hold",
+            description="Wait...",
+            default=False
         )
 
 class tissue_tessellate_prop(PropertyGroup):
@@ -561,13 +564,13 @@ class tissue_tessellate_prop(PropertyGroup):
     boundary_mat_offset : IntProperty(
             name="Material Offset",
             default=0,
-            description="Material Offset for boundaries (with Multi Components or Material ID)",
+            description="Material Offset for boundaries (with components based on Materials)",
             update = anim_tessellate_active
             )
     fill_frame_mat : IntProperty(
             name="Material Offset",
             default=0,
-            description="Material Offset for inner faces (with Multi Components or Material ID)",
+            description="Material Offset for inner faces (with components based on Materials)",
             update = anim_tessellate_active
             )
     open_edges_crease : FloatProperty(
@@ -598,14 +601,23 @@ class tissue_tessellate_prop(PropertyGroup):
             name="Frame Thickness",
             default=0.2,
             min=0,
-            soft_max=2,
+            soft_max=1,
             description="Frame Thickness",
+            update = anim_tessellate_active
+            )
+    frame_boundary_thickness : FloatProperty(
+            name="Frame Boundary Thickness",
+            default=0,
+            min=0,
+            soft_max=1,
+            description="Frame Boundary Thickness (when zero it uses the Frame Thickness instead)",
             update = anim_tessellate_active
             )
     frame_mode : EnumProperty(
             items=(
                 ('CONSTANT', 'Constant', 'Even thickness'),
-                ('RELATIVE', 'Relative', 'Frame offset depends on face areas')),
+                ('RELATIVE', 'Relative', 'Frame offset depends on face areas'),
+                ('CENTER', 'Center', 'Toward the center of the face (uses Incenter for Triangles)')),
             default='CONSTANT',
             name="Offset",
             update = anim_tessellate_active
@@ -641,7 +653,7 @@ class tissue_tessellate_prop(PropertyGroup):
             )
     use_origin_offset : BoolProperty(
             name="Align to Origins",
-            default=False,
+            default=True,
             description="Define offset according to components origin and local Z coordinate",
             update = anim_tessellate_active
             )
@@ -662,6 +674,31 @@ class tissue_tessellate_prop(PropertyGroup):
             min=0,
             max=1,
             description="Thickness factor to use for zero vertex group influence",
+            update = anim_tessellate_active
+            )
+
+    vertex_group_frame_thickness : StringProperty(
+            name="Frame Thickness weight", default='',
+            description="Vertex Group used for frame thickness",
+            update = anim_tessellate_active
+            )
+    invert_vertex_group_frame_thickness : BoolProperty(
+            name="Invert", default=False,
+            description="Invert the vertex group influence",
+            update = anim_tessellate_active
+            )
+    vertex_group_frame_thickness_factor : FloatProperty(
+            name="Factor",
+            default=0,
+            min=0,
+            max=1,
+            description="Frame thickness factor to use for zero vertex group influence",
+            update = anim_tessellate_active
+            )
+    face_weight_frame : BoolProperty(
+            name="Face Weight",
+            default=True,
+            description="Uniform weight for individual faces",
             update = anim_tessellate_active
             )
 
@@ -802,6 +839,12 @@ class tissue_tessellate_prop(PropertyGroup):
             description="Automatically rotate the boundary faces",
             update = anim_tessellate_active
             )
+    preserve_quads : BoolProperty(
+            name="Preserve Quads",
+            default=False,
+            description="Quad faces are tessellated using QUAD mode",
+            update = anim_tessellate_active
+            )
 
 def store_parameters(operator, ob):
     ob.tissue_tessellate.bool_hold = True
@@ -852,6 +895,7 @@ def store_parameters(operator, ob):
     ob.tissue_tessellate.bridge_cuts = operator.bridge_cuts
     ob.tissue_tessellate.bridge_smoothness = operator.bridge_smoothness
     ob.tissue_tessellate.frame_thickness = operator.frame_thickness
+    ob.tissue_tessellate.frame_boundary_thickness = operator.frame_boundary_thickness
     ob.tissue_tessellate.frame_mode = operator.frame_mode
     ob.tissue_tessellate.frame_boundary = operator.frame_boundary
     ob.tissue_tessellate.fill_frame = operator.fill_frame
@@ -863,6 +907,10 @@ def store_parameters(operator, ob):
     ob.tissue_tessellate.vertex_group_thickness = operator.vertex_group_thickness
     ob.tissue_tessellate.invert_vertex_group_thickness = operator.invert_vertex_group_thickness
     ob.tissue_tessellate.vertex_group_thickness_factor = operator.vertex_group_thickness_factor
+    ob.tissue_tessellate.vertex_group_frame_thickness = operator.vertex_group_frame_thickness
+    ob.tissue_tessellate.invert_vertex_group_frame_thickness = operator.invert_vertex_group_frame_thickness
+    ob.tissue_tessellate.vertex_group_frame_thickness_factor = operator.vertex_group_frame_thickness_factor
+    ob.tissue_tessellate.face_weight_frame = operator.face_weight_frame
     ob.tissue_tessellate.vertex_group_distribution = operator.vertex_group_distribution
     ob.tissue_tessellate.invert_vertex_group_distribution = operator.invert_vertex_group_distribution
     ob.tissue_tessellate.vertex_group_distribution_factor = operator.vertex_group_distribution_factor
@@ -888,6 +936,7 @@ def store_parameters(operator, ob):
     ob.tissue_tessellate.invert_vertex_group_scale_normals = operator.invert_vertex_group_scale_normals
     ob.tissue_tessellate.boundary_variable_offset = operator.boundary_variable_offset
     ob.tissue_tessellate.auto_rotate_boundary = operator.auto_rotate_boundary
+    ob.tissue_tessellate.preserve_quads = operator.preserve_quads
     ob.tissue_tessellate.bool_hold = False
     return ob
 
@@ -938,11 +987,16 @@ def load_parameters(operator, ob):
     operator.boundary_mat_offset = ob.tissue_tessellate.boundary_mat_offset
     operator.fill_frame_mat = ob.tissue_tessellate.fill_frame_mat
     operator.frame_thickness = ob.tissue_tessellate.frame_thickness
+    operator.frame_boundary_thickness = ob.tissue_tessellate.frame_boundary_thickness
     operator.frame_mode = ob.tissue_tessellate.frame_mode
     operator.use_origin_offset = ob.tissue_tessellate.use_origin_offset
     operator.vertex_group_thickness = ob.tissue_tessellate.vertex_group_thickness
     operator.invert_vertex_group_thickness = ob.tissue_tessellate.invert_vertex_group_thickness
     operator.vertex_group_thickness_factor = ob.tissue_tessellate.vertex_group_thickness_factor
+    operator.vertex_group_frame_thickness = ob.tissue_tessellate.vertex_group_frame_thickness
+    operator.invert_vertex_group_frame_thickness = ob.tissue_tessellate.invert_vertex_group_frame_thickness
+    operator.vertex_group_frame_thickness_factor = ob.tissue_tessellate.vertex_group_frame_thickness_factor
+    operator.face_weight_frame = ob.tissue_tessellate.face_weight_frame
     operator.vertex_group_distribution = ob.tissue_tessellate.vertex_group_distribution
     operator.invert_vertex_group_distribution = ob.tissue_tessellate.invert_vertex_group_distribution
     operator.vertex_group_distribution_factor = ob.tissue_tessellate.vertex_group_distribution_factor
@@ -968,6 +1022,7 @@ def load_parameters(operator, ob):
     operator.invert_vertex_group_scale_normals = ob.tissue_tessellate.invert_vertex_group_scale_normals
     operator.boundary_variable_offset = ob.tissue_tessellate.boundary_variable_offset
     operator.auto_rotate_boundary = ob.tissue_tessellate.auto_rotate_boundary
+    operator.preserve_quads = ob.tissue_tessellate.preserve_quads
     return ob
 
 def props_to_dict(ob):
@@ -1003,6 +1058,7 @@ def props_to_dict(ob):
     tessellate_dict['even_thickness'] = props.even_thickness
     tessellate_dict['even_thickness_iter'] = props.even_thickness_iter
     tessellate_dict['frame_thickness'] = props.frame_thickness
+    tessellate_dict['frame_boundary_thickness'] = props.frame_boundary_thickness
     tessellate_dict['frame_mode'] = props.frame_mode
     tessellate_dict['frame_boundary'] = props.frame_boundary
     tessellate_dict['fill_frame'] = props.fill_frame
@@ -1011,6 +1067,10 @@ def props_to_dict(ob):
     tessellate_dict['vertex_group_thickness'] = props.vertex_group_thickness
     tessellate_dict['invert_vertex_group_thickness'] = props.invert_vertex_group_thickness
     tessellate_dict['vertex_group_thickness_factor'] = props.vertex_group_thickness_factor
+    tessellate_dict['vertex_group_frame_thickness'] = props.vertex_group_frame_thickness
+    tessellate_dict['invert_vertex_group_frame_thickness'] = props.invert_vertex_group_frame_thickness
+    tessellate_dict['vertex_group_frame_thickness_factor'] = props.vertex_group_frame_thickness_factor
+    tessellate_dict['face_weight_frame'] = props.face_weight_frame
     tessellate_dict['vertex_group_distribution'] = props.vertex_group_distribution
     tessellate_dict['invert_vertex_group_distribution'] = props.invert_vertex_group_distribution
     tessellate_dict['vertex_group_distribution_factor'] = props.vertex_group_distribution_factor
@@ -1036,6 +1096,10 @@ def props_to_dict(ob):
     tessellate_dict["invert_vertex_group_scale_normals"] = props.invert_vertex_group_scale_normals
     tessellate_dict["boundary_variable_offset"] = props.boundary_variable_offset
     tessellate_dict["auto_rotate_boundary"] = props.auto_rotate_boundary
+    tessellate_dict["merge"] = props.merge
+    tessellate_dict["merge_thres"] = props.merge_thres
+    tessellate_dict["merge_open_edges_only"] = props.merge_open_edges_only
+    tessellate_dict["preserve_quads"] = props.preserve_quads
     return tessellate_dict
 
 def copy_tessellate_props(source_ob, target_ob):

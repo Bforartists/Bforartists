@@ -8,17 +8,14 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_blenlib.h"
 #include "BLI_ghash.h"
 
 #include "DNA_scene_types.h"
 
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_main.hh"
 #include "BKE_report.hh"
 
-#include "SEQ_iterator.hh"
 #include "SEQ_proxy.hh"
 #include "SEQ_relations.hh"
 #include "SEQ_sequencer.hh"
@@ -222,7 +219,7 @@ static int sequencer_enable_proxies_exec(bContext *C, wmOperator *op)
   }
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
-  
+
   return OPERATOR_FINISHED;
 }
 
