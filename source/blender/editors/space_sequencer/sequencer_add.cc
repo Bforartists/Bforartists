@@ -14,25 +14,18 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_ghash.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.hh"
 
-#include "DNA_mask_types.h"
 #include "DNA_scene_types.h"
-#include "DNA_sound_types.h"
 #include "DNA_space_types.h"
 
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
-#include "BKE_mask.h"
-#include "BKE_movieclip.h"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
-#include "BKE_sound.h"
 
 #include "IMB_imbuf.hh"
 
@@ -45,15 +38,11 @@
 
 #include "SEQ_add.hh"
 #include "SEQ_effects.hh"
-#include "SEQ_iterator.hh"
 #include "SEQ_proxy.hh"
-#include "SEQ_relations.hh"
-#include "SEQ_render.hh"
 #include "SEQ_select.hh"
 #include "SEQ_sequencer.hh"
 #include "SEQ_time.hh"
 #include "SEQ_transform.hh"
-#include "SEQ_utils.hh"
 
 #include "ED_scene.hh"
 /* For menu, popup, icons, etc. */
@@ -632,7 +621,7 @@ static int sequencer_add_movieclip_strip_exec(bContext *C, wmOperator *op)
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
-  
+
   return OPERATOR_FINISHED;
 }
 
@@ -696,7 +685,7 @@ static int sequencer_add_mask_strip_exec(bContext *C, wmOperator *op)
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
-  
+
   return OPERATOR_FINISHED;
 }
 
@@ -968,7 +957,7 @@ static int sequencer_add_movie_strip_exec(bContext *C, wmOperator *op)
   DEG_relations_tag_update(bmain);
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
-  
+
   /* Free custom data. */
   sequencer_add_cancel(C, op);
 
@@ -1139,7 +1128,7 @@ static int sequencer_add_sound_strip_exec(bContext *C, wmOperator *op)
   DEG_relations_tag_update(bmain);
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
-  
+
   return OPERATOR_FINISHED;
 }
 
@@ -1324,7 +1313,7 @@ static int sequencer_add_image_strip_exec(bContext *C, wmOperator *op)
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
-  
+
   /* Free custom data. */
   sequencer_add_cancel(C, op);
 
@@ -1441,7 +1430,7 @@ static int sequencer_add_effect_strip_exec(bContext *C, wmOperator *op)
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
-  
+
   return OPERATOR_FINISHED;
 }
 

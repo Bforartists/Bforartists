@@ -1,5 +1,3 @@
-# SPDX-FileCopyrightText: 2019-2023 Blender Foundation
-#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy, bmesh
@@ -183,6 +181,25 @@ def vector_rotation(vec):
     if ang < 0: ang = 2*pi + ang
     return ang
 
+def signed_angle_with_axis(va, vb, axis):
+    return atan2(va.cross(vb).dot(axis.normalized()), va.dot(vb))
+
+def round_angle_with_axis(va, vb, axis):
+    angle = signed_angle_with_axis(va, vb, axis)
+    return 2*pi + angle if angle < 0 else angle
+
+def incenter(vecs):
+    lengths = x = y = z = 0
+    mid = len(vecs)//2+1
+    for vi, vj, vk in zip(vecs, vecs[1:]+vecs[:1], vecs[mid:]+vecs[:mid]):
+        length = (vj-vi).length
+        lengths += length
+        x += length*vk.x
+        y += length*vk.y
+        z += length*vk.z
+    inc = Vector((x/lengths, y/lengths, z/lengths))
+    return inc
+
 # ------------------------------------------------------------------
 # SCENE
 # ------------------------------------------------------------------
@@ -215,7 +232,15 @@ def turn_off_animatable(scene):
 # OBJECTS
 # ------------------------------------------------------------------
 
-def convert_object_to_mesh(ob, apply_modifiers=True, preserve_status=True):
+def remove_temp_objects():
+    # clean objects
+    for o in bpy.data.objects:
+        if "_tissue_tmp" in o.name:
+            bpy.data.objects.remove(o)
+    return
+
+def convert_object_to_mesh(ob, apply_modifiers=True, preserve_status=True, mirror_correction = True):
+    #mirror_correction = False
     try: ob.name
     except: return None
     if ob.type != 'MESH':
@@ -226,7 +251,10 @@ def convert_object_to_mesh(ob, apply_modifiers=True, preserve_status=True):
         #dg = bpy.context.evaluated_depsgraph_get()
         #ob_eval = ob.evaluated_get(dg)
         #me = bpy.data.meshes.new_from_object(ob_eval, preserve_all_data_layers=True, depsgraph=dg)
-        me = simple_to_mesh(ob)
+        if mirror_correction:
+            me = simple_to_mesh_mirror(ob)
+        else:
+            me = simple_to_mesh(ob)
         new_ob = bpy.data.objects.new(ob.data.name, me)
         new_ob.location, new_ob.matrix_world = ob.location, ob.matrix_world
         if not apply_modifiers:
@@ -234,7 +262,10 @@ def convert_object_to_mesh(ob, apply_modifiers=True, preserve_status=True):
     else:
         if apply_modifiers:
             new_ob = ob.copy()
-            new_me = simple_to_mesh(ob)
+            if mirror_correction:
+                new_me = simple_to_mesh_mirror(ob)
+            else:
+                new_me = simple_to_mesh(ob)
             new_ob.modifiers.clear()
             new_ob.data = new_me
         else:
@@ -250,6 +281,76 @@ def convert_object_to_mesh(ob, apply_modifiers=True, preserve_status=True):
         bpy.context.view_layer.objects.active = new_ob
     return new_ob
 
+def simple_to_mesh_mirror(ob, depsgraph=None):
+    '''
+    Convert object to mesh applying Modifiers and Shape Keys.
+    Automatically correct Faces rotation for Tessellations.
+    '''
+    if 'MIRROR' in [m.type for m in ob.modifiers]:
+
+        _ob = ob.copy()
+        _ob.name = _ob.name + "_mirror"
+        bpy.context.collection.objects.link(_ob)
+        # Store modifiers
+        mods = list(_ob.modifiers)
+        # Store visibility setting
+        mods_vis = [m.show_viewport for m in _ob.modifiers]
+        # Turn modifiers off
+        for m in _ob.modifiers:
+            m.show_viewport = False
+        while True:
+            if len(mods) == 0: break
+            remove_mods = []
+
+            for m, vis in zip(mods, mods_vis):
+                m.show_viewport = vis
+                remove_mods.append(m)
+                if m.type == 'MIRROR' and vis:
+                    n_axis = m.use_axis[0] + m.use_axis[1] + m.use_axis[2]
+                    fraction = 2**n_axis
+                    me = simple_to_mesh(_ob, depsgraph)
+                    bm = bmesh.new()
+                    bm.from_mesh(me)
+                    bm.faces.ensure_lookup_table()
+                    n_faces = len(bm.faces)
+                    if n_axis > 0:
+                        bm.faces.ensure_lookup_table()
+                        rotate_faces = bm.faces
+                        rot_index = []
+                        if n_axis == 1: fraction_val = [0,1]
+                        elif n_axis == 2: fraction_val = [0,1,1,0]
+                        elif n_axis == 3: fraction_val = [0,1,1,0,1,0,0,1]
+                        for i in fraction_val:
+                            for j in range(n_faces//fraction):
+                                rot_index.append(i)
+                        for face, shift in zip(rotate_faces, rot_index):
+                            if shift == 0: continue
+                            vs = face.verts[:]
+                            vs2 = vs[-shift:]+vs[:-shift]
+                            material_index = face.material_index
+                            bm.faces.remove(face)
+                            f2 = bm.faces.new(vs2)
+                            f2.select = True
+                            f2.material_index = material_index
+                            bm.normal_update()
+                    bm.to_mesh(me)
+                    bm.free()
+                    for rm in remove_mods:
+                        _ob.modifiers.remove(rm)
+                        _ob.data = me
+                        mods = mods[1:]
+                        mods_vis = mods_vis[1:]
+                    remove_mods = []
+                    break
+                if m == mods[-1]:
+                    mods = []
+                    me = simple_to_mesh(_ob, depsgraph)
+                    _ob.data = me
+                    _ob.modifiers.clear()
+    else:
+        me = simple_to_mesh(ob, depsgraph)
+    return me
+
 def simple_to_mesh(ob, depsgraph=None):
     '''
     Convert object to mesh applying Modifiers and Shape Keys
@@ -263,6 +364,7 @@ def simple_to_mesh(ob, depsgraph=None):
         dg = depsgraph
     ob_eval = ob.evaluated_get(dg)
     me = bpy.data.meshes.new_from_object(ob_eval, preserve_all_data_layers=True, depsgraph=dg)
+    #me.calc_normals()
     return me
 
 def _join_objects(context, objects, link_to_scene=True, make_active=True):
@@ -320,11 +422,10 @@ def join_objects(context, objects):
     return new_ob
 
 def join_objects(objects):
-    override = bpy.context.copy()
     new_ob = objects[0]
-    override['active_object'] = new_ob
-    override['selected_editable_objects'] = objects
-    bpy.ops.object.join(override)
+    override = {'active_object': new_ob, 'selected_editable_objects': objects}
+    with bpy.context.temp_override(**override):
+        bpy.ops.object.join()
     return new_ob
 
 def repeat_mesh(me, n):
@@ -345,9 +446,8 @@ def array_mesh(ob, n):
     arr = ob.modifiers.new('Repeat','ARRAY')
     arr.relative_offset_displace[0] = 0
     arr.count = n
-    # with bpy.context.temp_override(active_object=ob):
-    #     bpy.ops.object.modifier_apply(modifier='Repeat')
-    # me = ob.data
+    #bpy.ops.object.modifier_apply({'active_object':ob},modifier='Repeat')
+    #me = ob.data
     ob.modifiers.update()
 
     dg = bpy.context.evaluated_depsgraph_get()
@@ -366,7 +466,8 @@ def array_mesh_object(ob, n):
     override = bpy.context.copy()
     override['active_object'] = ob
     override = {'active_object': ob}
-    bpy.ops.object.modifier_apply(override, modifier=arr.name)
+    with bpy.context.temp_override(**override):
+        bpy.ops.object.modifier_apply(modifier=arr.name)
     return ob
 
 
@@ -389,7 +490,7 @@ def get_mesh_before_subs(ob):
             hide_mods = []
             mods_visibility = []
     for m in hide_mods: m.show_viewport = False
-    me = simple_to_mesh(ob)
+    me = simple_to_mesh_mirror(ob)
     for m, vis in zip(hide_mods,mods_visibility): m.show_viewport = vis
     return me, subs
 
@@ -542,9 +643,6 @@ def get_patches____(me_low, me_high, sides, subs, bool_selection, bool_material_
             # fill inners
             patches[:,1:-1,1:-1] = inners[None,:,:] + ips[:,None,None]
 
-    #end_time = time.time()
-    #print('Tissue: Got Patches in {:.4f} sec'.format(end_time-start_time))
-
     return patches, mask
 
 def tessellate_prepare_component(ob1, props):
@@ -673,10 +771,11 @@ def tessellate_prepare_component(ob1, props):
                 cut_edges = [g for g in bisect['geom_cut'] if type(g)==bmesh.types.BMEdge]
                 cut_verts = [g for g in bisect['geom_cut'] if type(g)==bmesh.types.BMVert]
 
-                if bound!='CLIP':
+                if True or bound!='CLIP':
                     for e in cut_edges:
                         seam = True
                         # Prevent glitches
+                        '''
                         for e1 in original_edges:
                             match_00 = (e.verts[0].co-e1.verts[0].co).length < thres
                             match_11 = (e.verts[1].co-e1.verts[1].co).length < thres
@@ -685,6 +784,7 @@ def tessellate_prepare_component(ob1, props):
                             if (match_00 and match_11) or (match_01 and match_10):
                                 seam = False
                                 break
+                        '''
                         e.seam = seam
 
                 if bound == 'CYCLIC':
@@ -912,6 +1012,26 @@ def get_edges_id_numpy(mesh):
     edges = np.concatenate((edges,indexes), axis=1)
     return edges
 
+def get_edges_numpy_ex(mesh):
+    '''
+    Create a numpy array with the edges of a given mesh, or all the possible
+    between the vertices of a same face
+    '''
+    edges_verts = get_edges_numpy(mesh)
+    polygons_diag = []
+    for f in mesh.polygons:
+        sides = len(f.vertices)
+        if sides < 4: continue
+        for i in range(sides-2):
+            v0 = f.vertices[i]
+            for j in range(i+2, sides-1 if i == 0 else sides):
+                v1 = f.vertices[j]
+                polygons_diag.append((v0,v1))
+    if len(polygons_diag) == 0:
+        return edges_verts
+    polygons_diag = np.array(polygons_diag,dtype=np.int32)
+    return np.concatenate((edges_verts, polygons_diag), axis=0)
+
 def get_polygons_select_numpy(mesh):
     n_polys = len(mesh.polygons)
     selections = [0]*n_polys*2
@@ -919,13 +1039,16 @@ def get_polygons_select_numpy(mesh):
     selections = np.array(selections)
     return selections
 
-def get_attribute_numpy(elements_list, attribute='select', mult=1):
+def get_attribute_numpy(elements_list, attribute='select', mult=1, size=None):
     '''
     Generate a numpy array getting attribute from a list of element using
     the foreach_get() function.
     '''
-    n_elements = len(elements_list)
-    values = [0]*n_elements*mult
+    if size:
+        n_elements = size
+    else:
+        n_elements = len(elements_list)
+    values = np.zeros(int(n_elements*mult))
     elements_list.foreach_get(attribute, values)
     values = np.array(values)
     if mult > 1: values = values.reshape((n_elements,mult))
@@ -1006,6 +1129,73 @@ def find_curves(edges, n_verts):
         curves.append(curve)
     return curves
 
+def find_curves_attribute(edges, n_verts, attribute):
+    # dictionary with a list for every point
+    verts_dict = {key:[] for key in range(n_verts)}
+    # get neighbors for every point
+    for e in edges:
+        verts_dict[e[0]].append(e[1])
+        verts_dict[e[1]].append(e[0])
+    curves = []
+    ordered_attr = []
+    while True:
+        if len(verts_dict) == 0: break
+        # next starting point
+        v = list(verts_dict.keys())[0]
+        # neighbors
+        v01 = verts_dict[v]
+        if len(v01) == 0:
+            verts_dict.pop(v)
+            continue
+        curve = []
+        attr = []
+        if len(v01) > 1:
+            curve.append(v01[1])    # add neighbors
+            attr.append(attribute[v01[1]])    # add neighbors
+        curve.append(v)         # add starting point
+        attr.append(attribute[v])
+        curve.append(v01[0])    # add neighbors
+        attr.append(attribute[v01[0]])
+        verts_dict.pop(v)
+        # start building curve
+        while True:
+            #last_point = curve[-1]
+            #if last_point not in verts_dict: break
+
+            # try to change direction if needed
+            if curve[-1] in verts_dict: pass
+            elif curve[0] in verts_dict:
+                curve.reverse()
+                attr.reverse()
+            else: break
+
+            # neighbors points
+            last_point = curve[-1]
+            v01 = verts_dict[last_point]
+
+            # curve end
+            if len(v01) == 1:
+                verts_dict.pop(last_point)
+                if curve[0] in verts_dict: continue
+                else: break
+
+            # chose next point
+            new_point = None
+            if v01[0] == curve[-2]: new_point = v01[1]
+            elif v01[1] == curve[-2]: new_point = v01[0]
+            #else: break
+
+            #if new_point != curve[1]:
+            curve.append(new_point)
+            ordered_attr.append(attr)
+            verts_dict.pop(last_point)
+            if curve[0] == curve[-1]:
+                verts_dict.pop(new_point)
+                break
+        if(len(curve)>0):
+            curves.append(curve)
+    return curves, ordered_attr
+
 def curve_from_points(points, name='Curve'):
     curve = bpy.data.curves.new(name,'CURVE')
     for c in points:
@@ -1015,8 +1205,54 @@ def curve_from_points(points, name='Curve'):
     ob_curve = bpy.data.objects.new(name,curve)
     return ob_curve
 
-def curve_from_pydata(points, radii, indexes, name='Curve', skip_open=False, merge_distance=1, set_active=True, only_data=False):
-    curve = bpy.data.curves.new(name,'CURVE')
+def curve_from_pydata(points, radii, indexes, name='Curve', skip_open=False, merge_distance=1, set_active=True, only_data=False, curve=None, spline_type='POLY'):
+    if not curve:
+        curve = bpy.data.curves.new(name,'CURVE')
+    curve.dimensions = '3D'
+    use_rad = True
+    for c in indexes:
+        bool_cyclic = c[0] == c[-1]
+        if bool_cyclic: c.pop(-1)
+        # cleanup
+        pts = np.array([points[i] for i in c])
+        try:
+            rad = np.array([radii[i] for i in c])
+        except:
+            use_rad = False
+            rad = 1
+        if merge_distance > 0:
+            pts1 = np.roll(pts,1,axis=0)
+            dist = np.linalg.norm(np.array(pts1-pts, dtype=np.float64), axis=1)
+            count = 0
+            n = len(dist)
+            mask = np.ones(n).astype('bool')
+            for i in range(n):
+                count += dist[i]
+                if count > merge_distance: count = 0
+                else: mask[i] = False
+            pts = pts[mask]
+            if use_rad: rad = rad[mask]
+
+        if skip_open and not bool_cyclic: continue
+        s = curve.splines.new(spline_type)
+        n_pts = len(pts)
+        s.points.add(n_pts-1)
+        w = np.ones(n_pts).reshape((n_pts,1))
+        co = np.concatenate((pts,w),axis=1).reshape((n_pts*4))
+        s.points.foreach_set('co',co)
+        if use_rad: s.points.foreach_set('radius',rad)
+        s.use_cyclic_u = bool_cyclic
+    if only_data:
+        return curve
+    else:
+        ob_curve = bpy.data.objects.new(name,curve)
+        bpy.context.collection.objects.link(ob_curve)
+        if set_active:
+            bpy.context.view_layer.objects.active = ob_curve
+        return ob_curve
+
+def update_curve_from_pydata_simple(curve, points, radii, indexes, skip_open=False, merge_distance=1, set_active=True, only_data=False, spline_type='POLY'):
+    curve.splines.clear()
     curve.dimensions = '3D'
     use_rad = True
     for c in indexes:
@@ -1043,7 +1279,7 @@ def curve_from_pydata(points, radii, indexes, name='Curve', skip_open=False, mer
             if use_rad: rad = rad[mask]
 
         if skip_open and not bool_cyclic: continue
-        s = curve.splines.new('POLY')
+        s = curve.splines.new(spline_type)
         n_pts = len(pts)
         s.points.add(n_pts-1)
         w = np.ones(n_pts).reshape((n_pts,1))
@@ -1091,13 +1327,14 @@ def update_curve_from_pydata(curve, points, normals, radii, indexes, merge_dista
         #if skip_open and not bool_cyclic: continue
         n_pts = len(pts)
         series = np.arange(n_pts)
-        patt1 = series + (series-series%pattern[1])/pattern[1]*pattern[0]+pattern[0]
-        patt1 = patt1[patt1<n_pts].astype('int')
-        patt0 = series + (series-series%pattern[0])/pattern[0]*pattern[1]
-        patt0 = patt0[patt0<n_pts].astype('int')
-        nor[patt0] *= 0.5*depth*(1 + offset)
-        nor[patt1] *= 0.5*depth*(-1 + offset)
-        if pattern[0]*pattern[1] != 0: pts += nor
+        if pattern[0]*pattern[1] != 0:
+            patt1 = series + (series-series%pattern[1])/pattern[1]*pattern[0]+pattern[0]
+            patt1 = patt1[patt1<n_pts].astype('int')
+            patt0 = series + (series-series%pattern[0])/pattern[0]*pattern[1]
+            patt0 = patt0[patt0<n_pts].astype('int')
+            nor[patt0] *= 0.5*depth*(1 + offset)
+            nor[patt1] *= 0.5*depth*(-1 + offset)
+            pts += nor
         s = curve.splines.new('POLY')
         s.points.add(n_pts-1)
         w = np.ones(n_pts).reshape((n_pts,1))
@@ -1253,7 +1490,7 @@ def get_weight(vertex_group, n_verts):
     :type vertex_group: :class:'bpy.types.VertexGroup'
     :arg n_verts: Number of Vertices (output list size).
     :type n_verts: int
-    :return: Read weight values.
+    :return: Readed weight values.
     :rtype: list
     """
     weight = [0]*n_verts
@@ -1269,22 +1506,24 @@ def get_weight_numpy(vertex_group, n_verts):
     :type vertex_group: :class:'bpy.types.VertexGroup'
     :arg n_verts: Number of Vertices (output list size).
     :type n_verts: int
-    :return: Read weight values as numpy array.
+    :return: Readed weight values as numpy array.
     :rtype: :class:'numpy.ndarray'
     """
-    weight = [0]*n_verts
+    weight = np.zeros(n_verts)
     for i in range(n_verts):
         try: weight[i] = vertex_group.weight(i)
         except: pass
-    return np.array(weight)
+    return weight
 
-def bmesh_get_weight_numpy(group_index, layer, verts):
+def bmesh_get_weight_numpy(group_index, layer, verts, normalized=False):
     weight = np.zeros(len(verts))
     for i, v in enumerate(verts):
         dvert = v[layer]
         if group_index in dvert:
             weight[i] = dvert[group_index]
             #dvert[group_index] = 0.5
+    if normalized:
+        weight = (weight - np.min(weight))/np.ptp(weight)
     return weight
 
 def bmesh_set_weight_numpy(group_index, layer, verts, weight):
@@ -1410,6 +1649,22 @@ def mesh_diffusion_vector(me, vectors, iter, diff, uv_dir=0):
     vectors[:,2] = z
     return vectors
 
+def fill_neighbors_attribute(verts,weight,attribute):
+    neigh = {}
+    for v0 in verts:
+        for f in v0.link_faces:
+            for v1 in f.verts:
+                if attribute == 'GEODESIC':
+                    dist = weight[v0.index] + (v0.co-v1.co).length
+                elif attribute == 'TOPOLOGY':
+                    dist = weight[v0.index] + 1.0
+                w1 = weight[v1.index]
+                if w1 == None or w1 > dist:
+                    weight[v1.index] = dist
+                    neigh[v1] = 0
+    if len(neigh) == 0: return weight
+    else: return fill_neighbors_attribute(neigh.keys(), weight, attribute)
+
 # ------------------------------------------------------------------
 # MODIFIERS
 # ------------------------------------------------------------------
@@ -1434,7 +1689,7 @@ def mod_preserve_shape(mod):
 
 def recurLayerCollection(layerColl, collName):
     '''
-    Recursively transverse layer_collection for a particular name.
+    Recursivly transverse layer_collection for a particular name.
     '''
     found = None
     if (layerColl.name == collName):
@@ -1456,3 +1711,15 @@ def auto_layer_collection():
             lc = recurLayerCollection(layer_collection, c.name)
             if not c.hide_viewport and not lc.hide_viewport:
                 bpy.context.view_layer.active_layer_collection = lc
+
+def np_remap_image_values(img, channel=0, min=0, max=1, invert=False):
+    nx = img.size[1]
+    ny = img.size[0]
+    px = np.float32(np.zeros(nx*ny*4))
+    img.pixels.foreach_get(px)
+    px = np.array(px).reshape((-1,4))
+    values = px[:,channel]
+    values = values.reshape((nx,ny))
+    if invert:
+        values = 1-values
+    return min + values*(max-min)

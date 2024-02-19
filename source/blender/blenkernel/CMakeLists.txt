@@ -315,6 +315,7 @@ set(SRC
   intern/volume_grid_file_cache.cc
   intern/volume_render.cc
   intern/volume_to_mesh.cc
+  intern/wm_runtime.cc
   intern/workspace.cc
   intern/world.cc
   intern/writeavi.cc
@@ -381,7 +382,7 @@ set(SRC
   BKE_data_transfer.h
   BKE_deform.hh
   BKE_displist.h
-  BKE_duplilist.h
+  BKE_duplilist.hh
   BKE_dynamicpaint.h
   BKE_editlattice.h
   BKE_editmesh.hh
@@ -405,6 +406,7 @@ set(SRC
   BKE_gpencil_update_cache_legacy.h
   BKE_grease_pencil.h
   BKE_grease_pencil.hh
+  BKE_grease_pencil_legacy_convert.hh
   BKE_grease_pencil_vertex_groups.hh
   BKE_icons.h
   BKE_idprop.h
@@ -522,6 +524,7 @@ set(SRC
   BKE_volume_openvdb.hh
   BKE_volume_render.hh
   BKE_volume_to_mesh.hh
+  BKE_wm_runtime.hh
   BKE_workspace.h
   BKE_world.h
   BKE_writeavi.h

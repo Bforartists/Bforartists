@@ -1680,8 +1680,7 @@ class IMAGE_PT_view_vectorscope(ImageScopesPanel, Panel):
         sima = context.space_data
 
         layout.template_vectorscope(sima, "scopes")
-
-        row = layout.split(factor=0.5)
+        row = layout.split(factor=0.75)
         row.label(text="Opacity")
         row.prop(sima.scopes, "vectorscope_alpha", text="")
         row.prop(sima.scopes, "vectorscope_mode", text="")
