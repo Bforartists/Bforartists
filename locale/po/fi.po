@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.1.0 Alpha (b'274dc815eb35')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'3d7e84f57d8a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-11 11:18:04\n"
+"POT-Creation-Date: 2024-02-05 09:44+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2058,6 +2058,10 @@ msgid "Local Location"
 msgstr "Lokaali sijainti"
 
 
+msgid "Index"
+msgstr "Indeksi"
+
+
 msgid "Visible"
 msgstr "Näkyvä"
 
@@ -3432,10 +3436,6 @@ msgstr "Vain ensimmäinen"
 
 msgid "Curve Point"
 msgstr "Käyräpiste"
-
-
-msgid "Index"
-msgstr "Indeksi"
 
 
 msgctxt "Mesh"
@@ -5193,14 +5193,6 @@ msgid "UV Center"
 msgstr "UV-keskus"
 
 
-msgid "UV Layer"
-msgstr "UV-taso"
-
-
-msgid "UV Layer name"
-msgstr "UV-tason nimi"
-
-
 msgid "Use Channel"
 msgstr "Käytä kanavaa"
 
@@ -5907,6 +5899,10 @@ msgstr "Tiedoston ulostulo"
 
 msgid "Pixelate"
 msgstr "Pikselöi"
+
+
+msgid "Pixel Size"
+msgstr "Pikselin koko"
 
 
 msgid "Alpha Convert"
@@ -6775,6 +6771,10 @@ msgid "Animation settings"
 msgstr "Animaatioasetukset"
 
 
+msgid "Material Groups"
+msgstr "Materiaaliryhmät"
+
+
 msgctxt "Operator"
 msgid "Delete Selected Files"
 msgstr "Poista valitut tiedostot"
@@ -7423,6 +7423,10 @@ msgid "Save Sequence"
 msgstr "Tallenna sekvenssi"
 
 
+msgid "UV Layer"
+msgstr "UV-taso"
+
+
 msgid "Column"
 msgstr "Sarake"
 
@@ -7433,10 +7437,6 @@ msgstr "Kangas"
 
 msgid "XYZ"
 msgstr "XYZ"
-
-
-msgid "Pixel Size"
-msgstr "Pikselin koko"
 
 
 msgid "3D"
@@ -8198,16 +8198,6 @@ msgstr "Tallenna nimellä..."
 
 
 msgctxt "Operator"
-msgid "Horizontally"
-msgstr "Horisontaalisesti"
-
-
-msgctxt "Operator"
-msgid "Vertically"
-msgstr "Vertikaalisesti"
-
-
-msgctxt "Operator"
 msgid "Vertex"
 msgstr "Kärki"
 
@@ -8414,6 +8404,10 @@ msgid "Axis X"
 msgstr "X-akselit"
 
 
+msgid "Preferences:"
+msgstr "Mieltymykset:"
+
+
 msgid "Use Light"
 msgstr "Käytä valoa"
 
@@ -8428,6 +8422,10 @@ msgstr "Pöyrä"
 
 msgid "Fly/Walk"
 msgstr "Lennä/kävele"
+
+
+msgid "Error (see console)"
+msgstr "Virhe (katso konsoli)"
 
 
 msgid "Description:"
@@ -8452,22 +8450,6 @@ msgstr "Varoitus:"
 
 msgid "Internet:"
 msgstr "Internet:"
-
-
-msgid "description"
-msgstr "kuvaus"
-
-
-msgid "location"
-msgstr "sijainti"
-
-
-msgid "Preferences:"
-msgstr "Mieltymykset:"
-
-
-msgid "Error (see console)"
-msgstr "Virhe (katso konsoli)"
 
 
 msgctxt "Operator"
@@ -9000,26 +8982,6 @@ msgid "Internal error!"
 msgstr "Sisäinen virhe!"
 
 
-msgid "Shortcut: %s"
-msgstr "Pikakomento: %s"
-
-
-msgid "Python: %s"
-msgstr "Python: %s"
-
-
-msgid "Value: %s"
-msgstr "Arvo: %s"
-
-
-msgid "Library: %s"
-msgstr "Kirjasto: %s"
-
-
-msgid "Python: %s.%s"
-msgstr "Python: %s.%s"
-
-
 msgctxt "Operator"
 msgid "Click"
 msgstr "Napsauta"
@@ -9100,6 +9062,18 @@ msgstr "Poista pisteitä"
 
 msgid "Stop this job"
 msgstr "Lopeta tämä työ"
+
+
+msgid "File Not Found"
+msgstr "Tiedostoa ei löydy"
+
+
+msgid "Today"
+msgstr "Tänään"
+
+
+msgid "Yesterday"
+msgstr "Eilen"
 
 
 msgctxt "Object"
@@ -9249,10 +9223,6 @@ msgstr "Vienti asetukset"
 
 msgid "Grouping"
 msgstr "Ryhmittäminen"
-
-
-msgid "Material Groups"
-msgstr "Materiaaliryhmät"
 
 
 msgid "Data Types"
@@ -9721,14 +9691,6 @@ msgstr "Leveys:"
 
 msgid "Height:"
 msgstr "Korkeus:"
-
-
-msgid "Today"
-msgstr "Tänään"
-
-
-msgid "Yesterday"
-msgstr "Eilen"
 
 
 msgid "File path"
@@ -10410,6 +10372,22 @@ msgid "Outer Mask"
 msgstr "Ulkomaski"
 
 
+msgid "Path:"
+msgstr "Polku:"
+
+
+msgid "Base Path:"
+msgstr "Peruspolku:"
+
+
+msgid "Add Input"
+msgstr "Lisää syöte"
+
+
+msgid "Format:"
+msgstr "Formaatti:"
+
+
 msgid "From Min"
 msgstr "Minimistä"
 
@@ -10432,22 +10410,6 @@ msgstr "Y-siirros"
 
 msgid "Dot"
 msgstr "Piste"
-
-
-msgid "Path:"
-msgstr "Polku:"
-
-
-msgid "Base Path:"
-msgstr "Peruspolku:"
-
-
-msgid "Add Input"
-msgstr "Lisää syöte"
-
-
-msgid "Format:"
-msgstr "Formaatti:"
 
 
 msgid "Degr"
@@ -11067,16 +11029,12 @@ msgid "Don't Save"
 msgstr "Älä tallenna"
 
 
-msgid "unable to open the file"
-msgstr "kykenemätön avaamaan tiedostoa"
-
-
-msgid "File Not Found"
-msgstr "Tiedostoa ei löydy"
-
-
 msgid "Enable scripts"
 msgstr "Salli koodit"
+
+
+msgid "unable to open the file"
+msgstr "kykenemätön avaamaan tiedostoa"
 
 
 msgid "Startup file saved"
@@ -11553,10 +11511,6 @@ msgstr "FBX-formaatti"
 
 msgid "Import Images as Planes"
 msgstr "Tuo kuva tasoina"
-
-
-msgid "STL format"
-msgstr "STL-formaatti"
 
 
 msgid "Import-Export STL files"

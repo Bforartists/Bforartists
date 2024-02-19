@@ -33,7 +33,7 @@
 #include "BKE_camera.h"
 #include "BKE_context.hh"
 #include "BKE_object.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 
 #include "DEG_depsgraph.hh"
@@ -1625,7 +1625,8 @@ static bool view3d_camera_to_view_selected_impl(Main *bmain,
     bool is_ortho_camera = false;
 
     if ((camera_ob_eval->type == OB_CAMERA) &&
-        (((Camera *)camera_ob_eval->data)->type == CAM_ORTHO)) {
+        (((Camera *)camera_ob_eval->data)->type == CAM_ORTHO))
+    {
       ((Camera *)camera_ob->data)->ortho_scale = scale;
       is_ortho_camera = true;
     }

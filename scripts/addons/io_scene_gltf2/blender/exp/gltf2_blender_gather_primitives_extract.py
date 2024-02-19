@@ -11,6 +11,7 @@ from ...io.com.gltf2_io_constants import ROUNDING_DIGIT
 from ...io.exp.gltf2_io_user_extensions import export_user_extensions
 from ...io.com import gltf2_io_constants
 from ..com import gltf2_blender_conversion
+from ..com.gltf2_blender_utils import fast_structured_np_unique
 from .material.gltf2_blender_gather_materials import get_base_material, get_material_from_idx, get_active_uvmap_index, get_new_material_texture_shared
 from .material.gltf2_blender_gather_texture_info import gather_udim_texture_info
 from . import gltf2_blender_gather_skins
@@ -334,10 +335,12 @@ class PrimitiveCreator:
 
 
     def populate_dots_data(self):
-        vidxs = np.empty(len(self.blender_mesh.loops))
-        self.blender_mesh.loops.foreach_get('vertex_index', vidxs)
-        self.dots['vertex_index'] = vidxs
-        del vidxs
+        corner_vertex_indices = gltf2_blender_conversion.get_attribute(self.blender_mesh.attributes, '.corner_vert', 'INT', 'CORNER')
+        if corner_vertex_indices:
+            vidxs = np.empty(len(self.blender_mesh.loops), dtype=np.intc)
+            corner_vertex_indices.data.foreach_get('value', vidxs)
+            self.dots['vertex_index'] = vidxs
+            del vidxs
 
         for attr in self.blender_attributes:
             if 'skip_getting_to_dots' in attr:
@@ -412,11 +415,19 @@ class PrimitiveCreator:
             # Now we need to get data and populate
             for attr in self.uvmap_attribute_list:
                 if attr + str(0) not in self.dots.dtype.names: # In case user exports custom attributes, we may have it already
-                    # Vector in custom Attributes are Vector3, but keeping only the first two data
-                    data = np.empty(len(self.blender_mesh.loops) * 3, gltf2_blender_conversion.get_numpy_type('FLOAT2'))
-                    self.blender_mesh.attributes[attr].data.foreach_get('vector', data)
-                    data = data.reshape(-1, 3)
-                    data = data[:,:2]
+                    # Vector in custom Attributes are Vector2 or Vector3 (but keeping only the first two data)
+                    if self.blender_mesh.attributes[attr].data_type == "FLOAT_VECTOR":
+                        data = np.empty(len(self.blender_mesh.loops) * 3, gltf2_blender_conversion.get_numpy_type('FLOAT2'))
+                        self.blender_mesh.attributes[attr].data.foreach_get('vector', data)
+                        data = data.reshape(-1, 3)
+                        data = data[:,:2]
+                    elif self.blender_mesh.attributes[attr].data_type == "FLOAT2":
+                        data = np.empty(len(self.blender_mesh.loops) * 2, gltf2_blender_conversion.get_numpy_type('FLOAT2'))
+                        self.blender_mesh.attributes[attr].data.foreach_get('vector', data)
+                        data = data.reshape(-1, 2)
+                    else:
+                        print_console('WARNING', 'We are not managing this case yet (UVMap as custom attribute for unknown type)')
+                        continue
                     # Blender UV space -> glTF UV space
                     # u,v -> u,1-v
                     data[:, 1] *= -1
@@ -621,7 +632,7 @@ class PrimitiveCreator:
 
     def primitive_creation_shared(self):
         primitives = []
-        self.dots, shared_dot_indices = np.unique(self.dots, return_inverse=True)
+        self.dots, shared_dot_indices = fast_structured_np_unique(self.dots, return_inverse=True)
 
         self.blender_idxs = self.dots['vertex_index']
 
@@ -696,7 +707,7 @@ class PrimitiveCreator:
             # Extract just dots used by this primitive, deduplicate them, and
             # calculate indices into this deduplicated list.
             self.prim_dots = self.dots[dot_indices]
-            self.prim_dots, indices = np.unique(self.prim_dots, return_inverse=True)
+            self.prim_dots, indices = fast_structured_np_unique(self.prim_dots, return_inverse=True)
 
             if len(self.prim_dots) == 0:
                 continue
@@ -770,7 +781,7 @@ class PrimitiveCreator:
             if self.blender_idxs_edges.shape[0] > 0:
                 # Export one glTF vert per unique Blender vert in a loose edge
                 self.blender_idxs = self.blender_idxs_edges
-                dots_edges, indices = np.unique(self.dots_edges, return_inverse=True)
+                dots_edges, indices = fast_structured_np_unique(self.dots_edges, return_inverse=True)
                 self.blender_idxs = np.unique(self.blender_idxs_edges)
 
                 self.attributes_edges_points = {}
@@ -871,14 +882,21 @@ class PrimitiveCreator:
 
     def __get_positions(self):
         self.locs = np.empty(len(self.blender_mesh.vertices) * 3, dtype=np.float32)
-        source = self.key_blocks[0].relative_key.data if self.key_blocks else self.blender_mesh.vertices
-        source.foreach_get('co', self.locs)
+        if self.key_blocks:
+            source = self.key_blocks[0].relative_key.points
+            foreach_attribute = 'co'
+        else:
+            position_attribute = gltf2_blender_conversion.get_attribute(self.blender_mesh.attributes, 'position', 'FLOAT_VECTOR', 'POINT')
+            source = position_attribute.data if position_attribute else None
+            foreach_attribute = 'vector'
+        if source:
+            source.foreach_get(foreach_attribute, self.locs)
         self.locs = self.locs.reshape(len(self.blender_mesh.vertices), 3)
 
         self.morph_locs = []
         for key_block in self.key_blocks:
             vs = np.empty(len(self.blender_mesh.vertices) * 3, dtype=np.float32)
-            key_block.data.foreach_get('co', vs)
+            key_block.points.foreach_get('co', vs)
             vs = vs.reshape(len(self.blender_mesh.vertices), 3)
             self.morph_locs.append(vs)
 
@@ -1116,7 +1134,7 @@ class PrimitiveCreator:
     def __get_uvs_attribute(self, blender_uv_idx, attr):
         layer = self.blender_mesh.uv_layers[blender_uv_idx]
         uvs = np.empty(len(self.blender_mesh.loops) * 2, dtype=np.float32)
-        layer.data.foreach_get('uv', uvs)
+        layer.uv.foreach_get('vector', uvs)
         uvs = uvs.reshape(len(self.blender_mesh.loops), 2)
 
         # Blender UV space -> glTF UV space
@@ -1136,7 +1154,7 @@ class PrimitiveCreator:
             self.normals = np.array(self.normals, dtype=np.float32)
         else:
             self.normals = np.empty(len(self.blender_mesh.loops) * 3, dtype=np.float32)
-            self.blender_mesh.loops.foreach_get('normal', self.normals)
+            self.blender_mesh.corner_normals.foreach_get('vector', self.normals)
 
         self.normals = self.normals.reshape(len(self.blender_mesh.loops), 3)
 

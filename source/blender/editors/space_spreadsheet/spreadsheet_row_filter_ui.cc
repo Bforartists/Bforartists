@@ -19,7 +19,7 @@
 #include "UI_interface.hh"
 #include "UI_resources.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -31,8 +31,7 @@
 
 #include <sstream>
 
-using namespace blender;
-using namespace blender::ed::spreadsheet;
+namespace blender::ed::spreadsheet {
 
 static void filter_panel_id_fn(void * /*row_filter_v*/, char *r_name)
 {
@@ -367,3 +366,5 @@ void register_row_filter_panels(ARegionType &region_type)
     BLI_addtail(&region_type.paneltypes, panel_type);
   }
 }
+
+}  // namespace blender::ed::spreadsheet

@@ -134,15 +134,20 @@ bool is_autokey_on(const Scene *scene);
 /** Check the mode for auto-keyframing (per scene takes precedence). */
 bool is_autokey_mode(const Scene *scene, eAutokey_Mode mode);
 
-/** Check if a flag is set for auto-key-framing (per scene takes precedence). */
-bool is_autokey_flag(const Scene *scene, eKeyInsert_Flag flag);
+/** Check if a flag is set for keyframing (per scene takes precedence). */
+bool is_keying_flag(const Scene *scene, eKeying_Flag flag);
 
 /**
  * Auto-keyframing feature - checks for whether anything should be done for the current frame.
  */
 bool autokeyframe_cfra_can_key(const Scene *scene, ID *id);
 
-void autokeyframe_object(bContext *C, Scene *scene, Object *ob);
+/**
+ * Insert keyframes on the given object `ob` based on the auto-keying settings.
+ *
+ * \param rna_paths: Only inserts keys on those RNA paths.
+ */
+void autokeyframe_object(bContext *C, Scene *scene, Object *ob, Span<std::string> rna_paths);
 /**
  * Auto-keyframing feature - for objects
  *
@@ -154,12 +159,18 @@ bool autokeyframe_pchan(bContext *C, Scene *scene, Object *ob, bPoseChannel *pch
 /**
  * Auto-keyframing feature - for poses/pose-channels
  *
- * targetless_ik: has targetless ik been done on any channels?
+ * \param targetless_ik: Has targetless ik been done on any channels?
+ * \param rna_paths: Only inserts keys on those RNA paths.
  *
  * \note Context may not always be available,
  * so must check before using it as it's a luxury for a few cases.
  */
-void autokeyframe_pose(bContext *C, Scene *scene, Object *ob, short targetless_ik);
+void autokeyframe_pose_channel(bContext *C,
+                               Scene *scene,
+                               Object *ob,
+                               bPoseChannel *pose_channel,
+                               Span<std::string> rna_paths,
+                               short targetless_ik);
 /**
  * Use for auto-key-framing.
  * \param only_if_property_keyed: if true, auto-key-framing only creates keyframes on already keyed
@@ -186,6 +197,7 @@ bool autokeyframe_property(bContext *C,
 int insert_key_action(Main *bmain,
                       bAction *action,
                       PointerRNA *ptr,
+                      PropertyRNA *prop,
                       const std::string &rna_path,
                       float frame,
                       Span<float> values,

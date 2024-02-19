@@ -8,10 +8,10 @@
  */
 
 #ifdef WITH_FFMPEG
-#  include <stdio.h>
-#  include <string.h>
+#  include <cstdio>
+#  include <cstring>
 
-#  include <stdlib.h>
+#  include <cstdlib>
 
 #  include "MEM_guardedalloc.h"
 
@@ -29,16 +29,16 @@
 #  include "BLI_threads.h"
 #  include "BLI_utildefines.h"
 
-#  include "BKE_global.h"
+#  include "BKE_global.hh"
 #  include "BKE_idprop.h"
 #  include "BKE_image.h"
-#  include "BKE_lib_id.h"
+#  include "BKE_lib_id.hh"
 #  include "BKE_main.hh"
-#  include "BKE_report.h"
+#  include "BKE_report.hh"
 #  include "BKE_sound.h"
 #  include "BKE_writeffmpeg.hh"
 
-#  include "IMB_imbuf.h"
+#  include "IMB_imbuf.hh"
 
 /* This needs to be included after BLI_math_base.h otherwise it will redefine some math defines
  * like M_SQRT1_2 leading to warnings with MSVC */
@@ -420,17 +420,7 @@ static AVFrame *generate_video_frame(FFMpegContext *context, const uint8_t *pixe
   /* Convert to the output pixel format, if it's different that Blender's internal one. */
   if (context->img_convert_frame != nullptr) {
     BLI_assert(context->img_convert_ctx != NULL);
-#  if defined(FFMPEG_SWSCALE_THREADING)
-    sws_scale_frame(context->img_convert_ctx, context->current_frame, rgb_frame);
-#  else
-    sws_scale(context->img_convert_ctx,
-              (const uint8_t *const *)rgb_frame->data,
-              rgb_frame->linesize,
-              0,
-              codec->height,
-              context->current_frame->data,
-              context->current_frame->linesize);
-#  endif
+    BKE_ffmpeg_sws_scale_frame(context->img_convert_ctx, context->current_frame, rgb_frame);
   }
 
   return context->current_frame;
@@ -677,10 +667,8 @@ static const AVCodec *get_av1_encoder(
   return codec;
 }
 
-static SwsContext *get_threaded_sws_context(int width,
-                                            int height,
-                                            AVPixelFormat src_format,
-                                            AVPixelFormat dst_format)
+SwsContext *BKE_ffmpeg_sws_get_context(
+    int width, int height, int av_src_format, int av_dst_format, int sws_flags)
 {
 #  if defined(FFMPEG_SWSCALE_THREADING)
   /* sws_getContext does not allow passing flags that ask for multi-threaded
@@ -691,11 +679,11 @@ static SwsContext *get_threaded_sws_context(int width,
   }
   av_opt_set_int(c, "srcw", width, 0);
   av_opt_set_int(c, "srch", height, 0);
-  av_opt_set_int(c, "src_format", src_format, 0);
+  av_opt_set_int(c, "src_format", av_src_format, 0);
   av_opt_set_int(c, "dstw", width, 0);
   av_opt_set_int(c, "dsth", height, 0);
-  av_opt_set_int(c, "dst_format", dst_format, 0);
-  av_opt_set_int(c, "sws_flags", SWS_BICUBIC, 0);
+  av_opt_set_int(c, "dst_format", av_dst_format, 0);
+  av_opt_set_int(c, "sws_flags", sws_flags, 0);
   av_opt_set_int(c, "threads", BLI_system_thread_count(), 0);
 
   if (sws_init_context(c, nullptr, nullptr) < 0) {
@@ -705,17 +693,25 @@ static SwsContext *get_threaded_sws_context(int width,
 #  else
   SwsContext *c = sws_getContext(width,
                                  height,
-                                 src_format,
+                                 AVPixelFormat(av_src_format),
                                  width,
                                  height,
-                                 dst_format,
-                                 SWS_BICUBIC,
+                                 AVPixelFormat(av_dst_format),
+                                 sws_flags,
                                  nullptr,
                                  nullptr,
                                  nullptr);
 #  endif
 
   return c;
+}
+void BKE_ffmpeg_sws_scale_frame(SwsContext *ctx, AVFrame *dst, const AVFrame *src)
+{
+#  if defined(FFMPEG_SWSCALE_THREADING)
+  sws_scale_frame(ctx, dst, src);
+#  else
+  sws_scale(ctx, src->data, src->linesize, 0, src->height, dst->data, dst->linesize);
+#  endif
 }
 
 /* prepare a video stream for the output file */
@@ -787,7 +783,8 @@ static AVStream *alloc_video_stream(FFMpegContext *context,
   if (c->time_base.num != 1) {
     AVRational new_time_base;
     if (av_reduce(
-            &new_time_base.num, &new_time_base.den, c->time_base.num, c->time_base.den, INT_MAX)) {
+            &new_time_base.num, &new_time_base.den, c->time_base.num, c->time_base.den, INT_MAX))
+    {
       /* Exact reduction was possible. Use the new value. */
       c->time_base = new_time_base;
     }
@@ -955,8 +952,8 @@ static AVStream *alloc_video_stream(FFMpegContext *context,
   else {
     /* Output pixel format is different, allocate frame for conversion. */
     context->img_convert_frame = alloc_picture(AV_PIX_FMT_RGBA, c->width, c->height);
-    context->img_convert_ctx = get_threaded_sws_context(
-        c->width, c->height, AV_PIX_FMT_RGBA, c->pix_fmt);
+    context->img_convert_ctx = BKE_ffmpeg_sws_get_context(
+        c->width, c->height, AV_PIX_FMT_RGBA, c->pix_fmt, SWS_BICUBIC);
   }
 
   avcodec_parameters_from_context(st->codecpar, c);
@@ -1198,7 +1195,7 @@ static int start_ffmpeg_impl(FFMpegContext *context,
 
   of = avformat_alloc_context();
   if (!of) {
-    BKE_report(reports, RPT_ERROR, "Can't allocate FFMPEG format context");
+    BKE_report(reports, RPT_ERROR, "Can't allocate FFmpeg format context");
     return 0;
   }
 
@@ -1269,7 +1266,7 @@ static int start_ffmpeg_impl(FFMpegContext *context,
     if (context->ffmpeg_audio_codec != AV_CODEC_ID_NONE &&
         rd->ffcodecdata.audio_mixrate != 48000 && rd->ffcodecdata.audio_channels != 2)
     {
-      BKE_report(reports, RPT_ERROR, "FFMPEG only supports 48khz / stereo audio for DV!");
+      BKE_report(reports, RPT_ERROR, "FFmpeg only supports 48khz / stereo audio for DV!");
       goto fail;
     }
   }

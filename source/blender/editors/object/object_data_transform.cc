@@ -35,11 +35,11 @@
 #include "BKE_curve.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_gpencil_geom_legacy.h"
-#include "BKE_key.h"
+#include "BKE_key.hh"
 #include "BKE_lattice.hh"
-#include "BKE_mball.h"
+#include "BKE_mball.hh"
 #include "BKE_mesh.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "bmesh.hh"
 
@@ -342,11 +342,11 @@ XFormObjectData *ED_object_data_xform_create_ex(ID *id, bool is_edit_mode)
         }
       }
       else {
-        const int elem_array_len = mesh->totvert;
+        const int elem_array_len = mesh->verts_num;
         XFormObjectData_Mesh *xod = static_cast<XFormObjectData_Mesh *>(
             MEM_mallocN(sizeof(*xod) + (sizeof(*xod->elem_array) * elem_array_len), __func__));
         memset(xod, 0x0, sizeof(*xod));
-        blender::MutableSpan(reinterpret_cast<blender::float3 *>(xod->elem_array), mesh->totvert)
+        blender::MutableSpan(reinterpret_cast<blender::float3 *>(xod->elem_array), mesh->verts_num)
             .copy_from(mesh->vert_positions());
 
         xod_base = &xod->base;
@@ -549,9 +549,16 @@ void ED_object_data_xform_by_mat4(XFormObjectData *xod_base, const float mat[4][
       }
       else {
         MutableSpan<float3> positions = mesh->vert_positions_for_write();
+#ifdef __GNUC__ /* Invalid `xod->elem_array` warning with GCC 13.2.1. */
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
         for (const int i : positions.index_range()) {
           mul_v3_m4v3(positions[i], mat, xod->elem_array[i]);
         }
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
         mesh->tag_positions_changed();
       }
 
@@ -660,7 +667,7 @@ void ED_object_data_xform_restore(XFormObjectData *xod_base)
       }
       else {
         mesh->vert_positions_for_write().copy_from(
-            {reinterpret_cast<const blender::float3 *>(xod->elem_array), mesh->totvert});
+            {reinterpret_cast<const blender::float3 *>(xod->elem_array), mesh->verts_num});
         mesh->tag_positions_changed();
       }
 

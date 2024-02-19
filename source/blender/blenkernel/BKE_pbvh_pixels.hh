@@ -4,19 +4,16 @@
 
 #pragma once
 
-#include <functional>
-
 #include "BLI_math_vector.hh"
 #include "BLI_rect.h"
 #include "BLI_vector.hh"
 
 #include "DNA_image_types.h"
-#include "DNA_meshdata_types.h"
 
 #include "BKE_image.h"
 #include "BKE_image_wrappers.hh"
 
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf_types.hh"
 
 namespace blender::bke::pbvh::pixels {
 

@@ -108,7 +108,7 @@ enum PropertyScaleType {
   PROP_SCALE_CUBIC = 2,
 };
 
-#define RNA_SUBTYPE_UNIT(subtype) ((subtype)&0x00FF0000)
+#define RNA_SUBTYPE_UNIT(subtype) ((subtype) & 0x00FF0000)
 #define RNA_SUBTYPE_VALUE(subtype) ((subtype) & ~0x00FF0000)
 #define RNA_SUBTYPE_UNIT_VALUE(subtype) ((subtype) >> 16)
 
@@ -179,7 +179,7 @@ enum PropertySubType {
 
 /* Make sure enums are updated with these */
 /* HIGHEST FLAG IN USE: 1 << 31
- * FREE FLAGS: 9, 11, 13, 14, 15. */
+ * FREE FLAGS: 13, 14, 15. */
 enum PropertyFlag {
   /**
    * Editable means the property is editable in the user
@@ -212,9 +212,9 @@ enum PropertyFlag {
   PROP_ICONS_CONSECUTIVE = (1 << 12),
   PROP_ICONS_REVERSE = (1 << 8),
 
-  /** Hidden in the user interface. */
+  /** Hidden in the user interface. Inherits #ROP_SKIP_PRESET. */
   PROP_HIDDEN = (1 << 19),
-  /** Do not write in presets. */
+  /** Do not use ghost values. Inherits #PROP_SKIP_PRESET. */
   PROP_SKIP_SAVE = (1 << 28),
 
   /* numbers */
@@ -301,10 +301,19 @@ enum PropertyFlag {
   PROP_NO_DEG_UPDATE = (1 << 30),
 
   /**
-   * Filepaths that refer to output get a special treatment such
+   * Property needs to ensure evaluated data-blocks are in sync with their original counter-part
+   * but the property does not affect evaluation itself.
+   */
+  PROP_DEG_SYNC_ONLY = (1 << 9),
+
+  /**
+   * File-paths that refer to output get a special treatment such
    * as having the +/- operators available in the file browser.
-   **/
+   */
   PROP_PATH_OUTPUT = (1 << 2),
+
+  /** Do not write in presets. */
+  PROP_SKIP_PRESET = (1 << 11),
 };
 ENUM_OPERATORS(PropertyFlag, PROP_TEXTEDIT_UPDATE)
 
@@ -446,6 +455,11 @@ enum RawPropertyType {
   PROP_RAW_BOOLEAN,
   PROP_RAW_DOUBLE,
   PROP_RAW_FLOAT,
+  PROP_RAW_UINT8,
+  PROP_RAW_UINT16,
+  PROP_RAW_INT64,
+  PROP_RAW_UINT64,
+  PROP_RAW_INT8,
 };
 
 struct RawArray {
@@ -555,7 +569,7 @@ typedef void (*StringPropertySearchVisitFunc)(void *visit_user_data,
 /**
  * \param C: context, may be NULL (in this case all available items should be shown).
  * \param ptr: RNA pointer.
- * \param prop: RNA property. This must have it's #StringPropertyRNA.search callback set,
+ * \param prop: RNA property. This must have its #StringPropertyRNA.search callback set,
  * to check this use `RNA_property_string_search_flag(prop) & PROP_STRING_SEARCH_SUPPORTED`.
  * \param edit_text: Optionally use the string being edited by the user as a basis
  * for the search results (auto-complete Python attributes for e.g.).

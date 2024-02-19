@@ -13,7 +13,7 @@
 
 #include "BLI_blenlib.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_ID.h"
 #include "DNA_action_types.h"
@@ -31,12 +31,12 @@
 #include "BKE_armature.hh"
 #include "BKE_context.hh"
 #include "BKE_fcurve.h"
-#include "BKE_global.h"
-#include "BKE_idtype.h"
-#include "BKE_lib_id.h"
+#include "BKE_global.hh"
+#include "BKE_idtype.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_nla.h"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
@@ -47,6 +47,7 @@
 
 #include "ANIM_animdata.hh"
 #include "ANIM_bone_collections.hh"
+#include "ANIM_driver.hh"
 #include "ANIM_fcurve.hh"
 #include "ANIM_keyframing.hh"
 #include "ANIM_rna.hh"
@@ -75,38 +76,23 @@ static int delete_key_using_keying_set(bContext *C, wmOperator *op, KeyingSet *k
 /* ************************************************** */
 /* Keyframing Setting Wrangling */
 
-eInsertKeyFlags ANIM_get_keyframing_flags(Scene *scene, const bool use_autokey_mode)
+eInsertKeyFlags ANIM_get_keyframing_flags(Scene *scene)
 {
   using namespace blender::animrig;
   eInsertKeyFlags flag = INSERTKEY_NOFLAGS;
 
-  /* standard flags */
-  {
-    /* visual keying */
-    if (is_autokey_flag(scene, AUTOKEY_FLAG_VISUALKEY)) {
-      flag |= INSERTKEY_MATRIX;
-    }
-
-    /* only needed */
-    if (is_autokey_flag(scene, AUTOKEY_FLAG_INSERTNEEDED)) {
-      flag |= INSERTKEY_NEEDED;
-    }
+  /* Visual keying. */
+  if (is_keying_flag(scene, KEYING_FLAG_VISUALKEY)) {
+    flag |= INSERTKEY_MATRIX;
   }
 
-  /* only if including settings from the autokeying mode... */
-  /* TODO: The fact that this flag needs to be passed as true is confusing because it is not clear
-   * why those two flags would be exclusive to autokeying. Refactor flags so they are separate
-   * between normal keying and autokeying. */
-  if (use_autokey_mode) {
-    /* keyframing mode - only replace existing keyframes */
-    if (is_autokey_mode(scene, AUTOKEY_MODE_EDITKEYS)) {
-      flag |= INSERTKEY_REPLACE;
-    }
+  /* Cycle-aware keyframe insertion - preserve cycle period and flow. */
+  if (is_keying_flag(scene, KEYING_FLAG_CYCLEAWARE)) {
+    flag |= INSERTKEY_CYCLE_AWARE;
+  }
 
-    /* cycle-aware keyframe insertion - preserve cycle period and flow */
-    if (is_autokey_flag(scene, AUTOKEY_FLAG_CYCLEAWARE)) {
-      flag |= INSERTKEY_CYCLE_AWARE;
-    }
+  if (is_keying_flag(scene, MANUALKEY_FLAG_INSERTNEEDED)) {
+    flag |= INSERTKEY_NEEDED;
   }
 
   return flag;
@@ -129,7 +115,7 @@ void update_autoflags_fcurve(FCurve *fcu, bContext *C, ReportList *reports, Poin
   /* try to get property we should be affecting */
   if (RNA_path_resolve_property(ptr, fcu->rna_path, &tmp_ptr, &prop) == false) {
     /* property not found... */
-    const char *idname = (ptr->owner_id) ? ptr->owner_id->name : TIP_("<No ID pointer>");
+    const char *idname = (ptr->owner_id) ? ptr->owner_id->name : RPT_("<No ID pointer>");
 
     BKE_reportf(reports,
                 RPT_ERROR,
@@ -361,9 +347,7 @@ static int insert_key(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   const float scene_frame = BKE_scene_frame_get(scene);
 
-  /* Passing autokey mode as true because that is needed to get the cycle aware keying flag. */
-  const bool use_autokey_mode = true;
-  const eInsertKeyFlags insert_key_flags = ANIM_get_keyframing_flags(scene, use_autokey_mode);
+  const eInsertKeyFlags insert_key_flags = ANIM_get_keyframing_flags(scene);
   const eBezTriple_KeyframeType key_type = eBezTriple_KeyframeType(
       scene->toolsettings->keyframe_type);
 
@@ -390,7 +374,8 @@ static int insert_key_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   /* Use the active keying set if there is one. */
-  KeyingSet *ks = ANIM_keyingset_get_from_enum_type(scene, scene->active_keyingset);
+  const int type = RNA_enum_get(op->ptr, "type");
+  KeyingSet *ks = ANIM_keyingset_get_from_enum_type(scene, type);
   if (ks) {
     return insert_key_with_keyingset(C, op, ks);
   }
@@ -412,6 +397,13 @@ void ANIM_OT_keyframe_insert(wmOperatorType *ot)
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  /* Allows passing in a keying set when using the Python operator. */
+  PropertyRNA *prop = RNA_def_enum(
+      ot->srna, "type", rna_enum_dummy_DEFAULT_items, 0, "Keying Set", "The Keying Set to use");
+  RNA_def_enum_funcs(prop, ANIM_keying_sets_enum_itemf);
+  RNA_def_property_flag(prop, PROP_HIDDEN);
+  ot->prop = prop;
 }
 
 static int keyframe_insert_with_keyingset_exec(bContext *C, wmOperator *op)
@@ -874,7 +866,7 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-  WM_operator_properties_confirm_or_exec(ot);
+  // WM_operator_properties_confirm_or_exec(ot); // BFA - Remove confirmation dialog
 }
 
 /* bfa - Apply animation to all selected pose bones through UI animate property */
@@ -895,7 +887,7 @@ static bool insert_key_selected_pose_bones(Main *bmain,
   bPoseChannel *pchan = NULL;
   ListBase selected_bones;
   char *group = NULL;
-  char *path = NULL;
+  std::optional<std::string> path;
   bool changed = false;
 
   CTX_data_selected_pose_bones(C, &selected_bones);
@@ -918,12 +910,11 @@ static bool insert_key_selected_pose_bones(Main *bmain,
                                                     link->ptr.owner_id,
                                                     NULL,
                                                     group,
-                                                    path,
+                                                    path->c_str(),
                                                     index,
                                                     &anim_eval_context,
                                                     eBezTriple_KeyframeType(ts->keyframe_type),
                                                     flag) != 0);
-      MEM_freeN(path);
     }
   }
 
@@ -943,7 +934,7 @@ static bool insert_key_selected_objects(Main *bmain,
                                         int index,
                                         eInsertKeyFlags flag,
                                         const char *group,
-                                        char *prop_path,
+                                        const char *prop_path,
                                         Object *object_to_exclude)
 {
   ListBase selected_objects;
@@ -995,7 +986,6 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
   ToolSettings *ts = scene->toolsettings;
   PointerRNA ptr = {nullptr};
   PropertyRNA *prop = nullptr;
-  char *path;
   uiBut *but;
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
       CTX_data_depsgraph_pointer(C), BKE_scene_frame_get(scene));
@@ -1004,8 +994,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
   const bool all = RNA_boolean_get(op->ptr, "all");
   eInsertKeyFlags flag = INSERTKEY_NOFLAGS;
 
-  /* flags for inserting keyframes */
-  flag = ANIM_get_keyframing_flags(scene, true);
+  flag = ANIM_get_keyframing_flags(scene);
 
   if (!(but = UI_context_active_but_prop_get(C, &ptr, &prop, &index))) {
     /* pass event on if no active button found */
@@ -1047,22 +1036,24 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
           C, &ptr, prop, index, nullptr, nullptr, &driven, &special);
 
       if (fcu && driven) {
+        const float driver_frame = blender::animrig::evaluate_driver_from_rna_pointer(
+            &anim_eval_context, &ptr, prop, fcu);
+        AnimationEvalContext remapped_context = BKE_animsys_eval_context_construct(
+            CTX_data_depsgraph_pointer(C), driver_frame);
         changed = blender::animrig::insert_keyframe_direct(
             op->reports,
             ptr,
             prop,
             fcu,
-            &anim_eval_context,
+            &remapped_context,
             eBezTriple_KeyframeType(ts->keyframe_type),
             nullptr,
-            INSERTKEY_DRIVER);
+            INSERTKEY_NOFLAGS);
       }
     }
     else {
       /* standard properties */
-      path = RNA_path_from_ID_to_property(&ptr, prop);
-
-      if (path) {
+      if (const std::optional<std::string> path = RNA_path_from_ID_to_property(&ptr, prop)) {
         const char *identifier = RNA_property_identifier(prop);
         const char *group = nullptr;
 
@@ -1106,7 +1097,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
                                                    index,
                                                    flag,
                                                    group,
-                                                   path,
+                                                   path->c_str(),
                                                    (Object *)ptr.data);
           }
         }
@@ -1121,13 +1112,11 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
                                                       ptr.owner_id,
                                                       nullptr,
                                                       group,
-                                                      path,
+                                                      path->c_str(),
                                                       index,
                                                       &anim_eval_context,
                                                       eBezTriple_KeyframeType(ts->keyframe_type),
                                                       flag) != 0);
-
-        MEM_freeN(path);
       }
       else {
         BKE_report(op->reports,
@@ -1172,15 +1161,27 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
   return (changed) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
+/*bfa - descriptions*/
+static std::string ANIM_OT_keyframe_insert_button_get_description(struct bContext * /*C*/,
+                                                            struct wmOperatorType * /*op*/,
+                                                            struct PointerRNA *values)
+{
+  if (RNA_boolean_get(values, "all")) {
+    return "Insert a keyframe for all UI elements of the property";
+  }
+  return "";
+}
+
 void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Insert Keyframe (Buttons)";
   ot->idname = "ANIM_OT_keyframe_insert_button";
-  ot->description = "Insert a keyframe for current UI-active property";
+  ot->description = "Insert a keyframe for the single property";
 
   /* callbacks */
   ot->exec = insert_key_button_exec;
+  ot->get_description = ANIM_OT_keyframe_insert_button_get_description; /*bfa - descriptions*/
   ot->poll = modify_key_op_poll;
 
   /* flags */
@@ -1205,7 +1206,7 @@ static bool delete_key_selected_pose_bones(Main *bmain,
   bPoseChannel *pchan = NULL;
   ListBase selected_bones;
   AnimData *adt = NULL;
-  char *path = NULL;
+  std::optional<std::string> path;
   bool changed = false;
 
   CTX_data_selected_pose_bones(C, &selected_bones);
@@ -1230,8 +1231,7 @@ static bool delete_key_selected_pose_bones(Main *bmain,
     path = RNA_path_from_ID_to_property(&link->ptr, prop);
     if (path) {
       changed |= (blender::animrig::delete_keyframe(
-                      bmain, reports, link->ptr.owner_id, NULL, path, index, cfra) != 0);
-      MEM_freeN(path);
+                      bmain, reports, link->ptr.owner_id, NULL, path->c_str(), index, cfra) != 0);
     }
   }
 
@@ -1247,7 +1247,7 @@ static bool delete_key_selected_objects(Main *bmain,
                                         bContext *C,
                                         ReportList *reports,
                                         int index,
-                                        char *prop_path,
+                                        const char *prop_path,
                                         float cfra,
                                         Object *object_to_exclude)
 {
@@ -1297,7 +1297,6 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
   PointerRNA ptr = {nullptr};
   PropertyRNA *prop = nullptr;
   Main *bmain = CTX_data_main(C);
-  char *path;
   const float cfra = BKE_scene_frame_get(scene);
   bool changed = false;
   int index;
@@ -1349,9 +1348,7 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
     }
     else {
       /* standard properties */
-      path = RNA_path_from_ID_to_property(&ptr, prop);
-
-      if (path) {
+      if (const std::optional<std::string> path = RNA_path_from_ID_to_property(&ptr, prop)) {
         if (all) {
           /* -1 indicates operating on the entire array (or the property itself otherwise) */
           index = -1;
@@ -1365,7 +1362,7 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
           }
           else if (ptr.type == &RNA_Object) {
             changed |= delete_key_selected_objects(
-                bmain, C, op->reports, index, path, cfra, (Object *)ptr.data);
+                bmain, C, op->reports, index, path->c_str(), cfra, (Object *)ptr.data);
           }
         }
         /* bfa - Apply animation to all selected through UI animate property */
@@ -1379,10 +1376,9 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
              * to make sure delete/insert_frame is not called twice on same object/bone,
              * exclude ptr.data from selected objects/bones. */
             changed |= blender::animrig::delete_keyframe(
-                           bmain, op->reports, ptr.owner_id, nullptr, path, index, cfra) != 0;
+                           bmain, op->reports, ptr.owner_id, nullptr, path->c_str(), index, cfra) != 0;
           }
         }
-        MEM_freeN(path);
       }
       else if (G.debug & G_DEBUG) {
         printf("Button Delete-Key: no path to property\n");
@@ -1429,7 +1425,6 @@ static int clear_key_button_exec(bContext *C, wmOperator *op)
   PointerRNA ptr = {nullptr};
   PropertyRNA *prop = nullptr;
   Main *bmain = CTX_data_main(C);
-  char *path;
   bool changed = false;
   int index;
   const bool all = RNA_boolean_get(op->ptr, "all");
@@ -1440,18 +1435,19 @@ static int clear_key_button_exec(bContext *C, wmOperator *op)
   }
 
   if (ptr.owner_id && ptr.data && prop) {
-    path = RNA_path_from_ID_to_property(&ptr, prop);
-
-    if (path) {
+    if (const std::optional<std::string> path = RNA_path_from_ID_to_property(&ptr, prop)) {
       if (all) {
         /* -1 indicates operating on the entire array (or the property itself otherwise) */
         index = -1;
       }
 
-      changed |=
-          (blender::animrig::clear_keyframe(
-               bmain, op->reports, ptr.owner_id, nullptr, path, index, eInsertKeyFlags(0)) != 0);
-      MEM_freeN(path);
+      changed |= (blender::animrig::clear_keyframe(bmain,
+                                                   op->reports,
+                                                   ptr.owner_id,
+                                                   nullptr,
+                                                   path->c_str(),
+                                                   index,
+                                                   eInsertKeyFlags(0)) != 0);
     }
     else if (G.debug & G_DEBUG) {
       printf("Button Clear-Key: no path to property\n");
@@ -1649,7 +1645,13 @@ static KeyingSet *keyingset_get_from_op_with_error(wmOperator *op, PropertyRNA *
   else if (prop_type == PROP_STRING) {
     char type_id[MAX_ID_NAME - 2];
     RNA_property_string_get(op->ptr, prop, type_id);
-    ks = ANIM_keyingset_get_from_idname(scene, type_id);
+
+    if (STREQ(type_id, "__ACTIVE__")) {
+      ks = ANIM_keyingset_get_from_enum_type(scene, scene->active_keyingset);
+    }
+    else {
+      ks = ANIM_keyingset_get_from_idname(scene, type_id);
+    }
 
     if (ks == nullptr) {
       BKE_reportf(op->reports, RPT_ERROR, "Keying set '%s' not found", type_id);

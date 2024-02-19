@@ -17,7 +17,7 @@
 #include "BLI_math_vector.h"
 #include "BLI_rand.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_defaults.h"
 #include "DNA_mesh_types.h"
@@ -27,14 +27,15 @@
 #include "DNA_screen_types.h"
 
 #include "BKE_context.hh"
-#include "BKE_deform.h"
+#include "BKE_customdata.hh"
+#include "BKE_deform.hh"
 #include "BKE_lattice.hh"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_modifier.hh"
 #include "BKE_particle.h"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 
 #include "UI_interface.hh"
@@ -105,7 +106,7 @@ static void createFacepa(ExplodeModifierData *emd, ParticleSystemModifierData *p
   blender::MutableSpan<blender::float3> positions = mesh->vert_positions_for_write();
   mface = (MFace *)CustomData_get_layer_for_write(
       &mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy);
-  totvert = mesh->totvert;
+  totvert = mesh->verts_num;
   totface = mesh->totface_legacy;
   totpart = psmd->psys->totpart;
 
@@ -659,7 +660,7 @@ static Mesh *cutEdges(ExplodeModifierData *emd, Mesh *mesh)
   MFace *mface = static_cast<MFace *>(
       CustomData_get_layer_for_write(&mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy));
   float *dupve;
-  int totvert = mesh->totvert;
+  int totvert = mesh->verts_num;
   int totface = mesh->totface_legacy;
 
   int *facesplit = static_cast<int *>(MEM_calloc_arrayN(totface, sizeof(int), __func__));
@@ -918,7 +919,7 @@ static Mesh *explodeMesh(ExplodeModifierData *emd,
   uint mindex = 0;
 
   totface = mesh->totface_legacy;
-  totvert = mesh->totvert;
+  totvert = mesh->verts_num;
   mface = static_cast<MFace *>(
       CustomData_get_layer_for_write(&mesh->fdata_legacy, CD_MFACE, mesh->totface_legacy));
   totpart = psmd->psys->totpart;
@@ -1260,4 +1261,5 @@ ModifierTypeInfo modifierType_Explode = {
     /*panel_register*/ panel_register,
     /*blend_write*/ nullptr,
     /*blend_read*/ blend_read,
+    /*foreach_cache*/ nullptr,
 };

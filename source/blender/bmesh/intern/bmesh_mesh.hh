@@ -28,8 +28,7 @@ struct BMeshCreateParams {
  *
  * \note ob is needed by multires
  */
-BMesh *BM_mesh_create(const struct BMAllocTemplate *allocsize,
-                      const struct BMeshCreateParams *params);
+BMesh *BM_mesh_create(const BMAllocTemplate *allocsize, const BMeshCreateParams *params);
 
 /**
  * \brief BMesh Free Mesh
@@ -162,15 +161,15 @@ void BM_mesh_remap(BMesh *bm, const uint *vert_idx, const uint *edge_idx, const 
  * but could also be used for packing fragmented bmeshes.
  */
 void BM_mesh_rebuild(BMesh *bm,
-                     const struct BMeshCreateParams *params,
-                     struct BLI_mempool *vpool,
-                     struct BLI_mempool *epool,
-                     struct BLI_mempool *lpool,
-                     struct BLI_mempool *fpool);
+                     const BMeshCreateParams *params,
+                     BLI_mempool *vpool,
+                     BLI_mempool *epool,
+                     BLI_mempool *lpool,
+                     BLI_mempool *fpool);
 
-typedef struct BMAllocTemplate {
+struct BMAllocTemplate {
   int totvert, totedge, totloop, totface;
-} BMAllocTemplate;
+};
 
 /* used as an extern, defined in bmesh.h */
 extern const BMAllocTemplate bm_mesh_allocsize_default;
@@ -183,15 +182,15 @@ extern const BMAllocTemplate bm_mesh_chunksize_default;
 
 #define _VA_BMALLOC_TEMPLATE_FROM_ME_1(me) \
   { \
-    (CHECK_TYPE_INLINE(me, Mesh *), (me)->totvert), (me)->totedge, (me)->totloop, \
+    (CHECK_TYPE_INLINE(me, Mesh *), (me)->verts_num), (me)->edges_num, (me)->corners_num, \
         (me)->faces_num, \
   }
 #define _VA_BMALLOC_TEMPLATE_FROM_ME_2(me_a, me_b) \
   { \
     (CHECK_TYPE_INLINE(me_a, Mesh *), \
      CHECK_TYPE_INLINE(me_b, Mesh *), \
-     (me_a)->totvert + (me_b)->totvert), \
-        (me_a)->totedge + (me_b)->totedge, (me_a)->totloop + (me_b)->totloop, \
+     (me_a)->verts_num + (me_b)->verts_num), \
+        (me_a)->edges_num + (me_b)->edges_num, (me_a)->corners_num + (me_b)->corners_num, \
         (me_a)->faces_num + (me_b)->faces_num, \
   }
 #define BMALLOC_TEMPLATE_FROM_ME(...) \

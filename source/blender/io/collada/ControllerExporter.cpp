@@ -17,10 +17,10 @@
 
 #include "BKE_action.h"
 #include "BKE_armature.hh"
-#include "BKE_deform.h"
-#include "BKE_global.h"
+#include "BKE_deform.hh"
+#include "BKE_global.hh"
 #include "BKE_idprop.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_mesh.hh"
 
 #include "ED_armature.hh"
@@ -207,7 +207,7 @@ void ControllerExporter::export_skin_controller(Object *ob, Object *ob_arm)
 
     const MDeformVert *dvert = mesh->deform_verts().data();
     int oob_counter = 0;
-    for (i = 0; i < mesh->totvert; i++) {
+    for (i = 0; i < mesh->verts_num; i++) {
       const MDeformVert *vert = &dvert[i];
       std::map<int, float> jw;
 

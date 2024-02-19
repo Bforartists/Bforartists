@@ -122,6 +122,7 @@ void ShaderCreateInfo::finalize()
     vertex_out_interfaces_.extend_non_duplicates(info.vertex_out_interfaces_);
     geometry_out_interfaces_.extend_non_duplicates(info.geometry_out_interfaces_);
     subpass_inputs_.extend_non_duplicates(info.subpass_inputs_);
+    specialization_constants_.extend_non_duplicates(info.specialization_constants_);
 
     validate_vertex_attributes(&info);
 
@@ -131,6 +132,14 @@ void ShaderCreateInfo::finalize()
     batch_resources_.extend_non_duplicates(info.batch_resources_);
     pass_resources_.extend_non_duplicates(info.pass_resources_);
     typedef_sources_.extend_non_duplicates(info.typedef_sources_);
+
+    /* API-specific parameters.
+     * We will only copy API-specific parameters if they are otherwise unassigned. */
+#ifdef WITH_METAL_BACKEND
+    if (mtl_max_threads_per_threadgroup_ == 0) {
+      mtl_max_threads_per_threadgroup_ = info.mtl_max_threads_per_threadgroup_;
+    }
+#endif
 
     if (info.early_fragment_test_) {
       early_fragment_test_ = true;
@@ -279,6 +288,16 @@ std::string ShaderCreateInfo::check_error() const
              " contains a stage interface using an instance name and mixed interpolation modes. "
              "This is not compatible with Vulkan and need to be adjusted.\n";
   }
+
+  /* Validate specialization constants. */
+  for (int i = 0; i < specialization_constants_.size(); i++) {
+    for (int j = i + 1; j < specialization_constants_.size(); j++) {
+      if (specialization_constants_[i].name == specialization_constants_[j].name) {
+        error += this->name_ + " contains two specialization constants with the name: " +
+                 std::string(specialization_constants_[i].name);
+      }
+    }
+  }
 #endif
 
   return error;
@@ -394,6 +413,15 @@ void ShaderCreateInfo::validate_vertex_attributes(const ShaderCreateInfo *other_
 
 using namespace blender::gpu::shader;
 
+#ifdef _MSC_VER
+/* Disable optimization for this function with MSVC. It does not like the fact
+ * shaders info are declared in the same function (same basic block or not does
+ * not change anything).
+ * Since it is just a function called to register shaders (once),
+ * the fact it's optimized or not does not matter, it's not on any hot
+ * code path. */
+#  pragma optimize("", off)
+#endif
 void gpu_shader_create_info_init()
 {
   g_create_infos = new CreateInfoDictionnary();
@@ -534,6 +562,9 @@ void gpu_shader_create_info_init()
   /* TEST */
   // gpu_shader_create_info_compile(nullptr);
 }
+#ifdef _MSC_VER
+#  pragma optimize("", on)
+#endif
 
 void gpu_shader_create_info_exit()
 {
@@ -567,7 +598,6 @@ bool gpu_shader_create_info_compile(const char *name_starts_with_filter)
       if ((info->metal_backend_only_ && GPU_backend_get_type() != GPU_BACKEND_METAL) ||
           (GPU_compute_shader_support() == false && info->compute_source_ != nullptr) ||
           (GPU_geometry_shader_support() == false && info->geometry_source_ != nullptr) ||
-          (GPU_shader_image_load_store_support() == false && info->has_resource_image()) ||
           (GPU_transform_feedback_support() == false && info->tf_type_ != GPU_SHADER_TFB_NONE))
       {
         skipped++;

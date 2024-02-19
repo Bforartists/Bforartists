@@ -43,6 +43,22 @@ class PIE_OT_PivotToSelection(Operator):
 
 # Pivot to Bottom
 
+def origin_to_bottom(ob):
+    if ob.type != 'MESH':
+        return
+
+    init = 0
+    for x in ob.data.vertices:
+        if init == 0:
+            a = x.co.z
+            init = 1
+        elif x.co.z < a:
+            a = x.co.z
+
+    for x in ob.data.vertices:
+        x.co.z -= a
+
+    ob.location.z += a
 
 class PIE_OT_PivotBottom(Operator):
     bl_idname = "object.pivotobottom"
@@ -59,19 +75,9 @@ class PIE_OT_PivotBottom(Operator):
     def execute(self, context):
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
-        o = context.active_object
-        init = 0
-        for x in o.data.vertices:
-            if init == 0:
-                a = x.co.z
-                init = 1
-            elif x.co.z < a:
-                a = x.co.z
 
-        for x in o.data.vertices:
-            x.co.z -= a
-
-        o.location.z += a
+        for ob in context.selected_objects:
+            origin_to_bottom(ob)
 
         return {'FINISHED'}
 
@@ -93,19 +99,10 @@ class PIE_OT_PivotBottom_edit(Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
-        o = context.active_object
-        init = 0
-        for x in o.data.vertices:
-            if init == 0:
-                a = x.co.z
-                init = 1
-            elif x.co.z < a:
-                a = x.co.z
 
-        for x in o.data.vertices:
-            x.co.z -= a
+        for ob in context.selected_objects:
+            origin_to_bottom(ob)
 
-        o.location.z += a
         bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
@@ -235,7 +232,7 @@ class PIE_MT_OriginPivot(Menu):
         if obj and obj.type == 'MESH' and obj.mode in {'OBJECT'}:
             # 4 - LEFT
             pie.operator("object.origin_set", text="Origin to Center of Mass",
-                         icon='NONE').type = 'ORIGIN_CENTER_OF_MASS'
+                         icon='ORIGIN_TO_CENTEROFMASS').type = 'ORIGIN_CENTER_OF_MASS' #BFA - Icon Added
             # 6 - RIGHT
             pie.operator("object.origin_set", text="Origin to Cursor",
                          icon='PIVOT_CURSOR').type = 'ORIGIN_CURSOR'
@@ -247,15 +244,15 @@ class PIE_MT_OriginPivot(Menu):
                          icon='SNAP_INCREMENT')
             # 7 - TOP - LEFT
             pie.operator("object.origin_set", text="Geometry To Origin",
-                         icon='NONE').type = 'GEOMETRY_ORIGIN'
+                         icon='GEOMETRY_TO_ORIGIN').type = 'GEOMETRY_ORIGIN' #BFA - Icon Added
             # 9 - TOP - RIGHT
             pie.operator("object.origin_set", text="Origin To Geometry",
-                         icon='NONE').type = 'ORIGIN_GEOMETRY'
+                         icon='ORIGIN_TO_GEOMETRY').type = 'ORIGIN_GEOMETRY' #BFA - Icon Added
 
         elif obj and obj.type == 'MESH' and obj.mode in {'EDIT'}:
             # 4 - LEFT
             pie.operator("object.origintomass_edit", text="Origin to Center of Mass",
-                         icon='NONE')
+                         icon='ORIGIN_TO_CENTEROFMASS') #BFA - Icon Added
             # 6 - RIGHT
             pie.operator("object.pivot2cursor_edit", text="Origin to Cursor",
                          icon='PIVOT_CURSOR')
@@ -267,15 +264,15 @@ class PIE_MT_OriginPivot(Menu):
                          icon='SNAP_INCREMENT')
             # 7 - TOP - LEFT
             pie.operator("object.geometrytoorigin_edit", text="Geometry To Origin",
-                         icon='NONE')
+                         icon='GEOMETRY_TO_ORIGIN') #BFA - Icon Added
             # 9 - TOP - RIGHT
             pie.operator("object.origintogeometry_edit", text="Origin To Geometry",
-                         icon='NONE')
+                         icon='ORIGIN_TO_GEOMETRY') #BFA - Icon Added
 
         else:
             # 4 - LEFT
             pie.operator("object.origin_set", text="Origin to Center of Mass",
-                         icon='NONE').type = 'ORIGIN_CENTER_OF_MASS'
+                         icon='ORIGIN_TO_CENTEROFMASS').type = 'ORIGIN_CENTER_OF_MASS'  #BFA - Icon Added
             # 6 - RIGHT
             pie.operator("object.origin_set", text="Origin To 3D Cursor",
                          icon='PIVOT_CURSOR').type = 'ORIGIN_CURSOR'
@@ -284,10 +281,10 @@ class PIE_MT_OriginPivot(Menu):
                          icon='SNAP_INCREMENT')
             # 8 - TOP
             pie.operator("object.origin_set", text="Origin To Geometry",
-                         icon='NONE').type = 'ORIGIN_GEOMETRY'
+                         icon='ORIGIN_TO_GEOMETRY').type = 'ORIGIN_GEOMETRY' #BFA - Icon Added
             # 7 - TOP - LEFT
             pie.operator("object.origin_set", text="Geometry To Origin",
-                         icon='NONE').type = 'GEOMETRY_ORIGIN'
+                         icon='GEOMETRY_TO_ORIGIN').type = 'GEOMETRY_ORIGIN' #BFA - Icon Added
 
 
 classes = (

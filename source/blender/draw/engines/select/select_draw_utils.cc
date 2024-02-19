@@ -77,6 +77,7 @@ static void draw_select_id_edit_mesh(SELECTID_StorageList *stl,
                                      uint *r_edge_offset,
                                      uint *r_face_offset)
 {
+  using namespace blender::draw;
   Mesh *mesh = static_cast<Mesh *>(ob->data);
   BMEditMesh *em = mesh->edit_mesh;
 
@@ -142,6 +143,7 @@ static void draw_select_id_mesh(SELECTID_StorageList *stl,
                                 uint *r_edge_offset,
                                 uint *r_face_offset)
 {
+  using namespace blender::draw;
   Mesh *mesh = static_cast<Mesh *>(ob->data);
 
   GPUBatch *geom_faces = DRW_mesh_batch_cache_get_triangles_with_select_id(mesh);
@@ -163,7 +165,7 @@ static void draw_select_id_mesh(SELECTID_StorageList *stl,
     DRWShadingGroup *edge_shgrp = DRW_shgroup_create_sub(stl->g_data->shgrp_edge);
     DRW_shgroup_uniform_int_copy(edge_shgrp, "offset", *(int *)r_face_offset);
     DRW_shgroup_call_no_cull(edge_shgrp, geom_edges, ob);
-    *r_edge_offset = *r_face_offset + mesh->totedge;
+    *r_edge_offset = *r_face_offset + mesh->edges_num;
   }
   else {
     *r_edge_offset = *r_face_offset;
@@ -174,7 +176,7 @@ static void draw_select_id_mesh(SELECTID_StorageList *stl,
     DRWShadingGroup *vert_shgrp = DRW_shgroup_create_sub(stl->g_data->shgrp_vert);
     DRW_shgroup_uniform_int_copy(vert_shgrp, "offset", *r_edge_offset);
     DRW_shgroup_call_no_cull(vert_shgrp, geom_verts, ob);
-    *r_vert_offset = *r_edge_offset + mesh->totvert;
+    *r_vert_offset = *r_edge_offset + mesh->verts_num;
   }
   else {
     *r_vert_offset = *r_edge_offset;

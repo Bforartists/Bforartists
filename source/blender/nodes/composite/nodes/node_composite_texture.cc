@@ -43,7 +43,7 @@ class TextureOperation : public NodeOperation {
   {
     Result &color_result = get_result("Color");
     Result &value_result = get_result("Value");
-    if (!get_texture()) {
+    if (!get_texture() || !context().is_valid_compositing_region()) {
       if (color_result.should_compute()) {
         color_result.allocate_invalid();
       }
@@ -59,8 +59,8 @@ class TextureOperation : public NodeOperation {
         get_texture(),
         true,
         domain.size,
-        get_input("Offset").get_vector_value_default(float4(0.0f)).xy(),
-        get_input("Scale").get_vector_value_default(float4(0.0f)).xy());
+        get_input("Offset").get_vector_value_default(float4(0.0f)).xyz(),
+        get_input("Scale").get_vector_value_default(float4(1.0f)).xyz());
 
     if (color_result.should_compute()) {
       color_result.wrap_external(cached_texture.color_texture());

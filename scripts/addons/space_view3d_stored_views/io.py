@@ -35,8 +35,7 @@ class IO_Utils():
             # stored_views preset folder doesn't exist, so create it
             paths = [os.path.join(bpy.utils.user_resource('SCRIPTS'), "presets",
                     "stored_views")]
-            if not os.path.exists(paths[0]):
-                os.makedirs(paths[0])
+            os.makedirs(paths[0], exist_ok=True)
 
         return(paths)
 

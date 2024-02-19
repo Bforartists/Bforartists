@@ -35,19 +35,19 @@ class PIE_MT_Align(Menu):
 
         row = box.row(align=True)
         row.label(text="X")
-        align_1 = row.operator("alignxyz.all", text="Neg")
+        align_1 = row.operator("alignxyz.all", text="", icon="ZOOMOUT") # BFA
         align_1.axis = '0'
         align_1.side = 'NEGATIVE'
 
         row = box.row(align=True)
         row.label(text="Y")
-        align_3 = row.operator("alignxyz.all", text="Neg")
+        align_3 = row.operator("alignxyz.all", text="", icon="ZOOMOUT")  # BFA
         align_3.axis = '1'
         align_3.side = 'NEGATIVE'
 
         row = box.row(align=True)
         row.label(text="Z")
-        align_5 = row.operator("alignxyz.all", text="Neg")
+        align_5 = row.operator("alignxyz.all", text="", icon="ZOOMOUT")  # BFA
         align_5.axis = '2'
         align_5.side = 'NEGATIVE'
         # 6 - RIGHT
@@ -55,19 +55,19 @@ class PIE_MT_Align(Menu):
 
         row = box.row(align=True)
         row.label(text="X")
-        align_2 = row.operator("alignxyz.all", text="Pos")
+        align_2 = row.operator("alignxyz.all", text="", icon="ADD") # BFA
         align_2.axis = '0'
         align_2.side = 'POSITIVE'
 
         row = box.row(align=True)
         row.label(text="Y")
-        align_4 = row.operator("alignxyz.all", text="Pos")
+        align_4 = row.operator("alignxyz.all", text="", icon="ADD")  # BFA
         align_4.axis = '1'
         align_4.side = 'POSITIVE'
 
         row = box.row(align=True)
         row.label(text="Z")
-        align_6 = row.operator("alignxyz.all", text="Pos")
+        align_6 = row.operator("alignxyz.all", text="", icon="ADD")  # BFA
         align_6.axis = '2'
         align_6.side = 'POSITIVE'
         # 2 - BOTTOM

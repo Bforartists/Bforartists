@@ -11,7 +11,7 @@
 #include "NOD_geometry.hh"
 
 #include "BKE_context.hh"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_node.hh"
 #include "BKE_object.hh"
 
@@ -24,7 +24,7 @@
 
 #include "UI_resources.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "node_common.h"
 
@@ -120,7 +120,8 @@ static bool geometry_node_tree_socket_type_valid(bNodeTreeType * /*treetype*/,
                                                                    SOCK_COLLECTION,
                                                                    SOCK_TEXTURE,
                                                                    SOCK_IMAGE,
-                                                                   SOCK_MATERIAL);
+                                                                   SOCK_MATERIAL,
+                                                                   SOCK_MENU);
 }
 
 void register_node_tree_type_geo()

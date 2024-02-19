@@ -20,8 +20,8 @@
 #include "BLI_ghash.h"
 #include "BLI_math_base.h"
 
-#include "BKE_global.h"
-#include "BKE_lib_query.h"
+#include "BKE_global.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
 #include "BKE_screen.hh"
 #include "BKE_sequencer_offscreen.h"
@@ -49,10 +49,10 @@
 
 #include "BLO_read_write.hh"
 
-#include "IMB_imbuf.h"
+#include "IMB_imbuf.hh"
 
 /* Only for cursor drawing. */
-#include "DRW_engine.h"
+#include "DRW_engine.hh"
 
 /* Own include. */
 #include "sequencer_intern.hh"
@@ -62,8 +62,15 @@
 static void sequencer_scopes_tag_refresh(ScrArea *area)
 {
   SpaceSeq *sseq = (SpaceSeq *)area->spacedata.first;
+  sseq->runtime->scopes.reference_ibuf = nullptr;
+}
 
-  sseq->scopes.reference_ibuf = nullptr;
+blender::ed::seq::SpaceSeq_Runtime::~SpaceSeq_Runtime()
+{
+  if (last_displayed_thumbnails != nullptr) {
+    BLI_ghash_free(last_displayed_thumbnails, nullptr, last_displayed_thumbnails_list_free);
+    last_displayed_thumbnails = nullptr;
+  }
 }
 
 /* ******************** manage regions ********************* */
@@ -96,10 +103,7 @@ static SpaceLink *sequencer_create(const ScrArea * /*area*/, const Scene *scene)
   sseq->timeline_overlay.flag = SEQ_TIMELINE_SHOW_STRIP_NAME | SEQ_TIMELINE_SHOW_STRIP_SOURCE |
                                 SEQ_TIMELINE_SHOW_STRIP_DURATION | SEQ_TIMELINE_SHOW_GRID |
                                 SEQ_TIMELINE_SHOW_FCURVES | SEQ_TIMELINE_SHOW_STRIP_COLOR_TAG |
-                                SEQ_TIMELINE_SHOW_STRIP_RETIMING;
-
-  BLI_rctf_init(&sseq->runtime.last_thumbnail_area, 0.0f, 0.0f, 0.0f, 0.0f);
-  sseq->runtime.last_displayed_thumbnails = nullptr;
+                                SEQ_TIMELINE_SHOW_STRIP_RETIMING | SEQ_TIMELINE_ALL_WAVEFORMS;
 
   /* Header. */
   region = MEM_cnew<ARegion>("header for sequencer");
@@ -192,8 +196,6 @@ static SpaceLink *sequencer_create(const ScrArea * /*area*/, const Scene *scene)
   region->v2d.flag |= V2D_VIEWSYNC_AREA_VERTICAL;
   region->v2d.align = V2D_ALIGN_NO_NEG_Y;
 
-  sseq->runtime.last_displayed_thumbnails = nullptr;
-
   return (SpaceLink *)sseq;
 }
 
@@ -201,43 +203,23 @@ static SpaceLink *sequencer_create(const ScrArea * /*area*/, const Scene *scene)
 static void sequencer_free(SpaceLink *sl)
 {
   SpaceSeq *sseq = (SpaceSeq *)sl;
-  SequencerScopes *scopes = &sseq->scopes;
+  MEM_delete(sseq->runtime);
 
 #if 0
   if (sseq->gpd) {
     BKE_gpencil_free_data(sseq->gpd);
   }
 #endif
-
-  if (scopes->zebra_ibuf) {
-    IMB_freeImBuf(scopes->zebra_ibuf);
-  }
-
-  if (scopes->waveform_ibuf) {
-    IMB_freeImBuf(scopes->waveform_ibuf);
-  }
-
-  if (scopes->sep_waveform_ibuf) {
-    IMB_freeImBuf(scopes->sep_waveform_ibuf);
-  }
-
-  if (scopes->vector_ibuf) {
-    IMB_freeImBuf(scopes->vector_ibuf);
-  }
-
-  if (scopes->histogram_ibuf) {
-    IMB_freeImBuf(scopes->histogram_ibuf);
-  }
-
-  if (sseq->runtime.last_displayed_thumbnails) {
-    BLI_ghash_free(
-        sseq->runtime.last_displayed_thumbnails, nullptr, last_displayed_thumbnails_list_free);
-    sseq->runtime.last_displayed_thumbnails = nullptr;
-  }
 }
 
 /* Space-type init callback. */
-static void sequencer_init(wmWindowManager * /*wm*/, ScrArea * /*area*/) {}
+static void sequencer_init(wmWindowManager * /*wm*/, ScrArea *area)
+{
+  SpaceSeq *sseq = (SpaceSeq *)area->spacedata.first;
+  if (sseq->runtime == nullptr) {
+    sseq->runtime = MEM_new<SpaceSeq_Runtime>(__func__);
+  }
+}
 
 static void sequencer_refresh(const bContext *C, ScrArea *area)
 {
@@ -301,12 +283,10 @@ static void sequencer_refresh(const bContext *C, ScrArea *area)
 static SpaceLink *sequencer_duplicate(SpaceLink *sl)
 {
   SpaceSeq *sseqn = static_cast<SpaceSeq *>(MEM_dupallocN(sl));
+  sseqn->runtime = MEM_new<SpaceSeq_Runtime>(__func__);
 
   /* Clear or remove stuff from old. */
   // sseq->gpd = gpencil_data_duplicate(sseq->gpd, false);
-
-  memset(&sseqn->scopes, 0, sizeof(sseqn->scopes));
-  memset(&sseqn->runtime, 0, sizeof(sseqn->runtime));
 
   return (SpaceLink *)sseqn;
 }
@@ -362,7 +342,18 @@ static int /*eContextResult*/ sequencer_context(const bContext *C,
     }
     return CTX_RESULT_OK;
   }
-
+  /*############## BFA - 3D Sequencer ##############*/
+  /* Scene override for the sequencer. */
+  if (CTX_data_equals(member, "scene")) {
+    SpaceSeq *sseq = CTX_wm_space_seq(C);
+    /* Check if scene is overwritten. */
+    if ((sseq != NULL) && (sseq->scene_override != NULL)) {
+      scene = sseq->scene_override;
+    }
+    CTX_data_id_pointer_set(result, &scene->id);
+    return CTX_RESULT_OK;
+  }
+  /*############## BFA - 3D Sequencer End ##############*/
   return CTX_RESULT_MEMBER_NOT_FOUND;
 }
 
@@ -534,7 +525,7 @@ static void sequencer_main_clamp_view(const bContext *C, ARegion *region)
   }
 
   /* If strip is deleted, don't move view automatically, keep current range until it is changed. */
-  strip_boundbox.ymax = max_ff(sseq->runtime.timeline_clamp_custom_range, strip_boundbox.ymax);
+  strip_boundbox.ymax = max_ff(sseq->runtime->timeline_clamp_custom_range, strip_boundbox.ymax);
 
   rctf view_clamped = v2d->cur;
 
@@ -557,7 +548,7 @@ static void sequencer_main_region_clamp_custom_set(const bContext *C, ARegion *r
   View2D *v2d = &region->v2d;
 
   if ((v2d->flag & V2D_IS_NAVIGATING) == 0) {
-    sseq->runtime.timeline_clamp_custom_range = v2d->cur.ymax;
+    sseq->runtime->timeline_clamp_custom_range = v2d->cur.ymax;
   }
 }
 
@@ -695,7 +686,17 @@ static void sequencer_tools_region_init(wmWindowManager *wm, ARegion *region)
 
 static void sequencer_tools_region_draw(const bContext *C, ARegion *region)
 {
-  ED_region_panels(C, region);
+  wmOperatorCallContext op_context = WM_OP_INVOKE_REGION_WIN;
+  switch (region->regiontype) {
+    case RGN_TYPE_CHANNELS:
+      op_context = WM_OP_INVOKE_REGION_CHANNELS;
+      break;
+    case RGN_TYPE_PREVIEW:
+      op_context = WM_OP_INVOKE_REGION_PREVIEW;
+      break;
+  }
+
+  ED_region_panels_ex(C, region, op_context, nullptr);
 }
 /* *********************** preview region ************************ */
 
@@ -928,6 +929,7 @@ static void sequencer_foreach_id(SpaceLink *space_link, LibraryForeachIDData *da
 {
   SpaceSeq *sseq = reinterpret_cast<SpaceSeq *>(space_link);
   BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, sseq->gpd, IDWALK_CB_USER);
+  BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, sseq->scene_override, IDWALK_CB_USER_ONE);
 }
 
 /* ************************************* */
@@ -960,6 +962,8 @@ static void sequencer_space_blend_read_data(BlendDataReader * /*reader*/, SpaceL
 {
   SpaceSeq *sseq = (SpaceSeq *)sl;
 
+  sseq->runtime = nullptr;
+
   /* grease pencil data is not a direct data and can't be linked from direct_link*
    * functions, it should be linked from lib_link* functions instead
    *
@@ -973,13 +977,6 @@ static void sequencer_space_blend_read_data(BlendDataReader * /*reader*/, SpaceL
     BKE_gpencil_blend_read_data(fd, sseq->gpd);
   }
 #endif
-  sseq->scopes.reference_ibuf = nullptr;
-  sseq->scopes.zebra_ibuf = nullptr;
-  sseq->scopes.waveform_ibuf = nullptr;
-  sseq->scopes.sep_waveform_ibuf = nullptr;
-  sseq->scopes.vector_ibuf = nullptr;
-  sseq->scopes.histogram_ibuf = nullptr;
-  memset(&sseq->runtime, 0x0, sizeof(sseq->runtime));
 }
 
 static void sequencer_space_blend_write(BlendWriter *writer, SpaceLink *sl)
@@ -989,7 +986,7 @@ static void sequencer_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 
 void ED_spacetype_sequencer()
 {
-  SpaceType *st = MEM_cnew<SpaceType>("spacetype sequencer");
+  std::unique_ptr<SpaceType> st = std::make_unique<SpaceType>();
   ARegionType *art;
 
   st->spaceid = SPACE_SEQ;
@@ -1103,7 +1100,7 @@ void ED_spacetype_sequencer()
   art = ED_area_type_hud(st->spaceid);
   BLI_addhead(&st->regiontypes, art);
 
-  BKE_spacetype_register(st);
+  BKE_spacetype_register(std::move(st));
 
   /* Set the sequencer callback when not in background mode. */
   if (G.background == 0) {

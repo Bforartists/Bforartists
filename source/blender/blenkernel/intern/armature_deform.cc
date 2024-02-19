@@ -35,7 +35,7 @@
 #include "BKE_action.h"
 #include "BKE_armature.hh"
 #include "BKE_customdata.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_lattice.hh"
 #include "BKE_mesh.hh"
@@ -436,7 +436,7 @@ static void armature_vert_task(void *__restrict userdata,
   const MDeformVert *dvert;
   if (data->use_dverts || data->armature_def_nr != -1) {
     if (data->me_target) {
-      BLI_assert(i < data->me_target->totvert);
+      BLI_assert(i < data->me_target->verts_num);
       if (data->dverts != nullptr) {
         dvert = data->dverts + i;
       }
@@ -522,7 +522,7 @@ static void armature_deform_coords_impl(const Object *ob_arm,
         const Mesh *mesh = (const Mesh *)target_data_id;
         dverts = mesh->deform_verts().data();
         if (dverts) {
-          dverts_len = mesh->totvert;
+          dverts_len = mesh->verts_num;
         }
       }
     }

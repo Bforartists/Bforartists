@@ -19,7 +19,6 @@
 
 #include "DNA_image_types.h"
 #include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_node_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
@@ -28,8 +27,8 @@
 #include "BKE_context.hh"
 #include "BKE_customdata.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_layer.h"
-#include "BKE_report.h"
+#include "BKE_layer.hh"
+#include "BKE_report.hh"
 
 #include "DEG_depsgraph.hh"
 
@@ -45,7 +44,9 @@
 
 #include "UI_view2d.hh"
 
-#include "uvedit_intern.h"
+#include "uvedit_intern.hh"
+
+using blender::Vector;
 
 /* -------------------------------------------------------------------- */
 /** \name UV Loop Rip Data Struct
@@ -247,7 +248,7 @@ static void bm_loop_calc_uv_angle_from_dir(BMLoop *l,
   normalize_v2(dir_test[1]);
 
   /* Rotate 90 degrees. */
-  SWAP(float, dir_test[1][0], dir_test[1][1]);
+  std::swap(dir_test[1][0], dir_test[1][1]);
   dir_test[1][1] *= -1.0f;
 
   if (BM_face_uv_calc_cross(l->f, cd_loop_uv_offset) > 0.0f) {
@@ -642,7 +643,8 @@ static UVRipPairs *uv_rip_pairs_from_loop(BMLoop *l_init,
         do {
           /* Not a boundary and visible. */
           if (!UL(l_radial_iter)->is_select_edge &&
-              BM_elem_flag_test(l_radial_iter->f, BM_ELEM_TAG)) {
+              BM_elem_flag_test(l_radial_iter->f, BM_ELEM_TAG))
+          {
             BMLoop *l_other = (l_radial_iter->v == l_step->v) ? l_radial_iter :
                                                                 l_radial_iter->next;
             BLI_assert(l_other->v == l_step->v);
@@ -913,13 +915,10 @@ static int uv_rip_exec(bContext *C, wmOperator *op)
   }
   const float aspect_y = aspx / aspy;
 
-  uint objects_len = 0;
-  Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, ((View3D *)nullptr), &objects_len);
+  Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
+      scene, view_layer, nullptr);
 
-  for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
-    Object *obedit = objects[ob_index];
-
+  for (Object *obedit : objects) {
     if (uv_rip_object(scene, obedit, co, aspect_y)) {
       changed_multi = true;
       uvedit_live_unwrap_update(sima, scene, obedit);
@@ -927,7 +926,6 @@ static int uv_rip_exec(bContext *C, wmOperator *op)
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
-  MEM_freeN(objects);
 
   if (!changed_multi) {
     BKE_report(op->reports, RPT_ERROR, "Rip failed");

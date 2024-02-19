@@ -32,15 +32,15 @@
 #include "RNA_enum_types.hh"
 #include "RNA_prototypes.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_animsys.h"
 #include "BKE_context.hh"
 #include "BKE_fcurve.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_nla.h"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 
 #include "DEG_depsgraph_build.hh"
 
@@ -148,7 +148,7 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
   }
 
   /* Init key-framing flag. */
-  flag = ANIM_get_keyframing_flags(scene, true);
+  flag = ANIM_get_keyframing_flags(scene);
   KeyframeSettings settings = get_keyframe_settings(true);
   settings.keyframe_type = eBezTriple_KeyframeType(ts->keyframe_type);
 
@@ -1804,7 +1804,7 @@ static ListBase /*tEulerFilter*/ euler_filter_group_channels(
       BKE_reportf(reports,
                   RPT_WARNING,
                   "Euler Rotation F-Curve has invalid index (ID='%s', Path='%s', Index=%d)",
-                  (ale->id) ? ale->id->name : TIP_("<No ID>"),
+                  (ale->id) ? ale->id->name : RPT_("<No ID>"),
                   fcu->rna_path,
                   fcu->array_index);
       continue;
@@ -2281,7 +2281,8 @@ static int keyframe_jump_exec(bContext *C, wmOperator *op)
       continue;
     }
     if ((next && closest_fcu_frame < closest_frame) ||
-        (!next && closest_fcu_frame > closest_frame)) {
+        (!next && closest_fcu_frame > closest_frame))
+    {
       closest_frame = closest_fcu_frame;
       found = true;
     }
@@ -2647,14 +2648,14 @@ void GRAPH_OT_equalize_handles(wmOperatorType *ot)
                           prop_graphkeys_equalize_handles_sides,
                           0,
                           "Side",
-                          "Side of the keyframes' bezier handles to affect");
+                          "Side of the keyframes' Bézier handles to affect");
   RNA_def_float(ot->srna,
                 "handle_length",
                 5.0f,
                 0.1f,
                 FLT_MAX,
                 "Handle Length",
-                "Length to make selected keyframes' bezier handles",
+                "Length to make selected keyframes' Bézier handles",
                 1.0f,
                 50.0f);
   RNA_def_boolean(

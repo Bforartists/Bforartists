@@ -6,6 +6,8 @@
  * \ingroup bke
  */
 
+#include <algorithm>
+
 #include "MEM_guardedalloc.h"
 
 #include "BLI_listbase.h"
@@ -27,7 +29,7 @@
 #include "BKE_fcurve.h"
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 
 #include "BIK_api.h"
 
@@ -93,7 +95,8 @@ static void splineik_init_tree_from_pchan(Scene * /*scene*/,
   /* Find the root bone and the chain of bones from the root to the tip.
    * NOTE: this assumes that the bones are connected, but that may not be true... */
   for (pchan = pchan_tip; pchan && (segcount < ik_data->chainlen);
-       pchan = pchan->parent, segcount++) {
+       pchan = pchan->parent, segcount++)
+  {
     /* Store this segment in the chain. */
     pchan_chain[segcount] = pchan;
 
@@ -664,7 +667,7 @@ static void splineik_evaluate_bone(
           }
           if (bulge < 1.0f) {
             if (ik_data->flag & CONSTRAINT_SPLINEIK_USE_BULGE_MIN) {
-              float bulge_min = CLAMPIS(ik_data->bulge_min, 0.0f, 1.0f);
+              float bulge_min = std::clamp(ik_data->bulge_min, 0.0f, 1.0f);
               float hard = max_ff(bulge, bulge_min);
 
               float range = 1.0f - bulge_min;

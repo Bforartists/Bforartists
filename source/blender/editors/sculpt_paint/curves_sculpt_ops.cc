@@ -8,6 +8,7 @@
 #include "BLI_utildefines.h"
 #include "BLI_vector_set.hh"
 
+#include "BKE_attribute.hh"
 #include "BKE_brush.hh"
 #include "BKE_bvhutils.hh"
 #include "BKE_context.hh"
@@ -18,7 +19,7 @@
 
 #include "WM_api.hh"
 #include "WM_message.hh"
-#include "WM_toolsystem.h"
+#include "WM_toolsystem.hh"
 
 #include "ED_curves.hh"
 #include "ED_curves_sculpt.hh"
@@ -50,19 +51,21 @@
 #include "GPU_matrix.h"
 #include "GPU_state.h"
 
+namespace blender::ed::sculpt_paint {
+
 /* -------------------------------------------------------------------- */
 /** \name Poll Functions
  * \{ */
 
-bool CURVES_SCULPT_mode_poll(bContext *C)
+bool curves_sculpt_poll(bContext *C)
 {
   const Object *ob = CTX_data_active_object(C);
   return ob && ob->mode & OB_MODE_SCULPT_CURVES;
 }
 
-bool CURVES_SCULPT_mode_poll_view3d(bContext *C)
+bool curves_sculpt_poll_view3d(bContext *C)
 {
-  if (!CURVES_SCULPT_mode_poll(C)) {
+  if (!curves_sculpt_poll(C)) {
     return false;
   }
   if (CTX_wm_region_view3d(C) == nullptr) {
@@ -72,10 +75,6 @@ bool CURVES_SCULPT_mode_poll_view3d(bContext *C)
 }
 
 /** \} */
-
-namespace blender::ed::sculpt_paint {
-
-using blender::bke::CurvesGeometry;
 
 /* -------------------------------------------------------------------- */
 /** \name Brush Stroke Operator
@@ -114,7 +113,7 @@ float brush_strength_get(const Scene &scene,
 static std::unique_ptr<CurvesSculptStrokeOperation> start_brush_operation(
     bContext &C, wmOperator &op, const StrokeExtension &stroke_start)
 {
-  const BrushStrokeMode mode = static_cast<BrushStrokeMode>(RNA_enum_get(op.ptr, "mode"));
+  const BrushStrokeMode mode = BrushStrokeMode(RNA_enum_get(op.ptr, "mode"));
 
   const Scene &scene = *CTX_data_scene(&C);
   const CurvesSculpt &curves_sculpt = *scene.toolsettings->curves_sculpt;
@@ -204,7 +203,7 @@ static void stroke_done(const bContext *C, PaintStroke *stroke)
 static int sculpt_curves_stroke_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   Scene *scene = CTX_data_scene(C);
-  Paint *paint = BKE_paint_get_active_from_paintmode(scene, PAINT_MODE_SCULPT_CURVES);
+  Paint *paint = BKE_paint_get_active_from_paintmode(scene, PaintMode::SculptCurves);
   const Brush *brush = paint ? BKE_paint_brush_for_read(paint) : nullptr;
   if (brush == nullptr) {
     return OPERATOR_CANCELLED;
@@ -289,11 +288,11 @@ static void curves_sculptmode_enter(bContext *C)
   ob->mode = OB_MODE_SCULPT_CURVES;
 
   /* Setup cursor color. BKE_paint_init() could be used, but creates an additional brush. */
-  Paint *paint = BKE_paint_get_active_from_paintmode(scene, PAINT_MODE_SCULPT_CURVES);
+  Paint *paint = BKE_paint_get_active_from_paintmode(scene, PaintMode::SculptCurves);
   copy_v3_v3_uchar(paint->paint_cursor_col, PAINT_CURSOR_SCULPT_CURVES);
   paint->paint_cursor_col[3] = 128;
 
-  ED_paint_cursor_start(&curves_sculpt->paint, CURVES_SCULPT_mode_poll_view3d);
+  ED_paint_cursor_start(&curves_sculpt->paint, curves_sculpt_poll_view3d);
   paint_init_pivot(ob, scene);
 
   /* Necessary to change the object mode on the evaluated object. */
@@ -379,8 +378,8 @@ static int select_random_exec(bContext *C, wmOperator *op)
       selection.fill(1.0f);
     }
     const OffsetIndices points_by_curve = curves.points_by_curve();
-    switch (curves_id->selection_domain) {
-      case ATTR_DOMAIN_POINT: {
+    switch (bke::AttrDomain(curves_id->selection_domain)) {
+      case bke::AttrDomain::Point: {
         if (partial) {
           if (constant_per_curve) {
             for (const int curve_i : curves.curves_range()) {
@@ -419,7 +418,7 @@ static int select_random_exec(bContext *C, wmOperator *op)
         }
         break;
       }
-      case ATTR_DOMAIN_CURVE: {
+      case bke::AttrDomain::Curve: {
         if (partial) {
           for (const int curve_i : curves.curves_range()) {
             const float random_value = next_partial_random_value();
@@ -436,18 +435,9 @@ static int select_random_exec(bContext *C, wmOperator *op)
         }
         break;
       }
-    }
-    const bool was_any_selected = std::any_of(
-        selection.begin(), selection.end(), [](const float v) { return v > 0.0f; });
-    if (was_any_selected) {
-      for (float &v : selection) {
-        v *= rng.get_float();
-      }
-    }
-    else {
-      for (float &v : selection) {
-        v = rng.get_float();
-      }
+      default:
+        BLI_assert_unreachable();
+        break;
     }
 
     attribute.finish();
@@ -585,11 +575,11 @@ static int select_grow_update(bContext *C, wmOperator *op, const float mouse_dif
 
     /* Grow or shrink selection based on precomputed distances. */
     switch (selection.domain) {
-      case ATTR_DOMAIN_POINT: {
+      case bke::AttrDomain::Point: {
         update_points_selection(*curve_op_data, distance, selection.span);
         break;
       }
-      case ATTR_DOMAIN_CURVE: {
+      case bke::AttrDomain::Curve: {
         Array<float> new_points_selection(curves.points_num());
         update_points_selection(*curve_op_data, distance, new_points_selection);
         /* Propagate grown point selection to the curve selection. */
@@ -777,7 +767,7 @@ static int select_grow_modal(bContext *C, wmOperator *op, const wmEvent *event)
         if (!curve_op_data->original_selection.is_empty()) {
           attributes.add(
               ".selection",
-              eAttrDomain(curves_id.selection_domain),
+              bke::AttrDomain(curves_id.selection_domain),
               bke::cpp_type_to_custom_data_type(curve_op_data->original_selection.type()),
               bke::AttributeInitVArray(GVArray::ForSpan(curve_op_data->original_selection)));
         }
@@ -1031,7 +1021,7 @@ static int min_distance_edit_invoke(bContext *C, wmOperator *op, const wmEvent *
   }
 
   BVHTreeFromMesh surface_bvh_eval;
-  BKE_bvhtree_from_mesh_get(&surface_bvh_eval, surface_me_eval, BVHTREE_FROM_LOOPTRIS, 2);
+  BKE_bvhtree_from_mesh_get(&surface_bvh_eval, surface_me_eval, BVHTREE_FROM_CORNER_TRIS, 2);
   BLI_SCOPED_DEFER([&]() { free_bvhtree_from_mesh(&surface_bvh_eval); });
 
   const int2 mouse_pos_int_re{event->mval};
