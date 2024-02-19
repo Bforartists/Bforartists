@@ -360,6 +360,11 @@ def register():
         name="Installed Extensions Only",
         description="Only show installed extensions",
     )
+    WindowManager.extension_show_legacy_addons = BoolProperty(
+        name="Show Legacy Add-Ons",
+        description="Only show extensions, hiding legacy add-ons",
+        default=True,
+    )
 
     from bl_ui.space_userpref import USERPREF_MT_interface_theme_presets
     USERPREF_MT_interface_theme_presets.append(theme_preset_draw)
@@ -390,6 +395,7 @@ def unregister():
     del WindowManager.extension_type
     del WindowManager.extension_enabled_only
     del WindowManager.extension_installed_only
+    del WindowManager.extension_show_legacy_addons
 
     for cls in classes:
         bpy.utils.unregister_class(cls)
