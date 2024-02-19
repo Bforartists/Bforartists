@@ -16,9 +16,7 @@
 #include "BLI_utildefines_stack.h"
 #include "BLI_vector.hh"
 
-#include "BLT_translation.h"
-
-#include "DNA_meshdata_types.h"
+#include "BLT_translation.hh"
 
 #include "BKE_customdata.hh"
 #include "BKE_mesh.hh"
@@ -677,7 +675,8 @@ int bmesh_elem_check(void *element, const char htype)
         }
         if (l_iter->e && l_iter->v) {
           if (!BM_vert_in_edge(l_iter->e, l_iter->v) ||
-              !BM_vert_in_edge(l_iter->e, l_iter->next->v)) {
+              !BM_vert_in_edge(l_iter->e, l_iter->next->v))
+          {
             err |= IS_FACE_LOOP_VERT_NOT_IN_EDGE;
           }
 
@@ -1045,7 +1044,7 @@ void bmesh_kernel_loop_reverse(BMesh *bm,
     l_iter->e = e_prev;
 #endif
 
-    SWAP(BMLoop *, l_iter->next, l_iter->prev);
+    std::swap(l_iter->next, l_iter->prev);
 
     if (cd_loop_mdisp_offset != -1) {
       MDisps *md = static_cast<MDisps *>(BM_ELEM_CD_GET_VOID_P(l_iter, cd_loop_mdisp_offset));
@@ -2692,9 +2691,9 @@ void bmesh_face_swap_data(BMFace *f_a, BMFace *f_b)
     l_iter->f = f_a;
   } while ((l_iter = l_iter->next) != l_first);
 
-  SWAP(BMFace, (*f_a), (*f_b));
+  std::swap((*f_a), (*f_b));
 
   /* swap back */
-  SWAP(void *, f_a->head.data, f_b->head.data);
-  SWAP(int, f_a->head.index, f_b->head.index);
+  std::swap(f_a->head.data, f_b->head.data);
+  std::swap(f_a->head.index, f_b->head.index);
 }

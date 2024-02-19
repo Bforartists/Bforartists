@@ -6,20 +6,20 @@
 #include "BLI_map.hh"
 #include "BLI_task.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
-#include "BKE_attribute.h"
+#include "BKE_attribute.hh"
 #include "BKE_curves.hh"
 #include "BKE_geometry_set.hh"
 #include "BKE_geometry_set_instances.hh"
 #include "BKE_grease_pencil.hh"
 #include "BKE_instances.hh"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object_types.hh"
-#include "BKE_pointcloud.h"
+#include "BKE_pointcloud.hh"
 #include "BKE_volume.hh"
 
 #include "DNA_collection_types.h"
@@ -60,7 +60,7 @@ GeometryComponentPtr GeometryComponent::create(Type component_type)
   return {};
 }
 
-int GeometryComponent::attribute_domain_size(const eAttrDomain domain) const
+int GeometryComponent::attribute_domain_size(const AttrDomain domain) const
 {
   if (this->is_empty()) {
     return 0;
@@ -225,10 +225,10 @@ std::ostream &operator<<(std::ostream &stream, const GeometrySet &geometry_set)
 {
   Vector<std::string> parts;
   if (const Mesh *mesh = geometry_set.get_mesh()) {
-    parts.append(std::to_string(mesh->totvert) + " verts");
-    parts.append(std::to_string(mesh->totedge) + " edges");
+    parts.append(std::to_string(mesh->verts_num) + " verts");
+    parts.append(std::to_string(mesh->edges_num) + " edges");
     parts.append(std::to_string(mesh->faces_num) + " faces");
-    parts.append(std::to_string(mesh->totloop) + " corners");
+    parts.append(std::to_string(mesh->corners_num) + " corners");
   }
   if (const Curves *curves = geometry_set.get_curves()) {
     parts.append(std::to_string(curves->geometry.point_num) + " control points");
@@ -608,15 +608,15 @@ void GeometrySet::propagate_attributes_from_layer_to_instances(
     if (id.is_anonymous() && !propagation_info.propagate(id.anonymous_id())) {
       return true;
     }
-    const GAttributeReader src = src_attributes.lookup(id, ATTR_DOMAIN_LAYER);
+    const GAttributeReader src = src_attributes.lookup(id, AttrDomain::Layer);
     if (src.sharing_info && src.varray.is_span()) {
       const AttributeInitShared init(src.varray.get_internal_span().data(), *src.sharing_info);
-      if (dst_attributes.add(id, ATTR_DOMAIN_INSTANCE, meta_data.data_type, init)) {
+      if (dst_attributes.add(id, AttrDomain::Instance, meta_data.data_type, init)) {
         return true;
       }
     }
     GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
-        id, ATTR_DOMAIN_INSTANCE, meta_data.data_type);
+        id, AttrDomain::Instance, meta_data.data_type);
     if (!dst) {
       return true;
     }
@@ -658,10 +658,10 @@ void GeometrySet::gather_attributes_for_propagation(
           return;
         }
 
-        eAttrDomain domain = meta_data.domain;
+        AttrDomain domain = meta_data.domain;
         if (dst_component_type != GeometryComponent::Type::Instance &&
-            domain == ATTR_DOMAIN_INSTANCE) {
-          domain = ATTR_DOMAIN_POINT;
+            domain == AttrDomain::Instance) {
+          domain = AttrDomain::Point;
         }
 
         auto add_info = [&](AttributeKind *attribute_kind) {

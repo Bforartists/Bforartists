@@ -6,12 +6,14 @@
  * \ingroup modifiers
  */
 
+#include <algorithm>
+
 #include "MEM_guardedalloc.h"
 
 #include "BLI_math_vector.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_curveprofile_types.h"
 #include "DNA_defaults.h"
@@ -23,7 +25,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_curveprofile.h"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_screen.hh"
@@ -95,7 +97,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
   const int offset_type = bmd->val_flags;
   const int profile_type = bmd->profile_type;
   const float value = bmd->value;
-  const int mat = CLAMPIS(bmd->mat, -1, ctx->object->totcol - 1);
+  const int mat = std::clamp(int(bmd->mat), -1, ctx->object->totcol - 1);
   const bool loop_slide = (bmd->flags & MOD_BEVEL_EVEN_WIDTHS) == 0;
   const bool mark_seam = (bmd->edge_flags & MOD_BEVEL_MARK_SEAM);
   const bool mark_sharp = (bmd->edge_flags & MOD_BEVEL_MARK_SHARP);
@@ -486,4 +488,5 @@ ModifierTypeInfo modifierType_Bevel = {
     /*panel_register*/ panel_register,
     /*blend_write*/ blend_write,
     /*blend_read*/ blend_read,
+    /*foreach_cache*/ nullptr,
 };

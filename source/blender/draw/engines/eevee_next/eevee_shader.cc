@@ -118,12 +118,8 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
       return "eevee_hiz_update_layer";
     case HORIZON_DENOISE:
       return "eevee_horizon_denoise";
-    case HORIZON_SCAN_DIFFUSE:
-      return "eevee_horizon_scan_diffuse";
-    case HORIZON_SCAN_REFLECT:
-      return "eevee_horizon_scan_reflect";
-    case HORIZON_SCAN_REFRACT:
-      return "eevee_horizon_scan_refract";
+    case HORIZON_SCAN:
+      return "eevee_horizon_scan";
     case HORIZON_SETUP:
       return "eevee_horizon_setup";
     case LOOKDEV_DISPLAY:
@@ -192,36 +188,20 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
       return "eevee_light_culling_tile";
     case LIGHT_CULLING_ZBIN:
       return "eevee_light_culling_zbin";
-    case RAY_DENOISE_SPATIAL_DIFFUSE:
-      return "eevee_ray_denoise_spatial_diffuse";
-    case RAY_DENOISE_SPATIAL_REFLECT:
-      return "eevee_ray_denoise_spatial_reflect";
-    case RAY_DENOISE_SPATIAL_REFRACT:
-      return "eevee_ray_denoise_spatial_refract";
+    case RAY_DENOISE_SPATIAL:
+      return "eevee_ray_denoise_spatial";
     case RAY_DENOISE_TEMPORAL:
       return "eevee_ray_denoise_temporal";
-    case RAY_DENOISE_BILATERAL_DIFFUSE:
-      return "eevee_ray_denoise_bilateral_diffuse";
-    case RAY_DENOISE_BILATERAL_REFLECT:
-      return "eevee_ray_denoise_bilateral_reflect";
-    case RAY_DENOISE_BILATERAL_REFRACT:
-      return "eevee_ray_denoise_bilateral_refract";
-    case RAY_GENERATE_DIFFUSE:
-      return "eevee_ray_generate_diffuse";
-    case RAY_GENERATE_REFLECT:
-      return "eevee_ray_generate_reflect";
-    case RAY_GENERATE_REFRACT:
-      return "eevee_ray_generate_refract";
+    case RAY_DENOISE_BILATERAL:
+      return "eevee_ray_denoise_bilateral";
+    case RAY_GENERATE:
+      return "eevee_ray_generate";
     case RAY_TRACE_FALLBACK:
       return "eevee_ray_trace_fallback";
     case RAY_TRACE_PLANAR:
       return "eevee_ray_trace_planar";
-    case RAY_TRACE_SCREEN_DIFFUSE:
-      return "eevee_ray_trace_screen_diffuse";
-    case RAY_TRACE_SCREEN_REFLECT:
-      return "eevee_ray_trace_screen_reflect";
-    case RAY_TRACE_SCREEN_REFRACT:
-      return "eevee_ray_trace_screen_refract";
+    case RAY_TRACE_SCREEN:
+      return "eevee_ray_trace_screen";
     case RAY_TILE_CLASSIFY:
       return "eevee_ray_tile_classify";
     case RAY_TILE_COMPACT:
@@ -234,11 +214,11 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
       return "eevee_lightprobe_irradiance_ray";
     case LIGHTPROBE_IRRADIANCE_LOAD:
       return "eevee_lightprobe_irradiance_load";
-    case REFLECTION_PROBE_REMAP:
+    case SPHERE_PROBE_REMAP:
       return "eevee_reflection_probe_remap";
-    case REFLECTION_PROBE_UPDATE_IRRADIANCE:
+    case SPHERE_PROBE_UPDATE_IRRADIANCE:
       return "eevee_reflection_probe_update_irradiance";
-    case REFLECTION_PROBE_SELECT:
+    case SPHERE_PROBE_SELECT:
       return "eevee_reflection_probe_select";
     case SHADOW_CLIPMAP_CLEAR:
       return "eevee_shadow_clipmap_clear";
@@ -397,7 +377,8 @@ void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOu
   bool supports_render_passes = (pipeline_type == MAT_PIPE_DEFERRED);
   /* Opaque forward do support AOVs and render pass if not using transparency. */
   if (!GPU_material_flag_get(gpumat, GPU_MATFLAG_TRANSPARENT) &&
-      (pipeline_type == MAT_PIPE_FORWARD)) {
+      (pipeline_type == MAT_PIPE_FORWARD))
+  {
     supports_render_passes = true;
   }
 

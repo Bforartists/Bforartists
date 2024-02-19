@@ -29,9 +29,9 @@
 #include "BKE_attribute.hh"
 #include "BKE_effect.h"
 #include "BKE_fluid.h"
-#include "BKE_global.h"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_global.hh"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_modifier.hh"
 #include "BKE_pointcache.h"
 
@@ -56,14 +56,13 @@
 
 #  include "BKE_bvhutils.hh"
 #  include "BKE_collision.h"
-#  include "BKE_colortools.h"
 #  include "BKE_customdata.hh"
-#  include "BKE_deform.h"
+#  include "BKE_deform.hh"
 #  include "BKE_mesh.hh"
 #  include "BKE_mesh_runtime.hh"
 #  include "BKE_object.hh"
 #  include "BKE_particle.h"
-#  include "BKE_scene.h"
+#  include "BKE_scene.hh"
 #  include "BKE_texture.h"
 
 #  include "DEG_depsgraph.hh"
@@ -411,7 +410,7 @@ static void manta_set_domain_from_mesh(FluidDomainSettings *fds,
   res = fds->maxres;
 
   /* Set minimum and maximum coordinates of BB. */
-  for (i = 0; i < mesh->totvert; i++) {
+  for (i = 0; i < mesh->verts_num; i++) {
     minmax_v3v3_v3(min, max, positions[i]);
   }
 
@@ -443,7 +442,7 @@ static void manta_set_domain_from_mesh(FluidDomainSettings *fds,
   }
 
   /* Define grid resolutions from longest domain side. */
-  if (size[0] >= MAX2(size[1], size[2])) {
+  if (size[0] >= std::max(size[1], size[2])) {
     scale = res / size[0];
     fds->scale = size[0] / fabsf(ob->scale[0]);
     fds->base_res[0] = res;
@@ -794,8 +793,8 @@ static void bb_combineMaps(FluidObjectBB *output,
                                                       output->influence[index_out]);
             }
           }
-          output->distances[index_out] = MIN2(bb2->distances[index_in],
-                                              output->distances[index_out]);
+          output->distances[index_out] = std::min(bb2->distances[index_in],
+                                                  output->distances[index_out]);
           if (output->velocity && bb2->velocity) {
             /* Last sample replaces the velocity. */
             output->velocity[index_out * 3] = ADD_IF_LOWER(output->velocity[index_out * 3],
@@ -833,7 +832,7 @@ BLI_INLINE void apply_effector_fields(FluidEffectorSettings * /*fes*/,
 {
   /* Ensure that distance value is "joined" into the levelset. */
   if (dest_phi_in) {
-    dest_phi_in[index] = MIN2(src_distance_value, dest_phi_in[index]);
+    dest_phi_in[index] = std::min(src_distance_value, dest_phi_in[index]);
   }
 
   /* Accumulate effector object count (important once effector object overlap). */
@@ -852,7 +851,7 @@ BLI_INLINE void apply_effector_fields(FluidEffectorSettings * /*fes*/,
 static void update_velocities(FluidEffectorSettings *fes,
                               const blender::Span<blender::float3> vert_positions,
                               const int *corner_verts,
-                              const MLoopTri *looptris,
+                              const blender::int3 *corner_tris,
                               float *velocity_map,
                               int index,
                               BVHTreeFromMesh *tree_data,
@@ -876,12 +875,12 @@ static void update_velocities(FluidEffectorSettings *fes,
           tree_data->tree, ray_start, &nearest, tree_data->nearest_callback, tree_data) != -1)
   {
     float weights[3];
-    int v1, v2, v3, lt_index = nearest.index;
+    int v1, v2, v3, tri_i = nearest.index;
 
     /* Calculate barycentric weights for nearest point. */
-    v1 = corner_verts[looptris[lt_index].tri[0]];
-    v2 = corner_verts[looptris[lt_index].tri[1]];
-    v3 = corner_verts[looptris[lt_index].tri[2]];
+    v1 = corner_verts[corner_tris[tri_i][0]];
+    v2 = corner_verts[corner_tris[tri_i][1]];
+    v3 = corner_verts[corner_tris[tri_i][2]];
     interp_weights_tri_v3(
         weights, vert_positions[v1], vert_positions[v2], vert_positions[v3], nearest.co);
 
@@ -915,15 +914,15 @@ static void update_velocities(FluidEffectorSettings *fes,
           velocity_map[index * 3 + 2] = hit_vel[2];
           break;
         case FLUID_EFFECTOR_GUIDE_MIN:
-          velocity_map[index * 3] = MIN2(abs_hit_vel[0], abs_vel[0]);
-          velocity_map[index * 3 + 1] = MIN2(abs_hit_vel[1], abs_vel[1]);
-          velocity_map[index * 3 + 2] = MIN2(abs_hit_vel[2], abs_vel[2]);
+          velocity_map[index * 3] = std::min(abs_hit_vel[0], abs_vel[0]);
+          velocity_map[index * 3 + 1] = std::min(abs_hit_vel[1], abs_vel[1]);
+          velocity_map[index * 3 + 2] = std::min(abs_hit_vel[2], abs_vel[2]);
           break;
         case FLUID_EFFECTOR_GUIDE_MAX:
         default:
-          velocity_map[index * 3] = MAX2(abs_hit_vel[0], abs_vel[0]);
-          velocity_map[index * 3 + 1] = MAX2(abs_hit_vel[1], abs_vel[1]);
-          velocity_map[index * 3 + 2] = MAX2(abs_hit_vel[2], abs_vel[2]);
+          velocity_map[index * 3] = std::max(abs_hit_vel[0], abs_vel[0]);
+          velocity_map[index * 3 + 1] = std::max(abs_hit_vel[1], abs_vel[1]);
+          velocity_map[index * 3 + 2] = std::max(abs_hit_vel[2], abs_vel[2]);
           break;
       }
     }
@@ -952,7 +951,7 @@ struct ObstaclesFromDMData {
 
   blender::Span<blender::float3> vert_positions;
   blender::Span<int> corner_verts;
-  blender::Span<MLoopTri> looptris;
+  blender::Span<blender::int3> corner_tris;
 
   BVHTreeFromMesh *tree;
   FluidObjectBB *bb;
@@ -987,7 +986,7 @@ static void obstacles_from_mesh_task_cb(void *__restrict userdata,
       update_velocities(data->fes,
                         data->vert_positions,
                         data->corner_verts.data(),
-                        data->looptris.data(),
+                        data->corner_tris.data(),
                         bb->velocity,
                         index,
                         data->tree,
@@ -1022,8 +1021,8 @@ static void obstacles_from_mesh(Object *coll_ob,
     int min[3], max[3], res[3];
 
     const blender::Span<int> corner_verts = mesh->corner_verts();
-    const blender::Span<MLoopTri> looptris = mesh->looptris();
-    numverts = mesh->totvert;
+    const blender::Span<blender::int3> corner_tris = mesh->corner_tris();
+    numverts = mesh->verts_num;
 
     /* TODO(sebbas): Make initialization of vertex velocities optional? */
     {
@@ -1080,13 +1079,13 @@ static void obstacles_from_mesh(Object *coll_ob,
 
     /* Skip effector sampling loop if object has disabled effector. */
     bool use_effector = fes->flags & FLUID_EFFECTOR_USE_EFFEC;
-    if (use_effector && BKE_bvhtree_from_mesh_get(&tree_data, mesh, BVHTREE_FROM_LOOPTRIS, 4)) {
+    if (use_effector && BKE_bvhtree_from_mesh_get(&tree_data, mesh, BVHTREE_FROM_CORNER_TRIS, 4)) {
 
       ObstaclesFromDMData data{};
       data.fes = fes;
       data.vert_positions = positions;
       data.corner_verts = corner_verts;
-      data.looptris = looptris;
+      data.corner_tris = corner_tris;
       data.tree = &tree_data;
       data.bb = bb;
       data.has_velocity = has_velocity;
@@ -1240,7 +1239,8 @@ static void compute_obstaclesemission(Scene *scene,
         /* Set scene time */
         /* Handle emission subframe */
         if ((subframe < subframes || time_per_frame + dt + FLT_EPSILON < frame_length) &&
-            !is_first_frame) {
+            !is_first_frame)
+        {
           scene->r.subframe = (time_per_frame + (subframe + 1.0f) * subframe_dt) / frame_length;
           scene->r.cfra = frame - 1;
         }
@@ -1423,7 +1423,8 @@ static void update_obstacles(Depsgraph *depsgraph,
             d_index = manta_get_index(dx, fds->res[0], dy, fds->res[1], dz);
             /* Make sure emission cell is inside the new domain boundary. */
             if (dx < 0 || dy < 0 || dz < 0 || dx >= fds->res[0] || dy >= fds->res[1] ||
-                dz >= fds->res[2]) {
+                dz >= fds->res[2])
+            {
               continue;
             }
 
@@ -1791,7 +1792,7 @@ static void update_distances(int index,
   }
 
   /* Update global distance array but ensure that older entries are not overridden. */
-  distance_map[index] = MIN2(distance_map[index], min_dist);
+  distance_map[index] = std::min(distance_map[index], min_dist);
 
   /* Sanity check: Ensure that distances don't explode. */
   CLAMP(distance_map[index], -PHI_MAX, PHI_MAX);
@@ -1801,7 +1802,7 @@ static void sample_mesh(FluidFlowSettings *ffs,
                         blender::Span<blender::float3> vert_positions,
                         const blender::Span<blender::float3> vert_normals,
                         const int *corner_verts,
-                        const MLoopTri *looptris,
+                        const blender::int3 *corner_tris,
                         const float (*mloopuv)[2],
                         float *influence_map,
                         float *velocity_map,
@@ -1882,13 +1883,13 @@ static void sample_mesh(FluidFlowSettings *ffs,
           tree_data->tree, ray_start, &nearest, tree_data->nearest_callback, tree_data) != -1)
   {
     float weights[3];
-    int v1, v2, v3, lt_index = nearest.index;
+    int v1, v2, v3, tri_i = nearest.index;
     float hit_normal[3];
 
     /* Calculate barycentric weights for nearest point. */
-    v1 = corner_verts[looptris[lt_index].tri[0]];
-    v2 = corner_verts[looptris[lt_index].tri[1]];
-    v3 = corner_verts[looptris[lt_index].tri[2]];
+    v1 = corner_verts[corner_tris[tri_i][0]];
+    v2 = corner_verts[corner_tris[tri_i][1]];
+    v3 = corner_verts[corner_tris[tri_i][2]];
     interp_weights_tri_v3(
         weights, vert_positions[v1], vert_positions[v2], vert_positions[v3], nearest.co);
 
@@ -1925,9 +1926,9 @@ static void sample_mesh(FluidFlowSettings *ffs,
         }
         else if (mloopuv) {
           const float *uv[3];
-          uv[0] = mloopuv[looptris[lt_index].tri[0]];
-          uv[1] = mloopuv[looptris[lt_index].tri[1]];
-          uv[2] = mloopuv[looptris[lt_index].tri[2]];
+          uv[0] = mloopuv[corner_tris[tri_i][0]];
+          uv[1] = mloopuv[corner_tris[tri_i][1]];
+          uv[2] = mloopuv[corner_tris[tri_i][2]];
 
           interp_v2_v2v2v2(tex_co, UNPACK3(uv), weights);
 
@@ -1972,8 +1973,8 @@ static void sample_mesh(FluidFlowSettings *ffs,
       float convert_vel[3];
       copy_v3_v3(convert_vel, ffs->vel_coord);
       float time_mult = 1.0 / (25.0f * DT_DEFAULT);
-      float size_mult = MAX3(base_res[0], base_res[1], base_res[2]) /
-                        MAX3(global_size[0], global_size[1], global_size[2]);
+      float size_mult = std::max({base_res[0], base_res[1], base_res[2]}) /
+                        std::max({global_size[0], global_size[1], global_size[2]});
       mul_v3_v3fl(convert_vel, ffs->vel_coord, size_mult * time_mult);
 
       velocity_map[index * 3] += convert_vel[0];
@@ -1989,7 +1990,7 @@ static void sample_mesh(FluidFlowSettings *ffs,
   }
 
   /* Apply final influence value but also consider volume initialization factor. */
-  influence_map[index] = MAX2(volume_factor, emission_strength);
+  influence_map[index] = std::max(volume_factor, emission_strength);
 }
 
 struct EmitFromDMData {
@@ -1999,7 +2000,7 @@ struct EmitFromDMData {
   blender::Span<blender::float3> vert_positions;
   blender::Span<blender::float3> vert_normals;
   blender::Span<int> corner_verts;
-  blender::Span<MLoopTri> looptris;
+  blender::Span<blender::int3> corner_tris;
   const float (*mloopuv)[2];
   const MDeformVert *dvert;
   int defgrp_index;
@@ -2033,7 +2034,7 @@ static void emit_from_mesh_task_cb(void *__restrict userdata,
                     data->vert_positions,
                     data->vert_normals,
                     data->corner_verts.data(),
-                    data->looptris.data(),
+                    data->corner_tris.data(),
                     data->mloopuv,
                     bb->influence,
                     bb->velocity,
@@ -2083,11 +2084,11 @@ static void emit_from_mesh(
     blender::MutableSpan<blender::float3> positions = mesh->vert_positions_for_write();
 
     const blender::Span<int> corner_verts = mesh->corner_verts();
-    const blender::Span<MLoopTri> looptris = mesh->looptris();
-    const int numverts = mesh->totvert;
+    const blender::Span<blender::int3> corner_tris = mesh->corner_tris();
+    const int numverts = mesh->verts_num;
     const MDeformVert *dvert = mesh->deform_verts().data();
     const float(*mloopuv)[2] = static_cast<const float(*)[2]>(
-        CustomData_get_layer_named(&mesh->loop_data, CD_PROP_FLOAT2, ffs->uvlayer_name));
+        CustomData_get_layer_named(&mesh->corner_data, CD_PROP_FLOAT2, ffs->uvlayer_name));
 
     if (ffs->flags & FLUID_FLOW_INITVELOCITY) {
       vert_vel = static_cast<float *>(
@@ -2146,7 +2147,7 @@ static void emit_from_mesh(
 
     /* Skip flow sampling loop if object has disabled flow. */
     bool use_flow = ffs->flags & FLUID_FLOW_USE_INFLOW;
-    if (use_flow && BKE_bvhtree_from_mesh_get(&tree_data, mesh, BVHTREE_FROM_LOOPTRIS, 4)) {
+    if (use_flow && BKE_bvhtree_from_mesh_get(&tree_data, mesh, BVHTREE_FROM_CORNER_TRIS, 4)) {
 
       EmitFromDMData data{};
       data.fds = fds;
@@ -2154,7 +2155,7 @@ static void emit_from_mesh(
       data.vert_positions = positions;
       data.vert_normals = mesh->vert_normals();
       data.corner_verts = corner_verts;
-      data.looptris = looptris;
+      data.corner_tris = corner_tris;
       data.mloopuv = mloopuv;
       data.dvert = dvert;
       data.defgrp_index = defgrp_index;
@@ -2258,7 +2259,8 @@ static void adaptive_domain_adjust(
 
         /* skip if cell already belongs to new area */
         if (xn >= min[0] && xn <= max[0] && yn >= min[1] && yn <= max[1] && zn >= min[2] &&
-            zn <= max[2]) {
+            zn <= max[2])
+        {
           continue;
         }
 
@@ -2267,7 +2269,7 @@ static void adaptive_domain_adjust(
                                 y - fds->res_min[1],
                                 fds->res[1],
                                 z - fds->res_min[2]);
-        max_den = (fuel) ? MAX2(density[index], fuel[index]) : density[index];
+        max_den = (fuel) ? std::max(density[index], fuel[index]) : density[index];
 
         /* Check high resolution bounds if max density isn't already high enough. */
         if (max_den < fds->adapt_threshold && fds->flags & FLUID_DOMAIN_USE_NOISE && fds->fluid) {
@@ -2281,7 +2283,7 @@ static void adaptive_domain_adjust(
             for (j = 0; j < block_size; j++) {
               for (k = 0; k < block_size; k++) {
                 int big_index = manta_get_index(xx + i, wt_res[0], yy + j, wt_res[1], zz + k);
-                float den = (bigfuel) ? MAX2(bigdensity[big_index], bigfuel[big_index]) :
+                float den = (bigfuel) ? std::max(bigdensity[big_index], bigfuel[big_index]) :
                                         bigdensity[big_index];
                 if (den > max_den) {
                   max_den = den;
@@ -2431,7 +2433,7 @@ BLI_INLINE void apply_outflow_fields(int index,
   /* Set levelset value for liquid inflow.
    * Ensure that distance value is "joined" into the levelset. */
   if (phiout) {
-    phiout[index] = MIN2(distance_value, phiout[index]);
+    phiout[index] = std::min(distance_value, phiout[index]);
   }
 
   /* Set smoke outflow, i.e. reset cell to zero. */
@@ -2476,7 +2478,7 @@ BLI_INLINE void apply_inflow_fields(FluidFlowSettings *ffs,
   /* Set levelset value for liquid inflow.
    * Ensure that distance value is "joined" into the levelset. */
   if (phi_in) {
-    phi_in[index] = MIN2(distance_value, phi_in[index]);
+    phi_in[index] = std::min(distance_value, phi_in[index]);
   }
 
   /* Set emission value for smoke inflow.
@@ -2502,13 +2504,13 @@ BLI_INLINE void apply_inflow_fields(FluidFlowSettings *ffs,
   if (absolute_flow) {
     if (density && density_in) {
       if (ffs->type != FLUID_FLOW_TYPE_FIRE && dens_flow > density[index]) {
-        /* Use MAX2 to preserve values from other emitters at this cell. */
+        /* Use std::max to preserve values from other emitters at this cell. */
         density_in[index] = std::max(dens_flow, density_in[index]);
       }
     }
     if (fuel && fuel_in) {
       if (ffs->type != FLUID_FLOW_TYPE_SMOKE && fuel_flow && fuel_flow > fuel[index]) {
-        /* Use MAX2 to preserve values from other emitters at this cell. */
+        /* Use std::max to preserve values from other emitters at this cell. */
         fuel_in[index] = std::max(fuel_flow, fuel_in[index]);
       }
     }
@@ -2754,7 +2756,8 @@ static void compute_flowsemission(Scene *scene,
 
         /* Set scene time */
         if ((subframe < subframes || time_per_frame + dt + FLT_EPSILON < frame_length) &&
-            !is_first_frame) {
+            !is_first_frame)
+        {
           scene->r.subframe = (time_per_frame + (subframe + 1.0f) * subframe_dt) / frame_length;
           scene->r.cfra = frame - 1;
         }
@@ -2999,7 +3002,8 @@ static void update_flowsfluids(Depsgraph *depsgraph,
             d_index = manta_get_index(dx, fds->res[0], dy, fds->res[1], dz);
             /* Make sure emission cell is inside the new domain boundary. */
             if (dx < 0 || dy < 0 || dz < 0 || dx >= fds->res[0] || dy >= fds->res[1] ||
-                dz >= fds->res[2]) {
+                dz >= fds->res[2])
+            {
               continue;
             }
 
@@ -3126,7 +3130,7 @@ static void update_effectors_task_cb(void *__restrict userdata,
       float voxel_center[3] = {0, 0, 0}, vel[3] = {0, 0, 0}, retvel[3] = {0, 0, 0};
       const uint index = manta_get_index(x, fds->res[0], y, fds->res[1], z);
 
-      if ((data->fuel && MAX2(data->density[index], data->fuel[index]) < FLT_EPSILON) ||
+      if ((data->fuel && std::max(data->density[index], data->fuel[index]) < FLT_EPSILON) ||
           (data->density && data->density[index] < FLT_EPSILON) ||
           (data->phi_obs_in && data->phi_obs_in[index] < 0.0f) ||
           data->flags[index] & 2) /* Manta-flow convention: `2 == FlagObstacle`. */
@@ -3220,15 +3224,16 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds,
                                     Object *ob)
 {
   using namespace blender;
+  using namespace blender::bke;
   Mesh *mesh;
   float min[3];
   float max[3];
   float size[3];
   float cell_size_scaled[3];
 
-  const bke::AttributeAccessor orig_attributes = orgmesh->attributes();
+  const AttributeAccessor orig_attributes = orgmesh->attributes();
   const VArraySpan orig_material_indices = *orig_attributes.lookup<int>("material_index",
-                                                                        ATTR_DOMAIN_FACE);
+                                                                        AttrDomain::Face);
   const short mp_mat_nr = orig_material_indices.is_empty() ? 0 : orig_material_indices[0];
 
   int i;
@@ -3259,9 +3264,9 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds,
   blender::MutableSpan<int> corner_verts = mesh->corner_verts_for_write();
 
   const bool is_sharp = orgmesh->attributes()
-                            .lookup_or_default<bool>("sharp_face", ATTR_DOMAIN_FACE, false)
+                            .lookup_or_default<bool>("sharp_face", AttrDomain::Face, false)
                             .varray[0];
-  bke::mesh_smooth_set(*mesh, !is_sharp);
+  mesh_smooth_set(*mesh, !is_sharp);
 
   /* Get size (dimension) but considering scaling. */
   copy_v3_v3(cell_size_scaled, fds->cell_size);
@@ -3271,7 +3276,7 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds,
   sub_v3_v3v3(size, max, min);
 
   /* Biggest dimension will be used for up-scaling. */
-  float max_size = MAX3(size[0], size[1], size[2]);
+  float max_size = std::max({size[0], size[1], size[2]});
 
   float co_scale[3];
   co_scale[0] = max_size / ob->scale[0];
@@ -3291,7 +3296,7 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds,
 
   if (use_speedvectors) {
     CustomDataLayer *velocity_layer = BKE_id_attribute_new(
-        &mesh->id, "velocity", CD_PROP_FLOAT3, ATTR_DOMAIN_POINT, nullptr);
+        &mesh->id, "velocity", CD_PROP_FLOAT3, AttrDomain::Point, nullptr);
     velarray = static_cast<float(*)[3]>(velocity_layer->data);
   }
 
@@ -3346,7 +3351,7 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds,
 
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
   bke::SpanAttributeWriter material_indices = attributes.lookup_or_add_for_write_span<int>(
-      "material_index", ATTR_DOMAIN_FACE);
+      "material_index", AttrDomain::Face);
 
   /* Loop for triangles. */
   for (const int i : face_offsets.index_range().drop_back(1)) {
@@ -3369,13 +3374,15 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds,
 
   material_indices.finish();
 
-  BKE_mesh_calc_edges(mesh, false, false);
+  mesh_calc_edges(*mesh, false, false);
 
   return mesh;
 }
 
 static Mesh *create_smoke_geometry(FluidDomainSettings *fds, Mesh *orgmesh, Object *ob)
 {
+  using namespace blender;
+  using namespace blender::bke;
   Mesh *result;
   float min[3];
   float max[3];
@@ -3493,7 +3500,7 @@ static Mesh *create_smoke_geometry(FluidDomainSettings *fds, Mesh *orgmesh, Obje
     }
   }
 
-  BKE_mesh_calc_edges(result, false, false);
+  mesh_calc_edges(*result, false, false);
   return result;
 }
 
@@ -3714,6 +3721,17 @@ static void fluid_modifier_processDomain(FluidModifierData *fmd,
   const char *relbase = BKE_modifier_path_relbase_from_global(ob);
   BLI_path_abs(fds->cache_directory, relbase);
 
+  /* If 'outdated', reset the cache here. */
+  if (is_startframe && mode == FLUID_DOMAIN_CACHE_REPLAY) {
+    PTCacheID pid;
+    BKE_ptcache_id_from_smoke(&pid, ob, fmd);
+    if (pid.cache->flag & PTCACHE_OUTDATED) {
+      BKE_ptcache_id_reset(scene, &pid, PTCACHE_RESET_OUTDATED);
+      BKE_fluid_cache_free_all(fds, ob);
+      fluid_modifier_reset_ex(fmd, false);
+    }
+  }
+
   /* Ensure that all flags are up to date before doing any baking and/or cache reading. */
   objs = BKE_collision_objects_create(
       depsgraph, ob, fds->fluid_group, &numobj, eModifierType_Fluid);
@@ -3726,17 +3744,6 @@ static void fluid_modifier_processDomain(FluidModifierData *fmd,
   update_obstacleflags(fds, objs, numobj);
   if (objs) {
     MEM_freeN(objs);
-  }
-
-  /* If 'outdated', reset the cache here. */
-  if (is_startframe && mode == FLUID_DOMAIN_CACHE_REPLAY) {
-    PTCacheID pid;
-    BKE_ptcache_id_from_smoke(&pid, ob, fmd);
-    if (pid.cache->flag & PTCACHE_OUTDATED) {
-      BKE_ptcache_id_reset(scene, &pid, PTCACHE_RESET_OUTDATED);
-      BKE_fluid_cache_free_all(fds, ob);
-      fluid_modifier_reset_ex(fmd, false);
-    }
   }
 
   /* Fluid domain init must not fail in order to continue modifier evaluation. */
@@ -4109,7 +4116,8 @@ Mesh *BKE_fluid_modifier_do(
 
       /* Always update viewport in cache replay mode. */
       if (fds->cache_type == FLUID_DOMAIN_CACHE_REPLAY ||
-          fds->flags & FLUID_DOMAIN_USE_ADAPTIVE_DOMAIN) {
+          fds->flags & FLUID_DOMAIN_USE_ADAPTIVE_DOMAIN)
+      {
         needs_viewport_update = true;
       }
       /* In other cache modes, only update the viewport when no bake is going on. */
@@ -4371,8 +4379,8 @@ float BKE_fluid_get_velocity_at(Object *ob, float position[3], float velocity[3]
   if (fmd && (fmd->type & MOD_FLUID_TYPE_DOMAIN) && fmd->domain && fmd->domain->fluid) {
     FluidDomainSettings *fds = fmd->domain;
     float time_mult = 25.0f * DT_DEFAULT;
-    float size_mult = MAX3(fds->global_size[0], fds->global_size[1], fds->global_size[2]) /
-                      MAX3(fds->base_res[0], fds->base_res[1], fds->base_res[2]);
+    float size_mult = std::max({fds->global_size[0], fds->global_size[1], fds->global_size[2]}) /
+                      std::max({fds->base_res[0], fds->base_res[1], fds->base_res[2]});
     float vel_mag;
     float density = 0.0f, fuel = 0.0f;
     float pos[3];

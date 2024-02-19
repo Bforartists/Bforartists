@@ -19,15 +19,15 @@
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BKE_action.h"
 #include "BKE_context.hh"
 #include "BKE_fcurve.h"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_nla.h"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 #include "BKE_screen.hh"
 
 #include "ED_anim_api.hh"
@@ -2189,7 +2189,8 @@ static int nlaedit_apply_scale_exec(bContext *C, wmOperator * /*op*/)
        * (transitions don't have scale) */
       if ((strip->flag & NLASTRIP_FLAG_SELECT) && (strip->type == NLASTRIP_TYPE_CLIP)) {
         if (strip->act == nullptr || ID_IS_OVERRIDE_LIBRARY(strip->act) ||
-            ID_IS_LINKED(strip->act)) {
+            ID_IS_LINKED(strip->act))
+        {
           continue;
         }
         /* if the referenced action is used by other strips,

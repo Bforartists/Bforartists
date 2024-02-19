@@ -16,6 +16,7 @@
 #include "BLI_math_vector.hh"
 #include "BLI_memarena.h"
 #include "BLI_span.hh"
+#include "BLI_time.h"
 #include "BLI_utildefines.h"
 
 #include "BKE_DerivedMesh.hh"
@@ -27,8 +28,6 @@
 #include "bmesh.hh"
 #include "pbvh_intern.hh"
 
-#include "PIL_time.h"
-
 #include "CLG_log.h"
 
 static CLG_LogRef LOG = {"pbvh.bmesh"};
@@ -36,7 +35,7 @@ static CLG_LogRef LOG = {"pbvh.bmesh"};
 /* Avoid skinny faces */
 #define USE_EDGEQUEUE_EVEN_SUBDIV
 #ifdef USE_EDGEQUEUE_EVEN_SUBDIV
-#  include "BKE_global.h"
+#  include "BKE_global.hh"
 #endif
 
 namespace blender::bke::pbvh {
@@ -1225,7 +1224,7 @@ static void pbvh_bmesh_split_edge(EdgeQueueContext *eq_ctx, PBVH *pbvh, BMEdge *
 
 static bool pbvh_bmesh_subdivide_long_edges(EdgeQueueContext *eq_ctx, PBVH *pbvh)
 {
-  const double start_time = PIL_check_seconds_timer();
+  const double start_time = BLI_check_seconds_timer();
 
   bool any_subdivided = false;
 
@@ -1268,7 +1267,7 @@ static bool pbvh_bmesh_subdivide_long_edges(EdgeQueueContext *eq_ctx, PBVH *pbvh
 #endif
 
   CLOG_INFO(
-      &LOG, 2, "Long edge subdivision took %f seconds.", PIL_check_seconds_timer() - start_time);
+      &LOG, 2, "Long edge subdivision took %f seconds.", BLI_check_seconds_timer() - start_time);
 
   return any_subdivided;
 }
@@ -1388,7 +1387,7 @@ static BMVert *find_outer_flap_vert(BMFace &face)
   BM_ITER_ELEM (vert, &bm_iter, &face, BM_VERTS_OF_FACE) {
     if (BM_vert_face_count_at_most(vert, 2) == 1) {
       if (flap_vert) {
-        /* There are multiple vertices which become loose on removing the face and its edges.*/
+        /* There are multiple vertices which become loose on removing the face and its edges. */
         return nullptr;
       }
       flap_vert = vert;
@@ -1702,7 +1701,7 @@ static void pbvh_bmesh_collapse_edge(
 
 static bool pbvh_bmesh_collapse_short_edges(EdgeQueueContext *eq_ctx, PBVH *pbvh)
 {
-  const double start_time = PIL_check_seconds_timer();
+  const double start_time = BLI_check_seconds_timer();
 
   const float min_len_squared = pbvh->bm_min_edge_len * pbvh->bm_min_edge_len;
   bool any_collapsed = false;
@@ -1753,7 +1752,7 @@ static bool pbvh_bmesh_collapse_short_edges(EdgeQueueContext *eq_ctx, PBVH *pbvh
   BLI_ghash_free(deleted_verts, nullptr, nullptr);
 
   CLOG_INFO(
-      &LOG, 2, "Short edge collapse took %f seconds.", PIL_check_seconds_timer() - start_time);
+      &LOG, 2, "Short edge collapse took %f seconds.", BLI_check_seconds_timer() - start_time);
 
   return any_collapsed;
 }
@@ -1793,8 +1792,9 @@ bool bmesh_node_raycast(PBVHNode *node,
           float location[3] = {0.0f};
           madd_v3_v3v3fl(location, ray_start, ray_normal, *depth);
           for (const int j : IndexRange(3)) {
-            if (j == 0 || len_squared_v3v3(location, cos[j]) <
-                              len_squared_v3v3(location, nearest_vertex_co)) {
+            if (j == 0 ||
+                len_squared_v3v3(location, cos[j]) < len_squared_v3v3(location, nearest_vertex_co))
+            {
               copy_v3_v3(nearest_vertex_co, cos[j]);
               r_active_vertex->i = intptr_t(node->bm_orvert[node->bm_ortri[i][j]]);
             }
@@ -1994,7 +1994,8 @@ static void pbvh_bmesh_node_limit_ensure_fast(PBVH *pbvh,
         BMFace *f_iter = nodeinfo[i_iter];
         const int face_iter_i = BM_elem_index_get(f_iter);
         if (math::midpoint(face_bounds[face_iter_i].min[axis],
-                           face_bounds[face_iter_i].max[axis]) <= mid) {
+                           face_bounds[face_iter_i].max[axis]) <= mid)
+        {
           candidate = i_iter;
           break;
         }

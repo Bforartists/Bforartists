@@ -936,7 +936,7 @@ static ShaderNode *add_node(Scene *scene,
     BL::ShaderNodeTexNoise b_noise_node(b_node);
     NoiseTextureNode *noise = graph->create_node<NoiseTextureNode>();
     noise->set_dimensions(b_noise_node.noise_dimensions());
-    noise->set_type((NodeNoiseType)b_noise_node.type());
+    noise->set_type((NodeNoiseType)b_noise_node.noise_type());
     noise->set_use_normalize(b_noise_node.normalize());
     BL::TexMapping b_texture_mapping(b_noise_node.texture_mapping());
     get_tex_mapping(noise, b_texture_mapping);
@@ -1592,7 +1592,7 @@ void BlenderSync::sync_world(BL::Depsgraph &b_depsgraph, BL::SpaceView3D &b_v3d,
   Integrator *integrator = scene->integrator;
   PointerRNA cscene = RNA_pointer_get(&b_scene.ptr, "cycles");
 
-  BL::World b_world = b_scene.world();
+  BL::World b_world = view_layer.world_override ? view_layer.world_override : b_scene.world();
 
   BlenderViewportParameters new_viewport_parameters(b_v3d, use_developer_ui);
 

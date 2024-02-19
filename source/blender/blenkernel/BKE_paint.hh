@@ -10,33 +10,34 @@
 
 #include "BLI_array.hh"
 #include "BLI_bit_vector.hh"
-#include "BLI_bitmap.h"
-#include "BLI_compiler_compat.h"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_offset_indices.hh"
 #include "BLI_ordered_edge.hh"
 #include "BLI_set.hh"
-#include "BLI_utildefines.h"
 
 #include "DNA_brush_enums.h"
+#include "DNA_customdata_types.h"
 #include "DNA_object_enums.h"
 
-#include "BKE_attribute.h"
 #include "BKE_pbvh.hh"
 
-#include "bmesh.hh"
-
 struct BMFace;
+struct BMLog;
 struct BMesh;
 struct BlendDataReader;
 struct BlendLibReader;
 struct BlendWriter;
 struct Brush;
+struct CustomDataLayer;
 struct CurveMapping;
 struct Depsgraph;
 struct EnumPropertyItem;
-namespace blender::ed::sculpt_paint {
+namespace blender {
+namespace bke {
+enum class AttrDomain : int8_t;
+}
+namespace ed::sculpt_paint {
 namespace expand {
 struct Cache;
 }
@@ -44,7 +45,8 @@ namespace filter {
 struct Cache;
 }
 struct StrokeCache;
-}  // namespace blender::ed::sculpt_paint
+}  // namespace ed::sculpt_paint
+}  // namespace blender
 struct GHash;
 struct GridPaintMask;
 struct Image;
@@ -52,7 +54,6 @@ struct ImagePool;
 struct ImageUser;
 struct KeyBlock;
 struct ListBase;
-struct MLoopTri;
 struct Main;
 struct Mesh;
 struct MDeformVert;
@@ -86,29 +87,29 @@ extern const uchar PAINT_CURSOR_WEIGHT_PAINT[3];
 extern const uchar PAINT_CURSOR_TEXTURE_PAINT[3];
 extern const uchar PAINT_CURSOR_SCULPT_CURVES[3];
 
-enum ePaintMode {
-  PAINT_MODE_SCULPT = 0,
+enum class PaintMode : int8_t {
+  Sculpt = 0,
   /** Vertex color. */
-  PAINT_MODE_VERTEX = 1,
-  PAINT_MODE_WEIGHT = 2,
+  Vertex = 1,
+  Weight = 2,
   /** 3D view (projection painting). */
-  PAINT_MODE_TEXTURE_3D = 3,
+  Texture3D = 3,
   /** Image space (2D painting). */
-  PAINT_MODE_TEXTURE_2D = 4,
-  PAINT_MODE_SCULPT_UV = 5,
-  PAINT_MODE_GPENCIL = 6,
+  Texture2D = 4,
+  SculptUV = 5,
+  GPencil = 6,
   /* Grease Pencil Vertex Paint */
-  PAINT_MODE_VERTEX_GPENCIL = 7,
-  PAINT_MODE_SCULPT_GPENCIL = 8,
-  PAINT_MODE_WEIGHT_GPENCIL = 9,
+  VertexGPencil = 7,
+  SculptGPencil = 8,
+  WeightGPencil = 9,
   /** Curves. */
-  PAINT_MODE_SCULPT_CURVES = 10,
+  SculptCurves = 10,
 
   /** Keep last. */
-  PAINT_MODE_INVALID = 11,
+  Invalid = 11,
 };
 
-#define PAINT_MODE_HAS_BRUSH(mode) !ELEM(mode, PAINT_MODE_SCULPT_UV)
+#define PAINT_MODE_HAS_BRUSH(mode) !ELEM(mode, PaintMode::SculptUV)
 
 /* overlay invalidation */
 enum ePaintOverlayControlFlags {
@@ -173,7 +174,7 @@ PaintCurve *BKE_paint_curve_add(Main *bmain, const char *name);
  * Call when entering each respective paint mode.
  */
 bool BKE_paint_ensure(ToolSettings *ts, Paint **r_paint);
-void BKE_paint_init(Main *bmain, Scene *sce, ePaintMode mode, const uchar col[3]);
+void BKE_paint_init(Main *bmain, Scene *sce, PaintMode mode, const uchar col[3]);
 void BKE_paint_free(Paint *p);
 /**
  * Called when copying scene settings, so even if 'src' and 'tar' are the same still do a
@@ -186,17 +187,17 @@ void BKE_paint_runtime_init(const ToolSettings *ts, Paint *paint);
 
 void BKE_paint_cavity_curve_preset(Paint *p, int preset);
 
-eObjectMode BKE_paint_object_mode_from_paintmode(ePaintMode mode);
-bool BKE_paint_ensure_from_paintmode(Scene *sce, ePaintMode mode);
-Paint *BKE_paint_get_active_from_paintmode(Scene *sce, ePaintMode mode);
-const EnumPropertyItem *BKE_paint_get_tool_enum_from_paintmode(ePaintMode mode);
-const char *BKE_paint_get_tool_enum_translation_context_from_paintmode(ePaintMode mode);
-const char *BKE_paint_get_tool_prop_id_from_paintmode(ePaintMode mode);
-uint BKE_paint_get_brush_tool_offset_from_paintmode(ePaintMode mode);
+eObjectMode BKE_paint_object_mode_from_paintmode(PaintMode mode);
+bool BKE_paint_ensure_from_paintmode(Scene *sce, PaintMode mode);
+Paint *BKE_paint_get_active_from_paintmode(Scene *sce, PaintMode mode);
+const EnumPropertyItem *BKE_paint_get_tool_enum_from_paintmode(PaintMode mode);
+const char *BKE_paint_get_tool_enum_translation_context_from_paintmode(PaintMode mode);
+const char *BKE_paint_get_tool_prop_id_from_paintmode(PaintMode mode);
+uint BKE_paint_get_brush_tool_offset_from_paintmode(PaintMode mode);
 Paint *BKE_paint_get_active(Scene *sce, ViewLayer *view_layer);
 Paint *BKE_paint_get_active_from_context(const bContext *C);
-ePaintMode BKE_paintmode_get_active_from_context(const bContext *C);
-ePaintMode BKE_paintmode_get_from_tool(const bToolRef *tref);
+PaintMode BKE_paintmode_get_active_from_context(const bContext *C);
+PaintMode BKE_paintmode_get_from_tool(const bToolRef *tref);
 Brush *BKE_paint_brush(Paint *paint);
 const Brush *BKE_paint_brush_for_read(const Paint *p);
 void BKE_paint_brush_set(Paint *paint, Brush *br);
@@ -246,7 +247,7 @@ void BKE_paint_face_set_overlay_color_get(int face_set, int seed, uchar r_color[
 bool paint_calculate_rake_rotation(UnifiedPaintSettings *ups,
                                    Brush *brush,
                                    const float mouse_pos[2],
-                                   ePaintMode paint_mode,
+                                   PaintMode paint_mode,
                                    bool stroke_has_started);
 void paint_update_brush_rake_rotation(UnifiedPaintSettings *ups, Brush *brush, float rotation);
 
@@ -301,95 +302,6 @@ struct SculptPoseIKChain {
   SculptPoseIKChainSegment *segments;
   int tot_segments;
   blender::float3 grab_delta_offset;
-};
-
-/* Cloth Brush */
-
-/* Cloth Simulation. */
-enum eSculptClothNodeSimState {
-  /* Constraints were not built for this node, so it can't be simulated. */
-  SCULPT_CLOTH_NODE_UNINITIALIZED,
-
-  /* There are constraints for the geometry in this node, but it should not be simulated. */
-  SCULPT_CLOTH_NODE_INACTIVE,
-
-  /* There are constraints for this node and they should be used by the solver. */
-  SCULPT_CLOTH_NODE_ACTIVE,
-};
-
-enum eSculptClothConstraintType {
-  /* Constraint that creates the structure of the cloth. */
-  SCULPT_CLOTH_CONSTRAINT_STRUCTURAL = 0,
-  /* Constraint that references the position of a vertex and a position in deformation_pos which
-   * can be deformed by the tools. */
-  SCULPT_CLOTH_CONSTRAINT_DEFORMATION = 1,
-  /* Constraint that references the vertex position and a editable soft-body position for
-   * plasticity. */
-  SCULPT_CLOTH_CONSTRAINT_SOFTBODY = 2,
-  /* Constraint that references the vertex position and its initial position. */
-  SCULPT_CLOTH_CONSTRAINT_PIN = 3,
-};
-
-struct SculptClothLengthConstraint {
-  /* Elements that are affected by the constraint. */
-  /* Element a should always be a mesh vertex with the index stored in elem_index_a as it is always
-   * deformed. Element b could be another vertex of the same mesh or any other position (arbitrary
-   * point, position for a previous state). In that case, elem_index_a and elem_index_b should be
-   * the same to avoid affecting two different vertices when solving the constraints.
-   * *elem_position points to the position which is owned by the element. */
-  int elem_index_a;
-  float *elem_position_a;
-
-  int elem_index_b;
-  float *elem_position_b;
-
-  float length;
-  float strength;
-
-  /* Index in #SculptClothSimulation.node_state of the node from where this constraint was created.
-   * This constraints will only be used by the solver if the state is active. */
-  int node;
-
-  eSculptClothConstraintType type;
-};
-
-struct SculptClothSimulation {
-  SculptClothLengthConstraint *length_constraints;
-  int tot_length_constraints;
-  blender::Set<blender::OrderedEdge> created_length_constraints;
-  int capacity_length_constraints;
-  float *length_constraint_tweak;
-
-  /* Position anchors for deformation brushes. These positions are modified by the brush and the
-   * final positions of the simulated vertices are updated with constraints that use these points
-   * as targets. */
-  float (*deformation_pos)[3];
-  float *deformation_strength;
-
-  float mass;
-  float damping;
-  float softbody_strength;
-
-  float (*acceleration)[3];
-  float (*pos)[3];
-  float (*init_pos)[3];
-  float (*init_no)[3];
-  float (*softbody_pos)[3];
-  float (*prev_pos)[3];
-  float (*last_iteration_pos)[3];
-
-  ListBase *collider_list;
-
-  int totnode;
-  /** #PBVHNode pointer as a key, index in #SculptClothSimulation.node_state as value. */
-  GHash *node_state_index;
-  eSculptClothNodeSimState *node_state;
-};
-
-struct SculptPersistentBase {
-  blender::float3 co;
-  blender::float3 no;
-  float disp;
 };
 
 struct SculptVertexInfo {
@@ -500,7 +412,7 @@ struct SculptAttributeParams {
 
 struct SculptAttribute {
   /* Domain, data type and name */
-  eAttrDomain domain;
+  blender::bke::AttrDomain domain;
   eCustomDataType proptype;
   char name[MAX_CUSTOMDATA_LAYER_NAME];
 
@@ -587,22 +499,22 @@ struct SculptSession {
   MPropCol *vcol;
   MLoopCol *mcol;
 
-  eAttrDomain vcol_domain;
+  blender::bke::AttrDomain vcol_domain;
   eCustomDataType vcol_type;
 
   /* Mesh connectivity maps. */
   /* Vertices to adjacent polys. */
-  blender::GroupedSpan<int> pmap;
+  blender::GroupedSpan<int> vert_to_face_map;
 
   /* Edges to adjacent faces. */
   blender::Array<int> edge_to_face_offsets;
   blender::Array<int> edge_to_face_indices;
-  blender::GroupedSpan<int> epmap;
+  blender::GroupedSpan<int> edge_to_face_map;
 
   /* Vertices to adjacent edges. */
   blender::Array<int> vert_to_edge_offsets;
   blender::Array<int> vert_to_edge_indices;
-  blender::GroupedSpan<int> vemap;
+  blender::GroupedSpan<int> vert_to_edge_map;
 
   /* Mesh Face Sets */
   /* Total number of faces of the base mesh. */
@@ -769,14 +681,14 @@ int BKE_sculptsession_vertex_count(const SculptSession *ss);
 
 /* Ensure an attribute layer exists. */
 SculptAttribute *BKE_sculpt_attribute_ensure(Object *ob,
-                                             eAttrDomain domain,
+                                             blender::bke::AttrDomain domain,
                                              eCustomDataType proptype,
                                              const char *name,
                                              const SculptAttributeParams *params);
 
 /* Returns nullptr if attribute does not exist. */
 SculptAttribute *BKE_sculpt_attribute_get(Object *ob,
-                                          eAttrDomain domain,
+                                          blender::bke::AttrDomain domain,
                                           eCustomDataType proptype,
                                           const char *name);
 
@@ -787,27 +699,6 @@ void BKE_sculpt_attribute_destroy_temporary_all(Object *ob);
 
 /* Destroy attributes that were marked as stroke only in SculptAttributeParams. */
 void BKE_sculpt_attributes_destroy_temporary_stroke(Object *ob);
-
-BLI_INLINE void *BKE_sculpt_vertex_attr_get(const PBVHVertRef vertex, const SculptAttribute *attr)
-{
-  if (attr->data) {
-    char *p = (char *)attr->data;
-    int idx = (int)vertex.i;
-
-    if (attr->data_for_bmesh) {
-      BMElem *v = (BMElem *)vertex.i;
-      idx = v->head.index;
-    }
-
-    return p + attr->elem_size * (int)idx;
-  }
-  else {
-    BMElem *v = (BMElem *)vertex.i;
-    return BM_ELEM_CD_GET_VOID_P(v, attr->bmesh_cd_offset);
-  }
-
-  return NULL;
-}
 
 /**
  * Create new color layer on object if it doesn't have one and if experimental feature set has
@@ -864,9 +755,7 @@ bool BKE_sculptsession_use_pbvh_draw(const Object *ob, const RegionView3D *rv3d)
 /**
  * Fills the object's active color attribute layer with the fill color.
  *
- * \param[in] ob: The object.
- * \param[in] fill_color: The fill color.
- * \param[in] only_selected: Limit the fill to selected faces or vertices.
+ * \param only_selected: Limit the fill to selected faces or vertices.
  *
  * \return #true if successful.
  */

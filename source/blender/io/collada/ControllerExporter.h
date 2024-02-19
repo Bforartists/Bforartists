@@ -10,7 +10,7 @@
 
 #include <list>
 #include <string>
-//#include <vector>
+// #include <vector>
 
 #include "COLLADASWExtraTechnique.h"
 #include "COLLADASWInputList.h"
@@ -32,7 +32,7 @@
 
 #include "ExportSettings.h"
 
-#include "BKE_key.h"
+#include "BKE_key.hh"
 
 class SceneExporter;
 

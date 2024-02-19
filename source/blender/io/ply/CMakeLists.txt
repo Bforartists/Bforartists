@@ -17,7 +17,6 @@ set(INC
 
 set(INC_SYS
   ../../../../extern/fast_float
-  ../../../../extern/fmtlib/include
 )
 
 set(SRC
@@ -57,7 +56,7 @@ set(LIB
   PRIVATE bf::dna
   PRIVATE bf::intern::guardedalloc
   bf_io_common
-  extern_fmtlib
+  PRIVATE bf::extern::fmtlib
 )
 
 blender_add_lib(bf_io_ply "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
@@ -73,7 +72,7 @@ if(WITH_GTESTS)
   )
   set(TEST_LIB
     bf_io_ply
+    bf_blenloader_test_util
   )
-  include(GTestTesting)
-  blender_add_test_lib(bf_io_ply_tests "${TEST_SRC}" "${INC};${TEST_INC}" "${INC_SYS}" "${LIB};${TEST_LIB}")
+  blender_add_test_suite_lib(io_ply "${TEST_SRC}" "${INC};${TEST_INC}" "${INC_SYS}" "${LIB};${TEST_LIB}")
 endif()

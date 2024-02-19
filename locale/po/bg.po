@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.1.0 Alpha (b'274dc815eb35')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'3d7e84f57d8a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-11 11:18:04\n"
+"POT-Creation-Date: 2024-02-05 09:44+0000\n"
 "PO-Revision-Date: 2023-09-26 10:37+0000\n"
 "Last-Translator: Gilberto Rodrigues <gilbertorodrigues@outlook.com>\n"
 "Language-Team: Bulgarian <https://translate.blender.org/projects/blender-ui/ui/bg/>\n"
@@ -142,6 +142,10 @@ msgstr "Родителска"
 
 msgid "Deform"
 msgstr "Деформиране"
+
+
+msgid "Index"
+msgstr "Индекс"
 
 
 msgid "Remove"
@@ -302,10 +306,6 @@ msgstr "Равнина"
 
 msgid "View"
 msgstr "Изглед"
-
-
-msgid "Index"
-msgstr "Индекс"
 
 
 msgid "Render"
@@ -846,6 +846,10 @@ msgstr "Завърти"
 
 msgid "Nor"
 msgstr "Нор"
+
+
+msgid "Bake"
+msgstr "Изпечи"
 
 
 msgid "Star"
@@ -1396,10 +1400,6 @@ msgid "Test Key Configuration for Conflicts"
 msgstr "Провери Клавишната Настройка за Конфликти"
 
 
-msgid "Bake"
-msgstr "Изпечи"
-
-
 msgctxt "Operator"
 msgid "Render"
 msgstr "Генериране"
@@ -1688,10 +1688,6 @@ msgid "Threads"
 msgstr "Нишки"
 
 
-msgid "Viscosity"
-msgstr "Вискозитет"
-
-
 msgid "Note"
 msgstr "Бележка"
 
@@ -1738,6 +1734,10 @@ msgstr "Отклонение"
 
 msgid "FPS"
 msgstr "FPS"
+
+
+msgid "Viscosity"
+msgstr "Вискозитет"
 
 
 msgid "Edge spring friction"

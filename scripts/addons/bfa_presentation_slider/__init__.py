@@ -1,7 +1,7 @@
 bl_info = {
     "name": "BFA - Presentation Slider",
     "author": "Draise",
-    "version": (0, 3, 5),
+    "version": (0, 3, 7),
     "blender": (3, 6, 2),
     "location": "View3D > Sidebar > View > Presentation Slider",
     "description": "Add controls to switch to the next Scene then plays the animation once, useful for presentation slides setup as Scenes",
@@ -28,14 +28,16 @@ def stop_playback(scene):
             bpy.ops.screen.animation_cancel(restore_frame=False)
             #print("Stopped")
     else:
+        pass
         #Animation is not playing, do something else...
-        #print("Animation is not playing")
+        #print("Animation is not playing, pass")
 
-        #reset to first frame
-        current_scene.frame_set(bpy.context.scene.frame_end)
-        bpy.ops.screen.frame_jump(end=True)
-    
-
+        # Get the current scene
+        #current_scene = bpy.context.scene
+        
+        # Reset to first frame
+        #current_scene.frame_set(bpy.context.scene.frame_end)
+        #bpy.ops.screen.frame_jump(end=True)
 
         
 class VIEW_OT_PlayAnimationOperator(Operator):
@@ -100,7 +102,7 @@ class VIEW_OT_PlayAnimationOperator(Operator):
             #print("---Waiting done")
 
             # Start playback
-            print("Playing")
+            #print("Playing")
             bpy.ops.screen.animation_play()
             
 
@@ -110,8 +112,8 @@ class VIEW_OT_PlayAnimationOperator(Operator):
             context.window.scene = first_scene
 
             # Set the current frame to the first frame
-            bpy.context.scene.frame_set(bpy.context.scene.frame_start)
-            bpy.ops.screen.frame_jump(end=False)
+            #bpy.context.scene.frame_set(bpy.context.scene.frame_start)
+            #bpy.ops.screen.frame_jump(end=False)
 
             #print("---Last Scene Loaded")
 
@@ -185,12 +187,13 @@ class VIEW_OT_ReverseAnimationOperator(Operator):
 
         else:
             # If this is the last scene, switch back to the first one EDIT: not necessary backwards
+           
             #first_scene = scenes[0]
             #context.window.scene = first_scene
 
             # Set the current frame to the first frame
-            bpy.context.scene.frame_set(bpy.context.scene.frame_start)
-            bpy.ops.screen.frame_jump(end=False)
+            #bpy.context.scene.frame_set(bpy.context.scene.frame_start)
+            #bpy.ops.screen.frame_jump(end=False)
 
             # Start playback
             bpy.ops.screen.animation_play()
@@ -225,8 +228,8 @@ class VIEW_OT_RemoveAnimationOperator(Operator):
             #print("Handler is not appended.")
 
             # Set the current frame to the first frame
-            bpy.context.scene.frame_set(bpy.context.scene.frame_start)
-            bpy.ops.screen.frame_jump(end=False)
+            #bpy.context.scene.frame_set(bpy.context.scene.frame_start)
+            #bpy.ops.screen.frame_jump(end=False)
             # Start playback
             bpy.ops.screen.animation_play()
 
@@ -269,7 +272,7 @@ class VIEW_OT_HideInterface(Operator):
         else:
             bpy.ops.screen.screen_full_area()
 
-            print("Set is_fullscreen False")  
+            #print("Set is_fullscreen False")
             
             for area in bpy.context.screen.areas:
                 if area.type == 'VIEW_3D':

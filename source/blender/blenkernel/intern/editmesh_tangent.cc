@@ -157,7 +157,7 @@ void BKE_editmesh_loop_tangent_calc(BMEditMesh *em,
                                     const char (*tangent_names)[MAX_CUSTOMDATA_LAYER_NAME],
                                     int tangent_names_len,
                                     const float (*face_normals)[3],
-                                    const float (*loop_normals)[3],
+                                    const float (*corner_normals)[3],
                                     const float (*vert_orco)[3],
                                     /* result */
                                     CustomData *loopdata_out,
@@ -257,7 +257,7 @@ void BKE_editmesh_loop_tangent_calc(BMEditMesh *em,
         mesh2tangent->precomputedFaceNormals = face_normals;
         /* NOTE: we assume we do have tessellated loop normals at this point
          * (in case it is object-enabled), have to check this is valid. */
-        mesh2tangent->precomputedLoopNormals = loop_normals;
+        mesh2tangent->precomputedLoopNormals = corner_normals;
         mesh2tangent->cd_loop_uv_offset = CustomData_get_n_offset(&bm->ldata, CD_PROP_FLOAT2, n);
 
         /* needed for indexing loop-tangents */
@@ -286,7 +286,7 @@ void BKE_editmesh_loop_tangent_calc(BMEditMesh *em,
         }
         BM_mesh_elem_index_ensure(bm, htype_index);
 
-        mesh2tangent->looptris = (const BMLoop *(*)[3])em->looptris;
+        mesh2tangent->looptris = const_cast<const BMLoop *(*)[3]>(em->looptris);
         mesh2tangent->tangent = static_cast<float(*)[4]>(loopdata_out->layers[index].data);
 
         BLI_task_pool_push(

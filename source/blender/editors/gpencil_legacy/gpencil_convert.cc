@@ -21,7 +21,7 @@
 #include "BLI_rand.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_anim_types.h"
 #include "DNA_collection_types.h"
@@ -36,20 +36,20 @@
 #include "DNA_view3d_types.h"
 
 #include "BKE_animsys.h"
-#include "BKE_collection.h"
+#include "BKE_collection.hh"
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
 #include "BKE_fcurve.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_image.h"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_object.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 #include "BKE_tracking.h"
 
 #include "DEG_depsgraph.hh"
@@ -99,12 +99,12 @@ enum {
 /* RNA enum define */
 static const EnumPropertyItem prop_gpencil_convertmodes[] = {
     {GP_STROKECONVERT_PATH, "PATH", ICON_CURVE_PATH, "Path", "Animation path"},
-    {GP_STROKECONVERT_CURVE, "CURVE", ICON_CURVE_BEZCURVE, "Bezier Curve", "Smooth Bezier curve"},
+    {GP_STROKECONVERT_CURVE, "CURVE", ICON_CURVE_BEZCURVE, "Bézier Curve", "Smooth Bézier curve"},
     {GP_STROKECONVERT_POLY,
      "POLY",
      ICON_MESH_DATA,
      "Polygon Curve",
-     "Bezier curve with straight-line segments (vector handles)"},
+     "Bézier curve with straight-line segments (vector handles)"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -1522,7 +1522,8 @@ static int gpencil_convert_layer_exec(bContext *C, wmOperator *op)
   gtd.mode = RNA_enum_get(op->ptr, "timing_mode");
   /* Check for illegal timing mode! */
   if (!valid_timing &&
-      !ELEM(gtd.mode, GP_STROKECONVERT_TIMING_NONE, GP_STROKECONVERT_TIMING_LINEAR)) {
+      !ELEM(gtd.mode, GP_STROKECONVERT_TIMING_NONE, GP_STROKECONVERT_TIMING_LINEAR))
+  {
     gtd.mode = GP_STROKECONVERT_TIMING_LINEAR;
     RNA_enum_set(op->ptr, "timing_mode", gtd.mode);
   }

@@ -1,11 +1,11 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.1.0 Alpha (b'274dc815eb35')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'3d7e84f57d8a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-11 11:18:04\n"
-"PO-Revision-Date: 2023-10-08 06:34+0000\n"
-"Last-Translator: Wannes Malfait <wannes.malfait@gmail.com>\n"
+"POT-Creation-Date: 2024-02-05 09:44+0000\n"
+"PO-Revision-Date: 2023-12-21 01:55+0000\n"
+"Last-Translator: Lisa <blendergirl@tutanota.com>\n"
 "Language-Team: Dutch <https://translate.blender.org/projects/blender-ui/ui/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -495,7 +495,7 @@ msgstr "Data Type"
 
 
 msgid "Vector"
-msgstr "Punt"
+msgstr "Vector"
 
 
 msgid "True or false"
@@ -503,7 +503,7 @@ msgstr "Waar of niet waar"
 
 
 msgid "2D Vector"
-msgstr "2D Punt"
+msgstr "2D Vector"
 
 
 msgid "Domain"
@@ -828,6 +828,10 @@ msgstr "Ouder"
 
 msgid "Bones"
 msgstr "Botten"
+
+
+msgid "Index"
+msgstr "Index"
 
 
 msgid "Visible"
@@ -1197,10 +1201,6 @@ msgstr "Vlak"
 
 msgid "View"
 msgstr "Weergave"
-
-
-msgid "Index"
-msgstr "Index"
 
 
 msgid "Segments"
@@ -3523,6 +3523,10 @@ msgid "Set Start Frame"
 msgstr "Zet Startframe"
 
 
+msgid "Collection Index"
+msgstr "Collectie Index"
+
+
 msgctxt "Operator"
 msgid "Add Bone"
 msgstr "Voeg Bot Toe"
@@ -3836,6 +3840,10 @@ msgid "Delete Constraint"
 msgstr "Verwijder Beperking"
 
 
+msgid "Duplicate"
+msgstr "Dupliceren"
+
+
 msgctxt "Operator"
 msgid "Dissolve Vertices"
 msgstr "Los Punten Op"
@@ -3941,8 +3949,8 @@ msgstr "Exporteer BVH"
 
 
 msgctxt "Operator"
-msgid "Export STL"
-msgstr "Exporteer STL"
+msgid "Export PLY"
+msgstr "Exporteer PLY"
 
 
 msgid "Apply Modifiers"
@@ -4410,10 +4418,6 @@ msgid "Flat"
 msgstr "Vlak"
 
 
-msgid "Duplicate"
-msgstr "Dupliceren"
-
-
 msgctxt "Operator"
 msgid "New Image"
 msgstr "Nieuwe Afbeelding"
@@ -4488,8 +4492,8 @@ msgstr "Importeer Afbeeldingen als Vlakken"
 
 
 msgctxt "Operator"
-msgid "Import STL"
-msgstr "Importeer STL"
+msgid "Import PLY"
+msgstr "Importeer PLY"
 
 
 msgctxt "Operator"
@@ -4986,10 +4990,6 @@ msgstr "Kopieer Aanpasser"
 msgctxt "Operator"
 msgid "Hide Collection"
 msgstr "Verberg Collectie"
-
-
-msgid "Collection Index"
-msgstr "Collectie Index"
 
 
 msgctxt "Operator"
@@ -6321,16 +6321,6 @@ msgid "Open a Blender file"
 msgstr "Open een Blender Bestand"
 
 
-msgctxt "Operator"
-msgid "Export PLY"
-msgstr "Exporteer PLY"
-
-
-msgctxt "Operator"
-msgid "Import PLY"
-msgstr "Importeer PLY"
-
-
 msgid "All Types"
 msgstr "Alle Types"
 
@@ -6446,6 +6436,16 @@ msgstr "Interface"
 msgctxt "Operator"
 msgid "About Blender"
 msgstr "Over Blender"
+
+
+msgctxt "Operator"
+msgid "Export STL"
+msgstr "Exporteer STL"
+
+
+msgctxt "Operator"
+msgid "Import STL"
+msgstr "Importeer STL"
 
 
 msgctxt "Operator"
@@ -7468,6 +7468,16 @@ msgid "Characters"
 msgstr "Karakters"
 
 
+msgctxt "Operator"
+msgid "Location"
+msgstr "Locatie"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotatie"
+
+
 msgid "Frame Range Before"
 msgstr "Framebereik Voor"
 
@@ -7777,11 +7787,6 @@ msgstr "Solutie"
 
 
 msgctxt "Operator"
-msgid "Location"
-msgstr "Locatie"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Zet Vloer"
 
@@ -7928,6 +7933,11 @@ msgstr "Sla Alle Afbeeldingen Op"
 msgctxt "Operator"
 msgid "Selection"
 msgstr "Selectie"
+
+
+msgctxt "Operator"
+msgid "Save As..."
+msgstr "Opslaan Als..."
 
 
 msgctxt "Operator"
@@ -8093,11 +8103,6 @@ msgstr "Positie"
 
 
 msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotatie"
-
-
-msgctxt "Operator"
 msgid "All Transforms"
 msgstr "Alle Transformaties"
 
@@ -8214,6 +8219,11 @@ msgstr "Volgende Werkomgeving"
 
 
 msgctxt "Operator"
+msgid "Save Incremental"
+msgstr "Incrementeel Opslaan"
+
+
+msgctxt "Operator"
 msgid "Save Copy..."
 msgstr "Sla Kopie Op..."
 
@@ -8271,6 +8281,10 @@ msgid "Double Click Speed"
 msgstr "Snelheid Dubbelklik"
 
 
+msgid "Preferences:"
+msgstr "Instellingen:"
+
+
 msgid "Use Light"
 msgstr "Gebruik Licht"
 
@@ -8307,21 +8321,9 @@ msgid "Internet:"
 msgstr "Internet:"
 
 
-msgid "description"
-msgstr "beschrijving"
-
-
-msgid "location"
-msgstr "locatie"
-
-
 msgctxt "Operator"
 msgid "Documentation"
 msgstr "Documentatie"
-
-
-msgid "Preferences:"
-msgstr "Instellingen:"
 
 
 msgctxt "Operator"
@@ -8694,11 +8696,6 @@ msgstr "Verwijder Punt"
 
 
 msgctxt "Operator"
-msgid "Registered Trademark"
-msgstr "Geregistreerd Handelsmerk"
-
-
-msgctxt "Operator"
 msgid "Hide Active Layer"
 msgstr "Verberg Actieve Laag"
 
@@ -8957,10 +8954,6 @@ msgid "Copy All to Selected"
 msgstr "Kopieer Alles naar Geselecteerd"
 
 
-msgid "Value: %s"
-msgstr "Waarde: %s"
-
-
 msgid "Double click to rename"
 msgstr "Dubbelklik om te hernoemen"
 
@@ -8979,6 +8972,18 @@ msgstr "Verwijder punten"
 
 msgid "Choose Screen layout"
 msgstr "Kies Scherm indeling"
+
+
+msgid "File Not Found"
+msgstr "Bestand Niet Gevonden"
+
+
+msgid "Today"
+msgstr "Vandaag"
+
+
+msgid "Yesterday"
+msgstr "Gisteren"
 
 
 msgctxt "Object"
@@ -9277,14 +9282,6 @@ msgid "Active Keyframe"
 msgstr "Actieve Sleutelframe"
 
 
-msgid "Today"
-msgstr "Vandaag"
-
-
-msgid "Yesterday"
-msgstr "Gisteren"
-
-
 msgid "File does not exist"
 msgstr "Bestand bestaat niet"
 
@@ -9530,16 +9527,16 @@ msgid "Hue Correct"
 msgstr "Hue Corrigeren"
 
 
+msgid "Save As..."
+msgstr "Opslaan Als..."
+
+
 msgid "Don't Save"
 msgstr "Niet Opslaan"
 
 
 msgid "unable to open the file"
 msgstr "kan het bestand niet openen"
-
-
-msgid "File Not Found"
-msgstr "Bestand Niet Gevonden"
 
 
 msgid "This may lead to unexpected behavior"

@@ -18,6 +18,8 @@
 #include "BLI_utildefines.h"
 #include "BLI_vector.hh"
 
+#include "BKE_volume_enums.hh"
+
 #include "DNA_customdata_types.h"
 
 struct BlendDataReader;
@@ -28,8 +30,6 @@ struct CustomData;
 struct CustomDataTransferLayerMap;
 struct ID;
 struct MeshPairRemap;
-
-using eCustomDataMask = uint64_t;
 
 /* These names are used as prefixes for UV layer names to find the associated boolean
  * layers. They should never be longer than 2 chars, as #MAX_CUSTOMDATA_LAYER_NAME
@@ -261,14 +261,17 @@ const void *CustomData_add_layer_with_data(CustomData *data,
 /**
  * Same as above but accepts a name.
  */
-void *CustomData_add_layer_named(
-    CustomData *data, eCustomDataType type, eCDAllocType alloctype, int totelem, const char *name);
+void *CustomData_add_layer_named(CustomData *data,
+                                 eCustomDataType type,
+                                 eCDAllocType alloctype,
+                                 int totelem,
+                                 blender::StringRef name);
 
 const void *CustomData_add_layer_named_with_data(CustomData *data,
                                                  eCustomDataType type,
                                                  void *layer_data,
                                                  int totelem,
-                                                 const char *name,
+                                                 blender::StringRef name,
                                                  const ImplicitSharingInfoHandle *sharing_info);
 
 void *CustomData_add_layer_anonymous(CustomData *data,
@@ -291,7 +294,7 @@ const void *CustomData_add_layer_anonymous_with_data(
  * In edit-mode, use #EDBM_data_layer_free instead of this function.
  */
 bool CustomData_free_layer(CustomData *data, eCustomDataType type, int totelem, int index);
-bool CustomData_free_layer_named(CustomData *data, const char *name, const int totelem);
+bool CustomData_free_layer_named(CustomData *data, blender::StringRef name, const int totelem);
 
 /**
  * Frees the layer index with the give type.
@@ -310,7 +313,9 @@ void CustomData_free_layers(CustomData *data, eCustomDataType type, int totelem)
  * Returns true if a layer with the specified type exists.
  */
 bool CustomData_has_layer(const CustomData *data, eCustomDataType type);
-bool CustomData_has_layer_named(const CustomData *data, eCustomDataType type, const char *name);
+bool CustomData_has_layer_named(const CustomData *data,
+                                eCustomDataType type,
+                                blender::StringRef name);
 
 /**
  * Returns the number of layers with this type.
@@ -395,7 +400,7 @@ BMCustomDataCopyMap CustomData_bmesh_copy_map_calc(const CustomData &src,
 void CustomData_bmesh_copy_block(CustomData &dst_data,
                                  const BMCustomDataCopyMap &map,
                                  const void *src_block,
-                                 void **dest_block);
+                                 void **dst_block);
 
 /**
  * Copies data of a single layer of a given type.
@@ -490,7 +495,10 @@ void *CustomData_bmesh_get_n(const CustomData *data, void *block, eCustomDataTyp
  */
 void *CustomData_bmesh_get_layer_n(const CustomData *data, void *block, int n);
 
-bool CustomData_set_layer_name(CustomData *data, eCustomDataType type, int n, const char *name);
+bool CustomData_set_layer_name(CustomData *data,
+                               eCustomDataType type,
+                               int n,
+                               blender::StringRef name);
 const char *CustomData_get_layer_name(const CustomData *data, eCustomDataType type, int n);
 
 /**
@@ -513,27 +521,31 @@ void *CustomData_get_layer_n_for_write(CustomData *data, eCustomDataType type, i
  */
 const void *CustomData_get_layer_named(const CustomData *data,
                                        eCustomDataType type,
-                                       const char *name);
+                                       blender::StringRef name);
 void *CustomData_get_layer_named_for_write(CustomData *data,
                                            eCustomDataType type,
-                                           const char *name,
+                                           blender::StringRef name,
                                            int totelem);
 
 int CustomData_get_offset(const CustomData *data, eCustomDataType type);
-int CustomData_get_offset_named(const CustomData *data, eCustomDataType type, const char *name);
+int CustomData_get_offset_named(const CustomData *data,
+                                eCustomDataType type,
+                                blender::StringRef name);
 int CustomData_get_n_offset(const CustomData *data, eCustomDataType type, int n);
 
 int CustomData_get_layer_index(const CustomData *data, eCustomDataType type);
 int CustomData_get_layer_index_n(const CustomData *data, eCustomDataType type, int n);
 int CustomData_get_named_layer_index(const CustomData *data,
                                      eCustomDataType type,
-                                     const char *name);
-int CustomData_get_named_layer_index_notype(const CustomData *data, const char *name);
+                                     blender::StringRef name);
+int CustomData_get_named_layer_index_notype(const CustomData *data, blender::StringRef name);
 int CustomData_get_active_layer_index(const CustomData *data, eCustomDataType type);
 int CustomData_get_render_layer_index(const CustomData *data, eCustomDataType type);
 int CustomData_get_clone_layer_index(const CustomData *data, eCustomDataType type);
 int CustomData_get_stencil_layer_index(const CustomData *data, eCustomDataType type);
-int CustomData_get_named_layer(const CustomData *data, eCustomDataType type, const char *name);
+int CustomData_get_named_layer(const CustomData *data,
+                               eCustomDataType type,
+                               blender::StringRef name);
 int CustomData_get_active_layer(const CustomData *data, eCustomDataType type);
 int CustomData_get_render_layer(const CustomData *data, eCustomDataType type);
 int CustomData_get_clone_layer(const CustomData *data, eCustomDataType type);
@@ -631,7 +643,7 @@ void CustomData_set_layer_unique_name(CustomData *data, int index);
 
 void CustomData_validate_layer_name(const CustomData *data,
                                     eCustomDataType type,
-                                    const char *name,
+                                    blender::StringRef name,
                                     char *outname);
 
 /**
@@ -799,6 +811,5 @@ void CustomData_debug_info_from_layers(const CustomData *data, const char *inden
 #endif /* !NDEBUG */
 
 namespace blender::bke {
-const CPPType *custom_data_type_to_cpp_type(eCustomDataType type);
-eCustomDataType cpp_type_to_custom_data_type(const CPPType &type);
+std::optional<VolumeGridType> custom_data_type_to_volume_grid_type(eCustomDataType type);
 }  // namespace blender::bke

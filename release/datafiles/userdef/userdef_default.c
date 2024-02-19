@@ -18,7 +18,7 @@
 
 #include "GPU_platform.h"
 
-#include "BLO_readfile.h" /* own include */
+#include "BLO_userdef_default.h" /* own include */
 
 /* bfa - for the flag names have a look into source\blender\makesrna\intern\rna_userdef.c*/
 /*bfa -  added USER_TOOLTIPS_PYTHON, USER_DEVELOPER_UI and USER_FILENOUI to the .flag*/
@@ -108,7 +108,7 @@ const UserDef U_default = {
     .autoexec_paths = {NULL},
     .user_menus = {NULL},
 
-    .keyconfigstr = "bforartists", /*bfa - the active keymap*/
+    .keyconfigstr = "Bforartists", /*bfa - the active keymap*/
     .undosteps = 32,
     .undomemory = 0,
     .gp_manhattandist = 1,
@@ -171,7 +171,7 @@ const UserDef U_default = {
     .image_draw_method = IMAGE_DRAW_METHOD_AUTO,
     .glalphaclip = 0.004,
     .autokey_mode = (AUTOKEY_MODE_NORMAL & ~AUTOKEY_ON),
-    .autokey_flag = AUTOKEY_FLAG_XYZ2RGB,
+    .keying_flag = KEYING_FLAG_XYZ2RGB | AUTOKEY_FLAG_INSERTNEEDED,
     .key_insert_channels = (USER_ANIM_KEY_CHANNEL_LOCATION | USER_ANIM_KEY_CHANNEL_ROTATION |
                             USER_ANIM_KEY_CHANNEL_SCALE | USER_ANIM_KEY_CHANNEL_CUSTOM_PROPERTIES),
     .animation_flag = USER_ANIM_HIGH_QUALITY_DRAWING,

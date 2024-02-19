@@ -319,7 +319,7 @@ static void add_instances_from_handles(bke::Instances &instances,
                                        const TextLayout &layout)
 {
   instances.resize(layout.positions.size());
-  MutableSpan<int> handles = instances.reference_handles();
+  MutableSpan<int> handles = instances.reference_handles_for_write();
   MutableSpan<float4x4> transforms = instances.transforms();
 
   threading::parallel_for(IndexRange(layout.positions.size()), 256, [&](IndexRange range) {
@@ -340,7 +340,7 @@ static void create_attributes(GeoNodeExecParams &params,
   if (AnonymousAttributeIDPtr line_id = params.get_output_anonymous_attribute_id_if_needed("Line"))
   {
     SpanAttributeWriter<int> line_attribute = attributes.lookup_or_add_for_write_only_span<int>(
-        *line_id, ATTR_DOMAIN_INSTANCE);
+        *line_id, AttrDomain::Instance);
     line_attribute.span.copy_from(layout.line_numbers);
     line_attribute.finish();
   }
@@ -349,7 +349,7 @@ static void create_attributes(GeoNodeExecParams &params,
           "Pivot Point"))
   {
     SpanAttributeWriter<float3> pivot_attribute =
-        attributes.lookup_or_add_for_write_only_span<float3>(*pivot_id, ATTR_DOMAIN_INSTANCE);
+        attributes.lookup_or_add_for_write_only_span<float3>(*pivot_id, AttrDomain::Instance);
 
     for (const int i : layout.char_codes.index_range()) {
       pivot_attribute.span[i] = layout.pivot_points.lookup(layout.char_codes[i]);

@@ -27,14 +27,14 @@
 
 #include "BKE_action.h"
 #include "BKE_context.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_main.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
-#include "BKE_report.h"
-#include "BKE_scene.h"
+#include "BKE_report.hh"
+#include "BKE_scene.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
@@ -497,7 +497,7 @@ static Object *add_hook_object_new(
   Base *basact = BKE_view_layer_active_base_get(view_layer);
   BLI_assert(basact->object == ob);
   if (v3d && v3d->localvd) {
-    basact->local_view_bits |= v3d->local_view_uuid;
+    basact->local_view_bits |= v3d->local_view_uid;
   }
 
   /* icky, BKE_object_add sets new base as active.
@@ -551,6 +551,7 @@ static int add_hook_object(const bContext *C,
   BLI_insertlinkbefore(&obedit->modifiers, md, hmd);
   SNPRINTF(hmd->modifier.name, "Hook-%s", ob->id.name + 2);
   BKE_modifier_unique_name(&obedit->modifiers, (ModifierData *)hmd);
+  BKE_modifiers_persistent_uid_init(*obedit, hmd->modifier);
 
   hmd->object = ob;
   hmd->indexar = indexar;
@@ -603,6 +604,7 @@ static int add_hook_object(const bContext *C,
   /* apparently this call goes from right to left... */
   mul_m4_series(hmd->parentinv, pose_mat, object_eval->world_to_object, obedit->object_to_world);
 
+  DEG_id_tag_update(&obedit->id, ID_RECALC_GEOMETRY);
   DEG_relations_tag_update(bmain);
 
   return true;

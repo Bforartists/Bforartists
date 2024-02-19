@@ -12,7 +12,7 @@
 
 #include "BLI_listbase.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_cloth_types.h"
 #include "DNA_defaults.h"
@@ -27,11 +27,12 @@
 
 #include "BKE_cloth.hh"
 #include "BKE_context.hh"
+#include "BKE_customdata.hh"
 #include "BKE_effect.h"
-#include "BKE_global.h"
-#include "BKE_key.h"
-#include "BKE_lib_id.h"
-#include "BKE_lib_query.h"
+#include "BKE_global.hh"
+#include "BKE_key.hh"
+#include "BKE_lib_id.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_pointcache.h"
@@ -99,15 +100,15 @@ static void deform_verts(ModifierData *md,
    * Also hopefully new cloth system will arrive soon..
    */
   if (mesh == nullptr && clmd->sim_parms->shapekey_rest) {
-    KeyBlock *kb = BKE_keyblock_from_key(BKE_key_from_object(ctx->object),
-                                         clmd->sim_parms->shapekey_rest);
+    KeyBlock *kb = BKE_keyblock_find_by_index(BKE_key_from_object(ctx->object),
+                                              clmd->sim_parms->shapekey_rest);
     if (kb && kb->data != nullptr) {
       float(*layerorco)[3];
       if (!(layerorco = static_cast<float(*)[3]>(
-                CustomData_get_layer_for_write(&mesh->vert_data, CD_CLOTH_ORCO, mesh->totvert))))
+                CustomData_get_layer_for_write(&mesh->vert_data, CD_CLOTH_ORCO, mesh->verts_num))))
       {
-        layerorco = static_cast<float(*)[3]>(
-            CustomData_add_layer(&mesh->vert_data, CD_CLOTH_ORCO, CD_SET_DEFAULT, mesh->totvert));
+        layerorco = static_cast<float(*)[3]>(CustomData_add_layer(
+            &mesh->vert_data, CD_CLOTH_ORCO, CD_SET_DEFAULT, mesh->verts_num));
       }
 
       memcpy(layerorco, kb->data, sizeof(float[3]) * positions.size());
@@ -260,7 +261,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  uiItemL(layout, TIP_("Settings are inside the Physics tab"), ICON_NONE);
+  uiItemL(layout, RPT_("Settings are inside the Physics tab"), ICON_NONE);
 
   modifier_panel_end(layout, ptr);
 }
@@ -303,4 +304,5 @@ ModifierTypeInfo modifierType_Cloth = {
     /*panel_register*/ panel_register,
     /*blend_write*/ nullptr,
     /*blend_read*/ nullptr,
+    /*foreach_cache*/ nullptr,
 };

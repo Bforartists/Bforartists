@@ -12,9 +12,11 @@
 #include "BLI_math_matrix.h"
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector.hh"
+#include "BLI_time.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
+#include "DNA_brush_types.h"
 #include "DNA_mesh_types.h"
 
 #include "BKE_context.hh"
@@ -39,8 +41,6 @@
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
-
-#include "PIL_time.h"
 
 #include "CLG_log.h"
 
@@ -115,7 +115,7 @@ static int sculpt_detail_flood_fill_exec(bContext *C, wmOperator *op)
   undo::push_begin(ob, op);
   undo::push_node(ob, nullptr, undo::Type::Position);
 
-  const double start_time = PIL_check_seconds_timer();
+  const double start_time = BLI_check_seconds_timer();
 
   while (bke::pbvh::bmesh_update_topology(
       ss->pbvh, PBVH_Collapse | PBVH_Subdivide, center, nullptr, size, false, false))
@@ -125,7 +125,7 @@ static int sculpt_detail_flood_fill_exec(bContext *C, wmOperator *op)
     }
   }
 
-  CLOG_INFO(&LOG, 2, "Detail flood fill took %f seconds.", PIL_check_seconds_timer() - start_time);
+  CLOG_INFO(&LOG, 2, "Detail flood fill took %f seconds.", BLI_check_seconds_timer() - start_time);
 
   undo::push_end(ob);
 
@@ -314,7 +314,7 @@ static int sculpt_sample_detail_size_exec(bContext *C, wmOperator *op)
 
 static int sculpt_sample_detail_size_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
-  ED_workspace_status_text(C, TIP_("Click on the mesh to set the detail"));
+  ED_workspace_status_text(C, IFACE_("Click on the mesh to set the detail"));
   WM_cursor_modal_set(CTX_wm_window(C), WM_CURSOR_EYEDROPPER);
   WM_event_add_modal_handler(C, op);
   return OPERATOR_RUNNING_MODAL;
@@ -764,7 +764,7 @@ static int dyntopo_detail_size_edit_invoke(bContext *C, wmOperator *op, const wm
 
   ss->draw_faded_cursor = true;
 
-  const char *status_str = TIP_(
+  const char *status_str = IFACE_(
       "Move the mouse to change the dyntopo detail size. LMB: confirm size, ESC/RMB: cancel, "
       "SHIFT: precision mode, CTRL: sample detail size");
   ED_workspace_status_text(C, status_str);

@@ -686,7 +686,7 @@ def fbx_data_camera_elements(root, cam_obj, scene_data):
     elem_props_template_set(tmpl, props, "p_double", b"SafeAreaAspectRatio", aspect)
     # Depth of field and Focus distance.
     elem_props_template_set(tmpl, props, "p_bool", b"UseDepthOfField", cam_data.dof.use_dof)
-    elem_props_template_set(tmpl, props, "p_double", b"FocusDistance", cam_data.dof.focus_distance * 1000 * gscale)
+    elem_props_template_set(tmpl, props, "p_double", b"FocusDistance", cam_data.dof.focus_distance * gscale)
     # Default to perspective camera.
     elem_props_template_set(tmpl, props, "p_enum", b"CameraProjectionType", 1 if cam_data.type == 'ORTHO' else 0)
     elem_props_template_set(tmpl, props, "p_double", b"OrthoZoom", cam_data.ortho_scale)
@@ -1162,11 +1162,13 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                 # All faces are smooth shaded, so we can get normals from the vertices.
                 normal_source = me.vertex_normals
                 normal_mapping = b"ByVertice"
-            case 'FACE':
-                # Either all faces or all edges are sharp, so we can get normals from the faces.
-                normal_source = me.polygon_normals
-                normal_mapping = b"ByPolygon"
-            case 'CORNER':
+            # External software support for b"ByPolygon" normals does not seem to be as widely available as the other
+            # mappings. See blender/blender#117470.
+            # case 'FACE':
+            #     # Either all faces or all edges are sharp, so we can get normals from the faces.
+            #     normal_source = me.polygon_normals
+            #     normal_mapping = b"ByPolygon"
+            case 'CORNER' | 'FACE':
                 # We have a mix of sharp/smooth edges/faces or custom split normals, so need to get normals from
                 # corners.
                 normal_source = me.corner_normals
@@ -2753,7 +2755,7 @@ def fbx_data_from_scene(scene, depsgraph, settings):
                 _cos = MESH_ATTRIBUTE_POSITION.to_ndarray(me.attributes)
             else:
                 _cos = np.empty(len(me.vertices) * 3, dtype=co_bl_dtype)
-                shape_key.data.foreach_get("co", _cos)
+                shape_key.points.foreach_get("co", _cos)
             return vcos_transformed(_cos, geom_mat_co, co_fbx_dtype)
 
         for shape in me.shape_keys.key_blocks[1:]:
@@ -3108,9 +3110,9 @@ def fbx_header_elements(root, scene_data, time=None):
     app_name = "Blender (stable FBX IO)"
     app_ver = bpy.app.version_string
 
-    import addon_utils
-    import sys
-    addon_ver = addon_utils.module_bl_info(sys.modules[__package__])['version']
+    from . import bl_info
+    addon_ver = bl_info["version"]
+    del bl_info
 
     # ##### Start of FBXHeaderExtension element.
     header_ext = elem_empty(root, b"FBXHeaderExtension")
@@ -3495,31 +3497,35 @@ def save_single(operator, scene, depsgraph, filepath="",
     # Generate some data about exported scene...
     scene_data = fbx_data_from_scene(scene, depsgraph, settings)
 
-    root = elem_empty(None, b"")  # Root element has no id, as it is not saved per se!
+    # Enable multithreaded array compression in FBXElem and wait until all threads are done before exiting the context
+    # manager.
+    with encode_bin.FBXElem.enable_multithreading_cm():
+        # Writing elements into an FBX hierarchy can now begin.
+        root = elem_empty(None, b"")  # Root element has no id, as it is not saved per se!
 
-    # Mostly FBXHeaderExtension and GlobalSettings.
-    fbx_header_elements(root, scene_data)
+        # Mostly FBXHeaderExtension and GlobalSettings.
+        fbx_header_elements(root, scene_data)
 
-    # Documents and References are pretty much void currently.
-    fbx_documents_elements(root, scene_data)
-    fbx_references_elements(root, scene_data)
+        # Documents and References are pretty much void currently.
+        fbx_documents_elements(root, scene_data)
+        fbx_references_elements(root, scene_data)
 
-    # Templates definitions.
-    fbx_definitions_elements(root, scene_data)
+        # Templates definitions.
+        fbx_definitions_elements(root, scene_data)
 
-    # Actual data.
-    fbx_objects_elements(root, scene_data)
+        # Actual data.
+        fbx_objects_elements(root, scene_data)
 
-    # How data are inter-connected.
-    fbx_connections_elements(root, scene_data)
+        # How data are inter-connected.
+        fbx_connections_elements(root, scene_data)
 
-    # Animation.
-    fbx_takes_elements(root, scene_data)
+        # Animation.
+        fbx_takes_elements(root, scene_data)
 
-    # Cleanup!
-    fbx_scene_data_cleanup(scene_data)
+        # Cleanup!
+        fbx_scene_data_cleanup(scene_data)
 
-    # And we are down, we can write the whole thing!
+    # And we are done, all multithreaded tasks are complete, and we can write the whole thing to file!
     encode_bin.write(filepath, root, FBX_VERSION)
 
     # Clear cached ObjectWrappers!

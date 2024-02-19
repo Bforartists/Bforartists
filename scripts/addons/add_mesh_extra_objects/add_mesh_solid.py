@@ -16,39 +16,15 @@ from bpy.props import (
 from bpy_extras.object_utils import object_data_add
 
 
-# this function creates a chain of quads and, when necessary, a remaining tri
-# for each polygon created in this script. be aware though, that this function
-# assumes each polygon is convex.
-#  poly: list of faces, or a single face, like those
-#        needed for mesh.from_pydata.
-#  returns the tessellated faces.
-
-def createPolys(poly):
-    # check for faces
-    if len(poly) == 0:
-        return []
-    # one or more faces
-    if type(poly[0]) == type(1):
-        poly = [poly]  # if only one,  make it a list of one face
-    faces = []
-    for i in poly:
-        L = len(i)
-        # let all faces of 3 or 4 verts be
-        if L < 5:
-            faces.append(i)
-        # split all polygons in half and bridge the two halves
-        else:
-            f = [[i[x], i[x + 1], i[L - 2 - x], i[L - 1 - x]] for x in range(L // 2 - 1)]
-            faces.extend(f)
-            if L & 1 == 1:
-                faces.append([i[L // 2 - 1 + x] for x in [0, 1, 2]])
-    return faces
-
-
 # function to make the reduce function work as a workaround to sum a list of vectors
 
 def vSum(list):
     return reduce(lambda a, b: a + b, list)
+
+
+# Get a copy of the input faces, but with the normals flipped by reversing the order of the vertex indices of each face.
+def flippedFaceNormals(faces):
+    return [list(reversed(vertexIndices)) for vertexIndices in faces]
 
 
 # creates the 5 platonic solids as a base for the rest
@@ -146,7 +122,8 @@ def createSolid(plato, vtrunc, etrunc, dual, snub):
             vInput, fInput = source(dualSource[plato])
             supposedSize = vSum(vInput[i] for i in fInput[0]).length / len(fInput[0])
             vInput = [-i * supposedSize for i in vInput]            # mirror it
-            return vInput, fInput
+            # Inverting vInput turns the mesh inside-out, so normals need to be flipped.
+            return vInput, flippedFaceNormals(fInput)
         return source(plato)
     elif 0 < vtrunc <= 0.5:  # simple truncation of the source
         vInput, fInput = source(plato)
@@ -158,10 +135,9 @@ def createSolid(plato, vtrunc, etrunc, dual, snub):
         if vtrunc == 0:    # no truncation needed
             if dual:
                 vInput, fInput = source(plato)
-                vInput = [i * supposedSize for i in vInput]
-                return vInput, fInput
             vInput = [-i * supposedSize for i in vInput]
-            return vInput, fInput
+            # Inverting vInput turns the mesh inside-out, so normals need to be flipped.
+            return vInput, flippedFaceNormals(fInput)
 
     # generate connection database
     vDict = [{} for i in vInput]
@@ -269,6 +245,10 @@ def createSolid(plato, vtrunc, etrunc, dual, snub):
     if supposedSize and not dual:                    # this to make the vtrunc > 1 work
         supposedSize *= len(fvOutput[0]) / vSum(vOutput[i] for i in fvOutput[0]).length
         vOutput = [-i * supposedSize for i in vOutput]
+        # Inverting vOutput turns the mesh inside-out, so normals need to be flipped.
+        flipNormals = True
+    else:
+        flipNormals = False
 
     # create new faces by replacing old vert IDs by newly generated verts
     ffOutput = [[] for i in fInput]
@@ -287,7 +267,10 @@ def createSolid(plato, vtrunc, etrunc, dual, snub):
                 ffOutput[x].append(fvOutput[i][vData[i][3].index(x) - 1])
 
     if not dual:
-        return vOutput, fvOutput + feOutput + ffOutput
+        fOutput = fvOutput + feOutput + ffOutput
+        if flipNormals:
+            fOutput = flippedFaceNormals(fOutput)
+        return vOutput, fOutput
     else:
         # do the same procedure as above,  only now on the generated mesh
         # generate connection database
@@ -488,9 +471,6 @@ class Solids(bpy.types.Operator):
                                    self.dual,
                                    self.snub
                                    )
-
-        # turn n-gons in quads and tri's
-        faces = createPolys(faces)
 
         # resize to normal size, or if keepSize, make sure all verts are of length 'size'
         if self.keepSize:

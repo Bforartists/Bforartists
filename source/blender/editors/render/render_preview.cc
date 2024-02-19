@@ -8,6 +8,7 @@
 
 /* global includes */
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -23,11 +24,10 @@
 #include "BLI_blenlib.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_rotation.h"
+#include "BLI_time.h"
 #include "BLI_utildefines.h"
 
-#include "PIL_time.h"
-
-#include "BLO_readfile.h"
+#include "BLO_readfile.hh"
 
 #include "DNA_brush_types.h"
 #include "DNA_camera_types.h"
@@ -43,17 +43,17 @@
 #include "DNA_world_types.h"
 
 #include "BKE_animsys.h"
-#include "BKE_appdir.h"
+#include "BKE_appdir.hh"
 #include "BKE_armature.hh"
 #include "BKE_brush.hh"
-#include "BKE_colortools.h"
+#include "BKE_colortools.hh"
 #include "BKE_context.hh"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_icons.h"
 #include "BKE_idprop.h"
 #include "BKE_image.h"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_light.h"
 #include "BKE_main.hh"
 #include "BKE_material.h"
@@ -61,7 +61,7 @@
 #include "BKE_object.hh"
 #include "BKE_pose_backup.h"
 #include "BKE_preview_image.hh"
-#include "BKE_scene.h"
+#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_texture.h"
 #include "BKE_world.h"
@@ -72,9 +72,9 @@
 #include "DEG_depsgraph_build.hh"
 #include "DEG_depsgraph_query.hh"
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
-#include "IMB_thumbs.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
+#include "IMB_thumbs.hh"
 
 #include "BIF_glutil.hh"
 
@@ -427,7 +427,8 @@ static const char *preview_world_name(const Scene *sce,
    * this approximation.
    */
   if (id_type == ID_MA && pr_method == PR_ICON_RENDER &&
-      !render_engine_supports_ray_visibility(sce)) {
+      !render_engine_supports_ray_visibility(sce))
+  {
     return "WorldFloor";
   }
   return "World";
@@ -890,6 +891,7 @@ static void object_preview_render(IconPreview *preview, IconPreviewSize *preview
       R_ALPHAPREMUL,
       nullptr,
       nullptr,
+      nullptr,
       err_out);
   /* TODO: color-management? */
 
@@ -1023,6 +1025,7 @@ static void action_preview_render(IconPreview *preview, IconPreviewSize *preview
                                                       IB_rect,
                                                       V3D_OFSDRAW_NONE,
                                                       R_ADDSKY,
+                                                      nullptr,
                                                       nullptr,
                                                       nullptr,
                                                       err_out);
@@ -1329,10 +1332,11 @@ static ImBuf *icon_preview_imbuf_from_brush(Brush *brush)
 
     /* Otherwise lets try to find it in other directories. */
     if (!(brush->icon_imbuf)) {
-      const char *brushicons_dir = BKE_appdir_folder_id(BLENDER_DATAFILES, "brushicons");
+      const std::optional<std::string> brushicons_dir = BKE_appdir_folder_id(BLENDER_DATAFILES,
+                                                                             "brushicons");
       /* Expected to be found, but don't crash if it's not. */
-      if (brushicons_dir) {
-        BLI_path_join(filepath, sizeof(filepath), brushicons_dir, brush->icon_filepath);
+      if (brushicons_dir.has_value()) {
+        BLI_path_join(filepath, sizeof(filepath), brushicons_dir->c_str(), brush->icon_filepath);
 
         /* Use default color spaces. */
         brush->icon_imbuf = IMB_loadiffname(filepath, flags, nullptr);
@@ -1381,8 +1385,8 @@ static void icon_copy_rect(ImBuf *ibuf, uint w, uint h, uint *rect)
   }
 
   /* Scaling down must never assign zero width/height, see: #89868. */
-  ex = MAX2(1, short(scaledx));
-  ey = MAX2(1, short(scaledy));
+  ex = std::max(short(1), short(scaledx));
+  ey = std::max(short(1), short(scaledy));
 
   dx = (w - ex) / 2;
   dy = (h - ey) / 2;
@@ -1449,7 +1453,8 @@ static void icon_preview_startjob(void *customdata, bool *stop, bool *do_update)
      * only get existing `ibuf`. */
     ibuf = BKE_image_acquire_ibuf(ima, &iuser, nullptr);
     if (ibuf == nullptr ||
-        (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.data == nullptr)) {
+        (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.data == nullptr))
+    {
       BKE_image_release_ibuf(ima, ibuf, nullptr);
       return;
     }

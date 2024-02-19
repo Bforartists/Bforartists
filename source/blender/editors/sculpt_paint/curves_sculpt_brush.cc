@@ -13,7 +13,7 @@
 #include "BKE_context.hh"
 #include "BKE_curves.hh"
 #include "BKE_object.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "ED_view3d.hh"
 
@@ -24,7 +24,7 @@
 
 #include "DEG_depsgraph_query.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "GEO_curve_constraints.hh"
 
@@ -193,7 +193,7 @@ std::optional<CurvesBrush3D> sample_curves_3d_brush(const Depsgraph &depsgraph,
 
     Mesh *surface_eval = BKE_object_get_evaluated_mesh(surface_object_eval);
     BVHTreeFromMesh surface_bvh;
-    BKE_bvhtree_from_mesh_get(&surface_bvh, surface_eval, BVHTREE_FROM_LOOPTRIS, 2);
+    BKE_bvhtree_from_mesh_get(&surface_bvh, surface_eval, BVHTREE_FROM_CORNER_TRIS, 2);
     BLI_SCOPED_DEFER([&]() { free_bvhtree_from_mesh(&surface_bvh); });
 
     const float3 center_ray_start_su = math::transform_point(world_to_surface_mat,
@@ -403,34 +403,32 @@ CurvesSculptCommonContext::CurvesSculptCommonContext(const bContext &C)
 
 void report_empty_original_surface(ReportList *reports)
 {
-  BKE_report(reports, RPT_WARNING, TIP_("Original surface mesh is empty"));
+  BKE_report(reports, RPT_WARNING, "Original surface mesh is empty");
 }
 
 void report_empty_evaluated_surface(ReportList *reports)
 {
-  BKE_report(reports, RPT_WARNING, TIP_("Evaluated surface mesh is empty"));
+  BKE_report(reports, RPT_WARNING, "Evaluated surface mesh is empty");
 }
 
 void report_missing_surface(ReportList *reports)
 {
-  BKE_report(reports, RPT_WARNING, TIP_("Missing surface mesh"));
+  BKE_report(reports, RPT_WARNING, "Missing surface mesh");
 }
 
 void report_missing_uv_map_on_original_surface(ReportList *reports)
 {
-  BKE_report(
-      reports, RPT_WARNING, TIP_("Missing UV map for attaching curves on original surface"));
+  BKE_report(reports, RPT_WARNING, "Missing UV map for attaching curves on original surface");
 }
 
 void report_missing_uv_map_on_evaluated_surface(ReportList *reports)
 {
-  BKE_report(
-      reports, RPT_WARNING, TIP_("Missing UV map for attaching curves on evaluated surface"));
+  BKE_report(reports, RPT_WARNING, "Missing UV map for attaching curves on evaluated surface");
 }
 
 void report_invalid_uv_map(ReportList *reports)
 {
-  BKE_report(reports, RPT_WARNING, TIP_("Invalid UV map: UV islands must not overlap"));
+  BKE_report(reports, RPT_WARNING, "Invalid UV map: UV islands must not overlap");
 }
 
 void CurvesConstraintSolver::initialize(const bke::CurvesGeometry &curves,

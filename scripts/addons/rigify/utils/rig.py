@@ -16,7 +16,7 @@ from bpy.types import bpy_prop_array, bpy_prop_collection  # noqa
 from idprop.types import IDPropertyArray
 from mathutils import Vector
 
-from .misc import ArmatureObject, wrap_list_to_lines, IdPropSequence, find_index
+from .misc import ArmatureObject, wrap_list_to_lines, IdPropSequence, find_index, flatten_children
 
 if TYPE_CHECKING:
     from ..base_rig import BaseRig
@@ -138,7 +138,7 @@ def resolve_layer_names(layers):
     name_counts = defaultdict(int)
 
     for i, layer in enumerate(layers):
-        if name := layer.get("name").strip():
+        if name := layer.get("name", "").strip():
             name_counts[name] += 1
             ui_rows[layer.get("row", 1)].append(name)
 
@@ -193,7 +193,7 @@ def upgrade_metarig_layers(metarig: ArmatureObject):
     # Find layer collections
     coll_table = {}
 
-    for coll in arm.collections:
+    for coll in arm.collections_all:
         if m := re.match(r'^Layer (\d+)', coll.name):
             coll_table[int(m[1]) - 1] = coll
 
@@ -229,7 +229,7 @@ def upgrade_metarig_layers(metarig: ArmatureObject):
                     coll.name = new_name
 
             if coll:
-                coll_idx = find_index(arm.collections, coll)
+                coll_idx = find_index(arm.collections_all, coll)
                 arm.collections.move(coll_idx, cur_idx)
                 cur_idx += 1
 
@@ -249,7 +249,7 @@ def upgrade_metarig_layers(metarig: ArmatureObject):
     root_bcoll = coll_table.get(28)
 
     used_rows = set()
-    for bcoll in arm.collections:
+    for bcoll in arm.collections_all:
         if bcoll != root_bcoll and bcoll.rigify_ui_row > 0:
             used_rows.add(bcoll.rigify_ui_row)
 
@@ -258,7 +258,7 @@ def upgrade_metarig_layers(metarig: ArmatureObject):
         if i in used_rows:
             row_map[i] = len(row_map) + 1
 
-    for bcoll in arm.collections:
+    for bcoll in arm.collections_all:
         if bcoll == root_bcoll:
             bcoll.rigify_ui_row = len(row_map) + 3
         elif bcoll.rigify_ui_row > 0:
@@ -535,13 +535,13 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
 
         code.append('\n    bone_collections = {}')
 
-        code.append('\n    for bcoll in list(arm.collections):'
+        code.append('\n    for bcoll in list(arm.collections_all):'
                     '\n        arm.collections.remove(bcoll)\n')
 
         args = ', '.join(f'{k}={repr(v)}' for k, v in collection_attrs.items())
 
-        code.append(f"    def add_bone_collection(name, *, {args}):")
-        code.append(f"        new_bcoll = arm.collections.new(name)")
+        code.append(f"    def add_bone_collection(name, *, parent=None, {args}):")
+        code.append(f"        new_bcoll = arm.collections.new(name, parent=bone_collections.get(parent))")
         for k, _v in collection_attrs.items():
             code.append(f"        new_bcoll.rigify_{k} = {k}")
         code.append("        bone_collections[name] = new_bcoll")
@@ -559,8 +559,10 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
                 ref_list.add().set_collection(bone_collections[name])
 """)
 
-        for i, bcoll in enumerate(arm.collections):
+        for bcoll in flatten_children(arm.collections):
             args = [repr(bcoll.name)]
+            if bcoll.parent:
+                args.append(f"parent={bcoll.parent.name!r}")
             for k, v in collection_attrs.items():
                 value = getattr(bcoll, "rigify_" + k)
                 if value != v:
