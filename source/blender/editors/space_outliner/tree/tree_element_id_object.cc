@@ -19,9 +19,9 @@
 #include "DNA_particle_types.h"
 #include "DNA_shader_fx_types.h"
 
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "../outliner_intern.hh"
 

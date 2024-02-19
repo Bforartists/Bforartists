@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "BKE_attribute.h"
 #include "BKE_grease_pencil.hh"
 
 #include "BLI_generic_span.hh"
@@ -16,6 +15,8 @@
 #include "BLI_math_matrix_types.hh"
 
 #include "ED_keyframes_edit.hh"
+
+#include "WM_api.hh"
 
 struct bContext;
 struct Main;
@@ -26,6 +27,11 @@ struct ToolSettings;
 struct Scene;
 struct ViewDepths;
 struct View3D;
+namespace blender {
+namespace bke {
+enum class AttrDomain : int8_t;
+}
+}  // namespace blender
 
 enum {
   LAYER_REORDER_ABOVE,
@@ -48,7 +54,7 @@ void ED_keymap_grease_pencil(wmKeyConfig *keyconf);
 /**
  * Get the selection mode for Grease Pencil selection operators: point, stroke, segment.
  */
-eAttrDomain ED_grease_pencil_selection_domain_get(const ToolSettings *tool_settings);
+blender::bke::AttrDomain ED_grease_pencil_selection_domain_get(const ToolSettings *tool_settings);
 
 /** \} */
 
@@ -64,7 +70,6 @@ class DrawingPlacement {
 
   DrawingPlacementDepth depth_;
   DrawingPlacementPlane plane_;
-  bke::greasepencil::DrawingTransforms transforms_;
   ViewDepths *depth_cache_ = nullptr;
   float surface_offset_;
 
@@ -72,12 +77,16 @@ class DrawingPlacement {
   float3 placement_normal_;
   float4 placement_plane_;
 
+  float4x4 layer_space_to_world_space_;
+  float4x4 world_space_to_layer_space_;
+
  public:
   DrawingPlacement() = default;
   DrawingPlacement(const Scene &scene,
                    const ARegion &region,
                    const View3D &view3d,
-                   const Object &object);
+                   const Object &eval_object,
+                   const bke::greasepencil::Layer &layer);
   ~DrawingPlacement();
 
  public:
@@ -148,8 +157,6 @@ bool has_any_frame_selected(const bke::greasepencil::Layer &layer);
 void create_keyframe_edit_data_selected_frames_list(KeyframeEditData *ked,
                                                     const bke::greasepencil::Layer &layer);
 
-float brush_radius_world_space(bContext &C, int x, int y);
-
 bool active_grease_pencil_poll(bContext *C);
 bool editable_grease_pencil_poll(bContext *C);
 bool editable_grease_pencil_point_selection_poll(bContext *C);
@@ -167,18 +174,24 @@ struct MutableDrawingInfo {
 };
 Array<MutableDrawingInfo> retrieve_editable_drawings(const Scene &scene,
                                                      GreasePencil &grease_pencil);
+Array<MutableDrawingInfo> retrieve_editable_drawings_from_layer(
+    const Scene &scene, GreasePencil &grease_pencil, const bke::greasepencil::Layer &layer);
 Array<DrawingInfo> retrieve_visible_drawings(const Scene &scene,
                                              const GreasePencil &grease_pencil);
 
 IndexMask retrieve_editable_strokes(Object &grease_pencil_object,
                                     const bke::greasepencil::Drawing &drawing,
                                     IndexMaskMemory &memory);
+IndexMask retrieve_editable_strokes_by_material(Object &object,
+                                                const bke::greasepencil::Drawing &drawing,
+                                                const int mat_i,
+                                                IndexMaskMemory &memory);
 IndexMask retrieve_editable_points(Object &object,
                                    const bke::greasepencil::Drawing &drawing,
                                    IndexMaskMemory &memory);
 IndexMask retrieve_editable_elements(Object &object,
                                      const bke::greasepencil::Drawing &drawing,
-                                     eAttrDomain selection_domain,
+                                     bke::AttrDomain selection_domain,
                                      IndexMaskMemory &memory);
 
 IndexMask retrieve_visible_strokes(Object &grease_pencil_object,
@@ -193,20 +206,12 @@ IndexMask retrieve_editable_and_selected_points(Object &object,
                                                 IndexMaskMemory &memory);
 IndexMask retrieve_editable_and_selected_elements(Object &object,
                                                   const bke::greasepencil::Drawing &drawing,
-                                                  eAttrDomain selection_domain,
+                                                  bke::AttrDomain selection_domain,
                                                   IndexMaskMemory &memory);
 
 void create_blank(Main &bmain, Object &object, int frame_number);
 void create_stroke(Main &bmain, Object &object, float4x4 matrix, int frame_number);
 void create_suzanne(Main &bmain, Object &object, float4x4 matrix, int frame_number);
-
-void gaussian_blur_1D(const GSpan src,
-                      int64_t iterations,
-                      float influence,
-                      bool smooth_ends,
-                      bool keep_shape,
-                      bool is_cyclic,
-                      GMutableSpan dst);
 
 int64_t ramer_douglas_peucker_simplify(IndexRange range,
                                        float epsilon,

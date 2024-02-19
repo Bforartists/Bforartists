@@ -28,7 +28,7 @@
 #include "ED_screen.hh"
 #include "ED_undo.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "UI_interface.hh"
 #include "UI_resources.hh"
@@ -245,8 +245,6 @@ void node_geometry_add_attribute_search_button(const bContext & /*C*/,
                                  &socket_ptr,
                                  "default_value",
                                  0,
-                                 0.0f,
-                                 0.0f,
                                  0.0f,
                                  0.0f,
                                  "");

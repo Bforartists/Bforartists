@@ -1103,27 +1103,33 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        col = layout.column()
+        col = layout.column() 
         mesh = context.active_object.data
-
+        
         row = col.row(align=True)
-        row.prop(mesh, "remesh_voxel_size")
-        props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
-        props.mode = 'VOXEL'
-        col.prop(mesh, "remesh_voxel_adaptivity")
-        col.use_property_split = False
-        col.prop(mesh, "use_remesh_fix_poles")
+        row.prop(mesh, "remesh_mode", text="Mode", expand=True)
+        
+        if mesh.remesh_mode == 'VOXEL':
+            row = col.row(align=True)
+            row.prop(mesh, "remesh_voxel_size")
+            props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
+            props.mode = 'VOXEL'
+            col.prop(mesh, "remesh_voxel_adaptivity")
+            col.use_property_split = False
+            col.prop(mesh, "use_remesh_fix_poles")
 
-        col.label(text = "Preserve")
+            col.label(text = "Preserve")
 
-        row = col.row()
-        row.separator()
-        row.prop(mesh, "use_remesh_preserve_volume", text="Volume")
-        row = col.row()
-        row.separator()
-        row.prop(mesh, "use_remesh_preserve_attributes", text="Attributes")
+            row = col.row()
+            row.separator()
+            row.prop(mesh, "use_remesh_preserve_volume", text="Volume")
+            row = col.row()
+            row.separator()
+            row.prop(mesh, "use_remesh_preserve_attributes", text="Attributes")
 
-        layout.operator("object.voxel_remesh", text="Voxel Remesh")
+            layout.operator("object.voxel_remesh", text="Voxel Remesh")
+        else:
+            col.operator("object.quadriflow_remesh", text="QuadriFlow Remesh")
 
 
 # TODO, move to space_view3d.py

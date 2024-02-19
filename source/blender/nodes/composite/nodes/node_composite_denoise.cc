@@ -59,12 +59,12 @@ static void node_composit_init_denonise(bNodeTree * /*ntree*/, bNode *node)
 static void node_composit_buts_denoise(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 {
 #ifndef WITH_OPENIMAGEDENOISE
-  uiItemL(layout, IFACE_("Disabled, built without OpenImageDenoise"), ICON_ERROR);
+  uiItemL(layout, RPT_("Disabled, built without OpenImageDenoise"), ICON_ERROR);
 #else
   /* Always supported through Accelerate framework BNNS on macOS. */
 #  ifndef __APPLE__
-  if (!BLI_cpu_support_sse41()) {
-    uiItemL(layout, IFACE_("Disabled, CPU with SSE4.1 is required"), ICON_ERROR);
+  if (!BLI_cpu_support_sse42()) {
+    uiItemL(layout, RPT_("Disabled, CPU with SSE4.2 is required"), ICON_ERROR);
   }
 #  endif
 #endif
@@ -206,7 +206,7 @@ class DenoiseOperation : public NodeOperation {
 #  ifdef __APPLE__
     return true;
 #  else
-    return BLI_cpu_support_sse41();
+    return BLI_cpu_support_sse42();
 #  endif
 #endif
   }

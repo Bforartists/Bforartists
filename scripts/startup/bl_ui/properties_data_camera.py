@@ -362,14 +362,25 @@ class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):
                             sub.template_image_stereo_3d(bg.image.stereo_3d_format)
 
                 elif bg.source == 'MOVIE_CLIP':
-                    box.prop(bg, "use_camera_clip", text="Active Clip")
+                    box.use_property_split = False
+
+                    row = box.row()
+                    row.use_property_split = False
+                    split = row.split(factor = 0.5)
+                    row = split.row()
+                    row.prop(bg, "use_camera_clip", text="Active Clip")
+                    row = split.row()
+                    if not bg.use_camera_clip:
+                        row.label(icon='DISCLOSURE_TRI_DOWN')
+                    else:
+                        row.label(icon='DISCLOSURE_TRI_RIGHT')
 
                     column = box.column()
-                    column.active = not bg.use_camera_clip
-                    column.template_ID(bg, "clip", open="clip.open")
+                    if not bg.use_camera_clip:
+                        column.template_ID(bg, "clip", open="clip.open")
 
-                    if bg.clip:
-                        column.template_movieclip(bg, "clip", compact=True)
+                        if bg.clip:
+                            column.template_movieclip(bg, "clip", compact=True)
 
                     if bg.use_camera_clip or bg.clip:
                         has_bg = True
@@ -377,11 +388,16 @@ class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):
                     column = box.column()
                     column.active = has_bg
                     column.prop(bg.clip_user, "use_render_undistorted")
+                    column.use_property_split = True
                     column.prop(bg.clip_user, "proxy_render_size")
 
                 if has_bg:
                     col = box.column()
-                    col.prop(bg, "alpha", slider=True)
+                    if bg.image is not None:
+                        col.use_property_split = False
+                        col.prop(bg.image, "use_view_as_render")
+                        col.use_property_split = True
+                    col.prop(bg, "alpha")
                     col.row().prop(bg, "display_depth", expand=True)
 
                     col.row().prop(bg, "frame_method", expand=True)
@@ -390,12 +406,18 @@ class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):
                     row.prop(bg, "offset")
 
                     col = box.column()
+                    col.use_property_split = True
                     col.prop(bg, "rotation")
                     col.prop(bg, "scale")
 
-                    col = box.column(heading="Flip", heading_ctxt=i18n_contexts.id_image)
-                    col.prop(bg, "use_flip_x", text="X")
-                    col.prop(bg, "use_flip_y", text="Y")
+                    col.label(text = "Flip")
+                    col.use_property_split = False
+                    row = col.row()
+                    row.separator()
+                    row.prop(bg, "use_flip_x", text="X")
+                    row = col.row()
+                    row.separator()
+                    row.prop(bg, "use_flip_y", text="Y")
 
 
 class DATA_PT_camera_display(CameraButtonsPanel, Panel):

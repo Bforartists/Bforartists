@@ -8,20 +8,18 @@
 
 #include <vector>
 
-#include "BKE_lib_query.h"
+#include "BKE_lib_query.hh"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_volume.hh"
-#include "BKE_volume_openvdb.hh"
+#include "BKE_volume_grid.hh"
 #include "BKE_volume_to_mesh.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "MOD_modifiertypes.hh"
 #include "MOD_ui_common.hh"
 
-#include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_modifier_types.h"
 #include "DNA_object_types.h"
 #include "DNA_screen_types.h"
@@ -164,16 +162,16 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
   const Volume *volume = static_cast<Volume *>(vmmd->object->data);
 
   BKE_volume_load(volume, DEG_get_bmain(ctx->depsgraph));
-  const VolumeGrid *volume_grid = BKE_volume_grid_find_for_read(volume, vmmd->grid_name);
+  const blender::bke::VolumeGridData *volume_grid = BKE_volume_grid_find(volume, vmmd->grid_name);
   if (volume_grid == nullptr) {
     BKE_modifier_set_error(ctx->object, md, "Cannot find '%s' grid", vmmd->grid_name);
     return create_empty_mesh(input_mesh);
   }
 
-  const openvdb::GridBase::ConstPtr local_grid = BKE_volume_grid_openvdb_for_read(volume,
-                                                                                  volume_grid);
+  blender::bke::VolumeTreeAccessToken tree_token;
+  const openvdb::GridBase &local_grid = volume_grid->grid(tree_token);
 
-  openvdb::math::Transform::Ptr transform = local_grid->transform().copy();
+  openvdb::math::Transform::Ptr transform = local_grid.transform().copy();
   transform->postMult(openvdb::Mat4d((float *)vmmd->object->object_to_world));
   openvdb::Mat4d imat = openvdb::Mat4d((float *)ctx->object->world_to_object);
   /* `imat` had floating point issues and wasn't affine. */
@@ -181,7 +179,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
   transform->postMult(imat);
 
   /* Create a temporary transformed grid. The underlying tree is shared. */
-  openvdb::GridBase::ConstPtr transformed_grid = local_grid->copyGridReplacingTransform(transform);
+  openvdb::GridBase::ConstPtr transformed_grid = local_grid.copyGridReplacingTransform(transform);
 
   bke::VolumeToMeshResolution resolution;
   resolution.mode = (VolumeToMeshResolutionMode)vmmd->resolution_mode;
@@ -241,4 +239,5 @@ ModifierTypeInfo modifierType_VolumeToMesh = {
     /*panel_register*/ panel_register,
     /*blend_write*/ nullptr,
     /*blend_read*/ nullptr,
+    /*foreach_cache*/ nullptr,
 };

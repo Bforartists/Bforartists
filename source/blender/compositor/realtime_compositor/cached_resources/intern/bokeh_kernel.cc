@@ -36,7 +36,7 @@ BokehKernelKey::BokehKernelKey(
 
 uint64_t BokehKernelKey::hash() const
 {
-  return get_default_hash_3(
+  return get_default_hash(
       size, size, get_default_hash(float4(rotation, roundness, catadioptric, lens_shift)));
 }
 
@@ -81,7 +81,7 @@ BokehKernel::BokehKernel(Context &context,
       size.y,
       1,
       Result::texture_format(ResultType::Color, context.get_precision()),
-      GPU_TEXTURE_USAGE_SHADER_READ,
+      GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_SHADER_WRITE,
       nullptr);
 
   GPUShader *shader = context.get_shader("compositor_bokeh_image");

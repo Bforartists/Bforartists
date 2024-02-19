@@ -13,7 +13,7 @@
 
 #include "DNA_userdef_types.h"
 
-#include "BLO_readfile.h"
+#include "BLO_userdef_default.h"
 
 /* clang-format off */
 
@@ -468,7 +468,7 @@ const bTheme U_theme_default = {
     .shade2 = RGBA(0x70707064),
     .grid = RGBA(0x5e5e5eff),
     .group = RGBA(0x4f6549ff),
-    .group_active = RGBA(0x87b17dff),
+    .group_active = RGBA(0x68845fff),
     .vertex = RGBA(0x000000ff),
     .vertex_select = RGBA(0xff8500ff),
     .cframe = RGBA(0x60c040ff),
@@ -530,7 +530,7 @@ const bTheme U_theme_default = {
     .info_operator_text = RGBA(0x000000ff),
   },
   .space_action = {
-    .back = RGBA(0x50505000),
+    .back = RGBA(0x40414100),
     .title = RGBA(0xffffffff),
     .text = RGBA(0xffffffff),
     .text_hi = RGBA(0xffffffff),
@@ -559,7 +559,7 @@ const bTheme U_theme_default = {
     .hilite = RGBA(0x60c04044),
     .grid = RGBA(0x000000ff),
     .group = RGBA(0x4f654937),
-    .group_active = RGBA(0x87b17d55),
+    .group_active = RGBA(0x68845f55),
     .strip = RGBA(0x0c0a0a80),
     .strip_select = RGBA(0xff8c00cc),
     .cframe = RGBA(0x6bd848ff),
@@ -569,16 +569,16 @@ const bTheme U_theme_default = {
     .ds_channel = RGBA(0x52606e24),
     .ds_subchannel = RGBA(0x7c899624),
     .ds_ipoline = RGBA(0x94e575cc),
-    .keytype_keyframe = RGBA(0xe8e8e8ff),
-    .keytype_extreme = RGBA(0xe8b3ccff),
-    .keytype_breakdown = RGBA(0xb3dbe8ff),
-    .keytype_jitter = RGBA(0x94e575ff),
-    .keytype_movehold = RGBA(0x5c5656ff),
+    .keytype_keyframe = RGBA(0xaa853eff),
+    .keytype_extreme = RGBA(0xc97768ff),
+    .keytype_breakdown = RGBA(0x5b8ba8ff),
+    .keytype_jitter = RGBA(0x689a56ff),
+    .keytype_movehold = RGBA(0x9d9794ff),
     .keytype_keyframe_select = RGBA(0xffbe32ff),
-    .keytype_extreme_select = RGBA(0xf28080ff),
-    .keytype_breakdown_select = RGBA(0x54bfedff),
-    .keytype_jitter_select = RGBA(0x61c042ff),
-    .keytype_movehold_select = RGBA(0xffaf23ff),
+    .keytype_extreme_select = RGBA(0xffa1a1ff),
+    .keytype_breakdown_select = RGBA(0x5aceffff),
+    .keytype_jitter_select = RGBA(0x87ff5cff),
+    .keytype_movehold_select = RGBA(0xffeff1ff),
     .keyborder = RGBA(0x000000ff),
     .keyborder_select = RGBA(0x000000ff),
     .vertex_size = 3,

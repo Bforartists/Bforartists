@@ -19,7 +19,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_main.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 #include "BKE_text.h"
 
 #include "DNA_text_types.h"
@@ -222,7 +222,9 @@ static bool python_script_exec(
         }
       }
     }
-    PyErr_Print();
+    if (!reports) {
+      PyErr_Print();
+    }
     PyErr_Clear();
   }
   else {

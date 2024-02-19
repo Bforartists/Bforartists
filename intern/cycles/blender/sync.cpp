@@ -187,7 +187,8 @@ void BlenderSync::sync_recalc(BL::Depsgraph &b_depsgraph, BL::SpaceView3D &b_v3d
           if (updated_geometry) {
             BL::Object::particle_systems_iterator b_psys;
             for (b_ob.particle_systems.begin(b_psys); b_psys != b_ob.particle_systems.end();
-                 ++b_psys) {
+                 ++b_psys)
+            {
               particle_system_map.set_recalc(b_ob);
             }
           }
@@ -405,7 +406,8 @@ void BlenderSync::sync_integrator(BL::ViewLayer &b_view_layer, bool background)
   /* Only use scrambling distance in the viewport if user wants to. */
   bool preview_scrambling_distance = get_boolean(cscene, "preview_scrambling_distance");
   if ((preview && !preview_scrambling_distance) ||
-      sampling_pattern == SAMPLING_PATTERN_SOBOL_BURLEY) {
+      sampling_pattern == SAMPLING_PATTERN_SOBOL_BURLEY)
+  {
     scrambling_distance = 1.0f;
   }
 
@@ -472,10 +474,12 @@ void BlenderSync::sync_integrator(BL::ViewLayer &b_view_layer, bool background)
    * is that the interface and the integrator are technically out of sync. */
   if (denoise_params.use) {
     integrator->set_denoiser_type(denoise_params.type);
+    integrator->set_denoise_use_gpu(denoise_params.use_gpu);
     integrator->set_denoise_start_sample(denoise_params.start_sample);
     integrator->set_use_denoise_pass_albedo(denoise_params.use_pass_albedo);
     integrator->set_use_denoise_pass_normal(denoise_params.use_pass_normal);
     integrator->set_denoiser_prefilter(denoise_params.prefilter);
+    integrator->set_denoiser_quality(denoise_params.quality);
   }
 
   /* UPDATE_NONE as we don't want to tag the integrator as modified (this was done by the
@@ -551,6 +555,8 @@ void BlenderSync::sync_view_layer(BL::ViewLayer &b_view_layer)
 
   /* Material override. */
   view_layer.material_override = b_view_layer.material_override();
+  /* World override. */
+  view_layer.world_override = b_view_layer.world_override();
 
   /* Sample override. */
   PointerRNA cscene = RNA_pointer_get(&b_scene.ptr, "cycles");
@@ -968,8 +974,12 @@ DenoiseParams BlenderSync::get_denoise_params(BL::Scene &b_scene,
     /* Final Render Denoising */
     denoising.use = get_boolean(cscene, "use_denoising");
     denoising.type = (DenoiserType)get_enum(cscene, "denoiser", DENOISER_NUM, DENOISER_NONE);
+    denoising.use_gpu = get_boolean(cscene, "denoising_use_gpu");
     denoising.prefilter = (DenoiserPrefilter)get_enum(
         cscene, "denoising_prefilter", DENOISER_PREFILTER_NUM, DENOISER_PREFILTER_NONE);
+    /* This currently only affects NVIDIA and the difference in quality is too small to justify
+     * exposing a setting to the user. */
+    denoising.quality = DENOISER_QUALITY_HIGH;
 
     input_passes = (DenoiserInput)get_enum(
         cscene, "denoising_input_passes", DENOISER_INPUT_NUM, DENOISER_INPUT_RGB_ALBEDO_NORMAL);
@@ -986,8 +996,12 @@ DenoiseParams BlenderSync::get_denoise_params(BL::Scene &b_scene,
     denoising.use = get_boolean(cscene, "use_preview_denoising");
     denoising.type = (DenoiserType)get_enum(
         cscene, "preview_denoiser", DENOISER_NUM, DENOISER_NONE);
+    denoising.use_gpu = get_boolean(cscene, "preview_denoising_use_gpu");
     denoising.prefilter = (DenoiserPrefilter)get_enum(
         cscene, "preview_denoising_prefilter", DENOISER_PREFILTER_NUM, DENOISER_PREFILTER_FAST);
+    /* This currently only affects NVIDIA and the difference in quality is too small to justify
+     * exposing a setting to the user. */
+    denoising.quality = DENOISER_QUALITY_BALANCED;
     denoising.start_sample = get_int(cscene, "preview_denoising_start_sample");
 
     input_passes = (DenoiserInput)get_enum(

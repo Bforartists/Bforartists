@@ -29,13 +29,13 @@
 #include "BKE_action.h"
 #include "BKE_armature.hh"
 #include "BKE_context.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_gpencil_modifier_legacy.h"
-#include "BKE_layer.h"
+#include "BKE_layer.hh"
 #include "BKE_main.hh"
 #include "BKE_object_deform.h"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -127,7 +127,8 @@ static int gpencil_bone_skinnable_cb(Object * /*ob*/, Bone *bone, void *datap)
   if (!(bone->flag & BONE_HIDDEN_P)) {
     if (!(bone->flag & BONE_NO_DEFORM)) {
       if (data->heat && data->armob->pose &&
-          BKE_pose_channel_find_name(data->armob->pose, bone->name)) {
+          BKE_pose_channel_find_name(data->armob->pose, bone->name))
+      {
         segments = bone->segments;
       }
       else {
@@ -200,14 +201,15 @@ static int dgroup_skinnable_cb(Object *ob, Bone *bone, void *datap)
   if (!(bone->flag & BONE_HIDDEN_P)) {
     if (!(bone->flag & BONE_NO_DEFORM)) {
       if (data->heat && data->armob->pose &&
-          BKE_pose_channel_find_name(data->armob->pose, bone->name)) {
+          BKE_pose_channel_find_name(data->armob->pose, bone->name))
+      {
         segments = bone->segments;
       }
       else {
         segments = 1;
       }
 
-      if (ANIM_bonecoll_is_visible(arm, bone)) {
+      if (ANIM_bone_in_visible_collection(arm, bone)) {
         if (!(defgroup = BKE_object_defgroup_find_name(ob, bone->name))) {
           defgroup = BKE_object_defgroup_add_name(ob, bone->name);
         }

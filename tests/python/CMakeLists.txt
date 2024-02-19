@@ -22,28 +22,18 @@ file(MAKE_DIRECTORY ${TEST_OUT_DIR}/blendfile_io)
 # endif()
 
 # Run Blender command with parameters.
-function(add_blender_test_impl testname exe)
+function(add_blender_test_impl testname envvars_list exe)
   add_test(
     NAME ${testname}
     COMMAND ${exe} ${ARGN}
   )
-
-  # Don't fail tests on leaks since these often happen in external libraries that we can't fix.
-  set(_lsan_options "exitcode=0")
-  if(DEFINED ENV{LSAN_OPTIONS})
-    set(_lsan_options "${_lsan_options}:$ENV{LSAN_OPTIONS}")
-  endif()
-  set_tests_properties(${testname} PROPERTIES ENVIRONMENT "LSAN_OPTIONS=${_lsan_options}")
-  unset(_lsan_options)
-
-  if(PLATFORM_ENV_INSTALL)
-    set_tests_properties(${testname} PROPERTIES ENVIRONMENT "${PLATFORM_ENV_INSTALL}")
-  endif()
+  blender_test_set_envvars("${testname}" "${envvars_list}")
 endfunction()
 
 function(add_blender_test testname)
   add_blender_test_impl(
     "${testname}"
+    ""
     "${TEST_BLENDER_EXE}"
     ${TEST_BLENDER_EXE_PARAMS}
     ${ARGN}
@@ -89,6 +79,7 @@ The location of weston, leave blank for the default location."
     list(REMOVE_ITEM EXE_PARAMS --background)
     add_blender_test_impl(
       "${testname}"
+      "${_blender_headless_env_vars}"
       "${TEST_PYTHON_EXE}"
       "${CMAKE_SOURCE_DIR}/tests/utils/blender_headless.py"
       # NOTE: attempting to maximize the window causes problems with a headless `weston`,
@@ -99,7 +90,6 @@ The location of weston, leave blank for the default location."
       "${EXE_PARAMS}"
       "${ARGN}"
     )
-    set_tests_properties(${testname} PROPERTIES ENVIRONMENT "${_blender_headless_env_vars}")
   endfunction()
 endif()
 
@@ -114,22 +104,12 @@ function(add_python_test testname testscript)
     COMMAND ${TEST_PYTHON_EXE} ${TEST_PYTHON_EXE_EXTRA_ARGS} ${testscript} ${ARGN}
     WORKING_DIRECTORY $<TARGET_FILE_DIR:bforartists>
   )
-
-  set(_lsan_options "exitcode=0")
-  if(DEFINED ENV{LSAN_OPTIONS})
-    set(_lsan_options "${_lsan_options}:$ENV{LSAN_OPTIONS}")
-  endif()
-  set_tests_properties(${testname} PROPERTIES ENVIRONMENT "LSAN_OPTIONS=${_lsan_options}")
-  unset(_lsan_options)
-
-  if(PLATFORM_ENV_INSTALL)
-    set_tests_properties(${testname} PROPERTIES ENVIRONMENT "${PLATFORM_ENV_INSTALL}")
-  endif()
+  blender_test_set_envvars("${testname}" "")
 endfunction()
 
 # Run Python render test.
 function(add_render_test testname testscript)
-  set(_args ${ARGN} -blender "${TEST_BLENDER_EXE}" -idiff "${OPENIMAGEIO_IDIFF}")
+  set(_args ${ARGN} -blender "${TEST_BLENDER_EXE}" -oiiotool "${OPENIMAGEIO_TOOL}")
   if(WITH_TESTS_BATCHED)
     list(APPEND _args --batch)
   endif()
@@ -285,6 +265,14 @@ add_blender_test(
   --run-all-tests
 )
 
+add_blender_test(
+  curves_extrude
+  ${TEST_SRC_DIR}/modeling/curves_extrude.blend
+  --python ${TEST_PYTHON_DIR}/curves_extrude.py
+  --
+  --run-all-tests
+)
+
 # ------------------------------------------------------------------------------
 # MODIFIERS TESTS
 add_blender_test(
@@ -379,6 +367,18 @@ add_blender_test(
 
 # ------------------------------------------------------------------------------
 # ANIMATION TESTS
+add_blender_test(
+  bl_animation_armature
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_animation_armature.py
+)
+
+add_blender_test(
+  bl_animation_drivers
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_animation_drivers.py
+  --
+  --testdir "${TEST_SRC_DIR}/animation"
+)
+
 add_blender_test(
   bl_animation_fcurves
   --python ${CMAKE_CURRENT_LIST_DIR}/bl_animation_fcurves.py
@@ -584,8 +584,8 @@ endif()
 
 # SVG Import
 if(TRUE)
-  if(NOT OPENIMAGEIO_IDIFF)
-    message(WARNING "Disabling SVG tests because OIIO idiff does not exist")
+  if(NOT OPENIMAGEIO_TOOL)
+    message(WARNING "Disabling SVG tests because OIIO oiiotool does not exist")
   else()
     set(_svg_render_tests complex path)
 
@@ -603,8 +603,8 @@ if(TRUE)
 endif()
 
 if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
-  if(NOT OPENIMAGEIO_IDIFF)
-    message(WARNING "Disabling render tests because OIIO idiff does not exist")
+  if(NOT OPENIMAGEIO_TOOL)
+    message(WARNING "Disabling render tests because OIIO oiiotool does not exist")
   elseif(NOT EXISTS "${TEST_SRC_DIR}/render/shader")
     message(WARNING "Disabling render tests because tests folder does not exist at ${TEST_SRC_DIR}")
   elseif(NOT WITH_COMPOSITOR_CPU)
@@ -694,65 +694,79 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
     endif()
 
     if(WITH_GPU_RENDER_TESTS)
+      list(APPEND gpu_render_tests ${render_tests})
+      list(FILTER gpu_render_tests EXCLUDE REGEX light_group|light_linking|shadow_catcher|denoise|guiding|reports)
+
+      set(_gpu_render_tests_arguments)
+      if(WITH_GPU_RENDER_TESTS_SILENT)
+        list(APPEND _gpu_render_tests_arguments --fail-silently)
+      endif()
+
       # Eevee
-      foreach(render_test ${render_tests})
+      foreach(render_test ${gpu_render_tests})
         add_render_test(
-          eevee_${render_test}_test
+          eevee_${render_test}
           ${CMAKE_CURRENT_LIST_DIR}/eevee_render_tests.py
           -testdir "${TEST_SRC_DIR}/render/${render_test}"
           -outdir "${TEST_OUT_DIR}/eevee"
+          ${_gpu_render_tests_arguments}
         )
       endforeach()
 
       # Eevee Next
-      foreach(render_test ${render_tests})
+      foreach(render_test ${gpu_render_tests})
         add_render_test(
-          eevee_next_${render_test}_test
+          eevee_next_${render_test}
           ${CMAKE_CURRENT_LIST_DIR}/eevee_next_render_tests.py
           -testdir "${TEST_SRC_DIR}/render/${render_test}"
           -outdir "${TEST_OUT_DIR}/eevee_next"
+          ${_gpu_render_tests_arguments}
         )
       endforeach()
 
-      foreach(render_test ${render_tests})
+      foreach(render_test ${gpu_render_tests})
         # Workbench
         add_render_test(
-          workbench_${render_test}_test
+          workbench_${render_test}
           ${CMAKE_CURRENT_LIST_DIR}/workbench_render_tests.py
           -testdir "${TEST_SRC_DIR}/render/${render_test}"
           -outdir "${TEST_OUT_DIR}/workbench"
+          ${_gpu_render_tests_arguments}
         )
       endforeach()
 
       if(WITH_HYDRA)
         # Hydra Storm
-        foreach(render_test ${render_tests})
+        foreach(render_test ${gpu_render_tests})
           add_render_test(
-            storm_hydra_${render_test}_test
+            storm_hydra_${render_test}
             ${CMAKE_CURRENT_LIST_DIR}/storm_render_tests.py
             -testdir "${TEST_SRC_DIR}/render/${render_test}"
             -outdir "${TEST_OUT_DIR}/storm_hydra"
             -export_method "HYDRA"
+            ${_gpu_render_tests_arguments}
           )
         endforeach()
 
-        foreach(render_test ${render_tests})
+        foreach(render_test ${gpu_render_tests})
           add_render_test(
-            storm_usd_${render_test}_test
+            storm_usd_${render_test}
             ${CMAKE_CURRENT_LIST_DIR}/storm_render_tests.py
             -testdir "${TEST_SRC_DIR}/render/${render_test}"
             -outdir "${TEST_OUT_DIR}/storm_usd"
             -export_method "USD"
+            ${_gpu_render_tests_arguments}
           )
         endforeach()
       endif()
+    unset(_gpu_render_tests_arguments)
     endif()
   endif()
 endif()
 
 if(WITH_COMPOSITOR_CPU)
-  if(NOT OPENIMAGEIO_IDIFF)
-    message(WARNING "Disabling Compositor CPU tests because OIIO idiff does not exist")
+  if(NOT OPENIMAGEIO_TOOL)
+    message(WARNING "Disabling Compositor CPU tests because OIIO oiiotool does not exist")
   else()
     set(compositor_tests
       color
@@ -771,7 +785,7 @@ if(WITH_COMPOSITOR_CPU)
 
     foreach(comp_test ${compositor_tests})
       add_render_test(
-        compositor_${comp_test}_cpu_test
+        compositor_${comp_test}_cpu
         ${CMAKE_CURRENT_LIST_DIR}/compositor_cpu_render_tests.py
         -testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
         -outdir "${TEST_OUT_DIR}/compositor_cpu"
@@ -783,8 +797,8 @@ endif()
 
 # NOTE: WITH_COMPOSITOR_CPU is needed for rendering.
 if(WITH_COMPOSITOR_REALTIME_TESTS AND WITH_COMPOSITOR_CPU)
-  if(NOT OPENIMAGEIO_IDIFF)
-    message(WARNING "Disabling realtime compositor tests because OIIO idiff does not exist")
+  if(NOT OPENIMAGEIO_TOOL)
+    message(WARNING "Disabling realtime compositor tests because OIIO oiiotool does not exist")
   else()
     set(compositor_tests
         color
@@ -803,7 +817,7 @@ if(WITH_COMPOSITOR_REALTIME_TESTS AND WITH_COMPOSITOR_CPU)
 
     foreach(comp_test ${compositor_tests})
       add_render_test(
-        compositor_${comp_test}_realtime_test
+        compositor_${comp_test}_realtime
         ${CMAKE_CURRENT_LIST_DIR}/compositor_realtime_render_tests.py
         -testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
         -outdir "${TEST_OUT_DIR}/compositor_realtime"
@@ -824,6 +838,7 @@ set(geo_node_tests
   mesh
   mesh/extrude
   mesh/split_edges
+  mesh/triangulate
   points
   texture
   utilities
@@ -848,7 +863,7 @@ foreach(geo_node_test ${geo_node_tests})
     foreach(file ${files})
       get_filename_component(filename ${file} NAME_WE)
       add_blender_test(
-        geo_node_${geo_node_test}_test_${filename}
+        geo_node_${geo_node_test}_${filename}
         ${file}
         --python ${TEST_PYTHON_DIR}/geo_node_test.py
       )
@@ -875,8 +890,8 @@ endif()
 
 
 if(WITH_GPU_DRAW_TESTS)
-  if(NOT OPENIMAGEIO_IDIFF)
-    message(STATUS "Disabling OpenGL draw tests because OIIO idiff does not exist")
+  if(NOT OPENIMAGEIO_TOOL)
+    message(STATUS "Disabling OpenGL draw tests because OIIO oiiotool does not exist")
   elseif(NOT EXISTS "${TEST_SRC_DIR}/opengl")
     message(STATUS "Disabling OpenGL draw tests because tests folder does not exist at ${TEST_SRC_DIR}")
   else()
@@ -910,7 +925,7 @@ if(WITH_ALEMBIC)
   get_filename_component(ALEMBIC_ROOT_DIR ${real_include_dir} DIRECTORY)
 
   add_python_test(
-    bf_io_alembic_export_tests
+    io_alembic_export_tests
     ${CMAKE_CURRENT_LIST_DIR}/alembic_export_tests.py
     --blender "${TEST_BLENDER_EXE}"
     --testdir "${TEST_SRC_DIR}/alembic"
@@ -927,13 +942,13 @@ endif()
 
 if(WITH_USD)
   add_blender_test(
-    bf_io_usd_export_test
+    io_usd_export
     --python ${CMAKE_CURRENT_LIST_DIR}/bl_usd_export_test.py
     --
     --testdir "${TEST_SRC_DIR}/usd"
   )
   add_blender_test(
-    bf_io_usd_import_test
+    io_usd_import
     --python ${CMAKE_CURRENT_LIST_DIR}/bl_usd_import_test.py
     --
     --testdir "${TEST_SRC_DIR}/usd"
@@ -949,8 +964,8 @@ if(WITH_CODEC_FFMPEG)
   )
 endif()
 
-if(NOT OPENIMAGEIO_IDIFF)
-  message(STATUS "Disabling ImBuf image format tests because OIIO idiff does not exist")
+if(NOT OPENIMAGEIO_TOOL)
+  message(STATUS "Disabling ImBuf image format tests because OIIO oiiotool does not exist")
 else()
   set(OPTIONAL_FORMATS "")
   if(WITH_IMAGE_CINEON)
@@ -967,22 +982,22 @@ else()
   endif()
 
   add_blender_test(
-    bf_imbuf_save
+    imbuf_save
     --python ${CMAKE_CURRENT_LIST_DIR}/bl_imbuf_save.py
     --
     -test_dir "${TEST_SRC_DIR}/imbuf_io"
     -output_dir "${TEST_OUT_DIR}/imbuf_io/save"
-    -idiff "${OPENIMAGEIO_IDIFF}"
+    -oiiotool "${OPENIMAGEIO_TOOL}"
     -optional_formats "${OPTIONAL_FORMATS}"
   )
 
   add_blender_test(
-    bf_imbuf_load
+    imbuf_load
     --python ${CMAKE_CURRENT_LIST_DIR}/bl_imbuf_load.py
     --
     -test_dir "${TEST_SRC_DIR}/imbuf_io"
     -output_dir "${TEST_OUT_DIR}/imbuf_io/load"
-    -idiff "${OPENIMAGEIO_IDIFF}"
+    -oiiotool "${OPENIMAGEIO_TOOL}"
     -optional_formats "${OPTIONAL_FORMATS}"
   )
 endif()
@@ -990,11 +1005,12 @@ endif()
 # ------------------------------------------------------------------------------
 # SEQUENCER RENDER TESTS
 
-if(NOT OPENIMAGEIO_IDIFF)
-  message(STATUS "Disabling sequencer render tests because OIIO idiff does not exist")
+if(NOT OPENIMAGEIO_TOOL)
+  message(STATUS "Disabling sequencer render tests because OIIO oiiotool does not exist")
 else()
   set(render_tests
     transform
+    filter
   )
 
   foreach(render_test ${render_tests})
@@ -1033,7 +1049,7 @@ if(WITH_UI_TESTS)
   )
   foreach(ui_test ${_undo_tests})
     add_blender_test_headless(
-      "bf_ui_${ui_test}"
+      "ui_${ui_test}"
       --enable-event-simulate
       --python "${CMAKE_CURRENT_LIST_DIR}/ui_simulate/run_blender_setup.py"
       --

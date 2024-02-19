@@ -25,11 +25,7 @@ class FILEBROWSER_HT_header(Header):
         layout.separator_spacer()
 
         if params.asset_library_reference not in {'LOCAL', 'ESSENTIALS'}:
-            #BFA - WIP, still not ready.
-            '''
-            if not params.drop_collections_as_instances:
-                layout.row().prop(params, "drop_collections_at_origin", icon_only=True, icon="CENTER")
-            '''
+            layout.row().prop(params, "drop_collections_at_origin", icon_only=True, icon="CENTER") # BFA - drop collections at origin
             layout.row().prop(params, "drop_collections_as_instances", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE") #BFA - set collection to instance toggle
             row = layout.row(align=True) #BFA - change to make row of buttons
             row.prop(params, "import_method", text="", expand=True, icon_only=True,) #BFA - change to make row of buttons
@@ -67,7 +63,7 @@ class FILEBROWSER_HT_header(Header):
 
         if space_data.active_operator is None:
             # layout.template_header()
-            ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
+            ALL_MT_editormenu_filebrowser.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         if SpaceAssetInfo.is_asset_browser(space_data):
             ASSETBROWSER_MT_editor_menus.draw_collapsible(context, layout)
@@ -81,8 +77,8 @@ class FILEBROWSER_HT_header(Header):
             layout.template_running_jobs()
 
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
+# bfa - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_filebrowser(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -842,7 +838,7 @@ class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
 
         row = layout.row(align=True)
         row.prop(wm, "asset_path_dummy", text="Source", icon='CURRENT_FILE' if is_local_asset else 'NONE')
-        row.operator("asset.open_containing_blend_file", text="", icon='FILE_BLEND')
+        row.operator("asset.open_containing_blend_file", text="", icon='FILE_FOLDER')
 
         metadata = asset.metadata
         self.metadata_prop(layout, metadata, "description")
@@ -933,7 +929,7 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
 
 
 classes = (
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_filebrowser,
     FILEBROWSER_HT_header,
     FILEBROWSER_PT_display,
     FILEBROWSER_PT_filter,

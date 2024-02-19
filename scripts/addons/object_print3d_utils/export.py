@@ -106,13 +106,12 @@ def write_mesh(context, report_cb):
             addon_utils.enable(addon_id, default_set=False)
 
     if export_format == 'STL':
-        addon_ensure("io_mesh_stl")
         filepath = bpy.path.ensure_ext(filepath, ".stl")
-        ret = bpy.ops.export_mesh.stl(
+        ret = bpy.ops.wm.stl_export(
             filepath=filepath,
-            ascii=False,
-            use_mesh_modifiers=True,
-            use_selection=True,
+            ascii_format=False,
+            apply_modifiers=True,
+            export_selected_objects=True,
             global_scale=global_scale,
         )
     elif export_format == 'PLY':

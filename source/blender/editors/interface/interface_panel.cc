@@ -16,12 +16,11 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "PIL_time.h"
-
 #include "BLI_blenlib.h"
+#include "BLI_time.h"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DNA_screen_types.h"
 #include "DNA_userdef_types.h"
@@ -31,7 +30,7 @@
 
 #include "RNA_access.hh"
 
-#include "BLF_api.h"
+#include "BLF_api.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -85,6 +84,7 @@ enum uiPanelMouseState {
   PANEL_MOUSE_OUTSIDE,        /** Mouse is not in the panel. */
   PANEL_MOUSE_INSIDE_CONTENT, /** Mouse is in the actual panel content. */
   PANEL_MOUSE_INSIDE_HEADER,  /** Mouse is in the panel header. */
+  PANEL_MOUSE_INSIDE_LAYOUT_PANEL_HEADER /** Mouse is in the header of a layout panel. */,
 };
 
 enum uiHandlePanelState {
@@ -620,7 +620,8 @@ static void panels_collapse_all(ARegion *region, const Panel *from_panel)
     if (pt && from_pt && !(pt->flag & PANEL_TYPE_NO_HEADER)) {
       if (!pt->context[0] || !from_pt->context[0] || STREQ(pt->context, from_pt->context)) {
         if ((panel->flag & PNL_PIN) || !category || !pt->category[0] ||
-            STREQ(pt->category, category)) {
+            STREQ(pt->category, category))
+        {
           panel->flag |= PNL_CLOSED;
         }
       }
@@ -1094,12 +1095,12 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
     const float size_y = BLI_rcti_size_y(&widget_rect);
     GPU_blend(GPU_BLEND_ALPHA);
     UI_icon_draw_ex(widget_rect.xmin + size_y * 0.2f,
-                    widget_rect.ymin + size_y * 0.2f,
+                    widget_rect.ymin + size_y * (UI_panel_is_closed(panel) ? 0.17f : 0.14f),
                     /*bfa - tri buttons, not right and down arrows*/
                     UI_panel_is_closed(panel) ? ICON_DISCLOSURE_TRI_RIGHT :
                                                 ICON_DISCLOSURE_TRI_DOWN,
                     aspect * UI_INV_SCALE_FAC,
-                    0.7f,
+                    0.8f,
                     0.0f,
                     title_color,
                     false,
@@ -1158,7 +1159,13 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
   }
 }
 
-static void panel_draw_aligned_backdrop(const Panel *panel,
+static int layout_panel_y_offset()
+{
+  return UI_style_get_dpi()->panelspace;
+}
+
+static void panel_draw_aligned_backdrop(const ARegion *region,
+                                        const Panel *panel,
                                         const rcti *rect,
                                         const rcti *header_rect)
 {
@@ -1196,6 +1203,32 @@ static void panel_draw_aligned_backdrop(const Panel *panel,
     box_rect.ymin = rect->ymin;
     box_rect.ymax = rect->ymax;
     UI_draw_roundbox_4fv(&box_rect, true, radius, panel_backcolor);
+
+    /* Draw backdrops for layout panels. */
+    for (const LayoutPanelBody &body : panel->runtime->layout_panels.bodies) {
+      float subpanel_backcolor[4];
+      UI_GetThemeColor4fv(TH_PANEL_SUB_BACK, subpanel_backcolor);
+
+      rctf panel_blockspace = panel->runtime->block->rect;
+      panel_blockspace.ymax = panel->runtime->block->rect.ymax + body.end_y;
+      panel_blockspace.ymin = panel->runtime->block->rect.ymax + body.start_y;
+      BLI_rctf_translate(&panel_blockspace, 0, -layout_panel_y_offset());
+
+      /* If the layout panel is at the end of the root panel, it's bottom corners are rounded. */
+      const bool is_main_panel_end = panel_blockspace.ymin - panel->runtime->block->rect.ymin < 10;
+      if (is_main_panel_end) {
+        panel_blockspace.ymin = panel->runtime->block->rect.ymin;
+        UI_draw_roundbox_corner_set(UI_CNR_BOTTOM_RIGHT | UI_CNR_BOTTOM_LEFT);
+      }
+      else {
+        UI_draw_roundbox_corner_set(UI_CNR_NONE);
+      }
+
+      rcti panel_pixelspace = ui_to_pixelrect(region, panel->runtime->block, &panel_blockspace);
+      rctf panel_pixelspacef;
+      BLI_rctf_rcti_copy(&panel_pixelspacef, &panel_pixelspace);
+      UI_draw_roundbox_4fv(&panel_pixelspacef, true, radius, subpanel_backcolor);
+    }
   }
 
   /* Panel header backdrops for non sub-panels. */
@@ -1218,7 +1251,8 @@ static void panel_draw_aligned_backdrop(const Panel *panel,
   immUnbindProgram();
 }
 
-void ui_draw_aligned_panel(const uiStyle *style,
+void ui_draw_aligned_panel(const ARegion *region,
+                           const uiStyle *style,
                            const uiBlock *block,
                            const rcti *rect,
                            const bool show_pin,
@@ -1236,7 +1270,7 @@ void ui_draw_aligned_panel(const uiStyle *style,
   };
 
   if (show_background) {
-    panel_draw_aligned_backdrop(panel, rect, &header_rect);
+    panel_draw_aligned_backdrop(region, panel, rect, &header_rect);
   }
 
   /* Draw the widgets and text in the panel header. */
@@ -1767,7 +1801,7 @@ static void ui_do_animate(bContext *C, Panel *panel)
   uiHandlePanelData *data = static_cast<uiHandlePanelData *>(panel->activedata);
   ARegion *region = CTX_wm_region(C);
 
-  float fac = (PIL_check_seconds_timer() - data->starttime) / ANIMATION_TIME;
+  float fac = (BLI_check_seconds_timer() - data->starttime) / ANIMATION_TIME;
   fac = min_ff(sqrtf(fac), 1.0f);
 
   if (uiAlignPanelStep(region, fac, false)) {
@@ -1897,6 +1931,19 @@ static void ui_do_drag(const bContext *C, const wmEvent *event, Panel *panel)
 /** \name Region Level Panel Interaction
  * \{ */
 
+static LayoutPanelHeader *get_layout_panel_header_under_mouse(const Panel &panel, const int my)
+{
+  for (LayoutPanelHeader &header : panel.runtime->layout_panels.headers) {
+    if (IN_RANGE(float(my - panel.runtime->block->rect.ymax + layout_panel_y_offset()),
+                 header.start_y,
+                 header.end_y))
+    {
+      return &header;
+    }
+  }
+  return nullptr;
+}
+
 static uiPanelMouseState ui_panel_mouse_state_get(const uiBlock *block,
                                                   const Panel *panel,
                                                   const int mx,
@@ -1908,6 +1955,9 @@ static uiPanelMouseState ui_panel_mouse_state_get(const uiBlock *block,
 
   if (IN_RANGE(float(my), block->rect.ymax, block->rect.ymax + PNL_HEADER)) {
     return PANEL_MOUSE_INSIDE_HEADER;
+  }
+  if (get_layout_panel_header_under_mouse(*panel, my) != nullptr) {
+    return PANEL_MOUSE_INSIDE_LAYOUT_PANEL_HEADER;
   }
 
   if (!UI_panel_is_closed(panel)) {
@@ -1941,10 +1991,9 @@ static void ui_panel_drag_collapse(const bContext *C,
     float xy_b_block[2] = {float(xy_dst[0]), float(xy_dst[1])};
     Panel *panel = block->panel;
 
-    if (panel == nullptr || (panel->type && (panel->type->flag & PANEL_TYPE_NO_HEADER))) {
+    if (panel == nullptr) {
       continue;
     }
-    const int oldflag = panel->flag;
 
     /* Lock axis. */
     xy_b_block[0] = dragcol_data->xy_init[0];
@@ -1952,6 +2001,27 @@ static void ui_panel_drag_collapse(const bContext *C,
     /* Use cursor coords in block space. */
     ui_window_to_block_fl(region, block, &xy_a_block[0], &xy_a_block[1]);
     ui_window_to_block_fl(region, block, &xy_b_block[0], &xy_b_block[1]);
+
+    for (LayoutPanelHeader &header : panel->runtime->layout_panels.headers) {
+      rctf rect = block->rect;
+      rect.ymin = block->rect.ymax + header.start_y + layout_panel_y_offset();
+      rect.ymax = block->rect.ymax + header.end_y + layout_panel_y_offset();
+
+      if (BLI_rctf_isect_segment(&rect, xy_a_block, xy_b_block)) {
+        RNA_boolean_set(
+            &header.open_owner_ptr, header.open_prop_name.c_str(), !dragcol_data->was_first_open);
+        RNA_property_update(
+            const_cast<bContext *>(C),
+            &header.open_owner_ptr,
+            RNA_struct_find_property(&header.open_owner_ptr, header.open_prop_name.c_str()));
+        ED_region_tag_redraw(region);
+      }
+    }
+
+    if (panel->type && (panel->type->flag & PANEL_TYPE_NO_HEADER)) {
+      continue;
+    }
+    const int oldflag = panel->flag;
 
     /* Set up `rect` to match header size. */
     rctf rect = block->rect;
@@ -2025,6 +2095,35 @@ static void ui_panel_drag_collapse_handler_add(const bContext *C, const bool was
                           ui_panel_drag_collapse_handler_remove,
                           dragcol_data,
                           eWM_EventHandlerFlag(0));
+}
+
+static void ui_handle_layout_panel_header(
+    const bContext *C, const uiBlock *block, const int /*mx*/, const int my, const int event_type)
+{
+  Panel *panel = block->panel;
+  BLI_assert(panel->type != nullptr);
+
+  LayoutPanelHeader *header = get_layout_panel_header_under_mouse(*panel, my);
+  if (header == nullptr) {
+    return;
+  }
+
+  const bool is_open = RNA_boolean_get(&header->open_owner_ptr, header->open_prop_name.c_str());
+  if (is_open) {
+    RNA_boolean_set(&header->open_owner_ptr, header->open_prop_name.c_str(), false);
+  }
+  else {
+    RNA_boolean_set(&header->open_owner_ptr, header->open_prop_name.c_str(), true);
+  }
+  RNA_property_update(
+      const_cast<bContext *>(C),
+      &header->open_owner_ptr,
+      RNA_struct_find_property(&header->open_owner_ptr, header->open_prop_name.c_str()));
+  ED_region_tag_redraw(CTX_wm_region(C));
+
+  if (event_type == LEFTMOUSE) {
+    ui_panel_drag_collapse_handler_add(C, is_open);
+  }
 }
 
 /**
@@ -2180,7 +2279,8 @@ static void ui_panel_category_active_set(ARegion *region, const char *idname, bo
     while ((pc_act = pc_act_next)) {
       pc_act_next = pc_act->next;
       if (!BLI_findstring(
-              &region->type->paneltypes, pc_act->idname, offsetof(PanelType, category))) {
+              &region->type->paneltypes, pc_act->idname, offsetof(PanelType, category)))
+      {
         BLI_remlink(lb, pc_act);
         MEM_freeN(pc_act);
       }
@@ -2364,10 +2464,9 @@ int ui_handler_panel_region(bContext *C,
     if (panel == nullptr || panel->type == nullptr) {
       continue;
     }
-    /* We can't expand or collapse panels without headers, they would disappear. */
-    if (panel->type->flag & PANEL_TYPE_NO_HEADER) {
-      continue;
-    }
+    /* We can't expand or collapse panels without headers, they would disappear. Layout panels can
+     * be expanded and collapsed though. */
+    const bool has_panel_header = !(panel->type->flag & PANEL_TYPE_NO_HEADER);
 
     int mx = event->xy[0];
     int my = event->xy[1];
@@ -2375,7 +2474,7 @@ int ui_handler_panel_region(bContext *C,
 
     const uiPanelMouseState mouse_state = ui_panel_mouse_state_get(block, panel, mx, my);
 
-    if (mouse_state != PANEL_MOUSE_OUTSIDE) {
+    if (has_panel_header && mouse_state != PANEL_MOUSE_OUTSIDE) {
       /* Mark panels that have been interacted with so their expansion
        * doesn't reset when property search finishes. */
       SET_FLAG_FROM_TEST(panel->flag, UI_panel_is_closed(panel), PNL_CLOSED);
@@ -2384,7 +2483,8 @@ int ui_handler_panel_region(bContext *C,
       /* The panel collapse / expand key "A" is special as it takes priority over
        * active button handling. */
       if (event->type == EVT_AKEY &&
-          ((event->modifier & (KM_SHIFT | KM_CTRL | KM_ALT | KM_OSKEY)) == 0)) {
+          ((event->modifier & (KM_SHIFT | KM_CTRL | KM_ALT | KM_OSKEY)) == 0))
+      {
         retval = WM_UI_HANDLER_BREAK;
         ui_handle_panel_header(
             C, block, mx, event->type, event->modifier & KM_CTRL, event->modifier & KM_SHIFT);
@@ -2397,7 +2497,7 @@ int ui_handler_panel_region(bContext *C,
       continue;
     }
 
-    if (mouse_state == PANEL_MOUSE_INSIDE_HEADER) {
+    if (has_panel_header && mouse_state == PANEL_MOUSE_INSIDE_HEADER) {
       /* All mouse clicks inside panel headers should return in break. */
       if (ELEM(event->type, EVT_RETKEY, EVT_PADENTER, LEFTMOUSE)) {
         retval = WM_UI_HANDLER_BREAK;
@@ -2409,6 +2509,12 @@ int ui_handler_panel_region(bContext *C,
         ui_popup_context_menu_for_panel(C, region, block->panel);
       }
       break;
+    }
+    if (mouse_state == PANEL_MOUSE_INSIDE_LAYOUT_PANEL_HEADER) {
+      if (ELEM(event->type, EVT_RETKEY, EVT_PADENTER, LEFTMOUSE)) {
+        retval = WM_UI_HANDLER_BREAK;
+        ui_handle_layout_panel_header(C, block, mx, my, event->type);
+      }
     }
   }
 
@@ -2553,7 +2659,7 @@ static void panel_handle_data_ensure(const bContext *C,
   data->startofsy = panel->ofsy;
   data->start_cur_xmin = region->v2d.cur.xmin;
   data->start_cur_ymin = region->v2d.cur.ymin;
-  data->starttime = PIL_check_seconds_timer();
+  data->starttime = BLI_check_seconds_timer();
 }
 
 /**

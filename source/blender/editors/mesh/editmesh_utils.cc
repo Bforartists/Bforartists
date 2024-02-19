@@ -10,7 +10,6 @@
 
 #include "DNA_key_types.h"
 #include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 
 #include "BLI_array.hh"
@@ -25,12 +24,12 @@
 #include "BKE_customdata.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_editmesh_bvh.h"
-#include "BKE_global.h"
-#include "BKE_layer.h"
+#include "BKE_global.hh"
+#include "BKE_layer.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.hh"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "DEG_depsgraph.hh"
 
@@ -43,7 +42,9 @@
 #include "ED_uvedit.hh"
 #include "ED_view3d.hh"
 
-#include "mesh_intern.h" /* own include */
+#include "mesh_intern.hh" /* own include */
+
+using blender::Vector;
 
 /* -------------------------------------------------------------------- */
 /** \name Redo API
@@ -879,7 +880,7 @@ static bool loop_uv_match(BMLoop *loop,
  * \param visited: A set of edges to prevent recursing down the same edge multiple times.
  * \param cd_loop_uv_offset: The UV layer.
  * \return true if there are edges that fan between them that are seam-free.
- * */
+ */
 static bool seam_connected_recursive(BMEdge *edge,
                                      const float luv_anchor[2],
                                      const float luv_fan[2],
@@ -1787,12 +1788,10 @@ BMElem *EDBM_elem_from_index_any(BMEditMesh *em, uint index)
 int EDBM_elem_to_index_any_multi(
     const Scene *scene, ViewLayer *view_layer, BMEditMesh *em, BMElem *ele, int *r_object_index)
 {
-  uint bases_len;
   int elem_index = -1;
   *r_object_index = -1;
-  Base **bases = BKE_view_layer_array_from_bases_in_edit_mode(
-      scene, view_layer, nullptr, &bases_len);
-  for (uint base_index = 0; base_index < bases_len; base_index++) {
+  Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(scene, view_layer, nullptr);
+  for (const int base_index : bases.index_range()) {
     Base *base_iter = bases[base_index];
     if (BKE_editmesh_from_object(base_iter->object) == em) {
       *r_object_index = base_index;
@@ -1800,7 +1799,6 @@ int EDBM_elem_to_index_any_multi(
       break;
     }
   }
-  MEM_freeN(bases);
   return elem_index;
 }
 
@@ -1810,12 +1808,9 @@ BMElem *EDBM_elem_from_index_any_multi(const Scene *scene,
                                        uint elem_index,
                                        Object **r_obedit)
 {
-  uint bases_len;
-  Base **bases = BKE_view_layer_array_from_bases_in_edit_mode(
-      scene, view_layer, nullptr, &bases_len);
+  Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(scene, view_layer, nullptr);
   *r_obedit = nullptr;
-  Object *obedit = (object_index < bases_len) ? bases[object_index]->object : nullptr;
-  MEM_freeN(bases);
+  Object *obedit = (object_index < bases.size()) ? bases[object_index]->object : nullptr;
   if (obedit != nullptr) {
     BMEditMesh *em = BKE_editmesh_from_object(obedit);
     BMElem *ele = EDBM_elem_from_index_any(em, elem_index);
@@ -1943,7 +1938,8 @@ void EDBM_project_snap_verts(
     if (BM_elem_flag_test(eve, BM_ELEM_SELECT)) {
       float mval[2], co_proj[3];
       if (ED_view3d_project_float_object(region, eve->co, mval, V3D_PROJ_TEST_NOP) ==
-          V3D_PROJ_RET_OK) {
+          V3D_PROJ_RET_OK)
+      {
         SnapObjectParams params{};
         params.snap_target_select = target_op;
         params.edit_mode_type = SNAP_GEOM_FINAL;

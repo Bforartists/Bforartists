@@ -6,7 +6,7 @@
  * \ingroup gpu
  */
 
-#include "BKE_global.h"
+#include "BKE_global.hh"
 
 #include "DNA_userdef_types.h"
 
@@ -426,7 +426,8 @@ id<MTLComputePipelineState> gpu::MTLTexture::mtl_texture_update_impl(
     if (error) {
       /* Only exit out if genuine error and not warning. */
       if ([[error localizedDescription] rangeOfString:@"Compilation succeeded"].location ==
-          NSNotFound) {
+          NSNotFound)
+      {
         NSLog(@"Compile Error - Metal Shader Library error %@ ", error);
         BLI_assert(false);
         return nil;
@@ -746,7 +747,8 @@ id<MTLComputePipelineState> gpu::MTLTexture::mtl_texture_read_impl(
     if (error) {
       /* Only exit out if genuine error and not warning. */
       if ([[error localizedDescription] rangeOfString:@"Compilation succeeded"].location ==
-          NSNotFound) {
+          NSNotFound)
+      {
         NSLog(@"Compile Error - Metal Shader Library error %@ ", error);
         BLI_assert(false);
         return nil;

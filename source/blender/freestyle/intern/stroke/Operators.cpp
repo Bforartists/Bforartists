@@ -18,7 +18,7 @@
 
 #include "BLI_sys_types.h"
 
-#include "BKE_global.h"
+#include "BKE_global.hh"
 
 namespace Freestyle {
 
@@ -1277,7 +1277,8 @@ int Operators::create(UnaryPredicate1D &pred, vector<StrokeShader *> shaders)
   }
   StrokesContainer new_strokes_set;
   for (Operators::I1DContainer::iterator it = _current_set->begin(); it != _current_set->end();
-       ++it) {
+       ++it)
+  {
     if (pred(**it) < 0) {
       goto error;
     }

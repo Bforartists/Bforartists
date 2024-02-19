@@ -6,6 +6,7 @@
  * \ingroup edtransform
  */
 
+#include <algorithm>
 #include <cstdlib>
 
 #include "MEM_guardedalloc.h"
@@ -24,7 +25,7 @@
 #include "UI_interface.hh"
 #include "UI_view2d.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "transform.hh"
 #include "transform_convert.hh"
@@ -55,7 +56,7 @@ static void headerTimeSlide(TransInfo *t, const float sval, char str[UI_MAX_DRAW
     BLI_snprintf(&tvec[0], NUM_STR_REP_LEN, "%.4f", val);
   }
 
-  BLI_snprintf(str, UI_MAX_DRAW_STR, TIP_("TimeSlide: %s"), &tvec[0]);
+  BLI_snprintf(str, UI_MAX_DRAW_STR, IFACE_("TimeSlide: %s"), &tvec[0]);
 }
 
 static void applyTimeSlideValue(TransInfo *t, float sval, float cval)
@@ -84,7 +85,7 @@ static void applyTimeSlideValue(TransInfo *t, float sval, float cval)
 
       /* only apply to data if in range */
       if ((sval > minx) && (sval < maxx)) {
-        float cvalc = CLAMPIS(cval, minx, maxx);
+        float cvalc = std::clamp(cval, minx, maxx);
         float timefac;
         float *dst;
         float ival;

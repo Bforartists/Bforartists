@@ -15,7 +15,7 @@
 #include "BLI_map.hh"
 #include "BLI_utildefines.h"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "DEG_depsgraph.hh"
 
@@ -34,12 +34,12 @@
 #include "BKE_animsys.h"
 #include "BKE_context.hh"
 #include "BKE_fcurve.h"
-#include "BKE_global.h"
+#include "BKE_global.hh"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_grease_pencil.hh"
-#include "BKE_key.h"
+#include "BKE_key.hh"
 #include "BKE_nla.h"
-#include "BKE_report.h"
+#include "BKE_report.hh"
 
 #include "UI_view2d.hh"
 #include "UI_resources.hh" /* BFA - needed for icons */
@@ -796,8 +796,9 @@ static void insert_grease_pencil_key(bAnimContext *ac,
 
   bool changed = false;
   if (hold_previous) {
-    const FramesMapKey active_frame_number = layer->frame_key_at(current_frame_number);
-    if ((active_frame_number == -1) || layer->frames().lookup(active_frame_number).is_null()) {
+    const std::optional<FramesMapKey> active_frame_number = layer->frame_key_at(
+        current_frame_number);
+    if (!active_frame_number || layer->frames().lookup(*active_frame_number).is_null()) {
       /* There is no active frame to hold to, or it's a null frame. Therefore just insert a blank
        * frame. */
       changed = grease_pencil->insert_blank_frame(
@@ -806,7 +807,7 @@ static void insert_grease_pencil_key(bAnimContext *ac,
     else {
       /* Duplicate the active frame. */
       changed = grease_pencil->insert_duplicate_frame(
-          *layer, active_frame_number, current_frame_number, false);
+          *layer, *active_frame_number, current_frame_number, false);
     }
   }
   else {
@@ -897,7 +898,7 @@ static void insert_action_keys(bAnimContext *ac, short mode)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, eAnimCont_Types(ac->datatype));
 
   /* Init keyframing flag. */
-  flag = ANIM_get_keyframing_flags(scene, true);
+  flag = ANIM_get_keyframing_flags(scene);
 
   /* GPLayers specific flags */
   if (ts->gpencil_flags & GP_TOOL_FLAG_RETAIN_LAST) {

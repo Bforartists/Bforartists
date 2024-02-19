@@ -21,7 +21,10 @@ from mathutils import (
     Vector,
 )
 
-from bpy.app.translations import pgettext_tip as tip_
+from bpy.app.translations import (
+    pgettext_tip as tip_,
+    pgettext_rpt as rpt_,
+)
 
 
 class NodeSetting(PropertyGroup):
@@ -95,7 +98,7 @@ class NodeAddOperator:
             except AttributeError as ex:
                 self.report(
                     {'ERROR_INVALID_INPUT'},
-                    tip_("Node has no attribute %s") % setting.name)
+                    rpt_("Node has no attribute %s") % setting.name)
                 print(str(ex))
                 # Continue despite invalid attribute
 
@@ -406,6 +409,153 @@ class NODE_OT_interface_item_remove(NodeInterfaceOperator, Operator):
 
         return {'FINISHED'}
 
+## BFA - BFA operator for GUI buttons to re-order items - Start
+class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
+    '''Move the active item to the specified direction\nYou can also alternatively drag and drop the active item to reorder'''
+    bl_idname = "node.interface_item_move"
+    bl_label = "Move Item"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    direction: EnumProperty(
+        name="Direction",
+        description="Specifies which direction the active item is moved towards",
+        items=(
+            ('UP', "Move Up", ""),
+            ('DOWN', "Move Down", "")
+        ),
+    )
+
+    @classmethod
+    def poll(cls, context):
+        if not super().poll(context):
+            return False
+
+        snode = context.space_data
+        tree = snode.edit_tree
+        interface = tree.interface
+        return interface.active is not None
+
+    @staticmethod
+    def fetch_all_parents(interface):
+        # The root panel that sockets are parented to by default is not directly accessible
+        # Hence we retrieve it by creating a new socket and getting its parent
+        new_socket = interface.new_socket(name="DUMMY_SOCKET")
+        yield new_socket.parent
+        interface.remove(new_socket)
+
+        # Retrieve all other panels
+        for item in interface.items_tree:
+            if item.item_type == 'PANEL':
+                yield item
+
+    @staticmethod
+    def get_prev_parent(parents, current_parent):
+        prev_parent = parents[0]
+
+        for parent in parents:
+            if parent == current_parent:
+                break
+
+            prev_parent = parent
+
+        return prev_parent
+
+    @staticmethod
+    def get_next_parent(parents, current_parent):
+        iter_parents = iter(parents)
+        for parent in iter_parents:
+            if parent == current_parent:
+                break
+
+        try:
+            next_parent = next(iter_parents)
+        except StopIteration:
+            next_parent = parent
+
+        return next_parent
+
+    def execute(self, context):
+        interface = context.space_data.edit_tree.interface
+        active_item = interface.active
+
+        offset = -1 if self.direction == 'UP' else 2
+
+        old_position = active_item.position
+        interface.move(active_item, active_item.position + offset)
+
+        if active_item.position == old_position and active_item.item_type == 'SOCKET':
+            parents = tuple(self.fetch_all_parents(interface))
+
+            if self.direction == 'UP':
+                new_parent = self.get_prev_parent(parents, active_item.parent)
+                new_position = len(new_parent.interface_items)
+            else:
+                new_parent = self.get_next_parent(parents, active_item.parent)
+                new_position = 0
+
+            if new_parent != active_item.parent:
+                interface.move_to_parent(active_item, new_parent, new_position)
+            else:
+                return {'CANCELLED'}
+
+        interface.active_index = active_item.index
+        return {'FINISHED'}
+## BFA - BFA operator for GUI buttons to re-order items - End
+
+class NODE_OT_enum_definition_item_add(Operator):
+    '''Add an enum item to the definition'''
+    bl_idname = "node.enum_definition_item_add"
+    bl_label = "Add Item"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        node = context.active_node
+        enum_def = node.enum_definition
+        item = enum_def.enum_items.new("Item")
+        enum_def.active_index = enum_def.enum_items[:].index(item)
+        return {'FINISHED'}
+
+
+class NODE_OT_enum_definition_item_remove(Operator):
+    '''Remove the selected enum item from the definition'''
+    bl_idname = "node.enum_definition_item_remove"
+    bl_label = "Remove Item"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        node = context.active_node
+        enum_def = node.enum_definition
+        item = enum_def.active_item
+        if item:
+            enum_def.enum_items.remove(item)
+        enum_def.active_index = min(max(enum_def.active_index, 0), len(enum_def.enum_items) - 1)
+        return {'FINISHED'}
+
+
+class NODE_OT_enum_definition_item_move(Operator):
+    '''Remove the selected enum item from the definition'''
+    bl_idname = "node.enum_definition_item_move"
+    bl_label = "Move Item"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    direction: EnumProperty(
+        name="Direction",
+        description="Move up or down",
+        items=[("UP", "Up", ""), ("DOWN", "Down", "")]
+    )
+
+    def execute(self, context):
+        node = context.active_node
+        enum_def = node.enum_definition
+        index = enum_def.active_index
+        if self.direction == 'UP':
+            enum_def.enum_items.move(index, index - 1)
+            enum_def.active_index = min(max(index - 1, 0), len(enum_def.enum_items) - 1)
+        else:
+            enum_def.enum_items.move(index, index + 1)
+            enum_def.active_index = min(max(index + 1, 0), len(enum_def.enum_items) - 1)
+        return {'FINISHED'}
+
 
 classes = (
     NodeSetting,
@@ -414,10 +564,14 @@ classes = (
     NODE_OT_add_simulation_zone,
     NODE_OT_add_repeat_zone,
     NODE_OT_collapse_hide_unused_toggle,
-    NODE_OT_interface_item_new_input, # -bfa separated add input operator with own description.
-    NODE_OT_interface_item_new_output, # -bfa separated add output operator with own description.
-    NODE_OT_interface_item_new_panel, # -bfa separated add panel operator with own description.
+    NODE_OT_interface_item_new_input, # BFA separated add input operator with own description.
+    NODE_OT_interface_item_new_output, # BFA separated add output operator with own description.
+    NODE_OT_interface_item_new_panel, # BFA separated add panel operator with own description.
     NODE_OT_interface_item_duplicate,
     NODE_OT_interface_item_remove,
+    NODE_OT_interface_item_move, # BFA operator for GUI buttons to re-order items
     NODE_OT_tree_path_parent,
+    NODE_OT_enum_definition_item_add,
+    NODE_OT_enum_definition_item_remove,
+    NODE_OT_enum_definition_item_move,
 )

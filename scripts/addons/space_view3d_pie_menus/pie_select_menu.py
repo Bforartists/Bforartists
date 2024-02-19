@@ -30,28 +30,28 @@ class PIE_MT_SelectionsMore(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         box = pie.split().column()
-        box.operator("object.select_random", text="Select Random")
-        box.operator("object.select_linked", text="Select Linked")
+        box.operator("object.select_random", text="Select Random", icon="RANDOMIZE") #BFA - Icon Added
+        box.operator("object.select_linked", text="Select Linked", icon="LINKED") #BFA - Icon Added
         box.separator()
 
-        box.operator("object.select_more", text="More")
-        box.operator("object.select_less", text="Less")
+        box.operator("object.select_more", text="More", icon="SELECTMORE") #BFA - Icon Added
+        box.operator("object.select_less", text="Less", icon="SELECTLESS") #BFA - Icon Added
         box.separator()
 
-        props = box.operator("object.select_hierarchy", text="Parent")
+        props = box.operator("object.select_hierarchy", text="Parent", icon="PARENT") #BFA - Icon Added
         props.extend = False
         props.direction = 'PARENT'
 
-        props = box.operator("object.select_hierarchy", text="Child")
+        props = box.operator("object.select_hierarchy", text="Child", icon="CHILD") #BFA - Icon Added
         props.extend = False
         props.direction = 'CHILD'
         box.separator()
 
-        props = box.operator("object.select_hierarchy", text="Extend Parent")
+        props = box.operator("object.select_hierarchy", text="Extend Parent", icon="PARENT") #BFA - Icon Added
         props.extend = True
         props.direction = 'PARENT'
 
-        props = box.operator("object.select_hierarchy", text="Extend Child")
+        props = box.operator("object.select_hierarchy", text="Extend Child", icon="CHILD") #BFA - Icon Added
         props.extend = True
         props.direction = 'CHILD'
 
@@ -70,15 +70,15 @@ class PIE_MT_SelectionsOM(Menu):
         # 6 - RIGHT
         pie.operator("object.select_by_type", text="Select By Type")
         # 2 - BOTTOM
-        pie.operator("object.select_all", text="Invert Selection", icon='ZOOM_PREVIOUS').action = 'INVERT'
+        pie.operator("object.select_all", text="Invert Selection", icon='INVERSE').action = 'INVERT' #BFA - Icon Added
         # 8 - TOP
-        pie.operator("object.select_all", text="Select All Toggle", icon='NONE').action = 'TOGGLE'
+        pie.operator("object.select_all", text="Select All Toggle", icon='SELECT_ALL').action = 'TOGGLE' #BFA - Icon Added
         # 7 - TOP - LEFT
-        pie.operator("view3d.select_circle", text="Circle Select")
+        pie.operator("view3d.select_circle", text="Circle Select", icon="CIRCLE_SELECT") #BFA - Icon Added
         # 9 - TOP - RIGHT
-        pie.operator("view3d.select_box", text="Box Select")
+        pie.operator("view3d.select_box", text="Box Select", icon="BOX_MASK") #BFA - Icon Added
         # 1 - BOTTOM - LEFT
-        pie.operator("object.select_camera", text="Select Camera")
+        pie.operator("object.select_camera", icon="CAMERA_DATA") #BFA - Icon Added
         # 3 - BOTTOM - RIGHT
         pie.menu("PIE_MT_selectionsmore", text="Select Menu")
 
@@ -92,19 +92,19 @@ class PIE_MT_SelectionsEM(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator("mesh.select_less", text="Select Less")
+        pie.operator("mesh.select_less", text="Select Less", icon="SELECTLESS") #BFA - Icon Added
         # 6 - RIGHT
-        pie.operator("mesh.select_more", text="Select More")
+        pie.operator("mesh.select_more", text="Select More", icon="SELECTMORE") #BFA - Icon Added
         # 2 - BOTTOM
         pie.menu("OBJECT_MT_selectloopselection", text="Select Loop Menu")
         # 8 - TOP
-        pie.operator("mesh.select_all", text="Select All Toggle").action = 'TOGGLE'
+        pie.operator("mesh.select_all", text="Select All Toggle", icon='SELECT_ALL').action = 'TOGGLE' #BFA - Icon Added
         # 7 - TOP - LEFT
-        pie.operator("view3d.select_circle", text="Circle Select")
+        pie.operator("view3d.select_circle", text="Circle Select", icon="CIRCLE_SELECT") #BFA - Icon Added
         # 9 - TOP - RIGHT
-        pie.operator("view3d.select_box", text="Box Select")
+        pie.operator("view3d.select_box", text="Box Select", icon="BOX_MASK") #BFA - Icon Added
         # 1 - BOTTOM - LEFT
-        pie.operator("mesh.select_all", text="Invert Selection").action = 'INVERT'
+        pie.operator("mesh.select_all", text="Invert Selection", icon='INVERSE').action = 'INVERT' #BFA - Icon Added
         # 3 - BOTTOM - RIGHT
         pie.menu("PIE_MT_selectallbyselection", text="Edit Modes", icon='VERTEXSEL')
 
@@ -198,9 +198,9 @@ class PIE_MT_SelectLoopSelection(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.loop_multi_select", text="Select Loop", icon='NONE').ring = False
-        layout.operator("mesh.loop_multi_select", text="Select Ring", icon='NONE').ring = True
-        layout.operator("mesh.loop_to_region", text="Select Loop Inner Region", icon='NONE')
+        layout.operator("mesh.loop_multi_select", text="Select Loop", icon="SELECT_EDGELOOP").ring = False #BFA - Icon Added
+        layout.operator("mesh.loop_multi_select", text="Select Ring", icon='SELECT_EDGERING').ring = True #BFA - Icon Added
+        layout.operator("mesh.loop_to_region", text="Select Loop Inner Region", icon='SELECT_LOOPINNER') #BFA - Icon Added
 
 
 classes = (

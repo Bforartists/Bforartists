@@ -280,8 +280,8 @@ class DOPESHEET_HT_header(Header):
 
         st = context.space_data
 
-        # bfa - show hide the editormenu
-        ALL_MT_editormenu.draw_hidden(context, layout)
+        # bfa - show hide the editormenu, editor suffix is needed.
+        ALL_MT_editormenu_dopesheet.draw_hidden(context, layout)
 
         if st.mode == 'TIMELINE':
             from bl_ui.space_time import (
@@ -310,10 +310,10 @@ class DOPESHEET_HT_header(Header):
             DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
             DOPESHEET_HT_editor_buttons.draw_header(context, layout)
 
-# bfa - show hide the editormenu
+# bfa - show hide the editormenu, editor suffix is needed.
 
 
-class ALL_MT_editormenu(Menu):
+class ALL_MT_editormenu_dopesheet(Menu):
     bl_label = ""
 
     def draw(self, context):
@@ -357,23 +357,42 @@ class DOPESHEET_HT_editor_buttons:
         # Layer management
         if st.mode == 'GPENCIL':
             ob = context.active_object
-            enable_but = ob is not None and ob.type == 'GPENCIL'
 
-            row = layout.row(align=True)
-            row.enabled = enable_but
-            row.operator("gpencil.layer_add", icon='ADD', text="")
-            row.operator("gpencil.layer_remove", icon='REMOVE', text="")
-            row.menu("GPENCIL_MT_layer_context_menu", icon='DOWNARROW_HLT', text="")
+            if context.preferences.experimental.use_grease_pencil_version3:
+                enable_but = ob is not None and ob.type == 'GREASEPENCIL'
 
-            row = layout.row(align=True)
-            row.enabled = enable_but
-            row.operator("gpencil.layer_move", icon='TRIA_UP', text="").type = 'UP'
-            row.operator("gpencil.layer_move", icon='TRIA_DOWN', text="").type = 'DOWN'
+                row = layout.row(align=True)
+                row.enabled = enable_but
+                row.operator("grease_pencil.layer_add", icon='ADD', text="")
+                row.operator("grease_pencil.layer_remove", icon='REMOVE', text="")
+                row.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="")
 
-            row = layout.row(align=True)
-            row.enabled = enable_but
-            row.operator("gpencil.layer_isolate", icon='RESTRICT_VIEW_ON', text="").affect_visibility = True
-            row.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
+                row = layout.row(align=True)
+                row.enabled = enable_but
+                row.operator("anim.channels_move", icon='TRIA_UP', text="").direction = 'UP'
+                row.operator("anim.channels_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
+
+                row = layout.row(align=True)
+                row.enabled = enable_but
+                row.operator("grease_pencil.layer_isolate", icon='RESTRICT_VIEW_ON', text="").affect_visibility = True
+                row.operator("grease_pencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
+            else:
+                enable_but = ob is not None and ob.type == 'GPENCIL'
+                row = layout.row(align=True)
+                row.enabled = enable_but
+                row.operator("gpencil.layer_add", icon='ADD', text="")
+                row.operator("gpencil.layer_remove", icon='REMOVE', text="")
+                row.menu("GPENCIL_MT_layer_context_menu", icon='DOWNARROW_HLT', text="")
+
+                row = layout.row(align=True)
+                row.enabled = enable_but
+                row.operator("gpencil.layer_move", icon='TRIA_UP', text="").type = 'UP'
+                row.operator("gpencil.layer_move", icon='TRIA_DOWN', text="").type = 'DOWN'
+
+                row = layout.row(align=True)
+                row.enabled = enable_but
+                row.operator("gpencil.layer_isolate", icon='RESTRICT_VIEW_ON', text="").affect_visibility = True
+                row.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
 
         layout.separator_spacer()
 
@@ -491,7 +510,12 @@ class DOPESHEET_MT_view(Menu):
         layout.prop(st, "show_region_channels") # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
+        layout.prop(st, "show_region_channels")
+        layout.separator()
 
+        layout.operator("action.view_selected")
+        layout.operator("action.view_all")
+        layout.operator("action.view_frame")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
@@ -516,7 +540,6 @@ class DOPESHEET_MT_view(Menu):
         layout.menu("INFO_MT_area")
 
         # Add this to show key-binding (reverse action in dope-sheet).
-        layout.separator()
         props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon='GRAPH')
         props.data_path = "area.type"
         props.value = 'GRAPH_EDITOR'
@@ -1142,7 +1165,7 @@ class DOPESHEET_PT_gpencil_layer_display(LayersDopeSheetPanel, GreasePencilLayer
 
 
 classes = (
-    ALL_MT_editormenu,
+    ALL_MT_editormenu_dopesheet,
     ANIM_OT_switch_editors_to_dopesheet,
     ANIM_OT_switch_editors_to_graph,
     ANIM_OT_switch_editors_to_driver,
