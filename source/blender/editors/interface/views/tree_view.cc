@@ -362,7 +362,7 @@ void AbstractTreeViewItem::add_collapse_chevron(uiBlock &block) const
     return;
   }
 
-  const BIFIconID icon = is_collapsed() ? ICON_RIGHTARROW : ICON_DOWNARROW_HLT;
+  const BIFIconID icon = is_collapsed() ? ICON_DISCLOSURE_TRI_RIGHT : ICON_DISCLOSURE_TRI_DOWN;
   uiBut *but = uiDefIconBut(&block,
                             UI_BTYPE_BUT_TOGGLE,
                             0,
