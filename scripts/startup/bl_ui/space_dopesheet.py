@@ -507,10 +507,9 @@ class DOPESHEET_MT_view(Menu):
 
         st = context.space_data
 
-        layout.prop(st, "show_region_channels") # BFA - channels
+        layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-        layout.prop(st, "show_region_channels")
         layout.separator()
 
         layout.operator("action.view_selected")
