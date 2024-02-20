@@ -1110,7 +1110,7 @@ class VIEW3D_HT_header(Header):
                             sculpt.use_automasking_start_normal or
                             sculpt.use_automasking_view_normal)
 
-        return "CLIPUV_DEHLT" if automask_enabled else "CLIPUV_HLT"
+        return "MOD_MASK" if automask_enabled else "MOD_MASK_OFF"
 
     @staticmethod
     def _gpencil_sculpt_automasking_icon(gpencil_sculpt):
@@ -1120,7 +1120,7 @@ class VIEW3D_HT_header(Header):
                             gpencil_sculpt.use_automasking_material_active or
                             gpencil_sculpt.use_automasking_layer_active)
 
-        return "CLIPUV_DEHLT" if automask_enabled else "CLIPUV_HLT"
+        return "MOD_MASK" if automask_enabled else "MOD_MASK_OFF"
 
 
 # bfa - show hide the editormenu, editor suffix is needed.
