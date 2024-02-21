@@ -200,13 +200,11 @@ class GRAPH_PT_properties_view_options(Panel):
         col = layout.column(align=True)
         col.prop(st, "show_sliders")
         col.prop(st, "use_auto_merge_keyframes")
-        col.prop(st, "use_beauty_drawing")
         layout.prop(st, "use_auto_lock_translation_axis")
 
         col = layout.column(align=True)
         col.prop(st, "show_extrapolation")
         col.prop(st, "show_handles")
-        col.prop(st, "use_only_selected_curves_handles")
         col.prop(st, "use_only_selected_keyframe_handles")
 
         col = layout.column(align=True)
