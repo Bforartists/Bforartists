@@ -14,6 +14,8 @@
 
 import bpy
 
+from . import properties
+
 class BFA_UI_preferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
@@ -29,3 +31,20 @@ class BFA_UI_preferences(bpy.types.AddonPreferences):
         col = row.column(align=True)
         col.label(text="Animation:", icon="TIME")
         layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_insertkeyframes")
+        layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_animationpanel")
+
+
+
+preferences_classes = [
+    BFA_UI_preferences,
+]
+
+
+def register():
+    for cls in preferences_classes:
+        bpy.utils.register_class(cls)
+
+
+def unregister():
+    for cls in preferences_classes:
+        bpy.utils.unregister_class(cls)
