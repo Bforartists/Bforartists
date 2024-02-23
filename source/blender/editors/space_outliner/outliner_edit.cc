@@ -2191,6 +2191,30 @@ static void unused_message_gen(std::string &message,
   }
 }
 
+/*bfa - we have predefined operators already*/
+// static int unused_message_popup_width_compute(bContext *C)
+// {
+//   /* Computation of unused data amounts, with all options ON.
+//    * Used to estimate the maximum required width for the dialog. */
+//   Main *bmain = CTX_data_main(C);
+//   LibQueryUnusedIDsData data = {true, true, true, {}, {}, {}};
+//   BKE_lib_query_unused_ids_amounts(bmain, data);
+
+//   std::string unused_message = "";
+//   const uiStyle *style = UI_style_get_dpi();
+//   unused_message_gen(unused_message, data.num_local);
+//   float max_messages_width = BLF_width(
+//       style->widget.uifont_id, unused_message.c_str(), BLF_DRAW_STR_DUMMY_MAX);
+
+//   unused_message = "";
+//   unused_message_gen(unused_message, data.num_linked);
+//   max_messages_width = std::max(
+//       max_messages_width,
+//       BLF_width(style->widget.uifont_id, unused_message.c_str(), BLF_DRAW_STR_DUMMY_MAX));
+
+//   return int(std::max(max_messages_width, 300.0f));
+// }
+
 static void outliner_orphans_purge_cleanup(wmOperator *op)
 {
   if (op->customdata) {
@@ -2213,6 +2237,21 @@ static bool outliner_orphans_purge_check(bContext *C, wmOperator *op)
   /* Always assume count changed, and request a redraw. */
   return true;
 }
+
+/*bfa - we have predefined operators already*/
+// static int outliner_orphans_purge_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
+// {
+//   op->customdata = MEM_new<LibQueryUnusedIDsData>(__func__);
+
+//   /* Compute expected amounts of deleted IDs and store them in 'cached' operator properties. */
+//   outliner_orphans_purge_check(C, op);
+
+//   return WM_operator_props_dialog_popup(C,
+//                                         op,
+//                                         unused_message_popup_width_compute(C),
+//                                         IFACE_("Purge Unused Data From This File"),
+//                                         IFACE_("Delete"));
+// }
 
 static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
 {
@@ -2348,7 +2387,7 @@ void OUTLINER_OT_orphans_purge(wmOperatorType *ot)
   ot->description = "Clear all orphaned data without any users from the file";
 
   /* callbacks */
-  /*bfa - removed outliner_orphans_purge_invoke, has not needed since we have predefined operators already*/
+  // ot->invoke = outliner_orphans_purge_invoke; /*bfa - we have predefined operators already*/
   ot->exec = outliner_orphans_purge_exec;
   ot->cancel = outliner_orphans_purge_cancel;
   ot->get_description = wm_orphans_purge_get_description; /*bfa - descriptions*/
