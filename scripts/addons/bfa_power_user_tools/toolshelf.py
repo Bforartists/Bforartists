@@ -20,7 +20,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         wm = context.window_manager
-        return ((wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes or wm.BFA_UI_addon_props.BFA_PROP_toggle_animationpanel) and context.object.mode in {'OBJECT', 'POSE'})
+        return ((wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes or wm.BFA_UI_addon_props.BFA_PROP_toggle_animationpanel) and context.object.mode in {'OBJECT', 'POSE'})
 
     def draw(self, context):
         layout = self.layout
@@ -35,10 +35,10 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
             wm = context.window_manager
             # Animation Operators
             if wm.BFA_UI_addon_props.BFA_PROP_toggle_animationpanel:
-                col.operator("anim.keyframe_insert", text="Insert Keyframe", icon='KEYFRAMES_INSERT')
-                col.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEYFRAMES_INSERT').always_prompt = True
-                col.operator("anim.keyframe_delete_v3d", text="Delete Keyframes", icon='KEYFRAMES_REMOVE')
-                col.operator("anim.keyframe_clear_v3d", text="Clear Keyframes", icon='KEYFRAMES_CLEAR')
+                col.operator("anim.keyframe_insert", text="Insert Frame", icon='KEYFRAMES_INSERT')
+                col.operator("anim.keyframe_insert_menu", text="Insert Frame with Keying Set", icon='KEYFRAMES_INSERT').always_prompt = True
+                col.operator("anim.keyframe_delete_v3d", text="Delete frames", icon='KEYFRAMES_REMOVE')
+                col.operator("anim.keyframe_clear_v3d", text="Clear frames", icon='KEYFRAMES_CLEAR')
                 col.operator("anim.keying_set_active_set", text="Change Keying Set", icon='KEYINGSET')
 
                 col.separator()
@@ -47,15 +47,17 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
                 col.operator("gpencil.bake_mesh_animation", text="Bake Mesh to Grease Pencil", icon='BAKE_ACTION')
                 col.operator( "gpencil.bake_grease_pencil_animation", text="Bake Object Transform to Grease Pencil", icon='BAKE_ACTION')
 
-            # Insert Keyframe Operators
-            if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes:
-                col.operator("anim.insertframe_right", text="Insert Keyframe Left", icon="TRIA_LEFT")
-                col.operator("anim.removeframe_left", text="Remove Keyframe Left", icon="PANEL_CLOSE")
+            # Insert Frame Operators
+            if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
+                col.separator()
+
+                col.operator("anim.insertframe_right", text="Insert Frame Left", icon="TRIA_LEFT")
+                col.operator("anim.removeframe_left", text="Remove Frame Left", icon="PANEL_CLOSE")
 
                 col.separator()
 
-                col.operator("anim.insertframe_left", text="Insert Keyframe Right", icon="TRIA_RIGHT")
-                col.operator("anim.removeframe_right", text="Remove Keyframe Right", icon="PANEL_CLOSE")
+                col.operator("anim.insertframe_left", text="Insert Frame Right", icon="TRIA_RIGHT")
+                col.operator("anim.removeframe_right", text="Remove Frame Right", icon="PANEL_CLOSE")
 
             #col = layout.column(align=True)
             #col.operator("operator.name", text="label", icon="DELETE")
@@ -92,7 +94,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
 
                 col.separator( factor = 0.5) # Button Separator
 
-                if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes:
+                if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
                     row = col.row(align=True)
                     row.operator("anim.insertframe_left", text="", icon="TRIA_LEFT")
                     row.operator("anim.removeframe_left", text="", icon="PANEL_CLOSE")
@@ -131,7 +133,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
 
                 col.separator( factor = 0.5) # Button Separator
 
-                if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes:
+                if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
                     row = col.row(align=True)
                     row.operator("anim.insertframe_left", text="", icon="TRIA_LEFT")
                     row.operator("anim.removeframe_left", text="", icon="PANEL_CLOSE")
@@ -165,7 +167,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
                     col.operator("gpencil.bake_grease_pencil_animation", text="", icon='BAKE_ACTION')
 
 
-                if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes:
+                if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
                     col.separator()
                     col.operator("anim.insertframe_left", text="", icon="TRIA_LEFT")
                     col.operator("anim.removeframe_left", text="", icon="PANEL_CLOSE")
@@ -196,6 +198,6 @@ def unregister():
         bpy.utils.unregister_class(cls)
 
     wm = context.window_manager
-    if not wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes and not wm.BFA_UI_addon_props.BFA_PROP_toggle_animationpanel:
+    if not wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes and not wm.BFA_UI_addon_props.BFA_PROP_toggle_animationpanel:
         bpy.utils.unregister_class(BFA_PT_toolshelf_animation)
 

@@ -27,7 +27,7 @@ class BFA_MT_timeline_key(bpy.types.Menu):
 
     def menu_func(self, context):
         wm = context.window_manager
-        if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes or wm.BFA_UI_addon_props.BFA_PROP_toggle_animationpanel:
+        if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes or wm.BFA_UI_addon_props.BFA_PROP_toggle_animationpanel:
             self.layout.menu(BFA_MT_timeline_key.bl_idname)
 
 def seperator(self, context):
