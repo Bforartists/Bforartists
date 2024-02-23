@@ -20,7 +20,7 @@ op = bpy.types.Operator
 class BFA_OT_insertframe_left(op):
     bl_idname = "anim.insertframe_left"
     bl_label = "Insert Frame Left"
-    bl_description = "Inserts an empty frame and nudges all keyframes to the left of the time cursor"
+    bl_description = "Inserts an empty frame and nudges all frames to the left of the timeline cursor"
     bl_icon = 'TRIA_LEFT'
 
     def execute(self, context):
@@ -60,14 +60,14 @@ class BFA_OT_insertframe_left(op):
 
     def menu_func(self, context):
         wm = context.window_manager
-        if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes:
+        if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
             self.layout.operator(BFA_OT_insertframe_left.bl_idname, icon=BFA_OT_insertframe_left.bl_icon)
 
 
 class BFA_OT_insertframe_right(op):
     bl_idname = "anim.insertframe_right"
     bl_label = "Insert Frame Right"
-    bl_description = "Inserts an empty frame and nudges all keyframes to the right of the time cursor"
+    bl_description = "Inserts an empty frame and nudges all frames to the right of the timeline cursor"
     bl_icon = 'TRIA_RIGHT'
 
     def execute(self, context):
@@ -107,14 +107,14 @@ class BFA_OT_insertframe_right(op):
 
     def menu_func(self, context):
         wm = context.window_manager
-        if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes:
+        if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
             self.layout.operator(BFA_OT_insertframe_right.bl_idname, icon=BFA_OT_insertframe_right.bl_icon)
 
 
 class BFA_OT_removeframe_left(op):
     bl_idname = "anim.removeframe_left"
     bl_label = "Remove Frame Left"
-    bl_description = "Removes frame and nudges all keyframes on the left to the time cursor"
+    bl_description = "RRemoves a frame and nudges all frames on the left  towards the timeline cursor"
     bl_icon = 'PANEL_CLOSE'
 
     def execute(self, context):
@@ -155,13 +155,13 @@ class BFA_OT_removeframe_left(op):
 
     def menu_func(self, context):
         wm = context.window_manager
-        if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes:
+        if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
             self.layout.operator(BFA_OT_removeframe_left.bl_idname, icon=BFA_OT_removeframe_left.bl_icon)
 
 class BFA_OT_removeframe_right(op):
     bl_idname = "anim.removeframe_right"
     bl_label = "Remove Frame Right"
-    bl_description = "Removes frame and nudges all keyframes on the right to the time cursor"
+    bl_description = "Removes a frame and nudges all frames on the right towards the timeline cursor"
     bl_icon = 'PANEL_CLOSE'
 
     def execute(self, context):
@@ -202,7 +202,7 @@ class BFA_OT_removeframe_right(op):
 
     def menu_func(self, context):
         wm = context.window_manager
-        if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertkeyframes:
+        if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
             self.layout.operator(BFA_OT_removeframe_right.bl_idname, icon=BFA_OT_removeframe_right.bl_icon)
 
 
