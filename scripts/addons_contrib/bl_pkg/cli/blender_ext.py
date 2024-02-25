@@ -4,23 +4,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 """
-Sub-commands:
-
-Running a Repo
-   - `server-generate` generate repository from a list of packages.
-
-Developing a Package
-   - `pkg-build` build a package.
-   - `pkg-check` check the package state (warn of any issues).
-
-Using a Package
-   - `repo-add`
-   - `repo-remove`
-   - `install` takes a name, optionally repo+name.
-   - `uninstall`
-   - `update` (defaults to all local repo).
-   - `check` (defaults to all local repo).
-   - `list` list all known remote, both local & remote (defaults to all local repos).
+Command for managing Blender extensions.
 """
 
 
@@ -112,9 +96,6 @@ RE_MANIFEST_SEMVER = re.compile(
 #
 # 16kb to be responsive even on slow connections.
 CHUNK_SIZE_DEFAULT = 1 << 14
-
-# Default for JSON requests this allows top-level URL's to be used.
-URL_REQUEST_JSON_HEADERS = {"Accept": "application/json"}
 
 # Standard out may be communicating with a parent process,
 # arbitrary prints are NOT acceptable.
@@ -227,15 +208,16 @@ class PkgManifest(NamedTuple):
     tagline: str
     version: str
     type: str
-    tags: List[str]
     maintainer: str
     license: List[str]
     blender_version_min: str
 
-    # Optional.
-    blender_version_max: str = ""
-    website: str = ""
-    copyright: Optional[List[str]] = []
+    # Optional (set all defaults).
+    blender_version_max: Optional[str] = None
+    website: Optional[str] = None
+    copyright: Optional[List[str]] = None
+    permissions: Optional[List[str]] = None
+    tags: Optional[List[str]] = None
 
 
 class PkgManifest_Archive(NamedTuple):
@@ -725,6 +707,13 @@ def pkg_manifest_validate_field_any_list_of_non_empty_strings(value: List[Any]) 
     return None
 
 
+def pkg_manifest_validate_field_any_non_empty_list_of_non_empty_strings(value: List[Any]) -> Optional[str]:
+    if not value:
+        return "list may not be empty"
+
+    return pkg_manifest_validate_field_any_list_of_non_empty_strings(value)
+
+
 def pkg_manifest_validate_field_any_version(value: str) -> Optional[str]:
     if not RE_MANIFEST_SEMVER.match(value):
         return "to be a semantic-version, found {!r}".format(value)
@@ -745,11 +734,12 @@ def pkg_manifest_validate_field_any_version_primitive_or_empty(value: str) -> Op
     return None
 
 # -----------------------------------------------------------------------------
-# Manifest Validation (Spesific Callbacks)
+# Manifest Validation (Specific Callbacks)
 
 
 def pkg_manifest_validate_field_type(value: str) -> Optional[str]:
-    value_expected = {"add-on", "theme", "keymap"}
+    # NOTE: add "keymap" in the future.
+    value_expected = {"add-on", "theme"}
     if value not in value_expected:
         return "Expected to be one of [{:s}], found {!r}".format(", ".join(value_expected), value)
     return None
@@ -782,18 +772,19 @@ def pkg_manifest_validate_field_archive_hash(value: str) -> Optional[str]:
 pkg_manifest_known_keys_and_types: Tuple[Tuple[str, type, Optional[Callable[[Any], Optional[str]]]], ...] = (
     ("schema_version", str, pkg_manifest_validate_field_any_version),
     ("name", str, pkg_manifest_validate_field_any_non_empty_string),
-    ("tagline", str, None),
+    ("tagline", str, pkg_manifest_validate_field_any_non_empty_string),
     ("version", str, pkg_manifest_validate_field_any_version),
     ("type", str, pkg_manifest_validate_field_type),
-    ("tags", list, pkg_manifest_validate_field_any_list_of_non_empty_strings),
     ("maintainer", str, pkg_manifest_validate_field_any_non_empty_string),
-    ("license", list, pkg_manifest_validate_field_any_list_of_non_empty_strings),
+    ("license", list, pkg_manifest_validate_field_any_non_empty_list_of_non_empty_strings),
     ("blender_version_min", str, pkg_manifest_validate_field_any_version_primitive),
 
     # Optional.
-    ("website", str, None),
-    ("copyright", list, pkg_manifest_validate_field_any_list_of_non_empty_strings),
     ("blender_version_max", str, pkg_manifest_validate_field_any_version_primitive_or_empty),
+    ("website", str, pkg_manifest_validate_field_any_non_empty_string),
+    ("copyright", list, pkg_manifest_validate_field_any_non_empty_list_of_non_empty_strings),
+    ("permissions", list, pkg_manifest_validate_field_any_non_empty_list_of_non_empty_strings),
+    ("tags", list, pkg_manifest_validate_field_any_non_empty_list_of_non_empty_strings),
 )
 
 # Keep in sync with `PkgManifest_Archive`.
@@ -829,6 +820,7 @@ def pkg_manifest_is_valid_or_error_impl(
             (pkg_manifest_known_keys_and_types, )
     ):
         for x_key, x_ty, x_check_fn in known_types:
+            is_default_value = False
             x_val = data.get(x_key, ...)
             if x_val is ...:
                 x_val = PkgManifest._field_defaults.get(x_key, ...)
@@ -839,31 +831,39 @@ def pkg_manifest_is_valid_or_error_impl(
                     error_list.append("missing \"{:s}\"".format(x_key))
                     if not all_errors:
                         return error_list
+                else:
+                    is_default_value = True
                 value_extract[x_key] = x_val
                 continue
 
-            if x_ty is None:
-                pass
-            elif isinstance(x_val, x_ty):
-                pass
-            else:
-                error_list.append("\"{:s}\" must be a {:s}, not a {:s}".format(
-                    x_key,
-                    x_ty.__name__,
-                    type(x_val).__name__,
-                ))
-                if not all_errors:
-                    return error_list
-                continue
-
-            if x_check_fn is not None:
-                if (error_msg := x_check_fn(x_val)) is not None:
-                    error_list.append("key \"{:s}\" invalid: {:s}".format(x_key, error_msg))
+            # When the default value is None, skip all type checks.
+            if is_default_value and x_val is None:
+                if x_ty is None:
+                    pass
+                elif isinstance(x_val, x_ty):
+                    pass
+                else:
+                    error_list.append("\"{:s}\" must be a {:s}, not a {:s}".format(
+                        x_key,
+                        x_ty.__name__,
+                        type(x_val).__name__,
+                    ))
                     if not all_errors:
                         return error_list
                     continue
 
+                if x_check_fn is not None:
+                    if (error_msg := x_check_fn(x_val)) is not None:
+                        error_list.append("key \"{:s}\" invalid: {:s}".format(x_key, error_msg))
+                        if not all_errors:
+                            return error_list
+                        continue
+
             value_extract[x_key] = x_val
+
+    if error_list:
+        assert all_errors
+        return error_list
 
     return None
 
@@ -899,6 +899,18 @@ def pkg_manifest_is_valid_or_error_all(
 
 # -----------------------------------------------------------------------------
 # Standalone Utilities
+
+
+def url_request_headers_create(*, accept_json: bool, user_agent: str) -> Dict[str, str]:
+    headers = {}
+    if accept_json:
+        # Default for JSON requests this allows top-level URL's to be used.
+        headers["Accept"] = "application/json"
+
+    if user_agent:
+        # Typically: `Blender/4.2.0 (Linux x84_64; cycle=alpha)`.
+        headers["User-Agent"] = user_agent
+    return headers
 
 
 def repo_json_is_valid_or_error(filepath: str) -> Optional[str]:
@@ -983,7 +995,14 @@ def repo_local_private_dir_ensure_with_subdir(*, local_dir: str, subdir: str) ->
     return local_private_subdir
 
 
-def repo_sync_from_remote(*, msg_fn: MessageFn, repo_dir: str, local_dir: str, timeout_in_seconds: float) -> bool:
+def repo_sync_from_remote(
+        *,
+        msg_fn: MessageFn,
+        repo_dir: str,
+        local_dir: str,
+        online_user_agent: str,
+        timeout_in_seconds: float,
+) -> bool:
     """
     Load package information into the local path.
     """
@@ -1019,7 +1038,7 @@ def repo_sync_from_remote(*, msg_fn: MessageFn, repo_dir: str, local_dir: str, t
                     remote_json_path,
                     local_json_path_temp,
                     is_filesystem=is_repo_filesystem,
-                    headers=URL_REQUEST_JSON_HEADERS,
+                    headers=url_request_headers_create(accept_json=True, user_agent=online_user_agent),
                     chunk_size=CHUNK_SIZE_DEFAULT,
                     timeout_in_seconds=timeout_in_seconds,
             ):
@@ -1231,6 +1250,20 @@ def generic_arg_local_cache(subparse: argparse.ArgumentParser) -> None:
     )
 
 
+def generic_arg_online_user_agent(subparse: argparse.ArgumentParser) -> None:
+    subparse.add_argument(
+        "--online-user-agent",
+        dest="online_user_agent",
+        type=str,
+        help=(
+            "Use user-agent used for making web requests. "
+            "Some web sites will reject requests when unset."
+        ),
+        default="",
+        required=False,
+    )
+
+
 def generic_arg_timeout(subparse: argparse.ArgumentParser) -> None:
     subparse.add_argument(
         "--timeout",
@@ -1286,6 +1319,11 @@ class subcmd_server:
             # TODO: we could have a method besides `_asdict` that excludes the ID.
             pkg_idname = manifest_dict.pop("id")
 
+            # Call all optional keys so the JSON never contains `null` items.
+            for key, value in list(manifest_dict.items()):
+                if value is None:
+                    del manifest_dict[key]
+
             # These are added, ensure they don't exist.
             has_key_error = False
             for key in ("archive_url", "archive_size", "archive_hash"):
@@ -1328,6 +1366,7 @@ class subcmd_client:
     def list_packages(
             msg_fn: MessageFn,
             repo_dir: str,
+            online_user_agent: str,
             timeout_in_seconds: float,
     ) -> bool:
         is_repo_filesystem = repo_is_filesystem(repo_dir=repo_dir)
@@ -1350,7 +1389,7 @@ class subcmd_client:
             for block in url_retrieve_to_data_iter_or_filesystem(
                     filepath_repo_json,
                     is_filesystem=is_repo_filesystem,
-                    headers=URL_REQUEST_JSON_HEADERS,
+                    headers=url_request_headers_create(accept_json=True, user_agent=online_user_agent),
                     chunk_size=CHUNK_SIZE_DEFAULT,
                     timeout_in_seconds=timeout_in_seconds,
             ):
@@ -1393,12 +1432,14 @@ class subcmd_client:
             *,
             repo_dir: str,
             local_dir: str,
+            online_user_agent: str,
             timeout_in_seconds: float,
     ) -> bool:
         success = repo_sync_from_remote(
             msg_fn=msg_fn,
             repo_dir=repo_dir,
             local_dir=local_dir,
+            online_user_agent=online_user_agent,
             timeout_in_seconds=timeout_in_seconds,
         )
         return success
@@ -1535,6 +1576,7 @@ class subcmd_client:
             local_dir: str,
             local_cache: bool,
             packages: Sequence[str],
+            online_user_agent: str,
             timeout_in_seconds: float,
     ) -> bool:
         # Extract...
@@ -1628,7 +1670,7 @@ class subcmd_client:
                         for block in url_retrieve_to_data_iter_or_filesystem(
                                 filepath_remote_archive,
                                 is_filesystem=is_pkg_filesystem,
-                                headers={},
+                                headers=url_request_headers_create(accept_json=False, user_agent=online_user_agent),
                                 chunk_size=CHUNK_SIZE_DEFAULT,
                                 timeout_in_seconds=timeout_in_seconds,
                         ):
@@ -1893,7 +1935,7 @@ class subcmd_dummy:
                     fh.write("""name = "{:s}"\n""".format(pkg_name))
                     fh.write("""type = "add-on"\n""")
                     fh.write("""tags = []\n""")
-                    fh.write("""maintainer = "Maintainer Name"\n""")
+                    fh.write("""maintainer = "Maintainer Name <username@addr.com>"\n""")
                     fh.write("""license = ["SPDX:GPL-2.0-or-later"]\n""")
                     fh.write("""version = "1.0.0"\n""")
                     fh.write("""tagline = "This is a tagline"\n""")
@@ -2006,6 +2048,8 @@ def argparse_create_client_list(subparsers: "argparse._SubParsersAction[argparse
 
     generic_arg_repo_dir(subparse)
     generic_arg_local_dir(subparse)
+    generic_arg_online_user_agent(subparse)
+
     generic_arg_output_type(subparse)
     generic_arg_timeout(subparse)
 
@@ -2013,6 +2057,7 @@ def argparse_create_client_list(subparsers: "argparse._SubParsersAction[argparse
         func=lambda args: subcmd_client.list_packages(
             msg_fn_from_args(args),
             args.repo_dir,
+            online_user_agent=args.online_user_agent,
             timeout_in_seconds=args.timeout,
         ),
     )
@@ -2031,6 +2076,8 @@ def argparse_create_client_sync(subparsers: "argparse._SubParsersAction[argparse
 
     generic_arg_repo_dir(subparse)
     generic_arg_local_dir(subparse)
+    generic_arg_online_user_agent(subparse)
+
     generic_arg_output_type(subparse)
     generic_arg_timeout(subparse)
 
@@ -2039,6 +2086,7 @@ def argparse_create_client_sync(subparsers: "argparse._SubParsersAction[argparse
             msg_fn_from_args(args),
             repo_dir=args.repo_dir,
             local_dir=args.local_dir,
+            online_user_agent=args.online_user_agent,
             timeout_in_seconds=args.timeout,
         ),
     )
@@ -2077,6 +2125,8 @@ def argparse_create_client_install(subparsers: "argparse._SubParsersAction[argpa
     generic_arg_repo_dir(subparse)
     generic_arg_local_dir(subparse)
     generic_arg_local_cache(subparse)
+    generic_arg_online_user_agent(subparse)
+
     generic_arg_output_type(subparse)
     generic_arg_timeout(subparse)
 
@@ -2087,6 +2137,7 @@ def argparse_create_client_install(subparsers: "argparse._SubParsersAction[argpa
             local_dir=args.local_dir,
             local_cache=args.local_cache,
             packages=args.packages.split(","),
+            online_user_agent=args.online_user_agent,
             timeout_in_seconds=args.timeout,
         ),
     )
@@ -2306,6 +2357,16 @@ def msg_fn_from_args(args: argparse.Namespace) -> MessageFn:
 
 
 def main(argv: Optional[List[str]] = None) -> bool:
+
+    # Needed on WIN32 which doesn't default to `utf-8`.
+    for fh in (sys.stdout, sys.stderr):
+        # While this is typically the case, is only guaranteed to be `TextIO` so check `reconfigure` is available.
+        if not isinstance(fh, io.TextIOWrapper):
+            continue
+        if fh.encoding.lower().partition(":")[0] == "utf-8":
+            continue
+        fh.reconfigure(encoding="utf-8")
+
     if "--version" in sys.argv:
         sys.stdout.write("{:s}\n".format(VERSION))
         return True
