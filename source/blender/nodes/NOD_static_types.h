@@ -421,6 +421,7 @@ DefNode(GeometryNode, GEO_NODE_REPLACE_MATERIAL, 0, "REPLACE_MATERIAL", ReplaceM
 DefNode(GeometryNode, GEO_NODE_RESAMPLE_CURVE, 0, "RESAMPLE_CURVE", ResampleCurve, "Resample Curve", "Add a Resample Curve Geometry node\nGenerate a poly spline for each input spline")
 DefNode(GeometryNode, GEO_NODE_REVERSE_CURVE, 0, "REVERSE_CURVE", ReverseCurve, "Reverse Curve", "Add a Reverse Curve Geometry node\nChange the direction of curves by swapping their start and end data")
 DefNode(GeometryNode, GEO_NODE_ROTATE_INSTANCES, 0, "ROTATE_INSTANCES", RotateInstances, "Rotate Instances", "Add a Rotate Instances Geometry node\nRotate geometry instances in local or global space")
+DefNode(GeometryNode, GEO_NODE_SAMPLE_GRID, 0, "SAMPLE_GRID", SampleGrid, "Sample Grid", "")
 DefNode(GeometryNode, GEO_NODE_SAMPLE_CURVE, def_geo_curve_sample, "SAMPLE_CURVE", SampleCurve, "Sample Curve", "Add a Sample Curve Geometry node\nRetrieve data from a point on a curve at a certain distance from its start")
 DefNode(GeometryNode, GEO_NODE_SAMPLE_INDEX, def_geo_sample_index, "SAMPLE_INDEX", SampleIndex, "Sample Index", "Add a Sample Index Geometry node\nRetrieve values from specific geometry elements")
 DefNode(GeometryNode, GEO_NODE_SAMPLE_NEAREST_SURFACE, 0, "SAMPLE_NEAREST_SURFACE", SampleNearestSurface, "Sample Nearest Surface", "Add a Sample Nearest Surface Geometry node\nCalculate the interpolated value of a mesh attribute on the closest point of its surface")
