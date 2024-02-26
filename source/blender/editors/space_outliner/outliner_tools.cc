@@ -783,7 +783,7 @@ static int outliner_scene_operation_exec(bContext *C, wmOperator *op)
                 OL_SCENE_OP_COPY_LINKED,
                 OL_SCENE_OP_COPY_FULL))
   {
-    DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
     DEG_relations_tag_update(bmain);
     outliner_cleanup_tree(space_outliner);
     WM_main_add_notifier(NC_SCENE | ND_LAYER, nullptr);
