@@ -43,6 +43,7 @@ class MotionPathButtonsPanel:
             col.prop(mps, "frame_step", text="Step")
 
         row = col.row()
+        row.use_property_split = False
         row.prop(mps, "use_camera_space_bake", text="Bake to Active Camera")
 
         if bones:
