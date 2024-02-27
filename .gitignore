@@ -56,14 +56,17 @@ waveletNoiseTile.bin
 /locale/user-config.py
 
 # External repositories.
-# bfa: ignore some remote repos
+/tests/benchmarks/
+
+# bfa: we don't use external repositories for addons
 # /scripts/addons/
 # /scripts/addons_contrib/
+
+# bfa: ignore remote repos
 /lib/macos_arm64
 /lib/macos_x64
 /lib/windows_x64
 /release/datafiles/assets
-/tests/benchmarks/
 
 # Ignore old submodules directories.
 # Eventually need to get rid of those, but for the first time of transition
