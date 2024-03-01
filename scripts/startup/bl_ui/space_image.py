@@ -1852,10 +1852,10 @@ class IMAGE_PT_overlay_guides(Panel):
             row.prop(uvedit, "tile_grid_shape", text="Tiles")
 
 
-class IMAGE_PT_overlay_uv_edit(Panel):
+class IMAGE_PT_overlay_uv_stretch(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'HEADER'
-    bl_label = "UV Editing"
+    bl_label = "UV Stretch"
     bl_parent_id = "IMAGE_PT_overlay"
 
     @classmethod
@@ -1882,6 +1882,7 @@ class IMAGE_PT_overlay_uv_edit(Panel):
         col = split.column()
         if uvedit.show_stretch:
             col.prop(uvedit, "display_stretch_type", text="")
+            col.prop(uvedit, "stretch_opacity", text="Opacity")
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
 
@@ -2081,7 +2082,7 @@ classes = (
     IMAGE_PT_gizmo_display,
     IMAGE_PT_overlay,
     IMAGE_PT_overlay_guides,
-    IMAGE_PT_overlay_uv_edit,
+    IMAGE_PT_overlay_uv_stretch,
     IMAGE_PT_overlay_uv_edit_geometry,
     IMAGE_PT_overlay_texture_paint,
     IMAGE_PT_overlay_image,

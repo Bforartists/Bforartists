@@ -5,14 +5,6 @@
 """
 Blender, thin wrapper around ``blender_extension_utils``.
 Where the operator shows progress, any errors and supports canceling operations.
-
- /src/blender/blender.bin --factory-startup --python ./blender/bl_extension_ops.py
-
-bpy.ops.bl_pkg.demo('INVOKE_DEFAULT')
-
-/src/blender/blender.bin \
-    --factory-startup --python ./blender/bl_extension_ops.py -b \
-    --python-expr "__import__('bpy').ops.bl_pkg.demo()"
 """
 
 __all__ = (
@@ -58,10 +50,7 @@ from .bl_extension_utils import (
     RepoLockContext,
 )
 
-# Enable extensions when they're installed.
-USE_ENABLE_ON_INSTALL = True
-
-
+rna_prop_url = StringProperty(name="URL", subtype='FILE_PATH', options={'HIDDEN'})
 rna_prop_directory = StringProperty(name="Repo Directory", subtype='FILE_PATH')
 rna_prop_repo_index = IntProperty(name="Repo Index", default=-1)
 rna_prop_repo_url = StringProperty(name="Repo URL", subtype='FILE_PATH')
@@ -132,6 +121,25 @@ class CheckSIGINT_Context:
 # -----------------------------------------------------------------------------
 # Internal Utilities
 #
+
+def wm_close_popup_hack():
+    # Setting the workspace closes popup, we may want an API for this.
+    from bpy import context
+    window = context.window
+    window.workspace = window.workspace
+
+
+def online_user_agent_from_blender():
+    # NOTE: keep this brief and avoid `platform.platform()` which could identify individual users.
+    # Produces something like this: `Blender/4.2.0 (Linux x86_64; cycle=alpha)` or similar.
+    import platform
+    return "Blender/{:d}.{:d}.{:d} ({:s} {:s}; cycle={:s})".format(
+        *bpy.app.version,
+        platform.system(),
+        platform.machine(),
+        bpy.app.version_cycle,
+    )
+
 
 def lock_result_any_failed_with_report(op, lock_result, report_type='ERROR'):
     """
@@ -490,6 +498,21 @@ class CommandHandle:
             repo_status_text.running = False
             return {'FINISHED'}
 
+        # Forward new messages to reports.
+        msg_list_per_command = self.cmd_batch.calc_status_log_since_last_request_or_none()
+        if msg_list_per_command is not None:
+            for i, msg_list in enumerate(msg_list_per_command, 1):
+                for (ty, msg) in msg_list:
+                    if len(msg_list_per_command) > 1:
+                        # These reports are flattened, note the process number that fails so
+                        # whoever is reading the reports can make sense of the messages.
+                        msg = "{:s} (process {:d} of {:d})".format(msg, i, len(msg_list_per_command))
+                    if ty == 'STATUS':
+                        op.report({'INFO'}, msg)
+                    else:
+                        op.report({'WARNING'}, msg)
+        del msg_list_per_command
+
         # Avoid high CPU usage by only redrawing when there has been a change.
         msg_list = self.cmd_batch.calc_status_log_or_none()
         if msg_list is not None:
@@ -657,6 +680,7 @@ class BlPkgRepoSync(Operator, _BlPkgCmdMixIn):
                     bl_extension_utils.repo_sync,
                     directory=directory,
                     repo_url=repo_item.repo_url,
+                    online_user_agent=online_user_agent_from_blender(),
                     use_idle=is_modal,
                 )
             )
@@ -669,16 +693,17 @@ class BlPkgRepoSync(Operator, _BlPkgCmdMixIn):
     def exec_command_finish(self):
         from . import repo_cache_store
 
-        # Unlock repositories.
-        lock_result_any_failed_with_report(self, self.repo_lock.release(), report_type='WARNING')
-        del self.repo_lock
-
         repo_cache_store_refresh_from_prefs()
         repo_cache_store.refresh_remote_from_directory(
             directory=self.repo_directory,
             error_fn=self.error_fn_from_exception,
             force=True,
         )
+
+        # Unlock repositories.
+        lock_result_any_failed_with_report(self, self.repo_lock.release(), report_type='WARNING')
+        del self.repo_lock
+
         _preferences_ui_redraw()
 
 
@@ -716,6 +741,7 @@ class BlPkgRepoSyncAll(Operator, _BlPkgCmdMixIn):
                     bl_extension_utils.repo_sync,
                     directory=repo_item.directory,
                     repo_url=repo_item.repo_url,
+                    online_user_agent=online_user_agent_from_blender(),
                     use_idle=is_modal,
                 ))
 
@@ -734,10 +760,6 @@ class BlPkgRepoSyncAll(Operator, _BlPkgCmdMixIn):
     def exec_command_finish(self):
         from . import repo_cache_store
 
-        # Unlock repositories.
-        lock_result_any_failed_with_report(self, self.repo_lock.release(), report_type='WARNING')
-        del self.repo_lock
-
         repo_cache_store_refresh_from_prefs()
 
         for repo_item in extension_repos_read():
@@ -746,6 +768,10 @@ class BlPkgRepoSyncAll(Operator, _BlPkgCmdMixIn):
                 error_fn=self.error_fn_from_exception,
                 force=True,
             )
+
+        # Unlock repositories.
+        lock_result_any_failed_with_report(self, self.repo_lock.release(), report_type='WARNING')
+        del self.repo_lock
 
         _preferences_ui_redraw()
 
@@ -819,6 +845,7 @@ class BlPkgPkgUpgradeAll(Operator, _BlPkgCmdMixIn):
                 directory=repo_item.directory,
                 repo_url=repo_item.repo_url,
                 pkg_id_sequence=pkg_id_sequence,
+                online_user_agent=online_user_agent_from_blender(),
                 use_cache=repo_item.use_cache,
                 use_idle=is_modal,
             ))
@@ -910,6 +937,7 @@ class BlPkgPkgInstallMarked(Operator, _BlPkgCmdMixIn):
                 directory=repo_item.directory,
                 repo_url=repo_item.repo_url,
                 pkg_id_sequence=pkg_id_sequence,
+                online_user_agent=online_user_agent_from_blender(),
                 use_cache=repo_item.use_cache,
                 use_idle=is_modal,
             ))
@@ -1070,10 +1098,20 @@ class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
         description="The local repository to install extensions into",
     )
 
+    enable_on_install: BoolProperty(
+        name="Enable Add-on",
+        description="Enable add-ons after installing",
+        default=True,
+    )
+
     def exec_command_iter(self, is_modal):
         from .bl_extension_utils import (
             pkg_manifest_dict_from_file_or_error,
         )
+        from .bl_extension_ui import (
+            extension_drop_file_popover_close_as_needed,
+        )
+        extension_drop_file_popover_close_as_needed()
 
         self._addon_restore = []
 
@@ -1164,10 +1202,6 @@ class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
 
     def exec_command_finish(self):
 
-        # Unlock repositories.
-        lock_result_any_failed_with_report(self, self.repo_lock.release(), report_type='WARNING')
-        del self.repo_lock
-
         # Refresh installed packages for repositories that were operated on.
         from . import repo_cache_store
 
@@ -1177,6 +1211,11 @@ class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
             error_fn=self.error_fn_from_exception,
             force=True,
         )
+
+        # Unlock repositories.
+        lock_result_any_failed_with_report(self, self.repo_lock.release(), report_type='WARNING')
+        del self.repo_lock
+
         repo_cache_store.refresh_local_from_directory(
             directory=self.repo_directory,
             error_fn=self.error_fn_from_exception,
@@ -1197,7 +1236,7 @@ class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
                 pkg_id_sequence_installed = pkg_id_sequence
 
         # Install.
-        if USE_ENABLE_ON_INSTALL:
+        if self.enable_on_install:
             import addon_utils
 
             # TODO: it would be nice to include this message in the banner.
@@ -1232,7 +1271,7 @@ class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
         # Show the text & repository names in two separate rows.
         layout = self.layout
         col = layout.column()
-        col.label(text="Repository:")
+        col.label(text="Local Repository:")
         col.prop(self, "repo", text="")
 
 
@@ -1246,7 +1285,18 @@ class BlPkgPkgInstall(Operator, _BlPkgCmdMixIn):
 
     pkg_id: rna_prop_pkg_id
 
+    enable_on_install: BoolProperty(
+        name="Enable Add-on",
+        description="Enable add-ons after installing",
+        default=True,
+    )
+
     def exec_command_iter(self, is_modal):
+        from .bl_extension_ui import (
+            extension_drop_url_popover_close_as_needed,
+        )
+        extension_drop_url_popover_close_as_needed()
+
         self._addon_restore = []
 
         directory = _repo_dir_and_index_get(self.repo_index, self.repo_directory, self.report)
@@ -1293,6 +1343,7 @@ class BlPkgPkgInstall(Operator, _BlPkgCmdMixIn):
                     directory=directory,
                     repo_url=repo_item.repo_url,
                     pkg_id_sequence=(pkg_id,),
+                    online_user_agent=online_user_agent_from_blender(),
                     use_cache=repo_item.use_cache,
                     use_idle=is_modal,
                 )
@@ -1325,7 +1376,7 @@ class BlPkgPkgInstall(Operator, _BlPkgCmdMixIn):
                 )
         else:
             # Install.
-            if USE_ENABLE_ON_INSTALL:
+            if self.enable_on_install:
                 import addon_utils
 
                 # TODO: it would be nice to include this message in the banner.
@@ -1386,12 +1437,25 @@ class BlPkgPkgUninstall(Operator, _BlPkgCmdMixIn):
 
     def exec_command_finish(self):
 
+        # Refresh installed packages for repositories that were operated on.
+        from . import repo_cache_store
+
+        repo_item = _extensions_repo_from_directory(self.repo_directory)
+        if repo_item.repo_url == "":
+            # Re-generate JSON meta-data from TOML files (needed for offline repository).
+            # NOTE: This could be slow with many local extensions,
+            # we could simply remove the package that was uninstalled.
+            repo_cache_store.refresh_remote_from_directory(
+                directory=self.repo_directory,
+                error_fn=self.error_fn_from_exception,
+                force=True,
+            )
+        del repo_item
+
         # Unlock repositories.
         lock_result_any_failed_with_report(self, self.repo_lock.release(), report_type='WARNING')
         del self.repo_lock
 
-        # Refresh installed packages for repositories that were operated on.
-        from . import repo_cache_store
         repo_cache_store.refresh_local_from_directory(
             directory=self.repo_directory,
             error_fn=self.error_fn_from_exception,
@@ -1402,12 +1466,12 @@ class BlPkgPkgUninstall(Operator, _BlPkgCmdMixIn):
 
 
 class BlPkgPkgDisable_TODO(Operator):
-    """NOTE: this operation is not yet supported"""
+    """Turn off this extension"""
     bl_idname = "bl_pkg.extension_disable"
-    bl_label = "Disable the extension"
+    bl_label = "Disable extension"
 
     def execute(self, _context):
-        self.report({'WARNING'}, "Disabling not yet supported")
+        self.report({'WARNING'}, "Disabling themes is not yet supported")
         return {'CANCELLED'}
 
 
@@ -1622,6 +1686,32 @@ class BlPkgRepoUnlock(Operator):
         return {'FINISHED'}
 
 
+class BlPkgEnableNotInstalled(Operator):
+    """Turn on this extension"""
+    bl_idname = "bl_pkg.extensions_enable_not_installed"
+    bl_label = "Enable Extension"
+
+    @classmethod
+    def poll(cls, context):
+        cls.poll_message_set("Extension needs to be installed before it can be enabled")
+        return False
+
+    def execute(self, context):
+        # This operator only exists to be able to show disabled check-boxes for extensions
+        # while giving users a reasonable explanation on why is that.
+        return {'CANCELLED'}
+
+
+class BlPkgPopupCancel(Operator):
+    """Close the popup"""
+    bl_idname = "bl_pkg.popup_cancel"
+    bl_label = "Cancel"
+
+    def execute(self, context):
+        wm_close_popup_hack()
+        return {'CANCELLED'}
+
+
 # -----------------------------------------------------------------------------
 # Register
 #
@@ -1650,6 +1740,10 @@ classes = (
     BlPkgObsoleteMarked,
     BlPkgRepoLock,
     BlPkgRepoUnlock,
+
+    # Dummy, just shows a message.
+    BlPkgEnableNotInstalled,
+    BlPkgPopupCancel,
 
     # Dummy commands (for testing).
     BlPkgDummyProgress,
