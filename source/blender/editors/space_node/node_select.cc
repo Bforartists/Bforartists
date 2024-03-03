@@ -1420,8 +1420,6 @@ static uiBlock *node_find_menu(bContext *C, ARegion *region, void *arg_op)
                        10,
                        UI_searchbox_size_x(),
                        UI_UNIT_Y,
-                       0,
-                       0,
                        "");
   UI_but_func_search_set(
       but, nullptr, node_find_update_fn, op->type, false, nullptr, node_find_exec_fn, nullptr);
@@ -1437,8 +1435,6 @@ static uiBlock *node_find_menu(bContext *C, ARegion *region, void *arg_op)
            UI_searchbox_size_x(),
            UI_searchbox_size_y(),
            nullptr,
-           0,
-           0,
            0,
            0,
            nullptr);

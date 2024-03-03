@@ -551,6 +551,11 @@ wmEventHandler_Op *WM_event_add_modal_handler_ex(wmWindow *win,
                                                  ARegion *region,
                                                  wmOperator *op) ATTR_NONNULL(1, 4);
 wmEventHandler_Op *WM_event_add_modal_handler(bContext *C, wmOperator *op) ATTR_NONNULL(1, 2);
+void WM_event_remove_model_handler(ListBase *handlers, const wmOperator *op, bool postpone)
+    ATTR_NONNULL(1, 2);
+
+void WM_event_remove_modal_handler_all(const wmOperator *op, bool postpone) ATTR_NONNULL(1);
+
 /**
  * Modal handlers store a pointer to an area which might be freed while the handler runs.
  * Use this function to NULL all handler pointers to \a old_area.
@@ -686,12 +691,9 @@ int WM_menu_invoke(bContext *C, wmOperator *op, const wmEvent *event);
  * Call an existent menu. The menu can be created in C or Python.
  */
 void WM_menu_name_call(bContext *C, const char *menu_name, short context);
-/**
- * Similar to #WM_enum_search_invoke, but draws previews. Also, this can't
- * be used as invoke callback directly since it needs additional info.
- */
-int WM_enum_search_invoke_previews(bContext *C, wmOperator *op, short prv_cols, short prv_rows);
+
 int WM_enum_search_invoke(bContext *C, wmOperator *op, const wmEvent *event);
+
 /**
  * Invoke callback, confirm menu + exec.
  */
@@ -1714,6 +1716,10 @@ void WM_main_playanim(int argc, const char **argv);
  * Convenient to save a blend file from a debugger.
  */
 bool write_crash_blend();
+
+bool WM_autosave_is_scheduled(wmWindowManager *wm);
+/** Flushes all changes from edit modes and stores the auto-save file. */
+void WM_autosave_write(wmWindowManager *wm, Main *bmain);
 
 /**
  * Lock the interface for any communication.

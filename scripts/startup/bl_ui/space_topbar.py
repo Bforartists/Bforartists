@@ -232,6 +232,8 @@ class TOPBAR_MT_file_cleanup(Menu):
         props.do_linked_ids = False
         props.do_recursive = True
 
+        layout.operator("outliner.orphans_manage", text="Manage Unused Data")
+
 
 class TOPBAR_MT_file(Menu):
     bl_label = "File"
