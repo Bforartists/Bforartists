@@ -77,7 +77,7 @@ const EnumPropertyItem rna_enum_nla_mode_extend_items[] = {
 #  include <stdio.h>
 
 /* needed for some of the validation stuff... */
-#  include "BKE_anim_data.h"
+#  include "BKE_anim_data.hh"
 #  include "BKE_fcurve.h"
 #  include "BKE_nla.h"
 
@@ -430,7 +430,7 @@ static void rna_NlaStrip_use_auto_blend_set(PointerRNA *ptr, bool value)
   }
 }
 
-static int rna_NlaStrip_action_editable(PointerRNA *ptr, const char ** /*r_info*/)
+static int rna_NlaStrip_action_editable(const PointerRNA *ptr, const char ** /*r_info*/)
 {
   NlaStrip *strip = (NlaStrip *)ptr->data;
 
