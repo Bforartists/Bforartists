@@ -37,7 +37,7 @@
 #include "BLI_utildefines.h"
 #include "BLI_vector.hh"
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_armature.hh"
 #include "BKE_collection.hh"
@@ -904,7 +904,7 @@ static uiBlock *merged_element_search_menu(bContext *C, ARegion *region, void *d
 
   short menu_width = 10 * UI_UNIT_X;
   but = uiDefSearchBut(
-      block, search, 0, ICON_VIEWZOOM, sizeof(search), 10, 10, menu_width, UI_UNIT_Y, 0, 0, "");
+      block, search, 0, ICON_VIEWZOOM, sizeof(search), 10, 10, menu_width, UI_UNIT_Y, "");
   UI_but_func_search_set(but,
                          nullptr,
                          merged_element_search_update_fn,
@@ -925,8 +925,6 @@ static uiBlock *merged_element_search_menu(bContext *C, ARegion *region, void *d
            menu_width,
            UI_searchbox_size_y(),
            nullptr,
-           0,
-           0,
            0,
            0,
            nullptr);
