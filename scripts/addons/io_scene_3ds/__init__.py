@@ -18,7 +18,7 @@ import bpy
 bl_info = {
     "name": "Autodesk 3DS format",
     "author": "Bob Holcomb, Campbell Barton, Sebastian Schrand",
-    "version": (2, 4, 9),
+    "version": (2, 5, 0),
     "blender": (4, 1, 0),
     "location": "File > Import-Export",
     "description": "3DS Import/Export meshes, UVs, materials, textures, "
@@ -46,6 +46,7 @@ class Import3DS(bpy.types.Operator, ImportHelper):
 
     filename_ext = ".3ds"
     filter_glob: StringProperty(default="*.3ds", options={'HIDDEN'})
+    filepath: StringProperty(subtype='FILE_PATH', options={'SKIP_SAVE'})
 
     constrain_size: FloatProperty(
         name="Constrain Size",
@@ -104,8 +105,14 @@ class Import3DS(bpy.types.Operator, ImportHelper):
         default=False,
     )
 
+    @classmethod
+    def poll(cls, context):
+        return (context.area and context.area.type == "VIEW_3D")
+
     def execute(self, context):
         from . import import_3ds
+        if not self.filepath or not self.filepath.endswith(".3ds"):
+            return {'CANCELLED'}
 
         keywords = self.as_keywords(ignore=("axis_forward",
                                             "axis_up",
@@ -119,8 +126,25 @@ class Import3DS(bpy.types.Operator, ImportHelper):
 
         return import_3ds.load(self, context, **keywords)
 
+    def invoke(self, context, event):
+        if self.filepath:
+            return self.execute(context)
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
     def draw(self, context):
         pass
+
+
+class MAX3DS_FH_import(bpy.types.FileHandler):
+    bl_idname = "MAX3DS_FH_import"
+    bl_label = "File handler for 3ds import"
+    bl_import_operator = "import_scene.max3ds"
+    bl_file_extensions = ".3ds"
+
+    @classmethod
+    def poll_drop(cls, context):
+        return (context.area and context.area.type == 'VIEW_3D')
 
 
 class MAX3DS_PT_import_include(bpy.types.Panel):
@@ -346,6 +370,7 @@ def menu_func_import(self, context):
 
 def register():
     bpy.utils.register_class(Import3DS)
+    bpy.utils.register_class(MAX3DS_FH_import)
     bpy.utils.register_class(MAX3DS_PT_import_include)
     bpy.utils.register_class(MAX3DS_PT_import_transform)
     bpy.utils.register_class(Export3DS)
@@ -357,6 +382,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(Import3DS)
+    bpy.utils.unregister_class(MAX3DS_FH_import)
     bpy.utils.unregister_class(MAX3DS_PT_import_include)
     bpy.utils.unregister_class(MAX3DS_PT_import_transform)
     bpy.utils.unregister_class(Export3DS)
