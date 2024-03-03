@@ -77,6 +77,12 @@ static int sculpt_set_persistent_base_exec(bContext *C, wmOperator * /*op*/)
   Object *ob = CTX_data_active_object(C);
   SculptSession *ss = ob->sculpt;
 
+  const View3D *v3d = CTX_wm_view3d(C);
+  const Base *base = CTX_data_active_base(C);
+  if (!BKE_base_is_visible(v3d, base)) {
+    return OPERATOR_CANCELLED;
+  }
+
   /* Do not allow in DynTopo just yet. */
   if (!ss || (ss && ss->bm)) {
     return OPERATOR_FINISHED;
@@ -175,6 +181,12 @@ static int sculpt_symmetrize_exec(bContext *C, wmOperator *op)
   const float dist = RNA_float_get(op->ptr, "merge_tolerance");
 
   if (!pbvh) {
+    return OPERATOR_CANCELLED;
+  }
+
+  const View3D *v3d = CTX_wm_view3d(C);
+  const Base *base = CTX_data_active_base(C);
+  if (!BKE_base_is_visible(v3d, base)) {
     return OPERATOR_CANCELLED;
   }
 

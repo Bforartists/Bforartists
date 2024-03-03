@@ -257,8 +257,6 @@ static void draw_channel_labels(const SeqChannelDrawContext *context,
              nullptr,
              0,
              0,
-             0,
-             0,
              nullptr);
   }
 }
