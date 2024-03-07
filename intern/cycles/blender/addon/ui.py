@@ -326,8 +326,9 @@ class CYCLES_RENDER_PT_sampling_render_denoise(CyclesButtonsPanel, Panel):
 
         if cscene.denoiser == 'OPENIMAGEDENOISE':
             row = col.row()
-            row.active = not use_cpu(context) and has_oidn_gpu_devices(context)
-            row.prop(cscene, "denoising_use_gpu", text="Use GPU")
+            if not use_cpu(context) and has_oidn_gpu_devices(context):
+                row.use_property_split = False
+                row.prop(cscene, "denoising_use_gpu", text="Use GPU")
 
 
 class CYCLES_RENDER_PT_sampling_path_guiding(CyclesButtonsPanel, Panel):
