@@ -1297,8 +1297,12 @@ class VIEW3D_PT_sculpt_symmetry(Panel, View3DPaintPanel):
         layout.separator()
 
         layout.label(text="Symmetrize")
-        layout.prop(sculpt, "symmetrize_direction")
-        layout.prop(WindowManager.operator_properties_last("sculpt.symmetrize"), "merge_tolerance")
+        row = layout.row()
+        row.separator()
+        row.prop(sculpt, "symmetrize_direction")
+        row = layout.row()
+        row.separator()
+        row.prop(WindowManager.operator_properties_last("sculpt.symmetrize"), "merge_tolerance")
         layout.operator("sculpt.symmetrize")
 
 
