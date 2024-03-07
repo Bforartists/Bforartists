@@ -1838,12 +1838,12 @@ class IMAGE_PT_overlay_guides(Panel):
                 row.separator(factor = 3.5)
                 row.prop(uvedit, "custom_grid_subdivisions", text="Fixed grid size")# by purpose.No text means x y is missing.
 
-            col = layout.column()
-            row = col.row()
-            row.separator()
-            row.separator()
-            row.prop(uvedit, "show_grid_over_image")
-            row.active = sima.image is not None
+            if sima.image is not None:
+                col = layout.column()
+                row = col.row()
+                row.separator()
+                row.separator()
+                row.prop(uvedit, "show_grid_over_image")
 
             row = layout.row()
             row.use_property_split = True
@@ -1881,10 +1881,19 @@ class IMAGE_PT_overlay_uv_stretch(Panel):
         row.prop(uvedit, "show_stretch")
         col = split.column()
         if uvedit.show_stretch:
-            col.prop(uvedit, "display_stretch_type", text="")
-            col.prop(uvedit, "stretch_opacity", text="Opacity")
+            col.label(icon='DISCLOSURE_TRI_DOWN')
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if uvedit.show_stretch:
+            col = layout.column()
+            col.use_property_split = True
+            row = col.row()
+            row.separator ( factor = 3.0)
+            row.prop(uvedit, "display_stretch_type", text="")
+            row = col.row()
+            row.separator ( factor = 3.0)
+            row.prop(uvedit, "stretch_opacity", text="Opacity")
 
 
 class IMAGE_PT_overlay_uv_edit_geometry(Panel):
@@ -1911,6 +1920,7 @@ class IMAGE_PT_overlay_uv_edit_geometry(Panel):
         col = layout.column()
         row = col.row()
         row.separator()
+        row.use_property_split = True
         row.prop(uvedit, "uv_opacity")
         row = col.row()
         row.separator()
@@ -1921,9 +1931,9 @@ class IMAGE_PT_overlay_uv_edit_geometry(Panel):
 
         # Faces
         row = col.row()
-        row.active = not uvedit.show_stretch
-        row.separator()
-        row.prop(uvedit, "show_faces", text="Faces")
+        if not uvedit.show_stretch:
+            row.separator()
+            row.prop(uvedit, "show_faces", text="Faces")
 
 
 class IMAGE_PT_overlay_texture_paint(Panel):
