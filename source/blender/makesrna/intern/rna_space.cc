@@ -3728,7 +3728,7 @@ bpy.ops.wm.save_as_mainfile()
 
   prop = RNA_def_property(srna, "show_faces", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SI_NO_DRAWFACES);
-  RNA_def_property_ui_text(prop, "Display Faces", "Display faces over the image");
+  RNA_def_property_ui_text(prop, "Display Faces", "Display faces over the image\nDoes not work when Display Stretch is active");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, nullptr);
 
   prop = RNA_def_property(srna, "tile_grid_shape", PROP_INT, PROP_XYZ);
@@ -3744,7 +3744,7 @@ bpy.ops.wm.save_as_mainfile()
   prop = RNA_def_property(srna, "show_grid_over_image", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SI_GRID_OVER_IMAGE);
   RNA_def_property_boolean_default(prop, true);
-  RNA_def_property_ui_text(prop, "Grid Over Image", "Show the grid over the image");
+  RNA_def_property_ui_text(prop, "Grid Over Image", "Show the grid over the image\nRequires an image to be active and loaded");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, nullptr);
 
   prop = RNA_def_property(srna, "grid_shape_source", PROP_ENUM, PROP_NONE);
