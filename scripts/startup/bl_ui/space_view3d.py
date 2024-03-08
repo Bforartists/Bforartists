@@ -10508,17 +10508,29 @@ class VIEW3D_PT_curves_sculpt_add_shape(Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False  # No animation.
 
         settings = UnifiedPaintPanel.paint_settings(context)
         brush = settings.brush
 
-        col = layout.column(heading="Interpolate", align=True)
-        col.prop(brush.curves_sculpt_settings, "use_length_interpolate", text="Length")
-        col.prop(brush.curves_sculpt_settings, "use_radius_interpolate", text="Radius")
-        col.prop(brush.curves_sculpt_settings, "use_shape_interpolate", text="Shape")
-        col.prop(brush.curves_sculpt_settings, "use_point_count_interpolate", text="Point Count")
+        col = layout.column(align = True)
+        col.label(text = "Interpolate")
+
+        row = col.row()
+        row.separator()
+        row.prop(brush.curves_sculpt_settings, "use_length_interpolate", text="Length")
+        row = col.row()
+        row.separator()
+        row.prop(brush.curves_sculpt_settings, "use_radius_interpolate", text="Radius")
+        row = col.row()
+        row.separator()
+        row.prop(brush.curves_sculpt_settings, "use_shape_interpolate", text="Shape")
+        row = col.row()
+        row.separator()
+        row.prop(brush.curves_sculpt_settings, "use_point_count_interpolate", text="Point Count")
+
+        layout.use_property_split = True
 
         col = layout.column()
         col.active = not brush.curves_sculpt_settings.use_length_interpolate
