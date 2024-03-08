@@ -2195,8 +2195,8 @@ static void unused_message_gen(std::string &message,
 /* static int unused_message_popup_width_compute(bContext *C)
 {
   /* Computation of unused data amounts, with all options ON.
-   * Used to estimate the maximum required width for the dialog. */ /*
-  Main *bmain = CTX_data_main(C);
+   * Used to estimate the maximum required width for the dialog. */ 
+  /* Main *bmain = CTX_data_main(C);
   LibQueryUnusedIDsData data;
   data.do_local_ids = true;
   data.do_linked_ids = true;
@@ -2246,8 +2246,8 @@ static bool outliner_orphans_purge_check(bContext *C, wmOperator *op)
 /* {
    op->customdata = MEM_new<LibQueryUnusedIDsData>(__func__);
 
-   /* Compute expected amounts of deleted IDs and store them in 'cached' operator properties. */ /*
-   outliner_orphans_purge_check(C, op);
+   /* Compute expected amounts of deleted IDs and store them in 'cached' operator properties. */ 
+   /* outliner_orphans_purge_check(C, op);
 
    return WM_operator_props_dialog_popup(C,
                                          op,
