@@ -833,7 +833,7 @@ def brush_settings(layout, context, brush, popover=False):
             layout.use_property_split = True
             layout.prop(brush.curves_sculpt_settings, "add_amount")
 
-            col = layout.column()
+            col = layout.column(align = True)
             col.use_property_split = False
             col.label(text = "Interpolate")
 
@@ -843,7 +843,9 @@ def brush_settings(layout, context, brush, popover=False):
             row = col.row()
             row.separator()
             row.prop(brush.curves_sculpt_settings, "use_radius_interpolate", text="Radius")
-            col.prop(brush.curves_sculpt_settings, "use_shape_interpolate", text="Shape")
+            row = col.row()
+            row.separator()
+            row.prop(brush.curves_sculpt_settings, "use_shape_interpolate", text="Shape")
             row = col.row()
             row.separator()
             row.prop(brush.curves_sculpt_settings, "use_point_count_interpolate", text="Point Count")
