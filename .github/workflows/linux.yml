@@ -26,7 +26,6 @@ jobs:
         sudo apt install python3 git git-lfs
         ./build_files/build_environment/install_linux_packages.py
         ./build_files/utils/make_update.py --use-linux-libraries
-        make update
         make release
         ls
         cd ..

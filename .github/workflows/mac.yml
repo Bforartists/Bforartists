@@ -23,7 +23,7 @@ jobs:
         cd ~/bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
         cd ~/bforartistsrepo/Bforartists
-        make update
+        python ./build_files/utils/make_update.py
         make release
 
     - name: Upload Build
