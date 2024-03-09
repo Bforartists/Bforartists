@@ -45,7 +45,7 @@
 #include "BLT_translation.hh"
 
 #include "BKE_action.h"
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_armature.hh"
 #include "BKE_camera.h"
 #include "BKE_collection.hh"
@@ -80,6 +80,7 @@
 #include "BKE_mball.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_runtime.hh"
+#include "BKE_modifier.hh"
 #include "BKE_nla.h"
 #include "BKE_node.hh"
 #include "BKE_object.hh"
@@ -1376,9 +1377,9 @@ static int object_gpencil_add_exec(bContext *C, wmOperator *op)
         ob_name = CTX_DATA_(BLT_I18NCONTEXT_ID_GPENCIL, "Stroke");
         break;
       }
-      case GP_LRT_OBJECT:
-      case GP_LRT_SCENE:
-      case GP_LRT_COLLECTION: {
+      case GREASE_PENCIL_LINEART_OBJECT:
+      case GREASE_PENCIL_LINEART_SCENE:
+      case GREASE_PENCIL_LINEART_COLLECTION: {
         ob_name = CTX_DATA_(BLT_I18NCONTEXT_ID_GPENCIL, "LineArt");
         break;
       }
@@ -1427,9 +1428,9 @@ static int object_gpencil_add_exec(bContext *C, wmOperator *op)
       ED_gpencil_create_monkey(C, ob, mat);
       break;
     }
-    case GP_LRT_SCENE:
-    case GP_LRT_COLLECTION:
-    case GP_LRT_OBJECT: {
+    case GREASE_PENCIL_LINEART_SCENE:
+    case GREASE_PENCIL_LINEART_COLLECTION:
+    case GREASE_PENCIL_LINEART_OBJECT: {
       float radius = RNA_float_get(op->ptr, "radius");
       float scale[3];
       copy_v3_fl(scale, radius);
@@ -1447,17 +1448,17 @@ static int object_gpencil_add_exec(bContext *C, wmOperator *op)
       BLI_addtail(&ob->greasepencil_modifiers, md);
       BKE_gpencil_modifier_unique_name(&ob->greasepencil_modifiers, (GpencilModifierData *)md);
 
-      if (type == GP_LRT_COLLECTION) {
-        md->source_type = LRT_SOURCE_COLLECTION;
+      if (type == GREASE_PENCIL_LINEART_COLLECTION) {
+        md->source_type = LINEART_SOURCE_COLLECTION;
         md->source_collection = CTX_data_collection(C);
       }
-      else if (type == GP_LRT_OBJECT) {
-        md->source_type = LRT_SOURCE_OBJECT;
+      else if (type == GREASE_PENCIL_LINEART_OBJECT) {
+        md->source_type = LINEART_SOURCE_OBJECT;
         md->source_object = ob_orig;
       }
       else {
         /* Whole scene. */
-        md->source_type = LRT_SOURCE_SCENE;
+        md->source_type = LINEART_SOURCE_SCENE;
       }
       /* Only created one layer and one material. */
       STRNCPY(md->target_layer, ((bGPDlayer *)gpd->layers.first)->info);
@@ -1515,7 +1516,11 @@ static void object_add_ui(bContext * /*C*/, wmOperator *op)
   uiItemR(layout, op->ptr, "type", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   int type = RNA_enum_get(op->ptr, "type");
-  if (ELEM(type, GP_LRT_COLLECTION, GP_LRT_OBJECT, GP_LRT_SCENE)) {
+  if (ELEM(type,
+           GREASE_PENCIL_LINEART_COLLECTION,
+           GREASE_PENCIL_LINEART_OBJECT,
+           GREASE_PENCIL_LINEART_SCENE))
+  {
     uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
     uiItemR(layout, op->ptr, "use_lights", UI_ITEM_NONE, nullptr, ICON_NONE);
     uiItemR(layout, op->ptr, "use_in_front", UI_ITEM_NONE, nullptr, ICON_NONE);
@@ -1625,9 +1630,9 @@ static int object_grease_pencil_add_exec(bContext *C, wmOperator *op)
       ob_name = CTX_DATA_(BLT_I18NCONTEXT_ID_GPENCIL, "Suzanne");
       break;
     }
-    case GP_LRT_OBJECT:
-    case GP_LRT_SCENE:
-    case GP_LRT_COLLECTION: {
+    case GREASE_PENCIL_LINEART_OBJECT:
+    case GREASE_PENCIL_LINEART_SCENE:
+    case GREASE_PENCIL_LINEART_COLLECTION: {
       ob_name = CTX_DATA_(BLT_I18NCONTEXT_ID_GPENCIL, "LineArt");
       break;
     }
@@ -1664,10 +1669,65 @@ static int object_grease_pencil_add_exec(bContext *C, wmOperator *op)
       greasepencil::create_suzanne(*bmain, *object, mat, scene->r.cfra);
       break;
     }
-    case GP_LRT_OBJECT:
-    case GP_LRT_SCENE:
-    case GP_LRT_COLLECTION: {
-      /* TODO. */
+    case GREASE_PENCIL_LINEART_OBJECT:
+    case GREASE_PENCIL_LINEART_SCENE:
+    case GREASE_PENCIL_LINEART_COLLECTION: {
+      Object *original_active_object = CTX_data_active_object(C);
+
+      const int type = RNA_enum_get(op->ptr, "type");
+      const bool use_in_front = RNA_boolean_get(op->ptr, "use_in_front");
+      const bool use_lights = RNA_boolean_get(op->ptr, "use_lights");
+      const int stroke_depth_order = RNA_enum_get(op->ptr, "stroke_depth_order");
+      const float stroke_depth_offset = RNA_float_get(op->ptr, "stroke_depth_offset");
+
+      greasepencil::create_blank(*bmain, *object, scene->r.cfra);
+
+      auto *grease_pencil = reinterpret_cast<GreasePencil *>(object->data);
+      auto *new_md = reinterpret_cast<ModifierData *>(
+          BKE_modifier_new(eModifierType_GreasePencilLineart));
+      auto *md = reinterpret_cast<GreasePencilLineartModifierData *>(new_md);
+
+      BLI_addtail(&object->modifiers, md);
+      BKE_modifier_unique_name(&object->modifiers, new_md);
+      BKE_modifiers_persistent_uid_init(*object, *new_md);
+
+      if (type == GREASE_PENCIL_LINEART_COLLECTION) {
+        md->source_type = LINEART_SOURCE_COLLECTION;
+        md->source_collection = CTX_data_collection(C);
+      }
+      else if (type == GREASE_PENCIL_LINEART_OBJECT) {
+        md->source_type = LINEART_SOURCE_OBJECT;
+        md->source_object = original_active_object;
+      }
+      else {
+        /* Whole scene. */
+        md->source_type = LINEART_SOURCE_SCENE;
+      }
+      /* Only created one layer and one material. */
+      STRNCPY(md->target_layer, grease_pencil->get_active_layer()->name().c_str());
+      md->target_material = BKE_object_material_get(object, 0);
+      if (md->target_material) {
+        id_us_plus(&md->target_material->id);
+      }
+
+      if (use_lights) {
+        object->dtx |= OB_USE_GPENCIL_LIGHTS;
+      }
+      else {
+        object->dtx &= ~OB_USE_GPENCIL_LIGHTS;
+      }
+
+      /* Stroke object is drawn in front of meshes by default. */
+      if (use_in_front) {
+        object->dtx |= OB_DRAW_IN_FRONT;
+      }
+      else {
+        if (stroke_depth_order == GP_DRAWMODE_3D) {
+          grease_pencil->flag |= GREASE_PENCIL_STROKE_ORDER_3D;
+        }
+        md->stroke_depth_offset = stroke_depth_offset;
+      }
+
       break;
     }
   }
@@ -1693,6 +1753,29 @@ void OBJECT_OT_grease_pencil_add(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_object_gpencil_type_items, 0, "Type", "");
+  RNA_def_boolean(ot->srna,
+                  "use_in_front",
+                  true,
+                  "Show In Front",
+                  "Show line art grease pencil in front of everything");
+  RNA_def_float(ot->srna,
+                "stroke_depth_offset",
+                0.05f,
+                0.0f,
+                FLT_MAX,
+                "Stroke Offset",
+                "Stroke offset for the line art modifier",
+                0.0f,
+                0.5f);
+  RNA_def_boolean(
+      ot->srna, "use_lights", false, "Use Lights", "Use lights for this grease pencil object");
+  RNA_def_enum(
+      ot->srna,
+      "stroke_depth_order",
+      rna_enum_gpencil_add_stroke_depth_order_items,
+      GP_DRAWMODE_3D,
+      "Stroke Depth Order",
+      "Defines how the strokes are ordered in 3D space (for objects not displayed 'In Front')");
 
   ED_object_add_unit_props_radius(ot);
   ED_object_add_generic_props(ot, false);
@@ -1958,7 +2041,7 @@ static int collection_drop_exec(bContext *C, wmOperator *op)
 
   if (RNA_boolean_get(op->ptr, "use_instance")) {
     BKE_collection_child_remove(bmain, active_collection->collection, add_info->collection);
-    DEG_id_tag_update(&active_collection->collection->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&active_collection->collection->id, ID_RECALC_SYNC_TO_EVAL);
     DEG_relations_tag_update(bmain);
 
     Object *ob = ED_object_add_type(C,
@@ -2849,7 +2932,7 @@ static void make_object_duplilist_real(bContext *C,
   BKE_main_id_newptr_and_tag_clear(bmain);
 
   base->object->transflag &= ~OB_DUPLI;
-  DEG_id_tag_update(&base->object->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&base->object->id, ID_RECALC_SYNC_TO_EVAL);
 }
 
 static int object_duplicates_make_real_exec(bContext *C, wmOperator *op)
@@ -4001,7 +4084,7 @@ static int duplicate_exec(bContext *C, wmOperator *op)
   ED_outliner_select_sync_from_object_tag(C);
 
   DEG_relations_tag_update(bmain);
-  DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE | ID_RECALC_SELECT);
+  DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL | ID_RECALC_SELECT);
 
   WM_event_add_notifier(C, NC_SCENE | ND_OB_SELECT, scene);
   WM_event_add_notifier(C, NC_SCENE | ND_LAYER_CONTENT, scene);

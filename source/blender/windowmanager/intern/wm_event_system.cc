@@ -2527,6 +2527,7 @@ static eHandlerActionFlag wm_handler_operator_call(bContext *C,
         else {
           /* Not very common, but modal operators may report before finishing. */
           if (!BLI_listbase_is_empty(&op->reports->list)) {
+            WM_event_add_notifier(C, NC_SPACE | ND_SPACE_INFO_REPORT, nullptr);
             WM_reports_from_reports_move(wm, op->reports);
           }
         }
@@ -4483,6 +4484,35 @@ wmEventHandler_Op *WM_event_add_modal_handler(bContext *C, wmOperator *op)
   ScrArea *area = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
   return WM_event_add_modal_handler_ex(win, area, region, op);
+}
+
+void WM_event_remove_model_handler(ListBase *handlers, const wmOperator *op, const bool postpone)
+{
+  LISTBASE_FOREACH (wmEventHandler *, handler_base, handlers) {
+    if (handler_base->type == WM_HANDLER_TYPE_OP) {
+      wmEventHandler_Op *handler = (wmEventHandler_Op *)handler_base;
+      if ((handler->op == op) || (op->opm && (handler->op == op->opm))) {
+        /* Handlers will be freed in #wm_handlers_do(). */
+        if (postpone) {
+          handler->head.flag |= WM_HANDLER_DO_FREE;
+        }
+        else {
+          BLI_remlink(handlers, handler);
+          wm_event_free_handler(&handler->head);
+        }
+        break;
+      }
+    }
+  }
+}
+
+void WM_event_remove_modal_handler_all(const wmOperator *op, const bool postpone)
+{
+  Main *bmain = G_MAIN;
+  wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
+  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+    WM_event_remove_model_handler(&win->modalhandlers, op, postpone);
+  }
 }
 
 void WM_event_modal_handler_area_replace(wmWindow *win, const ScrArea *old_area, ScrArea *new_area)

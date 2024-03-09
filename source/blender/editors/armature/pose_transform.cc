@@ -83,10 +83,9 @@ static void applyarmature_fix_boneparents(const bContext *C, Scene *scene, Objec
    * in this function. */
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Main *bmain = CTX_data_main(C);
-  Object workob, *ob;
 
   /* go through all objects in database */
-  for (ob = static_cast<Object *>(bmain->objects.first); ob;
+  for (Object *ob = static_cast<Object *>(bmain->objects.first); ob;
        ob = static_cast<Object *>(ob->id.next))
   {
     /* if parent is bone in this armature, apply corrections */
@@ -96,8 +95,7 @@ static void applyarmature_fix_boneparents(const bContext *C, Scene *scene, Objec
        */
       BKE_object_apply_mat4(ob, ob->object_to_world().ptr(), false, false);
 
-      BKE_object_workob_calc_parent(depsgraph, scene, ob, &workob);
-      invert_m4_m4(ob->parentinv, workob.object_to_world().ptr());
+      invert_m4_m4(ob->parentinv, BKE_object_calc_parent(depsgraph, scene, ob).ptr());
     }
   }
 }
@@ -462,7 +460,7 @@ static int apply_armature_pose2bones_exec(bContext *C, wmOperator *op)
 
   /* NOTE: notifier might evolve. */
   WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
-  DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
 
   return OPERATOR_FINISHED;
 }

@@ -42,7 +42,7 @@
 
 #include "BLT_translation.hh"
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_attribute.hh"
 #include "BKE_bake_data_block_id.hh"
 #include "BKE_bpath.hh"
@@ -292,6 +292,7 @@ static void mesh_blend_write(BlendWriter *writer, ID *id, const void *id_address
     }
   }
 
+  const blender::bke::MeshRuntime *mesh_runtime = mesh->runtime;
   mesh->runtime = nullptr;
 
   BLO_write_id_struct(writer, Mesh, id_address, &mesh->id);
@@ -317,7 +318,12 @@ static void mesh_blend_write(BlendWriter *writer, ID *id, const void *id_address
       writer, &mesh->face_data, face_layers, mesh->faces_num, CD_MASK_MESH.pmask, &mesh->id);
 
   if (mesh->face_offset_indices) {
-    BLO_write_int32_array(writer, mesh->faces_num + 1, mesh->face_offset_indices);
+    BLO_write_shared(
+        writer,
+        mesh->face_offset_indices,
+        sizeof(int) * mesh->faces_num,
+        mesh_runtime->face_offsets_sharing_info,
+        [&]() { BLO_write_int32_array(writer, mesh->faces_num + 1, mesh->face_offset_indices); });
   }
 }
 
@@ -363,9 +369,11 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
   mesh->runtime = new blender::bke::MeshRuntime();
 
   if (mesh->face_offset_indices) {
-    BLO_read_int32_array(reader, mesh->faces_num + 1, &mesh->face_offset_indices);
-    mesh->runtime->face_offsets_sharing_info = blender::implicit_sharing::info_for_mem_free(
-        mesh->face_offset_indices);
+    mesh->runtime->face_offsets_sharing_info = BLO_read_shared(
+        reader, &mesh->face_offset_indices, [&]() {
+          BLO_read_int32_array(reader, mesh->faces_num + 1, &mesh->face_offset_indices);
+          return blender::implicit_sharing::info_for_mem_free(mesh->face_offset_indices);
+        });
   }
 
   if (mesh->mselect == nullptr) {
@@ -456,6 +464,41 @@ bool BKE_mesh_has_custom_loop_normals(Mesh *mesh)
 
   return CustomData_has_layer(&mesh->corner_data, CD_CUSTOMLOOPNORMAL);
 }
+
+namespace blender::bke {
+
+void mesh_ensure_default_color_attribute_on_add(Mesh &mesh,
+                                                const AttributeIDRef &id,
+                                                AttrDomain domain,
+                                                eCustomDataType data_type)
+{
+  if (id.is_anonymous()) {
+    return;
+  }
+  if (!(CD_TYPE_AS_MASK(data_type) & CD_MASK_COLOR_ALL) ||
+      !(ATTR_DOMAIN_AS_MASK(domain) & ATTR_DOMAIN_MASK_COLOR))
+  {
+    return;
+  }
+  if (mesh.default_color_attribute) {
+    return;
+  }
+  mesh.default_color_attribute = BLI_strdupn(id.name().data(), id.name().size());
+}
+
+void mesh_ensure_required_data_layers(Mesh &mesh)
+{
+  MutableAttributeAccessor attributes = mesh.attributes_for_write();
+  AttributeInitConstruct attribute_init;
+
+  /* Try to create attributes if they do not exist. */
+  attributes.add("position", AttrDomain::Point, CD_PROP_FLOAT3, attribute_init);
+  attributes.add(".edge_verts", AttrDomain::Edge, CD_PROP_INT32_2D, attribute_init);
+  attributes.add(".corner_vert", AttrDomain::Corner, CD_PROP_INT32, attribute_init);
+  attributes.add(".corner_edge", AttrDomain::Corner, CD_PROP_INT32, attribute_init);
+}
+
+}  // namespace blender::bke
 
 void BKE_mesh_free_data_for_undo(Mesh *mesh)
 {
@@ -648,41 +691,6 @@ MutableSpan<MDeformVert> Mesh::deform_verts_for_write()
           this->verts_num};
 }
 
-namespace blender::bke {
-
-void mesh_ensure_default_color_attribute_on_add(Mesh &mesh,
-                                                const AttributeIDRef &id,
-                                                AttrDomain domain,
-                                                eCustomDataType data_type)
-{
-  if (id.is_anonymous()) {
-    return;
-  }
-  if (!(CD_TYPE_AS_MASK(data_type) & CD_MASK_COLOR_ALL) ||
-      !(ATTR_DOMAIN_AS_MASK(domain) & ATTR_DOMAIN_MASK_COLOR))
-  {
-    return;
-  }
-  if (mesh.default_color_attribute) {
-    return;
-  }
-  mesh.default_color_attribute = BLI_strdupn(id.name().data(), id.name().size());
-}
-
-static void mesh_ensure_cdlayers_primary(Mesh &mesh)
-{
-  MutableAttributeAccessor attributes = mesh.attributes_for_write();
-  AttributeInitConstruct attribute_init;
-
-  /* Try to create attributes if they do not exist. */
-  attributes.add("position", AttrDomain::Point, CD_PROP_FLOAT3, attribute_init);
-  attributes.add(".edge_verts", AttrDomain::Edge, CD_PROP_INT32_2D, attribute_init);
-  attributes.add(".corner_vert", AttrDomain::Corner, CD_PROP_INT32, attribute_init);
-  attributes.add(".corner_edge", AttrDomain::Corner, CD_PROP_INT32, attribute_init);
-}
-
-}  // namespace blender::bke
-
 Mesh *BKE_mesh_new_nomain(const int verts_num,
                           const int edges_num,
                           const int faces_num,
@@ -697,7 +705,7 @@ Mesh *BKE_mesh_new_nomain(const int verts_num,
   mesh->faces_num = faces_num;
   mesh->corners_num = corners_num;
 
-  blender::bke::mesh_ensure_cdlayers_primary(*mesh);
+  blender::bke::mesh_ensure_required_data_layers(*mesh);
   BKE_mesh_face_offsets_ensure_alloc(mesh);
 
   return mesh;
@@ -760,7 +768,7 @@ void BKE_mesh_copy_parameters(Mesh *me_dst, const Mesh *me_src)
 void BKE_mesh_copy_parameters_for_eval(Mesh *me_dst, const Mesh *me_src)
 {
   /* User counts aren't handled, don't copy into a mesh from #G_MAIN. */
-  BLI_assert(me_dst->id.tag & (LIB_TAG_NO_MAIN | LIB_TAG_COPIED_ON_WRITE));
+  BLI_assert(me_dst->id.tag & (LIB_TAG_NO_MAIN | LIB_TAG_COPIED_ON_EVAL));
 
   BKE_mesh_copy_parameters(me_dst, me_src);
   copy_attribute_names(*me_src, *me_dst);
@@ -819,7 +827,7 @@ Mesh *BKE_mesh_new_nomain_from_template_ex(const Mesh *me_src,
 
   /* The destination mesh should at least have valid primary CD layers,
    * even in cases where the source mesh does not. */
-  blender::bke::mesh_ensure_cdlayers_primary(*me_dst);
+  blender::bke::mesh_ensure_required_data_layers(*me_dst);
   BKE_mesh_face_offsets_ensure_alloc(me_dst);
   if (do_tessface && !CustomData_get_layer(&me_dst->fdata_legacy, CD_MFACE)) {
     CustomData_add_layer(&me_dst->fdata_legacy, CD_MFACE, CD_SET_DEFAULT, me_dst->totface_legacy);

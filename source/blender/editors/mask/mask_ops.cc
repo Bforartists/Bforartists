@@ -136,7 +136,7 @@ static int mask_layer_new_exec(bContext *C, wmOperator *op)
   mask->masklay_act = mask->masklay_tot - 1;
 
   WM_event_add_notifier(C, NC_MASK | NA_EDITED, mask);
-  DEG_id_tag_update(&mask->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&mask->id, ID_RECALC_SYNC_TO_EVAL);
 
   return OPERATOR_FINISHED;
 }
@@ -170,7 +170,7 @@ static int mask_layer_remove_exec(bContext *C, wmOperator * /*op*/)
     BKE_mask_layer_remove(mask, mask_layer);
 
     WM_event_add_notifier(C, NC_MASK | NA_EDITED, mask);
-    DEG_id_tag_update(&mask->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&mask->id, ID_RECALC_SYNC_TO_EVAL);
   }
 
   return OPERATOR_FINISHED;
@@ -1925,7 +1925,7 @@ static int mask_layer_move_exec(bContext *C, wmOperator *op)
   }
 
   WM_event_add_notifier(C, NC_MASK | NA_EDITED, mask);
-  DEG_id_tag_update(&mask->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&mask->id, ID_RECALC_SYNC_TO_EVAL);
 
   return OPERATOR_FINISHED;
 }

@@ -27,7 +27,7 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_camera.h"
 #include "BKE_context.hh"
 #include "BKE_customdata.hh"
@@ -40,7 +40,7 @@
 #include "BKE_main.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
-#include "BKE_writeavi.h"
+#include "BKE_writemovie.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"
