@@ -39,7 +39,7 @@
 
 #include "BLT_translation.hh"
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_animsys.h" /* <------ should this be here?, needed for sequencer update */
 #include "BKE_callbacks.hh"
 #include "BKE_camera.h"
@@ -59,7 +59,7 @@
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_sound.h"
-#include "BKE_writeavi.h" /* <------ should be replaced once with generic movie module */
+#include "BKE_writemovie.hh"
 
 #include "NOD_composite.hh"
 
@@ -2092,9 +2092,7 @@ bool RE_WriteRenderViewsMovie(ReportList *reports,
                             rd,
                             preview ? scene->r.psfra : scene->r.sfra,
                             scene->r.cfra,
-                            (int *)ibuf->byte_buffer.data,
-                            ibuf->x,
-                            ibuf->y,
+                            ibuf,
                             suffix,
                             reports))
       {
@@ -2126,9 +2124,7 @@ bool RE_WriteRenderViewsMovie(ReportList *reports,
                           rd,
                           preview ? scene->r.psfra : scene->r.sfra,
                           scene->r.cfra,
-                          (int *)ibuf_arr[2]->byte_buffer.data,
-                          ibuf_arr[2]->x,
-                          ibuf_arr[2]->y,
+                          ibuf_arr[2],
                           "",
                           reports))
     {

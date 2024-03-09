@@ -101,6 +101,7 @@ static SpaceLink *image_create(const ScrArea * /*area*/, const Scene * /*scene*/
   simage->lock = true;
   simage->flag = SI_SHOW_GPENCIL | SI_USE_ALPHA | SI_COORDFLOATS;
   simage->uv_opacity = 1.0f;
+  simage->stretch_opacity = 1.0f;
   simage->overlay.flag = SI_OVERLAY_SHOW_OVERLAYS | SI_OVERLAY_SHOW_GRID_BACKGROUND;
 
   BKE_imageuser_default(&simage->iuser);
@@ -1077,6 +1078,7 @@ static void image_space_blend_read_data(BlendDataReader * /*reader*/, SpaceLink 
   sima->scopes.waveform_2 = nullptr;
   sima->scopes.waveform_3 = nullptr;
   sima->scopes.vecscope = nullptr;
+  sima->scopes.vecscope_rgb = nullptr;
   sima->scopes.ok = 0;
 
 /* WARNING: gpencil data is no longer stored directly in sima after 2.5

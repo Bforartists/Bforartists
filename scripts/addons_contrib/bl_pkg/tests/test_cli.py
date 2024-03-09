@@ -27,6 +27,8 @@ from typing import (
 # For more useful output that isn't clipped.
 unittest.util._MAX_LENGTH = 10_000
 
+IS_WIN32 = sys.platform == "win32"
+
 # See the variable with the same name in `blender_ext.py`.
 REMOTE_REPO_HAS_JSON_IMPLIED = True
 
@@ -199,9 +201,10 @@ def command_output_filter_exclude(
 
 
 def command_output(args: Sequence[str]) -> str:
-    return subprocess.check_output(
-        [*CMD, *args],
-    ).decode("utf-8")
+    result = subprocess.check_output([*CMD, *args]).decode("utf-8")
+    if IS_WIN32:
+        result = result.replace("\r\n", "\n")
+    return result
 
 
 def command_output_from_json_0(

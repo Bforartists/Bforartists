@@ -227,7 +227,7 @@ static StructRNA *rna_FModifierType_refine(PointerRNA *ptr)
 
 /* ****************************** */
 
-#  include "BKE_anim_data.h"
+#  include "BKE_anim_data.hh"
 #  include "BKE_fcurve.h"
 #  include "BKE_fcurve_driver.h"
 
@@ -376,13 +376,13 @@ static StructRNA *rna_DriverTarget_id_typef(PointerRNA *ptr)
   return ID_code_to_RNA_type(dtar->idtype);
 }
 
-static int rna_DriverTarget_id_editable(PointerRNA *ptr, const char ** /*r_info*/)
+static int rna_DriverTarget_id_editable(const PointerRNA *ptr, const char ** /*r_info*/)
 {
   DriverTarget *dtar = (DriverTarget *)ptr->data;
   return (dtar->idtype) ? PROP_EDITABLE : PropertyFlag(0);
 }
 
-static int rna_DriverTarget_id_type_editable(PointerRNA *ptr, const char ** /*r_info*/)
+static int rna_DriverTarget_id_type_editable(const PointerRNA *ptr, const char ** /*r_info*/)
 {
   DriverTarget *dtar = (DriverTarget *)ptr->data;
 
@@ -722,7 +722,7 @@ static void rna_FCurve_update_data_relations(Main *bmain, Scene * /*scene*/, Poi
   DEG_relations_tag_update(bmain);
 }
 
-/* RNA update callback for F-Curves to indicate that there are copy-on-write tagging/flushing
+/* RNA update callback for F-Curves to indicate that there are copy-on-evaluation tagging/flushing
  * needed (e.g. for properties that affect how animation gets evaluated).
  */
 static void rna_FCurve_update_eval(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
