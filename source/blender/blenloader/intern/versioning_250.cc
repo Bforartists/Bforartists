@@ -48,7 +48,7 @@
 #include "BLI_math_rotation.h"
 #include "BLI_utildefines.h"
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_anim_visualization.h"
 #include "BKE_armature.hh"
 #include "BKE_colortools.hh"
@@ -58,7 +58,7 @@
 #include "BKE_main.hh"
 #include "BKE_modifier.hh"
 #include "BKE_multires.hh"
-#include "BKE_node.h"
+#include "BKE_node.hh"
 #include "BKE_node_tree_update.hh"
 #include "BKE_particle.h"
 #include "BKE_screen.hh"

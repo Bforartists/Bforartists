@@ -95,7 +95,9 @@ class HTTPServerContext:
         self._http_server = http_server
 
     def __exit__(self, _type: Any, _value: Any, traceback: Any) -> None:
+        # Needed on WIN32, otherwise exit causes an `OSError`.
+        self._http_server.shutdown()
+
         self._http_server.server_close()
-        # self._http_thread.join()
         del self._http_server
         del self._http_thread

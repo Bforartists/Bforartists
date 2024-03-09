@@ -25,7 +25,7 @@
 
 #include "BLT_translation.hh"
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
 #include "BKE_fcurve.h"
@@ -617,15 +617,15 @@ static void do_graph_region_driver_buttons(bContext *C, void *id_v, int event)
       ID *id = static_cast<ID *>(id_v);
       AnimData *adt = BKE_animdata_from_id(id);
 
-      /* Rebuild depsgraph for the new dependencies, and ensure COW copies get flushed. */
+      /* Rebuild depsgraph for the new dependencies, and ensure evaluated copies get flushed. */
       DEG_relations_tag_update(bmain);
-      DEG_id_tag_update_ex(bmain, id, ID_RECALC_COPY_ON_WRITE);
+      DEG_id_tag_update_ex(bmain, id, ID_RECALC_SYNC_TO_EVAL);
       if (adt != nullptr) {
         if (adt->action != nullptr) {
-          DEG_id_tag_update_ex(bmain, &adt->action->id, ID_RECALC_COPY_ON_WRITE);
+          DEG_id_tag_update_ex(bmain, &adt->action->id, ID_RECALC_SYNC_TO_EVAL);
         }
         if (adt->tmpact != nullptr) {
-          DEG_id_tag_update_ex(bmain, &adt->tmpact->id, ID_RECALC_COPY_ON_WRITE);
+          DEG_id_tag_update_ex(bmain, &adt->tmpact->id, ID_RECALC_SYNC_TO_EVAL);
         }
       }
 
@@ -1105,8 +1105,6 @@ static void graph_draw_driver_settings_panel(uiLayout *layout,
       nullptr,
       0.0,
       0.0,
-      0,
-      0,
       TIP_("Add a Driver Variable to keep track of an input used by the driver"));
   UI_but_func_set(but, driver_add_var_cb, driver, nullptr);
 
@@ -1176,8 +1174,6 @@ static void graph_draw_driver_settings_panel(uiLayout *layout,
                          nullptr,
                          0.0,
                          0.0,
-                         0.0,
-                         0.0,
                          TIP_("Invalid variable name, click here for details"));
       UI_but_func_set(but, driver_dvar_invalid_name_query_cb, dvar, nullptr); /* XXX: reports? */
     }
@@ -1192,8 +1188,6 @@ static void graph_draw_driver_settings_panel(uiLayout *layout,
                        UI_UNIT_X,
                        UI_UNIT_Y,
                        nullptr,
-                       0.0,
-                       0.0,
                        0.0,
                        0.0,
                        TIP_("Delete target variable"));
@@ -1271,8 +1265,6 @@ static void graph_draw_driver_settings_panel(uiLayout *layout,
       nullptr,
       0.0,
       0.0,
-      0,
-      0,
       TIP_("Force updates of dependencies - Only use this if drivers are not updating correctly"));
   UI_but_func_set(but, driver_update_flags_cb, fcu, nullptr);
 }
