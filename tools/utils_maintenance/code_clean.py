@@ -327,7 +327,7 @@ def process_commands(cmake_dir: str, data: Sequence[str]) -> Optional[ProcessedC
         return None
 
     # Check for unsupported configurations.
-    for arg in ("WITH_UNITY_BUILD", "WITH_COMPILER_CCACHE"):
+    for arg in ("WITH_UNITY_BUILD", "WITH_COMPILER_CCACHE", "WITH_COMPILER_PRECOMPILED_HEADERS"):
         if cmake_cache_var_is_true(cmake_cache_var(cmake_dir, arg)):
             sys.stderr.write("The option '%s' must be disabled for proper functionality\n" % arg)
             return None
@@ -1466,7 +1466,7 @@ class edit_generators:
         is_default = False
 
         @staticmethod
-        def _header_exclude(f_basename: str) -> str:
+        def _header_exclude(f_basename: str) -> bool:
             # This header only exists to add additional warnings, removing it doesn't impact generated output.
             # Skip this file.
             if f_basename == "BLI_strict_flags.h":

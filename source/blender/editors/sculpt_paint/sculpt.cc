@@ -91,10 +91,11 @@ using blender::Vector;
 
 static CLG_LogRef LOG = {"ed.sculpt_paint"};
 
-static float sculpt_calc_radius(ViewContext *vc,
-                                const Brush *brush,
-                                const Scene *scene,
-                                const float3 location)
+namespace blender::ed::sculpt_paint {
+float sculpt_calc_radius(ViewContext *vc,
+                         const Brush *brush,
+                         const Scene *scene,
+                         const float3 location)
 {
   if (!BKE_brush_use_locked_size(scene, brush)) {
     return paint_calc_object_space_radius(vc, location, BKE_brush_size_get(scene, brush));
@@ -103,6 +104,7 @@ static float sculpt_calc_radius(ViewContext *vc,
     return BKE_brush_unprojected_radius_get(scene, brush);
   }
 }
+}  // namespace blender::ed::sculpt_paint
 
 bool ED_sculpt_report_if_shape_key_is_locked(const Object *ob, ReportList *reports)
 {
@@ -5513,17 +5515,19 @@ static void sculpt_stroke_update_step(bContext *C,
   sculpt_restore_mesh(sd, ob);
 
   if (sd->flags & (SCULPT_DYNTOPO_DETAIL_CONSTANT | SCULPT_DYNTOPO_DETAIL_MANUAL)) {
-    float object_space_constant_detail = 1.0f / (sd->constant_detail *
-                                                 mat4_to_scale(ob->object_to_world().ptr()));
-    BKE_pbvh_bmesh_detail_size_set(ss->pbvh, object_space_constant_detail);
+    BKE_pbvh_bmesh_detail_size_set(
+        ss->pbvh, dyntopo::detail_size::constant_to_detail_size(sd->constant_detail, ob));
   }
   else if (sd->flags & SCULPT_DYNTOPO_DETAIL_BRUSH) {
-    BKE_pbvh_bmesh_detail_size_set(ss->pbvh, ss->cache->radius * sd->detail_percent / 100.0f);
+    BKE_pbvh_bmesh_detail_size_set(
+        ss->pbvh,
+        dyntopo::detail_size::brush_to_detail_size(sd->detail_percent, ss->cache->radius));
   }
   else {
-    BKE_pbvh_bmesh_detail_size_set(ss->pbvh,
-                                   (ss->cache->radius / ss->cache->dyntopo_pixel_radius) *
-                                       (sd->detail_size * U.pixelsize) / 0.4f);
+    BKE_pbvh_bmesh_detail_size_set(
+        ss->pbvh,
+        dyntopo::detail_size::relative_to_detail_size(
+            sd->detail_size, ss->cache->radius, ss->cache->dyntopo_pixel_radius, U.pixelsize));
   }
 
   if (dyntopo::stroke_is_dyntopo(ss, brush)) {

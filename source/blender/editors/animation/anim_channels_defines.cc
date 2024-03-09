@@ -51,7 +51,7 @@
 #include "RNA_path.hh"
 #include "RNA_prototypes.h"
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
@@ -4566,7 +4566,7 @@ static bool achannel_is_broken(const bAnimListElem *ale)
       const FCurve *fcu = static_cast<const FCurve *>(ale->data);
 
       /* The channel is disabled (has a bad rna path), or it's a driver that failed to evaluate. */
-      return (ale->flag & FCURVE_DISABLED) ||
+      return (fcu->flag & FCURVE_DISABLED) ||
              (fcu->driver != nullptr && (fcu->driver->flag & DRIVER_FLAG_INVALID));
     }
     default:
@@ -5349,8 +5349,6 @@ static void draw_setting_widget(bAnimContext *ac,
                              static_cast<int *>(ptr),
                              0,
                              0,
-                             0,
-                             0,
                              tooltip);
       break;
 
@@ -5367,8 +5365,6 @@ static void draw_setting_widget(bAnimContext *ac,
                              static_cast<short *>(ptr),
                              0,
                              0,
-                             0,
-                             0,
                              tooltip);
       break;
 
@@ -5383,8 +5379,6 @@ static void draw_setting_widget(bAnimContext *ac,
                              ICON_WIDTH,
                              ICON_WIDTH,
                              static_cast<char *>(ptr),
-                             0,
-                             0,
                              0,
                              0,
                              tooltip);

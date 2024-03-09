@@ -43,9 +43,6 @@ Desktop.ini
 # in-source lib downloads
 /build_files/build_environment/downloads/
 
-#bfa - we don't have sub modules
-/.gitmodules
-
 # in-source buildbot signing configuration
 /build_files/buildbot/codesign/config_server.py
 
@@ -59,9 +56,17 @@ waveletNoiseTile.bin
 /locale/user-config.py
 
 # External repositories.
-# bfa: we don't use external repositories for those
+/tests/benchmarks/
+
+# bfa: we don't use external repositories for addons
 # /scripts/addons/
 # /scripts/addons_contrib/
+
+# bfa: ignore remote repos
+/lib/macos_arm64
+/lib/macos_x64
+/lib/windows_x64
+/release/datafiles/assets
 
 # Ignore old submodules directories.
 # Eventually need to get rid of those, but for the first time of transition

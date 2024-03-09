@@ -66,7 +66,7 @@
 
 #include "BKE_DerivedMesh.hh"
 #include "BKE_action.h"
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_anim_path.h"
 #include "BKE_anim_visualization.h"
 #include "BKE_animsys.h"
@@ -1276,7 +1276,7 @@ bool BKE_object_support_modifier_type_check(const Object *ob, int modifier_type)
   }
 
   if (ELEM(ob->type, OB_POINTCLOUD, OB_CURVES)) {
-    return modifier_type == eModifierType_Nodes;
+    return ELEM(modifier_type, eModifierType_Nodes, eModifierType_MeshSequenceCache);
   }
   if (ob->type == OB_VOLUME) {
     return mti->modify_geometry_set != nullptr;
@@ -1543,7 +1543,7 @@ static void object_update_from_subsurf_ccg(Object *object)
     return;
   }
   /* If object does not own evaluated mesh we can not access it since it might be freed already
-   * (happens on dependency graph free where order of CoW-ed IDs free is undefined).
+   * (happens on dependency graph free where order of evaluated IDs free is undefined).
    *
    * Good news is: such mesh does not have modifiers applied, so no need to worry about CCG. */
   if (!object->runtime->is_data_eval_owned) {
@@ -1610,13 +1610,13 @@ static void object_update_from_subsurf_ccg(Object *object)
 
 void BKE_object_eval_assign_data(Object *object_eval, ID *data_eval, bool is_owned)
 {
-  BLI_assert(object_eval->id.tag & LIB_TAG_COPIED_ON_WRITE);
+  BLI_assert(object_eval->id.tag & LIB_TAG_COPIED_ON_EVAL);
   BLI_assert(object_eval->runtime->data_eval == nullptr);
   BLI_assert(data_eval->tag & LIB_TAG_NO_MAIN);
 
   if (is_owned) {
     /* Set flag for debugging. */
-    data_eval->tag |= LIB_TAG_COPIED_ON_WRITE_EVAL_RESULT;
+    data_eval->tag |= LIB_TAG_COPIED_ON_EVAL_FINAL_RESULT;
   }
 
   /* Assigned evaluated data. */
@@ -1628,7 +1628,7 @@ void BKE_object_eval_assign_data(Object *object_eval, ID *data_eval, bool is_own
   if (GS(data->name) == GS(data_eval->name)) {
     /* NOTE: we are not supposed to invoke evaluation for original objects,
      * but some areas are still being ported, so we play safe here. */
-    if (object_eval->id.tag & LIB_TAG_COPIED_ON_WRITE) {
+    if (object_eval->id.tag & LIB_TAG_COPIED_ON_EVAL) {
       object_eval->data = data_eval;
     }
   }
@@ -1670,7 +1670,7 @@ void BKE_object_free_derived_caches(Object *ob)
     ob->runtime->mesh_deform_eval = nullptr;
   }
 
-  /* Restore initial pointer for copy-on-write data-blocks, object->data
+  /* Restore initial pointer for copy-on-evaluation data-blocks, object->data
    * might be pointing to an evaluated data-block data was just freed above. */
   if (ob->runtime->data_orig != nullptr) {
     ob->data = ob->runtime->data_orig;
@@ -3389,27 +3389,28 @@ void BKE_object_where_is_calc(Depsgraph *depsgraph, Scene *scene, Object *ob)
   object_where_is_calc_ex(depsgraph, scene, ob, ctime, nullptr, nullptr);
 }
 
-void BKE_object_workob_calc_parent(Depsgraph *depsgraph, Scene *scene, Object *ob, Object *workob)
+blender::float4x4 BKE_object_calc_parent(Depsgraph *depsgraph, Scene *scene, Object *ob)
 {
   blender::bke::ObjectRuntime workob_runtime;
-  BKE_object_workob_clear(workob);
-  workob->runtime = &workob_runtime;
+  Object workob;
+  BKE_object_workob_clear(&workob);
+  workob.runtime = &workob_runtime;
 
-  unit_m4(workob->runtime->object_to_world.ptr());
-  unit_m4(workob->parentinv);
-  unit_m4(workob->constinv);
+  unit_m4(workob.runtime->object_to_world.ptr());
+  unit_m4(workob.parentinv);
+  unit_m4(workob.constinv);
 
   /* Since this is used while calculating parenting,
    * at this moment ob_eval->parent is still nullptr. */
-  workob->parent = DEG_get_evaluated_object(depsgraph, ob->parent);
+  workob.parent = DEG_get_evaluated_object(depsgraph, ob->parent);
 
-  workob->trackflag = ob->trackflag;
-  workob->upflag = ob->upflag;
+  workob.trackflag = ob->trackflag;
+  workob.upflag = ob->upflag;
 
-  workob->partype = ob->partype;
-  workob->par1 = ob->par1;
-  workob->par2 = ob->par2;
-  workob->par3 = ob->par3;
+  workob.partype = ob->partype;
+  workob.par1 = ob->par1;
+  workob.par2 = ob->par2;
+  workob.par3 = ob->par3;
 
   /* The effects of constraints should NOT be included in the parent-inverse matrix. Constraints
    * are supposed to be applied after the object's local loc/rot/scale. If the (inverted) effect of
@@ -3417,9 +3418,11 @@ void BKE_object_workob_calc_parent(Depsgraph *depsgraph, Scene *scene, Object *o
    * object's local loc/rot/scale instead of after. For example, a "Copy Rotation" constraint would
    * rotate the object's local translation as well. See #82156. */
 
-  STRNCPY(workob->parsubstr, ob->parsubstr);
+  STRNCPY(workob.parsubstr, ob->parsubstr);
 
-  BKE_object_where_is_calc(depsgraph, scene, workob);
+  BKE_object_where_is_calc(depsgraph, scene, &workob);
+
+  return workob.object_to_world();
 }
 
 void BKE_object_apply_mat4_ex(Object *ob,
@@ -4178,15 +4181,15 @@ Mesh *BKE_object_get_evaluated_mesh(const Object *object)
 Mesh *BKE_object_get_pre_modified_mesh(const Object *object)
 {
   if (object->type == OB_MESH && object->runtime->data_orig != nullptr) {
-    BLI_assert(object->id.tag & LIB_TAG_COPIED_ON_WRITE);
+    BLI_assert(object->id.tag & LIB_TAG_COPIED_ON_EVAL);
     BLI_assert(object->id.orig_id != nullptr);
     BLI_assert(object->runtime->data_orig->orig_id == ((Object *)object->id.orig_id)->data);
     Mesh *result = (Mesh *)object->runtime->data_orig;
-    BLI_assert((result->id.tag & LIB_TAG_COPIED_ON_WRITE) != 0);
-    BLI_assert((result->id.tag & LIB_TAG_COPIED_ON_WRITE_EVAL_RESULT) == 0);
+    BLI_assert((result->id.tag & LIB_TAG_COPIED_ON_EVAL) != 0);
+    BLI_assert((result->id.tag & LIB_TAG_COPIED_ON_EVAL_FINAL_RESULT) == 0);
     return result;
   }
-  BLI_assert((object->id.tag & LIB_TAG_COPIED_ON_WRITE) == 0);
+  BLI_assert((object->id.tag & LIB_TAG_COPIED_ON_EVAL) == 0);
   return (Mesh *)object->data;
 }
 
@@ -4194,15 +4197,15 @@ Mesh *BKE_object_get_original_mesh(const Object *object)
 {
   Mesh *result = nullptr;
   if (object->id.orig_id == nullptr) {
-    BLI_assert((object->id.tag & LIB_TAG_COPIED_ON_WRITE) == 0);
+    BLI_assert((object->id.tag & LIB_TAG_COPIED_ON_EVAL) == 0);
     result = (Mesh *)object->data;
   }
   else {
-    BLI_assert((object->id.tag & LIB_TAG_COPIED_ON_WRITE) != 0);
+    BLI_assert((object->id.tag & LIB_TAG_COPIED_ON_EVAL) != 0);
     result = (Mesh *)((Object *)object->id.orig_id)->data;
   }
   BLI_assert(result != nullptr);
-  BLI_assert((result->id.tag & (LIB_TAG_COPIED_ON_WRITE | LIB_TAG_COPIED_ON_WRITE_EVAL_RESULT)) ==
+  BLI_assert((result->id.tag & (LIB_TAG_COPIED_ON_EVAL | LIB_TAG_COPIED_ON_EVAL_FINAL_RESULT)) ==
              0);
   return result;
 }
@@ -4281,10 +4284,10 @@ static int pc_cmp(const void *a, const void *b)
   return 0;
 }
 
-/* TODO: Review the usages of this function, currently with COW it will be called for orig object
- * and then again for COW copies of it, think this is bad since there is no guarantee that we get
- * the same stack index in both cases? Order is important since this index is used for filenames
- * on disk. */
+/* TODO: Review the usages of this function, currently with copy-on-eval it will be called for orig
+ * object and then again for evaluated copies of it, think this is bad since there is no guarantee
+ * that we get the same stack index in both cases? Order is important since this index is used for
+ * filenames on disk. */
 int BKE_object_insert_ptcache(Object *ob)
 {
   LinkData *link = nullptr;
@@ -5024,7 +5027,7 @@ void BKE_object_groups_clear(Main *bmain, Scene *scene, Object *ob)
   Collection *collection = nullptr;
   while ((collection = BKE_collection_object_find(bmain, scene, collection, ob))) {
     BKE_collection_object_remove(bmain, collection, ob, false);
-    DEG_id_tag_update(&collection->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&collection->id, ID_RECALC_SYNC_TO_EVAL);
   }
 }
 
