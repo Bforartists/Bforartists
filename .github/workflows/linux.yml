@@ -32,7 +32,7 @@ jobs:
         ls
 
     - name: Upload Build
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: Bforartists-Release-${{ runner.os }}
         path: /home/runner/bforartistsrepo/bfa_build_linux_release/bin/
