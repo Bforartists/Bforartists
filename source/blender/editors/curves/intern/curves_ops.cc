@@ -396,7 +396,7 @@ static void try_convert_single_object(Object &curves_ob,
   particle_system->recalc |= ID_RECALC_PSYS_RESET;
 
   DEG_id_tag_update(&surface_ob.id, ID_RECALC_GEOMETRY);
-  DEG_id_tag_update(&settings.id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&settings.id, ID_RECALC_SYNC_TO_EVAL);
 }
 
 static int curves_convert_to_particle_system_exec(bContext *C, wmOperator *op)
@@ -485,7 +485,7 @@ static bke::CurvesGeometry particles_to_curves(Object &object, ParticleSystem &p
   bke::CurvesGeometry curves(points_num, curves_num);
   curves.offsets_for_write().copy_from(curve_offsets);
 
-  const float4x4 object_to_world_mat = object.object_to_world();
+  const float4x4 &object_to_world_mat = object.object_to_world();
   const float4x4 world_to_object_mat = math::invert(object_to_world_mat);
 
   MutableSpan<float3> positions = curves.positions_for_write();

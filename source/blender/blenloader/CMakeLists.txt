@@ -65,6 +65,7 @@ set(LIB
   PRIVATE bf::dna
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::extern::fmtlib
 )
 
 if(WITH_BUILDINFO)
@@ -132,4 +133,8 @@ if(WITH_GTESTS)
     bf_blenloader_test_util
   )
   blender_add_test_suite_lib(blenloader "${TEST_SRC}" "${INC}" "${INC_SYS}" "${TEST_LIB}")
+endif()
+
+if(WITH_EXPERIMENTAL_FEATURES)
+  add_definitions(-DWITH_EXPERIMENTAL_FEATURES)
 endif()

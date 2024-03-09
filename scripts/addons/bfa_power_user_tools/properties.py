@@ -13,6 +13,27 @@
 
 import bpy
 
-class BFA_UI_toggles(bpy.types.PropertyGroup):
-    BFA_PROP_toggle_insertkeyframes: bpy.props.BoolProperty(name='Insert Keyframes', description='Adds operators to insert a blank keyframe to the left or right of the timeline.\nLocated in the 3D View, Timeline, Dopesheet, and Graph editors', default=True)
 
+
+class BFA_UI_toggles(bpy.types.PropertyGroup):
+    BFA_PROP_toggle_insertframes: bpy.props.BoolProperty(name='Insert/Remove Frames Operators', description='Adds operators to insert/remove a frame to the left or right of the timeline cursor.\nLocated in the 3D View, Timeline, Dopesheet, and Graph editors', default=True)
+    BFA_PROP_toggle_animationpanel: bpy.props.BoolProperty(name='Animation Toolshelf Operators', description='Adds the animation operators from the header to the toolshelf. \nLocated in the tabbed toolshelf in the 3D View under the Animation Tab > Animation Panel', default=True)
+
+property_classes = [
+    BFA_UI_toggles,
+]
+
+
+def register():
+    for cls in property_classes:
+        bpy.utils.register_class(cls)
+
+    # Register the toggles
+    bpy.types.WindowManager.BFA_UI_addon_props = bpy.props.PointerProperty(type=BFA_UI_toggles)
+
+def unregister():
+    for cls in property_classes:
+        bpy.utils.unregister_class(cls)
+
+    # Unregister the toggles
+    del bpy.types.WindowManager.BFA_UI_addon_props
