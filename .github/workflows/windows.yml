@@ -23,7 +23,7 @@ jobs:
         cd C:/Users/runneradmin/bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
         cd Bforartists
-        make update
+        python ./build_files/utils/make_update.py
         make release
         dir
         cd ..
