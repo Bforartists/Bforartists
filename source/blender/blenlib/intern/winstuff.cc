@@ -169,7 +169,7 @@ bool BLI_windows_register_blend_extension(const bool all_users)
     return false;
 
   /* Replace the actual app name with the wrapper. */
-  blender_app = strstr(blender_path, "blender.exe");
+  blender_app = strstr(blender_path, "bforartists.exe");
   if (!blender_app) {
     return false;
   }
