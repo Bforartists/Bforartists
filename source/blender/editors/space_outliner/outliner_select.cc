@@ -321,6 +321,7 @@ static void tree_element_object_activate(bContext *C,
   sce = (Scene *)outliner_search_back(te, ID_SCE);
   if (sce && scene != sce) {
     WM_window_set_active_scene(CTX_data_main(C), C, CTX_wm_window(C), sce);
+    view_layer = WM_window_get_active_view_layer(CTX_wm_window(C));
     scene = sce;
   }
 
@@ -443,7 +444,7 @@ static void tree_element_camera_activate(bContext *C, Scene *scene, TreeElement 
   wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
 
   WM_windows_scene_data_sync(&wm->windows, scene);
-  DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
   DEG_relations_tag_update(bmain);
   WM_event_add_notifier(C, NC_SCENE | NA_EDITED, nullptr);
 }
@@ -1806,14 +1807,13 @@ static int outliner_item_do_activate_from_cursor(bContext *C,
      * holding CTRL or SHIFT, ignore events when the cursor is over the icon. This disambiguates
      * the case where we are recursing *and* holding CTRL or SHIFT in order to extend or range
      * select recursively. */
-    if (!recurse && (extend || use_range) &&
-        outliner_item_is_co_over_icon(activate_te, view_mval[0]))
-    {
+    if (!recurse && (extend || use_range) && is_over_icon) {
       return OPERATOR_CANCELLED;
     }
 
     if (use_range) {
-      do_outliner_range_select(C, space_outliner, activate_te, extend, recurse, parent_collection);
+      do_outliner_range_select(
+          C, space_outliner, activate_te, extend, (recurse && is_over_icon), parent_collection);
     }
     else {
       const bool is_over_name_icons = outliner_item_is_co_over_name_icons(activate_te,
@@ -1835,7 +1835,7 @@ static int outliner_item_do_activate_from_cursor(bContext *C,
       /* The recurse flag is set when the user double-clicks
        * to select everything in a collection or hierarchy. */
       if (recurse) {
-        if (outliner_item_is_co_over_icon(activate_te, view_mval[0])) {
+        if (is_over_icon) {
           /* Select or deselect object hierarchy recursively. */
           outliner_item_select(C, space_outliner, activate_te, select_flag);
           do_outliner_select_recursive(&activate_te->subtree, select, parent_collection);

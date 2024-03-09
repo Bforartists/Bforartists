@@ -171,18 +171,18 @@ const EnumPropertyItem rna_enum_object_gpencil_type_items[] = {
      "Construct a Suzanne grease pencil object\nSwitch to Draw mode to draw grease pencil "
      "strokes"},
     RNA_ENUM_ITEM_SEPR,
-    {GP_LRT_SCENE,
-     "LRT_SCENE",
+    {GREASE_PENCIL_LINEART_SCENE,
+     "LINEART_SCENE",
      ICON_LINEART_SCENE,
      "Scene Line Art",
      "Quickly set up line art for the entire scene"},
-    {GP_LRT_COLLECTION,
-     "LRT_COLLECTION",
+    {GREASE_PENCIL_LINEART_COLLECTION,
+     "LINEART_COLLECTION",
      ICON_LINEART_COLLECTION,
      "Collection Line Art",
      "Quickly set up line art for the active collection"},
-    {GP_LRT_OBJECT,
-     "LRT_OBJECT",
+    {GREASE_PENCIL_LINEART_OBJECT,
+     "LINEART_OBJECT",
      ICON_LINEART_OBJECT,
      "Object Line Art",
      "Quickly set up line art for the active object"},
@@ -389,7 +389,7 @@ static void rna_Object_hide_update(Main *bmain, Scene * /*scene*/, PointerRNA *p
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   BKE_main_collection_sync_remap(bmain);
-  DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
   DEG_relations_tag_update(bmain);
   WM_main_add_notifier(NC_OBJECT | ND_DRAW, &ob->id);
 }
@@ -1179,7 +1179,7 @@ static void rna_Object_active_material_set(PointerRNA *ptr,
   }
 }
 
-static int rna_Object_active_material_editable(PointerRNA *ptr, const char ** /*r_info*/)
+static int rna_Object_active_material_editable(const PointerRNA *ptr, const char ** /*r_info*/)
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   bool is_editable;
@@ -1272,7 +1272,7 @@ static void rna_Object_dimensions_set(PointerRNA *ptr, const float *value)
   BKE_object_dimensions_set(ob, value, 0);
 }
 
-static int rna_Object_location_editable(PointerRNA *ptr, int index)
+static int rna_Object_location_editable(const PointerRNA *ptr, int index)
 {
   Object *ob = static_cast<Object *>(ptr->data);
 
@@ -1291,7 +1291,7 @@ static int rna_Object_location_editable(PointerRNA *ptr, int index)
   }
 }
 
-static int rna_Object_scale_editable(PointerRNA *ptr, int index)
+static int rna_Object_scale_editable(const PointerRNA *ptr, int index)
 {
   Object *ob = static_cast<Object *>(ptr->data);
 
@@ -1310,7 +1310,7 @@ static int rna_Object_scale_editable(PointerRNA *ptr, int index)
   }
 }
 
-static int rna_Object_rotation_euler_editable(PointerRNA *ptr, int index)
+static int rna_Object_rotation_euler_editable(const PointerRNA *ptr, int index)
 {
   Object *ob = static_cast<Object *>(ptr->data);
 
@@ -1329,7 +1329,7 @@ static int rna_Object_rotation_euler_editable(PointerRNA *ptr, int index)
   }
 }
 
-static int rna_Object_rotation_4d_editable(PointerRNA *ptr, int index)
+static int rna_Object_rotation_4d_editable(const PointerRNA *ptr, int index)
 {
   Object *ob = static_cast<Object *>(ptr->data);
 
@@ -1364,7 +1364,7 @@ static int rna_MaterialSlot_index_get(PointerRNA *ptr)
   return rna_MaterialSlot_index(ptr);
 }
 
-static int rna_MaterialSlot_material_editable(PointerRNA *ptr, const char ** /*r_info*/)
+static int rna_MaterialSlot_material_editable(const PointerRNA *ptr, const char ** /*r_info*/)
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   const int index = rna_MaterialSlot_index(ptr);
@@ -2268,7 +2268,7 @@ static void rna_Object_mesh_symmetry_z_set(PointerRNA *ptr, bool value)
   mesh_symmetry_set_common(ptr, value, ME_SYMMETRY_Z);
 }
 
-static int rna_Object_mesh_symmetry_yz_editable(PointerRNA *ptr, const char ** /*r_info*/)
+static int rna_Object_mesh_symmetry_yz_editable(const PointerRNA *ptr, const char ** /*r_info*/)
 {
   const Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   if (ob->type != OB_MESH) {
