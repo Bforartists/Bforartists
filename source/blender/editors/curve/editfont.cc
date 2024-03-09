@@ -708,8 +708,6 @@ static uiBlock *wm_block_insert_unicode_create(bContext *C, ARegion *region, voi
                              edit_string,
                              0,
                              7,
-                             0,
-                             0,
                              TIP_("Unicode codepoint hex value"));
   UI_but_flag_enable(text_but, UI_BUT_ACTIVATE_ON_INIT);
   /* Hitting Enter in the text input is treated the same as clicking the Confirm button. */
@@ -732,17 +730,17 @@ static uiBlock *wm_block_insert_unicode_create(bContext *C, ARegion *region, voi
 
   if (windows_layout) {
     confirm = uiDefIconTextBut(
-        block, UI_BTYPE_BUT, 0, 0, "Insert", 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, 0, 0, nullptr);
+        block, UI_BTYPE_BUT, 0, 0, "Insert", 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, nullptr);
     uiLayoutColumn(split, false);
   }
 
   cancel = uiDefIconTextBut(
-      block, UI_BTYPE_BUT, 0, 0, "Cancel", 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, 0, 0, nullptr);
+      block, UI_BTYPE_BUT, 0, 0, "Cancel", 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, nullptr);
 
   if (!windows_layout) {
     uiLayoutColumn(split, false);
     confirm = uiDefIconTextBut(
-        block, UI_BTYPE_BUT, 0, 0, "Insert", 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, 0, 0, nullptr);
+        block, UI_BTYPE_BUT, 0, 0, "Insert", 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, nullptr);
   }
 
   UI_block_func_set(block, nullptr, nullptr, nullptr);
@@ -2595,7 +2593,7 @@ bool ED_curve_editfont_select_pick(
       cu->actbox = actbox_select;
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
       /* TODO: support #ID_RECALC_SELECT. */
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_COPY_ON_WRITE);
+      DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SYNC_TO_EVAL);
     }
     return true;
   }

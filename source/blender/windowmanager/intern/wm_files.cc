@@ -2109,33 +2109,51 @@ static void wm_autosave_location(char filepath[FILE_MAX])
   BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
 }
 
-static void wm_autosave_write(Main *bmain, wmWindowManager *wm)
+static bool wm_autosave_write_try(Main *bmain, wmWindowManager *wm)
 {
   char filepath[FILE_MAX];
 
   wm_autosave_location(filepath);
 
-  /* Fast save of last undo-buffer, now with UI. */
-  const bool use_memfile = (U.uiflag & USER_GLOBALUNDO) != 0;
-  MemFile *memfile = use_memfile ? ED_undosys_stack_memfile_get_active(wm->undo_stack) : nullptr;
-  if (memfile != nullptr) {
-    BLO_memfile_write_file(memfile, filepath);
+  /* Technically, we could always just save here, but that would cause performance regressions
+   * compared to when the #MemFile undo step was used for saving undo-steps. So for now just skip
+   * auto-save when we are in a mode where auto-save wouldn't have worked previously anyway. This
+   * check can be removed once the performance regressions have been solved. */
+  if (ED_undosys_stack_memfile_get_if_active(wm->undo_stack) != nullptr) {
+    WM_autosave_write(wm, bmain);
+    return true;
   }
-  else {
-    if (use_memfile) {
-      /* This is very unlikely, alert developers of this unexpected case. */
-      CLOG_WARN(&LOG, "undo-data not found for writing, fallback to regular file write!");
-    }
-
-    /* Save as regular blend file with recovery information. */
-    const int fileflags = (G.fileflags & ~G_FILE_COMPRESS) | G_FILE_RECOVER_WRITE;
-
-    ED_editors_flush_edits(bmain);
-
-    /* Error reporting into console. */
-    BlendFileWriteParams params{};
-    BLO_write_file(bmain, filepath, fileflags, &params, nullptr);
+  if ((U.uiflag & USER_GLOBALUNDO) == 0) {
+    WM_autosave_write(wm, bmain);
+    return true;
   }
+  /* Can't auto-save with MemFile right now, try again later. */
+  return false;
+}
+
+bool WM_autosave_is_scheduled(wmWindowManager *wm)
+{
+  return wm->autosave_scheduled;
+}
+
+void WM_autosave_write(wmWindowManager *wm, Main *bmain)
+{
+  ED_editors_flush_edits(bmain);
+
+  char filepath[FILE_MAX];
+  wm_autosave_location(filepath);
+  /* Save as regular blend file with recovery information. */
+  const int fileflags = (G.fileflags & ~G_FILE_COMPRESS) | G_FILE_RECOVER_WRITE;
+
+  /* Error reporting into console. */
+  BlendFileWriteParams params{};
+  BLO_write_file(bmain, filepath, fileflags, &params, nullptr);
+
+  /* Restart auto-save timer. */
+  wm_autosave_timer_end(wm);
+  wm_autosave_timer_begin(wm);
+
+  wm->autosave_scheduled = false;
 }
 
 static void wm_autosave_timer_begin_ex(wmWindowManager *wm, double timestep)
@@ -2183,8 +2201,10 @@ void wm_autosave_timer(Main *bmain, wmWindowManager *wm, wmTimer * /*wt*/)
     }
   }
 
-  wm_autosave_write(bmain, wm);
-
+  wm->autosave_scheduled = false;
+  if (!wm_autosave_write_try(bmain, wm)) {
+    wm->autosave_scheduled = true;
+  }
   /* Restart the timer after file write, just in case file write takes a long time. */
   wm_autosave_timer_begin(wm);
 }
@@ -3410,6 +3430,7 @@ static int wm_save_as_mainfile_exec(bContext *C, wmOperator *op)
      * often saving manually. */
     wm_autosave_timer_end(wm);
     wm_autosave_timer_begin(wm);
+    wm->autosave_scheduled = false;
   }
 
   if (!is_save_as && RNA_boolean_get(op->ptr, "exit")) {
@@ -3731,8 +3752,6 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
                            nullptr,
                            0,
                            0,
-                           0,
-                           0,
                            TIP_("Reload file with execution of Python scripts enabled"));
     UI_but_func_set(
         but, [block](bContext &C) { wm_block_autorun_warning_reload_with_scripts(&C, block); });
@@ -3748,8 +3767,6 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
                            50,
                            UI_UNIT_Y,
                            nullptr,
-                           0,
-                           0,
                            0,
                            0,
                            TIP_("Enable scripts"));
@@ -3769,8 +3786,6 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
                          50,
                          UI_UNIT_Y,
                          nullptr,
-                         0,
-                         0,
                          0,
                          0,
                          TIP_("Continue using file without Python scripts"));
@@ -3915,21 +3930,8 @@ static void save_file_forwardcompat_cancel(bContext *C, void *arg_block, void * 
 
 static void save_file_forwardcompat_cancel_button(uiBlock *block, wmGenericCallback *post_action)
 {
-  uiBut *but = uiDefIconTextBut(block,
-                                UI_BTYPE_BUT,
-                                0,
-                                ICON_NONE,
-                                IFACE_("Cancel"),
-                                0,
-                                0,
-                                0,
-                                UI_UNIT_Y,
-                                nullptr,
-                                0,
-                                0,
-                                0,
-                                0,
-                                "");
+  uiBut *but = uiDefIconTextBut(
+      block, UI_BTYPE_BUT, 0, ICON_NONE, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, "");
   UI_but_func_set(but, save_file_forwardcompat_cancel, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
 }
@@ -3972,8 +3974,6 @@ static void save_file_forwardcompat_overwrite_button(uiBlock *block,
                                 nullptr,
                                 0,
                                 0,
-                                0,
-                                0,
                                 "");
   UI_but_func_set(but, save_file_forwardcompat_overwrite, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
@@ -4000,8 +4000,6 @@ static void save_file_forwardcompat_saveas_button(uiBlock *block, wmGenericCallb
                                 0,
                                 UI_UNIT_Y,
                                 nullptr,
-                                0,
-                                0,
                                 0,
                                 0,
                                 "");
@@ -4168,7 +4166,7 @@ static void wm_block_file_close_save(bContext *C, void *arg_block, void *arg_dat
 static void wm_block_file_close_cancel_button(uiBlock *block, wmGenericCallback *post_action)
 {
   /* BFA - made the buttons higher. UI_UNIT_Y * 1.5, changed to UI_UNIT_Y + UI_UNIT_Y / 2,
-   * because 1.5 gets converted to 1 implictly because UI_UNIT_Y is of type "short", an integer type
+   * because 1.5 gets converted to 1 implicitly because UI_UNIT_Y is of type "short", an integer type
    */
   uiBut *but = uiDefIconTextBut(block,
                                 UI_BTYPE_BUT,
@@ -4180,8 +4178,6 @@ static void wm_block_file_close_cancel_button(uiBlock *block, wmGenericCallback 
                                 0,
                                 UI_UNIT_Y + UI_UNIT_Y / 2,
                                 nullptr,
-                                0,
-                                0,
                                 0,
                                 0,
                                 "");
@@ -4204,8 +4200,6 @@ static void wm_block_file_close_discard_button(uiBlock *block, wmGenericCallback
                                 0,
                                 UI_UNIT_Y + UI_UNIT_Y / 2,
                                 nullptr,
-                                0,
-                                0,
                                 0,
                                 0,
                                 "");
@@ -4232,8 +4226,6 @@ static void wm_block_file_close_save_button(uiBlock *block,
       0,
       UI_UNIT_Y + UI_UNIT_Y / 2,
       nullptr,
-      0,
-      0,
       0,
       0,
       "");

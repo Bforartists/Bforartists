@@ -71,6 +71,8 @@
 #include "tree/tree_element_rna.hh"
 #include "tree/tree_iterator.hh"
 
+#include "wm_window.hh"
+
 using namespace blender::ed::outliner;
 
 namespace blender::ed::outliner {
@@ -374,8 +376,7 @@ void item_rename_fn(bContext *C,
                     Scene * /*scene*/,
                     TreeElement *te,
                     TreeStoreElem * /*tsep*/,
-                    TreeStoreElem *tselem,
-                    void * /*user_data*/)
+                    TreeStoreElem *tselem)
 {
   ARegion *region = CTX_wm_region(C);
   do_item_rename(region, te, tselem, reports);
@@ -521,8 +522,7 @@ void id_delete_tag_fn(bContext *C,
                       Scene * /*scene*/,
                       TreeElement *te,
                       TreeStoreElem * /*tsep*/,
-                      TreeStoreElem *tselem,
-                      void * /*user_data*/)
+                      TreeStoreElem *tselem)
 {
   id_delete_tag(C, reports, te, tselem);
 }
@@ -693,7 +693,7 @@ static int outliner_id_remap_invoke(bContext *C, wmOperator *op, const wmEvent *
     outliner_id_remap_find_tree_element(C, op, &space_outliner->tree, fmval[1]);
   }
 
-  return WM_operator_props_dialog_popup(C, op, 400);
+  return WM_operator_props_dialog_popup(C, op, 400, IFACE_("Remap Data ID"), IFACE_("Remap"));
 }
 
 static const EnumPropertyItem *outliner_id_itemf(bContext *C,
@@ -766,8 +766,7 @@ void id_remap_fn(bContext *C,
                  Scene * /*scene*/,
                  TreeElement * /*te*/,
                  TreeStoreElem * /*tsep*/,
-                 TreeStoreElem *tselem,
-                 void * /*user_data*/)
+                 TreeStoreElem *tselem)
 {
   wmOperatorType *ot = WM_operatortype_find("OUTLINER_OT_id_remap", false);
   PointerRNA op_props;
@@ -1007,8 +1006,7 @@ void lib_relocate_fn(bContext *C,
                      Scene * /*scene*/,
                      TreeElement *te,
                      TreeStoreElem * /*tsep*/,
-                     TreeStoreElem *tselem,
-                     void * /*user_data*/)
+                     TreeStoreElem *tselem)
 {
   /* XXX: This does not work with several items
    * (it is only called once in the end, due to the 'deferred'
@@ -1064,8 +1062,7 @@ void lib_reload_fn(bContext *C,
                    Scene * /*scene*/,
                    TreeElement *te,
                    TreeStoreElem * /*tsep*/,
-                   TreeStoreElem *tselem,
-                   void * /*user_data*/)
+                   TreeStoreElem *tselem)
 {
   wmOperatorType *ot = WM_operatortype_find("WM_OT_lib_reload", false);
 
@@ -2421,6 +2418,55 @@ void OUTLINER_OT_orphans_purge(wmOperatorType *ot)
                   "Recursive Delete",
                   "Recursively check for indirectly unused data-blocks, ensuring that no orphaned "
                   "data-blocks remain after execution");
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Manage Orphan Data-Blocks Operator
+ * \{ */
+
+static int outliner_orphans_manage_invoke(bContext *C, wmOperator * /*op*/, const wmEvent *event)
+{
+  const int sizex = int(450.0f * UI_SCALE_FAC);
+  const int sizey = int(450.0f * UI_SCALE_FAC);
+  const rcti window_rect = {
+      /*xmin*/ event->xy[0],
+      /*xmax*/ event->xy[0] + sizex,
+      /*ymin*/ event->xy[1],
+      /*ymax*/ event->xy[1] + sizey,
+  };
+
+  if (WM_window_open(C,
+                     IFACE_("Manage Unused Data"),
+                     &window_rect,
+                     SPACE_OUTLINER,
+                     false,
+                     false,
+                     true,
+                     WIN_ALIGN_LOCATION_CENTER,
+                     nullptr,
+                     nullptr) != nullptr)
+  {
+    SpaceOutliner *soutline = CTX_wm_space_outliner(C);
+    soutline->outlinevis = SO_ID_ORPHANS;
+    return OPERATOR_FINISHED;
+  }
+  return OPERATOR_CANCELLED;
+}
+
+void OUTLINER_OT_orphans_manage(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->idname = "OUTLINER_OT_orphans_manage";
+  ot->name = "Manage Unused Data";
+  ot->description = "Open a window to manage unused data";
+
+  /* callbacks */
+  ot->invoke = outliner_orphans_manage_invoke;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER;
 }
 
 /** \} */

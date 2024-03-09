@@ -539,7 +539,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     else {
       c = IFACE_("Median:");
     }
-    uiDefBut(block, UI_BTYPE_LABEL, 0, c, 0, yi -= buth, butw, buth, nullptr, 0, 0, 0, 0, "");
+    uiDefBut(block, UI_BTYPE_LABEL, 0, c, 0, yi -= buth, butw, buth, nullptr, 0, 0, "");
 
     /* bfa */
 
@@ -1293,8 +1293,6 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
              nullptr,
              0,
              0,
-             0,
-             0,
              "");
     UI_block_align_begin(block);
     const float lim = FLT_MAX;
@@ -1634,7 +1632,6 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
               ICON_DECORATE_UNLOCKED);
       uiLayoutSetEmboss(sub, UI_EMBOSS_UNDEFINED);
       break;
-
     case ROT_MODE_AXISANGLE: /* axis angle */
                              /* bfa */
       col = uiLayoutColumn(layout, false);
@@ -1667,7 +1664,6 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
               ICON_DECORATE_UNLOCKED);
       uiLayoutSetEmboss(sub, UI_EMBOSS_UNDEFINED); /* bfa */
       break;
-
     default: /* euler rotations */
              /* bfa */
       col = uiLayoutColumn(layout, false);

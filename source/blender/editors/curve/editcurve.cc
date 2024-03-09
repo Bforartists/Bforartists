@@ -24,7 +24,7 @@
 #include "BLT_translation.hh"
 
 #include "BKE_action.h"
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_context.hh"
 #include "BKE_curve.hh"
 #include "BKE_displist.h"
@@ -1087,11 +1087,11 @@ int ED_curve_updateAnimPaths(Main *bmain, Curve *cu)
 
   if (adt->action != nullptr) {
     curve_rename_fcurves(cu, &adt->action->curves);
-    DEG_id_tag_update(&adt->action->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&adt->action->id, ID_RECALC_SYNC_TO_EVAL);
   }
 
   curve_rename_fcurves(cu, &adt->drivers);
-  DEG_id_tag_update(&cu->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&cu->id, ID_RECALC_SYNC_TO_EVAL);
 
   /* TODO(sergey): Only update if something actually changed. */
   DEG_relations_tag_update(bmain);
@@ -3406,7 +3406,7 @@ static int reveal_exec(bContext *C, wmOperator *op)
 
     if (changed) {
       DEG_id_tag_update(static_cast<ID *>(obedit->data),
-                        ID_RECALC_COPY_ON_WRITE | ID_RECALC_SELECT | ID_RECALC_GEOMETRY);
+                        ID_RECALC_SYNC_TO_EVAL | ID_RECALC_SELECT | ID_RECALC_GEOMETRY);
       WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
       changed_multi = true;
     }
@@ -4834,7 +4834,7 @@ bool ED_curve_editnurb_select_pick(bContext *C,
       for (Object *ob_iter : objects) {
         ED_curve_deselect_all(((Curve *)ob_iter->data)->editnurb);
         DEG_id_tag_update(static_cast<ID *>(ob_iter->data),
-                          ID_RECALC_SELECT | ID_RECALC_COPY_ON_WRITE);
+                          ID_RECALC_SELECT | ID_RECALC_SYNC_TO_EVAL);
         WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob_iter->data);
       }
       changed = true;
@@ -4998,7 +4998,7 @@ bool ED_curve_editnurb_select_pick(bContext *C,
       ED_object_base_activate(C, basact);
     }
 
-    DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SELECT | ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SELECT | ID_RECALC_SYNC_TO_EVAL);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
 
     changed = true;

@@ -15,6 +15,23 @@ bl_info = {
     "category": "System",
 }
 
+if "bpy" in locals():
+    import importlib
+    from . import (
+        bl_extension_ops,
+        bl_extension_ui,
+        bl_extension_utils,
+    )
+    importlib.reload(bl_extension_ops)
+    importlib.reload(bl_extension_ui)
+    importlib.reload(bl_extension_utils)
+    del (
+        bl_extension_ops,
+        bl_extension_ui,
+        bl_extension_utils,
+    )
+    del importlib
+
 import bpy
 
 from bpy.props import (
@@ -38,6 +55,15 @@ class BlExtPreferences(AddonPreferences):
     show_development: BoolProperty(
         name="Show Development Utilities",
         description="Show utilities intended for developing the extension",
+        default=False,
+    )
+    show_development_reports: BoolProperty(
+        name="Show Development Reports",
+        description=(
+            "Show the result of running commands in the main interface "
+            "this has the advantage that multiple processes that run at once have their errors properly grouped "
+            "which is not the case for reports which are mixed together"
+        ),
         default=False,
     )
 
@@ -148,6 +174,19 @@ def extenion_repos_upgrade(*_):
 
     if text := stdout.getvalue():
         repo_status_text.from_message("Upgrade \"{:s}\"".format(active_repo.name), text)
+
+
+@bpy.app.handlers.persistent
+def extenion_url_drop(url):
+    from .bl_extension_ui import (
+        extension_drop_url_popover,
+        extension_drop_file_popover,
+    )
+
+    if url.startswith(("http://", "https://", "file://")):
+        extension_drop_url_popover(url)
+    else:
+        extension_drop_file_popover(url)
 
 
 # -----------------------------------------------------------------------------
@@ -346,23 +385,35 @@ def register():
             None,
             ('ADDON', "Add-ons", "Only show add-ons"),
             ('THEME', "Themes", "Only show themes"),
-            ('KEYMAP', "Keymaps", "Only show keymaps"),
         ),
         name="Filter by Type",
         description="Show extensions by type",
         default='ALL',
     )
     WindowManager.extension_enabled_only = BoolProperty(
-        name="Enabled Extensions Only",
+        name="Show Enabled Extensions",
         description="Only show enabled extensions",
     )
     WindowManager.extension_installed_only = BoolProperty(
-        name="Installed Extensions Only",
+        name="Show Installed Extensions",
         description="Only show installed extensions",
     )
     WindowManager.extension_show_legacy_addons = BoolProperty(
         name="Show Legacy Add-Ons",
         description="Only show extensions, hiding legacy add-ons",
+        default=True,
+    )
+
+    # Use for drag & drop operators.
+    from .bl_extension_ops import rna_prop_repo_enum_local_only_itemf
+    WindowManager.extension_local_repos = EnumProperty(
+        name="Local Repository",
+        description="Local repository",
+        items=rna_prop_repo_enum_local_only_itemf,
+    )
+    WindowManager.extension_enable_on_install = BoolProperty(
+        name="Enable Add-on",
+        description="Enable on install",
         default=True,
     )
 
@@ -374,6 +425,9 @@ def register():
 
     handlers = bpy.app.handlers._extension_repos_upgrade
     handlers.append(extenion_repos_upgrade)
+
+    handlers = bpy.app.handlers._extension_drop_url
+    handlers.append(extenion_url_drop)
 
     monkeypatch_install()
 
@@ -416,5 +470,9 @@ def unregister():
     handlers = bpy.app.handlers._extension_repos_upgrade
     if extenion_repos_upgrade in handlers:
         handlers.remove(extenion_repos_upgrade)
+
+    handlers = bpy.app.handlers._extension_drop_url
+    if extenion_url_drop in handlers:
+        handlers.remove(extenion_url_drop)
 
     monkeypatch_uninstall()
