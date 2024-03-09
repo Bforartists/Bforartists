@@ -421,7 +421,7 @@ class GRAPH_MT_channel(Menu):
         layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
         layout.operator("graph.samples_to_keys", icon="SAMPLE_KEYFRAMES")
         layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
-        layout.operator("anim.channels_bake")
+        layout.operator("anim.channels_bake", icon="BAKE_ACTION")
         '''
 
         layout.separator()
@@ -583,7 +583,7 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
         layout.operator("graph.samples_to_keys", icon="SAMPLE_KEYFRAMES")
         layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
-        layout.operator("anim.channels_bake")
+        layout.operator("anim.channels_bake", icon="BAKE_ACTION")
 
         # BFA - redundant operators and menus
 

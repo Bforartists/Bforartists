@@ -27,6 +27,8 @@
 #include "BLI_time.h"
 #include "BLI_utildefines.h"
 
+#include "BLT_translation.hh"
+
 #include "IMB_colormanagement.hh"
 
 #include "BKE_addon.h"
@@ -38,6 +40,7 @@
 #include "BKE_colorband.hh"
 #include "BKE_context.hh"
 #include "BKE_global.hh"
+#include "BKE_idtype.hh"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
@@ -54,6 +57,7 @@
 #include "BKE_undo_system.hh"
 #include "BKE_workspace.h"
 
+#include "BLO_read_write.hh"
 #include "BLO_readfile.hh"
 #include "BLO_userdef_default.h"
 #include "BLO_writefile.hh"
@@ -329,7 +333,7 @@ static void swap_old_bmain_data_for_blendfile(ReuseOldBMainData *reuse_data, con
 
   std::swap(*new_lb, *old_lb);
 
-  /* TODO: Could add per-IDType control over namemaps clearing, if this becomes a performances
+  /* TODO: Could add per-IDType control over name-maps clearing, if this becomes a performances
    * concern. */
   BKE_main_namemap_clear(old_bmain);
   BKE_main_namemap_clear(new_bmain);
@@ -917,7 +921,7 @@ static void setup_app_data(bContext *C,
     }
   }
 
-  /* Setting scene might require having a dependency graph, with copy on write
+  /* Setting scene might require having a dependency graph, with copy-on-eval
    * we need to make sure we ensure scene has correct color management before
    * constructing dependency graph.
    */
@@ -952,6 +956,27 @@ static void setup_app_data(bContext *C,
 
     /* We need to rebuild some of the deleted override rules (for UI feedback purpose). */
     BKE_lib_override_library_main_operations_create(bmain, true, nullptr);
+  }
+
+  /* Now that liboverrides have been resynced and 'irrelevant' missing linked IDs has been removed,
+   * report actual missing linked data. */
+  if (mode != LOAD_UNDO) {
+    ID *id_iter;
+    int missing_linked_ids_num = 0;
+    FOREACH_MAIN_ID_BEGIN (bmain, id_iter) {
+      if (ID_IS_LINKED(id_iter) && (id_iter->tag & LIB_TAG_MISSING)) {
+        missing_linked_ids_num++;
+        BLO_reportf_wrap(reports,
+                         RPT_INFO,
+                         RPT_("LIB: %s: '%s' missing from '%s', parent '%s'"),
+                         BKE_idtype_idcode_to_name(GS(id_iter->name)),
+                         id_iter->name + 2,
+                         id_iter->lib->filepath_abs,
+                         id_iter->lib->parent ? id_iter->lib->parent->filepath_abs : "<direct>");
+      }
+    }
+    FOREACH_MAIN_ID_END;
+    reports->count.missing_linked_id = missing_linked_ids_num;
   }
 }
 
@@ -1234,6 +1259,9 @@ UserDef *BKE_blendfile_userdef_from_defaults()
   BKE_studiolight_default(userdef->light_param, userdef->light_ambient);
 
   BKE_preferences_asset_library_default_add(userdef);
+
+  BKE_preferences_extension_repo_add_default(userdef);
+  BKE_preferences_extension_repo_add_default_user(userdef);
 
   return userdef;
 }

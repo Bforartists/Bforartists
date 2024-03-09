@@ -555,7 +555,7 @@ static void ui_item_array(uiLayout *layout,
 
   /* create label */
   if (name[0] && show_text) {
-    uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, 0, 0, "");
+    uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, "");
   }
 
   /* create buttons */
@@ -1052,7 +1052,7 @@ static uiBut *ui_item_with_label(uiLayout *layout,
       else {
         w_label = w_hint / 3;
       }
-      uiDefBut(block, UI_BTYPE_LABEL, 0, name, x, y, w_label, h, nullptr, 0.0, 0.0, 0, 0, "");
+      uiDefBut(block, UI_BTYPE_LABEL, 0, name, x, y, w_label, h, nullptr, 0.0, 0.0, "");
     }
   }
 
@@ -1112,13 +1112,14 @@ static uiBut *ui_item_with_label(uiLayout *layout,
                          0,
                          nullptr);
     UI_but_func_set(but, ui_keymap_but_cb, but, nullptr);
-    if (flag & UI_ITEM_R_IMMEDIATE) {
-      UI_but_flag_enable(but, UI_BUT_ACTIVATE_ON_INIT);
-    }
   }
   else {
     const char *str = (type == PROP_ENUM && !(flag & UI_ITEM_R_ICON_ONLY)) ? nullptr : "";
     but = uiDefAutoButR(block, ptr, prop, index, str, icon, x, y, prop_but_width, h);
+  }
+
+  if (flag & UI_ITEM_R_IMMEDIATE) {
+    UI_but_flag_enable(but, UI_BUT_ACTIVATE_ON_INIT);
   }
 
 #ifdef UI_PROP_DECORATE
@@ -1203,8 +1204,7 @@ static void ui_item_disabled(uiLayout *layout, const char *name)
 
   const int w = ui_text_icon_width(layout, name, 0, false);
 
-  uiBut *but = uiDefBut(
-      block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, 0, 0, "");
+  uiBut *but = uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, "");
   UI_but_disable(but, "");
 }
 
@@ -1513,8 +1513,6 @@ void uiItemsFullEnumO_items(uiLayout *layout,
                  nullptr,
                  0,
                  0,
-                 0,
-                 0,
                  nullptr);
   }
   else {
@@ -1605,8 +1603,6 @@ void uiItemsFullEnumO_items(uiLayout *layout,
                          nullptr,
                          0.0,
                          0.0,
-                         0,
-                         0,
                          "");
           uiItemS(target);
         }
@@ -2335,8 +2331,6 @@ void uiItemFullR(uiLayout *layout,
                          nullptr,
                          0.0,
                          0.0,
-                         0,
-                         0,
                          "");
           but->drawflag |= UI_BUT_TEXT_RIGHT;
           but->drawflag &= ~UI_BUT_TEXT_LEFT;
@@ -2353,7 +2347,7 @@ void uiItemFullR(uiLayout *layout,
 
         if (name) {
           but = uiDefBut(
-              block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, 0, 0, "");
+              block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, "");
           but->drawflag |= UI_BUT_TEXT_RIGHT;
           but->drawflag &= ~UI_BUT_TEXT_LEFT;
 
@@ -3179,8 +3173,6 @@ void uiItemDecoratorR_prop(uiLayout *layout, PointerRNA *ptr, PropertyRNA *prop,
                               nullptr,
                               0.0,
                               0.0,
-                              0.0,
-                              0.0,
                               "");
     but->flag |= UI_BUT_DISABLED;
     return;
@@ -3200,8 +3192,6 @@ void uiItemDecoratorR_prop(uiLayout *layout, PointerRNA *ptr, PropertyRNA *prop,
                                                          UI_UNIT_X,
                                                          UI_UNIT_Y,
                                                          nullptr,
-                                                         0.0,
-                                                         0.0,
                                                          0.0,
                                                          0.0,
                                                          TIP_("Animate property"));
@@ -3326,29 +3316,15 @@ static uiBut *uiItemL_(uiLayout *layout, const char *name, int icon)
       layout, name, icon, ui_text_pad_none, UI_FSTYLE_WIDGET_LABEL);
   uiBut *but;
   if (icon && name[0]) {
-    but = uiDefIconTextBut(block,
-                           UI_BTYPE_LABEL,
-                           0,
-                           icon,
-                           name,
-                           0,
-                           0,
-                           w,
-                           UI_UNIT_Y,
-                           nullptr,
-                           0.0,
-                           0.0,
-                           0,
-                           0,
-                           nullptr);
+    but = uiDefIconTextBut(
+        block, UI_BTYPE_LABEL, 0, icon, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, nullptr);
   }
   else if (icon) {
     but = uiDefIconBut(
-        block, UI_BTYPE_LABEL, 0, icon, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, 0, 0, nullptr);
+        block, UI_BTYPE_LABEL, 0, icon, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, nullptr);
   }
   else {
-    but = uiDefBut(
-        block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, 0, 0, nullptr);
+    but = uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, nullptr);
   }
 
   /* to compensate for string size padding in ui_text_icon_width,
@@ -3459,29 +3435,14 @@ void uiItemV(uiLayout *layout, const char *name, int icon, int argval)
   const int w = ui_text_icon_width(layout, name, icon, false);
 
   if (icon && name[0]) {
-    uiDefIconTextButI(block,
-                      UI_BTYPE_BUT,
-                      argval,
-                      icon,
-                      name,
-                      0,
-                      0,
-                      w,
-                      UI_UNIT_Y,
-                      retvalue,
-                      0.0,
-                      0.0,
-                      0,
-                      -1,
-                      "");
+    uiDefIconTextButI(
+        block, UI_BTYPE_BUT, argval, icon, name, 0, 0, w, UI_UNIT_Y, retvalue, 0.0, 0.0, "");
   }
   else if (icon) {
-    uiDefIconButI(
-        block, UI_BTYPE_BUT, argval, icon, 0, 0, w, UI_UNIT_Y, retvalue, 0.0, 0.0, 0, -1, "");
+    uiDefIconButI(block, UI_BTYPE_BUT, argval, icon, 0, 0, w, UI_UNIT_Y, retvalue, 0.0, 0.0, "");
   }
   else {
-    uiDefButI(
-        block, UI_BTYPE_BUT, argval, name, 0, 0, w, UI_UNIT_Y, retvalue, 0.0, 0.0, 0, -1, "");
+    uiDefButI(block, UI_BTYPE_BUT, argval, name, 0, 0, w, UI_UNIT_Y, retvalue, 0.0, 0.0, "");
   }
 }
 
@@ -3512,20 +3473,23 @@ void uiItemS_ex(uiLayout *layout, float factor, const LayoutSeparatorType type)
   bool is_vertical_bar = (layout->w == 0) && but_type == UI_BTYPE_SEPR_LINE;
 
   UI_block_layout_set_current(block, layout);
-  uiDefBut(block,
-           but_type,
-           0,
-           "",
-           0,
-           0,
-           space,
-           is_vertical_bar ? UI_UNIT_Y : space,
-           nullptr,
-           0.0,
-           0.0,
-           is_vertical_bar ? 1.0f : 0.0f,
-           0,
-           "");
+  uiBut *but = uiDefBut(block,
+                        but_type,
+                        0,
+                        "",
+                        0,
+                        0,
+                        space,
+                        is_vertical_bar ? UI_UNIT_Y : space,
+                        nullptr,
+                        0.0,
+                        0.0,
+                        "");
+
+  if (but_type == UI_BTYPE_SEPR_LINE) {
+    uiButSeparatorLine *but_line = static_cast<uiButSeparatorLine *>(but);
+    but_line->is_vertical = is_vertical_bar;
+  }
 }
 
 void uiItemS(uiLayout *layout)
@@ -3564,8 +3528,6 @@ void uiItemProgressIndicator(uiLayout *layout,
                         nullptr,
                         0.0,
                         0.0,
-                        0,
-                        0,
                         "");
 
   if (has_text && (progress_type == UI_BUT_PROGRESS_TYPE_RING)) {
@@ -3605,8 +3567,6 @@ void uiItemSpacer(uiLayout *layout)
            nullptr,
            0.0,
            0.0,
-           0,
-           0,
            "");
 }
 
@@ -5056,21 +5016,8 @@ PanelLayout uiLayoutPanelProp(const bContext *C,
     uiBlock *block = uiLayoutGetBlock(row);
     const int icon = is_open ? ICON_DOWNARROW_HLT : ICON_RIGHTARROW;
     const int width = ui_text_icon_width(layout, "", icon, false);
-    uiDefIconTextBut(block,
-                     UI_BTYPE_LABEL,
-                     0,
-                     icon,
-                     "",
-                     0,
-                     0,
-                     width,
-                     UI_UNIT_Y,
-                     nullptr,
-                     0.0f,
-                     0.0f,
-                     0.0f,
-                     0.0f,
-                     "");
+    uiDefIconTextBut(
+        block, UI_BTYPE_LABEL, 0, icon, "", 0, 0, width, UI_UNIT_Y, nullptr, 0.0f, 0.0f, "");
 
     panel_layout.header = row;
   }
@@ -5210,8 +5157,7 @@ static uiLayoutItemBx *ui_layout_box(uiLayout *layout, int type)
 
   UI_block_layout_set_current(layout->root->block, &box->litem);
 
-  box->roundbox = uiDefBut(
-      layout->root->block, type, 0, "", 0, 0, 0, 0, nullptr, 0.0, 0.0, 0, 0, "");
+  box->roundbox = uiDefBut(layout->root->block, type, 0, "", 0, 0, 0, 0, nullptr, 0.0, 0.0, "");
 
   return box;
 }
@@ -5893,20 +5839,8 @@ static void ui_layout_add_padding_button(uiLayoutRoot *root)
     uiLayout *prev_layout = block->curlayout;
 
     block->curlayout = root->layout;
-    uiDefBut(block,
-             UI_BTYPE_SEPR,
-             0,
-             "",
-             0,
-             0,
-             root->padding,
-             root->padding,
-             nullptr,
-             0.0,
-             0.0,
-             0,
-             0,
-             "");
+    uiDefBut(
+        block, UI_BTYPE_SEPR, 0, "", 0, 0, root->padding, root->padding, nullptr, 0.0, 0.0, "");
     block->curlayout = prev_layout;
   }
 }
@@ -6117,12 +6051,6 @@ void UI_block_layout_resolve(uiBlock *block, int *r_x, int *r_y)
   }
 
   BLI_listbase_clear(&block->layouts);
-
-  /* XXX silly trick, `interface_templates.cc` doesn't get linked
-   * because it's not used by other files in this module? */
-  {
-    UI_template_fix_linking();
-  }
 }
 
 bool UI_block_layout_needs_resolving(const uiBlock *block)

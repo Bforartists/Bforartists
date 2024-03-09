@@ -20,7 +20,7 @@
 #include "DNA_scene_types.h"
 
 #include "BKE_action.h"
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_main.hh"
 #include "BKE_scene.hh"
 
@@ -52,7 +52,7 @@ struct MPathTarget {
   Object *ob;          /* source object */
   bPoseChannel *pchan; /* source posechannel (if applicable) */
 
-  /* "Evaluated" Copies (these come from the background COW copy
+  /* "Evaluated" Copies (these come from the background evaluated copy
    * that provide all the coordinates we want to save off). */
   Object *ob_eval; /* evaluated object */
 };
@@ -435,7 +435,7 @@ void animviz_calc_motionpaths(Depsgraph *depsgraph,
   }
 
   /* get copies of objects/bones to get the calculated results from
-   * (for copy-on-write evaluation), so that we actually get some results
+   * (for copy-on-evaluation), so that we actually get some results
    */
 
   /* TODO: Create a copy of background depsgraph that only contain these entities,

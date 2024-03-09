@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include "BKE_action.h"
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_curves.hh"
 #include "BKE_customdata.hh"
 #include "BKE_deform.hh"
@@ -49,6 +49,7 @@
 #include "DNA_ID.h"
 #include "DNA_ID_enums.h"
 #include "DNA_brush_types.h"
+#include "DNA_gpencil_modifier_types.h"
 #include "DNA_grease_pencil_types.h"
 #include "DNA_material_types.h"
 #include "DNA_modifier_types.h"
@@ -1368,11 +1369,32 @@ static void grease_pencil_evaluate_modifiers(Depsgraph *depsgraph,
   VirtualModifierData virtualModifierData;
   ModifierData *md = BKE_modifiers_get_virtual_modifierlist(object, &virtualModifierData);
 
-  /* Evaluate modifiers. */
+  /* Evaluate time modifiers.
+   * The time offset modifier can change what drawings are shown on the current frame. But it
+   * doesn't affect the drawings data. Modifiers that modify the drawings data are only evaluated
+   * for the current frame, so we run the time offset modifiers before all the other ones. */
+  ModifierData *tmd = md;
+  for (; tmd; tmd = tmd->next) {
+    const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(tmd->type));
+
+    if (!BKE_modifier_is_enabled(scene, tmd, required_mode) ||
+        ModifierType(tmd->type) != eModifierType_GreasePencilTime)
+    {
+      continue;
+    }
+
+    if (mti->modify_geometry_set != nullptr) {
+      mti->modify_geometry_set(tmd, &mectx, &geometry_set);
+    }
+  }
+
+  /* Evaluate drawing modifiers. */
   for (; md; md = md->next) {
     const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(md->type));
 
-    if (!BKE_modifier_is_enabled(scene, md, required_mode)) {
+    if (!BKE_modifier_is_enabled(scene, md, required_mode) ||
+        ModifierType(md->type) == eModifierType_GreasePencilTime)
+    {
       continue;
     }
 
@@ -1708,6 +1730,13 @@ template<typename T> static void shrink_array(T **array, int *num, const int shr
 {
   BLI_assert(shrink_num > 0);
   const int new_array_num = *num - shrink_num;
+  if (new_array_num == 0) {
+    MEM_freeN(*array);
+    *array = nullptr;
+    *num = 0;
+    return;
+  }
+
   T *new_array = reinterpret_cast<T *>(MEM_cnew_array<T *>(new_array_num, __func__));
 
   blender::uninitialized_move_n(*array, new_array_num, new_array);
@@ -1924,6 +1953,7 @@ static void remove_drawings_unchecked(GreasePencil &grease_pencil,
       for (auto [key, value] : layer->frames_for_write().items()) {
         if (value.drawing_index == swap_index) {
           value.drawing_index = index_to_remove;
+          layer->tag_frames_map_changed();
         }
       }
     }
@@ -2521,7 +2551,7 @@ void GreasePencil::remove_layer(blender::bke::greasepencil::Layer &layer)
   layer.parent_group().unlink_node(layer.as_node());
 
   /* Remove drawings. */
-  for (GreasePencilFrame frame : layer.frames_for_write().values()) {
+  for (const GreasePencilFrame frame : layer.frames().values()) {
     GreasePencilDrawingBase *drawing_base = this->drawing(frame.drawing_index);
     if (drawing_base->type != GP_DRAWING) {
       continue;
@@ -2598,7 +2628,8 @@ static void write_drawing_array(GreasePencil &grease_pencil, BlendWriter *writer
 
 static void free_drawing_array(GreasePencil &grease_pencil)
 {
-  if (grease_pencil.drawing_array == nullptr || grease_pencil.drawing_array_num == 0) {
+  if (grease_pencil.drawing_array == nullptr) {
+    BLI_assert(grease_pencil.drawing_array_num == 0);
     return;
   }
   for (int i = 0; i < grease_pencil.drawing_array_num; i++) {
@@ -2739,5 +2770,3 @@ static void write_layer_tree(GreasePencil &grease_pencil, BlendWriter *writer)
   grease_pencil.root_group_ptr->wrap().prepare_for_dna_write();
   write_layer_tree_group(writer, grease_pencil.root_group_ptr);
 }
-
-/** \} */

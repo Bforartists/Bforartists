@@ -51,7 +51,7 @@
 
 #include "IMB_imbuf.hh"
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_asset.hh"
 #include "BKE_bpath.hh"
@@ -4427,6 +4427,9 @@ const CPPType *socket_type_to_geo_nodes_base_cpp_type(const eNodeSocketDatatype 
       break;
     case SOCK_ROTATION:
       cpp_type = &CPPType::get<math::Quaternion>();
+      break;
+    case SOCK_MATRIX:
+      cpp_type = &CPPType::get<float4x4>();
       break;
     default:
       cpp_type = slow_socket_type_to_geo_nodes_base_cpp_type(type);
