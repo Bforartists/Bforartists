@@ -16,16 +16,16 @@ jobs:
 
     steps:
     - name: make
+      shell: cmd
       run: |
-        mkdir ~\bforartistsrepo
-        cd ~\bforartistsrepo
+        mkdir C:/Users/runneradmin/bforartistsrepo
+        cd C:/Users/runneradmin/bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
-        dir
-        cd ~\bforartistsrepo\Bforartists
+        cd Bforartists
         make update
-        .\make.bat ninja release
+        make release
         dir
-        cd ~\bforartistsrepo
+        cd ..
         dir
 
 
