@@ -2929,6 +2929,7 @@ classes = (
     USERPREF_PT_file_paths_development,
 
     USERPREF_PT_saveload_blend,
+    USERPREF_PT_saveload_blend_autosave,
     USERPREF_PT_saveload_autorun,
     USERPREF_PT_saveload_file_browser,
 
