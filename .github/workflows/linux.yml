@@ -15,24 +15,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: configure
-      run: |
-        sudo apt update
-        sudo apt install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libegl-dev libepoxy-dev
-        sudo apt install libwayland-dev wayland-protocols libxkbcommon-dev libdbus-1-dev linux-libc-dev
-
     - name: make
       run: |
-        mkdir ~/bforartistsrepo
-        cd ~/bforartistsrepo
+        mkdir /home/runner/bforartistsrepo
+        cd /home/runner/bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
-        cd ~/bforartistsrepo/Bforartists
+        cd Bforartists
+        sudo apt update
+        sudo apt install python3 git git-lfs
+        ./build_files/build_environment/install_linux_packages.py
         ./build_files/utils/make_update.py --use-linux-libraries
-        make
+        make update
+        make release
+        ls
+        cd ..
+        ls
 
     - name: Upload Build
       uses: actions/upload-artifact@v2
       with:
         name: Bforartists-Release-${{ runner.os }}
-        path: /home/runner/bforartistsrepo/bfa_build_linux/bin/
+        path: /home/runner/bforartistsrepo/bfa_build_linux_release/bin/
 
