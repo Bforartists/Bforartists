@@ -15,22 +15,19 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: configure
-      run:
-        brew install cmake svn
-
     - name: make
       run: |
+        brew install cmake git git-lfs svn
         mkdir ~/bforartistsrepo
         cd ~/bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
         cd ~/bforartistsrepo/Bforartists
         make update
-        make
+        make release
 
     - name: Upload Build
       uses: actions/upload-artifact@v2
       with:
         name: Bforartists-Release-${{ runner.os }}
-        path: /Users/runner/bforartistsrepo/build_darwin/bin/
+        path: /Users/runner/bforartistsrepo/build_darwin_release/bin/
 
