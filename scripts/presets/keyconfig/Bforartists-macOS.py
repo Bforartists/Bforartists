@@ -6220,7 +6220,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sculpt.face_set_invert_visibility", {"type": 'I', "value": 'PRESS', "oskey": True}, None),
+    ("paint.visibility_invert", {"type": 'I', "value": 'PRESS', "oskey": True}, None),
     ("sculpt.face_set_change_visibility",
      {"type": 'H', "value": 'PRESS', "alt": True},
      {"properties":
@@ -8100,7 +8100,7 @@ keyconfig_data = \
       },
      ),
     ("paint.weight_paint",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
      {"properties":
       [("mode", 'INVERT'),
        ],
