@@ -1071,16 +1071,13 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
             row = sub.row(align=True)
             row.prop(sculpt, "constant_detail_resolution")
             props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
-            sub.operator("sculpt.set_detail_size", text="Set Detail Size", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
             props.mode = 'DYNTOPO'
         elif (sculpt.detail_type_method == 'BRUSH'):
             row = sub.row(align=True)
             row.prop(sculpt, "detail_percent")
-            sub.operator("sculpt.set_detail_size", text="Set Detail Percent", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
         else:
             row = sub.row(align=True)
             row.prop(sculpt, "detail_size")
-            sub.operator("sculpt.set_detail_size", text="Set Detail Size", icon='BRUSHSIZE') #BFA - Added from hotkey exclusive operator
 
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
             #col.separator() #BFA - unnecessary
@@ -1103,12 +1100,12 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        col = layout.column() 
+        col = layout.column()
         mesh = context.active_object.data
-        
+
         row = col.row(align=True)
         row.prop(mesh, "remesh_mode", text="Mode", expand=True)
-        
+
         if mesh.remesh_mode == 'VOXEL':
             row = col.row(align=True)
             row.prop(mesh, "remesh_voxel_size")
