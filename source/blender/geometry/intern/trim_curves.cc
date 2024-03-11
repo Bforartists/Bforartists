@@ -13,7 +13,6 @@
 #include "BKE_attribute_math.hh"
 #include "BKE_curves.hh"
 #include "BKE_curves_utils.hh"
-#include "BKE_geometry_set.hh"
 
 #include "GEO_trim_curves.hh"
 
@@ -33,7 +32,7 @@ namespace blender::geometry {
  * \param cyclic: If curve is cyclic.
  * \param resolution: Curve resolution (number of evaluated points per segment).
  * \param num_curve_points: Total number of control points in the curve.
- * \return: Point on the piecewise segment matching the given distance.
+ * \return Point on the piecewise segment matching the given distance.
  */
 static bke::curves::CurvePoint lookup_point_uniform_spacing(const Span<float> lengths,
                                                             const float sample_length,

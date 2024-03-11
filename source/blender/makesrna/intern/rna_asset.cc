@@ -86,7 +86,7 @@ static bool rna_AssetMetaData_editable_from_owner_id(const ID *owner_id,
   return false;
 }
 
-int rna_AssetMetaData_editable(PointerRNA *ptr, const char **r_info)
+int rna_AssetMetaData_editable(const PointerRNA *ptr, const char **r_info)
 {
   AssetMetaData *asset_data = static_cast<AssetMetaData *>(ptr->data);
 
@@ -103,7 +103,7 @@ static std::optional<std::string> rna_AssetTag_path(const PointerRNA *ptr)
   return fmt::format("asset_data.tags[\"{}\"]", asset_tag_name_esc);
 }
 
-static int rna_AssetTag_editable(PointerRNA *ptr, const char **r_info)
+static int rna_AssetTag_editable(const PointerRNA *ptr, const char **r_info)
 {
   AssetTag *asset_tag = static_cast<AssetTag *>(ptr->data);
   ID *owner_id = ptr->owner_id;
@@ -368,7 +368,7 @@ void rna_AssetMetaData_catalog_id_update(bContext *C, PointerRNA *ptr)
   }
 
   AssetMetaData *asset_data = static_cast<AssetMetaData *>(ptr->data);
-  AS_asset_library_refresh_catalog_simplename(asset_library, asset_data);
+  asset_library->refresh_catalog_simplename(asset_data);
 }
 
 static PointerRNA rna_AssetHandle_file_data_get(PointerRNA *ptr)

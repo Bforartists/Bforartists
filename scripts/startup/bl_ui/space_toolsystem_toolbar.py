@@ -837,7 +837,9 @@ class _defs_edit_mesh:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.spin")
             layout.prop(props, "steps")
+            layout.use_property_split = False
             layout.prop(props, "dupli")
+            layout.use_property_split = True
             props = tool.gizmo_group_properties("MESH_GGT_spin")
             layout.prop(props, "axis")
 
@@ -1749,7 +1751,7 @@ class _defs_weight_paint:
              ob.data.use_paint_mask_vertex)):
             return VIEW3D_PT_tools_active._tools_select
         elif context.pose_object:
-            return (_defs_view3d_select.select,)
+            return VIEW3D_PT_tools_active._tools_select
         return ()
 
     @staticmethod

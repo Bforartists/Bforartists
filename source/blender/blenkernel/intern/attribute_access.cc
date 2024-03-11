@@ -50,6 +50,8 @@ const blender::CPPType *custom_data_type_to_cpp_type(const eCustomDataType type)
       return &CPPType::get<ColorGeometry4b>();
     case CD_PROP_QUATERNION:
       return &CPPType::get<math::Quaternion>();
+    case CD_PROP_FLOAT4X4:
+      return &CPPType::get<float4x4>();
     case CD_PROP_STRING:
       return &CPPType::get<MStringProperty>();
     default:
@@ -88,6 +90,9 @@ eCustomDataType cpp_type_to_custom_data_type(const blender::CPPType &type)
   }
   if (type.is<math::Quaternion>()) {
     return CD_PROP_QUATERNION;
+  }
+  if (type.is<float4x4>()) {
+    return CD_PROP_FLOAT4X4;
   }
   if (type.is<MStringProperty>()) {
     return CD_PROP_STRING;
@@ -167,6 +172,8 @@ static int attribute_data_type_complexity(const eCustomDataType data_type)
       return 8;
     case CD_PROP_COLOR:
       return 9;
+    case CD_PROP_FLOAT4X4:
+      return 10;
 #if 0 /* These attribute types are not supported yet. */
     case CD_PROP_STRING:
       return 10;
@@ -909,6 +916,9 @@ void gather_attributes(const AttributeAccessor src_attributes,
     if (meta_data.domain != domain) {
       return true;
     }
+    if (meta_data.data_type == CD_PROP_STRING) {
+      return true;
+    }
     if (id.is_anonymous() && !propagation_info.propagate(id.anonymous_id())) {
       return true;
     }
@@ -948,6 +958,9 @@ void gather_attributes(const AttributeAccessor src_attributes,
       if (meta_data.domain != domain) {
         return true;
       }
+      if (meta_data.data_type == CD_PROP_STRING) {
+        return true;
+      }
       if (id.is_anonymous() && !propagation_info.propagate(id.anonymous_id())) {
         return true;
       }
@@ -980,6 +993,9 @@ void gather_attributes_group_to_group(const AttributeAccessor src_attributes,
     if (meta_data.domain != domain) {
       return true;
     }
+    if (meta_data.data_type == CD_PROP_STRING) {
+      return true;
+    }
     if (id.is_anonymous() && !propagation_info.propagate(id.anonymous_id())) {
       return true;
     }
@@ -1008,6 +1024,9 @@ void gather_attributes_to_groups(const AttributeAccessor src_attributes,
 {
   src_attributes.for_all([&](const AttributeIDRef &id, const AttributeMetaData meta_data) {
     if (meta_data.domain != domain) {
+      return true;
+    }
+    if (meta_data.data_type == CD_PROP_STRING) {
       return true;
     }
     if (id.is_anonymous() && !propagation_info.propagate(id.anonymous_id())) {
@@ -1059,6 +1078,9 @@ void copy_attributes_group_to_group(const AttributeAccessor src_attributes,
     if (meta_data.domain != domain) {
       return true;
     }
+    if (meta_data.data_type == CD_PROP_STRING) {
+      return true;
+    }
     if (id.is_anonymous() && !propagation_info.propagate(id.anonymous_id())) {
       return true;
     }
@@ -1087,6 +1109,9 @@ void fill_attribute_range_default(MutableAttributeAccessor attributes,
       return true;
     }
     if (skip.contains(id.name())) {
+      return true;
+    }
+    if (meta_data.data_type == CD_PROP_STRING) {
       return true;
     }
     GSpanAttributeWriter attribute = attributes.lookup_for_write_span(id);

@@ -16,14 +16,11 @@
 #include "DNA_scene_types.h"
 #include "DNA_userdef_types.h"
 
-#include "BLI_easing.h"
 #include "BLI_link_utils.h"
 #include "BLI_listbase.h"
 #include "BLI_math_matrix.h"
 #include "BLI_memarena.h"
 #include "BLI_rect.h"
-#include "BLI_string.h"
-#include "BLI_timecode.h"
 #include "BLI_utildefines.h"
 
 #include "BKE_context.hh"
@@ -43,7 +40,6 @@
 #include "UI_interface.hh"
 #include "UI_view2d.hh"
 
-#include "interface_intern.hh"
 #include "view2d_intern.hh"
 
 static void ui_view2d_curRect_validate_resize(View2D *v2d, bool resize);
@@ -1351,13 +1347,11 @@ void UI_view2d_dot_grid_draw(const View2D *v2d,
     int count_x;
     float start_x;
 
-    /* Count points that fit in viewport minus space for the scroll-bars. */
-    grid_axis_start_and_count(
-        step, v2d->cur.xmin, v2d->cur.xmax - V2D_SCROLL_WIDTH, &start_x, &count_x);
+    /* Count points that fit in viewport. */
+    grid_axis_start_and_count(step, v2d->cur.xmin, v2d->cur.xmax, &start_x, &count_x);
     int count_y;
     float start_y;
-    grid_axis_start_and_count(
-        step, v2d->cur.ymin + V2D_SCROLL_HEIGHT, v2d->cur.ymax, &start_y, &count_y);
+    grid_axis_start_and_count(step, v2d->cur.ymin, v2d->cur.ymax, &start_y, &count_y);
     if (count_x == 0 || count_y == 0) {
       continue;
     }

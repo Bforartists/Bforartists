@@ -131,7 +131,6 @@ class DATA_PT_lens(CameraButtonsPanel, Panel):
                 elif cam.lens_unit == 'FOV':
                     col.prop(cam, "angle")
 
-
         col = layout.column()
         col.separator()
 

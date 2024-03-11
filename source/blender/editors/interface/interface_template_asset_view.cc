@@ -13,11 +13,8 @@
 
 #include "BKE_screen.hh"
 
-#include "BLI_path_util.h"
 #include "BLI_string.h"
 #include "BLI_string_ref.hh"
-
-#include "BLO_readfile.hh"
 
 #include "ED_asset.hh"
 #include "ED_screen.hh"
@@ -29,7 +26,6 @@
 
 #include "UI_interface.hh"
 
-#include "WM_api.hh"
 #include "WM_types.hh"
 
 #include "interface_intern.hh"
@@ -39,7 +35,7 @@ using namespace blender::ed;
 
 struct AssetViewListData {
   AssetLibraryReference asset_library_ref;
-  AssetFilterSettings filter_settings;
+  asset::AssetFilterSettings filter_settings;
   bScreen *screen;
   bool show_names;
 };
@@ -103,8 +99,6 @@ static void asset_view_draw_item(uiList *ui_list,
       nullptr,
       0,
       0,
-      0,
-      0,
       "");
   ui_def_but_icon(but,
                   asset::handle_get_preview_icon_id(&asset_handle),
@@ -122,7 +116,7 @@ static void asset_view_filter_items(uiList *ui_list,
                                     const char *propname)
 {
   AssetViewListData *list_data = (AssetViewListData *)ui_list->dyn_data->customdata;
-  AssetFilterSettings &filter_settings = list_data->filter_settings;
+  asset::AssetFilterSettings &filter_settings = list_data->filter_settings;
 
   uiListNameFilter name_filter(*ui_list);
 
@@ -223,7 +217,7 @@ void uiTemplateAssetView(uiLayout *layout,
                          const char *assets_propname,
                          PointerRNA *active_dataptr,
                          const char *active_propname,
-                         const AssetFilterSettings *filter_settings,
+                         const asset::AssetFilterSettings *filter_settings,
                          const int display_flags,
                          const char *activate_opname,
                          PointerRNA *r_activate_op_properties,

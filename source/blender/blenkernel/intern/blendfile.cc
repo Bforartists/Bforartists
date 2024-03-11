@@ -27,6 +27,8 @@
 #include "BLI_time.h"
 #include "BLI_utildefines.h"
 
+#include "BLT_translation.hh"
+
 #include "IMB_colormanagement.hh"
 
 #include "BKE_addon.h"
@@ -39,8 +41,6 @@
 #include "BKE_context.hh"
 #include "BKE_global.hh"
 #include "BKE_idtype.hh"
-#include "BKE_ipo.h"
-#include "BKE_keyconfig.h"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
@@ -57,17 +57,18 @@
 #include "BKE_undo_system.hh"
 #include "BKE_workspace.h"
 
+#include "BLO_read_write.hh"
 #include "BLO_readfile.hh"
 #include "BLO_userdef_default.h"
 #include "BLO_writefile.hh"
-
-#include "RNA_access.hh"
 
 #include "RE_pipeline.h"
 
 #ifdef WITH_PYTHON
 #  include "BPY_extern.h"
 #endif
+
+using namespace blender::bke;
 
 /* -------------------------------------------------------------------- */
 /** \name Blend/Library Paths
@@ -233,7 +234,7 @@ struct ReuseOldBMainData {
 
   /** Storage for all remapping rules (old_id -> new_id) required by the preservation of old IDs
    * into the new Main. */
-  IDRemapper *remapper;
+  id::IDRemapper *remapper;
   bool is_libraries_remapped;
 
   /** Used to find matching IDs by name/lib in new main, to remap ID usages of data ported over
@@ -251,25 +252,25 @@ struct ReuseOldBMainData {
  * double of a linked data as a local one, without any known relationships between them. In
  * practice, this latter case is not expected to commonly happen.
  */
-static IDRemapper *reuse_bmain_data_remapper_ensure(ReuseOldBMainData *reuse_data)
+static id::IDRemapper &reuse_bmain_data_remapper_ensure(ReuseOldBMainData *reuse_data)
 {
   if (reuse_data->is_libraries_remapped) {
-    return reuse_data->remapper;
+    return *reuse_data->remapper;
   }
 
   if (reuse_data->remapper == nullptr) {
-    reuse_data->remapper = BKE_id_remapper_create();
+    reuse_data->remapper = MEM_new<id::IDRemapper>(__func__);
   }
 
   Main *new_bmain = reuse_data->new_bmain;
   Main *old_bmain = reuse_data->old_bmain;
-  IDRemapper *remapper = reuse_data->remapper;
+  id::IDRemapper &remapper = *reuse_data->remapper;
 
   LISTBASE_FOREACH (Library *, old_lib_iter, &old_bmain->libraries) {
     /* In case newly opened `new_bmain` is a library of the `old_bmain`, remap it to null, since a
      * file should never ever have linked data from itself. */
     if (STREQ(old_lib_iter->filepath_abs, new_bmain->filepath)) {
-      BKE_id_remapper_add(remapper, &old_lib_iter->id, nullptr);
+      remapper.add(&old_lib_iter->id, nullptr);
       continue;
     }
 
@@ -282,19 +283,18 @@ static IDRemapper *reuse_bmain_data_remapper_ensure(ReuseOldBMainData *reuse_dat
         continue;
       }
 
-      BKE_id_remapper_add(remapper, &old_lib_iter->id, &new_lib_iter->id);
+      remapper.add(&old_lib_iter->id, &new_lib_iter->id);
       break;
     }
   }
 
   reuse_data->is_libraries_remapped = true;
-  return reuse_data->remapper;
+  return *reuse_data->remapper;
 }
 
-static bool reuse_bmain_data_remapper_is_id_remapped(IDRemapper *remapper, ID *id)
+static bool reuse_bmain_data_remapper_is_id_remapped(id::IDRemapper &remapper, ID *id)
 {
-  IDRemapperApplyResult result = BKE_id_remapper_get_mapping_result(
-      remapper, id, ID_REMAP_APPLY_DEFAULT, nullptr);
+  IDRemapperApplyResult result = remapper.get_mapping_result(id, ID_REMAP_APPLY_DEFAULT, nullptr);
   if (ELEM(result, ID_REMAP_RESULT_SOURCE_REMAPPED, ID_REMAP_RESULT_SOURCE_UNASSIGNED)) {
     /* ID is already remapped to its matching ID in the new main, or explicitly remapped to null,
      * nothing else to do here. */
@@ -324,7 +324,7 @@ static void swap_old_bmain_data_for_blendfile(ReuseOldBMainData *reuse_data, con
   ListBase *new_lb = which_libbase(new_bmain, id_code);
   ListBase *old_lb = which_libbase(old_bmain, id_code);
 
-  IDRemapper *remapper = reuse_bmain_data_remapper_ensure(reuse_data);
+  id::IDRemapper &remapper = reuse_bmain_data_remapper_ensure(reuse_data);
 
   /* NOTE: Full swapping is only supported for ID types that are assumed to be only local
    * data-blocks (like UI-like ones). Otherwise, the swapping could fail in many funny ways. */
@@ -333,7 +333,7 @@ static void swap_old_bmain_data_for_blendfile(ReuseOldBMainData *reuse_data, con
 
   std::swap(*new_lb, *old_lb);
 
-  /* TODO: Could add per-IDType control over namemaps clearing, if this becomes a performances
+  /* TODO: Could add per-IDType control over name-maps clearing, if this becomes a performances
    * concern. */
   BKE_main_namemap_clear(old_bmain);
   BKE_main_namemap_clear(new_bmain);
@@ -351,14 +351,14 @@ static void swap_old_bmain_data_for_blendfile(ReuseOldBMainData *reuse_data, con
     const int strcmp_result = strcmp(discarded_id_iter->name + 2, reused_id_iter->name + 2);
     if (strcmp_result == 0) {
       /* Matching IDs, we can remap the discarded 'new' one to the re-used 'old' one. */
-      BKE_id_remapper_add(remapper, discarded_id_iter, reused_id_iter);
+      remapper.add(discarded_id_iter, reused_id_iter);
 
       discarded_id_iter = static_cast<ID *>(discarded_id_iter->next);
       reused_id_iter = static_cast<ID *>(reused_id_iter->next);
     }
     else if (strcmp_result < 0) {
       /* No matching reused 'old' ID for this discarded 'new' one. */
-      BKE_id_remapper_add(remapper, discarded_id_iter, nullptr);
+      remapper.add(discarded_id_iter, nullptr);
 
       discarded_id_iter = static_cast<ID *>(discarded_id_iter->next);
     }
@@ -370,7 +370,7 @@ static void swap_old_bmain_data_for_blendfile(ReuseOldBMainData *reuse_data, con
   for (; discarded_id_iter != nullptr;
        discarded_id_iter = static_cast<ID *>(discarded_id_iter->next))
   {
-    BKE_id_remapper_add(remapper, discarded_id_iter, nullptr);
+    remapper.add(discarded_id_iter, nullptr);
   }
 
   FOREACH_MAIN_LISTBASE_ID_BEGIN (new_lb, reused_id_iter) {
@@ -379,7 +379,7 @@ static void swap_old_bmain_data_for_blendfile(ReuseOldBMainData *reuse_data, con
 
     /* Ensure that the reused ID is remapped to itself, since it is known to be in the `new_bmain`.
      */
-    BKE_id_remapper_add_overwrite(remapper, reused_id_iter, reused_id_iter);
+    remapper.add_overwrite(reused_id_iter, reused_id_iter);
   }
   FOREACH_MAIN_LISTBASE_ID_END;
 }
@@ -433,8 +433,8 @@ static void swap_wm_data_for_blendfile(ReuseOldBMainData *reuse_data, const bool
      * new WM, and is responsible to free it properly. */
     reuse_data->wm_setup_data->old_wm = old_wm;
 
-    IDRemapper *remapper = reuse_bmain_data_remapper_ensure(reuse_data);
-    BKE_id_remapper_add(remapper, &old_wm->id, &new_wm->id);
+    id::IDRemapper &remapper = reuse_bmain_data_remapper_ensure(reuse_data);
+    remapper.add(&old_wm->id, &new_wm->id);
   }
   /* Current (old) WM, but no (new) one in file (should only happen when reading pre 2.5 files, no
    * WM back then), or not loading UI: Keep current WM. */
@@ -457,7 +457,7 @@ static int swap_old_bmain_data_for_blendfile_dependencies_process_cb(
   ReuseOldBMainData *reuse_data = static_cast<ReuseOldBMainData *>(cb_data->user_data);
 
   /* First check if it has already been remapped. */
-  IDRemapper *remapper = reuse_bmain_data_remapper_ensure(reuse_data);
+  id::IDRemapper &remapper = reuse_bmain_data_remapper_ensure(reuse_data);
   if (reuse_bmain_data_remapper_is_id_remapped(remapper, id)) {
     return IDWALK_RET_NOP;
   }
@@ -466,7 +466,7 @@ static int swap_old_bmain_data_for_blendfile_dependencies_process_cb(
   BLI_assert(id_map != nullptr);
 
   ID *id_new = BKE_main_idmap_lookup_id(id_map, id);
-  BKE_id_remapper_add(remapper, id, id_new);
+  remapper.add(id, id_new);
 
   return IDWALK_RET_NOP;
 }
@@ -789,7 +789,7 @@ static void setup_app_data(bContext *C,
 
     /* Handle all pending remapping from swapping old and new IDs around. */
     BKE_libblock_remap_multiple_raw(bfd->main,
-                                    reuse_data.remapper,
+                                    *reuse_data.remapper,
                                     (ID_REMAP_FORCE_UI_POINTERS | ID_REMAP_SKIP_USER_REFCOUNT |
                                      ID_REMAP_SKIP_UPDATE_TAGGING | ID_REMAP_SKIP_USER_CLEAR));
 
@@ -798,7 +798,7 @@ static void setup_app_data(bContext *C,
      * library of the previous opened blendfile'. */
     reuse_bmain_data_invalid_local_usages_fix(&reuse_data);
 
-    BKE_id_remapper_free(reuse_data.remapper);
+    MEM_delete(reuse_data.remapper);
     reuse_data.remapper = nullptr;
 
     wm_data_consistency_ensure(CTX_wm_manager(C), curscene, cur_view_layer);
@@ -921,7 +921,7 @@ static void setup_app_data(bContext *C,
     }
   }
 
-  /* Setting scene might require having a dependency graph, with copy on write
+  /* Setting scene might require having a dependency graph, with copy-on-eval
    * we need to make sure we ensure scene has correct color management before
    * constructing dependency graph.
    */
@@ -943,7 +943,7 @@ static void setup_app_data(bContext *C,
   BLI_assert(BKE_main_namemap_validate(bmain));
 
   if (mode != LOAD_UNDO && !USER_EXPERIMENTAL_TEST(&U, no_override_auto_resync)) {
-    reports->duration.lib_overrides_resync = BLI_check_seconds_timer();
+    reports->duration.lib_overrides_resync = BLI_time_now_seconds();
 
     BKE_lib_override_library_main_resync(
         bmain,
@@ -951,11 +951,32 @@ static void setup_app_data(bContext *C,
         bfd->cur_view_layer ? bfd->cur_view_layer : BKE_view_layer_default_view(curscene),
         reports);
 
-    reports->duration.lib_overrides_resync = BLI_check_seconds_timer() -
+    reports->duration.lib_overrides_resync = BLI_time_now_seconds() -
                                              reports->duration.lib_overrides_resync;
 
     /* We need to rebuild some of the deleted override rules (for UI feedback purpose). */
     BKE_lib_override_library_main_operations_create(bmain, true, nullptr);
+  }
+
+  /* Now that liboverrides have been resynced and 'irrelevant' missing linked IDs has been removed,
+   * report actual missing linked data. */
+  if (mode != LOAD_UNDO) {
+    ID *id_iter;
+    int missing_linked_ids_num = 0;
+    FOREACH_MAIN_ID_BEGIN (bmain, id_iter) {
+      if (ID_IS_LINKED(id_iter) && (id_iter->tag & LIB_TAG_MISSING)) {
+        missing_linked_ids_num++;
+        BLO_reportf_wrap(reports,
+                         RPT_INFO,
+                         RPT_("LIB: %s: '%s' missing from '%s', parent '%s'"),
+                         BKE_idtype_idcode_to_name(GS(id_iter->name)),
+                         id_iter->name + 2,
+                         id_iter->lib->filepath_abs,
+                         id_iter->lib->parent ? id_iter->lib->parent->filepath_abs : "<direct>");
+      }
+    }
+    FOREACH_MAIN_ID_END;
+    reports->count.missing_linked_id = missing_linked_ids_num;
   }
 }
 
@@ -1238,6 +1259,9 @@ UserDef *BKE_blendfile_userdef_from_defaults()
   BKE_studiolight_default(userdef->light_param, userdef->light_ambient);
 
   BKE_preferences_asset_library_default_add(userdef);
+
+  BKE_preferences_extension_repo_add_default(userdef);
+  BKE_preferences_extension_repo_add_default_user(userdef);
 
   return userdef;
 }

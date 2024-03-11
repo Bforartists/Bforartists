@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include "DEG_depsgraph.hh"
 
 #include "RNA_types.hh"
@@ -16,6 +18,10 @@ struct Mesh;
 struct Object;
 struct ReportList;
 struct wmJobWorkerStatus;
+
+namespace blender::bke {
+struct GeometrySet;
+}
 
 namespace blender::io::usd {
 
@@ -170,11 +176,11 @@ void USD_free_handle(CacheArchiveHandle *handle);
 void USD_get_transform(CacheReader *reader, float r_mat[4][4], float time, float scale);
 
 /** Either modifies current_mesh in-place or constructs a new mesh. */
-Mesh *USD_read_mesh(CacheReader *reader,
-                    Object *ob,
-                    Mesh *existing_mesh,
-                    USDMeshReadParams params,
-                    const char **err_str);
+void USD_read_geometry(CacheReader *reader,
+                       Object *ob,
+                       blender::bke::GeometrySet &geometry_set,
+                       USDMeshReadParams params,
+                       const char **err_str);
 
 bool USD_mesh_topology_changed(CacheReader *reader,
                                const Object *ob,
@@ -204,13 +210,12 @@ struct USDHook {
   ExtensionRNA rna_ext;
 };
 
-void USD_register_hook(USDHook *hook);
+void USD_register_hook(std::unique_ptr<USDHook> hook);
 /**
- * Remove the given entry from the list of registered hooks.
- * Note that this does not free the allocated memory for the
- * hook instance, so a separate call to `MEM_freeN(hook)` is required.
+ * Remove the given entry from the list of registered hooks and
+ * free the allocated memory for the hook instance.
  */
 void USD_unregister_hook(USDHook *hook);
-USDHook *USD_find_hook_name(const char name[]);
+USDHook *USD_find_hook_name(const char idname[]);
 
 };  // namespace blender::io::usd

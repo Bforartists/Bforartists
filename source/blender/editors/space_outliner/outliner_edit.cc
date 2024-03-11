@@ -23,7 +23,6 @@
 #include "BLI_blenlib.h"
 #include "BLI_dynstr.h"
 #include "BLI_path_util.h"
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.hh"
@@ -71,6 +70,8 @@
 #include "outliner_intern.hh"
 #include "tree/tree_element_rna.hh"
 #include "tree/tree_iterator.hh"
+
+#include "wm_window.hh"
 
 using namespace blender::ed::outliner;
 
@@ -375,8 +376,7 @@ void item_rename_fn(bContext *C,
                     Scene * /*scene*/,
                     TreeElement *te,
                     TreeStoreElem * /*tsep*/,
-                    TreeStoreElem *tselem,
-                    void * /*user_data*/)
+                    TreeStoreElem *tselem)
 {
   ARegion *region = CTX_wm_region(C);
   do_item_rename(region, te, tselem, reports);
@@ -522,8 +522,7 @@ void id_delete_tag_fn(bContext *C,
                       Scene * /*scene*/,
                       TreeElement *te,
                       TreeStoreElem * /*tsep*/,
-                      TreeStoreElem *tselem,
-                      void * /*user_data*/)
+                      TreeStoreElem *tselem)
 {
   id_delete_tag(C, reports, te, tselem);
 }
@@ -694,7 +693,7 @@ static int outliner_id_remap_invoke(bContext *C, wmOperator *op, const wmEvent *
     outliner_id_remap_find_tree_element(C, op, &space_outliner->tree, fmval[1]);
   }
 
-  return WM_operator_props_dialog_popup(C, op, 400);
+  return WM_operator_props_dialog_popup(C, op, 400, IFACE_("Remap Data ID"), IFACE_("Remap"));
 }
 
 static const EnumPropertyItem *outliner_id_itemf(bContext *C,
@@ -767,8 +766,7 @@ void id_remap_fn(bContext *C,
                  Scene * /*scene*/,
                  TreeElement * /*te*/,
                  TreeStoreElem * /*tsep*/,
-                 TreeStoreElem *tselem,
-                 void * /*user_data*/)
+                 TreeStoreElem *tselem)
 {
   wmOperatorType *ot = WM_operatortype_find("OUTLINER_OT_id_remap", false);
   PointerRNA op_props;
@@ -1008,8 +1006,7 @@ void lib_relocate_fn(bContext *C,
                      Scene * /*scene*/,
                      TreeElement *te,
                      TreeStoreElem * /*tsep*/,
-                     TreeStoreElem *tselem,
-                     void * /*user_data*/)
+                     TreeStoreElem *tselem)
 {
   /* XXX: This does not work with several items
    * (it is only called once in the end, due to the 'deferred'
@@ -1065,8 +1062,7 @@ void lib_reload_fn(bContext *C,
                    Scene * /*scene*/,
                    TreeElement *te,
                    TreeStoreElem * /*tsep*/,
-                   TreeStoreElem *tselem,
-                   void * /*user_data*/)
+                   TreeStoreElem *tselem)
 {
   wmOperatorType *ot = WM_operatortype_find("WM_OT_lib_reload", false);
 
@@ -2185,35 +2181,39 @@ static void unused_message_gen(std::string &message,
           (is_first) ? "" : ", ",
           num_tagged[i],
           (num_tagged[i] > 1) ?
-              IFACE_(BKE_idtype_idcode_to_name_plural(BKE_idtype_idcode_from_index(i))) :
-              IFACE_(BKE_idtype_idcode_to_name(BKE_idtype_idcode_from_index(i))));
+              IFACE_(BKE_idtype_idcode_to_name_plural(BKE_idtype_index_to_idcode(i))) :
+              IFACE_(BKE_idtype_idcode_to_name(BKE_idtype_index_to_idcode(i))));
       is_first = false;
     }
   }
 }
 
-static int unused_message_popup_width_compute(bContext *C)
+/* bfa - we have predefined operators already */
+/* static int unused_message_popup_width_compute(bContext *C)
 {
   /* Computation of unused data amounts, with all options ON.
-   * Used to estimate the maximum required width for the dialog. */
-  Main *bmain = CTX_data_main(C);
-  LibQueryUnusedIDsData data = {true, true, true, {}, {}, {}};
+   * Used to estimate the maximum required width for the dialog. */ 
+  /* Main *bmain = CTX_data_main(C);
+  LibQueryUnusedIDsData data;
+  data.do_local_ids = true;
+  data.do_linked_ids = true;
+  data.do_recursive = true;
   BKE_lib_query_unused_ids_amounts(bmain, data);
 
-  std::string unused_message = "";
-  const uiStyle *style = UI_style_get_dpi();
-  unused_message_gen(unused_message, data.num_local);
-  float max_messages_width = BLF_width(
-      style->widget.uifont_id, unused_message.c_str(), BLF_DRAW_STR_DUMMY_MAX);
+   std::string unused_message = "";
+   const uiStyle *style = UI_style_get_dpi();
+   unused_message_gen(unused_message, data.num_local);
+   float max_messages_width = BLF_width(
+       style->widget.uifont_id, unused_message.c_str(), BLF_DRAW_STR_DUMMY_MAX);
 
-  unused_message = "";
-  unused_message_gen(unused_message, data.num_linked);
-  max_messages_width = std::max(
-      max_messages_width,
-      BLF_width(style->widget.uifont_id, unused_message.c_str(), BLF_DRAW_STR_DUMMY_MAX));
+   unused_message = "";
+   unused_message_gen(unused_message, data.num_linked);
+   max_messages_width = std::max(
+       max_messages_width,
+       BLF_width(style->widget.uifont_id, unused_message.c_str(), BLF_DRAW_STR_DUMMY_MAX));
 
-  return int(std::max(max_messages_width, 300.0f));
-}
+   return int(std::max(max_messages_width, 300.0f));
+} */
 
 static void outliner_orphans_purge_cleanup(wmOperator *op)
 {
@@ -2238,19 +2238,20 @@ static bool outliner_orphans_purge_check(bContext *C, wmOperator *op)
   return true;
 }
 
-static int outliner_orphans_purge_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
-{
-  op->customdata = MEM_new<LibQueryUnusedIDsData>(__func__);
+/* bfa - we have predefined operators already */
+// static int outliner_orphans_purge_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
+/* {
+   op->customdata = MEM_new<LibQueryUnusedIDsData>(__func__);
 
-  /* Compute expected amounts of deleted IDs and store them in 'cached' operator properties. */
-  outliner_orphans_purge_check(C, op);
+   /* Compute expected amounts of deleted IDs and store them in 'cached' operator properties. */ 
+   /* outliner_orphans_purge_check(C, op);
 
-  return WM_operator_props_dialog_popup(C,
-                                        op,
-                                        unused_message_popup_width_compute(C),
-                                        IFACE_("Purge Unused Data From This File"),
-                                        IFACE_("Delete"));
-}
+   return WM_operator_props_dialog_popup(C,
+                                         op,
+                                         unused_message_popup_width_compute(C),
+                                         IFACE_("Purge Unused Data From This File"),
+                                         IFACE_("Delete"));
+ } */ 
 
 static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
 {
@@ -2298,6 +2299,46 @@ static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static void outliner_orphans_purge_cancel(bContext * /*C*/, wmOperator *op)
+{
+  outliner_orphans_purge_cleanup(op);
+}
+
+static void outliner_orphans_purge_ui(bContext * /*C*/, wmOperator *op)
+{
+  uiLayout *layout = op->layout;
+  PointerRNA *ptr = op->ptr;
+  if (!op->customdata) {
+    /* This should only happen on 'adjust last operation' case, since `invoke` will not have  been
+     * called then before showing the UI (the 'redo panel' UI uses WM-stored operator properties
+     * and a newly-created operator).
+     *
+     * Since that operator is not 'registered' for adjusting from undo stack, this should never
+     * happen currently. */
+    BLI_assert_unreachable();
+    op->customdata = MEM_new<LibQueryUnusedIDsData>(__func__);
+  }
+  LibQueryUnusedIDsData &data = *static_cast<LibQueryUnusedIDsData *>(op->customdata);
+
+  std::string unused_message = "";
+  unused_message_gen(unused_message, data.num_local);
+  uiLayout *column = uiLayoutColumn(layout, true);
+  uiItemR(column, ptr, "do_local_ids", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiLayout *row = uiLayoutRow(column, true);
+  uiItemS_ex(row, 2.67f);
+  uiItemL(row, unused_message.c_str(), ICON_NONE);
+
+  unused_message = "";
+  unused_message_gen(unused_message, data.num_linked);
+  column = uiLayoutColumn(layout, true);
+  uiItemR(column, ptr, "do_linked_ids", UI_ITEM_NONE, nullptr, ICON_NONE);
+  row = uiLayoutRow(column, true);
+  uiItemS_ex(row, 2.67f);
+  uiItemL(row, unused_message.c_str(), ICON_NONE);
+
+  uiItemR(layout, ptr, "do_recursive", UI_ITEM_NONE, nullptr, ICON_NONE);
+}
+
 /*bfa - descriptions*/
 static std::string wm_orphans_purge_get_description(struct bContext * /*C*/,
                                                     struct wmOperatorType * /*op*/,
@@ -2338,48 +2379,6 @@ static std::string wm_orphans_purge_get_description(struct bContext * /*C*/,
   return "";
 }
 
-static void outliner_orphans_purge_cancel(bContext * /*C*/, wmOperator *op)
-{
-  outliner_orphans_purge_cleanup(op);
-}
-
-static void outliner_orphans_purge_ui(bContext * /*C*/, wmOperator *op)
-{
-  uiLayout *layout = op->layout;
-  PointerRNA *ptr = op->ptr;
-  if (!op->customdata) {
-    /* This should only happen on 'adjust last operation' case, since `invoke` will not have  been
-     * called then before showing the UI (the 'redo panel' UI uses WM-stored operator properties
-     * and a newly-created operator).
-     *
-     * Since that operator is not 'registered' for adjusting from undo stack, this should never
-     * happen currently. */
-    BLI_assert_unreachable();
-    op->customdata = MEM_new<LibQueryUnusedIDsData>(__func__);
-  }
-  LibQueryUnusedIDsData &data = *static_cast<LibQueryUnusedIDsData *>(op->customdata);
-
-  uiItemS_ex(layout, 0.5f);
-
-  std::string unused_message = "";
-  unused_message_gen(unused_message, data.num_local);
-  uiLayout *column = uiLayoutColumn(layout, true);
-  uiItemR(column, ptr, "do_local_ids", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiLayout *row = uiLayoutRow(column, true);
-  uiItemS_ex(row, 2.67f);
-  uiItemL(row, unused_message.c_str(), ICON_NONE);
-
-  unused_message = "";
-  unused_message_gen(unused_message, data.num_linked);
-  column = uiLayoutColumn(layout, true);
-  uiItemR(column, ptr, "do_linked_ids", UI_ITEM_NONE, nullptr, ICON_NONE);
-  row = uiLayoutRow(column, true);
-  uiItemS_ex(row, 2.67f);
-  uiItemL(row, unused_message.c_str(), ICON_NONE);
-
-  uiItemR(layout, ptr, "do_recursive", UI_ITEM_NONE, nullptr, ICON_NONE);
-}
-
 void OUTLINER_OT_orphans_purge(wmOperatorType *ot)
 {
   /* identifiers */
@@ -2388,7 +2387,7 @@ void OUTLINER_OT_orphans_purge(wmOperatorType *ot)
   ot->description = "Clear all orphaned data without any users from the file";
 
   /* callbacks */
-  ot->invoke = outliner_orphans_purge_invoke;
+  /* ot->invoke = outliner_orphans_purge_invoke; */ /* bfa - we have predefined operators already */
   ot->exec = outliner_orphans_purge_exec;
   ot->cancel = outliner_orphans_purge_cancel;
   ot->get_description = wm_orphans_purge_get_description; /*bfa - descriptions*/
@@ -2419,6 +2418,55 @@ void OUTLINER_OT_orphans_purge(wmOperatorType *ot)
                   "Recursive Delete",
                   "Recursively check for indirectly unused data-blocks, ensuring that no orphaned "
                   "data-blocks remain after execution");
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Manage Orphan Data-Blocks Operator
+ * \{ */
+
+static int outliner_orphans_manage_invoke(bContext *C, wmOperator * /*op*/, const wmEvent *event)
+{
+  const int sizex = int(450.0f * UI_SCALE_FAC);
+  const int sizey = int(450.0f * UI_SCALE_FAC);
+  const rcti window_rect = {
+      /*xmin*/ event->xy[0],
+      /*xmax*/ event->xy[0] + sizex,
+      /*ymin*/ event->xy[1],
+      /*ymax*/ event->xy[1] + sizey,
+  };
+
+  if (WM_window_open(C,
+                     IFACE_("Manage Unused Data"),
+                     &window_rect,
+                     SPACE_OUTLINER,
+                     false,
+                     false,
+                     true,
+                     WIN_ALIGN_LOCATION_CENTER,
+                     nullptr,
+                     nullptr) != nullptr)
+  {
+    SpaceOutliner *soutline = CTX_wm_space_outliner(C);
+    soutline->outlinevis = SO_ID_ORPHANS;
+    return OPERATOR_FINISHED;
+  }
+  return OPERATOR_CANCELLED;
+}
+
+void OUTLINER_OT_orphans_manage(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->idname = "OUTLINER_OT_orphans_manage";
+  ot->name = "Manage Unused Data";
+  ot->description = "Open a window to manage unused data";
+
+  /* callbacks */
+  ot->invoke = outliner_orphans_manage_invoke;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER;
 }
 
 /** \} */
