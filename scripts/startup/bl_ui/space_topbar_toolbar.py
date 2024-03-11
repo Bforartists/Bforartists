@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 import bpy
 import os
 import math
@@ -22,23 +24,77 @@ class TOPBAR_HT_tool_bar(Header):
     def draw(self, context):
         layout = self.layout
 
+        window = context.window
+        scene = context.scene
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
         layout.popover(panel="TOPBAR_PT_main", text = "", icon="NONE")
 
-        TOPBAR_MT_file.hide_file_topbar(context, layout)
-        TOPBAR_MT_meshedit.hide_meshedit_topbar(context, layout)
-        TOPBAR_MT_primitives.hide_primitives_topbar(context, layout)
-        TOPBAR_MT_image.hide_image_topbar(context, layout)
-        TOPBAR_MT_tools.hide_tools_topbar(context, layout)
-        TOPBAR_MT_animation.hide_animation_topbar(context, layout)
-        TOPBAR_MT_edit.hide_edit_topbar(context, layout)
+        ############## toolbars ##########################################################################
 
-        layout.separator_spacer()
-        TOPBAR_MT_misc.hide_misc_topbar(context, layout)
+        if addon_prefs.topbar_show_quicktoggle:
+            if addon_prefs.topbar_file_cbox:
+                layout.scale_x = 0.7
+                layout.operator("screen.header_topbar_file", text = "", icon = "THREE_DOTS")
+                layout.scale_x = 1
+                TOPBAR_MT_file.hide_file_topbar(context, layout) # bfa - show hide the complete toolbar container
+            if addon_prefs.topbar_mesh_cbox:
+                layout.scale_x = 0.7
+                layout.operator("screen.header_topbar_meshedit", text = "", icon = "THREE_DOTS")
+                layout.scale_x = 1
+                TOPBAR_MT_meshedit.hide_meshedit_topbar(context, layout)
+            if addon_prefs.topbar_primitives_cbox:
+                layout.scale_x = 0.7
+                layout.operator("screen.header_topbar_primitives", text = "", icon = "THREE_DOTS")
+                layout.scale_x = 1
+                TOPBAR_MT_primitives.hide_primitives_topbar(context, layout)
+            if addon_prefs.topbar_image_cbox:
+                layout.scale_x = 0.7
+                layout.operator("screen.header_topbar_image", text = "", icon = "THREE_DOTS")
+                layout.scale_x = 1
+                TOPBAR_MT_image.hide_image_topbar(context, layout)
+            if addon_prefs.topbar_tools_cbox:
+                layout.scale_x = 0.7
+                layout.operator("screen.header_topbar_tools", text = "", icon = "THREE_DOTS")
+                layout.scale_x = 1
+                TOPBAR_MT_tools.hide_tools_topbar(context, layout)
+            if addon_prefs.topbar_animation_cbox:
+                layout.scale_x = 0.7
+                layout.operator("screen.header_topbar_animation", text = "", icon = "THREE_DOTS")
+                layout.scale_x = 1
+                TOPBAR_MT_animation.hide_animation_topbar(context, layout)
+            if addon_prefs.topbar_edit_cbox:
+                layout.scale_x = 0.7
+                layout.operator("screen.header_topbar_edit", text = "", icon = "THREE_DOTS")
+                layout.scale_x = 1
+                TOPBAR_MT_edit.hide_edit_topbar(context, layout)
+
+            if addon_prefs.topbar_misc_cbox:
+                layout.separator_spacer()
+                layout.scale_x = 0.7
+                layout.operator("screen.header_topbar_misc", text = "", icon = "THREE_DOTS")
+                layout.scale_x = 1
+                TOPBAR_MT_misc.hide_misc_topbar(context, layout)
+        else:
+
+            TOPBAR_MT_file.hide_file_topbar(context, layout)
+            TOPBAR_MT_meshedit.hide_meshedit_topbar(context, layout)
+            TOPBAR_MT_primitives.hide_primitives_topbar(context, layout)
+            TOPBAR_MT_image.hide_image_topbar(context, layout)
+            TOPBAR_MT_tools.hide_tools_topbar(context, layout)
+            TOPBAR_MT_animation.hide_animation_topbar(context, layout)
+            TOPBAR_MT_edit.hide_edit_topbar(context, layout)
+
+            layout.separator_spacer()
+
+            TOPBAR_MT_misc.hide_misc_topbar(context, layout)
 
 
 ######################################## Main ########################################
 class TOPBAR_PT_main(Panel):
-    bl_label = 'Bforartists Topbar Manager'
+    bl_label = 'Topbar Manager'
     bl_idname = 'TOPBAR_PT_main'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
@@ -58,12 +114,13 @@ class TOPBAR_PT_main(Panel):
         box = layout.box()
         row = box.row()
         row.alignment = 'Center'.upper()
-        row.label(text='Bforartists Topbar Manager')
+        row.label(text='Topbar Manager')
 
         row.alignment = 'Center'.upper()
         row.prop(bpy.context.screen, 'show_bfa_topbar', text='', icon='TOPBAR', emboss=True)
         row.prop(bpy.context.scene, 'bfa_defaults', text='', icon='OPTIONS', emboss=True)
 
+        # Reset Settings Panel
         if (bpy.context.scene.bfa_defaults == True):
 
             row = box.row(heading='', align=True)
@@ -87,6 +144,7 @@ class TOPBAR_PT_main(Panel):
         grid = layout.grid_flow(row_major=False, columns=2, even_columns=True, even_rows=True, align=True)
         col_amount = 2
 
+        # Main Panels Preferences
         box = grid.box()
         row = box.row()
         row.alignment = 'Center'.upper()
@@ -102,6 +160,7 @@ class TOPBAR_PT_main(Panel):
         row.prop(addon_prefs, "topbar_edit_cbox", toggle=True)
         row.prop(addon_prefs, "topbar_misc_cbox", toggle=True)
 
+        # Sub panels Settings
         box = grid.box()
         row = box.row()
         row.alignment = 'Center'.upper()
@@ -261,6 +320,44 @@ class TOPBAR_PT_main(Panel):
                 row.alert = True
                 row.label(text='Misc is hidden', icon="NONE")
 
+        col = layout.column()
+        col.label( text = "Extra Options:")
+        row = layout.row()
+        row.separator()
+        row.prop(addon_prefs, "topbar_show_quicktoggle")
+
+        col = layout.column()
+        row = col.row()
+        row.separator()
+        row.label( text = "Note that you need to save the startup file")
+        row = col.row()
+        row.separator()
+        row.label( text = "to make the changes to the topbar permanent")
+
+
+
+#######################################################################
+
+################ Toolbar type
+
+# Everything menu in this class is collapsible.
+class TOPBAR_MT_toolbar_type(Menu):
+    bl_idname = "TOPBAR_MT_toolbar_type"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+        rd = scene.render
+
+        layout.operator("screen.toolbar_toolbox", text="Type")
+
+######################################## Toolbars ##############################################
+
+
 ######################################## File Menu ########################################
 class TOPBAR_MT_file(Menu):
     bl_idname = "TOPBAR_MT_file"
@@ -280,7 +377,7 @@ class TOPBAR_MT_file(Menu):
 
             layout.popover(panel = "BFA_PT_file", text="", icon = "NONE")
 
-            ## ------------------ Load Save
+            ## ------------------ Load / Save sub toolbars
 
             if addon_prefs.topbar_file_load_save:
                 row = layout.row(align=True)
@@ -1548,9 +1645,9 @@ class BFA_PT_animation(Panel):
 
 
 ######################################## Edit Apply Ops ########################################
-class VIEW3D_MT_object_apply_location(bpy.types.Operator):
+class VIEW3D_MT_topbar_object_apply_location(bpy.types.Operator):
     """Applies the current location"""
-    bl_idname = "view3d.tb_apply_location"
+    bl_idname = "view3d.topbar_apply_location"
     bl_label = "Apply Location"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1559,9 +1656,9 @@ class VIEW3D_MT_object_apply_location(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_MT_object_apply_rotate(bpy.types.Operator):
+class VIEW3D_MT_topbar_object_apply_rotate(bpy.types.Operator):
     """Applies the current rotation"""
-    bl_idname = "view3d.tb_apply_rotate"
+    bl_idname = "view3d.topbar_apply_rotate"
     bl_label = "Apply Rotation"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1570,9 +1667,9 @@ class VIEW3D_MT_object_apply_rotate(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
+class VIEW3D_MT_topbar_object_apply_scale(bpy.types.Operator):
     """Applies the current scale"""
-    bl_idname = "view3d.tb_apply_scale"
+    bl_idname = "view3d.topbar_apply_scale"
     bl_label = "Apply Scale"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1581,9 +1678,9 @@ class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_MT_object_apply_all(bpy.types.Operator):
+class VIEW3D_MT_topbar_object_apply_all(bpy.types.Operator):
     """Applies the current location, rotation and scale"""
-    bl_idname = "view3d.tb_apply_all"
+    bl_idname = "view3d.topbar_apply_all"
     bl_label = "Apply All"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1592,9 +1689,9 @@ class VIEW3D_MT_object_apply_all(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_MT_object_apply_rotscale(bpy.types.Operator):
+class VIEW3D_MT_topbar_object_apply_rotscale(bpy.types.Operator):
     """Applies the current rotation and scale"""
-    bl_idname = "view3d.tb_apply_rotscale"
+    bl_idname = "view3d.topbar_apply_rotscale"
     bl_label = "Apply Rotation & Scale"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1671,11 +1768,11 @@ class TOPBAR_MT_edit(Menu):
                     if mode == 'OBJECT':
 
                         row = layout.row(align=True)
-                        row.operator("view3d.tb_apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
-                        row.operator("view3d.tb_apply_rotate", text="", icon = "APPLYROTATE")
-                        row.operator("view3d.tb_apply_scale", text="", icon = "APPLYSCALE")
-                        row.operator("view3d.tb_apply_all", text="", icon = "APPLYALL")
-                        row.operator("view3d.tb_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
+                        row.operator("view3d.topbar_apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
+                        row.operator("view3d.topbar_apply_rotate", text="", icon = "APPLYROTATE")
+                        row.operator("view3d.topbar_apply_scale", text="", icon = "APPLYSCALE")
+                        row.operator("view3d.topbar_apply_all", text="", icon = "APPLYALL")
+                        row.operator("view3d.topbar_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
 
                 if addon_prefs.topbar_edit_objectapply2:
 
@@ -1879,6 +1976,7 @@ class BFA_PT_misc(Panel):
 classes = [
     TOPBAR_HT_tool_bar,
     TOPBAR_PT_main,
+    TOPBAR_MT_toolbar_type,
     BFA_PT_file,
     BFA_PT_meshedit,
     BFA_PT_primitives,
@@ -1888,11 +1986,11 @@ classes = [
     BFA_PT_misc,
     BFA_PT_normals_autosmooth,
     BFA_PT_menu_image,
-    VIEW3D_MT_object_apply_location,
-    VIEW3D_MT_object_apply_rotate,
-    VIEW3D_MT_object_apply_scale,
-    VIEW3D_MT_object_apply_all,
-    VIEW3D_MT_object_apply_rotscale,
+    VIEW3D_MT_topbar_object_apply_location,
+    VIEW3D_MT_topbar_object_apply_rotate,
+    VIEW3D_MT_topbar_object_apply_scale,
+    VIEW3D_MT_topbar_object_apply_all,
+    VIEW3D_MT_topbar_object_apply_rotscale,
 ]
 
 if __name__ == "__main__":  # only for live edit.
