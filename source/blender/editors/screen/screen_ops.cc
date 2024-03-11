@@ -4641,6 +4641,207 @@ static void SCREEN_OT_header_toolbar_misc(wmOperatorType *ot)
   ot->poll = ED_operator_areaactive;
   ot->flag = 0;
 }
+
+
+// bfa - show hide the file toolbar menus
+static int header_topbar_file_exec(bContext *C, wmOperator *)
+{
+  ScrArea *area = CTX_wm_area(C);
+
+  area->flag = area->flag ^ HEADER_TOPBAR_FILE;
+
+  ED_area_tag_redraw(area);
+  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_topbar_file(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Topbar File";
+  ot->idname = "SCREEN_OT_header_topbar_file";
+  ot->description = "Show or Hide the File topbars";
+
+  /* api callbacks */
+  ot->exec = header_topbar_file_exec;
+  ot->poll = ED_operator_areaactive;
+  ot->flag = 0;
+}
+
+// bfa - show hide the meshedit topbar menus
+static int header_topbar_meshedit_exec(bContext *C, wmOperator *)
+{
+  ScrArea *area = CTX_wm_area(C);
+
+  area->flag = area->flag ^ HEADER_TOPBAR_MESHEDIT;
+
+  ED_area_tag_redraw(area);
+  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_topbar_meshedit(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Topbar Meshedit";
+  ot->idname = "SCREEN_OT_header_topbar_meshedit";
+  ot->description = "Show or Hide the Meshedit topbars";
+
+  /* api callbacks */
+  ot->exec = header_topbar_meshedit_exec;
+  ot->poll = ED_operator_areaactive;
+  ot->flag = 0;
+}
+
+// bfa - show hide the primitives topbar menus
+static int header_topbar_primitives_exec(bContext *C, wmOperator *)
+{
+  ScrArea *area = CTX_wm_area(C);
+
+  area->flag = area->flag ^ HEADER_TOPBAR_PRIMITIVES;
+
+  ED_area_tag_redraw(area);
+  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_topbar_primitives(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Topbar Primitives";
+  ot->idname = "SCREEN_OT_header_topbar_primitives";
+  ot->description = "Show or Hide the Primitives topbars";
+
+  /* api callbacks */
+  ot->exec = header_topbar_primitives_exec;
+  ot->poll = ED_operator_areaactive;
+  ot->flag = 0;
+}
+
+// bfa - show hide the image topbar menus
+static int header_topbar_image_exec(bContext *C, wmOperator *)
+{
+  ScrArea *area = CTX_wm_area(C);
+
+  area->flag = area->flag ^ HEADER_TOPBAR_IMAGE;
+
+  ED_area_tag_redraw(area);
+  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_topbar_image(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Topbar Image";
+  ot->idname = "SCREEN_OT_header_topbar_image";
+  ot->description = "Show or Hide the Image topbars";
+
+  /* api callbacks */
+  ot->exec = header_topbar_image_exec;
+  ot->poll = ED_operator_areaactive;
+  ot->flag = 0;
+}
+
+// bfa - show hide the tools topbar menus
+static int header_topbar_tools_exec(bContext *C, wmOperator *)
+{
+  ScrArea *area = CTX_wm_area(C);
+
+  area->flag = area->flag ^ HEADER_TOPBAR_TOOLS;
+
+  ED_area_tag_redraw(area);
+  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_topbar_tools(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Topbar Tools";
+  ot->idname = "SCREEN_OT_header_topbar_tools";
+  ot->description = "Show or Hide the Tools topbars";
+
+  /* api callbacks */
+  ot->exec = header_topbar_tools_exec;
+  ot->poll = ED_operator_areaactive;
+  ot->flag = 0;
+}
+
+// bfa - show hide the animation topbar menus
+static int header_topbar_animation_exec(bContext *C, wmOperator *)
+{
+  ScrArea *area = CTX_wm_area(C);
+
+  area->flag = area->flag ^ HEADER_TOPBAR_ANIMATION;
+
+  ED_area_tag_redraw(area);
+  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_topbar_animation(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Topbar Animation";
+  ot->idname = "SCREEN_OT_header_topbar_animation";
+  ot->description = "Show or Hide the Animation topbars";
+
+  /* api callbacks */
+  ot->exec = header_topbar_animation_exec;
+  ot->poll = ED_operator_areaactive;
+  ot->flag = 0;
+}
+
+// bfa - show hide the edit topbar menus
+static int header_topbar_edit_exec(bContext *C, wmOperator *)
+{
+  ScrArea *area = CTX_wm_area(C);
+
+  area->flag = area->flag ^ HEADER_TOPBAR_EDIT;
+
+  ED_area_tag_redraw(area);
+  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_topbar_edit(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Topbar Edit";
+  ot->idname = "SCREEN_OT_header_topbar_edit";
+  ot->description = "Show or Hide the Edit topbars";
+
+  /* api callbacks */
+  ot->exec = header_topbar_edit_exec;
+  ot->poll = ED_operator_areaactive;
+  ot->flag = 0;
+}
+
+// bfa - show hide the misc topbar menus
+static int header_topbar_misc_exec(bContext *C, wmOperator *)
+{
+  ScrArea *area = CTX_wm_area(C);
+
+  area->flag = area->flag ^ HEADER_TOPBAR_MISC;
+
+  ED_area_tag_redraw(area);
+  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_topbar_misc(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Topbar Misc";
+  ot->idname = "SCREEN_OT_header_topbar_misc";
+  ot->description = "Show or Hide the Misc topbars";
+
+  /* api callbacks */
+  ot->exec = header_topbar_misc_exec;
+  ot->poll = ED_operator_areaactive;
+  ot->flag = 0;
+}
 /*--------------- bfa end -------------------------------------*/
 
 void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
@@ -4768,6 +4969,92 @@ static void SCREEN_OT_toolbar_toolbox(wmOperatorType *ot)
 
   /* api callbacks */
   ot->invoke = toolbar_toolbox_invoke;
+}
+/*----------------------------------------------------*/
+
+/* ************** bfa - topbar tools operator ***************************** */
+/* ************** This menu is called in the topbar editor to choose the topbar type
+ * ***************************** */
+void ED_screens_topbar_tools_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
+{
+  ScrArea *area = CTX_wm_area(C);
+  /*ARegion *region = CTX_wm_region(C);*/ /*bfa - commented out, obviously not needed*/
+
+  // bfa - show hide the File topbar
+  uiItemO(layout,
+          IFACE_("Topbar File"),
+          (area->flag & HEADER_TOPBAR_FILE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+          "SCREEN_OT_header_topbar_file");
+
+  // bfa - show hide the Meshedit topbar
+  uiItemO(layout,
+          IFACE_("Topbar Meshedit"),
+          (area->flag & HEADER_TOPBAR_MESHEDIT) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+          "SCREEN_OT_header_topbar_meshedit");
+
+  // bfa - show hide the Primitives topbar
+  uiItemO(layout,
+          IFACE_("Topbar Primitives"),
+          (area->flag & HEADER_TOPBAR_PRIMITIVES) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+          "SCREEN_OT_header_topbar_primitives");
+
+  // bfa - show hide the Image topbar
+  uiItemO(layout,
+          IFACE_("Topbar Image"),
+          (area->flag & HEADER_TOPBAR_IMAGE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+          "SCREEN_OT_header_topbar_image");
+
+  // bfa - show hide the Tools topbar
+  uiItemO(layout,
+          IFACE_("Topbar Tools"),
+          (area->flag & HEADER_TOPBAR_TOOLS) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+          "SCREEN_OT_header_topbar_tools");
+
+  // bfa - show hide the Animation topbar
+  uiItemO(layout,
+          IFACE_("Topbar Animation"),
+          (area->flag & HEADER_TOPBAR_ANIMATION) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+          "SCREEN_OT_header_topbar_animation");
+
+  // bfa - show hide the Edit topbar
+  uiItemO(layout,
+          IFACE_("Topbar Edit"),
+          (area->flag & HEADER_TOPBAR_EDIT) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+          "SCREEN_OT_header_topbar_edit");
+
+  // bfa - show hide the Misc topbar
+  uiItemO(layout,
+          IFACE_("Topbar Misc"),
+          (area->flag & HEADER_TOPBAR_MISC) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+          "SCREEN_OT_header_topbar_misc");
+}
+/*bfa topbar*/
+static int topbar_toolbox_invoke(bContext *C,
+                                  wmOperator *,
+                                  const wmEvent *)
+{
+  uiPopupMenu *pup;
+  uiLayout *layout;
+
+  pup = UI_popup_menu_begin(C, IFACE_("Topbar"), ICON_NONE);
+  layout = UI_popup_menu_layout(pup);
+
+  ED_screens_topbar_tools_menu_create(C, layout, nullptr);
+
+  UI_popup_menu_end(C, pup);
+
+  return OPERATOR_INTERFACE;
+}
+/*bfa topbar*/
+static void SCREEN_OT_topbar_toolbox(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Topbar Toolbox";
+  ot->description = "Topbar Toolbox\nDisplay Topbar type menu";
+  ot->idname = "SCREEN_OT_topbar_toolbox";
+
+  /* api callbacks */
+  ot->invoke = topbar_toolbox_invoke;
 }
 /*----------------------------------------------------*/
 
@@ -6242,6 +6529,21 @@ void ED_operatortypes_screen()
   WM_operatortype_append(SCREEN_OT_header_toolbar_misc);  // bfa - show hide the primitives toolbar
   WM_operatortype_append(
       SCREEN_OT_toolbar_toolbox);  // bfa - toolbar types menu in the toolbar editor
+  WM_operatortype_append(SCREEN_OT_header_topbar_file);  // bfa - show hide the file topbar
+  WM_operatortype_append(
+      SCREEN_OT_header_topbar_meshedit);  // bfa - show hide the meshedit topbar
+  WM_operatortype_append(
+      SCREEN_OT_header_topbar_primitives);  // bfa - show hide the primitives topbar
+  WM_operatortype_append(
+      SCREEN_OT_header_topbar_image);  // bfa - show hide the primitives topbar
+  WM_operatortype_append(
+      SCREEN_OT_header_topbar_tools);  // bfa - show hide the primitives topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_animation);  // bfa - show hide the primitives
+                                                               // topbarfSCREEN_OT_header_toolbox
+  WM_operatortype_append(SCREEN_OT_header_topbar_edit);  // bfa - show hide the primitives topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_misc);  // bfa - show hide the primitives topbar
+  WM_operatortype_append(
+      SCREEN_OT_topbar_toolbox);  // bfa - topbar types menu in the topbar editor
   WM_operatortype_append(SCREEN_OT_region_context_menu);
   WM_operatortype_append(SCREEN_OT_screen_set);
   WM_operatortype_append(SCREEN_OT_screen_full_area);
