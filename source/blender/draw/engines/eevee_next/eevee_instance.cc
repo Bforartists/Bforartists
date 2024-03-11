@@ -71,6 +71,13 @@ void Instance::init(const int2 &output_res,
   if (output_res != film.display_extent_get()) {
     sampling.reset();
   }
+  if (output_rect) {
+    int2 offset = int2(output_rect->xmin, output_rect->ymin);
+    int2 extent = int2(BLI_rcti_size_x(output_rect), BLI_rcti_size_y(output_rect));
+    if (offset != film.get_data().offset || extent != film.get_data().extent) {
+      sampling.reset();
+    }
+  }
   if (assign_if_different(overlays_enabled_, v3d && !(v3d->flag2 & V3D_HIDE_OVERLAYS))) {
     sampling.reset();
   }
@@ -239,7 +246,7 @@ void Instance::object_sync(Object *ob)
   if (partsys_is_visible && ob != DRW_context_state_get()->object_edit) {
     auto sync_hair =
         [&](ObjectHandle hair_handle, ModifierData &md, ParticleSystem &particle_sys) {
-          ResourceHandle _res_handle = manager->resource_handle(float4x4(ob->object_to_world));
+          ResourceHandle _res_handle = manager->resource_handle(ob->object_to_world());
           sync.sync_curves(ob, hair_handle, _res_handle, ob_ref, &md, &particle_sys);
         };
     foreach_hair_particle_handle(ob, ob_handle, sync_hair);

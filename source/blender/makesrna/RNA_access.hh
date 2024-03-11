@@ -17,6 +17,7 @@
 #include "RNA_types.hh"
 
 #include "BLI_compiler_attrs.h"
+#include "BLI_function_ref.hh"
 
 struct ID;
 struct IDOverrideLibrary;
@@ -287,29 +288,35 @@ int RNA_property_enum_bitflag_identifiers(
 StructRNA *RNA_property_pointer_type(PointerRNA *ptr, PropertyRNA *prop);
 bool RNA_property_pointer_poll(PointerRNA *ptr, PropertyRNA *prop, PointerRNA *value);
 
-bool RNA_property_editable(PointerRNA *ptr, PropertyRNA *prop);
+bool RNA_property_editable(const PointerRNA *ptr, PropertyRNA *prop);
 /**
  * Version of #RNA_property_editable that tries to return additional info in \a r_info
  * that can be exposed in UI.
  */
-bool RNA_property_editable_info(PointerRNA *ptr, PropertyRNA *prop, const char **r_info);
+bool RNA_property_editable_info(const PointerRNA *ptr, PropertyRNA *prop, const char **r_info);
 /**
  * Same as RNA_property_editable(), except this checks individual items in an array.
  */
-bool RNA_property_editable_index(PointerRNA *ptr, PropertyRNA *prop, const int index);
+bool RNA_property_editable_index(const PointerRNA *ptr, PropertyRNA *prop, const int index);
 
 /**
  * Without lib check, only checks the flag.
  */
-bool RNA_property_editable_flag(PointerRNA *ptr, PropertyRNA *prop);
+bool RNA_property_editable_flag(const PointerRNA *ptr, PropertyRNA *prop);
 
 bool RNA_property_animateable(const PointerRNA *ptr, PropertyRNA *prop);
 bool RNA_property_animated(PointerRNA *ptr, PropertyRNA *prop);
 /**
+ * With LibOverrides, a property may be animatable, but not drivable (in case the reference data
+ * already has an animation data, its Action can ba an editable local ID, but the drivers are
+ * directly stored in the animdata, overriding these is not supported currently).
+ */
+bool RNA_property_drivable(const PointerRNA *ptr, PropertyRNA *prop);
+/**
  * \note Does not take into account editable status, this has to be checked separately
  * (using #RNA_property_editable_flag() usually).
  */
-bool RNA_property_overridable_get(PointerRNA *ptr, PropertyRNA *prop);
+bool RNA_property_overridable_get(const PointerRNA *ptr, PropertyRNA *prop);
 /**
  * Should only be used for custom properties.
  */
@@ -378,16 +385,15 @@ void RNA_property_string_set_bytes(PointerRNA *ptr, PropertyRNA *prop, const cha
 eStringPropertySearchFlag RNA_property_string_search_flag(PropertyRNA *prop);
 /**
  * Search candidates for string `prop` by calling `visit_fn` with each string.
- * Typically these strings are collected in `visit_user_data` in a format defined by the caller.
  *
  * See #PropStringSearchFunc for details.
  */
-void RNA_property_string_search(const bContext *C,
-                                PointerRNA *ptr,
-                                PropertyRNA *prop,
-                                const char *edit_text,
-                                StringPropertySearchVisitFunc visit_fn,
-                                void *visit_user_data);
+void RNA_property_string_search(
+    const bContext *C,
+    PointerRNA *ptr,
+    PropertyRNA *prop,
+    const char *edit_text,
+    blender::FunctionRef<void(StringPropertySearchVisitParams)> visit_fn);
 
 /**
  * \return the length without `\0` terminator.

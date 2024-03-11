@@ -13,7 +13,6 @@
 #include <fmt/format.h>
 
 #include "DNA_object_types.h"
-#include "DNA_scene_types.h"
 #include "DNA_texture_types.h"
 
 #include "BLI_array.hh"
@@ -24,7 +23,6 @@
 
 #include "BLT_translation.hh"
 
-#include "BKE_context.hh"
 #include "BKE_global.hh"
 
 #include "WM_api.hh"
@@ -116,7 +114,7 @@ void uiTemplateOperatorSearch(uiLayout *layout)
   UI_block_layout_set_current(block, layout);
 
   but = uiDefSearchBut(
-      block, search, 0, ICON_VIEWZOOM, sizeof(search), 0, 0, UI_UNIT_X * 6, UI_UNIT_Y, 0, 0, "");
+      block, search, 0, ICON_VIEWZOOM, sizeof(search), 0, 0, UI_UNIT_X * 6, UI_UNIT_Y, "");
   UI_but_func_operator_search(but);
 }
 

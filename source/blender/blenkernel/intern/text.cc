@@ -24,13 +24,7 @@
 
 #include "BLT_translation.hh"
 
-#include "DNA_constraint_types.h"
-#include "DNA_material_types.h"
-#include "DNA_node_types.h"
-#include "DNA_object_types.h"
-#include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
-#include "DNA_space_types.h"
 #include "DNA_text_types.h"
 #include "DNA_userdef_types.h"
 
@@ -38,7 +32,6 @@
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
-#include "BKE_node.h"
 #include "BKE_text.h"
 
 #include "BLO_read_write.hh"
@@ -229,6 +222,7 @@ static void text_blend_read_data(BlendDataReader *reader, ID *id)
 IDTypeInfo IDType_ID_TXT = {
     /*id_code*/ ID_TXT,
     /*id_filter*/ FILTER_ID_TXT,
+    /*dependencies_id_types*/ 0,
     /*main_listbase_index*/ INDEX_ID_TXT,
     /*struct_size*/ sizeof(Text),
     /*name*/ "Text",

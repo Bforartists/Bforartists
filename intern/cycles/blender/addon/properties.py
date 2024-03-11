@@ -972,7 +972,6 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     debug_use_cpu_avx2: BoolProperty(name="AVX2", default=True)
     debug_use_cpu_sse42: BoolProperty(name="SSE42", default=True)
-    debug_use_cpu_sse2: BoolProperty(name="SSE2", default=True)
     debug_bvh_layout: EnumProperty(
         name="BVH Layout",
         items=enum_bvh_layouts,
@@ -1658,7 +1657,7 @@ class CyclesPreferences(bpy.types.AddonPreferences):
                     col.label(text=rpt_("and Windows driver version %s or newer") % driver_version,
                               icon='BLANK1', translate=False)
                 elif sys.platform.startswith("linux"):
-                    driver_version = "XX.XX.26918.50"
+                    driver_version = "XX.XX.27642.38"
                     col.label(
                         text=rpt_("Requires Intel GPU with Xe-HPG architecture and"),
                         icon='BLANK1',

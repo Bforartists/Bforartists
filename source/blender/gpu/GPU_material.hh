@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "DNA_customdata_types.h" /* for eCustomDataType */
 #include "DNA_image_types.h"
 #include "DNA_listBase.h"
@@ -71,6 +73,7 @@ enum eGPUMaterialFlag {
   GPU_MATFLAG_HOLDOUT = (1 << 6),
   GPU_MATFLAG_SHADER_TO_RGBA = (1 << 7),
   GPU_MATFLAG_AO = (1 << 8),
+  /* Signals the presence of multiple reflection closures. */
   GPU_MATFLAG_COAT = (1 << 9),
   GPU_MATFLAG_TRANSLUCENT = (1 << 10),
 
@@ -130,14 +133,14 @@ enum eGPUDefaultValue {
 };
 
 struct GPUCodegenOutput {
-  char *attr_load;
+  std::string attr_load;
   /* Node-tree functions calls. */
-  char *displacement;
-  char *surface;
-  char *volume;
-  char *thickness;
-  char *composite;
-  char *material_functions;
+  std::string displacement;
+  std::string surface;
+  std::string volume;
+  std::string thickness;
+  std::string composite;
+  std::string material_functions;
 
   GPUShaderCreateInfo *create_info;
 };

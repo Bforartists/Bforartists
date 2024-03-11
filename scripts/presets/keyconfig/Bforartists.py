@@ -1,4 +1,4 @@
-keyconfig_version = (4, 1, 6)
+keyconfig_version = (4, 2, 8)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -4689,42 +4689,6 @@ keyconfig_data = \
     ],
    },
   ),
- ("NLA Channels",
-  {"space_type": 'NLA_EDITOR', "region_type": 'WINDOW'},
-  {"items":
-   [("nla.channels_click",
-     {"type": 'LEFTMOUSE', "value": 'PRESS'},
-     {"properties":
-      [("extend", False),
-       ],
-      },
-     ),
-    ("nla.channels_click",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-     {"properties":
-      [("extend", True),
-       ],
-      },
-     ),
-    ("nla.tracks_delete", {"type": 'DEL', "value": 'PRESS'}, None),
-    ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
-     {"properties":
-      [("name", 'NLA_MT_channel_context_menu'),
-       ],
-      },
-     ),
-    ("nla.tracks_add", {"type": 'A', "value": 'PRESS', "shift": True}, None),
-    ("nla.tracks_add",
-     {"type": 'A', "value": 'PRESS', "shift": True, "ctrl": True},
-     {"properties":
-      [("above_selected", True),
-       ],
-      },
-     ),
-    ],
-   },
-  ),
  ("NLA Editor",
   {"space_type": 'NLA_EDITOR', "region_type": 'WINDOW'},
   {"items":
@@ -4887,6 +4851,42 @@ keyconfig_data = \
      {"type": 'TAB', "value": 'PRESS', "shift": True},
      {"properties":
       [("isolate_action", True),
+       ],
+      },
+     ),
+    ],
+   },
+  ),
+ ("NLA Tracks",
+  {"space_type": 'NLA_EDITOR', "region_type": 'WINDOW'},
+  {"items":
+   [("nla.channels_click",
+     {"type": 'LEFTMOUSE', "value": 'PRESS'},
+     {"properties":
+      [("extend", False),
+       ],
+      },
+     ),
+    ("nla.channels_click",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("extend", True),
+       ],
+      },
+     ),
+    ("nla.tracks_delete", {"type": 'DEL', "value": 'PRESS'}, None),
+    ("wm.call_menu",
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
+     {"properties":
+      [("name", 'NLA_MT_channel_context_menu'),
+       ],
+      },
+     ),
+    ("nla.tracks_add", {"type": 'A', "value": 'PRESS', "shift": True}, None),
+    ("nla.tracks_add",
+     {"type": 'A', "value": 'PRESS', "shift": True, "ctrl": True},
+     {"properties":
+      [("above_selected", True),
        ],
       },
      ),
@@ -6228,7 +6228,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sculpt.face_set_invert_visibility", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
+    ("paint.visibility_invert", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
     ("sculpt.face_set_change_visibility",
      {"type": 'H', "value": 'PRESS', "alt": True},
      {"properties":
@@ -6285,7 +6285,6 @@ keyconfig_data = \
       },
      ),
     ("paint.mask_lasso_gesture", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
-    ("sculpt.set_detail_size", {"type": 'D', "value": 'PRESS', "shift": True}, None),
     ("wm.radial_control",
      {"type": 'X', "value": 'PRESS'},
      {"properties":
@@ -6420,7 +6419,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("object.voxel_size_edit", {"type": 'R', "value": 'PRESS', "shift": True}, None),
+    ("object.voxel_size_edit", {"type": 'S', "value": 'PRESS'}, None),
     ("wm.tool_set_by_id",
      {"type": 'B', "value": 'PRESS'},
      {"properties":
@@ -6429,6 +6428,7 @@ keyconfig_data = \
       },
      ),
     ("object.transfer_mode", {"type": 'D', "value": 'RELEASE'}, None),
+    ("sculpt.dyntopo_detail_size_edit", {"type": 'S', "value": 'PRESS'}, None),
     ],
    },
   ),

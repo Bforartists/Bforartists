@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <memory>
+#include <mutex>
 
 #include "AS_asset_catalog.hh"
 
@@ -21,8 +22,11 @@
 
 #include "BKE_callbacks.hh"
 
-struct IDRemapper;
 struct Main;
+
+namespace blender::bke::id {
+class IDRemapper;
+}
 
 namespace blender::asset_system {
 
@@ -66,6 +70,12 @@ class AssetLibrary {
   std::unique_ptr<AssetStorage> asset_storage_;
 
  protected:
+  /* Changing this pointer should be protected using #catalog_service_mutex_. Note that changes
+   * within the catalog service may still happen without the mutex being locked. They should be
+   * protected separately. */
+  std::unique_ptr<AssetCatalogService> catalog_service_;
+  std::mutex catalog_service_mutex_;
+
   std::optional<eAssetImportMethod> import_method_;
   /** Assets owned by this library may be imported with a different method than set in
    * #import_method_ above, it's just a default. */
@@ -79,8 +89,6 @@ class AssetLibrary {
   /* Controlled by #ed::asset::catalogs_set_save_catalogs_when_file_is_saved,
    * for managing the "Save Catalog Changes" in the quit-confirmation dialog box. */
   static bool save_catalogs_when_file_is_saved;
-
-  std::unique_ptr<AssetCatalogService> catalog_service;
 
   friend class AssetLibraryService;
   friend class AssetRepresentation;
@@ -107,6 +115,8 @@ class AssetLibrary {
   static void foreach_loaded(FunctionRef<void(AssetLibrary &)> fn, bool include_all_library);
 
   void load_catalogs();
+
+  AssetCatalogService &catalog_service() const;
 
   /**
    * Create a representation of an asset to be considered part of this library. Once the
@@ -140,7 +150,7 @@ class AssetLibrary {
    * mapped to null (typically when an ID gets removed), the asset is removed, because we don't
    * support such empty/null assets.
    */
-  void remap_ids_and_remove_invalid(const IDRemapper &mappings);
+  void remap_ids_and_remove_invalid(const blender::bke::id::IDRemapper &mappings);
 
   /**
    * Update `catalog_simple_name` by looking up the asset's catalog by its ID.
@@ -176,6 +186,7 @@ class AssetLibrary {
 Vector<AssetLibraryReference> all_valid_asset_library_refs();
 
 AssetLibraryReference all_library_reference();
+void all_library_reload_catalogs_if_dirty();
 
 }  // namespace blender::asset_system
 
@@ -230,11 +241,6 @@ std::string AS_asset_library_find_suitable_root_path_from_path(blender::StringRe
  */
 std::string AS_asset_library_find_suitable_root_path_from_main(const Main *bmain);
 
-blender::asset_system::AssetCatalogService *AS_asset_library_get_catalog_service(
-    const blender::asset_system::AssetLibrary *library);
-blender::asset_system::AssetCatalogTree *AS_asset_library_get_catalog_tree(
-    const blender::asset_system::AssetLibrary *library);
-
 /**
  * Force clearing of all asset library data. After calling this, new asset libraries can be loaded
  * just as usual using #AS_asset_library_load(), no init or other setup is needed.
@@ -253,10 +259,6 @@ void AS_asset_libraries_exit();
 blender::asset_system::AssetLibrary *AS_asset_library_load(const char *name,
                                                            const char *library_dirpath);
 
-/** Look up the asset's catalog and copy its simple name into #asset_data. */
-void AS_asset_library_refresh_catalog_simplename(
-    blender::asset_system::AssetLibrary *asset_library, AssetMetaData *asset_data);
-
 /** Return whether any loaded AssetLibrary has unsaved changes to its catalogs. */
 bool AS_asset_library_has_any_unsaved_catalogs(void);
 
@@ -264,7 +266,7 @@ bool AS_asset_library_has_any_unsaved_catalogs(void);
  * An asset library can include local IDs (IDs in the current file). Their pointers need to be
  * remapped on change (or assets removed as IDs gets removed).
  */
-void AS_asset_library_remap_ids(const IDRemapper *mappings);
+void AS_asset_library_remap_ids(const blender::bke::id::IDRemapper &mappings);
 
 /**
  * Attempt to resolve a full path to an asset based on the currently available (not necessary

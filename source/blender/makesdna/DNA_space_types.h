@@ -854,7 +854,7 @@ typedef struct FileAssetSelectParams {
    * catalog to show. */
   bUUID catalog_id;
 
-  short import_method; /* eFileAssetImportType */
+  short import_method; /* eFileAssetImportMethod */
   char drop_collections_as_instances; /* BFA - boolean, needed for setting #use_instance from UI before executing the drop operator*/
   char drop_collections_at_origin; /* BFA - boolean, needed for dropping collection at origin instead of cursor when #use_instance is enabled */
   char _pad2[4]; /* BFA - modified padding */
@@ -1271,11 +1271,13 @@ typedef struct SpaceImage {
   char gizmo_flag;
 
   char grid_shape_source;
-  char _pad1[2];
+  char _pad1[6];
 
   int flag;
 
   float uv_opacity;
+
+  float stretch_opacity;
 
   int tile_grid_shape[2];
   /**
@@ -2057,6 +2059,7 @@ typedef enum eSpreadsheetColumnValueType {
   SPREADSHEET_VALUE_TYPE_INT8 = 9,
   SPREADSHEET_VALUE_TYPE_INT32_2D = 10,
   SPREADSHEET_VALUE_TYPE_QUATERNION = 11,
+  SPREADSHEET_VALUE_TYPE_FLOAT4X4 = 12,
 } eSpreadsheetColumnValueType;
 
 /**

@@ -24,6 +24,7 @@
 #include "BLI_set.hh"
 #include "BLI_string.h"
 #include "BLI_string_ref.hh"
+#include "BLI_string_utf8.h"
 #include "BLI_uuid.h"
 
 #include "AS_asset_catalog.hh"
@@ -204,7 +205,7 @@ struct AssetEntryReader {
     return lookup.lookup(ATTRIBUTE_ENTRIES_LICENSE)->as_string_value()->value();
   }
 
-  StringRef get_catalog_name() const
+  StringRefNull get_catalog_name() const
   {
     return lookup.lookup(ATTRIBUTE_ENTRIES_CATALOG_NAME)->as_string_value()->value();
   }
@@ -271,9 +272,8 @@ struct AssetEntryWriter {
 
   void add_catalog_id(const CatalogID &catalog_id)
   {
-    char catalog_id_str[UUID_STRING_SIZE];
-    BLI_uuid_format(catalog_id_str, catalog_id);
-    attributes.append_as(std::pair(ATTRIBUTE_ENTRIES_CATALOG_ID, new StringValue(catalog_id_str)));
+    attributes.append_as(
+        std::pair(ATTRIBUTE_ENTRIES_CATALOG_ID, new StringValue(catalog_id.str())));
   }
 
   void add_catalog_name(const StringRefNull catalog_name)
@@ -416,8 +416,8 @@ static void init_indexer_entry_from_value(FileIndexerEntry &indexer_entry,
     asset_data->license = BLI_strdupn(license.data(), license.size());
   }
 
-  const StringRef catalog_name = entry.get_catalog_name();
-  catalog_name.copy(asset_data->catalog_simple_name);
+  const StringRefNull catalog_name = entry.get_catalog_name();
+  STRNCPY_UTF8(asset_data->catalog_simple_name, catalog_name.c_str());
 
   asset_data->catalog_id = entry.get_catalog_id();
 

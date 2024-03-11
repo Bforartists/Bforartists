@@ -476,7 +476,7 @@ static bool armature_select_linked_impl(Object *ob, const bool select, const boo
 
   if (changed) {
     ED_armature_edit_sync_selection(arm->edbo);
-    DEG_id_tag_update(&arm->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&arm->id, ID_RECALC_SYNC_TO_EVAL);
     WM_main_add_notifier(NC_GPENCIL | ND_DATA | NA_EDITED, ob);
   }
 
@@ -1099,7 +1099,7 @@ bool ED_armature_edit_select_pick_bone(
     }
 
     WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, basact->object);
-    DEG_id_tag_update(&arm->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&arm->id, ID_RECALC_SYNC_TO_EVAL);
     changed = true;
   }
 
@@ -1509,7 +1509,7 @@ static int armature_de_select_more_exec(bContext *C, wmOperator * /*op*/)
   for (Object *ob : objects) {
     armature_select_more_less(ob, true);
     WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
-    DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
   }
 
   ED_outliner_select_sync_from_edit_bone_tag(C);
@@ -1546,7 +1546,7 @@ static int armature_de_select_less_exec(bContext *C, wmOperator * /*op*/)
   for (Object *ob : objects) {
     armature_select_more_less(ob, false);
     WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
-    DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
   }
 
   ED_outliner_select_sync_from_edit_bone_tag(C);
@@ -1605,8 +1605,8 @@ static const EnumPropertyItem prop_similar_types[] = {
 static float bone_length_squared_worldspace_get(Object *ob, EditBone *ebone)
 {
   float v1[3], v2[3];
-  mul_v3_mat3_m4v3(v1, ob->object_to_world, ebone->head);
-  mul_v3_mat3_m4v3(v2, ob->object_to_world, ebone->tail);
+  mul_v3_mat3_m4v3(v1, ob->object_to_world().ptr(), ebone->head);
+  mul_v3_mat3_m4v3(v2, ob->object_to_world().ptr(), ebone->tail);
   return len_squared_v3v3(v1, v2);
 }
 
@@ -1640,7 +1640,7 @@ static void select_similar_length(bContext *C, const float thresh)
 
     if (changed) {
       WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
-      DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+      DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
     }
   }
 }
@@ -1651,8 +1651,8 @@ static void bone_direction_worldspace_get(Object *ob, EditBone *ebone, float *r_
   copy_v3_v3(v1, ebone->head);
   copy_v3_v3(v2, ebone->tail);
 
-  mul_m4_v3(ob->object_to_world, v1);
-  mul_m4_v3(ob->object_to_world, v2);
+  mul_m4_v3(ob->object_to_world().ptr(), v1);
+  mul_m4_v3(ob->object_to_world().ptr(), v2);
 
   sub_v3_v3v3(r_dir, v1, v2);
   normalize_v3(r_dir);
@@ -1688,8 +1688,8 @@ static void select_similar_direction(bContext *C, const float thresh)
 
     if (changed) {
       WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
-      DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
-      DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+      DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
+      DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
     }
   }
 }
@@ -1730,7 +1730,7 @@ static void select_similar_bone_collection(bContext *C)
 
     if (changed) {
       WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
-      DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+      DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
     }
   }
 }
@@ -1764,7 +1764,7 @@ static void select_similar_bone_color(bContext *C)
 
     if (changed) {
       WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
-      DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+      DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
     }
   }
 }
@@ -1804,7 +1804,7 @@ static void select_similar_prefix(bContext *C)
 
     if (changed) {
       WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
-      DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+      DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
     }
   }
 }
@@ -1844,7 +1844,7 @@ static void select_similar_suffix(bContext *C)
 
     if (changed) {
       WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
-      DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+      DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
     }
   }
 }
@@ -1878,7 +1878,7 @@ static void select_similar_data_pchan(bContext *C, const size_t bytes_size, cons
   }
 
   WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, obedit);
-  DEG_id_tag_update(&obedit->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&obedit->id, ID_RECALC_SYNC_TO_EVAL);
 }
 
 static void is_ancestor(EditBone *bone, EditBone *ancestor)
@@ -1913,7 +1913,7 @@ static void select_similar_children(bContext *C)
   }
 
   WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, obedit);
-  DEG_id_tag_update(&obedit->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&obedit->id, ID_RECALC_SYNC_TO_EVAL);
 }
 
 static void select_similar_children_immediate(bContext *C)
@@ -1929,7 +1929,7 @@ static void select_similar_children_immediate(bContext *C)
   }
 
   WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, obedit);
-  DEG_id_tag_update(&obedit->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&obedit->id, ID_RECALC_SYNC_TO_EVAL);
 }
 
 static void select_similar_siblings(bContext *C)
@@ -1949,7 +1949,7 @@ static void select_similar_siblings(bContext *C)
   }
 
   WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, obedit);
-  DEG_id_tag_update(&obedit->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&obedit->id, ID_RECALC_SYNC_TO_EVAL);
 }
 
 static int armature_select_similar_exec(bContext *C, wmOperator *op)
@@ -2107,7 +2107,7 @@ static int armature_select_hierarchy_exec(bContext *C, wmOperator *op)
   ED_armature_edit_sync_selection(arm->edbo);
 
   WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
-  DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
 
   return OPERATOR_FINISHED;
 }
@@ -2199,7 +2199,7 @@ static int armature_select_mirror_exec(bContext *C, wmOperator *op)
     ED_armature_edit_sync_selection(arm->edbo);
 
     WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
-    DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
   }
 
   return OPERATOR_FINISHED;
@@ -2332,7 +2332,7 @@ static int armature_shortest_path_pick_invoke(bContext *C, wmOperator *op, const
     ED_outliner_select_sync_from_edit_bone_tag(C);
     ED_armature_edit_sync_selection(arm->edbo);
     WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, obedit);
-    DEG_id_tag_update(&obedit->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&obedit->id, ID_RECALC_SYNC_TO_EVAL);
 
     return OPERATOR_FINISHED;
   }

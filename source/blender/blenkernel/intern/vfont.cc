@@ -163,6 +163,7 @@ static void vfont_blend_read_data(BlendDataReader *reader, ID *id)
 IDTypeInfo IDType_ID_VF = {
     /*id_code*/ ID_VF,
     /*id_filter*/ FILTER_ID_VF,
+    /*dependencies_id_types*/ 0,
     /*main_listbase_index*/ INDEX_ID_VF,
     /*struct_size*/ sizeof(VFont),
     /*name*/ "Font",
@@ -1423,14 +1424,14 @@ static bool vfont_to_curve(Object *ob,
       float timeofs, sizefac;
 
       if (ob != nullptr) {
-        invert_m4_m4(imat, ob->object_to_world);
+        invert_m4_m4(imat, ob->object_to_world().ptr());
       }
       else {
         unit_m4(imat);
       }
       copy_m3_m4(imat3, imat);
 
-      copy_m3_m4(cmat, cu->textoncurve->object_to_world);
+      copy_m3_m4(cmat, cu->textoncurve->object_to_world().ptr());
       mul_m3_m3m3(cmat, cmat, imat3);
       sizefac = normalize_v3(cmat[0]) / font_size;
 

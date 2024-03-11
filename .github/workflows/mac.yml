@@ -7,6 +7,7 @@ on:
     - cron: 0 0 * * 1
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 permissions: {}
 jobs:
@@ -15,24 +16,19 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: configure
-      run:
-        brew install cmake svn
-
     - name: make
       run: |
+        brew install cmake git git-lfs svn
         mkdir ~/bforartistsrepo
         cd ~/bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
-        mkdir ~/bforartistsrepo/lib
-        cd ~/bforartistsrepo/lib
-        svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin/
         cd ~/bforartistsrepo/Bforartists
-        make
+        python ./build_files/utils/make_update.py
+        make release
 
     - name: Upload Build
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: Bforartists-Release-${{ runner.os }}
-        path: /Users/runner/bforartistsrepo/build_darwin/bin/
+        path: /Users/runner/bforartistsrepo/bfa_build_darwin_release/bin/
 

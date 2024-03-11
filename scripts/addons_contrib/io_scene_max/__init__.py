@@ -17,8 +17,8 @@ from bpy.props import (
 bl_info = {
     "name": "Import Autodesk MAX (.max)",
     "author": "Sebastian Sille, Philippe Lagadec, Jens M. Plonka",
-    "version": (1, 1, 2),
-    "blender": (3, 6, 0),
+    "version": (1, 1, 4),
+    "blender": (4, 0, 0),
     "location": "File > Import",
     "description": "Import 3DSMAX meshes & materials",
     "warning": "",
@@ -41,6 +41,7 @@ class Import_max(bpy.types.Operator, ImportHelper):
 
     filename_ext = ".max"
     filter_glob: StringProperty(default="*.max", options={'HIDDEN'})
+    filepath: StringProperty(subtype='FILE_PATH', options={'SKIP_SAVE'})
 
     scale_objects: FloatProperty(
         name="Scale",
@@ -65,16 +66,40 @@ class Import_max(bpy.types.Operator, ImportHelper):
         default=False,
     )
 
+    @classmethod
+    def poll(cls, context):
+        return (context.area and context.area.type == "VIEW_3D")
+
     def execute(self, context):
         from . import import_max
+        if not self.filepath or not self.filepath.endswith(".max"):
+            return {'CANCELLED'}
+
         keywords = self.as_keywords(ignore=("axis_forward", "axis_up", "filter_glob"))
         global_matrix = axis_conversion(from_forward=self.axis_forward, from_up=self.axis_up,).to_4x4()
         keywords["global_matrix"] = global_matrix
 
         return import_max.load(self, context, **keywords)
 
+    def invoke(self, context, event):
+        if self.filepath:
+            return self.execute(context)
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
     def draw(self, context):
         pass
+
+
+class MAX_FH_import(bpy.types.FileHandler):
+    bl_idname = "MAX_FH_import"
+    bl_label = "File handler for .max import"
+    bl_import_operator = "import_scene.max"
+    bl_file_extensions = ".max"
+
+    @classmethod
+    def poll_drop(cls, context):
+        return (context.area and context.area.type == 'VIEW_3D')
 
 
 class MAX_PT_import_include(bpy.types.Panel):
@@ -141,6 +166,7 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_class(Import_max)
+    bpy.utils.register_class(MAX_FH_import)
     bpy.utils.register_class(MAX_PT_import_include)
     bpy.utils.register_class(MAX_PT_import_transform)
     bpy.types.TOPBAR_MT_file_import.append(menu_func)
@@ -150,6 +176,7 @@ def unregister():
     bpy.types.TOPBAR_MT_file_import.remove(menu_func)
     bpy.utils.unregister_class(MAX_PT_import_transform)
     bpy.utils.unregister_class(MAX_PT_import_include)
+    bpy.utils.unregister_class(MAX_FH_import)
     bpy.utils.unregister_class(Import_max)
 
 

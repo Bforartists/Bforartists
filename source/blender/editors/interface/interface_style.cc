@@ -25,11 +25,7 @@
 
 #include "BLF_api.hh"
 
-#include "BLT_translation.hh"
-
 #include "UI_interface.hh"
-
-#include "ED_datafiles.h"
 
 #include "interface_intern.hh"
 
@@ -65,16 +61,12 @@ static uiStyle *ui_style_new(ListBase *styles, const char *name, short uifont_id
   BLI_addtail(styles, style);
   STRNCPY(style->name, name);
 
-  /*bfa - we have an unidentified bug in the theming.
-  The defaults for text style doesn't arrive in the factory settings
-  So we fit the values here*/
-
   style->panelzoom = 1.0; /* unused */
 
   style->paneltitle.uifont_id = uifont_id;
   style->paneltitle.points = UI_DEFAULT_TITLE_POINTS;
   style->paneltitle.character_weight = 400;
-  style->paneltitle.shadow = 1; /* bfa - changed from 3 to 1*/
+  style->paneltitle.shadow = 1; /* bfa changed to 1 */
   style->paneltitle.shadx = 0;
   style->paneltitle.shady = -1;
   style->paneltitle.shadowalpha = 0.15f; /* bfa 0.5f*/
@@ -502,6 +494,7 @@ static void fontstyle_set_ex(const uiFontStyle *fs, const float dpi_fac)
   uiFont *font = uifont_to_blfont(fs->uifont_id);
 
   BLF_size(font->blf_id, fs->points * dpi_fac);
+  BLF_character_weight(fs->uifont_id, fs->character_weight);
 }
 
 void UI_fontstyle_set(const uiFontStyle *fs)

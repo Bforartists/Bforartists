@@ -42,7 +42,6 @@
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_update.hh"
-#include "BKE_scene.hh"
 
 #include "DEG_depsgraph.hh"
 
@@ -50,7 +49,6 @@
 
 #include "WM_api.hh"
 
-#include "ED_datafiles.h"
 #include "ED_node_preview.hh"
 #include "ED_render.hh"
 #include "ED_screen.hh"
@@ -450,7 +448,7 @@ static void connect_node_to_surface_output(const Span<bNodeTreePath *> treepath,
 /* Connect the nodes to some aov nodes located in the first nodetree from `treepath`. Last element
  * of `treepath` should be the path to the nodes nodetree. */
 static void connect_nodes_to_aovs(const Span<bNodeTreePath *> treepath,
-                                  const Span<NodeSocketPair> &nodesocket_span)
+                                  const Span<NodeSocketPair> nodesocket_span)
 {
   if (nodesocket_span.is_empty()) {
     return;
