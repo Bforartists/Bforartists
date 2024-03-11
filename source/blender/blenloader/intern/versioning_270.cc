@@ -33,13 +33,11 @@
 #include "DNA_mask_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_modifier_types.h"
-#include "DNA_object_force_types.h"
 #include "DNA_object_types.h"
 #include "DNA_particle_types.h"
 #include "DNA_pointcache_types.h"
 #include "DNA_rigidbody_types.h"
 #include "DNA_screen_types.h"
-#include "DNA_sdna_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_space_types.h"
 #include "DNA_view3d_types.h"
@@ -48,7 +46,7 @@
 
 #undef DNA_GENFILE_VERSIONING_MACROS
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_colortools.hh"
 #include "BKE_customdata.hh"
@@ -56,10 +54,9 @@
 #include "BKE_main.hh"
 #include "BKE_mask.h"
 #include "BKE_modifier.hh"
-#include "BKE_node.h"
+#include "BKE_node.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
-#include "BKE_tracking.h"
 #include "DNA_material_types.h"
 
 #include "SEQ_effects.hh"
@@ -76,7 +73,6 @@
 
 #include "BLO_readfile.hh"
 
-#include "NOD_common.h"
 #include "NOD_composite.hh"
 #include "NOD_socket.hh"
 
@@ -1062,6 +1058,16 @@ void blo_do_versions_270(FileData *fd, Library * /*lib*/, Main *bmain)
     while (a--) {
       LISTBASE_FOREACH (ID *, id, lbarray[a]) {
         id->flag &= LIB_FAKEUSER;
+
+        /* NOTE: This is added in 4.1 code.
+         *
+         * Original commit (3fcf535d2e) forgot to handle embedded IDs. Fortunately, back then, the
+         * only embedded IDs that existed were the NodeTree ones, and the current API to access
+         * them should still be valid on code from 9 years ago. */
+        bNodeTree *node_tree = ntreeFromID(id);
+        if (node_tree) {
+          node_tree->id.flag &= LIB_FAKEUSER;
+        }
       }
     }
   }

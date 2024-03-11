@@ -54,9 +54,9 @@ bool IMB_metadata_get_field(IDProperty *metadata,
  */
 void IMB_metadata_set_field(IDProperty *metadata, const char *key, const char *value);
 
-void IMB_metadata_copy(ImBuf *dimb, ImBuf *simb);
+void IMB_metadata_copy(ImBuf *ibuf_dst, const ImBuf *ibuf_src);
 IDProperty *IMB_anim_load_metadata(ImBufAnim *anim);
 
 /* Invoke callback for every value stored in the metadata. */
-typedef void (*IMBMetadataForeachCb)(const char *field, const char *value, void *userdata);
+using IMBMetadataForeachCb = void (*)(const char *field, const char *value, void *userdata);
 void IMB_metadata_foreach(ImBuf *ibuf, IMBMetadataForeachCb callback, void *userdata);

@@ -35,7 +35,6 @@
 
 #include "BKE_blender.hh"
 #include "BKE_blendfile.hh"
-#include "BKE_callbacks.hh"
 #include "BKE_context.hh"
 #include "BKE_global.hh"
 #include "BKE_icons.h"
@@ -44,9 +43,7 @@
 #include "BKE_lib_remap.hh"
 #include "BKE_main.hh"
 #include "BKE_mball_tessellate.hh"
-#include "BKE_node.hh"
 #include "BKE_preview_image.hh"
-#include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_sound.h"
@@ -63,10 +60,7 @@
 #include "RE_engine.h"
 #include "RE_pipeline.h" /* RE_ free stuff */
 
-#include "IMB_thumbs.hh"
-
 #ifdef WITH_PYTHON
-#  include "BPY_extern.h"
 #  include "BPY_extern_python.h"
 #  include "BPY_extern_run.h"
 #endif
@@ -89,7 +83,6 @@
 #include "wm_window.hh"
 
 #include "ED_anim_api.hh"
-#include "ED_armature.hh"
 #include "ED_asset.hh"
 #include "ED_gpencil_legacy.hh"
 #include "ED_keyframes_edit.hh"
@@ -100,7 +93,6 @@
 #include "ED_space_api.hh"
 #include "ED_undo.hh"
 #include "ED_util.hh"
-#include "ED_view3d.hh"
 
 #include "BLF_api.hh"
 #include "BLT_lang.hh"
@@ -166,6 +158,10 @@ void WM_init_gpu()
   GPU_init();
 
   GPU_pass_cache_init();
+
+  if (G.debug & G_DEBUG_GPU_COMPILE_SHADERS) {
+    GPU_shader_compile_static();
+  }
 
   gpu_is_init = true;
 }
@@ -475,28 +471,18 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
   /* NOTE: same code copied in `wm_files.cc`. */
   if (C && wm) {
     if (do_user_exit_actions) {
-      MemFile *undo_memfile = wm->undo_stack ?
-                                  ED_undosys_stack_memfile_get_active(wm->undo_stack) :
-                                  nullptr;
-      if (undo_memfile != nullptr) {
-        /* save the undo state as quit.blend */
-        Main *bmain = CTX_data_main(C);
-        char filepath[FILE_MAX];
-        const int fileflags = G.fileflags & ~G_FILE_COMPRESS;
+      /* Save quit.blend. */
+      Main *bmain = CTX_data_main(C);
+      char filepath[FILE_MAX];
+      const int fileflags = G.fileflags & ~G_FILE_COMPRESS;
 
-        BLI_path_join(filepath, sizeof(filepath), BKE_tempdir_base(), BLENDER_QUIT_FILE);
+      BLI_path_join(filepath, sizeof(filepath), BKE_tempdir_base(), BLENDER_QUIT_FILE);
 
-        /* When true, the `undo_memfile` doesn't contain all information necessary
-         * for writing and up to date blend file. */
-        const bool is_memfile_outdated = ED_editors_flush_edits(bmain);
+      ED_editors_flush_edits(bmain);
 
-        BlendFileWriteParams blend_file_write_params{};
-        if (is_memfile_outdated ?
-                BLO_write_file(bmain, filepath, fileflags, &blend_file_write_params, nullptr) :
-                BLO_memfile_write_file(undo_memfile, filepath))
-        {
-          printf("Saved session recovery to \"%s\"\n", filepath);
-        }
+      BlendFileWriteParams blend_file_write_params{};
+      if (BLO_write_file(bmain, filepath, fileflags, &blend_file_write_params, nullptr)) {
+        printf("Saved session recovery to \"%s\"\n", filepath);
       }
     }
 

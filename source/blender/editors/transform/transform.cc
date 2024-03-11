@@ -11,8 +11,6 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_gpencil_legacy_types.h"
-#include "DNA_mask_types.h"
-#include "DNA_mesh_types.h"
 #include "DNA_screen_types.h"
 
 #include "BLI_math_matrix.h"
@@ -23,14 +21,12 @@
 #include "BKE_editmesh.hh"
 #include "BKE_layer.hh"
 #include "BKE_mask.h"
-#include "BKE_scene.hh"
 
 #include "GPU_state.h"
 
 #include "ED_clip.hh"
 #include "ED_gpencil_legacy.hh"
 #include "ED_image.hh"
-#include "ED_keyframing.hh"
 #include "ED_node.hh"
 #include "ED_screen.hh"
 #include "ED_space_api.hh"
@@ -712,6 +708,13 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
       break;
     }
     case TFM_MODAL_PASSTHROUGH_NAVIGATE:
+      if (ELEM(t->mode, TFM_EDGE_SLIDE, TFM_VERT_SLIDE)) {
+        /* Returning `false` will not prevent the navigation from working, it will just not display
+         * the shortcut in the header.
+         * Return `false` here to prevent this modal item from affecting the state with
+         * #T_ALT_TRANSFORM used by the Edge and Vert Slide operators. */
+        return false;
+      }
       return t->vod != nullptr;
   }
   return true;
@@ -1496,7 +1499,20 @@ static void drawTransformView(const bContext * /*C*/, ARegion *region, void *arg
   GPU_line_width(1.0f);
 
   drawConstraint(t);
-  drawPropCircle(t);
+
+  switch (t->spacetype) {
+    case SPACE_GRAPH:
+    case SPACE_ACTION:
+      /* Different visualization because the proportional editing in these editors only looks at
+       * the x-axis. */
+      drawPropRange(t);
+      break;
+
+    default:
+      drawPropCircle(t);
+      break;
+  }
+
   drawSnapping(t);
 
   if (region == t->region && t->mode_info && t->mode_info->draw_fn) {

@@ -19,15 +19,9 @@
 
 #include "ED_screen.hh"
 
-#include "GPU_framebuffer.h"
-#include "GPU_immediate.h"
-#include "GPU_immediate_util.h"
 #include "GPU_matrix.h"
-#include "GPU_state.h"
 #include "GPU_vertex_buffer.h"
-#include "GPU_viewport.h"
 
-#include "RNA_access.hh"
 #include "RNA_prototypes.h"
 
 #include "SEQ_channels.hh"
@@ -261,8 +255,6 @@ static void draw_channel_labels(const SeqChannelDrawContext *context,
              rect.xmax - rect.xmin,
              (rect.ymax - rect.ymin),
              nullptr,
-             0,
-             0,
              0,
              0,
              nullptr);

@@ -69,6 +69,7 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+#include "ED_gpencil_legacy.hh"
 #include "ED_paint.hh"
 #include "ED_screen.hh"
 #include "ED_sculpt.hh"
@@ -90,10 +91,11 @@ using blender::Vector;
 
 static CLG_LogRef LOG = {"ed.sculpt_paint"};
 
-static float sculpt_calc_radius(ViewContext *vc,
-                                const Brush *brush,
-                                const Scene *scene,
-                                const float3 location)
+namespace blender::ed::sculpt_paint {
+float sculpt_calc_radius(ViewContext *vc,
+                         const Brush *brush,
+                         const Scene *scene,
+                         const float3 location)
 {
   if (!BKE_brush_use_locked_size(scene, brush)) {
     return paint_calc_object_space_radius(vc, location, BKE_brush_size_get(scene, brush));
@@ -102,6 +104,7 @@ static float sculpt_calc_radius(ViewContext *vc,
     return BKE_brush_unprojected_radius_get(scene, brush);
   }
 }
+}  // namespace blender::ed::sculpt_paint
 
 bool ED_sculpt_report_if_shape_key_is_locked(const Object *ob, ReportList *reports)
 {
@@ -2686,14 +2689,14 @@ static void calc_local_from_screen(ViewContext *vc,
   Object *ob = vc->obact;
   float loc[3];
 
-  mul_v3_m4v3(loc, ob->object_to_world, center);
+  mul_v3_m4v3(loc, ob->object_to_world().ptr(), center);
   const float zfac = ED_view3d_calc_zfac(vc->rv3d, loc);
 
   ED_view3d_win_to_delta(vc->region, screen_dir, zfac, r_local_dir);
   normalize_v3(r_local_dir);
 
   add_v3_v3(r_local_dir, ob->loc);
-  mul_m4_v3(ob->world_to_object, r_local_dir);
+  mul_m4_v3(ob->world_to_object().ptr(), r_local_dir);
 }
 
 static void calc_brush_local_mat(const float rotation,
@@ -2708,7 +2711,7 @@ static void calc_brush_local_mat(const float rotation,
   float angle, v[3];
 
   /* Ensure `ob->world_to_object` is up to date. */
-  invert_m4_m4(ob->world_to_object, ob->object_to_world);
+  invert_m4_m4(ob->runtime->world_to_object.ptr(), ob->object_to_world().ptr());
 
   /* Initialize last column of matrix. */
   mat[0][3] = 0.0f;
@@ -2772,13 +2775,13 @@ void SCULPT_tilt_apply_to_normal(float r_normal[3],
     return;
   }
   const float rot_max = M_PI_2 * tilt_strength * SCULPT_TILT_SENSITIVITY;
-  mul_v3_mat3_m4v3(r_normal, cache->vc->obact->object_to_world, r_normal);
+  mul_v3_mat3_m4v3(r_normal, cache->vc->obact->object_to_world().ptr(), r_normal);
   float normal_tilt_y[3];
   rotate_v3_v3v3fl(normal_tilt_y, r_normal, cache->vc->rv3d->viewinv[0], cache->y_tilt * rot_max);
   float normal_tilt_xy[3];
   rotate_v3_v3v3fl(
       normal_tilt_xy, normal_tilt_y, cache->vc->rv3d->viewinv[1], cache->x_tilt * rot_max);
-  mul_v3_mat3_m4v3(r_normal, cache->vc->obact->world_to_object, normal_tilt_xy);
+  mul_v3_mat3_m4v3(r_normal, cache->vc->obact->world_to_object().ptr(), normal_tilt_xy);
   normalize_v3(r_normal);
 }
 
@@ -3239,7 +3242,7 @@ static void sculpt_topology_update(Sculpt *sd,
 
   /* Update average stroke position. */
   copy_v3_v3(location, ss->cache->true_location);
-  mul_m4_v3(ob->object_to_world, location);
+  mul_m4_v3(ob->object_to_world().ptr(), location);
 }
 
 static void do_brush_action_task(Object *ob, const Brush *brush, PBVHNode *node)
@@ -3570,7 +3573,7 @@ static void do_brush_action(Sculpt *sd,
 
   /* Update average stroke position. */
   copy_v3_v3(location, ss->cache->true_location);
-  mul_m4_v3(ob->object_to_world, location);
+  mul_m4_v3(ob->object_to_world().ptr(), location);
 
   add_v3_v3(ups->average_stroke_accum, location);
   ups->average_stroke_counter++;
@@ -3958,7 +3961,7 @@ bool SCULPT_mode_poll(bContext *C)
 
 bool SCULPT_mode_poll_view3d(bContext *C)
 {
-  return (SCULPT_mode_poll(C) && CTX_wm_region_view3d(C));
+  return (SCULPT_mode_poll(C) && CTX_wm_region_view3d(C) && !ED_gpencil_session_active());
 }
 
 bool SCULPT_poll(bContext *C)
@@ -4102,8 +4105,8 @@ static void sculpt_init_mirror_clipping(Object *ob, SculptSession *ss)
       /* Store matrix for mirror object clipping. */
       if (mmd->mirror_ob) {
         float imtx_mirror_ob[4][4];
-        invert_m4_m4(imtx_mirror_ob, mmd->mirror_ob->object_to_world);
-        mul_m4_m4m4(ss->cache->clip_mirror_mtx.ptr(), imtx_mirror_ob, ob->object_to_world);
+        invert_m4_m4(imtx_mirror_ob, mmd->mirror_ob->object_to_world().ptr());
+        mul_m4_m4m4(ss->cache->clip_mirror_mtx.ptr(), imtx_mirror_ob, ob->object_to_world().ptr());
       }
     }
   }
@@ -4270,10 +4273,10 @@ static void sculpt_update_cache_invariants(
   /* Cache projection matrix. */
   cache->projection_mat = ED_view3d_ob_project_mat_get(cache->vc->rv3d, ob);
 
-  invert_m4_m4(ob->world_to_object, ob->object_to_world);
+  invert_m4_m4(ob->runtime->world_to_object.ptr(), ob->object_to_world().ptr());
   copy_m3_m4(mat, cache->vc->rv3d->viewinv);
   mul_m3_v3(mat, viewDir);
-  copy_m3_m4(mat, ob->world_to_object);
+  copy_m3_m4(mat, ob->world_to_object().ptr());
   mul_m3_v3(mat, viewDir);
   normalize_v3_v3(cache->true_view_normal, viewDir);
 
@@ -4289,7 +4292,7 @@ static void sculpt_update_cache_invariants(
     if (sd->gravity_object) {
       Object *gravity_object = sd->gravity_object;
 
-      copy_v3_v3(cache->true_gravity_direction, gravity_object->object_to_world[2]);
+      copy_v3_v3(cache->true_gravity_direction, gravity_object->object_to_world().ptr()[2]);
     }
     else {
       cache->true_gravity_direction[0] = cache->true_gravity_direction[1] = 0.0f;
@@ -4449,27 +4452,27 @@ static void sculpt_update_brush_delta(UnifiedPaintSettings *ups, Object *ob, Bru
   }
 
   /* Compute 3d coordinate at same z from original location + mval. */
-  mul_v3_m4v3(loc, ob->object_to_world, cache->orig_grab_location);
+  mul_v3_m4v3(loc, ob->object_to_world().ptr(), cache->orig_grab_location);
   ED_view3d_win_to_3d(cache->vc->v3d, cache->vc->region, loc, mval, grab_location);
 
   /* Compute delta to move verts by. */
   if (!SCULPT_stroke_is_first_brush_step_of_symmetry_pass(ss->cache)) {
     if (sculpt_needs_delta_from_anchored_origin(brush)) {
       sub_v3_v3v3(delta, grab_location, cache->old_grab_location);
-      invert_m4_m4(imat, ob->object_to_world);
+      invert_m4_m4(imat, ob->object_to_world().ptr());
       mul_mat3_m4_v3(imat, delta);
       add_v3_v3(cache->grab_delta, delta);
     }
     else if (sculpt_needs_delta_for_tip_orientation(brush)) {
       if (brush->flag & BRUSH_ANCHORED) {
         float orig[3];
-        mul_v3_m4v3(orig, ob->object_to_world, cache->orig_grab_location);
+        mul_v3_m4v3(orig, ob->object_to_world().ptr(), cache->orig_grab_location);
         sub_v3_v3v3(cache->grab_delta, grab_location, orig);
       }
       else {
         sub_v3_v3v3(cache->grab_delta, grab_location, cache->old_grab_location);
       }
-      invert_m4_m4(imat, ob->object_to_world);
+      invert_m4_m4(imat, ob->object_to_world().ptr());
       mul_mat3_m4_v3(imat, cache->grab_delta);
     }
     else {
@@ -4514,7 +4517,7 @@ static void sculpt_update_brush_delta(UnifiedPaintSettings *ups, Object *ob, Bru
   /* Handle 'rake' */
   cache->is_rake_rotation_valid = false;
 
-  invert_m4_m4(imat, ob->object_to_world);
+  invert_m4_m4(imat, ob->object_to_world().ptr());
   mul_mat3_m4_v3(imat, grab_location);
 
   if (SCULPT_stroke_is_first_brush_step_of_symmetry_pass(ss->cache)) {
@@ -4851,7 +4854,7 @@ float SCULPT_raycast_init(ViewContext *vc,
   ED_view3d_win_to_segment_clipped(
       vc->depsgraph, vc->region, vc->v3d, mval, ray_start, ray_end, true);
 
-  invert_m4_m4(obimat, ob->object_to_world);
+  invert_m4_m4(obimat, ob->object_to_world().ptr());
   mul_m4_v3(obimat, ray_start);
   mul_m4_v3(obimat, ray_end);
 
@@ -4976,10 +4979,10 @@ bool SCULPT_cursor_geometry_info_update(bContext *C,
   float radius;
 
   /* Update cursor data in SculptSession. */
-  invert_m4_m4(ob->world_to_object, ob->object_to_world);
+  invert_m4_m4(ob->runtime->world_to_object.ptr(), ob->object_to_world().ptr());
   copy_m3_m4(mat, vc.rv3d->viewinv);
   mul_m3_v3(mat, viewDir);
-  copy_m3_m4(mat, ob->world_to_object);
+  copy_m3_m4(mat, ob->world_to_object().ptr());
   mul_m3_v3(mat, viewDir);
   normalize_v3_v3(ss->cursor_view_normal, viewDir);
   copy_v3_v3(ss->cursor_normal, srd.face_normal);
@@ -5512,17 +5515,19 @@ static void sculpt_stroke_update_step(bContext *C,
   sculpt_restore_mesh(sd, ob);
 
   if (sd->flags & (SCULPT_DYNTOPO_DETAIL_CONSTANT | SCULPT_DYNTOPO_DETAIL_MANUAL)) {
-    float object_space_constant_detail = 1.0f / (sd->constant_detail *
-                                                 mat4_to_scale(ob->object_to_world));
-    BKE_pbvh_bmesh_detail_size_set(ss->pbvh, object_space_constant_detail);
+    BKE_pbvh_bmesh_detail_size_set(
+        ss->pbvh, dyntopo::detail_size::constant_to_detail_size(sd->constant_detail, ob));
   }
   else if (sd->flags & SCULPT_DYNTOPO_DETAIL_BRUSH) {
-    BKE_pbvh_bmesh_detail_size_set(ss->pbvh, ss->cache->radius * sd->detail_percent / 100.0f);
+    BKE_pbvh_bmesh_detail_size_set(
+        ss->pbvh,
+        dyntopo::detail_size::brush_to_detail_size(sd->detail_percent, ss->cache->radius));
   }
   else {
-    BKE_pbvh_bmesh_detail_size_set(ss->pbvh,
-                                   (ss->cache->radius / ss->cache->dyntopo_pixel_radius) *
-                                       (sd->detail_size * U.pixelsize) / 0.4f);
+    BKE_pbvh_bmesh_detail_size_set(
+        ss->pbvh,
+        dyntopo::detail_size::relative_to_detail_size(
+            sd->detail_size, ss->cache->radius, ss->cache->dyntopo_pixel_radius, U.pixelsize));
   }
 
   if (dyntopo::stroke_is_dyntopo(ss, brush)) {
