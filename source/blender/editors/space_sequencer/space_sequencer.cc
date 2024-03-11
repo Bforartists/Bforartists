@@ -49,8 +49,6 @@
 
 #include "BLO_read_write.hh"
 
-#include "IMB_imbuf.hh"
-
 /* Only for cursor drawing. */
 #include "DRW_engine.hh"
 
@@ -347,7 +345,7 @@ static int /*eContextResult*/ sequencer_context(const bContext *C,
   if (CTX_data_equals(member, "scene")) {
     SpaceSeq *sseq = CTX_wm_space_seq(C);
     /* Check if scene is overwritten. */
-    if ((sseq != NULL) && (sseq->scene_override != NULL)) {
+    if ((sseq != nullptr) && (sseq->scene_override != nullptr)) {
       scene = sseq->scene_override;
     }
     CTX_data_id_pointer_set(result, &scene->id);
@@ -686,14 +684,18 @@ static void sequencer_tools_region_init(wmWindowManager *wm, ARegion *region)
 
 static void sequencer_tools_region_draw(const bContext *C, ARegion *region)
 {
+  ScrArea *area = CTX_wm_area(C);
   wmOperatorCallContext op_context = WM_OP_INVOKE_REGION_WIN;
-  switch (region->regiontype) {
-    case RGN_TYPE_CHANNELS:
-      op_context = WM_OP_INVOKE_REGION_CHANNELS;
-      break;
-    case RGN_TYPE_PREVIEW:
+
+  LISTBASE_FOREACH (ARegion *, ar, &area->regionbase) {
+    if (ar->regiontype == RGN_TYPE_PREVIEW && region->regiontype == RGN_TYPE_TOOLS) {
       op_context = WM_OP_INVOKE_REGION_PREVIEW;
       break;
+    }
+  }
+
+  if (region->regiontype == RGN_TYPE_CHANNELS) {
+    op_context = WM_OP_INVOKE_REGION_CHANNELS;
   }
 
   ED_region_panels_ex(C, region, op_context, nullptr);
@@ -919,10 +921,12 @@ static void sequencer_buttons_region_listener(const wmRegionListenerParams *para
   }
 }
 
-static void sequencer_id_remap(ScrArea * /*area*/, SpaceLink *slink, const IDRemapper *mappings)
+static void sequencer_id_remap(ScrArea * /*area*/,
+                               SpaceLink *slink,
+                               const blender::bke::id::IDRemapper &mappings)
 {
   SpaceSeq *sseq = (SpaceSeq *)slink;
-  BKE_id_remapper_apply(mappings, (ID **)&sseq->gpd, ID_REMAP_APPLY_DEFAULT);
+  mappings.apply((ID **)&sseq->gpd, ID_REMAP_APPLY_DEFAULT);
 }
 
 static void sequencer_foreach_id(SpaceLink *space_link, LibraryForeachIDData *data)

@@ -42,6 +42,7 @@
 #include "BKE_layer.hh"
 #include "BKE_object.hh"
 #include "BKE_object_deform.h"
+#include "BKE_object_types.hh"
 #include "BKE_report.hh"
 #include "BKE_screen.hh"
 
@@ -479,7 +480,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
   /* Location, X/Y/Z */
   mul_v3_fl(median_basis.generic.location, 1.0f / float(tot));
   if (v3d->flag & V3D_GLOBAL_STATS) {
-    mul_m4_v3(ob->object_to_world, median_basis.generic.location);
+    mul_m4_v3(ob->object_to_world().ptr(), median_basis.generic.location);
   }
 
   if (has_meshdata) {
@@ -538,7 +539,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     else {
       c = IFACE_("Median:");
     }
-    uiDefBut(block, UI_BTYPE_LABEL, 0, c, 0, yi -= buth, butw, buth, nullptr, 0, 0, 0, 0, "");
+    uiDefBut(block, UI_BTYPE_LABEL, 0, c, 0, yi -= buth, butw, buth, nullptr, 0, 0, "");
 
     /* bfa */
 
@@ -1006,9 +1007,9 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     memcpy(&ve_median_basis, &tfp->ve_median, sizeof(tfp->ve_median));
 
     if (v3d->flag & V3D_GLOBAL_STATS) {
-      invert_m4_m4(ob->world_to_object, ob->object_to_world);
-      mul_m4_v3(ob->world_to_object, median_basis.generic.location);
-      mul_m4_v3(ob->world_to_object, ve_median_basis.generic.location);
+      invert_m4_m4(ob->runtime->world_to_object.ptr(), ob->object_to_world().ptr());
+      mul_m4_v3(ob->world_to_object().ptr(), median_basis.generic.location);
+      mul_m4_v3(ob->world_to_object().ptr(), ve_median_basis.generic.location);
     }
     sub_vn_vnvn((float *)&median_basis,
                 (float *)&ve_median_basis,
@@ -1269,8 +1270,6 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
 {
   uiBlock *block = (layout) ? uiLayoutAbsoluteBlock(layout) : nullptr;
   TransformProperties *tfp = v3d_transform_props_ensure(v3d);
-  /*  uiLayout *row, *col;*/ /* bfa - use uiLayout when possible - not used */
-  /*  uiBlock *subblock;*/   /* bfa - helper block for UI - not used*/
 
   if (block) {
     BLI_assert(C == nullptr);
@@ -1281,7 +1280,7 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
     BKE_object_dimensions_eval_cached_get(ob, tfp->ob_dims);
     copy_v3_v3(tfp->ob_dims_orig, tfp->ob_dims);
     copy_v3_v3(tfp->ob_scale_orig, ob->scale);
-    copy_m4_m4(tfp->ob_obmat_orig, ob->object_to_world);
+    copy_m4_m4(tfp->ob_obmat_orig, ob->object_to_world().ptr());
 
     uiDefBut(block,
              UI_BTYPE_LABEL,
@@ -1292,8 +1291,6 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
              butw,
              buth,
              nullptr,
-             0,
-             0,
              0,
              0,
              "");
@@ -1318,7 +1315,7 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
       UI_but_number_precision_set(but, 3);
       UI_but_unit_type_set(but, PROP_UNIT_LENGTH);
     }
-    UI_block_align_end(block); /* BFA - subblock not used */
+    UI_block_align_end(block);
   }
   else { /* apply */
     int axis_mask = 0;
@@ -1635,7 +1632,6 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
               ICON_DECORATE_UNLOCKED);
       uiLayoutSetEmboss(sub, UI_EMBOSS_UNDEFINED);
       break;
-
     case ROT_MODE_AXISANGLE: /* axis angle */
                              /* bfa */
       col = uiLayoutColumn(layout, false);
@@ -1668,7 +1664,6 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
               ICON_DECORATE_UNLOCKED);
       uiLayoutSetEmboss(sub, UI_EMBOSS_UNDEFINED); /* bfa */
       break;
-
     default: /* euler rotations */
              /* bfa */
       col = uiLayoutColumn(layout, false);

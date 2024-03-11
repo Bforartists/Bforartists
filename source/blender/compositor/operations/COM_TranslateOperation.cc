@@ -14,58 +14,12 @@ TranslateOperation::TranslateOperation(DataType data_type, ResizeMode resize_mod
   this->add_input_socket(DataType::Value, ResizeMode::None);
   this->add_output_socket(data_type);
   this->set_canvas_input_index(0);
-  input_operation_ = nullptr;
-  input_xoperation_ = nullptr;
-  input_yoperation_ = nullptr;
   is_delta_set_ = false;
   is_relative_ = false;
   this->x_extend_mode_ = MemoryBufferExtend::Clip;
   this->y_extend_mode_ = MemoryBufferExtend::Clip;
 
   this->flags_.can_be_constant = true;
-}
-
-void TranslateOperation::init_execution()
-{
-  input_operation_ = this->get_input_socket_reader(0);
-  input_xoperation_ = this->get_input_socket_reader(1);
-  input_yoperation_ = this->get_input_socket_reader(2);
-}
-
-void TranslateOperation::deinit_execution()
-{
-  input_operation_ = nullptr;
-  input_xoperation_ = nullptr;
-  input_yoperation_ = nullptr;
-}
-
-void TranslateOperation::execute_pixel_sampled(float output[4],
-                                               float x,
-                                               float y,
-                                               PixelSampler /*sampler*/)
-{
-  ensure_delta();
-
-  float original_xpos = x - this->get_delta_x();
-  float original_ypos = y - this->get_delta_y();
-
-  input_operation_->read_sampled(output, original_xpos, original_ypos, PixelSampler::Bilinear);
-}
-
-bool TranslateOperation::determine_depending_area_of_interest(rcti *input,
-                                                              ReadBufferOperation *read_operation,
-                                                              rcti *output)
-{
-  rcti new_input;
-
-  ensure_delta();
-
-  new_input.xmin = input->xmin - this->get_delta_x();
-  new_input.xmax = input->xmax - this->get_delta_x();
-  new_input.ymin = input->ymin - this->get_delta_y();
-  new_input.ymax = input->ymax - this->get_delta_y();
-
-  return NodeOperation::determine_depending_area_of_interest(&new_input, read_operation, output);
 }
 
 void TranslateOperation::set_wrapping(int wrapping_type)
@@ -112,6 +66,23 @@ void TranslateOperation::update_memory_buffer_partial(MemoryBuffer *output,
                                                       Span<MemoryBuffer *> inputs)
 {
   MemoryBuffer *input = inputs[0];
+  if (input->is_a_single_elem()) {
+    copy_v4_v4(output->get_elem(0, 0), input->get_elem(0, 0));
+    return;
+  }
+
+  /* Some compositor operations produce an empty output buffer by specifying a COM_AREA_NONE canvas
+   * to indicate an invalid output, for instance, when the Mask operation reference an invalid
+   * mask. The intention is that this buffer would signal that a fallback value would fill the
+   * canvas of consumer operations. Since the aforementioned filling is achieved through the
+   * Translate operation as part of canvas conversion in COM_convert_canvas, we handle the empty
+   * buffer case here and fill the output using a fallback black color. */
+  if (BLI_rcti_is_empty(&input->get_rect())) {
+    const float value[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+    output->fill(area, value);
+    return;
+  }
+
   const int delta_x = this->get_delta_x();
   const int delta_y = this->get_delta_y();
   for (int y = area.ymin; y < area.ymax; y++) {

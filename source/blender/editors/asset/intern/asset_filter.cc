@@ -8,7 +8,6 @@
 
 #include "AS_asset_representation.hh"
 
-#include "BKE_asset.hh"
 #include "BKE_idtype.hh"
 
 #include "BLI_listbase.h"
@@ -19,8 +18,6 @@
 #include "AS_asset_library.hh"
 
 #include "ED_asset_filter.hh"
-#include "ED_asset_handle.hh"
-#include "ED_asset_library.hh"
 #include "ED_asset_list.hh"
 
 namespace blender::ed::asset {
@@ -67,7 +64,7 @@ asset_system::AssetCatalogTree build_filtered_catalog_tree(
       return true;
     }
 
-    const asset_system::AssetCatalog *catalog = library.catalog_service->find_catalog(
+    const asset_system::AssetCatalog *catalog = library.catalog_service().find_catalog(
         meta_data.catalog_id);
     if (catalog == nullptr) {
       return true;
@@ -78,13 +75,13 @@ asset_system::AssetCatalogTree build_filtered_catalog_tree(
 
   /* Build catalog tree. */
   asset_system::AssetCatalogTree filtered_tree;
-  asset_system::AssetCatalogTree &full_tree = *library.catalog_service->get_catalog_tree();
-  full_tree.foreach_item([&](asset_system::AssetCatalogTreeItem &item) {
+  const asset_system::AssetCatalogTree &full_tree = library.catalog_service().catalog_tree();
+  full_tree.foreach_item([&](const asset_system::AssetCatalogTreeItem &item) {
     if (!known_paths.contains(item.catalog_path().str())) {
       return;
     }
 
-    asset_system::AssetCatalog *catalog = library.catalog_service->find_catalog(
+    asset_system::AssetCatalog *catalog = library.catalog_service().find_catalog(
         item.get_catalog_id());
     if (catalog == nullptr) {
       return;
@@ -125,7 +122,7 @@ AssetItemTree build_filtered_all_catalog_tree(
       return true;
     }
 
-    const asset_system::AssetCatalog *catalog = library->catalog_service->find_catalog(
+    const asset_system::AssetCatalog *catalog = library->catalog_service().find_catalog(
         meta_data.catalog_id);
     if (catalog == nullptr) {
       /* Also include assets with catalogs we're unable to find (e.g. the catalog was deleted) in
@@ -138,12 +135,12 @@ AssetItemTree build_filtered_all_catalog_tree(
   });
 
   asset_system::AssetCatalogTree catalogs_with_node_assets;
-  asset_system::AssetCatalogTree &catalog_tree = *library->catalog_service->get_catalog_tree();
-  catalog_tree.foreach_item([&](asset_system::AssetCatalogTreeItem &item) {
+  const asset_system::AssetCatalogTree &catalog_tree = library->catalog_service().catalog_tree();
+  catalog_tree.foreach_item([&](const asset_system::AssetCatalogTreeItem &item) {
     if (assets_per_path.lookup(item.catalog_path()).is_empty()) {
       return;
     }
-    asset_system::AssetCatalog *catalog = library->catalog_service->find_catalog(
+    asset_system::AssetCatalog *catalog = library->catalog_service().find_catalog(
         item.get_catalog_id());
     if (catalog == nullptr) {
       return;

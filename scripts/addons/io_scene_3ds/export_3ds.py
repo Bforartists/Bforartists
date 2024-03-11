@@ -713,7 +713,8 @@ def make_material_chunk(material, image):
         material_chunk.add_subchunk(make_percent_subchunk(MATTRANS, 1 - wrap.alpha))
         material_chunk.add_subchunk(make_percent_subchunk(MATXPFALL, wrap.transmission))
         material_chunk.add_subchunk(make_percent_subchunk(MATSELFILPCT, wrap.emission_strength))
-        material_chunk.add_subchunk(make_percent_subchunk(MATREFBLUR, wrap.node_principled_bsdf.inputs['Coat Weight'].default_value))
+        if wrap.node_principled_bsdf is not None:
+            material_chunk.add_subchunk(make_percent_subchunk(MATREFBLUR, wrap.node_principled_bsdf.inputs['Coat Weight'].default_value))
         material_chunk.add_subchunk(shading)
 
         primary_tex = False
