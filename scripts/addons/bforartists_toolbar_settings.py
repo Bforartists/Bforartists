@@ -305,7 +305,8 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     bfa_button_style: BoolProperty(name='Checkerbox/Button Toggle', description='Switch between Checkerbox or Button Type', default=False)
 
     # Toolbar Options
-    toolbar_show_quicktoggle : BoolProperty(name="Show Quick Toggle", default = False, description = "Show the quick toggle buttons in the toolbar editor")
+    topbar_show_quicktoggle : BoolProperty(name="Show Topbar Quick Toggle", default = False, description = "Show the quick toggle buttons in the topbar")
+    toolbar_show_quicktoggle : BoolProperty(name="Show Toolbar Quick Toggle", default = False, description = "Show the quick toggle buttons in the toolbar editor")
 
     # NLA Editor, switch tweak methods
     nla_tweak_isolate_action : BoolProperty(name="Isolate", default = False, description = "Edit action in isolate mode")
@@ -625,6 +626,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
 
+            grid.prop(self, "topbar_show_quicktoggle", toggle=addon_prefs.bfa_button_style)
             grid.prop(self, "toolbar_show_quicktoggle", toggle=addon_prefs.bfa_button_style)
 
         # Node Editor Options
