@@ -83,7 +83,7 @@ void LightProbeModule::sync_volume(const Object *ob, ObjectHandle &handle)
     grid.initialized = true;
     grid.updated = true;
     grid.surfel_density = static_cast<const ::LightProbe *>(ob->data)->surfel_density;
-    grid.object_to_world = float4x4(ob->object_to_world);
+    grid.object_to_world = ob->object_to_world();
     grid.world_to_object = float4x4(
         math::normalize(math::transpose(float3x3(grid.object_to_world))));
 
@@ -125,7 +125,7 @@ void LightProbeModule::sync_sphere(const Object *ob, ObjectHandle &handle)
       cube.atlas_coord = find_empty_atlas_region(subdivision_lvl);
       SphereProbeData &cube_data = *static_cast<SphereProbeData *>(&cube);
       /* Update gpu data sampling coordinates. */
-      cube_data.atlas_coord = cube.atlas_coord.as_sampling_coord(probe_module.max_resolution_);
+      cube_data.atlas_coord = cube.atlas_coord.as_sampling_coord();
       /* Coordinates have changed. Area might contain random data. Do not use for rendering. */
       cube.use_for_render = false;
     }
@@ -143,8 +143,7 @@ void LightProbeModule::sync_sphere(const Object *ob, ObjectHandle &handle)
     cube.influence_shape = to_eevee_shape(light_probe.attenuation_type);
     cube.parallax_shape = to_eevee_shape(light_probe.parallax_type);
 
-    float4x4 object_to_world = math::scale(float4x4(ob->object_to_world),
-                                           float3(influence_distance));
+    float4x4 object_to_world = math::scale(ob->object_to_world(), float3(influence_distance));
     cube.location = object_to_world.location();
     cube.volume = math::abs(math::determinant(object_to_world));
     cube.world_to_probe_transposed = float3x4(math::transpose(math::invert(object_to_world)));
@@ -167,7 +166,7 @@ void LightProbeModule::sync_planar(const Object *ob, ObjectHandle &handle)
 
     plane.initialized = true;
     plane.updated = true;
-    plane.plane_to_world = float4x4(ob->object_to_world);
+    plane.plane_to_world = ob->object_to_world();
     plane.plane_to_world.z_axis() = math::normalize(plane.plane_to_world.z_axis()) *
                                     light_probe->distinf;
     plane.world_to_plane = math::invert(plane.plane_to_world);
@@ -205,8 +204,7 @@ void LightProbeModule::sync_world(const ::World *world, bool has_update)
     world_sphere_.atlas_coord.free();
     world_sphere_.atlas_coord = find_empty_atlas_region(subdivision_lvl);
     SphereProbeData &world_data = *static_cast<SphereProbeData *>(&world_sphere_);
-    world_data.atlas_coord = world_sphere_.atlas_coord.as_sampling_coord(
-        sph_module.max_resolution_);
+    world_data.atlas_coord = world_sphere_.atlas_coord.as_sampling_coord();
     has_update = true;
   }
 

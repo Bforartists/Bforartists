@@ -62,7 +62,7 @@ void Light::sync(ShadowModule &shadows, const Object *ob, float threshold)
   this->influence_radius_invsqr_volume = 1.0f / square_f(max_ff(influence_radius_volume, 1e-8f));
 
   this->color = float3(&la->r) * la->energy;
-  normalize_m4_m4_ex(this->object_mat.ptr(), ob->object_to_world, scale);
+  normalize_m4_m4_ex(this->object_mat.ptr(), ob->object_to_world().ptr(), scale);
   /* Make sure we have consistent handedness (in case of negatively scaled Z axis). */
   float3 cross = math::cross(float3(this->_right), float3(this->_up));
   if (math::dot(cross, float3(this->_back)) < 0.0f) {
@@ -77,6 +77,8 @@ void Light::sync(ShadowModule &shadows, const Object *ob, float threshold)
   this->power[LIGHT_TRANSMIT] = la->diff_fac * point_power;
   this->power[LIGHT_SPECULAR] = la->spec_fac * shape_power;
   this->power[LIGHT_VOLUME] = la->volume_fac * point_power;
+
+  this->pcf_radius = la->shadow_filter_radius;
 
   eLightType new_type = to_light_type(la->type, la->area_shape, la->mode & LA_USE_SOFT_FALLOFF);
   if (assign_if_different(this->type, new_type)) {
@@ -338,7 +340,7 @@ void LightModule::end_sync()
   if (sun_lights_len_ + local_lights_len_ > CULLING_MAX_ITEM) {
     sun_lights_len_ = min_ii(sun_lights_len_, CULLING_MAX_ITEM);
     local_lights_len_ = min_ii(local_lights_len_, CULLING_MAX_ITEM - sun_lights_len_);
-    inst_.info = "Error: Too many lights in the scene.";
+    inst_.info += "Error: Too many lights in the scene.\n";
   }
   lights_len_ = sun_lights_len_ + local_lights_len_;
 
@@ -471,7 +473,7 @@ void LightModule::set_view(View &view, const int2 extent)
 void LightModule::debug_draw(View &view, GPUFrameBuffer *view_fb)
 {
   if (inst_.debug_mode == eDebugMode::DEBUG_LIGHT_CULLING) {
-    inst_.info = "Debug Mode: Light Culling Validation";
+    inst_.info += "Debug Mode: Light Culling Validation\n";
     inst_.hiz_buffer.update();
     GPU_framebuffer_bind(view_fb);
     inst_.manager->submit(debug_draw_ps_, view);

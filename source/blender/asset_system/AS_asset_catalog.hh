@@ -8,15 +8,14 @@
 
 #pragma once
 
-#include <map>
 #include <memory>
+#include <mutex>
 #include <set>
 #include <string>
 
 #include "BLI_function_ref.hh"
 #include "BLI_map.hh"
 #include "BLI_set.hh"
-#include "BLI_string_ref.hh"
 #include "BLI_uuid.h"
 #include "BLI_vector.hh"
 
@@ -41,12 +40,17 @@ using OwningAssetCatalogMap = Map<CatalogID, std::unique_ptr<AssetCatalog>>;
  * directory hierarchy). */
 class AssetCatalogService {
   std::unique_ptr<AssetCatalogCollection> catalog_collection_;
+
+  /**
+   * Cached catalog tree storage. Lazy-created by #AssetCatalogService::catalog_tree().
+   */
   std::unique_ptr<AssetCatalogTree> catalog_tree_;
-  CatalogFilePath asset_library_root_;
+  std::mutex catalog_tree_mutex_;
 
   Vector<std::unique_ptr<AssetCatalogCollection>> undo_snapshots_;
   Vector<std::unique_ptr<AssetCatalogCollection>> redo_snapshots_;
 
+  const CatalogFilePath asset_library_root_;
   const bool is_read_only_ = false;
 
  public:
@@ -55,9 +59,8 @@ class AssetCatalogService {
   struct read_only_tag {};
 
  public:
-  AssetCatalogService();
+  explicit AssetCatalogService(const CatalogFilePath &asset_library_root = {});
   explicit AssetCatalogService(read_only_tag);
-  explicit AssetCatalogService(const CatalogFilePath &asset_library_root);
 
   /**
    * Set tag indicating that some catalog modifications are unsaved, which could
@@ -84,8 +87,13 @@ class AssetCatalogService {
   /**
    * Duplicate the catalogs from \a other_service into this one. Does not rebuild the tree, this
    * needs to be done by the caller (call #rebuild_tree()!).
+   *
+   * \note If a catalog from \a other already exists in this collection (identified by catalog ID),
+   * it will be skipped and \a on_duplicate_items will be called.
    */
-  void add_from_existing(const AssetCatalogService &other_service);
+  void add_from_existing(const AssetCatalogService &other_service,
+                         FunctionRef<void(const AssetCatalog &existing,
+                                          const AssetCatalog &to_be_ignored)> on_duplicate_items);
 
   /**
    * Write the catalog definitions to disk.
@@ -124,15 +132,6 @@ class AssetCatalogService {
    *   data). This includes in-memory marked-as-deleted catalogs.
    */
   void reload_catalogs();
-
-  /**
-   * Make sure the tree is updated to the latest collection of catalogs stored in this service.
-   * Does not depend on a CDF file being available so this can be called on a service that stores
-   * catalogs that are not stored in a CDF.
-   * Most API functions that modify catalog data will trigger this, unless otherwise specified (for
-   * batch operations).
-   */
-  void rebuild_tree();
 
   /** Return catalog with the given ID. Return nullptr if not found. */
   AssetCatalog *find_catalog(CatalogID catalog_id) const;
@@ -178,7 +177,10 @@ class AssetCatalogService {
    */
   void update_catalog_path(CatalogID catalog_id, const AssetCatalogPath &new_catalog_path);
 
-  AssetCatalogTree *get_catalog_tree();
+  /**
+   * May be called from multiple threads.
+   */
+  const AssetCatalogTree &catalog_tree();
 
   /** Return true only if there are no catalogs known. */
   bool is_empty() const;
@@ -239,7 +241,7 @@ class AssetCatalogService {
    * Construct an in-memory catalog definition file (CDF) from the currently known catalogs.
    * This object can then be processed further before saving to disk. */
   std::unique_ptr<AssetCatalogDefinitionFile> construct_cdf_in_memory(
-      const CatalogFilePath &file_path);
+      const CatalogFilePath &file_path) const;
 
   /**
    * Find a suitable path to write a CDF to.
@@ -250,7 +252,13 @@ class AssetCatalogService {
   static CatalogFilePath find_suitable_cdf_path_for_writing(
       const CatalogFilePath &blend_file_path);
 
-  std::unique_ptr<AssetCatalogTree> read_into_tree();
+  std::unique_ptr<AssetCatalogTree> read_into_tree() const;
+  /**
+   * Ensure a #catalog_tree() will update the tree. Must be called whenever the contained user
+   * visible catalogs change.
+   * May be called from multiple threads.
+   */
+  void invalidate_catalog_tree();
 
   /**
    * For every catalog, ensure that its parent path also has a known catalog.
@@ -263,117 +271,9 @@ class AssetCatalogService {
   void tag_all_catalogs_as_unsaved_changes();
 
   /* For access by subclasses, as those will not be marked as friend by #AssetCatalogCollection. */
-  AssetCatalogDefinitionFile *get_catalog_definition_file();
-  OwningAssetCatalogMap &get_catalogs();
-  OwningAssetCatalogMap &get_deleted_catalogs();
-};
-
-/**
- * All catalogs that are owned by a single asset library, and managed by a single instance of
- * #AssetCatalogService. The undo system for asset catalog edits contains historical copies of this
- * struct.
- */
-class AssetCatalogCollection {
- protected:
-  /** All catalogs known, except the known-but-deleted ones. */
-  OwningAssetCatalogMap catalogs_;
-
-  /** Catalogs that have been deleted. They are kept around so that the load-merge-save of catalog
-   * definition files can actually delete them if they already existed on disk (instead of the
-   * merge operation resurrecting them). */
-  OwningAssetCatalogMap deleted_catalogs_;
-
-  /* For now only a single catalog definition file is supported.
-   * The aim is to support an arbitrary number of such files per asset library in the future. */
-  std::unique_ptr<AssetCatalogDefinitionFile> catalog_definition_file_;
-
-  /** Whether any of the catalogs have unsaved changes. */
-  bool has_unsaved_changes_ = false;
-
-  friend AssetCatalogService;
-
- public:
-  AssetCatalogCollection() = default;
-  AssetCatalogCollection(const AssetCatalogCollection &other) = delete;
-  AssetCatalogCollection(AssetCatalogCollection &&other) noexcept = default;
-
-  std::unique_ptr<AssetCatalogCollection> deep_copy() const;
-  /**
-   * Copy the catalogs from \a other and append them to this collection. Copies no other data
-   * otherwise.
-   */
-  void add_catalogs_from_existing(const AssetCatalogCollection &other);
-
- protected:
-  static OwningAssetCatalogMap copy_catalog_map(const OwningAssetCatalogMap &orig);
-};
-
-/**
- * Keeps track of which catalogs are defined in a certain file on disk.
- * Only contains non-owning pointers to the #AssetCatalog instances, so ensure the lifetime of this
- * class is shorter than that of the #`AssetCatalog`s themselves.
- */
-class AssetCatalogDefinitionFile {
- protected:
-  /* Catalogs stored in this file. They are mapped by ID to make it possible to query whether a
-   * catalog is already known, without having to find the corresponding `AssetCatalog*`. */
-  Map<CatalogID, AssetCatalog *> catalogs_;
-
- public:
-  /* For now this is the only version of the catalog definition files that is supported.
-   * Later versioning code may be added to handle older files. */
-  const static int SUPPORTED_VERSION;
-  /* String that's matched in the catalog definition file to know that the line is the version
-   * declaration. It has to start with a space to ensure it won't match any hypothetical future
-   * field that starts with "VERSION". */
-  const static std::string VERSION_MARKER;
-  const static std::string HEADER;
-
-  CatalogFilePath file_path;
-
- public:
-  AssetCatalogDefinitionFile() = default;
-
-  /**
-   * Write the catalog definitions to the same file they were read from.
-   * Return true when the file was written correctly, false when there was a problem.
-   */
-  bool write_to_disk() const;
-  /**
-   * Write the catalog definitions to an arbitrary file path.
-   *
-   * Any existing file is backed up to "filename~". Any previously existing backup is overwritten.
-   *
-   * Return true when the file was written correctly, false when there was a problem.
-   */
-  bool write_to_disk(const CatalogFilePath &dest_file_path) const;
-
-  bool contains(CatalogID catalog_id) const;
-  /** Add a catalog, overwriting the one with the same catalog ID. */
-  void add_overwrite(AssetCatalog *catalog);
-  /** Add a new catalog. Undefined behavior if a catalog with the same ID was already added. */
-  void add_new(AssetCatalog *catalog);
-
-  /** Remove the catalog from the collection of catalogs stored in this file. */
-  void forget(CatalogID catalog_id);
-
-  using AssetCatalogParsedFn = FunctionRef<bool(std::unique_ptr<AssetCatalog>)>;
-  void parse_catalog_file(const CatalogFilePath &catalog_definition_file_path,
-                          AssetCatalogParsedFn callback);
-
-  std::unique_ptr<AssetCatalogDefinitionFile> copy_and_remap(
-      const OwningAssetCatalogMap &catalogs, const OwningAssetCatalogMap &deleted_catalogs) const;
-
- protected:
-  bool parse_version_line(StringRef line);
-  std::unique_ptr<AssetCatalog> parse_catalog_line(StringRef line);
-
-  /**
-   * Write the catalog definitions to the given file path.
-   * Return true when the file was written correctly, false when there was a problem.
-   */
-  bool write_to_disk_unsafe(const CatalogFilePath &dest_file_path) const;
-  bool ensure_directory_exists(const CatalogFilePath directory_path) const;
+  const AssetCatalogDefinitionFile *get_catalog_definition_file() const;
+  const OwningAssetCatalogMap &get_catalogs() const;
+  const OwningAssetCatalogMap &get_deleted_catalogs() const;
 };
 
 /**

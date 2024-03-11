@@ -800,7 +800,7 @@
     .flag = MOD_WIREFRAME_REPLACE | MOD_WIREFRAME_OFS_EVEN, \
     .mat_ofs = 0, \
   }
-
+  
 #define _DNA_DEFAULT_GreasePencilOpacityModifierData \
   { \
     .color_mode = MOD_GREASE_PENCIL_COLOR_BOTH, \
@@ -842,7 +842,7 @@
     .offset_mode = MOD_GREASE_PENCIL_OFFSET_RANDOM, \
     .loc = {0.0f, 0.0f, 0.0f}, \
     .rot = {0.0f, 0.0f, 0.0f}, \
-    .scale = {1.0f, 1.0f, 1.0f}, \
+    .scale = {0.0f, 0.0f, 0.0f}, \
     .stroke_step = 1, \
     .stroke_start_offset = 0, \
   }
@@ -888,12 +888,137 @@
 
 #define _DNA_DEFAULT_GreasePencilDashModifierSegment \
   { \
-    .name = "", \
+    .name = "Segment", \
     .dash = 2, \
     .gap = 1, \
     .radius = 1.0f, \
     .opacity = 1.0f, \
     .mat_nr = -1, \
+  }
+
+#define _DNA_DEFAULT_GreasePencilMultiModifierData \
+  { \
+    .flag = 0, \
+    .duplications = 3, \
+    .distance = 0.1f, \
+    .offset = 0.0f, \
+    .fading_center = 0.5f, \
+    .fading_thickness = 0.5f, \
+    .fading_opacity = 0.5f, \
+  }
+
+#define _DNA_DEFAULT_GreasePencilLengthModifierData \
+  { \
+    .start_fac = 0.1f,\
+    .end_fac = 0.1f,\
+    .overshoot_fac = 0.1f,\
+    .flag = GP_LENGTH_USE_CURVATURE,\
+    .point_density = 30.0f,\
+    .segment_influence = 0.0f,\
+    .max_angle = DEG2RAD(170.0f),\
+    .rand_start_fac = 0.0f,\
+    .rand_end_fac = 0.0f,\
+    .rand_offset = 0.0f,\
+    .seed = 0,\
+    .step = 4,\
+  }
+
+#define _DNA_DEFAULT_GreasePencilWeightAngleModifierData \
+  { \
+    .flag = 0, \
+    .axis = 1, \
+  }
+
+#define _DNA_DEFAULT_GreasePencilArrayModifierData \
+  { \
+    .object = NULL, \
+    .count = 2, \
+    .flag = GP_ARRAY_USE_RELATIVE, \
+    .offset = {0.0f, 0.0f, 0.0f}, \
+    .shift = {1.0f, 0.0f, 0.0f}, \
+    .rnd_offset = {0.0f, 0.0f, 0.0f}, \
+    .rnd_rot = {0.0f, 0.0f, 0.0f}, \
+    .rnd_scale = {0.0f, 0.0f, 0.0f}, \
+    .seed = 1, \
+    .mat_rpl = 0, \
+  }
+
+#define _DNA_DEFAULT_GreasePencilWeightProximityModifierData \
+  { \
+    .target_vgname = "", \
+    .flag = 0, \
+    .dist_start = 0.0f, \
+    .dist_end = 20.0f, \
+  }
+  
+#define _DNA_DEFAULT_GreasePencilHookModifierData \
+  { \
+    .object = NULL, \
+    .subtarget = "", \
+    .flag = 0, \
+    .falloff_type = MOD_GREASE_PENCIL_HOOK_Falloff_Smooth, \
+    .parentinv = _DNA_DEFAULT_UNIT_M4, \
+    .cent = {0.0f, 0.0f, 0.0f}, \
+    .falloff = 0.0f, \
+    .force = 0.5f, \
+  }
+
+#define _DNA_DEFAULT_GreasePencilLineartModifierData \
+  { \
+    .edge_types = MOD_LINEART_EDGE_FLAG_INIT_TYPE, \
+    .thickness = 25, \
+    .opacity = 1.0f, \
+    .crease_threshold = DEG2RAD(140.0f), \
+    .calculation_flags = MOD_LINEART_ALLOW_DUPLI_OBJECTS | MOD_LINEART_ALLOW_CLIPPING_BOUNDARIES | \
+                         MOD_LINEART_USE_CREASE_ON_SHARP_EDGES | MOD_LINEART_FILTER_FACE_MARK_KEEP_CONTOUR | \
+                         MOD_LINEART_MATCH_OUTPUT_VGROUP, \
+    /* Do not split by default, this is for better chaining quality. */ \
+    .angle_splitting_threshold = 0.0f, \
+    .chaining_image_threshold = 0.001f, \
+    .stroke_depth_offset = 0.05,\
+    .chain_smooth_tolerance = 0.0f,\
+    .overscan = 0.1f,\
+    .shadow_camera_near = 0.1f, \
+    .shadow_camera_far = 200.0f, \
+    .shadow_camera_size = 200.0f, \
+  }
+
+#define _DNA_DEFAULT_GreasePencilArmatureModifierData \
+  { \
+    .deformflag = ARM_DEF_VGROUP, \
+    .object = NULL, \
+  }
+
+#define _DNA_DEFAULT_GreasePencilTimeModifierData \
+  { \
+    .flag = MOD_GREASE_PENCIL_TIME_KEEP_LOOP, \
+    .offset = 1, \
+    .frame_scale = 1.0f, \
+    .mode = 0, \
+    .sfra = 1, \
+    .efra = 250, \
+    .segments_array = NULL, \
+    .segments_num = 1, \
+    .segment_active_index = 0, \
+  }
+
+#define _DNA_DEFAULT_GreasePencilTimeModifierSegment \
+  { \
+    .name = "Segment", \
+    .segment_start = 1, \
+    .segment_end = 2, \
+    .segment_mode = 0, \
+    .segment_repeat = 1, \
+  }
+
+#define _DNA_DEFAULT_GreasePencilEnvelopeModifierData \
+  { \
+    .spread = 10, \
+    .mode = MOD_GREASE_PENCIL_ENVELOPE_SEGMENTS, \
+    .mat_nr = -1, \
+    .thickness = 1.0f, \
+    .strength = 1.0f, \
+    .skip = 0, \
   }
 
 /* clang-format off */

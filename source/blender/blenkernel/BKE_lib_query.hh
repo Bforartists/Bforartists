@@ -21,10 +21,12 @@
 
 #include "DNA_ID.h"
 
+#include "BLI_function_ref.hh"
 #include "BLI_sys_types.h"
 
 #include <array>
 
+struct IDTypeInfo;
 struct LibraryForeachIDData;
 struct Main;
 
@@ -141,7 +143,7 @@ struct LibraryIDLinkCallbackData {
  *
  * \return a set of flags to control further iteration (0 to keep going).
  */
-typedef int (*LibraryIDLinkCallback)(LibraryIDLinkCallbackData *cb_data);
+using LibraryIDLinkCallback = int (*)(LibraryIDLinkCallbackData *cb_data);
 
 /* Flags for the foreach function itself. */
 enum {
@@ -299,7 +301,9 @@ bool BKE_library_id_can_use_idtype(ID *owner_id, short id_type_used);
 /**
  * Given the owner_id return the type of id_types it can use as a filter_id.
  */
-uint64_t BKE_library_id_can_use_filter_id(const ID *owner_id, const bool include_ui);
+uint64_t BKE_library_id_can_use_filter_id(const ID *owner_id,
+                                          const bool include_ui,
+                                          const IDTypeInfo *owner_id_type = nullptr);
 
 /**
  * Check whether given ID is used locally (i.e. by another non-linked ID).
@@ -321,15 +325,24 @@ void BKE_library_ID_test_usages(Main *bmain,
 /** Parameters and result data structure for the 'unused IDs' functions below. */
 struct LibQueryUnusedIDsData {
   /** Process local data-blocks. */
-  bool do_local_ids;
+  bool do_local_ids = false;
   /** Process linked data-blocks. */
-  bool do_linked_ids;
+  bool do_linked_ids = false;
   /**
    * Process all actually unused data-blocks, including these that are currently only used by
    * other unused data-blocks, and 'dependency islands' of several data-blocks using each-other,
    * without any external valid user.
    */
-  bool do_recursive;
+  bool do_recursive = false;
+
+  /**
+   * Callback filter, if defined and it returns `true`, the given `id` may be considered as unused,
+   * otherwise it will always be considered as used.
+   *
+   * Allows for more complex handling of which IDs should be deleted, on top of the basic
+   * local/linked choices.
+   */
+  blender::FunctionRef<bool(ID *id)> filter_fn = nullptr;
 
   /**
    * Amount of detected as unused data-blocks, per type and total as the last value of the array

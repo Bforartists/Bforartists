@@ -6,52 +6,36 @@
 #include <iomanip>
 #include <random>
 
-#include "BLI_endian_defines.h"
-#include "BLI_endian_switch.h"
 #include "BLI_fileops.hh"
 #include "BLI_path_util.h"
 #include "BLI_serialize.hh"
 #include "BLI_string.h"
-#include "BLI_string_utils.hh"
-#include "BLI_time.h"
 #include "BLI_vector.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+#include "ED_object.hh"
 #include "ED_screen.hh"
 
 #include "DNA_array_utils.hh"
-#include "DNA_curves_types.h"
-#include "DNA_material_types.h"
-#include "DNA_mesh_types.h"
 #include "DNA_modifier_types.h"
-#include "DNA_pointcloud_types.h"
 #include "DNA_windowmanager_types.h"
 
 #include "BKE_bake_geometry_nodes_modifier.hh"
 #include "BKE_context.hh"
-#include "BKE_curves.hh"
 #include "BKE_global.hh"
-#include "BKE_instances.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
-#include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_node_runtime.hh"
-#include "BKE_object.hh"
-#include "BKE_pointcloud.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
 
-#include "BLT_translation.hh"
-
 #include "RNA_access.hh"
 #include "RNA_define.hh"
-#include "RNA_enum_types.hh"
 
 #include "DEG_depsgraph.hh"
-#include "DEG_depsgraph_build.hh"
 
 #include "MOD_nodes.hh"
 
@@ -216,6 +200,12 @@ static bool bake_simulation_poll(bContext *C)
     CTX_wm_operator_poll_msg_set(C, "File must be saved before baking");
     return false;
   }
+  Object *ob = ED_object_active_context(C);
+  const bool use_frame_cache = ob->flag & OB_FLAG_USE_SIMULATION_CACHE;
+  if (!use_frame_cache) {
+    CTX_wm_operator_poll_msg_set(C, "Cache has to be enabled");
+    return false;
+  }
   return true;
 }
 
@@ -364,6 +354,7 @@ static void bake_geometry_nodes_endjob(void *customdata)
   G.is_rendering = false;
   WM_main_add_notifier(NC_OBJECT | ND_MODIFIER, nullptr);
   WM_main_add_notifier(NC_NODE | ND_DISPLAY, nullptr);
+  WM_main_add_notifier(NC_SPACE | ND_SPACE_VIEW3D | NS_VIEW3D_SHADING, nullptr);
 }
 
 static void reset_old_bake(NodeBakeRequest &request)

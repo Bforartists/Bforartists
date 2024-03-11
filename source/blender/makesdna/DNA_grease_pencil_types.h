@@ -334,6 +334,8 @@ typedef struct GreasePencilLayerTreeGroup {
  */
 typedef enum GreasePencilFlag {
   GREASE_PENCIL_ANIM_CHANNEL_EXPANDED = (1 << 0),
+  GREASE_PENCIL_AUTOLOCK_LAYERS = (1 << 1),
+  GREASE_PENCIL_STROKE_ORDER_3D = (1 << 2),
 } GreasePencilFlag;
 
 /**
@@ -488,6 +490,7 @@ typedef struct GreasePencil {
   blender::bke::greasepencil::Layer *get_active_layer();
   void set_active_layer(const blender::bke::greasepencil::Layer *layer);
   bool is_layer_active(const blender::bke::greasepencil::Layer *layer) const;
+  void autolock_inactive_layers();
 
   /* Adding layers and layer groups. */
   /** Adds a new layer with the given name to the top of root group. */
@@ -529,6 +532,13 @@ typedef struct GreasePencil {
   void remove_layer(blender::bke::greasepencil::Layer &layer);
 
   /* Drawing API functions. */
+
+  /**
+   * Low-level resizing of drawings array. Only allocates new entries in the array, no drawings are
+   * created in case of size increase. In case of size decrease, the removed drawings are deleted.
+   */
+  void resize_drawings(const int new_num);
+  /** Add `add_num` new empty geometry drawings. */
   void add_empty_drawings(int add_num);
   void add_duplicate_drawings(int duplicate_num,
                               const blender::bke::greasepencil::Drawing &drawing);

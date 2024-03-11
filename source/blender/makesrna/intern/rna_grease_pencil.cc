@@ -22,6 +22,7 @@
 
 #  include <fmt/format.h>
 
+#  include "BKE_attribute.hh"
 #  include "BKE_grease_pencil.hh"
 
 #  include "BLI_span.hh"
@@ -38,6 +39,22 @@ static void rna_grease_pencil_update(Main * /*bmain*/, Scene * /*scene*/, Pointe
 {
   DEG_id_tag_update(&rna_grease_pencil(ptr)->id, ID_RECALC_GEOMETRY);
   WM_main_add_notifier(NC_GPENCIL | NA_EDITED, rna_grease_pencil(ptr));
+}
+
+static void rna_grease_pencil_autolock(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
+{
+  using namespace blender::bke::greasepencil;
+  GreasePencil *grease_pencil = rna_grease_pencil(ptr);
+  if (grease_pencil->flag & GREASE_PENCIL_AUTOLOCK_LAYERS) {
+    grease_pencil->autolock_inactive_layers();
+  }
+  else {
+    for (Layer *layer : grease_pencil->layers_for_write()) {
+      layer->set_locked(false);
+    }
+  }
+
+  rna_grease_pencil_update(nullptr, nullptr, ptr);
 }
 
 static void rna_grease_pencil_dependency_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
@@ -117,6 +134,34 @@ static void rna_GreasePencilLayer_name_set(PointerRNA *ptr, const char *value)
   GreasePencilLayer *layer = static_cast<GreasePencilLayer *>(ptr->data);
 
   grease_pencil->rename_node(layer->wrap().as_node(), value);
+}
+
+static int rna_GreasePencilLayer_pass_index_get(PointerRNA *ptr)
+{
+  using namespace blender;
+  const GreasePencil &grease_pencil = *rna_grease_pencil(ptr);
+  const bke::greasepencil::Layer &layer =
+      static_cast<const GreasePencilLayer *>(ptr->data)->wrap();
+  const int layer_idx = *grease_pencil.get_layer_index(layer);
+
+  const VArray layer_passes = *grease_pencil.attributes().lookup_or_default<int>(
+      "pass_index", bke::AttrDomain::Layer, 0);
+  return layer_passes[layer_idx];
+}
+
+static void rna_GreasePencilLayer_pass_index_set(PointerRNA *ptr, int value)
+{
+  using namespace blender;
+  GreasePencil &grease_pencil = *rna_grease_pencil(ptr);
+  const bke::greasepencil::Layer &layer =
+      static_cast<const GreasePencilLayer *>(ptr->data)->wrap();
+  const int layer_idx = *grease_pencil.get_layer_index(layer);
+
+  bke::SpanAttributeWriter<int> layer_passes =
+      grease_pencil.attributes_for_write().lookup_or_add_for_write_span<int>(
+          "pass_index", bke::AttrDomain::Layer);
+  layer_passes.span[layer_idx] = std::max(0, value);
+  layer_passes.finish();
 }
 
 static PointerRNA rna_GreasePencil_active_layer_get(PointerRNA *ptr)
@@ -235,6 +280,15 @@ static void rna_def_grease_pencil_layer(BlenderRNA *brna)
       prop, "GreasePencilLayerTreeNode", "flag", GP_LAYER_TREE_NODE_USE_ONION_SKINNING);
   RNA_def_property_ui_text(
       prop, "Onion Skinning", "Display onion skins before and after the current frame");
+  RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_grease_pencil_update");
+
+  /* pass index for compositing and modifiers */
+  prop = RNA_def_property(srna, "pass_index", PROP_INT, PROP_UNSIGNED);
+  RNA_def_property_ui_text(prop, "Pass Index", "Index number for the \"Layer Index\" pass");
+  RNA_def_property_int_funcs(prop,
+                             "rna_GreasePencilLayer_pass_index_get",
+                             "rna_GreasePencilLayer_pass_index_set",
+                             nullptr);
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_grease_pencil_update");
 
   prop = RNA_def_property(srna, "parent", PROP_POINTER, PROP_NONE);
@@ -393,6 +447,14 @@ static void rna_def_grease_pencil_data(BlenderRNA *brna)
                                     nullptr, /* TODO */
                                     nullptr);
   RNA_def_property_ui_text(prop, "Layer Groups", "Grease Pencil layer groups");
+
+  prop = RNA_def_property(srna, "use_autolock_layers", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", GREASE_PENCIL_AUTOLOCK_LAYERS);
+  RNA_def_property_ui_text(
+      prop,
+      "Auto-Lock Layers",
+      "Automatically lock all layers except the active one to avoid accidental changes");
+  RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_grease_pencil_autolock");
 }
 
 void RNA_def_grease_pencil(BlenderRNA *brna)

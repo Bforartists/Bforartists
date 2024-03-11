@@ -39,7 +39,7 @@
 #  include "WM_api.hh"
 #  include "WM_types.hh"
 
-static int rna_Meta_texspace_editable(PointerRNA *ptr, const char ** /*r_info*/)
+static int rna_Meta_texspace_editable(const PointerRNA *ptr, const char ** /*r_info*/)
 {
   MetaBall *mb = (MetaBall *)ptr->data;
   return (mb->texspace_flag & MB_TEXSPACE_FLAG_AUTO) ? 0 : int(PROP_EDITABLE);
@@ -81,7 +81,7 @@ static void rna_MetaBall_redraw_data(Main * /*bmain*/, Scene * /*scene*/, Pointe
 {
   ID *id = ptr->owner_id;
 
-  DEG_id_tag_update(id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(id, ID_RECALC_SYNC_TO_EVAL);
   WM_main_add_notifier(NC_GEOM | ND_DATA, id);
 }
 

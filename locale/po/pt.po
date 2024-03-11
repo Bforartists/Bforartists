@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.1.0 Alpha (b'3d7e84f57d8a')\n"
+"Project-Id-Version: Blender 4.1.0 Beta (b'e938b516a994')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2024-02-05 09:44+0000\n"
-"PO-Revision-Date: 2024-01-30 23:55+0000\n"
+"POT-Creation-Date: 2024-02-26 11:48+0000\n"
+"PO-Revision-Date: 2024-02-23 23:55+0000\n"
 "Last-Translator: Duarte Ramos <duarte.framos@gmail.com>\n"
 "Language-Team: Portuguese <https://translate.blender.org/projects/blender-ui/ui/pt/>\n"
 "Language: pt\n"
@@ -656,6 +656,14 @@ msgstr "Definições de caminhos de movimento"
 
 msgid "Motion Path settings for animation visualization"
 msgstr "As definições de caminhos de movimento para a visualização de animação."
+
+
+msgid "Bake to active Camera"
+msgstr "Fazer bake para a Câmara activa"
+
+
+msgid "Motion path points will be baked into the camera space of the active camera. This means they will only look right when looking through that camera. Switching cameras using markers is not supported"
+msgstr "Os pontos do traçado de movimento serão calculados para o espaço de coordenadas da câmara activa. Isto significa que só aparecerão correctamente quando vendo por essa câmara. Mudar de câmara usando marcadores não é suportado"
 
 
 msgid "Bake Location"
@@ -1490,8 +1498,8 @@ msgid "ID Name"
 msgstr "Nome do identificador"
 
 
-msgid "If this is set, the asset gets a custom ID, otherwise it takes the name of the class used to define the menu (for example, if the class name is \"OBJECT_AST_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_AST_hello\")"
-msgstr "Se isto estiver definido, o recurso recebe um ID personalizado, caso contrário assume o nome da classe utilizada para definir o menu (por exemplo, se o nome da classe é \"OBJECT_AST_hello\", e bl_idname não está definido pelo script, então bl_idname = \"OBJECT_AST_hello\""
+msgid "If this is set, the asset gets a custom ID, otherwise it takes the name of the class used to define the asset (for example, if the class name is \"OBJECT_AST_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_AST_hello\")"
+msgstr "Quando definido, o recurso recebe um ID personalizado, caso contrário assume o nome da classe utilizada para definir o recurso (por exemplo, se o nome da classe é \"OBJECT_AST_hello\", e bl_idname não está definido pelo script, então bl_idname = \"OBJECT_AST_hello\")"
 
 
 msgid "Options"
@@ -2218,11 +2226,11 @@ msgid "Horizontal dimension of the baking map"
 msgstr "Dimensão horizontal do mapa para geração e gravação."
 
 
-msgid "Bezier Curve Point"
-msgstr "Ponto de curva Bézier"
+msgid "Bézier Curve Point"
+msgstr "Ponto de Curva Bézier"
 
 
-msgid "Bezier curve point with two handles"
+msgid "Bézier curve point with two handles"
 msgstr "Ponto de curva Bézier com dois manípulos"
 
 
@@ -2412,14 +2420,6 @@ msgstr "Lápis de cera"
 
 msgid "Grease Pencil data-blocks"
 msgstr "Blocos-de-dados de Grease Pencil"
-
-
-msgid "Grease Pencil v3"
-msgstr "Grease Pencil V3"
-
-
-msgid "Grease Pencil v3 data-blocks"
-msgstr "Data-blocks de Grease Pencil V3"
 
 
 msgid "Hair Curves"
@@ -3519,8 +3519,8 @@ msgid "Ease In"
 msgstr "Suavizar Entrada"
 
 
-msgid "Length of first Bezier Handle (for B-Bones only)"
-msgstr "Comprimento do primeiro manípulo de curva Bézier (somente para B-Bones)"
+msgid "Length of first Bézier Handle (for B-Bones only)"
+msgstr "Comprimento do primeiro Manípulo Bézier (apenas para B-Bones)"
 
 
 msgctxt "Armature"
@@ -3528,8 +3528,8 @@ msgid "Ease Out"
 msgstr "Suavizar Saída"
 
 
-msgid "Length of second Bezier Handle (for B-Bones only)"
-msgstr "Comprimento do segundo manípulo de curva Bézier (somente para B-Bones)"
+msgid "Length of second Bézier Handle (for B-Bones only)"
+msgstr "Comprimento do segundo Manípulo Bézier (apenas para B-Bones)"
 
 
 msgid "B-Bone End Handle Type"
@@ -3972,6 +3972,10 @@ msgid "This collection is owned by a local Armature, or was added via a library 
 msgstr "Esta colecção pertence a uma Armadura local, ou foi adicionada através de uma revogação no actual ficheiro blend"
 
 
+msgid "This bone collection is expanded in the bone collections tree view"
+msgstr "A colecção de ossos está expandida na vista de árvore de colecções de ossos"
+
+
 msgid "Is Local Override"
 msgstr "É Revogação Local"
 
@@ -3982,6 +3986,10 @@ msgstr "Esta colecção foi adicionada via revogação de biblioteca no actual f
 
 msgid "Solo"
 msgstr "Solo"
+
+
+msgid "Show only this bone collection, and others also marked as 'solo'"
+msgstr "Mostrar apenas esta colecção de ossos, e outras marcadas como 'solo'"
 
 
 msgid "Visible"
@@ -4002,6 +4010,10 @@ msgstr "Verdadeiro quando todos os ascendentes desta colecção de ossos estão 
 
 msgid "Effective Visibility"
 msgstr "Efectividade de Visibilidade"
+
+
+msgid "Whether this bone collection is effectively visible in the viewport. This is True when this bone collection and all of its ancestors are visible, or when it is marked as 'solo'"
+msgstr "Se esta colecção de ossos está efectivamente visível na janela de visualização. Verdadeiro quando esta colecção de ossos e todos os ascendentes estão visíveis, ou quando está marcada como 'solo'"
 
 
 msgid "Unique within the Armature"
@@ -4050,6 +4062,14 @@ msgstr "Nome da Colecção Activa"
 
 msgid "The name of the Armature's active bone collection; empty when there is no active collection"
 msgstr "O nome da colecção de ossos activa da Armação; vazio quando não há colecção activa"
+
+
+msgid "Solo Active"
+msgstr "Solo Activo"
+
+
+msgid "Read-ony flag that indicates there is at least one bone collection marked as 'solo'"
+msgstr "Etiqueta só de leitura que indica que há pelo menos uma colecção de ossos marcada como 'solo'"
 
 
 msgid "Theme color or custom color of a bone"
@@ -7222,8 +7242,8 @@ msgid "Floor"
 msgstr "Piso"
 
 
-msgid "Use position (and optionally rotation) of target to define a 'wall' or 'floor' that the owner can not cross"
-msgstr "Usa a posição (e rotação opcional) do alvo para definir uma \"parede\" ou \"piso\" o qual o proprietário não pode atravessar."
+msgid "Use position (and optionally rotation) of target to define a 'wall' or 'floor' that the owner cannot cross"
+msgstr "Usa posição (e opcionalmente rotação) do alvo para definir uma \"parede\" ou \"piso\" que o proprietário não pode atravessar"
 
 
 msgid "Follow Path"
@@ -8054,8 +8074,9 @@ msgid "Movie tracking object to follow (if empty, camera object is used)"
 msgstr "Objeto de rastreamento de filme para seguir (caso vazio, o objeto câmara é usado)."
 
 
+msgctxt "MovieClip"
 msgid "Track"
-msgstr "Rastrear"
+msgstr "Trilha"
 
 
 msgid "Movie tracking track to follow"
@@ -9286,8 +9307,8 @@ msgid "Handle Type"
 msgstr "Tipo de manípulo"
 
 
-msgid "Curve interpolation at this point: Bezier or vector"
-msgstr "Interpolação de curva neste ponto: Bézier ou vetor."
+msgid "Curve interpolation at this point: Bézier or vector"
+msgstr "Interpolação de curva neste ponto: Bézier ou vetor"
 
 
 msgid "Auto Handle"
@@ -9410,7 +9431,7 @@ msgid "Poly"
 msgstr "Polígonos"
 
 
-msgid "Bezier"
+msgid "Bézier"
 msgstr "Bézier"
 
 
@@ -16857,16 +16878,125 @@ msgid "Show an indicator for the current value while dragging"
 msgstr "Mostrar um indicador para o valor actual enquanto arrasta"
 
 
+msgid "Handle All Events"
+msgstr "Lidar com Todos os Eventos"
+
+
+msgid "When highlighted, do not pass events through to be handled by other keymaps"
+msgstr "Quando realçado, não deixar passar eventos para serem processados por outros mapeamentos de teclas"
+
+
 msgid "Grab Cursor"
 msgstr "Agarrar o cursor"
+
+
+msgid "Tool Property Init"
+msgstr "Iniciação de Propriedades de Ferramentas"
+
+
+msgid "Merge active tool properties on activation (does not overwrite existing)"
+msgstr "Juntar propriedades da ferramenta activa na activação (não sobrepõe existentes)"
+
+
+msgid "Select Background"
+msgstr "Seleccionar Fundo"
+
+
+msgid "Don't write into the depth buffer"
+msgstr "Não escrever no buffer de profundidade"
+
+
+msgid "Use Tooltip"
+msgstr "Usar Dica de Ferramenta"
+
+
+msgid "Use tooltips when hovering over this gizmo"
+msgstr "Mostrar dicas quando pairar sobre o gizmo"
+
+
+msgctxt "Operator"
+msgid "GizmoGroup"
+msgstr "GrupoGizmo"
+
+
+msgid "Storage of an operator being executed, or registered after execution"
+msgstr "Armazenamento de um operador a ser executado, ou registado após execução"
+
+
+msgid "Options for this operator type"
+msgstr "Opções para este tipo de operador"
+
+
+msgid "Use in 3D viewport"
+msgstr "Usar na janela de visualização 3D"
+
+
+msgid "Scale to respect zoom (otherwise zoom independent display size)"
+msgstr "Redimensionar para respeitar o nível de aproximação (caso contrário tamanho de exibição independente do nível de aproximação)"
+
+
+msgid "Depth 3D"
+msgstr "Profundidade 3D"
+
+
+msgid "Supports culled depth by other objects in the view"
+msgstr "Suporta profundidade oculta por outros objectos no campo de visão"
+
+
+msgid "Supports selection"
+msgstr "Suportar selecção"
 
 
 msgid "Persistent"
 msgstr "Persistente"
 
 
+msgid "Show Modal All"
+msgstr "Mostrar Todos dos Modais"
+
+
+msgid "Show all while interacting, as well as this group when another is being interacted with"
+msgstr "Mostrar todos durante interacção, assim como este grupo durante interacção com outro"
+
+
+msgid "Exclude Modal"
+msgstr "Excluir Modal"
+
+
+msgid "Show all except this group while interacting"
+msgstr "Mostrar todos excepto este grupo durante interacção"
+
+
+msgid "Tool Init"
+msgstr "Inicialização de Ferramenta"
+
+
+msgid "Postpone running until tool operator run (when used with a tool)"
+msgstr "Adiar execução até correr operador de ferramenta (quando usado com uma ferramenta)"
+
+
+msgid "Use fallback tools keymap"
+msgstr "Usar mapeamento de teclas de reserva da ferramenta"
+
+
+msgid "Add fallback tools keymap to this gizmo type"
+msgstr "Adicionar mapeamento de teclas de ferramentas de reserva a este tipo de gizmo"
+
+
+msgid "VR Redraws"
+msgstr "Redesenhar para RV"
+
+
+msgid "The gizmos are made for use with virtual reality sessions and require special redraw management"
+msgstr "Os Gizmos são feitos para usar com sessões de realidade virtual e requerem gestão especial de representação"
+
+
 msgid "Region Type"
 msgstr "Tipo de região"
+
+
+msgid "The region where the panel is going to be used in"
+msgstr "A região em que o painel vai ser usado"
 
 
 msgid "Window"
@@ -16881,12 +17011,104 @@ msgid "Temporary"
 msgstr "Temporário"
 
 
+msgid "Sidebar"
+msgstr "Barra Lateral"
+
+
 msgid "Tools"
 msgstr "Ferramentas"
 
 
 msgid "Tool Properties"
 msgstr "Ferramentas de propriedades"
+
+
+msgid "Asset Shelf Header"
+msgstr "Cabeçalho da Prateleira de Recursos"
+
+
+msgid "Floating Region"
+msgstr "Região Flutuante"
+
+
+msgid "Navigation Bar"
+msgstr "Barra de Navegação"
+
+
+msgid "Execute Buttons"
+msgstr "Botões de Execução"
+
+
+msgid "Footer"
+msgstr "Rodapé"
+
+
+msgid "Tool Header"
+msgstr "Cabeçalho de Ferramentas"
+
+
+msgid "XR"
+msgstr "XR"
+
+
+msgid "The space where the panel is going to be used in"
+msgstr "O espaço no qual o painel vai ser usado"
+
+
+msgid "Gizmos"
+msgstr "Gizmos"
+
+
+msgid "List of gizmos in the Gizmo Map"
+msgstr "Lista de gizmos no Mapa de Gizmo"
+
+
+msgid "Has Reports"
+msgstr "Tem Relatórios"
+
+
+msgid "GizmoGroup has a set of reports (warnings and errors) from last execution"
+msgstr "O GizmoGroup tem um conjunto de relatórios (avisos e erros) da última execução"
+
+
+msgid "VR Controller Poses Indicator"
+msgstr "Indicador de Poses do Controlador de RV"
+
+
+msgid "VR Landmark Indicators"
+msgstr "Indicador de Marco RV"
+
+
+msgid "VR Viewer Pose Indicator"
+msgstr "Indicador de Pose de Visualizador de RV"
+
+
+msgid "Gizmo Group Properties"
+msgstr "Propriedades do Grupo de Gizmos"
+
+
+msgid "Input properties of a Gizmo Group"
+msgstr "Propriedade de Entrada de um Grupo de Gizmos"
+
+
+msgid "Gizmo Properties"
+msgstr "Propriedades de Gizmo"
+
+
+msgid "Input properties of a Gizmo"
+msgstr "Propriedades de entrada de um Gizmo"
+
+
+msgid "Modifier affecting the Grease Pencil object"
+msgstr "Modificador afectando os objecto Grease Pencil"
+
+
+msgid "Override Modifier"
+msgstr "Revogar Modificador"
+
+
+msgid "In a local override object, whether this modifier comes from the linked reference object, or is local to the override"
+msgstr "Num objecto com revogação local, se este modificador vem do objecto de referência vinculado, ou é local da revogação"
 
 
 msgid "Modifier name"
@@ -16917,52 +17139,176 @@ msgid "Texture Mapping"
 msgstr "Mapeamento de textura"
 
 
+msgid "Change stroke UV texture values"
+msgstr "Alterar valores UV de traço"
+
+
 msgid "Time Offset"
 msgstr "Deslocamento de tempo"
+
+
+msgid "Offset keyframes"
+msgstr "Afastar Fotogramas"
+
+
+msgid "Vertex Weight Angle"
+msgstr "Ângulo de Peso de Vértices"
+
+
+msgid "Generate Vertex Weights base on stroke angle"
+msgstr "Gerar Pesos de Vértices baseados no ângulo de traços"
 
 
 msgid "Vertex Weight Proximity"
 msgstr "Aproximar peso de vértices"
 
 
+msgid "Generate Vertex Weights base on distance to object"
+msgstr "Gerar Pesos de Vértices baseados na distância ao objecto"
+
+
 msgid "Array"
 msgstr "Matriz"
+
+
+msgid "Create array of duplicate instances"
+msgstr "Criar disposição de instâncias duplicadas"
 
 
 msgid "Build"
 msgstr "Construir"
 
 
+msgid "Create duplication of strokes"
+msgstr "Criar duplicação de traços"
+
+
+msgid "Dot Dash"
+msgstr "Ponto Traço"
+
+
+msgid "Generate dot-dash styled strokes"
+msgstr "Gerar traços com estilo de linha ponto-traço"
+
+
 msgid "Envelope"
 msgstr "Envelope"
+
+
+msgid "Create an envelope shape"
+msgstr "Criar uma forma invólucro"
+
+
+msgid "Extend or shrink strokes"
+msgstr "Extender ou encolher traços"
+
+
+msgid "Line Art"
+msgstr "Desenho de Contorno"
+
+
+msgid "Generate line art strokes from selected source"
+msgstr "Gerar traços das linhas de contorno de fonte seleccionada"
 
 
 msgid "Mirror"
 msgstr "Espelhar"
 
 
+msgid "Duplicate strokes like a mirror"
+msgstr "Duplicar traços como um espelho"
+
+
+msgid "Multiple Strokes"
+msgstr "Múltiplos Traços"
+
+
+msgid "Produce multiple strokes along one stroke"
+msgstr "Produzir múltiplas linhas ao longo de um traço"
+
+
+msgid "Simplify stroke reducing number of points"
+msgstr "Simplificar traço reduzindo número de pontos"
+
+
+msgid "Subdivide"
+msgstr "Subdividir"
+
+
+msgid "Subdivide stroke adding more control points"
+msgstr "Subdividir traço adicionando mais pontos de controle"
+
+
+msgid "Deform stroke points using armature object"
+msgstr "Deformar pontos do traço usando um objecto armação"
+
+
 msgid "Hook"
 msgstr "Gancho"
+
+
+msgid "Deform stroke points using objects"
+msgstr "Deformar pontos do traço usando objectos"
 
 
 msgid "Lattice"
 msgstr "Treliça"
 
 
+msgid "Deform strokes using lattice"
+msgstr "Deformar traços usando uma grelha"
+
+
+msgid "Add noise to strokes"
+msgstr "Adicionar ruído aos traços"
+
+
+msgid "Change stroke location, rotation or scale"
+msgstr "Alterar posição, rotação e escala dos traços"
+
+
+msgid "Project the shape onto another object"
+msgstr "Projectar a forma sobre outro objecto"
+
+
 msgid "Smooth"
 msgstr "Suavizar"
+
+
+msgid "Smooth stroke"
+msgstr "Suavizar traço"
+
+
+msgid "Change stroke thickness"
+msgstr "Alterar espessura do traço"
 
 
 msgid "Hue/Saturation"
 msgstr "Matiz e saturação"
 
 
+msgid "Apply changes to stroke colors"
+msgstr "Aplicar alterações às cores dos traços"
+
+
+msgid "Opacity of the strokes"
+msgstr "Opacidade dos traços"
+
+
 msgid "Tint"
 msgstr "Tingimento"
 
 
+msgid "Tint strokes with new color"
+msgstr "Tingir traços com nova cor"
+
+
 msgid "Armature Modifier"
 msgstr "Modificador - Armação"
+
+
+msgid "Change stroke using armature to deform modifier"
+msgstr "Modificador para deformar traço usando uma armação"
 
 
 msgid "Invert vertex group influence"
@@ -16993,16 +17339,84 @@ msgid "Name of Vertex Group which determines influence of modifier per point"
 msgstr "Nome do grupo de vértices que determina a influência do modificador por ponto."
 
 
+msgid "Instance Modifier"
+msgstr "Modificador de Instância"
+
+
+msgid "Create grid of duplicate instances"
+msgstr "Criar grelha de instâncias duplicadas"
+
+
 msgid "Constant Offset"
 msgstr "Deslocamento constante"
+
+
+msgid "Value for the distance between items"
+msgstr "Valor para a distância entre items"
+
+
+msgid "Number of items"
+msgstr "Número de items"
+
+
+msgid "Inverse Pass"
+msgstr "Passagem Inversa"
+
+
+msgid "Inverse filter"
+msgstr "Filtro Inverso"
+
+
+msgid "Inverse Layers"
+msgstr "Camada Inversa"
+
+
+msgid "Inverse Materials"
+msgstr "Material Inverso"
 
 
 msgid "Pass"
 msgstr "Passo"
 
 
+msgid "Layer pass index"
+msgstr "Índice de passagem da camada"
+
+
+msgid "Material used for filtering effect"
+msgstr "Material usado para efeito de filtragem"
+
+
+msgid "Offset Object"
+msgstr "Afastar Objecto"
+
+
 msgid "Use the location and rotation of another object to determine the distance and rotational change between arrayed items"
 msgstr "Usa a localização e rotação de outro objeto para determinar a distância e alteração rotacional entre os itens que estão na matriz."
+
+
+msgid "Pass index"
+msgstr "Índice de passagem"
+
+
+msgid "Random Offset"
+msgstr "Afastamento Aleatório"
+
+
+msgid "Value for changes in location"
+msgstr "Valor para alterações na posição"
+
+
+msgid "Random Rotation"
+msgstr "Aleatorizar a Rotação"
+
+
+msgid "Value for changes in rotation"
+msgstr "Valores para alterações na rotação"
+
+
+msgid "Value for changes in scale"
+msgstr "Valor para alterações na escala"
 
 
 msgid "Relative Offset"
@@ -17013,36 +17427,376 @@ msgid "The size of the geometry will determine the distance between arrayed item
 msgstr "O tamanho da geometria irá determinar a distância entre os itens constantes na matriz."
 
 
+msgid "Index of the material used for generated strokes (0 keep original material)"
+msgstr "Índice do material usado para traços gerados (0 para manter material original)"
+
+
+msgid "Random seed"
+msgstr "Semente aleatória"
+
+
+msgid "Enable offset"
+msgstr "Activar afastamento"
+
+
+msgid "Use Object Offset"
+msgstr "Usar Afastamento do Objecto"
+
+
+msgid "Enable object offset"
+msgstr "Activar afastamento do objecto"
+
+
 msgid "Shift"
 msgstr "Shift"
+
+
+msgid "Enable shift"
+msgstr "Activar Afastamento"
 
 
 msgid "Uniform Scale"
 msgstr "Escala uniforme"
 
 
+msgid "Use the same random seed for each scale axis for a uniform scale"
+msgstr "Usar a mesma semente aleatória para cada eixo de escala para uma escala uniforme"
+
+
 msgid "Build Modifier"
 msgstr "Modificador - Construir"
+
+
+msgid "Animate strokes appearing and disappearing"
+msgstr "Animar traços a aparecer e desaparecer"
+
+
+msgid "Time Alignment"
+msgstr "Alinhamento de Tempo"
+
+
+msgid "How should strokes start to appear/disappear"
+msgstr "Como os traços devem começar a aparecer/desaparece"
+
+
+msgid "Align Start"
+msgstr "Alinhar Inicio"
+
+
+msgid "All strokes start at same time (i.e. short strokes finish earlier)"
+msgstr "Todos os traços começam ao mesmo tempo (traços mais curtos acabam primeiro)"
+
+
+msgid "Align End"
+msgstr "Alinhar Fim"
+
+
+msgid "All strokes end at same time (i.e. short strokes start later)"
+msgstr "Todos os traços acabam ao mesmo tempo (traços mais curtos começam primeiro)"
+
+
+msgid "Fade Factor"
+msgstr "Factor de Desvanecimento"
+
+
+msgid "Defines how much of the stroke is fading in/out"
+msgstr "Define que quantidade do traço tem desvanecimento de entrada ou de saída"
+
+
+msgid "Opacity Strength"
+msgstr "Força da Opacidade"
+
+
+msgid "How much strength fading applies on top of stroke opacity"
+msgstr "Que quantidade de desvanecimento de força é aplicado sobre opacidade do traço"
+
+
+msgid "Thickness Strength"
+msgstr "Força de Espessura"
+
+
+msgid "How much strength fading applies on top of stroke thickness"
+msgstr "Que quantidade de desvanecimento de força é aplicado sobre espessura do traço"
+
+
+msgid "End Frame (when Restrict Frame Range is enabled)"
+msgstr "Fotograma Final (quando Restrição de Intervalo de Fotogramas está activa)"
+
+
+msgid "Start Frame (when Restrict Frame Range is enabled)"
+msgstr "Fotograma de Inicial quando Restrição de Intervalo de Fotogramas está activa)"
+
+
+msgid "Maximum number of frames that the build effect can run for (unless another GP keyframe occurs before this time has elapsed)"
+msgstr "Número máximo de fotogramas em que o efeito de construção pode correr (a não ser que outro fotograma GP ocorra antes deste tempo ter passado)"
+
+
+msgid "How strokes are being built"
+msgstr "Como os traços estão a ser construídos"
+
+
+msgid "Sequential"
+msgstr "Sequencial"
+
+
+msgid "Strokes appear/disappear one after the other, but only a single one changes at a time"
+msgstr "Os traços aparecem/desaparecem um após o outro, mas apenas um se transforma de cada vez"
+
+
+msgid "Concurrent"
+msgstr "Simultâneo"
+
+
+msgid "Multiple strokes appear/disappear at once"
+msgstr "Múltiplos traços aparecem/desaparecem de uma vez"
+
+
+msgid "Builds only new strokes (assuming 'additive' drawing)"
+msgstr "Apenas constrói novos traços (assumindo desenho 'aditivo')"
+
+
+msgid "Object used as build starting position"
+msgstr "Objecto usado como ponto de início da construção"
+
+
+msgid "Defines how much of the stroke is visible"
+msgstr "Define que quantidade do traço está visível"
 
 
 msgid "Speed Factor"
 msgstr "Fator de velocidade"
 
 
+msgid "Multiply recorded drawing speed by a factor"
+msgstr "Multiplicar a velocidade de desenho gravada por um factor"
+
+
+msgid "Maximum Gap"
+msgstr "Intervalo Máximo"
+
+
+msgid "The maximum gap between strokes in seconds"
+msgstr "O intervalo máximo entre traços em segundos"
+
+
 msgid "Delay"
 msgstr "Atraso"
+
+
+msgid "Number of frames after each GP keyframe before the modifier has any effect"
+msgstr "Número de fotogramas após cada fotograma chave do GP antes do modificador ter qualquer efeito"
+
+
+msgid "Output Vertex group"
+msgstr "Grupo de Vértices de Saída"
+
+
+msgid "Timing"
+msgstr "Temporização"
+
+
+msgid "Use drawing speed, a number of frames, or a manual factor to build strokes"
+msgstr "Usar velocidade de desenho, número de fotogramas, ou factor manual para construir traços"
+
+
+msgid "Natural Drawing Speed"
+msgstr "Velocidade Natural de Desenho"
+
+
+msgid "Use recorded speed multiplied by a factor"
+msgstr "Usar velocidade gravada multiplicada por um factor"
+
+
+msgid "Number of Frames"
+msgstr "Número de Fotogramas"
+
+
+msgid "Set a fixed number of frames for all build animations"
+msgstr "Definir um número fixo de fotogramas para todas as animações de contrução"
+
+
+msgid "Percentage Factor"
+msgstr "Factor de Percentagem"
+
+
+msgid "Set a manual percentage to build"
+msgstr "Definir uma percentagem manual para construção"
 
 
 msgid "Transition"
 msgstr "Transição"
 
 
+msgid "How are strokes animated (i.e. are they appearing or disappearing)"
+msgstr "Como são animados os traços (se estão a aparecer ou desaparecer)"
+
+
 msgid "Grow"
 msgstr "Crescer"
 
 
+msgid "Show points in the order they occur in each stroke (e.g. for animating lines being drawn)"
+msgstr "Mostrar pontos na ordem em que ocorrem em cada traço (para animar linhas a ser desenhadas)"
+
+
+msgid "Hide points from the end of each stroke to the start (e.g. for animating lines being erased)"
+msgstr "Esconder pontos do fim para o princípio de cada traço (para animar linhas a ser apagadas)"
+
+
+msgid "Vanish"
+msgstr "Desaparecer"
+
+
+msgid "Hide points in the order they occur in each stroke (e.g. for animating ink fading or vanishing after getting drawn)"
+msgstr "Esconder pontos na ordem em que ocorrem em cada traço (para tinta a desvanecer ou desaparecer após ser desenhada)"
+
+
+msgid "Use Fading"
+msgstr "usar Desvanecimento"
+
+
+msgid "Fade out strokes instead of directly cutting off"
+msgstr "Desvanecer traços em vez de cortar abruptamente"
+
+
+msgid "Restrict Visible Points"
+msgstr "Restringir Pontos Visíveis"
+
+
+msgid "Use a percentage factor to determine the visible points"
+msgstr "Usar factor de percentagem para determinar pontos visíveis"
+
+
+msgid "Only modify strokes during the specified frame range"
+msgstr "Modificar pontos apenas no intervalo especificado"
+
+
+msgid "Hue/Saturation Modifier"
+msgstr "Modificador de Matiz/Saturação"
+
+
+msgid "Change Hue/Saturation modifier"
+msgstr "Alterar modificador de Matiz/Saturação"
+
+
+msgid "Custom curve to apply effect"
+msgstr "Curva personalizada para aplicar o efeito"
+
+
+msgid "Color Hue"
+msgstr "Matiz de Cor"
+
+
+msgid "Set what colors of the stroke are affected"
+msgstr "Que cores do traço são afectadas"
+
+
+msgid "Modify fill and stroke colors"
+msgstr "Modificar preenchimento e contorno"
+
+
+msgid "Modify stroke color only"
+msgstr "Modificar apenas contorno"
+
+
+msgid "Modify fill color only"
+msgstr "Modificar apenas preenchimento"
+
+
+msgid "Color Saturation"
+msgstr "Saturação de Cor"
+
+
 msgid "Custom Curve"
 msgstr "Curva personalizada"
+
+
+msgid "Use a custom curve to define color effect along the strokes"
+msgstr "Usar curva personalizada para definir efeito de cor ao longo do traço"
+
+
+msgid "Color Value"
+msgstr "Valor da Cor"
+
+
+msgid "Dash Modifier"
+msgstr "Modificador de Tracejado"
+
+
+msgid "Create dot-dash effect for strokes"
+msgstr "Cria um efeito de ponto-traço nas linhas"
+
+
+msgid "Offset into each stroke before the beginning of the dashed segment generation"
+msgstr "Afastamento em cada traço antes do início da geração de tracejado"
+
+
+msgid "Active Dash Segment Index"
+msgstr "Índice de Segmento de Tracejado Activo"
+
+
+msgid "Active index in the segment list"
+msgstr "Índice activo na lista de segmentos"
+
+
+msgid "Envelope Modifier"
+msgstr "Modificador de Invólucro"
+
+
+msgid "Envelope stroke effect modifier"
+msgstr "Modificador de efeito de invólucro"
+
+
+msgid "Inverse VertexGroup"
+msgstr "Inverter Grupo de Vértices"
+
+
+msgid "The material to use for the new strokes"
+msgstr "Material a usar para novos traços"
+
+
+msgid "Algorithm to use for generating the envelope"
+msgstr "Algoritmo para gerar o invólucro"
+
+
+msgid "Deform the stroke to best match the envelope shape"
+msgstr "Deformar o traço para melhor corresponder à forma do invólucro"
+
+
+msgid "Add segments to create the envelope. Keep the original stroke"
+msgstr "Adicionar segmentos para criar o invólucro. Manter o traço original"
+
+
+msgid "Fills"
+msgstr "Preenchimentos"
+
+
+msgid "Add fill segments to create the envelope. Don't keep the original stroke"
+msgstr "Adicionar segmentos de preenchimento para criar o invólucro. Não manter o traço original"
+
+
+msgid "Skip Segments"
+msgstr "Saltar Segmentos"
+
+
+msgid "The number of generated segments to skip to reduce complexity"
+msgstr "Número de segmentos gerados a saltar, para reduzir complexidade"
+
+
+msgid "Spread Length"
+msgstr "Força de Dispersão"
+
+
+msgid "The number of points to skip to create straight segments"
+msgstr "Número de pontos a saltar gerados a saltar para cria segmentos direitos"
+
+
+msgid "Multiplier for the strength of the new strokes"
+msgstr "Multiplicador para a força dos novos traços"
+
+
+msgid "Multiplier for the thickness of the new strokes"
+msgstr "Multiplicador para a espessura dos novos traços"
 
 
 msgid "Vertex group name for modulating the deform"
@@ -17053,12 +17807,20 @@ msgid "Hook Modifier"
 msgstr "Modificador - Gancho"
 
 
+msgid "Hook modifier to modify the location of stroke points"
+msgstr "Modificador Gancho para modificar a posição de pontos dos traços"
+
+
 msgid "Hook Center"
 msgstr "Enganchar centro"
 
 
 msgid "Falloff Curve"
 msgstr "Curva de decaimento"
+
+
+msgid "Custom falloff curve"
+msgstr "Curva de decaimento personalizada"
 
 
 msgid "If not zero, the distance from the hook where influence ends"
@@ -17115,6 +17877,10 @@ msgid "Constant"
 msgstr "Constante"
 
 
+msgid "Inverse Vertex Group"
+msgstr "Grupo de vértices inverso"
+
+
 msgid "Matrix"
 msgstr "Matriz"
 
@@ -17147,6 +17913,10 @@ msgid "Lattice Modifier"
 msgstr "Modificador - Treliça"
 
 
+msgid "Change stroke using lattice to deform modifier"
+msgstr "Alterar traço usando uma grelha para deformar"
+
+
 msgid "Lattice object to deform with"
 msgstr "Objeto jaula, com o qual deformar."
 
@@ -17155,12 +17925,188 @@ msgid "Strength of modifier effect"
 msgstr "Força do efeito do modificador."
 
 
+msgid "Length Modifier"
+msgstr "Modificador de comprimento"
+
+
+msgid "Stretch or shrink strokes"
+msgstr "Esticar ou encolher traços"
+
+
+msgid "End Factor"
+msgstr "Factor de término"
+
+
+msgid "Added length to the end of each stroke relative to its length"
+msgstr "Comprimento adicionado ao final de cada traço relativamente ao seu comprimento"
+
+
+msgid "Absolute added length to the end of each stroke"
+msgstr "Comprimento absoluto adicionado ao final de cada traço"
+
+
+msgid "Invert Curvature"
+msgstr "Inverter Curvatura"
+
+
+msgid "Invert the curvature of the stroke's extension"
+msgstr "Inverter a curvatura da extensão do traço"
+
+
+msgid "Filter Angle"
+msgstr "Filtrar Ângulo"
+
+
+msgid "Ignore points on the stroke that deviate from their neighbors by more than this angle when determining the extrapolation shape"
+msgstr "Ignorar pontos do traço que desviam dos vizinhos mais do que este ângulo quando se determina a forma de extrapolação"
+
+
+msgid "Mode to define length"
+msgstr "Modo para definir comprimento"
+
+
+msgid "Length in ratio to the stroke's length"
+msgstr "Comprimento em rácio do comprimento do traço"
+
+
+msgid "Length in geometry space"
+msgstr "Comprimento no espaço da geometria"
+
+
+msgid "Used Length"
+msgstr "Comprimento usado"
+
+
+msgid "Defines what portion of the stroke is used for the calculation of the extension"
+msgstr "Define que porção do traço é usado para o cálculo da extensão"
+
+
 msgid "Point Density"
 msgstr "Ponto de densidade"
 
 
+msgid "Multiplied by Start/End for the total added point count"
+msgstr "Multiplicado pelo Início/Fm para o total de pontos adicionados"
+
+
+msgid "Random End Factor"
+msgstr "Factor de Término Aleatório"
+
+
+msgid "Size of random length added to the end of each stroke"
+msgstr "Tamanho de comprimento aleatório adicionado ao final de cada traço"
+
+
+msgid "Random Noise Offset"
+msgstr "Ruído de Afastamento Aleatório"
+
+
+msgid "Smoothly offset each stroke's random value"
+msgstr "Afastar o valor aleatório de cada traço suavemente"
+
+
+msgid "Random Start Factor"
+msgstr "Factor de Arranque Aleatório"
+
+
+msgid "Size of random length added to the start of each stroke"
+msgstr "Tamanho do comprimento aleatório adicionado ao início de cada traço"
+
+
+msgid "Segment Influence"
+msgstr "Influência de Segmento"
+
+
+msgid "Factor to determine how much the length of the individual segments should influence the final computed curvature. Higher factors makes small segments influence the overall curvature less"
+msgstr "Factor para determinar o quanto o comprimento de segmentos individuais deve influenciar a curvatura computada final. Factores mais altos fazem segmentos menores influenciar menos a curvatura"
+
+
+msgid "Start Factor"
+msgstr "Factor de Arranque"
+
+
+msgid "Added length to the start of each stroke relative to its length"
+msgstr "Comprimento adicionado ao início de cada traço relativo ao seu comprimento"
+
+
+msgid "Absolute added length to the start of each stroke"
+msgstr "Comprimento absoluto adicionado ao início de cada traço"
+
+
 msgid "Step"
 msgstr "Passos"
+
+
+msgid "Number of frames between randomization steps"
+msgstr "Número de fotogramas entre passos de aleatorização"
+
+
+msgid "Use Curvature"
+msgstr "Usar Curvatura"
+
+
+msgid "Follow the curvature of the stroke"
+msgstr "Seguir a curvatura do traço"
+
+
+msgid "Use random values over time"
+msgstr "Usar valores aleatórios ao longo do tempo"
+
+
+msgid "Line Art Modifier"
+msgstr "Modificador Desenho de Contornos"
+
+
+msgid "Image Threshold"
+msgstr "Limite de Imagem"
+
+
+msgid "Segments with an image distance smaller than this will be chained together"
+msgstr "Segmentos a uma distância de imagem inferior a este valor serão encadeados"
+
+
+msgid "Crease Threshold"
+msgstr "Limite de Vinco"
+
+
+msgid "Angles smaller than this will be treated as creases. Crease angle priority: object line art crease override > mesh auto smooth angle > line art default crease"
+msgstr "Ângulos inferiores a este valor serão tratados como vincos. Prioridade de ângulo de vinco: Revogação de vinco de desenho de contornos do objecto > ângulo de auto-suavização da malha > vinco pré-definido do desenho de contornos"
+
+
+msgid "Invert Vertex Group"
+msgstr "Inverter Grupo de Vértices"
+
+
+msgid "Invert source vertex group values"
+msgstr "Inverter valores do grupo de vértices fonte"
+
+
+msgid "Is Baked"
+msgstr "Está Pré-Calculado"
+
+
+msgid "This modifier has baked data"
+msgstr "Este modificador tem dados pré calculada"
+
+
+msgid "Light Object"
+msgstr "Objecto Luz"
+
+
+msgid "Use this light object to generate light contour"
+msgstr "Usar este objecto luz"
+
+
+msgid "The strength value for the generate strokes"
+msgstr "O valor de força para os traços gerados"
+
+
+msgid "Overscan"
+msgstr "Sobre-Margem"
+
+
+msgid "A margin to prevent strokes from ending abruptly at the edge of the image"
+msgstr "Uma margem para prevenir que os traços terminem abruptamente no final de uma imagem"
 
 
 msgid "Shaded"
@@ -17425,6 +18371,10 @@ msgstr "Pincel"
 
 msgid "Font"
 msgstr "Fonte"
+
+
+msgid "Grease Pencil v3"
+msgstr "Grease Pencil V3"
 
 
 msgid "Key"
@@ -18084,10 +19034,6 @@ msgid "Draw a line with dabs separated according to spacing"
 msgstr "Desenha uma linha com tracejamentos separados de acordo com o espaçamento."
 
 
-msgid "Define the stroke curve with a bezier curve (dabs are separated according to spacing)"
-msgstr "Define o traçado da curva com uma curva bézier (os tracejamentos são separados de acordo com o espaçamento)."
-
-
 msgid "Texture Overlay Alpha"
 msgstr "Textura de sobreposição de alfa"
 
@@ -18150,10 +19096,6 @@ msgstr "Desprezar sobreposições"
 
 msgid "Don't show overlay during a stroke"
 msgstr "Não mostra as sobreposições durante os traços."
-
-
-msgid "Define the stroke curve with a bezier curve. Dabs are separated according to spacing"
-msgstr "Define a curva de traço com uma curva bézier. Os tracejados são separados de acordo com o espaçamento."
 
 
 msgid "Custom Icon"
@@ -18710,6 +19652,14 @@ msgstr "Tipo de mapeamento final"
 
 msgid "Start Mapping Type"
 msgstr "Tipo de mapeamento inicial"
+
+
+msgid "Determine how the geometry start factor is mapped to a spline"
+msgstr "Determinar como o factor de arranque da geometria é mapeado numa spline"
+
+
+msgid "Geometry Start Factor"
+msgstr "Factor de Arranque da Geometria"
 
 
 msgid "Round"
@@ -19690,10 +20640,6 @@ msgstr "Modo edição de traço(s)"
 
 msgid "Edit Grease Pencil strokes instead of viewport data"
 msgstr "Permite a edição dos traços de lápis de cera ao invés dos dados na porta de visão."
-
-
-msgid "Grease Pencil data-block"
-msgstr "Bloco de dados de lápis de cera."
 
 
 msgid "Image data-block referencing an external or packed image"
@@ -20702,6 +21648,10 @@ msgstr "O rótulo da árvore de nós."
 
 msgid "Grease Pencil Data"
 msgstr "Dados de lápis de cera"
+
+
+msgid "Grease Pencil data-block"
+msgstr "Bloco de dados de lápis de cera."
 
 
 msgid "Interface"
@@ -25395,10 +26345,6 @@ msgid "Collection of keymaps"
 msgstr "Coleção de mapas de teclas."
 
 
-msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
-msgstr "Ponto de curva Bézier com duas hastes, definindo um fotograma chave dentro de uma curva-f"
-
-
 msgid "Amount to boost elastic bounces for 'elastic' easing"
 msgstr "Quantidade de amplificação de rebatimentos elásticos para uma facilitação tipo elástica"
 
@@ -26143,10 +27089,6 @@ msgid "Backbone Stretcher"
 msgstr "Esticador de espinha dorsal"
 
 
-msgid "Bezier Curve"
-msgstr "Curva Bézier"
-
-
 msgid "Blueprint"
 msgstr "Diagrama de referência"
 
@@ -26269,14 +27211,6 @@ msgstr "Comprimento da espinha dorsal"
 
 msgid "Amount of backbone stretching"
 msgstr "Montante de esticamento da espinha dorsal."
-
-
-msgid "Replace stroke backbone geometry by a Bezier curve approximation of the original backbone geometry"
-msgstr "Substitui a geometria do traço da espinha dorsal por uma aproximação dessa mesma geometria usando uma curva Bézier."
-
-
-msgid "Maximum distance allowed between the new Bezier curve and the original backbone geometry"
-msgstr "Distância máxima permitida entre a nova curva Bézier e a geometria original da espinha dorsal."
 
 
 msgid "Produce a blueprint using circular, elliptic, and square contour strokes"
@@ -26993,6 +27927,10 @@ msgid "Rotation Track Specials"
 msgstr "Especiais para rastreamento de rotação"
 
 
+msgid "Track"
+msgstr "Rastrear"
+
+
 msgid "Show/Hide"
 msgstr "Mostrar ou ocultar"
 
@@ -27064,10 +28002,6 @@ msgstr "Matemática"
 
 msgid "Keying"
 msgstr "Inserção de chaves"
-
-
-msgid "Tracking"
-msgstr "Rastreamento"
 
 
 msgid "Layout"
@@ -33488,10 +34422,6 @@ msgid "Minimum speed for a pixel to be blurred (used to separate background from
 msgstr "Velocidade mínima para que um pixel seja desfocado (usado para separar o plano frontal do plano de fundo)."
 
 
-msgid "Interpolate between frames in a Bezier curve, rather than linearly"
-msgstr "Interpola entre fotogramas dentro de uma curva Bézier, ao invés de linearmente."
-
-
 msgid "Tile Order"
 msgstr "Ordem dos ladrilhos"
 
@@ -37894,15 +38824,6 @@ msgid "Toggle the selection"
 msgstr "Permite alternar a seleção"
 
 
-msgctxt "Operator"
-msgid "Add Bezier Circle"
-msgstr "Adicionar círculo Bézier"
-
-
-msgid "Construct a Bezier Circle"
-msgstr "Constrói um círculo Bézier."
-
-
 msgid "Align the new object to the view"
 msgstr "Alinha o novo objeto para a vista."
 
@@ -37917,15 +38838,6 @@ msgstr "Localização para o novo objeto adicionado."
 
 msgid "Rotation for the newly added object"
 msgstr "Rotação para o novo objeto adicionado."
-
-
-msgctxt "Operator"
-msgid "Add Bezier"
-msgstr "Adicionar Bézier"
-
-
-msgid "Construct a Bezier Curve"
-msgstr "Constrói uma curva Bézier."
 
 
 msgctxt "Operator"
@@ -38119,10 +39031,6 @@ msgstr "Define o tipo de Spline ativa."
 
 msgid "Handles"
 msgstr "Hastes"
-
-
-msgid "Use handles when converting bezier curves into polygons"
-msgstr "Usa as hastes durante a conversão de curvas Bézier em polígonos."
 
 
 msgctxt "Operator"
@@ -38392,9 +39300,12 @@ msgid "Convert rotations to euler ZYX"
 msgstr "Converte rotações para o Euler ZYX."
 
 
-msgctxt "Operator"
-msgid "Export PLY"
-msgstr "Exportar PLY"
+msgid "Ascii"
+msgstr "ASCII"
+
+
+msgid "Save the file in ASCII file format"
+msgstr "Guarda o ficheiro em formato de ficheiro ASCII"
 
 
 msgid "X Forward"
@@ -38441,26 +39352,6 @@ msgid "-Z Up"
 msgstr "-Z Para cima"
 
 
-msgid "Apply Modifiers"
-msgstr "Aplicar modificadores"
-
-
-msgid "Selection Only"
-msgstr "Somente a seleção"
-
-
-msgid "Export selected objects only"
-msgstr "Exporta somente os objetos selecionados."
-
-
-msgid "Ascii"
-msgstr "ASCII"
-
-
-msgid "Save the file in ASCII file format"
-msgstr "Guarda o ficheiro em formato de ficheiro ASCII"
-
-
 msgid "Batch Mode"
 msgstr "Modo de tarefas em lote"
 
@@ -38473,6 +39364,10 @@ msgid "Each object as a file"
 msgstr "Cada objeto como um ficheiro"
 
 
+msgid "Apply Modifiers"
+msgstr "Aplicar modificadores"
+
+
 msgid "Apply the modifiers before saving"
 msgstr "Aplica os modificadores antes de guardar."
 
@@ -38483,6 +39378,14 @@ msgstr "Unidades da cena"
 
 msgid "Apply current scene's unit (as defined by unit scale) to exported data"
 msgstr "Aplica as unidades atuais da cena (como definidas pelas unidades de escala) para os dados exportados."
+
+
+msgid "Selection Only"
+msgstr "Somente a seleção"
+
+
+msgid "Export selected objects only"
+msgstr "Exporta somente os objetos selecionados."
 
 
 msgctxt "Operator"
@@ -38796,14 +39699,6 @@ msgstr "Converte todas as faces para triângulos"
 
 msgid "Add binormal and tangent vectors, together with normal they form the tangent space (will only work correctly with tris/quads only meshes!)"
 msgstr "Adiciona vetores binormais e tangentes, juntamente com as normais que eles formam dentro do espaço tangente (só funciona corretamente com malhas formadas por triângulos ou quadriláteros !)."
-
-
-msgid "Material Groups"
-msgstr "Grupos de materiais"
-
-
-msgid "Smooth Groups"
-msgstr "Grupos suavizados"
 
 
 msgid "Compress"
@@ -39582,16 +40477,8 @@ msgid "Animation path"
 msgstr "Converte os traços em guias do tipo curvas de caminho para uso em animações."
 
 
-msgid "Smooth Bezier curve"
-msgstr "Converte os traços em curvas bézier suavizadas."
-
-
 msgid "Polygon Curve"
 msgstr "Curva poligonal"
-
-
-msgid "Bezier curve with straight-line segments (vector handles)"
-msgstr "Converte os traços em curvas bézier com segmentos de linha reta, usando manípulos do tipo vetor."
 
 
 msgid "Link Strokes"
@@ -40511,6 +41398,10 @@ msgid "Flat"
 msgstr "Achatar"
 
 
+msgid "By Material"
+msgstr "Através do material"
+
+
 msgctxt "Operator"
 msgid "Select Mode"
 msgstr "Modo de seleção"
@@ -40883,11 +41774,6 @@ msgid "Shadeless"
 msgstr "Insensível a luzes ou sombras"
 
 
-msgctxt "Operator"
-msgid "Import PLY"
-msgstr "Importar PLY"
-
-
 msgid "Load STL triangle mesh data"
 msgstr "Carrega os dados de malha de triângulos STL."
 
@@ -41023,10 +41909,6 @@ msgstr "Usar rotação prévia ou posterior"
 
 msgid "Use pre/post rotation from FBX transform (you may have to disable that in some cases)"
 msgstr "Usa uma rotação prévia ou posterior a partir das transformações FBX (será necessário desativar esta funcionalidade em alguns casos)."
-
-
-msgid "Import OBJ groups as vertex groups"
-msgstr "Importa os grupos OBJ como grupos de vértices."
 
 
 msgctxt "Operator"
@@ -43158,10 +44040,6 @@ msgstr "Seleciona regiões de face similares as da seleção atual."
 
 msgid "Separate selected geometry into a new mesh"
 msgstr "Separa a geometria selecionada em uma nova malha."
-
-
-msgid "By Material"
-msgstr "Através do material"
 
 
 msgctxt "Operator"
@@ -47880,10 +48758,6 @@ msgstr "Usa a janela de visualização 3D atual para renderização, caso contr�
 
 msgid "Write Image"
 msgstr "Gravar imagem"
-
-
-msgid "Save rendered the image to the output path (used only when animation is disabled)"
-msgstr "Guarda a imagem renderizada no caminho de saída (usada somente quando a animação está desativada)."
 
 
 msgctxt "Operator"
@@ -52624,6 +53498,10 @@ msgid "Print memory statistics to the console"
 msgstr "Imprime estatísticas de memória na linha de comando."
 
 
+msgid "Import OBJ groups as vertex groups"
+msgstr "Importa os grupos OBJ como grupos de vértices."
+
+
 msgid "Open a Blender file"
 msgstr "Abre um ficheiro Blender."
 
@@ -52673,6 +53551,16 @@ msgstr "Permite adicionar ou remover uma predefinição de operador."
 
 msgid "Open a path in a file browser"
 msgstr "Abre um caminho em um navegador de ficheiros."
+
+
+msgctxt "Operator"
+msgid "Export PLY"
+msgstr "Exportar PLY"
+
+
+msgctxt "Operator"
+msgid "Import PLY"
+msgstr "Importar PLY"
 
 
 msgctxt "Operator"
@@ -53652,11 +54540,6 @@ msgstr "Solucionar"
 
 msgid "Transforms"
 msgstr "Transformações"
-
-
-msgctxt "MovieClip"
-msgid "Scene Setup"
-msgstr "Definição de cena"
 
 
 msgid "Predefined track color"
@@ -59651,14 +60534,6 @@ msgid "Vertex weight group, to blend with basis shape"
 msgstr "Grupo de vértices de peso, para mesclar com o formato base."
 
 
-msgid "Shape Key Bezier Point"
-msgstr "Ponto Bézier de chave de formato"
-
-
-msgid "Point in a shape key for Bezier curves"
-msgstr "Ponto em uma chave de formato para curvas Bézier."
-
-
 msgid "Handle 1 Location"
 msgstr "Localização do manípulo 1"
 
@@ -59969,11 +60844,6 @@ msgstr "Espaço do editor de clipes"
 
 msgid "Clip editor space data"
 msgstr "Espaço de dados do editor de clipes."
-
-
-msgctxt "MovieClip"
-msgid "Track"
-msgstr "Trilha"
 
 
 msgid "2D Cursor Location"
@@ -60521,10 +61391,6 @@ msgstr "Mostra o cursor 2D"
 
 msgid "Show Handles"
 msgstr "Mostrar hastes"
-
-
-msgid "Show handles of Bezier control points"
-msgstr "Mostra as hastes dos pontos de controlo das curvas Bézier."
 
 
 msgid "Auto Normalization"
@@ -61335,18 +62201,6 @@ msgid "Continuously unwrap the selected UV island while transforming pinned vert
 msgstr "Desdobra continuamente a ilha de UV selecionada durante a transformação de vértices afixados."
 
 
-msgid "Element of a curve, either NURBS, Bezier or Polyline or a character with text objects"
-msgstr "Elemento de uma curva, tanto NURBS, Bézier, Poli-linha ou caracteres com objetos de texto."
-
-
-msgid "Bezier Points"
-msgstr "Pontos Bézier"
-
-
-msgid "Collection of points for Bezier curves only"
-msgstr "Coleção de pontos somente para curvas Bézier."
-
-
 msgid "Character Index"
 msgstr "Índice de caracteres"
 
@@ -61391,10 +62245,6 @@ msgid "Radius Interpolation"
 msgstr "Interpolação dos raios"
 
 
-msgid "The type of radius interpolation for Bezier curves"
-msgstr "Define o tipo de interpolação para construção dos raios das curvas Bézier."
-
-
 msgid "Curve or Surface subdivisions per segment"
 msgstr "O número de subdivisões por segmento de curva ou superfície."
 
@@ -61407,20 +62257,8 @@ msgid "Tilt Interpolation"
 msgstr "Interpolação das inclinações"
 
 
-msgid "The type of tilt interpolation for 3D, Bezier curves"
-msgstr "Define o tipo de interpolação das inclinações das curvas 3D e curvas Bézier."
-
-
 msgid "The interpolation type for this curve element"
 msgstr "Define o tipo de interpolação para este elemento de curva."
-
-
-msgid "Bezier U"
-msgstr "Bézier U"
-
-
-msgid "Bezier V"
-msgstr "Bézier V"
 
 
 msgid "Make this curve or surface a closed loop in the U direction"
@@ -61441,14 +62279,6 @@ msgstr "Terminação V"
 
 msgid "Smooth the normals of the surface or beveled curve"
 msgstr "Suaviza as normais da superfície ou curva perfilada."
-
-
-msgid "Spline Bezier Points"
-msgstr "Pontos de spline Bézier"
-
-
-msgid "Collection of spline Bezier points"
-msgstr "Coleção de pontos de uma spline Bézier."
 
 
 msgid "Spline point without handles"
@@ -61493,10 +62323,6 @@ msgstr "Fotograma encolhido"
 
 msgid "Combine both views in a squeezed image"
 msgstr "Combina ambas as visualizações em uma imagem encolhida."
-
-
-msgid "Lights user to display objects in solid draw mode"
-msgstr "Luzes do utilizador para mostrar objetos dentro do modo de desenho sólido."
 
 
 msgid "Map X and Y coordinates directly"
@@ -64548,6 +65374,10 @@ msgid "Invert Selection"
 msgstr "Inverter seleção"
 
 
+msgid "Tracking"
+msgstr "Rastreamento"
+
+
 msgctxt "Operator"
 msgid "New"
 msgstr "Novo(a)"
@@ -66148,11 +66978,6 @@ msgstr "Macaco"
 
 
 msgctxt "Operator"
-msgid "Bezier"
-msgstr "Bézier"
-
-
-msgctxt "Operator"
 msgid "Nurbs Curve"
 msgstr "Curva Nurbs"
 
@@ -67543,16 +68368,6 @@ msgstr "Objeto ativo não é uma curva selecionada."
 
 
 msgctxt "Curve"
-msgid "BezierCurve"
-msgstr "Bézier - Curva"
-
-
-msgctxt "Curve"
-msgid "BezierCircle"
-msgstr "Bézier - Círculo"
-
-
-msgctxt "Curve"
 msgid "CurvePath"
 msgstr "Curva - Guia de caminho"
 
@@ -67680,10 +68495,6 @@ msgstr "Não é possível alterar para uma camada não existente (O índice afet
 
 msgid "No strokes to paste, select and copy some points before trying again"
 msgstr "Sem traços a ser colados, por favor, selecione e copie alguns pontos antes de tentar novamente."
-
-
-msgid "Can not paste strokes when active layer is hidden or locked"
-msgstr "Não é possível colar traços quando uma camada ativa está oculta ou bloqueada."
 
 
 msgid "No grease pencil data"
@@ -68196,6 +69007,14 @@ msgid "Error during export (see Console)"
 msgstr "Erro durante a exportação (veja a linha de comando)."
 
 
+msgid "Material Groups"
+msgstr "Grupos de materiais"
+
+
+msgid "Smooth Groups"
+msgstr "Grupos suavizados"
+
+
 msgid "Rigging"
 msgstr "Arranjo de animação"
 
@@ -68267,10 +69086,6 @@ msgstr "Eixo inválido ou não definido."
 
 msgid "You have to select a string of connected vertices too"
 msgstr "Você deve selecionar também um conjunto de vértices conectados."
-
-
-msgid "Confirm: Enter/LClick, Cancel: (Esc/RClick), Thickness: %s, Depth (Ctrl to tweak): %s (%s), Outset (O): (%s), Boundary (B): (%s), Individual (I): (%s)"
-msgstr "Confirmar: (Enter ou BEM), Cancelar: (Esc ou BDM), Espessura: %s, Profundidade (Ctrl para ajustar): %s (%s), Contorno (O): (%s), Margens (B): (%s), Individual (I): (%s)"
 
 
 msgid "No intersections found"
@@ -70416,10 +71231,6 @@ msgid "No active camera"
 msgstr "Nenhuma câmara ativa."
 
 
-msgid "Auto Keying On"
-msgstr "Auto inserção de chaves ligada"
-
-
 msgid "along X"
 msgstr "- Ao longo do eixo X"
 
@@ -70458,6 +71269,10 @@ msgstr "- Travado no eixo Z - %s"
 
 msgid "along local Z"
 msgstr "- Ao longo do eixo Z - local"
+
+
+msgid "Auto Keying On"
+msgstr "Auto inserção de chaves ligada"
 
 
 msgid " along Y axis"
@@ -70590,14 +71405,6 @@ msgstr "Escalonando ossos: %s : %s : %s%s %s"
 
 msgid "ScaleB X: %s  Y: %s  Z: %s%s %s"
 msgstr "Escalonando ossos: X: %s Y: %s  Z: %s%s %s"
-
-
-msgid "Bend Angle: %s Radius: %s Alt, Clamp %s"
-msgstr "Ângulo de conformação: %s Raio: %s Alt, Truncar %s"
-
-
-msgid "Bend Angle: %.3f Radius: %.4f, Alt, Clamp %s"
-msgstr "Ângulo de conformação: %.3f Raio: %.4f, Alt, Truncar %s"
 
 
 msgid "Envelope: %s"
@@ -70940,14 +71747,6 @@ msgstr "Não é possível adicionar elemento para a gradiente de cores (limite %
 
 msgid "Relationship"
 msgstr "Relacionamento"
-
-
-msgid "Bezier spline cannot have points added"
-msgstr "Spline Bézier não pode ter pontos adicionados."
-
-
-msgid "Only Bezier splines can be added"
-msgstr "Somente Splines Bézier podem ser adicionadas."
 
 
 msgid "Curve '%s' does not contain spline given"

@@ -2,6 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+#include <fmt/format.h>
 #include <iostream>
 #include <mutex>
 
@@ -12,11 +13,11 @@
 #include "BLI_math_base.hh"
 #include "BLI_set.hh"
 #include "BLI_sort.hh"
-#include "BLI_strict_flags.h"
 #include "BLI_task.hh"
 #include "BLI_threads.h"
-#include "BLI_timeit.hh"
 #include "BLI_virtual_array.hh"
+
+#include "BLI_strict_flags.h" /* Keep last. */
 
 namespace blender::index_mask {
 
@@ -94,23 +95,18 @@ std::ostream &operator<<(std::ostream &stream, const IndexMask &mask)
   mask.to_indices<int64_t>(indices);
   Vector<std::variant<IndexRange, Span<int64_t>>> segments;
   unique_sorted_indices::split_to_ranges_and_spans<int64_t>(indices, 8, segments);
-  std::cout << "(Size: " << mask.size() << " | ";
+  Vector<std::string> parts;
   for (const std::variant<IndexRange, Span<int64_t>> &segment : segments) {
     if (std::holds_alternative<IndexRange>(segment)) {
       const IndexRange range = std::get<IndexRange>(segment);
-      std::cout << range;
+      parts.append(fmt::format("{}-{}", range.first(), range.last()));
     }
     else {
       const Span<int64_t> segment_indices = std::get<Span<int64_t>>(segment);
-      std::cout << "[";
-      for (const int64_t index : segment_indices) {
-        std::cout << index << ",";
-      }
-      std::cout << "]";
+      parts.append(fmt::format("{}", fmt::join(segment_indices, ", ")));
     }
-    std::cout << ", ";
   }
-  std::cout << ")";
+  stream << fmt::format("(Size: {} | {})", mask.size(), fmt::join(parts, ", "));
   return stream;
 }
 
@@ -173,17 +169,17 @@ IndexMask IndexMask::slice_content(const int64_t start, const int64_t size) cons
   return this->slice(*first_it, *last_it, sliced_mask_size);
 }
 
-IndexMask IndexMask::slice_and_offset(const IndexRange range,
-                                      const int64_t offset,
-                                      IndexMaskMemory &memory) const
+IndexMask IndexMask::slice_and_shift(const IndexRange range,
+                                     const int64_t offset,
+                                     IndexMaskMemory &memory) const
 {
-  return this->slice_and_offset(range.start(), range.size(), offset, memory);
+  return this->slice_and_shift(range.start(), range.size(), offset, memory);
 }
 
-IndexMask IndexMask::slice_and_offset(const int64_t start,
-                                      const int64_t size,
-                                      const int64_t offset,
-                                      IndexMaskMemory &memory) const
+IndexMask IndexMask::slice_and_shift(const int64_t start,
+                                     const int64_t size,
+                                     const int64_t offset,
+                                     IndexMaskMemory &memory) const
 {
   if (size == 0) {
     return {};
@@ -191,20 +187,28 @@ IndexMask IndexMask::slice_and_offset(const int64_t start,
   if (std::optional<IndexRange> range = this->to_range()) {
     return range->slice(start, size).shift(offset);
   }
-  IndexMask sliced_mask = this->slice(start, size);
-  if (offset == 0) {
-    return sliced_mask;
+  return this->slice(start, size).shift(offset, memory);
+}
+
+IndexMask IndexMask::shift(const int64_t offset, IndexMaskMemory &memory) const
+{
+  if (indices_num_ == 0) {
+    return {};
   }
-  if (std::optional<IndexRange> range = sliced_mask.to_range()) {
+  BLI_assert(this->first() + offset >= 0);
+  if (offset == 0) {
+    return *this;
+  }
+  if (std::optional<IndexRange> range = this->to_range()) {
     return range->shift(offset);
   }
-  MutableSpan<int64_t> new_segment_offsets = memory.allocate_array<int64_t>(
-      sliced_mask.segments_num_);
-  for (const int64_t i : new_segment_offsets.index_range()) {
-    new_segment_offsets[i] = sliced_mask.segment_offsets_[i] + offset;
+  IndexMask shifted_mask = *this;
+  MutableSpan<int64_t> new_segment_offsets = memory.allocate_array<int64_t>(segments_num_);
+  for (const int64_t i : IndexRange(segments_num_)) {
+    new_segment_offsets[i] = segment_offsets_[i] + offset;
   }
-  sliced_mask.segment_offsets_ = new_segment_offsets.data();
-  return sliced_mask;
+  shifted_mask.segment_offsets_ = new_segment_offsets.data();
+  return shifted_mask;
 }
 
 /**
@@ -231,7 +235,7 @@ static void consolidate_segments(Vector<IndexMaskSegment, 16> &segments,
       return;
     }
     /* Join multiple ranges together into a bigger range. */
-    const IndexRange range{group_first, group_last + 1 - group_first};
+    const IndexRange range = IndexRange::from_begin_end_inclusive(group_first, group_last);
     segments[group_start_segment_i] = IndexMaskSegment(range[0],
                                                        static_indices.take_front(range.size()));
     for (int64_t i = group_start_segment_i + 1; i <= last_segment_i; i++) {
@@ -496,16 +500,12 @@ IndexMask IndexMask::complement(const IndexRange universe, IndexMaskMemory &memo
     if (first_in_range) {
       /* This mask is a range that contains the start of the universe.
        * The complement is a range that contains the end of the universe. */
-      const int64_t complement_start = this_range->one_after_last();
-      const int64_t complement_size = universe.one_after_last() - complement_start;
-      return IndexRange(complement_start, complement_size);
+      return IndexRange::from_begin_end(this_range->one_after_last(), universe.one_after_last());
     }
     if (last_in_range) {
       /* This mask is a range that contains the end of the universe.
        * The complement is a range that contains the start of the universe. */
-      const int64_t complement_start = universe.first();
-      const int64_t complement_size = this_range->first() - complement_start;
-      return IndexRange(complement_start, complement_size);
+      return IndexRange::from_begin_end(universe.first(), this_range->first());
     }
   }
 
@@ -875,7 +875,7 @@ static Array<int16_t> build_every_nth_index_array(const int64_t n)
 }
 
 /**
- * Returns a span containting every nth index. This is optimized for a few special values of n
+ * Returns a span containing every nth index. This is optimized for a few special values of n
  * which are cached. The returned indices have either static life-time, or they are freed when the
  * given memory is feed.
  */
@@ -1100,6 +1100,45 @@ bool operator==(const IndexMask &a, const IndexMask &b)
   });
 
   return equals;
+}
+
+Vector<IndexMask, 4> IndexMask::from_group_ids(const IndexMask &universe,
+                                               const VArray<int> &group_ids,
+                                               IndexMaskMemory &memory,
+                                               VectorSet<int> &r_index_by_group_id)
+{
+  BLI_assert(group_ids.size() >= universe.min_array_size());
+  Vector<IndexMask, 4> result_masks;
+  if (const std::optional<int> single_group_id = group_ids.get_if_single()) {
+    /* Optimize for the case when all group ids are the same. */
+    const int64_t group_index = r_index_by_group_id.index_of_or_add(*single_group_id);
+    const int64_t groups_num = r_index_by_group_id.size();
+    result_masks.resize(groups_num);
+    result_masks[group_index] = universe;
+    return result_masks;
+  }
+
+  const VArraySpan<int> group_ids_span{group_ids};
+  universe.foreach_index([&](const int64_t i) { r_index_by_group_id.add(group_ids_span[i]); });
+  const int64_t groups_num = r_index_by_group_id.size();
+  result_masks.resize(groups_num);
+  IndexMask::from_groups<int>(
+      universe,
+      memory,
+      [&](const int64_t i) {
+        const int group_id = group_ids_span[i];
+        return r_index_by_group_id.index_of(group_id);
+      },
+      result_masks);
+  return result_masks;
+}
+
+Vector<IndexMask, 4> IndexMask::from_group_ids(const VArray<int> &group_ids,
+                                               IndexMaskMemory &memory,
+                                               VectorSet<int> &r_index_by_group_id)
+{
+  return IndexMask::from_group_ids(
+      IndexMask(group_ids.size()), group_ids, memory, r_index_by_group_id);
 }
 
 template IndexMask IndexMask::from_indices(Span<int32_t>, IndexMaskMemory &);

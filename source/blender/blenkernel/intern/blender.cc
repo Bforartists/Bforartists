@@ -25,27 +25,21 @@
 #include "BKE_blender.hh"           /* own include */
 #include "BKE_blender_user_menu.hh" /* own include */
 #include "BKE_blender_version.h"    /* own include */
-#include "BKE_blendfile.hh"
 #include "BKE_brush.hh"
 #include "BKE_cachefile.hh"
 #include "BKE_callbacks.hh"
 #include "BKE_global.hh"
 #include "BKE_idprop.h"
-#include "BKE_image.h"
-#include "BKE_layer.hh"
 #include "BKE_main.hh"
-#include "BKE_node.h"
+#include "BKE_node.hh"
 #include "BKE_report.hh"
-#include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_studiolight.h"
+#include "BKE_writeffmpeg.hh"
 
 #include "DEG_depsgraph.hh"
 
-#include "RE_pipeline.h"
 #include "RE_texture.h"
-
-#include "SEQ_sequencer.hh"
 
 #include "BLF_api.hh"
 
@@ -81,6 +75,9 @@ void BKE_blender_free()
   BKE_callback_global_finalize();
 
   IMB_moviecache_destruct();
+#ifdef WITH_FFMPEG
+  BKE_ffmpeg_exit();
+#endif
 
   BKE_node_system_exit();
 }
@@ -164,14 +161,14 @@ static void bforartists_version_init()
   else {
     BLI_assert_msg(0, "Invalid Bforartists version cycle");
   }
-  
+
   SNPRINTF(bforartists_version_string,
            "%d.%01d.%d%s",
            BFORARTISTS_VERSION / 10,
            BFORARTISTS_VERSION % 10,
            BFORARTISTS_VERSION_PATCH,
            version_cycle);
-  
+
   SNPRINTF(bforartists_version_string_compact,
            "%d.%01d%s",
            BFORARTISTS_VERSION / 10,
@@ -417,6 +414,11 @@ void BKE_blender_userdef_app_template_data_swap(UserDef *userdef_a, UserDef *use
    * - various minor settings (add as needed).
    */
 
+#define VALUE_SWAP(id) \
+  { \
+    std::swap(userdef_a->id, userdef_b->id); \
+  }
+
 #define DATA_SWAP(id) \
   { \
     UserDef userdef_tmp; \
@@ -437,12 +439,12 @@ void BKE_blender_userdef_app_template_data_swap(UserDef *userdef_a, UserDef *use
   } \
   ((void)0)
 
-  std::swap(userdef_a->uistyles, userdef_b->uistyles);
-  std::swap(userdef_a->uifonts, userdef_b->uifonts);
-  std::swap(userdef_a->themes, userdef_b->themes);
-  std::swap(userdef_a->addons, userdef_b->addons);
-  std::swap(userdef_a->user_keymaps, userdef_b->user_keymaps);
-  std::swap(userdef_a->user_keyconfig_prefs, userdef_b->user_keyconfig_prefs);
+  VALUE_SWAP(uistyles);
+  VALUE_SWAP(uifonts);
+  VALUE_SWAP(themes);
+  VALUE_SWAP(addons);
+  VALUE_SWAP(user_keymaps);
+  VALUE_SWAP(user_keyconfig_prefs);
 
   DATA_SWAP(font_path_ui);
   DATA_SWAP(font_path_ui_mono);
@@ -456,9 +458,8 @@ void BKE_blender_userdef_app_template_data_swap(UserDef *userdef_a, UserDef *use
 
   DATA_SWAP(ui_scale);
 
-#undef SWAP_TYPELESS
+#undef VALUE_SWAP
 #undef DATA_SWAP
-#undef LISTBASE_SWAP
 #undef FLAG_SWAP
 }
 
