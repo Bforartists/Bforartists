@@ -13,6 +13,7 @@
 #include "AS_asset_library.hh"
 #include "AS_asset_representation.hh"
 
+#include "BKE_lib_remap.hh"
 #include "BKE_main.hh"
 #include "BKE_preferences.h"
 
@@ -23,6 +24,8 @@
 
 #include "DNA_userdef_types.h"
 
+#include "asset_catalog_collection.hh"
+#include "asset_catalog_definition_file.hh"
 #include "asset_library_service.hh"
 #include "asset_storage.hh"
 #include "utils.hh"
@@ -93,36 +96,11 @@ std::string AS_asset_library_find_suitable_root_path_from_main(const Main *bmain
   return AS_asset_library_find_suitable_root_path_from_path(bmain->filepath);
 }
 
-AssetCatalogService *AS_asset_library_get_catalog_service(const AssetLibrary *library)
-{
-  if (library == nullptr) {
-    return nullptr;
-  }
-  return library->catalog_service.get();
-}
-
-AssetCatalogTree *AS_asset_library_get_catalog_tree(const AssetLibrary *library)
-{
-  AssetCatalogService *catalog_service = AS_asset_library_get_catalog_service(library);
-  if (catalog_service == nullptr) {
-    return nullptr;
-  }
-
-  return catalog_service->get_catalog_tree();
-}
-
-void AS_asset_library_refresh_catalog_simplename(AssetLibrary *asset_library,
-                                                 AssetMetaData *asset_data)
-{
-  asset_library->refresh_catalog_simplename(asset_data);
-}
-
-void AS_asset_library_remap_ids(const IDRemapper *mappings)
+void AS_asset_library_remap_ids(const bke::id::IDRemapper &mappings)
 {
   AssetLibraryService *service = AssetLibraryService::get();
   service->foreach_loaded_asset_library(
-      [mappings](AssetLibrary &library) { library.remap_ids_and_remove_invalid(*mappings); },
-      true);
+      [mappings](AssetLibrary &library) { library.remap_ids_and_remove_invalid(mappings); }, true);
 }
 
 void AS_asset_full_path_explode_from_weak_ref(const AssetWeakReference *asset_reference,
@@ -191,7 +169,7 @@ AssetLibrary::AssetLibrary(eAssetLibraryType library_type, StringRef name, Strin
       name_(name),
       root_path_(std::make_shared<std::string>(utils::normalize_directory_path(root_path))),
       asset_storage_(std::make_unique<AssetStorage>()),
-      catalog_service(std::make_unique<AssetCatalogService>())
+      catalog_service_(std::make_unique<AssetCatalogService>())
 {
 }
 
@@ -213,7 +191,13 @@ void AssetLibrary::load_catalogs()
 {
   auto catalog_service = std::make_unique<AssetCatalogService>(root_path());
   catalog_service->load_from_disk();
-  this->catalog_service = std::move(catalog_service);
+  std::lock_guard lock{catalog_service_mutex_};
+  catalog_service_ = std::move(catalog_service);
+}
+
+AssetCatalogService &AssetLibrary::catalog_service() const
+{
+  return *catalog_service_;
 }
 
 void AssetLibrary::refresh_catalogs() {}
@@ -239,7 +223,7 @@ bool AssetLibrary::remove_asset(AssetRepresentation &asset)
   return asset_storage_->remove_asset(asset);
 }
 
-void AssetLibrary::remap_ids_and_remove_invalid(const IDRemapper &mappings)
+void AssetLibrary::remap_ids_and_remove_invalid(const bke::id::IDRemapper &mappings)
 {
   asset_storage_->remap_ids_and_remove_invalid(mappings);
 }
@@ -278,12 +262,8 @@ void AssetLibrary::on_blend_save_post(Main *main,
                                       PointerRNA ** /*pointers*/,
                                       const int /*num_pointers*/)
 {
-  if (this->catalog_service == nullptr) {
-    return;
-  }
-
   if (save_catalogs_when_file_is_saved) {
-    this->catalog_service->write_to_disk(main->filepath);
+    this->catalog_service().write_to_disk(main->filepath);
   }
 }
 
@@ -305,7 +285,7 @@ void AssetLibrary::refresh_catalog_simplename(AssetMetaData *asset_data)
     asset_data->catalog_simple_name[0] = '\0';
     return;
   }
-  const AssetCatalog *catalog = this->catalog_service->find_catalog(asset_data->catalog_id);
+  const AssetCatalog *catalog = this->catalog_service().find_catalog(asset_data->catalog_id);
   if (catalog == nullptr) {
     /* No-op if the catalog cannot be found. This could be the kind of "the catalog definition file
      * is corrupt/lost" scenario that the simple name is meant to help recover from. */
@@ -362,6 +342,12 @@ AssetLibraryReference all_library_reference()
   all_library_ref.custom_library_index = -1;
   all_library_ref.type = ASSET_LIBRARY_ALL;
   return all_library_ref;
+}
+
+void all_library_reload_catalogs_if_dirty()
+{
+  AssetLibraryService *service = AssetLibraryService::get();
+  service->reload_all_library_catalogs_if_dirty();
 }
 
 }  // namespace blender::asset_system

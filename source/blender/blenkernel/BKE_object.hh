@@ -13,6 +13,7 @@
 
 #include "BLI_bounds_types.hh"
 #include "BLI_compiler_attrs.h"
+#include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_sys_types.h"
 #include "BLI_vector.hh"
@@ -54,8 +55,10 @@ void BKE_object_workob_clear(Object *workob);
  * Otherwise, after changing ob->parent you need to call:
  * - #DEG_relations_tag_update(bmain);
  * - #BKE_scene_graph_update_tagged(depsgraph, bmain);
+ *
+ * \return calculated object_to_world.
  */
-void BKE_object_workob_calc_parent(Depsgraph *depsgraph, Scene *scene, Object *ob, Object *workob);
+blender::float4x4 BKE_object_calc_parent(Depsgraph *depsgraph, Scene *scene, Object *ob);
 
 void BKE_object_transform_copy(Object *ob_tar, const Object *ob_src);
 void BKE_object_copy_softbody(Object *ob_dst, const Object *ob_src, int flag);
@@ -319,7 +322,7 @@ blender::Vector<Base *> BKE_object_pose_base_array_get(const Scene *scene,
 void BKE_object_get_parent_matrix(Object *ob, Object *par, float r_parentmat[4][4]);
 
 /**
- * Compute object world transform and store it in `ob->object_to_world`.
+ * Compute object world transform and store it in `ob->object_to_world().ptr()`.
  */
 void BKE_object_where_is_calc(Depsgraph *depsgraph, Scene *scene, Object *ob);
 void BKE_object_where_is_calc_ex(

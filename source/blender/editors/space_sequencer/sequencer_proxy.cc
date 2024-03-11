@@ -8,17 +8,16 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_blenlib.h"
 #include "BLI_ghash.h"
 
 #include "DNA_scene_types.h"
 
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_main.hh"
 #include "BKE_report.hh"
 
-#include "SEQ_iterator.hh"
+#include "BLT_translation.hh"
+
 #include "SEQ_proxy.hh"
 #include "SEQ_relations.hh"
 #include "SEQ_sequencer.hh"
@@ -157,7 +156,8 @@ void SEQUENCER_OT_rebuild_proxy(wmOperatorType *ot)
 
 static int sequencer_enable_proxies_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
-  return WM_operator_props_dialog_popup(C, op, 200);
+  return WM_operator_props_dialog_popup(
+      C, op, 200, IFACE_("Set Selected Strip Proxies"), IFACE_("Set"));
 }
 
 static int sequencer_enable_proxies_exec(bContext *C, wmOperator *op)
@@ -222,7 +222,7 @@ static int sequencer_enable_proxies_exec(bContext *C, wmOperator *op)
   }
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
-  
+
   return OPERATOR_FINISHED;
 }
 

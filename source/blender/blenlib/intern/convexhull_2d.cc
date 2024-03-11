@@ -7,15 +7,46 @@
  * \ingroup bli
  */
 
-#include <stdlib.h>
-#include <string.h>
+#include <algorithm>
+#include <cstdlib>
+#include <cstring>
 
 #include "MEM_guardedalloc.h"
 
+#include "BLI_bounds.hh"
 #include "BLI_convexhull_2d.h"
 #include "BLI_math_vector.h"
-#include "BLI_strict_flags.h"
 #include "BLI_utildefines.h"
+
+#include "BLI_strict_flags.h" /* Keep last. */
+
+/**
+ * Assert the optimized bounds match a brute force check,
+ * disable by default is this is slow for dense hulls, using `O(n^2)` complexity.
+ */
+// #define USE_BRUTE_FORCE_ASSERT
+
+using namespace blender;
+
+/* -------------------------------------------------------------------- */
+/** \name Internal Math Functions
+ * \{ */
+
+static float sincos_rotate_cw_x(const float2 &sincos, const float2 &p)
+{
+  return (sincos[0] * p[0]) + (sincos[1] * p[1]);
+}
+
+static float sincos_rotate_cw_y(const float2 &sincos, const float2 &p)
+{
+  return (sincos[1] * p[0]) - (sincos[0] * p[1]);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Main Convex-Hull Calculation
+ * \{ */
 
 /* Copyright 2001, softSurfer (http://www.softsurfer.com)
  * This code may be freely used and modified for any purpose
@@ -23,12 +54,7 @@
  * SoftSurfer makes no warranty for this code, and cannot be held
  * liable for any real or imagined damage resulting from its use.
  * Users of this code must verify correctness for their application.
- * http://softsurfer.com/Archive/algorithm_0203/algorithm_0203.htm
- */
-
-/* -------------------------------------------------------------------- */
-/** \name Main Convex-Hull Calculation
- * \{ */
+ * http://softsurfer.com/Archive/algorithm_0203/algorithm_0203.htm */
 
 /**
  * tests if a point is Left|On|Right of an infinite line.
@@ -42,129 +68,107 @@ static float is_left(const float p0[2], const float p1[2], const float p2[2])
   return (p1[0] - p0[0]) * (p2[1] - p0[1]) - (p2[0] - p0[0]) * (p1[1] - p0[1]);
 }
 
-static int BLI_convexhull_2d_sorted(const float (*points)[2], const int points_num, int r_points[])
+static int convexhull_2d_sorted(const float (*points)[2], const int points_num, int r_points[])
 {
   BLI_assert(points_num >= 2); /* Doesn't handle trivial cases. */
-  /* the output array r_points[] will be used as the stack */
+  /* The output array `r_points[]` will be used as the stack. */
   int bot = 0;
-  int top = -1; /* indices for bottom and top of the stack */
-  int i;        /* array scan index */
-  int minmin, minmax;
-  int maxmin, maxmax;
+  /* Indices for bottom and top of the stack. */
+  int top = -1;
+  /* Array scan index. */
+  int i;
+
+  const int minmin = 0;
+  const int maxmax = points_num - 1;
+  int minmax;
+  int maxmin;
+
   float xmax;
 
-  /* Get the indices of points with min x-coord and min|max y-coord */
+  /* Get the indices of points with min X-coord and min|max Y-coord. */
   float xmin = points[0][0];
-  for (i = 1; i < points_num; i++) {
+  for (i = 1; i <= maxmax; i++) {
     if (points[i][0] != xmin) {
       break;
     }
   }
 
-  minmin = 0;
   minmax = i - 1;
-  if (minmax == points_num - 1) { /* degenerate case: all x-coords == xmin */
+  if (minmax == maxmax) { /* Degenerate case: all x-coords == X-min. */
     r_points[++top] = minmin;
     if (points[minmax][1] != points[minmin][1]) {
-      /* a nontrivial segment */
+      /* A nontrivial segment. */
       r_points[++top] = minmax;
     }
-    r_points[++top] = minmin; /* add polygon endpoint */
     BLI_assert(top + 1 <= points_num);
     return top + 1;
   }
 
-  /* Get the indices of points with max x-coord and min|max y-coord */
+  /* Get the indices of points with max X-coord and min|max Y-coord. */
 
-  maxmax = points_num - 1;
-  xmax = points[points_num - 1][0];
-  for (i = points_num - 2; i >= 0; i--) {
+  xmax = points[maxmax][0];
+  for (i = maxmax - 1; i >= 0; i--) {
     if (points[i][0] != xmax) {
       break;
     }
   }
   maxmin = i + 1;
 
-  /* Compute the lower hull on the stack r_points */
-  r_points[++top] = minmin; /* push minmin point onto stack */
+  /* Compute the lower hull on the stack `r_points`. */
+  r_points[++top] = minmin; /* Push `minmin` point onto stack. */
   i = minmax;
   while (++i <= maxmin) {
-    /* the lower line joins points[minmin] with points[maxmin] */
+    /* The lower line joins `points[minmin]` with `points[maxmin]`. */
     if (is_left(points[minmin], points[maxmin], points[i]) >= 0 && i < maxmin) {
-      continue; /* ignore points[i] above or on the lower line */
+      continue; /* Ignore `points[i]` above or on the lower line. */
     }
 
-    while (top > 0) { /* there are at least 2 points on the stack */
-      /* test if points[i] is left of the line at the stack top */
+    while (top > 0) { /* There are at least 2 points on the stack. */
+      /* Test if `points[i]` is left of the line at the stack top. */
       if (is_left(points[r_points[top - 1]], points[r_points[top]], points[i]) > 0.0f) {
-        break; /* points[i] is a new hull vertex */
+        break; /* `points[i]` is a new hull vertex. */
       }
-      top--; /* pop top point off stack */
+      top--; /* Pop top point off stack. */
     }
 
-    r_points[++top] = i; /* push points[i] onto stack */
+    r_points[++top] = i; /* Push `points[i]` onto stack. */
   }
 
-  /* Next, compute the upper hull on the stack r_points above the bottom hull */
-  if (maxmax != maxmin) {     /* if distinct xmax points */
-    r_points[++top] = maxmax; /* push maxmax point onto stack */
+  /* Next, compute the upper hull on the stack `r_points` above the bottom hull. */
+  if (maxmax != maxmin) {     /* If distinct `xmax` points. */
+    r_points[++top] = maxmax; /* Push `maxmax` point onto stack. */
   }
 
   bot = top; /* the bottom point of the upper hull stack */
   i = maxmin;
   while (--i >= minmax) {
-    /* the upper line joins points[maxmax] with points[minmax] */
+    /* The upper line joins `points[maxmax]` with `points[minmax]`. */
     if (is_left(points[maxmax], points[minmax], points[i]) >= 0 && i > minmax) {
-      continue; /* ignore points[i] below or on the upper line */
+      continue; /* Ignore points[i] below or on the upper line. */
     }
 
-    while (top > bot) { /* at least 2 points on the upper stack */
-      /* test if points[i] is left of the line at the stack top */
+    while (top > bot) { /* At least 2 points on the upper stack. */
+      /* Test if `points[i]` is left of the line at the stack top. */
       if (is_left(points[r_points[top - 1]], points[r_points[top]], points[i]) > 0.0f) {
-        break; /* points[i] is a new hull vertex */
+        break; /* points[i] is a new hull vertex. */
       }
-      top--; /* pop top point off stack */
+      top--; /* Pop top point off stack. */
     }
 
     if (points[i][0] == points[r_points[0]][0] && points[i][1] == points[r_points[0]][1]) {
       BLI_assert(top + 1 <= points_num);
-      return top + 1; /* special case (mgomes) */
+      return top + 1; /* Special case (mgomes). */
     }
 
-    r_points[++top] = i; /* push points[i] onto stack */
+    r_points[++top] = i; /* Push points[i] onto stack. */
   }
 
   if (minmax != minmin && r_points[0] != minmin) {
-    r_points[++top] = minmin; /* push joining endpoint onto stack */
+    r_points[++top] = minmin; /* Push joining endpoint onto stack. */
   }
 
   BLI_assert(top + 1 <= points_num);
   return top + 1;
-}
-
-struct PointRef {
-  const float *pt; /* 2d vector */
-};
-
-static int pointref_cmp_yx(const void *a_, const void *b_)
-{
-  const PointRef *a = static_cast<const PointRef *>(a_);
-  const PointRef *b = static_cast<const PointRef *>(b_);
-
-  if (a->pt[1] > b->pt[1]) {
-    return 1;
-  }
-  if (a->pt[1] < b->pt[1]) {
-    return -1;
-  }
-
-  if (a->pt[0] > b->pt[0]) {
-    return 1;
-  }
-  if (a->pt[0] < b->pt[0]) {
-    return -1;
-  }
-  return 0;
 }
 
 int BLI_convexhull_2d(const float (*points)[2], const int points_num, int r_points[])
@@ -176,30 +180,46 @@ int BLI_convexhull_2d(const float (*points)[2], const int points_num, int r_poin
     }
     return points_num;
   }
-  PointRef *points_ref = static_cast<PointRef *>(
-      MEM_mallocN(sizeof(*points_ref) * size_t(points_num), __func__));
+  int *points_map = static_cast<int *>(MEM_mallocN(sizeof(int) * size_t(points_num), __func__));
   float(*points_sort)[2] = static_cast<float(*)[2]>(
       MEM_mallocN(sizeof(*points_sort) * size_t(points_num), __func__));
 
   for (int i = 0; i < points_num; i++) {
-    points_ref[i].pt = points[i];
+    points_map[i] = i;
   }
 
   /* Sort the points by X, then by Y. */
-  qsort(points_ref, size_t(points_num), sizeof(PointRef), pointref_cmp_yx);
+  std::sort(points_map, points_map + points_num, [points](const int &a_index, const int &b_index) {
+    const float *a = points[a_index];
+    const float *b = points[b_index];
+    if (a[1] > b[1]) {
+      return false;
+    }
+    if (a[1] < b[1]) {
+      return true;
+    }
+
+    if (a[0] > b[0]) {
+      return false;
+    }
+    if (a[0] < b[0]) {
+      return true;
+    }
+    return false;
+  });
 
   for (int i = 0; i < points_num; i++) {
-    memcpy(points_sort[i], points_ref[i].pt, sizeof(float[2]));
+    copy_v2_v2(points_sort[i], points[points_map[i]]);
   }
 
-  int points_hull_num = BLI_convexhull_2d_sorted(points_sort, points_num, r_points);
+  int points_hull_num = convexhull_2d_sorted(points_sort, points_num, r_points);
 
   /* Map back to the unsorted index values. */
   for (int i = 0; i < points_hull_num; i++) {
-    r_points[i] = int((const float(*)[2])points_ref[r_points[i]].pt - points);
+    r_points[i] = points_map[r_points[i]];
   }
 
-  MEM_freeN(points_ref);
+  MEM_freeN(points_map);
   MEM_freeN(points_sort);
 
   BLI_assert(points_hull_num <= points_num);
@@ -208,41 +228,41 @@ int BLI_convexhull_2d(const float (*points)[2], const int points_num, int r_poin
 
 /** \} */
 
-/* Helper functions */
-
 /* -------------------------------------------------------------------- */
-/** \name Utility Convex-Hull Functions
+/** \name Comupte AABB Fitting Angle (For Assertion)
  * \{ */
 
-static float BLI_convexhull_aabb_fit_hull_2d(const float (*points_hull)[2], int points_num)
+#if defined(USE_BRUTE_FORCE_ASSERT) && !defined(NDEBUG)
+static float convexhull_aabb_fit_hull_2d_brute_force(const float (*points_hull)[2],
+                                                     int points_hull_num)
 {
   float area_best = FLT_MAX;
-  float dvec_best[2]; /* best angle, delay atan2 */
+  float2 sincos_best = {0.0f, 1.0f}; /* Track the best angle as a unit vector, delaying `atan2`. */
 
-  for (int i = 0, i_prev = points_num - 1; i < points_num; i_prev = i++) {
-    const float *ev_a = points_hull[i];
-    const float *ev_b = points_hull[i_prev];
-    float dvec[2]; /* 2d rotation matrix */
-
-    sub_v2_v2v2(dvec, ev_a, ev_b);
-    if (UNLIKELY(normalize_v2(dvec) == 0.0f)) {
+  for (int i = 0, i_prev = points_hull_num - 1; i < points_hull_num; i_prev = i++) {
+    /* 2D rotation matrix. */
+    float dvec_length = 0.0f;
+    const float2 sincos = math::normalize_and_get_length(
+        float2(points_hull[i]) - float2(points_hull[i_prev]), dvec_length);
+    if (UNLIKELY(dvec_length == 0.0f)) {
       continue;
     }
-    /* rotation matrix */
-    float min[2] = {FLT_MAX, FLT_MAX}, max[2] = {-FLT_MAX, -FLT_MAX};
+
+    blender::Bounds<float> bounds[2] = {{FLT_MAX, -FLT_MAX}, {FLT_MAX, -FLT_MAX}};
     float area_test;
 
-    for (int j = 0; j < points_num; j++) {
-      float tvec[2];
-      mul_v2_v2_cw(tvec, dvec, points_hull[j]);
+    for (int j = 0; j < points_hull_num; j++) {
+      const float2 tvec = {
+          sincos_rotate_cw_x(sincos, points_hull[j]),
+          sincos_rotate_cw_y(sincos, points_hull[j]),
+      };
 
-      min[0] = min_ff(min[0], tvec[0]);
-      min[1] = min_ff(min[1], tvec[1]);
+      bounds[0].min = math::min(bounds[0].min, tvec[0]);
+      bounds[0].max = math::max(bounds[0].max, tvec[0]);
+      bounds[1].min = math::min(bounds[1].min, tvec[1]);
+      bounds[1].max = math::max(bounds[1].max, tvec[1]);
 
-      max[0] = max_ff(max[0], tvec[0]);
-      max[1] = max_ff(max[1], tvec[1]);
-
-      area_test = (max[0] - min[0]) * (max[1] - min[1]);
+      area_test = (bounds[0].max - bounds[0].min) * (bounds[1].max - bounds[1].min);
       if (area_test > area_best) {
         break;
       }
@@ -250,11 +270,148 @@ static float BLI_convexhull_aabb_fit_hull_2d(const float (*points_hull)[2], int 
 
     if (area_test < area_best) {
       area_best = area_test;
-      copy_v2_v2(dvec_best, dvec);
+      sincos_best = sincos;
     }
   }
 
-  return (area_best != FLT_MAX) ? float(atan2(dvec_best[0], dvec_best[1])) : 0.0f;
+  return (area_best != FLT_MAX) ? float(atan2(sincos_best[0], sincos_best[1])) : 0.0f;
+}
+#endif
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Comupte AABB Fitting Angle (Optimized)
+ * \{ */
+
+/**
+ * When using the rotating calipers, step one half of the caliper to a new index.
+ *
+ * Note that this relies on `points_hull` being ordered CCW which #BLI_convexhull_2d ensures.
+ */
+template<int Axis, int AxisSign>
+static float convexhull_2d_compute_extent_on_axis(const float (*points_hull)[2],
+                                                  const int points_hull_num,
+                                                  const float2 &sincos,
+                                                  int *index_p)
+{
+  /* NOTE(@ideasman42): This could be optimized to use a search strategy
+   * that computes the upper bounds and narrows down the result instead of
+   * simply checking every point until the new maximum is reached.
+   * From looking into I couldn't find cases where doing this has significant benefits,
+   * especially when compared with the complexity of using more involved logic for
+   * the common case, where only a few steps are needed.
+   * Typically the number of points to scan is small (around [0..8]).
+   * And while a high-detail hull with single outliner points will cause stepping over
+   * many more points, in practice there are rarely more than a few of these in a convex-hull.
+   * Nevertheless, a high-poly hull that has subtle curves containing many points as well as
+   * some sharp-corners wont perform as well with this method. */
+
+  const int index_init = *index_p;
+  int index_best = index_init;
+  float value_init = (Axis == 0) ? sincos_rotate_cw_x(sincos, points_hull[index_best]) :
+                                   sincos_rotate_cw_y(sincos, points_hull[index_best]);
+  float value_best = value_init;
+  /* Simply scan up the array. */
+  for (int count = 1; count < points_hull_num; count++) {
+    const int index_test = (index_init + count) % points_hull_num;
+    const float value_test = (Axis == 0) ? sincos_rotate_cw_x(sincos, points_hull[index_test]) :
+                                           sincos_rotate_cw_y(sincos, points_hull[index_test]);
+    if ((AxisSign == -1) ? (value_test > value_best) : (value_test < value_best)) {
+      break;
+    }
+    value_best = value_test;
+    index_best = index_test;
+  }
+
+  *index_p = index_best;
+  return value_best;
+}
+
+static float convexhull_aabb_fit_hull_2d(const float (*points_hull)[2], int points_hull_num)
+{
+  float area_best = FLT_MAX;
+  float2 sincos_best; /* Track the best angle as a unit vector, delaying `atan2`. */
+  bool is_first = true;
+
+  /* Initialize to zero because the first pass uses the first index to set the bounds. */
+  blender::Bounds<int> bounds_index[2] = {{0, 0}, {0, 0}};
+
+  for (int i = 0, i_prev = points_hull_num - 1; i < points_hull_num; i_prev = i++) {
+    /* 2D rotation matrix. */
+    float dvec_length = 0.0f;
+    const float2 sincos = math::normalize_and_get_length(
+        float2(points_hull[i]) - float2(points_hull[i_prev]), dvec_length);
+    if (UNLIKELY(dvec_length == 0.0f)) {
+      continue;
+    }
+
+    if (UNLIKELY(is_first)) {
+      is_first = false;
+
+      blender::Bounds<float> bounds[2];
+
+      bounds[0].min = bounds[0].max = sincos_rotate_cw_x(sincos, points_hull[0]);
+      bounds[1].min = bounds[1].max = sincos_rotate_cw_y(sincos, points_hull[0]);
+
+      bounds_index[0].min = bounds_index[0].max = 0;
+      bounds_index[1].min = bounds_index[1].max = 0;
+
+      for (int j = 1; j < points_hull_num; j++) {
+        const float2 tvec = {
+            sincos_rotate_cw_x(sincos, points_hull[j]),
+            sincos_rotate_cw_y(sincos, points_hull[j]),
+        };
+        for (int axis = 0; axis < 2; axis++) {
+          if (tvec[axis] < bounds[axis].min) {
+            bounds[axis].min = tvec[axis];
+            bounds_index[axis].min = j;
+          }
+          if (tvec[axis] > bounds[axis].max) {
+            bounds[axis].max = tvec[axis];
+            bounds_index[axis].max = j;
+          }
+        }
+      }
+
+      area_best = (bounds[0].max - bounds[0].min) * (bounds[1].max - bounds[1].min);
+      sincos_best = sincos;
+      continue;
+    }
+
+    /* Step the calipers to the new rotation `sincos`, returning the bounds at the same time. */
+    blender::Bounds<float> bounds_test[2] = {
+        {convexhull_2d_compute_extent_on_axis<0, -1>(
+             points_hull, points_hull_num, sincos, &bounds_index[0].min),
+         convexhull_2d_compute_extent_on_axis<0, 1>(
+             points_hull, points_hull_num, sincos, &bounds_index[0].max)},
+        {convexhull_2d_compute_extent_on_axis<1, -1>(
+             points_hull, points_hull_num, sincos, &bounds_index[1].min),
+         convexhull_2d_compute_extent_on_axis<1, 1>(
+             points_hull, points_hull_num, sincos, &bounds_index[1].max)},
+
+    };
+
+    const float area_test = (bounds_test[0].max - bounds_test[0].min) *
+                            (bounds_test[1].max - bounds_test[1].min);
+
+    if (area_test < area_best) {
+      area_best = area_test;
+      sincos_best = sincos;
+    }
+  }
+
+  const float angle = (area_best != FLT_MAX) ? float(atan2(sincos_best[0], sincos_best[1])) : 0.0f;
+
+#if defined(USE_BRUTE_FORCE_ASSERT) && !defined(NDEBUG)
+  {
+    /* Ensure the optimized result matches the brute-force version. */
+    const float angle_test = convexhull_aabb_fit_hull_2d_brute_force(points_hull, points_hull_num);
+    BLI_assert(angle == angle_test);
+  }
+#endif
+
+  return angle;
 }
 
 float BLI_convexhull_aabb_fit_points_2d(const float (*points)[2], int points_num)
@@ -274,7 +431,7 @@ float BLI_convexhull_aabb_fit_points_2d(const float (*points)[2], int points_num
       copy_v2_v2(points_hull[j], points[index_map[j]]);
     }
 
-    angle = BLI_convexhull_aabb_fit_hull_2d(points_hull, points_hull_num);
+    angle = convexhull_aabb_fit_hull_2d(points_hull, points_hull_num);
     MEM_freeN(points_hull);
   }
 

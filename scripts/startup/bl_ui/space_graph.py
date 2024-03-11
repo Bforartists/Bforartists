@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: 2009-2023 Blender Authors
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
-import bpy
-from bpy.types import Header, Menu, Panel
+
+from bpy.types import Header, Menu, Panel, Operator
 from bl_ui.space_dopesheet import (
     DopesheetFilterPopoverBase,
     dopesheet_filter,
@@ -13,7 +13,7 @@ from bl_ui.space_dopesheet import (
 # The blank button, we don't want to switch to the editor in which we are already.
 
 
-class ANIM_OT_switch_editor_in_graph(bpy.types.Operator):
+class ANIM_OT_switch_editor_in_graph(Operator):
     """You are in Graph Editor"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "wm.switch_editor_in_graph"        # unique identifier for buttons and menu items to reference.
     bl_label = "Graph Editor"         # display name in the interface.
@@ -23,7 +23,7 @@ class ANIM_OT_switch_editor_in_graph(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ANIM_OT_switch_editor_in_driver(bpy.types.Operator):
+class ANIM_OT_switch_editor_in_driver(Operator):
     """You are in Driver Editor"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "wm.switch_editor_in_driver"        # unique identifier for buttons and menu items to reference.
     bl_label = "Driver Editor"         # display name in the interface.
@@ -199,16 +199,12 @@ class GRAPH_PT_properties_view_options(Panel):
 
         col = layout.column(align=True)
         col.prop(st, "show_sliders")
-        if bpy.app.version < (2, 93):
-            layout.operator("anim.show_group_colors_deprecated", icon='CHECKBOX_HLT')
         col.prop(st, "use_auto_merge_keyframes")
-        col.prop(st, "use_beauty_drawing")
-        layout.prop(st, "autolock_translation_axis")
+        layout.prop(st, "use_auto_lock_translation_axis")
 
         col = layout.column(align=True)
         col.prop(st, "show_extrapolation")
         col.prop(st, "show_handles")
-        col.prop(st, "use_only_selected_curves_handles")
         col.prop(st, "use_only_selected_keyframe_handles")
 
         col = layout.column(align=True)
@@ -259,7 +255,6 @@ class GRAPH_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-        layout.prop(st, "show_region_channels")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
@@ -278,7 +273,7 @@ class GRAPH_MT_view(Menu):
         layout.operator("graph.view_selected", icon="VIEW_SELECTED")
         layout.operator("graph.view_frame", icon="VIEW_FRAME")
 
-        layout.operator("anim.view_curve_in_grapheditor", icon="VIEW_GRAPH")
+        layout.operator("anim.view_curve_in_graph_editor", icon="VIEW_GRAPH")
 
         layout.separator()
 
@@ -426,7 +421,7 @@ class GRAPH_MT_channel(Menu):
         layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
         layout.operator("graph.samples_to_keys", icon="SAMPLE_KEYFRAMES")
         layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
-        layout.operator("anim.channels_bake")
+        layout.operator("anim.channels_bake", icon="BAKE_ACTION")
         '''
 
         layout.separator()
@@ -588,7 +583,7 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.keys_to_samples", icon="BAKE_CURVE")
         layout.operator("graph.samples_to_keys", icon="SAMPLE_KEYFRAMES")
         layout.operator("graph.sound_to_samples", icon="BAKE_SOUND")
-        layout.operator("anim.channels_bake")
+        layout.operator("anim.channels_bake", icon="BAKE_ACTION")
 
         # BFA - redundant operators and menus
 

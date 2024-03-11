@@ -13,7 +13,6 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_blenlib.h"
 #include "BLI_lasso_2d.h"
 #include "BLI_math_vector.h"
 #include "BLI_utildefines.h"
@@ -26,7 +25,6 @@
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 
-#include "BKE_context.hh"
 #include "BKE_fcurve.h"
 #include "BKE_nla.h"
 
@@ -594,7 +592,7 @@ static void initialize_box_select_key_editing_data(const bool incl_handles,
     r_ked->iterflags |= KEYFRAME_ITER_HANDLES_DEFAULT_INVISIBLE;
   }
 
-  /* Enable handles selection. (used in keyframes_edit.cc > KEYFRAME_OK_CHECKS macro) */
+  /* Enable handles selection. (used in keyframes_edit.cc > keyframe_ok_checks function) */
   if (incl_handles) {
     r_ked->iterflags |= KEYFRAME_ITER_INCL_HANDLES;
     *r_mapping_flag = 0;

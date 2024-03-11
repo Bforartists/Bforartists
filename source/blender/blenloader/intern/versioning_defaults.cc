@@ -22,7 +22,6 @@
 #include "BLI_math_vector.h"
 #include "BLI_math_vector_types.hh"
 #include "BLI_string.h"
-#include "BLI_system.h"
 #include "BLI_utildefines.h"
 
 #include "DNA_camera_types.h"
@@ -33,7 +32,6 @@
 #include "DNA_mask_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
@@ -56,7 +54,6 @@
 #include "BKE_main_namemap.hh"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_update.hh"
 #include "BKE_paint.hh"
@@ -854,6 +851,14 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
 
       brush->automasking_view_normal_limit = default_brush->automasking_view_normal_limit;
       brush->automasking_view_normal_falloff = default_brush->automasking_view_normal_falloff;
+    }
+  }
+
+  {
+    LISTBASE_FOREACH (Brush *, brush, &bmain->brushes) {
+      if (!brush->automasking_cavity_curve) {
+        brush->automasking_cavity_curve = BKE_sculpt_default_cavity_curve();
+      }
     }
   }
 }

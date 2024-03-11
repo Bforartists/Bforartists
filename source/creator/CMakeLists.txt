@@ -152,6 +152,11 @@ set(SRC
   creator_intern.h
 )
 
+if(CMAKE_GENERATOR MATCHES "^Visual Studio.+")
+  # This helps visual studio find the debugger visualizers
+  list(APPEND SRC ${CMAKE_SOURCE_DIR}/tools/utils_ide/natvis/Blender.natvis)
+endif()
+
 # MSVC 2010 gives linking errors with the manifest.
 if(WIN32 AND NOT UNIX)
   # bfa: modifed BLEN_VER_RC_STR to show patch version as well
@@ -328,6 +333,31 @@ if(WITH_PYTHON_MODULE)
 
 else()
   add_executable(bforartists ${EXETYPE} ${SRC})
+  if(WITH_CPU_CHECK)
+    target_compile_definitions(bforartists PRIVATE WITH_CPU_CHECK)
+    # we cannot directly link against any blender libraries for the cpu_check module
+    # as they may have been build for an ISA that is unsupported by the CPU
+    # running this code.
+    add_library(blender_cpu_check SHARED
+      creator_cpu_check.cc
+    )
+    target_link_libraries(blender_cpu_check
+      PRIVATE ${PLATFORM_LINKLIBS}
+    )
+    # blender_cpu_check *NEEDS* to be linked first, there can be no exceptions
+    # to this, this is to ensure this will be the first code to run once the
+    # blender binary has been loaded by the OS.
+    target_link_libraries(bforartists PRIVATE blender_cpu_check)
+    if(NOT WIN32)
+      set(_LIB_SUB_FOLDER "lib/")
+    endif()
+    set_target_properties(blender_cpu_check
+      PROPERTIES
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${_LIB_SUB_FOLDER}"
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${_LIB_SUB_FOLDER}"
+    )
+    unset(_LIB_SUB_FOLDER)
+  endif()
   if(WIN32)
     add_executable(blender-launcher WIN32
       blender_launcher_win32.c
@@ -691,6 +721,13 @@ if(UNIX AND NOT APPLE)
       DESTINATION "."
     )
 
+    if(WITH_CPU_CHECK)
+      install(
+        TARGETS blender_cpu_check
+        DESTINATION "./lib"
+      )
+    endif()
+
     install(
       FILES
         ${CMAKE_SOURCE_DIR}/release/freedesktop/bforartists.desktop
@@ -746,7 +783,6 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/libglapi.so.0.0.0)\n
       TARGETS bforartists
       DESTINATION "./bin"
     )
-
     # Misc files.
     install(
       FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/bforartists.desktop
@@ -871,8 +907,10 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/libglapi.so.0.0.0)\n
         # Install to the same directory as the source, so debian-like
         # distros are happy with their policy.
         set(_suffix "site-packages")
-        if(${PYTHON_USD_PATH} MATCHES "dist-packages")
-          set(_suffix "dist-packages")
+        if(0) # TODO: `PYTHON_USD_PATH` isn't defined anywhere.
+          if(${PYTHON_USD_PATH} MATCHES "dist-packages")
+            set(_suffix "dist-packages")
+          endif()
         endif()
         install(
           DIRECTORY ${USD_LIBRARY_DIR}/python/
@@ -1673,10 +1711,6 @@ install(
 
 set(ASSET_BUNDLE_DIR ${CMAKE_SOURCE_DIR}/release/datafiles/assets/publish/)
 
-if(NOT EXISTS "${ASSET_BUNDLE_DIR}")
-  set(ASSET_BUNDLE_DIR ${CMAKE_SOURCE_DIR}/../lib/assets/publish/)
-endif()
-
 if(EXISTS "${ASSET_BUNDLE_DIR}")
   install(
     DIRECTORY ${ASSET_BUNDLE_DIR}
@@ -1847,10 +1881,17 @@ endif()
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
   set(BLENDER_BIN "bforartists.exe")
   install(
-    TARGETS bforartists # bforartists-launcher # BFA - Commented out the launcher. (maybe we should also use it?)
+    TARGETS bforartists # blender-launcher # BFA - Commented out the launcher. (maybe we should also use it?)
     COMPONENT Bforartists
     DESTINATION "."
   )
+  if(WITH_CPU_CHECK)
+    install(
+      TARGETS blender_cpu_check
+      COMPONENT Bforartists
+      DESTINATION "."
+    )
+  endif()
   set_target_properties(
     bforartists
     PROPERTIES

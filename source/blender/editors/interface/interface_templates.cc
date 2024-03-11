@@ -23,15 +23,12 @@
 #include "DNA_curveprofile_types.h"
 #include "DNA_gpencil_modifier_types.h"
 #include "DNA_node_types.h"
-#include "DNA_object_force_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_shader_fx_types.h"
 #include "DNA_texture_types.h"
 
-#include "BLI_alloca.h"
 #include "BLI_fileops.h"
-#include "BLI_fnmatch.h"
 #include "BLI_listbase.h"
 #include "BLI_math_color.h"
 #include "BLI_math_vector.h"
@@ -46,10 +43,8 @@
 #include "BLF_api.hh"
 #include "BLT_translation.hh"
 
-#include "BKE_action.h"
 #include "BKE_blender_version.h"
 #include "BKE_blendfile.hh"
-#include "BKE_cachefile.hh"
 #include "BKE_colorband.hh"
 #include "BKE_colortools.hh"
 #include "BKE_constraint.h"
@@ -65,9 +60,7 @@
 #include "BKE_linestyle.h"
 #include "BKE_main.hh"
 #include "BKE_modifier.hh"
-#include "BKE_object.hh"
 #include "BKE_packedFile.h"
-#include "BKE_particle.h"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
@@ -102,8 +95,10 @@
 #include "UI_interface.hh"
 #include "UI_interface_icons.hh"
 #include "UI_string_search.hh"
-#include "UI_view2d.hh"
 #include "interface_intern.hh"
+
+using blender::StringRef;
+using blender::Vector;
 
 /* we may want to make this optional, disable for now. */
 // #define USE_OP_RESET_BUT
@@ -111,8 +106,6 @@
 /* defines for templateID/TemplateSearch */
 #define TEMPLATE_SEARCH_TEXTBUT_MIN_WIDTH (UI_UNIT_X * 6)
 #define TEMPLATE_SEARCH_TEXTBUT_HEIGHT UI_UNIT_Y
-
-void UI_template_fix_linking() {}
 
 /* -------------------------------------------------------------------- */
 /** \name Header Template
@@ -264,20 +257,10 @@ static uiBlock *template_common_search_menu(const bContext *C,
     const int h = 5 * U.widget_unit * preview_rows * scale;
 
     /* fake button, it holds space for search items */
-    uiDefBut(block, UI_BTYPE_LABEL, 0, "", 10, 26, w, h, nullptr, 0, 0, 0, 0, nullptr);
+    uiDefBut(block, UI_BTYPE_LABEL, 0, "", 10, 26, w, h, nullptr, 0, 0, nullptr);
 
-    but = uiDefSearchBut(block,
-                         search,
-                         0,
-                         ICON_VIEWZOOM,
-                         sizeof(search),
-                         10,
-                         0,
-                         w,
-                         UI_UNIT_Y,
-                         preview_rows,
-                         preview_cols,
-                         "");
+    but = uiDefSearchBut(block, search, 0, ICON_VIEWZOOM, sizeof(search), 10, 0, w, UI_UNIT_Y, "");
+    UI_but_search_preview_grid_size_set(but, preview_rows, preview_cols);
   }
   /* list view */
   else {
@@ -296,8 +279,6 @@ static uiBlock *template_common_search_menu(const bContext *C,
              nullptr,
              0,
              0,
-             0,
-             0,
              nullptr);
     but = uiDefSearchBut(block,
                          search,
@@ -308,8 +289,6 @@ static uiBlock *template_common_search_menu(const bContext *C,
                          0,
                          searchbox_width,
                          UI_UNIT_Y - 1,
-                         0,
-                         0,
                          "");
   }
   UI_but_func_search_set(but,
@@ -677,9 +656,6 @@ static void template_id_liboverride_hierarchy_collections_tag_recursive(
        iter != nullptr;
        iter = iter->next)
   {
-    if (iter->collection->id.lib != root_collection->id.lib && ID_IS_LINKED(root_collection)) {
-      continue;
-    }
     if (ID_IS_LINKED(iter->collection) && iter->collection->id.lib != target_id->lib) {
       continue;
     }
@@ -754,7 +730,8 @@ ID *ui_template_id_liboverride_hierarchy_make(
     }
   }
 
-  Collection *collection_active = CTX_data_collection(C);
+  Collection *collection_active_context = CTX_data_collection(C);
+  Collection *collection_active = collection_active_context;
   if (collection_active == nullptr && GS(owner_id->name) == ID_GR) {
     collection_active = (Collection *)owner_id;
   }
@@ -786,7 +763,10 @@ ID *ui_template_id_liboverride_hierarchy_make(
     /* If we failed to find a valid 'active' collection so far for our override hierarchy, but do
      * have a valid 'active' object, try to find a collection from that object. */
     LISTBASE_FOREACH (Collection *, collection_iter, &bmain->collections) {
-      if (!(ID_IS_LINKED(collection_iter) || ID_IS_OVERRIDE_LIBRARY_REAL(collection_iter))) {
+      if (ID_IS_LINKED(collection_iter) && collection_iter->id.lib != id->lib) {
+        continue;
+      }
+      if (!ID_IS_OVERRIDE_LIBRARY_REAL(collection_iter)) {
         continue;
       }
       if (!BKE_collection_has_object_recursive(collection_iter, object_active)) {
@@ -933,6 +913,33 @@ ID *ui_template_id_liboverride_hierarchy_make(
 
   if (id_override != nullptr) {
     id_override->override_library->flag &= ~LIBOVERRIDE_FLAG_SYSTEM_DEFINED;
+
+    /* Ensure that the hierarchy root of the newly overridden data is instantiated in the scene, in
+     * case it's a collection or object. */
+    ID *hierarchy_root = id_override->override_library->hierarchy_root;
+    if (GS(hierarchy_root->name) == ID_OB) {
+      Object *object_hierarchy_root = reinterpret_cast<Object *>(hierarchy_root);
+      if (!BKE_scene_has_object(scene, object_hierarchy_root)) {
+        if (!ID_IS_LINKED(collection_active_context)) {
+          BKE_collection_object_add(bmain, collection_active_context, object_hierarchy_root);
+        }
+        else {
+          BKE_collection_object_add(bmain, scene->master_collection, object_hierarchy_root);
+        }
+      }
+    }
+    else if (GS(hierarchy_root->name) == ID_GR) {
+      Collection *collection_hierarchy_root = reinterpret_cast<Collection *>(hierarchy_root);
+      if (!BKE_collection_has_collection(scene->master_collection, collection_hierarchy_root)) {
+        if (!ID_IS_LINKED(collection_active_context)) {
+          BKE_collection_child_add(bmain, collection_active_context, collection_hierarchy_root);
+        }
+        else {
+          BKE_collection_child_add(bmain, scene->master_collection, collection_hierarchy_root);
+        }
+      }
+    }
+
     *r_undo_push_label = "Make Library Override Hierarchy";
 
     /* In theory we could rely on setting/updating the RNA ID pointer property (as done by calling
@@ -1275,7 +1282,7 @@ static uiBut *template_id_def_new_but(uiBlock *block,
    * is exceeded. */
 
   if (newop) {
-    /*bfa - changed ICON_DUPLICATE : ICON_ADD to ICON_ADD */
+    /*bfa - always use ICON_ADD */
     but = uiDefIconTextButO(block,
                             but_type,
                             newop,
@@ -1291,7 +1298,7 @@ static uiBut *template_id_def_new_but(uiBlock *block,
         but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_ADD_NEW));
   }
   else {
-    /*bfa - changed ICON_DUPLICATE : ICON_ADD to ICON_ADD */
+    /*bfa - always use ICON_ADD */
     but = uiDefIconTextBut(block,
                            but_type,
                            0,
@@ -1302,8 +1309,6 @@ static uiBut *template_id_def_new_but(uiBlock *block,
                            w,
                            but_height,
                            nullptr,
-                           0,
-                           0,
                            0,
                            0,
                            nullptr);
@@ -1420,8 +1425,6 @@ static void template_ID(const bContext *C,
                              nullptr,
                              0,
                              0,
-                             0,
-                             0,
                              TIP_("Indirect library data-block, cannot be made local, "
                                   "Shift + Click to create a library override hierarchy"));
         }
@@ -1435,8 +1438,6 @@ static void template_ID(const bContext *C,
                              UI_UNIT_X,
                              UI_UNIT_Y,
                              nullptr,
-                             0,
-                             0,
                              0,
                              0,
                              TIP_("Direct linked library data-block, click to make local, "
@@ -1463,8 +1464,6 @@ static void template_ID(const bContext *C,
             nullptr,
             0,
             0,
-            0,
-            0,
             TIP_("Library override of linked data-block, click to make fully local, "
                  "Shift + Click to clear the library override and toggle if it can be edited"));
         UI_but_funcN_set(
@@ -1488,8 +1487,6 @@ static void template_ID(const bContext *C,
           numstr_len * 0.2f * UI_UNIT_X + UI_UNIT_X,
           UI_UNIT_Y,
           nullptr,
-          0,
-          0,
           0,
           0,
           TIP_("Display number of users of this data (click to make a single-user copy)"));
@@ -1599,8 +1596,6 @@ static void template_ID(const bContext *C,
                              nullptr,
                              0,
                              0,
-                             0,
-                             0,
                              nullptr);
       UI_but_funcN_set(
           but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_OPEN));
@@ -1644,8 +1639,6 @@ static void template_ID(const bContext *C,
             UI_UNIT_X,
             UI_UNIT_Y,
             nullptr,
-            0,
-            0,
             0,
             0,
             TIP_("Remove "
@@ -1702,11 +1695,7 @@ static void template_ID_tabs(const bContext *C,
   uiBlock *block = uiLayoutGetBlock(layout);
   const uiStyle *style = UI_style_get_dpi();
 
-  ListBase ordered;
-  BKE_id_ordered_list(&ordered, template_id->idlb);
-
-  LISTBASE_FOREACH (LinkData *, link, &ordered) {
-    ID *id = static_cast<ID *>(link->data);
+  for (ID *id : BKE_id_ordered_list(template_id->idlb)) {
     const int name_width = UI_fontstyle_string_width(&style->widget, id->name + 2);
     const int but_width = name_width + UI_UNIT_X;
 
@@ -1731,8 +1720,6 @@ static void template_ID_tabs(const bContext *C,
 
     UI_but_drawflag_enable(tab, but_align);
   }
-
-  BLI_freelistN(&ordered);
 
   if (flag & UI_ID_ADD_NEW) {
     const bool editable = RNA_property_editable(&template_id->ptr, template_id->prop);
@@ -3253,20 +3240,8 @@ void uiTemplatePreview(uiLayout *layout,
   uiLayoutSetKeepAspect(col, true);
 
   /* add preview */
-  uiDefBut(block,
-           UI_BTYPE_EXTRA,
-           0,
-           "",
-           0,
-           0,
-           UI_UNIT_X * 10,
-           ui_preview->height,
-           pid,
-           0.0,
-           0.0,
-           0,
-           0,
-           "");
+  uiDefBut(
+      block, UI_BTYPE_EXTRA, 0, "", 0, 0, UI_UNIT_X * 10, ui_preview->height, pid, 0.0, 0.0, "");
   UI_but_func_drawextra_set(block, ED_preview_draw, pparent, slot);
   UI_block_func_handle_set(block, do_preview_buttons, nullptr);
 
@@ -3281,8 +3256,6 @@ void uiTemplatePreview(uiLayout *layout,
                 &ui_preview->height,
                 UI_UNIT_Y,
                 UI_UNIT_Y * 50.0f,
-                0.0f,
-                0.0f,
                 "");
 
   /* add buttons */
@@ -3326,8 +3299,6 @@ void uiTemplatePreview(uiLayout *layout,
                 pr_texture,
                 10,
                 TEX_PR_TEXTURE,
-                0,
-                0,
                 "");
       if (GS(parent->name) == ID_MA) {
         uiDefButS(block,
@@ -3341,8 +3312,6 @@ void uiTemplatePreview(uiLayout *layout,
                   pr_texture,
                   10,
                   TEX_PR_OTHER,
-                  0,
-                  0,
                   "");
       }
       else if (GS(parent->name) == ID_LA) {
@@ -3357,8 +3326,6 @@ void uiTemplatePreview(uiLayout *layout,
                   pr_texture,
                   10,
                   TEX_PR_OTHER,
-                  0,
-                  0,
                   "");
       }
       else if (GS(parent->name) == ID_WO) {
@@ -3373,8 +3340,6 @@ void uiTemplatePreview(uiLayout *layout,
                   pr_texture,
                   10,
                   TEX_PR_OTHER,
-                  0,
-                  0,
                   "");
       }
       else if (GS(parent->name) == ID_LS) {
@@ -3389,8 +3354,6 @@ void uiTemplatePreview(uiLayout *layout,
                   pr_texture,
                   10,
                   TEX_PR_OTHER,
-                  0,
-                  0,
                   "");
       }
       uiDefButS(block,
@@ -3404,8 +3367,6 @@ void uiTemplatePreview(uiLayout *layout,
                 pr_texture,
                 10,
                 TEX_PR_BOTH,
-                0,
-                0,
                 "");
 
       /* Alpha button for texture preview */
@@ -3428,24 +3389,21 @@ struct RNAUpdateCb {
   PropertyRNA *prop;
 };
 
-static void rna_update_cb(bContext *C, void *arg_cb, void * /*arg*/)
+static void rna_update_cb(bContext &C, const RNAUpdateCb &cb)
 {
-  RNAUpdateCb *cb = (RNAUpdateCb *)arg_cb;
-
   /* we call update here on the pointer property, this way the
    * owner of the curve mapping can still define its own update
    * and notifier, even if the CurveMapping struct is shared. */
-  RNA_property_update(C, &cb->ptr, cb->prop);
+  RNA_property_update(&C, &const_cast<PointerRNA &>(cb.ptr), cb.prop);
 }
 
-enum {
-  CB_FUNC_FLIP,
-  CB_FUNC_DISTRIBUTE_LR,
-  CB_FUNC_DISTRIBUTE_EVENLY,
-  CB_FUNC_RESET,
-};
+static void rna_update_cb(bContext *C, void *arg_cb, void * /*arg*/)
+{
+  RNAUpdateCb *cb = (RNAUpdateCb *)arg_cb;
+  rna_update_cb(*C, *cb);
+}
 
-static void colorband_flip_cb(bContext *C, ColorBand *coba)
+static void colorband_flip(bContext *C, ColorBand *coba)
 {
   CBData data_tmp[MAXCOLORBAND];
 
@@ -3463,7 +3421,7 @@ static void colorband_flip_cb(bContext *C, ColorBand *coba)
   ED_undo_push(C, "Flip Color Ramp");
 }
 
-static void colorband_distribute_cb(bContext *C, ColorBand *coba, bool evenly)
+static void colorband_distribute(bContext *C, ColorBand *coba, bool evenly)
 {
   if (coba->tot > 1) {
     const int tot = evenly ? coba->tot - 1 : coba->tot;
@@ -3477,39 +3435,16 @@ static void colorband_distribute_cb(bContext *C, ColorBand *coba, bool evenly)
   }
 }
 
-static void colorband_tools_dofunc(bContext *C, void *coba_v, int event)
+static uiBlock *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
 {
-  ColorBand *coba = static_cast<ColorBand *>(coba_v);
-
-  switch (event) {
-    case CB_FUNC_FLIP:
-      colorband_flip_cb(C, coba);
-      break;
-    case CB_FUNC_DISTRIBUTE_LR:
-      colorband_distribute_cb(C, coba, false);
-      break;
-    case CB_FUNC_DISTRIBUTE_EVENLY:
-      colorband_distribute_cb(C, coba, true);
-      break;
-    case CB_FUNC_RESET:
-      BKE_colorband_init(coba, true);
-      ED_undo_push(C, "Reset Color Ramp");
-      break;
-  }
-  ED_region_tag_redraw(CTX_wm_region(C));
-}
-
-static uiBlock *colorband_tools_func(bContext *C, ARegion *region, void *arg_cb)
-{
-  RNAUpdateCb *cb = (RNAUpdateCb *)arg_cb;
+  RNAUpdateCb &cb = *static_cast<RNAUpdateCb *>(cb_v);
   const uiStyle *style = UI_style_get_dpi();
-  PointerRNA coba_ptr = RNA_property_pointer_get(&cb->ptr, cb->prop);
+  PointerRNA coba_ptr = RNA_property_pointer_get(&cb.ptr, cb.prop);
   ColorBand *coba = static_cast<ColorBand *>(coba_ptr.data);
   short yco = 0;
   const short menuwidth = 10 * UI_UNIT_X;
 
   uiBlock *block = UI_block_begin(C, region, __func__, UI_EMBOSS_PULLDOWN);
-  UI_block_func_butmenu_set(block, colorband_tools_dofunc, coba);
 
   uiLayout *layout = UI_block_layout(block,
                                      UI_LAYOUT_VERTICAL,
@@ -3528,73 +3463,92 @@ static uiBlock *colorband_tools_func(bContext *C, ARegion *region, void *arg_cb)
   /* We could move these to operators,
    * although this isn't important unless we want to assign key shortcuts to them. */
   {
-    uiDefIconTextBut(block,
-                     UI_BTYPE_BUT_MENU,
-                     1,
-                     ICON_FLIP,
-                     IFACE_("Flip Color Ramp"),
-                     0,
-                     yco -= UI_UNIT_Y,
-                     menuwidth,
-                     UI_UNIT_Y,
-                     nullptr,
-                     0.0,
-                     0.0,
-                     0,
-                     CB_FUNC_FLIP,
-                     "");
-    uiDefIconTextBut(block,
-                     UI_BTYPE_BUT_MENU,
-                     1,
-                     ICON_ALIGNVERTICAL,
-                     IFACE_("Distribute Stops from Left"),
-                     0,
-                     yco -= UI_UNIT_Y,
-                     menuwidth,
-                     UI_UNIT_Y,
-                     nullptr,
-                     0.0,
-                     0.0,
-                     0,
-                     CB_FUNC_DISTRIBUTE_LR,
-                     "");
-    uiDefIconTextBut(block,
-                     UI_BTYPE_BUT_MENU,
-                     1,
-                     ICON_STRAIGHTEN_X,
-                     IFACE_("Distribute Stops Evenly"),
-                     0,
-                     yco -= UI_UNIT_Y,
-                     menuwidth,
-                     UI_UNIT_Y,
-                     nullptr,
-                     0.0,
-                     0.0,
-                     0,
-                     CB_FUNC_DISTRIBUTE_EVENLY,
-                     "");
+    uiBut *but = uiDefIconTextBut(block,
+                                  UI_BTYPE_BUT_MENU,
+                                  1,
+                                  ICON_FLIP,
+                                  IFACE_("Flip Color Ramp"),
+                                  0,
+                                  yco -= UI_UNIT_Y,
+                                  menuwidth,
+                                  UI_UNIT_Y,
+                                  nullptr,
+                                  0.0,
+                                  0.0,
+                                  "");
+    UI_but_func_set(but, [coba, cb](bContext &C) {
+      colorband_flip(&C, coba);
+      ED_region_tag_redraw(CTX_wm_region(&C));
+      rna_update_cb(C, cb);
+    });
+  }
+  {
+    uiBut *but = uiDefIconTextBut(block,
+                                  UI_BTYPE_BUT_MENU,
+                                  1,
+                                  ICON_ALIGNVERTICAL,
+                                  IFACE_("Distribute Stops from Left"),
+                                  0,
+                                  yco -= UI_UNIT_Y,
+                                  menuwidth,
+                                  UI_UNIT_Y,
+                                  nullptr,
+                                  0.0,
+                                  0.0,
+                                  "");
+    UI_but_func_set(but, [coba, cb](bContext &C) {
+      colorband_distribute(&C, coba, false);
+      ED_region_tag_redraw(CTX_wm_region(&C));
+      rna_update_cb(C, cb);
+    });
+  }
+  {
+    uiBut *but = uiDefIconTextBut(block,
+                                  UI_BTYPE_BUT_MENU,
+                                  1,
+                                  ICON_STRAIGHTEN_X,
+                                  IFACE_("Distribute Stops Evenly"),
+                                  0,
+                                  yco -= UI_UNIT_Y,
+                                  menuwidth,
+                                  UI_UNIT_Y,
+                                  nullptr,
+                                  0.0,
+                                  0.0,
+                                  "");
+    UI_but_func_set(but, [coba, cb](bContext &C) {
+      colorband_distribute(&C, coba, true);
+      ED_region_tag_redraw(CTX_wm_region(&C));
+      rna_update_cb(C, cb);
+    });
+  }
 
-    uiItemS(layout);
+  uiItemS(layout);
 
-    uiItemO(layout, IFACE_("Eyedropper"), ICON_EYEDROPPER, "UI_OT_eyedropper_colorramp");
+  uiItemO(layout, IFACE_("Eyedropper"), ICON_EYEDROPPER, "UI_OT_eyedropper_colorramp");
 
-    uiItemS(layout);
+  uiItemS(layout);
 
-    uiDefIconTextBut(block,
-                     UI_BTYPE_BUT_MENU,
-                     1,
-                     ICON_RESET,
-                     IFACE_("Reset Color Ramp"),
-                     0,
-                     yco -= UI_UNIT_Y,
-                     menuwidth,
-                     UI_UNIT_Y,
-                     nullptr,
-                     0.0,
-                     0.0,
-                     0,
-                     CB_FUNC_RESET,
-                     "");
+  {
+    uiBut *but = uiDefIconTextBut(block,
+                                  UI_BTYPE_BUT_MENU,
+                                  1,
+                                  ICON_RESET,
+                                  IFACE_("Reset Color Ramp"),
+                                  0,
+                                  yco -= UI_UNIT_Y,
+                                  menuwidth,
+                                  UI_UNIT_Y,
+                                  nullptr,
+                                  0.0,
+                                  0.0,
+                                  "");
+    UI_but_func_set(but, [coba, cb](bContext &C) {
+      BKE_colorband_init(coba, true);
+      ED_undo_push(&C, "Reset Color Ramp");
+      ED_region_tag_redraw(CTX_wm_region(&C));
+      rna_update_cb(C, cb);
+    });
   }
 
   UI_block_direction_set(block, UI_DIR_DOWN);
@@ -3603,33 +3557,22 @@ static uiBlock *colorband_tools_func(bContext *C, ARegion *region, void *arg_cb)
   return block;
 }
 
-static void colorband_add_cb(bContext *C, void *cb_v, void *coba_v)
+static void colorband_add(bContext &C, const RNAUpdateCb &cb, ColorBand &coba)
 {
-  ColorBand *coba = static_cast<ColorBand *>(coba_v);
   float pos = 0.5f;
 
-  if (coba->tot > 1) {
-    if (coba->cur > 0) {
-      pos = (coba->data[coba->cur - 1].pos + coba->data[coba->cur].pos) * 0.5f;
+  if (coba.tot > 1) {
+    if (coba.cur > 0) {
+      pos = (coba.data[coba.cur - 1].pos + coba.data[coba.cur].pos) * 0.5f;
     }
     else {
-      pos = (coba->data[coba->cur + 1].pos + coba->data[coba->cur].pos) * 0.5f;
+      pos = (coba.data[coba.cur + 1].pos + coba.data[coba.cur].pos) * 0.5f;
     }
   }
 
-  if (BKE_colorband_element_add(coba, pos)) {
-    rna_update_cb(C, cb_v, nullptr);
-    ED_undo_push(C, "Add Color Ramp Stop");
-  }
-}
-
-static void colorband_del_cb(bContext *C, void *cb_v, void *coba_v)
-{
-  ColorBand *coba = static_cast<ColorBand *>(coba_v);
-
-  if (BKE_colorband_element_remove(coba, coba->cur)) {
-    ED_undo_push(C, "Delete Color Ramp Stop");
-    rna_update_cb(C, cb_v, nullptr);
+  if (BKE_colorband_element_add(&coba, pos)) {
+    rna_update_cb(C, cb);
+    ED_undo_push(&C, "Add Color Ramp Stop");
   }
 }
 
@@ -3648,7 +3591,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                                      uiBlock *block,
                                      ColorBand *coba,
                                      const rctf *butr,
-                                     RNAUpdateCb *cb,
+                                     const RNAUpdateCb &cb,
                                      int expand)
 {
   uiBut *bt;
@@ -3656,7 +3599,7 @@ static void colorband_buttons_layout(uiLayout *layout,
   const float xs = butr->xmin;
   const float ys = butr->ymin;
 
-  PointerRNA ptr = RNA_pointer_create(cb->ptr.owner_id, &RNA_ColorRamp, coba);
+  PointerRNA ptr = RNA_pointer_create(cb.ptr.owner_id, &RNA_ColorRamp, coba);
 
   uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
 
@@ -3676,10 +3619,8 @@ static void colorband_buttons_layout(uiLayout *layout,
                         nullptr,
                         0,
                         0,
-                        0,
-                        0,
                         TIP_("Add Stop\nAdd a new color stop to the color ramp"));
-  UI_but_funcN_set(bt, colorband_add_cb, MEM_dupallocN(cb), coba);
+  UI_but_func_set(bt, [coba, cb](bContext &C) { colorband_add(C, cb, *coba); });
 
   bt = uiDefIconTextBut(block,
                         UI_BTYPE_BUT,
@@ -3693,14 +3634,17 @@ static void colorband_buttons_layout(uiLayout *layout,
                         nullptr,
                         0,
                         0,
-                        0,
-                        0,
                         TIP_("Delete Stop\nDelete the active position"));
-  UI_but_funcN_set(bt, colorband_del_cb, MEM_dupallocN(cb), coba);
+  UI_but_func_set(bt, [coba, cb](bContext &C) {
+    if (BKE_colorband_element_remove(coba, coba->cur)) {
+      rna_update_cb(C, cb);
+      ED_undo_push(&C, "Delete Color Ramp Stop");
+    }
+  });
 
-  RNAUpdateCb *tools_cb = static_cast<RNAUpdateCb *>(MEM_dupallocN(cb));
+  RNAUpdateCb *tools_cb = MEM_new<RNAUpdateCb>(__func__, cb);
   bt = uiDefIconBlockBut(block,
-                         colorband_tools_func,
+                         colorband_tools_fn,
                          tools_cb,
                          0,
                          ICON_DOWNARROW_HLT,
@@ -3709,7 +3653,9 @@ static void colorband_buttons_layout(uiLayout *layout,
                          2.0f * unit,
                          UI_UNIT_Y,
                          TIP_("Tools"));
-  UI_but_funcN_set(bt, rna_update_cb, tools_cb, coba);
+  /* Pass ownership of `tools_cb` to the button. */
+  UI_but_funcN_set(
+      bt, [](bContext *, void *, void *) {}, tools_cb, nullptr);
 
   UI_block_align_end(block);
   UI_block_emboss_set(block, UI_EMBOSS);
@@ -3728,28 +3674,16 @@ static void colorband_buttons_layout(uiLayout *layout,
 
   row = uiLayoutRow(layout, false);
 
-  bt = uiDefBut(block,
-                UI_BTYPE_COLORBAND,
-                0,
-                "",
-                xs,
-                ys,
-                BLI_rctf_size_x(butr),
-                UI_UNIT_Y,
-                coba,
-                0,
-                0,
-                0,
-                0,
-                "");
-  UI_but_funcN_set(bt, rna_update_cb, MEM_dupallocN(cb), nullptr);
+  bt = uiDefBut(
+      block, UI_BTYPE_COLORBAND, 0, "", xs, ys, BLI_rctf_size_x(butr), UI_UNIT_Y, coba, 0, 0, "");
+  UI_but_func_set(bt, [cb](bContext &C) { rna_update_cb(C, cb); });
 
   row = uiLayoutRow(layout, false);
 
   if (coba->tot) {
     CBData *cbd = coba->data + coba->cur;
 
-    ptr = RNA_pointer_create(cb->ptr.owner_id, &RNA_ColorRampElement, cbd);
+    ptr = RNA_pointer_create(cb.ptr.owner_id, &RNA_ColorRampElement, cbd);
 
     if (!expand) {
       split = uiLayoutSplit(layout, 0.3f, false);
@@ -3766,8 +3700,6 @@ static void colorband_buttons_layout(uiLayout *layout,
                      &coba->cur,
                      0.0,
                      float(std::max(0, coba->tot - 1)),
-                     0,
-                     0,
                      TIP_("Choose active color stop"));
       UI_but_number_step_size_set(bt, 1);
 
@@ -3793,8 +3725,6 @@ static void colorband_buttons_layout(uiLayout *layout,
                      &coba->cur,
                      0.0,
                      float(std::max(0, coba->tot - 1)),
-                     0,
-                     0,
                      TIP_("Choose active color stop"));
       UI_but_number_step_size_set(bt, 1);
 
@@ -3820,7 +3750,7 @@ static void colorband_buttons_layout(uiLayout *layout,
       }
 
       if (STREQ(prop_identifier, "color")) {
-        UI_but_funcN_set(but, rna_update_cb, MEM_dupallocN(cb), nullptr);
+        UI_but_func_set(bt, [cb](bContext &C) { rna_update_cb(C, cb); });
       }
     }
   }
@@ -3839,10 +3769,6 @@ void uiTemplateColorRamp(uiLayout *layout, PointerRNA *ptr, const char *propname
     return;
   }
 
-  RNAUpdateCb *cb = MEM_cnew<RNAUpdateCb>("RNAUpdateCb");
-  cb->ptr = *ptr;
-  cb->prop = prop;
-
   rctf rect;
   rect.xmin = 0;
   rect.xmax = 10.0f * UI_UNIT_X;
@@ -3854,11 +3780,10 @@ void uiTemplateColorRamp(uiLayout *layout, PointerRNA *ptr, const char *propname
   ID *id = cptr.owner_id;
   UI_block_lock_set(block, (id && ID_IS_LINKED(id)), ERROR_LIBDATA_MESSAGE);
 
-  colorband_buttons_layout(layout, block, static_cast<ColorBand *>(cptr.data), &rect, cb, expand);
+  colorband_buttons_layout(
+      layout, block, static_cast<ColorBand *>(cptr.data), &rect, RNAUpdateCb{*ptr, prop}, expand);
 
   UI_block_lock_clear(block);
-
-  MEM_freeN(cb);
 }
 
 /** \} */
@@ -3879,8 +3804,6 @@ void uiTemplateIcon(uiLayout *layout, int icon_value, float icon_scale)
                             UI_UNIT_X * icon_scale,
                             UI_UNIT_Y * icon_scale,
                             nullptr,
-                            0.0,
-                            0.0,
                             0.0,
                             0.0,
                             "");
@@ -4015,8 +3938,6 @@ void uiTemplateIconView(uiLayout *layout,
                        nullptr,
                        0.0,
                        0.0,
-                       0.0,
-                       0.0,
                        "");
   }
 
@@ -4057,8 +3978,7 @@ void uiTemplateHistogram(uiLayout *layout, PointerRNA *ptr, const char *propname
   uiLayout *col = uiLayoutColumn(layout, true);
   uiBlock *block = uiLayoutGetBlock(col);
 
-  uiDefBut(
-      block, UI_BTYPE_HISTOGRAM, 0, "", 0, 0, UI_UNIT_X * 10, hist->height, hist, 0, 0, 0, 0, "");
+  uiDefBut(block, UI_BTYPE_HISTOGRAM, 0, "", 0, 0, UI_UNIT_X * 10, hist->height, hist, 0, 0, "");
 
   /* Resize grip. */
   uiDefIconButI(block,
@@ -4072,8 +3992,6 @@ void uiTemplateHistogram(uiLayout *layout, PointerRNA *ptr, const char *propname
                 &hist->height,
                 UI_UNIT_Y,
                 UI_UNIT_Y * 20.0f,
-                0.0f,
-                0.0f,
                 "");
 }
 
@@ -4118,8 +4036,6 @@ void uiTemplateWaveform(uiLayout *layout, PointerRNA *ptr, const char *propname)
            scopes,
            0,
            0,
-           0,
-           0,
            "");
 
   /* Resize grip. */
@@ -4134,8 +4050,6 @@ void uiTemplateWaveform(uiLayout *layout, PointerRNA *ptr, const char *propname)
                 &scopes->wavefrm_height,
                 UI_UNIT_Y,
                 UI_UNIT_Y * 20.0f,
-                0.0f,
-                0.0f,
                 "");
 }
 
@@ -4180,8 +4094,6 @@ void uiTemplateVectorscope(uiLayout *layout, PointerRNA *ptr, const char *propna
            scopes,
            0,
            0,
-           0,
-           0,
            "");
 
   /* Resize grip. */
@@ -4196,8 +4108,6 @@ void uiTemplateVectorscope(uiLayout *layout, PointerRNA *ptr, const char *propna
                 &scopes->vecscope_height,
                 UI_UNIT_Y,
                 UI_UNIT_Y * 20.0f,
-                0.0f,
-                0.0f,
                 "");
 }
 
@@ -4219,10 +4129,8 @@ static bool curvemap_can_zoom_in(CurveMapping *cumap)
   return BLI_rctf_size_x(&cumap->curr) > CURVE_ZOOM_MAX * BLI_rctf_size_x(&cumap->clipr);
 }
 
-static void curvemap_buttons_zoom_in(bContext *C, void *cumap_v, void * /*arg*/)
+static void curvemap_buttons_zoom_in(bContext *C, CurveMapping *cumap)
 {
-  CurveMapping *cumap = static_cast<CurveMapping *>(cumap_v);
-
   if (curvemap_can_zoom_in(cumap)) {
     const float dx = 0.1154f * BLI_rctf_size_x(&cumap->curr);
     cumap->curr.xmin += dx;
@@ -4235,9 +4143,8 @@ static void curvemap_buttons_zoom_in(bContext *C, void *cumap_v, void * /*arg*/)
   ED_region_tag_redraw(CTX_wm_region(C));
 }
 
-static void curvemap_buttons_zoom_out(bContext *C, void *cumap_v, void * /*unused*/)
+static void curvemap_buttons_zoom_out(bContext *C, CurveMapping *cumap)
 {
-  CurveMapping *cumap = static_cast<CurveMapping *>(cumap_v);
   float d, d1;
 
   if (curvemap_can_zoom_out(cumap)) {
@@ -4279,23 +4186,6 @@ static void curvemap_buttons_zoom_out(bContext *C, void *cumap_v, void * /*unuse
   ED_region_tag_redraw(CTX_wm_region(C));
 }
 
-static void curvemap_buttons_setclip(bContext * /*C*/, void *cumap_v, void * /*arg*/)
-{
-  CurveMapping *cumap = static_cast<CurveMapping *>(cumap_v);
-
-  BKE_curvemapping_changed(cumap, false);
-}
-
-static void curvemap_buttons_delete(bContext *C, void *cb_v, void *cumap_v)
-{
-  CurveMapping *cumap = static_cast<CurveMapping *>(cumap_v);
-
-  BKE_curvemap_remove(cumap->cm + cumap->cur, SELECT);
-  BKE_curvemapping_changed(cumap, false);
-
-  rna_update_cb(C, cb_v, nullptr);
-}
-
 /* NOTE: this is a block-menu, needs 0 events, otherwise the menu closes */
 static uiBlock *curvemap_clipping_func(bContext *C, ARegion *region, void *cumap_v)
 {
@@ -4320,7 +4210,7 @@ static uiBlock *curvemap_clipping_func(bContext *C, ARegion *region, void *cumap
                     0.0,
                     0.0,
                     "");
-  UI_but_func_set(bt, curvemap_buttons_setclip, cumap, nullptr);
+  UI_but_func_set(bt, [cumap](bContext & /*C*/) { BKE_curvemapping_changed(cumap, false); });
 
   UI_block_align_begin(block);
   bt = uiDefButF(block,
@@ -4386,137 +4276,106 @@ static uiBlock *curvemap_clipping_func(bContext *C, ARegion *region, void *cumap
   return block;
 }
 
-/* only for BKE_curvemap_tools_dofunc */
-enum {
-  UICURVE_FUNC_RESET_NEG,
-  UICURVE_FUNC_RESET_POS,
-  UICURVE_FUNC_RESET_VIEW,
-  UICURVE_FUNC_HANDLE_VECTOR,
-  UICURVE_FUNC_HANDLE_AUTO,
-  UICURVE_FUNC_HANDLE_AUTO_ANIM,
-  UICURVE_FUNC_EXTEND_HOZ,
-  UICURVE_FUNC_EXTEND_EXP,
-};
-
-static void curvemap_tools_dofunc(bContext *C, void *cumap_v, int event)
-{
-  CurveMapping *cumap = static_cast<CurveMapping *>(cumap_v);
-  CurveMap *cuma = cumap->cm + cumap->cur;
-
-  switch (event) {
-    case UICURVE_FUNC_RESET_NEG:
-    case UICURVE_FUNC_RESET_POS: /* reset */
-      BKE_curvemap_reset(cuma,
-                         &cumap->clipr,
-                         cumap->preset,
-                         (event == UICURVE_FUNC_RESET_NEG) ? CURVEMAP_SLOPE_NEGATIVE :
-                                                             CURVEMAP_SLOPE_POSITIVE);
-      BKE_curvemapping_changed(cumap, false);
-      break;
-    case UICURVE_FUNC_RESET_VIEW:
-      BKE_curvemapping_reset_view(cumap);
-      break;
-    case UICURVE_FUNC_HANDLE_VECTOR: /* Set vector. */
-      BKE_curvemap_handle_set(cuma, HD_VECT);
-      BKE_curvemapping_changed(cumap, false);
-      break;
-    case UICURVE_FUNC_HANDLE_AUTO: /* Set auto. */
-      BKE_curvemap_handle_set(cuma, HD_AUTO);
-      BKE_curvemapping_changed(cumap, false);
-      break;
-    case UICURVE_FUNC_HANDLE_AUTO_ANIM: /* Set auto-clamped. */
-      BKE_curvemap_handle_set(cuma, HD_AUTO_ANIM);
-      BKE_curvemapping_changed(cumap, false);
-      break;
-    case UICURVE_FUNC_EXTEND_HOZ: /* Extend horizontal. */
-      cumap->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
-      BKE_curvemapping_changed(cumap, false);
-      break;
-    case UICURVE_FUNC_EXTEND_EXP: /* Extend extrapolate. */
-      cumap->flag |= CUMA_EXTEND_EXTRAPOLATE;
-      BKE_curvemapping_changed(cumap, false);
-      break;
-  }
-  ED_undo_push(C, "CurveMap tools");
-  ED_region_tag_redraw(CTX_wm_region(C));
-}
-
 static uiBlock *curvemap_tools_func(
-    bContext *C, ARegion *region, CurveMapping *cumap, bool show_extend, int reset_mode)
+    bContext *C, ARegion *region, RNAUpdateCb &cb, bool show_extend, int reset_mode)
 {
+  PointerRNA cumap_ptr = RNA_property_pointer_get(&cb.ptr, cb.prop);
+  CurveMapping *cumap = static_cast<CurveMapping *>(cumap_ptr.data);
+
   short yco = 0;
   const short menuwidth = 10 * UI_UNIT_X;
 
   uiBlock *block = UI_block_begin(C, region, __func__, UI_EMBOSS);
-  UI_block_func_butmenu_set(block, curvemap_tools_dofunc, cumap);
 
   {
-    uiDefIconTextBut(block,
-                     UI_BTYPE_BUT_MENU,
-                     1,
-                     ICON_VIEW_RESET,
-                     IFACE_("Reset View"),
-                     0,
-                     yco -= UI_UNIT_Y,
-                     menuwidth,
-                     UI_UNIT_Y,
-                     nullptr,
-                     0.0,
-                     0.0,
-                     0,
-                     UICURVE_FUNC_RESET_VIEW,
-                     "");
+    uiBut *but = uiDefIconTextBut(block,
+                                  UI_BTYPE_BUT_MENU,
+                                  1,
+                                  ICON_VIEW_RESET,
+                                  IFACE_("Reset View"),
+                                  0,
+                                  yco -= UI_UNIT_Y,
+                                  menuwidth,
+                                  UI_UNIT_Y,
+                                  nullptr,
+                                  0.0,
+                                  0.0,
+                                  "");
+    UI_but_func_set(but, [cumap](bContext &C) {
+      BKE_curvemapping_reset_view(cumap);
+      ED_region_tag_redraw(CTX_wm_region(&C));
+    });
   }
 
   if (show_extend) {
-    uiDefIconTextBut(block,
-                     UI_BTYPE_BUT_MENU,
-                     1,
-                     ICON_EXTRAPOLATION_CONSTANT,
-                     IFACE_("Extend Horizontal"),
-                     0,
-                     yco -= UI_UNIT_Y,
-                     menuwidth,
-                     UI_UNIT_Y,
-                     nullptr,
-                     0.0,
-                     0.0,
-                     0,
-                     UICURVE_FUNC_EXTEND_HOZ,
-                     "");
-    uiDefIconTextBut(block,
-                     UI_BTYPE_BUT_MENU,
-                     1,
-                     ICON_EXTRAPOLATION_LINEAR,
-                     IFACE_("Extend Extrapolated"),
-                     0,
-                     yco -= UI_UNIT_Y,
-                     menuwidth,
-                     UI_UNIT_Y,
-                     nullptr,
-                     0.0,
-                     0.0,
-                     0,
-                     UICURVE_FUNC_EXTEND_EXP,
-                     "");
+    {
+      uiBut *but = uiDefIconTextBut(block,
+                                    UI_BTYPE_BUT_MENU,
+                                    1,
+                                    ICON_EXTRAPOLATION_CONSTANT,
+                                    IFACE_("Extend Horizontal"),
+                                    0,
+                                    yco -= UI_UNIT_Y,
+                                    menuwidth,
+                                    UI_UNIT_Y,
+                                    nullptr,
+                                    0.0,
+                                    0.0,
+                                    "");
+      UI_but_func_set(but, [cumap, cb](bContext &C) {
+        cumap->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
+        BKE_curvemapping_changed(cumap, false);
+        rna_update_cb(C, cb);
+        ED_undo_push(&C, "CurveMap tools");
+        ED_region_tag_redraw(CTX_wm_region(&C));
+      });
+    }
+    {
+      uiBut *but = uiDefIconTextBut(block,
+                                    UI_BTYPE_BUT_MENU,
+                                    1,
+                                    ICON_EXTRAPOLATION_LINEAR,
+                                    IFACE_("Extend Extrapolated"),
+                                    0,
+                                    yco -= UI_UNIT_Y,
+                                    menuwidth,
+                                    UI_UNIT_Y,
+                                    nullptr,
+                                    0.0,
+                                    0.0,
+                                    "");
+      UI_but_func_set(but, [cumap, cb](bContext &C) {
+        cumap->flag |= CUMA_EXTEND_EXTRAPOLATE;
+        BKE_curvemapping_changed(cumap, false);
+        rna_update_cb(C, cb);
+        ED_undo_push(&C, "CurveMap tools");
+        ED_region_tag_redraw(CTX_wm_region(&C));
+      });
+    }
   }
 
   {
-    uiDefIconTextBut(block,
-                     UI_BTYPE_BUT_MENU,
-                     1,
-                     ICON_RESET,
-                     IFACE_("Reset Curve"),
-                     0,
-                     yco -= UI_UNIT_Y,
-                     menuwidth,
-                     UI_UNIT_Y,
-                     nullptr,
-                     0.0,
-                     0.0,
-                     0,
-                     reset_mode,
-                     "");
+    uiBut *but = uiDefIconTextBut(block,
+                                  UI_BTYPE_BUT_MENU,
+                                  1,
+                                  ICON_RESET,
+                                  IFACE_("Reset Curve"),
+                                  0,
+                                  yco -= UI_UNIT_Y,
+                                  menuwidth,
+                                  UI_UNIT_Y,
+                                  nullptr,
+                                  0.0,
+                                  0.0,
+                                  "");
+    UI_but_func_set(but, [cumap, cb, reset_mode](bContext &C) {
+      CurveMap *cuma = cumap->cm + cumap->cur;
+      BKE_curvemap_reset(cuma, &cumap->clipr, cumap->preset, reset_mode);
+      BKE_curvemapping_changed(cumap, false);
+      rna_update_cb(C, cb);
+      ED_undo_push(&C, "CurveMap tools");
+      ED_region_tag_redraw(CTX_wm_region(&C));
+    });
   }
 
   UI_block_direction_set(block, UI_DIR_DOWN);
@@ -4525,72 +4384,33 @@ static uiBlock *curvemap_tools_func(
   return block;
 }
 
-static uiBlock *curvemap_tools_posslope_func(bContext *C, ARegion *region, void *cumap_v)
+static uiBlock *curvemap_tools_posslope_func(bContext *C, ARegion *region, void *cb_v)
 {
   return curvemap_tools_func(
-      C, region, static_cast<CurveMapping *>(cumap_v), true, UICURVE_FUNC_RESET_POS);
+      C, region, *static_cast<RNAUpdateCb *>(cb_v), true, CURVEMAP_SLOPE_POSITIVE);
 }
 
-static uiBlock *curvemap_tools_negslope_func(bContext *C, ARegion *region, void *cumap_v)
+static uiBlock *curvemap_tools_negslope_func(bContext *C, ARegion *region, void *cb_v)
 {
   return curvemap_tools_func(
-      C, region, static_cast<CurveMapping *>(cumap_v), true, UICURVE_FUNC_RESET_NEG);
+      C, region, *static_cast<RNAUpdateCb *>(cb_v), true, CURVEMAP_SLOPE_NEGATIVE);
 }
 
-static uiBlock *curvemap_brush_tools_func(bContext *C, ARegion *region, void *cumap_v)
+static uiBlock *curvemap_brush_tools_func(bContext *C, ARegion *region, void *cb_v)
 {
   return curvemap_tools_func(
-      C, region, static_cast<CurveMapping *>(cumap_v), false, UICURVE_FUNC_RESET_NEG);
+      C, region, *static_cast<RNAUpdateCb *>(cb_v), false, CURVEMAP_SLOPE_POSITIVE);
 }
 
-static uiBlock *curvemap_brush_tools_negslope_func(bContext *C, ARegion *region, void *cumap_v)
+static uiBlock *curvemap_brush_tools_negslope_func(bContext *C, ARegion *region, void *cb_v)
 {
   return curvemap_tools_func(
-      C, region, static_cast<CurveMapping *>(cumap_v), false, UICURVE_FUNC_RESET_POS);
+      C, region, *static_cast<RNAUpdateCb *>(cb_v), false, CURVEMAP_SLOPE_POSITIVE);
 }
 
-static void curvemap_tools_handle_vector(bContext *C, void *cumap_v, void * /*arg*/)
+static void curvemap_buttons_redraw(bContext &C)
 {
-  curvemap_tools_dofunc(C, cumap_v, UICURVE_FUNC_HANDLE_VECTOR);
-}
-
-static void curvemap_tools_handle_auto(bContext *C, void *cumap_v, void * /*arg*/)
-{
-  curvemap_tools_dofunc(C, cumap_v, UICURVE_FUNC_HANDLE_AUTO);
-}
-
-static void curvemap_tools_handle_auto_clamped(bContext *C, void *cumap_v, void * /*arg*/)
-{
-  curvemap_tools_dofunc(C, cumap_v, UICURVE_FUNC_HANDLE_AUTO_ANIM);
-}
-
-static void curvemap_buttons_redraw(bContext *C, void * /*arg1*/, void * /*arg2*/)
-{
-  ED_region_tag_redraw(CTX_wm_region(C));
-}
-
-static void curvemap_buttons_update(bContext *C, void *arg1_v, void *cumap_v)
-{
-  CurveMapping *cumap = static_cast<CurveMapping *>(cumap_v);
-  BKE_curvemapping_changed(cumap, true);
-  rna_update_cb(C, arg1_v, nullptr);
-}
-
-static void curvemap_buttons_reset(bContext *C, void *cb_v, void *cumap_v)
-{
-  CurveMapping *cumap = static_cast<CurveMapping *>(cumap_v);
-  cumap->preset = CURVE_PRESET_LINE;
-  for (int a = 0; a < CM_TOT; a++) {
-    BKE_curvemap_reset(cumap->cm + a, &cumap->clipr, cumap->preset, CURVEMAP_SLOPE_POSITIVE);
-  }
-
-  cumap->black[0] = cumap->black[1] = cumap->black[2] = 0.0f;
-  cumap->white[0] = cumap->white[1] = cumap->white[2] = 1.0f;
-  BKE_curvemapping_set_black_white(cumap, nullptr, nullptr);
-
-  BKE_curvemapping_changed(cumap, false);
-
-  rna_update_cb(C, cb_v, nullptr);
+  ED_region_tag_redraw(CTX_wm_region(&C));
 }
 
 /**
@@ -4605,7 +4425,7 @@ static void curvemap_buttons_layout(uiLayout *layout,
                                     bool brush,
                                     bool neg_slope,
                                     bool tone,
-                                    RNAUpdateCb *cb)
+                                    const RNAUpdateCb &cb)
 {
   CurveMapping *cumap = static_cast<CurveMapping *>(ptr->data);
   CurveMap *cm = &cumap->cm[cumap->cur];
@@ -4631,19 +4451,16 @@ static void curvemap_buttons_layout(uiLayout *layout,
     uiLayoutSetAlignment(sub, UI_LAYOUT_ALIGN_LEFT);
 
     if (cumap->cm[0].curve) {
-      bt = uiDefButI(
-          block, UI_BTYPE_ROW, 0, "X", 0, 0, dx, dx, &cumap->cur, 0.0, 0.0, 0.0, 0.0, "");
-      UI_but_func_set(bt, curvemap_buttons_redraw, nullptr, nullptr);
+      bt = uiDefButI(block, UI_BTYPE_ROW, 0, "X", 0, 0, dx, dx, &cumap->cur, 0.0, 0.0, "");
+      UI_but_func_set(bt, curvemap_buttons_redraw);
     }
     if (cumap->cm[1].curve) {
-      bt = uiDefButI(
-          block, UI_BTYPE_ROW, 0, "Y", 0, 0, dx, dx, &cumap->cur, 0.0, 1.0, 0.0, 0.0, "");
-      UI_but_func_set(bt, curvemap_buttons_redraw, nullptr, nullptr);
+      bt = uiDefButI(block, UI_BTYPE_ROW, 0, "Y", 0, 0, dx, dx, &cumap->cur, 0.0, 1.0, "");
+      UI_but_func_set(bt, curvemap_buttons_redraw);
     }
     if (cumap->cm[2].curve) {
-      bt = uiDefButI(
-          block, UI_BTYPE_ROW, 0, "Z", 0, 0, dx, dx, &cumap->cur, 0.0, 2.0, 0.0, 0.0, "");
-      UI_but_func_set(bt, curvemap_buttons_redraw, nullptr, nullptr);
+      bt = uiDefButI(block, UI_BTYPE_ROW, 0, "Z", 0, 0, dx, dx, &cumap->cur, 0.0, 2.0, "");
+      UI_but_func_set(bt, curvemap_buttons_redraw);
     }
   }
   else if (labeltype == 'c') {
@@ -4663,25 +4480,20 @@ static void curvemap_buttons_layout(uiLayout *layout,
                      &cumap->cur,
                      0.0,
                      3.0,
-                     0.0,
-                     0.0,
                      "");
-      UI_but_func_set(bt, curvemap_buttons_redraw, nullptr, nullptr);
+      UI_but_func_set(bt, curvemap_buttons_redraw);
     }
     if (cumap->cm[0].curve) {
-      bt = uiDefButI(
-          block, UI_BTYPE_ROW, 0, IFACE_("R"), 0, 0, dx, dx, &cumap->cur, 0.0, 0.0, 0.0, 0.0, "");
-      UI_but_func_set(bt, curvemap_buttons_redraw, nullptr, nullptr);
+      bt = uiDefButI(block, UI_BTYPE_ROW, 0, IFACE_("R"), 0, 0, dx, dx, &cumap->cur, 0.0, 0.0, "");
+      UI_but_func_set(bt, curvemap_buttons_redraw);
     }
     if (cumap->cm[1].curve) {
-      bt = uiDefButI(
-          block, UI_BTYPE_ROW, 0, IFACE_("G"), 0, 0, dx, dx, &cumap->cur, 0.0, 1.0, 0.0, 0.0, "");
-      UI_but_func_set(bt, curvemap_buttons_redraw, nullptr, nullptr);
+      bt = uiDefButI(block, UI_BTYPE_ROW, 0, IFACE_("G"), 0, 0, dx, dx, &cumap->cur, 0.0, 1.0, "");
+      UI_but_func_set(bt, curvemap_buttons_redraw);
     }
     if (cumap->cm[2].curve) {
-      bt = uiDefButI(
-          block, UI_BTYPE_ROW, 0, IFACE_("B"), 0, 0, dx, dx, &cumap->cur, 0.0, 2.0, 0.0, 0.0, "");
-      UI_but_func_set(bt, curvemap_buttons_redraw, nullptr, nullptr);
+      bt = uiDefButI(block, UI_BTYPE_ROW, 0, IFACE_("B"), 0, 0, dx, dx, &cumap->cur, 0.0, 2.0, "");
+      UI_but_func_set(bt, curvemap_buttons_redraw);
     }
   }
   else if (labeltype == 'h') {
@@ -4690,19 +4502,16 @@ static void curvemap_buttons_layout(uiLayout *layout,
     uiLayoutSetAlignment(sub, UI_LAYOUT_ALIGN_LEFT);
 
     if (cumap->cm[0].curve) {
-      bt = uiDefButI(
-          block, UI_BTYPE_ROW, 0, IFACE_("H"), 0, 0, dx, dx, &cumap->cur, 0.0, 0.0, 0.0, 0.0, "");
-      UI_but_func_set(bt, curvemap_buttons_redraw, nullptr, nullptr);
+      bt = uiDefButI(block, UI_BTYPE_ROW, 0, IFACE_("H"), 0, 0, dx, dx, &cumap->cur, 0.0, 0.0, "");
+      UI_but_func_set(bt, curvemap_buttons_redraw);
     }
     if (cumap->cm[1].curve) {
-      bt = uiDefButI(
-          block, UI_BTYPE_ROW, 0, IFACE_("S"), 0, 0, dx, dx, &cumap->cur, 0.0, 1.0, 0.0, 0.0, "");
-      UI_but_func_set(bt, curvemap_buttons_redraw, nullptr, nullptr);
+      bt = uiDefButI(block, UI_BTYPE_ROW, 0, IFACE_("S"), 0, 0, dx, dx, &cumap->cur, 0.0, 1.0, "");
+      UI_but_func_set(bt, curvemap_buttons_redraw);
     }
     if (cumap->cm[2].curve) {
-      bt = uiDefButI(
-          block, UI_BTYPE_ROW, 0, IFACE_("V"), 0, 0, dx, dx, &cumap->cur, 0.0, 2.0, 0.0, 0.0, "");
-      UI_but_func_set(bt, curvemap_buttons_redraw, nullptr, nullptr);
+      bt = uiDefButI(block, UI_BTYPE_ROW, 0, IFACE_("V"), 0, 0, dx, dx, &cumap->cur, 0.0, 2.0, "");
+      UI_but_func_set(bt, curvemap_buttons_redraw);
     }
   }
   else {
@@ -4719,41 +4528,17 @@ static void curvemap_buttons_layout(uiLayout *layout,
   uiLayoutSetAlignment(sub, UI_LAYOUT_ALIGN_RIGHT);
 
   /* Zoom in */
-  bt = uiDefIconBut(block,
-                    UI_BTYPE_BUT,
-                    0,
-                    ICON_ZOOM_IN,
-                    0,
-                    0,
-                    dx,
-                    dx,
-                    nullptr,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    TIP_("Zoom in"));
-  UI_but_func_set(bt, curvemap_buttons_zoom_in, cumap, nullptr);
+  bt = uiDefIconBut(
+      block, UI_BTYPE_BUT, 0, ICON_ZOOM_IN, 0, 0, dx, dx, nullptr, 0.0, 0.0, TIP_("Zoom in"));
+  UI_but_func_set(bt, [cumap](bContext &C) { curvemap_buttons_zoom_in(&C, cumap); });
   if (!curvemap_can_zoom_in(cumap)) {
     UI_but_disable(bt, "");
   }
 
   /* Zoom out */
-  bt = uiDefIconBut(block,
-                    UI_BTYPE_BUT,
-                    0,
-                    ICON_ZOOM_OUT,
-                    0,
-                    0,
-                    dx,
-                    dx,
-                    nullptr,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    TIP_("Zoom out"));
-  UI_but_func_set(bt, curvemap_buttons_zoom_out, cumap, nullptr);
+  bt = uiDefIconBut(
+      block, UI_BTYPE_BUT, 0, ICON_ZOOM_OUT, 0, 0, dx, dx, nullptr, 0.0, 0.0, TIP_("Zoom out"));
+  UI_but_func_set(bt, [cumap](bContext &C) { curvemap_buttons_zoom_out(&C, cumap); });
   if (!curvemap_can_zoom_out(cumap)) {
     UI_but_disable(bt, "");
   }
@@ -4763,12 +4548,13 @@ static void curvemap_buttons_layout(uiLayout *layout,
   bt = uiDefIconBlockBut(
       block, curvemap_clipping_func, cumap, 0, icon, 0, 0, dx, dx, TIP_("Clipping Options"));
   bt->drawflag &= ~UI_BUT_ICON_LEFT;
-  UI_but_funcN_set(bt, rna_update_cb, MEM_dupallocN(cb), nullptr);
+  UI_but_func_set(bt, [cb](bContext &C) { rna_update_cb(C, cb); });
 
+  RNAUpdateCb *tools_cb = MEM_new<RNAUpdateCb>(__func__, cb);
   if (brush && neg_slope) {
     bt = uiDefIconBlockBut(block,
                            curvemap_brush_tools_negslope_func,
-                           cumap,
+                           tools_cb,
                            0,
                            ICON_NONE,
                            0,
@@ -4779,25 +4565,27 @@ static void curvemap_buttons_layout(uiLayout *layout,
   }
   else if (brush) {
     bt = uiDefIconBlockBut(
-        block, curvemap_brush_tools_func, cumap, 0, ICON_NONE, 0, 0, dx, dx, TIP_("Tools"));
+        block, curvemap_brush_tools_func, tools_cb, 0, ICON_NONE, 0, 0, dx, dx, TIP_("Tools"));
   }
   else if (neg_slope) {
     bt = uiDefIconBlockBut(
-        block, curvemap_tools_negslope_func, cumap, 0, ICON_NONE, 0, 0, dx, dx, TIP_("Tools"));
+        block, curvemap_tools_negslope_func, tools_cb, 0, ICON_NONE, 0, 0, dx, dx, TIP_("Tools"));
   }
   else {
     bt = uiDefIconBlockBut(
-        block, curvemap_tools_posslope_func, cumap, 0, ICON_NONE, 0, 0, dx, dx, TIP_("Tools"));
+        block, curvemap_tools_posslope_func, tools_cb, 0, ICON_NONE, 0, 0, dx, dx, TIP_("Tools"));
   }
-  UI_but_funcN_set(bt, rna_update_cb, MEM_dupallocN(cb), nullptr);
+  /* Pass ownership of `tools_cb` to the button. */
+  UI_but_funcN_set(
+      bt, [](bContext *, void *, void *) {}, tools_cb, nullptr);
 
-  UI_block_funcN_set(block, rna_update_cb, MEM_dupallocN(cb), nullptr);
+  UI_block_funcN_set(block, rna_update_cb, MEM_new<RNAUpdateCb>(__func__, cb), nullptr);
 
   /* Curve itself. */
   const int size = max_ii(uiLayoutGetWidth(layout), UI_UNIT_X);
   row = uiLayoutRow(layout, false);
   uiButCurveMapping *curve_but = (uiButCurveMapping *)uiDefBut(
-      block, UI_BTYPE_CURVE, 0, "", 0, 0, size, 8.0f * UI_UNIT_X, cumap, 0.0f, 1.0f, -1, 0, "");
+      block, UI_BTYPE_CURVE, 0, "", 0, 0, size, 8.0f * UI_UNIT_X, cumap, 0.0f, 1.0f, "");
   curve_but->gradient_type = bg;
 
   /* Sliders for selected curve point. */
@@ -4840,10 +4628,13 @@ static void curvemap_buttons_layout(uiLayout *layout,
                       nullptr,
                       0.0,
                       0.0,
-                      0.0,
-                      0.0,
                       TIP_("Auto Handle"));
-    UI_but_func_set(bt, curvemap_tools_handle_auto, cumap, nullptr);
+    UI_but_func_set(bt, [cumap, cb](bContext &C) {
+      CurveMap *cuma = cumap->cm + cumap->cur;
+      BKE_curvemap_handle_set(cuma, HD_AUTO);
+      BKE_curvemapping_changed(cumap, false);
+      rna_update_cb(C, cb);
+    });
     if (((cmp->flag & CUMA_HANDLE_AUTO_ANIM) == false) &&
         ((cmp->flag & CUMA_HANDLE_VECTOR) == false))
     {
@@ -4861,10 +4652,13 @@ static void curvemap_buttons_layout(uiLayout *layout,
                       nullptr,
                       0.0,
                       0.0,
-                      0.0,
-                      0.0,
                       TIP_("Vector Handle"));
-    UI_but_func_set(bt, curvemap_tools_handle_vector, cumap, nullptr);
+    UI_but_func_set(bt, [cumap, cb](bContext &C) {
+      CurveMap *cuma = cumap->cm + cumap->cur;
+      BKE_curvemap_handle_set(cuma, HD_VECT);
+      BKE_curvemapping_changed(cumap, false);
+      rna_update_cb(C, cb);
+    });
     if (cmp->flag & CUMA_HANDLE_VECTOR) {
       bt->flag |= UI_SELECT_DRAW;
     }
@@ -4880,16 +4674,18 @@ static void curvemap_buttons_layout(uiLayout *layout,
                       nullptr,
                       0.0,
                       0.0,
-                      0.0,
-                      0.0,
                       TIP_("Auto Clamped"));
-    UI_but_func_set(bt, curvemap_tools_handle_auto_clamped, cumap, nullptr);
+    UI_but_func_set(bt, [cumap, cb](bContext &C) {
+      CurveMap *cuma = cumap->cm + cumap->cur;
+      BKE_curvemap_handle_set(cuma, HD_AUTO_ANIM);
+      BKE_curvemapping_changed(cumap, false);
+      rna_update_cb(C, cb);
+    });
     if (cmp->flag & CUMA_HANDLE_AUTO_ANIM) {
       bt->flag |= UI_SELECT_DRAW;
     }
 
     /* Curve handle position */
-    UI_block_funcN_set(block, curvemap_buttons_update, MEM_dupallocN(cb), cumap);
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    0,
@@ -4904,6 +4700,11 @@ static void curvemap_buttons_layout(uiLayout *layout,
                    "");
     UI_but_number_step_size_set(bt, 1);
     UI_but_number_precision_set(bt, 5);
+    UI_but_func_set(bt, [cumap, cb](bContext &C) {
+      BKE_curvemapping_changed(cumap, true);
+      rna_update_cb(C, cb);
+    });
+
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    0,
@@ -4918,23 +4719,19 @@ static void curvemap_buttons_layout(uiLayout *layout,
                    "");
     UI_but_number_step_size_set(bt, 1);
     UI_but_number_precision_set(bt, 5);
+    UI_but_func_set(bt, [cumap, cb](bContext &C) {
+      BKE_curvemapping_changed(cumap, true);
+      rna_update_cb(C, cb);
+    });
 
     /* Curve handle delete point */
-    bt = uiDefIconBut(block,
-                      UI_BTYPE_BUT,
-                      0,
-                      ICON_X,
-                      0,
-                      0,
-                      dx,
-                      dx,
-                      nullptr,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      TIP_("Delete points"));
-    UI_but_funcN_set(bt, curvemap_buttons_delete, MEM_dupallocN(cb), cumap);
+    bt = uiDefIconBut(
+        block, UI_BTYPE_BUT, 0, ICON_X, 0, 0, dx, dx, nullptr, 0.0, 0.0, TIP_("Delete points"));
+    UI_but_func_set(bt, [cumap, cb](bContext &C) {
+      BKE_curvemap_remove(cumap->cm + cumap->cur, SELECT);
+      BKE_curvemapping_changed(cumap, false);
+      rna_update_cb(C, cb);
+    });
     if (point_last_or_first) {
       UI_but_flag_enable(bt, UI_BUT_DISABLED);
     }
@@ -4960,10 +4757,20 @@ static void curvemap_buttons_layout(uiLayout *layout,
                   nullptr,
                   0.0f,
                   0.0f,
-                  0,
-                  0,
                   TIP_("Reset Black/White point and curves"));
-    UI_but_funcN_set(bt, curvemap_buttons_reset, MEM_dupallocN(cb), cumap);
+    UI_but_func_set(bt, [cumap, cb](bContext &C) {
+      cumap->preset = CURVE_PRESET_LINE;
+      for (int a = 0; a < CM_TOT; a++) {
+        BKE_curvemap_reset(cumap->cm + a, &cumap->clipr, cumap->preset, CURVEMAP_SLOPE_POSITIVE);
+      }
+
+      cumap->black[0] = cumap->black[1] = cumap->black[2] = 0.0f;
+      cumap->white[0] = cumap->white[1] = cumap->white[2] = 1.0f;
+      BKE_curvemapping_set_black_white(cumap, nullptr, nullptr);
+
+      BKE_curvemapping_changed(cumap, false);
+      rna_update_cb(C, cb);
+    });
   }
 
   UI_block_funcN_set(block, nullptr, nullptr, nullptr);
@@ -4996,18 +4803,13 @@ void uiTemplateCurveMapping(uiLayout *layout,
     return;
   }
 
-  RNAUpdateCb *cb = MEM_cnew<RNAUpdateCb>("RNAUpdateCb");
-  cb->ptr = *ptr;
-  cb->prop = prop;
-
   ID *id = cptr.owner_id;
   UI_block_lock_set(block, (id && ID_IS_LINKED(id)), ERROR_LIBDATA_MESSAGE);
 
-  curvemap_buttons_layout(layout, &cptr, type, levels, brush, neg_slope, tone, cb);
+  curvemap_buttons_layout(
+      layout, &cptr, type, levels, brush, neg_slope, tone, RNAUpdateCb{*ptr, prop});
 
   UI_block_lock_clear(block);
-
-  MEM_freeN(cb);
 }
 
 /** \} */
@@ -5016,172 +4818,45 @@ void uiTemplateCurveMapping(uiLayout *layout,
 /** \name Curve Profile Template
  * \{ */
 
-static void CurveProfile_presets_dofunc(bContext *C, void *profile_v, int event)
+static uiBlock *curve_profile_presets_fn(bContext *C, ARegion *region, void *cb_v)
 {
-  CurveProfile *profile = static_cast<CurveProfile *>(profile_v);
-
-  profile->preset = event;
-  BKE_curveprofile_reset(profile);
-  BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
-
-  ED_undo_push(C, "CurveProfile tools");
-  ED_region_tag_redraw(CTX_wm_region(C));
-}
-
-static uiBlock *CurveProfile_presets_func(bContext *C, ARegion *region, CurveProfile *profile)
-{
+  RNAUpdateCb &cb = *static_cast<RNAUpdateCb *>(cb_v);
+  PointerRNA profile_ptr = RNA_property_pointer_get(&cb.ptr, cb.prop);
+  CurveProfile *profile = static_cast<CurveProfile *>(profile_ptr.data);
   short yco = 0;
 
   uiBlock *block = UI_block_begin(C, region, __func__, UI_EMBOSS);
-  UI_block_func_butmenu_set(block, CurveProfile_presets_dofunc, profile);
 
-  uiDefIconTextBut(block,
-                   UI_BTYPE_BUT_MENU,
-                   1,
-                   ICON_BLANK1,
-                   IFACE_("Default"),
-                   0,
-                   yco -= UI_UNIT_Y,
-                   0,
-                   UI_UNIT_Y,
-                   nullptr,
-                   0.0,
-                   0.0,
-                   0,
-                   PROF_PRESET_LINE,
-                   "");
-  uiDefIconTextBut(block,
-                   UI_BTYPE_BUT_MENU,
-                   1,
-                   ICON_BLANK1,
-                   IFACE_("Support Loops"),
-                   0,
-                   yco -= UI_UNIT_Y,
-                   0,
-                   UI_UNIT_Y,
-                   nullptr,
-                   0.0,
-                   0.0,
-                   0,
-                   PROF_PRESET_SUPPORTS,
-                   "");
-  uiDefIconTextBut(block,
-                   UI_BTYPE_BUT_MENU,
-                   1,
-                   ICON_BLANK1,
-                   IFACE_("Cornice Molding"),
-                   0,
-                   yco -= UI_UNIT_Y,
-                   0,
-                   UI_UNIT_Y,
-                   nullptr,
-                   0.0,
-                   0.0,
-                   0,
-                   PROF_PRESET_CORNICE,
-                   "");
-  uiDefIconTextBut(block,
-                   UI_BTYPE_BUT_MENU,
-                   1,
-                   ICON_BLANK1,
-                   IFACE_("Crown Molding"),
-                   0,
-                   yco -= UI_UNIT_Y,
-                   0,
-                   UI_UNIT_Y,
-                   nullptr,
-                   0.0,
-                   0.0,
-                   0,
-                   PROF_PRESET_CROWN,
-                   "");
-  uiDefIconTextBut(block,
-                   UI_BTYPE_BUT_MENU,
-                   1,
-                   ICON_BLANK1,
-                   IFACE_("Steps"),
-                   0,
-                   yco -= UI_UNIT_Y,
-                   0,
-                   UI_UNIT_Y,
-                   nullptr,
-                   0.0,
-                   0.0,
-                   0,
-                   PROF_PRESET_STEPS,
-                   "");
-
-  UI_block_direction_set(block, UI_DIR_DOWN);
-  UI_block_bounds_set_text(block, int(3.0f * UI_UNIT_X));
-
-  return block;
-}
-
-static uiBlock *CurveProfile_buttons_presets(bContext *C, ARegion *region, void *profile_v)
-{
-  return CurveProfile_presets_func(C, region, (CurveProfile *)profile_v);
-}
-
-/* Only for CurveProfile tools block */
-enum {
-  UIPROFILE_FUNC_RESET,
-  UIPROFILE_FUNC_RESET_VIEW,
-};
-
-static void CurveProfile_tools_dofunc(bContext *C, void *profile_v, int event)
-{
-  CurveProfile *profile = static_cast<CurveProfile *>(profile_v);
-
-  switch (event) {
-    case UIPROFILE_FUNC_RESET: /* reset */
+  for (const auto &item :
+       {std::pair<StringRef, eCurveProfilePresets>(IFACE_("Default"), PROF_PRESET_LINE),
+        std::pair<StringRef, eCurveProfilePresets>(IFACE_("Support Loops"), PROF_PRESET_SUPPORTS),
+        std::pair<StringRef, eCurveProfilePresets>(IFACE_("Cornice Molding"), PROF_PRESET_CORNICE),
+        std::pair<StringRef, eCurveProfilePresets>(IFACE_("Crown Molding"), PROF_PRESET_CROWN),
+        std::pair<StringRef, eCurveProfilePresets>(IFACE_("Steps"), PROF_PRESET_STEPS)})
+  {
+    uiBut *but = uiDefIconTextBut(block,
+                                  UI_BTYPE_BUT_MENU,
+                                  1,
+                                  ICON_BLANK1,
+                                  item.first,
+                                  0,
+                                  yco -= UI_UNIT_Y,
+                                  0,
+                                  UI_UNIT_Y,
+                                  nullptr,
+                                  0.0,
+                                  0.0,
+                                  "");
+    const eCurveProfilePresets preset = item.second;
+    UI_but_func_set(but, [profile, cb, preset](bContext &C) {
+      profile->preset = preset;
       BKE_curveprofile_reset(profile);
       BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
-      break;
-    case UIPROFILE_FUNC_RESET_VIEW: /* reset view to clipping rect */
-      BKE_curveprofile_reset_view(profile);
-      break;
+      ED_undo_push(&C, "Reset Curve Profile");
+      ED_region_tag_redraw(CTX_wm_region(&C));
+      rna_update_cb(C, cb);
+    });
   }
-  ED_undo_push(C, "CurveProfile tools");
-  ED_region_tag_redraw(CTX_wm_region(C));
-}
-
-static uiBlock *CurveProfile_tools_func(bContext *C, ARegion *region, CurveProfile *profile)
-{
-  short yco = 0;
-
-  uiBlock *block = UI_block_begin(C, region, __func__, UI_EMBOSS);
-  UI_block_func_butmenu_set(block, CurveProfile_tools_dofunc, profile);
-
-  uiDefIconTextBut(block,
-                   UI_BTYPE_BUT_MENU,
-                   1,
-                   ICON_VIEW_RESET,
-                   IFACE_("Reset View"),
-                   0,
-                   yco -= UI_UNIT_Y,
-                   0,
-                   UI_UNIT_Y,
-                   nullptr,
-                   0.0,
-                   0.0,
-                   0,
-                   UIPROFILE_FUNC_RESET_VIEW,
-                   "");
-  uiDefIconTextBut(block,
-                   UI_BTYPE_BUT_MENU,
-                   1,
-                   ICON_RESET,
-                   IFACE_("Reset Curve"),
-                   0,
-                   yco -= UI_UNIT_Y,
-                   0,
-                   UI_UNIT_Y,
-                   nullptr,
-                   0.0,
-                   0.0,
-                   0,
-                   UIPROFILE_FUNC_RESET,
-                   "");
 
   UI_block_direction_set(block, UI_DIR_DOWN);
   UI_block_bounds_set_text(block, int(3.0f * UI_UNIT_X));
@@ -5189,27 +4864,77 @@ static uiBlock *CurveProfile_tools_func(bContext *C, ARegion *region, CurveProfi
   return block;
 }
 
-static uiBlock *CurveProfile_buttons_tools(bContext *C, ARegion *region, void *profile_v)
+static uiBlock *curve_profile_tools_fn(bContext *C, ARegion *region, void *cb_v)
 {
-  return CurveProfile_tools_func(C, region, (CurveProfile *)profile_v);
+  RNAUpdateCb &cb = *static_cast<RNAUpdateCb *>(cb_v);
+  PointerRNA profile_ptr = RNA_property_pointer_get(&cb.ptr, cb.prop);
+  CurveProfile *profile = static_cast<CurveProfile *>(profile_ptr.data);
+  short yco = 0;
+
+  uiBlock *block = UI_block_begin(C, region, __func__, UI_EMBOSS);
+
+  {
+    uiBut *but = uiDefIconTextBut(block,
+                                  UI_BTYPE_BUT_MENU,
+                                  1,
+                                  ICON_VIEW_RESET,
+                                  IFACE_("Reset View"),
+                                  0,
+                                  yco -= UI_UNIT_Y,
+                                  0,
+                                  UI_UNIT_Y,
+                                  nullptr,
+                                  0.0,
+                                  0.0,
+                                  "");
+    UI_but_func_set(but, [profile](bContext &C) {
+      BKE_curveprofile_reset_view(profile);
+      ED_region_tag_redraw(CTX_wm_region(&C));
+    });
+  }
+  {
+    uiBut *but = uiDefIconTextBut(block,
+                                  UI_BTYPE_BUT_MENU,
+                                  1,
+                                  ICON_RESET,
+                                  IFACE_("Reset Curve"),
+                                  0,
+                                  yco -= UI_UNIT_Y,
+                                  0,
+                                  UI_UNIT_Y,
+                                  nullptr,
+                                  0.0,
+                                  0.0,
+                                  "");
+    UI_but_func_set(but, [profile, cb](bContext &C) {
+      BKE_curveprofile_reset(profile);
+      BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
+      ED_undo_push(&C, "Reset Profile");
+      ED_region_tag_redraw(CTX_wm_region(&C));
+      rna_update_cb(C, cb);
+    });
+  }
+
+  UI_block_direction_set(block, UI_DIR_DOWN);
+  UI_block_bounds_set_text(block, int(3.0f * UI_UNIT_X));
+
+  return block;
 }
 
-static bool CurveProfile_can_zoom_in(CurveProfile *profile)
+static bool curve_profile_can_zoom_in(CurveProfile *profile)
 {
   return BLI_rctf_size_x(&profile->view_rect) >
          CURVE_ZOOM_MAX * BLI_rctf_size_x(&profile->clip_rect);
 }
 
-static bool CurveProfile_can_zoom_out(CurveProfile *profile)
+static bool curve_profile_can_zoom_out(CurveProfile *profile)
 {
   return BLI_rctf_size_x(&profile->view_rect) < BLI_rctf_size_x(&profile->clip_rect);
 }
 
-static void CurveProfile_buttons_zoom_in(bContext *C, void *profile_v, void * /*arg*/)
+static void curve_profile_zoom_in(bContext *C, CurveProfile *profile)
 {
-  CurveProfile *profile = static_cast<CurveProfile *>(profile_v);
-
-  if (CurveProfile_can_zoom_in(profile)) {
+  if (curve_profile_can_zoom_in(profile)) {
     const float dx = 0.1154f * BLI_rctf_size_x(&profile->view_rect);
     profile->view_rect.xmin += dx;
     profile->view_rect.xmax -= dx;
@@ -5221,11 +4946,9 @@ static void CurveProfile_buttons_zoom_in(bContext *C, void *profile_v, void * /*
   ED_region_tag_redraw(CTX_wm_region(C));
 }
 
-static void CurveProfile_buttons_zoom_out(bContext *C, void *profile_v, void * /*arg*/)
+static void curve_profile_zoom_out(bContext *C, CurveProfile *profile)
 {
-  CurveProfile *profile = static_cast<CurveProfile *>(profile_v);
-
-  if (CurveProfile_can_zoom_out(profile)) {
+  if (curve_profile_can_zoom_out(profile)) {
     float d = 0.15f * BLI_rctf_size_x(&profile->view_rect);
     float d1 = d;
 
@@ -5265,51 +4988,7 @@ static void CurveProfile_buttons_zoom_out(bContext *C, void *profile_v, void * /
   ED_region_tag_redraw(CTX_wm_region(C));
 }
 
-static void CurveProfile_clipping_toggle(bContext *C, void *cb_v, void *profile_v)
-{
-  CurveProfile *profile = static_cast<CurveProfile *>(profile_v);
-
-  profile->flag ^= PROF_USE_CLIP;
-
-  BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
-  rna_update_cb(C, cb_v, nullptr);
-}
-
-static void CurveProfile_buttons_reverse(bContext *C, void *cb_v, void *profile_v)
-{
-  CurveProfile *profile = static_cast<CurveProfile *>(profile_v);
-
-  BKE_curveprofile_reverse(profile);
-  BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
-  rna_update_cb(C, cb_v, nullptr);
-}
-
-static void CurveProfile_buttons_delete(bContext *C, void *cb_v, void *profile_v)
-{
-  CurveProfile *profile = static_cast<CurveProfile *>(profile_v);
-
-  BKE_curveprofile_remove_by_flag(profile, SELECT);
-  BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
-
-  rna_update_cb(C, cb_v, nullptr);
-}
-
-static void CurveProfile_buttons_update(bContext *C, void *arg1_v, void *profile_v)
-{
-  CurveProfile *profile = static_cast<CurveProfile *>(profile_v);
-  BKE_curveprofile_update(profile, PROF_UPDATE_REMOVE_DOUBLES | PROF_UPDATE_CLIP);
-  rna_update_cb(C, arg1_v, nullptr);
-}
-
-static void CurveProfile_buttons_reset(bContext *C, void *arg1_v, void *profile_v)
-{
-  CurveProfile *profile = static_cast<CurveProfile *>(profile_v);
-  BKE_curveprofile_reset(profile);
-  BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
-  rna_update_cb(C, arg1_v, nullptr);
-}
-
-static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUpdateCb *cb)
+static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, const RNAUpdateCb &cb)
 {
   CurveProfile *profile = static_cast<CurveProfile *>(ptr->data);
   uiBut *bt;
@@ -5324,16 +5003,19 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
   /* There is probably potential to use simpler "uiItemR" functions here, but automatic updating
    * after a preset is selected would be more complicated. */
   uiLayout *row = uiLayoutRow(layout, true);
+  RNAUpdateCb *presets_cb = MEM_new<RNAUpdateCb>(__func__, cb);
   bt = uiDefBlockBut(block,
-                     CurveProfile_buttons_presets,
-                     profile,
+                     curve_profile_presets_fn,
+                     presets_cb,
                      IFACE_("Preset"),
                      0,
                      0,
                      UI_UNIT_X,
                      UI_UNIT_X,
                      "");
-  UI_but_funcN_set(bt, rna_update_cb, MEM_dupallocN(cb), nullptr);
+  /* Pass ownership of `presets_cb` to the button. */
+  UI_but_funcN_set(
+      bt, [](bContext *, void *, void *) {}, presets_cb, nullptr);
 
   /* Show a "re-apply" preset button when it has been changed from the preset. */
   if (profile->flag & PROF_DIRTY_PRESET) {
@@ -5351,10 +5033,12 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
                             nullptr,
                             0.0,
                             0.0,
-                            0.0,
-                            0.0,
                             TIP_("Reapply and update the preset, removing changes"));
-      UI_but_funcN_set(bt, CurveProfile_buttons_reset, MEM_dupallocN(cb), profile);
+      UI_but_func_set(bt, [profile, cb](bContext &C) {
+        BKE_curveprofile_reset(profile);
+        BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
+        rna_update_cb(C, cb);
+      });
     }
   }
 
@@ -5376,11 +5060,9 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
                     nullptr,
                     0.0,
                     0.0,
-                    0.0,
-                    0.0,
                     TIP_("Zoom in"));
-  UI_but_func_set(bt, CurveProfile_buttons_zoom_in, profile, nullptr);
-  if (!CurveProfile_can_zoom_in(profile)) {
+  UI_but_func_set(bt, [profile](bContext &C) { curve_profile_zoom_in(&C, profile); });
+  if (!curve_profile_can_zoom_in(profile)) {
     UI_but_disable(bt, "");
   }
 
@@ -5396,11 +5078,9 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
                     nullptr,
                     0.0,
                     0.0,
-                    0.0,
-                    0.0,
                     TIP_("Zoom out"));
-  UI_but_func_set(bt, CurveProfile_buttons_zoom_out, profile, nullptr);
-  if (!CurveProfile_can_zoom_out(profile)) {
+  UI_but_func_set(bt, [profile](bContext &C) { curve_profile_zoom_out(&C, profile); });
+  if (!curve_profile_can_zoom_out(profile)) {
     UI_but_disable(bt, "");
   }
 
@@ -5420,10 +5100,12 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
                     nullptr,
                     0.0,
                     0.0,
-                    0.0,
-                    0.0,
                     TIP_("Reverse Path"));
-  UI_but_funcN_set(bt, CurveProfile_buttons_reverse, MEM_dupallocN(cb), profile);
+  UI_but_func_set(bt, [profile, cb](bContext &C) {
+    BKE_curveprofile_reverse(profile);
+    BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
+    rna_update_cb(C, cb);
+  });
 
   /* Clipping toggle */
   const int icon = (profile->flag & PROF_USE_CLIP) ? ICON_CLIPUV_HLT : ICON_CLIPUV_DEHLT;
@@ -5438,15 +5120,18 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
                     nullptr,
                     0.0,
                     0.0,
-                    0.0,
-                    0.0,
                     TIP_("Toggle Profile Clipping"));
-  UI_but_funcN_set(bt, CurveProfile_clipping_toggle, MEM_dupallocN(cb), profile);
+  UI_but_func_set(bt, [profile, cb](bContext &C) {
+    profile->flag ^= PROF_USE_CLIP;
+    BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
+    rna_update_cb(C, cb);
+  });
 
   /* Reset view, reset curve */
+  RNAUpdateCb *tools_cb = MEM_new<RNAUpdateCb>(__func__, cb);
   bt = uiDefIconBlockBut(block,
-                         CurveProfile_buttons_tools,
-                         profile,
+                         curve_profile_tools_fn,
+                         tools_cb,
                          0,
                          ICON_NONE,
                          0,
@@ -5454,9 +5139,11 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
                          UI_UNIT_X,
                          UI_UNIT_X,
                          TIP_("Tools"));
-  UI_but_funcN_set(bt, rna_update_cb, MEM_dupallocN(cb), nullptr);
+  /* Pass ownership of `presets_cb` to the button. */
+  UI_but_funcN_set(
+      bt, [](bContext *, void *, void *) {}, tools_cb, nullptr);
 
-  UI_block_funcN_set(block, rna_update_cb, MEM_dupallocN(cb), nullptr);
+  UI_block_funcN_set(block, rna_update_cb, MEM_new<RNAUpdateCb>(__func__, cb), nullptr);
 
   /* The path itself */
   int path_width = max_ii(uiLayoutGetWidth(layout), UI_UNIT_X);
@@ -5474,8 +5161,6 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
            profile,
            0.0f,
            1.0f,
-           -1,
-           0,
            "");
 
   /* Position sliders for (first) selected point */
@@ -5544,7 +5229,10 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
                    "");
     UI_but_number_step_size_set(bt, 1);
     UI_but_number_precision_set(bt, 5);
-    UI_but_funcN_set(bt, CurveProfile_buttons_update, MEM_dupallocN(cb), profile);
+    UI_but_func_set(bt, [profile, cb](bContext &C) {
+      BKE_curveprofile_update(profile, PROF_UPDATE_REMOVE_DOUBLES | PROF_UPDATE_CLIP);
+      rna_update_cb(C, cb);
+    });
     if (point_last_or_first) {
       UI_but_flag_enable(bt, UI_BUT_DISABLED);
     }
@@ -5562,7 +5250,10 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
                    "");
     UI_but_number_step_size_set(bt, 1);
     UI_but_number_precision_set(bt, 5);
-    UI_but_funcN_set(bt, CurveProfile_buttons_update, MEM_dupallocN(cb), profile);
+    UI_but_func_set(bt, [profile, cb](bContext &C) {
+      BKE_curveprofile_update(profile, PROF_UPDATE_REMOVE_DOUBLES | PROF_UPDATE_CLIP);
+      rna_update_cb(C, cb);
+    });
     if (point_last_or_first) {
       UI_but_flag_enable(bt, UI_BUT_DISABLED);
     }
@@ -5579,10 +5270,12 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
                       nullptr,
                       0.0,
                       0.0,
-                      0.0,
-                      0.0,
                       TIP_("Delete points"));
-    UI_but_funcN_set(bt, CurveProfile_buttons_delete, MEM_dupallocN(cb), profile);
+    UI_but_func_set(bt, [profile, cb](bContext &C) {
+      BKE_curveprofile_remove_by_flag(profile, SELECT);
+      BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
+      rna_update_cb(C, cb);
+    });
     if (point_last_or_first) {
       UI_but_flag_enable(bt, UI_BUT_DISABLED);
     }
@@ -5617,19 +5310,12 @@ void uiTemplateCurveProfile(uiLayout *layout, PointerRNA *ptr, const char *propn
     return;
   }
 
-  /* Share update functionality with the CurveMapping widget template. */
-  RNAUpdateCb *cb = MEM_cnew<RNAUpdateCb>("RNAUpdateCb");
-  cb->ptr = *ptr;
-  cb->prop = prop;
-
   ID *id = cptr.owner_id;
   UI_block_lock_set(block, (id && ID_IS_LINKED(id)), ERROR_LIBDATA_MESSAGE);
 
-  CurveProfile_buttons_layout(layout, &cptr, cb);
+  CurveProfile_buttons_layout(layout, &cptr, RNAUpdateCb{*ptr, prop});
 
   UI_block_lock_clear(block);
-
-  MEM_freeN(cb);
 }
 
 /** \} */
@@ -5727,7 +5413,6 @@ void uiTemplateColorPicker(uiLayout *layout,
   if (lock_luminosity) {
     float color[4]; /* in case of alpha */
     RNA_property_float_get_array(ptr, prop, color);
-    but->a2 = len_v3(color);
     cpicker->luminosity_lock_value = len_v3(color);
   }
 
@@ -6141,7 +5826,7 @@ static std::string progress_tooltip_func(bContext * /*C*/, void *argN, const cha
   /* create tooltip text and associate it with the job */
   char elapsed_str[32];
   char remaining_str[32] = "Unknown";
-  const double elapsed = BLI_check_seconds_timer() - WM_jobs_starttime(wm, owner);
+  const double elapsed = BLI_time_now_seconds() - WM_jobs_starttime(wm, owner);
   BLI_timecode_string_from_time_simple(elapsed_str, sizeof(elapsed_str), elapsed);
 
   if (progress) {
@@ -6315,8 +6000,6 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
                      nullptr,
                      0.0f,
                      0.0f,
-                     0.0f,
-                     0.0f,
                      "");
 
     /* stick progress bar and cancel button together */
@@ -6341,15 +6024,13 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
                                                                       nullptr,
                                                                       0.0f,
                                                                       0.0f,
-                                                                      0.0f,
-                                                                      0,
                                                                       nullptr);
 
       but_progress->progress_factor = progress;
       UI_but_func_tooltip_set(but_progress, progress_tooltip_func, tip_arg, MEM_freeN);
     }
 
-    if (!wm->is_interface_locked) {
+    if (!wm->runtime->is_interface_locked) {
       uiDefIconTextBut(block,
                        UI_BTYPE_BUT,
                        handle_event,
@@ -6362,8 +6043,6 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
                        nullptr,
                        0.0f,
                        0.0f,
-                       0,
-                       0,
                        TIP_("Stop this job"));
     }
   }
@@ -6381,8 +6060,6 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
                      nullptr,
                      0.0f,
                      0.0f,
-                     0,
-                     0,
                      TIP_("Stop animation playback"));
   }
 }
@@ -6450,8 +6127,6 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
                  nullptr,
                  0.0f,
                  0.0f,
-                 0,
-                 0,
                  "");
   /* UI_BTYPE_ROUNDBOX's bg color is set in but->col. */
   copy_v4_v4_uchar(but->col, report_icon_color);
@@ -6468,8 +6143,6 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
                  nullptr,
                  0.0f,
                  0.0f,
-                 0,
-                 0,
                  "");
   /* Use icon background at low opacity to highlight, but still contrasting with area TH_TEXT. */
   copy_v3_v3_uchar(but->col, report_icon_color);
@@ -6594,8 +6267,6 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
                  nullptr,
                  0.0f,
                  0.0f,
-                 0,
-                 0,
                  "");
   /* UI_BTYPE_ROUNDBOX's bg color is set in but->col. */
   UI_GetThemeColorType4ubv(TH_INFO_WARNING, SPACE_INFO, but->col);
@@ -6612,8 +6283,6 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
                  nullptr,
                  0.0f,
                  0.0f,
-                 0,
-                 0,
                  "");
 
   /* Use icon background at low opacity to highlight, but still contrasting with area TH_TEXT. */
@@ -6642,8 +6311,6 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
                      nullptr,
                      0.0f,
                      0.0f,
-                     0.0f,
-                     0.0f,
                      compat_error_msg);
   UI_GetThemeColorType4ubv(TH_INFO_WARNING_TEXT, SPACE_INFO, but->col);
   but->col[3] = 255; /* This theme color is RBG only, so have to set alpha here. */
@@ -6658,8 +6325,6 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
                  short(width + UI_UNIT_X),
                  UI_UNIT_Y,
                  nullptr,
-                 0.0f,
-                 0.0f,
                  0.0f,
                  0.0f,
                  compat_error_msg);
@@ -6923,7 +6588,7 @@ void uiTemplateNodeSocket(uiLayout *layout, bContext * /*C*/, const float color[
    * Eventually it should be possible to use theme colors for this purpose,
    * but this requires a better design for extendable color palettes in user preferences. */
   uiBut *but = uiDefBut(
-      block, UI_BTYPE_NODE_SOCKET, 0, "", 0, 0, UI_UNIT_X, UI_UNIT_Y, nullptr, 0, 0, 0, 0, "");
+      block, UI_BTYPE_NODE_SOCKET, 0, "", 0, 0, UI_UNIT_X, UI_UNIT_Y, nullptr, 0, 0, "");
   rgba_float_to_uchar(but->col, color);
 
   UI_block_align_end(block);

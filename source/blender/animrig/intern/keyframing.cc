@@ -18,7 +18,7 @@
 #include "ANIM_visualkey.hh"
 
 #include "BKE_action.h"
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_fcurve.h"
 #include "BKE_idtype.hh"
@@ -28,6 +28,7 @@
 
 #include "DNA_scene_types.h"
 
+#include "BLI_bit_vector.hh"
 #include "BLI_dynstr.h"
 #include "BLI_math_base.h"
 #include "BLI_utildefines.h"
@@ -41,7 +42,6 @@
 #include "RNA_path.hh"
 #include "RNA_prototypes.h"
 
-#include "WM_api.hh"
 #include "WM_types.hh"
 
 namespace blender::animrig {
@@ -119,7 +119,7 @@ static void get_keyframe_values_create_reports(ReportList *reports,
                                                const int index,
                                                const int count,
                                                const bool force_all,
-                                               const BLI_bitmap *successful_remaps)
+                                               const BitSpan successful_remaps)
 {
 
   DynStr *ds_failed_indices = BLI_dynstr_new();
@@ -132,7 +132,7 @@ static void get_keyframe_values_create_reports(ReportList *reports,
       continue;
     }
 
-    if (BLI_BITMAP_TEST_BOOL(successful_remaps, i)) {
+    if (successful_remaps[i]) {
       /* `values[i]` successfully remapped. */
       continue;
     }
@@ -177,7 +177,7 @@ static Vector<float> get_keyframe_values(ReportList *reports,
                                          eInsertKeyFlags flag,
                                          const AnimationEvalContext *anim_eval_context,
                                          bool *r_force_all,
-                                         BLI_bitmap **r_successful_remaps)
+                                         blender::BitVector<> &r_successful_remaps)
 {
   Vector<float> values;
 
@@ -192,7 +192,7 @@ static Vector<float> get_keyframe_values(ReportList *reports,
     values = get_rna_values(&ptr, prop);
   }
 
-  *r_successful_remaps = BLI_BITMAP_NEW(values.size(), __func__);
+  r_successful_remaps.resize(values.size());
 
   /* adjust the value for NLA factors */
   BKE_animsys_nla_remap_keyframe_values(nla_context,
@@ -202,14 +202,14 @@ static Vector<float> get_keyframe_values(ReportList *reports,
                                         index,
                                         anim_eval_context,
                                         r_force_all,
-                                        *r_successful_remaps);
+                                        r_successful_remaps);
   get_keyframe_values_create_reports(reports,
                                      ptr,
                                      prop,
                                      index,
                                      values.size(),
                                      r_force_all ? *r_force_all : false,
-                                     *r_successful_remaps);
+                                     r_successful_remaps);
 
   return values;
 }
@@ -386,27 +386,17 @@ bool insert_keyframe_direct(ReportList *reports,
   update_autoflags_fcurve_direct(fcu, prop);
 
   const int index = fcu->array_index;
-  BLI_bitmap *successful_remaps = nullptr;
-  Vector<float> values = get_keyframe_values(reports,
-                                             ptr,
-                                             prop,
-                                             index,
-                                             nla_context,
-                                             flag,
-                                             anim_eval_context,
-                                             nullptr,
-                                             &successful_remaps);
+  BitVector<> successful_remaps;
+  Vector<float> values = get_keyframe_values(
+      reports, ptr, prop, index, nla_context, flag, anim_eval_context, nullptr, successful_remaps);
 
   float current_value = 0.0f;
   if (index >= 0 && index < values.size()) {
     current_value = values[index];
   }
 
-  const bool curval_valid = BLI_BITMAP_TEST_BOOL(successful_remaps, index);
-  MEM_freeN(successful_remaps);
-
   /* This happens if NLA rejects this insertion. */
-  if (!curval_valid) {
+  if (!successful_remaps[index]) {
     return false;
   }
 
@@ -539,7 +529,7 @@ int insert_keyframe(Main *bmain,
       anim_eval_context, &id_ptr, adt, act, &nla_cache, &nla_context);
 
   bool force_all;
-  BLI_bitmap *successful_remaps = nullptr;
+  BitVector successful_remaps;
   Vector<float> values = get_keyframe_values(reports,
                                              ptr,
                                              prop,
@@ -548,7 +538,7 @@ int insert_keyframe(Main *bmain,
                                              flag,
                                              anim_eval_context,
                                              &force_all,
-                                             &successful_remaps);
+                                             successful_remaps);
 
   /* Key the entire array. */
   int key_count = 0;
@@ -558,7 +548,7 @@ int insert_keyframe(Main *bmain,
       int exclude = -1;
 
       for (array_index = 0; array_index < values.size(); array_index++) {
-        if (!BLI_BITMAP_TEST_BOOL(successful_remaps, array_index)) {
+        if (!successful_remaps[array_index]) {
           continue;
         }
 
@@ -585,7 +575,7 @@ int insert_keyframe(Main *bmain,
         flag &= ~(INSERTKEY_REPLACE | INSERTKEY_AVAILABLE);
 
         for (array_index = 0; array_index < values.size(); array_index++) {
-          if (!BLI_BITMAP_TEST_BOOL(successful_remaps, array_index)) {
+          if (!successful_remaps[array_index]) {
             continue;
           }
 
@@ -609,7 +599,7 @@ int insert_keyframe(Main *bmain,
     /* Simply insert all channels. */
     else {
       for (array_index = 0; array_index < values.size(); array_index++) {
-        if (!BLI_BITMAP_TEST_BOOL(successful_remaps, array_index)) {
+        if (!successful_remaps[array_index]) {
           continue;
         }
 
@@ -630,9 +620,7 @@ int insert_keyframe(Main *bmain,
   }
   /* Key a single index. */
   else {
-    if (array_index >= 0 && array_index < values.size() &&
-        BLI_BITMAP_TEST_BOOL(successful_remaps, array_index))
-    {
+    if (array_index >= 0 && array_index < values.size() && successful_remaps[array_index]) {
       key_count += insert_keyframe_fcurve_value(bmain,
                                                 reports,
                                                 &ptr,
@@ -648,7 +636,6 @@ int insert_keyframe(Main *bmain,
     }
   }
 
-  MEM_freeN(successful_remaps);
   BKE_animsys_free_nla_keyframing_context_cache(&nla_cache);
 
   if (key_count > 0) {
@@ -863,7 +850,8 @@ int insert_key_action(Main *bmain,
                       const float frame,
                       const Span<float> values,
                       eInsertKeyFlags insert_key_flag,
-                      eBezTriple_KeyframeType key_type)
+                      eBezTriple_KeyframeType key_type,
+                      const BitSpan keying_mask)
 {
   BLI_assert(bmain != nullptr);
   BLI_assert(action != nullptr);
@@ -880,6 +868,10 @@ int insert_key_action(Main *bmain,
   int property_array_index = 0;
   int inserted_keys = 0;
   for (float value : values) {
+    if (!keying_mask[property_array_index]) {
+      property_array_index++;
+      continue;
+    }
     const bool inserted_key = insert_keyframe_fcurve_value(bmain,
                                                            nullptr,
                                                            ptr,
@@ -925,7 +917,8 @@ void insert_key_rna(PointerRNA *rna_pointer,
                     const eInsertKeyFlags insert_key_flags,
                     const eBezTriple_KeyframeType key_type,
                     Main *bmain,
-                    ReportList *reports)
+                    ReportList *reports,
+                    const AnimationEvalContext &anim_eval_context)
 {
   ID *id = rna_pointer->owner_id;
   bAction *action = id_action_ensure(bmain, id);
@@ -939,6 +932,15 @@ void insert_key_rna(PointerRNA *rna_pointer,
   }
 
   AnimData *adt = BKE_animdata_from_id(id);
+
+  /* Keyframing functions can deal with the nla_context being a nullptr. */
+  ListBase nla_cache = {nullptr, nullptr};
+  NlaKeyframingContext *nla_context = nullptr;
+  if (adt && adt->action == action) {
+    nla_context = BKE_animsys_get_nla_keyframing_context(
+        &nla_cache, rna_pointer, adt, &anim_eval_context);
+  }
+
   const float nla_frame = BKE_nla_tweakedit_remap(adt, scene_frame, NLATIME_CONVERT_UNMAP);
   const bool visual_keyframing = insert_key_flags & INSERTKEY_MATRIX;
 
@@ -961,6 +963,16 @@ void insert_key_rna(PointerRNA *rna_pointer,
                                                                                         prop);
     Vector<float> rna_values = get_keyframe_values(&ptr, prop, visual_keyframing);
 
+    BitVector<> successful_remaps(rna_values.size(), false);
+    BKE_animsys_nla_remap_keyframe_values(nla_context,
+                                          rna_pointer,
+                                          prop,
+                                          rna_values.as_mutable_span(),
+                                          -1,
+                                          &anim_eval_context,
+                                          nullptr,
+                                          successful_remaps);
+
     insert_key_count += insert_key_action(bmain,
                                           action,
                                           rna_pointer,
@@ -969,7 +981,8 @@ void insert_key_rna(PointerRNA *rna_pointer,
                                           nla_frame,
                                           rna_values.as_span(),
                                           insert_key_flags,
-                                          key_type);
+                                          key_type,
+                                          successful_remaps);
   }
 
   if (insert_key_count == 0) {

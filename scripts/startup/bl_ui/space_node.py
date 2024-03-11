@@ -1067,13 +1067,10 @@ class NODE_PT_quality(bpy.types.Panel):
         col.active = not use_realtime
         col.prop(tree, "render_quality", text="Render")
         col.prop(tree, "edit_quality", text="Edit")
-        col.prop(tree, "chunk_size")
 
         col = layout.column()
         col.use_property_split = False
         col.active = not use_realtime
-        col.prop(tree, "use_opencl")
-        col.prop(tree, "use_groupnode_buffer")
         col.prop(tree, "use_two_pass")
         col.prop(tree, "use_viewer_border")
 
@@ -1363,7 +1360,7 @@ class NODE_PT_repeat_zone_items(Panel):
         if snode is None:
             return False
         node = context.active_node
-        if node is None or node.bl_idname not in (cls.input_node_type, cls.output_node_type):
+        if node is None or node.bl_idname not in {cls.input_node_type, cls.output_node_type}:
             return False
         if cls.get_output_node(context) is None:
             return False

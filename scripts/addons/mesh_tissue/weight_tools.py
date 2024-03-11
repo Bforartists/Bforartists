@@ -1,13 +1,29 @@
-# SPDX-FileCopyrightText: 2022-2023 Blender Foundation
-#
 # SPDX-License-Identifier: GPL-2.0-or-later
+
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 
 #-------------------------- COLORS / GROUPS EXCHANGER -------------------------#
 #                                                                              #
-# Vertex Color to Vertex Group allow you to convert colors channels to weight  #
+# Vertex Color to Vertex Group allow you to convert colors channles to weight  #
 # maps.                                                                        #
 # The main purpose is to use vertex colors to store information when importing #
-# files from other software. The script works with the active vertex color     #
+# files from other softwares. The script works with the active vertex color    #
 # slot.                                                                        #
 # For use the command "Vertex Clors to Vertex Groups" use the search bar       #
 # (space bar).                                                                 #
@@ -27,17 +43,8 @@ from statistics import mean, stdev
 from mathutils import Vector
 from mathutils.kdtree import KDTree
 from numpy import *
-try: from .numba_functions import numba_reaction_diffusion, numba_reaction_diffusion_anisotropic, integrate_field
-except: pass
-#from .numba_functions import integrate_field
-#from .numba_functions import numba_reaction_diffusion
 try: import numexpr as ne
 except: pass
-
-# Reaction-Diffusion cache
-from pathlib import Path
-import random as rnd
-import string
 
 from bpy.types import (
         Operator,
@@ -52,199 +59,17 @@ from bpy.props import (
     IntProperty,
     StringProperty,
     FloatVectorProperty,
-    IntVectorProperty
+    IntVectorProperty,
+    PointerProperty
 )
 
 from .utils import *
-
-def reaction_diffusion_add_handler(self, context):
-    # remove existing handlers
-    reaction_diffusion_remove_handler(self, context)
-    # add new handler
-    bpy.app.handlers.frame_change_post.append(reaction_diffusion_scene)
-
-def reaction_diffusion_remove_handler(self, context):
-    # remove existing handlers
-    old_handlers = []
-    for h in bpy.app.handlers.frame_change_post:
-        if "reaction_diffusion" in str(h):
-            old_handlers.append(h)
-    for h in old_handlers: bpy.app.handlers.frame_change_post.remove(h)
 
 class formula_prop(PropertyGroup):
     name : StringProperty()
     formula : StringProperty()
     float_var : FloatVectorProperty(name="", description="", default=(0, 0, 0, 0, 0), size=5)
     int_var : IntVectorProperty(name="", description="", default=(0, 0, 0, 0, 0), size=5)
-
-class reaction_diffusion_prop(PropertyGroup):
-    run : BoolProperty(default=False, update = reaction_diffusion_add_handler,
-        description='Compute a new iteration on frame changes. Currently is not working during  Render Animation')
-
-    time_steps : IntProperty(
-        name="Steps", default=10, min=0, soft_max=50,
-        description="Number of Steps")
-
-    dt : FloatProperty(
-        name="dt", default=1, min=0, soft_max=0.2,
-        description="Time Step")
-
-    diff_a : FloatProperty(
-        name="Diff A", default=0.1, min=0, soft_max=2, precision=3,
-        description="Diffusion A")
-
-    diff_b : FloatProperty(
-        name="Diff B", default=0.05, min=0, soft_max=2, precision=3,
-        description="Diffusion B")
-
-    f : FloatProperty(
-        name="f", default=0.055, soft_min=0.01, soft_max=0.06, precision=4, step=0.05,
-        description="Feed Rate")
-
-    k : FloatProperty(
-        name="k", default=0.062, soft_min=0.035, soft_max=0.065, precision=4, step=0.05,
-        description="Kill Rate")
-
-    diff_mult : FloatProperty(
-        name="Scale", default=1, min=0, soft_max=1, max=10, precision=2,
-        description="Multiplier for the diffusion of both substances")
-
-    vertex_group_diff_a : StringProperty(
-        name="Diff A", default='',
-        description="Vertex Group used for A diffusion")
-
-    vertex_group_diff_b : StringProperty(
-        name="Diff B", default='',
-        description="Vertex Group used for B diffusion")
-
-    vertex_group_scale : StringProperty(
-        name="Scale", default='',
-        description="Vertex Group used for Scale value")
-
-    vertex_group_f : StringProperty(
-        name="f", default='',
-        description="Vertex Group used for Feed value (f)")
-
-    vertex_group_k : StringProperty(
-        name="k", default='',
-        description="Vertex Group used for Kill value (k)")
-
-    vertex_group_brush : StringProperty(
-        name="Brush", default='',
-        description="Vertex Group used for adding/removing B")
-
-    invert_vertex_group_diff_a : BoolProperty(default=False,
-        description='Inverte the value of the Vertex Group Diff A')
-
-    invert_vertex_group_diff_b : BoolProperty(default=False,
-        description='Inverte the value of the Vertex Group Diff B')
-
-    invert_vertex_group_scale : BoolProperty(default=False,
-        description='Inverte the value of the Vertex Group Scale')
-
-    invert_vertex_group_f : BoolProperty(default=False,
-        description='Inverte the value of the Vertex Group f')
-
-    invert_vertex_group_k : BoolProperty(default=False,
-        description='Inverte the value of the Vertex Group k')
-
-    min_diff_a : FloatProperty(
-        name="Min Diff A", default=0.1, min=0, soft_max=2, precision=3,
-        description="Min Diff A")
-
-    max_diff_a : FloatProperty(
-        name="Max Diff A", default=0.1, min=0, soft_max=2, precision=3,
-        description="Max Diff A")
-
-    min_diff_b : FloatProperty(
-        name="Min Diff B", default=0.1, min=0, soft_max=2, precision=3,
-        description="Min Diff B")
-
-    max_diff_b : FloatProperty(
-        name="Max Diff B", default=0.1, min=0, soft_max=2, precision=3,
-        description="Max Diff B")
-
-    min_scale : FloatProperty(
-        name="Scale", default=0.35, min=0, soft_max=1, max=10, precision=2,
-        description="Min Scale Value")
-
-    max_scale : FloatProperty(
-        name="Scale", default=1, min=0, soft_max=1, max=10, precision=2,
-        description="Max Scale value")
-
-    min_f : FloatProperty(
-        name="Min f", default=0.02, min=0, soft_min=0.01, soft_max=0.06, max=0.1, precision=4, step=0.05,
-        description="Min Feed Rate")
-
-    max_f : FloatProperty(
-        name="Max f", default=0.055, min=0, soft_min=0.01, soft_max=0.06, max=0.1, precision=4, step=0.05,
-        description="Max Feed Rate")
-
-    min_k : FloatProperty(
-        name="Min k", default=0.035, min=0, soft_min=0.035, soft_max=0.065, max=0.1, precision=4, step=0.05,
-        description="Min Kill Rate")
-
-    max_k : FloatProperty(
-        name="Max k", default=0.062, min=0, soft_min=0.035, soft_max=0.065, max=0.1, precision=4, step=0.05,
-        description="Max Kill Rate")
-
-    brush_mult : FloatProperty(
-        name="Mult", default=0.5, min=-1, max=1, precision=3, step=0.05,
-        description="Multiplier for brush value")
-
-    bool_mod : BoolProperty(
-        name="Use Modifiers", default=False,
-        description="Read modifiers affect the vertex groups")
-
-    bool_cache : BoolProperty(
-        name="Use Cache", default=False,
-        description="Read modifiers affect the vertex groups")
-
-    cache_frame_start : IntProperty(
-        name="Start", default=1,
-        description="Frame on which the simulation starts")
-
-    cache_frame_end : IntProperty(
-        name="End", default=250,
-        description="Frame on which the simulation ends")
-
-    cache_dir : StringProperty(
-        name="Cache directory", default="", subtype='FILE_PATH',
-        description = 'Directory that contains Reaction-Diffusion cache files'
-        )
-
-    update_weight_a : BoolProperty(
-        name="Update Vertex Group A", default=True,
-        description="Transfer Cache to the Vertex Groups named A")
-
-    update_weight_b : BoolProperty(
-        name="Update Vertex Group B", default=True,
-        description="Transfer Cache to the Vertex Groups named B")
-
-    update_colors_a : BoolProperty(
-        name="Update Vertex Color A", default=False,
-        description="Transfer Cache to the Vertex Color named A")
-
-    update_colors_b : BoolProperty(
-        name="Update Vertex Color B", default=False,
-        description="Transfer Cache to the Vertex Color named B")
-
-    update_colors : BoolProperty(
-        name="Update Vertex Color AB", default=False,
-        description="Transfer Cache to the Vertex Color named AB")
-
-    update_uv : BoolProperty(
-        name="Update UV", default=False,
-        description="Transfer Cache to the UV Map Layer named AB")
-
-    normalize : BoolProperty(
-        name="Normalize values", default=False,
-        description="Normalize values from 0 to 1")
-
-    fast_bake : BoolProperty(
-        name="Fast Bake", default=True,
-        description="Do not update modifiers or vertex groups while baking. Much faster!")
-
 
 from numpy import *
 def compute_formula(ob=None, formula="rx", float_var=(0,0,0,0,0), int_var=(0,0,0,0,0)):
@@ -631,7 +456,7 @@ class _weight_laplacian(Operator):
 
         for i in range(len(lap)):
             val = (lap[i]-min_def)/delta_def
-            if val > 0.7: print(str(val) + " " + str(lap[i]))
+            #if val > 0.7: print(str(val) + " " + str(lap[i]))
             #val = weight[i] + 0.2*lap[i]
             ob.vertex_groups[-1].add([i], val, 'REPLACE')
         self.bounds_string = str(round(min_def,2)) + " to " + str(round(max_def,2))
@@ -802,7 +627,6 @@ class weight_laplacian(Operator):
         lap = np.array(lap)
         lap /= np.max(lap)
         lap = list(lap)
-        print(lap)
 
         for i in range(n_verts):
             vg.add([i], lap[i], 'REPLACE')
@@ -812,117 +636,11 @@ class weight_laplacian(Operator):
         bm.free()
         return {'FINISHED'}
 
-
-class reaction_diffusion(Operator):
-    bl_idname = "object.reaction_diffusion"
-    bl_label = "Reaction Diffusion"
-    bl_description = ("Run a Reaction-Diffusion based on existing Vertex Groups: A and B")
-    bl_options = {'REGISTER', 'UNDO'}
-
-    steps : IntProperty(
-        name="Steps", default=10, min=0, soft_max=50,
-        description="Number of Steps")
-
-    dt : FloatProperty(
-        name="dt", default=0.2, min=0, soft_max=0.2,
-        description="Time Step")
-
-    diff_a : FloatProperty(
-        name="Diff A", default=1, min=0, soft_max=2,
-        description="Diffusion A")
-
-    diff_b : FloatProperty(
-        name="Diff B", default=0.5, min=0, soft_max=2,
-        description="Diffusion B")
-
-    f : FloatProperty(
-        name="f", default=0.055, min=0, soft_min=0.01, soft_max=0.06, max=0.1, precision=4,
-        description="Feed Rate")
-
-    k : FloatProperty(
-        name="k", default=0.062, min=0, soft_min=0.035, soft_max=0.065, max=0.1, precision=4,
-        description="Kill Rate")
-
-    bounds_string = ""
-
-    frame = None
-
-    @classmethod
-    def poll(cls, context):
-        return len(context.object.vertex_groups) > 0
-
-
-    def execute(self, context):
-        #bpy.app.handlers.frame_change_post.remove(reaction_diffusion_def)
-        reaction_diffusion_add_handler(self, context)
-        set_animatable_fix_handler(self, context)
-        try: ob = context.object
-        except:
-            self.report({'ERROR'}, "Please select an Object")
-            return {'CANCELLED'}
-
-        me = ob.data
-        bm = bmesh.new()
-        bm.from_mesh(me)
-        bm.edges.ensure_lookup_table()
-
-        # store weight values
-        a = []
-        b = []
-        for v in me.vertices:
-            try:
-                a.append(ob.vertex_groups["A"].weight(v.index))
-            except:
-                a.append(0)
-            try:
-                b.append(ob.vertex_groups["B"].weight(v.index))
-            except:
-                b.append(0)
-
-        a = array(a)
-        b = array(b)
-        f = self.f
-        k = self.k
-        diff_a = self.diff_a
-        diff_b = self.diff_b
-        dt = self.dt
-        n_verts = len(bm.verts)
-
-        for i in range(self.steps):
-
-            lap_a = zeros((n_verts))#[0]*n_verts
-            lap_b = zeros((n_verts))#[0]*n_verts
-            for e in bm.edges:
-                id0 = e.verts[0].index
-                id1 = e.verts[1].index
-                lap_a[id0] += a[id1] - a[id0]
-                lap_a[id1] += a[id0] - a[id1]
-                lap_b[id0] += b[id1] - b[id0]
-                lap_b[id1] += b[id0] - b[id1]
-            ab2 = a*b**2
-            a += (diff_a*lap_a - ab2 + f*(1-a))*dt
-            b += (diff_b*lap_b + ab2 - (k+f)*b)*dt
-
-            for i in range(n_verts):
-                ob.vertex_groups['A'].add([i], a[i], 'REPLACE')
-                ob.vertex_groups['B'].add([i], b[i], 'REPLACE')
-            ob.vertex_groups.update()
-            ob.data.update()
-
-            bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
-
-        bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
-        bm.free()
-        return {'FINISHED'}
-
-
 class edges_deformation(Operator):
     bl_idname = "object.edges_deformation"
     bl_label = "Edges Deformation"
-    bl_description = (
-        "Compute Weight based on the deformation of edges "
-        "according to visible modifiers"
-    )
+    bl_description = ("Compute Weight based on the deformation of edges"+
+        "according to visible modifiers.")
     bl_options = {'REGISTER', 'UNDO'}
 
     bounds : EnumProperty(
@@ -1065,10 +783,8 @@ class edges_deformation(Operator):
 class edges_bending(Operator):
     bl_idname = "object.edges_bending"
     bl_label = "Edges Bending"
-    bl_description = (
-        "Compute Weight based on the bending of edges"
-        "according to visible modifiers"
-    )
+    bl_description = ("Compute Weight based on the bending of edges"+
+        "according to visible modifiers.")
     bl_options = {'REGISTER', 'UNDO'}
 
     bounds : EnumProperty(
@@ -1244,7 +960,7 @@ class weight_contour_displace(Operator):
         vertex_group_name = ob0.vertex_groups[group_id].name
 
         bpy.ops.object.mode_set(mode='EDIT')
-        bpy.ops.mesh.select_all(action='SELECT')
+        bpy.ops.mesh.select_all(action='DESELECT')
         bpy.ops.object.mode_set(mode='OBJECT')
         if self.use_modifiers:
             #me0 = ob0.to_mesh(preserve_all_data_layers=True, depsgraph=bpy.context.evaluated_depsgraph_get()).copy()
@@ -1461,10 +1177,10 @@ class weight_contour_displace(Operator):
 
         # Displace Modifier
         if self.bool_displace:
-            displace_modifier = ob.modifiers.new(type='DISPLACE', name='Displace')
-            displace_modifier.mid_level = 0
-            displace_modifier.strength = 0.1
-            displace_modifier.vertex_group = vertex_group_name
+            ob.modifiers.new(type='DISPLACE', name='Displace')
+            ob.modifiers["Displace"].mid_level = 0
+            ob.modifiers["Displace"].strength = 0.1
+            ob.modifiers['Displace'].vertex_group = vertex_group_name
 
         bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
@@ -1743,11 +1459,8 @@ class weight_contour_mask_wip(Operator):
         group_id = ob0.vertex_groups.active_index
         vertex_group_name = ob0.vertex_groups[group_id].name
 
-        #bpy.ops.object.mode_set(mode='EDIT')
-        #bpy.ops.mesh.select_all(action='SELECT')
-        #bpy.ops.object.mode_set(mode='OBJECT')
         if self.use_modifiers:
-            me0 = simple_to_mesh(ob0)#ob0.to_mesh(preserve_all_data_layers=True, depsgraph=bpy.context.evaluated_depsgraph_get()).copy()
+            me0 = simple_to_mesh(ob0)
         else:
             me0 = ob0.data.copy()
 
@@ -1769,7 +1482,6 @@ class weight_contour_mask_wip(Operator):
         weight = weight[mask]
         mask = np.logical_not(mask)
         delete_verts = np.array(bm.verts)[mask]
-        #for v in delete_verts: bm.verts.remove(v)
 
         # Create mesh and object
         name = ob0.name + '_ContourMask_{:.3f}'.format(iso_val)
@@ -1815,590 +1527,11 @@ class weight_contour_mask_wip(Operator):
 
         return {'FINISHED'}
 
-
-class weight_contour_curves(Operator):
-    bl_idname = "object.weight_contour_curves"
-    bl_label = "Contour Curves"
-    bl_description = ("")
-    bl_options = {'REGISTER', 'UNDO'}
-
-    use_modifiers : BoolProperty(
-        name="Use Modifiers", default=True,
-        description="Apply all the modifiers")
-
-    min_iso : FloatProperty(
-        name="Min Value", default=0., soft_min=0, soft_max=1,
-        description="Minimum weight value")
-    max_iso : FloatProperty(
-        name="Max Value", default=1, soft_min=0, soft_max=1,
-        description="Maximum weight value")
-    n_curves : IntProperty(
-        name="Curves", default=3, soft_min=1, soft_max=10,
-        description="Number of Contour Curves")
-
-    min_rad : FloatProperty(
-        name="Min Radius", default=1, soft_min=0, soft_max=1,
-        description="Change radius according to Iso Value")
-    max_rad : FloatProperty(
-        name="Max Radius", default=1, soft_min=0, soft_max=1,
-        description="Change radius according to Iso Value")
-
-    @classmethod
-    def poll(cls, context):
-        ob = context.object
-        return len(ob.vertex_groups) > 0 or ob.type == 'CURVE'
-
-    def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self, width=350)
-
-    def execute(self, context):
-        start_time = timeit.default_timer()
-        try:
-            check = context.object.vertex_groups[0]
-        except:
-            self.report({'ERROR'}, "The object doesn't have Vertex Groups")
-            return {'CANCELLED'}
-        ob0 = context.object
-
-        group_id = ob0.vertex_groups.active_index
-        vertex_group_name = ob0.vertex_groups[group_id].name
-
-        bpy.ops.object.mode_set(mode='EDIT')
-        bpy.ops.mesh.select_all(action='SELECT')
-        bpy.ops.object.mode_set(mode='OBJECT')
-        if self.use_modifiers:
-            me0 = simple_to_mesh(ob0) #ob0.to_mesh(preserve_all_data_layers=True, depsgraph=bpy.context.evaluated_depsgraph_get()).copy()
-        else:
-            me0 = ob0.data.copy()
-
-        # generate new bmesh
-        bm = bmesh.new()
-        bm.from_mesh(me0)
-        bm.verts.ensure_lookup_table()
-        bm.edges.ensure_lookup_table()
-        bm.faces.ensure_lookup_table()
-
-        # store weight values
-        weight = []
-        ob = bpy.data.objects.new("temp", me0)
-        for g in ob0.vertex_groups:
-            ob.vertex_groups.new(name=g.name)
-        weight = get_weight_numpy(ob.vertex_groups[vertex_group_name], len(bm.verts))
-
-        #filtered_edges = bm.edges
-        total_verts = np.zeros((0,3))
-        total_segments = []
-        radius = []
-
-        # start iterate contours levels
-        vertices = get_vertices_numpy(me0)
-        filtered_edges = get_edges_id_numpy(me0)
-
-        faces_weight = [np.array([weight[v] for v in p.vertices]) for p in me0.polygons]
-        fw_min = np.array([np.min(fw) for fw in faces_weight])
-        fw_max = np.array([np.max(fw) for fw in faces_weight])
-
-        bm_faces = np.array(bm.faces)
-
-        ### Spiral
-        normals = np.array([v.normal for v in me0.vertices])
-
-        for c in range(self.n_curves):
-            min_iso = min(self.min_iso, self.max_iso)
-            max_iso = max(self.min_iso, self.max_iso)
-            try:
-                delta_iso = (max_iso-min_iso)/(self.n_curves-1)
-                iso_val = c*delta_iso + min_iso
-                if iso_val < 0: iso_val = (min_iso + max_iso)/2
-            except:
-                iso_val = (min_iso + max_iso)/2
-
-            # remove passed faces
-            bool_mask = iso_val < fw_max
-            bm_faces = bm_faces[bool_mask]
-            fw_min = fw_min[bool_mask]
-            fw_max = fw_max[bool_mask]
-
-            # mask faces
-            bool_mask = fw_min < iso_val
-            faces_mask = bm_faces[bool_mask]
-
-            n_verts = len(bm.verts)
-            count = len(total_verts)
-
-            # vertices indexes
-            id0 = filtered_edges[:,0]
-            id1 = filtered_edges[:,1]
-            # vertices weight
-            w0 = weight[id0]
-            w1 = weight[id1]
-            # weight condition
-            bool_w0 = w0 < iso_val
-            bool_w1 = w1 < iso_val
-
-            # mask all edges that have one weight value below the iso value
-            mask_new_verts = np.logical_xor(bool_w0, bool_w1)
-
-            id0 = id0[mask_new_verts]
-            id1 = id1[mask_new_verts]
-            # filter arrays
-            v0 = vertices[id0]
-            v1 = vertices[id1]
-            w0 = w0[mask_new_verts]
-            w1 = w1[mask_new_verts]
-            div = (w1-w0)
-            if div == 0: div = 0.000001
-
-            param = np.expand_dims((iso_val-w0)/div,axis=1)
-            verts = v0 + (v1-v0)*param
-
-            # indexes of edges with new vertices
-            edges_index = filtered_edges[mask_new_verts][:,2]
-            edges_id = {}
-            for i, id in enumerate(edges_index): edges_id[id] = i+len(total_verts)
-
-            # remove all edges completely below the iso value
-            mask_edges = np.logical_not(np.logical_and(bool_w0, bool_w1))
-            filtered_edges = filtered_edges[mask_edges]
-            if len(verts) == 0: continue
-
-            # finding segments
-            segments = []
-            for f in faces_mask:
-                seg = []
-                for e in f.edges:
-                    try:
-                        seg.append(edges_id[e.index])
-                        if len(seg) == 2:
-                            segments.append(seg)
-                            seg = []
-                    except: pass
-
-
-            #curves_points_indexes = find_curves(segments)
-            total_segments = total_segments + segments
-            total_verts = np.concatenate((total_verts,verts))
-
-            if self.min_rad != self.max_rad:
-                try:
-                    iso_rad = c*(self.max_rad-self.min_rad)/(self.n_curves-1)+self.min_rad
-                    if iso_rad < 0: iso_rad = (self.min_rad + self.max_rad)/2
-                except:
-                    iso_rad = (self.min_rad + self.max_rad)/2
-                radius = radius + [iso_rad]*len(verts)
-        print("Contour Curves, computing time: " + str(timeit.default_timer() - start_time) + " sec")
-        bm.free()
-        bm = bmesh.new()
-        # adding new vertices  _local for fast access
-        _new_vert = bm.verts.new
-        for v in total_verts: _new_vert(v)
-        bm.verts.ensure_lookup_table()
-
-        # adding new edges
-        _new_edge = bm.edges.new
-        for s in total_segments:
-            try:
-                pts = [bm.verts[i] for i in s]
-                _new_edge(pts)
-            except: pass
-
-
-        try:
-            name = ob0.name + '_ContourCurves'
-            me = bpy.data.meshes.new(name)
-            bm.to_mesh(me)
-            bm.free()
-            ob = bpy.data.objects.new(name, me)
-            # Link object to scene and make active
-            scn = context.scene
-            context.collection.objects.link(ob)
-            context.view_layer.objects.active = ob
-            ob.select_set(True)
-            ob0.select_set(False)
-
-            print("Contour Curves, bmesh time: " + str(timeit.default_timer() - start_time) + " sec")
-            bpy.ops.object.convert(target='CURVE')
-            ob = context.object
-            if not (self.min_rad == 0 and self.max_rad == 0):
-                if self.min_rad != self.max_rad:
-                    count = 0
-                    for s in ob.data.splines:
-                        for p in s.points:
-                            p.radius = radius[count]
-                            count += 1
-                else:
-                    for s in ob.data.splines:
-                        for p in s.points:
-                            p.radius = self.min_rad
-            ob.data.bevel_depth = 0.01
-            ob.data.fill_mode = 'FULL'
-            ob.data.bevel_resolution = 3
-        except:
-            self.report({'ERROR'}, "There are no values in the chosen range")
-            return {'CANCELLED'}
-
-        # align new object
-        ob.matrix_world = ob0.matrix_world
-        print("Contour Curves time: " + str(timeit.default_timer() - start_time) + " sec")
-
-        bpy.data.meshes.remove(me0)
-        bpy.data.meshes.remove(me)
-
-        return {'FINISHED'}
-
-class tissue_weight_contour_curves_pattern(Operator):
-    bl_idname = "object.tissue_weight_contour_curves_pattern"
-    bl_label = "Contour Curves"
-    bl_description = ("")
-    bl_options = {'REGISTER', 'UNDO'}
-
-    use_modifiers : BoolProperty(
-        name="Use Modifiers", default=True,
-        description="Apply all the modifiers")
-
-    auto_bevel : BoolProperty(
-        name="Automatic Bevel", default=False,
-        description="Bevel depends on weight density")
-
-    min_iso : FloatProperty(
-        name="Min Value", default=0., soft_min=0, soft_max=1,
-        description="Minimum weight value")
-    max_iso : FloatProperty(
-        name="Max Value", default=1, soft_min=0, soft_max=1,
-        description="Maximum weight value")
-    n_curves : IntProperty(
-        name="Curves", default=10, soft_min=1, soft_max=100,
-        description="Number of Contour Curves")
-    min_rad = 1
-    max_rad = 1
-
-    in_displace : FloatProperty(
-        name="Displace A", default=0, soft_min=-10, soft_max=10,
-        description="Pattern displace strength")
-    out_displace : FloatProperty(
-        name="Displace B", default=2, soft_min=-10, soft_max=10,
-        description="Pattern displace strength")
-
-    in_steps : IntProperty(
-        name="Steps A", default=1, min=0, soft_max=10,
-        description="Number of layers to move inwards")
-    out_steps : IntProperty(
-        name="Steps B", default=1, min=0, soft_max=10,
-        description="Number of layers to move outwards")
-    limit_z : BoolProperty(
-        name="Limit Z", default=False,
-        description="Limit Pattern in Z")
-
-    merge : BoolProperty(
-        name="Merge Vertices", default=True,
-        description="Merge points")
-    merge_thres : FloatProperty(
-        name="Merge Threshold", default=0.01, min=0, soft_max=1,
-        description="Minimum Curve Radius")
-
-    bevel_depth : FloatProperty(
-        name="Bevel Depth", default=0, min=0, soft_max=1,
-        description="")
-    min_bevel_depth : FloatProperty(
-        name="Min Bevel Depth", default=0.1, min=0, soft_max=1,
-        description="")
-    max_bevel_depth : FloatProperty(
-        name="Max Bevel Depth", default=1, min=0, soft_max=1,
-        description="")
-    remove_open_curves : BoolProperty(
-        name="Remove Open Curves", default=False,
-        description="Remove Open Curves")
-
-    vertex_group_pattern : StringProperty(
-        name="Displace", default='',
-        description="Vertex Group used for pattern displace")
-
-    vertex_group_bevel : StringProperty(
-        name="Bevel", default='',
-        description="Variable Bevel depth")
-
-    object_name : StringProperty(
-        name="Active Object", default='',
-        description="")
-
-    try: vg_name = bpy.context.object.vertex_groups.active.name
-    except: vg_name = ''
-
-    vertex_group_contour : StringProperty(
-        name="Contour", default=vg_name,
-        description="Vertex Group used for contouring")
-    clean_distance : FloatProperty(
-        name="Clean Distance", default=0, min=0, soft_max=10,
-        description="Remove short segments")
-
-
-    spiralized: BoolProperty(
-        name='Spiralized', default=False,
-        description='Create a Spiral Contour. Works better with dense meshes'
-    )
-    spiral_axis: FloatVectorProperty(
-        name="Spiral Axis", default=(0,0,1),
-        description="Axis of the Spiral (in local coordinates)"
-    )
-    spiral_rotation : FloatProperty(
-        name="Spiral Rotation", default=0, min=0, max=2*pi,
-        description=""
-    )
-
-    @classmethod
-    def poll(cls, context):
-        ob = context.object
-        return ob and len(ob.vertex_groups) > 0 or ob.type == 'CURVE'
-
-    def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self, width=250)
-
-    def draw(self, context):
-        if not context.object.type == 'CURVE':
-            self.object_name = context.object.name
-        ob = bpy.data.objects[self.object_name]
-        if self.vertex_group_contour not in [vg.name for vg in ob.vertex_groups]:
-            self.vertex_group_contour = ob.vertex_groups.active.name
-        layout = self.layout
-        col = layout.column(align=True)
-        col.prop(self, "use_modifiers")
-        col.label(text="Contour Curves:")
-        col.prop_search(self, 'vertex_group_contour', ob, "vertex_groups", text='')
-        row = col.row(align=True)
-        row.prop(self,'min_iso')
-        row.prop(self,'max_iso')
-        col.prop(self,'n_curves')
-        col.separator()
-        col.label(text='Curves Bevel:')
-        col.prop(self,'auto_bevel')
-        if not self.auto_bevel:
-            col.prop_search(self, 'vertex_group_bevel', ob, "vertex_groups", text='')
-        if self.vertex_group_bevel != '' or self.auto_bevel:
-            row = col.row(align=True)
-            row.prop(self,'min_bevel_depth')
-            row.prop(self,'max_bevel_depth')
-        else:
-            col.prop(self,'bevel_depth')
-        col.separator()
-
-        col.label(text="Displace Pattern:")
-        col.prop_search(self, 'vertex_group_pattern', ob, "vertex_groups", text='')
-        if self.vertex_group_pattern != '':
-            row = col.row(align=True)
-            row.prop(self,'in_steps')
-            row.prop(self,'out_steps')
-            row = col.row(align=True)
-            row.prop(self,'in_displace')
-            row.prop(self,'out_displace')
-            col.prop(self,'limit_z')
-        col.separator()
-        row=col.row(align=True)
-        row.prop(self,'spiralized')
-        row.label(icon='MOD_SCREW')
-        if self.spiralized:
-            #row=col.row(align=True)
-            #row.prop(self,'spiral_axis')
-            #col.separator()
-            col.prop(self,'spiral_rotation')
-        col.separator()
-
-        col.label(text='Clean Curves:')
-        col.prop(self,'clean_distance')
-        col.prop(self,'remove_open_curves')
-
-    def execute(self, context):
-        n_curves = self.n_curves
-        start_time = timeit.default_timer()
-        try:
-            check = context.object.vertex_groups[0]
-        except:
-            self.report({'ERROR'}, "The object doesn't have Vertex Groups")
-            return {'CANCELLED'}
-        ob0 = bpy.data.objects[self.object_name]
-
-        dg = context.evaluated_depsgraph_get()
-        ob = ob0.evaluated_get(dg)
-        me0 = ob.data
-
-        # generate new bmesh
-        bm = bmesh.new()
-        bm.from_mesh(me0)
-        n_verts = len(bm.verts)
-
-        # store weight values
-        try:
-            weight = get_weight_numpy(ob.vertex_groups[self.vertex_group_contour], len(me0.vertices))
-        except:
-            bm.free()
-            self.report({'ERROR'}, "Please select a Vertex Group for contouring")
-            return {'CANCELLED'}
-
-        try:
-            pattern_weight = get_weight_numpy(ob.vertex_groups[self.vertex_group_pattern], len(me0.vertices))
-        except:
-            #self.report({'WARNING'}, "There is no Vertex Group assigned to the pattern displace")
-            pattern_weight = np.zeros(len(me0.vertices))
-
-        variable_bevel = False
-        try:
-            bevel_weight = get_weight_numpy(ob.vertex_groups[self.vertex_group_bevel], len(me0.vertices))
-            variable_bevel = True
-        except:
-            bevel_weight = np.ones(len(me0.vertices))
-
-        if self.auto_bevel:
-            # calc weight density
-            bevel_weight = np.ones(len(me0.vertices))*10000
-            bevel_weight = np.zeros(len(me0.vertices))
-            edges_length = np.array([e.calc_length() for e in bm.edges])
-            edges_dw = np.array([max(abs(weight[e.verts[0].index]-weight[e.verts[1].index]),0.000001) for e in bm.edges])
-            dens = edges_length/edges_dw
-            n_records = np.zeros(len(me0.vertices))
-            for i, e in enumerate(bm.edges):
-                for v in e.verts:
-                    id = v.index
-                    #bevel_weight[id] = min(bevel_weight[id], dens[i])
-                    bevel_weight[id] += dens[i]
-                    n_records[id] += 1
-            bevel_weight = bevel_weight/n_records
-            bevel_weight = (bevel_weight - min(bevel_weight))/(max(bevel_weight) - min(bevel_weight))
-            #bevel_weight = 1-bevel_weight
-            variable_bevel = True
-
-        #filtered_edges = bm.edges
-        total_verts = np.zeros((0,3))
-        total_radii = np.zeros((0,1))
-        total_segments = []# np.array([])
-        radius = []
-
-        # start iterate contours levels
-        vertices, normals = get_vertices_and_normals_numpy(me0)
-        filtered_edges = get_edges_id_numpy(me0)
-
-
-        min_iso = min(self.min_iso, self.max_iso)
-        max_iso = max(self.min_iso, self.max_iso)
-
-        # Spiral
-        if self.spiralized:
-            nx = normals[:,0]
-            ny = normals[:,1]
-            ang = self.spiral_rotation + weight*pi*n_curves+arctan2(nx,ny)
-            weight = sin(ang)/2+0.5
-            n_curves = 1
-
-        if n_curves > 1:
-            delta_iso = (max_iso-min_iso)/(n_curves-1)
-
-        else:
-            delta_iso = None
-
-        faces_weight = [np.array([weight[v] for v in p.vertices]) for p in me0.polygons]
-        fw_min = np.array([np.min(fw) for fw in faces_weight])
-        fw_max = np.array([np.max(fw) for fw in faces_weight])
-
-        bm_faces = np.array(bm.faces)
-
-        #print("Contour Curves, data loaded: " + str(timeit.default_timer() - start_time) + " sec")
-        step_time = timeit.default_timer()
-        for c in range(n_curves):
-            if delta_iso:
-                iso_val = c*delta_iso + min_iso
-                if iso_val < 0: iso_val = (min_iso + max_iso)/2
-            else:
-                iso_val = (min_iso + max_iso)/2
-
-            #if c == 0 and self.auto_bevel:
-
-
-            # remove passed faces
-            bool_mask = iso_val < fw_max
-            bm_faces = bm_faces[bool_mask]
-            fw_min = fw_min[bool_mask]
-            fw_max = fw_max[bool_mask]
-
-            # mask faces
-            bool_mask = fw_min < iso_val
-            faces_mask = bm_faces[bool_mask]
-
-            count = len(total_verts)
-
-            new_filtered_edges, edges_index, verts, bevel = contour_edges_pattern(self, c, len(total_verts), iso_val, vertices, normals, filtered_edges, weight, pattern_weight, bevel_weight)
-
-            if len(edges_index) > 0:
-                if self.auto_bevel and False:
-                    bevel = 1-dens[edges_index]
-                    bevel = bevel[:,np.newaxis]
-                if self.max_bevel_depth != self.min_bevel_depth:
-                    min_radius = self.min_bevel_depth / max(0.0001,self.max_bevel_depth)
-                    radii = min_radius + bevel*(1 - min_radius)
-                else:
-                    radii = bevel
-            else:
-                continue
-
-            if verts[0,0] == None: continue
-            else: filtered_edges = new_filtered_edges
-            edges_id = {}
-            for i, id in enumerate(edges_index): edges_id[id] = i + count
-
-            if len(verts) == 0: continue
-
-            # finding segments
-            segments = []
-            for f in faces_mask:
-                seg = []
-                for e in f.edges:
-                    try:
-                        #seg.append(new_ids[np.where(edges_index == e.index)[0][0]])
-                        seg.append(edges_id[e.index])
-                        if len(seg) == 2:
-                            segments.append(seg)
-                            seg = []
-                    except: pass
-
-            total_segments = total_segments + segments
-            total_verts = np.concatenate((total_verts, verts))
-            total_radii = np.concatenate((total_radii, radii))
-
-            if self.min_rad != self.max_rad:
-                try:
-                    iso_rad = c*(self.max_rad-self.min_rad)/(self.n_curves-1)+self.min_rad
-                    if iso_rad < 0: iso_rad = (self.min_rad + self.max_rad)/2
-                except:
-                    iso_rad = (self.min_rad + self.max_rad)/2
-                radius = radius + [iso_rad]*len(verts)
-        #print("Contour Curves, points computing: " + str(timeit.default_timer() - step_time) + " sec")
-        step_time = timeit.default_timer()
-
-        if len(total_segments) > 0:
-            step_time = timeit.default_timer()
-            ordered_points = find_curves(total_segments, len(total_verts))
-
-            #print("Contour Curves, point ordered in: " + str(timeit.default_timer() - step_time) + " sec")
-            step_time = timeit.default_timer()
-            crv = curve_from_pydata(total_verts, total_radii, ordered_points, ob0.name + '_ContourCurves', self.remove_open_curves, merge_distance=self.clean_distance)
-            context.view_layer.objects.active = crv
-            if variable_bevel: crv.data.bevel_depth = self.max_bevel_depth
-            else: crv.data.bevel_depth = self.bevel_depth
-
-            crv.select_set(True)
-            ob0.select_set(False)
-            crv.matrix_world = ob0.matrix_world
-            #print("Contour Curves, curves created in: " + str(timeit.default_timer() - step_time) + " sec")
-        else:
-            bm.free()
-            self.report({'ERROR'}, "There are no values in the chosen range")
-            return {'CANCELLED'}
-        bm.free()
-        print("Contour Curves, total time: " + str(timeit.default_timer() - start_time) + " sec")
-        return {'FINISHED'}
-
 class vertex_colors_to_vertex_groups(Operator):
     bl_idname = "object.vertex_colors_to_vertex_groups"
     bl_label = "Vertex Color"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_description = ("Convert the active Vertex Color into a Vertex Group")
+    bl_description = ("Convert the active Vertex Color into a Vertex Group.")
 
     red : BoolProperty(
         name="red channel", default=False, description="convert red channel")
@@ -2415,19 +1548,20 @@ class vertex_colors_to_vertex_groups(Operator):
     @classmethod
     def poll(cls, context):
         try:
-            return len(context.object.data.vertex_colors) > 0
+            return len(context.object.data.color_attributes) > 0
         except: return False
 
     def execute(self, context):
-        obj = context.active_object
-        id = len(obj.vertex_groups)
+        ob = context.active_object
+        id = len(ob.vertex_groups)
         id_red = id
         id_green = id
         id_blue = id
         id_value = id
 
-        boolCol = len(obj.data.vertex_colors)
-        if(boolCol): col_name = obj.data.vertex_colors.active.name
+        boolCol = len(ob.data.color_attributes)
+        if(boolCol):
+            col = ob.data.color_attributes.active_color
         bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.mesh.select_all(action='SELECT')
 
@@ -2435,25 +1569,25 @@ class vertex_colors_to_vertex_groups(Operator):
             bpy.ops.object.vertex_group_add()
             bpy.ops.object.vertex_group_assign()
             id_red = id
-            obj.vertex_groups[id_red].name = col_name + '_red'
+            ob.vertex_groups[id_red].name = col.name + '_red'
             id+=1
         if(self.green and boolCol):
             bpy.ops.object.vertex_group_add()
             bpy.ops.object.vertex_group_assign()
             id_green = id
-            obj.vertex_groups[id_green].name = col_name + '_green'
+            ob.vertex_groups[id_green].name = col.name + '_green'
             id+=1
         if(self.blue and boolCol):
             bpy.ops.object.vertex_group_add()
             bpy.ops.object.vertex_group_assign()
             id_blue = id
-            obj.vertex_groups[id_blue].name = col_name + '_blue'
+            ob.vertex_groups[id_blue].name = col.name + '_blue'
             id+=1
         if(self.value and boolCol):
             bpy.ops.object.vertex_group_add()
             bpy.ops.object.vertex_group_assign()
             id_value = id
-            obj.vertex_groups[id_value].name = col_name + '_value'
+            ob.vertex_groups[id_value].name = col.name + '_value'
             id+=1
 
         mult = 1
@@ -2464,14 +1598,15 @@ class vertex_colors_to_vertex_groups(Operator):
         sub_blue = 1 + self.value
         sub_value = 1
 
-        id = len(obj.vertex_groups)
+        id = len(ob.vertex_groups)
         if(id_red <= id and id_green <= id and id_blue <= id and id_value <= \
                 id and boolCol):
-            v_colors = obj.data.vertex_colors.active.data
+            v_colors = ob.data.color_attributes.active_color.data
+
             i = 0
-            for f in obj.data.polygons:
-                for v in f.vertices:
-                    gr = obj.data.vertices[v].groups
+            if ob.data.color_attributes.active_color.domain == 'POINT':
+                for v in ob.data.vertices:
+                    gr = v.groups
                     if(self.red): gr[min(len(gr)-sub_red, id_red)].weight = \
                         self.invert + mult * v_colors[i].color[0]
                     if(self.green): gr[min(len(gr)-sub_green, id_green)].weight\
@@ -2485,6 +1620,24 @@ class vertex_colors_to_vertex_groups(Operator):
                         gr[min(len(gr)-sub_value, id_value)].weight\
                         = self.invert + mult * (0.2126*r + 0.7152*g + 0.0722*b)
                     i+=1
+            elif ob.data.color_attributes.active_color.domain == 'CORNER':
+                for f in ob.data.polygons:
+                    for v in f.vertices:
+                        gr = ob.data.vertices[v].groups
+                        if(self.red): gr[min(len(gr)-sub_red, id_red)].weight = \
+                            self.invert + mult * v_colors[i].color[0]
+                        if(self.green): gr[min(len(gr)-sub_green, id_green)].weight\
+                            = self.invert + mult * v_colors[i].color[1]
+                        if(self.blue): gr[min(len(gr)-sub_blue, id_blue)].weight = \
+                            self.invert + mult * v_colors[i].color[2]
+                        if(self.value):
+                            r = v_colors[i].color[0]
+                            g = v_colors[i].color[1]
+                            b = v_colors[i].color[2]
+                            gr[min(len(gr)-sub_value, id_value)].weight\
+                            = self.invert + mult * (0.2126*r + 0.7152*g + 0.0722*b)
+                        i+=1
+
             bpy.ops.paint.weight_paint_toggle()
         return {'FINISHED'}
 
@@ -2492,7 +1645,7 @@ class vertex_group_to_vertex_colors(Operator):
     bl_idname = "object.vertex_group_to_vertex_colors"
     bl_label = "Vertex Group"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_description = ("Convert the active Vertex Group into a Vertex Color")
+    bl_description = ("Convert the active Vertex Group into a Vertex Color.")
 
     channel : EnumProperty(
         items=[('BLUE', 'Blue Channel', 'Convert to Blue Channel'),
@@ -2519,8 +1672,8 @@ class vertex_group_to_vertex_colors(Operator):
 
         bpy.ops.object.mode_set(mode='OBJECT')
         group_name = obj.vertex_groups[group_id].name
-        me.vertex_colors.new()
-        colors_id = obj.data.vertex_colors.active_index
+        bpy.ops.geometry.color_attribute_add()
+        active_color = obj.data.color_attributes.active_color
 
         colors_name = group_name
         if(self.channel == 'FALSE_COLORS'): colors_name += "_false_colors"
@@ -2528,9 +1681,9 @@ class vertex_group_to_vertex_colors(Operator):
         elif(self.channel == 'RED'):  colors_name += "_red"
         elif(self.channel == 'GREEN'):  colors_name += "_green"
         elif(self.channel == 'BLUE'):  colors_name += "_blue"
-        context.object.data.vertex_colors[colors_id].name = colors_name
+        active_color.name = colors_name
 
-        v_colors = obj.data.vertex_colors.active.data
+        v_colors = obj.data.color_attributes.active_color.data
 
         bm = bmesh.new()
         bm.from_mesh(me)
@@ -2539,9 +1692,7 @@ class vertex_group_to_vertex_colors(Operator):
         if self.invert: weight = 1-weight
         loops_size = get_attribute_numpy(me.polygons, attribute='loop_total', mult=1)
         n_colors = np.sum(loops_size)
-        verts = np.ones(n_colors)
-        me.polygons.foreach_get('vertices',verts)
-        splitted_weight = weight[verts.astype(int)][:,None]
+        splitted_weight = weight[:,None]
         r = np.zeros(splitted_weight.shape)
         g = np.zeros(splitted_weight.shape)
         b = np.zeros(splitted_weight.shape)
@@ -2578,14 +1729,14 @@ class vertex_group_to_vertex_colors(Operator):
         v_colors.foreach_set('color',colors)
 
         bpy.ops.paint.vertex_paint_toggle()
-        context.object.data.vertex_colors[colors_id].active_render = True
+        bpy.ops.geometry.color_attribute_render_set(name=active_color.name)
         return {'FINISHED'}
 
 class vertex_group_to_uv(Operator):
     bl_idname = "object.vertex_group_to_uv"
     bl_label = "Vertex Group"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_description = ("Combine two Vertex Groups as UV Map Layer")
+    bl_description = ("Combine two Vertex Groups as UV Map Layer.")
 
     vertex_group_u : StringProperty(
         name="U", default='',
@@ -2673,10 +1824,7 @@ class curvature_to_vertex_groups(Operator):
     bl_label = "Curvature"
     bl_options = {'REGISTER', 'UNDO'}
     bl_description = ("Generate a Vertex Group based on the curvature of the"
-                      "mesh. Is based on Dirty Vertex Color")
-
-    invert : BoolProperty(
-        name="invert", default=False, description="invert values")
+                      "mesh. Is based on Dirty Vertex Color.")
 
     blur_strength : FloatProperty(
       name="Blur Strength", default=1, min=0.001,
@@ -2686,33 +1834,44 @@ class curvature_to_vertex_groups(Operator):
       name="Blur Iterations", default=1, min=0,
       max=40, description="Number of times to blur the values")
 
-    min_angle : FloatProperty(
-      name="Min Angle", default=0, min=0,
-      max=pi/2, subtype='ANGLE', description="Minimum angle")
-
-    max_angle : FloatProperty(
-      name="Max Angle", default=pi, min=pi/2,
-      max=pi, subtype='ANGLE', description="Maximum angle")
+    angle : FloatProperty(
+      name="Angle", default=5*pi/90, min=0,
+      max=pi/2, subtype='ANGLE', description="Angle")
 
     invert : BoolProperty(
         name="Invert", default=False,
         description="Invert the curvature map")
 
+    absolute : BoolProperty(
+        name="Absolute", default=False, description="Absolute values")
+
     def execute(self, context):
         bpy.ops.object.mode_set(mode='OBJECT')
-        vertex_colors = context.active_object.data.vertex_colors
-        vertex_colors.new()
-        vertex_colors[-1].active = True
-        vertex_colors[-1].active_render = True
-        vertex_colors[-1].name = "Curvature"
-        for c in vertex_colors[-1].data: c.color = (1,1,1,1)
+        bpy.ops.geometry.color_attribute_add(domain='CORNER', color = (1,1,1,1))
+        color_attributes = context.active_object.data.color_attributes
+        color_attributes.active = color_attributes[-1]
+        color_attributes.active_color = color_attributes[-1]
+        color_attributes[-1].name = "Curvature"
+        bpy.ops.geometry.color_attribute_render_set(name=color_attributes[-1].name)
         bpy.ops.object.mode_set(mode='VERTEX_PAINT')
         bpy.ops.paint.vertex_color_dirt(
             blur_strength=self.blur_strength,
-            blur_iterations=self.blur_iterations, clean_angle=self.max_angle,
-            dirt_angle=self.min_angle)
+            blur_iterations=self.blur_iterations,
+            clean_angle=pi/2 + self.angle,
+            dirt_angle=pi/2 - self.angle,
+            normalize=False)
         bpy.ops.object.vertex_colors_to_vertex_groups(invert=self.invert)
-        vertex_colors.remove(vertex_colors.active)
+        if self.absolute:
+            ob = context.object
+            weight = get_weight_numpy(ob.vertex_groups[-1], len(ob.data.vertices))
+            weight = np.abs(0.5-weight)*2
+            bm = bmesh.new()
+            bm.from_mesh(ob.data)
+            bmesh_set_weight_numpy(bm,len(ob.vertex_groups)-1,weight)
+            bm.to_mesh(ob.data)
+            ob.vertex_groups.update()
+            ob.data.update()
+        #bpy.ops.geometry.color_attribute_remove()
         return {'FINISHED'}
 
 class face_area_to_vertex_groups(Operator):
@@ -2720,7 +1879,7 @@ class face_area_to_vertex_groups(Operator):
     bl_label = "Area"
     bl_options = {'REGISTER', 'UNDO'}
     bl_description = ("Generate a Vertex Group based on the area of individual"
-                      "faces")
+                      "faces.")
 
     invert : BoolProperty(
         name="invert", default=False, description="invert values")
@@ -3035,13 +2194,13 @@ class TISSUE_PT_weight(Panel):
         col.label(text="Weight Curves:")
         #col.operator("object.weight_contour_curves", icon="MOD_CURVE")
         col.operator("object.tissue_weight_streamlines", icon="ANIM")
-        col.operator("object.tissue_weight_contour_curves_pattern", icon="FORCE_TURBULENCE")
+        op = col.operator("object.tissue_weight_contour_curves_pattern", icon="FORCE_TURBULENCE")
+        op.contour_mode = 'WEIGHT'
         col.separator()
         col.operator("object.weight_contour_displace", icon="MOD_DISPLACE")
         col.operator("object.weight_contour_mask", icon="MOD_MASK")
         col.separator()
         col.label(text="Simulations:")
-        #col.operator("object.reaction_diffusion", icon="MOD_OCEAN")
         col.operator("object.start_reaction_diffusion",
                     icon="EXPERIMENTAL",
                     text="Reaction-Diffusion")
@@ -3056,1163 +2215,10 @@ class TISSUE_PT_weight(Panel):
         col.operator("object.vertex_group_to_uv", icon="UV",
             text="Convert to UV")
 
-        #col.prop(context.object, "reaction_diffusion_run", icon="PLAY", text="Run Simulation")
-        ####col.prop(context.object, "reaction_diffusion_run")
-        #col.separator()
-        #col.label(text="Vertex Color from:")
-        #col.operator("object.vertex_group_to_vertex_colors", icon="GROUP_VERTEX")
-
-
-
-
-class start_reaction_diffusion(Operator):
-    bl_idname = "object.start_reaction_diffusion"
-    bl_label = "Start Reaction Diffusion"
-    bl_description = ("Run a Reaction-Diffusion based on existing Vertex Groups: A and B")
-    bl_options = {'REGISTER', 'UNDO'}
-
-    run : BoolProperty(
-        name="Run Reaction-Diffusion", default=True, description="Compute a new iteration on frame changes")
-
-    time_steps : IntProperty(
-        name="Steps", default=10, min=0, soft_max=50,
-        description="Number of Steps")
-
-    dt : FloatProperty(
-        name="dt", default=1, min=0, soft_max=0.2,
-        description="Time Step")
-
-    diff_a : FloatProperty(
-        name="Diff A", default=0.18, min=0, soft_max=2,
-        description="Diffusion A")
-
-    diff_b : FloatProperty(
-        name="Diff B", default=0.09, min=0, soft_max=2,
-        description="Diffusion B")
-
-    f : FloatProperty(
-        name="f", default=0.055, min=0, soft_min=0.01, soft_max=0.06, max=0.1, precision=4,
-        description="Feed Rate")
-
-    k : FloatProperty(
-        name="k", default=0.062, min=0, soft_min=0.035, soft_max=0.065, max=0.1, precision=4,
-        description="Kill Rate")
-
-    @classmethod
-    def poll(cls, context):
-        return context.object.type == 'MESH' and context.mode != 'EDIT_MESH'
-
-    def execute(self, context):
-        reaction_diffusion_add_handler(self, context)
-        set_animatable_fix_handler(self, context)
-
-        ob = context.object
-
-        ob.reaction_diffusion_settings.run = self.run
-        ob.reaction_diffusion_settings.dt = self.dt
-        ob.reaction_diffusion_settings.time_steps = self.time_steps
-        ob.reaction_diffusion_settings.f = self.f
-        ob.reaction_diffusion_settings.k = self.k
-        ob.reaction_diffusion_settings.diff_a = self.diff_a
-        ob.reaction_diffusion_settings.diff_b = self.diff_b
-
-
-        # check vertex group A
-        try:
-            vg = ob.vertex_groups['A']
-        except:
-            ob.vertex_groups.new(name='A')
-        # check vertex group B
-        try:
-            vg = ob.vertex_groups['B']
-        except:
-            ob.vertex_groups.new(name='B')
-
-        for v in ob.data.vertices:
-            ob.vertex_groups['A'].add([v.index], 1, 'REPLACE')
-            ob.vertex_groups['B'].add([v.index], 0, 'REPLACE')
-
-        ob.vertex_groups.update()
-        ob.data.update()
-        bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
-
-        return {'FINISHED'}
-
-class reset_reaction_diffusion_weight(Operator):
-    bl_idname = "object.reset_reaction_diffusion_weight"
-    bl_label = "Reset Reaction Diffusion Weight"
-    bl_description = ("Set A and B weight to default values")
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.object.type == 'MESH' and context.mode != 'EDIT_MESH'
-
-    def execute(self, context):
-        reaction_diffusion_add_handler(self, context)
-        set_animatable_fix_handler(self, context)
-
-        ob = context.object
-
-        # check vertex group A
-        try:
-            vg = ob.vertex_groups['A']
-        except:
-            ob.vertex_groups.new(name='A')
-        # check vertex group B
-        try:
-            vg = ob.vertex_groups['B']
-        except:
-            ob.vertex_groups.new(name='B')
-
-        for v in ob.data.vertices:
-            ob.vertex_groups['A'].add([v.index], 1, 'REPLACE')
-            ob.vertex_groups['B'].add([v.index], 0, 'REPLACE')
-
-        ob.vertex_groups.update()
-        ob.data.update()
-        bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
-
-        return {'FINISHED'}
-
-class bake_reaction_diffusion(Operator):
-    bl_idname = "object.bake_reaction_diffusion"
-    bl_label = "Bake Data"
-    bl_description = ("Bake the Reaction-Diffusion to the cache directory")
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.object.type == 'MESH' and context.mode != 'EDIT_MESH'
-
-    def execute(self, context):
-        ob = context.object
-        props = ob.reaction_diffusion_settings
-        if props.fast_bake:
-            bool_run = props.run
-            props.run = False
-            context.scene.frame_current = props.cache_frame_start
-            fast_bake_def(ob, frame_start=props.cache_frame_start, frame_end=props.cache_frame_end)
-            #create_fast_bake_def(ob, frame_start=props.cache_frame_start, frame_end=props.cache_frame_end)
-            context.scene.frame_current = props.cache_frame_end
-            props.run = bool_run
-        else:
-            for i in range(props.cache_frame_start, props.cache_frame_end):
-                context.scene.frame_current = i
-                reaction_diffusion_def(ob, bake=True)
-        props.bool_cache = True
-
-        return {'FINISHED'}
-
-class reaction_diffusion_free_data(Operator):
-    bl_idname = "object.reaction_diffusion_free_data"
-    bl_label = "Free Data"
-    bl_description = ("Free Reaction-Diffusion data")
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.object.type == 'MESH'
-
-    def execute(self, context):
-        ob = context.object
-        props = ob.reaction_diffusion_settings
-        props.bool_cache = False
-
-        folder = Path(props.cache_dir)
-        for i in range(props.cache_frame_start, props.cache_frame_end):
-            data_a = folder / "a_{:04d}".format(i)
-            if os.path.exists(data_a):
-                os.remove(data_a)
-            data_a = folder / "b_{:04d}".format(i)
-            if os.path.exists(data_a):
-                os.remove(data_a)
-        return {'FINISHED'}
-
-from bpy.app.handlers import persistent
-
-def reaction_diffusion_scene(scene, bake=False):
-    for ob in scene.objects:
-        if ob.reaction_diffusion_settings.run:
-            reaction_diffusion_def(ob)
-
-def reaction_diffusion_def(ob, bake=False):
-
-    scene = bpy.context.scene
-    start = time.time()
-    if type(ob) == bpy.types.Scene: return None
-    props = ob.reaction_diffusion_settings
-
-    if bake or props.bool_cache:
-        if props.cache_dir == '':
-            letters = string.ascii_letters
-            random_name = ''.join(rnd.choice(letters) for i in range(6))
-            if bpy.context.blend_data.filepath == '':
-                folder = Path(bpy.context.preferences.filepaths.temporary_directory)
-                folder = folder / 'reaction_diffusion_cache' / random_name
-            else:
-                folder = '//' + Path(bpy.context.blend_data.filepath).stem
-                folder = Path(bpy.path.abspath(folder)) / 'reaction_diffusion_cache' / random_name
-            folder.mkdir(parents=True, exist_ok=True)
-            props.cache_dir = str(folder)
-        else:
-            folder = Path(props.cache_dir)
-
-    me = ob.data
-    n_edges = len(me.edges)
-    n_verts = len(me.vertices)
-    a = np.zeros(n_verts)
-    b = np.zeros(n_verts)
-
-    print("{:6d} Reaction-Diffusion: {}".format(scene.frame_current, ob.name))
-
-    if not props.bool_cache:
-
-        if props.bool_mod:
-            # hide deforming modifiers
-            mod_visibility = []
-            for m in ob.modifiers:
-                mod_visibility.append(m.show_viewport)
-                if not mod_preserve_shape(m): m.show_viewport = False
-
-            # evaluated mesh
-            dg = bpy.context.evaluated_depsgraph_get()
-            ob_eval = ob.evaluated_get(dg)
-            me = bpy.data.meshes.new_from_object(ob_eval, preserve_all_data_layers=True, depsgraph=dg)
-
-            # set original visibility
-            for v, m in zip(mod_visibility, ob.modifiers):
-                m.show_viewport = v
-            ob.modifiers.update()
-
-        bm = bmesh.new()   # create an empty BMesh
-        bm.from_mesh(me)   # fill it in from a Mesh
-        dvert_lay = bm.verts.layers.deform.active
-
-        dt = props.dt
-        time_steps = props.time_steps
-        f = props.f
-        k = props.k
-        diff_a = props.diff_a
-        diff_b = props.diff_b
-        scale = props.diff_mult
-
-        brush_mult = props.brush_mult
-
-        # store weight values
-        if 'dB' in ob.vertex_groups: db = np.zeros(n_verts)
-        if 'grad' in ob.vertex_groups: grad = np.zeros(n_verts)
-
-        if props.vertex_group_diff_a != '': diff_a = np.zeros(n_verts)
-        if props.vertex_group_diff_b != '': diff_b = np.zeros(n_verts)
-        if props.vertex_group_scale != '': scale = np.zeros(n_verts)
-        if props.vertex_group_f != '': f = np.zeros(n_verts)
-        if props.vertex_group_k != '': k = np.zeros(n_verts)
-        if props.vertex_group_brush != '': brush = np.zeros(n_verts)
-        else: brush = 0
-
-        group_index_a = ob.vertex_groups["A"].index
-        group_index_b = ob.vertex_groups["B"].index
-        a = bmesh_get_weight_numpy(group_index_a, dvert_lay, bm.verts)
-        b = bmesh_get_weight_numpy(group_index_b, dvert_lay, bm.verts)
-
-        if props.vertex_group_diff_a != '':
-            group_index = ob.vertex_groups[props.vertex_group_diff_a].index
-            diff_a = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-            if props.invert_vertex_group_diff_a:
-                vg_bounds = (props.min_diff_a, props.max_diff_a)
-            else:
-                vg_bounds = (props.max_diff_a, props.min_diff_a)
-            diff_a = np.interp(diff_a, (0,1), vg_bounds)
-
-        if props.vertex_group_diff_b != '':
-            group_index = ob.vertex_groups[props.vertex_group_diff_b].index
-            diff_b = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-            if props.invert_vertex_group_diff_b:
-                vg_bounds = (props.max_diff_b, props.min_diff_b)
-            else:
-                vg_bounds = (props.min_diff_b, props.max_diff_b)
-            diff_b = np.interp(diff_b, (0,1), vg_bounds)
-
-        if props.vertex_group_scale != '':
-            group_index = ob.vertex_groups[props.vertex_group_scale].index
-            scale = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-            if props.invert_vertex_group_scale:
-                vg_bounds = (props.max_scale, props.min_scale)
-            else:
-                vg_bounds = (props.min_scale, props.max_scale)
-            scale = np.interp(scale, (0,1), vg_bounds)
-
-        if props.vertex_group_f != '':
-            group_index = ob.vertex_groups[props.vertex_group_f].index
-            f = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-            if props.invert_vertex_group_f:
-                vg_bounds = (props.max_f, props.min_f)
-            else:
-                vg_bounds = (props.min_f, props.max_f)
-            f = np.interp(f, (0,1), vg_bounds, )
-
-        if props.vertex_group_k != '':
-            group_index = ob.vertex_groups[props.vertex_group_k].index
-            k = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-            if props.invert_vertex_group_k:
-                vg_bounds = (props.max_k, props.min_k)
-            else:
-                vg_bounds = (props.min_k, props.max_k)
-            k = np.interp(k, (0,1), vg_bounds)
-
-        if props.vertex_group_brush != '':
-            group_index = ob.vertex_groups[props.vertex_group_brush].index
-            brush = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-            brush *= brush_mult
-
-
-        #timeElapsed = time.time() - start
-        #print('RD - Read Vertex Groups:',timeElapsed)
-        #start = time.time()
-
-        diff_a *= scale
-        diff_b *= scale
-
-        edge_verts = [0]*n_edges*2
-        me.edges.foreach_get("vertices", edge_verts)
-        edge_verts = np.array(edge_verts)
-
-        if 'gradient' in ob.vertex_groups.keys() and False:
-            group_index = ob.vertex_groups['gradient'].index
-            gradient = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-
-            arr = (np.arange(n_edges)*2).astype(int)
-            id0 = edge_verts[arr]
-            id1 = edge_verts[arr+1]
-
-            #gradient = np.abs(gradient[id0] - gradient[id1])
-            gradient = gradient[id1] - gradient[id0]
-            gradient /= np.max(gradient)
-            sign = np.sign(gradient)
-            sign[sign==0] = 1
-            gradient = (0.05*abs(gradient) + 0.95)*sign
-            #gradient *= (1-abs(gradient)
-            #gradient = 0.2*(1-gradient) + 0.95
-
-        #gradient = get_uv_edge_vectors(me)
-        #uv_dir = Vector((0.5,0.5,0)).normalized()
-        #gradient = np.array([abs(g.dot(uv_dir.normalized())) for g in gradient])
-        #gradient = (gradient + 0.5)/2
-        #gradient = np.array([max(0,g.dot(uv_dir.normalized())) for g in gradient])
-
-        timeElapsed = time.time() - start
-        print('       Preparation Time:',timeElapsed)
-        start = time.time()
-
-        try:
-            _f = f if type(f) is np.ndarray else np.array((f,))
-            _k = k if type(k) is np.ndarray else np.array((k,))
-            _diff_a = diff_a if type(diff_a) is np.ndarray else np.array((diff_a,))
-            _diff_b = diff_b if type(diff_b) is np.ndarray else np.array((diff_b,))
-            _brush = brush if type(brush) is np.ndarray else np.array((brush,))
-
-            #a, b = numba_reaction_diffusion_anisotropic(n_verts, n_edges, edge_verts, a, b, _brush, _diff_a, _diff_b, _f, _k, dt, time_steps, gradient)
-            a, b = numba_reaction_diffusion(n_verts, n_edges, edge_verts, a, b, _brush, _diff_a, _diff_b, _f, _k, dt, time_steps)
-        except:
-            print('Not using Numba! The simulation could be slow.')
-            arr = np.arange(n_edges)*2
-            id0 = edge_verts[arr]     # first vertex indices for each edge
-            id1 = edge_verts[arr+1]   # second vertex indices for each edge
-            for i in range(time_steps):
-                b += brush
-                lap_a = np.zeros(n_verts)
-                lap_b = np.zeros(n_verts)
-                lap_a0 =  a[id1] -  a[id0]   # laplacian increment for first vertex of each edge
-                lap_b0 =  b[id1] -  b[id0]   # laplacian increment for first vertex of each edge
-
-                np.add.at(lap_a, id0, lap_a0)
-                np.add.at(lap_b, id0, lap_b0)
-                np.add.at(lap_a, id1, -lap_a0)
-                np.add.at(lap_b, id1, -lap_b0)
-
-                ab2 = a*b**2
-                a += eval("(diff_a*lap_a - ab2 + f*(1-a))*dt")
-                b += eval("(diff_b*lap_b + ab2 - (k+f)*b)*dt")
-                #a += (diff_a*lap_a - ab2 + f*(1-a))*dt
-                #b += (diff_b*lap_b + ab2 - (k+f)*b)*dt
-
-                a = nan_to_num(a)
-                b = nan_to_num(b)
-
-        timeElapsed = time.time() - start
-        print('       Simulation Time:',timeElapsed)
-
-    if bake:
-        if not(os.path.exists(folder)):
-            os.mkdir(folder)
-        file_name = folder / "a_{:04d}".format(scene.frame_current)
-        a.tofile(file_name)
-        file_name = folder / "b_{:04d}".format(scene.frame_current)
-        b.tofile(file_name)
-    elif props.bool_cache:
-        try:
-            file_name = folder / "a_{:04d}".format(scene.frame_current)
-            a = np.fromfile(file_name)
-            file_name = folder / "b_{:04d}".format(scene.frame_current)
-            b = np.fromfile(file_name)
-        except:
-            print('       Cannot read cache.')
-            return
-
-    if props.update_weight_a or props.update_weight_b:
-        start = time.time()
-        if props.update_weight_a:
-            if 'A' in ob.vertex_groups.keys():
-                vg_a = ob.vertex_groups['A']
-            else:
-                vg_a = ob.vertex_groups.new(name='A')
-        else:
-            vg_a = None
-        if props.update_weight_b:
-            if 'B' in ob.vertex_groups.keys():
-                vg_b = ob.vertex_groups['B']
-            else:
-                vg_b = ob.vertex_groups.new(name='B')
-        else:
-            vg_b = None
-        if vg_a == vg_b == None:
-            pass
-        else:
-            if ob.mode == 'WEIGHT_PAINT':# or props.bool_cache:
-                # slower, but prevent crashes
-                for i in range(n_verts):
-                    if vg_a: vg_a.add([i], a[i], 'REPLACE')
-                    if vg_b: vg_b.add([i], b[i], 'REPLACE')
-            else:
-                if props.bool_mod or props.bool_cache:
-                    #bm.free()               # release old bmesh
-                    bm = bmesh.new()        # create an empty BMesh
-                    bm.from_mesh(ob.data)   # fill it in from a Mesh
-                    dvert_lay = bm.verts.layers.deform.active
-                # faster, but can cause crashes while painting weight
-                if vg_a: index_a = vg_a.index
-                if vg_b: index_b = vg_b.index
-                for i, v in enumerate(bm.verts):
-                    dvert = v[dvert_lay]
-                    if vg_a: dvert[index_a] = a[i]
-                    if vg_b: dvert[index_b] = b[i]
-                bm.to_mesh(ob.data)
-                bm.free()
-        print('       Writing Vertex Groups Time:',time.time() - start)
-    if props.normalize:
-        min_a = np.min(a)
-        max_a = np.max(a)
-        min_b = np.min(b)
-        max_b = np.max(b)
-        a = (a - min_a)/(max_a - min_a)
-        b = (b - min_b)/(max_b - min_b)
-    split_a = None
-    split_b = None
-    splitted = False
-    if props.update_colors:#_a or props.update_colors_b:
-        start = time.time()
-        loops_size = get_attribute_numpy(me.polygons, attribute='loop_total', mult=1)
-        n_colors = np.sum(loops_size)
-        v_id = np.ones(n_colors)
-        me.polygons.foreach_get('vertices',v_id)
-        v_id = v_id.astype(int)
-        #v_id = np.array([v for p in ob.data.polygons for v in p.vertices])
-        '''
-        if props.update_colors_b:
-            if 'B' in ob.data.vertex_colors.keys():
-                vc = ob.data.vertex_colors['B']
-            else:
-                vc = ob.data.vertex_colors.new(name='B')
-            c_val = b[v_id]
-            c_val = np.repeat(c_val, 4, axis=0)
-            vc.data.foreach_set('color',c_val)
-
-        if props.update_colors_a:
-            if 'A' in ob.data.vertex_colors.keys():
-                vc = ob.data.vertex_colors['A']
-            else:
-                vc = ob.data.vertex_colors.new(name='A')
-            c_val = a[v_id]
-            c_val = np.repeat(c_val, 4, axis=0)
-            vc.data.foreach_set('color',c_val)
-        '''
-        split_a = a[v_id,None]
-        split_b = b[v_id,None]
-        splitted = True
-        ones = np.ones((n_colors,1))
-        #rgba = np.concatenate((split_a,split_b,-split_b+split_a,ones),axis=1).flatten()
-        rgba = np.concatenate((split_a,split_b,ones,ones),axis=1).flatten()
-        if 'AB' in ob.data.vertex_colors.keys():
-            vc = ob.data.vertex_colors['AB']
-        else:
-            vc = ob.data.vertex_colors.new(name='AB')
-        vc.data.foreach_set('color',rgba)
-        ob.data.vertex_colors.update()
-
-        print('       Writing Vertex Colors Time:',time.time() - start)
-    if props.update_uv:
-        start = time.time()
-        if 'AB' in me.uv_layers.keys():
-            uv_layer = me.uv_layers['AB']
-        else:
-            uv_layer = me.uv_layers.new(name='AB')
-        if not splitted:
-            loops_size = get_attribute_numpy(me.polygons, attribute='loop_total', mult=1)
-            n_data = np.sum(loops_size)
-            v_id = np.ones(n_data)
-            me.polygons.foreach_get('vertices',v_id)
-            v_id = v_id.astype(int)
-            split_a = a[v_id,None]
-            split_b = b[v_id,None]
-        uv = np.concatenate((split_a,split_b),axis=1).flatten()
-        uv_layer.data.foreach_set('uv',uv)
-        me.uv_layers.update()
-        print('       Writing UV Map Time:',time.time() - start)
-
-    for ps in ob.particle_systems:
-        if ps.vertex_group_density == 'B' or ps.vertex_group_density == 'A':
-            ps.invert_vertex_group_density = not ps.invert_vertex_group_density
-            ps.invert_vertex_group_density = not ps.invert_vertex_group_density
-
-    if props.bool_mod and not props.bool_cache: bpy.data.meshes.remove(me)
-
-def fast_bake_def(ob, frame_start=1, frame_end=250):
-    scene = bpy.context.scene
-    start = time.time()
-    if type(ob) == bpy.types.Scene: return None
-    props = ob.reaction_diffusion_settings
-
-    # Define cache folder
-    if props.cache_dir == '':
-        letters = string.ascii_letters
-        random_name = ''.join(rnd.choice(letters) for i in range(6))
-        if bpy.context.blend_data.filepath == '':
-            folder = Path(bpy.context.preferences.filepaths.temporary_directory)
-            folder = folder / 'reaction_diffusion_cache' / random_name
-        else:
-            folder = '//' + Path(bpy.context.blend_data.filepath).stem
-            folder = Path(bpy.path.abspath(folder)) / 'reaction_diffusion_cache' / random_name
-        folder.mkdir(parents=True, exist_ok=True)
-        props.cache_dir = str(folder)
-    else:
-        folder = Path(props.cache_dir)
-
-    if props.bool_mod:
-        # hide deforming modifiers
-        mod_visibility = []
-        for m in ob.modifiers:
-            mod_visibility.append(m.show_viewport)
-            if not mod_preserve_shape(m): m.show_viewport = False
-
-        # evaluated mesh
-        dg = bpy.context.evaluated_depsgraph_get()
-        ob_eval = ob.evaluated_get(dg)
-        me = bpy.data.meshes.new_from_object(ob_eval, preserve_all_data_layers=True, depsgraph=dg)
-
-        # set original visibility
-        for v, m in zip(mod_visibility, ob.modifiers):
-            m.show_viewport = v
-        ob.modifiers.update()
-    else:
-        me = ob.data
-
-    bm = bmesh.new()   # create an empty BMesh
-    bm.from_mesh(me)   # fill it in from a Mesh
-    dvert_lay = bm.verts.layers.deform.active
-    n_edges = len(me.edges)
-    n_verts = len(me.vertices)
-    a = np.zeros(n_verts)
-    b = np.zeros(n_verts)
-    group_index_a = ob.vertex_groups["A"].index
-    group_index_b = ob.vertex_groups["B"].index
-
-    dt = props.dt
-    time_steps = props.time_steps
-    f = props.f
-    k = props.k
-    diff_a = props.diff_a
-    diff_b = props.diff_b
-    scale = props.diff_mult
-
-    brush_mult = props.brush_mult
-
-    # store weight values
-    if 'dB' in ob.vertex_groups: db = np.zeros(n_verts)
-    if 'grad' in ob.vertex_groups: grad = np.zeros(n_verts)
-
-    if props.vertex_group_diff_a != '': diff_a = np.zeros(n_verts)
-    if props.vertex_group_diff_b != '': diff_b = np.zeros(n_verts)
-    if props.vertex_group_scale != '': scale = np.zeros(n_verts)
-    if props.vertex_group_f != '': f = np.zeros(n_verts)
-    if props.vertex_group_k != '': k = np.zeros(n_verts)
-    if props.vertex_group_brush != '': brush = np.zeros(n_verts)
-    else: brush = 0
-
-    a = bmesh_get_weight_numpy(group_index_a, dvert_lay, bm.verts)
-    b = bmesh_get_weight_numpy(group_index_b, dvert_lay, bm.verts)
-
-    if props.vertex_group_diff_a != '':
-        group_index = ob.vertex_groups[props.vertex_group_diff_a].index
-        diff_a = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-        if props.invert_vertex_group_diff_a:
-            vg_bounds = (props.min_diff_a, props.max_diff_a)
-        else:
-            vg_bounds = (props.max_diff_a, props.min_diff_a)
-        diff_a = np.interp(diff_a, (0,1), vg_bounds)
-
-    if props.vertex_group_diff_b != '':
-        group_index = ob.vertex_groups[props.vertex_group_diff_b].index
-        diff_b = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-        if props.invert_vertex_group_diff_b:
-            vg_bounds = (props.max_diff_b, props.min_diff_b)
-        else:
-            vg_bounds = (props.min_diff_b, props.max_diff_b)
-        diff_b = np.interp(diff_b, (0,1), vg_bounds)
-
-    if props.vertex_group_scale != '':
-        group_index = ob.vertex_groups[props.vertex_group_scale].index
-        scale = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-        if props.invert_vertex_group_scale:
-            vg_bounds = (props.max_scale, props.min_scale)
-        else:
-            vg_bounds = (props.min_scale, props.max_scale)
-        scale = np.interp(scale, (0,1), vg_bounds)
-
-    if props.vertex_group_f != '':
-        group_index = ob.vertex_groups[props.vertex_group_f].index
-        f = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-        if props.invert_vertex_group_f:
-            vg_bounds = (props.max_f, props.min_f)
-        else:
-            vg_bounds = (props.min_f, props.max_f)
-        f = np.interp(f, (0,1), vg_bounds, )
-
-    if props.vertex_group_k != '':
-        group_index = ob.vertex_groups[props.vertex_group_k].index
-        k = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-        if props.invert_vertex_group_k:
-            vg_bounds = (props.max_k, props.min_k)
-        else:
-            vg_bounds = (props.min_k, props.max_k)
-        k = np.interp(k, (0,1), vg_bounds)
-
-    if props.vertex_group_brush != '':
-        group_index = ob.vertex_groups[props.vertex_group_brush].index
-        brush = bmesh_get_weight_numpy(group_index, dvert_lay, bm.verts)
-        brush *= brush_mult
-
-    diff_a *= scale
-    diff_b *= scale
-
-    edge_verts = [0]*n_edges*2
-    me.edges.foreach_get("vertices", edge_verts)
-
-    gradient = get_uv_edge_vectors(me)
-    uv_dir = Vector((0.5,0.5,0))
-    #gradient = [abs(g.dot(uv_dir)) for g in gradient]
-    gradient = [max(0,g.dot(uv_dir)) for g in gradient]
-
-    timeElapsed = time.time() - start
-    print('       Preparation Time:',timeElapsed)
-    start = time.time()
-
-    try:
-        edge_verts = np.array(edge_verts)
-        _f = f if type(f) is np.ndarray else np.array((f,))
-        _k = k if type(k) is np.ndarray else np.array((k,))
-        _diff_a = diff_a if type(diff_a) is np.ndarray else np.array((diff_a,))
-        _diff_b = diff_b if type(diff_b) is np.ndarray else np.array((diff_b,))
-        _brush = brush if type(brush) is np.ndarray else np.array((brush,))
-
-        run_rd = False
-        for j in range(props.cache_frame_start, props.cache_frame_end+1):
-            start2 = time.time()
-            print("{:6d} Reaction-Diffusion: {}".format(j, ob.name))
-            if run_rd:
-                b += _brush
-                a, b = numba_reaction_diffusion(n_verts, n_edges, edge_verts, a, b, _brush, _diff_a, _diff_b, _f, _k, dt, time_steps)
-            else:
-                run_rd = True
-
-            if not(os.path.exists(folder)):
-                os.mkdir(folder)
-            file_name = folder / "a_{:04d}".format(j)
-            a.tofile(file_name)
-            file_name = folder / "b_{:04d}".format(j)
-            b.tofile(file_name)
-
-            timeElapsed = time.time() - start2
-            print('       Simulation Time:',timeElapsed)
-
-    except:
-        print('Not using Numba! The simulation could be slow.')
-        edge_verts = np.array(edge_verts)
-        arr = np.arange(n_edges)*2
-        id0 = edge_verts[arr]     # first vertex indices for each edge
-        id1 = edge_verts[arr+1]   # second vertex indices for each edge
-        for j in range(props.cache_frame_start, props.cache_frame_end):
-            for i in range(time_steps):
-                b += brush
-                lap_a = np.zeros(n_verts)
-                lap_b = np.zeros(n_verts)
-                lap_a0 =  a[id1] -  a[id0]   # laplacian increment for first vertex of each edge
-                lap_b0 =  b[id1] -  b[id0]   # laplacian increment for first vertex of each edge
-
-                np.add.at(lap_a, id0, lap_a0)
-                np.add.at(lap_b, id0, lap_b0)
-                np.add.at(lap_a, id1, -lap_a0)
-                np.add.at(lap_b, id1, -lap_b0)
-
-                ab2 = a*b**2
-                a += eval("(diff_a*lap_a - ab2 + f*(1-a))*dt")
-                b += eval("(diff_b*lap_b + ab2 - (k+f)*b)*dt")
-
-                a = nan_to_num(a)
-                b = nan_to_num(b)
-
-            if not(os.path.exists(folder)):
-                os.mkdir(folder)
-            file_name = folder / "a_{:04d}".format(j)
-            a.tofile(file_name)
-            file_name = folder / "b_{:04d}".format(j)
-            b.tofile(file_name)
-
-    if ob.mode == 'WEIGHT_PAINT':
-        # slower, but prevent crashes
-        vg_a = ob.vertex_groups['A']
-        vg_b = ob.vertex_groups['B']
-        for i in range(n_verts):
-            vg_a.add([i], a[i], 'REPLACE')
-            vg_b.add([i], b[i], 'REPLACE')
-    else:
-        if props.bool_mod:
-            bm.free()               # release old bmesh
-            bm = bmesh.new()        # create an empty BMesh
-            bm.from_mesh(ob.data)   # fill it in from a Mesh
-            dvert_lay = bm.verts.layers.deform.active
-        # faster, but can cause crashes while painting weight
-        for i, v in enumerate(bm.verts):
-            dvert = v[dvert_lay]
-            dvert[group_index_a] = a[i]
-            dvert[group_index_b] = b[i]
-        bm.to_mesh(ob.data)
-
-    # Update Vertex Colors
-    if 'A' in ob.data.vertex_colors or 'B' in ob.data.vertex_colors:
-        v_id = np.array([v for p in ob.data.polygons for v in p.vertices])
-
-        if 'B' in ob.data.vertex_colors:
-            c_val = b[v_id]
-            c_val = np.repeat(c_val, 4, axis=0)
-            vc = ob.data.vertex_colors['B']
-            vc.data.foreach_set('color',c_val.tolist())
-
-        if 'A' in ob.data.vertex_colors:
-            c_val = a[v_id]
-            c_val = np.repeat(c_val, 4, axis=0)
-            vc = ob.data.vertex_colors['A']
-            vc.data.foreach_set('color',c_val.tolist())
-
-    for ps in ob.particle_systems:
-        if ps.vertex_group_density == 'B' or ps.vertex_group_density == 'A':
-            ps.invert_vertex_group_density = not ps.invert_vertex_group_density
-            ps.invert_vertex_group_density = not ps.invert_vertex_group_density
-
-    if props.bool_mod: bpy.data.meshes.remove(me)
-    bm.free()
-    timeElapsed = time.time() - start
-    print('       Closing Time:',timeElapsed)
-
-def create_fast_bake_def(ob, frame_start=1, frame_end=250):
-    scene = bpy.context.scene
-    start = time.time()
-    if type(ob) == bpy.types.Scene: return None
-    props = ob.reaction_diffusion_settings
-
-    dt = props.dt
-    time_steps = props.time_steps
-    scale = props.diff_mult
-
-    if props.cache_dir == '':
-        letters = string.ascii_letters
-        random_name = ''.join(rnd.choice(letters) for i in range(6))
-        if bpy.context.blend_data.filepath == '':
-            folder = Path(bpy.context.preferences.filepaths.temporary_directory)
-            folder = folder / 'reaction_diffusion_cache' / random_name
-        else:
-            folder = '//' + Path(bpy.context.blend_data.filepath).stem
-            folder = Path(bpy.path.abspath(folder)) / 'reaction_diffusion_cache' / random_name
-        folder.mkdir(parents=True, exist_ok=True)
-        props.cache_dir = str(folder)
-    else:
-        folder = Path(props.cache_dir)
-
-    if props.bool_mod:
-        # hide deforming modifiers
-        mod_visibility = []
-        for m in ob.modifiers:
-            mod_visibility.append(m.show_viewport)
-            if not mod_preserve_shape(m): m.show_viewport = False
-
-        # evaluated mesh
-        dg = bpy.context.evaluated_depsgraph_get()
-        ob_eval = ob.evaluated_get(dg)
-        me = bpy.data.meshes.new_from_object(ob_eval, preserve_all_data_layers=True, depsgraph=dg)
-
-        # set original visibility
-        for v, m in zip(mod_visibility, ob.modifiers):
-            m.show_viewport = v
-        ob.modifiers.update()
-    else:
-        me = ob.data
-
-    bm = bmesh.new()   # create an empty BMesh
-    bm.from_mesh(me)   # fill it in from a Mesh
-    verts = get_vertices_numpy(me)
-    dvert_lay = bm.verts.layers.deform.active
-    n_edges = len(me.edges)
-    n_verts = len(me.vertices)
-    group_index_x = ob.vertex_groups["x"].index
-    group_index_y = ob.vertex_groups["y"].index
-    group_index_module = ob.vertex_groups["module"].index
-    group_index_values = ob.vertex_groups["values"].index
-
-    if not props.bool_cache:
-        time_steps = props.time_steps
-
-        # store weight values
-        if 'dB' in ob.vertex_groups: db = np.zeros(n_verts)
-        if 'grad' in ob.vertex_groups: grad = np.zeros(n_verts)
-        vec_x = np.zeros(n_verts)
-        vec_y = np.zeros(n_verts)
-        vec_module = np.zeros(n_verts)
-        values = np.zeros(n_verts)
-
-        vec_x = bmesh_get_weight_numpy(group_index_x, dvert_lay, bm.verts)
-        vec_y = bmesh_get_weight_numpy(group_index_y, dvert_lay, bm.verts)
-        vec_module = bmesh_get_weight_numpy(group_index_module, dvert_lay, bm.verts)
-        values = bmesh_get_weight_numpy(group_index_values, dvert_lay, bm.verts)
-        field = np.concatenate((vec_x[:,None],vec_y[:,None],vec_y[:,None]*0),axis=1)
-        field = field*2-1
-        field[:,2] = 0
-        edge_verts = get_edges_numpy(me)
-
-        id0 = edge_verts[:,0]
-        id1 = edge_verts[:,1]
-        vert0 = verts[id0]
-        vert1 = verts[id1]
-        vec = vert1-vert0
-        edge_field = (field[id0] + field[id1])/2    # average vector associated to the edge
-        print(vert0.shape)
-        print(field.shape)
-        print(edge_field.shape)
-        # normalize vectors
-        vec /= np.linalg.norm(vec,axis=1)[:,None]
-        edge_field /= np.linalg.norm(edge_field,axis=1)[:,None]
-        edge_flow = np.einsum('...j,...j', vec, edge_field)
-        #sign = (edge_flow>0).astype(int)
-        #values[edge_verts[sign]] += values[edge_verts[1-sign]]*
-        #values[verts0] += values[verts1]*edge_flow
-
-        timeElapsed = time.time() - start
-        print('       Preparation Time:',timeElapsed)
-        start = time.time()
-
-        # Preserve energy
-        mult = np.zeros(values.shape)
-        #mult[id0] -= edge_flow
-        #mult[id1] += edge_flow
-        np.add.at(mult,id0,-edge_flow)
-        np.add.at(mult,id1,edge_flow)
-        print("mult")
-        mult = scale/mult
-        print(mult)
-        print(np.sum(mult))
-
-
-        #try:
-        print(vec)
-        print(edge_flow)
-        print(edge_flow)
-
-        bool_run = False
-        for j in range(props.cache_frame_start, props.cache_frame_end+1):
-            start2 = time.time()
-            print("{:6d} Reaction-Diffusion: {}".format(j, ob.name))
-            if bool_run:
-                print(values)
-                #for i in range(1):
-                values = integrate_field(n_edges,id0,id1,values,edge_flow,mult,time_steps)
-                #values0 = values
-                #np.add.at(values, id0, values0[id1]*edge_flow*mult[id1])
-                #np.add.at(values, id1, -values0[id0]*edge_flow*mult[id0])
-                #np.add.at(values, id0, values0[id1]*edge_flow*mult)
-                #np.add.at(values, id1, -values0[id0]*edge_flow*mult)
-                #values[id1] += values0[id0]*edge_flow/mult[id1]*dt
-                #values[id0] -= values0[id1]*edge_flow/mult[id0]*dt
-                #values[id1] = edge_flow
-                #values[id1] += edge_flow
-                #a, b = numba_reaction_diffusion(n_verts, n_edges, edge_verts, a, b, _brush, _diff_a, _diff_b, _f, _k, dt, time_steps)
-
-                '''
-                lap_a = np.zeros(n_verts)
-                lap_b = np.zeros(n_verts)
-                lap_a0 =  a[id1] -  a[id0]   # laplacian increment for first vertex of each edge
-                lap_b0 =  b[id1] -  b[id0]   # laplacian increment for first vertex of each edge
-
-                np.add.at(lap_a, id0, lap_a0)
-                np.add.at(lap_b, id0, lap_b0)
-                np.add.at(lap_a, id1, -lap_a0)
-                np.add.at(lap_b, id1, -lap_b0)
-                '''
-            else:
-                bool_run = True
-
-            if not(os.path.exists(folder)):
-                os.mkdir(folder)
-            file_name = folder / "a_{:04d}".format(j)
-            values.tofile(file_name)
-            file_name = folder / "b_{:04d}".format(j)
-            values.tofile(file_name)
-
-
-            timeElapsed = time.time() - start2
-            print('       Simulation Time:',timeElapsed)
-
-    if props.bool_mod: bpy.data.meshes.remove(me)
-    bm.free()
-    timeElapsed = time.time() - start
-    print('       Closing Time:',timeElapsed)
-
-
-
-
-
-class TISSUE_PT_reaction_diffusion(Panel):
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "data"
-    bl_label = "Tissue Reaction-Diffusion"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return 'A' and 'B' in context.object.vertex_groups
-
-    def draw(self, context):
-        reaction_diffusion_add_handler(self, context)
-
-        ob = context.object
-        props = ob.reaction_diffusion_settings
-        layout = self.layout
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        if not ("A" and "B" in ob.vertex_groups):
-            row.operator("object.start_reaction_diffusion",
-                        icon="EXPERIMENTAL",
-                        text="Reaction-Diffusion")
-        else:
-            row.operator("object.start_reaction_diffusion",
-                        icon="EXPERIMENTAL",
-                        text="Reset Reaction-Diffusion")
-            row = col.row(align=True)
-            row.prop(props, "run", text="Run Reaction-Diffusion")
-            col = layout.column(align=True)
-            row = col.row(align=True)
-            row.prop(props, "time_steps")
-            row.prop(props, "dt")
-            row.enabled = not props.bool_cache
-            col.separator()
-            row = col.row(align=True)
-            col1 = row.column(align=True)
-            col1.prop(props, "diff_a")
-            col1.enabled = props.vertex_group_diff_a == '' and not props.bool_cache
-            col1 = row.column(align=True)
-            col1.prop(props, "diff_b")
-            col1.enabled = props.vertex_group_diff_b == '' and not props.bool_cache
-            row = col.row(align=True)
-            row.prop(props, "diff_mult")
-            row.enabled = props.vertex_group_scale == '' and not props.bool_cache
-            #col.separator()
-            row = col.row(align=True)
-            col1 = row.column(align=True)
-            col1.prop(props, "f")
-            col1.enabled = props.vertex_group_f == '' and not props.bool_cache
-            col1 = row.column(align=True)
-            col1.prop(props, "k")
-            col1.enabled = props.vertex_group_k == '' and not props.bool_cache
-            col.separator()
-            col.label(text='Cache:')
-            #col.prop(props, "bool_cache")
-            col.prop(props, "cache_dir", text='')
-            col.separator()
-            row = col.row(align=True)
-            row.prop(props, "cache_frame_start")
-            row.prop(props, "cache_frame_end")
-            col.separator()
-            if props.bool_cache:
-                col.operator("object.reaction_diffusion_free_data")
-            else:
-                row = col.row(align=True)
-                row.operator("object.bake_reaction_diffusion")
-                file = bpy.context.blend_data.filepath
-                temp = bpy.context.preferences.filepaths.temporary_directory
-                if file == temp == props.cache_dir == '':
-                    row.enabled = False
-                    col.label(text="Cannot use cache", icon='ERROR')
-                    col.label(text='please save the Blender or set a Cache directory')
-                col.prop(props, "fast_bake")
-
-            col.separator()
-            col.label(text='Output attributes:')
-            row = col.row(align=True)
-            col2 = row.column(align=True)
-            row2 = col2.row(align=True)
-            row2.prop(props, "update_weight_a", icon='GROUP_VERTEX', text='A')
-            row2.prop(props, "update_weight_b", icon='GROUP_VERTEX', text='B')
-            col2.enabled = props.bool_cache
-            row.separator()
-            #row.prop(props, "update_colors_a", icon='GROUP_VCOL', text='A')
-            #row.prop(props, "update_colors_b", icon='GROUP_VCOL', text='B')
-            row.prop(props, "update_colors", icon='GROUP_VCOL', text='AB')
-            row.separator()
-            row.prop(props, "update_uv", icon='GROUP_UVS', text='AB')
-            col.prop(props,'normalize')
-
-            #col.prop_search(props, 'vertex_group_diff_a', ob, "vertex_groups", text='Diff A')
-            #col.prop_search(props, 'vertex_group_diff_b', ob, "vertex_groups", text='Diff B')
-            #col.prop_search(props, 'vertex_group_scale', ob, "vertex_groups", text='Scale')
-            #col.prop_search(props, 'vertex_group_f', ob, "vertex_groups", text='f')
-            #col.prop_search(props, 'vertex_group_k', ob, "vertex_groups", text='k')
-
-
-class TISSUE_PT_reaction_diffusion_weight(Panel):
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "data"
-    bl_parent_id = "TISSUE_PT_reaction_diffusion"
-    bl_label = "Vertex Groups"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return 'A' and 'B' in context.object.vertex_groups
-
-    def draw(self, context):
-        ob = context.object
-        props = ob.reaction_diffusion_settings
-        layout = self.layout
-        #layout.use_property_split = True
-        col = layout.column(align=True)
-        col.prop(props, "bool_mod")
-        if props.bool_mod and props.fast_bake:
-            col.label(text="When Fast Bake is on, the modifiers", icon='ERROR')
-            col.label(text="          are used only for the first frame")
-        col.separator()
-        insert_weight_parameter(col, ob, 'brush', text='Brush:')
-        insert_weight_parameter(col, ob, 'diff_a', text='Diff A:')
-        insert_weight_parameter(col, ob, 'diff_b', text='Diff B:')
-        insert_weight_parameter(col, ob, 'scale', text='Scale:')
-        insert_weight_parameter(col, ob, 'f', text='f:')
-        insert_weight_parameter(col, ob, 'k', text='k:')
-        col.enabled = not props.bool_cache
-
-def insert_weight_parameter(col, ob, name, text=''):
-    props = ob.reaction_diffusion_settings
-    split = col.split(factor=0.25, align=True)
-    col2 = split.column(align=True)
-    col2.label(text=text)
-    col2 = split.column(align=True)
-    row2 = col2.row(align=True)
-    row2.prop_search(props, 'vertex_group_' + name, ob, "vertex_groups", text='')
-    if name != 'brush':
-        row2.prop(props, "invert_vertex_group_" + name, text="", toggle=True, icon='ARROW_LEFTRIGHT')
-    if 'vertex_group_' + name in props:
-        if props['vertex_group_' + name] != '':
-            if name == 'brush':
-                col2.prop(props, "brush_mult")
-            else:
-                row2 = col2.row(align=True)
-                row2.prop(props, "min_" + name, text="Min")
-                row2 = col2.row(align=True)
-                row2.prop(props, "max_" + name, text="Max")
-    col.separator()
-
-def contour_edges_pattern(operator, c, verts_count, iso_val, vertices, normals, filtered_edges, weight, pattern_weight, bevel_weight):
-    # vertices indexes
-    id0 = filtered_edges[:,0]
-    id1 = filtered_edges[:,1]
-    # vertices weight
-    w0 = weight[id0]
-    w1 = weight[id1]
-    # weight condition
-    bool_w0 = w0 < iso_val
-    bool_w1 = w1 < iso_val
-
-    # mask all edges that have one weight value below the iso value
-    mask_new_verts = np.logical_xor(bool_w0, bool_w1)
-    if not mask_new_verts.any():
-        return np.array([[None]]), {}, np.array([[None]]), np.array([[None]])
-
-    id0 = id0[mask_new_verts]
-    id1 = id1[mask_new_verts]
-    # filter arrays
-    v0 = vertices[id0]
-    v1 = vertices[id1]
-    n0 = normals[id0]
-    n1 = normals[id1]
-    w0 = w0[mask_new_verts]
-    w1 = w1[mask_new_verts]
-    pattern0 = pattern_weight[id0]
-    pattern1 = pattern_weight[id1]
-    try:
-        bevel0 = bevel_weight[id0]
-        bevel1 = bevel_weight[id1]
-    except: pass
-
-    ### Spiral
-    #edge_nor = (n0+n1)/2
-    #shift = np.arctan2(edge_nor[:,0], edge_nor[:,1])/2/pi*delta_iso
-
-    #param = (iso_val + shift - w0)/(w1-w0)
-    param = (iso_val - w0)/(w1-w0)
-    # pattern displace
-    #mult = 1 if c%2 == 0 else -1
-    if c%(operator.in_steps + operator.out_steps) < operator.in_steps:
-        mult = operator.in_displace
-    else:
-        mult = operator.out_displace
-    pattern_value = pattern0 + (pattern1-pattern0)*param
-    try:
-        bevel_value = bevel0 + (bevel1-bevel0)*param
-        bevel_value = np.expand_dims(bevel_value,axis=1)
-    except: bevel_value = None
-    disp = pattern_value * mult
-
-    param = np.expand_dims(param,axis=1)
-    disp = np.expand_dims(disp,axis=1)
-    verts = v0 + (v1-v0)*param
-    norm = n0 + (n1-n0)*param
-    if operator.limit_z: disp *= 1-abs(np.expand_dims(norm[:,2], axis=1))
-    verts = verts + norm*disp
-    #verts = verts[np.flip(np.argsort(shift))]
-    #verts = verts[np.argsort(shift)]
-
-    # indexes of edges with new vertices
-    edges_index = filtered_edges[mask_new_verts][:,2]
-
-    # remove all edges completely below the iso value
-    #mask_edges = np.logical_not(np.logical_and(bool_w0, bool_w1))
-    #filtered_edges = filtered_edges[mask_edges]
-    return filtered_edges, edges_index, verts, bevel_value
-
 def contour_bmesh(me, bm, weight, iso_val):
     bm.verts.ensure_lookup_table()
     bm.edges.ensure_lookup_table()
     bm.faces.ensure_lookup_table()
-
-    # store weight values
 
     vertices = get_vertices_numpy(me)
     faces_mask = np.array(bm.faces)
@@ -4246,38 +2252,11 @@ def contour_bmesh(me, bm, weight, iso_val):
     param = np.expand_dims(param,axis=1)
     verts = v0 + (v1-v0)*param
 
-    # indexes of edges with new vertices
-    #edges_index = filtered_edges[mask_new_verts][:,2]
-
     edges_id = {}
     for i, e in enumerate(filtered_edges):
         #edges_id[id] = i + n_verts
         edges_id['{}_{}'.format(e[0],e[1])] = i + n_verts
         edges_id['{}_{}'.format(e[1],e[0])] = i + n_verts
-
-
-    '''
-    for e in filtered_edges:
-        id0 = e.verts[0].index
-        id1 = e.verts[1].index
-        w0 = weight[id0]
-        w1 = weight[id1]
-
-        if w0 == w1: continue
-        elif w0 > iso_val and w1 > iso_val:
-            continue
-        elif w0 < iso_val and w1 < iso_val: continue
-        elif w0 == iso_val or w1 == iso_val: continue
-        else:
-            v0 = me0.vertices[id0].co
-            v1 = me0.vertices[id1].co
-            v = v0.lerp(v1, (iso_val-w0)/(w1-w0))
-            delete_edges.append(e)
-            verts.append(v)
-            edges_id[str(id0)+"_"+str(id1)] = count
-            edges_id[str(id1)+"_"+str(id0)] = count
-            count += 1
-    '''
 
     splitted_faces = []
 
@@ -4524,7 +2503,6 @@ class tissue_weight_streamlines(Operator):
             # generate new bmesh
             bm = bmesh.new()
             bm.from_mesh(me)
-            print(len(me.vertices))
             #for v in me.vertices:
             #    if v.select: seeds.append(v.index)
             for v in bm.verts:
@@ -4605,6 +2583,7 @@ class tissue_weight_streamlines(Operator):
             if self.pos_steps > 0:
                 for i in range(n_verts):
                     n = neigh[i]
+                    if len(n) == 0: continue
                     nw = neigh_weight[i]
                     max_w = max(nw)
                     if self.same_weight:
@@ -4618,6 +2597,7 @@ class tissue_weight_streamlines(Operator):
                 prev_vert = [-1]*n_verts
                 for i in range(n_verts):
                     n = neigh[i]
+                    if len(n) == 0: continue
                     nw = neigh_weight[i]
                     min_w = min(nw)
                     if self.same_weight:
@@ -4638,7 +2618,8 @@ class tissue_weight_streamlines(Operator):
             for j in range(self.pos_steps):
                 if self.rand_dir > 0:
                     n = neigh[next_pts[-1]]
-                    next = n[int(len(n) * (1-random.random() * self.rand_dir))]
+                    if len(n) == 0: break
+                    next = n[int((len(n)-1) * (1-random.random() * self.rand_dir))]
                 else:
                     next = next_vert[next_pts[-1]]
                 if next > 0:
@@ -4649,6 +2630,7 @@ class tissue_weight_streamlines(Operator):
             for j in range(self.neg_steps):
                 if self.rand_dir > 0:
                     n = neigh[prev_pts[-1]]
+                    if len(n) == 0: break
                     prev = n[int(len(n) * random.random() * self.rand_dir)]
                 else:
                     prev = prev_vert[prev_pts[-1]]

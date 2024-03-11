@@ -20,8 +20,6 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
-#include "BKE_context.hh"
-
 #include "WM_types.hh"
 
 #include "RNA_access.hh"
@@ -29,8 +27,6 @@
 #include "UI_interface.hh"
 
 #include "BLT_translation.hh"
-
-#include "ED_screen.hh"
 
 #include "IMB_colormanagement.hh"
 
@@ -780,8 +776,6 @@ static void ui_block_colorpicker(uiBlock *block,
                 hexcol,
                 0,
                 8,
-                0,
-                0,
                 TIP_("Hex triplet for color (#RRGGBB)"));
   UI_but_flag_disable(bt, UI_BUT_UNDO);
   UI_but_func_set(bt, ui_colorpicker_hex_rna_cb, bt, hexcol);
@@ -797,8 +791,6 @@ static void ui_block_colorpicker(uiBlock *block,
            nullptr,
            0.0,
            0.0,
-           0,
-           0,
            "");
 
   ui_colorpicker_hide_reveal(block, (ePickerType)colormode);
