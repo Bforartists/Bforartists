@@ -7,6 +7,7 @@ on:
     - cron: 0 0 * * 1
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 permissions: {}
 jobs:
@@ -15,26 +16,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: configure
-      run: |
-        sudo apt update
-        sudo apt install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libegl-dev libepoxy-dev
-        sudo apt install libwayland-dev wayland-protocols libxkbcommon-dev libdbus-1-dev linux-libc-dev
-
     - name: make
       run: |
-        mkdir ~/bforartistsrepo
-        cd ~/bforartistsrepo
+        mkdir /home/runner/bforartistsrepo
+        cd /home/runner/bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
-        mkdir ~/bforartistsrepo/lib
-        cd ~/bforartistsrepo/lib
-        svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_x86_64_glibc_228
-        cd ~/bforartistsrepo/Bforartists
-        make
+        cd Bforartists
+        sudo apt update
+        sudo apt install python3 git git-lfs
+        ./build_files/build_environment/install_linux_packages.py
+        ./build_files/utils/make_update.py --use-linux-libraries
+        make release
+        ls
+        cd ..
+        ls
 
     - name: Upload Build
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: Bforartists-Release-${{ runner.os }}
-        path: /home/runner/bforartistsrepo/bfa_build_linux/bin/
+        path: /home/runner/bforartistsrepo/bfa_build_linux_release/bin/
 

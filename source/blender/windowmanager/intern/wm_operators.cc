@@ -48,7 +48,7 @@
 #include "BLI_time.h"
 #include "BLI_utildefines.h"
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_brush.hh"
 #include "BKE_colortools.hh"
 #include "BKE_context.hh"
@@ -1079,9 +1079,6 @@ int WM_menu_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 
 struct EnumSearchMenu {
   wmOperator *op; /* the operator that will be executed when selecting an item */
-
-  bool use_previews;
-  short prv_cols, prv_rows;
 };
 
 /** Generic enum search invoke popup. */
@@ -1092,10 +1089,8 @@ static uiBlock *wm_enum_search_menu(bContext *C, ARegion *region, void *arg)
   wmOperator *op = search_menu->op;
   /* template_ID uses 4 * widget_unit for width,
    * we use a bit more, some items may have a suffix to show. */
-  const int width = search_menu->use_previews ? 5 * U.widget_unit * search_menu->prv_cols :
-                                                UI_searchbox_size_x();
-  const int height = search_menu->use_previews ? 5 * U.widget_unit * search_menu->prv_rows :
-                                                 UI_searchbox_size_y();
+  const int width = UI_searchbox_size_x();
+  const int height = UI_searchbox_size_y();
   static char search[256] = "";
 
   uiBlock *block = UI_block_begin(C, region, "_popup", UI_EMBOSS);
@@ -1103,8 +1098,6 @@ static uiBlock *wm_enum_search_menu(bContext *C, ARegion *region, void *arg)
   UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
 
   search[0] = '\0';
-  BLI_assert(search_menu->use_previews ||
-             (search_menu->prv_cols == 0 && search_menu->prv_rows == 0));
 #if 0 /* ok, this isn't so easy... */
   uiDefBut(block,
            UI_BTYPE_LABEL,
@@ -1117,8 +1110,6 @@ static uiBlock *wm_enum_search_menu(bContext *C, ARegion *region, void *arg)
            nullptr,
            0.0,
            0.0,
-           0,
-           0,
            "");
 #endif
   uiBut *but = uiDefSearchButO_ptr(block,
@@ -1132,8 +1123,6 @@ static uiBlock *wm_enum_search_menu(bContext *C, ARegion *region, void *arg)
                                    10,
                                    width,
                                    UI_UNIT_Y,
-                                   search_menu->prv_rows,
-                                   search_menu->prv_cols,
                                    "");
 
   /* fake button, it holds space for search items */
@@ -1148,8 +1137,6 @@ static uiBlock *wm_enum_search_menu(bContext *C, ARegion *region, void *arg)
            nullptr,
            0,
            0,
-           0,
-           0,
            nullptr);
 
   /* Move it downwards, mouse over button. */
@@ -1158,20 +1145,6 @@ static uiBlock *wm_enum_search_menu(bContext *C, ARegion *region, void *arg)
   UI_but_focus_on_enter_event(win, but);
 
   return block;
-}
-
-int WM_enum_search_invoke_previews(bContext *C, wmOperator *op, short prv_cols, short prv_rows)
-{
-  static EnumSearchMenu search_menu;
-
-  search_menu.op = op;
-  search_menu.use_previews = true;
-  search_menu.prv_cols = prv_cols;
-  search_menu.prv_rows = prv_rows;
-
-  UI_popup_block_invoke(C, wm_enum_search_menu, &search_menu, nullptr);
-
-  return OPERATOR_INTERFACE;
 }
 
 int WM_enum_search_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
@@ -1423,8 +1396,7 @@ static uiBlock *wm_block_create_redo(bContext *C, ARegion *region, void *arg_op)
   }
 
   uiLayout *col = uiLayoutColumn(layout, false);
-  // bfa - align left? But what? Not sure, comment was added afterwards.
-  // Original change is not to find.
+  /* BFA - align operator properties to left in redo panel (UI_BUT_LABEL_ALIGN_SPLIT_COLUMN) */
   uiTemplateOperatorPropertyButs(
       C, col, op, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
 
@@ -1545,6 +1517,11 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
   /* Title. */
   if (!data->title.empty()) {
     uiItemL_ex(layout, data->title.c_str(), ICON_NONE, true, false);
+
+    /* Line under the title if there are properties but no message body. */
+    if (data->include_properties && message_lines.size() == 0) {
+      uiItemS_ex(layout, 0.2f, LayoutSeparatorType::Line);
+    };
   }
 
   /* Message lines. */
@@ -1553,6 +1530,7 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
   }
 
   if (data->include_properties) {
+    uiItemS_ex(layout, 0.5f);
     uiTemplateOperatorPropertyButs(C, layout, op, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, 0);
   }
 
@@ -1589,14 +1567,12 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
                              nullptr,
                              0,
                              0,
-                             0,
-                             0,
                              "");
       uiLayoutColumn(col, false);
     }
 
     cancel_but = uiDefBut(
-        col_block, UI_BTYPE_BUT, 0, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, 0, 0, "");
+        col_block, UI_BTYPE_BUT, 0, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, "");
 
     if (!windows_layout) {
       uiLayoutColumn(col, false);
@@ -1609,8 +1585,6 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
                              0,
                              UI_UNIT_Y,
                              nullptr,
-                             0,
-                             0,
                              0,
                              0,
                              "");
@@ -1856,7 +1830,7 @@ static int wm_debug_menu_exec(bContext *C, wmOperator *op)
 static int wm_debug_menu_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   RNA_int_set(op->ptr, "debug_value", G.debug_value);
-  return WM_operator_props_dialog_popup(C, op, 250);
+  return WM_operator_props_dialog_popup(C, op, 250, IFACE_("Set Debug Value"), IFACE_("Set"));
 }
 
 static void WM_OT_debug_menu(wmOperatorType *ot)
@@ -1940,8 +1914,6 @@ static uiBlock *wm_block_search_menu(bContext *C, ARegion *region, void *userdat
                               10,
                               init_data->size[0],
                               UI_UNIT_Y,
-                              0,
-                              0,
                               "");
 
   if (init_data->search_type == SEARCH_TYPE_OPERATOR) {
@@ -1970,8 +1942,6 @@ static uiBlock *wm_block_search_menu(bContext *C, ARegion *region, void *userdat
            init_data->size[0],
            init_data->size[1],
            nullptr,
-           0,
-           0,
            0,
            0,
            nullptr);
@@ -3612,7 +3582,7 @@ static int redraw_timer_exec(bContext *C, wmOperator *op)
 
   WM_cursor_wait(true);
 
-  double time_start = BLI_check_seconds_timer();
+  double time_start = BLI_time_now_seconds();
 
   wm_window_make_drawable(wm, win);
 
@@ -3622,14 +3592,14 @@ static int redraw_timer_exec(bContext *C, wmOperator *op)
     iter_steps += 1;
 
     if (time_limit != 0.0) {
-      if ((BLI_check_seconds_timer() - time_start) > time_limit) {
+      if ((BLI_time_now_seconds() - time_start) > time_limit) {
         break;
       }
       a = 0;
     }
   }
 
-  double time_delta = (BLI_check_seconds_timer() - time_start) * 1000;
+  double time_delta = (BLI_time_now_seconds() - time_start) * 1000;
 
   RNA_enum_description(redraw_timer_type_items, type, &infostr);
 
@@ -3928,7 +3898,7 @@ static void WM_OT_previews_clear(wmOperatorType *ot)
                                preview_id_type_items,
                                PREVIEW_FILTER_ALL,
                                "Data Type",
-                               "Which data set previews to clear");
+                               "Which data previews to clear");
 }
 
 /** \} */
@@ -3940,12 +3910,11 @@ static void WM_OT_previews_clear(wmOperatorType *ot)
 static int doc_view_manual_ui_context_exec(bContext *C, wmOperator * /*op*/)
 {
   PointerRNA ptr_props;
-  char buf[512];
   short retval = OPERATOR_CANCELLED;
 
-  if (UI_but_online_manual_id_from_active(C, buf, sizeof(buf))) {
+  if (std::optional<std::string> manual_id = UI_but_online_manual_id_from_active(C)) {
     WM_operator_properties_create(&ptr_props, "WM_OT_doc_view_manual");
-    RNA_string_set(&ptr_props, "doc_id", buf);
+    RNA_string_set(&ptr_props, "doc_id", manual_id.value().c_str());
 
     retval = WM_operator_name_call_ptr(C,
                                        WM_operatortype_find("WM_OT_doc_view_manual", false),

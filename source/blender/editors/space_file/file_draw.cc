@@ -396,12 +396,9 @@ static uiBut *file_add_icon_but(const SpaceFile *sfile,
   const int x = tile_draw_rect->xmin;
   const int y = tile_draw_rect->ymax - sfile->layout->tile_border_y - height;
 
-  /* For #uiDefIconBut(): if `a1==1.0` then a2 is alpha `0.0 - 1.0`. */
-  const float a1 = dimmed ? 1.0f : 0.0f;
-  const float a2 = dimmed ? 0.3f : 0.0f;
   but = uiDefIconBut(
-      block, UI_BTYPE_LABEL, 0, icon, x, y, width, height, nullptr, 0.0f, 0.0f, a1, a2, nullptr);
-
+      block, UI_BTYPE_LABEL, 0, icon, x, y, width, height, nullptr, 0.0f, 0.0f, nullptr);
+  UI_but_label_alpha_factor_set(but, dimmed ? 0.3f : 1.0f);
   if (file->asset) {
     UI_but_func_tooltip_set(but, file_draw_asset_tooltip_func, file->asset, nullptr);
   }
@@ -538,8 +535,6 @@ static void file_add_preview_drag_but(const SpaceFile *sfile,
                         nullptr,
                         0.0,
                         0.0,
-                        0,
-                        0,
                         nullptr);
   file_but_enable_drag(but, sfile, file, path, preview_image, icon, scale);
 
@@ -826,26 +821,28 @@ static void renamebutton_cb(bContext *C, void * /*arg1*/, char *oldname)
   BLI_path_join(newname, sizeof(newname), params->dir, filename);
 
   if (!STREQ(orgname, newname)) {
-    if (!BLI_exists(newname)) {
-      errno = 0;
-      if ((BLI_rename(orgname, newname) != 0) || !BLI_exists(newname)) {
-        WM_reportf(RPT_ERROR, "Could not rename: %s", errno ? strerror(errno) : "unknown error");
-        WM_report_banner_show(wm, win);
-      }
-      else {
-        /* If rename is successful, scroll to newly renamed entry. */
-        STRNCPY(params->renamefile, filename);
-        file_params_invoke_rename_postscroll(wm, win, sfile);
-      }
-
-      /* to make sure we show what is on disk */
-      ED_fileselect_clear(wm, sfile);
-    }
-    else {
+    errno = 0;
+    if ((BLI_rename(orgname, newname) != 0) || !BLI_exists(newname)) {
+      WM_reportf(RPT_ERROR, "Could not rename: %s", errno ? strerror(errno) : "unknown error");
+      WM_report_banner_show(wm, win);
       /* Renaming failed, reset the name for further renaming handling. */
       STRNCPY(params->renamefile, oldname);
     }
+    else {
+      /* If rename is successful, set renamefile to newly renamed entry.
+       * This is used later to select and scroll to the file.
+       */
+      STRNCPY(params->renamefile, filename);
+    }
 
+    /* Ensure we select and scroll to the renamed file.
+     * This is done even if the rename fails as we want to make sure that the file we tried to
+     * rename is still selected and in view. (it can move if something added files/folders to the
+     * directory while we were renaming.
+     */
+    file_params_invoke_rename_postscroll(wm, win, sfile);
+    /* to make sure we show what is on disk */
+    ED_fileselect_clear(wm, sfile);
     ED_region_tag_redraw(region);
   }
 }
@@ -1298,8 +1295,6 @@ void file_draw_list(const bContext *C, ARegion *region)
                                      nullptr,
                                      0,
                                      0,
-                                     0,
-                                     0,
                                      nullptr);
           UI_but_dragflag_enable(drag_but, UI_BUT_DRAG_FULL_BUT);
           file_but_enable_drag(drag_but, sfile, file, path, nullptr, icon, UI_SCALE_FAC);
@@ -1340,8 +1335,6 @@ void file_draw_list(const bContext *C, ARegion *region)
                             params->renamefile,
                             1.0f,
                             float(sizeof(params->renamefile)),
-                            0,
-                            0,
                             "");
       UI_but_func_rename_set(but, renamebutton_cb, file);
       UI_but_flag_enable(but, UI_BUT_NO_UTF8); /* allow non utf8 names */
@@ -1426,7 +1419,7 @@ static void file_draw_invalid_asset_library_hint(const bContext *C,
                                                  ARegion *region,
                                                  FileAssetSelectParams *asset_params)
 {
-  char library_ui_path[PATH_MAX];
+  char library_ui_path[FILE_MAX_LIBEXTRA];
   file_path_to_ui_path(asset_params->base_params.dir, library_ui_path, sizeof(library_ui_path));
 
   uchar text_col[4];

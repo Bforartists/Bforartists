@@ -35,9 +35,9 @@
 
 #  include "BLI_math_vector.h"
 
-#  include "BKE_anim_data.h"
+#  include "BKE_anim_data.hh"
 #  include "BKE_animsys.h"
-#  include "BKE_node.h"
+#  include "BKE_node.hh"
 #  include "BKE_report.hh"
 
 #  include "DEG_depsgraph.hh"
@@ -2103,7 +2103,7 @@ static void rna_def_trackingStabilization(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", TRACKING_SHOW_STAB_TRACKS);
   RNA_def_property_ui_text(
       prop, "Show Tracks", "Show UI list of tracks participating in stabilization");
-  RNA_def_property_ui_icon(prop, ICON_RIGHTARROW, 1);
+  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1);
 }
 
 static void rna_def_reconstructedCamera(BlenderRNA *brna)

@@ -10,22 +10,19 @@
 #include "DNA_modifier_types.h"
 #include "DNA_object_types.h"
 
-#include "BLT_translation.hh"
-
 #include "BKE_attribute.hh"
 #include "BKE_context.hh"
 #include "BKE_customdata.hh"
 #include "BKE_editmesh.hh"
-#include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_paint.hh"
-#include "BKE_report.hh"
-#include "BKE_screen.hh"
 #include "BKE_shrinkwrap.hh"
 
 #include "BLI_math_vector.h"
+
+#include "BLT_translation.hh" // bfa - needed for CTX_IFACE_
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
@@ -36,12 +33,10 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "ED_mesh.hh"
 #include "ED_object.hh"
 #include "ED_screen.hh"
 #include "ED_sculpt.hh"
 #include "ED_undo.hh"
-#include "ED_view3d.hh"
 
 #include "bmesh_tools.hh"
 
@@ -552,11 +547,11 @@ static std::string wm_paint_mask_slide_get_name(wmOperatorType *ot, PointerRNA *
     return CTX_IFACE_(ot->translation_context, "Mask Slice");
   }
   /*Mask Slice and Fill Holes*/
-  else if (fill_holes && !new_object) {
+  if (fill_holes && !new_object) {
     return CTX_IFACE_(ot->translation_context, "Mask Slice and Fill Holes");
   }
   /*Mask Slice to New Object*/
-  else if (new_object) {
+  if (new_object) {
     return CTX_IFACE_(ot->translation_context, "Mask Slice to New Object");
   }
   return "";
@@ -575,14 +570,11 @@ static std::string wm_paint_mask_slide_get_description(bContext * /*C*/,
     return "Slices the paint mask from the mesh";
   }
   /*Mask Slice and Fill Holes*/
-  else if (fill_holes && !new_object) {
+  if (fill_holes && !new_object) {
     return "Slices the paint mask from the mesh and fills existing holes";
   }
   /*Mask Slice to New Object*/
-  else if (new_object) {
-    return "Slices the paint mask from the mesh and separates it into a new object";
-  }
-  return "";
+  return "Slices the paint mask from the mesh and separates it into a new object";
 }
 
 void MESH_OT_paint_mask_slice(wmOperatorType *ot)

@@ -155,7 +155,7 @@ set(SRC
   intern/timecode.c
   intern/timeit.cc
   intern/uuid.cc
-  intern/uvproject.c
+  intern/uvproject.cc
   intern/vector.cc
   intern/virtual_array.cc
   intern/voxel.c
@@ -263,6 +263,7 @@ set(SRC
   BLI_lazy_threading.hh
   BLI_length_parameterize.hh
   BLI_linear_allocator.hh
+  BLI_linear_allocator_chunked_list.hh
   BLI_link_utils.h
   BLI_linklist.h
   BLI_linklist_lockfree.h
@@ -330,6 +331,7 @@ set(SRC
   BLI_quadric.h
   BLI_rand.h
   BLI_rand.hh
+  BLI_random_access_iterator_mixin.hh
   BLI_range.h
   BLI_rect.h
   BLI_resource_scope.hh
@@ -498,6 +500,7 @@ if(WITH_GTESTS)
     tests/BLI_bitmap_test.cc
     tests/BLI_bounds_test.cc
     tests/BLI_color_test.cc
+    tests/BLI_convexhull_2d_test.cc
     tests/BLI_cpp_type_test.cc
     tests/BLI_delaunay_2d_test.cc
     tests/BLI_disjoint_set_test.cc
@@ -519,6 +522,7 @@ if(WITH_GTESTS)
     tests/BLI_kdtree_test.cc
     tests/BLI_length_parameterize_test.cc
     tests/BLI_linear_allocator_test.cc
+    tests/BLI_linear_allocator_chunked_list_test.cc
     tests/BLI_linklist_lockfree_test.cc
     tests/BLI_listbase_test.cc
     tests/BLI_map_test.cc
@@ -544,6 +548,7 @@ if(WITH_GTESTS)
     tests/BLI_path_util_test.cc
     tests/BLI_polyfill_2d_test.cc
     tests/BLI_pool_test.cc
+    tests/BLI_random_access_iterator_mixin_test.cc
     tests/BLI_ressource_strings.h
     tests/BLI_serialize_test.cc
     tests/BLI_session_uid_test.cc

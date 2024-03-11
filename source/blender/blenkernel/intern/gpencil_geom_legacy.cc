@@ -13,8 +13,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "CLG_log.h"
-
 #include "MEM_guardedalloc.h"
 
 #include "BLI_array_utils.h"
@@ -38,19 +36,13 @@
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_scene_types.h"
-#include "DNA_screen_types.h"
-
-#include "BLT_translation.hh"
 
 #include "BKE_attribute.hh"
-#include "BKE_context.hh"
 #include "BKE_deform.hh"
 #include "BKE_gpencil_curve_legacy.h"
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_gpencil_legacy.h"
-#include "BKE_main.hh"
 #include "BKE_material.h"
-#include "BKE_mesh.hh"
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
 
@@ -2796,7 +2788,7 @@ bool BKE_gpencil_convert_mesh(Main *bmain,
                              use_vgroups);
 
   /* Tag for recalculation */
-  DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY | ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY | ID_RECALC_SYNC_TO_EVAL);
 
   return true;
 }
@@ -3980,7 +3972,7 @@ static int generate_perimeter_cap(const float point[4],
 /**
  * Calculate the perimeter (outline) of a stroke as list of tPerimeterPoint.
  * \param subdivisions: Number of subdivisions for the start and end caps
- * \return: list of tPerimeterPoint
+ * \return list of tPerimeterPoint.
  */
 static ListBase *gpencil_stroke_perimeter_ex(const bGPdata *gpd,
                                              const bGPDlayer *gpl,

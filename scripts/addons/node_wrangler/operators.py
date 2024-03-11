@@ -503,7 +503,7 @@ class NWPreviewNode(Operator, NWBase):
     @classmethod
     def poll(cls, context):
         """Already implemented natively for compositing nodes."""
-        return (nw_check(cls, context)
+        return (nw_check(cls, context) and nw_check_not_empty(cls, context)
                 and nw_check_space_type(cls, context, {'ShaderNodeTree', 'GeometryNodeTree'}))
 
     @staticmethod
@@ -532,7 +532,7 @@ class NWPreviewNode(Operator, NWBase):
             for i, socket in enumerate(output_sockets):
                 if is_viewer_socket(socket) and socket.socket_type == socket_type:
                     # If viewer output is already used but leads to the same socket we can still use it
-                    is_used = self.is_socket_used_other_mats(socket)
+                    is_used = self.has_socket_other_users(socket)
                     if is_used:
                         if connect_socket is None:
                             continue
@@ -557,7 +557,7 @@ class NWPreviewNode(Operator, NWBase):
         groupout = get_group_output_node(node_tree)
         if groupout is None:
             groupout = node_tree.nodes.new('NodeGroupOutput')
-            loc_x, loc_y = get_output_location(tree)
+            loc_x, loc_y = get_output_location(node_tree)
             groupout.location.x = loc_x
             groupout.location.y = loc_y
             groupout.select = False
@@ -625,19 +625,29 @@ class NWPreviewNode(Operator, NWBase):
                 self.search_sockets(output_node, self.used_viewer_sockets_active_mat)
         return socket in self.used_viewer_sockets_active_mat
 
-    def is_socket_used_other_mats(self, socket):
-        """Ensure used sockets in other materials are calculated and check given socket"""
-        if not hasattr(self, "used_viewer_sockets_other_mats"):
-            self.used_viewer_sockets_other_mats = []
-            for mat in bpy.data.materials:
-                if mat.node_tree == bpy.context.space_data.node_tree or not hasattr(mat.node_tree, "nodes"):
-                    continue
-                # Get viewer node
-                output_node = get_group_output_node(mat.node_tree,
-                                                    output_node_type=self.shader_output_type)
-                if output_node is not None:
-                    self.search_sockets(output_node, self.used_viewer_sockets_other_mats)
-        return socket in self.used_viewer_sockets_other_mats
+    def has_socket_other_users(self, socket):
+        """List the other users for this socket (other materials or GN groups)"""
+        if not hasattr(self, "other_viewer_sockets_users"):
+            self.other_viewer_sockets_users = []
+            if socket.socket_type == 'NodeSocketShader':
+                for mat in bpy.data.materials:
+                    if mat.node_tree == bpy.context.space_data.node_tree or not hasattr(mat.node_tree, "nodes"):
+                        continue
+                    # Get viewer node
+                    output_node = get_group_output_node(mat.node_tree,
+                                                        output_node_type=self.shader_output_type)
+                    if output_node is not None:
+                        self.search_sockets(output_node, self.other_viewer_sockets_users)
+            elif socket.socket_type == 'NodeSocketGeometry':
+                for obj in bpy.data.objects:
+                    for mod in obj.modifiers:
+                        if mod.type != 'NODES' or mod.node_group == bpy.context.space_data.node_tree:
+                            continue
+                        # Get viewer node
+                        output_node = get_group_output_node(mod.node_group)
+                        if output_node is not None:
+                            self.search_sockets(output_node, self.other_viewer_sockets_users)
+        return socket in self.other_viewer_sockets_users
 
     def get_output_index(self, node, output_node, is_base_node_tree, socket_type, check_type=False):
         """Get the next available output socket in the active node"""
@@ -689,7 +699,7 @@ class NWPreviewNode(Operator, NWBase):
     def cleanup(self):
         # Delete sockets
         for socket in self.delete_sockets:
-            if not self.is_socket_used_other_mats(socket):
+            if not self.has_socket_other_users(socket):
                 tree = socket.id_data
                 self.remove_socket(tree, socket)
 

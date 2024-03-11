@@ -530,7 +530,7 @@ void node_select_single(bContext &C, bNode &node)
 
   tree_draw_order_update(node_tree);
   if (active_texture_changed && has_workbench_in_texture_color(wm, scene, ob)) {
-    DEG_id_tag_update(&node_tree.id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&node_tree.id, ID_RECALC_SYNC_TO_EVAL);
   }
 
   WM_event_add_notifier(&C, NC_NODE | NA_SELECTED, nullptr);
@@ -690,7 +690,7 @@ static bool node_mouse_select(bContext *C,
   if ((active_texture_changed && has_workbench_in_texture_color(wm, scene, ob)) ||
       viewer_node_changed)
   {
-    DEG_id_tag_update(&snode.edittree->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update(&snode.edittree->id, ID_RECALC_SYNC_TO_EVAL);
   }
 
   WM_event_add_notifier(C, NC_NODE | NA_SELECTED, nullptr);
@@ -1420,8 +1420,6 @@ static uiBlock *node_find_menu(bContext *C, ARegion *region, void *arg_op)
                        10,
                        UI_searchbox_size_x(),
                        UI_UNIT_Y,
-                       0,
-                       0,
                        "");
   UI_but_func_search_set(
       but, nullptr, node_find_update_fn, op->type, false, nullptr, node_find_exec_fn, nullptr);
@@ -1437,8 +1435,6 @@ static uiBlock *node_find_menu(bContext *C, ARegion *region, void *arg_op)
            UI_searchbox_size_x(),
            UI_searchbox_size_y(),
            nullptr,
-           0,
-           0,
            0,
            0,
            nullptr);

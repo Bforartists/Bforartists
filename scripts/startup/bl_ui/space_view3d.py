@@ -606,36 +606,12 @@ class _draw_tool_settings_context_mode:
             )
             brush_basic__draw_color_selector(context, layout, brush, brush.gpencil_settings, None)
 
-        UnifiedPaintPanel.prop_unified(
-            layout,
-            context,
-            brush,
-            "size",
-            unified_name="use_unified_size",
-            pressure_name="use_pressure_size",
-            text="Radius",
-            slider=True,
-            header=True,
+        from bl_ui.properties_paint_common import (
+            brush_basic__draw_color_selector,
+            brush_basic_grease_pencil_paint_settings,
         )
 
-        UnifiedPaintPanel.prop_unified(
-            layout,
-            context,
-            brush,
-            "strength",
-            pressure_name="use_pressure_strength",
-            unified_name="use_unified_strength",
-            slider=True,
-            header=True,
-        )
-
-        if grease_pencil_tool == 'DRAW':
-            layout.prop(brush.gpencil_settings, "active_smooth_factor")
-        elif grease_pencil_tool == 'ERASE':
-            layout.prop(brush.gpencil_settings, "eraser_mode", expand=True)
-            if brush.gpencil_settings.eraser_mode == "HARD":
-                layout.prop(brush.gpencil_settings, "use_keep_caps_eraser")
-            layout.prop(brush.gpencil_settings, "use_active_layer_only")
+        brush_basic_grease_pencil_paint_settings(layout, context, brush, compact=True)
 
         return True
 
@@ -837,13 +813,22 @@ class VIEW3D_HT_header(Header):
                     depress=(tool_settings.gpencil_selectmode_edit == 'STROKE'),
                 ).mode = 'STROKE'
 
-                row = layout.row(align=True)
-                row.prop(tool_settings, "use_grease_pencil_multi_frame_editing", text="")
-
             if object_mode == 'PAINT_GREASE_PENCIL':
                 row = layout.row()
                 sub = row.row(align=True)
                 sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
+
+            if object_mode in {'PAINT_GREASE_PENCIL', 'EDIT', 'WEIGHT_PAINT'}:
+                row = layout.row(align=True)
+                row.prop(tool_settings, "use_grease_pencil_multi_frame_editing", text="")
+
+                if object_mode in {'EDIT', 'WEIGHT_PAINT'}:
+                    sub = row.row(align=True)
+                    sub.enabled = tool_settings.use_grease_pencil_multi_frame_editing
+                    sub.popover(
+                        panel="VIEW3D_PT_grease_pencil_multi_frame",
+                        text="Multiframe",
+                    )
 
         # Grease Pencil (legacy)
         if obj and obj.type == 'GPENCIL' and context.gpencil_data:
@@ -1101,7 +1086,7 @@ class VIEW3D_HT_header(Header):
                             sculpt.use_automasking_start_normal or
                             sculpt.use_automasking_view_normal)
 
-        return "CLIPUV_DEHLT" if automask_enabled else "CLIPUV_HLT"
+        return "MOD_MASK" if automask_enabled else "MOD_MASK_OFF"
 
     @staticmethod
     def _gpencil_sculpt_automasking_icon(gpencil_sculpt):
@@ -1111,7 +1096,7 @@ class VIEW3D_HT_header(Header):
                             gpencil_sculpt.use_automasking_material_active or
                             gpencil_sculpt.use_automasking_layer_active)
 
-        return "CLIPUV_DEHLT" if automask_enabled else "CLIPUV_HLT"
+        return "MOD_MASK" if automask_enabled else "MOD_MASK_OFF"
 
 
 # bfa - show hide the editormenu, editor suffix is needed.
@@ -3008,6 +2993,13 @@ class VIEW3D_MT_grease_pencil_add(Menu):
         layout.operator("object.grease_pencil_add", text="Empty", icon='EMPTY_AXIS').type = 'EMPTY'
         layout.operator("object.grease_pencil_add", text="Stroke", icon='STROKE').type = 'STROKE'
         layout.operator("object.grease_pencil_add", text="Suzanne", icon='MONKEY').type = 'MONKEY'
+        layout.separator()
+        layout.operator("object.grease_pencil_add", text="Scene Line Art", icon='SCENE').type = 'LINEART_SCENE'
+        layout.operator(
+            "object.grease_pencil_add",
+            text="Collection Line Art",
+            icon='GROUP').type = 'LINEART_COLLECTION'
+        layout.operator("object.grease_pencil_add", text="Object Line Art", icon='CUBE').type = 'LINEART_OBJECT'
 
 
 class VIEW3D_MT_add(Menu):
@@ -4330,8 +4322,10 @@ class VIEW3D_MT_paint_weight_legacy(Menu):
             layout.operator("paint.weight_gradient", text="Gradient (Linear)", icon='GRADIENT').type = 'LINEAR'
             layout.operator("paint.weight_gradient", text="Gradient (Radial)", icon='GRADIENT').type = 'RADIAL'
 
-    def draw(self, _context):
-        self.draw_generic(self.layout, is_editmode=False)
+    def draw(self, context):
+        obj = context.active_object
+        if obj.type == 'MESH':
+            self.draw_generic(self.layout, is_editmode=False)
 
 # bfa menu
 
@@ -5620,6 +5614,8 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         props = layout.operator("mesh.mark_sharp", text="Clear Sharp from Vertices", icon="CLEARSHARPVERTS")
         props.use_verts = True
         props.clear = True
+
+        layout.operator("mesh.set_sharpness_by_angle")
 
         if with_freestyle:
             layout.separator()
@@ -9635,6 +9631,25 @@ class VIEW3D_PT_gpencil_multi_frame(Panel):
             layout.template_curve_mapping(settings, "multiframe_falloff_curve", brush=True)
 
 
+class VIEW3D_PT_grease_pencil_multi_frame(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Multi Frame"
+
+    def draw(self, context):
+        layout = self.layout
+        tool_settings = context.tool_settings
+
+        settings = tool_settings.gpencil_sculpt
+
+        col = layout.column(align=True)
+        col.prop(settings, "use_multiframe_falloff")
+
+        # Falloff curve
+        if settings.use_multiframe_falloff:
+            layout.template_curve_mapping(settings, "multiframe_falloff_curve", brush=True)
+
+
 # Grease Pencil Object - Curve Editing tools
 class VIEW3D_PT_gpencil_curve_edit(Panel):
     bl_space_type = 'VIEW_3D'
@@ -10493,23 +10508,40 @@ class VIEW3D_PT_curves_sculpt_add_shape(Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False  # No animation.
 
         settings = UnifiedPaintPanel.paint_settings(context)
         brush = settings.brush
 
-        col = layout.column(heading="Interpolate", align=True)
-        col.prop(brush.curves_sculpt_settings, "interpolate_length", text="Length")
-        col.prop(brush.curves_sculpt_settings, "interpolate_shape", text="Shape")
-        col.prop(brush.curves_sculpt_settings, "interpolate_point_count", text="Point Count")
+        col = layout.column(align = True)
+        col.label(text = "Interpolate")
+
+        row = col.row()
+        row.separator()
+        row.prop(brush.curves_sculpt_settings, "use_length_interpolate", text="Length")
+        row = col.row()
+        row.separator()
+        row.prop(brush.curves_sculpt_settings, "use_radius_interpolate", text="Radius")
+        row = col.row()
+        row.separator()
+        row.prop(brush.curves_sculpt_settings, "use_shape_interpolate", text="Shape")
+        row = col.row()
+        row.separator()
+        row.prop(brush.curves_sculpt_settings, "use_point_count_interpolate", text="Point Count")
+
+        layout.use_property_split = True
 
         col = layout.column()
-        col.active = not brush.curves_sculpt_settings.interpolate_length
+        col.active = not brush.curves_sculpt_settings.use_length_interpolate
         col.prop(brush.curves_sculpt_settings, "curve_length", text="Length")
 
         col = layout.column()
-        col.active = not brush.curves_sculpt_settings.interpolate_point_count
+        col.active = not brush.curves_sculpt_settings.use_radius_interpolate
+        col.prop(brush.curves_sculpt_settings, "curve_radius", text="Radius")
+
+        col = layout.column()
+        col.active = not brush.curves_sculpt_settings.use_point_count_interpolate
         col.prop(brush.curves_sculpt_settings, "points_per_curve", text="Points")
 
 
@@ -10551,7 +10583,7 @@ class VIEW3D_PT_curves_sculpt_grow_shrink_scaling(Panel):
         settings = UnifiedPaintPanel.paint_settings(context)
         brush = settings.brush
 
-        layout.prop(brush.curves_sculpt_settings, "scale_uniform")
+        layout.prop(brush.curves_sculpt_settings, "use_uniform_scale")
         layout.prop(brush.curves_sculpt_settings, "minimum_length")
 
 
@@ -10839,6 +10871,7 @@ classes = (
     VIEW3D_PT_grease_pencil,
     VIEW3D_PT_annotation_onion,
     VIEW3D_PT_gpencil_multi_frame,
+    VIEW3D_PT_grease_pencil_multi_frame,
     VIEW3D_PT_gpencil_curve_edit,
     VIEW3D_PT_gpencil_sculpt_automasking,
     VIEW3D_PT_quad_view,
