@@ -27,20 +27,34 @@ class MotionPathButtonsPanel:
         col.prop(mps, "type")
         range_group = col.column(align=True)
         if mps.type == 'RANGE':
-            range_group.prop(mps, "range", text="Calculation Range")
+            row = range_group.row()
+            row.separator()
+            row.prop(mps, "range", text="Calculation Range")
 
         if mps.type == 'CURRENT_FRAME':
             col = layout.column(align=True)
-            col.prop(mps, "frame_before", text="Frame Range Before")
-            col.prop(mps, "frame_after", text="After")
-            col.prop(mps, "frame_step", text="Step")
+            row = col.row()
+            row.separator()
+            row.prop(mps, "frame_before", text="Frame Range Before")
+            row = col.row()
+            row.separator()
+            row.prop(mps, "frame_after", text="After")
+            row = col.row()
+            row.separator()
+            row.prop(mps, "frame_step", text="Step")
         elif mps.type == 'RANGE':
             col = layout.column(align=True)
             start_end_group = col.column(align=True)
             if mps.range == 'MANUAL':
-                start_end_group.prop(mps, "frame_start", text="Frame Range Start")
-                start_end_group.prop(mps, "frame_end", text="End")
-            col.prop(mps, "frame_step", text="Step")
+                row = start_end_group.row()
+                row.separator()
+                row.prop(mps, "frame_start", text="Frame Range Start")
+                row = start_end_group.row()
+                row.separator()
+                row.prop(mps, "frame_end", text="End")
+            row = col.row()
+            row.separator()
+            row.prop(mps, "frame_step", text="Step")
 
         row = col.row()
         row.use_property_split = False
@@ -57,7 +71,7 @@ class MotionPathButtonsPanel:
             col = layout.column(align=True)
             row = col.row(align=True)
             row.enabled = False
-            row.prop(mpath, "frame_start", text="Cached Range")
+            row.prop(mpath, "frame_start", text="Cached Range (Info)")
             row.prop(mpath, "frame_end", text="")
 
             # Update Selected.
