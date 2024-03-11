@@ -2,15 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "DEG_depsgraph_query.hh"
 #include "node_geometry_util.hh"
 
 #include "BKE_lib_id.hh"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_runtime.hh"
-#include "BKE_mesh_wrapper.hh"
-#include "BKE_object.hh"
-#include "BKE_volume.hh"
 
 #include "GEO_mesh_to_volume.hh"
 
@@ -113,7 +108,9 @@ static Volume *create_volume_from_mesh(const Mesh &mesh, GeoNodeExecParams &para
   /* Convert mesh to grid and add to volume. */
   geometry::fog_volume_grid_add_from_mesh(volume,
                                           "density",
-                                          &mesh,
+                                          mesh.vert_positions(),
+                                          mesh.corner_verts(),
+                                          mesh.corner_tris(),
                                           mesh_to_volume_space_transform,
                                           voxel_size,
                                           interior_band_width,

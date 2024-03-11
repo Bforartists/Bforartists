@@ -301,7 +301,7 @@ void AbstractTreeViewItem::add_treerow_button(uiBlock &block)
 {
   /* For some reason a width > (UI_UNIT_X * 2) make the layout system use all available width. */
   view_item_but_ = (uiButViewItem *)uiDefBut(
-      &block, UI_BTYPE_VIEW_ITEM, 0, "", 0, 0, UI_UNIT_X * 10, UI_UNIT_Y, nullptr, 0, 0, 0, 0, "");
+      &block, UI_BTYPE_VIEW_ITEM, 0, "", 0, 0, UI_UNIT_X * 10, UI_UNIT_Y, nullptr, 0, 0, "");
 
   view_item_but_->view_item = reinterpret_cast<uiViewItemHandle *>(this);
   view_item_but_->draw_height = unpadded_item_height();
@@ -319,13 +319,12 @@ void AbstractTreeViewItem::add_indent(uiLayout &row) const
   uiLayout *subrow = uiLayoutRow(&row, true);
   uiLayoutSetFixedSize(subrow, true);
 
-  uiDefBut(block, UI_BTYPE_SEPR, 0, "", 0, 0, indent_width(), 0, nullptr, 0.0, 0.0, 0, 0, "");
+  uiDefBut(block, UI_BTYPE_SEPR, 0, "", 0, 0, indent_width(), 0, nullptr, 0.0, 0.0, "");
 
   /* Indent items without collapsing icon some more within their parent. Makes it clear that they
    * are actually nested and not just a row at the same level without a chevron. */
   if (!is_collapsible()) {
-    uiDefBut(
-        block, UI_BTYPE_SEPR, 0, "", 0, 0, UI_TREEVIEW_INDENT, 0, nullptr, 0.0, 0.0, 0, 0, "");
+    uiDefBut(block, UI_BTYPE_SEPR, 0, "", 0, 0, UI_TREEVIEW_INDENT, 0, nullptr, 0.0, 0.0, "");
   }
 
   /* Restore. */
@@ -362,7 +361,7 @@ void AbstractTreeViewItem::add_collapse_chevron(uiBlock &block) const
     return;
   }
 
-  const BIFIconID icon = is_collapsed() ? ICON_RIGHTARROW : ICON_DOWNARROW_HLT;
+  const BIFIconID icon = is_collapsed() ? ICON_DISCLOSURE_TRI_RIGHT : ICON_DISCLOSURE_TRI_DOWN;
   uiBut *but = uiDefIconBut(&block,
                             UI_BTYPE_BUT_TOGGLE,
                             0,
@@ -372,8 +371,6 @@ void AbstractTreeViewItem::add_collapse_chevron(uiBlock &block) const
                             UI_TREEVIEW_INDENT,
                             UI_UNIT_Y,
                             nullptr,
-                            0,
-                            0,
                             0,
                             0,
                             "");
@@ -733,11 +730,6 @@ void BasicTreeViewItem::build_row(uiLayout &row)
 void BasicTreeViewItem::add_label(uiLayout &layout, StringRefNull label_override)
 {
   const StringRefNull label = label_override.is_empty() ? StringRefNull(label_) : label_override;
-
-  /* Some padding for labels without collapse chevron and no icon. Looks weird without. */
-  if (icon == ICON_NONE && !is_collapsible()) {
-    uiItemS_ex(&layout, 0.8f);
-  }
   uiItemL(&layout, IFACE_(label.c_str()), icon);
 }
 

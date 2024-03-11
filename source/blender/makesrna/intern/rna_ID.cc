@@ -217,7 +217,7 @@ const IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
 
 #  include "BLO_readfile.hh"
 
-#  include "BKE_anim_data.h"
+#  include "BKE_anim_data.hh"
 #  include "BKE_global.hh" /* XXX, remove me */
 #  include "BKE_idprop.h"
 #  include "BKE_idtype.hh"
@@ -300,7 +300,7 @@ void rna_ID_name_set(PointerRNA *ptr, const char *value)
   }
 }
 
-static int rna_ID_name_editable(PointerRNA *ptr, const char **r_info)
+static int rna_ID_name_editable(const PointerRNA *ptr, const char **r_info)
 {
   ID *id = (ID *)ptr->data;
 
@@ -599,12 +599,12 @@ IDProperty **rna_ID_idprops(PointerRNA *ptr)
   return &id->properties;
 }
 
-int rna_ID_is_runtime_editable(PointerRNA *ptr, const char **r_info)
+int rna_ID_is_runtime_editable(const PointerRNA *ptr, const char **r_info)
 {
   ID *id = (ID *)ptr->data;
   /* TODO: This should be abstracted in a BKE function or define, somewhat related to #88555. */
   if (id->tag & (LIB_TAG_NO_MAIN | LIB_TAG_TEMP_MAIN | LIB_TAG_LOCALIZED |
-                 LIB_TAG_COPIED_ON_WRITE_EVAL_RESULT | LIB_TAG_COPIED_ON_WRITE))
+                 LIB_TAG_COPIED_ON_EVAL_FINAL_RESULT | LIB_TAG_COPIED_ON_EVAL))
   {
     *r_info =
         "Cannot edit 'runtime' status of non-blendfile data-blocks, as they are by definition "
@@ -620,7 +620,7 @@ bool rna_ID_is_runtime_get(PointerRNA *ptr)
   ID *id = (ID *)ptr->data;
   /* TODO: This should be abstracted in a BKE function or define, somewhat related to #88555. */
   if (id->tag & (LIB_TAG_NO_MAIN | LIB_TAG_TEMP_MAIN | LIB_TAG_LOCALIZED |
-                 LIB_TAG_COPIED_ON_WRITE_EVAL_RESULT | LIB_TAG_COPIED_ON_WRITE))
+                 LIB_TAG_COPIED_ON_EVAL_FINAL_RESULT | LIB_TAG_COPIED_ON_EVAL))
   {
     return true;
   }

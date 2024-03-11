@@ -22,7 +22,6 @@
 #include "DNA_sound_types.h"
 
 #include "BKE_context.hh"
-#include "BKE_fcurve.h"
 #include "BKE_global.hh"
 #include "BKE_main.hh"
 #include "BKE_report.hh"
@@ -66,9 +65,6 @@
 
 /* Own include. */
 #include "sequencer_intern.hh"
-
-#include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-#include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 
 /* -------------------------------------------------------------------- */
 /** \name Structs & Enums
@@ -1116,9 +1112,14 @@ int seq_effect_find_selected(Scene *scene,
     seq2 = SEQ_select_active_get(scene);
   }
 
+  if (SEQ_effect_get_num_inputs(type) == 0) {
+    *r_selseq1 = *r_selseq2 = *r_selseq3 = nullptr;
+    return 1;
+  }
+
   LISTBASE_FOREACH (Sequence *, seq, ed->seqbasep) {
     if (seq->flag & SELECT) {
-      if (seq->type == SEQ_TYPE_SOUND_RAM && SEQ_effect_get_num_inputs(type) != 0) {
+      if (seq->type == SEQ_TYPE_SOUND_RAM) {
         *r_error_str = N_("Cannot apply effects to audio sequence strips");
         return 0;
       }
@@ -1149,9 +1150,6 @@ int seq_effect_find_selected(Scene *scene,
   }
 
   switch (SEQ_effect_get_num_inputs(type)) {
-    case 0:
-      *r_selseq1 = *r_selseq2 = *r_selseq3 = nullptr;
-      return 1; /* Success. */
     case 1:
       if (seq2 == nullptr) {
         *r_error_str = N_("At least one selected sequence strip is needed");
@@ -2364,7 +2362,7 @@ static std::string SEQUENCER_OT_swap_get_name(wmOperatorType *ot, PointerRNA *pt
   if (RNA_enum_get(ptr, "side") == SEQ_SIDE_RIGHT) {
     return CTX_IFACE_(ot->translation_context, "Swap Strip Right");
   }
-  else if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
+  if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
     return CTX_IFACE_(ot->translation_context, "Swap Strip Left");
   }
   return "";
@@ -2380,7 +2378,7 @@ static std::string SEQUENCER_OT_swap_get_description(bContext * /*C*/,
     return "Swap active strip with strip to the right";
   }
   /*Deselect*/
-  else if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
+  if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
     return "Swap active strip with strip to the left";
   }
   return "";

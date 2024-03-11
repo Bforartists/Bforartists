@@ -129,7 +129,7 @@ class LightBake {
         bake_result_[i] = nullptr;
       }
       /* Propagate the cache to evaluated object. */
-      DEG_id_tag_update(&orig_ob->id, ID_RECALC_COPY_ON_WRITE | ID_RECALC_SHADING);
+      DEG_id_tag_update(&orig_ob->id, ID_RECALC_SYNC_TO_EVAL | ID_RECALC_SHADING);
     }
   }
 
@@ -142,7 +142,7 @@ class LightBake {
     DEG_evaluate_on_framechange(depsgraph_, frame_);
 
     if (delay_ms_ > 0) {
-      BLI_sleep_ms(delay_ms_);
+      BLI_time_sleep_ms(delay_ms_);
     }
 
     context_enable();

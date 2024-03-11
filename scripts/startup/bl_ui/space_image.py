@@ -1680,8 +1680,7 @@ class IMAGE_PT_view_vectorscope(ImageScopesPanel, Panel):
         sima = context.space_data
 
         layout.template_vectorscope(sima, "scopes")
-
-        row = layout.split(factor=0.5)
+        row = layout.split(factor=0.75)
         row.label(text="Opacity")
         row.prop(sima.scopes, "vectorscope_alpha", text="")
         row.prop(sima.scopes, "vectorscope_mode", text="")
@@ -1839,12 +1838,12 @@ class IMAGE_PT_overlay_guides(Panel):
                 row.separator(factor = 3.5)
                 row.prop(uvedit, "custom_grid_subdivisions", text="Fixed grid size")# by purpose.No text means x y is missing.
 
-            col = layout.column()
-            row = col.row()
-            row.separator()
-            row.separator()
-            row.prop(uvedit, "show_grid_over_image")
-            row.active = sima.image is not None
+            if sima.image is not None:
+                col = layout.column()
+                row = col.row()
+                row.separator()
+                row.separator()
+                row.prop(uvedit, "show_grid_over_image")
 
             row = layout.row()
             row.use_property_split = True
@@ -1853,10 +1852,10 @@ class IMAGE_PT_overlay_guides(Panel):
             row.prop(uvedit, "tile_grid_shape", text="Tiles")
 
 
-class IMAGE_PT_overlay_uv_edit(Panel):
+class IMAGE_PT_overlay_uv_stretch(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'HEADER'
-    bl_label = "UV Editing"
+    bl_label = "UV Stretch"
     bl_parent_id = "IMAGE_PT_overlay"
 
     @classmethod
@@ -1882,9 +1881,19 @@ class IMAGE_PT_overlay_uv_edit(Panel):
         row.prop(uvedit, "show_stretch")
         col = split.column()
         if uvedit.show_stretch:
-            col.prop(uvedit, "display_stretch_type", text="")
+            col.label(icon='DISCLOSURE_TRI_DOWN')
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if uvedit.show_stretch:
+            col = layout.column()
+            col.use_property_split = True
+            row = col.row()
+            row.separator ( factor = 3.0)
+            row.prop(uvedit, "display_stretch_type", text="")
+            row = col.row()
+            row.separator ( factor = 3.0)
+            row.prop(uvedit, "stretch_opacity", text="Opacity")
 
 
 class IMAGE_PT_overlay_uv_edit_geometry(Panel):
@@ -1911,6 +1920,7 @@ class IMAGE_PT_overlay_uv_edit_geometry(Panel):
         col = layout.column()
         row = col.row()
         row.separator()
+        row.use_property_split = True
         row.prop(uvedit, "uv_opacity")
         row = col.row()
         row.separator()
@@ -1921,9 +1931,9 @@ class IMAGE_PT_overlay_uv_edit_geometry(Panel):
 
         # Faces
         row = col.row()
-        row.active = not uvedit.show_stretch
-        row.separator()
-        row.prop(uvedit, "show_faces", text="Faces")
+        if not uvedit.show_stretch:
+            row.separator()
+            row.prop(uvedit, "show_faces", text="Faces")
 
 
 class IMAGE_PT_overlay_texture_paint(Panel):
@@ -2082,7 +2092,7 @@ classes = (
     IMAGE_PT_gizmo_display,
     IMAGE_PT_overlay,
     IMAGE_PT_overlay_guides,
-    IMAGE_PT_overlay_uv_edit,
+    IMAGE_PT_overlay_uv_stretch,
     IMAGE_PT_overlay_uv_edit_geometry,
     IMAGE_PT_overlay_texture_paint,
     IMAGE_PT_overlay_image,

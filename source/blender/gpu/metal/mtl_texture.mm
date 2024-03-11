@@ -1122,6 +1122,8 @@ void gpu::MTLTexture::update_sub(
     /* Decrement texture reference counts. This ensures temporary texture views are released. */
     [texture_handle release];
 
+    ctx->main_command_buffer.submit(false);
+
     /* Release temporary staging buffer allocation.
      * NOTE: Allocation will be tracked with command submission and released once no longer in use.
      */
@@ -2345,15 +2347,9 @@ void gpu::MTLTexture::ensure_baked()
     /* Override storage mode if memoryless attachments are being used.
      * NOTE: Memoryless textures can only be supported on TBDR GPUs. */
     if (gpu_image_usage_flags_ & GPU_TEXTURE_USAGE_MEMORYLESS) {
-      if (@available(macOS 11.00, *)) {
-        const bool is_tile_based_arch = (GPU_platform_architecture() == GPU_ARCHITECTURE_TBDR);
-        if (is_tile_based_arch) {
-          texture_descriptor_.storageMode = MTLStorageModeMemoryless;
-        }
-      }
-      else {
-        MTL_LOG_WARNING(
-            "GPU_TEXTURE_USAGE_MEMORYLESS is not available on macOS versions prior to 11.0");
+      const bool is_tile_based_arch = (GPU_platform_architecture() == GPU_ARCHITECTURE_TBDR);
+      if (is_tile_based_arch) {
+        texture_descriptor_.storageMode = MTLStorageModeMemoryless;
       }
     }
 

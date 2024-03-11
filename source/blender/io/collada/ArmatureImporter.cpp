@@ -119,7 +119,7 @@ int ArmatureImporter::create_bone(SkinInfo *skin,
       Object *ob_arm = skin->BKE_armature_from_object();
       if (ob_arm) {
         float invmat[4][4];
-        invert_m4_m4(invmat, ob_arm->object_to_world);
+        invert_m4_m4(invmat, ob_arm->object_to_world().ptr());
         mul_m4_m4m4(mat, invmat, mat);
       }
 
@@ -476,6 +476,12 @@ void ArmatureImporter::create_armature_bones(Main *bmain, std::vector<Object *> 
       continue;
     }
 
+    /* Assumption that joint_parent_map only lists armatures is apparently wrong (it can be meshes,
+     * too), this needs to be checked again, for now prevent a crash though. */
+    if (ob_arm->type != OB_ARMATURE) {
+      continue;
+    }
+
     bArmature *armature = (bArmature *)ob_arm->data;
     if (!armature) {
       continue;
@@ -715,7 +721,7 @@ void ArmatureImporter::set_pose(Object *ob_arm,
 
     copy_m4_m4(mat, obmat);
     float invObmat[4][4];
-    invert_m4_m4(invObmat, ob_arm->object_to_world);
+    invert_m4_m4(invObmat, ob_arm->object_to_world().ptr());
     mul_m4_m4m4(pchan->pose_mat, invObmat, mat);
   }
 

@@ -35,7 +35,7 @@
 #include "BLT_translation.hh"
 
 #include "BKE_action.h"
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_anim_visualization.h"
 #include "BKE_animsys.h"
 #include "BKE_armature.hh"
@@ -268,6 +268,7 @@ static AssetTypeInfo AssetType_AC = {
 IDTypeInfo IDType_ID_AC = {
     /*id_code*/ ID_AC,
     /*id_filter*/ FILTER_ID_AC,
+    /*dependencies_id_types*/ 0,
     /*main_listbase_index*/ INDEX_ID_AC,
     /*struct_size*/ sizeof(bAction),
     /*name*/ "Action",
@@ -374,6 +375,12 @@ void action_group_colors_sync(bActionGroup *grp, const bActionGroup *ref_grp)
 
 void action_group_colors_set_from_posebone(bActionGroup *grp, const bPoseChannel *pchan)
 {
+  BLI_assert_msg(pchan, "cannot 'set action group colors from posebone' without a posebone");
+  if (!pchan->bone) {
+    /* pchan->bone is only set after leaving editmode. */
+    return;
+  }
+
   const BoneColor &color = blender::animrig::ANIM_bonecolor_posebone_get(pchan);
   action_group_colors_set(grp, &color);
 }
@@ -1711,7 +1718,7 @@ void what_does_obaction(Object *ob,
   workob->runtime = &workob_runtime;
 
   /* init workob */
-  copy_m4_m4(workob->object_to_world, ob->object_to_world);
+  copy_m4_m4(workob->runtime->object_to_world.ptr(), ob->object_to_world().ptr());
   copy_m4_m4(workob->parentinv, ob->parentinv);
   copy_m4_m4(workob->constinv, ob->constinv);
   workob->parent = ob->parent;
@@ -1772,6 +1779,8 @@ void what_does_obaction(Object *ob,
     /* execute effects of Action on to workob (or its PoseChannels) */
     BKE_animsys_evaluate_animdata(&workob->id, &adt, anim_eval_context, ADT_RECALC_ANIM, false);
   }
+  /* Ensure stack memory set here isn't accessed later, see !118847. */
+  workob->runtime = nullptr;
 }
 
 void BKE_pose_check_uids_unique_and_report(const bPose *pose)

@@ -215,7 +215,7 @@ def nw_check(cls, context):
 
 
 def nw_check_not_empty(cls, context):
-    if not context.space_data.node_tree.nodes:
+    if not context.space_data.edit_tree.nodes:
         cls.poll_message_set("Current node tree does not contain any nodes.")
         return False
     return True

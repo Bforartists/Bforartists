@@ -25,7 +25,7 @@
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
 
-#include "BKE_anim_data.h"
+#include "BKE_anim_data.hh"
 #include "BKE_armature.hh"
 #include "BKE_blender.hh"
 #include "BKE_collection.hh"
@@ -71,6 +71,8 @@
 #ifdef DEBUG_OVERRIDE_TIMEIT
 #  include "BLI_time_utildefines.h"
 #endif
+
+using namespace blender::bke;
 
 static CLG_LogRef LOG = {"bke.liboverride"};
 static CLG_LogRef LOG_RESYNC = {"bke.liboverride_resync"};
@@ -487,11 +489,11 @@ static void lib_override_prefill_newid_from_existing_overrides(Main *bmain, ID *
   FOREACH_MAIN_ID_END;
 }
 
-static void lib_override_remapper_overrides_add(IDRemapper *id_remapper,
+static void lib_override_remapper_overrides_add(id::IDRemapper &id_remapper,
                                                 ID *reference_id,
                                                 ID *local_id)
 {
-  BKE_id_remapper_add(id_remapper, reference_id, local_id);
+  id_remapper.add(reference_id, local_id);
 
   Key *reference_key, *local_key = nullptr;
   if ((reference_key = BKE_key_from_id(reference_id)) != nullptr) {
@@ -500,7 +502,7 @@ static void lib_override_remapper_overrides_add(IDRemapper *id_remapper,
       BLI_assert(local_key != nullptr);
     }
 
-    BKE_id_remapper_add(id_remapper, &reference_key->id, &local_key->id);
+    id_remapper.add(&reference_key->id, &local_key->id);
   }
 }
 
@@ -620,7 +622,7 @@ bool BKE_lib_override_library_create_from_tag(Main *bmain,
     BLI_assert(id_hierarchy_root != nullptr);
 
     blender::Vector<ID *> relinked_ids;
-    IDRemapper *id_remapper = BKE_id_remapper_create();
+    id::IDRemapper id_remapper;
     /* Still checking the whole Main, that way we can tag other local IDs as needing to be
      * remapped to use newly created overriding IDs, if needed. */
     ID *id;
@@ -693,7 +695,6 @@ bool BKE_lib_override_library_create_from_tag(Main *bmain,
                                  id_remapper,
                                  ID_REMAP_SKIP_OVERRIDE_LIBRARY | ID_REMAP_FORCE_USER_REFCOUNT);
 
-    BKE_id_remapper_free(id_remapper);
     relinked_ids.clear();
   }
   else {
@@ -1934,7 +1935,7 @@ static void lib_override_library_remap(Main *bmain,
                                        GHash *linkedref_to_old_override)
 {
   ID *id;
-  IDRemapper *remapper = BKE_id_remapper_create();
+  id::IDRemapper remapper;
   blender::Vector<ID *> nomain_ids;
 
   FOREACH_MAIN_ID_BEGIN (bmain, id) {
@@ -1944,7 +1945,7 @@ static void lib_override_library_remap(Main *bmain,
       if (id_override_old == nullptr) {
         continue;
       }
-      BKE_id_remapper_add(remapper, id_override_old, id_override_new);
+      remapper.add(id_override_old, id_override_new);
     }
   }
   FOREACH_MAIN_ID_END;
@@ -1968,7 +1969,6 @@ static void lib_override_library_remap(Main *bmain,
                                ID_REMAP_TYPE_REMAP,
                                remapper,
                                ID_REMAP_FORCE_USER_REFCOUNT | ID_REMAP_FORCE_NEVER_NULL_USAGE);
-  BKE_id_remapper_free(remapper);
 }
 
 /**
@@ -2071,8 +2071,15 @@ static bool lib_override_library_resync(Main *bmain,
 
   ID *id_root_reference = id_root->override_library->reference;
   ID *id;
-  BKE_view_layer_synced_ensure(scene, view_layer);
-  const Object *old_active_object = BKE_view_layer_active_object_get(view_layer);
+
+  const Object *old_active_object = nullptr;
+  if (view_layer) {
+    BKE_view_layer_synced_ensure(scene, view_layer);
+    old_active_object = BKE_view_layer_active_object_get(view_layer);
+  }
+  else {
+    BKE_scene_view_layers_synced_ensure(scene);
+  }
 
   if (id_root_reference->tag & LIB_TAG_MISSING) {
     BKE_reportf(reports != nullptr ? reports->reports : nullptr,
@@ -2508,7 +2515,7 @@ static bool lib_override_library_resync(Main *bmain,
   /* Once overrides have been properly 'transferred' from old to new ID, we can clear ID usages
    * of the old one.
    * This is necessary in case said old ID is not in Main anymore. */
-  IDRemapper *id_remapper = BKE_id_remapper_create();
+  id::IDRemapper id_remapper;
   BKE_libblock_relink_multiple(bmain,
                                id_override_old_vector,
                                ID_REMAP_TYPE_CLEANUP,
@@ -2518,7 +2525,6 @@ static bool lib_override_library_resync(Main *bmain,
     id_override_old->tag |= LIB_TAG_NO_USER_REFCOUNT;
   }
   id_override_old_vector.clear();
-  BKE_id_remapper_free(id_remapper);
 
   /* Delete old override IDs.
    * Note that we have to use tagged group deletion here, since ID deletion also uses
@@ -2660,6 +2666,56 @@ static bool lib_override_library_resync(Main *bmain,
   return success;
 }
 
+/** Clenup: Remove unused 'place holder' linked IDs. */
+static void lib_override_cleanup_after_resync(Main *bmain)
+{
+  LibQueryUnusedIDsData parameters;
+  parameters.do_local_ids = true;
+  parameters.do_linked_ids = true;
+  parameters.do_recursive = true;
+  parameters.filter_fn = [](const ID *id) -> bool {
+    if (ID_IS_LINKED(id) && (id->tag & LIB_TAG_MISSING) != 0) {
+      return true;
+    }
+    /* This is a fairly complex case.
+     *
+     * LibOverride resync process takes care of removing 'no more valid' liboverrides (see at the
+     * end of #lib_override_library_main_resync_on_library_indirect_level). However, since it does
+     * not resync data which linked reference is missing (see
+     * #lib_override_library_main_resync_id_skip_check), these are kept 'as is'. Indeed,
+     * liboverride resync code cannot know if a specific liboverride data is only part of its
+     * hierarchy, or if it is also used by some other data (in which case it should be preserved if
+     * the linked reference goes missing).
+     *
+     * So instead, we consider these cases as also valid candidates for deletion here, since the
+     * whole recursive process in `BKE_lib_query_unused_ids_tag` will ensure that if there is still
+     * any valid user of these, they won't get tagged for deletion.
+     *
+     * Also, do not delete 'orphaned' liboverrides if it's a hierarchy root, or if its hierarchy
+     * root's reference is missing, since this is much more likely a case of actual missing data,
+     * rather than changes in the liboverride's hierarchy in the linked data.
+     */
+    if (ID_IS_OVERRIDE_LIBRARY(id)) {
+      const IDOverrideLibrary *override_library = BKE_lib_override_library_get(
+          nullptr, id, nullptr, nullptr);
+      const ID *root = override_library->hierarchy_root;
+      if (root == id || (root->override_library->reference->tag & LIB_TAG_MISSING) != 0) {
+        return false;
+      }
+      return ((override_library->reference->tag & LIB_TAG_MISSING) != 0);
+    }
+    return false;
+  };
+  BKE_lib_query_unused_ids_tag(bmain, LIB_TAG_DOIT, parameters);
+  CLOG_INFO(&LOG_RESYNC,
+            2,
+            "Deleting %d unused linked missing IDs and their unused liboverrides (including %d "
+            "local ones)\n",
+            parameters.num_total[INDEX_ID_NULL],
+            parameters.num_local[INDEX_ID_NULL]);
+  BKE_id_multi_tagged_delete(bmain);
+}
+
 bool BKE_lib_override_library_resync(Main *bmain,
                                      Scene *scene,
                                      ViewLayer *view_layer,
@@ -2691,6 +2747,8 @@ bool BKE_lib_override_library_resync(Main *bmain,
   /* Cleanup global namemap, to avoid extra processing with regular ID name management. Better to
    * re-create the global namemap on demand. */
   BKE_main_namemap_destroy(&bmain->name_map_global);
+
+  lib_override_cleanup_after_resync(bmain);
 
   return success;
 }
@@ -3170,7 +3228,7 @@ static bool lib_override_library_main_resync_on_library_indirect_level(
     BlendFileReadReport *reports)
 {
   const bool do_reports_recursive_resync_timing = (library_indirect_level != 0);
-  const double init_time = do_reports_recursive_resync_timing ? BLI_check_seconds_timer() : 0.0;
+  const double init_time = do_reports_recursive_resync_timing ? BLI_time_now_seconds() : 0.0;
 
   BKE_main_relations_create(bmain, 0);
   BKE_main_id_tag_all(bmain, LIB_TAG_DOIT, false);
@@ -3476,7 +3534,7 @@ static bool lib_override_library_main_resync_on_library_indirect_level(
   BKE_lib_override_library_main_hierarchy_root_ensure(bmain);
 
   if (do_reports_recursive_resync_timing) {
-    reports->duration.lib_overrides_recursive_resync += BLI_check_seconds_timer() - init_time;
+    reports->duration.lib_overrides_recursive_resync += BLI_time_now_seconds() - init_time;
   }
 
   return process_lib_level_again;
@@ -3658,6 +3716,8 @@ void BKE_lib_override_library_main_resync(Main *bmain,
   /* Cleanup global namemap, to avoid extra processing with regular ID name management. Better to
    * re-create the global namemap on demand. */
   BKE_main_namemap_destroy(&bmain->name_map_global);
+
+  lib_override_cleanup_after_resync(bmain);
 
   BLI_assert(BKE_main_namemap_validate(bmain));
 }
@@ -4164,42 +4224,62 @@ bool BKE_lib_override_library_property_operation_operands_validate(
   return true;
 }
 
-void BKE_lib_override_library_validate(Main * /*bmain*/, ID *id, ReportList *reports)
+void BKE_lib_override_library_validate(Main *bmain, ID *id, ReportList *reports)
 {
-  if (id->override_library == nullptr) {
+  if (!ID_IS_OVERRIDE_LIBRARY(id)) {
     return;
   }
-  if (id->override_library->reference == nullptr) {
+
+  ID *liboverride_id = id;
+  IDOverrideLibrary *liboverride = id->override_library;
+  if (ID_IS_OVERRIDE_LIBRARY_VIRTUAL(id)) {
+    liboverride = BKE_lib_override_library_get(bmain, id, nullptr, &liboverride_id);
+    if (!liboverride) {
+      /* Happens in case the given ID is a liboverride-embedded one (actual embedded ID like
+       * NodeTree or master collection, or shapekeys), used by a totally not-liboverride owner ID.
+       * Just clear the relevant ID flag.
+       */
+      id->flag &= ~LIB_EMBEDDED_DATA_LIB_OVERRIDE;
+      return;
+    }
+  }
+  BLI_assert(liboverride);
+
+  /* NOTE: In code deleting liboverride data below, #BKE_lib_override_library_make_local is used
+   * instead of directly calling #BKE_lib_override_library_free, because the former also handles
+   * properly 'liboverride embedded' IDs, like root node-trees, or shape-keys. */
+
+  if (liboverride->reference == nullptr) {
     /* This (probably) used to be a template ID, could be linked or local, not an override. */
     BKE_reportf(reports,
                 RPT_WARNING,
                 "Library override templates have been removed: removing all override data from "
                 "the data-block '%s'",
-                id->name);
-    BKE_lib_override_library_free(&id->override_library, true);
+                liboverride_id->name);
+    BKE_lib_override_library_make_local(nullptr, liboverride_id);
     return;
   }
-  if (id->override_library->reference == id) {
+  if (liboverride->reference == liboverride_id) {
     /* Very serious data corruption, cannot do much about it besides removing the liboverride data.
      */
     BKE_reportf(reports,
                 RPT_ERROR,
                 "Data corruption: data-block '%s' is using itself as library override reference, "
                 "removing all override data",
-                id->name);
-    BKE_lib_override_library_free(&id->override_library, true);
+                liboverride_id->name);
+    BKE_lib_override_library_make_local(nullptr, liboverride_id);
     return;
   }
-  if (!ID_IS_LINKED(id->override_library->reference)) {
+  if (!ID_IS_LINKED(liboverride->reference)) {
     /* Very serious data corruption, cannot do much about it besides removing the liboverride data.
      */
     BKE_reportf(reports,
                 RPT_ERROR,
                 "Data corruption: data-block '%s' is using another local data-block ('%s') as "
                 "library override reference, removing all override data",
-                id->name,
-                id->override_library->reference->name);
-    BKE_lib_override_library_free(&id->override_library, true);
+                liboverride_id->name,
+                liboverride->reference->name);
+    BKE_lib_override_library_make_local(nullptr, liboverride_id);
     return;
   }
 }
@@ -4209,7 +4289,7 @@ void BKE_lib_override_library_main_validate(Main *bmain, ReportList *reports)
   ID *id;
 
   FOREACH_MAIN_ID_BEGIN (bmain, id) {
-    if (id->override_library != nullptr) {
+    if (ID_IS_OVERRIDE_LIBRARY(id)) {
       BKE_lib_override_library_validate(bmain, id, reports);
     }
   }
@@ -4640,7 +4720,7 @@ static bool lib_override_library_id_reset_do(Main *bmain,
   }
 
   if (was_op_deleted) {
-    DEG_id_tag_update_ex(bmain, id_root, ID_RECALC_COPY_ON_WRITE);
+    DEG_id_tag_update_ex(bmain, id_root, ID_RECALC_SYNC_TO_EVAL);
     IDOverrideLibraryRuntime *liboverride_runtime = override_library_runtime_ensure(
         id_root->override_library);
     liboverride_runtime->tag |= LIBOVERRIDE_TAG_NEEDS_RELOAD;

@@ -12,7 +12,7 @@
 
 #include "BKE_attribute.hh"
 #include "BKE_curves.hh"
-#include "BKE_duplilist.h"
+#include "BKE_duplilist.hh"
 #include "BKE_geometry_set.hh"
 #include "BKE_instances.hh"
 #include "BKE_mesh.hh"
@@ -44,7 +44,7 @@ static void add_values_to_text_cache(const GVArray &values,
       const float3 position = math::transform_point(object_to_world, positions[i]);
       const T &value = values_typed[i];
 
-      char numstr[32];
+      char numstr[64];
       size_t numstr_len = 0;
       if constexpr (std::is_same_v<T, bool>) {
         numstr_len = SNPRINTF_RLEN(numstr, "%s", value ? "True" : "False");
@@ -77,7 +77,8 @@ static void add_values_to_text_cache(const GVArray &values,
             numstr, "(%.3f, %.3f, %.3f, %.3f)", value.r, value.g, value.b, value.a);
       }
       else if constexpr (std::is_same_v<T, math::Quaternion>) {
-        numstr_len = SNPRINTF_RLEN(numstr, "(%g, %g, %g, %g)", value.w, value.x, value.y, value.z);
+        numstr_len = SNPRINTF_RLEN(
+            numstr, "(%.3f, %.3f, %.3f, %.3f)", value.w, value.x, value.y, value.z);
       }
       else {
         BLI_assert_unreachable();
@@ -122,7 +123,7 @@ void OVERLAY_viewer_attribute_text(const Object &object)
 {
   using namespace blender;
   using namespace blender::draw::overlay;
-  const float4x4 object_to_world = float4x4(object.object_to_world);
+  const float4x4 &object_to_world = object.object_to_world();
   DupliObject *dupli_object = DRW_object_get_dupli(&object);
 
   if (dupli_object->preview_instance_index >= 0) {

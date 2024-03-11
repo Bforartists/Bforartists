@@ -29,31 +29,21 @@
 #include "DNA_brush_types.h"
 #include "DNA_color_types.h"
 #include "DNA_defaults.h"
-#include "DNA_key_types.h"
 #include "DNA_linestyle_types.h"
 #include "DNA_material_types.h"
 #include "DNA_node_types.h"
 #include "DNA_object_types.h"
 #include "DNA_particle_types.h"
 
-#include "IMB_imbuf.hh"
-
-#include "BKE_main.hh"
-
-#include "BKE_anim_data.h"
 #include "BKE_colorband.hh"
 #include "BKE_colortools.hh"
 #include "BKE_icons.h"
 #include "BKE_idtype.hh"
 #include "BKE_image.h"
-#include "BKE_key.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_query.hh"
-#include "BKE_material.h"
-#include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_preview_image.hh"
-#include "BKE_scene.hh"
 #include "BKE_texture.h"
 
 #include "NOD_texture.h"
@@ -198,6 +188,7 @@ static void texture_blend_read_data(BlendDataReader *reader, ID *id)
 IDTypeInfo IDType_ID_TE = {
     /*id_code*/ ID_TE,
     /*id_filter*/ FILTER_ID_TE,
+    /*dependencies_id_types*/ FILTER_ID_IM | FILTER_ID_OB,
     /*main_listbase_index*/ INDEX_ID_TE,
     /*struct_size*/ sizeof(Tex),
     /*name*/ "Texture",

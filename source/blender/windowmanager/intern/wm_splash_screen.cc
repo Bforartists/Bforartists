@@ -17,8 +17,6 @@
 #include <algorithm>
 #include <cstring>
 
-#include "CLG_log.h"
-
 #include "DNA_ID.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
@@ -31,11 +29,8 @@
 #include "BKE_appdir.hh"
 #include "BKE_blender_version.h"
 #include "BKE_context.hh"
-#include "BKE_screen.hh"
 
 #include "BLT_translation.hh"
-
-#include "BLF_api.hh"
 
 #include "IMB_imbuf.hh"
 #include "IMB_imbuf_types.hh"
@@ -62,24 +57,24 @@ static void wm_block_splash_close(bContext *C, void *arg_block, void * /*arg*/)
   UI_popup_block_close(C, win, static_cast<uiBlock *>(arg_block));
 }
 
-/* Not used by BFA */
-// static void wm_block_splash_add_label(uiBlock *block, const char *label, int x, int y)
-// {
-//   if (!(label && label[0])) {
-//     return;
-//   }
+/* BFA - [[maybe_unused]] */
+[[maybe_unused]] static void wm_block_splash_add_label(uiBlock *block, const char *label, int x, int y)
+{
+  if (!(label && label[0])) {
+    return;
+  }
 
-//   UI_block_emboss_set(block, UI_EMBOSS_NONE);
+  UI_block_emboss_set(block, UI_EMBOSS_NONE);
 
-//   uiBut *but = uiDefBut(
-//       block, UI_BTYPE_LABEL, 0, label, 0, y, x, UI_UNIT_Y, nullptr, 0, 0, 0, 0, nullptr);
-//   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
-//   UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);
+  uiBut *but = uiDefBut(
+      block, UI_BTYPE_LABEL, 0, label, 0, y, x, UI_UNIT_Y, nullptr, 0, 0, nullptr);
+  UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
+  UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);
 
-//   /* 1 = UI_SELECT, internal flag to draw in white. */
-//   UI_but_flag_enable(but, 1);
-//   UI_block_emboss_set(block, UI_EMBOSS);
-// }
+  /* 1 = UI_SELECT, internal flag to draw in white. */
+  UI_but_flag_enable(but, 1);
+  UI_block_emboss_set(block, UI_EMBOSS);
+}
 
 #ifndef WITH_HEADLESS
 static void wm_block_splash_image_roundcorners_add(ImBuf *ibuf)
@@ -225,11 +220,6 @@ static uiBlock *wm_block_splash_create(bContext *C, ARegion *region, void * /*ar
         block, ibuf, 0, 0.5f * U.widget_unit, splash_width, splash_height, nullptr);
 
     UI_but_func_set(but, wm_block_splash_close, block, nullptr);
-    /*bfa -  We don't need Blender hashes or Blender version numbers in Bforartists*/
-    // wm_block_splash_add_label(block,
-    //                           BKE_blender_version_string(),
-    //                           splash_width - 8.0 * UI_SCALE_FAC,
-    //                           splash_height - 13.0 * UI_SCALE_FAC);
   }
 
   const int layout_margin_x = UI_SCALE_FAC * 26;

@@ -33,10 +33,7 @@
 #  include "UI_interface.hh"
 #  include "UI_resources.hh"
 
-#  include "DEG_depsgraph.hh"
-
 #  include "IO_orientation.hh"
-#  include "IO_path_util_types.hh"
 
 #  include "IO_ply.hh"
 #  include "io_ply_ops.hh"
@@ -70,7 +67,7 @@ static int wm_ply_export_exec(bContext *C, wmOperator *op)
     BKE_report(op->reports, RPT_ERROR, "No filepath given");
     return OPERATOR_CANCELLED;
   }
-  PLYExportParams export_params = {"\0"};
+  PLYExportParams export_params{};
   export_params.file_base_for_tests[0] = '\0';
   RNA_string_get(op->ptr, "filepath", export_params.filepath);
   export_params.blen_filepath = CTX_data_main(C)->filepath;
@@ -87,6 +84,8 @@ static int wm_ply_export_exec(bContext *C, wmOperator *op)
   export_params.export_attributes = RNA_boolean_get(op->ptr, "export_attributes");
   export_params.export_triangulated_mesh = RNA_boolean_get(op->ptr, "export_triangulated_mesh");
   export_params.ascii_format = RNA_boolean_get(op->ptr, "ascii_format");
+
+  export_params.reports = op->reports;
 
   PLY_export(C, &export_params);
 
@@ -251,6 +250,8 @@ static int wm_ply_import_exec(bContext *C, wmOperator *op)
   params.import_attributes = RNA_boolean_get(op->ptr, "import_attributes");
   params.vertex_colors = ePLYVertexColorMode(RNA_enum_get(op->ptr, "import_colors"));
 
+  params.reports = op->reports;
+
   const auto paths = blender::ed::io::paths_from_operator_properties(op->ptr);
 
   if (paths.is_empty()) {
@@ -259,7 +260,7 @@ static int wm_ply_import_exec(bContext *C, wmOperator *op)
   }
   for (const auto &path : paths) {
     STRNCPY(params.filepath, path.c_str());
-    PLY_import(C, &params, op);
+    PLY_import(C, &params);
   };
 
   Scene *scene = CTX_data_scene(C);

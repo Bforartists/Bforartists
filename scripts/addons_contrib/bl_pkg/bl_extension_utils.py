@@ -30,6 +30,7 @@ __all__ = (
 
     "pkg_manifest_dict_is_valid_or_error",
     "pkg_manifest_dict_from_file_or_error",
+    "pkg_manifest_archive_url_abs_from_repo_url",
 
     "CommandBatch",
     "RepoCacheStore",
@@ -97,12 +98,58 @@ IDLE_WAIT_ON_READ = 0.05
 # Internal Functions.
 #
 
-def file_handle_make_non_blocking(file_handle: IO[bytes]) -> None:
-    import fcntl
+if sys.platform == "win32":
+    # See: https://stackoverflow.com/a/35052424/432509
+    def file_handle_make_non_blocking(file_handle: IO[bytes]) -> None:
+        # Constant could define globally but avoid polluting the name-space
+        # thanks to: https://stackoverflow.com/questions/34504970
+        import msvcrt
+        from ctypes import (
+            POINTER,
+            WinError,
+            byref,
+            windll,
+            wintypes,
+        )
+        from ctypes.wintypes import (
+            BOOL,
+            DWORD,
+            HANDLE,
+        )
 
-    # Get current `file_handle` flags.
-    flags = fcntl.fcntl(file_handle.fileno(), fcntl.F_GETFL)
-    fcntl.fcntl(file_handle, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+        LPDWORD = POINTER(DWORD)
+
+        PIPE_NOWAIT = wintypes.DWORD(0x00000001)
+
+        # Set non-blocking.
+        SetNamedPipeHandleState = windll.kernel32.SetNamedPipeHandleState
+        SetNamedPipeHandleState.argtypes = [HANDLE, LPDWORD, LPDWORD, LPDWORD]
+        SetNamedPipeHandleState.restype = BOOL
+        os_handle = msvcrt.get_osfhandle(file_handle.fileno())
+        res = windll.kernel32.SetNamedPipeHandleState(os_handle, byref(PIPE_NOWAIT), None, None)
+        if res == 0:
+            print(WinError())
+
+    def file_handle_non_blocking_is_error_blocking(ex: BaseException) -> bool:
+        if not isinstance(ex, OSError):
+            return False
+        from ctypes import GetLastError
+        ERROR_NO_DATA = 232
+        # This is sometimes zero, `ex.args == (22, "Invalid argument")`
+        # This could be checked but for now ignore all zero errors.
+        return (GetLastError() in {0, ERROR_NO_DATA})
+
+else:
+    def file_handle_make_non_blocking(file_handle: IO[bytes]) -> None:
+        import fcntl
+        # Get current `file_handle` flags.
+        flags = fcntl.fcntl(file_handle.fileno(), fcntl.F_GETFL)
+        fcntl.fcntl(file_handle, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+
+    def file_handle_non_blocking_is_error_blocking(ex: BaseException) -> bool:
+        if not isinstance(ex, BlockingIOError):
+            return False
+        return True
 
 
 def file_mtime_or_none(filepath: str) -> Optional[int]:
@@ -140,7 +187,13 @@ def command_output_from_json_0(
 
     while True:
         # It's possible this is multiple chunks.
-        chunk = stdout.read()
+        try:
+            chunk = stdout.read()
+        except BaseException as ex:
+            if not file_handle_non_blocking_is_error_blocking(ex):
+                raise ex
+            chunk = b''
+
         if not chunk:
             if ps.poll() is not None:
                 break
@@ -202,6 +255,7 @@ def repo_sync(
         *,
         directory: str,
         repo_url: str,
+        online_user_agent: str,
         use_idle: bool,
 ) -> Generator[InfoItemSeq, None, None]:
     """
@@ -212,6 +266,7 @@ def repo_sync(
         "sync",
         "--local-dir", directory,
         "--repo-dir", repo_url,
+        "--online-user-agent", online_user_agent,
     ], use_idle=use_idle)
     yield [COMPLETE_ITEM]
 
@@ -220,6 +275,7 @@ def repo_upgrade(
         *,
         directory: str,
         repo_url: str,
+        online_user_agent: str,
         use_idle: bool,
 ) -> Generator[InfoItemSeq, None, None]:
     """
@@ -230,6 +286,7 @@ def repo_upgrade(
         "upgrade",
         "--local-dir", directory,
         "--repo-dir", repo_url,
+        "--online-user-agent", online_user_agent,
     ], use_idle=use_idle)
     yield [COMPLETE_ITEM]
 
@@ -275,6 +332,7 @@ def pkg_install(
         directory: str,
         repo_url: str,
         pkg_id_sequence: Sequence[str],
+        online_user_agent: str,
         use_cache: bool,
         use_idle: bool,
 ) -> Generator[InfoItemSeq, None, None]:
@@ -286,6 +344,7 @@ def pkg_install(
         "install", ",".join(pkg_id_sequence),
         "--local-dir", directory,
         "--repo-dir", repo_url,
+        "--online-user-agent", online_user_agent,
         "--local-cache", str(int(use_cache)),
     ], use_idle=use_idle)
     yield [COMPLETE_ITEM]
@@ -392,6 +451,24 @@ def pkg_manifest_dict_from_file_or_error(
     return result_dict
 
 
+def pkg_manifest_archive_url_abs_from_repo_url(repo_url: str, archive_url: str) -> str:
+    if archive_url.startswith("./"):
+        if (
+                len(repo_url) > len(PKG_REPO_LIST_FILENAME) and
+                repo_url.endswith(PKG_REPO_LIST_FILENAME) and
+                (repo_url[-(len(PKG_REPO_LIST_FILENAME) + 1)] in {"\\", "/"})
+        ):
+            # The URL contains the JSON name, strip this off before adding the package name.
+            archive_url = repo_url[:-len(PKG_REPO_LIST_FILENAME)] + archive_url[2:]
+        elif repo_url.startswith(("http://", "https://", "file://")):
+            # Simply add to the URL.
+            archive_url = repo_url.rstrip("/") + archive_url[1:]
+        else:
+            # Handle as a regular path.
+            archive_url = os.path.join(repo_url, archive_url[2:])
+    return archive_url
+
+
 # -----------------------------------------------------------------------------
 # Public Command Pool (non-command-line wrapper)
 #
@@ -405,6 +482,7 @@ class CommandBatchItem:
         "fn_iter",
         "status",
         "msg_log",
+        "msg_log_len_last",
 
         "msg_type",
         "msg_info",
@@ -419,6 +497,7 @@ class CommandBatchItem:
         self.fn_iter: Optional[Generator[InfoItemSeq, bool, None]] = None
         self.status = CommandBatchItem.STATUS_NOT_YET_STARTED
         self.msg_log: List[Tuple[str, Any]] = []
+        self.msg_log_len_last = 0
         self.msg_type = ""
         self.msg_info = ""
 
@@ -571,6 +650,23 @@ class CommandBatch:
             for ty, msg in (cmd.msg_log + ([(cmd.msg_type, cmd.msg_info)] if cmd.msg_type == 'PROGRESS' else []))
         ]
 
+    def calc_status_log_since_last_request_or_none(self) -> Optional[List[List[Tuple[str, str]]]]:
+        """
+        Return a list of new errors per command or None when none are found.
+        """
+        result: List[List[Tuple[str, str]]] = [[] for _ in range(len(self._batch))]
+        found = False
+        for cmd_index, cmd in enumerate(self._batch):
+            msg_log_len = len(cmd.msg_log)
+            if cmd.msg_log_len_last == msg_log_len:
+                continue
+            assert cmd.msg_log_len_last < msg_log_len
+            result[cmd_index] = cmd.msg_log[cmd.msg_log_len_last:]
+            cmd.msg_log_len_last = len(cmd.msg_log)
+            found = True
+
+        return result if found else None
+
 
 # -----------------------------------------------------------------------------
 # Public Repo Cache (non-command-line wrapper)
@@ -646,6 +742,15 @@ class _RepoCacheEntry:
         # Since there is no remote repo the ID name is defined by the directory name only.
         local_json_data = self.pkg_manifest_from_local_ensure(error_fn=error_fn)
         if local_json_data is None:
+            return
+
+        # We might want to adjust where this happens, create the directory here
+        # because this could be a fresh repo might not have been initialized until now.
+        try:
+            if not os.path.exists(self.directory):
+                os.makedirs(self.directory, exist_ok=True)
+        except BaseException as ex:
+            error_fn(ex)
             return
 
         filepath_json = os.path.join(self.directory, REPO_LOCAL_JSON)

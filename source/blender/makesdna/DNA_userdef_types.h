@@ -717,12 +717,13 @@ typedef struct UserDef_Experimental {
   char use_extended_asset_browser;
   char use_sculpt_texture_paint;
   char use_grease_pencil_version3;
+  char use_new_matrix_socket;
   char enable_overlay_next;
   char use_new_volume_nodes;
   char use_shader_node_previews;
   char use_extension_repos;
 
-  char _pad[4];
+  char _pad[3];
   /** `makesdna` does not allow empty structs. */
 } UserDef_Experimental;
 
@@ -1056,7 +1057,7 @@ typedef struct UserDef {
   UserDef_Runtime runtime;
 } UserDef;
 
-/** From blenkernel `blender.cc`. */
+/** From `source/blender/blenkernel/intern/blender.cc`. */
 extern UserDef U;
 
 /* ***************** USERDEF ****************** */
@@ -1473,16 +1474,6 @@ typedef enum eUserpref_VirtualPixel {
   VIRTUAL_PIXEL_NATIVE = 0,
   VIRTUAL_PIXEL_DOUBLE = 1,
 } eUserpref_VirtualPixel;
-
-typedef enum eOpensubdiv_Computee_Type {
-  USER_OPENSUBDIV_COMPUTE_NONE = 0,
-  USER_OPENSUBDIV_COMPUTE_CPU = 1,
-  USER_OPENSUBDIV_COMPUTE_OPENMP = 2,
-  USER_OPENSUBDIV_COMPUTE_OPENCL = 3,
-  USER_OPENSUBDIV_COMPUTE_CUDA = 4,
-  USER_OPENSUBDIV_COMPUTE_GLSL_TRANSFORM_FEEDBACK = 5,
-  USER_OPENSUBDIV_COMPUTE_GLSL_COMPUTE = 6,
-} eOpensubdiv_Computee_Type;
 
 /** #UserDef.factor_display_type */
 typedef enum eUserpref_FactorDisplay {

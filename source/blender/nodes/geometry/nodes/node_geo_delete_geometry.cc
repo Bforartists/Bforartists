@@ -7,16 +7,6 @@
 #include "UI_interface.hh"
 #include "UI_resources.hh"
 
-#include "DNA_grease_pencil_types.h"
-#include "DNA_pointcloud_types.h"
-
-#include "BKE_curves.hh"
-#include "BKE_grease_pencil.hh"
-#include "BKE_instances.hh"
-#include "BKE_mesh.hh"
-#include "BKE_pointcloud.hh"
-
-#include "GEO_mesh_copy_selection.hh"
 #include "GEO_separate_geometry.hh"
 
 #include "RNA_enum_types.hh"
@@ -117,7 +107,7 @@ static void node_rna(StructRNA *srna)
                     rna_enum_attribute_domain_without_corner_items,
                     NOD_storage_enum_accessors(domain),
                     int(AttrDomain::Point),
-                    enums::domain_experimental_grease_pencil_version3_fn);
+                    enums::domain_without_corner_experimental_grease_pencil_version3_fn);
 }
 
 static void node_register()

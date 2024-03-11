@@ -57,12 +57,12 @@ struct DRWUpdateContext {
 };
 void DRW_notify_view_update(const DRWUpdateContext *update_ctx);
 
-typedef enum eDRWSelectStage {
+enum eDRWSelectStage {
   DRW_SELECT_PASS_PRE = 1,
   DRW_SELECT_PASS_POST,
-} eDRWSelectStage;
-typedef bool (*DRW_SelectPassFn)(eDRWSelectStage stage, void *user_data);
-typedef bool (*DRW_ObjectFilterFn)(Object *ob, void *user_data);
+};
+using DRW_SelectPassFn = bool (*)(eDRWSelectStage stage, void *user_data);
+using DRW_ObjectFilterFn = bool (*)(Object *ob, void *user_data);
 
 /**
  * Everything starts here.
@@ -136,6 +136,11 @@ void DRW_draw_depth_loop(Depsgraph *depsgraph,
 void DRW_draw_depth_object(
     Scene *scene, ARegion *region, View3D *v3d, GPUViewport *viewport, Object *object);
 void DRW_draw_select_id(Depsgraph *depsgraph, ARegion *region, View3D *v3d);
+
+/**
+ * Query that drawing is in progress (use to prevent nested draw calls).
+ */
+bool DRW_draw_in_progress();
 
 /* Grease pencil render. */
 
