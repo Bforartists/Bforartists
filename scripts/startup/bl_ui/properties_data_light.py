@@ -117,8 +117,9 @@ class DATA_PT_EEVEE_light(DataButtonsPanel, Panel):
 
         if context.engine == 'BLENDER_EEVEE_NEXT':
             col.separator()
-
+            col.use_property_split = False
             col.prop(light, "use_shadow", text="Cast Shadow")
+            col.use_property_split = True
             col.prop(light, "shadow_softness_factor", text="Shadow Softness")
             col.prop(light, "shadow_filter_radius", text="Filtering Radius")
 
