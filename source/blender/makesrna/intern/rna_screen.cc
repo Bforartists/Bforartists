@@ -778,14 +778,14 @@ static void rna_def_screen(BlenderRNA *brna)
    /* BFA Top Bar. */
   prop = RNA_def_property(srna, "show_bfa_topbar", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SCREEN_BFA_TOP_BAR);
-  RNA_def_property_ui_text(prop, "Show Top Bar Toolbar", "Show/Hide the customizable Top Bar Toolbar");
+  RNA_def_property_ui_text(prop, "Show Topbar Toolbar", "Show/Hide the customizable Top Bar Toolbar");
   RNA_def_property_update(prop, 0, "rna_Screen_bar_update");
 
   /* Status Bar. */
 
   prop = RNA_def_property(srna, "show_statusbar", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SCREEN_COLLAPSE_STATUSBAR);
-  RNA_def_property_ui_text(prop, "Show Status Bar", "Show status bar");
+  RNA_def_property_ui_text(prop, "Show Statusbar", "Show status bar");
   RNA_def_property_update(prop, 0, "rna_Screen_bar_update");
 
   func = RNA_def_function(srna, "statusbar_info", "rna_Screen_statusbar_info_get");
