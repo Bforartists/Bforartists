@@ -375,7 +375,7 @@ class TOPBAR_MT_file(Menu):
 
         if addon_prefs.topbar_file_cbox:
 
-            layout.popover(panel = "BFA_PT_file", text="", icon = "NONE")
+            layout.popover(panel = "TOPBAR_PT_file", text="", icon = "NONE")
 
             ## ------------------ Load / Save sub toolbars
 
@@ -501,7 +501,7 @@ class TOPBAR_MT_file(Menu):
 
 
 ######################################## File Panel ########################################
-class BFA_PT_file(Panel):
+class TOPBAR_PT_file(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
     bl_category = "BTM"
@@ -551,7 +551,7 @@ class TOPBAR_MT_meshedit(Menu):
 
         if addon_prefs.topbar_mesh_cbox:
 
-            layout.popover(panel = "BFA_PT_meshedit", text="", icon = "NONE")
+            layout.popover(panel = "TOPBAR_PT_meshedit", text="", icon = "NONE")
 
             obj = context.object
             if obj is not None:
@@ -669,7 +669,7 @@ class TOPBAR_MT_meshedit(Menu):
 
 
 ######################################## Meshedit Panel ########################################
-class BFA_PT_meshedit(Panel):
+class TOPBAR_PT_meshedit(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
     bl_category = "BTM"
@@ -734,7 +734,7 @@ class TOPBAR_MT_primitives(Menu):
 
         if addon_prefs.topbar_primitives_cbox:
 
-            layout.popover(panel = "BFA_PT_primitives", text="", icon = "NONE")
+            layout.popover(panel = "TOPBAR_PT_primitives", text="", icon = "NONE")
 
             obj = context.object
 
@@ -1064,7 +1064,7 @@ class TOPBAR_MT_primitives(Menu):
 
 
 ######################################## Primitives Panel ########################################
-class BFA_PT_primitives(Panel):
+class TOPBAR_PT_primitives(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
     bl_category = "BTM"
@@ -1132,7 +1132,7 @@ class TOPBAR_MT_image(Menu):
 
         if addon_prefs.topbar_image_cbox:
 
-            layout.popover(panel = "BFA_PT_menu_image", text="", icon = "NONE")
+            layout.popover(panel = "TOPBAR_PT_menu_image", text="", icon = "NONE")
 
             obj = context.active_object
             mode = 'OBJECT' if obj is None else obj.mode
@@ -1212,7 +1212,7 @@ class TOPBAR_MT_image(Menu):
 
 
 ######################################## Image Panel ########################################
-class BFA_PT_menu_image(Panel):
+class TOPBAR_PT_menu_image(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Topbar Image"
@@ -1334,7 +1334,7 @@ class TOPBAR_MT_tools(Menu):
 
         if addon_prefs.topbar_tools_cbox:
 
-            layout.popover(panel = "BFA_PT_tools", text="", icon = "NONE")
+            layout.popover(panel = "TOPBAR_PT_tools", text="", icon = "NONE")
 
             if obj is not None:
 
@@ -1400,7 +1400,7 @@ class TOPBAR_MT_tools(Menu):
                             row = layout.row(align=True)
                             row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
                             row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
-                            row.popover(panel="BFA_PT_normals_autosmooth", text="", icon="NORMAL_SMOOTH")
+                            row.popover(panel="TOPBAR_PT_normals_autosmooth", text="", icon="NORMAL_SMOOTH")
 
                     if addon_prefs.topbar_tools_datatransfer:
 
@@ -1429,7 +1429,7 @@ class TOPBAR_MT_tools(Menu):
 
 
 ######################################## Tools Panel ########################################
-class BFA_PT_tools(Panel):
+class TOPBAR_PT_tools(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Topbar Tools"
@@ -1454,7 +1454,7 @@ class BFA_PT_tools(Panel):
 
 
 ######################################## Autosmooth Panel ########################################
-class BFA_PT_normals_autosmooth(Panel):
+class TOPBAR_PT_normals_autosmooth(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Auto Smooth"
@@ -1523,7 +1523,7 @@ class TOPBAR_MT_animation(Menu):
 
         if addon_prefs.topbar_animation_cbox:
 
-            layout.popover(panel = "BFA_PT_animation", text="", icon = "NONE")
+            layout.popover(panel = "TOPBAR_PT_animation", text="", icon = "NONE")
 
             if addon_prefs.topbar_animation_keyframes:
 
@@ -1622,7 +1622,7 @@ class TOPBAR_MT_animation(Menu):
 
 ######################################## Animation Panel ########################################
 
-class BFA_PT_animation(Panel):
+class TOPBAR_PT_animation(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Topbar Animation"
@@ -1643,7 +1643,7 @@ class BFA_PT_animation(Panel):
         col.prop(addon_prefs, "topbar_animation_keyframetype",toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_animation_keyingset",toggle=addon_prefs.bfa_button_style)
 
-
+'''
 ######################################## Edit Apply Ops ########################################
 class VIEW3D_MT_topbar_object_apply_location(bpy.types.Operator):
     """Applies the current location"""
@@ -1698,7 +1698,7 @@ class VIEW3D_MT_topbar_object_apply_rotscale(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
         return {'FINISHED'}
-
+'''
 
 ######################################## Edit Menu ########################################
 class TOPBAR_MT_edit(Menu):
@@ -1718,7 +1718,7 @@ class TOPBAR_MT_edit(Menu):
 
         if addon_prefs.topbar_edit_cbox:
 
-            layout.popover(panel = "BFA_PT_edit", text="", icon = "NONE")
+            layout.popover(panel = "TOPBAR_PT_edit", text="", icon = "NONE")
 
             if obj is not None:
 
@@ -1768,11 +1768,11 @@ class TOPBAR_MT_edit(Menu):
                     if mode == 'OBJECT':
 
                         row = layout.row(align=True)
-                        row.operator("view3d.topbar_apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
-                        row.operator("view3d.topbar_apply_rotate", text="", icon = "APPLYROTATE")
-                        row.operator("view3d.topbar_apply_scale", text="", icon = "APPLYSCALE")
-                        row.operator("view3d.topbar_apply_all", text="", icon = "APPLYALL")
-                        row.operator("view3d.topbar_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
+                        row.operator("view3d.apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
+                        row.operator("view3d.apply_rotate", text="", icon = "APPLYROTATE")
+                        row.operator("view3d.apply_scale", text="", icon = "APPLYSCALE")
+                        row.operator("view3d.apply_all", text="", icon = "APPLYALL")
+                        row.operator("view3d.apply_rotscale", text="", icon = "APPLY_ROTSCALE")
 
                 if addon_prefs.topbar_edit_objectapply2:
 
@@ -1823,7 +1823,7 @@ class TOPBAR_MT_edit(Menu):
 
 
 ######################################## Edit Panel ########################################
-class BFA_PT_edit(Panel):
+class TOPBAR_PT_edit(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Topbar Edit"
@@ -1881,7 +1881,7 @@ class TOPBAR_MT_misc(Menu):
 
         if addon_prefs.topbar_misc_cbox:
 
-            layout.popover(panel = "BFA_PT_misc", text="", icon = "NONE")
+            layout.popover(panel = "TOPBAR_PT_misc", text="", icon = "NONE")
 
             if addon_prefs.topbar_misc_viewport:
 
@@ -1948,7 +1948,7 @@ class TOPBAR_MT_misc(Menu):
 
 
 ######################################## Misc Panel ########################################
-class BFA_PT_misc(Panel):
+class TOPBAR_PT_misc(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Topbar Misc"
@@ -1977,20 +1977,20 @@ classes = [
     TOPBAR_HT_tool_bar,
     TOPBAR_PT_main,
     TOPBAR_MT_toolbar_type,
-    BFA_PT_file,
-    BFA_PT_meshedit,
-    BFA_PT_primitives,
-    BFA_PT_tools,
-    BFA_PT_animation,
-    BFA_PT_edit,
-    BFA_PT_misc,
-    BFA_PT_normals_autosmooth,
-    BFA_PT_menu_image,
-    VIEW3D_MT_topbar_object_apply_location,
-    VIEW3D_MT_topbar_object_apply_rotate,
-    VIEW3D_MT_topbar_object_apply_scale,
-    VIEW3D_MT_topbar_object_apply_all,
-    VIEW3D_MT_topbar_object_apply_rotscale,
+    TOPBAR_PT_file,
+    TOPBAR_PT_meshedit,
+    TOPBAR_PT_primitives,
+    TOPBAR_PT_tools,
+    TOPBAR_PT_animation,
+    TOPBAR_PT_edit,
+    TOPBAR_PT_misc,
+    TOPBAR_PT_normals_autosmooth,
+    TOPBAR_PT_menu_image,
+    #VIEW3D_MT_topbar_object_apply_location,
+    #VIEW3D_MT_topbar_object_apply_rotate,
+    #VIEW3D_MT_topbar_object_apply_scale,
+    #VIEW3D_MT_topbar_object_apply_all,
+    #VIEW3D_MT_topbar_object_apply_rotscale,
 ]
 
 if __name__ == "__main__":  # only for live edit.
