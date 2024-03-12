@@ -5663,7 +5663,7 @@ class VIEW3D_MT_edit_mesh_faces_data(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.flip_quad_tessellation")
+        layout.operator("mesh.flip_quad_tessellation", icon = "FLIP")
 
         if with_freestyle:
             layout.separator()
