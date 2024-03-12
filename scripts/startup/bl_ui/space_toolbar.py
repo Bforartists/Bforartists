@@ -770,7 +770,7 @@ class TOOLBAR_MT_primitives(Menu):
             if addon_prefs.primitives_gpencil_lineart:
 
                 row = layout.row(align=True)
-                row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LRT_SCENE'
+                row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
                 row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LRT_COLLECTION'
                 row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LRT_OBJECT'
 
@@ -909,9 +909,9 @@ class TOOLBAR_MT_primitives(Menu):
                 if addon_prefs.primitives_gpencil_lineart:
 
                     row = layout.row(align=True)
-                    row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LRT_SCENE'
-                    row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LRT_COLLECTION'
-                    row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LRT_OBJECT'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LINEART_COLLECTION'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LINEART_OBJECT'
 
                 if addon_prefs.primitives_light:
 
@@ -1203,6 +1203,10 @@ class TOOLBAR_MT_image(Menu):
             row = layout.row(align=True)
             row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method='ANGLE_BASED'
             row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method='CONFORMAL'
+            row.operator_context = 'EXEC_REGION_WIN'
+            row.operator("uv.cube_project", text= "",icon = "CUBEPROJECT")
+            row.operator("uv.cylinder_project", text= "",icon = "CYLINDERPROJECT")
+            row.operator("uv.sphere_project", text= "",icon = "SPHEREPROJECT")
 
         if addon_prefs.image_uv_modify:
 

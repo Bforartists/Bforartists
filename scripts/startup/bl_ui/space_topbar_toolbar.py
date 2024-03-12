@@ -9,6 +9,11 @@ user_path = Path(bpy.utils.resource_path('USER')).parent
 local_path = Path(bpy.utils.resource_path('LOCAL')).parent
 
 from bpy.types import Header, Menu, Panel
+from bpy.types import Operator, Scene, AddonPreferences
+from bpy.props import BoolProperty, EnumProperty, IntProperty
+
+import bpy.utils.previews
+
 
 from bpy.app.translations import (
     pgettext_iface as iface_,
@@ -804,9 +809,9 @@ class TOPBAR_MT_primitives(Menu):
                 if addon_prefs.topbar_primitives_gpencil_lineart:
 
                     row = layout.row(align=True)
-                    row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LRT_SCENE'
-                    row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LRT_COLLECTION'
-                    row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LRT_OBJECT'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LINEART_COLLECTION'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LINEART_OBJECT'
 
                 if addon_prefs.topbar_primitives_light:
 
@@ -943,9 +948,9 @@ class TOPBAR_MT_primitives(Menu):
                     if addon_prefs.topbar_primitives_gpencil_lineart:
 
                         row = layout.row(align=True)
-                        row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LRT_SCENE'
-                        row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LRT_COLLECTION'
-                        row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LRT_OBJECT'
+                        row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
+                        row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LINEART_COLLECTION'
+                        row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LINEART_OBJECT'
 
                     if addon_prefs.topbar_primitives_light:
 
@@ -985,9 +990,9 @@ class TOPBAR_MT_primitives(Menu):
                     if addon_prefs.topbar_primitives_lightprobe:
 
                         row = layout.row(align=True)
-                        row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_CUBEMAP').type='CUBEMAP'
-                        row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANAR').type='PLANAR'
-                        row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_GRID').type='GRID'
+                        row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_SPHERE').type='SPHERE'
+                        row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANE').type='PLANE'
+                        row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_VOLUME').type='VOLUME'
 
                     if addon_prefs.topbar_primitives_forcefield:
 
@@ -1165,6 +1170,7 @@ class TOPBAR_MT_image(Menu):
                     row.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
                     row.operator("uv.align", text= "", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
                     row.operator("uv.align", text= "", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+                    row.operator("uv.align_rotation", text= "", icon = "DRIVER_ROTATIONAL_DIFFERENCE")
 
                     # Try to give unique tooltip fails at wrong context issue. It throws an error when you are not in edit mode, have no uv editor open, and there is no mesh selected.
                     # Code remains here for now. Maybe we find a solution at a later point.
@@ -1199,7 +1205,6 @@ class TOPBAR_MT_image(Menu):
                     row = layout.row(align=True)
                     row.operator("uv.weld", text="", icon='WELD')
                     #row.operator("uv.stitch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
-                    #row.operator("uv.minimize_stretch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
                     row.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
 
                     row = layout.row(align=True)
@@ -1209,6 +1214,7 @@ class TOPBAR_MT_image(Menu):
                     sub = row.row()
                     sub.active = (mode == 'EDIT')
                     sub.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
+                    #row.operator("uv.minimize_stretch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
 
 
 ######################################## Image Panel ########################################
@@ -1247,73 +1253,6 @@ class TOPBAR_PT_menu_image(Panel):
             col.prop(addon_prefs, "topbar_image_uv_unwrap")
             col.prop(addon_prefs, "topbar_image_uv_modify")
 
-# special classes to call the rotate functionality in the image editor from the toolbar editor
-# Original operators doesn't work directly from toolbar
-class TOPBAR_MT_image_uv_rotate_clockwise(bpy.types.Operator):
-    """Rotate selected UV geometry clockwise by 90 degrees"""
-    bl_idname = "image.uv_rotate_clockwise"
-    bl_label = "Rotate UV by 90"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        for area in context.screen.areas:
-            if area.type != 'IMAGE_EDITOR':
-                continue
-
-        with context.temp_override(area=area, region=area.regions[0]):
-            bpy.ops.transform.rotate(value = math.pi/2 )
-
-        return {'FINISHED'}
-
-
-class TOPBAR_MT_image_uv_rotate_counterclockwise(bpy.types.Operator):
-    """Rotate selected UV geometry counter clockwise by 90 degrees"""
-    bl_idname = "image.uv_rotate_counterclockwise"
-    bl_label = "Rotate UV by minus 90"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        for area in context.screen.areas:
-            if area.type != 'IMAGE_EDITOR':
-                continue
-
-        with context.temp_override(area=area, region=area.regions[0]):
-            bpy.ops.transform.rotate(value = math.pi/-2 )
-
-        return {'FINISHED'}
-
-
-class TOPBAR_MT_image_uv_mirror_x(bpy.types.Operator):
-    """Mirror selected UV geometry along X axis"""
-    bl_idname = "image.uv_mirror_x"
-    bl_label = "Mirror X"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        for area in context.screen.areas:
-            if area.type != 'IMAGE_EDITOR':
-                continue
-
-        with context.temp_override(area=area, region=area.regions[0]):
-            bpy.ops.transform.mirror(constraint_axis=(True, False, False))
-
-        return {'FINISHED'}
-
-class TOPBAR_MT_image_uv_mirror_y(bpy.types.Operator):
-    """Mirror selected UV geometry along Y axis"""
-    bl_idname = "image.uv_mirror_y"
-    bl_label = "Mirror Y"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        for area in context.screen.areas:
-            if area.type != 'IMAGE_EDITOR':
-                continue
-
-        with context.temp_override(area=area, region=area.regions[0]):
-            bpy.ops.transform.mirror(constraint_axis=(False, True, False))
-
-        return {'FINISHED'}
 
 ######################################## Tools Menu ########################################
 class TOPBAR_MT_tools(Menu):
@@ -1399,8 +1338,8 @@ class TOPBAR_MT_tools(Menu):
 
                             row = layout.row(align=True)
                             row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
+                            row.operator("object.shade_smooth_by_angle", icon="NORMAL_SMOOTH", text="")
                             row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
-                            row.popover(panel="TOPBAR_PT_normals_autosmooth", text="", icon="NORMAL_SMOOTH")
 
                     if addon_prefs.topbar_tools_datatransfer:
 
@@ -1769,11 +1708,11 @@ class TOPBAR_MT_edit(Menu):
                     if mode == 'OBJECT':
 
                         row = layout.row(align=True)
-                        row.operator("view3d.apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
-                        row.operator("view3d.apply_rotate", text="", icon = "APPLYROTATE")
-                        row.operator("view3d.apply_scale", text="", icon = "APPLYSCALE")
-                        row.operator("view3d.apply_all", text="", icon = "APPLYALL")
-                        row.operator("view3d.apply_rotscale", text="", icon = "APPLY_ROTSCALE")
+                        row.operator("view3d.tb_apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
+                        row.operator("view3d.tb_apply_rotate", text="", icon = "APPLYROTATE")
+                        row.operator("view3d.tb_apply_scale", text="", icon = "APPLYSCALE")
+                        row.operator("view3d.tb_apply_all", text="", icon = "APPLYALL")
+                        row.operator("view3d.tb_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
 
                 if addon_prefs.topbar_edit_objectapply2:
 
@@ -1861,6 +1800,7 @@ class TOPBAR_PT_edit(Panel):
                 col.prop(addon_prefs, "topbar_edit_objectapply",toggle=addon_prefs.bfa_button_style)
                 col.prop(addon_prefs, "topbar_edit_objectapply2",toggle=addon_prefs.bfa_button_style)
                 col.prop(addon_prefs, "topbar_edit_objectapplydeltas",toggle=addon_prefs.bfa_button_style)
+                col.prop(addon_prefs, "topbar_edit_objectclear",toggle=addon_prefs.bfa_button_style)
 
 
 ######################################## Misc Menu ########################################
