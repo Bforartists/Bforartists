@@ -336,7 +336,7 @@
           <ThemeWidgetColors
             outline="#000000ff"
             inner="#333333ff"
-            inner_sel="#5680c2ff"
+            inner_sel="#4d6b99ff"
             item="#2d2d2dff"
             text="#a4a4a4"
             text_sel="#ffffff"
@@ -1290,20 +1290,20 @@
       <ThemeTopBar>
         <space>
           <ThemeSpaceGeneric
-            back="#404040"
+            back="#333333"
             title="#ffffff"
             text="#ffffff"
             text_hi="#ffffff"
             header="#232323ff"
             header_text="#eeeeee"
             header_text_hi="#ffffff"
-            button="#424242ff"
+            button="#202020ff"
             button_title="#ffffff"
             button_text="#e5e5e5"
             button_text_hi="#ffffff"
             navigation_bar="#232323ff"
             execution_buts="#232323ff"
-            tab_active="#5680c2"
+            tab_active="#4d6b99"
             tab_inactive="#424242"
             tab_back="#333333ff"
             tab_outline="#2d2d2dff"

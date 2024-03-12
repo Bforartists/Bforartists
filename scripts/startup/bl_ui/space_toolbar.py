@@ -170,7 +170,7 @@ class TOOLBAR_PT_type(Panel):
         row.operator("screen.header_toolbar_misc", text = "Misc")
 
         col = layout.column()
-        col.label( text = "Options:")
+        col.label( text = "Extra Options:")
         row = layout.row()
         row.separator()
         row.prop(addon_prefs, "toolbar_show_quicktoggle")
