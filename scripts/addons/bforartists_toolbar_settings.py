@@ -305,7 +305,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     bfa_button_style: BoolProperty(name='Checkerbox/Button Toggle', description='Switch between Checkerbox or Button Type', default=False)
 
     # Toolbar Options
-    topbar_show_quicktoggle : BoolProperty(name="Show Topbar Quick Toggle", default = False, description = "Show the quick toggle buttons in the topbar")
+    topbar_show_quicktoggle : BoolProperty(name="Show Topbar Quick Toggle", default = False, description = "Show the quick toggle buttons per type in the topbar")
     toolbar_show_quicktoggle : BoolProperty(name="Show Toolbar Quick Toggle", default = False, description = "Show the quick toggle buttons in the toolbar editor")
 
     # NLA Editor, switch tweak methods
