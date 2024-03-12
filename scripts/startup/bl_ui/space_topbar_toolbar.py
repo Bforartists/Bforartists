@@ -154,7 +154,7 @@ class TOPBAR_PT_main(Panel):
         row = box.row()
         row.alignment = 'Center'.upper()
 
-        row.label(text='Main')
+        row.label(text='Types', icon='DOWNARROW_HLT')
         row = box.grid_flow(columns=col_amount, align=True)
         row.prop(addon_prefs, "topbar_file_cbox", toggle=True)
         row.prop(addon_prefs, "topbar_mesh_cbox", toggle=True)
@@ -170,14 +170,14 @@ class TOPBAR_PT_main(Panel):
         row = box.row()
         row.alignment = 'Center'.upper()
 
-        row.label(text='Options')
+        row.label(text='Options', icon="RIGHTARROW")
         row = box.grid_flow(columns=col_amount, align=True)
         row.prop(addon_prefs, 'bfa_topbar_types', text='Types', icon="NONE", emboss=True, expand=True)
 
         box = layout.box()
         row = box.row(heading='', align=False)
         row.alignment = 'Center'.upper()
-        row.label(text='Hide / Show')
+        row.label(text='Show / Hide Toolbars')
 
         if (addon_prefs.bfa_topbar_types == 'Files'):
             if addon_prefs.topbar_file_cbox:
