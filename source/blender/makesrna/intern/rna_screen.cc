@@ -778,7 +778,7 @@ static void rna_def_screen(BlenderRNA *brna)
    /* BFA Top Bar. */
   prop = RNA_def_property(srna, "show_bfa_topbar", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SCREEN_BFA_TOP_BAR);
-  RNA_def_property_ui_text(prop, "Show Top Bar", "Show/Hide the customizable Topbar");
+  RNA_def_property_ui_text(prop, "Show Top Bar Toolbar", "Show/Hide the customizable Top Bar Toolbar");
   RNA_def_property_update(prop, 0, "rna_Screen_bar_update");
 
   /* Status Bar. */
