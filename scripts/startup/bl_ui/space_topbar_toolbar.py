@@ -92,7 +92,7 @@ class TOPBAR_HT_tool_bar(Header):
             TOPBAR_MT_misc.hide_misc_topbar(context, layout)
 
 
-######################################## Main ########################################
+######################################## Main (Options) ########################################
 class TOPBAR_PT_main(Panel):
     bl_label = 'Topbar Manager'
     bl_idname = 'TOPBAR_PT_main'
@@ -1643,6 +1643,7 @@ class TOPBAR_PT_animation(Panel):
         col.prop(addon_prefs, "topbar_animation_keyframetype",toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_animation_keyingset",toggle=addon_prefs.bfa_button_style)
 
+# BFA - removed as redundant, operators exist in space_toolbar.py
 '''
 ######################################## Edit Apply Ops ########################################
 class VIEW3D_MT_topbar_object_apply_location(bpy.types.Operator):
