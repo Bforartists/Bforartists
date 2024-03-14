@@ -30,7 +30,7 @@ class ANIM_OT_switch_editors_in_nla(bpy.types.Operator):
 
 
 class NLA_HT_header(Header):
-    bl_space_type = "NLA_EDITOR"
+    bl_space_type = 'NLA_EDITOR'
 
     def draw(self, context):
         layout = self.layout
@@ -610,6 +610,5 @@ classes = (
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
-
     for cls in classes:
         register_class(cls)
