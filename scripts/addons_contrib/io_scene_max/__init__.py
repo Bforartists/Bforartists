@@ -66,26 +66,13 @@ class Import_max(bpy.types.Operator, ImportHelper):
         default=False,
     )
 
-    @classmethod
-    def poll(cls, context):
-        return (context.area and context.area.type == "VIEW_3D")
-
     def execute(self, context):
         from . import import_max
-        if not self.filepath or not self.filepath.endswith(".max"):
-            return {'CANCELLED'}
-
         keywords = self.as_keywords(ignore=("axis_forward", "axis_up", "filter_glob"))
         global_matrix = axis_conversion(from_forward=self.axis_forward, from_up=self.axis_up,).to_4x4()
         keywords["global_matrix"] = global_matrix
 
         return import_max.load(self, context, **keywords)
-
-    def invoke(self, context, event):
-        if self.filepath:
-            return self.execute(context)
-        context.window_manager.fileselect_add(self)
-        return {'RUNNING_MODAL'}
 
     def draw(self, context):
         pass
