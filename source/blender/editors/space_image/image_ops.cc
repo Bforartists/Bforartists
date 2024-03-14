@@ -1107,7 +1107,7 @@ void IMAGE_OT_view_zoom_out(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Zoom Out";
   ot->idname = "IMAGE_OT_view_zoom_out";
-  ot->description = "Zoom out the image";
+  ot->description = "Zoom out the image (centered around 2D cursor)";
 
   /* api callbacks */
   ot->invoke = image_view_zoom_out_invoke;
@@ -2661,7 +2661,6 @@ static void image_new_draw(bContext * /*C*/, wmOperator *op)
 
   /* copy of WM_operator_props_dialog_popup() layout */
 
-  /*bfa - new image dialog in uv editor*/
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, false);
 
@@ -2711,7 +2710,8 @@ void IMAGE_OT_new(wmOperatorType *ot)
   ot->flag = OPTYPE_UNDO;
 
   /* properties */
-  RNA_def_string(ot->srna, "name", IMA_DEF_NAME, MAX_ID_NAME - 2, "Name", "Image name");
+  ot->prop = RNA_def_string(
+      ot->srna, "name", IMA_DEF_NAME, MAX_ID_NAME - 2, "Name", "Image name");
   prop = RNA_def_int(ot->srna, "width", 1024, 1, INT_MAX, "Width", "Image width", 1, 16384);
   RNA_def_property_subtype(prop, PROP_PIXEL);
   prop = RNA_def_int(ot->srna, "height", 1024, 1, INT_MAX, "Height", "Image height", 1, 16384);
@@ -4072,10 +4072,7 @@ void IMAGE_OT_clear_render_border(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Render Region";
-  ot->description =
-      "Removes an existing Render Region rectangle";  // Short, pregnant, working. And
-                                                      // UNDERSTANDABLE! That's how a tooltip
-                                                      // should look like.
+  ot->description = "Removes an existing Render Region rectangle";  // BFA
   ot->idname = "IMAGE_OT_clear_render_border";
 
   /* api callbacks */
