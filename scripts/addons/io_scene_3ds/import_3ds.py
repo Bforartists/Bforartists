@@ -1671,10 +1671,12 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, UNITS=False, IMAGE_SEARCH=True,
     object_dictionary.clear()
     object_matrix.clear()
 
+    """
     if APPLY_MATRIX:
         for ob in imported_objects:
             if ob.type == 'MESH':
                 ob.data.transform(ob.matrix_local.inverted())
+    """
 
     if UNITS:
         unit_mtx = mathutils.Matrix.Scale(MEASURE,4)
@@ -1768,11 +1770,12 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, UNITS=False, IMAGE_SEARCH=True,
     file.close()
 
 
-def load(operator, context, filepath="", constrain_size=0.0, use_scene_unit=False,
+def load(operator, context, files=None, directory="", filepath="", constrain_size=0.0, use_scene_unit=False,
          use_image_search=True, object_filter=None, use_world_matrix=False, use_keyframes=True,
          use_apply_transform=True, global_matrix=None, use_cursor=False, use_center_pivot=False):
 
-    load_3ds(filepath, context, CONSTRAIN=constrain_size, UNITS=use_scene_unit,
+    for f in files:
+        load_3ds(os.path.join(directory, f.name), context, CONSTRAIN=constrain_size, UNITS=use_scene_unit,
              IMAGE_SEARCH=use_image_search, FILTER=object_filter, WORLD_MATRIX=use_world_matrix, KEYFRAME=use_keyframes,
              APPLY_MATRIX=use_apply_transform, CONVERSE=global_matrix, CURSOR=use_cursor, PIVOT=use_center_pivot,)
 
