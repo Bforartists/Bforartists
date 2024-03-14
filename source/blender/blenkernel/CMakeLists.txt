@@ -55,6 +55,7 @@ set(SRC
   intern/anim_path.cc
   intern/anim_sys.cc
   intern/anim_visualization.cc
+  intern/animation.cc
   intern/anonymous_attribute_id.cc
   intern/appdir.cc
   intern/armature.cc
@@ -68,13 +69,14 @@ set(SRC
   intern/attribute_access.cc
   intern/attribute_math.cc
   intern/autoexec.cc
-  intern/bake_geometry_nodes_modifier.cc
   intern/bake_data_block_map.cc
+  intern/bake_geometry_nodes_modifier.cc
   intern/bake_items.cc
   intern/bake_items_paths.cc
   intern/bake_items_serialize.cc
   intern/bake_items_socket.cc
   intern/blender.cc
+  intern/blender_cli_command.cc
   intern/blender_copybuffer.cc
   intern/blender_undo.cc
   intern/blender_user_menu.cc
@@ -327,6 +329,7 @@ set(SRC
   BKE_anim_data.hh
   BKE_anim_path.h
   BKE_anim_visualization.h
+  BKE_animation.hh
   BKE_animsys.h
   BKE_anonymous_attribute_id.hh
   BKE_appdir.hh
@@ -336,13 +339,14 @@ set(SRC
   BKE_attribute.hh
   BKE_attribute_math.hh
   BKE_autoexec.hh
-  BKE_bake_geometry_nodes_modifier.hh
   BKE_bake_data_block_map.hh
+  BKE_bake_geometry_nodes_modifier.hh
   BKE_bake_items.hh
   BKE_bake_items_paths.hh
   BKE_bake_items_serialize.hh
   BKE_bake_items_socket.hh
   BKE_blender.hh
+  BKE_blender_cli_command.hh
   BKE_blender_copybuffer.hh
   BKE_blender_undo.hh
   BKE_blender_user_menu.hh
@@ -390,7 +394,7 @@ set(SRC
   BKE_editmesh_cache.hh
   BKE_editmesh_tangent.hh
   BKE_effect.h
-  BKE_fcurve.h
+  BKE_fcurve.hh
   BKE_fcurve_driver.h
   BKE_file_handler.hh
   BKE_fluid.h
