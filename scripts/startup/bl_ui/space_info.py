@@ -13,7 +13,7 @@ class INFO_HT_header(Header):
     def draw(self, context):
         layout = self.layout
 
-        ALL_MT_editormenu_info.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
+        ALL_MT_editormenu_info.draw_hidden(context, layout)  # BFA - show hide the editormenu, editor suffix is needed.
         INFO_MT_editor_menus.draw_collapsible(context, layout)
 
 
@@ -64,7 +64,7 @@ class INFO_MT_info(Menu):
         layout.operator("info.report_copy", text="Copy", icon='COPYDOWN')
 
 
-# bfa - show hide the editormenu, editor suffix is needed.
+# BFA - show hide the editormenu, editor suffix is needed.
 class ALL_MT_editormenu_info(Menu):
     bl_label = ""
 
@@ -85,6 +85,10 @@ class INFO_MT_area(Menu):
     def draw(self, context):
         layout = self.layout
 
+        if context.space_data.type == 'VIEW_3D':
+            layout.operator("screen.region_quadview")
+            layout.separator()
+            
         layout.operator("screen.area_split", icon="SPLIT_HORIZONTAL", text="Horizontal Split").direction = 'HORIZONTAL'
         layout.operator("screen.area_split", icon="SPLIT_VERTICAL", text="Vertical Split").direction = 'VERTICAL'
 
@@ -99,6 +103,7 @@ class INFO_MT_area(Menu):
             "screen.screen_full_area",
             text="Toggle Fullscreen Area",
             icon='FULLSCREEN_ENTER').use_hide_panels = True
+		layout.operator("screen.area_dupli") # BFA - wip
 
         layout.separator()
 

@@ -674,7 +674,7 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
         return t->data_type == &TransConvertType_Tracking;
       }
       if (value == TFM_MODAL_VERT_EDGE_SLIDE &&
-          (t->data_type != &TransConvertType_Mesh ||
+          (!ELEM(t->data_type, &TransConvertType_Mesh, &TransConvertType_MeshUV) ||
            /* WORKAROUND: Avoid repeated keys in status bar.
             *
             * Previously, `Vert/Edge Slide` and `Move` were triggered by the same modal key.
@@ -710,7 +710,7 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
     case TFM_MODAL_EDIT_SNAP_SOURCE_OFF:
       return false;
     case TFM_MODAL_EDIT_SNAP_SOURCE_ON: {
-      if (t->spacetype != SPACE_VIEW3D) {
+      if (!ELEM(t->spacetype, SPACE_VIEW3D, SPACE_IMAGE)) {
         return false;
       }
       if (!ELEM(
@@ -1311,15 +1311,7 @@ int transformEvent(TransInfo *t, const wmEvent *event)
         }
         else if (event->prev_val == KM_PRESS) {
           t->modifiers |= MOD_PRECISION;
-          /* If we are already in a snapping mode, we don't want to add mouse precision,
-           * it makes things like rotate snap really tedious. */
-          if (t->modifiers & (MOD_SNAP | MOD_SNAP_INVERT)) {
-            t->mouse.precision = false;
-          }
-          else {
-            /* Shift is modifier for higher precision transform. */
-            t->mouse.precision = true;
-          }
+          t->mouse.precision = true;
 
           t->redraw |= TREDRAW_HARD;
         }
@@ -1386,7 +1378,7 @@ int transformEvent(TransInfo *t, const wmEvent *event)
         break;
       case EVT_LEFTALTKEY:
       case EVT_RIGHTALTKEY:
-        if (ELEM(t->spacetype, SPACE_SEQ, SPACE_VIEW3D)) {
+        if (ELEM(t->spacetype, SPACE_SEQ, SPACE_VIEW3D, SPACE_IMAGE)) {
           t->flag |= T_ALT_TRANSFORM;
           t->redraw |= TREDRAW_HARD;
           handled = true;
@@ -1403,8 +1395,8 @@ int transformEvent(TransInfo *t, const wmEvent *event)
     switch (event->type) {
       case EVT_LEFTALTKEY:
       case EVT_RIGHTALTKEY:
-        /* TODO: Modal Map. */
-        if (ELEM(t->spacetype, SPACE_SEQ, SPACE_VIEW3D)) {
+        /* TODO: Modal Map */
+        if (ELEM(t->spacetype, SPACE_SEQ, SPACE_VIEW3D, SPACE_IMAGE)) {
           t->flag &= ~T_ALT_TRANSFORM;
           t->redraw |= TREDRAW_HARD;
           handled = true;
