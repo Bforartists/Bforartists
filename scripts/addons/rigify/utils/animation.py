@@ -94,8 +94,6 @@ def get_keying_flags(context):
     # Not adding INSERTKEY_VISUAL
     if prefs.edit.use_keyframe_insert_needed:
         flags.add('INSERTKEY_NEEDED')
-    if prefs.edit.use_insertkey_xyz_to_rgb:
-        flags.add('INSERTKEY_XYZ_TO_RGB')
     if ts.use_keyframe_cycle_aware:
         flags.add('INSERTKEY_CYCLE_AWARE')
     return flags
