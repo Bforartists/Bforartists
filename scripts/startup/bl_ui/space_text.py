@@ -20,7 +20,7 @@ class TEXT_HT_header(Header):
         text = st.text
         is_syntax_highlight_supported = st.is_syntax_highlight_supported()
 
-        ALL_MT_editormenu_text.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
+        ALL_MT_editormenu_text.draw_hidden(context, layout) # BFA - show hide the editormenu, editor suffix is needed.
         TEXT_MT_editor_menus.draw_collapsible(context, layout)
 
         row = layout.row(align=True)
@@ -30,8 +30,7 @@ class TEXT_HT_header(Header):
             row.operator("text.resolve_conflict", text="", icon='HELP')
 
         row = layout.row(align=True)
-        row.template_ID(st, "text", new="text.new",
-                        unlink="text.unlink", open="text.open")
+        row.template_ID(st, "text", new="text.new", unlink="text.unlink", open="text.open")
 
         if text:
             text_name = text.name
@@ -39,8 +38,7 @@ class TEXT_HT_header(Header):
 
             row = layout.row()
             if is_osl:
-                row = layout.row()
-                row.operator("node.shader_script_update")
+                row.operator("node.shader_script_update", text="", icon='FILE_REFRESH')
             else:
 
                 row = layout.row()
@@ -92,7 +90,7 @@ class TEXT_HT_footer(Header):
                 )
 
 
-# bfa - show hide the editormenu, editor suffix is needed.
+# BFA - show hide the editormenu, editor suffix is needed.
 class ALL_MT_editormenu_text(Menu):
     bl_label = ""
 
@@ -199,13 +197,12 @@ class TEXT_PT_find(Panel):
         row = layout.row(align=True)
         if not st.text:
             row.active = False
-        row.prop(st, "use_match_case", text="Case",
-                 text_ctxt=i18n_contexts.id_text, toggle=True)
-        row.prop(st, "use_find_wrap", text="Wrap",
-                 text_ctxt=i18n_contexts.id_text, toggle=True)
+        row.prop(st, "use_match_case", text="Case", text_ctxt=i18n_contexts.id_text, toggle=True)
+        row.prop(st, "use_find_wrap", text="Wrap", text_ctxt=i18n_contexts.id_text, toggle=True)
         row.prop(st, "use_find_all", text="All", toggle=True)
 
 
+# BFA - not used, exposed to top level
 class TEXT_MT_view(Menu):
     bl_label = "View"
 
@@ -256,9 +253,8 @@ class TEXT_MT_text(Menu):
         st = context.space_data
         text = st.text
 
-        layout.operator("text.new", text = "New Text",
-                        text_ctxt=i18n_contexts.id_text, icon='NEW')
-        layout.operator("text.open", text = "Open Text", icon='FILE_FOLDER')
+        layout.operator("text.new", text="New", text_ctxt=i18n_contexts.id_text, icon='NEW')
+        layout.operator("text.open", text="Open", icon='FILE_FOLDER')
 
         if text:
             layout.separator()
@@ -292,6 +288,7 @@ class TEXT_MT_text(Menu):
 
         layout.operator("screen.spacedata_cleanup", icon = "APPTEMPLATE")
         layout.operator("wm.memory_statistics", icon = "SYSTEM")
+        layout.operator("wm.operator_presets_cleanup", icon = "CLEAN_CHANNELS")
 
 
 class TEXT_MT_templates_py(Menu):
@@ -327,6 +324,7 @@ class TEXT_MT_templates(Menu):
         layout.menu("TEXT_MT_templates_osl")
 
 
+# BFA - 
 class TEXT_MT_format(Menu):
     bl_label = "Format"
 
@@ -348,14 +346,6 @@ class TEXT_MT_format(Menu):
         layout.operator("text.convert_whitespace", text = "Whitespace to Tabs", icon = "WHITESPACE_TABS").type = 'TABS'
 
 
-class TEXT_MT_edit_to3d(Menu):
-    bl_label = "Text to 3D Object"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("text.to_3d_object", text="One Object", icon = "OUTLINER_OB_FONT").split_lines = False
-        layout.operator("text.to_3d_object",text="One Object Per Line", icon = "OUTLINER_OB_FONT").split_lines = True
 
 
 class TEXT_MT_edit(Menu):
@@ -391,6 +381,7 @@ class TEXT_MT_edit(Menu):
 
         layout.operator("text.select_all", icon = "SELECT_ALL")
         layout.operator("text.select_line", icon = "SELECT_LINE")
+        layout.operator("text.select_word", text="Word", icon = "RESTRICT_SELECT_OFF")
 
         layout.separator()
 
@@ -406,23 +397,47 @@ class TEXT_MT_edit(Menu):
 
         layout.menu("TEXT_MT_edit_to3d")
 
+class TEXT_MT_edit_to3d(Menu):
+    bl_label = "Text to 3D Object"
 
-# move_select submenu
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("text.to_3d_object", text="One Object", icon = "OUTLINER_OB_FONT").split_lines = False
+        layout.operator("text.to_3d_object",text="One Object Per Line", icon = "OUTLINER_OB_FONT").split_lines = True
+
+# BFA - move_select submenu
 class TEXT_MT_edit_move_select(Menu):
     bl_label = "Select Text"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("text.move_select", text = "Line End", icon = "HAND").type = 'LINE_END'
-        layout.operator("text.move_select", text = "Line Begin", icon = "HAND").type = 'LINE_BEGIN'
-        layout.operator("text.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
-        layout.operator("text.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
-        layout.operator("text.move_select", text = "Previous Word", icon = "HAND").type = 'PREVIOUS_WORD'
-        layout.operator("text.move_select", text = "Next Word", icon = "HAND").type = 'NEXT_WORD'
-        layout.operator("text.move_select", text = "Previous Line", icon = "HAND").type = 'PREVIOUS_LINE'
-        layout.operator("text.move_select", text = "Next Line", icon = "HAND").type = 'NEXT_LINE'
 
+		# BFA - located in Select menu
+        #layout.operator("text.select_all", text="All", icon = "HAND")
+        #layout.operator("text.select_line", text="Line", icon = "HAND")
+        #layout.operator("text.select_word", text="Word", icon = "HAND")
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Top", icon = "HAND").type = 'FILE_TOP'
+        layout.operator("text.move_select", text="Bottom", icon = "HAND").type = 'FILE_BOTTOM'
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Line Begin", icon = "HAND").type = 'LINE_BEGIN'
+        layout.operator("text.move_select", text="Line End", icon = "HAND").type = 'LINE_END'
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Previous Line", icon = "HAND").type = 'PREVIOUS_LINE'
+        layout.operator("text.move_select", text="Next Line", icon = "HAND").type = 'NEXT_LINE'
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Previous Word", icon = "HAND").type = 'PREVIOUS_WORD'
+        layout.operator("text.move_select", text="Next Word", icon = "HAND").type = 'NEXT_WORD'
 
 class TEXT_MT_context_menu(Menu):
     bl_label = ""
@@ -435,6 +450,7 @@ class TEXT_MT_context_menu(Menu):
         layout.operator("text.cut", icon = "CUT")
         layout.operator("text.copy", icon = "COPYDOWN")
         layout.operator("text.paste", icon = "PASTEDOWN")
+        layout.operator("text.duplicate_line", icon="DUPLICATE")
 
         layout.separator()
 
@@ -481,9 +497,9 @@ classes = (
     TEXT_MT_templates_py,
     TEXT_MT_templates_osl,
     TEXT_MT_format,
-    TEXT_MT_edit_to3d,
     TEXT_MT_context_menu,
     TEXT_MT_edit,
+    TEXT_MT_edit_to3d,
     TEXT_MT_edit_move_select,
     TEXT_MT_edit_delete,
 )
