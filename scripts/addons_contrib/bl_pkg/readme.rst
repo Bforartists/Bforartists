@@ -80,7 +80,7 @@ The simple way to get started is by creating a dummy asset library.
       --repo-dir=/path/to/host/my/repo/files \
       --package-names="blue,red,green,purple,orange"
 
-This will populate the directory specified as ``--repo-dir`` with dummy assets packages (``.txz``),
+This will populate the directory specified as ``--repo-dir`` with dummy assets packages (``.zip``),
 and an index (``bl_ext_repo.json``).
 
 
@@ -91,24 +91,24 @@ First you need to create individual packages for the individual extension:
 
 - Go to the directory of the extension you want to package.
 - Create a ``bl_ext_pkg.toml`` file with your configuration.
-- Run the command ``blender_ext.py pkg-build``.
+- Run the command ``blender_ext.py build``.
 
 You can look at an example of a dummy extension in the ``example_extension`` directory.
 
 .. code-block::
 
    cd ./example_extension
-   ../blender_addon/bl_pkg/cli/blender_ext.py pkg-build
+   ../blender_addon/bl_pkg/cli/blender_ext.py build
 
-This will create a ``my_example_package.txz`` (as specified in the .toml file).
+This will create a ``my_example_package.zip`` (as specified in the .toml file).
 
-Now you can move all your ``*.txz`` packages to where they will be hosted in the server.
+Now you can move all your ``*.zip`` packages to where they will be hosted in the server.
 The final step is to create an index file to serve all your packages.
 
 .. code-block::
 
    mkdir -p /path/to/host/my/repo/files
-   cp ./example_extension/my_example_package.txz /path/to/host/my/repo/files
+   cp ./example_extension/my_example_package.zip /path/to/host/my/repo/files
    ./blender_addon/bl_pkg/cli/blender_ext.py server-generate --repo-dir /path/to/host/my/repo/files
 
 This will generate a new file ``bl_ext_repo.json`` in your repository directory.
@@ -127,9 +127,9 @@ Add-ons packaged as extensions must use relative imports when importing its own 
 This is a requirement of Python module name-spacing.
 
 
-Requirement: Blender 4.1
+Requirement: Blender 4.2
 ========================
 
 This add-on requires an yet-to-be released version of Blender.
 
-You can download a `daily build <https://builder.blender.org>`__ of Blender 4.1 for testing and development purposes.
+You can download a `daily build <https://builder.blender.org>`__ of Blender 4.2 for testing and development purposes.

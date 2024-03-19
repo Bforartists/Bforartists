@@ -256,7 +256,7 @@ class TOPBAR_MT_file_cleanup(Menu):
         props.do_linked_ids = False
         props.do_recursive = True
 
-		layout.separator()
+        layout.separator()
 		
         layout.operator("outliner.orphans_manage", text="Manage Unused Data")
 
@@ -423,7 +423,7 @@ class TOPBAR_MT_file_defaults(Menu):
                 text=iface_(bpy.path.display_name(app_template, has_ext=False),
                             i18n_contexts.id_workspace), translate=False)
 
-        layout.operator("wm.save_homefile", icon='SAVE_PREFS'))
+        layout.operator("wm.save_homefile", icon='SAVE_PREFS')
         if app_template:
             display_name = bpy.path.display_name(iface_(app_template))
             props = layout.operator("wm.read_factory_settings", text="Load Factory Blender Settings", icon="LOAD_FACTORY")
