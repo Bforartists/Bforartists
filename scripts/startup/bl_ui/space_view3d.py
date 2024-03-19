@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # BFA NOTE: For this document in merges, it is best to preserve the
 # Bforartists one and compare the old Blender version with the new to see
-# what changed.
+# what changed. 
+# Once you compare Blender changes with an old version, splice it in manually.
 import bpy
 from bpy.types import (
     Header,
