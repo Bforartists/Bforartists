@@ -103,7 +103,6 @@ class INFO_MT_area(Menu):
             "screen.screen_full_area",
             text="Toggle Fullscreen Area",
             icon='FULLSCREEN_ENTER').use_hide_panels = True
-		layout.operator("screen.area_dupli") # BFA - wip
 
         layout.separator()
 
