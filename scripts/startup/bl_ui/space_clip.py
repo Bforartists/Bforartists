@@ -476,7 +476,7 @@ class CLIP_PT_tools_clip(Panel):
         col = layout.column(align=True)
         col.operator("clip.set_scene_frames", icon="SET_FRAMES")
         row = col.row(align=True)
-        row.operator("clip.prefetch", text="Prefetch", icon="PREFETCH)
+        row.operator("clip.prefetch", text="Prefetch", icon="PREFETCH")
         row.operator("clip.reload", text="Reload", icon="FILE_REFRESH")
 
 

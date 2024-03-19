@@ -1839,6 +1839,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                     # If Bump add bump node in between
                     bump_node_texture = nodes.new(type='ShaderNodeTexImage')
                     img = bpy.data.images.load(path.join(import_path, sname[2]))
+                    img.colorspace_settings.is_data = True
                     bump_node_texture.image = img
                     bump_node_texture.label = 'Bump'
 
@@ -1857,6 +1858,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                     # If Normal add normal node in between
                     normal_node_texture = nodes.new(type='ShaderNodeTexImage')
                     img = bpy.data.images.load(path.join(import_path, sname[2]))
+                    img.colorspace_settings.is_data = True
                     normal_node_texture.image = img
                     normal_node_texture.label = 'Normal'
 
