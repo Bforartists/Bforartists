@@ -54,24 +54,22 @@ FilmSample film_sample_get(int sample_n, ivec2 texel_film)
    * reprojecting the incoming pixel data into film pixel space. */
 #else
 
-#  ifdef SCALED_RENDERING
-  texel_film /= uniform_buf.film.scaling_factor;
-#  endif
-
   FilmSample film_sample = uniform_buf.film.samples[sample_n];
-  film_sample.texel += texel_film + uniform_buf.film.render_offset;
+  film_sample.texel += (texel_film / scaling_factor) + uniform_buf.film.render_offset;
   /* Use extend on borders. */
   film_sample.texel = clamp(film_sample.texel, ivec2(0, 0), uniform_buf.film.render_extent - 1);
 
   /* TODO(fclem): Panoramic projection will need to compute the sample weight in the shader
    * instead of precomputing it on CPU. */
-#  ifdef SCALED_RENDERING
-  /* We need to compute the real distance and weight since a sample
-   * can be used by many final pixel. */
-  vec2 offset = uniform_buf.film.subpixel_offset -
-                vec2(texel_film % uniform_buf.film.scaling_factor);
-  film_sample.weight = film_filter_weight(uniform_buf.film.filter_size, length_squared(offset));
-#  endif
+  if (scaling_factor > 1) {
+    /* We need to compute the real distance and weight since a sample
+     * can be used by many final pixel. */
+    vec2 offset = (vec2(film_sample.texel) + 0.5 - uniform_buf.film.subpixel_offset) *
+                      scaling_factor -
+                  (vec2(texel_film) + 0.5);
+    film_sample.weight = film_filter_weight(uniform_buf.film.filter_radius,
+                                            length_squared(offset));
+  }
 
 #endif /* PANORAMIC */
 
@@ -84,13 +82,14 @@ FilmSample film_sample_get(int sample_n, ivec2 texel_film)
 /* Returns the combined weights of all samples affecting this film pixel. */
 float film_weight_accumulation(ivec2 texel_film)
 {
-#if 0 /* TODO(fclem): Reference implementation, also needed for panoramic cameras. */
-  float weight = 0.0;
-  for (int i = 0; i < uniform_buf.film.samples_len; i++) {
-    weight += film_sample_get(i, texel_film).weight;
+  /* TODO(fclem): Reference implementation, also needed for panoramic cameras. */
+  if (scaling_factor > 1) {
+    float weight = 0.0;
+    for (int i = 0; i < uniform_buf.film.samples_len; i++) {
+      weight += film_sample_get(i, texel_film).weight;
+    }
+    return weight;
   }
-  return weight;
-#endif
   return uniform_buf.film.samples_weight_total;
 }
 
@@ -143,17 +142,10 @@ void film_sample_accum_combined(FilmSample samp, inout vec4 accum, inout float w
   weight_accum += weight;
 }
 
-#ifdef GPU_METAL
-void film_sample_cryptomatte_accum(FilmSample samp,
-                                   int layer,
-                                   sampler2D tex,
-                                   thread vec2 *crypto_samples)
-#else
 void film_sample_cryptomatte_accum(FilmSample samp,
                                    int layer,
                                    sampler2D tex,
                                    inout vec2 crypto_samples[4])
-#endif
 {
   float hash = texelFetch(tex, samp.texel, 0)[layer];
   /* Find existing entry. */
@@ -248,11 +240,7 @@ vec2 film_pixel_history_motion_vector(ivec2 texel_sample)
 /* \a t is inter-pixel position. 0 means perfectly on a pixel center.
  * Returns weights in both dimensions.
  * Multiply each dimension weights to get final pixel weights. */
-#ifdef GPU_METAL
-void film_get_catmull_rom_weights(vec2 t, thread vec2 *weights)
-#else
 void film_get_catmull_rom_weights(vec2 t, out vec2 weights[4])
-#endif
 {
   vec2 t2 = t * t;
   vec2 t3 = t2 * t;
