@@ -2299,7 +2299,7 @@ scale_average
 set_time
 set_selection
 view_graph
-#~ DEF_ICON_BLANK(2319)
+internet
 #~ DEF_ICON_BLANK(2320)
 #~ DEF_ICON_BLANK(2321)
 #~ DEF_ICON_BLANK(2322)
@@ -2566,6 +2566,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.sculpt.color_filter
   ops.sculpt.face_set_edit
   ops.sculpt.lasso_face_set
+  ops.sculpt.lasso_hide
   ops.sculpt.lasso_mask
   ops.sculpt.lasso_trim
   ops.sculpt.line_mask
