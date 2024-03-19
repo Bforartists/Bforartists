@@ -2887,6 +2887,16 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     }
   }
 
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 401, 21)) {
+    LISTBASE_FOREACH (Brush *, brush, &bmain->brushes) {
+      /* The `sculpt_flag` was used to store the `BRUSH_DIR_IN`
+       * With the fix for #115313 this is now just using the `brush->flag`.*/
+      if (brush->gpencil_settings && (brush->gpencil_settings->sculpt_flag & BRUSH_DIR_IN) != 0) {
+        brush->flag |= BRUSH_DIR_IN;
+      }
+    }
+  }
+
   /* Keep point/spot light soft falloff for files created before 4.0. */
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 0)) {
     LISTBASE_FOREACH (Light *, light, &bmain->lights) {
@@ -2983,8 +2993,8 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 9)) {
-    const float default_snap_angle_increment = DEG2RADF(15.0f);
-    const float default_snap_angle_increment_precision = DEG2RADF(5.0f);
+    const float default_snap_angle_increment = DEG2RADF(5.0f);
+    const float default_snap_angle_increment_precision = DEG2RADF(1.0f);
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       scene->toolsettings->snap_angle_increment_2d = default_snap_angle_increment;
       scene->toolsettings->snap_angle_increment_3d = default_snap_angle_increment;
