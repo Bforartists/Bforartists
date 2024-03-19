@@ -1563,7 +1563,7 @@ def make_ambient_node(world):
 ##########
 
 def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False, use_selection=False,
-         object_filter=None, use_hierarchy=False, use_keyframes=False, global_matrix=None, use_cursor=False):
+         object_filter=None, use_keyframes=True, use_hierarchy=False, global_matrix=None, use_cursor=False):
     """Save the Blender scene to a 3ds file."""
 
     # Time the export
