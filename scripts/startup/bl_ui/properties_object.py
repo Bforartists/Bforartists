@@ -185,10 +185,10 @@ class OBJECT_PT_collections(ObjectButtonsPanel, Panel):
 
         row = layout.row(align=True)
         if bpy.data.collections:
-            row.operator("object.collection_link", text="Link to existing Collection")
+            row.operator("object.collection_link", text="Link to existing Collection", icon="DECORATE_LINKED")
             row.operator("object.collection_add", text="", icon='ADD')
         else:
-            row.operator("object.collection_add", text="Add to New Collection")
+            row.operator("object.collection_add", text="Add to New Collection", icon='ADD')
 
         for collection in obj.users_collection:
             col = layout.column(align=True)
@@ -491,7 +491,7 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
                 col.prop(ob, "hide_probe_sphere", text="Sphere", toggle=False, invert_checkbox=True)
                 col.prop(ob, "hide_probe_plane", text="Plane", toggle=False, invert_checkbox=True)
 
-        if ob.type == 'GPENCIL':
+        if ob.type in {'GPENCIL', 'GREASEPENCIL'}:
 
             col = layout.column(align = True)
             col.label(text = "Grease Pencil")
