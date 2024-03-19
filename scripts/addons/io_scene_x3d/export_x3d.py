@@ -417,7 +417,7 @@ def export(file,
 
         location = matrix.to_translation()[:]
 
-        radius = lamp.distance * math.cos(beamWidth)
+        radius = lamp.cutoff_distance * math.cos(beamWidth)
         # radius = lamp.dist*math.cos(beamWidth)
         ident_step = ident + (' ' * (-len(ident) + \
         fw('%s<SpotLight ' % ident)))
@@ -479,7 +479,7 @@ def export(file,
         fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clamp_color(light.color))
 
         fw(ident_step + 'intensity="%.4f"\n' % intensity)
-        fw(ident_step + 'radius="%.4f" \n' % light.distance)
+        fw(ident_step + 'radius="%.4f" \n' % light.cutoff_distance)
         fw(ident_step + 'location="%.4f %.4f %.4f"\n' % location)
         fw(ident_step + '/>\n')
 
