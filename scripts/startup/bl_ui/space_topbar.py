@@ -54,16 +54,16 @@ class TOPBAR_HT_upper_bar(Header):
         if not screen.show_statusbar:
             layout.template_reports_banner()
             layout.template_running_jobs()
-
+        # BFA - now in the toolbar as an opt-in
         # Active workspace view-layer is retrieved through window, not through workspace.
-        layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
+        #layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
 
-        row = layout.row(align=True)
-        row.template_search(
-            window, "view_layer",
-            scene, "view_layers",
-            new="scene.view_layer_add",
-            unlink="scene.view_layer_remove")
+        #row = layout.row(align=True)
+        #row.template_search(
+        #    window, "view_layer",
+        #    scene, "view_layers",
+        #    new="scene.view_layer_add",
+        #    unlink="scene.view_layer_remove")
 
 
 class TOPBAR_PT_tool_settings_extra(Panel):
@@ -708,13 +708,6 @@ class TOPBAR_MT_window(Menu):
 
         layout.operator("wm.window_new", icon = "NEW_WINDOW")
         layout.operator("wm.window_new_main", icon = "NEW_WINDOW_MAIN")
-
-        layout.separator()
-
-        layout.operator("screen.workspace_cycle",
-                        text="Next Workspace").direction = 'NEXT'
-        layout.operator("screen.workspace_cycle",
-                        text="Previous Workspace").direction = 'PREV'
 
         layout.separator()
 

@@ -2236,7 +2236,7 @@ class GLTF_AddonPreferences(bpy.types.AddonPreferences):
             layout.label(text="This is the least efficient of the available forms, and should only be used when required.", icon='ERROR')
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)')
+    self.layout.operator(ImportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)', icon="LOAD_GLTF")  #BFA - icon
 
 
 classes = (
