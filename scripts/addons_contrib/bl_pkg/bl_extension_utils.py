@@ -744,16 +744,20 @@ class _RepoCacheEntry:
         if local_json_data is None:
             return
 
+        filepath_json = os.path.join(self.directory, REPO_LOCAL_JSON)
+
         # We might want to adjust where this happens, create the directory here
         # because this could be a fresh repo might not have been initialized until now.
+        directory = os.path.dirname(filepath_json)
         try:
-            if not os.path.exists(self.directory):
-                os.makedirs(self.directory, exist_ok=True)
+            # A symbolic-link that's followed (good), if it exists and is a file an error is raised here and returned.
+            if not os.path.isdir(directory):
+                os.makedirs(directory, exist_ok=True)
         except BaseException as ex:
             error_fn(ex)
             return
+        del directory
 
-        filepath_json = os.path.join(self.directory, REPO_LOCAL_JSON)
         with open(filepath_json, "w", encoding="utf-8") as fh:
             # Indent because it can be useful to check this file if there are any issues.
             fh.write(json.dumps(local_json_data, indent=2))

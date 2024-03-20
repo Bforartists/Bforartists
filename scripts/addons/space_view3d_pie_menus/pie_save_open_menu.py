@@ -65,7 +65,7 @@ class PIE_MT_SaveOpen(Menu):
             ).filepath = self._save_as_mainfile_calc_incremental_name()
             layout.operator_context = default_operator_contest
         else:
-            pie.box().label(text="Incremental Save (unsaved)", icon='SAVE_AS')
+            pie.box().label(text="Incremental Save (unsaved)", icon='SAVE_AS')  #BFA - icon added
 
         # 3 - BOTTOM - RIGHT
         pie.menu("PIE_MT_recover", text="Recovery Menu", icon='RECOVER_LAST')

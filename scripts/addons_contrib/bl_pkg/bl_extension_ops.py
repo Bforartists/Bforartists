@@ -59,15 +59,19 @@ rna_prop_pkg_id = StringProperty(name="Package ID")
 
 def rna_prop_repo_enum_local_only_itemf(_self, context):
     if context is None:
-        return []
-    return [
-        (
-            repo_item.module,
-            repo_item.name if repo_item.enabled else (repo_item.name + " (disabled)"),
-            "",
-        )
-        for repo_item in repo_iter_valid_local_only(context)
-    ]
+        result = []
+    else:
+        result = [
+            (
+                repo_item.module,
+                repo_item.name if repo_item.enabled else (repo_item.name + " (disabled)"),
+                "",
+            )
+            for repo_item in repo_iter_valid_local_only(context)
+        ]
+    # Prevent the strings from being freed.
+    rna_prop_repo_enum_local_only_itemf._result = result
+    return result
 
 
 is_background = bpy.app.background
@@ -906,6 +910,13 @@ class BlPkgPkgInstallMarked(Operator, _BlPkgCmdMixIn):
     bl_label = "Ext Package Install_marked"
     __slots__ = _BlPkgCmdMixIn.cls_slots + (
         "_repo_directories",
+        "_repo_map_packages_addon_only",
+    )
+
+    enable_on_install: BoolProperty(
+        name="Enable Add-on",
+        description="Enable add-ons after installing",
+        default=True,
     )
 
     def exec_command_iter(self, is_modal):
@@ -916,6 +927,7 @@ class BlPkgPkgInstallMarked(Operator, _BlPkgCmdMixIn):
         ))
         repo_pkg_map = _pkg_marked_by_repo(pkg_manifest_remote_all)
         self._repo_directories = set()
+        self._repo_map_packages_addon_only = []
         package_count = 0
 
         cmd_batch = []
@@ -944,6 +956,14 @@ class BlPkgPkgInstallMarked(Operator, _BlPkgCmdMixIn):
             self._repo_directories.add(repo_item.directory)
             package_count += len(pkg_id_sequence)
 
+            # Filter out non add-on extensions.
+            pkg_manifest_remote = pkg_manifest_remote_all[repo_index]
+
+            pkg_id_sequence_addon_only = [
+                pkg_id for pkg_id in pkg_id_sequence if pkg_manifest_remote[pkg_id]["type"] == "add-on"]
+            if pkg_id_sequence_addon_only:
+                self._repo_map_packages_addon_only.append((repo_item.directory, pkg_id_sequence_addon_only))
+
         if not cmd_batch:
             self.report({'ERROR'}, "No un-installed packages marked")
             return None
@@ -971,6 +991,20 @@ class BlPkgPkgInstallMarked(Operator, _BlPkgCmdMixIn):
                 directory=directory,
                 error_fn=self.error_fn_from_exception,
             )
+
+        # Enable.
+        if self.enable_on_install:
+            import addon_utils
+
+            # TODO: it would be nice to include this message in the banner.
+            def handle_error(ex):
+                self.report({'ERROR'}, str(ex))
+
+            for directory, pkg_id_sequence in self._repo_map_packages_addon_only:
+                repo_item = _extensions_repo_from_directory(directory)
+                for pkg_id in pkg_id_sequence:
+                    addon_module_name = "bl_ext.{:s}.{:s}".format(repo_item.module, pkg_id)
+                    addon_utils.enable(addon_module_name, default_set=True, handle_error=handle_error)
 
         _preferences_ui_redraw()
         _preferences_ui_refresh_addons()
