@@ -469,12 +469,13 @@ class NLA_MT_strips_transform(Menu):
             "transform.transform", text="Scale", icon="TRANSFORM_SCALE"
         ).mode = "TIME_SCALE"
 
-        layout.separator()
-        layout.operator("nla.swap", text="Swap")
+        # BFA - moved up to top level
+        #layout.separator()
+        #layout.operator("nla.swap", text="Swap")
 
-        layout.separator()
-        layout.operator("nla.move_up", text="Move Up")
-        layout.operator("nla.move_down", text="Move Down")
+        #layout.separator()
+        #layout.operator("nla.move_up", text="Move Up")
+        #layout.operator("nla.move_down", text="Move Down")
 
 
 class NLA_MT_snap_pie(Menu):
