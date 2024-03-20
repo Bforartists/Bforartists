@@ -150,8 +150,9 @@ class TIME_MT_view(Menu):
         layout.prop(st, "show_region_hud")
         layout.prop(st, "show_region_channels")
 
+		# BFA - moved below
         layout.separator()
-## BFA - these properties were moved to the header options properties
+		# BFA - these properties were moved to the header options properties
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
         layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
@@ -218,7 +219,7 @@ def marker_menu_generic(layout, context):
 
     layout.separator()
 
-    layout.operator("marker.camera_bind", icon = "MARKER_BIND")
+    layout.menu('NLA_MT_marker_select')
 
     layout.separator()
 
@@ -252,7 +253,7 @@ class TimelinePanelButtons:
 class TIME_PT_playback(TimelinePanelButtons, Panel):
     bl_label = "Playback"
     bl_region_type = 'HEADER'
-    bl_ui_units_x = 11
+    bl_ui_units_x = 13
 
     def draw(self, context):
         layout = self.layout

@@ -39,17 +39,9 @@ class TOPBAR_HT_upper_bar(Header):
         layout.separator()
 
         if not screen.show_fullscreen:
-            layout.template_ID_tabs(
-                window, "workspace",
-                new="workspace.add",
-                menu="TOPBAR_MT_workspace_menu",
-            )
+            layout.template_ID_tabs(window, "workspace", new="workspace.add", menu="TOPBAR_MT_workspace_menu")
         else:
-            layout.operator(
-                "screen.back_to_previous",
-                icon='SCREEN_BACK',
-                text="Back to Previous",
-            )
+            layout.operator("screen.back_to_previous", icon='SCREEN_BACK', text="Back to Previous")
 
     def draw_right(self, context):
         layout = self.layout
@@ -62,6 +54,16 @@ class TOPBAR_HT_upper_bar(Header):
         if not screen.show_statusbar:
             layout.template_reports_banner()
             layout.template_running_jobs()
+        # BFA - now in the toolbar as an opt-in
+        # Active workspace view-layer is retrieved through window, not through workspace.
+        #layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
+
+        #row = layout.row(align=True)
+        #row.template_search(
+        #    window, "view_layer",
+        #    scene, "view_layers",
+        #    new="scene.view_layer_add",
+        #    unlink="scene.view_layer_remove")
 
 
 class TOPBAR_PT_tool_settings_extra(Panel):
@@ -79,11 +81,9 @@ class TOPBAR_PT_tool_settings_extra(Panel):
         layout = self.layout
 
         # Get the active tool
-        space_type, mode = ToolSelectPanelHelper._tool_key_from_context(
-            context)
+        space_type, mode = ToolSelectPanelHelper._tool_key_from_context(context)
         cls = ToolSelectPanelHelper._tool_class_from_space_type(space_type)
-        item, tool, _ = cls._tool_get_active(
-            context, space_type, mode, with_icon=True)
+        item, tool, _ = cls._tool_get_active(context, space_type, mode, with_icon=True)
         if item is None:
             return
 
@@ -150,8 +150,7 @@ class TOPBAR_PT_gpencil_layers(Panel):
 
             srow = col.row(align=True)
             srow.prop(gpl, "opacity", text="Opacity", slider=True)
-            srow.prop(gpl, "use_mask_layer", text="",
-                      icon='MOD_MASK' if gpl.use_mask_layer else 'MOD_MASK_OFF')
+            srow.prop(gpl, "use_mask_layer", text="", icon='CLIPUV_DEHLT' if gpl.use_mask_layer else 'CLIPUV_HLT')
 
             srow = col.row(align=True)
             srow.prop(gpl, "use_lights", text="Lights")
@@ -187,6 +186,13 @@ class TOPBAR_MT_editor_menus(Menu):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - removed, not needed
+        # Allow calling this menu directly (this might not be a header area).
+        #if getattr(context.area, "show_menus", False):
+        #    layout.menu("TOPBAR_MT_blender", text="", icon='BLENDER')
+        #else:
+        #    layout.menu("TOPBAR_MT_blender", text="Blender")
+
         layout.menu("TOPBAR_MT_file")
         layout.menu("TOPBAR_MT_edit")
 
@@ -194,6 +200,24 @@ class TOPBAR_MT_editor_menus(Menu):
 
         layout.menu("TOPBAR_MT_window")
         layout.menu("TOPBAR_MT_help")
+
+# BFA - not used
+class TOPBAR_MT_blender(Menu):
+    bl_label = "Blender"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("wm.splash")
+        layout.operator("wm.splash_about")
+
+        layout.separator()
+
+        layout.operator("preferences.app_template_install", text="Install Application Template...")
+
+        layout.separator()
+
+        layout.menu("TOPBAR_MT_blender_system")
 
 
 class TOPBAR_MT_file_cleanup(Menu):
@@ -232,13 +256,15 @@ class TOPBAR_MT_file_cleanup(Menu):
         props.do_linked_ids = False
         props.do_recursive = True
 
+        layout.separator()
+		
         layout.operator("outliner.orphans_manage", text="Manage Unused Data")
 
 
 class TOPBAR_MT_file(Menu):
     bl_label = "File"
 
-    #bfa - incremental save calculation
+    #BFA - incremental save calculation
     @staticmethod
     def _save_calculate_incremental_name():
         import re
@@ -357,11 +383,7 @@ class TOPBAR_MT_file_new(Menu):
             props.app_template = ""
 
         for d in paths:
-            props = layout.operator(
-                "wm.read_homefile",
-                text=bpy.path.display_name(iface_(d)),
-                icon=icon,
-            )
+            props = layout.operator("wm.read_homefile", text=bpy.path.display_name(iface_(d)), icon=icon)
             props.app_template = d
 
         layout.operator_context = 'EXEC_DEFAULT'
@@ -371,6 +393,69 @@ class TOPBAR_MT_file_new(Menu):
 
     def draw(self, context):
         TOPBAR_MT_file_new.draw_ex(self.layout, context)
+
+# BFA - Not used, exposed to top level, icons added though
+class TOPBAR_MT_file_recover(Menu):
+    bl_label = "Recover"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator("wm.revert_mainfile", icon='FILE_REFRESH')
+        layout.operator("wm.recover_last_session", icon='RECOVER_LAST')
+
+# BFA - Not used, exposed to top level, icons added though
+class TOPBAR_MT_file_defaults(Menu):
+    bl_label = "Defaults"
+
+    def draw(self, context):
+        layout = self.layout
+        prefs = context.preferences
+
+        layout.operator_context = 'INVOKE_AREA'
+
+        if any(bpy.utils.app_template_paths()):
+            app_template = prefs.app_template
+        else:
+            app_template = None
+
+        if app_template:
+            layout.label(
+                text=iface_(bpy.path.display_name(app_template, has_ext=False),
+                            i18n_contexts.id_workspace), translate=False)
+
+        layout.operator("wm.save_homefile", icon='SAVE_PREFS')
+        if app_template:
+            display_name = bpy.path.display_name(iface_(app_template))
+            props = layout.operator("wm.read_factory_settings", text="Load Factory Blender Settings", icon="LOAD_FACTORY")
+            props.app_template = app_template
+            props = layout.operator("wm.read_factory_settings",
+            						icon="LOAD_FACTORY",
+                                    text=iface_("Load Factory %s Settings",
+                                                i18n_contexts.operator_default) % display_name,
+                                    translate=False)
+            props.app_template = app_template
+            props.use_factory_startup_app_template_only = True
+            del display_name
+        else:
+            layout.operator("wm.read_factory_settings", icon="LOAD_FACTORY")
+
+# BFA - these are located in the Text Editor now, this has been made consistent though
+# Include technical operators here which would otherwise have no way for users to access.
+class TOPBAR_MT_blender_system(Menu):
+    bl_label = "System"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator_menu_enum("wm.redraw_timer", "type")
+        layout.operator("wm.debug_menu", icon='DEBUG')
+        layout.operator("script.reload", icon='FILE_REFRESH')
+
+        layout.separator()
+
+        layout.operator("screen.spacedata_cleanup", icon = "APPTEMPLATE")
+        layout.operator("wm.memory_statistics", icon = "SYSTEM")
+        layout.operator("wm.operator_presets_cleanup", icon = "CLEAN_CHANNELS")
 
 
 class TOPBAR_MT_templates_more(Menu):
@@ -626,10 +711,6 @@ class TOPBAR_MT_window(Menu):
 
         layout.separator()
 
-        layout.operator("wm.window_fullscreen_toggle", icon='FULLSCREEN_ENTER')
-
-        layout.separator()
-
         layout.operator("screen.workspace_cycle", text="Next Workspace", icon = "FRAME_NEXT").direction = 'NEXT'
         layout.operator("screen.workspace_cycle", text="Previous Workspace", icon = "FRAME_PREV").direction = 'PREV'
 
@@ -649,7 +730,7 @@ class TOPBAR_MT_window(Menu):
             layout.separator()
             layout.operator("wm.console_toggle", icon='CONSOLE')
 
-
+# BFA - these links are heavily different
 class TOPBAR_MT_help(Menu):
     bl_label = "Help"
 
@@ -876,8 +957,12 @@ classes = (
     TOPBAR_MT_file_context_menu,
     TOPBAR_MT_workspace_menu,
     TOPBAR_MT_editor_menus,
+    TOPBAR_MT_blender,  # BFA - not used
+    TOPBAR_MT_blender_system,  # BFA - not used
     TOPBAR_MT_file,
     TOPBAR_MT_file_new,
+    TOPBAR_MT_file_recover, # BFA - not used
+    TOPBAR_MT_file_defaults, # BFA - not used
     TOPBAR_MT_templates_more,
     TOPBAR_MT_file_import,
     TOPBAR_MT_file_export,

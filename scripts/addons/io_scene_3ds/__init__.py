@@ -47,7 +47,6 @@ class Import3DS(bpy.types.Operator, ImportHelper):
 
     filename_ext = ".3ds"
     filter_glob: StringProperty(default="*.3ds", options={'HIDDEN'})
-    filepath: StringProperty(subtype='FILE_PATH', options={'SKIP_SAVE'})
     files: CollectionProperty(type=bpy.types.OperatorFileListElement, options={'HIDDEN', 'SKIP_SAVE'})
     directory: StringProperty(subtype='DIR_PATH')
 
@@ -100,6 +99,11 @@ class Import3DS(bpy.types.Operator, ImportHelper):
     use_world_matrix: BoolProperty(
         name="World Space",
         description="Transform to matrix world",
+        default=False,
+    )
+    use_collection: BoolProperty(
+        name="Collection",
+        description="Create a new collection",
         default=False,
     )
     use_cursor: BoolProperty(
@@ -166,6 +170,9 @@ class MAX3DS_PT_import_include(bpy.types.Panel):
         layrow.prop(operator, "use_keyframes")
         layrow.label(text="", icon='ANIM' if operator.use_keyframes else 'DECORATE_DRIVER')
         layrow = layout.row(align=True)
+        layrow.prop(operator, "use_collection")
+        layrow.label(text="", icon='OUTLINER_COLLECTION' if operator.use_collection else 'GROUP')
+        layrow = layout.row(align=True)
         layrow.prop(operator, "use_cursor")
         layrow.label(text="", icon='PIVOT_CURSOR' if operator.use_cursor else 'CURSOR')
 
@@ -216,10 +223,7 @@ class Export3DS(bpy.types.Operator, ExportHelper):
     bl_options = {'PRESET', 'UNDO'}
 
     filename_ext = ".3ds"
-    filter_glob: StringProperty(
-        default="*.3ds",
-        options={'HIDDEN'},
-    )
+    filter_glob: StringProperty(default="*.3ds", options={'HIDDEN'})
 
     scale_factor: FloatProperty(
         name="Scale Factor",
@@ -249,14 +253,14 @@ class Export3DS(bpy.types.Operator, ExportHelper):
         description="Object types to export",
         default={'WORLD', 'MESH', 'LIGHT', 'CAMERA', 'EMPTY'},
     )
-    use_hierarchy: BoolProperty(
-        name="Hierarchy",
-        description="Export hierarchy chunks",
-        default=False,
-    )
     use_keyframes: BoolProperty(
         name="Animation",
         description="Write the keyframe data",
+        default=True,
+    )
+    use_hierarchy: BoolProperty(
+        name="Hierarchy",
+        description="Export hierarchy chunks",
         default=False,
     )
     use_cursor: BoolProperty(
@@ -267,7 +271,6 @@ class Export3DS(bpy.types.Operator, ExportHelper):
 
     def execute(self, context):
         from . import export_3ds
-
         keywords = self.as_keywords(ignore=("axis_forward",
                                             "axis_up",
                                             "filter_glob",
@@ -310,11 +313,11 @@ class MAX3DS_PT_export_include(bpy.types.Panel):
         layrow.label(text="", icon='RESTRICT_SELECT_OFF' if operator.use_selection else 'RESTRICT_SELECT_ON')
         layout.column().prop(operator, "object_filter")
         layrow = layout.row(align=True)
-        layrow.prop(operator, "use_hierarchy")
-        layrow.label(text="", icon='OUTLINER' if operator.use_hierarchy else 'CON_CHILDOF')
-        layrow = layout.row(align=True)
         layrow.prop(operator, "use_keyframes")
         layrow.label(text="", icon='ANIM' if operator.use_keyframes else 'DECORATE_DRIVER')
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_hierarchy")
+        layrow.label(text="", icon='OUTLINER' if operator.use_hierarchy else 'CON_CHILDOF')
         layrow = layout.row(align=True)
         layrow.prop(operator, "use_cursor")
         layrow.label(text="", icon='PIVOT_CURSOR' if operator.use_cursor else 'CURSOR')
