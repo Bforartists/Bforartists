@@ -132,6 +132,12 @@ def repo_active_or_none():
     return active_repo
 
 
+def print_debug(*args, **kw):
+    if not bpy.app.debug:
+        return
+    print(*args, **kw)
+
+
 # -----------------------------------------------------------------------------
 # Handlers
 
@@ -142,7 +148,7 @@ def extenion_repos_sync(*_):
     if (active_repo := repo_active_or_none()) is None:
         return
 
-    print("SYNC:", active_repo.name)
+    print_debug("SYNC:", active_repo.name)
     # There may be nothing to upgrade.
 
     from contextlib import redirect_stdout
@@ -163,7 +169,7 @@ def extenion_repos_upgrade(*_):
     if (active_repo := repo_active_or_none()) is None:
         return
 
-    print("UPGRADE:", active_repo.name)
+    print_debug("UPGRADE:", active_repo.name)
 
     from contextlib import redirect_stdout
     import io
@@ -210,6 +216,7 @@ def monkeypatch_extenions_repos_update_pre_impl():
 
 
 def monkeypatch_extenions_repos_update_post_impl():
+    import os
     from . import bl_extension_ops
 
     bl_extension_ops.repo_cache_store_refresh_from_prefs()
@@ -222,7 +229,9 @@ def monkeypatch_extenions_repos_update_post_impl():
         directory, _repo_path = repo_paths_or_none(repo_item)
         if directory is None:
             continue
-
+        # Happens for newly added extension directories.
+        if not os.path.exists(directory):
+            continue
         if directory in _monkeypatch_extenions_repos_update_dirs:
             continue
         # Ignore missing because the new repo might not have a JSON file.
@@ -234,28 +243,28 @@ def monkeypatch_extenions_repos_update_post_impl():
 
 @bpy.app.handlers.persistent
 def monkeypatch_extensions_repos_update_pre(*_):
-    print("PRE:")
+    print_debug("PRE:")
     try:
         monkeypatch_extenions_repos_update_pre_impl()
     except BaseException as ex:
-        print("ERROR", str(ex))
+        print_debug("ERROR", str(ex))
     try:
         monkeypatch_extensions_repos_update_pre._fn_orig()
     except BaseException as ex:
-        print("ERROR", str(ex))
+        print_debug("ERROR", str(ex))
 
 
 @bpy.app.handlers.persistent
 def monkeypatch_extenions_repos_update_post(*_):
-    print("POST:")
+    print_debug("POST:")
     try:
         monkeypatch_extenions_repos_update_post._fn_orig()
     except BaseException as ex:
-        print("ERROR", str(ex))
+        print_debug("ERROR", str(ex))
     try:
         monkeypatch_extenions_repos_update_post_impl()
     except BaseException as ex:
-        print("ERROR", str(ex))
+        print_debug("ERROR", str(ex))
 
 
 def monkeypatch_install():
@@ -343,12 +352,19 @@ def theme_preset_draw(menu, context):
                 props.menu_idname = menu_idname
 
 
+def cli_extension(argv):
+    from . import bl_extension_cli
+    return bl_extension_cli.cli_extension_handler(argv)
+
+
 # -----------------------------------------------------------------------------
 # Registration
 
 classes = (
     BlExtPreferences,
 )
+
+cli_commands = []
 
 
 def register():
@@ -429,6 +445,8 @@ def register():
     handlers = bpy.app.handlers._extension_drop_url
     handlers.append(extenion_url_drop)
 
+    cli_commands.append(bpy.utils.register_cli_command("extension", cli_extension))
+
     monkeypatch_install()
 
 
@@ -474,5 +492,9 @@ def unregister():
     handlers = bpy.app.handlers._extension_drop_url
     if extenion_url_drop in handlers:
         handlers.remove(extenion_url_drop)
+
+    for cmd in cli_commands:
+        bpy.utils.unregister_cli_command(cmd)
+    cli_commands.clear()
 
     monkeypatch_uninstall()
