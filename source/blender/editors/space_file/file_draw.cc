@@ -692,7 +692,7 @@ static void file_draw_preview(const FileList *files,
     float icon_x, icon_y;
     icon_x = xco + (2.0f * UI_SCALE_FAC);
     icon_y = yco + (2.0f * UI_SCALE_FAC);
-    const int arrow = is_link ? ICON_LOOP_FORWARDS : ICON_URL;
+    const int arrow = is_link ? ICON_LOOP_FORWARDS : ICON_INTERNET;
     if (!is_icon) {
       /* At very bottom-left if preview style. */
       const uchar dark[4] = {0, 0, 0, 255};
@@ -1298,6 +1298,10 @@ void file_draw_list(const bContext *C, ARegion *region)
                                      nullptr);
           UI_but_dragflag_enable(drag_but, UI_BUT_DRAG_FULL_BUT);
           file_but_enable_drag(drag_but, sfile, file, path, nullptr, icon, UI_SCALE_FAC);
+          UI_but_func_tooltip_custom_set(drag_but,
+                                         file_draw_tooltip_custom_func,
+                                         file_tooltip_data_create(sfile, file),
+                                         MEM_freeN);
         }
       }
 

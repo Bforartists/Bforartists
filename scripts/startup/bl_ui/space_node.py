@@ -33,7 +33,7 @@ from bl_ui.properties_data_light import (
 )
 
 
-################################ Switch between the editors ##########################################
+################################ BFA - Switch between the editors ##########################################
 
 class NODE_OT_switch_editors_to_compositor(bpy.types.Operator):
     """Switch to the Comppositor Editor"""      # blender will use this as a tooltip for menu items and buttons.
@@ -132,9 +132,9 @@ class NODE_HT_header(Header):
         id_from = snode.id_from
         tool_settings = context.tool_settings
         is_compositor = snode.tree_type == 'CompositorNodeTree'
-        not_group = (len(snode.path) > 1) # bfa - don't show up arrow if at top level.
+        not_group = (len(snode.path) > 1) # BFA - don't show up arrow if at top level.
 
-        ALL_MT_editormenu_node.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
+        ALL_MT_editormenu_node.draw_hidden(context, layout) # BFA - show hide the editormenu, editor suffix is needed.
 
         # Now expanded via the `ui_type`.
         # layout.prop(snode, "tree_type", text="")
@@ -278,7 +278,7 @@ class NODE_HT_header(Header):
 
             layout.template_ID(snode, "node_tree", new="node.new_node_tree")
 
-        #################### options at the right ###################################
+        #################### BFA - options at the right ###################################
 
 
         layout.separator_spacer()
@@ -366,7 +366,7 @@ class NODE_HT_header(Header):
         sub.active = overlay.show_overlays
         sub.popover(panel="NODE_PT_overlay", text="")
 
-# bfa - show hide the editormenu, editor suffix is needed.
+# BFA - show hide the editormenu, editor suffix is needed.
 class ALL_MT_editormenu_node(Menu):
     bl_label = ""
 
@@ -481,6 +481,7 @@ class NODE_MT_view(Menu):
 
             layout.operator("node.viewer_border", text = "Set Viewer Region", icon = "RENDERBORDER")
             layout.operator("node.clear_viewer_border", text = "Clear Viewer Region", icon = "RENDERBORDER_CLEAR")
+			# BFA - these are exposed to header, so these are now redundant
 
         layout.separator()
 
@@ -549,6 +550,7 @@ class NODE_MT_node(Menu):
 
         myvar = layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
         myvar.release_confirm = True
+        myvar.view2d_edge_pan = True # BFA - wip
         layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
         layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
 
@@ -613,27 +615,6 @@ class NODE_MT_node_links(Menu):
         layout.operator("node.links_mute", icon = "MUTE_IPO_ON")
 
 
-class NODE_MT_context_menu_show_hide_menu(Menu):
-    bl_label = "Show/Hide"
-
-    def draw(self, context):
-        layout = self.layout
-        snode = context.space_data
-        is_compositor = snode.tree_type == 'CompositorNodeTree'
-
-        layout.operator("node.hide_toggle", icon = "HIDE_ON")
-        layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
-
-        # Node previews are only available in the Compositor.
-        if is_compositor:
-            layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
-
-        layout.separator()
-
-        layout.operator("node.hide_socket_toggle", icon = "HIDE_OFF")
-        layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
-        layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
-
 # BFA - Hidden legacy operators exposed to GUI
 class NODE_MT_view_annotations(Menu):
     bl_label = "Annotations (Legacy)"
@@ -681,7 +662,7 @@ class NODE_PT_material_slots(Panel):
             iface_("Slot")
         )
 
-    # Duplicate part of 'EEVEE_MATERIAL_PT_context_material'.
+    # Duplicate part of `EEVEE_MATERIAL_PT_context_material`.
     def draw(self, context):
         layout = self.layout
         row = layout.row()
@@ -781,6 +762,26 @@ class NODE_MT_node_color_context_menu(Menu):
         layout.operator("node.node_copy_color", icon='COPY_ID')
 
 
+class NODE_MT_context_menu_show_hide_menu(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+        snode = context.space_data
+        is_compositor = snode.tree_type == 'CompositorNodeTree'
+
+        layout.operator("node.hide_toggle", icon = "HIDE_ON")
+        layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
+
+        # Node previews are only available in the Compositor.
+        if is_compositor:
+            layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
+
+        layout.separator()
+
+        layout.operator("node.hide_socket_toggle", icon = "HIDE_OFF")
+        layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
+        layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
 class NODE_MT_context_menu_select_menu(Menu):
     bl_label = "Select"
 
@@ -883,7 +884,7 @@ class NODE_MT_context_menu(Menu):
 
         layout.separator()
 
-        props = layout.operator("wm.call_panel", text="Rename...", icon = "RENAME")
+        props = layout.operator("wm.call_panel", text="Rename", icon = "RENAME")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
@@ -894,7 +895,7 @@ class NODE_MT_context_menu(Menu):
 
         if active_node:
             layout.separator()
-            props = layout.operator("wm.doc_view_manual", text="Blender Online Manual", icon='URL')
+            props = layout.operator("wm.doc_view_manual", text="Online Manual", icon='URL')
             props.doc_id = active_node.bl_idname
 
 
@@ -1205,7 +1206,7 @@ class NODE_PT_node_tree_interface(Panel):
                         if 'OUTPUT' in active_item.in_out:
                             layout.prop(active_item, "attribute_domain")
                         layout.prop(active_item, "default_attribute_name")
-                if hasattr(active_item, 'draw'):
+                if hasattr(active_item, "draw"):
                     active_item_col = layout.column()
                     active_item_col.use_property_split = True
                     active_item.draw(context, active_item_col)
@@ -1577,6 +1578,7 @@ def node_panel(cls):
         node_cls.bl_parent_id = "NODE_" + node_cls.bl_parent_id
 
     return node_cls
+    
 ## BFA - new view menu for consistency
 class NODE_PT_view(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'

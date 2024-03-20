@@ -152,10 +152,16 @@ def extension_drop_url_popover_close_as_needed():
 
 def extension_drop_file_popover(url):
     from .bl_extension_ops import repo_iter_valid_local_only
+    from .bl_extension_utils import pkg_manifest_dict_from_file_or_error
 
     if not list(repo_iter_valid_local_only(bpy.context)):
         wm_error("Error", "No Local Repositories", icon='ERROR')
         return
+
+    if isinstance(err := pkg_manifest_dict_from_file_or_error(url), str):
+        wm_error("Error", err, icon='ERROR')
+        return
+    del err
 
     USERPREF_PT_extensions_bl_pkg_drop_file.drop_variables = url
     bpy.ops.wm.call_panel(name="USERPREF_PT_extensions_bl_pkg_drop_file", keep_open=True)
@@ -684,11 +690,9 @@ class USERPREF_MT_extensions_bl_pkg_settings(Menu):
         layout.operator("bl_pkg.pkg_install_files", icon='IMPORT', text="Install from Disk")
         layout.operator("preferences.addon_install", text="Install Legacy Add-on")
 
-        layout.separator()
+        if context.preferences.experimental.use_extension_utils:
+            layout.separator()
 
-        layout.prop(addon_prefs, "show_development")
-
-        if addon_prefs.show_development:
             layout.prop(addon_prefs, "show_development_reports")
 
             layout.separator()
@@ -722,7 +726,7 @@ def extensions_panel_draw(panel, context):
 
     addon_prefs = prefs.addons[__package__].preferences
 
-    show_development = addon_prefs.show_development
+    show_development = context.preferences.experimental.use_extension_utils
     show_development_reports = show_development and addon_prefs.show_development_reports
 
     wm = context.window_manager
