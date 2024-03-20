@@ -365,7 +365,9 @@ ShadowRayPunctual shadow_ray_generate_punctual(LightData light,
   vec3 local_ray_start = lP + projection_origin;
   vec3 local_ray_end = local_ray_start + direction;
 
-  int face_id = shadow_punctual_face_index_get(local_ray_start);
+  /* Use an offset in the ray direction to jitter which face is traced.
+   * This helps hiding some harsh discontinuity. */
+  int face_id = shadow_punctual_face_index_get(local_ray_start + direction * 0.5);
   /* Local Light Space > Face Local (View) Space. */
   vec3 view_ray_start = shadow_punctual_local_position_to_face_local(face_id, local_ray_start);
   vec3 view_ray_end = shadow_punctual_local_position_to_face_local(face_id, local_ray_end);
@@ -471,6 +473,12 @@ vec3 shadow_pcf_offset(LightData light, const bool is_directional, vec3 P, vec3 
   vec3 offset_P = P + ws_offset;
 
   /* Project the offset position into the surface */
+
+#ifdef GPU_NVIDIA
+  /* Workaround for a bug in the Nvidia shader compiler.
+   * If we don't compute L here again, it breaks shadows on reflection probes. */
+  L = light_vector_get(light, is_directional, P).L;
+#endif
 
   if (abs(dot(Ng, L)) > 0.999) {
     return ws_offset;

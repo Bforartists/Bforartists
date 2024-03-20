@@ -3171,7 +3171,7 @@ def importLamp_PointLight(node, ancestry):
 
     bpylamp = bpy.data.lights.new(vrmlname, 'POINT')
     bpylamp.energy = intensity
-    bpylamp.distance = radius
+    bpylamp.cutoff_distance = radius
     bpylamp.color = color
 
     mtx = Matrix.Translation(Vector(location))
@@ -3220,7 +3220,7 @@ def importLamp_SpotLight(node, ancestry):
 
     bpylamp = bpy.data.lights.new(vrmlname, 'SPOT')
     bpylamp.energy = intensity
-    bpylamp.distance = radius
+    bpylamp.cutoff_distance = radius
     bpylamp.color = color
     bpylamp.spot_size = cutOffAngle
     if beamWidth > cutOffAngle:

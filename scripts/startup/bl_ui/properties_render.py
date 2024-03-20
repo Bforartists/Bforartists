@@ -113,7 +113,8 @@ class RENDER_PT_color_management_display_settings(RenderButtonsPanel, Panel):
         col = layout.column(align=True)
         sub = col.row()
         sub.active = (not view.view_transform.startswith("Filmic") and not view.view_transform.startswith("AgX") and not
-                      view.view_transform.startswith("False Color"))
+                      view.view_transform.startswith("False Color") and not 
+                      view.view_transform.startswith("Khronos PBR Neutral"))
         sub.use_property_split = False
         sub.prop(view, "use_hdr_view")
 
@@ -1118,6 +1119,28 @@ class RENDER_PT_eevee_performance(RenderButtonsPanel, Panel):
         row.prop(rd, "use_high_quality_normals")
         row.prop_decorator(rd, "use_high_quality_normals")
 
+class RENDER_PT_eevee_performance_viewport(RenderButtonsPanel, Panel):
+    bl_label = "Viewport"
+    bl_parent_id = "RENDER_PT_eevee_performance"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        scene = context.scene
+        rd = scene.render
+
+        col = layout.column()
+        col.prop(rd, "preview_pixel_size", text="Pixel Size")
+
+
 class RENDER_PT_gpencil(RenderButtonsPanel, Panel):
     bl_label = "Grease Pencil"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1357,6 +1380,7 @@ classes = (
     RENDER_PT_eevee_next_volumes_lighting,
     RENDER_PT_eevee_next_volumes_shadows,
     RENDER_PT_eevee_performance,
+    RENDER_PT_eevee_performance_viewport,
     RENDER_PT_eevee_hair,
     RENDER_PT_eevee_shadows,
     RENDER_PT_eevee_next_lights,

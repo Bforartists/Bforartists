@@ -77,15 +77,13 @@ class OUTLINER_HT_header(Header):
             if space.use_filter_id_type:
                 sub.prop(space, "filter_id_type", text="", icon_only=True)
 		#BFA - already shown elsewhere
-        '''
-        if display_mode == 'VIEW_LAYER':
-            layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW').nested = True
-		'''
+        # if display_mode == 'VIEW_LAYER':
+        #    layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW').nested = True
+		
         #BFA - has a drop down and button with consistenty naming
-        '''
-        elif display_mode == 'ORPHAN_DATA':
-            layout.operator("outliner.orphans_purge", text="Purge").do_recursive = True
-        '''
+        #elif display_mode == 'ORPHAN_DATA':
+        #    layout.operator("outliner.orphans_purge", text="Purge").do_recursive = True
+        
         if space.display_mode == 'DATA_API':
             layout.separator()
 
@@ -126,7 +124,7 @@ class   OUTLINER_MT_object_collection(Menu):
         layout.operator("collection.objects_remove_active", icon = "DELETE")
 
 
-# bfa - show hide the editormenu, editor suffix is needed.
+# BFA - show hide the editormenu, editor suffix is needed.
 class ALL_MT_editormenu_outliner(Menu):
     bl_label = ""
 
@@ -139,7 +137,7 @@ class ALL_MT_editormenu_outliner(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
-
+# BFA
 class BFA_OUTLINER_PT_scene_ops(Panel):
     bl_label = "New Scene"
     bl_space_type = "OUTLINER"
@@ -187,7 +185,7 @@ class OUTLINER_MT_editor_menus(Menu):
 
             layout.operator("outliner.orphans_purge", text="Clean Up")
             layout.menu("TOPBAR_MT_file_cleanup", text = "", icon = "DOWNARROW_HLT")
-
+# BFA
 class OUTLINER_MT_pie_menus(Menu):
     bl_label = "Pie Menus"
 
@@ -198,7 +196,7 @@ class OUTLINER_MT_pie_menus(Menu):
 
         layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'OUTLINER_MT_view_pie'
 
-
+# BFA
 class OUTLINER_MT_view(Menu):
     bl_label = "View"
 
@@ -297,9 +295,11 @@ class OUTLINER_MT_context_menu_view(Menu):
 
         layout.separator()
 
-        layout.operator("outliner.show_hierarchy", icon = "HIERARCHY")
         layout.operator("outliner.show_one_level", text = "Show One Level", icon = "HIERARCHY_DOWN")
         layout.operator("outliner.show_one_level", text = "Hide One Level", icon = "HIERARCHY_UP").open = False
+
+        layout.operator("outliner.expanded_toggle", icon = 'INVERSE')
+        layout.operator("outliner.show_hierarchy", icon = "HIERARCHY")
 
 
 class OUTLINER_MT_view_pie(Menu):
@@ -351,12 +351,12 @@ class OUTLINER_MT_collection_visibility(Menu):
         layout = self.layout
 
         layout.operator("outliner.collection_isolate", text="Isolate", icon="HIDE_UNSELECTED")
-		# BFA - redundant view toggles, removed.
 
         layout.separator()
 
         layout.operator("outliner.collection_show_inside", text="Show All Inside", icon="HIDE_OFF")
         layout.operator("outliner.collection_hide_inside", text="Hide All Inside", icon="HIDE_ON")
+		# BFA - redundant view toggles, removed. 
 
 
 class OUTLINER_MT_collection(Menu):
@@ -367,18 +367,10 @@ class OUTLINER_MT_collection(Menu):
 
         space = context.space_data
 
-        layout.operator(
-            "outliner.collection_new",
-            text="New",
-            icon='COLLECTION_NEW',
-            text_ctxt=i18n_contexts.id_collection)
-        layout.operator(
-            "outliner.collection_new",
-            text="New Nested",
-            icon='COLLECTION_NEW',
-            text_ctxt=i18n_contexts.id_collection).nested = True
-        layout.operator("outliner.collection_duplicate", text="Duplicate Collection", icon="DUPLICATE")
-        layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon="DUPLICATE")
+        layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection)
+        layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection).nested = True
+        layout.operator("outliner.collection_duplicate", text="Duplicate Collection")
+        layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked")
         layout.operator("outliner.id_copy", text="Copy", icon='COPYDOWN')
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
@@ -712,7 +704,7 @@ classes = (
     OUTLINER_MT_asset,
     OUTLINER_MT_liboverride,
     OUTLINER_MT_context_menu,
-    OUTLINER_MT_context_menu_view,
+    OUTLINER_MT_context_menu_view,#BFA - not used
     OUTLINER_MT_view_pie,
     OUTLINER_PT_filter,
 )
