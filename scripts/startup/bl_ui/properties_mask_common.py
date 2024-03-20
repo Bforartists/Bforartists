@@ -36,8 +36,7 @@ def draw_mask_context_menu(layout, _context):
 
 
 class MASK_UL_layers(UIList):
-    def draw_item(self, _context, layout, _data, item, icon,
-                  _active_data, _active_propname, _index):
+    def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
         # assert(isinstance(item, bpy.types.MaskLayer)
         mask = item
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
@@ -322,7 +321,7 @@ class MASK_MT_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("MASK_MT_transform")
+        layout.menu("MASK_MT_transform") #BFA - made consistent with other transform panels
 
         layout.separator()
 
