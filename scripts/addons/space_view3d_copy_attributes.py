@@ -347,10 +347,10 @@ class VIEW3D_MT_posecopypopup(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
         for op in pose_copies:
-            layout.operator("pose.copy_" + op[0])
-        layout.operator("pose.copy_selected_constraints")
-        layout.operator("pose.copy_selected_custom_props")
-        layout.operator("pose.copy", text="copy pose")
+            layout.operator("pose.copy_" + op[0], icon="COPYDOWN") #BFA - icon added
+        layout.operator("pose.copy_selected_constraints", icon="CONSTRAINT_DATA") #BFA - icon added
+        layout.operator("pose.copy_selected_custom_props", icon="NODE_ATTRIBUTE") #BFA - icon added
+        layout.operator("pose.copy", text="copy pose", icon="POSE_DATA") #BFA - icon added
 
 
 def obLoopExec(self, context, funk):
@@ -701,10 +701,10 @@ class VIEW3D_MT_copypopup(Menu):
         for entry, op in enumerate(object_copies):
             if entry and entry % 4 == 0:
                 layout.separator()
-            layout.operator("object.copy_" + op[0])
-        layout.operator("object.copy_selected_constraints")
-        layout.operator("object.copy_selected_modifiers")
-        layout.operator("object.copy_selected_custom_props")
+            layout.operator("object.copy_" + op[0], icon="COPYDOWN") #BFA - icon added
+        layout.operator("object.copy_selected_constraints", icon="CONSTRAINT_DATA") #BFA - icon added
+        layout.operator("object.copy_selected_modifiers", icon="MODIFIER") #BFA - icon added
+        layout.operator("object.copy_selected_custom_props", icon="NODE_ATTRIBUTE") #BFA - icon added
 
 
 # Begin Mesh copy settings:
