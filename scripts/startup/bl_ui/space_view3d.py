@@ -4369,7 +4369,7 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
-        # BFA: commented out code
+        # BFA: redundant - commented out code
         # props = layout.operator("sculpt.face_set_change_visibility", text="Toggle Visibility")
         # props.mode = 'TOGGLE'
         #
@@ -4482,15 +4482,20 @@ class VIEW3D_MT_sculpt_showhide(Menu):
         props = layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set", icon="HIDE_ON")
         props.mode = 'HIDE_ACTIVE'
 
-        props = layout.operator("paint.hide_show", text="Show All", icon="HIDE_OFF")
+        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Hide")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show")
         props.action = 'SHOW'
-        props.area = 'ALL'
+
+        props = layout.operator("paint.hide_show_all", text="Show All", icon="HIDE_OFF")
+        props.action = 'SHOW'
 
         props = layout.operator("paint.visibility_invert", text="Invert Visible", icon="HIDE_ON")
 
-        props = layout.operator("paint.hide_show", text="Hide Masked", icon="MOD_MASK_OFF")
+        props = layout.operator("paint.hide_show_masked", text="Hide Masked", icon="MOD_MASK_OFF")
         props.action = 'HIDE'
-        props.area = 'MASKED'
+
 
 
 class VIEW3D_MT_sculpt_curves(Menu):
