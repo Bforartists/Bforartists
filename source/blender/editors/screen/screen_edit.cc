@@ -1137,16 +1137,19 @@ static int screen_global_header_size()
   return int(ceilf(ED_area_headersize() / UI_SCALE_FAC));
 }
 
+// BFA Top Toolbar
 static void screen_global_topbar_area_refresh(wmWindow *win, bScreen *screen)
 {
-  const short size = screen_global_header_size();
+  const short size_min = screen_global_header_size();
+  const short size_max = size_min * 2.15;
+  const short size = (screen->flag & SCREEN_BFA_TOP_BAR) ? size_min : size_max;
   rcti rect;
 
   BLI_rcti_init(&rect, 0, WM_window_pixels_x(win) - 1, 0, WM_window_pixels_y(win) - 1);
-  rect.ymin = rect.ymax - size;
+  rect.ymin = rect.ymax - size_max;
 
   screen_global_area_refresh(
-      win, screen, SPACE_TOPBAR, GLOBAL_AREA_ALIGN_TOP, &rect, size, size, size);
+      win, screen, SPACE_TOPBAR, GLOBAL_AREA_ALIGN_TOP, &rect, size, size_min, size_max);
 }
 
 static void screen_global_statusbar_area_refresh(wmWindow *win, bScreen *screen)
