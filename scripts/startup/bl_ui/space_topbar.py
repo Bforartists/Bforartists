@@ -702,6 +702,7 @@ class TOPBAR_MT_window(Menu):
 
         layout = self.layout
 
+        layout.prop(context.screen, "show_bfa_topbar")
         layout.prop(context.screen, "show_statusbar")
 
         layout.separator()
