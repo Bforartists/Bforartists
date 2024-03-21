@@ -12,6 +12,8 @@ from bpy.types import Operator
 from bpy.props import (
     IntProperty,
     FloatProperty,
+    BoolProperty,
+    EnumProperty,
 )
 import bmesh
 
@@ -818,3 +820,135 @@ class MESH_OT_print3d_export(Operator):
             return {'FINISHED'}
 
         return {'CANCELLED'}
+
+
+# ------
+# Hollow out
+
+class MESH_OT_print3d_hollow(Operator):
+    bl_idname = "mesh.print3d_hollow"
+    bl_label = "Hollow"
+    bl_description = "Create offset surface"
+    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
+
+    offset_direction: EnumProperty(
+        items=[
+            ('INSIDE', "Inside", "Offset surface inside of object"),
+            ('OUTSIDE', "Outside", "Offset surface outside of object"),
+            ],
+        name="Offset Direction",
+        description="Where the offset surface is created relative to the object",
+        default='INSIDE',
+        )
+    offset: FloatProperty(
+        name="Offset",
+        description="Surface offset in relation to original mesh",
+        default=1.0,
+        subtype='DISTANCE',
+        min=0.0,
+        step=1,
+        )
+    voxel_size: FloatProperty(
+        name="Voxel size",
+        description="Size of the voxel used for volume evaluation. Lower values preserve finer details",
+        default=1.0,
+        min=0.0001,
+        step=1,
+        subtype='DISTANCE',
+        )
+    make_hollow_duplicate: BoolProperty(
+        name="Hollow Duplicate",
+        description="Create hollowed out copy of the object",
+        )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        layout.separator()
+
+        layout.prop(self, "offset_direction", expand=True)
+        layout.prop(self, "offset")
+        layout.prop(self, "voxel_size")
+        layout.prop(self, "make_hollow_duplicate")
+
+    def execute(self, context):
+        import numpy as np
+        import pyopenvdb as vdb
+
+        if not self.offset:
+            return {'FINISHED'}
+
+        # Get target mesh with modifiers
+        obj = context.active_object
+        depsgraph = context.evaluated_depsgraph_get()
+        mesh_target = bpy.data.meshes.new_from_object(obj.evaluated_get(depsgraph))
+
+        # Apply scale, but avoid translating the mesh
+        mat = obj.matrix_world.copy()
+        mat.translation = 0, 0, 0
+        mesh_target.transform(mat)
+
+        # Read mesh to numpy arrays
+        nverts = len(mesh_target.vertices)
+        ntris = len(mesh_target.loop_triangles)
+        verts = np.zeros(3 * nverts, dtype=np.float32)
+        tris = np.zeros(3 * ntris, dtype=np.int32)
+        mesh_target.vertices.foreach_get("co", verts)
+        verts.shape = (-1, 3)
+        mesh_target.loop_triangles.foreach_get("vertices", tris)
+        tris.shape = (-1, 3)
+
+        # Generate VDB levelset
+        half_width = max(3.0, math.ceil(abs(self.offset) / self.voxel_size) + 2.0) # half_width has to envelop offset
+        trans = vdb.Transform()
+        trans.scale(self.voxel_size)
+        levelset = vdb.FloatGrid.createLevelSetFromPolygons(verts, triangles=tris, transform=trans, halfWidth=half_width)
+
+        # Generate offset surface
+        if self.offset_direction == 'INSIDE':
+            newverts, newquads = levelset.convertToQuads(-self.offset)
+            if newquads.size == 0:
+                self.report({'ERROR'}, "Make sure target mesh has closed surface and offset value is less than half of target thickness")
+                return {'FINISHED'}
+        else:
+            newverts, newquads = levelset.convertToQuads(self.offset)
+
+        polys = list(newquads)
+
+        # Instantiate new object in Blender
+        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.ops.object.select_all(action='DESELECT')
+        mesh_offset = bpy.data.meshes.new(mesh_target.name + " offset")
+        mesh_offset.from_pydata(newverts, [], polys)
+
+        # For some reason OpenVDB has inverted normals
+        mesh_offset.flip_normals()
+        obj_offset = bpy.data.objects.new(obj.name + " offset", mesh_offset)
+        obj_offset.matrix_world.translation = obj.matrix_world.translation
+        bpy.context.collection.objects.link(obj_offset)
+        obj_offset.select_set(True)
+        context.view_layer.objects.active = obj_offset
+
+        if self.make_hollow_duplicate:
+            obj_hollow = bpy.data.objects.new(obj.name + " hollow", mesh_target)
+            bpy.context.collection.objects.link(obj_hollow)
+            obj_hollow.matrix_world.translation = obj.matrix_world.translation
+            obj_hollow.select_set(True)
+            if self.offset_direction == 'INSIDE':
+                mesh_offset.flip_normals()
+            else:
+                mesh_target.flip_normals()
+            context.view_layer.objects.active = obj_hollow
+            bpy.ops.object.join()
+        else:
+            bpy.data.meshes.remove(mesh_target)
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        if context.mode == 'EDIT_MESH':
+            bpy.ops.object.mode_set(mode='OBJECT')
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)

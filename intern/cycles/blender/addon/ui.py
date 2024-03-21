@@ -144,17 +144,20 @@ def show_device_active(context):
     return backend_has_active_gpu(context)
 
 
-def get_effective_preview_denoiser(context):
+def get_effective_preview_denoiser(context, has_oidn_gpu):
     scene = context.scene
     cscene = scene.cycles
 
     if cscene.preview_denoiser != "AUTO":
         return cscene.preview_denoiser
 
+    if has_oidn_gpu:
+        return 'OPENIMAGEDENOISE'
+
     if context.preferences.addons[__package__].preferences.get_devices_for_type('OPTIX'):
         return 'OPTIX'
 
-    return 'OIDN'
+    return 'OPENIMAGEDENOISE'
 
 
 def has_oidn_gpu_devices(context):
@@ -243,7 +246,8 @@ class CYCLES_RENDER_PT_sampling_viewport_denoise(CyclesButtonsPanel, Panel):
         col.prop(cscene, "preview_denoiser", text="Denoiser")
         col.prop(cscene, "preview_denoising_input_passes", text="Passes")
 
-        effective_preview_denoiser = get_effective_preview_denoiser(context)
+        has_oidn_gpu = has_oidn_gpu_devices(context)
+        effective_preview_denoiser = get_effective_preview_denoiser(context, has_oidn_gpu)
         if effective_preview_denoiser == 'OPENIMAGEDENOISE':
             col.prop(cscene, "preview_denoising_prefilter", text="Prefilter")
 
@@ -251,7 +255,7 @@ class CYCLES_RENDER_PT_sampling_viewport_denoise(CyclesButtonsPanel, Panel):
 
         if effective_preview_denoiser == 'OPENIMAGEDENOISE':
             row = col.row()
-            row.active = not use_cpu(context) and has_oidn_gpu_devices(context)
+            row.active = not use_cpu(context) and has_oidn_gpu
             row.prop(cscene, "preview_denoising_use_gpu", text="Use GPU")
 
 
@@ -1791,7 +1795,9 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
         col.separator()
 
         if light.type in {'POINT', 'SPOT'}:
+            col.use_property_split = False
             col.prop(light, "use_soft_falloff")
+            col.use_property_split = True
             col.prop(light, "shadow_soft_size", text="Radius")
         elif light.type == 'SUN':
             col.prop(light, "angle")

@@ -102,8 +102,8 @@ class VIEW3D_PT_print3d_cleanup(View3DPrintPanel, Panel):
         # layout.operator("mesh.print3d_clean_thin", text="Wall Thickness")
 
 
-class VIEW3D_PT_print3d_transform(View3DPrintPanel, Panel):
-    bl_label = "Transform"
+class VIEW3D_PT_print3d_edit(View3DPrintPanel, Panel):
+    bl_label = "Edit"
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
@@ -111,6 +111,7 @@ class VIEW3D_PT_print3d_transform(View3DPrintPanel, Panel):
 
         print_3d = context.scene.print_3d
 
+        layout.operator("mesh.print3d_hollow")
         layout.label(text="Scale To")
         row = layout.row(align=True)
         row.operator("mesh.print3d_scale_to_volume", text="Volume")

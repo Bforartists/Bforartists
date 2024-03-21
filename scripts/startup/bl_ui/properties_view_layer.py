@@ -209,7 +209,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
 
         view_layer = context.view_layer
         view_layer_eevee = view_layer.eevee
-
+		# BFA - changed to a flow grid
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
         col = flow.column(align=True)
@@ -269,7 +269,7 @@ class VIEWLAYER_PT_eevee_next_layer_passes_light(ViewLayerButtonsPanel, Panel):
 
         view_layer = context.view_layer
         view_layer_eevee = view_layer.eevee
-
+		# BFA - changed to a flow grid
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
         col = flow.column(align=True)
@@ -364,8 +364,7 @@ class ViewLayerAOVPanel(ViewLayerButtonsPanel, Panel):
 
         row = layout.row()
         col = row.column()
-        col.template_list("VIEWLAYER_UL_aov", "aovs", view_layer,
-                          "aovs", view_layer, "active_aov_index", rows=3)
+        col.template_list("VIEWLAYER_UL_aov", "aovs", view_layer, "aovs", view_layer, "active_aov_index", rows=3)
 
         col = row.column()
         sub = col.column(align=True)
@@ -374,8 +373,7 @@ class ViewLayerAOVPanel(ViewLayerButtonsPanel, Panel):
 
         aov = view_layer.active_aov
         if aov and not aov.is_valid:
-            layout.label(
-                text="Conflicts with another render pass with the same name", icon='ERROR')
+            layout.label(text="Conflicts with another render pass with the same name", icon='ERROR')
 
 
 class VIEWLAYER_PT_layer_passes_aov(ViewLayerAOVPanel):
@@ -488,7 +486,6 @@ class VIEWLAYER_PT_filter(ViewLayerButtonsPanel, Panel):
         layout.use_property_decorate = False
 
         scene = context.scene
-        rd = scene.render
         view_layer = context.view_layer
 
         col = layout.column(heading="Include")
