@@ -137,9 +137,9 @@ def my_create_package(dirpath: str, filename: str, *, metadata: Dict[str, Any], 
 
         output_json = command_output_from_json_0(
             [
-                "pkg-build",
-                "--pkg-source-dir", temp_dir_pkg,
-                "--pkg-output-filepath", outfile,
+                "build",
+                "--source-dir", temp_dir_pkg,
+                "--output-filepath", outfile,
             ],
             exclude_types={"PROGRESS"},
         )
