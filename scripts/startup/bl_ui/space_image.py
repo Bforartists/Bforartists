@@ -77,6 +77,7 @@ class IMAGE_MT_view(Menu):
         layout = self.layout
 
         sima = context.space_data
+		#BFA - options moved to relevant options sub-panel
         show_uvedit = sima.show_uvedit
         show_render = sima.show_render
 
@@ -95,7 +96,7 @@ class IMAGE_MT_view(Menu):
 
         layout.separator()
 
-        # bfa - the view menu is shared between uv and image editor
+        # BFA - the view menu is shared between uv and image editor
         # and uv editor has a 3d cursor tool in the shelf. So legacy ...
         if sima.mode != 'UV':
             if sima.ui_mode == 'MASK':
@@ -217,6 +218,8 @@ class IMAGE_MT_select(Menu):
         layout.separator()
 
         layout.operator("uv.select_box", text="Box Select Pinned", icon='BORDER_RECT').pinned = True
+		# BFA - moved to legacy
+		# BFA - moved to legacy
 
         layout.separator()
 
@@ -334,9 +337,8 @@ class IMAGE_MT_image(Menu):
         ima = sima.image
         show_render = sima.show_render
 
-        layout.operator("image.new", text="New", icon='IMAGE_DATA',
-                        text_ctxt=i18n_contexts.id_image)
-        layout.operator("image.open", text="Open...", icon='FILE_FOLDER')
+        layout.operator("image.new", text="New", icon='IMAGE_DATA', text_ctxt=i18n_contexts.id_image)
+        layout.operator("image.open", text="Open", icon='FILE_FOLDER')
 
         layout.operator("image.read_viewlayers", icon="RENDERLAYERS")
 
@@ -376,7 +378,16 @@ class IMAGE_MT_image(Menu):
 
         layout.separator()
 
+        has_image_clipboard = False
         if sys.platform[:3] == "win":
+            has_image_clipboard = True
+        else:
+            from _bpy import _ghost_backend
+            if _ghost_backend() == 'WAYLAND':
+                has_image_clipboard = True
+            del _ghost_backend
+
+        if has_image_clipboard:
             layout.operator("image.clipboard_copy", text="Copy", icon = 'COPYDOWN')
             layout.operator("image.clipboard_paste", text="Paste", icon = 'PASTEDOWN')
             layout.separator()
@@ -391,7 +402,7 @@ class IMAGE_MT_image(Menu):
 
         layout.operator("image.save_all_modified", text="Save All Images", icon="SAVE_ALL")
 
-        # bfa - hide disfunctional tools and settings for render result
+        # BFA - hide disfunctional tools and settings for render result
         if ima:
             if ima.type != 'RENDER_RESULT':
                 layout.separator()
@@ -477,7 +488,11 @@ class IMAGE_MT_uvs_transform(Menu):
         layout.separator()
 
         layout.operator("transform.shear", icon='SHEAR')
-
+        layout.separator()
+        
+        layout.operator("transform.vert_slide")
+        layout.operator("transform.edge_slide")
+        
         layout.separator()
 
         layout.operator("uv.randomize_uv_transform", icon = 'RANDOMIZE')
@@ -493,10 +508,8 @@ class IMAGE_MT_uvs_snap(Menu):
 
         layout.operator("uv.snap_selected", text="Selected to Pixels", icon="SNAP_TO_PIXELS").target = 'PIXELS'
         layout.operator("uv.snap_selected", text="Selected to Cursor", icon="SELECTIONTOCURSOR").target = 'CURSOR'
-        layout.operator("uv.snap_selected", text="Selected to Cursor (Offset)",
-                        icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
-        layout.operator("uv.snap_selected", text="Selected to Adjacent Unselected",
-                        icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
+        layout.operator("uv.snap_selected", text="Selected to Cursor (Offset)", icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+        layout.operator("uv.snap_selected", text="Selected to Adjacent Unselected", icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
 
         layout.separator()
 
@@ -556,7 +569,7 @@ class IMAGE_MT_uvs_split(Menu):
         layout.operator("uv.select_split", text="Selection", icon='SPLIT')
 
 
-# Tooltip and operator for Clear Seam.
+# BFA - Tooltip and operator for Clear Seam.
 class IMAGE_MT_uvs_clear_seam(bpy.types.Operator):
     """Clears the UV Seam for selected edges"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "uv.clear_seam"        # unique identifier for buttons and menu items to reference.
@@ -573,7 +586,7 @@ class IMAGE_MT_uvs_unwrap(Menu):
 
     def draw(self, _context):
         layout = self.layout
-
+		# BFA - exposed both methods to top level
         layout.operator("uv.unwrap", text="Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
         layout.operator("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
 
@@ -606,7 +619,7 @@ class IMAGE_MT_uvs(Menu):
         layout.menu("IMAGE_MT_uvs_snap")
 
         layout.separator()
-## BFA order of these group of ops changed so that the pin operators are in their own group.
+		# BFA order of these group of ops changed so that the pin operators are in their own group.
         layout.operator("uv.pin", icon="PINNED").clear = False
         layout.operator("uv.pin", text="Unpin", icon="UNPINNED").clear = True
         layout.operator("uv.pin", text="Invert Pins", icon='INVERSE').invert = True
@@ -618,7 +631,7 @@ class IMAGE_MT_uvs(Menu):
         layout.operator("uv.select_split", text="Split Selection", icon='SPLIT')
 
         layout.separator()
-## BFA order of these group of ops changed. They are listed below.
+		# BFA order of these group of ops changed. They are listed below.
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("uv.pack_islands", icon="PACKISLAND")
         layout.operator_context = 'EXEC_REGION_WIN'
@@ -660,27 +673,32 @@ class IMAGE_MT_uvs_select_mode(Menu):
         # Do smart things depending on whether uv_select_sync is on.
 
         if tool_settings.use_uv_select_sync:
+            props = layout.operator("wm.context_set_value", text="Vertex", icon='VERTEXSEL')
+            props.value = "(True, False, False)"
+            props.data_path = "tool_settings.mesh_select_mode"
 
-            layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("mesh.select_mode", text="Vertex", icon='VERTEXSEL').type = 'VERT'
-            layout.operator("mesh.select_mode", text="Edge", icon='EDGESEL').type = 'EDGE'
-            layout.operator("mesh.select_mode", text="Face", icon='FACESEL').type = 'FACE'
+            props = layout.operator("wm.context_set_value", text="Edge", icon='EDGESEL')
+            props.value = "(False, True, False)"
+            props.data_path = "tool_settings.mesh_select_mode"
+
+            props = layout.operator("wm.context_set_value", text="Face", icon='FACESEL')
+            props.value = "(False, False, True)"
+            props.data_path = "tool_settings.mesh_select_mode"
 
         else:
-            #layout.operator_context = 'INVOKE_REGION_WIN'
-            props = layout.operator("wm.context_set_enum", text="Vertex", icon='UV_VERTEXSEL')
+            props = layout.operator("wm.context_set_string", text="Vertex", icon='UV_VERTEXSEL')
             props.value = 'VERTEX'
             props.data_path = "tool_settings.uv_select_mode"
 
-            props = layout.operator("wm.context_set_enum", text="Edge", icon='UV_EDGESEL')
+            props = layout.operator("wm.context_set_string", text="Edge", icon='UV_EDGESEL')
             props.value = 'EDGE'
             props.data_path = "tool_settings.uv_select_mode"
 
-            props = layout.operator("wm.context_set_enum", text="Face", icon='UV_FACESEL')
+            props = layout.operator("wm.context_set_string", text="Face", icon='UV_FACESEL')
             props.value = 'FACE'
             props.data_path = "tool_settings.uv_select_mode"
 
-            props = layout.operator("wm.context_set_enum", text="Island", icon='UV_ISLANDSEL')
+            props = layout.operator("wm.context_set_string", text="Island", icon='UV_ISLANDSEL')
             props.value = 'ISLAND'
             props.data_path = "tool_settings.uv_select_mode"
 
@@ -695,6 +713,16 @@ class IMAGE_MT_uvs_context_menu(Menu):
 
         # UV Edit Mode
         if sima.show_uvedit:
+            ts = context.tool_settings
+            if ts.use_uv_select_sync:
+                is_vert_mode, is_edge_mode, _ = ts.mesh_select_mode
+            else:
+                uv_select_mode = ts.uv_select_mode
+                is_vert_mode = uv_select_mode == 'VERTEX'
+                is_edge_mode = uv_select_mode == 'EDGE'
+                # is_face_mode = uv_select_mode == 'FACE'
+                # is_island_mode = uv_select_mode == 'ISLAND'
+
             # Add
             layout.operator("uv.unwrap", icon='UNWRAP_ABF')
             layout.operator("uv.follow_active_quads", icon="FOLLOWQUADS")
@@ -720,6 +748,18 @@ class IMAGE_MT_uvs_context_menu(Menu):
             layout.operator_enum("uv.align", "axis")  # W, 2/3/4.
 
             layout.separator()
+
+            if is_vert_mode or is_edge_mode:
+                layout.operator_context = 'INVOKE_DEFAULT'
+
+                if is_vert_mode:
+                    layout.operator("transform.vert_slide")
+
+                if is_edge_mode:
+                    layout.operator("transform.edge_slide")
+
+                layout.operator_context = 'EXEC_REGION_WIN'
+                layout.separator()
 
             # Remove
             layout.menu("IMAGE_MT_uvs_merge")
@@ -961,8 +1001,11 @@ class IMAGE_HT_header(Header):
            # proportional editing settings
             if tool_settings.use_proportional_edit is True:
                 sub = row.row(align=True)
-                sub.prop_with_popover(tool_settings, "proportional_edit_falloff", text="",
-                                      icon_only=True, panel="VIEW3D_PT_proportional_edit")
+                sub.prop_with_popover(tool_settings, 
+                	"proportional_edit_falloff", 
+                	text="",
+                    icon_only=True, 
+                    panel="IMAGE_PT_proportional_edit")# BFA - was VIEW3D_PT_proportional_edit
             if show_uvedit:
                 uvedit = sima.uv_editor
 
@@ -983,9 +1026,9 @@ class IMAGE_HT_header(Header):
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
 
-        ALL_MT_editormenu_image.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
+        ALL_MT_editormenu_image.draw_hidden(context, layout)  # BFA - show hide the editormenu, editor suffix is needed.
 
-        # bfa - hide disfunctional tools and settings for render result
+        # BFA - hide disfunctional tools and settings for render result
         is_render = False
         if ima:
             is_render = ima.type == 'RENDER_RESULT'
@@ -1054,13 +1097,14 @@ class IMAGE_HT_header(Header):
         sub.active = overlay.show_overlays
         sub.popover(panel="IMAGE_PT_overlay", text="")
 
+		# BFA - moved search above to be consistent
         if ima:
             if ima.is_stereo_3d:
                 row = layout.row()
                 row.prop(sima, "show_stereo_3d", text="")
             if show_maskedit:
                 row = layout.row()
-                row.popover(panel='IMAGE_PT_mask_display')
+                row.popover(panel="IMAGE_PT_mask_display")
 
             # layers.
             layout.template_image_layers(ima, iuser)
@@ -1072,7 +1116,7 @@ class IMAGE_HT_header(Header):
         row.popover(panel="IMAGE_PT_image_options", text="Options")
 
 
-# bfa - show hide the editormenu, editor suffix is needed.
+# BFA - show hide the editormenu, editor suffix is needed.
 class ALL_MT_editormenu_image(Menu):
     bl_label = ""
 
@@ -1098,7 +1142,7 @@ class IMAGE_MT_editor_menus(Menu):
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
 
-        layout.menu("SCREEN_MT_user_menu", text="Quick")  # Quick favourites menu
+        layout.menu("SCREEN_MT_user_menu", text="Quick")  # BFA - Quick favourites menu
         layout.menu("IMAGE_MT_view")
 
         if show_uvedit:
@@ -1203,8 +1247,12 @@ class IMAGE_PT_snapping(Panel):
         row.prop(tool_settings, "use_snap_translate", text="Move", toggle=True)
         row.prop(tool_settings, "use_snap_rotate", text="Rotate", toggle=True)
         row.prop(tool_settings, "use_snap_scale", text="Scale", toggle=True)
+        col.label(text="Rotation Increment")
+        row = col.row(align=True)
+        row.prop(tool_settings, "snap_angle_increment_2d", text="")
+        row.prop(tool_settings, "snap_angle_increment_2d_precision", text="")
 
-
+# BFA
 class IMAGE_PT_image_options(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'HEADER'
@@ -1681,7 +1729,7 @@ class IMAGE_PT_view_vectorscope(ImageScopesPanel, Panel):
 
         layout.template_vectorscope(sima, "scopes")
         row = layout.split(factor=0.75)
-        row.label(text="Opacity")
+        row.label(text="Opacity") # BFA label
         row.prop(sima.scopes, "vectorscope_alpha", text="")
         row.prop(sima.scopes, "vectorscope_mode", text="")
 
@@ -1805,7 +1853,7 @@ class IMAGE_PT_overlay_guides(Panel):
         uvedit = sima.uv_editor
 
         layout.active = overlay.show_overlays
-
+		# BFA - grid settings greaty improved and changed
         split = layout.split()
         col = split.column()
         col.use_property_split = False
@@ -1871,7 +1919,7 @@ class IMAGE_PT_overlay_uv_stretch(Panel):
         overlay = sima.overlay
 
         layout.active = overlay.show_overlays
-
+		# BFA - changed greatly to be improved
         # UV Stretching
         split = layout.split()
         col = split.column()
@@ -1988,7 +2036,7 @@ class IMAGE_PT_annotation(AnnotationDataPanel, Panel):
 # Grease Pencil drawing tools.
 
 
-# -------------------- tabs to switch between uv and image editor
+# -------------------- BFA - tabs to switch between uv and image editor
 
 class IMAGE_OT_switch_editors_to_uv(bpy.types.Operator):
     """Switch to the UV Editor"""      # blender will use this as a tooltip for menu items and buttons.

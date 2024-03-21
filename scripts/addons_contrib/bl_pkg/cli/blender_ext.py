@@ -39,6 +39,8 @@ from typing import (
     Union,
 )
 
+ArgsSubparseFn = Callable[["argparse._SubParsersAction[argparse.ArgumentParser]"], None]
+
 REQUEST_EXIT = False
 
 # Expect the remote URL to contain JSON (don't append the JSON name to the path).
@@ -384,7 +386,9 @@ def pkg_manifest_archive_from_dict_and_validate(
     return PkgManifest_Archive(
         manifest=manifest,
         archive_size=data["archive_size"],
-        archive_hash=data["archive_hash"],
+        # Repositories that use their own hash generation may use capitals,
+        # ensure always lowercase for comparison (hashes generated here are always lowercase).
+        archive_hash=data["archive_hash"].lower(),
         archive_url=data["archive_url"],
     )
 
@@ -475,7 +479,7 @@ def pkg_manifest_from_archive_and_validate(
     # TODO: handle errors.
     with zipfile.ZipFile(filepath, mode="r") as zip_fh:
         if (archive_subdir := pkg_zipfile_detect_subdir_or_none(zip_fh)) is None:
-            return "Archive has no manifest"
+            return "Archive has no manifest: \"{:s}\"".format(PKG_MANIFEST_FILENAME_TOML)
         return pkg_manifest_from_zipfile_and_validate(zip_fh, archive_subdir)
 
 
@@ -783,7 +787,7 @@ pkg_manifest_known_keys_and_types: Tuple[Tuple[str, type, Optional[Callable[[Any
     ("blender_version_max", str, pkg_manifest_validate_field_any_version_primitive_or_empty),
     ("website", str, pkg_manifest_validate_field_any_non_empty_string),
     ("copyright", list, pkg_manifest_validate_field_any_non_empty_list_of_non_empty_strings),
-    ("permissions", list, pkg_manifest_validate_field_any_non_empty_list_of_non_empty_strings),
+    ("permissions", list, pkg_manifest_validate_field_any_list_of_non_empty_strings),
     ("tags", list, pkg_manifest_validate_field_any_non_empty_list_of_non_empty_strings),
 )
 
@@ -837,7 +841,7 @@ def pkg_manifest_is_valid_or_error_impl(
                 continue
 
             # When the default value is None, skip all type checks.
-            if is_default_value and x_val is None:
+            if not (is_default_value and x_val is None):
                 if x_ty is None:
                     pass
                 elif isinstance(x_val, x_ty):
@@ -1143,7 +1147,7 @@ def generic_arg_package_list_positional(subparse: argparse.ArgumentParser) -> No
         dest="packages",
         type=str,
         help=(
-            "The packages to operate on (separated by \",\" without spaces)."
+            "The packages to operate on (separated by ``,`` without spaces)."
         ),
     )
 
@@ -1184,22 +1188,22 @@ def generic_arg_local_dir(subparse: argparse.ArgumentParser) -> None:
 
 
 # Only for authoring.
-def generic_arg_pkg_source_dir(subparse: argparse.ArgumentParser) -> None:
+def generic_arg_package_source_dir(subparse: argparse.ArgumentParser) -> None:
     subparse.add_argument(
-        "--pkg-source-dir",
-        dest="pkg_source_dir",
+        "--source-dir",
+        dest="source_dir",
         type=str,
         help=(
-            "The package source directory."
+            "The package source directory containing a ``{:s}`` manifest.".format(PKG_MANIFEST_FILENAME_TOML)
         ),
         default=".",
     )
 
 
-def generic_arg_pkg_output_dir(subparse: argparse.ArgumentParser) -> None:
+def generic_arg_package_output_dir(subparse: argparse.ArgumentParser) -> None:
     subparse.add_argument(
-        "--pkg-output-dir",
-        dest="pkg_output_dir",
+        "--output-dir",
+        dest="output_dir",
         type=str,
         help=(
             "The package output directory."
@@ -1208,13 +1212,13 @@ def generic_arg_pkg_output_dir(subparse: argparse.ArgumentParser) -> None:
     )
 
 
-def generic_arg_pkg_output_filepath(subparse: argparse.ArgumentParser) -> None:
+def generic_arg_package_output_filepath(subparse: argparse.ArgumentParser) -> None:
     subparse.add_argument(
-        "--pkg-output-filepath",
-        dest="pkg_output_filepath",
+        "--output-filepath",
+        dest="output_filepath",
         type=str,
         help=(
-            "The package output filepath."
+            "The package output filepath (should include a ``{:s}`` extension).".format(PKG_EXT)
         ),
         default=".",
     )
@@ -1229,6 +1233,7 @@ def generic_arg_output_type(subparse: argparse.ArgumentParser) -> None:
         default='TEXT',
         help=(
             "The output type:\n"
+            "\n"
             "- TEXT: Plain text.\n"
             "- JSON: Separated by new-lines.\n"
             "- JSON_0: Separated null bytes.\n"
@@ -1807,7 +1812,7 @@ class subcmd_client:
 class subcmd_author:
 
     @staticmethod
-    def pkg_build(
+    def build(
             msg_fn: MessageFn,
             *,
             pkg_source_dir: str,
@@ -1883,6 +1888,33 @@ class subcmd_author:
         message_status(msg_fn, "created \"{:s}\", {:d}".format(outfile, os.path.getsize(outfile)))
         return True
 
+    @staticmethod
+    def validate(
+            msg_fn: MessageFn,
+            *,
+            pkg_source_dir: str,
+    ) -> bool:
+        if not os.path.isdir(pkg_source_dir):
+            message_error(msg_fn, "Missing local \"{:s}\"".format(pkg_source_dir))
+            return False
+
+        pkg_manifest_filepath = os.path.join(pkg_source_dir, PKG_MANIFEST_FILENAME_TOML)
+
+        if not os.path.exists(pkg_manifest_filepath):
+            message_error(msg_fn, "File \"{:s}\" not found!".format(pkg_manifest_filepath))
+            return False
+
+        # Demote errors to status as the function of this action is to check the manifest is stable.
+        manifest = pkg_manifest_from_toml_and_validate_all_errors(pkg_manifest_filepath)
+        if isinstance(manifest, list):
+            message_status(msg_fn, "Error parsing TOML \"{:s}\"".format(pkg_manifest_filepath))
+            for error_msg in manifest:
+                message_status(msg_fn, error_msg)
+            return False
+
+        message_status(msg_fn, "Success parsing TOML \"{:s}\"".format(pkg_manifest_filepath))
+        return True
+
 
 class subcmd_dummy:
 
@@ -1934,7 +1966,7 @@ class subcmd_dummy:
                     fh.write("""id = "{:s}"\n""".format(pkg_idname))
                     fh.write("""name = "{:s}"\n""".format(pkg_name))
                     fh.write("""type = "add-on"\n""")
-                    fh.write("""tags = []\n""")
+                    fh.write("""tags = ["UV"]\n""")
                     fh.write("""maintainer = "Maintainer Name <username@addr.com>"\n""")
                     fh.write("""license = ["SPDX:GPL-2.0-or-later"]\n""")
                     fh.write("""version = "1.0.0"\n""")
@@ -1963,8 +1995,8 @@ def unregister():
                 with open(os.path.join(docs, "readme.txt"), "w", encoding="utf-8") as fh:
                     fh.write("Example readme.")
 
-                # `{cmd} pkg-build --pkg-source-dir {pkg_src_dir} --pkg-output-dir {repo_dir}`.
-                if not subcmd_author.pkg_build(
+                # `{cmd} build --pkg-source-dir {pkg_src_dir} --pkg-output-dir {repo_dir}`.
+                if not subcmd_author.build(
                     msg_fn_no_done,
                     pkg_source_dir=pkg_src_dir,
                     pkg_output_dir=repo_dir,
@@ -2016,16 +2048,23 @@ def unregister():
 # Server Manipulating Actions
 
 
-def argparse_create_server_generate(subparsers: "argparse._SubParsersAction[argparse.ArgumentParser]") -> None:
+def argparse_create_server_generate(
+        subparsers: "argparse._SubParsersAction[argparse.ArgumentParser]",
+        args_internal: bool,
+) -> None:
     subparse = subparsers.add_parser(
         "server-generate",
         help="Create a listing from all packages.",
-        description="Test.",
+        description=(
+            "Generate a listing of all packages stored in a directory.\n"
+            "This can be used to host packages which only requires static-file hosting."
+        ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
 
     generic_arg_repo_dir(subparse)
-    generic_arg_output_type(subparse)
+    if args_internal:
+        generic_arg_output_type(subparse)
 
     subparse.set_defaults(
         func=lambda args: subcmd_server.generate(
@@ -2167,26 +2206,53 @@ def argparse_create_client_uninstall(subparsers: "argparse._SubParsersAction[arg
 # -----------------------------------------------------------------------------
 # Authoring Actions
 
-def argparse_create_author_build(subparsers: "argparse._SubParsersAction[argparse.ArgumentParser]") -> None:
+def argparse_create_author_build(
+        subparsers: "argparse._SubParsersAction[argparse.ArgumentParser]",
+        args_internal: bool,
+) -> None:
     subparse = subparsers.add_parser(
-        "pkg-build",
+        "build",
         help="Build a package.",
-        description="Build a packaging in the current directory.",
+        description="Build a package in the current directory.",
         formatter_class=argparse.RawTextHelpFormatter,
     )
 
-    generic_arg_pkg_source_dir(subparse)
-    generic_arg_pkg_output_dir(subparse)
-    generic_arg_pkg_output_filepath(subparse)
+    generic_arg_package_source_dir(subparse)
+    generic_arg_package_output_dir(subparse)
+    generic_arg_package_output_filepath(subparse)
 
-    generic_arg_output_type(subparse)
+    if args_internal:
+        generic_arg_output_type(subparse)
 
     subparse.set_defaults(
-        func=lambda args: subcmd_author.pkg_build(
+        func=lambda args: subcmd_author.build(
             msg_fn_from_args(args),
-            pkg_source_dir=args.pkg_source_dir,
-            pkg_output_dir=args.pkg_output_dir,
-            pkg_output_filepath=args.pkg_output_filepath,
+            pkg_source_dir=args.source_dir,
+            pkg_output_dir=args.output_dir,
+            pkg_output_filepath=args.output_filepath,
+        ),
+    )
+
+
+def argparse_create_author_validate(
+        subparsers: "argparse._SubParsersAction[argparse.ArgumentParser]",
+        args_internal: bool,
+) -> None:
+    subparse = subparsers.add_parser(
+        "validate",
+        help="Validate a package.",
+        description="Validate the package meta-data in the current directory.",
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
+    generic_arg_package_source_dir(subparse)
+
+    if args_internal:
+        generic_arg_output_type(subparse)
+
+    subparse.set_defaults(
+        func=lambda args: subcmd_author.validate(
+            msg_fn_from_args(args),
+            pkg_source_dir=args.source_dir,
         ),
     )
 
@@ -2266,39 +2332,46 @@ def argparse_create_dummy_progress(subparsers: "argparse._SubParsersAction[argpa
     )
 
 
-def argparse_create() -> argparse.ArgumentParser:
-
-    usage_text = "blender_ext!\n" + __doc__
+def argparse_create(
+        args_internal: bool = True,
+        args_extra_subcommands_fn: Optional[ArgsSubparseFn] = None,
+        prog: Optional[str] = None,
+) -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(
-        prog="blender_ext",
-        description=usage_text,
+        prog=prog or "blender_ext",
+        description=__doc__,
         formatter_class=argparse.RawTextHelpFormatter,
     )
 
     subparsers = parser.add_subparsers(
-        title='subcommands',
-        description='valid subcommands',
-        help='additional help',
+        title="subcommands",
+        description="",
+        help="",
     )
 
-    argparse_create_server_generate(subparsers)
+    argparse_create_server_generate(subparsers, args_internal)
 
-    # Queries.
-    argparse_create_client_list(subparsers)
+    if args_internal:
+        # Queries.
+        argparse_create_client_list(subparsers)
 
-    # Manipulating Actions.
-    argparse_create_client_sync(subparsers)
-    argparse_create_client_install_files(subparsers)
-    argparse_create_client_install(subparsers)
-    argparse_create_client_uninstall(subparsers)
+        # Manipulating Actions.
+        argparse_create_client_sync(subparsers)
+        argparse_create_client_install_files(subparsers)
+        argparse_create_client_install(subparsers)
+        argparse_create_client_uninstall(subparsers)
+
+        # Dummy commands.
+        argparse_create_dummy_repo(subparsers)
+        argparse_create_dummy_progress(subparsers)
 
     # Authoring Commands.
-    argparse_create_author_build(subparsers)
+    argparse_create_author_build(subparsers, args_internal)
+    argparse_create_author_validate(subparsers, args_internal)
 
-    # Dummy commands.
-    argparse_create_dummy_repo(subparsers)
-    argparse_create_dummy_progress(subparsers)
+    if args_extra_subcommands_fn is not None:
+        args_extra_subcommands_fn(subparsers)
 
     return parser
 
@@ -2345,7 +2418,10 @@ def msg_print_json_0(ty: str, data: PrimTypeOrSeq) -> bool:
 
 
 def msg_fn_from_args(args: argparse.Namespace) -> MessageFn:
-    match args.output_type:
+    # Will be None when running form Blender.
+    output_type = getattr(args, "output_type", 'TEXT')
+
+    match output_type:
         case 'JSON':
             return msg_print_json
         case 'JSON_0':
@@ -2356,7 +2432,12 @@ def msg_fn_from_args(args: argparse.Namespace) -> MessageFn:
     raise Exception("Unknown output!")
 
 
-def main(argv: Optional[List[str]] = None) -> bool:
+def main(
+        argv: Optional[List[str]] = None,
+        args_internal: bool = True,
+        args_extra_subcommands_fn: Optional[ArgsSubparseFn] = None,
+        prog: Optional[str] = None,
+) -> int:
 
     # Needed on WIN32 which doesn't default to `utf-8`.
     for fh in (sys.stdout, sys.stderr):
@@ -2369,18 +2450,22 @@ def main(argv: Optional[List[str]] = None) -> bool:
 
     if "--version" in sys.argv:
         sys.stdout.write("{:s}\n".format(VERSION))
-        return True
+        return 0
 
-    parser = argparse_create()
+    parser = argparse_create(
+        args_internal=args_internal,
+        args_extra_subcommands_fn=args_extra_subcommands_fn,
+        prog=prog,
+    )
     args = parser.parse_args(argv)
     # Call sub-parser callback.
     if not hasattr(args, "func"):
         parser.print_help()
-        return True
+        return 0
 
     result = args.func(args)
     assert isinstance(result, bool)
-    return result
+    return 0 if result else 1
 
 
 if __name__ == "__main__":
