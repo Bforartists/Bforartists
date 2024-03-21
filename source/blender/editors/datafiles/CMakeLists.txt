@@ -2378,8 +2378,8 @@ face_maps_active
 select_key
 face_set
 set_face_set
-#~ DEF_ICON_BLANK(2398)
-#~ DEF_ICON_BLANK(2399)
+lasso_show
+lasso_hide
 #~ DEF_ICON_BLANK(2400)
 #~ DEF_ICON_BLANK(2401)
 #~ DEF_ICON_BLANK(2402)
