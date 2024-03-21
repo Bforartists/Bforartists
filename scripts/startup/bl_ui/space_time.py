@@ -270,7 +270,7 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
         row.prop(scene, "use_audio_scrub", text="Scrubbing")
         row = col.row()
         row.separator()
-        row.prop(scene, "use_audio", text="Mute")
+        row.prop(scene, "use_audio", text="Play Audio")
 
         col = layout.column(align = True)
         col.label(text = "Playback")
