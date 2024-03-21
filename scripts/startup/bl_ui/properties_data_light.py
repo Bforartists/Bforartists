@@ -98,7 +98,9 @@ class DATA_PT_EEVEE_light(DataButtonsPanel, Panel):
         col.separator()
 
         if light.type in {'POINT', 'SPOT'}:
+            col.use_property_split = False
             col.prop(light, "use_soft_falloff")
+            col.use_property_split = True
             col.prop(light, "shadow_soft_size", text="Radius")
         elif light.type == 'SUN':
             col.prop(light, "angle")
@@ -115,8 +117,9 @@ class DATA_PT_EEVEE_light(DataButtonsPanel, Panel):
 
         if context.engine == 'BLENDER_EEVEE_NEXT':
             col.separator()
-
+            col.use_property_split = False
             col.prop(light, "use_shadow", text="Cast Shadow")
+            col.use_property_split = True
             col.prop(light, "shadow_softness_factor", text="Shadow Softness")
             col.prop(light, "shadow_filter_radius", text="Filtering Radius")
 
@@ -250,6 +253,7 @@ class DATA_PT_EEVEE_shadow_contact(DataButtonsPanel, Panel):
 class DATA_PT_spot(DataButtonsPanel, Panel):
     bl_label = "Spot Shape"
     bl_parent_id = "DATA_PT_EEVEE_light"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
         'BLENDER_EEVEE_NEXT',

@@ -8,7 +8,6 @@ from mathutils import Matrix
 from ....blender.com.gltf2_blender_data_path import get_sk_exported
 from ....io.com import gltf2_io
 from ....io.exp.gltf2_io_user_extensions import export_user_extensions
-from ....io.com.gltf2_io_debug import print_console
 from ..gltf2_blender_gather_tree import VExportNode
 from .sampled.armature.armature_action_sampled import gather_action_armature_sampled
 from .sampled.object.gltf2_blender_gather_object_action_sampled import gather_action_object_sampled
@@ -130,7 +129,7 @@ def merge_tracks_perform(merged_tracks, animations, export_settings):
 
             for channel in animations[anim_idx].channels:
                 if (channel.target.node, channel.target.path) in already_animated:
-                    print_console("WARNING", "Some strips have same channel animation ({}), on node {} !".format(channel.target.path, channel.target.node.name))
+                    export_settings['log'].warning("Some strips have same channel animation ({}), on node {} !".format(channel.target.path, channel.target.node.name))
                     continue
                 animations[base_animation_idx].channels.append(channel)
                 animations[base_animation_idx].channels[-1].sampler = animations[base_animation_idx].channels[-1].sampler + offset_sampler
@@ -162,6 +161,9 @@ def merge_tracks_perform(merged_tracks, animations, export_settings):
 
 def bake_animation(obj_uuid: str, animation_key: str, export_settings, mode=None):
 
+    # Bake situation does not export any extra animation channels, as we bake TRS + weights on Track or scene level, without direct
+    # Access to fcurve and action data
+
     # if there is no animation in file => no need to bake
     if len(bpy.data.actions) == 0:
         return None
@@ -180,8 +182,7 @@ def bake_animation(obj_uuid: str, animation_key: str, export_settings, mode=None
         # (skinned meshes TRS must be ignored, says glTF specification)
         if export_settings['vtree'].nodes[obj_uuid].skin is None:
             if mode is None or mode == "OBJECT":
-                animation = gather_action_object_sampled(obj_uuid, None, animation_key, export_settings)
-
+                animation, _ = gather_action_object_sampled(obj_uuid, None, animation_key, export_settings)
 
         # Need to bake sk only if not linked to a driver sk by parent armature
         # In case of NLA track export, no baking of SK
@@ -227,7 +228,7 @@ def bake_animation(obj_uuid: str, animation_key: str, export_settings, mode=None
         # We need to bake all bones. Because some bone can have some constraints linking to
         # some other armature bones, for example
 
-        animation = gather_action_armature_sampled(obj_uuid, None, animation_key, export_settings)
+        animation, _ = gather_action_armature_sampled(obj_uuid, None, animation_key, export_settings)
         link_samplers(animation, export_settings)
         if animation is not None:
             return animation

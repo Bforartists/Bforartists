@@ -219,14 +219,14 @@ class VIEW3D_PT_3dnavigationPanel(Panel):
         col = layout.column(align=True)
         col.label(text="Align view from:", icon="VIEW3D")
         row = col.row()
-        row.operator("view3d.view_axis", text="Front", icon="VIEW_FRONT").type = 'FRONT'
-        row.operator("view3d.view_axis", text="Back", icon="VIEW_BACK").type = 'BACK'
+        row.operator("view3d.view_axis", text="Front", icon="VIEW_FRONT").type = 'FRONT'  #BFA - icon added
+        row.operator("view3d.view_axis", text="Back", icon="VIEW_BACK").type = 'BACK'  #BFA - icon added
         row = col.row()
-        row.operator("view3d.view_axis", text="Left", icon="VIEW_LEFT").type = 'LEFT'
-        row.operator("view3d.view_axis", text="Right", icon="VIEW_RIGHT").type = 'RIGHT'
+        row.operator("view3d.view_axis", text="Left", icon="VIEW_LEFT").type = 'LEFT'  #BFA - icon added
+        row.operator("view3d.view_axis", text="Right", icon="VIEW_RIGHT").type = 'RIGHT'  #BFA - icon added
         row = col.row()
-        row.operator("view3d.view_axis", text="Top", icon="VIEW_TOP").type = 'TOP'
-        row.operator("view3d.view_axis", text="Bottom", icon="VIEW_BOTTOM").type = 'BOTTOM'
+        row.operator("view3d.view_axis", text="Top", icon="VIEW_TOP").type = 'TOP'  #BFA - icon added
+        row.operator("view3d.view_axis", text="Bottom", icon="VIEW_BOTTOM").type = 'BOTTOM'  #BFA - icon added
 
         # group of 2 buttons
         col = layout.column(align=True)

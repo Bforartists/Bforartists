@@ -1206,14 +1206,19 @@ static Node *alloc_node(Object *ob, PBVHNode *node, Type type)
   const bool need_faces = ELEM(type, Type::FaceSet, Type::HideFace);
 
   if (need_loops) {
-    unode->corner_indices = BKE_pbvh_node_get_loops(node);
+    unode->corner_indices = BKE_pbvh_node_get_corner_indices(node);
     unode->mesh_corners_num = static_cast<Mesh *>(ob->data)->corners_num;
 
     usculpt->undo_size += unode->corner_indices.as_span().size_in_bytes();
   }
 
   if (need_faces) {
-    unode->face_indices = BKE_pbvh_node_calc_face_indices(*ss->pbvh, *node);
+    if (BKE_pbvh_type(ss->pbvh) == PBVH_FACES) {
+      bke::pbvh::node_face_indices_calc_mesh(*ss->pbvh, *node, unode->face_indices);
+    }
+    else {
+      bke::pbvh::node_face_indices_calc_grids(*ss->pbvh, *node, unode->face_indices);
+    }
     usculpt->undo_size += unode->face_indices.as_span().size_in_bytes();
   }
 
@@ -1744,6 +1749,7 @@ static void set_active_layer(bContext *C, SculptAttrRef *attr)
     mesh->attributes_for_write().add(
         attr->name, attr->domain, attr->type, bke::AttributeInitDefaultValue());
     layer = BKE_id_attribute_find(&mesh->id, attr->name, attr->type, attr->domain);
+    DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
   }
 
   if (layer) {
@@ -1847,11 +1853,11 @@ static void sculpt_undosys_step_decode_redo(bContext *C, Depsgraph *depsgraph, S
     us_iter = (SculptUndoStep *)us_iter->step.prev;
   }
   while (us_iter && (us_iter->step.is_applied == false)) {
-    set_active_layer(C, &((SculptUndoStep *)us_iter)->active_color_start);
+    set_active_layer(C, &((SculptUndoStep *)us_iter)->active_color_end);
     sculpt_undosys_step_decode_redo_impl(C, depsgraph, us_iter);
 
     if (us_iter == us) {
-      set_active_layer(C, &((SculptUndoStep *)us_iter)->active_color_end);
+      set_active_layer(C, &((SculptUndoStep *)us_iter)->active_color_start);
       break;
     }
     us_iter = (SculptUndoStep *)us_iter->step.next;

@@ -128,7 +128,7 @@ classes = (
 
     ui.VIEW3D_PT_print3d_analyze,
     ui.VIEW3D_PT_print3d_cleanup,
-    ui.VIEW3D_PT_print3d_transform,
+    ui.VIEW3D_PT_print3d_edit,
     ui.VIEW3D_PT_print3d_export,
 
     operators.MESH_OT_print3d_info_volume,
@@ -149,6 +149,7 @@ classes = (
     operators.MESH_OT_print3d_scale_to_bounds,
     operators.MESH_OT_print3d_align_to_xy,
     operators.MESH_OT_print3d_export,
+    operators.MESH_OT_print3d_hollow,
 )
 
 
