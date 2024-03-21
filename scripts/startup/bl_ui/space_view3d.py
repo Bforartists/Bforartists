@@ -3005,6 +3005,8 @@ class VIEW3D_MT_add(Menu):
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "VIEW3D_MT_add"
             layout.separator()
+        else:
+            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "VIEW3D_MT_add" # BFA - make sure you can see it in the header
 
         # NOTE: don't use 'EXEC_SCREEN' or operators won't get the `v3d` context.
 
