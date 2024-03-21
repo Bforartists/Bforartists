@@ -10,6 +10,8 @@ from bpy.types import (
 )
 from bpy.app.translations import contexts as i18n_contexts
 
+######################################## Toolbar ########################################
+
 class TOOLBAR_HT_header(Header):
     bl_space_type = 'TOOLBAR'
 
@@ -97,9 +99,10 @@ class ALL_MT_editormenu_toolbar(Menu):
 ############################### Toolbar Type Panel ########################################
 
 class TOOLBAR_PT_type(Panel):
+    bl_label = "Toolbar Manager"
+    bl_idname = 'TOOLBAR_PT_type'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
-    bl_label = "Toolbar Types"
 
     def draw(self, context):
         layout = self.layout
@@ -108,7 +111,11 @@ class TOOLBAR_PT_type(Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.label(text = "Toolbar Types:")
+        col = layout.column(align = True)
+        row = col.row()
+        row.alignment = 'Center'.upper()
+        row.label(text='Toolbar Manager')
+
         # bfa - for toolbar types in context.area to show or hide
         # the toolbar content see bpy_types.py - class Menu
 
@@ -162,6 +169,13 @@ class TOOLBAR_PT_type(Panel):
         row.separator()
         row.operator("screen.header_toolbar_misc", text = "Misc")
 
+        col = layout.column()
+        col.label( text = "Extra Options:")
+        row = layout.row()
+        row.separator()
+        row.prop(addon_prefs, "toolbar_show_quicktoggle")
+
+        col = layout.column()
         row = col.row()
         row.separator()
         row.label( text = "Note that you need to save the")
@@ -170,14 +184,10 @@ class TOOLBAR_PT_type(Panel):
         row.label( text = "startup file to make the changes")
         row = col.row()
         row.separator()
-        row.label( text = "at the toolbar types permanent")
+        row.label( text = "to the toolbar permanent")
 
 
-        col = layout.column()
-        col.label( text = "Options:")
-        row = layout.row()
-        row.separator()
-        row.prop(addon_prefs, "toolbar_show_quicktoggle")
+
 
 #######################################################################
 
@@ -203,7 +213,6 @@ class TOOLBAR_MT_toolbar_type(Menu):
 
 
 ######################################## File ##############################################
-
 
 #################### Holds the Toolbars menu for file, collapsible
 
@@ -761,7 +770,7 @@ class TOOLBAR_MT_primitives(Menu):
             if addon_prefs.primitives_gpencil_lineart:
 
                 row = layout.row(align=True)
-                row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LRT_SCENE'
+                row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
                 row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LRT_COLLECTION'
                 row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LRT_OBJECT'
 
@@ -900,9 +909,9 @@ class TOOLBAR_MT_primitives(Menu):
                 if addon_prefs.primitives_gpencil_lineart:
 
                     row = layout.row(align=True)
-                    row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LRT_SCENE'
-                    row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LRT_COLLECTION'
-                    row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LRT_OBJECT'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LINEART_COLLECTION'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LINEART_OBJECT'
 
                 if addon_prefs.primitives_light:
 
@@ -1194,6 +1203,10 @@ class TOOLBAR_MT_image(Menu):
             row = layout.row(align=True)
             row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method='ANGLE_BASED'
             row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method='CONFORMAL'
+            row.operator_context = 'EXEC_REGION_WIN'
+            row.operator("uv.cube_project", text= "",icon = "CUBEPROJECT")
+            row.operator("uv.cylinder_project", text= "",icon = "CYLINDERPROJECT")
+            row.operator("uv.sphere_project", text= "",icon = "SPHEREPROJECT")
 
         if addon_prefs.image_uv_modify:
 

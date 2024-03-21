@@ -579,6 +579,7 @@ enum {
   AREA_FLAG_OFFSCREEN = (1 << 18),/*bfa*/
 };
 
+
 #define AREAGRID 4
 #define AREAMINX 29
 #define HEADER_PADDING_Y 6
@@ -588,6 +589,23 @@ enum {
 enum {
   SCREEN_DEPRECATED = 1,
   SCREEN_COLLAPSE_STATUSBAR = 2,
+  SCREEN_BFA_TOP_BAR = 4, /* BFA Top Toolbar */
+  // bfa - show hide the File topbar
+  HEADER_TOPBAR_FILE = (1 << 5),
+  // bfa - show hide the View topbar
+  HEADER_TOPBAR_MESHEDIT = (1 << 6),
+  // bfa - show hide the Primitives topbar
+  HEADER_TOPBAR_PRIMITIVES = (1 << 7),
+  // bfa - show hide the Image topbar
+  HEADER_TOPBAR_IMAGE = (1 << 8),
+  // bfa - show hide the Tools topbar
+  HEADER_TOPBAR_TOOLS = (1 << 9),
+  // bfa - show hide the Animation topbar
+  HEADER_TOPBAR_ANIMATION = (1 << 10),
+  // bfa - show hide the Edit topbar
+  HEADER_TOPBAR_EDIT = (1 << 11),
+  // bfa - show hide the Misc topbar
+  HEADER_TOPBAR_MISC = (1 << 12),
 };
 
 /** #bScreen.state */

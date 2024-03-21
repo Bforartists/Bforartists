@@ -1214,6 +1214,8 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
             display_name=lambda name: bpy.path.display_name(name, title_case=False)
         )
 
+    # bfa - toolbar start
+
     @classmethod
     def draw_collapsible(cls, context, layout):
         # helper function for (optionally) collapsed header menus
@@ -1250,7 +1252,7 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         if not context.area.primitives_toolbars:
             cls.draw_menus(layout, context)
 
-    # bfa - show hide the primitives toolbar
+    # bfa - show hide the Images toolbar
     @classmethod
     def hide_image_toolbar(cls, context, layout):
         if not context.area.image_toolbars:
@@ -1280,6 +1282,59 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         if not context.area.misc_toolbars:
             cls.draw_menus(layout, context)
 
+    # bfa - toolbar finish
+
+    # bfa - topbar start
+
+    # bfa - show hide the file topbar #
+    @classmethod
+    def hide_file_topbar(cls, context, layout):
+        if context.area.file_topbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - show hide the meshedit topbar #
+    @classmethod
+    def hide_meshedit_topbar(cls, context, layout):
+        if context.area.meshedit_topbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - show hide the primitives topbar #
+    @classmethod
+    def hide_primitives_topbar(cls, context, layout):
+        if context.area.primitives_topbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - show hide the Images topbar #
+    @classmethod
+    def hide_image_topbar(cls, context, layout):
+        if context.area.image_topbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - show hide the tools topbar #
+    @classmethod
+    def hide_tools_topbar(cls, context, layout):
+        if context.area.tools_topbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - show hide the animation topbar #
+    @classmethod
+    def hide_animation_topbar(cls, context, layout):
+        if context.area.animation_topbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - show hide the edit topbar #
+    @classmethod
+    def hide_edit_topbar(cls, context, layout):
+        if context.area.edit_topbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - show hide the misc topbar #
+    @classmethod
+    def hide_misc_topbar(cls, context, layout):
+        if context.area.misc_topbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - topbar finish
 
 class AssetShelf(StructRNA, metaclass=RNAMeta):
     __slots__ = ()
