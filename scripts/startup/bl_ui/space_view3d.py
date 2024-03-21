@@ -4367,6 +4367,12 @@ class VIEW3D_MT_sculpt(Menu):
         props = layout.operator("paint.hide_show", text="Box Show", icon="BOX_SHOW")
         props.action = 'SHOW'
 
+        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Hide", icon="LASSO_HIDE")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show", icon="LASSO_SHOW")
+        props.action = 'SHOW'
+
         layout.separator()
 
         # BFA: redundant - commented out code
@@ -4481,12 +4487,6 @@ class VIEW3D_MT_sculpt_showhide(Menu):
 
         props = layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set", icon="HIDE_ON")
         props.mode = 'HIDE_ACTIVE'
-
-        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Hide")
-        props.action = 'HIDE'
-
-        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show")
-        props.action = 'SHOW'
 
         props = layout.operator("paint.hide_show_all", text="Show All", icon="HIDE_OFF")
         props.action = 'SHOW'
