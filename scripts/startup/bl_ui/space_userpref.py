@@ -264,14 +264,24 @@ class USERPREF_PT_interface_translation(InterfacePanel, CenterAlignMixIn, Panel)
         view = prefs.view
 
         layout.prop(view, "language")
+        col = layout.column()
 
-        col = layout.column(heading="Translate")
+        col.label(text = "Translate")
         col.active = (bpy.app.translations.locale != "en_US")
         col.use_property_split = False #BFA - Left align checkboxes
-        col.prop(view, "use_translate_tooltips", text="Tooltips")
-        col.prop(view, "use_translate_interface", text="Interface")
-        col.prop(view, "use_translate_reports", text="Reports")
-        col.prop(view, "use_translate_new_dataname", text="New Data")
+
+        row = col.row()
+        row.separator()
+        row.prop(view, "use_translate_tooltips", text="Tooltips")
+        row = col.row()
+        row.separator()
+        row.prop(view, "use_translate_interface", text="Interface")
+        row = col.row()
+        row.separator()
+        row.prop(view, "use_translate_reports", text="Reports")
+        row = col.row()
+        row.separator()
+        row.prop(view, "use_translate_new_dataname", text="New Data")
 
 
 class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
