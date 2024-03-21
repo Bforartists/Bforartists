@@ -101,6 +101,8 @@ _modules = [
     "space_toolbar",
     # bfa - node toolshelf
     "space_node_toolshelf",
+    # bfa - topbar toolbar
+    "space_topbar_toolbar",
 
     # XXX, keep last so panels show after all other tool options.
     "properties_workspace",
