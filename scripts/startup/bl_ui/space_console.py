@@ -167,9 +167,7 @@ class CONSOLE_MT_language(Menu):
         languages.sort()
 
         for language in languages:
-            layout.operator("console.language",
-                            text=language.title(),
-                            translate=False).language = language
+            layout.operator("console.language", text=language.title(), translate=False).language = language
 
 class CONSOLE_MT_edit_delete(Menu):
     bl_label = "Delete"

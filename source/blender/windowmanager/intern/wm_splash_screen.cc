@@ -154,6 +154,7 @@ static ImBuf *wm_block_splash_image(int width, int *r_height)
   }
 
   if (ibuf) {
+    ibuf->planes = 32; /* The image might not have an alpha channel. */
     height = (width * ibuf->y) / ibuf->x;
     if (width != ibuf->x || height != ibuf->y) {
       IMB_scaleImBuf(ibuf, width, height);
@@ -200,7 +201,7 @@ static uiBlock *wm_block_splash_create(bContext *C, ARegion *region, void * /*ar
 
   uiBlock *block = UI_block_begin(C, region, "splash", UI_EMBOSS);
 
-  /* note on UI_BLOCK_NO_WIN_CLIP, the window size is not always synchronized
+  /* Note on #UI_BLOCK_NO_WIN_CLIP, the window size is not always synchronized
    * with the OS when the splash shows, window clipping in this case gives
    * ugly results and clipping the splash isn't useful anyway, just disable it #32938. */
   UI_block_flag_enable(block, UI_BLOCK_LOOP | UI_BLOCK_KEEP_OPEN | UI_BLOCK_NO_WIN_CLIP);
