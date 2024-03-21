@@ -317,8 +317,7 @@ void OBJECT_OT_hide_view_clear(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  PropertyRNA *prop = RNA_def_boolean(ot->srna, "select", true, "Select", "");
-  RNA_def_property_flag(prop, PropertyFlag(PROP_SKIP_SAVE | PROP_HIDDEN));
+  RNA_def_boolean(ot->srna, "select", true, "Select", "");
 }
 
 static int object_hide_view_set_exec(bContext *C, wmOperator *op)
@@ -1625,6 +1624,7 @@ static int shade_smooth_exec(bContext *C, wmOperator *op)
         const float angle = RNA_float_get(op->ptr, "angle");
         bke::mesh_sharp_edges_set_from_angle(mesh, angle, keep_sharp_edges);
       }
+      mesh.tag_sharpness_changed();
       BKE_mesh_batch_cache_dirty_tag(static_cast<Mesh *>(ob->data), BKE_MESH_BATCH_DIRTY_ALL);
       changed = true;
     }

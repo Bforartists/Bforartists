@@ -1567,10 +1567,7 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
 
 
 def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=False):
-    tool_settings = context.tool_settings
-    settings = tool_settings.gpencil_paint
     gp_settings = brush.gpencil_settings
-    tool = context.workspace.tools.from_space_view3d_mode(context.mode, create=False)
     if gp_settings is None:
         return
 
@@ -1590,8 +1587,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=
 
     if brush.use_pressure_size and not compact:
         col = layout.column()
-        col.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True,
-                                   use_negative_slope=True)
+        col.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True)
 
     UnifiedPaintPanel.prop_unified(
         layout,
@@ -1606,8 +1602,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=
 
     if brush.use_pressure_strength and not compact:
         col = layout.column()
-        col.template_curve_mapping(gp_settings, "curve_strength", brush=True,
-                                   use_negative_slope=True)
+        col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
 
     if grease_pencil_tool == 'DRAW':
         layout.prop(gp_settings, "active_smooth_factor")
@@ -1644,7 +1639,7 @@ def brush_basic_gpencil_sculpt_settings(layout, _context, brush, *, compact=Fals
     if compact:
         if tool in {'THICKNESS', 'STRENGTH', 'PINCH', 'TWIST'}:
             row.separator()
-            row.prop(gp_settings, "direction", expand=True, text="")
+            row.prop(brush, "direction", expand=True, text="")
     else:
         use_property_split_prev = layout.use_property_split
         layout.use_property_split = False
@@ -1663,12 +1658,12 @@ def brush_basic_gpencil_sculpt_settings(layout, _context, brush, *, compact=Fals
 
 def brush_basic_gpencil_weight_settings(layout, _context, brush, *, compact=False):
 
+	# BFA - order changed to be consistent with others
 
     if brush.gpencil_weight_tool in {'WEIGHT'}:
         layout.prop(brush, "weight", slider=True)
 
-        gp_settings = brush.gpencil_settings
-        layout.prop(gp_settings, "direction", expand=True, text="" if compact else "Direction")
+        layout.prop(brush, "direction", expand=True, text="" if compact else "Direction")
 
 
     layout.prop(brush, "size", slider=True)

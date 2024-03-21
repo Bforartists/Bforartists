@@ -167,12 +167,10 @@ class FILEBROWSER_PT_filter(FileBrowserPanel, Panel):
         else:
             row = col.row()
             row.label(icon='FILE_BLEND')
-            row.prop(params, "use_filter_blender",
-                     text=".blend Files", toggle=False)
+            row.prop(params, "use_filter_blender", text=".blend Files", toggle=False)
             row = col.row()
             row.label(icon='FILE_BACKUP')
-            row.prop(params, "use_filter_backup",
-                     text="Backup .blend Files", toggle=False)
+            row.prop(params, "use_filter_backup", text="Backup .blend Files", toggle=False)
             row = col.row()
             row.label(icon='FILE_IMAGE')
             row.prop(params, "use_filter_image", text="Image Files", toggle=False)
@@ -181,8 +179,7 @@ class FILEBROWSER_PT_filter(FileBrowserPanel, Panel):
             row.prop(params, "use_filter_movie", text="Movie Files", toggle=False)
             row = col.row()
             row.label(icon='FILE_SCRIPT')
-            row.prop(params, "use_filter_script",
-                     text="Script Files", toggle=False)
+            row.prop(params, "use_filter_script", text="Script Files", toggle=False)
             row = col.row()
             row.label(icon='FILE_FONT')
             row.prop(params, "use_filter_font", text="Font Files", toggle=False)
@@ -201,8 +198,7 @@ class FILEBROWSER_PT_filter(FileBrowserPanel, Panel):
         if is_lib_browser:
             row = col.row()
             row.label(icon='BLANK1')  # Indentation
-            row.prop(params, "use_filter_blendid",
-                     text="Blender IDs", toggle=False)
+            row.prop(params, "use_filter_blendid", text="Blender IDs", toggle=False)
             if params.use_filter_blendid:
                 row = col.row()
                 row.label(icon='BLANK1')  # Indentation
@@ -306,10 +302,8 @@ class FILEBROWSER_MT_bookmarks_context_menu(Menu):
         layout.operator("file.bookmark_cleanup", icon='X', text="Cleanup")
 
         layout.separator()
-        layout.operator("file.bookmark_move", icon='TRIA_UP_BAR',
-                        text="Move to Top").direction = 'TOP'
-        layout.operator("file.bookmark_move", icon='TRIA_DOWN_BAR',
-                        text="Move to Bottom").direction = 'BOTTOM'
+        layout.operator("file.bookmark_move", icon='TRIA_UP_BAR', text="Move to Top").direction = 'TOP'
+        layout.operator("file.bookmark_move", icon='TRIA_DOWN_BAR', text="Move to Bottom").direction = 'BOTTOM'
 
 
 class FILEBROWSER_PT_bookmarks_favorites(FileBrowserPanel, Panel):
@@ -339,15 +333,12 @@ class FILEBROWSER_PT_bookmarks_favorites(FileBrowserPanel, Panel):
             col = row.column(align=True)
             col.operator("file.bookmark_add", icon='ADD', text="")
             col.operator("file.bookmark_delete", icon='REMOVE', text="")
-            col.menu("FILEBROWSER_MT_bookmarks_context_menu",
-                     icon='DOWNARROW_HLT', text="")
+            col.menu("FILEBROWSER_MT_bookmarks_context_menu", icon='DOWNARROW_HLT', text="")
 
             if num_rows > 1:
                 col.separator()
-                col.operator("file.bookmark_move", icon='TRIA_UP',
-                             text="").direction = 'UP'
-                col.operator("file.bookmark_move", icon='TRIA_DOWN',
-                             text="").direction = 'DOWN'
+                col.operator("file.bookmark_move", icon='TRIA_UP', text="").direction = 'UP'
+                col.operator("file.bookmark_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
         else:
             layout.operator("file.bookmark_add", icon='ADD')
 
@@ -796,45 +787,54 @@ class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
                 col.prop(asset.metadata, "catalog_id", text="UUID")
                 col.prop(asset.metadata, "catalog_simple_name", text="Simple Name")
 
-
+# BFA - we made this info into a panel you can collapse
 class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
     bl_label = "Info"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'} # BFA - not needed on first use
+
+    @staticmethod
+    def metadata_prop(layout, asset_metadata, propname):
+        """
+        Only display properties that are either set or can be modified (i.e. the
+        asset is in the current file). Empty, non-editable fields are not really useful.
+        """
+        if getattr(asset_metadata, propname) or not asset_metadata.is_property_readonly(propname):
+            layout.prop(asset_metadata, propname)
 
     def draw(self, context):
         layout = self.layout
         wm = context.window_manager
-        asset_file_handle = context.asset_file_handle
+        asset = context.asset
 
-        if asset_file_handle is None:
+        if asset is None:
             layout.label(text="No active asset", icon='INFO')
             return
 
         prefs = context.preferences
         show_asset_debug_info = prefs.view.show_developer_ui and prefs.experimental.show_asset_debug_info
-        is_local_asset = bool(asset_file_handle.local_id)
+        is_local_asset = bool(asset.local_id)
 
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
         if is_local_asset:
             # If the active file is an ID, use its name directly so renaming is possible from right here.
-            layout.prop(asset_file_handle.local_id, "name")
+            #layout.prop(asset.local_id, "name") # BFA - redundant
 
             if show_asset_debug_info:
                 col = layout.column(align=True)
                 col.label(text="Asset Catalog:")
-                col.prop(asset_file_handle.local_id.asset_data, "catalog_id", text="UUID")
-                col.prop(asset_file_handle.local_id.asset_data, "catalog_simple_name", text="Simple Name")
+                col.prop(asset.local_id.asset_data, "catalog_id", text="UUID")
+                col.prop(asset.local_id.asset_data, "catalog_simple_name", text="Simple Name")
         else:
-            layout.prop(asset_file_handle, "name")
+            #layout.prop(asset, "name")  # BFA - redundant
 
             if show_asset_debug_info:
                 col = layout.column(align=True)
                 col.enabled = False
                 col.label(text="Asset Catalog:")
-                col.prop(asset_file_handle.asset_data, "catalog_id", text="UUID")
-                col.prop(asset_file_handle.asset_data, "catalog_simple_name", text="Simple Name")
+                col.prop(asset.asset_data, "catalog_id", text="UUID")
+                col.prop(asset.asset_data, "catalog_simple_name", text="Simple Name")
 
         row = layout.row(align=True)
         row.prop(wm, "asset_path_dummy", text="Source", icon='CURRENT_FILE' if is_local_asset else 'NONE')

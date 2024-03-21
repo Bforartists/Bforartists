@@ -722,8 +722,9 @@ typedef struct UserDef_Experimental {
   char use_new_volume_nodes;
   char use_shader_node_previews;
   char use_extension_repos;
+  char use_extension_utils;
 
-  char _pad[3];
+  char _pad[2];
   /** `makesdna` does not allow empty structs. */
 } UserDef_Experimental;
 
@@ -741,6 +742,12 @@ typedef struct bUserScriptDirectory {
   char dir_path[768]; /* FILE_MAXDIR */
 } bUserScriptDirectory;
 
+/**
+ * Main user preferences data, typically accessed from #U.
+ * See: #BKE_blendfile_userdef_from_defaults & #BKE_blendfile_userdef_read.
+ *
+ * \note This is either loaded from the file #BLENDER_USERPREF_FILE or from memory, see #U_default.
+ */
 typedef struct UserDef {
   DNA_DEFINE_CXX_METHODS(UserDef)
 

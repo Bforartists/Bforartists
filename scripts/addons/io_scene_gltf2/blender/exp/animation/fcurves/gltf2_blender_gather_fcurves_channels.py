@@ -6,7 +6,6 @@ import bpy
 import typing
 from .....io.exp.gltf2_io_user_extensions import export_user_extensions
 from .....blender.com.gltf2_blender_data_path import skip_sk
-from .....io.com import gltf2_io_debug
 from .....io.com import gltf2_io
 from ....exp.gltf2_blender_gather_cache import cached
 from ....com.gltf2_blender_data_path import get_target_object_path, get_target_property_name, get_rotation_modes
@@ -23,25 +22,40 @@ def gather_animation_fcurves_channels(
         export_settings
         ):
 
-    channels_to_perform, to_be_sampled = get_channel_groups(obj_uuid, blender_action, export_settings)
+    channels_to_perform, to_be_sampled, extra_channels_to_perform = get_channel_groups(obj_uuid, blender_action, export_settings)
 
     custom_range = None
     if blender_action.use_frame_range:
         custom_range = (blender_action.frame_start, blender_action.frame_end)
 
     channels = []
-    for chan in [chan for chan in channels_to_perform.values() if len(chan['properties']) != 0 and chan['type'] != "EXTRA"]:
+    extra_samplers = []
+
+    for chan in [chan for chan in channels_to_perform.values() if len(chan['properties']) != 0]:
         for channel_group in chan['properties'].values():
             channel = __gather_animation_fcurve_channel(chan['obj_uuid'], channel_group, chan['bone'], custom_range, export_settings)
             if channel is not None:
                 channels.append(channel)
 
 
-    return channels, to_be_sampled
+    if export_settings['gltf_export_extra_animations']:
+        for chan in [chan for chan in extra_channels_to_perform.values() if len(chan['properties']) != 0]:
+            for channel_group_name, channel_group in chan['properties'].items():
+
+                # No glTF channel here, as we don't have any target
+                # Trying to retrieve sampler directly
+                sampler = __gather_sampler(obj_uuid, tuple(channel_group), None, custom_range, True, export_settings)
+                if sampler is not None:
+                    extra_samplers.append((channel_group_name, sampler, "OBJECT", None))
 
 
-def get_channel_groups(obj_uuid: str, blender_action: bpy.types.Action, export_settings):
+    return channels, to_be_sampled, extra_samplers
+
+
+def get_channel_groups(obj_uuid: str, blender_action: bpy.types.Action, export_settings, no_sample_option=False):
+    # no_sample_option is used when we want to retrieve all SK channels, to be evaluate.
     targets = {}
+    targets_extra = {}
 
 
     blender_object = export_settings['vtree'].nodes[obj_uuid].blender_object
@@ -61,20 +75,33 @@ def get_channel_groups(obj_uuid: str, blender_action: bpy.types.Action, export_s
             # example of target_property : location, rotation_quaternion, value
             target_property = get_target_property_name(fcurve.data_path)
         except:
-            gltf2_io_debug.print_console("WARNING", "Invalid animation fcurve name on action {}".format(blender_action.name))
+            export_settings['log'].warning("Invalid animation fcurve data path on action {}".format(blender_action.name))
             continue
         object_path = get_target_object_path(fcurve.data_path)
 
         # find the object affected by this action
         # object_path : blank for blender_object itself, key_blocks["<name>"] for SK, pose.bones["<name>"] for bones
         if not object_path:
-            target = blender_object
-            type_ = "OBJECT"
+            if fcurve.data_path.startswith("["):
+                target = blender_object
+                type_ = "EXTRA"
+            else:
+                target = blender_object
+                type_ = "OBJECT"
         else:
             try:
                 target = get_object_from_datapath(blender_object, object_path)
+
                 if blender_object.type == "ARMATURE" and fcurve.data_path.startswith("pose.bones["):
-                    type_ = "BONE"
+                    if target_property is not None:
+                        if get_target(target_property) is not None:
+                            type_ = "BONE"
+                        else:
+                            type_ = "EXTRA"
+                    else:
+                        type_ = "EXTRA"
+
+
                 else:
                     type_ = "EXTRA"
                 if blender_object.type == "MESH" and object_path.startswith("key_blocks"):
@@ -95,10 +122,10 @@ def get_channel_groups(obj_uuid: str, blender_action: bpy.types.Action, export_s
                         type_ = "SK"
                     except:
                         # Something is wrong, for example a bone animation is linked to an object mesh...
-                        gltf2_io_debug.print_console("WARNING", "Animation target {} not found".format(object_path))
+                        export_settings['log'].warning("Invalid animation fcurve data path on action {}".format(blender_action.name))
                         continue
                 else:
-                    gltf2_io_debug.print_console("WARNING", "Animation target {} not found".format(object_path))
+                    export_settings['log'].warning("Animation target {} not found".format(object_path))
                     continue
 
         # Detect that object or bone are not multiple keyed for euler and quaternion
@@ -106,6 +133,25 @@ def get_channel_groups(obj_uuid: str, blender_action: bpy.types.Action, export_s
         rotation, rotation_modes = get_rotation_modes(target_property)
         if rotation and target.rotation_mode not in rotation_modes:
             multiple_rotation_mode_detected[target] = True
+            continue
+
+        if type_ == "EXTRA":
+            # No group by property, because we are going to export fcurve separately
+            # We are going to evaluate fcurve, so no check if need to be sampled
+            if target_property is None:
+                target_property = fcurve.data_path
+            if not target_property.startswith("pose.bones["):
+                target_property = fcurve.data_path
+            target_data = targets_extra.get(target, {})
+            target_data['type'] = type_
+            target_data['bone'] = target.name
+            target_data['obj_uuid'] = obj_uuid
+            target_properties = target_data.get('properties', {})
+            channels = target_properties.get(target_property, [])
+            channels.append(fcurve)
+            target_properties[target_property] = channels
+            target_data['properties'] = target_properties
+            targets_extra[target] = target_data
             continue
 
         # group channels by target object and affected property of the target
@@ -122,7 +168,7 @@ def get_channel_groups(obj_uuid: str, blender_action: bpy.types.Action, export_s
         targets[target] = target_data
 
     for targ in multiple_rotation_mode_detected.keys():
-        gltf2_io_debug.print_console("WARNING", "Multiple rotation mode detected for {}".format(targ.name))
+        export_settings['log'].warning("Multiple rotation mode detected for {}".format(targ.name))
 
     # Now that all curves are extracted,
     #    - check that there is no normal + delta transforms
@@ -148,7 +194,7 @@ def get_channel_groups(obj_uuid: str, blender_action: bpy.types.Action, export_s
         # Check if the property can be exported without sampling
         new_properties = {}
         for prop in target_data['properties'].keys():
-            if needs_baking(obj_uuid, target_data['properties'][prop], export_settings) is True:
+            if no_sample_option is False and needs_baking(obj_uuid, target_data['properties'][prop], export_settings) is True:
                 to_be_sampled.append((obj_uuid, target_data['type'], get_channel_from_target(get_target(prop)), target_data['bone'])) # bone can be None if not a bone :)
             else:
                 new_properties[prop] = target_data['properties'][prop]
@@ -165,7 +211,7 @@ def get_channel_groups(obj_uuid: str, blender_action: bpy.types.Action, export_s
 
     to_be_sampled = list(set(to_be_sampled))
 
-    return targets, to_be_sampled
+    return targets, to_be_sampled, targets_extra
 
 
 def __get_channel_group_sorted(channels: typing.Tuple[bpy.types.FCurve], blender_object: bpy.types.Object):
@@ -226,7 +272,7 @@ def __gather_animation_fcurve_channel(obj_uuid: str,
 
     __target= __gather_target(obj_uuid, channel_group, bone, export_settings)
     if __target.path is not None:
-        sampler = __gather_sampler(obj_uuid, channel_group, bone, custom_range, export_settings)
+        sampler = __gather_sampler(obj_uuid, channel_group, bone, custom_range, False, export_settings)
 
         if sampler is None:
             # After check, no need to animate this node for this channel
@@ -261,9 +307,10 @@ def __gather_sampler(obj_uuid: str,
                     channel_group: typing.Tuple[bpy.types.FCurve],
                     bone: typing.Optional[str],
                     custom_range: typing.Optional[set],
+                    extra_mode: bool,
                     export_settings) -> gltf2_io.AnimationSampler:
 
-    return gather_animation_fcurves_sampler(obj_uuid, channel_group, bone, custom_range, export_settings)
+    return gather_animation_fcurves_sampler(obj_uuid, channel_group, bone, custom_range, extra_mode, export_settings)
 
 def needs_baking(obj_uuid: str,
                  channels: typing.Tuple[bpy.types.FCurve],
@@ -281,24 +328,24 @@ def needs_baking(obj_uuid: str,
     # Sampling due to unsupported interpolation
     interpolation = [c for c in channels if c is not None][0].keyframe_points[0].interpolation
     if interpolation not in ["BEZIER", "LINEAR", "CONSTANT"]:
-        gltf2_io_debug.print_console("WARNING",
-                                     "Baking animation because of an unsupported interpolation method: {}".format(
-                                         interpolation)
-                                     )
+        export_settings['log'].warning(
+            "Baking animation because of an unsupported interpolation method: {}".format(interpolation)
+        )
         return True
 
     if any(any(k.interpolation != interpolation for k in c.keyframe_points) for c in channels if c is not None):
         # There are different interpolation methods in one action group
-        gltf2_io_debug.print_console("WARNING",
-                                     "Baking animation because there are keyframes with different "
+        export_settings['log'].warning(
+            "Baking animation because there are keyframes with different "
                                      "interpolation methods in one channel"
-                                     )
+        )
         return True
 
     if not all_equal([len(c.keyframe_points) for c in channels if c is not None]):
-        gltf2_io_debug.print_console("WARNING",
-                                     "Baking animation because the number of keyframes is not "
-                                     "equal for all channel tracks")
+        export_settings['log'].warning(
+            "Baking animation because the number of keyframes is not "
+            "equal for all channel tracks"
+        )
         return True
 
     if len([c for c in channels if c is not None][0].keyframe_points) <= 1:
@@ -307,8 +354,7 @@ def needs_baking(obj_uuid: str,
 
     if not all_equal(list(zip([[k.co[0] for k in c.keyframe_points] for c in channels if c is not None]))):
         # The channels have differently located keyframes
-        gltf2_io_debug.print_console("WARNING",
-                                     "Baking animation because of differently located keyframes in one channel")
+        export_settings['log'].warning("Baking animation because of differently located keyframes in one channel")
         return True
 
     if export_settings['vtree'].nodes[obj_uuid].blender_object.type == "ARMATURE":
@@ -316,8 +362,7 @@ def needs_baking(obj_uuid: str,
         if isinstance(animation_target, bpy.types.PoseBone):
             if len(animation_target.constraints) != 0:
                 # Constraints such as IK act on the bone -> can not be represented in glTF atm
-                gltf2_io_debug.print_console("WARNING",
-                                             "Baking animation because of unsupported constraints acting on the bone")
+                export_settings['log'].warning("Baking animation because of unsupported constraints acting on the bone")
                 return True
 
     return False

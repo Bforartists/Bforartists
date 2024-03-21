@@ -17,8 +17,7 @@ from bl_ui.properties_grease_pencil_common import (
 
 
 class CLIP_UL_tracking_objects(UIList):
-    def draw_item(self, _context, layout, _data, item, _icon,
-                  _active_data, _active_propname, _index):
+    def draw_item(self, _context, layout, _data, item, _icon, _active_data, _active_propname, _index):
         # assert(isinstance(item, bpy.types.MovieTrackingObject)
         tobj = item
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
@@ -60,6 +59,7 @@ class CLIP_PT_marker_display(Panel):
         col.prop(view, "show_marker_pattern", text="Pattern")
         col.prop(view, "show_marker_search", text="Search")
         col.prop(view, "show_disabled", text="Show Disabled")
+		# BFA - moved below
 
         col = row.column()
         col.prop(view, "show_names", text="Info")
@@ -107,7 +107,7 @@ class CLIP_PT_clip_display(Panel):
         row = layout.row()
         col = row.column()
         col.prop(sc.clip_user, "use_render_undistorted", text="Render Undistorted")
-        col.prop(sc, "show_metadata")
+        col.prop(sc, "show_metadata") # BFA - exposed from header to here
 
         col = row.column()
         col.prop(sc, "show_stable", text="Show Stable")
@@ -149,8 +149,7 @@ class CLIP_HT_header(Header):
             props = row.operator("clip.track_markers", text="", icon='TRACKING_BACKWARDS_SINGLE')
             props.backwards = True
             props.sequence = False
-            props = row.operator("clip.track_markers", text="",
-                                 icon='TRACKING_BACKWARDS')
+            props = row.operator("clip.track_markers", text="", icon='TRACKING_BACKWARDS')
             props.backwards = True
             props.sequence = True
             props = row.operator("clip.track_markers", text="", icon='TRACKING_FORWARDS')
@@ -178,16 +177,14 @@ class CLIP_HT_header(Header):
                 r = active_object.reconstruction
 
                 if r.is_valid and sc.view == 'CLIP':
-                    layout.label(text=rpt_("Solve error: %.2f px") %
-                                 (r.average_error),
-                                 translate=False)
+                    layout.label(text=rpt_("Solve error: %.2f px") % (r.average_error), translate=False)
 
                 row = layout.row()
                 row.prop(sc, "pivot_point", text="", icon_only=True)
                 row = layout.row(align=True)
                 icon = 'LOCKED' if sc.lock_selection else 'UNLOCKED'
                 row.operator("clip.lock_selection_toggle", icon=icon, text="", depress=sc.lock_selection)
-                row.popover(panel='CLIP_PT_display')
+                row.popover(panel="CLIP_PT_display")
 
             elif sc.view == 'GRAPH':
                 row = layout.row(align=True)
@@ -202,7 +199,7 @@ class CLIP_HT_header(Header):
 
                 row.prop(sc, "show_graph_tracks_motion", icon='GRAPH', text="")
                 row.prop(sc, "show_graph_tracks_error", icon='ANIM_DATA', text="")
-                row.popover(panel="CLIP_PT_options", text="Options")
+                row.popover(panel="CLIP_PT_options", text="Options") # BFA - make options consistent in editor
 
             elif sc.view == 'DOPESHEET':
                 dopesheet = tracking.dopesheet
@@ -256,11 +253,11 @@ class CLIP_HT_header(Header):
 
             row = layout.row()
             row.template_ID(sc, "mask", new="mask.new")
-            row.popover(panel='CLIP_PT_mask_display')
+            row.popover(panel="CLIP_PT_mask_display")
             row = layout.row(align=True)
             icon = 'LOCKED' if sc.lock_selection else 'UNLOCKED'
             row.operator("clip.lock_selection_toggle", icon=icon, text="", depress=sc.lock_selection)
-            row.popover(panel='CLIP_PT_display')
+            row.popover(panel="CLIP_PT_display")
 
     def draw(self, context):
         layout = self.layout
@@ -336,7 +333,7 @@ class CLIP_MT_tracking_editor_menus(Menu):
         layout = self.layout
         sc = context.space_data
         clip = sc.clip
-        layout.menu("SCREEN_MT_user_menu", text="Quick")  # Quick favourites menu
+        layout.menu("SCREEN_MT_user_menu", text="Quick")  # BFA - Quick favourites menu
         layout.menu("CLIP_MT_view")
 
         if sc.view == 'CLIP':
@@ -417,7 +414,7 @@ class CLIP_MT_masking_editor_menus(Menu):
         sc = context.space_data
         clip = sc.clip
 
-        layout.menu("SCREEN_MT_user_menu", text="Quick")  # Quick favourites menu
+        layout.menu("SCREEN_MT_user_menu", text="Quick")  # BFA - Quick favourites menu
         layout.menu("CLIP_MT_view")
 
         if clip:
@@ -478,6 +475,9 @@ class CLIP_PT_tools_clip(Panel):
 
         col = layout.column(align=True)
         col.operator("clip.set_scene_frames", icon="SET_FRAMES")
+        row = col.row(align=True)
+        row.operator("clip.prefetch", text="Prefetch", icon="PREFETCH")
+        row.operator("clip.reload", text="Reload", icon="FILE_REFRESH")
 
 
 class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
@@ -592,8 +592,7 @@ class CLIP_PT_tools_tracking(CLIP_PT_tracking_panel, Panel):
         props = row.operator("clip.track_markers", text="", icon='TRACKING_BACKWARDS_SINGLE')
         props.backwards = True
         props.sequence = False
-        props = row.operator("clip.track_markers", text="",
-                             icon='TRACKING_BACKWARDS')
+        props = row.operator("clip.track_markers", text="", icon='TRACKING_BACKWARDS')
         props.backwards = True
         props.sequence = True
         props = row.operator("clip.track_markers", text="", icon='TRACKING_FORWARDS')
@@ -824,8 +823,7 @@ class CLIP_PT_objects(CLIP_PT_clip_view_panel, Panel):
         tracking = sc.clip.tracking
 
         row = layout.row()
-        row.template_list("CLIP_UL_tracking_objects", "", tracking, "objects",
-                          tracking, "active_object_index", rows=1)
+        row.template_list("CLIP_UL_tracking_objects", "", tracking, "objects", tracking, "active_object_index", rows=1)
 
         sub = row.column(align=True)
 
@@ -877,8 +875,7 @@ class CLIP_PT_track(CLIP_PT_tracking_panel, Panel):
         row.prop(act_track, "use_grayscale_preview", text="B/W", toggle=True)
 
         row.separator()
-        row.prop(act_track, "use_alpha_preview",
-                 text="", toggle=True, icon='IMAGE_ALPHA')
+        row.prop(act_track, "use_alpha_preview", text="", toggle=True, icon='IMAGE_ALPHA')
 
         layout.prop(act_track, "weight")
         layout.prop(act_track, "weight_stab")
@@ -922,8 +919,7 @@ class CLIP_PT_plane_track(CLIP_PT_tracking_panel, Panel):
         layout.prop(active_track, "name")
         layout.prop(active_track, "use_auto_keying")
         row = layout.row()
-        row.template_ID(
-            active_track, "image", new="image.new", open="image.open")
+        row.template_ID(active_track, "image", new="image.new", open="image.open")
         row.menu("CLIP_MT_plane_track_image_context_menu", icon='DOWNARROW_HLT', text="")
 
         row = layout.row()
@@ -967,6 +963,12 @@ class CLIP_PT_track_settings_extras(CLIP_PT_tracking_panel, Panel):
     bl_label = "Tracking Options Extras"
     bl_parent_id = "CLIP_PT_track_settings"
     bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        clip = context.space_data.clip
+
+        return clip.tracking.tracks.active
 
     def draw(self, context):
         layout = self.layout
@@ -1166,8 +1168,7 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
             sub.operator("clip.stabilize_2d_add", icon='ADD', text="")
             sub.operator("clip.stabilize_2d_remove", icon='REMOVE', text="")
 
-            sub.menu('CLIP_MT_stabilize_2d_context_menu', text="",
-                     icon='DOWNARROW_HLT')
+            sub.menu("CLIP_MT_stabilize_2d_context_menu", text="", icon='DOWNARROW_HLT')
 
             # Usually we don't hide things from interface, but here every pixel of
             # vertical space is precious.
@@ -1183,8 +1184,7 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
                 sub.operator("clip.stabilize_2d_rotation_add", icon='ADD', text="")
                 sub.operator("clip.stabilize_2d_rotation_remove", icon='REMOVE', text="")
 
-                sub.menu('CLIP_MT_stabilize_2d_rotation_context_menu', text="",
-                         icon='DOWNARROW_HLT')
+                sub.menu("CLIP_MT_stabilize_2d_rotation_context_menu", text="", icon='DOWNARROW_HLT')
 
         split = layout.split()
         col = split.column()
@@ -1312,6 +1312,7 @@ from bl_ui.properties_mask_common import (
     MASK_PT_spline,
     MASK_PT_point,
     MASK_PT_display,
+    # MASK_PT_transforms, # bfa - former mask tools panel. Keeping code for compatibility reasons
     # MASK_PT_tools # bfa - former mask tools panel. Keeping code for compatibility reasons
 )
 
@@ -1338,6 +1339,12 @@ class CLIP_PT_mask(MASK_PT_mask, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Mask"
+
+# bfa - former mask tools panel. Keeping code for compatibility reasons
+#class CLIP_PT_tools_mask_transforms(MASK_PT_transforms, Panel):
+#    bl_space_type = 'CLIP_EDITOR'
+#    bl_region_type = 'TOOLS'
+#    bl_category = "Mask"
 
 # bfa - former mask tools panel. Keeping code for compatibility reasons
 # class CLIP_PT_tools_mask_tools(MASK_PT_tools, Panel):
@@ -1445,7 +1452,7 @@ class CLIP_MT_view(Menu):
             layout.prop(sc, "show_region_ui")
             layout.prop(sc, "show_region_hud")
             layout.separator()
-
+			# BFA - this menu has been heavily changed, options now in options panel and order same to view menus elsehwere
             layout.menu("CLIP_MT_view_annotations")
             layout.separator()
             if sc.mode == 'MASK':
@@ -2160,6 +2167,7 @@ classes = (
     CLIP_PT_mask_display,
     CLIP_PT_active_mask_spline,
     CLIP_PT_active_mask_point,
+    # CLIP_PT_tools_mask_transforms, # bfa - former mask tools panel. Keeping code for compatibility reasons
     # CLIP_PT_tools_mask_tools, # bfa - former mask tools panel. Keeping code for compatibility reasons
     CLIP_PT_tools_scenesetup,
     CLIP_PT_annotation,
