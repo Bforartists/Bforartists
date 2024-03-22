@@ -38,16 +38,18 @@ bl_info = {
     "warning": "",
     "wiki_url": "",
     "tracker_url": "",
-    "category": "User Interface"}
+    "category": "Bforartists",
+    "support": "OFFICIAL",
+}
 
-def align_view_buttons(self, context):
+def bfa_align_view_buttons(self, context):
     layout = self.layout
     view = context.space_data
     overlay = view.overlay
 
     preferences = context.preferences
-    addon_prefs = preferences.addons["align_view_buttons"].preferences
-    
+    addon_prefs = preferences.addons["bfa_align_view_buttons"].preferences
+
     #View
     row = layout.row(align=True)
 
@@ -59,11 +61,11 @@ def align_view_buttons(self, context):
         row.operator("view3d.view_axis", text="", icon ="VIEW_TOP").type = 'TOP'
         row.operator("view3d.view_axis", text="", icon ="VIEW_BOTTOM").type = 'BOTTOM'
         row.separator()
-        
+
     if addon_prefs.lock_camera_to_view:
         if context.space_data.region_3d.view_perspective == "CAMERA":
             row.prop(view, "lock_camera", icon = "LOCK_TO_CAMVIEW", icon_only=True )
-            
+
     if addon_prefs.lock_view_rotation:
         row.prop(context.space_data.region_3d, 'lock_rotation', icon = "LOCK_ROTATION", icon_only=True )
 
@@ -90,25 +92,25 @@ def align_view_buttons(self, context):
     if addon_prefs.reset_3dview:
         if hasattr(bpy.ops, "reset_3d_view"):
             row.operator("view3d.reset_3d_view", text="", icon ="VIEW_RESET")
-            
+
     #overlay
     row.separator(factor = 0.5)
-            
-    if addon_prefs.groundgrid:  
+
+    if addon_prefs.groundgrid:
         row.prop(overlay, "show_ortho_grid", toggle=True, icon_only = True, icon = "GROUNDGRID")
-    if addon_prefs.wireframe: 
+    if addon_prefs.wireframe:
         row.prop(overlay, "show_wireframes", toggle=True, icon_only = True, icon = "NODE_WIREFRAME")
-    if addon_prefs.cursor: 
+    if addon_prefs.cursor:
         row.prop(overlay, "show_cursor", text="", toggle=True, icon_only = True, icon = "CURSOR")
-    if addon_prefs.origin: 
+    if addon_prefs.origin:
         row.prop(overlay, "show_object_origins", text="", toggle=True, icon_only = True, icon = "ORIGIN")
-    if addon_prefs.annotations: 
+    if addon_prefs.annotations:
         row.prop(overlay, "show_annotation", text="", toggle=True, icon_only = True, icon = "GREASEPENCIL")
 
-    row.popover(panel = "VIEW3D_PT_align_view_buttons_options", text = "")
+    row.popover(panel = "VIEW3D_PT_bfa_align_view_buttons_options", text = "")
 
 
-class VIEW3D_PT_align_view_buttons_options(Panel):
+class VIEW3D_PT_bfa_align_view_buttons_options(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Align View Buttons Options"
@@ -118,7 +120,7 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         view = context.space_data
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["align_view_buttons"].preferences
+        addon_prefs = preferences.addons["bfa_align_view_buttons"].preferences
 
         #view
         col = layout.column(align = True)
@@ -135,7 +137,7 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "camera_view")
-        
+
         #navigation
         col = layout.column(align = True)
         col.label(text="Navigation")
@@ -143,7 +145,7 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         row.separator()
         row.prop(addon_prefs, "lock_camera_to_view")
         row = col.row()
-        row.separator()        
+        row.separator()
         row.prop(addon_prefs, "lock_view_rotation")
         row = col.row()
         row.separator()
@@ -157,7 +159,7 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "reset_3dview")
-        
+
         #overlay
         col = layout.column(align = True)
         col.label(text="Overlay")
@@ -183,7 +185,7 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         col.label(text="It can be turned off in the Preferences")
 
 
-class BFA_OT_align_view_buttons_prefs(AddonPreferences):
+class BFA_OT_bfa_align_view_buttons_prefs(AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
     bl_idname = __name__
@@ -213,8 +215,8 @@ class BFA_OT_align_view_buttons_prefs(AddonPreferences):
 
 
 classes = (
-    VIEW3D_PT_align_view_buttons_options,
-    BFA_OT_align_view_buttons_prefs,
+    VIEW3D_PT_bfa_align_view_buttons_options,
+    BFA_OT_bfa_align_view_buttons_prefs,
     )
 
 def register():
@@ -223,7 +225,7 @@ def register():
     for cls in classes:
        register_class(cls)
 
-    bpy.types.VIEW3D_HT_header.append(align_view_buttons) # Add buttons in the View 3D header.
+    bpy.types.VIEW3D_HT_header.append(bfa_align_view_buttons) # Add buttons in the View 3D header.
 
 def unregister():
 
@@ -231,7 +233,7 @@ def unregister():
     for cls in classes:
        unregister_class(cls)
 
-    bpy.types.VIEW3D_HT_header.remove(align_view_buttons)
+    bpy.types.VIEW3D_HT_header.remove(bfa_align_view_buttons)
 
 
 # This allows you to run the script directly from blenders text editor

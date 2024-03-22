@@ -33,7 +33,7 @@ class TOPBAR_HT_tool_bar(Header):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         layout.popover(panel="TOPBAR_PT_main", text = "", icon="NONE")
 
@@ -114,7 +114,7 @@ class TOPBAR_PT_main(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         box = layout.box()
         row = box.row()
@@ -376,7 +376,7 @@ class TOPBAR_MT_file(Menu):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         if addon_prefs.topbar_file_cbox:
 
@@ -516,7 +516,7 @@ class TOPBAR_PT_file(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         col = layout.column(align = True)
         col.label(text = "Topbar File Options:", icon="NONE")
@@ -552,7 +552,7 @@ class TOPBAR_MT_meshedit(Menu):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         if addon_prefs.topbar_mesh_cbox:
 
@@ -684,7 +684,7 @@ class TOPBAR_PT_meshedit(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         obj = context.object
 
@@ -735,7 +735,7 @@ class TOPBAR_MT_primitives(Menu):
         rd = scene.render
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         if addon_prefs.topbar_primitives_cbox:
 
@@ -1079,7 +1079,7 @@ class TOPBAR_PT_primitives(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         col = layout.column(align = True)
         col.label(text = "Topbar Primitives:", icon="NONE")
@@ -1133,7 +1133,7 @@ class TOPBAR_MT_image(Menu):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         if addon_prefs.topbar_image_cbox:
 
@@ -1227,7 +1227,7 @@ class TOPBAR_PT_menu_image(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         obj = context.object
 
@@ -1269,7 +1269,7 @@ class TOPBAR_MT_tools(Menu):
         obj = context.object
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         if addon_prefs.topbar_tools_cbox:
 
@@ -1377,7 +1377,7 @@ class TOPBAR_PT_tools(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         col = layout.column(align = True)
         col.label(text = "Tools Options:", icon="NONE")
@@ -1458,7 +1458,7 @@ class TOPBAR_MT_animation(Menu):
         userprefs = context.preferences
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         if addon_prefs.topbar_animation_cbox:
 
@@ -1570,7 +1570,7 @@ class TOPBAR_PT_animation(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         col = layout.column(align = True)
         row = col.row()
@@ -1654,7 +1654,7 @@ class TOPBAR_MT_edit(Menu):
         obj = context.object
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         if addon_prefs.topbar_edit_cbox:
 
@@ -1772,7 +1772,7 @@ class TOPBAR_PT_edit(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         obj = context.object
 
@@ -1818,7 +1818,7 @@ class TOPBAR_MT_misc(Menu):
         obj = context.object
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         if addon_prefs.topbar_misc_cbox:
 
@@ -1898,7 +1898,7 @@ class TOPBAR_PT_misc(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         col = layout.column(align = True)
         col.label(text="Topbar Misc:")
