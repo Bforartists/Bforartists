@@ -12,17 +12,17 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 bl_info = {
-        "name": "BFA - Power User Tools",
+        "name": "Power User Tools",
         "description": "Additional set of user experience tools and operators to assist with every day use for the power user.",
-        "author": "Andres Stephens (Draise)",
+        "author": "Draise (@trinumedia)",
         "version": (0, 2, 1),
         "blender": (4, 00, 0),
         "location": "Varios consistent locations for the power user - customize as you need! ",
         "warning": "This is a Bforartists exclusive addon for the time being", # used for warning icon and text in add-ons panel
-        "wiki_url": "",
-        "tracker_url": "https://github.com/Draise14/bfa_power_user_tools",
-        "support": "COMMUNITY",
-        "category": "UI"
+        "doc_url": "https://github.com/Bforartists/Manual",
+        "tracker_url": "https://github.com/Bforartists/Bforartists",
+        "support": "OFFICIAL",
+        "category": "Bforartists"
         }
 
 

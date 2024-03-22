@@ -17,17 +17,18 @@
 # ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
-    "name": "Bforartists Settings",
-    "author": "Bforartists",
+    "name": "User Settings",
+    "author": "Reiner 'Tiles' Prokein, Blenux (Juso3D)",
     "version": (1, 2, 1),
     "blender": (3, 0, 0),
     "location": "User Preferences > Addons",
     "description": "DO NOT TURN OFF! This addon contains the settings for Bforartists.",
     "warning": "",
-    "wiki_url": "",
-    "tracker_url": "",
-    "category": "User Interface",
-    }
+    "doc_url": "https://github.com/Bforartists/Manual",
+    "tracker_url": "https://github.com/Bforartists/Bforartists",
+    "support": "OFFICIAL",
+    "category": "Bforartists",
+}
 
 import bpy
 
