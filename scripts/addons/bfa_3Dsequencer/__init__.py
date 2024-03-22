@@ -29,14 +29,17 @@ from bfa_3Dsequencer import (
 
 
 bl_info = {
-    "name": "BFA - 3D Sequencer",
-    "author": "The SPA Studios, Znight, Draise",
+    "name": "3D Sequencer",
+    "author": "The SPA Studios, Znight, Draise (@trinumedia)",
     "description": "Toolset for a 3D sequencer scene workflow to switch scenes/cameras with a master sequencer timeline.",
     "blender": (4, 0, 2),
     "version": (1, 0, 1),
     "location": "",
     "warning": "",
-    "category": "Sequencer",
+    "doc_url": "https://github.com/Bforartists/Manual",
+    "tracker_url": "https://github.com/Bforartists/Bforartists",
+    "support": "OFFICIAL",
+    "category": "Bforartists",
 }
 
 

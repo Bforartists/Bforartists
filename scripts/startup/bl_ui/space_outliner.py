@@ -23,7 +23,7 @@ class OUTLINER_HT_header(Header):
 
         # addon prefs for the show search prop
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         ALL_MT_editormenu_outliner.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
