@@ -26,12 +26,14 @@ from bpy.props import FloatProperty, PointerProperty
 
 bl_info = {
     "name": "Mesh Tools - Bforartists version",
-    "author": "Jake Dube, Reiner Prokein",
+    "author": "Jake Dube, Reiner 'Tiles' Prokein",
     "version": (1, 1, 2),
     "blender": (2, 90, 0),
     "location": "Edit Mode > Mesh menu > Transform > Set Dimensions",
     "description": "Sets dimensions for selected vertices in world coordinates.",
-    "category": "Mesh"}
+    "category": "Mesh",
+    "support": "OFFICIAL",
+}
 
 
 def calc_bounds():
