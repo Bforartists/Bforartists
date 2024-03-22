@@ -450,7 +450,7 @@ class NODE_MT_view(Menu):
         snode = context.space_data
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")

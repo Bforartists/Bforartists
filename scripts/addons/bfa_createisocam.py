@@ -19,7 +19,9 @@ bl_info = {
     "location": "3D View - Add menu",
     "warning": "", # used for warning icon and text in addons panel
     "wiki_url": "",
-    "category": "Create"}
+    "category": "Bforartists",
+    "support": "OFFICIAL",
+}
 
 import bpy
 from bpy.types import Menu
