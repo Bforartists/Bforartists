@@ -1,4 +1,4 @@
-keyconfig_version = (4, 2, 8)
+keyconfig_version = (4, 2, 9)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1569,6 +1569,13 @@ keyconfig_data = \
      {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
+       ],
+      },
+     ),
+    ("wm.call_menu",
+     {"type": 'A', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'VIEW3D_MT_curve_add'),
        ],
       },
      ),
@@ -4580,6 +4587,13 @@ keyconfig_data = \
        ],
       },
      ),
+    ("wm.call_menu",
+     {"type": 'A', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'VIEW3D_MT_mesh_add'),
+       ],
+      },
+     ),
     ],
    },
   ),
@@ -4683,6 +4697,13 @@ keyconfig_data = \
      {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
+       ],
+      },
+     ),
+    ("wm.call_menu",
+     {"type": 'A', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'VIEW3D_MT_metaball_add'),
        ],
       },
      ),
@@ -5388,6 +5409,13 @@ keyconfig_data = \
       },
      ),
     ("anim.keyframe_insert", {"type": 'I', "value": 'PRESS', "repeat": True}, None),
+    ("wm.call_menu",
+     {"type": 'A', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'VIEW3D_MT_add'),
+       ],
+      },
+     ),
     ],
    },
   ),
@@ -8183,7 +8211,15 @@ keyconfig_data = \
  ("Window",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True}, None),
+   [("wm.call_panel",
+     {"type": 'Q', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("name", 'TOPBAR_PT_main'),
+       ("keep_open", True),
+       ],
+      },
+     ),
+    ("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True}, None),
     ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "ctrl": True}, None),
     ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "shift": True, "ctrl": True}, None),
     ("wm.call_menu",
