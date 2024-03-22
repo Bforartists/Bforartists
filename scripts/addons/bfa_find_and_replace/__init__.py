@@ -12,16 +12,17 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 bl_info = {
-    "name" : "BFA Find and Replace",
+    "name" : "Find and Replace",
     "author" : "Blenux (Juso3D)",
     "description" : "A Popup Panel for Find and Replace",
     "blender" : (3, 0, 0),
     "version" : (1, 0, 1),
     "location" : "Text Editor via Keymap (Check Addon Preferences)",
     "warning" : "",
-    "doc_url": "",
-    "tracker_url": "",
-    "category" : "Text Editor"
+    "doc_url": "https://github.com/Bforartists/Manual",
+    "tracker_url": "https://github.com/Bforartists/Bforartists",
+    "support": "OFFICIAL",
+    "category" : "Bforartists"
 }
 
 
