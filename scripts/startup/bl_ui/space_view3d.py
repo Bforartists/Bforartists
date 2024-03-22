@@ -2775,6 +2775,10 @@ class VIEW3D_MT_mesh_add(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "VIEW3D_MT_mesh_add" # BFA - make sure you can see it in the header
+
+        layout.separator()
+
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("mesh.primitive_plane_add", text="Plane", icon='MESH_PLANE')
@@ -3007,6 +3011,8 @@ class VIEW3D_MT_add(Menu):
             layout.separator()
         else:
             layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "VIEW3D_MT_add" # BFA - make sure you can see it in the header
+
+        layout.separator()
 
         # NOTE: don't use 'EXEC_SCREEN' or operators won't get the `v3d` context.
 
