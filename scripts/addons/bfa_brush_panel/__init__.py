@@ -1,11 +1,14 @@
 bl_info = {
-    "name": "Bforartists Brush Panel",
+    "name": "Brush Panel",
     "author": "Iyad Ahmed (@cgonfire), Draise (@trinumedia)",
     "version": (0, 0, 12),
     "blender": (3, 1, 0),
     "location": "3D View > Tools",
     "description": "Official BFA add-on to display brushes in a top-level panel",
-    "category": "Paint",
+    "doc_url": "https://github.com/Bforartists/Manual",
+    "tracker_url": "https://github.com/Bforartists/Bforartists",
+    "support": "OFFICIAL",
+    "category": "Bforartists",
 }
 
 ## INFO ##
