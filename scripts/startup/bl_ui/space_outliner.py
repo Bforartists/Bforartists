@@ -369,8 +369,8 @@ class OUTLINER_MT_collection(Menu):
 
         layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection)
         layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection).nested = True
-        layout.operator("outliner.collection_duplicate", text="Duplicate Collection")
-        layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked")
+        layout.operator("outliner.collection_duplicate", text="Duplicate Collection", icon="DUPLICATE")
+        layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon="DUPLICATE")
         layout.operator("outliner.id_copy", text="Copy", icon='COPYDOWN')
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
@@ -450,6 +450,11 @@ class OUTLINER_MT_object(Menu):
         layout.operator("outliner.object_operation", text="Select", icon="RESTRICT_SELECT_OFF").type = 'SELECT'
         layout.operator("outliner.object_operation", text="Select Hierarchy", icon="RESTRICT_SELECT_OFF").type = 'SELECT_HIERARCHY'
         layout.operator("outliner.object_operation", text="Deselect", icon = "SELECT_NONE").type = 'DESELECT'
+
+        layout.separator()
+
+        layout.operator("object.duplicate", text="Duplicate", icon='DUPLICATE')
+        layout.operator("object.duplicate", text="Duplicate Linked", icon='DUPLICATE').linked = True
 
         layout.separator()
 
