@@ -72,7 +72,7 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -154,7 +154,7 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -227,7 +227,7 @@ class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -322,7 +322,7 @@ class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -437,7 +437,7 @@ class IMAGE_PT_uvtab_merge(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -510,7 +510,7 @@ class IMAGE_PT_uvtab_uvtools(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -640,7 +640,7 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -734,7 +734,7 @@ class IMAGE_PT_image_masktab_add(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -808,7 +808,7 @@ class IMAGE_PT_image_masktab_transform(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -893,7 +893,7 @@ class IMAGE_PT_image_masktab_mask(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -978,7 +978,7 @@ class IMAGE_PT_image_masktab_handletype(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data
@@ -1056,7 +1056,7 @@ class IMAGE_PT_image_masktab_animation(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         view = context.space_data
         sima = context.space_data

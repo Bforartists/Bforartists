@@ -42,13 +42,13 @@ bl_info = {
     "support": "OFFICIAL",
 }
 
-def bfa_align_view_buttons(self, context):
+def align_view_buttons(self, context):
     layout = self.layout
     view = context.space_data
     overlay = view.overlay
 
     preferences = context.preferences
-    addon_prefs = preferences.addons["bfa_align_view_buttons"].preferences
+    addon_prefs = preferences.addons["align_view_buttons"].preferences
 
     #View
     row = layout.row(align=True)
@@ -107,10 +107,10 @@ def bfa_align_view_buttons(self, context):
     if addon_prefs.annotations:
         row.prop(overlay, "show_annotation", text="", toggle=True, icon_only = True, icon = "GREASEPENCIL")
 
-    row.popover(panel = "VIEW3D_PT_bfa_align_view_buttons_options", text = "")
+    row.popover(panel = "VIEW3D_PT_align_view_buttons_options", text = "")
 
 
-class VIEW3D_PT_bfa_align_view_buttons_options(Panel):
+class VIEW3D_PT_align_view_buttons_options(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Align View Buttons Options"
@@ -120,7 +120,7 @@ class VIEW3D_PT_bfa_align_view_buttons_options(Panel):
         view = context.space_data
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_align_view_buttons"].preferences
+        addon_prefs = preferences.addons["align_view_buttons"].preferences
 
         #view
         col = layout.column(align = True)
@@ -185,7 +185,7 @@ class VIEW3D_PT_bfa_align_view_buttons_options(Panel):
         col.label(text="It can be turned off in the Preferences")
 
 
-class BFA_OT_bfa_align_view_buttons_prefs(AddonPreferences):
+class BFA_OT_align_view_buttons_prefs(AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
     bl_idname = __name__
@@ -215,8 +215,8 @@ class BFA_OT_bfa_align_view_buttons_prefs(AddonPreferences):
 
 
 classes = (
-    VIEW3D_PT_bfa_align_view_buttons_options,
-    BFA_OT_bfa_align_view_buttons_prefs,
+    VIEW3D_PT_align_view_buttons_options,
+    BFA_OT_align_view_buttons_prefs,
     )
 
 def register():
@@ -225,7 +225,7 @@ def register():
     for cls in classes:
        register_class(cls)
 
-    bpy.types.VIEW3D_HT_header.append(bfa_align_view_buttons) # Add buttons in the View 3D header.
+    bpy.types.VIEW3D_HT_header.append(align_view_buttons) # Add buttons in the View 3D header.
 
 def unregister():
 
@@ -233,7 +233,7 @@ def unregister():
     for cls in classes:
        unregister_class(cls)
 
-    bpy.types.VIEW3D_HT_header.remove(bfa_align_view_buttons)
+    bpy.types.VIEW3D_HT_header.remove(align_view_buttons)
 
 
 # This allows you to run the script directly from blenders text editor
