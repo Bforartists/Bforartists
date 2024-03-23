@@ -11421,6 +11421,9 @@ static int node_type_to_icon(int type)
     case FN_NODE_ROTATE_EULER:
       return ICON_ROTATE_EULER;
 
+    case FN_NODE_ROTATE_ROTATION:
+      return ICON_ROTATE_EULER;
+
     case FN_NODE_ROTATE_VECTOR:
       return ICON_NODE_VECTORROTATE;
 
