@@ -4150,6 +4150,10 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeMergeByDistance"
 
+            props = col.operator("node.add_node", text=" Sort Elements    ", icon = "SORTSIZE")
+            props.use_transform = True
+            props.type = "GeometryNodeSortElements"
+
             props = col.operator("node.add_node", text=" Transform Geometry  ", icon = "NODE_TRANSFORM")
             props.use_transform = True
             props.type = "GeometryNodeTransform"
@@ -4200,6 +4204,10 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "REMOVE_DOUBLES")
             props.use_transform = True
             props.type = "GeometryNodeMergeByDistance"
+
+            props = col.operator("node.add_node", text="", icon = "SORTSIZE")
+            props.use_transform = True
+            props.type = "GeometryNodeSortElements"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
             props.use_transform = True
