@@ -26,7 +26,7 @@ class NODES_PT_shader_comp_textoricon_shader_add(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
         row = layout.row()
@@ -53,7 +53,7 @@ class NODES_PT_shader_comp_textoricon_compositor_add(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
         row = layout.row()
@@ -79,7 +79,7 @@ class NODES_PT_shader_comp_textoricon_relations(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
         layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
@@ -104,7 +104,7 @@ class NODES_PT_geom_textoricon_add(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
         layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
@@ -129,7 +129,7 @@ class NODES_PT_geom_textoricon_relations(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
         layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
@@ -147,7 +147,7 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
 
@@ -159,7 +159,7 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ##### Textbuttons
 
@@ -373,7 +373,7 @@ class NODES_PT_shader_add_output(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
 
@@ -385,7 +385,7 @@ class NODES_PT_shader_add_output(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         engine = context.engine
 
@@ -482,7 +482,7 @@ class NODES_PT_comp_add_input(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
        #### Text Buttons
 
@@ -570,7 +570,7 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -622,7 +622,7 @@ class NODES_PT_comp_add_input_scene(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -687,7 +687,7 @@ class NODES_PT_comp_add_output(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -753,7 +753,7 @@ class NODES_PT_comp_add_color(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -845,7 +845,7 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -961,7 +961,7 @@ class NODES_PT_comp_add_color_mix(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -1047,7 +1047,7 @@ class NODES_PT_comp_add_filter(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -1180,7 +1180,7 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -1270,7 +1270,7 @@ class NODES_PT_comp_add_keying(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -1387,7 +1387,7 @@ class NODES_PT_comp_add_mask(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -1480,7 +1480,7 @@ class NODES_PT_comp_add_tracking(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -1543,7 +1543,7 @@ class NODES_PT_comp_add_transform(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -1679,7 +1679,7 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -1795,7 +1795,7 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -1870,7 +1870,7 @@ class NODES_PT_Input_input_tex(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -1923,7 +1923,7 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -2034,7 +2034,7 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ( 'OBJECT', 'WORLD')) # Just in shader mode, Just in Object and World
 
@@ -2047,7 +2047,7 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
         engine = context.engine
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -2308,7 +2308,7 @@ class NODES_PT_shader_add_texture(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader and texture mode
 
@@ -2321,7 +2321,7 @@ class NODES_PT_shader_add_texture(bpy.types.Panel):
         engine = context.engine
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ##### Textbuttons
 
@@ -2462,7 +2462,7 @@ class NODES_PT_shader_add_color(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree')
 
@@ -2472,7 +2472,7 @@ class NODES_PT_shader_add_color(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -2574,7 +2574,7 @@ class NODES_PT_Input_input_advanced_tex(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -2626,7 +2626,7 @@ class NODES_PT_Input_pattern(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -2681,7 +2681,7 @@ class NODES_PT_Input_color_tex(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -2770,7 +2770,7 @@ class NODES_PT_Input_output_tex(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
 
         #### Text Buttons
@@ -2821,7 +2821,7 @@ class NODES_PT_Modify_converter_tex(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -2897,7 +2897,7 @@ class NODES_PT_shader_add_vector(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
 
@@ -2907,7 +2907,7 @@ class NODES_PT_shader_add_vector(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -3017,7 +3017,7 @@ class NODES_PT_shader_add_converter(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
 
@@ -3027,7 +3027,7 @@ class NODES_PT_shader_add_converter(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
         engine = context.engine
@@ -3196,7 +3196,7 @@ class NODES_PT_Modify_distort_tex(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -3262,7 +3262,7 @@ class NODES_PT_Relations_group(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -3395,7 +3395,7 @@ class NODES_PT_Relations_layout(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -3455,7 +3455,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -3560,7 +3560,7 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -3661,7 +3661,7 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -3767,7 +3767,7 @@ class NODES_PT_geom_add_output(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -3814,7 +3814,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -3871,7 +3871,7 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -3969,7 +3969,7 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -4049,7 +4049,7 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -4115,7 +4115,7 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -4255,7 +4255,7 @@ class NODES_PT_geom_add_curve_read(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -4374,7 +4374,7 @@ class NODES_PT_geom_add_curve_sample(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -4423,7 +4423,7 @@ class NODES_PT_geom_add_curve_write(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -4526,7 +4526,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -4647,7 +4647,7 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -4751,7 +4751,7 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -4814,7 +4814,7 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -4939,7 +4939,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5099,7 +5099,7 @@ class NODES_PT_geom_add_mesh_sample(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5155,7 +5155,7 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5213,7 +5213,7 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5372,7 +5372,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5479,7 +5479,7 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5587,7 +5587,7 @@ class NODES_PT_geom_add_mesh_uv(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5642,7 +5642,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5740,7 +5740,7 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5794,7 +5794,7 @@ class NODES_PT_geom_add_simulation(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5842,7 +5842,7 @@ class NODES_PT_geom_add_material(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -5921,7 +5921,7 @@ class NODES_PT_geom_add_texture(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -6032,7 +6032,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -6104,7 +6104,7 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -6188,7 +6188,7 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -6284,7 +6284,7 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -6378,7 +6378,7 @@ class NODES_PT_geom_add_utilities_field(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -6442,7 +6442,7 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -6551,7 +6551,7 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -6666,7 +6666,7 @@ class NODES_PT_shader_add_input_common(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
 
@@ -6678,7 +6678,7 @@ class NODES_PT_shader_add_input_common(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ##### Textbuttons
 
@@ -6743,7 +6743,7 @@ class NODES_PT_shader_add_output_common(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
 
     @staticmethod
@@ -6754,7 +6754,7 @@ class NODES_PT_shader_add_output_common(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         engine = context.engine
 
@@ -6823,7 +6823,7 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == True and (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ( 'OBJECT', 'WORLD')) # Just in shader mode, Just in Object and World
 
@@ -6836,7 +6836,7 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel):
         engine = context.engine
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -6990,7 +6990,7 @@ class NODES_PT_shader_add_texture_common(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and texture mode
 
@@ -7003,7 +7003,7 @@ class NODES_PT_shader_add_texture_common(bpy.types.Panel):
         engine = context.engine
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ##### Textbuttons
 
@@ -7080,7 +7080,7 @@ class NODES_PT_shader_add_color_common(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree'
 
@@ -7090,7 +7090,7 @@ class NODES_PT_shader_add_color_common(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -7172,7 +7172,7 @@ class NODES_PT_shader_add_vector_common(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
 
@@ -7182,7 +7182,7 @@ class NODES_PT_shader_add_vector_common(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 
@@ -7239,7 +7239,7 @@ class NODES_PT_shader_add_converter_common(bpy.types.Panel):
     def poll(cls, context):
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
 
@@ -7249,7 +7249,7 @@ class NODES_PT_shader_add_converter_common(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
         engine = context.engine
@@ -7339,7 +7339,7 @@ class NODES_PT_shader_add_script(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
 

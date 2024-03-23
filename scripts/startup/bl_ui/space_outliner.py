@@ -23,7 +23,7 @@ class OUTLINER_HT_header(Header):
 
         # addon prefs for the show search prop
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ALL_MT_editormenu_outliner.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
@@ -79,11 +79,11 @@ class OUTLINER_HT_header(Header):
 		#BFA - already shown elsewhere
         # if display_mode == 'VIEW_LAYER':
         #    layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW').nested = True
-		
+
         #BFA - has a drop down and button with consistenty naming
         #elif display_mode == 'ORPHAN_DATA':
         #    layout.operator("outliner.orphans_purge", text="Purge").do_recursive = True
-        
+
         if space.display_mode == 'DATA_API':
             layout.separator()
 
@@ -365,7 +365,7 @@ class OUTLINER_MT_collection_visibility(Menu):
 
         layout.operator("outliner.collection_show_inside", text="Show All Inside", icon="HIDE_OFF")
         layout.operator("outliner.collection_hide_inside", text="Hide All Inside", icon="HIDE_ON")
-		# BFA - redundant view toggles, removed. 
+		# BFA - redundant view toggles, removed.
 
 
 class OUTLINER_MT_collection(Menu):
