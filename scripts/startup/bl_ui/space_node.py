@@ -450,7 +450,7 @@ class NODE_MT_view(Menu):
         snode = context.space_data
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
@@ -1578,7 +1578,7 @@ def node_panel(cls):
         node_cls.bl_parent_id = "NODE_" + node_cls.bl_parent_id
 
     return node_cls
-    
+
 ## BFA - new view menu for consistency
 class NODE_PT_view(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
