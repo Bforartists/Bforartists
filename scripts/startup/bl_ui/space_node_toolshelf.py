@@ -6051,6 +6051,14 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Index Switch    ", icon = "INDEX_SWITCH")
+            props.use_transform = True
+            props.type = "GeometryNodeIndexSwitch"
+
+            props = col.operator("node.add_node", text=" Menu Switch    ", icon = "MENU_SWITCH")
+            props.use_transform = True
+            props.type = "GeometryNodeMenuSwitch"
+
             props = col.operator("node.add_node", text=" Random Value  ", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomValue"
@@ -6063,9 +6071,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
 
-            props = col.operator("node.add_node", text=" Index Switch    ", icon = "INDEX_SWITCH")
-            props.use_transform = True
-            props.type = "GeometryNodeIndexSwitch"
+
 
         #### Icon Buttons
 
@@ -6074,6 +6080,14 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "INDEX_SWITCH")
+            props.use_transform = True
+            props.type = "GeometryNodeIndexSwitch"
+
+            props = flow.operator("node.add_node", text = "", icon = "MENU_SWITCH")
+            props.use_transform = True
+            props.type = "GeometryNodeMenuSwitch"
 
             props = flow.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
             props.use_transform = True
@@ -6087,9 +6101,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
 
-            props = flow.operator("node.add_node", text = "", icon = "INDEX_SWITCH")
-            props.use_transform = True
-            props.type = "GeometryNodeIndexSwitch"
+
 
 
 #add utilities panel, color subpanel
