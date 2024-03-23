@@ -9,8 +9,11 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D > View",
     "warning": "", # used for warning icon and text in addons panel
-    "wiki_url": "",
-    "category": "View"}
+    "doc_url": "https://github.com/Bforartists/Manual",
+    "tracker_url": "https://github.com/Bforartists/Bforartists",
+    "support": "OFFICIAL",
+    "category": "Bforartists",
+}
 
 
 import bpy
