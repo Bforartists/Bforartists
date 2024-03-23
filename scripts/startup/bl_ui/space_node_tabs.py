@@ -65,7 +65,7 @@ class NODE_PT_transform(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         #view = context.space_data
         #overlay = view.overlay
@@ -129,7 +129,7 @@ class NODE_PT_links(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         #view = context.space_data
         #overlay = view.overlay
@@ -206,7 +206,7 @@ class NODE_PT_separate(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         #view = context.space_data
         #overlay = view.overlay
@@ -265,7 +265,7 @@ class NODE_PT_node_tools(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         #view = context.space_data
         #overlay = view.overlay

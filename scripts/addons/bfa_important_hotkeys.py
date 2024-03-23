@@ -15,16 +15,18 @@ import blf
 # ¸¸♫·¯·♪¸¸♩·¯·♬¸¸¸¸♫·¯·♪¸¸♩·¯·♬¸¸¸¸♫·¯·♪¸¸♩·¯·♬¸¸¸¸♫·¯·♪¸¸♩·¯·♬¸¸¸¸♫·¯·♪¸¸♩·¯·♬¸¸¸¸♫·¯·♪¸¸♩·¯·♬¸¸
 
 bl_info = {
-    "name": "Important Hotkeys BFA",
+    "name": "Important Hotkeys Overlays",
     "author": "Reiner 'Tiles' Prokein",
     "version": (1, 4, 0),
     "blender": (3, 60, 0),
     "location": "3D View > Properties Sidebar > Important Hotkeys",
     "description": "This addon displays some important hotkeys in the upper left corner of the 3D view",
     "warning": "",
-    "wiki_url": "",
-    "tracker_url": "",
-    "category": "User Interface"}
+    "doc_url": "https://github.com/Bforartists/Manual",
+    "tracker_url": "https://github.com/Bforartists/Bforartists",
+    "support": "OFFICIAL",
+    "category": "Bforartists",
+}
 
 # ---------------------- Some variables, needed to position the text
 
