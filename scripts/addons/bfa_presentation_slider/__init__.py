@@ -1,13 +1,15 @@
 bl_info = {
-    "name": "BFA - Presentation Slider",
-    "author": "Draise",
+    "name": "Presentation Slider",
+    "author": "Draise (@trinumedia)",
     "version": (0, 3, 7),
     "blender": (3, 6, 2),
     "location": "View3D > Sidebar > View > Presentation Slider",
     "description": "Add controls to switch to the next Scene then plays the animation once, useful for presentation slides setup as Scenes",
     "warning": "",
-    "doc_url": "",
-    "category": "Interface",
+    "doc_url": "https://github.com/Bforartists/Manual",
+    "tracker_url": "https://github.com/Bforartists/Bforartists",
+    "support": "OFFICIAL",
+    "category": "Bforartists",
 }
 
 

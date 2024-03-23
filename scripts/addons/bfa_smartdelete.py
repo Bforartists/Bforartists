@@ -21,12 +21,15 @@
 
 import bpy
 bl_info = {
-"name": "Smart Delete bfa",
+"name": "Smart Delete",
 "description": "Auto detect a delete elements",
 "author": "Reiner 'Tiles' Prokein",
 "version": (0,2.1),
 "blender": (2, 80, 0),
-"category": "Mesh",
+"doc_url": "https://github.com/Bforartists/Manual",
+"tracker_url": "https://github.com/Bforartists/Bforartists",
+"support": "OFFICIAL",
+"category": "Bforartists",
 }
  
 
