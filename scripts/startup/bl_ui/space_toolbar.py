@@ -22,7 +22,7 @@ class TOOLBAR_HT_header(Header):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         ALL_MT_editormenu_toolbar.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
@@ -109,7 +109,7 @@ class TOOLBAR_PT_type(Panel):
         screen = bpy.ops.screen
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         col = layout.column(align = True)
         row = col.row()
@@ -225,7 +225,7 @@ class TOOLBAR_PT_menu_file(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         layout.label(text = "Toolbars File:")
 
@@ -296,7 +296,7 @@ class TOOLBAR_MT_file(Menu):
         ## ------------------ Load / Save sub toolbars
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         if addon_prefs.file_load_save:
 
@@ -436,7 +436,7 @@ class TOOLBAR_PT_menu_meshedit(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         layout.label(text = "Toolbars Mesh Edit:")
 
@@ -499,7 +499,7 @@ class TOOLBAR_MT_meshedit(Menu):
         ## ------------------ Vertices
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         obj = context.object
         if obj is not None:
@@ -628,7 +628,7 @@ class TOOLBAR_PT_menu_primitives(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         layout.label(text = "Toolbars Primitives:")
 
@@ -699,7 +699,7 @@ class TOOLBAR_MT_primitives(Menu):
         layout.popover(panel="TOOLBAR_PT_menu_primitives", text = "")
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         obj = context.object
 
@@ -1057,7 +1057,7 @@ class TOOLBAR_PT_menu_image(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         layout.label(text = "Toolbars Image:")
 
@@ -1152,7 +1152,7 @@ class TOOLBAR_MT_image(Menu):
         layout.popover(panel="TOOLBAR_PT_menu_image", text = "")
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         obj = context.active_object
         mode = 'OBJECT' if obj is None else obj.mode
@@ -1241,7 +1241,7 @@ class TOOLBAR_PT_menu_tools(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         layout.label(text = "Toolbars Tools:")
 
@@ -1296,7 +1296,7 @@ class TOOLBAR_MT_tools(Menu):
         ## ------------------ Tools sub toolbars
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         if obj is not None:
 
@@ -1403,7 +1403,7 @@ class TOOLBAR_PT_menu_animation(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         layout.label(text = "Toolbars Animation:")
 
@@ -1447,7 +1447,7 @@ class TOOLBAR_MT_animation(Menu):
         layout.popover(panel="TOOLBAR_PT_menu_animation", text = "")
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         ## ------------------ Animation sub toolbars
 
@@ -1611,7 +1611,7 @@ class TOOLBAR_PT_menu_edit(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         layout.label(text = "Toolbars Edit:")
 
@@ -1652,7 +1652,7 @@ class TOOLBAR_MT_edit(Menu):
         layout.popover(panel="TOOLBAR_PT_menu_edit", text = "")
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         ## ------------------ Edit sub toolbars
 
@@ -1772,7 +1772,7 @@ class TOOLBAR_PT_menu_misc(Panel):
         layout = self.layout
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         layout.label(text = "Toolbars Misc:")
 
@@ -1825,7 +1825,7 @@ class TOOLBAR_MT_misc(Menu):
         layout.popover(panel="TOOLBAR_PT_menu_misc", text = "")
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         ## ------------------ Misc sub toolbars
 

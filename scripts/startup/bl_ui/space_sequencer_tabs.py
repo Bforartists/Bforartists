@@ -60,7 +60,7 @@ class SEQUENCER_PT_imagetab_clear(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         #view = context.space_data
         #overlay = view.overlay
@@ -132,7 +132,7 @@ class SEQUENCER_PT_imagetab_image(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         #view = context.space_data
         #overlay = view.overlay
@@ -199,7 +199,7 @@ class SEQUENCER_PT_sequencer_striptab_transform(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
         st = context.space_data
 
         #view = context.space_data
@@ -319,7 +319,7 @@ class SEQUENCER_PT_sequencer_striptab_split(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
         st = context.space_data
 
         #view = context.space_data
@@ -381,7 +381,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
         st = context.space_data
 
         #view = context.space_data
