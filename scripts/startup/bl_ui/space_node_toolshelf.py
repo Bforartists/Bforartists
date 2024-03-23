@@ -6578,7 +6578,11 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeInvertRotation"
 
-            props = col.operator("node.add_node", text=" Rotate Euler         ", icon = "ROTATE_EULER")
+            props = col.operator("node.add_node", text=" Rotate Rotation         ", icon = "ROTATE_EULER")
+            props.use_transform = True
+            props.type = "FunctionNodeRotateRotation"
+
+            props = col.operator("node.add_node", text=" Rotate Euler (Depreacated)        ", icon = "ROTATE_EULER")
             props.use_transform = True
             props.type = "FunctionNodeRotateEuler"
 
@@ -6625,6 +6629,10 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "INVERT_ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeInvertRotation"
+
+            props = col.operator("node.add_node", text="", icon = "ROTATE_EULER")
+            props.use_transform = True
+            props.type = "FunctionNodeRotateRotation"
 
             props = flow.operator("node.add_node", text = "", icon = "ROTATE_EULER")
             props.use_transform = True
