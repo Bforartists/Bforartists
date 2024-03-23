@@ -11894,6 +11894,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SIMULATION_OUTPUT:
       return ICON_TIME;
 
+    case GEO_NODE_SORT_ELEMENTS:
+      return ICON_SORTSIZE;
+
     case GEO_NODE_SPLIT_TO_INSTANCES:
       return ICON_SPLIT_TO_INSTANCES;
 
