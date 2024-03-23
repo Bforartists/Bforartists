@@ -451,7 +451,7 @@ DefNode(GeometryNode, GEO_NODE_SET_SPLINE_CYCLIC, 0, "SET_SPLINE_CYCLIC", SetSpl
 DefNode(GeometryNode, GEO_NODE_SET_SPLINE_RESOLUTION, 0, "SET_SPLINE_RESOLUTION", SetSplineResolution, "Set Spline Resolution", "Add a Set Spline Resolution Geometry node\nControl how many evaluated points should be generated on every curve segment")
 DefNode(GeometryNode, GEO_NODE_SIMULATION_INPUT, def_geo_simulation_input, "SIMULATION_INPUT", SimulationInput, "Simulation Input", "Add a Simulation Input Geometry node\nInput data for the simulation zone")
 DefNode(GeometryNode, GEO_NODE_SIMULATION_OUTPUT, def_geo_simulation_output, "SIMULATION_OUTPUT", SimulationOutput, "Simulation Output", "Add a Simulation Output Geometry node\nOutput data from the simulation zone")
-DefNode(GeometryNode, GEO_NODE_SORT_ELEMENTS, 0, "SORT_ELEMENTS", SortElements, "Sort Elements", "Rearrange geometry elements, changing their indices")
+DefNode(GeometryNode, GEO_NODE_SORT_ELEMENTS, 0, "SORT_ELEMENTS", SortElements, "Sort Elements", "Add a Sort Elements node\nRearrange geometry elements, changing their indices")
 DefNode(GeometryNode, GEO_NODE_SPLIT_EDGES, 0, "SPLIT_EDGES", SplitEdges, "Split Edges", "Add a Split Edges Geometry node\nDuplicate mesh edges and break connections with the surrounding faces")
 DefNode(GeometryNode, GEO_NODE_SPLIT_TO_INSTANCES, 0, "Split to Instances", SplitToInstances, "Split to Instances", "Add a Split to Instances Geometry node\nCreate separate geometries containing the elements from the same group")
 DefNode(GeometryNode, GEO_NODE_STORE_NAMED_ATTRIBUTE, 0, "STORE_NAMED_ATTRIBUTE", StoreNamedAttribute, "Store Named Attribute", "Add a Store Named Attribute Geometry node\nStore the result of a field on a geometry as an attribute with the specified name")
