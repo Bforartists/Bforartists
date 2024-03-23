@@ -227,6 +227,8 @@ class TOPBAR_MT_file_cleanup(Menu):
         layout = self.layout
         layout.separator()
 
+        context = bpy.context
+
         props = layout.operator("outliner.orphans_purge", text="Unused Data", icon = "CLEAN_CHANNELS")
         props.do_local_ids = True
         props.do_linked_ids = True
@@ -256,9 +258,11 @@ class TOPBAR_MT_file_cleanup(Menu):
         props.do_linked_ids = False
         props.do_recursive = True
 
-        layout.separator()
-		
-        layout.operator("outliner.orphans_manage", text="Manage Unused Data")
+        # BFA - only shows in drop down in the File topbar menu entry, but not in the outliner dropdown.
+        if not (context.area.type == 'OUTLINER' and context.space_data.display_mode == 'ORPHAN_DATA'):
+            layout.separator()
+            layout.operator("outliner.orphans_manage", text="Manage Unused Data", icon = "ORPHAN_DATA")
+
 
 
 class TOPBAR_MT_file(Menu):
