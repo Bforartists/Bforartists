@@ -1250,7 +1250,7 @@ def curve_draw_settings(context, layout, _tool, *, extra=False):
         col.prop(cps, "surface_offset")
         col.use_property_split = False
         col.prop(cps, "use_offset_absolute")
-     
+
         split = layout.split()
         split.use_property_split=False
         split.prop(cps, "use_stroke_endpoints")
@@ -1259,15 +1259,11 @@ def curve_draw_settings(context, layout, _tool, *, extra=False):
             split.label(icon='DISCLOSURE_TRI_DOWN')
         else:
             split.label(icon='DISCLOSURE_TRI_RIGHT')
-            
+
         if cps.use_stroke_endpoints:
             row = layout.row()
             row.separator()
             row.prop(cps, "surface_plane")
-
-
-        col = layout.column(heading="Frame Rate")
-        self.draw_framerate(col, rd)
 
 
 class _defs_edit_curve:
