@@ -82,7 +82,7 @@ class IMAGE_MT_view(Menu):
         show_render = sima.show_render
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #overlay = sima.overlay
 

@@ -442,7 +442,7 @@ class SEQUENCER_MT_view(Menu):
         is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bfa_user_settings"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         # bfa - we have it already separated with correct invoke.
 
