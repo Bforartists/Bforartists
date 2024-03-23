@@ -1248,11 +1248,22 @@ def curve_draw_settings(context, layout, _tool, *, extra=False):
     if cps.depth_mode == 'SURFACE':
         col = layout.column()
         col.prop(cps, "surface_offset")
+        col.use_property_split = False
         col.prop(cps, "use_offset_absolute")
-        col.prop(cps, "use_stroke_endpoints")
+
+        split = layout.split()
+        split.use_property_split=False
+        split.prop(cps, "use_stroke_endpoints")
+        split.alignment = 'LEFT'
         if cps.use_stroke_endpoints:
-            colsub = layout.column(align=True)
-            colsub.prop(cps, "surface_plane")
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if cps.use_stroke_endpoints:
+            row = layout.row()
+            row.separator()
+            row.prop(cps, "surface_plane")
 
 
 class _defs_edit_curve:
