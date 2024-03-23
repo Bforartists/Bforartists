@@ -203,7 +203,9 @@ class OUTLINER_MT_view(Menu):
     def draw(self, context):
         layout = self.layout
 
+        context = bpy.context
         space = context.space_data
+
 
         layout.operator("outliner.show_active", icon = "CENTER")
 
@@ -223,9 +225,16 @@ class OUTLINER_MT_view(Menu):
         layout.operator("outliner.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
         layout.operator("outliner.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
+        # BFA - only shows in view menu entry, but not in the orphan data mode.
+        if not (context.area.type == 'OUTLINER' and context.space_data.display_mode == 'ORPHAN_DATA'):
+            layout.separator()
+            layout.operator("outliner.orphans_manage", text="Manage Unused Data", icon = "ORPHAN_DATA")
+
         layout.separator()
         layout.menu("OUTLINER_MT_pie_menus")
         layout.menu("INFO_MT_area")
+
+
 
 
 class OUTLINER_MT_context_menu(Menu):
