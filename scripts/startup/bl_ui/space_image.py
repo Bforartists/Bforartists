@@ -82,7 +82,7 @@ class IMAGE_MT_view(Menu):
         show_render = sima.show_render
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        addon_prefs = preferences.addons["bfa_user_settings"].preferences
 
         #overlay = sima.overlay
 
@@ -489,10 +489,10 @@ class IMAGE_MT_uvs_transform(Menu):
 
         layout.operator("transform.shear", icon='SHEAR')
         layout.separator()
-        
+
         layout.operator("transform.vert_slide")
         layout.operator("transform.edge_slide")
-        
+
         layout.separator()
 
         layout.operator("uv.randomize_uv_transform", icon = 'RANDOMIZE')
@@ -1001,10 +1001,10 @@ class IMAGE_HT_header(Header):
            # proportional editing settings
             if tool_settings.use_proportional_edit is True:
                 sub = row.row(align=True)
-                sub.prop_with_popover(tool_settings, 
-                	"proportional_edit_falloff", 
+                sub.prop_with_popover(tool_settings,
+                	"proportional_edit_falloff",
                 	text="",
-                    icon_only=True, 
+                    icon_only=True,
                     panel="IMAGE_PT_proportional_edit")# BFA - was VIEW3D_PT_proportional_edit
             if show_uvedit:
                 uvedit = sima.uv_editor

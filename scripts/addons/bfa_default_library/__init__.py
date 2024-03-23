@@ -36,8 +36,8 @@ from pathlib import Path
 from os import path as p
 
 bl_info = {
-    "name": "BFA - Default Asset Library",
-    "author": "Draise",
+    "name": "Default Asset Library",
+    "author": "Draise (@trinumedia)",
     "version": (1, 0, 2),
     "blender": (3, 6, 0),
     "location": "Asset Browser>Default Library",
@@ -47,7 +47,8 @@ bl_info = {
     "tracker_url": "https://github.com/Bforartists/Bforartists",
     # Please go to https://github.com/BlenderDefender/implement_addon_updater to implement support for automatic library updates:
     "endpoint_url": "",
-    "category": "Import-Export"
+    "support": "OFFICIAL",
+    "category": "Bforartists",
 }
 
 # Configure the display name and sub-folder of your Library here:

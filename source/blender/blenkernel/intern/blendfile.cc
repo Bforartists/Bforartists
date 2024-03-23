@@ -1211,14 +1211,14 @@ UserDef *BKE_blendfile_userdef_from_defaults()
         "cycles",
         "pose_library",
         "bfa_default_library",
-        "bforartists_toolbar_settings",
+        "bfa_user_settings",
         "bfa_find_and_replace",
-        "createisocam",
+        "bfa_createisocam",
         "edit_dimensions",
-        "reset3dview",
-        "smartdelete_bfa",
-        "align_view_buttons",
-        "important_hotkeys_BFA",
+        "bfa_reset3dview",
+        "bfa_smartdelete",
+        "bfa_align_view_buttons",
+        "bfa_important_hotkeys",
     };
     for (int i = 0; i < ARRAY_SIZE(addons); i++) {
       bAddon *addon = BKE_addon_new();
