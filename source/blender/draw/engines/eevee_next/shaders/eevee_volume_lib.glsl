@@ -10,6 +10,7 @@
 #pragma BLENDER_REQUIRE(draw_view_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_light_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_shadow_lib.glsl)
+#pragma BLENDER_REQUIRE(eevee_spherical_harmonics_lib.glsl)
 
 /* Based on Frosbite Unified Volumetric.
  * https://www.ea.com/frostbite/news/physically-based-unified-volumetric-rendering-in-frostbite */
@@ -68,11 +69,27 @@ float volume_phase_function(vec3 V, vec3 L, float g)
   return (1 - sqr_g) / max(1e-8, 4.0 * M_PI * pow(1 + sqr_g - 2 * g * cos_theta, 3.0 / 2.0));
 }
 
+SphericalHarmonicL1 volume_phase_function_as_sh_L1(vec3 V, float g)
+{
+  /* Compute rotated zonal harmonic.
+   * From Bartlomiej Wronsky
+   * "Volumetric Fog: Unified compute shader based solution to atmospheric scattering" page 55
+   * SIGGRAPH 2014
+   * https://bartwronski.files.wordpress.com/2014/08/bwronski_volumetric_fog_siggraph2014.pdf
+   */
+  SphericalHarmonicL1 sh;
+  sh.L0.M0 = spherical_harmonics_L0_M0(V) * vec4(1.0);
+  sh.L1.Mn1 = spherical_harmonics_L1_Mn1(V) * vec4(g);
+  sh.L1.M0 = spherical_harmonics_L1_M0(V) * vec4(g);
+  sh.L1.Mp1 = spherical_harmonics_L1_Mp1(V) * vec4(g);
+  return sh;
+}
+
 vec3 volume_light(LightData light, const bool is_directional, LightVector lv)
 {
   float power = 1.0;
   if (!is_directional) {
-    float volume_radius_squared = light.radius_squared;
+    float volume_radius_squared = light_local_data_get(light).radius_squared;
     float light_clamp = uniform_buf.volumes.light_clamp;
     if (light_clamp != 0.0) {
       /* 0.0 light clamp means it's disabled. */
@@ -151,16 +168,6 @@ vec3 volume_shadow(
 #else
   return vec3(1.0);
 #endif /* VOLUME_SHADOW */
-}
-
-vec3 volume_irradiance(vec3 P)
-{
-#ifdef VOLUME_IRRADIANCE
-  SphericalHarmonicL1 irradiance = lightprobe_irradiance_sample(P);
-  return irradiance.L0.M0.rgb * M_PI;
-#else
-  return vec3(0.0);
-#endif
 }
 
 struct VolumeResolveSample {
