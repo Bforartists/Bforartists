@@ -1983,9 +1983,9 @@ static void rna_Scene_editmesh_select_mode_set(PointerRNA *ptr, const bool *valu
         Object *object = BKE_view_layer_active_object_get(view_layer);
         if (object) {
           Mesh *mesh = BKE_mesh_from_object(object);
-          if (mesh && mesh->edit_mesh && mesh->edit_mesh->selectmode != flag) {
-            mesh->edit_mesh->selectmode = flag;
-            EDBM_selectmode_set(mesh->edit_mesh);
+          if (mesh && mesh->runtime->edit_mesh && mesh->runtime->edit_mesh->selectmode != flag) {
+            mesh->runtime->edit_mesh->selectmode = flag;
+            EDBM_selectmode_set(mesh->runtime->edit_mesh);
           }
         }
       }
@@ -2003,7 +2003,7 @@ static void rna_Scene_editmesh_select_mode_update(bContext *C, PointerRNA * /*pt
   Object *object = BKE_view_layer_active_object_get(view_layer);
   if (object) {
     mesh = BKE_mesh_from_object(object);
-    if (mesh && mesh->edit_mesh == nullptr) {
+    if (mesh && mesh->runtime->edit_mesh == nullptr) {
       mesh = nullptr;
     }
   }
@@ -2070,6 +2070,10 @@ static void object_simplify_update(Scene *scene,
     if (OB_TYPE_IS_GEOMETRY(ob->type)) {
       DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
     }
+  }
+
+  if (ob->type == OB_LAMP) {
+    DEG_id_tag_update(&ob->id, ID_RECALC_SHADING);
   }
 }
 
@@ -7824,6 +7828,13 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
+  static const EnumPropertyItem eevee_horizon_pixel_rate_items[] = {
+      {1, "1", 0, "1 px", ""},
+      {2, "2", 0, "4 px", ""},
+      {4, "4", 0, "16 px", ""},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   static const EnumPropertyItem ray_tracing_method_items[] = {
       {RAYTRACE_EEVEE_METHOD_NONE, "NONE", 0, "None", "No intersection with scene geometry"},
       {RAYTRACE_EEVEE_METHOD_SCREEN,
@@ -8033,6 +8044,14 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
       prop, "Tracing Method", "Select the tracing method used to find scene-ray intersections");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
+  prop = RNA_def_property(srna, "use_shadow_jittered_viewport", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SCE_EEVEE_SHADOW_JITTERED_VIEWPORT);
+  RNA_def_property_ui_text(prop,
+                           "Jittered Shadows (Viewport)",
+                           "Enable jittered shadows on the viewport. (Jittered shadows are always "
+                           "enabled for final renders)");
+  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
+
   /* Volumetrics */
   prop = RNA_def_property(srna, "volumetric_start", PROP_FLOAT, PROP_DISTANCE);
   RNA_def_property_ui_text(prop, "Start", "Start distance of the volumetric effect");
@@ -8187,6 +8206,16 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Bias", "Bias the horizon angles to reduce self intersection artifacts");
   RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
+  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
+
+  prop = RNA_def_property(srna, "horizon_resolution", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "gtao_resolution");
+  RNA_def_property_enum_items(prop, eevee_horizon_pixel_rate_items);
+  RNA_def_property_ui_text(prop,
+                           "Resolution",
+                           "Control the quality of the horizon scan lighting "
+                           "(lower size increase vram usage and quality)");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
