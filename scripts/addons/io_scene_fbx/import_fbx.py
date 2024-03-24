@@ -2658,11 +2658,8 @@ class FbxImportHelperNode:
 
         bone.matrix = bone_matrix
 
-        # Correction for children attached to a bone. FBX expects to attach to the head of a bone,
-        # while Blender attaches to the tail.
-        self.bone_child_matrix = Matrix.Translation(-bone_tail)
-
         force_connect_children = settings.force_connect_children
+
         connect_ctx = [force_connect_children, ...]
         for child in self.children:
             if child.is_leaf and force_connect_children:
@@ -2676,6 +2673,22 @@ class FbxImportHelperNode:
                 child_connect(bone, child_bone, None, connect_ctx)
 
         child_connect_finalize(bone, connect_ctx)
+
+        # Correction for children attached to a bone. FBX expects to attach to the head of a bone, while Blender
+        # attaches to the tail.
+        if force_connect_children:
+            # When forcefully connecting, the bone's tail position may be changed, which can change both the bone's
+            # rotation and its length.
+            # Set the correction matrix such that it transforms the current tail transformation back to the original
+            # head transformation.
+            head_to_origin = bone.matrix.inverted_safe()
+            tail_to_head = Matrix.Translation(bone.head-bone.tail)
+            origin_to_original_head = bone_matrix
+            tail_to_original_head = head_to_origin @ tail_to_head @ origin_to_original_head
+            self.bone_child_matrix = tail_to_original_head
+        else:
+            self.bone_child_matrix = Matrix.Translation(-bone_tail)
+
         return bone
 
     def build_node_obj(self, fbx_tmpl, settings):
