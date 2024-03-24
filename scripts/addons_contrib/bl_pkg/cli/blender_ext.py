@@ -1623,136 +1623,145 @@ class subcmd_client:
 
         request_exit = False
 
-        for manifest_archive in packages_info:
-            pkg_idname = manifest_archive.manifest.id
-            # Archive name.
-            archive_size_expected = manifest_archive.archive_size
-            archive_hash_expected = manifest_archive.archive_hash
-            pkg_archive_url = manifest_archive.archive_url
+        # Ensure all cache is cleared (when `local_cache` is disabled) no matter the cause of exiting.
+        files_to_clean: List[str] = []
+        with CleanupPathsContext(files=files_to_clean, directories=()):
+            for manifest_archive in packages_info:
+                pkg_idname = manifest_archive.manifest.id
+                # Archive name.
+                archive_size_expected = manifest_archive.archive_size
+                archive_hash_expected = manifest_archive.archive_hash
+                pkg_archive_url = manifest_archive.archive_url
 
-            # Local path.
-            filepath_local_cache_archive = os.path.join(local_cache_dir, pkg_idname + PKG_EXT)
+                # Local path.
+                filepath_local_cache_archive = os.path.join(local_cache_dir, pkg_idname + PKG_EXT)
 
-            # Remote path.
-            if pkg_archive_url.startswith("./"):
-                if is_repo_filesystem:
-                    filepath_remote_archive = os.path.join(repo_dir, pkg_archive_url[2:])
-                else:
-                    if REMOTE_REPO_HAS_JSON_IMPLIED:
-                        # TODO: use `urllib.parse.urlsplit(..)`.
-                        # NOTE: strip the path until the directory.
-                        # Convert: `https://foo.bar/bl_ext_repo.json` -> https://foo.bar/ARCHIVE_NAME
-                        filepath_remote_archive = urllib.parse.urljoin(repo_dir.rpartition("/")[0], pkg_archive_url[2:])
+                if not local_cache:
+                    files_to_clean.append(filepath_local_cache_archive)
+
+                # Remote path.
+                if pkg_archive_url.startswith("./"):
+                    if is_repo_filesystem:
+                        filepath_remote_archive = os.path.join(repo_dir, pkg_archive_url[2:])
                     else:
-                        filepath_remote_archive = urllib.parse.urljoin(repo_dir, pkg_archive_url[2:])
-                is_pkg_filesystem = is_repo_filesystem
-            else:
-                filepath_remote_archive = pkg_archive_url
-                is_pkg_filesystem = repo_is_filesystem(repo_dir=pkg_archive_url)
-
-            # Check if the cache should be used.
-            found = False
-            if os.path.exists(filepath_local_cache_archive):
-                if (
-                        local_cache and (
-                            archive_size_expected,
-                            archive_hash_expected,
-                        ) == sha256_from_file(filepath_local_cache_archive, hash_prefix=True)
-                ):
-                    found = True
-                else:
-                    os.unlink(filepath_local_cache_archive)
-
-            if not found:
-                # Create `filepath_local_cache_archive`.
-                filename_archive_size_test = 0
-                sha256 = hashlib.new('sha256')
-
-                # NOTE(@ideasman42): There is more logic in the try/except block than I'd like.
-                # Refactoring could be done to avoid that but it ends up making logic difficult to follow.
-                try:
-                    with open(filepath_local_cache_archive, "wb") as fh_cache:
-                        for block in url_retrieve_to_data_iter_or_filesystem(
-                                filepath_remote_archive,
-                                is_filesystem=is_pkg_filesystem,
-                                headers=url_request_headers_create(accept_json=False, user_agent=online_user_agent),
-                                chunk_size=CHUNK_SIZE_DEFAULT,
-                                timeout_in_seconds=timeout_in_seconds,
-                        ):
-                            request_exit |= message_progress(
-                                msg_fn,
-                                "Downloading \"{:s}\"".format(pkg_idname),
-                                filename_archive_size_test,
-                                archive_size_expected,
-                                'BYTE',
+                        if REMOTE_REPO_HAS_JSON_IMPLIED:
+                            # TODO: use `urllib.parse.urlsplit(..)`.
+                            # NOTE: strip the path until the directory.
+                            # Convert: `https://foo.bar/bl_ext_repo.json` -> https://foo.bar/ARCHIVE_NAME
+                            filepath_remote_archive = urllib.parse.urljoin(
+                                repo_dir.rpartition("/")[0],
+                                pkg_archive_url[2:],
                             )
-                            if request_exit:
-                                break
-                            fh_cache.write(block)
-                            sha256.update(block)
-                            filename_archive_size_test += len(block)
+                        else:
+                            filepath_remote_archive = urllib.parse.urljoin(repo_dir, pkg_archive_url[2:])
+                    is_pkg_filesystem = is_repo_filesystem
+                else:
+                    filepath_remote_archive = pkg_archive_url
+                    is_pkg_filesystem = repo_is_filesystem(repo_dir=pkg_archive_url)
 
-                except FileNotFoundError as ex:
-                    message_error(
+                # Check if the cache should be used.
+                found = False
+                if os.path.exists(filepath_local_cache_archive):
+                    if (
+                            local_cache and (
+                                archive_size_expected,
+                                archive_hash_expected,
+                            ) == sha256_from_file(filepath_local_cache_archive, hash_prefix=True)
+                    ):
+                        found = True
+                    else:
+                        os.unlink(filepath_local_cache_archive)
+
+                if not found:
+                    # Create `filepath_local_cache_archive`.
+                    filename_archive_size_test = 0
+                    sha256 = hashlib.new('sha256')
+
+                    # NOTE(@ideasman42): There is more logic in the try/except block than I'd like.
+                    # Refactoring could be done to avoid that but it ends up making logic difficult to follow.
+                    try:
+                        with open(filepath_local_cache_archive, "wb") as fh_cache:
+                            for block in url_retrieve_to_data_iter_or_filesystem(
+                                    filepath_remote_archive,
+                                    is_filesystem=is_pkg_filesystem,
+                                    headers=url_request_headers_create(accept_json=False, user_agent=online_user_agent),
+                                    chunk_size=CHUNK_SIZE_DEFAULT,
+                                    timeout_in_seconds=timeout_in_seconds,
+                            ):
+                                request_exit |= message_progress(
+                                    msg_fn,
+                                    "Downloading \"{:s}\"".format(pkg_idname),
+                                    filename_archive_size_test,
+                                    archive_size_expected,
+                                    'BYTE',
+                                )
+                                if request_exit:
+                                    break
+                                fh_cache.write(block)
+                                sha256.update(block)
+                                filename_archive_size_test += len(block)
+
+                    except FileNotFoundError as ex:
+                        message_error(
+                            msg_fn,
+                            "install: file-not-found ({:s}) reading {!r}!".format(str(ex), filepath_remote_archive),
+                        )
+                        return False
+                    except TimeoutError as ex:
+                        message_error(
+                            msg_fn,
+                            "install: timeout ({:s}) reading {!r}!".format(str(ex), filepath_remote_archive),
+                        )
+                        return False
+                    except urllib.error.URLError as ex:
+                        message_error(
+                            msg_fn,
+                            "install: URL error ({:s}) reading {!r}!".format(str(ex), filepath_remote_archive),
+                        )
+                        return False
+                    except BaseException as ex:
+                        message_error(
+                            msg_fn,
+                            "install: unexpected error ({:s}) reading {!r}!".format(str(ex), filepath_remote_archive),
+                        )
+                        return False
+
+                    if request_exit:
+                        return False
+
+                    # Validate:
+                    if filename_archive_size_test != archive_size_expected:
+                        message_warn(msg_fn, "Archive size mismatch \"{:s}\", expected {:d}, was {:d}".format(
+                            pkg_idname,
+                            archive_size_expected,
+                            filename_archive_size_test,
+                        ))
+                        return False
+                    filename_archive_hash_test = "sha256:" + sha256.hexdigest()
+                    if filename_archive_hash_test != archive_hash_expected:
+                        message_warn(msg_fn, "Archive checksum mismatch \"{:s}\", expected {:s}, was {:s}".format(
+                            pkg_idname,
+                            archive_hash_expected,
+                            filename_archive_hash_test,
+                        ))
+                        return False
+                    del filename_archive_size_test
+                    del filename_archive_hash_test
+                del found
+                del filepath_local_cache_archive
+
+            # All packages have been downloaded, install them.
+            for manifest_archive in packages_info:
+                filepath_local_cache_archive = os.path.join(local_cache_dir, manifest_archive.manifest.id + PKG_EXT)
+
+                if not subcmd_client._install_package_from_file_impl(
                         msg_fn,
-                        "install: file-not-found ({:s}) reading {!r}!".format(str(ex), filepath_remote_archive),
-                    )
-                    return False
-                except TimeoutError as ex:
-                    message_error(
-                        msg_fn,
-                        "install: timeout ({:s}) reading {!r}!".format(str(ex), filepath_remote_archive),
-                    )
-                    return False
-                except urllib.error.URLError as ex:
-                    message_error(
-                        msg_fn,
-                        "install: URL error ({:s}) reading {!r}!".format(str(ex), filepath_remote_archive),
-                    )
-                    return False
-                except BaseException as ex:
-                    message_error(
-                        msg_fn,
-                        "install: unexpected error ({:s}) reading {!r}!".format(str(ex), filepath_remote_archive),
-                    )
-                    return False
-
-                if request_exit:
-                    return False
-
-                # Validate:
-                if filename_archive_size_test != archive_size_expected:
-                    message_warn(msg_fn, "Archive size mismatch \"{:s}\", expected {:d}, was {:d}".format(
-                        pkg_idname,
-                        archive_size_expected,
-                        filename_archive_size_test,
-                    ))
-                    return False
-                filename_archive_hash_test = "sha256:" + sha256.hexdigest()
-                if filename_archive_hash_test != archive_hash_expected:
-                    message_warn(msg_fn, "Archive checksum mismatch \"{:s}\", expected {:s}, was {:s}".format(
-                        pkg_idname,
-                        archive_hash_expected,
-                        filename_archive_hash_test,
-                    ))
-                    return False
-                del filename_archive_size_test
-                del filename_archive_hash_test
-            del found
-            del filepath_local_cache_archive
-
-        # All packages have been downloaded, install them.
-        for manifest_archive in packages_info:
-            filepath_local_cache_archive = os.path.join(local_cache_dir, manifest_archive.manifest.id + PKG_EXT)
-
-            if not subcmd_client._install_package_from_file_impl(
-                    msg_fn,
-                    local_dir=local_dir,
-                    filepath_archive=filepath_local_cache_archive,
-                    manifest_compare=manifest_archive.manifest,
-            ):
-                # The package failed to install.
-                continue
+                        local_dir=local_dir,
+                        filepath_archive=filepath_local_cache_archive,
+                        manifest_compare=manifest_archive.manifest,
+                ):
+                    # The package failed to install.
+                    continue
 
         return True
 
@@ -1796,15 +1805,25 @@ class subcmd_client:
         if error:
             return False
 
-        for pkg_idname in packages_valid:
-            filepath_local_pkg = os.path.join(local_dir, pkg_idname)
-            try:
-                shutil.rmtree(filepath_local_pkg)
-            except BaseException as ex:
-                message_error(msg_fn, "Failure to remove \"{:s}\" with error ({:s})".format(pkg_idname, str(ex)))
-                continue
+        # Ensure a private directory so a local cache can be created.
+        # TODO: don't create (it's only accessed for file removal).
+        local_cache_dir = repo_local_private_dir_ensure_with_subdir(local_dir=local_dir, subdir="cache")
 
-            message_status(msg_fn, "Removed \"{:s}\"".format(pkg_idname))
+        files_to_clean: List[str] = []
+        with CleanupPathsContext(files=files_to_clean, directories=()):
+            for pkg_idname in packages_valid:
+                filepath_local_pkg = os.path.join(local_dir, pkg_idname)
+                try:
+                    shutil.rmtree(filepath_local_pkg)
+                except BaseException as ex:
+                    message_error(msg_fn, "Failure to remove \"{:s}\" with error ({:s})".format(pkg_idname, str(ex)))
+                    continue
+
+                message_status(msg_fn, "Removed \"{:s}\"".format(pkg_idname))
+
+                filepath_local_cache_archive = os.path.join(local_cache_dir, pkg_idname + PKG_EXT)
+                if os.path.exists(filepath_local_cache_archive):
+                    files_to_clean.append(filepath_local_cache_archive)
 
         return True
 
