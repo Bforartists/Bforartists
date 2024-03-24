@@ -211,9 +211,10 @@ class VIEW3D_HT_tool_header(Header):
             sub = layout.row()
             sub.popover(
                 panel="TOPBAR_PT_gpencil_layers",
-                text="Layer: " + text, # BFA
+                text="Layer: " + text,  # BFA
             )
-            if mode_string == 'EDIT_GPENCIL': sub.popover(panel="VIEW3D_PT_gpencil_edit_options", text="Options") # BFA
+            if mode_string == 'EDIT_GPENCIL':
+                sub.popover(panel="VIEW3D_PT_gpencil_edit_options", text="Options")  # BFA
 
 
 class _draw_tool_settings_context_mode:
@@ -465,7 +466,7 @@ class _draw_tool_settings_context_mode:
         if (tool is None) or (not tool.has_datablock):
             return False
 
-        # See: 'VIEW3D_PT_tools_brush', basically a duplicate
+        # See: `VIEW3D_PT_tools_brush`, basically a duplicate
         tool_settings = context.tool_settings
         settings = tool_settings.particle_edit
         brush = settings.brush
@@ -3101,8 +3102,10 @@ class VIEW3D_MT_image_add(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("object.load_reference_image", text="Reference", icon='IMAGE_REFERENCE')
-        layout.operator("object.load_background_image", text="Background", icon='IMAGE_BACKGROUND')
+        # Explicitly set background mode on/off as operator will try to
+        # auto-detect which mode to use otherwise.
+        layout.operator("object.empty_image_add", text="Reference", icon='IMAGE_REFERENCE').background = False
+        layout.operator("object.empty_image_add", text="Background", icon='IMAGE_BACKGROUND').background = True
 
 
 class VIEW3D_MT_object_relations(Menu):
@@ -10515,7 +10518,7 @@ class VIEW3D_PT_curves_sculpt_add_shape(Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.use_property_split = False
+        layout.use_property_split = False  # BFA - set to False
         layout.use_property_decorate = False  # No animation.
 
         settings = UnifiedPaintPanel.paint_settings(context)
