@@ -45,7 +45,7 @@
 
 #include "BKE_image.h"
 
-#include "GPU_debug.h"
+#include "GPU_debug.hh"
 #include "GPU_material.hh"
 
 #include "DRW_gpu_wrapper.hh"
@@ -54,10 +54,10 @@
 #include "draw_handle.hh"
 #include "draw_manager.hh"
 #include "draw_pass.hh"
-#include "draw_shader_shared.h"
-#include "draw_state.h"
+#include "draw_shader_shared.hh"
+#include "draw_state.hh"
 
-#include "intern/gpu_codegen.h"
+#include "intern/gpu_codegen.hh"
 
 #include <sstream>
 
@@ -276,6 +276,7 @@ class PassBase {
   /**
    * Record a compute dispatch call.
    */
+  void dispatch(int group_len);
   void dispatch(int2 group_len);
   void dispatch(int3 group_len);
   void dispatch(int3 *group_len);
@@ -801,6 +802,12 @@ inline void PassBase<T>::draw_procedural_indirect(
 /* -------------------------------------------------------------------- */
 /** \name Compute Dispatch Implementation
  * \{ */
+
+template<class T> inline void PassBase<T>::dispatch(int group_len)
+{
+  BLI_assert(shader_);
+  create_command(Type::Dispatch).dispatch = {int3(group_len, 1, 1)};
+}
 
 template<class T> inline void PassBase<T>::dispatch(int2 group_len)
 {

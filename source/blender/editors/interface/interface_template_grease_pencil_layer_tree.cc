@@ -178,6 +178,8 @@ class LayerViewItem : public AbstractTreeViewItem {
 
   bool supports_collapsing() const override
   {
+    /* This is a bit redundant since `LayerViewItem` can't have children.
+     * But being explicit might catch errors. */
     return false;
   }
 
@@ -392,14 +394,12 @@ void LayerTreeView::build_tree_node_recursive(TreeViewOrItem &parent, TreeNode &
 {
   using namespace blender::bke::greasepencil;
   if (node.is_layer()) {
-    LayerViewItem &item = parent.add_tree_item<LayerViewItem>(this->grease_pencil_,
-                                                              node.as_layer());
-    item.set_collapsed(false);
+    parent.add_tree_item<LayerViewItem>(this->grease_pencil_, node.as_layer());
   }
   else if (node.is_group()) {
     LayerGroupViewItem &group_item = parent.add_tree_item<LayerGroupViewItem>(this->grease_pencil_,
                                                                               node.as_group());
-    group_item.set_collapsed(false);
+    group_item.uncollapse_by_default();
     LISTBASE_FOREACH_BACKWARD (GreasePencilLayerTreeNode *, node_, &node.as_group().children) {
       build_tree_node_recursive(group_item, node_->wrap());
     }
