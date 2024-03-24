@@ -58,35 +58,6 @@ typedef struct SceneRuntimeHandle SceneRuntimeHandle;
 /** \name FFMPEG
  * \{ */
 
-typedef struct AviCodecData {
-  /** Save format. */
-  void *lpFormat;
-  /** Compressor options. */
-  void *lpParms;
-  /** Size of lpFormat buffer. */
-  unsigned int cbFormat;
-  /** Size of lpParms buffer. */
-  unsigned int cbParms;
-
-  /** Stream type, for consistency. */
-  unsigned int fccType;
-  /** Compressor. */
-  unsigned int fccHandler;
-  /** Keyframe rate. */
-  unsigned int dwKeyFrameEvery;
-  /** Compress quality 0-10,000. */
-  unsigned int dwQuality;
-  /** Bytes per second. */
-  unsigned int dwBytesPerSecond;
-  /** Flags... see below. */
-  unsigned int dwFlags;
-  /** For non-video streams only. */
-  unsigned int dwInterleaveEvery;
-  char _pad[4];
-
-  char avicodecname[128];
-} AviCodecData;
-
 typedef enum eFFMpegPreset {
   FFM_PRESET_NONE = 0,
 
@@ -684,7 +655,7 @@ typedef enum eBakePassFilter {
 typedef struct RenderData {
   struct ImageFormatData im_format;
 
-  struct AviCodecData *avicodecdata;
+  void *_pad;
   struct FFMpegCodecData ffcodecdata;
 
   /** Frames as in 'images'. */
@@ -1895,6 +1866,7 @@ typedef struct SceneEEVEE {
   float gtao_quality;
   float gtao_thickness;
   float gtao_focus;
+  int gtao_resolution;
 
   float bokeh_overblur;
   float bokeh_max_size;
@@ -1923,7 +1895,6 @@ typedef struct SceneEEVEE {
   int shadow_ray_count;
   int shadow_step_count;
   float shadow_normal_bias;
-  float _pad0;
 
   int ray_tracing_method;
 
@@ -2887,7 +2858,8 @@ enum {
   SCE_EEVEE_DOF_JITTER = (1 << 23),
   SCE_EEVEE_SHADOW_ENABLED = (1 << 24),
   SCE_EEVEE_RAYTRACE_OPTIONS_SPLIT = (1 << 25),
-  SCE_EEVEE_VOLUMETRIC_BLENDING = (1 << 26), /* BFA - volumetric blending patch from lordloki */
+  SCE_EEVEE_SHADOW_JITTERED_VIEWPORT = (1 << 26),
+  SCE_EEVEE_VOLUMETRIC_BLENDING = (1 << 27), /* BFA - volumetric blending patch from lordloki */
 };
 
 typedef enum RaytraceEEVEE_Flag {
