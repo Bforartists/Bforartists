@@ -6,7 +6,7 @@
  * \ingroup draw
  */
 
-#include "GPU_index_buffer.h"
+#include "GPU_index_buffer.hh"
 
 #include "extract_mesh.hh"
 
@@ -44,7 +44,7 @@ static void extract_fdots_pos_init(const MeshRenderData &mr,
   GPUVertBuf *vbo = static_cast<GPUVertBuf *>(buf);
   GPUVertFormat *format = get_fdots_pos_format();
   GPU_vertbuf_init_with_format(vbo, format);
-  GPU_vertbuf_data_alloc(vbo, mr.face_len);
+  GPU_vertbuf_data_alloc(vbo, mr.faces_num);
   void *vbo_data = GPU_vertbuf_get_data(vbo);
   *(float(**)[3])tls_data = static_cast<float(*)[3]>(vbo_data);
 }

@@ -204,7 +204,7 @@ void MESH_OT_primitive_cube_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Cube";
-  ot->description = "Add a cube mesh";
+  ot->description = "Add a cube mesh that consists of six square faces";
   ot->idname = "MESH_OT_primitive_cube_add";
 
   /* api callbacks */
@@ -508,7 +508,7 @@ void MESH_OT_primitive_grid_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Grid";
-  ot->description = "Add a grid mesh";
+  ot->description = "Add a subdivided plane mesh";
   ot->idname = "MESH_OT_primitive_grid_add";
 
   /* api callbacks */
@@ -648,7 +648,9 @@ void MESH_OT_primitive_uv_sphere_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add UV Sphere";
-  ot->description = "Add a UV sphere mesh";
+  ot->description =
+      "Add a spherical mesh with quad faces, except for triangle faces at the top and "
+      "bottom";
   ot->idname = "MESH_OT_primitive_uv_sphere_add";
 
   /* api callbacks */
@@ -716,7 +718,7 @@ void MESH_OT_primitive_ico_sphere_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Ico Sphere";
-  ot->description = "Add a Icosphere mesh";
+  ot->description = "Add a spherical mesh that consists of equally sized triangles";
   ot->idname = "MESH_OT_primitive_ico_sphere_add";
 
   /* api callbacks */
