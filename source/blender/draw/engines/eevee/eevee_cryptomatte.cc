@@ -33,7 +33,7 @@
 
 #include "BKE_cryptomatte.h"
 
-#include "GPU_batch.h"
+#include "GPU_batch.hh"
 
 #include "RE_pipeline.h"
 
@@ -48,7 +48,7 @@
 
 #include "IMB_imbuf_types.hh"
 
-#include "eevee_private.h"
+#include "eevee_private.hh"
 
 /* -------------------------------------------------------------------- */
 /** \name Data Management cryptomatte accum buffer

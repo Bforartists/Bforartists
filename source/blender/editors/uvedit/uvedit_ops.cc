@@ -33,6 +33,7 @@
 #include "BKE_layer.hh"
 #include "BKE_material.h"
 #include "BKE_mesh_mapping.hh"
+#include "BKE_mesh_types.hh"
 #include "BKE_node.hh"
 
 #include "DEG_depsgraph.hh"
@@ -1666,7 +1667,7 @@ static int uv_seams_from_islands_exec(bContext *C, wmOperator *op)
 
   for (Object *ob : objects) {
     Mesh *mesh = (Mesh *)ob->data;
-    BMEditMesh *em = mesh->edit_mesh;
+    BMEditMesh *em = mesh->runtime->edit_mesh;
     BMesh *bm = em->bm;
     BMIter iter;
 
@@ -1770,7 +1771,7 @@ static int uv_mark_seam_exec(bContext *C, wmOperator *op)
 
   for (Object *ob : objects) {
     Mesh *mesh = (Mesh *)ob->data;
-    BMEditMesh *em = mesh->edit_mesh;
+    BMEditMesh *em = mesh->runtime->edit_mesh;
     BMesh *bm = em->bm;
 
     if (synced_selection && (bm->totedgesel == 0)) {

@@ -11,22 +11,22 @@
 
 #include "DNA_pointcloud_types.h"
 
-#include "GPU_batch.h"
-#include "GPU_capabilities.h"
-#include "GPU_compute.h"
+#include "GPU_batch.hh"
+#include "GPU_capabilities.hh"
+#include "GPU_compute.hh"
 #include "GPU_material.hh"
-#include "GPU_shader.h"
-#include "GPU_texture.h"
-#include "GPU_vertex_buffer.h"
+#include "GPU_shader.hh"
+#include "GPU_texture.hh"
+#include "GPU_vertex_buffer.hh"
 
 #include "DRW_gpu_wrapper.hh"
 #include "DRW_render.hh"
 
 #include "draw_attributes.hh"
 #include "draw_cache_impl.hh"
-#include "draw_common.h"
 #include "draw_common.hh"
-#include "draw_manager.h"
+#include "draw_common_c.hh"
+#include "draw_manager_c.hh"
 #include "draw_pointcloud_private.hh"
 /* For drw_curves_get_attribute_sampler_name. */
 #include "draw_curves_private.hh"

@@ -40,6 +40,7 @@
 #include "BKE_deform.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_layer.hh"
+#include "BKE_mesh_types.hh"
 #include "BKE_object.hh"
 #include "BKE_object_deform.h"
 #include "BKE_object_types.hh"
@@ -311,7 +312,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
   if (ob->type == OB_MESH) {
     TransformMedian_Mesh *median = &median_basis.mesh;
     Mesh *mesh = static_cast<Mesh *>(ob->data);
-    BMEditMesh *em = mesh->edit_mesh;
+    BMEditMesh *em = mesh->runtime->edit_mesh;
     BMesh *bm = em->bm;
     BMVert *eve;
     BMEdge *eed;
@@ -992,7 +993,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
 
     if (ob->type == OB_MESH) {
       Mesh *mesh = static_cast<Mesh *>(ob->data);
-      BMEditMesh *em = mesh->edit_mesh;
+      BMEditMesh *em = mesh->runtime->edit_mesh;
       if (em != nullptr) {
         uiBlockInteraction_CallbackData callback_data{};
         callback_data.begin_fn = editmesh_partial_update_begin_fn;
@@ -1026,7 +1027,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     {
       const TransformMedian_Mesh *median = &median_basis.mesh, *ve_median = &ve_median_basis.mesh;
       Mesh *mesh = static_cast<Mesh *>(ob->data);
-      BMEditMesh *em = mesh->edit_mesh;
+      BMEditMesh *em = mesh->runtime->edit_mesh;
       BMesh *bm = em->bm;
       BMIter iter;
       BMVert *eve;

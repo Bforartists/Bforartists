@@ -33,15 +33,15 @@
 
 #include "ED_particle.hh"
 
-#include "GPU_batch.h"
-#include "GPU_capabilities.h"
-#include "GPU_context.h"
+#include "GPU_batch.hh"
+#include "GPU_capabilities.hh"
+#include "GPU_context.hh"
 #include "GPU_material.hh"
 
 #include "DEG_depsgraph_query.hh"
 
 #include "draw_cache_impl.hh" /* own include */
-#include "draw_hair_private.h"
+#include "draw_hair_private.hh"
 
 namespace blender::draw {
 

@@ -11,15 +11,15 @@
 #include "BKE_object.hh"
 #include "BLI_link_utils.h"
 #include "BLI_math_matrix.hh"
-#include "GPU_batch.h"
-#include "GPU_capabilities.h"
-#include "GPU_debug.h"
+#include "GPU_batch.hh"
+#include "GPU_capabilities.hh"
+#include "GPU_debug.hh"
 
-#include "draw_debug.h"
 #include "draw_debug.hh"
-#include "draw_manager.h"
+#include "draw_debug_c.hh"
+#include "draw_manager_c.hh"
 #include "draw_shader.hh"
-#include "draw_shader_shared.h"
+#include "draw_shader_shared.hh"
 
 #include <iomanip>
 #include <sstream>
