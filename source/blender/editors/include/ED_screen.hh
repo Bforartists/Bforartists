@@ -369,6 +369,7 @@ ScrArea *ED_screen_temp_space_open(bContext *C,
                                    int display_type,
                                    bool dialog) ATTR_NONNULL(1, 2, 3);
 void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *arg);
+void ED_screens_topbar_tools_menu_create(bContext *C, uiLayout *layout, void *arg); /*bfa - topbar*/
 void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void *arg); /*bfa - toolbar*/
 void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void *arg);
 void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void *arg);
