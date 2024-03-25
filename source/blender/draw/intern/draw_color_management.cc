@@ -6,21 +6,21 @@
  * \ingroup draw
  */
 
-#include "draw_manager.h"
+#include "draw_manager_c.hh"
 
 #include "DRW_render.hh"
 
-#include "GPU_batch.h"
-#include "GPU_framebuffer.h"
-#include "GPU_matrix.h"
-#include "GPU_texture.h"
+#include "GPU_batch.hh"
+#include "GPU_framebuffer.hh"
+#include "GPU_matrix.hh"
+#include "GPU_texture.hh"
 
 #include "DNA_space_types.h"
 #include "DNA_view3d_types.h"
 
 #include "BKE_colortools.hh"
 
-#include "draw_color_management.h"
+#include "draw_color_management.hh"
 
 namespace blender::draw::color_management {
 
