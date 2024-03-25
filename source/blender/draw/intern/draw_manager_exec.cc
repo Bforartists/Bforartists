@@ -6,7 +6,7 @@
  * \ingroup draw
  */
 
-#include "draw_manager.h"
+#include "draw_manager_c.hh"
 
 #include "BLI_alloca.h"
 #include "BLI_math_bits.h"
@@ -14,10 +14,10 @@
 
 #include "BKE_global.hh"
 
-#include "GPU_compute.h"
-#include "GPU_platform.h"
-#include "GPU_shader.h"
-#include "GPU_state.h"
+#include "GPU_compute.hh"
+#include "GPU_platform.hh"
+#include "GPU_shader.hh"
+#include "GPU_state.hh"
 
 #ifdef USE_GPU_SELECT
 #  include "GPU_select.hh"

@@ -26,15 +26,15 @@
 #include "BKE_object.hh"
 #include "BKE_paint.hh"
 
-#include "GPU_batch.h"
-#include "GPU_batch_utils.h"
-#include "GPU_capabilities.h"
+#include "GPU_batch.hh"
+#include "GPU_batch_utils.hh"
+#include "GPU_capabilities.hh"
 
 #include "MEM_guardedalloc.h"
 
 #include "draw_cache.hh"
 #include "draw_cache_impl.hh"
-#include "draw_manager.h"
+#include "draw_manager_c.hh"
 
 /* -------------------------------------------------------------------- */
 /** \name Internal Defines

@@ -19,6 +19,7 @@
 #include "BLI_string_ref.hh"
 
 #include "BKE_animsys.h"
+#include "BKE_grease_pencil_legacy_convert.hh"
 #include "BKE_idprop.h"
 #include "BKE_ipo.h"
 #include "BKE_lib_id.hh"
@@ -531,7 +532,16 @@ void do_versions_after_setup(Main *new_bmain, BlendFileReadReport *reports)
     BKE_lib_override_library_main_hierarchy_root_ensure(new_bmain);
   }
 
-  if (!blendfile_or_libraries_versions_atleast(new_bmain, 401, 2)) {
+  if (!blendfile_or_libraries_versions_atleast(new_bmain, 402, 22)) {
+    /* Initial auto smooth versioning started at (401, 2), but a bug caused the legacy flag to not
+     * be cleared, so it is re-run in a later version when the bug is fixed and the versioning has
+     * been made idempotent. */
     BKE_main_mesh_legacy_convert_auto_smooth(*new_bmain);
+  }
+
+  if (U.experimental.use_grease_pencil_version3 &&
+      U.experimental.use_grease_pencil_version3_convert_on_load)
+  {
+    blender::bke::greasepencil::convert::legacy_main(*new_bmain, *reports);
   }
 }
