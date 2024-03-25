@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Sebastian Schrand
+# SPDX-FileCopyrightText: 2023-2024 Sebastian Schrand
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -12,12 +12,13 @@ from bpy.props import (
     BoolProperty,
     FloatProperty,
     StringProperty,
+    CollectionProperty,
 )
 
 bl_info = {
     "name": "Import Autodesk MAX (.max)",
     "author": "Sebastian Sille, Philippe Lagadec, Jens M. Plonka",
-    "version": (1, 1, 4),
+    "version": (1, 1, 6),
     "blender": (4, 0, 0),
     "location": "File > Import",
     "description": "Import 3DSMAX meshes & materials",
@@ -41,7 +42,8 @@ class Import_max(bpy.types.Operator, ImportHelper):
 
     filename_ext = ".max"
     filter_glob: StringProperty(default="*.max", options={'HIDDEN'})
-    filepath: StringProperty(subtype='FILE_PATH', options={'SKIP_SAVE'})
+    files: CollectionProperty(type=bpy.types.OperatorFileListElement, options={'HIDDEN', 'SKIP_SAVE'})
+    directory: StringProperty(subtype='DIR_PATH')
 
     scale_objects: FloatProperty(
         name="Scale",
@@ -58,6 +60,11 @@ class Import_max(bpy.types.Operator, ImportHelper):
     use_uv_mesh: BoolProperty(
         name="UV Mesh",
         description="Import texture coordinates as mesh objects",
+        default=False,
+    )
+    use_collection: BoolProperty(
+        name="Collection",
+        description="Create a new collection",
         default=False,
     )
     use_apply_matrix: BoolProperty(
@@ -116,6 +123,9 @@ class MAX_PT_import_include(bpy.types.Panel):
         layrow = layout.row(align=True)
         layrow.prop(operator, "use_uv_mesh")
         layrow.label(text="", icon='UV' if operator.use_uv_mesh else 'GROUP_UVS')
+        layrow = layout.row(align=True)
+        layrow.prop(operator, "use_collection")
+        layrow.label(text="", icon='OUTLINER_COLLECTION' if operator.use_collection else 'GROUP')
 
 
 class MAX_PT_import_transform(bpy.types.Panel):
