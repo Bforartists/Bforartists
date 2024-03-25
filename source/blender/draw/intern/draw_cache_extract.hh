@@ -11,7 +11,7 @@
 #include "BLI_math_matrix_types.hh"
 #include "BLI_utildefines.h"
 
-#include "GPU_shader.h"
+#include "GPU_shader.hh"
 
 #include "draw_attributes.hh"
 
@@ -217,12 +217,14 @@ struct MeshExtractLooseGeom {
 };
 
 struct SortedFaceData {
-  /** The first triangle index for each polygon, sorted into slices by material. */
-  Array<int> tri_first_index;
+  /* The total number of visible triangles (a sum of the values in #mat_tri_counts). */
+  int visible_tris_num;
   /** The number of visible triangles assigned to each material. */
-  Array<int> mat_tri_len;
-  /* The total number of visible triangles (a sum of the values in #mat_tri_len). */
-  int visible_tri_len;
+  Array<int> tris_num_by_material;
+  /**
+   * The first triangle index for each face, sorted into slices by material.
+   */
+  Array<int> face_tri_offsets;
 };
 
 /**

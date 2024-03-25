@@ -714,6 +714,21 @@ int UI_popup_menu_invoke(bContext *C, const char *idname, ReportList *reports) A
  */
 void UI_popup_menu_retval_set(const uiBlock *block, int retval, bool enable);
 /**
+ * Set a dummy panel in the popup `block` to support using layout panels, the panel is linked
+ * to the popup `region` so layout panels state can be persistent until the popup is closed.
+ */
+void UI_popup_dummy_panel_set(ARegion *region, uiBlock *block);
+/** Toggles layout panel open state and returns the new state. */
+bool UI_layout_panel_toggle_open(const bContext *C, struct LayoutPanelHeader *header);
+void UI_panel_drag_collapse_handler_add(const bContext *C, const bool was_open);
+LayoutPanelHeader *UI_layout_panel_header_under_mouse(const Panel &panel, const int my);
+/** Apply scroll to layout panels when the main panel is used in popups. */
+void UI_layout_panel_popup_scroll_apply(Panel *panel, const float dy);
+void UI_draw_layout_panels_backdrop(const ARegion *region,
+                                    const Panel *panel,
+                                    const float radius,
+                                    float subpanel_backcolor[4]);
+/**
  * Setting the button makes the popup open from the button instead of the cursor.
  */
 void UI_popup_menu_but_set(uiPopupMenu *pup, ARegion *butregion, uiBut *but);
@@ -1724,6 +1739,22 @@ enum uiTooltipColorID {
   UI_TIP_LC_MAX
 };
 
+enum class uiTooltipImageBackground {
+  None = 0,
+  Checkerboard_Themed,
+  Checkerboard_Fixed,
+};
+
+struct uiTooltipImage {
+  ImBuf *ibuf = nullptr;
+  short width = 0;
+  short height = 0;
+  bool premultiplied = false;
+  bool border = false;
+  bool text_color = false;
+  uiTooltipImageBackground background = uiTooltipImageBackground::None;
+};
+
 void UI_but_func_tooltip_custom_set(uiBut *but,
                                     uiButToolTipCustomFunc func,
                                     void *arg,
@@ -1744,8 +1775,7 @@ void UI_tooltip_text_field_add(uiTooltipData *data,
  * \param image: Image buffer (duplicated, ownership is *not* transferred to `data`).
  * \param image_size: Display size for the image (pixels without UI scale applied).
  */
-void UI_tooltip_image_field_add(uiTooltipData *data, const ImBuf *image, const short image_size[2])
-    ATTR_NONNULL(1, 2, 3);
+void UI_tooltip_image_field_add(uiTooltipData *data, const uiTooltipImage &image_data);
 
 /**
  * Recreate tool-tip (use to update dynamic tips)
@@ -2677,6 +2707,12 @@ void uiTemplateNodeTreeInterface(uiLayout *layout, PointerRNA *ptr);
  * Draw all node buttons and socket default values with the same panel structure used by the node.
  */
 void uiTemplateNodeInputs(uiLayout *layout, bContext *C, PointerRNA *ptr);
+
+/**
+ * \return: True if the list item with unfiltered, unordered index \a item_idx is visible given the
+ *          current filter settings.
+ */
+bool UI_list_item_index_is_filtered_visible(const struct uiList *ui_list, int item_idx);
 
 /**
  * \return An RNA pointer for the operator properties.

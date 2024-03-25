@@ -662,6 +662,10 @@ class MESH_OT_print3d_scale_to_volume(Operator):
             bm.free()
             return volume
 
+        if not context.selectable_objects:
+            self.report({'ERROR'}, "At least one mesh object must be selected")
+            return {'CANCELLED'}
+
         if context.mode == 'EDIT_MESH':
             volume = calc_volume(context.edit_object)
         else:
@@ -707,6 +711,10 @@ class MESH_OT_print3d_scale_to_bounds(Operator):
 
         def calc_length(vecs):
             return max(((max(v[i] for v in vecs) - min(v[i] for v in vecs)), i) for i in range(3))
+
+        if not context.selectable_objects:
+            self.report({'ERROR'}, "At least one mesh object must be selected")
+            return {'CANCELLED'}
 
         if context.mode == 'EDIT_MESH':
             length, axis = calc_length(

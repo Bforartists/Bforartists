@@ -235,41 +235,41 @@ set(SRC
   intern/draw_cache_extract.hh
   intern/draw_cache_impl.hh
   intern/draw_cache_inline.hh
-  intern/draw_color_management.h
+  intern/draw_color_management.hh
   intern/draw_command.hh
-  intern/draw_common.h
+  intern/draw_common_c.hh
   intern/draw_common.hh
-  intern/draw_common_shader_shared.h
+  intern/draw_common_shader_shared.hh
   intern/draw_curves_private.hh
-  intern/draw_debug.h
+  intern/draw_debug_c.hh
   intern/draw_debug.hh
-  intern/draw_hair_private.h
+  intern/draw_hair_private.hh
   intern/draw_handle.hh
-  intern/draw_instance_data.h
-  intern/draw_manager.h
+  intern/draw_instance_data.hh
+  intern/draw_manager_c.hh
   intern/draw_manager.hh
   intern/draw_manager_profiling.hh
-  intern/draw_manager_testing.h
+  intern/draw_manager_testing.hh
   intern/draw_manager_text.hh
   intern/draw_pass.hh
   intern/draw_pbvh.hh
   intern/draw_resource.hh
   intern/draw_sculpt.hh
   intern/draw_shader.hh
-  intern/draw_shader_shared.h
-  intern/draw_state.h
+  intern/draw_shader_shared.hh
+  intern/draw_state.hh
   intern/draw_subdivision.hh
-  intern/draw_texture_pool.h
-  intern/draw_view.h
+  intern/draw_texture_pool.hh
+  intern/draw_view_c.hh
   intern/draw_view.hh
-  intern/draw_view_data.h
+  intern/draw_view_data.hh
   intern/mesh_extractors/extract_mesh.hh
   engines/basic/basic_engine.h
   engines/basic/basic_private.h
   engines/compositor/compositor_engine.h
   engines/eevee/eevee_engine.h
   engines/eevee/eevee_lightcache.h
-  engines/eevee/eevee_private.h
+  engines/eevee/eevee_private.hh
   engines/eevee/engine_eevee_shared_defines.h
   engines/eevee_next/eevee_ambient_occlusion.hh
   engines/eevee_next/eevee_camera.hh
@@ -498,6 +498,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_film_cryptomatte_post_comp.glsl
   engines/eevee_next/shaders/eevee_film_frag.glsl
   engines/eevee_next/shaders/eevee_film_lib.glsl
+  engines/eevee_next/shaders/eevee_filter_lib.glsl
   engines/eevee_next/shaders/eevee_forward_lib.glsl
   engines/eevee_next/shaders/eevee_gbuffer_lib.glsl
   engines/eevee_next/shaders/eevee_gbuffer_closure_test.glsl
@@ -511,6 +512,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_hiz_debug_frag.glsl
   engines/eevee_next/shaders/eevee_hiz_update_comp.glsl
   engines/eevee_next/shaders/eevee_horizon_denoise_comp.glsl
+  engines/eevee_next/shaders/eevee_horizon_resolve_comp.glsl
   engines/eevee_next/shaders/eevee_horizon_scan_eval_lib.glsl
   engines/eevee_next/shaders/eevee_horizon_scan_comp.glsl
   engines/eevee_next/shaders/eevee_horizon_scan_lib.glsl
@@ -529,6 +531,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_lightprobe_irradiance_ray_comp.glsl
   engines/eevee_next/shaders/eevee_lightprobe_irradiance_offset_comp.glsl
   engines/eevee_next/shaders/eevee_lightprobe_irradiance_load_comp.glsl
+  engines/eevee_next/shaders/eevee_lightprobe_irradiance_world_comp.glsl
   engines/eevee_next/shaders/eevee_lightprobe_lib.glsl
   engines/eevee_next/shaders/eevee_lightprobe_volume_eval_lib.glsl
   engines/eevee_next/shaders/eevee_lookdev_display_frag.glsl
@@ -558,11 +561,11 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_ray_types_lib.glsl
   engines/eevee_next/shaders/eevee_reflection_probe_convolve_comp.glsl
   engines/eevee_next/shaders/eevee_reflection_probe_eval_lib.glsl
+  engines/eevee_next/shaders/eevee_reflection_probe_irradiance_comp.glsl
   engines/eevee_next/shaders/eevee_reflection_probe_lib.glsl
   engines/eevee_next/shaders/eevee_reflection_probe_mapping_lib.glsl
   engines/eevee_next/shaders/eevee_reflection_probe_remap_comp.glsl
   engines/eevee_next/shaders/eevee_reflection_probe_select_comp.glsl
-  engines/eevee_next/shaders/eevee_reflection_probe_update_irradiance_comp.glsl
   engines/eevee_next/shaders/eevee_renderpass_lib.glsl
   engines/eevee_next/shaders/eevee_sampling_lib.glsl
   engines/eevee_next/shaders/eevee_shadow_debug_frag.glsl
@@ -702,10 +705,10 @@ set(GLSL_SRC
   intern/shaders/draw_visibility_comp.glsl
 
   intern/draw_command_shared.hh
-  intern/draw_common_shader_shared.h
-  intern/draw_defines.h
+  intern/draw_common_shader_shared.hh
+  intern/draw_defines.hh
   intern/draw_pointcloud_private.hh
-  intern/draw_shader_shared.h
+  intern/draw_shader_shared.hh
 
   engines/gpencil/shaders/gpencil_frag.glsl
   engines/gpencil/shaders/gpencil_vert.glsl
@@ -762,6 +765,8 @@ set(GLSL_SRC
   engines/overlay/shaders/overlay_edit_curve_handle_vert.glsl
   engines/overlay/shaders/overlay_edit_curve_handle_vert_no_geom.glsl
   engines/overlay/shaders/overlay_edit_curve_point_vert.glsl
+  engines/overlay/shaders/overlay_edit_curves_handle_frag.glsl
+  engines/overlay/shaders/overlay_edit_curves_handle_vert.glsl
   engines/overlay/shaders/overlay_edit_curve_wire_vert.glsl
   engines/overlay/shaders/overlay_edit_gpencil_canvas_vert.glsl
   engines/overlay/shaders/overlay_edit_gpencil_guide_vert.glsl
