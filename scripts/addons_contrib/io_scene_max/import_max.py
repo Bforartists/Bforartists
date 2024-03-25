@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Sebastian Schrand
+# SPDX-FileCopyrightText: 2023-2024 Sebastian Schrand
 #                         2017-2022 Jens M. Plonka
 #                         2005-2018 Philippe Lagadec
 #
@@ -1408,14 +1408,25 @@ def read(context, filename, mscale, usemat, uvmesh, transform):
         print("File seems to be no 3D Studio Max file!")
 
 
-def load(operator, context, filepath="", scale_objects=1.0, use_material=True,
-         use_uv_mesh=False, use_apply_matrix=False, global_matrix=None):
+def load(operator, context, files=None, directory="", filepath="", scale_objects=1.0, use_material=True,
+         use_uv_mesh=False, use_collection=False, use_apply_matrix=False, global_matrix=None):
     context.window.cursor_set('WAIT')
     mscale = mathutils.Matrix.Scale(scale_objects, 4)
     if global_matrix is not None:
         mscale = global_matrix @ mscale
 
-    read(context, filepath, mscale, usemat=use_material, uvmesh=use_uv_mesh, transform=use_apply_matrix)
+    default_layer = context.view_layer.active_layer_collection.collection
+    for fl in files:
+        if use_collection:
+            collection = bpy.data.collections.new(fl.name.split(".")[0])
+            context.scene.collection.children.link(collection)
+            context.view_layer.active_layer_collection = context.view_layer.layer_collection.children[collection.name]
+        read(context, os.path.join(directory, fl.name), mscale, usemat=use_material, uvmesh=use_uv_mesh, transform=use_apply_matrix)
+
+    active = context.view_layer.layer_collection.children.get(default_layer.name)
+    if active is not None:
+        context.view_layer.active_layer_collection = active
+
     context.window.cursor_set('DEFAULT')
 
     return {'FINISHED'}
