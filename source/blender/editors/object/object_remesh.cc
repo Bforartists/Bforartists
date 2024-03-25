@@ -49,9 +49,9 @@
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 
-#include "GPU_immediate.h"
-#include "GPU_matrix.h"
-#include "GPU_state.h"
+#include "GPU_immediate.hh"
+#include "GPU_matrix.hh"
+#include "GPU_state.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -383,6 +383,7 @@ static int voxel_size_edit_modal(bContext *C, wmOperator *op, const wmEvent *eve
     MEM_freeN(op->customdata);
     ED_region_tag_redraw(region);
     ED_workspace_status_text(C, nullptr);
+    WM_event_add_notifier(C, NC_GEOM | ND_DATA, nullptr);
     return OPERATOR_FINISHED;
   }
 

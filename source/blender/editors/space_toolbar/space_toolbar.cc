@@ -6,8 +6,6 @@
  *  \ingroup sptoolbar
  */
 
-#include <cstring>
-
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
@@ -18,10 +16,8 @@
 #include "ED_screen.hh"
 #include "ED_space_api.hh"
 
-#include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "GPU_framebuffer.h"
 #include "UI_resources.hh"
 #include "UI_view2d.hh"
 
