@@ -1267,6 +1267,7 @@ def curve_draw_settings(context, layout, tool, *, extra=False):
 
     props = tool.operator_properties("curves.draw")
     col = layout.column(align=True)
+    col.use_property_split = False
     col.prop(props, "is_curve_2d", text="Curve 2D")
     col.prop(props, "bezier_as_nurbs", text="As NURBS")
 
