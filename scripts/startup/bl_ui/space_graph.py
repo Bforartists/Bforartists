@@ -91,16 +91,12 @@ class GRAPH_HT_header(Header):
 
         dopesheet_filter(layout, context)
 
-        #BFA - moved below
-        #layout.prop(st, "pivot_point", icon_only=True)
+        layout.popover(panel="GRAPH_PT_filters", text="", icon='FILTER')
 
         row = layout.row(align=True)
         row.prop(tool_settings, "use_snap_anim", text="")
         sub = row.row(align=True)
-        sub.popover(
-            panel="GRAPH_PT_snapping",
-            text="",
-        )
+        sub.popover( panel="GRAPH_PT_snapping",text="")
 
         row = layout.row(align=True)
         row.prop(tool_settings, "use_proportional_fcurve", text="", icon_only=True)
