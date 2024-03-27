@@ -1708,10 +1708,13 @@ class IMAGE_PT_view_waveform(ImageScopesPanel, Panel):
         layout.use_property_split = True
 
         layout.template_waveform(sima, "scopes")
-        row = layout.split(factor=0.5)
+        layout.use_property_decorate = False
+        row = layout.split(factor=0.3)
         row.label(text="Opacity")
         row.prop(sima.scopes, "waveform_alpha", text="")
-        layout.prop(sima.scopes, "waveform_mode", text="")
+        row = layout.split(factor=0.3)
+        row.label(text="Mode")
+        row.prop(sima.scopes, "waveform_mode", text="")
 
 
 class IMAGE_PT_view_vectorscope(ImageScopesPanel, Panel):
@@ -1728,10 +1731,13 @@ class IMAGE_PT_view_vectorscope(ImageScopesPanel, Panel):
         sima = context.space_data
 
         layout.template_vectorscope(sima, "scopes")
-        row = layout.split(factor=0.75)
-        row.label(text="Opacity") # BFA label
-        row.prop(sima.scopes, "vectorscope_alpha", text="")
-        row.prop(sima.scopes, "vectorscope_mode", text="")
+        layout.use_property_decorate = False
+        row = layout.split(factor = 0.3)
+        row.label(text = "Opacity")
+        row.prop(sima.scopes, "vectorscope_alpha", text = "")
+        row = layout.split(factor = 0.3)
+        row.label(text = "Mode")
+        row.prop(sima.scopes, "vectorscope_mode", text = "")
 
 
 class IMAGE_PT_sample_line(ImageScopesPanel, Panel):
