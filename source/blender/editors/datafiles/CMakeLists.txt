@@ -2381,7 +2381,7 @@ set_face_set
 lasso_show
 lasso_hide
 menu_switch
-#~ DEF_ICON_BLANK(2401)
+unicode
 #~ DEF_ICON_BLANK(2402)
 collection_bone_new
 
