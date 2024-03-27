@@ -2382,7 +2382,7 @@ lasso_show
 lasso_hide
 menu_switch
 unicode
-#~ DEF_ICON_BLANK(2402)
+marksharpangle
 collection_bone_new
 
 #~ DEF_ICON_BLANK(2405)
