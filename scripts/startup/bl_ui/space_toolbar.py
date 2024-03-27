@@ -543,6 +543,7 @@ class TOOLBAR_MT_meshedit(Menu):
                         row = layout.row(align=True)
                         row.operator("mesh.mark_sharp", text = "", icon = "MARKSHARPEDGES")
                         row.operator("mesh.mark_sharp", text = "", icon = "CLEARSHARPEDGES").clear = True
+                        row.operator("mesh.set_sharpness_by_angle", text = "", icon="MARKSHARPANGLE")
 
                     if addon_prefs.mesh_edges_freestyle:
 
