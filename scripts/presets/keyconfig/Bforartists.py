@@ -1,4 +1,4 @@
-keyconfig_version = (4, 2, 9)
+keyconfig_version = (4, 2, 12)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -5531,8 +5531,7 @@ keyconfig_data = \
     ("outliner.item_activate",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
      {"properties":
-      [("extend", False),
-       ("deselect_all", True),
+      [("deselect_all", True),
        ],
       },
      ),
@@ -5757,6 +5756,45 @@ keyconfig_data = \
      {"type": 'D', "value": 'PRESS', "alt": True},
      {"properties":
       [("linked", True),
+       ],
+      },
+     ),
+    ("outliner.item_activate",
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"properties":
+      [("extend", False),
+       ("deselect_all", True),
+       ("recurse", True),
+       ],
+      },
+     ),
+    ("outliner.item_activate",
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "ctrl": True},
+     {"properties":
+      [("extend", True),
+       ("extend_range", False),
+       ("deselect_all", True),
+       ("recurse", True),
+       ],
+      },
+     ),
+    ("outliner.item_activate",
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True},
+     {"properties":
+      [("extend", False),
+       ("extend_range", True),
+       ("deselect_all", True),
+       ("recurse", True),
+       ],
+      },
+     ),
+    ("outliner.item_activate",
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True, "ctrl": True},
+     {"properties":
+      [("extend", True),
+       ("extend_range", True),
+       ("deselect_all", True),
+       ("recurse", True),
        ],
       },
      ),
@@ -8225,7 +8263,15 @@ keyconfig_data = \
  ("Window",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True}, None),
+   [("wm.call_panel",
+     {"type": 'Q', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("name", 'TOPBAR_PT_main'),
+       ("keep_open", True),
+       ],
+      },
+     ),
+    ("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True}, None),
     ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "ctrl": True}, None),
     ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "shift": True, "ctrl": True}, None),
     ("wm.call_panel",
