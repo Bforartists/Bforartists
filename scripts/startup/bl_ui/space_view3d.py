@@ -6299,7 +6299,7 @@ class VIEW3D_MT_edit_font_chars(Menu):
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Euro \u20AC").text = "\u20AC"
+        layout.operator("font.text_insert", text="Euro \u20AC", icon="EURO").text = "\u20AC"
         layout.operator("font.text_insert", text="Florin \u0192", icon="DUTCH_FLORIN").text = "\u0192"
         layout.operator("font.text_insert", text="Pound \u00A3", icon="POUND").text = "\u00A3"
         layout.operator("font.text_insert", text="Yen \u00A5", icon="YEN").text = "\u00A5"

@@ -2300,7 +2300,7 @@ set_time
 set_selection
 view_graph
 internet
-#~ DEF_ICON_BLANK(2320)
+euro
 #~ DEF_ICON_BLANK(2321)
 #~ DEF_ICON_BLANK(2322)
 #~ DEF_ICON_BLANK(2323)
