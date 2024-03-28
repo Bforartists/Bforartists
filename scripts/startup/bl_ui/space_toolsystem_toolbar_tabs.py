@@ -2949,6 +2949,12 @@ class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
             props = col.operator("paint.hide_show", text=" Box Show   ", icon="BOX_SHOW")
             props.action = 'SHOW'
 
+            props = col.operator("paint.hide_show_lasso_gesture", text=" Lasso Hide", icon="LASSO_HIDE")
+            props.action = 'HIDE'
+
+            props = col.operator("paint.hide_show_lasso_gesture", text=" Lasso Show", icon="LASSO_SHOW")
+            props.action = 'SHOW'
+
             props = col.operator("sculpt.trim_box_gesture", text=" Box Trim    ", icon = 'BOX_TRIM')
             props.trim_mode = 'DIFFERENCE'
 
@@ -2974,6 +2980,11 @@ class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
             props = col.operator("sculpt.face_set_edit", text=" Fair Tangency", icon = 'NODE_TANGENT')
             props.mode = 'FAIR_TANGENCY'
 
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("sculpt.sample_color", text="  Sample Color", icon='EYEDROPPER')
+
 
         # icon buttons
         else:
@@ -2991,13 +3002,20 @@ class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
                 props = row.operator("paint.hide_show", text="", icon="BOX_SHOW")
                 props.action = 'SHOW'
 
+                props = row.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_HIDE")
+                props.action = 'HIDE'
+
+                row = col.row(align=True)
+                props = row.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_SHOW")
+                props.action = 'SHOW'
+
                 props = row.operator("sculpt.trim_box_gesture", text="", icon = 'BOX_TRIM')
                 props.trim_mode = 'DIFFERENCE'
 
-                row = col.row(align=True)
                 props = row.operator("sculpt.trim_lasso_gesture", text="", icon = 'LASSO_TRIM')
                 props.trim_mode = 'DIFFERENCE'
 
+                row = col.row(align=True)
                 props = row.operator("sculpt.trim_box_gesture", text="", icon = 'BOX_ADD')
                 props.trim_mode = 'JOIN'
 
@@ -3017,6 +3035,11 @@ class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
                 props = row.operator("sculpt.face_set_edit", text="", icon = 'NODE_TANGENT')
                 props.mode = 'FAIR_TANGENCY'
 
+                col.separator()
+
+                row = col.row(align=True)
+                row.operator("sculpt.sample_color", text="", icon='EYEDROPPER')
+
 
             elif column_count == 2:
 
@@ -3025,6 +3048,13 @@ class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
                 props.action = 'HIDE'
 
                 props = row.operator("paint.hide_show", text="", icon="BOX_SHOW")
+                props.action = 'SHOW'
+
+                row = col.row(align=True)
+                props = row.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_HIDE")
+                props.action = 'HIDE'
+
+                props = row.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_SHOW")
                 props.action = 'SHOW'
 
                 row = col.row(align=True)
@@ -3055,12 +3085,23 @@ class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
                 props = row.operator("sculpt.face_set_edit", text="", icon = 'NODE_TANGENT')
                 props.mode = 'FAIR_TANGENCY'
 
+                col.separator()
+
+                row = col.row(align=True)
+                row.operator("sculpt.sample_color", text="", icon='EYEDROPPER')
+
             elif column_count == 1:
 
                 props = col.operator("paint.hide_show", text="", icon="BOX_HIDE")
                 props.action = 'HIDE'
 
                 props = col.operator("paint.hide_show", text="", icon="BOX_SHOW")
+                props.action = 'SHOW'
+
+                props = col.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_HIDE")
+                props.action = 'HIDE'
+
+                props = col.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_SHOW")
                 props.action = 'SHOW'
 
                 props = col.operator("sculpt.trim_box_gesture", text="", icon = 'BOX_TRIM')
@@ -3086,6 +3127,10 @@ class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
                 # Fair Tangency
                 props = col.operator("sculpt.face_set_edit", text="", icon = 'NODE_TANGENT')
                 props.mode = 'FAIR_TANGENCY'
+
+                col.separator()
+
+                col.operator("sculpt.sample_color", text="", icon='EYEDROPPER')
 
 
 class VIEW3D_PT_sculpttab_filters(toolshelf_calculate, Panel):
