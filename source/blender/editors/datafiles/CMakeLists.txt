@@ -2300,7 +2300,7 @@ set_time
 set_selection
 view_graph
 internet
-#~ DEF_ICON_BLANK(2320)
+euro
 #~ DEF_ICON_BLANK(2321)
 #~ DEF_ICON_BLANK(2322)
 #~ DEF_ICON_BLANK(2323)
@@ -2381,8 +2381,8 @@ set_face_set
 lasso_show
 lasso_hide
 menu_switch
-#~ DEF_ICON_BLANK(2401)
-#~ DEF_ICON_BLANK(2402)
+unicode
+marksharpangle
 collection_bone_new
 
 #~ DEF_ICON_BLANK(2405)
