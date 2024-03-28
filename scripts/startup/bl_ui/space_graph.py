@@ -162,8 +162,9 @@ class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
         layout = self.layout
         st = context.space_data
 
-        DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
-        layout.separator()
+        # bfa - we have the props in the header already
+        # DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
+        # layout.separator()
         DopesheetFilterPopoverBase.draw_search_filters(context, layout)
         layout.separator()
         DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
