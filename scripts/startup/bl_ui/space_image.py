@@ -480,6 +480,18 @@ class IMAGE_MT_uvs_transform(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        # Conditional to define what selection mode you're in for the slide operators
+        context = bpy.context
+        ts = context.tool_settings
+        if ts.use_uv_select_sync:
+            is_vert_mode, is_edge_mode, _ = ts.mesh_select_mode
+        else:
+            uv_select_mode = ts.uv_select_mode
+            is_vert_mode = uv_select_mode == 'VERTEX'
+            is_edge_mode = uv_select_mode == 'EDGE'
+            # is_face_mode = uv_select_mode == 'FACE'
+            # is_island_mode = uv_select_mode == 'ISLAND'
+
         layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("transform.rotate", text="Rotate Clockwise 90\u00B0", icon="ROTATE_PLUS_90").value = math.pi / 2
         layout.operator("transform.rotate", text="Rotate Counter-Clockwise 90\u00B0", icon="ROTATE_MINUS_90").value = math.pi / -2
@@ -490,8 +502,12 @@ class IMAGE_MT_uvs_transform(Menu):
         layout.operator("transform.shear", icon='SHEAR')
         layout.separator()
 
-        layout.operator("transform.vert_slide", icon='SLIDE_VERTEX')
-        layout.operator("transform.edge_slide", icon='SLIDE_EDGE')
+        if is_vert_mode or is_edge_mode:
+            layout.operator_context = 'INVOKE_DEFAULT'
+            if is_vert_mode:
+                layout.operator("transform.vert_slide", icon='SLIDE_VERTEX')
+            if is_edge_mode:
+                layout.operator("transform.edge_slide", icon='SLIDE_EDGE')
 
         layout.separator()
 
