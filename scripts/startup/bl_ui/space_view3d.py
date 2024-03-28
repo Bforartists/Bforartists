@@ -5372,7 +5372,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.operator("mesh.mark_sharp", icon="MARKSHARPEDGES")
             col.operator("mesh.mark_sharp", text="Clear Sharp", icon="CLEARSHARPEDGES").clear = True
-            col.operator("mesh.set_sharpness_by_angle", icon="NORMAL_SMOOTH")
+            col.operator("mesh.set_sharpness_by_angle", icon="MARKSHARPANGLE")
 
             if with_freestyle:
                 col.separator()
@@ -5634,7 +5634,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         props.use_verts = True
         props.clear = True
 
-        layout.operator("mesh.set_sharpness_by_angle", icon="NORMAL_SMOOTH")
+        layout.operator("mesh.set_sharpness_by_angle", icon="MARKSHARPANGLE")
 
         if with_freestyle:
             layout.separator()
@@ -6299,7 +6299,7 @@ class VIEW3D_MT_edit_font_chars(Menu):
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Euro \u20AC").text = "\u20AC"
+        layout.operator("font.text_insert", text="Euro \u20AC", icon="EURO").text = "\u20AC"
         layout.operator("font.text_insert", text="Florin \u0192", icon="DUTCH_FLORIN").text = "\u0192"
         layout.operator("font.text_insert", text="Pound \u00A3", icon="POUND").text = "\u00A3"
         layout.operator("font.text_insert", text="Yen \u00A5", icon="YEN").text = "\u00A5"
@@ -6370,7 +6370,7 @@ class VIEW3D_MT_edit_font(Menu):
 
         layout.separator()
 
-        layout.operator("FONT_OT_text_insert_unicode")
+        layout.operator("FONT_OT_text_insert_unicode", icon="UNICODE")
         layout.menu("VIEW3D_MT_edit_font_chars")
         layout.menu("VIEW3D_MT_edit_font_move")  # bfa menu
 
