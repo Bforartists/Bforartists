@@ -439,9 +439,9 @@ class IMAGE_MT_image_transform(Menu):
         layout.operator("image.flip", text="Flip Horizontally", icon="FLIP_Y").use_flip_x = True
         layout.operator("image.flip", text="Flip Vertically", icon="FLIP_X").use_flip_y = True
         layout.separator()
-        layout.operator("image.rotate_orthogonal", text="Rotate 90\u00B0 Clockwise").degrees = '90'
-        layout.operator("image.rotate_orthogonal", text="Rotate 90\u00B0 Counter-Clockwise").degrees = '270'
-        layout.operator("image.rotate_orthogonal", text="Rotate 180\u00B0").degrees = '180'
+        layout.operator("image.rotate_orthogonal", text="Rotate Clockwise 90\u00B0", icon="ROTATE_PLUS_90").degrees = '90'
+        layout.operator("image.rotate_orthogonal", text="Rotate Counter-Clockwise 90\u00B0", icon="ROTATE_MINUS_90").degrees = '270'
+        layout.operator("image.rotate_orthogonal", text="Rotate Flip 180\u00B0", icon="FLIP").degrees = '180'
 
 
 class IMAGE_MT_image_invert(Menu):
@@ -481,8 +481,8 @@ class IMAGE_MT_uvs_transform(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("transform.rotate", text="Rotate +90°", icon="ROTATE_PLUS_90").value = math.pi / 2
-        layout.operator("transform.rotate", text="Rotate  - 90°", icon="ROTATE_MINUS_90").value = math.pi / -2
+        layout.operator("transform.rotate", text="Rotate Clockwise 90\u00B0", icon="ROTATE_PLUS_90").value = math.pi / 2
+        layout.operator("transform.rotate", text="Rotate Counter-Clockwise 90\u00B0", icon="ROTATE_MINUS_90").value = math.pi / -2
         layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.separator()
