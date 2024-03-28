@@ -1,4 +1,4 @@
-keyconfig_version = (4, 2, 9)
+keyconfig_version = (4, 2, 12)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -6270,7 +6270,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("paint.visibility_invert", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
     ("sculpt.face_set_change_visibility",
      {"type": 'H', "value": 'PRESS', "alt": True},
      {"properties":
@@ -6471,6 +6470,13 @@ keyconfig_data = \
      ),
     ("object.transfer_mode", {"type": 'D', "value": 'RELEASE'}, None),
     ("sculpt.dyntopo_detail_size_edit", {"type": 'S', "value": 'PRESS'}, None),
+    ("paint.mask_flood_fill",
+     {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("mode", 'INVERT'),
+       ],
+      },
+     ),
     ],
    },
   ),
@@ -8225,7 +8231,15 @@ keyconfig_data = \
  ("Window",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True}, None),
+   [("wm.call_panel",
+     {"type": 'Q', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("name", 'TOPBAR_PT_main'),
+       ("keep_open", True),
+       ],
+      },
+     ),
+    ("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True}, None),
     ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "ctrl": True}, None),
     ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "shift": True, "ctrl": True}, None),
     ("wm.call_panel",
