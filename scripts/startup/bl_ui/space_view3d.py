@@ -4624,6 +4624,20 @@ class VIEW3D_MT_mask_legacy(Menu):
         props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask", icon="LASSO_MASK")
 
 
+class VIEW3D_MT_face_sets_showhide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("sculpt.face_set_change_visibility", text="Toggle Visibility", icon="HIDE_UNSELECTED").mode = 'TOGGLE'
+
+        layout.separator()
+
+        layout.operator("paint.hide_show_all", text="Show All Geometry", icon="HIDE_OFF").action = 'SHOW'
+        layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set", icon="HIDE_ON").mode = 'HIDE_ACTIVE'
+
+
 class VIEW3D_MT_face_sets(Menu):
     bl_label = "Face Sets"
 
@@ -4666,6 +4680,10 @@ class VIEW3D_MT_face_sets(Menu):
         layout.separator()
 
         layout.operator("sculpt.face_sets_randomize_colors", text="Randomize Colors", icon="COLOR")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_face_sets_showhide")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -10745,6 +10763,7 @@ classes = (
     VIEW3D_MT_sculpt_set_pivot,
     VIEW3D_MT_mask,
     VIEW3D_MT_mask_legacy,  # bfa menu
+    VIEW3D_MT_face_sets_showhide, # bfa menu
     VIEW3D_MT_face_sets,
     VIEW3D_MT_face_sets_init,
     VIEW3D_MT_random_mask,
