@@ -480,7 +480,7 @@ class IMAGE_MT_uvs_transform(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        # Conditional to define what selection mode you're in for the slide operators
+        # BFA - Conditional to define what selection mode you're in for the slide operators
         context = bpy.context
         ts = context.tool_settings
         if ts.use_uv_select_sync:
@@ -502,7 +502,7 @@ class IMAGE_MT_uvs_transform(Menu):
         layout.operator("transform.shear", icon='SHEAR')
         layout.separator()
 
-        if is_vert_mode or is_edge_mode:
+        if is_vert_mode or is_edge_mode: # BFA - now conditional based on context, for consistency
             layout.operator_context = 'INVOKE_DEFAULT'
             if is_vert_mode:
                 layout.operator("transform.vert_slide", icon='SLIDE_VERTEX')
