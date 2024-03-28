@@ -95,13 +95,15 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("transform.rotate", text="Rotate +90°", icon="ROTATE_PLUS_90").value = math.pi / 2
-            col.operator("transform.rotate", text="Rotate  - 90°", icon="ROTATE_MINUS_90").value = math.pi / -2
+            col.operator("transform.rotate", text="Rotate Clockwise 90\u00B0", icon="ROTATE_PLUS_90").value = math.pi / 2
+            col.operator("transform.rotate", text="Rotate Counter-Clockwise 90\u00B0", icon="ROTATE_MINUS_90").value = math.pi / -2
             col.operator_context = 'INVOKE_DEFAULT'
 
             col.separator()
 
             col.operator("transform.shear", icon='SHEAR')
+            col.operator("transform.vert_slide", icon='SLIDE_VERTEX')
+            col.operator("transform.edge_slide", icon='SLIDE_EDGE')
             col.operator("uv.randomize_uv_transform", icon = 'RANDOMIZE')
 
         # icon buttons
@@ -118,6 +120,8 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
                 row.operator("transform.rotate", text="", icon="ROTATE_MINUS_90").value = math.pi / -2
                 row.operator("transform.shear", text="", icon='SHEAR')
                 row = col.row(align=True)
+                row.operator("transform.vert_slide", text="", icon='SLIDE_VERTEX')
+                row.operator("transform.edge_slide", text="", icon='SLIDE_EDGE')
                 row.operator("uv.randomize_uv_transform", text="", icon = 'RANDOMIZE')
 
             elif column_count == 2:
@@ -128,6 +132,10 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("transform.shear", text="", icon='SHEAR')
+                row.operator("transform.vert_slide", text="", icon='SLIDE_VERTEX')
+
+                row = col.row(align=True)
+                row.operator("transform.edge_slide", text="", icon='SLIDE_EDGE')
                 row.operator("uv.randomize_uv_transform", text="", icon = 'RANDOMIZE')
 
             elif column_count == 1:
@@ -140,6 +148,8 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
                 col.separator()
 
                 col.operator("transform.shear", text="", icon='SHEAR')
+                col.operator("transform.vert_slide", text="", icon='SLIDE_VERTEX')
+                col.operator("transform.edge_slide", text="", icon='SLIDE_EDGE')
                 col.operator("uv.randomize_uv_transform", text="", icon = 'RANDOMIZE')
 
 

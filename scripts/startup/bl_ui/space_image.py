@@ -490,8 +490,8 @@ class IMAGE_MT_uvs_transform(Menu):
         layout.operator("transform.shear", icon='SHEAR')
         layout.separator()
 
-        layout.operator("transform.vert_slide")
-        layout.operator("transform.edge_slide")
+        layout.operator("transform.vert_slide", icon='SLIDE_VERTEX')
+        layout.operator("transform.edge_slide", icon='SLIDE_EDGE')
 
         layout.separator()
 
@@ -753,10 +753,10 @@ class IMAGE_MT_uvs_context_menu(Menu):
                 layout.operator_context = 'INVOKE_DEFAULT'
 
                 if is_vert_mode:
-                    layout.operator("transform.vert_slide")
+                    layout.operator("transform.vert_slide", icon='SLIDE_VERTEX')
 
                 if is_edge_mode:
-                    layout.operator("transform.edge_slide")
+                    layout.operator("transform.edge_slide", icon='SLIDE_EDGE')
 
                 layout.operator_context = 'EXEC_REGION_WIN'
                 layout.separator()
