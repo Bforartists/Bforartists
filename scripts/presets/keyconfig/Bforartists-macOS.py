@@ -8407,30 +8407,7 @@ keyconfig_data = \
  ("Window",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("wm.call_panel",
-     {"type": 'Q', "value": 'PRESS', "alt": True, "repeat": True},
-     {"properties":
-      [("name", 'TOPBAR_PT_main'),
-       ("keep_open", True),
-       ],
-      },
-     ),
-    ("wm.call_panel",
-     {"type": 'Q', "value": 'PRESS', "alt": True, "repeat": True},
-     {"properties":
-      [("name", 'TOPBAR_PT_main'),
-       ("keep_open", True),
-       ],
-      },
-     ),
-    ("wm.call_panel",
-     {"type": 'Q', "value": 'PRESS', "alt": True, "repeat": True},
-     {"properties":
-      [("name", 'TOPBAR_PT_main'),
-       ("keep_open", True),
-       ],
-      },
-     ),
+   [
     ("wm.read_homefile", {"type": 'N', "value": 'PRESS', "oskey": True}, None),
     ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "oskey": True}, None),
     ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "shift": True, "oskey": True}, None),
