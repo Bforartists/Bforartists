@@ -191,32 +191,36 @@ class BFA_PT_toolshelf_frames(bpy.types.Panel):
             col.scale_y = 2
 
             if num_cols == 3:
-
                 wm = context.window_manager
-
-                col.separator( factor = 0.5) # Button Separator
 
                 if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
                     row = col.row(align=True)
                     row.operator("anim.insertframe_left", text="", icon="TRIA_LEFT")
                     row.operator("anim.removeframe_left", text="", icon="PANEL_CLOSE")
+
+                    col.separator( factor = 0.5) # Button Separator
+
                     row = col.row(align=True)
                     row.operator("anim.insertframe_right", text="", icon="TRIA_RIGHT")
                     row.operator("anim.removeframe_right", text="", icon="PANEL_CLOSE")
 
             elif num_cols == 2:
                 wm = context.window_manager
-                col.separator( factor = 0.5) # Button Separator
 
                 if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
                     row = col.row(align=True)
                     row.operator("anim.insertframe_left", text="", icon="TRIA_LEFT")
                     row.operator("anim.removeframe_left", text="", icon="PANEL_CLOSE")
+
+                    col.separator( factor = 0.5) # Button Separator
+
                     row = col.row(align=True)
                     row.operator("anim.insertframe_right", text="", icon="TRIA_RIGHT")
                     row.operator("anim.removeframe_right", text="", icon="PANEL_CLOSE")
 
             elif num_cols == 1:
+                wm = context.window_manager
+
                 if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
                     col.separator()
                     col.operator("anim.insertframe_left", text="", icon="TRIA_LEFT")
