@@ -9801,7 +9801,7 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
 
             col.separator()
 
-            col.operator("gpencil.reproject", text="Reproject")
+            col.operator_menu_enum("gpencil.reproject", property="type", text="Reproject Strokes")
 
         layout.separator()
 
