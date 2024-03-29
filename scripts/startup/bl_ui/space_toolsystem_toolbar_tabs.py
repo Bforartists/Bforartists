@@ -5394,7 +5394,7 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
     bl_label = "Animation"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_context = "greasepencil_paint"
+    #bl_context = "greasepencil_paint"
     bl_category = "Animation"
     bl_options = {'HIDE_BG'}
 
@@ -5403,7 +5403,7 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True
+        return overlay.show_toolshelf_tabs == True and context.mode in {'PAINT_GPENCIL', 'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'VERTEX_GPENCIL'}
 
     def draw(self, _context):
         layout = self.layout
