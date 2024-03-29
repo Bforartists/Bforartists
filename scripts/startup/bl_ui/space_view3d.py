@@ -1638,7 +1638,7 @@ class VIEW3D_MT_view_pie_menus(Menu):
             icon="MENU_PANEL").name = 'VIEW3D_MT_sculpt_automasking_pie'
         layout.operator("wm.call_menu_pie", text="Weightpaint Vertexgroup Lock",
                         icon="MENU_PANEL").name = 'VIEW3D_MT_wpaint_vgroup_lock_pie'
-
+        layout.operator("wm.call_menu_pie", text="Keyframe Insert", icon="MENU_PANEL").name = 'ANIM_MT_keyframe_insert_pie'
         layout.separator()
 
         layout.operator("wm.call_menu_pie", text="Greasepencil Snap", icon="MENU_PANEL").name = 'GPENCIL_MT_snap_pie'
