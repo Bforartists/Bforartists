@@ -143,7 +143,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
 
     # Image Topbar
-    topbar_image_cbox: BoolProperty(name='Image', default=True, description = "Display the Topbar Image Operators\nAll Modes",)
+    topbar_image_cbox: BoolProperty(name='Image', default=False, description = "Display the Topbar Image Operators\nAll Modes",)
     topbar_image_uv_mirror : BoolProperty(name="UV Mirror", default=True, description = "Display the UV Mirror Topbar\nAll Modes", )
     topbar_image_uv_rotate : BoolProperty(name="UV Rotate", default=True, description = "Display the UV Rotate Topbar\nAll Modes", )
     topbar_image_uv_align : BoolProperty(name="UV Align", default=True, description = "Display the UV Align Topbar\nAll Modes", )
@@ -165,13 +165,13 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
 
     # Animation Topbar
-    topbar_animation_cbox: BoolProperty(name='Animation', default=True, description = "Display the Topbar Animation Operators\nAll Modes",)
+    topbar_animation_cbox: BoolProperty(name='Animation', default=False, description = "Display the Topbar Animation Operators\nAll Modes",)
     topbar_animation_keyframes : BoolProperty(name="Keyframes", default=True, description = "Display the keyframes Topbar\nDisplay is mode and content dependant", )
     topbar_animation_range : BoolProperty(name="Range", default=False, description = "Display the Range Topbar\nAll Modes", )
     topbar_animation_play : BoolProperty(name="Play", default=False, description = "Display the Play Topbar\nAll Modes", )
     topbar_animation_sync : BoolProperty(name="Sync", default=False, description = "Display the Sync Topbar\nAll Modes", )
     topbar_animation_keyframetype : BoolProperty(name="Keyframetype", default=False, description = "Display the Keyframe Type Topbar\nAll Modes", )
-    topbar_animation_keyingset : BoolProperty(name="Keyingset", default=True, description = "Display the Keyingset Topbar\nAll Modes", )
+    topbar_animation_keyingset : BoolProperty(name="Keyingset", default=False, description = "Display the Keyingset Topbar\nAll Modes", )
 
     # Edit Topbar
     topbar_edit_cbox: BoolProperty(name='Edit', default=True, description = "Display the Topbar Edit Operators\nAll Modes",)
@@ -272,7 +272,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     animation_play : BoolProperty(name="Play", default=False, description = "Display the Play Toolbar\nAll Modes", )
     animation_sync : BoolProperty(name="Sync", default=False, description = "Display the Sync Toolbar\nAll Modes", )
     animation_keyframetype : BoolProperty(name="Keyframetype", default=False, description = "Display the Keyframe Type Toolbar\nAll Modes", )
-    animation_keyingset : BoolProperty(name="Keyingset", default=True, description = "Display the Keyingset Toolbar\nAll Modes", )
+    animation_keyingset : BoolProperty(name="Keyingset", default=False, description = "Display the Keyingset Toolbar\nAll Modes", )
 
 
     # Edit Toolbar
