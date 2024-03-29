@@ -617,13 +617,13 @@ class USERPREF_PT_animation_keyframes(AnimationPanel, CenterAlignMixIn, Panel):
     def draw_centered(self, context, layout):
         prefs = context.preferences
         edit = prefs.edit
-
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-        flow.prop(edit, "key_insert_channels", expand=True)
-
-        flow = flow.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-        flow.prop(edit, "use_visual_keying")
-        row = flow.row(align=True, heading="Only Insert Needed")
+        
+        col = layout.column()
+        col.prop(edit, "key_insert_channels", expand=True)
+        col.use_property_split = False
+        col.prop(edit, "use_visual_keying")
+        
+        row = layout.row(align=True, heading="Only Insert Needed")
         row.prop(edit, "use_keyframe_insert_needed", text="Manual", toggle=1)
         row.prop(edit, "use_auto_keyframe_insert_needed", text="Auto", toggle=1)
 
