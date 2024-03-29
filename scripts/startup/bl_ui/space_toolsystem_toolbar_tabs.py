@@ -5394,7 +5394,6 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
     bl_label = "Animation"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    #bl_context = "greasepencil_paint"
     bl_category = "Animation"
     bl_options = {'HIDE_BG'}
 
