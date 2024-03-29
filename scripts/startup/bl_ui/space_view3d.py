@@ -4386,23 +4386,6 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
-        # BFA: redundant - commented out code
-        # props = layout.operator("sculpt.face_set_change_visibility", text="Toggle Visibility")
-        # props.mode = 'TOGGLE'
-        #
-        # props = layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set")
-        # props.mode = 'HIDE_ACTIVE'
-        #
-        # props = layout.operator("paint.hide_show_all", text="Show All")
-        # props.action = 'SHOW'
-        #
-        # layout.operator("paint.visibility_invert", text="Invert Visible")
-        #
-        # props = layout.operator("paint.hide_show_masked", text="Hide Masked")
-        # props.action = 'HIDE'
-        #
-        # layout.separator()
-
         props = layout.operator("sculpt.trim_box_gesture", text="Box Trim", icon='BOX_TRIM')
         props.trim_mode = 'DIFFERENCE'
 
