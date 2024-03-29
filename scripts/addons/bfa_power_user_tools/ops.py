@@ -132,21 +132,34 @@ class BFA_OT_removeframe_left(op):
                 for fcurve in obj.animation_data.action.fcurves:
                     # Iterate over each keyframe point in the fcurve
                     for keyframe in fcurve.keyframe_points:
-                        # If the keyframe is to the left of the current frame and not on the current frame
-                        if keyframe.co.x < current_frame and keyframe.co.x != current_frame:
-                            # Nudge the key frame one frame forward
+                        # If the keyframe is on the current frame
+                        if keyframe.co.x == current_frame:
+                            # Delete the keyframe
+                            fcurve.keyframe_points.remove(keyframe)
+                        # If the keyframe is to the right of the current frame
+                        elif keyframe.co.x < current_frame:
+                            # Nudge the key frame one frame backward
                             keyframe.co.x += 1
 
-            # Check if the object is a grease pencil object
-            if obj.type == 'GPENCIL':
-                # Iterate over each layer in the grease pencil object
-                for layer in obj.data.layers:
-                    # Iterate over each frame in the layer
-                    for frame in layer.frames:
-                        # If the frame is to the left of the current frame and not on the current frame
-                        if frame.frame_number < current_frame and frame.frame_number != current_frame:
-                            # Nudge the frame one frame forward
-                            frame.frame_number += 1
+        # Check if the object is a grease pencil object
+        if obj.type == 'GPENCIL':
+            # Iterate over each layer in the grease pencil object
+            for layer in obj.data.layers:
+                # Create a list of frames to remove
+                frames_to_remove = []
+                # Iterate over each frame in the layer
+                for frame in layer.frames:
+                    # If the frame is on the current frame
+                    if frame.frame_number == current_frame:
+                        # Add the frame to the list of frames to remove
+                        frames_to_remove.append(frame)
+                    # If the frame is to the right of the current frame
+                    elif frame.frame_number < current_frame:
+                        # Nudge the frame one frame backwards
+                        frame.frame_number += 1
+                # Remove the frames at the current frame
+                for frame in frames_to_remove:
+                    layer.frames.remove(frame)
 
         # Update the scene
         bpy.context.scene.frame_set(current_frame)
@@ -179,21 +192,34 @@ class BFA_OT_removeframe_right(op):
                 for fcurve in obj.animation_data.action.fcurves:
                     # Iterate over each keyframe point in the fcurve
                     for keyframe in fcurve.keyframe_points:
-                        # If the keyframe is to the right of the current frame and not on the current frame
-                        if keyframe.co.x > current_frame and keyframe.co.x != current_frame:
+                        # If the keyframe is on the current frame
+                        if keyframe.co.x == current_frame:
+                            # Delete the keyframe
+                            fcurve.keyframe_points.remove(keyframe)
+                        # If the keyframe is to the right of the current frame
+                        elif keyframe.co.x > current_frame:
                             # Nudge the key frame one frame backward
                             keyframe.co.x -= 1
 
-            # Check if the object is a grease pencil object
-            if obj.type == 'GPENCIL':
-                # Iterate over each layer in the grease pencil object
-                for layer in obj.data.layers:
-                    # Iterate over each frame in the layer
-                    for frame in layer.frames:
-                        # If the frame is to the right  of the current frame and not on the current frame
-                        if frame.frame_number > current_frame and frame.frame_number != current_frame:
-                            # Nudge the frame one frame backwards
-                            frame.frame_number -= 1
+        # Check if the object is a grease pencil object
+        if obj.type == 'GPENCIL':
+            # Iterate over each layer in the grease pencil object
+            for layer in obj.data.layers:
+                # Create a list of frames to remove
+                frames_to_remove = []
+                # Iterate over each frame in the layer
+                for frame in layer.frames:
+                    # If the frame is on the current frame
+                    if frame.frame_number == current_frame:
+                        # Add the frame to the list of frames to remove
+                        frames_to_remove.append(frame)
+                    # If the frame is to the right of the current frame
+                    elif frame.frame_number > current_frame:
+                        # Nudge the frame one frame backwards
+                        frame.frame_number -= 1
+                # Remove the frames at the current frame
+                for frame in frames_to_remove:
+                    layer.frames.remove(frame)
 
         # Update the scene
         bpy.context.scene.frame_set(current_frame)
