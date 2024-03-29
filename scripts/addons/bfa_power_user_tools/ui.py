@@ -51,6 +51,14 @@ def register():
     bpy.types.VIEW3D_MT_object_animation.append(ops.BFA_OT_insertframe_right.menu_func)
     bpy.types.VIEW3D_MT_object_animation.append(ops.BFA_OT_removeframe_right.menu_func)
 
+    ## 3D View Editor - Grease Pencil
+    bpy.types.VIEW3D_MT_gpencil_animation.append(seperator)
+    bpy.types.VIEW3D_MT_gpencil_animation.append(ops.BFA_OT_insertframe_left.menu_func)
+    bpy.types.VIEW3D_MT_gpencil_animation.append(ops.BFA_OT_removeframe_left.menu_func)
+    bpy.types.VIEW3D_MT_gpencil_animation.append(seperator)
+    bpy.types.VIEW3D_MT_gpencil_animation.append(ops.BFA_OT_insertframe_right.menu_func)
+    bpy.types.VIEW3D_MT_gpencil_animation.append(ops.BFA_OT_removeframe_right.menu_func)
+
     ## Dopesheet Editor
     bpy.types.DOPESHEET_MT_key.append(seperator)
     bpy.types.DOPESHEET_MT_key.append(ops.BFA_OT_insertframe_left.menu_func)
@@ -85,6 +93,14 @@ def unregister():
     bpy.types.VIEW3D_MT_object_animation.remove(seperator)
     bpy.types.VIEW3D_MT_object_animation.remove(ops.BFA_OT_insertframe_right.menu_func)
     bpy.types.VIEW3D_MT_object_animation.remove(ops.BFA_OT_removeframe_right.menu_func)
+
+    ## 3D View Editor - Grease Pencil
+    bpy.types.VIEW3D_MT_gpencil_animation.remove(seperator)
+    bpy.types.VIEW3D_MT_gpencil_animation.remove(ops.BFA_OT_insertframe_left.menu_func)
+    bpy.types.VIEW3D_MT_gpencil_animation.remove(ops.BFA_OT_removeframe_left.menu_func)
+    bpy.types.VIEW3D_MT_gpencil_animation.remove(seperator)
+    bpy.types.VIEW3D_MT_gpencil_animation.remove(ops.BFA_OT_insertframe_right.menu_func)
+    bpy.types.VIEW3D_MT_gpencil_animation.remove(ops.BFA_OT_removeframe_right.menu_func)
 
     ## Dopesheet Editor
     bpy.types.DOPESHEET_MT_key.remove(seperator)
