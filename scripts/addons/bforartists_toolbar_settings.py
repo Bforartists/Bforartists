@@ -1032,18 +1032,6 @@ def register():
     Scene.bfa_defaults = BoolProperty(name='BFA Defaults', description='Resets Topbar to Default State', default=False)
 
 
-# Keymap Register
-    global _icons
-    _icons = bpy.utils.previews.new()
-    kc = bpy.context.window_manager.keyconfigs.addon
-    km = kc.keymaps.new(name='Window', space_type='EMPTY')
-    kmi = km.keymap_items.new('wm.call_panel', 'Q', 'PRESS',
-        ctrl=False, alt=True, shift=False, repeat=True)
-    kmi.properties.name = 'TOPBAR_PT_main'
-    kmi.properties.keep_open = True
-    addon_keymaps['BFAPU'] = (km, kmi)
-
-
 def unregister():
     from bpy.utils import unregister_class
     for cls in classes:
