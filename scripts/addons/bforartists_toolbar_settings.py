@@ -1040,15 +1040,5 @@ def unregister():
     del Scene.bfa_defaults
 
 
-# Keymap Unregister
-    global _icons
-    bpy.utils.previews.remove(_icons)
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    for km, kmi in addon_keymaps.values():
-        km.keymap_items.remove(kmi)
-    addon_keymaps.clear()
-
-
 if __name__ == "__main__":
     register()
