@@ -9,6 +9,8 @@
 #pragma once
 
 #include "BLI_compiler_attrs.h"
+#include "BLI_math_vector_types.hh"
+#include "BLI_span.hh"
 
 struct ARegion;
 struct BMBVHTree;
@@ -42,7 +44,7 @@ struct wmOperator;
 struct UvElement;
 struct UvElementMap;
 
-/* editmesh_utils.cc */
+/* `editmesh_utils.cc` */
 
 /**
  * \param em: Edit-mesh used for generating mirror data.
@@ -189,12 +191,12 @@ void EDBM_automerge(Object *obedit, bool update, char hflag, float dist);
 void EDBM_automerge_and_split(
     Object *obedit, bool split_edges, bool split_faces, bool update, char hflag, float dist);
 
-/* editmesh_undo.cc */
+/* `editmesh_undo.cc` */
 
 /** Export for ED_undo_sys. */
 void ED_mesh_undosys_type(UndoType *ut);
 
-/* editmesh_select.cc */
+/* `editmesh_select.cc` */
 
 void EDBM_select_mirrored(
     BMEditMesh *em, const Mesh *mesh, int axis, bool extend, int *r_totmirr, int *r_totfail);
@@ -337,7 +339,7 @@ void EDBM_preselect_edgering_update_from_edge(EditMesh_PreSelEdgeRing *psel,
                                               BMesh *bm,
                                               BMEdge *eed_start,
                                               int previewlines,
-                                              const float (*coords)[3]);
+                                              blender::Span<blender::float3> vert_positions);
 
 /* `editmesh_preselect_elem.cc` */
 
@@ -356,7 +358,7 @@ void EDBM_preselect_elem_draw(EditMesh_PreSelElem *psel, const float matrix[4][4
 void EDBM_preselect_elem_update_from_single(EditMesh_PreSelElem *psel,
                                             BMesh *bm,
                                             BMElem *ele,
-                                            const float (*coords)[3]);
+                                            blender::Span<blender::float3> vert_positions);
 
 void EDBM_preselect_elem_update_preview(
     EditMesh_PreSelElem *psel, ViewContext *vc, BMesh *bm, BMElem *ele, const int mval[2]);
@@ -375,7 +377,7 @@ void ED_keymap_mesh(wmKeyConfig *keyconf);
 /* `editface.cc` */
 
 /**
- * Copy the face flags, most importantly selection from the mesh to the final derived mesh,
+ * Copy the face flags, most importantly selection from the mesh to the final evaluated mesh,
  * use in object mode when selecting faces (while painting).
  */
 void paintface_flush_flags(bContext *C, Object *ob, bool flush_selection, bool flush_hidden);
@@ -409,7 +411,7 @@ bool paintvert_deselect_all_visible(Object *ob, int action, bool flush_flags);
 void paintvert_select_ungrouped(Object *ob, bool extend, bool flush_flags);
 /**
  * (similar to void `paintface_flush_flags(Object *ob)`)
- * copy the vertex flags, most importantly selection from the mesh to the final derived mesh,
+ * copy the vertex flags, most importantly selection from the mesh to the final evaluated mesh,
  * use in object mode when selecting vertices (while painting).
  */
 void paintvert_flush_flags(Object *ob);
@@ -441,79 +443,7 @@ void ED_mesh_mirrtopo_init(BMEditMesh *em,
                            bool skip_em_vert_array_init);
 void ED_mesh_mirrtopo_free(MirrTopoStore_t *mesh_topo_store);
 
-/* object_vgroup.cc */
-
-#define WEIGHT_REPLACE 1
-#define WEIGHT_ADD 2
-#define WEIGHT_SUBTRACT 3
-
-bool ED_vgroup_sync_from_pose(Object *ob);
-void ED_vgroup_select_by_name(Object *ob, const char *name);
-/**
- * Removes out of range #MDeformWeights
- */
-void ED_vgroup_data_clamp_range(ID *id, int total);
-/**
- * Matching index only.
- */
-bool ED_vgroup_array_copy(Object *ob, Object *ob_from);
-bool ED_vgroup_parray_alloc(ID *id, MDeformVert ***dvert_arr, int *dvert_tot, bool use_vert_sel);
-/**
- * For use with tools that use ED_vgroup_parray_alloc with \a use_vert_sel == true.
- * This finds the unselected mirror deform verts and copies the weights to them from the selected.
- *
- * \note \a dvert_array has mirrored weights filled in,
- * in case cleanup operations are needed on both.
- */
-void ED_vgroup_parray_mirror_sync(Object *ob,
-                                  MDeformVert **dvert_array,
-                                  int dvert_tot,
-                                  const bool *vgroup_validmap,
-                                  int vgroup_tot);
-/**
- * Fill in the pointers for mirror verts (as if all mirror verts were selected too).
- *
- * similar to #ED_vgroup_parray_mirror_sync but only fill in mirror points.
- */
-void ED_vgroup_parray_mirror_assign(Object *ob, MDeformVert **dvert_array, int dvert_tot);
-void ED_vgroup_parray_remove_zero(MDeformVert **dvert_array,
-                                  int dvert_tot,
-                                  const bool *vgroup_validmap,
-                                  int vgroup_tot,
-                                  float epsilon,
-                                  bool keep_single);
-void ED_vgroup_parray_to_weight_array(const MDeformVert **dvert_array,
-                                      int dvert_tot,
-                                      float *dvert_weights,
-                                      int def_nr);
-void ED_vgroup_parray_from_weight_array(MDeformVert **dvert_array,
-                                        int dvert_tot,
-                                        const float *dvert_weights,
-                                        int def_nr,
-                                        bool remove_zero);
-void ED_vgroup_mirror(Object *ob,
-                      bool mirror_weights,
-                      bool flip_vgroups,
-                      bool all_vgroups,
-                      bool use_topology,
-                      int *r_totmirr,
-                      int *r_totfail);
-
-/**
- * Called while not in editmode.
- */
-void ED_vgroup_vert_add(Object *ob, bDeformGroup *dg, int vertnum, float weight, int assignmode);
-/**
- * Mesh object mode, lattice can be in edit-mode.
- */
-void ED_vgroup_vert_remove(Object *ob, bDeformGroup *dg, int vertnum);
-float ED_vgroup_vert_weight(Object *ob, bDeformGroup *dg, int vertnum);
-/**
- * Use when adjusting the active vertex weight and apply to mirror vertices.
- */
-void ED_vgroup_vert_active_mirror(Object *ob, int def_nr);
-
-/* mesh_data.cc */
+/* `mesh_data.cc` */
 
 void ED_mesh_verts_add(Mesh *mesh, ReportList *reports, int count);
 void ED_mesh_edges_add(Mesh *mesh, ReportList *reports, int count);
@@ -584,7 +514,7 @@ void EDBM_redo_state_restore_and_free(BMBackup *backup, BMEditMesh *em, bool rec
     ATTR_NONNULL(1, 2);
 void EDBM_redo_state_free(BMBackup *backup) ATTR_NONNULL(1);
 
-/* *** meshtools.cc *** */
+/* `meshtools.cc` */
 
 int ED_mesh_join_objects_exec(bContext *C, wmOperator *op);
 int ED_mesh_shapes_join_objects_exec(bContext *C, wmOperator *op);

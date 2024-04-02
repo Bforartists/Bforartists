@@ -104,7 +104,7 @@ static void pygpu_fill_format_sequence(void *data_dst_void,
 #undef WARN_TYPE_LIMIT_PUSH
 #undef WARN_TYPE_LIMIT_POP
 
-static bool pygpu_vertbuf_fill_impl(GPUVertBuf *vbo,
+static bool pygpu_vertbuf_fill_impl(blender::gpu::VertBuf *vbo,
                                     uint data_id,
                                     PyObject *seq,
                                     const char *error_prefix)
@@ -201,7 +201,7 @@ static bool pygpu_vertbuf_fill_impl(GPUVertBuf *vbo,
   return ok;
 }
 
-static int pygpu_vertbuf_fill(GPUVertBuf *buf,
+static int pygpu_vertbuf_fill(blender::gpu::VertBuf *buf,
                               int id,
                               PyObject *py_seq_data,
                               const char *error_prefix)
@@ -252,7 +252,7 @@ static PyObject *pygpu_vertbuf__tp_new(PyTypeObject * /*type*/, PyObject *args, 
   }
 
   const GPUVertFormat *fmt = &((BPyGPUVertFormat *)params.py_fmt)->fmt;
-  GPUVertBuf *vbo = GPU_vertbuf_create_with_format(fmt);
+  blender::gpu::VertBuf *vbo = GPU_vertbuf_create_with_format(fmt);
 
   GPU_vertbuf_data_alloc(vbo, params.len);
 
@@ -406,7 +406,7 @@ PyTypeObject BPyGPUVertBuf_Type = {
 /** \name Public API
  * \{ */
 
-PyObject *BPyGPUVertBuf_CreatePyObject(GPUVertBuf *buf)
+PyObject *BPyGPUVertBuf_CreatePyObject(blender::gpu::VertBuf *buf)
 {
   BPyGPUVertBuf *self;
 

@@ -21,7 +21,7 @@ struct ShadowSampleParams {
   float z_range;
 };
 
-ShadowTileData shadow_tile_data_get(usampler2D tilemaps_tx, ShadowSampleParams params)
+ShadowSamplingTile shadow_tile_data_get(usampler2D tilemaps_tx, ShadowSampleParams params)
 {
   /* Prevent out of bound access. Assumes the input is already non negative. */
   vec2 tilemap_uv = min(params.uv.xy, vec2(0.99999));
@@ -46,9 +46,9 @@ float shadow_read_depth(SHADOW_ATLAS_TYPE atlas_tx,
   const int page_shift = SHADOW_PAGE_LOD;
 
   ivec2 tile_coord = texel_coord >> page_shift;
-  ShadowTileData tile = shadow_tile_load(tilemaps_tx, tile_coord, params.tilemap_index);
+  ShadowSamplingTile tile = shadow_tile_load(tilemaps_tx, tile_coord, params.tilemap_index);
 
-  if (!tile.is_allocated) {
+  if (!tile.is_valid) {
     return -1.0;
   }
 
@@ -210,7 +210,10 @@ ShadowDirectionalSampleInfo shadow_directional_sample_info_get(LightData light, 
                                                         level;
 
   info.clipmap_offset = shadow_decompress_grid_offset(
-      light.type, light_sun_data_get(light).clipmap_base_offset, info.level_relative);
+      light.type,
+      light_sun_data_get(light).clipmap_base_offset_neg,
+      light_sun_data_get(light).clipmap_base_offset_pos,
+      info.level_relative);
   info.clipmap_origin = light_sun_data_get(light).clipmap_origin;
 
   return info;

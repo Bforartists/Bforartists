@@ -960,7 +960,7 @@ static void calc_text_rcts(SpaceText *st, ARegion *region, rcti *scroll, rcti *b
       else if (lhlstart > st->top + st->runtime->viewlines && hlstart < barstart + barheight &&
                hlstart > barstart)
       {
-        /* push hl start down */
+        /* Push `hlstart` down. */
         hlstart = barstart + barheight;
       }
       else if (lhlend > st->top && lhlstart < st->top && hlstart > barstart) {
@@ -981,13 +981,13 @@ static void calc_text_rcts(SpaceText *st, ARegion *region, rcti *scroll, rcti *b
                 (pix_bardiff * (lhlend - st->top) / st->runtime->viewlines);
       }
       else if (lhlend < st->top && hlend >= barstart - 2 && hlend < barstart + barheight) {
-        /* push hl end up */
+        /* Push `hlend` up. */
         hlend = barstart;
       }
       else if (lhlend > st->top + st->runtime->viewlines &&
                lhlstart < st->top + st->runtime->viewlines && hlend < barstart + barheight)
       {
-        /* fill out end */
+        /* Fill out end. */
         hlend = barstart + barheight;
       }
 
@@ -1013,7 +1013,7 @@ static void calc_text_rcts(SpaceText *st, ARegion *region, rcti *scroll, rcti *b
   CLAMP(st->runtime->scroll_region_select.ymax, pix_bottom_margin, region->winy - pix_top_margin);
 }
 
-static void draw_textscroll(const SpaceText *st, rcti *scroll, rcti *back)
+static void draw_textscroll(const SpaceText *st, const rcti *scroll, const rcti *back)
 {
   bTheme *btheme = UI_GetTheme();
   uiWidgetColors wcol = btheme->tui.wcol_scroll;

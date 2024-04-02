@@ -15,6 +15,7 @@
 #include "BLI_math_vector_types.hh"
 #include "BLI_offset_indices.hh"
 #include "BLI_span.hh"
+#include "BLI_virtual_array.hh"
 
 /*
  * Shrinkwrap is composed by a set of functions and options that define the type of shrink.
@@ -46,7 +47,15 @@ struct ShrinkwrapBoundaryVertData {
   float normal_plane[3];
 };
 
-struct ShrinkwrapBoundaryData {
+class ShrinkwrapBoundaryData {
+ public:
+  /* Returns true if there is boundary information. If there is no boundary information, then the
+   * mesh from which this data is created from has no boundaries. */
+  inline bool has_boundary() const
+  {
+    return !edge_is_boundary.is_empty();
+  }
+
   /* True if the edge belongs to exactly one face. */
   blender::BitVector<> edge_is_boundary;
   /* True if the triangle has any boundary edges. */
@@ -60,10 +69,11 @@ struct ShrinkwrapBoundaryData {
   blender::Array<ShrinkwrapBoundaryVertData> boundary_verts;
 };
 
-/**
- * Free boundary data for target project.
- */
-void BKE_shrinkwrap_compute_boundary_data(Mesh *mesh);
+namespace blender::bke::shrinkwrap {
+
+const ShrinkwrapBoundaryData &boundary_cache_ensure(const Mesh &mesh);
+
+}  // namespace blender::bke::shrinkwrap
 
 /* Information about a mesh and BVH tree. */
 struct ShrinkwrapTreeData {
@@ -78,8 +88,8 @@ struct ShrinkwrapTreeData {
   blender::Span<blender::float3> face_normals;
   blender::Span<blender::float3> vert_normals;
   blender::Span<blender::float3> corner_normals;
-  const bool *sharp_faces;
-  ShrinkwrapBoundaryData *boundary;
+  blender::VArraySpan<bool> sharp_faces;
+  const ShrinkwrapBoundaryData *boundary;
 };
 
 /**

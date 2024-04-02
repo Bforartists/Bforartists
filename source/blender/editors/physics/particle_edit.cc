@@ -72,7 +72,7 @@
 
 #include "DEG_depsgraph_query.hh"
 
-#include "physics_intern.h"
+#include "physics_intern.hh"
 
 #include "particle_edit_utildefines.h"
 
@@ -5570,7 +5570,7 @@ static int particle_edit_toggle_exec(bContext *C, wmOperator *op)
   const bool is_mode_set = (ob->mode & mode_flag) != 0;
 
   if (!is_mode_set) {
-    if (!ED_object_mode_compat_set(C, ob, eObjectMode(mode_flag), op->reports)) {
+    if (!blender::ed::object::mode_compat_set(C, ob, eObjectMode(mode_flag), op->reports)) {
       return OPERATOR_CANCELLED;
     }
   }
