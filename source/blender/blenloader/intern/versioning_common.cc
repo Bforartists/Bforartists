@@ -20,7 +20,7 @@
 
 #include "BKE_animsys.h"
 #include "BKE_grease_pencil_legacy_convert.hh"
-#include "BKE_idprop.h"
+#include "BKE_idprop.hh"
 #include "BKE_ipo.h"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
@@ -389,14 +389,11 @@ int version_cycles_property_int(IDProperty *idprop, const char *name, int defaul
 
 void version_cycles_property_int_set(IDProperty *idprop, const char *name, int value)
 {
-  IDProperty *prop = IDP_GetPropertyTypeFromGroup(idprop, name, IDP_INT);
-  if (prop) {
+  if (IDProperty *prop = IDP_GetPropertyTypeFromGroup(idprop, name, IDP_INT)) {
     IDP_Int(prop) = value;
   }
   else {
-    IDPropertyTemplate val = {0};
-    val.i = value;
-    IDP_AddToGroup(idprop, IDP_New(IDP_INT, &val, name));
+    IDP_AddToGroup(idprop, blender::bke::idprop::create(name, value).release());
   }
 }
 

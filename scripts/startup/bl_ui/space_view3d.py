@@ -140,17 +140,20 @@ class VIEW3D_HT_tool_header(Header):
             return row, sub
 
         if mode_string == 'EDIT_ARMATURE':
+            ob = context.object
             _row, sub = row_for_mirror()
-            sub.prop(context.object.data, "use_mirror_x", icon='MIRROR_X', toggle=True, icon_only=True)
+            sub.prop(ob.data, "use_mirror_x", icon='MIRROR_X', toggle=True, icon_only=True)
         elif mode_string == 'POSE':
+            ob = context.object
             _row, sub = row_for_mirror()
-            sub.prop(context.object.pose, "use_mirror_x", icon='MIRROR_X', toggle=True, icon_only=True)
+            sub.prop(ob.pose, "use_mirror_x", icon='MIRROR_X', toggle=True, icon_only=True)
         elif mode_string in {'EDIT_MESH', 'PAINT_WEIGHT', 'SCULPT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
             # Mesh Modes, Use Mesh Symmetry
+            ob = context.object
             row, sub = row_for_mirror()
-            sub.prop(context.object, "use_mesh_mirror_x", icon='MIRROR_X', toggle=True, icon_only=True)
-            sub.prop(context.object, "use_mesh_mirror_y", icon='MIRROR_Y', toggle=True, icon_only=True)
-            sub.prop(context.object, "use_mesh_mirror_z", icon='MIRROR_Z', toggle=True, icon_only=True)
+            sub.prop(ob, "use_mesh_mirror_x", icon='MIRROR_X', toggle=True, icon_only=True)
+            sub.prop(ob, "use_mesh_mirror_y", icon='MIRROR_Y', toggle=True, icon_only=True)
+            sub.prop(ob, "use_mesh_mirror_z", icon='MIRROR_Z', toggle=True, icon_only=True)
             if mode_string == 'EDIT_MESH':
                 tool_settings = context.tool_settings
                 layout.prop(tool_settings, "use_mesh_automerge", text="")
@@ -161,12 +164,13 @@ class VIEW3D_HT_tool_header(Header):
             elif mode_string == 'PAINT_VERTEX':
                 row.popover(panel="VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar", text="")
         elif mode_string == 'SCULPT_CURVES':
+            ob = context.object
             _row, sub = row_for_mirror()
-            sub.prop(context.object.data, "use_mirror_x", text="X", toggle=True)
-            sub.prop(context.object.data, "use_mirror_y", text="Y", toggle=True)
-            sub.prop(context.object.data, "use_mirror_z", text="Z", toggle=True)
+            sub.prop(ob.data, "use_mirror_x", text="X", toggle=True)
+            sub.prop(ob.data, "use_mirror_y", text="Y", toggle=True)
+            sub.prop(ob.data, "use_mirror_z", text="Z", toggle=True)
 
-            layout.prop(context.object.data, "use_sculpt_collision", icon='MOD_PHYSICS', icon_only=True, toggle=True)
+            layout.prop(ob.data, "use_sculpt_collision", icon='MOD_PHYSICS', icon_only=True, toggle=True)
 
         # Expand panels from the side-bar as popovers.
         popover_kw = {"space_type": 'VIEW_3D', "region_type": 'UI', "category": "Tool"}
@@ -375,19 +379,20 @@ class _draw_tool_settings_context_mode:
         if brush is None:
             return False
 
+        ob = context.object
         gp_settings = brush.gpencil_settings
 
         row = layout.row(align=True)
         settings = tool_settings.gpencil_paint
         row.template_ID_preview(settings, "brush", rows=3, cols=8, hide_buttons=True)
 
-        if context.object and brush.gpencil_tool in {'FILL', 'DRAW'}:
+        if ob and brush.gpencil_tool in {'FILL', 'DRAW'}:
             from bl_ui.properties_paint_common import (
                 brush_basic__draw_color_selector,
             )
             brush_basic__draw_color_selector(context, layout, brush, gp_settings, None)
 
-        if context.object and brush.gpencil_tool == 'TINT':
+        if ob and brush.gpencil_tool == 'TINT':
             row.separator(factor=0.4)
             row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
 
@@ -609,6 +614,9 @@ class _draw_tool_settings_context_mode:
                 brush_basic__draw_color_selector,
             )
             brush_basic__draw_color_selector(context, layout, brush, brush.gpencil_settings, None)
+
+        if grease_pencil_tool == 'TINT':
+            UnifiedPaintPanel.prop_unified_color(row, context, brush, "color", text="")
 
         from bl_ui.properties_paint_common import (
             brush_basic__draw_color_selector,
@@ -2542,6 +2550,7 @@ class VIEW3D_MT_paint_grease_pencil(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
+        layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
 
         layout.separator()
 
@@ -3162,7 +3171,7 @@ class VIEW3D_MT_object(Menu):
     def draw(self, context):
         layout = self.layout
 
-        obj = context.object
+        ob = context.object
         view = context.space_data
 
         layout.menu("VIEW3D_MT_transform_object")
@@ -3207,22 +3216,23 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_make_links")
 
         layout.separator()
-        # BFA: Added a context menu operator for consistency and discovervability...
+        # BFA: Added a context menu operator for consistency and discoverability...
         # ...This is a minimal UX of layout.menu("VIEW3D_MT_object_collection")
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("object.move_to_collection", icon='GROUP')
-        layout.menu("VIEW3D_MT_object_collection") #BFA - Could be redundant operators, the UX was exclusive to the outliner
+        # BFA - Could be redundant operators, the UX was exclusive to the outliner
+        layout.menu("VIEW3D_MT_object_collection")
 
         # BFA: shading just for mesh and curve objects
-        if obj is None:
+        if ob is None:
             pass
 
-        elif obj.type in {'MESH', 'CURVE', 'SURFACE'}:
+        elif ob.type in {'MESH', 'CURVE', 'SURFACE'}:
 
             layout.separator()
 
             layout.operator("object.shade_smooth", icon='SHADING_SMOOTH')
-            if context.object and context.object.type == 'MESH':
+            if ob and ob.type == 'MESH':
                 layout.operator("object.shade_smooth_by_angle", icon='NORMAL_SMOOTH')
             layout.operator("object.shade_flat", icon='SHADING_FLAT')
 
@@ -3245,20 +3255,20 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_showhide")
         layout.menu("VIEW3D_MT_object_cleanup")
 
-        if obj is None:
+        if ob is None:
             pass
 
-        elif obj.type == 'CAMERA':
+        elif ob.type == 'CAMERA':
             layout.operator_context = 'INVOKE_REGION_WIN'
 
             layout.separator()
 
-            if obj.data.type == 'PERSP':
+            if ob.data.type == 'PERSP':
                 props = layout.operator("wm.context_modal_mouse", text="Adjust Focal Length", icon="LENS_ANGLE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.lens"
                 props.input_scale = 0.1
-                if obj.data.lens_unit == 'MILLIMETERS':
+                if ob.data.lens_unit == 'MILLIMETERS':
                     props.header_text = "Camera Focal Length: %.1fmm"
                 else:
                     props.header_text = "Camera Focal Length: %.1f\u00B0"
@@ -3270,8 +3280,8 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Camera Lens Scale: %.3f"
 
-            if not obj.data.dof.focus_object:
-                if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
+            if not ob.data.dof.focus_object:
+                if view and view.camera == ob and view.region_3d.view_perspective == 'CAMERA':
                     props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon="DOF")
                 else:
                     props = layout.operator("wm.context_modal_mouse", text="Adjust Focus Distance", icon="DOF")
@@ -3280,7 +3290,7 @@ class VIEW3D_MT_object(Menu):
                     props.input_scale = 0.02
                     props.header_text = "Focus Distance: %.3f"
 
-        elif obj.type in {'CURVE', 'FONT'}:
+        elif ob.type in {'CURVE', 'FONT'}:
             layout.operator_context = 'INVOKE_REGION_WIN'
 
             layout.separator()
@@ -3297,7 +3307,7 @@ class VIEW3D_MT_object(Menu):
             props.input_scale = 0.01
             props.header_text = "Offset %.3f"
 
-        elif obj.type == 'EMPTY':
+        elif ob.type == 'EMPTY':
             layout.operator_context = 'INVOKE_REGION_WIN'
 
             layout.separator()
@@ -3308,8 +3318,8 @@ class VIEW3D_MT_object(Menu):
             props.input_scale = 0.01
             props.header_text = "Empty Diosplay Size: %.3f"
 
-        elif obj.type == 'LIGHT':
-            light = obj.data
+        elif ob.type == 'LIGHT':
+            light = ob.data
 
             layout.operator_context = 'INVOKE_REGION_WIN'
 
@@ -4384,6 +4394,12 @@ class VIEW3D_MT_sculpt(Menu):
         props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show", icon="LASSO_SHOW")
         props.action = 'SHOW'
 
+        props = layout.operator("paint.hide_show_line_gesture", text="Line Hide")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show_line_gesture", text="Line Show")
+        props.action = 'SHOW'
+
         layout.separator()
 
         props = layout.operator("sculpt.trim_box_gesture", text="Box Trim", icon='BOX_TRIM')
@@ -4949,9 +4965,10 @@ class VIEW3D_MT_bone_collections(Menu):
 
     @classmethod
     def poll(cls, context):
-        if not context.object or context.object.type != 'ARMATURE':
+        ob = context.object
+        if not (ob and ob.type == 'ARMATURE'):
             return False
-        if context.object.data.library:
+        if ob.data.library:
             return False
         return True
 
@@ -5491,7 +5508,8 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
 
         tool_settings = context.tool_settings
         select_mode = tool_settings.mesh_select_mode
-        mesh = context.object.data
+        ob = context.object
+        mesh = ob.data
 
         if mesh.total_face_sel:
             layout.operator("view3d.edit_mesh_extrude_move_normal",
@@ -6995,6 +7013,15 @@ class VIEW3D_MT_edit_greasepencil_showhide(Menu):
         layout.operator("grease_pencil.layer_hide", text="Hide Inactive Layers").unselected = True
 
 
+class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
+    bl_label = "Cleanup"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("grease_pencil.clean_loose")
+
+
 class VIEW3D_MT_edit_greasepencil(Menu):
     bl_label = "Grease Pencil"
 
@@ -7020,7 +7047,7 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
         layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
-        layout.operator("grease_pencil.clean_loose")
+        layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
 
         layout.separator()
 
@@ -7864,10 +7891,9 @@ class VIEW3D_PT_shading_lighting(Panel):
                 row = col.row()
                 row.separator()
                 row.prop(shading, "studiolight_background_alpha")
-                if engine != 'BLENDER_EEVEE_NEXT':
-                    row = col.row()
-                    row.separator()
-                    row.prop(shading, "studiolight_background_blur")
+                row = col.row()
+                row.separator()
+                row.prop(shading, "studiolight_background_blur")
                 col = split.column()  # to align properly with above
 
         elif shading.type == 'RENDERED':
@@ -7904,10 +7930,9 @@ class VIEW3D_PT_shading_lighting(Panel):
                 row.separator()
                 row.prop(shading, "studiolight_background_alpha")
                 engine = context.scene.render.engine
-                if engine != 'BLENDER_EEVEE_NEXT':
-                    row = col.row()
-                    row.separator()
-                    row.prop(shading, "studiolight_background_blur")
+                row = col.row()
+                row.separator()
+                row.prop(shading, "studiolight_background_blur")
                 col = split.column()  # to align properly with above
             else:
                 row = col.row()
@@ -9119,20 +9144,17 @@ class VIEW3D_PT_snapping(Panel):
         layout = self.layout
         col = layout.column()
 
-        col.label(text="Snap With")
+        col.label(text="Snap Target")
         row = col.row(align=True)
         row.prop(tool_settings, "snap_target", expand=True)
 
-        col.label(text="Snap To")
+        col.label(text="Snap Base")
         col.prop(tool_settings, "snap_elements_base", expand=True)
 
-        col.label(text="Snap Individual Elements To")
+        col.label(text="Snap Target for Individual Elements")
         col.prop(tool_settings, "snap_elements_individual", expand=True)
 
         col.separator()
-
-        if 'INCREMENT' in tool_settings.snap_elements:
-            col.prop(tool_settings, "use_snap_grid_absolute")
 
         if 'VOLUME' in tool_settings.snap_elements:
             col.prop(tool_settings, "use_snap_peel_object")
@@ -9330,12 +9352,15 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object and context.object.type == 'GPENCIL'
+        ob = context.object
+        return ob and ob.type == 'GPENCIL'
 
     def draw(self, context):
         layout = self.layout
         view = context.space_data
         overlay = view.overlay
+
+        ob = context.object
 
         layout.label(text={
             'PAINT_GPENCIL': iface_("Draw Grease Pencil"),
@@ -9387,7 +9412,7 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        if context.object.mode in {'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}:
+        if ob.mode in {'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}:
             split = layout.split()
             col = split.column()
             row = col.row()
@@ -9399,8 +9424,8 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
             else:
                 col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-            if context.object.mode == 'EDIT_GPENCIL':
-                gpd = context.object.data
+            if ob.mode == 'EDIT_GPENCIL':
+                gpd = ob.data
 
                 col = layout.column()
                 row = col.row()
@@ -9422,13 +9447,13 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
                     row.separator()
                     row.prop(overlay, "display_handle", text="Handles")
 
-        if context.object.mode == 'SCULPT_GPENCIL':
+        if ob.mode == 'SCULPT_GPENCIL':
             layout.use_property_split = True
             row = layout.row()
             row.separator()
             row.prop(overlay, "vertex_opacity", text="Vertex Opacity", slider=True)
 
-        if context.object.mode in {'PAINT_GPENCIL', 'VERTEX_GPENCIL'}:
+        if ob.mode in {'PAINT_GPENCIL', 'VERTEX_GPENCIL'}:
             layout.label(text="Vertex Paint")
             row = layout.row()
             shading = VIEW3D_PT_shading.get_shading(context)
@@ -9446,12 +9471,15 @@ class VIEW3D_PT_overlay_grease_pencil_options(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object and context.object.type == 'GREASEPENCIL'
+        ob = context.object
+        return ob and ob.type == 'GREASEPENCIL'
 
     def draw(self, context):
         layout = self.layout
         view = context.space_data
         overlay = view.overlay
+
+        ob = context.object
 
         layout.label(text={
             'PAINT_GREASE_PENCIL': iface_("Draw Grease Pencil"),
@@ -9459,7 +9487,7 @@ class VIEW3D_PT_overlay_grease_pencil_options(Panel):
             'OBJECT': iface_("Grease Pencil"),
         }[context.mode], translate=False)
 
-        if context.object.mode in {'EDIT'}:
+        if ob.mode in {'EDIT'}:
             split = layout.split()
             col = split.column()
             col.prop(overlay, "use_gpencil_edit_lines", text="Edit Lines")
@@ -10488,7 +10516,7 @@ class TOPBAR_PT_gpencil_materials(GreasePencilMaterialsPanel, Panel):
     @classmethod
     def poll(cls, context):
         ob = context.object
-        return ob and (ob.type == 'GPENCIL' or ob.type == 'GREASEPENCIL')
+        return ob and ob.type in {'GPENCIL', 'GREASEPENCIL'}
 
 
 class TOPBAR_PT_gpencil_vertexcolor(GreasePencilVertexcolorPanel, Panel):
@@ -10808,6 +10836,7 @@ classes = (
     VIEW3D_MT_sculpt_gpencil_copy,  # bfa menu
     VIEW3D_MT_edit_gpencil_showhide,
     VIEW3D_MT_edit_greasepencil_showhide,
+    VIEW3D_MT_edit_greasepencil_cleanup,
     VIEW3D_MT_weight_gpencil,
     VIEW3D_MT_gpencil_animation,
     VIEW3D_MT_gpencil_simplify,

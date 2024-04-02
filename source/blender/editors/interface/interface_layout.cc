@@ -31,7 +31,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_idprop.h"
+#include "BKE_idprop.hh"
 #include "BKE_screen.hh"
 
 #include "RNA_access.hh"
@@ -1294,8 +1294,7 @@ static uiBut *uiItemFullO_ptr_ex(uiLayout *layout,
       opptr->data = properties;
     }
     else {
-      const IDPropertyTemplate val = {0};
-      opptr->data = IDP_New(IDP_GROUP, &val, "wmOperatorProperties");
+      opptr->data = blender::bke::idprop::create_group("wmOperatorProperties").release();
     }
     if (r_opptr) {
       *r_opptr = *opptr;
@@ -2309,7 +2308,7 @@ void uiItemFullR(uiLayout *layout,
           str[0] = RNA_property_array_item_char(prop, a);
 
           /*bfa -turned off code*/
-          // const bool use_prefix = (a == 0 && name && name[0]);
+          // const bool use_prefix = (a == 0 && name[0]);
           // if (use_prefix) {
           // char *s = name_with_suffix;
           // s += STRNCPY_RLEN(name_with_suffix, name);
@@ -2345,14 +2344,11 @@ void uiItemFullR(uiLayout *layout,
         layout_sub = uiLayoutColumn(layout_split, true);
         layout_sub->space = 0;
 
-        if (name) {
-          but = uiDefBut(
-              block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, "");
-          but->drawflag |= UI_BUT_TEXT_RIGHT;
-          but->drawflag &= ~UI_BUT_TEXT_LEFT;
+        but = uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, "");
+        but->drawflag |= UI_BUT_TEXT_RIGHT;
+        but->drawflag &= ~UI_BUT_TEXT_LEFT;
 
-          label_added = true;
-        }
+        label_added = true;
       }
 
       if (!label_added && heading_layout) {
@@ -6192,7 +6188,7 @@ static void ui_paneltype_draw_impl(bContext *C, PanelType *pt, uiLayout *layout,
   }
 
   /* This check may be paranoid, this function might run outside the context of a popup or can run
-   * in popopers that are not supposed to support refreshing, see #ui_popover_create_block. */
+   * in popovers that are not supposed to support refreshing, see #ui_popover_create_block. */
   if (block->handle && block->handle->region) {
     /* Allow popovers to contain collapsible sections, see #uiItemPopoverPanel. */
     UI_popup_dummy_panel_set(block->handle->region, block);

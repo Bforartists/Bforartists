@@ -52,7 +52,9 @@
 
 #include "UI_resources.hh"
 
-#include "object_intern.h"
+#include "object_intern.hh"
+
+namespace blender::ed::object {
 
 static int return_editmesh_indexar(BMEditMesh *em,
                                    int *r_indexar_num,
@@ -995,3 +997,5 @@ void OBJECT_OT_hook_select(wmOperatorType *ot)
   RNA_def_enum_funcs(prop, hook_mod_itemf);
   RNA_def_property_flag(prop, PROP_ENUM_NO_TRANSLATE);
 }
+
+}  // namespace blender::ed::object

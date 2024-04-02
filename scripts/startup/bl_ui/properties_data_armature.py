@@ -195,7 +195,7 @@ class ARMATURE_MT_collection_tree_context_menu(Menu):
         # editable or not. That means this menu has to do the disabling for it.
         sub = layout.column()
         sub.enabled = not active_bcoll_is_locked
-        sub.operator("armature.collection_add", text="Add Collection", icon="ADD")
+        sub.operator("armature.collection_add", text="Add Bone Collection", icon="ADD")
         sub.operator("armature.collection_remove", icon="REMOVE")
         sub.operator("armature.collection_remove_unused", text="Remove Unused Collections", icon="DELETE")
 
