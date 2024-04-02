@@ -34,7 +34,7 @@ struct PropertyRNA;
 struct bAction;
 struct bActionGroup;
 
-/* Container for data required to do FCurve and Driver evaluation. */
+/** Container for data required to do FCurve and Driver evaluation. */
 typedef struct AnimationEvalContext {
   /* For drivers, so that they have access to the dependency graph and the current view layer. See
    * #77086. */
@@ -237,7 +237,7 @@ typedef struct NlaKeyframingContext NlaKeyframingContext;
  *
  * \param cache: List used to cache contexts for reuse when keying
  * multiple channels in one operation.
- * \param ptr: RNA pointer to the Object with the animation.
+ * \param ptr: RNA pointer to the ID with the animation.
  * \return Keyframing context, or NULL if not necessary.
  */
 struct NlaKeyframingContext *BKE_animsys_get_nla_keyframing_context(

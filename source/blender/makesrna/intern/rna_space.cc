@@ -568,7 +568,7 @@ static const EnumPropertyItem rna_enum_curve_display_handle_items[] = {
 #  include "BKE_context.hh"
 #  include "BKE_global.hh"
 #  include "BKE_icons.h"
-#  include "BKE_idprop.h"
+#  include "BKE_idprop.hh"
 #  include "BKE_layer.hh"
 #  include "BKE_nla.h"
 #  include "BKE_paint.hh"
@@ -2861,7 +2861,7 @@ static PointerRNA rna_FileAssetSelectParams_filter_id_get(PointerRNA *ptr)
   return rna_pointer_inherit_refine(ptr, &RNA_FileAssetSelectIDFilter, ptr->data);
 }
 
-static PointerRNA rna_FileBrowser_FileSelectEntry_asset_data_get(const PointerRNA *ptr)
+static PointerRNA rna_FileBrowser_FileSelectEntry_asset_data_get_impl(const PointerRNA *ptr)
 {
   const FileDirEntry *entry = static_cast<const FileDirEntry *>(ptr->data);
 
@@ -2893,12 +2893,17 @@ static int rna_FileBrowser_FileSelectEntry_name_editable(const PointerRNA *ptr,
    * message returned to `r_info` in some cases. */
 
   if (entry->asset) {
-    PointerRNA asset_data_ptr = rna_FileBrowser_FileSelectEntry_asset_data_get(ptr);
+    PointerRNA asset_data_ptr = rna_FileBrowser_FileSelectEntry_asset_data_get_impl(ptr);
     /* Get disabled hint from asset metadata polling. */
     rna_AssetMetaData_editable(&asset_data_ptr, r_info);
   }
 
   return 0;
+}
+
+static PointerRNA rna_FileBrowser_FileSelectEntry_asset_data_get(PointerRNA *ptr)
+{
+  return rna_FileBrowser_FileSelectEntry_asset_data_get_impl(ptr);
 }
 
 static void rna_FileBrowser_FileSelectEntry_name_get(PointerRNA *ptr, char *value)

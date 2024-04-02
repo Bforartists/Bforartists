@@ -79,7 +79,7 @@
 #include "IMB_imbuf.hh"
 #include "IMB_imbuf_types.hh"
 
-#include "view3d_intern.h" /* own include */
+#include "view3d_intern.hh" /* own include */
 
 using blender::float4;
 
@@ -920,7 +920,7 @@ float ED_view3d_grid_view_scale(const Scene *scene,
                                 const char **r_grid_unit)
 {
   float grid_scale;
-  RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
+  const RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
   if (!rv3d->is_persp && RV3D_VIEW_IS_AXIS(rv3d->view)) {
     /* Decrease the distance between grid snap points depending on zoom. */
     float dist = 12.0f / (region->sizex * rv3d->winmat[0][0]);
@@ -2092,8 +2092,14 @@ ImBuf *ED_view3d_draw_offscreen_imbuf_simple(Depsgraph *depsgraph,
 
   v3d.flag2 = V3D_HIDE_OVERLAYS;
   /* HACK: When rendering gpencil objects this opacity is used to mix vertex colors in when not in
-   * render mode. */
+   * render mode (e.g. in the sequencer). */
   v3d.overlay.gpencil_vertex_paint_opacity = 1.0f;
+
+  /* Also initialize wire-frame properties to the default so it renders properly in sequencer.
+   * Should find some way to use the viewport's current opacity and threshold,
+   * but this is a start. */
+  v3d.overlay.wireframe_opacity = 1.0f;
+  v3d.overlay.wireframe_threshold = 0.5f;
 
   if (draw_flags & V3D_OFSDRAW_SHOW_ANNOTATION) {
     v3d.flag2 |= V3D_SHOW_ANNOTATION;

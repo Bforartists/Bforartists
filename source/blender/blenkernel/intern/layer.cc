@@ -24,7 +24,7 @@
 #include "BKE_animsys.h"
 #include "BKE_collection.hh"
 #include "BKE_freestyle.h"
-#include "BKE_idprop.h"
+#include "BKE_idprop.hh"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -431,9 +431,7 @@ static void layer_aov_copy_data(ViewLayer *view_layer_dst,
                                 ListBase *aovs_dst,
                                 const ListBase *aovs_src)
 {
-  if (aovs_src != nullptr) {
-    BLI_duplicatelist(aovs_dst, aovs_src);
-  }
+  BLI_duplicatelist(aovs_dst, aovs_src);
 
   ViewLayerAOV *aov_dst = static_cast<ViewLayerAOV *>(aovs_dst->first);
   const ViewLayerAOV *aov_src = static_cast<const ViewLayerAOV *>(aovs_src->first);

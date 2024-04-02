@@ -91,7 +91,7 @@ static void extract_edituv_stretch_angle_init(const MeshRenderData &mr,
                                               void *buf,
                                               void *tls_data)
 {
-  GPUVertBuf *vbo = static_cast<GPUVertBuf *>(buf);
+  gpu::VertBuf *vbo = static_cast<gpu::VertBuf *>(buf);
   static GPUVertFormat format = {0};
   if (format.attr_len == 0) {
     /* Waning: adjust #UVStretchAngle struct accordingly. */
@@ -228,13 +228,13 @@ static void extract_edituv_stretch_angle_init_subdiv(const DRWSubdivCache &subdi
                                                      void *buffer,
                                                      void * /*tls_data*/)
 {
-  GPUVertBuf *refined_vbo = static_cast<GPUVertBuf *>(buffer);
+  gpu::VertBuf *refined_vbo = static_cast<gpu::VertBuf *>(buffer);
 
   GPU_vertbuf_init_build_on_device(
       refined_vbo, get_edituv_stretch_angle_format_subdiv(), subdiv_cache.num_subdiv_loops);
 
-  GPUVertBuf *pos_nor = cache.final.buff.vbo.pos;
-  GPUVertBuf *uvs = cache.final.buff.vbo.uv;
+  gpu::VertBuf *pos_nor = cache.final.buff.vbo.pos;
+  gpu::VertBuf *uvs = cache.final.buff.vbo.uv;
 
   /* It may happen that the data for the UV editor is requested before (as a separate draw update)
    * the data for the mesh when switching to the `UV Editing` workspace, and therefore the position
@@ -253,8 +253,8 @@ static void extract_edituv_stretch_angle_init_subdiv(const DRWSubdivCache &subdi
 
   /* UVs are stored contiguously so we need to compute the offset in the UVs buffer for the active
    * UV layer. */
-  CustomData *cd_ldata = (mr.extract_type == MR_EXTRACT_MESH) ? &mr.mesh->corner_data :
-                                                                &mr.bm->ldata;
+  const CustomData *cd_ldata = (mr.extract_type == MR_EXTRACT_MESH) ? &mr.mesh->corner_data :
+                                                                      &mr.bm->ldata;
 
   uint32_t uv_layers = cache.cd_used.uv;
   /* HACK to fix #68857 */

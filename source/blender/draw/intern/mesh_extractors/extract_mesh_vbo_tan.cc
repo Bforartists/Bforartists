@@ -38,10 +38,10 @@ static void extract_tan_init_common(const MeshRenderData &mr,
 {
   GPU_vertformat_deinterleave(format);
 
-  CustomData *cd_ldata = (mr.extract_type == MR_EXTRACT_BMESH) ? &mr.bm->ldata :
-                                                                 &mr.mesh->corner_data;
-  CustomData *cd_vdata = (mr.extract_type == MR_EXTRACT_BMESH) ? &mr.bm->vdata :
-                                                                 &mr.mesh->vert_data;
+  const CustomData *cd_ldata = (mr.extract_type == MR_EXTRACT_BMESH) ? &mr.bm->ldata :
+                                                                       &mr.mesh->corner_data;
+  const CustomData *cd_vdata = (mr.extract_type == MR_EXTRACT_BMESH) ? &mr.bm->vdata :
+                                                                       &mr.mesh->vert_data;
   uint32_t tan_layers = cache.cd_used.tan;
   const float(*orco)[3] = (const float(*)[3])CustomData_get_layer(cd_vdata, CD_ORCO);
   float(*orco_allocated)[3] = nullptr;
@@ -96,7 +96,9 @@ static void extract_tan_init_common(const MeshRenderData &mr,
         copy_v3_v3(orco_allocated[v], mr.vert_positions[v]);
       }
     }
-    BKE_mesh_orco_verts_transform(mr.mesh, orco_allocated, mr.verts_num, false);
+    /* TODO: This is not thread-safe. Draw extraction should not modify the mesh. */
+    BKE_mesh_orco_verts_transform(
+        const_cast<Mesh *>(mr.mesh), orco_allocated, mr.verts_num, false);
     orco = orco_allocated;
   }
 
@@ -165,7 +167,7 @@ static void extract_tan_init_common(const MeshRenderData &mr,
 
 static void extract_tan_ex_init(const MeshRenderData &mr,
                                 MeshBatchCache &cache,
-                                GPUVertBuf *vbo,
+                                gpu::VertBuf *vbo,
                                 const bool do_hq)
 {
   GPUVertCompType comp_type = do_hq ? GPU_COMP_I16 : GPU_COMP_I10;
@@ -244,7 +246,7 @@ static void extract_tan_init(const MeshRenderData &mr,
                              void *buf,
                              void * /*tls_data*/)
 {
-  GPUVertBuf *vbo = static_cast<GPUVertBuf *>(buf);
+  gpu::VertBuf *vbo = static_cast<gpu::VertBuf *>(buf);
   extract_tan_ex_init(mr, cache, vbo, false);
 }
 
@@ -282,10 +284,10 @@ static void extract_tan_init_subdiv(const DRWSubdivCache &subdiv_cache,
                           tangent_names,
                           &use_orco_tan);
 
-  GPUVertBuf *dst_buffer = static_cast<GPUVertBuf *>(buffer);
+  gpu::VertBuf *dst_buffer = static_cast<gpu::VertBuf *>(buffer);
   GPU_vertbuf_init_build_on_device(dst_buffer, &format, subdiv_cache.num_subdiv_loops);
 
-  GPUVertBuf *coarse_vbo = GPU_vertbuf_calloc();
+  gpu::VertBuf *coarse_vbo = GPU_vertbuf_calloc();
   /* Dynamic as we upload and interpolate layers one at a time. */
   GPU_vertbuf_init_with_format_ex(coarse_vbo, get_coarse_tan_format(), GPU_USAGE_DYNAMIC);
   GPU_vertbuf_data_alloc(coarse_vbo, coarse_len);
@@ -356,7 +358,7 @@ static void extract_tan_hq_init(const MeshRenderData &mr,
                                 void *buf,
                                 void * /*tls_data*/)
 {
-  GPUVertBuf *vbo = static_cast<GPUVertBuf *>(buf);
+  gpu::VertBuf *vbo = static_cast<gpu::VertBuf *>(buf);
   extract_tan_ex_init(mr, cache, vbo, true);
 }
 

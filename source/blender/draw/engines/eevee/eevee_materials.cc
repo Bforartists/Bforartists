@@ -246,10 +246,12 @@ void EEVEE_materials_init(EEVEE_ViewLayerData *sldata,
   }
 
   if (draw_ctx->rv3d) {
-    copy_v4_v4(sldata->common_data.camera_uv_scale, draw_ctx->rv3d->viewcamtexcofac);
+    copy_v2_v2(sldata->common_data.camera_uv_scale, &draw_ctx->rv3d->viewcamtexcofac[0]);
+    copy_v2_v2(sldata->common_data.camera_uv_bias, &draw_ctx->rv3d->viewcamtexcofac[2]);
   }
   else {
-    copy_v4_fl4(sldata->common_data.camera_uv_scale, 1.0f, 1.0f, 0.0f, 0.0f);
+    copy_v2_fl2(sldata->common_data.camera_uv_scale, 1.0f, 1.0f);
+    copy_v2_fl2(sldata->common_data.camera_uv_bias, 0.0f, 0.0f);
   }
 
   if (!DRW_state_is_image_render() && ((stl->effects->enabled_effects & EFFECT_TAA) == 0)) {
@@ -874,7 +876,7 @@ void EEVEE_materials_cache_populate(EEVEE_Data *vedata,
         GPUMaterial **gpumat_array = BLI_array_alloca(gpumat_array, materials_len);
         MATCACHE_AS_ARRAY(matcache, shading_gpumat, materials_len, gpumat_array);
         /* Get per-material split surface */
-        GPUBatch **mat_geom = DRW_cache_object_surface_material_get(
+        blender::gpu::Batch **mat_geom = DRW_cache_object_surface_material_get(
             ob, gpumat_array, materials_len);
 
         if (mat_geom) {

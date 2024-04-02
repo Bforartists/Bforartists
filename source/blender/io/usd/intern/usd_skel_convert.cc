@@ -40,6 +40,7 @@
 
 #include "ED_armature.hh"
 #include "ED_mesh.hh"
+#include "ED_object_vgroup.hh"
 
 #include "ANIM_animdata.hh"
 #include "ANIM_fcurve.hh"
@@ -1102,7 +1103,7 @@ void import_mesh_skel_bindings(Main *bmain,
       }
       const int joint_idx = joint_indices[k];
       if (bDeformGroup *def_grp = joint_def_grps[joint_idx]) {
-        ED_vgroup_vert_add(mesh_obj, def_grp, i, w, WEIGHT_REPLACE);
+        blender::ed::object::vgroup_vert_add(mesh_obj, def_grp, i, w, WEIGHT_REPLACE);
       }
     }
   }
