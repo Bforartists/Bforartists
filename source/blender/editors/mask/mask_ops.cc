@@ -39,7 +39,7 @@
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 
-#include "mask_intern.h" /* own include */
+#include "mask_intern.hh" /* own include */
 
 // #include "UI_interface.hh" /*bfa - for the icons*/
 #include "UI_resources.hh" /*bfa - for the icons*/

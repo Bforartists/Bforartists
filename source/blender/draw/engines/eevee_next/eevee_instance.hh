@@ -248,6 +248,17 @@ class Instance {
     return DRW_state_is_playback();
   }
 
+  bool is_transforming() const
+  {
+    BLI_assert_msg(!is_image_render(), "Caller need to check, otherwise this is unsafe");
+    return (G.moving & (G_TRANSFORM_OBJ | G_TRANSFORM_EDIT)) != 0;
+  }
+
+  bool is_navigating() const
+  {
+    return DRW_state_is_navigating();
+  }
+
   bool use_scene_lights() const
   {
     return (!v3d) ||

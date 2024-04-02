@@ -60,7 +60,7 @@
 #include "RNA_path.hh"
 #include "RNA_prototypes.h"
 
-#include "anim_intern.h"
+#include "anim_intern.hh"
 
 static KeyingSet *keyingset_get_from_op_with_error(wmOperator *op,
                                                    PropertyRNA *prop,
@@ -198,7 +198,7 @@ static int insert_key_with_keyingset(bContext *C, wmOperator *op, KeyingSet *ks)
    * updated since the last switching to the edit mode will be keyframed correctly
    */
   if (obedit && ANIM_keyingset_find_id(ks, (ID *)obedit->data)) {
-    ED_object_mode_set(C, OB_MODE_OBJECT);
+    blender::ed::object::mode_set(C, OB_MODE_OBJECT);
     ob_edit_mode = true;
   }
 
@@ -214,7 +214,7 @@ static int insert_key_with_keyingset(bContext *C, wmOperator *op, KeyingSet *ks)
 
   /* restore the edit mode if necessary */
   if (ob_edit_mode) {
-    ED_object_mode_set(C, OB_MODE_EDIT);
+    blender::ed::object::mode_set(C, OB_MODE_EDIT);
   }
 
   /* report failure or do updates? */
@@ -307,8 +307,8 @@ static blender::Vector<std::string> construct_rna_paths(PointerRNA *ptr)
   return paths;
 }
 
-/* Fill the list with CollectionPointerLink depending on the mode of the context. */
-static bool get_selection(bContext *C, ListBase *r_selection)
+/* Fill the list with items depending on the mode of the context. */
+static bool get_selection(bContext *C, blender::Vector<PointerRNA> *r_selection)
 {
   const eContextObjectMode context_mode = CTX_data_mode_enum(C);
 
@@ -332,7 +332,7 @@ static int insert_key(bContext *C, wmOperator *op)
 {
   using namespace blender;
 
-  ListBase selection = {nullptr, nullptr};
+  blender::Vector<PointerRNA> selection;
   const bool found_selection = get_selection(C, &selection);
   if (!found_selection) {
     BKE_reportf(op->reports, RPT_ERROR, "Unsupported context mode");
@@ -349,14 +349,13 @@ static int insert_key(bContext *C, wmOperator *op)
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
       depsgraph, BKE_scene_frame_get(scene));
 
-  LISTBASE_FOREACH (CollectionPointerLink *, collection_ptr_link, &selection) {
-    ID *selected_id = collection_ptr_link->ptr.owner_id;
+  for (PointerRNA &id_ptr : selection) {
+    ID *selected_id = id_ptr.owner_id;
     if (!BKE_id_is_editable(bmain, selected_id)) {
       BKE_reportf(op->reports, RPT_ERROR, "'%s' is not editable", selected_id->name + 2);
       continue;
     }
-    PointerRNA id_ptr = collection_ptr_link->ptr;
-    Vector<std::string> rna_paths = construct_rna_paths(&collection_ptr_link->ptr);
+    Vector<std::string> rna_paths = construct_rna_paths(&id_ptr);
 
     animrig::insert_key_rna(&id_ptr,
                             rna_paths.as_span(),
@@ -369,7 +368,6 @@ static int insert_key(bContext *C, wmOperator *op)
   }
 
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_ADDED, nullptr);
-  BLI_freelistN(&selection);
 
   return OPERATOR_FINISHED;
 }
@@ -917,29 +915,29 @@ static bool insert_key_selected_pose_bones(Main *bmain,
                                            bPoseChannel *pchan_to_exclude)
 {
   bPoseChannel *pchan = NULL;
-  ListBase selected_bones;
+  blender::Vector<PointerRNA> selected_bones;
   char *group = NULL;
   std::optional<std::string> path;
   bool changed = false;
 
   CTX_data_selected_pose_bones(C, &selected_bones);
-  if (selected_bones.first == NULL) {
+  if (selected_bones.is_empty()) {
     return false;
   }
 
-  LISTBASE_FOREACH (CollectionPointerLink *, link, &selected_bones) {
-    pchan = (bPoseChannel *)link->ptr.data;
+  for (PointerRNA ptr : selected_bones) {
+    pchan = (bPoseChannel *)ptr.data;
     if (pchan_to_exclude != NULL) {
       if (pchan == pchan_to_exclude) {
         continue;
       }
     }
     group = pchan->name;
-    path = RNA_path_from_ID_to_property(&link->ptr, prop);
+    path = RNA_path_from_ID_to_property(&ptr, prop);
     if (path) {
       changed |= (blender::animrig::insert_keyframe(bmain,
                                                     reports,
-                                                    link->ptr.owner_id,
+                                                    ptr.owner_id,
                                                     group,
                                                     path->c_str(),
                                                     index,
@@ -948,8 +946,6 @@ static bool insert_key_selected_pose_bones(Main *bmain,
                                                     flag) != 0);
     }
   }
-
-  BLI_freelistN(&selected_bones);
   return changed;
 }
 
@@ -968,17 +964,17 @@ static bool insert_key_selected_objects(Main *bmain,
                                         const char *prop_path,
                                         Object *object_to_exclude)
 {
-  ListBase selected_objects;
+  blender::Vector<PointerRNA> selected_objects;
   Object *object = NULL;
   bool changed = false;
 
   CTX_data_selected_objects(C, &selected_objects);
-  if (selected_objects.first == NULL) {
+  if (selected_objects.is_empty()) {
     return false;
   }
 
-  LISTBASE_FOREACH (CollectionPointerLink *, link, &selected_objects) {
-    object = (Object *)link->ptr.data;
+  for (PointerRNA ptr : selected_objects) {
+    object = (Object *)ptr.data;
     if (object_to_exclude != NULL) {
       if (object == object_to_exclude) {
         continue;
@@ -986,7 +982,7 @@ static bool insert_key_selected_objects(Main *bmain,
     }
     if (blender::animrig::insert_keyframe(bmain,
                                           reports,
-                                          link->ptr.owner_id,
+                                          ptr.owner_id,
                                           group,
                                           prop_path,
                                           index,
@@ -994,12 +990,10 @@ static bool insert_key_selected_objects(Main *bmain,
                                           eBezTriple_KeyframeType(ts->keyframe_type),
                                           flag) != 0)
     {
-      DEG_id_tag_update(link->ptr.owner_id, ID_RECALC_ANIMATION_NO_FLUSH);
+      DEG_id_tag_update(ptr.owner_id, ID_RECALC_ANIMATION_NO_FLUSH);
       changed = true;
     }
   }
-  BLI_freelistN(&selected_objects);
-
   return changed;
 }
 
@@ -1233,23 +1227,23 @@ static bool delete_key_selected_pose_bones(Main *bmain,
                                            bPoseChannel *pchan_to_exclude)
 {
   bPoseChannel *pchan = NULL;
-  ListBase selected_bones;
+  blender::Vector<PointerRNA> selected_bones;
   AnimData *adt = NULL;
   std::optional<std::string> path;
   bool changed = false;
 
   CTX_data_selected_pose_bones(C, &selected_bones);
-  if (selected_bones.first == NULL) {
+  if (selected_bones.is_empty()) {
     return false;
   }
 
-  LISTBASE_FOREACH (CollectionPointerLink *, link, &selected_bones) {
-    pchan = (bPoseChannel *)link->ptr.data;
+  for (PointerRNA ptr : selected_bones) {
+    pchan = (bPoseChannel *)ptr.data;
     if (pchan == pchan_to_exclude) {
       continue;
     }
     /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting error */
-    adt = BKE_animdata_from_id(link->ptr.owner_id);
+    adt = BKE_animdata_from_id(ptr.owner_id);
     if (adt == NULL) {
       continue;
     }
@@ -1257,14 +1251,12 @@ static bool delete_key_selected_pose_bones(Main *bmain,
       continue;
     }
     /* -- */
-    path = RNA_path_from_ID_to_property(&link->ptr, prop);
+    path = RNA_path_from_ID_to_property(&ptr, prop);
     if (path) {
       changed |= (blender::animrig::delete_keyframe(
-                      bmain, reports, link->ptr.owner_id, NULL, path->c_str(), index, cfra) != 0);
+                      bmain, reports, ptr.owner_id, NULL, path->c_str(), index, cfra) != 0);
     }
   }
-
-  BLI_freelistN(&selected_bones);
   return changed;
 }
 
@@ -1280,22 +1272,22 @@ static bool delete_key_selected_objects(Main *bmain,
                                         float cfra,
                                         Object *object_to_exclude)
 {
-  ListBase selected_objects;
+  blender::Vector<PointerRNA> selected_objects;
   Object *object = NULL;
   AnimData *adt = NULL;
   bool changed = false;
 
   CTX_data_selected_objects(C, &selected_objects);
-  if (selected_objects.first == NULL) {
+  if (selected_objects.is_empty()) {
     return false;
   }
 
-  LISTBASE_FOREACH (CollectionPointerLink *, link, &selected_objects) {
-    object = (Object *)link->ptr.data;
+  for (PointerRNA ptr : selected_objects) {
+    object = (Object *)ptr.data;
     if (object == object_to_exclude) {
       continue;
     }
-    adt = BKE_animdata_from_id(link->ptr.owner_id);
+    adt = BKE_animdata_from_id(ptr.owner_id);
     /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting error.
      */
     if (adt == NULL) {
@@ -1306,10 +1298,8 @@ static bool delete_key_selected_objects(Main *bmain,
     }
     /* -- */
     changed |= (blender::animrig::delete_keyframe(
-                    bmain, reports, link->ptr.owner_id, NULL, prop_path, index, cfra) != 0);
+                    bmain, reports, ptr.owner_id, NULL, prop_path, index, cfra) != 0);
   }
-  BLI_freelistN(&selected_objects);
-
   return changed;
 }
 

@@ -50,7 +50,7 @@
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"
 
-#include "gpencil_intern.h"
+#include "gpencil_intern.hh"
 
 /* -------------------------------------------------------------------- */
 /** \name Shared Utilities
@@ -1595,7 +1595,7 @@ static bool gpencil_do_curve_circle_sel(bContext *C,
                                         const int my,
                                         const int radius,
                                         const bool select,
-                                        rcti *rect,
+                                        const rcti *rect,
                                         const float diff_mat[4][4],
                                         const int selectmode)
 {

@@ -13,9 +13,9 @@
 
 #include "GPU_batch.hh"
 
+#include "GPU_vertex_buffer.hh"
 #include "gpu_context_private.hh"
 #include "gpu_drawlist_private.hh"
-#include "gpu_vertex_buffer_private.hh"
 
 #include "gl_backend.hh"
 #include "gl_drawlist.hh"
@@ -100,7 +100,7 @@ void GLDrawList::init()
   command_offset_ = 0;
 }
 
-void GLDrawList::append(GPUBatch *gpu_batch, int i_first, int i_count)
+void GLDrawList::append(Batch *gpu_batch, int i_first, int i_count)
 {
   /* Fallback when MultiDrawIndirect is not supported/enabled. */
   if (MDI_DISABLED) {

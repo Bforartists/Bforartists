@@ -91,14 +91,14 @@ int shadow_tile_offset(ivec2 tile, int tiles_index, int lod)
  * \{ */
 
 /** \note: Will clamp if out of bounds. */
-ShadowTileData shadow_tile_load(usampler2D tilemaps_tx, ivec2 tile_co, int tilemap_index)
+ShadowSamplingTile shadow_tile_load(usampler2D tilemaps_tx, ivec2 tile_co, int tilemap_index)
 {
   /* NOTE(@fclem): This clamp can hide some small imprecision at clip-map transition.
    * Can be disabled to check if the clip-map is well centered. */
   tile_co = clamp(tile_co, ivec2(0), ivec2(SHADOW_TILEMAP_RES - 1));
-  uint tile_data =
-      texelFetch(tilemaps_tx, shadow_tile_coord_in_atlas(tile_co, tilemap_index), 0).x;
-  return shadow_tile_unpack(tile_data);
+  ivec2 texel = shadow_tile_coord_in_atlas(tile_co, tilemap_index);
+  uint tile_data = texelFetch(tilemaps_tx, texel, 0).x;
+  return shadow_sampling_tile_unpack(tile_data);
 }
 
 /**
@@ -176,13 +176,16 @@ struct ShadowCoordinates {
 };
 
 /* Retain sign bit and avoid costly int division. */
-ivec2 shadow_decompress_grid_offset(eLightType light_type, ivec2 offset, int level_relative)
+ivec2 shadow_decompress_grid_offset(eLightType light_type,
+                                    ivec2 offset_neg,
+                                    ivec2 offset_pos,
+                                    int level_relative)
 {
   if (light_type == LIGHT_SUN_ORTHO) {
-    return shadow_cascade_grid_offset(offset, level_relative);
+    return shadow_cascade_grid_offset(offset_pos, level_relative);
   }
   else {
-    return ((offset & 0xFFFF) >> level_relative) - ((offset >> 16) >> level_relative);
+    return (offset_pos >> level_relative) - (offset_neg >> level_relative);
   }
 }
 
@@ -203,7 +206,10 @@ ShadowCoordinates shadow_directional_coordinates_at_level(LightData light, vec3 
 
   /* Compute offset in tile. */
   ivec2 clipmap_offset = shadow_decompress_grid_offset(
-      light.type, light_sun_data_get(light).clipmap_base_offset, level_relative);
+      light.type,
+      light_sun_data_get(light).clipmap_base_offset_neg,
+      light_sun_data_get(light).clipmap_base_offset_pos,
+      level_relative);
 
   ret.uv = lP.xy - light_sun_data_get(light).clipmap_origin;
   ret.uv /= exp2(float(ret.lod_relative));

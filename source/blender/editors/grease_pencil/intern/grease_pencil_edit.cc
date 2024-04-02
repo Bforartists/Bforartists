@@ -1406,7 +1406,7 @@ static void GREASE_PENCIL_OT_clean_loose(wmOperatorType *ot)
 
   ot->invoke = WM_operator_props_popup_confirm;
   ot->exec = grease_pencil_clean_loose_exec;
-  ot->poll = editable_grease_pencil_poll;
+  ot->poll = active_grease_pencil_layer_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -1864,7 +1864,7 @@ static Object *duplicate_grease_pencil_object(Main *bmain,
                                               GreasePencil &grease_pencil_src)
 {
   const eDupli_ID_Flags dupflag = eDupli_ID_Flags(U.dupflag & USER_DUP_ACT);
-  Base *base_new = ED_object_add_duplicate(bmain, scene, view_layer, base_prev, dupflag);
+  Base *base_new = object::add_duplicate(bmain, scene, view_layer, base_prev, dupflag);
   Object *object_dst = base_new->object;
   object_dst->mode = OB_MODE_OBJECT;
   object_dst->data = BKE_grease_pencil_add(bmain, grease_pencil_src.id.name + 2);

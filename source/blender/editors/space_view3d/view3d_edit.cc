@@ -41,7 +41,7 @@
 #include "ED_transform.hh"
 #include "ED_transform_snap_object_context.hh"
 
-#include "view3d_intern.h" /* own include */
+#include "view3d_intern.hh" /* own include */
 
 /* test for unlocked camera view in quad view */
 static bool view3d_camera_user_poll(bContext *C)
@@ -821,7 +821,6 @@ void VIEW3D_OT_clip_border(wmOperatorType *ot)
 /** \name Set Cursor Operator
  * \{ */
 
-/* cursor position in vec, result in vec, mval in region coords */
 void ED_view3d_cursor3d_position(bContext *C,
                                  const int mval[2],
                                  const bool use_depth,
@@ -910,7 +909,7 @@ void ED_view3d_cursor3d_position_rotation(bContext *C,
     SnapObjectContext *snap_context = ED_transform_snap_object_context_create(scene, 0);
 
     float obmat[4][4];
-    Object *ob_dummy = nullptr;
+    const Object *ob_dummy = nullptr;
     float dist_px = 0;
     SnapObjectParams params{};
     params.snap_target_select = SCE_SNAP_TARGET_ALL;
