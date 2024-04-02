@@ -30,7 +30,7 @@
 #include "BKE_constraint.h"
 #include "BKE_context.hh"
 #include "BKE_fcurve_driver.h"
-#include "BKE_idprop.h"
+#include "BKE_idprop.hh"
 #include "BKE_layer.hh"
 #include "BKE_main.hh"
 #include "BKE_report.hh"
@@ -493,7 +493,7 @@ int ED_armature_join_objects_exec(bContext *C, wmOperator *op)
       }
 
       /* Free the old object data */
-      ED_object_base_free_and_unlink(bmain, scene, ob_iter);
+      blender::ed::object::base_free_and_unlink(bmain, scene, ob_iter);
     }
   }
   CTX_DATA_END;
@@ -735,7 +735,7 @@ static int separate_armature_exec(bContext *C, wmOperator *op)
     /* Only duplicate linked armature but take into account
      * user preferences for duplicating actions. */
     short dupflag = USER_DUP_ARM | (U.dupflag & USER_DUP_ACT);
-    Base *base_new = ED_object_add_duplicate(
+    Base *base_new = blender::ed::object::add_duplicate(
         bmain, scene, view_layer, base_old, eDupli_ID_Flags(dupflag));
     Object *ob_new = base_new->object;
 
@@ -774,20 +774,6 @@ static int separate_armature_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int separate_armature_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
-{
-  if (RNA_boolean_get(op->ptr, "confirm")) {
-    return WM_operator_confirm_ex(C,
-                                  op,
-                                  IFACE_("Move selected bones to a separate armature?"),
-                                  nullptr,
-                                  IFACE_("Separate"),
-                                  ALERT_ICON_NONE,
-                                  false);
-  }
-  return separate_armature_exec(C, op);
-}
-
 void ARMATURE_OT_separate(wmOperatorType *ot)
 {
   /* identifiers */
@@ -796,13 +782,11 @@ void ARMATURE_OT_separate(wmOperatorType *ot)
   ot->description = "Isolate selected bones into a separate armature";
 
   /* callbacks */
-  ot->invoke = separate_armature_invoke;
   ot->exec = separate_armature_exec;
   ot->poll = ED_operator_editarmature;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-  WM_operator_properties_confirm_or_exec(ot);
 }
 
 /** \} */

@@ -58,7 +58,7 @@
 #include "BKE_context.hh"
 #include "BKE_customdata.hh"
 #include "BKE_global.hh"
-#include "BKE_idprop.h"
+#include "BKE_idprop.hh"
 #include "BKE_image.h"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
@@ -6231,6 +6231,7 @@ static bool texture_paint_image_from_view_poll(bContext *C)
 
 static int texture_paint_image_from_view_exec(bContext *C, wmOperator *op)
 {
+  using namespace blender;
   Image *image;
   ImBuf *ibuf;
   char filename[FILE_MAX];
@@ -6313,27 +6314,21 @@ static int texture_paint_image_from_view_exec(bContext *C, wmOperator *op)
   if (image) {
     /* now for the trickiness. store the view projection here!
      * re-projection will reuse this */
-    IDPropertyTemplate val;
     IDProperty *idgroup = IDP_EnsureProperties(&image->id);
-    IDProperty *view_data;
-    bool is_ortho;
-    float *array;
 
-    val.array.len = PROJ_VIEW_DATA_SIZE;
-    val.array.type = IDP_FLOAT;
-    view_data = IDP_New(IDP_ARRAY, &val, PROJ_VIEW_DATA_ID);
-
-    array = (float *)IDP_Array(view_data);
-    memcpy(array, rv3d->winmat, sizeof(rv3d->winmat));
-    array += sizeof(rv3d->winmat) / sizeof(float);
-    memcpy(array, rv3d->viewmat, sizeof(rv3d->viewmat));
-    array += sizeof(rv3d->viewmat) / sizeof(float);
-    is_ortho = ED_view3d_clip_range_get(depsgraph, v3d, rv3d, &array[0], &array[1], true);
+    blender::Vector<float, PROJ_VIEW_DATA_SIZE> array;
+    array.extend(Span(reinterpret_cast<float *>(rv3d->winmat), 16));
+    array.extend(Span(reinterpret_cast<float *>(rv3d->viewmat), 16));
+    float clip_start;
+    float clip_end;
+    const bool is_ortho = ED_view3d_clip_range_get(
+        depsgraph, v3d, rv3d, &clip_start, &clip_end, true);
+    array.append(clip_start);
+    array.append(clip_end);
     /* using float for a bool is dodgy but since its an extra member in the array...
      * easier than adding a single bool prop */
-    array[2] = is_ortho ? 1.0f : 0.0f;
-
-    IDP_AddToGroup(idgroup, view_data);
+    array.append(is_ortho ? 1.0f : 0.0f);
+    IDP_AddToGroup(idgroup, bke::idprop::create(PROJ_VIEW_DATA_ID, array.as_span()).release());
   }
 
   return OPERATOR_FINISHED;
@@ -6651,7 +6646,7 @@ static void default_paint_slot_color_get(int layer_type, Material *ma, float col
 
 static bool proj_paint_add_slot(bContext *C, wmOperator *op)
 {
-  Object *ob = ED_object_active_context(C);
+  Object *ob = blender::ed::object::context_active_object(C);
   Scene *scene = CTX_data_scene(C);
   Material *ma;
   Image *ima = nullptr;
@@ -6822,7 +6817,7 @@ static int texture_paint_add_texture_paint_slot_invoke(bContext *C,
                                                        wmOperator *op,
                                                        const wmEvent * /*event*/)
 {
-  Object *ob = ED_object_active_context(C);
+  Object *ob = blender::ed::object::context_active_object(C);
   Material *ma = BKE_object_material_get(ob, ob->actcol);
 
   int type = get_texture_layer_type(op, "type");
@@ -6846,7 +6841,7 @@ static void texture_paint_add_texture_paint_slot_ui(bContext *C, wmOperator *op)
   uiLayout *layout = op->layout;
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, false);
-  Object *ob = ED_object_active_context(C);
+  Object *ob = blender::ed::object::context_active_object(C);
   ePaintCanvasSource slot_type = PAINT_CANVAS_SOURCE_IMAGE;
 
   if (ob->mode == OB_MODE_SCULPT) {

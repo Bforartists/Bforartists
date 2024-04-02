@@ -61,7 +61,9 @@
 #  define DRW_DEBUG_FILE_LINE_ARGS
 #endif
 
-struct GPUBatch;
+namespace blender::gpu {
+class Batch;
+}
 struct GPUMaterial;
 struct GPUShader;
 struct GPUTexture;
@@ -381,7 +383,7 @@ DRWShadingGroup *DRW_shgroup_create_sub(DRWShadingGroup *shgroup);
 DRWShadingGroup *DRW_shgroup_material_create(GPUMaterial *material, DRWPass *pass);
 DRWShadingGroup *DRW_shgroup_transform_feedback_create(GPUShader *shader,
                                                        DRWPass *pass,
-                                                       GPUVertBuf *tf_target);
+                                                       blender::gpu::VertBuf *tf_target);
 
 void DRW_shgroup_add_material_resources(DRWShadingGroup *grp, GPUMaterial *material);
 
@@ -393,7 +395,7 @@ typedef bool(DRWCallVisibilityFn)(bool vis_in, void *user_data);
 void DRW_shgroup_call_ex(DRWShadingGroup *shgroup,
                          const Object *ob,
                          const float (*obmat)[4],
-                         GPUBatch *geom,
+                         blender::gpu::Batch *geom,
                          bool bypass_culling,
                          void *user_data);
 
@@ -421,12 +423,12 @@ void DRW_shgroup_call_ex(DRWShadingGroup *shgroup,
   DRW_shgroup_call_ex(shgroup, ob, nullptr, geom, true, nullptr)
 
 void DRW_shgroup_call_range(
-    DRWShadingGroup *shgroup, const Object *ob, GPUBatch *geom, uint v_sta, uint v_num);
+    DRWShadingGroup *shgroup, const Object *ob, blender::gpu::Batch *geom, uint v_sta, uint v_num);
 /**
  * A count of 0 instance will use the default number of instance in the batch.
  */
 void DRW_shgroup_call_instance_range(
-    DRWShadingGroup *shgroup, const Object *ob, GPUBatch *geom, uint i_sta, uint i_num);
+    DRWShadingGroup *shgroup, const Object *ob, blender::gpu::Batch *geom, uint i_sta, uint i_num);
 
 void DRW_shgroup_call_compute(DRWShadingGroup *shgroup,
                               int groups_x_len,
@@ -453,15 +455,15 @@ void DRW_shgroup_call_procedural_indirect(DRWShadingGroup *shgroup,
  */
 void DRW_shgroup_call_instances(DRWShadingGroup *shgroup,
                                 const Object *ob,
-                                GPUBatch *geom,
+                                blender::gpu::Batch *geom,
                                 uint count);
 /**
  * \warning Only use with Shaders that have INSTANCED_ATTR defined.
  */
 void DRW_shgroup_call_instances_with_attrs(DRWShadingGroup *shgroup,
                                            const Object *ob,
-                                           GPUBatch *geom,
-                                           GPUBatch *inst_attributes);
+                                           blender::gpu::Batch *geom,
+                                           blender::gpu::Batch *inst_attributes);
 
 void DRW_shgroup_call_sculpt(DRWShadingGroup *shgroup,
                              Object *ob,
@@ -481,7 +483,7 @@ DRWCallBuffer *DRW_shgroup_call_buffer(DRWShadingGroup *shgroup,
                                        GPUPrimType prim_type);
 DRWCallBuffer *DRW_shgroup_call_buffer_instance(DRWShadingGroup *shgroup,
                                                 GPUVertFormat *format,
-                                                GPUBatch *geom);
+                                                blender::gpu::Batch *geom);
 
 void DRW_buffer_add_entry_struct(DRWCallBuffer *callbuf, const void *data);
 void DRW_buffer_add_entry_array(DRWCallBuffer *callbuf, const void *attr[], uint attr_len);
@@ -617,16 +619,17 @@ void DRW_shgroup_uniform_mat4_copy(DRWShadingGroup *shgroup,
                                    const float (*value)[4]);
 void DRW_shgroup_vertex_buffer_ex(DRWShadingGroup *shgroup,
                                   const char *name,
-                                  GPUVertBuf *vertex_buffer DRW_DEBUG_FILE_LINE_ARGS);
+                                  blender::gpu::VertBuf *vertex_buffer DRW_DEBUG_FILE_LINE_ARGS);
 void DRW_shgroup_vertex_buffer_ref_ex(DRWShadingGroup *shgroup,
                                       const char *name,
-                                      GPUVertBuf **vertex_buffer DRW_DEBUG_FILE_LINE_ARGS);
+                                      blender::gpu::VertBuf **vertex_buffer
+                                          DRW_DEBUG_FILE_LINE_ARGS);
 void DRW_shgroup_buffer_texture(DRWShadingGroup *shgroup,
                                 const char *name,
-                                GPUVertBuf *vertex_buffer);
+                                blender::gpu::VertBuf *vertex_buffer);
 void DRW_shgroup_buffer_texture_ref(DRWShadingGroup *shgroup,
                                     const char *name,
-                                    GPUVertBuf **vertex_buffer);
+                                    blender::gpu::VertBuf **vertex_buffer);
 
 #ifdef DRW_UNUSED_RESOURCE_TRACKING
 #  define DRW_shgroup_vertex_buffer(shgroup, name, vert) \

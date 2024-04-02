@@ -63,7 +63,7 @@
 #include "BKE_editmesh.hh"
 #include "BKE_effect.h"
 #include "BKE_fcurve.hh"
-#include "BKE_idprop.h"
+#include "BKE_idprop.hh"
 #include "BKE_idtype.hh"
 #include "BKE_image.h"
 #include "BKE_image_format.h"
@@ -829,8 +829,9 @@ static bool seq_foreach_member_id_cb(Sequence *seq, void *user_data)
   FOREACHID_PROCESS_IDSUPER(data, seq->clip, IDWALK_CB_USER);
   FOREACHID_PROCESS_IDSUPER(data, seq->mask, IDWALK_CB_USER);
   FOREACHID_PROCESS_IDSUPER(data, seq->sound, IDWALK_CB_USER);
-  IDP_foreach_property(
-      seq->prop, IDP_TYPE_FILTER_ID, BKE_lib_query_idpropertiesForeachIDLink_callback, data);
+  IDP_foreach_property(seq->prop, IDP_TYPE_FILTER_ID, [&](IDProperty *prop) {
+    BKE_lib_query_idpropertiesForeachIDLink_callback(prop, data);
+  });
   LISTBASE_FOREACH (SequenceModifierData *, smd, &seq->modifiers) {
     FOREACHID_PROCESS_IDSUPER(data, smd->mask_id, IDWALK_CB_USER);
   }
@@ -885,10 +886,9 @@ static void scene_foreach_id(ID *id, LibraryForeachIDData *data)
     BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, view_layer->world_override, IDWALK_CB_USER);
     BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(
         data,
-        IDP_foreach_property(view_layer->id_properties,
-                             IDP_TYPE_FILTER_ID,
-                             BKE_lib_query_idpropertiesForeachIDLink_callback,
-                             data));
+        IDP_foreach_property(view_layer->id_properties, IDP_TYPE_FILTER_ID, [&](IDProperty *prop) {
+          BKE_lib_query_idpropertiesForeachIDLink_callback(prop, data);
+        }));
 
     BKE_view_layer_synced_ensure(scene, view_layer);
     LISTBASE_FOREACH (Base *, base, BKE_view_layer_object_bases_get(view_layer)) {
@@ -914,11 +914,9 @@ static void scene_foreach_id(ID *id, LibraryForeachIDData *data)
   LISTBASE_FOREACH (TimeMarker *, marker, &scene->markers) {
     BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, marker->camera, IDWALK_CB_NOP);
     BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(
-        data,
-        IDP_foreach_property(marker->prop,
-                             IDP_TYPE_FILTER_ID,
-                             BKE_lib_query_idpropertiesForeachIDLink_callback,
-                             data));
+        data, IDP_foreach_property(marker->prop, IDP_TYPE_FILTER_ID, [&](IDProperty *prop) {
+          BKE_lib_query_idpropertiesForeachIDLink_callback(prop, data);
+        }));
   }
 
   ToolSettings *toolsett = scene->toolsettings;
@@ -3156,7 +3154,7 @@ const char *BKE_scene_multiview_view_id_suffix_get(const RenderData *rd, const i
 }
 
 void BKE_scene_multiview_view_prefix_get(Scene *scene,
-                                         const char *name,
+                                         const char *filepath,
                                          char *r_prefix,
                                          const char **r_ext)
 {
@@ -3165,8 +3163,8 @@ void BKE_scene_multiview_view_prefix_get(Scene *scene,
 
   r_prefix[0] = '\0';
 
-  /* Split filename into base name and extension. */
-  const size_t basename_len = BLI_str_rpartition(name, delims, r_ext, &unused);
+  /* Split `filepath` into base name and extension. */
+  const size_t basename_len = BLI_str_rpartition(filepath, delims, r_ext, &unused);
   if (*r_ext == nullptr) {
     return;
   }
@@ -3177,9 +3175,9 @@ void BKE_scene_multiview_view_prefix_get(Scene *scene,
     if (BKE_scene_multiview_is_render_view_active(&scene->r, srv)) {
       const size_t suffix_len = strlen(srv->suffix);
       if (basename_len >= suffix_len &&
-          STREQLEN(name + basename_len - suffix_len, srv->suffix, suffix_len))
+          STREQLEN(filepath + basename_len - suffix_len, srv->suffix, suffix_len))
       {
-        BLI_strncpy(r_prefix, name, basename_len - suffix_len + 1);
+        BLI_strncpy(r_prefix, filepath, basename_len - suffix_len + 1);
         break;
       }
     }

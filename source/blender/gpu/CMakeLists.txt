@@ -114,7 +114,6 @@ set(SRC
   GPU_viewport.hh
 
   intern/gpu_backend.hh
-  intern/gpu_batch_private.hh
   intern/gpu_capabilities_private.hh
   intern/gpu_codegen.hh
   intern/gpu_context_private.hh
@@ -122,7 +121,6 @@ set(SRC
   intern/gpu_drawlist_private.hh
   intern/gpu_framebuffer_private.hh
   intern/gpu_immediate_private.hh
-  intern/gpu_index_buffer_private.hh
   intern/gpu_material_library.hh
   intern/gpu_matrix_private.hh
   intern/gpu_node_graph.hh
@@ -139,7 +137,6 @@ set(SRC
   intern/gpu_storage_buffer_private.hh
   intern/gpu_texture_private.hh
   intern/gpu_uniform_buffer_private.hh
-  intern/gpu_vertex_buffer_private.hh
   intern/gpu_vertex_format_private.hh
 
   dummy/dummy_backend.hh
@@ -231,6 +228,7 @@ set(VULKAN_SRC
   vulkan/vk_storage_buffer.cc
   vulkan/vk_texture.cc
   vulkan/vk_timeline_semaphore.cc
+  vulkan/vk_to_string.cc
   vulkan/vk_uniform_buffer.cc
   vulkan/vk_vertex_attribute_object.cc
   vulkan/vk_vertex_buffer.cc
@@ -272,6 +270,7 @@ set(VULKAN_SRC
   vulkan/vk_storage_buffer.hh
   vulkan/vk_texture.hh
   vulkan/vk_timeline_semaphore.hh
+  vulkan/vk_to_string.hh
   vulkan/vk_uniform_buffer.hh
   vulkan/vk_vertex_attribute_object.hh
   vulkan/vk_vertex_buffer.hh

@@ -1871,7 +1871,7 @@ static bool animchannels_grouping_poll(bContext *C)
     case SPACE_ACTION: {
       SpaceAction *saction = (SpaceAction *)sl;
 
-      /* dopesheet and action only - all others are for other datatypes or have no groups */
+      /* Dopesheet and action only - all others are for other data-types or have no groups. */
       if (ELEM(saction->mode, SACTCONT_ACTION, SACTCONT_DOPESHEET) == 0) {
         return false;
       }
@@ -3366,6 +3366,7 @@ static int click_select_channel_object(bContext *C,
                                        bAnimListElem *ale,
                                        const short /* eEditKeyframes_Select or -1 */ selectmode)
 {
+  using namespace blender::ed;
   Scene *scene = ac->scene;
   ViewLayer *view_layer = ac->view_layer;
   Base *base = (Base *)ale->data;
@@ -3378,7 +3379,7 @@ static int click_select_channel_object(bContext *C,
 
   if (selectmode == SELECT_INVERT) {
     /* swap select */
-    ED_object_base_select(base, BA_INVERT);
+    object::base_select(base, object::BA_INVERT);
 
     if (adt) {
       adt->flag ^= ADT_UI_SELECTED;
@@ -3394,14 +3395,14 @@ static int click_select_channel_object(bContext *C,
     BKE_view_layer_synced_ensure(scene, view_layer);
     /* TODO: should this deselect all other types of channels too? */
     LISTBASE_FOREACH (Base *, b, BKE_view_layer_object_bases_get(view_layer)) {
-      ED_object_base_select(b, BA_DESELECT);
+      object::base_select(b, object::BA_DESELECT);
       if (b->object->adt) {
         b->object->adt->flag &= ~(ADT_UI_SELECTED | ADT_UI_ACTIVE);
       }
     }
 
     /* select object now */
-    ED_object_base_select(base, BA_SELECT);
+    object::base_select(base, object::BA_SELECT);
     if (adt) {
       adt->flag |= ADT_UI_SELECTED;
     }
@@ -3411,7 +3412,7 @@ static int click_select_channel_object(bContext *C,
    *
    * Ensure we exit edit-mode on whatever object was active before
    * to avoid getting stuck there, see: #48747. */
-  ED_object_base_activate_with_mode_exit_if_needed(C, base); /* adds notifier */
+  object::base_activate_with_mode_exit_if_needed(C, base); /* adds notifier */
 
   /* Similar to outliner, do not change active element when selecting elements in range. */
   if ((adt) && (adt->flag & ADT_UI_SELECTED) && (selectmode != SELECT_EXTEND_RANGE)) {
@@ -4643,7 +4644,7 @@ static rctf calculate_fcurve_bounds_and_unhide(SpaceLink *space_link,
 }
 
 static rctf calculate_selection_fcurve_bounds(bAnimContext *ac,
-                                              ListBase /* CollectionPointerLink */ *selection,
+                                              blender::Span<PointerRNA> selection,
                                               PropertyRNA *prop,
                                               const blender::StringRefNull id_to_prop_path,
                                               const int index,
@@ -4656,8 +4657,8 @@ static rctf calculate_selection_fcurve_bounds(bAnimContext *ac,
   bounds.ymin = INFINITY;
   bounds.ymax = -INFINITY;
 
-  LISTBASE_FOREACH (CollectionPointerLink *, selected, selection) {
-    ID *selected_id = selected->ptr.owner_id;
+  for (const PointerRNA &selected : selection) {
+    ID *selected_id = selected.owner_id;
     if (!BKE_animdata_id_is_animated(selected_id)) {
       continue;
     }
@@ -4665,13 +4666,13 @@ static rctf calculate_selection_fcurve_bounds(bAnimContext *ac,
     PropertyRNA *resolved_prop;
     if (!id_to_prop_path.is_empty()) {
       const bool resolved = RNA_path_resolve_property(
-          &selected->ptr, id_to_prop_path.c_str(), &resolved_ptr, &resolved_prop);
+          &selected, id_to_prop_path.c_str(), &resolved_ptr, &resolved_prop);
       if (!resolved) {
         continue;
       }
     }
     else {
-      resolved_ptr = selected->ptr;
+      resolved_ptr = selected;
       resolved_prop = prop;
     }
     blender::Vector<FCurve *> fcurves = get_fcurves_of_property(
@@ -4700,7 +4701,7 @@ static int view_curve_in_graph_editor_exec(bContext *C, wmOperator *op)
 
   int retval = OPERATOR_FINISHED;
 
-  ListBase selection = {nullptr, nullptr};
+  blender::Vector<PointerRNA> selection;
 
   struct {
     wmWindow *win;
@@ -4747,9 +4748,9 @@ static int view_curve_in_graph_editor_exec(bContext *C, wmOperator *op)
       bounds.ymin = INFINITY;
       bounds.ymax = -INFINITY;
       int filtered_fcurve_count = 0;
-      if (selected_list_success && !BLI_listbase_is_empty(&selection)) {
+      if (selected_list_success && !selection.is_empty()) {
         rctf selection_bounds = calculate_selection_fcurve_bounds(&ac,
-                                                                  &selection,
+                                                                  selection,
                                                                   button_prop,
                                                                   id_to_prop_path.value_or(""),
                                                                   index,
@@ -4795,8 +4796,6 @@ static int view_curve_in_graph_editor_exec(bContext *C, wmOperator *op)
     CTX_wm_area_set(C, wm_context_prev.area);
     CTX_wm_region_set(C, wm_context_prev.region);
   }
-
-  BLI_freelistN(&selection);
 
   return retval;
 }

@@ -342,10 +342,10 @@ float get_default_rna_value(FCurve *fcu, PropertyRNA *prop, PointerRNA *ptr)
   switch (RNA_property_type(prop)) {
     case PROP_BOOLEAN:
       if (len) {
-        default_value = RNA_property_boolean_get_default_index(ptr, prop, fcu->array_index);
+        default_value = float(RNA_property_boolean_get_default_index(ptr, prop, fcu->array_index));
       }
       else {
-        default_value = RNA_property_boolean_get_default(ptr, prop);
+        default_value = float(RNA_property_boolean_get_default(ptr, prop));
       }
       break;
     case PROP_INT:
@@ -514,10 +514,6 @@ static float butterworth_calculate_blend_value(float *samples,
   return 0;
 }
 
-/**
- * \param samples: Are expected to start at the first frame of the segment with a buffer of size
- * `segment->filter_order` at the left.
- */
 void butterworth_smooth_fcurve_segment(FCurve *fcu,
                                        FCurveSegment *segment,
                                        float *samples,
@@ -687,7 +683,7 @@ void ease_fcurve_segment(FCurve *fcu,
     return;
   }
 
-  /* Using the factor on the xshift we are basicaly moving the curve horizontaly. */
+  /* Using the factor on the X-shift we are basically moving the curve horizontally. */
   const float shift = -factor;
   const float y_min = ease_sigmoid_function(-1, width, shift);
   const float y_max = ease_sigmoid_function(1, width, shift);
