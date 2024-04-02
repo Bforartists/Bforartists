@@ -16,6 +16,7 @@
 #include "../blenlib/BLI_function_ref.hh"
 #include "../blenlib/BLI_sys_types.h"
 #include "../blenlib/BLI_utildefines.h"
+#include "../blenlib/BLI_vector.hh"
 
 struct BlenderRNA;
 struct FunctionRNA;
@@ -182,7 +183,7 @@ enum PropertySubType {
 };
 
 /* Make sure enums are updated with these */
-/* HIGHEST FLAG IN USE: 1 << 31
+/* HIGHEST FLAG IN USE: 1u << 31
  * FREE FLAGS: 13, 14, 15. */
 enum PropertyFlag {
   /**
@@ -441,14 +442,8 @@ struct CollectionPropertyIterator {
   int valid;
 };
 
-struct CollectionPointerLink {
-  CollectionPointerLink *next, *prev;
-  PointerRNA ptr;
-};
-
-/** Copy of ListBase for RNA. */
-struct CollectionListBase {
-  CollectionPointerLink *first, *last;
+struct CollectionVector {
+  blender::Vector<PointerRNA> items;
 };
 
 enum RawPropertyType {

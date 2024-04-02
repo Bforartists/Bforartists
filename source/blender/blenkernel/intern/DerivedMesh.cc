@@ -318,7 +318,7 @@ void DM_interp_vert_data(const DerivedMesh *source,
       &source->vertData, &dest->vertData, src_indices, weights, nullptr, count, dest_index);
 }
 
-static float (*get_editbmesh_orco_verts(BMEditMesh *em))[3]
+static float (*get_editbmesh_orco_verts(const BMEditMesh *em))[3]
 {
   BMIter iter;
   BMVert *eve;
@@ -338,7 +338,7 @@ static float (*get_editbmesh_orco_verts(BMEditMesh *em))[3]
 }
 
 /* orco custom data layer */
-static float (*get_orco_coords(Object *ob, BMEditMesh *em, int layer, int *free))[3]
+static float (*get_orco_coords(const Object *ob, const BMEditMesh *em, int layer, int *free))[3]
 {
   *free = 0;
 
@@ -355,11 +355,11 @@ static float (*get_orco_coords(Object *ob, BMEditMesh *em, int layer, int *free)
     /* apply shape key for cloth, this should really be solved
      * by a more flexible customdata system, but not simple */
     if (!em) {
-      ClothModifierData *clmd = (ClothModifierData *)BKE_modifiers_findby_type(
+      const ClothModifierData *clmd = (const ClothModifierData *)BKE_modifiers_findby_type(
           ob, eModifierType_Cloth);
       if (clmd && clmd->sim_parms->shapekey_rest) {
-        KeyBlock *kb = BKE_keyblock_find_by_index(BKE_key_from_object(ob),
-                                                  clmd->sim_parms->shapekey_rest);
+        const KeyBlock *kb = BKE_keyblock_find_by_index(
+            BKE_key_from_object(const_cast<Object *>(ob)), clmd->sim_parms->shapekey_rest);
 
         if (kb && kb->data) {
           return (float(*)[3])kb->data;
@@ -373,7 +373,7 @@ static float (*get_orco_coords(Object *ob, BMEditMesh *em, int layer, int *free)
   return nullptr;
 }
 
-static Mesh *create_orco_mesh(Object *ob, Mesh *mesh, BMEditMesh *em, int layer)
+static Mesh *create_orco_mesh(const Object *ob, const Mesh *mesh, const BMEditMesh *em, int layer)
 {
   Mesh *orco_mesh;
   float(*orco)[3];
@@ -410,8 +410,11 @@ static MutableSpan<float3> orco_coord_layer_ensure(Mesh *mesh, const eCustomData
   return MutableSpan(reinterpret_cast<float3 *>(data), mesh->verts_num);
 }
 
-static void add_orco_mesh(
-    Object *ob, BMEditMesh *em, Mesh *mesh, Mesh *mesh_orco, const eCustomDataType layer)
+static void add_orco_mesh(Object *ob,
+                          const BMEditMesh *em,
+                          Mesh *mesh,
+                          const Mesh *mesh_orco,
+                          const eCustomDataType layer)
 {
   const int totvert = mesh->verts_num;
 
@@ -978,18 +981,6 @@ static void mesh_calc_modifiers(Depsgraph *depsgraph,
   }
 }
 
-static blender::Array<float3> editbmesh_vert_coords_alloc(const BMEditMesh *em)
-{
-  blender::Array<float3> cos(em->bm->totvert);
-  BMIter iter;
-  BMVert *eve;
-  int i;
-  BM_ITER_MESH_INDEX (eve, &iter, em->bm, BM_VERTS_OF_MESH, i) {
-    cos[i] = eve->co;
-  }
-  return cos;
-}
-
 bool editbmesh_modifier_is_enabled(const Scene *scene,
                                    const Object *ob,
                                    ModifierData *md,
@@ -1019,7 +1010,7 @@ static void editbmesh_calc_modifier_final_normals(Mesh *mesh_final)
     case ME_WRAPPER_TYPE_BMESH: {
       BMEditMesh &em = *mesh_final->runtime->edit_mesh;
       blender::bke::EditMeshData &emd = *mesh_final->runtime->edit_data;
-      if (!emd.vertexCos.is_empty()) {
+      if (!emd.vert_positions.is_empty()) {
         BKE_editmesh_cache_ensure_vert_normals(em, emd);
         BKE_editmesh_cache_ensure_face_normals(em, emd);
       }
@@ -1044,11 +1035,11 @@ static MutableSpan<float3> mesh_wrapper_vert_coords_ensure_for_write(Mesh *mesh)
 {
   switch (mesh->runtime->wrapper_type) {
     case ME_WRAPPER_TYPE_BMESH:
-      if (mesh->runtime->edit_data->vertexCos.is_empty()) {
-        mesh->runtime->edit_data->vertexCos = editbmesh_vert_coords_alloc(
-            mesh->runtime->edit_mesh);
+      if (mesh->runtime->edit_data->vert_positions.is_empty()) {
+        mesh->runtime->edit_data->vert_positions = BM_mesh_vert_coords_alloc(
+            mesh->runtime->edit_mesh->bm);
       }
-      return mesh->runtime->edit_data->vertexCos;
+      return mesh->runtime->edit_data->vert_positions;
     case ME_WRAPPER_TYPE_MDATA:
     case ME_WRAPPER_TYPE_SUBD:
       return mesh->vert_positions_for_write();
@@ -1269,12 +1260,14 @@ static void editbmesh_calc_modifiers(Depsgraph *depsgraph,
   }
 }
 
-static void mesh_build_extra_data(Depsgraph *depsgraph, Object *ob, Mesh *mesh_eval)
+static void mesh_build_extra_data(const Depsgraph *depsgraph,
+                                  const Object *ob,
+                                  const Mesh *mesh_eval)
 {
   uint32_t eval_flags = DEG_get_eval_flags_for_id(depsgraph, &ob->id);
 
   if (eval_flags & DAG_EVAL_NEED_SHRINKWRAP_BOUNDARY) {
-    BKE_shrinkwrap_compute_boundary_data(mesh_eval);
+    blender::bke::shrinkwrap::boundary_cache_ensure(*mesh_eval);
   }
 }
 

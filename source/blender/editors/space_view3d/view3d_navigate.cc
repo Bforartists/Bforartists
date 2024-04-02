@@ -30,7 +30,7 @@
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 
-#include "view3d_intern.h"
+#include "view3d_intern.hh"
 
 #include "view3d_navigate.hh" /* own include */
 
@@ -89,7 +89,7 @@ void ViewOpsData::init_context(bContext *C)
 void ViewOpsData::state_backup()
 {
   copy_v3_v3(this->init.ofs, rv3d->ofs);
-  copy_v3_v3(this->init.ofs_lock, rv3d->ofs_lock);
+  copy_v2_v2(this->init.ofs_lock, rv3d->ofs_lock);
   this->init.camdx = rv3d->camdx;
   this->init.camdy = rv3d->camdy;
   this->init.camzoom = rv3d->camzoom;
@@ -1042,10 +1042,10 @@ static const ViewOpsType *view3d_navigation_type_from_idname(const char *idname)
   return nullptr;
 }
 
-/* Unlike `viewops_data_create`, `ED_view3d_navigation_init` creates a navigation context along
- * with an array of `wmKeyMapItem`s used for navigation. */
 ViewOpsData *ED_view3d_navigation_init(bContext *C, const wmKeyMapItem *kmi_merge)
 {
+  /* Unlike `viewops_data_create`, `ED_view3d_navigation_init` creates a navigation context along
+   * with an array of `wmKeyMapItem`s used for navigation. */
   if (!CTX_wm_region_view3d(C)) {
     return nullptr;
   }

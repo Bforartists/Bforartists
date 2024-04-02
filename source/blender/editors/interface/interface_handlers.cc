@@ -1804,7 +1804,7 @@ static bool ui_selectcontext_begin(bContext *C, uiBut *but, uiSelectContextStore
   PropertyRNA *lprop;
   bool success = false;
 
-  ListBase lb = {nullptr};
+  blender::Vector<PointerRNA> lb;
 
   PointerRNA ptr = but->rnapoin;
   PropertyRNA *prop = but->rnaprop;
@@ -1825,19 +1825,21 @@ static bool ui_selectcontext_begin(bContext *C, uiBut *but, uiSelectContextStore
 
     std::optional<std::string> path;
     if (UI_context_copy_to_selected_list(C, &ptr, prop, &lb, &use_path_from_id, &path) &&
-        !BLI_listbase_is_empty(&lb))
+        !lb.is_empty())
     {
-      selctx_data->elems_len = BLI_listbase_count(&lb);
+      selctx_data->elems_len = lb.size();
       selctx_data->elems = static_cast<uiSelectContextElem *>(
           MEM_mallocN(sizeof(uiSelectContextElem) * selctx_data->elems_len, __func__));
+
       int i;
-      LISTBASE_FOREACH_INDEX (CollectionPointerLink *, link, &lb, i) {
+      PointerRNA *link;
+      for (i = 0, link = lb.data(); i < selctx_data->elems_len; i++, link++) {
         if (i >= selctx_data->elems_len) {
           break;
         }
 
         if (!UI_context_copy_to_selected_check(&ptr,
-                                               &link->ptr,
+                                               link,
                                                prop,
                                                path.has_value() ? path->c_str() : nullptr,
                                                use_path_from_id,
@@ -1890,8 +1892,6 @@ static bool ui_selectcontext_begin(bContext *C, uiBut *but, uiSelectContextStore
   if (selctx_data->elems_len == 0) {
     MEM_SAFE_FREE(selctx_data->elems);
   }
-
-  BLI_freelistN(&lb);
 
   /* caller can clear */
   selctx_data->do_free = true;
@@ -4992,7 +4992,7 @@ static float ui_numedit_apply_snapf(
     float fac = 1.0f;
 
     if (ui_but_is_unit(but)) {
-      UnitSettings *unit = but->block->unit;
+      const UnitSettings *unit = but->block->unit;
       const int unit_type = RNA_SUBTYPE_UNIT_VALUE(UI_but_unit_type_get(but));
 
       if (BKE_unit_is_valid(unit->system, unit_type)) {
@@ -5015,7 +5015,7 @@ static float ui_numedit_apply_snapf(
     /* snapping by 10's for float buttons is quite annoying (location, scale...),
      * but allow for rotations */
     if (softrange >= 21.0f) {
-      UnitSettings *unit = but->block->unit;
+      const UnitSettings *unit = but->block->unit;
       const int unit_type = UI_but_unit_type_get(but);
       if ((unit_type == PROP_UNIT_ROTATION) && (unit->system_rotation != USER_UNIT_ROT_RADIANS)) {
         /* Pass (degrees). */
@@ -6013,7 +6013,7 @@ static int ui_do_but_SCROLL(
       button_activate_state(C, but, BUTTON_STATE_EXIT);
     }
     else if (event->type == MOUSEMOVE) {
-      const bool is_motion = (event->type == MOUSEMOVE);
+      const bool is_motion = true;
       if (ui_numedit_but_SLI(
               but, data, (horizontal) ? mx : my, horizontal, is_motion, false, false))
       {

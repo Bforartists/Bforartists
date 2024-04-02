@@ -53,7 +53,7 @@
 #include "BKE_colortools.hh"
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_idprop.h"
+#include "BKE_idprop.hh"
 #include "BKE_image.h"
 #include "BKE_image_format.h"
 #include "BKE_lib_id.hh"
@@ -710,8 +710,7 @@ void WM_operator_properties_alloc(PointerRNA **ptr, IDProperty **properties, con
   }
 
   if (*properties == nullptr) {
-    IDPropertyTemplate val = {0};
-    *properties = IDP_New(IDP_GROUP, &val, "wmOpItemProp");
+    *properties = blender::bke::idprop::create_group("wmOpItemProp").release();
   }
 
   if (*ptr == nullptr) {
@@ -825,8 +824,7 @@ void WM_operator_properties_free(PointerRNA *ptr)
 static bool operator_last_properties_init_impl(wmOperator *op, IDProperty *last_properties)
 {
   bool changed = false;
-  IDPropertyTemplate val = {0};
-  IDProperty *replaceprops = IDP_New(IDP_GROUP, &val, "wmOperatorProperties");
+  IDProperty *replaceprops = blender::bke::idprop::create_group("wmOperatorProperties").release();
 
   PropertyRNA *iterprop = RNA_struct_iterator_property(op->type->srna);
 
@@ -894,8 +892,8 @@ bool WM_operator_last_properties_store(wmOperator *op)
     LISTBASE_FOREACH (wmOperator *, opm, &op->macro) {
       if (opm->properties) {
         if (op->type->last_properties == nullptr) {
-          IDPropertyTemplate temp{};
-          op->type->last_properties = IDP_New(IDP_GROUP, &temp, "wmOperatorProperties");
+          op->type->last_properties =
+              blender::bke::idprop::create_group("wmOperatorProperties").release();
         }
         IDProperty *idp_macro = IDP_CopyProperty(opm->properties);
         STRNCPY(idp_macro->name, opm->type->idname);
@@ -1262,8 +1260,7 @@ wmOperator *WM_operator_last_redo(const bContext *C)
 IDProperty *WM_operator_last_properties_ensure_idprops(wmOperatorType *ot)
 {
   if (ot->last_properties == nullptr) {
-    IDPropertyTemplate val = {0};
-    ot->last_properties = IDP_New(IDP_GROUP, &val, "wmOperatorProperties");
+    ot->last_properties = blender::bke::idprop::create_group("wmOperatorProperties").release();
   }
   return ot->last_properties;
 }
@@ -1685,8 +1682,12 @@ int WM_operator_confirm_ex(bContext *C,
 {
   wmOpPopUp *data = MEM_new<wmOpPopUp>(__func__);
   data->op = op;
-  data->width = int(180.0f * UI_SCALE_FAC * UI_style_get()->widgetlabel.points /
+
+  /* Larger dialog needs a wider minimum width to balance with the big icon. */
+  const float min_width = (message == nullptr) ? 180.0f : 230.0f;
+  data->width = int(min_width * UI_SCALE_FAC * UI_style_get()->widgetlabel.points /
                     UI_DEFAULT_TEXT_POINTS);
+
   data->free_op = true;
   data->title = (title == nullptr) ? WM_operatortype_name(op->type, op->ptr) : title;
   data->message = (message == nullptr) ? std::string() : message;
@@ -4137,6 +4138,7 @@ static void gesture_straightline_modal_keymap(wmKeyConfig *keyconf)
   WM_modalkeymap_assign(keymap, "MESH_OT_bisect");
   WM_modalkeymap_assign(keymap, "PAINT_OT_mask_line_gesture");
   WM_modalkeymap_assign(keymap, "SCULPT_OT_project_line_gesture");
+  WM_modalkeymap_assign(keymap, "PAINT_OT_hide_show_line_gesture");
 }
 
 /* Box_select-like modal operators. */
