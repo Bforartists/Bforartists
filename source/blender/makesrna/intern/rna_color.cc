@@ -200,13 +200,11 @@ static std::optional<std::string> rna_ColorRamp_path(const PointerRNA *ptr)
       case ID_LS: {
         /* may be nullptr */
         return BKE_linestyle_path_to_color_ramp((FreestyleLineStyle *)id, (ColorBand *)ptr->data);
-        break;
       }
 
       default:
         /* everything else just uses 'color_ramp' */
         return "color_ramp";
-        break;
     }
   }
   else {
@@ -597,8 +595,11 @@ struct Seq_colorspace_cb_data {
   Sequence *r_seq;
 };
 
-/* Colorspace could be changed for scene, but also VSE strip. If property pointer matches one of
- * strip, set `r_seq`, so not all cached images have to be invalidated. */
+/**
+ * Color-space could be changed for scene, but also sequencer-strip.
+ * If property pointer matches one of strip, set `r_seq`,
+ * so not all cached images have to be invalidated.
+ */
 static bool seq_find_colorspace_settings_cb(Sequence *seq, void *user_data)
 {
   Seq_colorspace_cb_data *cd = (Seq_colorspace_cb_data *)user_data;

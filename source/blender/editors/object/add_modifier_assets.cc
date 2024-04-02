@@ -16,7 +16,7 @@
 
 #include "BKE_asset.hh"
 #include "BKE_context.hh"
-#include "BKE_idprop.h"
+#include "BKE_idprop.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_modifier.hh"
@@ -38,7 +38,7 @@
 
 #include "WM_api.hh"
 
-#include "object_intern.h"
+#include "object_intern.hh"
 
 namespace blender::ed::object {
 
@@ -197,7 +197,7 @@ static void unassigned_assets_draw(const bContext *C, Menu *menu)
 
 static void root_catalogs_draw(const bContext *C, Menu *menu)
 {
-  const Object *object = ED_object_active_context(C);
+  const Object *object = context_active_object(C);
   if (!object) {
     return;
   }
@@ -295,10 +295,10 @@ static int modifier_add_asset_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
-  Object *object = ED_object_active_context(C);
+  Object *object = context_active_object(C);
 
   NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(
-      ED_object_modifier_add(op->reports, bmain, scene, object, nullptr, eModifierType_Nodes));
+      modifier_add(op->reports, bmain, scene, object, nullptr, eModifierType_Nodes));
   if (!nmd) {
     return OPERATOR_CANCELLED;
   }
@@ -398,9 +398,6 @@ void ui_template_modifier_asset_menu_items(uiLayout &layout,
                                            const bContext &C,
                                            const StringRef catalog_path)
 {
-  using namespace blender;
-  using namespace blender::ed;
-  using namespace blender::ed::object;
   bScreen &screen = *CTX_wm_screen(&C);
   asset::AssetItemTree &tree = *get_static_item_tree();
   const asset_system::AssetCatalogTreeItem *item = tree.catalogs.find_root_item(catalog_path);

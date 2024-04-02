@@ -57,7 +57,7 @@ struct wmOperator;
 struct wmWindow;
 struct wmWindowManager;
 
-/* for derivedmesh drawing callbacks, for view3d_select, .... */
+/** For mesh drawing callbacks, for viewport selection, etc. */
 struct ViewContext {
   bContext *C;
   Main *bmain;
@@ -148,7 +148,7 @@ void ED_view3d_from_m4(const float mat[4][4], float ofs[3], float quat[4], const
  * \param lens: The view lens angle set for cameras and lights, normally from View3D.lens.
  */
 void ED_view3d_from_object(
-    const Object *ob, float ofs[3], float quat[4], float *dist, float *lens);
+    const Object *ob, float ofs[3], float quat[4], const float *dist, float *lens);
 /**
  * Set the object transformation from #RegionView3D members.
  * \param depsgraph: The depsgraph to get the evaluated object parent
@@ -357,7 +357,7 @@ void ED_view3d_cursor_snap_draw_util(RegionView3D *rv3d,
                                      const uchar source_color[4],
                                      const uchar target_color[4]);
 
-/* view3d_iterators.cc */
+/* `view3d_iterators.cc` */
 
 /* foreach iterators */
 
@@ -926,7 +926,7 @@ int view3d_opengl_select_with_id_filter(const ViewContext *vc,
                                         eV3DSelectObjectFilter select_filter,
                                         uint select_id);
 
-/* view3d_select.cc */
+/* `view3d_select.cc` */
 
 float ED_view3d_select_dist_px();
 ViewContext ED_view3d_viewcontext_init(bContext *C, Depsgraph *depsgraph);
@@ -1273,19 +1273,7 @@ void ED_view3d_shade_update(Main *bmain, View3D *v3d, ScrArea *area);
 #define RETOPOLOGY_ENABLED(v3d) (OVERLAY_RETOPOLOGY_ENABLED((v3d)->overlay))
 #define RETOPOLOGY_OFFSET(v3d) (OVERLAY_RETOPOLOGY_OFFSET((v3d)->overlay))
 
-/* view3d_draw_legacy.c */
-
-/**
- * Try avoid using these more move out of legacy.
- */
-void ED_view3d_draw_bgpic_test(const Scene *scene,
-                               Depsgraph *depsgraph,
-                               ARegion *region,
-                               View3D *v3d,
-                               bool do_foreground,
-                               bool do_camera_frame);
-
-/* view3d_gizmo_preselect_type.cc */
+/* `view3d_gizmo_preselect_type.cc` */
 
 void ED_view3d_gizmo_mesh_preselect_get_active(const bContext *C,
                                                const wmGizmo *gz,
@@ -1293,7 +1281,7 @@ void ED_view3d_gizmo_mesh_preselect_get_active(const bContext *C,
                                                BMElem **r_ele);
 void ED_view3d_gizmo_mesh_preselect_clear(wmGizmo *gz);
 
-/* space_view3d.cc */
+/* `space_view3d.cc` */
 
 void ED_view3d_buttons_region_layout_ex(const bContext *C,
                                         ARegion *region,

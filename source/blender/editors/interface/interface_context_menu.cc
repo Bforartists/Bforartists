@@ -24,7 +24,7 @@
 
 #include "BKE_addon.h"
 #include "BKE_context.hh"
-#include "BKE_idprop.h"
+#include "BKE_idprop.hh"
 #include "BKE_screen.hh"
 
 #include "ED_asset.hh"
@@ -58,6 +58,7 @@
 
 static IDProperty *shortcut_property_from_rna(bContext *C, uiBut *but)
 {
+  using namespace blender;
   /* Compute data path from context to property. */
 
   /* If this returns null, we won't be able to bind shortcuts to these RNA properties.
@@ -69,15 +70,14 @@ static IDProperty *shortcut_property_from_rna(bContext *C, uiBut *but)
   }
 
   /* Create ID property of data path, to pass to the operator. */
-  const IDPropertyTemplate val = {0};
-  IDProperty *prop = IDP_New(IDP_GROUP, &val, __func__);
-  IDP_AddToGroup(prop, IDP_NewString(final_data_path.value().c_str(), "data_path"));
-
+  IDProperty *prop = bke::idprop::create_group(__func__).release();
+  IDP_AddToGroup(prop, bke::idprop::create("data_path", final_data_path.value()).release());
   return prop;
 }
 
 static const char *shortcut_get_operator_property(bContext *C, uiBut *but, IDProperty **r_prop)
 {
+  using namespace blender;
   if (but->optype) {
     /* Operator */
     *r_prop = (but->opptr && but->opptr->data) ?
@@ -108,17 +108,15 @@ static const char *shortcut_get_operator_property(bContext *C, uiBut *but, IDPro
   }
 
   if (MenuType *mt = UI_but_menutype_get(but)) {
-    const IDPropertyTemplate val = {0};
-    IDProperty *prop = IDP_New(IDP_GROUP, &val, __func__);
-    IDP_AddToGroup(prop, IDP_NewString(mt->idname, "name"));
+    IDProperty *prop = bke::idprop::create_group(__func__).release();
+    IDP_AddToGroup(prop, bke::idprop::create("name", mt->idname).release());
     *r_prop = prop;
     return "WM_OT_call_menu";
   }
 
   if (PanelType *pt = UI_but_paneltype_get(but)) {
-    const IDPropertyTemplate val = {0};
-    IDProperty *prop = IDP_New(IDP_GROUP, &val, __func__);
-    IDP_AddToGroup(prop, IDP_NewString(pt->idname, "name"));
+    IDProperty *prop = blender::bke::idprop::create_group(__func__).release();
+    IDP_AddToGroup(prop, bke::idprop::create("name", pt->idname).release());
     *r_prop = prop;
     return "WM_OT_call_panel";
   }
@@ -1010,6 +1008,34 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
 
     if (type == PROP_STRING && ELEM(subtype, PROP_FILEPATH, PROP_DIRPATH)) {
       if (ui_but_menu_add_path_operators(layout, ptr, prop)) {
+        uiItemS(layout);
+      }
+    }
+  }
+  else if (but->optype && but->opptr && RNA_struct_property_is_set(but->opptr, "filepath")) {
+    /* Operator with "filepath" string property of PROP_FILEPATH subtype. */
+    PropertyRNA *prop = RNA_struct_find_property(but->opptr, "filepath");
+    const PropertySubType subtype = RNA_property_subtype(prop);
+
+    if (prop && RNA_property_type(prop) == PROP_STRING &&
+        subtype == PropertySubType::PROP_FILEPATH)
+    {
+      char filepath[FILE_MAX] = {0};
+      RNA_property_string_get(but->opptr, prop, filepath);
+      if (filepath[0] && BLI_exists(filepath)) {
+        wmOperatorType *ot = WM_operatortype_find("WM_OT_path_open", true);
+        PointerRNA props_ptr;
+        char dir[FILE_MAXDIR];
+        BLI_path_split_dir_part(filepath, dir, sizeof(dir));
+        uiItemFullO_ptr(layout,
+                        ot,
+                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open File Location"),
+                        ICON_NONE,
+                        nullptr,
+                        WM_OP_INVOKE_DEFAULT,
+                        UI_ITEM_NONE,
+                        &props_ptr);
+        RNA_string_set(&props_ptr, "filepath", dir);
         uiItemS(layout);
       }
     }

@@ -265,6 +265,24 @@ ccl_device_inline bool spot_light_sample_from_intersection(
   return true;
 }
 
+/* Find the ray segment lit by the spot light. */
+ccl_device_inline bool spot_light_valid_ray_segment(const ccl_global KernelLight *klight,
+                                                    const float3 P,
+                                                    const float3 D,
+                                                    ccl_private float2 *t_range)
+{
+  /* Convert to local space of the spot light. */
+  const Transform itfm = klight->itfm;
+  float3 local_P = P + klight->spot.dir * klight->spot.ray_segment_dp;
+  local_P = transform_point(&itfm, local_P);
+  const float3 local_D = transform_direction(&itfm, D);
+  const float3 axis = make_float3(0.0f, 0.0f, -1.0f);
+
+  /* Intersect the ray with the smallest enclosing cone of the light spread. */
+  return ray_cone_intersect(
+      axis, local_P, local_D, sqr(klight->spot.cos_half_spot_angle), t_range);
+}
+
 template<bool in_volume_segment>
 ccl_device_forceinline bool spot_light_tree_parameters(const ccl_global KernelLight *klight,
                                                        const float3 centroid,
@@ -273,35 +291,32 @@ ccl_device_forceinline bool spot_light_tree_parameters(const ccl_global KernelLi
                                                        ccl_private float2 &distance,
                                                        ccl_private float3 &point_to_centroid)
 {
-  float dist_point_to_centroid;
-  const float3 point_to_centroid_ = safe_normalize_len(centroid - P, &dist_point_to_centroid);
+  float min_distance;
+  point_to_centroid = safe_normalize_len(centroid - P, &min_distance);
+  distance = min_distance * one_float2();
 
   const float radius = klight->spot.radius;
 
   if (klight->spot.is_sphere) {
-    cos_theta_u = (dist_point_to_centroid > radius) ?
-                      cos_from_sin(radius / dist_point_to_centroid) :
-                      -1.0f;
+    cos_theta_u = (min_distance > radius) ? cos_from_sin(radius / min_distance) : -1.0f;
 
     if (in_volume_segment) {
       return true;
     }
 
-    distance = (dist_point_to_centroid > radius) ?
-                   dist_point_to_centroid * make_float2(1.0f / cos_theta_u, 1.0f) :
-                   one_float2() * radius / M_SQRT2_F;
+    distance = (min_distance > radius) ? min_distance * make_float2(1.0f / cos_theta_u, 1.0f) :
+                                         one_float2() * radius / M_SQRT2_F;
   }
   else {
-    const float hypotenus = sqrtf(sqr(radius) + sqr(dist_point_to_centroid));
-    cos_theta_u = dist_point_to_centroid / hypotenus;
+    const float hypotenus = sqrtf(sqr(radius) + sqr(min_distance));
+    cos_theta_u = min_distance / hypotenus;
 
     if (in_volume_segment) {
       return true;
     }
 
-    distance = make_float2(hypotenus, dist_point_to_centroid);
+    distance.x = hypotenus;
   }
-  point_to_centroid = point_to_centroid_;
 
   return true;
 }

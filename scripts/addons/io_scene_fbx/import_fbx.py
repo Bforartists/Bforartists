@@ -860,7 +860,7 @@ def blen_store_keyframes_multi(fbx_key_times, fcurve_and_key_values_pairs, blen_
     # Compatible with C float type
     bl_keyframe_dtype = np.single
     # Compatible with C char type
-    bl_enum_dtype = np.byte
+    bl_enum_dtype = np.ubyte
 
     # The keyframe_points 'co' are accessed as flattened pairs of (time, value).
     # The key times are the same for each (blen_fcurve, key_values) pair, so only the values need to be updated for each
