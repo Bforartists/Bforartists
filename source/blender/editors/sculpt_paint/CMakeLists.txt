@@ -43,6 +43,7 @@ set(SRC
   grease_pencil_draw_ops.cc
   grease_pencil_erase.cc
   grease_pencil_paint.cc
+  grease_pencil_tint.cc
   paint_canvas.cc
   paint_cursor.cc
   paint_curve.cc

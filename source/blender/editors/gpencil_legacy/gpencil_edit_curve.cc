@@ -34,7 +34,7 @@
 
 #include "DEG_depsgraph.hh"
 
-#include "gpencil_intern.h"
+#include "gpencil_intern.hh"
 
 #include "UI_interface.hh" /*bfa - for the icons*/
 #include "UI_resources.hh" /*bfa - for the icons*/
