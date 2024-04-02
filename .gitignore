@@ -1,6 +1,6 @@
 # generic files to ignore
 .*
-# Bforartists: include .github folder
+# BFA: include .github folder
 !.github
 
 # python temp paths
@@ -56,17 +56,10 @@ waveletNoiseTile.bin
 /locale/user-config.py
 
 # External repositories.
+# BFA: We do not use external repositories for addons
+#/scripts/addons/
+#/scripts/addons_contrib/
 /tests/benchmarks/
-
-# bfa: we don't use external repositories for addons
-# /scripts/addons/
-# /scripts/addons_contrib/
-
-# bfa: ignore remote repos
-/lib/macos_arm64
-/lib/macos_x64
-/lib/windows_x64
-/release/datafiles/assets
 
 # Ignore old submodules directories.
 # Eventually need to get rid of those, but for the first time of transition
