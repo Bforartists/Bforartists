@@ -263,7 +263,7 @@ RenderPass *render_layer_add_pass(RenderResult *rr,
 }
 
 RenderResult *render_result_new(Render *re,
-                                rcti *partrct,
+                                const rcti *partrct,
                                 const char *layername,
                                 const char *viewname)
 {
@@ -1115,7 +1115,9 @@ ImBuf *RE_render_result_rect_to_ibuf(RenderResult *rr,
 
   /* Color -> gray-scale. */
   /* editing directly would alter the render view */
-  if (imf->planes == R_IMF_PLANES_BW && imf->imtype != R_IMF_IMTYPE_MULTILAYER) {
+  if (imf->planes == R_IMF_PLANES_BW && imf->imtype != R_IMF_IMTYPE_MULTILAYER &&
+      !(ibuf->float_buffer.data && !ibuf->byte_buffer.data && ibuf->channels == 1))
+  {
     ImBuf *ibuf_bw = IMB_dupImBuf(ibuf);
     IMB_color_to_bw(ibuf_bw);
     IMB_freeImBuf(ibuf);

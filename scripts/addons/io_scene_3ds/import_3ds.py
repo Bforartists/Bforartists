@@ -184,6 +184,7 @@ scn = None
 
 object_dictionary = {}
 parent_dictionary = {}
+matrix_transform = {}
 object_matrix = {}
 
 
@@ -352,8 +353,9 @@ def add_texture_to_material(image, contextWrapper, pct, extend, alpha, scale, of
 childs_list = []
 parent_list = []
 
-def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAIN, FILTER,
-                       IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, CONVERSE, MEASURE, CURSOR):
+def process_next_chunk(context, file, previous_chunk, imported_objects,
+                       CONSTRAIN, FILTER, IMAGE_SEARCH, WORLD_MATRIX,
+                       KEYFRAME, APPLY_MATRIX, CONVERSE, MEASURE, CURSOR):
 
     contextObName = None
     contextWorld = None
@@ -709,8 +711,9 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
 
         # The main object info chunk
         elif new_chunk.ID == OBJECTINFO:
-            process_next_chunk(context, file, new_chunk, imported_objects, CONSTRAIN, FILTER,
-                               IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, CONVERSE, MEASURE, CURSOR)
+            process_next_chunk(context, file, new_chunk, imported_objects,
+                               CONSTRAIN, FILTER, IMAGE_SEARCH, WORLD_MATRIX,
+                               KEYFRAME, APPLY_MATRIX, CONVERSE, MEASURE, CURSOR)
 
             # keep track of how much we read in the main chunk
             new_chunk.bytes_read += temp_chunk.bytes_read
@@ -1400,7 +1403,10 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif KEYFRAME and new_chunk.ID == POS_TRACK_TAG and tracktype == 'OBJECT':  # Translation
             keyframe_data = {}
             keyframe_data[0] = child.location[:]
-            child.location = read_track_data(new_chunk)[0]
+            trackpos = mathutils.Vector(read_track_data(new_chunk)[0])
+            loca_mtx = mathutils.Matrix.Translation(-1*trackpos)
+            matrix_transform[child.name] = loca_mtx
+            child.location = trackpos
             if child.type in {'LIGHT', 'CAMERA'}:
                 trackposition[0] = child.location
                 CreateTrackData = True
@@ -1474,7 +1480,12 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 new_chunk.bytes_read += SZ_4FLOAT
                 keyframe_rotation[nframe] = rotation
             rad, axis_x, axis_y, axis_z = keyframe_rotation[0]
-            child.rotation_euler = mathutils.Quaternion((axis_x, axis_y, axis_z), -rad).to_euler()  # Why negative?
+            trackrot = mathutils.Quaternion((axis_x, axis_y, axis_z), -rad)  # Why negative?
+            rota_mtx = mathutils.Matrix.Rotation(trackrot.angle, 4, trackrot.axis)
+            transrot = matrix_transform.get(child.name)
+            if transrot is not None:
+                matrix_transform[child.name] = rota_mtx.inverted() @ transrot
+            child.rotation_euler = trackrot.to_euler()
             for keydata in keyframe_rotation.items():
                 rad, axis_x, axis_y, axis_z = keydata[1]
                 child.rotation_euler = mathutils.Quaternion((axis_x, axis_y, axis_z), -rad).to_euler()
@@ -1490,7 +1501,12 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         elif KEYFRAME and new_chunk.ID == SCL_TRACK_TAG and tracktype == 'OBJECT':  # Scale
             keyframe_data = {}
             keyframe_data[0] = child.scale[:]
-            child.scale = read_track_data(new_chunk)[0]
+            trackscale = mathutils.Vector(read_track_data(new_chunk)[0])
+            scale_mtx = mathutils.Matrix.Diagonal(trackscale)
+            transscale = matrix_transform.get(child.name)
+            if transscale is not None:
+                matrix_transform[child.name] = scale_mtx.to_4x4() @ transscale
+            child.scale = trackscale
             if contextTrack_flag & 0x8:  # Flag 0x8 locks X axis
                 child.lock_scale[0] = True
             if contextTrack_flag & 0x10:  # Flag 0x10 locks Y axis
@@ -1558,6 +1574,13 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
         putContextMesh(context, contextMesh_vertls, contextMesh_facels, contextMesh_flag,
             contextMeshMaterials, contextMesh_smooth, WORLD_MATRIX)
 
+    # Fix transform
+    if APPLY_MATRIX:
+        for obj, mtx in matrix_transform.items():
+            cld = object_dictionary.get(obj)
+            if (cld and cld.data) and cld.type == 'MESH':
+                cld.data.transform(mtx)
+
     # Assign parents to objects
     # check _if_ we need to assign first because doing so recalcs the depsgraph
     for ind, ob in enumerate(object_list):
@@ -1575,7 +1598,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
                 ob.parent = object_dict.get(parent)
             except:  # object is None or self to parent exception
                 object_list.pop(ind)
-
+    
         #pivot_list[ind] += pivot_list[parent]  # Not sure this is correct, should parent space matrix be applied before combining?
 
     # if parent name
@@ -1606,6 +1629,16 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             pivot_matrix = mathutils.Matrix.Translation(-1 * pivot)
             # pivot_matrix = mathutils.Matrix.Translation(pivot_matrix.to_3x3() @ -pivot)
             ob.data.transform(pivot_matrix)
+        if APPLY_MATRIX:
+            cld = ob
+            mat = mathutils.Matrix()
+            while cld.parent:
+                trans = matrix_transform.get(cld.parent.name)
+                if trans is not None:
+                    mat = trans @ mat
+                cld = cld.parent
+            if ob.type == 'MESH' and ob.data and ob.parent:
+                ob.data.transform(mat)
 
 
 ##########
@@ -1666,9 +1699,10 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, UNITS=False, IMAGE_SEARCH=True,
 
     imported_objects = []  # Fill this list with objects
     process_next_chunk(context, file, current_chunk, imported_objects, CONSTRAIN, FILTER,
-                       IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, CONVERSE, MEASURE, CURSOR)
+                       IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, APPLY_MATRIX, CONVERSE, MEASURE, CURSOR)
 
     # fixme, make unglobal
+    matrix_transform.clear()
     object_dictionary.clear()
     object_matrix.clear()
 
