@@ -440,10 +440,11 @@ def pkg_zipfile_detect_subdir_or_none(
     return base_dir
 
 
-def pkg_manifest_from_zipfile_and_validate(
+def pkg_manifest_from_zipfile_and_validate_impl(
         zip_fh: zipfile.ZipFile,
         archive_subdir: str,
-) -> Union[PkgManifest, str]:
+        all_errors: bool,
+) -> Union[PkgManifest, List[str]]:
     """
     Validate the manifest and return all errors.
     """
@@ -459,25 +460,46 @@ def pkg_manifest_from_zipfile_and_validate(
         file_content = None
 
     if file_content is None:
-        return "Archive does not contain a manifest"
+        return ["Archive does not contain a manifest"]
 
     manifest_dict = toml_from_bytes(file_content)
     assert isinstance(manifest_dict, dict)
 
     # TODO: forward actual error.
     if manifest_dict is None:
-        return "Archive does not contain a manifest"
+        return ["Archive does not contain a manifest"]
     pkg_idname = manifest_dict.pop("id", None)
     if pkg_idname is None:
-        return "Archive does not contain an \"id\" field"
-    return pkg_manifest_from_dict_and_validate(pkg_idname, manifest_dict, from_repo=False)
+        return ["Archive does not contain an \"id\" field"]
+    return pkg_manifest_from_dict_and_validate_impl(pkg_idname, manifest_dict, from_repo=False, all_errors=all_errors)
+
+
+def pkg_manifest_from_zipfile_and_validate(
+        zip_fh: zipfile.ZipFile,
+        archive_subdir: str,
+) -> Union[PkgManifest, str]:
+    manifest = pkg_manifest_from_zipfile_and_validate_impl(zip_fh, archive_subdir, all_errors=False)
+    if isinstance(manifest, list):
+        return manifest[0]
+    return manifest
+
+
+def pkg_manifest_from_zipfile_and_validate_all_errors(
+        zip_fh: zipfile.ZipFile,
+        archive_subdir: str,
+) -> Union[PkgManifest, List[str]]:
+    return pkg_manifest_from_zipfile_and_validate_impl(zip_fh, archive_subdir, all_errors=True)
 
 
 def pkg_manifest_from_archive_and_validate(
         filepath: str,
 ) -> Union[PkgManifest, str]:
-    # TODO: handle errors.
-    with zipfile.ZipFile(filepath, mode="r") as zip_fh:
+    try:
+        zip_fh_context = zipfile.ZipFile(filepath, mode="r")
+    except BaseException as ex:
+        return "Error extracting archive \"{:s}\"".format(str(ex))
+
+    with contextlib.closing(zip_fh_context) as zip_fh:
         if (archive_subdir := pkg_zipfile_detect_subdir_or_none(zip_fh)) is None:
             return "Archive has no manifest: \"{:s}\"".format(PKG_MANIFEST_FILENAME_TOML)
         return pkg_manifest_from_zipfile_and_validate(zip_fh, archive_subdir)
@@ -1188,6 +1210,23 @@ def generic_arg_local_dir(subparse: argparse.ArgumentParser) -> None:
 
 
 # Only for authoring.
+def generic_arg_package_source_path_positional(subparse: argparse.ArgumentParser) -> None:
+    subparse.add_argument(
+        dest="source_path",
+        type=str,
+        nargs="?",
+        default=".",
+        metavar="SOURCE_PATH",
+        help=(
+            "The package source path "
+            "(either directory containing package files or the package archive).\n"
+            "This path must containing a ``{:s}`` manifest.\n"
+            "\n"
+            "The current directory ``.`` is default.".format(PKG_MANIFEST_FILENAME_TOML)
+        ),
+    )
+
+
 def generic_arg_package_source_dir(subparse: argparse.ArgumentParser) -> None:
     subparse.add_argument(
         "--source-dir",
@@ -1318,7 +1357,7 @@ class subcmd_server:
             filepath = os.path.join(repo_dir, filename)
             manifest = pkg_manifest_from_archive_and_validate(filepath)
             if isinstance(manifest, str):
-                message_warn(msg_fn, "unable to read manifest from {!r}, error: {:s}".format(filepath, manifest))
+                message_warn(msg_fn, "archive validation failed {!r}, error: {:s}".format(filepath, manifest))
                 continue
             manifest_dict = manifest._asdict()
             # TODO: we could have a method besides `_asdict` that excludes the ID.
@@ -1463,7 +1502,16 @@ class subcmd_client:
         # Remove `filepath_local_pkg_temp` if this block exits.
         directories_to_clean: List[str] = []
         with CleanupPathsContext(files=(), directories=directories_to_clean):
-            with zipfile.ZipFile(filepath_archive, mode="r") as zip_fh:
+            try:
+                zip_fh_context = zipfile.ZipFile(filepath_archive, mode="r")
+            except BaseException as ex:
+                message_warn(
+                    msg_fn,
+                    "Error extracting archive: {:s}".format(str(ex)),
+                )
+                return False
+
+            with contextlib.closing(zip_fh_context) as zip_fh:
                 archive_subdir = pkg_zipfile_detect_subdir_or_none(zip_fh)
                 if archive_subdir is None:
                     message_warn(
@@ -1883,7 +1931,13 @@ class subcmd_author:
             return False
 
         with CleanupPathsContext(files=(outfile_temp,), directories=()):
-            with zipfile.ZipFile(outfile_temp, 'w', zipfile.ZIP_LZMA) as zip_fh:
+            try:
+                zip_fh_context = zipfile.ZipFile(outfile_temp, 'w', zipfile.ZIP_LZMA)
+            except BaseException as ex:
+                message_status(msg_fn, "Error creating archive \"{:s}\"".format(str(ex)))
+                return False
+
+            with contextlib.closing(zip_fh_context) as zip_fh:
                 for filepath_abs, filepath_rel in scandir_recursive(
                         pkg_source_dir,
                         # Be more advanced in the future, for now ignore dot-files (`.git`) .. etc.
@@ -1894,7 +1948,11 @@ class subcmd_author:
 
                     # Handy for testing that sub-directories:
                     # zip_fh.write(filepath_abs, manifest.id + "/" + filepath_rel)
-                    zip_fh.write(filepath_abs, filepath_rel)
+                    try:
+                        zip_fh.write(filepath_abs, filepath_rel)
+                    except BaseException as ex:
+                        message_status(msg_fn, "Error adding to archive \"{:s}\"".format(str(ex)))
+                        return False
 
                 request_exit |= message_status(msg_fn, "complete")
                 if request_exit:
@@ -1908,19 +1966,15 @@ class subcmd_author:
         return True
 
     @staticmethod
-    def validate(
+    def _validate_directory(
             msg_fn: MessageFn,
             *,
             pkg_source_dir: str,
     ) -> bool:
-        if not os.path.isdir(pkg_source_dir):
-            message_error(msg_fn, "Missing local \"{:s}\"".format(pkg_source_dir))
-            return False
-
         pkg_manifest_filepath = os.path.join(pkg_source_dir, PKG_MANIFEST_FILENAME_TOML)
 
         if not os.path.exists(pkg_manifest_filepath):
-            message_error(msg_fn, "File \"{:s}\" not found!".format(pkg_manifest_filepath))
+            message_error(msg_fn, "Error, file \"{:s}\" not found!".format(pkg_manifest_filepath))
             return False
 
         # Demote errors to status as the function of this action is to check the manifest is stable.
@@ -1931,8 +1985,94 @@ class subcmd_author:
                 message_status(msg_fn, error_msg)
             return False
 
-        message_status(msg_fn, "Success parsing TOML \"{:s}\"".format(pkg_manifest_filepath))
+        expected_files = []
+        if manifest.type == "add-on":
+            expected_files.append("__init__.py")
+        ok = True
+        for filepath in expected_files:
+            if not os.path.exists(os.path.join(pkg_source_dir, filepath)) is None:
+                message_status(msg_fn, "Error, file missing from {:s}: \"{:s}\"".format(
+                    manifest.type,
+                    filepath,
+                ))
+                ok = False
+        if not ok:
+            return False
+
+        message_status(msg_fn, "Success parsing TOML in \"{:s}\"".format(pkg_source_dir))
         return True
+
+    @staticmethod
+    def _validate_archive(
+            msg_fn: MessageFn,
+            *,
+            pkg_source_archive: str,
+    ) -> bool:
+        # NOTE(@ideasman42): having `_validate_directory` & `_validate_archive`
+        # use separate code-paths isn't ideal in some respects however currently the difference
+        # doesn't cause a lot of duplication.
+        #
+        # Operate on the archive directly because:
+        # - Validating the manifest *does* use shared logic.
+        # - It's faster for large archives or archives with a large number of files
+        #   which will litter the file-system.
+        # - There is already a validation function which is used before installing an archive.
+        #
+        # If it's ever causes too much code-duplication we can always
+        # extract the archive into a temporary directory and run validation there.
+
+        try:
+            zip_fh_context = zipfile.ZipFile(pkg_source_archive, mode="r")
+        except BaseException as ex:
+            message_status(msg_fn, "Error extracting archive \"{:s}\"".format(str(ex)))
+            return False
+
+        with contextlib.closing(zip_fh_context) as zip_fh:
+            if (archive_subdir := pkg_zipfile_detect_subdir_or_none(zip_fh)) is None:
+                message_status(msg_fn, "Error, archive has no manifest: \"{:s}\"".format(PKG_MANIFEST_FILENAME_TOML))
+                return False
+            # Demote errors to status as the function of this action is to check the manifest is stable.
+            manifest = pkg_manifest_from_zipfile_and_validate_all_errors(zip_fh, archive_subdir)
+            if isinstance(manifest, list):
+                message_status(msg_fn, "Error parsing TOML in \"{:s}\"".format(pkg_source_archive))
+                for error_msg in manifest:
+                    message_status(msg_fn, error_msg)
+                return False
+
+            # NOTE: this is arguably *not* manifest validation, the check could be refactored out.
+            # Currently we always want to check both and it's useful to do that while the informatio
+            expected_files = []
+            if manifest.type == "add-on":
+                if archive_subdir:
+                    assert archive_subdir.endswith("/")
+                    expected_files.append(archive_subdir + "__init__.py")
+                else:
+                    expected_files.append("__init__.py")
+            ok = True
+            for filepath in expected_files:
+                if zip_fh.NameToInfo.get(filepath) is None:
+                    message_status(msg_fn, "Error, file missing from {:s}: \"{:s}\"".format(
+                        manifest.type,
+                        filepath,
+                    ))
+                    ok = False
+            if not ok:
+                return False
+
+        message_status(msg_fn, "Success parsing TOML in \"{:s}\"".format(pkg_source_archive))
+        return True
+
+    @staticmethod
+    def validate(
+            msg_fn: MessageFn,
+            *,
+            source_path: str,
+    ) -> bool:
+        if os.path.isdir(source_path):
+            result = subcmd_author._validate_directory(msg_fn, pkg_source_dir=source_path)
+        else:
+            result = subcmd_author._validate_archive(msg_fn, pkg_source_archive=source_path)
+        return result
 
 
 class subcmd_dummy:
@@ -2263,7 +2403,7 @@ def argparse_create_author_validate(
         description="Validate the package meta-data in the current directory.",
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    generic_arg_package_source_dir(subparse)
+    generic_arg_package_source_path_positional(subparse)
 
     if args_internal:
         generic_arg_output_type(subparse)
@@ -2271,7 +2411,7 @@ def argparse_create_author_validate(
     subparse.set_defaults(
         func=lambda args: subcmd_author.validate(
             msg_fn_from_args(args),
-            pkg_source_dir=args.source_dir,
+            source_path=args.source_path,
         ),
     )
 
@@ -2488,5 +2628,4 @@ def main(
 
 
 if __name__ == "__main__":
-    # TODO: `sys.exit(..)` exit-code.
-    main()
+    sys.exit(main())

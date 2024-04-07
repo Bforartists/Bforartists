@@ -81,6 +81,9 @@ static void standard_defines(Vector<const char *> &sources)
   else if (GPU_type_matches(GPU_DEVICE_INTEL, GPU_OS_ANY, GPU_DRIVER_ANY)) {
     sources.append("#define GPU_INTEL\n");
   }
+  else if (GPU_type_matches(GPU_DEVICE_APPLE, GPU_OS_ANY, GPU_DRIVER_ANY)) {
+    sources.append("#define GPU_APPLE\n");
+  }
   /* some useful defines to detect OS type */
   if (GPU_type_matches(GPU_DEVICE_ANY, GPU_OS_WIN, GPU_DRIVER_ANY)) {
     sources.append("#define OS_WIN\n");
@@ -104,7 +107,7 @@ static void standard_defines(Vector<const char *> &sources)
       sources.append("#define GPU_VULKAN\n");
       break;
     default:
-      BLI_assert(false && "Invalid GPU Backend Type");
+      BLI_assert_msg(false, "Invalid GPU Backend Type");
       break;
   }
 

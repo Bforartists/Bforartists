@@ -200,8 +200,18 @@ def command_output_filter_exclude(
     return [(a, b) for a, b in output_json if a not in exclude_types]
 
 
-def command_output(args: Sequence[str]) -> str:
-    result = subprocess.check_output([*CMD, *args]).decode("utf-8")
+def command_output(
+        args: Sequence[str],
+        expected_returncode=0,
+) -> str:
+    proc = subprocess.run(
+        [*CMD, *args],
+        stdout=subprocess.PIPE,
+        check=expected_returncode == 0,
+    )
+    if proc.returncode != expected_returncode:
+        raise subprocess.CalledProcessError(proc.returncode, proc.args, output=proc.stdout, stderr=proc.stderr)
+    result = proc.stdout.decode("utf-8")
     if IS_WIN32:
         result = result.replace("\r\n", "\n")
     return result
@@ -211,11 +221,18 @@ def command_output_from_json_0(
         args: Sequence[str],
         *,
         exclude_types: Optional[Set[str]] = None,
+        expected_returncode=0,
 ) -> Sequence[Tuple[str, Any]]:
     result = []
-    for json_bytes in subprocess.check_output(
+
+    proc = subprocess.run(
         [*CMD, *args, "--output-type=JSON_0"],
-    ).split(b'\0'):
+        stdout=subprocess.PIPE,
+        check=expected_returncode == 0,
+    )
+    if proc.returncode != expected_returncode:
+        raise subprocess.CalledProcessError(proc.returncode, proc.args, output=proc.stdout, stderr=proc.stderr)
+    for json_bytes in proc.stdout.split(b'\0'):
         if not json_bytes:
             continue
         json_str = json_bytes.decode("utf-8")
@@ -366,10 +383,13 @@ class TestCLI_WithRepo(unittest.TestCase):
             self.assertTrue(os.path.isdir(os.path.join(temp_dir_local, "another_package")))
 
             # Uninstall (not found).
-            output_json = command_output_from_json_0([
-                "uninstall", "another_package_",
-                "--local-dir", temp_dir_local,
-            ])
+            output_json = command_output_from_json_0(
+                [
+                    "uninstall", "another_package_",
+                    "--local-dir", temp_dir_local,
+                ],
+                expected_returncode=1,
+            )
             self.assertEqual(
                 output_json, [
                     ("ERROR", "Package not found \"another_package_\"")
