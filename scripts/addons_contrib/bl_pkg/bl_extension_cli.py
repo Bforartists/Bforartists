@@ -403,10 +403,17 @@ class subcmd_repo:
             directory: str,
             url: str,
             cache: bool,
+            clear_all: bool,
             no_prefs: bool,
     ) -> bool:
         from bpy import context
-        repo = context.preferences.filepaths.extension_repos.new(
+
+        extension_repos = context.preferences.filepaths.extension_repos
+        if clear_all:
+            while extension_repos:
+                extension_repos.remove(extension_repos[0])
+
+        repo = extension_repos.new(
             name=name,
             module=id,
             custom_directory=directory,
@@ -497,6 +504,7 @@ def generic_arg_no_prefs(subparse: argparse.ArgumentParser) -> None:
 def generic_arg_package_list_positional(subparse: argparse.ArgumentParser) -> None:
     subparse.add_argument(
         dest="packages",
+        metavar="PACKAGES",
         type=str,
         help=(
             "The packages to operate on (separated by ``,`` without spaces)."
@@ -507,6 +515,7 @@ def generic_arg_package_list_positional(subparse: argparse.ArgumentParser) -> No
 def generic_arg_package_file_positional(subparse: argparse.ArgumentParser) -> None:
     subparse.add_argument(
         dest="file",
+        metavar="FILE",
         type=str,
         help=(
             "The packages file."
@@ -524,6 +533,17 @@ def generic_arg_repo_id(subparse: argparse.ArgumentParser) -> None:
             "The repository identifier."
         ),
         required=True,
+    )
+
+
+def generic_arg_package_repo_id_positional(subparse: argparse.ArgumentParser) -> None:
+    subparse.add_argument(
+        dest="id",
+        metavar="ID",
+        type=str,
+        help=(
+            "The repository identifier."
+        ),
     )
 
 
@@ -680,13 +700,7 @@ def cli_extension_args_repo_add(subparsers: "argparse._SubParsersAction[argparse
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    subparse.add_argument(
-        dest="id",
-        type=str,
-        help=(
-            "The repository identifier."
-        ),
-    )
+    generic_arg_package_repo_id_positional(subparse)
 
     # Optional.
     subparse.add_argument(
@@ -735,6 +749,15 @@ def cli_extension_args_repo_add(subparsers: "argparse._SubParsersAction[argparse
         ),
     )
 
+    subparse.add_argument(
+        "--clear-all",
+        dest="clear_all",
+        action="store_true",
+        help=(
+            "Clear all repositories before adding, simplifies test setup."
+        ),
+    )
+
     generic_arg_no_prefs(subparse)
 
     subparse.set_defaults(
@@ -744,6 +767,7 @@ def cli_extension_args_repo_add(subparsers: "argparse._SubParsersAction[argparse
             directory=args.directory,
             url=args.url,
             cache=args.cache,
+            clear_all=args.clear_all,
             no_prefs=args.no_prefs,
         ),
     )
@@ -759,13 +783,7 @@ def cli_extension_args_repo_remove(subparsers: "argparse._SubParsersAction[argpa
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    subparse.add_argument(
-        dest="id",
-        type=str,
-        help=(
-            "The repository identifier."
-        ),
-    )
+    generic_arg_package_repo_id_positional(subparse)
     generic_arg_no_prefs(subparse)
 
     subparse.set_defaults(

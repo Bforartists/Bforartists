@@ -5,8 +5,8 @@
 bl_info = {
     "name": "FBX format",
     "author": "Campbell Barton, Bastien Montagne, Jens Restemeier, @Mysteryem",
-    "version": (5, 12, 2),
-    "blender": (4, 1, 0),
+    "version": (5, 12, 3),
+    "blender": (4, 2, 0),
     "location": "File > Import-Export",
     "description": "FBX IO meshes, UVs, vertex colors, materials, textures, cameras, lamps and actions",
     "warning": "",
@@ -40,6 +40,7 @@ from bpy_extras.io_utils import (
         orientation_helper,
         path_reference_mode,
         axis_conversion,
+        poll_file_object_drop,
         )
 
 
@@ -193,7 +194,14 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
             )
 
     def draw(self, context):
-        pass
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        import_panel_include(layout, self)
+        import_panel_transform(layout, self)
+        import_panel_animation(layout, self)
+        import_panel_armature(layout, self)
 
     def execute(self, context):
         keywords = self.as_keywords(ignore=("filter_glob", "directory", "ui_tab", "filepath", "files"))
@@ -212,159 +220,68 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
         else:
             return import_fbx.load(self, context, filepath=self.filepath, **keywords)
 
+    def invoke(self, context, event):
+        return self.invoke_popup(context)
 
-class FBX_PT_import_include(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Include"
-    bl_parent_id = "FILE_PT_operator"
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "IMPORT_SCENE_OT_fbx"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.prop(operator, "use_custom_normals")
-        layout.prop(operator, "use_subsurf")
-        layout.prop(operator, "use_custom_props")
-        sub = layout.row()
+def import_panel_include(layout, operator):
+    header, body = layout.panel("FBX_import_include", default_closed=False)
+    header.label(text="Include")
+    if body:
+        body.prop(operator, "use_custom_normals")
+        body.prop(operator, "use_subsurf")
+        body.prop(operator, "use_custom_props")
+        sub = body.row()
         sub.enabled = operator.use_custom_props
         sub.prop(operator, "use_custom_props_enum_as_string")
-        layout.prop(operator, "use_image_search")
-        layout.prop(operator, "colors_type")
+        body.prop(operator, "use_image_search")
+        body.prop(operator, "colors_type")
 
 
-class FBX_PT_import_transform(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Transform"
-    bl_parent_id = "FILE_PT_operator"
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "IMPORT_SCENE_OT_fbx"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.prop(operator, "global_scale")
-        layout.prop(operator, "decal_offset")
-        row = layout.row()
+def import_panel_transform(layout, operator):
+    header, body = layout.panel("FBX_import_transform", default_closed=False)
+    header.label(text="Transform")
+    if body:
+        body.prop(operator, "global_scale")
+        body.prop(operator, "decal_offset")
+        row = body.row()
         row.prop(operator, "bake_space_transform")
         row.label(text="", icon='ERROR')
-        layout.prop(operator, "use_prepost_rot")
+        body.prop(operator, "use_prepost_rot")
+
+        import_panel_transform_orientation(body, operator)
 
 
-class FBX_PT_import_transform_manual_orientation(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Manual Orientation"
-    bl_parent_id = "FBX_PT_import_transform"
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "IMPORT_SCENE_OT_fbx"
-
-    def draw_header(self, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        self.layout.prop(operator, "use_manual_orientation", text="")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.enabled = operator.use_manual_orientation
-
-        layout.prop(operator, "axis_forward")
-        layout.prop(operator, "axis_up")
+def import_panel_transform_orientation(layout, operator):
+    header, body = layout.panel("FBX_import_transform_manual_orientation", default_closed=False)
+    header.use_property_split = False
+    header.prop(operator, "use_manual_orientation", text="")
+    header.label(text="Manual Orientation")
+    if body:
+        body.enabled = operator.use_manual_orientation
+        body.prop(operator, "axis_forward")
+        body.prop(operator, "axis_up")
 
 
-class FBX_PT_import_animation(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Animation"
-    bl_parent_id = "FILE_PT_operator"
-    bl_options = {'DEFAULT_CLOSED'}
 
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "IMPORT_SCENE_OT_fbx"
-
-    def draw_header(self, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        self.layout.prop(operator, "use_anim", text="")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.enabled = operator.use_anim
-
-        layout.prop(operator, "anim_offset")
+def import_panel_animation(layout, operator):
+    header, body = layout.panel("FBX_import_animation", default_closed=True)
+    header.use_property_split = False
+    header.prop(operator, "use_anim", text="")
+    header.label(text="Animation")
+    if body:
+        body.enabled = operator.use_anim
+        body.prop(operator, "anim_offset")
 
 
-class FBX_PT_import_armature(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Armature"
-    bl_parent_id = "FILE_PT_operator"
-    bl_options = {'DEFAULT_CLOSED'}
 
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "IMPORT_SCENE_OT_fbx"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.prop(operator, "ignore_leaf_bones")
-        layout.prop(operator, "force_connect_children"),
-        layout.prop(operator, "automatic_bone_orientation"),
-        sub = layout.column()
+def import_panel_armature(layout, operator):
+    header, body = layout.panel("FBX_import_armature", default_closed=True)
+    header.label(text="Armature")
+    if body:
+        body.prop(operator, "ignore_leaf_bones")
+        body.prop(operator, "force_connect_children"),
+        body.prop(operator, "automatic_bone_orientation"),
+        sub = body.column()
         sub.enabled = not operator.automatic_bone_orientation
         sub.prop(operator, "primary_bone_axis")
         sub.prop(operator, "secondary_bone_axis")
@@ -636,7 +553,16 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
             )
 
     def draw(self, context):
-        pass
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        export_main(layout, self)
+        export_panel_include(layout, self)
+        export_panel_transform(layout, self)
+        export_panel_geometry(layout, self)
+        export_panel_armature(layout, self)
+        export_panel_animation(layout, self)
 
     @property
     def check_extension(self):
@@ -663,205 +589,103 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
         return export_fbx_bin.save(self, context, **keywords)
 
 
-class FBX_PT_export_main(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = ""
-    bl_parent_id = "FILE_PT_operator"
-    bl_options = {'HIDE_HEADER'}
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENE_OT_fbx"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        row = layout.row(align=True)
-        row.prop(operator, "path_mode")
-        sub = row.row(align=True)
-        sub.enabled = (operator.path_mode == 'COPY')
-        sub.prop(operator, "embed_textures", text="", icon='PACKAGE' if operator.embed_textures else 'UGLYPACKAGE')
-        row = layout.row(align=True)
-        row.prop(operator, "batch_mode")
-        sub = row.row(align=True)
-        sub.prop(operator, "use_batch_own_dir", text="", icon='NEWFOLDER')
+def export_main(layout, operator):
+    row = layout.row(align=True)
+    row.prop(operator, "path_mode")
+    sub = row.row(align=True)
+    sub.enabled = (operator.path_mode == 'COPY')
+    sub.prop(operator, "embed_textures", text="", icon='PACKAGE' if operator.embed_textures else 'UGLYPACKAGE')
+    row = layout.row(align=True)
+    row.prop(operator, "batch_mode")
+    sub = row.row(align=True)
+    sub.prop(operator, "use_batch_own_dir", text="", icon='NEWFOLDER')
 
 
-class FBX_PT_export_include(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Include"
-    bl_parent_id = "FILE_PT_operator"
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENE_OT_fbx"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        sublayout = layout.column(heading="Limit to")
+def export_panel_include(layout, operator):
+    header, body = layout.panel("FBX_export_include", default_closed=False)
+    header.label(text="Include")
+    if body:
+        sublayout = body.column(heading="Limit to")
         sublayout.enabled = (operator.batch_mode == 'OFF')
         sublayout.prop(operator, "use_selection")
         sublayout.prop(operator, "use_visible")
         sublayout.prop(operator, "use_active_collection")
 
-        layout.column().prop(operator, "object_types")
-        layout.prop(operator, "use_custom_props")
+        body.column().prop(operator, "object_types")
+        body.prop(operator, "use_custom_props")
 
 
-class FBX_PT_export_transform(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Transform"
-    bl_parent_id = "FILE_PT_operator"
+def export_panel_transform(layout, operator):
+    header, body = layout.panel("FBX_export_transform", default_closed=False)
+    header.label(text="Transform")
+    if body:
+        body.prop(operator, "global_scale")
+        body.prop(operator, "apply_scale_options")
 
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
+        body.prop(operator, "axis_forward")
+        body.prop(operator, "axis_up")
 
-        return operator.bl_idname == "EXPORT_SCENE_OT_fbx"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.prop(operator, "global_scale")
-        layout.prop(operator, "apply_scale_options")
-
-        layout.prop(operator, "axis_forward")
-        layout.prop(operator, "axis_up")
-
-        layout.prop(operator, "apply_unit_scale")
-        layout.prop(operator, "use_space_transform")
-        row = layout.row()
+        body.prop(operator, "apply_unit_scale")
+        body.prop(operator, "use_space_transform")
+        row = body.row()
         row.prop(operator, "bake_space_transform")
         row.label(text="", icon='ERROR')
 
 
-class FBX_PT_export_geometry(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Geometry"
-    bl_parent_id = "FILE_PT_operator"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENE_OT_fbx"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.prop(operator, "mesh_smooth_type")
-        layout.prop(operator, "use_subsurf")
-        layout.prop(operator, "use_mesh_modifiers")
-        #sub = layout.row()
+def export_panel_geometry(layout, operator):
+    header, body = layout.panel("FBX_export_geometry", default_closed=True)
+    header.label(text="Geometry")
+    if body:
+        body.prop(operator, "mesh_smooth_type")
+        body.prop(operator, "use_subsurf")
+        body.prop(operator, "use_mesh_modifiers")
+        #sub = body.row()
         #sub.enabled = operator.use_mesh_modifiers and False  # disabled in 2.8...
         #sub.prop(operator, "use_mesh_modifiers_render")
-        layout.prop(operator, "use_mesh_edges")
-        layout.prop(operator, "use_triangles")
-        sub = layout.row()
+        body.prop(operator, "use_mesh_edges")
+        body.prop(operator, "use_triangles")
+        sub = body.row()
         #~ sub.enabled = operator.mesh_smooth_type in {'OFF'}
         sub.prop(operator, "use_tspace")
-        layout.prop(operator, "colors_type")
-        layout.prop(operator, "prioritize_active_color")
+        body.prop(operator, "colors_type")
+        body.prop(operator, "prioritize_active_color")
 
 
-class FBX_PT_export_armature(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Armature"
-    bl_parent_id = "FILE_PT_operator"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENE_OT_fbx"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.prop(operator, "primary_bone_axis")
-        layout.prop(operator, "secondary_bone_axis")
-        layout.prop(operator, "armature_nodetype")
-        layout.prop(operator, "use_armature_deform_only")
-        layout.prop(operator, "add_leaf_bones")
+def export_panel_armature(layout, operator):
+    header, body = layout.panel("FBX_export_armature", default_closed=True)
+    header.label(text="Armature")
+    if body:
+        body.prop(operator, "primary_bone_axis")
+        body.prop(operator, "secondary_bone_axis")
+        body.prop(operator, "armature_nodetype")
+        body.prop(operator, "use_armature_deform_only")
+        body.prop(operator, "add_leaf_bones")
 
 
-class FBX_PT_export_bake_animation(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Bake Animation"
-    bl_parent_id = "FILE_PT_operator"
-    bl_options = {'DEFAULT_CLOSED'}
+def export_panel_animation(layout, operator):
+    header, body = layout.panel("FBX_export_bake_animation", default_closed=True)
+    header.use_property_split = False
+    header.prop(operator, "bake_anim", text="")
+    header.label(text="Animation")
+    if body:
+        body.enabled = operator.bake_anim
+        body.prop(operator, "bake_anim_use_all_bones")
+        body.prop(operator, "bake_anim_use_nla_strips")
+        body.prop(operator, "bake_anim_use_all_actions")
+        body.prop(operator, "bake_anim_force_startend_keying")
+        body.prop(operator, "bake_anim_step")
+        body.prop(operator, "bake_anim_simplify_factor")
+
+
+class IO_FH_fbx(bpy.types.FileHandler):
+    bl_idname = "IO_FH_fbx"
+    bl_label = "FBX"
+    bl_import_operator = "import_scene.fbx"
+    bl_file_extensions = ".fbx"
 
     @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENE_OT_fbx"
-
-    def draw_header(self, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        self.layout.prop(operator, "bake_anim", text="")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.enabled = operator.bake_anim
-        layout.prop(operator, "bake_anim_use_all_bones")
-        layout.prop(operator, "bake_anim_use_nla_strips")
-        layout.prop(operator, "bake_anim_use_all_actions")
-        layout.prop(operator, "bake_anim_force_startend_keying")
-        layout.prop(operator, "bake_anim_step")
-        layout.prop(operator, "bake_anim_simplify_factor")
+    def poll_drop(cls, context):
+        return poll_file_object_drop(context)
 
 
 def menu_func_import(self, context):
@@ -874,18 +698,8 @@ def menu_func_export(self, context):
 
 classes = (
     ImportFBX,
-    FBX_PT_import_include,
-    FBX_PT_import_transform,
-    FBX_PT_import_transform_manual_orientation,
-    FBX_PT_import_animation,
-    FBX_PT_import_armature,
     ExportFBX,
-    FBX_PT_export_main,
-    FBX_PT_export_include,
-    FBX_PT_export_transform,
-    FBX_PT_export_geometry,
-    FBX_PT_export_armature,
-    FBX_PT_export_bake_animation,
+    IO_FH_fbx,
 )
 
 
