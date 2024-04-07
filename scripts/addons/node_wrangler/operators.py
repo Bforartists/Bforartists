@@ -2592,63 +2592,6 @@ class NWAddMultipleImages(Operator, NWBase, ImportHelper):
         return {'FINISHED'}
 
 
-class NWViewerFocus(bpy.types.Operator):
-    """Set the viewer tile center to the mouse position"""
-    bl_idname = "node.nw_viewer_focus"
-    bl_label = "Viewer Focus"
-
-    x: bpy.props.IntProperty()
-    y: bpy.props.IntProperty()
-
-    @classmethod
-    def poll(cls, context):
-        return (nw_check(cls, context)
-                and nw_check_space_type(cls, context, {'CompositorNodeTree'}))
-
-    def execute(self, context):
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
-        render = context.scene.render
-        space = context.space_data
-        percent = render.resolution_percentage * 0.01
-
-        nodes, links = get_nodes_links(context)
-        viewers = [n for n in nodes if n.type == 'VIEWER']
-
-        if viewers:
-            mlocx = event.mouse_region_x
-            mlocy = event.mouse_region_y
-            select_node = bpy.ops.node.select(location=(mlocx, mlocy), extend=False)
-
-            if 'FINISHED' not in select_node:  # only run if we're not clicking on a node
-                region_x = context.region.width
-                region_y = context.region.height
-
-                region_center_x = context.region.width / 2
-                region_center_y = context.region.height / 2
-
-                bd_x = render.resolution_x * percent * space.backdrop_zoom
-                bd_y = render.resolution_y * percent * space.backdrop_zoom
-
-                backdrop_center_x = (bd_x / 2) - space.backdrop_offset[0]
-                backdrop_center_y = (bd_y / 2) - space.backdrop_offset[1]
-
-                margin_x = region_center_x - backdrop_center_x
-                margin_y = region_center_y - backdrop_center_y
-
-                abs_mouse_x = (mlocx - margin_x) / bd_x
-                abs_mouse_y = (mlocy - margin_y) / bd_y
-
-                for node in viewers:
-                    node.center_x = abs_mouse_x
-                    node.center_y = abs_mouse_y
-            else:
-                return {'PASS_THROUGH'}
-
-        return self.execute(context)
-
-
 class NWSaveViewer(bpy.types.Operator, ExportHelper):
     """Save the current viewer node to an image file"""
     bl_idname = "node.nw_save_viewer"
@@ -2838,7 +2781,6 @@ classes = (
     NWCallInputsMenu,
     NWAddSequence,
     NWAddMultipleImages,
-    NWViewerFocus,
     NWSaveViewer,
     NWResetNodes,
 )

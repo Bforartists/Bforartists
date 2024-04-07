@@ -297,7 +297,7 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
         row.prop(screen, "use_play_image_editors", text="Image Editor")
         row = col.row()
         row.separator()
-        row.prop(screen, "use_play_properties_editors", text="Properties Editor")
+        row.prop(screen, "use_play_properties_editors", text="Properties and Sidebars Editor")
         row = col.row()
         row.separator()
         row.prop(screen, "use_play_clip_editors", text="Movie Clip Editor")
