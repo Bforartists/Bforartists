@@ -114,7 +114,7 @@ class BFA_OT_insertframe_right(op):
 class BFA_OT_removeframe_left(op):
     bl_idname = "anim.removeframe_left"
     bl_label = "Remove Frame Left"
-    bl_description = "RRemoves a frame and nudges all frames on the left  towards the timeline cursor"
+    bl_description = "Removes a frame and nudges all frames on the left towards the timeline cursor"
     bl_icon = 'PANEL_CLOSE'
 
     def execute(self, context):
