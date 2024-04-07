@@ -560,7 +560,7 @@ CCGKey BKE_subdiv_ccg_key_top_level(const SubdivCCG &subdiv_ccg)
  *   {(x, y), {x + 1, y}, {x + 1, y + 1}, {x, y + 1}}
  *
  * The result is stored in normals storage from TLS. */
-static void subdiv_ccg_recalc_inner_face_normals(SubdivCCG &subdiv_ccg,
+static void subdiv_ccg_recalc_inner_face_normals(const SubdivCCG &subdiv_ccg,
                                                  const CCGKey &key,
                                                  MutableSpan<float3> face_normals,
                                                  const int corner)
@@ -590,7 +590,7 @@ static void subdiv_ccg_recalc_inner_face_normals(SubdivCCG &subdiv_ccg,
 }
 
 /* Average normals at every grid element, using adjacent faces normals. */
-static void subdiv_ccg_average_inner_face_normals(SubdivCCG &subdiv_ccg,
+static void subdiv_ccg_average_inner_face_normals(const SubdivCCG &subdiv_ccg,
                                                   const CCGKey &key,
                                                   const Span<float3> face_normals,
                                                   const int corner)
@@ -690,7 +690,7 @@ static void average_grid_element_value_v3(float a[3], float b[3])
   copy_v3_v3(b, a);
 }
 
-static void average_grid_element(SubdivCCG &subdiv_ccg,
+static void average_grid_element(const SubdivCCG &subdiv_ccg,
                                  const CCGKey &key,
                                  CCGElem *grid_element_a,
                                  CCGElem *grid_element_b)
@@ -744,7 +744,7 @@ static void element_accumulator_mul_fl(GridElementAccumulator &accumulator, cons
   accumulator.mask *= f;
 }
 
-static void element_accumulator_copy(SubdivCCG &subdiv_ccg,
+static void element_accumulator_copy(const SubdivCCG &subdiv_ccg,
                                      const CCGKey &key,
                                      CCGElem &destination,
                                      const GridElementAccumulator &accumulator)
@@ -795,7 +795,7 @@ static void subdiv_ccg_average_inner_face_grids(SubdivCCG &subdiv_ccg,
 
 static void subdiv_ccg_average_grids_boundary(SubdivCCG &subdiv_ccg,
                                               const CCGKey &key,
-                                              SubdivCCGAdjacentEdge &adjacent_edge,
+                                              const SubdivCCGAdjacentEdge &adjacent_edge,
                                               MutableSpan<GridElementAccumulator> accumulators)
 {
   const int num_adjacent_faces = adjacent_edge.num_adjacent_faces;
@@ -837,7 +837,7 @@ struct AverageGridsCornerData {
 
 static void subdiv_ccg_average_grids_corners(SubdivCCG &subdiv_ccg,
                                              const CCGKey &key,
-                                             SubdivCCGAdjacentVertex &adjacent_vertex)
+                                             const SubdivCCGAdjacentVertex &adjacent_vertex)
 {
   const int num_adjacent_faces = adjacent_vertex.num_adjacent_faces;
   if (num_adjacent_faces == 1) {
@@ -871,7 +871,7 @@ static void subdiv_ccg_average_boundaries(SubdivCCG &subdiv_ccg,
   adjacent_edge_mask.foreach_segment(GrainSize(1024), [&](const IndexMaskSegment segment) {
     MutableSpan<GridElementAccumulator> accumulators = all_accumulators.local();
     for (const int i : segment) {
-      SubdivCCGAdjacentEdge &adjacent_edge = subdiv_ccg.adjacent_edges[i];
+      const SubdivCCGAdjacentEdge &adjacent_edge = subdiv_ccg.adjacent_edges[i];
       subdiv_ccg_average_grids_boundary(subdiv_ccg, key, adjacent_edge, accumulators);
     }
   });
@@ -883,7 +883,7 @@ static void subdiv_ccg_average_corners(SubdivCCG &subdiv_ccg,
 {
   using namespace blender;
   adjacent_vert_mask.foreach_index(GrainSize(1024), [&](const int i) {
-    SubdivCCGAdjacentVertex &adjacent_vert = subdiv_ccg.adjacent_verts[i];
+    const SubdivCCGAdjacentVertex &adjacent_vert = subdiv_ccg.adjacent_verts[i];
     subdiv_ccg_average_grids_corners(subdiv_ccg, key, adjacent_vert);
   });
 }
@@ -1004,15 +1004,8 @@ BLI_INLINE void subdiv_ccg_neighbors_init(SubdivCCGNeighbors &neighbors,
                                           const int num_duplicates)
 {
   const int size = num_unique + num_duplicates;
-  neighbors.size = size;
+  neighbors.coords.reinitialize(size);
   neighbors.num_duplicates = num_duplicates;
-  if (size < ARRAY_SIZE(neighbors.coords_fixed)) {
-    neighbors.coords = neighbors.coords_fixed;
-  }
-  else {
-    neighbors.coords = static_cast<SubdivCCGCoord *>(
-        MEM_mallocN(sizeof(*neighbors.coords) * size, "SubdivCCGNeighbors.coords"));
-  }
 }
 
 /* Check whether given coordinate belongs to a grid corner. */
@@ -1520,7 +1513,7 @@ void BKE_subdiv_ccg_neighbor_coords_get(const SubdivCCG &subdiv_ccg,
   }
 
 #ifndef NDEBUG
-  for (int i = 0; i < r_neighbors.size; i++) {
+  for (const int i : r_neighbors.coords.index_range()) {
     BLI_assert(BKE_subdiv_ccg_check_coord_valid(subdiv_ccg, r_neighbors.coords[i]));
   }
 #endif
