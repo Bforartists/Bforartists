@@ -347,8 +347,6 @@ kmi_defs = (
     # Lazy Connect with Menu
     (operators.NWLazyConnect.bl_idname, 'RIGHTMOUSE', 'PRESS', False,
      True, True, (('with_menu', True),), "Lazy Connect with Socket Menu"),
-    # Viewer Tile Center
-    (operators.NWViewerFocus.bl_idname, 'LEFTMOUSE', 'DOUBLE_CLICK', False, False, False, None, "Set Viewers Tile Center"),
     # Align Nodes
     (operators.NWAlignNodes.bl_idname, 'EQUAL', 'PRESS', False, True,
      False, None, "Align selected nodes neatly in a row/column"),
