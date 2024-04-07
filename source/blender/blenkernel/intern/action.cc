@@ -350,8 +350,8 @@ void action_group_colors_sync(bActionGroup *grp, const bActionGroup *ref_grp)
   if (grp->customCol) {
     if (grp->customCol > 0) {
       /* copy theme colors on-to group's custom color in case user tries to edit color */
-      bTheme *btheme = static_cast<bTheme *>(U.themes.first);
-      ThemeWireColor *col_set = &btheme->tarm[(grp->customCol - 1)];
+      const bTheme *btheme = static_cast<const bTheme *>(U.themes.first);
+      const ThemeWireColor *col_set = &btheme->tarm[(grp->customCol - 1)];
 
       memcpy(&grp->cs, col_set, sizeof(ThemeWireColor));
     }
@@ -1779,6 +1779,9 @@ void what_does_obaction(Object *ob,
 
     /* execute effects of Action on to workob (or its PoseChannels) */
     BKE_animsys_evaluate_animdata(&workob->id, &adt, anim_eval_context, ADT_RECALC_ANIM, false);
+
+    /* Ensure stack memory set here isn't accessed later, relates to !118847. */
+    workob->adt = nullptr;
   }
   /* Ensure stack memory set here isn't accessed later, see !118847. */
   workob->runtime = nullptr;
