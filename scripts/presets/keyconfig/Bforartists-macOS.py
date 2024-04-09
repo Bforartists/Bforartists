@@ -6348,6 +6348,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("anim.keyframe_insert", {"type": 'I', "value": 'PRESS', "repeat": True}, None),
     ],
    },
   ),
