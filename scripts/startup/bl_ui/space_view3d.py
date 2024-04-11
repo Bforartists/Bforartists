@@ -5384,7 +5384,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.operator("mesh.mark_sharp", icon="MARKSHARPEDGES")
             col.operator("mesh.mark_sharp", text="Clear Sharp", icon="CLEARSHARPEDGES").clear = True
-            col.operator("mesh.set_sharpness_by_angle", icon="NORMAL_SMOOTH")
+            col.operator("mesh.set_sharpness_by_angle", icon="MARKSHARPANGLE")
 
             if with_freestyle:
                 col.separator()
@@ -5647,7 +5647,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         props.use_verts = True
         props.clear = True
 
-        layout.operator("mesh.set_sharpness_by_angle", icon="NORMAL_SMOOTH")
+        layout.operator("mesh.set_sharpness_by_angle", icon="MARKSHARPANGLE")
 
         if with_freestyle:
             layout.separator()
