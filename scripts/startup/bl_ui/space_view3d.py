@@ -6383,7 +6383,7 @@ class VIEW3D_MT_edit_font(Menu):
 
         layout.separator()
 
-        layout.operator("FONT_OT_text_insert_unicode")
+        layout.operator("FONT_OT_text_insert_unicode", icon="UNICODE")
         layout.menu("VIEW3D_MT_edit_font_chars")
         layout.menu("VIEW3D_MT_edit_font_move")  # bfa menu
 
