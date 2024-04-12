@@ -535,6 +535,7 @@ class TOOLBAR_MT_meshedit(Menu):
                     if addon_prefs.mesh_edges_subdiv:
 
                         row = layout.row(align=True)
+                        row.operator("mesh.subdivide", text = "", icon = "SUBDIVIDE_EDGES")
                         row.operator("mesh.subdivide_edgering", text = "", icon = "SUBDIVEDGELOOP")
                         row.operator("mesh.unsubdivide", text = "", icon = "UNSUBDIVIDE")
 
