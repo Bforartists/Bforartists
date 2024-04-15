@@ -67,21 +67,6 @@
 #include "sequencer_intern.hh"
 
 /* -------------------------------------------------------------------- */
-/** \name Structs & Enums
- * \{ */
-
-struct TransSeq {
-  int start, machine;
-  int startofs, endofs;
-  int anim_startofs, anim_endofs;
-  // int final_left, final_right; /* UNUSED. */
-  int len;
-  float content_start;
-};
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
 /** \name Public Context Checks
  * \{ */
 
@@ -1337,7 +1322,7 @@ static const EnumPropertyItem prop_split_types[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-EnumPropertyItem prop_side_types[] = {
+const EnumPropertyItem prop_side_types[] = {
     {SEQ_SIDE_MOUSE, "MOUSE", 0, "Mouse Position", ""},
     {SEQ_SIDE_LEFT, "LEFT", 0, "Left", ""},
     {SEQ_SIDE_RIGHT, "RIGHT", 0, "Right", ""},
@@ -1721,8 +1706,7 @@ static int sequencer_delete_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/* bfa - [[maybe_unused]] */
-[[maybe_unused]] static int sequencer_delete_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static int sequencer_delete_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   Scene *scene = CTX_data_scene(C);
   ListBase *markers = &scene->markers;
@@ -2673,38 +2657,18 @@ void SEQUENCER_OT_change_effect_input(wmOperatorType *ot)
 /** \name Change Effect Type Operator
  * \{ */
 
-EnumPropertyItem sequencer_prop_effect_types[] = {
+const EnumPropertyItem sequencer_prop_effect_types[] = {
     {SEQ_TYPE_CROSS, "CROSS", ICON_NODE_VECTOR, "Crossfade", "Crossfade effect strip type"},
     {SEQ_TYPE_ADD, "ADD", ICON_SEQ_ADD, "Add", "Add effect strip type"},
     {SEQ_TYPE_SUB, "SUBTRACT", ICON_NODE_INVERT, "Subtract", "Subtract effect strip type"},
-    {SEQ_TYPE_ALPHAOVER,
-     "ALPHA_OVER",
-     ICON_SEQ_ALPHA_OVER,
-     "Alpha Over",
-     "Alpha Over effect strip type"},
-    {SEQ_TYPE_ALPHAUNDER,
-     "ALPHA_UNDER",
-     ICON_NODE_HOLDOUTSHADER,
-     "Alpha Under",
-     "Alpha Under effect strip type"},
-    {SEQ_TYPE_GAMCROSS,
-     "GAMMA_CROSS",
-     ICON_NODE_VECTOR,
-     "Gamma Cross",
-     "Gamma Cross effect strip type"},
+    {SEQ_TYPE_ALPHAOVER, "ALPHA_OVER", ICON_SEQ_ALPHA_OVER, "Alpha Over", "Alpha Over effect strip type"},
+    {SEQ_TYPE_ALPHAUNDER, "ALPHA_UNDER", ICON_NODE_HOLDOUTSHADER, "Alpha Under", "Alpha Under effect strip type"},
+    {SEQ_TYPE_GAMCROSS, "GAMMA_CROSS", ICON_NODE_VECTOR, "Gamma Cross", "Gamma Cross effect strip type"},
     {SEQ_TYPE_MUL, "MULTIPLY", ICON_SEQ_MULTIPLY, "Multiply", "Multiply effect strip type"},
-    {SEQ_TYPE_OVERDROP,
-     "OVER_DROP",
-     ICON_SEQ_ALPHA_OVER,
-     "Alpha Over Drop",
-     "Alpha Over Drop effect strip type"},
+    {SEQ_TYPE_OVERDROP, "OVER_DROP", ICON_SEQ_ALPHA_OVER, "Alpha Over Drop", "Alpha Over Drop effect strip type"},
     {SEQ_TYPE_WIPE, "WIPE", ICON_NODE_VECTOR_TRANSFORM, "Wipe", "Wipe effect strip type"},
     {SEQ_TYPE_GLOW, "GLOW", ICON_LIGHT_SUN, "Glow", "Glow effect strip type"},
-    {SEQ_TYPE_TRANSFORM,
-     "TRANSFORM",
-     ICON_TRANSFORM_MOVE,
-     "Transform",
-     "Transform effect strip type"},
+    {SEQ_TYPE_TRANSFORM, "TRANSFORM", ICON_TRANSFORM_MOVE, "Transform", "Transform effect strip type"},
     {SEQ_TYPE_COLOR, "COLOR", ICON_COLOR, "Color", "Color effect strip type"},
     {SEQ_TYPE_SPEED, "SPEED", ICON_NODE_CURVE_TIME, "Speed", "Color effect strip type"},
     {SEQ_TYPE_MULTICAM, "MULTICAM", ICON_SEQ_MULTICAM, "Multicam Selector", ""},
@@ -3326,17 +3290,9 @@ void SEQUENCER_OT_strip_transform_clear(wmOperatorType *ot)
  * \{ */
 
 static const EnumPropertyItem scale_fit_methods[] = {
-    {SEQ_SCALE_TO_FIT, "FIT", 0, "Scale to Fit", "Scale the image so that it fits in the preview"},
-    {SEQ_SCALE_TO_FILL,
-     "FILL",
-     0,
-     "Scale to Fill",
-     "Scale the image so that it fills the preview completely"},
-    {SEQ_STRETCH_TO_FILL,
-     "STRETCH",
-     0,
-     "Stretch to Fill",
-     "Stretch the image so that it fills the preview"},
+    {SEQ_SCALE_TO_FIT, "FIT", ICON_VIEW_FIT, "Scale to Fit", "Scale image so fits in preview"},
+    {SEQ_SCALE_TO_FILL, "FILL", ICON_VIEW_FILL, "Scale to Fill", "Scale image so it fills preview completely"},
+    {SEQ_STRETCH_TO_FILL, "STRETCH", ICON_VIEW_STRETCH, "Stretch to Fill", "Stretch image so it fills preview"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
