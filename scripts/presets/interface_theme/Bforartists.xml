@@ -1,5 +1,7 @@
 <bpy>
-  <Theme>
+  <Theme
+    filepath="C:\3D_Stuff\bfa_build_windows_x64_vc17_Debug\bin\4.2\scripts\presets\interface_theme\Bforartists.xml"
+    >
     <user_interface>
       <ThemeUserInterface
         menu_shadow_fac="0.5"
@@ -369,7 +371,6 @@
         speaker="#000000"
         vertex="#000000"
         vertex_select="#ff8500"
-        vertex_active="#ffffff"
         vertex_size="4"
         vertex_bevel="#00a5ff"
         vertex_unreferenced="#000000"
@@ -736,9 +737,8 @@
         grid="#505050ff"
         vertex="#000000"
         vertex_select="#ff8500"
-        vertex_active="#000000"
         vertex_size="3"
-        vertex_bevel="#000000"
+        vertex_bevel="#00a5ff"
         vertex_unreferenced="#000000"
         face="#ffffff0a"
         face_select="#ff85003c"
