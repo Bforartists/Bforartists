@@ -10,6 +10,7 @@
 #include <cstring>
 #include <optional>
 
+#include "DNA_object_enums.h"
 #include "MEM_guardedalloc.h"
 
 #include "DNA_brush_types.h"
@@ -81,7 +82,7 @@ using blender::Span;
 using blender::Vector;
 using blender::bke::AttrDomain;
 
-static void sculpt_attribute_update_refs(Object *ob);
+static void sculpt_attribute_update_refs(Object *ob, PBVHType pbvhtype);
 static SculptAttribute *sculpt_attribute_ensure_ex(Object *ob,
                                                    AttrDomain domain,
                                                    eCustomDataType proptype,
@@ -250,6 +251,7 @@ const uchar PAINT_CURSOR_VERTEX_PAINT[3] = {255, 255, 255};
 const uchar PAINT_CURSOR_WEIGHT_PAINT[3] = {200, 200, 255};
 const uchar PAINT_CURSOR_TEXTURE_PAINT[3] = {255, 255, 255};
 const uchar PAINT_CURSOR_SCULPT_CURVES[3] = {255, 100, 100};
+const uchar PAINT_CURSOR_SCULPT_GREASE_PENCIL[3] = {255, 100, 100};
 
 static ePaintOverlayControlFlags overlay_flags = (ePaintOverlayControlFlags)0;
 
@@ -361,6 +363,9 @@ bool BKE_paint_ensure_from_paintmode(Scene *sce, PaintMode mode)
     case PaintMode::SculptCurves:
       paint_ptr = (Paint **)&ts->curves_sculpt;
       break;
+    case PaintMode::SculptGreasePencil:
+      paint_ptr = (Paint **)&ts->gp_sculptpaint;
+      break;
     case PaintMode::Invalid:
       break;
   }
@@ -398,6 +403,8 @@ Paint *BKE_paint_get_active_from_paintmode(Scene *sce, PaintMode mode)
         return &ts->gp_weightpaint->paint;
       case PaintMode::SculptCurves:
         return &ts->curves_sculpt->paint;
+      case PaintMode::SculptGreasePencil:
+        return &ts->gp_sculptpaint->paint;
       case PaintMode::Invalid:
         return nullptr;
       default:
@@ -432,6 +439,8 @@ const EnumPropertyItem *BKE_paint_get_tool_enum_from_paintmode(const PaintMode m
       return rna_enum_brush_gpencil_weight_types_items;
     case PaintMode::SculptCurves:
       return rna_enum_brush_curves_sculpt_tool_items;
+    case PaintMode::SculptGreasePencil:
+      return rna_enum_brush_gpencil_sculpt_types_items;
     case PaintMode::Invalid:
       break;
   }
@@ -462,6 +471,8 @@ const char *BKE_paint_get_tool_prop_id_from_paintmode(const PaintMode mode)
       return "gpencil_weight_tool";
     case PaintMode::SculptCurves:
       return "curves_sculpt_tool";
+    case PaintMode::SculptGreasePencil:
+      return "gpencil_sculpt_tool";
     case PaintMode::Invalid:
       break;
   }
@@ -485,6 +496,7 @@ const char *BKE_paint_get_tool_enum_translation_context_from_paintmode(const Pai
     case PaintMode::SculptGPencil:
     case PaintMode::WeightGPencil:
     case PaintMode::SculptCurves:
+    case PaintMode::SculptGreasePencil:
     case PaintMode::Invalid:
       break;
   }
@@ -596,7 +608,13 @@ PaintMode BKE_paintmode_get_active_from_context(const bContext *C)
         case OB_MODE_SCULPT:
           return PaintMode::Sculpt;
         case OB_MODE_SCULPT_GPENCIL_LEGACY:
-          return PaintMode::SculptGPencil;
+          if (obact->type == OB_GPENCIL_LEGACY) {
+            return PaintMode::SculptGPencil;
+          }
+          if (obact->type == OB_GREASE_PENCIL) {
+            return PaintMode::SculptGreasePencil;
+          }
+          return PaintMode::Invalid;
         case OB_MODE_WEIGHT_GPENCIL_LEGACY:
           return PaintMode::WeightGPencil;
         case OB_MODE_VERTEX_PAINT:
@@ -648,6 +666,8 @@ PaintMode BKE_paintmode_get_from_tool(const bToolRef *tref)
         return PaintMode::SculptCurves;
       case CTX_MODE_PAINT_GREASE_PENCIL:
         return PaintMode::GPencil;
+      case CTX_MODE_SCULPT_GREASE_PENCIL:
+        return PaintMode::SculptGreasePencil;
     }
   }
   else if (tref->space_type == SPACE_IMAGE) {
@@ -759,6 +779,8 @@ uint BKE_paint_get_brush_tool_offset_from_paintmode(const PaintMode mode)
       return offsetof(Brush, gpencil_weight_tool);
     case PaintMode::SculptCurves:
       return offsetof(Brush, curves_sculpt_tool);
+    case PaintMode::SculptGreasePencil:
+      return offsetof(Brush, gpencil_sculpt_tool);
     case PaintMode::Invalid:
       break; /* We don't use these yet. */
   }
@@ -1093,6 +1115,8 @@ eObjectMode BKE_paint_object_mode_from_paintmode(const PaintMode mode)
       return OB_MODE_SCULPT_CURVES;
     case PaintMode::GPencil:
       return OB_MODE_PAINT_GREASE_PENCIL;
+    case PaintMode::SculptGreasePencil:
+      return OB_MODE_SCULPT_GPENCIL_LEGACY;
     case PaintMode::Invalid:
     default:
       return OB_MODE_OBJECT;
@@ -1754,7 +1778,7 @@ static void sculpt_update_object(Depsgraph *depsgraph,
 
   BKE_pbvh_subdiv_cgg_set(ss->pbvh, ss->subdiv_ccg);
 
-  sculpt_attribute_update_refs(ob);
+  sculpt_attribute_update_refs(ob, BKE_pbvh_type(ss->pbvh));
   sculpt_update_persistent_base(ob);
 
   if (ob->type == OB_MESH) {
@@ -2211,7 +2235,7 @@ PBVH *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Object *ob)
   BKE_pbvh_pmap_set(pbvh, ob->sculpt->vert_to_face_map);
   ob->sculpt->pbvh = pbvh;
 
-  sculpt_attribute_update_refs(ob);
+  sculpt_attribute_update_refs(ob, BKE_pbvh_type(pbvh));
   return pbvh;
 }
 
@@ -2463,7 +2487,7 @@ static bool sculpt_attribute_create(SculptSession *ss,
   return true;
 }
 
-static bool sculpt_attr_update(Object *ob, SculptAttribute *attr)
+static bool sculpt_attr_update(Object *ob, SculptAttribute *attr, PBVHType pbvh_type)
 {
   SculptSession *ss = ob->sculpt;
   int elem_num = sculpt_attr_elem_count_get(ob, attr->domain);
@@ -2476,7 +2500,7 @@ static bool sculpt_attr_update(Object *ob, SculptAttribute *attr)
 
   /* Check if we are a coerced simple array and shouldn't be. */
   bad |= attr->simple_array && !attr->params.simple_array &&
-         !ELEM(BKE_pbvh_type(ss->pbvh), PBVH_GRIDS, PBVH_BMESH);
+         !ELEM(pbvh_type, PBVH_GRIDS, PBVH_BMESH);
 
   CustomData *cdata = sculpt_get_cdata(ob, attr->domain);
   if (cdata && !attr->simple_array) {
@@ -2507,7 +2531,7 @@ static bool sculpt_attr_update(Object *ob, SculptAttribute *attr)
                             attr->name,
                             attr,
                             &attr->params,
-                            BKE_pbvh_type(ss->pbvh),
+                            pbvh_type,
                             attr->data_for_bmesh);
   }
 
@@ -2548,19 +2572,17 @@ static SculptAttribute *sculpt_alloc_attr(SculptSession *ss)
   return nullptr;
 }
 
-SculptAttribute *BKE_sculpt_attribute_get(Object *ob,
-                                          AttrDomain domain,
-                                          eCustomDataType proptype,
-                                          const char *name)
+/* The PBVH is NOT guaranteed to exist at the point of this method being called. */
+static SculptAttribute *sculpt_attribute_get_ex(
+    Object *ob, PBVHType pbvhtype, AttrDomain domain, eCustomDataType proptype, const char *name)
 {
   SculptSession *ss = ob->sculpt;
-
   /* See if attribute is cached in ss->temp_attributes. */
   SculptAttribute *attr = sculpt_get_cached_layer(ss, domain, proptype, name);
 
   if (attr) {
-    if (sculpt_attr_update(ob, attr)) {
-      sculpt_attribute_update_refs(ob);
+    if (sculpt_attr_update(ob, attr, pbvhtype)) {
+      sculpt_attribute_update_refs(ob, pbvhtype);
     }
 
     return attr;
@@ -2605,6 +2627,17 @@ SculptAttribute *BKE_sculpt_attribute_get(Object *ob,
   return nullptr;
 }
 
+SculptAttribute *BKE_sculpt_attribute_get(Object *ob,
+                                          AttrDomain domain,
+                                          eCustomDataType proptype,
+                                          const char *name)
+{
+  SculptSession *ss = ob->sculpt;
+  BLI_assert(ss->pbvh != nullptr);
+
+  return sculpt_attribute_get_ex(ob, BKE_pbvh_type(ss->pbvh), domain, proptype, name);
+}
+
 static SculptAttribute *sculpt_attribute_ensure_ex(Object *ob,
                                                    AttrDomain domain,
                                                    eCustomDataType proptype,
@@ -2614,10 +2647,10 @@ static SculptAttribute *sculpt_attribute_ensure_ex(Object *ob,
                                                    bool flat_array_for_bmesh)
 {
   SculptSession *ss = ob->sculpt;
-  SculptAttribute *attr = BKE_sculpt_attribute_get(ob, domain, proptype, name);
+  SculptAttribute *attr = sculpt_attribute_get_ex(ob, pbvhtype, domain, proptype, name);
 
   if (attr) {
-    sculpt_attr_update(ob, attr);
+    sculpt_attr_update(ob, attr, pbvhtype);
 
     /* Since "stroke_only" is not a CustomData flag we have
      * to sync its parameter setting manually. Fixes #104618.
@@ -2632,7 +2665,7 @@ static SculptAttribute *sculpt_attribute_ensure_ex(Object *ob,
   /* Create attribute. */
   sculpt_attribute_create(
       ss, ob, domain, proptype, name, attr, params, pbvhtype, flat_array_for_bmesh);
-  sculpt_attribute_update_refs(ob);
+  sculpt_attribute_update_refs(ob, pbvhtype);
 
   return attr;
 }
@@ -2700,7 +2733,7 @@ void BKE_sculpt_attributes_destroy_temporary_stroke(Object *ob)
   }
 }
 
-static void sculpt_attribute_update_refs(Object *ob)
+static void sculpt_attribute_update_refs(Object *ob, PBVHType pbvhtype)
 {
   SculptSession *ss = ob->sculpt;
 
@@ -2710,7 +2743,7 @@ static void sculpt_attribute_update_refs(Object *ob)
       SculptAttribute *attr = ss->temp_attributes + j;
 
       if (attr->used) {
-        sculpt_attr_update(ob, attr);
+        sculpt_attr_update(ob, attr, pbvhtype);
       }
     }
 
@@ -2804,7 +2837,7 @@ bool BKE_sculpt_attribute_destroy(Object *ob, SculptAttribute *attr)
       CustomData_free_layer(cdata, attr->proptype, totelem, layer_i);
     }
 
-    sculpt_attribute_update_refs(ob);
+    sculpt_attribute_update_refs(ob, BKE_pbvh_type(ss->pbvh));
   }
 
   attr->data = nullptr;

@@ -7,6 +7,7 @@ from bpy.types import (
     Menu,
     Operator,
     OperatorFileListElement,
+    Panel,
     WindowManager,
 )
 from bpy.props import (
@@ -18,6 +19,7 @@ from bpy.app.translations import (
     pgettext_rpt as rpt_,
     pgettext_data as data_,
 )
+from bl_ui.utils import PresetPanel
 
 
 # For preset popover menu
@@ -26,6 +28,25 @@ WindowManager.preset_name = StringProperty(
     description="Name for new preset",
     default=data_("New Preset"),
 )
+
+
+def _call_preset_cb(fn, context, filepath):
+    # Allow "None" so the caller doesn't have to assign a variable and check it.
+    if fn is None:
+        return
+
+    # Support a `filepath` argument, optional for backwards compatibility.
+    fn_arg_count = getattr(getattr(fn, "__code__", None), "co_argcount", None)
+    if fn_arg_count == 2:
+        args = (context, filepath)
+    else:
+        print("Deprecated since Blender 4.2, a filepath argument should be included in:", fn)
+        args = (context, )
+
+    try:
+        fn(*args)
+    except BaseException as ex:
+        print("Internal error running", fn, str(ex))
 
 
 class AddPresetBase:
@@ -239,8 +260,7 @@ class ExecutePreset(Operator):
             self.report({'ERROR'}, rpt_("Unknown file type: %r") % ext)
             return {'CANCELLED'}
 
-        if hasattr(preset_class, "reset_cb"):
-            preset_class.reset_cb(context)
+        _call_preset_cb(getattr(preset_class, "reset_cb", None), context, filepath)
 
         if ext == ".py":
             try:
@@ -252,8 +272,7 @@ class ExecutePreset(Operator):
             import rna_xml
             rna_xml.xml_file_run(context, filepath, preset_class.preset_xml_map)
 
-        if hasattr(preset_class, "post_cb"):
-            preset_class.post_cb(context)
+        _call_preset_cb(getattr(preset_class, "post_cb", None), context, filepath)
 
         return {'FINISHED'}
 
@@ -587,6 +606,11 @@ class RemovePresetInterfaceTheme(AddPresetBase, Operator):
     def invoke(self, context, event):
         return context.window_manager.invoke_confirm(self, event, title="Remove Custom Theme", confirm_text="Delete")
 
+    def post_cb(self, context):
+        # Without this, the name & colors are kept after removing the theme.
+        # Even though the theme is removed from the list, it's seems like a bug to keep it displayed after removal.
+        bpy.ops.preferences.reset_default_theme()
+
 
 class SavePresetInterfaceTheme(AddPresetBase, Operator):
     """Save a custom theme in the preset list"""
@@ -629,6 +653,8 @@ class SavePresetInterfaceTheme(AddPresetBase, Operator):
             import traceback
             traceback.print_exc()
             return {'CANCELLED'}
+
+        context.preferences.themes[0].filepath = filepath
 
         return {'FINISHED'}
 
@@ -748,6 +774,24 @@ class WM_MT_operator_presets(Menu):
         return AddPresetOperator.operator_path(self.operator)
 
     preset_operator = "script.execute_preset"
+
+
+class WM_PT_operator_presets(PresetPanel, Panel):
+    bl_label = "Operator Presets"
+    preset_add_operator = "wm.operator_preset_add"
+    preset_operator = "script.execute_preset"
+
+    @property
+    def preset_subdir(self):
+        return AddPresetOperator.operator_path(self.operator)
+
+    @property
+    def preset_add_operator_properties(self):
+        return {"operator": self.operator}
+
+    def draw(self, context):
+        self.operator = context.active_operator.bl_idname
+        PresetPanel.draw(self, context)
 
 
 class WM_OT_operator_presets_cleanup(Operator):
@@ -921,5 +965,6 @@ classes = (
     AddPresetEEVEERaytracing,
     ExecutePreset,
     WM_MT_operator_presets,
+    WM_PT_operator_presets,
     WM_OT_operator_presets_cleanup,
 )
