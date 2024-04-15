@@ -219,6 +219,9 @@ class ARMATURE_MT_collection_tree_context_menu(Menu):
         layout.operator("armature.collection_select", text="Select Bones", icon="RESTRICT_SELECT_OFF")
         layout.operator("armature.collection_deselect", text="Deselect Bones", icon="SELECT_NONE")
 
+        layout.separator()
+        layout.operator("UI_OT_view_item_rename", text="Rename")
+
 
 class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
     bl_label = "Inverse Kinematics"
