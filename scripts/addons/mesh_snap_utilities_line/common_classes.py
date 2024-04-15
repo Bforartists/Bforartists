@@ -40,7 +40,7 @@ class SnapNavigation():
     def __init__(self, context, use_ndof):
         # TO DO:
         # 'View Orbit', 'View Pan', 'NDOF Orbit View', 'NDOF Pan View'
-        self.use_ndof = use_ndof and context.preferences.inputs.use_ndof
+        self.use_ndof = use_ndof and bpy.app.build_options.input_ndof
 
         self._rotate = set()
         self._move = set()
