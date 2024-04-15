@@ -42,7 +42,7 @@
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_sound.h"
-#include "BKE_workspace.h"
+#include "BKE_workspace.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -4407,23 +4407,21 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
 
   uiItemS(layout);
 
-  if (area->spacetype != SPACE_FILE) {
-    uiItemO(layout,
-            area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
-            ICON_MAXIMIZE_AREA,
-            "SCREEN_OT_screen_full_area");
+  uiItemO(layout,
+          area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
+          ICON_MAXIMIZE_AREA,
+          "SCREEN_OT_screen_full_area");
 
-    if (!area->full) {
-      uiItemFullO(layout,
-                  "SCREEN_OT_screen_full_area",
-                  IFACE_("Full Screen Area"),
-                  ICON_FULLSCREEN_ENTER,
-                  nullptr,
-                  WM_OP_INVOKE_DEFAULT,
-                  UI_ITEM_NONE,
-                  &ptr);
-      RNA_boolean_set(&ptr, "use_hide_panels", true);
-    }
+  if (area->spacetype != SPACE_FILE && !area->full) {
+    uiItemFullO(layout,
+                "SCREEN_OT_screen_full_area",
+                IFACE_("Full Screen Area"),
+                ICON_FULLSCREEN_ENTER,
+                nullptr,
+                WM_OP_INVOKE_DEFAULT,
+                UI_ITEM_NONE,
+                &ptr);
+    RNA_boolean_set(&ptr, "use_hide_panels", true);
   }
 
   uiItemO(layout, nullptr, ICON_NEW_WINDOW, "SCREEN_OT_area_dupli");
@@ -5117,7 +5115,8 @@ static void ed_screens_statusbar_menu_create(uiLayout *layout, void * /*arg*/)
     uiItemR(layout, &ptr, "show_statusbar_vram", UI_ITEM_NONE, IFACE_("Video Memory"), ICON_NONE);
   }
   /*bfa - bforartists version, not blender version*/
-  uiItemR(layout, &ptr, "show_statusbar_version", UI_ITEM_NONE, IFACE_("Bforartists Version"), ICON_NONE);
+  uiItemR(
+      layout, &ptr, "show_statusbar_version", UI_ITEM_NONE, IFACE_("Bforartists Version"), ICON_NONE);
 }
 
 static int screen_context_menu_invoke(bContext *C, wmOperator * /*op*/, const wmEvent * /*event*/)
@@ -5351,6 +5350,8 @@ static int screen_animation_step_invoke(bContext *C, wmOperator * /*op*/, const 
   if (!(wt && wt == event->customdata)) {
     return OPERATOR_PASS_THROUGH;
   }
+
+  wmWindow *win = CTX_wm_window(C);
 
 #ifdef PROFILE_AUDIO_SYNCH
   static int old_frame = 0;

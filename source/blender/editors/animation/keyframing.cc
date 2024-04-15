@@ -247,6 +247,35 @@ static int insert_key_with_keyingset(bContext *C, wmOperator *op, KeyingSet *ks)
   return OPERATOR_FINISHED;
 }
 
+static bool is_idproperty_keyable(IDProperty *prop, const PropertyRNA *property_rna)
+{
+  if (RNA_property_is_runtime(property_rna)) {
+    return false;
+  }
+
+  if (ELEM(prop->type,
+           eIDPropertyType::IDP_BOOLEAN,
+           eIDPropertyType::IDP_INT,
+           eIDPropertyType::IDP_FLOAT,
+           eIDPropertyType::IDP_DOUBLE))
+  {
+    return true;
+  }
+
+  if (prop->type == eIDPropertyType::IDP_ARRAY) {
+    if (ELEM(prop->subtype,
+             eIDPropertyType::IDP_BOOLEAN,
+             eIDPropertyType::IDP_INT,
+             eIDPropertyType::IDP_FLOAT,
+             eIDPropertyType::IDP_DOUBLE))
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 static blender::Vector<std::string> construct_rna_paths(PointerRNA *ptr)
 {
   eRotationModes rotation_mode;
@@ -302,7 +331,17 @@ static blender::Vector<std::string> construct_rna_paths(PointerRNA *ptr)
       LISTBASE_FOREACH (IDProperty *, prop, &properties->data.group) {
         char name_escaped[MAX_IDPROP_NAME * 2];
         BLI_str_escape(name_escaped, prop->name, sizeof(name_escaped));
-        paths.append(fmt::format("[\"{}\"]", name_escaped));
+        std::string path = fmt::format("[\"{}\"]", name_escaped);
+        PointerRNA resolved_ptr;
+        PropertyRNA *resolved_prop;
+        const bool is_resolved = RNA_path_resolve_property(
+            ptr, path.c_str(), &resolved_ptr, &resolved_prop);
+        if (!is_resolved) {
+          continue;
+        }
+        if (is_idproperty_keyable(prop, resolved_prop)) {
+          paths.append(path);
+        }
       }
     }
   }
@@ -338,6 +377,12 @@ static int insert_key(bContext *C, wmOperator *op)
   const bool found_selection = get_selection(C, &selection);
   if (!found_selection) {
     BKE_reportf(op->reports, RPT_ERROR, "Unsupported context mode");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (selection.is_empty()) {
+    BKE_reportf(op->reports, RPT_WARNING, "Nothing selected to key");
+    return OPERATOR_CANCELLED;
   }
 
   Main *bmain = CTX_data_main(C);
@@ -351,22 +396,34 @@ static int insert_key(bContext *C, wmOperator *op)
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
       depsgraph, BKE_scene_frame_get(scene));
 
+  animrig::CombinedKeyingResult combined_result;
   for (PointerRNA &id_ptr : selection) {
     ID *selected_id = id_ptr.owner_id;
+    if (!id_can_have_animdata(selected_id)) {
+      BKE_reportf(op->reports,
+                  RPT_ERROR,
+                  "Could not insert keyframe, as this type does not support animation data (ID = "
+                  "%s)",
+                  selected_id->name);
+      continue;
+    }
     if (!BKE_id_is_editable(bmain, selected_id)) {
       BKE_reportf(op->reports, RPT_ERROR, "'%s' is not editable", selected_id->name + 2);
       continue;
     }
     Vector<std::string> rna_paths = construct_rna_paths(&id_ptr);
 
-    animrig::insert_key_rna(&id_ptr,
-                            rna_paths.as_span(),
-                            scene_frame,
-                            insert_key_flags,
-                            key_type,
-                            bmain,
-                            op->reports,
-                            anim_eval_context);
+    combined_result.merge(animrig::insert_key_rna(&id_ptr,
+                                                  rna_paths.as_span(),
+                                                  scene_frame,
+                                                  insert_key_flags,
+                                                  key_type,
+                                                  bmain,
+                                                  anim_eval_context));
+  }
+
+  if (combined_result.get_count(animrig::SingleKeyingResult::SUCCESS) == 0) {
+    combined_result.generate_reports(op->reports);
   }
 
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_ADDED, nullptr);

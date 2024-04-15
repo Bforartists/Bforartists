@@ -949,6 +949,7 @@ static const PaintMode brush_select_paint_modes[] = {
     PaintMode::SculptGPencil,
     PaintMode::WeightGPencil,
     PaintMode::SculptCurves,
+    PaintMode::SculptGreasePencil,
 };
 
 static int brush_select_exec(bContext *C, wmOperator *op)

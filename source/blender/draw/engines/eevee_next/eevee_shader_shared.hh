@@ -506,8 +506,13 @@ struct VolumesInfoData {
    * are not invertible. We store the finite projection matrix and use it for this purpose. */
   float4x4 winmat_finite;
   float4x4 wininv_finite;
-  /* Convert volume frustum UV(+ linear Z) coordinates into previous frame UV(+ linear Z). */
-  float4x4 history_matrix;
+  /* Copies of the matrices above but without jittering. Used for re-projection. */
+  float4x4 wininv_stable;
+  float4x4 winmat_stable;
+  /* Previous render sample copy of winmat_stable. */
+  float4x4 history_winmat_stable;
+  /* Transform from current view space to previous render sample view space. */
+  float4x4 curr_view_to_past_view;
   /* Size of the froxel grid texture. */
   packed_int3 tex_size;
   /* Maximum light intensity during volume lighting evaluation. */
@@ -529,7 +534,14 @@ struct VolumesInfoData {
   float depth_near;
   float depth_far;
   float depth_distribution;
-  float _pad0;
+  /* Previous render sample copy of the depth mapping parameters. */
+  float history_depth_near;
+  float history_depth_far;
+  float history_depth_distribution;
+  /* Amount of history to blend during the scatter phase. */
+  float history_opacity;
+
+  float _pad1;
 };
 BLI_STATIC_ASSERT_ALIGN(VolumesInfoData, 16)
 
@@ -705,7 +717,6 @@ enum eLightType : uint32_t {
 enum LightingType : uint32_t {
   LIGHT_DIFFUSE = 0u,
   LIGHT_SPECULAR = 1u,
-  LIGHT_TRANSMIT = 2u,
   LIGHT_VOLUME = 3u,
 };
 
@@ -925,10 +936,8 @@ BLI_STATIC_ASSERT_ALIGN(LightData, 16)
  * the GPU so that only lights of a certain type can read for the appropriate union member.
  * Return cross platform garbage data as some platform can return cleared memory if we early exit.
  */
-#ifdef SAFE_UNION_ACCESS
+#if SAFE_UNION_ACCESS
 #  ifdef GPU_SHADER
-#    define DATA_MEMBER do_not_access_directly
-
 /* Should result in a beautiful zebra pattern on invalid load. */
 #    if defined(GPU_FRAGMENT_SHADER)
 #      define GARBAGE_VALUE sin(gl_FragCoord.x + gl_FragCoord.y)
@@ -944,7 +953,6 @@ BLI_STATIC_ASSERT_ALIGN(LightData, 16)
 
 #  else /* C++ */
 #    define GARBAGE_VALUE 0.0f
-#    define DATA_MEMBER local
 #  endif
 
 #  define SAFE_BEGIN(data_type, check) \
@@ -958,6 +966,12 @@ BLI_STATIC_ASSERT_ALIGN(LightData, 16)
 #else
 #  define SAFE_BEGIN(data_type, check) data_type data;
 #  define SAFE_ASSIGN_LIGHT_TYPE_CHECK(_type, _value) _value
+#endif
+
+#if USE_LIGHT_UNION
+#  define DATA_MEMBER local
+#else
+#  define DATA_MEMBER do_not_access_directly
 #endif
 
 #define ERROR_OFS(a, b) "Offset of " STRINGIFY(a) " mismatch offset of " STRINGIFY(b)
