@@ -27,7 +27,6 @@
 
 const bTheme U_theme_default = {
   .name = "Default",
-  .filepath = "C:\3D_Stuff\bfa_build_windows_x64_vc17_Debug\bin\4.2\scripts\presets\interface_theme\Bforartists.xml",
   .tui = {
     .wcol_regular = {
       .outline = RGBA(0x252525ff),
