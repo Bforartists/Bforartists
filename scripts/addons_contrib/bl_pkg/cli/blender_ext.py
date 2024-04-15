@@ -33,6 +33,7 @@ from typing import (
     Optional,
     Sequence,
     List,
+    Set,
     Tuple,
     Callable,
     NamedTuple,
@@ -62,9 +63,6 @@ PrimType = Union[int, str]
 PrimTypeOrSeq = Union[PrimType, Sequence[PrimType]]
 
 MessageFn = Callable[[str, PrimTypeOrSeq], bool]
-
-# Name is a bit odd, a new convention could be used here.
-PkgManifest_RepoDict = Dict[str, Any]
 
 VERSION = "0.1"
 
@@ -201,6 +199,11 @@ class CleanupPathsContext:
 # -----------------------------------------------------------------------------
 # Generic Functions
 
+class PkgRepoData(NamedTuple):
+    version: str
+    blocklist: List[str]
+    data: List[Dict[str, Any]]
+
 
 class PkgManifest(NamedTuple):
     """Package Information."""
@@ -307,18 +310,12 @@ def scandir_recursive(
 
 
 def pkg_manifest_from_dict_and_validate_impl(
-        pkg_idname: str,
         data: Dict[Any, Any],
         *,
         from_repo: bool,
         all_errors: bool,
 ) -> Union[PkgManifest, List[str]]:
     error_list = []
-    if (error_msg := pkg_idname_is_valid_or_error(pkg_idname)) is not None:
-        error_list.append("key \"id\": \"{:s}\" invalid, {:s}".format(pkg_idname, error_msg))
-        if not all_errors:
-            return error_list
-
     # Validate the dictionary.
     if all_errors:
         if (x := pkg_manifest_is_valid_or_error_all(data, from_repo=from_repo)) is not None:
@@ -331,9 +328,6 @@ def pkg_manifest_from_dict_and_validate_impl(
 
     values: List[str] = []
     for key in PkgManifest._fields:
-        if key == "id":
-            values.append(pkg_idname)
-            continue
         val = data.get(key, ...)
         if val is ...:
             val = PkgManifest._field_defaults.get(key, ...)
@@ -353,32 +347,29 @@ def pkg_manifest_from_dict_and_validate_impl(
 
 
 def pkg_manifest_from_dict_and_validate(
-        pkg_idname: str,
         data: Dict[Any, Any],
         from_repo: bool,
 ) -> Union[PkgManifest, str]:
-    manifest = pkg_manifest_from_dict_and_validate_impl(pkg_idname, data, from_repo=from_repo, all_errors=False)
+    manifest = pkg_manifest_from_dict_and_validate_impl(data, from_repo=from_repo, all_errors=False)
     if isinstance(manifest, list):
         return manifest[0]
     return manifest
 
 
 def pkg_manifest_from_dict_and_validate_all_errros(
-        pkg_idname: str,
         data: Dict[Any, Any],
         from_repo: bool,
 ) -> Union[PkgManifest, List[str]]:
     """
     Validate the manifest and return all errors.
     """
-    return pkg_manifest_from_dict_and_validate_impl(pkg_idname, data, from_repo=from_repo, all_errors=True)
+    return pkg_manifest_from_dict_and_validate_impl(data, from_repo=from_repo, all_errors=True)
 
 
 def pkg_manifest_archive_from_dict_and_validate(
-        pkg_idname: str,
         data: Dict[Any, Any],
 ) -> Union[PkgManifest_Archive, str]:
-    manifest = pkg_manifest_from_dict_and_validate(pkg_idname, data, from_repo=True)
+    manifest = pkg_manifest_from_dict_and_validate(data, from_repo=True)
     if isinstance(manifest, str):
         return manifest
 
@@ -406,8 +397,7 @@ def pkg_manifest_from_toml_and_validate_all_errors(filepath: str) -> Union[PkgMa
     except Exception as ex:
         return [str(ex)]
 
-    pkg_idname = data.pop("id", "")
-    return pkg_manifest_from_dict_and_validate_all_errros(pkg_idname, data, from_repo=False)
+    return pkg_manifest_from_dict_and_validate_all_errros(data, from_repo=False)
 
 
 def pkg_zipfile_detect_subdir_or_none(
@@ -468,10 +458,7 @@ def pkg_manifest_from_zipfile_and_validate_impl(
     # TODO: forward actual error.
     if manifest_dict is None:
         return ["Archive does not contain a manifest"]
-    pkg_idname = manifest_dict.pop("id", None)
-    if pkg_idname is None:
-        return ["Archive does not contain an \"id\" field"]
-    return pkg_manifest_from_dict_and_validate_impl(pkg_idname, manifest_dict, from_repo=False, all_errors=all_errors)
+    return pkg_manifest_from_dict_and_validate_impl(manifest_dict, from_repo=False, all_errors=all_errors)
 
 
 def pkg_manifest_from_zipfile_and_validate(
@@ -796,6 +783,7 @@ def pkg_manifest_validate_field_archive_hash(value: str) -> Optional[str]:
 # Keep in sync with `PkgManifest`.
 # key, type, check_fn.
 pkg_manifest_known_keys_and_types: Tuple[Tuple[str, type, Optional[Callable[[Any], Optional[str]]]], ...] = (
+    ("id", str, pkg_idname_is_valid_or_error),
     ("schema_version", str, pkg_manifest_validate_field_any_version),
     ("name", str, pkg_manifest_validate_field_any_non_empty_string),
     ("tagline", str, pkg_manifest_validate_field_any_non_empty_string),
@@ -833,8 +821,7 @@ def pkg_manifest_is_valid_or_error_impl(
     if not isinstance(data, dict):
         return ["Expected value to be a dict, not a {!r}".format(type(data))]
 
-    # +1 because known types doesn't include the "id".
-    assert len(pkg_manifest_known_keys_and_types) + 1 == len(PkgManifest._fields)
+    assert len(pkg_manifest_known_keys_and_types) == len(PkgManifest._fields)
     # -1 because the manifest is an item.
     assert len(pkg_manifest_known_keys_and_types_from_repo) == len(PkgManifest_Archive._fields) - 1
 
@@ -952,14 +939,38 @@ def repo_json_is_valid_or_error(filepath: str) -> Optional[str]:
     if not isinstance(result, dict):
         return "Expected a dictionary, not a {!r}".format(type(result))
 
-    for i, (key, value) in enumerate(result.items()):
-        if not isinstance(key, str):
-            return "Expected key at index {:d} to be a string, not a {!r}".format(i, type(key))
+    if (value := result.get("version")) is None:
+        return "Expected a \"version\" key which was not found"
+    if not isinstance(value, str):
+        return "Expected \"version\" value to be a version string"
 
-        if (error_msg := pkg_idname_is_valid_or_error(key)) is not None:
-            return "Expected key at index {:d} to be an identifier, \"{:s}\" failed: {:s}".format(i, key, error_msg)
+    if (value := result.get("blocklist")) is not None:
+        if not isinstance(value, list):
+            return "Expected \"blocklist\" to be a list, not a {:s}".format(str(type(value)))
+        for item in value:
+            if isinstance(item, str):
+                continue
+            return "Expected \"blocklist\" to be a list of strings, found {:s}".format(str(type(item)))
 
-        if (error_msg := pkg_manifest_is_valid_or_error(value, from_repo=True)) is not None:
+    if (value := result.get("data")) is None:
+        return "Expected a \"data\" key which was not found"
+    if not isinstance(value, list):
+        return "Expected \"data\" value to be a list"
+
+    for i, item in enumerate(value):
+
+        if (pkg_idname := item.get("id")) is None:
+            return "Expected item at index {:d} to have an \"id\"".format(i)
+
+        if not isinstance(pkg_idname, str):
+            return "Expected item at index {:d} to have a string id, not a {!r}".format(i, type(pkg_idname))
+
+        if (error_msg := pkg_idname_is_valid_or_error(pkg_idname)) is not None:
+            return "Expected key at index {:d} to be an identifier, \"{:s}\" failed: {:s}".format(
+                i, pkg_idname, error_msg,
+            )
+
+        if (error_msg := pkg_manifest_is_valid_or_error(item, from_repo=True)) is not None:
             return "Error at index {:d}: {:s}".format(i, error_msg)
 
     return None
@@ -1125,15 +1136,20 @@ def repo_pkginfo_from_local(*, local_dir: str) -> Optional[Dict[str, Any]]:
     return result
 
 
-def repo_pkginfo_from_local_with_idname_as_key(*, local_dir: str) -> Optional[PkgManifest_RepoDict]:
+def pkg_repo_dat_from_json(json_data: Dict[str, Any]) -> PkgRepoData:
+    result_new = PkgRepoData(
+        version=json_data.get("version", "v1"),
+        blocklist=json_data.get("blocklist", []),
+        data=json_data.get("data", []),
+    )
+    return result_new
+
+
+def repo_pkginfo_from_local_with_idname_as_key(*, local_dir: str) -> Optional[PkgRepoData]:
     result = repo_pkginfo_from_local(local_dir=local_dir)
     if result is None:
         return None
-
-    result_new: PkgManifest_RepoDict = {}
-    for key, value in result.items():
-        result_new[key] = value
-    return result_new
+    return pkg_repo_dat_from_json(result)
 
 
 def repo_is_filesystem(*, repo_dir: str) -> bool:
@@ -1342,8 +1358,14 @@ class subcmd_server:
             message_error(msg_fn, "Directory: {!r} not found!".format(repo_dir))
             return False
 
+        repo_data_idname_unique: Set[str] = set()
+        repo_data: List[Dict[str, Any]] = []
         # Write package meta-data into each directory.
-        repo_gen_dict = {}
+        repo_gen_dict = {
+            "version": "1",
+            "blocklist": [],
+            "data": repo_data,
+        }
         for entry in os.scandir(repo_dir):
             if not entry.name.endswith(PKG_EXT):
                 continue
@@ -1360,8 +1382,12 @@ class subcmd_server:
                 message_warn(msg_fn, "archive validation failed {!r}, error: {:s}".format(filepath, manifest))
                 continue
             manifest_dict = manifest._asdict()
-            # TODO: we could have a method besides `_asdict` that excludes the ID.
-            pkg_idname = manifest_dict.pop("id")
+
+            repo_data_idname_unique_len = len(repo_data_idname_unique)
+            repo_data_idname_unique.add(manifest_dict["id"])
+            if len(repo_data_idname_unique) == repo_data_idname_unique_len:
+                message_warn(msg_fn, "archive found with duplicate id {!r}, {!r}".format(manifest_dict["id"], filepath))
+                continue
 
             # Call all optional keys so the JSON never contains `null` items.
             for key, value in list(manifest_dict.items()):
@@ -1390,7 +1416,7 @@ class subcmd_server:
                 manifest_dict["archive_hash"],
             ) = sha256_from_file(filepath, hash_prefix=True)
 
-            repo_gen_dict[pkg_idname] = manifest_dict
+            repo_data.append(manifest_dict)
 
         filepath_repo_json = os.path.join(repo_dir, PKG_REPO_LIST_FILENAME)
 
@@ -1454,16 +1480,17 @@ class subcmd_client:
 
         result_str = result.getvalue().decode("utf-8")
         del result
-        repo_gen_dict = json.loads(result_str)
 
-        items: List[Tuple[str, Dict[str, Any]]] = list(repo_gen_dict.items())
-        items.sort(key=lambda elem: elem[0])
+        repo_gen_dict = pkg_repo_dat_from_json(json.loads(result_str))
+
+        items: List[Dict[str, Any]] = repo_gen_dict.data
+        items.sort(key=lambda elem: elem.get("id", ""))
 
         request_exit = False
-        for pkg_idname, elem in items:
+        for elem in items:
             request_exit |= message_status(
                 msg_fn,
-                "{:s}({:s}): {:s}".format(pkg_idname, elem.get("version"), elem.get("name")),
+                "{:s}({:s}): {:s}".format(elem.get("id"), elem.get("version"), elem.get("name")),
             )
             if request_exit:
                 return False
@@ -1634,8 +1661,8 @@ class subcmd_client:
     ) -> bool:
         # Extract...
         is_repo_filesystem = repo_is_filesystem(repo_dir=repo_dir)
-        json_data = repo_pkginfo_from_local_with_idname_as_key(local_dir=local_dir)
-        if json_data is None:
+        pkg_repo_data = repo_pkginfo_from_local_with_idname_as_key(local_dir=local_dir)
+        if pkg_repo_data is None:
             # TODO: raise warning.
             return False
 
@@ -1646,15 +1673,20 @@ class subcmd_client:
         # Ensure a private directory so a local cache can be created.
         local_cache_dir = repo_local_private_dir_ensure_with_subdir(local_dir=local_dir, subdir="cache")
 
+        # TODO: this could be optimized to only lookup known ID's.
+        json_data_pkg_info_map: Dict[str, Dict[str, Any]] = {
+            pkg_info["id"]: pkg_info for pkg_info in pkg_repo_data.data
+        }
+
         has_error = False
         packages_info: List[PkgManifest_Archive] = []
         for pkg_idname in packages:
-            pkg_info = json_data.get(pkg_idname)
+            pkg_info = json_data_pkg_info_map.get(pkg_idname)
             if pkg_info is None:
                 message_error(msg_fn, "Package \"{:s}\", not found".format(pkg_idname))
                 has_error = True
                 continue
-            manifest_archive = pkg_manifest_archive_from_dict_and_validate(pkg_idname, pkg_info)
+            manifest_archive = pkg_manifest_archive_from_dict_and_validate(pkg_info)
             if isinstance(manifest_archive, str):
                 message_error(msg_fn, "Package malformed meta-data for \"{:s}\", error: {:s}".format(
                     pkg_idname,
