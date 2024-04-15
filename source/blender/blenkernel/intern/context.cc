@@ -39,7 +39,7 @@
 #include "BKE_screen.hh"
 #include "BKE_sound.h"
 #include "BKE_wm_runtime.hh"
-#include "BKE_workspace.h"
+#include "BKE_workspace.hh"
 
 #include "RE_engine.h"
 
@@ -186,7 +186,7 @@ const PointerRNA *CTX_store_ptr_lookup(const bContextStore *store,
 {
   for (auto entry = store->entries.rbegin(); entry != store->entries.rend(); ++entry) {
     if (entry->name == name) {
-      if (!type || (type && RNA_struct_is_a(entry->ptr.type, type))) {
+      if (!type || RNA_struct_is_a(entry->ptr.type, type)) {
         return &entry->ptr;
       }
     }
@@ -1201,7 +1201,12 @@ enum eContextObjectMode CTX_data_mode_enum_ex(const Object *obedit,
         return CTX_MODE_EDIT_GPENCIL_LEGACY;
       }
       if (object_mode & OB_MODE_SCULPT_GPENCIL_LEGACY) {
-        return CTX_MODE_SCULPT_GPENCIL_LEGACY;
+        if (ob->type == OB_GPENCIL_LEGACY) {
+          return CTX_MODE_SCULPT_GPENCIL_LEGACY;
+        }
+        if (ob->type == OB_GREASE_PENCIL) {
+          return CTX_MODE_SCULPT_GREASE_PENCIL;
+        }
       }
       if (object_mode & OB_MODE_WEIGHT_GPENCIL_LEGACY) {
         return CTX_MODE_WEIGHT_GPENCIL_LEGACY;
@@ -1258,6 +1263,7 @@ static const char *data_mode_strings[] = {
     "greasepencil_vertex",
     "curves_sculpt",
     "grease_pencil_paint",
+    "grease_pencil_sculpt",
     nullptr,
 };
 BLI_STATIC_ASSERT(ARRAY_SIZE(data_mode_strings) == CTX_MODE_NUM + 1,
