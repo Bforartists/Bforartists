@@ -27,6 +27,7 @@
 
 const bTheme U_theme_default = {
   .name = "Default",
+  .filepath = "C:\3D_Stuff\bfa_build_windows_x64_vc17_Debug\bin\4.2\scripts\presets\interface_theme\Bforartists.xml",
   .tui = {
     .wcol_regular = {
       .outline = RGBA(0x252525ff),
@@ -737,6 +738,7 @@ const bTheme U_theme_default = {
     .grid = RGBA(0x505050ff),
     .wire_edit = RGBA(0xc0c0c0ff),
     .vertex_select = RGBA(0xff8500ff),
+    .vertex_bevel = RGBA(0x00a5ff00),
     .edge_select = RGBA(0xff8500ff),
     .face = RGBA(0xffffff0a),
     .face_select = RGBA(0xff85003c),
