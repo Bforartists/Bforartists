@@ -483,12 +483,25 @@ typedef struct ThemeStripColor {
 /**
  * A theme.
  *
- * \note Currently only a single theme is ever used at once.
+ * \note Currently only the first theme is used at once.
  * Different theme presets are stored as external files now.
  */
 typedef struct bTheme {
   struct bTheme *next, *prev;
-  char name[32];
+  /** #MAX_NAME. */
+  char name[64];
+
+  /* NOTE: Values after `name` are copied when resetting the default theme. */
+
+  /**
+   * The file-path for the preset that was loaded into this theme.
+   *
+   * This is needed so it's possible to know if updating or removing a theme preset
+   * should apply changes to the current theme.
+   *
+   * #FILE_MAX.
+   */
+  char filepath[1024];
 
   ThemeUI tui;
 
@@ -724,8 +737,8 @@ typedef struct UserDef_Experimental {
   char use_extension_repos;
   char use_extension_utils;
   char use_grease_pencil_version3_convert_on_load;
+  char use_animation_baklava;
 
-  char _pad[1];
   /** `makesdna` does not allow empty structs. */
 } UserDef_Experimental;
 
@@ -844,6 +857,10 @@ typedef struct UserDef {
   /** Startup application template. */
   char app_template[64];
 
+  /**
+   * A list of themes (#bTheme), the first is only used currently.
+   * But there may be multiple themes in the list.
+   */
   struct ListBase themes;
   struct ListBase uifonts;
   struct ListBase uistyles;

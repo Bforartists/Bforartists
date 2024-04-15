@@ -61,6 +61,7 @@ _modules = [
     "properties_texture",
     "properties_world",
     "properties_collection",
+    "temp_anim_layers",
     "generic_ui_list",
     "generic_column_menu",
 
@@ -135,6 +136,7 @@ def register():
             register_class(cls)
 
     space_filebrowser.register_props()
+    temp_anim_layers.register_props()
 
     from bpy.props import (
         EnumProperty,
