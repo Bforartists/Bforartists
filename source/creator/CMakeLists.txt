@@ -159,7 +159,7 @@ endif()
 
 # MSVC 2010 gives linking errors with the manifest.
 if(WIN32 AND NOT UNIX)
-  # bfa: modifed BLEN_VER_RC_STR to show patch version as well
+  # BFA: modifed BLEN_VER_RC_STR to show patch version as well
   add_definitions(
     -DBLEN_VER_RC_STR="${BFORARTISTS_VERSION}.${BFORARTISTS_VERSION_PATCH}"
     -DBLEN_VER_RC_1=${BFORARTISTS_VERSION_MAJOR}
@@ -334,29 +334,10 @@ if(WITH_PYTHON_MODULE)
 else()
   add_executable(bforartists ${EXETYPE} ${SRC})
   if(WITH_CPU_CHECK)
-    target_compile_definitions(bforartists PRIVATE WITH_CPU_CHECK)
-    # we cannot directly link against any blender libraries for the cpu_check module
-    # as they may have been build for an ISA that is unsupported by the CPU
-    # running this code.
-    add_library(blender_cpu_check SHARED
-      creator_cpu_check.cc
-    )
-    target_link_libraries(blender_cpu_check
-      PRIVATE ${PLATFORM_LINKLIBS}
-    )
     # blender_cpu_check *NEEDS* to be linked first, there can be no exceptions
     # to this, this is to ensure this will be the first code to run once the
     # blender binary has been loaded by the OS.
     target_link_libraries(bforartists PRIVATE blender_cpu_check)
-    if(NOT WIN32)
-      set(_LIB_SUB_FOLDER "lib/")
-    endif()
-    set_target_properties(blender_cpu_check
-      PROPERTIES
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${_LIB_SUB_FOLDER}"
-      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${_LIB_SUB_FOLDER}"
-    )
-    unset(_LIB_SUB_FOLDER)
   endif()
   if(WIN32)
     add_executable(blender-launcher WIN32
