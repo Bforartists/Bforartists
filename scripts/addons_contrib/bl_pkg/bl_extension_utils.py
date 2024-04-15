@@ -25,6 +25,7 @@ __all__ = (
 
     # Public Stand-Alone Utilities.
     "pkg_theme_file_list",
+    "file_mtime_or_none",
 
     # Public API.
     "json_from_filepath",
@@ -452,17 +453,16 @@ def pkg_make_obsolete_for_testing(local_dir: str, pkg_id: str) -> None:
 
 
 def pkg_manifest_dict_is_valid_or_error(
-        pkg_idname: str,
         data: Dict[str, Any],
         from_repo: bool,
 ) -> Optional[str]:
     # Exception! In in general `cli` shouldn't be considered a Python module,
     # it's validation function is handy to reuse.
     from .cli.blender_ext import pkg_manifest_from_dict_and_validate
-    assert "id" not in data
-    result = pkg_manifest_from_dict_and_validate(pkg_idname, data, from_repo=from_repo)
+    assert "id" in data
+    result = pkg_manifest_from_dict_and_validate(data, from_repo=from_repo)
     if isinstance(result, str):
-        return "{:s}: {:s}".format(pkg_idname, result)
+        return result
     return None
 
 
@@ -806,7 +806,21 @@ class _RepoCacheEntry:
 
         with open(filepath_json, "w", encoding="utf-8") as fh:
             # Indent because it can be useful to check this file if there are any issues.
-            fh.write(json.dumps(local_json_data, indent=2))
+
+            # Begin: transform to list with ID's in item.
+            # TODO: this transform can probably be removed and the internal format can change
+            # to use the same structure as the actual JSON.
+            local_json_data_compat = {
+                "version": "v1",
+                "blocklist": [],
+                "data": [
+                    {"id": pkg_idname, **value}
+                    for pkg_idname, value in local_json_data.items()
+                ],
+            }
+            # End: compatibility change.
+
+            fh.write(json.dumps(local_json_data_compat, indent=2))
 
     def _json_data_refresh(
             self,
@@ -893,7 +907,7 @@ class _RepoCacheEntry:
                 if item_local is None:
                     continue
 
-                pkg_idname = item_local.pop("id")
+                pkg_idname = item_local["id"]
                 if has_remote:
                     # This should never happen, the user may have manually renamed a directory.
                     if pkg_idname != filename:
@@ -906,7 +920,7 @@ class _RepoCacheEntry:
                     pkg_idname = filename
 
                 # Validate so local-only packages with invalid manifests aren't used.
-                if (error_str := pkg_manifest_dict_is_valid_or_error(pkg_idname, item_local, from_repo=False)):
+                if (error_str := pkg_manifest_dict_is_valid_or_error(item_local, from_repo=False)):
                     error_fn(Exception(error_str))
                     continue
 
@@ -1019,9 +1033,20 @@ class RepoCacheStore:
                 yield None
             else:
                 pkg_manifest_remote = {}
-                for pkg_idname, item_remote in json_data.items():
-                    pkg_manifest_remote[pkg_idname] = item_remote
-                yield pkg_manifest_remote
+                # "data" should always exist, it's not the purpose of this function to fully validate though.
+                json_items = json_data.get("data")
+                if json_items is None:
+                    error_fn(ValueError("JSON was missing \"data\" key"))
+                    yield None
+                else:
+                    for item_remote in json_items:
+                        # TODO(@ideasman42): we may want to include the "id", as part of moving to a new format
+                        # the "id" used not to be part of each item so users of this API assume it's not.
+                        # The `item_remote` could be used in-place however that needs further testing.
+                        item_remove_copy = item_remote.copy()
+                        pkg_idname = item_remove_copy.pop("id")
+                        pkg_manifest_remote[pkg_idname] = item_remove_copy
+                    yield pkg_manifest_remote
 
     def pkg_manifest_from_local_ensure(
             self,
