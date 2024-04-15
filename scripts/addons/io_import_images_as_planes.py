@@ -5,8 +5,8 @@
 bl_info = {
     "name": "Import Images as Planes",
     "author": "Florian Meyer (tstscr), mont29, matali, Ted Schundler (SpkyElctrc), mrbimax",
-    "version": (3, 5, 1),
-    "blender": (4, 0, 0),
+    "version": (3, 6, 0),
+    "blender": (4, 2, 0),
     "location": "File > Import > Images as Planes or Add > Image > Images as Planes",
     "description": "Imports images and creates planes with the appropriate aspect ratio. "
                    "The images are mapped to the planes.",
@@ -45,6 +45,7 @@ from bpy_extras.object_utils import (
 )
 
 from bpy_extras.image_utils import load_image
+from bpy_extras.io_utils import ImportHelper
 
 # -----------------------------------------------------------------------------
 # Module-level Shared State
@@ -594,7 +595,7 @@ def setup_compositing(context, plane, img_spec):
 # -----------------------------------------------------------------------------
 # Operator
 
-class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
+class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper, ImportHelper):
     """Create mesh plane(s) from image files with the appropriate aspect ratio"""
 
     bl_idname = "import_image.to_plane"
@@ -919,9 +920,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
                 self.report({'WARNING'},
                             tip_("Generating Cycles/EEVEE compatible material, but won't be visible with %s engine") % engine)
 
-        # Open file browser
-        context.window_manager.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        return self.invoke_popup(context)
 
     def execute(self, context):
         if not bpy.data.is_saved:
@@ -1225,6 +1224,18 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
             constraint.lock_axis = 'LOCK_Y'
 
 
+class IMPORT_IMAGE_FH_to_plane(bpy.types.FileHandler):
+    bl_idname = "IMPORT_IMAGE_FH_to_plane"
+    bl_label = "File handler for images as planes import"
+    bl_import_operator = "import_image.to_plane"
+    bl_file_extensions = ";".join(bpy.path.extensions_image.union(bpy.path.extensions_movie))
+
+    @classmethod
+    def poll_drop(cls, context):
+        return (context.region and context.region.type == 'WINDOW'
+                and context.area and context.area.ui_type == 'VIEW_3D')
+
+
 # -----------------------------------------------------------------------------
 # Register
 
@@ -1234,6 +1245,7 @@ def import_images_button(self, context):
 
 classes = (
     IMPORT_IMAGE_OT_to_plane,
+    IMPORT_IMAGE_FH_to_plane,
 )
 
 
