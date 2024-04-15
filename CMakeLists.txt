@@ -722,8 +722,8 @@ This option is only for debugging purposes."
   # https://www.intel.com/content/www/us/en/develop/documentation/oneapi-dpcpp-cpp-compiler-dev-guide-and-reference/top/compilation/ahead-of-time-compilation.html
   # The target architectures levels can be retrieved from `ocloc` output when running
   # `ocloc compile -device {device_id} test.c` for given GPUs PCI device IDs.
-  # 12.55.8 is for Arc Alchemist GPUs. 12.70.0 for Meteor Lake iGPUs.
-  set(CYCLES_ONEAPI_INTEL_BINARIES_ARCH 12.55.8 12.70.0 CACHE STRING "\
+  # 12.55.8 is for Arc Alchemist GPUs. 12.70.4 for Meteor Lake iGPUs.
+  set(CYCLES_ONEAPI_INTEL_BINARIES_ARCH 12.55.8 12.70.4 CACHE STRING "\
 oneAPI Intel GPU architectures to build binaries for"
   )
   set(CYCLES_ONEAPI_SYCL_TARGETS spir64 spir64_gen CACHE STRING "\
@@ -870,19 +870,29 @@ else()
 endif()
 
 # Vulkan
-if(NOT APPLE)
-  option(WITH_VULKAN_BACKEND "Enable Vulkan as graphics backend (experimental)" ON)
-  option(WITH_VULKAN_GUARDEDALLOC "\
-Use guardedalloc for host allocations done inside Vulkan (development option)"
-    OFF
-  )
+option(WITH_VULKAN_BACKEND "Enable Vulkan as graphics backend (experimental)" ON)
+option(WITH_VULKAN_GUARDEDALLOC "Use guardedalloc for host allocations done inside Vulkan (development option)"
+  OFF
+)
+mark_as_advanced(
+  WITH_VULKAN_BACKEND
+  WITH_VULKAN_GUARDEDALLOC
+)
+if(APPLE)
+  option(WITH_VULKAN_MOLTENVK "Enable Vulkan over MoltenVK (development option)" OFF)
   mark_as_advanced(
-    WITH_VULKAN_BACKEND
-    WITH_VULKAN_GUARDEDALLOC
+    WITH_VULKAN_MOLTENVK
   )
-  if(NOT WITH_EXPERIMENTAL_FEATURES)
-    set(WITH_VULKAN_BACKEND OFF)
+endif()
+
+if(APPLE AND NOT WITH_VULKAN_MOLTENVK)
+  set(WITH_VULKAN_BACKEND OFF)
+endif()
+if(NOT WITH_EXPERIMENTAL_FEATURES)
+  if (APPLE)
+    set(WITH_VULKAN_MOLTENVK OFF)
   endif()
+  set(WITH_VULKAN_BACKEND OFF)
 endif()
 
 # Metal
@@ -1389,13 +1399,12 @@ endif()
 
 # Test SIMD support, before platform includes to determine if sse2neon is needed.
 if(WITH_CPU_SIMD)
-  set(COMPILER_SSE_FLAG)
-  set(COMPILER_SSE2_FLAG)
+  set(COMPILER_SSE42_FLAG)
 
   # Test Neon first since macOS Arm can compile and run x86-64 SSE binaries.
   test_neon_support()
   if(NOT SUPPORT_NEON_BUILD)
-    test_sse_support(COMPILER_SSE_FLAG COMPILER_SSE2_FLAG)
+    test_sse_support(COMPILER_SSE42_FLAG)
   endif()
 endif()
 
@@ -1435,8 +1444,6 @@ endif()
 
 # Enable SIMD support if detected by `test_sse_support()` or `test_neon_support()`.
 #
-# This is done globally, so that all modules can use it if available, and
-# because these are used in headers used by many modules.
 if(WITH_CPU_SIMD)
   if(SUPPORT_NEON_BUILD)
     # Neon
@@ -1446,15 +1453,20 @@ if(WITH_CPU_SIMD)
     endif()
   else()
     # SSE
-    if(SUPPORT_SSE_BUILD)
-      string(PREPEND PLATFORM_CFLAGS "${COMPILER_SSE_FLAG} ")
-      add_definitions(-D__SSE__ -D__MMX__)
-    endif()
-    if(SUPPORT_SSE2_BUILD)
-      string(APPEND PLATFORM_CFLAGS " ${COMPILER_SSE2_FLAG}")
-      add_definitions(-D__SSE2__)
-      if(NOT SUPPORT_SSE_BUILD) # don't double up
-        add_definitions(-D__MMX__)
+    if(SUPPORT_SSE42_BUILD)
+      string(APPEND CMAKE_CXX_FLAGS " ${COMPILER_SSE42_FLAG}")
+      string(APPEND CMAKE_C_FLAGS " ${COMPILER_SSE42_FLAG}")
+      # MSVC doesn't define any of these and only does the AVX and higher flags.
+      # For consistency we define these flags for MSVC.
+      if(WIN32)
+        add_compile_definitions(
+          __MMX__
+          __SSE__
+          __SSE2__
+          __SSE3__
+          __SSE4_1__
+          __SSE4_2__
+        )
       endif()
     endif()
   endif()
@@ -1469,10 +1481,8 @@ if(FIRST_RUN)
       else()
         message(STATUS "Neon SIMD instructions detected but unused, requires sse2neon")
       endif()
-    elseif(SUPPORT_SSE2_BUILD)
-      message(STATUS "SSE2 SIMD instructions enabled")
-    elseif(SUPPORT_SSE_BUILD)
-      message(STATUS "SSE SIMD instructions enabled")
+    elseif(SUPPORT_SSE42_BUILD)
+      message(STATUS "SSE42 SIMD instructions enabled")
     else()
       message(STATUS "No SIMD instructions detected")
     endif()
