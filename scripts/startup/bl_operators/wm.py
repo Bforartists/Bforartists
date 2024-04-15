@@ -3264,7 +3264,7 @@ class WM_MT_splash_quick_setup(Menu):
         sub = col.column(heading="Theme")
         label = bpy.types.USERPREF_MT_interface_theme_presets.bl_label
         if label == "Presets":
-            label = "Blender Dark"
+            label = "Bforartists"  # BFA - default theme
         sub.menu("USERPREF_MT_interface_theme_presets", text=label)
 
         col.separator()
@@ -3287,14 +3287,6 @@ class WM_MT_splash_quick_setup(Menu):
         has_spacebar_action = hasattr(kc_prefs, "spacebar_action")
         if has_spacebar_action:
             col.row().prop(kc_prefs, "spacebar_action", text="Spacebar Action")
-
-        # Themes.
-        col.separator()
-        sub = col.column(heading="Theme")
-        label = bpy.types.USERPREF_MT_interface_theme_presets.bl_label
-        if label == "Presets":
-            label = "Bforartists" # BFA - default theme
-        sub.menu("USERPREF_MT_interface_theme_presets", text=label)
 
         if can_import:
             sub.operator("wm.save_userpref", text="Save New Preferences", icon='NONE')
