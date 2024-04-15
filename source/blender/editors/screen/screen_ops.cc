@@ -5351,8 +5351,6 @@ static int screen_animation_step_invoke(bContext *C, wmOperator * /*op*/, const 
     return OPERATOR_PASS_THROUGH;
   }
 
-  wmWindow *win = CTX_wm_window(C);
-
 #ifdef PROFILE_AUDIO_SYNCH
   static int old_frame = 0;
   int newfra_int;
