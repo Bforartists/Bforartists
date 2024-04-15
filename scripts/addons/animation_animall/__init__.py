@@ -228,14 +228,10 @@ class VIEW3D_PT_animall(Panel):
             col.prop(animall_properties, "key_shape_key")
 
             # Vertex group update operator
-            if (obj.data.animation_data is not None
-                    and obj.data.animation_data.action is not None):
-                for fcurve in context.active_object.data.animation_data.action.fcurves:
-                    if bpy.ops.anim.update_attribute_animation_animall.poll():
-                        col = layout.column(align=True)
-                        col.label(text="Object includes old-style attributes. Consider updating them.", icon="ERROR")
-                        col.operator("anim.update_attribute_animation_animall", icon="FILE_REFRESH")
-                        break
+            if bpy.ops.anim.update_attribute_animation_animall.poll():
+                col = layout.column(align=True)
+                col.label(text="Object includes old-style attributes. Consider updating them.", icon="ERROR")
+                col.operator("anim.update_attribute_animation_animall", icon="FILE_REFRESH")
 
         elif obj.type in {'CURVE', 'SURFACE'}:
             col = layout.column(align=True)
