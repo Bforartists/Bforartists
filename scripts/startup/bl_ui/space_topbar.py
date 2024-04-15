@@ -323,8 +323,11 @@ class TOPBAR_MT_file(Menu):
 
         layout.separator()
 
-        layout.menu("TOPBAR_MT_file_import")
-        layout.menu("TOPBAR_MT_file_export")
+        layout.menu("TOPBAR_MT_file_import", icon='IMPORT')
+        layout.menu("TOPBAR_MT_file_export", icon='EXPORT')
+        row = layout.row()
+        row.operator("wm.collection_export_all")
+        row.enabled = context.view_layer.has_export_collections
 
         layout.separator()
 
@@ -593,7 +596,7 @@ class TOPBAR_MT_render(Menu):
         layout.operator("sound.mixdown", text="Mixdown Audio", icon='PLAY_AUDIO')
 
         layout.separator()
-
+		# BFA - Exposed hidden operators
         layout.operator("render.opengl", text="OpenGL Render Image", icon = 'RENDER_STILL_VIEW')
         layout.operator("render.opengl", text="OpenGL Render Animation", icon = 'RENDER_ANI_VIEW').animation = True
 
@@ -674,10 +677,10 @@ class TOPBAR_MT_edit(Menu):
 
         layout.separator()
 
-        #bfa - preferences path exists
+        #BFA - preferences path exists
         if os.path.isdir(Path(bpy.utils.resource_path('USER'))):
             layout.operator("wm.path_open", text="Open Preferences Folder", icon = "FOLDER_REDIRECT").filepath = str(user_path)
-        #bfa - preferences path does not exist yet
+        #BFA - preferences path does not exist yet
         else:
             #layout.operator("wm.path_open", text="Open Preferences Folder", icon = "FOLDER_REDIRECT").filepath = str(local_path)
             layout.operator("topbar.no_prefsfolder", text="Open Preferences Folder", icon = "FOLDER_REDIRECT")
@@ -685,7 +688,7 @@ class TOPBAR_MT_edit(Menu):
         layout.operator("screen.userpref_show", text="Preferences", icon='PREFERENCES')
 
 
-# Workaround to separate the tooltips for the preferences folder
+# BFA - Workaround to separate the tooltips for the preferences folder
 class TOPBAR_MT_edit_no_prefsfolder(bpy.types.Operator):
     """The preferences folder does not exist yet\nThe file browser will open at the installation directory instead\nPlease click at Next in the splash sceen first"""
     bl_idname = "topbar.no_prefsfolder"        # unique identifier for buttons and menu items to reference.
@@ -735,6 +738,7 @@ class TOPBAR_MT_window(Menu):
             layout.separator()
             layout.operator("wm.console_toggle", icon='CONSOLE')
 
+		#BFA - moved to the VIEW3D_PT_view3d_stereo in the space_3dview.py file
 # BFA - these links are heavily different
 class TOPBAR_MT_help(Menu):
     bl_label = "Help"
@@ -977,7 +981,7 @@ classes = (
     TOPBAR_MT_edit,
     TOPBAR_MT_render,
     TOPBAR_MT_window,
-    TOPBAR_MT_edit_no_prefsfolder,
+    TOPBAR_MT_edit_no_prefsfolder,# BFA
     TOPBAR_MT_help,
     TOPBAR_PT_tool_fallback,
     TOPBAR_PT_tool_settings_extra,

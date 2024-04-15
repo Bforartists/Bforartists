@@ -1398,12 +1398,16 @@ static uiBlock *wm_block_create_redo(bContext *C, ARegion *region, void *arg_op)
     }
   }
 
+  uiItemL_ex(layout, WM_operatortype_name(op->type, op->ptr).c_str(), ICON_NONE, true, false);
+  uiItemS_ex(layout, 0.2f, LayoutSeparatorType::Line);
+  uiItemS_ex(layout, 0.5f);
+
   uiLayout *col = uiLayoutColumn(layout, false);
   /* BFA - align operator properties to left in redo panel (UI_BUT_LABEL_ALIGN_SPLIT_COLUMN) */
   uiTemplateOperatorPropertyButs(
       C, col, op, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
 
-  UI_block_bounds_set_popup(block, 6 * UI_SCALE_FAC, nullptr);
+  UI_block_bounds_set_popup(block, 7 * UI_SCALE_FAC, nullptr);
 
   return block;
 }
@@ -2052,7 +2056,7 @@ static void WM_OT_search_operator(wmOperatorType *ot)
 {
   ot->name = "Search Operator";
   ot->idname = "WM_OT_search_operator";
-  ot->description = "Search for all available operators";
+  ot->description = "Pop-up Search for all available operators in current context";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
