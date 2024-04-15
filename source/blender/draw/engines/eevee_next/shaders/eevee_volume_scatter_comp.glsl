@@ -14,6 +14,7 @@
 #pragma BLENDER_REQUIRE(eevee_lightprobe_eval_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_volume_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_sampling_lib.glsl)
+#pragma BLENDER_REQUIRE(eevee_colorspace_lib.glsl)
 
 #pragma BLENDER_REQUIRE(eevee_volume_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_sampling_lib.glsl)
@@ -25,6 +26,7 @@ vec3 volume_scatter_light_eval(
 {
   LightData light = light_buf[l_idx];
 
+  /* TODO(fclem): Own light list for volume without lights that have 0 volume influence. */
   if (light.power[LIGHT_VOLUME] == 0.0) {
     return vec3(0);
   }
@@ -41,14 +43,15 @@ vec3 volume_scatter_light_eval(
     visibility *= shadow_sample(is_directional, shadow_atlas_tx, shadow_tilemaps_tx, light, P)
                       .light_visibilty;
   }
-
+  visibility *= volume_phase_function(-V, lv.L, s_anisotropy);
   if (visibility < LIGHT_ATTENUATION_THRESHOLD) {
     return vec3(0);
   }
 
-  vec3 Li = volume_light(light, is_directional, lv) *
+  vec3 Li = volume_light(light, is_directional, lv) * visibility *
             volume_shadow(light, is_directional, P, lv, extinction_tx);
-  return Li * visibility * volume_phase_function(-V, lv.L, s_anisotropy);
+
+  return colorspace_brightness_clamp_max(Li, uniform_buf.volumes.light_clamp);
 }
 
 #endif
@@ -99,17 +102,16 @@ void main()
   scattering += light_scattering * s_scattering;
 #endif
 
-#if 0 /* TODO */
- {
+  if (uniform_buf.volumes.history_opacity > 0.0) {
     /* Temporal reprojection. */
-    vec3 uvw_history = volume_history_position_get(froxel);
-    vec4 scattering_history = texture(scattering_history_tx, uvw_history);
-    vec4 extinction_history = texture(extinction_history_tx, uvw_history);
-    float history_opacity = 0.95 * scattering_history.a;
-    scattering = mix(scattering, scattering_history.rgb, history_opacity);
-    extinction = mix(extinction, extinction_history.rgb, history_opacity);
+    vec3 uvw_history = volume_history_uvw_get(froxel);
+    if (uvw_history.x != -1.0) {
+      vec3 scattering_history = texture(scattering_history_tx, uvw_history).rgb;
+      vec3 extinction_history = texture(extinction_history_tx, uvw_history).rgb;
+      scattering = mix(scattering, scattering_history, uniform_buf.volumes.history_opacity);
+      extinction = mix(extinction, extinction_history, uniform_buf.volumes.history_opacity);
+    }
   }
-#endif
 
   /* Catch NaNs. */
   if (any(isnan(scattering)) || any(isnan(extinction))) {

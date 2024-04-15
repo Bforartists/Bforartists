@@ -365,7 +365,7 @@ class OUTLINER_MT_collection_visibility(Menu):
 
         layout.operator("outliner.collection_show_inside", text="Show All Inside", icon="HIDE_OFF")
         layout.operator("outliner.collection_hide_inside", text="Hide All Inside", icon="HIDE_ON")
-		# BFA - redundant view toggles, removed.
+		# BFA - redundant view toggles, removed. TODO: They are usueful for batch operation (hold ALT to use on all)
 
 
 class OUTLINER_MT_collection(Menu):
@@ -379,7 +379,7 @@ class OUTLINER_MT_collection(Menu):
         layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection)
         layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection).nested = True
         layout.operator("outliner.collection_duplicate", text="Duplicate Collection", icon="DUPLICATE")
-        layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon="DUPLICATE")
+        layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon="DUPLICATE") #BFA - exposed hidden operator
         layout.operator("outliner.id_copy", text="Copy", icon='COPYDOWN')
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
@@ -438,7 +438,7 @@ class OUTLINER_MT_collection_new(Menu):
 
     def draw(self, context):
         layout = self.layout
-
+		# BFA - exposed hidden operators
         layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW').nested = True
         layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW')
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
@@ -455,7 +455,7 @@ class OUTLINER_MT_object(Menu):
         layout = self.layout
 
         space = context.space_data
-
+		# BFA - order changed to be consistent with other menus
         layout.operator("outliner.object_operation", text="Select", icon="RESTRICT_SELECT_OFF").type = 'SELECT'
         layout.operator("outliner.object_operation", text="Select Hierarchy", icon="RESTRICT_SELECT_OFF").type = 'SELECT_HIERARCHY'
         layout.operator("outliner.object_operation", text="Deselect", icon = "SELECT_NONE").type = 'DESELECT'

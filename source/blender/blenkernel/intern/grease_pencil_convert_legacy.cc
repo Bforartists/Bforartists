@@ -29,6 +29,7 @@
 #include "BKE_node.hh"
 #include "BKE_node_tree_update.hh"
 #include "BKE_object.hh"
+#include "BKE_screen.hh"
 
 #include "BLO_readfile.hh"
 
@@ -50,6 +51,8 @@
 #include "DNA_grease_pencil_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_modifier_types.h"
+#include "DNA_screen_types.h"
+#include "DNA_space_types.h"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
@@ -321,11 +324,17 @@ void legacy_gpencil_frame_to_grease_pencil_drawing(const bGPDframe &gpf,
   bool has_bezier_stroke = false;
   LISTBASE_FOREACH (bGPDstroke *, gps, &gpf.strokes) {
     if (gps->editcurve != nullptr) {
+      if (gps->editcurve->tot_curve_points == 0) {
+        continue;
+      }
       has_bezier_stroke = true;
       num_points += gps->editcurve->tot_curve_points;
       curve_types.append(CURVE_TYPE_BEZIER);
     }
     else {
+      if (gps->totpoints == 0) {
+        continue;
+      }
       num_points += gps->totpoints;
       curve_types.append(CURVE_TYPE_POLY);
     }
@@ -333,13 +342,17 @@ void legacy_gpencil_frame_to_grease_pencil_drawing(const bGPDframe &gpf,
     offsets.append(num_points);
   }
 
+  /* Return if the legacy frame contains no strokes (or zero points). */
+  if (num_strokes == 0) {
+    return;
+  }
+
   /* Resize the CurvesGeometry. */
   Drawing &drawing = r_drawing.wrap();
   CurvesGeometry &curves = drawing.strokes_for_write();
   curves.resize(num_points, num_strokes);
-  if (num_strokes > 0) {
-    curves.offsets_for_write().copy_from(offsets);
-  }
+  curves.offsets_for_write().copy_from(offsets);
+
   OffsetIndices<int> points_by_curve = curves.points_by_curve();
   MutableAttributeAccessor attributes = curves.attributes_for_write();
 
@@ -416,7 +429,16 @@ void legacy_gpencil_frame_to_grease_pencil_drawing(const bGPDframe &gpf,
   Array<float4x2> legacy_texture_matrices(num_strokes);
 
   int stroke_i = 0;
-  LISTBASE_FOREACH_INDEX (bGPDstroke *, gps, &gpf.strokes, stroke_i) {
+  LISTBASE_FOREACH (bGPDstroke *, gps, &gpf.strokes) {
+    /* In GPv2 strokes with 0 points could technically be represented. In `CurvesGeometry` this is
+     * not the case and would be a bug. So we explicitly make sure to skip over strokes with no
+     * points. */
+    if (gps->totpoints == 0 ||
+        (gps->editcurve != nullptr && gps->editcurve->tot_curve_points == 0))
+    {
+      continue;
+    }
+
     stroke_cyclic.span[stroke_i] = (gps->flag & GP_STROKE_CYCLIC) != 0;
     /* TODO: This should be a `double` attribute. */
     stroke_init_times.span[stroke_i] = float(gps->inittime);
@@ -428,10 +450,8 @@ void legacy_gpencil_frame_to_grease_pencil_drawing(const bGPDframe &gpf,
     stroke_fill_colors[stroke_i] = ColorGeometry4f(gps->vert_color_fill);
     stroke_materials.span[stroke_i] = gps->mat_nr;
 
-    IndexRange points = points_by_curve[stroke_i];
-    if (points.is_empty()) {
-      continue;
-    }
+    const IndexRange points = points_by_curve[stroke_i];
+    BLI_assert(points.size() == gps->totpoints);
 
     const Span<bGPDspoint> src_points{gps->points, gps->totpoints};
     /* Previously, Grease Pencil used a radius convention where 1 `px` = 0.001 units. This `px`
@@ -512,6 +532,8 @@ void legacy_gpencil_frame_to_grease_pencil_drawing(const bGPDframe &gpf,
 
     const float4x2 legacy_texture_matrix = get_legacy_texture_matrix(gps);
     legacy_texture_matrices[stroke_i] = legacy_texture_matrix;
+
+    stroke_i++;
   }
 
   /* Ensure that the normals are up to date. */
@@ -573,9 +595,10 @@ void legacy_gpencil_to_grease_pencil(Main &bmain, GreasePencil &grease_pencil, b
     new_layer.set_locked((gpl->flag & GP_LAYER_LOCKED) != 0);
     new_layer.set_selected((gpl->flag & GP_LAYER_SELECT) != 0);
     SET_FLAG_FROM_TEST(
-        new_layer.base.flag, (gpl->flag & GP_LAYER_FRAMELOCK), GP_LAYER_TREE_NODE_MUTE);
-    SET_FLAG_FROM_TEST(
-        new_layer.base.flag, (gpl->flag & GP_LAYER_USE_LIGHTS), GP_LAYER_TREE_NODE_USE_LIGHTS);
+        new_layer.base.flag, (gpl->flag & GP_LAYER_FRAMELOCK) != 0, GP_LAYER_TREE_NODE_MUTE);
+    SET_FLAG_FROM_TEST(new_layer.base.flag,
+                       (gpl->flag & GP_LAYER_USE_LIGHTS) != 0,
+                       GP_LAYER_TREE_NODE_USE_LIGHTS);
     SET_FLAG_FROM_TEST(new_layer.base.flag,
                        (gpl->onion_flag & GP_LAYER_ONIONSKIN) == 0,
                        GP_LAYER_TREE_NODE_HIDE_ONION_SKINNING);
@@ -586,12 +609,16 @@ void legacy_gpencil_to_grease_pencil(Main &bmain, GreasePencil &grease_pencil, b
 
     new_layer.parent = gpl->parent;
     new_layer.set_parent_bone_name(gpl->parsubstr);
+    copy_m4_m4(new_layer.parentinv, gpl->inverse);
 
     copy_v3_v3(new_layer.translation, gpl->location);
     copy_v3_v3(new_layer.rotation, gpl->rotation);
     copy_v3_v3(new_layer.scale, gpl->scale);
 
     new_layer.set_view_layer_name(gpl->viewlayername);
+    SET_FLAG_FROM_TEST(new_layer.base.flag,
+                       (gpl->flag & GP_LAYER_DISABLE_MASKS_IN_VIEWLAYER) != 0,
+                       GP_LAYER_TREE_NODE_DISABLE_MASKS_IN_VIEWLAYER);
 
     /* Convert the layer masks. */
     LISTBASE_FOREACH (bGPDlayer_Mask *, mask, &gpl->mask_layers) {
@@ -2383,6 +2410,161 @@ static void legacy_object_modifiers(Main & /*bmain*/, Object &object)
   }
 }
 
+/**
+ * Ensure that both use-cases of legacy grease pencil data (as object, and as annotations) are
+ * fully separated and valid (have proper tag). Annotation IDs are left as-is currently, while GPv2
+ * data used by objects need to be converted to GPv3 data.
+ *
+ * \note GPv2 IDs not used by object nor annotations are just left in their current state - the
+ * ones tagged as annotations will be left untouched, the others will be converted to GPv3 data.
+ *
+ * \note De-duplication needs to assign the new, duplicated GPv2 ID to annotations, and keep the
+ * original one assigned to objects. That way, when the object data are converted, other potential
+ * references to the old GPv2 ID (drivers, custom properties, etc.) can be safely remapped to the
+ * new GPv3 ID.
+ *
+ * \warning: This makes the assumption that annotation data is not typically referenced by anything
+ * else than annotation pointers. If this is not true, then some data might be lost during
+ * conversion process.
+ */
+static void legacy_gpencil_sanitize_annotations(Main &bmain)
+{
+  /* Annotations mapping, keys are existing GPv2 IDs actually used as annotations, values are
+   * either:
+   *  - nullptr: this annotation is never used by any object, there was no need to duplicate it.
+   *  - new GPv2 ID: this annotation was also used by objects, this is its new duplicated ID. */
+  Map<bGPdata *, bGPdata *> annotations_gpv2;
+  /* All legacy GPv2 data used by objects. */
+  Set<bGPdata *> object_gpv2;
+
+  /* Check all GP objects. */
+  LISTBASE_FOREACH (Object *, object, &bmain.objects) {
+    if (object->type != OB_GPENCIL_LEGACY) {
+      continue;
+    }
+    bGPdata *legacy_gpd = static_cast<bGPdata *>(object->data);
+    if (!legacy_gpd) {
+      continue;
+    }
+    if ((legacy_gpd->flag & GP_DATA_ANNOTATIONS) != 0) {
+      legacy_gpd->flag &= ~GP_DATA_ANNOTATIONS;
+    }
+    object_gpv2.add(legacy_gpd);
+  }
+
+  /* Detect all annotations currently used as such, and de-duplicate them if they are also used by
+   * objects. */
+
+  auto sanitize_gpv2_annotation = [&](bGPdata **legacy_gpd_p) {
+    bGPdata *legacy_gpd = *legacy_gpd_p;
+    if (!legacy_gpd) {
+      return;
+    }
+
+    bGPdata *new_annotation_gpd = annotations_gpv2.lookup_or_add(legacy_gpd, nullptr);
+    if (!object_gpv2.contains(legacy_gpd)) {
+      /* Legacy annotation GPv2 data not used by any object, just ensure that it is properly
+       * tagged. */
+      BLI_assert(!new_annotation_gpd);
+      if ((legacy_gpd->flag & GP_DATA_ANNOTATIONS) == 0) {
+        legacy_gpd->flag |= GP_DATA_ANNOTATIONS;
+      }
+      return;
+    }
+
+    /* Legacy GP data also used by objects. Create the duplicate of legacy GPv2 data for
+     * annotations, if not yet done. */
+    if (!new_annotation_gpd) {
+      new_annotation_gpd = reinterpret_cast<bGPdata *>(BKE_id_copy_in_lib(
+          &bmain, legacy_gpd->id.lib, &legacy_gpd->id, nullptr, LIB_ID_COPY_DEFAULT));
+      new_annotation_gpd->flag |= GP_DATA_ANNOTATIONS;
+      id_us_min(&new_annotation_gpd->id);
+      annotations_gpv2.add_overwrite(legacy_gpd, new_annotation_gpd);
+    }
+
+    /* Assign the annotation duplicate ID to the annotation pointer. */
+    BLI_assert(new_annotation_gpd->flag & GP_DATA_ANNOTATIONS);
+    id_us_min(&legacy_gpd->id);
+    *legacy_gpd_p = new_annotation_gpd;
+    id_us_plus_no_lib(&new_annotation_gpd->id);
+  };
+
+  LISTBASE_FOREACH (Scene *, scene, &bmain.scenes) {
+    sanitize_gpv2_annotation(&scene->gpd);
+  }
+
+  ID *id_iter;
+  FOREACH_MAIN_ID_BEGIN (&bmain, id_iter) {
+    if (bNodeTree *node_tree = ntreeFromID(id_iter)) {
+      sanitize_gpv2_annotation(&node_tree->gpd);
+    }
+  }
+  FOREACH_MAIN_ID_END;
+  LISTBASE_FOREACH (bNodeTree *, node_tree, &bmain.nodetrees) {
+    sanitize_gpv2_annotation(&node_tree->gpd);
+  }
+
+  LISTBASE_FOREACH (MovieClip *, movie_clip, &bmain.movieclips) {
+    sanitize_gpv2_annotation(&movie_clip->gpd);
+
+    LISTBASE_FOREACH (MovieTrackingObject *, mvc_tracking_object, &movie_clip->tracking.objects) {
+      LISTBASE_FOREACH (MovieTrackingTrack *, mvc_track, &mvc_tracking_object->tracks) {
+        sanitize_gpv2_annotation(&mvc_track->gpd);
+      }
+      LISTBASE_FOREACH (
+          MovieTrackingPlaneTrack *, mvc_plane_track, &mvc_tracking_object->plane_tracks)
+      {
+        for (int i = 0; i < mvc_plane_track->point_tracksnr; i++) {
+          sanitize_gpv2_annotation(&mvc_plane_track->point_tracks[i]->gpd);
+        }
+      }
+    }
+  }
+
+  LISTBASE_FOREACH (bScreen *, screen, &bmain.screens) {
+    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+      LISTBASE_FOREACH (SpaceLink *, space_link, &area->spacedata) {
+        switch (eSpace_Type(space_link->spacetype)) {
+          case SPACE_SEQ: {
+            SpaceSeq *space_sequencer = reinterpret_cast<SpaceSeq *>(space_link);
+            sanitize_gpv2_annotation(&space_sequencer->gpd);
+            break;
+          }
+          case SPACE_IMAGE: {
+            SpaceImage *space_image = reinterpret_cast<SpaceImage *>(space_link);
+            sanitize_gpv2_annotation(&space_image->gpd);
+            break;
+          }
+          case SPACE_NODE: {
+            SpaceNode *space_node = reinterpret_cast<SpaceNode *>(space_link);
+            sanitize_gpv2_annotation(&space_node->gpd);
+            break;
+          }
+          case SPACE_EMPTY:
+          case SPACE_VIEW3D:
+            /* #View3D.gpd is deprecated and can be ignored here. */
+          case SPACE_GRAPH:
+          case SPACE_OUTLINER:
+          case SPACE_PROPERTIES:
+          case SPACE_FILE:
+          case SPACE_INFO:
+          case SPACE_TEXT:
+          case SPACE_ACTION:
+          case SPACE_NLA:
+          case SPACE_SCRIPT:
+          case SPACE_CONSOLE:
+          case SPACE_USERPREF:
+          case SPACE_CLIP:
+          case SPACE_TOPBAR:
+          case SPACE_STATUSBAR:
+          case SPACE_SPREADSHEET:
+            break;
+        }
+      }
+    }
+  }
+}
+
 static void legacy_gpencil_object_ex(
     Main &bmain,
     Object &object,
@@ -2436,8 +2618,11 @@ void legacy_gpencil_object(Main &bmain, Object &object)
 
 void legacy_main(Main &bmain, BlendFileReadReport & /*reports*/)
 {
+  /* Ensure that annotations are fully separated from object usages of legacy GPv2 data. */
+  legacy_gpencil_sanitize_annotations(bmain);
+
   /* Allows to convert a legacy GPencil data only once, in case it's used by several objects. */
-  blender::Map<bGPdata *, GreasePencil *> legacy_to_greasepencil_data;
+  Map<bGPdata *, GreasePencil *> legacy_to_greasepencil_data;
 
   LISTBASE_FOREACH (Object *, object, &bmain.objects) {
     if (object->type != OB_GPENCIL_LEGACY) {
@@ -2448,11 +2633,17 @@ void legacy_main(Main &bmain, BlendFileReadReport & /*reports*/)
 
   /* Potential other usages of legacy bGPdata IDs also need to be remapped to their matching new
    * GreasePencil counterparts. */
-  blender::bke::id::IDRemapper gpd_remapper;
+  bke::id::IDRemapper gpd_remapper;
   /* Allow remapping from legacy bGPdata IDs to new GreasePencil ones. */
   gpd_remapper.allow_idtype_mismatch = true;
 
   LISTBASE_FOREACH (bGPdata *, legacy_gpd, &bmain.gpencils) {
+    /* Annotations still use legacy `bGPdata`, these should not be converted. Call to
+     * #legacy_gpencil_sanitize_annotations above ensured to fully separate annotations from object
+     * legacy grease pencil. */
+    if ((legacy_gpd->flag & GP_DATA_ANNOTATIONS) != 0) {
+      continue;
+    }
     GreasePencil *new_grease_pencil = legacy_to_greasepencil_data.lookup_default(legacy_gpd,
                                                                                  nullptr);
     if (!new_grease_pencil) {
