@@ -1270,7 +1270,7 @@ def _wm_doc_get_id(doc_id, *, do_url=True, url_prefix="", report=None):
 
 
 class WM_OT_doc_view_manual(Operator):
-    """Load online manual\nNote that this link leads to the online Blender manual. And is not part of Bforartists"""
+    """Load online manual\nNote that this link leads to the online Blender manual. This is not officially part of Bforartists"""
     bl_idname = "wm.doc_view_manual"
     bl_label = "View Manual"
 
@@ -3227,7 +3227,7 @@ class WM_MT_splash_quick_setup(Menu):
         can_import = bpy.types.PREFERENCES_OT_copy_prev.poll(context) and old_version
 
         if can_import:
-            layout.label(text="Import Existing Settings")
+            layout.label(text="Import Preferences From Previous Version")
             split = layout.split(factor=0.20)  # Left margin.
             split.label()
 
@@ -3240,8 +3240,11 @@ class WM_MT_splash_quick_setup(Menu):
                 translate=False,
             )
 
+            layout.separator()
+            layout.separator(type='LINE')
+            
         if can_import:
-            layout.label(text="Create New Settings")
+            layout.label(text="Create New Preferences")
         else:
             layout.label(text="Quick Setup")
 
@@ -3256,14 +3259,22 @@ class WM_MT_splash_quick_setup(Menu):
         if bpy.app.build_options.international:
             prefs = context.preferences
             col.prop(prefs.view, "language")
-            col.separator()
+
+        # Themes.
+        sub = col.column(heading="Theme")
+        label = bpy.types.USERPREF_MT_interface_theme_presets.bl_label
+        if label == "Presets":
+            label = "Blender Dark"
+        sub.menu("USERPREF_MT_interface_theme_presets", text=label)
+
+        col.separator()
 
         # Shortcuts.
         wm = context.window_manager
         kc = wm.keyconfigs.active
         kc_prefs = kc.preferences
 
-        sub = col.column(heading="Shortcuts")
+        sub = col.column(heading="Keymap")
         text = bpy.path.display_name(kc.name)
         if not text:
             text = "Blender"
@@ -3271,25 +3282,23 @@ class WM_MT_splash_quick_setup(Menu):
 
         has_select_mouse = hasattr(kc_prefs, "select_mouse")
         if has_select_mouse:
-            col.row().prop(kc_prefs, "select_mouse", text="Select With", expand=True)
+            col.row().prop(kc_prefs, "select_mouse", text="Mouse Select", expand=True)
 
         has_spacebar_action = hasattr(kc_prefs, "spacebar_action")
         if has_spacebar_action:
-            col.row().prop(kc_prefs, "spacebar_action", text="Spacebar")
+            col.row().prop(kc_prefs, "spacebar_action", text="Spacebar Action")
 
         # Themes.
         col.separator()
         sub = col.column(heading="Theme")
         label = bpy.types.USERPREF_MT_interface_theme_presets.bl_label
         if label == "Presets":
-            label = "Bforartists"
+            label = "Bforartists" # BFA - default theme
         sub.menu("USERPREF_MT_interface_theme_presets", text=label)
 
         if can_import:
-            sub.label()
-            sub.operator("wm.save_userpref", text="Save New Settings", icon='CHECKMARK')
+            sub.operator("wm.save_userpref", text="Save New Preferences", icon='NONE')
         else:
-            sub.label()
             sub.operator("wm.save_userpref", text="Continue")
 
         layout.separator(factor=2.0)
