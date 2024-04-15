@@ -70,6 +70,21 @@ def license_info_to_text(license_list):
     return ", ".join(result)
 
 
+def pkg_repo_and_id_from_theme_path(repos_all, filepath):
+    import os
+    if not filepath:
+        return None
+
+    # Strip the `theme.xml` filename.
+    dirpath = os.path.dirname(filepath)
+    repo_directory, pkg_id = os.path.split(dirpath)
+    for repo_index, repo in enumerate(repos_all):
+        if not os.path.samefile(repo_directory, repo.directory):
+            continue
+        return repo_index, pkg_id
+    return None
+
+
 # -----------------------------------------------------------------------------
 # Extensions UI (Legacy)
 
@@ -289,8 +304,11 @@ def extensions_panel_draw_impl(
 
     # To access enabled add-ons.
     show_addons = filter_by_type in {"", "add-on"}
+    show_themes = filter_by_type in {"", "theme"}
     if show_addons:
         used_addon_module_name_map = {addon.module: addon for addon in context.preferences.addons}
+    if show_themes:
+        active_theme_info = pkg_repo_and_id_from_theme_path(repos_all, context.preferences.themes[0].filepath)
 
     # Collect exceptions accessing repositories, and optionally show them.
     errors_on_draw = []
@@ -365,7 +383,13 @@ def extensions_panel_draw_impl(
             if installed_only and (is_installed == 0):
                 continue
 
-            is_addon = (item_remote["type"] == "add-on")
+            is_addon = False
+            is_theme = False
+            match item_remote["type"]:
+                case "add-on":
+                    is_addon = True
+                case "theme":
+                    is_theme = True
 
             if is_addon:
                 if is_installed:
@@ -376,6 +400,9 @@ def extensions_panel_draw_impl(
                 else:
                     is_enabled = False
                     addon_module_name = None
+            elif is_theme:
+                is_enabled = (repo_index, pkg_id) == active_theme_info
+                addon_module_name = None
             else:
                 # TODO: ability to disable.
                 is_enabled = is_installed
@@ -420,6 +447,16 @@ def extensions_panel_draw_impl(
                         text="",
                         emboss=False,
                     ).module = addon_module_name
+                elif is_theme:
+                    props = row.operator(
+                        "bl_pkg.extension_theme_disable" if is_enabled else "bl_pkg.extension_theme_enable",
+                        icon='CHECKBOX_HLT' if is_enabled else 'CHECKBOX_DEHLT',
+                        text="",
+                        emboss=False,
+                    )
+                    props.repo_index = repo_index
+                    props.pkg_id = pkg_id
+                    del props
                 else:
                     # Use a place-holder checkbox icon to avoid odd text alignment when mixing with installed add-ons.
                     # Non add-ons have no concept of "enabled" right now, use installed.
@@ -562,11 +599,14 @@ class USERPREF_PT_extensions_bl_pkg_filter(Panel):
         wm = context.window_manager
         col = layout.column(heading="Show")
         col.use_property_split = True
-        col.prop(wm, "extension_installed_only", text="Installed Extensions")
-        sub = col.column()
-        sub.active = wm.extension_installed_only
-        sub.prop(wm, "extension_enabled_only", text="Enabled Extensions")
         col.prop(wm, "extension_show_legacy_addons", text="Legacy Add-ons")
+
+        col = layout.column(heading="Only")
+        col.use_property_split = True
+        col.prop(wm, "extension_enabled_only", text="Enabled Extensions")
+        sub = col.column()
+        sub.active = not wm.extension_enabled_only
+        sub.prop(wm, "extension_installed_only", text="Installed Extensions")
 
 
 class USERPREF_MT_extensions_bl_pkg_settings(Menu):
@@ -577,12 +617,16 @@ class USERPREF_MT_extensions_bl_pkg_settings(Menu):
 
         addon_prefs = context.preferences.addons[__package__].preferences
 
-        layout.operator("bl_pkg.repo_sync_all", text="Check for Updates", icon='FILE_REFRESH')
-        layout.operator("bl_pkg.pkg_upgrade_all", text="Update All", icon='IMPORT')
+        layout.popover("USERPREF_PT_extensions_repos", text="Repositories")
 
         layout.separator()
 
-        layout.operator("bl_pkg.pkg_install_files", icon='IMPORT', text="Install from Disk")
+        layout.operator("bl_pkg.repo_sync_all", text="Check for Updates", icon='FILE_REFRESH')
+
+        layout.separator()
+
+        layout.operator("bl_pkg.pkg_upgrade_all", text="Install Available Updates", icon='IMPORT')
+        layout.operator("bl_pkg.pkg_install_files", text="Install from Disk")
         layout.operator("preferences.addon_install", text="Install Legacy Add-on")
 
         if context.preferences.experimental.use_extension_utils:
@@ -636,7 +680,6 @@ def extensions_panel_draw(panel, context):
 
     row_b.separator()
     row_b.menu("USERPREF_MT_extensions_bl_pkg_settings", text="", icon='DOWNARROW_HLT')
-    row_b.popover("USERPREF_PT_extensions_repos", text="", icon='PREFERENCES')
     del row, row_a, row_b
 
     if show_development_reports:

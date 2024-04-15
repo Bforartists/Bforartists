@@ -202,7 +202,7 @@ def command_output_filter_exclude(
 
 def command_output(
         args: Sequence[str],
-        expected_returncode=0,
+        expected_returncode: int = 0,
 ) -> str:
     proc = subprocess.run(
         [*CMD, *args],
@@ -221,7 +221,7 @@ def command_output_from_json_0(
         args: Sequence[str],
         *,
         exclude_types: Optional[Set[str]] = None,
-        expected_returncode=0,
+        expected_returncode: int = 0,
 ) -> Sequence[Tuple[str, Any]]:
     result = []
 
