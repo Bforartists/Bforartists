@@ -2482,7 +2482,7 @@ static BIFIconID tree_element_get_icon_from_id(const ID *id)
       if (id->tag & LIB_TAG_MISSING) {
         return ICON_LIBRARY_DATA_BROKEN;
       }
-      else if (((Library *)id)->parent) {
+      else if (((Library *)id)->runtime.parent) {
         return ICON_LIBRARY_DATA_INDIRECT;
       }
       else {
@@ -3441,6 +3441,15 @@ static void outliner_draw_tree_element(bContext *C,
         UI_icon_draw_alpha(
             float(startx) + offsx + 2 * ufac, float(*starty) + 2 * ufac, lib_icon, alpha_fac);
         offsx += UI_UNIT_X + 4 * ufac;
+      }
+
+      if (tselem->type == TSE_LAYER_COLLECTION) {
+        const Collection *collection = (Collection *)tselem->id;
+        if (!BLI_listbase_is_empty(&collection->exporters)) {
+          UI_icon_draw_alpha(
+              float(startx) + offsx + 2 * ufac, float(*starty) + 2 * ufac, ICON_EXPORT, alpha_fac);
+          offsx += UI_UNIT_X + 4 * ufac;
+        }
       }
     }
     GPU_blend(GPU_BLEND_NONE);
