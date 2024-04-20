@@ -856,16 +856,28 @@ class DopesheetActionPanelBase:
     def draw_generic_panel(cls, _context, layout, action):
         layout.label(text=action.name, icon='ACTION')
 
-        layout.prop(action, "use_frame_range")
+        row = layout.row()
+        row.use_property_split = False
+        split = row.split(factor = 0.75)
+        row = split.row()
+        row.prop(action, "use_frame_range")
+        row = split.row()
+        if action.use_frame_range:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        col = layout.column()
-        col.active = action.use_frame_range
+        if action.use_frame_range:
+            col = layout.column()
 
-        row = col.row(align=True)
-        row.prop(action, "frame_start", text="Start")
-        row.prop(action, "frame_end", text="End")
+            row = col.row(align=True)
+            row.separator(factor = 2.0)
+            row.prop(action, "frame_start", text="Start")
+            row.prop(action, "frame_end", text="End")
 
-        col.prop(action, "use_cyclic")
+            row = col.row()
+            row.separator()
+            row.prop(action, "use_cyclic")
 
 
 class DOPESHEET_PT_custom_props_action(PropertyPanel, Panel):
