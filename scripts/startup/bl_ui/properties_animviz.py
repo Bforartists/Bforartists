@@ -134,9 +134,12 @@ class MotionPathButtonsPanel_display:
                 row.label(icon='DISCLOSURE_TRI_RIGHT')
 
             if mpath.use_custom_color:
-                sub = layout.column()
-                sub.prop(mpath, "color", text="Before")
-                sub.prop(mpath, "color_post", text="After")
+                row = layout.row()
+                row.separator()
+                row.prop(mpath, "color", text="Before")
+                row = layout.row()
+                row.separator()
+                row.prop(mpath, "color_post", text="After")
 
 
 classes = (
