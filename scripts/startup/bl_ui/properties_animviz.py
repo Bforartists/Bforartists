@@ -122,11 +122,21 @@ class MotionPathButtonsPanel_display:
             col = layout.column()
             col.prop(mpath, "line_thickness", text="Thickness")
 
-            col.prop(mpath, "use_custom_color", text="Custom Color")
-            sub = layout.column()
-            sub.enabled = mpath.use_custom_color
-            sub.prop(mpath, "color", text="Before")
-            sub.prop(mpath, "color_post", text="After")
+            row = layout.row()
+            row.use_property_split = False
+            split = row.split(factor = 0.5)
+            row = split.row()
+            row.prop(mpath, "use_custom_color", text="Custom Color")
+            row = split.row()
+            if mpath.use_custom_color:
+                row.label(icon='DISCLOSURE_TRI_DOWN')
+            else:
+                row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+            if mpath.use_custom_color:
+                sub = layout.column()
+                sub.prop(mpath, "color", text="Before")
+                sub.prop(mpath, "color_post", text="After")
 
 
 classes = (
