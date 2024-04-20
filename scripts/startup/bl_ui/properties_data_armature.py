@@ -178,7 +178,8 @@ class ARMATURE_MT_collection_context_menu(Menu):
         layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
         layout.operator("armature.collection_unsolo_all", icon="SOLO_OFF")
 
-
+        layout.separator()
+        layout.operator("UI_OT_view_item_rename", text="Rename", icon="RENAME")
 
 
 class ARMATURE_MT_collection_tree_context_menu(Menu):
@@ -220,7 +221,7 @@ class ARMATURE_MT_collection_tree_context_menu(Menu):
         layout.operator("armature.collection_deselect", text="Deselect Bones", icon="SELECT_NONE")
 
         layout.separator()
-        layout.operator("UI_OT_view_item_rename", text="Rename")
+        layout.operator("UI_OT_view_item_rename", text="Rename", icon="RENAME")
 
 
 class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
