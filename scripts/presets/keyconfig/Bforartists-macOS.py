@@ -1640,6 +1640,13 @@ keyconfig_data = \
        ],
       },
      ),
+    ("wm.call_menu",
+     {"type": 'A', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'VIEW3D_MT_edit_curves_add'),
+       ],
+      },
+     ),
     ],
    },
   ),
