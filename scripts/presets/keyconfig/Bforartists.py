@@ -1,4 +1,4 @@
-keyconfig_version = (4, 2, 12)
+keyconfig_version = (4, 2, 16)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1624,6 +1624,34 @@ keyconfig_data = \
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
       [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'D', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.select'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'W', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.move'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'E', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.rotate'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'R', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.scale'),
        ],
       },
      ),
