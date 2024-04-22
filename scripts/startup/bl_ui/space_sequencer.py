@@ -649,7 +649,7 @@ class SEQUENCER_MT_marker(Menu):
         from bl_ui.space_time import marker_menu_generic
         marker_menu_generic(layout, context)
 
-
+# BFA - no longer used
 class SEQUENCER_MT_change(Menu):
     bl_label = "Change"
 
@@ -697,6 +697,7 @@ class SEQUENCER_MT_change(Menu):
                     layout.operator_menu_enum("sequencer.change_effect_type", "type")
                 else:
                     layout.label(text="Please select a changeable strip", icon="QUESTION")
+                    pass
         except:
             layout.label(text="Please select a strip", icon="QUESTION")
         # BFA - End of changes
@@ -1140,7 +1141,8 @@ class SEQUENCER_MT_strip(Menu):
                     layout.operator_menu_enum("sequencer.change_effect_input", "swap")
                     layout.operator_menu_enum("sequencer.change_effect_type", "type")
                 else:
-                    layout.label(text="Please select a changeable strip", icon="QUESTION")
+                    #layout.label(text="Please select a changeable strip", icon="QUESTION")
+                    pass
         except:
             #layout.label(text="Please select a strip to change", icon="QUESTION")
             pass
@@ -1328,7 +1330,8 @@ class SEQUENCER_MT_context_menu(Menu):
                     layout.operator_menu_enum("sequencer.change_effect_input", "swap")
                     layout.operator_menu_enum("sequencer.change_effect_type", "type")
                 else:
-                    layout.label(text="Please select a changeable strip", icon="QUESTION")
+                    #layout.label(text="Please select a changeable strip", icon="QUESTION")
+                    pass
         except:
             #layout.label(text="Please select a strip to change", icon="QUESTION")
             pass
