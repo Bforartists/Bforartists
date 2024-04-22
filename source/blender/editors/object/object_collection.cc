@@ -8,6 +8,10 @@
 
 #include <cstring>
 
+// BFA - include <string> and <unordered_map>
+#include <string>
+#include <unordered_map>
+
 #include "BLI_path_util.h"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
@@ -712,6 +716,14 @@ static void WM_OT_collection_export_all(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+/* BFA - set builtin save enum items icons */
+std::unordered_map<std::string, BIFIconID_Static> ks_icons_map = {
+    {"IO_FH_alembic", ICON_SAVE_ABC},
+    {"IO_FH_usd", ICON_SAVE_USD},
+    {"IO_FH_obj", ICON_SAVE_OBJ},
+};
+/* end BFA */
+
 static void collection_exporter_menu_draw(const bContext * /*C*/, Menu *menu)
 {
   using namespace blender;
@@ -721,8 +733,17 @@ static void collection_exporter_menu_draw(const bContext * /*C*/, Menu *menu)
   bool at_least_one = false;
   for (const auto &fh : bke::file_handlers()) {
     if (WM_operatortype_find(fh->export_operator, true)) {
+      /* BFA start */
+      int icon ;
+      if (auto it = ks_icons_map.find(fh->idname); it != ks_icons_map.end()) {
+        icon = it->second;
+      }
+      else {
+        icon = ICON_NONE;
+      }
+      /* BFA end */
       uiItemStringO(
-          layout, fh->label, ICON_NONE, "COLLECTION_OT_exporter_add", "name", fh->idname);
+          layout, fh->label, icon, "COLLECTION_OT_exporter_add", "name", fh->idname);
       at_least_one = true;
     }
   }
