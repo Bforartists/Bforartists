@@ -282,7 +282,7 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
         row.prop(screen, "use_follow", text="Follow Current Frame")
 
         col = layout.column(align = True)
-        col.label(text = "Play In")
+        col.label(text = "Play in") #BFA - capitals on prepositions is bad grammar
         row = col.row()
         row.separator()
         row.prop(screen, "use_play_top_left_3d_editor", text="Active Editor")
@@ -297,7 +297,7 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
         row.prop(screen, "use_play_image_editors", text="Image Editor")
         row = col.row()
         row.separator()
-        row.prop(screen, "use_play_properties_editors", text="Properties and Sidebars Editor")
+        row.prop(screen, "use_play_properties_editors", text="Properties Editor and Sidebars") #BFA - changed name, sidebars aren't editors...
         row = col.row()
         row.separator()
         row.prop(screen, "use_play_clip_editors", text="Movie Clip Editor")
