@@ -4516,10 +4516,10 @@ class VIEW3D_MT_sculpt_legacy(Menu):
         props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show", icon="LASSO_SHOW")
         props.action = 'SHOW'
 
-        props = layout.operator("paint.hide_show_line_gesture", text="Line Hide", icon="HIDE_ON")
+        props = layout.operator("paint.hide_show_line_gesture", text="Line Hide", icon="LINE_HIDE")
         props.action = 'HIDE'
 
-        props = layout.operator("paint.hide_show_line_gesture", text="Line Show", icon="HIDE_OFF")
+        props = layout.operator("paint.hide_show_line_gesture", text="Line Show", icon="LINE_SHOW")
         props.action = 'SHOW'
 
         layout.separator()

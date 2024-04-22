@@ -2221,8 +2221,8 @@ blend_to_ease
 split_to_instances
 index_switch
 bake
-#~ DEF_ICON_BLANK(2241)
-#~ DEF_ICON_BLANK(2242)
+line_show
+line_hide
 #~ DEF_ICON_BLANK(2243)
 #~ DEF_ICON_BLANK(2244)
 collection_bone_remove
