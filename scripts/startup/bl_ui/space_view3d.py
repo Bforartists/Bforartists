@@ -4447,42 +4447,6 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
-        props = layout.operator("paint.hide_show", text="Box Hide", icon="BOX_HIDE")
-        props.action = 'HIDE'
-
-        props = layout.operator("paint.hide_show", text="Box Show", icon="BOX_SHOW")
-        props.action = 'SHOW'
-
-        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Hide", icon="LASSO_HIDE")
-        props.action = 'HIDE'
-
-        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show", icon="LASSO_SHOW")
-        props.action = 'SHOW'
-
-        props = layout.operator("paint.hide_show_line_gesture", text="Line Hide")
-        props.action = 'HIDE'
-
-        props = layout.operator("paint.hide_show_line_gesture", text="Line Show")
-        props.action = 'SHOW'
-
-        layout.separator()
-
-        props = layout.operator("sculpt.trim_box_gesture", text="Box Trim", icon='BOX_TRIM')
-        props.trim_mode = 'DIFFERENCE'
-
-        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim", icon='LASSO_TRIM')
-        props.trim_mode = 'DIFFERENCE'
-
-        props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon='BOX_ADD')
-        props.trim_mode = 'JOIN'
-
-        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon='LASSO_ADD')
-        props.trim_mode = 'JOIN'
-
-        layout.separator()
-
-        layout.operator("sculpt.project_line_gesture", text="Line Project", icon='LINE_PROJECT')
-
         # Fair Positions
         props = layout.operator("sculpt.face_set_edit", text="Fair Positions", icon='POSITION')
         props.mode = 'FAIR_POSITIONS'
@@ -4537,6 +4501,44 @@ class VIEW3D_MT_sculpt_legacy(Menu):
         layout.operator("transform.translate", icon='TRANSFORM_MOVE')
         layout.operator("transform.rotate", icon='TRANSFORM_ROTATE')
         layout.operator("transform.resize", text="Scale", icon='TRANSFORM_SCALE')
+
+        layout.separator()
+
+        props = layout.operator("paint.hide_show", text="Box Hide", icon="BOX_HIDE")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show", text="Box Show", icon="BOX_SHOW")
+        props.action = 'SHOW'
+
+        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Hide", icon="LASSO_HIDE")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show", icon="LASSO_SHOW")
+        props.action = 'SHOW'
+
+        props = layout.operator("paint.hide_show_line_gesture", text="Line Hide", icon="HIDE_ON")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show_line_gesture", text="Line Show", icon="HIDE_OFF")
+        props.action = 'SHOW'
+
+        layout.separator()
+
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Trim", icon='BOX_TRIM')
+        props.trim_mode = 'DIFFERENCE'
+
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim", icon='LASSO_TRIM')
+        props.trim_mode = 'DIFFERENCE'
+
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon='BOX_ADD')
+        props.trim_mode = 'JOIN'
+
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon='LASSO_ADD')
+        props.trim_mode = 'JOIN'
+
+        layout.separator()
+
+        layout.operator("sculpt.project_line_gesture", text="Line Project", icon='LINE_PROJECT')
 
 
 # bfa menu
