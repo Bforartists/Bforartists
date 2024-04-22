@@ -2301,7 +2301,7 @@ set_selection
 view_graph
 internet
 euro
-#~ DEF_ICON_BLANK(2321)
+export_collection
 #~ DEF_ICON_BLANK(2322)
 #~ DEF_ICON_BLANK(2323)
 collection_bone_add
