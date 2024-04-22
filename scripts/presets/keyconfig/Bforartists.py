@@ -8447,7 +8447,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("view3d.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, None),
+    ("view3d.select", {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True}, None),
     ("wm.call_panel",
      {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
@@ -8470,7 +8470,7 @@ keyconfig_data = \
       },
      ),
     ("paint.weight_paint",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True},
      {"properties":
       [("mode", 'INVERT'),
        ],

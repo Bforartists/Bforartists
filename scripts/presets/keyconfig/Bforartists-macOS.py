@@ -2873,7 +2873,7 @@ keyconfig_data = \
     ("transform.bend", {"type": 'W', "value": 'PRESS', "shift": True}, None),
     ("transform.mirror", {"type": 'M', "value": 'PRESS', "oskey": True}, None),
     ("transform.tosphere", {"type": 'S', "value": 'PRESS', "shift": True, "alt": True}, None),
-    ("transform.shear", {"type": 'S', "value": 'PRESS', "shift": True, "oskey": True, "alt": True}, None),
+    ("transform.shear", {"type": 'S', "value": 'PRESS', "shift": True, "alt": True, "oskey": True}, None),
     ("transform.transform",
      {"type": 'S', "value": 'PRESS', "alt": True},
      {"properties":
@@ -5477,10 +5477,10 @@ keyconfig_data = \
  ("Object Mode",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("scene.cic_create_groundplane", {"type": 'FOUR', "value": 'PRESS', "shift": True, "oskey": True, "alt": True}, None),
-    ("scene.cic_create_gameisocam4to3", {"type": 'THREE', "value": 'PRESS', "shift": True, "oskey": True, "alt": True}, None),
-    ("scene.cic_create_gameisocam", {"type": 'TWO', "value": 'PRESS', "shift": True, "oskey": True, "alt": True}, None),
-    ("scene.cic_create_trueisocam", {"type": 'ONE', "value": 'PRESS', "shift": True, "oskey": True, "alt": True}, None),
+   [("scene.cic_create_groundplane", {"type": 'FOUR', "value": 'PRESS', "shift": True, "alt": True, "oskey": True}, None),
+    ("scene.cic_create_gameisocam4to3", {"type": 'THREE', "value": 'PRESS', "shift": True, "alt": True, "oskey": True}, None),
+    ("scene.cic_create_gameisocam", {"type": 'TWO', "value": 'PRESS', "shift": True, "alt": True, "oskey": True}, None),
+    ("scene.cic_create_trueisocam", {"type": 'ONE', "value": 'PRESS', "shift": True, "alt": True, "oskey": True}, None),
     ("object.select_all",
      {"type": 'A', "value": 'PRESS'},
      {"properties":
@@ -8389,7 +8389,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("view3d.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True}, None),
+    ("view3d.select", {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True}, None),
     ("wm.call_panel",
      {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
@@ -8412,7 +8412,7 @@ keyconfig_data = \
       },
      ),
     ("paint.weight_paint",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
+     {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True},
      {"properties":
       [("mode", 'INVERT'),
        ],
