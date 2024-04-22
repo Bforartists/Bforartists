@@ -664,11 +664,12 @@ class SEQUENCER_MT_change(Menu):
             layout.operator_context = 'INVOKE_REGION_WIN'
             if strip and strip.type == 'SCENE':
                 bpy_data_scenes_len = len(bpy.data.scenes)
-                if bpy_data_scenes_len > 10:
+
+                if bpy_data_scenes_len > 14:
                     layout.operator_context = 'INVOKE_DEFAULT'
-                    layout.operator("sequencer.change_scene", text="Change Scene...")
+                    layout.operator("sequencer.change_scene", text="Change Scene", icon="SCENE_DATA")
                 elif bpy_data_scenes_len > 1:
-                    layout.operator_menu_enum("sequencer.change_scene", "scene", text="Change Scene")
+                    layout.menu("SEQUENCER_MT_change_scene_with_icons", text="Change Scene")
                 del bpy_data_scenes_len
             else:
                 layout.operator_context = 'INVOKE_DEFAULT'
@@ -1042,6 +1043,22 @@ class SEQUENCER_MT_strip_retiming(Menu):
         except:
             layout.label(text="To Retime, select a movie strip", icon="QUESTION") #BFA
 
+class SEQUENCER_MT_change_scene_with_icons(Menu):
+    bl_label = "Change Scene with Icons"
+
+    def draw(self, context):
+        layout = self.layout
+        scenes = bpy.data.scenes
+
+        current_scene_name = context.scene.name  # Get the current scene name
+
+        for scene in scenes:
+            # Skip the current scene to avoid the error
+            if scene.name == current_scene_name:
+                continue
+            # Here 'SCENE_DATA' is used as a placeholder icon for all items
+            layout.operator("sequencer.change_scene", text=scene.name, icon='SCENE_DATA').scene = scene.name
+
 
 class SEQUENCER_MT_strip(Menu):
     bl_label = "Strip"
@@ -1082,7 +1099,52 @@ class SEQUENCER_MT_strip(Menu):
             layout.operator("sequencer.scene_frame_range_update", icon = 'NODE_MAP_RANGE')
 
         layout.separator()
-        layout.menu("SEQUENCER_MT_change")
+        #layout.menu("SEQUENCER_MT_change") # BFA - replaced to be a top-level series of conditional operators
+
+        # BFA - Changed the Change contextual operator visibility to be based on strip type selection
+        # BFA - This is done by listing the strip types then checking if it exists for the relevant operators
+        # BFA - If there is no correct strip selected, a label will advise what to do
+        try:
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            if strip and strip.type == 'SCENE':
+                bpy_data_scenes_len = len(bpy.data.scenes)
+
+                if bpy_data_scenes_len > 14:
+                    layout.operator_context = 'INVOKE_DEFAULT'
+                    layout.operator("sequencer.change_scene", text="Change Scene", icon="SCENE_DATA")
+                elif bpy_data_scenes_len > 1:
+                    layout.menu("SEQUENCER_MT_change_scene_with_icons", text="Change Scene")
+                del bpy_data_scenes_len
+            else:
+                layout.operator_context = 'INVOKE_DEFAULT'
+
+                strip_type = strip.type
+                data_strips = ['IMAGE', 'MOVIE', 'SOUND']
+                effect_strips = ['GAUSSIAN_BLUR', 'SPEED', 'GLOW', 'TRANSFORM', 'MULTICAM', 'ADD', 'SUBRACT', 'ALPHA_OVER', 'ALPHA_UNDER', 'COLORMIX']
+
+                if strip_type in data_strips:
+                    layout.operator_context = 'INVOKE_DEFAULT'
+                    props = layout.operator("sequencer.change_path", text="Change Path/Files", icon='FILE_MOVIE')
+
+                    if strip:
+                        strip_type = strip.type
+
+                        if strip_type == 'IMAGE':
+                            props.filter_image = True
+                        elif strip_type == 'MOVIE':
+                            props.filter_movie = True
+                        elif strip_type == 'SOUND':
+                            props.filter_sound = True
+                elif strip_type in effect_strips:
+                    layout.operator_context = 'INVOKE_DEFAULT'
+                    layout.operator_menu_enum("sequencer.change_effect_input", "swap")
+                    layout.operator_menu_enum("sequencer.change_effect_type", "type")
+                else:
+                    layout.label(text="Please select a changeable strip", icon="QUESTION")
+        except:
+            #layout.label(text="Please select a strip to change", icon="QUESTION")
+            pass
+        # BFA - End of changes
 
         if has_sequencer:
             if strip:
@@ -1224,8 +1286,53 @@ class SEQUENCER_MT_context_menu(Menu):
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon='DELETE_DUPLICATE').delete_data = True
             layout.operator("sequencer.scene_frame_range_update")
 
-        layout.separator()
-        layout.menu("SEQUENCER_MT_change")
+        #layout.separator()
+        #layout.menu("SEQUENCER_MT_change") # BFA - replaced to be a top-level series of conditional operators
+
+        # BFA - Changed the Change contextual operator visibility to be based on strip type selection
+        # BFA - This is done by listing the strip types then checking if it exists for the relevant operators
+        # BFA - If there is no correct strip selected, a label will advise what to do
+        try:
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            if strip and strip.type == 'SCENE':
+                bpy_data_scenes_len = len(bpy.data.scenes)
+
+                if bpy_data_scenes_len > 14:
+                    layout.operator_context = 'INVOKE_DEFAULT'
+                    layout.operator("sequencer.change_scene", text="Change Scene", icon="SCENE_DATA")
+                elif bpy_data_scenes_len > 1:
+                    layout.menu("SEQUENCER_MT_change_scene_with_icons", text="Change Scene")
+                del bpy_data_scenes_len
+            else:
+                layout.operator_context = 'INVOKE_DEFAULT'
+
+                strip_type = strip.type
+                data_strips = ['IMAGE', 'MOVIE', 'SOUND']
+                effect_strips = ['GAUSSIAN_BLUR', 'SPEED', 'GLOW', 'TRANSFORM', 'MULTICAM', 'ADD', 'SUBRACT', 'ALPHA_OVER', 'ALPHA_UNDER', 'COLORMIX']
+
+                if strip_type in data_strips:
+                    layout.operator_context = 'INVOKE_DEFAULT'
+                    props = layout.operator("sequencer.change_path", text="Change Path/Files", icon='FILE_MOVIE')
+
+                    if strip:
+                        strip_type = strip.type
+
+                        if strip_type == 'IMAGE':
+                            props.filter_image = True
+                        elif strip_type == 'MOVIE':
+                            props.filter_movie = True
+                        elif strip_type == 'SOUND':
+                            props.filter_sound = True
+                elif strip_type in effect_strips:
+                    layout.operator_context = 'INVOKE_DEFAULT'
+                    layout.operator_menu_enum("sequencer.change_effect_input", "swap")
+                    layout.operator_menu_enum("sequencer.change_effect_type", "type")
+                else:
+                    layout.label(text="Please select a changeable strip", icon="QUESTION")
+        except:
+            #layout.label(text="Please select a strip to change", icon="QUESTION")
+            pass
+        # BFA - End of changes
 
         layout.separator()
 
@@ -3044,7 +3151,7 @@ class SEQUENCER_MT_fades_add(Menu):
 
 classes = (
     ALL_MT_editormenu_sequencer,
-    SEQUENCER_MT_change,
+    SEQUENCER_MT_change, #BFA - no longer used
     SEQUENCER_HT_tool_header,
     SEQUENCER_HT_header,
     SEQUENCER_MT_editor_menus,
@@ -3089,6 +3196,7 @@ classes = (
     SEQUENCER_PT_color_tag_picker,
 
     SEQUENCER_PT_active_tool,
+    SEQUENCER_MT_change_scene_with_icons, # BFA
     SEQUENCER_PT_strip,
 
     SEQUENCER_PT_gizmo_display,
@@ -3134,7 +3242,7 @@ classes = (
 
     SEQUENCER_PT_snapping,
 
-#BFA
+# BFA
     SEQUENCER_PT_view_options,
     SEQUENCER_MT_fades_add,
 )
