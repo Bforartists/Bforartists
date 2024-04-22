@@ -7177,11 +7177,11 @@ class VIEW3D_MT_edit_curves(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.separator()
-        layout.operator("curves.duplicate_move")
+        layout.operator("curves.duplicate_move", icon='DUPLICATE')
         layout.separator()
         layout.operator("curves.attribute_set", icon='NODE_ATTRIBUTE')
         layout.operator("curves.delete", icon='DELETE')
-        layout.operator("curves.cyclic_toggle")
+        layout.operator("curves.cyclic_toggle", icon='TOGGLE_CYCLIC')
         layout.operator_menu_enum("curves.curve_type_set", "type")
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -7194,15 +7194,14 @@ class VIEW3D_MT_edit_curves_control_points(Menu):
 
         layout.operator_menu_enum("curves.handle_type_set", "type")
 
-
 class VIEW3D_MT_edit_curves_segments(Menu):
     bl_label = "Segments"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("curves.subdivide")
-        layout.operator("curves.switch_direction")
+        layout.operator("curves.subdivide", icon='SUBDIVIDE_EDGES')
+        layout.operator("curves.switch_direction", icon='SWITCH_DIRECTION')
 
 
 class VIEW3D_MT_edit_pointcloud(Menu):
