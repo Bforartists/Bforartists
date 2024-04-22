@@ -326,7 +326,7 @@ class TOPBAR_MT_file(Menu):
         layout.menu("TOPBAR_MT_file_import", icon='IMPORT')
         layout.menu("TOPBAR_MT_file_export", icon='EXPORT')
         row = layout.row()
-        row.operator("wm.collection_export_all")
+        row.operator("wm.collection_export_all", icon='EXPORT_COLLECTION')
         row.enabled = context.view_layer.has_export_collections
 
         layout.separator()
