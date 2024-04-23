@@ -2251,7 +2251,7 @@ static bool outliner_orphans_purge_check(bContext *C, wmOperator *op)
    return WM_operator_props_dialog_popup(C,
                                          op,
                                          unused_message_popup_width_compute(C),
-                                         IFACE_("Purge Unused Data From This File"),
+                                         IFACE_("Purge Unused Data from This File"),
                                          IFACE_("Delete"));
  } */
 

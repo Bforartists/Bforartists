@@ -144,11 +144,14 @@ void WorldVolumePipeline::sync(GPUMaterial *gpumat)
 
   world_ps_.material_set(*inst_.manager, gpumat);
   /* Bind correct dummy texture for attributes defaults. */
-  volume_sub_pass(world_ps_, nullptr, nullptr, gpumat);
+  PassSimple::Sub *sub = volume_sub_pass(world_ps_, nullptr, nullptr, gpumat);
 
-  world_ps_.draw_procedural(GPU_PRIM_TRIS, 1, 3);
-  /* Sync with object property pass. */
-  world_ps_.barrier(GPU_BARRIER_SHADER_IMAGE_ACCESS);
+  is_valid_ = (sub != nullptr);
+  if (is_valid_) {
+    world_ps_.draw_procedural(GPU_PRIM_TRIS, 1, 3);
+    /* Sync with object property pass. */
+    world_ps_.barrier(GPU_BARRIER_SHADER_IMAGE_ACCESS);
+  }
 }
 
 void WorldVolumePipeline::render(View &view)
@@ -270,10 +273,7 @@ void ForwardPipeline::sync()
 
     {
       /* Common resources. */
-
-      /* Textures. */
       prepass_ps_.bind_texture(RBUFS_UTILITY_TEX_SLOT, inst_.pipelines.utility_tx);
-
       prepass_ps_.bind_resources(inst_.uniform_data);
       prepass_ps_.bind_resources(inst_.velocity);
       prepass_ps_.bind_resources(inst_.sampling);
@@ -296,14 +296,7 @@ void ForwardPipeline::sync()
 
     {
       /* Common resources. */
-      /* RenderPasses & AOVs. */
-      opaque_ps_.bind_image(RBUFS_COLOR_SLOT, &inst_.render_buffers.rp_color_tx);
-      opaque_ps_.bind_image(RBUFS_VALUE_SLOT, &inst_.render_buffers.rp_value_tx);
-      /* Cryptomatte. */
-      opaque_ps_.bind_image(RBUFS_CRYPTOMATTE_SLOT, &inst_.render_buffers.cryptomatte_tx);
-      /* Textures. */
       opaque_ps_.bind_texture(RBUFS_UTILITY_TEX_SLOT, inst_.pipelines.utility_tx);
-
       opaque_ps_.bind_resources(inst_.uniform_data);
       opaque_ps_.bind_resources(inst_.lights);
       opaque_ps_.bind_resources(inst_.shadows);

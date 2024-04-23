@@ -617,10 +617,6 @@ class USERPREF_MT_extensions_bl_pkg_settings(Menu):
 
         addon_prefs = context.preferences.addons[__package__].preferences
 
-        layout.popover("USERPREF_PT_extensions_repos", text="Repositories")
-
-        layout.separator()
-
         layout.operator("bl_pkg.repo_sync_all", text="Check for Updates", icon='FILE_REFRESH')
 
         layout.separator()
@@ -677,6 +673,9 @@ def extensions_panel_draw(panel, context):
     row_b = row.row(align=True)
     row_b.prop(wm, "extension_type", text="")
     row_b.popover("USERPREF_PT_extensions_bl_pkg_filter", text="", icon='FILTER')
+
+    row_b.separator()
+    row_b.popover("USERPREF_PT_extensions_repos", text="Repositories")
 
     row_b.separator()
     row_b.menu("USERPREF_MT_extensions_bl_pkg_settings", text="", icon='DOWNARROW_HLT')

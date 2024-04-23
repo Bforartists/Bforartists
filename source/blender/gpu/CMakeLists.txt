@@ -203,6 +203,7 @@ set(VULKAN_SRC
   vulkan/vk_debug.cc
   vulkan/vk_descriptor_pools.cc
   vulkan/vk_descriptor_set.cc
+  vulkan/vk_descriptor_set_layouts.cc
   vulkan/vk_device.cc
   vulkan/vk_drawlist.cc
   vulkan/vk_fence.cc
@@ -217,6 +218,12 @@ set(VULKAN_SRC
   vulkan/vk_pixel_buffer.cc
   vulkan/vk_push_constants.cc
   vulkan/vk_query.cc
+  vulkan/render_graph/vk_command_buffer_wrapper.cc
+  vulkan/render_graph/vk_command_builder.cc
+  vulkan/render_graph/vk_resource_access_info.cc
+  vulkan/render_graph/vk_resource_state_tracker.cc
+  vulkan/render_graph/vk_scheduler.cc
+  vulkan/render_graph/vk_render_graph.cc
   vulkan/vk_resource_tracker.cc
   vulkan/vk_sampler.cc
   vulkan/vk_samplers.cc
@@ -245,6 +252,7 @@ set(VULKAN_SRC
   vulkan/vk_debug.hh
   vulkan/vk_descriptor_pools.hh
   vulkan/vk_descriptor_set.hh
+  vulkan/vk_descriptor_set_layouts.hh
   vulkan/vk_device.hh
   vulkan/vk_drawlist.hh
   vulkan/vk_fence.hh
@@ -259,6 +267,26 @@ set(VULKAN_SRC
   vulkan/vk_pixel_buffer.hh
   vulkan/vk_push_constants.hh
   vulkan/vk_query.hh
+  vulkan/render_graph/nodes/vk_blit_image_node.hh
+  vulkan/render_graph/nodes/vk_clear_color_image_node.hh
+  vulkan/render_graph/nodes/vk_clear_depth_stencil_image_node.hh
+  vulkan/render_graph/nodes/vk_copy_buffer_node.hh
+  vulkan/render_graph/nodes/vk_copy_buffer_to_image_node.hh
+  vulkan/render_graph/nodes/vk_copy_image_node.hh
+  vulkan/render_graph/nodes/vk_copy_image_to_buffer_node.hh
+  vulkan/render_graph/nodes/vk_dispatch_node.hh
+  vulkan/render_graph/nodes/vk_fill_buffer_node.hh
+  vulkan/render_graph/nodes/vk_node_info.hh
+  vulkan/render_graph/nodes/vk_synchronization_node.hh
+  vulkan/render_graph/nodes/vk_pipeline_data.hh
+  vulkan/render_graph/vk_command_buffer_wrapper.hh
+  vulkan/render_graph/vk_command_builder.hh
+  vulkan/render_graph/vk_render_graph_node.hh
+  vulkan/render_graph/vk_resource_access_info.hh
+  vulkan/render_graph/vk_resource_state_tracker.hh
+  vulkan/render_graph/vk_scheduler.hh
+  vulkan/render_graph/vk_render_graph.hh
+  vulkan/render_graph/vk_render_graph_links.hh
   vulkan/vk_resource_tracker.hh
   vulkan/vk_sampler.hh
   vulkan/vk_samplers.hh
@@ -844,7 +872,7 @@ if(WITH_GPU_BUILDTIME_SHADER_BUILDER)
   unset(_manifest)
   setup_platform_linker_flags(shader_builder)
 
-  if (WITH_BUILD_INFO)
+  if(WITH_BUILD_INFO)
     target_link_libraries(shader_builder PRIVATE buildinfoobj)
   endif()
   target_link_libraries(shader_builder PRIVATE
@@ -908,8 +936,11 @@ if(WITH_GTESTS)
 
   if(WITH_VULKAN_BACKEND)
     list(APPEND TEST_SRC
-      vulkan/vk_data_conversion_test.cc
-      vulkan/vk_memory_layout_test.cc
+      vulkan/tests/vk_data_conversion_test.cc
+      vulkan/tests/vk_memory_layout_test.cc
+      vulkan/render_graph/tests/vk_render_graph_test_transfer.cc
+      vulkan/render_graph/tests/vk_render_graph_test_compute.cc
+      vulkan/render_graph/tests/vk_render_graph_test_present.cc
     )
   endif()
 
@@ -920,7 +951,7 @@ if(WITH_GTESTS)
     )
   endif()
 
-  if (TEST_SRC)
+  if(TEST_SRC)
     set(TEST_COMMON_SRC
       tests/gpu_testing.cc
       tests/gpu_testing.hh

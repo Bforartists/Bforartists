@@ -23,6 +23,8 @@
 #include "BLI_path_util.h"
 #include "BLI_string.h"
 
+#include "BLT_translation.hh"
+
 #include "BKE_attribute.hh"
 #include "BKE_callbacks.hh"
 #include "BKE_context.hh"
@@ -1215,7 +1217,7 @@ static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
       }
     }
 
-    if (BMEditMesh *em = mesh->runtime->edit_mesh) {
+    if (BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
       /* Copy to bmesh. */
       const int active_color_offset = CustomData_get_offset_named(
           &em->bm->vdata, eCustomDataType(active_color_layer->type), active_color_layer->name);
@@ -1250,7 +1252,7 @@ static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
     MEM_SAFE_FREE(num_loops_for_vertex);
   }
   else if (domain == bke::AttrDomain::Corner) {
-    if (BMEditMesh *em = mesh->runtime->edit_mesh) {
+    if (BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
       /* Copy to bmesh. */
       const int active_color_offset = CustomData_get_offset_named(
           &em->bm->ldata, eCustomDataType(active_color_layer->type), active_color_layer->name);
@@ -2255,24 +2257,27 @@ void OBJECT_OT_bake(wmOperatorType *ot)
                R_BAKE_SPACE_TANGENT,
                "Normal Space",
                "Choose normal space for baking");
-  RNA_def_enum(ot->srna,
-               "normal_r",
-               rna_enum_normal_swizzle_items,
-               R_BAKE_POSX,
-               "R",
-               "Axis to bake in red channel");
-  RNA_def_enum(ot->srna,
-               "normal_g",
-               rna_enum_normal_swizzle_items,
-               R_BAKE_POSY,
-               "G",
-               "Axis to bake in green channel");
-  RNA_def_enum(ot->srna,
-               "normal_b",
-               rna_enum_normal_swizzle_items,
-               R_BAKE_POSZ,
-               "B",
-               "Axis to bake in blue channel");
+  prop = RNA_def_enum(ot->srna,
+                      "normal_r",
+                      rna_enum_normal_swizzle_items,
+                      R_BAKE_POSX,
+                      "R",
+                      "Axis to bake in red channel");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_COLOR);
+  prop = RNA_def_enum(ot->srna,
+                      "normal_g",
+                      rna_enum_normal_swizzle_items,
+                      R_BAKE_POSY,
+                      "G",
+                      "Axis to bake in green channel");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_COLOR);
+  prop = RNA_def_enum(ot->srna,
+                      "normal_b",
+                      rna_enum_normal_swizzle_items,
+                      R_BAKE_POSZ,
+                      "B",
+                      "Axis to bake in blue channel");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_COLOR);
   RNA_def_enum(ot->srna,
                "target",
                rna_enum_bake_target_items,
