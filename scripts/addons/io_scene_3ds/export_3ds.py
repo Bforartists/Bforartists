@@ -1562,8 +1562,9 @@ def make_ambient_node(world):
 # EXPORT #
 ##########
 
-def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False, use_selection=False,
-         object_filter=None, use_keyframes=True, use_hierarchy=False, global_matrix=None, use_cursor=False):
+def save(operator, context, filepath="", collection="", scale_factor=1.0, use_scene_unit=False,
+         use_selection=False, object_filter=None, use_keyframes=True, use_hierarchy=False,
+         use_collection=False, global_matrix=None, use_cursor=False):
     """Save the Blender scene to a 3ds file."""
 
     # Time the export
@@ -1573,6 +1574,7 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
     scene = context.scene
     layer = context.view_layer
     depsgraph = context.evaluated_depsgraph_get()
+    items = scene.objects
     world = scene.world
 
     unit_measure = 1.0
@@ -1596,6 +1598,13 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
             unit_measure = 1000000
 
     mtx_scale = mathutils.Matrix.Scale((scale_factor * unit_measure),4)
+
+    if use_collection:
+        items = layer.active_layer_collection.collection.all_objects
+    elif collection:
+        item_collection = bpy.data.collections.get(collection)
+        if item_collection:
+            items = item_collection.all_objects
 
     if global_matrix is None:
         global_matrix = mathutils.Matrix()
@@ -1630,9 +1639,9 @@ def save(operator, context, filepath="", scale_factor=1.0, use_scene_unit=False,
     mesh_objects = []
 
     if use_selection:
-        objects = [ob for ob in scene.objects if ob.type in object_filter and ob.visible_get(view_layer=layer) and ob.select_get(view_layer=layer)]
+        objects = [ob for ob in items if ob.type in object_filter and ob.visible_get(view_layer=layer) and ob.select_get(view_layer=layer)]
     else:
-        objects = [ob for ob in scene.objects if ob.type in object_filter and ob.visible_get(view_layer=layer)]
+        objects = [ob for ob in items if ob.type in object_filter and ob.visible_get(view_layer=layer)]
 
     empty_objects = [ob for ob in objects if ob.type == 'EMPTY']
     light_objects = [ob for ob in objects if ob.type == 'LIGHT']

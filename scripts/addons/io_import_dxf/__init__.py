@@ -4,10 +4,10 @@
 
 import bpy
 import os
-from bpy.props import StringProperty, BoolProperty, EnumProperty, IntProperty, FloatProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty, IntProperty, FloatProperty, CollectionProperty
 from .dxfimport.do import Do, Indicator
 from .transverse_mercator import TransverseMercator
-
+from pathlib import Path
 
 try:
     from pyproj import Proj, transform
@@ -83,6 +83,7 @@ T_CreateNewScene = False
 T_Recenter = False
 T_ThicknessBevel = True
 T_import_atts = True
+T_Collection = False
 
 RELEASE_TEST = False
 DEBUG = False
@@ -93,14 +94,14 @@ def is_ref_scene(scene):
 
 
 def read(report, filename, obj_merge=BY_LAYER, import_text=True, import_light=True, export_acis=True, merge_lines=True,
-         do_bbox=True, block_rep=LINKED_OBJECTS, new_scene=None, recenter=False, projDXF=None, projSCN=None,
+         do_bbox=True, block_rep=LINKED_OBJECTS, new_scene=None, new_collection=None, recenter=False, projDXF=None, projSCN=None,
          thicknessWidth=True, but_group_by_att=True, dxf_unit_scale=1.0):
     # import dxf and export nurbs types to sat/sab files
     # because that's how autocad stores nurbs types in a dxf...
     do = Do(filename, obj_merge, import_text, import_light, export_acis, merge_lines, do_bbox, block_rep, recenter,
             projDXF, projSCN, thicknessWidth, but_group_by_att, dxf_unit_scale)
 
-    errors = do.entities(os.path.basename(filename).replace(".dxf", ""), new_scene)
+    errors = do.entities(Path(filename.name).stem, new_scene, new_collection)
 
     # display errors
     for error in errors:
@@ -192,6 +193,15 @@ class IMPORT_OT_dxf(bpy.types.Operator):
 
     filename_ext = ".dxf"
 
+    files: CollectionProperty(
+            type=bpy.types.OperatorFileListElement, 
+            options={'HIDDEN', 'SKIP_SAVE'}
+            )
+
+    directory: StringProperty(
+            subtype='DIR_PATH'
+            )
+
     filter_glob: StringProperty(
             default="*.dxf",
             options={'HIDDEN'},
@@ -256,7 +266,23 @@ class IMPORT_OT_dxf(bpy.types.Operator):
             default=T_Bbox
             )
 
+    scene_options: EnumProperty(
+            name="Scene",
+            description="Select the import method",
+            items=[('CURRENT_SCENE', "Current", "All DXF files in the current scene."),
+                   ('NEW_SCENE', "New", "Each DXF file in a new scene."),
+                   ('NEW_UNIQUE_SCENE', "Unique", "All DXF files in a new collection.")],
+            default='CURRENT_SCENE',
+            )
 
+    collection_options: EnumProperty(
+            name="Collection",
+            description="Select the import method",
+            items=[('CURRENT_COLLECTION', "Current", "All DXF files in the current scene collection."),
+                   ('NEW_COLLECTION', "New", "Each DXF file in a new collection."),
+                   ('SCENE_COLLECTION', "Scene", "All DXF files in the scene collection.")],
+            default='CURRENT_COLLECTION',
+            )
 
     block_options: EnumProperty(
             name="Blocks As",
@@ -368,6 +394,12 @@ class IMPORT_OT_dxf(bpy.types.Operator):
         layout = self.layout
         scene = context.scene
 
+        # Import options
+        layout.label(text="Import Options:")
+        box = layout.box()
+        box.prop(self, "scene_options")
+        box.prop(self, "collection_options")
+
         # merge options
         layout.label(text="Merge Options:")
         box = layout.box()
@@ -401,7 +433,6 @@ class IMPORT_OT_dxf(bpy.types.Operator):
         layout.label(text="View Options:")
         box = layout.box()
         box.prop(self, "outliner_groups")
-        box.prop(self, "create_new_scene")
         sub = box.row()
         sub.enabled = _recenter_allowed(self)
         sub.prop(self, "recenter")
@@ -515,13 +546,39 @@ class IMPORT_OT_dxf(bpy.types.Operator):
                 proj_dxf = Indicator(self.dxf_indi)
                 proj_scn = TransverseMercator(lat=self.merc_scene_lat, lon=self.merc_scene_lon)
 
-        if RELEASE_TEST:
-            # for release testing
-            from . import test
-            test.test()
-        else:
-            read(self.report, self.filepath, merge_options, self.import_text, self.import_light, self.export_acis,
-                 self.merge_lines, self.do_bbox, block_map[self.block_options], scene, self.recenter,
+        scene = bpy.context.scene
+        if self.create_new_scene:
+            scene = bpy.data.scenes.new(Path(file.name).stem)
+
+        for file in self.files:
+
+            match self.scene_options:
+                case 'NEW_SCENE':
+                    scene = bpy.data.scenes.new(Path(file.name).stem)
+                case 'NEW_UNIQUE_SCENE':
+                    scene_name="DXF Import"
+                    if bpy.data.scenes.get(scene_name): scene=bpy.data.scenes[scene_name]
+                    else: scene = bpy.data.scenes.new(scene_name)
+                case _:
+                    scene = bpy.context.scene
+        
+            match self.collection_options:
+                case 'NEW_COLLECTION':
+                    collection = bpy.data.collections.new(Path(file.name).stem)
+                    scene.collection.children.link(collection)
+                case 'SCENE_COLLECTION':
+                    collection = scene.collection
+                case _:
+                    collection = bpy.context.collection
+                    if collection.name not in scene.collection.children: scene.collection.children.link(collection)
+
+            if RELEASE_TEST:
+                # for release testing
+                from . import test
+                test.test()
+            else:
+                read(self.report, Path(self.directory, file.name), merge_options, self.import_text, self.import_light, self.export_acis,
+                 self.merge_lines, self.do_bbox, block_map[self.block_options], scene, collection, self.recenter,
                  proj_dxf, proj_scn, self.represent_thickness_and_width, self.import_atts, dxf_unit_scale)
 
         if self.outliner_groups:

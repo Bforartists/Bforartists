@@ -150,7 +150,7 @@ static void addtail(volatile localListBase *listbase, void *vlink);
 static void remlink(volatile localListBase *listbase, void *vlink);
 static void rem_memblock(MemHead *memh);
 static void MemorY_ErroR(const char *block, const char *error);
-static const char *check_memlist(MemHead *memh);
+static const char *check_memlist(const MemHead *memh);
 
 /* --------------------------------------------------------------------- */
 /* locally used defines                                                  */
@@ -235,7 +235,7 @@ static void mem_unlock_thread()
 bool MEM_guarded_consistency_check()
 {
   const char *err_val = nullptr;
-  MemHead *listend;
+  const MemHead *listend;
   /* check_memlist starts from the front, and runs until it finds
    * the requested chunk. For this test, that's the last one. */
   listend = static_cast<MemHead *>(membase->last);
@@ -617,6 +617,36 @@ void *MEM_guarded_calloc_arrayN(size_t len, size_t size, const char *str)
   }
 
   return MEM_guarded_callocN(total_size, str);
+}
+
+void *MEM_guarded_calloc_arrayN_aligned(const size_t len,
+                                        const size_t size,
+                                        const size_t alignment,
+                                        const char *str)
+{
+  size_t bytes_num;
+  if (UNLIKELY(!MEM_size_safe_multiply(len, size, &bytes_num))) {
+    print_error(
+        "Calloc array aborted due to integer overflow: "
+        "len=" SIZET_FORMAT "x" SIZET_FORMAT " in %s, total " SIZET_FORMAT "\n",
+        SIZET_ARG(len),
+        SIZET_ARG(size),
+        str,
+        mem_in_use);
+    abort();
+    return nullptr;
+  }
+  if (alignment <= MEM_MIN_CPP_ALIGNMENT) {
+    return MEM_callocN(bytes_num, str);
+  }
+  /* There is no lower level #calloc with an alignment parameter, so we have to fallback to using
+   * #memset unfortunately. */
+  void *ptr = MEM_mallocN_aligned(bytes_num, alignment, str);
+  if (!ptr) {
+    return nullptr;
+  }
+  memset(ptr, 0, bytes_num);
+  return ptr;
 }
 
 /* Memory statistics print */
@@ -1070,7 +1100,7 @@ static void MemorY_ErroR(const char *block, const char *error)
 #endif
 }
 
-static const char *check_memlist(MemHead *memh)
+static const char *check_memlist(const MemHead *memh)
 {
   MemHead *forw, *back, *forwok, *backok;
   const char *name;

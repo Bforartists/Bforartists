@@ -14,7 +14,7 @@ from .geo import parse_position
 from .sun_calc import format_lat_long, sun, update_time, move_sun
 
 from math import pi
-from datetime import datetime
+from datetime import datetime, date
 TODAY = datetime.today()
 
 ############################################################################
@@ -34,6 +34,28 @@ def get_coordinates(self):
     if parse_success:
         return format_lat_long(self.latitude, self.longitude)
     return iface_("ERROR: Could not parse coordinates")
+
+
+def get_day(self):
+    """Getter for the day property.
+
+    Not all days are valid, depending on month.
+    Invalid days are only at the end of the month so they
+    can be checked by just decreasing the value until it is valid.
+    """
+    day = self.get("day", 1)
+    found_date = False
+    while not found_date:
+        try:
+            date(self.year, self.month, day)
+            found_date = True
+        except ValueError:
+            day -= 1
+    return day
+
+
+def set_day(self, value):
+    self["day"] = value
 
 
 def set_coordinates(self, value):
@@ -175,6 +197,8 @@ class SunPosProperties(PropertyGroup):
     day: IntProperty(
         name="Day",
         min=1, max=31, default=TODAY.day,
+        get=get_day,
+        set=set_day,
         update=sun_update)
 
     year: IntProperty(

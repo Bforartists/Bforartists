@@ -13,8 +13,8 @@ It's called "global" to avoid confusion with the Blender World data-block.
 bl_info = {
     "name": "Copy Global Transform",
     "author": "Sybren A. Stüvel",
-    "version": (2, 1),
-    "blender": (3, 5, 0),
+    "version": (3, 0),
+    "blender": (4, 2, 0),
     "location": "N-panel in the 3D Viewport",
     "category": "Animation",
     "support": 'OFFICIAL',
@@ -23,10 +23,12 @@ bl_info = {
 }
 
 import ast
-from typing import Iterable, Optional, Union, Any
+import abc
+import contextlib
+from typing import Iterable, Optional, Union, Any, TypeAlias, Iterator
 
 import bpy
-from bpy.types import Context, Object, Operator, Panel, PoseBone, UILayout
+from bpy.types import Context, Object, Operator, Panel, PoseBone, UILayout, FCurve, Camera, FModifierStepped
 from mathutils import Matrix
 
 
@@ -42,6 +44,47 @@ class AutoKeying:
 
     Based on Rigify code by Alexander Gavrilov.
     """
+
+    # Use AutoKeying.keytype() or Authkeying.options() context to change those.
+    _keytype = 'KEYFRAME'
+    _force_autokey = False  # Allow use without the user activating auto-keying.
+    _use_loc = True
+    _use_rot = True
+    _use_scale = True
+
+    @classmethod
+    @contextlib.contextmanager
+    def keytype(cls, the_keytype: str) -> Iterator[None]:
+        """Context manager to set the key type that's inserted."""
+        default_keytype = cls._keytype
+        try:
+            cls._keytype = the_keytype
+            yield
+        finally:
+            cls._keytype = default_keytype
+
+    @classmethod
+    @contextlib.contextmanager
+    def options(cls, *, keytype="", use_loc=True, use_rot=True, use_scale=True, force_autokey=False) -> Iterator[None]:
+        """Context manager to set various options."""
+        default_keytype = cls._keytype
+        default_use_loc = cls._use_loc
+        default_use_rot = cls._use_rot
+        default_use_scale = cls._use_scale
+        default_force_autokey = cls._force_autokey
+        try:
+            cls._keytype = keytype
+            cls._use_loc = use_loc
+            cls._use_rot = use_rot
+            cls._use_scale = use_scale
+            cls._force_autokey = force_autokey
+            yield
+        finally:
+            cls._keytype = default_keytype
+            cls._use_loc = default_use_loc
+            cls._use_rot = default_use_rot
+            cls._use_scale = default_use_scale
+            cls._force_autokey = default_force_autokey
 
     @classmethod
     def keying_options(cls, context: Context) -> set[str]:
@@ -65,7 +108,7 @@ class AutoKeying:
 
         ts = context.scene.tool_settings
 
-        if not ts.use_keyframe_insert_auto:
+        if not (cls._force_autokey or ts.use_keyframe_insert_auto):
             return None
 
         if ts.use_keyframe_insert_keyingset:
@@ -89,8 +132,9 @@ class AutoKeying:
         else:
             return [all(bone.lock_rotation)] * 4
 
-    @staticmethod
+    @classmethod
     def keyframe_channels(
+        cls,
         target: Union[Object, PoseBone],
         options: set[str],
         data_path: str,
@@ -101,13 +145,13 @@ class AutoKeying:
             return
 
         if not any(locks):
-            target.keyframe_insert(data_path, group=group, options=options)
+            target.keyframe_insert(data_path, group=group, options=options, keytype=cls._keytype)
             return
 
         for index, lock in enumerate(locks):
             if lock:
                 continue
-            target.keyframe_insert(data_path, index=index, group=group, options=options)
+            target.keyframe_insert(data_path, index=index, group=group, options=options, keytype=cls._keytype)
 
     @classmethod
     def key_transformation(
@@ -124,19 +168,26 @@ class AutoKeying:
             group = "Object Transforms"
 
         def keyframe(data_path: str, locks: Iterable[bool]) -> None:
-            cls.keyframe_channels(target, options, data_path, group, locks)
+            try:
+                cls.keyframe_channels(target, options, data_path, group, locks)
+            except RuntimeError:
+                # These are expected when "Insert Available" is turned on, and
+                # these curves are not available.
+                pass
 
-        if not (is_bone and target.bone.use_connect):
+        if cls._use_loc and not (is_bone and target.bone.use_connect):
             keyframe("location", target.lock_location)
 
-        if target.rotation_mode == 'QUATERNION':
-            keyframe("rotation_quaternion", cls.get_4d_rotlock(target))
-        elif target.rotation_mode == 'AXIS_ANGLE':
-            keyframe("rotation_axis_angle", cls.get_4d_rotlock(target))
-        else:
-            keyframe("rotation_euler", target.lock_rotation)
+        if cls._use_rot:
+            if target.rotation_mode == 'QUATERNION':
+                keyframe("rotation_quaternion", cls.get_4d_rotlock(target))
+            elif target.rotation_mode == 'AXIS_ANGLE':
+                keyframe("rotation_axis_angle", cls.get_4d_rotlock(target))
+            else:
+                keyframe("rotation_euler", target.lock_rotation)
 
-        keyframe("scale", target.lock_scale)
+        if cls._use_scale:
+            keyframe("scale", target.lock_scale)
 
     @classmethod
     def autokey_transformation(cls, context: Context, target: Union[Object, PoseBone]) -> None:
@@ -222,6 +273,12 @@ def _selected_keyframes_in_action(object: Object, rna_path_prefix: str) -> list[
     return sorted(keyframes)
 
 
+def _copy_matrix_to_clipboard(window_manager: bpy.types.WindowManager, matrix: Matrix) -> None:
+    rows = [f"    {tuple(row)!r}," for row in matrix]
+    as_string = "\n".join(rows)
+    window_manager.clipboard = f"Matrix((\n{as_string}\n))"
+
+
 class OBJECT_OT_copy_global_transform(Operator):
     bl_idname = "object.copy_global_transform"
     bl_label = "Copy Global Transform"
@@ -237,9 +294,38 @@ class OBJECT_OT_copy_global_transform(Operator):
 
     def execute(self, context: Context) -> set[str]:
         mat = get_matrix(context)
-        rows = [f"    {tuple(row)!r}," for row in mat]
-        as_string = "\n".join(rows)
-        context.window_manager.clipboard = f"Matrix((\n{as_string}\n))"
+        _copy_matrix_to_clipboard(context.window_manager, mat)
+        return {'FINISHED'}
+
+
+def _get_relative_ob(context: Context) -> Optional[Object]:
+    """Get the 'relative' object.
+
+    This is the object that's configured, or if that's empty, the active scene camera.
+    """
+    rel_ob = context.scene.addon_copy_global_transform_relative_ob
+    return rel_ob or context.scene.camera
+
+
+class OBJECT_OT_copy_relative_transform(Operator):
+    bl_idname = "object.copy_relative_transform"
+    bl_label = "Copy Relative Transform"
+    bl_description = "Copies the matrix of the currently active object or pose bone to the clipboard. " \
+        "Uses matrices relative to a specific object or the active scene camera"
+    # This operator cannot be un-done because it manipulates data outside Blender.
+    bl_options = {'REGISTER'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        rel_ob = _get_relative_ob(context)
+        if not rel_ob:
+            return False
+        return bool(context.active_pose_bone) or bool(context.active_object)
+
+    def execute(self, context: Context) -> set[str]:
+        rel_ob = _get_relative_ob(context)
+        mat = rel_ob.matrix_world.inverted() @ get_matrix(context)
+        _copy_matrix_to_clipboard(context.window_manager, mat)
         return {'FINISHED'}
 
 
@@ -304,6 +390,12 @@ class OBJECT_OT_paste_transform(Operator):
         default='z',
     )
 
+    use_relative: bpy.props.BoolProperty(  # type: ignore
+        name="Use Relative Paste",
+        description="When pasting, assume the pasted matrix is relative to another object (set in the user interface)",
+        default=False,
+    )
+
     @classmethod
     def poll(cls, context: Context) -> bool:
         if not context.active_pose_bone and not context.active_object:
@@ -355,7 +447,7 @@ class OBJECT_OT_paste_transform(Operator):
             return {'CANCELLED'}
 
         try:
-            mat = self._maybe_mirror(context, mat)
+            mat = self._preprocess_matrix(context, mat)
         except UnableToMirrorError:
             self.report({'ERROR'}, "Unable to mirror, no mirror object/bone configured")
             return {'CANCELLED'}
@@ -367,10 +459,25 @@ class OBJECT_OT_paste_transform(Operator):
         }[self.method]
         return applicator(context, mat)
 
-    def _maybe_mirror(self, context: Context, matrix: Matrix) -> Matrix:
-        if not self.use_mirror:
+    def _preprocess_matrix(self, context: Context, matrix: Matrix) -> Matrix:
+        matrix = self._relative_to_world(context, matrix)
+
+        if self.use_mirror:
+            matrix = self._mirror_matrix(context, matrix)
+        return matrix
+
+    def _relative_to_world(self, context: Context, matrix: Matrix) -> Matrix:
+        if not self.use_relative:
             return matrix
 
+        rel_ob = _get_relative_ob(context)
+        if not rel_ob:
+            return matrix
+
+        rel_ob_eval = rel_ob.evaluated_get(context.view_layer.depsgraph)
+        return rel_ob_eval.matrix_world @ matrix
+
+    def _mirror_matrix(self, context: Context, matrix: Matrix) -> Matrix:
         mirror_ob = context.scene.addon_copy_global_transform_mirror_ob
         mirror_bone = context.scene.addon_copy_global_transform_mirror_bone
 
@@ -484,6 +591,269 @@ class OBJECT_OT_paste_transform(Operator):
             context.scene.frame_set(int(current_frame), subframe=current_frame % 1.0)
 
 
+# Mapping from frame number to the dominant key type.
+# GENERATED is the only recessive key type, others are dominant.
+KeyInfo: TypeAlias = dict[float, str]
+
+
+class Transformable(metaclass=abc.ABCMeta):
+    """Interface for a bone or an object."""
+
+    def __init__(self) -> None:
+        self._key_info_cache: Optional[KeyInfo] = None
+
+    @abc.abstractmethod
+    def matrix_world(self) -> Matrix:
+        pass
+
+    @abc.abstractmethod
+    def set_matrix_world(self, context: Context, matrix: Matrix) -> None:
+        pass
+
+    @abc.abstractmethod
+    def _my_fcurves(self) -> Iterable[bpy.types.FCurve]:
+        pass
+
+    def key_info(self) -> KeyInfo:
+        if self._key_info_cache is not None:
+            return self._key_info_cache
+
+        keyinfo: KeyInfo = {}
+        for fcurve in self._my_fcurves():
+            for kp in fcurve.keyframe_points:
+                frame = kp.co.x
+                if kp.type == 'GENERATED' and frame in keyinfo:
+                    # Don't bother overwriting other key types.
+                    continue
+                keyinfo[frame] = kp.type
+
+        self._key_info_cache = keyinfo
+        return keyinfo
+
+    def remove_keys_of_type(self, key_type: str, *, frame_start=float("-inf"), frame_end=float("inf")) -> None:
+        self._key_info_cache = None
+
+        for fcurve in self._my_fcurves():
+            to_remove = [
+                kp for kp in fcurve.keyframe_points if kp.type == key_type and (frame_start <= kp.co.x <= frame_end)
+            ]
+            for kp in reversed(to_remove):
+                fcurve.keyframe_points.remove(kp, fast=True)
+            fcurve.keyframe_points.handles_recalc()
+
+
+class TransformableObject(Transformable):
+    object: Object
+
+    def __init__(self, object: Object) -> None:
+        super().__init__()
+        self.object = object
+
+    def matrix_world(self) -> Matrix:
+        return self.object.matrix_world
+
+    def set_matrix_world(self, context: Context, matrix: Matrix) -> None:
+        self.object.matrix_world = matrix
+        AutoKeying.autokey_transformation(context, self.object)
+
+    def __hash__(self) -> int:
+        return hash(self.object.as_pointer())
+
+    def _my_fcurves(self) -> Iterable[bpy.types.FCurve]:
+        action = self._action()
+        if not action:
+            return
+        yield from action.fcurves
+
+    def _action(self) -> Optional[bpy.types.Action]:
+        adt = self.object.animation_data
+        return adt and adt.action
+
+
+class TransformableBone(Transformable):
+    arm_object: Object
+    pose_bone: PoseBone
+
+    def __init__(self, pose_bone: PoseBone) -> None:
+        super().__init__()
+        self.arm_object = pose_bone.id_data
+        self.pose_bone = pose_bone
+
+    def matrix_world(self) -> Matrix:
+        mat = self.arm_object.matrix_world @ self.pose_bone.matrix
+        return mat
+
+    def set_matrix_world(self, context: Context, matrix: Matrix) -> None:
+        # Convert matrix to armature-local space
+        arm_eval = self.arm_object.evaluated_get(context.view_layer.depsgraph)
+        self.pose_bone.matrix = arm_eval.matrix_world.inverted() @ matrix
+        AutoKeying.autokey_transformation(context, self.pose_bone)
+
+    def __hash__(self) -> int:
+        return hash(self.pose_bone.as_pointer())
+
+    def _my_fcurves(self) -> Iterable[bpy.types.FCurve]:
+        action = self._action()
+        if not action:
+            return
+
+        rna_prefix = f"{self.pose_bone.path_from_id()}."
+        for fcurve in action.fcurves:
+            if fcurve.data_path.startswith(rna_prefix):
+                yield fcurve
+
+    def _action(self) -> Optional[bpy.types.Action]:
+        adt = self.arm_object.animation_data
+        return adt and adt.action
+
+
+class FixToCameraCommon:
+    """Common functionality for the Fix To Scene Camera operator + its 'delete' button."""
+
+    keytype = 'GENERATED'
+
+    # Operator method stubs to avoid PyLance/MyPy errors:
+    @classmethod
+    def poll_message_set(cls, message: str) -> None:
+        raise NotImplementedError()
+
+    def report(self, level: set[str], message: str) -> None:
+        raise NotImplementedError()
+
+    # Implement in subclass:
+    def _execute(self, context: Context, transformables: list[Transformable]) -> None:
+        raise NotImplementedError()
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        if not context.active_pose_bone and not context.active_object:
+            cls.poll_message_set("Select an object or pose bone")
+            return False
+        if context.mode not in {'POSE', 'OBJECT'}:
+            cls.poll_message_set("Switch to Pose or Object mode")
+            return False
+        if not context.scene.camera:
+            cls.poll_message_set("The Scene needs a camera")
+            return False
+        return True
+
+    def execute(self, context: Context) -> set[str]:
+        match context.mode:
+            case 'OBJECT':
+                transformables = self._transformable_objects(context)
+            case 'POSE':
+                transformables = self._transformable_pbones(context)
+            case mode:
+                self.report({'ERROR'}, 'Unsupported mode: %r' % mode)
+                return {'CANCELLED'}
+
+        restore_frame = context.scene.frame_current
+        try:
+            self._execute(context, transformables)
+        finally:
+            context.scene.frame_set(restore_frame)
+        return {'FINISHED'}
+
+    def _transformable_objects(self, context: Context) -> list[Transformable]:
+        return [TransformableObject(object=ob) for ob in context.selected_editable_objects]
+
+    def _transformable_pbones(self, context: Context) -> list[Transformable]:
+        return [TransformableBone(pose_bone=bone) for bone in context.selected_pose_bones]
+
+
+class OBJECT_OT_fix_to_camera(Operator, FixToCameraCommon):
+    bl_idname = "object.fix_to_camera"
+    bl_label = "Fix to Scene Camera"
+    bl_description = "Generate new keys to fix the selected object/bone to the camera on unkeyed frames"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    use_loc: bpy.props.BoolProperty(  # type: ignore
+        name="Location",
+        description="Create Location keys when fixing to the scene camera",
+        default=True,
+    )
+    use_rot: bpy.props.BoolProperty(  # type: ignore
+        name="Rotation",
+        description="Create Rotation keys when fixing to the scene camera",
+        default=True,
+    )
+    use_scale: bpy.props.BoolProperty(  # type: ignore
+        name="Scale",
+        description="Create Scale keys when fixing to the scene camera",
+        default=True,
+    )
+
+    def _get_matrices(self, camera: Camera, transformables: list[Transformable]) -> dict[Transformable, Matrix]:
+        camera_mat_inv = camera.matrix_world.inverted()
+        return {t: camera_mat_inv @ t.matrix_world() for t in transformables}
+
+    def _execute(self, context: Context, transformables: list[Transformable]) -> None:
+        depsgraph = context.view_layer.depsgraph
+        scene = context.scene
+
+        scene.frame_set(scene.frame_start)
+        camera_eval = scene.camera.evaluated_get(depsgraph)
+        last_camera_name = scene.camera.name
+        matrices = self._get_matrices(camera_eval, transformables)
+
+        if scene.use_preview_range:
+            frame_start = scene.frame_preview_start
+            frame_end = scene.frame_preview_end
+        else:
+            frame_start = scene.frame_start
+            frame_end = scene.frame_end
+
+        with AutoKeying.options(
+            keytype=self.keytype,
+            use_loc=self.use_loc,
+            use_rot=self.use_rot,
+            use_scale=self.use_scale,
+            force_autokey=True,
+        ):
+            for frame in range(frame_start, frame_end + scene.frame_step, scene.frame_step):
+                scene.frame_set(frame)
+
+                camera_eval = scene.camera.evaluated_get(depsgraph)
+                cam_matrix_world = camera_eval.matrix_world
+                camera_mat_inv = cam_matrix_world.inverted()
+
+                if scene.camera.name != last_camera_name:
+                    # The scene camera changed, so the previous
+                    # relative-to-camera matrices can no longer be used.
+                    matrices = self._get_matrices(camera_eval, transformables)
+                    last_camera_name = scene.camera.name
+
+                for t, camera_rel_matrix in matrices.items():
+                    key_info = t.key_info()
+                    key_type = key_info.get(frame, "")
+                    if key_type not in {self.keytype, ""}:
+                        # Manually set key, remember the current camera-relative matrix.
+                        matrices[t] = camera_mat_inv @ t.matrix_world()
+                        continue
+
+                    # No key, or a generated one. Overwrite it with a new transform.
+                    t.set_matrix_world(context, cam_matrix_world @ camera_rel_matrix)
+
+
+class OBJECT_OT_delete_fix_to_camera_keys(Operator, FixToCameraCommon):
+    bl_idname = "object.delete_fix_to_camera_keys"
+    bl_label = "Delete Generated Keys"
+    bl_description = "Delete all keys that were generated by the 'Fix to Scene Camera' operator"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def _execute(self, context: Context, transformables: list[Transformable]) -> None:
+        scene = context.scene
+        if scene.use_preview_range:
+            frame_start = scene.frame_preview_start
+            frame_end = scene.frame_preview_end
+        else:
+            frame_start = scene.frame_start
+            frame_end = scene.frame_end
+
+        for t in transformables:
+            t.remove_keys_of_type(self.keytype, frame_start=frame_start, frame_end=frame_end)
+
+
 class PanelMixin:
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -495,6 +865,7 @@ class VIEW3D_PT_copy_global_transform(PanelMixin, Panel):
 
     def draw(self, context: Context) -> None:
         layout = self.layout
+        scene = context.scene
 
         # No need to put "Global Transform" in the operator text, given that it's already in the panel title.
         layout.operator("object.copy_global_transform", text="Copy", icon='COPYDOWN')
@@ -509,22 +880,46 @@ class VIEW3D_PT_copy_global_transform(PanelMixin, Panel):
         paste_props.method = 'CURRENT'
         paste_props.use_mirror = True
 
-        wants_autokey_col = paste_col.column(align=True)
-        has_autokey = context.scene.tool_settings.use_keyframe_insert_auto
+        wants_autokey_col = paste_col.column(align=False)
+        has_autokey = scene.tool_settings.use_keyframe_insert_auto
         wants_autokey_col.enabled = has_autokey
         if not has_autokey:
             wants_autokey_col.label(text="These require auto-key:")
 
-        wants_autokey_col.operator(
+        paste_col = wants_autokey_col.column(align=True)
+        paste_col.operator(
             "object.paste_transform",
             text="Paste to Selected Keys",
             icon='PASTEDOWN',
         ).method = 'EXISTING_KEYS'
-        wants_autokey_col.operator(
+        paste_col.operator(
             "object.paste_transform",
             text="Paste and Bake",
             icon='PASTEDOWN',
         ).method = 'BAKE'
+
+
+class VIEW3D_PT_copy_global_transform_fix_to_camera(PanelMixin, Panel):
+    bl_label = "Fix to Camera"
+    bl_parent_id = "VIEW3D_PT_copy_global_transform"
+
+    def draw(self, context: Context) -> None:
+        layout = self.layout
+        scene = context.scene
+
+        # Fix to Scene Camera:
+        layout.use_property_split = True
+        props_box = layout.column(heading="Fix", align=True)
+        props_box.prop(scene, "addon_copy_global_transform_fix_cam_use_loc", text="Location")
+        props_box.prop(scene, "addon_copy_global_transform_fix_cam_use_rot", text="Rotation")
+        props_box.prop(scene, "addon_copy_global_transform_fix_cam_use_scale", text="Scale")
+
+        row = layout.row(align=True)
+        props = row.operator("object.fix_to_camera")
+        props.use_loc = scene.addon_copy_global_transform_fix_cam_use_loc
+        props.use_rot = scene.addon_copy_global_transform_fix_cam_use_rot
+        props.use_scale = scene.addon_copy_global_transform_fix_cam_use_scale
+        row.operator("object.delete_fix_to_camera_keys", text="", icon='TRASH')
 
 
 class VIEW3D_PT_copy_global_transform_mirror(PanelMixin, Panel):
@@ -563,7 +958,42 @@ class VIEW3D_PT_copy_global_transform_mirror(PanelMixin, Panel):
         layout.prop(scene, "addon_copy_global_transform_mirror_bone", text="Bone")
 
 
-### Messagebus subscription to monitor changes & refresh panels.
+class VIEW3D_PT_copy_global_transform_relative(PanelMixin, Panel):
+    bl_label = "Relative"
+    bl_parent_id = "VIEW3D_PT_copy_global_transform"
+
+    def draw(self, context: Context) -> None:
+        layout = self.layout
+        scene = context.scene
+
+        # Copy/Paste relative to some object:
+        copy_paste_sub = layout.column(align=False)
+        has_relative_ob = bool(_get_relative_ob(context))
+        copy_paste_sub.label(text="Work Relative to some Object")
+        copy_paste_sub.prop(scene, 'addon_copy_global_transform_relative_ob', text="Object")
+        if not scene.addon_copy_global_transform_relative_ob:
+            copy_paste_sub.label(text="Using Active Scene Camera")
+
+        button_sub = copy_paste_sub.row(align=True)
+        button_sub.enabled = has_relative_ob
+        button_sub.operator("object.copy_relative_transform", text="Copy", icon='COPYDOWN')
+
+        paste_props = button_sub.operator("object.paste_transform", text="Paste", icon='PASTEDOWN')
+        paste_props.method = 'CURRENT'
+        paste_props.use_mirror = False
+        paste_props.use_relative = True
+
+        # It is unknown whether this combination of options is in any way
+        # sensible or usable, and of so, in which order the mirroring and
+        # relative'ing-to should happen. That's why, for now, it's disabled.
+        #
+        # paste_props = paste_row.operator("object.paste_transform", text="Mirrored", icon='PASTEFLIPDOWN')
+        # paste_props.method = 'CURRENT'
+        # paste_props.use_mirror = True
+        # paste_props.use_relative = True
+
+
+# Messagebus subscription to monitor changes & refresh panels.
 _msgbus_owner = object()
 
 
@@ -578,9 +1008,14 @@ def _refresh_3d_panels():
 
 classes = (
     OBJECT_OT_copy_global_transform,
+    OBJECT_OT_copy_relative_transform,
     OBJECT_OT_paste_transform,
+    OBJECT_OT_fix_to_camera,
+    OBJECT_OT_delete_fix_to_camera_keys,
     VIEW3D_PT_copy_global_transform,
     VIEW3D_PT_copy_global_transform_mirror,
+    VIEW3D_PT_copy_global_transform_fix_to_camera,
+    VIEW3D_PT_copy_global_transform_relative,
 )
 _register, _unregister = bpy.utils.register_classes_factory(classes)
 
@@ -625,6 +1060,30 @@ def register():
         name="Mirror Bone",
         description="Bone to use for the mirroring",
     )
+    bpy.types.Scene.addon_copy_global_transform_relative_ob = bpy.props.PointerProperty(
+        type=bpy.types.Object,
+        name="Relative Object",
+        description="Object to which matrices are made relative",
+    )
+
+    bpy.types.Scene.addon_copy_global_transform_fix_cam_use_loc = bpy.props.BoolProperty(
+        name="Fix Camera: Use Location",
+        description="Create Location keys when fixing to the scene camera",
+        default=True,
+        options=set(),  # Remove ANIMATABLE default option.
+    )
+    bpy.types.Scene.addon_copy_global_transform_fix_cam_use_rot = bpy.props.BoolProperty(
+        name="Fix Camera: Use Rotation",
+        description="Create Rotation keys when fixing to the scene camera",
+        default=True,
+        options=set(),  # Remove ANIMATABLE default option.
+    )
+    bpy.types.Scene.addon_copy_global_transform_fix_cam_use_scale = bpy.props.BoolProperty(
+        name="Fix Camera: Use Scale",
+        description="Create Scale keys when fixing to the scene camera",
+        default=True,
+        options=set(),  # Remove ANIMATABLE default option.
+    )
 
 
 def unregister():
@@ -634,3 +1093,8 @@ def unregister():
 
     del bpy.types.Scene.addon_copy_global_transform_mirror_ob
     del bpy.types.Scene.addon_copy_global_transform_mirror_bone
+    del bpy.types.Scene.addon_copy_global_transform_relative_ob
+
+    del bpy.types.Scene.addon_copy_global_transform_fix_cam_use_loc
+    del bpy.types.Scene.addon_copy_global_transform_fix_cam_use_rot
+    del bpy.types.Scene.addon_copy_global_transform_fix_cam_use_scale

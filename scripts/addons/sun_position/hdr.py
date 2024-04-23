@@ -84,10 +84,15 @@ class SUNPOS_OT_ShowHdr(bpy.types.Operator):
         if not sun_props.hdr_texture:
             self.poll_message_set("Please select an Environment Texture node")
             return False
+        if sun_props.bind_to_sun:
+            self.poll_message_set("The environment texture is already bound to the Sun object")
+            return False
 
         nt = context.scene.world.node_tree.nodes
         env_tex_node = nt.get(context.scene.sun_pos_properties.hdr_texture)
-        if env_tex_node is None or env_tex_node.type != "TEX_ENVIRONMENT":
+        if (env_tex_node is None
+                or env_tex_node.type != "TEX_ENVIRONMENT"
+                or env_tex_node.image is None):
             self.poll_message_set("Please select a valid Environment Texture node")
             return False
         return True
