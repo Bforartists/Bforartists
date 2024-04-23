@@ -406,6 +406,7 @@ def bvh_node_dict2armature(
         global_matrix=None,
         use_fps_scale=False,
 ):
+    from bpy.utils import escape_identifier
 
     if frame_start < 1:
         frame_start = 1
@@ -563,7 +564,7 @@ def bvh_node_dict2armature(
         if bvh_node.has_loc:
             # Not sure if there is a way to query this or access it in the
             # PoseBone structure.
-            data_path = 'pose.bones["%s"].location' % pose_bone.name
+            data_path = 'pose.bones["%s"].location' % escape_identifier(pose_bone.name)
 
             location = [(0.0, 0.0, 0.0)] * num_frame
             for frame_i in range(num_frame):
@@ -592,12 +593,10 @@ def bvh_node_dict2armature(
 
             if 'QUATERNION' == rotate_mode:
                 rotate = [(1.0, 0.0, 0.0, 0.0)] * num_frame
-                data_path = ('pose.bones["%s"].rotation_quaternion'
-                             % pose_bone.name)
+                data_path = ('pose.bones["%s"].rotation_quaternion' % escape_identifier(pose_bone.name))
             else:
                 rotate = [(0.0, 0.0, 0.0)] * num_frame
-                data_path = ('pose.bones["%s"].rotation_euler' %
-                             pose_bone.name)
+                data_path = ('pose.bones["%s"].rotation_euler' % escape_identifier(pose_bone.name))
 
             prev_euler = Euler((0.0, 0.0, 0.0))
             for frame_i in range(num_frame):

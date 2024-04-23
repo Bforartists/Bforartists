@@ -78,7 +78,7 @@ class Do:
     __slots__ = (
         "dwg", "combination", "known_blocks", "import_text", "import_light", "export_acis", "merge_lines",
         "do_bounding_boxes", "acis_files", "errors", "block_representation", "recenter", "did_group_instance",
-        "objects_before", "pDXF", "pScene", "thickness_and_width", "but_group_by_att", "current_scene",
+        "objects_before", "pDXF", "pScene", "thickness_and_width", "but_group_by_att", "current_scene", "current_collection",
         "dxf_unit_scale"
     )
 
@@ -104,6 +104,7 @@ class Do:
         self.thickness_and_width = thicknessWidth
         self.but_group_by_att = but_group_by_att
         self.current_scene = None
+        self.current_collection = None
         self.dxf_unit_scale = dxf_unit_scale
 
     def proj(self, co, elevation=0):
@@ -707,7 +708,7 @@ class Do:
         o = bpy.data.objects.new("Point", None)
         o.location = self.proj(en.point)
         self._extrusion(o, en)
-        scene.collection.objects.link(o)
+        self.current_collection.objects.link(o)
 
         group = self._get_group(en.layer)
         group.objects.link(o)
@@ -735,7 +736,7 @@ class Do:
             o.location = self.proj(en.position)
             dir = self.proj(en.target) - self.proj(en.position)
             o.rotation_quaternion = dir.rotation_difference(Vector((0, 0, -1)))
-            scene.collection.objects.link(o)
+            self.current_collection.objects.link(o)
             return o
 
     def mtext(self, en, scene, name):
@@ -818,7 +819,7 @@ class Do:
                 if inserts is not None:
                     inserts.append(new_insert)
                 new_insert.parent = parent
-                scene.collection.objects.link(new_insert)
+                self.current_collection.objects.link(new_insert)
 
         if name is None:
             name = entity.name
@@ -850,7 +851,7 @@ class Do:
                 if len(insert.children) > 0:
                     i_copy = bpy.data.objects.new(insert.name, None)
                     i_copy.matrix_basis = insert.matrix_basis
-                    scene.collection.objects.link(i_copy)
+                    self.current_collection.objects.link(i_copy)
                     group.objects.link(i_copy)
                     kids = insert.children[:]
                     for child in kids:
@@ -864,10 +865,10 @@ class Do:
             if len(objects) > 1 or len(insert_bounding_boxes) > 0:
                 if self.do_bounding_boxes:
                     o = self._object_bbox(objects + insert_bounding_boxes, name, recursion_level == 0)
-                    scene.collection.objects.link(o)
+                    self.current_collection.objects.link(o)
                 else:
                     o = bpy.data.objects.new(name, None)
-                    scene.collection.objects.link(o)
+                    self.current_collection.objects.link(o)
                 if len(objects) > 0:
                     for obj in objects:
                         obj.parent = o
@@ -877,13 +878,13 @@ class Do:
             else:
                 # strange case but possible according to the testfiles
                 o = bpy.data.objects.new(name, None)
-                scene.collection.objects.link(o)
+                self.current_collection.objects.link(o)
 
             # unlink bounding boxes of inserts
             for ib in insert_bounding_boxes:
                 if ib.name in group.objects:
                     group.objects.unlink(ib)
-                scene.collection.objects.unlink(ib)
+                self.current_collection.objects.unlink(ib)
 
             # parent inserts to this block before any transformation on the block is being applied
             for obj in inserts:
@@ -902,11 +903,11 @@ class Do:
 
             for known_object in known_objects:
                 oc = known_object.copy()
-                scene.collection.objects.link(oc)
+                self.current_collection.objects.link(oc)
                 objects.append(oc)
 
             o = known_o.copy()
-            scene.collection.objects.link(o)
+            self.current_collection.objects.link(o)
 
             _recursive_copy_inserts(o, known_inserts, inserts, group, invisible)
 
@@ -996,7 +997,7 @@ class Do:
         if invisible is not None:
             o.hide_viewport = invisible
         o.location = self.proj(entity.basepoint)
-        scene.collection.objects.link(o)
+        self.current_collection.objects.link(o)
         # block_scene.view_layers[0].update()
 
         return o
@@ -1074,7 +1075,7 @@ class Do:
                     # Blender custom property
                     o[a.tag] = a.text
                     attname = entity.name + "_" + a.tag
-                    scene.collection.objects.link(self.text(a, scene, attname))
+                    self.current_collection.objects.link(self.text(a, scene, attname))
 
         return o
 
@@ -1157,7 +1158,7 @@ class Do:
 
             bevel = bpy.data.objects.new("BEVEL", bevd)
             obj.data.bevel_object = bevel
-            scene.collection.objects.link(bevel)
+            self.current_collection.objects.link(bevel)
 
             # CURVE TAPER
             if has_varying_width and len(ew) == 1:
@@ -1179,7 +1180,7 @@ class Do:
 
                 taper = bpy.data.objects.new("TAPER", tapd)
                 obj.data.taper_object = taper
-                scene.collection.objects.link(taper)
+                self.current_collection.objects.link(taper)
 
             # THICKNESS FOR CURVES HAVING A WIDTH
             if th != 0:
@@ -1217,7 +1218,7 @@ class Do:
 
         bm.to_mesh(d)
         o = bpy.data.objects.new(name, d)
-        scene.collection.objects.link(o)
+        self.current_collection.objects.link(o)
         return o
 
     def object_mesh(self, entities, scene, name):
@@ -1374,7 +1375,7 @@ class Do:
 
         if type(o) == bpy.types.Object:
             if o.name not in scene.objects:
-                scene.collection.objects.link(o)
+                self.current_collection.objects.link(o)
 
             if o.name not in group.objects:
                 group.objects.link(o)
@@ -1447,7 +1448,7 @@ class Do:
         bm.to_mesh(m)
         o = bpy.data.objects.new(blockname, m)
         o.location = location
-        scene.collection.objects.link(o)
+        self.current_collection.objects.link(o)
 
         self._nest_block(o, blockname, blgroup, scene)
         o.instance_type = "FACES"
@@ -1457,7 +1458,7 @@ class Do:
     def _nest_block(self, parent, name, blgroup, scene):
         b = self.dwg.blocks[name]
         e = bpy.data.objects.new(name, None)
-        scene.collection.objects.link(e)
+        self.current_collection.objects.link(e)
         #e.location = parent.location
         e.parent = parent
         for TYPE, grouped in groupsort.by_dxftype(b):
@@ -1593,14 +1594,18 @@ class Do:
 
         return objects
 
-    def entities(self, name, scene=None):
+    def entities(self, name, scene=None, collection=None):
         """
         Iterates over all DXF entities according to the options set by user.
         """
         if scene is None:
             scene = bpy.context.scene
 
+        if collection is None:
+            collection = scene.collection
+
         self.current_scene = scene
+        self.current_collection = collection
 
         if self.recenter:
             self.objects_before += scene.objects[:]

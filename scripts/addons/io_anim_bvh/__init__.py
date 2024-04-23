@@ -350,11 +350,11 @@ class BVH_PT_export_animation(bpy.types.Panel):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)", icon = "LOAD_BVH") #BFA - icon
+    self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)", icon="LOAD_BVH") #BFA - icon
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportBVH.bl_idname, text="Motion Capture (.bvh)", icon = "SAVE_BVH") #BFA - icon
+    self.layout.operator(ExportBVH.bl_idname, text="Motion Capture (.bvh)", icon="SAVE_BVH") #BFA - icon
 
 
 classes = (
