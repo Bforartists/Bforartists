@@ -196,7 +196,7 @@ static bool needs_factors_cache(const Sculpt *sd, const Brush *brush)
   return false;
 }
 
-static float calc_brush_normal_factor(Cache *automasking,
+static float calc_brush_normal_factor(const Cache *automasking,
                                       SculptSession *ss,
                                       PBVHVertRef vertex,
                                       const NodeData &automask_data)
@@ -219,7 +219,7 @@ static float calc_brush_normal_factor(Cache *automasking,
                      automask_data);
 }
 
-static float calc_view_normal_factor(Cache &automasking,
+static float calc_view_normal_factor(const Cache &automasking,
                                      SculptSession *ss,
                                      PBVHVertRef vertex,
                                      const NodeData &automask_data)
@@ -243,7 +243,7 @@ static float calc_view_normal_factor(Cache &automasking,
                      automask_data);
 }
 
-static float calc_view_occlusion_factor(Cache &automasking,
+static float calc_view_occlusion_factor(const Cache &automasking,
                                         SculptSession *ss,
                                         PBVHVertRef vertex,
                                         uchar stroke_id,
@@ -262,7 +262,7 @@ static float calc_view_occlusion_factor(Cache &automasking,
 
 /* Updates vertex stroke id. */
 static float automasking_factor_end(SculptSession *ss,
-                                    Cache *automasking,
+                                    const Cache *automasking,
                                     PBVHVertRef vertex,
                                     float value)
 {
@@ -274,7 +274,7 @@ static float automasking_factor_end(SculptSession *ss,
   return value;
 }
 
-static float calc_cavity_factor(Cache *automasking, float factor)
+static float calc_cavity_factor(const Cache *automasking, float factor)
 {
   float sign = signf(factor);
 
@@ -301,7 +301,7 @@ struct CavityBlurVert {
 };
 
 static void calc_blurred_cavity(SculptSession *ss,
-                                Cache *automasking,
+                                const Cache *automasking,
                                 int steps,
                                 PBVHVertRef vertex)
 {
@@ -479,7 +479,7 @@ int settings_hash(const Object &ob, const Cache &automasking)
   return hash;
 }
 
-static float calc_cavity_factor(Cache *automasking, SculptSession *ss, PBVHVertRef vertex)
+static float calc_cavity_factor(const Cache *automasking, SculptSession *ss, PBVHVertRef vertex)
 {
   uchar stroke_id = *(uchar *)SCULPT_vertex_attr_get(vertex, ss->attrs.automasking_stroke_id);
 
@@ -501,7 +501,7 @@ static float calc_cavity_factor(Cache *automasking, SculptSession *ss, PBVHVertR
   return factor;
 }
 
-float factor_get(Cache *automasking,
+float factor_get(const Cache *automasking,
                  SculptSession *ss,
                  PBVHVertRef vert,
                  const NodeData *automask_data)
@@ -600,11 +600,11 @@ struct AutomaskFloodFillData {
   char symm;
 };
 
-static bool floodfill_cb(
-    SculptSession *ss, PBVHVertRef from_v, PBVHVertRef to_v, bool /*is_duplicate*/, void *userdata)
+static bool floodfill_cb(SculptSession *ss,
+                         PBVHVertRef from_v,
+                         PBVHVertRef to_v,
+                         AutomaskFloodFillData *data)
 {
-  AutomaskFloodFillData *data = (AutomaskFloodFillData *)userdata;
-
   *(float *)SCULPT_vertex_attr_get(to_v, ss->attrs.automasking_factor) = 1.0f;
   *(float *)SCULPT_vertex_attr_get(from_v, ss->attrs.automasking_factor) = 1.0f;
   return (!data->use_radius ||
@@ -626,7 +626,7 @@ static void topology_automasking_init(const Sculpt *sd, Object *ob)
 
   /* Flood fill automask to connected vertices. Limited to vertices inside
    * the brush radius if the tool requires it. */
-  SculptFloodFill flood;
+  flood_fill::FillData flood;
   flood_fill::init_fill(ss, &flood);
   const float radius = ss->cache ? ss->cache->radius : FLT_MAX;
   flood_fill::add_active(ob, ss, &flood, radius);
@@ -638,7 +638,12 @@ static void topology_automasking_init(const Sculpt *sd, Object *ob)
   fdata.symm = SCULPT_mesh_symmetry_xyz_get(ob);
 
   copy_v3_v3(fdata.location, SCULPT_active_vertex_co_get(ss));
-  flood_fill::execute(ss, &flood, floodfill_cb, &fdata);
+  flood_fill::execute(
+      ss,
+      &flood,
+      [&](SculptSession *ss, PBVHVertRef from_v, PBVHVertRef to_v, bool /*is_duplicate*/) {
+        return floodfill_cb(ss, from_v, to_v, &fdata);
+      });
 }
 
 static void init_face_sets_masking(const Sculpt *sd, Object *ob)

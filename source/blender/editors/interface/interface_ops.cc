@@ -1667,7 +1667,7 @@ static bool jump_to_target_button(bContext *C, bool poll)
         char *str_ptr = RNA_property_string_get_alloc(
             &ptr, prop, str_buf, sizeof(str_buf), nullptr);
 
-        int found = 0;
+        bool found = false;
         /* Jump to target only works with search properties currently, not search callbacks yet.
          * See ui_but_add_search. */
         if (coll_search->search_prop != nullptr) {
@@ -2594,6 +2594,7 @@ static void UI_OT_drop_material(wmOperatorType *ot)
 
 void ED_operatortypes_ui()
 {
+  using namespace blender::ui;
   WM_operatortype_append(UI_OT_copy_data_path_button);
   WM_operatortype_append(UI_OT_copy_as_driver_button);
   WM_operatortype_append(UI_OT_copy_python_command_button);
