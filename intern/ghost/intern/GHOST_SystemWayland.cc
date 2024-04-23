@@ -3389,7 +3389,7 @@ static void data_device_handle_drop(void *data, wl_data_device * /*wl_data_devic
       GHOST_TDragnDropTypes ghost_dnd_type = GHOST_kDragnDropTypeUnknown;
       void *ghost_dnd_data = nullptr;
 
-      /* Failure to receive drop data . */
+      /* Failure to receive drop data. */
       if (mime_receive == ghost_wl_mime_text_uri) {
         const char file_proto[] = "file://";
         /* NOTE: some applications CRLF (`\r\n`) GTK3 for e.g. & others don't `pcmanfm-qt`.
@@ -3616,7 +3616,7 @@ static void cursor_surface_handle_leave(void *data, wl_surface *wl_surface, wl_o
 }
 
 static void cursor_surface_handle_preferred_buffer_scale(void * /*data*/,
-                                                         struct wl_surface * /*wl_surface*/,
+                                                         wl_surface * /*wl_surface*/,
                                                          int32_t factor)
 {
   /* Only available in interface version 6. */
@@ -3624,7 +3624,7 @@ static void cursor_surface_handle_preferred_buffer_scale(void * /*data*/,
 }
 
 static void cursor_surface_handle_preferred_buffer_transform(void * /*data*/,
-                                                             struct wl_surface * /*wl_surface*/,
+                                                             wl_surface * /*wl_surface*/,
                                                              uint32_t transform)
 {
   /* Only available in interface version 6. */
@@ -3880,7 +3880,7 @@ static void pointer_handle_frame(void *data, wl_pointer * /*wl_pointer*/)
       if (wl_surface *wl_surface_focus = seat->pointer.wl.surface_window) {
         GHOST_WindowWayland *win = ghost_wl_surface_user_data(wl_surface_focus);
         seat->system->pushEvent_maybe_pending(
-            new GHOST_EventWheel(event_ms, win, seat->pointer_scroll.discrete_xy[1]));
+            new GHOST_EventWheel(event_ms, win, -seat->pointer_scroll.discrete_xy[1]));
       }
     }
     seat->pointer_scroll.discrete_xy[0] = 0;
@@ -4673,7 +4673,7 @@ static void tablet_tool_handle_frame(void *data,
         }
         case GWL_TabletTool_EventTypes::Wheel: {
           seat->system->pushEvent_maybe_pending(
-              new GHOST_EventWheel(event_ms, win, tablet_tool->frame_pending.wheel.clicks));
+              new GHOST_EventWheel(event_ms, win, -tablet_tool->frame_pending.wheel.clicks));
           break;
         }
       }
@@ -6143,13 +6143,13 @@ static void output_handle_scale(void *data, wl_output * /*wl_output*/, const int
   output->system->output_scale_update(output);
 }
 
-static void output_handle_name(void * /*data*/, struct wl_output * /*wl_output*/, const char *name)
+static void output_handle_name(void * /*data*/, wl_output * /*wl_output*/, const char *name)
 {
   /* Only available in interface version 4. */
   CLOG_INFO(LOG, 2, "name (%s)", name);
 }
 static void output_handle_description(void * /*data*/,
-                                      struct wl_output * /*wl_output*/,
+                                      wl_output * /*wl_output*/,
                                       const char *description)
 {
   /* Only available in interface version 4. */
@@ -7900,7 +7900,7 @@ GHOST_TSuccess GHOST_SystemWayland::getCursorPositionClientRelative(const GHOST_
   if (UNLIKELY(!seat)) {
     return GHOST_kFailure;
   }
-  GWL_SeatStatePointer *seat_state_pointer = gwl_seat_state_pointer_active(seat);
+  const GWL_SeatStatePointer *seat_state_pointer = gwl_seat_state_pointer_active(seat);
   if (!seat_state_pointer || !seat_state_pointer->wl.surface_window) {
     return GHOST_kFailure;
   }
@@ -7934,7 +7934,7 @@ GHOST_TSuccess GHOST_SystemWayland::getCursorPosition(int32_t &x, int32_t &y) co
   if (UNLIKELY(!seat)) {
     return GHOST_kFailure;
   }
-  GWL_SeatStatePointer *seat_state_pointer = gwl_seat_state_pointer_active(seat);
+  const GWL_SeatStatePointer *seat_state_pointer = gwl_seat_state_pointer_active(seat);
   if (!seat_state_pointer) {
     return GHOST_kFailure;
   }

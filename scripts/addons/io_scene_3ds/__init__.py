@@ -7,6 +7,7 @@ from bpy_extras.io_utils import (
     ExportHelper,
     orientation_helper,
     axis_conversion,
+    poll_file_object_drop,
 )
 from bpy.props import (
     BoolProperty,
@@ -19,8 +20,8 @@ import bpy
 bl_info = {
     "name": "Autodesk 3DS format",
     "author": "Bob Holcomb, Campbell Barton, Sebastian Schrand",
-    "version": (2, 5, 0),
-    "blender": (4, 1, 0),
+    "version": (2, 5, 1),
+    "blender": (4, 2, 0),
     "location": "File > Import-Export",
     "description": "3DS Import/Export meshes, UVs, materials, textures, "
                    "cameras, lamps & animation",
@@ -112,13 +113,20 @@ class Import3DS(bpy.types.Operator, ImportHelper):
         default=False,
     )
 
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        import_include(layout, self)
+        import_transform(layout, self)
+
     def execute(self, context):
         from . import import_3ds
         keywords = self.as_keywords(ignore=("axis_forward",
                                             "axis_up",
                                             "filter_glob",
                                             ))
-
         global_matrix = axis_conversion(from_forward=self.axis_forward,
                                         from_up=self.axis_up,
                                         ).to_4x4()
@@ -126,93 +134,48 @@ class Import3DS(bpy.types.Operator, ImportHelper):
 
         return import_3ds.load(self, context, **keywords)
 
-    def draw(self, context):
-        pass
+    def invoke(self, context, event):
+        return self.invoke_popup(context)
 
 
-class MAX3DS_FH_import(bpy.types.FileHandler):
-    bl_idname = "MAX3DS_FH_import"
-    bl_label = "File handler for 3ds import"
-    bl_import_operator = "import_scene.max3ds"
-    bl_file_extensions = ".3ds;.3DS"
-
-    @classmethod
-    def poll_drop(cls, context):
-        return (context.area and context.area.type == 'VIEW_3D')
-
-
-class MAX3DS_PT_import_include(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Include"
-    bl_parent_id = "FILE_PT_operator"
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "IMPORT_SCENE_OT_max3ds"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_image_search")
-        layrow.label(text="", icon='OUTLINER_OB_IMAGE' if operator.use_image_search else 'IMAGE_DATA')
-        layout.column().prop(operator, "object_filter")
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_keyframes")
-        layrow.label(text="", icon='ANIM' if operator.use_keyframes else 'DECORATE_DRIVER')
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_collection")
-        layrow.label(text="", icon='OUTLINER_COLLECTION' if operator.use_collection else 'GROUP')
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_cursor")
-        layrow.label(text="", icon='PIVOT_CURSOR' if operator.use_cursor else 'CURSOR')
+def import_include(layout, operator):
+    header, body = layout.panel("MAX3DS_import_include", default_closed=False)
+    header.label(text="Include")
+    if body:
+        line = body.row(align=True)
+        line.prop(operator, "use_image_search")
+        line.label(text="", icon='OUTLINER_OB_IMAGE' if operator.use_image_search else 'IMAGE_DATA')
+        body.column().prop(operator, "object_filter")
+        line = body.row(align=True)
+        line.prop(operator, "use_keyframes")
+        line.label(text="", icon='ANIM' if operator.use_keyframes else 'DECORATE_DRIVER')
+        line = body.row(align=True)
+        line.prop(operator, "use_collection")
+        line.label(text="", icon='OUTLINER_COLLECTION' if operator.use_collection else 'GROUP')
+        line = body.row(align=True)
+        line.prop(operator, "use_cursor")
+        line.label(text="", icon='PIVOT_CURSOR' if operator.use_cursor else 'CURSOR')
 
 
-class MAX3DS_PT_import_transform(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Transform"
-    bl_parent_id = "FILE_PT_operator"
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "IMPORT_SCENE_OT_max3ds"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.prop(operator, "constrain_size")
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_scene_unit")
-        layrow.label(text="", icon='EMPTY_ARROWS' if operator.use_scene_unit else 'EMPTY_DATA')
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_center_pivot")
-        layrow.label(text="", icon='OVERLAY' if operator.use_center_pivot else 'PIVOT_ACTIVE')
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_apply_transform")
-        layrow.label(text="", icon='MESH_CUBE' if operator.use_apply_transform else 'MOD_SOLIDIFY')
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_world_matrix")
-        layrow.label(text="", icon='WORLD' if operator.use_world_matrix else 'META_BALL')
-        layout.prop(operator, "axis_forward")
-        layout.prop(operator, "axis_up")
+def import_transform(layout, operator):
+    header, body = layout.panel("MAX3DS_import_transform", default_closed=False)
+    header.label(text="Transform")
+    if body:
+        body.prop(operator, "constrain_size")
+        line = body.row(align=True)
+        line.prop(operator, "use_scene_unit")
+        line.label(text="", icon='EMPTY_ARROWS' if operator.use_scene_unit else 'EMPTY_DATA')
+        line = body.row(align=True)
+        line.prop(operator, "use_center_pivot")
+        line.label(text="", icon='OVERLAY' if operator.use_center_pivot else 'PIVOT_ACTIVE')
+        line = body.row(align=True)
+        line.prop(operator, "use_apply_transform")
+        line.label(text="", icon='MESH_CUBE' if operator.use_apply_transform else 'MOD_SOLIDIFY')
+        line = body.row(align=True)
+        line.prop(operator, "use_world_matrix")
+        line.label(text="", icon='WORLD' if operator.use_world_matrix else 'META_BALL')
+        body.prop(operator, "axis_forward")
+        body.prop(operator, "axis_up")
 
 
 @orientation_helper(axis_forward='Y', axis_up='Z')
@@ -225,6 +188,11 @@ class Export3DS(bpy.types.Operator, ExportHelper):
     filename_ext = ".3ds"
     filter_glob: StringProperty(default="*.3ds", options={'HIDDEN'})
 
+    collection: StringProperty(
+        name="Source Collection",
+        description="Export objects from this collection",
+        default="",
+    )
     scale_factor: FloatProperty(
         name="Scale Factor",
         description="Master scale factor for all objects",
@@ -263,11 +231,26 @@ class Export3DS(bpy.types.Operator, ExportHelper):
         description="Export hierarchy chunks",
         default=False,
     )
+    use_collection: BoolProperty(
+        name="Collection",
+        description="Export active collection only",
+        default=False,
+    )
     use_cursor: BoolProperty(
         name="Cursor Origin",
         description="Save the 3D cursor location",
         default=False,
     )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        browser = context.space_data.type == 'FILE_BROWSER'
+
+        export_include(layout, self, browser)
+        export_transform(layout, self)
 
     def execute(self, context):
         from . import export_3ds
@@ -283,104 +266,76 @@ class Export3DS(bpy.types.Operator, ExportHelper):
 
         return export_3ds.save(self, context, **keywords)
 
-    def draw(self, context):
-        pass
+
+def export_include(layout, operator, browser):
+    header, body = layout.panel("MAX3DS_export_include", default_closed=False)
+    header.label(text="Include")
+    if body:
+        if browser:
+            line = body.row(align=True)
+            line.prop(operator, "use_selection")
+            line.label(text="", icon='RESTRICT_SELECT_OFF' if operator.use_selection else 'RESTRICT_SELECT_ON')
+        body.column().prop(operator, "object_filter")
+        line = body.row(align=True)
+        line.prop(operator, "use_keyframes")
+        line.label(text="", icon='ANIM' if operator.use_keyframes else 'DECORATE_DRIVER')
+        line = body.row(align=True)
+        line.prop(operator, "use_hierarchy")
+        line.label(text="", icon='OUTLINER' if operator.use_hierarchy else 'CON_CHILDOF')
+        if browser:
+            line = body.row(align=True)
+            line.prop(operator, "use_collection")
+            line.label(text="", icon='OUTLINER_COLLECTION' if operator.use_collection else 'GROUP')
+        line = body.row(align=True)
+        line.prop(operator, "use_cursor")
+        line.label(text="", icon='PIVOT_CURSOR' if operator.use_cursor else 'CURSOR')
 
 
-class MAX3DS_PT_export_include(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Include"
-    bl_parent_id = "FILE_PT_operator"
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENE_OT_max3ds"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_selection")
-        layrow.label(text="", icon='RESTRICT_SELECT_OFF' if operator.use_selection else 'RESTRICT_SELECT_ON')
-        layout.column().prop(operator, "object_filter")
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_keyframes")
-        layrow.label(text="", icon='ANIM' if operator.use_keyframes else 'DECORATE_DRIVER')
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_hierarchy")
-        layrow.label(text="", icon='OUTLINER' if operator.use_hierarchy else 'CON_CHILDOF')
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_cursor")
-        layrow.label(text="", icon='PIVOT_CURSOR' if operator.use_cursor else 'CURSOR')
+def export_transform(layout, operator):
+    header, body = layout.panel("MAX3DS_export_transform", default_closed=False)
+    header.label(text="Transform")
+    if body:
+        body.prop(operator, "scale_factor")
+        line = body.row(align=True)
+        line.prop(operator, "use_scene_unit")
+        line.label(text="", icon='EMPTY_ARROWS' if operator.use_scene_unit else 'EMPTY_DATA')
+        body.prop(operator, "axis_forward")
+        body.prop(operator, "axis_up")
 
 
-class MAX3DS_PT_export_transform(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Transform"
-    bl_parent_id = "FILE_PT_operator"
+class IO_FH_3ds(bpy.types.FileHandler):
+    bl_idname = "IO_FH_3ds"
+    bl_label = "Autodesk 3DS"
+    bl_import_operator = "import_scene.max3ds"
+    bl_export_operator = "export_scene.max3ds"
+    bl_file_extensions = ".3ds;.3DS"
 
     @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENE_OT_max3ds"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.prop(operator, "scale_factor")
-        layrow = layout.row(align=True)
-        layrow.prop(operator, "use_scene_unit")
-        layrow.label(text="", icon='EMPTY_ARROWS' if operator.use_scene_unit else 'EMPTY_DATA')
-        layout.prop(operator, "axis_forward")
-        layout.prop(operator, "axis_up")
+    def poll_drop(cls, context):
+        return poll_file_object_drop(context)
 
 
 # Add to a menu
 def menu_func_export(self, context):
-    self.layout.operator(Export3DS.bl_idname, text="3D Studio (.3ds)", icon = 'SAVE_3DS') #bfa - added icon
+    self.layout.operator(Export3DS.bl_idname, text="3D Studio (.3ds)", icon='SAVE_3DS') #bfa - added icon
 
 
 def menu_func_import(self, context):
-    self.layout.operator(Import3DS.bl_idname, text="3D Studio (.3ds)", icon = 'LOAD_3DS') #bfa - added icon
+    self.layout.operator(Import3DS.bl_idname, text="3D Studio (.3ds)", icon='LOAD_3DS') #bfa - added icon
 
 
 def register():
     bpy.utils.register_class(Import3DS)
-    bpy.utils.register_class(MAX3DS_FH_import)
-    bpy.utils.register_class(MAX3DS_PT_import_include)
-    bpy.utils.register_class(MAX3DS_PT_import_transform)
     bpy.utils.register_class(Export3DS)
-    bpy.utils.register_class(MAX3DS_PT_export_include)
-    bpy.utils.register_class(MAX3DS_PT_export_transform)
+    bpy.utils.register_class(IO_FH_3ds)
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
     bpy.utils.unregister_class(Import3DS)
-    bpy.utils.unregister_class(MAX3DS_FH_import)
-    bpy.utils.unregister_class(MAX3DS_PT_import_include)
-    bpy.utils.unregister_class(MAX3DS_PT_import_transform)
     bpy.utils.unregister_class(Export3DS)
-    bpy.utils.unregister_class(MAX3DS_PT_export_include)
-    bpy.utils.unregister_class(MAX3DS_PT_export_transform)
+    bpy.utils.unregister_class(IO_FH_3ds)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 

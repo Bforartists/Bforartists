@@ -68,7 +68,7 @@ def draw_callback_px(self, context):
 class RC_OT_RotateCanvas(bpy.types.Operator):
     bl_idname = 'view3d.rotate_canvas'
     bl_label = 'Rotate Canvas'
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER"}
 
     def get_center_view(self, context, cam):
         '''
@@ -109,7 +109,9 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             context.area.tag_redraw()
         if self.in_cam:
-                self.cam.rotation_mode = self.org_rotation_mode
+            self.cam.rotation_mode = self.org_rotation_mode
+            # Undo step is only needed if used within camera
+            bpy.ops.ed.undo_push(message='Rotate Canvas')
         return {'FINISHED'}
 
 
