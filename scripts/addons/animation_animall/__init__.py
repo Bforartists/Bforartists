@@ -5,7 +5,7 @@
 bl_info = {
     "name": "AnimAll",
     "author": "Daniel Salazar (ZanQdo), Damien Picard (pioverfour)",
-    "version": (0, 10, 0),
+    "version": (0, 10, 1),
     "blender": (4, 0, 0),
     "location": "3D View > Toolbox > Animation tab > AnimAll",
     "description": "Allows animation of mesh, lattice, curve and surface data",
@@ -17,6 +17,7 @@ bl_info = {
 import bpy
 from bpy.types import (Operator, Panel, AddonPreferences)
 from bpy.props import (BoolProperty, StringProperty)
+from bpy.app.handlers import persistent
 from bpy.app.translations import (pgettext_iface as iface_,
                                   pgettext_data as data_)
 from . import translations
@@ -226,12 +227,6 @@ class VIEW3D_PT_animall(Panel):
             col.prop(animall_properties, "key_active_attribute")
             col.prop(animall_properties, "key_uvs")
             col.prop(animall_properties, "key_shape_key")
-
-            # Vertex group update operator
-            if bpy.ops.anim.update_attribute_animation_animall.poll():
-                col = layout.column(align=True)
-                col.label(text="Object includes old-style attributes. Consider updating them.", icon="ERROR")
-                col.operator("anim.update_attribute_animation_animall", icon="FILE_REFRESH")
 
         elif obj.type in {'CURVE', 'SURFACE'}:
             col = layout.column(align=True)
@@ -615,48 +610,6 @@ class ANIM_OT_clear_animation_animall(Operator):
         return {'FINISHED'}
 
 
-class ANIM_OT_update_attribute_animation_animall(Operator):
-    bl_label = "Update Attribute Animation"
-    bl_idname = "anim.update_attribute_animation_animall"
-    bl_description = "Update attributes from the old format"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    path_re = re.compile(r"^vertex_colors|(vertices|edges)\[([0-9]+)\]\.(bevel_weight|crease)")
-    attribute_map = {
-        ("vertices", "bevel_weight"): ("bevel_weight_vert", "FLOAT", "POINT"),
-        ("edges", "bevel_weight"):    ("bevel_weight_edge", "FLOAT", "POINT"),
-        ("vertices", "crease"):       ("crease_vert", "FLOAT", "EDGE"),
-        ("edges", "crease"):          ("crease_edge", "FLOAT", "EDGE"),
-    }
-
-    @classmethod
-    def poll(self, context):
-        if (context.active_object is None
-                or context.active_object.type != 'MESH'
-                or context.active_object.data.animation_data is None
-                or context.active_object.data.animation_data.action is None):
-            return False
-        for fcurve in context.active_object.data.animation_data.action.fcurves:
-            if self.path_re.match(fcurve.data_path):
-                return True
-
-    def execute(self, context):
-        for fcurve in context.active_object.data.animation_data.action.fcurves:
-            if fcurve.data_path.startswith("vertex_colors"):
-                # Update pre-3.3 vertex colors
-                fcurve.data_path = fcurve.data_path.replace("vertex_colors", "attributes")
-            else:
-                # Update pre-4.0 attributes
-                match = self.path_re.match(fcurve.data_path)
-                if match is None:
-                    continue
-                domain, index, src_attribute = match.groups()
-                attribute, type, domain = self.attribute_map[(domain, src_attribute)]
-                get_attribute(context.active_object.data, attribute, type, domain)
-                fcurve.data_path = f'attributes["{attribute}"].data[{index}].value'
-        return {'FINISHED'}
-
-
 # Add-ons Preferences Update Panel
 
 # Define Panel classes for updating
@@ -699,19 +652,49 @@ class AnimallAddonPreferences(AddonPreferences):
         col.label(text="Tab Category:")
         col.prop(self, "category", text="")
 
+
+@persistent
+def update_attribute_animation(_):
+    """Update attributes from the old format"""
+    path_re = re.compile(r"^vertex_colors|(vertices|edges)\[([0-9]+)\]\.(bevel_weight|crease)")
+    attribute_map = {
+        ("vertices", "bevel_weight"): ("bevel_weight_vert", "FLOAT", "POINT"),
+        ("edges", "bevel_weight"):    ("bevel_weight_edge", "FLOAT", "POINT"),
+        ("vertices", "crease"):       ("crease_vert", "FLOAT", "EDGE"),
+        ("edges", "crease"):          ("crease_edge", "FLOAT", "EDGE"),
+    }
+    for mesh in bpy.data.meshes:
+        print(f"Updating {mesh.name}")
+        for fcurve in mesh.animation_data.action.fcurves:
+            if fcurve.data_path.startswith("vertex_colors"):
+                # Update pre-3.3 vertex colors
+                fcurve.data_path = fcurve.data_path.replace("vertex_colors", "attributes")
+            else:
+                # Update pre-4.0 attributes
+                match = path_re.match(fcurve.data_path)
+                if match is None:
+                    continue
+                domain, index, src_attribute = match.groups()
+                attribute, type, domain = attribute_map[(domain, src_attribute)]
+                get_attribute(mesh, attribute, type, domain)
+                fcurve.data_path = f'attributes["{attribute}"].data[{index}].value'
+
+
 register_classes, unregister_classes = bpy.utils.register_classes_factory(
     (AnimallProperties, VIEW3D_PT_animall, ANIM_OT_insert_keyframe_animall,
      ANIM_OT_delete_keyframe_animall, ANIM_OT_clear_animation_animall,
-     ANIM_OT_update_attribute_animation_animall, AnimallAddonPreferences))
+     AnimallAddonPreferences))
 
 def register():
     register_classes()
     bpy.types.Scene.animall_properties = bpy.props.PointerProperty(type=AnimallProperties)
     update_panel(None, bpy.context)
+    bpy.app.handlers.load_post.append(update_attribute_animation)
     bpy.app.translations.register(__name__, translations.translations_dict)
 
 def unregister():
     bpy.app.translations.unregister(__name__)
+    bpy.app.handlers.load_post.remove(update_attribute_animation)
     del bpy.types.Scene.animall_properties
     unregister_classes()
 

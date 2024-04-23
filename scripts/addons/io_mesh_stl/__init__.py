@@ -403,11 +403,11 @@ class STL_PT_export_geometry(bpy.types.Panel):
 
 
 def menu_import(self, context):
-    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl) (legacy)", icon = "LOAD_STL") #BFA - icon added
+    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl) (legacy)", icon="LOAD_STL") #BFA - icon added
 
 
 def menu_export(self, context):
-    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl) (legacy)", icon = "SAVE_STL") #BFA - icon added
+    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl) (legacy)", icon="SAVE_STL") #BFA - icon added
 
 
 classes = (

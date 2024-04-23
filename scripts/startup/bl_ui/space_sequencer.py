@@ -498,8 +498,8 @@ class SEQUENCER_MT_view(Menu):
 
             layout.separator()
 
-            layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon = "VIEW_FIT")
-            layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
+            layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon='VIEW_FIT')
+            layout.operator("sequencer.view_selected", text="Frame Selected", icon='VIEW_SELECTED')
 
             layout.separator()
             layout.menu("SEQUENCER_MT_proxy")
@@ -2745,7 +2745,6 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
             col.prop(st, "show_overexposed")
 
         elif st.display_mode == 'WAVEFORM':
-            col.use_property_split = False
             col.prop(st, "show_separate_color")
 
 

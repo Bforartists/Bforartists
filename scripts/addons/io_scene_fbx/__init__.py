@@ -315,6 +315,11 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
             description="Export only objects from the active collection (and its children)",
             default=False,
             )
+    collection: StringProperty(
+            name="Source Collection",
+            description="Export only objects from this collection (and its children)",
+            default="",
+            )
     global_scale: FloatProperty(
             name="Scale",
             description="Scale all data (Some importers do not support scaled armatures!)",
@@ -557,8 +562,11 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        export_main(layout, self)
-        export_panel_include(layout, self)
+        # Are we inside the File browser
+        is_file_browser = context.space_data.type == 'FILE_BROWSER'
+
+        export_main(layout, self, is_file_browser)
+        export_panel_include(layout, self, is_file_browser)
         export_panel_transform(layout, self)
         export_panel_geometry(layout, self)
         export_panel_armature(layout, self)
@@ -589,27 +597,29 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
         return export_fbx_bin.save(self, context, **keywords)
 
 
-def export_main(layout, operator):
+def export_main(layout, operator, is_file_browser):
     row = layout.row(align=True)
     row.prop(operator, "path_mode")
     sub = row.row(align=True)
     sub.enabled = (operator.path_mode == 'COPY')
     sub.prop(operator, "embed_textures", text="", icon='PACKAGE' if operator.embed_textures else 'UGLYPACKAGE')
-    row = layout.row(align=True)
-    row.prop(operator, "batch_mode")
-    sub = row.row(align=True)
-    sub.prop(operator, "use_batch_own_dir", text="", icon='NEWFOLDER')
+    if is_file_browser:
+        row = layout.row(align=True)
+        row.prop(operator, "batch_mode")
+        sub = row.row(align=True)
+        sub.prop(operator, "use_batch_own_dir", text="", icon='NEWFOLDER')
 
 
-def export_panel_include(layout, operator):
+def export_panel_include(layout, operator, is_file_browser):
     header, body = layout.panel("FBX_export_include", default_closed=False)
     header.label(text="Include")
     if body:
         sublayout = body.column(heading="Limit to")
         sublayout.enabled = (operator.batch_mode == 'OFF')
-        sublayout.prop(operator, "use_selection")
-        sublayout.prop(operator, "use_visible")
-        sublayout.prop(operator, "use_active_collection")
+        if is_file_browser:
+            sublayout.prop(operator, "use_selection")
+            sublayout.prop(operator, "use_visible")
+            sublayout.prop(operator, "use_active_collection")
 
         body.column().prop(operator, "object_types")
         body.prop(operator, "use_custom_props")
@@ -681,6 +691,7 @@ class IO_FH_fbx(bpy.types.FileHandler):
     bl_idname = "IO_FH_fbx"
     bl_label = "FBX"
     bl_import_operator = "import_scene.fbx"
+    bl_export_operator = "export_scene.fbx"
     bl_file_extensions = ".fbx"
 
     @classmethod
@@ -689,11 +700,11 @@ class IO_FH_fbx(bpy.types.FileHandler):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportFBX.bl_idname, text="FBX (.fbx)", icon = "LOAD_FBX") #BFA - icon added
+    self.layout.operator(ImportFBX.bl_idname, text="FBX (.fbx)", icon="LOAD_FBX") #BFA - icon added
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportFBX.bl_idname, text="FBX (.fbx)", icon = "SAVE_FBX") #BFA - icon added
+    self.layout.operator(ExportFBX.bl_idname, text="FBX (.fbx)", icon="SAVE_FBX") #BFA - icon added
 
 
 classes = (

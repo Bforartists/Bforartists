@@ -3586,6 +3586,7 @@ def save(operator, context,
          use_selection=False,
          use_visible=False,
          use_active_collection=False,
+         collection="",
          batch_mode='OFF',
          use_batch_own_dir=False,
          **kwargs
@@ -3606,13 +3607,23 @@ def save(operator, context,
 
     if batch_mode == 'OFF':
         kwargs_mod = kwargs.copy()
+
+        source_collection = None
         if use_active_collection:
-            if use_selection:
-                ctx_objects = tuple(obj
-                                    for obj in context.view_layer.active_layer_collection.collection.all_objects
-                                    if obj.select_get())
+            source_collection = context.view_layer.active_layer_collection.collection
+        elif collection:
+            local_collection = bpy.data.collections.get((collection, None))
+            if local_collection:
+                source_collection = local_collection
             else:
-                ctx_objects = context.view_layer.active_layer_collection.collection.all_objects
+                operator.report({'ERROR'}, "Collection '%s' was not found" % collection)
+                return {'CANCELLED'}
+
+        if source_collection:
+            if use_selection:
+                ctx_objects = tuple(obj for obj in source_collection.all_objects if obj.select_get())
+            else:
+                ctx_objects = source_collection.all_objects
         else:
             if use_selection:
                 ctx_objects = context.selected_objects
