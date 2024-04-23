@@ -1060,9 +1060,7 @@ static void versioning_replace_musgrave_texture_node(bNodeTree *ntree)
     }
     else {
       if (*detail < 1.0f) {
-        if ((noise_type != SHD_NOISE_RIDGED_MULTIFRACTAL) &&
-            (noise_type != SHD_NOISE_HETERO_TERRAIN))
-        {
+        if (!ELEM(noise_type, SHD_NOISE_RIDGED_MULTIFRACTAL, SHD_NOISE_HETERO_TERRAIN)) {
           /* Add Multiply Math node behind Fac output. */
 
           bNode *mul_node = nodeAddStaticNode(nullptr, ntree, SH_NODE_MATH);
@@ -2830,7 +2828,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
                                                           RAYTRACE_EEVEE_DENOISE_BILATERAL;
         scene->eevee.ray_tracing_options.screen_trace_quality = 0.25f;
         scene->eevee.ray_tracing_options.screen_trace_thickness = 0.2f;
-        scene->eevee.ray_tracing_options.screen_trace_max_roughness = 0.5f;
+        scene->eevee.ray_tracing_options.trace_max_roughness = 0.5f;
         scene->eevee.ray_tracing_options.sample_clamp = 10.0f;
         scene->eevee.ray_tracing_options.resolution_scale = 2;
       }
@@ -3164,6 +3162,23 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
           mpath->color_post[2] = 0.1f;
         }
       }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 18)) {
+    if (!DNA_struct_member_exists(fd->filesdna, "Light", "float", "transmission_fac")) {
+      LISTBASE_FOREACH (Light *, light, &bmain->lights) {
+        /* Refracted light was not supported in legacy EEVEE. Set it to zero for compatibility with
+         * older files. */
+        light->transmission_fac = 0.0f;
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 19)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      /* Keep legacy EEVEE old behavior. */
+      scene->eevee.flag |= SCE_EEVEE_VOLUME_CUSTOM_RANGE;
     }
   }
 

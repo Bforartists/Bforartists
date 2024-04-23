@@ -383,15 +383,8 @@ void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOu
     }
   }
 
-  bool supports_render_passes = (pipeline_type == MAT_PIPE_DEFERRED);
-  /* Opaque forward do support AOVs and render pass if not using transparency. */
-  if (!GPU_material_flag_get(gpumat, GPU_MATFLAG_TRANSPARENT) &&
-      (pipeline_type == MAT_PIPE_FORWARD))
-  {
-    supports_render_passes = true;
-  }
-
-  if (supports_render_passes) {
+  /* Only deferred material allow use of cryptomatte and render passes. */
+  if (pipeline_type == MAT_PIPE_DEFERRED) {
     info.additional_info("eevee_render_pass_out");
     info.additional_info("eevee_cryptomatte_out");
   }
@@ -596,7 +589,7 @@ void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOu
   std::stringstream attr_load;
   attr_load << "void attrib_load()\n";
   attr_load << "{\n";
-  attr_load << ((!codegen.attr_load.empty()) ? codegen.attr_load : "");
+  attr_load << (!codegen.attr_load.empty() ? codegen.attr_load : "");
   attr_load << "}\n\n";
 
   std::stringstream vert_gen, frag_gen, comp_gen;
@@ -611,9 +604,9 @@ void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOu
   }
 
   {
-    const bool use_vertex_displacement = (!codegen.displacement.empty()) &&
+    const bool use_vertex_displacement = !codegen.displacement.empty() &&
                                          (displacement_type != MAT_DISPLACEMENT_BUMP) &&
-                                         (!ELEM(geometry_type, MAT_GEOM_WORLD, MAT_GEOM_VOLUME));
+                                         !ELEM(geometry_type, MAT_GEOM_WORLD, MAT_GEOM_VOLUME);
 
     vert_gen << "vec3 nodetree_displacement()\n";
     vert_gen << "{\n";
@@ -624,7 +617,7 @@ void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOu
   }
 
   if (pipeline_type != MAT_PIPE_VOLUME_OCCUPANCY) {
-    frag_gen << ((!codegen.material_functions.empty()) ? codegen.material_functions : "\n");
+    frag_gen << (!codegen.material_functions.empty() ? codegen.material_functions : "\n");
 
     if (!codegen.displacement.empty()) {
       /* Bump displacement. Needed to recompute normals after displacement. */
@@ -639,19 +632,37 @@ void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOu
     frag_gen << "Closure nodetree_surface(float closure_rand)\n";
     frag_gen << "{\n";
     frag_gen << "  closure_weights_reset(closure_rand);\n";
-    frag_gen << ((!codegen.surface.empty()) ? codegen.surface : "return Closure(0);\n");
+    frag_gen << (!codegen.surface.empty() ? codegen.surface : "return Closure(0);\n");
     frag_gen << "}\n\n";
 
     frag_gen << "float nodetree_thickness()\n";
     frag_gen << "{\n";
-    /* TODO(fclem): Better default. */
-    frag_gen << ((!codegen.thickness.empty()) ? codegen.thickness : "return 0.1;\n");
+    if (codegen.thickness.empty()) {
+      /* Check presence of closure needing thickness to not add mandatory dependency on obinfos. */
+      if (!GPU_material_flag_get(
+              gpumat, GPU_MATFLAG_SUBSURFACE | GPU_MATFLAG_REFRACT | GPU_MATFLAG_TRANSLUCENT))
+      {
+        frag_gen << "return 0.0;\n";
+      }
+      else {
+        if (info.additional_infos_.first_index_of_try("draw_object_infos_new") == -1) {
+          info.additional_info("draw_object_infos_new");
+        }
+        frag_gen << "vec3 ls_dimensions = safe_rcp(abs(OrcoTexCoFactors[1].xyz));\n";
+        frag_gen << "vec3 ws_dimensions = mat3x3(ModelMatrix) * ls_dimensions;\n";
+        /* Choose the minimum axis so that cuboids are better represented. */
+        frag_gen << "return reduce_min(ws_dimensions);\n";
+      }
+    }
+    else {
+      frag_gen << codegen.thickness;
+    }
     frag_gen << "}\n\n";
 
     frag_gen << "Closure nodetree_volume()\n";
     frag_gen << "{\n";
     frag_gen << "  closure_weights_reset(0.0);\n";
-    frag_gen << ((!codegen.volume.empty()) ? codegen.volume : "return Closure(0);\n");
+    frag_gen << (!codegen.volume.empty() ? codegen.volume : "return Closure(0);\n");
     frag_gen << "}\n\n";
 
     info.fragment_source_generated = frag_gen.str();

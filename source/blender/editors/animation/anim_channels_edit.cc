@@ -257,6 +257,7 @@ void ANIM_set_active_channel(bAnimContext *ac,
         break;
       }
       case ANIMTYPE_FILLACTD: /* Action Expander */
+      case ANIMTYPE_FILLANIM: /* Animation Expander */
       case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
       case ANIMTYPE_DSLAM:
       case ANIMTYPE_DSCAM:
@@ -313,6 +314,7 @@ void ANIM_set_active_channel(bAnimContext *ac,
         break;
       }
       case ANIMTYPE_FILLACTD: /* Action Expander */
+      case ANIMTYPE_FILLANIM: /* Animation Expander */
       case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
       case ANIMTYPE_DSLAM:
       case ANIMTYPE_DSCAM:
@@ -366,6 +368,7 @@ bool ANIM_is_active_channel(bAnimListElem *ale)
 {
   switch (ale->type) {
     case ANIMTYPE_FILLACTD: /* Action Expander */
+    case ANIMTYPE_FILLANIM: /* Animation Expander */
     case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
     case ANIMTYPE_DSLAM:
     case ANIMTYPE_DSCAM:
@@ -502,6 +505,7 @@ static eAnimChannels_SetFlag anim_channels_selection_flag_for_toggle(const ListB
         break;
 
       case ANIMTYPE_FILLACTD: /* Action Expander */
+      case ANIMTYPE_FILLANIM: /* Animation Expander */
       case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
       case ANIMTYPE_DSLAM:
       case ANIMTYPE_DSCAM:
@@ -616,6 +620,7 @@ static void anim_channels_select_set(bAnimContext *ac,
         break;
       }
       case ANIMTYPE_FILLACTD: /* Action Expander */
+      case ANIMTYPE_FILLANIM: /* Animation Expander */
       case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
       case ANIMTYPE_DSLAM:
       case ANIMTYPE_DSCAM:
@@ -3833,6 +3838,7 @@ static int mouse_anim_channels(bContext *C,
       notifierFlags |= click_select_channel_object(C, ac, ale, selectmode);
       break;
     case ANIMTYPE_FILLACTD: /* Action Expander */
+    case ANIMTYPE_FILLANIM: /* Animation Expander */
     case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
     case ANIMTYPE_DSLAM:
     case ANIMTYPE_DSCAM:

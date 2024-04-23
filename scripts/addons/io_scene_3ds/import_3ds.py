@@ -1598,7 +1598,7 @@ def process_next_chunk(context, file, previous_chunk, imported_objects,
                 ob.parent = object_dict.get(parent)
             except:  # object is None or self to parent exception
                 object_list.pop(ind)
-    
+
         #pivot_list[ind] += pivot_list[parent]  # Not sure this is correct, should parent space matrix be applied before combining?
 
     # if parent name
@@ -1675,6 +1675,7 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, UNITS=False, IMAGE_SEARCH=True,
 
     # fixme, make unglobal, clear in case
     object_dictionary.clear()
+    matrix_transform.clear()
     object_matrix.clear()
     scn = context.scene
 
