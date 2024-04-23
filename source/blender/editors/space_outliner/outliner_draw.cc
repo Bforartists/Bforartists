@@ -1761,56 +1761,83 @@ static void outliner_draw_userbuts(uiBlock *block,
     }
 
     const TreeStoreElem *tselem = TREESTORE(te);
-    if (tselem->type != TSE_SOME_ID) {
+    ID *id = tselem->id;
+
+    if (tselem->type != TSE_SOME_ID || id->tag & LIB_TAG_EXTRAUSER) {
       return;
     }
 
     uiBut *bt;
-    ID *id = tselem->id;
     const char *tip = nullptr;
-    char buf[BLI_STR_FORMAT_INT32_GROUPED_SIZE] = "";
-    int but_flag = UI_BUT_DRAG_LOCK;
+    const int real_users = id->us - ID_FAKE_USERS(id);
+    const bool has_fake_user = id->flag & LIB_FAKEUSER;
+    const bool is_linked = ID_IS_LINKED(id);
+    const bool is_object = GS(id->name) == ID_OB;
+    char overlay[5];
+    BLI_str_format_integer_unit(overlay, id->us);
 
-    if (ID_IS_LINKED(id)) {
-      but_flag |= UI_BUT_DISABLED;
-    }
-
-    BLI_str_format_int_grouped(buf, id->us);
-    bt = uiDefBut(block,
-                  UI_BTYPE_BUT,
-                  1,
-                  buf,
-                  int(region->v2d.cur.xmax - OL_TOG_USER_BUTS_USERS),
-                  te->ys,
-                  UI_UNIT_X,
-                  UI_UNIT_Y,
-                  nullptr,
-                  0.0,
-                  0.0,
-                  TIP_("Number of users of this data-block"));
-    UI_but_flag_enable(bt, but_flag);
-
-    if (id->flag & LIB_FAKEUSER) {
-      tip = TIP_("Data will be retained using a fake user");
+    if (is_object) {
+      bt = uiDefBut(block,
+                    UI_BTYPE_BUT,
+                    0,
+                    overlay,
+                    int(region->v2d.cur.xmax - OL_TOG_USER_BUTS_USERS),
+                    te->ys,
+                    UI_UNIT_X,
+                    UI_UNIT_Y,
+                    nullptr,
+                    0.0,
+                    0.0,
+                    TIP_("Number of users"));
     }
     else {
-      tip = TIP_("Data has no users and will be deleted");
+
+      if (has_fake_user) {
+        tip = is_linked ? TIP_("Item is protected from deletion") :
+                          TIP_("Click to remove protection from deletion");
+      }
+      else {
+        if (real_users) {
+          tip = is_linked ? TIP_("Item is not protected from deletion") :
+                            TIP_("Click to add protection from deletion");
+        }
+        else {
+          tip = is_linked ?
+                    TIP_("Item has no users and will be removed") :
+                    TIP_("Item has no users and will be removed.\nClick to protect from deletion");
+        }
+      }
+
+      bt = uiDefIconButBitS(block,
+                            UI_BTYPE_ICON_TOGGLE,
+                            LIB_FAKEUSER,
+                            1,
+                            ICON_FAKE_USER_OFF,
+                            int(region->v2d.cur.xmax - OL_TOG_USER_BUTS_USERS),
+                            te->ys,
+                            UI_UNIT_X,
+                            UI_UNIT_Y,
+                            &id->flag,
+                            0,
+                            0,
+                            tip);
+
+      if (is_linked) {
+        UI_but_flag_enable(bt, UI_BUT_DISABLED);
+      }
+      else {
+        UI_but_func_set(bt, restrictbutton_id_user_toggle, id, nullptr);
+        /* Allow _inaccurate_ dragging over multiple toggles. */
+        UI_but_flag_enable(bt, UI_BUT_DRAG_LOCK);
+      }
+
+      if (!real_users && !has_fake_user) {
+        uchar overlay_color[4];
+        UI_GetThemeColor4ubv(TH_REDALERT, overlay_color);
+        UI_but_icon_indicator_color_set(bt, overlay_color);
+      }
+      UI_but_icon_indicator_set(bt, overlay);
     }
-    bt = uiDefIconButBitS(block,
-                          UI_BTYPE_ICON_TOGGLE,
-                          LIB_FAKEUSER,
-                          1,
-                          ICON_FAKE_USER_OFF,
-                          int(region->v2d.cur.xmax - OL_TOG_USER_BUTS_STATUS),
-                          te->ys,
-                          UI_UNIT_X,
-                          UI_UNIT_Y,
-                          &id->flag,
-                          0,
-                          0,
-                          tip);
-    UI_but_func_set(bt, restrictbutton_id_user_toggle, id, nullptr);
-    UI_but_flag_enable(bt, but_flag);
   });
 }
 
@@ -2980,18 +3007,20 @@ static bool tselem_draw_icon(uiBlock *block,
     }
   }
   else {
-    uiDefIconBut(block,
-                 UI_BTYPE_LABEL,
-                 0,
-                 data.icon,
-                 x,
-                 y,
-                 UI_UNIT_X,
-                 UI_UNIT_Y,
-                 nullptr,
-                 0.0,
-                 0.0,
-                 (data.drag_id && ID_IS_LINKED(data.drag_id)) ? data.drag_id->lib->filepath : "");
+    uiBut *but = uiDefIconBut(
+        block,
+        UI_BTYPE_LABEL,
+        0,
+        data.icon,
+        x,
+        y,
+        UI_UNIT_X,
+        UI_UNIT_Y,
+        nullptr,
+        0.0,
+        0.0,
+        (data.drag_id && ID_IS_LINKED(data.drag_id)) ? data.drag_id->lib->filepath : "");
+    UI_but_label_alpha_factor_set(but, alpha);
   }
 
   return true;
@@ -3276,6 +3305,12 @@ static bool element_should_draw_faded(const TreeViewContext *tvc,
         if (!is_visible) {
           return true;
         }
+        break;
+      }
+      default: {
+        if (te->parent) {
+          return element_should_draw_faded(tvc, te->parent, te->parent->store_elem);
+        }
       }
     }
   }
@@ -3290,6 +3325,11 @@ static bool element_should_draw_faded(const TreeViewContext *tvc,
       bke::greasepencil::TreeNode &node =
           tree_element_cast<TreeElementGreasePencilNode>(te)->node();
       return !node.is_visible();
+    }
+    default: {
+      if (te->parent) {
+        return element_should_draw_faded(tvc, te->parent, te->parent->store_elem);
+      }
     }
   }
 
@@ -3562,6 +3602,7 @@ static void outliner_draw_hierarchy_line(
 static void outliner_draw_hierarchy_lines_recursive(uint pos,
                                                     SpaceOutliner *space_outliner,
                                                     ListBase *lb,
+                                                    const TreeViewContext *tvc,
                                                     int startx,
                                                     const uchar col[4],
                                                     bool draw_grayed_out,
@@ -3606,18 +3647,28 @@ static void outliner_draw_hierarchy_lines_recursive(uint pos,
         }
       }
 
-      outliner_draw_hierarchy_lines_recursive(
-          pos, space_outliner, &te->subtree, startx + UI_UNIT_X, col, draw_grayed_out, starty);
+      outliner_draw_hierarchy_lines_recursive(pos,
+                                              space_outliner,
+                                              &te->subtree,
+                                              tvc,
+                                              startx + UI_UNIT_X,
+                                              col,
+                                              draw_grayed_out,
+                                              starty);
     }
 
     if (draw_hierarchy_line) {
+      const short alpha_fac = element_should_draw_faded(tvc, te, tselem) ? 127 : 255;
+      uchar line_color[4];
       if (color_tag != COLLECTION_COLOR_NONE) {
-        immUniformColor4ubv(btheme->collection_color[color_tag].color);
+        copy_v4_v4_uchar(line_color, btheme->collection_color[color_tag].color);
       }
       else {
-        immUniformColor4ubv(col);
+        copy_v4_v4_uchar(line_color, col);
       }
 
+      line_color[3] = alpha_fac;
+      immUniformColor4ubv(line_color);
       outliner_draw_hierarchy_line(pos, startx, y, *starty, is_object_line);
     }
   }
@@ -3625,6 +3676,7 @@ static void outliner_draw_hierarchy_lines_recursive(uint pos,
 
 static void outliner_draw_hierarchy_lines(SpaceOutliner *space_outliner,
                                           ListBase *lb,
+                                          const TreeViewContext *tvc,
                                           int startx,
                                           int *starty)
 {
@@ -3644,7 +3696,8 @@ static void outliner_draw_hierarchy_lines(SpaceOutliner *space_outliner,
 
   GPU_line_width(1.0f);
   GPU_blend(GPU_BLEND_ALPHA);
-  outliner_draw_hierarchy_lines_recursive(pos, space_outliner, lb, startx, col, false, starty);
+  outliner_draw_hierarchy_lines_recursive(
+      pos, space_outliner, lb, tvc, startx, col, false, starty);
   GPU_blend(GPU_BLEND_NONE);
 
   immUnbindProgram();
@@ -3846,7 +3899,7 @@ static void outliner_draw_tree(bContext *C,
   /* Draw hierarchy lines for collections and object children. */
   starty = int(region->v2d.tot.ymax) - OL_Y_OFFSET;
   startx = columns_offset + UI_UNIT_X / 2 - (U.pixelsize + 1) / 2;
-  outliner_draw_hierarchy_lines(space_outliner, &space_outliner->tree, startx, &starty);
+  outliner_draw_hierarchy_lines(space_outliner, &space_outliner->tree, tvc, startx, &starty);
 
   /* Items themselves. */
   starty = int(region->v2d.tot.ymax) - UI_UNIT_Y - OL_Y_OFFSET;
@@ -4019,8 +4072,7 @@ void draw_outliner(const bContext *C)
     outliner_draw_rnabuts(block, region, space_outliner, buttons_start_x);
     UI_block_emboss_set(block, UI_EMBOSS_NONE_OR_STATUS);
   }
-  else if (space_outliner->outlinevis == SO_ID_ORPHANS) {
-    /* draw user toggle columns */
+  else if (ELEM(space_outliner->outlinevis, SO_ID_ORPHANS, SO_LIBRARIES)) {
     outliner_draw_userbuts(block, region, space_outliner);
   }
   else if (space_outliner->outlinevis == SO_OVERRIDES_LIBRARY) {

@@ -110,7 +110,6 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.enabled = not sun_props.bind_to_sun
         row.operator("world.sunpos_show_hdr", icon='LIGHT_SUN')
 
     def draw_normal_mode_panel(self, context):
