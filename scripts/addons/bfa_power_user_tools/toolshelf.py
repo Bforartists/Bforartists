@@ -48,7 +48,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
 
                 col.operator("nla.bake", text="Bake Action", icon='BAKE_ACTION')
                 col.operator("gpencil.bake_mesh_animation", text="Bake Mesh to Grease Pencil", icon='BAKE_ACTION')
-                col.operator( "gpencil.bake_grease_pencil_animation", text="Bake Object Transform to Grease Pencil", icon='BAKE_ACTION')
+                col.operator("gpencil.bake_grease_pencil_animation", text="Bake Object Transform to Grease Pencil", icon='BAKE_ACTION')
 
 
             #col = layout.column(align=True)
