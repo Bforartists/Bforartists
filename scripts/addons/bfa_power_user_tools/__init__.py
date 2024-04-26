@@ -20,11 +20,11 @@ bl_info = {
         "name": "Power User Tools",
         "description": "Additional set of user experience tools and operators to assist with every day use for the power user.",
         "author": "Draise (@trinumedia)",
-        "version": (0, 2, 1),
+        "version": (0, 2, 2),
         "blender": (4, 00, 0),
         "location": "Varios consistent locations for the power user - customize as you need! ",
         "warning": "This is a Bforartists exclusive addon for the time being", # used for warning icon and text in add-ons panel
-        "doc_url": "https://github.com/Bforartists/Manual",
+        "doc_url": "https://www.bforartists.de/data/manualbfa4/35.4_Addon_-_Power_User_Tools.pdf",
         "tracker_url": "https://github.com/Bforartists/Bforartists",
         "support": "OFFICIAL",
         "category": "Bforartists"
