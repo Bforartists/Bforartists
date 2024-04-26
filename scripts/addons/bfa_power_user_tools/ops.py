@@ -171,6 +171,7 @@ class BFA_OT_removeframe_left(op):
         if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
             self.layout.operator(BFA_OT_removeframe_left.bl_idname, icon=BFA_OT_removeframe_left.bl_icon)
 
+
 class BFA_OT_removeframe_right(op):
     bl_idname = "anim.removeframe_right"
     bl_label = "Remove Frame Right"
@@ -232,12 +233,34 @@ class BFA_OT_removeframe_right(op):
             self.layout.operator(BFA_OT_removeframe_right.bl_idname, icon=BFA_OT_removeframe_right.bl_icon)
 
 
+class BFA_OT_jump_forward(bpy.types.Operator):
+    bl_idname = "anim.jump_forward"
+    bl_label = "Frame Jump Forward"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        context.scene.frame_current += context.scene.frameskip
+        return {'FINISHED'}
+
+
+class BFA_OT_jump_back(bpy.types.Operator):
+    bl_idname = "anim.jump_back"
+    bl_label = "Frame Jump Back"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        context.scene.frame_current -= context.scene.frameskip
+        return {'FINISHED'}
+
 
 operator_list = [
+    # Animation Operators
     BFA_OT_insertframe_left,
     BFA_OT_insertframe_right,
     BFA_OT_removeframe_left,
     BFA_OT_removeframe_right,
+    BFA_OT_jump_forward,
+    BFA_OT_jump_back,
     # Add more operators as needed
 ]
 
@@ -245,7 +268,12 @@ def register():
     for ops in operator_list:
         bpy.utils.register_class(ops)
 
+    # Remove Properties
+    bpy.types.Scene.frameskip = bpy.props.IntProperty(name="Jump Frames", default=10)
 
 def unregister():
     for ops in operator_list:
         bpy.utils.unregister_class(ops)
+
+    # Add Properties
+    del bpy.types.Scene.frameskip
