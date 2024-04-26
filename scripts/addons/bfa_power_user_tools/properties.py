@@ -16,7 +16,8 @@ import bpy
 
 
 class BFA_UI_toggles(bpy.types.PropertyGroup):
-    BFA_PROP_toggle_insertframes: bpy.props.BoolProperty(name='Frames Operators', description='Adds operators to insert/remove a frame to the left or right of the timeline cursor.\nLocated in the 3D View, Timeline, Dopesheet, and Graph editors', default=True)
+    BFA_PROP_toggle_insertframes: bpy.props.BoolProperty(name='Frames Instert/Remove Operators', description='Adds operators to insert/remove a frame on the left or right of the timeline cursor.\nLocated in the 3D View, Timeline, Dopesheet, and Graph editors', default=True)
+    BFA_PROP_toggle_jumpframes: bpy.props.BoolProperty(name='Jump Frame Operators', description='Adds operators to intervals of frames to the left or right of the timeline cursor.\nLocated in Timeline editor Header to the left', default=True)
     BFA_PROP_toggle_animationpanel: bpy.props.BoolProperty(name='Animation Toolshelf Operators', description='Adds the animation operators from the header to the toolshelf. \nLocated in the tabbed toolshelf in the 3D View under the Animation Tab > Animation Panel', default=True)
 
 property_classes = [
