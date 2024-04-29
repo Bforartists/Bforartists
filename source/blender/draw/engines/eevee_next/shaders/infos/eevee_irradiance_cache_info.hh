@@ -174,12 +174,13 @@ GPU_SHADER_CREATE_INFO(eevee_lightprobe_irradiance_world)
                       IRRADIANCE_GRID_BRICK_SIZE,
                       IRRADIANCE_GRID_BRICK_SIZE)
     .define("IRRADIANCE_GRID_UPLOAD")
-    .additional_info("eevee_shared")
+    .additional_info("eevee_shared", "eevee_global_ubo")
     .push_constant(Type::INT, "grid_index")
     .storage_buf(0, Qualifier::READ, "uint", "bricks_infos_buf[]")
     .storage_buf(1, Qualifier::READ, "SphereProbeHarmonic", "harmonic_buf")
     .uniform_buf(0, "VolumeProbeData", "grids_infos_buf[IRRADIANCE_GRID_MAX]")
-    .image(0, GPU_RGBA16F, Qualifier::READ_WRITE, ImageType::FLOAT_3D, "irradiance_atlas_img")
+    .image(
+        0, VOLUME_PROBE_FORMAT, Qualifier::READ_WRITE, ImageType::FLOAT_3D, "irradiance_atlas_img")
     .compute_source("eevee_lightprobe_irradiance_world_comp.glsl")
     .do_static_compilation(true);
 
@@ -188,7 +189,7 @@ GPU_SHADER_CREATE_INFO(eevee_lightprobe_irradiance_load)
                       IRRADIANCE_GRID_BRICK_SIZE,
                       IRRADIANCE_GRID_BRICK_SIZE)
     .define("IRRADIANCE_GRID_UPLOAD")
-    .additional_info("eevee_shared")
+    .additional_info("eevee_shared", "eevee_global_ubo")
     .push_constant(Type::MAT4, "grid_local_to_world")
     .push_constant(Type::INT, "grid_index")
     .push_constant(Type::INT, "grid_start_index")
@@ -208,7 +209,8 @@ GPU_SHADER_CREATE_INFO(eevee_lightprobe_irradiance_load)
     .sampler(7, ImageType::FLOAT_3D, "visibility_d_tx")
     .sampler(8, ImageType::FLOAT_3D, "irradiance_atlas_tx")
     .sampler(9, ImageType::FLOAT_3D, "validity_tx")
-    .image(0, GPU_RGBA16F, Qualifier::READ_WRITE, ImageType::FLOAT_3D, "irradiance_atlas_img")
+    .image(
+        0, VOLUME_PROBE_FORMAT, Qualifier::READ_WRITE, ImageType::FLOAT_3D, "irradiance_atlas_img")
     .compute_source("eevee_lightprobe_irradiance_load_comp.glsl")
     .do_static_compilation(true);
 

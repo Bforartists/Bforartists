@@ -216,7 +216,7 @@ static bool shaderfx_ui_poll(const bContext *C, PanelType * /*pt*/)
 {
   Object *ob = blender::ed::object::context_active_object(C);
 
-  return (ob != nullptr) && (ob->type == OB_GPENCIL_LEGACY);
+  return (ob != nullptr) && (ELEM(ob->type, OB_GPENCIL_LEGACY, OB_GREASE_PENCIL));
 }
 
 PanelType *shaderfx_panel_register(ARegionType *region_type, ShaderFxType type, PanelDrawFn draw)
@@ -253,6 +253,7 @@ PanelType *shaderfx_subpanel_register(ARegionType *region_type,
 {
   PanelType *panel_type = static_cast<PanelType *>(MEM_callocN(sizeof(PanelType), __func__));
 
+  BLI_assert(parent != nullptr);
   SNPRINTF(panel_type->idname, "%s_%s", parent->idname, name);
   STRNCPY(panel_type->label, label);
   STRNCPY(panel_type->context, "shaderfx");
@@ -263,7 +264,6 @@ PanelType *shaderfx_subpanel_register(ARegionType *region_type,
   panel_type->poll = shaderfx_ui_poll;
   panel_type->flag = PANEL_TYPE_DEFAULT_CLOSED;
 
-  BLI_assert(parent != nullptr);
   STRNCPY(panel_type->parent_id, parent->idname);
   panel_type->parent = parent;
   BLI_addtail(&parent->children, BLI_genericNodeN(panel_type));
