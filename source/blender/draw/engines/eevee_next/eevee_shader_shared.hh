@@ -44,6 +44,80 @@ constexpr GPUSamplerState with_filter = {GPU_SAMPLER_FILTERING_LINEAR};
 #define UBO_MIN_MAX_SUPPORTED_SIZE 1 << 14
 
 /* -------------------------------------------------------------------- */
+/** \name Transform
+ * \{ */
+
+struct Transform {
+  /* The transform is stored transposed for compactness. */
+  float4 x, y, z;
+#if IS_CPP
+  Transform() = default;
+  Transform(const float4x4 &tx)
+      : x(tx[0][0], tx[1][0], tx[2][0], tx[3][0]),
+        y(tx[0][1], tx[1][1], tx[2][1], tx[3][1]),
+        z(tx[0][2], tx[1][2], tx[2][2], tx[3][2])
+  {
+  }
+
+  operator float4x4() const
+  {
+    return float4x4(float4(x.x, y.x, z.x, 0.0f),
+                    float4(x.y, y.y, z.y, 0.0f),
+                    float4(x.z, y.z, z.z, 0.0f),
+                    float4(x.w, y.w, z.w, 1.0f));
+  }
+#endif
+};
+
+static inline float3 transform_x_axis(Transform t)
+{
+  return float3(t.x.x, t.y.x, t.z.x);
+}
+static inline float3 transform_y_axis(Transform t)
+{
+  return float3(t.x.y, t.y.y, t.z.y);
+}
+static inline float3 transform_z_axis(Transform t)
+{
+  return float3(t.x.z, t.y.z, t.z.z);
+}
+static inline float3 transform_location(Transform t)
+{
+  return float3(t.x.w, t.y.w, t.z.w);
+}
+
+static inline float3 transform_point(Transform t, float3 point)
+{
+  return float4(point, 1.0f) * float3x4(t.x, t.y, t.z);
+}
+
+static inline float3 transform_direction(Transform t, float3 direction)
+{
+  return direction * float3x3(float3(t.x.x, t.x.y, t.x.z),
+                              float3(t.y.x, t.y.y, t.y.z),
+                              float3(t.z.x, t.z.y, t.z.z));
+}
+
+static inline float3 transform_direction_transposed(Transform t, float3 direction)
+{
+  return float3x3(float3(t.x.x, t.x.y, t.x.z),
+                  float3(t.y.x, t.y.y, t.y.z),
+                  float3(t.z.x, t.z.y, t.z.z)) *
+         direction;
+}
+
+/* Assumes the transform has unit scale. */
+static inline float3 transform_point_inversed(Transform t, float3 point)
+{
+  return float3x3(float3(t.x.x, t.x.y, t.x.z),
+                  float3(t.y.x, t.y.y, t.y.z),
+                  float3(t.z.x, t.z.y, t.z.z)) *
+         (point - transform_location(t));
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Debug Mode
  * \{ */
 
@@ -870,21 +944,8 @@ BLI_STATIC_ASSERT(sizeof(LightSunData) == sizeof(LightLocalData), "Data size mus
 #endif
 
 struct LightData {
-  /** Normalized object to world matrix. */
-  /* TODO(fclem): Use float4x3. */
-  float4x4 object_mat;
-  /** Aliases for axes. */
-#ifndef USE_GPU_SHADER_CREATE_INFO
-#  define _right object_mat[0]
-#  define _up object_mat[1]
-#  define _back object_mat[2]
-#  define _position object_mat[3]
-#else
-#  define _right object_mat[0].xyz
-#  define _up object_mat[1].xyz
-#  define _back object_mat[2].xyz
-#  define _position object_mat[3].xyz
-#endif
+  /** Normalized object to world matrix. Stored transposed for compactness. */
+  Transform object_to_world;
 
   /** Power depending on shader type. Referenced by LightingType. */
   float4 power;
@@ -921,6 +982,23 @@ struct LightData {
 #endif
 };
 BLI_STATIC_ASSERT_ALIGN(LightData, 16)
+
+static inline float3 light_x_axis(LightData light)
+{
+  return transform_x_axis(light.object_to_world);
+}
+static inline float3 light_y_axis(LightData light)
+{
+  return transform_y_axis(light.object_to_world);
+}
+static inline float3 light_z_axis(LightData light)
+{
+  return transform_z_axis(light.object_to_world);
+}
+static inline float3 light_position_get(LightData light)
+{
+  return transform_location(light.object_to_world);
+}
 
 #ifdef GPU_SHADER
 #  define CHECK_TYPE_PAIR(a, b)
@@ -1146,9 +1224,12 @@ struct ShadowTileMapData {
   int clip_data_index;
   /** Bias LOD to tag for usage to lower the amount of tile used. */
   float lod_bias;
-  int _pad0;
-  int _pad1;
-  int _pad2;
+  /** Light type this tilemap is from. */
+  eLightType light_type;
+  /** True if the tilemap is part of area light shadow and is one of the side projections. */
+  bool32_t is_area_side;
+  /** Distance behind the area light a shadow is shifted. */
+  float area_shift;
   /** Near and far clip distances for punctual. */
   float clip_near;
   float clip_far;
@@ -1156,11 +1237,37 @@ struct ShadowTileMapData {
   float half_size;
   /** Offset in local space to the tilemap center in world units. Used for directional winmat. */
   float2 center_offset;
+  /** Filter radius of the light in pixels. */
+  float filter_radius;
+  float _pad0;
+  float _pad1;
+  float _pad2;
 };
 BLI_STATIC_ASSERT_ALIGN(ShadowTileMapData, 16)
 
 /**
+ * Lightweight version of ShadowTileMapData that only contains data used for rendering the shadow.
+ */
+struct ShadowRenderView {
+  /**
+   * Is either:
+   * - positive radial distance for point lights.
+   * - negative distance to light plane (divided by sqrt3) for area lights side projections.
+   * - zero if disabled.
+   * Use sign to determine with case we are in.
+   */
+  float clip_distance_inv;
+  /* Viewport to submit the geometry of this tilemap view to. */
+  uint viewport_index;
+  /* Filter radius for this view. */
+  float filter_radius;
+  uint _pad1;
+};
+BLI_STATIC_ASSERT_ALIGN(ShadowRenderView, 16)
+
+/**
  * Per tilemap data persistent on GPU.
+ * Kept separately for easier clearing on GPU.
  */
 struct ShadowTileMapClip {
   /** Clip distances that were used to render the pages. */
@@ -1372,10 +1479,10 @@ struct ShadowSceneData {
   int ray_count;
   /* Number of shadow samples to take for each shadow ray. */
   int step_count;
-  /* Bias the shading point by using the normal to avoid self intersection. */
-  float normal_bias;
   /* Ratio between tile-map pixel world "radius" and film pixel world "radius". */
   float tilemap_projection_ratio;
+
+  float _pad0;
 };
 BLI_STATIC_ASSERT_ALIGN(ShadowSceneData, 16)
 
@@ -1623,6 +1730,20 @@ BLI_STATIC_ASSERT_ALIGN(HiZData, 16)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Light Clamping
+ * \{ */
+
+struct ClampData {
+  float surface_direct;
+  float surface_indirect;
+  float volume_direct;
+  float volume_indirect;
+};
+BLI_STATIC_ASSERT_ALIGN(ClampData, 16)
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Ray-Tracing
  * \{ */
 
@@ -1685,8 +1806,6 @@ struct RayTraceData {
   int horizon_resolution_scale;
   /** Determine how fast the sample steps are getting bigger. */
   float quality;
-  /** Maximum brightness during lighting evaluation. */
-  float brightness_clamp;
   /** Maximum roughness for which we will trace a ray. */
   float roughness_mask_scale;
   float roughness_mask_bias;
@@ -1697,6 +1816,7 @@ struct RayTraceData {
   /** Closure being ray-traced. */
   int closure_index;
   int _pad0;
+  int _pad1;
 };
 BLI_STATIC_ASSERT_ALIGN(RayTraceData, 16)
 
@@ -1821,7 +1941,7 @@ BLI_STATIC_ASSERT_ALIGN(PlanarProbeDisplayData, 16)
 struct PipelineInfoData {
   float alpha_hash_scale;
   bool32_t is_probe_reflection;
-  bool32_t use_combined_lightprobe_eval;
+  float _pad1;
   float _pad2;
 };
 BLI_STATIC_ASSERT_ALIGN(PipelineInfoData, 16)
@@ -1836,6 +1956,7 @@ BLI_STATIC_ASSERT_ALIGN(PipelineInfoData, 16)
 struct UniformData {
   AOData ao;
   CameraData camera;
+  ClampData clamp;
   FilmData film;
   HiZData hiz;
   RayTraceData raytrace;
@@ -1962,6 +2083,7 @@ using ShadowPageCacheBuf = draw::StorageArrayBuffer<uint2, SHADOW_MAX_PAGE, true
 using ShadowTileMapDataBuf = draw::StorageVectorBuffer<ShadowTileMapData, SHADOW_MAX_TILEMAP>;
 using ShadowTileMapClipBuf = draw::StorageArrayBuffer<ShadowTileMapClip, SHADOW_MAX_TILEMAP, true>;
 using ShadowTileDataBuf = draw::StorageArrayBuffer<ShadowTileDataPacked, SHADOW_MAX_TILE, true>;
+using ShadowRenderViewBuf = draw::StorageArrayBuffer<ShadowRenderView, SHADOW_VIEW_MAX, true>;
 using SurfelBuf = draw::StorageArrayBuffer<Surfel, 64>;
 using SurfelRadianceBuf = draw::StorageArrayBuffer<SurfelRadiance, 64>;
 using CaptureInfoBuf = draw::StorageBuffer<CaptureInfoData>;
