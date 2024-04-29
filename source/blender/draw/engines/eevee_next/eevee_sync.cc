@@ -117,10 +117,8 @@ void SyncModule::sync_mesh(Object *ob,
     return;
   }
 
-  if ((ob->dt < OB_SOLID) && !DRW_state_is_scene_render()) {
-    /** NOTE:
-     * EEVEE doesn't render meshes with bounds or wire display type in the viewport,
-     * but Cycles does. */
+  if ((ob->dt < OB_SOLID) && ((inst_.is_viewport() && inst_.v3d->shading.type != OB_RENDER))) {
+    /** Do not render objects with display type lower than solid when in material preview mode. */
     return;
   }
 
@@ -251,7 +249,7 @@ bool SyncModule::sync_sculpt(Object *ob,
 
   /* Use a valid bounding box. The PBVH module already does its own culling, but a valid */
   /* bounding box is still needed for directional shadow tile-map bounds computation. */
-  const Bounds<float3> bounds = BKE_pbvh_bounding_box(ob_ref.object->sculpt->pbvh);
+  const Bounds<float3> bounds = bke::pbvh::bounds_get(*ob_ref.object->sculpt->pbvh);
   const float3 center = math::midpoint(bounds.min, bounds.max);
   const float3 half_extent = bounds.max - center + inflate_bounds;
   inst_.manager->update_handle_bounds(res_handle, center, half_extent);

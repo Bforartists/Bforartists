@@ -339,6 +339,12 @@ static int graph_slider_modal(bContext *C, wmOperator *op, const wmEvent *event)
       break;
     }
 
+    case EVT_TABKEY:
+      /* Switch between acting on different properties. If this is not handled
+       * by the caller, it's explicitly gobbled up here to avoid it being passed
+       * through via the 'default' case. */
+      break;
+
     /* When the mouse is moved, the percentage and the keyframes update. */
     case MOUSEMOVE: {
       if (has_numinput == false) {
@@ -1024,6 +1030,7 @@ static int ease_modal(bContext *C, wmOperator *op, const wmEvent *event)
         ED_slider_unit_set(gso->slider, "%");
         gso->factor_prop = RNA_struct_find_property(op->ptr, "factor");
       }
+      ED_slider_property_label_set(gso->slider, RNA_property_ui_name(gso->factor_prop));
       ease_modal_update(C, op);
       break;
     }
@@ -1049,6 +1056,7 @@ static int ease_invoke(bContext *C, wmOperator *op, const wmEvent *event)
   ED_slider_allow_overshoot_set(gso->slider, false, false);
   ED_slider_factor_bounds_set(gso->slider, -1, 1);
   ED_slider_factor_set(gso->slider, 0.0f);
+  ED_slider_property_label_set(gso->slider, RNA_property_ui_name(gso->factor_prop));
 
   return invoke_result;
 }
