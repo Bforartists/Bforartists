@@ -85,6 +85,8 @@ class UnifiedPaintPanel:
             return tool_settings.gpencil_paint
         elif mode == 'SCULPT_GREASE_PENCIL':
             return tool_settings.gpencil_sculpt_paint
+        elif mode == 'WEIGHT_GREASE_PENCIL':
+            return tool_settings.gpencil_weight_paint
         return None
 
     @staticmethod
@@ -1607,6 +1609,7 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
 
 def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=False):
     gp_settings = brush.gpencil_settings
+    tool = context.workspace.tools.from_space_view3d_mode(context.mode, create=False)
     if gp_settings is None:
         return
 
@@ -1643,7 +1646,39 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=
         col = layout.column()
         col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
 
-    if grease_pencil_tool == 'DRAW':
+    # Brush details
+    if tool.idname in {
+            "builtin.arc",
+            "builtin.curve",
+            "builtin.line",
+            "builtin.box",
+            "builtin.circle",
+            "builtin.polyline",
+    }:
+        row = layout.row(align=True)
+        if context.region.type == 'TOOL_HEADER':
+            row.prop(gp_settings, "caps_type", text="", expand=True)
+        else:
+            row.prop(gp_settings, "caps_type", text="Caps Type")
+
+        settings = context.tool_settings.gpencil_sculpt
+        if compact:
+            row = layout.row(align=True)
+            row.prop(settings, "use_thickness_curve", text="", icon='SPHERECURVE')
+            sub = row.row(align=True)
+            sub.active = settings.use_thickness_curve
+            sub.popover(
+                panel="TOPBAR_PT_gpencil_primitive",
+                text="Thickness Profile",
+            )
+        else:
+            row = layout.row(align=True)
+            row.prop(settings, "use_thickness_curve", text="Use Thickness Profile")
+            sub = row.row(align=True)
+            if settings.use_thickness_curve:
+                # Pressure curve.
+                layout.template_curve_mapping(settings, "thickness_primitive_curve", brush=True)
+    elif grease_pencil_tool == 'DRAW':
         layout.prop(gp_settings, "active_smooth_factor")
         row = layout.row(align=True)
         if compact:
@@ -1657,8 +1692,8 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=
         layout.prop(gp_settings, "use_active_layer_only")
     elif grease_pencil_tool == 'TINT':
         layout.prop(gp_settings, "vertex_mode", text="Mode")
-        layout.popover("VIEW3D_PT_tools_brush_settings_advanced", text="Brush")
         layout.popover("VIEW3D_PT_tools_brush_falloff")
+        layout.prop(gp_settings, "use_active_layer_only")
 
 
 def brush_basic_gpencil_sculpt_settings(layout, _context, brush, *, compact=False):
@@ -1734,48 +1769,88 @@ def brush_basic_gpencil_vertex_settings(layout, _context, brush, *, compact=Fals
         row.prop(gp_settings, "vertex_mode", text="Mode")
 
 
-class VIEW3D_PT_gpencil_brush_settings_radius(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_label = "Radius"
-    bl_region_type = 'HEADER'
-    bl_ui_units_x = 10
+def brush_basic_grease_pencil_weight_settings(layout, context, brush, *, compact=False):
+    UnifiedPaintPanel.prop_unified(
+        layout,
+        context,
+        brush,
+        "size",
+        pressure_name="use_pressure_size",
+        unified_name="use_unified_size",
+        text="Radius",
+        slider=True,
+        header=compact,
+    )
 
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
+    capabilities = brush.sculpt_capabilities
+    pressure_name = "use_pressure_strength" if capabilities.has_strength_pressure else None
+    UnifiedPaintPanel.prop_unified(
+        layout,
+        context,
+        brush,
+        "strength",
+        pressure_name=pressure_name,
+        unified_name="use_unified_strength",
+        text="Strength",
+        header=compact,
+    )
 
-        tool_settings = context.scene.tool_settings
-        gpencil_paint = tool_settings.gpencil_paint
-        brush = gpencil_paint.brush
-        gp_settings = brush.gpencil_settings
+    if brush.gpencil_weight_tool in {'WEIGHT'}:
+        UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            "weight",
+            unified_name="use_unified_weight",
+            text="Weight",
+            slider=True,
+            header=compact,
+        )
+        layout.prop(brush, "direction", expand=True, text="" if compact else "Direction")
 
-        layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True)
+
+class VIEW3D_PT_gpencil_brush_settings_radius(Panel): # BFA
+    bl_space_type = 'VIEW_3D' # BFA
+    bl_label = "Radius" # BFA
+    bl_region_type = 'HEADER' # BFA
+    bl_ui_units_x = 10 # BFA
+
+    def draw(self, context): # BFA
+        layout = self.layout # BFA
+        layout.use_property_split = True # BFA
+        layout.use_property_decorate = False # BFA
+
+        tool_settings = context.scene.tool_settings # BFA
+        gpencil_paint = tool_settings.gpencil_paint # BFA
+        brush = gpencil_paint.brush # BFA
+        gp_settings = brush.gpencil_settings # BFA
+
+        layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True) # BFA
 
 
-class VIEW3D_PT_gpencil_brush_settings_strength(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_label = "Strength"
-    bl_region_type = 'HEADER'
-    bl_ui_units_x = 10
+class VIEW3D_PT_gpencil_brush_settings_strength(Panel): # BFA
+    bl_space_type = 'VIEW_3D' # BFA
+    bl_label = "Strength" # BFA
+    bl_region_type = 'HEADER' # BFA
+    bl_ui_units_x = 10 # BFA
 
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
+    def draw(self, context): # BFA
+        layout = self.layout # BFA
+        layout.use_property_split = True # BFA
+        layout.use_property_decorate = False # BFA
 
-        tool_settings = context.scene.tool_settings
-        gpencil_paint = tool_settings.gpencil_paint
-        brush = gpencil_paint.brush
-        gp_settings = brush.gpencil_settings
+        tool_settings = context.scene.tool_settings # BFA
+        gpencil_paint = tool_settings.gpencil_paint # BFA
+        brush = gpencil_paint.brush # BFA
+        gp_settings = brush.gpencil_settings # BFA
 
-        layout.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
+        layout.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True) # BFA
 
 
 classes = (
     VIEW3D_MT_tools_projectpaint_clone,
-    VIEW3D_PT_gpencil_brush_settings_radius,
-    VIEW3D_PT_gpencil_brush_settings_strength,
+    VIEW3D_PT_gpencil_brush_settings_radius, # BFA
+    VIEW3D_PT_gpencil_brush_settings_strength, # BFA
 )
 
 if __name__ == "__main__":  # only for live edit.

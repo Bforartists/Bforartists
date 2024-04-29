@@ -219,6 +219,7 @@ void VolumeModule::end_sync()
   scatter_ps_.bind_resources(inst_.sphere_probes);
   scatter_ps_.bind_resources(inst_.volume_probes);
   scatter_ps_.bind_resources(inst_.shadows);
+  scatter_ps_.bind_resources(inst_.uniform_data);
   scatter_ps_.bind_resources(inst_.sampling);
   scatter_ps_.bind_image("in_scattering_img", &prop_scattering_tx_);
   scatter_ps_.bind_image("in_extinction_img", &prop_extinction_tx_);
@@ -362,12 +363,15 @@ void VolumeModule::draw_prepass(View &main_view)
   inst_.uniform_data.push_update();
 
   DRW_stats_group_start("Volumes");
+  occupancy_fb_.bind();
   inst_.pipelines.world_volume.render(main_view);
 
   volume_view.sync(main_view.viewmat(), winmat_infinite);
+  /* TODO(fclem): The infinite projection matrix makes the culling test unreliable (see #115595).
+   * We need custom culling for these but that's not implemented yet. */
+  volume_view.visibility_test(false);
 
   if (inst_.pipelines.volume.is_enabled()) {
-    occupancy_fb_.bind();
     inst_.pipelines.volume.render(volume_view, occupancy_tx_);
   }
   DRW_stats_group_end();
