@@ -13,6 +13,7 @@
 #include "BLI_generic_span.hh"
 #include "BLI_index_mask_fwd.hh"
 #include "BLI_math_matrix_types.hh"
+#include "BLI_set.hh"
 
 #include "ED_keyframes_edit.hh"
 
@@ -29,10 +30,12 @@ struct Scene;
 struct UndoType;
 struct ViewDepths;
 struct View3D;
+struct ViewContext;
 namespace blender {
 namespace bke {
 enum class AttrDomain : int8_t;
-}
+class CurvesGeometry;
+}  // namespace bke
 }  // namespace blender
 
 enum {
@@ -51,10 +54,16 @@ void ED_operatortypes_grease_pencil_layers();
 void ED_operatortypes_grease_pencil_select();
 void ED_operatortypes_grease_pencil_edit();
 void ED_operatortypes_grease_pencil_material();
+void ED_operatortypes_grease_pencil_primitives();
+void ED_operatortypes_grease_pencil_weight_paint();
 void ED_operatormacros_grease_pencil();
 void ED_keymap_grease_pencil(wmKeyConfig *keyconf);
+void ED_primitivetool_modal_keymap(wmKeyConfig *keyconf);
+
+void GREASE_PENCIL_OT_stroke_cutter(wmOperatorType *ot);
 
 void ED_undosys_type_grease_pencil(UndoType *undo_type);
+
 /**
  * Get the selection mode for Grease Pencil selection operators: point, stroke, segment.
  */
@@ -131,6 +140,41 @@ bool remove_all_selected_frames(GreasePencil &grease_pencil, bke::greasepencil::
 
 void select_layer_channel(GreasePencil &grease_pencil, bke::greasepencil::Layer *layer);
 
+struct KeyframeClipboard {
+  /* Datatype for use in copy/paste buffer. */
+  struct DrawingBufferItem {
+    blender::bke::greasepencil::FramesMapKey frame_number;
+    bke::greasepencil::Drawing drawing;
+    int duration;
+  };
+
+  struct LayerBufferItem {
+    Vector<DrawingBufferItem> drawing_buffers;
+    blender::bke::greasepencil::FramesMapKey first_frame;
+    blender::bke::greasepencil::FramesMapKey last_frame;
+  };
+
+  Map<std::string, LayerBufferItem> copy_buffer{};
+  int first_frame{std::numeric_limits<int>::max()};
+  int last_frame{std::numeric_limits<int>::min()};
+  int cfra{0};
+
+  void clear()
+  {
+    copy_buffer.clear();
+    first_frame = std::numeric_limits<int>::max();
+    last_frame = std::numeric_limits<int>::min();
+    cfra = 0;
+  }
+};
+
+bool grease_pencil_copy_keyframes(bAnimContext *ac, KeyframeClipboard &clipboard);
+
+bool grease_pencil_paste_keyframes(bAnimContext *ac,
+                                   const eKeyPasteOffset offset_mode,
+                                   const eKeyMergeMode merge_mode,
+                                   const KeyframeClipboard &clipboard);
+
 /**
  * Sets the selection flag, according to \a selection_mode to the frame at \a frame_number in the
  * \a layer if such frame exists. Returns false if no such frame exists.
@@ -165,7 +209,9 @@ bool has_any_frame_selected(const bke::greasepencil::Layer &layer);
  * create one when auto-key is on (taking additive drawing setting into account).
  * \return false when no keyframe could be found or created.
  */
-bool ensure_active_keyframe(const Scene &scene, GreasePencil &grease_pencil);
+bool ensure_active_keyframe(const Scene &scene,
+                            GreasePencil &grease_pencil,
+                            bool &r_inserted_keyframe);
 
 void create_keyframe_edit_data_selected_frames_list(KeyframeEditData *ked,
                                                     const bke::greasepencil::Layer &layer);
@@ -176,6 +222,19 @@ bool active_grease_pencil_layer_poll(bContext *C);
 bool editable_grease_pencil_point_selection_poll(bContext *C);
 bool grease_pencil_painting_poll(bContext *C);
 bool grease_pencil_sculpting_poll(bContext *C);
+bool grease_pencil_weight_painting_poll(bContext *C);
+
+float opacity_from_input_sample(const float pressure,
+                                const Brush *brush,
+                                const Scene *scene,
+                                const BrushGpencilSettings *settings);
+float radius_from_input_sample(const float pressure,
+                               const float3 location,
+                               ViewContext vc,
+                               const Brush *brush,
+                               const Scene *scene,
+                               const BrushGpencilSettings *settings);
+int grease_pencil_draw_operator_invoke(bContext *C, wmOperator *op);
 
 struct DrawingInfo {
   const bke::greasepencil::Drawing &drawing;
@@ -197,7 +256,11 @@ Vector<MutableDrawingInfo> retrieve_editable_drawings(const Scene &scene,
                                                       GreasePencil &grease_pencil);
 Vector<MutableDrawingInfo> retrieve_editable_drawings_with_falloff(const Scene &scene,
                                                                    GreasePencil &grease_pencil);
+Array<Vector<MutableDrawingInfo>> retrieve_editable_drawings_grouped_per_frame(
+    const Scene &scene, GreasePencil &grease_pencil);
 Vector<MutableDrawingInfo> retrieve_editable_drawings_from_layer(
+    const Scene &scene, GreasePencil &grease_pencil, const bke::greasepencil::Layer &layer);
+Vector<MutableDrawingInfo> retrieve_editable_drawings_from_layer_with_falloff(
     const Scene &scene, GreasePencil &grease_pencil, const bke::greasepencil::Layer &layer);
 Vector<DrawingInfo> retrieve_visible_drawings(const Scene &scene,
                                               const GreasePencil &grease_pencil,
@@ -221,6 +284,9 @@ IndexMask retrieve_editable_elements(Object &object,
 IndexMask retrieve_visible_strokes(Object &grease_pencil_object,
                                    const bke::greasepencil::Drawing &drawing,
                                    IndexMaskMemory &memory);
+IndexMask retrieve_visible_points(Object &object,
+                                  const bke::greasepencil::Drawing &drawing,
+                                  IndexMaskMemory &memory);
 
 IndexMask retrieve_editable_and_selected_strokes(Object &grease_pencil_object,
                                                  const bke::greasepencil::Drawing &drawing,
@@ -263,5 +329,74 @@ IndexMask polyline_detect_corners(Span<float2> points,
                                   int samples_max,
                                   float angle_threshold,
                                   IndexMaskMemory &memory);
+
+/**
+ * Structure describing a point in the destination relatively to the source.
+ * If a point in the destination \a is_src_point, then it corresponds
+ * exactly to the point at \a src_point index in the source geometry.
+ * Otherwise, it is a linear combination of points at \a src_point and \a src_next_point in the
+ * source geometry, with the given \a factor.
+ * A point in the destination is a \a cut if it splits the source curves geometry, meaning it is
+ * the first point of a new curve in the destination.
+ */
+struct PointTransferData {
+  int src_point;
+  int src_next_point;
+  float factor;
+  bool is_src_point;
+  bool is_cut;
+
+  /**
+   * Source point is the last of the curve.
+   */
+  bool is_src_end_point() const
+  {
+    /* The src_next_point index increments for all points except the last, where it is set to the
+     * first point index. This can be used to detect the curve end from the source index alone.
+     */
+    return is_src_point && src_point >= src_next_point;
+  }
+};
+
+/**
+ * Computes a \a dst curves geometry by applying a change of topology from a \a src curves
+ * geometry.
+ * The change of topology is described by \a src_to_dst_points, which size should be
+ * equal to the number of points in the source.
+ * For each point in the source, the corresponding vector in \a src_to_dst_points contains a set
+ * of destination points (PointTransferData), which can correspond to points of the source, or
+ * linear combination of them. Note that this vector can be empty, if we want to remove points
+ * for example. Curves can also be split if a destination point is marked as a cut.
+ *
+ * \returns an array containing the same elements as \a src_to_dst_points, but in the destination
+ * points domain.
+ */
+Array<PointTransferData> compute_topology_change(
+    const bke::CurvesGeometry &src,
+    bke::CurvesGeometry &dst,
+    const Span<Vector<PointTransferData>> src_to_dst_points,
+    const bool keep_caps);
+
+/** Returns a set of vertex group names that are deformed by a bone in an armature. */
+Set<std::string> get_bone_deformed_vertex_group_names(const Object &object);
+
+/** For a point in a stroke, normalize the weights of vertex groups deformed by bones so that the
+ * sum is 1.0f. */
+void normalize_vertex_weights(MDeformVert &dvert,
+                              int active_vertex_group,
+                              Span<bool> vertex_group_is_locked,
+                              Span<bool> vertex_group_is_bone_deformed);
+
+void clipboard_free();
+const bke::CurvesGeometry &clipboard_curves();
+/**
+ * Paste curves from the clipboard into the drawing.
+ * \param paste_back Render behind existing curves by inserting curves at the front.
+ * \return Index range of the new curves in the drawing after pasting.
+ */
+IndexRange clipboard_paste_strokes(Main &bmain,
+                                   Object &object,
+                                   bke::greasepencil::Drawing &drawing,
+                                   bool paste_back);
 
 }  // namespace blender::ed::greasepencil
