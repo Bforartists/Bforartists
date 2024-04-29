@@ -241,7 +241,7 @@ class LazyFunctionForGeometryNode : public LazyFunction {
       return user_data.call_data->modifier_data->self_object;
     }
     if (user_data.call_data->operator_data) {
-      return user_data.call_data->operator_data->self_object;
+      return user_data.call_data->operator_data->self_object_orig;
     }
     BLI_assert_unreachable();
     return nullptr;
@@ -3027,7 +3027,11 @@ struct GeometryNodesLazyFunctionBuilder {
       const CPPType &type = *typeinfo->geometry_nodes_cpp_type;
       lf::GraphOutputSocket &lf_socket = lf_graph.add_output(
           type, interface_output->name ? interface_output->name : "");
-      lf_socket.set_default_value(type.default_value());
+      const void *default_value = typeinfo->geometry_nodes_default_cpp_value;
+      if (default_value == nullptr) {
+        default_value = type.default_value();
+      }
+      lf_socket.set_default_value(default_value);
       standard_group_output_sockets_.append(&lf_socket);
     }
   }
@@ -4323,13 +4327,45 @@ std::optional<FoundNestedNodeID> find_nested_node_id(const GeoNodesLFUserData &u
   return found;
 }
 
+GeoNodesOperatorDepsgraphs::~GeoNodesOperatorDepsgraphs()
+{
+  if (Depsgraph *graph = this->extra) {
+    DEG_graph_free(graph);
+  }
+}
+
+static const ID *get_only_evaluated_id(const Depsgraph &depsgraph, const ID &id_orig)
+{
+  const ID *id = DEG_get_evaluated_id(&depsgraph, const_cast<ID *>(&id_orig));
+  if (id == &id_orig) {
+    return nullptr;
+  }
+  return id;
+}
+
+const ID *GeoNodesOperatorDepsgraphs::get_evaluated_id(const ID &id_orig) const
+{
+  if (const Depsgraph *graph = this->active) {
+    if (const ID *id = get_only_evaluated_id(*graph, id_orig)) {
+      return id;
+    }
+  }
+  if (const Depsgraph *graph = this->extra) {
+    if (const ID *id = get_only_evaluated_id(*graph, id_orig)) {
+      return id;
+    }
+  }
+  return nullptr;
+}
+
 const Object *GeoNodesCallData::self_object() const
 {
   if (this->modifier_data) {
     return this->modifier_data->self_object;
   }
   if (this->operator_data) {
-    return this->operator_data->self_object;
+    return DEG_get_evaluated_object(this->operator_data->depsgraphs->active,
+                                    const_cast<Object *>(this->operator_data->self_object_orig));
   }
   return nullptr;
 }

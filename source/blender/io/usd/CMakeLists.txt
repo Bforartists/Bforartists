@@ -93,6 +93,7 @@ set(SRC
   intern/usd_capi_import.cc
   intern/usd_hierarchy_iterator.cc
   intern/usd_hook.cc
+  intern/usd_mesh_utils.cc
   intern/usd_writer_abstract.cc
   intern/usd_writer_armature.cc
   intern/usd_writer_camera.cc
@@ -120,6 +121,7 @@ set(SRC
   intern/usd_reader_stage.cc
   intern/usd_reader_volume.cc
   intern/usd_reader_xform.cc
+  intern/usd_reader_utils.cc
   intern/usd_skel_convert.cc
   intern/usd_skel_root_utils.cc
 
@@ -133,6 +135,7 @@ set(SRC
   intern/usd_hash_types.hh
   intern/usd_hierarchy_iterator.hh
   intern/usd_hook.hh
+  intern/usd_mesh_utils.hh
   intern/usd_writer_abstract.hh
   intern/usd_writer_armature.hh
   intern/usd_writer_camera.hh
@@ -160,6 +163,7 @@ set(SRC
   intern/usd_reader_stage.hh
   intern/usd_reader_volume.hh
   intern/usd_reader_xform.hh
+  intern/usd_reader_utils.hh
   intern/usd_skel_convert.hh
   intern/usd_skel_root_utils.hh
 )

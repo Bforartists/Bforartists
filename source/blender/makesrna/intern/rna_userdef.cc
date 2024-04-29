@@ -3440,6 +3440,8 @@ static void rna_def_userdef_theme_space_image(BlenderRNA *brna)
   rna_def_userdef_theme_spaces_curves(srna, false, false, false, true);
 
   rna_def_userdef_theme_spaces_paint_curves(srna);
+
+  rna_def_userdef_theme_spaces_asset_shelf_main(srna);
 }
 
 static void rna_def_userdef_theme_space_seq(BlenderRNA *brna)
@@ -4330,6 +4332,8 @@ static void rna_def_userdef_themes(BlenderRNA *brna)
   RNA_def_property_string_sdna(prop, nullptr, "filepath");
   RNA_def_property_ui_text(
       prop, "File Path", "The path to the preset loaded into this theme (if any)");
+  /* Don't store in presets. */
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
   prop = RNA_def_property(srna, "theme_area", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "active_theme_area");
@@ -6573,6 +6577,20 @@ static void rna_def_userdef_input(BlenderRNA *brna)
   prop = RNA_def_property(srna, "invert_zoom_wheel", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "uiflag", USER_WHEELZOOMDIR);
   RNA_def_property_ui_text(prop, "Wheel Invert Zoom", "Swap the Mouse Wheel zoom direction");
+
+  static const EnumPropertyItem touchpad_scroll_direction_items[] = {
+      {USER_TRACKPAD_SCROLL_DIR_TRADITIONAL,
+       "TRADITIONAL",
+       0,
+       "Traditional",
+       "Traditional scroll direction"},
+      {USER_TRACKPAD_SCROLL_DIR_NATURAL, "NATURAL", 0, "Natural", "Natural scroll direction"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+  prop = RNA_def_property(srna, "touchpad_scroll_direction", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "trackpad_scroll_direction");
+  RNA_def_property_enum_items(prop, touchpad_scroll_direction_items);
+  RNA_def_property_ui_text(prop, "Touchpad Scroll Direction", "Scroll direction (Wayland only)");
 }
 
 static void rna_def_userdef_keymap(BlenderRNA *brna)

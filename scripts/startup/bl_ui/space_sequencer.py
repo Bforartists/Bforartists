@@ -383,24 +383,31 @@ class SEQUENCER_MT_range(Menu):
         layout.operator("sequencer.set_range_to_strips", text="Set Frame Range to Strips", icon = "PREVIEW_RANGE")
 
 class SEQUENCER_MT_preview_zoom(Menu):
-    bl_label = "Fractional Zoom"
+    bl_label = "Zoom"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_PREVIEW'
+        from math import isclose
 
+        current_zoom = context.space_data.zoom_percentage
         ratios = ((1, 8), (1, 4), (1, 2), (1, 1), (2, 1), (4, 1), (8, 1))
 
-        for i, (a, b) in enumerate(ratios):
-            if i in {3, 4}:  # Draw separators around Zoom 1:1.
-                layout.separator()
+        for (a, b) in ratios:
+            ratio = a / b
+            percent = ratio * 100.0
 
             layout.operator(
                 "sequencer.view_zoom_ratio",
-                text=iface_("Zoom %d:%d") % (a, b), icon = "ZOOM_SET",
+                text="Zoom {:g}% ({:d}:{:d})".format(percent, a, b), # BFA
                 translate=False,
-            ).ratio = a / b
-        layout.operator_context = 'INVOKE_DEFAULT'
+                icon="ZOOM_SET" # BFA
+            ).ratio = ratio
+
+        layout.separator()
+        layout.operator("view2d.zoom_in")
+        layout.operator("view2d.zoom_out")
+        layout.operator("view2d.zoom_border", text="Zoom Region...")
 
 
 class SEQUENCER_MT_proxy(Menu):
@@ -479,23 +486,24 @@ class SEQUENCER_MT_view(Menu):
 
         if is_sequencer_view:
             layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("view2d.zoom_border", text = "Zoom Border", icon = "ZOOM_BORDER")
+            layout.operator("view2d.zoom_border", text="Zoom Border", icon="ZOOM_BORDER") # BFA
 
             layout.separator()
 
             layout.operator("sequencer.view_all", text="Frame All", icon = "VIEWALL" )
             layout.operator("sequencer.view_frame", icon = "VIEW_FRAME" )
             layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
+            layout.prop(st, "use_clamp_view")
 
         if is_preview:
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
 
             if is_sequencer_view:
-                layout.menu("SEQUENCER_MT_preview_zoom", text="Fractional Preview Zoom")
+                layout.menu("SEQUENCER_MT_preview_zoom", text="Preview Zoom")
             else:
-                layout.operator("view2d.zoom_border", text="Zoom Border", icon = "ZOOM_BORDER")
+                layout.operator("view2d.zoom_border", text="Zoom Border", icon="ZOOM_BORDER") # BFA
                 layout.menu("SEQUENCER_MT_preview_zoom")
-
+            layout.prop(st, "use_zoom_to_fit", text="Auto Zoom")
             layout.separator()
 
             layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon='VIEW_FIT')
@@ -1539,8 +1547,8 @@ class SEQUENCER_PT_color_tag_picker(SequencerColorTagPicker, Panel):
         row = layout.row(align=True)
         row.operator("sequencer.strip_color_tag_set", icon="X").color = 'NONE'
         for i in range(1, 10):
-            icon = 'SEQUENCE_COLOR_%02d' % i
-            row.operator("sequencer.strip_color_tag_set", icon=icon).color = 'COLOR_%02d' % i
+            icon = 'SEQUENCE_COLOR_{:02d}'.format(i)
+            row.operator("sequencer.strip_color_tag_set", icon=icon).color = 'COLOR_{:02d}'.format(i)
 
 
 class SEQUENCER_MT_color_tag_picker(SequencerColorTagPicker, Menu):
@@ -1769,11 +1777,11 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
                     if i == strip.multicam_source:
                         sub = row.row(align=True)
                         sub.enabled = False
-                        sub.operator("sequencer.split_multicam", text="%d" % i).camera = i
+                        sub.operator("sequencer.split_multicam", text="{:d}".format(i)).camera = i
                     else:
                         sub_1 = row.row(align=True)
                         sub_1.enabled = True
-                        sub_1.operator("sequencer.split_multicam", text="%d" % i).camera = i
+                        sub_1.operator("sequencer.split_multicam", text="{:d}".format(i)).camera = i
 
                 if strip.channel > BT_ROW and (strip_channel - 1) % BT_ROW:
                     for i in range(strip.channel, strip_channel + ((BT_ROW + 1 - strip_channel) % BT_ROW)):
@@ -1946,7 +1954,7 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 if sound.samplerate <= 0:
                     split.label(text="Unknown")
                 else:
-                    split.label(text="%d Hz" % sound.samplerate, translate=False)
+                    split.label(text="{:d} Hz".format(sound.samplerate), translate=False)
 
                 split = col.split(factor=0.5, align=False)
                 split.alignment = 'RIGHT'
@@ -2005,7 +2013,7 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
             size = (elem.orig_width, elem.orig_height) if elem else (0, 0)
             if size[0] and size[1]:
                 split.alignment = 'LEFT'
-                split.label(text="%dx%d" % size, translate=False)
+                split.label(text="{:d}x{:d}".format(*size), translate=False)
             else:
                 split.label(text="None")
             # FPS
@@ -2014,7 +2022,7 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 split.alignment = 'RIGHT'
                 split.label(text="FPS")
                 split.alignment = 'LEFT'
-                split.label(text="%.2f" % elem.orig_fps, translate=False)
+                split.label(text="{:.2f}".format(elem.orig_fps), translate=False)
 
 
 class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
@@ -2125,7 +2133,10 @@ class SEQUENCER_PT_mask(SequencerButtonsPanel, Panel):
         if mask:
             sta = mask.frame_start
             end = mask.frame_end
-            layout.label(text=rpt_("Original frame range: %d-%d (%d)") % (sta, end, end - sta + 1), translate=False)
+            layout.label(
+                text=rpt_("Original frame range: {:d}-{:d} ({:d})").format(sta, end, end - sta + 1),
+                translate=False,
+            )
 
 
 class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
@@ -2239,7 +2250,7 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
         split.alignment = 'RIGHT'
         split.label(text="End")
         split = split.split(factor=factor + 0.3 + max_factor, align=True)
-        split.label(text="%14s" % smpte_from_frame(frame_final_end))
+        split.label(text="{:>14s}".format(smpte_from_frame(frame_final_end)))
         split.alignment = 'RIGHT'
         split.label(text=str(frame_final_end) + " ")
 
@@ -2283,7 +2294,7 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
         split.label(text="Current Frame")
         split = split.split(factor=factor + 0.3 + max_factor, align=True)
         frame_display = frame_current - frame_final_start
-        split.label(text="%14s" % smpte_from_frame(frame_display))
+        split.label(text="{:>14s}".format(smpte_from_frame(frame_display)))
         split.alignment = 'RIGHT'
         split.label(text=str(frame_display) + " ")
 
@@ -2297,7 +2308,7 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
                 split.alignment = 'RIGHT'
                 split.label(text="Original Frame Range")
                 split.alignment = 'LEFT'
-                split.label(text="%d-%d (%d)" % (sta, end, end - sta + 1), translate=False)
+                split.label(text="{:d}-{:d} ({:d})".format(sta, end, end - sta + 1), translate=False)
 
 
 class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
@@ -2337,7 +2348,7 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
 
             audio_channels = context.scene.render.ffmpeg.audio_channels
             pan_enabled = sound.use_mono and audio_channels != 'MONO'
-            pan_text = "%.2f°" % (strip.pan * 90)
+            pan_text = "{:.2f}°".format(strip.pan * 90.0)
 
             split = col.split(factor=0.4)
             split.alignment = 'RIGHT'
@@ -2744,8 +2755,11 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
         if st.display_mode == 'IMAGE':
             col.prop(st, "show_overexposed")
 
-        elif st.display_mode == 'WAVEFORM':
-            col.prop(st, "show_separate_color")
+        elif st.display_mode == 'WAVEFORM': # BFA
+            col.prop(st, "show_separate_color") # BFA
+
+        if ed:
+            col.prop(ed, "show_missing_media")
 
 
 class SEQUENCER_PT_view_cursor(SequencerButtonsPanel_Output, Panel):
@@ -2963,10 +2977,10 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
                             col = flow.column()
                             box = col.box()
                             split = box.split(factor=0.4)
-                            split.label(text="%.2f" % sound_eq.curve_mapping.clip_min_x)
+                            split.label(text="{.2f}".format(sound_eq.curve_mapping.clip_min_x))
                             split.label(text="Hz")
                             split.alignment = "RIGHT"
-                            split.label(text="%.2f" % sound_eq.curve_mapping.clip_max_x)
+                            split.label(text="{.2f}".format(sound_eq.curve_mapping.clip_max_x))
                             box.template_curve_mapping(
                                 sound_eq,
                                 "curve_mapping",
@@ -3056,6 +3070,9 @@ class SEQUENCER_PT_snapping(Panel):
         row = col.row()
         row.separator()
         row.prop(sequencer_tool_settings, "snap_to_hold_offset")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "snap_to_markers")
 
         col = layout.column(align = True)
         col.label(text = "Ignore")
