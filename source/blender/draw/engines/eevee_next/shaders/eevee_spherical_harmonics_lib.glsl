@@ -707,3 +707,30 @@ SphericalHarmonicL1 spherical_harmonics_decompress(SphericalHarmonicL1 sh)
 }
 
 /** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Clamping
+ *
+ * Clamp the total power of the SH function.
+ * \{ */
+
+SphericalHarmonicL1 spherical_harmonics_clamp(SphericalHarmonicL1 sh, float clamp_value)
+{
+  /* Convert coefficients to per channel column. */
+  mat4x4 per_channel = transpose(mat4x4(sh.L0.M0, sh.L1.Mn1, sh.L1.M0, sh.L1.Mp1));
+  /* Magnitude per channel. */
+  vec3 mag_L1;
+  mag_L1.r = length(per_channel[0].yzw);
+  mag_L1.g = length(per_channel[1].yzw);
+  mag_L1.b = length(per_channel[2].yzw);
+  /* Find maximum of the sh function over all channels. */
+  vec3 max_sh = abs(sh.L0.M0.rgb) * 0.282094792 + mag_L1 * 0.488602512;
+
+  float fac = clamp_value * safe_rcp(reduce_max(max_sh));
+  if (fac > 1.0) {
+    return sh;
+  }
+  return spherical_harmonics_mul(sh, fac);
+}
+
+/** \} */
