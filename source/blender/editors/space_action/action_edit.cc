@@ -577,6 +577,12 @@ static eKeyPasteError paste_action_keys(bAnimContext *ac,
 
 /* ------------------- */
 
+static blender::ed::greasepencil::KeyframeClipboard &get_grease_pencil_keyframe_clipboard()
+{
+  static blender::ed::greasepencil::KeyframeClipboard clipboard;
+  return clipboard;
+}
+
 static int actkeys_copy_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
@@ -588,7 +594,10 @@ static int actkeys_copy_exec(bContext *C, wmOperator *op)
 
   /* copy keyframes */
   if (ac.datatype == ANIMCONT_GPENCIL) {
-    if (ED_gpencil_anim_copybuf_copy(&ac) == false) {
+    if (ED_gpencil_anim_copybuf_copy(&ac) == false &&
+        blender::ed::greasepencil::grease_pencil_copy_keyframes(
+            &ac, get_grease_pencil_keyframe_clipboard()) == false)
+    {
       /* check if anything ended up in the buffer */
       BKE_report(op->reports, RPT_ERROR, "No keyframes copied to the internal clipboard");
       return OPERATOR_CANCELLED;
@@ -602,7 +611,9 @@ static int actkeys_copy_exec(bContext *C, wmOperator *op)
   else {
     /* Both copy function needs to be evaluated to account for mixed selection */
     const short kf_empty = copy_action_keys(&ac);
-    const bool gpf_ok = ED_gpencil_anim_copybuf_copy(&ac);
+    const bool gpf_ok = ED_gpencil_anim_copybuf_copy(&ac) ||
+                        blender::ed::greasepencil::grease_pencil_copy_keyframes(
+                            &ac, get_grease_pencil_keyframe_clipboard());
 
     if (kf_empty && !gpf_ok) {
       BKE_report(op->reports, RPT_ERROR, "No keyframes copied to the internal clipboard");
@@ -648,7 +659,10 @@ static int actkeys_paste_exec(bContext *C, wmOperator *op)
 
   /* paste keyframes */
   if (ac.datatype == ANIMCONT_GPENCIL) {
-    if (ED_gpencil_anim_copybuf_paste(&ac, offset_mode) == false) {
+    if (ED_gpencil_anim_copybuf_paste(&ac, offset_mode) == false &&
+        blender::ed::greasepencil::grease_pencil_paste_keyframes(
+            &ac, offset_mode, merge_mode, get_grease_pencil_keyframe_clipboard()) == false)
+    {
       BKE_report(op->reports, RPT_ERROR, "No data in the internal clipboard to paste");
       return OPERATOR_CANCELLED;
     }
@@ -664,7 +678,9 @@ static int actkeys_paste_exec(bContext *C, wmOperator *op)
     /* Both paste function needs to be evaluated to account for mixed selection */
     const eKeyPasteError kf_empty = paste_action_keys(&ac, offset_mode, merge_mode, flipped);
     /* non-zero return means an error occurred while trying to paste */
-    gpframes_inbuf = ED_gpencil_anim_copybuf_paste(&ac, offset_mode);
+    gpframes_inbuf = ED_gpencil_anim_copybuf_paste(&ac, offset_mode) ||
+                     blender::ed::greasepencil::grease_pencil_paste_keyframes(
+                         &ac, offset_mode, merge_mode, get_grease_pencil_keyframe_clipboard());
 
     /* Only report an error if nothing was pasted, i.e. when both FCurve and GPencil failed. */
     if (!gpframes_inbuf) {
@@ -838,15 +854,17 @@ static void insert_fcurve_key(bAnimContext *ac,
    *   (TODO: add the full-blown PointerRNA relative parsing case here...)
    */
   if (ale->id && !ale->owner) {
-    insert_keyframe(ac->bmain,
-                    reports,
-                    ale->id,
-                    ((fcu->grp) ? (fcu->grp->name) : (nullptr)),
-                    fcu->rna_path,
-                    fcu->array_index,
-                    &anim_eval_context,
-                    eBezTriple_KeyframeType(ts->keyframe_type),
-                    flag);
+    CombinedKeyingResult result = insert_keyframe(ac->bmain,
+                                                  *ale->id,
+                                                  ((fcu->grp) ? (fcu->grp->name) : (nullptr)),
+                                                  fcu->rna_path,
+                                                  fcu->array_index,
+                                                  &anim_eval_context,
+                                                  eBezTriple_KeyframeType(ts->keyframe_type),
+                                                  flag);
+    if (result.get_count(SingleKeyingResult::SUCCESS) == 0) {
+      result.generate_reports(reports);
+    }
   }
   else {
     AnimData *adt = ANIM_nla_mapping_get(ac, ale);
@@ -892,7 +910,7 @@ static void insert_action_keys(bAnimContext *ac, short mode)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, eAnimCont_Types(ac->datatype));
 
   /* Init keyframing flag. */
-  flag = ANIM_get_keyframing_flags(scene);
+  flag = blender::animrig::get_keyframing_flags(scene);
 
   /* GPLayers specific flags */
   if (ts->gpencil_flags & GP_TOOL_FLAG_RETAIN_LAST) {

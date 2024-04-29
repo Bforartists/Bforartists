@@ -54,25 +54,13 @@ def draw_node_group_add_menu(context, layout):
         ]
         if groups:
             layout.separator()
-            # BFA - used an alternate way to draw group list to have an icon, borrowed from the "space_node_toolshelf.py".
-            '''
             for group in groups:
-                props = add_node_type(layout, node_tree_group_type[group.bl_idname], label=group.name)
-                ops = props.settings.add()
-                ops.name = "node_tree"
-                ops.value = "bpy.data.node_groups[%r]" % group.name
-            '''
-
-            for group in groups:
-                #props = add_node_type(layout, node_tree_group_type[group.bl_idname], label=group.name)
-
-                props = layout.operator("node.add_node", text=group.name, icon="NODETREE")
-                props.use_transform = True
-                props.type = node_tree_group_type[group.bl_idname]
-
-                ops = props.settings.add()
-                ops.name = "node_tree"
-                ops.value = "bpy.data.node_groups[%r]" % group.name
+                props = layout.operator("node.add_node", text=group.name, icon="NODETREE") # BFA
+                props.use_transform = True # BFA
+                props.type = node_tree_group_type[group.bl_idname] # BFA
+                ops = props.settings.add() # BFA
+                ops.name = "node_tree" # BFA
+                ops.value = "bpy.data.node_groups[{!r}]".format(group.name)
 
 
 def draw_assets_for_catalog(layout, catalog_path):

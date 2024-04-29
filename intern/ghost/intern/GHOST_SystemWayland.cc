@@ -108,6 +108,8 @@ static bool has_libdecor = true;
 #  endif
 #endif
 
+static signed char has_wl_trackpad_physical_direction = -1;
+
 #include "IMB_imbuf.hh"
 #include "IMB_imbuf_types.hh"
 
@@ -723,6 +725,8 @@ struct GWL_SeatStatePointerScroll {
   int32_t discrete_xy[2] = {0, 0};
   /** Discrete scrolling, v8 of the seat API (handled & reset with pointer "frame" callback). */
   int32_t discrete120_xy[2] = {0, 0};
+  /** Accumulated value from `discrete120_xy`, not reset between "frame" callbacks. */
+  int32_t discrete120_xy_accum[2] = {0, 0};
   /** True when the axis is inverted (also known is "natural" scrolling). */
   bool inverted_xy[2] = {false, false};
   /** The source of scroll event. */
@@ -3813,12 +3817,13 @@ static void pointer_handle_frame(void *data, wl_pointer * /*wl_pointer*/)
 
   /* Handle value120 to discrete steps first. */
   if (seat->pointer_scroll.discrete120_xy[0] || seat->pointer_scroll.discrete120_xy[1]) {
-    /* The values will have been normalized so 120 represents a single click-step. */
-    seat->pointer_scroll.discrete_xy[0] = seat->pointer_scroll.discrete120_xy[0] / 120;
-    seat->pointer_scroll.discrete_xy[1] = seat->pointer_scroll.discrete120_xy[1] / 120;
-
-    seat->pointer_scroll.discrete120_xy[0] = 0;
-    seat->pointer_scroll.discrete120_xy[1] = 0;
+    for (int i = 0; i < 2; i++) {
+      seat->pointer_scroll.discrete120_xy_accum[i] += seat->pointer_scroll.discrete120_xy[i];
+      seat->pointer_scroll.discrete120_xy[i] = 0;
+      /* The values will have been normalized so 120 represents a single click-step. */
+      seat->pointer_scroll.discrete_xy[i] = seat->pointer_scroll.discrete120_xy_accum[i] / 120;
+      seat->pointer_scroll.discrete120_xy_accum[i] -= seat->pointer_scroll.discrete_xy[i] * 120;
+    }
   }
 
   /* Multiple wheel events may have been generated and it's not known which.
@@ -6407,6 +6412,8 @@ static void gwl_registry_wl_seat_add(GWL_Display *display, const GWL_RegisteryAd
   display->seats.push_back(seat);
   wl_seat_add_listener(seat->wl.seat, &seat_listener, seat);
   gwl_registry_entry_add(display, params, static_cast<void *>(seat));
+
+  has_wl_trackpad_physical_direction = version >= 9;
 }
 static void gwl_registry_wl_seat_update(GWL_Display *display,
                                         const GWL_RegisteryUpdate_Params &params)
@@ -8364,6 +8371,9 @@ GHOST_TSuccess GHOST_SystemWayland::cursor_visibility_set(const bool visible)
 
 GHOST_TCapabilityFlag GHOST_SystemWayland::getCapabilities() const
 {
+  GHOST_ASSERT(has_wl_trackpad_physical_direction != -1,
+               "The trackpad direction was expected to be initialized");
+
   return GHOST_TCapabilityFlag(
       GHOST_CAPABILITY_FLAG_ALL &
       ~(
@@ -8385,7 +8395,9 @@ GHOST_TCapabilityFlag GHOST_SystemWayland::getCapabilities() const
            * is negligible. */
           GHOST_kCapabilityGPUReadFrontBuffer |
           /* This WAYLAND back-end has not yet implemented desktop color sample. */
-          GHOST_kCapabilityDesktopSample));
+          GHOST_kCapabilityDesktopSample |
+          /* This flag will eventually be removed. */
+          (has_wl_trackpad_physical_direction ? 0 : GHOST_kCapabilityTrackpadPhysicalDirection)));
 }
 
 bool GHOST_SystemWayland::cursor_grab_use_software_display_get(const GHOST_TGrabCursorMode mode)
