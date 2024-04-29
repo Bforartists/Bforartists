@@ -199,7 +199,7 @@ static int sculpt_symmetrize_exec(bContext *C, wmOperator *op)
        * are logged as added (as opposed to attempting to store just the
        * parts that symmetrize modifies). */
       undo::push_begin(ob, op);
-      undo::push_node(ob, nullptr, undo::Type::DyntopoSymmetrize);
+      undo::push_node(*ob, nullptr, undo::Type::DyntopoSymmetrize);
       BM_log_before_all_removed(ss->bm, ss->bm_log);
 
       BM_mesh_toolflags_set(ss->bm, true);
@@ -329,7 +329,7 @@ void ensure_valid_pivot(const Object *ob, Scene *scene)
 
   /* No valid pivot? Use bounding box center. */
   if (ups->average_stroke_counter == 0 || !ups->last_stroke_valid) {
-    const Bounds<float3> bounds = BKE_pbvh_bounding_box(ob->sculpt->pbvh);
+    const Bounds<float3> bounds = bke::pbvh::bounds_get(*ob->sculpt->pbvh);
     const float3 center = math::midpoint(bounds.min, bounds.max);
     const float3 location = math::transform_point(ob->object_to_world(), center);
 
@@ -417,7 +417,7 @@ void ED_object_sculptmode_enter_ex(Main *bmain,
       }
       dyntopo::enable_ex(bmain, depsgraph, ob);
       if (has_undo) {
-        undo::push_node(ob, nullptr, undo::Type::DyntopoBegin);
+        undo::push_node(*ob, nullptr, undo::Type::DyntopoBegin);
         undo::push_end(ob);
       }
     }
@@ -758,7 +758,7 @@ static void do_mask_by_color_contiguous_update_node(Object *ob,
   using namespace blender::ed::sculpt_paint;
   SculptSession *ss = ob->sculpt;
 
-  undo::push_node(ob, node, undo::Type::Mask);
+  undo::push_node(*ob, node, undo::Type::Mask);
   bool update_node = false;
 
   PBVHVertexIter vd;
@@ -826,8 +826,7 @@ static void sculpt_mask_by_color_contiguous(Object *object,
     }
   }
 
-  flood_fill::FillData flood;
-  flood_fill::init_fill(ss, &flood);
+  flood_fill::FillData flood = flood_fill::init_fill(ss);
   flood_fill::add_initial(&flood, vertex);
 
   MaskByColorContiguousFloodFillData ffd;
@@ -840,10 +839,9 @@ static void sculpt_mask_by_color_contiguous(Object *object,
 
   copy_v3_v3(ffd.initial_color, color);
 
-  flood_fill::execute(
-      ss, &flood, [&](SculptSession *ss, PBVHVertRef from_v, PBVHVertRef to_v, bool is_duplicate) {
-        return sculpt_mask_by_color_contiguous_floodfill(ss, from_v, to_v, is_duplicate, &ffd);
-      });
+  flood_fill::execute(ss, &flood, [&](PBVHVertRef from_v, PBVHVertRef to_v, bool is_duplicate) {
+    return sculpt_mask_by_color_contiguous_floodfill(ss, from_v, to_v, is_duplicate, &ffd);
+  });
 
   Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(ss->pbvh, {});
   const SculptMaskWriteInfo mask_write = SCULPT_mask_get_for_write(ss);
@@ -869,7 +867,7 @@ static void do_mask_by_color_task(Object *ob,
   using namespace blender::ed::sculpt_paint;
   SculptSession *ss = ob->sculpt;
 
-  undo::push_node(ob, node, undo::Type::Mask);
+  undo::push_node(*ob, node, undo::Type::Mask);
   bool update_node = false;
 
   float active_color[4];
@@ -1044,7 +1042,7 @@ static void sculpt_bake_cavity_exec_task(Object *ob,
   SculptSession *ss = ob->sculpt;
   PBVHVertexIter vd;
 
-  undo::push_node(ob, node, undo::Type::Mask);
+  undo::push_node(*ob, node, undo::Type::Mask);
 
   auto_mask::NodeData automask_data = auto_mask::node_begin(*ob, &automasking, *node);
 

@@ -30,13 +30,19 @@ void ShadowTileMap::sync_orthographic(const float4x4 &object_mat_,
                                       int2 origin_offset,
                                       int clipmap_level,
                                       float lod_bias_,
+                                      float filter_radius_,
                                       eShadowProjectionType projection_type_)
 {
-  if (projection_type != projection_type_ || (level != clipmap_level)) {
+  if ((projection_type != projection_type_) || (level != clipmap_level) ||
+      (filter_radius != filter_radius_))
+  {
     set_dirty();
   }
   projection_type = projection_type_;
   level = clipmap_level;
+  light_type = eLightType::LIGHT_SUN;
+  is_area_side = false;
+  filter_radius = filter_radius_;
 
   if (grid_shift == int2(0)) {
     /* Only replace shift if it is not already dirty. */
@@ -69,12 +75,14 @@ void ShadowTileMap::sync_orthographic(const float4x4 &object_mat_,
                   1.0);
 }
 
-void ShadowTileMap::sync_cubeface(const float4x4 &object_mat_,
+void ShadowTileMap::sync_cubeface(eLightType light_type_,
+                                  const float4x4 &object_mat_,
                                   float near_,
                                   float far_,
                                   float side_,
                                   float shift,
                                   eCubeFace face,
+                                  float filter_radius_,
                                   float lod_bias_)
 {
   if (projection_type != SHADOW_PROJECTION_CUBEFACE || (cubeface != face)) {
@@ -84,13 +92,19 @@ void ShadowTileMap::sync_cubeface(const float4x4 &object_mat_,
   cubeface = face;
   grid_offset = int2(0);
   lod_bias = lod_bias_;
+  light_type = light_type_;
+  is_area_side = is_area_light(light_type) && (face != eCubeFace::Z_NEG);
 
-  if ((clip_near != near_) || (clip_far != far_) || (half_size != side_)) {
+  if ((clip_near != near_) || (filter_radius != filter_radius_) || (clip_far != far_) ||
+      (half_size != side_))
+  {
     set_dirty();
   }
 
+  filter_radius = filter_radius_;
   clip_near = near_;
   clip_far = far_;
+  area_shift = shift;
   half_size = side_;
   center_offset = float2(0.0f);
 
@@ -259,25 +273,27 @@ void ShadowPunctual::release_excess_tilemaps()
   tilemaps_ = span.take_front(tilemaps_needed_);
 }
 
-void ShadowPunctual::compute_projection_boundaries(float light_radius,
+void ShadowPunctual::compute_projection_boundaries(eLightType light_type,
+                                                   float light_radius,
                                                    float shadow_radius,
                                                    float max_lit_distance,
                                                    float &near,
                                                    float &far,
-                                                   float &side)
+                                                   float &side,
+                                                   float &back_shift)
 {
-  /**
+  /*
    * In order to make sure we can trace any ray in its entirety using a single tile-map, we have
    * to make sure that the tile-map cover all potential occluder that can intersect any ray shot
    * in this particular shadow quadrant.
    *
-   * To this end, we shift the tile-map perspective origin behind the light shape and make sure the
+   * To this end, we inflate the tile-map perspective sides to make sure the
    * tile-map frustum starts where the rays cannot go.
    *
    * We are interesting in finding `I` the new origin and `n` the new near plane distances.
    *
-   *                                              I .... Shifted light center
-   *                                             /|
+   *                                              I .... Intersection between tangent and
+   *                                             /|      projection center axis
    *                                            / |
    *                                           /  |
    *                                          /   |
@@ -292,22 +308,22 @@ void ShadowPunctual::compute_projection_boundaries(float light_radius,
    *                                 / ...        |
    *                                /.            |
    *                               /              |
-   *  Tangent to light shape .... T\--------------N .... Shifted near plane
+   *  Tangent to light shape .... T\--------------N
    *                             /  --\ Beta      |
    *                            /      -\         |
    *                           /         --\      |
    *                          /.            --\   |
    *                         / .               -\ |
    *                        /  .           Alpha -O .... Light center
-   *                       /   .              --/ |
-   *                      /    .           --/    |
-   *                     /      .        -/       |
-   *                    /        .    --/         |
-   *                   /-------------/------------x .... Desired near plane (inscribed cube)
-   *                  /         --/ ..            |
-   *                 /       --/      ...         |
-   *                /     --/            ....     |
-   *               /    -/                    ....|
+   *                       /   .              /-/ |
+   *  Inflated side       /    .        /--- -/   |
+   *                 .   /      . /----  --/      |
+   *                  . /   /---- .   --/         |
+   *                   /-------------/------------X .... Desired near plane (inscribed cube)
+   *              /----         --/ ..            |
+   *         /----   /       --/      ...         |
+   *    /----       /     --/            ....     |
+   *               /    -/                    ....| .... Shadow radius
    *              /  --/                          |
    *             /--/                             |
    *            F .... Most distant shadow receiver possible.
@@ -315,18 +331,36 @@ void ShadowPunctual::compute_projection_boundaries(float light_radius,
    * F: The most distant shadowed point at the edge of the 45° cube-face pyramid.
    * O: The light origin.
    * T: The tangent to the circle of radius `radius` centered at the origin and passing through F.
-   * I: The shifted light origin.
+   * I: Intersection between tangent and the projection center axis.
    * N: The shifted near plane center.
+   * X: Intersection between the near plane and the projection center axis.
+   * Alpha: FOT angle.
+   * Beta: OTN angle.
    *
-   * TODO(fclem): Explain derivation.
+   * Note: FTO, ONT and TNI are right angles.
    */
   float cos_alpha = shadow_radius / max_lit_distance;
   float sin_alpha = sqrt(1.0f - math::square(cos_alpha));
   float near_shift = M_SQRT2 * shadow_radius * 0.5f * (sin_alpha - cos_alpha);
   float side_shift = M_SQRT2 * shadow_radius * 0.5f * (sin_alpha + cos_alpha);
   float origin_shift = M_SQRT2 * shadow_radius / (sin_alpha - cos_alpha);
-  /* Make near plane to be inside the inscribed cube of the sphere. */
-  near = max_ff(light_radius, max_lit_distance / 4000.0f) / M_SQRT3;
+
+  float min_near = (max_lit_distance / 4000.0f) / M_SQRT3;
+
+  if (is_area_light(light_type)) {
+    /* Make near plane be inside the inscribed cube of the shadow sphere. */
+    near = max_ff(shadow_radius / M_SQRT3, min_near);
+    /* Subtract min_near to make the shadow center match the light center if there is no shadow
+     * tracing required. This avoid light leaking issues near the light plane caused by the
+     * shadow discard clipping. */
+    back_shift = (near - min_near);
+  }
+  else {
+    /* Make near plane be inside the inscribed cube of the light sphere. */
+    near = max_ff(light_radius / M_SQRT3, min_near);
+    back_shift = 0.0f;
+  }
+
   far = max_lit_distance;
   if (shadow_radius > 1e-5f) {
     side = ((side_shift / (origin_shift - near_shift)) * (origin_shift + near));
@@ -340,32 +374,32 @@ void ShadowPunctual::end_sync(Light &light, float lod_bias)
 {
   ShadowTileMapPool &tilemap_pool = shadows_.tilemap_pool;
 
-  float side, near, far;
-  compute_projection_boundaries(light_radius_, shadow_radius_, max_distance_, near, far, side);
+  float side, near, far, shift;
+  compute_projection_boundaries(
+      light.type, light_radius_, shadow_radius_, max_distance_, near, far, side, shift);
 
-  /* Shift shadow map origin for area light to avoid clipping nearby geometry. */
-  float shift = is_area_light(light.type) ? near : 0.0f;
-
-  float4x4 obmat_tmp = light.object_mat;
-
-  /* Clear embedded custom data. */
-  obmat_tmp[0][3] = obmat_tmp[1][3] = obmat_tmp[2][3] = 0.0f;
-  obmat_tmp[3][3] = 1.0f;
+  float4x4 obmat_tmp = light.object_to_world;
 
   /* Acquire missing tile-maps. */
   while (tilemaps_.size() < tilemaps_needed_) {
     tilemaps_.append(tilemap_pool.acquire());
   }
 
-  tilemaps_[Z_NEG]->sync_cubeface(obmat_tmp, near, far, side, shift, Z_NEG, lod_bias);
+  tilemaps_[Z_NEG]->sync_cubeface(
+      light.type, obmat_tmp, near, far, side, shift, Z_NEG, light.pcf_radius, lod_bias);
   if (tilemaps_needed_ >= 5) {
-    tilemaps_[X_POS]->sync_cubeface(obmat_tmp, near, far, side, shift, X_POS, lod_bias);
-    tilemaps_[X_NEG]->sync_cubeface(obmat_tmp, near, far, side, shift, X_NEG, lod_bias);
-    tilemaps_[Y_POS]->sync_cubeface(obmat_tmp, near, far, side, shift, Y_POS, lod_bias);
-    tilemaps_[Y_NEG]->sync_cubeface(obmat_tmp, near, far, side, shift, Y_NEG, lod_bias);
+    tilemaps_[X_POS]->sync_cubeface(
+        light.type, obmat_tmp, near, far, side, shift, X_POS, light.pcf_radius, lod_bias);
+    tilemaps_[X_NEG]->sync_cubeface(
+        light.type, obmat_tmp, near, far, side, shift, X_NEG, light.pcf_radius, lod_bias);
+    tilemaps_[Y_POS]->sync_cubeface(
+        light.type, obmat_tmp, near, far, side, shift, Y_POS, light.pcf_radius, lod_bias);
+    tilemaps_[Y_NEG]->sync_cubeface(
+        light.type, obmat_tmp, near, far, side, shift, Y_NEG, light.pcf_radius, lod_bias);
   }
   if (tilemaps_needed_ == 6) {
-    tilemaps_[Z_POS]->sync_cubeface(obmat_tmp, near, far, side, shift, Z_POS, lod_bias);
+    tilemaps_[Z_POS]->sync_cubeface(
+        light.type, obmat_tmp, near, far, side, shift, Z_POS, light.pcf_radius, lod_bias);
   }
 
   light.tilemap_index = tilemap_pool.tilemaps_data.size();
@@ -490,7 +524,9 @@ void ShadowDirectional::cascade_tilemaps_distribution(Light &light, const Camera
   float2 farthest_tilemap_center = local_view_direction * half_size * (levels_range.size() - 1);
 
   /* Offset for smooth level transitions. */
-  light.object_mat.location() = near_point;
+  light.object_to_world.x.w = near_point.x;
+  light.object_to_world.y.w = near_point.y;
+  light.object_to_world.z.w = near_point.z;
 
   /* Offset in tiles from the scene origin to the center of the first tile-maps. */
   int2 origin_offset = int2(round(float2(near_point) / tile_size));
@@ -500,7 +536,7 @@ void ShadowDirectional::cascade_tilemaps_distribution(Light &light, const Camera
   light.sun.clipmap_base_offset_pos = (offset_vector * (1 << 16)) /
                                       max_ii(levels_range.size() - 1, 1);
 
-  /* \note: cascade_level_range starts the range at the unique LOD to apply to all tile-maps. */
+  /* \note cascade_level_range starts the range at the unique LOD to apply to all tile-maps. */
   int level = levels_range.first();
   for (int i : IndexRange(levels_range.size())) {
     ShadowTileMap *tilemap = tilemaps_[i];
@@ -508,7 +544,8 @@ void ShadowDirectional::cascade_tilemaps_distribution(Light &light, const Camera
     /* Equal spacing between cascades layers since we want uniform shadow density. */
     int2 level_offset = origin_offset +
                         shadow_cascade_grid_offset(light.sun.clipmap_base_offset_pos, i);
-    tilemap->sync_orthographic(object_mat_, level_offset, level, 0.0f, SHADOW_PROJECTION_CASCADE);
+    tilemap->sync_orthographic(
+        object_mat_, level_offset, level, 0.0f, light.pcf_radius, SHADOW_PROJECTION_CASCADE);
 
     /* Add shadow tile-maps grouped by lights to the GPU buffer. */
     shadows_.tilemap_pool.tilemaps_data.append(*tilemap);
@@ -575,7 +612,7 @@ void ShadowDirectional::clipmap_tilemaps_distribution(Light &light,
     int2 level_offset = int2(math::round(light_space_camera_position / tile_size));
 
     tilemap->sync_orthographic(
-        object_mat_, level_offset, level, lod_bias, SHADOW_PROJECTION_CLIPMAP);
+        object_mat_, level_offset, level, lod_bias, light.pcf_radius, SHADOW_PROJECTION_CLIPMAP);
 
     /* Add shadow tile-maps grouped by lights to the GPU buffer. */
     shadows_.tilemap_pool.tilemaps_data.append(*tilemap);
@@ -608,7 +645,10 @@ void ShadowDirectional::clipmap_tilemaps_distribution(Light &light,
   light.type = LIGHT_SUN;
 
   /* Used for selecting the clipmap level. */
-  light.object_mat.location() = camera.position() * float3x3(object_mat_.view<3, 3>());
+  float3 location = camera.position() * float3x3(object_mat_.view<3, 3>());
+  light.object_to_world.x.w = location.x;
+  light.object_to_world.y.w = location.y;
+  light.object_to_world.z.w = location.z;
   /* Used as origin for the clipmap_base_offset trick. */
   light.sun.clipmap_origin = float2(level_offset_max * tile_size_max);
 
@@ -740,7 +780,6 @@ void ShadowModule::init()
 
   data_.ray_count = clamp_i(inst_.scene->eevee.shadow_ray_count, 1, SHADOW_MAX_RAY);
   data_.step_count = clamp_i(inst_.scene->eevee.shadow_step_count, 1, SHADOW_MAX_STEP);
-  data_.normal_bias = max_ff(inst_.scene->eevee.shadow_normal_bias, 0.0f);
 
   /* Pool size is in MBytes. */
   const size_t pool_byte_size = enabled_ ? scene.eevee.shadow_pool_size * square_i(1024) : 1;
@@ -863,7 +902,10 @@ void ShadowModule::begin_sync()
       sub.bind_ssbo("tiles_buf", &tilemap_pool.tiles_data);
       sub.bind_texture("depth_tx", &src_depth_tx_);
       sub.push_constant("tilemap_proj_ratio", &data_.tilemap_projection_ratio);
+      sub.push_constant("input_depth_extent", &input_depth_extent_);
       sub.bind_resources(inst_.lights);
+      sub.bind_resources(inst_.uniform_data);
+      sub.bind_resources(inst_.hiz_buffer.front);
       sub.dispatch(&dispatch_depth_scan_size_);
     }
     {
@@ -1192,7 +1234,7 @@ void ShadowModule::end_sync()
         sub.bind_ssbo("dst_coord_buf", dst_coord_buf_);
         sub.bind_ssbo("src_coord_buf", src_coord_buf_);
         sub.bind_ssbo("render_map_buf", render_map_buf_);
-        sub.bind_ssbo("viewport_index_buf", viewport_index_buf_);
+        sub.bind_ssbo("render_view_buf", render_view_buf_);
         sub.bind_ssbo("pages_infos_buf", pages_infos_data_);
         sub.bind_image("tilemaps_img", tilemap_pool.tilemap_tx);
         sub.dispatch(int3(1, 1, tilemap_pool.tilemaps_data.size()));
@@ -1357,29 +1399,26 @@ int ShadowModule::max_view_per_tilemap()
   return max_view_count;
 }
 
-void ShadowModule::set_view(View &view, GPUTexture *depth_tx)
+void ShadowModule::set_view(View &view, int2 extent)
 {
   if (enabled_ == false) {
     /* All lights have been tagged to have no shadow. */
     return;
   }
 
+  input_depth_extent_ = extent;
+
   GPUFrameBuffer *prev_fb = GPU_framebuffer_active_get();
 
-  src_depth_tx_ = depth_tx;
-
-  int3 target_size(1);
-  GPU_texture_get_mipmap_size(depth_tx, 0, target_size);
-
-  dispatch_depth_scan_size_ = math::divide_ceil(target_size, int3(SHADOW_DEPTH_SCAN_GROUP_SIZE));
+  dispatch_depth_scan_size_ = int3(math::divide_ceil(extent, int2(SHADOW_DEPTH_SCAN_GROUP_SIZE)),
+                                   1);
   max_view_per_tilemap_ = max_view_per_tilemap();
 
-  pixel_world_radius_ = screen_pixel_radius(view, int2(target_size));
+  pixel_world_radius_ = screen_pixel_radius(view, extent);
   data_.tilemap_projection_ratio = tilemap_pixel_radius() / pixel_world_radius_;
   inst_.uniform_data.push_update();
 
-  usage_tag_fb_resolution_ = math::divide_ceil(int2(target_size),
-                                               int2(std::exp2(usage_tag_fb_lod_)));
+  usage_tag_fb_resolution_ = math::divide_ceil(extent, int2(std::exp2(usage_tag_fb_lod_)));
   usage_tag_fb.ensure(usage_tag_fb_resolution_);
 
   eGPUTextureUsage usage = GPU_TEXTURE_USAGE_ATTACHMENT | GPU_TEXTURE_USAGE_MEMORYLESS;
