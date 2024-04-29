@@ -621,17 +621,18 @@ static int sequencer_slip_exec(bContext *C, wmOperator *op)
 
 static void sequencer_slip_update_header(Scene *scene, ScrArea *area, SlipData *data, int offset)
 {
-  char msg[UI_MAX_DRAW_STR];
+  if (area == nullptr) {
+    return;
+  }
 
-  if (area) {
-    if (hasNumInput(&data->num_input)) {
-      char num_str[NUM_STR_REP_LEN];
-      outputNumInput(&data->num_input, num_str, &scene->unit);
-      SNPRINTF(msg, IFACE_("Slip offset: %s"), num_str);
-    }
-    else {
-      SNPRINTF(msg, IFACE_("Slip offset: %d"), offset);
-    }
+  char msg[UI_MAX_DRAW_STR];
+  if (hasNumInput(&data->num_input)) {
+    char num_str[NUM_STR_REP_LEN];
+    outputNumInput(&data->num_input, num_str, &scene->unit);
+    SNPRINTF(msg, IFACE_("Slip offset: %s"), num_str);
+  }
+  else {
+    SNPRINTF(msg, IFACE_("Slip offset: %d"), offset);
   }
 
   ED_area_status_text(area, msg);
@@ -1056,6 +1057,7 @@ static int sequencer_refresh_all_exec(bContext *C, wmOperator * /*op*/)
   Editing *ed = SEQ_editing_get(scene);
 
   SEQ_relations_free_imbuf(scene, &ed->seqbase, false);
+  blender::seq::media_presence_free(scene);
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 

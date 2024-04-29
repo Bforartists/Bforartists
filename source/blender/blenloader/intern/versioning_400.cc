@@ -63,6 +63,7 @@
 #include "BKE_tracking.h"
 
 #include "SEQ_iterator.hh"
+#include "SEQ_sequencer.hh"
 
 #include "ANIM_armature_iter.hh"
 #include "ANIM_bone_collections.hh"
@@ -1962,13 +1963,6 @@ static void versioning_nodes_dynamic_sockets_2(bNodeTree &ntree)
 static void versioning_grease_pencil_stroke_radii_scaling(GreasePencil *grease_pencil)
 {
   using namespace blender;
-  /* Previously, Grease Pencil used a radius convention where 1 `px` = 0.001 units. This `px` was
-   * the brush size which would be stored in the stroke thickness and then scaled by the point
-   * pressure factor. Finally, the render engine would divide this thickness value by 2000 (we're
-   * going from a thickness to a radius, hence the factor of two) to convert back into blender
-   * units.
-   * Store the radius now directly in blender units. This makes it consistent with how hair curves
-   * handle the radius. */
   for (GreasePencilDrawingBase *base : grease_pencil->drawings()) {
     if (base->type != GP_DRAWING) {
       continue;
@@ -1977,7 +1971,7 @@ static void versioning_grease_pencil_stroke_radii_scaling(GreasePencil *grease_p
     MutableSpan<float> radii = drawing.radii_for_write();
     threading::parallel_for(radii.index_range(), 8192, [&](const IndexRange range) {
       for (const int i : range) {
-        radii[i] /= 2000.0f;
+        radii[i] *= bke::greasepencil::LEGACY_RADIUS_CONVERSION_FACTOR;
       }
     });
   }
@@ -2055,6 +2049,34 @@ static void versioning_node_hue_correct_set_wrappng(bNodeTree *ntree)
       if (node->type == CMP_NODE_HUECORRECT) {
         CurveMapping *cumap = (CurveMapping *)node->storage;
         cumap->flag |= CUMA_USE_WRAPPING;
+      }
+    }
+  }
+}
+
+static void add_image_editor_asset_shelf(Main &bmain)
+{
+  LISTBASE_FOREACH (bScreen *, screen, &bmain.screens) {
+    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+      LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+        if (sl->spacetype != SPACE_IMAGE) {
+          continue;
+        }
+
+        ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase : &sl->regionbase;
+
+        if (ARegion *new_shelf_region = do_versions_add_region_if_not_found(
+                regionbase, RGN_TYPE_ASSET_SHELF, __func__, RGN_TYPE_TOOL_HEADER))
+        {
+          new_shelf_region->regiondata = MEM_cnew<RegionAssetShelf>(__func__);
+          new_shelf_region->alignment = RGN_ALIGN_BOTTOM;
+          new_shelf_region->flag |= RGN_FLAG_HIDDEN;
+        }
+        if (ARegion *new_shelf_header = do_versions_add_region_if_not_found(
+                regionbase, RGN_TYPE_ASSET_SHELF_HEADER, __func__, RGN_TYPE_ASSET_SHELF))
+        {
+          new_shelf_header->alignment = RGN_ALIGN_BOTTOM | RGN_ALIGN_HIDE_WITH_PREV;
+        }
       }
     }
   }
@@ -2519,12 +2541,11 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       }
     }
 
-    if (!DNA_struct_member_exists(fd->filesdna, "SceneEEVEE", "float", "shadow_normal_bias")) {
+    if (!DNA_struct_member_exists(fd->filesdna, "SceneEEVEE", "int", "shadow_step_count")) {
       SceneEEVEE default_scene_eevee = *DNA_struct_default_get(SceneEEVEE);
       LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
         scene->eevee.shadow_ray_count = default_scene_eevee.shadow_ray_count;
         scene->eevee.shadow_step_count = default_scene_eevee.shadow_step_count;
-        scene->eevee.shadow_normal_bias = default_scene_eevee.shadow_normal_bias;
       }
     }
 
@@ -2829,7 +2850,6 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
         scene->eevee.ray_tracing_options.screen_trace_quality = 0.25f;
         scene->eevee.ray_tracing_options.screen_trace_thickness = 0.2f;
         scene->eevee.ray_tracing_options.trace_max_roughness = 0.5f;
-        scene->eevee.ray_tracing_options.sample_clamp = 10.0f;
         scene->eevee.ray_tracing_options.resolution_scale = 2;
       }
     }
@@ -2924,9 +2944,6 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
                                    1;
       input_sample_values[2] = ts->curves_sculpt != nullptr ?
                                    ts->curves_sculpt->paint.num_input_samples_deprecated :
-                                   1;
-      input_sample_values[3] = ts->uvsculpt != nullptr ?
-                                   ts->uvsculpt->paint.num_input_samples_deprecated :
                                    1;
 
       input_sample_values[4] = ts->gp_paint != nullptr ?
@@ -3101,7 +3118,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 8)) {
     LISTBASE_FOREACH (Light *, light, &bmain->lights) {
-      light->shadow_filter_radius = 3.0f;
+      light->shadow_filter_radius = 1.0f;
     }
   }
 
@@ -3179,6 +3196,42 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       /* Keep legacy EEVEE old behavior. */
       scene->eevee.flag |= SCE_EEVEE_VOLUME_CUSTOM_RANGE;
+    }
+
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      scene->eevee.clamp_surface_indirect = 10.0f;
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 20)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      SequencerToolSettings *sequencer_tool_settings = SEQ_tool_settings_ensure(scene);
+      sequencer_tool_settings->snap_mode |= SEQ_SNAP_TO_MARKERS;
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 21)) {
+    add_image_editor_asset_shelf(*bmain);
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 22)) {
+    /* Display missing media in sequencer by default. */
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      if (scene->ed != nullptr) {
+        scene->ed->show_missing_media_flag |= SEQ_EDIT_SHOW_MISSING_MEDIA;
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 23)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      ToolSettings *ts = scene->toolsettings;
+      if (!ts->uvsculpt.strength_curve) {
+        ts->uvsculpt.size = 50;
+        ts->uvsculpt.strength = 1.0f;
+        ts->uvsculpt.curve_preset = BRUSH_CURVE_SMOOTH;
+        ts->uvsculpt.strength_curve = BKE_curvemapping_add(1, 0.0f, 0.0f, 1.0f, 1.0f);
+      }
     }
   }
 
