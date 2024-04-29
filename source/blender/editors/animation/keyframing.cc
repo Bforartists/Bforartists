@@ -70,31 +70,6 @@ static KeyingSet *keyingset_get_from_op_with_error(wmOperator *op,
 
 static int delete_key_using_keying_set(bContext *C, wmOperator *op, KeyingSet *ks);
 
-/* ************************************************** */
-/* Keyframing Setting Wrangling */
-
-eInsertKeyFlags ANIM_get_keyframing_flags(Scene *scene)
-{
-  using namespace blender::animrig;
-  eInsertKeyFlags flag = INSERTKEY_NOFLAGS;
-
-  /* Visual keying. */
-  if (is_keying_flag(scene, KEYING_FLAG_VISUALKEY)) {
-    flag |= INSERTKEY_MATRIX;
-  }
-
-  /* Cycle-aware keyframe insertion - preserve cycle period and flow. */
-  if (is_keying_flag(scene, KEYING_FLAG_CYCLEAWARE)) {
-    flag |= INSERTKEY_CYCLE_AWARE;
-  }
-
-  if (is_keying_flag(scene, MANUALKEY_FLAG_INSERTNEEDED)) {
-    flag |= INSERTKEY_NEEDED;
-  }
-
-  return flag;
-}
-
 /* ******************************************* */
 /* Animation Data Validation */
 
@@ -389,7 +364,7 @@ static int insert_key(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   const float scene_frame = BKE_scene_frame_get(scene);
 
-  const eInsertKeyFlags insert_key_flags = ANIM_get_keyframing_flags(scene);
+  const eInsertKeyFlags insert_key_flags = animrig::get_keyframing_flags(scene);
   const eBezTriple_KeyframeType key_type = eBezTriple_KeyframeType(
       scene->toolsettings->keyframe_type);
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
@@ -973,6 +948,8 @@ static bool insert_key_selected_pose_bones(Main *bmain,
                                            PropertyRNA *prop,
                                            bPoseChannel *pchan_to_exclude)
 {
+  using namespace blender::animrig;
+
   bPoseChannel *pchan = NULL;
   blender::Vector<PointerRNA> selected_bones;
   char *group = NULL;
@@ -994,15 +971,16 @@ static bool insert_key_selected_pose_bones(Main *bmain,
     group = pchan->name;
     path = RNA_path_from_ID_to_property(&ptr, prop);
     if (path) {
-      changed |= (blender::animrig::insert_keyframe(bmain,
-                                                    reports,
-                                                    ptr.owner_id,
-                                                    group,
-                                                    path->c_str(),
-                                                    index,
-                                                    &anim_eval_context,
-                                                    eBezTriple_KeyframeType(ts->keyframe_type),
-                                                    flag) != 0);
+      CombinedKeyingResult result = blender::animrig::insert_keyframe(
+          bmain,
+          *ptr.owner_id,
+          group,
+          path->c_str(),
+          index,
+          &anim_eval_context,
+          eBezTriple_KeyframeType(ts->keyframe_type),
+          flag);
+      changed |= (result.get_count(SingleKeyingResult::SUCCESS) != 0);
     }
   }
   return changed;
@@ -1023,6 +1001,8 @@ static bool insert_key_selected_objects(Main *bmain,
                                         const char *prop_path,
                                         Object *object_to_exclude)
 {
+  using namespace blender::animrig;
+
   blender::Vector<PointerRNA> selected_objects;
   Object *object = NULL;
   bool changed = false;
@@ -1039,16 +1019,16 @@ static bool insert_key_selected_objects(Main *bmain,
         continue;
       }
     }
-    if (blender::animrig::insert_keyframe(bmain,
-                                          reports,
-                                          ptr.owner_id,
-                                          group,
-                                          prop_path,
-                                          index,
-                                          &anim_eval_context,
-                                          eBezTriple_KeyframeType(ts->keyframe_type),
-                                          flag) != 0)
-    {
+    CombinedKeyingResult result = blender::animrig::insert_keyframe(
+        bmain,
+        *ptr.owner_id,
+        group,
+        prop_path,
+        index,
+        &anim_eval_context,
+        eBezTriple_KeyframeType(ts->keyframe_type),
+        flag);
+    if (result.get_count(SingleKeyingResult::SUCCESS) != 0) {
       DEG_id_tag_update(ptr.owner_id, ID_RECALC_ANIMATION_NO_FLUSH);
       changed = true;
     }
@@ -1060,6 +1040,8 @@ static bool insert_key_selected_objects(Main *bmain,
 
 static int insert_key_button_exec(bContext *C, wmOperator *op)
 {
+  using namespace blender::animrig;
+
   /* bfa - Apply animation to all selected through UI animate property */
   wmWindow *win = CTX_wm_window(C);
   bool alt_held = ((win->eventstate->modifier & KM_ALT) != 0);
@@ -1077,7 +1059,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
   const bool all = RNA_boolean_get(op->ptr, "all");
   eInsertKeyFlags flag = INSERTKEY_NOFLAGS;
 
-  flag = ANIM_get_keyframing_flags(scene);
+  flag = get_keyframing_flags(scene);
 
   if (!(but = UI_context_active_but_prop_get(C, &ptr, &prop, &index))) {
     /* pass event on if no active button found */
@@ -1094,15 +1076,14 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
       FCurve *fcu = BKE_fcurve_find(&strip->fcurves, RNA_property_identifier(prop), index);
 
       if (fcu) {
-        changed = blender::animrig::insert_keyframe_direct(
-            op->reports,
-            ptr,
-            prop,
-            fcu,
-            &anim_eval_context,
-            eBezTriple_KeyframeType(ts->keyframe_type),
-            nullptr,
-            eInsertKeyFlags(0));
+        changed = insert_keyframe_direct(op->reports,
+                                         ptr,
+                                         prop,
+                                         fcu,
+                                         &anim_eval_context,
+                                         eBezTriple_KeyframeType(ts->keyframe_type),
+                                         nullptr,
+                                         eInsertKeyFlags(0));
       }
       else {
         BKE_report(op->reports,
@@ -1119,19 +1100,18 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
           C, &ptr, prop, index, nullptr, nullptr, &driven, &special);
 
       if (fcu && driven) {
-        const float driver_frame = blender::animrig::evaluate_driver_from_rna_pointer(
+        const float driver_frame = evaluate_driver_from_rna_pointer(
             &anim_eval_context, &ptr, prop, fcu);
         AnimationEvalContext remapped_context = BKE_animsys_eval_context_construct(
             CTX_data_depsgraph_pointer(C), driver_frame);
-        changed = blender::animrig::insert_keyframe_direct(
-            op->reports,
-            ptr,
-            prop,
-            fcu,
-            &remapped_context,
-            eBezTriple_KeyframeType(ts->keyframe_type),
-            nullptr,
-            INSERTKEY_NOFLAGS);
+        changed = insert_keyframe_direct(op->reports,
+                                         ptr,
+                                         prop,
+                                         fcu,
+                                         &remapped_context,
+                                         eBezTriple_KeyframeType(ts->keyframe_type),
+                                         nullptr,
+                                         INSERTKEY_NOFLAGS);
       }
     }
     else {
@@ -1187,18 +1167,19 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
 
         /* bfa - NOTE: this has to be called anyways for UI button's object
          * as it is possible to show property for non selected object,
-         * to make sure delete/insert_frame is not called twice on same object/bone,
-         * exclude ptr.data from selected objects/bones.
-         * the | "or" operator is on purpose */
-        changed |= (blender::animrig::insert_keyframe(bmain,
-                                                      op->reports,
-                                                      ptr.owner_id,
+         * exclude ptr.data from selected objects/bones
+         * to make sure delete/insert_frame is not called twice on same object/bone.
+         */
+        CombinedKeyingResult result = insert_keyframe(bmain,
+                                                      *ptr.owner_id,
                                                       group,
                                                       path->c_str(),
                                                       index,
                                                       &anim_eval_context,
                                                       eBezTriple_KeyframeType(ts->keyframe_type),
-                                                      flag) != 0);
+                                                      flag);
+        /* bfa - the | "or" operator is on purpose */
+        changed |= result.get_count(SingleKeyingResult::SUCCESS) != 0;
       }
       else {
         BKE_report(op->reports,
@@ -1245,8 +1226,8 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static std::string ANIM_OT_keyframe_insert_button_get_description(struct bContext * /*C*/,
-                                                            struct wmOperatorType * /*op*/,
-                                                            struct PointerRNA *values)
+                                                                  struct wmOperatorType * /*op*/,
+                                                                  struct PointerRNA *values)
 {
   if (RNA_boolean_get(values, "all")) {
     return "Insert a keyframe for all UI elements of the property";
@@ -1453,8 +1434,9 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
              * as it is possible to show property for non selected object,
              * to make sure delete/insert_frame is not called twice on same object/bone,
              * exclude ptr.data from selected objects/bones. */
-            changed |= blender::animrig::delete_keyframe(
-                           bmain, op->reports, ptr.owner_id, nullptr, path->c_str(), index, cfra) != 0;
+            changed |=
+                blender::animrig::delete_keyframe(
+                    bmain, op->reports, ptr.owner_id, nullptr, path->c_str(), index, cfra) != 0;
           }
         }
       }
