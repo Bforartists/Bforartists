@@ -549,11 +549,9 @@ static void init_brush_icons()
 
 #  define INIT_BRUSH_ICON(icon_id, name) \
     { \
-      uchar *rect = (uchar *)datatoc_##name##_png; \
+      const uchar *rect = (const uchar *)datatoc_##name##_png; \
       const int size = datatoc_##name##_png_size; \
-      DrawInfo *di; \
-\
-      di = def_internal_icon(nullptr, icon_id, 0, 0, w, ICON_TYPE_BUFFER, 0); \
+      DrawInfo *di = def_internal_icon(nullptr, icon_id, 0, 0, w, ICON_TYPE_BUFFER, 0); \
       di->data.buffer.image->datatoc_rect = rect; \
       di->data.buffer.image->datatoc_size = size; \
     } \
@@ -1618,8 +1616,8 @@ PreviewImage *UI_icon_to_preview(int icon_id)
   }
 
   if (di->type == ICON_TYPE_PREVIEW) {
-    PreviewImage *prv = (icon->id_type != 0) ? BKE_previewimg_id_ensure((ID *)icon->obj) :
-                                               static_cast<PreviewImage *>(icon->obj);
+    const PreviewImage *prv = (icon->id_type != 0) ? BKE_previewimg_id_ensure((ID *)icon->obj) :
+                                                     static_cast<const PreviewImage *>(icon->obj);
 
     if (prv) {
       return BKE_previewimg_copy(prv);
@@ -1654,7 +1652,6 @@ static void icon_draw_rect(float x,
                            float y,
                            int w,
                            int h,
-                           float /*aspect*/,
                            int rw,
                            int rh,
                            const uint8_t *rect,
@@ -2018,8 +2015,7 @@ static void icon_draw_size(float x,
     const ImBuf *ibuf = static_cast<const ImBuf *>(icon->obj);
 
     GPU_blend(GPU_BLEND_ALPHA_PREMULT);
-    icon_draw_rect(
-        x, y, w, h, aspect, ibuf->x, ibuf->y, ibuf->byte_buffer.data, alpha, desaturate);
+    icon_draw_rect(x, y, w, h, ibuf->x, ibuf->y, ibuf->byte_buffer.data, alpha, desaturate);
     GPU_blend(GPU_BLEND_ALPHA);
   }
   else if (di->type == ICON_TYPE_VECTOR) {
@@ -2059,7 +2055,7 @@ static void icon_draw_size(float x,
     }
 
     GPU_blend(GPU_BLEND_ALPHA_PREMULT);
-    icon_draw_rect(x, y, w, h, aspect, w, h, ibuf->byte_buffer.data, alpha, desaturate);
+    icon_draw_rect(x, y, w, h, w, h, ibuf->byte_buffer.data, alpha, desaturate);
     GPU_blend(GPU_BLEND_ALPHA);
   }
   else if (di->type == ICON_TYPE_EVENT) {
@@ -2129,7 +2125,7 @@ static void icon_draw_size(float x,
       return;
     }
 
-    icon_draw_rect(x, y, w, h, aspect, iimg->w, iimg->h, iimg->rect, alpha, desaturate);
+    icon_draw_rect(x, y, w, h, iimg->w, iimg->h, iimg->rect, alpha, desaturate);
   }
   else if (di->type == ICON_TYPE_PREVIEW) {
     PreviewImage *pi = (icon->id_type != 0) ? BKE_previewimg_id_ensure((ID *)icon->obj) :
@@ -2148,7 +2144,6 @@ static void icon_draw_size(float x,
                      y,
                      w,
                      h,
-                     aspect,
                      pi->w[size],
                      pi->h[size],
                      reinterpret_cast<const uint8_t *>(pi->rect[size]),
@@ -2485,7 +2480,7 @@ int UI_icon_from_rnaptr(const bContext *C, PointerRNA *ptr, int rnaicon, const b
     return RNA_int_get(ptr, "icon");
   }
   else if (RNA_struct_is_a(ptr->type, &RNA_DynamicPaintSurface)) {
-    DynamicPaintSurface *surface = static_cast<DynamicPaintSurface *>(ptr->data);
+    const DynamicPaintSurface *surface = static_cast<const DynamicPaintSurface *>(ptr->data);
 
     if (surface->format == MOD_DPAINT_SURFACE_F_PTEX) {
       return ICON_SHADING_TEXTURE;
@@ -2631,7 +2626,6 @@ int UI_icon_from_object_mode(const int mode)
       return ICON_PARTICLEMODE;
     case OB_MODE_POSE:
       return ICON_POSE_HLT;
-    case OB_MODE_PAINT_GREASE_PENCIL:
     case OB_MODE_PAINT_GPENCIL_LEGACY:
       return ICON_GREASEPENCIL;
   }
@@ -2698,6 +2692,35 @@ void UI_icon_draw_ex(float x,
                  mono_color,
                  mono_border,
                  text_overlay);
+}
+
+void UI_icon_draw_mono_rect(
+    float x, float y, float width, float height, int icon_id, const uchar color[4])
+{
+  Icon *icon = BKE_icon_get(icon_id);
+  if (icon == nullptr) {
+    return;
+  }
+  DrawInfo *di = icon_ensure_drawinfo(icon);
+  if (di->type != ICON_TYPE_MONO_TEXTURE) {
+    return;
+  }
+
+  float fcolor[4];
+  straight_uchar_to_premul_float(fcolor, color);
+
+  icon_draw_texture(x,
+                    y,
+                    width,
+                    height,
+                    di->data.texture.x,
+                    di->data.texture.y,
+                    di->data.texture.w,
+                    di->data.texture.h,
+                    fcolor[3],
+                    fcolor,
+                    false,
+                    nullptr);
 }
 
 void UI_icon_text_overlay_init_from_count(IconTextOverlay *text_overlay,

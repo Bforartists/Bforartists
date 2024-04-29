@@ -23,6 +23,11 @@ void main()
   float depth = texelFetch(hiz_tx, texel, 0).r;
   GBufferReader gbuf = gbuffer_read(gbuf_header_tx, gbuf_closure_tx, gbuf_normal_tx, texel);
 
+  /* Bias the shading point position because of depth buffer precision.
+   * Constant is taken from https://www.terathon.com/gdc07_lengyel.pdf. */
+  const float bias = 2.4e-7;
+  depth -= bias;
+
   vec3 P = drw_point_screen_to_world(vec3(uvcoordsvar.xy, depth));
   vec3 Ng = gbuf.surface_N;
   vec3 V = drw_world_incident_vector(P);
@@ -91,9 +96,29 @@ void main()
   if (use_lightprobe_eval) {
     LightProbeSample samp = lightprobe_load(P, Ng, V);
 
+    float clamp_indirect = uniform_buf.clamp.surface_indirect;
+    samp.volume_irradiance = spherical_harmonics_clamp(samp.volume_irradiance, clamp_indirect);
+
     for (int i = 0; i < LIGHT_CLOSURE_EVAL_COUNT && i < gbuf.closure_count; i++) {
       ClosureUndetermined cl = gbuffer_closure_get(gbuf, i);
-      lightprobe_eval(samp, cl, P, V, gbuf.thickness, stack.cl[i].light_shadowed);
+      vec3 indirect_light = lightprobe_eval(samp, cl, P, V, gbuf.thickness);
+
+      if (use_split_indirect) {
+        int layer_index = gbuffer_closure_get_bin_index(gbuf, i);
+        /* TODO(fclem): Layered texture. */
+        if (layer_index == 0) {
+          imageStore(indirect_radiance_1_img, texel, vec4(indirect_light, 1.0));
+        }
+        else if (layer_index == 1) {
+          imageStore(indirect_radiance_2_img, texel, vec4(indirect_light, 1.0));
+        }
+        else if (layer_index == 2) {
+          imageStore(indirect_radiance_3_img, texel, vec4(indirect_light, 1.0));
+        }
+      }
+      else {
+        stack.cl[i].light_shadowed += indirect_light;
+      }
     }
   }
 
