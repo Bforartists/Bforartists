@@ -121,14 +121,15 @@ class USERPREF_MT_save_load(Menu):
         app_template = prefs.app_template
         if app_template:
             display_name = bpy.path.display_name(iface_(app_template))
-            layout.operator("wm.read_factory_userpref", text="Load Factory Preferences", icon="LOAD_FACTORY")
+            layout.operator("wm.read_factory_userpref", text="Load Factory Preferences", icon="LOAD_FACTORY") # BFA - added icon
             props = layout.operator("wm.read_factory_userpref",
-                                    text=iface_("Load Factory %s Preferences") % display_name, icon="LOAD_FACTORY",
-                                    translate=False)
+                                    text=iface_("Load Factory {:s} Preferences").format(display_name),
+                                    translate=False,
+                                    icon="LOAD_FACTORY") # BFA - added icon
             props.use_factory_startup_app_template_only = True
             del display_name
         else:
-            layout.operator("wm.read_factory_userpref", text="Load Factory Preferences", icon="LOAD_FACTORY")
+            layout.operator("wm.read_factory_userpref", text="Load Factory Preferences", icon="LOAD_FACTORY") # BFA - added icon
 
 
 class USERPREF_PT_save_preferences(Panel):
@@ -1249,7 +1250,7 @@ class USERPREF_PT_theme_bone_color_sets(ThemePanel, CenterAlignMixIn, Panel):
         layout.use_property_split = True
 
         for i, ui in enumerate(theme.bone_color_sets, 1):
-            layout.label(text=iface_("Color Set %d") % i, translate=False)
+            layout.label(text=iface_("Color Set {:d}").format(i), translate=False)
 
             flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
 
@@ -1275,7 +1276,7 @@ class USERPREF_PT_theme_collection_colors(ThemePanel, CenterAlignMixIn, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=2, even_columns=True, even_rows=False, align=False)
         for i, ui in enumerate(theme.collection_color, 1):
-            flow.prop(ui, "color", text=iface_("Color %d") % i, translate=False)
+            flow.prop(ui, "color", text=iface_("Color {:d}").format(i), translate=False)
 
 
 class USERPREF_PT_theme_strip_colors(ThemePanel, CenterAlignMixIn, Panel):
@@ -1294,7 +1295,7 @@ class USERPREF_PT_theme_strip_colors(ThemePanel, CenterAlignMixIn, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=2, even_columns=True, even_rows=False, align=False)
         for i, ui in enumerate(theme.strip_color, 1):
-            flow.prop(ui, "color", text=iface_("Color %d") % i, translate=False)
+            flow.prop(ui, "color", text=iface_("Color {:d}").format(i), translate=False)
 
 
 # Base class for dynamically defined theme-space panels.
@@ -1890,6 +1891,13 @@ class USERPREF_PT_input_touchpad(InputPanel, CenterAlignMixIn, Panel):
         col = layout.column()
         col.prop(inputs, "use_multitouch_gestures")
 
+        from _bpy import _wm_capabilities
+        capabilities = _wm_capabilities()
+        if not capabilities['TRACKPAD_PHYSICAL_DIRECTION']:
+            row = col.row()
+            row.active = inputs.use_multitouch_gestures
+            row.prop(inputs, "touchpad_scroll_direction", text="Scroll Direction")
+
 
 class USERPREF_PT_input_tablet(InputPanel, CenterAlignMixIn, Panel):
     bl_label = "Tablet"
@@ -2223,7 +2231,7 @@ class USERPREF_PT_extensions_repos(Panel):
             split = row.split(factor=0.936)
             if active_repo.remote_path == "":
                 split.alert = True
-            split.prop(active_repo, "remote_path", text="", icon="URL", placeholder="Repository URL")
+            split.prop(active_repo, "remote_path", text="", icon='URL', placeholder="Repository URL")
             split = row.split()
 
         layout_header, layout_panel = layout.panel("advanced", default_closed=True)
@@ -2474,7 +2482,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
 
             sub = row.row()
             sub.active = is_enabled
-            sub.label(text="%s: %s" % (iface_(bl_info["category"]), iface_(bl_info["name"])))
+            sub.label(text="{:s}: {:s}".format(iface_(bl_info["category"]), iface_(bl_info["name"])))
 
             if bl_info["warning"]:
                 sub.label(icon='ERROR')
@@ -2531,9 +2539,9 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                         ).url = bl_info["tracker_url"]
                     elif not user_addon:
                         addon_info = (
-                            "Name: %s %s\n"
-                            "Author: %s\n"
-                        ) % (bl_info["name"], str(bl_info["version"]), bl_info["author"])
+                            "Name: {:s} {:s}\n"
+                            "Author: {:s}\n"
+                        ).format(bl_info["name"], str(bl_info["version"]), bl_info["author"])
                         props = sub.operator(
                             "wm.url_open_preset", text="Report a Bug", icon='URL',
                         )
@@ -2613,7 +2621,7 @@ class StudioLightPanelMixin:
             layout.label(text=self.get_error_message())
 
     def get_error_message(self):
-        return rpt_("No custom %s configured") % self.bl_label
+        return rpt_("No custom {:s} configured").format(self.bl_label)
 
     def draw_studio_light(self, layout, studio_light):
         box = layout.box()
