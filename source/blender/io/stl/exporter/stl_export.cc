@@ -6,13 +6,14 @@
  * \ingroup stl
  */
 
-#include <algorithm>
+#include <cstdio>
 #include <memory>
-#include <string>
 
 #include "BKE_context.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_object.hh"
 #include "BKE_report.hh"
+#include "BKE_scene.hh"
 
 #include "BLI_string.h"
 #include "BLI_string_utils.hh"
@@ -29,6 +30,7 @@
 
 #include "IO_stl.hh"
 
+#include "stl_data.hh"
 #include "stl_export.hh"
 #include "stl_export_writer.hh"
 
@@ -118,31 +120,61 @@ void export_frame(Depsgraph *depsgraph,
 
     /* Write triangles. */
     const Span<float3> positions = mesh->vert_positions();
-    const blender::Span<int> corner_verts = mesh->corner_verts();
+    const Span<int> corner_verts = mesh->corner_verts();
     for (const int3 &tri : mesh->corner_tris()) {
-      Triangle t;
+      PackedTriangle data{};
       for (int i = 0; i < 3; i++) {
         float3 pos = positions[corner_verts[tri[i]]];
         mul_m4_v3(xform, pos);
         pos *= global_scale;
-        t.vertices[i] = pos;
+        data.vertices[i] = pos;
       }
-      t.normal = math::normal_tri(t.vertices[0], t.vertices[1], t.vertices[2]);
-      writer->write_triangle(t);
+      data.normal = math::normal_tri(data.vertices[0], data.vertices[1], data.vertices[2]);
+      writer->write_triangle(data);
     }
   }
   DEG_OBJECT_ITER_END;
 }
 
-void exporter_main(bContext *C, const STLExportParams &export_params)
+void exporter_main(const bContext *C, const STLExportParams &export_params)
 {
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+  Depsgraph *depsgraph = nullptr;
+  bool needs_free = false;
+
+  Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
+  if (export_params.collection[0]) {
+    Collection *collection = reinterpret_cast<Collection *>(
+        BKE_libblock_find_name(bmain, ID_GR, export_params.collection));
+    if (!collection) {
+      BKE_reportf(export_params.reports,
+                  RPT_ERROR,
+                  "STL Export: Unable to find collection '%s'",
+                  export_params.collection);
+      return;
+    }
+
+    ViewLayer *view_layer = CTX_data_view_layer(C);
+
+    depsgraph = DEG_graph_new(bmain, scene, view_layer, DAG_EVAL_RENDER);
+    needs_free = true;
+    DEG_graph_build_from_collection(depsgraph, collection);
+    BKE_scene_graph_evaluated_ensure(depsgraph, bmain);
+  }
+  else {
+    depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+  }
+
   float scene_unit_scale = 1.0f;
   if ((scene->unit.system != USER_UNIT_NONE) && export_params.use_scene_unit) {
     scene_unit_scale = scene->unit.scale_length;
   }
+
   export_frame(depsgraph, scene_unit_scale, export_params);
+
+  if (needs_free) {
+    DEG_graph_free(depsgraph);
+  }
 }
 
 }  // namespace blender::io::stl

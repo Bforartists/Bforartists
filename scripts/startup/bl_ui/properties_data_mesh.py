@@ -542,8 +542,10 @@ class MESH_UL_attributes(UIList):
         sub = split.row()
         sub.alignment = 'RIGHT'
         sub.active = False
-        sub.label(text="%s ▶ %s" % (iface_(domain_name), iface_(data_type.name)),
-                  translate=False)
+        sub.label(
+            text="{:s} ▶ {:s}".format(iface_(domain_name), iface_(data_type.name)),
+            translate=False,
+        )
 
 
 class DATA_PT_mesh_attributes(MeshButtonsPanel, Panel):
@@ -663,7 +665,7 @@ class MESH_UL_color_attributes(UIList, ColorAttributesListBase):
         sub = split.row()
         sub.alignment = 'RIGHT'
         sub.active = False
-        sub.label(text="%s ▶ %s" % (iface_(domain_name), iface_(data_type.name)), translate=False)
+        sub.label(text="{:s} ▶ {:s}".format(iface_(domain_name), iface_(data_type.name)), translate=False)
 
         active_render = _index == data.color_attributes.render_color_index
 

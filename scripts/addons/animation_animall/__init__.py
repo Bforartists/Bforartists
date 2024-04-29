@@ -664,7 +664,8 @@ def update_attribute_animation(_):
         ("edges", "crease"):          ("crease_edge", "FLOAT", "EDGE"),
     }
     for mesh in bpy.data.meshes:
-        print(f"Updating {mesh.name}")
+        if mesh.animation_data is None:
+            continue
         for fcurve in mesh.animation_data.action.fcurves:
             if fcurve.data_path.startswith("vertex_colors"):
                 # Update pre-3.3 vertex colors

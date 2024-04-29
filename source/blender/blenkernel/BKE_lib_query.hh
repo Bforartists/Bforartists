@@ -143,7 +143,7 @@ struct LibraryIDLinkCallbackData {
  *
  * \return a set of flags to control further iteration (0 to keep going).
  */
-using LibraryIDLinkCallback = int (*)(LibraryIDLinkCallbackData *cb_data);
+using LibraryIDLinkCallback = int(LibraryIDLinkCallbackData *cb_data);
 
 /* Flags for the foreach function itself. */
 enum {
@@ -271,8 +271,11 @@ void BKE_lib_query_idpropertiesForeachIDLink_callback(IDProperty *id_prop, void 
 /**
  * Loop over all of the ID's this data-block links to.
  */
-void BKE_library_foreach_ID_link(
-    Main *bmain, ID *id, LibraryIDLinkCallback callback, void *user_data, int flag);
+void BKE_library_foreach_ID_link(Main *bmain,
+                                 ID *id,
+                                 blender::FunctionRef<LibraryIDLinkCallback> callback,
+                                 void *user_data,
+                                 int flag);
 /**
  * Re-usable function, use when replacing ID's.
  */
@@ -348,21 +351,21 @@ struct LibQueryUnusedIDsData {
    * Amount of detected as unused data-blocks, per type and total as the last value of the array
    * (#INDEX_ID_NULL).
    *
-   * \note: Return value, set by the executed function.
+   * \note Return value, set by the executed function.
    */
   std::array<int, INDEX_ID_MAX> num_total;
   /**
    * Amount of detected as unused local data-blocks, per type and total as the last value of the
    * array (#INDEX_ID_NULL).
    *
-   * \note: Return value, set by the executed function.
+   * \note Return value, set by the executed function.
    */
   std::array<int, INDEX_ID_MAX> num_local;
   /**
    * Amount of detected as unused linked data-blocks, per type and total as the last value of the
    * array (#INDEX_ID_NULL).
    *
-   * \note: Return value, set by the executed function.
+   * \note Return value, set by the executed function.
    */
   std::array<int, INDEX_ID_MAX> num_linked;
 };
