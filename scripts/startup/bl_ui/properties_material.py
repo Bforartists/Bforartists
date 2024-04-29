@@ -230,6 +230,29 @@ class EEVEE_MATERIAL_PT_displacement(MaterialButtonsPanel, Panel):
         panel_node_draw(layout, mat.node_tree, 'OUTPUT_MATERIAL', "Displacement")
 
 
+class EEVEE_MATERIAL_PT_thickness(MaterialButtonsPanel, Panel):
+    bl_label = "Thickness"
+    bl_translation_context = i18n_contexts.id_id
+    bl_context = "material"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+
+    @classmethod
+    def poll(cls, context):
+        engine = context.engine
+        mat = context.material
+        return mat and mat.use_nodes and (engine in cls.COMPAT_ENGINES) and not mat.grease_pencil
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.use_property_split = True
+
+        mat = context.material
+
+        panel_node_draw(layout, mat.node_tree, 'OUTPUT_MATERIAL', "Thickness")
+
+
 def draw_material_settings(self, context):
     layout = self.layout
     layout.use_property_split = True
@@ -354,7 +377,7 @@ class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
         if mat.surface_render_method == 'BLENDED':
             row.prop(mat, "show_transparent_back", text="Transparency Overlap")
         elif mat.surface_render_method == 'DITHERED':
-            row.prop(mat, "use_screen_refraction", text="Raytraced Refraction")
+            row.prop(mat, "use_screen_refraction", text="Raytraced Transmission")
 
         col = layout.column()
         col.label(text = "Light Probe Volume")
@@ -468,6 +491,7 @@ classes = (
     EEVEE_MATERIAL_PT_surface,
     EEVEE_MATERIAL_PT_volume,
     EEVEE_MATERIAL_PT_displacement,
+    EEVEE_MATERIAL_PT_thickness,
     EEVEE_MATERIAL_PT_settings,
     EEVEE_NEXT_MATERIAL_PT_settings,
     EEVEE_NEXT_MATERIAL_PT_settings_surface,

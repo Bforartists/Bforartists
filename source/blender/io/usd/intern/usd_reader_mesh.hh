@@ -78,6 +78,7 @@ class USDMeshReader : public USDGeomReader {
 
   void read_mpolys(Mesh *mesh);
   void read_vertex_creases(Mesh *mesh, double motionSampleTime);
+  void read_velocities(Mesh *mesh, double motionSampleTime);
 
   void read_mesh_sample(ImportSettings *settings,
                         Mesh *mesh,
@@ -92,10 +93,6 @@ class USDMeshReader : public USDGeomReader {
                         Mesh *mesh,
                         double motionSampleTime,
                         bool new_mesh);
-
-  void read_color_data_primvar(Mesh *mesh,
-                               const pxr::UsdGeomPrimvar &color_primvar,
-                               const double motionSampleTime);
 
   void read_uv_data_primvar(Mesh *mesh,
                             const pxr::UsdGeomPrimvar &primvar,
