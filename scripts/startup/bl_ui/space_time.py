@@ -20,15 +20,7 @@ class TIME_HT_editor_buttons:
         layout.separator_spacer()
 
         row = layout.row(align=True)
-### BFA - moved to another area.
-#        row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
-#        sub = row.row(align=True)
-#        sub.active = tool_settings.use_keyframe_insert_auto
-#        sub.popover(
-#            panel="TIME_PT_auto_keyframing",
-#            text="",
-#        )
-#        row = layout.row(align=True)
+
 
         row.operator("screen.frame_jump", text="", icon='REW').end = False
         row.operator("screen.keyframe_jump", text="", icon='PREV_KEYFRAME').next = False
@@ -93,6 +85,7 @@ class TIME_HT_editor_buttons:
 
         row.popover(panel = "TIME_PT_view_view_options", text = "")
 
+
 class TIME_MT_editor_menus(Menu):
     bl_idname = "TIME_MT_editor_menus"
     bl_label = ""
@@ -107,19 +100,6 @@ class TIME_MT_editor_menus(Menu):
         else:
             sub = layout
 
-## BFA - moved to header options
-#        sub.popover(
-#            panel="TIME_PT_playback",
-#            text="Playback",
-#        )
-#        sub.popover(
-#            panel="TIME_PT_keyframing_settings",
-#            text="Keying",
-#            text_ctxt=i18n_contexts.id_windowmanager,
-#        )
-
-#        # Add a separator to keep the popover button from aligning with the menu button.
-#        sub.separator(factor=0.4)
         if horizontal:
             sub = row.row(align=True)
 
@@ -163,42 +143,6 @@ class TIME_MT_view(Menu):
         # NOTE: "action" now, since timeline is in the dopesheet editor, instead of as own editor
         layout.operator("action.view_all", icon = "VIEWALL")
         layout.operator("action.view_frame", icon = "VIEW_FRAME" )
-
-        layout.separator()
-
-        layout.prop(st, "show_markers")
-
-        layout.separator()
-
-        layout.prop(st, "show_locked_time")
-        layout.prop(st, "show_seconds")
-
-        layout.separator()
-
-        layout.prop(st, "show_region_hud")
-
-## BFA - moved to the options panel exclusively.
-#class TIME_MT_cache(Menu):
-#    bl_label = "Cache"
-
-#    def draw(self, context):
-#        layout = self.layout
-
-#        st = context.space_data
-
-#        layout.prop(st, "show_cache")
-
-#        layout.separator()
-
-#        col = layout.column()
-#        col.enabled = st.show_cache
-#        col.prop(st, "cache_softbody")
-#        col.prop(st, "cache_particles")
-#        col.prop(st, "cache_cloth")
-#        col.prop(st, "cache_simulation_nodes")
-#        col.prop(st, "cache_smoke")
-#        col.prop(st, "cache_dynamicpaint")
-#        col.prop(st, "cache_rigidbody")
 
 
 def marker_menu_generic(layout, context):
