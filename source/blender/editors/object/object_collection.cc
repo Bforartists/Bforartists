@@ -734,6 +734,10 @@ std::unordered_map<std::string, BIFIconID_Static> ks_icons_map = {
     {"IO_FH_alembic", ICON_SAVE_ABC},
     {"IO_FH_usd", ICON_SAVE_USD},
     {"IO_FH_obj", ICON_SAVE_OBJ},
+    {"IO_FH_ply", ICON_SAVE_PLY},
+    {"IO_FH_stl", ICON_SAVE_STL},
+    {"IO_FH_fbx", ICON_SAVE_FBX},
+    {"IO_FH_gltf2", ICON_SAVE_GLTF},
 };
 /* end BFA */
 
