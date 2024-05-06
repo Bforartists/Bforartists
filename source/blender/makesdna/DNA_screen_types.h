@@ -841,7 +841,7 @@ typedef struct AssetShelfSettings {
 
   AssetLibraryReference asset_library_reference;
 
-  ListBase enabled_catalog_paths; /* #LinkData */
+  ListBase enabled_catalog_paths; /* #AssetCatalogPathLink */
   /** If not set (null or empty string), all assets will be displayed ("All" catalog behavior). */
   const char *active_catalog_path;
 
@@ -897,6 +897,8 @@ typedef struct RegionAssetShelf {
   AssetShelf *active_shelf; /* Non-owning. */
 #ifdef __cplusplus
   static RegionAssetShelf *get_from_asset_shelf_region(const ARegion &region);
+  /** Creates the asset shelf region data if necessary, and returns it. */
+  static RegionAssetShelf *ensure_from_asset_shelf_region(ARegion &region);
 #endif
 } RegionAssetShelf;
 

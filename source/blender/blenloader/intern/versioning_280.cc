@@ -2874,10 +2874,10 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
       ToolSettings *ts = scene->toolsettings;
 
       /* Ensure new Paint modes. */
-      BKE_paint_ensure_from_paintmode(scene, PaintMode::GPencil);
-      BKE_paint_ensure_from_paintmode(scene, PaintMode::VertexGPencil);
-      BKE_paint_ensure_from_paintmode(scene, PaintMode::SculptGPencil);
-      BKE_paint_ensure_from_paintmode(scene, PaintMode::WeightGPencil);
+      BKE_paint_ensure_from_paintmode(bmain, scene, PaintMode::GPencil);
+      BKE_paint_ensure_from_paintmode(bmain, scene, PaintMode::VertexGPencil);
+      BKE_paint_ensure_from_paintmode(bmain, scene, PaintMode::SculptGPencil);
+      BKE_paint_ensure_from_paintmode(bmain, scene, PaintMode::WeightGPencil);
 
       /* Set default Draw brush. */
       if (brush != nullptr) {
@@ -2918,9 +2918,9 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
     /* Reset all grease pencil brushes. */
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       /* Ensure new Paint modes. */
-      BKE_paint_ensure_from_paintmode(scene, PaintMode::VertexGPencil);
-      BKE_paint_ensure_from_paintmode(scene, PaintMode::SculptGPencil);
-      BKE_paint_ensure_from_paintmode(scene, PaintMode::WeightGPencil);
+      BKE_paint_ensure_from_paintmode(bmain, scene, PaintMode::VertexGPencil);
+      BKE_paint_ensure_from_paintmode(bmain, scene, PaintMode::SculptGPencil);
+      BKE_paint_ensure_from_paintmode(bmain, scene, PaintMode::WeightGPencil);
     }
   }
 
@@ -2987,8 +2987,6 @@ static void do_versions_seq_unique_name_all_strips(Scene *sce, ListBase *seqbase
 static void do_versions_seq_set_cache_defaults(Editing *ed)
 {
   ed->cache_flag = SEQ_CACHE_STORE_FINAL_OUT;
-  ed->cache_flag |= SEQ_CACHE_VIEW_FINAL_OUT;
-  ed->cache_flag |= SEQ_CACHE_VIEW_ENABLE;
   ed->recycle_max_cost = 10.0f;
 }
 

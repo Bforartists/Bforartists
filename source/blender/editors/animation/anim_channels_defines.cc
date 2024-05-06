@@ -5573,13 +5573,32 @@ static void draw_grease_pencil_layer_widgets(bAnimListElem *ale,
   if (RNA_path_resolve_property(
           &id_ptr, onion_skinning_rna_path->c_str(), &ptr, &onion_skinning_prop))
   {
-    const int icon = layer->use_onion_skinning() ? ICON_ONIONSKIN_ON : ICON_ONIONSKIN_OFF;
     uiDefAutoButR(block,
                   &ptr,
                   onion_skinning_prop,
                   array_index,
                   "",
-                  icon,
+                  ICON_ONIONSKIN_OFF,
+                  offset,
+                  rect->ymin,
+                  ICON_WIDTH,
+                  channel_height);
+  }
+
+  /* Mask layer. */
+  offset -= ICON_WIDTH;
+  UI_block_emboss_set(block, UI_EMBOSS_NONE);
+  PropertyRNA *layer_mask_prop = RNA_struct_find_property(&ptr, "use_masks");
+
+  const std::optional<std::string> layer_mask_rna_path = RNA_path_from_ID_to_property(
+      &ptr, layer_mask_prop);
+  if (RNA_path_resolve_property(&id_ptr, layer_mask_rna_path->c_str(), &ptr, &layer_mask_prop)) {
+    uiDefAutoButR(block,
+                  &ptr,
+                  layer_mask_prop,
+                  array_index,
+                  "",
+                  ICON_CLIPUV_HLT,
                   offset,
                   rect->ymin,
                   ICON_WIDTH,

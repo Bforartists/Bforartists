@@ -15,6 +15,7 @@ from bl_ui.space_dopesheet import (
 
 # The blank button, we don't want to switch to the editor in which we are already.
 
+
 class ANIM_OT_switch_editors_in_nla(bpy.types.Operator):
     """You are in Nonlinear Animation Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
@@ -358,7 +359,7 @@ class NLA_MT_tracks(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("nla.tracks_delete", text="Delete", icon = 'DELETE')
+        layout.operator("nla.tracks_delete", text="Delete", icon='DELETE')
 
         layout.separator()
 
@@ -471,12 +472,12 @@ class NLA_MT_strips_transform(Menu):
         ).mode = "TIME_SCALE"
 
         # BFA - moved up to top level
-        #layout.separator()
-        #layout.operator("nla.swap", text="Swap")
+        # layout.separator()
+        # layout.operator("nla.swap", text="Swap")
 
-        #layout.separator()
-        #layout.operator("nla.move_up", text="Move Up")
-        #layout.operator("nla.move_down", text="Move Down")
+        # layout.separator()
+        # layout.operator("nla.move_up", text="Move Up")
+        # layout.operator("nla.move_down", text="Move Down")
 
 
 class NLA_MT_snap_pie(Menu):
