@@ -194,11 +194,13 @@ static void mesh_copy_data(Main *bmain,
 
   mesh_dst->mselect = (MSelect *)MEM_dupallocN(mesh_dst->mselect);
 
-  /* TODO: Do we want to add flag to prevent this? */
   if (mesh_src->key && (flag & LIB_ID_COPY_SHAPEKEY)) {
-    BKE_id_copy_in_lib(bmain, owner_library, &mesh_src->key->id, (ID **)&mesh_dst->key, flag);
-    /* XXX This is not nice, we need to make BKE_id_copy_ex fully re-entrant... */
-    mesh_dst->key->from = &mesh_dst->id;
+    BKE_id_copy_in_lib(bmain,
+                       owner_library,
+                       &mesh_src->key->id,
+                       &mesh_dst->id,
+                       reinterpret_cast<ID **>(&mesh_dst->key),
+                       flag);
   }
 }
 
@@ -1376,7 +1378,7 @@ void BKE_mesh_mselect_validate(Mesh *mesh)
   mesh->mselect = mselect_dst;
 }
 
-int BKE_mesh_mselect_find(Mesh *mesh, int index, int type)
+int BKE_mesh_mselect_find(const Mesh *mesh, int index, int type)
 {
   BLI_assert(ELEM(type, ME_VSEL, ME_ESEL, ME_FSEL));
 
@@ -1389,7 +1391,7 @@ int BKE_mesh_mselect_find(Mesh *mesh, int index, int type)
   return -1;
 }
 
-int BKE_mesh_mselect_active_get(Mesh *mesh, int type)
+int BKE_mesh_mselect_active_get(const Mesh *mesh, int type)
 {
   BLI_assert(ELEM(type, ME_VSEL, ME_ESEL, ME_FSEL));
 

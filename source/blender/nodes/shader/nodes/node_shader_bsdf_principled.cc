@@ -258,6 +258,17 @@ static void node_declare(NodeDeclarationBuilder &b)
           "Strength of the emitted light. A value of 1.0 ensures "
           "that the object in the image has the exact same color as the Emission Color");
 #define SOCK_EMISSION_STRENGTH_ID 27
+
+  /* Panel for Thin Film settings. */
+  PanelDeclarationBuilder &film = b.add_panel("Thin Film").default_closed(true);
+  film.add_input<decl::Float>("Thin Film Thickness")
+      .default_value(0.0)
+      .min(0.0f)
+      .max(100000.0f)
+      .subtype(PROP_WAVELENGTH);
+#define SOCK_THIN_FILM_THICKNESS_ID 28
+  film.add_input<decl::Float>("Thin Film IOR").default_value(1.33f).min(1.0f).max(1000.0f);
+#define SOCK_THIN_FILM_IOR_ID 29
 }
 
 static void node_shader_init_principled(bNodeTree * /*ntree*/, bNode *node)
@@ -657,7 +668,7 @@ void register_node_type_sh_bsdf_principled()
   sh_node_type_base(&ntype, SH_NODE_BSDF_PRINCIPLED, "Principled BSDF", NODE_CLASS_SHADER);
   ntype.declare = file_ns::node_declare;
   ntype.add_ui_poll = object_shader_nodes_poll;
-  blender::bke::node_type_size_preset(&ntype, blender::bke::eNodeSizePreset::LARGE);
+  blender::bke::node_type_size_preset(&ntype, blender::bke::eNodeSizePreset::Large);
   ntype.initfunc = file_ns::node_shader_init_principled;
   ntype.gpu_fn = file_ns::node_shader_gpu_bsdf_principled;
   ntype.updatefunc = file_ns::node_shader_update_principled;

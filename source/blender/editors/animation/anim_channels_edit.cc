@@ -58,6 +58,7 @@
 #include "ED_select_utils.hh"
 
 #include "ANIM_animdata.hh"
+#include "ANIM_fcurve.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -4334,6 +4335,7 @@ static const EnumPropertyItem channel_bake_key_options[] = {
 
 static int channels_bake_exec(bContext *C, wmOperator *op)
 {
+  using namespace blender::animrig;
   bAnimContext ac;
 
   /* Get editor data. */
@@ -4374,8 +4376,8 @@ static int channels_bake_exec(bContext *C, wmOperator *op)
   }
 
   const bool remove_outside_range = RNA_boolean_get(op->ptr, "remove_outside_range");
-  const BakeCurveRemove remove_existing = remove_outside_range ? BakeCurveRemove::REMOVE_ALL :
-                                                                 BakeCurveRemove::REMOVE_IN_RANGE;
+  const BakeCurveRemove remove_existing = remove_outside_range ? BakeCurveRemove::ALL :
+                                                                 BakeCurveRemove::IN_RANGE;
   const int interpolation_type = RNA_enum_get(op->ptr, "interpolation_type");
   const bool bake_modifiers = RNA_boolean_get(op->ptr, "bake_modifiers");
 

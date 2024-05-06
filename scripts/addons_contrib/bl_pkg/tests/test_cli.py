@@ -2,7 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# ./blender.bin --background -noaudio --python tests/python/bl_pyapi_text.py -- --verbose
+"""
+Test with command:
+   make test_blender BLENDER_BIN=$PWD/../../../blender.bin
+"""
 
 import json
 import os

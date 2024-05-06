@@ -13,6 +13,7 @@
 #include "kernel/closure/bsdf_microfacet.h"
 #include "kernel/closure/bsdf_sheen.h"
 #include "kernel/closure/bsdf_transparent.h"
+#include "kernel/closure/bsdf_ray_portal.h"
 #include "kernel/closure/bsdf_ashikhmin_shirley.h"
 #include "kernel/closure/bsdf_toon.h"
 #include "kernel/closure/bsdf_hair.h"
@@ -157,17 +158,21 @@ ccl_device_inline int bsdf_sample(KernelGlobals kg,
       *sampled_roughness = zero_float2();
       *eta = 1.0f;
       break;
+    case CLOSURE_BSDF_RAY_PORTAL_ID:
+      /* ray portals are not handled by the BSDF code, we should never get here */
+      kernel_assert(false);
+      break;
     case CLOSURE_BSDF_MICROFACET_GGX_ID:
     case CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID:
     case CLOSURE_BSDF_MICROFACET_GGX_GLASS_ID:
       label = bsdf_microfacet_ggx_sample(
-          sc, Ng, sd->wi, rand, eval, wo, pdf, sampled_roughness, eta);
+          kg, sc, Ng, sd->wi, rand, eval, wo, pdf, sampled_roughness, eta);
       break;
     case CLOSURE_BSDF_MICROFACET_BECKMANN_ID:
     case CLOSURE_BSDF_MICROFACET_BECKMANN_REFRACTION_ID:
     case CLOSURE_BSDF_MICROFACET_BECKMANN_GLASS_ID:
       label = bsdf_microfacet_beckmann_sample(
-          sc, Ng, sd->wi, rand, eval, wo, pdf, sampled_roughness, eta);
+          kg, sc, Ng, sd->wi, rand, eval, wo, pdf, sampled_roughness, eta);
       break;
     case CLOSURE_BSDF_ASHIKHMIN_SHIRLEY_ID:
       label = bsdf_ashikhmin_shirley_sample(
@@ -289,6 +294,7 @@ ccl_device_inline void bsdf_roughness_eta(const KernelGlobals kg,
       *eta = 1.0f;
       break;
     case CLOSURE_BSDF_TRANSPARENT_ID:
+    case CLOSURE_BSDF_RAY_PORTAL_ID:
       *roughness = zero_float2();
       *eta = 1.0f;
       break;
@@ -389,6 +395,9 @@ ccl_device_inline int bsdf_label(const KernelGlobals kg,
     case CLOSURE_BSDF_TRANSPARENT_ID:
       label = LABEL_TRANSMIT | LABEL_TRANSPARENT;
       break;
+    case CLOSURE_BSDF_RAY_PORTAL_ID:
+      label = LABEL_TRANSMIT | LABEL_RAY_PORTAL;
+      break;
     case CLOSURE_BSDF_MICROFACET_GGX_ID:
     case CLOSURE_BSDF_MICROFACET_BECKMANN_ID:
     case CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID:
@@ -488,18 +497,21 @@ ccl_device_inline
     case CLOSURE_BSDF_TRANSPARENT_ID:
       eval = bsdf_transparent_eval(sc, sd->wi, wo, pdf);
       break;
+    case CLOSURE_BSDF_RAY_PORTAL_ID:
+      eval = bsdf_ray_portal_eval(sc, sd->wi, wo, pdf);
+      break;
     case CLOSURE_BSDF_MICROFACET_GGX_ID:
     case CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID:
     case CLOSURE_BSDF_MICROFACET_GGX_GLASS_ID:
       /* For consistency with eval() this should be using sd->Ng, but that causes
        * artifacts (see shadow_terminator_metal test). Needs deeper investigation
        * for how to solve this. */
-      eval = bsdf_microfacet_ggx_eval(sc, sd->N, sd->wi, wo, pdf);
+      eval = bsdf_microfacet_ggx_eval(kg, sc, sd->N, sd->wi, wo, pdf);
       break;
     case CLOSURE_BSDF_MICROFACET_BECKMANN_ID:
     case CLOSURE_BSDF_MICROFACET_BECKMANN_REFRACTION_ID:
     case CLOSURE_BSDF_MICROFACET_BECKMANN_GLASS_ID:
-      eval = bsdf_microfacet_beckmann_eval(sc, sd->N, sd->wi, wo, pdf);
+      eval = bsdf_microfacet_beckmann_eval(kg, sc, sd->N, sd->wi, wo, pdf);
       break;
     case CLOSURE_BSDF_ASHIKHMIN_SHIRLEY_ID:
       eval = bsdf_ashikhmin_shirley_eval(sc, sd->N, sd->wi, wo, pdf);
