@@ -733,6 +733,13 @@ bool WM_operator_winactive(bContext *C);
  * just wraps #WM_operator_props_dialog_popup.
  */
 int WM_operator_props_popup_confirm(bContext *C, wmOperator *op, const wmEvent *event);
+
+int WM_operator_props_popup_confirm_ex(bContext *C,
+                                       wmOperator *op,
+                                       const wmEvent *event,
+                                       std::optional<std::string> title = std::nullopt,
+                                       std::optional<std::string> confirm_text = std::nullopt);
+
 /**
  * Same as #WM_operator_props_popup but call the operator first,
  * This way - the button values correspond to the result of the operator.
@@ -991,6 +998,10 @@ void WM_operator_properties_gesture_box_zoom(wmOperatorType *ot);
  * Use with #WM_gesture_lasso_invoke
  */
 void WM_operator_properties_gesture_lasso(wmOperatorType *ot);
+/**
+ * Use with #WM_gesture_polyline_invoke
+ */
+void WM_operator_properties_gesture_polyline(wmOperatorType *ot);
 /**
  * Use with #WM_gesture_straightline_invoke
  */
@@ -1285,6 +1296,9 @@ void WM_gesture_lines_cancel(bContext *C, wmOperator *op);
 int WM_gesture_lasso_invoke(bContext *C, wmOperator *op, const wmEvent *event);
 int WM_gesture_lasso_modal(bContext *C, wmOperator *op, const wmEvent *event);
 void WM_gesture_lasso_cancel(bContext *C, wmOperator *op);
+int WM_gesture_polyline_invoke(bContext *C, wmOperator *op, const wmEvent *event);
+int WM_gesture_polyline_modal(bContext *C, wmOperator *op, const wmEvent *event);
+void WM_gesture_polyline_cancel(bContext *C, wmOperator *op);
 /**
  * helper function, we may want to add options for conversion to view space
  */

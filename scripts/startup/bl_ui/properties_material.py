@@ -98,7 +98,7 @@ class EEVEE_MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
         slot = context.material_slot
         space = context.space_data
 
-        #bfa - no remove in edit mode
+        # bfa - no remove in edit mode
         obj = context.active_object
         object_mode = 'OBJECT' if obj is None else obj.mode
 
@@ -115,7 +115,7 @@ class EEVEE_MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
             col = row.column(align=True)
             col.operator("object.material_slot_add", icon='ADD', text="")
 
-            #bfa - no remove in edit mode
+            # bfa - no remove in edit mode
             sub = col.column()
             sub.active = (object_mode != 'EDIT')
             sub.operator("object.material_slot_remove", icon='REMOVE', text="")
@@ -281,20 +281,20 @@ def draw_material_settings(self, context):
     subcol = col.column()
     subcol.use_property_split = False
     row = subcol.row()
-    split = row.split(factor = 0.55)
+    split = row.split(factor=0.55)
     split.prop(mat, "use_screen_refraction")
     if mat.use_screen_refraction:
-        split.prop(mat, "refraction_depth", text = "")
+        split.prop(mat, "refraction_depth", text="")
     else:
         split.label(icon='DISCLOSURE_TRI_RIGHT')
 
     subcol = col.column()
     subcol.use_property_split = False
     row = subcol.row()
-    split = row.split(factor = 0.55)
+    split = row.split(factor=0.55)
     split.prop(mat, "use_sss_translucency")
     if mat.use_sss_translucency:
-        split.prop(mat, "pass_index", text = "")
+        split.prop(mat, "pass_index", text="")
     else:
         split.label(icon='DISCLOSURE_TRI_RIGHT')
 
@@ -347,7 +347,7 @@ class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
         mat = context.material
 
         col = layout.column()
-        col.label(text = "Backface Culling")
+        col.label(text="Backface Culling")
         col.use_property_split = False
         row = col.row()
         row.separator()
@@ -380,8 +380,14 @@ class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
             row.prop(mat, "use_screen_refraction", text="Raytraced Transmission")
 
         col = layout.column()
-        col.label(text = "Light Probe Volume")
         col.use_property_split = False
+        col.prop(mat, "thickness_mode", text="Thickness")
+        if mat.surface_render_method == 'DITHERED':
+            col.prop(mat, "use_thickness_from_shadow", text="From Shadow")
+
+        col = layout.column()
+        col.use_property_split = False
+        col.label(text="Light Probe Volume")
         row = col.row()
         row.separator()
         row.prop(mat, "lightprobe_volume_single_sided", text="Single Sided")
@@ -444,7 +450,7 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
         lineart = mat.lineart
 
         row = layout.row()
-        split = row.split(factor = 0.4)
+        split = row.split(factor=0.4)
         row = split.row()
         row.prop(lineart, "use_material_mask", text="Material Mask")
         row = split.row()
@@ -462,7 +468,8 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
         if lineart.use_material_mask:
             row = col.row(align=True, heading="      Masks")
             for i in range(8):
-                row.prop(lineart, "use_material_mask_bits", text=str(i), index=i, toggle=True) # bfa - labels on the maks bits
+                row.prop(lineart, "use_material_mask_bits", text=str(i),
+                         index=i, toggle=True)  # bfa - labels on the maks bits
                 if i == 3:
                     row = col.row(align=True)
 
@@ -471,7 +478,7 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
 
         col = layout.column()
         split = col.split(factor=.4)
-        split.use_property_split=False
+        split.use_property_split = False
         split.prop(lineart, "use_intersection_priority_override", text="Intersection Priority")
 
         split.alignment = 'LEFT'

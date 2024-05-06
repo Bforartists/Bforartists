@@ -536,6 +536,8 @@ class PrincipledBsdfNode : public BsdfBaseNode {
   NODE_SOCKET_API(float3, emission_color)
   NODE_SOCKET_API(float, emission_strength)
   NODE_SOCKET_API(float, surface_mix_weight)
+  NODE_SOCKET_API(float, thin_film_thickness)
+  NODE_SOCKET_API(float, thin_film_ior)
 
  public:
   void attributes(Shader *shader, AttributeRequestSet *attributes);
@@ -555,6 +557,19 @@ class TranslucentBsdfNode : public BsdfNode {
 class TransparentBsdfNode : public BsdfNode {
  public:
   SHADER_NODE_CLASS(TransparentBsdfNode)
+
+  bool has_surface_transparent()
+  {
+    return true;
+  }
+};
+
+class RayPortalBsdfNode : public BsdfNode {
+ public:
+  SHADER_NODE_CLASS(RayPortalBsdfNode)
+
+  NODE_SOCKET_API(float3, position)
+  NODE_SOCKET_API(float3, direction)
 
   bool has_surface_transparent()
   {
@@ -653,6 +668,7 @@ class SubsurfaceScatteringNode : public BsdfNode {
   NODE_SOCKET_API(float, scale)
   NODE_SOCKET_API(float3, radius)
   NODE_SOCKET_API(float, subsurface_ior)
+  NODE_SOCKET_API(float, subsurface_roughness)
   NODE_SOCKET_API(float, subsurface_anisotropy)
   NODE_SOCKET_API(ClosureType, method)
 };

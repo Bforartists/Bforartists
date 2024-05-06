@@ -114,22 +114,28 @@ class USERPREF_MT_save_load(Menu):
         # the user preferences themselves would need to have a `factory_startup` state.
         # Since showing an active menu item whenever factory-startup is used is not such a problem, leave this as-is.
         sub_revert.active = prefs.is_dirty or bpy.app.factory_startup
-        sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences", icon = "UNDO")
+        sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences", icon="UNDO")
 
         layout.operator_context = 'INVOKE_AREA'
 
         app_template = prefs.app_template
         if app_template:
             display_name = bpy.path.display_name(iface_(app_template))
-            layout.operator("wm.read_factory_userpref", text="Load Factory Preferences", icon="LOAD_FACTORY") # BFA - added icon
+            layout.operator(
+                "wm.read_factory_userpref",
+                text="Load Factory Preferences",
+                icon="LOAD_FACTORY")  # BFA - added icon
             props = layout.operator("wm.read_factory_userpref",
                                     text=iface_("Load Factory {:s} Preferences").format(display_name),
                                     translate=False,
-                                    icon="LOAD_FACTORY") # BFA - added icon
+                                    icon="LOAD_FACTORY")  # BFA - added icon
             props.use_factory_startup_app_template_only = True
             del display_name
         else:
-            layout.operator("wm.read_factory_userpref", text="Load Factory Preferences", icon="LOAD_FACTORY") # BFA - added icon
+            layout.operator(
+                "wm.read_factory_userpref",
+                text="Load Factory Preferences",
+                icon="LOAD_FACTORY")  # BFA - added icon
 
 
 class USERPREF_PT_save_preferences(Panel):
@@ -210,14 +216,14 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
 
         flow.prop(view, "ui_scale", text="Resolution Scale")
         flow.prop(view, "ui_line_width", text="Line Width")
-        flow.prop(view, "viewport_line_width", text="Viewport Line Width") # BFA - GooEngine
+        flow.prop(view, "viewport_line_width", text="Viewport Line Width")  # BFA - GooEngine
 
         layout.separator()
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         flow.use_property_split = False
-        flow.prop(view, "show_splash", text ="Splash Screen")
+        flow.prop(view, "show_splash", text="Splash Screen")
         flow.prop(view, "show_tooltips")
         if view.show_tooltips:
             flow.prop(view, "show_tooltips_python")
@@ -269,7 +275,7 @@ class USERPREF_PT_interface_translation(InterfacePanel, CenterAlignMixIn, Panel)
 
         col.label(text="Translate", heading_ctxt=i18n_contexts.editor_preferences)
         col.active = (bpy.app.translations.locale != "en_US")
-        col.use_property_split = False #BFA - Left align checkboxes
+        col.use_property_split = False  # BFA - Left align checkboxes
 
         row = col.row()
         row.separator()
@@ -330,7 +336,7 @@ class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
         view = prefs.view
 
         col = layout.column()
-        col.label(text = "Show:")
+        col.label(text="Show:")
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
@@ -628,6 +634,7 @@ class USERPREF_PT_animation_keyframes(AnimationPanel, CenterAlignMixIn, Panel):
         row.prop(edit, "use_keyframe_insert_needed", text="Manual", toggle=1)
         row.prop(edit, "use_auto_keyframe_insert_needed", text="Auto", toggle=1)
 
+
 class USERPREF_PT_animation_autokey(AnimationPanel, CenterAlignMixIn, Panel):
     bl_label = "Auto-Keyframing"
     bl_parent_id = "USERPREF_PT_animation_keyframes"
@@ -721,16 +728,31 @@ class USERPREF_PT_system_os_settings(SystemPanel, CenterAlignMixIn, Panel):
             return False
         return True
 
-    def draw_centered(self, context, layout):
+    @staticmethod
+    def _draw_associate_supported_or_label(context, layout):
         from sys import platform
-        associate_supported = True
         if platform[:3] == "win":
             if context.preferences.system.is_microsoft_store_install:
                 layout.label(text="Microsoft Store installation")
                 layout.label(text="Use Windows 'Default Apps' to associate with blend files")
-                associate_supported = False
+                return False
+        else:
+            # Linux.
+            if bpy.utils.resource_path('SYSTEM'):
+                layout.label(text="System Installation")
+                layout.label(text="File association is handled by the package manager")
+                return False
 
-        if associate_supported:
+            import os
+            if os.environ.get("SNAP"):
+                layout.label(text="Snap Package Installation")
+                layout.label(text="File association is handled by the package manager")
+                return False
+
+        return True
+
+    def draw_centered(self, context, layout):
+        if self._draw_associate_supported_or_label(context, layout):
             layout.label(text="Open blend files with this Bforartists version")
             split = layout.split(factor=0.5)
             split.alignment = 'LEFT'
@@ -829,7 +851,7 @@ class USERPREF_PT_viewport_display(ViewportPanel, CenterAlignMixIn, Panel):
         prefs = context.preferences
         view = prefs.view
 
-        layout.label(text = "Text Info Overlay")
+        layout.label(text="Text Info Overlay")
 
         col = layout.column()
 
@@ -876,7 +898,7 @@ class USERPREF_PT_viewport_display(ViewportPanel, CenterAlignMixIn, Panel):
         layout.separator()
         col = layout.column()
         col.use_property_split = False
-        col.prop(view, "use_fresnel_edit", text = "Fresnel in Edit Mode")
+        col.prop(view, "use_fresnel_edit", text="Fresnel in Edit Mode")
 
 
 class USERPREF_PT_viewport_quality(ViewportPanel, CenterAlignMixIn, Panel):
@@ -931,7 +953,7 @@ class USERPREF_PT_viewport_subdivision(ViewportPanel, CenterAlignMixIn, Panel):
     def draw_centered(self, context, layout):
         prefs = context.preferences
         system = prefs.system
-        layout.use_property_split = False # bfa: align left
+        layout.use_property_split = False  # bfa: align left
         layout.prop(system, "use_gpu_subdivision")
 
 
@@ -1419,7 +1441,6 @@ class ThemeGenericClassGenerator:
                 "wcol": wcol,
             })
 
-
     @staticmethod
     def generate_theme_area_child_panel_classes(parent_id, rna_type, theme_area, datapath):
         def generate_child_panel_classes_recurse(parent_id, rna_type, theme_area, datapath):
@@ -1765,12 +1786,12 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow.prop(paths, "use_file_compression")
         flow.prop(paths, "use_load_ui")
 
-        split = flow.split(factor = 0.5)
+        split = flow.split(factor=0.5)
         row = split.row()
-        row.label(text = "File Preview")
+        row.label(text="File Preview")
         row = split.row()
         row.use_property_split = False
-        row.prop(paths, "file_preview_type", text = "")
+        row.prop(paths, "file_preview_type", text="")
 
         flow.prop(paths, "use_tabs_as_spaces")
         flow.prop(view, "use_save_prompt")
@@ -2067,7 +2088,7 @@ class USERPREF_PT_ndof_settings(Panel):
     @staticmethod
     def draw_settings(layout, props, show_3dview_settings=True):
 
-        #layout.use_property_split = False
+        # layout.use_property_split = False
 
         col = layout.column()
         col.prop(props, "ndof_sensitivity", text="Pan Sensitivity")
@@ -2083,13 +2104,13 @@ class USERPREF_PT_ndof_settings(Panel):
 
             layout.separator()
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         col.use_property_split = False
         if show_3dview_settings:
             col.prop(props, "ndof_show_guide")
         col.prop(props, "ndof_zoom_invert")
 
-        col.label(text = "Pan")
+        col.label(text="Pan")
         row = col.row()
         row.separator()
         row.prop(props, "ndof_lock_camera_pan_zoom")
@@ -2118,9 +2139,9 @@ class USERPREF_PT_ndof_settings(Panel):
 
             layout.separator()
 
-            col = layout.column(align = True)
+            col = layout.column(align=True)
             col.use_property_split = False
-            col.label(text = "Fly/Walk")
+            col.label(text="Fly/Walk")
             row = col.row()
             row.separator()
             row.prop(props, "ndof_lock_horizon")
@@ -2789,6 +2810,7 @@ class USERPREF_PT_experimental_virtual_reality(ExperimentalPanel, Panel):
             ),
         )
 """
+
 
 class USERPREF_PT_experimental_ui(ExperimentalPanel, Panel):
     bl_label = "UI"
