@@ -16,6 +16,7 @@ from bl_ui.properties_paint_common import (
     brush_basic_texpaint_settings,
     brush_basic_gpencil_weight_settings,
     brush_basic_grease_pencil_weight_settings,
+    BrushAssetShelf,
 )
 from bl_ui.properties_grease_pencil_common import (
     AnnotationDataPanel,
@@ -797,7 +798,13 @@ class VIEW3D_HT_header(Header):
             )
 
         # Proportional editing
-        if object_mode in {'EDIT', 'PARTICLE_EDIT', 'SCULPT_GPENCIL', 'EDIT_GPENCIL', 'OBJECT'}:
+        if object_mode in {
+            'EDIT',
+            'PARTICLE_EDIT',
+            'SCULPT_GPENCIL',
+            'EDIT_GPENCIL',
+            'OBJECT',
+        } and context.mode != 'EDIT_ARMATURE':
             row = layout.row(align=True)
             kw = {}
             if object_mode == 'OBJECT':
@@ -835,7 +842,8 @@ class VIEW3D_HT_header(Header):
         shading = view.shading
         overlay = view.overlay
 
-        ALL_MT_editormenu_view3d.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
+        # bfa - show hide the editormenu, editor suffix is needed.
+        ALL_MT_editormenu_view3d.draw_hidden(context, layout)
 
         obj = context.active_object
         mode_string = context.mode
@@ -911,6 +919,8 @@ class VIEW3D_HT_header(Header):
 
             if object_mode == 'PAINT_GPENCIL':
                 row = layout.row(align=True)
+                sub.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
+                sub.separator(factor=0.4)
                 row.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
 
             if object_mode in {'PAINT_GPENCIL', 'EDIT', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}:
@@ -1210,26 +1220,35 @@ class VIEW3D_HT_header(Header):
 
     @staticmethod
     def _sculpt_automasking_icon(sculpt):
-        automask_enabled = (sculpt.use_automasking_topology or
-                            sculpt.use_automasking_face_sets or
-                            sculpt.use_automasking_boundary_edges or
-                            sculpt.use_automasking_boundary_face_sets or
-                            sculpt.use_automasking_cavity or
-                            sculpt.use_automasking_cavity_inverted or
-                            sculpt.use_automasking_start_normal or
-                            sculpt.use_automasking_view_normal)
+        automask_enabled = (
+            sculpt.use_automasking_topology or
+            sculpt.use_automasking_face_sets or
+            sculpt.use_automasking_boundary_edges or
+            sculpt.use_automasking_boundary_face_sets or
+            sculpt.use_automasking_cavity or
+            sculpt.use_automasking_cavity_inverted or
+            sculpt.use_automasking_start_normal or
+            sculpt.use_automasking_view_normal
+        )
 
         return "MOD_MASK" if automask_enabled else "MOD_MASK_OFF"
 
     @staticmethod
     def _gpencil_sculpt_automasking_icon(gpencil_sculpt):
-        automask_enabled = (gpencil_sculpt.use_automasking_stroke or
-                            gpencil_sculpt.use_automasking_layer_stroke or
-                            gpencil_sculpt.use_automasking_material_stroke or
-                            gpencil_sculpt.use_automasking_material_active or
-                            gpencil_sculpt.use_automasking_layer_active)
+        automask_enabled = (
+            gpencil_sculpt.use_automasking_stroke or
+            gpencil_sculpt.use_automasking_layer_stroke or
+            gpencil_sculpt.use_automasking_material_stroke or
+            gpencil_sculpt.use_automasking_material_active or
+            gpencil_sculpt.use_automasking_layer_active
+        )
 
         return "MOD_MASK" if automask_enabled else "MOD_MASK_OFF"
+
+    @staticmethod
+    def _texture_mask_icon(ipaint):
+        mask_enabled = ipaint.use_stencil_layer or ipaint.use_cavity
+        return 'MOD_MASK' if mask_enabled else 'MOD_MASK_OFF'
 
 
 # bfa - show hide the editormenu, editor suffix is needed.
@@ -1238,6 +1257,11 @@ class ALL_MT_editormenu_view3d(Menu):
 
     def draw(self, context):
         self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def _texture_mask_icon(ipaint):
+        mask_enabled = ipaint.use_stencil_layer or ipaint.use_cavity
+        return 'MOD_MASK' if mask_enabled else 'MOD_MASK_OFF'
 
     @staticmethod
     def draw_menus(layout, context):
@@ -1283,10 +1307,10 @@ class VIEW3D_MT_editor_menus(Menu):
                     'SCULPT_GREASE_PENCIL'} and use_gpencil_masking):
                 layout.menu("VIEW3D_MT_select_edit_gpencil")
 
-            if mode_string == "SCULPT_GPENCIL" and use_gpencil_masking: # BFA
+            if mode_string == "SCULPT_GPENCIL" and use_gpencil_masking:  # BFA
                 layout.menu("VIEW3D_MT_sculpt_gpencil_copy")  # bfa menu
 
-            elif mode_string == "VERTEX_GPENCIL": # BFA
+            elif mode_string == "VERTEX_GPENCIL":  # BFA
                 layout.menu("VIEW3D_MT_gpencil_animation")  # BFA
                 layout.menu("GPENCIL_MT_layer_active", text="Active Layer")  # BFA
 
@@ -1297,7 +1321,7 @@ class VIEW3D_MT_editor_menus(Menu):
             elif mesh.use_paint_mask_vertex and mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX'}:
                 layout.menu("VIEW3D_MT_select_paint_mask_vertex")
         elif mode_string not in {'SCULPT', 'SCULPT_CURVES', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL'}:
-            layout.menu("VIEW3D_MT_select_{:s}".format(mode_string.lower()))
+            layout.menu("VIEW3D_MT_select_" + mode_string.lower())
 
         if gp_edit:
             pass
@@ -1307,7 +1331,7 @@ class VIEW3D_MT_editor_menus(Menu):
             layout.menu("VIEW3D_MT_mesh_add", text="Add", text_ctxt=i18n_contexts.operator_default)
         elif mode_string == 'EDIT_CURVE':
             layout.menu("VIEW3D_MT_curve_add", text="Add", text_ctxt=i18n_contexts.operator_default)
-        elif mode_string == "EDIT_CURVES":
+        elif mode_string == 'EDIT_CURVES':
             layout.menu("VIEW3D_MT_edit_curves_add", text="Add", text_ctxt=i18n_contexts.operator_default)
         elif mode_string == 'EDIT_SURFACE':
             layout.menu("VIEW3D_MT_surface_add", text="Add", text_ctxt=i18n_contexts.operator_default)
@@ -1329,7 +1353,7 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_paint_gpencil")
 
         elif edit_object:
-            layout.menu("VIEW3D_MT_edit_{:s}".format(edit_object.type.lower()))
+            layout.menu("VIEW3D_MT_edit_" + edit_object.type.lower())
 
             if mode_string == 'EDIT_MESH':
                 layout.menu("VIEW3D_MT_edit_mesh_vertices")
@@ -1345,13 +1369,13 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_edit_curves_segments")
                 layout.template_node_operator_asset_root_items()
             elif mode_string == 'EDIT_GREASE_PENCIL':
-                layout.menu("VIEW3D_MT_edit_greasepencil_stroke")
                 layout.menu("VIEW3D_MT_edit_greasepencil_point")
+                layout.menu("VIEW3D_MT_edit_greasepencil_stroke")
 
         elif obj:
             if mode_string not in {'PAINT_TEXTURE', 'SCULPT_CURVES', 'SCULPT_GREASE_PENCIL'}:
-                layout.menu("VIEW3D_MT_{:s}".format(mode_string.lower()))
-            if mode_string in {'SCULPT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}: # BFA
+                layout.menu("VIEW3D_MT_" + mode_string.lower())
+            if mode_string in {'SCULPT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:  # BFA
                 layout.menu("VIEW3D_MT_brush")  # BFA
             if mode_string == 'SCULPT':
                 layout.menu("VIEW3D_MT_mask")
@@ -1383,8 +1407,16 @@ class ShowHideMenu:
         layout = self.layout
 
         layout.operator("{:s}.reveal".format(self._operator_name), text="Show Hidden", icon="HIDE_OFF")
-        layout.operator("{:s}.hide".format(self._operator_name), text="Hide Selected", icon="HIDE_ON").unselected = False
-        layout.operator("{:s}.hide".format(self._operator_name), text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
+        layout.operator(
+            "{:s}.hide".format(
+                self._operator_name),
+            text="Hide Selected",
+            icon="HIDE_ON").unselected = False
+        layout.operator(
+            "{:s}.hide".format(
+                self._operator_name),
+            text="Hide Unselected",
+            icon="HIDE_UNSELECTED").unselected = True
 
 
 # Standard transforms which apply to all cases (mix-in class, not used directly).
@@ -1515,7 +1547,7 @@ class VIEW3D_MT_mirror(Menu):
                 props = layout.operator("transform.mirror",
                                         text="{:s} {:s}".format(axis_name, iface_(space_name)),
                                         translate=False,
-                                        icon="MIRROR_" + axis_name) # BFA: set icon
+                                        icon="MIRROR_" + axis_name)  # BFA: set icon
                 props.constraint_axis[axis_index] = True
                 props.orient_type = space_id
 
@@ -1770,7 +1802,8 @@ class VIEW3D_MT_view_pie_menus(Menu):
             icon="MENU_PANEL").name = 'VIEW3D_MT_sculpt_automasking_pie'
         layout.operator("wm.call_menu_pie", text="Weightpaint Vertexgroup Lock",
                         icon="MENU_PANEL").name = 'VIEW3D_MT_wpaint_vgroup_lock_pie'
-        layout.operator("wm.call_menu_pie", text="Keyframe Insert", icon="MENU_PANEL").name = 'ANIM_MT_keyframe_insert_pie'
+        layout.operator("wm.call_menu_pie", text="Keyframe Insert",
+                        icon="MENU_PANEL").name = 'ANIM_MT_keyframe_insert_pie'
         layout.separator()
 
         layout.operator("wm.call_menu_pie", text="Greasepencil Snap", icon="MENU_PANEL").name = 'GPENCIL_MT_snap_pie'
@@ -1783,6 +1816,7 @@ class VIEW3D_MT_view_pie_menus(Menu):
 
         layout.operator("wm.toolbar_fallback_pie", text="Fallback Tool", icon="MENU_PANEL")  # BFA
         layout.operator("view3d.object_mode_pie_or_toggle", text="Modes", icon="MENU_PANEL")  # BFA
+
 
 class VIEW3D_MT_view_cameras(Menu):
     bl_label = "Cameras"
@@ -1802,22 +1836,29 @@ class VIEW3D_MT_view_viewpoint(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("view3d.view_camera", text="Camera", icon="CAMERA_DATA", text_ctxt=i18n_contexts.editor_view3d) #BFA - Icon
+        layout.operator("view3d.view_camera", text="Camera", icon="CAMERA_DATA",
+                        text_ctxt=i18n_contexts.editor_view3d)  # BFA - Icon
 
         layout.separator()
 
-        layout.operator("view3d.view_axis", text="Top", icon="VIEW_TOP", text_ctxt=i18n_contexts.editor_view3d).type = 'TOP'  #BFA - Icon
-        layout.operator("view3d.view_axis", text="Bottom", icon="VIEW_BOTTOM", text_ctxt=i18n_contexts.editor_view3d).type = 'BOTTOM'  #BFA - Icon
+        layout.operator("view3d.view_axis", text="Top", icon="VIEW_TOP",
+                        text_ctxt=i18n_contexts.editor_view3d).type = 'TOP'  # BFA - Icon
+        layout.operator("view3d.view_axis", text="Bottom", icon="VIEW_BOTTOM",
+                        text_ctxt=i18n_contexts.editor_view3d).type = 'BOTTOM'  # BFA - Icon
 
         layout.separator()
 
-        layout.operator("view3d.view_axis", text="Front", icon="VIEW_FRONT", text_ctxt=i18n_contexts.editor_view3d).type = 'FRONT'  #BFA - Icon
-        layout.operator("view3d.view_axis", text="Back", icon="VIEW_BACK", text_ctxt=i18n_contexts.editor_view3d).type = 'BACK'  #BFA - Icon
+        layout.operator("view3d.view_axis", text="Front", icon="VIEW_FRONT",
+                        text_ctxt=i18n_contexts.editor_view3d).type = 'FRONT'  # BFA - Icon
+        layout.operator("view3d.view_axis", text="Back", icon="VIEW_BACK",
+                        text_ctxt=i18n_contexts.editor_view3d).type = 'BACK'  # BFA - Icon
 
         layout.separator()
 
-        layout.operator("view3d.view_axis", text="Right", icon="VIEW_RIGHT", text_ctxt=i18n_contexts.editor_view3d).type = 'RIGHT'  #BFA - Icon
-        layout.operator("view3d.view_axis", text="Left", icon="VIEW_LEFT", text_ctxt=i18n_contexts.editor_view3d).type = 'LEFT'  #BFA - Icon
+        layout.operator("view3d.view_axis", text="Right", icon="VIEW_RIGHT",
+                        text_ctxt=i18n_contexts.editor_view3d).type = 'RIGHT'  # BFA - Icon
+        layout.operator("view3d.view_axis", text="Left", icon="VIEW_LEFT",
+                        text_ctxt=i18n_contexts.editor_view3d).type = 'LEFT'  # BFA - Icon
 
 
 # bfa menu
@@ -2909,7 +2950,9 @@ class VIEW3D_MT_mesh_add(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "VIEW3D_MT_mesh_add" # BFA - make sure you can see it in the header
+        # BFA - make sure you can see it in the header
+        layout.operator("WM_OT_search_single_menu", text="Search...",
+                        icon='VIEWZOOM').menu_idname = "VIEW3D_MT_mesh_add"
 
         layout.separator()
 
@@ -3144,7 +3187,8 @@ class VIEW3D_MT_add(Menu):
             layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "VIEW3D_MT_add"
             layout.separator()
         else:
-            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "VIEW3D_MT_add" # BFA - make sure you can see it in the header
+            # BFA - make sure you can see it in the header
+            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "VIEW3D_MT_add"
 
         layout.separator()
 
@@ -3335,7 +3379,8 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_liboverride")
         layout.menu("VIEW3D_MT_object_relations")
         layout.menu("VIEW3D_MT_object_parent")
-        layout.menu("VIEW3D_MT_object_constraints")
+        layout.menu("VIEW3D_MT_object_modifiers", icon='MODIFIER')
+        layout.menu("VIEW3D_MT_object_constraints", icon='CONSTRAINT')
         layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_make_links")
 
@@ -3521,7 +3566,10 @@ class VIEW3D_MT_object_animation(Menu):
         layout = self.layout
 
         layout.operator("anim.keyframe_insert", text="Insert Keyframe", icon='KEYFRAMES_INSERT')
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEYFRAMES_INSERT').always_prompt = True
+        layout.operator(
+            "anim.keyframe_insert_menu",
+            text="Insert Keyframe with Keying Set",
+            icon='KEYFRAMES_INSERT').always_prompt = True
         layout.operator("anim.keyframe_delete_v3d", text="Delete Keyframes", icon='KEYFRAMES_REMOVE')
         layout.operator("anim.keyframe_clear_v3d", text="Clear Keyframes", icon='KEYFRAMES_CLEAR')
         layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon='KEYINGSET')
@@ -3804,7 +3852,10 @@ class VIEW3D_MT_object_context_menu(Menu):
         layout.separator()
 
         layout.operator("anim.keyframe_insert", text="Insert Keyframe", icon='KEYFRAMES_INSERT')
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEYFRAMES_INSERT').always_prompt = True
+        layout.operator(
+            "anim.keyframe_insert_menu",
+            text="Insert Keyframe with Keying Set",
+            icon='KEYFRAMES_INSERT').always_prompt = True
 
         layout.separator()
 
@@ -3816,6 +3867,7 @@ class VIEW3D_MT_object_context_menu(Menu):
         layout.menu("VIEW3D_MT_object_showhide")  # BFA - added to context menu
 
         layout.template_node_operator_asset_menu_items(catalog_path="Object")
+
 
 class VIEW3D_MT_object_shading(Menu):
     # XXX, this menu is a place to store shading operator in object mode
@@ -3967,7 +4019,7 @@ class VIEW3D_MT_object_collection(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        #layout.operator("object.move_to_collection", icon='GROUP') #BFA - Double entry
+        # layout.operator("object.move_to_collection", icon='GROUP') #BFA - Double entry
         layout.operator("object.link_to_collection", icon='GROUP')
 
         layout.separator()
@@ -3995,6 +4047,28 @@ class VIEW3D_MT_object_constraints(Menu):
         layout.separator()
 
         layout.operator("object.constraints_clear", icon="CLEAR_CONSTRAINT")
+
+
+class VIEW3D_MT_object_modifiers(Menu):
+    bl_label = "Modifiers"
+
+    def draw(self, _context):
+        active_object = bpy.context.active_object
+        supported_types = {'MESH', 'CURVE', 'CURVES', 'SURFACE', 'FONT', 'VOLUME', 'GREASEPENCIL'}
+
+        layout = self.layout
+
+        if active_object:
+            if active_object.type in supported_types:
+                layout.menu("OBJECT_MT_modifier_add", text="Add Modifier")
+            elif active_object.type == 'GPENCIL':
+                layout.operator("object.gpencil_modifier_add", text="Add Modifier")
+
+        layout.operator("object.modifiers_copy_to_selected", text="Copy Modifiers to Selected Objects")
+
+        layout.separator()
+
+        layout.operator("object.modifiers_clear")
 
 
 class VIEW3D_MT_object_quick_effects(Menu):
@@ -4350,6 +4424,19 @@ class VIEW3D_MT_gpencil_vertex_group(Menu):
             layout.operator("gpencil.vertex_group_deselect", text="Deselect", icon="SELECT_NONE")
 
 
+class VIEW3D_MT_greasepencil_vertex_group(Menu):
+    bl_label = "Vertex Groups"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'EXEC_AREA'
+        ob = context.active_object
+
+        layout.operator("object.vertex_group_add", text="Add New Group")
+        ob = context.active_object
+
+
 class VIEW3D_MT_paint_weight_lock(Menu):
     bl_label = "Vertex Group Locks"
 
@@ -4508,32 +4595,26 @@ class VIEW3D_MT_sculpt(Menu):
         props = layout.operator("sculpt.face_set_edit", text="Fair Positions", icon='POSITION')
         props.mode = 'FAIR_POSITIONS'
 
-        # Fair Tangency
-        props = layout.operator("sculpt.face_set_edit", text="Fair Tangency", icon='NODE_TANGENT')
-        props.mode = 'FAIR_TANGENCY'
+        props = layout.operator("paint.hide_show", text="Box Show")
+        props.action = 'SHOW'
 
-        layout.separator()
+        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Hide")
+        props.action = 'HIDE'
 
-        sculpt_filters_types = [
-            ('SMOOTH', iface_("Smooth"), 'PARTICLEBRUSH_SMOOTH'),
-            ('SURFACE_SMOOTH', iface_("Surface Smooth"), 'SURFACE_SMOOTH'),
-            ('INFLATE', iface_("Inflate"), 'INFLATE'),
-            ('RELAX', iface_("Relax Topology"), 'RELAX_TOPOLOGY'),
-            ('RELAX_FACE_SETS', iface_("Relax Face Sets"), 'RELAX_FACE_SETS'),
-            ('SHARPEN', iface_("Sharpen"), 'SHARPEN'),
-            ('ENHANCE_DETAILS', iface_("Enhance Details"), 'ENHANCE'),
-            ('ERASE_DISCPLACEMENT', iface_("Erase Multires Displacement"), 'DELETE'),
-            ('RANDOM', iface_("Randomize"), 'RANDOMIZE')
-        ]
-        # bfa - added icons to the list
-        for filter_type, ui_name, icon in sculpt_filters_types:
-            props = layout.operator("sculpt.mesh_filter", text=ui_name, icon=icon, translate=False)
-            props.type = filter_type
+        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show")
+        props.action = 'SHOW'
 
-        layout.separator()
+        props = layout.operator("paint.hide_show_line_gesture", text="Line Hide")
+        props.action = 'HIDE'
 
-        layout.menu("VIEW3D_MT_subdivision_set")  # bfa - add subdivion set menu
-        layout.operator("sculpt.sample_color", text="Sample Color", icon='EYEDROPPER')
+        props = layout.operator("paint.hide_show_line_gesture", text="Line Show")
+        props.action = 'SHOW'
+
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Hide")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Show")
+        props.action = 'SHOW'
 
         layout.separator()
 
@@ -4587,6 +4668,9 @@ class VIEW3D_MT_sculpt_legacy(Menu):
         props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim", icon='LASSO_TRIM')
         props.trim_mode = 'DIFFERENCE'
 
+        props = layout.operator("sculpt.trim_line_gesture", text="Line Trim")
+        props.trim_mode = 'DIFFERENCE'
+
         props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon='BOX_ADD')
         props.trim_mode = 'JOIN'
 
@@ -4629,7 +4713,6 @@ class VIEW3D_MT_sculpt_showhide(Menu):
 
         props = layout.operator("paint.hide_show_masked", text="Hide Masked", icon="MOD_MASK_OFF")
         props.action = 'HIDE'
-
 
 
 class VIEW3D_MT_sculpt_curves(Menu):
@@ -4753,12 +4836,18 @@ class VIEW3D_MT_face_sets_showhide(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sculpt.face_set_change_visibility", text="Toggle Visibility", icon="HIDE_UNSELECTED").mode = 'TOGGLE'
+        layout.operator(
+            "sculpt.face_set_change_visibility",
+            text="Toggle Visibility",
+            icon="HIDE_UNSELECTED").mode = 'TOGGLE'
 
         layout.separator()
 
         layout.operator("paint.hide_show_all", text="Show All Geometry", icon="HIDE_OFF").action = 'SHOW'
-        layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set", icon="HIDE_ON").mode = 'HIDE_ACTIVE'
+        layout.operator(
+            "sculpt.face_set_change_visibility",
+            text="Hide Active Face Set",
+            icon="HIDE_ON").mode = 'HIDE_ACTIVE'
 
 
 class VIEW3D_MT_face_sets(Menu):
@@ -4997,7 +5086,10 @@ class VIEW3D_MT_pose(Menu):
 
         layout.separator()
 
-        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP_BONE") #BFA - added for consistency
+        layout.operator(
+            "armature.move_to_collection",
+            text="Move to Bone Collection",
+            icon="GROUP_BONE")  # BFA - added for consistency
         layout.menu("VIEW3D_MT_bone_collections")
 
         layout.separator()
@@ -5099,12 +5191,12 @@ class VIEW3D_MT_bone_collections(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("armature.assign_to_collection", text="Add", icon="COLLECTION_BONE_ADD")  #BFA - shortned label
+        layout.operator("armature.assign_to_collection", text="Add", icon="COLLECTION_BONE_ADD")  # BFA - shortned label
 
         layout.separator()
 
         layout.operator("armature.collection_show_all", icon="SHOW_UNSELECTED")
-        props = layout.operator("armature.collection_create_and_assign", #BFA - shortned label
+        props = layout.operator("armature.collection_create_and_assign",  # BFA - shortned label
                                 text="Assign to New",
                                 icon='COLLECTION_BONE_NEW')
         props.name = "New Collection"
@@ -5183,7 +5275,10 @@ class VIEW3D_MT_pose_context_menu(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("anim.keyframe_insert", text="Insert Keyframe", icon='KEYFRAMES_INSERT')
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEYFRAMES_INSERT').always_prompt = True
+        layout.operator(
+            "anim.keyframe_insert_menu",
+            text="Insert Keyframe with Keying Set",
+            icon='KEYFRAMES_INSERT').always_prompt = True
 
         layout.separator()
 
@@ -5212,7 +5307,10 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP_BONE") #BFA - added to context menu
+        layout.operator(
+            "armature.move_to_collection",
+            text="Move to Bone Collection",
+            icon="GROUP_BONE")  # BFA - added to context menu
 
         layout.separator()
 
@@ -5818,7 +5916,7 @@ class VIEW3D_MT_edit_mesh_faces_data(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.flip_quad_tessellation", icon = "FLIP")
+        layout.operator("mesh.flip_quad_tessellation", icon="FLIP")
 
         if with_freestyle:
             layout.separator()
@@ -6443,8 +6541,14 @@ class VIEW3D_MT_edit_font_chars(Menu):
         layout.separator()
 
         layout.operator("font.text_insert", text="German Eszett \u00DF", icon="GERMAN_S").text = "\u00DF"
-        layout.operator("font.text_insert", text="Inverted Question Mark \u00BF", icon="SPANISH_QUESTION").text = "\u00BF"
-        layout.operator("font.text_insert", text="Inverted Exclamation Mark \u00A1", icon="SPANISH_EXCLAMATION").text = "\u00A1"
+        layout.operator(
+            "font.text_insert",
+            text="Inverted Question Mark \u00BF",
+            icon="SPANISH_QUESTION").text = "\u00BF"
+        layout.operator(
+            "font.text_insert",
+            text="Inverted Exclamation Mark \u00A1",
+            icon="SPANISH_EXCLAMATION").text = "\u00A1"
 
 
 class VIEW3D_MT_edit_font_kerning(Menu):
@@ -6738,7 +6842,10 @@ class VIEW3D_MT_armature_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("armature.move_to_collection", text="Move to Bone Collection", icon="GROUP_BONE") # BFA - added to context menu
+        layout.operator(
+            "armature.move_to_collection",
+            text="Move to Bone Collection",
+            icon="GROUP_BONE")  # BFA - added to context menu
 
         layout.separator()
 
@@ -7164,6 +7271,10 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.separator()
 
+        layout.operator("grease_pencil.extrude_move", text="Extrude")
+
+        layout.separator()
+
         layout.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
         layout.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
 
@@ -7196,6 +7307,7 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
         layout.separator()
 
+        layout.operator("grease_pencil.cyclical_set", text="Close").type = 'CLOSE'
         layout.operator("grease_pencil.cyclical_set", text="Toggle Cyclic").type = 'TOGGLE'
         layout.operator_menu_enum("grease_pencil.caps_set", text="Set Caps", property="type")
         layout.operator("grease_pencil.stroke_switch_direction")
@@ -7214,6 +7326,10 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
     def draw(self, _context):
         layout = self.layout
         layout.operator("grease_pencil.stroke_smooth", text="Smooth")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_greasepencil_vertex_group")
 
 
 class VIEW3D_MT_edit_curves_add(Menu):
@@ -7251,6 +7367,7 @@ class VIEW3D_MT_edit_curves_control_points(Menu):
 
         layout.operator_menu_enum("curves.handle_type_set", "type")
 
+
 class VIEW3D_MT_edit_curves_segments(Menu):
     bl_label = "Segments"
 
@@ -7287,20 +7404,21 @@ class VIEW3D_MT_view_pie(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        #pie.operator_enum("view3d.view_axis", "type") #BFA - Opted to the operators that contain consistenty iconography
+        # pie.operator_enum("view3d.view_axis", "type") #BFA - Opted to the
+        # operators that contain consistenty iconography
 
         # 4 - LEFT
-        pie.operator("view3d.view_axis", text="Left", icon='VIEW_LEFT').type = 'LEFT' #BFA - Icon changed
+        pie.operator("view3d.view_axis", text="Left", icon='VIEW_LEFT').type = 'LEFT'  # BFA - Icon changed
         # 6 - RIGHT
-        pie.operator("view3d.view_axis", text="Right", icon='VIEW_RIGHT').type = 'RIGHT' #BFA - Icon changed
+        pie.operator("view3d.view_axis", text="Right", icon='VIEW_RIGHT').type = 'RIGHT'  # BFA - Icon changed
         # 2 - BOTTOM
-        pie.operator("view3d.view_axis", text="Bottom", icon='VIEW_BOTTOM').type = 'BOTTOM'  #BFA - Icon changed
+        pie.operator("view3d.view_axis", text="Bottom", icon='VIEW_BOTTOM').type = 'BOTTOM'  # BFA - Icon changed
         # 8 - TOP
-        pie.operator("view3d.view_axis", text="Top", icon='VIEW_TOP').type = 'TOP'  #BFA - Icon changed
+        pie.operator("view3d.view_axis", text="Top", icon='VIEW_TOP').type = 'TOP'  # BFA - Icon changed
         # 7 - TOP - LEFT
-        pie.operator("view3d.view_axis", text="Back", icon='VIEW_BACK').type = 'BACK' #BFA - Icon Added
+        pie.operator("view3d.view_axis", text="Back", icon='VIEW_BACK').type = 'BACK'  # BFA - Icon Added
         # 9 - TOP - RIGHT
-        pie.operator("view3d.view_axis", text="Front", icon='VIEW_FRONT').type = 'FRONT' #BFA - Icon Added
+        pie.operator("view3d.view_axis", text="Front", icon='VIEW_FRONT').type = 'FRONT'  # BFA - Icon Added
 
         # 1 - BOTTOM - LEFT
         pie.operator("view3d.view_camera", text="View Camera", icon='CAMERA_DATA')
@@ -7452,23 +7570,23 @@ class VIEW3D_MT_sculpt_mask_edit_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        props = pie.operator("paint.mask_flood_fill", text="Invert Mask", icon="INVERT_MASK") #BFA - icon
+        props = pie.operator("paint.mask_flood_fill", text="Invert Mask", icon="INVERT_MASK")  # BFA - icon
         props.mode = 'INVERT'
-        props = pie.operator("paint.mask_flood_fill", text="Clear Mask", icon="CLEAR_MASK") #BFA - icon
+        props = pie.operator("paint.mask_flood_fill", text="Clear Mask", icon="CLEAR_MASK")  # BFA - icon
         props.mode = 'VALUE'
         props.value = 0.0
-        props = pie.operator("sculpt.mask_filter", text="Smooth Mask", icon="PARTICLEBRUSH_SMOOTH") #BFA - icon
+        props = pie.operator("sculpt.mask_filter", text="Smooth Mask", icon="PARTICLEBRUSH_SMOOTH")  # BFA - icon
         props.filter_type = 'SMOOTH'
-        props = pie.operator("sculpt.mask_filter", text="Sharpen Mask", icon="SHARPEN") #BFA - icon
+        props = pie.operator("sculpt.mask_filter", text="Sharpen Mask", icon="SHARPEN")  # BFA - icon
         props.filter_type = 'SHARPEN'
-        props = pie.operator("sculpt.mask_filter", text="Grow Mask", icon="SELECTMORE") #BFA - icon
+        props = pie.operator("sculpt.mask_filter", text="Grow Mask", icon="SELECTMORE")  # BFA - icon
         props.filter_type = 'GROW'
-        props = pie.operator("sculpt.mask_filter", text="Shrink Mask", icon="SELECTLESS") #BFA - icon
+        props = pie.operator("sculpt.mask_filter", text="Shrink Mask", icon="SELECTLESS")  # BFA - icon
         props.filter_type = 'SHRINK'
-        props = pie.operator("sculpt.mask_filter", text="Increase Contrast", icon="INC_CONTRAST") #BFA - icon
+        props = pie.operator("sculpt.mask_filter", text="Increase Contrast", icon="INC_CONTRAST")  # BFA - icon
         props.filter_type = 'CONTRAST_INCREASE'
         props.auto_iteration_count = False
-        props = pie.operator("sculpt.mask_filter", text="Decrease Contrast", icon="DEC_CONTRAST") #BFA - icon
+        props = pie.operator("sculpt.mask_filter", text="Decrease Contrast", icon="DEC_CONTRAST")  # BFA - icon
         props.filter_type = 'CONTRAST_DECREASE'
         props.auto_iteration_count = False
 
@@ -7517,15 +7635,15 @@ class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        props = pie.operator("sculpt.face_sets_create", text="Face Set from Masked", icon="MOD_MASK") #BFA - Icon
+        props = pie.operator("sculpt.face_sets_create", text="Face Set from Masked", icon="MOD_MASK")  # BFA - Icon
         props.mode = 'MASKED'
 
-        props = pie.operator("sculpt.face_sets_create", text="Face Set from Visible", icon="FILL_MASK") #BFA - Icon
+        props = pie.operator("sculpt.face_sets_create", text="Face Set from Visible", icon="FILL_MASK")  # BFA - Icon
         props.mode = 'VISIBLE'
 
-        pie.operator("paint.visibility_invert", text="Invert Visible", icon="INVERT_MASK") #BFA - Icon
+        pie.operator("paint.visibility_invert", text="Invert Visible", icon="INVERT_MASK")  # BFA - Icon
 
-        props = pie.operator("paint.hide_show_all", text="Show All", icon="HIDE_OFF") #BFA - Icon
+        props = pie.operator("paint.hide_show_all", text="Show All")
         props.action = "SHOW"
 
 
@@ -10052,12 +10170,6 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-            # Copy/paste
-            col.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
-            col.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
-
-            col.separator()
-
             # Main Strokes Operators
             col.operator("grease_pencil.stroke_subdivide", text="Subdivide")
             col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth")
@@ -10079,7 +10191,14 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
+            # Copy/paste
+            col.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
+            col.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
             col.operator("grease_pencil.duplicate_move", text="Duplicate")
+
+            col.separator()
+
+            col.operator("grease_pencil.extrude_move", text="Extrude")
 
             col.separator()
 
@@ -10093,12 +10212,6 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
         if is_stroke_mode:
             col = row.column(align=True)
             col.label(text="Stroke", icon='GP_SELECT_STROKES')
-
-            col.separator()
-
-            # Copy/paste
-            col.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
-            col.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
 
             col.separator()
 
@@ -10126,7 +10239,14 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
+            # Copy/paste
+            col.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
+            col.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
             col.operator("grease_pencil.duplicate_move", text="Duplicate")
+
+            col.separator()
+
+            col.operator("grease_pencil.extrude_move", text="Extrude")
 
             col.separator()
 
@@ -10699,8 +10819,8 @@ class VIEW3D_PT_curves_sculpt_add_shape(Panel):
         settings = UnifiedPaintPanel.paint_settings(context)
         brush = settings.brush
 
-        col = layout.column(align = True)
-        col.label(text = "Interpolate")
+        col = layout.column(align=True)
+        col.label(text="Interpolate")
 
         row = col.row()
         row.separator()
@@ -10791,24 +10911,11 @@ class VIEW3D_PT_viewport_debug(Panel):
         layout.prop(overlay, "use_debug_freeze_view_culling")
 
 
-class VIEW3D_AST_sculpt_brushes(bpy.types.AssetShelf):
+class VIEW3D_AST_sculpt_brushes(BrushAssetShelf, bpy.types.AssetShelf):
     # Experimental: Asset shelf for sculpt brushes, only shows up if both the
     # "Asset Shelf" and the "Extended Asset Browser" experimental features are
     # enabled.
-
     bl_space_type = 'VIEW_3D'
-
-    @classmethod
-    def poll(cls, context):
-        prefs = context.preferences
-        if not prefs.experimental.use_extended_asset_browser:
-            return False
-
-        return context.mode == 'SCULPT'
-
-    @classmethod
-    def asset_poll(cls, asset):
-        return asset.id_type == 'BRUSH'
 
 
 classes = (
@@ -10904,6 +11011,7 @@ classes = (
     VIEW3D_MT_object_track,
     VIEW3D_MT_object_collection,
     VIEW3D_MT_object_constraints,
+    VIEW3D_MT_object_modifiers,
     VIEW3D_MT_object_quick_effects,
     VIEW3D_MT_object_showhide,
     VIEW3D_MT_object_cleanup,
@@ -10916,6 +11024,7 @@ classes = (
     VIEW3D_MT_hook,
     VIEW3D_MT_vertex_group,
     VIEW3D_MT_gpencil_vertex_group,
+    VIEW3D_MT_greasepencil_vertex_group,
     VIEW3D_MT_paint_weight,
     VIEW3D_MT_paint_weight_legacy,  # bfa menu
     VIEW3D_MT_paint_weight_lock,
@@ -10927,7 +11036,7 @@ classes = (
     VIEW3D_MT_sculpt_set_pivot,
     VIEW3D_MT_mask,
     VIEW3D_MT_mask_legacy,  # bfa menu
-    VIEW3D_MT_face_sets_showhide, # bfa menu
+    VIEW3D_MT_face_sets_showhide,  # bfa menu
     VIEW3D_MT_face_sets,
     VIEW3D_MT_face_sets_init,
     VIEW3D_MT_random_mask,

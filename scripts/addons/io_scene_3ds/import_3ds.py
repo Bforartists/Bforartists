@@ -14,7 +14,6 @@ from pathlib import Path
 
 BOUNDS_3DS = []
 
-
 ###################
 # Data Structures #
 ###################
@@ -176,7 +175,6 @@ FALLOFF_TRACK_TAG = 0xB028  # Keyframe spotlight falloff track
 HIDE_TRACK_TAG = 0xB029  # Keyframe object hide track
 OBJECT_NODE_ID = 0xB030  # Keyframe object node id
 PARENT_NAME = 0x80F0  # Object parent name tree (dot seperated)
-
 ROOT_OBJECT = 0xFFFF
 
 global scn
@@ -481,13 +479,9 @@ def process_next_chunk(context, file, previous_chunk, imported_objects,
         if ContextMesh_smooth:
             for f, pl in enumerate(bmesh.polygons):
                 smoothface = ContextMesh_smooth[f]
-                if smoothface > 0:
-                    bmesh.polygons[f].use_smooth = True
-                else:
-                    bmesh.polygons[f].use_smooth = False
+                bmesh.polygons[f].use_smooth = True if smoothface > 0 else False
         else:
-            for poly in bmesh.polygons:
-                poly.use_smooth = False
+            bmesh.polygons.foreach_set("use_smooth", [False] * len(bmesh.polygons))
 
         if contextMatrix:
             if WORLD_MATRIX:
@@ -571,12 +565,11 @@ def process_next_chunk(context, file, previous_chunk, imported_objects,
                 contextWrapper.node_principled_bsdf.inputs['Sheen Weight'].default_value = float(read_float(temp_chunk))
 
             elif temp_chunk.ID == MAT_MAP_TILING:
-                """Control bit flags, where 0x1 activates decaling, 0x2 activates mirror,
-                0x8 activates inversion, 0x10 deactivates tiling, 0x20 activates summed area sampling,
-                0x40 activates alpha source, 0x80 activates tinting, 0x100 ignores alpha, 0x200 activates RGB tint.
-                Bits 0x80, 0x100, and 0x200 are only used with TEXMAP, TEX2MAP, and SPECMAP chunks.
-                0x40, when used with a TEXMAP, TEX2MAP, or SPECMAP chunk must be accompanied with a tint bit,
-                either 0x100 or 0x200, tintcolor will be processed if colorchunks are present."""
+                """Control bit flags, 0x1 activates decaling, 0x2 activates mirror, 0x8 activates inversion,
+                0x10 deactivates tiling, 0x20 activates summed area sampling, 0x40 activates alpha source,
+                0x80 activates tinting, 0x100 ignores alpha, 0x200 activates RGB tint. Bits 0x80, 0x100, and 0x200
+                are only used with TEXMAP, TEX2MAP, and SPECMAP chunks. 0x40, when used with a TEXMAP, TEX2MAP, or SPECMAP chunk
+                must be accompanied with a tint bit, either 0x100 or 0x200, tintcolor will be processed if colorchunks are present."""
                 tiling = read_short(temp_chunk)
                 if tiling & 0x1:
                     extend = 'decal'
@@ -1220,18 +1213,25 @@ def process_next_chunk(context, file, previous_chunk, imported_objects,
             contextLamp.data.use_nodes = True
             nodes = contextLamp.data.node_tree.nodes
             links = contextLamp.data.node_tree.links
+            mix = nodes.new(type='ShaderNodeMixRGB')
+            rgb = nodes.new(type='ShaderNodeRGB')
+            mix.location = (-140, 320)
+            rgb.location = (-400, 120)
             gobo_name, read_str_len = read_string(file)
             new_chunk.bytes_read += read_str_len
             projection = nodes.new(type='ShaderNodeTexImage')
             projection.label = gobo_name
-            projection.location = (-340, 360)
+            projection.location = (-480, 420)
             projection.image = load_image(gobo_name, dirname, place_holder=False, recursive=IMAGE_SEARCH, check_existing=True)
             emitnode = next((node for node in nodes if node.type == 'EMISSION'), False)
-            emission = emitnode if emitnode else nodes.new(type='ShaderNodeEmission')
-            emission.label = "Projector"
-            emission.location = (0, 300)
-            links.new(emission.outputs['Emission'], nodes['Light Output'].inputs[0])
-            links.new(projection.outputs['Color'], emission.inputs[0])
+            emit = emitnode if emitnode else nodes.new(type='ShaderNodeEmission')
+            emit.label = "Projector"
+            emit.location = (80, 300)
+            emit.inputs[0].default_value[:3] = mix.inputs[2].default_value[:3] = rgb.outputs[0].default_value[:3] = contextLamp.data.color
+            links.new(emit.outputs['Emission'], nodes['Light Output'].inputs[0])
+            links.new(projection.outputs['Color'], mix.inputs[1])
+            links.new(mix.outputs[0], emit.inputs[0])
+            links.new(rgb.outputs[0], mix.inputs[2])
         elif CreateLightObject and new_chunk.ID == OBJECT_HIERARCHY:  # Hierarchy
             child_id = get_hierarchy(new_chunk)
         elif CreateLightObject and new_chunk.ID == OBJECT_PARENT:
@@ -1395,9 +1395,23 @@ def process_next_chunk(context, file, previous_chunk, imported_objects,
             keyframe_data = {}
             keyframe_data[0] = child.data.color[:]
             child.data.color = read_track_data(new_chunk)[0]
+            child.data.use_nodes = True
+            tree = child.data.node_tree
+            emitnode = next((nd for nd in tree.nodes if nd.type == 'EMISSION'), False)
+            colornode = next((nd for nd in tree.nodes if nd.type == 'RGB'), False)
+            if emitnode:
+                emitnode.inputs[0].default_value[:3] = child.data.color
+            if colornode:
+                colornode.outputs[0].default_value[:3] = child.data.color
             for keydata in keyframe_data.items():
                 child.data.color = keydata[1]
                 child.data.keyframe_insert(data_path="color", frame=keydata[0])
+                if emitnode:
+                    emitnode.inputs[0].default_value[:3] = keydata[1]
+                    tree.keyframe_insert(data_path="nodes[\"Emission\"].inputs[0].default_value", frame=keydata[0])
+                if colornode:
+                    colornode.outputs[0].default_value[:3] = keydata[1]
+                    tree.keyframe_insert(data_path="nodes[\"RGB\"].outputs[0].default_value", frame=keydata[0])
             contextTrack_flag = False
 
         elif KEYFRAME and new_chunk.ID == POS_TRACK_TAG and tracktype == 'OBJECT':  # Translation
@@ -1584,20 +1598,21 @@ def process_next_chunk(context, file, previous_chunk, imported_objects,
     # Assign parents to objects
     # check _if_ we need to assign first because doing so recalcs the depsgraph
     for ind, ob in enumerate(object_list):
+        if ob is None:
+            continue
         parent = object_parent[ind]
         if parent == ROOT_OBJECT:
-            if ob is not None:
-                ob.parent = None
+            ob.parent = None
         elif parent not in object_dict:
             try:
                 ob.parent = object_list[parent]
-            except:  # seems object is None or not in list
-                object_list.pop(ind)
+            except Exception as exc:
+                print("/tError: ", exc)
         else:  # get parent from node_id number
             try:
                 ob.parent = object_dict.get(parent)
-            except:  # object is None or self to parent exception
-                object_list.pop(ind)
+            except:  # self to parent exception
+                pass
 
         #pivot_list[ind] += pivot_list[parent]  # Not sure this is correct, should parent space matrix be applied before combining?
 
@@ -1621,8 +1636,8 @@ def process_next_chunk(context, file, previous_chunk, imported_objects,
 
     # fix pivots
     for ind, ob in enumerate(object_list):
-        if ob is None:  # remove None
-            object_list.remove(ob)
+        if ob is None:
+            continue
         elif ob.type == 'MESH':
             pivot = pivot_list[ind]
             pivot_matrix = object_matrix.get(ob, mathutils.Matrix())  # unlikely to fail
@@ -1658,12 +1673,10 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, UNITS=False, IMAGE_SEARCH=True,
     duration = time.time()
     current_chunk = Chunk()
     file = open(filepath, 'rb')
-    context.window.cursor_set('WAIT')
 
     # here we go!
     read_chunk(file, current_chunk)
     if current_chunk.ID != PRIMARY:
-        context.window.cursor_set('DEFAULT')
         print("\tFatal Error:  Not a valid 3ds file: %r" % filepath)
         file.close()
         return
@@ -1698,6 +1711,7 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, UNITS=False, IMAGE_SEARCH=True,
         elif unit_length == 'MICROMETERS':
             MEASURE = 0.000001
 
+    context.window.cursor_set('WAIT')
     imported_objects = []  # Fill this list with objects
     process_next_chunk(context, file, current_chunk, imported_objects, CONSTRAIN, FILTER,
                        IMAGE_SEARCH, WORLD_MATRIX, KEYFRAME, APPLY_MATRIX, CONVERSE, MEASURE, CURSOR)
@@ -1741,30 +1755,6 @@ def load_3ds(filepath, context, CONSTRAIN=10.0, UNITS=False, IMAGE_SEARCH=True,
                 bpy.ops.object.rotation_clear()
                 bpy.ops.object.location_clear()
                 bpy.ops.object.scale_clear()
-
-    """
-    if IMPORT_AS_INSTANCE:
-        name = filepath.split('\\')[-1].split('/')[-1]
-        # Create a group for this import.
-        group_scn = Scene.New(name)
-        for ob in imported_objects:
-            group_scn.link(ob) # dont worry about the layers
-
-        grp = Blender.Group.New(name)
-        grp.objects = imported_objects
-        grp_ob = Object.New('Empty', name)
-        grp_ob.enableDupGroup = True
-        grp_ob.DupGroup = grp
-        scn.link(grp_ob)
-        grp_ob.Layers = Layers
-        grp_ob.sel = 1
-    else:
-        # Select all imported objects.
-        for ob in imported_objects:
-            scn.link(ob)
-            ob.Layers = Layers
-            ob.sel = 1
-    """
 
     context.view_layer.update()
 

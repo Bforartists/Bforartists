@@ -35,6 +35,7 @@ struct GPUMaterial;
 struct GPUNodeStack;
 struct ID;
 struct ImBuf;
+struct LibraryForeachIDData;
 struct Light;
 struct Main;
 struct Material;
@@ -348,6 +349,13 @@ struct bNodeType {
   /** Get extra information that is drawn next to the node. */
   NodeExtraInfoFunction get_extra_info;
 
+  /**
+   * Registers operators that are specific to this node. This allows nodes to be more
+   * self-contained compared to the alternative to registering all operators in a more central
+   * place.
+   */
+  void (*register_operators)();
+
   /** True when the node cannot be muted. */
   bool no_muting;
   /** True when the node still works but it's usage is discouraged. */
@@ -501,8 +509,11 @@ void ntreeSetOutput(bNodeTree *ntree);
 
 /**
  * Returns localized tree for execution in threads.
+ *
+ * \param new_owner_id: the owner ID of the localized nodetree, may be null if unknown or
+ * irrelevant.
  */
-bNodeTree *ntreeLocalize(bNodeTree *ntree);
+bNodeTree *ntreeLocalize(bNodeTree *ntree, ID *new_owner_id);
 
 /**
  * This is only direct data, tree itself should have been written.
@@ -634,7 +645,11 @@ bool nodeIsParentAndChild(const bNode *parent, const bNode *child);
 
 int nodeCountSocketLinks(const bNodeTree *ntree, const bNodeSocket *sock);
 
-void nodeSetSelected(bNode *node, bool select);
+/**
+ * Selects or deselects the node. If the node is deselected, all its sockets are deselected too.
+ * \return True if any selection was changed.
+ */
+bool nodeSetSelected(bNode *node, bool select);
 /**
  * Two active flags, ID nodes have special flag for buttons display.
  */
@@ -916,6 +931,7 @@ void BKE_nodetree_remove_layer_n(bNodeTree *ntree, Scene *scene, int layer_index
 #define SH_NODE_COMBINE_COLOR 711
 #define SH_NODE_SEPARATE_COLOR 712
 #define SH_NODE_MIX 713
+#define SH_NODE_BSDF_RAY_PORTAL 714
 
 /** \} */
 
@@ -1323,6 +1339,9 @@ void BKE_nodetree_remove_layer_n(bNodeTree *ntree, Scene *scene, int layer_index
 #define FN_NODE_INVERT_MATRIX 1237
 #define FN_NODE_TRANSPOSE_MATRIX 1238
 #define FN_NODE_PROJECT_POINT 1239
+#define FN_NODE_ALIGN_ROTATION_TO_VECTOR 1240
+#define FN_NODE_COMBINE_MATRIX 1241
+#define FN_NODE_SEPARATE_MATRIX 1242
 
 /** \} */
 
@@ -1419,6 +1438,14 @@ void node_socket_move_default_value(Main &bmain,
  * \note ID user reference-counting and changing the `nodes_by_id` vector are up to the caller.
  */
 void node_free_node(bNodeTree *tree, bNode *node);
+
+/**
+ * Iterate over all ID usages of the given node.
+ * Can be used with #BKE_library_foreach_subdata_ID_link.
+ *
+ * See BKE_lib_query.hh and #IDTypeInfo.foreach_id for more details.
+ */
+void node_node_foreach_id(bNode *node, LibraryForeachIDData *data);
 
 /**
  * Set the mute status of a single link.
@@ -1611,10 +1638,10 @@ void node_type_socket_templates(bNodeType *ntype,
 void node_type_size(bNodeType *ntype, int width, int minwidth, int maxwidth);
 
 enum class eNodeSizePreset : int8_t {
-  DEFAULT,
-  SMALL,
-  MIDDLE,
-  LARGE,
+  Default,
+  Small,
+  Middle,
+  Large,
 };
 
 void node_type_size_preset(bNodeType *ntype, eNodeSizePreset size);

@@ -116,7 +116,7 @@ class SampleNearestSurfaceFunction : public mf::MultiFunction {
 
     /* Construct BVH tree for each group. */
     bvh_trees_.reinitialize(groups_num);
-    threading::parallel_for_weighted(
+    threading::parallel_for(
         IndexRange(groups_num),
         512,
         [&](const IndexRange range) {
@@ -126,7 +126,8 @@ class SampleNearestSurfaceFunction : public mf::MultiFunction {
             BKE_bvhtree_from_mesh_tris_init(mesh, group_mask, bvh);
           }
         },
-        [&](const int group_i) { return group_masks[group_i].size(); });
+        threading::individual_task_sizes(
+            [&](const int group_i) { return group_masks[group_i].size(); }, mesh.faces_num));
   }
 
   ~SampleNearestSurfaceFunction()
@@ -239,7 +240,7 @@ static void node_register()
       &ntype, GEO_NODE_SAMPLE_NEAREST_SURFACE, "Sample Nearest Surface", NODE_CLASS_GEOMETRY);
   ntype.initfunc = node_init;
   ntype.declare = node_declare;
-  blender::bke::node_type_size_preset(&ntype, blender::bke::eNodeSizePreset::MIDDLE);
+  blender::bke::node_type_size_preset(&ntype, blender::bke::eNodeSizePreset::Middle);
   ntype.geometry_node_execute = node_geo_exec;
   ntype.draw_buttons = node_layout;
   ntype.gather_link_search_ops = node_gather_link_searches;

@@ -2,8 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# TODO:
-# /src/blender/blender.bin --background -noaudio --python tests/test_blender.py -- --verbose
+"""
+Test with command:
+   make test
+"""
 
 # NOTE:
 # Currently this sets up an environment and runs commands.
