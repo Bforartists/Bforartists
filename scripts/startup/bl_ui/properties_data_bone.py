@@ -105,8 +105,9 @@ class BONE_PT_transform(BoneButtonsPanel, Panel):
             col.prop(bone, "tail")
 
             col = layout.column()
+            col.use_property_split = False # BFA
             col.prop(bone, "roll")
-            col.use_property_split = False
+            col.prop(bone, "length")
             col.prop(bone, "lock")
 
 

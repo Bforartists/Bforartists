@@ -22,7 +22,7 @@
 
 #include "BLI_math_vector.h"
 
-#include "BLT_translation.hh" // bfa - needed for CTX_IFACE_
+#include "BLT_translation.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
@@ -296,7 +296,8 @@ static int paint_mask_extract_exec(bContext *C, wmOperator *op)
 
 static int paint_mask_extract_invoke(bContext *C, wmOperator *op, const wmEvent *e)
 {
-  return WM_operator_props_popup_confirm(C, op, e);
+  return WM_operator_props_popup_confirm_ex(
+      C, op, e, IFACE_("Create Mesh From Paint Mask"), IFACE_("Extract"));
 }
 
 static void geometry_extract_props(StructRNA *srna)

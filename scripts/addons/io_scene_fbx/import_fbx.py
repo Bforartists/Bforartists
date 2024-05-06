@@ -327,7 +327,10 @@ def blen_read_custom_properties(fbx_obj, blen_obj, settings):
             if b'U' in fbx_prop.props[3]:
                 if fbx_prop.props[0] == b'UDP3DSMAX':
                     # Special case for 3DS Max user properties:
-                    assert(fbx_prop.props[1] == b'KString')
+                    try:
+                        assert(fbx_prop.props[1] == b'KString')
+                    except AssertionError as exc:
+                        print(exc)
                     assert(fbx_prop.props_type[4] == data_types.STRING)
                     items = fbx_prop.props[4].decode('utf-8', 'replace')
                     for item in items.split('\r\n'):
@@ -3470,7 +3473,10 @@ def load(operator, context, filepath="",
                     fbx_skin, _ = fbx_table_nodes.get(skin_uuid, (None, None))
                     if fbx_skin is None or fbx_skin.id != b'Deformer' or fbx_skin.props[2] != b'Skin':
                         continue
-                    for mesh_uuid, mesh_link in fbx_connection_map.get(skin_uuid):
+                    skin_connection = fbx_connection_map.get(skin_uuid)
+                    if skin_connection is None:
+                        continue
+                    for mesh_uuid, mesh_link in skin_connection:
                         if mesh_link.props[0] != b'OO':
                             continue
                         fbx_mesh, _ = fbx_table_nodes.get(mesh_uuid, (None, None))

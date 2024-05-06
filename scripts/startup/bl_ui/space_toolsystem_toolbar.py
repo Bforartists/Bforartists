@@ -1533,6 +1533,21 @@ class _defs_sculpt:
         )
 
     @ToolDef.from_fn
+    def hide_polyline():
+        def draw_settings(_context, layout, tool):
+            props = tool.operator_properties("paint.hide_show_polyline_gesture")
+            layout.prop(props, "area", expand=False)
+
+        return dict(
+            idname="builtin.polyline_hide",
+            label="Polyline Hide",
+            icon="ops.sculpt.polyline_hide",
+            widget=None,
+            keymap=(),
+            draw_settings=draw_settings,
+        )
+
+    @ToolDef.from_fn
     def mask_border():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("paint.mask_box_gesture")
@@ -1646,6 +1661,23 @@ class _defs_sculpt:
             idname="builtin.lasso_trim",
             label="Lasso Trim",
             icon="ops.sculpt.lasso_trim",
+            widget=None,
+            keymap=(),
+            draw_settings=draw_settings,
+        )
+
+    @ToolDef.from_fn
+    def trim_line():
+        def draw_settings(_context, layout, tool):
+            props = tool.operator_properties("sculpt.trim_line_gesture")
+            layout.prop(props, "trim_solver", expand=False)
+            layout.prop(props, "trim_orientation", expand=False)
+            layout.prop(props, "use_cursor_depth", expand=False)
+            layout.prop(props, "use_limit_to_segment", expand=False)
+        return dict(
+            idname="builtin.line_trim",
+            label="Line Trim",
+            icon="ops.sculpt.line_trim",
             widget=None,
             keymap=(),
             draw_settings=draw_settings,
@@ -3488,6 +3520,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 _defs_sculpt.hide_border,
                 _defs_sculpt.hide_lasso,
                 _defs_sculpt.hide_line,
+                _defs_sculpt.hide_polyline,
             ),
             (
                 _defs_sculpt.face_set_box,
@@ -3496,6 +3529,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             (
                 _defs_sculpt.trim_box,
                 _defs_sculpt.trim_lasso,
+                _defs_sculpt.trim_line,
             ),
             _defs_sculpt.project_line,
             None,

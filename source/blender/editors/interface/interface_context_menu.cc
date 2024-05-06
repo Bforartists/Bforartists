@@ -415,6 +415,10 @@ static void ui_but_user_menu_add(bContext *C, uiBut *but, bUserMenu *um)
         STRNCPY(drawstr, idname);
 #endif
       }
+      else if (but->tip_label_func) {
+        /* The "quick tooltip" often contains a short string that can be used as a fallback. */
+        drawstr = but->tip_label_func(but);
+      }
     }
     ED_screen_user_menu_item_add_operator(
         &um->items,
@@ -744,7 +748,15 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
                        1);
       }
 
-      if (!is_whole_array) {
+      if (is_whole_array) {
+        uiItemBooleanO(layout,
+                       CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Drivers to Selected"),
+                       ICON_NONE,
+                       "UI_OT_copy_driver_to_selected_button",
+                       "all",
+                       true);
+      }
+      else {
         uiItemO(layout,
                 CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Driver"),
                 ICON_COPYDOWN,/*BFA*/
@@ -754,6 +766,21 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
                   CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Paste Driver"),
                   ICON_PASTEDOWN,/*BFA*/
                   "ANIM_OT_paste_driver_button");
+        }
+        uiItemBooleanO(layout,
+                       CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Driver to Selected"),
+                       ICON_NONE,
+                       "UI_OT_copy_driver_to_selected_button",
+                       "all",
+                       false);
+        if (is_array_component) {
+          uiItemBooleanO(
+              layout,
+              CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy All Drivers to Selected"),
+              ICON_NONE,
+              "UI_OT_copy_driver_to_selected_button",
+              "all",
+              true);
         }
 
         uiItemO(layout,
