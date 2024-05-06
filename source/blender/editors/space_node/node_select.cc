@@ -245,11 +245,13 @@ static void node_socket_toggle(bNode *node, bNodeSocket &sock, bool deselect_nod
   }
 }
 
-void node_deselect_all(bNodeTree &node_tree)
+bool node_deselect_all(bNodeTree &node_tree)
 {
+  bool changed = false;
   for (bNode *node : node_tree.all_nodes()) {
-    nodeSetSelected(node, false);
+    changed |= nodeSetSelected(node, false);
   }
+  return changed;
 }
 
 void node_deselect_all_input_sockets(bNodeTree &node_tree, const bool deselect_nodes)
@@ -631,8 +633,7 @@ static bool node_mouse_select(bContext *C,
       }
       else if (found || params->deselect_all) {
         /* Deselect everything. */
-        node_deselect_all(node_tree);
-        changed = true;
+        changed = node_deselect_all(node_tree);
       }
     }
 
@@ -1282,7 +1283,11 @@ static int node_select_same_type_step_exec(bContext *C, wmOperator *op)
   SpaceNode *snode = CTX_wm_space_node(C);
   ARegion *region = CTX_wm_region(C);
   const bool prev = RNA_boolean_get(op->ptr, "prev");
-  bNode &active_node = *nodeGetActive(snode->edittree);
+  bNode *active_node = nodeGetActive(snode->edittree);
+
+  if (active_node == nullptr) {
+    return OPERATOR_CANCELLED;
+  }
 
   bNodeTree &node_tree = *snode->edittree;
   node_tree.ensure_topology_cache();
@@ -1291,7 +1296,7 @@ static int node_select_same_type_step_exec(bContext *C, wmOperator *op)
   }
 
   const Span<const bNode *> toposort = node_tree.toposort_left_to_right();
-  const int index = toposort.first_index(&active_node);
+  const int index = toposort.first_index(active_node);
 
   int new_index = index;
   while (true) {
@@ -1299,13 +1304,13 @@ static int node_select_same_type_step_exec(bContext *C, wmOperator *op)
     if (!toposort.index_range().contains(new_index)) {
       return OPERATOR_CANCELLED;
     }
-    if (nodes_are_same_type_for_select(*toposort[new_index], active_node)) {
+    if (nodes_are_same_type_for_select(*toposort[new_index], *active_node)) {
       break;
     }
   }
 
   bNode *new_active_node = node_tree.all_nodes()[toposort[new_index]->index()];
-  if (new_active_node == &active_node) {
+  if (new_active_node == active_node) {
     return OPERATOR_CANCELLED;
   }
 

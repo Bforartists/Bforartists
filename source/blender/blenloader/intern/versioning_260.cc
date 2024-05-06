@@ -567,6 +567,8 @@ static const char *node_get_static_idname(int type, int treetype)
         return "ShaderNodeBsdfTranslucent";
       case SH_NODE_BSDF_TRANSPARENT:
         return "ShaderNodeBsdfTransparent";
+      case SH_NODE_BSDF_RAY_PORTAL:
+        return "ShaderNodeBsdfRayPortal";
       case /*SH_NODE_BSDF_VELVET*/ 139:
         return "ShaderNodeBsdfVelvet";
       case /*SH_NODE_VOLUME_TRANSPARENT*/ 161:
@@ -1058,7 +1060,7 @@ static bNodeSocket *version_make_socket_stub(const char *idname,
   socket->storage = nullptr;
   socket->flag |= SOCK_COLLAPSED;
 
-  /* Note: technically socket values can store ref-counted ID pointers, but at this stage the
+  /* NOTE: technically socket values can store ref-counted ID pointers, but at this stage the
    * refcount can be ignored. It gets recomputed after lib-linking for all ID pointers. Socket
    * values don't have allocated data, so a simple duplication works here. */
   socket->default_value = default_value ? MEM_dupallocN(default_value) : nullptr;

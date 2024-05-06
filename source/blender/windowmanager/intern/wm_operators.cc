@@ -1727,7 +1727,9 @@ int WM_operator_ui_popup(bContext *C, wmOperator *op, int width)
 static int wm_operator_props_popup_ex(bContext *C,
                                       wmOperator *op,
                                       const bool do_call,
-                                      const bool do_redo)
+                                      const bool do_redo,
+                                      std::optional<std::string> title = std::nullopt,
+                                      std::optional<std::string> confirm_text = std::nullopt)
 {
   if ((op->type->flag & OPTYPE_REGISTER) == 0) {
     BKE_reportf(op->reports,
@@ -1750,7 +1752,7 @@ static int wm_operator_props_popup_ex(bContext *C,
   /* If we don't have global undo, we can't do undo push for automatic redo,
    * so we require manual OK clicking in this popup. */
   if (!do_redo || !(U.uiflag & USER_GLOBALUNDO)) {
-    return WM_operator_props_dialog_popup(C, op, 300);
+    return WM_operator_props_dialog_popup(C, op, 300, title, confirm_text);
   }
 
   UI_popup_block_ex(C, wm_block_create_redo, nullptr, wm_block_redo_cancel_cb, op, op);
@@ -1762,9 +1764,18 @@ static int wm_operator_props_popup_ex(bContext *C,
   return OPERATOR_RUNNING_MODAL;
 }
 
+int WM_operator_props_popup_confirm_ex(bContext *C,
+                                       wmOperator *op,
+                                       const wmEvent * /*event*/,
+                                       std::optional<std::string> title,
+                                       std::optional<std::string> confirm_text)
+{
+  return wm_operator_props_popup_ex(C, op, false, false, title, confirm_text);
+}
+
 int WM_operator_props_popup_confirm(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
-  return wm_operator_props_popup_ex(C, op, false, false);
+  return wm_operator_props_popup_ex(C, op, false, false, {}, {});
 }
 
 int WM_operator_props_popup_call(bContext *C, wmOperator *op, const wmEvent * /*event*/)
@@ -4141,6 +4152,7 @@ static void gesture_straightline_modal_keymap(wmKeyConfig *keyconf)
   WM_modalkeymap_assign(keymap, "PAINT_OT_weight_gradient");
   WM_modalkeymap_assign(keymap, "MESH_OT_bisect");
   WM_modalkeymap_assign(keymap, "PAINT_OT_mask_line_gesture");
+  WM_modalkeymap_assign(keymap, "SCULPT_OT_trim_line_gesture");
   WM_modalkeymap_assign(keymap, "SCULPT_OT_project_line_gesture");
   WM_modalkeymap_assign(keymap, "PAINT_OT_hide_show_line_gesture");
 }
@@ -4235,6 +4247,30 @@ static void gesture_lasso_modal_keymap(wmKeyConfig *keyconf)
   WM_modalkeymap_assign(keymap, "PAINT_OT_hide_show_lasso_gesture");
 }
 
+/* Polyline modal operators */
+static void gesture_polyline_modal_keymap(wmKeyConfig *keyconf)
+{
+  static const EnumPropertyItem modal_items[] = {
+      {GESTURE_MODAL_CONFIRM, "CONFIRM", 0, "Confirm", ""},
+      {GESTURE_MODAL_CANCEL, "CANCEL", 0, "Cancel", ""},
+      {GESTURE_MODAL_SELECT, "SELECT", 0, "Select", ""},
+      {GESTURE_MODAL_MOVE, "MOVE", 0, "Move", ""},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
+  wmKeyMap *keymap = WM_modalkeymap_find(keyconf, "Gesture Polyline");
+
+  /* This function is called for each space-type, only needs to add map once. */
+  if (keymap && keymap->modal_items) {
+    return;
+  }
+
+  keymap = WM_modalkeymap_ensure(keyconf, "Gesture Polyline", modal_items);
+
+  /* assign map to operators */
+  WM_modalkeymap_assign(keymap, "PAINT_OT_hide_show_polyline_gesture");
+}
+
 /* Zoom to border modal operators. */
 static void gesture_zoom_border_modal_keymap(wmKeyConfig *keyconf)
 {
@@ -4271,6 +4307,7 @@ void wm_window_keymap(wmKeyConfig *keyconf)
   gesture_zoom_border_modal_keymap(keyconf);
   gesture_straightline_modal_keymap(keyconf);
   gesture_lasso_modal_keymap(keyconf);
+  gesture_polyline_modal_keymap(keyconf);
 
   WM_keymap_fix_linking();
 }

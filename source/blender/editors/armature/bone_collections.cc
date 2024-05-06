@@ -1070,11 +1070,13 @@ static void move_to_collection_menu_create(bContext *C, uiLayout *layout, void *
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
   uiItemIntO(layout,
              "New Bone Collection",
-             ICON_ADD, /*BFA*/
+             ICON_ADD,
              is_move_operation ? "ARMATURE_OT_move_to_collection" :
                                  "ARMATURE_OT_assign_to_collection",
              "collection_index",
              parent_bcoll_index);
+
+  uiItemS(layout);
 
   /* The remaining operators in this menu should be executed on click. Invoking
    * them would show this same menu again. */
@@ -1143,7 +1145,7 @@ static int move_to_new_collection_invoke(bContext *C, wmOperator *op)
 {
   RNA_string_set(op->ptr, "new_collection_name", IFACE_("Bones"));
   return WM_operator_props_dialog_popup(
-      C, op, 200, IFACE_("Move to New Bone Collection"), IFACE_("Move"));
+      C, op, 200, IFACE_("Move to New Bone Collection"), IFACE_("Create"));
 }
 
 static int move_to_collection_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)

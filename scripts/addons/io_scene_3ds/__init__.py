@@ -217,9 +217,15 @@ class Export3DS(bpy.types.Operator, ExportHelper):
                ('LIGHT', "Light".rjust(12), "", 'LIGHT_DATA',0x4),
                ('CAMERA', "Camera".rjust(11), "", 'CAMERA_DATA',0x8),
                ('EMPTY', "Empty".rjust(11), "", 'EMPTY_AXIS',0x10),
+               ('OTHER', "Other".rjust(12), "", 'MATSHADERBALL', 0x20),
                ),
         description="Object types to export",
-        default={'WORLD', 'MESH', 'LIGHT', 'CAMERA', 'EMPTY'},
+        default={'WORLD', 'MESH', 'LIGHT', 'CAMERA', 'EMPTY', 'OTHER'},
+    )
+    use_apply_transform: bpy.props.BoolProperty(
+        name="Apply Transform",
+        description="Apply matrix transform before export",
+        default=True,
     )
     use_keyframes: BoolProperty(
         name="Animation",
@@ -299,6 +305,9 @@ def export_transform(layout, operator):
         line = body.row(align=True)
         line.prop(operator, "use_scene_unit")
         line.label(text="", icon='EMPTY_ARROWS' if operator.use_scene_unit else 'EMPTY_DATA')
+        line = body.row(align=True)
+        line.prop(operator, "use_apply_transform")
+        line.label(text="", icon='MESH_CUBE' if operator.use_apply_transform else 'MOD_SOLIDIFY')
         body.prop(operator, "axis_forward")
         body.prop(operator, "axis_up")
 
