@@ -55,6 +55,8 @@ void node_bsdf_principled(vec4 base_color,
                           vec4 sheen_tint,
                           vec4 emission,
                           float emission_strength,
+                          float thin_film_thickness,
+                          float thin_film_ior,
                           const float do_diffuse,
                           const float do_coat,
                           const float do_refraction,
@@ -167,7 +169,11 @@ void node_bsdf_principled(vec4 base_color,
     vec3 reflectance, transmittance;
     bsdf_lut(F0,
              F90,
+#ifdef GPU_SHADER_EEVEE_LEGACY_DEFINES
              clamped_base_color.rgb,
+#else
+             sqrt(clamped_base_color.rgb),
+#endif
              NV,
              roughness,
              ior,

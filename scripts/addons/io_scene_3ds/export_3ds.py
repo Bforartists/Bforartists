@@ -159,9 +159,11 @@ ROLL_TRACK_TAG = 0xB024  # Roll transform tag
 COL_TRACK_TAG = 0xB025  # Color transform tag
 HOTSPOT_TRACK_TAG = 0xB027  # Hotspot transform tag
 FALLOFF_TRACK_TAG = 0xB028  # Falloff transform tag
-
 ROOT_OBJECT = 0xFFFF  # Root object
 
+EMPTYS = {'EMPTY'}
+DUMMYS = {'ARMATURE', 'LATTICE', 'SPEAKER', 'VOLUME'}
+OTHERS = {'CURVE', 'SURFACE', 'FONT', 'META'}
 
 # So 3ds max can open files, limit names to 12 in length
 # this is very annoying for filenames!
@@ -683,12 +685,7 @@ def make_material_chunk(material, image):
     material_chunk = _3ds_chunk(MATERIAL)
     name = _3ds_chunk(MATNAME)
     shading = _3ds_chunk(MATSHADING)
-
     name_str = material.name if material else "None"
-
-    # if image:
-    #     name_str += image.name
-
     name.add_variable("name", _3ds_string(sane_name(name_str)))
     material_chunk.add_subchunk(name)
 
@@ -780,6 +777,7 @@ def make_material_chunk(material, image):
 
         # Make sure no textures are lost. Everything that doesn't fit
         # into a channel is exported as secondary texture
+        matmap = None
         for link in mtlks:
             mxsecondary = link.from_node if link.from_node.type == 'TEX_IMAGE' and link.to_socket.identifier in {'Color1', 'A_Color'} else False
             if mxsecondary:
@@ -973,9 +971,6 @@ def make_faces_chunk(tri_list, mesh, materialDict):
                 context_face_array = unique_mats[ma, img][1]
             except:
                 name_str = ma if ma else "None"
-                # if img:
-                #     name_str += img
-
                 context_face_array = _3ds_array()
                 unique_mats[ma, img] = _3ds_string(sane_name(name_str)), context_face_array
 
@@ -1299,7 +1294,7 @@ def make_object_node(ob, translation, rotation, scale, name_id):
     obj_node_header_chunk = _3ds_chunk(OBJECT_NODE_HDR)
     parent = ob.parent
 
-    if ob.type == 'EMPTY':  # Forcing to use the real name for empties
+    if ob.type in EMPTYS:  # Forcing to use the real name for empties
         # Empties called $$$DUMMY and use OBJECT_INSTANCE_NAME chunk as name
         obj_node_header_chunk.add_variable("name", _3ds_string(b"$$$DUMMY"))
         obj_node_header_chunk.add_variable("flags1", _3ds_ushort(0x4000))
@@ -1335,12 +1330,12 @@ def make_object_node(ob, translation, rotation, scale, name_id):
         obj_node.add_subchunk(obj_parent_name_chunk)
 
     # Empty objects need to have an extra chunk for the instance name
-    if ob.type == 'EMPTY':  # Will use a real object name for empties for now
+    if ob.type in EMPTYS:  # Will use a real object name for empties for now
         obj_instance_name_chunk = _3ds_chunk(OBJECT_INSTANCE_NAME)
         obj_instance_name_chunk.add_variable("name", _3ds_string(sane_name(name)))
         obj_node.add_subchunk(obj_instance_name_chunk)
 
-    if ob.type in {'MESH', 'EMPTY'}:  # Add a pivot point at the object center
+    if ob.type in {'MESH'} or EMPTYS:  # Add a pivot point at the object center
         pivot_pos = (translation[name])
         obj_pivot_chunk = _3ds_chunk(OBJECT_PIVOT)
         obj_pivot_chunk.add_variable("pivot", _3ds_point_3d(pivot_pos))
@@ -1372,7 +1367,7 @@ def make_object_node(ob, translation, rotation, scale, name_id):
 
     obj_node.add_subchunk(make_track_chunk(POS_TRACK_TAG, ob, ob_pos, ob_rot, ob_scale))
 
-    if ob.type in {'MESH', 'EMPTY'}:
+    if ob.type in {'MESH'} or EMPTYS:
         obj_node.add_subchunk(make_track_chunk(ROT_TRACK_TAG, ob, ob_pos, ob_rot, ob_size))
         obj_node.add_subchunk(make_track_chunk(SCL_TRACK_TAG, ob, ob_pos, ob_rot, ob_size))
     if ob.type =='CAMERA':
@@ -1563,8 +1558,8 @@ def make_ambient_node(world):
 ##########
 
 def save(operator, context, filepath="", collection="", scale_factor=1.0, use_scene_unit=False,
-         use_selection=False, object_filter=None, use_keyframes=True, use_hierarchy=False,
-         use_collection=False, global_matrix=None, use_cursor=False):
+         use_selection=False, object_filter=None, use_apply_transform=True, use_keyframes=True,
+         use_hierarchy=False, use_collection=False, global_matrix=None, use_cursor=False):
     """Save the Blender scene to a 3ds file."""
 
     # Time the export
@@ -1637,13 +1632,23 @@ def save(operator, context, filepath="", collection="", scale_factor=1.0, use_sc
     # Make a list of all materials used in the selected meshes (use dictionary, each material is added once)
     materialDict = {}
     mesh_objects = []
+    free_objects = []
+
+    if object_filter is None:
+        object_filter = {'WORLD', 'MESH', 'LIGHT', 'CAMERA', 'EMPTY', 'OTHER'}
+
+    if 'OTHER' in object_filter:
+        object_filter.remove('OTHER')
+        object_filter.update(DUMMYS)
+        object_filter.update(OTHERS)
+        EMPTYS.update(DUMMYS)
 
     if use_selection:
         objects = [ob for ob in items if ob.type in object_filter and ob.visible_get(view_layer=layer) and ob.select_get(view_layer=layer)]
     else:
         objects = [ob for ob in items if ob.type in object_filter and ob.visible_get(view_layer=layer)]
 
-    empty_objects = [ob for ob in objects if ob.type == 'EMPTY']
+    empty_objects = [ob for ob in objects if ob.type in EMPTYS]
     light_objects = [ob for ob in objects if ob.type == 'LIGHT']
     camera_objects = [ob for ob in objects if ob.type == 'CAMERA']
 
@@ -1651,7 +1656,6 @@ def save(operator, context, filepath="", collection="", scale_factor=1.0, use_sc
         # Get derived objects
         derived_dict = bpy_extras.io_utils.create_derived_objects(depsgraph, [ob])
         derived = derived_dict.get(ob)
-
         if derived is None:
             continue
 
@@ -1659,13 +1663,18 @@ def save(operator, context, filepath="", collection="", scale_factor=1.0, use_sc
             if ob.type not in {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META'}:
                 continue
 
-            try:
-                data = ob_derived.to_mesh()
-            except:
-                data = None
+            if ob_derived.type in OTHERS:
+                item = ob_derived.evaluated_get(depsgraph)
+                data = bpy.data.meshes.new_from_object(item, preserve_all_data_layers=True, depsgraph=depsgraph)
+                free_objects.append(data)
+            else:
+                try:
+                    data = ob_derived.to_mesh()
+                except:
+                    data = None
 
             if data:
-                matrix = global_matrix @ mtx
+                matrix = mtx @ global_matrix if use_apply_transform else global_matrix
                 data.transform(matrix)
                 data.transform(mtx_scale)
                 mesh_objects.append((ob_derived, data, matrix))
@@ -2026,9 +2035,14 @@ def save(operator, context, filepath="", collection="", scale_factor=1.0, use_sc
     # Close the file
     file.close()
 
+    # Remove free objects
+    for free in free_objects:
+        bpy.data.meshes.remove(free)
+
     # Clear name mapping vars, could make locals too
     del name_unique[:]
     name_mapping.clear()
+    free_objects.clear()
 
     # Debugging only: report the exporting time
     context.window.cursor_set('DEFAULT')

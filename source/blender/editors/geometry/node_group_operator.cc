@@ -7,6 +7,7 @@
  */
 
 #include "BLI_path_util.h"
+#include "BLI_rect.h"
 #include "BLI_string.h"
 
 #include "ED_curves.hh"
@@ -294,23 +295,77 @@ static void gather_node_group_ids(const bNodeTree &node_tree, Set<ID *> &ids)
   }
 }
 
-/**
- * Gather IDs referenced from node group input properties (the redo panel). Skip IDs that are
- * already fully evaluated in the active depsgraph. In the end, the group input properties will be
- * copied to contain evaluated data-blocks from the active and/or an extra depsgraph.
- */
-static void gather_input_ids(const Depsgraph &depsgraph_active,
-                             const IDProperty &properties,
-                             Set<ID *> &ids)
+static const bNodeTreeInterfaceSocket *find_group_input_by_identifier(const bNodeTree &node_group,
+                                                                      const StringRef identifier)
 {
+  for (const bNodeTreeInterfaceSocket *input : node_group.interface_inputs()) {
+    if (input->identifier == identifier) {
+      return input;
+    }
+  }
+  return nullptr;
+}
+
+static std::optional<ID_Type> socket_type_to_id_type(const eNodeSocketDatatype socket_type)
+{
+  switch (socket_type) {
+    case SOCK_CUSTOM:
+    case SOCK_FLOAT:
+    case SOCK_VECTOR:
+    case SOCK_RGBA:
+    case SOCK_SHADER:
+    case SOCK_BOOLEAN:
+    case SOCK_INT:
+    case SOCK_STRING:
+    case SOCK_GEOMETRY:
+    case SOCK_ROTATION:
+    case SOCK_MENU:
+    case SOCK_MATRIX:
+      return std::nullopt;
+    case SOCK_OBJECT:
+      return ID_OB;
+    case SOCK_IMAGE:
+      return ID_IM;
+    case SOCK_COLLECTION:
+      return ID_GR;
+    case SOCK_TEXTURE:
+      return ID_TE;
+    case SOCK_MATERIAL:
+      return ID_MA;
+  }
+  return std::nullopt;
+}
+
+/**
+ * Gather IDs referenced from node group input properties (the redo panel). In the end, the group
+ * input properties will be copied to contain evaluated data-blocks from the active and/or an extra
+ * depsgraph.
+ */
+static Map<StringRef, ID *> gather_input_ids(const Main &bmain,
+                                             const bNodeTree &node_group,
+                                             const IDProperty &properties)
+{
+  Map<StringRef, ID *> ids;
   IDP_foreach_property(
-      &const_cast<IDProperty &>(properties), IDP_TYPE_FILTER_ID, [&](IDProperty *property) {
-        if (ID *id = IDP_Id(property)) {
-          if (!DEG_id_is_fully_evaluated(&depsgraph_active, id)) {
-            ids.add(id);
-          }
+      &const_cast<IDProperty &>(properties), IDP_TYPE_FILTER_STRING, [&](IDProperty *prop) {
+        const bNodeTreeInterfaceSocket *input = find_group_input_by_identifier(node_group,
+                                                                               prop->name);
+        if (!input) {
+          return;
         }
+        const std::optional<ID_Type> id_type = socket_type_to_id_type(
+            eNodeSocketDatatype(input->socket_typeinfo()->type));
+        if (!id_type) {
+          return;
+        }
+        const char *id_name = IDP_String(prop);
+        ID *id = BKE_libblock_find_name(&const_cast<Main &>(bmain), *id_type, id_name);
+        if (!id) {
+          return;
+        }
+        ids.add(prop->name, id);
       });
+  return ids;
 }
 
 static Depsgraph *build_extra_depsgraph(const Depsgraph &depsgraph_active, const Set<ID *> &ids)
@@ -324,17 +379,29 @@ static Depsgraph *build_extra_depsgraph(const Depsgraph &depsgraph_active, const
   return depsgraph;
 }
 
-static IDProperty *replace_inputs_evaluated_data_blocks(
-    const IDProperty &op_properties, const nodes::GeoNodesOperatorDepsgraphs &depsgraphs)
+static IDProperty *replace_strings_with_id_pointers(const IDProperty &op_properties,
+                                                    const Map<StringRef, ID *> &input_ids)
 {
-  /* We just create a temporary copy, so don't adjust data-block user count. */
-  IDProperty *properties = IDP_CopyProperty_ex(&op_properties, LIB_ID_CREATE_NO_USER_REFCOUNT);
-  IDP_foreach_property(properties, IDP_TYPE_FILTER_ID, [&](IDProperty *property) {
+  IDProperty *properties = bke::idprop::create_group("Exec Properties").release();
+  IDP_foreach_property(&const_cast<IDProperty &>(op_properties), 0, [&](IDProperty *prop) {
+    if (ID *id = input_ids.lookup_default(prop->name, nullptr)) {
+      IDP_AddToGroup(properties, bke::idprop::create(prop->name, id).release());
+    }
+    else {
+      IDP_AddToGroup(properties, IDP_CopyProperty(prop));
+    }
+  });
+  return properties;
+}
+
+static void replace_inputs_evaluated_data_blocks(
+    IDProperty &properties, const nodes::GeoNodesOperatorDepsgraphs &depsgraphs)
+{
+  IDP_foreach_property(&properties, IDP_TYPE_FILTER_ID, [&](IDProperty *property) {
     if (ID *id = IDP_Id(property)) {
       property->data.pointer = const_cast<ID *>(depsgraphs.get_evaluated_id(*id));
     }
   });
-  return properties;
 }
 
 static bool object_has_editable_data(const Main &bmain, const Object &object)
@@ -394,7 +461,7 @@ static int run_node_group_exec(bContext *C, wmOperator *op)
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   Object *active_object = CTX_data_active_object(C);
-  /* Note: `region` and `rv3d` may be null when called from a script. */
+  /* NOTE: `region` and `rv3d` may be null when called from a script. */
   const ARegion *region = CTX_wm_region(C);
   const RegionView3D *rv3d = CTX_wm_region_view3d(C);
   if (!active_object) {
@@ -412,14 +479,24 @@ static int run_node_group_exec(bContext *C, wmOperator *op)
   Depsgraph *depsgraph_active = CTX_data_ensure_evaluated_depsgraph(C);
   Set<ID *> extra_ids;
   gather_node_group_ids(*node_tree_orig, extra_ids);
-  gather_input_ids(*depsgraph_active, *op->properties, extra_ids);
+  const Map<StringRef, ID *> input_ids = gather_input_ids(
+      *bmain, *node_tree_orig, *op->properties);
+  for (ID *id : input_ids.values()) {
+    /* Skip IDs that are already fully evaluated in the active depsgraph. */
+    if (!DEG_id_is_fully_evaluated(depsgraph_active, id)) {
+      return extra_ids.add(id);
+    }
+  }
+
   const nodes::GeoNodesOperatorDepsgraphs depsgraphs{
       depsgraph_active,
       extra_ids.is_empty() ? nullptr : build_extra_depsgraph(*depsgraph_active, extra_ids),
   };
 
-  IDProperty *properties = replace_inputs_evaluated_data_blocks(*op->properties, depsgraphs);
+  IDProperty *properties = replace_strings_with_id_pointers(*op->properties, input_ids);
   BLI_SCOPED_DEFER([&]() { IDP_FreeProperty_ex(properties, false); });
+
+  replace_inputs_evaluated_data_blocks(*properties, depsgraphs);
 
   const bNodeTree *node_tree = nullptr;
   if (depsgraphs.extra) {
@@ -440,18 +517,6 @@ static int run_node_group_exec(bContext *C, wmOperator *op)
   if (!node_tree->group_output_node()) {
     BKE_report(op->reports, RPT_ERROR, "Node group must have a group output node");
     return OPERATOR_CANCELLED;
-  }
-  for (const bNodeTreeInterfaceSocket *input : node_tree->interface_inputs()) {
-    if (STR_ELEM(input->socket_type,
-                 "NodeSocketObject",
-                 "NodeSocketImage",
-                 "NodeSocketCollection",
-                 "NodeSocketTexture",
-                 "NodeSocketMaterial"))
-    {
-      BKE_report(op->reports, RPT_ERROR, "Data-block inputs are unsupported");
-      return OPERATOR_CANCELLED;
-    }
   }
   if (node_tree->interface_outputs().is_empty() ||
       !STREQ(node_tree->interface_outputs()[0]->socket_type, "NodeSocketGeometry"))
@@ -474,7 +539,13 @@ static int run_node_group_exec(bContext *C, wmOperator *op)
     operator_eval_data.self_object_orig = object;
     operator_eval_data.scene_orig = scene;
     RNA_int_get_array(op->ptr, "mouse_position", operator_eval_data.mouse_position);
-    operator_eval_data.region_size = region ? int2(region->sizex, region->sizey) : int2(0);
+    if (region) {
+      operator_eval_data.region_size = int2(BLI_rcti_size_x(&region->winrct),
+                                            BLI_rcti_size_y(&region->winrct));
+    }
+    else {
+      operator_eval_data.region_size = int2(0);
+    }
     operator_eval_data.rv3d = rv3d;
 
     nodes::GeoNodesCallData call_data{};
@@ -519,7 +590,7 @@ static int run_node_group_invoke(bContext *C, wmOperator *op, const wmEvent *eve
 
   RNA_int_set_array(op->ptr, "mouse_position", event->mval);
 
-  nodes::update_input_properties_from_node_tree(*node_tree, op->properties, *op->properties);
+  nodes::update_input_properties_from_node_tree(*node_tree, op->properties, *op->properties, true);
   nodes::update_output_properties_from_node_tree(*node_tree, op->properties, *op->properties);
 
   return run_node_group_exec(C, op);
@@ -605,7 +676,7 @@ static void draw_property_for_socket(const bNodeTree &node_tree,
 
   /* IDProperties can be removed with python, so there could be a situation where
    * there isn't a property for a socket or it doesn't have the correct type. */
-  if (property == nullptr || !nodes::id_property_type_matches_socket(socket, *property)) {
+  if (property == nullptr || !nodes::id_property_type_matches_socket(socket, *property, true)) {
     return;
   }
 
@@ -1220,21 +1291,19 @@ void ui_template_node_operator_asset_root_items(uiLayout &layout, const bContext
     *tree = build_catalog_tree(C, *active_object);
   }
 
-  asset_system::AssetLibrary *all_library = asset::list::library_get_once_available(
-      asset_system::all_library_reference());
-  if (!all_library) {
-    return;
+  if (asset_system::AssetLibrary *all_library = asset::list::library_get_once_available(
+          asset_system::all_library_reference()))
+  {
+    const Set<std::string> builtin_menus = get_builtin_menus(ObjectType(active_object->type),
+                                                             eObjectMode(active_object->mode));
+
+    tree->catalogs.foreach_root_item([&](const asset_system::AssetCatalogTreeItem &item) {
+      if (!builtin_menus.contains_as(item.catalog_path().str())) {
+        asset::draw_menu_for_catalog(
+            screen, *all_library, item, "GEO_MT_node_operator_catalog_assets", layout);
+      }
+    });
   }
-
-  const Set<std::string> builtin_menus = get_builtin_menus(ObjectType(active_object->type),
-                                                           eObjectMode(active_object->mode));
-
-  tree->catalogs.foreach_root_item([&](const asset_system::AssetCatalogTreeItem &item) {
-    if (!builtin_menus.contains_as(item.catalog_path().str())) {
-      asset::draw_menu_for_catalog(
-          screen, *all_library, item, "GEO_MT_node_operator_catalog_assets", layout);
-    }
-  });
 
   if (!tree->unassigned_assets.is_empty() || unassigned_local_poll(C)) {
     uiItemM(&layout, "GEO_MT_node_operator_unassigned", "", ICON_TOOL_SETTINGS); /*BFA - icon*/
