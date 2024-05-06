@@ -555,7 +555,7 @@ static bool mesh_batch_cache_valid(Object *object, Mesh *mesh)
     return false;
   }
 
-  /* Note: PBVH draw data should not be checked here. */
+  /* NOTE: PBVH draw data should not be checked here. */
 
   if (cache->is_editmode != (mesh->runtime->edit_mesh != nullptr)) {
     return false;
@@ -585,7 +585,7 @@ static void mesh_batch_cache_init(Object *object, Mesh *mesh)
   cache->is_editmode = mesh->runtime->edit_mesh != nullptr;
 
   if (object->sculpt && object->sculpt->pbvh) {
-    cache->pbvh_is_drawing = BKE_pbvh_is_drawing(object->sculpt->pbvh);
+    cache->pbvh_is_drawing = BKE_pbvh_is_drawing(*object->sculpt->pbvh);
   }
 
   if (cache->is_editmode == false) {
@@ -1576,7 +1576,6 @@ void DRW_mesh_batch_cache_create_requested(TaskGraph *task_graph,
   }
   assert_deps_valid(MBC_LOOSE_EDGES, {BUFFER_INDEX(ibo.lines_loose), BUFFER_INDEX(vbo.pos)});
   if (DRW_batch_requested(cache.batch.loose_edges, GPU_PRIM_LINES)) {
-    DRW_ibo_request(nullptr, &mbuflist->ibo.lines);
     DRW_ibo_request(cache.batch.loose_edges, &mbuflist->ibo.lines_loose);
     DRW_vbo_request(cache.batch.loose_edges, &mbuflist->vbo.pos);
   }

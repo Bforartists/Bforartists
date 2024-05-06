@@ -191,15 +191,6 @@ static bool use_gnome_confine_hack = false;
  */
 #define USE_KDE_TABLET_HIDDEN_CURSOR_HACK
 
-/**
- * When GNOME is found, require `libdecor`.
- * This is a hack because it seems there is no way to check if the compositor supports
- * server side decorations when initializing WAYLAND.
- */
-#ifdef WITH_GHOST_WAYLAND_LIBDECOR
-#  define USE_GNOME_NEEDS_LIBDECOR_HACK
-#endif
-
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1362,7 +1353,6 @@ struct GWL_Display {
 
 #ifdef WITH_GHOST_WAYLAND_LIBDECOR
   GWL_LibDecor_System *libdecor = nullptr;
-  bool libdecor_required = false;
 #endif
   GWL_XDG_Decor_System *xdg_decor = nullptr;
 
@@ -1773,6 +1763,35 @@ static void gwl_registry_entry_update_all(GWL_Display *display, const int interf
 /** \name Private Utility Functions
  * \{ */
 
+static const char *strchr_or_end(const char *str, const char ch)
+{
+  const char *p = str;
+  while (!ELEM(*p, ch, '\0')) {
+    p++;
+  }
+  return p;
+}
+
+static bool string_elem_split_by_delim(const char *haystack, const char delim, const char *needle)
+{
+  /* Local copy of #BLI_string_elem_split_by_delim (would be a bad level call). */
+
+  /* May be zero, returns true when an empty span exists. */
+  const size_t needle_len = strlen(needle);
+  const char *p = haystack, *p_next;
+  while (true) {
+    p_next = strchr_or_end(p, delim);
+    if ((size_t(p_next - p) == needle_len) && (memcmp(p, needle, needle_len) == 0)) {
+      return true;
+    }
+    if (*p_next == '\0') {
+      break;
+    }
+    p = p_next + 1;
+  }
+  return false;
+}
+
 static uint64_t sub_abs_u64(const uint64_t a, const uint64_t b)
 {
   return a > b ? a - b : b - a;
@@ -1804,16 +1823,36 @@ static const char *ghost_wl_locale_from_env_with_default()
   return locale;
 }
 
+static void ghost_wl_display_report_error_from_code(wl_display *display, const int ecode)
+{
+  GHOST_ASSERT(ecode, "Error not set!");
+  if (ELEM(ecode, EPIPE, ECONNRESET)) {
+    fprintf(stderr, "The Wayland connection broke. Did the Wayland compositor die?\n");
+    return;
+  }
+
+  if (ecode == EPROTO) {
+    const struct wl_interface *interface = nullptr;
+    const int ecode_proto = wl_display_get_protocol_error(display, &interface, nullptr);
+    fprintf(stderr,
+            "The Wayland connection experienced a protocol error %d in interface: %s\n",
+            ecode_proto,
+            interface ? interface->name : "<nil>");
+    const char *env_debug = "WAYLAND_DEBUG";
+    if (getenv(env_debug) == nullptr) {
+      fprintf(stderr, "Run with the environment variable \"%s=1\" for details.\n", env_debug);
+    }
+    return;
+  }
+
+  fprintf(stderr, "The Wayland connection experienced a fatal error: %s\n", strerror(ecode));
+}
+
 static void ghost_wl_display_report_error(wl_display *display)
 {
   int ecode = wl_display_get_error(display);
   GHOST_ASSERT(ecode, "Error not set!");
-  if (ELEM(ecode, EPIPE, ECONNRESET)) {
-    fprintf(stderr, "The Wayland connection broke. Did the Wayland compositor die?\n");
-  }
-  else {
-    fprintf(stderr, "The Wayland connection experienced a fatal error: %s\n", strerror(ecode));
-  }
+  ghost_wl_display_report_error_from_code(display, ecode);
 
   /* NOTE(@ideasman42): The application is running,
    * however an error closes all windows and most importantly:
@@ -1827,6 +1866,16 @@ static void ghost_wl_display_report_error(wl_display *display)
    * Exit since leaving the process open will simply flood the output and do nothing.
    * Although as the process is in a valid state, auto-save for e.g. is possible, see: #100855. */
   ::exit(-1);
+}
+
+bool ghost_wl_display_report_error_if_set(wl_display *display)
+{
+  const int ecode = wl_display_get_error(display);
+  if (ecode == 0) {
+    return false;
+  }
+  ghost_wl_display_report_error_from_code(display, ecode);
+  return true;
 }
 
 #ifdef __GNUC__
@@ -6980,16 +7029,6 @@ static void global_handle_add(void *data,
 
     added = display->registry_entry != registry_entry_prev;
   }
-  else {
-    /* Not found. */
-#ifdef USE_GNOME_NEEDS_LIBDECOR_HACK
-    if (STRPREFIX(interface, "gtk_shell")) { /* `gtk_shell1` at time of writing. */
-      /* Only require `libdecor` when built with X11 support,
-       * otherwise there is nothing to fall back on. */
-      display->libdecor_required = true;
-    }
-#endif
-  }
 
   CLOG_INFO(LOG,
             2,
@@ -7147,24 +7186,33 @@ GHOST_SystemWayland::GHOST_SystemWayland(bool background)
   }
 
 #ifdef WITH_GHOST_WAYLAND_LIBDECOR
-  if (display_->libdecor_required) {
+  bool libdecor_required = false;
+  if (const char *xdg_current_desktop = getenv("XDG_CURRENT_DESKTOP")) {
+    /* See the free-desktop specifications for details on `XDG_CURRENT_DESKTOP`.
+     * https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html */
+    if (string_elem_split_by_delim(xdg_current_desktop, ':', "GNOME")) {
+      libdecor_required = true;
+    }
+  }
+
+  if (libdecor_required) {
     /* Ignore windowing requirements when running in background mode,
      * as it doesn't make sense to fall back to X11 because of windowing functionality
      * in background mode, also LIBDECOR is crashing in background mode `blender -b -f 1`
      * for e.g. while it could be fixed, requiring the library at all makes no sense. */
     if (background) {
-      display_->libdecor_required = false;
+      libdecor_required = false;
     }
 #  ifdef WITH_GHOST_X11
     else if (!has_libdecor && !ghost_wayland_is_x11_available()) {
       /* Only require LIBDECOR when X11 is available, otherwise there is nothing to fall back to.
        * It's better to open without window decorations than failing entirely. */
-      display_->libdecor_required = false;
+      libdecor_required = false;
     }
 #  endif /* WITH_GHOST_X11 */
   }
 
-  if (display_->libdecor_required) {
+  if (libdecor_required) {
     gwl_xdg_decor_system_destroy(display_, display_->xdg_decor);
     display_->xdg_decor = nullptr;
 

@@ -459,8 +459,10 @@ class ViewLayerLightgroupsPanel(ViewLayerButtonsPanel, Panel):
 
         row = layout.row()
         col = row.column()
-        col.template_list("UI_UL_list", "lightgroups", view_layer,
-                          "lightgroups", view_layer, "active_lightgroup_index", rows=3)
+        col.template_list(
+            "UI_UL_list", "lightgroups", view_layer,
+            "lightgroups", view_layer, "active_lightgroup_index", rows=3,
+        )
 
         col = row.column()
         sub = col.column(align=True)

@@ -33,8 +33,10 @@ class GPENCIL_MT_material_context_menu(Menu):
             layout.operator(
                 "grease_pencil.material_copy_to_object",
                 text="Copy Material to Selected").only_active = True
-            layout.operator("grease_pencil.material_copy_to_object",
-                            text="Copy All Materials to Selected").only_active = False
+            layout.operator(
+                "grease_pencil.material_copy_to_object",
+                text="Copy All Materials to Selected",
+            ).only_active = False
 
         else:
             layout.operator("gpencil.material_reveal", icon='RESTRICT_VIEW_OFF', text="Show All")
@@ -47,22 +49,34 @@ class GPENCIL_MT_material_context_menu(Menu):
 
             layout.operator("gpencil.material_lock_unused", text="Lock Unselected", icon='LOCKED')
             layout.operator("gpencil.lock_layer", text="Lock Unused", icon='LOCKED')
-	
+
             layout.separator()
-	        
-            layout.operator("gpencil.material_to_vertex_color", text="Convert Materials to Color Attribute", icon='NODE_VERTEX_COLOR')
-            layout.operator("gpencil.extract_palette_vertex", text="Extract Palette from Color Attribute", icon='MATERIAL_DATA')
-	        
+
+            layout.operator(
+                "gpencil.material_to_vertex_color",
+                text="Convert Materials to Color Attribute",
+                icon='NODE_VERTEX_COLOR')
+            layout.operator(
+                "gpencil.extract_palette_vertex",
+                text="Extract Palette from Color Attribute",
+                icon='MATERIAL_DATA')
+
             layout.separator()
-	        
-            layout.operator("gpencil.materials_copy_to_object", text="Copy Material to Selected", icon = "COPYDOWN").only_active = True
-            layout.operator("gpencil.materials_copy_to_object", text="Copy All Materials to Selected",  icon = "COPYDOWN").only_active = False
-	
+
+            layout.operator(
+                "gpencil.materials_copy_to_object",
+                text="Copy Material to Selected",
+                icon="COPYDOWN").only_active = True
+            layout.operator(
+                "gpencil.materials_copy_to_object",
+                text="Copy All Materials to Selected",
+                icon="COPYDOWN").only_active = False
+
             layout.separator()
-	        
-            layout.operator("gpencil.stroke_merge_material", text="Merge Similar", icon = "MERGE")
-	        
-        layout.operator("object.material_slot_remove_unused", icon = "DELETE")
+
+            layout.operator("gpencil.stroke_merge_material", text="Merge Similar", icon="MERGE")
+
+        layout.operator("object.material_slot_remove_unused", icon="DELETE")
 
 
 class GPENCIL_UL_matslots(UIList):
@@ -223,7 +237,7 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
             col.prop(gpcolor, "mix_color", text="Secondary Color")
             col.prop(gpcolor, "mix_factor", text="Blend", slider=True)
 
-            row = col.row(align = True)
+            row = col.row(align=True)
             row.use_property_split = False
             row.prop(gpcolor, "flip", text="Flip Colors")
             row.prop_decorator(gpcolor, "flip")
@@ -247,7 +261,7 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
             col.prop(gpcolor, "texture_angle", text="Rotation")
             col.prop(gpcolor, "texture_scale", text="Scale")
 
-            row = col.row(align = True)
+            row = col.row(align=True)
             row.use_property_split = False
             row.prop(gpcolor, "texture_clamp", text="Clip Image")
             row.prop_decorator(gpcolor, "texture_clamp")
