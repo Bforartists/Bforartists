@@ -273,7 +273,7 @@ class USERPREF_PT_interface_translation(InterfacePanel, CenterAlignMixIn, Panel)
         layout.prop(view, "language")
         col = layout.column()
 
-        col.label(text="Translate", heading_ctxt=i18n_contexts.editor_preferences)
+        col.label(text="Translate", text_ctxt=i18n_contexts.editor_preferences)
         col.active = (bpy.app.translations.locale != "en_US")
         col.use_property_split = False  # BFA - Left align checkboxes
 
