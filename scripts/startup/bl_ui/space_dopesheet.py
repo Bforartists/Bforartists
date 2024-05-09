@@ -518,11 +518,6 @@ class DOPESHEET_MT_view(Menu):
         layout.prop(st, "show_region_hud")
         layout.separator()
 
-        layout.operator("action.view_selected")
-        layout.operator("action.view_all")
-        layout.operator("action.view_frame")
-        layout.separator()
-
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.operator("anim.previewrange_clear", icon="CLEAR")
         layout.operator("action.previewrange_set", icon='BORDER_RECT')
