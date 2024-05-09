@@ -161,6 +161,10 @@ def marker_menu_generic(layout, context):
 
     layout.operator("marker.delete", text="Delete Marker", icon = "DELETE")
 
+    layout.separator()    
+
+    layout.operator("marker.camera_bind", text="Bind Camera to Markers", icon = "MARKER_BIND")
+    
     layout.separator()
 
     props = layout.operator("wm.call_panel", text="Rename Marker", icon = "RENAME")
