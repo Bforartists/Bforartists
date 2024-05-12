@@ -617,13 +617,6 @@ enum {
   NODE_LINK_MUTED = 1 << 4,
 };
 
-/** #bNodeTree::edit_quality & #bNodeTree::render_quality */
-enum {
-  NTREE_QUALITY_HIGH = 0,
-  NTREE_QUALITY_MEDIUM = 1,
-  NTREE_QUALITY_LOW = 2,
-};
-
 typedef struct bNestedNodePath {
   /** ID of the node that is or contains the nested node. */
   int32_t node_id;
@@ -663,6 +656,8 @@ typedef struct bNodeTree {
   struct bNodeTreeType *typeinfo;
   /** Runtime type identifier. */
   char idname[64];
+  /** User-defined description of the node tree. */
+  char *description;
 
   /** Grease pencil data. */
   struct bGPdata *gpd;
@@ -680,17 +675,15 @@ typedef struct bNodeTree {
   int cur_index;
   int flag;
 
-  /** Quality setting when editing. */
-  short edit_quality;
-  /** Quality setting when rendering. */
-  short render_quality;
   /** Tile size for compositor engine. */
   int chunksize DNA_DEPRECATED;
   /** Execution mode to use for compositor engine. */
-  int execution_mode;
-  /** Execution mode to use for compositor engine. */
-  int precision;
+  int execution_mode DNA_DEPRECATED;
+  /** Precision used by the GPU execution of the compositor tree. */
+  int precision DNA_DEPRECATED;
 
+  /** #NodeGroupColorTag. */
+  int color_tag;
   char _pad[4];
 
   rctf viewer_border;
@@ -839,7 +832,7 @@ enum {
   /** For animation editors. */
   NTREE_DS_EXPAND = 1 << 0,
   /** Two pass. */
-  NTREE_TWO_PASS = 1 << 2,
+  NTREE_UNUSED_2 = 1 << 2, /* cleared */
   /** Use a border for viewer nodes. */
   NTREE_VIEWER_BORDER = 1 << 4,
   /**
@@ -848,18 +841,6 @@ enum {
    */
   // NTREE_IS_LOCALIZED = 1 << 5,
 };
-
-/* tree->execution_mode */
-typedef enum eNodeTreeExecutionMode {
-  NTREE_EXECUTION_MODE_CPU = 0,
-  NTREE_EXECUTION_MODE_GPU = 2,
-} eNodeTreeExecutionMode;
-
-/* tree->precision */
-typedef enum eNodeTreePrecision {
-  NODE_TREE_COMPOSITOR_PRECISION_AUTO = 0,
-  NODE_TREE_COMPOSITOR_PRECISION_FULL = 1,
-} eNodeTreePrecision;
 
 typedef enum eNodeTreeRuntimeFlag {
   /** There is a node that references an image with animation. */
@@ -1558,6 +1539,10 @@ typedef struct NodeInputBool {
 typedef struct NodeInputInt {
   int integer;
 } NodeInputInt;
+
+typedef struct NodeInputRotation {
+  float rotation_euler[3];
+} NodeInputRotation;
 
 typedef struct NodeInputVector {
   float vector[3];
@@ -2872,3 +2857,8 @@ typedef enum NodeCombSepColorMode {
   NODE_COMBSEP_COLOR_HSV = 1,
   NODE_COMBSEP_COLOR_HSL = 2,
 } NodeCombSepColorMode;
+
+typedef enum NodeGeometryTransformMode {
+  GEO_NODE_TRANSFORM_MODE_COMPONENTS = 0,
+  GEO_NODE_TRANSFORM_MODE_MATRIX = 1,
+} NodeGeometryTransformMode;

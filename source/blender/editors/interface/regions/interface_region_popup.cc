@@ -393,6 +393,8 @@ static void ui_popup_block_position(wmWindow *window,
 
 static void ui_block_region_refresh(const bContext *C, ARegion *region)
 {
+  BLI_assert(region->regiontype == RGN_TYPE_TEMPORARY);
+
   ScrArea *ctx_area = CTX_wm_area(C);
   ARegion *ctx_region = CTX_wm_region(C);
 
@@ -649,7 +651,19 @@ uiBlock *ui_popup_block_refresh(bContext *C,
   /* callbacks _must_ leave this for us, otherwise we can't call UI_block_update_from_old */
   BLI_assert(!block->endblock);
 
-  /* ensure we don't use mouse coords here! */
+  /* Ensure we don't use mouse coords here.
+   *
+   * NOTE(@ideasman42): Important because failing to do will cause glitches refreshing the popup.
+   *
+   * - Many popups use #wmEvent::xy to position them.
+   * - Refreshing a pop-up must only ever change it's contents. Consider that refreshing
+   *   might be used to show a menu item as grayed out, or change a text label,
+   *   we *never* want the popup to move based on the cursor location while refreshing.
+   * - The location of the cursor at the time of creation is stored in:
+   *   `handle->popup_create_vars.event_xy` which must be used instead.
+   *
+   * Since it's difficult to control logic which is called indirectly here,
+   * clear the `eventstate` entirely to ensure it's never used when refreshing a popup. */
 #ifndef NDEBUG
   window->eventstate = nullptr;
 #endif
@@ -882,8 +896,19 @@ uiPopupBlockHandle *ui_popup_block_create(bContext *C,
 
   UI_region_handlers_add(&region->handlers);
 
+  /* Note that this will be set in the code-path that typically calls refreshing
+   * (that loops over #Screen::regionbase and refreshes regions tagged with #RGN_REFRESH_UI).
+   * Whereas this only runs on initial creation.
+   * Set the region here so drawing logic can rely on it being set.
+   * Note that restoring the previous value may not be needed, it just avoids potential
+   * problems caused by popups manipulating the context which created them. */
+  ARegion *region_popup_prev = CTX_wm_region_popup(C);
+  CTX_wm_region_popup_set(C, region);
+
   uiBlock *block = ui_popup_block_refresh(C, handle, butregion, but);
   handle = block->handle;
+
+  CTX_wm_region_popup_set(C, region_popup_prev);
 
   /* keep centered on window resizing */
   if (block->bounds_type == UI_BLOCK_BOUNDS_POPUP_CENTER) {
