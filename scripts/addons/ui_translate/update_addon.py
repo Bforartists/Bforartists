@@ -138,7 +138,7 @@ class UI_OT_i18n_addon_translation_update(Operator):
 
         # Generate addon-specific messages (no need for another blender instance here, this should not have any
         # influence over the final result).
-        pot = bl_extract_messages.dump_addon_messages(module_name, True, self.settings)
+        pot = bl_extract_messages.dump_addon_messages(module_name, False, self.settings)
 
         # Now (try to) get current i18n data from the addon...
         path = mod.__file__

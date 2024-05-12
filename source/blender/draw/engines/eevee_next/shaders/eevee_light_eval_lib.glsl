@@ -47,6 +47,46 @@ struct ClosureLightStack {
   ClosureLight cl[LIGHT_CLOSURE_EVAL_COUNT];
 };
 
+ClosureLight closure_light_get(ClosureLightStack stack, int index)
+{
+  switch (index) {
+    case 0:
+      return stack.cl[0];
+#if LIGHT_CLOSURE_EVAL_COUNT > 1
+    case 1:
+      return stack.cl[1];
+#endif
+#if LIGHT_CLOSURE_EVAL_COUNT > 2
+    case 2:
+      return stack.cl[2];
+#endif
+#if LIGHT_CLOSURE_EVAL_COUNT > 3
+#  error
+#endif
+  }
+  ClosureLight closure_null;
+  return closure_null;
+}
+
+void closure_light_set(inout ClosureLightStack stack, int index, ClosureLight cl_light)
+{
+  switch (index) {
+    case 0:
+      stack.cl[0] = cl_light;
+#if LIGHT_CLOSURE_EVAL_COUNT > 1
+    case 1:
+      stack.cl[1] = cl_light;
+#endif
+#if LIGHT_CLOSURE_EVAL_COUNT > 2
+    case 2:
+      stack.cl[2] = cl_light;
+#endif
+#if LIGHT_CLOSURE_EVAL_COUNT > 3
+#  error
+#endif
+  }
+}
+
 ClosureLight closure_light_new_ex(ClosureUndetermined cl,
                                   vec3 V,
                                   float thickness,
@@ -181,17 +221,16 @@ void light_eval_single(uint l_idx,
 
   float shadow = 1.0;
   if (light.tilemap_index != LIGHT_NO_SHADOW) {
-    ShadowEvalResult result = shadow_eval(light,
-                                          is_directional,
-                                          is_transmission,
-                                          is_translucent_with_thickness,
-                                          thickness,
-                                          P,
-                                          Ng,
-                                          lv.L,
-                                          ray_count,
-                                          ray_step_count);
-    shadow = result.light_visibilty;
+    shadow = shadow_eval(light,
+                         is_directional,
+                         is_transmission,
+                         is_translucent_with_thickness,
+                         thickness,
+                         P,
+                         Ng,
+                         lv.L,
+                         ray_count,
+                         ray_step_count);
   }
 
   if (is_translucent_with_thickness) {
