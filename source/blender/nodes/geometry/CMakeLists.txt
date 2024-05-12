@@ -9,8 +9,8 @@ set(INC
   ../intern
   ../../editors/include
   ../../blenkernel
-  ../../blentranslation
   ../../blenloader
+  ../../blentranslation
   ../../bmesh
   ../../functions
   ../../geometry
@@ -164,6 +164,7 @@ set(SRC
   nodes/node_geo_repeat.cc
   nodes/node_geo_rotate_instances.cc
   nodes/node_geo_sample_grid.cc
+  nodes/node_geo_sample_grid_index.cc
   nodes/node_geo_sample_index.cc
   nodes/node_geo_sample_nearest.cc
   nodes/node_geo_sample_nearest_surface.cc

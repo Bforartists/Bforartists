@@ -222,10 +222,10 @@ set(VULKAN_SRC
   vulkan/render_graph/nodes/vk_pipeline_data.cc
   vulkan/render_graph/vk_command_buffer_wrapper.cc
   vulkan/render_graph/vk_command_builder.cc
+  vulkan/render_graph/vk_render_graph.cc
   vulkan/render_graph/vk_resource_access_info.cc
   vulkan/render_graph/vk_resource_state_tracker.cc
   vulkan/render_graph/vk_scheduler.cc
-  vulkan/render_graph/vk_render_graph.cc
   vulkan/vk_resource_tracker.cc
   vulkan/vk_sampler.cc
   vulkan/vk_samplers.cc
@@ -271,6 +271,8 @@ set(VULKAN_SRC
   vulkan/vk_push_constants.hh
   vulkan/vk_query.hh
   vulkan/render_graph/nodes/vk_blit_image_node.hh
+  vulkan/render_graph/nodes/vk_begin_rendering_node.hh
+  vulkan/render_graph/nodes/vk_clear_attachments_node.hh
   vulkan/render_graph/nodes/vk_clear_color_image_node.hh
   vulkan/render_graph/nodes/vk_clear_depth_stencil_image_node.hh
   vulkan/render_graph/nodes/vk_copy_buffer_node.hh
@@ -278,18 +280,19 @@ set(VULKAN_SRC
   vulkan/render_graph/nodes/vk_copy_image_node.hh
   vulkan/render_graph/nodes/vk_copy_image_to_buffer_node.hh
   vulkan/render_graph/nodes/vk_dispatch_node.hh
+  vulkan/render_graph/nodes/vk_end_rendering_node.hh
   vulkan/render_graph/nodes/vk_fill_buffer_node.hh
   vulkan/render_graph/nodes/vk_node_info.hh
-  vulkan/render_graph/nodes/vk_synchronization_node.hh
   vulkan/render_graph/nodes/vk_pipeline_data.hh
+  vulkan/render_graph/nodes/vk_synchronization_node.hh
   vulkan/render_graph/vk_command_buffer_wrapper.hh
   vulkan/render_graph/vk_command_builder.hh
+  vulkan/render_graph/vk_render_graph.hh
+  vulkan/render_graph/vk_render_graph_links.hh
   vulkan/render_graph/vk_render_graph_node.hh
   vulkan/render_graph/vk_resource_access_info.hh
   vulkan/render_graph/vk_resource_state_tracker.hh
   vulkan/render_graph/vk_scheduler.hh
-  vulkan/render_graph/vk_render_graph.hh
-  vulkan/render_graph/vk_render_graph_links.hh
   vulkan/vk_resource_tracker.hh
   vulkan/vk_sampler.hh
   vulkan/vk_samplers.hh
@@ -942,9 +945,10 @@ if(WITH_GTESTS)
     list(APPEND TEST_SRC
       vulkan/tests/vk_data_conversion_test.cc
       vulkan/tests/vk_memory_layout_test.cc
-      vulkan/render_graph/tests/vk_render_graph_test_transfer.cc
       vulkan/render_graph/tests/vk_render_graph_test_compute.cc
       vulkan/render_graph/tests/vk_render_graph_test_present.cc
+      vulkan/render_graph/tests/vk_render_graph_test_render.cc
+      vulkan/render_graph/tests/vk_render_graph_test_transfer.cc
     )
   endif()
 

@@ -24,7 +24,7 @@ class LayerDataButtonsPanel:
     @classmethod
     def poll(cls, context):
         grease_pencil = context.grease_pencil
-        return grease_pencil and grease_pencil.layers.active
+        return grease_pencil and grease_pencil.layers.active_layer
 
 
 class GREASE_PENCIL_UL_masks(UIList):
@@ -44,7 +44,7 @@ class GreasePencil_LayerMaskPanel:
     def draw_header(self, context):
         ob = context.object
         grease_pencil = ob.data
-        layer = grease_pencil.layers.active
+        layer = grease_pencil.layers.active_layer
 
         self.layout.prop(layer, "use_masks", text="", toggle=0)
 
@@ -52,7 +52,7 @@ class GreasePencil_LayerMaskPanel:
         layout = self.layout
         ob = context.object
         grease_pencil = ob.data
-        layer = grease_pencil.layers.active
+        layer = grease_pencil.layers.active_layer
 
         layout = self.layout
         layout.enabled = layer.use_masks
@@ -86,7 +86,7 @@ class GreasePencil_LayerTransformPanel:
 
         ob = context.object
         grease_pencil = ob.data
-        layer = grease_pencil.layers.active
+        layer = grease_pencil.layers.active_layer
         layout.active = not layer.lock
 
         row = layout.row(align=True)
@@ -106,7 +106,7 @@ class GreasPencil_LayerRelationsPanel:
 
         ob = context.object
         grease_pencil = ob.data
-        layer = grease_pencil.layers.active
+        layer = grease_pencil.layers.active_layer
         layout.active = not layer.lock
 
         row = layout.row(align=True)
@@ -137,7 +137,7 @@ class GREASE_PENCIL_MT_layer_mask_add(Menu):
         layout = self.layout
 
         grease_pencil = context.grease_pencil
-        active_layer = grease_pencil.layers.active
+        active_layer = grease_pencil.layers.active_layer
         found = False
         for layer in grease_pencil.layers:
             if layer == active_layer or layer.name in active_layer.mask_layers:
@@ -195,6 +195,15 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         layout.prop(grease_pencil, "use_autolock_layers", text="Autolock Inactive Layers")
 
 
+class GREASE_PENCIL_MT_group_context_menu(Menu):
+    bl_label = "Layer Group"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("grease_pencil.layer_group_remove", text="Delete Group").keep_children = True
+        layout.operator("grease_pencil.layer_group_remove", text="Delete Group and children").keep_children = False
+
+
 class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
     bl_label = "Layers"
 
@@ -202,7 +211,7 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         layout = self.layout
 
         grease_pencil = context.grease_pencil
-        layer = grease_pencil.layers.active
+        layer = grease_pencil.layers.active_layer
 
         row = layout.row()
         row.template_grease_pencil_layer_tree()
@@ -349,6 +358,7 @@ classes = (
     DATA_PT_grease_pencil_onion_skinning_display,
     DATA_PT_grease_pencil_settings,
     GREASE_PENCIL_MT_grease_pencil_add_layer_extra,
+    GREASE_PENCIL_MT_group_context_menu,
 )
 
 if _has_gpv3:
