@@ -96,9 +96,7 @@ static bool grease_pencil_layer_initialize_trans_data(blender::bke::greasepencil
     }
 
     /* Store frames' duration to keep them visually correct while moving the frames. */
-    if (!frame.is_implicit_hold()) {
-      trans_data.frames_duration.add(frame_number, layer.get_frame_duration_at(frame_number));
-    }
+    trans_data.frames_duration.add(frame_number, layer.get_frame_duration_at(frame_number));
   }
 
   trans_data.status = LayerTransformData::TRANS_INIT;
@@ -154,8 +152,7 @@ static bool grease_pencil_layer_update_trans_data(blender::bke::greasepencil::La
 
   layer.remove_frame(dst_frame_number);
 
-  GreasePencilFrame *frame = layer.add_frame(
-      dst_frame_number, src_frame.drawing_index, src_duration);
+  GreasePencilFrame *frame = layer.add_frame(dst_frame_number, src_duration);
   *frame = src_frame;
 
   trans_data.frames_destination.add_overwrite(src_frame_number, dst_frame_number);

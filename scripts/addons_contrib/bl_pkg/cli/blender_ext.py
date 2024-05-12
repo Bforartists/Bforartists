@@ -223,6 +223,7 @@ class PkgManifest(NamedTuple):
     copyright: Optional[List[str]] = None
     permissions: Optional[List[str]] = None
     tags: Optional[List[str]] = None
+    wheels: Optional[List[str]] = None
 
 
 class PkgManifest_Archive(NamedTuple):
@@ -307,6 +308,32 @@ def scandir_recursive(
         filter_fn: Callable[[str], bool],
 ) -> Generator[Tuple[str, str], None, None]:
     yield from scandir_recursive_impl(path, path, filter_fn=filter_fn)
+
+
+def filepath_skip_compress(filepath: str) -> bool:
+    """
+    Return true when this file shouldn't be compressed while archiving.
+    Speeds up archive creation, especially for large ``*.whl`` files.
+    """
+    # NOTE: for now use simple extension check, we could check the magic number too.
+    return filepath.lower().endswith((
+        # Python wheels.
+        ".whl",
+        # Archives (exclude historic formats: `*.arj`, `*.lha` ... etc).
+        ".bz2",
+        ".gz",
+        ".lz4",
+        ".lzma",
+        ".rar",
+        ".xz",
+        ".zip",
+        ".zst",
+        # TAR combinations.
+        ".tbz2",
+        ".tgz",
+        ".txz",
+        ".tzst",
+    ))
 
 
 def pkg_manifest_from_dict_and_validate_impl(
@@ -758,6 +785,29 @@ def pkg_manifest_validate_field_type(value: str) -> Optional[str]:
     return None
 
 
+def pkg_manifest_validate_field_wheels(value: List[Any]) -> Optional[str]:
+    if (error := pkg_manifest_validate_field_any_list_of_non_empty_strings(value)) is not None:
+        return error
+    # Enforce naming spec:
+    # https://packaging.python.org/en/latest/specifications/binary-distribution-format/#file-name-convention
+    # This also defines the name spec:
+    filename_spec = "{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl"
+
+    for wheel in value:
+        if "\\" in wheel:
+            return "wheel paths must use forward slashes, found {!r}".format(wheel)
+
+        wheel_filename = os.path.basename(wheel)
+        if not wheel_filename.lower().endswith(".whl"):
+            return "wheel paths must end with \".whl\", found {!r}".format(wheel)
+
+        wheel_filename_split = wheel_filename.split("-")
+        if not (5 <= len(wheel_filename_split) <= 6):
+            return "wheel filename must follow the spec \"{:s}\", found {!r}".format(filename_spec, wheel_filename)
+
+    return None
+
+
 def pkg_manifest_validate_field_archive_size(value: int) -> Optional[str]:
     if value <= 0:
         return "to be a positive integer, found {!r}".format(value)
@@ -799,6 +849,7 @@ pkg_manifest_known_keys_and_types: Tuple[Tuple[str, type, Optional[Callable[[Any
     ("copyright", list, pkg_manifest_validate_field_any_non_empty_list_of_non_empty_strings),
     ("permissions", list, pkg_manifest_validate_field_any_list_of_non_empty_strings),
     ("tags", list, pkg_manifest_validate_field_any_non_empty_list_of_non_empty_strings),
+    ("wheels", list, pkg_manifest_validate_field_wheels),
 )
 
 # Keep in sync with `PkgManifest_Archive`.
@@ -1422,7 +1473,7 @@ class subcmd_server:
 
         with open(filepath_repo_json, "w", encoding="utf-8") as fh:
             json.dump(repo_gen_dict, fh, indent=2)
-        message_status(msg_fn, "found {:d} packages.".format(len(repo_gen_dict)))
+        message_status(msg_fn, "found {:d} packages.".format(len(repo_data)))
 
         return True
 
@@ -1949,6 +2000,9 @@ class subcmd_author:
 
         filenames_root_exclude = {
             pkg_filename,
+            # It's possible a temporary file exists from a previous run which was not cleaned up.
+            # Although in general this should be cleaned up - power failure etc may mean it exists.
+            pkg_filename + "@",
             # This is added, converted from the TOML.
             PKG_REPO_LIST_FILENAME,
 
@@ -1980,8 +2034,9 @@ class subcmd_author:
 
                     # Handy for testing that sub-directories:
                     # zip_fh.write(filepath_abs, manifest.id + "/" + filepath_rel)
+                    compress_type = zipfile.ZIP_STORED if filepath_skip_compress(filepath_abs) else None
                     try:
-                        zip_fh.write(filepath_abs, filepath_rel)
+                        zip_fh.write(filepath_abs, filepath_rel, compress_type=compress_type)
                     except BaseException as ex:
                         message_status(msg_fn, "Error adding to archive \"{:s}\"".format(str(ex)))
                         return False
@@ -2022,7 +2077,7 @@ class subcmd_author:
             expected_files.append("__init__.py")
         ok = True
         for filepath in expected_files:
-            if not os.path.exists(os.path.join(pkg_source_dir, filepath)) is None:
+            if not os.path.exists(os.path.join(pkg_source_dir, filepath)):
                 message_status(msg_fn, "Error, file missing from {:s}: \"{:s}\"".format(
                     manifest.type,
                     filepath,
