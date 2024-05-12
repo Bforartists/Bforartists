@@ -75,6 +75,30 @@ void ED_view3d_background_color_get(const Scene *scene, const View3D *v3d, float
   UI_GetThemeColor3fv(TH_BACK, r_color);
 }
 
+void ED_view3d_text_colors_get(const Scene *scene,
+                               const View3D *v3d,
+                               float r_text_color[4],
+                               float r_shadow_color[4])
+{
+  /* Text fully opaque, shadow slightly transparent. */
+  r_text_color[3] = 1.0f;
+  r_shadow_color[3] = 0.8f;
+
+  /* White text, black shadow. Unless view background
+   * is very dark; in that case black text, white shadow. */
+  float bg_color[4];
+  ED_view3d_background_color_get(scene, v3d, bg_color);
+  float lightness = rgb_to_grayscale(bg_color);
+  if (lightness > 0.04f) {
+    copy_v3_fl(r_text_color, 1.0f);
+    copy_v3_fl(r_shadow_color, 0.0f);
+  }
+  else {
+    copy_v3_fl(r_text_color, 0.2f);
+    copy_v3_fl(r_shadow_color, 1.0f);
+  }
+}
+
 bool ED_view3d_has_workbench_in_texture_color(const Scene *scene,
                                               const Object *ob,
                                               const View3D *v3d)
@@ -114,9 +138,9 @@ void ED_view3d_dist_range_get(const View3D *v3d, float r_dist_range[2])
 bool ED_view3d_clip_range_get(const Depsgraph *depsgraph,
                               const View3D *v3d,
                               const RegionView3D *rv3d,
-                              float *r_clipsta,
-                              float *r_clipend,
-                              const bool use_ortho_factor)
+                              const bool use_ortho_factor,
+                              float *r_clip_start,
+                              float *r_clip_end)
 {
   CameraParams params;
 
@@ -129,11 +153,11 @@ bool ED_view3d_clip_range_get(const Depsgraph *depsgraph,
     params.clip_end *= fac;
   }
 
-  if (r_clipsta) {
-    *r_clipsta = params.clip_start;
+  if (r_clip_start) {
+    *r_clip_start = params.clip_start;
   }
-  if (r_clipend) {
-    *r_clipend = params.clip_end;
+  if (r_clip_end) {
+    *r_clip_end = params.clip_end;
   }
 
   return params.is_ortho;

@@ -265,6 +265,7 @@ DefNode(TextureNode,     TEX_NODE_PROC+TEX_DISTNOISE,  0,                   "TEX
 
 DefNode(FunctionNode, FN_NODE_ALIGN_EULER_TO_VECTOR, 0,  "ALIGN_EULER_TO_VECTOR",  AlignEulerToVector,  "Align Euler to Vector",  "Add a Align Euler to Vector Function node\nAligns a euler value to a vector")
 DefNode(FunctionNode, FN_NODE_ALIGN_ROTATION_TO_VECTOR, 0, "ALIGN_ROTATION_TO_VECTOR", AlignRotationToVector, "Align Rotation to Vector", "")
+DefNode(FunctionNode, FN_NODE_AXES_TO_ROTATION, 0, "AXES_TO_ROTATION", AxesToRotation, "Axes to Rotation", "Create a rotation from a primary and (ideally orthogonal) secondary axis")
 DefNode(FunctionNode, FN_NODE_AXIS_ANGLE_TO_ROTATION, 0, "AXIS_ANGLE_TO_ROTATION", AxisAngleToRotation, "Axis Angle to Rotation", "Add a Axis Angle to Rotation Function node\nConverts a axis angle to a rotation vector")
 DefNode(FunctionNode, FN_NODE_BOOLEAN_MATH, 0,   "BOOLEAN_MATH",  BooleanMath,  "Boolean Math",  "Add a Boolean Math Function node\nPerforms a basic logical operation between its inputs")
 DefNode(FunctionNode, FN_NODE_COMBINE_COLOR, 0,  "COMBINE_COLOR",  CombineColor,  "Combine Color",  "Add a Combine Color Function node\nCombines single colors to a rgb, hsv or hsl color value" )
@@ -277,6 +278,7 @@ DefNode(FunctionNode, FN_NODE_FLOAT_TO_INT, def_float_to_int,  "FLOAT_TO_INT",  
 DefNode(FunctionNode, FN_NODE_INPUT_BOOL, def_fn_input_bool,  "INPUT_BOOL",  InputBool,  "Boolean",  "Add a Boolean Function node\nAdds a boolean that can be on or off")
 DefNode(FunctionNode, FN_NODE_INPUT_COLOR, def_fn_input_color,  "INPUT_COLOR",  InputColor,  "Color",  "Add a Color Function node\nAdds a color picker that allows you to set a color")
 DefNode(FunctionNode, FN_NODE_INPUT_INT, def_fn_input_int,  "INPUT_INT",  InputInt,  "Integer",  "Add a Integer Function node\nAllows to add a integer number")
+DefNode(FunctionNode, FN_NODE_INPUT_ROTATION, def_fn_input_rotation, "INPUT_ROTATION", InputRotation, "Rotation", "")
 DefNode(FunctionNode, FN_NODE_INPUT_SPECIAL_CHARACTERS,  0,  "INPUT_SPECIAL_CHARACTERS",  InputSpecialCharacters,  "Special Characters",  "Add a Special Character Function node\nAdd special characters")
 DefNode(FunctionNode, FN_NODE_INPUT_STRING, def_fn_input_string,  "INPUT_STRING",  InputString,  "String",  "Add a String Function node\nAdds a string")
 DefNode(FunctionNode, FN_NODE_INPUT_VECTOR, def_fn_input_vector,  "INPUT_VECTOR",  InputVector,  "Vector",  "Add a Vector Function Function node\nCreates a single vector of three values that can be used as an input")
@@ -433,6 +435,7 @@ DefNode(GeometryNode, GEO_NODE_REVERSE_CURVE, 0, "REVERSE_CURVE", ReverseCurve, 
 DefNode(GeometryNode, GEO_NODE_ROTATE_INSTANCES, 0, "ROTATE_INSTANCES", RotateInstances, "Rotate Instances", "Add a Rotate Instances Geometry node\nRotate geometry instances in local or global space")
 DefNode(GeometryNode, GEO_NODE_SAMPLE_CURVE, def_geo_curve_sample, "SAMPLE_CURVE", SampleCurve, "Sample Curve", "Add a Sample Curve Geometry node\nRetrieve data from a point on a curve at a certain distance from its start")
 DefNode(GeometryNode, GEO_NODE_SAMPLE_GRID, 0, "SAMPLE_GRID", SampleGrid, "Sample Grid", "")
+DefNode(GeometryNode, GEO_NODE_SAMPLE_GRID_INDEX, 0, "SAMPLE_GRID_INDEX", SampleGridIndex, "Sample Grid Index", "Retrieve volume grid values at specific voxels")
 DefNode(GeometryNode, GEO_NODE_SAMPLE_INDEX, def_geo_sample_index, "SAMPLE_INDEX", SampleIndex, "Sample Index", "Add a Sample Index Geometry node\nRetrieve values from specific geometry elements")
 DefNode(GeometryNode, GEO_NODE_SAMPLE_NEAREST_SURFACE, 0, "SAMPLE_NEAREST_SURFACE", SampleNearestSurface, "Sample Nearest Surface", "Add a Sample Nearest Surface Geometry node\nCalculate the interpolated value of a mesh attribute on the closest point of its surface")
 DefNode(GeometryNode, GEO_NODE_SAMPLE_NEAREST, 0, "SAMPLE_NEAREST", SampleNearest, "Sample Nearest", "Add a Sample Nearest Geometry node\nFind the element of a geometry closest to a position. Similar to the \"Index of Nearest\" node")

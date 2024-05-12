@@ -207,19 +207,17 @@ def command_output_from_json_0(
                 raise ex
             chunk = b''
 
+        json_messages = []
+
         if not chunk:
             if ps.poll() is not None:
                 break
             if use_idle:
                 time.sleep(IDLE_WAIT_ON_READ)
-            continue
-
-        # Extract contiguous data from `chunk_list`.
-        chunk_zero_index = chunk.find(b'\0')
-        if chunk_zero_index == -1:
+        elif (chunk_zero_index := chunk.find(b'\0')) == -1:
             chunk_list.append(chunk)
         else:
-            json_messages = []
+            # Extract contiguous data from `chunk_list`.
             chunk_list.append(chunk[:chunk_zero_index])
 
             json_bytes_list = [b''.join(chunk_list)]
@@ -245,10 +243,12 @@ def command_output_from_json_0(
 
                 json_messages.append((json_data[0], json_data[1]))
 
-            request_exit = yield json_messages
-            if request_exit and not request_exit_signal_sent:
-                ps.send_signal(signal.SIGINT)
-                request_exit_signal_sent = True
+        # Yield even when `json_messages`, otherwise this generator can block.
+        # It also means a request to exit might not be responded to soon enough.
+        request_exit = yield json_messages
+        if request_exit and not request_exit_signal_sent:
+            ps.send_signal(signal.SIGINT)
+            request_exit_signal_sent = True
 
 
 # -----------------------------------------------------------------------------
@@ -536,7 +536,7 @@ class CommandBatchItem:
 
     STATUS_NOT_YET_STARTED = 0
     STATUS_RUNNING = 1
-    STATUS_COMPLETE = -1
+    STATUS_COMPLETE = 2
 
     def __init__(self, fn_with_args: InfoItemCallable):
         self.fn_with_args = fn_with_args
@@ -647,6 +647,7 @@ class CommandBatch:
             # First time initialization.
             if cmd.fn_iter is None:
                 cmd.fn_iter = cmd.invoke()
+                cmd.status = CommandBatchItem.STATUS_RUNNING
                 send_arg = None
 
             try:

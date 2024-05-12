@@ -79,8 +79,6 @@ typedef struct Light {
   float volume_fac;
 
   float att_dist;
-  float shadow_softness_factor;
-  float shadow_trace_distance;
   float shadow_filter_radius;
   float shadow_resolution_scale;
 

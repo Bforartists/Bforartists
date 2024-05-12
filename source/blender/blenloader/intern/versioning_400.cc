@@ -62,6 +62,8 @@
 #include "BKE_scene.hh"
 #include "BKE_tracking.h"
 
+#include "IMB_imbuf_enums.h"
+
 #include "SEQ_iterator.hh"
 #include "SEQ_sequencer.hh"
 
@@ -2077,6 +2079,43 @@ static bool seq_hue_correct_set_wrapping(Sequence *seq, void * /*user_data*/)
   return true;
 }
 
+static void versioning_update_timecode(short int *tc)
+{
+  /* 2 = IMB_TC_FREE_RUN, 4 = IMB_TC_INTERPOLATED_REC_DATE_FREE_RUN. */
+  if (ELEM(*tc, 2, 4)) {
+    *tc = IMB_TC_RECORD_RUN;
+  }
+}
+
+static bool seq_proxies_timecode_update(Sequence *seq, void * /*user_data*/)
+{
+  if (seq->strip == nullptr || seq->strip->proxy == nullptr) {
+    return true;
+  }
+  StripProxy *proxy = seq->strip->proxy;
+  versioning_update_timecode(&proxy->tc);
+  return true;
+}
+
+static bool seq_text_data_update(Sequence *seq, void * /*user_data*/)
+{
+  if (seq->type != SEQ_TYPE_TEXT || seq->effectdata == nullptr) {
+    return true;
+  }
+
+  TextVars *data = static_cast<TextVars *>(seq->effectdata);
+  if (data->shadow_angle == 0.0f) {
+    data->shadow_angle = DEG2RADF(65.0f);
+    data->shadow_offset = 0.04f;
+    data->shadow_blur = 0.0f;
+  }
+  if (data->outline_width == 0.0f) {
+    data->outline_color[3] = 0.7f;
+    data->outline_width = 0.05f;
+  }
+  return true;
+}
+
 static void versioning_node_hue_correct_set_wrappng(bNodeTree *ntree)
 {
   if (ntree->type == NTREE_COMPOSIT) {
@@ -2208,7 +2247,6 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     if (!DNA_struct_member_exists(fd->filesdna, "LightProbe", "int", "grid_bake_samples")) {
       LISTBASE_FOREACH (LightProbe *, lightprobe, &bmain->lightprobes) {
         lightprobe->grid_bake_samples = 2048;
-        lightprobe->surfel_density = 1.0f;
         lightprobe->grid_normal_bias = 0.3f;
         lightprobe->grid_view_bias = 0.0f;
         lightprobe->grid_facing_bias = 0.5f;
@@ -2584,14 +2622,6 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
         scene->eevee.shadow_step_count = default_scene_eevee.shadow_step_count;
       }
     }
-
-    if (!DNA_struct_member_exists(fd->filesdna, "Light", "float", "shadow_softness_factor")) {
-      Light default_light = blender::dna::shallow_copy(*DNA_struct_default_get(Light));
-      LISTBASE_FOREACH (Light *, light, &bmain->lights) {
-        light->shadow_softness_factor = default_light.shadow_softness_factor;
-        light->shadow_trace_distance = default_light.shadow_trace_distance;
-      }
-    }
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 28)) {
@@ -2744,24 +2774,23 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     /* Unify Material::blend_shadow and Cycles.use_transparent_shadows into the
      * Material::blend_flag. */
     Scene *scene = static_cast<Scene *>(bmain->scenes.first);
-    bool is_cycles = scene && STREQ(scene->r.engine, RE_engine_id_CYCLES);
-    if (is_cycles) {
-      LISTBASE_FOREACH (Material *, material, &bmain->materials) {
-        bool transparent_shadows = true;
-        if (IDProperty *cmat = version_cycles_properties_from_ID(&material->id)) {
-          transparent_shadows = version_cycles_property_boolean(
-              cmat, "use_transparent_shadow", true);
-        }
-        SET_FLAG_FROM_TEST(material->blend_flag, transparent_shadows, MA_BL_TRANSPARENT_SHADOW);
+    bool is_eevee = scene && (STREQ(scene->r.engine, RE_engine_id_BLENDER_EEVEE) ||
+                              STREQ(scene->r.engine, RE_engine_id_BLENDER_EEVEE_NEXT));
+    LISTBASE_FOREACH (Material *, material, &bmain->materials) {
+      bool transparent_shadows = true;
+      if (is_eevee) {
+        transparent_shadows = material->blend_shadow != MA_BS_SOLID;
       }
-    }
-    else {
-      LISTBASE_FOREACH (Material *, material, &bmain->materials) {
-        bool transparent_shadow = material->blend_shadow != MA_BS_SOLID;
-        SET_FLAG_FROM_TEST(material->blend_flag, transparent_shadow, MA_BL_TRANSPARENT_SHADOW);
+      else if (IDProperty *cmat = version_cycles_properties_from_ID(&material->id)) {
+        transparent_shadows = version_cycles_property_boolean(
+            cmat, "use_transparent_shadow", true);
       }
+      SET_FLAG_FROM_TEST(material->blend_flag, transparent_shadows, MA_BL_TRANSPARENT_SHADOW);
     }
+  }
 
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 401, 5)) {
+    /** NOTE: This versioning code didn't update the subversion number. */
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
       if (ntree->type == NTREE_COMPOSIT) {
         versioning_replace_splitviewer(ntree);
@@ -3103,6 +3132,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 3)) {
+    constexpr int NTREE_EXECUTION_MODE_CPU = 0;
     constexpr int NTREE_EXECUTION_MODE_FULL_FRAME = 1;
 
     constexpr int NTREE_COM_GROUPNODE_BUFFER = 1 << 3;
@@ -3343,6 +3373,108 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
             sseq->cache_overlay.flag |= SEQ_CACHE_SHOW_FINAL_OUT;
           }
         }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 28)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      if (scene->ed != nullptr) {
+        SEQ_for_each_callback(&scene->ed->seqbase, seq_proxies_timecode_update, nullptr);
+      }
+    }
+
+    LISTBASE_FOREACH (MovieClip *, clip, &bmain->movieclips) {
+      MovieClipProxy proxy = clip->proxy;
+      versioning_update_timecode(&proxy.tc);
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 29)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      if (scene->ed) {
+        SEQ_for_each_callback(&scene->ed->seqbase, seq_text_data_update, nullptr);
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 30)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      if (scene->nodetree) {
+        scene->nodetree->flag &= ~NTREE_UNUSED_2;
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 31)) {
+    LISTBASE_FOREACH (LightProbe *, lightprobe, &bmain->lightprobes) {
+      /* Guess a somewhat correct density given the resolution. But very low resolution need
+       * a decent enough density to work. */
+      lightprobe->grid_surfel_density = max_ii(20,
+                                               2 * max_iii(lightprobe->grid_resolution_x,
+                                                           lightprobe->grid_resolution_y,
+                                                           lightprobe->grid_resolution_z));
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 31)) {
+    /* Mark old EEVEE world volumes for showing conversion operator. */
+    LISTBASE_FOREACH (World *, world, &bmain->worlds) {
+      if (world->nodetree) {
+        /* NOTE: duplicated from `ntreeShaderOutputNode` with small adjustments so it can be called
+         * during versioning. */
+        bNode *output_node = nullptr;
+
+        LISTBASE_FOREACH (bNode *, node, &world->nodetree->nodes) {
+          if (node->type != SH_NODE_OUTPUT_WORLD) {
+            continue;
+          }
+
+          if (node->custom1 == SHD_OUTPUT_ALL) {
+            if (output_node == nullptr) {
+              output_node = node;
+            }
+            else if (output_node->custom1 == SHD_OUTPUT_ALL) {
+              if ((node->flag & NODE_DO_OUTPUT) && !(output_node->flag & NODE_DO_OUTPUT)) {
+                output_node = node;
+              }
+            }
+          }
+          else if (node->custom1 == SHD_OUTPUT_EEVEE) {
+            if (output_node == nullptr) {
+              output_node = node;
+            }
+            else if ((node->flag & NODE_DO_OUTPUT) && !(output_node->flag & NODE_DO_OUTPUT)) {
+              output_node = node;
+            }
+          }
+        }
+        /* End duplication. */
+
+        if (output_node) {
+          bNodeSocket *volume_input_socket = static_cast<bNodeSocket *>(
+              BLI_findlink(&output_node->inputs, 1));
+          if (volume_input_socket) {
+            LISTBASE_FOREACH (bNodeLink *, node_link, &world->nodetree->links) {
+              if (node_link->tonode == output_node && node_link->tosock == volume_input_socket) {
+                world->flag |= WO_USE_EEVEE_FINITE_VOLUME;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 33)) {
+    constexpr int NTREE_EXECUTION_MODE_GPU = 2;
+
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      if (scene->nodetree) {
+        if (scene->nodetree->execution_mode == NTREE_EXECUTION_MODE_GPU) {
+          scene->r.compositor_device = SCE_COMPOSITOR_DEVICE_GPU;
+        }
+        scene->r.compositor_precision = scene->nodetree->precision;
       }
     }
   }

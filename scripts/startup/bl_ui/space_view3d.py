@@ -3402,7 +3402,7 @@ class VIEW3D_MT_object(Menu):
 
             layout.operator("object.shade_smooth", icon='SHADING_SMOOTH')
             if ob and ob.type == 'MESH':
-                layout.operator("object.shade_smooth_by_angle", icon='NORMAL_SMOOTH')
+                layout.operator("object.shade_auto_smooth", icon='NORMAL_SMOOTH')
             layout.operator("object.shade_flat", icon='SHADING_FLAT')
 
         layout.separator()
@@ -3789,7 +3789,7 @@ class VIEW3D_MT_object_context_menu(Menu):
             if obj.type in {'MESH', 'CURVE', 'SURFACE'}:
                 layout.operator("object.shade_smooth", text="Shade Smooth", icon="SHADING_SMOOTH")
                 if obj.type == 'MESH':
-                    layout.operator("object.shade_smooth_by_angle", icon="NORMAL_SMOOTH")
+                    layout.operator("object.shade_auto_smooth", icon="NORMAL_SMOOTH")
                 layout.operator("object.shade_flat", text="Shade Flat", icon="SHADING_FLAT")
                 layout.separator()
 
