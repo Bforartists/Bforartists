@@ -274,6 +274,21 @@ enum_denoising_prefilter = (
      3),
 )
 
+enum_denoising_quality = (
+    ('HIGH',
+     "High",
+     "High quality",
+     1),
+    ('BALANCED',
+     "Balanced",
+     "Balanced between performance and quality",
+     2),
+    ('FAST',
+     "Fast",
+     "High performance",
+     3),
+)
+
 enum_direct_light_sampling_type = (
     ('MULTIPLE_IMPORTANCE_SAMPLING',
      "Multiple Importance Sampling",
@@ -342,9 +357,15 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     )
     denoising_prefilter: EnumProperty(
         name="Denoising Prefilter",
-        description="Prefilter noisy guiding (albedo and normal) passes to improve denoising quality when using OpenImageDenoiser",
+        description="Prefilter noisy guiding (albedo and normal) passes to improve denoising quality when using OpenImageDenoise",
         items=enum_denoising_prefilter,
         default='ACCURATE',
+    )
+    denoising_quality: EnumProperty(
+        name="Denoising Quality",
+        description="Overall denoising quality when using OpenImageDenoise",
+        items=enum_denoising_quality,
+        default='HIGH',
     )
     denoising_input_passes: EnumProperty(
         name="Denoising Input Passes",
@@ -371,9 +392,15 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     )
     preview_denoising_prefilter: EnumProperty(
         name="Viewport Denoising Prefilter",
-        description="Prefilter noisy guiding (albedo and normal) passes to improve denoising quality when using OpenImageDenoiser",
+        description="Prefilter noisy guiding (albedo and normal) passes to improve denoising quality when using OpenImageDenoise",
         items=enum_denoising_prefilter,
         default='FAST',
+    )
+    preview_denoising_quality: EnumProperty(
+        name="Viewport Denoising Quality",
+        description="Overall denoising quality when using OpenImageDenoise",
+        items=enum_denoising_quality,
+        default='BALANCED',
     )
     preview_denoising_input_passes: EnumProperty(
         name="Viewport Denoising Input Passes",
@@ -1427,6 +1454,14 @@ class CyclesDeviceSettings(bpy.types.PropertyGroup):
 class CyclesPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
+    def default_device():
+        import platform
+        # Default to selecting the Metal compute device on Apple Silicon GPUs
+        # (drivers are tightly integrated with macOS so pose no stability risk)
+        if (platform.system() == 'Darwin') and (platform.machine() == 'arm64'):
+            return 5
+        return 0
+
     def get_device_types(self, context):
         import _cycles
         has_cuda, has_optix, has_hip, has_metal, has_oneapi, has_hiprt = _cycles.get_device_types()
@@ -1448,6 +1483,7 @@ class CyclesPreferences(bpy.types.AddonPreferences):
     compute_device_type: EnumProperty(
         name="Compute Device Type",
         description="Device to use for computation (rendering with Cycles)",
+        default=CyclesPreferences.default_device(),
         items=CyclesPreferences.get_device_types,
     )
 
