@@ -585,6 +585,121 @@ def _pkg_marked_by_repo(pkg_manifest_all):
 
 
 # -----------------------------------------------------------------------------
+# Wheel Handling
+#
+
+def _extensions_wheel_filter_for_platform(wheels):
+
+    # Copied from `wheel.bwheel_dist.get_platform(..)` which isn't part of Python.
+    # This misses some additional checks which aren't supported by official Blender builds,
+    # it's highly doubtful users ever run into this but we could add extend this if it's really needed.
+    # (e.g. `linux-i686` on 64 bit systems & `linux-armv7l`).
+    import sysconfig
+    platform_tag_current = sysconfig.get_platform().replace("-", "_")
+
+    # https://packaging.python.org/en/latest/specifications/binary-distribution-format/#file-name-convention
+    # This also defines the name spec:
+    # `{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl`
+
+    wheels_compatible = []
+    for wheel in wheels:
+        wheel_filename = wheel.rsplit("/", 1)[-1]
+
+        # Handled by validation (paranoid).
+        if not wheel_filename.lower().endswith(".whl"):
+            print("Error: wheel doesn't end with \".whl\", skipping!")
+            continue
+
+        wheel_filename_split = wheel_filename[:-4].split("-")
+        # Skipping, should never happen as validation will fail,
+        # keep paranoid check although this might be removed in the future.
+        if not (5 <= len(wheel_filename_split) <= 6):
+            print("Error: wheel doesn't follow naming spec \"{:s}\"".format(wheel_filename))
+            continue
+        # TODO: Match Python & ABI tags.
+        _python_tag, _abi_tag, platform_tag = wheel_filename_split[-3:]
+
+        if platform_tag in {"any", platform_tag_current}:
+            pass
+        elif platform_tag_current.startswith("macosx_") and (
+                # FIXME: `macosx_11.00` should be `macosx_11_0`.
+                platform_tag.startswith("macosx_") and
+                # Ignore the MACOSX version, ensure `arm64` suffix.
+                platform_tag.endswith("_" + platform_tag_current.rpartition("_")[2])
+        ):
+            pass
+        elif platform_tag_current.startswith("linux_") and (
+                # May be `manylinux1` or `manylinux2010`.
+                platform_tag.startswith("manylinux") and
+                # Match against the architecture: `linux_x86_64` -> `_x86_64` (ensure the same suffix).
+                # The GLIBC version is ignored because it will often be older.
+                # Although we will probably want to detect incompatible GLIBC versions eventually.
+                platform_tag.endswith("_" + platform_tag_current.partition("_")[2])
+        ):
+            pass
+        else:
+            # Useful to know, can quiet print in the future.
+            print(
+                "Skipping wheel for other system",
+                "({:s} != {:s}):".format(platform_tag, platform_tag_current),
+                wheel_filename,
+            )
+            continue
+
+        wheels_compatible.append(wheel)
+    return wheels_compatible
+
+
+def _extensions_repo_sync_wheels(repo_cache_store):
+    """
+    This function collects all wheels from all packages and ensures the packages are either extracted or removed
+    when they are no longer used.
+    """
+    from .bl_extension_local import sync
+
+    repos_all = extension_repos_read()
+
+    wheel_list = []
+    for repo_index, pkg_manifest_local in enumerate(repo_cache_store.pkg_manifest_from_local_ensure(error_fn=print)):
+        repo = repos_all[repo_index]
+        repo_module = repo.module
+        repo_directory = repo.directory
+        for pkg_id, item_local in pkg_manifest_local.items():
+            pkg_dirpath = os.path.join(repo_directory, pkg_id)
+            wheels_rel = item_local.get("wheels", None)
+            if wheels_rel is None:
+                continue
+            if not isinstance(wheels_rel, list):
+                continue
+
+            # Filter only the wheels for this platform.
+            wheels_rel = _extensions_wheel_filter_for_platform(wheels_rel)
+            if not wheels_rel:
+                continue
+
+            wheels_abs = []
+            for filepath_rel in wheels_rel:
+                filepath_abs = os.path.join(pkg_dirpath, filepath_rel)
+                if not os.path.exists(filepath_abs):
+                    continue
+                wheels_abs.append(filepath_abs)
+
+            if not wheels_abs:
+                continue
+
+            unique_pkg_id = "{:s}.{:s}".format(repo_module, pkg_id)
+            wheel_list.append((unique_pkg_id, wheels_abs))
+
+    extensions = bpy.utils.user_resource('EXTENSIONS')
+    local_dir = os.path.join(extensions, ".local")
+
+    sync(
+        local_dir=local_dir,
+        wheel_list=wheel_list,
+    )
+
+
+# -----------------------------------------------------------------------------
 # Theme Handling
 #
 
@@ -1195,6 +1310,8 @@ class BlPkgPkgInstallMarked(Operator, _BlPkgCmdMixIn):
                 error_fn=self.error_fn_from_exception,
             )
 
+        _extensions_repo_sync_wheels(repo_cache_store)
+
         # TODO: it would be nice to include this message in the banner.
         def handle_error(ex):
             self.report({'ERROR'}, str(ex))
@@ -1306,6 +1423,9 @@ class BlPkgPkgUninstallMarked(Operator, _BlPkgCmdMixIn):
                 directory=directory,
                 error_fn=self.error_fn_from_exception,
             )
+
+        _extensions_repo_sync_wheels(repo_cache_store)
+
         _preferences_theme_state_restore(self._theme_restore)
 
         _preferences_ui_redraw()
@@ -1463,6 +1583,8 @@ class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
             directory=self.repo_directory,
             error_fn=self.error_fn_from_exception,
         )
+
+        _extensions_repo_sync_wheels(repo_cache_store)
 
         # TODO: it would be nice to include this message in the banner.
 
@@ -1652,6 +1774,8 @@ class BlPkgPkgInstall(Operator, _BlPkgCmdMixIn):
             error_fn=self.error_fn_from_exception,
         )
 
+        _extensions_repo_sync_wheels(repo_cache_store)
+
         # TODO: it would be nice to include this message in the banner.
         def handle_error(ex):
             self.report({'ERROR'}, str(ex))
@@ -1810,6 +1934,9 @@ class BlPkgPkgUninstall(Operator, _BlPkgCmdMixIn):
             directory=self.repo_directory,
             error_fn=self.error_fn_from_exception,
         )
+
+        _extensions_repo_sync_wheels(repo_cache_store)
+
         _preferences_theme_state_restore(self._theme_restore)
 
         _preferences_ui_redraw()

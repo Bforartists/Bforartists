@@ -4,10 +4,21 @@
 
 #pragma once
 
+#include <optional>
+
 #include "DNA_node_types.h"
 
 #include "NOD_geo_simulation.hh"
 #include "NOD_socket_items.hh"
+
+#include "RNA_access.hh"
+
+#include "BLI_index_range.hh"
+
+struct NodesModifierData;
+struct NodesModifierBake;
+struct SpaceNode;
+struct Object;
 
 namespace blender::nodes {
 
@@ -39,9 +50,9 @@ struct BakeItemsAccessor {
   }
   static void blend_write(BlendWriter *writer, const bNode &node);
   static void blend_read_data(BlendDataReader *reader, bNode &node);
-  static short *get_socket_type(NodeGeometryBakeItem &item)
+  static eNodeSocketDatatype get_socket_type(const NodeGeometryBakeItem &item)
   {
-    return &item.socket_type;
+    return eNodeSocketDatatype(item.socket_type);
   }
   static char **get_name(NodeGeometryBakeItem &item)
   {
@@ -66,5 +77,23 @@ struct BakeItemsAccessor {
     return "Item_" + std::to_string(item.identifier);
   }
 };
+
+struct BakeDrawContext {
+  const bNode *node;
+  SpaceNode *snode;
+  const Object *object;
+  const NodesModifierData *nmd;
+  const NodesModifierBake *bake;
+  PointerRNA bake_rna;
+  std::optional<IndexRange> baked_range;
+  bool bake_still;
+  bool is_baked;
+};
+
+[[nodiscard]] bool get_bake_draw_context(const bContext *C,
+                                         const bNode &node,
+                                         BakeDrawContext &r_ctx);
+
+std::string get_baked_string(const BakeDrawContext &ctx);
 
 }  // namespace blender::nodes

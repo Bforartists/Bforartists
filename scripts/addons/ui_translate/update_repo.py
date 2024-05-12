@@ -72,6 +72,7 @@ class UI_OT_i18n_updatetranslation_work_repo(Operator):
                 "--python",
                 os.path.join(os.path.dirname(utils_i18n.__file__), "bl_extract_messages.py"),
                 "--",
+                "--no_checks",
                 "--settings",
                 self.settings.to_json(),
             )

@@ -24,6 +24,7 @@ void node_group_label(const struct bNodeTree *ntree,
 bool node_group_poll_instance(const struct bNode *node,
                               const struct bNodeTree *nodetree,
                               const char **r_disabled_hint);
+int node_group_ui_class(const struct bNode *node);
 
 /**
  * Global update function for Reroute node types.
@@ -33,4 +34,8 @@ void ntree_update_reroute_nodes(struct bNodeTree *ntree);
 
 #ifdef __cplusplus
 }
+
+#  include <string>
+
+std::string node_group_ui_description(const bNode &node);
 #endif
