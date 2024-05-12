@@ -570,7 +570,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
                     collection = scene.collection
                 case _:
                     collection = bpy.context.collection
-                    if collection.name not in scene.collection.children: scene.collection.children.link(collection)
+                    if collection != scene.collection and collection.name not in scene.collection.children: scene.collection.children.link(collection)
 
             if RELEASE_TEST:
                 # for release testing

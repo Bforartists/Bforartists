@@ -20,6 +20,7 @@ set(INC_SYS
 set(SRC
   nodes/node_fn_align_euler_to_vector.cc
   nodes/node_fn_align_rotation_to_vector.cc
+  nodes/node_fn_axes_to_rotation.cc
   nodes/node_fn_axis_angle_to_rotation.cc
   nodes/node_fn_boolean_math.cc
   nodes/node_fn_combine_color.cc
@@ -31,6 +32,7 @@ set(SRC
   nodes/node_fn_input_bool.cc
   nodes/node_fn_input_color.cc
   nodes/node_fn_input_int.cc
+  nodes/node_fn_input_rotation.cc
   nodes/node_fn_input_special_characters.cc
   nodes/node_fn_input_string.cc
   nodes/node_fn_input_vector.cc

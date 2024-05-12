@@ -1948,6 +1948,26 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
         else:
             split.label(icon='DISCLOSURE_TRI_RIGHT')
 
+        col = layout.column()
+        col.prop(strip, "shadow_angle")
+        col.prop(strip, "shadow_offset")
+        col.prop(strip, "shadow_blur")
+        col.active = strip.use_shadow and (not strip.mute)
+
+        row = layout.row(align=True, heading="Outline")
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(strip, "use_outline", text="")
+        subsub = sub.row(align=True)
+        subsub.active = strip.use_outline and (not strip.mute)
+        subsub.prop(strip, "outline_color", text="")
+        row.prop_decorator(strip, "outline_color")
+
+        row = layout.row(align=True, heading="Outline Width")
+        sub = row.row(align=True)
+        sub.prop(strip, "outline_width")
+        sub.active = strip.use_outline and (not strip.mute)
+
         split = col.split(factor=.4, align=True)
         col = split.column(align=True)
         col.use_property_decorate = False

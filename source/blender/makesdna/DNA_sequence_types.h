@@ -424,10 +424,14 @@ typedef struct TextVars {
   struct VFont *text_font;
   int text_blf_id;
   float text_size;
-  float color[4], shadow_color[4], box_color[4];
+  float color[4], shadow_color[4], box_color[4], outline_color[4];
   float loc[2];
   float wrap_width;
   float box_margin;
+  float shadow_angle;
+  float shadow_offset;
+  float shadow_blur;
+  float outline_width;
   char flag;
   char align, align_y;
   char _pad[5];
@@ -439,6 +443,7 @@ enum {
   SEQ_TEXT_BOX = (1 << 1),
   SEQ_TEXT_BOLD = (1 << 2),
   SEQ_TEXT_ITALIC = (1 << 3),
+  SEQ_TEXT_OUTLINE = (1 << 4),
 };
 
 /** #TextVars.align */
@@ -675,10 +680,7 @@ enum {
 enum {
   SEQ_PROXY_TC_NONE = 0,
   SEQ_PROXY_TC_RECORD_RUN = 1 << 0,
-  SEQ_PROXY_TC_FREE_RUN = 1 << 1,
-  SEQ_PROXY_TC_INTERP_REC_DATE_FREE_RUN = 1 << 2,
-  SEQ_PROXY_TC_RECORD_RUN_NO_GAPS = 1 << 3,
-  SEQ_PROXY_TC_ALL = (1 << 4) - 1,
+  SEQ_PROXY_TC_RECORD_RUN_NO_GAPS = 1 << 1,
 };
 
 /** SeqProxy.build_flags */
