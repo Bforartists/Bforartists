@@ -339,7 +339,7 @@ static int modifier_add_asset_exec(bContext *C, wmOperator *op)
 static int modifier_add_asset_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   if (event->modifier & KM_ALT || CTX_wm_view3d(C)) {
-    RNA_boolean_set(op->ptr, "use_selected_objects", true);
+    RNA_boolean_set(op->ptr, "use_selected_objects", false); /*BFA - inversed to act on selected, ALT to act on only Active*/
   }
   return modifier_add_asset_exec(C, op);
 }
@@ -362,7 +362,7 @@ static std::string modifier_add_asset_get_description(bContext *C,
 static void OBJECT_OT_modifier_add_node_group(wmOperatorType *ot)
 {
   ot->name = "Add Modifier";
-  ot->description = "Add a procedural operation/effect to the active object";
+  ot->description = "Add a procedural operation/effect to all selected objects"; /*BFA - defaults to all*/
   ot->idname = "OBJECT_OT_modifier_add_node_group";
 
   ot->invoke = modifier_add_asset_invoke;
