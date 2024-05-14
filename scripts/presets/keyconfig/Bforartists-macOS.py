@@ -5475,22 +5475,7 @@ keyconfig_data = \
  ("Image Editor Tool: Uv, Sculpt Stroke",
   {"space_type": 'IMAGE_EDITOR', "region_type": 'WINDOW'},
   {"items":
-   [("sculpt.uv_sculpt_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
-    ("sculpt.uv_sculpt_stroke",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
-     {"properties":
-      [("mode", 'INVERT'),
-       ],
-      },
-     ),
-    ("sculpt.uv_sculpt_stroke",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-     {"properties":
-      [("mode", 'RELAX'),
-       ],
-      },
-     ),
-    ("brush.scale_size",
+   [("brush.scale_size",
      {"type": 'LEFT_BRACKET', "value": 'PRESS', "repeat": True},
      {"properties":
       [("scalar", 0.9),
@@ -10307,28 +10292,7 @@ keyconfig_data = \
  ("UV Sculpt",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("sculpt.uv_sculpt_stroke",
-     {"type": 'LEFTMOUSE', "value": 'PRESS'},
-     {"properties":
-      [("mode", 'NORMAL'),
-       ],
-      },
-     ),
-    ("sculpt.uv_sculpt_stroke",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
-     {"properties":
-      [("mode", 'INVERT'),
-       ],
-      },
-     ),
-    ("sculpt.uv_sculpt_stroke",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-     {"properties":
-      [("mode", 'RELAX'),
-       ],
-      },
-     ),
-    ("wm.radial_control",
+   [("wm.radial_control",
      {"type": 'F', "value": 'PRESS'},
      {"properties":
       [("data_path_primary", 'tool_settings.uv_sculpt.brush.size'),
