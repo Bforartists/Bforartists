@@ -1301,9 +1301,9 @@ void modifier_register_use_selected_objects_prop(wmOperatorType *ot)
   PropertyRNA *prop = RNA_def_boolean(
       ot->srna,
       "use_selected_objects",
-      false,
-      "Selected Objects",
-      "Affect all selected objects instead of just the active object");
+      true, /*BFA - inversed to act on selected, ALT to act on only Active*/
+      "Active Object", /*BFA - inversed*/
+      "Affect only Active object instead of all the selected objects"); /*BFA - inversed*/
   RNA_def_property_flag(prop, PROP_SKIP_SAVE | PROP_HIDDEN);
 }
 
@@ -1336,7 +1336,7 @@ static int modifier_add_exec(bContext *C, wmOperator *op)
 static int modifier_add_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   if (event->modifier & KM_ALT || CTX_wm_view3d(C)) {
-    RNA_boolean_set(op->ptr, "use_selected_objects", true);
+    RNA_boolean_set(op->ptr, "use_selected_objects", false); /*BFA - inversed to act on selected, ALT to act on only Active*/
   }
   if (!RNA_struct_property_is_set(op->ptr, "type")) {
     return WM_menu_invoke(C, op, event);
@@ -1397,8 +1397,8 @@ void OBJECT_OT_modifier_add(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Add Modifier";
-  ot->description = "Add a procedural operation/effect to the active object";
+  ot->name = "Add Modifier to Selected"; /*BFA - defaults to all*/
+  ot->description = "Add a procedural operation/effect to all selected objects"; /*BFA - defaults to all*/
   ot->idname = "OBJECT_OT_modifier_add";
 
   /* api callbacks */
@@ -1526,7 +1526,7 @@ static bool edit_modifier_invoke_properties_with_hover(bContext *C,
 {
   if (RNA_struct_find_property(op->ptr, "use_selected_objects")) {
     if (event->modifier & KM_ALT) {
-      RNA_boolean_set(op->ptr, "use_selected_objects", true);
+      RNA_boolean_set(op->ptr, "use_selected_objects", false); /*BFA - inversed to act on selected, ALT to act on only Active*/
     }
   }
 
@@ -1640,8 +1640,8 @@ static int modifier_remove_invoke(bContext *C, wmOperator *op, const wmEvent *ev
 
 void OBJECT_OT_modifier_remove(wmOperatorType *ot)
 {
-  ot->name = "Remove Modifier";
-  ot->description = "Remove a modifier from the active object";
+  ot->name = "Remove Modifier from Selected"; /*BFA - defaults to all*/
+  ot->description = "Remove a modifier from all selected objects \nPress and hold ALT to remove from active object onlyy"; /*BFA - defaults to all*/
   ot->idname = "OBJECT_OT_modifier_remove";
 
   ot->invoke = modifier_remove_invoke;
@@ -1981,8 +1981,8 @@ static int modifier_apply_invoke(bContext *C, wmOperator *op, const wmEvent *eve
 
 void OBJECT_OT_modifier_apply(wmOperatorType *ot)
 {
-  ot->name = "Apply Modifier";
-  ot->description = "Apply modifier and remove from the stack";
+  ot->name = "Apply Modifier to Selected"; /*BFA - defaults to all*/
+  ot->description = "Apply modifier and remove from the stack \nPress and hold ALT to apply to active object only"; /*BFA - defaults to all*/
   ot->idname = "OBJECT_OT_modifier_apply";
 
   ot->invoke = modifier_apply_invoke;
