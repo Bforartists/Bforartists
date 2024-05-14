@@ -271,7 +271,7 @@ class OBJECT_MT_modifier_add_color(ModifierAddMenu, Menu):
 
 class OBJECT_MT_modifier_add_assets(ModifierAddMenu, Menu):
     bl_label = "Assets"
-    bl_description = "Add a modifier nodegroup to the active object"
+    bl_description = "Add a modifier nodegroup to all selected objects" #BFA - inversed
     bl_options = {'SEARCH_ON_KEY_PRESS'}
 
     def draw(self, context):
@@ -322,7 +322,7 @@ class OBJECT_MT_modifier_add_color_assets(AssetSubmenu, ModifierAddMenu, Menu):
 class OBJECT_OT_add_asset_modifier_menu(InvokeMenuOperator, Operator):
     bl_idname = "object.add_asset_modifier_menu"
     bl_label = "Add Asset Modifier"
-    bl_description = "Add a modifier nodegroup to the active object"
+    bl_description = "Add a modifier nodegroup to all selected objects" #BFA - inversed
     menu_id = "OBJECT_MT_modifier_add_assets"
     space_type = 'PROPERTIES'
     space_context = 'MODIFIER'
@@ -375,11 +375,11 @@ class OBJECT_OT_add_gpencil_modifier_menu(InvokeMenuOperator, Operator):
     space_type = 'PROPERTIES'
     space_context = 'MODIFIER'
 
-
+# BFA - floating menu for consistency
 class AddModifierMenu(Operator):
     bl_idname = "object.add_modifier_menu"
     bl_label = "Add Modifier"
-    bl_description = "Add a procedural operation/effect to the active object"
+    bl_description = "Add a procedural operation/effect to all selected objects" # BFA - defaults to all
 
     @classmethod
     def poll(cls, context):
