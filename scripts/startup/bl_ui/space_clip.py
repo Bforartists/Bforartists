@@ -345,6 +345,8 @@ class CLIP_MT_tracking_editor_menus(Menu):
                 layout.menu("CLIP_MT_track")
             else:
                 layout.menu("CLIP_MT_clip")
+        elif sc.view == 'GRAPH':
+            layout.menu("CLIP_MT_select_graph")
 
         if sc.view == 'GRAPH':
             if clip:
@@ -1767,7 +1769,7 @@ class CLIP_MT_select(Menu):
 
         layout.operator("clip.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("clip.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
-        layout.operator("clip.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("clip.select_all", text="Inverse", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -1783,6 +1785,17 @@ class CLIP_MT_select(Menu):
 
         layout.operator("clip.stabilize_2d_select", icon='SELECT_TRACKS')
         layout.operator("clip.stabilize_2d_rotation_select", icon='SELECT_TRACKS')
+
+# BFA - not used
+class CLIP_MT_select_graph(Menu):
+    bl_label = "Select"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("clip.graph_select_all_markers", text="All", icon='SELECT_ALL').action = "SELECT"
+        layout.operator("clip.graph_select_all_markers", text="None", icon='SELECT_NONE').action = "DESELECT"
+        layout.operator("clip.graph_select_all_markers", text="Inverse", icon='INVERSE').action = "INVERT"
 
 
 class CLIP_MT_select_grouped(Menu):
@@ -2196,6 +2209,7 @@ classes = (
     CLIP_MT_track_visibility,
     CLIP_MT_track_cleanup,
     CLIP_MT_select,
+    CLIP_MT_select_graph,
     CLIP_MT_select_grouped,
     CLIP_MT_tracking_context_menu,
     CLIP_MT_plane_track_image_context_menu,

@@ -37,16 +37,22 @@ def _initialize_once():
 
 
 def paths():
-    return [
-        path for subdir in (
-            # RELEASE SCRIPTS: official scripts distributed in Blender releases.
-            "addons",
-            # CONTRIB SCRIPTS: good for testing but not official scripts yet
-            # if folder addons_contrib/ exists, scripts in there will be loaded too.
-            "addons_contrib",
-        )
-        for path in _bpy.utils.script_paths(subdir=subdir)
-    ]
+    import os
+
+    paths = []
+    for p in _bpy.utils.script_paths():
+        # Bundled add-ons.
+        addon_dir = os.path.join(p, "addons_core")
+        if os.path.isdir(addon_dir):
+            paths.append(addon_dir)
+            # The system path if for core add-ons only,
+            # if the `addons` directory exists it's likely from an old "make install" target.
+            continue
+        # User defined add-ons, custom scripts directory.
+        addon_dir = os.path.join(p, "addons")
+        if os.path.isdir(addon_dir):
+            paths.append(addon_dir)
+    return paths
 
 
 # A version of `paths` that includes extension repositories returning a list `(path, package)` pairs.
@@ -65,14 +71,13 @@ def _paths_with_extension_repos():
 
     import os
     addon_paths = [(path, "") for path in paths()]
-    if _preferences.experimental.use_extension_repos:
-        for repo in _preferences.filepaths.extension_repos:
-            if not repo.enabled:
-                continue
-            dirpath = repo.directory
-            if not os.path.isdir(dirpath):
-                continue
-            addon_paths.append((dirpath, "{:s}.{:s}".format(_ext_base_pkg_idname, repo.module)))
+    for repo in _preferences.extensions.repos:
+        if not repo.enabled:
+            continue
+        dirpath = repo.directory
+        if not os.path.isdir(dirpath):
+            continue
+        addon_paths.append((dirpath, "{:s}.{:s}".format(_ext_base_pkg_idname, repo.module)))
 
     return addon_paths
 
@@ -178,7 +183,11 @@ def modules_refresh(*, module_cache=addons_fake_modules):
     for path, pkg_id in _paths_with_extension_repos():
 
         # Force all user contributed add-ons to be 'TESTING'.
-        force_support = 'TESTING' if ((not pkg_id) and path.endswith("addons_contrib")) else None
+
+        # TODO: remove this option entirely.
+        force_support = None
+        # Was part of support `addons_contrib`.
+        # `force_support = 'TESTING' if ((not pkg_id) and path.endswith("addons_contrib")) else None`
 
         for mod_name, mod_path in _bpy.path.module_names(path, package=pkg_id):
             modules_stale.discard(mod_name)
@@ -413,7 +422,7 @@ def enable(module_name, *, default_set=False, persistent=False, handle_error=Non
                 elif is_extension and module_name.startswith(ex.name + "."):
                     repo_id = module_name[len(_ext_base_pkg_idname_with_dot):].rpartition(".")[0]
                     repo = next(
-                        (repo for repo in _preferences.filepaths.extension_repos if repo.module == repo_id),
+                        (repo for repo in _preferences.extensions.repos if repo.module == repo_id),
                         None,
                     )
                     if repo is None:
@@ -756,17 +765,16 @@ def _fake_module_from_extension(mod_name, mod_path, force_support=None):
 # Extensions
 
 def _initialize_ensure_extensions_addon():
-    if _preferences.experimental.use_extension_repos:
-        module_name = "bl_pkg"
-        if module_name not in _preferences.addons:
-            enable(module_name, default_set=True, persistent=True)
+    module_name = "bl_pkg"
+    if module_name not in _preferences.addons:
+        enable(module_name, default_set=True, persistent=True)
 
 
 # Module-like class, store singletons.
 class _ext_global:
     __slots__ = ()
 
-    # Store a map of `preferences.filepaths.extension_repos` -> `module_id`.
+    # Store a map of `preferences.extensions.repos` -> `module_id`.
     # Only needed to detect renaming between `bpy.app.handlers.extension_repos_update_{pre & post}` events.
     #
     # The first dictionary is for enabled repositories, the second for disabled repositories
@@ -786,22 +794,20 @@ _ext_manifest_filename_toml = "blender_manifest.toml"
 def _extension_preferences_idmap():
     repos_idmap = {}
     repos_idmap_disabled = {}
-    if _preferences.experimental.use_extension_repos:
-        for repo in _preferences.filepaths.extension_repos:
-            if repo.enabled:
-                repos_idmap[repo.as_pointer()] = repo.module
-            else:
-                repos_idmap_disabled[repo.as_pointer()] = repo.module
+    for repo in _preferences.extensions.repos:
+        if repo.enabled:
+            repos_idmap[repo.as_pointer()] = repo.module
+        else:
+            repos_idmap_disabled[repo.as_pointer()] = repo.module
     return repos_idmap, repos_idmap_disabled
 
 
 def _extension_dirpath_from_preferences():
     repos_dict = {}
-    if _preferences.experimental.use_extension_repos:
-        for repo in _preferences.filepaths.extension_repos:
-            if not repo.enabled:
-                continue
-            repos_dict[repo.module] = repo.directory
+    for repo in _preferences.extensions.repos:
+        if not repo.enabled:
+            continue
+        repos_dict[repo.module] = repo.directory
     return repos_dict
 
 
@@ -909,7 +915,7 @@ def _initialize_extension_repos_post_addons_prepare(
             addon.module = module_name_next
 
     if submodules_del:
-        repo_module_map = {repo.module: repo for repo in _preferences.filepaths.extension_repos}
+        repo_module_map = {repo.module: repo for repo in _preferences.extensions.repos}
         for module_id in submodules_del:
             repo_userdef = addon_userdef_info.get(module_id, {})
             repo_runtime = addon_runtime_info.get(module_id, {})
@@ -979,7 +985,8 @@ def _initialize_extension_repos_post(*_, is_first=False):
     # Map `module_id` -> `repo.as_pointer()`.
     repos_idmap_next_reverse = {value: key for key, value in repos_idmap_next.items()}
 
-    # Mainly needed when the `preferences.experimental.use_extension_repos` option is enabled at run-time.
+    # Mainly needed when the state of repositories changes at run-time:
+    # factory settings then load preferences for example.
     #
     # Filter `repos_idmap_prev` so only items which were also in the `repos_info_prev` are included.
     # This is an awkward situation, they should be in sync, however when enabling the experimental option
@@ -1003,7 +1010,7 @@ def _initialize_extension_repos_post(*_, is_first=False):
 
     # Detect rename modules & module directories.
     for module_id_next, dirpath_next in repos_info_next.items():
-        # Lookup never fails, as the "next" values use: `preferences.filepaths.extension_repos`.
+        # Lookup never fails, as the "next" values use: `preferences.extensions.repos`.
         repo_id = repos_idmap_next_reverse[module_id_next]
         # Lookup may fail if this is a newly added module.
         # Don't attempt to setup `submodules_add` though as it's possible
