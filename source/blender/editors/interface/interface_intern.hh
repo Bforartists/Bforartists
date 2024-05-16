@@ -868,7 +868,12 @@ struct uiPopupBlockHandle {
 
   /** Store data for refreshing popups. */
   uiPopupBlockCreate popup_create_vars;
-  /** True if we can re-create the popup using #uiPopupBlockHandle.popup_create_vars. */
+  /**
+   * True if we can re-create the popup using #uiPopupBlockHandle.popup_create_vars.
+   *
+   * \note Popups that can refresh are called with #bContext::wm::region_popup set
+   * to the #uiPopupBlockHandle::region both on initial creation and when refreshing.
+   */
   bool can_refresh;
   bool refresh;
 
@@ -979,13 +984,18 @@ uiBlock *ui_popup_block_refresh(bContext *C,
                                 ARegion *butregion,
                                 uiBut *but);
 
+/**
+ * Note that callbacks can set the #UI_BLOCK_KEEP_OPEN flag to the block it creates, to allow
+ * refreshing the popup. That is, redrawing the layout, potentially affecting the popup size.
+ */
 uiPopupBlockHandle *ui_popup_block_create(bContext *C,
                                           ARegion *butregion,
                                           uiBut *but,
                                           uiBlockCreateFunc create_func,
                                           uiBlockHandleCreateFunc handle_create_func,
                                           void *arg,
-                                          uiFreeArgFunc arg_free);
+                                          uiFreeArgFunc arg_free,
+                                          bool can_refresh);
 uiPopupBlockHandle *ui_popup_menu_create(
     bContext *C, ARegion *butregion, uiBut *but, uiMenuCreateFunc menu_func, void *arg);
 

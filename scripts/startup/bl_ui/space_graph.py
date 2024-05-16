@@ -308,33 +308,25 @@ class GRAPH_MT_select(Menu):
 
         layout.separator()
 
-        props = layout.operator("graph.select_box", icon='BORDER_RECT')
+        layout.operator("graph.select_box", icon='BORDER_RECT')
         props = layout.operator("graph.select_box", text="Box Select (Axis Range)", icon='BORDER_RECT')
-
+        props.axis_range = True
+        props = layout.operator("graph.select_box", text="Box Select (Include Handles)", icon='BORDER_RECT')
+        props.include_handles = True
         layout.operator("graph.select_circle", icon='CIRCLE_SELECT')
         layout.operator_menu_enum("graph.select_lasso", "mode")
-
+		# BFA - column selection moved upwards for consistency with others
         layout.separator()
 
         layout.operator("graph.select_column", text="Columns on Selected Keys", icon="COLUMNS_KEYS").mode = 'KEYS'
-        layout.operator(
-            "graph.select_column",
-            text="Column on Current Frame",
-            icon="COLUMN_CURRENT_FRAME").mode = 'CFRA'
+        layout.operator("graph.select_column", text="Column on Current Frame", icon="COLUMN_CURRENT_FRAME").mode = 'CFRA'
 
-        # bfa - just in graph editor. Drivers does not have markers. graph editor = FCURVES
+        # BFA - just in graph editor. Drivers does not have markers. graph editor = FCURVES
         if _context.space_data.mode == 'FCURVES':
-            layout.operator(
-                "graph.select_column",
-                text="Columns on Selected Markers",
-                icon="COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
-            layout.operator(
-                "graph.select_column",
-                text="Between Selected Markers",
-                icon="BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
+            layout.operator("graph.select_column", text="Columns on Selected Markers", icon="COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
+            layout.operator("graph.select_column", text="Between Selected Markers", icon="BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
 
         layout.separator()
-
         layout.operator("graph.select_linked", text="Linked", icon="CONNECTED")
 
         layout.separator()
@@ -359,6 +351,7 @@ class GRAPH_MT_select(Menu):
         layout.separator()
         layout.operator("graph.select_more", text="More", icon="SELECTMORE")
         layout.operator("graph.select_less", text="Less", icon="SELECTLESS")
+
 
 
 class GRAPH_MT_marker(Menu):

@@ -711,9 +711,9 @@ class ASSETBROWSER_MT_select(AssetBrowserMenu, Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("file.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("file.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
-        layout.operator("file.select_all", text="Inverse", icon='INVERSE').action = 'INVERT'
+        layout.operator("file.select_all", text="All").action = 'SELECT'
+        layout.operator("file.select_all", text="None").action = 'DESELECT'
+        layout.operator("file.select_all", text="Inverse").action = 'INVERT'
 
         layout.separator()
 
@@ -931,7 +931,7 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
 
 
 classes = (
-    ALL_MT_editormenu_filebrowser,
+    ALL_MT_editormenu_filebrowser, # BFA
     FILEBROWSER_HT_header,
     FILEBROWSER_PT_display,
     FILEBROWSER_PT_filter,
@@ -946,7 +946,7 @@ classes = (
     FILEBROWSER_PT_directory_path,
     FILEBROWSER_MT_editor_menus,
     FILEBROWSER_MT_view,
-    FILEBROWSER_MT_view_pie_menus,
+    FILEBROWSER_MT_view_pie_menus, # BFA
     FILEBROWSER_MT_select,
     FILEBROWSER_MT_context_menu,
     FILEBROWSER_MT_view_pie,
@@ -958,7 +958,7 @@ classes = (
     ASSETBROWSER_MT_catalog,
     ASSETBROWSER_MT_metadata_preview_menu,
     ASSETBROWSER_PT_metadata,
-    ASSETBROWSER_PT_metadata_info,
+    ASSETBROWSER_PT_metadata_info, # BFA
     ASSETBROWSER_PT_metadata_preview,
     ASSETBROWSER_PT_metadata_tags,
     ASSETBROWSER_UL_metadata_tags,
