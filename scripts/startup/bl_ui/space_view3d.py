@@ -117,6 +117,18 @@ class VIEW3D_HT_tool_header(Header):
                             layout.popover("VIEW3D_PT_tools_grease_pencil_brush_stroke")
 
                     layout.popover("VIEW3D_PT_tools_grease_pencil_paint_appearance")
+        elif tool_mode == 'PAINT_GREASE_PENCIL':
+            if is_valid_context:
+                brush = context.tool_settings.gpencil_paint.brush
+                if brush:
+                    if brush.gpencil_tool != 'ERASE':
+                        if brush.gpencil_tool != 'TINT':
+                            layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_advanced")
+
+                        if brush.gpencil_tool not in {'FILL', 'TINT'}:
+                            layout.popover("VIEW3D_PT_tools_grease_pencil_brush_stroke")
+
+                    # layout.popover("VIEW3D_PT_tools_grease_pencil_paint_appearance")
         elif tool_mode == 'SCULPT_GPENCIL':
             if is_valid_context:
                 brush = context.tool_settings.gpencil_sculpt_paint.brush
@@ -919,9 +931,20 @@ class VIEW3D_HT_header(Header):
 
             if object_mode == 'PAINT_GPENCIL':
                 row = layout.row(align=True)
-                sub.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
-                sub.separator(factor=0.4)
+                row.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
+                row.separator(factor=0.4)
+                row.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
+                row.separator(factor=0.4)
+                row.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
+                row.separator(factor=0.4)
                 row.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
+
+            # Select mode for Sculpt
+            if object_mode == 'SCULPT_GPENCIL':
+                row = layout.row(align=True)
+                row.prop(tool_settings, "use_gpencil_select_mask_point", text="")
+                row.prop(tool_settings, "use_gpencil_select_mask_stroke", text="")
+                row.prop(tool_settings, "use_gpencil_select_mask_segment", text="")
 
             if object_mode in {'PAINT_GPENCIL', 'EDIT', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}:
                 row = layout.row(align=True)
@@ -1116,6 +1139,13 @@ class VIEW3D_HT_header(Header):
                 row.popover(panel="VIEW3D_PT_slots_color_attributes", icon='GROUP_VCOL')
 
             layout.popover(
+                panel="VIEW3D_PT_sculpt_snapping",
+                icon="SNAP_INCREMENT",
+                text="",
+                translate=False,
+            )
+
+            layout.popover(
                 panel="VIEW3D_PT_sculpt_automasking",
                 text="",
                 icon=VIEW3D_HT_header._sculpt_automasking_icon(tool_settings.sculpt)
@@ -1128,6 +1158,13 @@ class VIEW3D_HT_header(Header):
         elif object_mode == 'WEIGHT_PAINT':
             row = layout.row()
             row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon='GROUP_VERTEX')
+
+            layout.popover(
+                panel="VIEW3D_PT_sculpt_snapping",
+                icon="SNAP_INCREMENT",
+                text="",
+                translate=False,
+            )
 
         elif object_mode == 'TEXTURE_PAINT':
             tool_mode = tool_settings.image_paint.mode
@@ -1320,7 +1357,7 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_select_paint_mask")
             elif mesh.use_paint_mask_vertex and mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX'}:
                 layout.menu("VIEW3D_MT_select_paint_mask_vertex")
-        elif mode_string not in {'SCULPT', 'SCULPT_CURVES', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL'}:
+        elif mode_string not in {'SCULPT', 'SCULPT_CURVES', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL'}:
             layout.menu("VIEW3D_MT_select_" + mode_string.lower())
 
         if gp_edit:
@@ -2064,9 +2101,9 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_select_object_more_less")
+        layout.menu("VIEW3D_MT_select_object_more_less", text="Select More/Less")
 
-# bfa menu
+# BFA menu
 
 
 class VIEW3D_MT_select_object_legacy(Menu):
@@ -2078,9 +2115,9 @@ class VIEW3D_MT_select_object_legacy(Menu):
         layout.operator("view3d.select_box", icon="BOX_MASK")
         layout.operator("view3d.select_circle", icon="CIRCLE_SELECT")
 
-# bfa menu
 
 
+# BFA menu
 class VIEW3D_MT_select_by_type(Menu):
     bl_label = "All by Type"
 
@@ -2108,7 +2145,7 @@ class VIEW3D_MT_select_by_type(Menu):
         layout.operator("object.select_by_type", text="Probe", icon="OUTLINER_OB_LIGHTPROBE").type = 'LIGHT_PROBE'
 
 
-# bfa menu
+# BFA menu
 class VIEW3D_MT_select_grouped(Menu):
     bl_label = "Grouped"
 
@@ -2364,21 +2401,18 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         # other
         layout.menu("VIEW3D_MT_edit_mesh_select_similar")
 
-        layout.separator()
-
         # numeric
+        layout.separator()
         layout.operator("mesh.select_random", text="Random", icon="RANDOMIZE")
         layout.operator("mesh.select_nth", icon="CHECKER_DESELECT")
 
         layout.separator()
-
         layout.operator("mesh.select_mirror", text="Mirror Selection", icon="TRANSFORM_MIRROR")
         layout.operator("mesh.select_axis", text="Side of Active", icon="SELECT_SIDEOFACTIVE")
         layout.operator("mesh.shortest_path_select", text="Shortest Path", icon="SELECT_SHORTESTPATH")
 
-        layout.separator()
-
         # geometric
+        layout.separator()
         layout.operator("mesh.edges_select_sharp", text="Sharp Edges", icon="SELECT_SHARPEDGES")
 
         layout.separator()
@@ -2390,15 +2424,14 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.operator("mesh.region_to_loop", text="Boundary Loop", icon="SELECT_BOUNDARY")
 
         layout.separator()
-
         layout.menu("VIEW3D_MT_edit_mesh_select_by_trait")
 
+        # attribute
         layout.separator()
-
         layout.operator("mesh.select_by_attribute", text="By Attribute", icon="NODE_ATTRIBUTE")
-
+		
+        # more/less
         layout.separator()
-
         layout.menu("VIEW3D_MT_edit_mesh_select_more_less")
 
         layout.separator()
@@ -7164,6 +7197,11 @@ class VIEW3D_MT_weight_gpencil(Menu):
         layout.menu("VIEW3D_MT_gpencil_autoweights")
 
 
+class VIEW3D_MT_weight_grease_pencil(Menu):
+    bl_label = "Weights"
+
+    def draw(self, _context):
+        pass
 class VIEW3D_MT_gpencil_animation(Menu):
     bl_label = "Animation"
 
@@ -7247,10 +7285,15 @@ class VIEW3D_MT_edit_greasepencil_showhide(Menu):
 class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
     bl_label = "Cleanup"
 
-    def draw(self, _context):
+    def draw(self, context):
+        ob = context.object
+        
         layout = self.layout
 
         layout.operator("grease_pencil.clean_loose")
+        
+        if ob.mode != 'PAINT_GREASE_PENCIL':
+            layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance")
 
 
 class VIEW3D_MT_edit_greasepencil(Menu):
@@ -7260,6 +7303,7 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         layout = self.layout
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
+        layout.menu("GREASE_PENCIL_MT_snap")
 
         layout.separator()
 
@@ -9475,6 +9519,19 @@ class VIEW3D_PT_snapping(Panel):
         row.prop(tool_settings, "snap_angle_increment_3d_precision", text="")
 
 
+class VIEW3D_PT_sculpt_snapping(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Snapping"
+
+    def draw(self, context):
+        layout = self.layout
+        tool_settings = context.tool_settings
+        col = layout.column()
+
+        col.label(text="Rotation Increment")
+        row = col.row(align=True)
+        row.prop(tool_settings, "snap_angle_increment_3d", text="")
 class VIEW3D_PT_proportional_edit(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -11099,6 +11156,7 @@ classes = (
     VIEW3D_MT_edit_gpencil_showhide,
     VIEW3D_MT_edit_greasepencil_showhide,
     VIEW3D_MT_edit_greasepencil_cleanup,
+    VIEW3D_MT_weight_grease_pencil,
     VIEW3D_MT_weight_gpencil,
     VIEW3D_MT_gpencil_animation,
     VIEW3D_MT_gpencil_simplify,
@@ -11203,6 +11261,7 @@ classes = (
     VIEW3D_PT_overlay_sculpt,
     VIEW3D_PT_overlay_sculpt_curves,
     VIEW3D_PT_snapping,
+	VIEW3D_PT_sculpt_snapping,
     VIEW3D_PT_proportional_edit,
     VIEW3D_PT_gpencil_origin,
     VIEW3D_PT_gpencil_lock,
