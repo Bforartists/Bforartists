@@ -60,7 +60,7 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_EDITING, "EDITING", 0, "Editing", ""},
     {USER_SECTION_ANIMATION, "ANIMATION", 0, "Animation", ""},
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_ADDONS, "ADDONS", 0, "Add-ons", ""},
+    {USER_SECTION_EXTENSIONS, "EXTENSIONS", 0, "Extensions", ""},
 #if 0 /* def WITH_USERDEF_WORKSPACES */
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_WORKSPACE_CONFIG, "WORKSPACE_CONFIG", 0, "Configuration File", ""},
@@ -307,19 +307,6 @@ static void rna_userdef_screen_update_header_default(Main *bmain, Scene *scene, 
   USERDEF_TAG_DIRTY;
 }
 
-static void rna_PreferencesExperimental_use_extension_repos_set(PointerRNA * /*ptr*/, bool value)
-{
-  Main *bmain = G.main;
-  if (bool(U.experimental.use_extension_repos) != value) {
-    BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
-    U.experimental.use_extension_repos = value;
-    BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
-  }
-
-  /* Needed to redraw the preferences window. */
-  WM_main_add_notifier(NC_WINDOW, nullptr);
-}
-
 static void rna_userdef_font_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA * /*ptr*/)
 {
   BLF_cache_clear();
@@ -420,10 +407,10 @@ static void rna_userdef_extension_repo_use_custom_directory_set(PointerRNA *ptr,
       ptr, value, USER_EXTENSION_REPO_FLAG_USE_CUSTOM_DIRECTORY);
 }
 
-static void rna_userdef_extension_repo_use_remote_path_set(PointerRNA *ptr, bool value)
+static void rna_userdef_extension_repo_use_remote_url_set(PointerRNA *ptr, bool value)
 {
   rna_userdef_extension_repo_generic_flag_set_impl(
-      ptr, value, USER_EXTENSION_REPO_FLAG_USE_REMOTE_PATH);
+      ptr, value, USER_EXTENSION_REPO_FLAG_USE_REMOTE_URL);
 }
 
 static void rna_userdef_script_autoexec_update(Main * /*bmain*/,
@@ -525,7 +512,7 @@ static void rna_userdef_asset_library_remove(ReportList *reports, PointerRNA *pt
 static bUserExtensionRepo *rna_userdef_extension_repo_new(const char *name,
                                                           const char *module,
                                                           const char *custom_directory,
-                                                          const char *remote_path)
+                                                          const char *remote_url)
 {
   Main *bmain = G.main;
   BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
@@ -533,12 +520,12 @@ static bUserExtensionRepo *rna_userdef_extension_repo_new(const char *name,
   bUserExtensionRepo *repo = BKE_preferences_extension_repo_add(
       &U, name ? name : "", module ? module : "", custom_directory ? custom_directory : "");
 
-  if (remote_path) {
-    STRNCPY(repo->remote_path, remote_path);
+  if (remote_url) {
+    STRNCPY(repo->remote_url, remote_url);
   }
 
-  if (repo->remote_path[0]) {
-    repo->flag |= USER_EXTENSION_REPO_FLAG_USE_REMOTE_PATH;
+  if (repo->remote_url[0]) {
+    repo->flag |= USER_EXTENSION_REPO_FLAG_USE_REMOTE_URL;
   }
   if (repo->custom_dirpath[0]) {
     repo->flag |= USER_EXTENSION_REPO_FLAG_USE_CUSTOM_DIRECTORY;
@@ -721,9 +708,8 @@ static const EnumPropertyItem *rna_UseDef_active_section_itemf(bContext * /*C*/,
   UserDef *userdef = static_cast<UserDef *>(ptr->data);
 
   const bool use_developer_ui = (userdef->flag & USER_DEVELOPER_UI) != 0;
-  const bool use_extension_repos = use_developer_ui && U.experimental.use_extension_repos;
 
-  if (use_developer_ui && use_extension_repos == false) {
+  if (use_developer_ui) {
     *r_free = false;
     return rna_enum_preference_section_items;
   }
@@ -741,13 +727,6 @@ static const EnumPropertyItem *rna_UseDef_active_section_itemf(bContext * /*C*/,
     }
 
     RNA_enum_item_add(&items, &totitem, it);
-
-    /* Rename "Add-ons" to "Extensions" when extensions are enabled. */
-    if (it->value == USER_SECTION_ADDONS) {
-      if (use_extension_repos) {
-        items[totitem - 1].name = "Extensions";
-      }
-    }
   }
 
   RNA_enum_item_end(&items, &totitem);
@@ -779,6 +758,11 @@ static PointerRNA rna_UserDef_keymap_get(PointerRNA *ptr)
 static PointerRNA rna_UserDef_filepaths_get(PointerRNA *ptr)
 {
   return rna_pointer_inherit_refine(ptr, &RNA_PreferencesFilePaths, ptr->data);
+}
+
+static PointerRNA rna_UserDef_extensions_get(PointerRNA *ptr)
+{
+  return rna_pointer_inherit_refine(ptr, &RNA_PreferencesExtensions, ptr->data);
 }
 
 static PointerRNA rna_UserDef_system_get(PointerRNA *ptr)
@@ -4819,9 +4803,9 @@ static void rna_def_userdef_view(BlenderRNA *brna)
       {USER_TIMECODE_MILLISECONDS,
        "MILLISECONDS",
        0,
-       "Compact with Milliseconds",
-       "Similar to SMPTE (Compact), except that instead of frames, "
-       "milliseconds are shown instead"},
+       "Compact with Decimals",
+       "Similar to SMPTE (Compact), except that the decimal part of the second is shown instead "
+       "of frames"},
       {USER_TIMECODE_SECONDS_ONLY,
        "SECONDS_ONLY",
        0,
@@ -6706,8 +6690,8 @@ static void rna_def_userdef_filepaths_extension_repo(BlenderRNA *brna)
                                 "rna_userdef_extension_repo_directory_length",
                                 nullptr);
 
-  prop = RNA_def_property(srna, "remote_path", PROP_STRING, PROP_NONE);
-  RNA_def_property_string_sdna(prop, nullptr, "remote_path");
+  prop = RNA_def_property(srna, "remote_url", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_sdna(prop, nullptr, "remote_url");
   RNA_def_property_ui_text(prop, "URL", "Remote URL or path for extension repository");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_FILEBROWSER);
   RNA_def_property_update(prop, 0, "rna_userdef_update");
@@ -6725,6 +6709,11 @@ static void rna_def_userdef_filepaths_extension_repo(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Enabled", "Enable the repository");
   RNA_def_property_boolean_funcs(prop, nullptr, "rna_userdef_extension_repo_enabled_set");
 
+  prop = RNA_def_property(srna, "use_sync_on_startup", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_EXTENSION_REPO_FLAG_SYNC_ON_STARTUP);
+  RNA_def_property_ui_text(
+      prop, "Check for Updates on Startup", "Allow Blender to check for updates upon launch");
+
   prop = RNA_def_property(srna, "use_custom_directory", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(
       prop, nullptr, "flag", USER_EXTENSION_REPO_FLAG_USE_CUSTOM_DIRECTORY);
@@ -6735,11 +6724,10 @@ static void rna_def_userdef_filepaths_extension_repo(BlenderRNA *brna)
   RNA_def_property_boolean_funcs(
       prop, nullptr, "rna_userdef_extension_repo_use_custom_directory_set");
 
-  prop = RNA_def_property(srna, "use_remote_path", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_EXTENSION_REPO_FLAG_USE_REMOTE_PATH);
-  RNA_def_property_ui_text(
-      prop, "Use Remote", "Synchronize the repository with a remote URL/path");
-  RNA_def_property_boolean_funcs(prop, nullptr, "rna_userdef_extension_repo_use_remote_path_set");
+  prop = RNA_def_property(srna, "use_remote_url", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_EXTENSION_REPO_FLAG_USE_REMOTE_URL);
+  RNA_def_property_ui_text(prop, "Use Remote", "Synchronize the repository with a remote URL");
+  RNA_def_property_boolean_funcs(prop, nullptr, "rna_userdef_extension_repo_use_remote_url_set");
 }
 
 static void rna_def_userdef_script_directory(BlenderRNA *brna)
@@ -6857,7 +6845,7 @@ static void rna_def_userdef_extension_repos_collection(BlenderRNA *brna, Propert
                  "Custom Directory",
                  "");
   RNA_def_string(
-      func, "remote_path", nullptr, sizeof(bUserExtensionRepo::remote_path), "Remote Path", "");
+      func, "remote_url", nullptr, sizeof(bUserExtensionRepo::remote_url), "Remote URL", "");
 
   /* return type */
   parm = RNA_def_pointer(func, "repo", "UserExtensionRepo", "", "Newly added repository");
@@ -6949,6 +6937,14 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
       prop,
       "Tabs as Spaces",
       "Automatically convert all new tabs into spaces for new and loaded text files");
+
+  prop = RNA_def_property(srna, "use_extension_online_access_handled", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "extension_flag", USER_EXTENSION_FLAG_ONLINE_ACCESS_HANDLED);
+  RNA_def_property_ui_text(
+      prop,
+      "Online Access",
+      "The user has been shown the \"Online Access\" prompt and make a choice");
 
   /* Directories. */
 
@@ -7083,15 +7079,36 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Active Asset Library",
                            "Index of the asset library being edited in the Preferences UI");
+}
+
+static void rna_def_userdef_extensions(BlenderRNA *brna)
+{
+  PropertyRNA *prop;
+  StructRNA *srna;
+
+  srna = RNA_def_struct(brna, "PreferencesExtensions", nullptr);
+  RNA_def_struct_sdna(srna, "UserDef");
+  RNA_def_struct_nested(brna, srna, "Preferences");
+  RNA_def_struct_ui_text(srna, "Extensions", "Settings for extensions");
+
+  prop = RNA_def_property(srna, "use_online_access_handled", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "extension_flag", USER_EXTENSION_FLAG_ONLINE_ACCESS_HANDLED);
+  RNA_def_property_ui_text(
+      prop,
+      "Online Access",
+      "The user has been shown the \"Online Access\" prompt and make a choice");
 
   rna_def_userdef_filepaths_extension_repo(brna);
 
-  prop = RNA_def_property(srna, "extension_repos", PROP_COLLECTION, PROP_NONE);
+  prop = RNA_def_property(srna, "repos", PROP_COLLECTION, PROP_NONE);
+  RNA_def_property_collection_sdna(prop, nullptr, "extension_repos", nullptr);
   RNA_def_property_struct_type(prop, "UserExtensionRepo");
   RNA_def_property_ui_text(prop, "Extension Repositories", "");
   rna_def_userdef_extension_repos_collection(brna, prop);
 
-  prop = RNA_def_property(srna, "active_extension_repo", PROP_INT, PROP_NONE);
+  prop = RNA_def_property(srna, "active_repo", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "active_extension_repo");
   RNA_def_property_ui_text(
       prop,
       "Active Extension Repository",
@@ -7157,15 +7174,6 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "use_new_point_cloud_type", 1);
   RNA_def_property_ui_text(
       prop, "New Point Cloud Type", "Enable the new point cloud type in the ui");
-
-  prop = RNA_def_property(srna, "use_experimental_compositors", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "use_full_frame_compositor", 1);
-  RNA_def_property_ui_text(
-      prop,
-      "Experimental Compositors",
-      "Enable compositor full frame and realtime GPU execution mode options (no tiling, "
-      "reduces execution time and memory usage)");
-  RNA_def_property_update(prop, 0, "rna_userdef_update");
 
   prop = RNA_def_property(srna, "use_new_curves_tools", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "use_new_curves_tools", 1);
@@ -7256,14 +7264,6 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Shader Node Previews", "Enables previews in the shader node editor");
   RNA_def_property_update(prop, 0, "rna_userdef_ui_update");
-
-  prop = RNA_def_property(srna, "use_extension_repos", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_ui_text(prop,
-                           "Extensions",
-                           "Enables support for extensions, accessible from the \"Extensions\" "
-                           "section of the preferences");
-  RNA_def_property_boolean_funcs(
-      prop, nullptr, "rna_PreferencesExperimental_use_extension_repos_set");
 
   prop = RNA_def_property(srna, "use_extension_utils", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(
@@ -7414,6 +7414,12 @@ void RNA_def_userdef(BlenderRNA *brna)
   RNA_def_property_pointer_funcs(prop, "rna_UserDef_filepaths_get", nullptr, nullptr, nullptr);
   RNA_def_property_ui_text(prop, "File Paths", "Default paths for external files");
 
+  prop = RNA_def_property(srna, "extensions", PROP_POINTER, PROP_NONE);
+  RNA_def_property_flag(prop, PROP_NEVER_NULL);
+  RNA_def_property_struct_type(prop, "PreferencesExtensions");
+  RNA_def_property_pointer_funcs(prop, "rna_UserDef_extensions_get", nullptr, nullptr, nullptr);
+  RNA_def_property_ui_text(prop, "Extensions", "Settings for extensions");
+
   prop = RNA_def_property(srna, "system", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
   RNA_def_property_struct_type(prop, "PreferencesSystem");
@@ -7482,6 +7488,7 @@ void RNA_def_userdef(BlenderRNA *brna)
   rna_def_userdef_input(brna);
   rna_def_userdef_keymap(brna);
   rna_def_userdef_filepaths(brna);
+  rna_def_userdef_extensions(brna);
   rna_def_userdef_system(brna);
   rna_def_userdef_addon(brna);
   rna_def_userdef_addon_pref(brna);
