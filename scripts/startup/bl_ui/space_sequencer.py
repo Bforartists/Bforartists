@@ -239,7 +239,7 @@ class SEQUENCER_PT_overlay(Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "Overlays"
-    bl_ui_units_x = 7
+    bl_ui_units_x = 13
 
     def draw(self, _context):
         pass
@@ -288,30 +288,63 @@ class SEQUENCER_PT_sequencer_overlay(Panel):
         layout = self.layout
 
         layout.active = st.show_overlays
+        split = layout.column().split()
 
-        layout.prop(overlay_settings, "show_strip_name", text="Name")
-        layout.prop(overlay_settings, "show_strip_source", text="Source")
-        layout.prop(overlay_settings, "show_strip_duration", text="Duration")
-        layout.prop(overlay_settings, "show_strip_tag_color", text="Color Tags")
+        col = split.column()
+        col.prop(overlay_settings, "show_grid", text="Grid")
 
-        layout.separator()
+        col = split.column()
+        col.prop(st.cache_overlay, "show_cache", text="Cache")
 
-        layout.prop(overlay_settings, "show_strip_offset", text="Offsets")
-        layout.prop(overlay_settings, "show_fcurves", text="F-Curves")
-        layout.prop(overlay_settings, "show_strip_retiming", text="Retiming")
-        layout.prop(overlay_settings, "show_thumbnails", text="Thumbnails")
-        layout.prop(overlay_settings, "show_grid", text="Grid")
-        layout.prop(st.cache_overlay, "show_cache", text="Cache")
 
-        layout.separator()
+class SEQUENCER_PT_sequencer_overlay_strips(Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_parent_id = "SEQUENCER_PT_overlay"
+    bl_label = "Strips"
 
-        layout.label(text="Waveforms")
+    def draw(self, context):
+        st = context.space_data
+        overlay_settings = st.timeline_overlay
+        layout = self.layout
+
+        layout.active = st.show_overlays
+        split = layout.column().split()
+
+        col = split.column()
+        col.prop(overlay_settings, "show_strip_name", text="Name")
+        col.prop(overlay_settings, "show_strip_source", text="Source")
+        col.prop(overlay_settings, "show_strip_duration", text="Duration")
+        col.prop(overlay_settings, "show_fcurves", text="Animation Curves")
+
+        col = split.column()
+        col.prop(overlay_settings, "show_thumbnails", text="Thumbnails")
+        col.prop(overlay_settings, "show_strip_tag_color", text="Color Tags")
+        col.prop(overlay_settings, "show_strip_offset", text="Offsets")
+        col.prop(overlay_settings, "show_strip_retiming", text="Retiming")
+
+
+class SEQUENCER_PT_sequencer_overlay_waveforms(Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_parent_id = "SEQUENCER_PT_overlay"
+    bl_label = "Waveforms"
+
+    def draw(self, context):
+        st = context.space_data
+        overlay_settings = st.timeline_overlay
+        layout = self.layout
+
+        layout.active = st.show_overlays
+
         layout.row().prop(overlay_settings, "waveform_display_type", expand=True)
-        layout.label(text="Waveform Style")
-        layout.row().prop(overlay_settings, "waveform_display_style", expand=True)
+
+        row = layout.row()
+        row.prop(overlay_settings, "waveform_display_style", expand=True)
+        row.active = overlay_settings.waveform_display_type != 'NO_WAVEFORMS'
 
 
-# bfa - show hide the editormenu, editor suffix is needed.
+# BFA - show hide the editormenu, editor suffix is needed.
 class ALL_MT_editormenu_sequencer(Menu):
     bl_label = ""
 
@@ -377,10 +410,7 @@ class SEQUENCER_MT_range(Menu):
         layout = self.layout
 
         layout.operator("anim.previewrange_set", text="Set Preview Range", icon="PREVIEW_RANGE")
-        layout.operator(
-            "sequencer.set_range_to_strips",
-            text="Set Preview Range to Strips",
-            icon="PREVIEW_RANGE").preview = True
+        layout.operator("sequencer.set_range_to_strips", text="Set Preview Range to Strips", icon="PREVIEW_RANGE").preview = True
         layout.operator("anim.previewrange_clear", text="Clear Preview Range", icon="CLEAR")
 
         layout.separator()
@@ -599,12 +629,9 @@ class SEQUENCER_MT_select_handle(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.select_handles", text="Both Neighbors",
-                        icon="SELECT_HANDLE_BOTH").side = 'BOTH_NEIGHBORS'
-        layout.operator("sequencer.select_handles", text="Left Neighbor",
-                        icon="SELECT_HANDLE_LEFT").side = 'LEFT_NEIGHBOR'
-        layout.operator("sequencer.select_handles", text="Right Neighbor",
-                        icon="SELECT_HANDLE_RIGHT").side = 'RIGHT_NEIGHBOR'
+        layout.operator("sequencer.select_handles", text="Both Neighbors", icon="SELECT_HANDLE_BOTH").side = 'BOTH_NEIGHBORS'
+        layout.operator("sequencer.select_handles", text="Left Neighbor", icon="SELECT_HANDLE_LEFT").side = 'LEFT_NEIGHBOR'
+        layout.operator("sequencer.select_handles", text="Right Neighbor", icon="SELECT_HANDLE_RIGHT").side = 'RIGHT_NEIGHBOR'
 
 
 class SEQUENCER_MT_select_channel(Menu):
@@ -625,9 +652,9 @@ class SEQUENCER_MT_select_linked(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sequencer.select_linked", text="All", icon='SELECT_ALL')
-        layout.operator("sequencer.select_less", text="Less", icon="SELECTLESS")
-        layout.operator("sequencer.select_more", text="More", icon="SELECTMORE")
+        layout.operator("sequencer.select_linked", text="All")
+        layout.operator("sequencer.select_less", text="Less")
+        layout.operator("sequencer.select_more", text="More")
 
 
 class SEQUENCER_MT_select(Menu):
@@ -654,12 +681,13 @@ class SEQUENCER_MT_select(Menu):
         col.separator()
 
         if has_sequencer:
-            col.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame")
+            col.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame...")
             col.menu("SEQUENCER_MT_select_handle", text="Handle")
             col.menu("SEQUENCER_MT_select_channel", text="Channel")
             col.menu("SEQUENCER_MT_select_linked", text="Linked")
 
-        col.operator_menu_enum("sequencer.select_grouped", "type", text="Grouped")
+        col.operator_menu_enum("sequencer.select_grouped", "type", text="Select Grouped")
+        
 
 
 class SEQUENCER_MT_marker(Menu):
@@ -741,7 +769,7 @@ class SEQUENCER_MT_change(Menu):
 
 
 class SEQUENCER_MT_navigation(Menu):
-    bl_label = "Navi"
+    bl_label = "Navigation"
 
     def draw(self, _context):
         layout = self.layout
@@ -831,7 +859,7 @@ class SEQUENCER_MT_add(Menu):
         col.enabled = selected_sequences_len(context) >= 2
 
         col = layout.column()
-        # col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon='IPO_EASE_IN_OUT')
+        # col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon='IPO_EASE_IN_OUT') # BFA - now it's own menu
         col.menu("SEQUENCER_MT_fades_add", icon='IPO_EASE_IN_OUT')
         col.enabled = selected_sequences_len(context) >= 1
 
@@ -1451,7 +1479,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
             if selected_sequences_count >= 1:
                 col = layout.column()
-                # col.operator_menu_enum("sequencer.fades_add", "type", text="Fade")
+                # col.operator_menu_enum("sequencer.fades_add", "type", text="Fade") # BFA - now it's own menu
                 col.menu("SEQUENCER_MT_fades_add", text="Fade", icon='IPO_EASE_IN_OUT')
                 layout.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")
 
@@ -3305,7 +3333,6 @@ classes = (
     SEQUENCER_MT_proxy,
     SEQUENCER_MT_select_handle,
     SEQUENCER_MT_select_channel,
-    SEQUENCER_MT_select_linked,
     SEQUENCER_MT_select,
     SEQUENCER_MT_marker,
     SEQUENCER_MT_navigation,
@@ -3343,6 +3370,8 @@ classes = (
     SEQUENCER_PT_overlay,
     SEQUENCER_PT_preview_overlay,
     SEQUENCER_PT_sequencer_overlay,
+    SEQUENCER_PT_sequencer_overlay_strips,
+    SEQUENCER_PT_sequencer_overlay_waveforms,
 
     SEQUENCER_PT_effect,
     SEQUENCER_PT_scene,
