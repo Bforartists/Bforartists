@@ -561,13 +561,13 @@ def extensions_panel_draw_impl(
                         
                         # BFA - Move Uninstall next to Install
                         row_right2.active = True
-                        props = row_right2.operator("bl_pkg.pkg_uninstall", text="Uninstall")
+                        props = row_right2.operator("bl_pkg.pkg_uninstall", text="Uninstall", icon='CANCEL')
                         props.repo_index = repo_index
                         props.pkg_id = pkg_id
                         del props, row_right2
                         
                 else:
-                    props = row_right.operator("bl_pkg.pkg_install", text="Install")
+                    props = row_right.operator("bl_pkg.pkg_install", text="Install", icon='IMPORT')
                     props.repo_index = repo_index
                     props.pkg_id = pkg_id
                     del props
