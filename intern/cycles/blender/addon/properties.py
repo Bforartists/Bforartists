@@ -1083,11 +1083,6 @@ class CyclesMaterialSettings(bpy.types.PropertyGroup):
 
 class CyclesLightSettings(bpy.types.PropertyGroup):
 
-    cast_shadow: BoolProperty(
-        name="Cast Shadow",
-        description="Light casts shadows",
-        default=True,
-    )
     max_bounces: IntProperty(
         name="Max Bounces",
         description="Maximum number of bounces the light will contribute to the render",
@@ -1454,6 +1449,7 @@ class CyclesDeviceSettings(bpy.types.PropertyGroup):
 class CyclesPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
+    @staticmethod
     def default_device():
         import platform
         # Default to selecting the Metal compute device on Apple Silicon GPUs
