@@ -712,6 +712,18 @@ void UI_popup_menu_reports(bContext *C, ReportList *reports) ATTR_NONNULL();
 int UI_popup_menu_invoke(bContext *C, const char *idname, ReportList *reports) ATTR_NONNULL(1, 2);
 
 /**
+ * If \a block is displayed in a popup menu, tag it for closing.
+ * \param is_cancel: If set to true, the popup will be closed as being cancelled (e.g. when
+ *                   pressing escape) as opposed to being handled successfully.
+ */
+void UI_popup_menu_close(const uiBlock *block, bool is_cancel = false);
+/**
+ * Version of #UI_popup_menu_close() that can be called on a button contained in a popup menu
+ * block. Convenience since the block may not be available.
+ */
+void UI_popup_menu_close_from_but(const uiBut *but, bool is_cancel = false);
+
+/**
  * Allow setting menu return value from externals.
  * E.g. WM might need to do this for exiting files correctly.
  */
@@ -787,6 +799,11 @@ using uiBlockCreateFunc = uiBlock *(*)(bContext *C, ARegion *region, void *arg1)
 using uiBlockCancelFunc = void (*)(bContext *C, void *arg1);
 
 void UI_popup_block_invoke(bContext *C, uiBlockCreateFunc func, void *arg, uiFreeArgFunc arg_free);
+/**
+ * \param can_refresh: When true, the popup may be refreshed (updated after creation).
+ * \note It can be useful to disable refresh (even though it will work)
+ * as this exits text fields which can be disruptive if refresh isn't needed.
+ */
 void UI_popup_block_invoke_ex(
     bContext *C, uiBlockCreateFunc func, void *arg, uiFreeArgFunc arg_free, bool can_refresh);
 void UI_popup_block_ex(bContext *C,
@@ -1493,6 +1510,10 @@ uiBut *uiDefIconMenuBut(uiBlock *block,
                         short height,
                         const char *tip);
 
+/**
+ * Note that \a fun can set the #UI_BLOCK_KEEP_OPEN flag to the block it creates, to allow
+ * refreshing the popup. That is, redrawing the layout, potentially affecting the popup size.
+ */
 uiBut *uiDefBlockBut(uiBlock *block,
                      uiBlockCreateFunc func,
                      void *arg,
@@ -2709,6 +2730,13 @@ void uiTemplateAssetView(uiLayout *layout,
                          PointerRNA *r_activate_op_properties,
                          const char *drag_opname,
                          PointerRNA *r_drag_op_properties);
+
+namespace blender::ui {
+
+void template_asset_shelf_popover(
+    uiLayout &layout, const bContext &C, StringRefNull asset_shelf_id, StringRef name, int icon);
+
+}
 
 void uiTemplateLightLinkingCollection(uiLayout *layout,
                                       uiLayout *context_layout,
