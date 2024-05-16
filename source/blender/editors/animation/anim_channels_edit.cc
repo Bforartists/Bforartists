@@ -257,9 +257,9 @@ void ANIM_set_active_channel(bAnimContext *ac,
         ACHANNEL_SET_FLAG(nlt, ACHANNEL_SETFLAG_CLEAR, NLATRACK_ACTIVE);
         break;
       }
-      case ANIMTYPE_FILLACTD: /* Action Expander */
-      case ANIMTYPE_FILLANIM: /* Animation Expander */
-      case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
+      case ANIMTYPE_FILLACTD:        /* Action Expander */
+      case ANIMTYPE_FILLACT_LAYERED: /* Animation Expander */
+      case ANIMTYPE_DSMAT:           /* Datablock AnimData Expanders */
       case ANIMTYPE_DSLAM:
       case ANIMTYPE_DSCAM:
       case ANIMTYPE_DSCACHEFILE:
@@ -314,9 +314,9 @@ void ANIM_set_active_channel(bAnimContext *ac,
         nlt->flag |= NLATRACK_ACTIVE;
         break;
       }
-      case ANIMTYPE_FILLACTD: /* Action Expander */
-      case ANIMTYPE_FILLANIM: /* Animation Expander */
-      case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
+      case ANIMTYPE_FILLACTD:        /* Action Expander */
+      case ANIMTYPE_FILLACT_LAYERED: /* Animation Expander */
+      case ANIMTYPE_DSMAT:           /* Datablock AnimData Expanders */
       case ANIMTYPE_DSLAM:
       case ANIMTYPE_DSCAM:
       case ANIMTYPE_DSCACHEFILE:
@@ -368,9 +368,9 @@ void ANIM_set_active_channel(bAnimContext *ac,
 bool ANIM_is_active_channel(bAnimListElem *ale)
 {
   switch (ale->type) {
-    case ANIMTYPE_FILLACTD: /* Action Expander */
-    case ANIMTYPE_FILLANIM: /* Animation Expander */
-    case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
+    case ANIMTYPE_FILLACTD:        /* Action Expander */
+    case ANIMTYPE_FILLACT_LAYERED: /* Animation Expander */
+    case ANIMTYPE_DSMAT:           /* Datablock AnimData Expanders */
     case ANIMTYPE_DSLAM:
     case ANIMTYPE_DSCAM:
     case ANIMTYPE_DSCACHEFILE:
@@ -505,9 +505,9 @@ static eAnimChannels_SetFlag anim_channels_selection_flag_for_toggle(const ListB
         }
         break;
 
-      case ANIMTYPE_FILLACTD: /* Action Expander */
-      case ANIMTYPE_FILLANIM: /* Animation Expander */
-      case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
+      case ANIMTYPE_FILLACTD:        /* Action Expander */
+      case ANIMTYPE_FILLACT_LAYERED: /* Animation Expander */
+      case ANIMTYPE_DSMAT:           /* Datablock AnimData Expanders */
       case ANIMTYPE_DSLAM:
       case ANIMTYPE_DSCAM:
       case ANIMTYPE_DSCACHEFILE:
@@ -620,9 +620,9 @@ static void anim_channels_select_set(bAnimContext *ac,
         nlt->flag &= ~NLATRACK_ACTIVE;
         break;
       }
-      case ANIMTYPE_FILLACTD: /* Action Expander */
-      case ANIMTYPE_FILLANIM: /* Animation Expander */
-      case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
+      case ANIMTYPE_FILLACTD:        /* Action Expander */
+      case ANIMTYPE_FILLACT_LAYERED: /* Animation Expander */
+      case ANIMTYPE_DSMAT:           /* Datablock AnimData Expanders */
       case ANIMTYPE_DSLAM:
       case ANIMTYPE_DSCAM:
       case ANIMTYPE_DSCACHEFILE:
@@ -3838,9 +3838,9 @@ static int mouse_anim_channels(bContext *C,
     case ANIMTYPE_OBJECT:
       notifierFlags |= click_select_channel_object(C, ac, ale, selectmode);
       break;
-    case ANIMTYPE_FILLACTD: /* Action Expander */
-    case ANIMTYPE_FILLANIM: /* Animation Expander */
-    case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
+    case ANIMTYPE_FILLACTD:        /* Action Expander */
+    case ANIMTYPE_FILLACT_LAYERED: /* Animation Expander */
+    case ANIMTYPE_DSMAT:           /* Datablock AnimData Expanders */
     case ANIMTYPE_DSLAM:
     case ANIMTYPE_DSCAM:
     case ANIMTYPE_DSCACHEFILE:
@@ -4586,7 +4586,7 @@ static blender::Vector<FCurve *> get_fcurves_of_property(
     const int length = RNA_property_array_length(ptr, prop);
     for (int i = 0; i < length; i++) {
       FCurve *fcurve = BKE_animadata_fcurve_find_by_rna_path(
-          id, anim_data, path->c_str(), i, nullptr, nullptr);
+          anim_data, path->c_str(), i, nullptr, nullptr);
       if (fcurve != nullptr) {
         fcurves.append(fcurve);
       }
@@ -4594,7 +4594,7 @@ static blender::Vector<FCurve *> get_fcurves_of_property(
   }
   else {
     FCurve *fcurve = BKE_animadata_fcurve_find_by_rna_path(
-        id, anim_data, path->c_str(), index, nullptr, nullptr);
+        anim_data, path->c_str(), index, nullptr, nullptr);
     if (fcurve != nullptr) {
       fcurves.append(fcurve);
     }
