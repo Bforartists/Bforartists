@@ -226,7 +226,6 @@ class IMAGE_MT_select(Menu):
         layout.menu("IMAGE_MT_select_legacy")
 
         layout.operator("uv.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-
         layout.operator("uv.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
         layout.operator("uv.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
@@ -235,7 +234,8 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_box", text="Box Select Pinned", icon='BORDER_RECT').pinned = True
 		# BFA - moved to legacy
 		# BFA - moved to legacy
-
+        layout.operator_menu_enum("uv.select_lasso", "mode", text="Lasso Select")
+		
         layout.separator()
 
         layout.menu("IMAGE_MT_select_linked")
