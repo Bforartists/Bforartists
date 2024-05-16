@@ -998,6 +998,7 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
 
   /* Button is disabled, we may be able to tell user why. */
   if ((but->flag & UI_BUT_DISABLED) || extra_icon) {
+    const char *disabled_msg_orig = nullptr;
     const char *disabled_msg = nullptr;
     bool disabled_msg_free = false;
 
@@ -1010,7 +1011,8 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
       call_params.opcontext = opcontext;
       CTX_wm_operator_poll_msg_clear(C);
       ui_but_context_poll_operator_ex(C, but, &call_params);
-      disabled_msg = TIP_(CTX_wm_operator_poll_msg_get(C, &disabled_msg_free));
+      disabled_msg_orig = CTX_wm_operator_poll_msg_get(C, &disabled_msg_free);
+      disabled_msg = TIP_(disabled_msg_orig);
     }
     /* Alternatively, buttons can store some reasoning too. */
     else if (!extra_icon && but->disabled_info) {
@@ -1025,7 +1027,7 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
                                 UI_TIP_LC_ALERT);
     }
     if (disabled_msg_free) {
-      MEM_freeN((void *)disabled_msg);
+      MEM_freeN((void *)disabled_msg_orig);
     }
   }
 
@@ -1047,6 +1049,89 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
                                                  RNA_path_full_struct_py(&but->rnapoin);
       UI_tooltip_text_field_add(data, str.value_or(""), {}, UI_TIP_STYLE_MONO, UI_TIP_LC_PYTHON);
     }
+  }
+
+  if (but->type == UI_BTYPE_COLOR) {
+
+    float color[4];
+    ui_but_v3_get(but, color);
+    color[3] = 1.0f;
+
+    if (but->rnaprop) {
+      BLI_assert(but->rnaindex == -1);
+      if (RNA_property_array_length(&but->rnapoin, but->rnaprop) == 4) {
+        color[3] = RNA_property_float_get_index(&but->rnapoin, but->rnaprop, 3);
+      }
+    }
+
+    if (!ui_but_is_color_gamma(but)) {
+      ui_block_cm_to_display_space_v3(but->block, color);
+    }
+
+    const std::string hex_st = fmt::format("Hex: {:X}{:X}{:X}{:X}",
+                                           int(color[0] * 255.0f),
+                                           int(color[1] * 255.0f),
+                                           int(color[2] * 255.0f),
+                                           int(color[3] * 255.0f));
+
+    const std::string rgba_st = fmt::format("{}:  {:.3f}  {:.3f}  {:.3f}  {:.3f}",
+                                            TIP_("RGBA"),
+                                            color[0],
+                                            color[1],
+                                            color[2],
+                                            color[3]);
+    float hsva[4];
+    rgb_to_hsv_v(color, hsva);
+    hsva[3] = color[3];
+    const std::string hsva_st = fmt::format(
+        "{}:  {:.3f}  {:.3f}  {:.3f}  {:.3f}", TIP_("HSVA"), hsva[0], hsva[1], hsva[2], hsva[3]);
+
+    const float aspect = min_ff(1.0f, but->block->aspect);
+    const uiFontStyle *fs = UI_FSTYLE_WIDGET;
+    BLF_size(blf_mono_font, fs->points * UI_SCALE_FAC / aspect);
+    float w = BLF_width(blf_mono_font, hsva_st.c_str(), hsva_st.size());
+
+    uiTooltipImage image_data;
+    image_data.width = int(w);
+    image_data.height = int(w / 4.0f);
+    image_data.ibuf = IMB_allocImBuf(image_data.width, image_data.height, 32, IB_rect);
+    image_data.border = true;
+    image_data.premultiplied = false;
+
+    ColorManagedDisplay *display = ui_block_cm_display_get(but->block);
+    if (color[3] == 1.0f) {
+      /* No transparency so draw the entire area solid without checkerboard. */
+      image_data.background = uiTooltipImageBackground::None;
+      IMB_rectfill_area(
+          image_data.ibuf, color, 1, 1, image_data.width, image_data.height, display);
+    }
+    else {
+      image_data.background = uiTooltipImageBackground::Checkerboard_Fixed;
+      /* Draw one half with transparency. */
+      IMB_rectfill_area(image_data.ibuf,
+                        color,
+                        image_data.width / 2,
+                        1,
+                        image_data.width,
+                        image_data.height,
+                        display);
+      /* Draw the other half with a solid color. */
+      color[3] = 1.0f;
+      IMB_rectfill_area(
+          image_data.ibuf, color, 1, 1, image_data.width / 2, image_data.height, display);
+    }
+
+    UI_tooltip_text_field_add(data, {}, {}, UI_TIP_STYLE_SPACER, UI_TIP_LC_NORMAL, false);
+    UI_tooltip_text_field_add(data, {}, {}, UI_TIP_STYLE_SPACER, UI_TIP_LC_NORMAL, false);
+    UI_tooltip_image_field_add(data, image_data);
+    UI_tooltip_text_field_add(data, {}, {}, UI_TIP_STYLE_SPACER, UI_TIP_LC_NORMAL, false);
+    UI_tooltip_text_field_add(data, hex_st, {}, UI_TIP_STYLE_MONO, UI_TIP_LC_NORMAL, false);
+    UI_tooltip_text_field_add(data, {}, {}, UI_TIP_STYLE_SPACER, UI_TIP_LC_NORMAL, false);
+    UI_tooltip_text_field_add(data, rgba_st, {}, UI_TIP_STYLE_MONO, UI_TIP_LC_NORMAL, false);
+    UI_tooltip_text_field_add(data, hsva_st, {}, UI_TIP_STYLE_MONO, UI_TIP_LC_NORMAL, false);
+
+    /* Tooltip now owns a copy of the ImBuf, so we can delete ours.*/
+    IMB_freeImBuf(image_data.ibuf);
   }
 
   if (data->fields.is_empty()) {
