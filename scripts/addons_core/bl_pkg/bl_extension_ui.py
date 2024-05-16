@@ -542,7 +542,10 @@ def extensions_panel_draw_impl(
 
             row_right = row.row()
             row_right.alignment = 'RIGHT'
-
+            
+            row_right2 = row.row()
+            row_right2.alignment = 'RIGHT'
+            
             if has_remote:
                 if is_installed:
                     # Include uninstall below.
@@ -555,6 +558,14 @@ def extensions_panel_draw_impl(
                         # Right space for alignment with the button.
                         row_right.label(text="Installed   ")
                         row_right.active = False
+                        
+                        # BFA - Move Uninstall next to Install
+                        row_right2.active = True
+                        props = row_right2.operator("bl_pkg.pkg_uninstall", text="Uninstall")
+                        props.repo_index = repo_index
+                        props.pkg_id = pkg_id
+                        del props, row_right2
+                        
                 else:
                     props = row_right.operator("bl_pkg.pkg_install", text="Install")
                     props.repo_index = repo_index
@@ -611,15 +622,16 @@ def extensions_panel_draw_impl(
                     col_b.split(factor=0.5).operator("wm.url_open", text="Website", icon='HELP').url = value
                 del value
 
+                # BFA - moved next to Installed
                 # Note that we could allow removing extensions from non-remote extension repos
                 # although this is destructive, so don't enable this right now.
-                if is_installed:
-                    rowsub = col_b.row()
-                    rowsub.alignment = 'RIGHT'
-                    props = rowsub.operator("bl_pkg.pkg_uninstall", text="Uninstall")
-                    props.repo_index = repo_index
-                    props.pkg_id = pkg_id
-                    del props, rowsub
+                #if is_installed:
+                #    rowsub = col_b.row()
+                #    rowsub.alignment = 'RIGHT'
+                #    props = rowsub.operator("bl_pkg.pkg_uninstall", text="Uninstall")
+                #    props.repo_index = repo_index
+                #    props.pkg_id = pkg_id
+                #    del props, rowsub
 
                 # Show addon user preferences.
                 if is_enabled and is_addon:
