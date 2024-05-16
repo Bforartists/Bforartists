@@ -964,6 +964,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
 
     # Grease Pencil #
     if mode == 'PAINT_GREASE_PENCIL':
+        size_mode = True
         size = True
         strength = True
 
@@ -1621,38 +1622,54 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=
     if gp_settings is None:
         return
 
+    tool_settings = context.tool_settings
+    ups = tool_settings.unified_paint_settings
+
     grease_pencil_tool = brush.gpencil_tool
 
-    UnifiedPaintPanel.prop_unified(
-        layout,
-        context,
-        brush,
-        "size",
-        unified_name="use_unified_size",
-        pressure_name="use_pressure_size",
-        text="Radius",
-        slider=True,
-        header=compact,
-    )
+    if grease_pencil_tool in {'DRAW', 'ERASE', 'TINT'} or tool.idname in {
+            "builtin.arc",
+            "builtin.curve",
+            "builtin.line",
+            "builtin.box",
+            "builtin.circle",
+            "builtin.polyline",
+    }:
+        size = "size"
+        size_owner = ups if ups.use_unified_size else brush
+        if size_owner.use_locked_size == 'SCENE':
+            size = "unprojected_radius"
 
-    if brush.use_pressure_size and not compact:
-        col = layout.column()
-        col.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True)
+        UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            size,
+            unified_name="use_unified_size",
+            pressure_name="use_pressure_size",
+            text="Radius",
+            slider=True,
+            header=compact,
+        )
 
-    UnifiedPaintPanel.prop_unified(
-        layout,
-        context,
-        brush,
-        "strength",
-        unified_name="use_unified_strength",
-        pressure_name="use_pressure_strength",
-        slider=True,
-        header=compact,
-    )
+        if brush.use_pressure_size and not compact:
+            col = layout.column()
+            col.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True)
 
-    if brush.use_pressure_strength and not compact:
-        col = layout.column()
-        col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
+        UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            "strength",
+            unified_name="use_unified_strength",
+            pressure_name="use_pressure_strength",
+            slider=True,
+            header=compact,
+        )
+
+        if brush.use_pressure_strength and not compact:
+            col = layout.column()
+            col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
 
     # Brush details
     if tool.idname in {
@@ -1693,6 +1710,23 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=
             row.prop(gp_settings, "caps_type", text="", expand=True)
         else:
             row.prop(gp_settings, "caps_type", text="Caps Type")
+    elif brush.gpencil_tool == 'FILL':
+        use_property_split_prev = layout.use_property_split
+        if compact:
+            row = layout.row(align=True)
+            row.prop(gp_settings, "fill_direction", text="", expand=True)
+        else:
+            layout.use_property_split = False
+            row = layout.row(align=True)
+            row.prop(gp_settings, "fill_direction", expand=True)
+
+        row = layout.row(align=True)
+        row.prop(gp_settings, "fill_factor")
+        row = layout.row(align=True)
+        row.prop(gp_settings, "dilate")
+        row = layout.row(align=True)
+        row.prop(brush, "size", text="Thickness")
+        layout.use_property_split = use_property_split_prev
     elif grease_pencil_tool == 'ERASE':
         layout.prop(gp_settings, "eraser_mode", expand=True)
         if gp_settings.eraser_mode == 'HARD':
