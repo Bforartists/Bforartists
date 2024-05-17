@@ -444,6 +444,7 @@ def extensions_panel_draw_impl(
                     is_theme = True
 
             if is_addon:
+                icon_type = 'PLUGIN' # BFA - Added icons to indicate which is what.
                 if is_installed:
                     # Currently we only need to know the module name once installed.
                     addon_module_name = "bl_ext.{:s}.{:s}".format(repos_all[repo_index].module, pkg_id)
@@ -453,6 +454,7 @@ def extensions_panel_draw_impl(
                     is_enabled = False
                     addon_module_name = None
             elif is_theme:
+                icon_type = 'COLOR' # BFA - Added icons to indicate which is what.
                 is_enabled = (repo_index, pkg_id) == active_theme_info
                 addon_module_name = None
             else:
@@ -537,7 +539,7 @@ def extensions_panel_draw_impl(
 
             sub = row.row()
             sub.active = is_enabled
-            sub.label(text=item_remote["name"])
+            sub.label(text=item_remote["name"], icon=icon_type) # BFA - Added icons to indicate which is what.
             del sub
 
             row_right = row.row()
