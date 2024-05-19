@@ -171,7 +171,7 @@ if(WIN32 AND NOT UNIX)
 
   list(APPEND SRC
     ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.rc
-    ${CMAKE_BINARY_DIR}/blender.exe.manifest
+    ${CMAKE_BINARY_DIR}/bforartists.exe.manifest
   )
 endif()
 
@@ -340,13 +340,13 @@ else()
     target_link_libraries(bforartists PRIVATE blender_cpu_check)
   endif()
   if(WIN32)
-    add_executable(blender-launcher WIN32
+    add_executable(bforartists-launcher WIN32
       blender_launcher_win32.c
       ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.rc
-      ${CMAKE_BINARY_DIR}/blender.exe.manifest
+      ${CMAKE_BINARY_DIR}/bforartists.exe.manifest
     )
-    target_compile_definitions (blender-launcher PRIVATE -D_UNICODE -DUNICODE)
-    target_link_libraries(blender-launcher Pathcch.lib)
+    target_compile_definitions (bforartists-launcher PRIVATE -D_UNICODE -DUNICODE)
+    target_link_libraries(bforartists-launcher Pathcch.lib)
   endif()
 endif()
 
@@ -404,7 +404,7 @@ elseif(WIN32)
   else()
     set(TARGETDIR_VER "./${BLENDER_VERSION}")
     set(TARGETDIR_TEXT ".")
-    set(TARGETDIR_LIB "./blender.shared")
+    set(TARGETDIR_LIB "./bforartists.shared")
     set(TARGETDIR_EXE ".")
   endif()
 elseif(APPLE)
@@ -724,7 +724,7 @@ if(UNIX AND NOT APPLE)
 
     if(WITH_BLENDER_THUMBNAILER)
       install(
-        TARGETS blender-thumbnailer
+        TARGETS bforartists-thumbnailer
         DESTINATION "."
       )
     endif()
@@ -741,7 +741,7 @@ if(UNIX AND NOT APPLE)
 
       install(
         PROGRAMS
-        # ${CMAKE_SOURCE_DIR}/release/bin/blender-launcher # BFA - Commented out blender launcher (maybe we should also use it?)
+        ${CMAKE_SOURCE_DIR}/release/bin/bforartists-launcher
         ${CMAKE_SOURCE_DIR}/release/bin/bforartists-softwaregl
         DESTINATION "."
       )
@@ -788,7 +788,7 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/libglapi.so.0.0.0)\n
     )
     if(WITH_BLENDER_THUMBNAILER)
       install(
-        TARGETS blender-thumbnailer
+        TARGETS bforartists-thumbnailer
         DESTINATION "./bin"
       )
     endif()
@@ -1578,7 +1578,7 @@ elseif(APPLE)
 
   if(WITH_BLENDER_THUMBNAILER)
     install(
-      TARGETS blender-thumbnailer
+      TARGETS bforartists-thumbnailer
       DESTINATION "./Bforartists.app/Contents/MacOS"
     )
   endif()
@@ -1738,10 +1738,10 @@ if(WITH_USD)
   absolute_include_dirs(../blender/io/usd)
 endif()
 
-# Always install USD shared library and datafiles regardless if Blender
+# Always install USD shared library and datafiles regardless if Bforartists
 # itself uses them, the bundled Python module still needs it.
 if((DEFINED LIBDIR) AND TARGETDIR_LIB)
-  # On windows the usd library sits in ./blender.shared copy the files
+  # On windows the usd library sits in ./bforartists.shared copy the files
   # relative to the location of the USD dll, if the dll does not exist
   # assume we are linking against the static 3.5 lib.
   if(WITH_USD)
@@ -1759,7 +1759,7 @@ if((DEFINED LIBDIR) AND TARGETDIR_LIB)
         ${LIBDIR}/usd/plugin/usd/hdStorm
         ${LIBDIR}/usd/plugin/usd/usdShaders
         ${LIBDIR}/usd/plugin/usd/hioOiio
-        DESTINATION "./blender.shared/usd"
+        DESTINATION "./bforartists.shared/usd"
       )
     elseif(USD_PYTHON_SUPPORT)
       install(DIRECTORY
@@ -1873,7 +1873,7 @@ endif()
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
   set(BLENDER_BIN "bforartists.exe")
   install(
-    TARGETS bforartists # blender-launcher # BFA - Commented out the launcher. (maybe we should also use it?)
+    TARGETS bforartists bforartists-launcher
     COMPONENT Bforartists
     DESTINATION "."
   )
