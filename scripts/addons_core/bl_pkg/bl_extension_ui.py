@@ -666,28 +666,28 @@ class USERPREF_PT_extensions_bl_pkg_filter(Panel):
     def draw(self, context):
         layout = self.layout
         wm = context.window_manager
-        col = layout.column()
+        col = layout.column() # bfa
 
-        col.label(text="Show Only")
-        col.use_property_split = False
+        col.label(text="Show Only") # bfa
+        col.use_property_split = False # bfa
 
-        row = col.row()
-        row.separator()
-        row.prop(wm, "extension_enabled_only", text="Enabled Extensions")
-        row = col.row()
-        row.separator()
-        row.prop(wm, "extension_updates_only", text="Updates Available")
-        row = col.row()
-        row.separator()
-        row.active = (not wm.extension_enabled_only) and (not wm.extension_updates_only)
-        row.prop(wm, "extension_installed_only", text="Installed Extensions")
+        row = col.row() # bfa
+        row.separator() # bfa
+        row.prop(wm, "extension_enabled_only", text="Enabled Extensions") # bfa
+        row = col.row() # bfa
+        row.separator() # bfa
+        row.prop(wm, "extension_updates_only", text="Updates Available") # bfa
+        row = col.row() # bfa
+        row.separator() # bfa
+        row.active = (not wm.extension_enabled_only) and (not wm.extension_updates_only) # bfa
+        row.prop(wm, "extension_installed_only", text="Installed Extensions") # bfa
         
-        col.label(text="Show")
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.active = (not wm.extension_updates_only)
-        row.prop(wm, "extension_show_legacy_addons", text="Legacy Add-ons")
+        col.label(text="Show") # bfa
+        col.use_property_split = False # bfa
+        row = col.row() # bfa
+        row.separator() # bfa
+        row.active = (not wm.extension_updates_only) # bfa
+        row.prop(wm, "extension_show_legacy_addons", text="Legacy Add-ons") # bfa
 
 
 class USERPREF_MT_extensions_bl_pkg_settings(Menu):
