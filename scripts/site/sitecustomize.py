@@ -11,7 +11,7 @@ exe_dir, exe_file = os.path.split(sys.executable)
 is_python = exe_file.startswith("python")
 
 # Path to Blender shared libraries.
-shared_lib_dirname = "blender.shared" if sys.platform == "win32" else "lib"
+shared_lib_dirname = "bforartists.shared" if sys.platform == "win32" else "lib"
 if is_python:
     shared_lib_dir = os.path.abspath(os.path.join(exe_dir, "..", "..", "..", shared_lib_dirname))
 else:
