@@ -622,7 +622,7 @@ class USERPREF_MT_extensions_bl_pkg_settings(Menu):
         layout.separator()
 
         layout.operator("bl_pkg.pkg_upgrade_all", text="Install Available Updates", icon='IMPORT')
-        layout.operator("bl_pkg.pkg_install_files", text="Install from Disk")
+        layout.operator("bl_pkg.pkg_install_files", text="Install Extension")
         layout.operator("preferences.addon_install", text="Install Legacy Add-on")
 
         if context.preferences.experimental.use_extension_utils:
