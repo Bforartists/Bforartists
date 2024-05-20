@@ -77,7 +77,10 @@ class IMAGE_MT_view(Menu):
         layout = self.layout
 
         sima = context.space_data
-		#BFA - options moved to relevant options sub-panel
+        uv = sima.uv_editor
+        tool_settings = context.tool_settings
+        paint = tool_settings.image_paint
+
         show_uvedit = sima.show_uvedit
         show_render = sima.show_render
 
@@ -135,8 +138,6 @@ class IMAGE_MT_view(Menu):
         elif sima.mode == 'UV':
             layout.operator("image.view_center_cursor", text="Center View to Cursor", icon="CENTERTOCURSOR")
             layout.operator("image.view_cursor_center", icon='CURSORTOCENTER')
-
-        layout.menu("IMAGE_MT_view_zoom")
 
         layout.separator()
 
@@ -210,12 +211,6 @@ class IMAGE_MT_view_zoom(Menu):
                 icon="ZOOM_SET", # BFA
             ).ratio = ratio
 
-        layout.separator()
-        layout.operator("image.view_zoom_in")
-        layout.operator("image.view_zoom_out")
-        layout.operator("image.view_all", text="Zoom to Fit").fit_view = True
-        layout.operator("image.view_zoom_border", text="Zoom Region...")
-
 
 class IMAGE_MT_select(Menu):
     bl_label = "Select"
@@ -235,7 +230,7 @@ class IMAGE_MT_select(Menu):
 		# BFA - moved to legacy
 		# BFA - moved to legacy
         layout.operator_menu_enum("uv.select_lasso", "mode", text="Lasso Select")
-		
+
         layout.separator()
 
         layout.menu("IMAGE_MT_select_linked")
