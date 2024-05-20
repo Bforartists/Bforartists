@@ -2908,6 +2908,7 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
             col.prop(st, "show_separate_color")  # BFA
 
         if ed:
+            col.use_property_split = False
             col.prop(ed, "show_missing_media")
 
 
