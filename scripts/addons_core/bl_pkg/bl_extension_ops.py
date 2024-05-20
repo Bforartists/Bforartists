@@ -1434,7 +1434,7 @@ class BlPkgPkgUninstallMarked(Operator, _BlPkgCmdMixIn):
 
 
 class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
-    """Install an local extension addon into a user managed repository"""
+    """Install an extension, addon or theme from local drive"""
     bl_idname = "bl_pkg.pkg_install_files"
     bl_label = "Install Extension"
     __slots__ = _BlPkgCmdMixIn.cls_slots + (
