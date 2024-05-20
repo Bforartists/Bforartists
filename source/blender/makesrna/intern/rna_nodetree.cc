@@ -11321,6 +11321,12 @@ static int node_type_to_icon(int type)
     case FN_NODE_ALIGN_EULER_TO_VECTOR:
       return ICON_ALIGN_EULER_TO_VECTOR;
 
+    case FN_NODE_ALIGN_ROTATION_TO_VECTOR:
+      return ICON_ALIGN_ROTATION_TO_VECTOR;
+
+    case FN_NODE_AXES_TO_ROTATION:
+      return ICON_AXES_TO_ROTATION;
+
     case FN_NODE_AXIS_ANGLE_TO_ROTATION:
       return ICON_AXIS_ANGLE_TO_ROTATION;
 

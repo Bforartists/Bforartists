@@ -2302,7 +2302,7 @@ view_graph
 internet
 euro
 export_collection
-#~ DEF_ICON_BLANK(2322)
+axes_to_rotation
 #~ DEF_ICON_BLANK(2323)
 collection_bone_add
 
