@@ -6582,11 +6582,11 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Axis Angle to Rotation", icon = "ALIGN_ROTATION_TO_VECTOR")
+            props = col.operator("node.add_node", text=" Align Rotation to Vector", icon = "ALIGN_ROTATION_TO_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeAlignRotationToVector"
 
-            props = col.operator("node.add_node", text=" Euler to Rotation ", icon = "AXES_TO_ROTATION")
+            props = col.operator("node.add_node", text=" Axes to Rotation ", icon = "AXES_TO_ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeAxesToRotation"
 
