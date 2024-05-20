@@ -264,8 +264,8 @@ DefNode(TextureNode,     TEX_NODE_PROC+TEX_STUCCI,  0,                      "TEX
 DefNode(TextureNode,     TEX_NODE_PROC+TEX_DISTNOISE,  0,                   "TEX_DISTNOISE",   TexDistNoise,      "Distorted Noise",    "Add a Distorted Noise Texture node\nGenerate distorted noise"              )
 
 DefNode(FunctionNode, FN_NODE_ALIGN_EULER_TO_VECTOR, 0,  "ALIGN_EULER_TO_VECTOR",  AlignEulerToVector,  "Align Euler to Vector",  "Add a Align Euler to Vector Function node\nAligns a euler value to a vector")
-DefNode(FunctionNode, FN_NODE_ALIGN_ROTATION_TO_VECTOR, 0, "ALIGN_ROTATION_TO_VECTOR", AlignRotationToVector, "Align Rotation to Vector", "")
-DefNode(FunctionNode, FN_NODE_AXES_TO_ROTATION, 0, "AXES_TO_ROTATION", AxesToRotation, "Axes to Rotation", "Create a rotation from a primary and (ideally orthogonal) secondary axis")
+DefNode(FunctionNode, FN_NODE_ALIGN_ROTATION_TO_VECTOR, 0, "ALIGN_ROTATION_TO_VECTOR", AlignRotationToVector, "Align Rotation to Vector", "Add a Axes to Rotation Function node\Aligns a rotation to a vector")
+DefNode(FunctionNode, FN_NODE_AXES_TO_ROTATION, 0, "AXES_TO_ROTATION", AxesToRotation, "Axes to Rotation", "Add a Rotation to Vector Function node\Create a rotation from a primary and (ideally orthogonal) secondary axis")
 DefNode(FunctionNode, FN_NODE_AXIS_ANGLE_TO_ROTATION, 0, "AXIS_ANGLE_TO_ROTATION", AxisAngleToRotation, "Axis Angle to Rotation", "Add a Axis Angle to Rotation Function node\nConverts a axis angle to a rotation vector")
 DefNode(FunctionNode, FN_NODE_BOOLEAN_MATH, 0,   "BOOLEAN_MATH",  BooleanMath,  "Boolean Math",  "Add a Boolean Math Function node\nPerforms a basic logical operation between its inputs")
 DefNode(FunctionNode, FN_NODE_COMBINE_COLOR, 0,  "COMBINE_COLOR",  CombineColor,  "Combine Color",  "Add a Combine Color Function node\nCombines single colors to a rgb, hsv or hsl color value" )
