@@ -6582,9 +6582,13 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Align Euler to Vector", icon = "ALIGN_EULER_TO_VECTOR")
+            props = col.operator("node.add_node", text=" Axis Angle to Rotation", icon = "ALIGN_ROTATION_TO_VECTOR")
             props.use_transform = True
-            props.type = "FunctionNodeAlignEulerToVector"
+            props.type = "FunctionNodeAlignRotationToVector"
+
+            props = col.operator("node.add_node", text=" Euler to Rotation ", icon = "AXES_TO_ROTATION")
+            props.use_transform = True
+            props.type = "FunctionNodeAxesToRotation"
 
             props = col.operator("node.add_node", text=" Axis Angle to Rotation", icon = "AXIS_ANGLE_TO_ROTATION")
             props.use_transform = True
@@ -6602,9 +6606,7 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeRotateRotation"
 
-            props = col.operator("node.add_node", text=" Rotate Euler (Depreacated)        ", icon = "ROTATE_EULER")
-            props.use_transform = True
-            props.type = "FunctionNodeRotateEuler"
+
 
             props = col.operator("node.add_node", text=" Rotate Vector      ", icon = "NODE_VECTORROTATE")
             props.use_transform = True
@@ -6634,9 +6636,13 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "ALIGN_EULER_TO_VECTOR")
+            props = flow.operator("node.add_node", text="", icon = "ALIGN_ROTATION_TO_VECTOR")
             props.use_transform = True
-            props.type = "FunctionNodeAlignEulerToVector"
+            props.type = "FunctionNodeAlignRotationToVector"
+
+            props = flow.operator("node.add_node", text="", icon = "AXES_TO_ROTATION")
+            props.use_transform = True
+            props.type = "FunctionNodeAxesToRotation"
 
             props = flow.operator("node.add_node", text="", icon = "AXIS_ANGLE_TO_ROTATION")
             props.use_transform = True
@@ -6650,13 +6656,9 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeInvertRotation"
 
-            props = col.operator("node.add_node", text="", icon = "ROTATE_EULER")
+            props = flow.operator("node.add_node", text="", icon = "ROTATE_EULER")
             props.use_transform = True
             props.type = "FunctionNodeRotateRotation"
-
-            props = flow.operator("node.add_node", text = "", icon = "ROTATE_EULER")
-            props.use_transform = True
-            props.type = "FunctionNodeRotateEuler"
 
             props = flow.operator("node.add_node", text="", icon = "NODE_VECTORROTATE")
             props.use_transform = True
@@ -6678,6 +6680,61 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeQuaternionToRotation"
 
+
+#add utilities panel, deprecated subpanel
+class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Deprecated"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Align Euler to Vector", icon = "ALIGN_EULER_TO_VECTOR")
+            props.use_transform = True
+            props.type = "FunctionNodeAlignEulerToVector"
+
+            props = col.operator("node.add_node", text=" Rotate Euler (Depreacated)        ", icon = "ROTATE_EULER")
+            props.use_transform = True
+            props.type = "FunctionNodeRotateEuler"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "ALIGN_EULER_TO_VECTOR")
+            props.use_transform = True
+            props.type = "FunctionNodeAlignEulerToVector"
+
+            props = flow.operator("node.add_node", text = "", icon = "ROTATE_EULER")
+            props.use_transform = True
+            props.type = "FunctionNodeRotateEuler"
 
 
 # ---------------- shader editor common. This content shows when you activate the common switch in the display panel.
@@ -7494,6 +7551,7 @@ classes = (
     NODES_PT_geom_add_utilities_field,
     NODES_PT_geom_add_utilities_math,
     NODES_PT_geom_add_utilities_rotation,
+    NODES_PT_geom_add_utilities_deprecated,
 
     #----------------------------------
 
