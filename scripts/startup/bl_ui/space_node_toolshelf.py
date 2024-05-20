@@ -4181,7 +4181,7 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "Bake")
+            props = flow.operator("node.add_node", text = "", icon = "BAKE")
             props.use_transform = True
             props.type = "GeometryNodeBake"
 
@@ -4205,7 +4205,7 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeMergeByDistance"
 
-            props = col.operator("node.add_node", text="", icon = "SORTSIZE")
+            props = flow.operator("node.add_node", text="", icon = "SORTSIZE")
             props.use_transform = True
             props.type = "GeometryNodeSortElements"
 
