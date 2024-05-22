@@ -330,9 +330,17 @@ struct LayerTransformData {
   FrameTransformationStatus status{TRANS_CLEAR};
 };
 
-/* The key of a GreasePencilFrame in the frames map is the starting scene frame number (int) of
- * that frame. */
-using FramesMapKey = int;
+/*
+ * The key type for a `GreasePencilFrame` in the frames map.
+ *
+ * This is either the start or end frame (scene time) of a `GreasePencilFrame`.
+ *
+ * If the key refers to a end frame, the value in the map for this key is
+ * `GreasePencilFrame::end()`.
+ * Note that end frame is exclusive with regards to the frame duration. E.g. if a frame starts at
+ * 10 and the end frame is at 15, then the duration is 4.
+ */
+using FramesMapKeyT = int;
 
 class LayerRuntime {
  public:
@@ -341,7 +349,7 @@ class LayerRuntime {
    * (drawing_index) to the drawing in the GreasePencil->drawings array. The frame number indicates
    * the first frame the drawing is shown. The end time is implicitly defined by the next greater
    * frame number (key) in the map. If the value mapped to (index) is -1, no drawing is shown at
-   * this frame.
+   * this frame. Frames with such a value are `GreasePencilFrame::end()` in the code.
    *
    *    \example:
    *
@@ -361,11 +369,11 @@ class LayerRuntime {
    * referenced drawings are discarded. If the frame is longer than the number of referenced
    * drawings, then the last referenced drawing is held for the rest of the duration.
    */
-  Map<FramesMapKey, GreasePencilFrame> frames_;
+  Map<FramesMapKeyT, GreasePencilFrame> frames_;
   /**
    * Caches a sorted vector of the keys of `frames_`.
    */
-  mutable SharedCache<Vector<FramesMapKey>> sorted_keys_cache_;
+  mutable SharedCache<Vector<FramesMapKeyT>> sorted_keys_cache_;
   /**
    * A vector of LayerMask. This layer will be masked by the layers referenced in the masks.
    * A layer can have zero or more layer masks.
@@ -409,44 +417,48 @@ class Layer : public ::GreasePencilLayer {
   /**
    * \returns the frames mapping.
    */
-  const Map<FramesMapKey, GreasePencilFrame> &frames() const;
-  Map<FramesMapKey, GreasePencilFrame> &frames_for_write();
+  const Map<FramesMapKeyT, GreasePencilFrame> &frames() const;
+  Map<FramesMapKeyT, GreasePencilFrame> &frames_for_write();
 
+  /**
+   * \returns true, if the layer contains no keyframes.
+   */
   bool is_empty() const;
 
   /**
    * Adds a new frame into the layer frames map.
-   * Fails if there already exists a frame at \a key that is not a null-frame.
-   * Null-frame at \a key and subsequent null-frames are removed.
+   * Fails if there already exists a frame at \a key that is not an end-frame.
+   * End-frame at \a key and subsequent end-frames are removed.
    *
    * If \a duration is 0, the frame is marked as an implicit hold (see `GP_FRAME_IMPLICIT_HOLD`).
-   * Otherwise adds an additional null-frame at \a key + \a duration, if necessary, to
+   * Otherwise adds an additional end-frame at \a key + \a duration, if necessary, to
    * indicate the end of the added frame.
    *
    * \returns a pointer to the added frame on success, otherwise nullptr.
    */
-  GreasePencilFrame *add_frame(FramesMapKey key, int duration = 0);
+  GreasePencilFrame *add_frame(FramesMapKeyT key, int duration = 0);
   /**
    * Removes a frame with \a key from the frames map.
    *
    * Fails if the map does not contain a frame with \a key or in the specific case where
    * the previous frame has a fixed duration (is not marked as an implicit hold) and the frame to
-   * remove is a null frame.
+   * remove is an end frame.
    *
-   * Will remove null frames after the frame to remove.
+   * Will remove end frame(s) after the frame to remove.
    * \return true on success.
    */
-  bool remove_frame(FramesMapKey key);
+  bool remove_frame(FramesMapKeyT key);
 
   /**
    * Returns the sorted keys (start frame numbers) of the frames of this layer.
    * \note This will cache the keys lazily.
    */
-  Span<FramesMapKey> sorted_keys() const;
+  Span<FramesMapKeyT> sorted_keys() const;
 
   /**
    * \returns the index of the active drawing at frame \a frame_number or -1 if there is no
-   * drawing. */
+   * drawing.
+   * TODO: This should be a private API! */
   int drawing_index_at(const int frame_number) const;
 
   /**
@@ -455,9 +467,16 @@ class Layer : public ::GreasePencilLayer {
   bool has_drawing_at(const int frame_number) const;
 
   /**
-   * \returns the key of the active frame at \a frame_number or #std::nullopt if there is no frame.
+   * \returns the start frame number of the active frame at \a frame_number or #std::nullopt if no
+   * such frame exists.
    */
-  std::optional<FramesMapKey> frame_key_at(int frame_number) const;
+  std::optional<int> start_frame_at(int frame_number) const;
+
+  /**
+   * \returns the index of the key of the active frame in `sorted_keys` or -1 if no such frame
+   * exists.
+   */
+  int sorted_keys_index_at(int frame_number) const;
 
   /**
    * \returns a pointer to the active frame at \a frame_number or nullptr if there is no frame.
@@ -467,9 +486,8 @@ class Layer : public ::GreasePencilLayer {
 
   /**
    * \returns the frame duration of the keyframe at \a frame_number.
-   * If there is no keyframe at \a frame_number it \returns -1.
+   * If there is no keyframe at \a frame_number \returns -1.
    * If the keyframe is an implicit hold, \returns 0.
-   * if the keyframe is the last one, \returns -1.
    */
   int get_frame_duration_at(const int frame_number) const;
 
@@ -519,15 +537,27 @@ class Layer : public ::GreasePencilLayer {
   using SortedKeysIterator = const int *;
 
  private:
+  /**
+   * \returns an iterator into the `sorted_keys` span to the frame at \a frame_number or nullptr if
+   * no such frame exists.
+   */
+  SortedKeysIterator sorted_keys_iterator_at(int frame_number) const;
+  /**
+   * \returns the key of the active frame at \a frame_number or #std::nullopt if no such frame
+   * exists.
+   */
+  std::optional<FramesMapKeyT> frame_key_at(int frame_number) const;
+
   GreasePencilFrame *add_frame_internal(int frame_number);
 
   /**
-   * Removes null frames starting from \a begin until \a end (excluded) or until a non-null frame
-   * is reached. \param begin, end: Iterators into the `sorted_keys` span. \returns an iterator to
-   * the element after the last null-frame that was removed.
+   * Removes end frames starting from \a begin until \a end (excluded) or until a start frame
+   * is reached.
+   * \param begin, end: Iterators into the `sorted_keys` span.
+   * \returns an iterator to the element after the last end-frame that was removed.
    */
-  SortedKeysIterator remove_leading_null_frames_in_range(SortedKeysIterator begin,
-                                                         SortedKeysIterator end);
+  SortedKeysIterator remove_leading_end_frames_in_range(SortedKeysIterator begin,
+                                                        SortedKeysIterator end);
 
   float4x4 parent_inverse() const;
 
@@ -863,12 +893,12 @@ inline const blender::bke::greasepencil::DrawingReference &GreasePencilDrawingRe
   return *reinterpret_cast<const blender::bke::greasepencil::DrawingReference *>(this);
 }
 
-inline GreasePencilFrame GreasePencilFrame::null()
+inline GreasePencilFrame GreasePencilFrame::end()
 {
   return GreasePencilFrame{-1, 0, 0};
 }
 
-inline bool GreasePencilFrame::is_null() const
+inline bool GreasePencilFrame::is_end() const
 {
   return this->drawing_index == -1;
 }

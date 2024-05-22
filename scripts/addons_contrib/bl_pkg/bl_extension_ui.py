@@ -272,6 +272,7 @@ def extensions_panel_draw_impl(
         search_lower,
         filter_by_type,
         enabled_only,
+        updates_only,
         installed_only,
         show_legacy_addons,
         show_development,
@@ -296,6 +297,12 @@ def extensions_panel_draw_impl(
 
     layout = self.layout
 
+    prefs = context.preferences
+
+    if updates_only:
+        installed_only = True
+        show_legacy_addons = False
+
     # Define a top-most column to place warnings (if-any).
     # Needed so the warnings aren't mixed in with other content.
     layout_topmost = layout.column()
@@ -306,9 +313,9 @@ def extensions_panel_draw_impl(
     show_addons = filter_by_type in {"", "add-on"}
     show_themes = filter_by_type in {"", "theme"}
     if show_addons:
-        used_addon_module_name_map = {addon.module: addon for addon in context.preferences.addons}
+        used_addon_module_name_map = {addon.module: addon for addon in prefs.addons}
     if show_themes:
-        active_theme_info = pkg_repo_and_id_from_theme_path(repos_all, context.preferences.themes[0].filepath)
+        active_theme_info = pkg_repo_and_id_from_theme_path(repos_all, prefs.themes[0].filepath)
 
     # Collect exceptions accessing repositories, and optionally show them.
     errors_on_draw = []
@@ -418,6 +425,10 @@ def extensions_panel_draw_impl(
             else:
                 item_local_version = item_local["version"]
                 is_outdated = item_local_version != item_version
+
+            if updates_only:
+                if not is_outdated:
+                    continue
 
             key = (pkg_id, repo_index)
             if show_development:
@@ -597,16 +608,20 @@ class USERPREF_PT_extensions_bl_pkg_filter(Panel):
         layout = self.layout
 
         wm = context.window_manager
-        col = layout.column(heading="Show")
-        col.use_property_split = True
-        col.prop(wm, "extension_show_legacy_addons", text="Legacy Add-ons")
 
-        col = layout.column(heading="Only")
+        col = layout.column(heading="Show Only")
         col.use_property_split = True
         col.prop(wm, "extension_enabled_only", text="Enabled Extensions")
+        col.prop(wm, "extension_updates_only", text="Updates Available")
         sub = col.column()
-        sub.active = not wm.extension_enabled_only
+        sub.active = (not wm.extension_enabled_only) and (not wm.extension_updates_only)
         sub.prop(wm, "extension_installed_only", text="Installed Extensions")
+
+        col = layout.column(heading="Show")
+        col.use_property_split = True
+        sub = col.column()
+        sub.active = (not wm.extension_updates_only)
+        sub.prop(wm, "extension_show_legacy_addons", text="Legacy Add-ons")
 
 
 class USERPREF_MT_extensions_bl_pkg_settings(Menu):
@@ -615,17 +630,19 @@ class USERPREF_MT_extensions_bl_pkg_settings(Menu):
     def draw(self, context):
         layout = self.layout
 
-        addon_prefs = context.preferences.addons[__package__].preferences
+        prefs = context.preferences
+
+        addon_prefs = prefs.addons[__package__].preferences
 
         layout.operator("bl_pkg.repo_sync_all", text="Check for Updates", icon='FILE_REFRESH')
 
         layout.separator()
 
         layout.operator("bl_pkg.pkg_upgrade_all", text="Install Available Updates", icon='IMPORT')
-        layout.operator("bl_pkg.pkg_install_files", text="Install Extension")
+        layout.operator("bl_pkg.pkg_install_files", text="Install Extension") # BFA - changed label to be explicit
         layout.operator("preferences.addon_install", text="Install Legacy Add-on")
 
-        if context.preferences.experimental.use_extension_utils:
+        if prefs.experimental.use_extension_utils:
             layout.separator()
 
             layout.prop(addon_prefs, "show_development_reports")
@@ -650,6 +667,7 @@ class USERPREF_MT_extensions_bl_pkg_settings(Menu):
 
 def extensions_panel_draw(panel, context):
     prefs = context.preferences
+
     if not prefs.experimental.use_extension_repos:
         # Unexpected, the extension is disabled but this add-on is.
         # In this case don't show the UI as it is confusing.
@@ -661,7 +679,7 @@ def extensions_panel_draw(panel, context):
 
     addon_prefs = prefs.addons[__package__].preferences
 
-    show_development = context.preferences.experimental.use_extension_utils
+    show_development = prefs.experimental.use_extension_utils
     show_development_reports = show_development and addon_prefs.show_development_reports
 
     wm = context.window_manager
@@ -736,6 +754,7 @@ def extensions_panel_draw(panel, context):
         wm.extension_search.lower(),
         blender_filter_by_type_map[wm.extension_type],
         wm.extension_enabled_only,
+        wm.extension_updates_only,
         wm.extension_installed_only,
         wm.extension_show_legacy_addons,
         show_development,
