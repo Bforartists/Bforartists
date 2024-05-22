@@ -250,10 +250,10 @@ def repo_iter_valid_local_only(context):
         if not repo_item.enabled:
             continue
         # Ignore repositories that have invalid settings.
-        directory, remote_path = repo_paths_or_none(repo_item)
+        directory, remote_url = repo_paths_or_none(repo_item)
         if directory is None:
             continue
-        if remote_path:
+        if remote_url:
             continue
         yield repo_item
 
@@ -275,10 +275,10 @@ def repo_cache_store_refresh_from_prefs(include_disabled=False):
         if not include_disabled:
             if not repo_item.enabled:
                 continue
-        directory, remote_path = repo_paths_or_none(repo_item)
+        directory, remote_url = repo_paths_or_none(repo_item)
         if directory is None:
             continue
-        repos.append((directory, remote_path))
+        repos.append((directory, remote_url))
 
     repo_cache_store.refresh_from_repos(repos=repos)
 
@@ -472,7 +472,7 @@ def extension_repos_read_index(index, *, include_disabled=False):
         if not include_disabled:
             if not repo_item.enabled:
                 continue
-        directory, remote_path = repo_paths_or_none(repo_item)
+        directory, remote_url = repo_paths_or_none(repo_item)
         if directory is None:
             continue
 
@@ -480,7 +480,7 @@ def extension_repos_read_index(index, *, include_disabled=False):
             return RepoItem(
                 name=repo_item.name,
                 directory=directory,
-                repo_url=remote_path,
+                repo_url=remote_url,
                 module=repo_item.module,
                 use_cache=repo_item.use_cache,
             )
@@ -509,14 +509,14 @@ def extension_repos_read(*, include_disabled=False, use_active_only=False):
                 continue
 
         # Ignore repositories that have invalid settings.
-        directory, remote_path = repo_paths_or_none(repo_item)
+        directory, remote_url = repo_paths_or_none(repo_item)
         if directory is None:
             continue
 
         result.append(RepoItem(
             name=repo_item.name,
             directory=directory,
-            repo_url=remote_path,
+            repo_url=remote_url,
             module=repo_item.module,
             use_cache=repo_item.use_cache,
         ))
@@ -801,15 +801,9 @@ class CommandHandle:
         return {'RUNNING_MODAL'}
 
     def op_modal_step(self, op, context):
-        command_info = self.cmd_batch.exec_non_blocking(
+        command_result = self.cmd_batch.exec_non_blocking(
             request_exit=self.request_exit,
         )
-        if command_info is None:
-            self.wm.event_timer_remove(self.modal_timer)
-            del op._runtime_handle
-            context.workspace.status_text_set(None)
-            repo_status_text.running = False
-            return {'FINISHED'}
 
         # Forward new messages to reports.
         msg_list_per_command = self.cmd_batch.calc_status_log_since_last_request_or_none()
@@ -840,6 +834,13 @@ class CommandHandle:
             repo_status_text.log = msg_list
             repo_status_text.running = True
             _preferences_ui_redraw()
+
+        if command_result.all_complete:
+            self.wm.event_timer_remove(self.modal_timer)
+            del op._runtime_handle
+            context.workspace.status_text_set(None)
+            repo_status_text.running = False
+            return {'FINISHED'}
 
         return {'RUNNING_MODAL'}
 
@@ -1433,9 +1434,9 @@ class BlPkgPkgUninstallMarked(Operator, _BlPkgCmdMixIn):
 
 
 class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
-    """Install an extension, addon or theme from local drive"""
+    """Install an extension addon or theme from local drive""" #BFA - changed tooltip
     bl_idname = "bl_pkg.pkg_install_files"
-    bl_label = "Install Extension"
+    bl_label = "Install Extension" #BFA - changed label
     __slots__ = _BlPkgCmdMixIn.cls_slots + (
         "repo_directory",
         "pkg_id_sequence"
@@ -2197,6 +2198,30 @@ class BlPkgRepoUnlock(Operator):
         return {'FINISHED'}
 
 
+# NOTE: this is a modified version of `PREFERENCES_OT_addon_show`.
+# It would make most sense to extend this operator to support showing extensions to upgrade (eventually).
+class BlPkgShowUpgrade(Operator):
+    """Show add-on preferences"""
+    bl_idname = "bl_pkg.extensions_show_for_update"
+    bl_label = ""
+    bl_options = {'INTERNAL'}
+
+    def execute(self, context):
+        wm = context.window_manager
+        prefs = context.preferences
+
+        prefs.active_section = 'ADDONS'
+        prefs.view.show_addons_enabled_only = False
+
+        # Show only extensions that will be updated.
+        wm.extension_installed_only = False
+        wm.extension_updates_only = True
+
+        bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
+
+        return {'FINISHED'}
+
+
 class BlPkgEnableNotInstalled(Operator):
     """Turn on this extension"""
     bl_idname = "bl_pkg.extensions_enable_not_installed"
@@ -2244,6 +2269,8 @@ classes = (
     BlPkgObsoleteMarked,
     BlPkgRepoLock,
     BlPkgRepoUnlock,
+
+    BlPkgShowUpgrade,
 
     # Dummy, just shows a message.
     BlPkgEnableNotInstalled,

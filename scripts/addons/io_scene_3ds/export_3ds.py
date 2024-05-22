@@ -40,6 +40,8 @@ O_CONSTS = 0x1500  # The origin of the 3D cursor
 AMBIENTLIGHT = 0x2100  # The color of the ambient light
 FOG = 0x2200  # The fog atmosphere settings
 USE_FOG = 0x2201  # The fog atmosphere flag
+DISTANCE_CUE = 0x2300  # The distance cue atmosphere settings
+USE_DISTANCE_CUE = 0x2301  # The distance cue atmosphere flag
 LAYER_FOG = 0x2302  # The fog layer atmosphere settings
 USE_LAYER_FOG = 0x2303  # The fog layer atmosphere flag
 MATERIAL = 45055  # 0xAFFF // This stored the texture info
@@ -1744,6 +1746,7 @@ def save(operator, context, filepath="", collection="", scale_factor=1.0, use_sc
             bgmixer = 'BACKGROUND', 'MIX', 'MIX_RGB'
             bgshade = 'ADD_SHADER', 'MIX_SHADER', 'OUTPUT_WORLD'
             bg_tex = 'TEX_IMAGE', 'TEX_ENVIRONMENT'
+            bg_cue = 'BACKGROUND', 'EMISSION', 'MIX', 'MIX_RGB', 'MIX_SHADER'
             bg_color = next((lk.from_node.inputs[0].default_value[:3] for lk in ntree if lk.from_node.type == bgtype and lk.to_node.type in bgshade), world.color)
             bg_mixer = next((lk.from_node.type for lk in ntree if  lk.from_node.type in bgmixer and lk.to_node.type == bgtype), bgtype)
             bg_image = next((lk.from_node.image for lk in ntree if lk.from_node.type in bg_tex and lk.to_node.type == bg_mixer), False)
@@ -1779,7 +1782,7 @@ def save(operator, context, filepath="", collection="", scale_factor=1.0, use_sc
             if fognode:
                 fog_chunk = _3ds_chunk(FOG)
                 fog_color_chunk = _3ds_chunk(RGB)
-                use_fog_flag = _3ds_chunk(USE_FOG)
+                use_atmo_flag = _3ds_chunk(USE_FOG)
                 fog_density = fognode.inputs['Density'].default_value * 100
                 fog_color_chunk.add_variable("color", _3ds_float_color(fognode.inputs[0].default_value[:3]))
                 fog_chunk.add_variable("nearplane", _3ds_float(world.mist_settings.start))
@@ -1799,7 +1802,7 @@ def save(operator, context, filepath="", collection="", scale_factor=1.0, use_sc
                     layerfog_flag |= 0x2
                 layerfog_chunk = _3ds_chunk(LAYER_FOG)
                 layerfog_color_chunk = _3ds_chunk(RGB)
-                use_fog_flag = _3ds_chunk(USE_LAYER_FOG)
+                use_atmo_flag = _3ds_chunk(USE_LAYER_FOG)
                 layerfog_color_chunk.add_variable("color", _3ds_float_color(foglayer.inputs[0].default_value[:3]))
                 layerfog_chunk.add_variable("lowZ", _3ds_float(world.mist_settings.start))
                 layerfog_chunk.add_variable("highZ", _3ds_float(world.mist_settings.height))
@@ -1807,8 +1810,19 @@ def save(operator, context, filepath="", collection="", scale_factor=1.0, use_sc
                 layerfog_chunk.add_variable("flags", _3ds_uint(layerfog_flag))
                 layerfog_chunk.add_subchunk(layerfog_color_chunk)
                 object_info.add_subchunk(layerfog_chunk)
-            if fognode or foglayer and layer.use_pass_mist:
-                object_info.add_subchunk(use_fog_flag)
+
+            # Add DISTANCE CUE
+            distcue = next((lk.from_socket.node for lk in ntree if lk.from_socket.node.type == 'MAP_RANGE' and lk.to_socket.node.type in bg_cue), False)
+            if distcue:
+                distance_cue_chunk = _3ds_chunk(DISTANCE_CUE)
+                use_atmo_flag = _3ds_chunk(USE_DISTANCE_CUE)
+                distance_cue_chunk.add_variable("nearcue", _3ds_float(distcue.inputs[1].default_value))
+                distance_cue_chunk.add_variable("neardim", _3ds_float(distcue.inputs[2].default_value))
+                distance_cue_chunk.add_variable("farcue", _3ds_float(distcue.inputs[4].default_value))
+                distance_cue_chunk.add_variable("fardim", _3ds_float(distcue.inputs[3].default_value))
+                object_info.add_subchunk(distance_cue_chunk)
+            if fognode or foglayer or distcue and layer.use_pass_mist:
+                object_info.add_subchunk(use_atmo_flag)
         if use_keyframes and world.animation_data or (world.node_tree and world.node_tree.animation_data):
             kfdata.add_subchunk(make_ambient_node(world))
 

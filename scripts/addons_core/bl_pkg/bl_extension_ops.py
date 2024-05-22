@@ -1441,9 +1441,9 @@ class BlPkgPkgUninstallMarked(Operator, _BlPkgCmdMixIn):
 
 
 class BlPkgPkgInstallFiles(Operator, _BlPkgCmdMixIn):
-    """Install an extension, addon or theme from local drive"""
+    """Install an extension addon or theme from local drive""" #BFA - changed tooltip to be more explicit
     bl_idname = "bl_pkg.pkg_install_files"
-    bl_label = "Install Extension"
+    bl_label = "Install Extension" #BFA - changed label to be explicit
     __slots__ = _BlPkgCmdMixIn.cls_slots + (
         "repo_directory",
         "pkg_id_sequence"
