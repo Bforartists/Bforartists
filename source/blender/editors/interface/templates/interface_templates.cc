@@ -203,7 +203,7 @@ static void template_add_button_search_menu(const bContext *C,
       UI_but_drawflag_enable(but, UI_BUT_ICON_LEFT);
     }
 
-    if ((idfrom && idfrom->lib) || !editable) {
+    if ((idfrom && !ID_IS_EDITABLE(idfrom)) || !editable) {
       UI_but_flag_enable(but, UI_BUT_DISABLED);
     }
     if (use_big_size) {
@@ -226,7 +226,7 @@ static void template_add_button_search_menu(const bContext *C,
     }
     UI_but_drawflag_enable(but, UI_BUT_ICON_LEFT);
 
-    if ((idfrom && idfrom->lib) || !editable) {
+    if ((idfrom && !ID_IS_EDITABLE(idfrom)) || !editable) {
       UI_but_flag_enable(but, UI_BUT_DISABLED);
     }
   }
@@ -1048,7 +1048,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
           template_id_liboverride_hierarchy_make(C, bmain, template_ui, &idptr, &undo_push_label);
         }
         else {
-          if (BKE_lib_id_make_local(bmain, id, 0)) {
+          if (BKE_lib_id_make_local(bmain, id, LIB_ID_MAKELOCAL_ASSET_DATA_CLEAR)) {
             BKE_id_newptr_and_tag_clear(id);
 
             /* Reassign to get proper updates/notifiers. */
@@ -1315,7 +1315,7 @@ static uiBut *template_id_def_new_but(uiBlock *block,
         but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_ADD_NEW));
   }
 
-  if ((idfrom && idfrom->lib) || !editable) {
+  if ((idfrom && !ID_IS_EDITABLE(idfrom)) || !editable) {
     UI_but_flag_enable(but, UI_BUT_DISABLED);
   }
 
@@ -1414,7 +1414,7 @@ static void template_ID(const bContext *C,
 
     template_id_workspace_pin_extra_icon(template_ui, but);
 
-    if (!hide_buttons) {
+    if (!hide_buttons && !(idfrom && ID_IS_LINKED(idfrom))) {
       if (ID_IS_LINKED(id)) {
         const bool disabled = !BKE_idtype_idcode_is_localizable(GS(id->name));
         if (id->tag & LIB_TAG_INDIRECT) {
@@ -1498,7 +1498,7 @@ static void template_ID(const bContext *C,
 
       UI_but_funcN_set(
           but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_ALONE));
-      if (!BKE_id_copy_is_allowed(id) || (idfrom && idfrom->lib) || (!editable) ||
+      if (!BKE_id_copy_is_allowed(id) || (idfrom && !ID_IS_EDITABLE(idfrom)) || (!editable) ||
           /* object in editmode - don't change data */
           (idfrom && GS(idfrom->name) == ID_OB && (((Object *)idfrom)->mode & OB_MODE_EDIT)))
       {
@@ -1611,7 +1611,7 @@ static void template_ID(const bContext *C,
           but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_OPEN));
     }
 
-    if ((idfrom && idfrom->lib) || !editable) {
+    if ((idfrom && !ID_IS_EDITABLE(idfrom)) || !editable) {
       UI_but_flag_enable(but, UI_BUT_DISABLED);
     }
   }
@@ -1665,7 +1665,7 @@ static void template_ID(const bContext *C,
     }
 
     if (but) {
-      if ((idfrom && idfrom->lib) || !editable) {
+      if ((idfrom && !ID_IS_EDITABLE(idfrom)) || !editable) {
         UI_but_flag_enable(but, UI_BUT_DISABLED);
       }
     }
@@ -3291,7 +3291,7 @@ void uiTemplateConstraintHeader(uiLayout *layout, PointerRNA *ptr)
     return;
   }
 
-  UI_block_lock_set(uiLayoutGetBlock(layout), (ob && ID_IS_LINKED(ob)), ERROR_LIBDATA_MESSAGE);
+  UI_block_lock_set(uiLayoutGetBlock(layout), (ob && !ID_IS_EDITABLE(ob)), ERROR_LIBDATA_MESSAGE);
 
   draw_constraint_header(layout, ob, con);
 }
@@ -3936,7 +3936,7 @@ void uiTemplateColorRamp(uiLayout *layout, PointerRNA *ptr, const char *propname
   uiBlock *block = uiLayoutAbsoluteBlock(layout);
 
   ID *id = cptr.owner_id;
-  UI_block_lock_set(block, (id && ID_IS_LINKED(id)), ERROR_LIBDATA_MESSAGE);
+  UI_block_lock_set(block, (id && !ID_IS_EDITABLE(id)), ERROR_LIBDATA_MESSAGE);
 
   colorband_buttons_layout(
       layout, block, static_cast<ColorBand *>(cptr.data), &rect, RNAUpdateCb{*ptr, prop}, expand);
@@ -5030,7 +5030,7 @@ void uiTemplateCurveMapping(uiLayout *layout,
   }
 
   ID *id = cptr.owner_id;
-  UI_block_lock_set(block, (id && ID_IS_LINKED(id)), ERROR_LIBDATA_MESSAGE);
+  UI_block_lock_set(block, (id && !ID_IS_EDITABLE(id)), ERROR_LIBDATA_MESSAGE);
 
   curvemap_buttons_layout(
       layout, &cptr, type, levels, brush, neg_slope, tone, RNAUpdateCb{*ptr, prop});
@@ -5537,7 +5537,7 @@ void uiTemplateCurveProfile(uiLayout *layout, PointerRNA *ptr, const char *propn
   }
 
   ID *id = cptr.owner_id;
-  UI_block_lock_set(block, (id && ID_IS_LINKED(id)), ERROR_LIBDATA_MESSAGE);
+  UI_block_lock_set(block, (id && !ID_IS_EDITABLE(id)), ERROR_LIBDATA_MESSAGE);
 
   CurveProfile_buttons_layout(layout, &cptr, RNAUpdateCb{*ptr, prop});
 

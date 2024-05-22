@@ -1249,6 +1249,8 @@ static bNode *node_group_make_from_nodes(const bContext &C,
   /* New node-tree. */
   bNodeTree *ngroup = bke::ntreeAddTree(bmain, "NodeGroup", ntreetype);
 
+  BKE_id_move_to_same_lib(*bmain, ngroup->id, ntree.id);
+
   /* make group node */
   bNode *gnode = bke::nodeAddNode(&C, &ntree, ntype);
   gnode->id = (ID *)ngroup;

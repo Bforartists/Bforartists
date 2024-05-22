@@ -711,9 +711,9 @@ class ASSETBROWSER_MT_select(AssetBrowserMenu, Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("file.select_all", text="All").action = 'SELECT'
-        layout.operator("file.select_all", text="None").action = 'DESELECT'
-        layout.operator("file.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("file.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("file.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("file.select_all", text="Inverse", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
