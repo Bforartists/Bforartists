@@ -40,6 +40,7 @@
 #include "BKE_global.hh"
 #include "BKE_idprop.hh"
 #include "BKE_idtype.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
 #include "BKE_main.hh"
 #include "BKE_node.hh"
@@ -64,8 +65,6 @@
 
 #include "rna_access_internal.h"
 #include "rna_internal.hh"
-
-const PointerRNA PointerRNA_NULL = {nullptr};
 
 static CLG_LogRef LOG = {"rna.access"};
 
@@ -1582,22 +1581,28 @@ bool RNA_property_pointer_poll(PointerRNA *ptr, PropertyRNA *prop, PointerRNA *v
 {
   prop = rna_ensure_property(prop);
 
-  if (prop->type == PROP_POINTER) {
-    PointerPropertyRNA *pprop = (PointerPropertyRNA *)prop;
+  if (prop->type != PROP_POINTER) {
+    printf("%s: %s is not a pointer property.\n", __func__, prop->identifier);
+    return false;
+  }
 
-    if (pprop->poll) {
-      if (rna_idproperty_check(&prop, ptr)) {
-        return reinterpret_cast<PropPointerPollFuncPy>(reinterpret_cast<void *>(pprop->poll))(
-            ptr, *value, prop);
-      }
-      return pprop->poll(ptr, *value);
-    }
+  PointerPropertyRNA *pprop = (PointerPropertyRNA *)prop;
 
+  /* Can't point from linked to local datablock. */
+  if (ptr->owner_id && value->owner_id && !BKE_id_can_use_id(*ptr->owner_id, *value->owner_id)) {
+    return false;
+  }
+
+  /* Check custom poll function. */
+  if (!pprop->poll) {
     return true;
   }
 
-  printf("%s: %s is not a pointer property.\n", __func__, prop->identifier);
-  return false;
+  if (rna_idproperty_check(&prop, ptr)) {
+    return reinterpret_cast<PropPointerPollFuncPy>(reinterpret_cast<void *>(pprop->poll))(
+        ptr, *value, prop);
+  }
+  return pprop->poll(ptr, *value);
 }
 
 void RNA_property_enum_items_ex(bContext *C,
@@ -2134,7 +2139,7 @@ static bool rna_property_editable_do(const PointerRNA *ptr,
 
   /* Handle linked or liboverride ID cases. */
   const bool is_linked_prop_exception = (prop->flag & PROP_LIB_EXCEPTION) != 0;
-  if (ID_IS_LINKED(id)) {
+  if (!ID_IS_EDITABLE(id)) {
     if (is_linked_prop_exception) {
       return true;
     }
@@ -2222,7 +2227,7 @@ bool RNA_property_anim_editable(const PointerRNA *ptr, PropertyRNA *prop_orig)
   if (ptr->owner_id) {
     AnimData *anim_data = BKE_animdata_from_id(ptr->owner_id);
     if (anim_data && anim_data->action &&
-        (ID_IS_LINKED(anim_data->action) || ID_IS_OVERRIDE_LIBRARY(anim_data->action)))
+        (!ID_IS_EDITABLE(anim_data->action) || ID_IS_OVERRIDE_LIBRARY(anim_data->action)))
     {
       return false;
     }
