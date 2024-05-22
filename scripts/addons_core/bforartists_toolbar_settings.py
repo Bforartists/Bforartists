@@ -313,9 +313,9 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     nla_tweak_isolate_action : BoolProperty(name="Isolate", default = False, description = "Edit action in isolate mode")
 
     # Sidebar Tabs
-    uv_show_toolshelf_tabs : BoolProperty(name="UV Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the UV editor")
-    node_show_toolshelf_tabs : BoolProperty(name="Node Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the Node editor")
-    vse_show_toolshelf_tabs : BoolProperty(name="VSE Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the Video Sequence editor")
+    uv_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the UV editor") # bfa
+    node_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the Node editor") # bfa
+    vse_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the Video Sequence editor") # bfa
 
     def draw(self, context, ):
         preferences = context.preferences
