@@ -15,6 +15,7 @@ PY_FILES_MYPY=$(filter-out \
 	./bl_extension_cli.py \
 	./bl_extension_local.py \
 	./bl_extension_monkeypatch.py \
+	./bl_extension_notify.py \
 	./bl_extension_ops.py \
 	./bl_extension_ui.py \
 	./bl_extension_utils.py \

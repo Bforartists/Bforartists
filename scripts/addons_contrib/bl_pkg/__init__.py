@@ -105,12 +105,12 @@ def cookie_from_session():
 def repo_paths_or_none(repo_item):
     if (directory := repo_item.directory) == "":
         return None, None
-    if repo_item.use_remote_path:
-        if not (remote_path := repo_item.remote_path):
+    if repo_item.use_remote_url:
+        if not (remote_url := repo_item.remote_url):
             return None, None
     else:
-        remote_path = ""
-    return directory, remote_path
+        remote_url = ""
+    return directory, remote_url
 
 
 def repo_active_or_none():
@@ -131,6 +131,36 @@ def print_debug(*args, **kw):
     if not bpy.app.debug:
         return
     print(*args, **kw)
+
+
+use_repos_to_notify = False
+
+
+def repos_to_notify():
+    repos_notify = []
+    if not bpy.app.background:
+        # To use notifications on startup requires:
+        # - The splash displayed.
+        # - The status bar displayed.
+        #
+        # Since it's not all that common to disable the status bar just run notifications
+        # if any repositories are marked to run notifications.
+
+        prefs = bpy.context.preferences
+        if prefs.experimental.use_extension_repos:
+            extension_repos = bpy.context.preferences.filepaths.extension_repos
+            for repo_item in extension_repos:
+                if not repo_item.enabled:
+                    continue
+                if not repo_item.use_sync_on_startup:
+                    continue
+                if not repo_item.use_remote_url:
+                    continue
+                # Invalid, if there is no remote path this can't update.
+                if not repo_item.remote_url:
+                    continue
+                repos_notify.append(repo_item)
+    return repos_notify
 
 
 # -----------------------------------------------------------------------------
@@ -421,6 +451,10 @@ def register():
         name="Show Enabled Extensions",
         description="Only show enabled extensions",
     )
+    WindowManager.extension_updates_only = BoolProperty(
+        name="Show Updates Available",
+        description="Only show extensions with updates available",
+    )
     WindowManager.extension_installed_only = BoolProperty(
         name="Show Installed Extensions",
         description="Only show installed extensions",
@@ -444,6 +478,13 @@ def register():
     handlers.append(extenion_repos_files_clear)
 
     cli_commands.append(bpy.utils.register_cli_command("extension", cli_extension))
+
+    global use_repos_to_notify
+    if (repos_notify := repos_to_notify()):
+        use_repos_to_notify = True
+        from . import bl_extension_notify
+        bl_extension_notify.register(repos_notify)
+    del repos_notify
 
     monkeypatch_install()
 
@@ -494,5 +535,11 @@ def unregister():
     for cmd in cli_commands:
         bpy.utils.unregister_cli_command(cmd)
     cli_commands.clear()
+
+    global use_repos_to_notify
+    if use_repos_to_notify:
+        use_repos_to_notify = False
+        from . import bl_extension_notify
+        bl_extension_notify.unregister()
 
     monkeypatch_uninstall()

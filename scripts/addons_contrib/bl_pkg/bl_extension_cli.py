@@ -417,7 +417,7 @@ class subcmd_repo:
             name=name,
             module=id,
             custom_directory=directory,
-            remote_path=url,
+            remote_url=url,
         )
         repo.use_cache = cache
 
