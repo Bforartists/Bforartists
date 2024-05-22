@@ -59,11 +59,11 @@ BLENDER_DIR = ""
 # Path Constants
 
 # These files are included along side a portable Blender installation.
-BLENDER_DESKTOP = "blender.desktop"
+BLENDER_DESKTOP = "bforartists.desktop"
 # The target binary.
-BLENDER_FILENAME = "blender"
+BLENDER_FILENAME = "bforartists"
 # The target binary (thumbnailer).
-BLENDER_THUMBNAILER_FILENAME = "blender-thumbnailer"
+BLENDER_THUMBNAILER_FILENAME = "bforartists-thumbnailer"
 
 
 # -----------------------------------------------------------------------------
@@ -170,7 +170,7 @@ def handle_bin(do_register: bool, all_users: bool) -> Optional[str]:
 
 
 def handle_desktop_file(do_register: bool, all_users: bool) -> Optional[str]:
-    # `cp ./blender.desktop ~/.local/share/applications/`
+    # `cp ./bforartists.desktop ~/.local/share/applications/`
 
     filename = BLENDER_DESKTOP
 
@@ -204,7 +204,7 @@ def handle_desktop_file(do_register: bool, all_users: bool) -> Optional[str]:
     with open(filepath_desktop_src, "r", encoding="utf-8") as fh:
         data = fh.read()
 
-    data = data.replace("\nExec=blender %f\n", "\nExec={:s} %f\n".format(BLENDER_BIN))
+    data = data.replace("\nExec=bforartists %f\n", "\nExec={:s} %f\n".format(BLENDER_BIN))
 
     with open(filepath_desktop_dst, "w", encoding="utf-8") as fh:
         fh.write(data)
@@ -212,7 +212,7 @@ def handle_desktop_file(do_register: bool, all_users: bool) -> Optional[str]:
 
 
 def handle_thumbnailer(do_register: bool, all_users: bool) -> Optional[str]:
-    filename = "blender.thumbnailer"
+    filename = "bforartists.thumbnailer"
 
     if all_users:
         base_dir = os.path.join(SYSTEM_PREFIX, "share")
@@ -331,7 +331,7 @@ def handle_mime_association_xml(do_register: bool, all_users: bool) -> Optional[
 
 
 def handle_mime_association_default(do_register: bool, all_users: bool) -> Optional[str]:
-    # `xdg-mime default blender.desktop application/x-blender`
+    # `xdg-mime default bforartists.desktop application/x-blender`
 
     if VERBOSE:
         sys.stdout.write("- {:s} mime type as default\n".format(
@@ -353,7 +353,7 @@ def handle_mime_association_default(do_register: bool, all_users: bool) -> Optio
 
 
 def handle_icon(do_register: bool, all_users: bool) -> Optional[str]:
-    filename = "blender.svg"
+    filename = "bforartists.svg"
     if all_users:
         base_dir = os.path.join(SYSTEM_PREFIX, "share")
     else:
