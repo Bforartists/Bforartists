@@ -1347,7 +1347,7 @@ static bool object_gpencil_add_poll(bContext *C)
   Scene *scene = CTX_data_scene(C);
   Object *obact = CTX_data_active_object(C);
 
-  if ((scene == nullptr) || ID_IS_LINKED(scene) || ID_IS_OVERRIDE_LIBRARY(scene)) {
+  if ((scene == nullptr) || !ID_IS_EDITABLE(scene) || ID_IS_OVERRIDE_LIBRARY(scene)) {
     return false;
   }
 
@@ -3065,13 +3065,13 @@ static bool object_convert_poll(bContext *C)
   Base *base_act = CTX_data_active_base(C);
   Object *obact = base_act ? base_act->object : nullptr;
 
-  if (obact == nullptr || obact->data == nullptr || ID_IS_LINKED(obact) ||
+  if (obact == nullptr || obact->data == nullptr || !ID_IS_EDITABLE(obact) ||
       ID_IS_OVERRIDE_LIBRARY(obact) || ID_IS_OVERRIDE_LIBRARY(obact->data))
   {
     return false;
   }
 
-  return (!ID_IS_LINKED(scene) && (BKE_object_is_in_editmode(obact) == false) &&
+  return (ID_IS_EDITABLE(scene) && (BKE_object_is_in_editmode(obact) == false) &&
           (base_act->flag & BASE_SELECTED));
 }
 
@@ -3415,7 +3415,7 @@ static int object_convert_exec(bContext *C, wmOperator *op)
        */
       const Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob);
       const Mesh *mesh_eval = BKE_object_get_evaluated_mesh(ob_eval);
-      Mesh *new_mesh = mesh_eval ? BKE_mesh_copy_for_eval(mesh_eval) :
+      Mesh *new_mesh = mesh_eval ? BKE_mesh_copy_for_eval(*mesh_eval) :
                                    BKE_mesh_new_nomain(0, 0, 0, 0);
       BKE_object_material_from_eval_data(bmain, newob, &new_mesh->id);
       /* Anonymous attributes shouldn't be available on the applied geometry. */
@@ -3648,7 +3648,7 @@ static int object_convert_exec(bContext *C, wmOperator *op)
       newob->type = OB_MESH;
 
       if (const Mesh *mesh_eval = geometry.get_mesh()) {
-        BKE_mesh_nomain_to_mesh(BKE_mesh_copy_for_eval(mesh_eval), new_mesh, newob);
+        BKE_mesh_nomain_to_mesh(BKE_mesh_copy_for_eval(*mesh_eval), new_mesh, newob);
         BKE_object_material_from_eval_data(bmain, newob, &mesh_eval->id);
         new_mesh->attributes_for_write().remove_anonymous();
       }
@@ -4364,7 +4364,7 @@ static bool object_join_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
 
-  if (ob == nullptr || ob->data == nullptr || ID_IS_LINKED(ob) || ID_IS_OVERRIDE_LIBRARY(ob) ||
+  if (ob == nullptr || ob->data == nullptr || !ID_IS_EDITABLE(ob) || ID_IS_OVERRIDE_LIBRARY(ob) ||
       ID_IS_OVERRIDE_LIBRARY(ob->data))
   {
     return false;
@@ -4473,7 +4473,7 @@ static bool join_shapes_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
 
-  if (ob == nullptr || ob->data == nullptr || ID_IS_LINKED(ob) || ID_IS_OVERRIDE_LIBRARY(ob) ||
+  if (ob == nullptr || ob->data == nullptr || !ID_IS_EDITABLE(ob) || ID_IS_OVERRIDE_LIBRARY(ob) ||
       ID_IS_OVERRIDE_LIBRARY(ob->data))
   {
     return false;

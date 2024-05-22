@@ -4,9 +4,13 @@
 
 #pragma once
 
+#include "BLI_array.hh"
 #include "BLI_math_matrix_types.hh"
+#include "BLI_math_vector_types.hh"
 #include "BLI_span.hh"
 #include "BLI_sys_types.h"
+
+#include "mesh_extractors/extract_mesh.hh"
 
 struct BMesh;
 struct GPUUniformBuf;
@@ -42,56 +46,6 @@ struct DRWPatchMap {
   int max_patch_face;
   int max_depth;
   int patches_are_triangular;
-};
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name DRWSubdivLooseEdge
- *
- * This stores information about a subdivided loose edge.
- * \{ */
-
-struct DRWSubdivLooseEdge {
-  /* The corresponding coarse edge, this is always valid. */
-  int coarse_edge_index;
-  /* Pointers into #DRWSubdivLooseGeom.verts. */
-  int loose_subdiv_v1_index;
-  int loose_subdiv_v2_index;
-};
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name DRWSubdivLooseVertex
- *
- * This stores information about a subdivided loose vertex, that may or may not come from a loose
- * edge.
- * \{ */
-
-struct DRWSubdivLooseVertex {
-  /* The corresponding coarse vertex, or -1 if this vertex is the result
-   * of subdivision. */
-  unsigned int coarse_vertex_index;
-  /* Position and normal of the vertex. */
-  float co[3];
-  float nor[3];
-};
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name DRWSubdivLooseGeom
- *
- * This stores the subdivided vertices and edges of loose geometry from #MeshExtractLooseGeom.
- * \{ */
-
-struct DRWSubdivLooseGeom {
-  DRWSubdivLooseEdge *edges;
-  DRWSubdivLooseVertex *verts;
-  int edge_len;
-  int vert_len;
-  int loop_len;
 };
 
 /** \} */
@@ -170,10 +124,6 @@ struct DRWSubdivCache {
   /* Contains the start loop index and the smooth flag for each coarse face. */
   gpu::VertBuf *extra_coarse_face_data;
 
-  /* Computed for `ibo.points`, one value per subdivided vertex,
-   * mapping coarse vertices -> subdivided loop. */
-  int *point_indices;
-
   /* Material offsets. */
   int *mat_start;
   int *mat_end;
@@ -181,7 +131,11 @@ struct DRWSubdivCache {
 
   DRWPatchMap gpu_patch_map;
 
-  DRWSubdivLooseGeom loose_geom;
+  /**
+   * Subdivided vertices of loose edges. The size of this array is the number of loose edges
+   * multiplied with the resolution. For storage in the VBO the data is duplicated for each edge.
+   */
+  Array<float3> loose_edge_positions;
 
   /* UBO to store settings for the various compute shaders. */
   GPUUniformBuf *ubo;
@@ -197,10 +151,10 @@ void draw_subdiv_cache_free(DRWSubdivCache &cache);
 
 /** \} */
 
-void DRW_create_subdivision(Object *ob,
-                            Mesh *mesh,
+void DRW_create_subdivision(Object &ob,
+                            Mesh &mesh,
                             MeshBatchCache &batch_cache,
-                            MeshBufferCache *mbc,
+                            MeshBufferCache &mbc,
                             bool is_editmode,
                             bool is_paint_mode,
                             bool edit_mode_active,
@@ -211,7 +165,7 @@ void DRW_create_subdivision(Object *ob,
                             const ToolSettings *ts,
                             bool use_hide);
 
-void DRW_subdivide_loose_geom(DRWSubdivCache *subdiv_cache, MeshBufferCache *cache);
+void DRW_subdivide_loose_geom(DRWSubdivCache &subdiv_cache, const MeshBufferCache &cache);
 
 void DRW_subdiv_cache_free(bke::subdiv::Subdiv *subdiv);
 
@@ -302,11 +256,28 @@ void draw_subdiv_build_edituv_stretch_angle_buffer(const DRWSubdivCache &cache,
 /** Return the format used for the positions and normals VBO. */
 GPUVertFormat *draw_subdiv_get_pos_nor_format();
 
-/* Helper to access the loose edges. */
-Span<DRWSubdivLooseEdge> draw_subdiv_cache_get_loose_edges(const DRWSubdivCache &cache);
+/** For every coarse edge, there are `resolution - 1` subdivided edges. */
+inline int subdiv_edges_per_coarse_edge(const DRWSubdivCache &cache)
+{
+  return cache.resolution - 1;
+}
 
-/* Helper to access only the loose vertices, i.e. not the ones attached to loose edges. To access
- * loose vertices of loose edges #draw_subdiv_cache_get_loose_edges should be used. */
-Span<DRWSubdivLooseVertex> draw_subdiv_cache_get_loose_verts(const DRWSubdivCache &cache);
+/** For every subdivided edge, there are two coarse vertices stored in vertex buffers. */
+inline int subdiv_verts_per_coarse_edge(const DRWSubdivCache &cache)
+{
+  return subdiv_edges_per_coarse_edge(cache) * 2;
+}
+
+/** The number of subdivided edges from base mesh loose edges. */
+inline int subdiv_loose_edges_num(const MeshRenderData &mr, const DRWSubdivCache &cache)
+{
+  return mr.loose_edges.size() * subdiv_edges_per_coarse_edge(cache);
+}
+
+/** Size of vertex buffers including all face corners, loose edges, and loose vertices. */
+inline int subdiv_full_vbo_size(const MeshRenderData &mr, const DRWSubdivCache &cache)
+{
+  return cache.num_subdiv_loops + subdiv_loose_edges_num(mr, cache) * 2 + mr.loose_verts.size();
+}
 
 }  // namespace blender::draw

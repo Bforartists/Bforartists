@@ -85,7 +85,7 @@ const UserDef U_default = {
     .viewport_line_width = 1.0, /* BFA - GooEngine */
 
     .scrollback = 256,
-    .node_margin = 80,
+    .node_margin = 40,
     .node_preview_res = 120,
     .transopts = USER_TR_TOOLTIPS,
     .menuthreshold1 = 5,
