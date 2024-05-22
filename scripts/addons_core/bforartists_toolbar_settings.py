@@ -36,25 +36,7 @@ from bpy.types import Operator, Scene, AddonPreferences
 from bpy.props import BoolProperty, EnumProperty, IntProperty
 import bpy.utils.previews
 
-addon_keymaps = {}
 _icons = None
-
-
-def find_user_keyconfig(key):
-    km, kmi = addon_keymaps[key]
-    for item in bpy.context.window_manager.keyconfigs.user.keymaps[km.name].keymap_items:
-        found_item = False
-        if kmi.idname == item.idname:
-            found_item = True
-            for name in dir(kmi.properties):
-                if not name in ["bl_rna", "rna_type"] and not name[0] == "_":
-                    if not kmi.properties[name] == item.properties[name]:
-                        found_item = False
-        if found_item:
-            return item
-    #print(f"Couldn't find keymap item for {key}, using addon keymap instead. This won't be saved across sessions!")
-    return kmi
-
 
 class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     # this must match the addon name, use '__package__'
@@ -70,7 +52,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         ('NLA', 'NLA', 'NLA Options', 0, 4),
         ('Outliner', 'Outliner', 'Outliner Options', 0, 5),
         ('Other', 'Other', 'Other Options', 0, 6),
-        ('Keymap', 'Keymap', 'Keymap Options', 0, 7),
 
     ])
 
@@ -713,17 +694,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
             grid.prop(self, "uv_show_toolshelf_tabs", toggle=addon_prefs.bfa_button_style)
             grid.prop(self, "vse_show_toolshelf_tabs", toggle=addon_prefs.bfa_button_style)
 
-        # Keymap Tab
-        if (addon_prefs.bfa_pref_tab_types == 'Keymap'):
-
-            box = layout.box()
-            row = box.row()
-            row.alignment = 'Center'.upper()
-            row.label(text="Topbar Popup Panel Keymap")
-
-            grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
-
-            grid.prop(find_user_keyconfig('BFAPU'), 'type', text='', full_event=True)
 
 ##### Reset Functions ####
 def bfa_reset_files(layout_function,):
