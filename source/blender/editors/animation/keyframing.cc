@@ -953,9 +953,11 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
  * \return Whether keyframes were added or not.
  * caller should update animation data afterwards.
  */
+#define UNUSED(x) (void)(x) /*BFA - to suppress a warning*/
+
 static bool insert_key_selected_pose_bones(Main *bmain,
                                            bContext *C,
-                                           ReportList *reports,
+                                           ReportList *reports, /*BFA - warning*/
                                            ToolSettings *ts,
                                            const AnimationEvalContext anim_eval_context,
                                            int index,
@@ -963,6 +965,7 @@ static bool insert_key_selected_pose_bones(Main *bmain,
                                            PropertyRNA *prop,
                                            bPoseChannel *pchan_to_exclude)
 {
+  UNUSED(reports); /* BFA - Used the UNUSED macro to suppress the warning*/
   using namespace blender::animrig;
 
   bPoseChannel *pchan = NULL;
@@ -1005,9 +1008,10 @@ static bool insert_key_selected_pose_bones(Main *bmain,
 /**
  * \return Whether keyframes were added or not.
  */
+#define UNUSED(x) (void)(x) /*BFA - to suppress a warning*/
 static bool insert_key_selected_objects(Main *bmain,
                                         bContext *C,
-                                        ReportList *reports,
+                                        ReportList *reports, /*BFA - warning*/
                                         ToolSettings *ts,
                                         const AnimationEvalContext anim_eval_context,
                                         int index,
@@ -1016,6 +1020,7 @@ static bool insert_key_selected_objects(Main *bmain,
                                         const char *prop_path,
                                         Object *object_to_exclude)
 {
+  UNUSED(reports); /* BFA - Used the UNUSED macro to suppress the warning*/
   using namespace blender::animrig;
 
   blender::Vector<PointerRNA> selected_objects;
@@ -1275,7 +1280,7 @@ void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
  */
 static bool delete_key_selected_pose_bones(Main *bmain,
                                            bContext *C,
-                                           ReportList *reports,
+                                           ReportList *reports, /*BFA - warning*/
                                            int index,
                                            PropertyRNA *prop,
                                            float cfra,
