@@ -9,13 +9,13 @@
  *
  * To run automatically with a file manager such as Nautilus, save this file
  * in a directory that is listed in PATH environment variable, and create
- * `blender.thumbnailer` file in `${HOME}/.local/share/thumbnailers/` directory
+ * `bforartists.thumbnailer` file in `${HOME}/.local/share/thumbnailers/` directory
  * with the following contents:
  *
  * \code{.txt}
  * [Thumbnailer Entry]
- * TryExec=blender-thumbnailer
- * Exec=blender-thumbnailer %u %o
+ * TryExec=bforartists-thumbnailer
+ * Exec=bforartists-thumbnailer %u %o
  * MimeType=application/x-blender;
  * \endcode
  */
@@ -92,7 +92,7 @@ static eThumbStatus extract_png_from_blend_file(const char *src_blend, const cha
 int main(int argc, char *argv[])
 {
   if (argc < 3) {
-    std::cerr << "Usage: blender-thumbnailer <input.blend> <output.png>" << std::endl;
+    std::cerr << "Usage: bforartists-thumbnailer <input.blend> <output.png>" << std::endl;
     return -1;
   }
 
