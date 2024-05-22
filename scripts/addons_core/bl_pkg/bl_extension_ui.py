@@ -115,6 +115,7 @@ def extensions_panel_draw_legacy_addons(
         enabled_only,
         installed_only,
         used_addon_module_name_map,
+        addon_modules,
 ):
     # NOTE: this duplicates logic from `USERPREF_PT_addons` eventually this logic should be used instead.
     # Don't de-duplicate the logic as this is a temporary state - as long as extensions remains experimental.
@@ -126,15 +127,11 @@ def extensions_panel_draw_legacy_addons(
         pkg_info_check_exclude_filter_ex,
     )
 
-    addons = [
-        (mod, addon_utils.module_bl_info(mod))
-        for mod in addon_utils.modules(refresh=False)
-    ]
-
     # Initialized on demand.
     user_addon_paths = []
 
-    for mod, bl_info in addons:
+    for mod in addon_modules:
+        bl_info = addon_utils.module_bl_info(mod)
         module_name = mod.__name__
         is_extension = addon_utils.check_extension(module_name)
         if is_extension:
@@ -325,6 +322,7 @@ def extensions_panel_draw_impl(
     """
     Show all the items... we may want to paginate at some point.
     """
+    import addon_utils
     import os
     from .bl_extension_ops import (
         blender_extension_mark,
@@ -359,6 +357,8 @@ def extensions_panel_draw_impl(
     show_themes = filter_by_type in {"", "theme"}
     if show_addons:
         used_addon_module_name_map = {addon.module: addon for addon in prefs.addons}
+        addon_modules = [mod for mod in addon_utils.modules(refresh=False)]
+
     if show_themes:
         active_theme_info = pkg_repo_and_id_from_theme_path(repos_all, prefs.themes[0].filepath)
 
@@ -545,8 +545,8 @@ def extensions_panel_draw_impl(
             row_right = row.row()
             row_right.alignment = 'RIGHT'
             
-            row_right2 = row.row()
-            row_right2.alignment = 'RIGHT'
+            row_right2 = row.row() #BFA - new row
+            row_right2.alignment = 'RIGHT' #BFA - row alignment
             
             if has_remote:
                 if is_installed:
@@ -567,9 +567,9 @@ def extensions_panel_draw_impl(
                         props.repo_index = repo_index
                         props.pkg_id = pkg_id
                         del props, row_right2
-                        
+                        # BFA - end of changes
                 else:
-                    props = row_right.operator("bl_pkg.pkg_install", text="Install", icon='IMPORT')
+                    props = row_right.operator("bl_pkg.pkg_install", text="Install", icon='IMPORT') # BFA - added icon
                     props.repo_index = repo_index
                     props.pkg_id = pkg_id
                     del props
@@ -586,6 +586,13 @@ def extensions_panel_draw_impl(
                 col_a.label(text="Description:")
                 # The full description may be multiple lines (not yet supported by Blender's UI).
                 col_b.label(text=item_remote["tagline"])
+
+                if is_addon:
+                    col_a.label(text="Permissions:")
+                    if (value := item_remote.get("permissions")):
+                        col_b.label(text="({:s})".format(", ".join(value)))
+                    else:
+                        col_b.label(text="None")
 
                 if is_installed:
                     col_a.label(text="Path:")
@@ -624,7 +631,7 @@ def extensions_panel_draw_impl(
                     col_b.split(factor=0.5).operator("wm.url_open", text="Website", icon='HELP').url = value
                 del value
 
-                # BFA - moved next to Installed
+                # BFA - moved next to Installed above
                 # Note that we could allow removing extensions from non-remote extension repos
                 # although this is destructive, so don't enable this right now.
                 #if is_installed:
@@ -648,12 +655,50 @@ def extensions_panel_draw_impl(
             enabled_only=enabled_only,
             installed_only=installed_only,
             used_addon_module_name_map=used_addon_module_name_map,
+            addon_modules=addon_modules,
         )
 
     # Finally show any errors in a single panel which can be dismissed.
     display_errors.errors_curr = errors_on_draw
     if errors_on_draw:
         display_errors.draw(layout_topmost)
+
+    # Append missing scripts
+    # First collect scripts that are used but have no script file.
+    if show_addons:
+        module_names = {mod.__name__ for mod in addon_modules}
+        missing_modules = {
+            addon_module_name for addon_module_name in used_addon_module_name_map
+            if addon_module_name not in module_names
+        }
+
+        if missing_modules:
+            layout_topmost.column().label(text="Missing script files")
+
+            module_names = {mod.__name__ for mod in addon_modules}
+            for addon_module_name in sorted(missing_modules):
+                is_enabled = addon_module_name in used_addon_module_name_map
+                # Addon UI Code
+                box = layout_topmost.column().box()
+                colsub = box.column()
+                row = colsub.row(align=True)
+
+                row.label(text="", icon='ERROR')
+
+                if is_enabled:
+                    row.operator(
+                        "preferences.addon_disable", icon='CHECKBOX_HLT', text="", emboss=False,
+                    ).module = addon_module_name
+
+                row.label(text=addon_module_name, translate=False)
+
+                row_right = row.row()
+                row_right.alignment = 'RIGHT'
+
+                row_right.label(text="Missing   ")
+                row_right.active = False
+
+            layout_topmost.label(text="")
 
 
 class USERPREF_PT_extensions_bl_pkg_filter(Panel):
@@ -666,28 +711,28 @@ class USERPREF_PT_extensions_bl_pkg_filter(Panel):
     def draw(self, context):
         layout = self.layout
         wm = context.window_manager
-        col = layout.column() # bfa
+        col = layout.column() # BFA - added indents and labels properly per standards
 
-        col.label(text="Show Only") # bfa
-        col.use_property_split = False # bfa
+        col.label(text="Show Only") # BFA
+        col.use_property_split = False # BFA
 
-        row = col.row() # bfa
-        row.separator() # bfa
-        row.prop(wm, "extension_enabled_only", text="Enabled Extensions") # bfa
-        row = col.row() # bfa
-        row.separator() # bfa
-        row.prop(wm, "extension_updates_only", text="Updates Available") # bfa
-        row = col.row() # bfa
-        row.separator() # bfa
-        row.active = (not wm.extension_enabled_only) and (not wm.extension_updates_only) # bfa
-        row.prop(wm, "extension_installed_only", text="Installed Extensions") # bfa
+        row = col.row() # BFA
+        row.separator() # BFA
+        row.prop(wm, "extension_enabled_only", text="Enabled Extensions") # BFA
+        row = col.row() # BFA
+        row.separator() # BFA
+        row.prop(wm, "extension_updates_only", text="Updates Available") # BFA
+        row = col.row() # BFA
+        row.separator() # BFA
+        row.active = (not wm.extension_enabled_only) and (not wm.extension_updates_only) # BFA
+        row.prop(wm, "extension_installed_only", text="Installed Extensions") # BFA
         
-        col.label(text="Show") # bfa
-        col.use_property_split = False # bfa
-        row = col.row() # bfa
-        row.separator() # bfa
-        row.active = (not wm.extension_updates_only) # bfa
-        row.prop(wm, "extension_show_legacy_addons", text="Legacy Add-ons") # bfa
+        col.label(text="Show") # BFA
+        col.use_property_split = False # BFA
+        row = col.row() # BFA
+        row.separator() # BFA
+        row.active = (not wm.extension_updates_only) # BFA
+        row.prop(wm, "extension_show_legacy_addons", text="Legacy Add-ons") # BFA
 
 
 class USERPREF_MT_extensions_bl_pkg_settings(Menu):
@@ -705,7 +750,7 @@ class USERPREF_MT_extensions_bl_pkg_settings(Menu):
         layout.separator()
 
         layout.operator("bl_pkg.pkg_upgrade_all", text="Install Available Updates", icon='IMPORT')
-        layout.operator("bl_pkg.pkg_install_files", text="Install Extension")
+        layout.operator("bl_pkg.pkg_install_files", text="Install Extension") # BFA - made label more explicit
         layout.operator("preferences.addon_install", text="Install Legacy Add-on")
 
         if prefs.experimental.use_extension_utils:
