@@ -43,16 +43,16 @@ if(WIN32)
 
 else()
   # -----------------------------------------------------------------------------
-  # Build `blender-thumbnailer` executable
+  # Build `bforartists-thumbnailer` executable
 
   set(SRC_CMD
-    src/blender_thumbnailer.cc
+    src/bforartists_thumbnailer.cc
   )
 
-  add_executable(blender-thumbnailer ${SRC} ${SRC_CMD})
-  setup_platform_linker_flags(blender-thumbnailer)
-  target_link_libraries(blender-thumbnailer bf_blenlib)
+  add_executable(bforartists-thumbnailer ${SRC} ${SRC_CMD})
+  setup_platform_linker_flags(bforartists-thumbnailer)
+  target_link_libraries(bforartists-thumbnailer bf_blenlib)
   if(DEFINED PTHREADS_LIBRARIES)
-    target_link_libraries(blender-thumbnailer ${PTHREADS_LIBRARIES})
+    target_link_libraries(bforartists-thumbnailer ${PTHREADS_LIBRARIES})
   endif()
 endif()
