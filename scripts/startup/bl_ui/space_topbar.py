@@ -663,7 +663,7 @@ class TOPBAR_MT_edit(Menu):
         layout.operator("preferences.app_template_install", text="Install Application Template", icon="APPTEMPLATE")
 
         layout.separator()
-
+		# BFa - app template system
         layout.operator_context = 'INVOKE_AREA'
 
         if any(bpy.utils.app_template_paths()):

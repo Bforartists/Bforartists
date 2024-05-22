@@ -129,6 +129,21 @@ const EnumPropertyItem rna_enum_usd_export_subdiv_mode_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+const EnumPropertyItem rna_enum_usd_xform_op_mode_items[] = {
+    {USD_XFORM_OP_TRS,
+     "TRS",
+     0,
+     "Translate, Rotate, Scale",
+     "Export with translate, rotate, and scale Xform operators"},
+    {USD_XFORM_OP_TOS,
+     "TOS",
+     0,
+     "Translate, Orient, Scale",
+     "Export with translate, orient quaternion, and scale Xform operators"},
+    {USD_XFORM_OP_MAT, "MAT", 0, "Matrix", "Export matrix operator"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
 /* Stored in the wmOperator's customdata field to indicate it should run as a background job.
  * This is set when the operator is invoked, and not set when it is only executed. */
 enum { AS_BACKGROUND_JOB = 1 };
@@ -215,6 +230,8 @@ static int wm_usd_export_exec(bContext *C, wmOperator *op)
   const int global_forward = RNA_enum_get(op->ptr, "export_global_forward_selection");
   const int global_up = RNA_enum_get(op->ptr, "export_global_up_selection");
 
+  const eUSDXformOpMode xform_op_mode = eUSDXformOpMode(RNA_enum_get(op->ptr, "xform_op_mode"));
+
   char root_prim_path[FILE_MAX];
   RNA_string_get(op->ptr, "root_prim_path", root_prim_path);
   process_prim_path(root_prim_path);
@@ -243,6 +260,7 @@ static int wm_usd_export_exec(bContext *C, wmOperator *op)
       convert_orientation,
       eIOAxis(global_forward),
       eIOAxis(global_up),
+      xform_op_mode,
   };
 
   STRNCPY(params.root_prim_path, root_prim_path);
@@ -268,6 +286,9 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
     uiItemR(col, ptr, "selected_objects_only", UI_ITEM_NONE, nullptr, ICON_NONE);
     uiItemR(col, ptr, "visible_objects_only", UI_ITEM_NONE, nullptr, ICON_NONE);
   }
+
+  col = uiLayoutColumn(box, true);
+  uiItemR(col, ptr, "xform_op_mode", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   col = uiLayoutColumn(box, true);
   uiItemR(col, ptr, "export_animation", UI_ITEM_NONE, nullptr, ICON_NONE);
@@ -523,6 +544,13 @@ void WM_OT_usd_export(wmOperatorType *ot)
                   "Use relative paths to reference external files (i.e. textures, volumes) in "
                   "USD, otherwise use absolute paths");
 
+  RNA_def_enum(ot->srna,
+               "xform_op_mode",
+               rna_enum_usd_xform_op_mode_items,
+               USD_XFORM_OP_TRS,
+               "Xform Ops",
+               "The type of transform operators to write");
+
   RNA_def_string(ot->srna,
                  "root_prim_path",
                  "/root",
@@ -598,6 +626,7 @@ static int wm_usd_import_exec(bContext *C, wmOperator *op)
   const bool import_shapes = RNA_boolean_get(op->ptr, "import_shapes");
   const bool import_skeletons = RNA_boolean_get(op->ptr, "import_skeletons");
   const bool import_blendshapes = RNA_boolean_get(op->ptr, "import_blendshapes");
+  const bool import_points = RNA_boolean_get(op->ptr, "import_points");
 
   const bool import_subdiv = RNA_boolean_get(op->ptr, "import_subdiv");
 
@@ -667,6 +696,7 @@ static int wm_usd_import_exec(bContext *C, wmOperator *op)
   params.import_shapes = import_shapes;
   params.import_skeletons = import_skeletons;
   params.import_blendshapes = import_blendshapes;
+  params.import_points = import_points;
   params.prim_path_mask = prim_path_mask;
   params.import_subdiv = import_subdiv;
   params.support_scene_instancing = support_scene_instancing;
@@ -715,6 +745,7 @@ static void wm_usd_import_draw(bContext * /*C*/, wmOperator *op)
   uiItemR(col, ptr, "import_shapes", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, ptr, "import_skeletons", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, ptr, "import_blendshapes", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "import_points", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(box, ptr, "prim_path_mask", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(box, ptr, "scale", UI_ITEM_NONE, nullptr, ICON_NONE);
 
@@ -813,6 +844,7 @@ void WM_OT_usd_import(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "import_shapes", true, "Shapes", "");
   RNA_def_boolean(ot->srna, "import_skeletons", true, "Skeletons", "");
   RNA_def_boolean(ot->srna, "import_blendshapes", true, "Blend Shapes", "");
+  RNA_def_boolean(ot->srna, "import_points", true, "Point Clouds", "");
 
   RNA_def_boolean(ot->srna,
                   "import_subdiv",

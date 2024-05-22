@@ -14,6 +14,15 @@
 #include "DNA_listBase.h"
 
 #ifdef __cplusplus
+namespace blender::bke {
+struct PreviewImageRuntime;
+}
+using PreviewImageRuntimeHandle = blender::bke::PreviewImageRuntime;
+#else
+typedef struct PreviewImageRuntimeHandle PreviewImageRuntimeHandle;
+#endif
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -581,6 +590,14 @@ typedef struct Library {
 enum eLibrary_Tag {
   /* Automatic recursive resync was needed when linking/loading data from that library. */
   LIBRARY_TAG_RESYNC_REQUIRED = 1 << 0,
+  /* Datablocks from this library are editable in the UI despite being linked.
+   * Used for asset that can be temporarily or permantently edited.
+   * Currently all datablocks from this library will be edited. In the future this
+   * may need to become per datablock to handle cases where a library is both used
+   * for editable assets and linked into the blend file for other reasons. */
+  LIBRARY_ASSET_EDITABLE = 1 << 1,
+  /* The blend file of this library is writable for asset editing. */
+  LIBRARY_ASSET_FILE_WRITABLE = 1 << 2,
 };
 
 /**
@@ -614,8 +631,6 @@ enum ePreviewImage_Flag {
 
 /* PreviewImage.tag */
 enum {
-  /** Actual loading of preview is deferred. */
-  PRV_TAG_DEFFERED = (1 << 0),
   /** Deferred preview is being loaded. */
   PRV_TAG_DEFFERED_RENDERING = (1 << 1),
   /** Deferred preview should be deleted asap. */
@@ -627,6 +642,7 @@ enum {
  * Don't call this for shallow copies (or the original instance will have dangling pointers).
  */
 typedef struct PreviewImage {
+  DNA_DEFINE_CXX_METHODS(PreviewImage)
   /* All values of 2 are really NUM_ICON_SIZES */
   unsigned int w[2];
   unsigned int h[2];
@@ -634,24 +650,7 @@ typedef struct PreviewImage {
   short changed_timestamp[2];
   unsigned int *rect[2];
 
-  /* Runtime-only data. */
-  struct GPUTexture *gputexture[2];
-  /** Used by previews outside of ID context. */
-  int icon_id;
-
-  /** Runtime data. */
-  short tag;
-  char _pad[2];
-
-#ifdef __cplusplus
-  PreviewImage();
-  /* Shallow copy! Contained data is not copied. */
-  PreviewImage(const PreviewImage &) = default;
-  /* Don't free contained data to allow shallow copies. */
-  ~PreviewImage() = default;
-  /* Shallow copy! Contained data is not copied. */
-  PreviewImage &operator=(const PreviewImage &) = default;
-#endif
+  PreviewImageRuntimeHandle *runtime;
 } PreviewImage;
 
 #define ID_FAKE_USERS(id) ((((const ID *)id)->flag & LIB_FAKEUSER) ? 1 : 0)
@@ -669,6 +668,13 @@ typedef struct PreviewImage {
 #define ID_MISSING(_id) ((((const ID *)(_id))->tag & LIB_TAG_MISSING) != 0)
 
 #define ID_IS_LINKED(_id) (((const ID *)(_id))->lib != NULL)
+
+#define ID_TYPE_SUPPORTS_ASSET_EDITABLE(id_type) ELEM(id_type, ID_BR, ID_TE, ID_NT, ID_IM)
+
+#define ID_IS_EDITABLE(_id) \
+  ((((const ID *)(_id))->lib == NULL) || \
+   ((((const ID *)(_id))->lib->runtime.tag & LIBRARY_ASSET_EDITABLE) && \
+    ID_TYPE_SUPPORTS_ASSET_EDITABLE(GS((((const ID *)(_id))->name)))))
 
 /* Note that these are fairly high-level checks, should be used at user interaction level, not in
  * BKE_library_override typically (especially due to the check on LIB_TAG_EXTERN). */
