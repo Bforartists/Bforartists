@@ -44,6 +44,9 @@ ArgsSubparseFn = Callable[["argparse._SubParsersAction[argparse.ArgumentParser]"
 
 REQUEST_EXIT = False
 
+# When set, ignore broken pipe exceptions (these occur when the calling processes is closed).
+FORCE_EXIT_OK = False
+
 # Expect the remote URL to contain JSON (don't append the JSON name to the path).
 # File-system still append the expected JSON filename.
 REMOTE_REPO_HAS_JSON_IMPLIED = True
@@ -155,6 +158,13 @@ def message_progress(msg_fn: MessageFn, s: str, progress: int, progress_range: i
     """
     assert unit == 'BYTE'
     return msg_fn("PROGRESS", (s, unit, progress, progress_range))
+
+
+def force_exit_ok_enable() -> None:
+    global FORCE_EXIT_OK
+    FORCE_EXIT_OK = True
+    # Without this, some errors are printed on exit.
+    sys.unraisablehook = lambda _ex: None
 
 
 # -----------------------------------------------------------------------------
@@ -1388,6 +1398,18 @@ def generic_arg_timeout(subparse: argparse.ArgumentParser) -> None:
     )
 
 
+def generic_arg_ignore_broken_pipe(subparse: argparse.ArgumentParser) -> None:
+    subparse.add_argument(
+        "--force-exit-ok",
+        dest="force_exit_ok",
+        action="store_true",
+        default=False,
+        help=(
+            "Silently ignore broken pipe, use when the caller may disconnect."
+        ),
+    )
+
+
 class subcmd_server:
 
     def __new__(cls) -> Any:
@@ -1556,7 +1578,11 @@ class subcmd_client:
             local_dir: str,
             online_user_agent: str,
             timeout_in_seconds: float,
+            force_exit_ok: bool,
     ) -> bool:
+        if force_exit_ok:
+            force_exit_ok_enable()
+
         success = repo_sync_from_remote(
             msg_fn=msg_fn,
             repo_dir=repo_dir,
@@ -2365,6 +2391,7 @@ def argparse_create_client_sync(subparsers: "argparse._SubParsersAction[argparse
 
     generic_arg_output_type(subparse)
     generic_arg_timeout(subparse)
+    generic_arg_ignore_broken_pipe(subparse)
 
     subparse.set_defaults(
         func=lambda args: subcmd_client.sync(
@@ -2373,6 +2400,7 @@ def argparse_create_client_sync(subparsers: "argparse._SubParsersAction[argparse
             local_dir=args.local_dir,
             online_user_agent=args.online_user_agent,
             timeout_in_seconds=args.timeout,
+            force_exit_ok=args.force_exit_ok,
         ),
     )
 
@@ -2715,4 +2743,11 @@ def main(
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except BrokenPipeError as ex:
+        # When called for notifications, a broken pipe may occur if the caller closes soon after activating.
+        # In this case a broken pipe is expected and not something we want to avoid.
+        # This most only ever be set if canceling will *not* leave the repository in a corrupt sate.
+        if not FORCE_EXIT_OK:
+            raise ex

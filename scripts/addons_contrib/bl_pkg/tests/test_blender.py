@@ -133,7 +133,7 @@ def blender_test_run(temp_dir_local: str) -> None:
         name="My Test",
         module="my_repo",
         custom_directory=temp_dir_local,
-        remote_path=repo_url,
+        remote_url=repo_url,
     )
 
     bpy.ops.bl_pkg.dummy_progress()
