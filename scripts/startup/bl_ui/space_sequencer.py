@@ -533,7 +533,6 @@ class SEQUENCER_MT_view(Menu):
             layout.operator("sequencer.view_all", text="Frame All", icon="VIEWALL")
             layout.operator("sequencer.view_frame", icon="VIEW_FRAME")
             layout.operator("sequencer.view_selected", text="Frame Selected", icon='VIEW_SELECTED')
-            layout.prop(st, "use_clamp_view")
 
         if is_preview:
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
@@ -687,7 +686,7 @@ class SEQUENCER_MT_select(Menu):
             col.menu("SEQUENCER_MT_select_linked", text="Linked")
 
         col.operator_menu_enum("sequencer.select_grouped", "type", text="Select Grouped")
-        
+
 
 
 class SEQUENCER_MT_marker(Menu):
