@@ -775,7 +775,7 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/libglapi.so.0.0.0)\n
       DESTINATION "./share/applications"
     )
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/org.bforartists.Bforartists.metainfo.xml
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/de.bforartists.Bforartists.metainfo.xml
       DESTINATION "./share/metainfo"
     )
     install(
