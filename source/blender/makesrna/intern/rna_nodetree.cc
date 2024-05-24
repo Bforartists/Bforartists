@@ -11357,6 +11357,9 @@ static int node_type_to_icon(int type)
     case FN_NODE_INPUT_INT:
       return ICON_INTEGER;
 
+    case FN_NODE_INPUT_ROTATION:
+      return ICON_ROTATION;
+
     case FN_NODE_INPUT_SPECIAL_CHARACTERS:
       return ICON_SPECIAL;
 
