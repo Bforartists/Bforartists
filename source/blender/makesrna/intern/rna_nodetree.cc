@@ -11406,6 +11406,8 @@ static int node_type_to_icon(int type)
       return ICON_VALUE_TO_STRING;
 
       /* bfa - GeometryNode */
+    case GEO_NODE_ACCUMULATE_FIELD:
+      return ICON_ACCUMULATE;
 
     case GEO_NODE_ATTRIBUTE_DOMAIN_SIZE:
       return ICON_DOMAIN_SIZE;
@@ -11421,12 +11423,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_BOUNDING_BOX:
       return ICON_PIVOT_BOUNDBOX;
-
+    
     case GEO_NODE_CAPTURE_ATTRIBUTE:
       return ICON_ATTRIBUTE_CAPTURE;
-
-    case GEO_NODE_TOOL_3D_CURSOR:
-      return ICON_CURSOR;
 
     case GEO_NODE_COLLECTION_INFO:
       return ICON_COLLECTION_INFO;
@@ -11487,7 +11486,7 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_CURVE_TOPOLOGY_POINTS_OF_CURVE:
       return ICON_POINT_OF_CURVE;
-
+    
     case GEO_NODE_DEFORM_CURVES_ON_SURFACE:
       return ICON_DEFORM_CURVES;
 
@@ -11497,9 +11496,15 @@ static int node_type_to_icon(int type)
     case GEO_NODE_DISTRIBUTE_POINTS_IN_VOLUME:
       return ICON_VOLUME_DISTRIBUTE;
 
+    case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
+      return ICON_POINT_DISTRIBUTE;
+
+    case GEO_NODE_DUAL_MESH:
+      return ICON_DUAL_MESH;
+    
     case GEO_NODE_DUPLICATE_ELEMENTS:
       return ICON_DUPLICATE;
-
+    
     case GEO_NODE_EDGE_PATHS_TO_CURVES:
       return ICON_EDGE_PATHS_TO_CURVES;
 
@@ -11514,19 +11519,10 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_EVALUATE_ON_DOMAIN:
       return ICON_FIELD_DOMAIN;
-
-    case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
-      return ICON_POINT_DISTRIBUTE;
-
-    case GEO_NODE_ACCUMULATE_FIELD:
-      return ICON_ACCUMULATE;
-
-    case GEO_NODE_DUAL_MESH:
-      return ICON_DUAL_MESH;
-
+    
     case GEO_NODE_EXTRUDE_MESH:
       return ICON_EXTRUDE_REGION;
-
+    
     case GEO_NODE_FILL_CURVE:
       return ICON_CURVE_FILL;
 
@@ -11535,27 +11531,24 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_FLIP_FACES:
       return ICON_FLIP_NORMALS;
-
+    
     case GEO_NODE_GEOMETRY_TO_INSTANCE:
       return ICON_GEOMETRY_INSTANCE;
-
+    
     case GEO_NODE_IMAGE_INFO:
       return ICON_IMAGE_INFO;
 
     case GEO_NODE_IMAGE_TEXTURE:
       return ICON_IMAGE_DATA;
 
+    case GEO_NODE_IMAGE:
+      return ICON_FILE_IMAGE;
+
     case GEO_NODE_INDEX_OF_NEAREST:
       return ICON_INDEX_OF_NEAREST;
 
     case GEO_NODE_INDEX_SWITCH:
       return ICON_INDEX_SWITCH;
-
-    case GEO_NODE_MENU_SWITCH:
-      return ICON_MENU_SWITCH;
-
-    case GEO_NODE_IMAGE:
-      return ICON_FILE_IMAGE;
 
     case GEO_NODE_INPUT_ACTIVE_CAMERA:
       return ICON_VIEW_SWITCHTOCAM;
@@ -11565,6 +11558,12 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_INPUT_CURVE_TILT:
       return ICON_CURVE_TILT;
+
+    case GEO_NODE_INPUT_EDGE_SMOOTH:
+      return ICON_SHADING_EDGE_SMOOTH;
+
+    case GEO_NODE_INPUT_FACE_SMOOTH:
+      return ICON_SHADING_SMOOTH;
 
     case GEO_NODE_INPUT_ID:
       return ICON_GET_ID;
@@ -11602,9 +11601,6 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_MESH_FACE_NEIGHBORS:
       return ICON_FACE_NEIGHBORS;
 
-    case GEO_NODE_TOOL_FACE_SET:
-      return ICON_FACE_SET;
-
     case GEO_NODE_INPUT_MESH_ISLAND:
       return ICON_UV_ISLANDSEL;
 
@@ -11626,17 +11622,8 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_RADIUS:
       return ICON_RADIUS;
 
-    case GEO_NODE_TOOL_SELECTION:
-      return ICON_RESTRICT_SELECT_OFF;
-
-    case GEO_NODE_TOOL_ACTIVE_ELEMENT:
-      return ICON_ACTIVE_ELEMENT;
-
     case GEO_NODE_INPUT_SCENE_TIME:
       return ICON_TIME;
-
-    case GEO_NODE_INPUT_FACE_SMOOTH:
-      return ICON_SHADING_SMOOTH;
 
     case GEO_NODE_INPUT_SHORTEST_EDGE_PATHS:
       return ICON_SELECT_SHORTESTPATH;
@@ -11659,14 +11646,20 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INSTANCES_TO_POINTS:
       return ICON_INSTANCES_TO_POINTS;
 
+    case GEO_NODE_INTERPOLATE_CURVES:
+      return ICON_INTERPOLATE_CURVE;
+
     case GEO_NODE_IS_VIEWPORT:
       return ICON_VIEW;
-
+    
     case GEO_NODE_JOIN_GEOMETRY:
       return ICON_JOIN;
-
+    
     case GEO_NODE_MATERIAL_SELECTION:
       return ICON_SELECT_BY_MATERIAL;
+
+    case GEO_NODE_MENU_SWITCH:
+      return ICON_MENU_SWITCH;
 
     case GEO_NODE_MERGE_BY_DISTANCE:
       return ICON_REMOVE_DOUBLES;
@@ -11733,15 +11726,15 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_MESH_TOPOLOGY_VERTEX_OF_CORNER:
       return ICON_VERTEX_OF_CORNER;
-
+    
     case GEO_NODE_OBJECT_INFO:
       return ICON_NODE_OBJECTINFO;
-
+    
     case GEO_NODE_OFFSET_POINT_IN_CURVE:
       return ICON_OFFSET_POINT_IN_CURVE;
 
-    case GEO_NODE_POINTS:
-      return ICON_DECORATE;
+    case GEO_NODE_POINTS_TO_CURVES:
+      return ICON_POINTS_TO_CURVES;
 
     case GEO_NODE_POINTS_TO_VERTICES:
       return ICON_POINTS_TO_VERTICES;
@@ -11749,9 +11742,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_POINTS_TO_VOLUME:
       return ICON_POINT_TO_VOLUME;
 
+    case GEO_NODE_POINTS:
+      return ICON_DECORATE;
+    
     case GEO_NODE_PROXIMITY:
       return ICON_GEOMETRY_PROXIMITY;
-
+    
     case GEO_NODE_RAYCAST:
       return ICON_RAYCAST;
 
@@ -11775,10 +11771,10 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_REVERSE_CURVE:
       return ICON_SWITCH_DIRECTION;
-
+    
     case GEO_NODE_ROTATE_INSTANCES:
       return ICON_ROTATE_INSTANCE;
-
+    
     case GEO_NODE_SAMPLE_CURVE:
       return ICON_CURVE_SAMPLE;
 
@@ -11836,12 +11832,6 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_POSITION:
       return ICON_SET_POSITION;
 
-    case GEO_NODE_TOOL_SET_SELECTION:
-      return ICON_SET_SELECTION;
-
-    case GEO_NODE_TOOL_SET_FACE_SET:
-      return ICON_SET_FACE_SET;
-
     case GEO_NODE_SET_SHADE_SMOOTH:
       return ICON_SET_SHADE_SMOOTH;
 
@@ -11887,6 +11877,24 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SWITCH:
       return ICON_SWITCH;
 
+    case GEO_NODE_TOOL_3D_CURSOR:
+      return ICON_CURSOR;
+
+    case GEO_NODE_TOOL_FACE_SET:
+      return ICON_FACE_SET;
+
+    case GEO_NODE_TOOL_SELECTION:
+      return ICON_RESTRICT_SELECT_OFF;
+
+    case GEO_NODE_TOOL_ACTIVE_ELEMENT:
+      return ICON_ACTIVE_ELEMENT;
+
+    case GEO_NODE_TOOL_SET_FACE_SET:
+      return ICON_SET_FACE_SET;
+
+    case GEO_NODE_TOOL_SET_SELECTION:
+      return ICON_SET_SELECTION;
+
     case GEO_NODE_TRANSFORM_GEOMETRY:
       return ICON_NODE_TRANSFORM;
 
@@ -11898,13 +11906,13 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_TRIM_CURVE:
       return ICON_CURVE_TRIM;
-
+    
     case GEO_NODE_UV_PACK_ISLANDS:
       return ICON_PACKISLAND;
 
     case GEO_NODE_UV_UNWRAP:
       return ICON_UNWRAP_ABF;
-
+    
     case GEO_NODE_VIEWER:
       return ICON_NODE_VIEWER;
 
@@ -11913,15 +11921,6 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_VOLUME_TO_MESH:
       return ICON_VOLUME_TO_MESH;
-
-    case GEO_NODE_INTERPOLATE_CURVES:
-      return ICON_INTERPOLATE_CURVE;
-
-    case GEO_NODE_POINTS_TO_CURVES:
-      return ICON_POINTS_TO_CURVES;
-
-    case GEO_NODE_INPUT_EDGE_SMOOTH:
-      return ICON_SHADING_EDGE_SMOOTH;
   }
   return ICON_NONE;
 }
