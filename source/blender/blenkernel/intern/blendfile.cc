@@ -1427,6 +1427,7 @@ UserDef *BKE_blendfile_userdef_from_defaults()
         "smartdelete_bfa",
         "align_view_buttons",
         "important_hotkeys_BFA",
+        "bfa_default_addons",
     };
     for (int i = 0; i < ARRAY_SIZE(addons); i++) {
       bAddon *addon = BKE_addon_new();
