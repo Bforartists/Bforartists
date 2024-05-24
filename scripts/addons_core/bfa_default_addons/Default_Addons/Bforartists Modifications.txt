@@ -1,0 +1,13 @@
+achm_room_maker.py
+edit_dimensions.py
+io_mesh_dxf\
+io_mesh_stl\
+io_mesh_uv_layout\
+io_scene_3d\
+meshinset\
+meshedgetools.py
+minilightlib\
+space_view3d_3d_navigation.py
+space_view3d_copy_attributes.py
+space_view3d_pie_menus\
+
