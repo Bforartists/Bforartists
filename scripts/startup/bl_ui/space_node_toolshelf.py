@@ -3907,9 +3907,14 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel):
             props.type = "GeometryNodeInputRadius"
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                props = col.operator("node.add_node", text=" Selection                 ", icon = "RESTRICT_SELECT_OFF")
+                props = col.operator("node.add_node", text=" Selection                    ", icon = "RESTRICT_SELECT_OFF")
                 props.use_transform = True
                 props.type = "GeometryNodeToolSelection"
+                
+                props = col.operator("node.add_node", text=" Active Element          ", icon = "ACTIVE_ELEMENT")
+                props.use_transform = True
+                props.type = "GeometryNodeToolActiveElement"
+
 
         #### Icon Buttons
 
@@ -3947,6 +3952,11 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel):
                 props = flow.operator("node.add_node", text="", icon = "RESTRICT_SELECT_OFF")
                 props.use_transform = True
                 props.type = "GeometryNodeToolSelection"
+                
+                props = flow.operator("node.add_node", text="", icon = "ACTIVE_ELEMENT")
+                props.use_transform = True
+                props.type = "GeometryNodeToolActiveElement"
+
 
 
 #add geometry panel, sample subpanel
