@@ -149,6 +149,9 @@ def register_addons():
             else:
                 shutil.copy2(s, d)  # copies also metadata
         print("Info: Legacy addons installed")
+
+        # Refresh to see all
+        bpy.ops.preferences.addon_refresh()
         pass
 
     return
