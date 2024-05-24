@@ -2303,7 +2303,7 @@ internet
 euro
 export_collection
 axes_to_rotation
-#~ DEF_ICON_BLANK(2323)
+active_element
 collection_bone_add
 
 #~ DEF_ICON_BLANK(2326)
