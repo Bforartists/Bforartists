@@ -38,12 +38,12 @@ from pathlib import Path
 from os import path as p
 
 bl_info = {
-    "name": "Default Legacy Addons",
+    "name": "Default Legacy Addons ",
     "author": "Draise (@trinumedia)",
     "version": (1, 0, 0),
     "blender": (4, 2, 0),
     "location": "Preferences - Extensions",
-    "description": "Adds all the default legacy addons as pre-downloaded extensions",
+    "description": "Adds all the default legacy addons as a pre-downloaded bundle of addons and extensions",
     "warning": "Bforartists Exclusive",
     "doc_url": "https://github.com/Bforartists/Manual",
     "tracker_url": "https://github.com/Bforartists/Bforartists",
@@ -54,8 +54,8 @@ bl_info = {
 }
 
 # Configure the display name and sub-folder of your Library here:
-LIB_NAME = "Default_Extensions"
-LIB_NAME2 = "Default_Addons"
+source_ext = "Default_Extensions"
+source_addons = "Default_Addons"
 
 ### Variables
 prefs = bpy.context.preferences
@@ -63,11 +63,9 @@ prefs = bpy.context.preferences
 # Get the addon path
 path = p.dirname(__file__)
 
-# Get the addon files path
-addons_folder = LIB_NAME2
 
 # Get the extensions source files
-source_addon_folder = os.path.join(path, addons_folder)
+source_addon_folder = os.path.join(path, source_addons)
 
 # Get the USER path
 user_path = Path(bpy.utils.resource_path('USER')).parent
@@ -89,7 +87,7 @@ destination_addon_folder = version_path / 'scripts' / 'addons'
 # Running code, don't change if not necessary!
 # -----------------------------------------------------------------------------
 
-# # safe_bl_idname = re.sub("\s", "_", re.sub("[^\w\s]", "", LIB_NAME)).lower()
+# # safe_bl_idname = re.sub("\s", "_", re.sub("[^\w\s]", "", source_ext)).lower()
 
 
 class LIBADDON_APT_preferences(AddonPreferences):
@@ -102,21 +100,16 @@ class LIBADDON_APT_preferences(AddonPreferences):
         addon_version = bl_info['version']
 
         layout.label(
-            text=f"{LIB_NAME} - Version {'.'.join(map(str, addon_version))}")
+            text=f"{source_ext} - Version {'.'.join(map(str, addon_version))}")
         layout.label(
-            text="This addons copies all the legacy addons to the user preferences.")
+            text="This addons copies all the legacy addons to the user preferences on first load.")
         layout.label(
-            text="When you opt-in to use Extensions, this will remove the legacy addons.")
+            text="When you opt-in to use Extensions, Bforartists  will remove the legacy addons.")
         layout.label(
-            text="Bforartists will try to replace legacy addons with extensions you can. Enjoy!")
+            text="Legacy addons will become extensions that you can uninstall, update and enjoy!")
+        layout.label(
+            text="If you disable this addon, this will remove the legacy addons", icon="")
 
-
-def get_lib_path_index(prefs: Preferences):
-    """Get the index of the library name or path for configuring them in the operator."""
-    for index, lib in enumerate(prefs.filepaths.asset_libraries):
-        if lib.path == p.dirname(__file__) or lib.name == LIB_NAME:
-            return index
-    return -1
 
 
 def register_addons():
@@ -133,30 +126,38 @@ def register_addons():
         print("Extensions was on, so never mind...")
         pass
     else:
-        print("Extensions not enabled, copied legacy addons")
+        print("Extensions not enabled, copying legacy addons")
         # If extensions is not on, and the addon is on, then install the legacy addons
 
-        # Install the addons
+        # Loop through each file in the source_addon_folder to install them, so the pycache is set
+        for file in os.listdir(source_addon_folder):
+            file_path = os.path.join(source_addon_folder, file)
+
+            # Check if the file is a .py file and is directly in the source_addon_folder
+            if file.endswith(".py") or file.endswith(".zip")  and os.path.isfile(file_path):
+                # install the addon
+                bpy.ops.preferences.addon_install(filepath=file_path)
+                print("Installed: " + file)
+
+        # Copy the other addons that are in sub-directories
         for item in os.listdir(source_addon_folder):
             s = os.path.join(source_addon_folder, item)
             d = os.path.join(destination_addon_folder, item)
-            print(s)
             if os.path.isdir(s):
                 if not os.path.exists(d):
                     shutil.copytree(s, d, False, None)
             else:
                 shutil.copy2(s, d)  # copies also metadata
-
+        print("Info: Legacy addons installed")
         pass
 
     return
 
-def unregister_addons():
-    """Remove the addons as soon as the addon is disabled."""
-
+def remove_legacy_addons():
+    """Remove the legacy addons as soon as the addon is disabled."""
 
     # Get the addon source files
-    source_addon_folder = os.path.join(path, addons_folder)
+    source_addon_folder = os.path.join(path, source_addons)
 
     # Iterate over all files in the source folder
     for root, dirs, files in os.walk(source_addon_folder):
@@ -178,15 +179,12 @@ def unregister_addons():
             src_dir = os.path.join(root, dir)
 
             # Construct the corresponding directory path in the destination folder
-            dest_dir = str(src_dir).replace(str(source_addon_folder), str(destination_addon_folder))
+            dest_dir = os.path.join(destination_addon_folder, os.path.relpath(src_dir, source_addon_folder))
 
-            # If the directory also exists in the destination folder and is empty, delete it
-            if os.path.exists(dest_dir) and not os.listdir(dest_dir):
-                os.rmdir(dest_dir)
+            # If the directory exists in the destination folder and is empty (contains no files), delete it
+            if os.path.exists(dest_dir) and not any(os.path.isfile(os.path.join(dest_dir, f)) for f in os.listdir(dest_dir)):
+                shutil.rmtree(dest_dir)
 
-    # Ensure the addons sub-folder exists
-    if not destination_addon_folder.exists():
-        destination_addon_folder.mkdir(parents=True)
 
 
 
@@ -194,18 +192,14 @@ classes = (
     LIBADDON_APT_preferences,
 )
 
-
-#Adds the the addons when you load the addon.
+#Adds the the bundle when you load the addon.
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
     bpy.app.timers.register(register_addons, first_interval=0.1)
 
-#Removes the addons when you unload the addon.
 def unregister():
-    unregister_addons()
-
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
