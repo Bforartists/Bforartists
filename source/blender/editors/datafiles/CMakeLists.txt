@@ -2223,7 +2223,7 @@ index_switch
 bake
 line_show
 line_hide
-#~ DEF_ICON_BLANK(2243)
+rotation
 #~ DEF_ICON_BLANK(2244)
 collection_bone_remove
 
