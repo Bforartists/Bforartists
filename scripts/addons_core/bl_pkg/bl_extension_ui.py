@@ -187,6 +187,18 @@ def extensions_panel_draw_legacy_addons(
         row_right.label(text="Installed   ")
         row_right.active = False
 
+        # BFA - Move Uninstall next to Install (Legacy)
+        user_addon = USERPREF_PT_addons.is_user_addon(mod, user_addon_paths) # BFA
+
+        if user_addon: # BFA
+                row_right = row.row() # BFA
+                row_right.active = True # BFA
+                row_right.alignment = 'RIGHT' # BFA
+                row_right.operator( # BFA
+                    "preferences.addon_remove", text="Uninstall", icon='CANCEL', # BFA
+                ).module = module_name # BFA
+        # BFA - end of changes
+
         if bl_info["show_expanded"]:
             split = box.split(factor=0.15)
             col_a = split.column()
@@ -240,17 +252,19 @@ def extensions_panel_draw_legacy_addons(
                     props.type = 'BUG_ADDON'
                     props.id = addon_info
 
-            if user_addon:
-                rowsub = col_b.row()
-                rowsub.alignment = 'RIGHT'
-                rowsub.operator(
-                    "preferences.addon_remove", text="Uninstall", icon='CANCEL',
-                ).module = module_name
-
+            # BFA - Move Uninstall next to Install (Legacy)
+            # if user_addon:
+            #     rowsub = col_b.row()
+            #     rowsub.alignment = 'RIGHT'
+            #     rowsub.operator(
+            #         "preferences.addon_remove", text="Uninstall", icon='CANCEL',
+            #     ).module = module_name
+            # BFA - end of changes
+            
             if is_enabled:
-                if (addon_preferences := used_addon_module_name_map[module_name].preferences) is not None:
-                    USERPREF_PT_addons.draw_addon_preferences(layout, context, addon_preferences)
-
+                 if (addon_preferences := used_addon_module_name_map[module_name].preferences) is not None:
+                     USERPREF_PT_addons.draw_addon_preferences(layout, context, addon_preferences)
+            
 
 # -----------------------------------------------------------------------------
 # Extensions UI
@@ -736,7 +750,7 @@ def extensions_panel_draw(panel, context):
 
     wm = context.window_manager
     layout = panel.layout
-
+    
     row = layout.split(factor=0.5)
     row_a = row.row()
     row_a.prop(wm, "extension_search", text="", icon='VIEWZOOM')
