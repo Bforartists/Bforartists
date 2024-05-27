@@ -2319,10 +2319,7 @@ class BlkPkgReplaceLegacyAddons(Operator):
     bl_label = "Replace Legacy with Extension"
 
     def execute(self, context):
-        print("Well look at that, it found what to do with the operator")
-
         source_ext = "Default_Extensions"
-        source_addons = "Default_Addons"
 
         # ----------
         # Variables
@@ -2346,10 +2343,8 @@ class BlkPkgReplaceLegacyAddons(Operator):
 
         # Get the source files
         source_ext_folder = os.path.join(path, source_ext)
-        source_addon_folder = os.path.join(path, source_addons)
 
-        # Define the addons  sub-folder path
-        destination_addon_folder = version_path / 'scripts' / 'addons'
+        # Define the Extensions sub-folder path
         destination_ext_folder = version_path / 'extensions' / 'blender_org'
 
         # --------------------------
@@ -2370,37 +2365,6 @@ class BlkPkgReplaceLegacyAddons(Operator):
             else:
                 shutil.copy2(s, d)  # copies also metadata
             print("It copied the extensions correctly")
-
-        # --------------------------
-        # Remove the legacy addons
-
-        # Iterate over all files in the source folder
-        for root, dirs, files in os.walk(source_addon_folder):
-            for file in files:
-                # Construct the full filepath
-                src_file = os.path.join(root, file)
-
-                # Construct the corresponding filepath in the destination folder
-                dest_file = str(src_file).replace(str(source_addon_folder), str(destination_addon_folder))
-
-                # If the file also exists in the destination folder, delete it
-                if os.path.exists(dest_file):
-                    os.remove(dest_file)
-
-        # Iterate over all sub-folders in the source folder
-        for root, dirs, files in os.walk(source_addon_folder):
-            for dir in dirs:
-                # Construct the full directory path
-                src_dir = os.path.join(root, dir)
-
-                # Construct the corresponding directory path in the destination folder
-                dest_dir = os.path.join(destination_addon_folder, os.path.relpath(src_dir, source_addon_folder))
-
-                # If the directory exists in the destination folder and is empty (contains no files), delete it
-                if os.path.exists(dest_dir) and not any(os.path.isfile(os.path.join(dest_dir, f)) for f in os.listdir(dest_dir)):
-                    shutil.rmtree(dest_dir)
-        # Refresh to see all
-        bpy.ops.preferences.addon_refresh()
 
         return {'FINISHED'}
 ### BFA - End of changes
