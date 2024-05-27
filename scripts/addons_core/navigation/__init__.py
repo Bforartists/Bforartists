@@ -359,5 +359,5 @@ def unregister():
         bpy.utils.unregister_class(cls)
 
 
-if __package__ == "__main__":
+if __name__ == "__main__":
     register()
