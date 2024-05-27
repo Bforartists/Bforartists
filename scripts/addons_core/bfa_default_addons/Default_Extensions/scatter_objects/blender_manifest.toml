@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "scatter_objects"
+name = "Scatter Objects"
+version = "0.2.0"
+tagline = "Distribute object instances on another object"
+maintainer = "Community"
+type = "add-on"
+tags = ["Object"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/object_scatter"
+copyright = ["2024 Jacques Lucke"]
