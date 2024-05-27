@@ -13,6 +13,18 @@ from bpy.types import (
         )
 from bpy.props import StringProperty
 
+# BFA - Needed to be included as a Core addon
+bl_info = {
+    "name": "3D Navigation",
+    "author": "Demohero, uriel",
+    "version": (1, 2, 6),
+    "blender": (2, 92, 0),
+    "location": "View3D > Sidebar > View Tab",
+    "description": "Navigate the Camera & 3D Viewport from the Sidebar",
+    "warning": "Bforartists Version",  #BFA - warning added
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/3d_view/3d_navigation.html",
+    "category": "3D View",
+}
 
 # main class of this toolbar
 

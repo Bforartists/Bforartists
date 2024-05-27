@@ -9,6 +9,7 @@ bl_info = {
     "blender": (2, 81, 6),
     "location": "File > Import-Export",
     "description": "Import-Export STL files",
+    "warning": "Bforartists Version",  #BFA - warning added
     "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/mesh_stl.html",
     "support": 'OFFICIAL',
     "category": "Import-Export",
