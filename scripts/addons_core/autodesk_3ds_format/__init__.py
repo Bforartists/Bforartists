@@ -16,8 +16,9 @@ bl_info = {
     "blender": (4, 1, 0),
     "location": "File > Import-Export",
     "description": "3DS Import/Export meshes, UVs, materials, textures, "
-                   "cameras, lamps & animation - Bforartists Version",  #BFA - warning added
-    "warning": "Images must be in file folder, "
+                   "cameras, lamps & animation - Bforartists Version",
+    "warning": "Bforartists version: Disable first if you wish to use the online Extension version," #BFA - warning added
+               "Images must be in file folder,"
                "filenames are limited to DOS 8.3 format",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/scene_3ds.html",
     "category": "Import-Export",
