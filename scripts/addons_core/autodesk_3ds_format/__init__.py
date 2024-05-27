@@ -8,6 +8,20 @@ __author__ = "Sebastian Sille <nrgsille@gmail.com>"
 __version__ = "2.6.0"
 __date__ = "24 Sep 2020"
 
+#BFA - needed to be a core addon
+bl_info = {
+    "name": "Autodesk 3DS format",
+    "author": "Bob Holcomb, Campbell Barton, Sebastian Schrand",
+    "version": (2, 5, 0),
+    "blender": (4, 1, 0),
+    "location": "File > Import-Export",
+    "description": "3DS Import/Export meshes, UVs, materials, textures, "
+                   "cameras, lamps & animation - Bforartists Version",  #BFA - warning added
+    "warning": "Images must be in file folder, "
+               "filenames are limited to DOS 8.3 format",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/scene_3ds.html",
+    "category": "Import-Export",
+}
 
 from bpy_extras.io_utils import (
     ImportHelper,
