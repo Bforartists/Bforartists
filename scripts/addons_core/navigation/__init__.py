@@ -21,7 +21,7 @@ bl_info = {
     "blender": (2, 92, 0),
     "location": "View3D > Sidebar > View Tab",
     "description": "Navigate the Camera & 3D Viewport from the Sidebar",
-    "warning": "Bforartists Version",  #BFA - warning added
+    "warning": "Bforartists version: Disable first if you wish to use the online Extension version",  #BFA - warning added
     "doc_url": "{BLENDER_MANUAL_URL}/addons/3d_view/3d_navigation.html",
     "category": "3D View",
 }

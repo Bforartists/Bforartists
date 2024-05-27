@@ -9,7 +9,7 @@ bl_info = {
     "blender": (3, 4, 0),
     "location": "View3D > Ctrl-C",
     "description": "Copy Attributes Menu",
-    "warning": "Bforartists Version", #BFA - warning added
+    "warning": "Bforartists version: Disable first if you wish to use the online Extension version", #BFA - warning added
     "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/copy_attributes.html",
     "category": "Interface",
 }
