@@ -9,7 +9,7 @@ bl_info = {
     "blender": (4, 0, 0),
     "location": "Edit -> Preferences -> Extensions",
     "description": "Extension repository support for remote repositories - Bforartists Version", #BFA - mentined
-    "warning": "",
+    "warning": "Bforartists Version",
     # "doc_url": "{BLENDER_MANUAL_URL}/addons/bl_pkg/bl_pkg.html",
     "support": 'OFFICIAL',
     "category": "System",
