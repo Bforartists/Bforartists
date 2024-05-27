@@ -1,8 +1,8 @@
 schema_version = "1.0.0"
 id = "copy_attributes_menu"
-name = "Copy Attributes Menu - Bforartists Version"
+name = "Copy Attributes Menu"
 version = "0.6.0"
-tagline = "Copy Attributes Menu"
+tagline = "Copy Attributes Menu - Bforartists Version"
 maintainer = "Community"
 type = "add-on"
 tags = ["User Interface"]
