@@ -15,18 +15,6 @@ try:
 except:
     PYPROJ = False
 
-bl_info = {
-    "name": "Import AutoCAD DXF Format (.dxf)",
-    "author": "Lukas Treyer, Manfred Moitzi (support + dxfgrabber library), Vladimir Elistratov, Bastien Montagne, Remigiusz Fiedler (AKA migius)",
-    "version": (0, 9, 8),
-    "blender": (2, 80, 0),
-    "location": "File > Import > AutoCAD DXF",
-    "description": "Import files in the Autocad DXF format (.dxf)",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/scene_dxf.html",
-    "category": "Import-Export",
-}
-
-
 proj_none_items = (
     ('NONE', "None", "No Coordinate System is available / will be set"),
 )
@@ -58,8 +46,6 @@ proj_epsg_items = (
 )
 
 proj_epsg_dict = {e[0]: e[1] for e in proj_epsg_items}
-
-__version__ = '.'.join([str(s) for s in bl_info['version']])
 
 BY_LAYER = 0
 BY_DXFTYPE = 1
@@ -181,7 +167,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
     """Import from DXF file format (.dxf)"""
     bl_idname = "import_scene.dxf"
     bl_description = 'Import from DXF file format (.dxf)'
-    bl_label = "Import DXf v." + __version__
+    bl_label = "Import DXF"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_options = {'UNDO'}
@@ -194,7 +180,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
     filename_ext = ".dxf"
 
     files: CollectionProperty(
-            type=bpy.types.OperatorFileListElement, 
+            type=bpy.types.OperatorFileListElement,
             options={'HIDDEN', 'SKIP_SAVE'}
             )
 
@@ -561,7 +547,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
                     else: scene = bpy.data.scenes.new(scene_name)
                 case _:
                     scene = bpy.context.scene
-        
+
             match self.collection_options:
                 case 'NEW_COLLECTION':
                     collection = bpy.data.collections.new(Path(file.name).stem)
