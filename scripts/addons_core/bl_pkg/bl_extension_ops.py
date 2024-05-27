@@ -21,6 +21,8 @@ from typing import (
 
 import bpy
 
+import shutil # BFA - needed for legacy addons UX
+
 from bpy.types import (
     Operator,
 )
@@ -49,6 +51,9 @@ from .bl_extension_utils import (
     RepoLock,
     RepoLockContext,
 )
+
+from pathlib import Path # BFA - needed for legacy addons UX
+from os import path as p # BFA - needed for legacy addons UX
 
 rna_prop_url = StringProperty(name="URL", subtype='FILE_PATH', options={'HIDDEN'})
 rna_prop_directory = StringProperty(name="Repo Directory", subtype='FILE_PATH')
@@ -2279,6 +2284,10 @@ class BlPkgOnlineAccess(Operator):
             assert bpy.ops.bl_pkg.repo_sync_all.poll()
             bpy.ops.bl_pkg.repo_sync_all('INVOKE_DEFAULT')
 
+            # BFA - when you enable, copy pre-downloaded extensions
+            bpy.ops.bl_pkg.replace_legacy_addons('INVOKE_DEFAULT') # BFA
+            print("It ran the custom operator, yay!")
+
         prefs.extensions.use_online_access_handled = True
 
         return {'FINISHED'}
@@ -2299,6 +2308,66 @@ class BlPkgEnableNotInstalled(Operator):
         # while giving users a reasonable explanation on why is that.
         return {'CANCELLED'}
 
+
+# -----------------------------------------------------------------------------
+# BFA - Start of changes, a new operation to remove legacy and replace with pre-downloaded extension addons
+#
+
+class BlkPkgReplaceLegacyAddons(Operator):
+    """Remove the legacy addons when Extensions are enabled."""
+    bl_idname = "bl_pkg.replace_legacy_addons"
+    bl_label = "Replace Legacy with Extension"
+
+    def execute(self, context):
+        source_ext = "Default_Extensions"
+
+        # ----------
+        # Variables
+
+        current_script_path = p.dirname(__file__)
+
+        # Get the addon path
+        path = os.path.join(os.path.dirname(current_script_path), "bfa_default_addons")
+
+        # Get the USER path
+        user_path = Path(bpy.utils.resource_path('USER')).parent
+
+        # Get the version string
+        version_string = bpy.app.version_string
+
+        # Split the string at the last dot to get 'MAJOR.MINOR'
+        major_minor = '.'.join(version_string.split('.')[:-1])
+
+        # Join with the user_path
+        version_path = Path(user_path, major_minor)
+
+        # Get the source files
+        source_ext_folder = os.path.join(path, source_ext)
+
+        # Define the Extensions sub-folder path
+        destination_ext_folder = version_path / 'extensions' / 'blender_org'
+
+        # --------------------------
+        # Copy the extension addons
+
+        # Ensure the extensions sub-folder exists
+        if not destination_ext_folder.exists():
+            destination_ext_folder.mkdir(parents=True)
+        print(destination_ext_folder)
+
+        # Copy the other extenions that are in sub-directories
+        for item in os.listdir(source_ext_folder):
+            s = os.path.join(source_ext_folder, item)
+            d = os.path.join(destination_ext_folder, item)
+            if os.path.isdir(s):
+                if not os.path.exists(d):
+                    shutil.copytree(s, d, False, None)
+            else:
+                shutil.copy2(s, d)  # copies also metadata
+            print("It copied the extensions correctly")
+
+        return {'FINISHED'}
+### BFA - End of changes
 
 # -----------------------------------------------------------------------------
 # Register
@@ -2340,6 +2409,8 @@ classes = (
 
     # Dummy commands (for testing).
     BlPkgDummyProgress,
+
+    BlkPkgReplaceLegacyAddons, #BFA - custom operator for legacy addons
 )
 
 

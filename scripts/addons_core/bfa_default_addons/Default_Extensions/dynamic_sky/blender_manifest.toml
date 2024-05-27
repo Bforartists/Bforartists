@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "dynamic_sky"
+name = "Dynamic Sky"
+version = "1.0.6"
+tagline = "Creates Dynamic Sky for Cycles"
+maintainer = "Community"
+type = "add-on"
+tags = ["Lighting"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/lighting_dynamic_sky"
+copyright = ["2024 Pratik Solanki"]

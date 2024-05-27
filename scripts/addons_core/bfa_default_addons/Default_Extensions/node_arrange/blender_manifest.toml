@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "node_arrange"
+name = "Node Arrange"
+version = "0.2.2"
+tagline = "Node Tree Arrangement Tools"
+maintainer = "Community"
+type = "add-on"
+tags = ["Node"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/node_arrange"
+copyright = ["2024 JuhaW"]

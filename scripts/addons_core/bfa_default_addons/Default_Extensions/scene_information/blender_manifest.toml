@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "scene_information"
+name = "Scene Information"
+version = "0.3.1"
+tagline = "Show information about the .blend"
+maintainer = "Community"
+type = "add-on"
+tags = ["System"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/system_blend_info"
+copyright = ["2024 uselessdreamer"]
