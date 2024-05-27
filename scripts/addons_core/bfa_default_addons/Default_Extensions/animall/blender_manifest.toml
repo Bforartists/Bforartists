@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "animall"
+name = "AnimAll"
+version = "0.10.1"
+tagline = "Allows animation of mesh, lattice, curve and surface data"
+maintainer = "Community"
+type = "add-on"
+tags = ["Animation"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/animation_animall"
+copyright = ["2024 Daniel Salazar (ZanQdo)", "2024 Damien Picard (pioverfour)"]

@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "skinify_rig"
+name = "Skinify Rig"
+version = "0.11.2"
+tagline = "Creates a mesh object from selected bones"
+maintainer = "Community"
+type = "add-on"
+tags = ["Object"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/object_skinify"
+copyright = ["2024 Albert Makac (karab44)"]

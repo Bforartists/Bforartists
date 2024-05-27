@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "object_color_rules"
+name = "Object Color Rules"
+version = "0.0.2"
+tagline = "Rules for assigning object color (for object & wireframe co . . "
+maintainer = "Community"
+type = "add-on"
+tags = ["Object"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/object_color_rules"
+copyright = ["2024 Campbell Barton"]
