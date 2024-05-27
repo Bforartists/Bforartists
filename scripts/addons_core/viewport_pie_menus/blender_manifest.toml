@@ -1,8 +1,8 @@
 schema_version = "1.0.0"
 id = "viewport_pie_menus"
-name = "3D Viewport Pie Menus - Bforartists Version"
+name = "3D Viewport Pie Menus"
 version = "1.3.0"
-tagline = "Pie Menu Activation"
+tagline = "Extra Pie Menus - Bforartists Version"
 maintainer = "Community"
 type = "add-on"
 tags = ["User Interface"]
