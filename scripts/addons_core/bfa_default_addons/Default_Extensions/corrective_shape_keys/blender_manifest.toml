@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "corrective_shape_keys"
+name = "Corrective Shape Keys"
+version = "1.0.0"
+tagline = "Creates a corrective shape key for the current pose"
+maintainer = "Community"
+type = "add-on"
+tags = ["Animation"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/animation_add_corrective_shape_key"
+copyright = ["2024 Ivo Grigull (loolarge)", "2024 Tal Trachtman"]

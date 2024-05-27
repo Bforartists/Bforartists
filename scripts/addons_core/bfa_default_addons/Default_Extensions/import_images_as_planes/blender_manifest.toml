@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "import_images_as_planes"
+name = "Import Images as Planes"
+version = "3.6.0"
+tagline = "Imports images and creates planes with the appropriate aspe . . "
+maintainer = "Community"
+type = "add-on"
+tags = ["Import-Export"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/io_import_images_as_planes"
+copyright = ["2024 Florian Meyer (tstscr)", "2024 mont29", "2024 matali", "2024 Ted Schundler (SpkyElctrc)", "2024 mrbimax"]
