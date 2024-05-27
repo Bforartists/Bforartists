@@ -1,0 +1,4428 @@
+#
+#    Program: Create_atomic_data_file
+#    ================================
+#
+#    Version: 0.5
+#    Author : Dr. Clemens Barth
+#    Date   : 2022-01-21
+#
+#
+#
+#
+#    This file contains, for each element, the following properties:
+#
+#    - Atom radii (atomic, covalent, ionic)
+#    - Color of the representative ball
+#    - Material properties used in the Principled BSDF shader
+#    - Properties for Eevee.
+#
+#
+#
+#    The following string options are available:
+#
+#    P BSDF Subsurface method : 'BURLEY', 'RANDOM_WALK', 'RANDOM_WALK_SKIN'
+#    P BSDF Distribution      : 'GGX', 'MULTI_GGX'
+#    Eevee Blend Method       : 'OPAQUE', 'CLIP', 'HASHED', 'BLEND'
+#    Eevee Shadow Method      : 'NONE', 'OPAQUE', 'CLIP', 'HASHED'
+#
+#
+
+
+Atom
+====
+Number                       : 1
+Name                         : Hydrogen
+Short name                   : H
+Radius used                  : 0.320000
+Radius, covalent             : 0.320000
+Radius, atomic               : 0.790000
+Charge state                 : -1
+Radius, ionic                : 1.540000
+Color                        : 1.0,1.0,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 2
+Name                         : Helium
+Short name                   : He
+Radius used                  : 0.930000
+Radius, covalent             : 0.930000
+Radius, atomic               : 0.490000
+Color                        : 0.8509803921568627,1.0,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 3
+Name                         : Lithium
+Short name                   : Li
+Radius used                  : 1.230000
+Radius, covalent             : 1.230000
+Radius, atomic               : 2.050000
+Charge state                 : 1
+Radius, ionic                : 0.680000
+Color                        : 0.8,0.5019607843137255,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 4
+Name                         : Beryllium
+Short name                   : Be
+Radius used                  : 0.900000
+Radius, covalent             : 0.900000
+Radius, atomic               : 1.400000
+Charge state                 : 1
+Radius, ionic                : 0.440000
+Charge state                 : 2
+Radius, ionic                : 0.350000
+Color                        : 0.7607843137254902,1.0,0.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 5
+Name                         : Boron
+Short name                   : B
+Radius used                  : 0.820000
+Radius, covalent             : 0.820000
+Radius, atomic               : 1.170000
+Charge state                 : 1
+Radius, ionic                : 0.350000
+Charge state                 : 3
+Radius, ionic                : 0.230000
+Color                        : 1.0,0.7098039215686275,0.7098039215686275,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 6
+Name                         : Carbon
+Short name                   : C
+Radius used                  : 0.770000
+Radius, covalent             : 0.770000
+Radius, atomic               : 0.910000
+Charge state                 : -4
+Radius, ionic                : 2.600000
+Charge state                 : 4
+Radius, ionic                : 0.160000
+Color                        : 0.5647058823529412,0.5647058823529412,0.5647058823529412,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 7
+Name                         : Nitrogen
+Short name                   : N
+Radius used                  : 0.750000
+Radius, covalent             : 0.750000
+Radius, atomic               : 0.750000
+Charge state                 : -3
+Radius, ionic                : 1.710000
+Charge state                 : 1
+Radius, ionic                : 0.250000
+Charge state                 : 3
+Radius, ionic                : 0.160000
+Charge state                 : 5
+Radius, ionic                : 0.130000
+Color                        : 0.18823529411764706,0.3137254901960784,0.9725490196078431,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 8
+Name                         : Oxygen
+Short name                   : O
+Radius used                  : 0.730000
+Radius, covalent             : 0.730000
+Radius, atomic               : 0.650000
+Charge state                 : -2
+Radius, ionic                : 1.320000
+Charge state                 : -1
+Radius, ionic                : 1.760000
+Charge state                 : 1
+Radius, ionic                : 0.220000
+Charge state                 : 6
+Radius, ionic                : 0.090000
+Color                        : 1.0,0.050980392156862744,0.050980392156862744,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 9
+Name                         : Fluorine
+Short name                   : F
+Radius used                  : 0.720000
+Radius, covalent             : 0.720000
+Radius, atomic               : 0.570000
+Charge state                 : -1
+Radius, ionic                : 1.330000
+Charge state                 : 7
+Radius, ionic                : 0.080000
+Color                        : 0.5647058823529412,0.8784313725490196,0.3137254901960784,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 10
+Name                         : Neon
+Short name                   : Ne
+Radius used                  : 0.710000
+Radius, covalent             : 0.710000
+Radius, atomic               : 0.510000
+Charge state                 : 1
+Radius, ionic                : 1.120000
+Color                        : 0.7019607843137254,0.8901960784313725,0.9607843137254902,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 11
+Name                         : Sodium
+Short name                   : Na
+Radius used                  : 1.540000
+Radius, covalent             : 1.540000
+Radius, atomic               : 2.230000
+Charge state                 : 1
+Radius, ionic                : 0.970000
+Color                        : 0.6705882352941176,0.3607843137254902,0.9490196078431372,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 12
+Name                         : Magnesium
+Short name                   : Mg
+Radius used                  : 1.360000
+Radius, covalent             : 1.360000
+Radius, atomic               : 1.720000
+Charge state                 : 1
+Radius, ionic                : 0.820000
+Charge state                 : 2
+Radius, ionic                : 0.660000
+Color                        : 0.5411764705882353,1.0,0.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 13
+Name                         : Aluminium
+Short name                   : Al
+Radius used                  : 1.180000
+Radius, covalent             : 1.180000
+Radius, atomic               : 1.820000
+Charge state                 : 3
+Radius, ionic                : 0.510000
+Color                        : 0.7490196078431373,0.6509803921568628,0.6509803921568628,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 14
+Name                         : Silicon
+Short name                   : Si
+Radius used                  : 1.110000
+Radius, covalent             : 1.110000
+Radius, atomic               : 1.460000
+Charge state                 : -4
+Radius, ionic                : 2.710000
+Charge state                 : -1
+Radius, ionic                : 3.840000
+Charge state                 : 1
+Radius, ionic                : 0.650000
+Charge state                 : 4
+Radius, ionic                : 0.420000
+Color                        : 0.9411764705882353,0.7843137254901961,0.6274509803921569,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 15
+Name                         : Phosphorus
+Short name                   : P
+Radius used                  : 1.060000
+Radius, covalent             : 1.060000
+Radius, atomic               : 1.230000
+Charge state                 : -3
+Radius, ionic                : 2.120000
+Charge state                 : 3
+Radius, ionic                : 0.440000
+Charge state                 : 5
+Radius, ionic                : 0.350000
+Color                        : 1.0,0.5019607843137255,0.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 16
+Name                         : Sulfur
+Short name                   : S
+Radius used                  : 1.020000
+Radius, covalent             : 1.020000
+Radius, atomic               : 1.090000
+Charge state                 : -2
+Radius, ionic                : 1.840000
+Charge state                 : 2
+Radius, ionic                : 2.190000
+Charge state                 : 4
+Radius, ionic                : 0.370000
+Charge state                 : 6
+Radius, ionic                : 0.300000
+Color                        : 1.0,1.0,0.18823529411764706,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 17
+Name                         : Chlorine
+Short name                   : Cl
+Radius used                  : 0.990000
+Radius, covalent             : 0.990000
+Radius, atomic               : 0.970000
+Charge state                 : -1
+Radius, ionic                : 1.810000
+Charge state                 : 5
+Radius, ionic                : 0.340000
+Charge state                 : 7
+Radius, ionic                : 0.270000
+Color                        : 0.12156862745098039,0.9411764705882353,0.12156862745098039,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 18
+Name                         : Argon
+Short name                   : Ar
+Radius used                  : 0.980000
+Radius, covalent             : 0.980000
+Radius, atomic               : 0.880000
+Charge state                 : 1
+Radius, ionic                : 1.540000
+Color                        : 0.5019607843137255,0.8196078431372549,0.8901960784313725,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 19
+Name                         : Potassium
+Short name                   : K
+Radius used                  : 2.030000
+Radius, covalent             : 2.030000
+Radius, atomic               : 2.770000
+Charge state                 : 1
+Radius, ionic                : 0.810000
+Color                        : 0.5607843137254902,0.25098039215686274,0.8313725490196079,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 20
+Name                         : Calcium
+Short name                   : Ca
+Radius used                  : 1.740000
+Radius, covalent             : 1.740000
+Radius, atomic               : 2.230000
+Charge state                 : 1
+Radius, ionic                : 1.180000
+Charge state                 : 2
+Radius, ionic                : 0.990000
+Color                        : 0.23921568627450981,1.0,0.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 21
+Name                         : Scandium
+Short name                   : Sc
+Radius used                  : 1.440000
+Radius, covalent             : 1.440000
+Radius, atomic               : 2.090000
+Charge state                 : 3
+Radius, ionic                : 0.732000
+Color                        : 0.9019607843137255,0.9019607843137255,0.9019607843137255,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 22
+Name                         : Titanium
+Short name                   : Ti
+Radius used                  : 1.320000
+Radius, covalent             : 1.320000
+Radius, atomic               : 2.000000
+Charge state                 : 1
+Radius, ionic                : 0.960000
+Charge state                 : 2
+Radius, ionic                : 0.940000
+Charge state                 : 3
+Radius, ionic                : 0.760000
+Charge state                 : 4
+Radius, ionic                : 0.680000
+Color                        : 0.7490196078431373,0.7607843137254902,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 23
+Name                         : Vanadium
+Short name                   : V
+Radius used                  : 1.220000
+Radius, covalent             : 1.220000
+Radius, atomic               : 1.920000
+Charge state                 : 2
+Radius, ionic                : 0.880000
+Charge state                 : 3
+Radius, ionic                : 0.740000
+Charge state                 : 4
+Radius, ionic                : 0.630000
+Charge state                 : 5
+Radius, ionic                : 0.590000
+Color                        : 0.6509803921568628,0.6509803921568628,0.6705882352941176,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 24
+Name                         : Chromium
+Short name                   : Cr
+Radius used                  : 1.180000
+Radius, covalent             : 1.180000
+Radius, atomic               : 1.850000
+Charge state                 : 1
+Radius, ionic                : 0.810000
+Charge state                 : 2
+Radius, ionic                : 0.890000
+Charge state                 : 3
+Radius, ionic                : 0.630000
+Charge state                 : 6
+Radius, ionic                : 0.520000
+Color                        : 0.5411764705882353,0.6,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 25
+Name                         : Manganese
+Short name                   : Mn
+Radius used                  : 1.170000
+Radius, covalent             : 1.170000
+Radius, atomic               : 1.790000
+Charge state                 : 2
+Radius, ionic                : 0.800000
+Charge state                 : 3
+Radius, ionic                : 0.660000
+Charge state                 : 4
+Radius, ionic                : 0.600000
+Charge state                 : 7
+Radius, ionic                : 0.460000
+Color                        : 0.611764705882353,0.47843137254901963,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 26
+Name                         : Iron
+Short name                   : Fe
+Radius used                  : 1.170000
+Radius, covalent             : 1.170000
+Radius, atomic               : 1.720000
+Charge state                 : 2
+Radius, ionic                : 0.740000
+Charge state                 : 3
+Radius, ionic                : 0.640000
+Color                        : 0.8784313725490196,0.4,0.2,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 27
+Name                         : Cobalt
+Short name                   : Co
+Radius used                  : 1.160000
+Radius, covalent             : 1.160000
+Radius, atomic               : 1.670000
+Charge state                 : 2
+Radius, ionic                : 0.720000
+Charge state                 : 3
+Radius, ionic                : 0.630000
+Color                        : 0.9411764705882353,0.5647058823529412,0.6274509803921569,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 28
+Name                         : Nickel
+Short name                   : Ni
+Radius used                  : 1.150000
+Radius, covalent             : 1.150000
+Radius, atomic               : 1.620000
+Charge state                 : 2
+Radius, ionic                : 0.690000
+Color                        : 0.3137254901960784,0.8156862745098039,0.3137254901960784,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 29
+Name                         : Copper
+Short name                   : Cu
+Radius used                  : 1.170000
+Radius, covalent             : 1.170000
+Radius, atomic               : 1.570000
+Charge state                 : 1
+Radius, ionic                : 0.960000
+Charge state                 : 2
+Radius, ionic                : 0.720000
+Color                        : 0.7843137254901961,0.5019607843137255,0.2,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 30
+Name                         : Zinc
+Short name                   : Zn
+Radius used                  : 1.250000
+Radius, covalent             : 1.250000
+Radius, atomic               : 1.530000
+Charge state                 : 1
+Radius, ionic                : 0.880000
+Charge state                 : 2
+Radius, ionic                : 0.740000
+Color                        : 0.49019607843137253,0.5019607843137255,0.6901960784313725,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 31
+Name                         : Gallium
+Short name                   : Ga
+Radius used                  : 1.260000
+Radius, covalent             : 1.260000
+Radius, atomic               : 1.810000
+Charge state                 : 1
+Radius, ionic                : 0.810000
+Charge state                 : 3
+Radius, ionic                : 0.620000
+Color                        : 0.7607843137254902,0.5607843137254902,0.5607843137254902,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 32
+Name                         : Germanium
+Short name                   : Ge
+Radius used                  : 1.220000
+Radius, covalent             : 1.220000
+Radius, atomic               : 1.520000
+Charge state                 : -4
+Radius, ionic                : 2.720000
+Charge state                 : 2
+Radius, ionic                : 0.730000
+Charge state                 : 4
+Radius, ionic                : 0.530000
+Color                        : 0.4,0.5607843137254902,0.5607843137254902,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 33
+Name                         : Arsenic
+Short name                   : As
+Radius used                  : 1.200000
+Radius, covalent             : 1.200000
+Radius, atomic               : 1.330000
+Charge state                 : -3
+Radius, ionic                : 2.220000
+Charge state                 : 3
+Radius, ionic                : 0.580000
+Charge state                 : 5
+Radius, ionic                : 0.460000
+Color                        : 0.7411764705882353,0.5019607843137255,0.8901960784313725,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 34
+Name                         : Selenium
+Short name                   : Se
+Radius used                  : 1.160000
+Radius, covalent             : 1.160000
+Radius, atomic               : 1.220000
+Charge state                 : -2
+Radius, ionic                : 1.910000
+Charge state                 : -1
+Radius, ionic                : 2.320000
+Charge state                 : 1
+Radius, ionic                : 0.660000
+Charge state                 : 4
+Radius, ionic                : 0.500000
+Charge state                 : 6
+Radius, ionic                : 0.420000
+Color                        : 1.0,0.6313725490196078,0.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 35
+Name                         : Bromine
+Short name                   : Br
+Radius used                  : 1.140000
+Radius, covalent             : 1.140000
+Radius, atomic               : 1.120000
+Charge state                 : -1
+Radius, ionic                : 1.960000
+Charge state                 : 5
+Radius, ionic                : 0.470000
+Charge state                 : 7
+Radius, ionic                : 0.390000
+Color                        : 0.6509803921568628,0.1607843137254902,0.1607843137254902,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 36
+Name                         : Krypton
+Short name                   : Kr
+Radius used                  : 1.310000
+Radius, covalent             : 1.310000
+Radius, atomic               : 1.240000
+Color                        : 0.3607843137254902,0.7215686274509804,0.8196078431372549,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 37
+Name                         : Rubidium
+Short name                   : Rb
+Radius used                  : 2.160000
+Radius, covalent             : 2.160000
+Radius, atomic               : 2.980000
+Charge state                 : 1
+Radius, ionic                : 1.470000
+Color                        : 0.4392156862745098,0.1803921568627451,0.6901960784313725,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 38
+Name                         : Strontium
+Short name                   : Sr
+Radius used                  : 1.910000
+Radius, covalent             : 1.910000
+Radius, atomic               : 2.450000
+Charge state                 : 2
+Radius, ionic                : 1.120000
+Color                        : 0.0,1.0,0.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 39
+Name                         : Yttrium
+Short name                   : Y
+Radius used                  : 1.620000
+Radius, covalent             : 1.620000
+Radius, atomic               : 2.270000
+Charge state                 : 3
+Radius, ionic                : 0.893000
+Color                        : 0.5803921568627451,1.0,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 40
+Name                         : Zirconium
+Short name                   : Zr
+Radius used                  : 1.450000
+Radius, covalent             : 1.450000
+Radius, atomic               : 2.160000
+Charge state                 : 1
+Radius, ionic                : 1.090000
+Charge state                 : 4
+Radius, ionic                : 0.790000
+Color                        : 0.5803921568627451,0.8784313725490196,0.8784313725490196,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 41
+Name                         : Niobium
+Short name                   : Nb
+Radius used                  : 1.340000
+Radius, covalent             : 1.340000
+Radius, atomic               : 2.080000
+Charge state                 : 1
+Radius, ionic                : 1.000000
+Charge state                 : 4
+Radius, ionic                : 0.740000
+Charge state                 : 5
+Radius, ionic                : 0.690000
+Color                        : 0.45098039215686275,0.7607843137254902,0.788235294117647,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 42
+Name                         : Molybdenum
+Short name                   : Mo
+Radius used                  : 1.300000
+Radius, covalent             : 1.300000
+Radius, atomic               : 2.010000
+Charge state                 : 1
+Radius, ionic                : 0.930000
+Charge state                 : 4
+Radius, ionic                : 0.700000
+Charge state                 : 6
+Radius, ionic                : 0.620000
+Color                        : 0.32941176470588235,0.7098039215686275,0.7098039215686275,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 43
+Name                         : Technetium
+Short name                   : Tc
+Radius used                  : 1.270000
+Radius, covalent             : 1.270000
+Radius, atomic               : 1.950000
+Charge state                 : 7
+Radius, ionic                : 0.979000
+Color                        : 0.23137254901960785,0.6196078431372549,0.6196078431372549,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 44
+Name                         : Ruthenium
+Short name                   : Ru
+Radius used                  : 1.250000
+Radius, covalent             : 1.250000
+Radius, atomic               : 1.890000
+Charge state                 : 4
+Radius, ionic                : 0.670000
+Color                        : 0.1411764705882353,0.5607843137254902,0.5607843137254902,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 45
+Name                         : Rhodium
+Short name                   : Rh
+Radius used                  : 1.250000
+Radius, covalent             : 1.250000
+Radius, atomic               : 1.830000
+Charge state                 : 3
+Radius, ionic                : 0.680000
+Color                        : 0.0392156862745098,0.49019607843137253,0.5490196078431373,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 46
+Name                         : Palladium
+Short name                   : Pd
+Radius used                  : 1.280000
+Radius, covalent             : 1.280000
+Radius, atomic               : 1.790000
+Charge state                 : 2
+Radius, ionic                : 0.800000
+Charge state                 : 4
+Radius, ionic                : 0.650000
+Color                        : 0.0,0.4117647058823529,0.5215686274509804,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 47
+Name                         : Silver
+Short name                   : Ag
+Radius used                  : 1.340000
+Radius, covalent             : 1.340000
+Radius, atomic               : 1.750000
+Charge state                 : 1
+Radius, ionic                : 1.260000
+Charge state                 : 2
+Radius, ionic                : 0.890000
+Color                        : 0.7529411764705882,0.7529411764705882,0.7529411764705882,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 48
+Name                         : Cadmium
+Short name                   : Cd
+Radius used                  : 1.480000
+Radius, covalent             : 1.480000
+Radius, atomic               : 1.710000
+Charge state                 : 1
+Radius, ionic                : 1.140000
+Charge state                 : 2
+Radius, ionic                : 0.970000
+Color                        : 1.0,0.8509803921568627,0.5607843137254902,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 49
+Name                         : Indium
+Short name                   : In
+Radius used                  : 1.440000
+Radius, covalent             : 1.440000
+Radius, atomic               : 2.000000
+Charge state                 : 3
+Radius, ionic                : 0.810000
+Color                        : 0.6509803921568628,0.4588235294117647,0.45098039215686275,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 50
+Name                         : Tin
+Short name                   : Sn
+Radius used                  : 1.410000
+Radius, covalent             : 1.410000
+Radius, atomic               : 1.720000
+Charge state                 : -4
+Radius, ionic                : 2.940000
+Charge state                 : -1
+Radius, ionic                : 3.700000
+Charge state                 : 2
+Radius, ionic                : 0.930000
+Charge state                 : 4
+Radius, ionic                : 0.710000
+Color                        : 0.4,0.5019607843137255,0.5019607843137255,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 51
+Name                         : Antimony
+Short name                   : Sb
+Radius used                  : 1.400000
+Radius, covalent             : 1.400000
+Radius, atomic               : 1.530000
+Charge state                 : -3
+Radius, ionic                : 2.450000
+Charge state                 : 3
+Radius, ionic                : 0.760000
+Charge state                 : 5
+Radius, ionic                : 0.620000
+Color                        : 0.6196078431372549,0.38823529411764707,0.7098039215686275,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 52
+Name                         : Tellurium
+Short name                   : Te
+Radius used                  : 1.360000
+Radius, covalent             : 1.360000
+Radius, atomic               : 1.420000
+Charge state                 : -2
+Radius, ionic                : 2.110000
+Charge state                 : -1
+Radius, ionic                : 2.500000
+Charge state                 : 1
+Radius, ionic                : 0.820000
+Charge state                 : 4
+Radius, ionic                : 0.700000
+Charge state                 : 6
+Radius, ionic                : 0.560000
+Color                        : 0.8313725490196079,0.47843137254901963,0.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 53
+Name                         : Iodine
+Short name                   : I
+Radius used                  : 1.330000
+Radius, covalent             : 1.330000
+Radius, atomic               : 1.320000
+Charge state                 : -1
+Radius, ionic                : 2.200000
+Charge state                 : 5
+Radius, ionic                : 0.620000
+Charge state                 : 7
+Radius, ionic                : 0.500000
+Color                        : 0.5803921568627451,0.0,0.5803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 54
+Name                         : Xenon
+Short name                   : Xe
+Radius used                  : 1.310000
+Radius, covalent             : 1.310000
+Radius, atomic               : 1.240000
+Color                        : 0.25882352941176473,0.6196078431372549,0.6901960784313725,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 55
+Name                         : Caesium
+Short name                   : Cs
+Radius used                  : 2.350000
+Radius, covalent             : 2.350000
+Radius, atomic               : 3.350000
+Charge state                 : 1
+Radius, ionic                : 1.670000
+Color                        : 0.3411764705882353,0.09019607843137255,0.5607843137254902,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 56
+Name                         : Barium
+Short name                   : Ba
+Radius used                  : 1.980000
+Radius, covalent             : 1.980000
+Radius, atomic               : 2.780000
+Charge state                 : 1
+Radius, ionic                : 1.530000
+Charge state                 : 2
+Radius, ionic                : 1.340000
+Color                        : 0.0,0.788235294117647,0.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 57
+Name                         : Lanthanum
+Short name                   : La
+Radius used                  : 1.690000
+Radius, covalent             : 1.690000
+Radius, atomic               : 2.740000
+Charge state                 : 1
+Radius, ionic                : 1.390000
+Charge state                 : 3
+Radius, ionic                : 1.061000
+Color                        : 0.4392156862745098,0.8313725490196079,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 58
+Name                         : Cerium
+Short name                   : Ce
+Radius used                  : 1.650000
+Radius, covalent             : 1.650000
+Radius, atomic               : 2.700000
+Charge state                 : 1
+Radius, ionic                : 1.270000
+Charge state                 : 3
+Radius, ionic                : 1.034000
+Charge state                 : 4
+Radius, ionic                : 0.920000
+Color                        : 1.0,1.0,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 59
+Name                         : Praseodymium
+Short name                   : Pr
+Radius used                  : 1.650000
+Radius, covalent             : 1.650000
+Radius, atomic               : 2.670000
+Charge state                 : 3
+Radius, ionic                : 1.013000
+Charge state                 : 4
+Radius, ionic                : 0.900000
+Color                        : 0.8509803921568627,1.0,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 60
+Name                         : Neodymium
+Short name                   : Nd
+Radius used                  : 1.640000
+Radius, covalent             : 1.640000
+Radius, atomic               : 2.640000
+Charge state                 : 3
+Radius, ionic                : 0.995000
+Color                        : 0.7803921568627451,1.0,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 61
+Name                         : Promethium
+Short name                   : Pm
+Radius used                  : 1.630000
+Radius, covalent             : 1.630000
+Radius, atomic               : 2.620000
+Charge state                 : 3
+Radius, ionic                : 0.979000
+Color                        : 0.6392156862745098,1.0,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 62
+Name                         : Samarium
+Short name                   : Sm
+Radius used                  : 1.620000
+Radius, covalent             : 1.620000
+Radius, atomic               : 2.590000
+Charge state                 : 3
+Radius, ionic                : 0.964000
+Color                        : 0.5607843137254902,1.0,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 63
+Name                         : Europium
+Short name                   : Eu
+Radius used                  : 1.850000
+Radius, covalent             : 1.850000
+Radius, atomic               : 2.560000
+Charge state                 : 2
+Radius, ionic                : 1.090000
+Charge state                 : 3
+Radius, ionic                : 0.950000
+Color                        : 0.3803921568627451,1.0,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 64
+Name                         : Gadolinium
+Short name                   : Gd
+Radius used                  : 1.610000
+Radius, covalent             : 1.610000
+Radius, atomic               : 2.540000
+Charge state                 : 3
+Radius, ionic                : 0.938000
+Color                        : 0.27058823529411763,1.0,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 65
+Name                         : Terbium
+Short name                   : Tb
+Radius used                  : 1.590000
+Radius, covalent             : 1.590000
+Radius, atomic               : 2.510000
+Charge state                 : 3
+Radius, ionic                : 0.923000
+Charge state                 : 4
+Radius, ionic                : 0.840000
+Color                        : 0.18823529411764706,1.0,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 66
+Name                         : Dysprosium
+Short name                   : Dy
+Radius used                  : 1.590000
+Radius, covalent             : 1.590000
+Radius, atomic               : 2.490000
+Charge state                 : 3
+Radius, ionic                : 0.908000
+Color                        : 0.12156862745098039,1.0,0.7803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 67
+Name                         : Holmium
+Short name                   : Ho
+Radius used                  : 1.580000
+Radius, covalent             : 1.580000
+Radius, atomic               : 2.470000
+Charge state                 : 3
+Radius, ionic                : 0.894000
+Color                        : 0.0,1.0,0.611764705882353,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 68
+Name                         : Erbium
+Short name                   : Er
+Radius used                  : 1.570000
+Radius, covalent             : 1.570000
+Radius, atomic               : 2.450000
+Charge state                 : 3
+Radius, ionic                : 0.881000
+Color                        : 0.0,0.9019607843137255,0.4588235294117647,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 69
+Name                         : Thulium
+Short name                   : Tm
+Radius used                  : 1.560000
+Radius, covalent             : 1.560000
+Radius, atomic               : 2.420000
+Charge state                 : 3
+Radius, ionic                : 0.870000
+Color                        : 0.0,0.8313725490196079,0.3215686274509804,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 70
+Name                         : Ytterbium
+Short name                   : Yb
+Radius used                  : 1.740000
+Radius, covalent             : 1.740000
+Radius, atomic               : 2.400000
+Charge state                 : 2
+Radius, ionic                : 0.930000
+Charge state                 : 3
+Radius, ionic                : 0.858000
+Color                        : 0.0,0.7490196078431373,0.2196078431372549,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 71
+Name                         : Lutetium
+Short name                   : Lu
+Radius used                  : 1.560000
+Radius, covalent             : 1.560000
+Radius, atomic               : 2.250000
+Charge state                 : 3
+Radius, ionic                : 0.850000
+Color                        : 0.0,0.6705882352941176,0.1411764705882353,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 72
+Name                         : Hafnium
+Short name                   : Hf
+Radius used                  : 1.440000
+Radius, covalent             : 1.440000
+Radius, atomic               : 2.160000
+Charge state                 : 4
+Radius, ionic                : 0.780000
+Color                        : 0.30196078431372547,0.7607843137254902,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 73
+Name                         : Tantalum
+Short name                   : Ta
+Radius used                  : 1.340000
+Radius, covalent             : 1.340000
+Radius, atomic               : 2.090000
+Charge state                 : 5
+Radius, ionic                : 0.680000
+Color                        : 0.30196078431372547,0.6509803921568628,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 74
+Name                         : Tungsten
+Short name                   : W
+Radius used                  : 1.300000
+Radius, covalent             : 1.300000
+Radius, atomic               : 2.020000
+Charge state                 : 4
+Radius, ionic                : 0.700000
+Charge state                 : 6
+Radius, ionic                : 0.620000
+Color                        : 0.12941176470588237,0.5803921568627451,0.8392156862745098,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 75
+Name                         : Rhenium
+Short name                   : Re
+Radius used                  : 1.280000
+Radius, covalent             : 1.280000
+Radius, atomic               : 1.970000
+Charge state                 : 4
+Radius, ionic                : 0.720000
+Charge state                 : 7
+Radius, ionic                : 0.560000
+Color                        : 0.14901960784313725,0.49019607843137253,0.6705882352941176,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 76
+Name                         : Osmium
+Short name                   : Os
+Radius used                  : 1.260000
+Radius, covalent             : 1.260000
+Radius, atomic               : 1.920000
+Charge state                 : 4
+Radius, ionic                : 0.880000
+Charge state                 : 6
+Radius, ionic                : 0.690000
+Color                        : 0.14901960784313725,0.4,0.5882352941176471,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 77
+Name                         : Iridium
+Short name                   : Ir
+Radius used                  : 1.270000
+Radius, covalent             : 1.270000
+Radius, atomic               : 1.870000
+Charge state                 : 4
+Radius, ionic                : 0.680000
+Color                        : 0.09019607843137255,0.32941176470588235,0.5294117647058824,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 78
+Name                         : Platinium
+Short name                   : Pt
+Radius used                  : 1.300000
+Radius, covalent             : 1.300000
+Radius, atomic               : 1.830000
+Charge state                 : 2
+Radius, ionic                : 0.800000
+Charge state                 : 4
+Radius, ionic                : 0.650000
+Color                        : 0.8156862745098039,0.8156862745098039,0.8784313725490196,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 79
+Name                         : Gold
+Short name                   : Au
+Radius used                  : 1.340000
+Radius, covalent             : 1.340000
+Radius, atomic               : 1.790000
+Charge state                 : 1
+Radius, ionic                : 1.370000
+Charge state                 : 3
+Radius, ionic                : 0.850000
+Color                        : 1.0,0.8196078431372549,0.13725490196078433,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 80
+Name                         : Mercury
+Short name                   : Hg
+Radius used                  : 1.490000
+Radius, covalent             : 1.490000
+Radius, atomic               : 1.760000
+Charge state                 : 1
+Radius, ionic                : 1.270000
+Charge state                 : 2
+Radius, ionic                : 1.100000
+Color                        : 0.7215686274509804,0.7215686274509804,0.8156862745098039,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 81
+Name                         : Thallium
+Short name                   : Tl
+Radius used                  : 1.480000
+Radius, covalent             : 1.480000
+Radius, atomic               : 2.080000
+Charge state                 : 1
+Radius, ionic                : 1.470000
+Charge state                 : 3
+Radius, ionic                : 0.950000
+Color                        : 0.6509803921568628,0.32941176470588235,0.30196078431372547,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 82
+Name                         : Lead
+Short name                   : Pb
+Radius used                  : 1.470000
+Radius, covalent             : 1.470000
+Radius, atomic               : 1.810000
+Charge state                 : 2
+Radius, ionic                : 1.200000
+Charge state                 : 4
+Radius, ionic                : 0.840000
+Color                        : 0.3411764705882353,0.34901960784313724,0.3803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 83
+Name                         : Bismuth
+Short name                   : Bi
+Radius used                  : 1.460000
+Radius, covalent             : 1.460000
+Radius, atomic               : 1.630000
+Charge state                 : 1
+Radius, ionic                : 0.980000
+Charge state                 : 3
+Radius, ionic                : 0.960000
+Charge state                 : 5
+Radius, ionic                : 0.740000
+Color                        : 0.6196078431372549,0.30980392156862746,0.7098039215686275,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 84
+Name                         : Polonium
+Short name                   : Po
+Radius used                  : 1.460000
+Radius, covalent             : 1.460000
+Radius, atomic               : 1.530000
+Charge state                 : 6
+Radius, ionic                : 0.670000
+Color                        : 0.6705882352941176,0.3607843137254902,0.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 85
+Name                         : Astatine
+Short name                   : At
+Radius used                  : 1.450000
+Radius, covalent             : 1.450000
+Radius, atomic               : 1.430000
+Charge state                 : -3
+Radius, ionic                : 2.220000
+Charge state                 : 3
+Radius, ionic                : 0.850000
+Charge state                 : 5
+Radius, ionic                : 0.460000
+Color                        : 0.4588235294117647,0.30980392156862746,0.27058823529411763,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 86
+Name                         : Radon
+Short name                   : Rn
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.340000
+Color                        : 0.25882352941176473,0.5098039215686274,0.5882352941176471,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 87
+Name                         : Francium
+Short name                   : Fr
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Charge state                 : 1
+Radius, ionic                : 1.800000
+Color                        : 0.25882352941176473,0.0,0.4,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 88
+Name                         : Radium
+Short name                   : Ra
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Charge state                 : 2
+Radius, ionic                : 1.430000
+Color                        : 0.0,0.49019607843137253,0.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 89
+Name                         : Actinium
+Short name                   : Ac
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Charge state                 : 3
+Radius, ionic                : 1.180000
+Color                        : 0.4392156862745098,0.6705882352941176,0.9803921568627451,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 90
+Name                         : Thorium
+Short name                   : Th
+Radius used                  : 1.650000
+Radius, covalent             : 1.650000
+Radius, atomic               : 1.000000
+Charge state                 : 4
+Radius, ionic                : 1.020000
+Color                        : 0.0,0.7294117647058823,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 91
+Name                         : Protactinium
+Short name                   : Pa
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Charge state                 : 3
+Radius, ionic                : 1.130000
+Charge state                 : 4
+Radius, ionic                : 0.980000
+Charge state                 : 5
+Radius, ionic                : 0.890000
+Color                        : 0.0,0.6313725490196078,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 92
+Name                         : Uranium
+Short name                   : U
+Radius used                  : 1.420000
+Radius, covalent             : 1.420000
+Radius, atomic               : 1.000000
+Charge state                 : 4
+Radius, ionic                : 0.970000
+Charge state                 : 6
+Radius, ionic                : 0.800000
+Color                        : 0.0,0.5607843137254902,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 93
+Name                         : Neptunium
+Short name                   : Np
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Charge state                 : 3
+Radius, ionic                : 1.100000
+Charge state                 : 4
+Radius, ionic                : 0.950000
+Charge state                 : 7
+Radius, ionic                : 0.710000
+Color                        : 0.0,0.5019607843137255,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 94
+Name                         : Plutonium
+Short name                   : Pu
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Charge state                 : 3
+Radius, ionic                : 1.080000
+Charge state                 : 4
+Radius, ionic                : 0.930000
+Color                        : 0.0,0.4196078431372549,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 95
+Name                         : Americium
+Short name                   : Am
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Charge state                 : 3
+Radius, ionic                : 1.070000
+Charge state                 : 4
+Radius, ionic                : 0.920000
+Color                        : 0.32941176470588235,0.3607843137254902,0.9490196078431372,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 96
+Name                         : Curium
+Short name                   : Cm
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Color                        : 0.47058823529411764,0.3607843137254902,0.8901960784313725,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 97
+Name                         : Berkelium
+Short name                   : Bk
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Color                        : 0.5411764705882353,0.30980392156862746,0.8901960784313725,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 98
+Name                         : Californium
+Short name                   : Cf
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Color                        : 0.6313725490196078,0.21176470588235294,0.8313725490196079,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 99
+Name                         : Einsteinium
+Short name                   : Es
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Color                        : 0.7019607843137254,0.12156862745098039,0.8313725490196079,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 100
+Name                         : Fermium
+Short name                   : Fm
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Color                        : 0.7019607843137254,0.12156862745098039,0.7294117647058823,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 101
+Name                         : Mendelevium
+Short name                   : Md
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Color                        : 0.7019607843137254,0.050980392156862744,0.6509803921568628,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 102
+Name                         : Nobelium
+Short name                   : No
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Color                        : 0.7411764705882353,0.050980392156862744,0.5294117647058824,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 103
+Name                         : Lawrencium
+Short name                   : Lr
+Radius used                  : 1.000000
+Radius, covalent             : 1.000000
+Radius, atomic               : 1.000000
+Color                        : 0.7803921568627451,0.0,0.4,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 104
+Name                         : Vacancy
+Short name                   : Vac
+Radius used                  : 1.0
+Radius, covalent             : 1.0
+Radius, atomic               : 1.0
+Color                        : 0.5,0.5,0.5,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Specular Tint         : 1.0, 1.0, 1.0, 1.0
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 105
+Name                         : Default
+Short name                   : Default
+Radius used                  : 1.0
+Radius, covalent             : 1.0
+Radius, atomic               : 1.0
+Color                        : 1.0,1.0,1.0,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+
+Atom
+====
+Number                       : 106
+Name                         : Stick
+Short name                   : Stick
+Radius used                  : 1.0
+Radius, covalent             : 1.0
+Radius, atomic               : 1.0
+Color                        : 0.5,0.5,0.5,1.0
+P BSDF Subsurface method     : BURLEY
+P BSDF Distribution          : MULTI_GGX
+P BSDF Subsurface Weight     : 0.0
+P BSDF Subsurface Radius     : 1.0, 0.2, 0.1
+P BSDF Metallic              : 0.0
+P BSDF Specular IOR Level    : 0.5
+P BSDF Roughness             : 0.5
+P BSDF Anisotropic           : 0.5
+P BSDF Anisotropic Rotation  : 0.5
+P BSDF Sheen Weight          : 0.5
+P BSDF Sheen Tint            : 0.5
+P BSDF Coat Weight           : 0.0
+P BSDF Coat Roughness        : 0.030
+P BSDF IOR                   : 1.4
+P BSDF Transmission Weight   : 0.0
+P BSDF Emisssion             : 0.0, 0.0, 0.0, 1.0
+P BSDF Emission Strength     : 0.0
+P BSDF Alpha                 : 1.0
+Eevee Use Backface Culling   : True
+Eevee Blend Method           : OPAQUE
+Eevee Shadow Method          : OPAQUE
+Eevee Clip Threshold         : 0.5
+Eevee Use Screen Refraction  : False
+Eevee Refraction depth       : 0.5
+Eevee Use SSS Translucency   : False
+Eevee Pass Index             : 0
+
+

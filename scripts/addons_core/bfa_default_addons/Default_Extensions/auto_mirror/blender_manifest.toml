@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "auto_mirror"
+name = "Auto Mirror"
+version = "2.5.4"
+tagline = "Super fast cutting and mirroring for mesh"
+maintainer = "Community"
+type = "add-on"
+tags = ["Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/mesh_auto_mirror"
+copyright = ["2024 Lapineige"]

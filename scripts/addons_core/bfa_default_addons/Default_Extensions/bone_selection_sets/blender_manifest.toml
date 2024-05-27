@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "bone_selection_sets"
+name = "Bone Selection Sets"
+version = "2.1.1"
+tagline = "List of Bone sets for easy selection while animating"
+maintainer = "Community"
+type = "add-on"
+tags = ["Animation"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/bone_selection_sets"
+copyright = ["2024 Inês Almeida", "2024 Sybren A. Stüvel", "2024 Antony Riakiotakis", "2024 Dan Eicher"]

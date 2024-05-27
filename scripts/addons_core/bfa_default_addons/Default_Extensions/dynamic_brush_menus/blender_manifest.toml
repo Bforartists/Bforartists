@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "dynamic_brush_menus"
+name = "Dynamic Brush Menus"
+version = "1.1.10"
+tagline = "Fast access to brushes & tools in Sculpt and Paint Modes"
+maintainer = "Community"
+type = "add-on"
+tags = ["User Interface"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/space_view3d_brush_menus"
+copyright = ["2024 Ryan Inch (Imaginer)"]
