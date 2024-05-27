@@ -29,7 +29,6 @@ import sys
 from bpy.types import (
     AddonPreferences,
     Context,
-    Preferences,
     UILayout,
 )
 
@@ -43,7 +42,7 @@ bl_info = {
     "version": (1, 0, 0),
     "blender": (4, 2, 0),
     "location": "Preferences - Extensions",
-    "description": "Adds all the default legacy addons as a pre-downloaded bundle of addons and extensions",
+    "description": "Adds all the default legacy addons as a pre-downloaded bundle of addons and/or extensions",
     "warning": "Bforartists Exclusive",
     "doc_url": "https://github.com/Bforartists/Manual",
     "tracker_url": "https://github.com/Bforartists/Bforartists",
@@ -102,13 +101,13 @@ class LIBADDON_APT_preferences(AddonPreferences):
         layout.label(
             text=f"{source_ext} - Version {'.'.join(map(str, addon_version))}")
         layout.label(
-            text="This addons copies all the legacy addons to the user preferences on first load.")
+            text="This addons copies all the legacy addons to the user preferences on first startup.")
         layout.label(
-            text="When you opt-in to use Extensions, Bforartists  will remove the legacy addons.")
+            text="When you opt-in to use Extensions, Bforartists will remove the legacy addons")
         layout.label(
-            text="Legacy addons will become extensions that you can uninstall, update and enjoy!")
+            text="and they will be replaced with extensions that you can uninstall, update and enjoy!")
         layout.label(
-            text="If you disable this addon, this will remove the legacy addons")
+            text="Bforartist Legacy addons with changes are now Core extensions", info="ERROR")
 
 
 
@@ -122,15 +121,14 @@ def register_addons():
     # Ensure the addons sub-folder exists
     if not destination_addon_folder.exists():
         destination_addon_folder.mkdir(parents=True)
-    print(destination_addon_folder)
 
     # Check if extensions is on on first load, if not, bypass
     if prefs.extensions.use_online_access_handled == True :
         # If addon is enabled and extensions is on, do nothing
-        print("Extensions is already enabled, so never mind...")
+        print("INFO: Extensions is already enabled, so never mind...")
         pass
     else:
-        print("Extensions not enabled, copying default legacy addons...")
+        print("INFO: Extensions not enabled, copying default legacy addons...")
         # If extensions is not on, and the addon is on, then install the legacy addons
 
         # Loop through each file in the source_addon_folder to install them, so the pycache is set
@@ -152,7 +150,7 @@ def register_addons():
                     shutil.copytree(s, d, False, None)
             else:
                 shutil.copy2(s, d)  # copies also metadata
-        print("Info: Legacy addons installed")
+        print("INFO: Legacy addons installed")
 
         # Refresh to see all
         bpy.ops.preferences.addon_refresh()
