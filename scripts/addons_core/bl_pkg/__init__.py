@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 bl_info = {
-    "name": "Blender Extensions",
+    "name": "Extensions", #BFA - removed "Blender"
     "author": "Campbell Barton",
     "version": (0, 0, 1),
     "blender": (4, 0, 0),
     "location": "Edit -> Preferences -> Extensions",
-    "description": "Extension repository support for remote repositories",
-    "warning": "",
+    "description": "Extension repository support for remote repositories - Bforartists Version", #BFA - mentined
+    "warning": "Bforartists Version",
     # "doc_url": "{BLENDER_MANUAL_URL}/addons/bl_pkg/bl_pkg.html",
     "support": 'OFFICIAL',
     "category": "System",

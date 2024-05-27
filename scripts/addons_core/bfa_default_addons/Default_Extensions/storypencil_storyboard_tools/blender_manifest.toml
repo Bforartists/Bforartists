@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "storypencil_storyboard_tools"
+name = "Storypencil - Storyboard Tools"
+version = "1.1.4"
+tagline = "Storyboard tools"
+maintainer = "Community"
+type = "add-on"
+tags = ["Sequencer"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/storypencil"
+copyright = ["2024 Antonio Vazquez", "2024 Matias Mendiola", "2024 Daniel Martinez Lara", "2024 Rodrigo Blaas", "2024 Samuel Bernou"]

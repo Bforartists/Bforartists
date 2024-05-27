@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "bsurfaces_gpl_edition"
+name = "Bsurfaces GPL Edition"
+version = "1.8.2"
+tagline = "Modeling and retopology tool"
+maintainer = "Community"
+type = "add-on"
+tags = ["Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/mesh_bsurfaces"
+copyright = ["2024 Eclectiel", "2024 Vladimir Spivak (cwolf3d)"]

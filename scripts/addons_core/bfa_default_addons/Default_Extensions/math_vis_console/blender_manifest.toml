@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "math_vis_console"
+name = "Math Vis (Console)"
+version = "0.2.2"
+tagline = "Display console defined mathutils variables in the 3D view"
+maintainer = "Community"
+type = "add-on"
+tags = ["3D View"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/space_view3d_math_vis"
+copyright = ["2024 Campbell Barton"]
