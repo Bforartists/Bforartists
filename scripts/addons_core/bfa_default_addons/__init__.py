@@ -29,6 +29,7 @@ import sys
 from bpy.types import (
     AddonPreferences,
     Context,
+    Operator,
     UILayout,
 )
 
@@ -85,27 +86,121 @@ destination_addon_folder = version_path / 'scripts' / 'addons'
 # ---------
 
 
-
-class LIBADDON_APT_preferences(AddonPreferences):
+class DEFAULTADDON_APT_preferences(AddonPreferences):
     bl_idname = __package__
 
     def draw(self, context: Context):
         layout: UILayout = self.layout
 
         # Display addon inormation
-        addon_version = bl_info['version']
+        #addon_version = bl_info['version']
+
+        #layout.label(
+        #    text=f"{source_ext} - Version {'.'.join(map(str, addon_version))}")
+
+
+        box = layout.box()
+
+        box.operator("bfa.install_legacy_addons", text="Install All Default Legacy Addons", icon='IMPORT')
+        box.operator("bfa.remove_legacy_addons", text="Remove All Default Legacy Addons", icon='CANCEL')
+
+        layout.separator()
+
+        box = layout.box()
+        box.label(
+            text="When enabled, this installs the Default Legacy Addons to the user preferences.", icon='INFO')
+        box.label(
+            text="When you opt-in to use Extensions, you can optionally remove all Default Legacy Addons.")
+        box.label(
+            text="Default Legacy Addons can be replaced with Extensions that can remotely update.")
+        box.label(
+            text="Bforartists will update every Legacy Addon and Extension equivalent per release.")
+
+        layout.separator()
 
         layout.label(
-            text=f"{source_ext} - Version {'.'.join(map(str, addon_version))}")
-        layout.label(
-            text="This addons copies all the legacy addons to the user preferences on first startup.")
-        layout.label(
-            text="When you opt-in to use Extensions, Bforartists will remove the legacy addons")
-        layout.label(
-            text="and they will be replaced with extensions that you can uninstall, update and enjoy!")
-        layout.label(
-            text="Bforartist Legacy addons with changes are now Core extensions", info="ERROR")
+            text="WARNING: You must disable the legacy addon before you enable the extension equivalent.", icon='ERROR')
 
+
+class DEFAULTADDON_OT_installlegacy(Operator):
+    """Installs all legacy addons that are not core addons"""
+    bl_idname = "bfa.install_legacy_addons"
+    bl_label = "Install Legacy Addons"
+
+    def execute(self, context):
+        # --------------------------
+        # Ensure the addons sub-folder exists
+        if not destination_addon_folder.exists():
+            destination_addon_folder.mkdir(parents=True)
+
+        print("INFO: Extensions not enabled, copying default legacy addons...")
+        # If extensions is not on, and the addon is on, then install the legacy addons
+
+        # Loop through each file in the source_addon_folder to install them, so the pycache is set
+        for file in os.listdir(source_addon_folder):
+            file_path = os.path.join(source_addon_folder, file)
+
+            # Check if the file is a .py file and is directly in the source_addon_folder
+            if file.endswith(".py") or file.endswith(".zip")  and os.path.isfile(file_path):
+                # install the addon
+                bpy.ops.preferences.addon_install(filepath=file_path)
+                print("Installed: " + file)
+
+        # Copy the other addons that are in sub-directories
+        for item in os.listdir(source_addon_folder):
+            s = os.path.join(source_addon_folder, item)
+            d = os.path.join(destination_addon_folder, item)
+            if os.path.isdir(s):
+                if not os.path.exists(d):
+                    shutil.copytree(s, d, False, None)
+            else:
+                shutil.copy2(s, d)  # copies also metadata
+        print("INFO: Legacy addons installed")
+
+        # Refresh to see all
+        bpy.ops.preferences.addon_refresh()
+
+        return {'FINISHED'}
+
+
+class DEFAULTADDON_OT_removelegacy(Operator):
+    """Removes all legacy addons that are not core addons"""
+    bl_idname = "bfa.remove_legacy_addons"
+    bl_label = "Remove Legacy Addons"
+
+    def execute(self, context):
+       # --------------------------
+        # Remove the legacy addons
+
+        # Iterate over all files in the source folder
+        for root, dirs, files in os.walk(source_addon_folder):
+            for file in files:
+                # Construct the full filepath
+                src_file = os.path.join(root, file)
+
+                # Construct the corresponding filepath in the destination folder
+                dest_file = str(src_file).replace(str(source_addon_folder), str(destination_addon_folder))
+
+                # If the file also exists in the destination folder, delete it
+                if os.path.exists(dest_file):
+                    os.remove(dest_file)
+
+        # Iterate over all sub-folders in the source folder
+        for root, dirs, files in os.walk(source_addon_folder):
+            for dir in dirs:
+                # Construct the full directory path
+                src_dir = os.path.join(root, dir)
+
+                # Construct the corresponding directory path in the destination folder
+                dest_dir = os.path.join(destination_addon_folder, os.path.relpath(src_dir, source_addon_folder))
+
+                # If the directory exists in the destination folder and is empty (contains no files), delete it
+                if os.path.exists(dest_dir) and not any(os.path.isfile(os.path.join(dest_dir, f)) for f in os.listdir(dest_dir)):
+                    shutil.rmtree(dest_dir)
+        # Refresh to see all
+        bpy.ops.preferences.addon_refresh()
+
+        return {'FINISHED'}
 
 
 def register_addons():
@@ -157,7 +252,9 @@ def register_addons():
 
 
 classes = (
-    LIBADDON_APT_preferences,
+    DEFAULTADDON_APT_preferences,
+    DEFAULTADDON_OT_installlegacy,
+    DEFAULTADDON_OT_removelegacy,
 )
 
 #Adds the the bundle when you load the addon.
