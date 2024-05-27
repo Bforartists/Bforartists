@@ -156,40 +156,6 @@ def register_addons():
 
     return
 
-def remove_legacy_addons():
-    """Remove the legacy addons as soon as the addon is disabled."""
-
-    # Get the addon source files
-    source_addon_folder = os.path.join(path, source_addons)
-
-    # Iterate over all files in the source folder
-    for root, dirs, files in os.walk(source_addon_folder):
-        for file in files:
-            # Construct the full filepath
-            src_file = os.path.join(root, file)
-
-            # Construct the corresponding filepath in the destination folder
-            dest_file = str(src_file).replace(str(source_addon_folder), str(destination_addon_folder))
-
-            # If the file also exists in the destination folder, delete it
-            if os.path.exists(dest_file):
-                os.remove(dest_file)
-
-    # Iterate over all sub-folders in the source folder
-    for root, dirs, files in os.walk(source_addon_folder):
-        for dir in dirs:
-            # Construct the full directory path
-            src_dir = os.path.join(root, dir)
-
-            # Construct the corresponding directory path in the destination folder
-            dest_dir = os.path.join(destination_addon_folder, os.path.relpath(src_dir, source_addon_folder))
-
-            # If the directory exists in the destination folder and is empty (contains no files), delete it
-            if os.path.exists(dest_dir) and not any(os.path.isfile(os.path.join(dest_dir, f)) for f in os.listdir(dest_dir)):
-                shutil.rmtree(dest_dir)
-
-
-
 
 classes = (
     LIBADDON_APT_preferences,
