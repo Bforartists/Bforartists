@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "real_snow"
+name = "Real Snow"
+version = "1.3.2"
+tagline = "Generate snow mesh"
+maintainer = "Community"
+type = "add-on"
+tags = ["Object"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/real_snow"
+copyright = ["2024 Marco Pavanello", "2024 Drew Perttula"]

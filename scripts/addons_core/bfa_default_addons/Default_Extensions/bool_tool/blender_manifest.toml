@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "bool_tool"
+name = "Bool Tool"
+version = "0.4.1"
+tagline = "Bool Tool Hotkey: Ctrl Shift B"
+maintainer = "Community"
+type = "add-on"
+tags = ["Object"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/object_boolean_tools"
+copyright = ["2024 Vitor Balbio", "2024 Mikhail Rachinskiy", "2024 TynkaTopi", "2024 Meta-Androcto", "2024 Simon Appelt"]
