@@ -2314,7 +2314,7 @@ class BlPkgEnableNotInstalled(Operator):
 #
 
 class BlkPkgReplaceLegacyAddons(Operator):
-    """Remove the legacy addons as soon as the addon is disabled."""
+    """Remove the legacy addons when Extensions are enabled."""
     bl_idname = "bl_pkg.replace_legacy_addons"
     bl_label = "Replace Legacy with Extension"
 
@@ -2324,7 +2324,7 @@ class BlkPkgReplaceLegacyAddons(Operator):
         source_ext = "Default_Extensions"
         source_addons = "Default_Addons"
 
-        # --------------------------
+        # ----------
         # Variables
 
         current_script_path = p.dirname(__file__)

@@ -1,6 +1,13 @@
 # SPDX-FileCopyrightText: 2011-2023 Blender Foundation
+#                         2020-2024 Sebastian Schrand
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
+
+
+__author__ = "Sebastian Sille <nrgsille@gmail.com>"
+__version__ = "2.6.0"
+__date__ = "24 Sep 2020"
+
 
 from bpy_extras.io_utils import (
     ImportHelper,
@@ -17,19 +24,6 @@ from bpy.props import (
     CollectionProperty,
 )
 import bpy
-bl_info = {
-    "name": "Autodesk 3DS format",
-    "author": "Bob Holcomb, Campbell Barton, Sebastian Schrand",
-    "version": (2, 5, 1),
-    "blender": (4, 2, 0),
-    "location": "File > Import-Export",
-    "description": "3DS Import/Export meshes, UVs, materials, textures, "
-                   "cameras, lamps & animation",
-    "warning": "Images must be in file folder, "
-               "filenames are limited to DOS 8.3 format",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/scene_3ds.html",
-    "category": "Import-Export",
-}
 
 if "bpy" in locals():
     import importlib
@@ -42,7 +36,7 @@ if "bpy" in locals():
 @orientation_helper(axis_forward='Y', axis_up='Z')
 class Import3DS(bpy.types.Operator, ImportHelper):
     """Import from 3DS file format (.3ds)"""
-    bl_idname = "import_scene.max3ds"
+    bl_idname = "import_scene.3ds"
     bl_label = 'Import 3DS'
     bl_options = {'PRESET', 'UNDO'}
 
@@ -62,11 +56,6 @@ class Import3DS(bpy.types.Operator, ImportHelper):
     use_scene_unit: BoolProperty(
         name="Scene Units",
         description="Convert to scene unit length settings",
-        default=False,
-    )
-    use_center_pivot: BoolProperty(
-        name="Pivot Origin",
-        description="Move all geometry to pivot origin",
         default=False,
     )
     use_image_search: BoolProperty(
@@ -96,11 +85,6 @@ class Import3DS(bpy.types.Operator, ImportHelper):
         name="Animation",
         description="Read the keyframe data",
         default=True,
-    )
-    use_world_matrix: BoolProperty(
-        name="World Space",
-        description="Transform to matrix world",
-        default=False,
     )
     use_collection: BoolProperty(
         name="Collection",
@@ -166,14 +150,8 @@ def import_transform(layout, operator):
         line.prop(operator, "use_scene_unit")
         line.label(text="", icon='EMPTY_ARROWS' if operator.use_scene_unit else 'EMPTY_DATA')
         line = body.row(align=True)
-        line.prop(operator, "use_center_pivot")
-        line.label(text="", icon='OVERLAY' if operator.use_center_pivot else 'PIVOT_ACTIVE')
-        line = body.row(align=True)
         line.prop(operator, "use_apply_transform")
         line.label(text="", icon='MESH_CUBE' if operator.use_apply_transform else 'MOD_SOLIDIFY')
-        line = body.row(align=True)
-        line.prop(operator, "use_world_matrix")
-        line.label(text="", icon='WORLD' if operator.use_world_matrix else 'META_BALL')
         body.prop(operator, "axis_forward")
         body.prop(operator, "axis_up")
 
@@ -181,7 +159,7 @@ def import_transform(layout, operator):
 @orientation_helper(axis_forward='Y', axis_up='Z')
 class Export3DS(bpy.types.Operator, ExportHelper):
     """Export to 3DS file format (.3ds)"""
-    bl_idname = "export_scene.max3ds"
+    bl_idname = "export_scene.3ds"
     bl_label = 'Export 3DS'
     bl_options = {'PRESET', 'UNDO'}
 
@@ -312,11 +290,11 @@ def export_transform(layout, operator):
         body.prop(operator, "axis_up")
 
 
-class IO_FH_3ds(bpy.types.FileHandler):
-    bl_idname = "IO_FH_3ds"
-    bl_label = "Autodesk 3DS"
-    bl_import_operator = "import_scene.max3ds"
-    bl_export_operator = "export_scene.max3ds"
+class IO_FH_3dsMax(bpy.types.FileHandler):
+    bl_idname = "IO_FH_3dsMax"
+    bl_label = "3DS"
+    bl_import_operator = "import_scene.3ds"
+    bl_export_operator = "export_scene.3ds"
     bl_file_extensions = ".3ds;.3DS"
 
     @classmethod
@@ -336,7 +314,7 @@ def menu_func_import(self, context):
 def register():
     bpy.utils.register_class(Import3DS)
     bpy.utils.register_class(Export3DS)
-    bpy.utils.register_class(IO_FH_3ds)
+    bpy.utils.register_class(IO_FH_3dsMax)
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
@@ -344,7 +322,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(Import3DS)
     bpy.utils.unregister_class(Export3DS)
-    bpy.utils.unregister_class(IO_FH_3ds)
+    bpy.utils.unregister_class(IO_FH_3dsMax)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
