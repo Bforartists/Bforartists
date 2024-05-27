@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "navigation"
+name = "3D Navigation"
+version = "1.2.8"
+tagline = "Navigate the Camera & 3D Viewport from the Sidebar - Bforartists Version"
+maintainer = "Community"
+type = "add-on"
+tags = ["3D View"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/space_view3d_3d_navigation"
+copyright = ["2024 Demohero", "2024 uriel"]

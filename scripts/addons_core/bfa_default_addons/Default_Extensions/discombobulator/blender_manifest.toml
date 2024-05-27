@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "discombobulator"
+name = "Discombobulator"
+version = "0.1.0"
+tagline = "Add Discombobulator"
+maintainer = "Community"
+type = "add-on"
+tags = ["Add Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/add_mesh_discombobulator"
+copyright = ["2024 Evan J. Rosky (syrux)"]

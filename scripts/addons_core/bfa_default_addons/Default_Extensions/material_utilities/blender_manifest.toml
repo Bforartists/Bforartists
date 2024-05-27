@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "material_utilities"
+name = "Material Utilities"
+version = "2.2.2"
+tagline = "Menu of material tools (assign, select..) in the 3D View"
+maintainer = "Community"
+type = "add-on"
+tags = ["Material"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/materials_utils"
+copyright = ["2024 MichaleW", "2024 ChrisHinde"]
