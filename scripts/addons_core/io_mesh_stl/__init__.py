@@ -9,6 +9,7 @@ bl_info = {
     "blender": (2, 81, 6),
     "location": "File > Import-Export",
     "description": "Import-Export STL files",
+    "warning": "Bforartists version: Disable first if you wish to use the online Extension version",  #BFA - warning added
     "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/mesh_stl.html",
     "support": 'OFFICIAL',
     "category": "Import-Export",
@@ -403,11 +404,11 @@ class STL_PT_export_geometry(bpy.types.Panel):
 
 
 def menu_import(self, context):
-    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl) (legacy)", icon="LOAD_STL") #BFA - icon added
+    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl) (legacy)", icon = "LOAD_STL") #BFA - icon added
 
 
 def menu_export(self, context):
-    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl) (legacy)", icon="SAVE_STL") #BFA - icon added
+    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl) (legacy)", icon = "SAVE_STL") #BFA - icon added
 
 
 classes = (

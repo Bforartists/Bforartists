@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "dynamic_context_menu"
+name = "Dynamic Context Menu"
+version = "1.9.4"
+tagline = "Object Mode Context Sensitive Spacebar Menu"
+maintainer = "Community"
+type = "add-on"
+tags = ["User Interface"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/space_view3d_spacebar_menu"
+copyright = ["2024 meta-androcto"]

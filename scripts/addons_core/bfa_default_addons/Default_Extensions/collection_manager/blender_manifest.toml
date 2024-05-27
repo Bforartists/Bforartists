@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "collection_manager"
+name = "Collection Manager"
+version = "2.24.9"
+tagline = "Manage collections and their objects"
+maintainer = "Community"
+type = "add-on"
+tags = ["User Interface"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/object_collection_manager"
+copyright = ["2024 Ryan Inch"]
