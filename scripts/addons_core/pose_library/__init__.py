@@ -8,7 +8,7 @@ Pose Library based on the Asset Browser.
 
 bl_info = {
     "name": "Pose Library",
-    "description": "Pose Library based on the asset system.",
+    "description": "Pose Library based on the asset system - Bforartists Version",
     "author": "Sybren A. Stüvel, Julian Eisel",
     "version": (2, 0),
     "blender": (3, 0, 0),
