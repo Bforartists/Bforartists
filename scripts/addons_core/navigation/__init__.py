@@ -17,7 +17,7 @@ from bpy.props import StringProperty
 bl_info = {
     "name": "3D Navigation",
     "author": "Demohero, uriel",
-    "version": (1, 2, 6),
+    "version": (1, 2, 8),
     "blender": (2, 92, 0),
     "location": "View3D > Sidebar > View Tab",
     "description": "Navigate the Camera & 3D Viewport from the Sidebar",
