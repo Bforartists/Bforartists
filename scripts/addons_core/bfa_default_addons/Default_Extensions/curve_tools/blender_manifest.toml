@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "curve_tools"
+name = "Curve Tools"
+version = "0.4.6"
+tagline = "Adds some functionality for bezier/nurbs curve/surface modeling"
+maintainer = "Community"
+type = "add-on"
+tags = ["Add Curve"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/curve_tools"
+copyright = ["2024 Mackraken", "2024 Spivak Vladimir (cwolf3d)"]

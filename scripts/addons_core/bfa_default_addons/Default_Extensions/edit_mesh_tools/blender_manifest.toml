@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "edit_mesh_tools"
+name = "Edit Mesh Tools"
+version = "0.3.6"
+tagline = "Mesh modelling toolkit. Several tools to aid modelling"
+maintainer = "Community"
+type = "add-on"
+tags = ["Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/mesh_tools"
+copyright = ["2024 Meta-Androcto"]
