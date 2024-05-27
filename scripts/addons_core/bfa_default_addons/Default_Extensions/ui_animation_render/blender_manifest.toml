@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "ui_animation_render"
+name = "UI Animation Render"
+version = "0.1.0"
+tagline = "Render animations of the Blender UI"
+maintainer = "Community"
+type = "add-on"
+tags = ["Render"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/render_ui_animation_render"
+copyright = ["2024 Luca Rood"]

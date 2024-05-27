@@ -1,0 +1,107 @@
+{
+
+  "color": {
+    "name": "color",
+    "colorspace":  "color",
+    "normal": "no",
+    "displacement": "no",
+    "find_input": [ "Color", "Base Color" ],
+    "input": 0,
+    "rampnode": "no",
+    "huenode": "yes",
+    "node_color": [0.535, 0.608, 0.306]
+  },
+
+  "metalness": {
+    "name": "metalness",
+    "colorspace": "noncolor",
+    "normal": "no",
+    "displacement": "no",
+    "find_input": [ "Metallic" ],
+    "input": 1,
+    "rampnode": "yes",
+    "huenode": "no",
+    "node_color": [ 0.027, 0.324, 0.908 ]
+  },
+
+  "rough": {
+    "name": "rough",
+    "colorspace": "noncolor",
+    "normal": "no",
+    "displacement": "no",
+    "find_input": [ "Roughness" ],
+    "input": 2,
+    "rampnode": "yes",
+    "huenode": "no",
+    "node_color": [ 0.608, 0.254, 0.000 ]
+  },
+
+  "nmap": {
+    "name": "nmap",
+    "colorspace": "noncolor",
+    "normal": "yes",
+    "displacement": "no",
+    "find_input": [ "Normal" ],
+    "input": 3,
+    "rampnode": "no",
+    "huenode": "no",
+    "normal_node_location": [ -350, -350 ],
+    "node_color": [ 0.417, 0.363, 0.608 ]
+  },
+
+  "displacement": {
+    "name": "displacement",
+    "colorspace": "noncolor",
+    "normal": "no",
+    "displacement": "yes",
+    "rampnode": "yes",
+    "huenode": "no",
+    "input": 5,
+    "node_color": [ 0.608, 0.591, 0.498 ]
+  },
+
+  "emissive": {
+    "name": "emissive",
+    "colorspace": "color",
+    "normal": "no",
+    "displacement": "no",
+    "find_input": [ "Emissive" ],
+    "rampnode": "no",
+    "huenode": "yes",
+    "input": 4,
+    "node_color": [ 0.0, 0.0, 0.0 ]
+  },
+
+  "emissive_power": {
+    "name": "emissive_power",
+    "colorspace": "color",
+    "normal": "no",
+    "displacement": "no",
+    "rampnode": "no",
+    "huenode": "no",
+    "node_color": [ 0.0, 0.0, 0.0 ]
+  },
+
+  "ao": {
+    "name": "ao",
+    "colorspace": "noncolor",
+    "normal": "no",
+    "displacement": "no",
+    "rampnode": "yes",
+    "huenode": "no",
+    "node_color": [ 0.1, 0.5, 0.1 ]
+  },
+
+ "alpha": {
+    "name": "alpha",
+    "colorspace":  "noncolor",
+    "normal": "no",
+    "displacement": "no",
+    "find_input": [ "Alpha"],
+    "input": 8,
+    "rampnode": "no",
+    "huenode": "no",
+    "node_color": [0.535, 0.608, 0.306]
+  }
+
+}
