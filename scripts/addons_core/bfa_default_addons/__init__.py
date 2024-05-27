@@ -17,14 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # -----------------------------------------------------------------------------
-# ! IMPORTANT! READ THIS WHEN SETTING UP THE LIBRARY
-# This is a work in progress, and many assets, categories, thumbnails and more are subject to change.
-# Use at own risk. 
+# This addon is a Bforartists exclusive addons the pre-downloadeds legacy addons
+# and extensions without requiring opt-in access to the internet.
 # -----------------------------------------------------------------------------
 
 import bpy
 import os
 
+import sys
 
 from bpy.types import (
     AddonPreferences,
@@ -108,12 +108,16 @@ class LIBADDON_APT_preferences(AddonPreferences):
         layout.label(
             text="Legacy addons will become extensions that you can uninstall, update and enjoy!")
         layout.label(
-            text="If you disable this addon, this will remove the legacy addons", icon="")
+            text="If you disable this addon, this will remove the legacy addons")
 
 
 
 def register_addons():
-    """Register the addons in Blender, as long as the addon is enabled."""
+    """Register the addons in Bforartists, as long as the addon is enabled."""
+
+    # Redirect stdout and stderr to /dev/null - surpresses terminal messages to not spam on first load.
+    sys.stdout = open(os.devnull, 'w')
+    sys.stderr = open(os.devnull, 'w')
 
     # Ensure the addons sub-folder exists
     if not destination_addon_folder.exists():
@@ -123,10 +127,10 @@ def register_addons():
     # Check if extensions is on on first load, if not, bypass
     if prefs.extensions.use_online_access_handled == True :
         # If addon is enabled and extensions is on, do nothing
-        print("Extensions was on, so never mind...")
+        print("Extensions is already enabled, so never mind...")
         pass
     else:
-        print("Extensions not enabled, copying legacy addons")
+        print("Extensions not enabled, copying default legacy addons...")
         # If extensions is not on, and the addon is on, then install the legacy addons
 
         # Loop through each file in the source_addon_folder to install them, so the pycache is set
