@@ -22,7 +22,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "description": "Pie Menu Activation",
     "location": "Addons Preferences",
-    "warning": "Bforartists Version", #BFA - warning added
+    "warning": "Bforartists version: Disable first if you wish to use the online Extension version", #BFA - warning added
     "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/viewport_pies.html",
     "category": "Interface"
 }
