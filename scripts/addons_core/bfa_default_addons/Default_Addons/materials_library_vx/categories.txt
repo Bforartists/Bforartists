@@ -1,0 +1,71 @@
+[
+    [
+        "Misc",
+        [
+            "Blaster Bolt (Blue)",
+            "Building",
+            "Fake Shading",
+            "Fresnel",
+            "Wire Musgrave"
+        ]
+    ],
+    [
+        "Ceramic",
+        [
+            "1970_tiles",
+            "Ceramic",
+            "Ceramic Polished"
+        ]
+    ],
+    [
+        "Earth",
+        [
+            "Molten",
+            "Stars"
+        ]
+    ],
+    [
+        "Glass",
+        [
+            "Basic Glass",
+            "Cranberry Juice",
+            "Facade_Glass",
+            "Fake Glass",
+            "Soap Bubble"
+        ]
+    ],
+    [
+        "Organic",
+        [
+            "Chocolate Swirl",
+            "Lemon"
+        ]
+    ],
+    [
+        "Wood",
+        [
+            "Polished Walnut",
+            "WoodP"
+        ]
+    ],
+    [
+        "Metal",
+        [
+            "Anodized",
+            "Brushed Metal",
+            "Galvanized Steel",
+            "Jewelry"
+        ]
+    ],
+    [
+        "Paint",
+        [
+            "Car Paint",
+            "Coated Glossy",
+            "Flaky Tangelo",
+            "High Gloss Plastic",
+            "Metallic Paint",
+            "Metallic Paint Clean"
+        ]
+    ]
+]

@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "assign_shape_keys"
+name = "Assign Shape Keys"
+version = "1.0.2"
+tagline = "Assigns one or more Bezier curves as shape keys to another  . . "
+maintainer = "Community"
+type = "add-on"
+tags = ["Add Curve"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/curve_assign_shapekey"
+copyright = ["2024 Shrinivas Kulkarni"]

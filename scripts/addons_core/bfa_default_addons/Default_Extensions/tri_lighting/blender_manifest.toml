@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "tri_lighting"
+name = "Tri-lighting"
+version = "0.1.4"
+tagline = "Add 3 Point Lighting to Selected / Active Object"
+maintainer = "Community"
+type = "add-on"
+tags = ["Lighting"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/lighting_tri_lights"
+copyright = ["2024 Daniel Schalla"]
