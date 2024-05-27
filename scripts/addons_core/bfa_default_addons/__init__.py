@@ -52,16 +52,17 @@ bl_info = {
     "category": "Bforartists",
 }
 
+# ---------
+# Variables
+
 # Configure the display name and sub-folder of your Library here:
 source_ext = "Default_Extensions"
 source_addons = "Default_Addons"
 
-### Variables
 prefs = bpy.context.preferences
 
 # Get the addon path
 path = p.dirname(__file__)
-
 
 # Get the extensions source files
 source_addon_folder = os.path.join(path, source_addons)
@@ -81,12 +82,8 @@ version_path = Path(user_path, major_minor)
 # Define the addons  sub-folder path
 destination_addon_folder = version_path / 'scripts' / 'addons'
 
-###
+# ---------
 
-# Running code, don't change if not necessary!
-# -----------------------------------------------------------------------------
-
-# # safe_bl_idname = re.sub("\s", "_", re.sub("[^\w\s]", "", source_ext)).lower()
 
 
 class LIBADDON_APT_preferences(AddonPreferences):
@@ -95,7 +92,7 @@ class LIBADDON_APT_preferences(AddonPreferences):
     def draw(self, context: Context):
         layout: UILayout = self.layout
 
-        # Display addon inormation: Library name and Version.
+        # Display addon inormation
         addon_version = bl_info['version']
 
         layout.label(
