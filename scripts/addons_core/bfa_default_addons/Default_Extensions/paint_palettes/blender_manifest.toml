@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "paint_palettes"
+name = "Paint Palettes"
+version = "0.9.4"
+tagline = "Palettes for color and weight paint modes"
+maintainer = "Community"
+type = "add-on"
+tags = ["Paint"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/paint_palette"
+copyright = ["2024 Dany Lebel (Axon D)"]

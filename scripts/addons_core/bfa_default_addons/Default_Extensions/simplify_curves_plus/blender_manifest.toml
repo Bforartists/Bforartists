@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "simplify_curves_plus"
+name = "Simplify Curves+"
+version = "1.1.2"
+tagline = "Simplify Curves: 3dview, Dopesheet, Graph. Distance Merge:  . . "
+maintainer = "Community"
+type = "add-on"
+tags = ["Add Curve"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/curve_simplify"
+copyright = ["2024 testscreenings", "2024 Michael Soluyanov"]
