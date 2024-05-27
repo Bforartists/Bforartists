@@ -1,0 +1,16 @@
+schema_version = "1.0.0"
+id = "align_tools"
+name = "Align Tools"
+version = "0.3.5"
+tagline = "Align Selected Objects to Active Object"
+maintainer = "Community"
+type = "add-on"
+tags = ["Object"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/space_view3d_align_tools"
+copyright = [
+    "2024 gabhead",
+    "2024 Lell",
+    "2024 Anfeo",
+]

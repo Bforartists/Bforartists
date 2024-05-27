@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "icon_viewer"
+name = "Icon Viewer"
+version = "1.4.2"
+tagline = "Click an icon to copy its name to the clipboard"
+maintainer = "Community"
+type = "add-on"
+tags = ["Development"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/development_icon_get"
+copyright = ["2024 roaoao"]

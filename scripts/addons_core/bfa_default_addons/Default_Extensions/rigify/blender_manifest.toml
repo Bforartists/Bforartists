@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "rigify"
+name = "Rigify"
+version = "0.6.11"
+tagline = "Automatic rigging from building-block components"
+maintainer = "Community"
+type = "add-on"
+tags = ["Rigging"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/rigify"
+copyright = ["2024 Nathan Vegdahl", "2024 Lucio Rossi", "2024 Ivan Cappiello", "2024 Alexander Gavrilov"]
