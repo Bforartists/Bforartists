@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "node_wrangler"
+name = "Node Wrangler"
+version = "3.53.0"
+tagline = "Various tools to enhance and speed up node-based workflow"
+maintainer = "Community"
+type = "add-on"
+tags = ["Node"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/node_wrangler"
+copyright = ["2024 Bartek Skorupa", "2024 Greg Zaal", "2024 Sebastian Koenig", "2024 Christian Brinkmann", "2024 Florian Meyer"]
