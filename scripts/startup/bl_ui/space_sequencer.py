@@ -178,8 +178,8 @@ class SEQUENCER_HT_header(Header):
         row.template_ID(st, "scene_override", unlink="sequencer.remove_scene_override")  # BFA - 3D Sequencer
 
         if st.view_type == 'PREVIEW':
-            row = layout.row(align=True)
-            row.prop(sequencer_tool_settings, "pivot_point", text="", icon_only=True)
+            row = layout.row(align=True) #BFA
+            row.prop(sequencer_tool_settings, "pivot_point", text="", icon_only=True) #BFA
 
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
@@ -189,7 +189,8 @@ class SEQUENCER_HT_header(Header):
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap_sequencer", text="")
             sub = row.row(align=True)
-            sub.popover(panel="SEQUENCER_PT_snapping", text="")
+            sub.popover(panel="SEQUENCER_PT_snapping", text="") #BFA - removed text
+			#layout.separator_spacer() #BFA
 
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             layout.prop(st, "display_mode", text="", icon_only=True)
@@ -357,7 +358,7 @@ class ALL_MT_editormenu_sequencer(Menu):
         row = layout.row(align=True)
         row.template_header()  # editor type menus
 
-
+#BFA - moved here from above
 class SEQUENCER_MT_editor_menus(Menu):
     bl_idname = "SEQUENCER_MT_editor_menus"
     bl_label = ""
@@ -409,15 +410,15 @@ class SEQUENCER_MT_range(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("anim.previewrange_set", text="Set Preview Range", icon="PREVIEW_RANGE")
-        layout.operator("sequencer.set_range_to_strips", text="Set Preview Range to Strips", icon="PREVIEW_RANGE").preview = True
-        layout.operator("anim.previewrange_clear", text="Clear Preview Range", icon="CLEAR")
+        layout.operator("anim.previewrange_set", text="Set Preview Range", icon="PREVIEW_RANGE") #BFA
+        layout.operator("sequencer.set_range_to_strips", text="Set Preview Range to Strips", icon="PREVIEW_RANGE").preview = True #BFA
+        layout.operator("anim.previewrange_clear", text="Clear Preview Range", icon="CLEAR") #BFA
 
         layout.separator()
 
-        layout.operator("anim.start_frame_set", text="Set Start Frame", icon="AFTER_CURRENT_FRAME")
-        layout.operator("anim.end_frame_set", text="Set End Frame", icon="BEFORE_CURRENT_FRAME")
-        layout.operator("sequencer.set_range_to_strips", text="Set Frame Range to Strips", icon="PREVIEW_RANGE")
+        layout.operator("anim.start_frame_set", text="Set Start Frame", icon="AFTER_CURRENT_FRAME") #BFA
+        layout.operator("anim.end_frame_set", text="Set End Frame", icon="BEFORE_CURRENT_FRAME") #BFA
+        layout.operator("sequencer.set_range_to_strips", text="Set Frame Range to Strips", icon="PREVIEW_RANGE") #BFA
 
 
 class SEQUENCER_MT_preview_zoom(Menu):
@@ -461,7 +462,7 @@ class SEQUENCER_MT_proxy(Menu):
         col.enabled = selected_sequences_len(context) >= 1
         layout.prop(st, "proxy_render_size", text="")
 
-
+#BFA menu
 class SEQUENCER_MT_view_pie_menus(Menu):
     bl_label = "Pie menus"
 
@@ -507,12 +508,16 @@ class SEQUENCER_MT_view(Menu):
             layout.prop(st, "show_region_hud")
             layout.prop(st, "show_region_channels")
 
-        layout.prop(addon_prefs, "vse_show_toolshelf_tabs")
+        layout.prop(addon_prefs, "vse_show_toolshelf_tabs") # BFA
 
         layout.separator()
 
-        layout.menu("SEQUENCER_MT_view_annotations")
-
+        layout.menu("SEQUENCER_MT_view_annotations") # BFA
+		# BFA - properties in properties menu
+        #if st.view_type == 'SEQUENCER': 
+        #    layout.prop(st, "show_backdrop", text="Preview as Backdrop")
+        #if is_preview or st.show_backdrop:
+        #    layout.prop(st, "show_transform_preview", text="Preview During Transform")
         layout.separator()
 
         layout.operator_context = 'INVOKE_REGION_WIN'
@@ -523,7 +528,7 @@ class SEQUENCER_MT_view(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("view2d.zoom_in", icon="ZOOM_IN")
         layout.operator("view2d.zoom_out", icon="ZOOM_OUT")
-
+		# BFA - properties in properties menu
         if is_sequencer_view:
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("view2d.zoom_border", text="Zoom Border", icon="ZOOM_BORDER")  # BFA
@@ -559,6 +564,7 @@ class SEQUENCER_MT_view(Menu):
         layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.separator()
+		# BFA - properties in properties menu
 
         layout.operator("render.opengl", text="Sequence Render Image", icon='RENDER_STILL').sequencer = True
         props = layout.operator("render.opengl", text="Sequence Render Animation", icon='RENDER_ANIMATION')
@@ -578,15 +584,13 @@ class SEQUENCER_MT_view(Menu):
         props.value_2 = 'PREVIEW'
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        layout.menu("SEQUENCER_MT_view_pie_menus")
+        layout.menu("SEQUENCER_MT_view_pie_menus") #BFA
 
         layout.separator()
 
         layout.menu("INFO_MT_area")
 
 # BFA - Hidden legacy operators exposed to GUI
-
-
 class SEQUENCER_MT_view_annotations(Menu):
     bl_label = "Annotations (Legacy)"
 
@@ -606,7 +610,7 @@ class SEQUENCER_MT_view_annotations(Menu):
             text="Erase Annotation Active Keyframe",
             icon='DELETE')
 
-
+#BFA menu
 class SEQUENCER_MT_export(Menu):
     bl_label = "Export"
 
@@ -644,7 +648,7 @@ class SEQUENCER_MT_select_channel(Menu):
         layout.separator()
         layout.operator("sequencer.select_side", text="Both Sides", icon="RESTRICT_SELECT_OFF").side = 'BOTH'
 
-
+# BFA - submenu
 class SEQUENCER_MT_select_linked(Menu):
     bl_label = "Select Linked"
 
@@ -686,7 +690,9 @@ class SEQUENCER_MT_select(Menu):
             col.menu("SEQUENCER_MT_select_linked", text="Linked")
 
         col.operator_menu_enum("sequencer.select_grouped", "type", text="Select Grouped")
+		#BFA - moved to a sub-menu
 
+		#BFA - moved to a sub-menu
 
 
 class SEQUENCER_MT_marker(Menu):
@@ -701,7 +707,9 @@ class SEQUENCER_MT_marker(Menu):
         from bl_ui.space_time import marker_menu_generic
         marker_menu_generic(layout, context)
 
-# BFA - no longer used
+		#BFA - no longer used
+		#if is_sequencer_view:
+		#layout.prop(st, "use_marker_sync")
 
 
 class SEQUENCER_MT_change(Menu):
@@ -795,7 +803,7 @@ class SEQUENCER_MT_navigation(Menu):
 
         layout.separator()
 
-        layout.menu("SEQUENCER_MT_range")
+        layout.menu("SEQUENCER_MT_range") #BFA
 
 
 class SEQUENCER_MT_add(Menu):
@@ -808,7 +816,7 @@ class SEQUENCER_MT_add(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "SEQUENCER_MT_add"
+        layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "SEQUENCER_MT_add" #BFA
 
         layout.separator()
 
@@ -862,7 +870,7 @@ class SEQUENCER_MT_add(Menu):
         col.menu("SEQUENCER_MT_fades_add", icon='IPO_EASE_IN_OUT')
         col.enabled = selected_sequences_len(context) >= 1
 
-        col.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")
+        col.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR") # BFA - added icon
 
 
 class SEQUENCER_MT_add_scene(Menu):
@@ -986,10 +994,7 @@ class SEQUENCER_MT_strip_transform(Menu):
             layout.operator("transform.resize", text="Scale", icon="TRANSFORM_SCALE")
         else:
             layout.operator("transform.seq_slide", text="Move", icon="TRANSFORM_MOVE").view2d_edge_pan = True
-            layout.operator(
-                "transform.transform",
-                text="Move/Extend from Current Frame",
-                icon="SEQ_MOVE_EXTEND").mode = 'TIME_EXTEND'
+            layout.operator("transform.transform", text="Move/Extend from Current Frame", icon="SEQ_MOVE_EXTEND").mode = 'TIME_EXTEND'
             layout.operator("sequencer.slip", text="Slip Strip Contents", icon="SEQ_SLIP_CONTENTS")
 
         # TODO (for preview)
@@ -1001,8 +1006,8 @@ class SEQUENCER_MT_strip_transform(Menu):
             layout.separator()
 
         if has_sequencer:
-            layout.operator("sequencer.swap", text="Swap Strip Left", icon="SEQ_SWAP_LEFT").side = 'LEFT'
-            layout.operator("sequencer.swap", text="Swap Strip Right", icon="SEQ_SWAP_RIGHT").side = 'RIGHT'
+            layout.operator("sequencer.swap", text="Swap Strip Left", icon="SEQ_SWAP_LEFT").side = 'LEFT' #BFA
+            layout.operator("sequencer.swap", text="Swap Strip Right", icon="SEQ_SWAP_RIGHT").side = 'RIGHT' #BFA
 
             layout.separator()
 
@@ -1018,10 +1023,7 @@ class SEQUENCER_MT_strip_input(Menu):
         strip = context.active_sequence_strip
 
         layout.operator("sequencer.reload", text="Reload Strips", icon="FILE_REFRESH")
-        layout.operator(
-            "sequencer.reload",
-            text="Reload Strips and Adjust Length",
-            icon="FILE_REFRESH").adjust_length = True
+        layout.operator("sequencer.reload", text="Reload Strips and Adjust Length", icon="FILE_REFRESH").adjust_length = True
         props = layout.operator("sequencer.change_path", text="Change Path/Files", icon="FILE_MOVIE")
         layout.operator("sequencer.swap_data", text="Swap Data", icon="SWAP")
 
@@ -1059,8 +1061,10 @@ class SEQUENCER_MT_strip_effect(Menu):
     def draw(self, _context):
         layout = self.layout
 
+		#BFA - moved to a conditional
         layout.operator("sequencer.reassign_inputs", icon='RANDOMIZE_TRANSFORM')
         layout.operator("sequencer.swap_inputs", icon='RANDOMIZE')
+	
 
 
 class SEQUENCER_MT_strip_movie(Menu):
@@ -1118,7 +1122,7 @@ class SEQUENCER_MT_strip_retiming(Menu):
         except:
             layout.label(text="To Retime, select a movie strip", icon="QUESTION")  # BFA
 
-
+# BFA menu
 class SEQUENCER_MT_change_scene_with_icons(Menu):
     bl_label = "Change Scene with Icons"
 
@@ -1290,7 +1294,7 @@ class SEQUENCER_MT_image(Menu):
             layout.menu("SEQUENCER_MT_image_transform")
 
         layout.menu("SEQUENCER_MT_image_clear")
-
+		#BFA - moved these up
         layout.separator()
 
         layout.operator("sequencer.strip_transform_fit", text="Scale To Fit", icon="VIEW_FIT").fit_method = 'FIT'
@@ -1313,19 +1317,20 @@ class SEQUENCER_MT_image_transform(Menu):
         layout.operator("transform.rotate", icon="TRANSFORM_ROTATE")
         layout.operator("transform.resize", text="Scale", icon="TRANSFORM_SCALE")
 
-
+# BFA - Was used in the image menu. But not used in the UI anymore, remains for compatibility
 class SEQUENCER_MT_image_clear(Menu):
     bl_label = "Clear"
 
     def draw(self, _context):
         layout = self.layout
-
-        layout.operator("sequencer.strip_transform_clear", text="Position", icon="CLEARMOVE").property = 'POSITION'
-        layout.operator("sequencer.strip_transform_clear", text="Scale", icon="CLEARSCALE").property = 'SCALE'
-        layout.operator("sequencer.strip_transform_clear", text="Rotation", icon="CLEARROTATE").property = 'ROTATION'
+        layout.operator("sequencer.strip_transform_clear", text="Position", icon="CLEARMOVE",
+                        text_ctxt=i18n_contexts.default).property = 'POSITION'
+        layout.operator("sequencer.strip_transform_clear", text="Scale", icon="CLEARSCALE",
+                        text_ctxt=i18n_contexts.default).property = 'SCALE'
+        layout.operator("sequencer.strip_transform_clear", text="Rotation", icon="CLEARROTATE",
+                        text_ctxt=i18n_contexts.default).property = 'ROTATION'
         layout.operator("sequencer.strip_transform_clear", text="All Transforms", icon="CLEAR").property = 'ALL'
-
-# bfa - Was used in the image menu. But not used in the UI anymore, remains for compatibility
+	
 
 
 class SEQUENCER_MT_image_apply(Menu):
@@ -1336,10 +1341,7 @@ class SEQUENCER_MT_image_apply(Menu):
 
         layout.operator("sequencer.strip_transform_fit", text="Scale To Fit", icon="VIEW_FIT").fit_method = 'FIT'
         layout.operator("sequencer.strip_transform_fit", text="Scale to Fill", icon="VIEW_FILL").fit_method = 'FILL'
-        layout.operator(
-            "sequencer.strip_transform_fit",
-            text="Stretch To Fill",
-            icon="VIEW_STRETCH").fit_method = 'STRETCH'
+        layout.operator("sequencer.strip_transform_fit", text="Stretch To Fill", icon="VIEW_STRETCH").fit_method = 'STRETCH'
 
 
 class SEQUENCER_MT_retiming(Menu):
@@ -1874,11 +1876,11 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
                     if i == strip.multicam_source:
                         sub = row.row(align=True)
                         sub.enabled = False
-                        sub.operator("sequencer.split_multicam", text="{:d}".format(i)).camera = i
+                        sub.operator("sequencer.split_multicam", text="{:d}".format(i), translate=False).camera = i
                     else:
                         sub_1 = row.row(align=True)
                         sub_1.enabled = True
-                        sub_1.operator("sequencer.split_multicam", text="{:d}".format(i)).camera = i
+                        sub_1.operator("sequencer.split_multicam", text="{:d}".format(i), translate=False).camera = i
 
                 if strip.channel > BT_ROW and (strip_channel - 1) % BT_ROW:
                     for i in range(strip.channel, strip_channel + ((BT_ROW + 1 - strip_channel) % BT_ROW)):
@@ -2367,7 +2369,7 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
         split.alignment = 'RIGHT'
         split.label(text="End")
         split = split.split(factor=factor + 0.3 + max_factor, align=True)
-        split.label(text="{:>14s}".format(smpte_from_frame(frame_final_end)))
+        split.label(text="{:>14s}".format(smpte_from_frame(frame_final_end)), translate=False)
         split.alignment = 'RIGHT'
         split.label(text=str(frame_final_end) + " ")
 
@@ -2411,7 +2413,7 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
         split.label(text="Current Frame")
         split = split.split(factor=factor + 0.3 + max_factor, align=True)
         frame_display = frame_current - frame_final_start
-        split.label(text="{:>14s}".format(smpte_from_frame(frame_display)))
+        split.label(text="{:>14s}".format(smpte_from_frame(frame_display)), translate=False)
         split.alignment = 'RIGHT'
         split.label(text=str(frame_display) + " ")
 
@@ -3126,10 +3128,10 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
                             col = flow.column()
                             box = col.box()
                             split = box.split(factor=0.4)
-                            split.label(text="{:.2f}".format(sound_eq.curve_mapping.clip_min_x))
+                            split.label(text="{:.2f}".format(sound_eq.curve_mapping.clip_min_x), translate=False)
                             split.label(text="Hz")
                             split.alignment = 'RIGHT'
-                            split.label(text="{:.2f}".format(sound_eq.curve_mapping.clip_max_x))
+                            split.label(text="{:.2f}".format(sound_eq.curve_mapping.clip_max_x), translate=False)
                             box.template_curve_mapping(
                                 sound_eq,
                                 "curve_mapping",
@@ -3197,7 +3199,7 @@ class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
     _property_type = (bpy.types.Sequence,)
     bl_category = "Strip"
 
-
+#BFA - contains format changes
 class SEQUENCER_PT_snapping(Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'HEADER'
@@ -3238,7 +3240,7 @@ class SEQUENCER_PT_snapping(Panel):
         row.separator()
         row.prop(sequencer_tool_settings, "use_snap_current_frame_to_strips", text="Snap to Strips")
 
-
+# BFA
 class SEQUENCER_PT_view_options(bpy.types.Panel):
     bl_label = "View Options"
     bl_category = "View"
@@ -3302,7 +3304,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             col.prop(st, "use_marker_sync")
             col.prop(st, "use_clamp_view")
 
-
+#BFA
 class SEQUENCER_MT_fades_add(Menu):
     bl_label = "Fade"
 
@@ -3324,11 +3326,11 @@ classes = (
     SEQUENCER_HT_header,
     SEQUENCER_MT_editor_menus,
     SEQUENCER_MT_range,
-    SEQUENCER_MT_view_pie_menus,
+    SEQUENCER_MT_view_pie_menus, #BFA
     SEQUENCER_MT_view,
-    SEQUENCER_MT_view_annotations,
-    SEQUENCER_MT_export,
-    SEQUENCER_MT_view_cache,
+    SEQUENCER_MT_view_annotations, #BFA
+    SEQUENCER_MT_export, #BFA
+    SEQUENCER_MT_view_cache, #BFA
     SEQUENCER_MT_preview_zoom,
     SEQUENCER_MT_proxy,
     SEQUENCER_MT_select_handle,
@@ -3412,9 +3414,8 @@ classes = (
 
     SEQUENCER_PT_snapping,
 
-    # BFA
-    SEQUENCER_PT_view_options,
-    SEQUENCER_MT_fades_add,
+    SEQUENCER_PT_view_options, #BFA
+    SEQUENCER_MT_fades_add, #BFA
 )
 
 if __name__ == "__main__":  # only for live edit.

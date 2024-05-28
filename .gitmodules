@@ -32,3 +32,21 @@
 	path = tests/data
 	url = https://projects.blender.org/blender/blender-test-data.git
 	branch = main
+[submodule "scripts/addons_contrib/space_view3d_pie_menus"]
+	path = scripts/addons_contrib/space_view3d_pie_menus
+	url = https://projects.blender.org/extensions/space_view3d_pie_menus.git
+[submodule "scripts/addons_contrib/space_view3d_3d_navigation"]
+	path = scripts/addons_contrib/space_view3d_3d_navigation
+	url = https://projects.blender.org/extensions/space_view3d_3d_navigation.git
+[submodule "scripts/addons_contrib/space_view3d_copy_attributes"]
+	path = scripts/addons_contrib/space_view3d_copy_attributes
+	url = https://projects.blender.org/extensions/space_view3d_copy_attributes.git
+[submodule "scripts/addons_contrib/io_scene_x3d"]
+	path = scripts/addons_contrib/io_scene_x3d
+	url = https://projects.blender.org/extensions/io_scene_x3d.git
+[submodule "scripts/addons_contrib/io_mesh_stl"]
+	path = scripts/addons_contrib/io_mesh_stl
+	url = https://projects.blender.org/extensions/io_mesh_stl.git
+[submodule "scripts/addons_contrib/io_scene_3ds"]
+	path = scripts/addons_contrib/io_scene_3ds
+	url = https://projects.blender.org/extensions/io_scene_3ds.git
