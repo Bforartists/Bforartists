@@ -298,8 +298,20 @@ void BKE_image_multiview_index(const struct Image *ima, struct ImageUser *iuser)
 bool BKE_image_is_multilayer(const struct Image *ima);
 bool BKE_image_is_multiview(const struct Image *ima);
 bool BKE_image_is_stereo(const struct Image *ima);
-struct RenderResult *BKE_image_acquire_renderresult(struct Scene *scene, struct Image *ima);
-void BKE_image_release_renderresult(struct Scene *scene, struct Image *ima);
+
+/**
+ * Acquire render result associated with the give image.
+ *
+ * The returned render result is user-counted It is then required to call *
+ * #BKE_image_release_renderresult with the non-null render result returned by this function.
+ *
+ * It is possible to use ibuf acquire/release API while a render result is held.
+ *
+ * It is allowed to call #BKE_image_release_renderresult with render_result of nullptr, but it is
+ * not required.
+ */
+RenderResult *BKE_image_acquire_renderresult(Scene *scene, Image *ima);
+void BKE_image_release_renderresult(Scene *scene, Image *ima, RenderResult *render_result);
 
 /**
  * For multi-layer images as well as for single-layer.
