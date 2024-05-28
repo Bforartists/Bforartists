@@ -1323,14 +1323,14 @@ static PointerRNA rna_View3DShading_selected_studio_light_get(PointerRNA *ptr)
   View3DShading *shading = (View3DShading *)ptr->data;
   StudioLight *sl;
   if (shading->type == OB_SOLID && shading->light == V3D_LIGHTING_MATCAP) {
-    sl = BKE_studiolight_find(shading->matcap, STUDIOLIGHT_FLAG_ALL);
+    sl = BKE_studiolight_find(shading->matcap, STUDIOLIGHT_TYPE_MATCAP);
   }
   else if (shading->type == OB_SOLID && shading->light == V3D_LIGHTING_STUDIO) {
-    sl = BKE_studiolight_find(shading->studio_light, STUDIOLIGHT_FLAG_ALL);
+    sl = BKE_studiolight_find(shading->studio_light, STUDIOLIGHT_TYPE_STUDIO);
   }
   else {
     /* OB_MATERIAL and OB_RENDER */
-    sl = BKE_studiolight_find(shading->lookdev_light, STUDIOLIGHT_FLAG_ALL);
+    sl = BKE_studiolight_find(shading->lookdev_light, STUDIOLIGHT_TYPE_WORLD);
   }
   return rna_pointer_inherit_refine(ptr, &RNA_StudioLight, sl);
 }
@@ -4596,6 +4596,12 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_stats", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "overlay.flag", V3D_OVERLAY_STATS);
   RNA_def_property_ui_text(prop, "Show Statistics", "Display scene statistics overlay text");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
+
+  /* show camera composition guides */
+  prop = RNA_def_property(srna, "show_camera_guides", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag2", V3D_SHOW_CAMERA_GUIDES);
+  RNA_def_property_ui_text(prop, "Show Camera Guides", "Show camera composition guides");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "show_extras", PROP_BOOLEAN, PROP_NONE);
