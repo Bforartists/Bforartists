@@ -1401,11 +1401,12 @@ static void create_inspection_string_for_generic_value(const bNodeSocket &socket
     const math::Quaternion &rotation = *static_cast<math::Quaternion *>(socket_value);
     const math::EulerXYZ euler = math::to_euler(rotation);
     fmt::format_to(fmt::appender(buf),
-                   TIP_("({}" BLI_STR_UTF8_DEGREE_SIGN ", {}" BLI_STR_UTF8_DEGREE_SIGN
-                        ", {}" BLI_STR_UTF8_DEGREE_SIGN ") (Rotation)"),
+                   ("({}" BLI_STR_UTF8_DEGREE_SIGN ", {}" BLI_STR_UTF8_DEGREE_SIGN
+                    ", {}" BLI_STR_UTF8_DEGREE_SIGN ")"),
                    euler.x().degree(),
                    euler.y().degree(),
                    euler.z().degree());
+    fmt::format_to(fmt::appender(buf), TIP_("(Rotation)"));
   }
   else if (socket_type.is<bool>()) {
     fmt::format_to(fmt::appender(buf),
@@ -1906,17 +1907,21 @@ static std::string node_socket_get_tooltip(const SpaceNode *snode,
   }
 
   if (inspection_strings.is_empty()) {
+    const bool is_extend = StringRef(socket.idname) == "NodeSocketVirtual";
     const bNode &node = socket.owner_node();
     if (node.is_reroute()) {
       char reroute_name[MAX_NAME];
       bke::nodeLabel(&ntree, &node, reroute_name, sizeof(reroute_name));
       output << reroute_name;
     }
+    else if (is_extend) {
+      output << TIP_("Connect a link to create a new socket");
+    }
     else {
       output << bke::nodeSocketLabel(&socket);
     }
 
-    if (ntree.type == NTREE_GEOMETRY) {
+    if (ntree.type == NTREE_GEOMETRY && !is_extend) {
       output << ".\n\n";
       output << TIP_(
           "Unknown socket value. Either the socket was not used or its value was not logged "
@@ -2984,6 +2989,41 @@ static void node_get_compositor_extra_info(TreeDrawContext &tree_draw_ctx,
   }
 }
 
+static void node_get_invalid_links_extra_info(const SpaceNode &snode,
+                                              const bNode &node,
+                                              Vector<NodeExtraInfoRow> &rows)
+{
+  const bNodeTree &tree = *snode.edittree;
+  const Span<bke::NodeLinkError> link_errors = tree.runtime->link_errors_by_target_node.lookup(
+      node.identifier);
+  if (link_errors.is_empty()) {
+    return;
+  }
+  NodeExtraInfoRow row;
+  row.text = IFACE_("Invalid Link");
+
+  row.tooltip_fn = [](bContext *C, void *arg, const char * /*tip*/) {
+    const bNodeTree &tree = *CTX_wm_space_node(C)->edittree;
+    const bNode &node = *static_cast<const bNode *>(arg);
+    const Span<bke::NodeLinkError> link_errors = tree.runtime->link_errors_by_target_node.lookup(
+        node.identifier);
+    std::stringstream ss;
+    Set<StringRef> already_added_errors;
+    for (const int i : link_errors.index_range()) {
+      const StringRefNull tooltip = link_errors[i].tooltip;
+      if (already_added_errors.add_as(tooltip)) {
+        ss << "\u2022 " << tooltip << "\n";
+      }
+    }
+    ss << "\n";
+    ss << "Any invalid links are highlighted";
+    return ss.str();
+  };
+  row.tooltip_fn_arg = const_cast<bNode *>(&node);
+  row.icon = ICON_ERROR;
+  rows.append(std::move(row));
+}
+
 static Vector<NodeExtraInfoRow> node_get_extra_info(const bContext &C,
                                                     TreeDrawContext &tree_draw_ctx,
                                                     const SpaceNode &snode,
@@ -3003,6 +3043,8 @@ static Vector<NodeExtraInfoRow> node_get_extra_info(const bContext &C,
     row.tooltip = TIP_(node.typeinfo->deprecation_notice);
     rows.append(std::move(row));
   }
+
+  node_get_invalid_links_extra_info(snode, node, rows);
 
   if (snode.edittree->type == NTREE_COMPOSIT) {
     node_get_compositor_extra_info(tree_draw_ctx, snode, node, rows);

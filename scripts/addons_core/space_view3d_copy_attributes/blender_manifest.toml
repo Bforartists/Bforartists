@@ -9,4 +9,9 @@ tags = ["User Interface"]
 blender_version_min = "4.2.0"
 license = ["SPDX:GPL-2.0-or-later"]
 website = "https://projects.blender.org/extensions/space_view3d_copy_attributes"
-copyright = ["2024 Bassam Kurdali", "2024 Fabian Fricke", "2024 Adam Wiseman", "2024 Demeter Dzadik"]
+copyright = [
+    "2024 Bassam Kurdali",
+    "2024 Fabian Fricke",
+    "2024 Adam Wiseman",
+    "2024 Demeter Dzadik",
+]
