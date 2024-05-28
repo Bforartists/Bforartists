@@ -25,6 +25,8 @@
 
 #include "BLT_translation.hh"
 
+#include "BLO_read_write.hh"
+
 #include "DNA_asset_types.h"
 #include "DNA_defaults.h"
 #include "DNA_userdef_types.h"
@@ -202,8 +204,7 @@ bUserExtensionRepo *BKE_preferences_extension_repo_add_default(UserDef *userdef)
   STRNCPY(repo->remote_url, "https://extensions.blender.org/api/v1/extensions");
   /* Disable `blender.org` by default, the initial "Online Preferences" section gives
    * the option to enable this. */
-  repo->flag |= USER_EXTENSION_REPO_FLAG_USE_REMOTE_URL | USER_EXTENSION_REPO_FLAG_DISABLED |
-                USER_EXTENSION_REPO_FLAG_SYNC_ON_STARTUP;
+  repo->flag |= USER_EXTENSION_REPO_FLAG_USE_REMOTE_URL | USER_EXTENSION_REPO_FLAG_SYNC_ON_STARTUP;
   return repo;
 }
 
@@ -404,6 +405,21 @@ int BKE_preferences_extension_repo_get_index(const UserDef *userdef,
 {
   return BLI_findindex(&userdef->extension_repos, repo);
 }
+
+void BKE_preferences_extension_repo_read_data(BlendDataReader *reader, bUserExtensionRepo *repo)
+{
+  if (repo->access_token) {
+    BLO_read_string(reader, &repo->access_token);
+  }
+}
+
+void BKE_preferences_extension_repo_write_data(BlendWriter *writer, const bUserExtensionRepo *repo)
+{
+  if (repo->access_token) {
+    BLO_write_string(writer, repo->access_token);
+  }
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
