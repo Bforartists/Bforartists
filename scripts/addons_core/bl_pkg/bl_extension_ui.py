@@ -191,12 +191,12 @@ def extensions_panel_draw_legacy_addons(
         user_addon = USERPREF_PT_addons.is_user_addon(mod, user_addon_paths) # BFA
 
         if user_addon: # BFA
-                row_right = row.row() # BFA
-                row_right.active = True # BFA
-                row_right.alignment = 'RIGHT' # BFA
-                row_right.operator( # BFA
-                    "preferences.addon_remove", text="Uninstall", icon='CANCEL', # BFA
-                ).module = module_name # BFA
+            row_right = row.row() # BFA
+            row_right.active = True # BFA
+            row_right.alignment = 'RIGHT' # BFA
+            row_right.operator( # BFA
+                "preferences.addon_remove", text="Uninstall", icon='CANCEL', # BFA
+            ).module = module_name # BFA
         # BFA - end of changes
 
         if bl_info["show_expanded"]:
@@ -262,8 +262,8 @@ def extensions_panel_draw_legacy_addons(
             # BFA - end of changes
             
             if is_enabled:
-                 if (addon_preferences := used_addon_module_name_map[module_name].preferences) is not None:
-                     USERPREF_PT_addons.draw_addon_preferences(layout, context, addon_preferences)
+                if (addon_preferences := used_addon_module_name_map[module_name].preferences) is not None:
+                    USERPREF_PT_addons.draw_addon_preferences(layout, context, addon_preferences)
             
 
 # -----------------------------------------------------------------------------
