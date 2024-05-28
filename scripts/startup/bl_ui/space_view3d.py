@@ -929,6 +929,8 @@ class VIEW3D_HT_header(Header):
                     depress=(tool_settings.gpencil_selectmode_edit == 'STROKE'),
                 ).mode = 'STROKE'
 
+                # TODO: Segment selection
+
             if object_mode == 'PAINT_GPENCIL':
                 row = layout.row(align=True)
                 row.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
@@ -7409,21 +7411,10 @@ class VIEW3D_MT_edit_curves_control_points(Menu):
 
     def draw(self, _context):
         layout = self.layout
-		#layout.operator("curves.extrude_move") #BFA - for next merge
+
+        layout.operator("curves.extrude_move")
         layout.operator_menu_enum("curves.handle_type_set", "type")
 
-#BFA for next merge
-#class VIEW3D_MT_edit_curves_context_menu(Menu):
-#    bl_label = "Curves"
-#
-#    def draw(self, _context):
-#        layout = self.layout
-#
-#        layout.operator_context = 'INVOKE_DEFAULT'
-#
-#        layout.operator("curves.subdivide")
-#        layout.operator("curves.extrude_move")
-        
         
 class VIEW3D_MT_edit_curves_segments(Menu):
     bl_label = "Segments"
@@ -7433,6 +7424,18 @@ class VIEW3D_MT_edit_curves_segments(Menu):
 
         layout.operator("curves.subdivide", icon='SUBDIVIDE_EDGES')
         layout.operator("curves.switch_direction", icon='SWITCH_DIRECTION')
+
+
+class VIEW3D_MT_edit_curves_context_menu(Menu):
+    bl_label = "Curves"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_DEFAULT'
+
+        layout.operator("curves.subdivide")
+        layout.operator("curves.extrude_move")
 
 
 class VIEW3D_MT_edit_pointcloud(Menu):
@@ -11215,7 +11218,7 @@ classes = (
     VIEW3D_MT_edit_curves_add,
     VIEW3D_MT_edit_curves_segments,
     VIEW3D_MT_edit_curves_control_points,
-    #VIEW3D_MT_edit_curves_context_menu,
+    VIEW3D_MT_edit_curves_context_menu,
     VIEW3D_MT_edit_pointcloud,
     VIEW3D_MT_object_mode_pie,
     VIEW3D_MT_view_pie,
