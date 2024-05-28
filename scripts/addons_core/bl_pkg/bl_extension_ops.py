@@ -1145,7 +1145,7 @@ class BlPkgPkgUpgradeAll(Operator, _BlPkgCmdMixIn):
     def poll(cls, context):
         if not bpy.app.online_access:
             if bpy.app.online_access_override:
-                cls.poll_message_set("Online access required to install updates. Launch Bforartists without --offline-mode") #BFA - not blender
+                cls.poll_message_set("Online access required to install updates. Launch Bforartists without --offline-mode")#BFA - not blender
             else:
                 cls.poll_message_set(
                     "Online access required to install updates. Enable online access in System preferences")
@@ -2327,10 +2327,10 @@ class BlPkgShowOnlinePreference(Operator):
         wm = context.window_manager
         prefs = context.preferences
 
-        bpy.ops.screen.userpref_show('INVOKE_DEFAULT', section='SYSTEM')
-
 		# BFA - when you enable, copy pre-downloaded extensions
         bpy.ops.bl_pkg.replace_legacy_addons('INVOKE_DEFAULT') # BFA - WIP, needs to made into another button
+
+        bpy.ops.screen.userpref_show('INVOKE_DEFAULT', section='SYSTEM')
 
         return {'FINISHED'}
 
@@ -2356,7 +2356,7 @@ class BlPkgEnableNotInstalled(Operator):
 #
 
 class BlkPkgReplaceLegacyAddons(Operator):
-    """Remove the legacy addons when Extensions are enabled."""
+    """Remove the legacy addons when Extensions are enabled"""
     bl_idname = "bl_pkg.replace_legacy_addons"
     bl_label = "Replace Legacy with Extension"
 
