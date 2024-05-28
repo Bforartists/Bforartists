@@ -515,7 +515,7 @@ void ED_node_set_tree_type(SpaceNode *snode, blender::bke::bNodeTreeType *typein
   }
 }
 
-bool ED_node_is_compositor(SpaceNode *snode)
+bool ED_node_is_compositor(const SpaceNode *snode)
 {
   return STREQ(snode->tree_idname, ntreeType_Composite->idname);
 }
@@ -1283,6 +1283,9 @@ float node_link_dim_factor(const View2D &v2d, const bNodeLink &link)
   if (link.fromsock == nullptr || link.tosock == nullptr) {
     return 1.0f;
   }
+  if (link.flag & NODE_LINK_INSERT_TARGET_INVALID) {
+    return 0.2f;
+  }
 
   const float2 from = link.fromsock->runtime->location;
   const float2 to = link.tosock->runtime->location;
@@ -1434,6 +1437,11 @@ static int node_duplicate_exec(bContext *C, wmOperator *op)
 
   for (bNode *node : node_map.values()) {
     blender::bke::nodeDeclarationEnsure(ntree, node);
+  }
+
+  ntree->ensure_topology_cache();
+  for (bNode *node : node_map.values()) {
+    update_multi_input_indices_for_removed_links(*node);
   }
 
   /* Clear flags for recursive depth-first iteration. */

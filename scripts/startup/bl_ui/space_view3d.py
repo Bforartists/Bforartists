@@ -3316,6 +3316,7 @@ class VIEW3D_MT_image_add(Menu):
         # auto-detect which mode to use otherwise.
         layout.operator("object.empty_image_add", text="Reference", icon='IMAGE_REFERENCE').background = False
         layout.operator("object.empty_image_add", text="Background", icon='IMAGE_BACKGROUND').background = True
+        layout.operator("image.import_as_mesh_planes", text="Mesh Plane", icon='MESH_PLANE')
 
 
 class VIEW3D_MT_object_relations(Menu):
@@ -3649,9 +3650,9 @@ class VIEW3D_MT_object_clear(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.location_clear", text="Location", icon="CLEARMOVE").clear_delta = False
-        layout.operator("object.rotation_clear", text="Rotation", icon="CLEARROTATE").clear_delta = False
-        layout.operator("object.scale_clear", text="Scale", icon="CLEARSCALE").clear_delta = False
+        layout.operator("object.location_clear", text="Location", text_ctxt=i18n_contexts.default).clear_delta = False
+        layout.operator("object.rotation_clear", text="Rotation", text_ctxt=i18n_contexts.default).clear_delta = False
+        layout.operator("object.scale_clear", text="Scale", text_ctxt=i18n_contexts.default).clear_delta = False
 
         layout.separator()
 
@@ -5153,9 +5154,9 @@ class VIEW3D_MT_pose_transform(Menu):
 
         layout.separator()
 
-        layout.operator("pose.loc_clear", text="Location", icon="CLEARMOVE")
-        layout.operator("pose.rot_clear", text="Rotation", icon="CLEARROTATE")
-        layout.operator("pose.scale_clear", text="Scale", icon="CLEARSCALE")
+        layout.operator("pose.loc_clear", text="Location", text_ctxt=i18n_contexts.default)
+        layout.operator("pose.rot_clear", text="Rotation", text_ctxt=i18n_contexts.default)
+        layout.operator("pose.scale_clear", text="Scale", text_ctxt=i18n_contexts.default)
 
         layout.separator()
 
@@ -7408,10 +7409,22 @@ class VIEW3D_MT_edit_curves_control_points(Menu):
 
     def draw(self, _context):
         layout = self.layout
-
+		#layout.operator("curves.extrude_move") #BFA - for next merge
         layout.operator_menu_enum("curves.handle_type_set", "type")
 
-
+#BFA for next merge
+#class VIEW3D_MT_edit_curves_context_menu(Menu):
+#    bl_label = "Curves"
+#
+#    def draw(self, _context):
+#        layout = self.layout
+#
+#        layout.operator_context = 'INVOKE_DEFAULT'
+#
+#        layout.operator("curves.subdivide")
+#        layout.operator("curves.extrude_move")
+        
+        
 class VIEW3D_MT_edit_curves_segments(Menu):
     bl_label = "Segments"
 
@@ -8146,7 +8159,7 @@ class VIEW3D_PT_shading_lighting(Panel):
                     )
 
                 col = split.column()
-                col.operator("preferences.studiolight_show", emboss=False, text="", icon='PREFERENCES')
+                col.operator("screen.userpref_show", emboss=False, text="", icon='PREFERENCES').section = 'LIGHTS'
 
                 split = layout.split(factor=0.9)
                 col = split.column()
@@ -8166,7 +8179,7 @@ class VIEW3D_PT_shading_lighting(Panel):
                 row.template_icon_view(shading, "studio_light", scale_popup=3.0)
 
                 col = split.column()
-                col.operator("preferences.studiolight_show", emboss=False, text="", icon='PREFERENCES')
+                col.operator("screen.userpref_show", emboss=False, text="", icon='PREFERENCES').section = 'LIGHTS'
                 col.operator("view3d.toggle_matcap_flip", emboss=False, text="", icon='ARROW_LEFTRIGHT')
 
         elif shading.type == 'MATERIAL':
@@ -8188,7 +8201,7 @@ class VIEW3D_PT_shading_lighting(Panel):
                 row.template_icon_view(shading, "studio_light", scale_popup=3)
 
                 col = split.column()
-                col.operator("preferences.studiolight_show", emboss=False, text="", icon='PREFERENCES')
+                col.operator("screen.userpref_show", emboss=False, text="", icon='PREFERENCES').section = 'LIGHTS'
 
                 split = layout.split(factor=0.9)
                 col = split.column()
@@ -8232,7 +8245,7 @@ class VIEW3D_PT_shading_lighting(Panel):
                 row.template_icon_view(shading, "studio_light", scale_popup=3)
 
                 col = split.column()
-                col.operator("preferences.studiolight_show", emboss=False, text="", icon='PREFERENCES')
+                col.operator("screen.userpref_show", emboss=False, text="", icon='PREFERENCES').section = 'LIGHTS'
 
                 split = layout.split(factor=0.9)
                 col = split.column()
@@ -8542,15 +8555,13 @@ class VIEW3D_PT_gizmo_display(Panel):
         row.separator()
         row.prop(view, "show_gizmo_navigate", text="Navigate")
 
-        if view.show_gizmo_navigate:
-            row = colsub.row()
-            row.separator()
-            row.separator()
-            row.prop(prefsview, "show_navigate_ui")  # bfa - moved from the preferences
-            row = colsub.row()
-            row.separator()
-            row.separator()
-            row.prop(prefsview, "mini_axis_type", text="")
+        col = layout.column()
+        col.active = view.show_gizmo and view.show_gizmo_context
+        col.label(text="Object Gizmos")
+        col.prop(scene.transform_orientation_slots[1], "type", text="")
+        col.prop(view, "show_gizmo_object_translate", text="Move", text_ctxt=i18n_contexts.operator_default)
+        col.prop(view, "show_gizmo_object_rotate", text="Rotate", text_ctxt=i18n_contexts.operator_default)
+        col.prop(view, "show_gizmo_object_scale", text="Scale", text_ctxt=i18n_contexts.operator_default)
 
         row = colsub.row()
         row.separator()
@@ -8680,12 +8691,8 @@ class VIEW3D_PT_overlay_guides(Panel):
         split = layout.split()
         split.active = display_all
         sub = split.column()
-        row = sub.row()
-        row.separator()
-        row.prop(overlay, "show_text", text="Text Info")
-        row = sub.row()
-        row.separator()
-        row.prop(overlay, "show_stats", text="Statistics")
+        sub.prop(overlay, "show_text", text="Text Info")
+        sub.prop(overlay, "show_stats", text="Statistics")
 
         sub = split.column()
         sub.prop(overlay, "show_cursor", text="3D Cursor")
@@ -9510,9 +9517,14 @@ class VIEW3D_PT_snapping(Panel):
 
         col.label(text="Affect")
         row = col.row(align=True)
-        row.prop(tool_settings, "use_snap_translate", text="Move", toggle=True)
-        row.prop(tool_settings, "use_snap_rotate", text="Rotate", toggle=True)
-        row.prop(tool_settings, "use_snap_scale", text="Scale", toggle=True)
+        row.prop(
+            tool_settings,
+            "use_snap_translate",
+            text="Move",
+            text_ctxt=i18n_contexts.operator_default,
+            toggle=True)
+        row.prop(tool_settings, "use_snap_rotate", text="Rotate", text_ctxt=i18n_contexts.operator_default, toggle=True)
+        row.prop(tool_settings, "use_snap_scale", text="Scale", text_ctxt=i18n_contexts.operator_default, toggle=True)
         col.label(text="Rotation Increment")
         row = col.row(align=True)
         row.prop(tool_settings, "snap_angle_increment_3d", text="")
@@ -9601,7 +9613,10 @@ class VIEW3D_PT_gpencil_origin(Panel):
             row = layout.row()
             row.label(text="Offset")
             row = layout.row()
-            row.prop(gpd, "zdepth_offset", text="")
+            if context.preferences.experimental.use_grease_pencil_version3:
+                row.prop(tool_settings, "gpencil_surface_offset", text="")
+            else:
+                row.prop(gpd, "zdepth_offset", text="")
 
         if tool_settings.gpencil_stroke_placement_view3d == 'STROKE':
             row = layout.row()
@@ -11200,6 +11215,7 @@ classes = (
     VIEW3D_MT_edit_curves_add,
     VIEW3D_MT_edit_curves_segments,
     VIEW3D_MT_edit_curves_control_points,
+    #VIEW3D_MT_edit_curves_context_menu,
     VIEW3D_MT_edit_pointcloud,
     VIEW3D_MT_object_mode_pie,
     VIEW3D_MT_view_pie,

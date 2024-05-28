@@ -509,6 +509,13 @@ class Layer : public ::GreasePencilLayer {
    */
   void update_from_dna_read();
 
+  float4x4 parent_inverse() const;
+
+  /**
+   * The local transform of the layer (in layer space, not object space).
+   */
+  float4x4 local_transform() const;
+
   /**
    * Returns the transformation from layer space to object space.
    */
@@ -558,13 +565,6 @@ class Layer : public ::GreasePencilLayer {
    */
   SortedKeysIterator remove_leading_end_frames_in_range(SortedKeysIterator begin,
                                                         SortedKeysIterator end);
-
-  float4x4 parent_inverse() const;
-
-  /**
-   * The local transform of the layer (in layer space, not object space).
-   */
-  float4x4 local_transform() const;
 
   /**
    * Get the parent to world matrix for this layer.
@@ -984,6 +984,12 @@ inline bool GreasePencil::has_active_group() const
 void *BKE_grease_pencil_add(Main *bmain, const char *name);
 GreasePencil *BKE_grease_pencil_new_nomain();
 GreasePencil *BKE_grease_pencil_copy_for_eval(const GreasePencil *grease_pencil_src);
+/**
+ * Move data from a grease pencil outside of the main data-base into a grease pencil in the
+ * data-base. Takes ownership of the source mesh. */
+void BKE_grease_pencil_nomain_to_grease_pencil(GreasePencil *grease_pencil_src,
+                                               GreasePencil *grease_pencil_dst);
+
 void BKE_grease_pencil_data_update(Depsgraph *depsgraph, Scene *scene, Object *object);
 void BKE_grease_pencil_duplicate_drawing_array(const GreasePencil *grease_pencil_src,
                                                GreasePencil *grease_pencil_dst);

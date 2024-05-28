@@ -114,6 +114,7 @@
 #include "BKE_main_namemap.hh"
 #include "BKE_node.hh"
 #include "BKE_packedFile.h"
+#include "BKE_preferences.h"
 #include "BKE_report.hh"
 #include "BKE_workspace.hh"
 
@@ -934,6 +935,7 @@ static void write_userdef(BlendWriter *writer, const UserDef *userdef)
 
   LISTBASE_FOREACH (const bUserExtensionRepo *, repo_ref, &userdef->extension_repos) {
     BLO_write_struct(writer, bUserExtensionRepo, repo_ref);
+    BKE_preferences_extension_repo_write_data(writer, repo_ref);
   }
   LISTBASE_FOREACH (
       const bUserAssetShelfSettings *, shelf_settings, &userdef->asset_shelves_settings)
@@ -1309,10 +1311,11 @@ static bool write_file_handle(Main *mainvar,
 
         /* We only write unused IDs in undo case. */
         if (!wd->use_memfile) {
-          /* NOTE: All Scenes, WindowManagers and WorkSpaces should always be written to disk, so
-           * their user-count should never be zero currently. */
+          /* NOTE: All 'never unused' local IDs (Scenes, WindowManagers, ...) should always be
+           * written to disk, so their user-count should never be zero currently. Note that
+           * libraries have already been skipped above, as they need a specific handling. */
           if (id->us == 0) {
-            BLI_assert(!ELEM(GS(id->name), ID_SCE, ID_WM, ID_WS));
+            BLI_assert((id_type->flags & IDTYPE_FLAGS_NEVER_UNUSED) == 0);
             continue;
           }
 
@@ -1345,8 +1348,11 @@ static bool write_file_handle(Main *mainvar,
 
         /* If not writing undo data, properly set directly linked IDs as `LIB_TAG_EXTERN`. */
         if (!wd->use_memfile) {
-          BKE_library_foreach_ID_link(
-              bmain, id, write_id_direct_linked_data_process_cb, nullptr, IDWALK_READONLY);
+          BKE_library_foreach_ID_link(bmain,
+                                      id,
+                                      write_id_direct_linked_data_process_cb,
+                                      nullptr,
+                                      IDWALK_READONLY | IDWALK_INCLUDE_UI);
         }
 
         if (do_override) {
