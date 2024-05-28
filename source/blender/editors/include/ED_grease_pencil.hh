@@ -87,6 +87,7 @@ class DrawingPlacement {
   DrawingPlacementDepth depth_;
   DrawingPlacementPlane plane_;
   ViewDepths *depth_cache_ = nullptr;
+  bool use_project_only_selected_ = false;
   float surface_offset_;
 
   float3 placement_loc_;
@@ -102,7 +103,7 @@ class DrawingPlacement {
                    const ARegion &region,
                    const View3D &view3d,
                    const Object &eval_object,
-                   const bke::greasepencil::Layer &layer);
+                   const bke::greasepencil::Layer *layer);
   ~DrawingPlacement();
 
  public:
@@ -117,6 +118,8 @@ class DrawingPlacement {
    */
   float3 project(float2 co) const;
   void project(Span<float2> src, MutableSpan<float3> dst) const;
+
+  float4x4 to_world_space() const;
 };
 
 void set_selected_frames_type(bke::greasepencil::Layer &layer,
@@ -232,11 +235,13 @@ float opacity_from_input_sample(const float pressure,
                                 const Brush *brush,
                                 const Scene *scene,
                                 const BrushGpencilSettings *settings);
-float radius_from_input_sample(const float pressure,
-                               const float3 location,
-                               ViewContext vc,
-                               const Brush *brush,
+float radius_from_input_sample(const RegionView3D *rv3d,
+                               const ARegion *region,
                                const Scene *scene,
+                               const Brush *brush,
+                               float pressure,
+                               float3 location,
+                               float4x4 to_world,
                                const BrushGpencilSettings *settings);
 int grease_pencil_draw_operator_invoke(bContext *C, wmOperator *op);
 
@@ -522,7 +527,8 @@ void draw_grease_pencil_stroke(const RegionView3D &rv3d,
                                bool cyclic,
                                eGPDstroke_Caps cap_start,
                                eGPDstroke_Caps cap_end,
-                               bool fill_stroke);
+                               bool fill_stroke,
+                               float radius_scale = 1.0f);
 /**
  * Draw points as quads or circles.
  */
@@ -544,7 +550,8 @@ void draw_grease_pencil_strokes(const RegionView3D &rv3d,
                                 const VArray<ColorGeometry4f> &colors,
                                 const float4x4 &layer_to_world,
                                 int mode,
-                                bool use_xray);
+                                bool use_xray,
+                                float radius_scale = 1.0f);
 
 }  // namespace image_render
 
