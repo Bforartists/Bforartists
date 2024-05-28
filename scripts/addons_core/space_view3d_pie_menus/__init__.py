@@ -14,7 +14,7 @@ from bpy.types import (
     AddonPreferences,
 )
 
-
+# BFA - needed to be a core addon
 bl_info = {
     "name": "3D Viewport Pie Menus",
     "author": "meta-androcto",
@@ -47,7 +47,6 @@ sub_modules_names = (
 
 
 sub_modules = [__import__(__package__ + "." + submod, {}, {}, submod) for submod in sub_modules_names]
-sub_modules.sort(key=lambda mod: (mod.bl_info['category'], mod.bl_info['name']))
 
 
 def _get_pref_class(mod):
