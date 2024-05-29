@@ -45,6 +45,7 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         ob = context.object
         return ob and ob.type != 'GPENCIL'
 
+		# BFA - changed to be columns
     def draw(self, context):
         layout = self.layout
         ob = context.object
@@ -55,7 +56,7 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
             'MESH', 'CURVE', 'CURVES',
             'FONT', 'VOLUME', 'POINTCLOUD', 'GREASEPENCIL',
         }
-
+		# BFA - changed to be columns
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False)
         col1 = flow.column()
         col2 = flow.column()
@@ -66,7 +67,7 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
 
         layout.template_modifiers()
 
-
+# BFA - Heavily modified to be a column menu
 class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
     bl_label = ""
     bl_options = {'SEARCH_ON_KEY_PRESS'}
@@ -95,11 +96,17 @@ class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'VOLUME', 'GREASEPENCIL'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_generate)
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE', 'VOLUME', 'GREASEPENCIL'}:
-            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_deform)
+            layout.menu("OBJECT_MT_modifier_add_deform")
+        if ob_type in {'MESH'}:
+            layout.menu("OBJECT_MT_modifier_add_normals")
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_physics)
         if ob_type in {'GREASEPENCIL'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_color)
+		
+		#BFA - moved to another button below
+        #if geometry_nodes_supported: 
+        #    layout.menu_contents("OBJECT_MT_modifier_add_root_catalogs")
 
 
 class OBJECT_MT_modifier_add_edit(ModifierAddMenu, Menu):
@@ -116,8 +123,8 @@ class OBJECT_MT_modifier_add_edit(ModifierAddMenu, Menu):
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE'}:
             self.operator_modifier_add(layout, 'MESH_SEQUENCE_CACHE')
         if ob_type == 'MESH':
-            self.operator_modifier_add(layout, 'NORMAL_EDIT')
-            self.operator_modifier_add(layout, 'WEIGHTED_NORMAL')
+            #self.operator_modifier_add(layout, 'NORMAL_EDIT') # BFA - moved to another menu
+            #self.operator_modifier_add(layout, 'WEIGHTED_NORMAL') # BFA - moved to another menu
             self.operator_modifier_add(layout, 'UV_PROJECT')
             self.operator_modifier_add(layout, 'UV_WARP')
             self.operator_modifier_add(layout, 'VERTEX_WEIGHT_EDIT')
@@ -235,6 +242,19 @@ class OBJECT_MT_modifier_add_deform(ModifierAddMenu, Menu):
         layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
 
 
+class OBJECT_MT_modifier_add_normals(ModifierAddMenu, Menu):
+    bl_label = "Normals"
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+
+    def draw(self, context):
+        layout = self.layout
+        ob_type = context.object.type
+        if ob_type == 'MESH':
+            self.operator_modifier_add(layout, 'NORMAL_EDIT')
+            self.operator_modifier_add(layout, 'WEIGHTED_NORMAL')
+        layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
+
+
 class OBJECT_MT_modifier_add_physics(ModifierAddMenu, Menu):
     bl_label = "Physics"
     bl_options = {'SEARCH_ON_KEY_PRESS'}
@@ -268,7 +288,7 @@ class OBJECT_MT_modifier_add_color(ModifierAddMenu, Menu):
             self.operator_modifier_add(layout, 'GREASE_PENCIL_TINT')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_OPACITY')
 
-
+# BFA - Modifier Assets
 class OBJECT_MT_modifier_add_assets(ModifierAddMenu, Menu):
     bl_label = "Assets"
     bl_description = "Add a modifier nodegroup to all selected objects" #BFA - inversed
@@ -298,27 +318,27 @@ class OBJECT_MT_modifier_add_assets(ModifierAddMenu, Menu):
         if geometry_nodes_supported:
             layout.menu_contents("OBJECT_MT_modifier_add_root_catalogs")
 
-
+# BFA - Modifier Assets
 class AssetSubmenu:
     def draw(self, context):
         self.layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
-
+# BFA - Modifier Assets
 class OBJECT_MT_modifier_add_edit_assets(AssetSubmenu, ModifierAddMenu, Menu):
     bl_label = OBJECT_MT_modifier_add_edit.bl_label
-
+# BFA - Modifier Assets
 class OBJECT_MT_modifier_add_generate_assets(AssetSubmenu, ModifierAddMenu, Menu):
     bl_label = OBJECT_MT_modifier_add_generate.bl_label
-
+# BFA - Modifier Assets
 class OBJECT_MT_modifier_add_deform_assets(AssetSubmenu, ModifierAddMenu, Menu):
     bl_label = OBJECT_MT_modifier_add_deform.bl_label
-
+# BFA - Modifier Assets
 class OBJECT_MT_modifier_add_physics_assets(AssetSubmenu, ModifierAddMenu, Menu):
     bl_label = OBJECT_MT_modifier_add_physics.bl_label
-
+# BFA - Modifier Assets
 class OBJECT_MT_modifier_add_color_assets(AssetSubmenu, ModifierAddMenu, Menu):
     bl_label = OBJECT_MT_modifier_add_color.bl_label
 
-
+# BFA - Modifier Assets
 class OBJECT_OT_add_asset_modifier_menu(InvokeMenuOperator, Operator):
     bl_idname = "object.add_asset_modifier_menu"
     bl_label = "Add Asset Modifier"
@@ -338,10 +358,10 @@ class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("object.add_gpencil_modifier_menu", text="Add Modifier", icon='ADD')
+        layout.operator("object.add_gpencil_modifier_menu", text="Add Modifier", icon='ADD') # BFA icon
         layout.template_grease_pencil_modifiers()
 
-
+# BFA - Grease Pencil Modifier add menu
 class OBJECT_MT_gpencil_modifier_add(GenericColumnMenu, Menu):
     bl_description = "Add a procedural operation/effect to the active grease pencil object"
 
@@ -400,14 +420,15 @@ classes = (
     OBJECT_MT_modifier_add_edit,
     OBJECT_MT_modifier_add_generate,
     OBJECT_MT_modifier_add_deform,
+    OBJECT_MT_modifier_add_normals,
     OBJECT_MT_modifier_add_physics,
     OBJECT_MT_modifier_add_color,
-    OBJECT_MT_modifier_add_assets,
-    OBJECT_MT_modifier_add_color_assets,
-    OBJECT_OT_add_asset_modifier_menu,
+    OBJECT_MT_modifier_add_assets, #BFA
+    OBJECT_MT_modifier_add_color_assets, #BFA
+    OBJECT_OT_add_asset_modifier_menu, #BFA
     DATA_PT_gpencil_modifiers,
-    OBJECT_MT_gpencil_modifier_add,
-    OBJECT_OT_add_gpencil_modifier_menu,
+    OBJECT_MT_gpencil_modifier_add, #BFA
+    OBJECT_OT_add_gpencil_modifier_menu, #BFA
     AddModifierMenu,
 )
 
