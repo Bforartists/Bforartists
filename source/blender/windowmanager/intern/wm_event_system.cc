@@ -874,6 +874,7 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
     CTX_wm_region_set(C, handler->context.region);
   }
   if (handler->context.region_popup) {
+    BLI_assert(screen_temp_region_exists(handler->context.region_popup));
     CTX_wm_region_popup_set(C, handler->context.region_popup);
   }
 
@@ -883,6 +884,7 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
   if ((retval != WM_UI_HANDLER_BREAK) || always_pass) {
     CTX_wm_area_set(C, area);
     CTX_wm_region_set(C, region);
+    BLI_assert((region_popup == nullptr) || screen_temp_region_exists(region_popup));
     CTX_wm_region_popup_set(C, region_popup);
   }
   else {
@@ -2252,6 +2254,7 @@ void WM_event_remove_handlers(bContext *C, ListBase *handlers)
           CTX_wm_region_set(C, handler->context.region);
         }
         if (handler->context.region_popup) {
+          BLI_assert(screen_temp_region_exists(handler->context.region_popup));
           CTX_wm_region_popup_set(C, handler->context.region_popup);
         }
 
@@ -2484,6 +2487,36 @@ static void wm_event_modalkeymap_end(wmEvent *event, const wmEvent_ModalMapStore
   if (event_backup->dbl_click_disabled) {
     event->val = KM_DBL_CLICK;
   }
+}
+
+/**
+ * Insert modal operator into list of modal handlers, respecting priority.
+ */
+static void wm_handler_operator_insert(wmWindow *win, wmEventHandler_Op *handler)
+{
+  if (handler->op->type->flag & OPTYPE_MODAL_PRIORITY) {
+    BLI_addhead(&win->modalhandlers, handler);
+    return;
+  }
+
+  LISTBASE_FOREACH (wmEventHandler *, handler_iter, &win->modalhandlers) {
+    if (handler_iter->type == WM_HANDLER_TYPE_UI) {
+      /* UI always has priority. */
+      continue;
+    }
+    if (handler_iter->type == WM_HANDLER_TYPE_OP) {
+      wmEventHandler_Op *handler_iter_op = (wmEventHandler_Op *)handler_iter;
+      if (handler_iter_op->op->type->flag & OPTYPE_MODAL_PRIORITY) {
+        /* Keep priority operators in front. */
+        continue;
+      }
+
+      BLI_insertlinkbefore(&win->modalhandlers, handler_iter, handler);
+      return;
+    }
+  }
+
+  BLI_addtail(&win->modalhandlers, handler);
 }
 
 /**
@@ -4394,7 +4427,7 @@ void WM_event_add_fileselect(bContext *C, wmOperator *op)
   handler->context.area = root_area;
   handler->context.region = root_region;
 
-  BLI_addhead(&root_win->modalhandlers, handler);
+  wm_handler_operator_insert(root_win, handler);
 
   /* Check props once before invoking if check is available
    * ensures initial properties are valid. */
@@ -4497,7 +4530,7 @@ wmEventHandler_Op *WM_event_add_modal_handler_ex(wmWindow *win,
   handler->context.region_type = handler->context.region ? handler->context.region->regiontype :
                                                            -1;
 
-  BLI_addhead(&win->modalhandlers, handler);
+  wm_handler_operator_insert(win, handler);
 
   if (op->type->modalkeymap) {
     WM_window_status_area_tag_redraw(win);
@@ -4569,6 +4602,20 @@ void WM_event_modal_handler_region_replace(wmWindow *win,
       if ((handler->context.region == old_region) && (handler->is_fileselect == false)) {
         handler->context.region = new_region;
         handler->context.region_type = new_region ? new_region->regiontype : int(RGN_TYPE_WINDOW);
+      }
+    }
+  }
+}
+
+void WM_event_ui_handler_region_popup_replace(wmWindow *win,
+                                              const ARegion *old_region,
+                                              ARegion *new_region)
+{
+  LISTBASE_FOREACH (wmEventHandler *, handler_base, &win->modalhandlers) {
+    if (handler_base->type == WM_HANDLER_TYPE_UI) {
+      wmEventHandler_UI *handler = (wmEventHandler_UI *)handler_base;
+      if (handler->context.region_popup == old_region) {
+        handler->context.region_popup = new_region;
       }
     }
   }
