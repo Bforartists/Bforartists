@@ -91,21 +91,21 @@ class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
         if layout.operator_context == 'INVOKE_REGION_WIN':
             layout.label(text=self.search_header)
 
+        if ob_type in {'MESH'}:
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_normals) #BFA - moved to the front, closer to where they originally were
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE', 'GREASEPENCIL'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_edit)
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'VOLUME', 'GREASEPENCIL'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_generate)
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE', 'VOLUME', 'GREASEPENCIL'}:
-            layout.menu("OBJECT_MT_modifier_add_deform")
-        if ob_type in {'MESH'}:
-            layout.menu("OBJECT_MT_modifier_add_normals")
+            self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_deform)
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_physics)
         if ob_type in {'GREASEPENCIL'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_color)
-		
-		#BFA - moved to another button below
-        #if geometry_nodes_supported: 
+
+		#BFA - moved to another button menu below
+        #if geometry_nodes_supported:
         #    layout.menu_contents("OBJECT_MT_modifier_add_root_catalogs")
 
 
@@ -123,8 +123,6 @@ class OBJECT_MT_modifier_add_edit(ModifierAddMenu, Menu):
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE'}:
             self.operator_modifier_add(layout, 'MESH_SEQUENCE_CACHE')
         if ob_type == 'MESH':
-            #self.operator_modifier_add(layout, 'NORMAL_EDIT') # BFA - moved to another menu
-            #self.operator_modifier_add(layout, 'WEIGHTED_NORMAL') # BFA - moved to another menu
             self.operator_modifier_add(layout, 'UV_PROJECT')
             self.operator_modifier_add(layout, 'UV_WARP')
             self.operator_modifier_add(layout, 'VERTEX_WEIGHT_EDIT')
