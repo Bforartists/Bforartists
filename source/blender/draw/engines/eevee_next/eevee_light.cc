@@ -87,9 +87,9 @@ void Light::sync(ShadowModule &shadows,
   this->power[LIGHT_TRANSMISSION] = la->transmission_fac * shape_power * transmission_visibility;
   this->power[LIGHT_VOLUME] = la->volume_fac * point_power * volume_visibility;
 
-  this->lod_bias = (1.0f - la->shadow_resolution_scale) * SHADOW_TILEMAP_LOD;
+  this->lod_bias = shadows.global_lod_bias();
   this->lod_min = shadow_lod_min_get(la);
-  this->pcf_radius = la->shadow_filter_radius;
+  this->filter_radius = la->shadow_filter_radius;
   this->shadow_jitter = (la->mode & LA_SHADOW_JITTER) != 0;
 
   if (la->mode & LA_SHADOW) {
@@ -189,8 +189,8 @@ void Light::shape_parameters_set(const ::Light *la,
     this->area.size = float2(la->area_size, is_irregular ? la->area_sizey : la->area_size);
     /* Scale and clamp to minimum value before float imprecision artifacts appear. */
     this->area.size *= scale.xy() / 2.0f;
-    /* In this case, this is just the scaling factor. */
-    this->local.shadow_radius = trace_scaling_fac;
+    this->area.shadow_scale = trace_scaling_fac;
+    this->local.shadow_radius = length(this->area.size) * trace_scaling_fac;
     /* Set to default position. */
     this->local.shadow_position = float3(0.0f);
     /* Do not render lights that have no area. */
@@ -353,8 +353,11 @@ void LightModule::begin_sync()
     la.r = la.g = la.b = -1.0f; /* Tag as world sun light. */
     la.energy = 1.0f;
     la.sun_angle = inst_.world.sun_angle();
+    la.shadow_filter_radius = inst_.world.sun_shadow_filter_radius();
+    la.shadow_jitter_overblur = inst_.world.sun_shadow_jitter_overblur();
     la.shadow_maximum_resolution = inst_.world.sun_shadow_max_resolution();
     SET_FLAG_FROM_TEST(la.mode, inst_.world.use_sun_shadow(), LA_SHADOW);
+    SET_FLAG_FROM_TEST(la.mode, inst_.world.use_sun_shadow_jitter(), LA_SHADOW_JITTER);
 
     Light &light = light_map_.lookup_or_add_default(world_sunlight_key);
     light.used = true;
@@ -402,8 +405,8 @@ void LightModule::end_sync()
   auto it_end = light_map_.items().end();
   for (auto it = light_map_.items().begin(); it != it_end; ++it) {
     Light &light = (*it).value;
-
-    if (!light.used) {
+    /* Do not discard casters in baking mode. See WORKAROUND in `surfels_create`. */
+    if (!light.used && !inst_.is_baking()) {
       light_map_.remove(it);
       continue;
     }

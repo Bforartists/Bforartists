@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+#BFA - needed to be used as a core addon
 bl_info = {
     "name": "Copy Attributes Menu",
     "author": "Bassam Kurdali, Fabian Fricke, Adam Wiseman, Demeter Dzadik",

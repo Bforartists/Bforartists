@@ -26,6 +26,7 @@
 #include "ED_grease_pencil.hh"
 #include "ED_view3d.hh"
 
+#include "GEO_simplify_curves.hh"
 #include "GEO_smooth_curves.hh"
 
 #include "WM_api.hh"
@@ -38,7 +39,6 @@
 namespace blender::ed::sculpt_paint::greasepencil {
 
 static constexpr float POINT_OVERRIDE_THRESHOLD_PX = 3.0f;
-static constexpr float POINT_RESAMPLE_MIN_DISTANCE_PX = 10.0f;
 
 template<typename T>
 static inline void linear_interpolation(const T &a,
@@ -182,7 +182,7 @@ struct PaintOperationExecutor {
                         std::make_optional(color_base) :
                         std::nullopt;
     }
-    softness_ = 0.0f;
+    softness_ = 1.0f - settings_->hardness;
 
     BLI_assert(grease_pencil->has_active_layer());
     drawing_ = grease_pencil->get_editable_drawing_at(*grease_pencil->get_active_layer(),
@@ -320,14 +320,18 @@ struct PaintOperationExecutor {
                             const int material_index)
   {
     const float2 start_coords = start_sample.mouse_position;
-    ViewContext vc = ED_view3d_viewcontext_init(const_cast<bContext *>(&C),
-                                                CTX_data_depsgraph_pointer(&C));
+    const RegionView3D *rv3d = CTX_wm_region_view3d(&C);
+    const ARegion *region = CTX_wm_region(&C);
+
+    const float3 start_location = self.placement_.project(start_coords);
     const float start_radius = ed::greasepencil::radius_from_input_sample(
-        start_sample.pressure,
-        self.placement_.project(start_sample.mouse_position),
-        vc,
-        brush_,
+        rv3d,
+        region,
         scene_,
+        brush_,
+        start_sample.pressure,
+        start_location,
+        self.placement_.to_world_space(),
         settings_);
     const float start_opacity = ed::greasepencil::opacity_from_input_sample(
         start_sample.pressure, brush_, scene_, settings_);
@@ -347,7 +351,7 @@ struct PaintOperationExecutor {
     const IndexRange curve_points = curves.points_by_curve()[active_curve];
     const int last_active_point = curve_points.last();
 
-    curves.positions_for_write()[last_active_point] = self.placement_.project(start_coords);
+    curves.positions_for_write()[last_active_point] = start_location;
     drawing_->radii_for_write()[last_active_point] = start_radius;
     drawing_->opacities_for_write()[last_active_point] = start_opacity;
     if (vertex_color_) {
@@ -491,14 +495,18 @@ struct PaintOperationExecutor {
                                 const InputSample &extension_sample)
   {
     const float2 coords = extension_sample.mouse_position;
-    ViewContext vc = ED_view3d_viewcontext_init(const_cast<bContext *>(&C),
-                                                CTX_data_depsgraph_pointer(&C));
+    const RegionView3D *rv3d = CTX_wm_region_view3d(&C);
+    const ARegion *region = CTX_wm_region(&C);
+
+    const float3 position = self.placement_.project(coords);
     const float radius = ed::greasepencil::radius_from_input_sample(
-        extension_sample.pressure,
-        self.placement_.project(extension_sample.mouse_position),
-        vc,
-        brush_,
+        rv3d,
+        region,
         scene_,
+        brush_,
+        extension_sample.pressure,
+        position,
+        self.placement_.to_world_space(),
         settings_);
     const float opacity = ed::greasepencil::opacity_from_input_sample(
         extension_sample.pressure, brush_, scene_, settings_);
@@ -524,7 +532,7 @@ struct PaintOperationExecutor {
     if (math::distance(coords, prev_coords) < POINT_OVERRIDE_THRESHOLD_PX) {
       /* Don't move the first point of the stroke. */
       if (!is_first_sample) {
-        curves.positions_for_write()[last_active_point] = self.placement_.project(coords);
+        curves.positions_for_write()[last_active_point] = position;
       }
       drawing_->radii_for_write()[last_active_point] = math::max(radius, prev_radius);
       drawing_->opacities_for_write()[last_active_point] = math::max(opacity, prev_opacity);
@@ -534,8 +542,8 @@ struct PaintOperationExecutor {
     /* If the next sample is far away, we subdivide the segment to add more points. */
     int new_points_num = 1;
     const float distance_px = math::distance(coords, prev_coords);
-    if (distance_px > POINT_RESAMPLE_MIN_DISTANCE_PX) {
-      const int subdivisions = int(math::floor(distance_px / POINT_RESAMPLE_MIN_DISTANCE_PX)) - 1;
+    if (distance_px > float(settings_->input_samples)) {
+      const int subdivisions = int(math::floor(distance_px / float(settings_->input_samples))) - 1;
       new_points_num += subdivisions;
     }
 
@@ -624,7 +632,7 @@ void PaintOperation::on_stroke_begin(const bContext &C, const InputSample &start
 
   const bke::greasepencil::Layer &layer = *grease_pencil->get_active_layer();
   /* Initialize helper class for projecting screen space coordinates. */
-  placement_ = ed::greasepencil::DrawingPlacement(*scene, *region, *view3d, *eval_object, layer);
+  placement_ = ed::greasepencil::DrawingPlacement(*scene, *region, *view3d, *eval_object, &layer);
   if (placement_.use_project_to_surface()) {
     placement_.cache_viewport_depths(CTX_data_depsgraph_pointer(&C), region, view3d);
   }
@@ -698,55 +706,41 @@ void PaintOperation::on_stroke_extended(const bContext &C, const InputSample &ex
   WM_event_add_notifier(&C, NC_GEOM | ND_DATA, grease_pencil);
 }
 
-static float dist_to_interpolated_2d(
-    float2 pos, float2 posA, float2 posB, float val, float valA, float valB)
-{
-  const float dist1 = math::distance_squared(posA, pos);
-  const float dist2 = math::distance_squared(posB, pos);
-
-  if (dist1 + dist2 > 1e-5f) {
-    const float interpolated_val = math::interpolate(valB, valA, dist1 / (dist1 + dist2));
-    return math::distance(interpolated_val, val);
-  }
-  return 0.0f;
-}
-
 void PaintOperation::simplify_stroke(const bContext &C,
                                      bke::greasepencil::Drawing &drawing,
-                                     const float epsilon_px)
+                                     const float epsilon)
 {
   const Scene *scene = CTX_data_scene(&C);
+  const bke::CurvesGeometry &curves = drawing.strokes();
+
   const bool on_back = (scene->toolsettings->gpencil_flags & GP_TOOL_FLAG_PAINT_ONBACK) != 0;
-  const int active_curve = on_back ? drawing.strokes().curves_range().first() :
-                                     drawing.strokes().curves_range().last();
-  const IndexRange points = drawing.strokes().points_by_curve()[active_curve];
-  bke::CurvesGeometry &curves = drawing.strokes_for_write();
+  const int active_curve = on_back ? curves.curves_range().first() : curves.curves_range().last();
+
+  IndexMaskMemory memory;
+  IndexMask points_to_delete = geometry::simplify_curve_attribute(
+      curves.positions(),
+      IndexRange::from_single(active_curve),
+      curves.points_by_curve(),
+      curves.cyclic(),
+      epsilon,
+      curves.positions(),
+      memory);
+
   const VArray<float> radii = drawing.radii();
+  if (!radii.is_empty() && radii.is_span()) {
+    const IndexMask radii_mask = geometry::simplify_curve_attribute(
+        curves.positions(),
+        IndexRange::from_single(active_curve),
+        curves.points_by_curve(),
+        curves.cyclic(),
+        epsilon,
+        radii.get_internal_span(),
+        memory);
+    points_to_delete = IndexMask::from_intersection(points_to_delete, radii_mask, memory);
+  }
 
-  /* Distance function for `ramer_douglas_peucker_simplify`. */
-  const Span<float2> positions_2d = this->screen_space_smoothed_coords_.as_span();
-  const auto dist_function = [&](int64_t first_index, int64_t last_index, int64_t index) {
-    /* 2D coordinates are only stored for the current stroke, so offset the indices. */
-    const float dist_position_px = dist_to_line_segment_v2(
-        positions_2d[index - points.first()],
-        positions_2d[first_index - points.first()],
-        positions_2d[last_index - points.first()]);
-    const float dist_radii_px = dist_to_interpolated_2d(positions_2d[index - points.first()],
-                                                        positions_2d[first_index - points.first()],
-                                                        positions_2d[last_index - points.first()],
-                                                        radii[index],
-                                                        radii[first_index],
-                                                        radii[last_index]);
-    return math::max(dist_position_px, dist_radii_px);
-  };
-
-  Array<bool> points_to_delete(curves.points_num(), false);
-  int64_t total_points_to_delete = ed::greasepencil::ramer_douglas_peucker_simplify(
-      points, epsilon_px, dist_function, points_to_delete.as_mutable_span());
-
-  if (total_points_to_delete > 0) {
-    IndexMaskMemory memory;
-    curves.remove_points(IndexMask::from_bools(points_to_delete, memory), {});
+  if (!points_to_delete.is_empty()) {
+    drawing.strokes_for_write().remove_points(points_to_delete, {});
   }
 }
 
@@ -848,15 +842,20 @@ void PaintOperation::on_stroke_done(const bContext &C)
   Object *object = CTX_data_active_object(&C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
 
+  Paint *paint = &scene->toolsettings->gp_paint->paint;
+  Brush *brush = BKE_paint_brush(paint);
+  BrushGpencilSettings *settings = brush->gpencil_settings;
+  const bool do_post_processing = (settings->flag & GP_BRUSH_GROUP_SETTINGS) != 0;
+
   /* Grease Pencil should have an active layer. */
   BLI_assert(grease_pencil.has_active_layer());
   bke::greasepencil::Layer &active_layer = *grease_pencil.get_active_layer();
   /* Drawing should exist. */
   bke::greasepencil::Drawing &drawing = *grease_pencil.get_editable_drawing_at(active_layer,
                                                                                scene->r.cfra);
-
-  const float simplifiy_threshold_px = 0.5f;
-  this->simplify_stroke(C, drawing, simplifiy_threshold_px);
+  if (do_post_processing) {
+    this->simplify_stroke(C, drawing, settings->simplify_f);
+  }
   this->process_stroke_end(C, drawing);
   drawing.tag_topology_changed();
 
