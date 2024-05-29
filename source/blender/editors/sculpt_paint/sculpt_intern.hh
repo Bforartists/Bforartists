@@ -974,6 +974,7 @@ bool vert_has_unique_face_set(const SculptSession &ss, PBVHVertRef vertex);
 bke::SpanAttributeWriter<int> ensure_face_sets_mesh(Object &object);
 int ensure_face_sets_bmesh(Object &object);
 Array<int> duplicate_face_sets(const Mesh &mesh);
+Set<int> gather_hidden_face_sets(Span<bool> hide_poly, Span<int> face_sets);
 
 }
 
@@ -1791,6 +1792,7 @@ namespace blender::ed::sculpt_paint::trim {
 void SCULPT_OT_trim_lasso_gesture(wmOperatorType *ot);
 void SCULPT_OT_trim_box_gesture(wmOperatorType *ot);
 void SCULPT_OT_trim_line_gesture(wmOperatorType *ot);
+void SCULPT_OT_trim_polyline_gesture(wmOperatorType *ot);
 }
 
 /** \} */
@@ -1809,6 +1811,8 @@ void SCULPT_OT_face_sets_edit(wmOperatorType *ot);
 
 void SCULPT_OT_face_set_lasso_gesture(wmOperatorType *ot);
 void SCULPT_OT_face_set_box_gesture(wmOperatorType *ot);
+void SCULPT_OT_face_set_line_gesture(wmOperatorType *ot);
+void SCULPT_OT_face_set_polyline_gesture(wmOperatorType *ot);
 
 }
 
