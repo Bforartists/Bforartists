@@ -84,6 +84,9 @@ struct ShadowTileMap : public ShadowTileMapData {
     tiles_index = tiles_index_;
     /* For now just the same index. */
     clip_data_index = tiles_index_ / SHADOW_TILEDATA_PER_TILEMAP;
+    /* Avoid uninitialized data. */
+    this->grid_offset = int2(0);
+    this->grid_shift = int2(0);
     this->set_dirty();
   }
 
@@ -302,6 +305,8 @@ class ShadowModule {
 
   /** Scene immutable parameters. */
 
+  /* Render setting that reduces the LOD for every light. */
+  float global_lod_bias_ = 0.0f;
   /** For now, needs to be hardcoded. */
   int shadow_page_size_ = SHADOW_PAGE_RES;
   /** Maximum number of allocated pages. Maximum value is SHADOW_MAX_TILEMAP. */
@@ -345,6 +350,11 @@ class ShadowModule {
   const ShadowSceneData &get_data()
   {
     return data_;
+  }
+
+  float global_lod_bias() const
+  {
+    return global_lod_bias_;
   }
 
   /* Set all shadows to update. To be called before `end_sync`. */

@@ -29,6 +29,7 @@
 
 #  include "RNA_access.hh"
 #  include "RNA_define.hh"
+#  include "RNA_enum_types.hh"
 
 #  include "UI_interface.hh"
 #  include "UI_resources.hh"
@@ -210,6 +211,13 @@ static int wm_usd_export_exec(bContext *C, wmOperator *op)
   const bool export_materials = RNA_boolean_get(op->ptr, "export_materials");
   const eSubdivExportMode export_subdiv = eSubdivExportMode(
       RNA_enum_get(op->ptr, "export_subdivision"));
+
+  const bool export_meshes = RNA_boolean_get(op->ptr, "export_meshes");
+  const bool export_lights = RNA_boolean_get(op->ptr, "export_lights");
+  const bool export_cameras = RNA_boolean_get(op->ptr, "export_cameras");
+  const bool export_curves = RNA_boolean_get(op->ptr, "export_curves");
+  const bool export_volumes = RNA_boolean_get(op->ptr, "export_volumes");
+
   const bool use_instancing = RNA_boolean_get(op->ptr, "use_instancing");
   const bool evaluation_mode = RNA_enum_get(op->ptr, "evaluation_mode");
 
@@ -224,6 +232,10 @@ static int wm_usd_export_exec(bContext *C, wmOperator *op)
 
   const bool export_custom_properties = RNA_boolean_get(op->ptr, "export_custom_properties");
   const bool author_blender_name = RNA_boolean_get(op->ptr, "author_blender_name");
+
+  const bool triangulate_meshes = RNA_boolean_get(op->ptr, "triangulate_meshes");
+  const int quad_method = RNA_enum_get(op->ptr, "quad_method");
+  const int ngon_method = RNA_enum_get(op->ptr, "ngon_method");
 
   const bool convert_orientation = RNA_boolean_get(op->ptr, "convert_orientation");
 
@@ -257,10 +269,18 @@ static int wm_usd_export_exec(bContext *C, wmOperator *op)
       relative_paths,
       export_custom_properties,
       author_blender_name,
+      triangulate_meshes,
+      quad_method,
+      ngon_method,
       convert_orientation,
       eIOAxis(global_forward),
       eIOAxis(global_up),
       xform_op_mode,
+      export_meshes,
+      export_lights,
+      export_cameras,
+      export_curves,
+      export_volumes,
   };
 
   STRNCPY(params.root_prim_path, root_prim_path);
@@ -292,7 +312,6 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
 
   col = uiLayoutColumn(box, true);
   uiItemR(col, ptr, "export_animation", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(col, ptr, "export_hair", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, ptr, "export_uvmaps", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, ptr, "export_normals", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, ptr, "export_materials", UI_ITEM_NONE, nullptr, ICON_NONE);
@@ -300,6 +319,14 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
   row = uiLayoutRow(col, true);
   uiItemR(row, ptr, "author_blender_name", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiLayoutSetActive(row, RNA_boolean_get(op->ptr, "export_custom_properties"));
+
+  col = uiLayoutColumn(box, true);
+  uiItemR(col, ptr, "triangulate_meshes", UI_ITEM_NONE, nullptr, ICON_NONE);
+
+  uiLayout *sub = uiLayoutColumn(col, false);
+  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "triangulate_meshes"));
+  uiItemR(sub, ptr, "quad_method", UI_ITEM_NONE, IFACE_("Method Quads"), ICON_NONE);
+  uiItemR(sub, ptr, "ngon_method", UI_ITEM_NONE, IFACE_("Polygons"), ICON_NONE);
 
   col = uiLayoutColumnWithHeading(box, true, IFACE_("Rigging"));
   uiItemR(col, ptr, "export_armatures", UI_ITEM_NONE, nullptr, ICON_NONE);
@@ -344,6 +371,15 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
   box = uiLayoutBox(layout);
   col = uiLayoutColumnWithHeading(box, true, IFACE_("Experimental"));
   uiItemR(col, ptr, "use_instancing", UI_ITEM_NONE, nullptr, ICON_NONE);
+
+  box = uiLayoutBox(layout);
+  col = uiLayoutColumnWithHeading(box, true, IFACE_("Object Types"));
+  uiItemR(col, ptr, "export_meshes", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "export_lights", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "export_cameras", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "export_volumes", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "export_curves", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "export_hair", UI_ITEM_NONE, nullptr, ICON_NONE);
 }
 
 static void free_operator_customdata(wmOperator *op)
@@ -571,6 +607,36 @@ void WM_OT_usd_export(wmOperatorType *ot)
                   "Blender Names",
                   "Author USD custom attributes containing the original Blender object and "
                   "object data names");
+
+  RNA_def_boolean(ot->srna, "export_meshes", true, "Meshes", "Export all meshes");
+
+  RNA_def_boolean(ot->srna, "export_lights", true, "Lights", "Export all lights");
+
+  RNA_def_boolean(ot->srna, "export_cameras", true, "Cameras", "Export all cameras");
+
+  RNA_def_boolean(ot->srna, "export_curves", true, "Curves", "Export all curves");
+
+  RNA_def_boolean(ot->srna, "export_volumes", true, "Volumes", "Export all volumes");
+
+  RNA_def_boolean(ot->srna,
+                  "triangulate_meshes",
+                  false,
+                  "Triangulate Meshes",
+                  "Triangulate meshes during export");
+
+  RNA_def_enum(ot->srna,
+               "quad_method",
+               rna_enum_modifier_triangulate_quad_method_items,
+               MOD_TRIANGULATE_QUAD_SHORTEDGE,
+               "Quad Method",
+               "Method for splitting the quads into triangles");
+
+  RNA_def_enum(ot->srna,
+               "ngon_method",
+               rna_enum_modifier_triangulate_ngon_method_items,
+               MOD_TRIANGULATE_NGON_BEAUTY,
+               "N-gon Method",
+               "Method for splitting the n-gons into triangles");
 }
 
 /* ====== USD Import ====== */
@@ -633,6 +699,8 @@ static int wm_usd_import_exec(bContext *C, wmOperator *op)
   const bool support_scene_instancing = RNA_boolean_get(op->ptr, "support_scene_instancing");
 
   const bool import_visible_only = RNA_boolean_get(op->ptr, "import_visible_only");
+
+  const bool import_defined_only = RNA_boolean_get(op->ptr, "import_defined_only");
 
   const bool create_collection = RNA_boolean_get(op->ptr, "create_collection");
 
@@ -705,6 +773,7 @@ static int wm_usd_import_exec(bContext *C, wmOperator *op)
   params.import_proxy = import_proxy;
   params.import_render = import_render;
   params.import_visible_only = import_visible_only;
+  params.import_defined_only = import_defined_only;
   params.use_instancing = use_instancing;
   params.import_usd_preview = import_usd_preview;
   params.set_material_blend = set_material_blend;
@@ -759,6 +828,7 @@ static void wm_usd_import_draw(bContext * /*C*/, wmOperator *op)
   uiItemR(col, ptr, "import_subdiv", UI_ITEM_NONE, IFACE_("Subdivision"), ICON_NONE);
   uiItemR(col, ptr, "support_scene_instancing", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, ptr, "import_visible_only", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "import_defined_only", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, ptr, "import_guide", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, ptr, "import_proxy", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, ptr, "import_render", UI_ITEM_NONE, nullptr, ICON_NONE);
@@ -974,6 +1044,13 @@ void WM_OT_usd_import(wmOperatorType *ot)
       "Validate Meshes",
       "Ensure the data is valid "
       "(when disabled, data may be imported which causes crashes displaying or editing)");
+
+  RNA_def_boolean(ot->srna,
+                  "import_defined_only",
+                  true,
+                  "Import only defined USD primitives",
+                  "When disabled this allows importing USD primitives which are not defined,"
+                  "such as those with an override specifier");
 }
 
 namespace blender::ed::io {
