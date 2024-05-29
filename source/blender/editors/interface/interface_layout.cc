@@ -25,6 +25,7 @@
 #include "BLI_memory_utils.hh"
 #include "BLI_rect.h"
 #include "BLI_string.h"
+#include "BLI_string_ref.hh"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.hh"
@@ -6046,6 +6047,12 @@ void uiLayoutSetContextPointer(uiLayout *layout, const char *name, PointerRNA *p
   layout->context = CTX_store_add(block->contexts, name, ptr);
 }
 
+void uiLayoutSetContextString(uiLayout *layout, const char *name, blender::StringRef value)
+{
+  uiBlock *block = layout->root->block;
+  layout->context = CTX_store_add(block->contexts, name, value);
+}
+
 bContextStore *uiLayoutGetContextStore(uiLayout *layout)
 {
   return layout->context;
@@ -6086,7 +6093,7 @@ void uiLayoutSetTooltipFunc(uiLayout *layout,
     }
   }
 
-  if (!arg_used) {
+  if (free_arg != nullptr && !arg_used) {
     /* Free the original copy of arg in case the layout is empty. */
     free_arg(arg);
   }

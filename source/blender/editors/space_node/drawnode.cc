@@ -1733,8 +1733,10 @@ static float2 socket_link_connection_location(const bNode &node,
 {
   const float2 socket_location = socket.runtime->location;
   if (socket.is_multi_input() && socket.is_input() && !(node.flag & NODE_HIDDEN)) {
+    /* For internal link case, handle number of links as at least 1. */
+    const int clamped_total_inputs = math::max<int>(1, socket.runtime->total_inputs);
     return node_link_calculate_multi_input_position(
-        socket_location, link.multi_input_sort_id, socket.runtime->total_inputs);
+        socket_location, link.multi_input_sort_id, clamped_total_inputs);
   }
   return socket_location;
 }
@@ -2329,7 +2331,7 @@ void node_draw_link(const bContext &C,
 
   if (link.flag & NODE_LINK_VALID) {
     /* special indicated link, on drop-node */
-    if (link.flag & NODE_LINK_INSERT_TARGET) {
+    if (link.flag & NODE_LINK_INSERT_TARGET && !(link.flag & NODE_LINK_INSERT_TARGET_INVALID)) {
       th_col1 = th_col2 = TH_ACTIVE;
     }
     else if (link.flag & NODE_LINK_MUTED) {
@@ -2340,15 +2342,6 @@ void node_draw_link(const bContext &C,
     /* Invalid link. */
     th_col1 = th_col2 = th_col3 = TH_REDALERT;
     // th_col3 = -1; /* no shadow */
-  }
-
-  /* Links from field to non-field sockets are not allowed. */
-  if (snode.edittree->type == NTREE_GEOMETRY) {
-    if ((link.fromsock && link.fromsock->display_shape == SOCK_DISPLAY_SHAPE_DIAMOND) &&
-        (link.tosock && link.tosock->display_shape == SOCK_DISPLAY_SHAPE_CIRCLE))
-    {
-      th_col1 = th_col2 = th_col3 = TH_REDALERT;
-    }
   }
 
   node_draw_link_bezier(C, v2d, snode, link, th_col1, th_col2, th_col3, selected);

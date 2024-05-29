@@ -1,0 +1,3 @@
+These are sub-modules directly pulled from https://projects.blender.org/extensions/
+
+For merges, compare the source folder with the addons_core equivalent. 
