@@ -733,16 +733,6 @@ void UI_popup_menu_retval_set(const uiBlock *block, int retval, bool enable);
  * to the popup `region` so layout panels state can be persistent until the popup is closed.
  */
 void UI_popup_dummy_panel_set(ARegion *region, uiBlock *block);
-/** Toggles layout panel open state and returns the new state. */
-bool UI_layout_panel_toggle_open(const bContext *C, struct LayoutPanelHeader *header);
-void UI_panel_drag_collapse_handler_add(const bContext *C, const bool was_open);
-LayoutPanelHeader *UI_layout_panel_header_under_mouse(const Panel &panel, const int my);
-/** Apply scroll to layout panels when the main panel is used in popups. */
-void UI_layout_panel_popup_scroll_apply(Panel *panel, const float dy);
-void UI_draw_layout_panels_backdrop(const ARegion *region,
-                                    const Panel *panel,
-                                    const float radius,
-                                    float subpanel_backcolor[4]);
 /**
  * Setting the button makes the popup open from the button instead of the cursor.
  */
@@ -1386,6 +1376,8 @@ void UI_but_context_ptr_set(uiBlock *block, uiBut *but, const char *name, const 
 const PointerRNA *UI_but_context_ptr_get(const uiBut *but,
                                          const char *name,
                                          const StructRNA *type = nullptr);
+std::optional<blender::StringRefNull> UI_but_context_string_get(const uiBut *but,
+                                                                const char *name);
 const bContextStore *UI_but_context_get(const uiBut *but);
 
 void UI_but_unit_type_set(uiBut *but, int unit_type);
@@ -1510,10 +1502,6 @@ uiBut *uiDefIconMenuBut(uiBlock *block,
                         short height,
                         const char *tip);
 
-/**
- * Note that \a fun can set the #UI_BLOCK_KEEP_OPEN flag to the block it creates, to allow
- * refreshing the popup. That is, redrawing the layout, potentially affecting the popup size.
- */
 uiBut *uiDefBlockBut(uiBlock *block,
                      uiBlockCreateFunc func,
                      void *arg,
@@ -2182,6 +2170,7 @@ uiBlock *uiLayoutGetBlock(uiLayout *layout);
 
 void uiLayoutSetFunc(uiLayout *layout, uiMenuHandleFunc handlefunc, void *argv);
 void uiLayoutSetContextPointer(uiLayout *layout, const char *name, PointerRNA *ptr);
+void uiLayoutSetContextString(uiLayout *layout, const char *name, blender::StringRef value);
 bContextStore *uiLayoutGetContextStore(uiLayout *layout);
 void uiLayoutContextCopy(uiLayout *layout, const bContextStore *context);
 

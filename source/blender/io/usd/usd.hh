@@ -10,6 +10,7 @@
 
 #include "DEG_depsgraph.hh"
 
+#include "DNA_modifier_types.h"
 #include "RNA_types.hh"
 
 struct bContext;
@@ -105,10 +106,19 @@ struct USDExportParams {
   bool relative_paths = true;
   bool export_custom_properties = true;
   bool author_blender_name = true;
+  bool triangulate_meshes = false;
+  int quad_method = MOD_TRIANGULATE_QUAD_SHORTEDGE;
+  int ngon_method = MOD_TRIANGULATE_NGON_BEAUTY;
   bool convert_orientation = false;
   enum eIOAxis forward_axis = eIOAxis::IO_AXIS_NEGATIVE_Z;
   enum eIOAxis up_axis = eIOAxis::IO_AXIS_Y;
   eUSDXformOpMode xform_op_mode = eUSDXformOpMode::USD_XFORM_OP_TRS;
+  bool export_meshes = true;
+  bool export_lights = true;
+  bool export_cameras = true;
+  bool export_curves = true;
+  bool export_volumes = true;
+
   char root_prim_path[1024] = ""; /* FILE_MAX */
   char collection[MAX_IDPROP_NAME] = "";
 
@@ -149,6 +159,7 @@ struct USDImportParams {
   float light_intensity_scale;
   eUSDMtlNameCollisionMode mtl_name_collision_mode;
   eUSDTexImportMode import_textures_mode;
+  bool import_defined_only;
   char import_textures_dir[768]; /* FILE_MAXDIR */
   eUSDTexNameCollisionMode tex_name_collision_mode;
   bool import_all_materials;

@@ -87,7 +87,7 @@ static void grease_pencil_init_data(ID *id)
   MEMCPY_STRUCT_AFTER(grease_pencil, DNA_struct_default_get(GreasePencil), id);
 
   grease_pencil->root_group_ptr = MEM_new<greasepencil::LayerGroup>(__func__);
-  grease_pencil->active_node = nullptr;
+  grease_pencil->set_active_node(nullptr);
 
   CustomData_reset(&grease_pencil->layers_data);
 
@@ -116,11 +116,11 @@ static void grease_pencil_copy_data(Main * /*bmain*/,
       __func__, grease_pencil_src->root_group());
 
   /* Set active node. */
-  if (grease_pencil_src->active_node) {
+  if (grease_pencil_src->get_active_node()) {
     bke::greasepencil::TreeNode *active_node = grease_pencil_dst->find_node_by_name(
-        grease_pencil_src->active_node->wrap().name());
+        grease_pencil_src->get_active_node()->name());
     BLI_assert(active_node);
-    grease_pencil_dst->active_node = active_node;
+    grease_pencil_dst->set_active_node(active_node);
   }
 
   CustomData_copy(&grease_pencil_src->layers_data,
@@ -1166,18 +1166,38 @@ int Layer::sorted_keys_index_at(const int frame_number) const
 
 const GreasePencilFrame *Layer::frame_at(const int frame_number) const
 {
-  const std::optional<FramesMapKeyT> frame_key = this->frame_key_at(frame_number);
-  return frame_key ? this->frames().lookup_ptr(*frame_key) : nullptr;
+  const GreasePencilFrame *frame_ptr = [&]() -> const GreasePencilFrame * {
+    if (const GreasePencilFrame *frame = this->frames().lookup_ptr(frame_number)) {
+      return frame;
+    }
+    /* Look for a keyframe that starts before `frame_number` and ends after `frame_number`. */
+    const std::optional<FramesMapKeyT> frame_key = this->frame_key_at(frame_number);
+    if (!frame_key) {
+      return nullptr;
+    }
+    return this->frames().lookup_ptr(*frame_key);
+  }();
+  if (frame_ptr == nullptr || frame_ptr->is_end()) {
+    /* Not a valid frame. */
+    return nullptr;
+  }
+  return frame_ptr;
 }
 
 GreasePencilFrame *Layer::frame_at(const int frame_number)
 {
-  const std::optional<FramesMapKeyT> frame_key = this->frame_key_at(frame_number);
-  if (!frame_key) {
-    return nullptr;
-  }
-  GreasePencilFrame *frame_ptr = this->frames_for_write().lookup_ptr(*frame_key);
-  if (frame_ptr->is_end()) {
+  GreasePencilFrame *frame_ptr = [&]() -> GreasePencilFrame * {
+    if (GreasePencilFrame *frame = this->frames_for_write().lookup_ptr(frame_number)) {
+      return frame;
+    }
+    /* Look for a keyframe that starts before `frame_number`. */
+    const std::optional<FramesMapKeyT> frame_key = this->frame_key_at(frame_number);
+    if (!frame_key) {
+      return nullptr;
+    }
+    return this->frames_for_write().lookup_ptr(*frame_key);
+  }();
+  if (frame_ptr == nullptr || frame_ptr->is_end()) {
     /* Not a valid frame. */
     return nullptr;
   }
@@ -1733,6 +1753,67 @@ GreasePencil *BKE_grease_pencil_copy_for_eval(const GreasePencil *grease_pencil_
       BKE_id_copy_ex(nullptr, &grease_pencil_src->id, nullptr, LIB_ID_COPY_LOCALIZE));
   grease_pencil->runtime->eval_frame = grease_pencil_src->runtime->eval_frame;
   return grease_pencil;
+}
+
+void BKE_grease_pencil_nomain_to_grease_pencil(GreasePencil *grease_pencil_src,
+                                               GreasePencil *grease_pencil_dst)
+{
+  using namespace blender;
+  using bke::greasepencil::Drawing;
+  using bke::greasepencil::DrawingReference;
+
+  /* Drawings. */
+  const int drawing_array_num = grease_pencil_src->drawing_array_num;
+  grease_pencil_dst->resize_drawings(drawing_array_num);
+  for (const int i : IndexRange(drawing_array_num)) {
+    if (grease_pencil_dst->drawing_array[i]) {
+      switch (grease_pencil_dst->drawing_array[i]->type) {
+        case GP_DRAWING:
+          MEM_delete(&reinterpret_cast<GreasePencilDrawing *>(grease_pencil_dst->drawing_array[i])
+                          ->wrap());
+          break;
+        case GP_DRAWING_REFERENCE:
+          MEM_delete(&reinterpret_cast<GreasePencilDrawingReference *>(
+                          grease_pencil_dst->drawing_array[i])
+                          ->wrap());
+          break;
+      }
+    }
+    switch (grease_pencil_src->drawing_array[i]->type) {
+      case GP_DRAWING: {
+        const Drawing &src_drawing =
+            reinterpret_cast<GreasePencilDrawing *>(grease_pencil_src->drawing_array[i])->wrap();
+        grease_pencil_dst->drawing_array[i] = reinterpret_cast<GreasePencilDrawingBase *>(
+            MEM_new<Drawing>(__func__, src_drawing));
+        break;
+      }
+      case GP_DRAWING_REFERENCE:
+        const DrawingReference &src_drawing_ref = reinterpret_cast<GreasePencilDrawingReference *>(
+                                                      grease_pencil_src->drawing_array[i])
+                                                      ->wrap();
+        grease_pencil_dst->drawing_array[i] = reinterpret_cast<GreasePencilDrawingBase *>(
+            MEM_new<DrawingReference>(__func__, src_drawing_ref));
+        break;
+    }
+  }
+
+  /* Layers. */
+  if (grease_pencil_dst->root_group_ptr) {
+    MEM_delete(&grease_pencil_dst->root_group());
+  }
+
+  grease_pencil_dst->root_group_ptr = MEM_new<bke::greasepencil::LayerGroup>(
+      __func__, grease_pencil_src->root_group_ptr->wrap());
+  BLI_assert(grease_pencil_src->layers().size() == grease_pencil_dst->layers().size());
+
+  CustomData_copy(&grease_pencil_src->layers_data,
+                  &grease_pencil_dst->layers_data,
+                  eCustomDataMask(CD_MASK_ALL),
+                  grease_pencil_src->layers().size());
+
+  DEG_id_tag_update(&grease_pencil_dst->id, ID_RECALC_GEOMETRY);
+
+  BKE_id_free(nullptr, grease_pencil_src);
 }
 
 static void grease_pencil_evaluate_modifiers(Depsgraph *depsgraph,
@@ -2625,12 +2706,11 @@ const blender::bke::greasepencil::Layer *GreasePencil::get_active_layer() const
   if (this->active_node == nullptr) {
     return nullptr;
   }
-
-  if (!this->active_node->wrap().is_layer()) {
+  const blender::bke::greasepencil::TreeNode &active_node = *this->get_active_node();
+  if (!active_node.is_layer()) {
     return nullptr;
   }
-
-  return &this->active_node->wrap().as_layer();
+  return &active_node.as_layer();
 }
 
 blender::bke::greasepencil::Layer *GreasePencil::get_active_layer()
@@ -2638,17 +2718,16 @@ blender::bke::greasepencil::Layer *GreasePencil::get_active_layer()
   if (this->active_node == nullptr) {
     return nullptr;
   }
-
-  if (!this->active_node->wrap().is_layer()) {
+  blender::bke::greasepencil::TreeNode &active_node = *this->get_active_node();
+  if (!active_node.is_layer()) {
     return nullptr;
   }
-
-  return &this->active_node->wrap().as_layer();
+  return &active_node.as_layer();
 }
 
-void GreasePencil::set_active_layer(const blender::bke::greasepencil::Layer *layer)
+void GreasePencil::set_active_layer(blender::bke::greasepencil::Layer *layer)
 {
-  this->active_node = const_cast<GreasePencilLayerTreeNode *>(&layer->base);
+  this->active_node = reinterpret_cast<GreasePencilLayerTreeNode *>(&layer->as_node());
 
   if (this->flag & GREASE_PENCIL_AUTOLOCK_LAYERS) {
     this->autolock_inactive_layers();
@@ -2681,12 +2760,11 @@ const blender::bke::greasepencil::LayerGroup *GreasePencil::get_active_group() c
   if (this->active_node == nullptr) {
     return nullptr;
   }
-
-  if (!this->active_node->wrap().is_group()) {
+  const blender::bke::greasepencil::TreeNode &active_node = *this->get_active_node();
+  if (!active_node.is_group()) {
     return nullptr;
   }
-
-  return &this->active_node->wrap().as_group();
+  return &active_node.as_group();
 }
 
 blender::bke::greasepencil::LayerGroup *GreasePencil::get_active_group()
@@ -2694,12 +2772,36 @@ blender::bke::greasepencil::LayerGroup *GreasePencil::get_active_group()
   if (this->active_node == nullptr) {
     return nullptr;
   }
-
-  if (!this->active_node->wrap().is_group()) {
+  blender::bke::greasepencil::TreeNode &active_node = *this->get_active_node();
+  if (!active_node.is_group()) {
     return nullptr;
   }
+  return &active_node.as_group();
+}
 
-  return &this->active_node->wrap().as_group();
+const blender::bke::greasepencil::TreeNode *GreasePencil::get_active_node() const
+{
+  if (this->active_node == nullptr) {
+    return nullptr;
+  }
+  return &this->active_node->wrap();
+}
+
+blender::bke::greasepencil::TreeNode *GreasePencil::get_active_node()
+{
+  if (this->active_node == nullptr) {
+    return nullptr;
+  }
+  return &this->active_node->wrap();
+}
+
+void GreasePencil::set_active_node(blender::bke::greasepencil::TreeNode *node)
+{
+  this->active_node = reinterpret_cast<GreasePencilLayerTreeNode *>(node);
+
+  if (this->flag & GREASE_PENCIL_AUTOLOCK_LAYERS) {
+    this->autolock_inactive_layers();
+  }
 }
 
 static blender::VectorSet<blender::StringRefNull> get_node_names(const GreasePencil &grease_pencil)
@@ -3016,10 +3118,10 @@ static void update_active_node(GreasePencil &grease_pencil,
                                const blender::bke::greasepencil::TreeNode &node)
 {
   using namespace blender::bke::greasepencil;
-  if (grease_pencil.active_node == nullptr) {
+  if (grease_pencil.get_active_node() == nullptr) {
     return;
   }
-  const TreeNode &active_node = grease_pencil.active_node->wrap();
+  TreeNode &active_node = *grease_pencil.get_active_node();
   if (&active_node != &node) {
     return;
   }
@@ -3029,7 +3131,7 @@ static void update_active_node(GreasePencil &grease_pencil,
     return;
   }
 
-  Span<const Layer *> layers = grease_pencil.layers();
+  Span<Layer *> layers = grease_pencil.layers_for_write();
   /* If there is no other layer available, unset the active layer. */
   if (layers.size() == 1) {
     grease_pencil.set_active_layer(nullptr);
@@ -3253,7 +3355,7 @@ static void read_layer_tree(GreasePencil &grease_pencil, BlendDataReader *reader
    * and create an empty root group to avoid crashes. */
   if (grease_pencil.root_group_ptr == nullptr) {
     grease_pencil.root_group_ptr = MEM_new<blender::bke::greasepencil::LayerGroup>(__func__);
-    grease_pencil.active_node = nullptr;
+    grease_pencil.set_active_node(nullptr);
     return;
   }
   /* Read active layer. */

@@ -489,6 +489,11 @@ static void wm_init_userdef(Main *bmain)
     SET_FLAG_FROM_TEST(G.f, (U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0, G_FLAG_SCRIPT_AUTOEXEC);
   }
 
+  /* Only reset "offline mode" if they weren't passes via command line arguments. */
+  if ((G.f & G_FLAG_INTERNET_OVERRIDE_PREF_ANY) == 0) {
+    SET_FLAG_FROM_TEST(G.f, U.flag & USER_INTERNET_ALLOW, G_FLAG_INTERNET_ALLOW);
+  }
+
   MEM_CacheLimiter_set_maximum(size_t(U.memcachelimit) * 1024 * 1024);
   BKE_sound_init(bmain);
 
@@ -3035,16 +3040,16 @@ static int wm_open_mainfile_exec(bContext *C, wmOperator *op)
   return wm_open_mainfile__open(C, op);
 }
 
-static std::string wm_open_mainfile_description(bContext * /*C*/,
-                                                wmOperatorType * /*ot*/,
-                                                PointerRNA *params)
+static std::string wm_open_mainfile_get_description(bContext * /*C*/,
+                                                    wmOperatorType * /*ot*/,
+                                                    PointerRNA *ptr)
 {
-  if (!RNA_struct_property_is_set(params, "filepath")) {
+  if (!RNA_struct_property_is_set(ptr, "filepath")) {
     return "";
   }
 
   char filepath[FILE_MAX];
-  RNA_string_get(params, "filepath", filepath);
+  RNA_string_get(ptr, "filepath", filepath);
 
   BLI_stat_t stats;
   if (BLI_stat(filepath, &stats) == -1) {
@@ -3145,8 +3150,8 @@ void WM_OT_open_mainfile(wmOperatorType *ot)
 {
   ot->name = "Open";
   ot->idname = "WM_OT_open_mainfile";
-  ot->description = "Open a *blend file";
-  ot->get_description = wm_open_mainfile_description;
+  ot->description = "Open a *.blend file"; /*BFA*/
+  ot->get_description = wm_open_mainfile_get_description;
 
   ot->invoke = wm_open_mainfile_invoke;
   ot->exec = wm_open_mainfile_exec;

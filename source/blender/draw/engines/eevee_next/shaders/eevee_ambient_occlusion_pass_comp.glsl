@@ -36,10 +36,13 @@ void main()
                                              noise,
                                              uniform_buf.ao.pixel_size,
                                              uniform_buf.ao.distance,
-                                             uniform_buf.ao.thickness,
+                                             uniform_buf.ao.thickness_near,
+                                             uniform_buf.ao.thickness_far,
                                              uniform_buf.ao.angle_bias,
+                                             2,
                                              10,
-                                             false);
+                                             false,
+                                             true);
 
   imageStore(out_ao_img, ivec3(texel, out_ao_img_layer_index), vec4(saturate(scan.result)));
 }
