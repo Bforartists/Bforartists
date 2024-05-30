@@ -770,6 +770,7 @@ class USERPREF_PT_system_network(SystemPanel, CenterAlignMixIn, Panel):
         system = prefs.system
 
         row = layout.row()
+        row.use_property_split = False # bfa: align left
         row.prop(system, "use_online_access", text="Allow Online Access")
 
         # Show when the preference has been overridden and doesn't match the current preference.
