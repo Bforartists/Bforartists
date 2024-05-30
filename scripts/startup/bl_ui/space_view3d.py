@@ -8581,13 +8581,13 @@ class VIEW3D_PT_gizmo_display(Panel):
             row.prop(scene.transform_orientation_slots[1], "type", text="")
             row = col.row()
             row.separator()
-            row.prop(view, "show_gizmo_object_translate", text="Move")
+            row.prop(view, "show_gizmo_object_translate", text="Move", text_ctxt=i18n_contexts.operator_default) # BFA 
             row = col.row()
             row.separator()
-            row.prop(view, "show_gizmo_object_rotate", text="Rotate")
+            row.prop(view, "show_gizmo_object_rotate", text="Rotate", text_ctxt=i18n_contexts.operator_default) # BFA
             row = col.row()
             row.separator()
-            row.prop(view, "show_gizmo_object_scale", text="Scale")
+            row.prop(view, "show_gizmo_object_scale", text="Scale", text_ctxt=i18n_contexts.operator_default) # BFA
 
         # Match order of object type visibility
         col = layout.column(align=True)
