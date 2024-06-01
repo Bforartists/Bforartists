@@ -254,7 +254,7 @@ static void gpencil_modifier_ops_extra_draw(bContext *C, uiLayout *layout, void 
 
   uiItemO(layout,
           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy to Selected"),
-          0,
+          ICON_COPYDOWN,
           "OBJECT_OT_gpencil_modifier_copy_to_selected");
 
   uiItemS(layout);
