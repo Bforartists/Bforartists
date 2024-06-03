@@ -2224,7 +2224,7 @@ bake
 line_show
 line_hide
 rotation
-#~ DEF_ICON_BLANK(2244)
+instance_transform
 collection_bone_remove
 
 #~ DEF_ICON_BLANK(2247)
