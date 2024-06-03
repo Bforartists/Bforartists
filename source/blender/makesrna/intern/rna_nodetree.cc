@@ -11844,6 +11844,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_SPLINE_RESOLUTION:
       return ICON_SET_SPLINE_RESOLUTION;
 
+    case GEO_NODE_SET_INSTANCE_TRANSFORM:
+      return ICON_INSTANCE_TRANSFORM;
+
     case GEO_NODE_SIMULATION_INPUT:
       return ICON_TIME;
 
