@@ -238,13 +238,14 @@ static void gpencil_modifier_ops_extra_draw(bContext *C, uiLayout *layout, void 
 
   uiLayoutSetUnitsX(layout, 4.0f);
 
-  /* Apply. */
-  if (!(mti->flags & eGpencilModifierTypeFlag_NoApply)) {
-    uiItemO(layout,
-            CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
-            ICON_CHECKMARK,
-            "OBJECT_OT_gpencil_modifier_apply");
-  }
+  /*bfa - we have the apply button already in the header of the modifier*/
+  ///* Apply. */
+  //if (!(mti->flags & eGpencilModifierTypeFlag_NoApply)) {
+  //  uiItemO(layout,
+  //          CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
+  //          ICON_CHECKMARK,
+  //          "OBJECT_OT_gpencil_modifier_apply");
+  //}
 
   /* Duplicate. */
   uiItemO(layout,
