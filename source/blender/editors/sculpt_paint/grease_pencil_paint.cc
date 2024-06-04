@@ -130,6 +130,9 @@ class PaintOperation : public GreasePencilStrokeOperation {
   /* Helper class to project screen space coordinates to 3d. */
   ed::greasepencil::DrawingPlacement placement_;
 
+  /* Angle factor smoothed over time. */
+  float smoothed_angle_factor_ = 1.0f;
+
   friend struct PaintOperationExecutor;
 
  public:
@@ -181,6 +184,9 @@ struct PaintOperationExecutor {
       fill_color_ = ELEM(settings_->vertex_mode, GPPAINT_MODE_FILL, GPPAINT_MODE_BOTH) ?
                         std::make_optional(color_base) :
                         std::nullopt;
+    }
+    else {
+      vertex_color_ = std::make_optional(ColorGeometry4f(0.0f, 0.0f, 0.0f, 0.0f));
     }
     softness_ = 1.0f - settings_->hardness;
 
@@ -499,15 +505,14 @@ struct PaintOperationExecutor {
     const ARegion *region = CTX_wm_region(&C);
 
     const float3 position = self.placement_.project(coords);
-    const float radius = ed::greasepencil::radius_from_input_sample(
-        rv3d,
-        region,
-        scene_,
-        brush_,
-        extension_sample.pressure,
-        position,
-        self.placement_.to_world_space(),
-        settings_);
+    float radius = ed::greasepencil::radius_from_input_sample(rv3d,
+                                                              region,
+                                                              scene_,
+                                                              brush_,
+                                                              extension_sample.pressure,
+                                                              position,
+                                                              self.placement_.to_world_space(),
+                                                              settings_);
     const float opacity = ed::greasepencil::opacity_from_input_sample(
         extension_sample.pressure, brush_, scene_, settings_);
     Scene *scene = CTX_data_scene(&C);
@@ -526,6 +531,24 @@ struct PaintOperationExecutor {
     const float prev_opacity = drawing_->opacities()[last_active_point];
     const ColorGeometry4f prev_vertex_color = drawing_->vertex_colors()[last_active_point];
 
+    /* Approximate brush with non-circular shape by changing the radius based on the angle. */
+    if (settings_->draw_angle_factor > 0.0f) {
+      const float angle = settings_->draw_angle;
+      const float2 angle_vec = float2(math::cos(angle), math::sin(angle));
+      const float2 vec = coords - self.screen_space_coords_orig_.last();
+
+      /* `angle_factor` is the angle to the horizontal line in screen space. */
+      const float angle_factor = 1.0f - math::abs(math::dot(angle_vec, math::normalize(vec)));
+      /* Smooth the angle factor over time. */
+      self.smoothed_angle_factor_ = math::interpolate(
+          self.smoothed_angle_factor_, angle_factor, 0.1f);
+
+      /* Influence is controlled by `draw_angle_factor`. */
+      const float radius_factor = math::interpolate(
+          1.0f, self.smoothed_angle_factor_, settings_->draw_angle_factor);
+      radius *= radius_factor;
+    }
+
     /* Overwrite last point if it's very close. */
     const IndexRange points_range = curves.points_by_curve()[curves.curves_range().last()];
     const bool is_first_sample = (points_range.size() == 1);
@@ -542,8 +565,11 @@ struct PaintOperationExecutor {
     /* If the next sample is far away, we subdivide the segment to add more points. */
     int new_points_num = 1;
     const float distance_px = math::distance(coords, prev_coords);
-    if (distance_px > float(settings_->input_samples)) {
-      const int subdivisions = int(math::floor(distance_px / float(settings_->input_samples))) - 1;
+    /* TODO: Do we need to calculate the screen space brush size here? */
+    const float max_spacing_px = (float(brush_->spacing) / 100.0f) *
+                                 BKE_brush_size_get(scene, brush_);
+    if (distance_px > max_spacing_px) {
+      const int subdivisions = int(math::floor(distance_px / max_spacing_px)) - 1;
       new_points_num += subdivisions;
     }
 
