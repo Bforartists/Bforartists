@@ -434,7 +434,7 @@ class BONE_PT_display_custom_shape(BoneButtonsPanel, Panel):
             sub.prop_search(pchan, "custom_shape_transform", ob.pose, "bones", text="Override Transform")
             sub.separator()
 
-            row = sub.row() # by design as a separator
+            row = sub.row() #BFA - by design as a separator
             row.use_property_split = False
             row.prop(pchan, "use_custom_shape_bone_size")
             row.prop_decorator(pchan, "use_custom_shape_bone_size")
@@ -443,6 +443,8 @@ class BONE_PT_display_custom_shape(BoneButtonsPanel, Panel):
             row.use_property_split = False
             row.prop(bone, "show_wire", text="Wireframe")
             row.prop_decorator(bone, "show_wire")
+            row.prop(pchan, "custom_shape_wire_width")
+            
 
 
 class BONE_PT_inverse_kinematics(BoneButtonsPanel, Panel):

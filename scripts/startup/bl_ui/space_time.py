@@ -20,6 +20,14 @@ class TIME_HT_editor_buttons:
         layout.separator_spacer()
 
         row = layout.row(align=True)
+        #BFA - moved below
+        #row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
+        #sub = row.row(align=True)
+        #sub.active = tool_settings.use_keyframe_insert_auto
+        #sub.popover(
+        #    panel="TIME_PT_auto_keyframing",
+        #    text="",
+        #)
 
 
         row.operator("screen.frame_jump", text="", icon='REW').end = False
@@ -143,6 +151,32 @@ class TIME_MT_view(Menu):
         # NOTE: "action" now, since timeline is in the dopesheet editor, instead of as own editor
         layout.operator("action.view_all", icon = "VIEWALL")
         layout.operator("action.view_frame", icon = "VIEW_FRAME" )
+        if context.scene.use_preview_range:
+            layout.operator("anim.scene_range_frame", text="Frame Preview Range")
+        else:
+            layout.operator("anim.scene_range_frame", text="Frame Scene Range")
+#BFA - note used
+class TIME_MT_cache(Menu):
+    bl_label = "Cache"
+
+    def draw(self, context):
+        layout = self.layout
+
+        st = context.space_data
+
+        layout.prop(st, "show_cache")
+
+        layout.separator()
+
+        col = layout.column()
+        col.enabled = st.show_cache
+        col.prop(st, "cache_softbody")
+        col.prop(st, "cache_particles")
+        col.prop(st, "cache_cloth")
+        col.prop(st, "cache_simulation_nodes")
+        col.prop(st, "cache_smoke")
+        col.prop(st, "cache_dynamicpaint")
+        col.prop(st, "cache_rigidbody")
 
 
 def marker_menu_generic(layout, context):
@@ -391,7 +425,7 @@ classes = (
     TIME_MT_editor_menus,
     TIME_MT_marker,
     TIME_MT_view,
-    #TIME_MT_cache, #BFA - not used, replaced by the PT_view_view_options
+    TIME_MT_cache, #BFA - not used, replaced by the PT_view_view_options
     TIME_PT_playback,
     TIME_PT_keyframing_settings,
     TIME_PT_view_view_options,
