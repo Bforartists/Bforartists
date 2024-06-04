@@ -597,6 +597,12 @@ class PREFERENCES_OT_addon_install(Operator):
         default=True,
     )
 
+    enable_on_install: BoolProperty(
+        name="Enable on Install",
+        description="Enable after installing",
+        default=False,
+    )
+
     def _target_path_items(_self, context):
         default_item = ('DEFAULT', "Default", "")
         if context is None:
@@ -605,10 +611,13 @@ class PREFERENCES_OT_addon_install(Operator):
             )
 
         paths = context.preferences.filepaths
+        script_directories_items = [
+            (item.name, item.name, "") for index, item in enumerate(paths.script_directories)
+            if item.directory
+        ]
         return (
-            default_item,
-            None,
-            *[(item.name, item.name, "") for index, item in enumerate(paths.script_directories) if item.directory],
+            (default_item, None, *script_directories_items) if script_directories_items else
+            (default_item,)
         )
 
     target: EnumProperty(
@@ -739,6 +748,9 @@ class PREFERENCES_OT_addon_install(Operator):
         for mod in addon_utils.modules(refresh=False):
             if mod.__name__ in addons_new:
                 bl_info = addon_utils.module_bl_info(mod)
+
+                if self.enable_on_install:
+                    bpy.ops.preferences.addon_enable(module=mod.__name__)
 
                 # show the newly installed addon.
                 context.preferences.view.show_addons_enabled_only = False
