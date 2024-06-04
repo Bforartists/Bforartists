@@ -800,8 +800,9 @@ void POSE_OT_reveal(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "select", true, "Select", "");
 }
 
-/* ********************************************** */
-/* Flip Quats */
+/* -------------------------------------------------------------------- */
+/** \name Flip Quaternions
+ * \{ */
 
 static int pose_flip_quats_exec(bContext *C, wmOperator * /*op*/)
 {
@@ -855,3 +856,5 @@ void POSE_OT_quaternions_flip(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
+
+/** \} */
