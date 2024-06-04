@@ -26,7 +26,7 @@
 
 #include "BKE_attribute.hh"
 #include "BKE_brush.hh"
-#include "BKE_ccg.h"
+#include "BKE_ccg.hh"
 #include "BKE_context.hh"
 #include "BKE_layer.hh"
 #include "BKE_main.hh"
@@ -612,7 +612,7 @@ void SCULPT_geometry_preview_lines_update(bContext *C, SculptSession &ss, float 
 
     SculptVertexNeighborIter ni;
     SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, from_v, ni) {
-      if (totpoints + (ni.size * 2) < max_preview_verts) {
+      if (totpoints + (ni.neighbors.size() * 2) < max_preview_verts) {
         PBVHVertRef to_v = ni.vertex;
         int to_v_i = ni.index;
         ss.preview_vert_list[totpoints] = from_v;

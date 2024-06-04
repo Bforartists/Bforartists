@@ -4,6 +4,7 @@
 
 #include "DNA_lightprobe_types.h"
 
+#include "BKE_global.hh"
 #include "BKE_lightprobe.h"
 
 #include "GPU_capabilities.hh"
@@ -13,7 +14,9 @@
 
 #include "eevee_instance.hh"
 
-#include "eevee_irradiance_cache.hh"
+#include "eevee_lightprobe_volume.hh"
+
+#include <cstdio>
 
 namespace blender::eevee {
 
@@ -611,7 +614,7 @@ void VolumeProbeModule::display_pass_draw(View &view, GPUFrameBuffer *view_fb)
     display_grids_ps_.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
                                 DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_CULL_BACK);
     display_grids_ps_.framebuffer_set(&view_fb);
-    display_grids_ps_.shader_set(inst_.shaders.static_shader_get(DISPLAY_PROBE_GRID));
+    display_grids_ps_.shader_set(inst_.shaders.static_shader_get(DISPLAY_PROBE_VOLUME));
 
     display_grids_ps_.push_constant("sphere_radius", grid.viewport_display_size);
     display_grids_ps_.push_constant("grid_resolution", grid_size);
@@ -984,25 +987,44 @@ void IrradianceBake::surfels_create(const Object &probe_object)
   GPU_memory_barrier(GPU_BARRIER_BUFFER_UPDATE);
   capture_info_buf_.read();
   if (capture_info_buf_.surfel_len == 0) {
-    /* No surfel to allocated. */
-    do_break_ = true;
+    /* No surfel to allocate. */
     return;
   }
 
   if (capture_info_buf_.surfel_len > surfels_buf_.size()) {
+    printf("IrradianceBake: Allocating %u surfels.\n", capture_info_buf_.surfel_len);
+
     size_t max_size = GPU_max_storage_buffer_size();
     if (GPU_mem_stats_supported()) {
       int total_mem_kb, free_mem_kb;
       GPU_mem_stats_get(&total_mem_kb, &free_mem_kb);
-      max_size = min(max_size, size_t(free_mem_kb) * 1024);
+      /* Leave at least 128MByte for OS and stuffs.
+       * Try to avoid crashes because of OUT_OF_MEMORY errors.  */
+      size_t max_alloc = (size_t(total_mem_kb) - 128 * 1024) * 1024;
+      /* Cap to 95% of available memory. */
+      size_t max_free = size_t((size_t(free_mem_kb) * 1024) * 0.95f);
+
+      max_size = min(max_size, min(max_alloc, max_free));
     }
 
     size_t required_mem = sizeof(Surfel) * (capture_info_buf_.surfel_len - surfels_buf_.size());
     if (required_mem > max_size) {
-      capture_info_buf_.surfel_len = 0u;
-      capture_info_buf_.push_update();
-      inst_.info += "Error: Not enough memory to bake " + std::string(probe_object.id.name) +
-                    ".\n";
+      const bool is_ssbo_bound = (max_size == GPU_max_storage_buffer_size());
+      const uint req_mb = required_mem / (1024 * 1024);
+      const uint max_mb = max_size / (1024 * 1024);
+
+      inst_.info = std::string(is_ssbo_bound ? "Cannot allocate enough" : "Not enough available") +
+                   " video memory to bake \"" + std::string(probe_object.id.name + 2) + "\" (" +
+                   std::to_string(req_mb) + " / " + std::to_string(max_mb) +
+                   " MBytes). "
+                   "Try reducing surfel resolution or capture distance to lower the size of the "
+                   "allocation.\n";
+
+      if (G.background) {
+        /* Print something in background mode instead of failing silently. */
+        fprintf(stderr, "%s\n", inst_.info.c_str());
+      }
+
       do_break_ = true;
       return;
     }
