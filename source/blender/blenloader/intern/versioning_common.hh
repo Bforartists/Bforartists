@@ -66,7 +66,7 @@ void version_node_output_socket_name(bNodeTree *ntree,
                                      const char *new_name);
 
 /**
- * Adds a new node for versioning purposes. This is intended to be used to create raw dna that
+ * Adds a new node for versioning purposes. This is intended to be used to create raw DNA that
  * might have been read from a file. The created node does not have storage or sockets. Both have
  * to be added manually afterwards.
  *
@@ -166,3 +166,5 @@ void version_update_node_input(
     const char *socket_identifier,
     FunctionRef<void(bNode *, bNodeSocket *)> update_input,
     FunctionRef<void(bNode *, bNodeSocket *, bNode *, bNodeSocket *)> update_input_link);
+
+bNode *version_eevee_output_node_get(bNodeTree *ntree, int16_t node_type);

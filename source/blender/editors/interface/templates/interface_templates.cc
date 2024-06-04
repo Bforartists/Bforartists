@@ -3012,7 +3012,7 @@ static wmOperator *minimal_operator_create(wmOperatorType *ot, PointerRNA *prope
 {
   /* Copied from #wm_operator_create.
    * Create a slimmed down operator suitable only for UI drawing. */
-  wmOperator *op = MEM_cnew<wmOperator>(ot->idname);
+  wmOperator *op = MEM_cnew<wmOperator>(ot->rna_ext.srna ? __func__ : ot->idname);
   STRNCPY(op->idname, ot->idname);
   op->type = ot;
 
@@ -6475,19 +6475,89 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
+  uiLayout *row = uiLayoutRow(layout, true);
+
+  const char *status_info_txt = ED_info_statusbar_string_ex(
+      bmain, scene, view_layer, (U.statusbar_flag & ~STATUSBAR_SHOW_VERSION));
+  /* True when the status is populated (delimiters required for following items). */
+  bool has_status_info = false;
+
+  if (status_info_txt[0]) {
+    uiItemL(row, status_info_txt, ICON_NONE);
+    has_status_info = true;
+  }
+
+  if (U.statusbar_flag & STATUSBAR_SHOW_EXTENSIONS_UPDATES) {
+    wmWindowManager *wm = CTX_wm_manager(C);
+    if ((G.f & G_FLAG_INTERNET_ALLOW) == 0) {
+      if (has_status_info) {
+        uiItemS_ex(row, -0.5f);
+        uiItemL(row, "|", ICON_NONE);
+        uiItemS_ex(row, -0.5f);
+      }
+
+      if ((G.f & G_FLAG_INTERNET_OVERRIDE_PREF_OFFLINE) != 0) {
+        uiItemL(row, "", ICON_DELETE); /*BFA - wip, replace icon with ICON_INTERNET_OFFLINE*/
+      }
+      else {
+        uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
+        uiItemO(row, "", ICON_DELETE, "EXTENSIONS_OT_userpref_show_online"); /*BFA - wip, replace icon with ICON_INTERNET_OFFLINE*/
+        uiBut *but = static_cast<uiBut *>(uiLayoutGetBlock(layout)->buttons.last);
+        uchar color[4];
+        UI_GetThemeColor4ubv(TH_TEXT, color);
+        copy_v4_v4_uchar(but->col, color);
+      }
+
+      uiItemS_ex(row, 1.0f);
+      has_status_info = true;
+    }
+    else if ((wm->extensions_updates > 0) ||
+             (wm->extensions_updates == WM_EXTENSIONS_UPDATE_CHECKING))
+    {
+      int icon = ICON_INTERNET;
+      if (wm->extensions_updates == WM_EXTENSIONS_UPDATE_CHECKING) {
+        icon = ICON_UV_SYNC_SELECT;
+      }
+
+      if (has_status_info) {
+        uiItemS_ex(row, -0.5f);
+        uiItemL(row, "|", ICON_NONE);
+        uiItemS_ex(row, -0.5f);
+      }
+      uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
+      uiItemO(row, "", icon, "EXTENSIONS_OT_userpref_show_for_update");
+      uiBut *but = static_cast<uiBut *>(uiLayoutGetBlock(layout)->buttons.last);
+      uchar color[4];
+      UI_GetThemeColor4ubv(TH_TEXT, color);
+      copy_v4_v4_uchar(but->col, color);
+
+      if (wm->extensions_updates > 0) {
+        BLI_str_format_integer_unit(but->icon_overlay_text.text, wm->extensions_updates);
+        UI_GetThemeColor4ubv(TH_TEXT, color);
+        UI_but_icon_indicator_color_set(but, color);
+      }
+
+      uiItemS_ex(row, 1.0f);
+      has_status_info = true;
+    }
+  }
 
   if (!bmain->has_forward_compatibility_issues) {
-    const char *status_info_txt = ED_info_statusbar_string(bmain, scene, view_layer);
-    uiItemL(layout, status_info_txt, ICON_NONE);
+    if (U.statusbar_flag & STATUSBAR_SHOW_VERSION) {
+      if (has_status_info) {
+        uiItemS_ex(row, -0.5f);
+        uiItemL(row, "|", ICON_NONE);
+        uiItemS_ex(row, -0.5f);
+      }
+      const char *status_info_d_txt = ED_info_statusbar_string_ex(
+          bmain, scene, view_layer, STATUSBAR_SHOW_VERSION);
+      uiItemL(row, status_info_d_txt, ICON_NONE);
+    }
     return;
   }
 
   /* Blender version part is shown as warning area when there are forward compatibility issues with
    * currently loaded .blend file. */
-
-  const char *status_info_txt = ED_info_statusbar_string_ex(
-      bmain, scene, view_layer, (U.statusbar_flag & ~STATUSBAR_SHOW_VERSION));
-  uiItemL(layout, status_info_txt, ICON_NONE);
 
   status_info_txt = ED_info_statusbar_string_ex(bmain, scene, view_layer, STATUSBAR_SHOW_VERSION);
 
@@ -6739,17 +6809,25 @@ int uiTemplateStatusBarModalItem(uiLayout *layout,
     }
 
     if (xyz_label) {
-      int icon_mod[4];
+      int icon_mod[4] = {0};
+#ifdef WITH_HEADLESS
+      int icon = 0;
+#else
       int icon = UI_icon_from_keymap_item(kmi, icon_mod);
+#endif
       for (int j = 0; j < ARRAY_SIZE(icon_mod) && icon_mod[j]; j++) {
         uiItemL(layout, "", icon_mod[j]);
       }
       uiItemL(layout, "", icon);
 
+#ifndef WITH_HEADLESS
       icon = UI_icon_from_keymap_item(kmi_y, icon_mod);
+#endif
       uiItemL(layout, "", icon);
 
+#ifndef WITH_HEADLESS
       icon = UI_icon_from_keymap_item(kmi_z, icon_mod);
+#endif
       uiItemL(layout, "", icon);
 
       uiItemS_ex(layout, 0.6f);
