@@ -257,6 +257,10 @@ class GRAPH_MT_view(Menu):
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.operator("anim.previewrange_clear", icon="CLEAR")
         layout.operator("graph.previewrange_set", icon='BORDER_RECT')
+        if context.scene.use_preview_range:
+            layout.operator("anim.scene_range_frame", text="Frame Preview Range")
+        else:
+            layout.operator("anim.scene_range_frame", text="Frame Scene Range")
 
         layout.separator()
 
@@ -633,13 +637,17 @@ class GRAPH_MT_key_transform(Menu):
 class GRAPH_MT_view_pie(Menu):
     bl_label = "View"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         pie = layout.menu_pie()
         pie.operator("graph.view_all", icon="VIEWALL")
         pie.operator("graph.view_selected", icon='ZOOM_SELECTED')
         pie.operator("graph.view_frame", icon="VIEW_FRAME")
+        if context.scene.use_preview_range:
+            pie.operator("anim.scene_range_frame", text="Frame Preview Range")
+        else:
+            pie.operator("anim.scene_range_frame", text="Frame Scene Range")
 
 
 class GRAPH_MT_delete(Menu):

@@ -522,6 +522,11 @@ class DOPESHEET_MT_view(Menu):
         layout.operator("anim.previewrange_clear", icon="CLEAR")
         layout.operator("action.previewrange_set", icon='BORDER_RECT')
 
+        if context.scene.use_preview_range:
+            layout.operator("anim.scene_range_frame", text="Frame Preview Range")
+        else:
+            layout.operator("anim.scene_range_frame", text="Frame Scene Range")
+
         layout.separator()
 
         layout.operator("view2d.zoom_in", text="Zoom In", icon="ZOOM_IN")
@@ -557,13 +562,18 @@ class DOPESHEET_MT_view_pie_menus(Menu):
 class DOPESHEET_MT_view_pie(Menu):
     bl_label = "View"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         pie = layout.menu_pie()
         pie.operator("action.view_all", icon="VIEWALL")
         pie.operator("action.view_selected", icon="VIEW_SELECTED")
         pie.operator("action.view_frame", icon="VIEW_FRAME")
+        
+        if context.scene.use_preview_range:
+            pie.operator("anim.scene_range_frame", text="Frame Preview Range")
+        else:
+            pie.operator("anim.scene_range_frame", text="Frame Scene Range")
 
 
 class DOPESHEET_MT_select(Menu):
@@ -656,12 +666,12 @@ class DOPESHEET_MT_channel(Menu):
         layout.menu("GRAPH_MT_channel_settings_toggle")
 
         # BFA - Redundant operators now located in GRAPH_MT_channel_settings_toggle
-        '''
-        layout.separator()
-        layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
-        layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
-        layout.operator("anim.channels_editable_toggle", icon="LOCKED")
-        '''
+        
+        #layout.separator()
+        #layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
+        #layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
+        #layout.operator("anim.channels_editable_toggle", icon="LOCKED")
+        
 
         layout.separator()
 
