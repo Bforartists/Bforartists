@@ -143,6 +143,28 @@ def show_device_active(context):
         return True
     return backend_has_active_gpu(context)
 
+def show_preview_denoise_active(context):
+    cscene = context.scene.cycles
+    if not cscene.use_preview_denoising:
+        return False
+
+    if cscene.preview_denoiser == 'OPTIX':
+        return has_optixdenoiser_gpu_devices(context)
+
+    # OIDN is always available, thanks to CPU support
+    return True
+
+def show_denoise_active(context):
+    cscene = context.scene.cycles
+    if not cscene.use_denoising:
+        return False
+
+    if cscene.denoiser == 'OPTIX':
+        return has_optixdenoiser_gpu_devices(context)
+
+    # OIDN is always available, thanks to CPU support
+    return True
+
 
 def get_effective_preview_denoiser(context, has_oidn_gpu):
     scene = context.scene
@@ -162,6 +184,9 @@ def get_effective_preview_denoiser(context, has_oidn_gpu):
 
 def has_oidn_gpu_devices(context):
     return context.preferences.addons[__package__].preferences.has_oidn_gpu_devices()
+
+def has_optixdenoiser_gpu_devices(context):
+    return context.preferences.addons[__package__].preferences.has_optixdenoiser_gpu_devices()
 
 
 def use_mnee(context):
@@ -243,7 +268,11 @@ class CYCLES_RENDER_PT_sampling_viewport_denoise(CyclesButtonsPanel, Panel):
 
         col = layout.column()
         col.active = cscene.use_preview_denoising
-        col.prop(cscene, "preview_denoiser", text="Denoiser")
+
+        sub = col.column()
+        sub.active = show_preview_denoise_active(context)
+        sub.prop(cscene, "preview_denoiser", text="Denoiser")
+
         col.prop(cscene, "preview_denoising_input_passes", text="Passes")
 
         has_oidn_gpu = has_oidn_gpu_devices(context)
@@ -256,7 +285,7 @@ class CYCLES_RENDER_PT_sampling_viewport_denoise(CyclesButtonsPanel, Panel):
 
         if effective_preview_denoiser == 'OPENIMAGEDENOISE':
             row = col.row()
-            row.active = not use_cpu(context) and has_oidn_gpu
+            row.active = has_oidn_gpu_devices(context)
             row.prop(cscene, "preview_denoising_use_gpu", text="Use GPU")
 
 
@@ -324,7 +353,13 @@ class CYCLES_RENDER_PT_sampling_render_denoise(CyclesButtonsPanel, Panel):
 
         col = layout.column()
         col.active = cscene.use_denoising
-        col.prop(cscene, "denoiser", text="Denoiser")
+
+		col.prop(cscene, "denoiser", text="Denoiser")#BFA
+        
+        #sub = col.column()
+        #sub.active = show_denoise_active(context)
+        #sub.prop(cscene, "denoiser", text="Denoiser")
+
         col.prop(cscene, "denoising_input_passes", text="Passes")
         if cscene.denoiser == 'OPENIMAGEDENOISE':
             col.prop(cscene, "denoising_prefilter", text="Prefilter")
@@ -332,9 +367,9 @@ class CYCLES_RENDER_PT_sampling_render_denoise(CyclesButtonsPanel, Panel):
 
         if cscene.denoiser == 'OPENIMAGEDENOISE':
             row = col.row()
-            if not use_cpu(context) and has_oidn_gpu_devices(context):
-                row.use_property_split = False
-                row.prop(cscene, "denoising_use_gpu", text="Use GPU")
+            row.active = has_oidn_gpu_devices(context)
+            row.use_property_split = False #BFA
+            row.prop(cscene, "denoising_use_gpu", text="Use GPU")
 
 
 class CYCLES_RENDER_PT_sampling_path_guiding(CyclesButtonsPanel, Panel):
@@ -365,7 +400,7 @@ class CYCLES_RENDER_PT_sampling_path_guiding(CyclesButtonsPanel, Panel):
         layout.prop(cscene, "guiding_training_samples")
 
         col = layout.column(align=True)
-        col.use_property_split = False
+        col.use_property_split = False #BFA
         col.prop(cscene, "use_surface_guiding", text="Surface")
         col.prop(cscene, "use_volume_guiding", text="Volume", text_ctxt=i18n_contexts.id_id)
 
@@ -418,7 +453,7 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(cscene, "sample_offset")
 
-        col = layout.column(align=True)
+        col = layout.column(align=True) #BFA
         # Tabulated Sobol is used when the debug UI is turned off.
         col.active = cscene.sampling_pattern == 'TABULATED_SOBOL' or not CyclesDebugButtonsPanel.poll(context)
         col.label(text="Scrambling Distance")
@@ -454,7 +489,7 @@ class CYCLES_RENDER_PT_sampling_lights(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = False #BFA
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -463,7 +498,7 @@ class CYCLES_RENDER_PT_sampling_lights(CyclesButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(cscene, "use_light_tree")
         sub = col.row()
-        sub.use_property_split = True
+        sub.use_property_split = True #BFA
         sub.prop(cscene, "light_sampling_threshold", text="Light Threshold")
         sub.active = not cscene.use_light_tree
 
@@ -628,6 +663,7 @@ class CYCLES_RENDER_PT_light_paths_caustics(CyclesButtonsPanel, Panel):
         col = layout.column()
         col.prop(cscene, "blur_glossy")
 
+		#col = layout.column(heading="Caustics", align=True) #BFA - redundant
         col.use_property_split = False
         col.prop(cscene, "caustics_reflective")
         col.prop(cscene, "caustics_refractive")
@@ -1858,6 +1894,7 @@ class CYCLES_LIGHT_PT_nodes(CyclesButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
+		#layout.use_property_split = True #BFA
         light = context.light
         panel_node_draw(layout, light, 'OUTPUT_LIGHT', 'Surface')
 
@@ -1913,6 +1950,7 @@ class CYCLES_WORLD_PT_surface(CyclesButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
+		#layout.use_property_split = True #BFA
         world = context.world
 
         if not panel_node_draw(layout, world, 'OUTPUT_WORLD', 'Surface'):
@@ -1978,7 +2016,7 @@ class CYCLES_WORLD_PT_ray_visibility(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = False #BFA
         layout.use_property_decorate = False
 
         world = context.world
@@ -2130,6 +2168,7 @@ class CYCLES_MATERIAL_PT_surface(CyclesButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
+		#layout.use_property_split = True #BFA
         mat = context.material
         if not panel_node_draw(layout, mat, 'OUTPUT_MATERIAL', 'Surface'):
             layout.prop(mat, "diffuse_color")
@@ -2149,6 +2188,7 @@ class CYCLES_MATERIAL_PT_volume(CyclesButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
+		#layout.use_property_split = True #BFA
         mat = context.material
         # cmat = mat.cycles
 
@@ -2167,6 +2207,7 @@ class CYCLES_MATERIAL_PT_displacement(CyclesButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
+		#layout.use_property_split = True #BFA
         mat = context.material
         panel_node_draw(layout, mat, 'OUTPUT_MATERIAL', 'Displacement')
 
@@ -2201,7 +2242,7 @@ class CYCLES_MATERIAL_PT_settings_surface(CyclesButtonsPanel, Panel):
     @staticmethod
     def draw_shared(self, mat):
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = False #BFA
         layout.use_property_decorate = False
 
         cmat = mat.cycles

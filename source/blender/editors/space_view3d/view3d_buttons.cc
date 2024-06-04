@@ -953,11 +953,10 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
       UI_block_layout_set_current(subblock, col);
 
       if (totlattdata == 1) {
-        /* bfa */
-        uiDefButR(subblock,
+        uiDefButR(block,
                   UI_BTYPE_NUM,
                   0,
-                  "", /* -bfa remove text from slider */
+                  IFACE_(""),/* -bfa remove text from slider */
                   0,
                   yi -= buth + but_margin,
                   butw,
@@ -976,7 +975,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
         but = uiDefButF(subblock,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        "", /* -bfa remove text from slider */
+                        IFACE_(""), /* -bfa remove text from slider */
                         0,
                         yi -= buth + but_margin,
                         butw,
