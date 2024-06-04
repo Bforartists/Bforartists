@@ -48,8 +48,8 @@ class VIEW3D_AST_pose_library(bpy.types.AssetShelf):
     @classmethod
     def draw_context_menu(cls, _context: Context, _asset: AssetRepresentation, layout: UILayout):
         # Make sure these operator properties match those used in `VIEW3D_PT_pose_library_legacy`.
-        layout.operator("poselib.apply_pose_asset", text="Apply Pose").flipped = False
-        layout.operator("poselib.apply_pose_asset", text="Apply Pose Flipped").flipped = True
+        layout.operator("poselib.apply_pose_asset", icon="MOD_ARMATURE_SELECTED", text="Apply Pose").flipped = False  #BFA - icon added
+        layout.operator("poselib.apply_pose_asset", icon="FLIP", text="Apply Pose Flipped").flipped = True  #BFA - icon added
 
         with operator_context(layout, 'INVOKE_DEFAULT'):
             layout.operator("poselib.blend_pose_asset", icon="BLEND_TO_DEFAULT", text="Blend Pose") #BFA - icon added
