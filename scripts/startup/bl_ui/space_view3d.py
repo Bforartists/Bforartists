@@ -4623,7 +4623,7 @@ class VIEW3D_MT_sculpt(Menu):
         layout = self.layout
 
         layout.menu("VIEW3D_MT_sculpt_legacy")  # bfa menu
-        layout.menu("VIEW3D_MT_sculpt_transform")  # bfa menu
+        layout.menu("VIEW3D_MT_bfa_sculpt_transform")  # bfa menu
 
         layout.separator()
 
@@ -4719,7 +4719,7 @@ class VIEW3D_MT_sculpt_legacy(Menu):
 
 
 # bfa menu
-class VIEW3D_MT_sculpt_transform(Menu):
+class VIEW3D_MT_bfa_sculpt_transform(Menu):
     bl_label = "Transform"
 
     def draw(self, _context):
@@ -4730,7 +4730,7 @@ class VIEW3D_MT_sculpt_transform(Menu):
 
 
 # bfa menu
-class VIEW3D_MT_sculpt_showhide(Menu):
+class VIEW3D_MT_bfa_sculpt_showhide(Menu):
     bl_label = "Show/Hide"
 
     def draw(self, _context):
@@ -4749,6 +4749,84 @@ class VIEW3D_MT_sculpt_showhide(Menu):
 
         props = layout.operator("paint.hide_show_masked", text="Hide Masked", icon="MOD_MASK_OFF")
         props.action = 'HIDE'
+
+#BFA - not used
+class VIEW3D_MT_sculpt_transform(Menu):
+    bl_label = "Transform"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("transform.translate")
+        layout.operator("transform.rotate")
+        layout.operator("transform.resize", text="Scale")
+
+        layout.separator()
+        props = layout.operator("sculpt.mesh_filter", text="To Sphere")
+        props.type = 'SPHERE'
+
+#BFA - not used
+class VIEW3D_MT_sculpt_showhide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        props = layout.operator("paint.hide_show", text="Box Hide")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Hide")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show_line_gesture", text="Line Hide")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Hide")
+        props.action = 'HIDE'
+
+        layout.separator()
+
+        props = layout.operator("paint.hide_show", text="Box Show")
+        props.action = 'SHOW'
+
+        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show")
+        props.action = 'SHOW'
+
+        props = layout.operator("paint.hide_show_line_gesture", text="Line Show")
+        props.action = 'SHOW'
+
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Show")
+        props.action = 'SHOW'
+
+#BFA - not used
+class VIEW3D_MT_sculpt_trim(Menu):
+    bl_label = "Trim/Add"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Trim")
+        props.trim_mode = 'DIFFERENCE'
+
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim")
+        props.trim_mode = 'DIFFERENCE'
+
+        props = layout.operator("sculpt.trim_line_gesture", text="Line Trim")
+        props.trim_mode = 'DIFFERENCE'
+
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")
+        props.trim_mode = 'DIFFERENCE'
+
+        layout.separator()
+
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Add")
+        props.trim_mode = 'JOIN'
+
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add")
+        props.trim_mode = 'JOIN'
+
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add")
+        props.trim_mode = 'JOIN'
 
 
 class VIEW3D_MT_sculpt_curves(Menu):
@@ -7318,10 +7396,6 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.separator()
 
-        layout.operator("grease_pencil.extrude_move", text="Extrude")
-
-        layout.separator()
-
         layout.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
         layout.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
 
@@ -7372,6 +7446,11 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.operator("grease_pencil.extrude_move", text="Extrude")
+
+        layout.separator()
+
         layout.operator("grease_pencil.stroke_smooth", text="Smooth")
 
         layout.separator()
@@ -7815,6 +7894,8 @@ class VIEW3D_PT_view3d_properties(Panel):
             row.separator()
             row.use_property_split = True
             row.prop(view, "camera", text="")
+            row.active = view.region_3d.view_perspective == 'CAMERA'
+            row.prop(view.overlay, "show_camera_passepartout", text="Passepartout")
 
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")
@@ -7858,8 +7939,6 @@ class VIEW3D_PT_view3d_lock(Panel):
         col.prop(view, "lock_camera", text="Camera to View")
 
  # bfa panel
-
-
 class VIEW3D_PT_view3d_properties_edit(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -7874,8 +7953,6 @@ class VIEW3D_PT_view3d_properties_edit(Panel):
         layout.prop(tool_settings, "lock_object_mode")
 
 # bfa panel
-
-
 class VIEW3D_PT_view3d_camera_lock(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -11108,9 +11185,12 @@ classes = (
     VIEW3D_MT_subdivision_set,  # bfa menu
     VIEW3D_MT_sculpt,
     VIEW3D_MT_sculpt_legacy,  # bfa menu
-    VIEW3D_MT_sculpt_transform,  # bfa menu
-    VIEW3D_MT_sculpt_showhide,  # bfa menu
+    VIEW3D_MT_bfa_sculpt_transform,  # bfa menu
+    VIEW3D_MT_bfa_sculpt_showhide,  # bfa menu
     VIEW3D_MT_sculpt_set_pivot,
+    VIEW3D_MT_sculpt_transform, #BFA - not used
+    VIEW3D_MT_sculpt_showhide, #BFA - not used
+    VIEW3D_MT_sculpt_trim, #BFA - not used
     VIEW3D_MT_mask,
     VIEW3D_MT_mask_legacy,  # bfa menu
     VIEW3D_MT_face_sets_showhide,  # bfa menu
