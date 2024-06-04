@@ -859,18 +859,29 @@ static void PREFERENCES_OT_extension_repo_upgrade(wmOperatorType *ot)
 static int preferences_extension_url_drop_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   char *url = RNA_string_get_alloc(op->ptr, "url", nullptr, 0, nullptr);
-  const bool url_is_remote = STRPREFIX(url, "http://") || STRPREFIX(url, "https://") ||
-                             STRPREFIX(url, "file://");
+  const bool url_is_file = STRPREFIX(url, "file://");
+  const bool url_is_online = STRPREFIX(url, "http://") || STRPREFIX(url, "https://");
+  const bool url_is_remote = url_is_file | url_is_online;
 
   /* NOTE: searching for hard-coded add-on name isn't great.
    * Needed since #WM_dropbox_add expects the operator to exist on startup. */
-  const char *idname_external = url_is_remote ? "bl_pkg.pkg_install" : "bl_pkg.pkg_install_files";
+  const char *idname_external = url_is_remote ? "extensions.package_install" :
+                                                "extensions.package_install_files";
+  bool use_url = true;
+
+  if (url_is_online && (G.f & G_FLAG_INTERNET_ALLOW) == 0) {
+    idname_external = "extensions.userpref_allow_online_popup";
+    use_url = false;
+  }
+
   wmOperatorType *ot = WM_operatortype_find(idname_external, true);
   int retval;
   if (ot) {
     PointerRNA props_ptr;
     WM_operator_properties_create_ptr(&props_ptr, ot);
-    RNA_string_set(&props_ptr, "url", url);
+    if (use_url) {
+      RNA_string_set(&props_ptr, "url", url);
+    }
     WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr, event);
     WM_operator_properties_free(&props_ptr);
     retval = OPERATOR_FINISHED;
@@ -920,9 +931,9 @@ static bool associate_blend_poll(bContext *C)
 }
 
 #if !defined(__APPLE__)
-static bool assosiate_blend(bool do_register, bool all_users, char **error_msg)
+static bool associate_blend(bool do_register, bool all_users, char **error_msg)
 {
-  const bool result = WM_platform_assosiate_set(do_register, all_users, error_msg);
+  const bool result = WM_platform_associate_set(do_register, all_users, error_msg);
 #  ifdef WIN32
   if ((result == false) &&
       /* For some reason the message box isn't shown in this case. */
@@ -957,7 +968,7 @@ static int associate_blend_exec(bContext * /*C*/, wmOperator *op)
   char *error_msg = nullptr;
 
   WM_cursor_wait(true);
-  const bool success = assosiate_blend(true, all_users, &error_msg);
+  const bool success = associate_blend(true, all_users, &error_msg);
   WM_cursor_wait(false);
 
   if (!success) {
@@ -1005,7 +1016,7 @@ static int unassociate_blend_exec(bContext * /*C*/, wmOperator *op)
   char *error_msg = nullptr;
 
   WM_cursor_wait(true);
-  bool success = assosiate_blend(false, all_users, &error_msg);
+  bool success = associate_blend(false, all_users, &error_msg);
   WM_cursor_wait(false);
 
   if (!success) {
@@ -1064,10 +1075,28 @@ static bool drop_extension_url_poll(bContext * /*C*/, wmDrag *drag, const wmEven
     return false;
   }
 
-  const char *cstr_ext = BLI_path_extension(cstr);
+  bool has_known_extension = false;
+  {
+    /* Strip parameters from the URL (if they exist) before the file extension is checked.
+     * This allows for `https://example.org/api/v1/file.zip?repository=/api/v1/`.
+     * This allows draggable links to specify their repository, see: #120665. */
+    std::string str_strip;
+    const char *cstr_maybe_copy = cstr;
+    size_t param_char = str.find('?');
+    if (param_char != std::string::npos) {
+      str_strip = str.substr(0, param_char);
+      cstr_maybe_copy = str_strip.c_str();
+    }
+
+    const char *cstr_ext = BLI_path_extension(cstr_maybe_copy);
+    if (cstr_ext && STRCASEEQ(cstr_ext, ".zip")) {
+      has_known_extension = true;
+    }
+  }
+
   /* Check the URL has a `.zip` suffix OR has a known repository as a prefix.
    * This is needed to support redirects which don't contain an extension. */
-  if (!(cstr_ext && STRCASEEQ(cstr_ext, ".zip")) &&
+  if (!has_known_extension &&
       !BKE_preferences_extension_repo_find_by_remote_url_prefix(&U, cstr, true))
   {
     return false;
