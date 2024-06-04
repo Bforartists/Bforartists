@@ -5120,9 +5120,14 @@ static void ed_screens_statusbar_menu_create(uiLayout *layout, void * /*arg*/)
   if (GPU_mem_stats_supported()) {
     uiItemR(layout, &ptr, "show_statusbar_vram", UI_ITEM_NONE, IFACE_("Video Memory"), ICON_NONE);
   }
-  /*bfa - bforartists version, not blender version*/
+  uiItemR(layout,
+          &ptr,
+          "show_extensions_updates",
+          UI_ITEM_NONE,
+          IFACE_("Extensions Updates"),
+          ICON_NONE);
   uiItemR(
-      layout, &ptr, "show_statusbar_version", UI_ITEM_NONE, IFACE_("Bforartists Version"), ICON_NONE);
+      layout, &ptr, "show_statusbar_version", UI_ITEM_NONE, IFACE_("Bforartists Version"), ICON_NONE); /*bfa - bforartists version, not blender version*/
 }
 
 static int screen_context_menu_invoke(bContext *C, wmOperator * /*op*/, const wmEvent * /*event*/)

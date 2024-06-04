@@ -3126,7 +3126,8 @@ class WM_OT_batch_rename(Operator):
                     row.label(text=re_error_dst)
 
                 # Row 4: case.
-                row = col.row(align = True)
+                row = col.split(factor=fac)
+                row.label(text="")
                 row.prop(action, "replace_match_case")
 
             elif ty == 'CASE':
@@ -3239,8 +3240,8 @@ class WM_MT_splash_quick_setup(Menu):
             col = split.column()
             col.operator(
                 "preferences.copy_prev",
-                text=iface_("Load Bforartists {:d}.{:d} Settings", "Operator").format(*old_version),
-                icon='DUPLICATE',
+                text=iface_("Load Bforartists {:d}.{:d} Preferences", "Operator").format(*old_version),
+                icon='DUPLICATE', #BFA
                 translate=False,
             )
 
@@ -3353,8 +3354,13 @@ class WM_MT_splash(Menu):
 
         layout.separator()
 
+        if (not bpy.app.online_access) and bpy.app.online_access_override:
+            self.layout.label(text="Running in Offline Mode", icon='DELETE') #BFA - wip, update icon to INTERNET_OFFLINE
+		
+        layout.separator()
+		
         layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string}")
-
+		
         layout.separator()
 
 
