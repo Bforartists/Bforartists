@@ -2470,17 +2470,13 @@ class EXTENSIONS_OT_userpref_show_online(Operator):
         return True
 
     def execute(self, context):
-        wm = context.window_manager
-        prefs = context.preferences
-
         bpy.ops.screen.userpref_show('INVOKE_DEFAULT', section='SYSTEM')
-        	
         return {'FINISHED'}
 
 
 class EXTENSIONS_OT_userpref_allow_online(Operator):
-    """Allow internet access. Blender may access configured online extension repositories. """ \
-        """Installed third party add-ons may access the internet for their own functionality"""
+    """Allow internet access. Bforartists may access configured online extension repositories. """ \
+        """Installed third party add-ons may access the internet for their own functionality""" # BFA - not Blender
     bl_idname = "extensions.userpref_allow_online"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -2489,24 +2485,24 @@ class EXTENSIONS_OT_userpref_allow_online(Operator):
     def poll(cls, context):
         if bpy.app.online_access_override:
             if not bpy.app.online_access:
-                cls.poll_message_set("Blender was launched in offline-mode which cannot be changed at runtime")
+                cls.poll_message_set("Bforartists was launched in offline-mode which cannot be changed at runtime") # BFA - not Blender
                 return False
         return True
 
     def execute(self, context):
         context.preferences.system.use_online_access = True
         
-        # BFA - when you enable, copy pre-downloaded extensions
-        bpy.ops.extensions.replace_legacy_addons('INVOKE_DEFAULT') # BFA - WIP, needs to made into another button
-        
+        bpy.ops.extensions.activate_downloaded_extensions('INVOKE_DEFAULT') # BFA - when you enable, copy pre-downloaded extensions
+        bpy.ops.preferences.addon_refresh() # BFA - force refresh
+
         return {'FINISHED'}
 
 
 # NOTE: this is a wrapper for `extensions.userpref_allow_online`.
 # It exists *only* show a dialog.
 class EXTENSIONS_OT_userpref_allow_online_popup(Operator):
-    """Allow internet access. Blender may access configured online extension repositories. """ \
-        """Installed third party add-ons may access the internet for their own functionality"""
+    """Allow internet access. Bforartists may access configured online extension repositories. """ \
+        """Installed third party add-ons may access the internet for their own functionality"""  # BFA - not Blender
     bl_idname = "extensions.userpref_allow_online_popup"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -2539,7 +2535,7 @@ class EXTENSIONS_OT_userpref_allow_online_popup(Operator):
             lines = (
                 "Online access required to install or update.",
                 "",
-                "Launch Blender without --offline-mode"
+                "Launch Bforartists without --offline-mode"  # BFA - not Blender
             )
         else:
             lines = (
@@ -2571,9 +2567,9 @@ class EXTENSIONS_OT_package_enable_not_installed(Operator):
 # BFA - Start of changes, a new operation to remove legacy and replace with pre-downloaded extension addons
 #
 
-class EXTENSIONS_OT_replace_legacy_addons(Operator):
-    """Remove the legacy addons when Extensions are enabled"""
-    bl_idname = "extensions.replace_legacy_addons"
+class EXTENSIONS_OT_activate_downloaded_extensions(Operator):
+    """Copy and prepare pre-downloaded Extensions Addons when opt-in to be online is enabled"""
+    bl_idname = "extensions.activate_downloaded_extensions"
     bl_label = "Replace Legacy with Extension"
 
     def execute(self, context):
@@ -2668,7 +2664,7 @@ classes = (
     # Dummy commands (for testing).
     EXTENSIONS_OT_dummy_progress,
 
-    EXTENSIONS_OT_replace_legacy_addons, #BFA - custom operator for legacy addons
+    EXTENSIONS_OT_activate_downloaded_extensions, #BFA - custom operator for legacy addons
 )
 
 
