@@ -2431,7 +2431,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         # attribute
         layout.separator()
         layout.operator("mesh.select_by_attribute", text="By Attribute", icon="NODE_ATTRIBUTE")
-		
+
         # more/less
         layout.separator()
         layout.menu("VIEW3D_MT_edit_mesh_select_more_less")
@@ -7376,11 +7376,11 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
 
     def draw(self, context):
         ob = context.object
-        
+
         layout = self.layout
 
         layout.operator("grease_pencil.clean_loose")
-        
+
         if ob.mode != 'PAINT_GREASE_PENCIL':
             layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance")
 
@@ -7502,7 +7502,7 @@ class VIEW3D_MT_edit_curves_control_points(Menu):
         layout.operator("curves.extrude_move")
         layout.operator_menu_enum("curves.handle_type_set", "type")
 
-        
+
 class VIEW3D_MT_edit_curves_segments(Menu):
     bl_label = "Segments"
 
@@ -8666,7 +8666,7 @@ class VIEW3D_PT_gizmo_display(Panel):
             row.prop(scene.transform_orientation_slots[1], "type", text="")
             row = col.row()
             row.separator()
-            row.prop(view, "show_gizmo_object_translate", text="Move", text_ctxt=i18n_contexts.operator_default) # BFA 
+            row.prop(view, "show_gizmo_object_translate", text="Move", text_ctxt=i18n_contexts.operator_default) # BFA
             row = col.row()
             row.separator()
             row.prop(view, "show_gizmo_object_rotate", text="Rotate", text_ctxt=i18n_contexts.operator_default) # BFA
@@ -8781,7 +8781,7 @@ class VIEW3D_PT_overlay_guides(Panel):
         sub = split.column()
         sub.prop(overlay, "show_text", text="Text Info")
         sub.prop(overlay, "show_stats", text="Statistics")
-        if view.region_3d.view_perspective == 'CAMERA': 
+        if view.region_3d.view_perspective == 'CAMERA':
             sub.prop(overlay, "show_camera_guides", text="Camera Guides")
 
         sub = split.column()
