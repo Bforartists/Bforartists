@@ -4564,7 +4564,7 @@ class VIEW3D_MT_paint_weight(Menu):
             self.draw_generic(self.layout, is_editmode=False)
 
 
-# bfa menu
+# BFA menu
 class VIEW3D_MT_paint_weight_legacy(Menu):
     bl_label = "Legacy"
 
@@ -4587,9 +4587,7 @@ class VIEW3D_MT_paint_weight_legacy(Menu):
     def draw(self, _context):
         self.draw_generic(self.layout, is_editmode=False)
 
-# bfa menu
-
-
+# BFA menu
 class VIEW3D_MT_subdivision_set(Menu):
     bl_label = "Subdivide"
 
@@ -4615,7 +4613,7 @@ class VIEW3D_MT_subdivision_set(Menu):
         myvar.relative = False
         myvar.level = 5
 
-
+# BFA - heavily modified, careful!
 class VIEW3D_MT_sculpt(Menu):
     bl_label = "Sculpt"
 
@@ -4631,31 +4629,39 @@ class VIEW3D_MT_sculpt(Menu):
         props = layout.operator("sculpt.face_set_edit", text="Fair Positions", icon='POSITION')
         props.mode = 'FAIR_POSITIONS'
 
-        props = layout.operator("paint.hide_show", text="Box Show")
-        props.action = 'SHOW'
+        # Add
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon='BOX_ADD')
+        props.trim_mode = 'JOIN'
 
-        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Hide")
-        props.action = 'HIDE'
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon='LASSO_ADD')
+        props.trim_mode = 'JOIN'
 
-        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show")
-        props.action = 'SHOW'
+        # BFA - added icons to these
+        sculpt_filters_types = [
+            ('SMOOTH', iface_("Smooth"), 'PARTICLEBRUSH_SMOOTH'),
+            ('SURFACE_SMOOTH', iface_("Surface Smooth"), 'SURFACE_SMOOTH'),
+            ('INFLATE', iface_("Inflate"), 'INFLATE'),
+            ('RELAX', iface_("Relax Topology"), 'RELAX_TOPOLOGY'),
+            ('RELAX_FACE_SETS', iface_("Relax Face Sets"), 'RELAX_FACE_SETS'),
+            ('SHARPEN', iface_("Sharpen"), 'SHARPEN'),
+            ('ENHANCE_DETAILS', iface_("Enhance Details"), 'ENHANCE'),
+            ('ERASE_DISCPLACEMENT', iface_("Erase Multires Displacement"), 'DELETE'),
+            ('RANDOM', iface_("Randomize"), 'RANDOMIZE')
+        ]
+        # BFA - added icons to the list above
+        for filter_type, ui_name, icon in sculpt_filters_types:
+            props = layout.operator("sculpt.mesh_filter", text=ui_name, icon=icon, translate=False)
+            props.type = filter_type
 
-        props = layout.operator("paint.hide_show_line_gesture", text="Line Hide")
-        props.action = 'HIDE'
+        layout.separator()
 
-        props = layout.operator("paint.hide_show_line_gesture", text="Line Show")
-        props.action = 'SHOW'
-
-        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Hide")
-        props.action = 'HIDE'
-
-        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Show")
-        props.action = 'SHOW'
+        layout.menu("VIEW3D_MT_subdivision_set")  # BFA - add subdivion set menu
+        layout.operator("sculpt.sample_color", text="Sample Color", icon='EYEDROPPER') #BFA - icon added
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_sculpt_set_pivot", text="Set Pivot")
-        layout.menu("VIEW3D_MT_sculpt_showhide")  # bfa menu
+        #layout.menu("VIEW3D_MT_sculpt_showhide")  # BFA - moved to legacy menu
 
         layout.separator()
 
@@ -4684,16 +4690,28 @@ class VIEW3D_MT_sculpt_legacy(Menu):
         props = layout.operator("paint.hide_show", text="Box Show", icon="BOX_SHOW")
         props.action = 'SHOW'
 
+        layout.separator()
+
         props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Hide", icon="LASSO_HIDE")
         props.action = 'HIDE'
 
         props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show", icon="LASSO_SHOW")
         props.action = 'SHOW'
 
+        layout.separator()
+
         props = layout.operator("paint.hide_show_line_gesture", text="Line Hide", icon="LINE_HIDE")
         props.action = 'HIDE'
 
         props = layout.operator("paint.hide_show_line_gesture", text="Line Show", icon="LINE_SHOW")
+        props.action = 'SHOW'
+
+        layout.separator()
+
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Hide")
+        props.action = 'HIDE'
+
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Show")
         props.action = 'SHOW'
 
         layout.separator()
@@ -4706,12 +4724,6 @@ class VIEW3D_MT_sculpt_legacy(Menu):
 
         props = layout.operator("sculpt.trim_line_gesture", text="Line Trim")
         props.trim_mode = 'DIFFERENCE'
-
-        props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon='BOX_ADD')
-        props.trim_mode = 'JOIN'
-
-        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon='LASSO_ADD')
-        props.trim_mode = 'JOIN'
 
         layout.separator()
 
