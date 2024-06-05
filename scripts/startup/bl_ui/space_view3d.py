@@ -4629,12 +4629,20 @@ class VIEW3D_MT_sculpt(Menu):
         props = layout.operator("sculpt.face_set_edit", text="Fair Positions", icon='POSITION')
         props.mode = 'FAIR_POSITIONS'
 
+        # Fair Tangency
+        props = layout.operator("sculpt.face_set_edit", text="Fair Tangency", icon='NODE_TANGENT')
+        props.mode = 'FAIR_TANGENCY'
+
+        layout.separator()
+
         # Add
         props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon='BOX_ADD')
         props.trim_mode = 'JOIN'
 
         props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon='LASSO_ADD')
         props.trim_mode = 'JOIN'
+
+        layout.separator()
 
         # BFA - added icons to these
         sculpt_filters_types = [
@@ -4661,7 +4669,7 @@ class VIEW3D_MT_sculpt(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_sculpt_set_pivot", text="Set Pivot")
-        #layout.menu("VIEW3D_MT_sculpt_showhide")  # BFA - moved to legacy menu
+        layout.menu("VIEW3D_MT_sculpt_showhide")  # BFA - menu
 
         layout.separator()
 
@@ -4777,38 +4785,26 @@ class VIEW3D_MT_sculpt_transform(Menu):
         props = layout.operator("sculpt.mesh_filter", text="To Sphere")
         props.type = 'SPHERE'
 
-#BFA - not used
+#BFA - menu
 class VIEW3D_MT_sculpt_showhide(Menu):
     bl_label = "Show/Hide"
 
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("paint.hide_show", text="Box Hide")
-        props.action = 'HIDE'
+        props = layout.operator("sculpt.face_set_change_visibility", text="Toggle Visibility", icon="HIDE_OFF")
+        props.mode = 'TOGGLE'
 
-        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Hide")
-        props.action = 'HIDE'
+        props = layout.operator("sculpt.face_set_change_visibility", text="Hide Active Face Set", icon="HIDE_ON")
+        props.mode = 'HIDE_ACTIVE'
 
-        props = layout.operator("paint.hide_show_line_gesture", text="Line Hide")
-        props.action = 'HIDE'
-
-        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Hide")
-        props.action = 'HIDE'
-
-        layout.separator()
-
-        props = layout.operator("paint.hide_show", text="Box Show")
+        props = layout.operator("paint.hide_show_all", text="Show All", icon="HIDE_OFF")
         props.action = 'SHOW'
 
-        props = layout.operator("paint.hide_show_lasso_gesture", text="Lasso Show")
-        props.action = 'SHOW'
+        props = layout.operator("paint.visibility_invert", text="Invert Visible", icon="HIDE_ON")
 
-        props = layout.operator("paint.hide_show_line_gesture", text="Line Show")
-        props.action = 'SHOW'
-
-        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Show")
-        props.action = 'SHOW'
+        props = layout.operator("paint.hide_show_masked", text="Hide Masked", icon="MOD_MASK_OFF")
+        props.action = 'HIDE'
 
 #BFA - not used
 class VIEW3D_MT_sculpt_trim(Menu):
@@ -11200,9 +11196,9 @@ classes = (
     VIEW3D_MT_bfa_sculpt_transform,  # bfa menu
     VIEW3D_MT_bfa_sculpt_showhide,  # bfa menu
     VIEW3D_MT_sculpt_set_pivot,
-    VIEW3D_MT_sculpt_transform, #BFA - not used
-    VIEW3D_MT_sculpt_showhide, #BFA - not used
-    VIEW3D_MT_sculpt_trim, #BFA - not used
+    VIEW3D_MT_sculpt_transform, # BFA - not used
+    VIEW3D_MT_sculpt_showhide, # BFA - menu
+    VIEW3D_MT_sculpt_trim, # BFA - not used
     VIEW3D_MT_mask,
     VIEW3D_MT_mask_legacy,  # bfa menu
     VIEW3D_MT_face_sets_showhide,  # bfa menu
