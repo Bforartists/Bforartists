@@ -354,8 +354,8 @@ class CYCLES_RENDER_PT_sampling_render_denoise(CyclesButtonsPanel, Panel):
         col = layout.column()
         col.active = cscene.use_denoising
 
-		col.prop(cscene, "denoiser", text="Denoiser")#BFA
-        
+        col.prop(cscene, "denoiser", text="Denoiser")#BFA
+
         #sub = col.column()
         #sub.active = show_denoise_active(context)
         #sub.prop(cscene, "denoiser", text="Denoiser")
