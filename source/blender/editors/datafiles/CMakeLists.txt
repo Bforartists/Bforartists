@@ -89,7 +89,7 @@ planar
 attribute_combine_xyz
 attribute_separate_xyz
 
-#~ DEF_ICON_BLANK(109)
+line_trim
 #~ DEF_ICON_BLANK(110)
 #~ DEF_ICON_BLANK(111)
 #~ DEF_ICON_BLANK(112)
