@@ -1362,6 +1362,7 @@ class RENDER_PT_simplify_viewport(RenderButtonsPanel, Panel):
         col.prop(rd, "simplify_volumes", text="Volume Resolution")
 
         col = flow.column()
+        col.use_property_split = False
         col.prop(rd, "use_simplify_normals", text="Normals")
 
 
