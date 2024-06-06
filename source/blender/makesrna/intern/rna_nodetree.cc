@@ -11979,6 +11979,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_TOOL_SET_SELECTION:
       return ICON_SET_SELECTION;
 
+    case GEO_NODE_TOOL_VIEWPORT_TRANSFORM:
+      return ICON_VIEWPORT_TRANSFORM;
+
     case GEO_NODE_TRANSFORM_GEOMETRY:
       return ICON_NODE_TRANSFORM;
 
