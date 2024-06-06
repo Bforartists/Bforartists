@@ -4777,13 +4777,14 @@ class VIEW3D_MT_sculpt_transform(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize", text="Scale")
+        layout.operator("transform.translate", icon='TRANSFORM_MOVE')
+        layout.operator("transform.rotate", icon='TRANSFORM_ROTATE')
+        layout.operator("transform.resize", text="Scale", icon='TRANSFORM_SCALE')
 
         layout.separator()
-        props = layout.operator("sculpt.mesh_filter", text="To Sphere")
+        props = layout.operator("sculpt.mesh_filter", text="Sphere", icon='SPHERE')
         props.type = 'SPHERE'
+
 
 #BFA - menu
 class VIEW3D_MT_sculpt_showhide(Menu):
@@ -7856,7 +7857,7 @@ class VIEW3D_PT_active_tool_duplicate(Panel, ToolActivePanelHelper):
     def poll(cls, context):
         return context.area.type != 'VIEW_3D'
 
-
+# BFA - heavily modified, careful
 class VIEW3D_PT_view3d_properties(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -7897,54 +7898,21 @@ class VIEW3D_PT_view3d_properties(Panel):
             split.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if view.use_local_camera:
-            subcol = col.column()
             row = subcol.row()
-            row.separator()
             row.use_property_split = True
             row.prop(view, "camera", text="")
-            row.active = view.region_3d.view_perspective == 'CAMERA'
-            row.prop(view.overlay, "show_camera_passepartout", text="Passepartout")
+
+        row = subcol.row(align=True)
+        if view.region_3d.view_perspective == 'CAMERA':
+            row = subcol.row()
+            subcol.prop(view.overlay, "show_camera_passepartout", text="Passepartout")
 
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")
 
+
 # BFA - not used
-
-
-class VIEW3D_PT_view3d_lock(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "View"
-    bl_label = "View Lock"
-    bl_parent_id = "VIEW3D_PT_view3d_properties"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        view = context.space_data
-
-        col = layout.column(align=True)
-        sub = col.column()
-        sub.active = bool(view.region_3d.view_perspective != 'CAMERA' or view.region_quadviews)
-
-        sub.prop(view, "lock_object")
-        lock_object = view.lock_object
-        if lock_object:
-            if lock_object.type == 'ARMATURE':
-                sub.prop_search(
-                    view, "lock_bone", lock_object.data,
-                    "edit_bones" if lock_object.mode == 'EDIT'
-                    else "bones",
-                    text="Bone",
-                )
-
-        col = layout.column(heading="Lock", align=True)
-        if not lock_object:
-            col.prop(view, "lock_cursor", text="To 3D Cursor")
-        col.prop(view, "lock_camera", text="Camera to View")
+#class VIEW3D_PT_view3d_lock(Panel):
 
  # bfa panel
 class VIEW3D_PT_view3d_properties_edit(Panel):
@@ -11329,7 +11297,7 @@ classes = (
     VIEW3D_PT_active_tool_duplicate,
     VIEW3D_PT_view3d_properties,
     VIEW3D_PT_view3d_properties_edit,  # bfa panel
-    VIEW3D_PT_view3d_lock,
+    #VIEW3D_PT_view3d_lock, # BFA - not used
     VIEW3D_PT_view3d_camera_lock,  # bfa panel
     VIEW3D_PT_view3d_cursor,
     VIEW3D_PT_collections,
