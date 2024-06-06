@@ -4716,10 +4716,10 @@ class VIEW3D_MT_sculpt_legacy(Menu):
 
         layout.separator()
 
-        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Hide")
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Hide", icon="POLYLINE_HIDE")
         props.action = 'HIDE'
 
-        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Show")
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Show", icon="POLYLINE_SHOW")
         props.action = 'SHOW'
 
         layout.separator()

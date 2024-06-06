@@ -91,8 +91,8 @@ attribute_separate_xyz
 
 line_trim
 internet_offline
-#~ DEF_ICON_BLANK(111)
-#~ DEF_ICON_BLANK(112)
+polyline_hide
+polyline_show
 #~ DEF_ICON_BLANK(113)
 #~ DEF_ICON_BLANK(114)
 #~ DEF_ICON_BLANK(115)
