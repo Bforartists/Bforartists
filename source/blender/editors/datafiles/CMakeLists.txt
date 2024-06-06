@@ -90,7 +90,7 @@ attribute_combine_xyz
 attribute_separate_xyz
 
 line_trim
-#~ DEF_ICON_BLANK(110)
+internet_offline
 #~ DEF_ICON_BLANK(111)
 #~ DEF_ICON_BLANK(112)
 #~ DEF_ICON_BLANK(113)
