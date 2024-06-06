@@ -2303,33 +2303,41 @@ class USERPREF_PT_extensions_repos(Panel):
         layout_header.label(text="Advanced")
 
         if layout_panel:
-            layout_panel.use_property_split = True
+            layout_panel.use_property_split = False
 
-            col = layout_panel.column(align=False, heading="Custom Directory")
+            col = layout_panel.column(align=False)
+            col.prop(active_repo, "use_custom_directory", text="Custom Directory")
             row = col.row(align=True)
             sub = row.row(align=True)
-            sub.prop(active_repo, "use_custom_directory", text="")
+
             sub = sub.row(align=True)
             sub.active = active_repo.use_custom_directory
             if active_repo.use_custom_directory:
                 if active_repo.custom_directory == "":
                     sub.alert = True
+                sub.separator(factor = 2.0)
                 sub.prop(active_repo, "custom_directory", text="")
             else:
                 # Show the read-only directory property.
                 # Apart from being consistent with the custom directory UI,
                 # prefer a read-only property over a label because this is not necessarily
                 # valid UTF-8 which will raise a Python exception when passed in as text.
+                sub.separator(factor = 2.0)
                 sub.prop(active_repo, "directory", text="")
 
             if active_repo.use_remote_url:
-                row = layout_panel.row(align=True, heading="Authentication")
+                col = layout.column(align = True)
+                col.label(text = "Authentication")
+                row = col.row()
+                row.separator()
                 row.prop(active_repo, "use_access_token")
 
-            layout_panel.prop(active_repo, "use_cache")
-            layout_panel.separator()
+                row = col.row()
+                row.separator()
+                row.prop(active_repo, "use_cache")
 
-            layout_panel.prop(active_repo, "module")
+            col = layout.column()
+            col.prop(active_repo, "module")
 
 
 # -----------------------------------------------------------------------------
