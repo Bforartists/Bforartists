@@ -6497,11 +6497,11 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
       }
 
       if ((G.f & G_FLAG_INTERNET_OVERRIDE_PREF_OFFLINE) != 0) {
-        uiItemL(row, "", ICON_DELETE); /*BFA - wip, replace icon with ICON_INTERNET_OFFLINE*/
+        uiItemL( row, "", ICON_INTERNET_OFFLINE);
       }
       else {
         uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
-        uiItemO(row, "", ICON_DELETE, "EXTENSIONS_OT_userpref_show_online"); /*BFA - wip, replace icon with ICON_INTERNET_OFFLINE*/
+        uiItemO(row, "", ICON_INTERNET_OFFLINE, "EXTENSIONS_OT_userpref_show_online");
         uiBut *but = static_cast<uiBut *>(uiLayoutGetBlock(layout)->buttons.last);
         uchar color[4];
         UI_GetThemeColor4ubv(TH_TEXT, color);
