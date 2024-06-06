@@ -1572,7 +1572,7 @@ static void create_inspection_string_for_geometry_socket(fmt::memory_buffer &buf
 
   Span<bke::GeometryComponent::Type> supported_types = socket_decl->supported_types();
   if (supported_types.is_empty()) {
-    fmt::format_to(fmt::appender(buf), TIP_("Supported: All Types"));
+    fmt::format_to(fmt::appender(buf), TIP_("Supported: All Types\nHold CTRL and click at the name to rename"));
     return;
   }
 
