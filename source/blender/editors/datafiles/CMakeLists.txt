@@ -168,7 +168,7 @@ node_vectorrotate
 mask_slice
 mesh_line
 
-#~ DEF_ICON_BLANK(188)
+instance_transform_get
 #~ DEF_ICON_BLANK(189)
 #~ DEF_ICON_BLANK(190)
 #~ DEF_ICON_BLANK(191)
