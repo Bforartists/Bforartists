@@ -3713,6 +3713,12 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSelfObject"
 
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = col.operator("node.add_node", text=" Viewport Transform ", icon = "VIEWPORT_TRANSFORM")
+                props.use_transform = True
+                props.type = "GeometryNodeViewportTransform"
+
+
 
         #### Icon Buttons
 
@@ -3754,6 +3760,12 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "SELF_OBJECT")
             props.use_transform = True
             props.type = "GeometryNodeSelfObject"
+
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = flow.operator("node.add_node", text="", icon = "VIEWPORT_TRANSFORM")
+                props.use_transform = True
+                props.type = "GeometryNodeViewportTransform"
+
 
 
 #add output panel

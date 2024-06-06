@@ -247,7 +247,7 @@ save_svg
 save_pdf
 load_svg_gpencil
 
-#~ DEF_ICON_BLANK(267)
+viewport_transform
 #~ DEF_ICON_BLANK(268)
 #~ DEF_ICON_BLANK(269)
 #~ DEF_ICON_BLANK(270)
