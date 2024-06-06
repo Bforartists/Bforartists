@@ -271,7 +271,7 @@ def extensions_panel_draw_legacy_addons(
             #         "preferences.addon_remove", text="Uninstall", icon='CANCEL',
             #     ).module = module_name
             # BFA - end of changes
-            
+
             if is_enabled:
                 if (addon_preferences := used_addon_module_name_map[module_name].preferences) is not None:
                     USERPREF_PT_addons.draw_addon_preferences(layout, context, addon_preferences)
@@ -678,10 +678,10 @@ def extensions_panel_draw_impl(
 
             row_right = row.row()
             row_right.alignment = 'RIGHT'
-            
+
             row_right2 = row.row() #BFA - new row
             row_right2.alignment = 'RIGHT' #BFA - row alignment
-            
+
             if has_remote:
                 if is_installed:
                     # Include uninstall below.
@@ -694,7 +694,7 @@ def extensions_panel_draw_impl(
                         # Right space for alignment with the button.
                         row_right.label(text="Installed   ")
                         row_right.active = False
-                        
+
                         # BFA - Move Uninstall next to Install
                         row_right2.active = True
                         props = row_right2.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL')
@@ -846,7 +846,7 @@ class USERPREF_PT_extensions_filter(Panel):
         row.separator() # BFA
         row.active = (not wm.extension_enabled_only) and (not wm.extension_updates_only) # BFA
         row.prop(wm, "extension_installed_only", text="Installed Extensions") # BFA
-        
+
         col.label(text="Show") # BFA
         col.use_property_split = False # BFA
         row = col.row() # BFA
@@ -882,7 +882,7 @@ class USERPREF_MT_extensions_settings(Menu):
         layout.separator()
 
         layout.operator("extensions.package_upgrade_all", text="Install Available Updates", icon='IMPORT')
-        layout.operator("extensions.package_install_files", text="Install from Disk") #BFA
+        layout.operator("extensions.package_install_files", text="Install from Disk", icon='IMPORT') #BFA
 
         if prefs.experimental.use_extension_utils:
             layout.separator()
