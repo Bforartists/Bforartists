@@ -11658,6 +11658,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_MATERIAL_INDEX:
       return ICON_MATERIAL_INDEX;
 
+    case GEO_NODE_INPUT_INSTANCE_TRANSFORM:
+      return ICON_INSTANCE_TRANSFORM_GET;
+
     case GEO_NODE_INPUT_MATERIAL:
       return ICON_NODE_MATERIAL;
 
