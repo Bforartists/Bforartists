@@ -523,9 +523,9 @@ class DOPESHEET_MT_view(Menu):
         layout.operator("action.previewrange_set", icon='BORDER_RECT')
 
         if context.scene.use_preview_range:
-            layout.operator("anim.scene_range_frame", text="Frame Preview Range")
+            layout.operator("anim.scene_range_frame", text="Frame Preview Range", icon='FRAME_PREVIEW_RANGE')
         else:
-            layout.operator("anim.scene_range_frame", text="Frame Scene Range")
+            layout.operator("anim.scene_range_frame", text="Frame Scene Range", icon='FRAME_SCENE_RANGE')
 
         layout.separator()
 
@@ -569,7 +569,7 @@ class DOPESHEET_MT_view_pie(Menu):
         pie.operator("action.view_all", icon="VIEWALL")
         pie.operator("action.view_selected", icon="VIEW_SELECTED")
         pie.operator("action.view_frame", icon="VIEW_FRAME")
-        
+
         if context.scene.use_preview_range:
             pie.operator("anim.scene_range_frame", text="Frame Preview Range")
         else:
@@ -666,12 +666,12 @@ class DOPESHEET_MT_channel(Menu):
         layout.menu("GRAPH_MT_channel_settings_toggle")
 
         # BFA - Redundant operators now located in GRAPH_MT_channel_settings_toggle
-        
+
         #layout.separator()
         #layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
         #layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
         #layout.operator("anim.channels_editable_toggle", icon="LOCKED")
-        
+
 
         layout.separator()
 
