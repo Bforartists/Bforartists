@@ -258,9 +258,9 @@ class GRAPH_MT_view(Menu):
         layout.operator("anim.previewrange_clear", icon="CLEAR")
         layout.operator("graph.previewrange_set", icon='BORDER_RECT')
         if context.scene.use_preview_range:
-            layout.operator("anim.scene_range_frame", text="Frame Preview Range")
+            layout.operator("anim.scene_range_frame", text="Frame Preview Range", icon='FRAME_PREVIEW_RANGE')
         else:
-            layout.operator("anim.scene_range_frame", text="Frame Scene Range")
+            layout.operator("anim.scene_range_frame", text="Frame Scene Range", icon='FRAME_SCENE_RANGE')
 
         layout.separator()
 
