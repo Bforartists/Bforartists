@@ -41,9 +41,6 @@
 [submodule "scripts/addons_contrib/space_view3d_copy_attributes"]
 	path = scripts/addons_contrib/space_view3d_copy_attributes
 	url = https://projects.blender.org/extensions/space_view3d_copy_attributes.git
-[submodule "scripts/addons_contrib/io_scene_x3d"]
-	path = scripts/addons_contrib/io_scene_x3d
-	url = https://projects.blender.org/extensions/io_scene_x3d.git
 [submodule "scripts/addons_contrib/io_mesh_stl"]
 	path = scripts/addons_contrib/io_mesh_stl
 	url = https://projects.blender.org/extensions/io_mesh_stl.git
