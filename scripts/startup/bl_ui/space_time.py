@@ -152,9 +152,9 @@ class TIME_MT_view(Menu):
         layout.operator("action.view_all", icon = "VIEWALL")
         layout.operator("action.view_frame", icon = "VIEW_FRAME" )
         if context.scene.use_preview_range:
-            layout.operator("anim.scene_range_frame", text="Frame Preview Range")
+            layout.operator("anim.scene_range_frame", text="Frame Preview Range", icon = "FRAME_PREVIEW_RANGE")
         else:
-            layout.operator("anim.scene_range_frame", text="Frame Scene Range")
+            layout.operator("anim.scene_range_frame", text="Frame Scene Range", icon = "FRAME_SCENE_RANGE")
 #BFA - note used
 class TIME_MT_cache(Menu):
     bl_label = "Cache"
@@ -195,10 +195,10 @@ def marker_menu_generic(layout, context):
 
     layout.operator("marker.delete", text="Delete Marker", icon = "DELETE")
 
-    layout.separator()    
+    layout.separator()
 
     layout.operator("marker.camera_bind", text="Bind Camera to Markers", icon = "MARKER_BIND")
-    
+
     layout.separator()
 
     props = layout.operator("wm.call_panel", text="Rename Marker", icon = "RENAME")
