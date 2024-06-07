@@ -155,10 +155,6 @@ class IMAGE_MT_view(Menu):
 
             layout.separator()
 
-        if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
-            layout.prop(uv, "show_texpaint")
-            layout.prop(tool_settings, "show_uv_local_view", text="Show Same Material")
-
         layout.menu("INFO_MT_area")
         layout.menu("IMAGE_MT_view_pie_menus")
 
