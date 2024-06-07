@@ -155,7 +155,13 @@ class TIME_MT_view(Menu):
             layout.operator("anim.scene_range_frame", text="Frame Preview Range", icon = "FRAME_PREVIEW_RANGE")
         else:
             layout.operator("anim.scene_range_frame", text="Frame Scene Range", icon = "FRAME_SCENE_RANGE")
-#BFA - note used
+
+        layout.separator()
+
+        layout.menu("INFO_MT_area")
+
+
+#BFA - not used
 class TIME_MT_cache(Menu):
     bl_label = "Cache"
 
