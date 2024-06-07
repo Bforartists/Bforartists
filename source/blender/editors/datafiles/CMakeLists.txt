@@ -93,8 +93,8 @@ line_trim
 internet_offline
 polyline_hide
 polyline_show
-#~ DEF_ICON_BLANK(113)
-#~ DEF_ICON_BLANK(114)
+frame_preview_range
+frame_scene_range
 #~ DEF_ICON_BLANK(115)
 #~ DEF_ICON_BLANK(116)
 #~ DEF_ICON_BLANK(117)
