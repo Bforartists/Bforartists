@@ -197,9 +197,9 @@ class NLA_MT_view(Menu):
         layout.operator("anim.previewrange_clear", icon="CLEAR")
         layout.operator("nla.previewrange_set", icon="BORDER_RECT")
         if context.scene.use_preview_range:
-            layout.operator("anim.scene_range_frame", text="Frame Preview Range")
+            layout.operator("anim.scene_range_frame", text="Frame Preview Range", icon='FRAME_PREVIEW_RANGE')
         else:
-            layout.operator("anim.scene_range_frame", text="Frame Scene Range")
+            layout.operator("anim.scene_range_frame", text="Frame Scene Range", icon='FRAME_SCENE_RANGE')
         layout.separator()
 
         layout.operator("view2d.zoom_in", text="Zoom In", icon="ZOOM_IN")
@@ -511,7 +511,7 @@ class NLA_MT_view_pie(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        
+
         pie.operator("nla.view_all", icon="VIEWALL")
         pie.operator("nla.view_selected", icon="VIEW_SELECTED")
         pie.operator("nla.view_frame", icon="VIEW_FRAME")
