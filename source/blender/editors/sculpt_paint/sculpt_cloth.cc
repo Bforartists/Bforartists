@@ -962,7 +962,7 @@ static void cloth_brush_apply_brush_foces(const Sculpt &sd, Object &ob, Span<PBV
   if (brush.cloth_deform_type == BRUSH_CLOTH_DEFORM_PINCH_PERPENDICULAR ||
       brush.cloth_force_falloff_type == BRUSH_CLOTH_FORCE_FALLOFF_PLANE)
   {
-    SCULPT_calc_brush_plane(sd, ob, nodes, area_no, area_co);
+    calc_brush_plane(brush, ob, nodes, area_no, area_co);
 
     /* Initialize stroke local space matrix. */
     cross_v3_v3v3(mat[0], area_no, ss.cache->grab_delta_symmetry);
@@ -1479,7 +1479,7 @@ static int sculpt_cloth_filter_modal(bContext *C, wmOperator *op, const wmEvent 
   if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
     filter::cache_free(ss);
     undo::push_end(ob);
-    SCULPT_flush_update_done(C, ob, SCULPT_UPDATE_COORDS);
+    flush_update_done(C, ob, UpdateType::Position);
     return OPERATOR_FINISHED;
   }
 
@@ -1518,7 +1518,7 @@ static int sculpt_cloth_filter_modal(bContext *C, wmOperator *op, const wmEvent 
   if (ss.deform_modifiers_active || ss.shapekey_active) {
     SCULPT_flush_stroke_deform(sd, ob, true);
   }
-  SCULPT_flush_update_step(C, SCULPT_UPDATE_COORDS);
+  flush_update_step(C, UpdateType::Position);
   return OPERATOR_RUNNING_MODAL;
 }
 

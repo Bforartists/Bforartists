@@ -445,7 +445,7 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'
+        'BLENDER_WORKBENCH',
     }
 
     def draw(self, context):
@@ -495,7 +495,7 @@ class TEXTURE_PT_image_alpha(TextureTypePanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'
+        'BLENDER_WORKBENCH',
     }
 
     def draw_header(self, context):
@@ -524,7 +524,7 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'
+        'BLENDER_WORKBENCH',
     }
 
     def draw(self, context):
@@ -591,7 +591,7 @@ class TEXTURE_PT_image_mapping_crop(TextureTypePanel, Panel):
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
-        'BLENDER_WORKBENCH'
+        'BLENDER_WORKBENCH',
     }
 
     def draw(self, context):
