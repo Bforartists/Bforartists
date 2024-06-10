@@ -16,9 +16,9 @@ class MATERIAL_MT_context_menu(Menu):
         layout = self.layout
 
         layout.operator("material.copy", icon='COPYDOWN')
-        layout.operator("object.material_slot_copy", icon='COPYDOWN')
+        layout.operator("object.material_slot_copy", icon='COPYDOWN') # BFA - icon
         layout.operator("material.paste", icon='PASTEDOWN')
-        layout.operator("object.material_slot_remove_unused", icon='DELETE')
+        layout.operator("object.material_slot_remove_unused", icon='DELETE') # BFA - icon
 
 
 class MATERIAL_UL_matslots(UIList):
@@ -98,7 +98,7 @@ class EEVEE_MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
         slot = context.material_slot
         space = context.space_data
 
-        # bfa - no remove in edit mode
+        # BFA - no remove in edit mode
         obj = context.active_object
         object_mode = 'OBJECT' if obj is None else obj.mode
 
@@ -115,7 +115,7 @@ class EEVEE_MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
             col = row.column(align=True)
             col.operator("object.material_slot_add", icon='ADD', text="")
 
-            # bfa - no remove in edit mode
+            # BFA - no remove in edit mode
             sub = col.column()
             sub.active = (object_mode != 'EDIT')
             sub.operator("object.material_slot_remove", icon='REMOVE', text="")
@@ -282,7 +282,7 @@ def draw_material_settings(self, context):
     subcol.use_property_split = False
     row = subcol.row()
     split = row.split(factor=0.55)
-    split.prop(mat, "use_screen_refraction")
+    split.prop(mat, "use_raytrace_refraction")
     if mat.use_screen_refraction:
         split.prop(mat, "refraction_depth", text="")
     else:
@@ -375,9 +375,9 @@ class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
         row = col.row()
         row.separator()
         if mat.surface_render_method == 'BLENDED':
-            row.prop(mat, "show_transparent_back", text="Transparency Overlap")
+            col.prop(mat, "use_transparency_overlap", text="Transparency Overlap")
         elif mat.surface_render_method == 'DITHERED':
-            row.prop(mat, "use_screen_refraction", text="Raytraced Transmission")
+            col.prop(mat, "use_raytrace_refraction", text="Raytraced Transmission")
 
         col = layout.column()
         col.use_property_split = False

@@ -176,7 +176,7 @@ void cache_init(bContext *C,
       return !node_fully_masked_or_hidden(node) && node_in_sphere(node, co, radius_sq, true);
     });
 
-    const std::optional<float3> area_normal = SCULPT_pbvh_calc_area_normal(*brush, ob, nodes);
+    const std::optional<float3> area_normal = calc_area_normal(*brush, ob, nodes);
     if (BKE_paint_brush_for_read(&sd.paint) && area_normal) {
       ss.filter_cache->initial_normal = *area_normal;
       ss.last_normal = ss.filter_cache->initial_normal;
@@ -733,7 +733,7 @@ static void sculpt_mesh_filter_apply(bContext *C, wmOperator *op)
     bke::pbvh::update_normals(*ss.pbvh, ss.subdiv_ccg);
   }
 
-  SCULPT_flush_update_step(C, SCULPT_UPDATE_COORDS);
+  flush_update_step(C, UpdateType::Position);
 }
 
 static void sculpt_mesh_update_strength(wmOperator *op,
@@ -784,7 +784,7 @@ static void sculpt_mesh_filter_end(bContext *C)
   SculptSession &ss = *ob.sculpt;
 
   cache_free(ss);
-  SCULPT_flush_update_done(C, ob, SCULPT_UPDATE_COORDS);
+  flush_update_done(C, ob, UpdateType::Position);
 }
 
 static int sculpt_mesh_filter_confirm(SculptSession &ss,
@@ -829,7 +829,7 @@ static void sculpt_mesh_filter_cancel(bContext *C, wmOperator * /*op*/)
     BKE_pbvh_node_mark_update(node);
   }
 
-  blender::bke::pbvh::update_bounds(*ss->pbvh, PBVH_UpdateBB);
+  blender::bke::pbvh::update_bounds(*ss->pbvh);
 }
 
 static int sculpt_mesh_filter_modal(bContext *C, wmOperator *op, const wmEvent *event)
