@@ -10848,9 +10848,11 @@ class VIEW3D_PT_sculpt_automasking(Panel):
         if sculpt.use_automasking_start_normal:
             col = layout.column(align=True)
             row = col.row()
+            row.use_property_split = True # BFA - label outside
             row.separator(factor=3.5)
             row.prop(sculpt, "automasking_start_normal_limit", text="Limit")
             row = col.row()
+            row.use_property_split = True # BFA - label outside
             row.separator(factor=3.5)
             row.prop(sculpt, "automasking_start_normal_falloff", text="Falloff")
             col.separator()
