@@ -132,6 +132,11 @@ ccl_device_inline float4 operator*=(float4 &a, float f)
   return a = a * f;
 }
 
+ccl_device_inline float4 operator/=(float4 &a, const float4 b)
+{
+  return a = a / b;
+}
+
 ccl_device_inline float4 operator/=(float4 &a, float f)
 {
   return a = a / f;
@@ -387,6 +392,11 @@ ccl_device_inline float len_squared(const float4 a)
   return dot(a, a);
 }
 
+ccl_device_inline float4 sqr(const float4 a)
+{
+  return a * a;
+}
+
 #if !defined(__KERNEL_METAL__)
 ccl_device_inline float distance(const float4 a, const float4 b)
 {
@@ -410,11 +420,6 @@ ccl_device_inline float4 sqrt(const float4 a)
 #  else
   return make_float4(sqrtf(a.x), sqrtf(a.y), sqrtf(a.z), sqrtf(a.w));
 #  endif
-}
-
-ccl_device_inline float4 sqr(const float4 a)
-{
-  return a * a;
 }
 
 ccl_device_inline float4 cross(const float4 a, const float4 b)
