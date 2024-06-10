@@ -127,6 +127,10 @@ class DeviceInfo {
     return id == info.id && use_hardware_raytracing == info.use_hardware_raytracing &&
            kernel_optimization_level == info.kernel_optimization_level;
   }
+  bool operator!=(const DeviceInfo &info) const
+  {
+    return !(*this == info);
+  }
 };
 
 /* Device */
@@ -135,8 +139,8 @@ class Device {
   friend class device_sub_ptr;
 
  protected:
-  Device(const DeviceInfo &info_, Stats &stats_, Profiler &profiler_)
-      : info(info_), stats(stats_), profiler(profiler_)
+  Device(const DeviceInfo &info_, Stats &stats_, Profiler &profiler_, bool headless_)
+      : info(info_), stats(stats_), profiler(profiler_), headless(headless_)
   {
   }
 
@@ -177,6 +181,7 @@ class Device {
   /* statistics */
   Stats &stats;
   Profiler &profiler;
+  bool headless = true;
 
   /* constant memory */
   virtual void const_copy_to(const char *name, void *host, size_t size) = 0;
@@ -283,7 +288,7 @@ class Device {
   }
 
   /* static */
-  static Device *create(const DeviceInfo &info, Stats &stats, Profiler &profiler);
+  static Device *create(const DeviceInfo &info, Stats &stats, Profiler &profiler, bool headless);
 
   static DeviceType type_from_string(const char *name);
   static string string_from_type(DeviceType type);
@@ -328,8 +333,8 @@ class Device {
 /* Device, which is GPU, with some common functionality for GPU back-ends. */
 class GPUDevice : public Device {
  protected:
-  GPUDevice(const DeviceInfo &info_, Stats &stats_, Profiler &profiler_)
-      : Device(info_, stats_, profiler_),
+  GPUDevice(const DeviceInfo &info_, Stats &stats_, Profiler &profiler_, bool headless_)
+      : Device(info_, stats_, profiler_, headless_),
         texture_info(this, "texture_info", MEM_GLOBAL),
         need_texture_info(false),
         can_map_host(false),

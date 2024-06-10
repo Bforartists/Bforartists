@@ -108,13 +108,13 @@ class USERPREF_MT_save_load(Menu):
 
         layout.operator_context = 'EXEC_AREA'
         if prefs.use_preferences_save:
-            layout.operator("wm.save_userpref", text="Save Preferences", icon='SAVE_PREFS')
+            layout.operator("wm.save_userpref", text="Save Preferences", icon='SAVE_PREFS') # BFA - added icon
         sub_revert = layout.column(align=True)
         # NOTE: regarding `factory_startup`. To correctly show the active state of this menu item,
         # the user preferences themselves would need to have a `factory_startup` state.
         # Since showing an active menu item whenever factory-startup is used is not such a problem, leave this as-is.
         sub_revert.active = prefs.is_dirty or bpy.app.factory_startup
-        sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences", icon="UNDO")
+        sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences", icon="UNDO") # BFA - added icon
 
         layout.operator_context = 'INVOKE_AREA'
 
@@ -320,10 +320,10 @@ class USERPREF_PT_interface_temporary_windows(InterfacePanel, CenterAlignMixIn, 
         prefs = context.preferences
         view = prefs.view
 
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False) # BFA
 
-        flow.prop(view, "render_display_type", text="Render In")
-        flow.prop(view, "filebrowser_display_type", text="File Browser")
+        flow.prop(view, "render_display_type", text="Render In") # BFA
+        flow.prop(view, "filebrowser_display_type", text="File Browser") # BFA
 
 
 class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
@@ -345,7 +345,8 @@ class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(view, "show_statusbar_scene_duration", text="Scene Duration")
         flow.prop(view, "show_statusbar_memory", text="System Memory")
         flow.prop(view, "show_statusbar_vram", text="Video Memory")
-        flow.prop(view, "show_statusbar_version", text="Bforartists Version")
+        flow.prop(view, "show_extensions_updates", text="Extensions Updates")
+        flow.prop(view, "show_statusbar_version", text="Bforartists Version") # BFA - not Blender
 
 
 class USERPREF_PT_interface_menus(InterfacePanel, Panel):
@@ -800,6 +801,8 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
     bl_label = "Memory & Limits"
 
     def draw_centered(self, context, layout):
+        import sys
+
         prefs = context.preferences
         system = prefs.system
         edit = prefs.edit
@@ -831,6 +834,11 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
 
         flow.prop(system, "vbo_time_out", text="VBO Time Out")
         flow.prop(system, "vbo_collection_rate", text="Garbage Collection Rate")
+
+        if sys.platform != "darwin":
+            layout.separator()
+            col = layout.column()
+            col.prop(system, "max_shader_compilation_subprocesses")
 
 
 class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
@@ -1724,7 +1732,7 @@ class USERPREF_PT_file_paths_asset_libraries(FilePathsPanel, Panel):
         row.template_list(
             "USERPREF_UL_asset_libraries", "user_asset_libraries",
             paths, "asset_libraries",
-            paths, "active_asset_library"
+            paths, "active_asset_library",
         )
 
         col = row.column(align=True)
@@ -2234,6 +2242,15 @@ class USERPREF_PT_keymap(KeymapPanel, Panel):
 # -----------------------------------------------------------------------------
 # Extension Panels
 
+
+class USERPREF_MT_extensions_active_repo(Menu):
+    bl_label = "Active Repository"
+
+    def draw(self, _context):
+        # Add-ons may extend.
+        pass
+
+
 class USERPREF_PT_extensions_repos(Panel):
     bl_label = "Repositories"
     bl_options = {'HIDE_HEADER'}
@@ -2257,7 +2274,7 @@ class USERPREF_PT_extensions_repos(Panel):
         row.template_list(
             "USERPREF_UL_extension_repos", "user_extension_repos",
             extensions, "repos",
-            extensions, "active_repo"
+            extensions, "active_repo",
         )
 
         col = row.column(align=True)
@@ -2265,9 +2282,9 @@ class USERPREF_PT_extensions_repos(Panel):
         props = col.operator_menu_enum("preferences.extension_repo_remove", "type", text="", icon='REMOVE')
         props.index = active_repo_index
 
-        col.separator()
-        col.operator("preferences.extension_repo_sync", text="", icon='FILE_REFRESH')
-        col.operator("preferences.extension_repo_upgrade", text="", icon='IMPORT')
+        #col.operator("preferences.extension_repo_sync", text="", icon='FILE_REFRESH')
+        #col.operator("preferences.extension_repo_upgrade", text="", icon='IMPORT')
+        col.menu_contents("USERPREF_MT_extensions_active_repo")
 
         try:
             active_repo = None if active_repo_index < 0 else extensions.repos[active_repo_index]
@@ -2303,41 +2320,43 @@ class USERPREF_PT_extensions_repos(Panel):
         layout_header.label(text="Advanced")
 
         if layout_panel:
-            layout_panel.use_property_split = False
+            layout_panel.use_property_split = True
+            use_custom_directory = active_repo.use_custom_directory
 
-            col = layout_panel.column(align=False)
-            col.prop(active_repo, "use_custom_directory", text="Custom Directory")
+            col = layout_panel.column(align=False, heading="Custom Directory")
             row = col.row(align=True)
             sub = row.row(align=True)
 
             sub = sub.row(align=True)
-            sub.active = active_repo.use_custom_directory
-            if active_repo.use_custom_directory:
+            sub.active = use_custom_directory
+            if use_custom_directory:
                 if active_repo.custom_directory == "":
                     sub.alert = True
-                sub.separator(factor = 2.0)
                 sub.prop(active_repo, "custom_directory", text="")
             else:
                 # Show the read-only directory property.
                 # Apart from being consistent with the custom directory UI,
                 # prefer a read-only property over a label because this is not necessarily
                 # valid UTF-8 which will raise a Python exception when passed in as text.
-                sub.separator(factor = 2.0)
                 sub.prop(active_repo, "directory", text="")
 
+            row = layout_panel.row()
+            row.active = not use_custom_directory
+            row.prop(active_repo, "source")
+
             if active_repo.use_remote_url:
-                col = layout.column(align = True)
-                col.label(text = "Authentication")
-                row = col.row()
-                row.separator()
+                col = layout.column(align = True) # BFA
+                col.label(text = "Authentication") # BFA
+                row = col.row() # BFA
+                row.separator() # BFA
                 row.prop(active_repo, "use_access_token")
 
-                row = col.row()
-                row.separator()
-                row.prop(active_repo, "use_cache")
+                row = col.row() # BFA
+                row.separator() # BFA
+                row.prop(active_repo, "use_cache") # BFA
 
-            col = layout.column()
-            col.prop(active_repo, "module")
+            col = layout.column() # BFA
+            col.prop(active_repo, "module") # BFA
 
 
 # -----------------------------------------------------------------------------
@@ -2395,7 +2414,8 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
 
         addon_preferences_class = type(addon_preferences)
         box_prefs = layout.box()
-        box_prefs.label(text="Preferences:")
+        box_prefs.label(text="Preferences")
+        box_prefs.separator(type='LINE')
         addon_preferences_class.layout = box_prefs
         try:
             draw(context)
@@ -2771,9 +2791,9 @@ class USERPREF_PT_studiolight_light_editor(StudioLightPanel, Panel):
         col = layout.column()
         col.active = light.use
 
-        col.use_property_split = False
+        col.use_property_split = False # BFA
         col.prop(light, "use", text="Use Light")
-        col.use_property_split = True
+        col.use_property_split = True # BFA
         col.prop(light, "diffuse_color", text="Diffuse")
         col.prop(light, "specular_color", text="Specular")
         col.prop(light, "smooth")
@@ -3051,6 +3071,7 @@ classes = (
 
     USERPREF_PT_addons,
 
+    USERPREF_MT_extensions_active_repo,
     USERPREF_PT_extensions_repos,
 
     USERPREF_PT_studiolight_lights,
