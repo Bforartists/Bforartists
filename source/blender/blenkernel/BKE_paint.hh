@@ -227,8 +227,7 @@ bool BKE_paint_always_hide_test(const Object *ob);
 /* Partial visibility. */
 
 /**
- * Returns non-zero if any of the corners of the grid
- * face whose inner corner is at (x, y) are hidden, zero otherwise.
+ * Returns whether any of the corners of the grid face whose inner corner is at (x, y) are hidden.
  */
 bool paint_is_grid_face_hidden(blender::BoundedBitSpan grid_hidden, int gridsize, int x, int y);
 /**
@@ -337,8 +336,8 @@ struct SculptBoundary {
   bool forms_loop;
 
   /* Initial vertex in the boundary which is closest to the current sculpt active vertex. */
-  PBVHVertRef initial_vertex;
-  int initial_vertex_i;
+  PBVHVertRef initial_vert;
+  int initial_vert_i;
 
   /* Vertex that at max_propagation_steps from the boundary and closest to the original active
    * vertex that was used to initialize the boundary. This is used as a reference to check how much
@@ -348,7 +347,7 @@ struct SculptBoundary {
   /* Stores the initial positions of the pivot and boundary initial vertex as they may be deformed
    * during the brush action. This allows to use them as a reference positions and vectors for some
    * brush effects. */
-  blender::float3 initial_vertex_position;
+  blender::float3 initial_vert_position;
   blender::float3 initial_pivot_position;
 
   /* Maximum number of topology steps that were calculated from the boundary. */
