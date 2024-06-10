@@ -729,16 +729,18 @@ def extensions_panel_draw_impl(
                         text=domain_extract_from_url(value),
                         icon='URL').url = value
                 del value
-
+                
+                # BFA - Move Uninstall next to Install
                 # Note that we could allow removing extensions from non-remote extension repos
                 # although this is destructive, so don't enable this right now.
-                if is_installed:
-                    rowsub = col_b.row()
-                    rowsub.alignment = 'RIGHT'
-                    props = rowsub.operator("extensions.package_uninstall", text="Uninstall")
-                    props.repo_index = repo_index
-                    props.pkg_id = pkg_id
-                    del props, rowsub
+                # if is_installed:
+                #     rowsub = col_b.row()
+                #     rowsub.alignment = 'RIGHT'
+                #     props = rowsub.operator("extensions.package_uninstall", text="Uninstall")
+                #     props.repo_index = repo_index
+                #     props.pkg_id = pkg_id
+                #     del props, rowsub
+                # BFA - end of changes
 
                 del split, col_a, col_b
 
