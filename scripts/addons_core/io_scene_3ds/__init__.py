@@ -5,7 +5,7 @@
 
 
 __author__ = "Sebastian Sille <nrgsille@gmail.com>"
-__version__ = "2.6.0"
+__version__ = "2.6.4"
 __date__ = "24 Sep 2020"
 
 #BFA - needed to be a core addon
