@@ -133,6 +133,7 @@ KERNEL_STRUCT_MEMBER(film, int, pass_aov_value)
 KERNEL_STRUCT_MEMBER(film, int, pass_lightgroup)
 /* Baking. */
 KERNEL_STRUCT_MEMBER(film, int, pass_bake_primitive)
+KERNEL_STRUCT_MEMBER(film, int, pass_bake_seed)
 KERNEL_STRUCT_MEMBER(film, int, pass_bake_differential)
 /* Shadow catcher. */
 KERNEL_STRUCT_MEMBER(film, int, use_approximate_shadow_catcher)
@@ -195,6 +196,8 @@ KERNEL_STRUCT_MEMBER_DONT_SPECIALIZE
 KERNEL_STRUCT_MEMBER(integrator, int, tabulated_sobol_sequence_size)
 KERNEL_STRUCT_MEMBER_DONT_SPECIALIZE
 KERNEL_STRUCT_MEMBER(integrator, int, sobol_index_mask)
+KERNEL_STRUCT_MEMBER_DONT_SPECIALIZE
+KERNEL_STRUCT_MEMBER(integrator, int, blue_noise_sequence_length)
 /* Volume render. */
 KERNEL_STRUCT_MEMBER(integrator, int, use_volumes)
 KERNEL_STRUCT_MEMBER(integrator, int, volume_max_steps)

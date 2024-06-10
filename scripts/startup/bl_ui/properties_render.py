@@ -972,17 +972,6 @@ class RENDER_PT_eevee_indirect_lighting(RenderButtonsPanel, Panel):
         props = scene.eevee
 
         col = layout.column()
-        col.operator("scene.light_cache_bake", text="Bake Indirect Lighting", icon='RENDER_STILL') #BFA - updated title for object type
-        col.operator("scene.light_cache_bake", text="Bake Volume Only", icon='LIGHTPROBE_SPHERE').subset = 'CUBEMAPS' #BFA - updated title for object type
-        col.operator("scene.light_cache_free", text="Delete Lighting Cache", icon='TRASH')
-
-        cache_info = scene.eevee.gi_cache_info
-        if cache_info:
-            col.label(text=rpt_(cache_info), translate=False)
-
-        col.use_property_split = False
-        col.prop(props, "gi_auto_bake")
-
         col.use_property_split = True
         col.prop(props, "gi_diffuse_bounces")
         col.prop(props, "gi_cubemap_resolution", text="Volume Resolution") #BFA - updated title for object type
@@ -1050,25 +1039,6 @@ class RENDER_PT_eevee_film(RenderButtonsPanel, Panel):
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
-    bl_label = "Film"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.engine in cls.COMPAT_ENGINES)
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-
-        scene = context.scene
-        rd = scene.render
-        props = scene.eevee
-
-        col = layout.column()
-        col.prop(rd, "filter_size")
 
 
 class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
@@ -1090,6 +1060,7 @@ class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(rd, "filter_size")
+		# col.prop(rd, "film_transparent", text="Transparent") # BFA - moved to file output panel
 
         split = layout.split(factor=.4)
         split.use_property_split=False
@@ -1263,7 +1234,6 @@ class RENDER_PT_opengl_sampling(RenderButtonsPanel, Panel):
         col.prop(props, "viewport_aa", text="Viewport")
 
 # BFA - transparent toggle now located in Output tab
-
 #class RENDER_PT_opengl_film(RenderButtonsPanel, Panel):
 #    bl_label = "Film"
 #    bl_options = {'DEFAULT_CLOSED'}
@@ -1477,7 +1447,7 @@ classes = (
     RENDER_PT_opengl_lighting,
     RENDER_PT_opengl_color,
     RENDER_PT_opengl_options,
-    # RENDER_PT_opengl_film, # BFA: commented out, now located in Output tab
+    # RENDER_PT_opengl_film, # BFA - commented out, now located in Output tab
     RENDER_PT_hydra_debug,
     RENDER_PT_color_management,
     RENDER_PT_color_management_display_settings,
