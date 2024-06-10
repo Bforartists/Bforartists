@@ -443,7 +443,7 @@ class AddPresetTextEditor(AddPresetBase, Operator):
 
     preset_values = [
         "filepaths.text_editor",
-        "filepaths.text_editor_args"
+        "filepaths.text_editor_args",
     ]
 
     preset_subdir = "text_editor"
@@ -539,7 +539,7 @@ class AddPresetEEVEERaytracing(AddPresetBase, Operator):
 
     preset_defines = [
         "eevee = bpy.context.scene.eevee",
-        "options = eevee.ray_tracing_options"
+        "options = eevee.ray_tracing_options",
     ]
 
     preset_values = [
@@ -600,6 +600,7 @@ class RemovePresetInterfaceTheme(AddPresetBase, Operator):
         from bpy.utils import is_path_builtin
         preset_menu_class = getattr(bpy.types, cls.preset_menu)
         name = preset_menu_class.bl_label
+        name = bpy.path.clean_name(name)
         filepath = bpy.utils.preset_find(name, cls.preset_subdir, ext=".xml")
         if not bool(filepath) or is_path_builtin(filepath):
             cls.poll_message_set("Built-in themes cannot be removed")
@@ -633,6 +634,7 @@ class SavePresetInterfaceTheme(AddPresetBase, Operator):
 
         preset_menu_class = getattr(bpy.types, cls.preset_menu)
         name = preset_menu_class.bl_label
+        name = bpy.path.clean_name(name)
         filepath = bpy.utils.preset_find(name, cls.preset_subdir, ext=".xml")
         if (not filepath) or is_path_builtin(filepath):
             cls.poll_message_set("Built-in themes cannot be overwritten")
@@ -644,6 +646,7 @@ class SavePresetInterfaceTheme(AddPresetBase, Operator):
         import rna_xml
         preset_menu_class = getattr(bpy.types, self.preset_menu)
         name = preset_menu_class.bl_label
+        name = bpy.path.clean_name(name)
         filepath = bpy.utils.preset_find(name, self.preset_subdir, ext=".xml")
         if not bool(filepath) or is_path_builtin(filepath):
             self.report({'ERROR'}, "Built-in themes cannot be overwritten")
@@ -865,7 +868,7 @@ class WM_OT_operator_presets_cleanup(Operator):
                 "filepath",
                 "directory",
                 "files",
-                "filename"
+                "filename",
             ]
 
         self._cleanup_operators_presets(operators, properties_exclude)
