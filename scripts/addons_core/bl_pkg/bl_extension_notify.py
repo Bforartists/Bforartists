@@ -24,9 +24,6 @@ from . import bl_extension_utils
 # only keep this as a reference and in case we can speed up forcing them to exit.
 USE_GRACEFUL_EXIT = False
 
-# Special value to signal no packages can be updated because all repositories are blocked by being offline.
-STATE_DATA_ALL_OFFLINE = object()
-
 # `wmWindowManager.extensions_updates` from C++
 WM_EXTENSIONS_UPDATE_UNSET = -2
 WM_EXTENSIONS_UPDATE_CHECKING = -1
@@ -367,7 +364,7 @@ class NotifyHandle:
 _notify_queue = []
 
 
-def _ui_refresh_apply(*, notify):
+def _ui_refresh_apply():
     # Ensure the preferences are redrawn when the update is complete.
     if bpy.context.preferences.active_section == 'EXTENSIONS':
         for wm in bpy.data.window_managers:
@@ -382,12 +379,13 @@ def _ui_refresh_apply(*, notify):
 
 
 def _ui_refresh_timer():
+    wm = bpy.context.window_manager
+
     if not _notify_queue:
         if wm.extensions_updates == WM_EXTENSIONS_UPDATE_CHECKING:
             wm.extensions_updates = WM_EXTENSIONS_UPDATE_UNSET
         return None
 
-    wm = bpy.context.window_manager
     notify = _notify_queue[0]
     notify.run_ensure()
 
@@ -409,7 +407,7 @@ def _ui_refresh_timer():
 
     # If the generator exited, either step to the next action or early exit here.
     if sync_info is ...:
-        _ui_refresh_apply(notify=notify)
+        _ui_refresh_apply()
         if len(_notify_queue) <= 1:
             # Keep `_notify_queuy[0]` because we may want to keep accessing the text even when updates are complete.
             if wm.extensions_updates == WM_EXTENSIONS_UPDATE_CHECKING:
@@ -420,7 +418,7 @@ def _ui_refresh_timer():
         return default_wait
 
     # TODO: redraw the status bar.
-    _ui_refresh_apply(notify=notify)
+    _ui_refresh_apply()
 
     update_count = notify.updates_count()
     if update_count != wm.extensions_updates:
