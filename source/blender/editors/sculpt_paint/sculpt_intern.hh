@@ -61,14 +61,18 @@ struct wmOperatorType;
 /** \name Sculpt Types
  * \{ */
 
-enum SculptUpdateType {
-  SCULPT_UPDATE_COORDS = 1 << 0,
-  SCULPT_UPDATE_MASK = 1 << 1,
-  SCULPT_UPDATE_VISIBILITY = 1 << 2,
-  SCULPT_UPDATE_COLOR = 1 << 3,
-  SCULPT_UPDATE_IMAGE = 1 << 4,
-  SCULPT_UPDATE_FACE_SET = 1 << 5,
+namespace blender::ed::sculpt_paint {
+
+enum class UpdateType {
+  Position,
+  Mask,
+  Visibility,
+  Color,
+  Image,
+  FaceSet,
 };
+
+}
 
 struct SculptCursorGeometryInfo {
   blender::float3 location;
@@ -457,7 +461,10 @@ struct StrokeCache {
   float4x4 symm_rot_mat;
   float4x4 symm_rot_mat_inv;
 
-  /* Accumulate mode. Note: inverted for SCULPT_TOOL_DRAW_SHARP. */
+  /**
+   * Accumulate mode.
+   * \note inverted for #SCULPT_TOOL_DRAW_SHARP.
+   */
   bool accum;
 
   float3 anchored_location;
@@ -726,8 +733,18 @@ bool SCULPT_handles_colors_report(SculptSession &ss, ReportList *reports);
 /** \name Sculpt Update Functions
  * \{ */
 
-void SCULPT_flush_update_step(bContext *C, SculptUpdateType update_flags);
-void SCULPT_flush_update_done(const bContext *C, Object &ob, SculptUpdateType update_flags);
+namespace blender::ed::sculpt_paint {
+
+/**
+ * Triggers redraws, updates, and dependency graph tags as necessary after each brush calculation.
+ */
+void flush_update_step(bContext *C, UpdateType update_type);
+/**
+ * Triggers redraws, updates, and dependency graph tags as necessary when a brush stroke finishes.
+ */
+void flush_update_done(const bContext *C, Object &ob, UpdateType update_type);
+
+}
 
 void SCULPT_pbvh_clear(Object &ob);
 
@@ -990,13 +1007,16 @@ Set<int> gather_hidden_face_sets(Span<bool> hide_poly, Span<int> face_sets);
  * handles #BMesh, #Mesh, and multi-resolution.
  */
 void SCULPT_orig_vert_data_init(SculptOrigVertData &data,
-                                Object &ob,
+                                const Object &ob,
                                 const PBVHNode &node,
                                 blender::ed::sculpt_paint::undo::Type type);
 /**
  * Update a #SculptOrigVertData for a particular vertex from the PBVH iterator.
  */
 void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, const PBVHVertexIter &iter);
+void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, const BMVert &vert);
+void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, int i);
+
 /**
  * Initialize a #SculptOrigVertData for accessing original vertex data;
  * handles #BMesh, #Mesh, and multi-resolution.
@@ -1012,28 +1032,31 @@ void SCULPT_orig_vert_data_unode_init(SculptOrigVertData &data,
 
 bool SCULPT_tool_needs_all_pbvh_nodes(const Brush &brush);
 
-void SCULPT_calc_brush_plane(const Sculpt &sd,
-                             Object &ob,
-                             blender::Span<PBVHNode *> nodes,
-                             float r_area_no[3],
-                             float r_area_co[3]);
+namespace blender::ed::sculpt_paint {
 
-std::optional<blender::float3> SCULPT_calc_area_normal(const Sculpt &sd,
-                                                       Object &ob,
-                                                       blender::Span<PBVHNode *> nodes);
+void calc_brush_plane(const Brush &brush,
+                      Object &ob,
+                      Span<PBVHNode *> nodes,
+                      float r_area_no[3],
+                      float r_area_co[3]);
+
+std::optional<float3> calc_area_normal(const Brush &brush, Object &ob, Span<PBVHNode *> nodes);
+
 /**
  * This calculates flatten center and area normal together,
  * amortizing the memory bandwidth and loop overhead to calculate both at the same time.
  */
-void SCULPT_calc_area_normal_and_center(const Sculpt &sd,
-                                        const Object &ob,
-                                        blender::Span<PBVHNode *> nodes,
-                                        float r_area_no[3],
-                                        float r_area_co[3]);
-void SCULPT_calc_area_center(const Sculpt &sd,
-                             const Object &ob,
-                             blender::Span<PBVHNode *> nodes,
-                             float r_area_co[3]);
+void calc_area_normal_and_center(const Brush &brush,
+                                 const Object &ob,
+                                 Span<PBVHNode *> nodes,
+                                 float r_area_no[3],
+                                 float r_area_co[3]);
+void calc_area_center(const Brush &brush,
+                      const Object &ob,
+                      Span<PBVHNode *> nodes,
+                      float r_area_co[3]);
+
+}
 
 PBVHVertRef SCULPT_nearest_vertex_get(const Object &ob,
                                       const float co[3],
@@ -1123,6 +1146,14 @@ float SCULPT_brush_strength_factor(
     const PBVHVertRef vertex,
     int thread_id,
     const blender::ed::sculpt_paint::auto_mask::NodeData *automask_data);
+
+/** Sample the brush's texture value. */
+void sculpt_apply_texture(const SculptSession &ss,
+                          const Brush &brush,
+                          const float brush_point[3],
+                          const int thread_id,
+                          float *r_value,
+                          float r_rgba[4]);
 
 /**
  * Return a color of a brush texture on a particular vertex multiplied by active masks.
@@ -1306,10 +1337,16 @@ struct NodeData {
 /**
  * Call before PBVH vertex iteration.
  */
-NodeData node_begin(Object &object, const Cache *automasking, const PBVHNode &node);
+NodeData node_begin(const Object &object, const Cache *automasking, const PBVHNode &node);
 
 /* Call before factor_get and SCULPT_brush_strength_factor. */
-void node_update(NodeData &automask_data, PBVHVertexIter &vd);
+void node_update(NodeData &automask_data, const PBVHVertexIter &vd);
+void node_update(NodeData &automask_data, const BMVert &vert);
+/**
+ * Call before factor_get and SCULPT_brush_strength_factor. The index is in the range of the PBVH
+ * node's vertex indices.
+ */
+void node_update(NodeData &automask_data, int i);
 
 float factor_get(const Cache *automasking,
                  SculptSession &ss,
@@ -1586,13 +1623,6 @@ void relax_vertex(SculptSession &ss,
 }
 
 /** \} */
-
-/**
- * Expose 'calc_area_normal' externally (just for vertex paint).
- */
-std::optional<blender::float3> SCULPT_pbvh_calc_area_normal(const Brush &brush,
-                                                            Object &ob,
-                                                            blender::Span<PBVHNode *> nodes);
 
 /**
  * Flip all the edit-data across the axis/axes specified by \a symm.
