@@ -143,6 +143,7 @@ def show_device_active(context):
         return True
     return backend_has_active_gpu(context)
 
+
 def show_preview_denoise_active(context):
     cscene = context.scene.cycles
     if not cscene.use_preview_denoising:
@@ -153,6 +154,7 @@ def show_preview_denoise_active(context):
 
     # OIDN is always available, thanks to CPU support
     return True
+
 
 def show_denoise_active(context):
     cscene = context.scene.cycles
@@ -184,6 +186,7 @@ def get_effective_preview_denoiser(context, has_oidn_gpu):
 
 def has_oidn_gpu_devices(context):
     return context.preferences.addons[__package__].preferences.has_oidn_gpu_devices()
+
 
 def has_optixdenoiser_gpu_devices(context):
     return context.preferences.addons[__package__].preferences.has_optixdenoiser_gpu_devices()
@@ -447,6 +450,9 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         cscene = scene.cycles
 
         row = layout.row(align=True)
+        row.prop(cscene, "sampling_pattern", text="Pattern")
+
+        row = layout.row(align=True)
         row.prop(cscene, "seed")
         row.prop(cscene, "use_animated_seed", text="", icon='TIME')
 
@@ -455,7 +461,7 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
 
         col = layout.column(align=True) #BFA
         # Tabulated Sobol is used when the debug UI is turned off.
-        col.active = cscene.sampling_pattern == 'TABULATED_SOBOL' or not CyclesDebugButtonsPanel.poll(context)
+        col.active = cscene.sampling_pattern == 'TABULATED_SOBOL'
         col.label(text="Scrambling Distance")
         row = col.row()
         row.use_property_split = False
@@ -501,23 +507,6 @@ class CYCLES_RENDER_PT_sampling_lights(CyclesButtonsPanel, Panel):
         sub.use_property_split = True #BFA
         sub.prop(cscene, "light_sampling_threshold", text="Light Threshold")
         sub.active = not cscene.use_light_tree
-
-
-class CYCLES_RENDER_PT_sampling_debug(CyclesDebugButtonsPanel, Panel):
-    bl_label = "Debug"
-    bl_parent_id = "CYCLES_RENDER_PT_sampling"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        scene = context.scene
-        cscene = scene.cycles
-
-        col = layout.column(align=True)
-        col.prop(cscene, "sampling_pattern", text="Pattern")
 
 
 class CYCLES_RENDER_PT_subdivision(CyclesButtonsPanel, Panel):
@@ -2828,7 +2817,6 @@ classes = (
     CYCLES_RENDER_PT_sampling_path_guiding_debug,
     CYCLES_RENDER_PT_sampling_lights,
     CYCLES_RENDER_PT_sampling_advanced,
-    CYCLES_RENDER_PT_sampling_debug,
     CYCLES_RENDER_PT_light_paths,
     CYCLES_RENDER_PT_light_paths_max_bounces,
     CYCLES_RENDER_PT_light_paths_clamping,

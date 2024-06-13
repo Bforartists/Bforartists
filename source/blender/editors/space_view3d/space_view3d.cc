@@ -684,12 +684,6 @@ static bool view3d_ima_empty_drop_poll(bContext *C, wmDrag *drag, const wmEvent 
   return false;
 }
 
-static bool view3d_volume_drop_poll(bContext * /*C*/, wmDrag *drag, const wmEvent * /*event*/)
-{
-  const eFileSel_File_Types file_type = eFileSel_File_Types(WM_drag_get_path_file_type(drag));
-  return (drag->type == WM_DRAG_PATH) && (file_type == FILE_TYPE_VOLUME);
-}
-
 static bool view3d_geometry_nodes_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
 {
   if (!view3d_drop_id_in_main_region_poll(C, drag, event, ID_NT)) {
@@ -911,27 +905,6 @@ static void view3d_id_path_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
   }
 }
 
-static void view3d_lightcache_update(bContext *C)
-{
-  PointerRNA op_ptr;
-
-  Scene *scene = CTX_data_scene(C);
-
-  if (!BKE_scene_uses_blender_eevee(scene)) {
-    /* Only do auto bake if eevee is the active engine */
-    return;
-  }
-
-  wmOperatorType *ot = WM_operatortype_find("SCENE_OT_light_cache_bake", true);
-  WM_operator_properties_create_ptr(&op_ptr, ot);
-  RNA_int_set(&op_ptr, "delay", 200);
-  RNA_enum_set_identifier(C, &op_ptr, "subset", "DIRTY");
-
-  WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &op_ptr, nullptr);
-
-  WM_operator_properties_free(&op_ptr);
-}
-
 /* region dropbox definition */
 static void view3d_dropboxes()
 {
@@ -994,12 +967,6 @@ static void view3d_dropboxes()
   WM_dropbox_add(lb,
                  "OBJECT_OT_empty_image_add",
                  view3d_ima_empty_drop_poll,
-                 view3d_id_path_drop_copy,
-                 WM_drag_free_imported_drag_ID,
-                 nullptr);
-  WM_dropbox_add(lb,
-                 "OBJECT_OT_volume_import",
-                 view3d_volume_drop_poll,
                  view3d_id_path_drop_copy,
                  WM_drag_free_imported_drag_ID,
                  nullptr);
@@ -2011,14 +1978,7 @@ static void space_view3d_listener(const wmSpaceTypeListenerParams *params)
 
 static void space_view3d_refresh(const bContext *C, ScrArea *area)
 {
-  Scene *scene = CTX_data_scene(C);
-  LightCache *lcache = scene->eevee.light_cache_data;
-
-  if (lcache && (lcache->flag & LIGHTCACHE_UPDATE_AUTO) != 0) {
-    lcache->flag &= ~LIGHTCACHE_UPDATE_AUTO;
-    view3d_lightcache_update((bContext *)C);
-  }
-
+  UNUSED_VARS(C);
   View3D *v3d = (View3D *)area->spacedata.first;
   MEM_SAFE_FREE(v3d->runtime.local_stats);
 }

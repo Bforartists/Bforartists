@@ -7,6 +7,7 @@
 #include "usd_attribute_utils.hh"
 #include "usd_blend_shape_utils.hh"
 #include "usd_skel_convert.hh"
+#include "usd_utils.hh"
 
 #include <pxr/usd/usdGeom/mesh.h>
 #include <pxr/usd/usdGeom/primvarsAPI.h>
@@ -261,7 +262,8 @@ void USDGenericMeshWriter::write_generic_data(const Mesh *mesh,
   }
 
   const pxr::UsdTimeCode timecode = get_export_time_code();
-  const pxr::TfToken pv_name(pxr::TfMakeValidIdentifier(attribute_id.name()));
+  const pxr::TfToken pv_name(
+      make_safe_name(attribute_id.name(), usd_export_context_.export_params.allow_unicode));
   const pxr::UsdGeomPrimvarsAPI pv_api = pxr::UsdGeomPrimvarsAPI(usd_mesh);
 
   pxr::UsdGeomPrimvar pv_attr = pv_api.CreatePrimvar(pv_name, *pv_type, *pv_interp);
@@ -282,7 +284,8 @@ void USDGenericMeshWriter::write_uv_data(const Mesh *mesh,
   }
 
   const pxr::UsdTimeCode timecode = get_export_time_code();
-  const pxr::TfToken pv_name(pxr::TfMakeValidIdentifier(attribute_id.name()));
+  const pxr::TfToken pv_name(
+      make_safe_name(attribute_id.name(), usd_export_context_.export_params.allow_unicode));
   const pxr::UsdGeomPrimvarsAPI pv_api = pxr::UsdGeomPrimvarsAPI(usd_mesh);
 
   pxr::UsdGeomPrimvar pv_uv = pv_api.CreatePrimvar(
@@ -303,7 +306,8 @@ void USDGenericMeshWriter::write_color_data(const Mesh *mesh,
   }
 
   const pxr::UsdTimeCode timecode = get_export_time_code();
-  const pxr::TfToken pv_name(pxr::TfMakeValidIdentifier(attribute_id.name()));
+  const pxr::TfToken pv_name(
+      make_safe_name(attribute_id.name(), usd_export_context_.export_params.allow_unicode));
   const pxr::UsdGeomPrimvarsAPI pv_api = pxr::UsdGeomPrimvarsAPI(usd_mesh);
 
   /* Varying type depends on original domain. */
@@ -755,8 +759,9 @@ void USDGenericMeshWriter::write_surface_velocity(const Mesh *mesh, pxr::UsdGeom
 {
   /* Export velocity attribute output by fluid sim, sequence cache modifier
    * and geometry nodes. */
-  CustomDataLayer *velocity_layer = BKE_id_attribute_find(
-      &mesh->id, "velocity", CD_PROP_FLOAT3, bke::AttrDomain::Point);
+  AttributeOwner owner = AttributeOwner::from_id(const_cast<ID *>(&mesh->id));
+  CustomDataLayer *velocity_layer = BKE_attribute_find(
+      owner, "velocity", CD_PROP_FLOAT3, bke::AttrDomain::Point);
 
   if (velocity_layer == nullptr) {
     return;
@@ -876,7 +881,10 @@ void USDMeshWriter::init_blend_shapes(const HierarchyContext &context)
     return;
   }
 
-  create_blend_shapes(this->usd_export_context_.stage, context.object, mesh_prim);
+  create_blend_shapes(this->usd_export_context_.stage,
+                      context.object,
+                      mesh_prim,
+                      usd_export_context_.export_params.allow_unicode);
 }
 
 void USDMeshWriter::do_write(HierarchyContext &context)

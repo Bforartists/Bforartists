@@ -152,95 +152,6 @@ static void sculpt_project_v3_normal_align(const SculptSession &ss,
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Sculpt Draw Brush
- * \{ */
-
-static void do_draw_brush_task(Object &ob, const Brush &brush, const float *offset, PBVHNode *node)
-{
-  using namespace blender::ed::sculpt_paint;
-  SculptSession &ss = *ob.sculpt;
-  PBVHVertexIter vd;
-  const MutableSpan<float3> proxy = BKE_pbvh_node_add_proxy(*ss.pbvh, *node).co;
-
-  SculptBrushTest test;
-  SculptBrushTestFn sculpt_brush_test_sq_fn = SCULPT_brush_test_init_with_falloff_shape(
-      ss, test, brush.falloff_shape);
-  const int thread_id = BLI_task_parallel_thread_id(nullptr);
-
-  auto_mask::NodeData automask_data = auto_mask::node_begin(
-      ob, ss.cache->automasking.get(), *node);
-
-  BKE_pbvh_vertex_iter_begin (*ss.pbvh, node, vd, PBVH_ITER_UNIQUE) {
-    if (!sculpt_brush_test_sq_fn(test, vd.co)) {
-      continue;
-    }
-
-    auto_mask::node_update(automask_data, vd);
-
-    /* Offset vertex. */
-    if (ss.cache->brush->flag2 & BRUSH_USE_COLOR_AS_DISPLACEMENT &&
-        (brush.mtex.brush_map_mode == MTEX_MAP_MODE_AREA))
-    {
-      float r_rgba[4];
-      SCULPT_brush_strength_color(ss,
-                                  brush,
-                                  vd.co,
-                                  sqrtf(test.dist),
-                                  vd.no,
-                                  vd.fno,
-                                  vd.mask,
-                                  vd.vertex,
-                                  thread_id,
-                                  &automask_data,
-                                  r_rgba);
-      SCULPT_calc_vertex_displacement(ss, brush, r_rgba, proxy[vd.i]);
-    }
-    else {
-      float fade = SCULPT_brush_strength_factor(ss,
-                                                brush,
-                                                vd.co,
-                                                sqrtf(test.dist),
-                                                vd.no,
-                                                vd.fno,
-                                                vd.mask,
-                                                vd.vertex,
-                                                thread_id,
-                                                &automask_data);
-      mul_v3_v3fl(proxy[vd.i], offset, fade);
-    }
-  }
-  BKE_pbvh_vertex_iter_end;
-}
-
-void SCULPT_do_draw_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
-{
-  using namespace blender;
-  SculptSession &ss = *ob.sculpt;
-  const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
-  float offset[3];
-  const float bstrength = ss.cache->bstrength;
-
-  /* Offset with as much as possible factored in already. */
-  float effective_normal[3];
-  SCULPT_tilt_effective_normal_get(ss, brush, effective_normal);
-  mul_v3_v3fl(offset, effective_normal, ss.cache->radius);
-  mul_v3_v3(offset, ss.cache->scale);
-  mul_v3_fl(offset, bstrength);
-
-  /* XXX: this shouldn't be necessary, but sculpting crashes in blender2.8 otherwise
-   * initialize before threads so they can do curve mapping. */
-  BKE_curvemapping_init(brush.curve);
-
-  threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
-    for (const int i : range) {
-      do_draw_brush_task(ob, brush, offset, nodes[i]);
-    }
-  });
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
 /** \name Sculpt Fill Brush
  * \{ */
 
@@ -303,6 +214,7 @@ static void do_fill_brush_task(
 void SCULPT_do_fill_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
 {
   using namespace blender;
+  using namespace blender::ed::sculpt_paint;
   SculptSession &ss = *ob.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
@@ -316,7 +228,7 @@ void SCULPT_do_fill_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
 
   float temp[3];
 
-  SCULPT_calc_brush_plane(sd, ob, nodes, area_no, area_co);
+  calc_brush_plane(brush, ob, nodes, area_no, area_co);
 
   SCULPT_tilt_apply_to_normal(area_no, ss.cache, brush.tilt_strength_factor);
 
@@ -391,6 +303,7 @@ static void do_scrape_brush_task(
 void SCULPT_do_scrape_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
 {
   using namespace blender;
+  using namespace blender::ed::sculpt_paint;
   SculptSession &ss = *ob.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
@@ -404,7 +317,7 @@ void SCULPT_do_scrape_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes
 
   float temp[3];
 
-  SCULPT_calc_brush_plane(sd, ob, nodes, area_no, area_co);
+  calc_brush_plane(brush, ob, nodes, area_no, area_co);
 
   SCULPT_tilt_apply_to_normal(area_no, ss.cache, brush.tilt_strength_factor);
 
@@ -512,6 +425,7 @@ float SCULPT_clay_thumb_get_stabilized_pressure(
 void SCULPT_do_clay_thumb_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
 {
   using namespace blender;
+  using namespace blender::ed::sculpt_paint;
   SculptSession &ss = *ob.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
@@ -524,10 +438,10 @@ void SCULPT_do_clay_thumb_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> n
   float scale[4][4];
   float tmat[4][4];
 
-  SCULPT_calc_brush_plane(sd, ob, nodes, area_no_sp, area_co_tmp);
+  calc_brush_plane(brush, ob, nodes, area_no_sp, area_co_tmp);
 
   if (brush.sculpt_plane != SCULPT_DISP_DIR_AREA || (brush.flag & BRUSH_ORIGINAL_NORMAL)) {
-    area_no = SCULPT_calc_area_normal(sd, ob, nodes).value_or(float3(0));
+    area_no = calc_area_normal(brush, ob, nodes).value_or(float3(0));
   }
   else {
     area_no = area_no_sp;
@@ -636,6 +550,7 @@ static void do_flatten_brush_task(
 void SCULPT_do_flatten_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
 {
   using namespace blender;
+  using namespace blender::ed::sculpt_paint;
   SculptSession &ss = *ob.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
@@ -648,7 +563,7 @@ void SCULPT_do_flatten_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> node
   float displace;
   float temp[3];
 
-  SCULPT_calc_brush_plane(sd, ob, nodes, area_no, area_co);
+  calc_brush_plane(brush, ob, nodes, area_no, area_co);
 
   SCULPT_tilt_apply_to_normal(area_no, ss.cache, brush.tilt_strength_factor);
 
@@ -770,6 +685,7 @@ static void do_clay_brush_task(
 void SCULPT_do_clay_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
 {
   using namespace blender;
+  using namespace blender::ed::sculpt_paint;
   SculptSession &ss = *ob.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
@@ -784,7 +700,7 @@ void SCULPT_do_clay_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
   float area_co[3];
   float temp[3];
 
-  SCULPT_calc_brush_plane(sd, ob, nodes, area_no, area_co);
+  calc_brush_plane(brush, ob, nodes, area_no, area_co);
 
   ClaySampleData csd = threading::parallel_reduce(
       nodes.index_range(),
@@ -884,6 +800,7 @@ static void do_clay_strips_brush_task(Object &ob,
 void SCULPT_do_clay_strips_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
 {
   using namespace blender;
+  using namespace blender::ed::sculpt_paint;
   SculptSession &ss = *ob.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
@@ -904,11 +821,11 @@ void SCULPT_do_clay_strips_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> 
   float scale[4][4];
   float tmat[4][4];
 
-  SCULPT_calc_brush_plane(sd, ob, nodes, area_no_sp, area_co);
+  calc_brush_plane(brush, ob, nodes, area_no_sp, area_co);
   SCULPT_tilt_apply_to_normal(area_no_sp, ss.cache, brush.tilt_strength_factor);
 
   if (brush.sculpt_plane != SCULPT_DISP_DIR_AREA || (brush.flag & BRUSH_ORIGINAL_NORMAL)) {
-    area_no = SCULPT_calc_area_normal(sd, ob, nodes).value_or(float3(0));
+    area_no = calc_area_normal(brush, ob, nodes).value_or(float3(0));
   }
   else {
     area_no = area_no_sp;
@@ -1637,6 +1554,7 @@ static void do_pinch_brush_task(Object &ob,
 void SCULPT_do_pinch_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
 {
   using namespace blender;
+  using namespace blender::ed::sculpt_paint;
   SculptSession &ss = *ob.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
@@ -1644,7 +1562,7 @@ void SCULPT_do_pinch_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
   float area_co[3];
 
   float mat[4][4];
-  SCULPT_calc_brush_plane(sd, ob, nodes, area_no, area_co);
+  calc_brush_plane(brush, ob, nodes, area_no, area_co);
 
   /* delay the first daub because grab delta is not setup */
   if (SCULPT_stroke_is_first_brush_step_of_symmetry_pass(*ss.cache)) {
