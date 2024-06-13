@@ -824,7 +824,12 @@ def extensions_panel_draw_impl(
                         row_right.active = False
 
                         # BFA - Move Uninstall next to Install
+                        # Note that we could allow removing extensions from non-remote extension repos
+                        # although this is destructive, so don't enable this right now.
                         row_right2.active = True
+                        if is_system_repo:
+                            row_right2.operator("extensions.package_uninstall_system", text="Uninstall", icon = 'CANCEL')
+                        else:
                         props = row_right2.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL')
                         props.repo_index = repo_index
                         props.pkg_id = pkg_id
@@ -858,20 +863,6 @@ def extensions_panel_draw_impl(
                         icon='URL',
                     ).url = value
                 del value
-                
-                # BFA - Move Uninstall next to Install
-                # Note that we could allow removing extensions from non-remote extension repos
-                # although this is destructive, so don't enable this right now.
-                if is_installed:
-                    rowsub = col_b.row()
-                    rowsub.alignment = 'RIGHT'
-                    if is_system_repo:
-                        rowsub.operator("extensions.package_uninstall_system", text="Uninstall")
-                    else:
-                        props = rowsub.operator("extensions.package_uninstall", text="Uninstall")
-                        props.repo_index = repo_index
-                        props.pkg_id = pkg_id
-                        del props, rowsub
 
                 del split, col_a, col_b
 
