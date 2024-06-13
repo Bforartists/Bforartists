@@ -121,6 +121,7 @@ const UserDef U_default = {
 #else
     .gpu_backend = GPU_BACKEND_OPENGL,
 #endif
+    .max_shader_compilation_subprocesses = 0,
 
     /** Initialized by: #BKE_studiolight_default. */
     .light_param = {{0}},
