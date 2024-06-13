@@ -341,7 +341,13 @@ if(WITH_OPENCOLLADA)
     if(WITH_STATIC_LIBS)
       # PCRE is bundled with OpenCollada without headers, so can't use
       # find_package reliably to detect it.
-      set(PCRE_LIBRARIES ${LIBDIR}/opencollada/lib/libpcre.a)
+      # NOTE: newer fork no longer depends on PCRE: see !122270.
+      if(EXISTS ${LIBDIR}/opencollada/lib/libpcre.a)
+        set(PCRE_LIBRARIES ${LIBDIR}/opencollada/lib/libpcre.a)
+      else()
+        # Quiet warnings.
+        set(PCRE_LIBRARIES)
+      endif()
     else()
       find_package_wrapper(PCRE)
     endif()
@@ -414,6 +420,7 @@ if(DEFINED LIBDIR)
     ${SYCL_ROOT_DIR}/lib/libsycl.so
     ${SYCL_ROOT_DIR}/lib/libsycl.so.*
     ${SYCL_ROOT_DIR}/lib/libpi_*.so
+    ${SYCL_ROOT_DIR}/lib/libur_*.so
   )
   list(FILTER _sycl_runtime_libraries EXCLUDE REGEX ".*\.py")
   list(REMOVE_ITEM _sycl_runtime_libraries "${SYCL_ROOT_DIR}/lib/libpi_opencl.so")
