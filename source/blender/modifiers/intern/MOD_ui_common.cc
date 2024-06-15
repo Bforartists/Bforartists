@@ -288,7 +288,8 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 
   uiItemS(layout);
 
-  uiItemR(layout, &ptr, "use_pin_to_last", UI_ITEM_NONE, nullptr, ICON_NONE);
+  /* bfa - moved to top level header */
+  /* uiItemR(layout, &ptr, "use_pin_to_last", UI_ITEM_NONE, nullptr, ICON_NONE); */
 
   if (md->type == eModifierType_Nodes) {
     uiItemS(layout);
@@ -434,6 +435,13 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
     uiItemO(op_row, "", ICON_X, "OBJECT_OT_modifier_remove");/*bfa*/
     buttons_number++;
   }
+
+  /* bfa - modifier pin to last toggle button */
+  op_row = uiLayoutRow(layout, true);
+  bool is_pinned = RNA_boolean_get(ptr, "use_pin_to_last");
+  uiItemR(op_row, ptr, "use_pin_to_last", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "",
+          is_pinned ? ICON_PINNED : ICON_UNPINNED);
+  buttons_number++;
 
   /* Switch context buttons. */
   if (modifier_is_simulation(md) == 1) {
