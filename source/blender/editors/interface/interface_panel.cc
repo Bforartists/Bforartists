@@ -565,7 +565,8 @@ static bool panel_custom_pin_to_last_get(const Panel *panel)
   return false;
 }
 
-static void panel_custom_pin_to_last_set(const bContext *C, const Panel *panel, const bool value)
+/* bfa - we use the toggle itself to unpin */
+/* static void panel_custom_pin_to_last_set(const bContext *C, const Panel *panel, const bool value)
 {
   if (panel->type->pin_to_last_property[0] != '\0') {
     PointerRNA *ptr = UI_panel_custom_data_get(panel);
@@ -575,7 +576,7 @@ static void panel_custom_pin_to_last_set(const bContext *C, const Panel *panel, 
       RNA_property_update(const_cast<bContext *>(C), ptr, prop);
     }
   }
-}
+} */
 
 static bool panel_custom_data_active_get(const Panel *panel)
 {
@@ -1171,7 +1172,8 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
     UI_GetThemeColorShade4fv(TH_PANEL_BACK, -col_tint, color_dark);
     if (panel_custom_pin_to_last_get(panel)) {
       GPU_blend(GPU_BLEND_ALPHA);
-      UI_icon_draw_ex(widget_rect.xmax - scaled_unit * 1.15,
+      /* bfa - we use the toggle itself to unpin */
+      /*UI_icon_draw_ex(widget_rect.xmax - scaled_unit * 1.15,
                       widget_rect.ymin + (header_height - drag_widget_size) * 0.5f,
                       ICON_PINNED,
                       aspect * UI_INV_SCALE_FAC,
@@ -1179,11 +1181,11 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
                       0.0f,
                       title_color,
                       false,
-                      UI_NO_ICON_OVERLAY_TEXT);
+                      UI_NO_ICON_OVERLAY_TEXT); */
       GPU_blend(GPU_BLEND_NONE);
     }
     else {
-      GPU_matrix_push();
+    GPU_matrix_push();
       /* The magic numbers here center the widget vertically and offset it to the left.
        * Currently this depends on the height of the header, although it could be independent. */
       GPU_matrix_translate_2f(widget_rect.xmax - scaled_unit * 1.15,
@@ -1193,8 +1195,8 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
       GPU_batch_program_set_builtin(batch, GPU_SHADER_3D_FLAT_COLOR);
       GPU_batch_draw(batch);
       GPU_matrix_pop();
-    }
   }
+}
 }
 
 static int layout_panel_y_offset()
@@ -2285,7 +2287,8 @@ static void ui_handle_panel_header(const bContext *C,
     const float drag_area_xmax = block->rect.xmax;
     if (IN_RANGE(mx, drag_area_xmin, drag_area_xmax)) {
       if (panel_custom_pin_to_last_get(panel)) {
-        panel_custom_pin_to_last_set(C, panel, false);
+        /* bfa - we use the toggle itself to unpin */
+        /* panel_custom_pin_to_last_set(C, panel, false); */
         return;
       }
       else {
