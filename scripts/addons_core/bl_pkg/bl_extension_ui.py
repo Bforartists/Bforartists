@@ -830,11 +830,11 @@ def extensions_panel_draw_impl(
                         if is_system_repo:
                             row_right2.operator("extensions.package_uninstall_system", text="Uninstall", icon = 'CANCEL')
                         else:
-                        props = row_right2.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL')
-                        props.repo_index = repo_index
-                        props.pkg_id = pkg_id
-                        del props, row_right2
-                        # BFA - end of changes
+                            props = row_right2.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL')
+                            props.repo_index = repo_index
+                            props.pkg_id = pkg_id
+                            del props, row_right2
+                            # BFA - end of changes
                 else:
                     props = row_right.operator("extensions.package_install", text="Install", icon='IMPORT') # BFA - added icon
                     props.repo_index = repo_index
