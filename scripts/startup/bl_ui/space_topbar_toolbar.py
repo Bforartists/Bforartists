@@ -428,7 +428,10 @@ class TOPBAR_MT_file(Menu):
             if addon_prefs.topbar_file_import_common:
 
                 row = layout.row(align=True)
-                row.operator("import_scene.fbx", text="", icon='LOAD_FBX')
+
+                if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+                    row.operator("import_scene.fbx", text="", icon='LOAD_FBX')
+
                 row.operator("wm.obj_import", text="", icon='LOAD_OBJ')
                 row.operator("wm.alembic_import", text="", icon = "LOAD_ABC" )
 
@@ -437,24 +440,35 @@ class TOPBAR_MT_file(Menu):
                 row = layout.row(align=True)
                 row.operator("wm.collada_import", text="", icon='LOAD_DAE')
                 row.operator("import_anim.bvh", text="", icon='LOAD_BVH')
-                row.operator("import_scene.gltf", text="", icon='LOAD_GLTF')
+
+                if "io_scene_gltf2" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+                    row.operator("import_scene.gltf", text="", icon='LOAD_GLTF')
 
             ## ------------------ Import uncommon
 
             if addon_prefs.topbar_file_import_uncommon:
 
                 row = layout.row(align=True)
-                row.operator("import_mesh.stl", text="", icon='LOAD_STL')
-                row.operator("import_mesh.ply", text="", icon='LOAD_PLY')
-                row.operator("import_scene.x3d", text="", icon='LOAD_X3D')
-                row.operator("import_curve.svg", text="", icon='LOAD_SVG')
+
+                if "io_mesh_stl" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+                    row.operator("import_mesh.stl", text="", icon='LOAD_STL')
+
+                row.operator("wm.ply_import", text="", icon='LOAD_PLY')
+
+                if "io_scene_x3d" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+                    row.operator("import_scene.x3d", text="", icon='LOAD_X3D')
+
+                if "io_curve_svg" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+                    row.operator("import_curve.svg", text="", icon='LOAD_SVG')
 
             ## ------------------ Export common
 
             if addon_prefs.topbar_file_export_common:
 
                 row = layout.row(align=True)
-                row.operator("export_scene.fbx", text="", icon='SAVE_FBX')
+                if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+                    row.operator("export_scene.fbx", text="", icon='SAVE_FBX')
+
                 row.operator("wm.obj_export", text="", icon='SAVE_OBJ')
                 row.operator("wm.alembic_export", text="", icon = "SAVE_ABC" )
 
@@ -464,16 +478,22 @@ class TOPBAR_MT_file(Menu):
                 row.operator("wm.collada_export", text="", icon='SAVE_DAE')
                 row.operator("export_anim.bvh", text="", icon='SAVE_BVH')
                 row.operator("wm.usd_export", text="", icon='SAVE_USD')
-                row.operator("export_scene.gltf", text="", icon='SAVE_GLTF')
+
+                if "io_scene_gltf2" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+                    row.operator("export_scene.gltf", text="", icon='SAVE_GLTF')
 
             ## ------------------ Export uncommon
 
             if addon_prefs.topbar_file_export_uncommon:
 
                 row = layout.row(align=True)
-                row.operator("export_mesh.stl", text="", icon='SAVE_STL')
-                row.operator("export_mesh.ply", text="", icon='SAVE_PLY')
-                row.operator("export_scene.x3d", text="", icon='SAVE_X3D')
+                if "io_mesh_stl" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+                    row.operator("export_mesh.stl", text="", icon='SAVE_STL')
+
+                row.operator("wm.ply_export", text="", icon='SAVE_PLY')
+
+                if "io_scene_x3d" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+                    row.operator("export_scene.x3d", text="", icon='SAVE_X3D')
 
             ## ------------------ Render
 
