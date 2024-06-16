@@ -445,7 +445,7 @@ class TOPBAR_MT_file(Menu):
 
                 row = layout.row(align=True)
                 row.operator("import_mesh.stl", text="", icon='LOAD_STL')
-                row.operator("import_mesh.ply", text="", icon='LOAD_PLY')
+                row.operator("wm.ply_import", text="", icon='LOAD_PLY')
                 row.operator("import_scene.x3d", text="", icon='LOAD_X3D')
                 row.operator("import_curve.svg", text="", icon='LOAD_SVG')
 
@@ -472,7 +472,7 @@ class TOPBAR_MT_file(Menu):
 
                 row = layout.row(align=True)
                 row.operator("export_mesh.stl", text="", icon='SAVE_STL')
-                row.operator("export_mesh.ply", text="", icon='SAVE_PLY')
+                row.operator("wm.ply_export", text="", icon='SAVE_PLY')
                 row.operator("export_scene.x3d", text="", icon='SAVE_X3D')
 
             ## ------------------ Render
