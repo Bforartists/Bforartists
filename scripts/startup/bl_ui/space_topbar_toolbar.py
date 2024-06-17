@@ -487,6 +487,7 @@ class TOPBAR_MT_file(Menu):
             if addon_prefs.topbar_file_export_uncommon:
 
                 row = layout.row(align=True)
+
                 if "io_mesh_stl" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("export_mesh.stl", text="", icon='SAVE_STL')
 
