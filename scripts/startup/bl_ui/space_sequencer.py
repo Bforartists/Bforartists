@@ -190,7 +190,7 @@ class SEQUENCER_HT_header(Header):
             row.prop(tool_settings, "use_snap_sequencer", text="")
             sub = row.row(align=True)
             sub.popover(panel="SEQUENCER_PT_snapping", text="") #BFA - removed text
-			#layout.separator_spacer() #BFA
+            #layout.separator_spacer() #BFA
 
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             layout.prop(st, "display_mode", text="", icon_only=True)
@@ -528,8 +528,8 @@ class SEQUENCER_MT_view(Menu):
         layout.separator()
 
         layout.menu("SEQUENCER_MT_view_annotations") # BFA
-		# BFA - properties in properties menu
-        #if st.view_type == 'SEQUENCER': 
+        # BFA - properties in properties menu
+        #if st.view_type == 'SEQUENCER':
         #    layout.prop(st, "show_backdrop", text="Preview as Backdrop")
         #if is_preview or st.show_backdrop:
         #    layout.prop(st, "show_transform_preview", text="Preview During Transform")
@@ -543,7 +543,7 @@ class SEQUENCER_MT_view(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("view2d.zoom_in", icon="ZOOM_IN")
         layout.operator("view2d.zoom_out", icon="ZOOM_OUT")
-		# BFA - properties in properties menu
+        # BFA - properties in properties menu
         if is_sequencer_view:
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("view2d.zoom_border", text="Zoom Border", icon="ZOOM_BORDER")  # BFA
@@ -581,7 +581,7 @@ class SEQUENCER_MT_view(Menu):
         layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.separator()
-		# BFA - properties in properties menu
+        # BFA - properties in properties menu
 
         layout.operator("render.opengl", text="Sequence Render Image", icon='RENDER_STILL').sequencer = True
         props = layout.operator("render.opengl", text="Sequence Render Animation", icon='RENDER_ANIMATION')
@@ -707,9 +707,9 @@ class SEQUENCER_MT_select(Menu):
             col.menu("SEQUENCER_MT_select_linked", text="Linked")
 
         col.operator_menu_enum("sequencer.select_grouped", "type", text="Select Grouped")
-		#BFA - moved to a sub-menu
+        #BFA - moved to a sub-menu
 
-		#BFA - moved to a sub-menu
+        #BFA - moved to a sub-menu
 
 
 class SEQUENCER_MT_marker(Menu):
@@ -724,9 +724,9 @@ class SEQUENCER_MT_marker(Menu):
         from bl_ui.space_time import marker_menu_generic
         marker_menu_generic(layout, context)
 
-		#BFA - no longer used
-		#if is_sequencer_view:
-		#layout.prop(st, "use_marker_sync")
+        #BFA - no longer used
+        #if is_sequencer_view:
+        #layout.prop(st, "use_marker_sync")
 
 
 class SEQUENCER_MT_change(Menu):
@@ -1078,10 +1078,9 @@ class SEQUENCER_MT_strip_effect(Menu):
     def draw(self, _context):
         layout = self.layout
 
-		#BFA - moved to a conditional
+        #BFA - moved to a conditional
         layout.operator("sequencer.reassign_inputs", icon='RANDOMIZE_TRANSFORM')
         layout.operator("sequencer.swap_inputs", icon='RANDOMIZE')
-	
 
 
 class SEQUENCER_MT_strip_movie(Menu):
@@ -1311,7 +1310,7 @@ class SEQUENCER_MT_image(Menu):
             layout.menu("SEQUENCER_MT_image_transform")
 
         layout.menu("SEQUENCER_MT_image_clear")
-		#BFA - moved these up
+        #BFA - moved these up
         layout.separator()
 
         layout.operator("sequencer.strip_transform_fit", text="Scale To Fit", icon="VIEW_FIT").fit_method = 'FIT'
@@ -1347,7 +1346,6 @@ class SEQUENCER_MT_image_clear(Menu):
         layout.operator("sequencer.strip_transform_clear", text="Rotation", icon="CLEARROTATE",
                         text_ctxt=i18n_contexts.default).property = 'ROTATION'
         layout.operator("sequencer.strip_transform_clear", text="All Transforms", icon="CLEAR").property = 'ALL'
-	
 
 
 class SEQUENCER_MT_image_apply(Menu):
@@ -1993,45 +1991,49 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
         row = split.row()
         row.use_property_decorate = False
         row.use_property_split = False
-        row = row.prop(strip, "use_shadow", text="Shadow")
+        row.prop(strip, "use_shadow", text="Shadow")
+        sub = split.column()
         if (strip.use_shadow and (not strip.mute)):
-            split.prop(strip, "shadow_color", text="")
+            sub.prop(strip, "shadow_color", text="")
+            row = col.row()
+            row.separator()
+            row.prop(strip, "shadow_angle", text="Angle")
+            row = col.row()
+            row.separator()
+            row.prop(strip, "shadow_offset", text="Offset")
+            row = col.row()
+            row.separator()
+            row.prop(strip, "shadow_blur", text="Blue")
+            sub.active = strip.use_shadow and (not strip.mute)
         else:
-            split.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        col = layout.column()
-        col.prop(strip, "shadow_angle")
-        col.prop(strip, "shadow_offset")
-        col.prop(strip, "shadow_blur")
-        col.active = strip.use_shadow and (not strip.mute)
-
-        row = layout.row(align=True, heading="Outline")
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(strip, "use_outline", text="")
-        subsub = sub.row(align=True)
-        subsub.active = strip.use_outline and (not strip.mute)
-        subsub.prop(strip, "outline_color", text="")
-        row.prop_decorator(strip, "outline_color")
-
-        row = layout.row(align=True, heading="Outline Width")
-        sub = row.row(align=True)
-        sub.prop(strip, "outline_width")
-        sub.active = strip.use_outline and (not strip.mute)
+            sub.label(icon='DISCLOSURE_TRI_RIGHT')
 
         split = col.split(factor=.4, align=True)
-        col = split.column(align=True)
-        col.use_property_decorate = False
-        col.use_property_split = False
-        col.prop(strip, "use_box", text="Box")
+        row = split.row()
+        row.use_property_decorate = False
+        row.use_property_split = False
+        row.prop(strip, "use_outline", text="Outline")
+        sub = split.column()
+        if (strip.use_outline and (not strip.mute)):
+            sub.prop(strip, "outline_color", text="")
+            row = col.row()
+            row.separator()
+            row.prop(strip, "outline_width", text="Width")
+            row.active = strip.use_outline
+        else:
+            sub.label(icon='DISCLOSURE_TRI_RIGHT')
 
+        split = col.split(factor=.4, align=True)
+        row = split.row()
+        row.use_property_decorate = False
+        row.use_property_split = False
+        row.prop(strip, "use_box", text="Box")
         sub = split.column()
         if (strip.use_box and (not strip.mute)):
             sub.prop(strip, "box_color", text="")
             row = col.row()
             row.separator()
-            row.label(text="Box Margin")
-            sub.prop(strip, "box_margin", text="")
+            row.prop(strip, "box_margin", text="Margin")
         else:
             sub.label(icon='DISCLOSURE_TRI_RIGHT')
 
