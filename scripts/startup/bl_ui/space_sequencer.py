@@ -2003,7 +2003,7 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
             row.prop(strip, "shadow_offset", text="Offset")
             row = col.row()
             row.separator()
-            row.prop(strip, "shadow_blur", text="Blue")
+            row.prop(strip, "shadow_blur", text="Blur")
             sub.active = strip.use_shadow and (not strip.mute)
         else:
             sub.label(icon='DISCLOSURE_TRI_RIGHT')
