@@ -782,6 +782,8 @@ static int view_socket(const bContext &C,
   if (viewer_bsocket == nullptr) {
     return OPERATOR_CANCELLED;
   }
+  viewer_bsocket->flag &= ~SOCK_HIDDEN;
+
   bNodeLink *viewer_link = nullptr;
   LISTBASE_FOREACH_MUTABLE (bNodeLink *, link, &btree.links) {
     if (link->tosock == viewer_bsocket) {
@@ -940,6 +942,10 @@ static bool should_create_drag_link_search_menu(const bNodeTree &node_tree,
   /* Don't allow a drag from the "new socket" (group input node or simulation nodes currently).
    * Handling these properly in node callbacks increases the complexity too much for now. */
   if (nldrag.start_socket->type == SOCK_CUSTOM) {
+    return false;
+  }
+  if (nldrag.start_socket->type == SOCK_TEXTURE) {
+    /* This socket types is not used anymore, but can currently still exists in files. */
     return false;
   }
   return true;

@@ -237,7 +237,7 @@ void SCULPT_OT_mask_filter(wmOperatorType *ot)
       "auto_iteration_count",
       true,
       "Auto Iteration Count",
-      "Use a automatic number of iterations based on the number of vertices of the sculpt");
+      "Use an automatic number of iterations based on the number of vertices of the sculpt");
 
   /* BFA - use filter_type enum property as label and tooltip source when the operator is expanded
    * or searched */
