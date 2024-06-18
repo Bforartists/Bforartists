@@ -395,13 +395,13 @@ void ShadowDirectional::cascade_tilemaps_distribution(Light &light, const Camera
 IndexRange ShadowDirectional::clipmap_level_range(const Camera &cam)
 {
   using namespace blender::math;
+  /* Covers the closest points of the view. */
+  /* FIXME: IndexRange does not support negative indices. Clamp to 0 for now. */
+  int min_level = max(0.0f, floor(log2(abs(cam.data_get().clip_near))));
   /* Covers the farthest points of the view. */
   int max_level = ceil(log2(cam.bound_radius() + distance(cam.bound_center(), cam.position())));
   /* We actually need to cover a bit more because of clipmap origin snapping. */
-  max_level += 1;
-  /* Covers the closest points of the view. */
-  /* FIXME: IndexRange does not support negative range. Clamp to 1 for now. */
-  int min_level = max(0.0f, floor(log2(abs(cam.data_get().clip_near))));
+  max_level = max(min_level, max_level) + 1;
   IndexRange range(min_level, max_level - min_level + 1);
   /* 32 to be able to pack offset into a single int2.
    * The maximum level count is bounded by the mantissa of a 32bit float.  */
@@ -1117,15 +1117,17 @@ void ShadowModule::debug_end_sync()
 }
 
 /* Compute approximate screen pixel density (as world space radius). */
-float ShadowModule::screen_pixel_radius(const View &view, const int2 &extent)
+float ShadowModule::screen_pixel_radius(const float4x4 &wininv,
+                                        bool is_perspective,
+                                        const int2 &extent)
 {
   float min_dim = float(min_ii(extent.x, extent.y));
   float3 p0 = float3(-1.0f, -1.0f, 0.0f);
   float3 p1 = float3(float2(min_dim / extent) * 2.0f - 1.0f, 0.0f);
-  mul_project_m4_v3(view.wininv().ptr(), p0);
-  mul_project_m4_v3(view.wininv().ptr(), p1);
+  p0 = math::project_point(wininv, p0);
+  p1 = math::project_point(wininv, p1);
   /* Compute radius at unit plane from the camera. This is NOT the perspective division. */
-  if (view.is_persp()) {
+  if (is_perspective) {
     p0 = p0 / p0.z;
     p1 = p1 / p1.z;
   }
@@ -1201,7 +1203,7 @@ void ShadowModule::set_view(View &view, int2 extent)
                                    1);
   max_view_per_tilemap_ = max_view_per_tilemap();
 
-  data_.film_pixel_radius = screen_pixel_radius(view, extent);
+  data_.film_pixel_radius = screen_pixel_radius(view.wininv(), view.is_persp(), extent);
   inst_.uniform_data.push_update();
 
   usage_tag_fb_resolution_ = math::divide_ceil(extent, int2(std::exp2(usage_tag_fb_lod_)));

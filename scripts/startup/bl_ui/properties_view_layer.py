@@ -326,6 +326,9 @@ class VIEWLAYER_PT_eevee_next_layer_passes_light(ViewLayerButtonsPanel, Panel):
             row.separator(factor = 4)
             row.prop(context.scene.eevee, "gtao_distance", text="Occlusion Distance")
 
+        row = col.row()
+        row.separator()
+        row.prop(view_layer_eevee, "use_pass_transparent", text="Transparent")
 
 class VIEWLAYER_PT_eevee_layer_passes_effects(ViewLayerButtonsPanel, Panel):
     bl_label = "Effects"

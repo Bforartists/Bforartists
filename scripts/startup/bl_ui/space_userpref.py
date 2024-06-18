@@ -646,7 +646,7 @@ class USERPREF_PT_animation_keyframes(AnimationPanel, CenterAlignMixIn, Panel):
         row.prop(edit, "use_keyframe_insert_needed", text="Manual", toggle=1)
         row.prop(edit, "use_auto_keyframe_insert_needed", text="Auto", toggle=1)
 
-
+# BFA - custom menu
 class USERPREF_PT_animation_autokey(AnimationPanel, CenterAlignMixIn, Panel):
     bl_label = "Auto-Keyframing"
     bl_parent_id = "USERPREF_PT_animation_keyframes"
@@ -790,11 +790,14 @@ class USERPREF_PT_system_network(SystemPanel, CenterAlignMixIn, Panel):
         if system.use_online_access != runtime_online_access:
             row = layout.split(factor=0.4)
             row.label(text="")
-            row.label(
-                text="{:s} on startup, overriding the preference.".format(
-                    "Enabled" if runtime_online_access else "Disabled"
-                ),
-            )
+            if runtime_online_access:
+                text = iface_("Enabled on startup, overriding the preference.")
+            else:
+                text = iface_("Disabled on startup, overriding the preference.")
+            row.label(text=text, translate=False)
+
+        layout.row().prop(system, "network_timeout", text="Time Out")
+        layout.row().prop(system, "network_connection_limit", text="Connection Limit")
 
 
 class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
@@ -1847,7 +1850,7 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow.prop(paths, "save_version")
         flow.prop(paths, "recent_files")
 
-
+# BFA - custom menu
 class USERPREF_PT_saveload_blend_autosave(SaveLoadPanel, CenterAlignMixIn, Panel):
     bl_label = "Auto Save"
     bl_parent_id = "USERPREF_PT_saveload_blend"
@@ -2251,6 +2254,31 @@ class USERPREF_MT_extensions_active_repo(Menu):
         pass
 
 
+class USERPREF_MT_extensions_active_repo_remove(Menu):
+    bl_label = "Remove Extension Repository"
+
+    def draw(self, context):
+        layout = self.layout
+
+        extensions = context.preferences.extensions
+        active_repo_index = extensions.active_repo
+
+        try:
+            active_repo = None if active_repo_index < 0 else extensions.repos[active_repo_index]
+        except IndexError:
+            active_repo = None
+
+        is_system_repo = (active_repo.use_remote_url is False) and (active_repo.source == 'SYSTEM')
+
+        props = layout.operator("preferences.extension_repo_remove", text="Remove Repository")
+        props.index = active_repo_index
+
+        if not is_system_repo:
+            props = layout.operator("preferences.extension_repo_remove", text="Remove Repository & Files")
+            props.index = active_repo_index
+            props.remove_files = True
+
+
 class USERPREF_PT_extensions_repos(Panel):
     bl_label = "Repositories"
     bl_options = {'HIDE_HEADER'}
@@ -2279,11 +2307,10 @@ class USERPREF_PT_extensions_repos(Panel):
 
         col = row.column(align=True)
         col.operator_menu_enum("preferences.extension_repo_add", "type", text="", icon='ADD')
-        props = col.operator_menu_enum("preferences.extension_repo_remove", "type", text="", icon='REMOVE')
-        props.index = active_repo_index
+        col.menu("USERPREF_MT_extensions_active_repo_remove", text="", icon='REMOVE')
 
-        #col.operator("preferences.extension_repo_sync", text="", icon='FILE_REFRESH')
-        #col.operator("preferences.extension_repo_upgrade", text="", icon='IMPORT')
+        col.separator()
+
         col.menu_contents("USERPREF_MT_extensions_active_repo")
 
         try:
@@ -2299,7 +2326,8 @@ class USERPREF_PT_extensions_repos(Panel):
         # For now it can be accessed from Python if someone is.
         # `layout.prop(active_repo, "use_remote_url", text="Use Remote URL")`
 
-        if active_repo.use_remote_url:
+        use_remote_url = active_repo.use_remote_url
+        if use_remote_url:
             row = layout.row()
             split = row.split(factor=0.936)
             if active_repo.remote_url == "":
@@ -2326,7 +2354,7 @@ class USERPREF_PT_extensions_repos(Panel):
             col = layout_panel.column(align=False, heading="Custom Directory")
             row = col.row(align=True)
             sub = row.row(align=True)
-
+            sub.prop(active_repo, "use_custom_directory", text="")
             sub = sub.row(align=True)
             sub.active = use_custom_directory
             if use_custom_directory:
@@ -2354,6 +2382,10 @@ class USERPREF_PT_extensions_repos(Panel):
                 row = col.row() # BFA
                 row.separator() # BFA
                 row.prop(active_repo, "use_cache") # BFA
+            else:
+                row = col.row() # BFA
+                row.separator() # BFA
+                row.prop(active_repo, "source") # BFA
 
             col = layout.column() # BFA
             col.prop(active_repo, "module") # BFA
@@ -2491,8 +2523,8 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
             if p
         )
 
-        # collect the categories that can be filtered on
-        addon_modules = [mod for mod in addon_utils.modules(refresh=False)]
+        # Collect the categories that can be filtered on.
+        addon_modules = addon_utils.modules(refresh=False)
 
         self._draw_addon_header(layout, prefs, wm)
 
@@ -2891,17 +2923,6 @@ class USERPREF_PT_experimental_virtual_reality(ExperimentalPanel, Panel):
 """
 
 
-class USERPREF_PT_experimental_ui(ExperimentalPanel, Panel):
-    bl_label = "UI"
-
-    def draw(self, context):
-        self._draw_items(
-            context, (
-                ({"property": "use_menu_search"}, "T74157"),
-            ),
-        )
-
-
 class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
     bl_label = "New Features"
 
@@ -2912,6 +2933,7 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                 ({"property": "use_extended_asset_browser"},
                  ("blender/blender/projects/10", "Pipeline, Assets & IO Project Page")),
                 ({"property": "use_new_volume_nodes"}, ("blender/blender/issues/103248", "#103248")),
+                ({"property": "use_new_file_import_nodes"}, ("blender/blender/issues/122846", "#122846")),
                 ({"property": "use_shader_node_previews"}, ("blender/blender/issues/110353", "#110353")),
             ),
         )
@@ -2926,10 +2948,7 @@ class USERPREF_PT_experimental_prototypes(ExperimentalPanel, Panel):
                 ({"property": "use_new_curves_tools"}, ("blender/blender/issues/68981", "#68981")),
                 ({"property": "use_new_point_cloud_type"}, ("blender/blender/issues/75717", "#75717")),
                 ({"property": "use_sculpt_texture_paint"}, ("blender/blender/issues/96225", "#96225")),
-                ({"property": "use_grease_pencil_version3"}, ("blender/blender/projects/6", "Grease Pencil 3.0")),
-                ({"property": "use_grease_pencil_version3_convert_on_load"}, ("blender/blender/projects/6", "Grease Pencil 3.0")),
                 ({"property": "enable_overlay_next"}, ("blender/blender/issues/102179", "#102179")),
-                ({"property": "use_extension_utils"}, ("/blender/blender/issues/117286", "#117286")),
                 ({"property": "use_animation_baklava"}, ("/blender/blender/issues/120406", "#120406")),
             ),
         )
@@ -2969,6 +2988,7 @@ class USERPREF_PT_experimental_debugging(ExperimentalPanel, Panel):
                 ({"property": "use_asset_indexing"}, None),
                 ({"property": "use_viewport_debug"}, None),
                 ({"property": "use_eevee_debug"}, None),
+                ({"property": "use_extensions_debug"}, ("/blender/blender/issues/119521", "#119521")),
             ),
         )
 
@@ -3018,7 +3038,7 @@ classes = (
 
     USERPREF_PT_animation_timeline,
     USERPREF_PT_animation_keyframes,
-    USERPREF_PT_animation_autokey,
+    USERPREF_PT_animation_autokey, # BFA - custom menu
     USERPREF_PT_animation_fcurves,
 
     USERPREF_PT_system_cycles_devices,
@@ -3050,7 +3070,7 @@ classes = (
     USERPREF_PT_file_paths_development,
 
     USERPREF_PT_saveload_blend,
-    USERPREF_PT_saveload_blend_autosave,
+    USERPREF_PT_saveload_blend_autosave, # BFA - custom menu
     USERPREF_PT_saveload_autorun,
     USERPREF_PT_saveload_file_browser,
 
@@ -3072,6 +3092,7 @@ classes = (
     USERPREF_PT_addons,
 
     USERPREF_MT_extensions_active_repo,
+    USERPREF_MT_extensions_active_repo_remove,
     USERPREF_PT_extensions_repos,
 
     USERPREF_PT_studiolight_lights,

@@ -92,18 +92,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemR(layout, ptr, "quad_method", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(layout, ptr, "ngon_method", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(layout, ptr, "min_vertices", UI_ITEM_NONE, nullptr, ICON_NONE);
-
-  /*------------------- bfa - original props */
-  // uiItemR(layout, ptr, "keep_custom_normals", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiLayout *row, *col;
-
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "keep_custom_normals", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "keep_custom_normals", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
-
+  
   modifier_panel_end(layout, ptr);
 }
 
