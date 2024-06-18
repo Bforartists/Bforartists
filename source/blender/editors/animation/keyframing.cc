@@ -402,13 +402,14 @@ static int insert_key(bContext *C, wmOperator *op)
     }
     Vector<RNAPath> rna_paths = construct_rna_paths(&id_ptr);
 
-    combined_result.merge(animrig::insert_key_rna(&id_ptr,
-                                                  rna_paths.as_span(),
-                                                  scene_frame,
-                                                  insert_key_flags,
-                                                  key_type,
-                                                  bmain,
-                                                  anim_eval_context));
+    combined_result.merge(animrig::insert_keyframes(bmain,
+                                                    &id_ptr,
+                                                    std::nullopt,
+                                                    rna_paths.as_span(),
+                                                    scene_frame,
+                                                    anim_eval_context,
+                                                    key_type,
+                                                    insert_key_flags));
   }
 
   if (combined_result.get_count(animrig::SingleKeyingResult::SUCCESS) == 0) {
@@ -767,7 +768,7 @@ static int clear_anim_v3d_invoke(bContext *C, wmOperator *op, const wmEvent * /*
                                   op,
                                   IFACE_("Remove animation from selected objects?"),
                                   nullptr,
-                                  IFACE_("Remove"),
+                                  CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove"),
                                   ALERT_ICON_NONE,
                                   false);
   }
@@ -918,7 +919,7 @@ static int delete_key_v3d_exec(bContext *C, wmOperator *op)
 
 static int delete_key_v3d_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
-  if (RNA_boolean_get(op->ptr, "confirm")) {
+  /*if (RNA_boolean_get(op->ptr, "confirm")) {
     return WM_operator_confirm_ex(C,
                                   op,
                                   IFACE_("Delete keyframes from selected objects?"),
@@ -926,7 +927,7 @@ static int delete_key_v3d_invoke(bContext *C, wmOperator *op, const wmEvent * /*
                                   IFACE_("Delete"),
                                   ALERT_ICON_NONE,
                                   false);
-  }
+  }*/ /*BFA - Remove confirmation dialog*/
   return delete_key_v3d_exec(C, op);
 }
 
@@ -945,126 +946,184 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-  // WM_operator_properties_confirm_or_exec(ot); // BFA - Remove confirmation dialog
+  //WM_operator_properties_confirm_or_exec(ot); /*BFA - Remove confirmation dialog*/
 }
 
+// BFA - old version
 /* bfa - Apply animation to all selected pose bones through UI animate property */
 /**
  * \return Whether keyframes were added or not.
  * caller should update animation data afterwards.
  */
-#define UNUSED(x) (void)(x) /*BFA - to suppress a warning*/
+//#define UNUSED(x) (void)(x) /*BFA - to suppress a warning*/
 
-static bool insert_key_selected_pose_bones(Main *bmain,
-                                           bContext *C,
-                                           ReportList *reports, /*BFA - warning*/
-                                           ToolSettings *ts,
-                                           const AnimationEvalContext anim_eval_context,
-                                           int index,
-                                           eInsertKeyFlags flag,
-                                           PropertyRNA *prop,
-                                           bPoseChannel *pchan_to_exclude)
-{
-  UNUSED(reports); /* BFA - Used the UNUSED macro to suppress the warning*/
-  using namespace blender::animrig;
-
-  bPoseChannel *pchan = NULL;
-  blender::Vector<PointerRNA> selected_bones;
-  char *group = NULL;
-  std::optional<std::string> path;
-  bool changed = false;
-
-  CTX_data_selected_pose_bones(C, &selected_bones);
-  if (selected_bones.is_empty()) {
-    return false;
-  }
-
-  for (PointerRNA ptr : selected_bones) {
-    pchan = (bPoseChannel *)ptr.data;
-    if (pchan_to_exclude != NULL) {
-      if (pchan == pchan_to_exclude) {
-        continue;
-      }
-    }
-    group = pchan->name;
-    path = RNA_path_from_ID_to_property(&ptr, prop);
-    if (path) {
-      CombinedKeyingResult result = blender::animrig::insert_keyframe(
-          bmain,
-          *ptr.owner_id,
-          group,
-          path->c_str(),
-          index,
-          &anim_eval_context,
-          eBezTriple_KeyframeType(ts->keyframe_type),
-          flag);
-      changed |= (result.get_count(SingleKeyingResult::SUCCESS) != 0);
-    }
-  }
-  return changed;
-}
+//static bool insert_key_selected_pose_bones(Main *bmain,
+//                                           bContext *C,
+//                                           ReportList *reports, /*BFA - warning*/
+//                                           ToolSettings *ts,
+//                                           const AnimationEvalContext anim_eval_context,
+//                                           int index,
+//                                           eInsertKeyFlags flag,
+//                                           PropertyRNA *prop,
+//                                           bPoseChannel *pchan_to_exclude)
+//{
+//  UNUSED(reports); /* BFA - Used the UNUSED macro to suppress the warning*/
+//  using namespace blender::animrig;
+//
+//  Main *bmain = CTX_data_main(C);
+//  Scene *scene = CTX_data_scene(C);
+//  ToolSettings *ts = scene->toolsettings;
+//  PointerRNA ptr = {nullptr};
+//  PropertyRNA *prop = nullptr;
+//  uiBut *but;
+//  const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
+//      CTX_data_depsgraph_pointer(C), BKE_scene_frame_get(scene));
+//  bool changed = false;
+//  int index;
+//  const bool all = RNA_boolean_get(op->ptr, "all");
+//  eInsertKeyFlags flag = INSERTKEY_NOFLAGS;
+//
+//  flag = get_keyframing_flags(scene);
+//
+//  bPoseChannel *pchan = nullptr;
+//  blender::Vector<PointerRNA> selected_bones;
+//  char *group = nullptr;
+//  std::optional<std::string> path;
+//  bool changed = false;
+//
+//  CTX_data_selected_pose_bones(C, &selected_bones);
+//  if (selected_bones.is_empty()) {
+//    return false;
+//  }
+//
+//  for (PointerRNA ptr : selected_bones) {
+//    pchan = (bPoseChannel *)ptr.data;
+//    if (pchan_to_exclude != nullptr) {
+//      if (pchan == pchan_to_exclude) {
+//        continue;
+//      }
+//    }
+//    group = pchan->name;
+//    path = RNA_path_from_ID_to_property(&ptr, prop);
+//    if (path) {
+//      CombinedKeyingResult combined_result;
+//      for (PointerRNA &ptr : sources) {
+//      const CombinedKeyingResult result = insert_keyframes(
+//          bmain,
+//          &ptr,
+//          std::nullopt,
+//          rna_paths,
+//          scene_frame,
+//          anim_eval_context,
+//          eBezTriple_KeyframeType(scene->toolsettings->keyframe_type),
+//          flag);
+//      combined_result.merge(result);
+//      }   
+      // BFA - old version
+      //CombinedKeyingResult result = blender::animrig::insert_keyframe(
+      //    bmain,
+      //    *ptr.owner_id,
+      //    group,
+      //    path->c_str(),
+      //    index,
+      //    &anim_eval_context,
+      //    eBezTriple_KeyframeType(ts->keyframe_type),
+      //    flag);
+//      changed |= (result.get_count(SingleKeyingResult::SUCCESS) != 0);
+//    }
+//  }
+//  return changed;
+//}
 
 /* bfa - Apply animation to all selected objects through UI animate property */
 /**
  * \return Whether keyframes were added or not.
  */
-#define UNUSED(x) (void)(x) /*BFA - to suppress a warning*/
-static bool insert_key_selected_objects(Main *bmain,
-                                        bContext *C,
-                                        ReportList *reports, /*BFA - warning*/
-                                        ToolSettings *ts,
-                                        const AnimationEvalContext anim_eval_context,
-                                        int index,
-                                        eInsertKeyFlags flag,
-                                        const char *group,
-                                        const char *prop_path,
-                                        Object *object_to_exclude)
-{
-  UNUSED(reports); /* BFA - Used the UNUSED macro to suppress the warning*/
-  using namespace blender::animrig;
+//#define UNUSED(x) (void)(x) /*BFA - to suppress a warning*/
+//static bool insert_key_selected_objects(Main *bmain,
+//                                        bContext *C,
+//                                        ReportList *reports, /*BFA - warning*/
+//                                        ToolSettings *ts,
+//                                        const AnimationEvalContext anim_eval_context,
+//                                        int index,
+//                                        eInsertKeyFlags flag,
+//                                        const char *group,
+//                                        const char *prop_path,
+//                                        Object *object_to_exclude)
+//{
+//  UNUSED(reports); /* BFA - Used the UNUSED macro to suppress the warning*/
+//  using namespace blender::animrig;
+//
+//  Main *bmain = CTX_data_main(C);
+//  Scene *scene = CTX_data_scene(C);
+//  ToolSettings *ts = scene->toolsettings;
+//  PointerRNA ptr = {nullptr};
+//  PropertyRNA *prop = nullptr;
+//  uiBut *but;
+//  const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
+//      CTX_data_depsgraph_pointer(C), BKE_scene_frame_get(scene));
+//  bool changed = false;
+//  int index;
+//  const bool all = RNA_boolean_get(op->ptr, "all");
+//  eInsertKeyFlags flag = INSERTKEY_NOFLAGS;
+//
+//  flag = get_keyframing_flags(scene);
+//  blender::Vector<PointerRNA> selected_objects;
+//  Object *object = nullptr;
+//  bool changed = false;
+//
+//  CTX_data_selected_objects(C, &selected_objects);
+//  if (selected_objects.is_empty()) {
+//    return false;
+//  }
 
-  blender::Vector<PointerRNA> selected_objects;
-  Object *object = NULL;
-  bool changed = false;
-
-  CTX_data_selected_objects(C, &selected_objects);
-  if (selected_objects.is_empty()) {
-    return false;
-  }
-
-  for (PointerRNA ptr : selected_objects) {
-    object = (Object *)ptr.data;
-    if (object_to_exclude != NULL) {
-      if (object == object_to_exclude) {
-        continue;
-      }
-    }
-    CombinedKeyingResult result = blender::animrig::insert_keyframe(
-        bmain,
-        *ptr.owner_id,
-        group,
-        prop_path,
-        index,
-        &anim_eval_context,
-        eBezTriple_KeyframeType(ts->keyframe_type),
-        flag);
-    if (result.get_count(SingleKeyingResult::SUCCESS) != 0) {
-      DEG_id_tag_update(ptr.owner_id, ID_RECALC_ANIMATION_NO_FLUSH);
-      changed = true;
-    }
-  }
-  return changed;
-}
+//  for (PointerRNA ptr : selected_objects) {
+//    object = (Object *)ptr.data;
+//    if (object_to_exclude != nullptr) {
+//      if (object == object_to_exclude) {
+//        continue;
+//      }
+//    }
+//        CombinedKeyingResult combined_result;
+//        for (PointerRNA &ptr : sources) {
+//        const CombinedKeyingResult result = insert_keyframes(
+//            bmain,
+//            &ptr,
+//            std::nullopt,
+//            rna_paths,
+//            scene_frame,
+//            anim_eval_context,
+//            eBezTriple_KeyframeType(scene->toolsettings->keyframe_type),
+//            flag);
+//        combined_result.merge(result);
+//        }    
+        // BFA- old version
+        //CombinedKeyingResult result = blender::animrig::insert_keyframe(
+        //bmain,
+        //*ptr.owner_id,
+        //group,
+        //prop_path,
+        //index,
+        //&anim_eval_context,
+        //eBezTriple_KeyframeType(ts->keyframe_type),
+        //flag);
+//    if (result.get_count(SingleKeyingResult::SUCCESS) != 0) {
+//      DEG_id_tag_update(ptr.owner_id, ID_RECALC_ANIMATION_NO_FLUSH);
+//      changed = true;
+//    }
+//  }
+//  return changed;
+//}
 
 /* Insert Key Button Operator ------------------------ */
 
 static int insert_key_button_exec(bContext *C, wmOperator *op)
 {
   using namespace blender::animrig;
-
-  /* bfa - Apply animation to all selected through UI animate property */
-  wmWindow *win = CTX_wm_window(C);
-  bool alt_held = ((win->eventstate->modifier & KM_ALT) != 0);
+// BFA - old version
+//  /* bfa - Apply animation to all selected through UI animate property */
+//  wmWindow *win = CTX_wm_window(C);
+//  bool alt_held = ((win->eventstate->modifier & KM_ALT) != 0);
 
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
@@ -1138,13 +1197,15 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
       /* standard properties */
       if (const std::optional<std::string> path = RNA_path_from_ID_to_property(&ptr, prop)) {
         const char *identifier = RNA_property_identifier(prop);
-        const char *group = nullptr;
+        const std::optional<blender::StringRefNull> group = default_channel_group_for_path(
+            &ptr, identifier);
 
-        /*bfa - if (all) put on top*/
-        if (all) {
-          /* -1 indicates operating on the entire array (or the property itself otherwise) */
-          index = -1;
-        }
+// BFA - Old version
+//        /*bfa - if (all) put on top*/
+//        if (all) {
+//          /* -1 indicates operating on the entire array (or the property itself otherwise) */
+//          index = -1;
+//        }
 
         /* Special exception for keyframing transforms:
          * Set "group" for this manually, instead of having them appearing at the bottom
@@ -1153,53 +1214,60 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
          *
          * TODO: Perhaps we can extend this behavior in future for other properties...
          */
-        if (ptr.type == &RNA_PoseBone) {
-          bPoseChannel *pchan = static_cast<bPoseChannel *>(ptr.data);
-          group = pchan->name;
+//        if (ptr.type == &RNA_PoseBone) {
+//          bPoseChannel *pchan = static_cast<bPoseChannel *>(ptr.data);
+//          group = pchan->name;
           /* bfa - Apply animation to all selected through UI animate property */
-          if (alt_held) {
-            changed |= insert_key_selected_pose_bones(
-                bmain, C, op->reports, ts, anim_eval_context, index, flag, prop, pchan);
-          }
-        }
-        else if ((ptr.type == &RNA_Object) &&
-                 (strstr(identifier, "location") || strstr(identifier, "rotation") ||
-                  strstr(identifier, "scale")))
-        {
+//          if (alt_held) {
+//            changed |= insert_key_selected_pose_bones(
+//                bmain, C, op->reports, ts, anim_eval_context, index, flag, prop, pchan);
+//          }
+//        }
+//        else if ((ptr.type == &RNA_Object) &&
+//                 (strstr(identifier, "location") || strstr(identifier, "rotation") ||
+//                  strstr(identifier, "scale")))
+//        {
           /* NOTE: Keep this label in sync with the "ID" case in
            * keyingsets_utils.py :: get_transform_generators_base_info()
            */
-          group = "Object Transforms";
+//          group = "Object Transforms";
           /* bfa - Apply animation to all selected through UI animate property */
-          if (alt_held) {
-            changed |= insert_key_selected_objects(bmain,
-                                                   C,
-                                                   op->reports,
-                                                   ts,
-                                                   anim_eval_context,
-                                                   index,
-                                                   flag,
-                                                   group,
-                                                   path->c_str(),
-                                                   (Object *)ptr.data);
-          }
-        }
+//          if (alt_held) {
+//            changed |= insert_key_selected_objects(bmain,
+//                                                   C,
+//                                                   op->reports,
+//                                                   ts,
+//                                                   anim_eval_context,
+//                                                   index,
+//                                                   flag,
+//                                                   group,
+//                                                   path->c_str(),
+//                                                   (Object *)ptr.data);
+//          }
+//        }
 
         /* bfa - NOTE: this has to be called anyways for UI button's object
          * as it is possible to show property for non selected object,
          * exclude ptr.data from selected objects/bones
          * to make sure delete/insert_frame is not called twice on same object/bone.
          */
-        CombinedKeyingResult result = insert_keyframe(bmain,
-                                                      *ptr.owner_id,
-                                                      group,
-                                                      path->c_str(),
-                                                      index,
-                                                      &anim_eval_context,
-                                                      eBezTriple_KeyframeType(ts->keyframe_type),
-                                                      flag);
-        /* bfa - the | "or" operator is on purpose */
-        changed |= result.get_count(SingleKeyingResult::SUCCESS) != 0;
+        /* NOTE: `index == -1` is a magic number, meaning either "operate on all
+         * elements" or "not an array property". */
+        const std::optional<int> array_index = (all || index < 0) ? std::nullopt :
+                                                                    std::optional(index);
+        PointerRNA owner_ptr = RNA_id_pointer_create(ptr.owner_id);
+        CombinedKeyingResult result = insert_keyframes(bmain,
+                                                       &owner_ptr,
+                                                       group,
+                                                       {{*path, {}, array_index}},
+                                                       std::nullopt,
+                                                       anim_eval_context,
+                                                       eBezTriple_KeyframeType(ts->keyframe_type),
+                                                       flag);
+// BFA - Old version
+//        /* bfa - the | "or" operator is on purpose */
+//        changed |= result.get_count(SingleKeyingResult::SUCCESS) != 0;
+        changed = result.get_count(SingleKeyingResult::SUCCESS) != 0;
       }
       else {
         BKE_report(op->reports,
@@ -1272,105 +1340,107 @@ void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
 
   /* properties */
   RNA_def_boolean(ot->srna, "all", true, "All", "Insert a keyframe for all element of the array");
-}
+// BFA - Old version
+//}
 
 /* bfa - Apply animation to all selected through UI animate property */
 /**
  * \return Whether keyframes were deleted or not.
  */
-static bool delete_key_selected_pose_bones(Main *bmain,
-                                           bContext *C,
-                                           ReportList *reports, /*BFA - warning*/
-                                           int index,
-                                           PropertyRNA *prop,
-                                           float cfra,
-                                           bPoseChannel *pchan_to_exclude)
-{
-  bPoseChannel *pchan = NULL;
-  blender::Vector<PointerRNA> selected_bones;
-  AnimData *adt = NULL;
-  std::optional<std::string> path;
-  bool changed = false;
-
-  CTX_data_selected_pose_bones(C, &selected_bones);
-  if (selected_bones.is_empty()) {
-    return false;
-  }
-
-  for (PointerRNA ptr : selected_bones) {
-    pchan = (bPoseChannel *)ptr.data;
-    if (pchan == pchan_to_exclude) {
-      continue;
-    }
-    /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting error */
-    adt = BKE_animdata_from_id(ptr.owner_id);
-    if (adt == NULL) {
-      continue;
-    }
-    if (adt->action == NULL) {
-      continue;
-    }
-    /* -- */
-    path = RNA_path_from_ID_to_property(&ptr, prop);
-    if (path) {
-      changed |= (blender::animrig::delete_keyframe(
-                      bmain, reports, ptr.owner_id, NULL, path->c_str(), index, cfra) != 0);
-    }
-  }
-  return changed;
-}
-
+//static bool delete_key_selected_pose_bones(Main *bmain,
+//                                           bContext *C,
+//                                           ReportList *reports, /*BFA - warning*/
+//                                           int index,
+//                                           PropertyRNA *prop,
+//                                           float cfra,
+//                                           bPoseChannel *pchan_to_exclude)
+//{
+//  bPoseChannel *pchan = nullptr;
+//  blender::Vector<PointerRNA> selected_bones;
+//  AnimData *adt = nullptr;
+//  std::optional<std::string> path;
+//  bool changed = false;
+//
+//  CTX_data_selected_pose_bones(C, &selected_bones);
+//  if (selected_bones.is_empty()) {
+//    return false;
+//  }
+//
+//  for (PointerRNA ptr : selected_bones) {
+//    pchan = (bPoseChannel *)ptr.data;
+//    if (pchan == pchan_to_exclude) {
+//      continue;
+//    }
+//    /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting error */
+//    adt = BKE_animdata_from_id(ptr.owner_id);
+//    if (adt == nullptr) {
+//      continue;
+//    }
+//    if (adt->action == nullptr) {
+//      continue;
+//    }
+//    /* -- */
+//    path = RNA_path_from_ID_to_property(&ptr, prop);
+//    if (path) {
+//      changed |= (blender::animrig::delete_keyframe(
+//                      bmain, reports, ptr.owner_id, nullptr, path->c_str(), index, cfra) != 0);
+//    }
+//  }
+//  return changed;
+//}
+//
 /* bfa - Apply animation to all selected through UI animate property */
 /**
  * \return Whether keyframes were deleted or not.
  */
-static bool delete_key_selected_objects(Main *bmain,
-                                        bContext *C,
-                                        ReportList *reports,
-                                        int index,
-                                        const char *prop_path,
-                                        float cfra,
-                                        Object *object_to_exclude)
-{
-  blender::Vector<PointerRNA> selected_objects;
-  Object *object = NULL;
-  AnimData *adt = NULL;
-  bool changed = false;
-
-  CTX_data_selected_objects(C, &selected_objects);
-  if (selected_objects.is_empty()) {
-    return false;
-  }
-
-  for (PointerRNA ptr : selected_objects) {
-    object = (Object *)ptr.data;
-    if (object == object_to_exclude) {
-      continue;
-    }
-    adt = BKE_animdata_from_id(ptr.owner_id);
+//static bool delete_key_selected_objects(Main *bmain,
+//                                        bContext *C,
+//                                        ReportList *reports,
+//                                        int index,
+//                                        const char *prop_path,
+//                                        float cfra,
+//                                        Object *object_to_exclude)
+//{
+//  blender::Vector<PointerRNA> selected_objects;
+//  Object *object = nullptr;
+//  AnimData *adt = nullptr;
+//  bool changed = false;
+//
+//  CTX_data_selected_objects(C, &selected_objects);
+//  if (selected_objects.is_empty()) {
+//    return false;
+//  }
+//
+//  for (PointerRNA ptr : selected_objects) {
+//    object = (Object *)ptr.data;
+//    if (object == object_to_exclude) {
+//      continue;
+//    }
+//    adt = BKE_animdata_from_id(ptr.owner_id);
     /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting error.
      */
-    if (adt == NULL) {
-      continue;
-    }
-    if (adt->action == NULL) {
-      continue;
-    }
+//    if (adt == nullptr) {
+//      continue;
+//    }
+//    if (adt->action == nullptr) {
+//      continue;
+//    }
     /* -- */
-    changed |= (blender::animrig::delete_keyframe(
-                    bmain, reports, ptr.owner_id, NULL, prop_path, index, cfra) != 0);
-  }
-  return changed;
+//    changed |= (blender::animrig::delete_keyframe(
+//                    bmain, reports, ptr.owner_id, nullptr, prop_path, index, cfra) != 0);
+//  }
+//  return changed;
 }
 
 /* Delete Key Button Operator ------------------------ */
 
 static int delete_key_button_exec(bContext *C, wmOperator *op)
 {
-  /* bfa - Apply animation to all selected through UI animate property */
-  wmWindow *win = CTX_wm_window(C);
-  bool alt_held = ((win->eventstate->modifier & KM_ALT) != 0);
-  AnimData *adt = NULL;
+// BFA - old version
+//  /* bfa - Apply animation to all selected through UI animate property */
+//  wmWindow *win = CTX_wm_window(C);
+//  bool alt_held = ((win->eventstate->modifier & KM_ALT) != 0);
+//  AnimData *adt = nullptr;
 
   Scene *scene = CTX_data_scene(C);
   PointerRNA ptr = {nullptr};
@@ -1433,32 +1503,35 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
           index = -1;
         }
 
-        /* bfa - Apply animation to all selected through UI animate property */
-        if (alt_held) {
-          if (ptr.type == &RNA_PoseBone) {
-            changed |= delete_key_selected_pose_bones(
-                bmain, C, op->reports, index, prop, cfra, (bPoseChannel *)ptr.data);
-          }
-          else if (ptr.type == &RNA_Object) {
-            changed |= delete_key_selected_objects(
-                bmain, C, op->reports, index, path->c_str(), cfra, (Object *)ptr.data);
-          }
-        }
-        /* bfa - Apply animation to all selected through UI animate property */
-        /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting
-         * error. */
-        adt = BKE_animdata_from_id(ptr.owner_id);
-        if (adt != nullptr) {
-          if (adt->action != nullptr) {
-            /* bfa - NOTE: this has to be called anyways for UI button's object
-             * as it is possible to show property for non selected object,
-             * to make sure delete/insert_frame is not called twice on same object/bone,
-             * exclude ptr.data from selected objects/bones. */
-            changed |=
-                blender::animrig::delete_keyframe(
-                    bmain, op->reports, ptr.owner_id, nullptr, path->c_str(), index, cfra) != 0;
-          }
-        }
+        changed = blender::animrig::delete_keyframe(
+                      bmain, op->reports, ptr.owner_id, nullptr, path->c_str(), index, cfra) != 0;
+// BFA - Old version
+//        /* bfa - Apply animation to all selected through UI animate property */
+//        if (alt_held) {
+//          if (ptr.type == &RNA_PoseBone) {
+//            changed |= delete_key_selected_pose_bones(
+//                bmain, C, op->reports, index, prop, cfra, (bPoseChannel *)ptr.data);
+//          }
+//          else if (ptr.type == &RNA_Object) {
+//            changed |= delete_key_selected_objects(
+//                bmain, C, op->reports, index, path->c_str(), cfra, (Object *)ptr.data);
+//          }
+//        }
+//        /* bfa - Apply animation to all selected through UI animate property */
+//        /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting
+//         * error. */
+//        adt = BKE_animdata_from_id(ptr.owner_id);
+//        if (adt != nullptr) {
+//          if (adt->action != nullptr) {
+//            /* bfa - NOTE: this has to be called anyways for UI button's object
+//             * as it is possible to show property for non selected object,
+//             * to make sure delete/insert_frame is not called twice on same object/bone,
+//             * exclude ptr.data from selected objects/bones. */
+//            changed |=
+//                blender::animrig::delete_keyframe(
+//                    bmain, op->reports, ptr.owner_id, nullptr, path->c_str(), index, cfra) != 0;
+//          }
+//        }
       }
       else if (G.debug & G_DEBUG) {
         printf("Button Delete-Key: no path to property\n");
