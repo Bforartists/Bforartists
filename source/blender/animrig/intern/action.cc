@@ -163,13 +163,19 @@ Layer *Action::layer(const int64_t index)
 
 Layer &Action::layer_add(const StringRefNull name)
 {
-  using namespace blender::animrig;
-
   Layer &new_layer = ActionLayer_alloc();
   STRNCPY_UTF8(new_layer.name, name.c_str());
 
   grow_array_and_append<::ActionLayer *>(&this->layer_array, &this->layer_array_num, &new_layer);
   this->layer_active_index = this->layer_array_num - 1;
+
+  /* If this is the first layer in this Action, it means that it could have been
+   * used as a legacy Action before. As a result, this->idroot may be non-zero
+   * while it should be zero for layered Actions.
+   *
+   * And since setting this to 0 when it is already supposed to be 0 is fine,
+   * there is no check for whether this is actually the first layer. */
+  this->idroot = 0;
 
   return new_layer;
 }
@@ -361,6 +367,15 @@ Binding &Action::binding_add()
       &this->binding_array, &this->binding_array_num, &binding);
 
   anim_binding_name_ensure_unique(*this, binding);
+
+  /* If this is the first binding in this Action, it means that it could have
+   * been used as a legacy Action before. As a result, this->idroot may be
+   * non-zero while it should be zero for layered Actions.
+   *
+   * And since setting this to 0 when it is already supposed to be 0 is fine,
+   * there is no check for whether this is actually the first layer. */
+  this->idroot = 0;
+
   return binding;
 }
 
@@ -445,26 +460,43 @@ bool Action::assign_id(Binding *binding, ID &animated_id)
     return false;
   }
 
-  if (binding) {
-    if (!binding->is_suitable_for(animated_id)) {
-      return false;
-    }
-    this->binding_setup_for_id(*binding, animated_id);
+  /* Check that the new Binding is suitable, before changing `adt`. */
+  if (binding && !binding->is_suitable_for(animated_id)) {
+    return false;
+  }
 
+  /* Unassign any previously-assigned Binding. */
+  Binding *binding_to_unassign = this->binding_for_handle(adt->binding_handle);
+  if (binding_to_unassign) {
+    /* Before unassigning, make sure that the stored Binding name is up to date. The binding name
+     * might have changed in a way that wasn't copied into the ADT yet (for example when the
+     * Action is linked from another file), so better copy the name to be sure that it can be
+     * transparently reassigned later.
+     *
+     * TODO: Replace this with a BLI_assert() that the name is as expected, and "simply" ensure
+     * this name is always correct. */
+    STRNCPY_UTF8(adt->binding_name, binding_to_unassign->name);
+  }
+
+  /* Assign the Action itself. */
+  if (!adt->action) {
+    /* Due to the precondition check above, we know that adt->action is either 'this' (in which
+     * case the user count is already correct) or `nullptr` (in which case this is a new
+     * reference, and the user count should be increased). */
+    id_us_plus(&this->id);
+    adt->action = this;
+  }
+
+  /* Assign the Binding. */
+  if (binding) {
+    this->binding_setup_for_id(*binding, animated_id);
     adt->binding_handle = binding->handle;
+
     /* Always make sure the ID's binding name matches the assigned binding. */
     STRNCPY_UTF8(adt->binding_name, binding->name);
   }
   else {
-    unassign_binding(*adt);
-  }
-
-  if (!adt->action) {
-    /* Due to the precondition check above, we know that adt->action is either 'this' (in which
-     * case the user count is already correct) or `nullptr` (in which case this is a new reference,
-     * and the user count should be increased). */
-    id_us_plus(&this->id);
-    adt->action = this;
+    adt->binding_handle = Binding::unassigned;
   }
 
   return true;
@@ -493,8 +525,10 @@ void Action::unassign_id(ID &animated_id)
   BLI_assert_msg(adt, "ID is not animated at all");
   BLI_assert_msg(adt->action == this, "ID is not assigned to this Animation");
 
-  unassign_binding(*adt);
+  /* Unassign the Binding first. */
+  this->assign_id(nullptr, animated_id);
 
+  /* Unassign the Action itself. */
   id_us_min(&this->id);
   adt->action = nullptr;
 }
@@ -607,6 +641,30 @@ bool assign_animation(Action &anim, ID &animated_id)
   return anim.assign_id(binding, animated_id);
 }
 
+bool is_action_assignable_to(const bAction *dna_action, const ID_Type id_code)
+{
+  if (!dna_action) {
+    /* Clearing the Action is always possible. */
+    return true;
+  }
+
+  if (dna_action->idroot == 0) {
+    /* This is either a never-assigned legacy action, or a layered action. In
+     * any case, it can be assigned to any ID. */
+    return true;
+  }
+
+  const animrig::Action &action = dna_action->wrap();
+  if (!action.is_action_layered()) {
+    /* Legacy Actions can only be assigned if their idroot matches. Empty
+     * Actions are considered both 'layered' and 'legacy' at the same time,
+     * hence this condition checks for 'not layered' rather than 'legacy'. */
+    return action.idroot == id_code;
+  }
+
+  return true;
+}
+
 void unassign_animation(ID &animated_id)
 {
   Action *anim = get_animation(animated_id);
@@ -616,24 +674,24 @@ void unassign_animation(ID &animated_id)
   anim->unassign_id(animated_id);
 }
 
-void unassign_binding(AnimData &adt)
+void unassign_binding(ID &animated_id)
 {
-  /* Before unassigning, make sure that the stored Binding name is up to date. The binding name
-   * might have changed in a way that wasn't copied into the ADT yet (for example when the
-   * Animation data-block is linked from another file), so better copy the name to be sure that it
-   * can be transparently reassigned later.
-   *
-   * TODO: Replace this with a BLI_assert() that the name is as expected, and "simply" ensure this
-   * name is always correct. */
-  if (adt.action) {
-    const Action &anim = adt.action->wrap();
-    const Binding *binding = anim.binding_for_handle(adt.binding_handle);
-    if (binding) {
-      STRNCPY_UTF8(adt.binding_name, binding->name);
-    }
+  AnimData *adt = BKE_animdata_from_id(&animated_id);
+  BLI_assert_msg(adt, "Cannot unassign an Action Binding from a non-animated ID.");
+  if (!adt) {
+    return;
   }
 
-  adt.binding_handle = Binding::unassigned;
+  if (!adt->action) {
+    /* Nothing assigned. */
+    BLI_assert_msg(adt->binding_handle == Binding::unassigned,
+                   "Binding handle should be 'unassigned' when no Action is assigned");
+    return;
+  }
+
+  /* Assign the 'nullptr' binding, effectively unassigning it. */
+  Action &action = adt->action->wrap();
+  action.assign_id(nullptr, animated_id);
 }
 
 /* TODO: rename to get_action(). */
