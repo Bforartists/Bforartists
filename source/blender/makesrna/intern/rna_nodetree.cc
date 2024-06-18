@@ -4146,13 +4146,13 @@ static const EnumPropertyItem node_principled_hair_parametrization_items[] = {
 };
 
 static const EnumPropertyItem node_script_mode_items[] = {
-    {NODE_SCRIPT_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data"},
+    {NODE_SCRIPT_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data"}, /*BFA - no block*/
     {NODE_SCRIPT_EXTERNAL, "EXTERNAL", 0, "External", "Use external .osl or .oso file"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
 static EnumPropertyItem node_ies_mode_items[] = {
-    {NODE_IES_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data"},
+    {NODE_IES_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data"}, /*BFA - no block*/
     {NODE_IES_EXTERNAL, "EXTERNAL", 0, "External", "Use external .ies file"},
     {0, nullptr, 0, nullptr, nullptr},
 };
@@ -4659,7 +4659,7 @@ static void def_sh_attribute(StructRNA *srna)
        "OBJECT",
        0,
        "Object",
-       "The attribute is associated with the object or mesh data itself, "
+       "The attribute is associated with the object or mesh data itself, " /*BFA - no block*/
        "and its value is uniform"},
       {SHD_ATTRIBUTE_INSTANCER,
        "INSTANCER",
@@ -5861,7 +5861,7 @@ static void def_sh_tex_ies(StructRNA *srna)
   RNA_def_property_enum_funcs(prop, nullptr, "rna_ShaderNodeTexIES_mode_set", nullptr);
   RNA_def_property_enum_items(prop, node_ies_mode_items);
   RNA_def_property_ui_text(
-      prop, "Source", "Whether the IES file is loaded from disk or from a text data");
+      prop, "Source", "Whether the IES file is loaded from disk or from a text data"); /*BFA - no block*/
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   RNA_def_struct_sdna_from(srna, "bNode", nullptr);
@@ -7661,7 +7661,7 @@ static void def_cmp_zcombine(StructRNA *srna)
   prop = RNA_def_property(srna, "use_antialias_z", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "custom2", 0);
   RNA_def_property_ui_text(
-      prop, "Anti-Alias Z", "Anti-alias the z-buffer to try to avoid artifacts");
+      prop, "Anti-Alias Z", "Anti-alias the z-buffer to try to avoid artifacts"); /*BFA*/
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -10577,7 +10577,7 @@ static void rna_def_nodetree(BlenderRNA *brna)
       prop, nullptr, nullptr, nullptr, "rna_GPencil_datablocks_annotations_poll");
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
-  RNA_def_property_ui_text(prop, "Grease Pencil Data", "Grease Pencil data");
+  RNA_def_property_ui_text(prop, "Grease Pencil Data", "Grease Pencil data"); /*BFA - no block*/
   RNA_def_property_update(prop, NC_NODE, nullptr);
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
@@ -10653,10 +10653,10 @@ static void rna_def_nodetree(BlenderRNA *brna)
   parm = RNA_def_pointer(
       func, "result_1", "NodeTree", "Node Tree", "Active node tree from context");
   RNA_def_function_output(func, parm);
-  parm = RNA_def_pointer(func, "result_2", "ID", "Owner ID", "ID data that owns the node tree");
+  parm = RNA_def_pointer(func, "result_2", "ID", "Owner ID", "ID data that owns the node tree"); /*BFA - no block*/
   RNA_def_function_output(func, parm);
   parm = RNA_def_pointer(
-      func, "result_3", "ID", "From ID", "Original ID data selected from the context");
+      func, "result_3", "ID", "From ID", "Original ID data selected from the context"); /*BFA - no block*/
   RNA_def_function_output(func, parm);
 
   /* Check for support of a socket type with a type identifier. */
@@ -10697,7 +10697,7 @@ static void rna_def_shader_nodetree(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna,
       "Shader Node Tree",
-      "Node tree consisting of linked nodes used for materials (and other shading data)");
+      "Node tree consisting of linked nodes used for materials (and other shading data)"); /*BFA - no block*/
   RNA_def_struct_sdna(srna, "bNodeTree");
   RNA_def_struct_ui_icon(srna, ICON_MATERIAL);
 
@@ -10736,7 +10736,7 @@ static void rna_def_geometry_nodetree(BlenderRNA *brna)
   prop = RNA_def_property(srna, "is_tool", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", GEO_NODE_ASSET_TOOL);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Tool", "The node group is used as a tool\nOnly relevant for marked nodegroups as assets");
+  RNA_def_property_ui_text(prop, "Tool", "The node group is used as a tool\nOnly relevant for marked nodegroups as assets"); /*BFA*/
   RNA_def_property_boolean_funcs(
       prop, "rna_GeometryNodeTree_is_tool_get", "rna_GeometryNodeTree_is_tool_set");
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update_asset");
@@ -10744,7 +10744,7 @@ static void rna_def_geometry_nodetree(BlenderRNA *brna)
   prop = RNA_def_property(srna, "is_modifier", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", GEO_NODE_ASSET_MODIFIER);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Modifier", "The node group is used as a geometry modifier\nOnly relevant for marked nodegroups as assets");
+  RNA_def_property_ui_text(prop, "Modifier", "The node group is used as a geometry modifier\nOnly relevant for marked nodegroups as assets"); /*BFA*/
   RNA_def_property_boolean_funcs(
       prop, "rna_GeometryNodeTree_is_modifier_get", "rna_GeometryNodeTree_is_modifier_set");
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update_asset");
@@ -12047,7 +12047,7 @@ static StructRNA *define_specific_node(BlenderRNA *brna,
                                        const char *struct_name,
                                        const char *base_name,
                                        void (*def_func)(StructRNA *),
-                                       const int ui_icon)
+                                       const int ui_icon) /*BFA - used to show the cion*/
 {
   StructRNA *srna;
   FunctionRNA *func;
@@ -12123,9 +12123,6 @@ void RNA_def_nodetree(BlenderRNA *brna)
 {
   StructRNA *srna;
 
-//  rna_def_node_socket(brna);
-//  rna_def_node_socket_interface(brna);
-
   rna_def_node(brna);
   rna_def_node_link(brna);
 
@@ -12134,12 +12131,9 @@ void RNA_def_nodetree(BlenderRNA *brna)
   rna_def_compositor_node(brna);
   rna_def_texture_node(brna);
   rna_def_geometry_node(brna);
-//  rna_def_simulation_state_item(brna);
   rna_def_function_node(brna);
 
   rna_def_nodetree(brna);
-
-//  rna_def_node_socket_standard_types(brna);
 
   rna_def_composite_nodetree(brna);
   rna_def_shader_nodetree(brna);
