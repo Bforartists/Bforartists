@@ -2168,6 +2168,47 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 split.label(text="{:.2f}".format(elem.orig_fps), translate=False)
 
 
+class SEQUENCER_PT_movie_clip(SequencerButtonsPanel, Panel):
+    bl_label = "Movie Clip"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_category = "Strip"
+
+    @classmethod
+    def poll(cls, context):
+        if not cls.has_sequencer(context):
+            return False
+
+        strip = context.active_sequence_strip
+        if not strip:
+            return False
+
+        return strip.type == 'MOVIECLIP'
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        strip = context.active_sequence_strip
+
+        layout.active = not strip.mute
+        layout.template_ID(strip, "clip")
+
+        if strip.type == 'MOVIECLIP':
+            col = layout.column(heading="Use")
+            col.prop(strip, "stabilize2d", text="2D Stabilized Clip")
+            col.prop(strip, "undistort", text="Undestorted Clip")
+
+        clip = strip.clip
+        if clip:
+            sta = clip.frame_start
+            end = clip.frame_start + clip.frame_duration
+            layout.label(
+                text=rpt_("Original frame range: {:d}-{:d} ({:d})").format(sta, end, end - sta + 1),
+                translate=False,
+            )
+
+
 class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
     bl_label = "Scene"
     bl_category = "Strip"
@@ -3405,6 +3446,7 @@ classes = (
     SEQUENCER_PT_mask,
     SEQUENCER_PT_effect_text_style,
     SEQUENCER_PT_effect_text_layout,
+    SEQUENCER_PT_movie_clip,
 
     SEQUENCER_PT_adjust_comp,
     SEQUENCER_PT_adjust_transform,
