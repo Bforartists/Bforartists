@@ -28,6 +28,7 @@ from typing import (
 )
 
 # For more useful output that isn't clipped.
+# pylint: disable-next=protected-access
 unittest.util._MAX_LENGTH = 10_000
 
 IS_WIN32 = sys.platform == "win32"
@@ -404,7 +405,7 @@ class TestCLI_WithRepo(unittest.TestCase):
             )
             self.assertEqual(
                 output_json, [
-                    ("STATUS", "Re-Installed \"another_package\"")
+                    ("STATUS", "Reinstalled \"another_package\"")
                 ]
             )
             self.assertTrue(os.path.isdir(os.path.join(temp_dir_local, "another_package")))
