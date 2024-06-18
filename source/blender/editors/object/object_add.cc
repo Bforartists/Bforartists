@@ -2978,11 +2978,12 @@ void OBJECT_OT_duplicates_make_real(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  RNA_def_boolean(ot->srna,
-                  "use_base_parent",
-                  false,
-                  "Parent",
-                  "Parent newly created objects to the original instancer");
+  ot->prop = RNA_def_boolean(ot->srna,
+                             "use_base_parent",
+                             false,
+                             "Parent",
+                             "Parent newly created objects to the original instancer");
+  RNA_def_property_translation_context(ot->prop, BLT_I18NCONTEXT_OPERATOR_DEFAULT);
   RNA_def_boolean(
       ot->srna, "use_hierarchy", false, "Keep Hierarchy", "Maintain parent child relationships");
 }
@@ -3008,11 +3009,13 @@ static const EnumPropertyItem convert_target_items[] = {
 #else
      "Mesh from Curve, Surface, Metaball, or Text objects"},
 #endif
+#if 0
     {OB_GPENCIL_LEGACY,
      "GPENCIL",
      ICON_OUTLINER_OB_GREASEPENCIL,
      "Grease Pencil",
      "Grease Pencil from Curve or Mesh objects"},
+#endif
 #ifdef WITH_POINT_CLOUD
     {OB_POINTCLOUD,
      "POINTCLOUD",
@@ -3021,13 +3024,11 @@ static const EnumPropertyItem convert_target_items[] = {
      "Point Cloud from Mesh objects"},
 #endif
     {OB_CURVES, "CURVES", ICON_OUTLINER_OB_CURVES, "Curves", "Curves from evaluated curve data"},
-#ifdef WITH_GREASE_PENCIL_V3
     {OB_GREASE_PENCIL,
      "GREASEPENCIL",
      ICON_OUTLINER_OB_GREASEPENCIL,
-     "Grease Pencil v3",
-     "Grease Pencil v3 from Grease Pencil"},
-#endif
+     "Grease Pencil",
+     "Grease Pencil from Curve or Mesh objects"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -3049,12 +3050,7 @@ static const EnumPropertyItem *convert_target_itemf(bContext *C,
   if (U.experimental.use_new_point_cloud_type) {
     RNA_enum_items_add_value(&item, &totitem, convert_target_items, OB_POINTCLOUD);
   }
-  if (U.experimental.use_grease_pencil_version3) {
-    RNA_enum_items_add_value(&item, &totitem, convert_target_items, OB_GREASE_PENCIL);
-  }
-  else {
-    RNA_enum_items_add_value(&item, &totitem, convert_target_items, OB_GPENCIL_LEGACY);
-  }
+  RNA_enum_items_add_value(&item, &totitem, convert_target_items, OB_GREASE_PENCIL);
 
   RNA_enum_item_end(&item, &totitem);
 
@@ -3346,20 +3342,6 @@ static int object_convert_exec(bContext *C, wmOperator *op)
       }
       ob_gpencil->actcol = actcol;
     }
-    else if (U.experimental.use_grease_pencil_version3 && ob->type == OB_GPENCIL_LEGACY &&
-             target == OB_GREASE_PENCIL)
-    {
-      ob->flag |= OB_DONE;
-
-      if (keep_original) {
-        BLI_assert_unreachable();
-      }
-      else {
-        newob = ob;
-      }
-
-      bke::greasepencil::convert::legacy_gpencil_object(*bmain, *newob);
-    }
     else if (target == OB_CURVES) {
       ob->flag |= OB_DONE;
 
@@ -3430,11 +3412,13 @@ static int object_convert_exec(bContext *C, wmOperator *op)
             curves_id->geometry.wrap() = drawings[i].drawing.strokes();
             geometries[i] = bke::GeometrySet::from_curves(curves_id);
           }
-          bke::GeometrySet joined_curves = geometry::join_geometries(geometries, {});
+          if (geometries.size() > 0) {
+            bke::GeometrySet joined_curves = geometry::join_geometries(geometries, {});
 
-          new_curves->geometry.wrap() = joined_curves.get_curves()->geometry.wrap();
-          new_curves->geometry.wrap().tag_topology_changed();
-          BKE_object_material_from_eval_data(bmain, newob, &joined_curves.get_curves()->id);
+            new_curves->geometry.wrap() = joined_curves.get_curves()->geometry.wrap();
+            new_curves->geometry.wrap().tag_topology_changed();
+            BKE_object_material_from_eval_data(bmain, newob, &joined_curves.get_curves()->id);
+          }
         }
 
         BKE_object_free_derived_caches(newob);
