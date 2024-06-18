@@ -390,7 +390,7 @@ class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
         col.label(text="Light Probe Volume")
         row = col.row()
         row.separator()
-        row.prop(mat, "lightprobe_volume_single_sided", text="Single Sided")
+        row.prop(mat, "use_backface_culling_lightprobe_volume", text="Light Probe Volume Backfaces") #BFA - made this explicit
 
 
 class EEVEE_NEXT_MATERIAL_PT_settings_volume(MaterialButtonsPanel, Panel):
