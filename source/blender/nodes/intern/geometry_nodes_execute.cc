@@ -431,7 +431,7 @@ static bool old_id_property_type_matches_socket_convert_to_new_float_vec(
 static bool old_id_property_type_matches_socket_convert_to_new_string(
     const IDProperty &old_property, IDProperty *new_property)
 {
-  if (old_property.type != IDP_STRING || new_property->subtype != IDP_STRING_SUB_UTF8) {
+  if (old_property.type != IDP_STRING || old_property.subtype != IDP_STRING_SUB_UTF8) {
     return false;
   }
   if (new_property) {
@@ -442,8 +442,8 @@ static bool old_id_property_type_matches_socket_convert_to_new_string(
 }
 
 /**
- * Check if the given `old_property` property type is compatible with the given `socket` type. E.g.
- * a `SOCK_FLOAT` socket can use data from `IDP_FLOAT`, `IDP_INT` and `IDP_DOUBLE` idproperties.
+ * Check if the given `old_property` property type is compatible with the given `socket` type.
+ * E.g. a #SOCK_FLOAT socket can use data from #IDP_FLOAT, #IDP_INT and #IDP_DOUBLE ID-properties.
  *
  * If `new_property` is given, it is expected to be of the 'perfect match' type with the given
  * `socket` (see #id_property_create_from_socket), and its value will be set from the value of
@@ -1052,7 +1052,7 @@ void update_input_properties_from_node_tree(const bNodeTree &tree,
       continue;
     }
 
-    new_prop->flag |= IDP_FLAG_OVERRIDABLE_LIBRARY;
+    new_prop->flag |= IDP_FLAG_OVERRIDABLE_LIBRARY | IDP_FLAG_STATIC_TYPE;
     if (socket.description && socket.description[0] != '\0') {
       IDPropertyUIData *ui_data = IDP_ui_data_ensure(new_prop);
       ui_data->description = BLI_strdup(socket.description);
